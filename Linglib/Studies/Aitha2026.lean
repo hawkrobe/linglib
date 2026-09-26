@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Syntax.Case.Basic
 public import Linglib.Syntax.Case.Order
+public import Linglib.Fragments.Telugu.Case
 public import Linglib.Morphology.Paradigm.Contiguity
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.OptimalityTheory.Stratal
@@ -21,14 +21,29 @@ is triggered by agreement suffixes in nominative contexts, and reads the weight 
 syllable inside the prosodic word. It is the phonology of one underlying *-am-ni*, derived in
 Stratal OT ([kiparsky-2000]) from prespecified stress on the singular suffix *-ni*.
 
-This file defines the Vocabulary Items of the strong alternation (`strongItems`), the weak
-generalization (`weakN`), the singular suffix (`numItems`), and the Stem, Word, and Phrase
-tableaux with the marks of the paper's (49), (59), (62), (63), (66), and (67) under the
-rankings of (64) and (68). `strong_rows` and `weak_rows` check both alternations against
-every paradigm cell of the pool; `weak_not_case_function` and `weak_violates_aba` are the
-arguments against case conditioning; `oblique_across_quantifier` is the locality contrast;
-the `*_optimal` theorems derive both surface forms from *-am-ni*, and the `*_reranked`
-theorems are the Word-to-Phrase rerankings of (68).
+This file defines the Vocabulary Items of the strong alternation, the weak generalization, the
+singular suffix, and the Stem, Word, and Phrase tableaux with the marks of the paper's (49),
+(59), (62), (63), (66), and (67) under the rankings of (64) and (68).
+
+## Main definitions
+
+* `strongItems`, `strongN`: the Vocabulary Items of (4) and the n exponent they insert.
+* `weakN`: the weak alternation by the syllable that follows n.
+* `numItems`, `numSg`: the singular suffix *-ni* of (40).
+* `wordOrder`, `phraseOrder`: the rankings of (64) and (68).
+
+## Main results
+
+* `strong_rows`, `weak_rows`: both alternations against every paradigm cell of the pool.
+* `weak_not_case_function`, `weak_violates_aba`: the arguments against case conditioning.
+* `oblique_across_quantifier`: the locality contrast of (33)–(36).
+* `wordDat_optimal`, `wordNom_optimal`: both surface forms from one underlying *-am-ni*.
+* `distZero_alignR_max_reranked` and its siblings: the Word-to-Phrase rerankings of (68).
+
+## Implementation notes
+
+The cases of the paradigms are those of `Telugu.Case`, the paper's P cell being the locative
+postposition *-lō*, and the containment order on them is the scoped Caha order on `Case`.
 
 ## References
 
@@ -48,28 +63,11 @@ open Core Constraints OptimalityTheory
 
 /-! ### Case -/
 
-/-- The Telugu cases of the paradigms, with the postpositions as P. -/
-inductive TeluguCase where
-  | nom | acc | gen | dat | p
-  deriving DecidableEq, Repr, Fintype
-
-def TeluguCase.toCore : TeluguCase → Case
-  | .nom => .nom
-  | .acc => .acc
-  | .gen => .gen
-  | .dat => .dat
-  | .p => .loc
-
-/-- A nonnominative case contains [ACC] ((3), [caha-2009]): the natural class
-of the oblique. -/
-def TeluguCase.IsNonnom (c : TeluguCase) : Prop := Case.IsNonnominative c.toCore
-
-instance (c : TeluguCase) : Decidable c.IsNonnom :=
-  inferInstanceAs (Decidable (Case.IsNonnominative c.toCore))
-
-def TeluguCase.ofString : String → Option TeluguCase
+/-- The case of a paradigm cell by the paper's label, its P the postposition *-lō* of
+`Telugu.Case`. -/
+def caseOfLabel : String → Option Case
   | "nom" => some .nom | "acc" => some .acc | "gen" => some .gen | "dat" => some .dat
-  | "p" => some .p | _ => none
+  | "p" => some .loc | _ => none
 
 /-! ### The strong alternation (§2) -/
 
@@ -84,27 +82,28 @@ def Root.ofString : String → Option Root
   | "plough" => some .plough | "ghee" => some .ghee | "well" => some .well | "town" => some .town
   | "husband" => some .husband | _ => none
 
-/-- Features at the n head: the root it attaches to and, in every
-nonnominative case, [ACC]. -/
+/-- The features at the n head are the root it attaches to and, in every nonnominative case,
+[ACC]. -/
 inductive Feature where
   | root (r : Root)
   | acc
   deriving DecidableEq, Repr
 
-/-- The n head's bundle for root `r` in case `c`. -/
-def site (r : Root) (c : TeluguCase) : List Feature :=
-  .root r :: if c.IsNonnom then [.acc] else []
+/-- The n head's bundle for root `r` in case `c`, with [ACC] in every nonnominative case, the
+natural class of the oblique ((3), [caha-2009]). -/
+def site (r : Root) (c : Case) : List Feature :=
+  .root r :: if c.IsNonnominative then [.acc] else []
 
-/-- The items of one exponent: `e` next to each listed root, in the context
-of [ACC] when `acc`. -/
+/-- `forRoots roots e acc` lists the items inserting `e` next to each root of `roots`, in the
+context of [ACC] when `acc`. -/
 def forRoots (roots : List Root) (e : String) (acc : Bool := false) :
     List (VocabularyItem Feature String) :=
-  roots.map fun r => (.root r :: if acc then [.acc] else []) ⟷ e
+  roots.map fun r ↦ (.root r :: if acc then [.acc] else []) ⟷ e
 
-/-- The Vocabulary Items of (4) for the roots of (2): the nominative exponents
-next to their roots, and the oblique exponents next to the same roots and
-[ACC] — one *-ṭi* entry spanning the *-ru*, *-lu*, *-nu*, *-ḍu*, and *-li*
-classes, *-ti* for the *-yi* class, *-i* for the *-u* class. -/
+/-- The Vocabulary Items of (4) for the roots of (2) insert the nominative exponents next to
+their roots and the oblique exponents next to the same roots and [ACC], one *-ṭi* entry
+spanning the *-ru*, *-lu*, *-nu*, *-ḍu*, and *-li* classes, *-ti* for the *-yi* class and *-i*
+for the *-u* class. -/
 def strongItems : List (VocabularyItem Feature String) :=
   forRoots [.stream, .mouth] "ru" ++ forRoots [.house, .bow] "lu" ++
     forRoots [.eye, .tooth] "nu" ++ forRoots [.nest] "ḍu" ++ forRoots [.plough] "li" ++
@@ -113,18 +112,18 @@ def strongItems : List (VocabularyItem Feature String) :=
     forRoots [.town, .husband] "u" ++ forRoots [.town, .husband] "i" true
 
 /-- The exponent of n for root `r` in case `c`. -/
-def strongN (r : Root) (c : TeluguCase) : Option String := subsetPrinciple strongItems (site r c)
+def strongN (r : Root) (c : Case) : Option String := subsetPrinciple strongItems (site r c)
 
-/-- The nominative–nonnominative cut: every nonnominative case takes the
-accusative's exponent, by the Elsewhere Condition over [ACC]. -/
+/-- Every nonnominative case takes the accusative's exponent, the nominative–nonnominative cut
+of the paradigm, by the Elsewhere Condition over [ACC]. -/
 theorem strongN_nonnom :
-    ∀ (r : Root) (c : TeluguCase), c.IsNonnom → strongN r c = strongN r .acc := by
+    ∀ r : Root, ∀ c ∈ Telugu.Case.inventory, c.IsNonnominative → strongN r c = strongN r .acc := by
   decide
 
 /-! ### The weak alternation (§3) -/
 
-/-- What follows the n exponent: its membership in the noun's prosodic word
-and the weight of its initial syllable (§3.2). -/
+/-- What follows the n exponent is recorded by its membership in the noun's prosodic word and
+the weight of its initial syllable (§3.2). -/
 structure Following where
   internal : Bool
   weight : Syllable.Weight
@@ -139,19 +138,18 @@ def TriggersLong (f : Option Following) : Prop :=
 instance (f : Option Following) : Decidable (TriggersLong f) := by
   unfold TriggersLong; infer_instance
 
-/-- The weak n exponent: *-āni* before a word-internal light syllable, *-am*
-otherwise. -/
+/-- The weak n exponent is *-āni* before a word-internal light syllable and *-am* otherwise. -/
 def weakN (f : Option Following) : String := if TriggersLong f then "āni" else "am"
 
 /-! ### The data pool -/
 
-/-- A paradigm cell of the pool: the root class, the case if any, what follows n, the n
-exponent, and for singular weak nouns whether the form is long. -/
+/-- A paradigm cell of the pool records the noun, its strong root if any, its number, its case
+if any, what follows n, the n exponent, and for singular weak nouns whether the form is long. -/
 structure Cell where
   noun : String
   strongRoot : Option Root
   plural : Bool
-  case : Option TeluguCase
+  case : Option Case
   following : Option Following
   n : String
   long : Option Bool
@@ -176,7 +174,7 @@ def Cell.ofExample (ex : LinguisticExample) : Option Cell := do
     | _, _ => none
   let strongRoot ←
     if cls = "strong" then (fs.lookup "root" >>= Root.ofString).map some else some none
-  pure ⟨noun, strongRoot, number = "pl", TeluguCase.ofString case, following, n,
+  pure ⟨noun, strongRoot, number = "pl", caseOfLabel case, following, n,
     (fs.lookup "form").map (· = "long")⟩
 
 /-- Every row recording an n exponent is a cell. -/
@@ -187,18 +185,18 @@ theorem cell_ofExample_isSome :
 def cells : List Cell := Examples.all.filterMap Cell.ofExample
 
 /-- The strong cells, with their roots. -/
-def strongCells : List (Root × TeluguCase × String) :=
-  cells.filterMap fun c => do pure (← c.strongRoot, ← c.case, c.n)
+def strongCells : List (Root × Case × String) :=
+  cells.filterMap fun c ↦ do pure (← c.strongRoot, ← c.case, c.n)
 
 /-- The singular weak cells. -/
-def weakCells : List Cell := cells.filter fun c => c.strongRoot = none ∧ ¬ c.plural
+def weakCells : List Cell := cells.filter fun c ↦ c.strongRoot = none ∧ ¬ c.plural
 
-/-- **The strong paradigm**: (4) inserts the attested exponent in every strong cell of (1),
-(2), and fn. 6 — the agreement suffix, bearing no [ACC], leaves the nominative form. -/
+/-- The items of (4) insert the attested exponent in every strong cell of (1), (2), and fn. 6;
+the agreement suffix, bearing no [ACC], leaves the nominative form. -/
 theorem strong_rows : ∀ x ∈ strongCells, strongN x.1 x.2.1 = some x.2.2 := by decide
 
-/-- **The weak generalization**: in every singular weak cell of (6)–(8), (13)–(18), and (34)
-the form is long exactly when the following syllable is light and word-internal. -/
+/-- In every singular weak cell of (6)–(8), (13)–(18), and (34) the form is long exactly when
+the following syllable is light and word-internal, the weak generalization. -/
 theorem weak_rows : ∀ c ∈ weakCells, c.long = some (decide (TriggersLong c.following)) := by
   decide
 
@@ -208,18 +206,18 @@ def oceanNom : Cell := ⟨"samudram", none, false, some .nom, none, "am", some f
 /-- The long form under the 1SG agreement suffix, in a nominative predicate nominal ((13)). -/
 def ocean1sg : Cell := ⟨"samudram", none, false, some .nom, some ⟨true, .light⟩, "āni", some true⟩
 
-/-- **Not case allomorphy**: no assignment of a form to each case fits the weak cells, since
-the nominative carries both *-am* and *-āni* ((8) with (13)–(16)). -/
+/-- No assignment of a form to each case fits the weak cells, since the nominative carries both
+*-am* and *-āni* ((8) with (13)–(16)), so the weak alternation is not case allomorphy. -/
 theorem weak_not_case_function :
-    ¬ ∃ f : Option TeluguCase → Option Bool, ∀ c ∈ weakCells, f c.case = c.long := by
+    ¬ ∃ f : Option Case → Option Bool, ∀ c ∈ weakCells, f c.case = c.long := by
   rintro ⟨f, h⟩
   have h₁ := h oceanNom (by decide)
   have h₂ := h ocean1sg (by decide)
   simp only [oceanNom, ocean1sg] at h₁ h₂
   exact absurd (h₁.symm.trans h₂) (by decide)
 
-/-- **Locality** ((33)–(36)): across a postposed quantifier the strong oblique is licensed
-exactly when the overall case is nonnominative. -/
+/-- Across a postposed quantifier the strong oblique is licensed exactly when the overall case
+is nonnominative ((33)–(36)). -/
 theorem oblique_across_quantifier :
     ∀ row ∈ Examples.all, row.feature? "intervener" = some "quantifier" →
       row.feature? "class" = some "strong" →
@@ -229,51 +227,48 @@ theorem oblique_across_quantifier :
 
 /-! ### Paradigm shapes against containment (§3.1) -/
 
-/-- The suffix shapes of the case paradigms (1) and (8): null nominative and genitive, light
-*-ni* and *-ki*, and the heavy postposition *-lō*. -/
-def caseSuffix : TeluguCase → Option Following
-  | .nom => none
-  | .acc => some ⟨true, .light⟩
-  | .gen => none
-  | .dat => some ⟨true, .light⟩
-  | .p => some ⟨false, .heavy⟩
+/-- What follows n in each case of the paradigms (1) and (8) is nothing in the unmarked
+nominative and genitive, a light suffix inside the prosodic word, or a heavy postposition
+outside it. -/
+def caseSuffix (c : Case) : Option Following :=
+  if c ∈ Case.Marker.inventory Telugu.Case.suffixes then some ⟨true, .light⟩
+  else if c ∈ Case.Marker.inventory Telugu.Case.postpositions then some ⟨false, .heavy⟩
+  else none
 
-/-- The Telugu cases in containment order, through their core cases. -/
-scoped instance : Preorder TeluguCase := Preorder.lift TeluguCase.toCore
-
-scoped instance : DecidableLE TeluguCase := fun c₁ c₂ ↦
-  inferInstanceAs (Decidable (c₁.toCore ≤ c₂.toCore))
-
-/-- The weak paradigm (8) violates *ABA: the nominative form resurfaces in the genitive,
-which contains [ACC] ([caha-2009]). -/
-theorem weak_violates_aba : ¬ Morphology.IsContiguous (weakN ∘ caseSuffix) := by decide
+/-- The weak paradigm (8) violates *ABA on the containment hierarchy, since the nominative
+form resurfaces in the genitive, which contains [ACC] ([caha-2009]). -/
+theorem weak_violates_aba :
+    ¬ Morphology.IsContiguous fun c : Telugu.Case.inventory ↦ weakN (caseSuffix c) := by
+  decide
 
 /-- The strong paradigm of *illu* (1) is contiguous on the containment hierarchy. -/
-theorem strong_contiguous : Morphology.IsContiguous (strongN .house) := by decide
+theorem strong_contiguous :
+    Morphology.IsContiguous fun c : Telugu.Case.inventory ↦ strongN .house c := by
+  decide
 
 /-! ### The singular suffix (§4.2) -/
 
-/-- The context of Num: the preceding n exponent is *-am*. -/
+/-- The context of Num records that the preceding n exponent is *-am*. -/
 inductive NumContext where
   | afterAm
   deriving DecidableEq, Repr
 
-/-- The Vocabulary Items of Num in the singular ((40)): *-ni* after *-am*, null elsewhere —
-conditioned inward, as root-out insertion allows. -/
+/-- The Vocabulary Items of Num in the singular ((40)) insert *-ni* after *-am* and null
+elsewhere, conditioned inward as root-out insertion allows. -/
 def numItems : List (VocabularyItem NumContext String) := [[.afterAm] ⟷ "ni", [] ⟷ "ø"]
 
 /-- The singular exponent of Num after an n exponent. -/
 def numSg (nExponent : String) : Option String :=
   subsetPrinciple numItems (if nExponent = "am" then [.afterAm] else [] : List NumContext)
 
-/-- Weak nouns take *-ni*, strong nouns the null singular: the underlying weak singular is
-*samudr-am-ni-K* ((41)). -/
+/-- Weak nouns take *-ni* and strong nouns the null singular, so the underlying weak singular
+is *samudr-am-ni-K* ((41)). -/
 theorem numSg_am : numSg "am" = some "ni" ∧ numSg "lu" = some "ø" := by decide
 
 /-! ### Stem-level phonology (§5.1) -/
 
-/-- The metrical parses of *samudr-am* in (49): final heavy syllable unparsed, three
-degenerate feet, or two bimoraic trochees. -/
+/-- The metrical parses of *samudr-am* in (49) leave the final heavy syllable unparsed, form
+three degenerate feet, or form two bimoraic trochees. -/
 inductive StemCandidate where
   | unparsedFinal
   | degenerate
@@ -285,13 +280,13 @@ def StemCandidate.toFooting : StemCandidate → Footing Syllable.Weight
   | .degenerate => [.inl ⟨[.light], 0⟩, .inl ⟨[.light], 0⟩, .inl ⟨[.heavy], 0⟩]
   | .trochees => [.inl ⟨[.light, .light], 0⟩, .inl ⟨[.heavy], 0⟩]
 
-/-- FT-BIN(μ) ≫ PARSE-SYL ≫ ALL-FT-LEFT ((46)–(48)), read off each parse's footing: the
-non-bimoraic feet, the stray syllables, and the feet's distances from the left edge. -/
+/-- FT-BIN(μ) ≫ PARSE-SYL ≫ ALL-FT-LEFT ((46)–(48)), each read off a parse's footing as its
+non-bimoraic feet, its stray syllables, and the feet's distances from the left edge. -/
 def stemRanking : List (Constraint StemCandidate) :=
-  [fun c => (c.toFooting.nonBimoraicFeet id).length, fun c => c.toFooting.strays.length,
-    fun c => c.toFooting.footOffsets.sum]
+  [fun c ↦ (c.toFooting.nonBimoraicFeet id).length, fun c ↦ c.toFooting.strays.length,
+    fun c ↦ c.toFooting.footOffsets.sum]
 
-/-- (49): the Stem parses as two moraic trochees, (ˈsa.mu)(ˌdram). -/
+/-- The Stem parses as two moraic trochees, (ˈsa.mu)(ˌdram) ((49)). -/
 theorem stem_optimal : (Tableau.ofFintype stemRanking).optimal = {.trochees} := by decide
 
 /-! ### Word- and Phrase-level rankings (§5.2–5.3)
@@ -315,8 +310,8 @@ def phraseOrder : List Con :=
 
 /-! ### Word-level phonology (§5.2) -/
 
-/-- The candidates for dative *samudr-am-ní-ki* ((59)): keep /mn/; delete /n/ or /m/ with the
-mora; delete /m/ or /n/ with compensatory lengthening. -/
+/-- The candidates for dative *samudr-am-ní-ki* ((59)) keep /mn/, delete /n/ or /m/ with the
+mora, or delete /m/ or /n/ with compensatory lengthening. -/
 inductive WordCandDat where
   | faithful | deleteN | deleteM | deleteMLengthen | deleteNLengthen
   deriving DecidableEq, Repr, Fintype, Inhabited
@@ -332,14 +327,14 @@ def WordCandDat.marks : WordCandDat → Con → ℕ
   | .deleteNLengthen, .max => 2
   | _, _ => 0
 
-/-- (59): the /mn/ contact is repaired by deleting /m/ and lengthening /a/ — the long form
-*samudrāniki*. -/
+/-- The /mn/ contact is repaired by deleting /m/ and lengthening /a/, the long form
+*samudrāniki* ((59)). -/
 theorem wordDat_optimal :
     (Tableau.ofOrder wordOrder WordCandDat.marks).optimal = {.deleteMLengthen} := by
   decide
 
-/-- The candidates for nominative *samudr-am-ní* ((62)): destress *-ni*; foot it alone; delete
-/i/ into a coda cluster; delete /i/ and /m/; or delete /ni/. -/
+/-- The candidates for nominative *samudr-am-ní* ((62)) destress *-ni*, foot it alone, delete
+/i/ into a coda cluster, delete /i/ and /m/, or delete /ni/. -/
 inductive WordCandNom where
   | destress | degenerateFoot | deleteI | deleteIM | deleteNi
   deriving DecidableEq, Repr, Fintype, Inhabited
@@ -355,14 +350,14 @@ def WordCandNom.marks : WordCandNom → Con → ℕ
   | .deleteNi, .max => 2
   | _, _ => 0
 
-/-- (62): word-final stressed *-ni*, unable to head a binary foot, is deleted — the short form
-*samudram*. -/
+/-- Word-final stressed *-ni*, unable to head a binary foot, is deleted, the short form
+*samudram* ((62)). -/
 theorem wordNom_optimal :
     (Tableau.ofOrder wordOrder WordCandNom.marks).optimal = {.deleteNi} := by
   decide
 
-/-- The candidates for *samudr-am-ní-antaṭi-ni* with a postposed quantifier ((63)): destress
-*-ni*; foot it alone; delete /i/ into /mn/; delete /i/ and /m/ with /n/ as coda; delete /ni/;
+/-- The candidates for *samudr-am-ní-antaṭi-ni* with a postposed quantifier ((63)) destress
+*-ni*, foot it alone, delete /i/ into /mn/, delete /i/ and /m/ with /n/ as coda, delete /ni/,
 or delete /i/ and /m/ with /n/ resyllabified as onset. -/
 inductive WordCandQ where
   | destress | degenerateFoot | deleteI | deleteIM | deleteNi | deleteIMResyllabify
@@ -381,8 +376,8 @@ def WordCandQ.marks : WordCandQ → Con → ℕ
   | .deleteIMResyllabify, .max => 2
   | _, _ => 0
 
-/-- (63): before the heavy *an* the stressed *-ni* is again deleted, leaving the coda /m/
-before an onsetless syllable. -/
+/-- Before the heavy *an* the stressed *-ni* is again deleted, leaving the coda /m/ before an
+onsetless syllable ((63)). -/
 theorem wordQ_optimal :
     (Tableau.ofOrder wordOrder WordCandQ.marks).optimal = {.deleteNi} := by
   decide
@@ -401,8 +396,8 @@ def WordCandDat.nExponent : WordCandDat → String
   | .deleteMLengthen => "āni"
   | .deleteNLengthen => "āmi"
 
-/-- The two Word-level winners are the two forms of the generalization `weakN`: the same
-underlying *-am-ni* surfaces short before nothing and long before a word-internal light
+/-- The two Word-level winners are the two forms of the generalization `weakN`, the same
+underlying *-am-ni* surfacing short before nothing and long before a word-internal light
 syllable. -/
 theorem word_level_derives_weakN :
     WordCandNom.deleteNi.nExponent = weakN (caseSuffix .nom) ∧
@@ -411,7 +406,7 @@ theorem word_level_derives_weakN :
 
 /-! ### Phrase-level phonology (§5.3) -/
 
-/-- The candidates for *samudram nunci* 'from the ocean' ((66)): delete /m/ with or without
+/-- The candidates for *samudram nunci* 'from the ocean' ((66)) delete /m/ with or without
 lengthening, delete the postposition's /n/, or keep the /mn/ contact. -/
 inductive PhraseCandP where
   | deleteMLengthen | deleteM | deleteN | faithful
@@ -426,13 +421,13 @@ def PhraseCandP.marks : PhraseCandP → Con → ℕ
   | .faithful, .alignR => 2
   | _, _ => 0
 
-/-- (66): across the postposition boundary the /mn/ contact is kept. -/
+/-- Across the postposition boundary the /mn/ contact is kept ((66)). -/
 theorem phraseP_optimal :
     (Tableau.ofOrder phraseOrder PhraseCandP.marks).optimal = {.faithful} := by
   decide
 
-/-- The candidates for the Word-level output of (63) at the Phrase level ((67)): keep the
-onsetless *an*; resyllabify /m/ as its onset; lengthen /a/ and resyllabify; or foot the
+/-- The candidates for the Word-level output of (63) at the Phrase level ((67)) keep the
+onsetless *an*, resyllabify /m/ as its onset, lengthen /a/ and resyllabify, or foot the
 shortened *dra* alone. -/
 inductive PhraseCandQ where
   | faithful | resyllabify | lengthen | degenerateFoot
@@ -447,8 +442,8 @@ def PhraseCandQ.marks : PhraseCandQ → Con → ℕ
   | .degenerateFoot, .maxMora => 1
   | _, _ => 0
 
-/-- (67): the coda /m/ resyllabifies as the onset of *an*, shifting stress — *samudra.man.ta.ṭi.ni*
-without compensatory lengthening. -/
+/-- The coda /m/ resyllabifies as the onset of *an*, shifting stress, *samudra.man.ta.ṭi.ni*
+without compensatory lengthening ((67)). -/
 theorem phraseQ_optimal :
     (Tableau.ofOrder phraseOrder PhraseCandQ.marks).optimal = {.resyllabify} := by
   decide
@@ -458,7 +453,7 @@ theorem phraseQ_optimal :
 open OptimalityTheory.Stratal
 
 /-- *DIST-0 and ALIGN-RIGHT outrank MAX at the Word level and are outranked by it at the
-Phrase level: consonant deletion at the Word level, retention and resyllabification at the
+Phrase level, so consonants delete at the Word level and are kept and resyllabified at the
 Phrase level. -/
 theorem distZero_alignR_max_reranked :
     Reranked Con.distZero .max wordOrder phraseOrder ∧
@@ -472,7 +467,7 @@ theorem prosodic_segmental_reranked :
       Reranked Con.maxMora .identLength wordOrder phraseOrder := by
   decide
 
-/-- IDENT-STRESS outranks ONSET at the Word level and ONSET outranks it at the Phrase level:
+/-- IDENT-STRESS outranks ONSET at the Word level and ONSET outranks it at the Phrase level, so
 the onsetless *an* of (63) is resyllabified only in (67). -/
 theorem identStress_onset_reranked : Reranked Con.identStress .onset wordOrder phraseOrder := by
   decide

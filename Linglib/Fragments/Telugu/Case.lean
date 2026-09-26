@@ -1,53 +1,63 @@
 module
 
 public import Linglib.Syntax.Case.Basic
-public import Linglib.Syntax.Case.Order
 
 /-!
-# Telugu Case Inventory
-[krishnamurti-gwynn-1985] [mcfadden-2018]
+# Telugu case
 
-Telugu (Dravidian) has **5 core cases** with agglutinative suffixes:
-NOM (∅), ACC (-ni), GEN (∅), DAT (-ki), and a locative postposition
-(-lō 'in'). [krishnamurti-gwynn-1985] list these as the
-productive case/postposition forms for modern Telugu nominals.
+Telugu marks four cases on the noun by suffix and the other relations by postposition. The
+nominative is the bare stem and the genitive the oblique stem, neither with a suffix; the
+accusative suffix is *-ni* and the dative *-ki*, each also heard with *-u* for *-i* except after
+an *i*. The oblique stem carries the accusative and dative suffixes and the postpositions alike,
+among them *lō* 'in' and *nunci* 'from'. Dravidian grammars keep the postpositions apart from
+the cases, and Aitha shows the Telugu ones to stand outside the noun's prosodic word. The forms
+are those of the paradigms of *illu* 'house' and *samudram* 'ocean' that Aitha reproduces from
+Krishnamurti and Gwynn's grammar; the oblique stem is the matter of `Studies/Aitha2026.lean`.
 
-Like Tamil and other Dravidian languages, Telugu shows a robust
-**NOM-vs-oblique split** in stem allomorphy: the nominative stem
-form differs from the form used in all nonnominative contexts
-([mcfadden-2018]). This split is predicted by the case containment
-hierarchy ([caha-2009]), where all nonnominative cases include
-the ACC feature in their syntactic representation; see
-`Studies/Aitha2026.lean` for the analysis of Telugu stem allomorphy.
+## Main definitions
+
+* `Telugu.Case.ni`, `Telugu.Case.ki`: the accusative and dative suffixes.
+* `Telugu.Case.lō`, `Telugu.Case.nunci`: the locative and ablative postpositions.
+* `Telugu.Case.inventory`: the cases, the unmarked two with those the markers realize.
+
+## References
+
+* [aitha-2026]
+* [kolichala-2026]
 -/
 
 @[expose] public section
 
 namespace Telugu.Case
 
-/-! ### Case inventory -/
+/-! ### Suffixes -/
 
-/-- Telugu 5-case core inventory.
-    ACC, GEN, DAT are inflectional suffixes within the prosodic word;
-    LOC is realized by a postposition (-lō) in a separate prosodic word. -/
-def inventory : Finset Case :=
-  {.nom, .acc, .gen, .dat, .loc}
+/-- The accusative *-ni*, also *-nu* except after an *i*. -/
+def ni : Case.Marker := { form := "-ni/-nu", cases := {.acc} }
 
-/-! ### Containment properties -/
+/-- The dative *-ki*, also *-ku* except after an *i*. -/
+def ki : Case.Marker := { form := "-ki/-ku", cases := {.dat} }
 
-/-- All nonnominative Telugu cases bear the ACC feature. -/
-theorem acc_nonnom : Case.IsNonnominative .acc := by decide
-theorem gen_nonnom : Case.IsNonnominative .gen := by decide
-theorem dat_nonnom : Case.IsNonnominative .dat := by decide
-theorem loc_nonnom : Case.IsNonnominative .loc := by decide
-theorem nom_not_nonnom : ¬ Case.IsNonnominative .nom := by decide
+/-- The case suffixes, inside the noun's prosodic word. -/
+def suffixes : Finset Case.Marker := {ni, ki}
 
-/-! ### Cross-Dravidian connection -/
+/-! ### Postpositions -/
 
-/-- Telugu and Tamil share the same core case spine on Blake's hierarchy.
-    Both have NOM, ACC, GEN, DAT, LOC (Tamil additionally has ABL, INST, COM). -/
-theorem telugu_subset_tamil :
-    inventory ⊆ ({.nom, .acc, .gen, .dat, .loc, .abl, .inst, .com} : Finset Case) := by
-  decide
+/-- *lō* 'in', the locative. -/
+def lō : Case.Marker := { form := "lō", cases := {.loc} }
+
+/-- *nunci* 'from', the ablative. -/
+def nunci : Case.Marker := { form := "nunci", cases := {.abl} }
+
+/-- The postpositions, separate words after the oblique stem. -/
+def postpositions : Finset Case.Marker := {lō, nunci}
+
+/-! ### The inventory -/
+
+/-- The unmarked cases, the nominative on the bare stem and the genitive on the oblique stem. -/
+def unmarked : Finset Case := {.nom, .gen}
+
+/-- The cases, the unmarked two with those the suffixes and the postpositions realize. -/
+def inventory : Finset Case := unmarked ∪ Case.Marker.inventory (suffixes ∪ postpositions)
 
 end Telugu.Case
