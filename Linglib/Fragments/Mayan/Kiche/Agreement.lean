@@ -2,396 +2,115 @@ module
 
 public import Linglib.Syntax.Case.Basic
 public import Linglib.Phonology.Segmental.Defs
-public import Linglib.Syntax.Number.Basic
-public import Linglib.Semantics.Reference.Prominence
 public import Linglib.Fragments.Mayan.Agreement
+public import Linglib.Syntax.Category.Pronoun.Personal
 public import Linglib.Syntax.Clause.ArgumentRole
-public import Linglib.Syntax.Person.Basic
 
 /-!
-# K'iche' Agreement Fragment
+# K'iche' agreement
 
-Theory-neutral typological metadata for K'iche' (K'ichean Mayan)
-agreement morphology, following [mondloch-2017] Lessons 4, 7–8, 9, 15.
-K'iche' has ergative-absolutive alignment realized through two verbal
-agreement paradigms: Set B (absolutive) cross-references intransitive S
-and transitive P and appears between the aspect marker and the root;
-Set A (ergative) cross-references transitive A, appears between the
-object marker and the root, and is identical to the possessive prefixes.
-Unlike its sister Kaqchikel, K'iche' has no construction-specific
-inverted alignment.
+K'iche' marks person with two sets of affixes on the verb. Set B, the prefixes *in-*, *at-*,
+zero, *oj-*, *ix-* and *ee-*, indexes the intransitive subject, the transitive object and the
+subject of a non-verbal predicate; Set A, *in-*, *a-*, *u-*, *qa-*, *i-* and *ki-* before a
+consonant and *w-*, *aw-*, *r-*, *q-*, *iw-* and *k-* before a vowel, indexes the transitive
+subject and the possessor of a noun, where the first person singular possessive is *nu-*. The
+alignment is ergative in every aspect. The verbal complex runs aspect, Set B, Set A, stem,
+status suffix, so that Set B precedes the stem and K'iche' is a high-absolutive language. The
+honorific second person is marked by the enclitics *=la* in the singular and *=alaq* in the
+plural, after the verb whatever their function. The independent pronouns are the Set B forms
+in the first and second persons, *in*, *at*, *oj*, *ix* and the honorific *laal* and *alaq*, and
+*are'* and *a're'* in the third, usually with a determiner. Can Pixabaj's sketch and Mondloch's
+grammar are the sources.
 
-## Main declarations
+## Main definitions
 
-* `Kiche.PhiFeatures`: person/number/formality bundles, with the informal shorthand
-  `Kiche.phi`.
-* `Kiche.setBMarker`, `Kiche.setAPreC`, `Kiche.setAPreV`: the Set B
-  (absolutive) and Set A (ergative, pre-consonantal / pre-vocalic)
-  exponents.
-* `Kiche.agreementSet`, `Kiche.assignCase`: the agreement set and case each
-  argument position triggers; `Kiche.template`: the verbal complex, with Set B
-  between the aspect marker and the stem.
-* `Kiche.independentPronoun`: the free personal pronouns.
-* `Kiche.setAExponent`, `Kiche.setBExponent`: canonical φ-cell exponent
-  tables for cross-Mayan consumption.
+* `Kiche.setAExponent`, `Kiche.setBExponent`: the two paradigms.
+* `Kiche.laEncl`, `Kiche.alaqEncl`: the honorific second person enclitics.
+* `Kiche.template`, `Kiche.assignCase`: the verbal complex and the ergative case function.
+* `Kiche.pronouns`: the independent pronouns.
 
-## Implementation notes
+## References
 
-The alignment is ergative-absolutive: Set B groups S and P (both trigger
-the same paradigm) while A triggers Set A. This contrasts with Mam,
-which is morphologically tripartite (S, A, P each distinct;
-[scott-2023]). K'iche' has two 2nd-person formality levels; the formal
-forms (laal SG, alaq PL) are syntactically postverbal and pattern
-outside the prefix paradigm. K'iche' is high absolutive, Set B preceding
-the stem, and `Kiche.assignCase` is `Alignment.ergative` in every aspect;
-the canonical φ-cell exponent tables key on
-`Agreement.Bundle` for cross-Mayan consumption. Extraction marking (AF
-and *wi*) lives in `Kiche/Extraction.lean`.
+* [can-pixabaj-2017]
+* [mondloch-2017]
 -/
 
 @[expose] public section
 
-
 namespace Kiche
+
+open Mayan (ExponentTable)
 
 /-! ### The verbal complex -/
 
-/-- The position classes of the K'iche' verbal complex: the aspect marker, Set B and Set A
-before the stem, the status suffix after it ([mondloch-2017]). -/
+/-- The position classes of the verbal complex, the aspect marker, Set B and Set A before the
+stem and the status suffix after it. -/
 def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setB, .setA], [.status]⟩
 
-/-- K'iche' is ergative-absolutive in every aspect, with no aspect-conditioned split
-([mondloch-2017]). -/
+/-- K'iche' is ergative in every aspect. -/
 def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.ergative
 
-/-! ### Person, number, and formality features -/
+/-! ### The paradigms -/
 
-/-- Formality level for 2nd person. K'iche'-specific: the formal
-    forms (laal SG, alaq PL) are postverbal and pattern outside the
-    prefix paradigm. -/
-inductive Formality where
-  | informal | formal
-  deriving DecidableEq, Repr
+/-- The Set A markers by the following segment. The first person singular is *in-* on the verb
+and *nu-* on a possessed noun. -/
+def setAExponent : Phonology.Segment.Class → ExponentTable
+  | .consonant =>
+    [(.pn .first .singular, [.pref "in"]), (.pn .second .singular, [.pref "a"]),
+     (.pn .third .singular, [.pref "u"]), (.pn .first .plural, [.pref "qa"]),
+     (.pn .second .plural, [.pref "i"]), (.pn .third .plural, [.pref "ki"])]
+  | .vowel =>
+    [(.pn .first .singular, [.pref "w"]), (.pn .second .singular, [.pref "aw"]),
+     (.pn .third .singular, [.pref "r"]), (.pn .first .plural, [.pref "q"]),
+     (.pn .second .plural, [.pref "iw"]), (.pn .third .plural, [.pref "k"])]
 
-/-- A person/number/formality specification. Uses canonical
-    `Person` for cross-language compatibility;
-    Formality is K'iche'-specific. -/
-structure PhiFeatures where
-  person : Person
-  number : Number
-  formality : Formality
-  deriving DecidableEq, Repr
+/-- The Set B markers, with a zero third person singular. -/
+def setBExponent : ExponentTable :=
+  [(.pn .first .singular, [.pref "in"]), (.pn .second .singular, [.pref "at"]),
+   (.pn .third .singular, []), (.pn .first .plural, [.pref "oj"]),
+   (.pn .second .plural, [.pref "ix"]), (.pn .third .plural, [.pref "ee"])]
 
-/-- Shorthand for informal phi features. -/
-abbrev phi (p : Person) (n : Number) : PhiFeatures :=
-  ⟨p, n, .informal⟩
+/-- The honorific second person singular enclitic *=la*, after the verb in both sets. -/
+def laEncl : List Morphology.Morph := [.encl "la"]
 
-/-! ### Set B (absolutive) markers -/
-
-/-- Set B (absolutive) agreement markers.
-    These are verbal prefixes (or postverbal particles for formal forms)
-    that cross-reference S (intransitive subject) and P (transitive
-    object). [mondloch-2017] Lessons 9, 15. -/
-def setBMarker : PhiFeatures → List Morphology.Morph
-  | ⟨.first,  .singular, .informal⟩ => [.pref "in"]
-  | ⟨.second, .singular, .informal⟩ => [.pref "at"]
-  | ⟨.third,  .singular, .informal⟩ => []
-  | ⟨.first,  .plural, .informal⟩ => [.pref "oj"]
-  | ⟨.second, .plural, .informal⟩ => [.pref "ix"]
-  | ⟨.third,  .plural, .informal⟩ => [.pref "ee"]
-  | ⟨.second, .singular, .formal⟩   => [.free "la"]
-  | ⟨.second, .plural, .formal⟩   => [.free "alaq"]
-  -- Non-binary number falls through to plural; formal non-2nd is Ø
-  | ⟨.first,  _, .informal⟩ | ⟨.firstInclusive, _, .informal⟩
-  | ⟨.firstExclusive, _, .informal⟩ => [.pref "oj"]
-  | ⟨.zero, _, .informal⟩ => []  -- no zero-person cell in the paradigm
-  | ⟨.second, _, .informal⟩   => [.pref "ix"]
-  | ⟨.third,  _, .informal⟩   => [.pref "ee"]
-  | ⟨_, _, .formal⟩            => []
-
-/-! ### Set A (ergative) markers -/
-
-/-- Set A (ergative) markers before consonant-initial roots.
-    These cross-reference A (transitive subject) and are identical to
-    possessive pronouns before consonant-initial nouns.
-    [mondloch-2017] Lessons 7, 15. -/
-def setAPreC : PhiFeatures → List Morphology.Morph
-  | ⟨.first,  .singular, .informal⟩ => [.pref "nu"]
-  | ⟨.second, .singular, .informal⟩ => [.pref "a"]
-  | ⟨.third,  .singular, .informal⟩ => [.pref "u"]
-  | ⟨.first,  .plural, .informal⟩ => [.pref "qa"]
-  | ⟨.second, .plural, .informal⟩ => [.pref "i"]
-  | ⟨.third,  .plural, .informal⟩ => [.pref "ki"]
-  | ⟨.second, .singular, .formal⟩   => [.free "la"]
-  | ⟨.second, .plural, .formal⟩   => [.free "alaq"]
-  | ⟨.first,  _, .informal⟩ | ⟨.firstInclusive, _, .informal⟩
-  | ⟨.firstExclusive, _, .informal⟩ => [.pref "qa"]
-  | ⟨.zero, _, .informal⟩ => []  -- no zero-person cell in the paradigm
-  | ⟨.second, _, .informal⟩   => [.pref "i"]
-  | ⟨.third,  _, .informal⟩   => [.pref "ki"]
-  | ⟨_, _, .formal⟩            => []
-
-/-- Set A (ergative) markers before vowel-initial roots.
-    [mondloch-2017] Lesson 8. -/
-def setAPreV : PhiFeatures → List Morphology.Morph
-  | ⟨.first,  .singular, .informal⟩ => [.pref "w"]
-  | ⟨.second, .singular, .informal⟩ => [.pref "aw"]
-  | ⟨.third,  .singular, .informal⟩ => [.pref "r"]
-  | ⟨.first,  .plural, .informal⟩ => [.pref "q"]
-  | ⟨.second, .plural, .informal⟩ => [.pref "iw"]
-  | ⟨.third,  .plural, .informal⟩ => [.pref "k"]
-  | ⟨.second, .singular, .formal⟩   => [.free "la"]
-  | ⟨.second, .plural, .formal⟩   => [.free "alaq"]
-  | ⟨.first,  _, .informal⟩ | ⟨.firstInclusive, _, .informal⟩
-  | ⟨.firstExclusive, _, .informal⟩ => [.pref "q"]
-  | ⟨.zero, _, .informal⟩ => []  -- no zero-person cell in the paradigm
-  | ⟨.second, _, .informal⟩   => [.pref "iw"]
-  | ⟨.third,  _, .informal⟩   => [.pref "k"]
-  | ⟨_, _, .formal⟩            => []
-
-/-! ### Morphological positions -/
-
-/-- Is a Set B marker a prefix (appearing before the root) or a
-    postverbal particle? Formal forms are postverbal; all others
-    are prefixes. [mondloch-2017] Lesson 9. -/
-def SetBIsPrefix (φ : PhiFeatures) : Prop := φ.formality = .informal
-
-instance (φ : PhiFeatures) : Decidable (SetBIsPrefix φ) :=
-  inferInstanceAs (Decidable (φ.formality = .informal))
-
-/-- Is a Set A marker a prefix or postverbal?
-    Same distribution as Set B: formal forms are postverbal. -/
-def SetAIsPrefix (φ : PhiFeatures) : Prop := φ.formality = .informal
-
-instance (φ : PhiFeatures) : Decidable (SetAIsPrefix φ) :=
-  inferInstanceAs (Decidable (φ.formality = .informal))
-
-/-! ### Argument positions and alignment -/
-
-/-- Which agreement set cross-references each argument position? -/
-inductive AgreementSet where
-  | setA  -- Ergative markers
-  | setB  -- Absolutive markers
-  | none  -- No agreement (e.g., for ditransitive R/T not modeled here)
-  deriving DecidableEq, Repr
-
-/-- The agreement set triggered by each argument position.
-    S and P both trigger Set B (= absolutive grouping).
-    A triggers Set A (= ergative). Ditransitive R/T default to `.none`
-    (not modeled in this fragment). -/
-def agreementSet : ArgumentRole → AgreementSet
-  | .A => .setA  -- A → Set A (ergative)
-  | .P => .setB  -- P → Set B (absolutive)
-  | .S => .setB  -- S → Set B (absolutive)
-  | .R | .T => .none
-
-/-! ### Alignment theorems -/
-
-/-- K'iche' groups S and P together (both trigger Set B):
-    ergative-absolutive alignment. -/
-theorem ergative_absolutive_alignment :
-    agreementSet .S = agreementSet .P ∧
-    agreementSet .A ≠ agreementSet .P :=
-  ⟨rfl, by decide⟩
-
-/-- Case is ergatively aligned: A apart, S with P, where Mam is tripartite. -/
-theorem isErgative_perfective : Alignment.IsErgative (assignCase .Perf) :=
-  Alignment.isErgative_ergative
-
-/-! ### Set B per-cell verification -/
-
-/-- 1SG absolutive: in- -/
-theorem setB_1sg : setBMarker (phi .first .singular) = [.pref "in"] := rfl
-/-- 2SG absolutive: at- -/
-theorem setB_2sg : setBMarker (phi .second .singular) = [.pref "at"] := rfl
-/-- 3SG absolutive: ∅ (null morpheme) -/
-theorem setB_3sg : setBMarker (phi .third .singular) = [] := rfl
-/-- 1PL absolutive: oj- -/
-theorem setB_1pl : setBMarker (phi .first .plural) = [.pref "oj"] := rfl
-/-- 2PL absolutive: ix- -/
-theorem setB_2pl : setBMarker (phi .second .plural) = [.pref "ix"] := rfl
-/-- 3PL absolutive: ee- -/
-theorem setB_3pl : setBMarker (phi .third .plural) = [.pref "ee"] := rfl
-/-- 2SG.FORM: la (postverbal) -/
-theorem setB_2sg_form : setBMarker ⟨.second, .singular, .formal⟩ = [.free "la"] := rfl
-/-- 2PL.FORM: alaq (postverbal) -/
-theorem setB_2pl_form : setBMarker ⟨.second, .plural, .formal⟩ = [.free "alaq"] := rfl
-
-/-! ### Set A per-cell verification -/
-
-/-- 1SG ergative (preC): nu- (possessive citation form; in- as transitive
-    subject per [mondloch-2017] Lesson 15 — both pre-consonantal, with w-
-    pre-vocalic for both constructions) -/
-theorem setA_1sg : setAPreC (phi .first .singular) = [.pref "nu"] := rfl
-/-- 2SG ergative (preC): a- -/
-theorem setA_2sg : setAPreC (phi .second .singular) = [.pref "a"] := rfl
-/-- 3SG ergative (preC): u- -/
-theorem setA_3sg : setAPreC (phi .third .singular) = [.pref "u"] := rfl
-/-- 1PL ergative (preC): qa- -/
-theorem setA_1pl : setAPreC (phi .first .plural) = [.pref "qa"] := rfl
-/-- 2PL ergative (preC): i- -/
-theorem setA_2pl : setAPreC (phi .second .plural) = [.pref "i"] := rfl
-/-- 3PL ergative (preC): ki- -/
-theorem setA_3pl : setAPreC (phi .third .plural) = [.pref "ki"] := rfl
-
-/-- 1SG ergative (preV): w- -/
-theorem setA_preV_1sg : setAPreV (phi .first .singular) = [.pref "w"] := rfl
-/-- 2SG ergative (preV): aw- -/
-theorem setA_preV_2sg : setAPreV (phi .second .singular) = [.pref "aw"] := rfl
-/-- 3SG ergative (preV): r- -/
-theorem setA_preV_3sg : setAPreV (phi .third .singular) = [.pref "r"] := rfl
-
-/-! ### Possessives equal Set A -/
-
-/-- Set A markers are identical to possessive pronouns: the transitive
-    subject markers (Lesson 15) are the same forms as the possessive
-    prefixes (Lessons 7–8). This is a hallmark of ergative-absolutive
-    languages, where ERG agreement and possession share the same
-    morphological paradigm. [mondloch-2017] Lesson 15 explicitly
-    notes this identity. -/
-theorem possessives_equal_setA :
-    setAPreC (phi .first .plural) = [.pref "qa"] ∧
-    setAPreC (phi .second .singular) = [.pref "a"] ∧
-    setAPreC (phi .third .singular) = [.pref "u"] ∧
-    setAPreC (phi .third .plural) = [.pref "ki"] :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-/-! ### Formal markers are postverbal -/
-
-/-- All informal Set B markers are prefixes. -/
-theorem setB_informal_prefix :
-    SetBIsPrefix (phi .first .singular) ∧
-    SetBIsPrefix (phi .second .singular) ∧
-    SetBIsPrefix (phi .third .singular) ∧
-    SetBIsPrefix (phi .first .plural) ∧
-    SetBIsPrefix (phi .second .plural) ∧
-    SetBIsPrefix (phi .third .plural) :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-- Formal Set B markers are NOT prefixes (they're postverbal). -/
-theorem setB_formal_postverbal :
-    ¬ SetBIsPrefix ⟨.second, .singular, .formal⟩ ∧
-    ¬ SetBIsPrefix ⟨.second, .plural, .formal⟩ :=
-  ⟨by decide, by decide⟩
+/-- The honorific second person plural enclitic *=alaq*, after the verb in both sets. -/
+def alaqEncl : List Morphology.Morph := [.encl "alaq"]
 
 /-! ### Independent pronouns -/
 
-/-- Independent (free) personal pronouns. These are used in nonverbal
-    sentences and as emphatic/contrastive pronouns in verbal sentences.
-    [mondloch-2017] Lesson 4. -/
-def independentPronoun : PhiFeatures → String
-  | ⟨.first,  .singular, .informal⟩ => "in"
-  | ⟨.second, .singular, .informal⟩ => "at"
-  | ⟨.third,  .singular, .informal⟩ => "are'"
-  | ⟨.first,  .plural, .informal⟩ => "oj"
-  | ⟨.second, .plural, .informal⟩ => "ix"
-  | ⟨.third,  .plural, .informal⟩ => "a're'"
-  | ⟨.second, .singular, .formal⟩   => "laal"
-  | ⟨.second, .plural, .formal⟩   => "alaq"
-  | ⟨.first,  _, .informal⟩ | ⟨.firstInclusive, _, .informal⟩
-  | ⟨.firstExclusive, _, .informal⟩ => "oj"
-  | ⟨.zero, _, .informal⟩ => "∅"  -- no zero-person cell in the paradigm
-  | ⟨.second, _, .informal⟩   => "ix"
-  | ⟨.third,  _, .informal⟩   => "a're'"
-  | ⟨_, _, .formal⟩            => "are'"
+/-- The first person singular *in*. -/
+def in_ : PersonalPronoun := { form := "in", person := some .first, number := some .singular }
 
-/-- Independent pronouns correspond to Set B (absolutive) markers in
-    form: 1SG *in* = Set B *in-*, 2SG *at* = Set B *at-*, etc.
-    This is expected for an ergative language where the independent
-    pronouns pattern with absolutive agreement. -/
-theorem pronoun_setB_correspondence :
-    independentPronoun (phi .first .singular)  = "in"  ∧
-    independentPronoun (phi .second .singular) = "at"  ∧
-    independentPronoun (phi .first .plural)  = "oj"  ∧
-    independentPronoun (phi .second .plural) = "ix"  :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- The second person singular *at*. -/
+def at_ : PersonalPronoun :=
+  { form := "at", person := some .second, number := some .singular,
+    honorific := some .nonhonorific }
 
-/-! ### Cross-Mayan canonical wrappers -/
+/-- The honorific second person singular *laal*. -/
+def laal : PersonalPronoun :=
+  { form := "laal", person := some .second, number := some .singular,
+    honorific := some .honorific }
 
-open Mayan (ExponentTable)
-open Agreement
+/-- The third person singular *are'*, usually with a determiner, *ri are'*. -/
+def are' : PersonalPronoun := { form := "are'", person := some .third, number := some .singular }
 
-/-- Canonical Set A exponent table (informal) by following-segment
-    environment, keyed on the canonical φ-cell `Agreement.Bundle` for
-    cross-Mayan consumption. -/
-def setAExponent : Phonology.Segment.Class → ExponentTable
-  | .consonant =>
-    [(.pn .first .singular, setAPreC (phi .first  .singular)),
-     (.pn .second .singular, setAPreC (phi .second .singular)),
-     (.pn .third .singular, setAPreC (phi .third  .singular)),
-     (.pn .first .plural, setAPreC (phi .first  .plural)),
-     (.pn .second .plural, setAPreC (phi .second .plural)),
-     (.pn .third .plural, setAPreC (phi .third  .plural))]
-  | .vowel =>
-    [(.pn .first .singular, setAPreV (phi .first  .singular)),
-     (.pn .second .singular, setAPreV (phi .second .singular)),
-     (.pn .third .singular, setAPreV (phi .third  .singular)),
-     (.pn .first .plural, setAPreV (phi .first  .plural)),
-     (.pn .second .plural, setAPreV (phi .second .plural)),
-     (.pn .third .plural, setAPreV (phi .third  .plural))]
+/-- The first person plural *oj*. -/
+def oj : PersonalPronoun := { form := "oj", person := some .first, number := some .plural }
 
-/-- Canonical Set B exponent table (informal) keyed on the canonical φ-cell
-    `Agreement.Bundle`. -/
-def setBExponent : ExponentTable :=
-  [(.pn .first .singular, setBMarker (phi .first  .singular)),
-   (.pn .second .singular, setBMarker (phi .second .singular)),
-   (.pn .third .singular, setBMarker (phi .third  .singular)),
-   (.pn .first .plural, setBMarker (phi .first  .plural)),
-   (.pn .second .plural, setBMarker (phi .second .plural)),
-   (.pn .third .plural, setBMarker (phi .third  .plural))]
+/-- The second person plural *ix*. -/
+def ix : PersonalPronoun :=
+  { form := "ix", person := some .second, number := some .plural,
+    honorific := some .nonhonorific }
 
-/-- Third person singular Set B is null, as across the Mayan branches with an ergative
-perfective ([kaufman-norman-1984]); San Juan Atitán Mam's default Set B surfaces there. -/
-theorem p3sg_abs_null : setBExponent.realize (.pn .third .singular) = some [] := rfl
+/-- The honorific second person plural *alaq*. -/
+def alaq : PersonalPronoun :=
+  { form := "alaq", person := some .second, number := some .plural,
+    honorific := some .honorific }
 
-/-! ### Formality-forgetting hom to canonical cells -/
+/-- The third person plural *a're'*, usually with a determiner, *ri a're'*. -/
+def a're' : PersonalPronoun := { form := "a're'", person := some .third, number := some .plural }
 
-/-- The formality-forgetting map from K'iche' φ-bundles to the canonical bundles: an
-informal bundle maps to its person–number cell, and the two formal second-person forms,
-postverbal and outside the prefix paradigm, forget to `none`. -/
-def PhiFeatures.toCell (φ : PhiFeatures) : Option Agreement.Bundle :=
-  match φ.formality with
-  | .formal => none
-  | .informal => some (.pn φ.person φ.number)
-
-/-- Formal cells lie outside the prefix paradigm and forget to `none`. -/
-theorem toCell_formal (p : Person) (n : Number) :
-    PhiFeatures.toCell ⟨p, n, .formal⟩ = none := rfl
-
-/-- On the six basic informal cells the hom lands on the very cell the
-    canonical Set B table keys, and the two tables agree: looking `φ.toCell`
-    up in `setBExponent` returns the direct exponent `setBMarker φ`. -/
-theorem setBExponent_agrees_informal :
-    (phi .first  .singular).toCell.bind setBExponent.realize
-      = some (setBMarker (phi .first  .singular)) ∧
-    (phi .second .singular).toCell.bind setBExponent.realize
-      = some (setBMarker (phi .second .singular)) ∧
-    (phi .third  .singular).toCell.bind setBExponent.realize
-      = some (setBMarker (phi .third  .singular)) ∧
-    (phi .first  .plural).toCell.bind setBExponent.realize
-      = some (setBMarker (phi .first  .plural)) ∧
-    (phi .second .plural).toCell.bind setBExponent.realize
-      = some (setBMarker (phi .second .plural)) ∧
-    (phi .third  .plural).toCell.bind setBExponent.realize
-      = some (setBMarker (phi .third  .plural)) :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-- The same agreement holds for Set A in both following-segment
-    environments: `φ.toCell` in `setAExponent env` returns `setAPreC φ`
-    (pre-consonant) or `setAPreV φ` (pre-vowel). -/
-theorem setAExponent_agrees_informal :
-    (phi .first  .singular).toCell.bind (setAExponent .consonant).realize
-      = some (setAPreC (phi .first  .singular)) ∧
-    (phi .second .singular).toCell.bind (setAExponent .consonant).realize
-      = some (setAPreC (phi .second .singular)) ∧
-    (phi .third  .plural).toCell.bind (setAExponent .consonant).realize
-      = some (setAPreC (phi .third  .plural)) ∧
-    (phi .first  .singular).toCell.bind (setAExponent .vowel).realize
-      = some (setAPreV (phi .first  .singular)) ∧
-    (phi .second .singular).toCell.bind (setAExponent .vowel).realize
-      = some (setAPreV (phi .second .singular)) ∧
-    (phi .third  .plural).toCell.bind (setAExponent .vowel).realize
-      = some (setAPreV (phi .third  .plural)) :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+/-- The independent pronouns. -/
+def pronouns : Finset PersonalPronoun := {in_, at_, laal, are', oj, ix, alaq, a're'}
 
 end Kiche
