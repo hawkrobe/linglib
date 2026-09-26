@@ -1,51 +1,44 @@
 module
 
 public import Linglib.Semantics.Aspect.Defs
-public import Linglib.Semantics.ArgumentStructure.EventStructure
 public import Linglib.Fragments.Mayan.Agreement
-public import Linglib.Syntax.Case.Basic
 public import Linglib.Syntax.Case.Alignment
+
 /-!
-# Yukatek Maya Verb Classes and Status System
+# Yukatek Maya verb classes and status
 
-Yukatek Maya has a typologically rare split-intransitive pattern of
-argument marking controlled by overt aspect-mood marking
-([bohnemeyer-2004]; [lucy-1994]). The system comprises five verb stem
-classes distinguished by status inflection patterns (allomorphy of
-aspect-mood suffixes) and four status categories encoding viewpoint aspect
-and modal assertiveness. The split in argument marking tracks the aspectual
-value: perfective status marks S like U (ergative), imperfective status
-marks S like A (accusative).
+A Yukatek Maya verb is inflected for status, a suffixal category of aspect and mood with
+four values, the incompletive, the completive, the subjunctive, which Hofling calls the
+dependent, and the imperative. The allomorphs of the status suffixes sort verb stems into five
+classes: the active intransitives, unmarked in the incompletive, the inactive intransitives,
+unmarked in the completive, the inchoatives derived from stative roots, the positionals of
+spatial configurations, and the transitives. The status also fixes which set of person
+markers cross-references the sole argument of an intransitive: Set A, the set of transitive
+subjects, in the incompletive, and Set B, the set of transitive objects, in the completive and
+the subjunctive, so that the alignment of an intransitive clause is accusative under
+imperfective status and ergative under perfective status. Bohnemeyer's tables of status
+patterns and marker functions and Hofling's Yucatecan sketch are the sources; the verbs are
+those of Bohnemeyer's examples, whose classification by causation and linking is the matter of
+`Studies/Bohnemeyer2004.lean`.
 
-## Main declarations
+## Main definitions
 
-* `Yukatek.VerbStemClass`: the five stem classes, with `eventType`,
-  `isIntransitive`, and `toTemplate` (R&H templates).
-* `Yukatek.StatusCategory`: the four status categories, with
-  `viewpointAspect` and `isAssertive`.
-* `Yukatek.sArgumentMarker`: which marker set cross-references the
-  intransitive subject, given the status category.
-* `Yukatek.alignment`: the alignment each status category imposes.
+* `Yukatek.StatusCategory`, `Yukatek.VerbStemClass`, `Yukatek.statusSuffix`: the four statuses,
+  the five stem classes, and the status suffix of each class.
+* `Yukatek.sArgumentMarker`, `Yukatek.alignment`: the marker set and the alignment of the
+  intransitive subject under each status.
+* `Yukatek.Verb`, `Yukatek.verbs`: the verbs of Bohnemeyer's examples with their stem classes.
 
 ## Implementation notes
 
-Verb stem classes ([bohnemeyer-2004] Table 3):
+The suffixes are written as Bohnemeyer prints them, *V* for the harmonic vowel and a slash
+between allomorphs; the imperfective reading of the incompletive and the perfective reading of
+the completive and the subjunctive are his glosses of the statuses.
 
-| Class | Event type | Examples |
-|-------|-----------|----------|
-| active | process | walk, sing, dance, sneeze |
-| inactive | state change | die, burst, enter, exit |
-| inchoative | state change (stative root + *-tal*) | blacken, shrink, sink |
-| positional | state change (spatial config.) | sit, stand, hang, be round |
-| transitive active | transitive | hit, chip, eat |
+## References
 
-Status marking encodes both viewpoint aspect and modal assertiveness
-([bohnemeyer-2004] Table 2):
-
-- **completive**: +perfective, +assertive → ergative (S = U)
-- **subjunctive**: +perfective, −assertive → ergative (S = U)
-- **incompletive**: −perfective, +assertive → accusative (S = A)
-- **imperative**: directive mood
+* [bohnemeyer-2004]
+* [hofling-2017]
 -/
 
 @[expose] public section
@@ -53,175 +46,173 @@ Status marking encodes both viewpoint aspect and modal assertiveness
 namespace Yukatek
 
 open Aspect (Perfectivity)
-open ArgumentStructure.EventStructure (EventType InternalExternalCause)
 open Mayan (MarkerSet)
 
-/-! ### Verb stem classes -/
+/-! ### Status -/
 
-/-- The five verb stem classes of Yukatek Maya, distinguished by
-    status inflection patterns ([bohnemeyer-2004] Table 3). -/
-inductive VerbStemClass where
-  | active           -- activity roots: walk, sing, dance, sneeze
-  | inactive         -- state-change roots: die, burst, enter, exit
-  | inchoative       -- stative root + *-tal*: blacken, shrink, sink
-  | positional       -- spatial configurations: sit, stand, hang
-  | transitiveActive -- transitive roots: hit, chip, eat
-  deriving DecidableEq, Repr
-
-/-- Event type per verb stem class: active stems encode processes, all
-    others state changes. Per [bohnemeyer-2004] §5, atelic degree
-    achievements still fall in the inactive and inchoative classes — class
-    membership tracks the process vs state-change distinction, not
-    telicity. -/
-def VerbStemClass.eventType : VerbStemClass → EventType
-  | .active => .process
-  | .inactive => .stateChange
-  | .inchoative => .stateChange
-  | .positional => .stateChange
-  | .transitiveActive => .stateChange
-
-/-- Whether a verb stem class is intransitive. -/
-def VerbStemClass.isIntransitive : VerbStemClass → Bool
-  | .transitiveActive => false
-  | _ => true
-
-/-! ### Status categories -/
-
-/-- The four status categories of Yukatek Maya, encoding viewpoint
-    aspect and modal assertiveness ([bohnemeyer-2004] Table 2). -/
+/-- The four status categories. -/
 inductive StatusCategory where
-  | completive    -- +assertive, +perfective
-  | subjunctive   -- −assertive, +perfective
-  | incompletive  -- +assertive, −perfective
-  | imperative    -- directive mood
-  deriving DecidableEq, Repr
+  | incompletive
+  | completive
+  | subjunctive
+  | imperative
+  deriving DecidableEq, Repr, Fintype
 
-/-- Aspectual value of a status category (the imperative has none). -/
+/-- The viewpoint aspect a status expresses, imperfective in the incompletive and perfective in
+the completive and the subjunctive; the imperative expresses none. -/
 def StatusCategory.viewpointAspect : StatusCategory → Option Perfectivity
-  | .completive => some .perfective
-  | .subjunctive => some .perfective
   | .incompletive => some .imperfective
+  | .completive | .subjunctive => some .perfective
   | .imperative => none
 
-/-- Whether the status category is assertive (modal component). -/
-def StatusCategory.isAssertive : StatusCategory → Bool
-  | .completive => true
-  | .incompletive => true
-  | _ => false
+/-! ### Stem classes -/
 
-/-! ### Argument marking pattern -/
+/-- The five verb stem classes, distinguished by their status allomorphs. -/
+inductive VerbStemClass where
+  | active
+  | inactive
+  | inchoative
+  | positional
+  | transitiveActive
+  deriving DecidableEq, Repr, Fintype
 
-/-- Which marker set cross-references the sole argument (S) of an
-    intransitive verb, given the status category ([bohnemeyer-2004]
-    Table 2). Perfective status gives set-B (ergative, S = U), imperfective
-    set-A (accusative, S = A); the imperative is omitted from Table 2's
-    split analysis. -/
+/-- The status suffix of each stem class, `none` where the class has no form in the status. -/
+def statusSuffix : VerbStemClass → StatusCategory → Option String
+  | .active, .incompletive => some "-ø"
+  | .active, .completive => some "-nah"
+  | .active, .subjunctive => some "-nak"
+  | .active, .imperative => some "-nen"
+  | .inactive, .incompletive => some "-Vl"
+  | .inactive, .completive => some "-ø"
+  | .inactive, .subjunctive => some "-Vk"
+  | .inactive, .imperative => some "-en"
+  | .inchoative, .incompletive => some "-tal"
+  | .inchoative, .completive => some "-chah"
+  | .inchoative, .subjunctive => some "-chahak"
+  | .inchoative, .imperative => none
+  | .positional, .incompletive => some "-tal"
+  | .positional, .completive => some "-lah"
+  | .positional, .subjunctive => some "-l(ah)ak"
+  | .positional, .imperative => some "-len"
+  | .transitiveActive, .incompletive => some "-ik"
+  | .transitiveActive, .completive => some "-ah"
+  | .transitiveActive, .subjunctive => some "-ø/-eh"
+  | .transitiveActive, .imperative => some "-ø/-eh"
+
+/-! ### The split -/
+
+/-- The marker set of the sole argument of an intransitive under each status, Set A in the
+incompletive and Set B in the completive and the subjunctive; the imperative is outside the
+split. -/
 def sArgumentMarker : StatusCategory → Option MarkerSet
-  | .completive => some .setB    -- ergative: S patterns with U
-  | .subjunctive => some .setB   -- ergative: S patterns with U
-  | .incompletive => some .setA  -- accusative: S patterns with A
-  | .imperative => none          -- not part of the aspect-governed split
+  | .incompletive => some .setA
+  | .completive | .subjunctive => some .setB
+  | .imperative => none
 
-/-- The split: perfective → set-B (ergative), imperfective → set-A (accusative). -/
-theorem perfective_ergative :
-    sArgumentMarker .completive = some .setB ∧
-    sArgumentMarker .subjunctive = some .setB := ⟨rfl, rfl⟩
-
-theorem imperfective_accusative :
-    sArgumentMarker .incompletive = some .setA := rfl
-
-/-! ### Representative verb entries -/
-
-/-- A Yukatek verb entry for the split-intransitivity analysis: stem class
-    and causation type of the intransitive base. -/
-structure YukatekVerb where
-  gloss : String
-  stemClass : VerbStemClass
-  causationType : InternalExternalCause
-  deriving BEq, Repr
-
--- Active verbs (internally caused processes)
-def meyah : YukatekVerb := ⟨"work", .active, .internal⟩
-def baaxal : YukatekVerb := ⟨"play", .active, .internal⟩
-
--- Active verbs (externally caused processes — manner of motion / emission)
-def balak : YukatekVerb := ⟨"roll", .active, .external⟩
-def peek : YukatekVerb := ⟨"move/wiggle", .active, .external⟩
-def tsiirin : YukatekVerb := ⟨"buzz", .active, .external⟩
-
--- Inactive verbs (state changes, externally caused)
-def kim : YukatekVerb := ⟨"die", .inactive, .external⟩
-def luub : YukatekVerb := ⟨"fall", .inactive, .external⟩
-
--- Inchoative verbs (state changes from stative roots)
-def booxTal : YukatekVerb := ⟨"blacken", .inchoative, .external⟩
-def chichanTal : YukatekVerb := ⟨"shrink", .inchoative, .external⟩
-
--- Degree achievements — inactive/inchoative class despite atelic behavior
-def kaan : YukatekVerb := ⟨"get tired", .inactive, .external⟩
-def naak : YukatekVerb := ⟨"ascend", .inactive, .external⟩
-
--- Positional verbs (externally caused spatial configurations)
-def kulTal : YukatekVerb := ⟨"sit down", .positional, .external⟩
-def waalTal : YukatekVerb := ⟨"stand up", .positional, .external⟩
-
--- Key exception: inactive stem class but internally caused → applicative
--- [bohnemeyer-2004] ex. (9): hàan-t-ik (applicative -t, not causative -s).
-def haanEat : YukatekVerb := ⟨"eat", .inactive, .internal⟩
-
--- Active verbs (externally caused: manner of motion)
-def chiik : YukatekVerb := ⟨"shake", .active, .external⟩
-def haarax : YukatekVerb := ⟨"slide", .active, .external⟩
-def huuy : YukatekVerb := ⟨"stir", .active, .external⟩
-def mosoon : YukatekVerb := ⟨"whirl", .active, .external⟩
-def pirik : YukatekVerb := ⟨"flick", .active, .external⟩
-def walak : YukatekVerb := ⟨"turn/revolve", .active, .external⟩
-
--- Active verbs (externally caused: sound emission)
-def nikich : YukatekVerb := ⟨"squeak", .active, .external⟩
-
--- Positional verbs (additional)
-def chilTal : YukatekVerb := ⟨"lie down", .positional, .external⟩
-def xolTal : YukatekVerb := ⟨"kneel", .positional, .external⟩
-
--- Degree achievements (additional, inactive class but atelic)
-def lab : YukatekVerb := ⟨"deteriorate", .inactive, .external⟩
-def tiil : YukatekVerb := ⟨"last/drag on", .inactive, .external⟩
-def tsuuk : YukatekVerb := ⟨"rot", .inactive, .external⟩
-
--- Transitive active
-def haats : YukatekVerb := ⟨"hit", .transitiveActive, .internal⟩
-
-/-! ### Event-structure templates -/
-
-open ArgumentStructure.EventStructure (Template)
-
-/-- Yukatek verb stem classes to R&H event-structure templates
-    (`EventStructure.lean`): active → activity [x ACT], inactive and
-    inchoative → achievement [BECOME [x ⟨STATE⟩]], positional → achievement
-    (externally-caused spatial config.), transitive active →
-    accomplishment [[x ACT] CAUSE [BECOME [y ⟨STATE⟩]]]. -/
-def VerbStemClass.toTemplate : VerbStemClass → Template
-  | .active => .activity
-  | .inactive => .achievement
-  | .inchoative => .achievement
-  | .positional => .achievement
-  | .transitiveActive => .accomplishment
-
-/-- The stem class → template mapping preserves event type:
-    `VerbStemClass.eventType` agrees with `Template.eventType ∘ toTemplate`. -/
-theorem eventType_consistent (c : VerbStemClass) :
-    c.eventType = c.toTemplate.eventType := by
-  cases c <;> rfl
-
-/-! ### Split-ergative system -/
-
-/-- The alignment a status category imposes: ergative under perfective status, the
-completive and the subjunctive, accusative under the imperfective incompletive, and ergative
-by default in the imperative ([bohnemeyer-2004]). -/
+/-- The alignment a status imposes, accusative under the imperfective incompletive and ergative
+under the perfective completive and subjunctive and by default in the imperative. -/
 def alignment (s : StatusCategory) : Alignment.AlignmentType :=
   match s.viewpointAspect with
   | some .imperfective => .accusative
   | some .perfective | none => .ergative
+
+/-! ### Verbs -/
+
+/-- A verb with its stem class. -/
+structure Verb where
+  /-- The stem, in Bohnemeyer's orthography. -/
+  form : String
+  /-- The gloss. -/
+  gloss : String
+  /-- The stem class. -/
+  stemClass : VerbStemClass
+  deriving DecidableEq, Repr
+
+/-- *meyah* 'work', active. -/
+def meyah : Verb := ⟨"meyah", "work", .active⟩
+
+/-- *bàaxal* 'play', active. -/
+def bàaxal : Verb := ⟨"bàaxal", "play", .active⟩
+
+/-- *balak'* 'roll', active. -/
+def balak' : Verb := ⟨"balak'", "roll", .active⟩
+
+/-- *péek* 'move, wiggle', active. -/
+def péek : Verb := ⟨"péek", "move", .active⟩
+
+/-- *tsíirin* 'buzz', active. -/
+def tsíirin : Verb := ⟨"tsíirin", "buzz", .active⟩
+
+/-- *chíik* 'shake, rattle', active. -/
+def chíik : Verb := ⟨"chíik", "shake", .active⟩
+
+/-- *háarax* 'slide', active. -/
+def háarax : Verb := ⟨"háarax", "slide", .active⟩
+
+/-- *húuy* 'stir, agitate', active. -/
+def húuy : Verb := ⟨"húuy", "stir", .active⟩
+
+/-- *mosòon* 'whirl, revolve', active. -/
+def mosòon : Verb := ⟨"mosòon", "whirl", .active⟩
+
+/-- *pirix* 'flick', active. -/
+def pirix : Verb := ⟨"pirix", "flick", .active⟩
+
+/-- *walak'* 'turn, revolve', active. -/
+def walak' : Verb := ⟨"walak'", "turn", .active⟩
+
+/-- *nik'ich* 'squeak', active. -/
+def nik'ich : Verb := ⟨"nik'ich", "squeak", .active⟩
+
+/-- *kim* 'die', inactive. -/
+def kim : Verb := ⟨"kim", "die", .inactive⟩
+
+/-- *lúub* 'fall', inactive. -/
+def lúub : Verb := ⟨"lúub", "fall", .inactive⟩
+
+/-- *hàan* 'eat', inactive. -/
+def hàan : Verb := ⟨"hàan", "eat", .inactive⟩
+
+/-- *ka'n* 'get tired', inactive. -/
+def ka'n : Verb := ⟨"ka'n", "get tired", .inactive⟩
+
+/-- *na'k* 'ascend', inactive. -/
+def na'k : Verb := ⟨"na'k", "ascend", .inactive⟩
+
+/-- *la'b* 'deteriorate', inactive. -/
+def la'b : Verb := ⟨"la'b", "deteriorate", .inactive⟩
+
+/-- *t'íil* 'last, drag on', inactive. -/
+def t'íil : Verb := ⟨"t'íil", "last", .inactive⟩
+
+/-- *ts'u'k* 'rot', inactive. -/
+def ts'u'k : Verb := ⟨"ts'u'k", "rot", .inactive⟩
+
+/-- *bòox-tal* 'blacken', inchoative. -/
+def bòoxtal : Verb := ⟨"bòox-tal", "blacken", .inchoative⟩
+
+/-- *chichan-tal* 'shrink', inchoative. -/
+def chichantal : Verb := ⟨"chichan-tal", "shrink", .inchoative⟩
+
+/-- *kul-tal* 'sit down', positional. -/
+def kultal : Verb := ⟨"kul-tal", "sit down", .positional⟩
+
+/-- *wa'l-tal* 'stand up', positional. -/
+def wa'ltal : Verb := ⟨"wa'l-tal", "stand up", .positional⟩
+
+/-- *chil-tal* 'lie down', positional. -/
+def chiltal : Verb := ⟨"chil-tal", "lie down", .positional⟩
+
+/-- *xol-tal* 'kneel', positional. -/
+def xoltal : Verb := ⟨"xol-tal", "kneel", .positional⟩
+
+/-- *hats'* 'hit', transitive. -/
+def hats' : Verb := ⟨"hats'", "hit", .transitiveActive⟩
+
+/-- The verbs of Bohnemeyer's examples. -/
+def verbs : List Verb :=
+  [meyah, bàaxal, balak', péek, tsíirin, chíik, háarax, húuy, mosòon, pirix, walak', nik'ich,
+    kim, lúub, hàan, ka'n, na'k, la'b, t'íil, ts'u'k, bòoxtal, chichantal, kultal, wa'ltal,
+    chiltal, xoltal, hats']
 
 end Yukatek
