@@ -5,6 +5,7 @@ public import Mathlib.Tactic.Linarith
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Data.Set.Card
 
 /-!
 # Additive contents and the orders they induce
@@ -151,6 +152,29 @@ noncomputable def ofFintype [Fintype W] (w : W → K) (hw : ∀ i, 0 ≤ w i)
     ofFintype w hw hw1 {i} = w i := by
   classical
   simp [ofFintype, Set.mem_singleton_iff, Finset.sum_ite_eq' Finset.univ i w]
+
+
+/-- The uniform measure on a finite nonempty type. -/
+noncomputable def uniform (W : Type*) [Fintype W] [Nonempty W] : FinAddMeasure K W :=
+  ofFintype (fun _ ↦ 1 / Fintype.card W) (fun _ ↦ div_nonneg zero_le_one (Nat.cast_nonneg _))
+    (by
+      rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+      exact mul_one_div_cancel (Nat.cast_ne_zero.2 Fintype.card_pos.ne'))
+
+@[simp] theorem uniform_singleton [Fintype W] [Nonempty W] (w : W) :
+    uniform (K := K) W {w} = 1 / Fintype.card W :=
+  ofFintype_singleton _ _ _ w
+
+/-- The uniform measure of a proposition counts its worlds. -/
+theorem uniform_apply [Fintype W] [Nonempty W] (A : Set W) :
+    uniform (K := K) W A = (A.ncard : K) / Fintype.card W := by
+  classical
+  have hcard : (Finset.univ.filter (· ∈ A)).card = A.ncard := by
+    rw [← Set.ncard_coe_finset]
+    congr 1
+    ext; simp
+  simp only [uniform, ofFintype, coe_mk]
+  rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul, hcard, mul_one_div]
 
 end FinAddMeasure
 
