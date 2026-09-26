@@ -5,23 +5,18 @@ public import Linglib.Core.Order.Domination
 public import Mathlib.Data.Fintype.Powerset
 
 /-!
-# World-ordering semantics: the liftings as comparative-probability models
+# World-ordering semantics: the l-lifting as a comparative-probability model
 
 [lewis-1973]'s comparative possibility lifts an ordering of worlds to an
 ordering of propositions (`DominationLift`); [holliday-icard-2013] (§5) take it
 as a semantics for comparative epistemic modals with complete logic WJR
-([halpern-2003] Thm. 7.5.1), and (§9) replace it by the injective `MatchingLift`.
-This file registers both lifts of a preorder as carriers of the
-`ComparativeProbability` mixins, so that the validity patterns transfer by
-instance resolution, and gives the model-theoretic content of the WJR
+([halpern-2003] Thm. 7.5.1). This file gives the model-theoretic content of that
 completeness: a monotone, transitive comparison relation is an l-lifting of some
 reflexive world relation **iff** it satisfies right-union (axiom `J`) and
 determination by singletons.
 
 ## Main statements
 
-* The `IsLikelihoodMono` instances for both lifts of a reflexive relation and the
-  `IsComplementReversing` instance for the matching lift of a finite preorder.
 * `strict_dominationLift_iff` — over a total world relation the strict lift is
   Lewis's ∃∀ clause.
 * `exists_dominationLift_repr`, `dominationLift_repr_iff` — the WJR
@@ -41,19 +36,6 @@ namespace ComparativeProbability
 section
 
 variable {α : Type*} {r : α → α → Prop}
-
-/-! Both lifts inherit transitivity from the world relation (`Core.Order.Domination`);
-monotonicity needs reflexivity, and complement reversal holds for the matching lift of a
-finite preorder. -/
-
-instance [Std.Refl r] : IsLikelihoodMono (DominationLift r) :=
-  ⟨fun _ _ h ↦ dominationLift_of_subset h⟩
-
-instance [Std.Refl r] : IsLikelihoodMono (MatchingLift r) :=
-  ⟨fun _ _ h ↦ matchingLift_of_subset h⟩
-
-instance [Finite α] [IsPreorder α r] : IsComplementReversing (MatchingLift r) :=
-  ⟨fun _ _ ↦ MatchingLift.compl⟩
 
 /-- Over a **total** relation, the strict l-lifting collapses to Lewis's
 ∃∀ comparative possibility: some A-point strictly dominates every B-point. -/
