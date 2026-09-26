@@ -39,71 +39,72 @@ variable {W : Type*} [DecidableEq W] {Atom : Type*} {M : KripkeModel W Atom}
 
 /-! ### Free-choice facts -/
 
-/-- `[α ∨ β]⁺ ⊨ (α ∧ NE) ∨ (β ∧ NE)`: an enriched split disjunction has a
-non-empty witness subteam for each disjunct. -/
+/-- An enriched split disjunction has a non-empty witness subteam for each disjunct,
+`[α ∨ β]⁺ ⊨ (α ∧ NE) ∨ (β ∧ NE)`. -/
 theorem witnesses_of_enrich_disj (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (enrich (.disj α β)) t) :
     (∃ s ⊆ t, s.Nonempty ∧ support M α s) ∧ ∃ s ⊆ t, s.Nonempty ∧ support M β s :=
   have ⟨t₁, t₂, hu, h₁, h₂⟩ := h.1
-  ⟨⟨t₁, hu ▸ Finset.subset_union_left, enriched_support_implies_nonempty M α t₁ h₁,
-      enrichment_strengthens_support M α t₁ hα h₁⟩,
-    ⟨t₂, hu ▸ Finset.subset_union_right, enriched_support_implies_nonempty M β t₂ h₂,
-      enrichment_strengthens_support M β t₂ hβ h₂⟩⟩
+  ⟨⟨t₁, hu ▸ Finset.subset_union_left, nonempty_of_support_enrich h₁,
+      support_of_support_enrich hα h₁⟩,
+    ⟨t₂, hu ▸ Finset.subset_union_right, nonempty_of_support_enrich h₂,
+      support_of_support_enrich hβ h₂⟩⟩
 
-/-- Modal Disjunction (Fact 3): `[α ∨ β]⁺ ⊨ ◇α ∧ ◇β` on a state-based `R`. -/
+/-- Modal Disjunction (Fact 3) is `[α ∨ β]⁺ ⊨ ◇α ∧ ◇β` on a state-based `R`. -/
 theorem modalDisjunction (hα : α.NEFree) (hβ : β.NEFree) (hSB : M.IsStateBased t)
     (h : support M (enrich (.disj α β)) t) :
     support M (.poss α) t ∧ support M (.poss β) t :=
   have ⟨⟨s₁, hs₁, hne₁, h₁⟩, ⟨s₂, hs₂, hne₂, h₂⟩⟩ := witnesses_of_enrich_disj hα hβ h
-  ⟨λ w hw => ⟨s₁, (hSB w hw).symm ▸ hs₁, hne₁, h₁⟩,
-   λ w hw => ⟨s₂, (hSB w hw).symm ▸ hs₂, hne₂, h₂⟩⟩
+  ⟨fun w hw ↦ ⟨s₁, (hSB w hw).symm ▸ hs₁, hne₁, h₁⟩,
+   fun w hw ↦ ⟨s₂, (hSB w hw).symm ▸ hs₂, hne₂, h₂⟩⟩
 
-/-- Narrow Scope FC (Fact 4): `[◇(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β`. -/
+/-- Narrow Scope FC (Fact 4) is `[◇(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β`. -/
 theorem narrowScopeFC (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (enrich (.poss (.disj α β))) t) :
     support M (.poss α) t ∧ support M (.poss β) t :=
-  ⟨λ w hw =>
+  ⟨fun w hw ↦
     have ⟨_, hs, _, h'⟩ := h.1 w hw
-    (witnesses_of_enrich_disj hα hβ h').1.imp λ _ ⟨hs', hne, h₁⟩ => ⟨hs'.trans hs, hne, h₁⟩,
-   λ w hw =>
+    (witnesses_of_enrich_disj hα hβ h').1.imp fun _ ⟨hs', hne, h₁⟩ ↦ ⟨hs'.trans hs, hne, h₁⟩,
+   fun w hw ↦
     have ⟨_, hs, _, h'⟩ := h.1 w hw
-    (witnesses_of_enrich_disj hα hβ h').2.imp λ _ ⟨hs', hne, h₂⟩ => ⟨hs'.trans hs, hne, h₂⟩⟩
+    (witnesses_of_enrich_disj hα hβ h').2.imp fun _ ⟨hs', hne, h₂⟩ ↦ ⟨hs'.trans hs, hne, h₂⟩⟩
 
-/-- Free choice for logically dependent disjuncts:
+/-- Free choice for logically dependent disjuncts is
 `[◇(α ∨ (α ∧ β))]⁺ ⊨ ◇α ∧ ◇(α ∧ β)`. -/
 theorem narrowScopeFC_dependent (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (enrich (.poss (.disj α (.conj α β)))) t) :
     support M (.poss α) t ∧ support M (.poss (.conj α β)) t :=
   narrowScopeFC hα ⟨hα, hβ⟩ h
 
-/-- Wide Scope FC (Fact 5): `[◇α ∨ ◇β]⁺ ⊨ ◇α ∧ ◇β` on an indisputable `R`. -/
+/-- Wide Scope FC (Fact 5) is `[◇α ∨ ◇β]⁺ ⊨ ◇α ∧ ◇β` on an indisputable `R`. -/
 theorem wideScopeFC (hα : α.NEFree) (hβ : β.NEFree) (hInd : M.IsIndisputable t)
     (h : support M (enrich (.disj (.poss α) (.poss β))) t) :
     support M (.poss α) t ∧ support M (.poss β) t :=
   have ⟨⟨_, ht₁, ⟨w₁, hw₁⟩, h₁⟩, ⟨_, ht₂, ⟨w₂, hw₂⟩, h₂⟩⟩ :=
     witnesses_of_enrich_disj (α := .poss α) (β := .poss β) hα hβ h
-  ⟨λ w hw => (h₁ w₁ hw₁).imp λ _ ⟨hs, hne, hs'⟩ => ⟨hInd w₁ (ht₁ hw₁) w hw ▸ hs, hne, hs'⟩,
-   λ w hw => (h₂ w₂ hw₂).imp λ _ ⟨hs, hne, hs'⟩ => ⟨hInd w₂ (ht₂ hw₂) w hw ▸ hs, hne, hs'⟩⟩
+  ⟨fun w hw ↦ (h₁ w₁ hw₁).imp fun _ ⟨hs, hne, hs'⟩ ↦ ⟨hInd w₁ (ht₁ hw₁) w hw ▸ hs, hne, hs'⟩,
+   fun w hw ↦ (h₂ w₂ hw₂).imp fun _ ⟨hs, hne, hs'⟩ ↦ ⟨hInd w₂ (ht₂ hw₂) w hw ▸ hs, hne, hs'⟩⟩
 
-/-- Dual Prohibition (Fact 11): `[¬◇(α ∨ β)]⁺ ⊨ ¬◇α ∧ ¬◇β`. -/
+/-- Dual Prohibition (Fact 11) is `[¬◇(α ∨ β)]⁺ ⊨ ¬◇α ∧ ¬◇β`. -/
 theorem dualProhibition (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (enrich (.neg (.poss (.disj α β)))) t) :
     support M (.neg (.poss α)) t ∧ support M (.neg (.poss β)) t :=
-  have h' := antiSupport_strip_ne M _ t h.1
-  ⟨λ w hw => (enrichment_strengthens_antiSupport M (.disj α β) _ ⟨hα, hβ⟩ (h' w hw)).1,
-   λ w hw => (enrichment_strengthens_antiSupport M (.disj α β) _ ⟨hα, hβ⟩ (h' w hw)).2⟩
+  have h' := (antiSupport_conj_ne M _ t).mp h.1
+  have hαβ : (Formula.disj α β).NEFree := ⟨hα, hβ⟩
+  ⟨fun w hw ↦ (antiSupport_of_antiSupport_enrich hαβ (h' w hw)).1,
+   fun w hw ↦ (antiSupport_of_antiSupport_enrich hαβ (h' w hw)).2⟩
 
-/-- Double Negation (Fact 12): `[¬¬◇(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β`. -/
+/-- Double Negation (Fact 12) is `[¬¬◇(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β`. -/
 theorem doubleNegationFC (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (enrich (.neg (.neg (.poss (.disj α β))))) t) :
     support M (.poss α) t ∧ support M (.poss β) t :=
   narrowScopeFC hα hβ ((support_enrich_neg_neg M _ t).mp h)
 
-/-- Epistemic contradiction (§4.1): on a state-based `R`, `◇φ ∧ ¬φ` is supported
+/-- Epistemic contradiction (§4.1) says that on a state-based `R`, `◇φ ∧ ¬φ` is supported
 only by `∅`, the sole team supporting the weak contradiction `⊥`. -/
 theorem epistemicContradiction (hSB : M.IsStateBased t)
     (h : support M (.conj (.poss φ) (.neg φ)) t) : t = ∅ :=
-  Finset.eq_empty_of_forall_notMem λ w hw =>
+  Finset.eq_empty_of_forall_notMem fun w hw ↦
     have ⟨_, hs, ⟨_, hv⟩, hsupp⟩ := h.1 w hw
     Finset.disjoint_left.mp (disjoint_support_antiSupport M φ h.2 hsupp) (hSB w hw ▸ hs hv) hv
 
@@ -112,41 +113,41 @@ theorem epistemicContradiction (hSB : M.IsStateBased t)
 The paper's figures are model–state pairs on `TwoAtomWorld`; each `figNx` fixes
 the accessibility arrows drawn in Figure N(x), worlds without arrows seeing `∅`. -/
 
-/-- The paper's Kripke models on the four worlds: valuation `TwoAtomWorld.holds`,
+/-- The paper's Kripke models on the four worlds have valuation `TwoAtomWorld.holds` and
 accessibility `R`. -/
 def model (R : TwoAtomWorld → Finset TwoAtomWorld) : KripkeModel TwoAtomWorld FCAtom :=
-  ⟨R, λ p w => w.holds p⟩
+  ⟨R, fun p w ↦ w.holds p⟩
 
 /-- The state `{w_a, w_b}` of Figures 1, 2(a), 3 and 5. -/
 def state : Finset TwoAtomWorld := {.onlyA, .onlyB}
 
-/-- Figures 1–2 draw no arrows: only atoms and disjunction are evaluated. -/
-def propositional : KripkeModel TwoAtomWorld FCAtom := model λ _ => ∅
+/-- Figures 1–2 draw no arrows, so only atoms and disjunction are evaluated. -/
+def propositional : KripkeModel TwoAtomWorld FCAtom := model fun _ ↦ ∅
 
-/-- Figure 3(a): `R[w_a] = R[w_b] = {w_ab, w_∅}`. -/
+/-- Figure 3(a) has `R[w_a] = R[w_b] = {w_ab, w_∅}`. -/
 def fig3a : KripkeModel TwoAtomWorld FCAtom :=
-  model λ | .onlyA | .onlyB => {.both, .nothing} | _ => ∅
+  model fun | .onlyA | .onlyB => {.both, .nothing} | _ => ∅
 
-/-- Figure 3(b): `R[w_a] = R[w_b] = {w_a, w_b}`. -/
+/-- Figure 3(b) has `R[w_a] = R[w_b] = {w_a, w_b}`. -/
 def fig3b : KripkeModel TwoAtomWorld FCAtom :=
-  model λ | .onlyA | .onlyB => {.onlyA, .onlyB} | _ => ∅
+  model fun | .onlyA | .onlyB => {.onlyA, .onlyB} | _ => ∅
 
-/-- Figure 3(c): `R[w_a] = {w_ab}`, `R[w_b] = {w_a, w_∅}`. -/
+/-- Figure 3(c) has `R[w_a] = {w_ab}`, `R[w_b] = {w_a, w_∅}`. -/
 def fig3c : KripkeModel TwoAtomWorld FCAtom :=
-  model λ | .onlyA => {.both} | .onlyB => {.onlyA, .nothing} | _ => ∅
+  model fun | .onlyA => {.both} | .onlyB => {.onlyA, .nothing} | _ => ∅
 
-/-- Figure 4(a): `R[w_ab] = {w_a}`. -/
-def fig4a : KripkeModel TwoAtomWorld FCAtom := model λ | .both => {.onlyA} | _ => ∅
+/-- Figure 4(a) has `R[w_ab] = {w_a}`. -/
+def fig4a : KripkeModel TwoAtomWorld FCAtom := model fun | .both => {.onlyA} | _ => ∅
 
-/-- Figure 4(b): `R[w_ab] = {w_a, w_b}`. -/
-def fig4b : KripkeModel TwoAtomWorld FCAtom := model λ | .both => {.onlyA, .onlyB} | _ => ∅
+/-- Figure 4(b) has `R[w_ab] = {w_a, w_b}`. -/
+def fig4b : KripkeModel TwoAtomWorld FCAtom := model fun | .both => {.onlyA, .onlyB} | _ => ∅
 
-/-- Figure 5(a): `R[w_a] = R[w_b] = {w_b}`. -/
-def fig5a : KripkeModel TwoAtomWorld FCAtom := model λ | .onlyA | .onlyB => {.onlyB} | _ => ∅
+/-- Figure 5(a) has `R[w_a] = R[w_b] = {w_b}`. -/
+def fig5a : KripkeModel TwoAtomWorld FCAtom := model fun | .onlyA | .onlyB => {.onlyB} | _ => ∅
 
-/-- Figure 5(b): `R[w_a] = {w_a}`, `R[w_b] = {w_b}`. -/
+/-- Figure 5(b) has `R[w_a] = {w_a}`, `R[w_b] = {w_b}`. -/
 def fig5b : KripkeModel TwoAtomWorld FCAtom :=
-  model λ | .onlyA => {.onlyA} | .onlyB => {.onlyB} | _ => ∅
+  model fun | .onlyA => {.onlyA} | .onlyB => {.onlyB} | _ => ∅
 
 /-- The disjunction `a ∨ b`. -/
 def aOrB : Formula FCAtom := .disj (.atom .a) (.atom .b)
@@ -205,19 +206,19 @@ BSML⁺ validates neither `◇¬(α ∧ β) ⊨ ◇¬α` nor `¬□(α ∧ β) �
 Arabic". The countermodel is Figure 5(b)'s frame at the state `{w_a}`: inside
 `[¬(a ∧ b)]⁺` a zero witness anti-supports `a`, but no non-empty subteam of
 `R[w_a] = {w_a}` anti-supports `a`. BSML* validates both inferences
-(`BSML.negativeFC_star`). -/
+(`BSML.negativeFC_star_poss`, `BSML.negativeFC_star_nec`). -/
 
 theorem not_negativeFC_poss :
     ¬ consequencePlus (W := TwoAtomWorld) (Atom := FCAtom)
       (.poss (.neg (.conj (.atom .a) (.atom .b)))) (.poss (.neg (.atom .a))) :=
-  λ h => (by decide : ¬ support fig5b (enrich (.poss (.neg (.atom .a)))) {.onlyA})
+  fun h ↦ (by decide : ¬ support fig5b (enrich (.poss (.neg (.atom .a)))) {.onlyA})
     (h fig5b {.onlyA} (by decide))
 
 /-- The `□` form follows from the `◇` form by the duality `□φ := ¬◇¬φ`. -/
 theorem not_negativeFC_nec :
     ¬ consequencePlus (W := TwoAtomWorld) (Atom := FCAtom)
       (.neg (Formula.nec (.conj (.atom .a) (.atom .b)))) (.neg (Formula.nec (.atom .a))) :=
-  λ h => not_negativeFC_poss λ M t hp =>
+  fun h ↦ not_negativeFC_poss fun M t hp ↦
     (support_enrich_neg_neg M _ t).mp (h M t ((support_enrich_neg_neg M _ t).mpr hp))
 
 end Aloni2022

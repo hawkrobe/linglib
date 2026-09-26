@@ -3,25 +3,48 @@ module
 public import Linglib.Logic.Team.BSML.Defs
 
 /-!
-# BSML pragmatic enrichment
+# Pragmatic enrichment in BSML
 
-Pragmatic enrichment `[·]⁺` ([aloni-2022] Definition 6) conjoins `NE` to every
-subformula, modelling the *neglect-zero* tendency: language users disregard
-models that verify a sentence by an empty witness. On the `NE`-free fragment
-enrichment strengthens (`[α]⁺ ⊨ α ∧ NE`, Facts 1–2), is vacuous under a single
-negation (Fact 9) but not under two (Fact 10), and coincides on classical
-positive formulas with BSML*, the variant excluding `∅` from the states
-(Fact 13). The free-choice consequences are drawn in `Studies/Aloni2022.lean`.
+This file defines the pragmatic enrichment `[·]⁺` of a BSML formula and proves how it
+interacts with support, negation and the variant BSML*. Enrichment conjoins the
+non-emptiness atom `NE` to every subformula, so a team supports an enriched formula only
+when each subformula is witnessed by a non-empty team. Aloni introduces it to model the
+neglect-zero tendency, the disposition of language users to disregard models that verify a
+sentence through an empty witness, and derives the free-choice inferences of
+`Studies/Aloni2022.lean` from it. BSML⁺ is BSML with enrichment applied globally, and
+BSML* is BSML with the empty team removed from the possible states.
 
-## Main declarations
+## Main definitions
 
-* `enrich` — the enrichment function.
-* `enrichment_strengthens_support`, `enrichment_strengthens_antiSupport`,
-  `enrichment_entails_conj_ne` — Facts 1 and 2.
-* `enrichment_vacuous_under_negation`,
-  `enrichment_not_vacuous_under_double_negation` — Facts 9 and 10.
-* `consequencePlus`, `bsmlStar_iff_bsmlPlus`, `negativeFC_star` — BSML⁺
-  consequence, Fact 13, and the BSML* half of Fact 14.
+* `BSML.enrich`: the enrichment function `[·]⁺`.
+* `BSML.consequencePlus`: BSML⁺ consequence, consequence between the enriched formulas.
+* `BSML.Formula.ClassicalPositive`: the formulas with neither `NE` nor negation.
+
+## Main results
+
+* `BSML.eval_of_eval_enrich`: on `NE`-free formulas enrichment strengthens in both
+  polarities (Fact 1); `BSML.support_conj_ne_of_support_enrich` is `[α]⁺ ⊨ α ∧ NE`
+  (Fact 2).
+* `BSML.antiSupport_enrich_iff`: on positive formulas enrichment is vacuous under a single
+  negation (Fact 9).
+* `BSML.support_neg_enrich_neg_iff`, `BSML.not_support_neg_neg_enrich_iff`: under a
+  double negation it is not (Fact 10).
+* `BSML.consequenceStar_iff_consequencePlus`: BSML* and BSML⁺ consequence coincide on
+  classical positive formulas (Fact 13).
+* `BSML.negativeFC_star_poss`, `BSML.negativeFC_star_nec`: BSML* validates negative free
+  choice (Fact 14); its failure in BSML⁺ is proved in the study.
+
+## Implementation notes
+
+Aloni defines `[·]⁺` on the `NE`-free fragment only. `enrich` is total and sends `NE` to
+itself, and `□` abbreviates `¬◇¬`, so it has no clause of its own. The paper's `≡` is
+mutual support consequence, so Facts 9 and 10 are stated as equivalences of support rather
+than through the bilateral `BSML.equivalent`. Fact 1 is one induction over the polarity
+parameter of `BSML.eval`, which is the paper's double induction.
+
+## References
+
+* [aloni-2022] Aloni, Logic and Conversation: The Case of Free Choice
 -/
 
 @[expose] public section
@@ -30,22 +53,12 @@ namespace BSML
 
 open ModalLogic (KripkeModel)
 
-variable {W : Type*} [DecidableEq W] {Atom : Type*}
+variable {W : Type*} [DecidableEq W] {Atom : Type*} {M : KripkeModel W Atom}
+  {φ ψ : Formula Atom} {t : Finset W} {pol : Bool}
 
-/-! ### Pragmatic enrichment (Definition 6) -/
+/-! ### Enrichment -/
 
-/--
-Pragmatic enrichment [·]⁺ (Definition 6 from [aloni-2022]).
-
-Recursively adds non-emptiness constraints at every level:
-- `[p]⁺ = p ∧ NE`
-- `[NE]⁺ = NE`
-- `[¬φ]⁺ = ¬[φ]⁺ ∧ NE`
-- `[φ ∧ ψ]⁺ = ([φ]⁺ ∧ [ψ]⁺) ∧ NE`
-- `[φ ∨ ψ]⁺ = ([φ]⁺ ∨ [ψ]⁺) ∧ NE`
-- `[◇φ]⁺ = ◇[φ]⁺ ∧ NE`
-- `[□φ]⁺ = □[φ]⁺ ∧ NE`
--/
+/-- The pragmatic enrichment `[φ]⁺` conjoins `NE` to every subformula of `φ`. -/
 def enrich : Formula Atom → Formula Atom
   | .atom p => .conj (.atom p) .ne
   | .ne => .ne
@@ -54,305 +67,173 @@ def enrich : Formula Atom → Formula Atom
   | .disj φ ψ => .conj (.disj (enrich φ) (enrich ψ)) .ne
   | .poss φ => .conj (.poss (enrich φ)) .ne
 
-/-! ### Enriched support implies non-emptiness -/
-
-/-- If an enriched formula is supported, the team is non-empty. -/
-theorem enriched_support_implies_nonempty (M : KripkeModel W Atom)
-    (φ : Formula Atom) (t : Finset W)
-    (h : support M (enrich φ) t) : t.Nonempty := by
+/-- A team supporting an enriched formula is non-empty. -/
+theorem nonempty_of_support_enrich (h : support M (enrich φ) t) : t.Nonempty := by
   cases φ with
   | ne => exact h
   | _ => exact h.2
 
-/-! ### Stripping `NE` from anti-support -/
+/-- Only the empty team anti-supports `NE`, so anti-support of `φ ∧ NE` reduces to
+anti-support of `φ`. -/
+theorem antiSupport_conj_ne (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
+    antiSupport M (.conj φ .ne) t ↔ antiSupport M φ t where
+  mp := fun ⟨_, _, hu, h, h₂⟩ ↦ by subst h₂; simpa [← hu] using h
+  mpr h := ⟨t, ∅, by simp, h, rfl⟩
 
-/-- Anti-support of (φ ∧ NE) implies anti-support of φ.
-    From the SPLIT, one part anti-supports φ and the other (anti-supporting NE)
-    is empty, so the first part is the whole team. -/
-theorem antiSupport_strip_ne (M : KripkeModel W Atom)
-    (φ : Formula Atom) (t : Finset W)
-    (h : antiSupport M (.conj φ .ne) t) :
-    antiSupport M φ t := by
-  obtain ⟨t₁, t₂, hunion, h₁, h₂⟩ := h
-  -- h₂ : t₂ = ∅, so t₁ = t
-  subst h₂
-  have heq : t₁ = t := (Finset.union_empty t₁).symm.trans hunion
-  subst heq; exact h₁
-
-/-- Anti-support of φ implies anti-support of (φ ∧ NE).
-    Use the trivial split (t, ∅). -/
-theorem antiSupport_conj_ne_of_antiSupport (M : KripkeModel W Atom)
-    (φ : Formula Atom) (t : Finset W)
-    (h : antiSupport M φ t) :
-    antiSupport M (.conj φ .ne) t :=
-  ⟨t, ∅, by simp, h, rfl⟩
-
-/-- Anti-support of (φ ∧ NE) ↔ anti-support of φ. -/
-theorem antiSupport_conj_ne_iff (M : KripkeModel W Atom)
-    (φ : Formula Atom) (t : Finset W) :
-    antiSupport M (.conj φ .ne) t ↔ antiSupport M φ t :=
-  ⟨antiSupport_strip_ne M φ t, antiSupport_conj_ne_of_antiSupport M φ t⟩
-
-/-- `[¬¬φ]⁺` and `[φ]⁺` have the same support: the two `NE` conjuncts added by
-    the negations are absorbed. -/
+/-- `[¬¬φ]⁺` and `[φ]⁺` have the same support, since the two `NE` conjuncts added by the
+negations are absorbed. -/
 theorem support_enrich_neg_neg (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
-    support M (enrich (.neg (.neg φ))) t ↔ support M (enrich φ) t :=
-  ⟨λ h => (antiSupport_conj_ne_iff M _ t).mp h.1,
-   λ h => ⟨(antiSupport_conj_ne_iff M _ t).mpr h, enriched_support_implies_nonempty M φ t h⟩⟩
+    support M (enrich (.neg (.neg φ))) t ↔ support M (enrich φ) t where
+  mp h := (antiSupport_conj_ne M _ t).mp h.1
+  mpr h := ⟨(antiSupport_conj_ne M _ t).mpr h, nonempty_of_support_enrich h⟩
 
-/-! ### Enrichment strengthens (Fact 1) -/
+/-! ### Enrichment strengthens (Facts 1 and 2) -/
 
-/-- Both directions of Fact 1 (enrichment strengthens), proved by simultaneous
-    induction on formula structure. -/
-private theorem enrichment_strengthens_both (M : KripkeModel W Atom)
-    (φ : Formula Atom) (hNE : φ.NEFree) :
-    (∀ t, support M (enrich φ) t → support M φ t) ∧
-    (∀ t, antiSupport M (enrich φ) t → antiSupport M φ t) := by
-  induction φ with
+/-- Enrichment strengthens an `NE`-free formula in both polarities (Fact 1). -/
+theorem eval_of_eval_enrich (hNE : φ.NEFree) (h : eval M pol (enrich φ) t) :
+    eval M pol φ t := by
+  induction φ generalizing pol t with
   | ne => exact hNE.elim
   | atom p =>
-    exact ⟨fun t h => h.1, fun t h => antiSupport_strip_ne M (.atom p) t h⟩
+    cases pol
+    · exact (antiSupport_conj_ne M _ t).mp h
+    · exact h.1
   | neg ψ ih =>
-    have ⟨ih_s, ih_a⟩ := ih hNE
-    exact ⟨fun t h => ih_a t h.1, fun t h => ih_s t (antiSupport_strip_ne M _ t h)⟩
+    cases pol
+    · exact ih (pol := true) hNE ((antiSupport_conj_ne M _ t).mp h)
+    · exact ih (pol := false) hNE h.1
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    have hψ₁ := hNE.1
-    have hψ₂ := hNE.2
-    have ⟨ih₁_s, ih₁_a⟩ := ih₁ hψ₁
-    have ⟨ih₂_s, ih₂_a⟩ := ih₂ hψ₂
-    constructor
-    · intro t h; exact ⟨ih₁_s t h.1.1, ih₂_s t h.1.2⟩
-    · intro t h
-      have h' := antiSupport_strip_ne M (.conj (enrich ψ₁) (enrich ψ₂)) t h
-      obtain ⟨s₁, s₂, hunion, h₁, h₂⟩ := h'
-      exact ⟨s₁, s₂, hunion, ih₁_a s₁ h₁, ih₂_a s₂ h₂⟩
+    cases pol
+    · obtain ⟨s₁, s₂, hs, h₁, h₂⟩ := (antiSupport_conj_ne M _ t).mp h
+      exact ⟨s₁, s₂, hs, ih₁ hNE.1 h₁, ih₂ hNE.2 h₂⟩
+    · exact ⟨ih₁ hNE.1 h.1.1, ih₂ hNE.2 h.1.2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    have hψ₁ := hNE.1
-    have hψ₂ := hNE.2
-    have ⟨ih₁_s, ih₁_a⟩ := ih₁ hψ₁
-    have ⟨ih₂_s, ih₂_a⟩ := ih₂ hψ₂
-    constructor
-    · intro t h
-      obtain ⟨s₁, s₂, hunion, h₁, h₂⟩ := h.1
-      exact ⟨s₁, s₂, hunion, ih₁_s s₁ h₁, ih₂_s s₂ h₂⟩
-    · intro t h
-      have h' := antiSupport_strip_ne M (.disj (enrich ψ₁) (enrich ψ₂)) t h
-      exact ⟨ih₁_a t h'.1, ih₂_a t h'.2⟩
+    cases pol
+    · obtain ⟨h₁, h₂⟩ := (antiSupport_conj_ne M _ t).mp h
+      exact ⟨ih₁ hNE.1 h₁, ih₂ hNE.2 h₂⟩
+    · obtain ⟨s₁, s₂, hs, h₁, h₂⟩ := h.1
+      exact ⟨s₁, s₂, hs, ih₁ hNE.1 h₁, ih₂ hNE.2 h₂⟩
   | poss ψ ih =>
-    have ⟨ih_s, ih_a⟩ := ih hNE
-    constructor
-    · intro t h w hw
-      obtain ⟨s, hs, hne, hsupp⟩ := h.1 w hw
-      exact ⟨s, hs, hne, ih_s s hsupp⟩
-    · intro t h
-      have h' := antiSupport_strip_ne M (.poss (enrich ψ)) t h
-      exact fun w hw => ih_a _ (h' w hw)
+    cases pol
+    · exact fun w hw ↦ ih hNE ((antiSupport_conj_ne M _ t).mp h w hw)
+    · exact fun w hw ↦ (h.1 w hw).imp fun _ ⟨hs, hne, h'⟩ ↦ ⟨hs, hne, ih hNE h'⟩
 
-/--
-Enrichment strengthens: [α]⁺ ⊨ α (Fact 1 from [aloni-2022]).
-
-For NE-free α, if a team supports the enriched formula [α]⁺, it also
-supports the original α.
--/
-theorem enrichment_strengthens_support (M : KripkeModel W Atom)
-    (φ : Formula Atom) (t : Finset W)
-    (hNE : φ.NEFree)
-    (h : support M (enrich φ) t) :
+/-- `[α]⁺ ⊨ α` for `NE`-free `α`, the support half of Fact 1. -/
+theorem support_of_support_enrich (hNE : φ.NEFree) (h : support M (enrich φ) t) :
     support M φ t :=
-  (enrichment_strengthens_both M φ hNE).1 t h
+  eval_of_eval_enrich hNE h
 
-/-- Enrichment strengthens (anti-support direction of Fact 1). -/
-theorem enrichment_strengthens_antiSupport (M : KripkeModel W Atom)
-    (φ : Formula Atom) (t : Finset W)
-    (hNE : φ.NEFree)
-    (h : antiSupport M (enrich φ) t) :
+/-- The anti-support half of Fact 1. -/
+theorem antiSupport_of_antiSupport_enrich (hNE : φ.NEFree) (h : antiSupport M (enrich φ) t) :
     antiSupport M φ t :=
-  (enrichment_strengthens_both M φ hNE).2 t h
+  eval_of_eval_enrich hNE h
 
-/-! ### Enrichment entails the original plus `NE` (Fact 2) -/
-
-/--
-Fact 2 from [aloni-2022]: [α]⁺ ⊨ α ∧ NE for NE-free α.
--/
-theorem enrichment_entails_conj_ne (M : KripkeModel W Atom)
-    (φ : Formula Atom) (t : Finset W)
-    (hNE : φ.NEFree)
-    (h : support M (enrich φ) t) :
+/-- `[α]⁺ ⊨ α ∧ NE` for `NE`-free `α` (Fact 2). -/
+theorem support_conj_ne_of_support_enrich (hNE : φ.NEFree) (h : support M (enrich φ) t) :
     support M (.conj φ .ne) t :=
-  ⟨enrichment_strengthens_support M φ t hNE h,
-   enriched_support_implies_nonempty M φ t h⟩
+  ⟨support_of_support_enrich hNE h, nonempty_of_support_enrich h⟩
 
-/-! ### Enrichment vacuous under single negation (Fact 9) -/
+/-! ### Enrichment under negation (Facts 9 and 10) -/
 
-/--
-Pragmatic enrichment is vacuous under single negation for positive formulas
-(Fact 9 from [aloni-2022]).
-
-For positive α (no negation): ¬[α]⁺ ≡ ¬α (both support and anti-support).
--/
-theorem enrichment_vacuous_under_negation (M : KripkeModel W Atom)
-    (φ : Formula Atom) (t : Finset W)
-    (hPos : φ.Positive) :
+/-- Enrichment is vacuous under a single negation, `¬[α]⁺ ≡ ¬α`, for positive `α`
+(Fact 9). -/
+theorem antiSupport_enrich_iff (hPos : φ.Positive) :
     antiSupport M (enrich φ) t ↔ antiSupport M φ t := by
   induction φ generalizing t with
-  | atom p => exact antiSupport_conj_ne_iff M (.atom p) t
+  | atom p => exact antiSupport_conj_ne M _ t
   | ne => exact Iff.rfl
   | neg _ => exact hPos.elim
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    simp only [enrich]
-    rw [antiSupport_conj_ne_iff]
-    show (∃ t₁ t₂, t₁ ∪ t₂ = t ∧ antiSupport M (enrich ψ₁) t₁ ∧
-          antiSupport M (enrich ψ₂) t₂) ↔
-         (∃ t₁ t₂, t₁ ∪ t₂ = t ∧ antiSupport M ψ₁ t₁ ∧ antiSupport M ψ₂ t₂)
-    constructor
-    · rintro ⟨t₁, t₂, hu, h₁, h₂⟩
-      exact ⟨t₁, t₂, hu, (ih₁ t₁ hPos.1).mp h₁, (ih₂ t₂ hPos.2).mp h₂⟩
-    · rintro ⟨t₁, t₂, hu, h₁, h₂⟩
-      exact ⟨t₁, t₂, hu, (ih₁ t₁ hPos.1).mpr h₁, (ih₂ t₂ hPos.2).mpr h₂⟩
+    rw [enrich, antiSupport_conj_ne]
+    exact exists₂_congr fun _ _ ↦ and_congr_right fun _ ↦ and_congr (ih₁ hPos.1) (ih₂ hPos.2)
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    simp only [enrich]
-    rw [antiSupport_conj_ne_iff]
-    show antiSupport M (enrich ψ₁) t ∧ antiSupport M (enrich ψ₂) t ↔
-         antiSupport M ψ₁ t ∧ antiSupport M ψ₂ t
-    exact ⟨fun ⟨h₁, h₂⟩ => ⟨(ih₁ t hPos.1).mp h₁, (ih₂ t hPos.2).mp h₂⟩,
-           fun ⟨h₁, h₂⟩ => ⟨(ih₁ t hPos.1).mpr h₁, (ih₂ t hPos.2).mpr h₂⟩⟩
+    rw [enrich, antiSupport_conj_ne]
+    exact and_congr (ih₁ hPos.1) (ih₂ hPos.2)
   | poss ψ ih =>
-    simp only [enrich]
-    rw [antiSupport_conj_ne_iff]
-    show (∀ w ∈ t, antiSupport M (enrich ψ) (M.access w)) ↔
-         (∀ w ∈ t, antiSupport M ψ (M.access w))
-    exact ⟨fun h w hw => (ih _ hPos).mp (h w hw),
-           fun h w hw => (ih _ hPos).mpr (h w hw)⟩
+    rw [enrich, antiSupport_conj_ne]
+    exact forall₂_congr fun _ _ ↦ ih hPos
 
-/-- Fact 9, support direction: support M (.neg (enrich φ)) t ↔ support M (.neg φ) t. -/
-theorem enrichment_vacuous_under_negation_support (M : KripkeModel W Atom)
-    (φ : Formula Atom) (t : Finset W)
-    (hPos : φ.Positive) :
-    support M (.neg (enrich φ)) t ↔ support M (.neg φ) t :=
-  enrichment_vacuous_under_negation M φ t hPos
+/-- `¬[¬φ]⁺ ≡ ¬¬[φ]⁺`, the equivalence half of Fact 10. -/
+theorem support_neg_enrich_neg_iff (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
+    support M (.neg (enrich (.neg φ))) t ↔ support M (.neg (.neg (enrich φ))) t :=
+  antiSupport_conj_ne M _ t
 
-/-! ### BSML⁺ consequence -/
+/-- Enrichment is not vacuous under a double negation, `¬¬[p]⁺ ≢ ¬¬p` (Fact 10). The empty
+team supports `¬¬p` but not `¬¬[p]⁺`. -/
+theorem not_support_neg_neg_enrich_iff (p : Atom) :
+    ¬ ∀ (M : KripkeModel W Atom) (t : Finset W),
+      support M (.neg (.neg (enrich (.atom p)))) t ↔ support M (.neg (.neg (.atom p))) t :=
+  fun h ↦ ((h ⟨fun _ ↦ ∅, fun _ _ ↦ false⟩ ∅).mpr (empty_supports_atom _ p)).2.ne_empty rfl
 
-/-- BSML+ consequence: consequence between enriched formulas.
-    α ⊨_{BSML+} β iff [α]⁺ ⊨_{BSML} [β]⁺ ([aloni-2022] §6.3.1). -/
+/-! ### BSML⁺ and BSML* (Facts 13 and 14) -/
+
+/-- BSML⁺ consequence is consequence between the enriched formulas,
+`α ⊨⁺ β iff [α]⁺ ⊨ [β]⁺`. -/
 def consequencePlus (φ ψ : Formula Atom) : Prop :=
-  ∀ (M : KripkeModel W Atom) (t : Finset W), support M (enrich φ) t → support M (enrich ψ) t
+  consequence (W := W) (enrich φ) (enrich ψ)
 
-/-! ### BSML* and BSML⁺ agree on classical positive formulas (Fact 13) -/
-
-/-- `Formula.ClassicalPositive φ` holds when `φ` has no `NE` and no negation —
-    the fragment on which BSML* and BSML+ consequence coincide. -/
+/-- A formula is classical positive when it contains neither `NE` nor negation. -/
 def Formula.ClassicalPositive (φ : Formula Atom) : Prop :=
   φ.NEFree ∧ φ.Positive
 
 instance (φ : Formula Atom) : Decidable φ.ClassicalPositive :=
   inferInstanceAs (Decidable (φ.NEFree ∧ φ.Positive))
 
-/-- For classical positive formulas, enriched support is equivalent to BSML*
-    support plus non-emptiness. The key insight is that enrichment adds NE at
-    every level, which exactly matches BSML*'s exclusion of ∅ from all
-    intermediate states (including disjunction splits). -/
-private theorem enriched_iff_star_nonempty (M : KripkeModel W Atom)
-    (φ : Formula Atom) (t : Finset W)
-    (hCP : φ.ClassicalPositive) :
+/-- On classical positive formulas, support of the enrichment is BSML* support on a non-empty
+team: the `NE` conjunct at each subformula is the exclusion of `∅` from each split. -/
+theorem support_enrich_iff_supportStar (hCP : φ.ClassicalPositive) :
     support M (enrich φ) t ↔ supportStar M φ t ∧ t.Nonempty := by
   induction φ generalizing t with
   | ne => exact hCP.1.elim
   | neg _ => exact hCP.2.elim
   | atom _ => exact Iff.rfl
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    have hψ₁ : ψ₁.ClassicalPositive := ⟨hCP.1.1, hCP.2.1⟩
-    have hψ₂ : ψ₂.ClassicalPositive := ⟨hCP.1.2, hCP.2.2⟩
-    simp only [enrich, support, eval, supportStar, evalStar]
-    constructor
-    · intro ⟨⟨h₁, h₂⟩, hne⟩
-      exact ⟨⟨((ih₁ t hψ₁).mp h₁).1, ((ih₂ t hψ₂).mp h₂).1⟩, hne⟩
-    · intro ⟨⟨h₁, h₂⟩, hne⟩
-      exact ⟨⟨(ih₁ t hψ₁).mpr ⟨h₁, hne⟩, (ih₂ t hψ₂).mpr ⟨h₂, hne⟩⟩, hne⟩
+    have ih₁ := ih₁ (t := t) ⟨hCP.1.1, hCP.2.1⟩
+    have ih₂ := ih₂ (t := t) ⟨hCP.1.2, hCP.2.2⟩
+    exact ⟨fun ⟨⟨h₁, h₂⟩, hne⟩ ↦ ⟨⟨(ih₁.mp h₁).1, (ih₂.mp h₂).1⟩, hne⟩,
+      fun ⟨⟨h₁, h₂⟩, hne⟩ ↦ ⟨⟨ih₁.mpr ⟨h₁, hne⟩, ih₂.mpr ⟨h₂, hne⟩⟩, hne⟩⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    have hψ₁ : ψ₁.ClassicalPositive := ⟨hCP.1.1, hCP.2.1⟩
-    have hψ₂ : ψ₂.ClassicalPositive := ⟨hCP.1.2, hCP.2.2⟩
-    simp only [enrich, support, eval, supportStar, evalStar]
-    constructor
-    · intro ⟨⟨t₁, t₂, hu, h₁, h₂⟩, hne⟩
-      have ⟨hs₁, hne₁⟩ := (ih₁ t₁ hψ₁).mp h₁
-      have ⟨hs₂, hne₂⟩ := (ih₂ t₂ hψ₂).mp h₂
-      exact ⟨⟨t₁, t₂, ⟨hu, hne₁, hne₂⟩, hs₁, hs₂⟩, hne⟩
-    · intro ⟨⟨t₁, t₂, ⟨hu, hne₁, hne₂⟩, hs₁, hs₂⟩, hne⟩
-      exact ⟨⟨t₁, t₂, hu, (ih₁ t₁ hψ₁).mpr ⟨hs₁, hne₁⟩,
-              (ih₂ t₂ hψ₂).mpr ⟨hs₂, hne₂⟩⟩, hne⟩
+    have ih₁ := fun t ↦ ih₁ (t := t) ⟨hCP.1.1, hCP.2.1⟩
+    have ih₂ := fun t ↦ ih₂ (t := t) ⟨hCP.1.2, hCP.2.2⟩
+    exact ⟨fun ⟨⟨t₁, t₂, hu, h₁, h₂⟩, hne⟩ ↦
+        ⟨⟨t₁, t₂, ⟨hu, ((ih₁ t₁).mp h₁).2, ((ih₂ t₂).mp h₂).2⟩, ((ih₁ t₁).mp h₁).1,
+          ((ih₂ t₂).mp h₂).1⟩, hne⟩,
+      fun ⟨⟨t₁, t₂, ⟨hu, hne₁, hne₂⟩, h₁, h₂⟩, hne⟩ ↦
+        ⟨⟨t₁, t₂, hu, (ih₁ t₁).mpr ⟨h₁, hne₁⟩, (ih₂ t₂).mpr ⟨h₂, hne₂⟩⟩, hne⟩⟩
   | poss ψ ih =>
-    have hψ : ψ.ClassicalPositive := hCP
-    simp only [enrich, support, eval, supportStar, evalStar]
-    constructor
-    · intro ⟨hposs, hne⟩
-      refine ⟨fun w hw => ?_, hne⟩
-      obtain ⟨s, hs, hne_s, hsupp⟩ := hposs w hw
-      exact ⟨s, hs, hne_s, ((ih s hψ).mp hsupp).1⟩
-    · intro ⟨hposs, hne⟩
-      refine ⟨fun w hw => ?_, hne⟩
-      obtain ⟨s, hs, hne_s, hstar⟩ := hposs w hw
-      exact ⟨s, hs, hne_s, (ih s hψ).mpr ⟨hstar, hne_s⟩⟩
+    have ih := fun s ↦ ih (t := s) hCP
+    exact ⟨fun ⟨h, hne⟩ ↦ ⟨fun w hw ↦ (h w hw).imp fun _ ⟨hs, hs', h'⟩ ↦
+          ⟨hs, hs', ((ih _).mp h').1⟩, hne⟩,
+      fun ⟨h, hne⟩ ↦ ⟨fun w hw ↦ (h w hw).imp fun _ ⟨hs, hs', h'⟩ ↦
+          ⟨hs, hs', (ih _).mpr ⟨h', hs'⟩⟩, hne⟩⟩
 
-/-- **Negative free choice in BSML*** ([aloni-2022] Fact 14):
-    `◇¬(α ∧ β) ⊨ ◇¬α` in the star system. The conjunction anti-support
-    split requires two *non-empty* parts, so an accessible team
-    anti-supporting `α ∧ β` yields a non-empty sub-team anti-supporting
-    `α`. BSML+ does not validate this inference. -/
-theorem negativeFC_star (M : KripkeModel W Atom) (α β : Formula Atom)
-    (t : Finset W) (h : supportStar M (.poss (.neg (.conj α β))) t) :
-    supportStar M (.poss (.neg α)) t := by
-  intro w hw
-  obtain ⟨s, hs, hne, hstar⟩ := h w hw
-  have hstar' : ∃ s₁ s₂ : Finset W, Team.splitsAsNE s s₁ s₂ ∧
-      antiSupportStar M α s₁ ∧ antiSupportStar M β s₂ := hstar
-  obtain ⟨s₁, s₂, ⟨hsplit, hne₁, -⟩, h₁, -⟩ := hstar'
-  exact ⟨s₁, fun x hx => hs (hsplit ▸ Finset.mem_union_left s₂ hx), hne₁, h₁⟩
+/-- BSML* and BSML⁺ consequence coincide on classical positive formulas (Fact 13). Excluding
+the empty team from the states and excluding it syntactically through `[·]⁺` agree. -/
+theorem consequenceStar_iff_consequencePlus (hφ : φ.ClassicalPositive)
+    (hψ : ψ.ClassicalPositive) :
+    consequenceStar (W := W) φ ψ ↔ consequencePlus (W := W) φ ψ where
+  mp h M t h' :=
+    have ⟨hs, hne⟩ := (support_enrich_iff_supportStar hφ).mp h'
+    (support_enrich_iff_supportStar hψ).mpr ⟨h M t hne hs, hne⟩
+  mpr h M t hne hs :=
+    ((support_enrich_iff_supportStar hψ).mp
+      (h M t ((support_enrich_iff_supportStar hφ).mpr ⟨hs, hne⟩))).1
 
-/--
-For classical positive formulas, BSML* and BSML+ consequence coincide
-(Fact 13 from [aloni-2022]).
+/-- Negative free choice holds in BSML*, `◇¬(α ∧ β) ⊨* ◇¬α` (Fact 14). A BSML* anti-support
+split of `α ∧ β` has two non-empty parts, and the part anti-supporting `α` is the witness. -/
+theorem negativeFC_star_poss (α β : Formula Atom) :
+    consequenceStar (W := W) (.poss (.neg (.conj α β))) (.poss (.neg α)) :=
+  fun M _ _ h w hw ↦
+    have ⟨s, hs, _, hstar⟩ := h w hw
+    have ⟨s₁, s₂, ⟨hsplit, hne₁, _⟩, h₁, _⟩ :
+        ∃ s₁ s₂, Team.splitsAsNE s s₁ s₂ ∧ antiSupportStar M α s₁ ∧ antiSupportStar M β s₂ :=
+      hstar
+    ⟨s₁, fun _ hx ↦ hs (hsplit ▸ Finset.mem_union_left s₂ hx), hne₁, h₁⟩
 
-If we restrict to positive formulas without NE or ¬, then ruling out the
-empty state syntactically (via [·]⁺ enrichment) is equivalent to ruling
-it out model-theoretically (via BSML* non-empty restriction).
--/
-theorem bsmlStar_iff_bsmlPlus (φ ψ : Formula Atom)
-    (hφ : φ.ClassicalPositive) (hψ : ψ.ClassicalPositive) :
-    consequenceStar (W := W) φ ψ ↔ consequencePlus (W := W) φ ψ := by
-  constructor
-  · intro hStar M t hEnrich
-    have ⟨hφ_star, hne⟩ := (enriched_iff_star_nonempty M φ t hφ).mp hEnrich
-    exact (enriched_iff_star_nonempty M ψ t hψ).mpr ⟨hStar M t hne hφ_star, hne⟩
-  · intro hPlus M t hne hφ_star
-    have hEnrich := (enriched_iff_star_nonempty M φ t hφ).mpr ⟨hφ_star, hne⟩
-    exact ((enriched_iff_star_nonempty M ψ t hψ).mp (hPlus M t hEnrich)).1
-
-/-! ### Enrichment not vacuous under double negation (Fact 10) -/
-
-/--
-Pragmatic enrichment is NOT vacuous under double negation
-(Fact 10 from [aloni-2022]).
-
-While Fact 9 shows ¬[α]⁺ ≡ ¬α for positive α (enrichment is vacuous under
-single negation), under **double** negation enrichment has a non-trivial effect:
-`¬¬[p]⁺ = ¬¬(p ∧ NE) = p ∧ NE ≢ p = ¬¬p`.
-
-The counterexample is the empty team: ∅ vacuously supports p but does not
-support p ∧ NE (the NE conjunct fails).
--/
-theorem enrichment_not_vacuous_under_double_negation :
-    ∃ (W : Type) (_ : DecidableEq W) (_ : Fintype W)
-      (M : KripkeModel W String) (t : Finset W),
-      -- ¬¬p holds on ∅ (by DNE, = vacuous support of p)
-      support M (.neg (.neg (.atom "p"))) t ∧
-      -- but ¬¬[p]⁺ fails on ∅ (= p ∧ NE requires non-emptiness)
-      ¬support M (.neg (.neg (enrich (.atom "p")))) t := by
-  refine ⟨Bool, inferInstance, inferInstance,
-    ⟨fun _ => Finset.univ, fun _ _ => true⟩, ∅, ?_, ?_⟩
-  · -- support M (¬¬p) ∅ = support M p ∅ = vacuously true
-    intro w hw; exact absurd hw (by simp)
-  · -- ¬support M (¬¬(p ∧ NE)) ∅ = ¬(∅.Nonempty) (NE fails on ∅)
-    intro h; exact Finset.not_nonempty_empty h.2
+/-- The `□` form of negative free choice in BSML*, `¬□(α ∧ β) ⊨* ¬□α` (Fact 14), by the
+duality `□φ := ¬◇¬φ`. -/
+theorem negativeFC_star_nec (α β : Formula Atom) :
+    consequenceStar (W := W) (.neg (Formula.nec (.conj α β))) (.neg (Formula.nec α)) :=
+  negativeFC_star_poss α β
 
 end BSML
