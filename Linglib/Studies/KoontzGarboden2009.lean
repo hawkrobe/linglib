@@ -205,7 +205,7 @@ theorem not_licensesBySelf_inchoative :
 
 /-- The Monotonicity Hypothesis (8) holds of a word formation operation on event templates when
 the output keeps every kind of operator the input has. -/
-def MonotonicityHypothesis (f : Template → Option Template) : Prop :=
+def MonotonicityHypothesis (f : Template .event → Option (Template .event)) : Prop :=
   ∀ t t', f t = some t' → t.kinds ⊆ t'.kinds
 
 /-- The inchoativization rule of [grimshaw-1982] ((95)) keeps the caused subevent, stripping
@@ -215,7 +215,7 @@ theorem not_monotonicityHypothesis_caused : ¬ MonotonicityHypothesis Template.c
 
 /-- Reflexivization on templates identifies the causer with the undergoer, so it applies
 exactly to templates with CAUSE and changes no operator. -/
-def reflexivizeTemplate (t : Template) : Option Template :=
+def reflexivizeTemplate (t : Template .event) : Option (Template .event) :=
   if t.HasCause then some t else none
 
 /-- Anticausativization as reflexivization satisfies the hypothesis. -/

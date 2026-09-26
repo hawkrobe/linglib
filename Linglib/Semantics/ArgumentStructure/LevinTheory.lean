@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.LevinClass
-public import Linglib.Semantics.ArgumentStructure.EventStructure
 public import Linglib.Semantics.Root.Kinds
 
 /-!
@@ -11,13 +10,12 @@ The root-entailment signature of [beavers-koontz-garboden-2020] that each class 
 [levin-1993] realizes, for the classes the literature has analysed; `none` for the rest.
 `LevinClass.RootEntails` reads a single entailment off the signature, and
 `LevinClass.RootPredictsCausative` is the root hypothesis for the causative alternation, read
-off the signature's template.
+off the signature.
 
 ## References
 
 * [beavers-koontz-garboden-2020]
 * [levin-1993]
-* [rappaport-hovav-levin-1998]
 -/
 
 @[expose] public section
@@ -199,12 +197,12 @@ the root entails a caused change: the destroy and murder verbs of
 def LevinClass.causativeExceptions : Finset LevinClass := {.destroy, .murder}
 
 /-- The root hypothesis: a class alternates between causative and inchoative when its root
-entails a caused change and no manner, so that its template is causative
-([rappaport-hovav-levin-1998]), unless the root entails its causer (`causativeExceptions`). A
-hypothesis to be measured against Part II of [levin-1993], not data. -/
+entails a caused change and no manner, unless the root entails its causer
+(`causativeExceptions`). A hypothesis to be measured against Part II of [levin-1993], not
+data. -/
 def LevinClass.RootPredictsCausative (c : LevinClass) : Prop :=
-  (∃ s ∈ c.rootEntailments, (EventStructure.Template.ofKinds s).caused.isSome ∧
-      Root.Kind.manner ∉ s) ∧ c ∉ LevinClass.causativeExceptions
+  (∃ s ∈ c.rootEntailments, Root.Kind.cause ∈ s ∧ Root.Kind.manner ∉ s) ∧
+    c ∉ LevinClass.causativeExceptions
 
 instance (c : LevinClass) : Decidable c.RootPredictsCausative :=
   inferInstanceAs (Decidable ((∃ s ∈ _, _ ∧ _) ∧ _))

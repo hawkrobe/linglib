@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Root.Defs
+public import Linglib.Semantics.ArgumentStructure.EventStructure.Interpretation
 
 /-!
 # Event structure templates
@@ -14,28 +14,41 @@ root, which tells it apart from the other members of the class. The basic invent
 achievement `[BECOME [x ⟨STATE⟩]]` and the accomplishment
 `[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]`.
 
-The primitives are the four kinds of entailment of the root typology of
-[beavers-koontz-garboden-2020], whose collocational restrictions mirror the conditions on
-possible templates, so `Template.kinds` reads a template's primitives as a root signature. The
-diagnostics `HasCause` and `HasResultState` are membership in it, and a root's template is the
-canonical template of its signature.
+Templates are sorted like the domain of an `Interpretation`: `BECOME` turns a state template into
+an event template and `CAUSE` relates two event templates. `Template.denote` interprets a
+template with a root in its slots, the root's state predicate at the state and its manner at
+`ACT`, through the heads `vBecome` and `vCause`. The primitives are the four kinds of entailment
+of the root typology of [beavers-koontz-garboden-2020], so `Template.kinds` reads a template's
+primitives as a root signature, and membership in it is exactly what every denotation of the
+template entails: a change for `HasResultState`, a causal relation for `HasCause`. A template's
+denotation entails that each of its subterms is realized, which orders the readings of a
+modifier such as *again* attached at different subterms.
 
 ## Main definitions
 
-* `Template`: the terms, with `Template.achievement` and `Template.accomplishment`
-* `Template.kinds`: the kinds of entailment a template's primitives contribute
-* `Template.HasCause`, `Template.HasResultState`: the template has `CAUSE`, or `BECOME`
+* `Eventuality`, `Template`: the two sorts, and the sorted terms, with `Template.achievement`
+  and `Template.accomplishment`
+* `Template.denote`: the denotation in an interpretation
+* `Template.kinds`, `Template.HasCause`, `Template.HasResultState`
 * `Template.causing`, `Template.caused`: the two subevents of a causative template
-* `Template.ofKinds`, `Semantics.Root.template`: the canonical template of a signature, and of a
-  root
+* `Template.IsSubterm`
+
+## Main results
+
+* `Template.hasResultState_iff`, `Template.hasCause_iff`: the diagnostics are the entailments
+  of the denotation
+* `Template.exists_denote_of_isSubterm`: a template's subterms are realized with its undergoer
+* `Template.denote_cause_act_top`: with the manner unconstrained, the accomplishment is `vCause`
 
 ## Implementation notes
 
-`CAUSE` relates a causing subevent to a caused one. The inventory's second accomplishment,
-`[x CAUSE [BECOME [y ⟨STATE⟩]]]`, has an individual causer, and is read here as the first, with
-an action by the causer as the causing subevent. Participants are not represented: a template is
-the shape of an event structure, and the interpretation of its primitives is
-`EventStructure.Interpretation`.
+A template relates two participants, the actor `y`, which is the effector of an action and of a
+causing subevent, and the undergoer `x`, of which the state holds. The caused subevent of
+`CAUSE` is predicated of the undergoer, which is its actor when the caused subevent is itself
+an action or a causation. The inventory's second accomplishment,
+`[x CAUSE [BECOME [y ⟨STATE⟩]]]`, whose causer is an individual, is the accomplishment whose
+manner is unconstrained, which is the `vcause` of [beavers-koontz-garboden-2020]. The carriers
+of the two sorts share a universe, so that the type of a denotation can depend on the sort.
 
 ## References
 
@@ -49,86 +62,211 @@ namespace ArgumentStructure.EventStructure
 
 open Semantics
 
-/-- An event structure template, a term over the primitive predicates. -/
-inductive Template where
-  /-- `[x ⟨STATE⟩]`. -/
+universe u
+
+/-- The two sorts of eventuality a template describes. -/
+inductive Eventuality where
   | state
-  /-- `[x ACT⟨MANNER⟩]`, the activity. -/
-  | act
-  /-- `[BECOME t]`. -/
-  | become (t : Template)
-  /-- `[causing CAUSE caused]`. -/
-  | cause (causing caused : Template)
+  | event
   deriving DecidableEq, Repr
+
+/-- The carrier of a sort, the states or the events of an interpretation. -/
+abbrev Eventuality.Carrier (State Event : Type u) : Eventuality → Type u
+  | .state => State
+  | .event => Event
+
+instance {State Event : Type u} [Nonempty State] [Nonempty Event] (σ : Eventuality) :
+    Nonempty (σ.Carrier State Event) := by
+  cases σ <;> assumption
+
+/-- An event structure template, a sorted term over the primitive predicates. -/
+inductive Template : Eventuality → Type where
+  /-- `[x ⟨STATE⟩]`. -/
+  | state : Template .state
+  /-- `[x ACT⟨MANNER⟩]`, the activity. -/
+  | act : Template .event
+  /-- `[BECOME t]`. -/
+  | become (t : Template .state) : Template .event
+  /-- `[causing CAUSE caused]`. -/
+  | cause (causing caused : Template .event) : Template .event
 
 namespace Template
 
+variable {σ τ : Eventuality}
+
 /-- The achievement `[BECOME [x ⟨STATE⟩]]`. -/
-def achievement : Template := become state
+def achievement : Template .event := become state
 
 /-- The accomplishment `[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]`. -/
-def accomplishment : Template := cause act achievement
+def accomplishment : Template .event := cause act achievement
 
 /-- The kinds of entailment a template's primitives contribute: a state, the manner of an
 action, the change of `BECOME` and the causation of `CAUSE`. -/
-def kinds : Template → Root.Kinds
-  | state => {.state}
-  | act => {.manner}
-  | become t => insert .result t.kinds
-  | cause c e => insert .cause (c.kinds ∪ e.kinds)
+def kinds : {σ : Eventuality} → Template σ → Root.Kinds
+  | _, state => {.state}
+  | _, act => {.manner}
+  | _, become t => insert .result t.kinds
+  | _, cause c e => insert .cause (c.kinds ∪ e.kinds)
 
 /-- The template has `CAUSE`. -/
-def HasCause (t : Template) : Prop := Root.Kind.cause ∈ t.kinds
+def HasCause (t : Template σ) : Prop := Root.Kind.cause ∈ t.kinds
 
 /-- The template has `BECOME`, and so a result state. -/
-def HasResultState (t : Template) : Prop := Root.Kind.result ∈ t.kinds
+def HasResultState (t : Template σ) : Prop := Root.Kind.result ∈ t.kinds
 
-instance (t : Template) : Decidable t.HasCause := inferInstanceAs (Decidable (_ ∈ _))
+instance (t : Template σ) : Decidable t.HasCause := inferInstanceAs (Decidable (_ ∈ _))
 
-instance (t : Template) : Decidable t.HasResultState := inferInstanceAs (Decidable (_ ∈ _))
+instance (t : Template σ) : Decidable t.HasResultState := inferInstanceAs (Decidable (_ ∈ _))
 
 /-- The causing subevent of a causative template. -/
-def causing : Template → Option Template
+def causing : Template .event → Option (Template .event)
   | cause c _ => some c
   | _ => none
 
 /-- The caused subevent of a causative template. -/
-def caused : Template → Option Template
+def caused : Template .event → Option (Template .event)
   | cause _ e => some e
   | _ => none
 
-/-! ### The canonical template of a root -/
+/-- `u` occurs in `t`. -/
+inductive IsSubterm : {α β : Eventuality} → Template α → Template β → Prop
+  | refl {α : Eventuality} (t : Template α) : IsSubterm t t
+  | become {α : Eventuality} {u : Template α} {t : Template .state} :
+      IsSubterm u t → IsSubterm u (become t)
+  | causing {α : Eventuality} {u : Template α} {c e : Template .event} :
+      IsSubterm u c → IsSubterm u (cause c e)
+  | caused {α : Eventuality} {u : Template α} {c e : Template .event} :
+      IsSubterm u e → IsSubterm u (cause c e)
 
-/-- The canonical template of a kind signature: an accomplishment for a caused change, an
-achievement for a change, an activity for a manner, and otherwise a state. -/
-def ofKinds (σ : Root.Kinds) : Template :=
-  if Root.Kind.cause ∈ σ then accomplishment
-  else if Root.Kind.result ∈ σ then achievement
-  else if Root.Kind.manner ∈ σ then act
-  else state
+/-! ### Denotation -/
 
-theorem ofKinds_hasCause_iff (σ : Root.Kinds) : (ofKinds σ).HasCause ↔ Root.Kind.cause ∈ σ := by
-  unfold ofKinds
-  split_ifs <;> simp_all [HasCause, kinds, accomplishment, achievement]
+section Denotation
 
-/-- On a well-formed signature, whose `cause` brings its `result`, the canonical template has a
-result state iff the signature has a change. -/
-theorem ofKinds_hasResultState_iff {σ : Root.Kinds} (h : σ.WellFormed) :
-    (ofKinds σ).HasResultState ↔ Root.Kind.result ∈ σ := by
-  have hcr : Root.Kind.cause ∈ σ → Root.Kind.result ∈ σ := h Root.Kind.LE.result_cause
-  unfold ofKinds
-  split_ifs <;> simp_all [HasResultState, kinds, accomplishment, achievement]
+variable {Entity : Type*} {State Event : Type u} (M : Interpretation Entity State Event)
+  (P : Entity → State → Prop) (Q : Event → Prop)
+
+/-- The denotation of a template in `M`, with a root's state predicate `P` at the state and its
+manner `Q` at `ACT`: a relation between the actor, the undergoer and an eventuality of the
+template's sort. -/
+def denote : {σ : Eventuality} → Template σ → Entity → Entity → σ.Carrier State Event → Prop
+  | _, state, _, x, s => P x s
+  | _, act, y, _, v => M.effector y v ∧ Q v
+  | _, become t, y, x, e => M.vBecome (fun x ↦ denote t y x) x e
+  | _, cause c t, y, x, v => denote c y x v ∧ M.vCause (denote t x x) y v
+
+variable {M P Q} {y x : Entity}
+
+/-- With the manner unconstrained, the accomplishment is the head `vCause` over its caused
+subevent: an event whose effector is the causer. -/
+theorem denote_cause_act_top {t : Template .event} {v : Event} :
+    (cause act t).denote M P ⊤ y x v ↔ M.vCause (t.denote M P ⊤ x x) y v :=
+  ⟨And.right, fun h ↦ ⟨⟨let ⟨_, he, _⟩ := h; he, trivial⟩, h⟩⟩
+
+/-- A template's denotation entails that each of its subterms is realized, with the same
+undergoer. -/
+theorem exists_denote_of_isSubterm {u : Template τ} {t : Template σ} (hu : u.IsSubterm t)
+    {v : σ.Carrier State Event} (h : t.denote M P Q y x v) :
+    ∃ y' w, u.denote M P Q y' x w := by
+  induction hu generalizing y with
+  | refl => exact ⟨y, v, h⟩
+  | become _ ih => obtain ⟨_, _, hs⟩ := h; exact ih hs
+  | causing _ ih => exact ih h.1
+  | caused _ ih => obtain ⟨_, _, _, _, he⟩ := h; exact ih he
+
+/-- A template with `BECOME` describes only eventualities that involve a change. -/
+theorem exists_become_of_denote {t : Template σ} (ht : t.HasResultState)
+    {v : σ.Carrier State Event} (h : t.denote M P Q y x v) : ∃ s e, M.become s e := by
+  induction t generalizing y x with
+  | state | act => simp [HasResultState, kinds] at ht
+  | become _ _ => obtain ⟨s, hb, _⟩ := h; exact ⟨s, _, hb⟩
+  | cause c e ihc ihe =>
+    simp only [HasResultState, kinds, Finset.mem_insert, Finset.mem_union, reduceCtorEq,
+      false_or] at ht
+    obtain ⟨hc, _, _, _, he⟩ := h
+    exact ht.elim (ihc · hc) (ihe · he)
+
+/-- A template with `CAUSE` describes only eventualities that involve a causal relation. -/
+theorem exists_cause_of_denote {t : Template σ} (ht : t.HasCause)
+    {v : σ.Carrier State Event} (h : t.denote M P Q y x v) : ∃ v e, M.cause v e := by
+  induction t generalizing y x with
+  | state | act => simp [HasCause, kinds] at ht
+  | become t ih =>
+    simp only [HasCause, kinds, Finset.mem_insert, reduceCtorEq, false_or] at ht
+    obtain ⟨_, _, hs⟩ := h
+    exact ih ht hs
+  | cause _ _ _ _ => obtain ⟨_, _, _, hc, _⟩ := h; exact ⟨_, _, hc⟩
+
+end Denotation
+
+/-! ### Completeness of the diagnostics -/
+
+section Completeness
+
+variable {Entity : Type*} {State Event : Type u}
+
+/-- The interpretation in which every eventuality has every effector and causes every other,
+and nothing gives rise to a state. -/
+private def noChange (Entity : Type*) (State Event : Type u) :
+    Interpretation Entity State Event where
+  become _ _ := False
+  cause _ _ := True
+  effector _ _ := True
+
+/-- The interpretation in which every eventuality has every effector and gives rise to every
+state, and nothing causes anything. -/
+private def noCause (Entity : Type*) (State Event : Type u) :
+    Interpretation Entity State Event where
+  become _ _ := True
+  cause _ _ := False
+  effector _ _ := True
+
+private theorem denote_noChange [Nonempty Event] {t : Template σ} (ht : ¬ t.HasResultState)
+    (y x : Entity) (v : σ.Carrier State Event) :
+    t.denote (noChange Entity State Event) ⊤ ⊤ y x v := by
+  induction t generalizing y x with
+  | state => trivial
+  | act => exact ⟨trivial, trivial⟩
+  | become _ _ => exact absurd (Finset.mem_insert_self _ _) ht
+  | cause c e ihc ihe =>
+    simp only [HasResultState, kinds, Finset.mem_insert, Finset.mem_union, reduceCtorEq,
+      false_or, not_or] at ht
+    exact ⟨ihc ht.1 y x v, Classical.arbitrary Event, trivial, trivial, ihe ht.2 x x _⟩
+
+private theorem denote_noCause [Nonempty State] {t : Template σ} (ht : ¬ t.HasCause)
+    (y x : Entity) (v : σ.Carrier State Event) :
+    t.denote (noCause Entity State Event) ⊤ ⊤ y x v := by
+  induction t generalizing y x with
+  | state => trivial
+  | act => exact ⟨trivial, trivial⟩
+  | become t ih =>
+    simp only [HasCause, kinds, Finset.mem_insert, reduceCtorEq, false_or] at ht
+    exact ⟨Classical.arbitrary State, trivial, ih ht y x _⟩
+  | cause _ _ _ _ => exact absurd (Finset.mem_insert_self _ _) ht
+
+variable [Nonempty Entity] [Nonempty State] [Nonempty Event] {t : Template σ}
+
+/-- A template has `BECOME` iff every denotation of it, in every interpretation, involves a
+change. -/
+theorem hasResultState_iff :
+    t.HasResultState ↔ ∀ (M : Interpretation Entity State Event) P Q y x
+      (v : σ.Carrier State Event), t.denote M P Q y x v → ∃ s e, M.become s e := by
+  refine ⟨fun ht _ _ _ _ _ _ ↦ exists_become_of_denote ht, fun h ↦ by_contra fun ht ↦ ?_⟩
+  obtain ⟨_, _, hb⟩ := h _ _ _ (Classical.arbitrary _) (Classical.arbitrary _)
+    (Classical.arbitrary _) (denote_noChange ht _ _ _)
+  exact hb
+
+/-- A template has `CAUSE` iff every denotation of it, in every interpretation, involves a
+causal relation. -/
+theorem hasCause_iff :
+    t.HasCause ↔ ∀ (M : Interpretation Entity State Event) P Q y x
+      (v : σ.Carrier State Event), t.denote M P Q y x v → ∃ v e, M.cause v e := by
+  refine ⟨fun ht _ _ _ _ _ _ ↦ exists_cause_of_denote ht, fun h ↦ by_contra fun ht ↦ ?_⟩
+  obtain ⟨_, _, hc⟩ := h _ _ _ (Classical.arbitrary _) (Classical.arbitrary _)
+    (Classical.arbitrary _) (denote_noCause ht _ _ _)
+  exact hc
+
+end Completeness
 
 end Template
-
-/-- A root's template, the canonical template of its collocational closure. -/
-def _root_.Semantics.Root.template (r : Root) : Template :=
-  Template.ofKinds r.closedKinds
-
-/-- A root's template has a result state iff the root entails a change
-([beavers-koontz-garboden-2020]'s result entailment). -/
-theorem _root_.Semantics.Root.template_hasResultState_iff (r : Root) :
-    r.template.HasResultState ↔ Root.Kind.result ∈ r.closedKinds :=
-  Template.ofKinds_hasResultState_iff r.closedKinds_wellFormed
 
 end ArgumentStructure.EventStructure
