@@ -24,12 +24,16 @@ rank by scale value. From the third chapter it takes the theory of choices among
 decomposable preference structure couples a choice function over gambles with one over chance
 events, the events fall into at most three classes of subjective likelihood, exactly three under the
 complementation axioms, and the choice function over events is constant across classes. From the
-fourth chapter it takes the alpha and beta learning operators on response strengths. An alpha-model
-matrix changes the total strength by a fixed proportion exactly when each of its columns sums to
-that proportion, so its probability operator is linear, and with two alternatives it is the linear
-operator of Bush and Mosteller. The independence-of-unit condition makes the beta model multiply
-each strength by a constant; its probability operator applies the same multipliers to the
-probabilities and renormalizes, so the beta operators commute.
+fourth chapter it takes the alpha, beta, and gamma learning operators on response strengths. An
+alpha-model matrix changes the total strength by a fixed proportion exactly when each of its columns
+sums to that proportion, so its probability operator is linear, and with two alternatives it is the
+linear operator of Bush and Mosteller. The independence-of-unit condition makes the beta model
+multiply each strength by a constant; its probability operator applies the same multipliers to the
+probabilities and renormalizes, so the beta operators commute. The gamma model adds a constant to
+each strength, which makes its probability operator no function of the probabilities. In a partial
+reinforcement experiment Theorem 14 fixes the product of the strengths of the two gambles, and an
+alpha or gamma operator that keeps the product fixed either confines the strengths to a few values
+or does not learn, while a beta operator that keeps it fixed is a simple one.
 
 ## Implementation notes
 
@@ -50,8 +54,10 @@ conditions, and `responseProb` is the ratio rule on a strength vector, the state
 
 ## TODO
 
-The gamma model (§4.E), the comparison of the three models on partial reinforcement (§4.F), and
-the asymptotic theory of the beta model (§4.G) are not formalized.
+The asymptotic theory of the beta model (§4.G) is not formalized. The derivation of the gamma
+form on pp. 105–106 applies the independence-of-unit condition to `gᵢ` without rescaling the
+bound `v_M`, which read literally would force `γᵢ = 0` as well, so the form `βᵢ·v + γᵢ` is taken
+as given.
 
 ## References
 
@@ -2593,7 +2599,7 @@ section Learning
 open Finset Matrix
 
 /-!
-### §4: Response-strength operators (pp. 93–102)
+### §4: Response-strength operators (pp. 93–106)
 
 A learning event changes the vector `v` of response strengths by an operator, and the choice
 probabilities follow from the new strengths by the ratio rule (`responseProb`). The alpha model
@@ -2601,7 +2607,8 @@ probabilities follow from the new strengths by the ratio rule (`responseProb`). 
 proportion; its probability operator is then linear, and for two alternatives it is the linear
 operator of Bush and Mosteller. The beta model (§4.D) lets each strength change on its own,
 which by the independence-of-unit condition makes the operator a positive multiplier on each
-strength; its probability operator is nonlinear but commutative.
+strength; its probability operator is nonlinear but commutative. The gamma model (§4.E) adds a
+constant to each strength, and its probability operator is no function of the probabilities.
 -/
 
 variable {A : Type*} [Fintype A]
@@ -2725,6 +2732,183 @@ theorem responseProb_mul_fin_two (β : Fin 2 → ℝ) (hβ : β 1 ≠ 0) (v : Fi
   congr 2
   ext i; fin_cases i <;> simp [mul_div_cancel₀ _ hβ]
 
+/-! #### §4.E: The gamma model -/
+
+/-- The additive constant of the gamma model `vᵢ ↦ βᵢ·vᵢ + γᵢ` keeps its probability operator from
+being a function of the probabilities, so path independence fails at the level of the
+probabilities (p. 106). -/
+theorem not_exists_responseProb_gamma [Nontrivial A] {β γ : A → ℝ} (hβ : ∀ i, 0 < β i)
+    (hγ : ∀ i, 0 ≤ γ i) (hγ₀ : γ ≠ 0) :
+    ¬∃ F : (A → ℝ) → A → ℝ, ∀ v : A → ℝ, (∀ i, 0 < v i) →
+      responseProb (β * v + γ) = F (responseProb v) := by
+  classical
+  rintro ⟨F, hF⟩
+  obtain ⟨i, hi⟩ : ∃ i, γ i ≠ 0 := by
+    by_contra! h
+    exact hγ₀ (funext h)
+  obtain ⟨j, hj⟩ := exists_ne i
+  have pos (w : A → ℝ) (hw : ∀ k, 0 < w k) : 0 < ∑ k, (β * w + γ) k :=
+    sum_pos (fun k _ ↦ by simp only [Pi.add_apply, Pi.mul_apply]; nlinarith [hβ k, hw k, hγ k])
+      univ_nonempty
+  have key (v : A → ℝ) (hv : ∀ k, 0 < v k) : β i * v i * γ j = γ i * (β j * v j) := by
+    have hv2 (k : A) : 0 < ((2 : ℝ) • v) k := by simp [hv k]
+    have e : responseProb (β * ((2 : ℝ) • v) + γ) = responseProb (β * v + γ) := by
+      rw [hF _ hv2, hF _ hv, responseProb_smul two_ne_zero]
+    have ei := congrFun e i
+    have ej := congrFun e j
+    simp only [responseProb_apply] at ei ej
+    rw [div_eq_div_iff (pos _ hv2).ne' (pos _ hv).ne'] at ei ej
+    have : (β * ((2 : ℝ) • v) + γ) i * (β * v + γ) j = (β * ((2 : ℝ) • v) + γ) j * (β * v + γ) i :=
+      mul_right_cancel₀ (pos _ hv).ne'
+        (by linear_combination (β * v + γ) j * ei - (β * v + γ) i * ej)
+    simp only [Pi.add_apply, Pi.mul_apply, Pi.smul_apply, smul_eq_mul] at this
+    linear_combination this
+  have h₁ := key 1 fun _ ↦ one_pos
+  have h₂ := key (Function.update 1 i 2) fun k ↦ by
+    rcases eq_or_ne k i with rfl | hk <;> simp [*]
+  simp only [Pi.one_apply, mul_one, Function.update_self, Function.update_of_ne hj] at h₁ h₂
+  have hγj : γ j = 0 := by nlinarith [hβ i]
+  exact hi (by nlinarith [hβ j])
+
 end Learning
+
+section PartialReinforcement
+
+open Finset Matrix Polynomial
+
+/-!
+#### §4.F: Partial reinforcement (pp. 107–110)
+
+In a partial reinforcement experiment the organism chooses between the gambles `aρb` and `aρ̄b`,
+with `a` a reward and `b` nothing. Theorem 14 makes the product `K` of their strengths the same
+for every event, and if `K` does not change with learning, a learning operator must carry each
+point of the hyperbola `v(aρb)·v(aρ̄b) = K` back onto it. Writing `x` for `v(aρb)`, this pins `x`
+to the roots of a polynomial unless the operator is degenerate: for the alpha model either there
+is no learning or the strengths swap on every trial, the gamma model either stops learning or
+reduces to the beta model, and the beta model needs only `β₁·β₂ = 1`.
+-/
+
+variable {A E : Type*} [DecidableEq A] [DecidableEq E] [BooleanAlgebra E] [Nontrivial E]
+
+private theorem encard_le_of_isRoot {S : Set ℝ} {p : ℝ[X]} (hp : p ≠ 0) {n : ℕ}
+    (hn : p.natDegree ≤ n) (h : ∀ x ∈ S, p.IsRoot x) : S.encard ≤ n :=
+  calc S.encard ≤ (p.roots.toFinset : Set ℝ).encard :=
+        Set.encard_le_encard fun x hx ↦ by simpa [mem_roots hp] using h x hx
+    _ ≤ n := by
+      rw [Set.encard_coe_eq_coe_finsetCard]
+      exact_mod_cast (Multiset.toFinset_card_le _).trans ((card_roots' p).trans hn)
+
+/-- With `a` preferred to `b`, theorem 14 with `d = a` and `c = b` makes the product of the
+strengths of `aρb` and `aρ̄b` the same for every event `ρ` (p. 108). -/
+theorem DecomposablePreference.strength_mul_strength_compl {dp : DecomposablePreference A E}
+    (ax3 : dp.Complementation) {a b : A} {ρ σ : E} {v : Alternative A E → ℝ} (hab : a ≠ b)
+    (hρσ : ρ ≠ σ) (ha : dp.alt a b = 1)
+    (hv : dp.P.BinaryRatioScaleOn
+      {.inl ⟨a, ρ, b⟩, .inl ⟨a, σ, b⟩, .inl ⟨b, ρ, a⟩, .inl ⟨b, σ, a⟩,
+        .inl ⟨a, ρᶜ, b⟩, .inl ⟨a, σᶜ, b⟩} v) :
+    v (.inl ⟨a, ρ, b⟩) * v (.inl ⟨a, ρᶜ, b⟩) = v (.inl ⟨a, σ, b⟩) * v (.inl ⟨a, σᶜ, b⟩) :=
+  DecomposablePreference.theorem14 ax3 hab hab.symm hρσ (fun h ↦ hab h.1) ha ha hv
+
+/-- An alpha-model operator that keeps the product `K` of the two strengths fixed either confines
+`v(aρb)` to at most four values, the roots of a quartic, or is the identity or the swap of the
+two strengths, neither of which learns (pp. 108–109). -/
+theorem ProportionalChange.encard_le_four_or {M : Matrix (Fin 2) (Fin 2) ℝ} {a : ℝ}
+    (h : ProportionalChange M a) (hM : ∀ i j, 0 ≤ M i j) {K : ℝ} (hK : 0 < K) :
+    {x : ℝ | 0 < x ∧ (M *ᵥ ![x, K / x]) 0 * (M *ᵥ ![x, K / x]) 1 = K}.encard ≤ 4 ∨
+      M = 1 ∨ M = !![0, 1; 1, 0] := by
+  have hcol := proportionalChange_iff.1 h
+  simp only [Fin.sum_univ_two] at hcol
+  have h₀ := hcol 0
+  have h₁ := hcol 1
+  by_cases hc : M 0 0 * M 1 0 = 0 ∧ M 0 1 * M 1 1 = 0 ∧ M 1 0 * M 0 1 + M 0 0 * M 1 1 = 1
+  · obtain ⟨h4, h0, h2⟩ := hc
+    right
+    rcases mul_eq_zero.1 h4 with h00 | h10
+    · have h11 : M 1 1 = 0 := by
+        rcases mul_eq_zero.1 h0 with h | h
+        · simp [h, h00] at h2
+        · exact h
+      have h01 : M 0 1 = 1 := by nlinarith [hM 0 1]
+      right
+      ext i j
+      fin_cases i <;> fin_cases j <;> simp <;> linarith
+    · have h01 : M 0 1 = 0 := by
+        rcases mul_eq_zero.1 h0 with h | h
+        · exact h
+        · simp [h, h10] at h2
+      have h00 : M 0 0 = 1 := by nlinarith [hM 0 0]
+      left
+      ext i j
+      fin_cases i <;> fin_cases j <;> simp <;> linarith
+  · left
+    refine encard_le_of_isRoot (p := C (M 0 0 * M 1 0) * X ^ 4 +
+      C ((M 1 0 * M 0 1 + M 0 0 * M 1 1 - 1) * K) * X ^ 2 + C (M 0 1 * M 1 1 * K ^ 2))
+      (fun hp ↦ hc ?_) (by compute_degree) ?_
+    · have c4 := congrArg (coeff · 4) hp
+      have c2 := congrArg (coeff · 2) hp
+      have c0 := congrArg (coeff · 0) hp
+      simp only [coeff_add, coeff_C_mul, coeff_X_pow, coeff_C, coeff_zero] at c4 c2 c0
+      norm_num at c4 c2 c0
+      exact ⟨mul_eq_zero.2 c4, by simpa [hK.ne'] using c0, by
+        rcases c2 with c2 | c2 <;> [linarith; exact absurd c2 hK.ne']⟩
+    · rintro x ⟨hx, hxK⟩
+      simp only [mulVec, dotProduct, Fin.sum_univ_two, Matrix.cons_val_zero,
+        Matrix.cons_val_one] at hxK
+      simp only [IsRoot, eval_add, eval_mul, eval_C, eval_pow, eval_X]
+      field_simp at hxK
+      linear_combination hxK
+
+/-- A beta-model operator that keeps the product of the two strengths fixed has
+`β₁·β₂ = 1`, and is then the simple beta model with `β = β₁²` (p. 109). -/
+theorem responseProb_mul_eq_of_mul_eq {β : Fin 2 → ℝ} {K x : ℝ} (hK : 0 < K) (hx : 0 < x)
+    (h : β 0 * x * (β 1 * (K / x)) = K) (v : Fin 2 → ℝ) :
+    responseProb (β * v) = responseProb (Function.update (1 : Fin 2 → ℝ) 0 (β 0 ^ 2) * v) := by
+  have hβ : β 0 * β 1 = 1 := by
+    field_simp at h
+    nlinarith
+  have h₁ := right_ne_zero_of_mul_eq_one hβ
+  rw [responseProb_mul_fin_two β h₁, show β 0 / β 1 = β 0 ^ 2 by
+    rw [div_eq_iff h₁]; linear_combination -β 0 * hβ]
+
+/-- A gamma-model operator `vᵢ ↦ βᵢ·vᵢ + γᵢ` that keeps the product `K` of the two strengths
+fixed either confines `v(aρb)` to at most two values, the roots of a quadratic, or holds both
+strengths constant, or is a beta-model operator with `β₁ = 1/β₂` (p. 110). -/
+theorem encard_le_two_or_gamma {β γ : Fin 2 → ℝ} {K : ℝ} (hK : 0 < K) :
+    {x : ℝ | 0 < x ∧ (β 0 * x + γ 0) * (β 1 * (K / x) + γ 1) = K}.encard ≤ 2 ∨
+      (β = 0 ∧ γ 0 * γ 1 = K) ∨ (γ = 0 ∧ β 0 * β 1 = 1) := by
+  by_cases hc : β 0 * γ 1 = 0 ∧ (β 0 * β 1 - 1) * K + γ 0 * γ 1 = 0 ∧ γ 0 * β 1 = 0
+  · obtain ⟨hA, hB, hC⟩ := hc
+    right
+    rcases eq_or_ne (β 0) 0 with h0 | h0
+    · have hγ : γ 0 * γ 1 = K := by simp [h0] at hB; linarith
+      have h1 : β 1 = 0 := by
+        rcases mul_eq_zero.1 hC with h | h
+        · simp [h] at hγ; linarith
+        · exact h
+      exact .inl ⟨funext fun i ↦ by fin_cases i <;> simp [h0, h1], hγ⟩
+    · have hγ1 : γ 1 = 0 := (mul_eq_zero.1 hA).resolve_left h0
+      have hβ : β 0 * β 1 = 1 := by
+        simp only [hγ1, mul_zero, add_zero] at hB
+        rcases mul_eq_zero.1 hB with h | h
+        · linarith
+        · exact absurd h hK.ne'
+      have hγ0 : γ 0 = 0 := (mul_eq_zero.1 hC).resolve_right (right_ne_zero_of_mul_eq_one hβ)
+      exact .inr ⟨funext fun i ↦ by fin_cases i <;> simp [hγ0, hγ1], hβ⟩
+  · left
+    refine encard_le_of_isRoot (p := C (β 0 * γ 1) * X ^ 2 +
+      C ((β 0 * β 1 - 1) * K + γ 0 * γ 1) * X + C (γ 0 * β 1 * K))
+      (fun hp ↦ hc ?_) (by compute_degree) ?_
+    · have c2 := congrArg (coeff · 2) hp
+      have c1 := congrArg (coeff · 1) hp
+      have c0 := congrArg (coeff · 0) hp
+      simp only [coeff_add, coeff_C_mul, coeff_X_pow, coeff_X, coeff_C, coeff_zero] at c2 c1 c0
+      norm_num at c2 c1 c0
+      exact ⟨mul_eq_zero.2 c2, c1, by simpa [hK.ne'] using c0⟩
+    · rintro x ⟨hx, hxK⟩
+      simp only [IsRoot, eval_add, eval_mul, eval_C, eval_pow, eval_X]
+      field_simp at hxK
+      linear_combination hxK
+
+end PartialReinforcement
 
 end Luce1959
