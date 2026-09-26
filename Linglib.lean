@@ -143,7 +143,6 @@ import Linglib.Core.Order.Bilattice.Interlaced
 import Linglib.Core.Order.Bilattice.Product
 import Linglib.Core.Order.Bilattice.Representation
 import Linglib.Logic.ComparativeProbability.Defs
-import Linglib.Logic.ComparativeProbability.WorldOrdering
 import Linglib.Logic.Consequence
 import Linglib.Logic.CylindricAlgebra
 import Linglib.Logic.Duality

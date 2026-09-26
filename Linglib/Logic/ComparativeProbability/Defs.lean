@@ -1,16 +1,14 @@
 module
 
-public import Mathlib.Order.BooleanAlgebra.Basic
+public import Linglib.Core.Order.Probability.Defs
 
 /-!
-# Comparative probability: the derived modal operators
+# The modal operators of comparative probability
 
-A relation `r a b` on a Boolean algebra `α` reads "`a` is at least as likely as `b`"
-([holliday-icard-2013]); `QualitativeProbability.ge` and the measure-induced orders of
-`Core/Order/Probability` are its models. This file defines the operators that the
-comparative epistemic modals are built from: strict comparison `a ≻ b`, *probably*
-`△a` (`a` is strictly more likely than its complement) and *possibly* `◇a` (`a` is
-not certainly impossible).
+The logics of comparative probability ([holliday-icard-2013]) read a likelihood order
+`r` on a Boolean algebra as the comparative *at least as likely as* and define the graded
+epistemic modals from it: *probably* `△a`, `a` strictly more likely than its complement,
+and *possibly* `◇a`, `a` not certainly impossible.
 
 ## References
 
@@ -22,12 +20,6 @@ not certainly impossible).
 namespace ComparativeProbability
 
 variable {α : Type*} [BooleanAlgebra α]
-
-/-- `Strict r a b` ("`a ≻ b`"): `a` is at least as likely as `b` but not conversely. -/
-def Strict (r : α → α → Prop) (a b : α) : Prop := r a b ∧ ¬ r b a
-
-instance {r : α → α → Prop} [DecidableRel r] : DecidableRel (Strict r) :=
-  fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- `Probably r a` ("`△a`"): `a` is strictly more likely than its complement. -/
 def Probably (r : α → α → Prop) (a : α) : Prop := Strict r a aᶜ
