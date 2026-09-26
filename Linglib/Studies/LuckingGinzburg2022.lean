@@ -19,36 +19,49 @@ cardinalities (`sieve`). Such a condition is a quantifier on [van-benthem-1984]'
 with `k` instances (`card_powerset_antidiagonal_erase`). A verb phrase predicates on the
 reference set and anti-predicates on the complement set (`AntiPredication`), so the sentence is
 true exactly when the condition holds of the sizes of `N \ VP` and `N ∩ VP`
-(`exists_antiPredication_iff`): referential transparency has the truth conditions of the tree
-quantifier (`exists_antiPredication_iff_toGQ`), which is conservative by construction
-(`livesOn_toGQ`), and the surviving reference sets are exactly the witness sets of
-[barwise-cooper-1981] (`mem_sieve_iff_witness`). The quantifier perspective, whether the
-bipartition with an empty reference set survives the sieve, is derived from the denotation and
-gates anaphora to the complement set (`CompsetAccessible`, `compsetAccessible_sieve`). The
-paper's minimal pair: *few* and *a few* share their condition, but *a few* carries a reference
-individual, so its denotation lacks the empty-reference bipartition and the complement set is
-inaccessible whatever the condition (`compsetAccessible_few`, `not_compsetAccessible_refind`).
+(`exists_antiPredication_iff`). So referential transparency has the truth conditions of the tree
+quantifier of its condition (`exists_antiPredication_iff_toGQ`), which recovers the paper's claim
+that the set-up entails the conservativity universal (`livesOn_toGQ`), and the surviving reference
+sets are exactly the witness sets of [barwise-cooper-1981] (`mem_sieve_iff_witness`). The
+quantifier perspective, whether the bipartition with an empty reference set survives the sieve,
+gates anaphora to the complement set (the paper's (47), `CompsetAccessible`,
+`compsetAccessible_sieve`). The paper's minimal pair (43a) ~ (44): *few* and *a few* share their
+condition, but *a few* carries a reference individual, so its denotation lacks the
+empty-reference bipartition and the complement set is inaccessible whatever the condition
+(`compsetAccessible_few`, `not_compsetAccessible_refind`).
 
 ## Implementation notes
 
 An ordered bipartition of `S` (the paper's (15)) is determined by its reference set `R ⊆ S`, the
 complement set being `S \ R`, so a denotation is a `Finset (Finset α)` of reference sets and the
 bipartitions of `S` are its powerset. A condition on the cardinalities of the complement and
-reference sets is a `NumberTree`, whose coordinates are `|A \ B|` and `|A ∩ B|`, so the paper's
-*every*, *no* and *some* are the tree's `all`, `no` and `some`. The contextual standard of *many*
-is a parameter and that of *few* is simplified to a strict comparison. The quantifier perspective
-is the proposition that the empty reference set is in the denotation; the paper's third value for
-degenerate denotations collapses into inaccessibility, which gates anaphora identically. The
-dialogue and gesture data, the clarification-request diagnostics, and the type-theoretic
-encoding are not represented.
+reference sets is a `NumberTree`, whose coordinates are `|A \ B|` and `|A ∩ B|`, in the order
+of the paper's (18), so the paper's *every*, *no* and *some* are the tree's `all`, `no` and
+`some`. *Few* takes the proportional sense of (38a), its *much smaller* weakened to a strict
+comparison; the cardinal sense of (38b), *few* against a contextual standard, is not represented.
+The contextual standard of *many* is a parameter. Anti-predication, the negation of a plural type
+on the complement set, is read distributively as the paper's gloss of (55b) does. The quantifier
+perspective is derived from the denotation as the proposition that the empty reference set is in
+it, where the paper carries it as a lexical feature; its third value for degenerate denotations
+collapses into inaccessibility, which gates anaphora identically. The count of §4.8 is read off
+the paper's enumeration for two individuals, the non-empty selections of cardinality types; the
+paper's own gloss of the subtraction speaks of the empty set. Negation of a noun phrase, which
+the paper's (49) shows to flip accessibility, the dialogue and gesture data, the
+clarification-request diagnostics, and the type-theoretic encoding are not represented.
 
 ## TODO
 
+The derived perspective makes the complement set accessible after any cardinal quantifier whose
+set contains zero (`compsetAccessible_cardinal`), including *fewer than 100* in the paper's (43d),
+which the paper marks as blocking the anaphora; the lexical feature of the paper can stipulate
+its way past the case, the derivation cannot.
+
 The paper's count of 63 quantifiers on a two-element domain (§4.8) multiplies the per-noun count
 over the subsets of the domain rather than over their sizes, so it distinguishes the two
-singletons. The permutation-invariant selections number `∏ (2 ^ (k + 1) - 1)` over the sizes
-`k ≤ n`, 21 for two individuals, and from three individuals on the paper's product exceeds the
-`2 ^ ((n + 1) * (n + 2) / 2)` tree quantifiers of [van-benthem-1984].
+singletons, against its own closing remark that a quantifier word applies one condition to the
+extensions of every noun. The permutation-invariant selections number `∏ (2 ^ (k + 1) - 1)` over
+the sizes `k ≤ n`, 21 for two individuals, and from three individuals on the paper's product
+exceeds the `2 ^ ((n + 1) * (n + 2) / 2)` tree quantifiers of [van-benthem-1984].
 
 ## References
 
@@ -87,10 +100,11 @@ theorem sieve_congr {q' : NumberTree} [DecidableRel q']
 
 /-! ### Descriptive quantifier conditions -/
 
-/-- The condition of *most* (§4.2), a reference set outnumbering the complement set. -/
+/-- The condition of *most* (§4.8), a reference set outnumbering the complement set. -/
 def most : NumberTree := fun a b ↦ a < b
 
-/-- The condition of *few*, a complement set outnumbering the reference set. -/
+/-- The condition of *few* in the proportional sense of (38a), a complement set outnumbering the
+reference set. -/
 def few : NumberTree := fun a b ↦ b < a
 
 /-- The condition of *many* (the paper's (39)), a reference set exceeding a contextual standard
@@ -100,9 +114,6 @@ def many (θ : ℕ) : NumberTree := cardinal (Set.Ioi θ)
 instance : DecidableRel most := fun a b ↦ inferInstanceAs (Decidable (a < b))
 instance : DecidableRel few := fun a b ↦ inferInstanceAs (Decidable (b < a))
 instance (θ : ℕ) : DecidableRel (many θ) := fun _ b ↦ inferInstanceAs (Decidable (θ < b))
-
-/-- *Few* is the inner negation of *most*. -/
-theorem innerNeg_most : most.innerNeg = few := rfl
 
 /-! ### Quantifier perspective and complement-set anaphora -/
 
@@ -140,17 +151,24 @@ theorem not_compsetAccessible_most : ¬ CompsetAccessible (sieve most S) := fun 
 theorem not_compsetAccessible_many (θ : ℕ) : ¬ CompsetAccessible (sieve (many θ) S) := fun h ↦
   Nat.not_lt_zero θ ((compsetAccessible_sieve (q := many θ)).1 h)
 
-/-- *Few N* makes the complement set accessible, the noun being nonempty, as in *Few dogs barked.
-They slept through.* -/
+/-- *Few N* makes the complement set accessible, the noun being nonempty: the paper's (43a),
+*Few music lovers admire Reger. They prefer Mozart.* -/
 theorem compsetAccessible_few (hS : S.Nonempty) : CompsetAccessible (sieve few S) :=
   compsetAccessible_sieve.2 hS.card_pos
+
+/-- A cardinal quantifier whose set contains zero makes the complement set accessible. This
+includes *fewer than 100*, which the paper's (43d) marks as blocking the anaphora. -/
+theorem compsetAccessible_cardinal {s : Set ℕ} [DecidablePred (· ∈ s)] (hs : 0 ∈ s) :
+    CompsetAccessible (sieve (cardinal s) S) :=
+  (compsetAccessible_sieve (q := cardinal s)).2 hs
 
 /-- The reference individual of *a few* (the paper's (46)) requires a nonempty reference set,
 which removes the empty-reference bipartition from a denotation. -/
 def refind (D : Finset (Finset α)) : Finset (Finset α) := D.erase ∅
 
 /-- A denotation carrying a reference individual never makes its complement set accessible,
-whatever the condition: *a few* shares the condition of *few* and blocks the anaphora (§4.3). -/
+whatever the condition: *a few* shares the condition of *few* and blocks the anaphora, the paper's
+(44), *A few music lovers admire Reger. #They prefer Mozart.* -/
 theorem not_compsetAccessible_refind (D : Finset (Finset α)) : ¬ CompsetAccessible (refind D) :=
   notMem_erase _ _
 
@@ -252,11 +270,11 @@ def domainCount (M : Finset α) : ℕ := ∏ R ∈ M.powerset, (2 ^ (#R + 1) - 1
 /-- The seven denotations over two individuals enumerated in §4.8. -/
 example : #((antidiagonal 2).powerset.erase ∅) = 7 := by decide
 
-/-- The paper's `1 × 3 × 3 × 7 = 63` quantifiers on a domain of two individuals, against the
-`2 ^ 3 ^ 2 = 512` conservative ones of [keenan-stavi-1986]. -/
+/-- The paper's `1 × 3 × 3 × 7 = 63` quantifiers on a domain of two individuals, against the 512
+conservative ones it cites, the `2 ^ 3 ^ 2` of [keenan-stavi-1986]. -/
 example : domainCount (univ : Finset (Fin 2)) = 63 ∧ 63 < 2 ^ 3 ^ 2 := by decide
 
-/-- Three dogs. -/
+/-- Three dogs, a constructed domain. -/
 inductive Dog
   | fido | rex | spot
   deriving DecidableEq, Fintype
@@ -267,8 +285,9 @@ def dogs : Finset Dog := univ
 /-- *Every dog* keeps one of the eight bipartitions, *most dogs* four. -/
 example : #(sieve NumberTree.all dogs) = 1 ∧ #(sieve most dogs) = 4 := by decide
 
-/-- *Few dogs barked. They slept through* against *A few dogs barked. They slept through.* -/
-example : CompsetAccessible (sieve few dogs) ∧ ¬ CompsetAccessible (refind (sieve few dogs)) := by
+/-- *Few* against *a few* on the dogs, and the divergence on *fewer than 100*. -/
+example : CompsetAccessible (sieve few dogs) ∧ ¬ CompsetAccessible (refind (sieve few dogs)) ∧
+    CompsetAccessible (sieve (cardinal {b | b < 100}) dogs) := by
   decide
 
 end LuckingGinzburg2022
