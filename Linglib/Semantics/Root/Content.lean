@@ -13,8 +13,8 @@ scale rather than a point, since a verb is compatible with a range of force
 levels, patient materials, or result geometries. [spalek-mcnally-2026] separate
 English *tear* from Spanish *rasgar*, two roots of one kind, by patient
 robustness, force direction, and compatibility with careful action;
-[majid-boster-bowerman-2008] sort cutting and breaking events by instrument,
-object dimensionality, and the geometry of the result. `Root.Content` bundles
+[majid-boster-bowerman-2008] vary the instrument and the object's rigidity and
+dimensionality across their cutting and breaking events. `Root.Content` bundles
 one region per dimension, `univ` where a root says nothing.
 
 ## Main declarations
@@ -85,8 +85,8 @@ inductive ResultGeometry where
   | totalDestruction
   deriving DecidableEq, Fintype, Repr
 
-/-- The instrument effecting a separation, which together with the object's
-properties fixes how predictable the locus of separation is
+/-- The instrument effecting a separation, which together with the object and the
+manner of action determines how predictable the locus of separation is
 ([majid-boster-bowerman-2008]). -/
 inductive InstrumentType where
   | sharpBlade
@@ -95,7 +95,7 @@ inductive InstrumentType where
   | other
   deriving DecidableEq, Fintype, Repr
 
-/-- Dimensionality of the patient, the rope that snaps, the cloth that tears, or the
+/-- Dimensionality of the patient, the twig that snaps, the cloth that tears, or the
 pot that smashes ([majid-boster-bowerman-2008]). -/
 inductive ObjectDimensionality where
   | oneD
