@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.Cuervo2003
 public import Linglib.Syntax.Minimalist.Verbal.Applicative
 public import Linglib.Fragments.Romance.Spanish.Verbs
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 
 /-!
 # Cuervo (2003): Datives at Large
@@ -194,17 +194,17 @@ end Spanish
 section English
 
 /-- *pass* as a transitive activity, (85a'). -/
-def pass : Predicate := ⟨English.pass.toVerb, .np, [.vDO], false, .recipient⟩
+def pass : Predicate := ⟨English.Verbs.pass.toVerb, .np, [.vDO], false, .recipient⟩
 
 /-- Causative *open*, (88). -/
-def openCausative : Predicate := ⟨English.open_.toVerb, .np, [.vDO, .vBE], false, .recipient⟩
+def openCausative : Predicate := ⟨English.Verbs.open_.toVerb, .np, [.vDO, .vBE], false, .recipient⟩
 
 /-- Inchoative *open*, (89a). -/
 def openInchoative : Predicate :=
-  ⟨English.open_.toVerb, .unaccusative, [.vGO, .vBE], false, .recipient⟩
+  ⟨English.Verbs.open_.toVerb, .unaccusative, [.vGO, .vBE], false, .recipient⟩
 
 /-- *arrive*, a simple verb of movement, (92b). -/
-def arrive : Predicate := ⟨English.arrive.toVerb, .unaccusative, [.vGO], false, .recipient⟩
+def arrive : Predicate := ⟨English.Verbs.arrive.toVerb, .unaccusative, [.vGO], false, .recipient⟩
 
 end English
 

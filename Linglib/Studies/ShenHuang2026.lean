@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Reference.Definiteness
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Syntax.Minimalist.Linearization.Cyclic
 public import Linglib.Syntax.Minimalist.Phase.Domain
 public import Linglib.Data.Examples.ShenHuang2026
@@ -284,20 +284,20 @@ selecting a result nominal, *write* for a book, *tell* for a joke, *paint* for a
 *compose* (3), *tell* a joke (20b), *direct* (23), *shoot*, *make* and *compose* a video or
 song (footnote 12), and *write* (25b). The notion is per verb, not a Levin class: *tell* and
 *shoot* belong to no class of creation in [levin-1993]. -/
-def IsVerbOfCreation (v : English.Verb) : Prop :=
+def IsVerbOfCreation (v : English.Verbs.Verb) : Prop :=
   v.form ∈ ["compose", "direct", "make", "shoot", "tell", "write"]
 
 instance : DecidablePred IsVerbOfCreation := fun v ↦ inferInstanceAs (Decidable (v.form ∈ _))
 
 /-- The configuration of an item whose main verb is a Fragment entry. -/
-def Config.ofVerb (d : Dependency) (o : Definiteness) (v : English.Verb) : Config :=
+def Config.ofVerb (d : Dependency) (o : Definiteness) (v : English.Verbs.Verb) : Config :=
   ⟨d, o, decide (IsVerbOfCreation v)⟩
 
 /-- (25): *read that book about* violates both constraints and *write that book about* the
 Specificity Condition alone, the residual definite island under a verb of creation. -/
 theorem read_write :
-    violations combined (Config.ofVerb .movement .definite English.read) = 2 ∧
-      violations combined (Config.ofVerb .movement .definite English.write) = 1 := by
+    violations combined (Config.ofVerb .movement .definite English.Verbs.read) = 2 ∧
+      violations combined (Config.ofVerb .movement .definite English.Verbs.write) = 1 := by
   decide
 
 end ShenHuang2026

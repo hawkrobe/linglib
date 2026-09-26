@@ -3,7 +3,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.Dayal2025
 public import Linglib.Fragments.English.Particles
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.HindiUrdu.Particles
 public import Linglib.Fragments.Japanese.Particles
 public import Linglib.Semantics.Questions.Exhaustivity
@@ -71,7 +71,7 @@ lacks. Question particles sit at the layer their embedding distribution shows.
 namespace Dayal2025
 
 open Minimalist Question Data.Examples Clause
-open English English.Particles HindiUrdu.Particles Japanese.Particles
+open English English.Particles HindiUrdu.Particles Japanese.Particles English.Verbs
 
 /-! ### The three layers (7), (20) -/
 
@@ -265,7 +265,7 @@ theorem ya_nahi_obligatory_iff :
 /-! ### The paper's judgments -/
 
 /-- The English predicates of the paper, from the fragment. -/
-def verbs : List English.Verb :=
+def verbs : List English.Verbs.Verb :=
   [know, believe, wonder, ask, investigate, depend_on, remember_rog, forget_rog]
 
 /-- The embedding context a row's `embedding` feature names. -/

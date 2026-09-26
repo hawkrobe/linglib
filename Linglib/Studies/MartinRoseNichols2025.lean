@@ -2,7 +2,7 @@ module
 
 public import Linglib.Pragmatics.Bidirectional
 public import Linglib.Semantics.Root.Defs
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 
 /-!
 # Martin, Rose and Nichols (2025): Burning facts: thick and thin causatives
@@ -264,44 +264,44 @@ inductive Sample where
 namespace Sample
 
 /-- The fragment entry of each verb. -/
-def entry : Sample → English.Verb
-  | .activate => English.activate
-  | .affect => English.affect
-  | .change => English.change
-  | .close => English.close
-  | .cool => English.cool
-  | .damage => English.damage
-  | .destroy => English.destroy
-  | .dry => English.dry
-  | .eliminate => English.eliminate
-  | .enhance => English.enhance
-  | .extend => English.extend
-  | .hurt => English.hurt
-  | .kill => English.kill
-  | .lower => English.lower
-  | .open_ => English.open_
-  | .put => English.put
-  | .restore => English.restore
-  | .set_ => English.set_
-  | .slow => English.slow
-  | .start => English.start
-  | .stop => English.stop
-  | .trigger => English.trigger
-  | .turn => English.turn
-  | .wakeUp => English.wakeUp
-  | .break_ => English.break_
-  | .bury => English.bury
-  | .burn => English.burn
-  | .cut => English.cut
-  | .drop => English.drop
-  | .lift => English.lift
-  | .lock => English.lock
-  | .melt => English.melt
-  | .mix => English.mix
-  | .shut => English.shut
-  | .spread => English.spread
-  | .stretch => English.stretch
-  | .switch => English.switch
+def entry : Sample → English.Verbs.Verb
+  | .activate => English.Verbs.activate
+  | .affect => English.Verbs.affect
+  | .change => English.Verbs.change
+  | .close => English.Verbs.close
+  | .cool => English.Verbs.cool
+  | .damage => English.Verbs.damage
+  | .destroy => English.Verbs.destroy
+  | .dry => English.Verbs.dry
+  | .eliminate => English.Verbs.eliminate
+  | .enhance => English.Verbs.enhance
+  | .extend => English.Verbs.extend
+  | .hurt => English.Verbs.hurt
+  | .kill => English.Verbs.kill
+  | .lower => English.Verbs.lower
+  | .open_ => English.Verbs.open_
+  | .put => English.Verbs.put
+  | .restore => English.Verbs.restore
+  | .set_ => English.Verbs.set_
+  | .slow => English.Verbs.slow
+  | .start => English.Verbs.start
+  | .stop => English.Verbs.stop
+  | .trigger => English.Verbs.trigger
+  | .turn => English.Verbs.turn
+  | .wakeUp => English.Verbs.wakeUp
+  | .break_ => English.Verbs.break_
+  | .bury => English.Verbs.bury
+  | .burn => English.Verbs.burn
+  | .cut => English.Verbs.cut
+  | .drop => English.Verbs.drop
+  | .lift => English.Verbs.lift
+  | .lock => English.Verbs.lock
+  | .melt => English.Verbs.melt
+  | .mix => English.Verbs.mix
+  | .shut => English.Verbs.shut
+  | .spread => English.Verbs.spread
+  | .stretch => English.Verbs.stretch
+  | .switch => English.Verbs.switch
 
 /-- The verbs the survey's annotators judged to enter the causative alternation. -/
 def alternating : Finset Sample :=

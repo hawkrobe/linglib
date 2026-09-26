@@ -2,7 +2,7 @@ module
 
 public import Linglib.Studies.UegakiSudo2019
 public import Linglib.Semantics.Modality.Kratzer.Ordering
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.Mandarin.Verbs
 public import Linglib.Fragments.Japanese.Verbs
 public import Linglib.Fragments.Turkish.Verbs
@@ -192,9 +192,9 @@ theorem trivial_iff_class [Inhabited E] (k : Strategy)
 entry for English, Mandarin, Japanese, Turkish, and Spanish *esperar*, and off the paper's
 classification for the other Spanish predicates. -/
 def attitude? : String → Option Attitude
-  | "hope" => English.hope.attitude
-  | "fear" => English.fear.attitude
-  | "worry" => English.worry.attitude
+  | "hope" => English.Verbs.hope.attitude
+  | "fear" => English.Verbs.fear.attitude
+  | "worry" => English.Verbs.worry.attitude
   | "qidai" => Mandarin.qidai.attitude
   | "danxin" => Mandarin.danxin.attitude
   | "xiwang" => Mandarin.xiwang.attitude

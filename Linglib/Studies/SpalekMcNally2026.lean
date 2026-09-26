@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.Romance.Spanish.Verbs
 
 /-!
@@ -52,7 +52,7 @@ for the foil, robustness and force for the silence, force for the rough.
 
 namespace SpalekMcNally2026
 
-open Semantics.Root Semantics.Root.Content English Spanish.Verbs
+open Semantics.Root Semantics.Root.Content English Spanish.Verbs English.Verbs
 
 /-! ### Situations and admission -/
 

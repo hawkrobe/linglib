@@ -20,7 +20,7 @@ finds *the man who Mary is taller than* "rather uncomfortable". The data are
 
 @[expose] public section
 
-namespace English
+namespace English.Relativization
 
 open RelativeClause
 
@@ -45,4 +45,4 @@ def relWhom : Marker :=
 /-- The English relative-clause markers. -/
 def relMarkers : List Marker := [relThat, relWhom]
 
-end English
+end English.Relativization

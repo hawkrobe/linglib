@@ -102,9 +102,9 @@ abbrev danish : V2Grammar := {root .declarative, root .constituent, root .polar,
 /-- Table 3.1 is the required set of the fragment for Standard Norwegian, Standard English,
 Nordmøre, Belfast English and German. -/
 theorem table_3_1_eq_required :
-    Norwegian.verbSecond.required = stdNorwegian ∧ English.verbSecond.required = stdEnglish ∧
+    Norwegian.verbSecond.required = stdNorwegian ∧ English.V2.verbSecond.required = stdEnglish ∧
       Norwegian.Nordmore.verbSecond.required = nordmore ∧
-      English.Belfast.verbSecond.required = belfast ∧ German.verbSecond.required = german := by
+      English.V2.Belfast.verbSecond.required = belfast ∧ German.verbSecond.required = german := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> ext c <;> revert c <;> decide
 
 /-- Table 3.1's Danish grammar lies between the fragment's required and possible cells, since
@@ -117,8 +117,8 @@ theorem danish_table_3_1 :
 theorem nordmore_english_mirror :
     root .declarative ∈ Norwegian.Nordmore.verbSecond.required ∧
       root .constituent ∉ Norwegian.Nordmore.verbSecond.required ∧
-      root .declarative ∉ English.verbSecond.required ∧
-      root .constituent ∈ English.verbSecond.required := by
+      root .declarative ∉ English.V2.verbSecond.required ∧
+      root .constituent ∈ English.V2.verbSecond.required := by
   decide
 
 /-- Only German requires verb second in an embedded declarative, and every variety requires it
@@ -126,12 +126,12 @@ in a root yes/no-question. -/
 theorem embedded_german_polar_all :
     (.declarative, .quasiSubordinated) ∈ German.verbSecond.required ∧
       (.declarative, .quasiSubordinated) ∉ Norwegian.verbSecond.required ∧
-      (.declarative, .quasiSubordinated) ∉ English.verbSecond.required ∧
+      (.declarative, .quasiSubordinated) ∉ English.V2.verbSecond.required ∧
       (.declarative, .quasiSubordinated) ∉ Danish.verbSecond.required ∧
       root .polar ∈ Norwegian.verbSecond.required ∧
-      root .polar ∈ English.verbSecond.required ∧
+      root .polar ∈ English.V2.verbSecond.required ∧
       root .polar ∈ Norwegian.Nordmore.verbSecond.required ∧
-      root .polar ∈ English.Belfast.verbSecond.required ∧
+      root .polar ∈ English.V2.Belfast.verbSecond.required ∧
       root .polar ∈ German.verbSecond.required ∧
       root .polar ∈ Danish.verbSecond.required := by
   decide
@@ -241,9 +241,9 @@ or Danish; the Tromsø rows have none. -/
 def grammarOf (r : LinguisticExample) : Option Distribution :=
   match r.feature? "variety", r.language with
   | some "Nordmøre", _ => some Norwegian.Nordmore.verbSecond
-  | some "Belfast English", _ => some English.Belfast.verbSecond
+  | some "Belfast English", _ => some English.V2.Belfast.verbSecond
   | some "Standard Norwegian", _ | none, "norw1258" => some Norwegian.verbSecond
-  | none, "stan1293" => some English.verbSecond
+  | none, "stan1293" => some English.V2.verbSecond
   | none, "dani1285" => some Danish.verbSecond
   | _, _ => none
 

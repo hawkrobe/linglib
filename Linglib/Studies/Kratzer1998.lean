@@ -256,7 +256,7 @@ def southGerman : Variety where
 
 /-- The tables use the tense forms of the Fragments. -/
 theorem table_forms :
-    (∀ x ∈ english.table, x.1 ∈ English.tenseForms) ∧
+    (∀ x ∈ english.table, x.1 ∈ English.Tense.tenseForms) ∧
       (∀ x ∈ standardGerman.table, x.1 ∈ German.tenseForms) ∧
       ∀ x ∈ southGerman.table, x.1 ∈ German.southernTenseForms := by
   decide

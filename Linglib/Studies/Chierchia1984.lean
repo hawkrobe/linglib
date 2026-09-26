@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Voice.Basic
 public import Linglib.Semantics.Modality.Kratzer.Operators
 public import Linglib.Semantics.Composition.Ty
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Mathlib.Tactic.FinCases
 
 /-!
@@ -176,7 +176,8 @@ theorem subjectControl_not_blocks_antipassive :
 
 section Fragment
 
-open English hiding Verb
+open English
+open English.Verbs hiding Verb
 
 /-- Every control verb of the Fragment, the attitude verbs *want*, *hope* and *promise* included,
 is a control verb in the dissertation's sense, with a fixed controller whether subject or

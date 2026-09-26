@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Causation.VerbClass
 public import Linglib.Semantics.Presupposition.Basic
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 
 /-!
 # Karttunen (1971): Implicative Verbs
@@ -165,20 +165,20 @@ The implicative annotations of the English fragment. -/
 /-- "manage" is a positive implicative: success entails the complement
     (`Implicative.manageSem`). -/
 theorem manage_positive_implicative :
-    English.manage.toVerb.implicative = some .positive := rfl
+    English.Verbs.manage.toVerb.implicative = some .positive := rfl
 
 /-- "fail" is a negative implicative: success entails the complement's
     negation (`Implicative.failSem`). -/
 theorem fail_negative_implicative :
-    English.fail.toVerb.implicative = some .negative := rfl
+    English.Verbs.fail.toVerb.implicative = some .negative := rfl
 
 /-- "remember" is a positive implicative: success entails the complement. -/
 theorem remember_positive_implicative :
-    English.remember.toVerb.implicative = some .positive := rfl
+    English.Verbs.remember.toVerb.implicative = some .positive := rfl
 
 /-- "forget" is a negative implicative: success entails the complement's
     negation. -/
 theorem forget_negative_implicative :
-    English.forget.toVerb.implicative = some .negative := rfl
+    English.Verbs.forget.toVerb.implicative = some .negative := rfl
 
 end Karttunen1971a

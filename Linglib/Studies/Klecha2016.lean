@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Semantics.Tense.Embedding
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Data.Examples.Klecha2016
 
 /-!
@@ -44,7 +44,7 @@ namespace Klecha2016
 
 open Semantics
 
-open Tense HistoricalAlternatives Reference English
+open Tense HistoricalAlternatives Reference English English.Verbs
 
 variable {W T : Type*}
 
@@ -147,7 +147,7 @@ theorem matrix_nonpast_present : ModalBase.dox.orientations ∩ nonpast = ⟦pre
 /-! ### The data, (1)–(3) -/
 
 /-- The attitude verb of a row, from the fragment. -/
-def verbOf : String → Option English.Verb
+def verbOf : String → Option English.Verbs.Verb
   | "think" => some think
   | "hope" => some hope
   | "pray" => some pray

@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Tree.Cat
 public import Linglib.Semantics.Composition.Tree
 public import Linglib.Semantics.Composition.Assignment
-public import Linglib.Fragments.English.Toy
+public import Linglib.Semantics.Composition.Toy
 public import Linglib.Semantics.Composition.Reduction
 public import Linglib.Semantics.Composition.Partial
 public import Linglib.Semantics.Composition.Lexicon

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Semantics.Presupposition.Environment
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Data.Examples.Karttunen1971b
@@ -41,7 +41,8 @@ not the presupposition holds (`negExt_no_inference`).
 namespace Karttunen1971b
 
 open Presupposition Data.Examples
-open English hiding Verb
+open English
+open English.Verbs hiding Verb
 
 /-! ### The meaning postulates -/
 

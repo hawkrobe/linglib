@@ -17,9 +17,9 @@ model-theoretic way and in mathlib's concrete-language idiom (after
 are *read off the model* via `Model.const`/`Model.pred₁ext`/`Model.pred₂ext` —
 the connection is true by construction, with no bridge theorems.
 
-Lives in `Fragments/` so substrate files cannot import it — worked examples
-over this fragment belong in `Studies/`. The namespace remains
-`Semantics.Montague` for continuity with the engine's `Lexicon`.
+It is a pedagogical fixture rather than data about English, so it lives beside the
+composition engine; worked examples over it belong in `Studies/`. The namespace is
+`Semantics.Montague`, the engine's `Lexicon` namespace.
 -/
 
 @[expose] public section

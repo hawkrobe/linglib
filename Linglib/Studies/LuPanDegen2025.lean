@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Questions.Partition.Basic
 public import Linglib.Semantics.ArgumentStructure.LevinClass
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Data.Examples.LuPanDegen2025
 
 /-!
@@ -64,7 +64,7 @@ overt complementizer of manner-of-speaking complements (22).
 
 namespace LuPanDegen2025
 
-open ArgumentStructure English
+open ArgumentStructure English English.Verbs
 open Data.Examples
 
 /-! ### Foregrounding (3) -/
@@ -124,7 +124,7 @@ end Questions
 /-- The matrix predicate: a verb of the fragment, and whether a manner adverb modifies it. -/
 structure MatrixPredicate where
   /-- The matrix verb. -/
-  verb : English.Verb
+  verb : English.Verbs.Verb
   /-- Whether a manner adverb modifies the verb. -/
   mannerAdverb : Bool
 
@@ -138,12 +138,12 @@ def HasManner (p : MatrixPredicate) : Prop :=
 instance : DecidablePred HasManner := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- A verb of the manner-of-speaking class carries manner however it is modified. -/
-theorem hasManner_of_mannerOfSpeaking {v : English.Verb}
+theorem hasManner_of_mannerOfSpeaking {v : English.Verbs.Verb}
     (h : .mannerOfSpeaking ∈ v.levinClasses) (b : Bool) : HasManner ⟨v, b⟩ :=
   .inl h
 
 /-- A verb of the *say* class carries manner only by an adverb. -/
-theorem hasManner_say_iff {v : English.Verb} (h : v.levinClasses = {.say}) (b : Bool) :
+theorem hasManner_say_iff {v : English.Verbs.Verb} (h : v.levinClasses = {.say}) (b : Bool) :
     HasManner ⟨v, b⟩ ↔ b = true := by
   simp [HasManner, h]
 

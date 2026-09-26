@@ -4,7 +4,7 @@ public import Linglib.Fragments.English.Auxiliaries
 public import Linglib.Fragments.English.Nouns
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Fragments.English.TemporalDeictic
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Syntax.DependencyGrammar.Projectivity
 public import Linglib.Syntax.DependencyGrammar.Valency
 public import Linglib.Logic.Nonmonotonic.Inheritance
@@ -344,9 +344,9 @@ end Analysis
 /-! ### Raising, (9) -/
 
 abbrev they := English.Pronouns.they.toWord
-abbrev seemed := English.seem.toWord .past
+abbrev seemed := English.Verbs.seem.toWord .past
 abbrev to_ := English.Auxiliaries.toInf
-abbrev dance := English.dance.toWord .base
+abbrev dance := English.Verbs.dance.toWord .base
 
 /-- *They seemed to dance*, (9): the subject depends on each verb, and each verb's xc complement
 is the next. -/
@@ -373,10 +373,10 @@ theorem orderedByLandmarks_theySeemedToDance : theySeemedToDance.OrderedByLandma
 
 /-! ### Dependent interrogatives, (51) and (52) -/
 
-abbrev know := English.know.toWord .base
+abbrev know := English.Verbs.know.toWord .base
 abbrev what := English.Pronouns.what.toWord
 abbrev she := English.Pronouns.she.toWord
-abbrev said := English.say.toWord .past
+abbrev said := English.Verbs.say.toWord .past
 
 /-- (51), *(I don't) know what she said* with the verb as head: *said* is the complement of
 *know*, and *what* its extracted object. -/
@@ -413,7 +413,7 @@ theorem orderedByPositionalHeads_whHeaded : whHeaded.OrderedByPositionalHeads :=
 /-! ### Free relatives, (53), (55) to (58) -/
 
 abbrev i := English.Pronouns.i.toWord
-abbrev ate := English.eat.toWord .past
+abbrev ate := English.Verbs.eat.toWord .past
 
 /-- (53), *I ate what they ate*: *what* is the object of the first *ate*, takes the second as its
 complement, and is the second's extracted object. -/
@@ -435,8 +435,8 @@ theorem orderedByPositionalHeads_iAteWhatTheyAte : iAteWhatTheyAte.OrderedByPosi
   decide
 
 abbrev he := English.Pronouns.he.toWord
-abbrev bought := English.buy.toWord .past
-abbrev cost := English.cost.toWord .past
+abbrev bought := English.Verbs.buy.toWord .past
+abbrev cost := English.Verbs.cost.toWord .past
 abbrev lots := (English.Nouns.lot.toWord .plural).get rfl
 
 /-- (55) and (56), *What he bought cost lots*: *What* is the subject of *cost*, takes *bought* as
@@ -471,8 +471,8 @@ theorem orderedByPositionalHeads_whatHeBoughtCostLots :
   decide
 
 abbrev we := English.Pronouns.we.toWord
-abbrev saw := English.see.toWord .past
-abbrev happened := English.happen.toWord .past
+abbrev saw := English.Verbs.see.toWord .past
+abbrev happened := English.Verbs.happen.toWord .past
 
 /-- (58), *We saw what happened*, a subject free relative without extraction: *what* is the
 complement of *saw*, takes *happened* as its complement, and is its subject. -/
@@ -499,7 +499,7 @@ Hudson's analyses of (11b) to (11e), which the paper diagrams in (12) and (13), 
 by some choice of landmarks. -/
 
 abbrev then_ := Word.mk' English.TemporalDeictic.then_.form .ADV
-abbrev wonder := English.wonder.toWord .base
+abbrev wonder := English.Verbs.wonder.toWord .base
 
 /-- (11b), *What happened then?*: *what* is the subject of *happened* and takes it as its
 complement, and *then* follows *happened* as its adjunct. -/

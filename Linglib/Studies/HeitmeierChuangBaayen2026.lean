@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.LinearAlgebra.LinearIndependent
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Processing.DiscriminativeLexicon.Realization
 public import Linglib.Processing.DiscriminativeLexicon.Training
 import all Init.Data.String.Pattern.Basic  -- for unfolding `String.Slice.Pattern.Internal.memcmpSlice`
@@ -124,7 +124,7 @@ theorem pos_weightedLoss_of_not_regular {f : Lexeme → Cell → FormVec n}
 
 /-- The two verbs of the book's contrast, regular *walk* and suppletive *go*, are the English
 fragment's entries. -/
-def verb : Fin 2 → English.Verb := ![English.walk, English.go]
+def verb : Fin 2 → English.Verbs.Verb := ![English.Verbs.walk, English.Verbs.go]
 
 /-- *walk* is the first verb. -/
 abbrev walk : Fin 2 := 0
@@ -133,7 +133,7 @@ abbrev walk : Fin 2 := 0
 abbrev go : Fin 2 := 1
 
 /-- The base and past cells of the fragment's verb paradigm are the two cells of the table. -/
-def cell : Fin 2 → English.Verb.Cell := ![.base, .past]
+def cell : Fin 2 → English.Verbs.Verb.Cell := ![.base, .past]
 
 /-- The base cell is the first cell. -/
 abbrev base : Fin 2 := 0

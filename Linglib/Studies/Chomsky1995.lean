@@ -2,7 +2,7 @@ module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 public import Linglib.Syntax.Minimalist.Linearization.Replay
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.English.Nouns
 import all Init.Data.String.Defs  -- for unfolding `String.intercalate`
 
@@ -43,12 +43,12 @@ def positionCat : ArgumentFrame.Position → Option Cat
 /-- The selectional stack of a verb's citation frame, in which each c-selected argument is one
     `Cat` feature consumed by complement Merge.
     Folded in from the former `Syntax/Minimalist/FromFragments.lean` (its only consumer). -/
-def verbToSelStack (v : English.Verb) : SelStack :=
+def verbToSelStack (v : English.Verbs.Verb) : SelStack :=
   (v.citationFrame?.map fun fr ↦ fr.complements.filterMap positionCat).getD []
 
-/-- A `English.Verb` as a `SyntacticObject` leaf (`Cat = .V`, selStack from the citation
+/-- A `English.Verbs.Verb` as a `SyntacticObject` leaf (`Cat = .V`, selStack from the citation
 frame). -/
-def verbToSO (v : English.Verb) (id : Nat) : SyntacticObject :=
+def verbToSO (v : English.Verbs.Verb) (id : Nat) : SyntacticObject :=
   mkLeafPhon .V (verbToSelStack v) v.form3sg id
 
 /-- A proper name as a leaf, projecting as `.D`. -/
@@ -57,7 +57,7 @@ def nameToSO (n : ProperName) (id : Nat) : SyntacticObject := mkLeafPhon .D [] n
 /-- The Minimalist Merge derivation of "John sees Mary", in which *see*'s complement is
     *Mary* (`em .right`) and then *John* is added as specifier (`em .left`). -/
 def john_sees_mary : Derivation :=
-  { initial := verbToSO English.see 31
+  { initial := verbToSO English.Verbs.see 31
     steps   := [.em .right (nameToSO English.Nouns.mary 11),
                 .em .left (nameToSO English.Nouns.john 10)] }
 

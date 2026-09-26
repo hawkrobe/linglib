@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.English.Verbs
+public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Studies.Larson1988
 public import Linglib.Studies.Pylkkanen2008
 
@@ -61,7 +61,8 @@ Of the roughly 43 verbs of (56), the 32 whose Fragment encoding is unambiguous a
 
 namespace Bruening2021
 
-open English hiding Verb
+open English
+open English.Verbs hiding Verb
 open ArgumentStructure
 
 /-! ### Table (56) as a grid
@@ -81,7 +82,7 @@ inductive GoalPosition where
 
 /-- The position of each verb's goal in (56), for the verbs whose Fragment encoding is
 unambiguous. -/
-def classification : List (English.Verb × GoalPosition) := [
+def classification : List (English.Verbs.Verb × GoalPosition) := [
   (forgive, .firstObject), (spare, .firstObject), (show_, .firstObject),
   (tell, .pp), (pass, .pp), (throw, .pp), (sell, .pp),
   (charge, .firstObject), (cost, .firstObject), (envy, .firstObject), (fine, .firstObject),
@@ -96,7 +97,7 @@ def classification : List (English.Verb × GoalPosition) := [
 
 /-- The interpretation of the verb's implicit second object: for a first-object goal, the
 implicit position after the first object; for a PP goal, the implicit theme before the PP. -/
-def implicitSecondObject (vp : English.Verb × GoalPosition) : Option ImplicitInterp :=
+def implicitSecondObject (vp : English.Verbs.Verb × GoalPosition) : Option ImplicitInterp :=
   vp.1.frames.findSome? fun fr ↦
     match vp.2, fr.complements with
     | .firstObject, [.nominal, .implicit i] => i
@@ -105,7 +106,7 @@ def implicitSecondObject (vp : English.Verb × GoalPosition) : Option ImplicitIn
 
 /-- The interpretation of the verb's implicit goal: the implicit first object, or the implicit
 PP after the theme. -/
-def implicitGoal (vp : English.Verb × GoalPosition) : Option ImplicitInterp :=
+def implicitGoal (vp : English.Verbs.Verb × GoalPosition) : Option ImplicitInterp :=
   vp.1.frames.findSome? fun fr ↦
     match vp.2, fr.complements with
     | .firstObject, [.implicit i, .nominal] => i
@@ -114,14 +115,14 @@ def implicitGoal (vp : English.Verb × GoalPosition) : Option ImplicitInterp :=
 
 /-- The cell a verb occupies: its second object's interpretation, its goal's position, and the
 goal's interpretation. -/
-def cell (vp : English.Verb × GoalPosition) :
+def cell (vp : English.Verbs.Verb × GoalPosition) :
     Option ImplicitInterp × GoalPosition × Option ImplicitInterp :=
   (implicitSecondObject vp, vp.2, implicitGoal vp)
 
 /-! ### Derived verb subsets -/
 
 /-- The verbs of (56) whose goal argument is a first object. -/
-def docOnlyVerbs : List (English.Verb × GoalPosition) :=
+def docOnlyVerbs : List (English.Verbs.Verb × GoalPosition) :=
   classification.filter fun vp ↦ vp.2 == .firstObject
 
 /-! ### G2: the empty cell
@@ -176,7 +177,7 @@ one.
 
 (Bruening's prototypical example *bake* is not in the English fragment.) -/
 
-def baseTransitivesWithImplicit : List English.Verb := [melt, build]
+def baseTransitivesWithImplicit : List English.Verbs.Verb := [melt, build]
 
 theorem g3_base_transitive_constraint :
     baseTransitivesWithImplicit.all (fun v =>
