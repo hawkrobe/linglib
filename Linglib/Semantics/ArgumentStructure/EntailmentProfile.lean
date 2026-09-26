@@ -32,7 +32,7 @@ with Proto-Patient dominance breaking ties.
   predictions
 - `activitySubjectProfile` … `accomplishmentObjectProfile` — the
   [rappaport-hovav-levin-1998] template-level profile defaults (per-verb
-  content lives in the class map, `Semantics/ArgumentStructure/LevinClassProfiles.lean`)
+  content lives in the class map, `LevinClass.subjectProfile`)
 - the projection to [grimm-2011]'s lattice objects and its consistency
   theorems live in `Projection.lean`
 
@@ -297,12 +297,10 @@ theorem two_le_pAgentScore_of_isEffector (h : IsEffector p) :
 /-! ### Template-level proto-role defaults
 
 Per-template subject/object defaults ([rappaport-hovav-levin-1998] with
-[dowty-1991]'s entailments), consumed by `Template.subjectProfile` and
-`Template.objectProfile` in `EventStructure.lean` and by Fragment-level verb
-entries. Per-verb entailment content is NOT stored here: it lives in the
-Levin-class → template map (`Semantics/ArgumentStructure/LevinClassProfiles.lean`),
-and Dowty's own per-verb attributions are typed data rows in
-`Data/ProtoRoles/Dowty1991.json` consumed by `Studies/Dowty1991.lean`. -/
+[dowty-1991]'s entailments), consumed by Fragment-level verb entries. Per-verb
+entailment content is NOT stored here: it lives in the Levin-class map
+(`LevinClass.subjectProfile`), and Dowty's own per-verb attributions are typed
+data rows in `Data/ProtoRoles/Dowty1991.json` consumed by `Studies/Dowty1991.lean`. -/
 
 /-- Activity template subject: V+S+M+IE. Transitive activities like *hit*
 add causation at the class level via root-contributed objects. -/
@@ -314,7 +312,7 @@ def activitySubjectProfile : EntailmentProfile :=
 movement entailment fits directed-motion achievements (*arrive*) but
 overgeneralizes to non-motion achievements (*recognize*, *notice*), whose
 subjects are sentient rather than moving — those pattern with the psych-state
-templates in `LevinClassProfiles.lean`. -/
+templates in `LevinClass.subjectProfile`. -/
 def achievementSubjectProfile : EntailmentProfile :=
   { movement := true, independentExistence := true, changeOfState := true }
 
