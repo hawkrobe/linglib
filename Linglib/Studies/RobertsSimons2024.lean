@@ -3,6 +3,7 @@ module
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Fragments.English.Verbs
 public import Linglib.Semantics.Aspect.Phasal
+public import Linglib.Semantics.Presupposition.Context
 public import Linglib.Semantics.Questions.Resolution
 
 /-!
@@ -61,6 +62,7 @@ here. The §3.1 cells are equiprobable, the paper's "roughly equal" probabilitie
 * [L. Karttunen, *Some observations on factivity* (1971)][karttunen-1971b]
 * [L. Karttunen, *Presuppositions of Compound Sentences* (1973)][karttunen-1973]
 * [R. C. Stalnaker, *Pragmatic Presuppositions* (1974)][stalnaker-1974]
+* [L. Karttunen, *Presupposition and Linguistic Context* (1974)][karttunen-1974-presupposition]
 * [I. Heim, *On the Projection Problem for Presuppositions* (1983)][heim-1983]
 * [C. Qing, N. D. Goodman, D. Lassiter, *A Rational Speech-Act Model of Projective Content*
   (2016)][qing-goodman-lassiter-2016]
@@ -191,37 +193,30 @@ theorem not_subset_of_presumes_ignorance {Dox : ι → Set ι} {C P : Set ι} {w
     (hbel : Dox w ⊆ C) (hign : C ⊆ {v | ¬ Dox v ⊆ P}) : ¬ C ⊆ P :=
   fun hP ↦ hign hw (hbel.trans hP)
 
-/-! ### Filtering (§4) -/
+/-! ### Filtering (§4)
 
-/-- The filtering constructions (41), (42), (43) place the trigger in the second conjunct, in the
-consequent, or in a disjunct. -/
-inductive Construction
-  | conjunction
-  | conditional
-  | disjunction
-  deriving DecidableEq, Fintype
+The filtering constructions (41), (42), (43) place the trigger in the second conjunct, in the
+consequent, or in a disjunct. The paper shares with the satisfaction theory the assumption that
+the trigger is evaluated in the context updated with the other clause, the local context of
+[karttunen-1974-presupposition]'s table (`Presupposition.Connective.localContext`), but not the
+requirement that the local context entail the precondition. -/
 
-/-- The context in which the trigger is evaluated: the context updated with the first conjunct,
-with the antecedent, or with the negation of the other disjunct. -/
-def localContext (C A : Set ι) : Construction → Set ι
-  | .conjunction => C ∩ A
-  | .conditional => C ∩ A
-  | .disjunction => C ∩ Aᶜ
+open Presupposition (Connective)
 
 /-- Filtering arises where the first clause asserts or supposes the precondition, or the other
 disjunct is its negation: the trigger is evaluated in a context entailing the precondition, so
 no global presumption is attributable to the speaker; in disjunction the condition concerns the
 other disjunct whichever comes first (§4). -/
 theorem localContext_subset {C A pre : Set ι} :
-    (A ⊆ pre → localContext C A .conjunction ⊆ pre ∧ localContext C A .conditional ⊆ pre) ∧
-      (Aᶜ ⊆ pre → localContext C A .disjunction ⊆ pre) :=
+    (A ⊆ pre → Connective.conj.localContext C A ⊆ pre ∧ Connective.cond.localContext C A ⊆ pre) ∧
+      (Aᶜ ⊆ pre → Connective.disj.localContext C A ⊆ pre) :=
   ⟨fun h ↦ ⟨fun _ hw ↦ h hw.2, fun _ hw ↦ h hw.2⟩, fun h _ hw ↦ h hw.2⟩
 
 /-- The contrast in (44) is that, in a context that leaves the precondition open, a disjunctive
 antecedent whose other disjunct negates the precondition filters it, whereas a simple antecedent
 leaves the precondition to be presumed globally, which the open context forbids. -/
 theorem disjunctive_antecedent_filters {C pre : Set ι} (hopen : ¬ C ⊆ pre) :
-    localContext C preᶜ .disjunction ⊆ pre ∧ ¬ localContext C Set.univ .conditional ⊆ pre :=
+    Connective.disj.localContext C preᶜ ⊆ pre ∧ ¬ Connective.cond.localContext C Set.univ ⊆ pre :=
   ⟨fun _ hw ↦ not_not.mp hw.2, fun h ↦ hopen fun _ hw ↦ h ⟨hw, trivial⟩⟩
 
 end RobertsSimons2024

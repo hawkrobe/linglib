@@ -206,7 +206,7 @@ for `a` and `b`. So the disjunction rule (45) filters it. -/
 theorem filtering (h₁ : ∃ w ∈ poss R a, w ∉ poss R b) (h₂ : ∃ w ∈ poss R b, w ∉ poss R a)
     (h : ∃ w ∈ poss R a ∩ poss R b, w ∉ poss R (a ∩ b)) {c : Set W}
     (hc : c ⊆ (pexFC R a b).presup) (C : W → Prop) :
-    presupSatisfied (localCtxSecondDisjunct c (pexFC R a b).neg)
+    presupSatisfied (Connective.disj.localContext c (pexFC R a b).neg.assertion)
       ⟨λ w => w ∈ poss R A ∧ w ∈ poss R B, C⟩ := by
   intro w ⟨hcw, hna⟩
   have hfc := pex_fc h₁ h₂ h ⟨hc hcw, not_not.1 hna⟩
@@ -235,7 +235,7 @@ first disjunct is negative free choice for `A` and `B`, which entails it, so the
 rule filters it. -/
 theorem filtering_negative (hsat : ∃ w, w ∈ nec R (A ∩ B)) {c : Set W}
     (hc : c ⊆ (pexNec R A B).presup) (C : W → Prop) :
-    presupSatisfied (localCtxSecondDisjunct c (pexNec R A B))
+    presupSatisfied (Connective.disj.localContext c (pexNec R A B).assertion)
       ⟨λ w => w ∉ nec R a ∧ w ∉ nec R b, C⟩ := by
   intro w ⟨hcw, hna⟩
   have := pex_negative_fc_under_neg hsat (w := w) ⟨hc hcw, hna⟩
