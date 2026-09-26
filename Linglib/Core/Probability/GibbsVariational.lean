@@ -31,6 +31,7 @@ by the module docstring of `Mathlib/MeasureTheory/Measure/Tilted.lean`.
 * `InformationTheory.eq_tilted_of_freeEnergy_eq_cgf` — and only there.
 * `InformationTheory.isGreatest_cgf` — the **variational principle**: `cgf f μ 1` is
   the greatest value of `freeEnergy μ f` over admissible `q`.
+* `MeasureTheory.tilted_real_singleton` — on a finite type, the tilted measure at an atom.
 
 ## Implementation notes
 
@@ -147,3 +148,20 @@ theorem isGreatest_cgf (μ : Measure α) [IsProbabilityMeasure μ] {f : α → �
   exact freeEnergy_le_cgf μ q hqμ hq_llr hq_f h_exp
 
 end InformationTheory
+
+namespace MeasureTheory
+
+variable {α : Type*} [MeasurableSpace α] [Fintype α] [MeasurableSingletonClass α]
+
+/-- On a finite type, the tilted measure at an atom is the atom's mass reweighted by the
+exponential of `f` and renormalized. -/
+theorem tilted_real_singleton (μ : Measure α) [IsFiniteMeasure μ] (f : α → ℝ) (a : α) :
+    (μ.tilted f).real {a} = μ.real {a} * Real.exp (f a) / ∑ b, μ.real {b} * Real.exp (f b) := by
+  have hZ : 0 ≤ ∫ x, Real.exp (f x) ∂μ := integral_nonneg fun _ => (Real.exp_pos _).le
+  rw [measureReal_def, tilted_apply, lintegral_singleton, ENNReal.toReal_mul,
+    ENNReal.toReal_ofReal (div_nonneg (Real.exp_pos _).le hZ), ← measureReal_def,
+    integral_fintype .of_finite]
+  simp only [smul_eq_mul]
+  ring
+
+end MeasureTheory
