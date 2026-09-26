@@ -5,6 +5,11 @@ public import Linglib.Core.Probability.Distributions.Gaussian
 public import Linglib.Core.Probability.Choice.RandomUtility
 public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 public import Mathlib.Order.BooleanAlgebra.Basic
+public import Mathlib.Probability.Kernel.WithDensity
+public import Mathlib.Probability.Kernel.Composition.MeasureComp
+public import Mathlib.Probability.Kernel.Composition.IntegralCompProd
+public import Mathlib.Analysis.Convex.Integral
+public import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
 
 /-!
 # Luce (1959): Individual Choice Behavior
@@ -33,7 +38,10 @@ probabilities and renormalizes, so the beta operators commute. The gamma model a
 each strength, which makes its probability operator no function of the probabilities. In a partial
 reinforcement experiment Theorem 14 fixes the product of the strengths of the two gambles, and an
 alpha or gamma operator that keeps the product fixed either confines the strengths to a few values
-or does not learn, while a beta operator that keeps it fixed is a simple one.
+or does not learn, while a beta operator that keeps it fixed is a simple one. For the beta model
+with two alternatives and two outcomes it takes the asymptotic theory: the ratio of the strengths is
+a Markov chain whose moments obey three equations, and these tie the limit of the mean choice
+probability to the limits of the moments of the ratio and of its reciprocal.
 
 ## Implementation notes
 
@@ -50,11 +58,17 @@ representatives, without a quotient. Luce offers the factoring `v(aρb) = w(a,b)
 hypothesis, not a theorem, and so does `gam_of_factored`. The alpha model is stated for its
 matrix, the form Luce derives from the unboundedness, superposition, and independence-of-unit
 conditions, and `responseProb` is the ratio rule on a strength vector, the stateless form of
-`RationalAction.policy`.
+`RationalAction.policy`. The beta model of §4.G is a Markov kernel on the log ratio `u = log v`,
+where its four events are translations and `P` is the sigmoid of `u`; its moments are integrals
+under the law of each trial from an initial law with finite exponential moments, and the second
+parts of Theorems 15, 16 and 18 are the first parts for the model with the alternatives exchanged
+(`BetaLearner.swap`).
 
 ## TODO
 
-The asymptotic theory of the beta model (§4.G) is not formalized. The derivation of the gamma
+The special case of §4.G.4 (equations 19–29 and Table 6) and its conjecture are not formalized.
+Theorem 15 (ii) as printed has `(1 − A(−i))/(1 − B(−i))` in its product, where (10) and (11) give
+`(A(−i) − 1)/(1 − B(−i))`, which `BetaLearner.theorem15_inv` states. The derivation of the gamma
 form on pp. 105–106 applies the independence-of-unit condition to `gᵢ` without rescaling the
 bound `v_M`, which read literally would force `γᵢ = 0` as well, so the form `βᵢ·v + γᵢ` is taken
 as given.
@@ -2910,5 +2924,761 @@ theorem encard_le_two_or_gamma {β γ : Fin 2 → ℝ} {K : ℝ} (hK : 0 < K) :
       linear_combination hxK
 
 end PartialReinforcement
+
+section BetaAsymptotics
+
+open MeasureTheory ProbabilityTheory Filter Topology
+open scoped ENNReal
+
+/-!
+#### §4.G: Asymptotic properties of the beta model (pp. 111–120)
+
+With two alternatives and two outcomes the beta model is a Markov chain on the ratio `vₙ` of the
+response strengths, which on the log scale moves by one of four fixed steps with probabilities set
+by `Pₙ = vₙ/(vₙ + 1)`. Three equations govern its expectations: the moments of `vₙ` satisfy (10),
+the identity (11) relates `Pₙvₙ` to `vₙ` and `Pₙ`, and the expected log ratio moves in proportion
+to `E(Pₙ) − P*` (16). From these, Theorems 15 and 16 tie the limit of `E(Pₙ)` to the limits of the
+moments of `vₙ` and `1/vₙ`, Theorem 17 places it at `P*` unless a first moment diverges, and
+Theorem 18 decides divergence from `A(1)`, `B(1)`, `A(−1)` and `B(−1)`. Each second part is the
+first part for the model with the alternatives exchanged.
+-/
+
+/-- The beta model of §4.G for two alternatives and two outcomes (p. 112). When alternative `i` is
+chosen and outcome `j` occurs, the ratio `v = v(1)/v(2)` of the response strengths is multiplied by
+`β₁ⱼ` if `i = 1` and divided by `β₂ⱼ` if `i = 2`, and outcome `1` follows the choice of `i` with
+probability `πᵢ`. -/
+structure BetaLearner where
+  /-- The multiplier of `v` after choice 1 and outcome 1. -/
+  β₁₁ : ℝ
+  /-- The multiplier of `v` after choice 1 and outcome 2. -/
+  β₁₂ : ℝ
+  /-- The divisor of `v` after choice 2 and outcome 1. -/
+  β₂₁ : ℝ
+  /-- The divisor of `v` after choice 2 and outcome 2. -/
+  β₂₂ : ℝ
+  /-- The probability of outcome 1 after choice 1. -/
+  π₁ : ℝ
+  /-- The probability of outcome 1 after choice 2. -/
+  π₂ : ℝ
+  β₁₁_pos : 0 < β₁₁
+  β₁₂_pos : 0 < β₁₂
+  β₂₁_pos : 0 < β₂₁
+  β₂₂_pos : 0 < β₂₂
+  π₁_nonneg : 0 ≤ π₁
+  π₁_le_one : π₁ ≤ 1
+  π₂_nonneg : 0 ≤ π₂
+  π₂_le_one : π₂ ≤ 1
+
+namespace BetaLearner
+
+variable (m : BetaLearner)
+
+/-- The probability `v(1)/(v(1) + v(2))` of choosing alternative `1` is the sigmoid of the log ratio
+`log (v(1)/v(2))` (6). -/
+theorem sigmoid_log_div (v : Fin 2 → ℝ) (h₁ : 0 < v 0) (h₂ : 0 < v 1) :
+    Real.sigmoid (Real.log (v 0 / v 1)) = pairwiseProb v 0 1 := by
+  rw [Real.sigmoid_def, Real.exp_neg, Real.exp_log (div_pos h₁ h₂), pairwiseProb]
+  field_simp
+
+/-- The transition (7) on the log ratio `u = log v`. With `P = v/(v + 1)` the sigmoid of `u` (6),
+the events `E₁₁, E₁₂, E₂₁, E₂₂` have probabilities `Pπ₁`, `P(1 − π₁)`, `(1 − P)π₂`,
+`(1 − P)(1 − π₂)` and move `u` by `log β₁₁`, `log β₁₂`, `−log β₂₁`, `−log β₂₂`. -/
+noncomputable def kernel : Kernel ℝ ℝ :=
+  Kernel.withDensity (Kernel.deterministic (· + Real.log m.β₁₁) (measurable_add_const _))
+      (fun u _ ↦ ENNReal.ofReal (Real.sigmoid u * m.π₁)) +
+    Kernel.withDensity (Kernel.deterministic (· + Real.log m.β₁₂) (measurable_add_const _))
+      (fun u _ ↦ ENNReal.ofReal (Real.sigmoid u * (1 - m.π₁))) +
+    Kernel.withDensity (Kernel.deterministic (· - Real.log m.β₂₁) (measurable_sub_const _))
+      (fun u _ ↦ ENNReal.ofReal ((1 - Real.sigmoid u) * m.π₂)) +
+    Kernel.withDensity (Kernel.deterministic (· - Real.log m.β₂₂) (measurable_sub_const _))
+      (fun u _ ↦ ENNReal.ofReal ((1 - Real.sigmoid u) * (1 - m.π₂)))
+
+/-- Each row of the kernel is the four-point distribution of (7). -/
+theorem kernel_apply (u : ℝ) : m.kernel u =
+    ENNReal.ofReal (Real.sigmoid u * m.π₁) • Measure.dirac (u + Real.log m.β₁₁) +
+    ENNReal.ofReal (Real.sigmoid u * (1 - m.π₁)) • Measure.dirac (u + Real.log m.β₁₂) +
+    ENNReal.ofReal ((1 - Real.sigmoid u) * m.π₂) • Measure.dirac (u - Real.log m.β₂₁) +
+    ENNReal.ofReal ((1 - Real.sigmoid u) * (1 - m.π₂)) • Measure.dirac (u - Real.log m.β₂₂) := by
+  simp only [kernel, FunLike.coe_add, Pi.add_apply]
+  rw [Kernel.withDensity_apply _ (by fun_prop), Kernel.withDensity_apply _ (by fun_prop),
+    Kernel.withDensity_apply _ (by fun_prop), Kernel.withDensity_apply _ (by fun_prop)]
+  simp [Kernel.deterministic_apply]
+
+
+private theorem w₁_nonneg (u : ℝ) : 0 ≤ Real.sigmoid u * m.π₁ :=
+  mul_nonneg (Real.sigmoid_nonneg u) m.π₁_nonneg
+private theorem w₂_nonneg (u : ℝ) : 0 ≤ Real.sigmoid u * (1 - m.π₁) :=
+  mul_nonneg (Real.sigmoid_nonneg u) (sub_nonneg.2 m.π₁_le_one)
+private theorem w₃_nonneg (u : ℝ) : 0 ≤ (1 - Real.sigmoid u) * m.π₂ :=
+  mul_nonneg (sub_nonneg.2 (Real.sigmoid_le_one u)) m.π₂_nonneg
+private theorem w₄_nonneg (u : ℝ) : 0 ≤ (1 - Real.sigmoid u) * (1 - m.π₂) :=
+  mul_nonneg (sub_nonneg.2 (Real.sigmoid_le_one u)) (sub_nonneg.2 m.π₂_le_one)
+
+/-- The conditional expectation given the log ratio `u` averages over the four events of (7). -/
+theorem integral_kernel (f : ℝ → ℝ) (u : ℝ) : ∫ x, f x ∂m.kernel u =
+    Real.sigmoid u * m.π₁ * f (u + Real.log m.β₁₁) +
+    Real.sigmoid u * (1 - m.π₁) * f (u + Real.log m.β₁₂) +
+    (1 - Real.sigmoid u) * m.π₂ * f (u - Real.log m.β₂₁) +
+    (1 - Real.sigmoid u) * (1 - m.π₂) * f (u - Real.log m.β₂₂) := by
+  have hi (c : ℝ) (a : ℝ) : Integrable f (ENNReal.ofReal c • Measure.dirac a) :=
+    (integrable_dirac (by simp)).smul_measure ENNReal.ofReal_ne_top
+  rw [kernel_apply, integral_add_measure (((hi _ _).add_measure (hi _ _)).add_measure (hi _ _))
+    (hi _ _), integral_add_measure ((hi _ _).add_measure (hi _ _)) (hi _ _),
+    integral_add_measure (hi _ _) (hi _ _)]
+  simp only [integral_smul_measure, integral_dirac, smul_eq_mul,
+    ENNReal.toReal_ofReal (m.w₁_nonneg u), ENNReal.toReal_ofReal (m.w₂_nonneg u),
+    ENNReal.toReal_ofReal (m.w₃_nonneg u), ENNReal.toReal_ofReal (m.w₄_nonneg u)]
+
+/-- The probabilities of the four events sum to one. -/
+theorem kernel_apply_univ (u : ℝ) : m.kernel u Set.univ = 1 := by
+  simp only [kernel_apply, Measure.add_apply, Measure.smul_apply, measure_univ, smul_eq_mul,
+    mul_one]
+  rw [← ENNReal.ofReal_add (m.w₁_nonneg u) (m.w₂_nonneg u),
+    ← ENNReal.ofReal_add (add_nonneg (m.w₁_nonneg u) (m.w₂_nonneg u)) (m.w₃_nonneg u),
+    ← ENNReal.ofReal_add (add_nonneg (add_nonneg (m.w₁_nonneg u) (m.w₂_nonneg u))
+      (m.w₃_nonneg u)) (m.w₄_nonneg u), ← ENNReal.ofReal_one]
+  congr 1
+  ring
+
+instance : IsMarkovKernel m.kernel := ⟨fun u ↦ ⟨m.kernel_apply_univ u⟩⟩
+
+/-- The distribution of the log ratio on trial `n`, starting from the distribution `μ₀`. -/
+noncomputable def law (μ₀ : Measure ℝ) : ℕ → Measure ℝ
+  | 0 => μ₀
+  | n + 1 => m.kernel ∘ₘ law μ₀ n
+
+instance isProbabilityMeasure_law (μ₀ : Measure ℝ) [IsProbabilityMeasure μ₀] (n : ℕ) :
+    IsProbabilityMeasure (m.law μ₀ n) := by
+  induction n with
+  | zero => exact ‹_›
+  | succ n ih => exact inferInstanceAs (IsProbabilityMeasure (m.kernel ∘ₘ m.law μ₀ n))
+
+
+variable {m}
+
+private theorem integrable_sigmoid_mul {μ : Measure ℝ} {g : ℝ → ℝ} (hg : Integrable g μ) (c : ℝ) :
+    Integrable (fun u ↦ Real.sigmoid u * c * g u) μ :=
+  hg.bdd_mul (c := |c|) (by fun_prop) (.of_forall fun u ↦ by
+    rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (Real.sigmoid_nonneg u)]
+    exact mul_le_of_le_one_left (abs_nonneg c) (Real.sigmoid_le_one u))
+
+private theorem integrable_one_sub_sigmoid_mul {μ : Measure ℝ} {g : ℝ → ℝ} (hg : Integrable g μ)
+    (c : ℝ) : Integrable (fun u ↦ (1 - Real.sigmoid u) * c * g u) μ :=
+  hg.bdd_mul (c := |c|) (by fun_prop) (.of_forall fun u ↦ by
+    rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (sub_nonneg.2 (Real.sigmoid_le_one u))]
+    exact mul_le_of_le_one_left (abs_nonneg c) (by linarith [Real.sigmoid_pos u]))
+
+variable (m)
+
+/-- When the translates of `f` are integrable, the expectation of `f` on trial `n + 1` is the
+expectation on trial `n` of its conditional expectation. -/
+theorem integral_law_succ (μ₀ : Measure ℝ) (n : ℕ) {f : ℝ → ℝ} (hf : Measurable f)
+    (hi : ∀ c, Integrable (fun u ↦ f (u + c)) (m.law μ₀ n)) :
+    Integrable f (m.law μ₀ (n + 1)) ∧
+      ∫ x, f x ∂m.law μ₀ (n + 1) = ∫ u, ∫ x, f x ∂m.kernel u ∂m.law μ₀ n := by
+  have hi' (c : ℝ) : Integrable (fun u ↦ f (u - c)) (m.law μ₀ n) := by
+    simpa [sub_eq_add_neg] using hi (-c)
+  have hsum (g : ℝ → ℝ) (hg : ∀ c, Integrable (fun u ↦ g (u + c)) (m.law μ₀ n))
+      (hg' : ∀ c, Integrable (fun u ↦ g (u - c)) (m.law μ₀ n)) :
+      Integrable (fun u ↦ Real.sigmoid u * m.π₁ * g (u + Real.log m.β₁₁) +
+        Real.sigmoid u * (1 - m.π₁) * g (u + Real.log m.β₁₂) +
+        (1 - Real.sigmoid u) * m.π₂ * g (u - Real.log m.β₂₁) +
+        (1 - Real.sigmoid u) * (1 - m.π₂) * g (u - Real.log m.β₂₂)) (m.law μ₀ n) :=
+    (((integrable_sigmoid_mul (hg _) _).add (integrable_sigmoid_mul (hg _) _)).add
+      (integrable_one_sub_sigmoid_mul (hg' _) _)).add (integrable_one_sub_sigmoid_mul (hg' _) _)
+  have hint : Integrable f (m.law μ₀ (n + 1)) := by
+    show Integrable f (m.kernel ∘ₘ m.law μ₀ n)
+    rw [Measure.integrable_comp_iff hf.aestronglyMeasurable]
+    refine ⟨.of_forall fun u ↦ ?_, ?_⟩
+    · have hd (c a : ℝ) : Integrable f (ENNReal.ofReal c • Measure.dirac a) :=
+        (integrable_dirac (by simp)).smul_measure ENNReal.ofReal_ne_top
+      rw [kernel_apply]
+      exact (((hd _ _).add_measure (hd _ _)).add_measure (hd _ _)).add_measure (hd _ _)
+    · simp_rw [integral_kernel]
+      exact hsum (fun x ↦ ‖f x‖) (fun c ↦ (hi c).norm) (fun c ↦ (hi' c).norm)
+  refine ⟨hint, ?_⟩
+  show ∫ x, f x ∂(m.kernel ∘ₘ m.law μ₀ n) = _
+  rw [Measure.comp_eq_comp_const_apply, ProbabilityTheory.Kernel.integral_comp
+    (by rwa [← Measure.comp_eq_comp_const_apply])]
+  simp [Kernel.const_apply]
+
+/-- Finite moments `E(v₀ᵗ)` of every real order persist on every trial. -/
+theorem integrable_exp_law {μ₀ : Measure ℝ} (hμ₀ : ∀ t, Integrable (fun u ↦ Real.exp (t * u)) μ₀)
+    (n : ℕ) (t : ℝ) : Integrable (fun u ↦ Real.exp (t * u)) (m.law μ₀ n) := by
+  induction n generalizing t with
+  | zero => exact hμ₀ t
+  | succ n ih =>
+    refine (m.integral_law_succ μ₀ n (by fun_prop) fun c ↦ ?_).1
+    simpa [mul_add, Real.exp_add, mul_comm] using (ih t).mul_const (Real.exp (t * c))
+
+
+/-- The constant `A(k) = π₁β₁₁ᵏ + (1 − π₁)β₁₂ᵏ` of (9). -/
+noncomputable def A (k : ℝ) : ℝ := m.π₁ * m.β₁₁ ^ k + (1 - m.π₁) * m.β₁₂ ^ k
+
+/-- The constant `B(k) = π₂/β₂₁ᵏ + (1 − π₂)/β₂₂ᵏ` of (9). -/
+noncomputable def B (k : ℝ) : ℝ := m.π₂ / m.β₂₁ ^ k + (1 - m.π₂) / m.β₂₂ ^ k
+
+/-- Given `vₙ`, the expectation of `vₙ₊₁ᵏ` is `(A(k) − B(k))Pₙvₙᵏ + B(k)vₙᵏ` (8). -/
+theorem integral_exp_kernel (k u : ℝ) : ∫ x, Real.exp (k * x) ∂m.kernel u =
+    (m.A k - m.B k) * Real.sigmoid u * Real.exp (k * u) + m.B k * Real.exp (k * u) := by
+  have up {β : ℝ} (hβ : 0 < β) : Real.exp (k * (u + Real.log β)) = Real.exp (k * u) * β ^ k := by
+    rw [Real.rpow_def_of_pos hβ, ← Real.exp_add]; ring_nf
+  have dn {β : ℝ} (hβ : 0 < β) : Real.exp (k * (u - Real.log β)) = Real.exp (k * u) / β ^ k := by
+    rw [Real.rpow_def_of_pos hβ, ← Real.exp_sub]; ring_nf
+  rw [integral_kernel, up m.β₁₁_pos, up m.β₁₂_pos, dn m.β₂₁_pos, dn m.β₂₂_pos, A, B]
+  ring
+
+/-- The identity `Pₙvₙ = vₙ − Pₙ` (11). -/
+theorem sigmoid_mul_exp (u : ℝ) : Real.sigmoid u * Real.exp u = Real.exp u - Real.sigmoid u := by
+  rw [Real.sigmoid_def, Real.exp_neg]
+  field_simp
+  ring
+
+variable {μ₀ : Measure ℝ}
+
+private theorem abs_le_exp_add_exp (u : ℝ) : |u| ≤ Real.exp u + Real.exp (-u) := by
+  rcases le_total 0 u with h | h
+  · rw [abs_of_nonneg h]; linarith [Real.add_one_le_exp u, Real.exp_pos (-u)]
+  · rw [abs_of_nonpos h]; linarith [Real.add_one_le_exp (-u), Real.exp_pos u]
+
+/-- The model with the two alternatives exchanged, whose ratio of strengths is `1/v`. -/
+def swap : BetaLearner where
+  β₁₁ := m.β₂₁
+  β₁₂ := m.β₂₂
+  β₂₁ := m.β₁₁
+  β₂₂ := m.β₁₂
+  π₁ := m.π₂
+  π₂ := m.π₁
+  β₁₁_pos := m.β₂₁_pos
+  β₁₂_pos := m.β₂₂_pos
+  β₂₁_pos := m.β₁₁_pos
+  β₂₂_pos := m.β₁₂_pos
+  π₁_nonneg := m.π₂_nonneg
+  π₁_le_one := m.π₂_le_one
+  π₂_nonneg := m.π₁_nonneg
+  π₂_le_one := m.π₁_le_one
+
+/-- Exchanging the alternatives turns `A(k)` into `B(−k)`. -/
+theorem swap_A (k : ℝ) : m.swap.A k = m.B (-k) := by
+  simp [swap, A, B, Real.rpow_neg m.β₂₁_pos.le, Real.rpow_neg m.β₂₂_pos.le, div_eq_mul_inv]
+
+/-- Exchanging the alternatives turns `B(k)` into `A(−k)`. -/
+theorem swap_B (k : ℝ) : m.swap.B k = m.A (-k) := by
+  simp [swap, A, B, Real.rpow_neg m.β₁₁_pos.le, Real.rpow_neg m.β₁₂_pos.le, div_eq_mul_inv]
+
+/-- The transition of the exchanged model is the reflection of the original one. -/
+theorem swap_kernel (u : ℝ) : m.swap.kernel u = (m.kernel (-u)).map Neg.neg := by
+  simp only [kernel_apply, Measure.map_add _ _ measurable_neg,
+    Measure.map_smul _ measurable_neg.aemeasurable, Measure.map_dirac' measurable_neg,
+    Real.sigmoid_neg, swap, neg_add, neg_neg, sub_eq_add_neg]
+  abel_nf
+
+/-- The log ratio of the exchanged model is the negated log ratio. -/
+theorem law_swap (n : ℕ) : m.swap.law (μ₀.map Neg.neg) n = (m.law μ₀ n).map Neg.neg := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    show m.swap.kernel ∘ₘ m.swap.law _ n = (m.kernel ∘ₘ m.law μ₀ n).map Neg.neg
+    rw [ih, Measure.map_comp _ _ measurable_neg]
+    ext s hs
+    rw [Measure.bind_apply hs (Kernel.aemeasurable _),
+      Measure.bind_apply hs (Kernel.aemeasurable _),
+      lintegral_map (Kernel.measurable_coe _ hs) measurable_neg]
+    simp [swap_kernel, Kernel.map_apply _ measurable_neg]
+
+/-- The exponent `σ₁` of (14), with `β₁₁^σ₁ = 1/β₁₂`, the number of occurrences of `E₁₁` that undo
+one occurrence of `E₁₂`. -/
+noncomputable def σ₁ : ℝ := -Real.log m.β₁₂ / Real.log m.β₁₁
+
+/-- The exponent `σ₂` of (14), with `β₂₁^σ₂ = 1/β₂₂`. -/
+noncomputable def σ₂ : ℝ := -Real.log m.β₂₂ / Real.log m.β₂₁
+
+/-- The coefficient `(log β₁₁)[π₁(σ₁ + 1) − σ₁] + (log β₂₁)[π₂(σ₂ + 1) − σ₂]` of (16). -/
+noncomputable def drift : ℝ :=
+  Real.log m.β₁₁ * (m.π₁ * (m.σ₁ + 1) - m.σ₁) + Real.log m.β₂₁ * (m.π₂ * (m.σ₂ + 1) - m.σ₂)
+
+/-- The probability `P*` of (15). -/
+noncomputable def Pstar : ℝ :=
+  (m.π₂ * (m.σ₂ + 1) - m.σ₂) /
+    (Real.log m.β₁₁ / Real.log m.β₂₁ * (m.π₁ * (m.σ₁ + 1) - m.σ₁) + (m.π₂ * (m.σ₂ + 1) - m.σ₂))
+
+/-- The probability `Pₙ` is integrable on every trial. -/
+theorem integrable_sigmoid_law [IsProbabilityMeasure μ₀] (n : ℕ) :
+    Integrable (fun u ↦ Real.sigmoid u) (m.law μ₀ n) :=
+  (integrable_const (1 : ℝ)).mono' (by fun_prop) (.of_forall fun u ↦ by
+    rw [Real.norm_eq_abs, abs_of_nonneg (Real.sigmoid_nonneg u)]; exact Real.sigmoid_le_one u)
+
+/-- Expectations under the exchanged model are expectations of the reflected function. -/
+theorem integral_law_swap (f : ℝ → ℝ) (n : ℕ) :
+    ∫ x, f x ∂m.swap.law (μ₀.map Neg.neg) n = ∫ u, f (-u) ∂m.law μ₀ n := by
+  rw [law_swap]
+  exact integral_map_equiv (MeasurableEquiv.neg ℝ) f
+
+/-- The exchanged model chooses its first alternative with probability `1 − E(Pₙ)`. -/
+theorem integral_sigmoid_law_swap [IsProbabilityMeasure μ₀] (n : ℕ) :
+    ∫ x, Real.sigmoid x ∂m.swap.law (μ₀.map Neg.neg) n = 1 - ∫ u, Real.sigmoid u ∂m.law μ₀ n := by
+  rw [integral_law_swap]
+  simp_rw [Real.sigmoid_neg]
+  rw [integral_sub (integrable_const 1) (m.integrable_sigmoid_law n)]
+  simp
+
+private theorem A_one_pos : 0 < m.A 1 := by
+  simp only [A, Real.rpow_one]
+  rcases eq_or_lt_of_le m.π₁_nonneg with h | h
+  · rw [← h]; simp [m.β₁₂_pos]
+  · nlinarith [mul_pos h m.β₁₁_pos, mul_nonneg (sub_nonneg.2 m.π₁_le_one) m.β₁₂_pos.le]
+
+private theorem B_one_pos : 0 < m.B 1 := by
+  simp only [B, Real.rpow_one]
+  have := div_nonneg m.π₂_nonneg m.β₂₁_pos.le
+  have := div_nonneg (sub_nonneg.2 m.π₂_le_one) m.β₂₂_pos.le
+  rcases eq_or_lt_of_le m.π₂_nonneg with h | h
+  · rw [← h]; simp [m.β₂₂_pos]
+  · linarith [div_pos h m.β₂₁_pos]
+
+variable (hμ₀ : ∀ t, Integrable (fun u ↦ Real.exp (t * u)) μ₀)
+include hμ₀
+
+/-- The product `Pₙvₙᵗ` is integrable on every trial. -/
+theorem integrable_sigmoid_mul_exp_law (n : ℕ) (t : ℝ) :
+    Integrable (fun u ↦ Real.sigmoid u * Real.exp (t * u)) (m.law μ₀ n) := by
+  simpa using integrable_sigmoid_mul (m.integrable_exp_law hμ₀ n t) 1
+
+/-- Taking expectations in (8), `E(vₙ₊₁ᵏ) = (A(k) − B(k))E(Pₙvₙᵏ) + B(k)E(vₙᵏ)` (10). -/
+theorem integral_exp_law_succ (k : ℝ) (n : ℕ) :
+    ∫ u, Real.exp (k * u) ∂m.law μ₀ (n + 1) =
+      (m.A k - m.B k) * ∫ u, Real.sigmoid u * Real.exp (k * u) ∂m.law μ₀ n +
+        m.B k * ∫ u, Real.exp (k * u) ∂m.law μ₀ n := by
+  rw [(m.integral_law_succ μ₀ n (by fun_prop) fun c ↦ by
+      simpa [mul_add, Real.exp_add, mul_comm] using
+        (m.integrable_exp_law hμ₀ n k).mul_const (Real.exp (k * c))).2]
+  simp_rw [integral_exp_kernel, mul_assoc]
+  rw [integral_add ((m.integrable_sigmoid_mul_exp_law hμ₀ n k).const_mul _)
+    ((m.integrable_exp_law hμ₀ n k).const_mul _), integral_const_mul, integral_const_mul]
+
+/-- The log ratio is integrable on every trial. -/
+theorem integrable_id_law (n : ℕ) : Integrable (fun u ↦ u) (m.law μ₀ n) := by
+  refine Integrable.mono' ((m.integrable_exp_law hμ₀ n 1).add (m.integrable_exp_law hμ₀ n (-1)))
+    (by fun_prop) (.of_forall fun u ↦ ?_)
+  simpa using abs_le_exp_add_exp u
+
+/-- When `β₁₁ ≠ 1`, `β₂₁ ≠ 1` and the coefficient of (16) is nonzero, the expected log ratio moves
+by that coefficient times `E(Pₙ) − P*` (16). -/
+theorem integral_law_succ_sub [IsProbabilityMeasure μ₀] (h₁ : m.β₁₁ ≠ 1) (h₂ : m.β₂₁ ≠ 1)
+    (hd : m.drift ≠ 0) (n : ℕ) :
+    ∫ u, u ∂m.law μ₀ (n + 1) - ∫ u, u ∂m.law μ₀ n =
+      m.drift * (∫ u, Real.sigmoid u ∂m.law μ₀ n - m.Pstar) := by
+  have l₁ := Real.log_ne_zero_of_pos_of_ne_one m.β₁₁_pos h₁
+  have l₂ := Real.log_ne_zero_of_pos_of_ne_one m.β₂₁_pos h₂
+  set a := m.π₁ * Real.log m.β₁₁ + (1 - m.π₁) * Real.log m.β₁₂
+  set b := m.π₂ * Real.log m.β₂₁ + (1 - m.π₂) * Real.log m.β₂₂
+  have ha : m.π₁ * (m.σ₁ + 1) - m.σ₁ = a / Real.log m.β₁₁ := by
+    simp only [σ₁, a]; field_simp; ring
+  have hb : m.π₂ * (m.σ₂ + 1) - m.σ₂ = b / Real.log m.β₂₁ := by
+    simp only [σ₂, b]; field_simp; ring
+  have hdr : m.drift = a + b := by
+    simp only [drift, ha, hb]; field_simp
+  have hab : a + b ≠ 0 := hdr ▸ hd
+  have hP : m.drift * m.Pstar = b := by
+    rw [hdr, Pstar, ha, hb]
+    field_simp
+  have hk (u : ℝ) : ∫ x, x ∂m.kernel u = u + (a + b) * Real.sigmoid u - b := by
+    rw [integral_kernel]; simp only [a, b]; ring
+  rw [(m.integral_law_succ μ₀ n (f := fun x ↦ x) measurable_id fun c ↦
+      (m.integrable_id_law hμ₀ n).add (integrable_const c)).2]
+  simp_rw [hk]
+  have i₁ : Integrable (fun u ↦ u + (a + b) * Real.sigmoid u) (m.law μ₀ n) :=
+    (m.integrable_id_law hμ₀ n).add ((m.integrable_sigmoid_law n).const_mul _)
+  rw [integral_sub i₁ (integrable_const b), integral_add (m.integrable_id_law hμ₀ n)
+      ((m.integrable_sigmoid_law n).const_mul _), integral_const_mul, integral_const]
+  simp only [probReal_univ, smul_eq_mul, one_mul]
+  rw [mul_sub, hP, hdr]
+  ring
+
+/-- Multiplying (11) by `vₙᵗ` and integrating gives `E(Pₙvₙᵗ⁺¹) = E(vₙᵗ⁺¹) − E(Pₙvₙᵗ)`. -/
+theorem integral_sigmoid_mul_exp_succ (t : ℝ) (n : ℕ) :
+    ∫ u, Real.sigmoid u * Real.exp ((t + 1) * u) ∂m.law μ₀ n =
+      ∫ u, Real.exp ((t + 1) * u) ∂m.law μ₀ n -
+        ∫ u, Real.sigmoid u * Real.exp (t * u) ∂m.law μ₀ n := by
+  rw [← integral_sub (m.integrable_exp_law hμ₀ n _) (m.integrable_sigmoid_mul_exp_law hμ₀ n t)]
+  congr 1 with u
+  have := sigmoid_mul_exp u
+  rw [add_mul, one_mul, Real.exp_add]
+  linear_combination Real.exp (t * u) * this
+
+/-- By (10) and (11) the first moment satisfies `E(vₙ₊₁) = A(1)E(vₙ) − (A(1) − B(1))E(Pₙ)`. -/
+theorem integral_exp_law_succ_one (n : ℕ) :
+    ∫ u, Real.exp u ∂m.law μ₀ (n + 1) =
+      m.A 1 * ∫ u, Real.exp u ∂m.law μ₀ n - (m.A 1 - m.B 1) * ∫ u, Real.sigmoid u ∂m.law μ₀ n := by
+  have h := m.integral_exp_law_succ hμ₀ 1 n
+  have h' := m.integral_sigmoid_mul_exp_succ hμ₀ 0 n
+  simp only [zero_add, one_mul, zero_mul, Real.exp_zero, mul_one] at h h'
+  rw [h, h']
+  ring
+
+private theorem integrable_exp_map_neg :
+    ∀ t, Integrable (fun u ↦ Real.exp (t * u)) (μ₀.map Neg.neg) := fun t ↦ by
+  refine (integrable_map_equiv (MeasurableEquiv.neg ℝ) _).2 ?_
+  simpa [Function.comp_def] using hμ₀ (-t)
+
+/-- The limit of `E(Pₙvₙʲ)` given that of `E(vₙʲ⁺¹)`, from (17). -/
+private theorem tendsto_sigmoid_mul_exp {j : ℕ} {L : ℝ}
+    (hL : Tendsto (fun n ↦ ∫ u, Real.exp (((j + 1 : ℕ) : ℝ) * u) ∂m.law μ₀ n) atTop (𝓝 L))
+    (hAB : m.A (j + 1 : ℕ) ≠ m.B (j + 1 : ℕ)) :
+    Tendsto (fun n ↦ ∫ u, Real.sigmoid u * Real.exp (j * u) ∂m.law μ₀ n) atTop
+      (𝓝 ((m.A (j + 1 : ℕ) - 1) * L / (m.A (j + 1 : ℕ) - m.B (j + 1 : ℕ)))) := by
+  have key (n : ℕ) : ∫ u, Real.sigmoid u * Real.exp (j * u) ∂m.law μ₀ n =
+      (m.A (j + 1 : ℕ) * ∫ u, Real.exp (((j + 1 : ℕ) : ℝ) * u) ∂m.law μ₀ n -
+        ∫ u, Real.exp (((j + 1 : ℕ) : ℝ) * u) ∂m.law μ₀ (n + 1)) /
+        (m.A (j + 1 : ℕ) - m.B (j + 1 : ℕ)) := by
+    rw [eq_div_iff (sub_ne_zero.2 hAB), m.integral_exp_law_succ hμ₀,
+      Nat.cast_succ, m.integral_sigmoid_mul_exp_succ hμ₀]
+    ring
+  simp_rw [key]
+  refine Tendsto.div_const ?_ _
+  convert (hL.const_mul _).sub ((tendsto_add_atTop_iff_nat 1).2 hL) using 2
+  ring
+
+/-- If `E(vₙⁱ)` converges to `L i` and `A(i) ≠ B(i)`, `A(i) ≠ 1` for `i = 1, …, k`, then `E(Pₙ)`
+converges to some `p`, and `L k` is `(A(k) − B(k))/(A(k) − 1)` times the product of
+`(1 − B(i))/(A(i) − 1)` over `1 ≤ i < k` times `p` (Theorem 15 (i), p. 114). -/
+theorem theorem15 [IsProbabilityMeasure μ₀] {k : ℕ} (hk : 1 ≤ k) {L : ℕ → ℝ}
+    (hL : ∀ i ∈ Finset.Icc 1 k,
+      Tendsto (fun n ↦ ∫ u, Real.exp (i * u) ∂m.law μ₀ n) atTop (𝓝 (L i)))
+    (hAB : ∀ i ∈ Finset.Icc 1 k, m.A i ≠ m.B i) (hA : ∀ i ∈ Finset.Icc 1 k, m.A i ≠ 1) :
+    ∃ p, Tendsto (fun n ↦ ∫ u, Real.sigmoid u ∂m.law μ₀ n) atTop (𝓝 p) ∧
+      L k = (m.A k - m.B k) / (m.A k - 1) *
+        (∏ i ∈ Finset.Ico 1 k, (1 - m.B i) / (m.A i - 1)) * p := by
+  have h1 : 1 ∈ Finset.Icc 1 k := Finset.mem_Icc.2 ⟨le_rfl, hk⟩
+  have hp := m.tendsto_sigmoid_mul_exp hμ₀ (j := 0) (hL 1 h1) (hAB 1 h1)
+  simp only [Nat.cast_zero, zero_mul, Real.exp_zero, mul_one, zero_add, Nat.cast_one] at hp
+  refine ⟨_, hp, ?_⟩
+  -- the recursion between consecutive limits
+  have step (j : ℕ) (hj : j ∈ Finset.Ico 1 k) :
+      (1 - m.B j) * L j = (m.A j - m.B j) * ((m.A (j + 1 : ℕ) - 1) * L (j + 1) /
+        (m.A (j + 1 : ℕ) - m.B (j + 1 : ℕ))) := by
+    obtain ⟨hj1, hjk⟩ := Finset.mem_Ico.1 hj
+    have hjI : j ∈ Finset.Icc 1 k := Finset.mem_Icc.2 ⟨hj1, hjk.le⟩
+    have hj1I : j + 1 ∈ Finset.Icc 1 k := Finset.mem_Icc.2 ⟨by omega, hjk⟩
+    have hM := m.tendsto_sigmoid_mul_exp hμ₀ (hL (j + 1) hj1I) (hAB (j + 1) hj1I)
+    have h := tendsto_nhds_unique ((tendsto_add_atTop_iff_nat 1).2 (hL j hjI))
+      (((hM.const_mul (m.A j - m.B j)).add ((hL j hjI).const_mul (m.B j))).congr
+        fun n ↦ (m.integral_exp_law_succ hμ₀ j n).symm)
+    linear_combination h
+  -- induction on the order of the moment
+  suffices main : ∀ k', 1 ≤ k' → k' ≤ k → L k' = (m.A k' - m.B k') / (m.A k' - 1) *
+      (∏ i ∈ Finset.Ico 1 k', (1 - m.B i) / (m.A i - 1)) *
+        ((m.A 1 - 1) * L 1 / (m.A 1 - m.B 1)) from main k hk le_rfl
+  have hA' (i : ℕ) (h1 : 1 ≤ i) (hi : i ≤ k) : m.A i - 1 ≠ 0 :=
+    sub_ne_zero.2 (hA i (Finset.mem_Icc.2 ⟨h1, hi⟩))
+  have hAB' (i : ℕ) (h1 : 1 ≤ i) (hi : i ≤ k) : m.A i - m.B i ≠ 0 :=
+    sub_ne_zero.2 (hAB i (Finset.mem_Icc.2 ⟨h1, hi⟩))
+  intro k' hk'
+  induction k', hk' using Nat.le_induction with
+  | base =>
+    intro _
+    have := hA' 1 le_rfl hk
+    have := hAB' 1 le_rfl hk
+    simp only [Finset.Ico_self, Finset.prod_empty, mul_one, Nat.cast_one] at *
+    field_simp
+  | succ k' hk' ih =>
+    intro hk'k
+    have := hA' k' hk' (by omega)
+    have := hAB' k' hk' (by omega)
+    have := hA' (k' + 1) (by omega) hk'k
+    have := hAB' (k' + 1) (by omega) hk'k
+    have h₁ : m.A 1 - m.B 1 ≠ 0 := by simpa using hAB' 1 le_rfl hk
+    have hs := step k' (Finset.mem_Ico.2 ⟨hk', hk'k⟩)
+    rw [ih (by omega)] at hs
+    rw [Finset.prod_Ico_succ_top hk']
+    push_cast at *
+    field_simp at hs ⊢
+    linear_combination -hs
+
+/-- The limits of the moments of `1/vₙ` satisfy the formula of Theorem 15 (ii) (p. 114), proved as
+part (i) for the exchanged model, with `(A(−i) − 1)/(1 − B(−i))` as the factors of the product
+where the book prints `(1 − A(−i))/(1 − B(−i))`. -/
+theorem theorem15_inv [IsProbabilityMeasure μ₀] {k : ℕ} (hk : 1 ≤ k) {L : ℕ → ℝ}
+    (hL : ∀ i ∈ Finset.Icc 1 k,
+      Tendsto (fun n ↦ ∫ u, Real.exp (-i * u) ∂m.law μ₀ n) atTop (𝓝 (L i)))
+    (hBA : ∀ i ∈ Finset.Icc 1 k, m.B (-i) ≠ m.A (-i)) (hB : ∀ i ∈ Finset.Icc 1 k, m.B (-i) ≠ 1) :
+    ∃ p, Tendsto (fun n ↦ ∫ u, Real.sigmoid u ∂m.law μ₀ n) atTop (𝓝 p) ∧
+      L k = (m.A (-k) - m.B (-k)) / (1 - m.B (-k)) *
+        (∏ i ∈ Finset.Ico 1 k, (m.A (-i) - 1) / (1 - m.B (-i))) * (1 - p) := by
+  obtain ⟨p, hp, hLk⟩ := m.swap.theorem15 (integrable_exp_map_neg hμ₀) hk (L := L)
+    (fun i hi ↦ by simpa [integral_law_swap] using hL i hi)
+    (fun i hi ↦ by simpa [swap_A, swap_B] using hBA i hi)
+    (fun i hi ↦ by simpa [swap_A] using hB i hi)
+  have e (x y : ℝ) : (x - y) / (x - 1) = (y - x) / (1 - x) := by
+    rw [← neg_div_neg_eq, neg_sub, neg_sub]
+  have e' (x y : ℝ) : (1 - x) / (y - 1) = (x - 1) / (1 - y) := by
+    rw [← neg_div_neg_eq, neg_sub, neg_sub]
+  refine ⟨1 - p, ?_, ?_⟩
+  · simp_rw [integral_sigmoid_law_swap] at hp
+    simpa using tendsto_const_nhds.sub hp (a := 1)
+  · rw [hLk, swap_A, swap_B, e, sub_sub_cancel]
+    congr 2
+    exact Finset.prod_congr rfl fun i _ ↦ by rw [swap_A, swap_B, e']
+
+/-- If `E(vₙ)` converges and `A(1) ≠ B(1)`, or `E(1/vₙ)` converges and `B(−1) ≠ A(−1)`, then `E(Pₙ)`
+converges (the corollary to Theorem 15, p. 115). -/
+theorem theorem15_corollary [IsProbabilityMeasure μ₀]
+    (h : (∃ L, Tendsto (fun n ↦ ∫ u, Real.exp u ∂m.law μ₀ n) atTop (𝓝 L)) ∧ m.A 1 ≠ m.B 1 ∨
+      (∃ L, Tendsto (fun n ↦ ∫ u, Real.exp (-u) ∂m.law μ₀ n) atTop (𝓝 L)) ∧
+        m.B (-1) ≠ m.A (-1)) :
+    ∃ p, Tendsto (fun n ↦ ∫ u, Real.sigmoid u ∂m.law μ₀ n) atTop (𝓝 p) := by
+  rcases h with ⟨⟨L, hL⟩, hAB⟩ | ⟨⟨L, hL⟩, hBA⟩
+  · have := m.tendsto_sigmoid_mul_exp hμ₀ (j := 0) (by simpa using hL) (by simpa using hAB)
+    exact ⟨_, by simpa using this⟩
+  · have := m.swap.tendsto_sigmoid_mul_exp (integrable_exp_map_neg hμ₀) (j := 0)
+      (by simpa [integral_law_swap] using hL) (by simpa [swap_A, swap_B] using hBA)
+    simp only [Nat.cast_zero, zero_mul, Real.exp_zero, mul_one, integral_sigmoid_law_swap] at this
+    exact ⟨_, by simpa using tendsto_const_nhds.sub this (a := 1)⟩
+
+private theorem integral_sigmoid_le [IsProbabilityMeasure μ₀] (n : ℕ) :
+    ∫ u, Real.sigmoid u ∂m.law μ₀ n ≤ ∫ u, Real.exp u ∂m.law μ₀ n :=
+  integral_mono (m.integrable_sigmoid_law n) (by simpa using m.integrable_exp_law hμ₀ n 1)
+    fun u ↦ by nlinarith [sigmoid_mul_exp u, Real.sigmoid_pos u, Real.exp_pos u]
+
+private theorem exp_integral_le [IsProbabilityMeasure μ₀] (n : ℕ) (t : ℝ) :
+    Real.exp (t * ∫ u, u ∂m.law μ₀ n) ≤ ∫ u, Real.exp (t * u) ∂m.law μ₀ n := by
+  rw [← integral_const_mul]
+  exact convexOn_exp.map_integral_le Real.continuous_exp.continuousOn isClosed_univ
+    (.of_forall fun _ ↦ Set.mem_univ _) ((m.integrable_id_law hμ₀ n).const_mul t)
+    (m.integrable_exp_law hμ₀ n t)
+
+private theorem integral_exp_pos [IsProbabilityMeasure μ₀] (n : ℕ) (t : ℝ) :
+    0 < ∫ u, Real.exp (t * u) ∂m.law μ₀ n :=
+  (Real.exp_pos _).trans_le (m.exp_integral_le hμ₀ n t)
+
+private theorem one_le_integral_exp_mul [IsProbabilityMeasure μ₀] (n : ℕ) :
+    1 ≤ (∫ u, Real.exp u ∂m.law μ₀ n) * ∫ u, Real.exp (-u) ∂m.law μ₀ n := by
+  have h₁ := m.exp_integral_le hμ₀ n 1
+  have h₂ := m.exp_integral_le hμ₀ n (-1)
+  simp only [one_mul, neg_one_mul] at h₁ h₂
+  calc (1 : ℝ) = Real.exp (∫ u, u ∂m.law μ₀ n) * Real.exp (-∫ u, u ∂m.law μ₀ n) := by
+        rw [← Real.exp_add, add_neg_cancel, Real.exp_zero]
+    _ ≤ _ := mul_le_mul h₁ h₂ (Real.exp_pos _).le ((Real.exp_pos _).le.trans h₁)
+
+/-- Suppose `E(vₙ)` converges to `L`. If `L = 0` then `E(Pₙ) → 0` and `E(1/vₙ) → ∞`, and if
+`E(Pₙ) → 0` and `A(1) ≠ 1` then `L = 0` (Theorem 16 (i), p. 115). -/
+theorem theorem16 [IsProbabilityMeasure μ₀] {L : ℝ}
+    (hL : Tendsto (fun n ↦ ∫ u, Real.exp u ∂m.law μ₀ n) atTop (𝓝 L)) :
+    (L = 0 → Tendsto (fun n ↦ ∫ u, Real.sigmoid u ∂m.law μ₀ n) atTop (𝓝 0) ∧
+      Tendsto (fun n ↦ ∫ u, Real.exp (-u) ∂m.law μ₀ n) atTop atTop) ∧
+    (Tendsto (fun n ↦ ∫ u, Real.sigmoid u ∂m.law μ₀ n) atTop (𝓝 0) → m.A 1 ≠ 1 → L = 0) := by
+  refine ⟨fun hL0 ↦ ⟨?_, ?_⟩, fun hq hA ↦ ?_⟩
+  · subst hL0
+    exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hL
+      (fun n ↦ integral_nonneg fun u ↦ (Real.sigmoid_pos u).le) (m.integral_sigmoid_le hμ₀)
+  · subst hL0
+    have hpos (n : ℕ) : 0 < ∫ u, Real.exp u ∂m.law μ₀ n := by
+      simpa using m.integral_exp_pos hμ₀ n 1
+    have h := (tendsto_nhdsWithin_iff.2 ⟨hL, .of_forall hpos⟩).inv_tendsto_nhdsGT_zero
+    refine tendsto_atTop_mono (fun n ↦ ?_) h
+    rw [Pi.inv_apply, inv_le_iff_one_le_mul₀ (hpos n)]
+    exact (m.one_le_integral_exp_mul hμ₀ n).trans_eq (mul_comm _ _)
+  · have h := tendsto_nhds_unique ((tendsto_add_atTop_iff_nat 1).2 hL)
+      (((hL.const_mul (m.A 1)).sub (hq.const_mul (m.A 1 - m.B 1))).congr
+        fun n ↦ (m.integral_exp_law_succ_one hμ₀ n).symm)
+    have : (m.A 1 - 1) * L = 0 := by linear_combination -h
+    exact (mul_eq_zero.1 this).resolve_left (sub_ne_zero.2 hA)
+
+/-- Suppose `E(1/vₙ)` converges to `L`. If `L = 0` then `E(Pₙ) → 1` and `E(vₙ) → ∞`, and if
+`E(Pₙ) → 1` and `B(−1) ≠ 1` then `L = 0` (Theorem 16 (ii), p. 116). -/
+theorem theorem16_inv [IsProbabilityMeasure μ₀] {L : ℝ}
+    (hL : Tendsto (fun n ↦ ∫ u, Real.exp (-u) ∂m.law μ₀ n) atTop (𝓝 L)) :
+    (L = 0 → Tendsto (fun n ↦ ∫ u, Real.sigmoid u ∂m.law μ₀ n) atTop (𝓝 1) ∧
+      Tendsto (fun n ↦ ∫ u, Real.exp u ∂m.law μ₀ n) atTop atTop) ∧
+    (Tendsto (fun n ↦ ∫ u, Real.sigmoid u ∂m.law μ₀ n) atTop (𝓝 1) → m.B (-1) ≠ 1 → L = 0) := by
+  have h := m.swap.theorem16 (integrable_exp_map_neg hμ₀) (L := L)
+    (by simpa [integral_law_swap] using hL)
+  simp only [integral_sigmoid_law_swap] at h
+  simp only [integral_law_swap, neg_neg, swap_A] at h
+  have e : Tendsto (fun n ↦ 1 - ∫ u, Real.sigmoid u ∂m.law μ₀ n) atTop (𝓝 0) ↔
+      Tendsto (fun n ↦ ∫ u, Real.sigmoid u ∂m.law μ₀ n) atTop (𝓝 1) := by
+    constructor <;> intro h'
+    · simpa using tendsto_const_nhds.sub h' (a := 1)
+    · simpa using tendsto_const_nhds.sub h' (a := 1)
+  simpa [e] using h
+
+/-- A mean log ratio growing linearly with positive slope sends `E(vₙᵗ)` to infinity. -/
+private theorem tendsto_integral_exp_of_cesaro [IsProbabilityMeasure μ₀] {K : ℝ} (hK : 0 < K)
+    (t : ℝ)
+    (h : Tendsto (fun n : ℕ ↦ (n : ℝ)⁻¹ * (t * ∫ u, u ∂m.law μ₀ n - t * ∫ u, u ∂m.law μ₀ 0))
+      atTop (𝓝 K)) :
+    Tendsto (fun n ↦ ∫ u, Real.exp (t * u) ∂m.law μ₀ n) atTop atTop := by
+  have hl : Tendsto (fun n ↦ t * ∫ u, u ∂m.law μ₀ n) atTop atTop := by
+    have := (tendsto_natCast_atTop_atTop (R := ℝ)).atTop_mul_pos hK h
+    have h' : Tendsto (fun n ↦ t * ∫ u, u ∂m.law μ₀ n - t * ∫ u, u ∂m.law μ₀ 0) atTop atTop :=
+      this.congr' ((eventually_ge_atTop 1).mono fun n hn ↦ by
+        have : (n : ℝ) ≠ 0 := by positivity
+        field_simp)
+    simpa using tendsto_atTop_add_const_right _ (t * ∫ u, u ∂m.law μ₀ 0) h'
+  refine tendsto_atTop_mono (fun n ↦ ?_) hl
+  rw [← integral_const_mul]
+  refine integral_mono ((m.integrable_id_law hμ₀ n).const_mul t) (m.integrable_exp_law hμ₀ n t)
+    fun u ↦ ?_
+  linarith [Real.add_one_le_exp (t * u)]
+
+/-- If `E(Pₙ)` converges to `p` and the coefficient of (16) is nonzero, then `p = P*`, or
+`E(vₙ) → ∞`, or `E(1/vₙ) → ∞` (Theorem 17, p. 116). -/
+theorem theorem17 [IsProbabilityMeasure μ₀] (h₁ : m.β₁₁ ≠ 1) (h₂ : m.β₂₁ ≠ 1) (hd : m.drift ≠ 0)
+    {p : ℝ} (hp : Tendsto (fun n ↦ ∫ u, Real.sigmoid u ∂m.law μ₀ n) atTop (𝓝 p)) :
+    p = m.Pstar ∨ Tendsto (fun n ↦ ∫ u, Real.exp u ∂m.law μ₀ n) atTop atTop ∨
+      Tendsto (fun n ↦ ∫ u, Real.exp (-u) ∂m.law μ₀ n) atTop atTop := by
+  set l := fun n ↦ ∫ u, u ∂m.law μ₀ n
+  have hdiff : Tendsto (fun n ↦ l (n + 1) - l n) atTop (𝓝 (m.drift * (p - m.Pstar))) := by
+    simp_rw [l, m.integral_law_succ_sub hμ₀ h₁ h₂ hd]
+    exact (hp.sub_const _).const_mul _
+  have hc := hdiff.cesaro
+  simp_rw [Finset.sum_range_sub (f := l)] at hc
+  rcases lt_trichotomy (m.drift * (p - m.Pstar)) 0 with hK | hK | hK
+  · refine .inr (.inr ?_)
+    simpa using m.tendsto_integral_exp_of_cesaro hμ₀ (neg_pos.2 hK) (-1)
+      (hc.neg.congr fun n ↦ by ring)
+  · exact .inl (sub_eq_zero.1 ((mul_eq_zero.1 hK).resolve_left hd))
+  · refine .inr (.inl ?_)
+    simpa using m.tendsto_integral_exp_of_cesaro hμ₀ hK 1 (by simpa using hc)
+
+/-- If `E(vₙ)` and `E(1/vₙ)` both converge, `A(1) ≠ B(1)` or `B(−1) ≠ A(−1)`, and the coefficient
+of (16) is nonzero, then `E(Pₙ) → P*` (the corollary to Theorem 17, p. 117). -/
+theorem theorem17_corollary [IsProbabilityMeasure μ₀] (h₁ : m.β₁₁ ≠ 1) (h₂ : m.β₂₁ ≠ 1)
+    (hd : m.drift ≠ 0) {L L' : ℝ}
+    (hL : Tendsto (fun n ↦ ∫ u, Real.exp u ∂m.law μ₀ n) atTop (𝓝 L))
+    (hL' : Tendsto (fun n ↦ ∫ u, Real.exp (-u) ∂m.law μ₀ n) atTop (𝓝 L'))
+    (hAB : m.A 1 ≠ m.B 1 ∨ m.B (-1) ≠ m.A (-1)) :
+    Tendsto (fun n ↦ ∫ u, Real.sigmoid u ∂m.law μ₀ n) atTop (𝓝 m.Pstar) := by
+  obtain ⟨p, hp⟩ := m.theorem15_corollary hμ₀
+    (hAB.imp (fun h ↦ ⟨⟨L, hL⟩, h⟩) fun h ↦ ⟨⟨L', hL'⟩, h⟩)
+  rcases m.theorem17 hμ₀ h₁ h₂ hd hp with h | h | h
+  · exact h ▸ hp
+  · exact absurd h (not_tendsto_atTop_of_tendsto_nhds hL)
+  · exact absurd h (not_tendsto_atTop_of_tendsto_nhds hL')
+
+/-- The first moment changes by a factor between `A(1)` and `B(1)`. -/
+private theorem integral_exp_law_succ_mem (n : ℕ) :
+    min (m.A 1) (m.B 1) * ∫ u, Real.exp u ∂m.law μ₀ n ≤ ∫ u, Real.exp u ∂m.law μ₀ (n + 1) ∧
+      ∫ u, Real.exp u ∂m.law μ₀ (n + 1) ≤ max (m.A 1) (m.B 1) * ∫ u, Real.exp u ∂m.law μ₀ n := by
+  have h := m.integral_exp_law_succ hμ₀ 1 n
+  simp only [one_mul] at h
+  have hP : 0 ≤ ∫ u, Real.sigmoid u * Real.exp u ∂m.law μ₀ n :=
+    integral_nonneg fun u ↦ (mul_pos (Real.sigmoid_pos u) (Real.exp_pos u)).le
+  have hP' : ∫ u, Real.sigmoid u * Real.exp u ∂m.law μ₀ n ≤ ∫ u, Real.exp u ∂m.law μ₀ n :=
+    integral_mono (by simpa using m.integrable_sigmoid_mul_exp_law hμ₀ n 1)
+      (by simpa using m.integrable_exp_law hμ₀ n 1) fun u ↦
+        mul_le_of_le_one_left (Real.exp_pos u).le (Real.sigmoid_le_one u)
+  rw [h]
+  constructor <;> nlinarith [min_le_left (m.A 1) (m.B 1), min_le_right (m.A 1) (m.B 1),
+    le_max_left (m.A 1) (m.B 1), le_max_right (m.A 1) (m.B 1)]
+
+/-- If `A(1), B(1) > 1` then `E(vₙ) → ∞`, if `A(1), B(1) < 1` then `E(vₙ) → 0`, and if
+`E(vₙ) → ∞` then `A(1) ≥ 1` (Theorem 18 (i), p. 117). -/
+theorem theorem18 [IsProbabilityMeasure μ₀] :
+    (1 < m.A 1 → 1 < m.B 1 → Tendsto (fun n ↦ ∫ u, Real.exp u ∂m.law μ₀ n) atTop atTop) ∧
+    (m.A 1 < 1 → m.B 1 < 1 → Tendsto (fun n ↦ ∫ u, Real.exp u ∂m.law μ₀ n) atTop (𝓝 0)) ∧
+    (Tendsto (fun n ↦ ∫ u, Real.exp u ∂m.law μ₀ n) atTop atTop → 1 ≤ m.A 1) := by
+  set e := fun n ↦ ∫ u, Real.exp u ∂m.law μ₀ n
+  have he (n : ℕ) : 0 < e n := by simpa using m.integral_exp_pos hμ₀ n 1
+  have hmin : 0 ≤ min (m.A 1) (m.B 1) := le_min m.A_one_pos.le m.B_one_pos.le
+  have lower (n : ℕ) : min (m.A 1) (m.B 1) ^ n * e 0 ≤ e n := by
+    induction n with
+    | zero => simp
+    | succ n ih =>
+      rw [pow_succ, mul_comm _ (min _ _), mul_assoc]
+      exact (mul_le_mul_of_nonneg_left ih hmin).trans (m.integral_exp_law_succ_mem hμ₀ n).1
+  have upper (n : ℕ) : e n ≤ max (m.A 1) (m.B 1) ^ n * e 0 := by
+    induction n with
+    | zero => simp
+    | succ n ih =>
+      rw [pow_succ, mul_comm _ (max _ _), mul_assoc]
+      exact (m.integral_exp_law_succ_mem hμ₀ n).2.trans
+        (mul_le_mul_of_nonneg_left ih (hmin.trans (min_le_max)))
+  refine ⟨fun hA hB ↦ ?_, fun hA hB ↦ ?_, fun hL ↦ ?_⟩
+  · exact tendsto_atTop_mono lower
+      ((tendsto_pow_atTop_atTop_of_one_lt (lt_min hA hB)).atTop_mul_const (he 0))
+  · have := (tendsto_pow_atTop_nhds_zero_of_lt_one (hmin.trans min_le_max) (max_lt hA hB)).mul_const
+      (e 0)
+    rw [zero_mul] at this
+    exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds this
+      (fun n ↦ (he n).le) upper
+  · by_contra! hA
+    set M := |m.A 1 - m.B 1| / (1 - m.A 1)
+    obtain ⟨N, hN⟩ := eventually_atTop.1 (hL.eventually_gt_atTop M)
+    have hdec (n : ℕ) (hn : N ≤ n) : e (n + 1) < e n := by
+      have h := m.integral_exp_law_succ_one hμ₀ n
+      have hq0 : 0 ≤ ∫ u, Real.sigmoid u ∂m.law μ₀ n :=
+        integral_nonneg fun u ↦ (Real.sigmoid_pos u).le
+      have hq1 : ∫ u, Real.sigmoid u ∂m.law μ₀ n ≤ 1 := by
+        calc _ ≤ ∫ _, (1 : ℝ) ∂m.law μ₀ n :=
+              integral_mono (m.integrable_sigmoid_law n) (integrable_const 1)
+                fun u ↦ Real.sigmoid_le_one u
+          _ = 1 := by simp
+      have hM : M < e n := hN n hn
+      rw [div_lt_iff₀ (by linarith)] at hM
+      show ∫ u, Real.exp u ∂m.law μ₀ (n + 1) < e n
+      rw [h]
+      cases abs_cases (m.A 1 - m.B 1) <;> nlinarith
+    have hle (n : ℕ) (hn : N ≤ n) : e n ≤ e N := by
+      induction n, hn using Nat.le_induction with
+      | base => exact le_rfl
+      | succ n hn ih => exact (hdec n hn).le.trans ih
+    obtain ⟨n, hn, hnN⟩ := ((hL.eventually_gt_atTop (e N)).and (eventually_ge_atTop N)).exists
+    linarith [hle n hnN]
+
+/-- If `A(−1), B(−1) > 1` then `E(1/vₙ) → ∞`, if `A(−1), B(−1) < 1` then `E(1/vₙ) → 0`, and if
+`E(1/vₙ) → ∞` then `B(−1) ≥ 1` (Theorem 18 (ii), p. 117). -/
+theorem theorem18_inv [IsProbabilityMeasure μ₀] :
+    (1 < m.A (-1) → 1 < m.B (-1) →
+      Tendsto (fun n ↦ ∫ u, Real.exp (-u) ∂m.law μ₀ n) atTop atTop) ∧
+    (m.A (-1) < 1 → m.B (-1) < 1 →
+      Tendsto (fun n ↦ ∫ u, Real.exp (-u) ∂m.law μ₀ n) atTop (𝓝 0)) ∧
+    (Tendsto (fun n ↦ ∫ u, Real.exp (-u) ∂m.law μ₀ n) atTop atTop → 1 ≤ m.B (-1)) := by
+  have h := m.swap.theorem18 (integrable_exp_map_neg hμ₀) (μ₀ := μ₀.map Neg.neg)
+  simp only [integral_law_swap, swap_A, swap_B] at h
+  exact ⟨fun hA hB ↦ h.1 hB hA, fun hA hB ↦ h.2.1 hB hA, h.2.2⟩
+
+end BetaLearner
+
+/-- For `x, y > 1`, `log x/(x − 1) < y log y/(y − 1)` (Lemma 12, p. 119). -/
+theorem lemma12 {x y : ℝ} (hx : 1 < x) (hy : 1 < y) :
+    Real.log x / (x - 1) < y / (y - 1) * Real.log y := by
+  have h₁ := Real.log_lt_sub_one_of_pos (by linarith) (ne_of_gt hx)
+  have h₂ := Real.log_lt_sub_one_of_pos (inv_pos.2 (by linarith : (0 : ℝ) < y))
+    (inv_ne_one.2 (ne_of_gt hy))
+  rw [Real.log_inv] at h₂
+  have h₃ : y - 1 < y * Real.log y := by
+    have := mul_lt_mul_of_pos_left h₂ (show (0 : ℝ) < y by linarith)
+    rw [mul_sub, mul_inv_cancel₀ (by linarith), mul_one, mul_neg] at this
+    linarith
+  calc Real.log x / (x - 1) < 1 := by rw [div_lt_one (by linarith)]; linarith
+    _ < y / (y - 1) * Real.log y := by
+      rw [div_mul_eq_mul_div, one_lt_div (by linarith)]; exact h₃
+
+/-- If `βᵢ₁ > 1 > βᵢ₂`, here `x` and `y`, then `σᵢ/(σᵢ + 1)` with `σᵢ = −log βᵢ₂/log βᵢ₁` (14) lies
+strictly between `(1 − βᵢ₂)/(βᵢ₁ − βᵢ₂)` and `βᵢ₁(1 − βᵢ₂)/(βᵢ₁ − βᵢ₂)` (Theorem 19, p. 119). -/
+theorem theorem19 {x y : ℝ} (hx : 1 < x) (hy₀ : 0 < y) (hy : y < 1) :
+    (1 - y) / (x - y) < -Real.log y / Real.log x / (-Real.log y / Real.log x + 1) ∧
+      -Real.log y / Real.log x / (-Real.log y / Real.log x + 1) < x * (1 - y) / (x - y) := by
+  have ha := Real.log_pos hx
+  have hb := neg_pos.2 (Real.log_neg hy₀ hy)
+  have hy' : 1 < y⁻¹ := (one_lt_inv₀ hy₀).2 hy
+  have hσ : -Real.log y / Real.log x / (-Real.log y / Real.log x + 1) =
+      -Real.log y / (Real.log x + -Real.log y) := by
+    field_simp
+    ring
+  have U := lemma12 hy' hx
+  have L := lemma12 hx hy'
+  rw [Real.log_inv] at U L
+  have e₁ : -Real.log y / (y⁻¹ - 1) = -Real.log y * y / (1 - y) := by
+    field_simp
+  have e₂ : y⁻¹ / (y⁻¹ - 1) * -Real.log y = -Real.log y / (1 - y) := by
+    field_simp
+  rw [e₁, div_mul_eq_mul_div, div_lt_div_iff₀ (by linarith) (by linarith)] at U
+  rw [e₂, div_lt_div_iff₀ (by linarith) (by linarith)] at L
+  rw [hσ, div_lt_div_iff₀ (by linarith) (by linarith), div_lt_div_iff₀ (by linarith) (by linarith)]
+  constructor <;> nlinarith
+
+end BetaAsymptotics
 
 end Luce1959
