@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Pi
 public import Linglib.Semantics.Modality.Directive
-public import Linglib.Fragments.Portuguese.Modals
+public import Linglib.Fragments.Romance.Portuguese.Modals
 public import Linglib.Data.Examples.Ferreira2023
 
 /-!
@@ -498,11 +498,18 @@ def interpret (φ : ModalForce) (f : ModalBase W) (g : OrderingSource W) (p q : 
 
 /-- (135): the Portuguese necessity modal at each vertex. X-marking the ordering source is
 lexical, from *ter que* to *dever*, and X-marking the modal base is the past imperfect. -/
-def square : Vertex → ModalItem
-  | ⟨false, false⟩ => Portuguese.terQue
-  | ⟨false, true⟩ => Portuguese.dever
-  | ⟨true, false⟩ => Portuguese.tinhaQue
-  | ⟨true, true⟩ => Portuguese.devia
+def modalAt : Vertex → Auxiliary
+  | ⟨false, false⟩ => Portuguese.Modals.terQue
+  | ⟨false, true⟩ => Portuguese.Modals.dever
+  | ⟨true, false⟩ => Portuguese.Modals.tinhaQue
+  | ⟨true, true⟩ => Portuguese.Modals.devia
+
+/-- The modal item at a vertex. -/
+def square (v : Vertex) : ModalItem := (modalAt v).toModalItem
+
+/-- (135): the fragment's modal at a vertex is in the past imperfect exactly when the modal
+base is X-marked. -/
+theorem tense_square : ∀ v : Vertex, (modalAt v).tense = some .Imp ↔ v.xf = true := by decide
 
 /-- (83), (135): the fragment's force at a vertex is weak necessity exactly when the ordering
 source is X-marked. -/

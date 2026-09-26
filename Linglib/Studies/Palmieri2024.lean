@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Reciprocal
 public import Linglib.Studies.Siloni2012
 public import Linglib.Studies.Winter2018
-public import Linglib.Fragments.Romance.BrazilianPortuguese.Reciprocals
+public import Linglib.Fragments.Romance.Portuguese.Reciprocals
 public import Linglib.Fragments.Romance.Catalan.Reciprocals
 public import Linglib.Fragments.Romance.Italian.Reciprocals
 public import Linglib.Fragments.Romance.Spanish.Reciprocals
@@ -153,7 +153,7 @@ theorem every_language_diagnosable (l : Language) : SeOmissible l .analyticCausa
 
 /-- Per-language inventories of lexical reciprocals, from the Fragments. -/
 def inventory : Language → List Verb
-  | .brazilianPortuguese => BrazilianPortuguese.Reciprocals.lexicalReciprocals
+  | .brazilianPortuguese => Portuguese.Reciprocals.lexicalReciprocals
   | .italian => Italian.Reciprocals.lexicalReciprocals
   | .spanish => Spanish.Reciprocals.lexicalReciprocals
   | .catalan => Catalan.Reciprocals.lexicalReciprocals

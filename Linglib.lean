@@ -882,13 +882,11 @@ import Linglib.Fragments.Niuean.Modals
 import Linglib.Fragments.Norwegian.V2
 import Linglib.Fragments.Numee.Prosody
 import Linglib.Fragments.Poko.Tone
-import Linglib.Fragments.Portuguese.Modals
 import Linglib.Fragments.Punjabi.Pronouns
 import Linglib.Fragments.Quechua.Evidentiality
 import Linglib.Fragments.Quechua.Negation
 import Linglib.Fragments.Quechua.PolarityItems
 import Linglib.Fragments.Quechua.SaraguroKichwa.Evidentiality
-import Linglib.Fragments.Romance.BrazilianPortuguese.Reciprocals
 import Linglib.Fragments.Romance.Catalan.Reciprocals
 import Linglib.Fragments.Romance.French.Comparison
 import Linglib.Fragments.Romance.French.Determiners
