@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Quantification.Witness
-public import Linglib.Semantics.Quantification.NP
 public import Linglib.Semantics.Quantification.NumberTree
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Tactic.DeriveFintype
@@ -12,134 +11,250 @@ public import Mathlib.Tactic.DeriveFintype
 This file formalizes the denotations of quantified noun phrases in the referential
 transparency theory of [lucking-ginzburg-2022]. In place of the sets of sets of generalized
 quantifier theory ([barwise-cooper-1981]), a quantified noun phrase denotes a set of ordered
-bipartitions of the head noun's extension into a reference set and its complement (`BP`,
-`allBP`), the quantifier word acting as a sieve on them through a descriptive condition on
-the two cardinalities (`QCond`, `sieve`). Conservativity holds by construction, only the
-restrictor being partitioned (`qcond_conservative`); a verb phrase predicates on the
-reference set and anti-predicates on the complement set, which for *every* gives the
-classical truth conditions (`every_truth_conditions`); and the quantifier perspective,
-whether the bipartition with an empty reference set survives the sieve, is derived from the
-denotation and gates anaphora to the complement set (`deriveQPersp`). The paper's minimal
-pair: *few* and *a few* share their condition, but *a few* carries a reference individual,
-so its denotation lacks the empty-reference bipartition and the complement set is
-inaccessible (`few_dog_qpersp`, `aFew_dog_qpersp`). Read as a generalized quantifier
-(`qcondToGQ`), a condition lives on the head noun, and the reference set of every surviving
-bipartition is a witness set of that quantifier in the sense of [barwise-cooper-1981]
-(`bp_refset_is_witness`). The denotations over a noun with `k`
-instances number `2 ^ (k + 1) - 1`, fewer than the conservative generalized quantifiers of
-[van-benthem-1984] (`rttQuantifierCount_lt_conservative`).
+bipartitions of the head noun's extension into a reference set and its complement set, the
+quantifier word acting as a sieve on them through a descriptive condition on the two
+cardinalities (`sieve`). Such a condition is a quantifier on [van-benthem-1984]'s tree of numbers
+(`Quantifier.NumberTree`), and the sieve reads only the row of the tree at the size of the noun
+(`sieve_eq_iff`), which yields the paper's count of `2 ^ (k + 1) - 1` denotations over a noun
+with `k` instances (`card_powerset_antidiagonal_erase`). A verb phrase predicates on the
+reference set and anti-predicates on the complement set (`AntiPredication`), so the sentence is
+true exactly when the condition holds of the sizes of `N \ VP` and `N ∩ VP`
+(`exists_antiPredication_iff`): referential transparency has the truth conditions of the tree
+quantifier (`exists_antiPredication_iff_toGQ`), which is conservative by construction
+(`livesOn_toGQ`), and the surviving reference sets are exactly the witness sets of
+[barwise-cooper-1981] (`mem_sieve_iff_witness`). The quantifier perspective, whether the
+bipartition with an empty reference set survives the sieve, is derived from the denotation and
+gates anaphora to the complement set (`CompsetAccessible`, `compsetAccessible_sieve`). The
+paper's minimal pair: *few* and *a few* share their condition, but *a few* carries a reference
+individual, so its denotation lacks the empty-reference bipartition and the complement set is
+inaccessible whatever the condition (`compsetAccessible_few`, `not_compsetAccessible_refind`).
 
 ## Implementation notes
 
-Conditions are relations on the two cardinalities, quantity-invariant by construction; the
-contextual standard of *many* is a parameter and that of *few* is simplified to a strict
-comparison. The paper's third perspective value for degenerate denotations collapses into
-the non-empty one, which gates anaphora identically. The dialogue and gesture data, the
-clarification-request diagnostics, and the type-theoretic encoding are not represented.
+An ordered bipartition of `S` (the paper's (15)) is determined by its reference set `R ⊆ S`, the
+complement set being `S \ R`, so a denotation is a `Finset (Finset α)` of reference sets and the
+bipartitions of `S` are its powerset. A condition on the cardinalities of the complement and
+reference sets is a `NumberTree`, whose coordinates are `|A \ B|` and `|A ∩ B|`, so the paper's
+*every*, *no* and *some* are the tree's `all`, `no` and `some`. The contextual standard of *many*
+is a parameter and that of *few* is simplified to a strict comparison. The quantifier perspective
+is the proposition that the empty reference set is in the denotation; the paper's third value for
+degenerate denotations collapses into inaccessibility, which gates anaphora identically. The
+dialogue and gesture data, the clarification-request diagnostics, and the type-theoretic
+encoding are not represented.
+
+## TODO
+
+The paper's count of 63 quantifiers on a two-element domain (§4.8) multiplies the per-noun count
+over the subsets of the domain rather than over their sizes, so it distinguishes the two
+singletons. The permutation-invariant selections number `∏ (2 ^ (k + 1) - 1)` over the sizes
+`k ≤ n`, 21 for two individuals, and from three individuals on the paper's product exceeds the
+`2 ^ ((n + 1) * (n + 2) / 2)` tree quantifiers of [van-benthem-1984].
 
 ## References
 
 * [lucking-ginzburg-2022]
 * [barwise-cooper-1981]
 * [van-benthem-1984]
+* [keenan-stavi-1986]
 -/
 
 @[expose] public section
 
 namespace LuckingGinzburg2022
 
-open Quantifier Quantifier.GQ Quantifier.NP
+open Finset Quantifier Quantifier.NP Quantifier.NumberTree
+open scoped Finset
 
-variable {α : Type} [DecidableEq α]
+variable {α : Type*} [DecidableEq α] {q : NumberTree} [DecidableRel q] {S R : Finset α}
 
-/-! ### Ordered set bipartitions -/
+/-! ### The sieve -/
 
-/-- An ordered set bipartition (the paper's (15)) is a reference set and a complement set,
-disjoint with union the head noun's extension; the two conditions are verified extrinsically
-so that the type decides. -/
-structure BP (α : Type) where
-  refset : Finset α
-  compset : Finset α
-  deriving DecidableEq
+/-- The ordered bipartitions of the head noun's extension `S` (the paper's (15)) sifted by the
+condition `q` on the sizes of the complement set and the reference set: the reference sets
+`R ⊆ S` with `q |S \ R| |R|`. -/
+def sieve (q : NumberTree) [DecidableRel q] (S : Finset α) : Finset (Finset α) :=
+  S.powerset.filter fun R ↦ q #(S \ R) #R
 
-/-- The union of the two sets, the head noun's extension. -/
-def BP.maxset (b : BP α) : Finset α := b.refset ∪ b.compset
+@[simp] theorem mem_sieve : R ∈ sieve q S ↔ R ⊆ S ∧ q #(S \ R) #R := by simp [sieve]
 
-/-- All ordered bipartitions of a set, each subset with its complement. -/
-def allBP (S : Finset α) : Finset (BP α) :=
-  S.powerset.map ⟨fun R ↦ ⟨R, S \ R⟩, fun a b h ↦ by simp [BP.mk.injEq] at h; exact h.1⟩
-
-/-- A set of `k` elements has `2 ^ k` ordered bipartitions. -/
-theorem allBP_card (S : Finset α) : (allBP S).card = 2 ^ S.card := by
-  simp [allBP, Finset.card_map, Finset.card_powerset]
-
-/-- The two sets of a bipartition of `S` make up `S`. -/
-theorem allBP_maxset (S : Finset α) (b : BP α) (h : b ∈ allBP S) : b.maxset = S := by
-  simp [allBP, Finset.mem_map] at h
-  obtain ⟨R, hR, rfl⟩ := h
-  exact Finset.union_sdiff_of_subset hR
-
-/-- The reference set of a bipartition of `S` lies within `S`. -/
-theorem allBP_refset_sub (S : Finset α) (b : BP α) (h : b ∈ allBP S) : b.refset ⊆ S := by
-  simp [allBP, Finset.mem_map] at h
-  obtain ⟨R, hR, rfl⟩ := h
-  exact hR
+/-- The sieve reads only the row of the tree at the size of the noun. -/
+theorem sieve_congr {q' : NumberTree} [DecidableRel q']
+    (h : ∀ a b, a + b = #S → (q a b ↔ q' a b)) : sieve q S = sieve q' S := by
+  ext R
+  simp only [mem_sieve]
+  refine and_congr_right fun hR ↦ h _ _ ?_
+  rw [card_sdiff_of_subset hR, Nat.sub_add_cancel (card_le_card hR)]
 
 /-! ### Descriptive quantifier conditions -/
 
-/-- A descriptive quantifier condition (§4.2) is a relation on the cardinalities of the
-reference and complement sets. -/
-abbrev QCond := ℕ → ℕ → Prop
-
-/-- The sieve keeps the bipartitions meeting the condition. -/
-def sieve (qc : QCond) [DecidableRel qc] (bps : Finset (BP α)) : Finset (BP α) :=
-  bps.filter fun b ↦ qc b.refset.card b.compset.card
-
-/-- The condition of *every*, an empty complement set. -/
-def every_qcond : QCond := fun _ c ↦ c = 0
-
-/-- The condition of *no*, an empty reference set. -/
-def no_qcond : QCond := fun r _ ↦ r = 0
-
-/-- The condition of *some*, a non-empty reference set. -/
-def some_qcond : QCond := fun r _ ↦ 1 ≤ r
-
-/-- The condition of *most*, a reference set outnumbering the complement set. -/
-def most_qcond : QCond := fun r c ↦ c < r
+/-- The condition of *most* (§4.2), a reference set outnumbering the complement set. -/
+def most : NumberTree := fun a b ↦ a < b
 
 /-- The condition of *few*, a complement set outnumbering the reference set. -/
-def few_qcond : QCond := fun r c ↦ r < c
+def few : NumberTree := fun a b ↦ b < a
 
-/-- The condition of *many* (the paper's (39)), a reference set exceeding a contextual
-standard. -/
-def many_qcond (θ : ℕ) : QCond := fun r _ ↦ θ < r
+/-- The condition of *many* (the paper's (39)), a reference set exceeding a contextual standard
+`θ`; a cardinal quantifier. -/
+def many (θ : ℕ) : NumberTree := cardinal (Set.Ioi θ)
 
-instance : DecidableRel every_qcond := fun _ c ↦ inferInstanceAs (Decidable (c = 0))
-instance : DecidableRel no_qcond := fun r _ ↦ inferInstanceAs (Decidable (r = 0))
-instance : DecidableRel some_qcond := fun r _ ↦ inferInstanceAs (Decidable (1 ≤ r))
-instance : DecidableRel most_qcond := fun r c ↦ inferInstanceAs (Decidable (c < r))
-instance : DecidableRel few_qcond := fun r c ↦ inferInstanceAs (Decidable (r < c))
-instance (θ : ℕ) : DecidableRel (many_qcond θ) := fun r _ ↦ inferInstanceAs (Decidable (θ < r))
+instance : DecidableRel most := fun a b ↦ inferInstanceAs (Decidable (a < b))
+instance : DecidableRel few := fun a b ↦ inferInstanceAs (Decidable (b < a))
+instance (θ : ℕ) : DecidableRel (many θ) := fun _ b ↦ inferInstanceAs (Decidable (θ < b))
 
-/-! ### Quantifier perspective -/
+/-- *Few* is the inner negation of *most*. -/
+theorem innerNeg_most : most.innerNeg = few := rfl
 
-/-- The quantifier perspective (the paper's (47)–(48)) records whether the bipartition with an
-empty reference set belongs to the denotation, in which case the complement set is
-accessible to anaphora. -/
-inductive QPerspective
-  | refsetEmpty
-  | refsetNonempty
-  deriving DecidableEq, Repr
+/-! ### Quantifier perspective and complement-set anaphora -/
 
-/-- The perspective derived from a sieved set of bipartitions. -/
-def deriveQPersp (bps : Finset (BP α)) : QPerspective :=
-  if ∃ b ∈ bps, b.refset = ∅ then .refsetEmpty else .refsetNonempty
+/-- The complement set of a denotation is available to anaphora (the paper's (47)) when the
+bipartition with an empty reference set is in the denotation, the value `refset = ∅` of the
+quantifier perspective (48). -/
+def CompsetAccessible (D : Finset (Finset α)) : Prop := ∅ ∈ D
 
-/-- The reference individual of *a few* (the paper's (46)) requires a non-empty reference
-set. -/
-def refindFilter (bps : Finset (BP α)) : Finset (BP α) := bps.filter fun b ↦ b.refset.Nonempty
+instance (D : Finset (Finset α)) : Decidable (CompsetAccessible D) :=
+  inferInstanceAs (Decidable (∅ ∈ D))
 
-/-! ### The dogs -/
+/-- The empty reference set survives the sieve exactly when the condition holds at the point
+`(|S|, 0)` of the tree. -/
+theorem compsetAccessible_sieve : CompsetAccessible (sieve q S) ↔ q #S 0 := by
+  simp [CompsetAccessible]
+
+/-- *Every N* makes the complement set inaccessible, the noun being nonempty. -/
+theorem not_compsetAccessible_all (hS : S.Nonempty) :
+    ¬ CompsetAccessible (sieve NumberTree.all S) := fun h ↦
+  hS.card_pos.ne' ((compsetAccessible_sieve (q := NumberTree.all)).1 h)
+
+/-- *No N* makes the complement set accessible. -/
+theorem compsetAccessible_no : CompsetAccessible (sieve NumberTree.no S) :=
+  compsetAccessible_sieve.2 rfl
+
+/-- *Some N* makes the complement set inaccessible. -/
+theorem not_compsetAccessible_some : ¬ CompsetAccessible (sieve NumberTree.some S) := fun h ↦
+  compsetAccessible_sieve.1 h rfl
+
+/-- *Most N* makes the complement set inaccessible. -/
+theorem not_compsetAccessible_most : ¬ CompsetAccessible (sieve most S) := fun h ↦
+  Nat.not_lt_zero _ (compsetAccessible_sieve.1 h)
+
+/-- *Many N* makes the complement set inaccessible. -/
+theorem not_compsetAccessible_many (θ : ℕ) : ¬ CompsetAccessible (sieve (many θ) S) := fun h ↦
+  Nat.not_lt_zero θ ((compsetAccessible_sieve (q := many θ)).1 h)
+
+/-- *Few N* makes the complement set accessible, the noun being nonempty, as in *Few dogs barked.
+They slept through.* -/
+theorem compsetAccessible_few (hS : S.Nonempty) : CompsetAccessible (sieve few S) :=
+  compsetAccessible_sieve.2 hS.card_pos
+
+/-- The reference individual of *a few* (the paper's (46)) requires a nonempty reference set,
+which removes the empty-reference bipartition from a denotation. -/
+def refind (D : Finset (Finset α)) : Finset (Finset α) := D.erase ∅
+
+/-- A denotation carrying a reference individual never makes its complement set accessible,
+whatever the condition: *a few* shares the condition of *few* and blocks the anaphora (§4.3). -/
+theorem not_compsetAccessible_refind (D : Finset (Finset α)) : ¬ CompsetAccessible (refind D) :=
+  notMem_erase _ _
+
+/-! ### Predication and anti-predication -/
+
+/-- Two-headed predication (§4.5): the verb phrase holds throughout the reference set and fails
+throughout the complement set. -/
+def AntiPredication (B : α → Prop) (S R : Finset α) : Prop :=
+  (∀ a ∈ R, B a) ∧ ∀ a ∈ S \ R, ¬ B a
+
+variable {B : α → Prop} [DecidablePred B]
+
+/-- A reference set within `S` is anti-predicated exactly when it is the part of `S` where the
+verb phrase holds. -/
+theorem antiPredication_iff (hR : R ⊆ S) : AntiPredication B S R ↔ R = S.filter B := by
+  refine ⟨fun ⟨h₁, h₂⟩ ↦ ext fun a ↦ ?_, fun h ↦ h ▸ ⟨fun a ha ↦ (mem_filter.1 ha).2,
+    fun a ha hB ↦ (mem_sdiff.1 ha).2 (mem_filter.2 ⟨(mem_sdiff.1 ha).1, hB⟩)⟩⟩
+  simp only [mem_filter]
+  exact ⟨fun ha ↦ ⟨hR ha, h₁ a ha⟩,
+    fun ⟨haS, haB⟩ ↦ by_contra fun haR ↦ h₂ a (mem_sdiff.2 ⟨haS, haR⟩) haB⟩
+
+/-- The truth conditions of *q N VP* (§4.5): some surviving bipartition is anti-predicated exactly
+when the condition holds of the sizes of `N \ VP` and `N ∩ VP`. -/
+theorem exists_antiPredication_iff :
+    (∃ R ∈ sieve q S, AntiPredication B S R) ↔ q #(S \ S.filter B) #(S.filter B) :=
+  ⟨fun ⟨_, hR, h⟩ ↦ (antiPredication_iff (mem_sieve.1 hR).1).1 h ▸ (mem_sieve.1 hR).2,
+    fun hq ↦ ⟨S.filter B, mem_sieve.2 ⟨filter_subset _ _, hq⟩,
+      (antiPredication_iff (filter_subset _ _)).2 rfl⟩⟩
+
+omit [DecidableEq α] in
+/-- A count over the universe of the members of `S` with a property is a count in `S`. -/
+private theorem count_mem_and [Fintype α] {i : DecidablePred fun x ↦ x ∈ S ∧ B x} :
+    @GQ.count α _ (fun x ↦ x ∈ S ∧ B x) i = #(S.filter B) := by
+  unfold GQ.count GQ.countOn
+  congr 1
+  ext; simp
+
+/-- Referential transparency has the truth conditions of the tree quantifier of its condition,
+a conservative, permutation-invariant generalized quantifier on the head noun. -/
+theorem exists_antiPredication_iff_toGQ [Fintype α] :
+    (∃ R ∈ sieve q S, AntiPredication B S R) ↔ q.toGQ (· ∈ S) B := by
+  rw [exists_antiPredication_iff, toGQ_apply, count_mem_and, count_mem_and, filter_not]
+
+omit [DecidableEq α] [DecidableRel q] in
+/-- Conservativity holds by construction: the quantifier lives on the head noun. -/
+theorem livesOn_toGQ [Fintype α] : LivesOn (q.toGQ (· ∈ S)) (· ∈ S) :=
+  (conservative_toGQ q).livesOn _
+
+/-! ### Witness sets -/
+
+/-- The witness of a quantified noun phrase is a surviving reference set (the paper's (17)), and
+these are exactly the witness sets of [barwise-cooper-1981] of the tree quantifier on the head
+noun. -/
+theorem mem_sieve_iff_witness [Fintype α] :
+    R ∈ sieve q S ↔ Witness (q.toGQ (· ∈ S)) (· ∈ S) (· ∈ R) := by
+  simp only [mem_sieve, Witness, toGQ_apply, count_mem_and, subset_iff]
+  refine and_congr_right fun hR ↦ ?_
+  rw [filter_not, filter_mem_eq_inter, inter_eq_right.2 fun _ h ↦ hR h]
+
+/-! ### Complexity -/
+
+/-- The points of row `k` of the tree a condition selects, the denotation on a noun with `k`
+instances up to the choice of reference sets. -/
+def row (q : NumberTree) [DecidableRel q] (k : ℕ) : Finset (ℕ × ℕ) :=
+  (antidiagonal k).filter fun p ↦ q p.1 p.2
+
+/-- Every set of points of row `k` is the row of some condition, its membership condition. -/
+theorem row_mem {k : ℕ} {T : Finset (ℕ × ℕ)} (hT : T ⊆ antidiagonal k) :
+    row (fun a b ↦ (a, b) ∈ T) k = T := by
+  ext ⟨a, b⟩
+  simp only [row, mem_filter]
+  exact ⟨And.right, fun h ↦ ⟨hT h, h⟩⟩
+
+/-- Two conditions sieve a noun alike exactly when they select the same points of its row. -/
+theorem sieve_eq_iff {q' : NumberTree} [DecidableRel q'] :
+    sieve q S = sieve q' S ↔ row q #S = row q' #S := by
+  refine ⟨fun h ↦ ?_, fun h ↦ sieve_congr fun a b hab ↦ ?_⟩
+  · ext ⟨a, b⟩
+    simp only [row, mem_filter, mem_antidiagonal]
+    refine and_congr_right fun hab ↦ ?_
+    obtain ⟨R, hR, hb⟩ := exists_subset_card_eq (s := S) (n := b) (by omega)
+    have ha : #(S \ R) = a := by rw [card_sdiff_of_subset hR]; omega
+    simpa [hR, ha, hb] using congrArg (R ∈ ·) h
+  · simpa [row, hab] using congrArg ((a, b) ∈ ·) h
+
+/-- A condition selects one of `2 ^ (k + 1)` sets of points of row `k`, so the paper's
+`2 ^ (k + 1) - 1` combinatorially possible denotations over a noun with `k` instances (§4.8)
+are the nonempty ones. -/
+theorem card_powerset_antidiagonal_erase (k : ℕ) :
+    #((antidiagonal k).powerset.erase ∅) = 2 ^ (k + 1) - 1 := by
+  rw [card_erase_of_mem (empty_mem_powerset _), card_powerset, Nat.card_antidiagonal]
+
+/-- The paper's count of quantifiers on a domain `M` (§4.8): a nonempty selection of a row for
+each subset of the domain, taken as a head noun's extension. -/
+def domainCount (M : Finset α) : ℕ := ∏ R ∈ M.powerset, (2 ^ (#R + 1) - 1)
+
+/-! ### The paper's examples -/
+
+/-- The seven denotations over two individuals enumerated in §4.8. -/
+example : #((antidiagonal 2).powerset.erase ∅) = 7 := by decide
+
+/-- The paper's `1 × 3 × 3 × 7 = 63` quantifiers on a domain of two individuals, against the
+`2 ^ 3 ^ 2 = 512` conservative ones of [keenan-stavi-1986]. -/
+example : domainCount (univ : Finset (Fin 2)) = 63 ∧ 63 < 2 ^ 3 ^ 2 := by decide
 
 /-- Three dogs. -/
 inductive Dog
@@ -147,105 +262,13 @@ inductive Dog
   deriving DecidableEq, Fintype
 
 /-- The extension of *dog*. -/
-def dogs : Finset Dog := Finset.univ
+def dogs : Finset Dog := univ
 
-/-- Three dogs have eight ordered bipartitions. -/
-theorem dog_bipartitions_card : (allBP dogs).card = 8 := by decide
+/-- *Every dog* keeps one of the eight bipartitions, *most dogs* four. -/
+example : #(sieve NumberTree.all dogs) = 1 ∧ #(sieve most dogs) = 4 := by decide
 
-/-- For *every* the sole surviving bipartition has all dogs in the reference set. -/
-theorem every_dog_qpersp :
-    deriveQPersp (sieve every_qcond (allBP dogs)) = .refsetNonempty := by decide
-
-/-- For *no* the sole surviving bipartition has an empty reference set. -/
-theorem no_dog_qpersp : deriveQPersp (sieve no_qcond (allBP dogs)) = .refsetEmpty := by decide
-
-/-- For *some* every surviving bipartition has a non-empty reference set. -/
-theorem some_dog_qpersp :
-    deriveQPersp (sieve some_qcond (allBP dogs)) = .refsetNonempty := by decide
-
-/-- For *most* every surviving bipartition has a non-empty reference set. -/
-theorem most_dog_qpersp :
-    deriveQPersp (sieve most_qcond (allBP dogs)) = .refsetNonempty := by decide
-
-/-- For *few* the empty-reference bipartition survives, so the complement set is accessible,
-as in *Few dogs barked. They slept through.* -/
-theorem few_dog_qpersp : deriveQPersp (sieve few_qcond (allBP dogs)) = .refsetEmpty := by
+/-- *Few dogs barked. They slept through* against *A few dogs barked. They slept through.* -/
+example : CompsetAccessible (sieve few dogs) ∧ ¬ CompsetAccessible (refind (sieve few dogs)) := by
   decide
-
-/-- For *a few* the condition is the same, but the reference individual excludes the
-empty-reference bipartition, so the complement set is inaccessible. -/
-theorem aFew_dog_qpersp :
-    deriveQPersp (refindFilter (sieve few_qcond (allBP dogs))) = .refsetNonempty := by
-  decide
-
-/-! ### Witness sets and conservativity -/
-
-/-- The generalized quantifier of a condition holds when the verb phrase holds throughout the
-reference set of some surviving bipartition. -/
-def qcondToGQ (qc : QCond) [DecidableRel qc] [Fintype α] (N : α → Prop) [DecidablePred N] :
-    NP α :=
-  fun Q ↦ ∃ b ∈ sieve qc (allBP {x | N x}), ∀ a ∈ b.refset, Q a
-
-/-- The reference set of a surviving bipartition lies within the head noun. -/
-theorem refset_sub_of_mem_sieve [Fintype α] {qc : QCond} [DecidableRel qc] {N : α → Prop}
-    [DecidablePred N] {b : BP α} (h : b ∈ sieve qc (allBP {x | N x})) {a : α}
-    (ha : a ∈ b.refset) : N a :=
-  (Finset.mem_filter.1 (allBP_refset_sub _ b (Finset.mem_filter.1 h).1 ha)).2
-
-/-- Conservativity holds by construction, since the quantifier lives on the head noun, the
-reference set lying within it. -/
-theorem qcond_conservative [Fintype α] (qc : QCond) [DecidableRel qc] (N : α → Prop)
-    [DecidablePred N] : LivesOn (qcondToGQ qc N) N := fun _ ↦
-  ⟨fun ⟨b, hb, hQ⟩ ↦ ⟨b, hb, fun _ ha ↦ ⟨refset_sub_of_mem_sieve hb ha, hQ _ ha⟩⟩,
-    fun ⟨b, hb, hNQ⟩ ↦ ⟨b, hb, fun _ ha ↦ (hNQ _ ha).2⟩⟩
-
-/-- The reference set of a surviving bipartition is a witness set of the quantifier, since it
-lies within the head noun and the quantifier holds of it, the bipartition itself verifying it. -/
-theorem bp_refset_is_witness [Fintype α] (qc : QCond) [DecidableRel qc] (N : α → Prop)
-    [DecidablePred N] {b : BP α} (h : b ∈ sieve qc (allBP {x | N x})) :
-    Witness (qcondToGQ qc N) N (· ∈ b.refset) :=
-  ⟨fun _ ↦ refset_sub_of_mem_sieve h, b, h, fun _ ↦ id⟩
-
-/-- The number of denotations over a noun with `k` instances (§4.8), the non-empty sets of
-its `2 ^ k` bipartitions. -/
-def rttQuantifierCount (k : ℕ) : ℕ := 2 ^ (k + 1) - 1
-
-/-- Fewer denotations than conservative generalized quantifiers, at every size. -/
-theorem rttQuantifierCount_lt_conservative (k : ℕ) :
-    rttQuantifierCount k < conservativeQuantifierCount k :=
-  calc 2 ^ (k + 1) - 1 < 2 ^ (k + 1) := Nat.sub_lt (Nat.two_pow_pos _) one_pos
-    _ ≤ 2 ^ ((k + 1) * (k + 2) / 2) := Nat.pow_le_pow_right two_pos
-        ((Nat.le_div_iff_mul_le two_pos).mpr (Nat.mul_le_mul_left _ (by omega)))
-
-/-! ### Anti-predication -/
-
-/-- Anti-predication (§4.5): the verb phrase holds of every member of the reference set and
-fails of every member of the complement set. -/
-def antiPredication (VP : α → Prop) (b : BP α) : Prop :=
-  (∀ a ∈ b.refset, VP a) ∧ ∀ a ∈ b.compset, ¬ VP a
-
-/-- For *every N VP*, some surviving bipartition is anti-predicated exactly when the verb
-phrase holds throughout the extension, the sole survivor having everything in its reference
-set. -/
-theorem every_truth_conditions (S : Finset α) (VP : α → Prop) :
-    (∃ b ∈ sieve every_qcond (allBP S), antiPredication VP b) ↔ ∀ a ∈ S, VP a := by
-  constructor
-  · rintro ⟨b, hb, hanti⟩
-    have hmem := (Finset.mem_filter.mp hb).1
-    have hqc := (Finset.mem_filter.mp hb).2
-    rw [allBP, Finset.mem_map] at hmem
-    obtain ⟨R, hR, rfl⟩ := hmem
-    rw [Finset.mem_powerset] at hR
-    have hcomp : S \ R = ∅ := Finset.card_eq_zero.mp hqc
-    intro a haS
-    apply hanti.1
-    by_contra h
-    exact absurd (hcomp ▸ Finset.mem_sdiff.mpr ⟨haS, h⟩) (by simp)
-  · intro hall
-    refine ⟨⟨S, S \ S⟩, Finset.mem_filter.mpr ⟨?_, ?_⟩, hall, fun _ ha ↦ ?_⟩
-    · rw [allBP, Finset.mem_map]
-      exact ⟨S, Finset.mem_powerset.mpr (Finset.Subset.refl S), rfl⟩
-    · simp [every_qcond]
-    · simp at ha
 
 end LuckingGinzburg2022
