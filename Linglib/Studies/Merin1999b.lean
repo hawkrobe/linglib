@@ -37,7 +37,7 @@ file and are UNVERIFIED.
 
 @[expose] public section
 
-namespace Merin1999
+namespace Merin1999b
 
 open Core.DecisionTheory Core.DecisionTheory.DecisionProblem
 
@@ -215,4 +215,4 @@ theorem partitionEU_congr [Fintype M] [DecidableEq M] (dp : DecisionProblem ℚ 
     partitionEU dp q a = partitionEU dp q' a :=
   (eu_eq_partitionEU dp a q hprior).symm.trans (eu_eq_partitionEU dp a q' hprior)
 
-end Merin1999
+end Merin1999b

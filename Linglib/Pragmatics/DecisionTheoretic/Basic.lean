@@ -11,92 +11,80 @@ public import Mathlib.Probability.Decision.Risk.Countable
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
-# Decision-Theoretic Semantics: Core
-[merin-1999-relevance]
+# Decision-Theoretic Semantics
 
-Core definitions for Merin's Decision-Theoretic Semantics (DTS). Meaning is
-explicated through *signed relevance* — the Bayes factor P(E∣H)/P(E∣¬H) —
-relative to a dichotomic issue {H, ¬H}.
+This file sets up the core of Merin's Decision-Theoretic Semantics (DTS) [merin-1999-relevance]:
+meaning explicated through the *signed relevance* of a proposition E to one side H of a
+dichotomic issue {H, ¬H}, the log Bayes factor log (P(E∣H) / P(E∣¬H)).
 
-A context is a binary statistical model in the sense of mathlib's
-statistical decision theory (`Mathlib.Probability.Decision`): each side of
-the issue generates data from the prior conditioned on it
-(`Context.conditional`), the pair packages as a kernel out of `Bool`
-(`Context.hypothesisKernel`, the shape of Degenne's `twoHypKernel`), and
-`bayesFactor` is `ProbabilityTheory.likelihoodRatio` of the two
-conditionals. The substance of the Bayes-factor algebra lives at the
-two-measure level in `Core.Probability.LikelihoodRatio`; this file adds the
-issue vocabulary and the facts that genuinely concern the joint prior.
+A context is a binary statistical model in the sense of mathlib's statistical decision theory
+(`Mathlib.Probability.Decision`): each side of the issue generates data from the prior
+conditioned on it (`Context.conditional`), the pair packages as a kernel out of `Bool`
+(`Context.hypothesisKernel`, the shape of Degenne's `twoHypKernel`), and `bayesFactor` is
+`ProbabilityTheory.likelihoodRatio` of the two conditionals. The Bayes-factor algebra lives at
+the two-measure level in `Core.Probability.LikelihoodRatio`; this file adds the issue vocabulary
+and the facts that concern the joint prior. The paper's applications to *or*, *but*, *even*, and
+*also* are in `Studies/Merin1999a.lean`.
 
-## Key Definitions
+## Main definitions
 
-- `Context` — a dichotomic issue (`topic : Set W`, with its measurability
-  witness) plus a prior measure; `Context.Nondegenerate` marks a live issue
-- `bayesFactor` — the likelihood ratio of the induced testing problem
-- `relevance` — its logarithm, Merin's relevance of E to H
-- `posRelevant` / `negRelevant` / `irrelevant` — ordinal relevance predicates
-- `hContrary` — A and B have opposite relevance signs
-- `CondIndepIssue` — Merin's Conditional Independence Presumption, as
-  mathlib `IndepSet` under both conditionals
+- `Context`: a dichotomic issue (`topic : Set W`, with its measurability witness) plus a prior
+  (Partial Definition 6); `Context.Nondegenerate` marks a live issue
+- `bayesFactor`: the likelihood ratio of the induced testing problem
+- `relevance`: its logarithm, Merin's relevance of E to H (Definition 4)
+- `posRelevant`, `negRelevant`, `irrelevant`: the relevance signs (Definition 5)
+- `hContrary`: A and B have opposite relevance signs
+- `CondIndepIssue`: independence of A and B conditionally on H and on ¬H (Definition 9), the
+  content of the Conditional Independence Presumption (Hypothesis 2)
 
-## Main Results
+## Main results
 
-- **Corollary 3** (`sign_reversal`): BF_H(E) · BF_{¬H}(E) = 1
-- **Fact 2** (`relevance_eq_neg_log_sub_neg_log`): relevance is the
-  differential of conditional informativeness
-- **Fact 5** (`CondIndepIssue.bayesFactor_inter`): under issue-conditional
-  independence, BF(A∧B) = BF(A) · BF(B); **Theorem 6a** splits into
-  `CondIndepIssue.max_bayesFactor_lt_inter`, `.bayesFactor_union_lt_max`,
-  and `.one_lt_bayesFactor_union`
-- **Theorem 6b** (`xor_not_necessarily_positive`): XOR of two positively
-  relevant propositions can be negatively relevant
-- `avgRisk_hypothesisKernel`: the average risk of an estimator against the
-  induced problem, in its finite two-point form
-- `bayesFactor_lt_of_subset`: shedding ¬H-worlds from an utterance strengthens
-  it as an argument for H
-- `relevance_count`: over a counting prior, relevance is the log ratio of
-  proportions
+- `sign_reversal`: BF_H(E) · BF_¬H(E) = 1 (Corollary 3)
+- `relevance_eq_neg_log_sub_neg_log`: relevance is the differential of conditional
+  informativeness (Fact 2)
+- `CondIndepIssue.bayesFactor_inter`: under issue-conditional independence, BF(A∧B) =
+  BF(A) · BF(B) (Fact 5); Theorem 6a's order of conjunction, disjuncts, and disjunction is
+  `CondIndepIssue.max_bayesFactor_lt_inter`, `.bayesFactor_union_lt_max`, and
+  `.one_lt_bayesFactor_union`
+- `posRelevant_of_lt_cond`: evidence that H makes more probable confirms H
+- `avgRisk_hypothesisKernel`: the average risk of an estimator against the induced problem, in
+  its finite two-point form
+- `bayesFactor_lt_of_subset`: shedding ¬H-worlds from an utterance strengthens it as an argument
+  for H
+- `relevance_count`, `condIndepIssue_count_iff`: over a counting prior, relevance is the log ratio
+  of proportions and issue-conditional independence is a product equation of cardinalities
+
+## Implementation notes
+
+The polar question {H, ¬H} is not a separate wrapper type: the context stores H, and the
+question is recovered by `Context.toQuestion`. Relevance is carried by `bayesFactor` in `ℝ≥0∞`,
+where the boundary cases P(E∣¬H) = 0 and P(E∣H) = 0 take their true values `∞` and `0`
+(Merin's r = ±∞); `relevance` is the real logarithm, which sends both to `0`, so sign and
+order facts are stated on `bayesFactor`.
+
+## References
+
+* [merin-1999-relevance]
 -/
 
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory
-open scoped ENNReal symmDiff
+open scoped ENNReal
 
 namespace DTS
 
-/-- 4-world example type. Used by `xor_not_necessarily_positive` and
-consumers in this directory. -/
-inductive World4 where
-  | w0 | w1 | w2 | w3
-  deriving DecidableEq, Repr, Inhabited
+/-! ### Contexts -/
 
-instance : Fintype World4 where
-  elems := {.w0, .w1, .w2, .w3}
-  complete := fun x => by cases x <;> simp
-
-instance : MeasurableSpace World4 := ⊤
-instance : DiscreteMeasurableSpace World4 := ⟨fun _ => trivial⟩
-
-/-! ### Core types -/
-
-/-- A DTS context: a dichotomic hypothesis `topic` (the proposition H, with
-¬H implicit) plus a prior measure over worlds.
-
-Following mathlib's `Filter.principal` pattern, the polar interrogative
-{H, ¬H} is not packaged as a separate wrapper type — the topic is stored
-directly, and the inquisitive view is recovered on demand via
-`Context.toCoreIssue`. -/
+/-- A DTS context (Partial Definition 6): the proposition H at issue, with ¬H implicit, and a
+prior over worlds. -/
 structure Context (W : Type*) [MeasurableSpace W] where
-  /-- The hypothesis H. The dichotomic issue {H, ¬H} is recovered as
-      `Question.polar topic`. -/
+  /-- The hypothesis H. -/
   topic : Set W
-  /-- Measurability of the topic, so that conditioning on H and ¬H is
-      well-behaved. Free (`.of_discrete`) on the discrete study enums. -/
+  /-- Measurability of the topic, so that conditioning on H and ¬H is well-behaved. -/
   topicMeasurable : MeasurableSet topic
-  /-- Prior measure over worlds. Conditioning normalizes, so an
-      unnormalized prior (e.g. `Measure.count`) induces the same relevance
-      facts as its normalization. -/
+  /-- Prior measure over worlds. Conditioning normalizes, so an unnormalized prior (e.g.
+  `Measure.count`) induces the same relevance facts as its normalization. -/
   prior : Measure W
 
 variable {W : Type*} [MeasurableSpace W]
@@ -107,28 +95,17 @@ def swapIssue (ctx : Context W) : Context W :=
     topicMeasurable := ctx.topicMeasurable.compl,
     prior := ctx.prior }
 
-/-- Forgetful projection from a DTS context to the general `Question`
-lattice via the polar interrogative content of the topic proposition. The
-two representations agree on the underlying question semantics: a DTS
-dichotomy {H, ¬H} is exactly the polar interrogative of H, with two
-alternatives ⟦H⟧ and ⟦¬H⟧. -/
-def Context.toCoreIssue (ctx : Context W) : Question W :=
-  Question.polar {w | ctx.topic w}
+/-- The issue {H, ¬H} as the polar question of H. -/
+def Context.toQuestion (ctx : Context W) : Question W :=
+  Question.polar ctx.topic
 
-/-- Every DTS dichotomic issue is non-informative (`info = univ`): the
-question `{H, ¬H}` itself rules out no worlds; only an answer to it does.
-Inherited from `Question.info_polar`. -/
-@[simp] theorem Context.toCoreIssue_info (ctx : Context W) :
-    ctx.toCoreIssue.info = Set.univ :=
+/-- The issue rules out no worlds; only an answer to it does. -/
+@[simp] theorem Context.toQuestion_info (ctx : Context W) : ctx.toQuestion.info = Set.univ :=
   Question.info_polar _
 
-/-- A DTS dichotomy is genuinely inquisitive (raises an unsettled question
-over the universal info state) iff its topic is non-trivial: neither
-everything nor nothing satisfies H. Inherited from
-`Question.isInquisitive_polar_iff`. -/
-theorem Context.toCoreIssue_isInquisitive_iff (ctx : Context W) :
-    ctx.toCoreIssue.isInquisitive ↔
-      {w | ctx.topic w} ≠ ∅ ∧ {w | ctx.topic w} ≠ Set.univ :=
+/-- The issue is inquisitive iff H is neither everything nor nothing. -/
+theorem Context.toQuestion_isInquisitive_iff (ctx : Context W) :
+    ctx.toQuestion.isInquisitive ↔ ctx.topic ≠ ∅ ∧ ctx.topic ≠ Set.univ :=
   Question.isInquisitive_polar_iff _
 
 /-! ### The induced binary testing problem
@@ -215,7 +192,7 @@ theorem bayesFactor_def (ctx : Context W) (e : Set W) :
 theorem bayesFactor_eq_hypothesisKernel_div (ctx : Context W) (e : Set W) :
     bayesFactor ctx e = ctx.hypothesisKernel true e / ctx.hypothesisKernel false e := rfl
 
-/-- Merin's relevance of E to H, the log Bayes factor, real-valued through
+/-- Merin's relevance of E to H (Definition 4), the log Bayes factor, real-valued through
 `ENNReal.toReal`: the boundary cases `0` and `∞` both land at `Real.log 0 = 0`,
 so sign and order facts are read off `bayesFactor` itself
 (`posRelevant_iff_one_lt_toReal`, `relevance_lt_relevance`). -/
@@ -239,7 +216,7 @@ theorem relevance_lt_relevance {ctx : Context W} {e₁ e₂ : Set W} (h₁ : bay
   Real.log_lt_log (ENNReal.toReal_pos h₁ (ne_top_of_lt h))
     ((ENNReal.toReal_lt_toReal (ne_top_of_lt h) h₂).mpr h)
 
-/-- E is positively relevant to H: BF > 1 (E confirms H). -/
+/-- E is positively relevant to H, BF > 1 (Definition 5): E confirms H. -/
 def posRelevant (ctx : Context W) (e : Set W) : Prop :=
   1 < bayesFactor ctx e
 
@@ -247,17 +224,20 @@ theorem posRelevant_iff_one_lt_toReal {ctx : Context W} {e : Set W}
     (ht : bayesFactor ctx e ≠ ⊤) : posRelevant ctx e ↔ 1 < (bayesFactor ctx e).toReal := by
   rw [posRelevant, ← ENNReal.toReal_lt_toReal ENNReal.one_ne_top ht, ENNReal.toReal_one]
 
-/-- E is negatively relevant to H: BF < 1 (E disconfirms H). -/
+/-- E is negatively relevant to H, BF < 1 (Definition 5): E disconfirms H. -/
 def negRelevant (ctx : Context W) (e : Set W) : Prop :=
   bayesFactor ctx e < 1
 
-/-- E is irrelevant to H: BF = 1 (E neither confirms nor disconfirms). -/
+theorem negRelevant_iff_toReal_lt_one {ctx : Context W} {e : Set W}
+    (ht : bayesFactor ctx e ≠ ⊤) : negRelevant ctx e ↔ (bayesFactor ctx e).toReal < 1 := by
+  rw [negRelevant, ← ENNReal.toReal_lt_toReal ht ENNReal.one_ne_top, ENNReal.toReal_one]
+
+/-- E is irrelevant to H, BF = 1 (Definition 5): E neither confirms nor disconfirms H. -/
 def irrelevant (ctx : Context W) (e : Set W) : Prop :=
   bayesFactor ctx e = 1
 
-/-- A and B have opposite relevance signs w.r.t. H.
-
-Merin's "contrariness": one supports H while the other supports ¬H. -/
+/-- A and B are H-contrary: they have opposite nonzero relevance signs, one supporting H and
+the other ¬H. -/
 def hContrary (ctx : Context W) (a b : Set W) : Prop :=
   (posRelevant ctx a ∧ negRelevant ctx b) ∨ (negRelevant ctx a ∧ posRelevant ctx b)
 
@@ -280,7 +260,7 @@ theorem bayesFactor_le_of_subset (ctx : Context W) {u₁ u₂ : Set W}
     (hsub : u₂ ⊆ u₁) (hent : ctx.topic ∩ u₁ ⊆ u₂) :
     bayesFactor ctx u₁ ≤ bayesFactor ctx u₂ := by
   have h : ctx.topic ∩ u₁ = ctx.topic ∩ u₂ :=
-    Set.Subset.antisymm (λ w hw => ⟨hw.1, hent hw⟩) (Set.inter_subset_inter_right _ hsub)
+    Set.Subset.antisymm (fun w hw ↦ ⟨hw.1, hent hw⟩) (Set.inter_subset_inter_right _ hsub)
   rw [bayesFactor_def, bayesFactor_def, cond_apply ctx.topicMeasurable,
     cond_apply ctx.topicMeasurable, h]
   exact ENNReal.div_le_div_left (measure_mono hsub) _
@@ -291,20 +271,20 @@ theorem bayesFactor_lt_of_subset (ctx : Context W) [IsFiniteMeasure ctx.prior]
     (hpos : ctx.prior (ctx.topic ∩ u₂) ≠ 0) (hgap : ctx.prior (u₁ \ u₂) ≠ 0) :
     bayesFactor ctx u₁ < bayesFactor ctx u₂ := by
   have h : ctx.topic ∩ u₁ = ctx.topic ∩ u₂ :=
-    Set.Subset.antisymm (λ w hw => ⟨hw.1, hent hw⟩) (Set.inter_subset_inter_right _ hsub)
-  have hgap' : u₁ \ u₂ ⊆ ctx.topicᶜ := λ w hw h => hw.2 (hent ⟨h, hw.1⟩)
+    Set.Subset.antisymm (fun w hw ↦ ⟨hw.1, hent hw⟩) (Set.inter_subset_inter_right _ hsub)
+  have hgap' : u₁ \ u₂ ⊆ ctx.topicᶜ := fun w hw h ↦ hw.2 (hent ⟨h, hw.1⟩)
   have hd : ctx.prior[|ctx.topicᶜ] u₂ < ctx.prior[|ctx.topicᶜ] u₁ := by
     rw [cond_apply ctx.topicMeasurable.compl, cond_apply ctx.topicMeasurable.compl,
       ← measure_inter_add_sdiff (ctx.topicᶜ ∩ u₁) hu₂, Set.inter_sdiff_assoc,
       Set.inter_eq_right.mpr hgap', Set.inter_assoc, Set.inter_eq_right.mpr hsub]
     exact ENNReal.mul_lt_mul_right (ENNReal.inv_ne_zero.mpr (measure_ne_top ctx.prior _))
-      (ENNReal.inv_ne_top.mpr λ h0 => hgap (measure_mono_null hgap' h0))
+      (ENNReal.inv_ne_top.mpr fun h0 ↦ hgap (measure_mono_null hgap' h0))
       (ENNReal.lt_add_right (measure_ne_top ctx.prior _) hgap)
   rw [bayesFactor_def, bayesFactor_def, cond_apply ctx.topicMeasurable,
     cond_apply ctx.topicMeasurable, h]
   exact ENNReal.div_lt_div_left
     (mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top ctx.prior _)) hpos)
-    (ENNReal.mul_ne_top (ENNReal.inv_ne_top.mpr λ h => hpos
+    (ENNReal.mul_ne_top (ENNReal.inv_ne_top.mpr fun h ↦ hpos
       (measure_mono_null Set.inter_subset_left h)) (measure_ne_top ctx.prior _)) hd
 
 /-! ### Counting priors
@@ -414,7 +394,7 @@ theorem negRelevant_iff_real_cross (ctx : Context W) [IsFiniteMeasure ctx.prior]
   · have hzm : ctx.prior (ctx.topicᶜ ∩ e) = 0 :=
       (mul_eq_zero.mp ((cond_apply hHm.compl ctx.prior e).symm.trans hz)).resolve_left
         (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _))
-    refine iff_of_false (fun hneg => ?_) ?_
+    refine iff_of_false (fun hneg ↦ ?_) ?_
     · rcases eq_or_ne (ctx.prior[|ctx.topic] e) 0 with h0 | h0
       · have hzH : ctx.prior (ctx.topic ∩ e) = 0 :=
           (mul_eq_zero.mp ((cond_apply hHm ctx.prior e).symm.trans h0)).resolve_left
@@ -438,9 +418,9 @@ theorem negRelevant_iff_real_cross (ctx : Context W) [IsFiniteMeasure ctx.prior]
 
 /-! ### Issue-conditional independence -/
 
-/-- Merin's Conditional Independence Presumption (Def. 6): A and B are
-independent under the prior conditioned on each side of the issue —
-mathlib's `IndepSet` at both conditionals. -/
+/-- A and B are independent conditionally on H and on ¬H (Definition 9): mathlib's `IndepSet` at
+both conditionals. Merin's Conditional Independence Presumption (Hypothesis 2) is that
+interpretation assumes this of coordinated sisters unless something suggests otherwise. -/
 def CondIndepIssue (ctx : Context W) (a b : Set W) : Prop :=
   ∀ θ, IndepSet a b (ctx.conditional θ)
 
@@ -453,11 +433,43 @@ theorem condIndepIssue_iff (ctx : Context W) {a b : Set W}
         ctx.prior[|ctx.topic] a * ctx.prior[|ctx.topic] b ∧
       ctx.prior[|ctx.topicᶜ] (a ∩ b) =
         ctx.prior[|ctx.topicᶜ] a * ctx.prior[|ctx.topicᶜ] b) := by
-  refine ⟨fun h => ⟨(h true).measure_inter_eq_mul, (h false).measure_inter_eq_mul⟩,
-    fun h θ => ?_⟩
+  refine ⟨fun h ↦ ⟨(h true).measure_inter_eq_mul, (h false).measure_inter_eq_mul⟩,
+    fun h θ ↦ ?_⟩
   cases θ
   · exact (indepSet_iff_measure_inter_eq_mul ham hbm _).mpr h.2
   · exact (indepSet_iff_measure_inter_eq_mul ham hbm _).mpr h.1
+
+section Count
+
+variable [Fintype W] [MeasurableSingletonClass W] {topic a b : Set W}
+
+private theorem indepSet_uniformOn_iff (s : Set W) :
+    IndepSet a b (uniformOn s) ↔
+      (s ∩ (a ∩ b)).ncard * s.ncard = (s ∩ a).ncard * (s ∩ b).ncard := by
+  rw [indepSet_iff_measure_inter_eq_mul .of_discrete .of_discrete (uniformOn s),
+    ← ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _)
+      (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
+    ENNReal.toReal_mul, ← measureReal_def, ← measureReal_def, ← measureReal_def,
+    uniformOn_real_apply, uniformOn_real_apply, uniformOn_real_apply]
+  rcases Nat.eq_zero_or_pos s.ncard with h0 | h0
+  · have hz : ∀ t, (s ∩ t).ncard = 0 := fun t ↦
+      Nat.eq_zero_of_le_zero (h0 ▸ Set.ncard_le_ncard Set.inter_subset_left s.toFinite)
+    simp [h0, hz]
+  · rw [div_mul_div_comm, div_eq_div_iff (by positivity) (by positivity)]
+    norm_cast
+    rw [← mul_assoc]
+    exact ⟨fun h ↦ Nat.eq_of_mul_eq_mul_right h0 h, fun h ↦ by rw [h]⟩
+
+/-- Over a counting prior, issue-conditional independence is the product equation of
+cardinalities on each side of the issue. -/
+theorem condIndepIssue_count_iff :
+    CondIndepIssue ⟨topic, .of_discrete, .count⟩ a b ↔
+      (topic ∩ (a ∩ b)).ncard * topic.ncard = (topic ∩ a).ncard * (topic ∩ b).ncard ∧
+      (topicᶜ ∩ (a ∩ b)).ncard * topicᶜ.ncard = (topicᶜ ∩ a).ncard * (topicᶜ ∩ b).ncard := by
+  rw [CondIndepIssue, Bool.forall_bool, and_comm]
+  exact and_congr (indepSet_uniformOn_iff _) (indepSet_uniformOn_iff _)
+
+end Count
 
 /-! ### Sign reversal -/
 
@@ -552,110 +564,21 @@ theorem CondIndepIssue.one_lt_bayesFactor_union {ctx : Context W}
 
 /-! ### The Bayesian bridge -/
 
-/-- Probabilistic support implies positive relevance over a live issue: the
-Bayes-theorem bridge P(E∣H) > P(E) ⟹ BF_H(E) > 1. The edge case
-P(E ∩ ¬H) = 0 needs no special treatment: the factor is then genuinely
-infinite.
-
-Promoted from the IKW2025 Part II "Bayesian-to-DTS bridge" in 0.230.502 —
-pure DTS-internal content (no IKW dependency), belongs in DTS Core. -/
-theorem posRelevant_of_lt_cond (ctx : Context W) [IsProbabilityMeasure ctx.prior]
-    [ctx.Nondegenerate] (e : Set W)
-    (hSupp : ctx.prior e < ctx.prior[|ctx.topic] e) :
-    posRelevant ctx e := by
-  set μ := ctx.prior
-  set topic := ctx.topic
-  have htopic : MeasurableSet topic := ctx.topicMeasurable
-  have hH_pos : μ topic ≠ 0 := Context.Nondegenerate.topic_ne_zero
-  have hNH_pos : μ topicᶜ ≠ 0 := Context.Nondegenerate.compl_ne_zero
-  have hpart : μ (e ∩ topic) + μ (e ∩ topicᶜ) = μ e := by
-    simpa [Set.sdiff_eq] using measure_inter_add_sdiff e htopic
-  have hEH : μ[|topic] e = (μ topic)⁻¹ * μ (topic ∩ e) :=
-    cond_apply htopic μ e
-  show 1 < ctx.prior[|ctx.topic] e / ctx.prior[|ctx.topicᶜ] e
-  rcases eq_or_ne (μ[|topicᶜ] e) 0 with hz | hz
-  · -- P(E∣¬H) = 0: the factor is ∞ once P(E∣H) > 0.
-    have hnum : μ[|topic] e ≠ 0 := by
-      intro h0
-      rw [h0] at hSupp
-      exact absurd hSupp (by simp)
-    rw [show ctx.prior[|ctx.topicᶜ] e = 0 from hz, ENNReal.div_zero hnum]
-    exact ENNReal.one_lt_top
-  · -- Main case: cross-multiply in ℝ.
-    have hENH : μ[|topicᶜ] e = (μ topicᶜ)⁻¹ * μ (topicᶜ ∩ e) :=
-      cond_apply htopic.compl μ e
-    rw [ENNReal.lt_div_iff_mul_lt (Or.inl hz)
-      (Or.inl (cond_apply_ne_top μ htopic.compl e)), one_mul]
-    have hHfin := measure_ne_top μ topic
-    have hNHfin := measure_ne_top μ topicᶜ
-    have hsum1 : μ topic + μ topicᶜ = 1 := prob_add_prob_compl htopic
-    set pH := (μ topic).toReal with hpH
-    set pNH := (μ topicᶜ).toReal with hpNH
-    set pEH := (μ (topic ∩ e)).toReal with hpEH
-    set pENH := (μ (topicᶜ ∩ e)).toReal with hpENH
-    have hpH_pos : 0 < pH := ENNReal.toReal_pos hH_pos hHfin
-    have hpNH_pos : 0 < pNH := ENNReal.toReal_pos hNH_pos hNHfin
-    have hpEH_nonneg : 0 ≤ pEH := ENNReal.toReal_nonneg
-    have hpENH_nonneg : 0 ≤ pENH := ENNReal.toReal_nonneg
-    have hsum1' : pH + pNH = 1 := by
-      rw [hpH, hpNH, ← ENNReal.toReal_add hHfin hNHfin, hsum1, ENNReal.toReal_one]
-    have hpartR : pEH + pENH = (μ e).toReal := by
-      rw [hpEH, hpENH, ← ENNReal.toReal_add (measure_ne_top _ _) (measure_ne_top _ _)]
-      congr 1
-      simpa [Set.inter_comm] using hpart
-    have hSuppR : (μ e).toReal < pEH / pH := by
-      have := ENNReal.toReal_lt_toReal (measure_ne_top μ e)
-        (cond_apply_ne_top μ htopic e) |>.mpr hSupp
-      rwa [hEH, ENNReal.toReal_mul, ENNReal.toReal_inv, inv_mul_eq_div] at this
-    refine ENNReal.toReal_lt_toReal
-      (cond_apply_ne_top μ htopic.compl e)
-      (cond_apply_ne_top μ htopic e) |>.mp ?_
-    rw [hEH, hENH, ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.toReal_inv,
-      ENNReal.toReal_inv, inv_mul_eq_div, inv_mul_eq_div, div_lt_div_iff₀ hpNH_pos hpH_pos]
-    nlinarith [hSuppR, hsum1', hpartR, mul_pos hpH_pos hpNH_pos,
-      (lt_div_iff₀ hpH_pos).mp hSuppR]
-
-/-- Negative relevance implies non-support: the contrapositive of
-`posRelevant_of_lt_cond`. Promoted from IKW2025 Part II in 0.230.502. -/
-theorem not_lt_cond_of_negRelevant (ctx : Context W) [IsProbabilityMeasure ctx.prior]
-    [ctx.Nondegenerate] (e : Set W)
-    (hNeg : negRelevant ctx e) :
-    ¬ ctx.prior e < ctx.prior[|ctx.topic] e := fun hSupp =>
-  absurd (posRelevant_of_lt_cond ctx e hSupp) (lt_asymm hNeg)
-
-/-! ### Exclusive disjunction -/
-
-/-- **Theorem 6b**: XOR of two positively relevant propositions is not
-necessarily positively relevant.
-
-Counterexample on `World4`: H = {w0}, A = {w0, w1}, B = {w0, w2}, counting
-prior. BF(A) = BF(B) = 3, but A ∆ B = {w1, w2} misses H entirely, so its
-Bayes factor is 0. -/
-theorem xor_not_necessarily_positive :
-    ∃ (ctx : Context World4) (a b : Set World4),
-      posRelevant ctx a ∧ posRelevant ctx b ∧ ¬ posRelevant ctx (a ∆ b) := by
-  refine ⟨⟨(↑({World4.w0} : Finset World4) : Set World4), .of_discrete, .count⟩,
-    ↑({World4.w0, World4.w1} : Finset World4), ↑({World4.w0, World4.w2} : Finset World4),
-    ?_, ?_, ?_⟩ <;>
-    simp only [posRelevant, bayesFactor, likelihoodRatio, Context.conditional_true,
-      Context.conditional_false, cond_apply MeasurableSet.of_discrete,
-      ← Finset.coe_compl, ← Finset.coe_inter, ← Finset.coe_symmDiff,
-      Measure.count_apply_finset]
-  · rw [show ({World4.w0} : Finset World4).card = 1 by decide,
-      show ({World4.w0} ∩ {World4.w0, World4.w1} : Finset World4).card = 1 by decide,
-      show ({World4.w0}ᶜ : Finset World4).card = 3 by decide,
-      show ({World4.w0}ᶜ ∩ {World4.w0, World4.w1} : Finset World4).card = 1 by decide]
-    simp only [Nat.cast_one, Nat.cast_ofNat, inv_one]
-    norm_num
-  · rw [show ({World4.w0} : Finset World4).card = 1 by decide,
-      show ({World4.w0} ∩ {World4.w0, World4.w2} : Finset World4).card = 1 by decide,
-      show ({World4.w0}ᶜ : Finset World4).card = 3 by decide,
-      show ({World4.w0}ᶜ ∩ {World4.w0, World4.w2} : Finset World4).card = 1 by decide]
-    simp only [Nat.cast_one, Nat.cast_ofNat, inv_one]
-    norm_num
-  · rw [show ({World4.w0} ∩ ({World4.w0, World4.w1} ∆ {World4.w0, World4.w2}) :
-        Finset World4).card = 0 by decide]
-    simp
+/-- Over a live issue, E confirms H iff H makes E more probable than it is a priori: the
+Bayes-theorem bridge between P(E∣H) > P(E) and BF_H(E) > 1. -/
+theorem posRelevant_iff_lt_cond (ctx : Context W) [IsProbabilityMeasure ctx.prior]
+    [ctx.Nondegenerate] (e : Set W) :
+    posRelevant ctx e ↔ ctx.prior e < ctx.prior[|ctx.topic] e := by
+  have hm := ctx.topicMeasurable
+  have hpH : 0 < (ctx.prior ctx.topic).toReal :=
+    ENNReal.toReal_pos Context.Nondegenerate.topic_ne_zero (measure_ne_top _ _)
+  have hsum : (ctx.prior ctx.topic).toReal + (ctx.prior ctx.topicᶜ).toReal = 1 := by
+    rw [← ENNReal.toReal_add (measure_ne_top _ _) (measure_ne_top _ _),
+      measure_add_measure_compl hm, measure_univ, ENNReal.toReal_one]
+  rw [posRelevant_iff_real_cross, ← ENNReal.toReal_lt_toReal (measure_ne_top _ _)
+    (cond_apply_ne_top _ hm e), cond_real_apply _ hm, ← real_total ctx.prior hm e,
+    lt_div_iff₀ hpH, eq_sub_of_add_eq' hsum]
+  constructor <;> intro h <;> linarith
 
 /-! ### Risk of the induced problem -/
 
