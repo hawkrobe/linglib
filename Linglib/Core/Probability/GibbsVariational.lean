@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.MeasureTheory.Measure.Real
 public import Mathlib.MeasureTheory.Measure.Tilted
 public import Mathlib.MeasureTheory.Measure.LogLikelihoodRatio
 public import Mathlib.InformationTheory.KullbackLeibler.Basic
@@ -31,7 +32,8 @@ by the module docstring of `Mathlib/MeasureTheory/Measure/Tilted.lean`.
 * `InformationTheory.eq_tilted_of_freeEnergy_eq_cgf` — and only there.
 * `InformationTheory.isGreatest_cgf` — the **variational principle**: `cgf f μ 1` is
   the greatest value of `freeEnergy μ f` over admissible `q`.
-* `MeasureTheory.tilted_real_singleton` — on a finite type, the tilted measure at an atom.
+* `MeasureTheory.tilted_real_singleton` — on a finite type, the tilted measure at an atom;
+  `MeasureTheory.eq_tilted_iff`, a measure is a tilt exactly when its atoms are proportional.
 
 ## Implementation notes
 
@@ -163,5 +165,29 @@ theorem tilted_real_singleton (μ : Measure α) [IsFiniteMeasure μ] (f : α →
     integral_fintype .of_finite]
   simp only [smul_eq_mul]
   ring
+
+/-- On a finite type, a probability measure is the tilt of `ν` by `f` exactly when its atoms are
+proportional to those of `ν` reweighted by the exponential of `f`. -/
+theorem eq_tilted_iff (μ ν : Measure α) [IsProbabilityMeasure μ] [IsFiniteMeasure ν] [NeZero ν]
+    (f : α → ℝ) : μ = ν.tilted f ↔ ∃ Z > 0, ∀ a, μ.real {a} = ν.real {a} * Real.exp (f a) / Z := by
+  have hZ : 0 < ∑ b, ν.real {b} * Real.exp (f b) := by
+    obtain ⟨a, ha⟩ : ∃ a, ν {a} ≠ 0 := by
+      by_contra! h
+      exact NeZero.ne ν (Measure.ext_iff_singleton.2 fun a => by simp [h a])
+    exact (mul_pos (ENNReal.toReal_pos ha (measure_ne_top _ _)) (Real.exp_pos _)).trans_le
+      (Finset.single_le_sum (fun b _ => mul_nonneg measureReal_nonneg (Real.exp_pos _).le)
+        (Finset.mem_univ a))
+  constructor
+  · rintro rfl
+    exact ⟨_, hZ, tilted_real_singleton ν f⟩
+  · rintro ⟨Z, hZ0, h⟩
+    have hZeq : Z = ∑ b, ν.real {b} * Real.exp (f b) := by
+      have := sum_measureReal_singleton_eq_one μ
+      simp_rw [h, ← Finset.sum_div] at this
+      exact ((div_eq_one_iff_eq hZ0.ne').1 this).symm
+    have : IsProbabilityMeasure (ν.tilted f) := isProbabilityMeasure_tilted .of_finite
+    refine Measure.ext_iff_singleton.2 fun a => ?_
+    rw [← ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _),
+      ← measureReal_def, ← measureReal_def, h, tilted_real_singleton, hZeq]
 
 end MeasureTheory

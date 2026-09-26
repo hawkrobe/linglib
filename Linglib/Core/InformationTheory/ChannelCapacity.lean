@@ -8,6 +8,7 @@ module
 public import Linglib.Core.InformationTheory.Entropy
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 public import Linglib.Core.MeasureTheory.Measure.Real
+public import Linglib.Core.Probability.GibbsVariational
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 
@@ -22,15 +23,23 @@ capacity of the channel is the supremum over input distributions of the mutual i
 Over finite alphabets the mutual information is the input average of the divergence of each row
 `κ c` from the output marginal, and averaging the divergence from any other reference measure
 overshoots it by the divergence of the output marginal from that reference (the compensation
-identity). The divergences of the rows characterize the input distributions that attain
-capacity, as in the Kuhn–Tucker conditions: an input distribution achieves capacity when no row
-lies farther from its output marginal than the information it conveys, and an input distribution
-of positive mass everywhere that achieves capacity puts every row at divergence exactly the
-capacity from its output marginal.
+identity). An input distribution achieves capacity when no row lies farther from its output
+marginal than the information it conveys.
+
+Each row's divergence is also the row's expected log posterior of its input less the input's log
+prior, and the Bayesian decoder maximizes that expected log posterior. Hence, taking a fixed input
+distribution's expected log posteriors as the exponent, the free energy relative to the uniform
+distribution of every input distribution is at most its mutual information less `log |C|`, with
+equality at the fixed distribution. By the Gibbs variational principle the capacity-achieving
+input distributions of positive mass everywhere are exactly the fixed points of the
+Blahut–Arimoto update, which tilts the uniform distribution by that exponent, and at such a
+fixed point every row lies at divergence exactly the capacity from the output marginal.
 
 ## Main definitions
 
 * `InformationTheory.channelCapacity`: `⨆ μ, Im[μ ⊗ₘ κ]` over probability measures `μ`.
+* `InformationTheory.blahutArimoto`: the uniform distribution tilted by each input's expected
+  log posterior.
 
 ## Main results
 
@@ -40,12 +49,21 @@ capacity from its output marginal.
 * `InformationTheory.channelCapacity_le_log_card`: the capacity is at most `log |W|`.
 * `InformationTheory.measureMutualInfo_compProd_eq_channelCapacity`: sufficiency of the
   divergence condition.
-* `InformationTheory.toReal_klDiv_eq_channelCapacity`: its necessity at an input distribution of
-  positive mass everywhere.
+* `InformationTheory.toReal_klDiv_eq_integral_log_sub`,
+  `InformationTheory.sum_mul_integral_log_le`: a row's divergence as expected log posterior, and
+  the optimality of the Bayesian decoder for it.
+* `InformationTheory.eq_blahutArimoto_iff`: the capacity-achieving input distributions of
+  positive mass everywhere are the Blahut–Arimoto fixed points.
+* `InformationTheory.toReal_klDiv_eq_channelCapacity`: at such a distribution every row lies at
+  divergence the capacity.
 
 ## References
 
 * [C. E. Shannon, *A Mathematical Theory of Communication* (1948)][shannon-1948]
+* [R. E. Blahut, *Computation of channel capacity and rate-distortion functions*
+  (1972)][blahut-1972]
+* [S. Arimoto, *An algorithm for computing the capacity of arbitrary discrete memoryless
+  channels* (1972)][arimoto-1972]
 * [T. M. Cover and J. A. Thomas, *Elements of Information Theory* (2006)][cover-thomas-2006]
 -/
 
@@ -63,6 +81,12 @@ variable {C W : Type*} [MeasurableSpace C] [MeasurableSpace W] [Fintype C] [Fint
 between its input and output. -/
 noncomputable def channelCapacity (κ : Kernel C W) : ℝ :=
   ⨆ μ : ProbabilityMeasure C, Im[(μ : Measure C) ⊗ₘ κ]
+
+/-- The Blahut–Arimoto update of an input distribution ([blahut-1972], [arimoto-1972]): the
+uniform distribution tilted by each input's expected log posterior. -/
+noncomputable def blahutArimoto [Nonempty C] (κ : Kernel C W) [IsFiniteKernel κ] (μ : Measure C)
+    [IsFiniteMeasure μ] : Measure C :=
+  (uniformOn Set.univ).tilted fun c => ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)
 
 variable (κ : Kernel C W) [IsMarkovKernel κ] (μ : Measure C) [IsProbabilityMeasure μ]
 
@@ -171,88 +195,171 @@ theorem measureMutualInfo_compProd_eq_channelCapacity
     _ = Im[μ ⊗ₘ κ] := by
         rw [← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul]
 
-/-- At a capacity-achieving input distribution of positive mass everywhere, no row lies farther
-from the output marginal than the capacity: moving mass `t` onto one input raises the mutual
-information by `t` times the excess of that row's divergence, less a divergence of order `t²`. -/
-private theorem toReal_klDiv_le (hμ : ∀ c, μ {c} ≠ 0) (h : Im[μ ⊗ₘ κ] = channelCapacity κ)
-    (c : C) : (klDiv (κ c) (κ ∘ₘ μ)).toReal ≤ Im[μ ⊗ₘ κ] := by
-  have hac (c' : C) : κ c' ≪ κ ∘ₘ μ := κ.absolutelyContinuous_comp μ (hμ c')
-  set A := ∑ w, (κ c).real {w} ^ 2 / (κ ∘ₘ μ).real {w} - 1
-  have key (t : ℝ) (ht0 : 0 < t) (ht1 : t ≤ 1) :
-      t * ((klDiv (κ c) (κ ∘ₘ μ)).toReal - Im[μ ⊗ₘ κ]) ≤ t ^ 2 * A := by
-    classical
-    set ν : Measure C := ENNReal.ofReal (1 - t) • μ + ENNReal.ofReal t • Measure.dirac c
-    have hν (c' : C) : ν.real {c'} = (1 - t) * μ.real {c'} + t * if c = c' then 1 else 0 := by
-      simp only [ν, measureReal_def, Measure.add_apply, Measure.smul_apply, smul_eq_mul,
-        Measure.dirac_apply' c (measurableSet_singleton c'), Set.indicator_apply,
-        Set.mem_singleton_iff, Pi.one_apply]
-      rw [ENNReal.toReal_add (by finiteness) (by split_ifs <;> simp), ENNReal.toReal_mul,
-        ENNReal.toReal_mul, ENNReal.toReal_ofReal (by linarith), ENNReal.toReal_ofReal ht0.le]
-      split_ifs <;> simp
-    have : IsProbabilityMeasure ν := ⟨by
-      simp only [ν, Measure.add_apply, Measure.smul_apply, smul_eq_mul, measure_univ, mul_one]
-      rw [← ENNReal.ofReal_add (by linarith) ht0.le, sub_add_cancel, ENNReal.ofReal_one]⟩
-    have hq (w : W) :
-        (κ ∘ₘ ν).real {w} = (1 - t) * (κ ∘ₘ μ).real {w} + t * (κ c).real {w} := by
-      simp_rw [Measure.comp_real_singleton, hν, add_mul, Finset.sum_add_distrib, mul_assoc,
-        ← Finset.mul_sum, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ,
-        ite_true]
-    have hlhs : ∑ c', ν.real {c'} * (klDiv (κ c') (κ ∘ₘ μ)).toReal
-        = (1 - t) * Im[μ ⊗ₘ κ] + t * (klDiv (κ c) (κ ∘ₘ μ)).toReal := by
-      simp_rw [hν, add_mul, Finset.sum_add_distrib, mul_assoc, ← Finset.mul_sum,
-        ← measureMutualInfo_compProd κ μ, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq,
-        Finset.mem_univ, ite_true]
-    have hsq (w : W) : ((1 - t) * (κ ∘ₘ μ).real {w} + t * (κ c).real {w}) ^ 2 / (κ ∘ₘ μ).real {w}
-        = (1 - t) ^ 2 * (κ ∘ₘ μ).real {w} + 2 * t * (1 - t) * (κ c).real {w}
-          + t ^ 2 * ((κ c).real {w} ^ 2 / (κ ∘ₘ μ).real {w}) := by
-      obtain hw | hw := eq_or_ne ((κ ∘ₘ μ).real {w}) 0
-      · have hk : (κ c).real {w} = 0 := by
-          rw [measureReal_eq_zero_iff (measure_ne_top _ _)] at hw ⊢
-          exact hac c hw
-        simp [hw, hk]
-      · field_simp
-        ring
-    have hKL : (klDiv (κ ∘ₘ ν) (κ ∘ₘ μ)).toReal ≤ t ^ 2 * A := by
-      have hνac : κ ∘ₘ ν ≪ κ ∘ₘ μ := comp_absolutelyContinuous κ ν fun c' _ => hac c'
-      rw [toReal_klDiv_eq_sum_log_div hνac]
-      calc ∑ w, (κ ∘ₘ ν).real {w} * log ((κ ∘ₘ ν).real {w} / (κ ∘ₘ μ).real {w})
-          ≤ ∑ w, ((κ ∘ₘ ν).real {w} ^ 2 / (κ ∘ₘ μ).real {w} - (κ ∘ₘ ν).real {w}) := by
-            refine Finset.sum_le_sum fun w _ => ?_
-            obtain hx | hx := eq_or_ne ((κ ∘ₘ ν).real {w}) 0
-            · simp [hx]
-            have hy : (κ ∘ₘ μ).real {w} ≠ 0 := by
-              rw [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)] at hx ⊢
-              exact fun h => hx (hνac h)
-            have hxpos := lt_of_le_of_ne measureReal_nonneg (Ne.symm hx)
-            have hypos := lt_of_le_of_ne measureReal_nonneg (Ne.symm hy)
-            calc (κ ∘ₘ ν).real {w} * log ((κ ∘ₘ ν).real {w} / (κ ∘ₘ μ).real {w})
-                ≤ (κ ∘ₘ ν).real {w} * ((κ ∘ₘ ν).real {w} / (κ ∘ₘ μ).real {w} - 1) :=
-                  mul_le_mul_of_nonneg_left (log_le_sub_one_of_pos (div_pos hxpos hypos))
-                    hxpos.le
-              _ = _ := by ring
-        _ = t ^ 2 * A := by
-            rw [Finset.sum_sub_distrib, sum_measureReal_singleton_eq_one]
-            simp_rw [hq, hsq, Finset.sum_add_distrib, ← Finset.mul_sum,
-              sum_measureReal_singleton_eq_one]
-            ring
-    have hcomp := sum_mul_toReal_klDiv κ ν (κ ∘ₘ μ) fun c' _ => hac c'
-    have hcap : Im[ν ⊗ₘ κ] ≤ Im[μ ⊗ₘ κ] := h ▸ measureMutualInfo_compProd_le_channelCapacity κ ν
+/-- The divergence of a row from the output marginal is the row's expected log posterior of its
+input, less the input's log prior. -/
+theorem toReal_klDiv_eq_integral_log_sub [Nonempty C] {c : C} (hc : μ {c} ≠ 0) :
+    (klDiv (κ c) (κ ∘ₘ μ)).toReal = ∫ w, log (((κ†μ) w).real {c}) ∂(κ c) - log (μ.real {c}) := by
+  have hpc : μ.real {c} ≠ 0 := by rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
+  rw [toReal_klDiv_eq_sum_log_div (κ.absolutelyContinuous_comp μ hc), integral_fintype .of_finite,
+    show log (μ.real {c}) = ∑ w, (κ c).real {w} * log (μ.real {c}) by
+      rw [← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul],
+    ← Finset.sum_sub_distrib]
+  refine Finset.sum_congr rfl fun w _ => ?_
+  obtain hk | hk := eq_or_ne ((κ c).real {w}) 0
+  · simp [hk]
+  have hw' : (κ ∘ₘ μ).real {w} ≠ 0 := by
+    rw [Measure.comp_real_singleton]
+    refine (lt_of_lt_of_le (mul_pos (lt_of_le_of_ne measureReal_nonneg (Ne.symm hpc))
+      (lt_of_le_of_ne measureReal_nonneg (Ne.symm hk))) ?_).ne'
+    exact Finset.single_le_sum (f := fun c => μ.real {c} * (κ c).real {w})
+      (fun _ _ => by positivity) (Finset.mem_univ c)
+  have hw : (κ ∘ₘ μ) {w} ≠ 0 := by rwa [Ne, ← measureReal_eq_zero_iff (measure_ne_top _ _)]
+  rw [smul_eq_mul, posterior_real_singleton κ μ hw, log_div (mul_ne_zero hpc hk) hw',
+    log_mul hpc hk, log_div hk hw']
+  ring
+
+/-- The Bayesian decoder maximizes the expected log score of the input: no decoder that charges
+every input the posterior charges does better. -/
+theorem sum_mul_integral_log_le [Nonempty C] (φ : Kernel W C) [IsMarkovKernel φ]
+    (hφ : ∀ w, (κ ∘ₘ μ) {w} ≠ 0 → (κ†μ) w ≪ φ w) :
+    ∑ c, μ.real {c} * ∫ w, log ((φ w).real {c}) ∂(κ c)
+      ≤ ∑ c, μ.real {c} * ∫ w, log (((κ†μ) w).real {c}) ∂(κ c) := by
+  rw [← sub_nonneg]
+  have key : ∑ c, μ.real {c} * ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)
+        - ∑ c, μ.real {c} * ∫ w, log ((φ w).real {c}) ∂(κ c)
+      = ∑ w, (κ ∘ₘ μ).real {w} * (klDiv ((κ†μ) w) (φ w)).toReal := by
+    simp only [integral_fintype .of_finite, smul_eq_mul, Finset.mul_sum, ← Finset.sum_sub_distrib]
+    rw [Finset.sum_comm]
+    refine Finset.sum_congr rfl fun w _ => ?_
+    have hb (c : C) : μ.real {c} * ((κ c).real {w} * log (((κ†μ) w).real {c}))
+          - μ.real {c} * ((κ c).real {w} * log ((φ w).real {c}))
+        = (κ ∘ₘ μ).real {w} * (((κ†μ) w).real {c}
+          * (log (((κ†μ) w).real {c}) - log ((φ w).real {c}))) := by
+      linear_combination (log ((φ w).real {c}) - log (((κ†μ) w).real {c}))
+        * comp_real_mul_posterior_real κ μ c w
+    simp_rw [hb, ← Finset.mul_sum]
+    obtain hw | hw := eq_or_ne ((κ ∘ₘ μ) {w}) 0
+    · rw [measureReal_def, hw, ENNReal.toReal_zero, zero_mul, zero_mul]
+    rw [toReal_klDiv_eq_sum_log_div (hφ w hw)]
+    congr 1
+    refine Finset.sum_congr rfl fun c _ => ?_
+    obtain hp | hp := eq_or_ne (((κ†μ) w).real {c}) 0
+    · simp [hp]
+    have hφc : (φ w).real {c} ≠ 0 := fun h => hp <|
+      (measureReal_eq_zero_iff (measure_ne_top _ _)).2
+        (hφ w hw ((measureReal_eq_zero_iff (measure_ne_top _ _)).1 h))
+    rw [log_div hp hφc]
+  rw [key]
+  exact Finset.sum_nonneg fun w _ => mul_nonneg measureReal_nonneg ENNReal.toReal_nonneg
+
+/-! ### The Blahut–Arimoto fixed point -/
+
+section BlahutArimoto
+
+variable [Nonempty C]
+
+instance : IsProbabilityMeasure (blahutArimoto κ μ) := isProbabilityMeasure_tilted .of_finite
+
+omit [IsMarkovKernel κ] [IsProbabilityMeasure μ] in
+private theorem freeEnergy_uniformOn (ν : Measure C) [IsProbabilityMeasure ν] (f : C → ℝ) :
+    (uniformOn Set.univ).freeEnergy f ν
+      = ∑ c, ν.real {c} * (f c - log (ν.real {c})) - log (Fintype.card C) := by
+  have hac : ν ≪ uniformOn Set.univ := Measure.absolutelyContinuous_of_forall_singleton
+    fun c h => absurd h (uniformOn_univ_singleton_ne_zero c)
+  have := isProbabilityMeasure_uniformOn (Set.finite_univ (α := C)) Set.univ_nonempty
+  rw [Measure.freeEnergy, integral_fintype .of_finite, toReal_klDiv_eq_sum_log_div hac,
+    show log (Fintype.card C : ℝ) = ∑ c, ν.real {c} * log (Fintype.card C) by
+      rw [← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul],
+    ← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib]
+  refine Finset.sum_congr rfl fun c _ => ?_
+  obtain hc | hc := eq_or_ne (ν.real {c}) 0
+  · simp [hc]
+  rw [uniformOn_univ_real_singleton, div_inv_eq_mul,
+    log_mul hc (Nat.cast_ne_zero.2 Fintype.card_ne_zero), smul_eq_mul]
+  ring
+
+private theorem measureMutualInfo_compProd_eq_sum_log :
+    Im[μ ⊗ₘ κ] = ∑ c, μ.real {c}
+      * (∫ w, log (((κ†μ) w).real {c}) ∂(κ c) - log (μ.real {c})) := by
+  rw [measureMutualInfo_compProd]
+  refine Finset.sum_congr rfl fun c _ => ?_
+  obtain hc | hc := eq_or_ne (μ {c}) 0
+  · simp [measureReal_def, hc]
+  rw [toReal_klDiv_eq_integral_log_sub κ μ hc]
+
+/-- At a fixed point of the Blahut–Arimoto update, every row lies at the same divergence from the
+output marginal, the log partition function of the update. -/
+private theorem toReal_klDiv_of_eq_blahutArimoto (h : μ = blahutArimoto κ μ) (c : C) :
+    (klDiv (κ c) (κ ∘ₘ μ)).toReal
+      = log (∑ c', exp (∫ w, log (((κ†μ) w).real {c'}) ∂(κ c'))) := by
+  have := isProbabilityMeasure_uniformOn (Set.finite_univ (α := C)) Set.univ_nonempty
+  have hreal (c : C) : μ.real {c} = exp (∫ w, log (((κ†μ) w).real {c}) ∂(κ c))
+      / ∑ c', exp (∫ w, log (((κ†μ) w).real {c'}) ∂(κ c')) := by
+    rw [congrArg (·.real {c}) h, blahutArimoto, tilted_real_singleton]
+    simp_rw [uniformOn_univ_real_singleton, ← Finset.mul_sum]
+    rw [mul_div_mul_left _ _ (inv_ne_zero (Nat.cast_ne_zero.2 Fintype.card_ne_zero))]
+  have hZ : 0 < ∑ c', exp (∫ w, log (((κ†μ) w).real {c'}) ∂(κ c')) :=
+    Finset.sum_pos (fun _ _ => exp_pos _) Finset.univ_nonempty
+  have hc : μ {c} ≠ 0 := by
+    rw [← measureReal_ne_zero_iff (measure_ne_top _ _), hreal]
+    exact (div_pos (exp_pos _) hZ).ne'
+  rw [toReal_klDiv_eq_integral_log_sub κ μ hc, hreal, log_div (exp_pos _).ne' hZ.ne', log_exp]
+  ring
+
+/-- **The capacity-achieving priors are the Blahut–Arimoto fixed points.** An input distribution
+achieves capacity with positive mass everywhere exactly when it is the uniform distribution
+tilted by each input's expected log posterior ([blahut-1972], [arimoto-1972]). -/
+theorem eq_blahutArimoto_iff :
+    (Im[μ ⊗ₘ κ] = channelCapacity κ ∧ ∀ c, μ {c} ≠ 0) ↔ μ = blahutArimoto κ μ := by
+  have := isProbabilityMeasure_uniformOn (Set.finite_univ (α := C)) Set.univ_nonempty
+  constructor
+  · rintro ⟨h, hμ⟩
+    -- the free energy of every input distribution, tilted by `μ`'s expected log posterior,
+    -- is at most its mutual information, with equality at `μ`
+    have hfe (ν : Measure C) [IsProbabilityMeasure ν] : (uniformOn Set.univ).freeEnergy
+        (fun c => ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)) ν + log (Fintype.card C)
+          ≤ Im[ν ⊗ₘ κ] := by
+      rw [freeEnergy_uniformOn, measureMutualInfo_compProd_eq_sum_log, sub_add_cancel]
+      simp only [mul_sub, Finset.sum_sub_distrib, sub_le_sub_iff_right]
+      refine sum_mul_integral_log_le κ ν (κ†μ) fun w hw => ?_
+      refine Measure.absolutelyContinuous_of_forall_singleton fun c hc => ?_
+      obtain ⟨c', hc', hk'⟩ : ∃ c', ν {c'} ≠ 0 ∧ κ c' {w} ≠ 0 := by
+        by_contra! h0
+        apply hw
+        rw [Measure.comp_apply_singleton]
+        refine Finset.sum_eq_zero fun c' _ => ?_
+        by_cases hν : ν {c'} = 0
+        · rw [hν, zero_mul]
+        · rw [h0 c' hν, mul_zero]
+      have hμw : (κ ∘ₘ μ) {w} ≠ 0 := comp_apply_singleton_ne_zero κ μ (hμ c') hk'
+      by_contra hne
+      exact (posterior_apply_singleton_ne_zero_iff κ μ hμw c).2
+        ⟨hμ c, ((posterior_apply_singleton_ne_zero_iff κ ν hw c).1 hne).2⟩ hc
+    have hμeq : (uniformOn Set.univ).freeEnergy
+        (fun c => ∫ w, log (((κ†μ) w).real {c}) ∂(κ c)) μ + log (Fintype.card C)
+          = Im[μ ⊗ₘ κ] := by
+      rw [freeEnergy_uniformOn, measureMutualInfo_compProd_eq_sum_log, sub_add_cancel]
+    refine eq_tilted_of_freeEnergy_eq_cgf _ _ (Measure.absolutelyContinuous_of_forall_singleton
+      fun c h => absurd h (uniformOn_univ_singleton_ne_zero c)) .of_finite .of_finite .of_finite
+      (le_antisymm (freeEnergy_le_cgf _ _ (Measure.absolutelyContinuous_of_forall_singleton
+        fun c h => absurd h (uniformOn_univ_singleton_ne_zero c)) .of_finite .of_finite
+        .of_finite) ?_)
+    rw [← freeEnergy_tilted (uniformOn Set.univ) .of_finite .of_finite .of_finite]
+    have := hfe (blahutArimoto κ μ)
+    have := measureMutualInfo_compProd_le_channelCapacity κ (blahutArimoto κ μ)
+    unfold blahutArimoto at *
     linarith
-  by_contra hlt
-  set ε := (klDiv (κ c) (κ ∘ₘ μ)).toReal - Im[μ ⊗ₘ κ]
-  have hε : 0 < ε := sub_pos.mpr (not_le.mp hlt)
-  set t := min 1 (ε / (2 * (|A| + 1)))
-  have ht0 : 0 < t := lt_min one_pos (by positivity)
-  have htA : t * A < ε := calc
-    t * A ≤ ε / (2 * (|A| + 1)) * |A| :=
-      (mul_le_mul_of_nonneg_left (le_abs_self A) ht0.le).trans
-        (mul_le_mul_of_nonneg_right (min_le_right _ _) (abs_nonneg A))
-    _ < ε := by
-      rw [div_mul_eq_mul_div, div_lt_iff₀ (by positivity)]
-      nlinarith [abs_nonneg A]
-  have := key t ht0 (min_le_left _ _)
-  have : ε ≤ t * A := le_of_mul_le_mul_left (by nlinarith) ht0
-  linarith
+  · intro h
+    have hD := toReal_klDiv_of_eq_blahutArimoto κ μ h
+    have hI : Im[μ ⊗ₘ κ] = log (∑ c', exp (∫ w, log (((κ†μ) w).real {c'}) ∂(κ c'))) := by
+      rw [measureMutualInfo_compProd, Finset.sum_congr rfl fun c _ => by rw [hD c],
+        ← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul]
+    have hμ (c : C) : μ {c} ≠ 0 := by
+      rw [h]
+      exact fun h0 => uniformOn_univ_singleton_ne_zero c (absolutelyContinuous_tilted .of_finite h0)
+    refine ⟨measureMutualInfo_compProd_eq_channelCapacity κ μ fun c => ?_, hμ⟩
+    rw [hI, ← hD c, ENNReal.ofReal_toReal]
+    exact klDiv_eq_top_iff_not_ac.not.2 (not_not.2 (κ.absolutelyContinuous_comp μ (hμ c)))
 
 /-- **Necessity of the divergence condition.** An input distribution of positive mass everywhere
 that achieves capacity puts every row of the channel at divergence exactly the capacity from the
@@ -260,16 +367,11 @@ output marginal. -/
 theorem toReal_klDiv_eq_channelCapacity (hμ : ∀ c, μ {c} ≠ 0)
     (h : Im[μ ⊗ₘ κ] = channelCapacity κ) (c : C) :
     (klDiv (κ c) (κ ∘ₘ μ)).toReal = channelCapacity κ := by
-  rw [← h]
-  refine (toReal_klDiv_le κ μ hμ h c).eq_of_not_lt fun hlt => ?_
-  have hpos : 0 < μ.real {c} := by
-    rw [measureReal_def]
-    exact ENNReal.toReal_pos (hμ c) (measure_ne_top _ _)
-  have := Finset.sum_lt_sum (s := Finset.univ)
-    (fun c' _ => mul_le_mul_of_nonneg_left (toReal_klDiv_le κ μ hμ h c') measureReal_nonneg)
-    ⟨c, Finset.mem_univ c, mul_lt_mul_of_pos_left hlt hpos⟩
-  rw [← measureMutualInfo_compProd, ← Finset.sum_mul, sum_measureReal_singleton_eq_one,
-    one_mul] at this
-  exact lt_irrefl _ this
+  have hfix := (eq_blahutArimoto_iff κ μ).1 ⟨h, hμ⟩
+  have hD := toReal_klDiv_of_eq_blahutArimoto κ μ hfix
+  rw [← h, measureMutualInfo_compProd, Finset.sum_congr rfl fun c _ => by rw [hD c],
+    ← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul, hD c]
+
+end BlahutArimoto
 
 end InformationTheory

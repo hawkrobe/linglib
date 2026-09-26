@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.InformationTheory.ChannelCapacity
 public import Linglib.Core.Probability.ConditionalProbability
+public import Linglib.Studies.ZaslavskyKempRegierTishby2018
 
 /-!
 # Zaslavsky et al. (2019): Color Naming Reflects Both Perceptual Structure and Communicative Need
@@ -30,7 +31,8 @@ asymmetry is an asymmetry in cluster size (`warmCoolAsymmetry_ofPartition_unifor
 prior spreading mass equally over clusters (`clusterPrior`) is capacity-achieving
 (`capacityAchieving_clusterPrior`) and the capacity of a `k`-term clustering system is `log k`
 (`channelCapacity_ofPartition`). The universal need distribution inferred from the World Color
-Survey averages the per-language capacity-achieving priors (eq. 7, `averagePrior`).
+Survey averages the per-language capacity-achieving priors (eq. 7), which are the least
+informative priors of [zaslavsky-kemp-regier-tishby-2018] (`isLeastInformative_iff`).
 
 ## Implementation notes
 
@@ -97,30 +99,18 @@ section Capacity
 variable [Fintype W] (κ : Kernel C W) [IsMarkovKernel κ] (μ : Measure C)
   [IsProbabilityMeasure μ]
 
+omit [Fintype W] [MeasurableSingletonClass W] in
+/-- The expected surprisal is the negative expected log posterior. -/
+theorem neg_expectedSurprisal (c : C) :
+    -expectedSurprisal κ μ c = ∫ w, log (((κ†μ) w).real {c}) ∂(κ c) := by
+  rw [expectedSurprisal, ← integral_neg]
+  simp only [surprisal, neg_neg]
+
 /-- The identity behind eq. 5: the divergence of a color's naming distribution from the word
 marginal is its negative expected surprisal less its log need. -/
 theorem toReal_klDiv_eq {c : C} (hc : μ {c} ≠ 0) :
     (klDiv (κ c) (κ ∘ₘ μ)).toReal = -expectedSurprisal κ μ c - log (μ.real {c}) := by
-  have hpc : μ.real {c} ≠ 0 := by
-    rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
-  rw [toReal_klDiv_eq_sum_log_div (κ.absolutelyContinuous_comp μ hc), expectedSurprisal,
-    integral_fintype .of_finite, show log (μ.real {c}) = ∑ w, (κ c).real {w} * log (μ.real {c})
-      by rw [← sum_mul, sum_measureReal_singleton_eq_one, one_mul],
-    ← sum_neg_distrib, ← sum_sub_distrib]
-  refine sum_congr rfl fun w _ => ?_
-  obtain hk | hk := eq_or_ne ((κ c).real {w}) 0
-  · simp [hk]
-  have hw : (κ ∘ₘ μ) {w} ≠ 0 := by
-    rw [Ne, ← measureReal_eq_zero_iff (measure_ne_top _ _), Measure.comp_real_singleton]
-    refine (lt_of_lt_of_le (mul_pos (lt_of_le_of_ne measureReal_nonneg (Ne.symm hpc))
-      (lt_of_le_of_ne measureReal_nonneg (Ne.symm hk))) ?_).ne'
-    exact single_le_sum (f := fun c => μ.real {c} * (κ c).real {w})
-      (fun _ _ => by positivity) (mem_univ c)
-  have hw' : (κ ∘ₘ μ).real {w} ≠ 0 := by
-    rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
-  rw [smul_eq_mul, surprisal, posterior_real_singleton κ μ hw, log_div (mul_ne_zero hpc hk) hw',
-    log_mul hpc hk, log_div hk hw']
-  ring
+  rw [toReal_klDiv_eq_integral_log_sub κ μ hc, neg_expectedSurprisal]
 
 /-- Eq. 6: at a capacity-achieving need distribution of positive mass everywhere, `−log p(c)` is
 linear in the expected surprisal with slope one, and the intercept is the capacity of the
@@ -133,29 +123,24 @@ theorem neg_log_eq_add_channelCapacity (h : Im[μ ⊗ₘ κ] = channelCapacity �
   linarith
 
 /-- Eq. 5: a need distribution satisfies `p(c) ∝ exp(−S(c))` exactly when it is
-capacity-achieving and gives every color positive mass. -/
+capacity-achieving and gives every color positive mass. The condition says that the need
+distribution is a fixed point of the Blahut–Arimoto update (`eq_blahutArimoto_iff`). -/
 theorem capacityAchieving_iff :
     (Im[μ ⊗ₘ κ] = channelCapacity κ ∧ ∀ c, μ {c} ≠ 0) ↔
       ∃ Z > 0, ∀ c, μ.real {c} = exp (-expectedSurprisal κ μ c) / Z := by
+  have := isProbabilityMeasure_uniformOn (Set.finite_univ (α := C)) Set.univ_nonempty
+  have hC : (0 : ℝ) < Fintype.card C := by exact_mod_cast Fintype.card_pos
+  rw [eq_blahutArimoto_iff, blahutArimoto, eq_tilted_iff]
+  simp_rw [uniformOn_univ_real_singleton, ← neg_expectedSurprisal]
   constructor
-  · rintro ⟨h, hμ⟩
-    refine ⟨exp (channelCapacity κ), exp_pos _, fun c => ?_⟩
-    have hpc : 0 < μ.real {c} := ENNReal.toReal_pos (hμ c) (measure_ne_top _ _)
-    rw [← exp_sub, ← neg_add', ← neg_log_eq_add_channelCapacity κ μ h hμ c, neg_neg,
-      exp_log hpc]
-  · rintro ⟨Z, hZ, hp⟩
-    have hμ (c : C) : μ {c} ≠ 0 := by
-      rw [← measureReal_ne_zero_iff (measure_ne_top _ _), hp c]
-      positivity
-    have hD (c : C) : (klDiv (κ c) (κ ∘ₘ μ)).toReal = log Z := by
-      rw [toReal_klDiv_eq κ μ (hμ c), hp c, log_div (exp_pos _).ne' hZ.ne', log_exp]
-      ring
-    have hI : Im[μ ⊗ₘ κ] = log Z := by
-      rw [measureMutualInfo_compProd, sum_congr rfl fun c _ => by rw [hD c], ← sum_mul,
-        sum_measureReal_singleton_eq_one, one_mul]
-    refine ⟨measureMutualInfo_compProd_eq_channelCapacity κ μ fun c => ?_, hμ⟩
-    rw [hI, ← hD c, ENNReal.ofReal_toReal]
-    exact (klDiv_eq_top_iff_not_ac.not.mpr (not_not.mpr (κ.absolutelyContinuous_comp μ (hμ c))))
+  · rintro ⟨Z, hZ, h⟩
+    refine ⟨Z * Fintype.card C, by positivity, fun c => ?_⟩
+    rw [h]
+    field_simp
+  · rintro ⟨Z, hZ, h⟩
+    refine ⟨Z / Fintype.card C, by positivity, fun c => ?_⟩
+    rw [h]
+    field_simp
 
 end Capacity
 
@@ -301,20 +286,22 @@ theorem channelCapacity_ofPartition (f : C → W) :
 
 end ClusterPrior
 
-/-! ### The universal need distribution -/
+/-! ### The universal need distribution
 
-/-- Eq. 7: the universal need distribution inferred from a survey of `L` languages averages the
-languages' capacity-achieving priors, following [zaslavsky-kemp-regier-tishby-2018]. Averaging
-inside the logarithm of eq. 6 need not preserve it (fn. 4). -/
-noncomputable def averagePrior {L : ℕ} (priors : Fin L → Measure C) : Measure C :=
-  (L : ℝ≥0∞)⁻¹ • ∑ l, priors l
+Eq. 7 averages the per-language capacity-achieving priors into a universal need distribution,
+following [zaslavsky-kemp-regier-tishby-2018]: it is that paper's least informative source
+(`ZaslavskyKempRegierTishby2018.averagePrior`), whose per-language priors are the least
+informative priors of the languages' naming distributions. -/
 
-instance {L : ℕ} [NeZero L] (priors : Fin L → Measure C)
-    [∀ l, IsProbabilityMeasure (priors l)] : IsProbabilityMeasure (averagePrior priors) := by
-  constructor
-  rw [averagePrior, Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply]
-  simp only [measure_univ, sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one,
-    smul_eq_mul]
-  exact ENNReal.inv_mul_cancel (by exact_mod_cast NeZero.ne L) (ENNReal.natCast_ne_top L)
+/-- The per-language priors averaged in eq. 7 are the least informative priors of
+[zaslavsky-kemp-regier-tishby-2018]; those of positive mass everywhere are exactly the need
+distributions satisfying eq. 5. -/
+theorem isLeastInformative_iff [Fintype W] (κ : Kernel C W) [IsMarkovKernel κ] (μ : Measure C)
+    [IsProbabilityMeasure μ] :
+    (ZaslavskyKempRegierTishby2018.IsLeastInformative μ κ ∧ ∀ c, μ {c} ≠ 0) ↔
+      ∃ Z > 0, ∀ c, μ.real {c} = exp (-expectedSurprisal κ μ c) / Z := by
+  rw [ZaslavskyKempRegierTishby2018.isLeastInformative_iff,
+    ZaslavskyKempRegierTishby2018.complexity]
+  exact capacityAchieving_iff κ μ
 
 end ZaslavskyEtAl2019
