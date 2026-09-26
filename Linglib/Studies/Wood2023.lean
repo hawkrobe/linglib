@@ -195,8 +195,7 @@ theorem subsetPrinciple_vContext_isSome : (subsetPrinciple vocab (vContext r)).i
   intro h
   have : ([Feature.cat .v] ⟷ zero) ∈ Morphology.Exponence.applicable vocab (vContext r) :=
     Morphology.Exponence.mem_applicable.mpr ⟨by simp [vocab],
-      by simp [VocabularyItem.applies_iff, vContext, Neighborhood.subset_def,
-        Neighborhood.positioned]⟩
+      by simp [VocabularyItem.applies_iff, vContext]⟩
   simp [h] at this
 
 /-- The exponent of v in the nominal of the root `r`. -/
@@ -242,7 +241,8 @@ theorem nominalizer_eq_none (h : verbalizer r = zero) (hr : r ∉ listed) :
   rw [nominalizer_of_eq_zero r h, subsetPrinciple, Morphology.Exponence.realize_eq_none_iff]
   simp [listed] at hr
   simp [Morphology.Exponence.applicable, vocab, nAfter, VocabularyItem.applies_iff,
-    Neighborhood.subset_def, Neighborhood.positioned, Morph.root, Morph.suff, Morph.bound, zero]
+    Neighborhood.subset_iff_positioned, Neighborhood.positioned, Morph.root, Morph.suff,
+    Morph.bound, zero]
   simpa [eq_comm] using hr
 
 /-- *borða* 'eat' has no nominalization: *\*borð-un*. -/

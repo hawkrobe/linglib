@@ -90,7 +90,7 @@ theorem subsetPrinciple_realizes (h : subsetPrinciple items n = some e) : Realiz
 /-- Applicability is monotone in the neighborhood. -/
 theorem applicable_mono (hsub : n' ⊆ n) : applicable items n' ⊆ applicable items n :=
   fun _ hi => mem_applicable.mpr
-    ⟨(mem_applicable.mp hi).1, Neighborhood.Subset.trans (mem_applicable.mp hi).2 hsub⟩
+    ⟨(mem_applicable.mp hi).1, (mem_applicable.mp hi).2.trans hsub⟩
 
 /-- **Retreat to the general case**: shrinking the neighborhood — deleting
 features by Impoverishment — can only make the winner weakly less specific,
