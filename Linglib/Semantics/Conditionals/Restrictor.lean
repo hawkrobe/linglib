@@ -53,7 +53,7 @@ def conditionalPossibility : Prop := possibility (f.restrict α) g β w
 ordering source induces. -/
 theorem conditionalNecessity_iff_mem_orderingImp :
     conditionalNecessity f g α β w ↔
-      w ∈ orderingImp (f.accessibleWorlds) (fun w ↦ kratzerPreorder (g w)) {v | α v} {v | β v} := by
+      w ∈ orderingImp (f.accessibleWorlds) (fun w ↦ premisePreorder (g w)) {v | α v} {v | β v} := by
   rw [conditionalNecessity, necessity_iff, mem_orderingImp, bestWorlds, bestAmong,
     accessibleWorlds_restrict]
   rfl
@@ -61,7 +61,7 @@ theorem conditionalNecessity_iff_mem_orderingImp :
 /-- *If α, might β* is the *might* of the conditional over the best accessible α-worlds. -/
 theorem conditionalPossibility_iff_mem_might :
     conditionalPossibility f g α β w ↔
-      w ∈ might (orderingImp (f.accessibleWorlds) (fun w ↦ kratzerPreorder (g w))) {v | α v}
+      w ∈ might (orderingImp (f.accessibleWorlds) (fun w ↦ premisePreorder (g w))) {v | α v}
         {v | β v} := by
   rw [mem_might]
   change _ ↔ w ∉ orderingImp _ _ {v | α v} {v | ¬ β v}

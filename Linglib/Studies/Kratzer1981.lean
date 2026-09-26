@@ -128,7 +128,7 @@ theorem limitAssumption : LimitAssumption circumstances desires w₀ := by
 /-- Decide a verdict of the limit-free operators through the best worlds. -/
 scoped macro "decide_verdict" : tactic =>
   `(tactic| (simp only [humanPossibility, humanNecessity_iff_necessity limitAssumption,
-      necessity, ModalLogic.box, kratzerBestR, mem_bestWorlds_iff, forall_eq_or_imp,
+      necessity, ModalLogic.box, BestAccessible, mem_bestWorlds_iff, forall_eq_or_imp,
       forall_eq]; decide))
 
 /-- Conclusion one fails: the speaker need not go to the pub. -/
@@ -248,20 +248,20 @@ theorem limitAssumption_injustice :
 good. -/
 theorem justice_must_be_done :
     necessity emptyBackground morallyGood (fun s ↦ ¬ injustice s) none := by
-  simp only [necessity, ModalLogic.box, kratzerBestR, mem_bestWorlds_good_iff, forall_eq]
+  simp only [necessity, ModalLogic.box, BestAccessible, mem_bestWorlds_good_iff, forall_eq]
   decide
 
 /-- (60): if someone was treated unjustly, the injustice must be amended for. -/
 theorem injustice_must_be_amended :
     conditionalNecessity emptyBackground morallyGood injustice amended none := by
-  simp only [conditionalNecessity, necessity, ModalLogic.box, kratzerBestR,
+  simp only [conditionalNecessity, necessity, ModalLogic.box, BestAccessible,
     mem_bestWorlds_injustice_iff, forall_eq]
   decide
 
 /-- (61) is false: the injustice need not be rewarded. -/
 theorem not_injustice_must_be_rewarded :
     ¬ conditionalNecessity emptyBackground morallyGood injustice rewarded none := by
-  simp only [conditionalNecessity, necessity, ModalLogic.box, kratzerBestR,
+  simp only [conditionalNecessity, necessity, ModalLogic.box, BestAccessible,
     mem_bestWorlds_injustice_iff, forall_eq]
   decide
 

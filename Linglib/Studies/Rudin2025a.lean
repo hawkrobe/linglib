@@ -311,7 +311,7 @@ theorem compatibleOrd_must [Finite W] {p : Set W} {c : OrdState W} :
 /-- Decide a claim about a three-world state by unfolding the operators. -/
 scoped macro "decide_states" : tactic =>
   `(tactic| (simp only [MIOrd, mustOrd, OrdState.best, bestAmong, Preorder.mem_minimals_iff,
-      kratzerPreorder, Preorder.ofCriteria_le_iff,
+      premisePreorder, Preorder.ofCriteria_le_iff,
       Set.mem_ofPred_eq, Set.mem_univ, Set.mem_insert_iff, Set.mem_singleton_iff, Set.subset_def,
       Set.mem_inter_iff, Set.Nonempty, List.forall_mem_cons, List.mem_nil_iff, false_implies,
       implies_true, true_and, and_true, forall_const]; decide))
