@@ -142,20 +142,9 @@ theorem exh_eq_empty_of_isSymmetric (h : IsSymmetric S S₁ S₂) (h₁ : S₁ �
 
 /-- Neither symmetric alternative is innocently excludable given the assertion. -/
 theorem not_isInnocentlyExcludable_of_isSymmetric (h : IsSymmetric S S₁ S₂)
-    (hne₁ : S₁.Nonempty) : ¬ IsInnocentlyExcludable {S, S₁, S₂} S S₁ := by
-  rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (by simp)]
-  obtain ⟨a, ha⟩ := hne₁
-  refine λ h' => h' ⟨h.subset_left ha, ?_⟩ ha
-  rintro ⟨v, hv, hva, hnav⟩
-  have hv' : v ∈ S₁ ∪ S₂ := h.union ▸ hv
-  rcases hv' with hv₁ | hv₂
-  · refine hnav λ c hc hac => ?_
-    simp only [mem_insert_iff, mem_singleton_iff] at hc
-    obtain h1 | h1 | h1 := hc <;> subst c
-    · exact hv
-    · exact hv₁
-    · exact (disjoint_left.1 h.disjoint ha hac).elim
-  · exact disjoint_left.1 h.disjoint ha (hva S₂ (by simp) hv₂)
+    (hne₁ : S₁.Nonempty) : ¬ IsInnocentlyExcludable {S, S₁, S₂} S S₁ :=
+  not_isInnocentlyExcludable_of_subset_union _ _ (toFinite _) (by simp) (by simp)
+    h.union.symm.subset (h.symm.sdiff_eq.symm ▸ hne₁)
 
 /-- Innocent exclusion negates neither symmetric alternative: exhaustification is vacuous. -/
 theorem exhIE_eq_self_of_isSymmetric (h : IsSymmetric S S₁ S₂) (hne₁ : S₁.Nonempty)

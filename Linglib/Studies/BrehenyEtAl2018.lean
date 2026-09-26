@@ -1,402 +1,297 @@
 module
 
-public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Semantics.Exhaustification.Finite
-public import Linglib.Semantics.Alternatives.Symmetric
+public import Linglib.Studies.TrinhHaida2015
+public import Linglib.Data.Examples.BrehenyEtAl2018
 
 /-!
-# Breheny, Klinedinst, Romoli and Sudo 2018: the symmetry problem
+# Breheny, Klinedinst, Romoli and Sudo (2018): the symmetry problem
 
-[breheny-et-al-2018] (Natural Language Semantics 26) surveys the symmetry
-problem for scalar-implicature alternatives: a theory must admit the
-alternative A while excluding its symmetric partner S ∧ ¬A. The structural
-approach ([katzir-2007], [fox-katzir-2011]) solves the basic some/all case
-but undergenerates for indirect (12) and particularised (18) implicatures;
-[trinh-haida-2015]'s Atomicity Constraint repairs those two and backfires on
-gradable adjectives under negation (32), blocking the needed *empty*
-alternative (40); and the RSA account of [bergen-levy-goodman-2016] covers
-the direct, indirect, and full/empty cases through cost and relative
-informativity, but fails on the many-variant (54), the run-and-smoke
-sentences (55), the adjective asymmetry (56), and — short of frequency
-costs — [swanson-2010]'s lexicalized partners (44), (57). No account covers
-everything; the problem stays open. Each argument runs through
-[fox-2007]'s innocent-exclusion engine on a small domain: the wrong
-alternative sets make `exh` vacuous or derive the unattested inference, the
-right ones derive the observed implicature.
+[breheny-et-al-2018] survey the symmetry problem for the alternatives of scalar implicature: an
+assertion `S` implicating `¬A` must have `A` among its alternatives but not `S ∧ ¬A`, which
+would implicate the opposite. On the structural approach of [katzir-2007] and
+[fox-katzir-2011] the alternatives negated are a contextual subset `C` of the formal
+alternatives `F(S)` obeying the closure condition (8): `S ∈ C`, and every formal alternative in
+the Boolean closure of `C` is in `C`. That condition is [trinh-haida-2015]'s (27), the sibling
+study's `TrinhHaida2015.IsDomain`, and the implicatures are computed by innocent exclusion,
+`Exhaustification.exhIE`, of which the paper's (9) is the simplification its footnote 7
+describes. The paper's arguments then all have one shape: some formal alternative is the
+negation, or the symmetric partner, of the alternative the inference needs, closure puts it into
+every domain holding the other (`IsDomain.compl_mem`, `IsDomain.mem_of_isSymmetric`), and
+neither can be innocently excluded, since negating both contradicts the assertion
+(`Exhaustification.not_isInnocentlyExcludable_of_subset_union`); the study's
+`exhIE_eq_self_of_isDomain` is that shape.
 
-## Main results
+* Indirect implicatures, (12)–(15), after [romoli-2013]: *some* is derived from *not all* by
+  (15), it is the negation of the needed *not any*, and exhaustification is vacuous on every
+  domain (`exhIE_indirect_eq_self`); the Atomicity Constraint of [trinh-haida-2015] removes
+  *some*, (22), and the implicature follows (`exhIE_indirect_atomicity`).
+* Particularised implicatures, (28)–(31): with the conjunction of (18) split across sentences,
+  the salient constituents yield only *smoke* and *not smoke*, and no domain licenses any
+  inference (`exhIE_split_eq_self`); ignoring the salient *didn't smoke* derives the opposite
+  one, footnote 16 (`exhIE_split_ignored`).
+* Gradable adjectives, (32)–(40): Atomicity blocks *empty* but not *not empty*, so `{¬full,
+  ¬empty}` is a domain (`isDomain_notFull_notEmpty`) on which exhaustification derives the
+  unattested *the glass is empty* (`exhIE_notFull_notEmpty`); without Atomicity, *empty* joins
+  every domain holding *not empty* and neither inference arises (`exhIE_notFull_eq_self`). The
+  observed inference is available through the modifier alternatives of (37), *not half full*
+  in place of *not empty* (`isDomain_notFull_notHalf`, `exhIE_notFull_notHalf`), but keeping
+  both leaves exhaustification vacuous, footnote 20 (`exhIE_adjectiveAlts_eq_self`), and (38)
+  shows the modifier route overgenerating for *safe*, *tall*, and *transparent*, adjectives of
+  every scale structure in [kennedy-2007]'s sense.
+* Lexicalised symmetric partners, (44)–(45), after [swanson-2010]: *required* and *optional*
+  partition *permitted* and are lexical items of the same complexity, so both are formal
+  alternatives, every domain holding one holds the other, and exhaustification is vacuous
+  (`exhIE_permitted_eq_self`).
 
-* `indirect_si_blocked`, `indirect_si_correct` — (12): with the symmetric
-  *some* present, exhaustification is vacuous; under the Atomicity
-  Constraint the indirect implicature is derived.
-* `adjective_full_alts_vacuous`, `ac_wrong_for_adjectives`,
-  `adjective_correct_alts` — (32): without the constraint neither inference
-  arrives, with it the unattested "the glass is empty" is derived, and the
-  observed inference needs an alternative set no structural variant
-  generates.
-* `particularised_symmetric`, `particularised_blocked`,
-  `particularised_correct` — (18) and (28): the conjunctive alternative
-  derives the implicature exactly when the substitution source supplies it.
-* `swanson_symmetric`, `swanson_exh_vacuous`, `swanson_without_symmetric` —
-  (44): lexicalized symmetric partners of equal complexity leave
-  exhaustification vacuous.
+Section 4.1's problem of too few lexical alternatives, the Japanese deontic paradigm
+(41)–(43) in which necessity is a negated verbal stem or an existential construction and yet
+*yoi* 'allowed' implicates *not required*, and Section 5's assessment of the cost-and-
+informativity account of [bergen-levy-goodman-2016], which covers (46), (48), and (50) and
+fails (54)–(58), are recorded as rows and prose: the paper concludes that no account solves
+the problem in full generality.
+
+## Implementation notes
+
+Sentences are propositions `Set W` over an arbitrary set of worlds, in the paper's schematic
+notation (*¬all*, *some*, *run ∧ ¬smoke*); the relations the paper assumes among them (that
+no glass is both half filled and empty) are hypotheses, and the worlds of the paper's
+partitions (none, some but not all; empty, a bit filled, half filled) are witnesses. Which
+sentences are formal alternatives is taken from the paper's sets (14), (19), (31), and (37),
+not derived from a lexicon; that *some* is not derivable from *not all* under Atomicity is
+`TrinhHaida2015.atoms_mem_source`, and (18) itself is `TrinhHaida2015.exhIE_run_smoke` on the
+domain `TrinhHaida2015.run_smoke_isDomain`. The examples are the rows of `Examples.all`.
+
+## TODO
+
+* Section 5.1.2's argument that alternatives of equal cost and equal relative informativity
+  leave the listener undecided is an invariance of `RSA.pragmaticListener` under an involution
+  of worlds and utterances that preserves meaning and cost and fixes the assertion; the paper's
+  hypothetical of a *just some* no costlier than *all* and its cases (54)–(58) await that
+  theorem.
 
 ## References
 
-* [breheny-et-al-2018] — the paper.
-* [katzir-2007], [fox-katzir-2011] — the structural approach.
-* [trinh-haida-2015] — the Atomicity Constraint.
-* [bergen-levy-goodman-2016], [swanson-2010] — the RSA account and the
-  lexicalized-symmetry cases.
-* [fox-2007] — innocent exclusion.
+* [breheny-et-al-2018]
+* [katzir-2007]
+* [fox-katzir-2011]
+* [trinh-haida-2015]
+* [romoli-2013]
+* [swanson-2010]
+* [bergen-levy-goodman-2016]
+* [fox-2007]
+* [kennedy-2007]
 -/
 
 @[expose] public section
 
 namespace BrehenyEtAl2018
 
-open Exhaustification (innocent predToFinset altsFromPreds)
-open Alternatives
-
-/-!
-## The Problem of Indirect Scalar Implicatures
-
-(12a) John didn't do all of the homework.
-(12b) ⤳ John did some of the homework.
-
-This is an **indirect** SI: the inference arises from negating the
-stronger alternative ¬any (= "didn't do any") under the scope of
-sentential negation. The structural approach ([fox-katzir-2011])
-wrongly generates the symmetric alternative "some" (= "did some")
-by extracting the VP subconstituent and substituting all→some within
-it, blocking the correct inference.
-
-[trinh-haida-2015]'s Atomicity Constraint solves this: after
-extracting the VP, it becomes atomic and the internal substitution
-all→some is blocked.
--/
-
-section IndirectSI
-
-/-- Three homework worlds: did none, did some but not all, did all. -/
-inductive HWWorld where
-  | none_ | someNotAll | all_
-  deriving Repr, DecidableEq, Fintype
-
-/-- ¬all = "didn't do all the homework" = {none, someNotAll}. -/
-def notAll : HWWorld → Bool
-  | .none_ | .someNotAll => true | .all_ => false
-
-/-- ¬any = "didn't do any" = {none}. Stronger than ¬all. -/
-def notAny : HWWorld → Bool
-  | .none_ => true | _ => false
-
-/-- some = "did some" = {someNotAll, all}. Independent of ¬all. -/
-def didSome : HWWorld → Bool
-  | .someNotAll | .all_ => true | .none_ => false
-
-/-- With the symmetric alternative "some" present (as the structural
-    approach generates), exh is vacuous: neither ¬any nor some is in
-    I-E. The correct inference (12b) is not derived.
-
-    F(12a) ⊇ {¬all, ¬any, some} per [fox-katzir-2011], because
-    "some" is derivable by extracting the VP subconstituent and
-    substituting all→some within it. -/
-theorem indirect_si_blocked :
-    innocent.exh (altsFromPreds [notAll, notAny, didSome]) (predToFinset notAll)
-      = predToFinset notAll := by decide
-
-/-- Without "some" (the Atomicity Constraint's prediction), exh
-    correctly derives the indirect SI: ¬all ∧ ¬(¬any) = {someNotAll}.
-
-    The AC blocks "some" because deriving it requires extracting the
-    VP and then substituting within it, violating atomicity. -/
-theorem indirect_si_correct :
-    innocent.exh (altsFromPreds [notAll, notAny]) (predToFinset notAll)
-      = predToFinset (fun w => notAll w && didSome w) := by decide
-
-/-- I-E includes ¬any when "some" is absent. -/
-theorem ac_solves_indirect_si :
-    predToFinset notAny ∈
-      innocent.excluded (altsFromPreds [notAll, notAny]) (predToFinset notAll) := by
-  decide
-
-end IndirectSI
-
-/-!
-## Gradable Adjectives Under Negation
-
-The Atomicity Constraint backfires for gradable adjectives with
-contradictory antonyms:
-
-(32) It's not the case that the glass is full.
-  a. ⤳ The glass is not empty.        (observed)
-  b. ⤴ The glass is empty.            (not observed)
-
-The structural approach generates "not empty" as an alternative to
-"not full" by simple lexical substitution of full→empty under negation.
-The AC also blocks "empty" (the bare positive form) because deriving
-it requires extracting the AP/S subconstituent and substituting within
-it (ex. 40).
-
-Without "empty" to serve as a counterweight, exh negates "not empty"
-and derives the WRONG inference (32b): the glass IS empty. The AC's
-solution for one class of cases (indirect SIs) creates a problem for
-another (gradable adjectives).
-
-### Adjective pair asymmetry ((34), (35), (38))
-
-Not all contradictory antonym pairs generate the inference: full/empty,
-required/allowed (34), and certain/possible (35) do; the (38) pairs
-safe/dangerous, tall/short, and transparent/opaque do not.
-
-The paper notes this variation cuts across scale structure: safe has
-an upper closed scale, transparent has a fully closed scale, and tall
-a fully open scale — yet none generates the inference. The explanation
-remains open, though the paper suggests the POS morpheme and its
-interaction with degree modifiers (partly, half) may be relevant.
--/
-
-section GradableAdjectives
-
-/-- Three-degree scale for a closed-scale adjective pair (full/empty).
-    Represents glass fullness: empty (0), mid (0.5), full (1). -/
-inductive GlassWorld where
-  | empty_ | mid | full_
-  deriving Repr, DecidableEq, Fintype
-
-def isFull : GlassWorld → Bool
-  | .full_ => true | _ => false
-
-def isEmpty : GlassWorld → Bool
-  | .empty_ => true | _ => false
-
-def notFull : GlassWorld → Bool
-  | .empty_ | .mid => true | .full_ => false
-
-def notEmpty : GlassWorld → Bool
-  | .mid | .full_ => true | .empty_ => false
-
--- ── Full alternative set (no AC) ─────────────────────────────
-
-/-- With all four alternatives {¬full, ¬empty, full, empty}, only
-    "full" is in I-E — but ¬full already entails ¬full, so exh adds
-    nothing. The crucial inference ¬empty is NOT derived.
-
-    This is because ¬empty and empty cannot both be excluded
-    (¬empty ∧ empty = ⊥), and they end up in different MCEs. -/
-theorem adjective_full_alts_ie :
-    innocent.excluded
-      (altsFromPreds [notFull, notEmpty, isFull, isEmpty]) (predToFinset notFull)
-      = {predToFinset isFull} := by decide
-
-/-- Consequence: exh(¬full) = ¬full (vacuous for the empty/¬empty
-    pair). Neither the correct inference (32a) nor the wrong one (32b)
-    is derived. -/
-theorem adjective_full_alts_vacuous :
-    innocent.exh (altsFromPreds [notFull, notEmpty, isFull, isEmpty]) (predToFinset notFull)
-      = predToFinset notFull := by decide
-
--- ── AC alternative set (empty removed) ───────────────────────
-
-/-- With the AC, "empty" is blocked (requires extraction + substitution,
-    ex. 40). Alternatives: {¬full, ¬empty, full}. Now both ¬empty and
-    "full" are in I-E. -/
-theorem ac_adjective_ie :
-    innocent.excluded (altsFromPreds [notFull, notEmpty, isFull]) (predToFinset notFull)
-      = {predToFinset notEmpty, predToFinset isFull} := by decide
-
-/-- The AC produces the WRONG prediction: exh(¬full) = ¬full ∧ empty
-    = {empty}. This says the glass IS empty — inference (32b).
-
-    The derivation: ¬empty is in I-E, so exh negates it. ¬(¬empty)
-    = empty. Combined with ¬full: ¬full ∧ empty = {empty}. -/
-theorem ac_wrong_for_adjectives :
-    innocent.exh (altsFromPreds [notFull, notEmpty, isFull]) (predToFinset notFull)
-      = predToFinset isEmpty := by decide
-
--- ── Desired alternative set ──────────────────────────────────
-
-/-- To derive the correct inference (32a), the alternatives must
-    include "empty" but NOT "¬empty". Then exh(¬full) = ¬full ∧
-    ¬empty = {mid} — the glass is neither full nor empty.
-
-    No version of the structural approach (with or without AC)
-    produces this alternative set: ¬empty is always derivable by
-    leaf substitution of full→empty under negation. -/
-theorem adjective_correct_alts :
-    innocent.exh (altsFromPreds [notFull, isFull, isEmpty]) (predToFinset notFull)
-      = predToFinset (fun w => notFull w && notEmpty w) := by decide
-
-end GradableAdjectives
-
-/-!
-## Particularised SIs and the Role of Conjunction
-
-(18) Bill went for a run and didn't smoke. What did John do?
-     John went for a run.
-     ⤳ John smoked.
-
-The inference is derived by negating the contextually salient
-alternative "ran ∧ ¬smoked" (from Bill's sentence). The AC correctly
-handles this case: the conjunctive constituent α = "went for a run
-and didn't smoke" is atomic after extraction, blocking generation of
-the symmetric counterpart "smoked".
-
-(28) Bill went for a run. He didn't smoke. What did John do?
-     John went for a run.
-     ⤳ John smoked.
-
-Same inference, but now the conjunction is split across two sentences.
-The crucial constituent "ran ∧ ¬smoked" is NOT a subconstituent of
-any single sentence, yet the inference persists. Neither the AC nor
-the structural approach generates the right alternative here.
--/
-
-section ParticularisedSI
-
-/-- Three activity worlds for John. -/
-inductive ActivityWorld where
-  | ranOnly | ranAndSmoked | neither
-  deriving Repr, DecidableEq, Fintype
-
-private def actDomain : List ActivityWorld :=
-  [.ranOnly, .ranAndSmoked, .neither]
-
-def ran : ActivityWorld → Bool
-  | .ranOnly | .ranAndSmoked => true | .neither => false
-
-def smoked : ActivityWorld → Bool
-  | .ranAndSmoked => true | _ => false
-
-def ranAndNotSmoked : ActivityWorld → Bool
-  | .ranOnly => true | _ => false
-
-/-- "smoked" and "ran ∧ ¬smoked" are symmetric alternatives of "ran":
-    they partition ran's denotation (ex. 19). -/
-theorem particularised_symmetric :
-    IsSymmetric (↑(predToFinset ran) : Set ActivityWorld) (↑(predToFinset smoked) : Set ActivityWorld)
-      (↑(predToFinset ranAndNotSmoked) : Set ActivityWorld) :=
-  (isSymmetric_coe _ _ _).2 (by decide)
-
-/-- With the symmetric alternative present, exh is vacuous —
-    the inference "John smoked" is not derived. -/
-theorem particularised_blocked :
-    innocent.exh (altsFromPreds [ran, smoked, ranAndNotSmoked]) (predToFinset ran)
-      = predToFinset ran := by decide
-
-/-- With only the conjunctive alternative "ran ∧ ¬smoked" (salient
-    from context), exh correctly derives: ran ∧ ¬(ran ∧ ¬smoked)
-    = ran ∧ smoked = {ranAndSmoked}.
-
-    The structural approach generates this alternative for (18) because
-    the salient conjunctive constituent is in the substitution source, but
-    NOT for (28), where the conjunction spans separate sentences. -/
-theorem particularised_correct :
-    innocent.exh (altsFromPreds [ran, ranAndNotSmoked]) (predToFinset ran)
-      = predToFinset smoked := by decide
-
-end ParticularisedSI
-
-/-!
-## Lexicalized Symmetric Alternatives
-
-[swanson-2010] observes scalar items with lexicalized symmetric
-counterparts:
-
-(44) Going to confession is permitted.
-  a. ⤳ Going to confession is optional.     (observed)
-  b. ⤴ Going to confession is required.     (not observed)
-
-The structural approach cannot exclude "optional" because it is a
-single lexical item of equal structural complexity to "permitted" and
-"required". Since "required" and "optional" partition "permitted"'s
-denotation, they are symmetric, and exh is vacuous.
-
-(45) The heater sometimes squeaks.
-  a. ⤳ The heater intermittently squeaks.   (observed)
-  b. ⤴ The heater constantly squeaks.       (not observed)
-
-Same pattern: "intermittently" ≈ sometimes ∧ ¬always.
--/
-
-section SwansonCases
-
-/-- Three deontic worlds. -/
-inductive DeonticWorld where
-  | forbidden | optional_ | required_
-  deriving Repr, DecidableEq, Fintype
-
-private def deonticDomain : List DeonticWorld :=
-  [.forbidden, .optional_, .required_]
-
-def isPermitted : DeonticWorld → Bool
-  | .optional_ | .required_ => true | .forbidden => false
-
-def isRequired : DeonticWorld → Bool
-  | .required_ => true | _ => false
-
-def isOptional : DeonticWorld → Bool
-  | .optional_ => true | _ => false
-
-/-- "required" and "optional" partition "permitted"'s denotation —
-    they are symmetric alternatives (cf. some/all and some-but-not-all
-    in `Symmetry.lean`). -/
-theorem swanson_symmetric :
-    IsSymmetric (↑(predToFinset isPermitted) : Set DeonticWorld)
-      (↑(predToFinset isRequired) : Set DeonticWorld) (↑(predToFinset isOptional) : Set DeonticWorld) :=
-  (isSymmetric_coe _ _ _).2 (by decide)
-
-/-- With both lexicalized symmetric alternatives, exh is vacuous.
-    The structural approach cannot block "optional" from F because
-    it has the same structural complexity as "permitted" — it is a
-    single lexical item, not a phrasal combination like "some but
-    not all" which requires ConjP/NegP structure. -/
-theorem swanson_exh_vacuous :
-    innocent.exh (altsFromPreds [isPermitted, isRequired, isOptional]) (predToFinset isPermitted)
-      = predToFinset isPermitted := by decide
-
-/-- Without the symmetric partner, exh correctly derives the SI:
-    permitted ∧ ¬required = optional. -/
-theorem swanson_without_symmetric :
-    innocent.exh (altsFromPreds [isPermitted, isRequired]) (predToFinset isPermitted)
-      = predToFinset isOptional := by decide
-
-end SwansonCases
-
-/-!
-## The RSA Approach to Symmetry
-
-[bergen-levy-goodman-2016] propose that utterance **cost**
-(structural complexity) combined with **relative informativity**
-dissolves the symmetry problem without structural restriction of
-alternatives.
-
-What it covers: direct SIs — *some but not all* is costlier than *all*,
-so cost breaks the symmetry; plain indirect SIs (48) — the alternatives
-{some, none} tie in complexity, but *some* is relatively uninformative
-against *not all* where *none* is not, so informativity breaks it; and
-the full/empty case (50), since *not empty* is costlier than *empty*.
-
-Where it fails: the many-variant (54), where the unwanted *many* matches
-the needed *not many* on both dimensions; the run-and-smoke sentences (55),
-where the unattested alternative is if anything simpler; the adjective
-asymmetry (56), predicting the same inference for safe/dangerous and
-tall/short as for full/empty; and (57), where *intermittently* is no more
-complex than *always* — unless lexical frequency is priced into cost.
--/
-
-/-!
-## Summary
-
-The paper's three problems — indirect and particularised implicatures, too
-few lexical alternatives (the Japanese deontic paradigm (41)–(43), where
-the needed necessity alternative is not structurally derivable), and too
-many (Swanson's lexicalized partners) — leave every account partial: the
-structural approach fails the first, the Atomicity Constraint trades the
-indirect cases for the gradable-adjective ones, and the RSA account clears
-direct, indirect, and full/empty but not (54)–(57). The symmetry problem
-remains open as of this paper.
--/
+open Alternatives Exhaustification Set TrinhHaida2015
+
+variable {W : Type*}
+
+/-! ### The shape of the arguments -/
+
+/-- When the formal alternatives of `φ` are among `φ`, an alternative `p`, its negation, and the
+negation of `φ`, with `p` and its negation both formal, every domain holding either holds both
+by closure, neither is innocently excludable when `φ` is compatible with both, and
+exhaustification is vacuous on every domain. -/
+theorem exhIE_eq_self_of_isDomain {F C : Set (Set W)} {φ p : Set W}
+    (hF : F ⊆ {φ, p, pᶜ, φᶜ}) (hp : p ∈ F) (hpc : pᶜ ∈ F) (hC : IsDomain F φ C)
+    (h₁ : (φ ∩ p).Nonempty) (h₂ : (φ ∩ pᶜ).Nonempty) : exhIE C φ = φ := by
+  have hfin : C.Finite := (toFinite _).subset (hC.subset.trans hF)
+  rw [exhIE_eq_self_iff C φ hfin]
+  intro a ha
+  have hmem := hF (hC.subset ha.1)
+  simp only [mem_insert_iff, mem_singleton_iff] at hmem
+  rcases hmem with rfl | rfl | rfl | rfl
+  · exact absurd ha
+      (not_isInnocentlyExcludable_of_phi_subset hfin (h₁.mono inter_subset_left) subset_rfl)
+  · exact absurd ha (not_isInnocentlyExcludable_of_subset_union _ _ hfin ha.1
+      (hC.compl_mem ha.1 hpc) (by simp) (by rwa [sdiff_compl]))
+  · exact absurd ha (not_isInnocentlyExcludable_of_subset_union _ _ hfin ha.1
+      (by simpa using hC.compl_mem ha.1 (by simpa using hp)) (by simp) (by rwa [sdiff_eq]))
+  · exact disjoint_compl_right
+
+/-! ### Indirect scalar implicatures, Section 2.2 -/
+
+section Indirect
+
+variable {all any : Set W}
+
+/-- (14): the formal alternatives of *John didn't do all of the homework* on the structural
+approach: *not all*, *not any*, *all*, and *some*, the last by the derivation (15). -/
+def indirectAlts (all any : Set W) : Set (Set W) := {allᶜ, anyᶜ, all, any}
+
+/-- (12) undergenerates: *some* is the negation of *not any*, every domain holding one holds
+both, and exhaustification of *not all* is vacuous on every domain, given a world with no
+homework done and one with some but not all of it done. -/
+theorem exhIE_indirect_eq_self {C : Set (Set W)} (hC : IsDomain (indirectAlts all any) allᶜ C)
+    (h₀ : (allᶜ ∩ anyᶜ).Nonempty) (h₁ : (allᶜ ∩ any).Nonempty) : exhIE C allᶜ = allᶜ :=
+  exhIE_eq_self_of_isDomain (p := anyᶜ) (by simp [indirectAlts, insert_subset_iff])
+    (by simp [indirectAlts]) (by simp [indirectAlts]) hC h₀ (by simpa using h₁)
+
+/-- (22): under the Atomicity Constraint *some* is not derivable from *not all*, the formal
+alternatives are *not all*, *not any*, and *all*, their own domain, and exhaustification
+derives (12b), *not all* and *some*, given a world with some but not all of the homework
+done. -/
+theorem exhIE_indirect_atomicity (h₁ : (allᶜ ∩ any).Nonempty) :
+    exhIE {allᶜ, anyᶜ, all} allᶜ = allᶜ ∩ any := by
+  obtain ⟨v, hv, hv'⟩ := h₁
+  have hIE : ∀ a ∈ ({anyᶜ, all} : Set (Set W)),
+      IsInnocentlyExcludable {allᶜ, anyᶜ, all} allᶜ a := by
+    rintro a (rfl | rfl)
+    · refine .of_forall_subset_or_notMem (by simp) hv (notMem_compl_iff.2 hv') ?_
+      rintro b (rfl | rfl | rfl)
+      · exact Or.inl subset_rfl
+      · exact Or.inr (notMem_compl_iff.2 hv')
+      · exact Or.inr hv
+    · refine .of_forall_subset_or_notMem (by simp) hv hv ?_
+      rintro b (rfl | rfl | rfl)
+      · exact Or.inl subset_rfl
+      · exact Or.inr (notMem_compl_iff.2 hv')
+      · exact Or.inr hv
+  ext w
+  rw [mem_exhIE_iff _ _ (toFinite _), mem_inter_iff]
+  refine ⟨λ ⟨hw, h⟩ => ⟨hw, notMem_compl_iff.1 (h _ (hIE anyᶜ (by simp)))⟩,
+    λ ⟨hw, hw'⟩ => ⟨hw, λ a ha => ?_⟩⟩
+  rcases ha.1 with rfl | rfl | rfl
+  · exact absurd ha (not_isInnocentlyExcludable_of_phi_subset (toFinite _) ⟨w, hw⟩ subset_rfl)
+  · exact notMem_compl_iff.2 hw'
+  · exact hw
+
+end Indirect
+
+/-! ### Particularised scalar implicatures, Section 3.2.1 -/
+
+section Particularised
+
+variable {run smoke : Set W}
+
+/-- (31): the alternatives of *John went for a run* from the constituents (28) makes salient:
+*run*, *smoke*, and *not smoke*. -/
+def splitAlts (run smoke : Set W) : Set (Set W) := {run, smoke, smokeᶜ}
+
+/-- (28) undergenerates with or without Atomicity: a domain holding *smoke* or *not smoke* holds
+both by closure, so exhaustification is vacuous on every domain, given a world where John runs
+and smokes and one where he runs and does not. -/
+theorem exhIE_split_eq_self {C : Set (Set W)} (hC : IsDomain (splitAlts run smoke) run C)
+    (h₁ : (run ∩ smoke).Nonempty) (h₂ : (run ∩ smokeᶜ).Nonempty) : exhIE C run = run :=
+  exhIE_eq_self_of_isDomain (p := smoke) (by simp [splitAlts, insert_subset_iff])
+    (by simp [splitAlts]) (by simp [splitAlts]) hC h₁ h₂
+
+/-- Footnote 16: ignoring the salient *didn't smoke* leaves `{run, smoke}`, and exhaustification
+derives that John did not smoke, the opposite of the attested inference. -/
+theorem exhIE_split_ignored (h₂ : (run ∩ smokeᶜ).Nonempty) :
+    exhIE {run, smoke} run = run ∩ smokeᶜ := by
+  rw [exhIE_pair_sdiff run (by rwa [sdiff_eq]), sdiff_eq]
+
+end Particularised
+
+/-! ### Gradable adjectives, Section 3.2.2 -/
+
+section Gradable
+
+variable {full empty half : Set W}
+
+/-- (39)–(40) with (37) and footnote 20: under Atomicity the formal alternatives of (32) are
+*not full*, *not empty*, and the modifier alternative *not half full*, while *empty* is not
+derivable; `{¬full, ¬empty}` is a domain, since *not half full* separates a glass a bit filled
+from one half filled, which *not full* and *not empty* do not. -/
+theorem isDomain_notFull_notEmpty {l m : W} (hl : l ∈ fullᶜ ∩ emptyᶜ ∩ halfᶜ)
+    (hm : m ∈ fullᶜ ∩ emptyᶜ ∩ half) :
+    IsDomain {fullᶜ, emptyᶜ, halfᶜ} fullᶜ {fullᶜ, emptyᶜ} := by
+  refine isDomain_pair (by simp) (by simp) ?_
+  rintro _ (rfl | rfl | rfl) hc
+  · exact Or.inl rfl
+  · exact Or.inr rfl
+  · refine absurd hc (notMem_closure_of_separates ?_ hl.2 (notMem_compl_iff.2 hm.2))
+    rintro _ (rfl | rfl) <;> simp [hl.1.1, hl.1.2, hm.1.1, hm.1.2]
+
+/-- The Atomicity Constraint backfires, (32b): on that domain exhaustification of *not full*
+asserts *empty*, given an empty glass and no glass both full and empty. -/
+theorem exhIE_notFull_notEmpty (h : Disjoint full empty) (hne : empty.Nonempty) :
+    exhIE {fullᶜ, emptyᶜ} fullᶜ = empty := by
+  have hsd : fullᶜ \ emptyᶜ = empty := by rw [sdiff_compl, inter_eq_right.2 h.subset_compl_left]
+  rw [exhIE_pair_sdiff fullᶜ (by rwa [hsd]), hsd]
+
+/-- Without Atomicity, [fox-katzir-2011]: *empty* is a formal alternative by (40), every domain
+holding *not empty* holds it, and exhaustification of *not full* is vacuous, neither the
+unattested (32b) nor the attested (32a), given an empty glass and one neither full nor
+empty. -/
+theorem exhIE_notFull_eq_self {C : Set (Set W)}
+    (hC : IsDomain {fullᶜ, emptyᶜ, empty, full} fullᶜ C) (h₁ : (fullᶜ ∩ emptyᶜ).Nonempty)
+    (h₂ : (fullᶜ ∩ empty).Nonempty) : exhIE C fullᶜ = fullᶜ :=
+  exhIE_eq_self_of_isDomain (p := emptyᶜ) (by simp) (by simp) (by simp) hC h₁ (by simpa using h₂)
+
+/-- (37): `{¬full, ¬half full}` is a domain as well, since *not empty* separates an empty glass
+from one a bit filled, which *not full* and *not half full* do not. -/
+theorem isDomain_notFull_notHalf {e l : W} (he : e ∈ fullᶜ ∩ empty ∩ halfᶜ)
+    (hl : l ∈ fullᶜ ∩ emptyᶜ ∩ halfᶜ) :
+    IsDomain {fullᶜ, emptyᶜ, halfᶜ} fullᶜ {fullᶜ, halfᶜ} := by
+  refine isDomain_pair (by simp) (by simp) ?_
+  rintro _ (rfl | rfl | rfl) hc
+  · exact Or.inl rfl
+  · refine absurd hc (notMem_closure_of_separates ?_ hl.1.2 (notMem_compl_iff.2 he.1.2))
+    rintro _ (rfl | rfl) <;> simp [he.1.1, he.2, hl.1.1, hl.2]
+  · exact Or.inr rfl
+
+/-- On that domain exhaustification of *not full* asserts *half full*, given a glass half but
+not fully filled. -/
+theorem exhIE_notFull_notHalf (hm : (fullᶜ ∩ half).Nonempty) :
+    exhIE {fullᶜ, halfᶜ} fullᶜ = fullᶜ ∩ half := by
+  rw [exhIE_pair_sdiff fullᶜ (by rwa [sdiff_compl]), sdiff_compl]
+
+/-- That inference entails (32a), *not empty*, when no glass is both half filled and empty. -/
+theorem exhIE_notFull_notHalf_subset (h : Disjoint half empty) (hm : (fullᶜ ∩ half).Nonempty) :
+    exhIE {fullᶜ, halfᶜ} fullᶜ ⊆ emptyᶜ :=
+  (exhIE_notFull_notHalf hm).symm ▸ inter_subset_right.trans h.subset_compl_right
+
+/-- Footnote 20: with *not half full* kept alongside *not empty*, neither is excludable, and
+exhaustification on all three alternatives is vacuous, given an empty glass and one half but
+not fully filled. -/
+theorem exhIE_adjectiveAlts_eq_self (h : Disjoint half empty) (he : (fullᶜ ∩ empty).Nonempty)
+    (hm : (fullᶜ ∩ half).Nonempty) : exhIE {fullᶜ, emptyᶜ, halfᶜ} fullᶜ = fullᶜ := by
+  have hcov : fullᶜ ⊆ emptyᶜ ∪ halfᶜ := by
+    rw [← compl_inter, inter_comm, h.inter_eq, compl_empty]
+    exact subset_univ _
+  rw [exhIE_eq_self_iff _ _ (toFinite _)]
+  intro a ha
+  rcases ha.1 with rfl | rfl | rfl
+  · exact absurd ha (not_isInnocentlyExcludable_of_phi_subset (toFinite _)
+      (he.mono inter_subset_left) subset_rfl)
+  · exact absurd ha (not_isInnocentlyExcludable_of_subset_union _ _ (toFinite _) ha.1 (by simp)
+      hcov (by rwa [sdiff_compl]))
+  · exact absurd ha (not_isInnocentlyExcludable_of_subset_union _ _ (toFinite _) ha.1 (by simp)
+      (union_comm _ _ ▸ hcov) (by rwa [sdiff_compl]))
+
+end Gradable
+
+/-! ### Too many lexical alternatives, Section 4.2 -/
+
+section Lexicalised
+
+variable {permitted required optional : Set W}
+
+/-- (44): *required* and *optional* partition *permitted*, and as single lexical items all three
+are formal alternatives of one another; every domain holding one of the pair holds the other by
+closure, and exhaustification of *permitted* is vacuous on every domain, so neither (44b) nor
+(44c) arises. -/
+theorem exhIE_permitted_eq_self {C : Set (Set W)} (h : IsSymmetric permitted required optional)
+    (hC : IsDomain {permitted, required, optional} permitted C) (h₁ : required.Nonempty)
+    (h₂ : optional.Nonempty) : exhIE C permitted = permitted := by
+  have hfin : C.Finite := (toFinite _).subset hC.subset
+  rw [exhIE_eq_self_iff C permitted hfin]
+  intro a ha
+  rcases hC.subset ha.1 with rfl | rfl | rfl
+  · exact absurd ha
+      (not_isInnocentlyExcludable_of_phi_subset hfin (h₁.mono h.subset_left) subset_rfl)
+  · exact absurd ha (not_isInnocentlyExcludable_of_subset_union _ _ hfin ha.1
+      (hC.mem_of_isSymmetric h ha.1 (by simp)) h.union.symm.subset (h.symm.sdiff_eq.symm ▸ h₁))
+  · exact absurd ha (not_isInnocentlyExcludable_of_subset_union _ _ hfin ha.1
+      (hC.mem_of_isSymmetric h.symm ha.1 (by simp)) h.symm.union.symm.subset
+      (h.sdiff_eq.symm ▸ h₂))
+
+end Lexicalised
 
 end BrehenyEtAl2018
