@@ -79,14 +79,14 @@ theorem impossible_dual {W : Type*} (f : ModalBase W) (g : OrderingSource W) (p 
     (w : W) (h : necessity f g (fun w' ↦ ¬ p w') w) (hb : (bestWorlds f g w).Nonempty)
     (hp : ∃ x, p x) : DualInference p :=
   let ⟨w', hw'⟩ := hb
-  ⟨hp, w', (necessity_iff_all f g _ w).1 h w' hw'⟩
+  ⟨hp, w', (necessity_iff f g _ w).1 h w' hw'⟩
 
 open Modality in
 /-- The negation of *impossible p* is the possibility of `p`. -/
 theorem possibility_of_not_impossible {W : Type*} (f : ModalBase W) (g : OrderingSource W)
     (p : W → Prop) (w : W) (h : ¬ necessity f g (fun w' ↦ ¬ p w') w) : possibility f g p w := by
-  rw [necessity_iff_all] at h
-  rw [possibility_iff_any]
+  rw [necessity_iff] at h
+  rw [possibility_iff]
   by_contra hne
   exact h fun w' hw' ↦ fun hp ↦ hne ⟨w', hw', hp⟩
 

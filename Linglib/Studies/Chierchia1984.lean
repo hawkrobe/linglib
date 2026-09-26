@@ -68,7 +68,7 @@ def ControlVerb.ofKratzer (base : ModalBase W) (ordering : OrderingSource W)
   sem P args w := necessity base ordering (P (controller args)) w
   controller := controller
   accessible _ w := bestWorlds base ordering w
-  control _ _ _ := necessity_iff_all _ _ _ _
+  control _ _ _ := necessity_iff _ _ _ _
 
 variable (v : ControlVerb E W Args)
 

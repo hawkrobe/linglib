@@ -172,7 +172,7 @@ theorem not_antitone_conditionalNecessity :
       {w | Restrictor.conditionalNecessity (λ _ => []) (λ _ => [(· = 0)]) α (· = 0) w} :=
   λ h => by
     have := @h (· = 1) (λ _ => True) (λ _ _ => trivial) 0
-    simp only [Restrictor.conditionalNecessity, necessity_iff_all, bestWorlds, mem_bestAmong,
+    simp only [Restrictor.conditionalNecessity, necessity_iff, bestWorlds, mem_bestAmong,
       ModalBase.accessibleWorlds, ModalBase.restrict, propIntersection, atLeastAsGoodAs_iff,
       List.forall_mem_cons, List.mem_nil_iff, false_imp_iff, implies_true, and_true,
       Set.mem_ofPred_eq] at this

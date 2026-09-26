@@ -77,11 +77,11 @@ abbrev World := Bool × Bool
 def w₀ : World := (false, false)
 
 /-- The relevant circumstances: the speaker becomes mayor only by going to the pub. -/
-def circumstances : ModalBase World := Function.const World [λ w => w.1 = true → w.2 = true]
+def circumstances : ModalBase World := Function.const World [fun w ↦ w.1 = true → w.2 = true]
 
 /-- What the speaker wants: to become mayor, and to avoid the pub. -/
 def desires : OrderingSource World :=
-  Function.const World [λ w => w.1 = true, λ w => w.2 = false]
+  Function.const World [fun w ↦ w.1 = true, fun w ↦ w.2 = false]
 
 /-- Decide a claim about the backgrounds and the ordering over the four worlds. -/
 scoped macro "decide_worlds" : tactic =>
@@ -142,7 +142,7 @@ theorem not_must_avoid : ¬ humanNecessity circumstances desires (·.2 = false) 
 /-- Conclusion three fails: becoming mayor without the pub is not even accessible, and wishes
 cannot override facts. -/
 theorem not_can_mayor_without_pub :
-    ¬ humanPossibility circumstances desires (λ w => w.1 = true ∧ w.2 = false) w₀ := by
+    ¬ humanPossibility circumstances desires (fun w ↦ w.1 = true ∧ w.2 = false) w₀ := by
   decide_verdict
 
 /-- Conclusion four holds: the speaker could go to the pub. -/
@@ -171,14 +171,14 @@ theorem material_implication {W : Type*} {f : ModalBase W} (hf : f.IsTotallyReal
 holds iff the antecedent logically implies the consequent. -/
 theorem strict_implication {W : Type*} (α β : W → Prop) (w : W) :
     conditionalNecessity emptyBackground emptyBackground α β w ↔ ∀ v, α v → β v := by
-  rw [restrictor_eq_strict, Conditional.mem_strictImp_forall, empty_base_universal_access]
+  rw [restrictor_eq_strict, Conditional.mem_strictImp_forall, accessibleWorlds_emptyBackground]
   simp
 
 /-- Under an analysis of conditionals as modalized material implications, a necessity that
 the antecedent fail makes every conditional with that antecedent vacuously true. -/
 theorem traditional_vacuous {W : Type*} (f : ModalBase W) (α β : W → Prop) (w : W)
-    (h : simpleNecessity f (λ v => ¬ α v) w) : simpleNecessity f (λ v => α v → β v) w :=
-  λ v hv hα => absurd hα (h v hv)
+    (h : simpleNecessity f (fun v ↦ ¬ α v) w) : simpleNecessity f (fun v ↦ α v → β v) w :=
+  fun v hv hα ↦ absurd hα (h v hv)
 
 /-! #### The deontic example -/
 
@@ -201,18 +201,18 @@ def amended (s : Situation) : Prop := s = some .amended
 /-- The injustice was rewarded. -/
 def rewarded (s : Situation) : Prop := s = some .rewarded
 
-instance : DecidablePred injustice := λ s => inferInstanceAs (Decidable (s.isSome = true))
-instance : DecidablePred amended := λ s => inferInstanceAs (Decidable (s = some .amended))
-instance : DecidablePred rewarded := λ s => inferInstanceAs (Decidable (s = some .rewarded))
+instance : DecidablePred injustice := fun s ↦ inferInstanceAs (Decidable (s.isSome = true))
+instance : DecidablePred amended := fun s ↦ inferInstanceAs (Decidable (s = some .amended))
+instance : DecidablePred rewarded := fun s ↦ inferInstanceAs (Decidable (s = some .rewarded))
 
 /-- What is morally good: there is no injustice, and any injustice is amended for. A situation
 with amended injustice is not good, but it is closer to the good than one where the injustice
 is rewarded or unredressed. -/
 def morallyGood : OrderingSource Situation :=
-  Function.const Situation [λ s => ¬ injustice s, λ s => injustice s → amended s]
+  Function.const Situation [fun s ↦ ¬ injustice s, fun s ↦ injustice s → amended s]
 
 /-- The morally accessible situations of the traditional analysis: those without injustice. -/
-def morallyAccessible : ModalBase Situation := Function.const Situation [λ s => ¬ injustice s]
+def morallyAccessible : ModalBase Situation := Function.const Situation [fun s ↦ ¬ injustice s]
 
 /-- Decide a claim about the backgrounds and the ordering over the four situations. -/
 scoped macro "decide_situations" : tactic =>
@@ -246,7 +246,8 @@ theorem limitAssumption_injustice :
 
 /-- (59): justice must be done, there being no injustice in the situations closest to the
 good. -/
-theorem justice_must_be_done : necessity emptyBackground morallyGood (λ s => ¬ injustice s) none := by
+theorem justice_must_be_done :
+    necessity emptyBackground morallyGood (fun s ↦ ¬ injustice s) none := by
   simp only [necessity, ModalLogic.box, kratzerBestR, mem_bestWorlds_good_iff, forall_eq]
   decide
 
@@ -267,11 +268,11 @@ theorem not_injustice_must_be_rewarded :
 /-- The traditional analysis over the morally accessible situations: (59) holds, and then
 (60) and (61) are both vacuously true, since no accessible situation has injustice. -/
 theorem traditional_collapses :
-    simpleNecessity morallyAccessible (λ s => ¬ injustice s) none ∧
-      simpleNecessity morallyAccessible (λ s => injustice s → amended s) none ∧
-        simpleNecessity morallyAccessible (λ s => injustice s → rewarded s) none := by
-  have h : simpleNecessity morallyAccessible (λ s => ¬ injustice s) none := by
-    simp only [simpleNecessity_iff_all]
+    simpleNecessity morallyAccessible (fun s ↦ ¬ injustice s) none ∧
+      simpleNecessity morallyAccessible (fun s ↦ injustice s → amended s) none ∧
+        simpleNecessity morallyAccessible (fun s ↦ injustice s → rewarded s) none := by
+  have h : simpleNecessity morallyAccessible (fun s ↦ ¬ injustice s) none := by
+    simp only [simpleNecessity_iff]
     decide_situations
   exact ⟨h, traditional_vacuous _ _ _ _ h, traditional_vacuous _ _ _ _ h⟩
 

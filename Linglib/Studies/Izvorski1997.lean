@@ -93,7 +93,7 @@ verifies every belief and all such worlds verify `p`, the assertion holds. A rel
 sound inference makes the reading close to universal, and an unreliable source leaves it weak. -/
 theorem necessity_of_beliefs (hex : ∃ u ∈ f.accessibleWorlds w, ∀ q ∈ g w, q u)
     (h : ∀ u ∈ f.accessibleWorlds w, (∀ q ∈ g w, q u) → p u) : necessity f g p w := by
-  rw [necessity_iff_all]
+  rw [necessity_iff]
   intro u hu
   rw [bestWorlds, bestAmong_eq_of_exists hex] at hu
   exact h u hu.1 hu.2

@@ -1322,7 +1322,6 @@ import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Semantics.Modality.Exclusion
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Modality.Kernel
-import Linglib.Semantics.Modality.Kratzer.ConversationalBackground
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Modality.Kratzer.Ordering
 import Linglib.Semantics.Modality.Kratzer.Premise

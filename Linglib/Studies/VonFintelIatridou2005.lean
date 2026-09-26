@@ -85,7 +85,7 @@ abbrev goals : OrderingSource Hoboken := λ _ => [goHoboken]
 ordered by the actual goals, makes the Harlem sentence false, since the best *want-Harlem*
 world takes the PATH train. -/
 theorem not_obvious : ¬ conditionalNecessity (λ _ => []) goals wantHarlem takeA wantA := by
-  simp only [conditionalNecessity, necessity_iff_all, bestWorlds, mem_bestAmong,
+  simp only [conditionalNecessity, necessity_iff, bestWorlds, mem_bestAmong,
     ModalBase.accessibleWorlds, ModalBase.restrict, propIntersection, atLeastAsGoodAs_iff,
     List.forall_mem_cons, List.mem_nil_iff, false_imp_iff, implies_true, and_true,
     Set.mem_ofPred_eq]
@@ -115,7 +115,7 @@ abbrev saebo : OrderingSource Conflict := λ _ => [goHoboken, goHarlem]
 /-- Sæbø's analysis makes the Harlem sentence false, since with the two goals inconsistent the
 best worlds achieve either, and not all take the A train. -/
 theorem not_saebo : ¬ necessity (λ _ => []) saebo takeA aTrain := by
-  simp only [necessity_iff_all, bestWorlds, mem_bestAmong, ModalBase.accessibleWorlds,
+  simp only [necessity_iff, bestWorlds, mem_bestAmong, ModalBase.accessibleWorlds,
     propIntersection, atLeastAsGoodAs_iff, List.forall_mem_cons, List.mem_nil_iff, false_imp_iff,
     implies_true, and_true, Set.mem_ofPred_eq]
   decide
@@ -157,7 +157,7 @@ the Hoboken goal survives and the PATH train is among the best worlds. -/
 theorem not_nested :
     ¬ conditionalNecessity (λ _ => []) closeness wantHarlem
       (λ w' => necessity (λ _ => []) goals takeA w') actual := by
-  simp only [conditionalNecessity, necessity_iff_all, bestWorlds, mem_bestAmong,
+  simp only [conditionalNecessity, necessity_iff, bestWorlds, mem_bestAmong,
     ModalBase.accessibleWorlds, ModalBase.restrict, propIntersection, atLeastAsGoodAs_iff,
     List.forall_mem_cons, List.mem_nil_iff, false_imp_iff, implies_true, and_true,
     Set.mem_ofPred_eq]
@@ -187,7 +187,7 @@ theorem haveTo_iff : haveTo f p q w ↔ ∀ v ∈ f.accessibleWorlds w, p v → 
 /-- Sloman's insight is that *have to* entails *ought to* whatever the ancillary
 considerations. -/
 theorem oughtTo_of_haveTo (h : haveTo f p q w) : oughtTo f g p q w := by
-  rw [oughtTo, conditionalNecessity, necessity_iff_all]
+  rw [oughtTo, conditionalNecessity, necessity_iff]
   intro v hv
   have hv' := mem_propIntersection.1 (bestAmong_subset _ _ hv)
   exact haveTo_iff.1 h v (mem_propIntersection.2 λ r hr => hv' r (List.mem_cons_of_mem _ hr))
@@ -203,7 +203,7 @@ bus; both arrive by noon, and only the train is comfortable. -/
 theorem exists_oughtTo_not_haveTo :
     oughtTo (λ _ : Bool => []) (λ _ => [(· = true)]) (λ _ => True) (· = true) true ∧
       ¬ haveTo (λ _ : Bool => []) (λ _ => True) (· = true) true := by
-  simp only [oughtTo, conditionalNecessity, haveTo_iff, necessity_iff_all, bestWorlds,
+  simp only [oughtTo, conditionalNecessity, haveTo_iff, necessity_iff, bestWorlds,
     mem_bestAmong, ModalBase.accessibleWorlds, ModalBase.restrict, propIntersection,
     atLeastAsGoodAs_iff, List.forall_mem_cons, List.mem_nil_iff, false_imp_iff, implies_true,
     and_true, Set.mem_ofPred_eq]
@@ -230,7 +230,7 @@ abbrev meetRuud : Ruud → Prop := takeA
 theorem not_haveTo_and_oughtTo :
     ¬ haveTo (λ _ => []) (λ _ => True) takeA aTrain ∧
       oughtTo (λ _ => []) (λ _ => [meetRuud]) (λ _ => True) takeA aTrain := by
-  simp only [oughtTo, conditionalNecessity, haveTo_iff, necessity_iff_all, bestWorlds,
+  simp only [oughtTo, conditionalNecessity, haveTo_iff, necessity_iff, bestWorlds,
     mem_bestAmong, ModalBase.accessibleWorlds, ModalBase.restrict, propIntersection,
     atLeastAsGoodAs_iff, List.forall_mem_cons, List.mem_nil_iff, false_imp_iff, implies_true,
     and_true, Set.mem_ofPred_eq]
@@ -256,7 +256,7 @@ abbrev kissPedro : Pedro → Prop := (· = cTrainKiss)
 /-- The designated-goal semantics predicts *to go to Harlem, you ought to kiss Pedro Martinez*
 true, contrary to fact. -/
 theorem oughtTo_kissPedro : oughtTo (λ _ => []) (λ _ => [kissPedro]) goHarlem kissPedro aTrain := by
-  simp only [oughtTo, conditionalNecessity, necessity_iff_all, bestWorlds, mem_bestAmong,
+  simp only [oughtTo, conditionalNecessity, necessity_iff, bestWorlds, mem_bestAmong,
     ModalBase.accessibleWorlds, ModalBase.restrict, propIntersection, atLeastAsGoodAs_iff,
     List.forall_mem_cons, List.mem_nil_iff, false_imp_iff, implies_true, and_true,
     Set.mem_ofPred_eq]
