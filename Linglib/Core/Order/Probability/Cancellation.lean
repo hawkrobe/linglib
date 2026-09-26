@@ -14,8 +14,8 @@ additive measure, [scott-1964] reformulating [kraft-pratt-seidenberg-1959])
 and its **generalized** strengthening (representability by a nonempty set of
 measures, [rios-insua-1992]; [alon-lehrer-2014]).
 
-`Scott.lean` proves Scott's theorem in the disjoint-comparison form of the
-condition and shows the two forms agree
+`Scott.lean` proves Scott's theorem in the sign-vector form of the condition
+and shows the two forms agree
 (`ComparativeProbability.cancellation_iff_finiteCancellation`). What is here:
 the definitions, the derived properties of a cancellation order, and the
 soundness directions — measures induce cancellation orders, and representable

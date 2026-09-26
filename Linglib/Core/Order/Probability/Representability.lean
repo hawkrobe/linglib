@@ -14,24 +14,26 @@ public import Mathlib.Algebra.BigOperators.Fin
 
 Qualitative probability orders on small domains (|W| ≤ 4) are representable by
 finitely additive probability measures (**Theorem 8a**,
-[kraft-pratt-seidenberg-1959]). For every |W| ≥ 5 this fails: padding the KPS
-counterexample with null atoms gives a non-representable order at each
-cardinality (**Theorem 8b**).
+[kraft-pratt-seidenberg-1959]); this file holds the predicate, the reduction
+lemmas, and the one- and two-atom cases. For every |W| ≥ 5 representability
+fails (**Theorem 8b**, `Completeness.lean`).
 
 `[UPSTREAM]` candidate (see the note in `Defs.lean`).
 
 ## Contents
 
 1. **`Representable`**: the representability predicate.
-2. **KPS counterexample** (Fin 5): non-representable order (`kpsSystem`,
-   `kps_not_representable`); null-atom padding (`QualitativeProbability.pad`,
-   `exists_nonrepresentable_fin`) extends it to every `Fin n` with `n ≥ 5`.
-3. **Shared infrastructure**: null element reduction (`null_elem_reduce`),
+2. **Shared infrastructure**: null element reduction (`null_elem_reduce`),
    representability along equivalences (`perm_repr`).
-4. **Small-cardinality proofs**: Fin 1
+3. **Small-cardinality proofs**: Fin 1
    (`representable_fin1`), Fin 2 (`representable_fin2`).  Fin 3 and Fin 4 are
    derived from Scott cancellation in `CancellationFin4.lean`
-   (`representable_fin3`, `representable_fin4`).
+   (`representable_fin3`, `representable_fin4`); the Kraft–Pratt–Seidenberg
+   counterexample and its padding to every `n ≥ 5` are in `Completeness.lean`.
+
+## References
+
+* [kraft-pratt-seidenberg-1959]
 -/
 
 @[expose] public section
@@ -42,123 +44,6 @@ namespace ComparativeProbability
     additive probability measure induces exactly its comparison relation. -/
 def Representable {W : Type*} (sys : QualitativeProbability (Set W)) : Prop :=
   ∃ m : FinAddMeasure ℚ W, ∀ A B, sys.le A B ↔ m A ≤ m B
-
--- ── KPS Counterexample Infrastructure ──────────────
-
-/-- Convert a Finset (Fin 5) to a bitmask index. -/
-def finsetIdx (s : Finset (Fin 5)) : ℕ :=
-  s.sum (λ i => 2 ^ i.val)
-
-/-- The KPS rank table: maps bitmask index to rank (0–31).
-    Ordering from [kraft-pratt-seidenberg-1959], Section 4.
-    Elements: p=0, q=1, r=2, s=3, t=4.
-    ∅ < q < r < s < qr < qs < p < pq < rs < t < qrs < rp < ps < tq < qrp < rt
-    and complements in reverse (by supplementation, from axiom A). -/
-def kpsRankNat (idx : ℕ) : ℕ :=
-  match idx with
-  |  0 =>  0 |  1 =>  6 |  2 =>  1 |  3 =>  7
-  |  4 =>  2 |  5 => 11 |  6 =>  4 |  7 => 14
-  |  8 =>  3 |  9 => 12 | 10 =>  5 | 11 => 16
-  | 12 =>  8 | 13 => 18 | 14 => 10 | 15 => 22
-  | 16 =>  9 | 17 => 21 | 18 => 13 | 19 => 23
-  | 20 => 15 | 21 => 26 | 22 => 19 | 23 => 28
-  | 24 => 17 | 25 => 27 | 26 => 20 | 27 => 29
-  | 28 => 24 | 29 => 30 | 30 => 25 | 31 => 31
-  |  _ =>  0
-
-/-- KPS rank of a finset. -/
-def kpsRank (s : Finset (Fin 5)) : ℕ :=
-  kpsRankNat (finsetIdx s)
-
-theorem kps_mono_finset :
-    ∀ (a b : Finset (Fin 5)), a ⊆ b → kpsRank b ≥ kpsRank a := by
-  decide
-
-private theorem kps_additive_finset :
-    ∀ (a b : Finset (Fin 5)),
-      (kpsRank a ≥ kpsRank b) ↔ (kpsRank (a \ b) ≥ kpsRank (b \ a)) := by
-  decide
-
-section KPSSystem
-
-attribute [local instance] Classical.propDecidable
-
-noncomputable def kpsRankSet (A : Set (Fin 5)) : ℕ := kpsRank A.toFinset
-noncomputable def kpsLe (A B : Set (Fin 5)) : Prop := kpsRankSet A ≤ kpsRankSet B
-
-noncomputable def kpsSystem : QualitativeProbability (Set (Fin 5)) where
-  le := kpsLe
-  mono' := λ {A B} hAB => kps_mono_finset _ _ (Set.toFinset_subset_toFinset.mpr hAB)
-  nonTrivial := by
-    simp only [kpsLe, kpsRankSet, Set.top_eq_univ, Set.bot_eq_empty, Set.toFinset_univ,
-      Set.toFinset_empty]; decide
-  total := λ A B => le_total (kpsRankSet A) (kpsRankSet B)
-  trans' := λ {_ _ _} hab hbc => le_trans hab hbc
-  additive A B := by
-    unfold kpsLe kpsRankSet
-    rw [Set.toFinset_sdiff, Set.toFinset_sdiff]
-    exact kps_additive_finset _ _
-
-private theorem mu_pair (m : FinAddMeasure ℚ (Fin 5)) (a b : Fin 5) (hab : a ≠ b) :
-    m ({a, b} : Set (Fin 5)) = m {a} + m {b} := by
-  rw [Set.insert_eq a {b}, m.additive (Set.disjoint_singleton.mpr hab)]
-
-private theorem mu_triple (m : FinAddMeasure ℚ (Fin 5)) (a b c : Fin 5)
-    (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
-    m ({a, b, c} : Set (Fin 5)) = m {a} + m {b} + m {c} := by
-  rw [Set.insert_eq a ({b, c} : Set (Fin 5)), m.additive (A := {a}) (B := {b, c})
-    (Set.disjoint_left.mpr fun x hx hxbc => by
-      rw [Set.mem_singleton_iff] at hx
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hxbc
-      subst hx; rcases hxbc with rfl | rfl
-      exacts [absurd rfl hab, absurd rfl hac]),
-    mu_pair m b c hbc, add_assoc]
-
-theorem kps_not_representable : ¬Representable kpsSystem := by
-  intro ⟨m, hm⟩
-  set P := m ({(0 : Fin 5)} : Set (Fin 5))
-  set Q := m ({(1 : Fin 5)} : Set (Fin 5))
-  set R := m ({(2 : Fin 5)} : Set (Fin 5))
-  set S := m ({(3 : Fin 5)} : Set (Fin 5))
-  set T := m ({(4 : Fin 5)} : Set (Fin 5))
-  -- Ordering facts: three strict (rank <), one weak (rank ≤)
-  have hord1 : ¬ kpsLe {0} ({1, 3} : Set (Fin 5)) := by
-    unfold kpsLe kpsRankSet
-    simp only [Set.toFinset_insert, Set.toFinset_singleton]; decide
-  have hord2 : ¬ kpsLe {2, 3} ({0, 1} : Set (Fin 5)) := by
-    unfold kpsLe kpsRankSet
-    simp only [Set.toFinset_insert, Set.toFinset_singleton]; decide
-  have hord3 : ¬ kpsLe {1, 4} ({0, 3} : Set (Fin 5)) := by
-    unfold kpsLe kpsRankSet
-    simp only [Set.toFinset_insert, Set.toFinset_singleton]; decide
-  have hord4 : kpsLe {2, 4} ({0, 1, 3} : Set (Fin 5)) := by
-    unfold kpsLe kpsRankSet
-    simp only [Set.toFinset_insert, Set.toFinset_singleton]; decide
-  -- Convert to measure inequalities via the representation isomorphism
-  have hmeas1 : m ({1, 3} : Set _) < m ({(0 : Fin 5)} : Set _) :=
-    not_le.mp (λ h => hord1 ((hm _ _).mpr h))
-  have hmeas2 : m ({0, 1} : Set _) < m ({2, 3} : Set _) :=
-    not_le.mp (λ h => hord2 ((hm _ _).mpr h))
-  have hmeas3 : m ({0, 3} : Set _) < m ({1, 4} : Set _) :=
-    not_le.mp (λ h => hord3 ((hm _ _).mpr h))
-  have hmeas4 : m ({0, 1, 3} : Set _) ≥ m ({2, 4} : Set _) :=
-    (hm _ _).mp hord4
-  -- Decompose pairs/triples using finite additivity
-  rw [mu_pair m 1 3 (by decide)] at hmeas1
-  rw [mu_pair m 0 1 (by decide), mu_pair m 2 3 (by decide)] at hmeas2
-  rw [mu_pair m 0 3 (by decide), mu_pair m 1 4 (by decide)] at hmeas3
-  rw [mu_triple m 0 1 3 (by decide) (by decide) (by decide),
-      mu_pair m 2 4 (by decide)] at hmeas4
-  -- hmeas1: Q + S < P      hmeas2: P + Q < R + S
-  -- hmeas3: P + S < Q + T   hmeas4: P + Q + S ≥ R + T
-  -- Summing the three strict inequalities (Scott cancellation):
-  --   (Q+S) + (P+Q) + (P+S) < P + (R+S) + (Q+T)
-  --   P + Q + S < R + T
-  -- contradicts hmeas4.
-  linarith
-
-end KPSSystem
-
 
 -- ── Theorem 8a: Per-cardinality proofs ──────────
 
@@ -415,74 +300,5 @@ theorem perm_repr {W α : Type*} (σ : W ≃ α) (sys : QualitativeProbability (
     (h : Representable (sys.transport σ)) : Representable sys := by
   obtain ⟨m, hm⟩ := h
   exact ⟨m.map σ.symm, transfer_repr σ sys m hm⟩
-
--- ── Null-atom padding: Theorem 8b at every cardinality ≥ 5 ──
-
-/-- Pad an order with one null atom: comparisons on `Fin (n + 1)` are decided
-    by the preimage restriction to the first `n` atoms. -/
-def QualitativeProbability.pad {n : ℕ} (sys : QualitativeProbability (Set (Fin n))) :
-    QualitativeProbability (Set (Fin (n + 1))) where
-  le A B := sys.le (Fin.castSucc ⁻¹' A) (Fin.castSucc ⁻¹' B)
-  mono' _ _ hAB := sys.mono (Set.preimage_mono hAB)
-  nonTrivial := by
-    show ¬sys.le (Fin.castSucc ⁻¹' Set.univ) (Fin.castSucc ⁻¹' ∅)
-    rw [Set.preimage_univ, Set.preimage_empty, ← Set.top_eq_univ, ← Set.bot_eq_empty]
-    exact sys.nonTrivial
-  total _ _ := sys.total _ _
-  trans' _ _ _ h1 h2 := sys.trans h1 h2
-  additive A B := by
-    show sys.le _ _ ↔ sys.le _ _
-    rw [Set.preimage_sdiff, Set.preimage_sdiff]; exact sys.additive _ _
-
-/-- The padded atom is null. -/
-theorem QualitativeProbability.pad_last_null {n : ℕ}
-    (sys : QualitativeProbability (Set (Fin n))) : sys.pad.le {Fin.last n} ∅ := by
-  show sys.le (Fin.castSucc ⁻¹' {Fin.last n}) (Fin.castSucc ⁻¹' ∅)
-  rw [Set.preimage_empty, show Fin.castSucc ⁻¹' {Fin.last n} = (∅ : Set (Fin n)) from
-    Set.eq_empty_of_forall_notMem fun i hi => (Fin.castSucc_lt_last i).ne hi]; exact sys.refl ∅
-
-/-- Padding reflects representability: a measure for `sys.pad` assigns the
-    padded atom measure zero, so its `Fin.castSucc`-image restriction represents
-    `sys`. -/
-theorem representable_of_pad {n : ℕ} {sys : QualitativeProbability (Set (Fin n))}
-    (h : Representable sys.pad) : Representable sys := by
-  obtain ⟨m, hm⟩ := h
-  have hinj := Fin.castSucc_injective n
-  have hlast : m {Fin.last n} = 0 := by
-    have h0 : m {Fin.last n} ≤ m ∅ := (hm _ _).mp sys.pad_last_null
-    rw [m.mu_empty] at h0; linarith [m.nonneg {Fin.last n}]
-  have hcover : Fin.castSucc '' (Set.univ : Set (Fin n)) ∪ {Fin.last n} = Set.univ := by
-    rw [Set.image_univ]
-    ext i
-    simp only [Set.mem_union, Set.mem_range, Set.mem_singleton_iff, Set.mem_univ, iff_true]
-    rcases Fin.eq_castSucc_or_eq_last i with ⟨j, rfl⟩ | rfl
-    · exact Or.inl ⟨j, rfl⟩
-    · exact Or.inr rfl
-  have hdisj : Disjoint (Fin.castSucc '' (Set.univ : Set (Fin n))) {Fin.last n} :=
-    Set.disjoint_singleton_right.mpr fun ⟨i, _, hi⟩ => (Fin.castSucc_lt_last i).ne hi
-  have htotal : m (Fin.castSucc '' (Set.univ : Set (Fin n))) = 1 := by
-    have := m.additive hdisj
-    rw [hcover, m.total, hlast, add_zero] at this; linarith
-  refine ⟨{
-    toFun := fun A => m (Fin.castSucc '' A)
-    nonneg' := fun A => m.nonneg _
-    additive' := fun A B hd => by
-      rw [Set.image_union]; exact m.additive ((Set.disjoint_image_iff hinj).mpr hd)
-    total' := htotal
-  }, fun A B => ?_⟩
-  have key := hm (Fin.castSucc '' A) (Fin.castSucc '' B)
-  rwa [show sys.pad.le (Fin.castSucc '' A) (Fin.castSucc '' B) ↔ sys.le A B from by
-    show sys.le (Fin.castSucc ⁻¹' (Fin.castSucc '' A)) _ ↔ _
-    rw [Set.preimage_image_eq A hinj, Set.preimage_image_eq B hinj]] at key
-
-/-- **Theorem 8b at every cardinality**: for `n ≥ 5` there is a non-representable
-    FA system on `Fin n` — the KPS counterexample, padded with null atoms. -/
-theorem exists_nonrepresentable_fin {n : ℕ} (h : 5 ≤ n) :
-    ∃ sys : QualitativeProbability (Set (Fin n)), ¬Representable sys := by
-  induction n, h using Nat.le_induction with
-  | base => exact ⟨kpsSystem, kps_not_representable⟩
-  | succ n _ ih =>
-    obtain ⟨sys, hsys⟩ := ih
-    exact ⟨sys.pad, fun h => hsys (representable_of_pad h)⟩
 
 end ComparativeProbability
