@@ -537,6 +537,26 @@ theorem isInnocentlyExcludable_iff_exhMW_subset_compl (a : Set World) (ha : a �
       have hna_in_union : (aᶜ) ∈ E ∪ {aᶜ} := Set.mem_union_right E rfl
       exact hE_union_sub_E hna_in_union
 
+/-- An alternative that covers the prejacent together with a second alternative some prejacent
+world falsifies is not innocently excludable: negating both contradicts the prejacent, and a
+minimal world below that prejacent world verifies the first. -/
+theorem not_isInnocentlyExcludable_of_subset_union (hfin : ALT.Finite) {p q : Set World}
+    (hp : p ∈ ALT) (hq : q ∈ ALT) (hcov : φ ⊆ p ∪ q) (hne : (φ \ q).Nonempty) :
+    ¬ IsInnocentlyExcludable ALT φ p := by
+  obtain ⟨w, hw, hwq⟩ := hne
+  obtain ⟨u, hu, huw⟩ := exists_isMinimal_le ALT φ hfin hw
+  rw [isInnocentlyExcludable_iff_exhMW_subset_compl ALT φ p hp]
+  exact λ h => h hu ((hcov hu.1).resolve_right λ huq => hwq (huw q hq huq))
+
+/-- Exhaustification is vacuous iff every innocently excludable alternative is already
+incompatible with the prejacent. -/
+theorem exhIE_eq_self_iff (hfin : ALT.Finite) :
+    exhIE ALT φ = φ ↔ ∀ a, IsInnocentlyExcludable ALT φ a → Disjoint φ a := by
+  refine ⟨λ h a ha => Set.disjoint_left.2 λ w hw => ?_, λ h => ?_⟩
+  · exact ((mem_exhIE_iff ALT φ hfin).1 (by rwa [h])).2 a ha
+  · refine Set.Subset.antisymm (exhIE_subset ALT φ) λ w hw => ?_
+    exact (mem_exhIE_iff ALT φ hfin).2 ⟨hw, λ a ha => Set.disjoint_left.1 (h a ha) hw⟩
+
 
 section MinimalCover
 

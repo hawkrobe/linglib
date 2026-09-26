@@ -1,0 +1,576 @@
+[
+  {
+    "id": "brehenyetal2018_1",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(1)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John did some of the homework.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John did some of the homework.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: John didn't do all of the homework", "judgment": "acceptable"},
+      {"name": "inference: John did all of the homework", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "direct"],
+      ["prejacent", "some"],
+      ["alternative", "all"],
+      ["symmetric alternative", "some but not all"]
+    ],
+    "comment": "The symmetric alternative (2), some but not all, must not enter the computation.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_11",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(11)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "He smoked pot.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He smoked pot.",
+    "context": "Mary got drunk. What did John do?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: John didn't get drunk", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "particularised"],
+      ["prejacent", "smoked pot"],
+      ["alternative", "got drunk"]
+    ],
+    "comment": "The alternative is formal because got drunk is salient in the context.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_12",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(12)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John didn't do all of the homework.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John didn't do all of the homework.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: John did some of the homework", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "indirect"],
+      ["prejacent", "not all"],
+      ["alternative", "not any"],
+      ["symmetric alternative", "some"]
+    ],
+    "comment": "The inference negates (13), John didn't do any of the homework; the structural approach also derives some, (14)–(15).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_17",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(17)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John (my favourite student) didn't do all of the homework.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John (my favourite student) didn't do all of the homework.",
+    "context": "What happened at school today?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: John did some of the homework", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "indirect"],
+      ["prejacent", "not all"],
+      ["focus", "broad"]
+    ],
+    "comment": "Focus includes negation, so narrow focus cannot keep some out of the alternatives.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_18",
+    "source": {"bibkey": "trinh-haida-2015", "paperLabel": "(5)"},
+    "reportedIn": {"bibkey": "breheny-et-al-2018", "paperLabel": "(18)"},
+    "language": "stan1293",
+    "primaryText": "John went for a run.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John went for a run.",
+    "context": "Bill went for a run and didn't smoke. What did John do?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: John smoked", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "particularised"],
+      ["prejacent", "run"],
+      ["alternative", "run and not smoke"],
+      ["symmetric alternative", "run and smoke"]
+    ],
+    "comment": "Unnatural when it is known that John didn't smoke.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_28",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(28)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John went for a run.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John went for a run.",
+    "context": "Bill went for a run. He didn't smoke. What did John do?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: John smoked", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "particularised"],
+      ["prejacent", "run"],
+      ["alternative", "not smoke"],
+      ["symmetric alternative", "smoke"]
+    ],
+    "comment": "The conjunction is split across sentences, so no salient constituent means run and not smoke, (29)–(31).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_32",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(32)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not the case that the glass is full.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It's not the case that the glass is full.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: the glass is not empty", "judgment": "acceptable"},
+      {"name": "inference: the glass is empty", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "gradable adjective"],
+      ["prejacent", "not full"],
+      ["alternative", "not empty"],
+      ["symmetric alternative", "empty"]
+    ],
+    "comment": "Sentential negation keeps the Atomicity Constraint from blocking not empty, footnote 17.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_33",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(33)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not the case that the glass is empty.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It's not the case that the glass is empty.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: the glass is not full", "judgment": "acceptable"},
+      {"name": "inference: the glass is full", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "gradable adjective"],
+      ["prejacent", "not empty"],
+      ["alternative", "not full"],
+      ["symmetric alternative", "full"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_34",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(34)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not the case that a tie is required.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It's not the case that a tie is required.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: a tie is allowed", "judgment": "acceptable"},
+      {"name": "inference: a tie is mandatory", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "gradable adjective"],
+      ["prejacent", "not required"],
+      ["alternative", "not allowed"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_35",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(35)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not the case that Mary's promotion is certain.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It's not the case that Mary's promotion is certain.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: Mary's promotion is possible", "judgment": "acceptable"},
+      {"name": "inference: Mary's promotion is impossible", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "gradable adjective"],
+      ["prejacent", "not certain"],
+      ["alternative", "not possible"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_38a",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(38a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "This neighbourhood is not safe.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "This neighbourhood is not safe.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: this neighbourhood is not dangerous", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "gradable adjective"],
+      ["prejacent", "not safe"],
+      ["scale", "upper closed"]
+    ],
+    "comment": "The modifier route (37) predicts the inference; it is absent.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_38b",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(38b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John is not tall.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John is not tall.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: John is not small", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "gradable adjective"],
+      ["prejacent", "not tall"],
+      ["scale", "open"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_38c",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(38c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The glass is not transparent.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The glass is not transparent.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: the glass is not opaque", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "gradable adjective"],
+      ["prejacent", "not transparent"],
+      ["scale", "closed"]
+    ],
+    "comment": "Transparent takes the same modifiers as full, so scale structure does not explain the contrast with (32).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_41",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(41)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "John-wa ki-te yoi.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["John-wa", "John-TOP"], ["ki-te", "come-GER"], ["yoi", "good"]
+    ],
+    "translation": "John is allowed to come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: John is not required to come", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "too few lexical alternatives"],
+      ["prejacent", "allowed"],
+      ["alternative", "required"]
+    ],
+    "comment": "Deontic possibility with the adjective yoi; unnatural when John is required to come.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "brehenyetal2018_42a",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(42a)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "John-wa ko-naku-te-wa nar-anai.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["John-wa", "John-TOP"], ["ko-naku-te-wa", "come-NEG-GER-TOP"], ["nar-anai", "become-NEG"]
+    ],
+    "translation": "John must come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "John-wa ko-naku-te-wa ike-nai.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "too few lexical alternatives"],
+      ["prejacent", "required"]
+    ],
+    "comment": "Deontic necessity with a negated verbal stem, nar-anai or ike-nai, and obligatory topic marking on the gerund: not derivable from (41) by substitution and deletion.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "brehenyetal2018_42b",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(42b)"},
+    "reportedIn": null,
+    "language": "nucl1643",
+    "primaryText": "John-wa kuru hitsuyoo-ga aru.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["John-wa", "John-TOP"], ["kuru", "come"], ["hitsuyoo-ga", "necessity-NOM"],
+      ["aru", "exist"]
+    ],
+    "translation": "John needs to come.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "too few lexical alternatives"],
+      ["prejacent", "required"]
+    ],
+    "comment": "Deontic necessity as an existential construction over the nominal hitsuyoo.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "brehenyetal2018_44",
+    "source": {"bibkey": "swanson-2010", "paperLabel": ""},
+    "reportedIn": {"bibkey": "breheny-et-al-2018", "paperLabel": "(44)"},
+    "language": "stan1293",
+    "primaryText": "Going to confession is permitted.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Going to confession is permitted.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: going to confession is optional", "judgment": "acceptable"},
+      {"name": "inference: going to confession is required", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "too many lexical alternatives"],
+      ["prejacent", "permitted"],
+      ["alternative", "required"],
+      ["symmetric alternative", "optional"]
+    ],
+    "comment": "Optional is a single lexical item of the same complexity as required.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_45",
+    "source": {"bibkey": "swanson-2010", "paperLabel": ""},
+    "reportedIn": {"bibkey": "breheny-et-al-2018", "paperLabel": "(45)"},
+    "language": "stan1293",
+    "primaryText": "The heater sometimes squeaks.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The heater sometimes squeaks.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: the heater intermittently squeaks", "judgment": "acceptable"},
+      {"name": "inference: the heater constantly squeaks", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "too many lexical alternatives"],
+      ["prejacent", "sometimes"],
+      ["alternative", "constantly"],
+      ["symmetric alternative", "intermittently"]
+    ],
+    "comment": "Footnote 23 weighs whether intermittently and optional are symmetric partners or themselves strengthened.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_46",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(46)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John saw some of the students.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John saw some of the students.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: John didn't see all of the students", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "rsa"],
+      ["prejacent", "some"],
+      ["alternative", "all"],
+      ["symmetric alternative", "just some"]
+    ],
+    "comment": "The alternatives (47) include both all and just some; cost breaks the symmetry.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_48",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(48)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John didn't see all of the students.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John didn't see all of the students.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: John saw some of the students", "judgment": "acceptable"},
+      {"name": "inference, when many is relevant: John saw many of the students", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "rsa"],
+      ["prejacent", "not all"],
+      ["alternative", "none"],
+      ["symmetric alternative", "some"]
+    ],
+    "comment": "The alternatives (49) tie in complexity; relative informativity breaks the symmetry. The second inference holds when whether John saw many of the students is relevant, with the alternatives (54).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_50",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(50)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The glass is not full.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The glass is not full.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: the glass is not empty", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "rsa"],
+      ["prejacent", "not full"],
+      ["alternative", "not empty"],
+      ["symmetric alternative", "empty"]
+    ],
+    "comment": "With the alternatives (51), not empty is both less informative and costlier than empty.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_55",
+    "source": {"bibkey": "trinh-haida-2015", "paperLabel": "(5)"},
+    "reportedIn": {"bibkey": "breheny-et-al-2018", "paperLabel": "(55)"},
+    "language": "stan1293",
+    "primaryText": "John ran.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "John ran.",
+    "context": "Bill ran and didn't smoke.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "inference: John smoked", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["case", "rsa"],
+      ["prejacent", "run"],
+      ["alternative", "run and not smoke"],
+      ["symmetric alternative", "run and smoke"]
+    ],
+    "comment": "The alternatives tie in informativity, and the unattested one is if anything simpler.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "brehenyetal2018_57",
+    "source": {"bibkey": "breheny-et-al-2018", "paperLabel": "(57)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The heater often squeaks.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The heater often squeaks.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["case", "rsa"],
+      ["prejacent", "often"],
+      ["alternative", "always"],
+      ["symmetric alternative", "intermittently"]
+    ],
+    "comment": "With the alternatives (58), only a frequency cost on intermittently breaks the symmetry.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]

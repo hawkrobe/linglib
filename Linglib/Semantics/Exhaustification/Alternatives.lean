@@ -75,6 +75,13 @@ theorem exists_minimal_of_finite (hfin : ALT.Finite) (hsat : ∃ w, φ w) :
   let ⟨u, hu, hmin⟩ := (ltALT_wf_of_finite ALT hfin).has_min {w | φ w} hsat
   ⟨u, hu, λ ⟨v, hv, hlt⟩ => hmin v hv hlt⟩
 
+/-- Every prejacent world lies above a minimal one when `ALT` is finite. -/
+theorem exists_isMinimal_le (hfin : ALT.Finite) {w : World} (hw : φ w) :
+    ∃ u, IsMinimal ALT φ u ∧ u ≤[ALT] w :=
+  let ⟨u, ⟨hu, huw⟩, hmin⟩ :=
+    (ltALT_wf_of_finite ALT hfin).has_min {v | φ v ∧ v ≤[ALT] w} ⟨w, hw, leALT_refl ALT w⟩
+  ⟨u, ⟨hu, λ ⟨v, hv, hlt⟩ => hmin v ⟨hv, leALT_trans ALT v u w hlt.1 huw⟩ hlt⟩, huw⟩
+
 /-! ### Representative minimal worlds -/
 
 /-- A set of prejacent worlds represents the minimal worlds when every prejacent world lies

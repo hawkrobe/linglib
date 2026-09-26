@@ -90,6 +90,14 @@ theorem notMem_closure_of_separates {A : Set (Set W)} {p : Set W} {w v : W}
 
 variable {F A : Set (Set W)} {S S₁ S₂ : Set W}
 
+/-- The formal alternatives are a domain for any of their members. -/
+theorem isDomain_self (hS : S ∈ F) : IsDomain F S F := ⟨subset_rfl, hS, λ _ h _ => h⟩
+
+/-- The negation of a member of a domain is in the domain whenever it is a formal
+alternative. -/
+theorem IsDomain.compl_mem (hA : IsDomain F S A) (h₁ : S₁ ∈ A) (h₂ : S₁ᶜ ∈ F) : S₁ᶜ ∈ A :=
+  hA.closed _ h₂ (BooleanSubalgebra.compl_mem (BooleanSubalgebra.subset_closure h₁))
+
 /-- The partner of a symmetric alternative in a domain is in the domain's Boolean closure, so
 the domain contains it too whenever it is a formal alternative. -/
 theorem IsDomain.mem_of_isSymmetric (hA : IsDomain F S A) (h : IsSymmetric S S₁ S₂)
