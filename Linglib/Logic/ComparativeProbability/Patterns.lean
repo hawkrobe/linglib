@@ -9,13 +9,9 @@ The intuitively valid (`V1`–`V13`) and invalid (`I1`–`I3`) inference pattern
 comparative epistemic modals ([holliday-icard-2013], Figure 1; [yalcin-2010]),
 stated for an abstract likelihood relation `r` on a Boolean algebra and proved
 **once** at the weakest axiom hypotheses. Models whose relations carry the
-`ComparativeProbability.*` mixins unconditionally (e.g. `FinAddMeasure.inducedGe`)
-discharge each pattern by instance resolution. The world-ordering lifts
-(`Entailments.lean`) instead validate most patterns for
-*arbitrary* world relations — strictly weaker hypotheses than the mixin route,
-which would demand reflexivity, transitivity, and (for the m-lift) finiteness —
-so their `V2`–`V7` proofs are deliberately bespoke; they consume this layer
-exactly where its hypotheses are genuinely required (`V11`/`V12`).
+`ComparativeProbability.*` mixins (`FinAddMeasure.inducedGe`, the lifts of a
+preorder registered in `WorldOrdering.lean`) discharge each pattern by instance
+resolution.
 
 `I1`–`I3` are stated but not proved here: they are *invalid* for additive models
 (refuted by measure counterexamples) yet *valid* for the l-lifting, so their status
@@ -28,6 +24,11 @@ is model-specific.
 * `patternV6` — additionally needs additivity and non-triviality.
 * `patternV11`, `patternV12` — from transitivity + complement reversal.
 * `patternV13` — from monotonicity + additivity.
+
+## References
+
+* [holliday-icard-2013]
+* [yalcin-2010]
 -/
 
 @[expose] public section

@@ -189,7 +189,7 @@ clause in `below`. -/
 theorem strict_dominationLift_iff_below {below : W → W → Prop}
     (hTotal : ∀ a b, ge_w a b ∨ ge_w b a)
     (hBelow : ∀ a b, below a b ↔ ge_w b a ∧ ¬ ge_w a b) (A B : Set W) :
-    Strict (dominationLift ge_w) A B ↔ ∃ a ∈ A, ∀ b ∈ B, below b a := by
+    Strict (DominationLift ge_w) A B ↔ ∃ a ∈ A, ∀ b ∈ B, below b a := by
   rw [strict_dominationLift_iff hTotal]
   exact exists_congr fun a ↦ and_congr_right fun _ ↦ forall₂_congr fun b _ ↦ (hBelow b a).symm
 
@@ -199,7 +199,7 @@ theorem coneStrictLift_iff_strict_dominationLift {le below : W → W → Prop}
     (hTotal : ∀ a b, ge_w a b ∨ ge_w b a)
     (hBelow : ∀ a b, below a b ↔ ge_w b a ∧ ¬ ge_w a b) (P Q : W → Prop) (i : W) :
     coneStrictLift le below P Q i ↔
-      Strict (dominationLift ge_w) (coneDiff le P Q i) (coneDiff le Q P i) := by
+      Strict (DominationLift ge_w) (coneDiff le P Q i) (coneDiff le Q P i) := by
   rw [strict_dominationLift_iff_below hTotal hBelow]
   unfold coneStrictLift coneDiff
   simp only [Set.mem_ofPred_eq, and_imp, and_assoc]
@@ -316,7 +316,7 @@ theorem ComparativeFree.realize_congr :
 the cone at the evaluation index. -/
 theorem realize_comp_iff_strict_dominationLift :
     Realize interp (.comp A B) ord.le i w ↔
-    Strict (dominationLift (flip ord.le))
+    Strict (DominationLift (flip ord.le))
       (coneDiff ord.le (Realize interp A ord.le · w) (Realize interp B ord.le · w) i)
       (coneDiff ord.le (Realize interp B ord.le · w) (Realize interp A ord.le · w) i) :=
   coneStrictLift_iff_strict_dominationLift (fun a b ↦ ord.le_total b a) (fun _ _ ↦ Iff.rfl) _ _ _
@@ -553,7 +553,7 @@ applies with ≪ in the role of <. -/
 theorem evalMuchMore_iff_strict_dominationLift :
     EvalMuchMore interp φ ψ ord d i w ↔
     Strict
-      (dominationLift (fun a b ↦ ¬ FarBelow ord d a b))
+      (DominationLift (fun a b ↦ ¬ FarBelow ord d a b))
       (coneDiff ord.le (Eval interp φ ord · w) (Eval interp ψ ord · w) i)
       (coneDiff ord.le (Eval interp ψ ord · w) (Eval interp φ ord · w) i) :=
   coneStrictLift_iff_strict_dominationLift
@@ -567,7 +567,7 @@ strictly below the index, dominates every level below it where `φ` fails throug
 theorem evalMostly_iff_strict_dominationLift :
     EvalMostly interp φ ord d i w ↔
     Strict
-      (dominationLift (fun a b ↦ ord.le b a))
+      (DominationLift (fun a b ↦ ord.le b a))
       {x | ord.lt x i ∧ d.close i x ∧ ∀ j, ord.equiv j x → Eval interp φ ord j w}
       {x | ord.lt x i ∧ ∀ j, ord.equiv j x → ¬ Eval interp φ ord j w} := by
   rw [strict_dominationLift_iff_below
