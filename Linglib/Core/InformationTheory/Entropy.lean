@@ -43,8 +43,8 @@ Entropies are invariant under injective recodings and depend only on laws.
 
 * `measureEntropy_le_log_card`: entropy is at most the log of the cardinality;
   `measureEntropy_uniformOn`: the uniform measure attains it.
-* `measureMutualInfo_eq_toReal_klDiv`, `measureMutualInfo_nonneg`,
-  `measureMutualInfo_parallelComp_id_comp_le` (data processing).
+* `measureMutualInfo_eq_toReal_klDiv`, `measureMutualInfo_nonneg`, `measureMutualInfo_prod`,
+  `measureMutualInfo_map_swap`, `measureMutualInfo_parallelComp_id_comp_le` (data processing).
 * `measureEntropy_map_of_injective`, `entropy_comp_of_injective`, `entropy_comm`,
   `IdentDistrib.entropy_eq`, `IdentDistrib.condEntropy_eq`.
 * `chain_rule`, `mutualInfo_eq_entropy_sub_condEntropy`, `condEntropy_le_entropy`,
@@ -193,6 +193,13 @@ noncomputable def measureMutualInfo (μ : Measure (S × T)) : ℝ :=
 
 @[inherit_doc measureMutualInfo] scoped notation:100 "Im[" μ "]" => measureMutualInfo μ
 
+/-- Mutual information is symmetric in the two coordinates. -/
+theorem measureMutualInfo_map_swap [MeasurableSingletonClass S] [MeasurableSingletonClass T]
+    (ρ : Measure (S × T)) : Im[ρ.map Prod.swap] = Im[ρ] := by
+  rw [measureMutualInfo, measureMutualInfo, Measure.fst_map_swap, Measure.snd_map_swap,
+    measureEntropy_map_of_injective measurable_swap Prod.swap_injective]
+  ring
+
 variable [Fintype S] [Fintype T] [MeasurableSingletonClass S] [MeasurableSingletonClass T]
   (μ : Measure (S × T)) [IsProbabilityMeasure μ]
 
@@ -234,6 +241,12 @@ theorem measureMutualInfo_eq_toReal_klDiv : Im[μ] = (klDiv μ (μ.fst.prod μ.s
 theorem measureMutualInfo_nonneg : 0 ≤ Im[μ] := by
   rw [measureMutualInfo_eq_toReal_klDiv]
   exact ENNReal.toReal_nonneg
+
+/-- A product measure carries no mutual information. -/
+theorem measureMutualInfo_prod (ν₁ : Measure S) (ν₂ : Measure T) [IsProbabilityMeasure ν₁]
+    [IsProbabilityMeasure ν₂] : Im[ν₁.prod ν₂] = 0 := by
+  rw [measureMutualInfo_eq_toReal_klDiv, Measure.fst_prod, Measure.snd_prod, klDiv_self,
+    ENNReal.toReal_zero]
 
 /-- **Data processing.** Pushing the second coordinate through a Markov kernel cannot increase
 mutual information. -/
