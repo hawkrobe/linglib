@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.MeasureTheory.Measure.Real
 public import Linglib.Pragmatics.RSA.Decision
 public import Linglib.Pragmatics.RSA.Uniform
 public import Mathlib.Algebra.BigOperators.Ring.Finset
@@ -191,8 +192,7 @@ theorem expectedReward_cellReward (u : U) :
     expectedReward L (cellReward r s c) u 0 = s + (r - s) * cellMass L c u ∧
       expectedReward L (cellReward r s c) u 1 = r + (s - r) * cellMass L c u := by
   have htot := sum_filter_add_sum_filter_not univ (· ∈ c) λ w => (L u).real {w}
-  have h1 : ∑ w, (L u).real {w} = 1 := by
-    rw [sum_measureReal_singleton, coe_univ, probReal_univ]
+  have h1 : ∑ w, (L u).real {w} = 1 := sum_measureReal_singleton_eq_one (L u)
   rw [filter_mem_eq_inter, univ_inter, h1] at htot
   have hB : ∑ w with w ∉ c, (L u).real {w} = 1 - cellMass L c u := by
     rw [cellMass]; linarith

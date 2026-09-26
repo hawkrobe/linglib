@@ -8,6 +8,7 @@ module
 public import Linglib.Core.InformationTheory.KullbackLeibler.Finite
 public import Linglib.Core.InformationTheory.Surprisal
 public import Linglib.Core.MeasureTheory.Measure.Prod
+public import Linglib.Core.MeasureTheory.Measure.Real
 public import Linglib.Core.Probability.ConditionalProbability
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Linglib.Core.Probability.UniformOn
@@ -156,7 +157,7 @@ private theorem measureEntropy_le_log_card_of_isProbabilityMeasure [Fintype S] (
         gcongr
         exact concaveOn_negMulLog.le_map_sum (by simp) (by simp [N]) (by simp)
     _ = N * negMulLog (N : ℝ)⁻¹ := by
-        rw [← Finset.mul_sum, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, mul_one]
+        rw [← Finset.mul_sum, sum_measureReal_singleton_eq_one, mul_one]
     _ = log N := by simp [negMulLog, ← mul_assoc, mul_inv_cancel₀ hN]
 
 /-- Entropy is at most the logarithm of the cardinality of the type. -/
