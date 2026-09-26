@@ -48,7 +48,7 @@ Entropies are invariant under injective recodings and depend only on laws.
 * `measureEntropy_map_of_injective`, `entropy_comp_of_injective`, `entropy_comm`,
   `IdentDistrib.entropy_eq`, `IdentDistrib.condEntropy_eq`.
 * `chain_rule`, `mutualInfo_eq_entropy_sub_condEntropy`, `condEntropy_le_entropy`,
-  `condEntropy_eq_sum_negLog`, `condEntropy_fst_snd`.
+  `condEntropy_eq_sum_negLog`, `condEntropy_fst_snd`, `measureMutualInfo_le_measureEntropy_snd`.
 * `mutualInfo_comp_le` (data processing), `condEntropy_le_condEntropy_comp`,
   `condEntropy_of_injective`, `condEntropy_comp_self`.
 * `mutualInfo_comm`; `mutualInfo_eq_zero_iff`: mutual information vanishes exactly on independent random variables;
@@ -516,6 +516,16 @@ theorem condEntropy_fst_snd (ρ : Measure (S × T)) [IsProbabilityMeasure ρ] :
     show (fun p : S × T => (p.1, p.2)) = id from rfl, Measure.map_id] at h
   show _ = H[Prod.fst ; ρ] - Im[ρ]
   linarith
+
+/-- Mutual information is at most the entropy of the second marginal. -/
+theorem measureMutualInfo_le_measureEntropy_snd (ρ : Measure (S × T)) [IsProbabilityMeasure ρ] :
+    Im[ρ] ≤ Hm[ρ.snd] := by
+  have h := mutualInfo_eq_entropy_sub_condEntropy ρ measurable_snd measurable_fst
+  rw [mutualInfo_comm ρ measurable_snd measurable_fst,
+    mutualInfo_eq_measureMutualInfo measurable_fst measurable_snd,
+    show (fun p : S × T => (p.1, p.2)) = id from rfl, Measure.map_id] at h
+  rw [h]
+  exact sub_le_self _ (condEntropy_nonneg _ _ _)
 
 end entropy
 
