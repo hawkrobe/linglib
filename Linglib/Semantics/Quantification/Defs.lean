@@ -269,6 +269,10 @@ namespace NP
 def LivesOn (Q : NP α) (A : α → Prop) : Prop :=
   ∀ B, Q B ↔ Q (fun x => A x ∧ B x)
 
+/-- A conservative quantifier lives on its restrictor. -/
+theorem _root_.Quantifier.GQ.Conservative.livesOn {q : GQ α} (h : GQ.Conservative q)
+    (A : α → Prop) : LivesOn (q A) A := h A
+
 /-- The Montague lift of an entity is the principal ultrafilter it generates, the type ⟨1⟩
 quantifier of the properties it has; it is Partee's LIFT and the continuation `pure`. -/
 def individual (a : α) : NP α := fun P => P a

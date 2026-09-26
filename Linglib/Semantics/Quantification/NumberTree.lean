@@ -32,7 +32,8 @@ proof that the corners are the only quantifiers satisfying them, from *all* to t
   `Quantifier.NumberTree.Euclidean`: relational conditions on a quantifier, read off the tree.
 * `Quantifier.NumberTree.Variety`, `Quantifier.NumberTree.Cont`, `Quantifier.NumberTree.Plus`,
   `Quantifier.NumberTree.Uniform`: the postulates VAR, CONT, PLUS and UNIF.
-* `Quantifier.NumberTree.ofGQ`: the tree of a generalized quantifier over a finite universe.
+* `Quantifier.NumberTree.ofGQ`, `Quantifier.NumberTree.toGQ`: the tree of a generalized
+  quantifier over a finite universe, and the quantifier of a tree on one.
 
 ## Main results
 
@@ -44,8 +45,11 @@ proof that the corners are the only quantifiers satisfying them, from *all* to t
   postulates are exactly the four corners of the square of opposition.
 * `Quantifier.NumberTree.ofGQ_iff`: a conservative, permutation-invariant generalized quantifier
   holds of `A` and `B` exactly when its tree holds of `|A \ B|` and `|A ∩ B|`.
+* `Quantifier.NumberTree.conservative_toGQ`, `Quantifier.NumberTree.quantityInvariant_toGQ`: the
+  quantifier of a tree is conservative and permutation invariant.
 * `Quantifier.NumberTree.card_powerset_points`: there are `2 ^ ((n + 1) * (n + 2) / 2)` sets of
-  points in rows `0` to `n`, the number of quantifiers on a universe of `n` individuals.
+  points in rows `0` to `n`, the number of conservative, permutation-invariant quantifiers on a
+  universe of `n` individuals.
 
 ## Implementation notes
 
@@ -390,6 +394,33 @@ theorem ofGQ_iff (hC : Conservative Q) (hQ : QuantityInvariant Q) (A B : α → 
     ofGQ Q (count fun x ↦ A x ∧ ¬ B x) (count fun x ↦ A x ∧ B x) ↔ Q A B :=
   ⟨fun ⟨_, _, hd, hi, h⟩ ↦ (GQ.iff_of_count_eq hC hQ hd hi).mp h, fun h ↦ ⟨A, B, rfl, rfl, h⟩⟩
 
+/-- The quantifier of a tree on a finite universe holds of `A` and `B` when the tree holds of
+`|A \ B|` and `|A ∩ B|`. -/
+def toGQ (q : NumberTree) : GQ α := fun A B ↦
+  q (count fun x ↦ A x ∧ ¬ B x) (count fun x ↦ A x ∧ B x)
+
+theorem toGQ_apply (q : NumberTree) (A B : α → Prop) :
+    q.toGQ A B ↔ q (count fun x ↦ A x ∧ ¬ B x) (count fun x ↦ A x ∧ B x) := Iff.rfl
+
+/-- The quantifier of a tree is conservative, since `A \ B` and `A ∩ B` see only `B ∩ A`. -/
+theorem conservative_toGQ (q : NumberTree) : Conservative (q.toGQ : GQ α) := fun A B ↦
+  Iff.of_eq <| congrArg₂ q (count_congr fun _ ↦ by tauto) (count_congr fun _ ↦ by tauto)
+
+/-- A bijection of the universe preserves counts. -/
+private theorem count_comp {P : α → Prop} {f : α → α} (hf : Function.Bijective f)
+    {i : DecidablePred P} [DecidablePred fun x ↦ P (f x)] :
+    count (fun x ↦ P (f x)) = @count α _ P i :=
+  Finset.card_bij (fun x _ ↦ f x) (fun _ hx ↦ by simpa using hx) (fun _ _ _ _ h ↦ hf.1 h)
+    fun y hy ↦ let ⟨x, hx⟩ := hf.2 y; ⟨x, by simpa [hx] using hy, hx⟩
+
+/-- The quantifier of a tree is permutation invariant, since counts are. -/
+theorem quantityInvariant_toGQ (q : NumberTree) : QuantityInvariant (q.toGQ : GQ α) := by
+  intro A B A' B' f hf hA hB
+  simp only [toGQ_apply]
+  rw [← count_comp (P := fun x ↦ A x ∧ ¬ B x) hf, ← count_comp (P := fun x ↦ A x ∧ B x) hf]
+  exact Iff.of_eq (congrArg₂ q (count_congr fun x ↦ by rw [hA, hB])
+    (count_congr fun x ↦ by rw [hA, hB]))
+
 end OfGQ
 
 /-! ### Counting quantifiers -/
@@ -405,14 +436,12 @@ theorem card_points (n : ℕ) : (points n).card = (n + 1) * (n + 2) / 2 := by
   rw [points, Finset.card_sigma, Finset.sum_congr rfl fun k _ ↦ Finset.Nat.card_antidiagonal k,
     ← h n, Nat.mul_div_cancel _ two_pos]
 
+/-- The conservative, permutation-invariant quantifiers on a universe of `n` individuals are the
+sets of points in rows `0` to `n` of the tree. -/
+theorem card_powerset_points (n : ℕ) :
+    (points n).powerset.card = 2 ^ ((n + 1) * (n + 2) / 2) := by
+  rw [Finset.card_powerset, card_points]
+
 end NumberTree
-
-/-- The number of quantifiers on a universe of `n` individuals, which are the sets of points in
-rows `0` to `n` of the tree. -/
-def conservativeQuantifierCount (n : ℕ) : ℕ := 2 ^ ((n + 1) * (n + 2) / 2)
-
-theorem NumberTree.card_powerset_points (n : ℕ) :
-    (NumberTree.points n).powerset.card = conservativeQuantifierCount n := by
-  rw [Finset.card_powerset, NumberTree.card_points, conservativeQuantifierCount]
 
 end Quantifier
