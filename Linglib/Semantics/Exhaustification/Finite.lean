@@ -475,14 +475,21 @@ theorem innocent_exh_pairwise_disjoint_partial
   show φ \ ((innocentlyExcludable ALT φ).biUnion id) = φ \ ALT.sup id
   rw [h_ie_eq, ← Finset.sup_eq_biUnion]
 
-/-- A single alternative strictly below the prejacent is denied. -/
-theorem innocent_exh_singleton_proper {α φ : Finset W} (h : α ⊂ φ) :
+/-- A single alternative whose denial is consistent with the prejacent is denied. -/
+theorem innocent_exh_singleton {α φ : Finset W} (h : (φ \ α).Nonempty) :
     innocent.exh ({α} : Finset (Finset W)) φ = φ \ α := by
-  have hsup : ({α} : Finset (Finset W)).sup id = α := Finset.sup_singleton
-  have hcompat : (φ \ ({α} : Finset (Finset W)).sup id).Nonempty := by
-    rw [hsup]; exact (Finset.exists_of_ssubset h).imp fun _ ⟨h₁, h₂⟩ =>
-      Finset.mem_sdiff.mpr ⟨h₁, h₂⟩
-  rw [innocent_exh_pairwise_disjoint_partial hcompat, hsup]
+  simpa using innocent_exh_pairwise_disjoint_partial (ALT := {α}) (by simpa)
+
+/-- With every alternative entailed by the prejacent, exhaustification is vacuous. -/
+theorem innocent_exh_eq_self_of_forall_subset {ALT : Finset (Finset W)} {φ : Finset W}
+    (h : ∀ a ∈ ALT, φ ⊆ a) : innocent.exh ALT φ = φ := by
+  rcases φ.eq_empty_or_nonempty with rfl | hne
+  · exact Finset.subset_empty.1 (Excluder.exh_subset_phi _ _ _)
+  refine innocent_exh_eq_phi_of_innocentlyExcludable_empty
+    (Finset.eq_empty_of_forall_notMem fun a ha => ?_)
+  exact not_isInnocentlyExcludable_of_phi_subset (finite_asSetOfSets ALT)
+    (hne.imp fun _ h => h) (Finset.coe_subset.2 (h a (innocentlyExcludable_subset ALT φ ha)))
+    ((isInnocentlyExcludable_iff ALT φ a).2 ha)
 
 /-- An alternative entailed by the prejacent can be dropped without changing the
 exhaustification. -/
