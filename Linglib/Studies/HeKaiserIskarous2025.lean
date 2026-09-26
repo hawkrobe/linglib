@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.MeasureTheory.Measure.Real
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Data.Examples.HeKaiserIskarous2025
 public import Linglib.Pragmatics.RSA.Basic
@@ -381,15 +382,12 @@ section Boolean
 
 variable (P : Measure State) [IsProbabilityMeasure P] (hP : ∀ st, P {st} ≠ 0) (s : Setting)
 
-theorem sum_real_singleton : ∑ st, P.real {st} = 1 := by
-  rw [sum_measureReal_singleton, Finset.coe_univ, probReal_univ]
-
 /-- Silence leaves the literal listener at the prior, under any meaning where it holds
 everywhere. -/
 theorem L0_null_real (m : Meaning) (hm : ∀ u st, 0 ≤ m u st) (hnull : ∀ st, m .null st = 1)
     (st : State) : (L0 P m .null {st}).toReal = P.real {st} := by
   rw [L0_real P m hm]
-  simp only [hnull, one_mul, sum_real_singleton, div_one]
+  simp only [hnull, one_mul, sum_measureReal_singleton_eq_one, div_one]
 
 include hP
 
@@ -667,7 +665,7 @@ theorem expectedTypicality_eq (m : World → Meaning) (ω : ℝ) (st : State) :
   have h1 : (s.wonkyListener m ω st.utterance).snd.real {.normal} +
       (s.wonkyListener m ω st.utterance).snd.real {.wonky} = 1 := by
     rw [← sum_world (λ w => (s.wonkyListener m ω st.utterance).snd.real {w}),
-      sum_measureReal_singleton, Finset.coe_univ, probReal_univ]
+      sum_measureReal_singleton_eq_one]
   rw [expectedTypicality, sum_world, worldPrior_real_normal, worldPrior_real_wonky, wonkiness]
   linear_combination s.statePrior st * h1
 

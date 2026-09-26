@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.InformationTheory.KullbackLeibler.Finite
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
+public import Linglib.Core.MeasureTheory.Measure.Real
 public import Linglib.Pragmatics.RSA.Basic
 public import Mathlib.Data.Nat.Dist
 public import Mathlib.Order.Interval.Finset.Nat
@@ -647,7 +648,7 @@ theorem jointUtility_eq_of_forall_log_eq {L : Kernel M (W × O)} {o : O}
         (EReal.coe_ne_top _)]
   have hone : ∑ w, ((belief P o).real {w} : EReal) = 1 := by
     have := isProbabilityMeasure_belief P ho
-    rw [← coe_sum, sum_measureReal_singleton, Finset.coe_univ, probReal_univ, EReal.coe_one]
+    rw [← coe_sum, sum_measureReal_singleton_eq_one, EReal.coe_one]
   have hE : ∑ w, ((belief P o).real {w} : EReal) * ENNReal.log (P {(w, o)}) =
       (surprisalTerm P o : EReal) := by
     rw [surprisalTerm, coe_sum]

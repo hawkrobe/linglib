@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.MeasureTheory.Measure.Real
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
@@ -58,8 +59,8 @@ theorem bhattacharyyaCoeff_le_one : bhattacharyyaCoeff μ ν ≤ 1 := by
         Finset.sum_le_sum λ a _ => sqrt_le_iff.mpr
           ⟨by positivity, by nlinarith [sq_nonneg (μ.real {a} - ν.real {a})]⟩
     _ = 1 := by
-        rw [← Finset.sum_div, Finset.sum_add_distrib, sum_measureReal_singleton,
-          sum_measureReal_singleton, Finset.coe_univ, probReal_univ]
+        rw [← Finset.sum_div, Finset.sum_add_distrib, sum_measureReal_singleton_eq_one,
+          sum_measureReal_singleton_eq_one]
         norm_num
 
 theorem hellingerDistSq_nonneg : 0 ≤ hellingerDistSq μ ν :=

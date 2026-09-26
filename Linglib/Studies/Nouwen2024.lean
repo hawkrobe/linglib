@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.MeasureTheory.Measure.Real
 public import Linglib.Pragmatics.RSA.Basic
 public import Linglib.Fragments.English.Adjectives
 
@@ -271,9 +272,8 @@ theorem update_eq_self [IsProbabilityMeasure P] (hα : 0 < α) (hE : Assertable 
     le_antisymm (update_mul_le_mul c hα hE fun l ↦ h l s t)
       (update_mul_le_mul c hα hE fun l ↦ h l t s)
   have hsum := Finset.sum_congr (s₁ := Finset.univ) rfl fun t _ ↦ key t
-  rw [← Finset.mul_sum, ← Finset.sum_mul, sum_measureReal_singleton,
-    sum_measureReal_singleton, Finset.coe_univ, probReal_univ, probReal_univ, mul_one,
-    one_mul] at hsum
+  rw [← Finset.mul_sum, ← Finset.sum_mul, sum_measureReal_singleton_eq_one,
+    sum_measureReal_singleton_eq_one, mul_one, one_mul] at hsum
   exact (ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)).mp hsum
 
 /-- The update depends on the prior only as a measure. -/
