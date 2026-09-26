@@ -7,117 +7,53 @@ public import Linglib.Fragments.Mayan.Agreement
 public import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
-# Chol Agreement and Case Fragment
+# Chol agreement
 
-Agreement morphology and case assignment for Chol (Cholan, Mayan), a
-**low absolutive** language with aspect-based split alignment. Per
-[vazquez-alvarez-2011] §1.9.4, Chol is "an ergative language" in which
-"the ergative pattern is split in all non-perfective aspects, resulting in
-nominative-accusative alignment" — Set A indicates both transitive and
-intransitive subjects in non-perfective. The formal-syntactic analyses of
-[coon-2013] and [imanishi-2020] reanalyse this surface pattern.
+Chol cross-references the core arguments with two sets of person markers: Set A, the prefixes
+*k-*, *a-* and *i-*, before a vowel *k-*, *aw-* and *(i)y-*, which index transitive subjects and
+possessors, and Set B, the suffixes *-oñ*, *-ety* and zero, which index transitive objects.
+Plurality is carried by clitics common to both sets, *=la* for the inclusive first and for the
+second person and *=l(oj)oñ* for the exclusive first, and by the suffix *-ob* for the third.
+The aspect markers are auxiliaries, the perfective *tyi* and the imperfective *mi*, and the
+verbal complex after them runs Set A, stem, status suffix, Set B, so that Set B follows the stem
+and Chol is a low-absolutive language. The alignment splits by aspect: in the perfective the
+intransitive subject takes Set B, the ergative pattern, and in every other aspect it takes Set
+A, the pattern Vázquez Álvarez calls nominative–accusative and Coon, reading the non-perfective
+clause as a nominalization under an aspectual predicate, extended ergative. Within the
+perfective the intransitives divide further: agentive verbs such as *k'ay* 'sing' index their
+subject with Set A on the light verb *cha'l*, non-agentive verbs such as *majl* 'go' with Set B
+on the verb, and a third class such as *wäy* 'sleep' allows both. Chol has no Agent Focus
+form, so any argument extracts without a reflex on the verb. Vázquez Álvarez's grammar and
+Coon's sketch are the sources.
 
-## Main declarations
+## Main definitions
 
-* `Chol.template`, `Chol.assignCase`: the verbal complex, with Set B after the stem, and
-  case ergative in the perfective and extended-ergative in the non-perfective aspects.
-* `Chol.setAExponent`, `Chol.setBExponent`: the Set A (ERG/GEN) and Set B
-  (ABS) exponent tables ([vazquez-alvarez-2011] Table 10).
-* `Chol.Extraction.realize`, `Chol.absObjectInNonFinite`,
-  `Chol.absIntranSInNonFinite`: the (unmarked) extraction marking and
-  non-finite absolutive availability.
+* `Chol.setAExponent`, `Chol.setBExponent`: the two paradigms, the plural cells with the
+  inclusive clitic.
+* `Chol.template`, `Chol.assignCase`: the verbal complex and the case of each argument by
+  aspect.
+* `Chol.IntransitiveClass`, `Chol.Intransitive`, `Chol.intransitives`: the three classes of
+  intransitive verb by the marking of their subject in the perfective, with the grammar's
+  examples.
+* `Chol.Extraction.realize`: no reflex for any extraction.
 
 ## Implementation notes
 
-### Descriptive vs analytical framing of the non-perfective pattern
-
-The descriptive grammar ([vazquez-alvarez-2011]) characterizes the
-non-perfective alignment as **nominative-accusative**: Set A as a
-nominative-like marker grouping S with A, Set B as accusative on O.
-
-The formal-syntactic analyses cited here label the same surface pattern
-differently: [coon-2013] argues the non-perfective construction
-embeds a nominalized clause (with the aspectual predicate *choñkol* as
-matrix), so Set A on the embedded subject is genitive-from-D, NOT
-nominative — the morphological identity of Set A with the possessive
-marker (cf. `tyi j-kajpelo` 'in my coffee field' vs `tyi j-k'el-e-ø`
-'I saw him', both with Set A `j-` per [vazquez-alvarez-2011]
-p. 76) is taken as evidence. [imanishi-2020] parameterizes Mayan
-split-ergative alignment via two parameters: (i) the Restriction on
-Nominalization (RON) on the nominalizing head *n*, and (ii) the Mayan
-Absolutive Parameter (high vs low ABS, after
-[coon-mateo-pedro-preminger-2014]). For Chol, *n* does not impose
-RON, so S/A is the highest DP in the nominalized clause and receives
-genitive from D — matching Coon's analytical view. The substrate's
-`Alignment.extendedErgative` returns `.gen` (Coon's analytical view);
-a descriptive-grammar implementation would return `.nom`. The label
-"extended ergative" is Coon's coinage, generalizing one subtype of
-[dixon-1994]'s split-ergative-on-TAM-lines pattern.
-
-### Morpheme order and word-class status
-
-Per [vazquez-alvarez-2011] §3.4: in Chol "the aspect
-markers are auxiliaries" — `tyi` (perfective) and `mi` (imperfective)
-are **aspectual auxiliaries** (independent words preceding the verbal
-complex), not particles, not clitics, not verbal prefixes. Set A
-ergative/genitive markers are prefixes on the verbal complex (per
-[vazquez-alvarez-2011] §4.1.1; some prior literature treats them
-as proclitics — [martinez-cruz-2007], [arcos-lopez-2009]).
-Set B absolutive markers are suffixes (per [kaufman-norman-1984]
-p. 90, originally cliticized pronouns).
-
-Schematic order: `[Aux] [ERG-modifier*-ROOT-DERIV-STATUS-ABS]`, with
-the bracketed verbal complex as a single phonological unit. Contrasts
-with Kaqchikel's `[Aux] [ABS-ERG-Stem]` (high-ABS).
-
-### The two agreement paradigms (Set A / Set B)
-
-- **Set A** (ergative in perfective; nominative-or-genitive in
-  non-perfective; possessive on nominals): prefixes
-- **Set B** (absolutive in perfective; accusative in non-perfective):
-  suffixes
-
-### Case licensing (analytical, per [coon-2013])
-
-- **ERG**: inherent from transitive *v*
-- **ABS** (transitive): structural from Voice (low absolutive)
-- **ABS** (intransitive): structural from Infl
-- **GEN** (non-perfective S/A): from D under nominalization
-
-### Accusative side (non-perfective)
-
-In non-perfective aspect, the aspectual predicate *choñkol* embeds a
-nominalized clause. The RON does NOT hold: the external argument may be
-generated inside the nominalized clause. Result (Coon analysis):
-S/A = GEN (from D), O = ABS (from Voice).
-
-### What this fragment doesn't model
-
-Per [vazquez-alvarez-2011] §1.9.4, Chol exhibits all
-four Dixon alignment types: ergative-absolutive, nominative-accusative, **Split-S**
-(some intransitives obligatorily Sa = Set A on light verb *cha'l*; others
-obligatorily So = Set B), and **Fluid-S** (verbs like *wäy* 'sleep' that
-take either Set A or Set B). The single S cell of `ArgumentRole` collapses
-Sa/So/fluid-S into one intransitive subject category — sufficient
-for the perfective↔non-perfective split formalization but undermodels
-the agentive split. Future refinement: split into `intranSAgentive` /
-`intranSPatientive` / `intranSFluid`.
+The non-perfective case function is `Alignment.extendedErgative`, Coon's genitive on the
+subject rather than a nominative, the analysis of `Studies/Coon2013.lean`; the plural cells
+carry the inclusive *=la*, the exclusive *=l(oj)oñ* having no cell in the person–number
+bundles. The first person prefix is *j-* before a stem-initial *k*.
 
 ## References
 
-* [arcos-lopez-2009]
-* [coon-2013]
-* [coon-mateo-pedro-preminger-2014]
-* [dixon-1994]
-* [imanishi-2020]
-* [kaufman-norman-1984]
-* [martinez-cruz-2007]
-* [scott-2023]
 * [vazquez-alvarez-2011]
+* [coon-2017]
+* [coon-2013]
+* [imanishi-2020]
+* [coon-mateo-pedro-preminger-2014]
 -/
 
 @[expose] public section
-
 
 namespace Chol
 
@@ -125,63 +61,20 @@ open Mayan (ExponentTable)
 
 /-! ### The verbal complex -/
 
-/-- The position classes of the Chol verbal complex: the aspect marker and Set A before the
-stem, the status suffix and then Set B after it ([vazquez-alvarez-2011]). -/
+/-- The position classes of the verbal complex, the aspect marker and Set A before the stem and
+the status suffix and then Set B after it. -/
 def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setA], [.status, .setB]⟩
 
-/-- Chol splits its alignment by aspect: ergative in the perfective, and in every
-non-perfective aspect the pattern the descriptive grammar calls nominative-accusative, Set A on
-all subjects, here the extended-ergative alignment ([vazquez-alvarez-2011], [coon-2013]). -/
+/-- Chol is ergative in the perfective and puts Set A on every subject in the other aspects,
+the extended ergative pattern. -/
 def assignCase : UD.Aspect → ArgumentRole → Case
   | .Perf => Alignment.ergative
   | .Imp | .Prog | .Prosp | .Hab | .Iter => Alignment.extendedErgative
 
-/-! ### Extraction marking -/
+/-! ### The paradigms -/
 
-namespace Extraction
-
-/-- Chol requires **no Agent Focus morphology** for any extraction —
-    unlike Q'anjob'al, the diagnostic for "lacking syntactic ergativity"
-    in the [coon-mateo-pedro-preminger-2014] sense. Every argument
-    extracts freely; the resulting ambiguity when both arguments are
-    3rd person follows from the absent AF marking:
-    `Maxki₁ tyi y-il-ä (___₁) jiñi wiñik (___₁)?`
-    'Who saw the man?' / 'Who did the man see?' -/
-def realize : ArgumentRole → Finset (Reflex Empty) :=
-  fun _ ↦ ∅
-
-end Extraction
-
-/-! ### Non-finite absolutive availability -/
-
-/-- In Chol non-finite (aspectless) embedded clauses, absolutive objects
-    are available — Chol is LOW-ABS, so v⁰ licenses the object without Infl⁰.
-
-    `Mejl [i-k'el-oñ]` 'She can see me.' (ABS object ✓)
-    `Choñkol [k-mek'-ety]` 'I am hugging you.' (ABS object ✓) -/
-def absObjectInNonFinite : Bool := true
-
-/-- Absolutive intransitive subjects are not available in Chol non-finite
-    clauses — they take the ergative/possessive prefix instead.
-
-    `Choñkol [k-ts'äm-el]` 'I am bathing.' (ERG prefix, not ABS)
-    `*Choñkol [ts'äm-i-yoñ]` intended: 'I am bathing.' (ABS ✗) -/
-def absIntranSInNonFinite : Bool := false
-
-/-! ### Person-number paradigm ([vazquez-alvarez-2011] Tables 9-10) -/
-
-/-- Set A (ergative/possessive/genitive) markers by following-segment
-    environment ([vazquez-alvarez-2011] Table 10, p. 83). 1sg `k-` is
-    identical in both environments; 2sg surfaces pre-vocalically as
-    `aw-`, 3sg as `iy-` (with speaker-variable omission of the initial
-    vowel, i.e. a variant `y-` — [vazquez-alvarez-2011] examples
-    (12)-(13) p. 76-77). Note the morphophonemic rule k- → j- /_k (1sg
-    before a /k/ root, e.g., `tyi j-kajpelo` 'in my coffee field'
-    p. 76). Plural cells are discontinuous: person prefix plus the
-    inclusive enclitic `=la` for 1pl/2pl (the unmarked plural form per
-    VA §4.2; the exclusive paradigm with `=l(oj)oñ` is a per-language
-    refinement not exposed by the canonical φ-cell substrate) and the
-    suffix `-ob` for 3pl. -/
+/-- The Set A markers by the following segment, with the plural clitic *=la* and the third
+person plural suffix *-ob*. -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
     [(.pn .first .singular, [.pref "k"]), (.pn .second .singular, [.pref "a"]),
@@ -196,10 +89,8 @@ def setAExponent : Phonology.Segment.Class → ExponentTable
      (.pn .second .plural, [.pref "aw", .encl "la"]),
      (.pn .third .plural, [.pref "iy", .suff "ob"])]
 
-/-- Set B (absolutive) markers: suffixes ([vazquez-alvarez-2011]
-    Table 10, p. 83). 3rd singular has zero exponence; 3pl is the plural
-    suffix alone; 1pl/2pl are discontinuous with the inclusive `=la`
-    enclitic per the convention above. -/
+/-- The Set B markers, with a zero third person singular, the plural clitic *=la* and the third
+person plural *-ob*. -/
 def setBExponent : ExponentTable :=
   [(.pn .first .singular, [.suff "oñ"]), (.pn .second .singular, [.suff "ety"]),
    (.pn .third .singular, []),
@@ -207,19 +98,77 @@ def setBExponent : ExponentTable :=
    (.pn .second .plural, [.suff "ety", .encl "la"]),
    (.pn .third .plural, [.suff "ob"])]
 
-/-- Third person singular Set B is null, as across the Mayan branches with an ergative
-perfective ([kaufman-norman-1984]); San Juan Atitán Mam's default Set B *tz'=* surfaces there
-([scott-2023]). -/
-theorem p3sg_abs_null : setBExponent.realize (.pn .third .singular) = some [] := rfl
+/-! ### Intransitive classes -/
 
-/-- 3rd person Set A allomorphy: pre-consonantal `i-` vs pre-vocalic
-    `iy-`. Distinct from Q'anjob'al's `s-` vs `y-` (the proto-Mayan
-    `*s-` ~ `*y-` allomorphy was leveled to `*r` → `y` in proto-Tseltalan,
-    and Chol inherited the leveled form per [kaufman-norman-1984]
-    p. 91). -/
-theorem p3sg_erg_allomorphy :
-    (setAExponent .consonant).realize (.pn .third .singular) = some [.pref "i"] ∧
-    (setAExponent .vowel).realize (.pn .third .singular) = some [.pref "iy"] :=
-  ⟨rfl, rfl⟩
+/-- The three classes of intransitive verb by the marking of their subject in the perfective:
+Set A on the light verb *cha'l*, Set B on the verb, or either. -/
+inductive IntransitiveClass where
+  | agentive
+  | nonAgentive
+  | fluid
+  deriving DecidableEq, Repr, Fintype
+
+/-- An intransitive verb with its class. -/
+structure Intransitive where
+  /-- The root. -/
+  form : String
+  /-- The gloss. -/
+  gloss : String
+  /-- The class by the marking of the subject. -/
+  marking : IntransitiveClass
+  deriving DecidableEq, Repr
+
+/-- *ajñel* 'run', agentive. -/
+def ajñel : Intransitive := ⟨"ajñel", "run", .agentive⟩
+
+/-- *oñel* 'shout', agentive. -/
+def oñel : Intransitive := ⟨"oñel", "shout", .agentive⟩
+
+/-- *tse'ñal* 'laugh', agentive. -/
+def tse'ñal : Intransitive := ⟨"tse'ñal", "laugh", .agentive⟩
+
+/-- *k'ay* 'sing', agentive. -/
+def k'ay : Intransitive := ⟨"k'ay", "sing", .agentive⟩
+
+/-- *majl* 'go', non-agentive. -/
+def majl : Intransitive := ⟨"majl", "go", .nonAgentive⟩
+
+/-- *lets* 'climb', non-agentive. -/
+def lets : Intransitive := ⟨"lets", "climb", .nonAgentive⟩
+
+/-- *chäm* 'die', non-agentive. -/
+def chäm : Intransitive := ⟨"chäm", "die", .nonAgentive⟩
+
+/-- *tyojm* 'explode', non-agentive. -/
+def tyojm : Intransitive := ⟨"tyojm", "explode", .nonAgentive⟩
+
+/-- *jil* 'finish', non-agentive. -/
+def jil : Intransitive := ⟨"jil", "finish", .nonAgentive⟩
+
+/-- *wäy* 'sleep', of either marking. -/
+def wäy : Intransitive := ⟨"wäy", "sleep", .fluid⟩
+
+/-- *uk'* 'cry', of either marking. -/
+def uk' : Intransitive := ⟨"uk'", "cry", .fluid⟩
+
+/-- *ts'äm* 'bathe', of either marking. -/
+def ts'äm : Intransitive := ⟨"ts'äm", "bathe", .fluid⟩
+
+/-- *tyijp'* 'jump', of either marking. -/
+def tyijp' : Intransitive := ⟨"tyijp'", "jump", .fluid⟩
+
+/-- The intransitives of the grammar's alignment examples. -/
+def intransitives : List Intransitive :=
+  [ajñel, oñel, tse'ñal, k'ay, majl, lets, chäm, tyojm, jil, wäy, uk', ts'äm, tyijp']
+
+/-! ### Extraction -/
+
+namespace Extraction
+
+/-- No extraction leaves a reflex on the verb, since Chol has no Agent Focus form, so a
+question with two third person arguments is ambiguous between subject and object extraction. -/
+def realize : ArgumentRole → Finset (Reflex Empty) := fun _ ↦ ∅
+
+end Extraction
 
 end Chol
