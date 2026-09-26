@@ -62,7 +62,7 @@ def content : ModalBase World := Function.const World [chief]
 /-- Decide a claim about the backgrounds over the four worlds. -/
 scoped macro "decide_worlds" : tactic =>
   `(tactic| ((try simp only [simpleNecessity, simplePossibility, ModalLogic.box,
-      ModalLogic.diamond, kratzerR, ModalBase.accessibleWorlds, mem_propIntersection,
+      ModalLogic.diamond, ModalBase.Accessible, ModalBase.accessibleWorlds, mem_propIntersection,
       ConvBackground.IsRealistic, evidence, content, chief, rumor, Function.const_apply,
       List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true, and_true]) <;>
       decide))

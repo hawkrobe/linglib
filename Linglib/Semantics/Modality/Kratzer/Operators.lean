@@ -9,12 +9,12 @@ public import Linglib.Logic.Modal.Basic
 This file defines necessity and possibility over a modal base and an ordering source,
 [kratzer-1981]'s operators, as the box and diamond of `Logic.Modal` over the accessibility
 relations the two backgrounds induce: simple necessity quantifies over the accessible worlds
-(`kratzerR`, `simpleNecessity`), necessity over the best accessible worlds (`kratzerBestR`,
-`necessity`). The paper's own definition needs no Limit Assumption: human necessity asks each
-accessible world to see, at least as good, a witness below which only `p`-worlds occur
-(`humanNecessity`), and it is universal quantification over the best worlds exactly under the
-Limit Assumption (`humanNecessity_iff_necessity`). The modal axioms follow from the frame
-conditions the backgrounds impose (`duality`, `necessity_K`,
+(`ModalBase.Accessible`, `simpleNecessity`), necessity over the best accessible worlds
+(`BestAccessible`, `necessity`). The paper's own definition needs no Limit Assumption: human
+necessity asks each accessible world to see, at least as good, a witness below which only
+`p`-worlds occur (`humanNecessity`), and it is universal quantification over the best worlds
+exactly under the Limit Assumption (`humanNecessity_iff_necessity`). The modal axioms follow
+from the frame conditions the backgrounds impose (`duality`, `necessity_K`,
 `ConvBackground.IsTotallyRealistic.necessity_le_id`), a realistic base being exactly one over
 which simple necessity is veridical (`isRealistic_iff_simpleNecessity_le_id`), and a
 conditional antecedent restricts the modal base (`ModalBase.restrict`,
@@ -46,41 +46,41 @@ variable {W : Type*}
 
 /-- The accessibility relation of a modal base: `w'` is accessible from `w` when it satisfies
 every premise of `f w`, Kratzer's `w' ∈ ⋂f(w)`. -/
-def kratzerR (f : ModalBase W) : W → W → Prop :=
-  fun w w' ↦ w' ∈ f.accessibleWorlds w
+def ModalBase.Accessible (f : ModalBase W) (w w' : W) : Prop :=
+  w' ∈ f.accessibleWorlds w
 
 /-- The best-worlds accessibility relation of a modal base and an ordering source: `w'` is
 accessible from `w` when it is among the best worlds accessible from `w`. -/
-def kratzerBestR (f : ModalBase W) (g : OrderingSource W) : W → W → Prop :=
-  fun w w' ↦ w' ∈ bestWorlds f g w
+def BestAccessible (f : ModalBase W) (g : OrderingSource W) (w w' : W) : Prop :=
+  w' ∈ bestWorlds f g w
 
 /-- With the empty ordering source, best-world accessibility is base accessibility. -/
-theorem kratzerBestR_empty (f : ModalBase W) (w w' : W) :
-    kratzerBestR f (emptyBackground (W := W)) w w' ↔ kratzerR f w w' := by
-  rw [kratzerBestR, kratzerR, bestWorlds_emptyBackground]
+theorem bestAccessible_emptyBackground (f : ModalBase W) (w w' : W) :
+    BestAccessible f (emptyBackground (W := W)) w w' ↔ f.Accessible w w' := by
+  rw [BestAccessible, ModalBase.Accessible, bestWorlds_emptyBackground]
 
 /-! ### Operators -/
 
 /-- Simple necessity: `p` holds at every accessible world,
 `⟦must⟧_f(p)(w) = ∀w' ∈ ⋂f(w). p(w')`, Definition 5 of [kratzer-1977]. -/
 def simpleNecessity (f : ModalBase W) (p : W → Prop) (w : W) : Prop :=
-  box (kratzerR f) p w
+  box f.Accessible p w
 
 /-- Simple possibility: `p` holds at some accessible world,
 `⟦can⟧_f(p)(w) = ∃w' ∈ ⋂f(w). p(w')`, Definition 6 of [kratzer-1977]. -/
 def simplePossibility (f : ModalBase W) (p : W → Prop) (w : W) : Prop :=
-  diamond (kratzerR f) p w
+  diamond f.Accessible p w
 
 /-- Necessity with an ordering source: `p` holds at every best world,
 `⟦must⟧_{f,g}(p)(w) = ∀w' ∈ Best(f,g,w). p(w')`, the Limit Assumption form of
 `humanNecessity`. -/
 def necessity (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) : Prop :=
-  box (kratzerBestR f g) p w
+  box (BestAccessible f g) p w
 
 /-- Possibility with an ordering source: `p` holds at some best world,
 `⟦can⟧_{f,g}(p)(w) = ∃w' ∈ Best(f,g,w). p(w')`. -/
 def possibility (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) : Prop :=
-  diamond (kratzerBestR f g) p w
+  diamond (BestAccessible f g) p w
 
 /-! ### Human necessity
 
@@ -199,11 +199,11 @@ theorem not_necessity_cons {f : ModalBase W} {g : OrderingSource W} {p q r : W �
     (hur : ¬ r u) : ¬ necessity f (fun v ↦ p :: g v) r w :=
   fun h ↦ hur (h u (mem_bestWorlds_cons hq hpq hu huq))
 
-/-! ### Frame conditions on `kratzerR` -/
+/-! ### Frame conditions on `ModalBase.Accessible` -/
 
 /-- A realistic modal base gives reflexive accessibility. -/
 theorem ConvBackground.IsRealistic.refl {f : ModalBase W} (h : f.IsRealistic) :
-    Std.Refl (kratzerR f) :=
+    Std.Refl f.Accessible :=
   ⟨fun w ↦ h w⟩
 
 /-- Over a realistic base the evaluation world is itself accessible. -/
@@ -213,11 +213,11 @@ theorem ConvBackground.IsRealistic.mem_accessibleWorlds {f : ModalBase W} (h : f
 
 /-- A realistic base gives serial accessibility. -/
 theorem ConvBackground.IsRealistic.isSerial {f : ModalBase W} (h : f.IsRealistic) :
-    IsSerial (kratzerR f) :=
+    IsSerial f.Accessible :=
   ⟨fun w ↦ ⟨w, h.refl.refl w⟩⟩
 
 /-- A modal base is realistic exactly when its accessibility relation is reflexive. -/
-theorem isRealistic_iff_refl {f : ModalBase W} : f.IsRealistic ↔ Std.Refl (kratzerR f) :=
+theorem isRealistic_iff_refl {f : ModalBase W} : f.IsRealistic ↔ Std.Refl f.Accessible :=
   ⟨ConvBackground.IsRealistic.refl, fun h w ↦ h.refl w⟩
 
 /-- A modal base is realistic exactly when simple necessity over it is veridical, what must be
@@ -227,13 +227,14 @@ theorem isRealistic_iff_simpleNecessity_le_id {f : ModalBase W} :
   isRealistic_iff_refl.trans box_T_iff.symm
 
 /-- Under the empty modal base, every world is accessible. -/
-theorem kratzerR_emptyBackground (w w' : W) : kratzerR (emptyBackground (W := W)) w w' :=
+theorem accessible_emptyBackground (w w' : W) :
+    ModalBase.Accessible (emptyBackground (W := W)) w w' :=
   fun _ hq ↦ (List.not_mem_nil hq).elim
 
 /-- Under a singleton modal base, accessibility is the sole premise. -/
-theorem kratzerR_singleton (p : W → Prop) (w w' : W) :
-    kratzerR (fun _ ↦ [p]) w w' ↔ p w' := by
-  rw [kratzerR, ModalBase.accessibleWorlds, propIntersection_singleton]
+theorem accessible_singleton (p : W → Prop) (w w' : W) :
+    ModalBase.Accessible (fun _ ↦ [p]) w w' ↔ p w' := by
+  rw [ModalBase.Accessible, ModalBase.accessibleWorlds, propIntersection_singleton]
   rfl
 
 /-- Under the empty modal base, the accessible worlds are all the worlds. -/
@@ -244,7 +245,7 @@ theorem accessibleWorlds_emptyBackground (w : W) :
 /-! ### Modal axioms -/
 
 /-- Modal duality, `□p ↔ ¬◇¬p`, is the box-diamond duality (`ModalLogic.not_diamond`), since
-`necessity = box (kratzerBestR f g)`. -/
+`necessity = box (BestAccessible f g)`. -/
 theorem duality (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) :
     necessity f g p w ↔ ¬ possibility f g (fun w' ↦ ¬ p w') w := by
   rw [necessity, possibility, not_diamond]
