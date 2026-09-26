@@ -1,35 +1,58 @@
 module
 
-public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Semantics.Exhaustification.Finite
+public import Mathlib.Data.Fintype.Prod
+public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Genericity.SortedOntology
-public import Linglib.Data.Examples.CohenErteschikShir2002
 public import Linglib.Data.Examples.Magri2009
 
 /-!
 # Magri (2009): A Theory of Individual-Level Predicates Based on Blind Mandatory Scalar Implicatures
 
-This file formalizes the blind mandatory scalar implicatures of [magri-2009] and their
-application to individual-level predicates. The exhaustivity operator strengthens a sentence
-against its scalar alternatives using logical entailment alone, blind to common knowledge
-(`BlindScenario`, `strengthened`); when the blind strengthening contradicts common knowledge
-the sentence sounds odd (`blindOdd`); and the implicature is mandatory, since a relevance
-variable that respects contextual equivalence cannot exclude an alternative equivalent to
-the sentence uttered (`RelevantBlindScenario`, `mismatching_alt_relevant`). The introductory
-case is *Some Italians come from a warm country*, odd because common knowledge makes *some*
-and *all* equivalent. Individual-level predicates are homogeneous over times and situations
-(the paper's assumption (70), read off [carlson-1977]'s predicate levels), so quantifying
-adverbs over them (*Sometimes, John is tall*), bare plural subjects, and overt *always*
-trigger the mismatch, while stage-level predicates and universal quantification over
-individuals escape it; the German word-order facts of the paper's §4.5 are checked against
-its examples.
+[magri-2009] explains the oddness of *#Some Italians come from a warm country* and of
+*#Sometimes, John is tall* by one mechanism, the blind mandatory scalar implicature. The
+strengthened meaning is [fox-2007]'s innocent exclusion computed with logical entailment, blind to
+common knowledge (the Blindness Hypothesis (32)), and a sentence whose strengthened meaning
+contradicts common knowledge is odd (the Mismatch Hypothesis (33), `Odd`). Blindness is
+essential: with entailment given common knowledge these sentences would not be strengthened at
+all (`exhIE_image_inter`). The implicature is mandatory because relevance, constrained by (43),
+cannot set aside an alternative that is contextually equivalent to the utterance
+(`disjoint_exhR`), while an ordinary implicature depends on the context (`exists_isRelevance`).
+Both hypotheses carry over to presuppositions, (65) and (66) (`odd_univ_iff`).
+
+Individual-level predicates differ from stage-level ones only in common knowledge: they are
+permanent, (70) (`Permanent`), hence homogeneous over any part of a lifespan (`Homogeneous`,
+(71)). The oddness of *sometimes* with *tall*, (72b), is then that of *some* with *come from a
+warm country*, (73) (`odd_some`, `sometimes_odd`). An existential in the scope of a universal,
+against its alternatives with definite descriptions (49), (94), is odd when common knowledge fixes
+a single witness for it (`odd_narrowSome`). This covers the fronted indefinite of (46a) and (54a)
+(`winner_odd`, `running_odd`) and the existential reading of a bare plural subject of an
+individual-level predicate, (84b), whose narrowest scope puts it below GEN (`existential_odd`).
+A universal over individuals rescues the existential, since distinct individuals may have distinct
+witnesses, (54b) and (102b) (`table_not_odd`, `universal_not_odd`). The same computation predicts
+the German word order facts of [diesing-1992], (8) and (125) (`word_order_rows`). Overt *always*
+competes with GEN, which presupposes homogeneity, so *#John is always tall* is odd, (134a)
+(`always_odd`), but *Firemen are always tall* is not, (139b) (`always_bare_not_odd`).
 
 ## Implementation notes
 
-Innocent exclusion is the substrate's `Exhaustification.innocent`, after [fox-2007]. The
-mandatoriness of the exhaustivity operator in matrix clauses is an external assumption. The
-`BPSWorld` type below concerns bare plural subjects, not the presuppositional
-exhaustification of the same abbreviation elsewhere in the library.
+* Propositions are sets of worlds. A world of §3.3 and §4 is the extension of the one predicate
+  at issue over individuals and an index (times, or objects and times), with lifespans, nouns and
+  restrictors held fixed, so every extension is a logically possible world. The worlds the paper
+  exhibits, (98), the table of (54) and the world of §4.3, are constructed.
+* GEN contributes its universal assertion (137) to truth conditions; its homogeneity
+  presupposition is used only in §4.6, as in the paper. The restrictor `C̃` of (90) is arbitrary,
+  as in the paper, and the definite alternatives (93b) restrict GEN to the part of each lifespan
+  in `C`.
+* The world (98) is sampled at three times of `C̃`, one in each fireman's stretch of tallness in
+  the paper's picture.
+
+## TODO
+
+* The alternatives of the episodic existential reading (92b), sketched in footnote 20, are not
+  formalized.
+* The facts of §4.4 (non-kind bare plurals, association with *only*, statives, locatives) are
+  discussion only, and the contrast (133) with definite subjects is left open by the paper.
 
 ## References
 
@@ -43,1149 +66,491 @@ exhaustification of the same abbreviation elsewhere in the library.
 
 namespace Magri2009
 
-open Exhaustification (innocent predToFinset altsFromPreds)
-open Genericity.SortedOntology
+open Exhaustification Quantifier Set Genericity.SortedOntology
 
-/-- A scenario for blind scalar implicature computation.
+/-! ### Blind strengthening and oddness (§3.2) -/
 
-[magri-2009]'s mechanism needs only literal meanings, scalar
-alternatives, and common knowledge — no QUD or complexity ordering. -/
-structure BlindScenario (W U : Type) [Fintype W] [DecidableEq W] where
-  /-- Literal meaning of each utterance at each world. -/
-  meaning : U → W → Bool
-  /-- All scalar alternatives for each utterance.
-      [fox-2007]'s innocent exclusion algorithm determines which
-      alternatives are excludable — weaker alternatives (e.g., "some"
-      when the prejacent is "all") are automatically filtered out. -/
-  alternatives : U → List U
-  /-- Common knowledge: which worlds are CK-compatible. -/
-  context : W → Bool
+section Oddness
 
-namespace BlindScenario
+variable {W : Type*} {Wck φ ψ : Set W}
 
-variable {W U : Type} [Fintype W] [DecidableEq W] (s : BlindScenario W U)
+/-- The Mismatch Hypothesis (33): the sentence `φ`, with alternatives `ALT`, is odd when its
+strengthened meaning contradicts common knowledge `Wck`. By the Blindness Hypothesis (32) the
+strengthened meaning is innocent exclusion (30) with logical entailment, computed over all worlds
+rather than over `Wck`. -/
+def Odd (Wck : Set W) (ALT : Set (Set W)) (φ : Set W) : Prop :=
+  Disjoint (exhIE ALT φ) Wck
 
-/-- CK-compatible worlds. -/
-def cWorlds : Finset W := Finset.univ.filter (λ w => s.context w)
+private theorem disjoint_diff_iff {s t u : Set W} : Disjoint (s \ t) u ↔ s ∩ u ⊆ t := by
+  simp only [disjoint_left, subset_def, mem_sdiff, mem_inter_iff, and_imp, not_imp_not]
 
-/-- Strengthened meaning via [fox-2007]'s exhaustivity operator.
+/-- (34), (82): against one alternative that `φ` can hold without, `φ` is odd exactly when common
+knowledge makes it entail the alternative. -/
+theorem odd_pair_iff (h : (φ \ ψ).Nonempty) : Odd Wck {φ, ψ} φ ↔ φ ∩ Wck ⊆ ψ := by
+  rw [Odd, exhIE_pair_sdiff φ h, disjoint_diff_iff]
 
-Implements the **Blindness Hypothesis** (BH): EXH computes the
-strengthened meaning using logical entailment over W, not entailment
-given common knowledge W_ck. The grammar strengthens automatically,
-even when the result contradicts what speaker and hearer both know. -/
-def strengthened (u : U) (w : W) : Bool :=
-  decide (w ∈ innocent.exh (altsFromPreds ((s.alternatives u).map s.meaning))
-                    (predToFinset (s.meaning u)))
+/-- (53), (97), (109): against the alternatives `ψP i`, blind strengthening denies them all when
+`φ` can hold with all of them false. -/
+theorem exhIE_insert_range {ι : Type*} {ψP : ι → Set W} (h : (φ \ ⋃ i, ψP i).Nonempty) :
+    exhIE (insert φ (range ψP)) φ = φ \ ⋃ i, ψP i := by
+  have hexh : exh (insert φ (range ψP)) φ = φ \ ⋃ i, ψP i := by
+    obtain ⟨v, hvφ, hv⟩ := h
+    ext x
+    simp only [mem_exh, forall_mem_insert, forall_mem_range, mem_sdiff, mem_iUnion, not_exists]
+    exact and_congr_right fun _ ↦ ⟨fun h i hx ↦ hv (mem_iUnion.2 ⟨i, h.2 i hx hvφ⟩),
+      fun h ↦ ⟨fun _ ↦ subset_rfl, fun i hx ↦ (h i hx).elim⟩⟩
+  rw [exhIE_eq_exh_of_nonempty _ _ (hexh ▸ h), hexh]
 
-/-- Blind oddness: the exhaustivity operator produced a non-vacuous
-implicature, yet the strengthened meaning is false at every CK world.
+/-- The Mismatch Hypothesis against a family of alternatives that `φ` can hold without: `φ` is
+odd exactly when common knowledge makes it entail one of them. -/
+theorem odd_insert_range_iff {ι : Type*} {ψP : ι → Set W} (h : (φ \ ⋃ i, ψP i).Nonempty) :
+    Odd Wck (insert φ (range ψP)) φ ↔ φ ∩ Wck ⊆ ⋃ i, ψP i := by
+  rw [Odd, exhIE_insert_range h, disjoint_diff_iff]
 
-Implements the **Mismatch Hypothesis** (MH): if EXH(φ) ∩ W_ck = ∅
-(the blind strengthened meaning contradicts common knowledge), then
-φ sounds odd. -/
-def blindOdd (u : U) : Bool :=
-  let alts := altsFromPreds ((s.alternatives u).map s.meaning)
-  let φ := predToFinset (s.meaning u)
-  decide (innocent.excluded alts φ).Nonempty &&
-  decide (∀ w ∈ s.cWorlds, w ∉ innocent.exh alts φ)
+/-- (34): the Blindness Hypothesis is essential. Strengthening with entailment given common
+knowledge (31b), that is innocent exclusion over the propositions restricted to `Wck`, leaves `φ`
+unstrengthened when its alternatives are equivalent to it given common knowledge. -/
+theorem exhIE_image_inter {ALT : Set (Set W)} (hφ : φ ∈ ALT)
+    (h : ∀ a ∈ ALT, a ∩ Wck = φ ∩ Wck) : exhIE ((· ∩ Wck) '' ALT) (φ ∩ Wck) = φ ∩ Wck := by
+  rw [eq_singleton_iff_unique_mem.2 ⟨mem_image_of_mem _ hφ, forall_mem_image.2 h⟩,
+    exhIE_singleton_self]
 
-/-- Structural extraction of the second `blindOdd` conjunct: when the
-strengthened meaning is `blindOdd`, every CK-compatible world is
-*excluded* by the EXH operator. This is the load-bearing fact for the
-"strengthened meaning has no CK-realizer" claim — `strengthened u w =
-true` means `w ∈ innocent.exh ...`, but blindOdd says no CK world is in
-that set. Lifting this lemma to the `BlindScenario` level (rather than
-inlining it at every consumer site) decouples the proof from the
-specific shape of `blindOdd`. -/
-theorem blindOdd_excludes_cWorlds (u : U) (h : s.blindOdd u = true) :
-    ∀ w ∈ s.cWorlds,
-      w ∉ innocent.exh (altsFromPreds ((s.alternatives u).map s.meaning))
-                      (predToFinset (s.meaning u)) := by
-  simp only [blindOdd, Bool.and_eq_true, decide_eq_true_eq] at h
-  exact h.2
+/-! ### Mandatoriness (§3.2.5) -/
 
-/-- Membership in `cWorlds` reflects context truth. Convenience for callers
-that have a `s.context w = true` hypothesis and need `w ∈ s.cWorlds`. -/
-theorem mem_cWorlds_of_context (w : W) (h : s.context w = true) :
-    w ∈ s.cWorlds := by
-  simp only [cWorlds, Finset.mem_filter, Finset.mem_univ, true_and, h]
+/-- The postulates (43) on a relevance property `R` in a context where `φ` is uttered: the
+utterance is relevant (43a), and propositions equivalent given common knowledge are alike in
+relevance (43b). -/
+structure IsRelevance (Wck φ : Set W) (R : Set W → Prop) : Prop where
+  uttered : R φ
+  congr {p q : Set W} : p ∩ Wck = q ∩ Wck → (R p ↔ R q)
 
-end BlindScenario
+/-- (42): the prejacent with every relevant innocently excludable alternative denied, the
+counterpart over sets of `Excluder.restrict` applied to `innocent`. -/
+def exhR (R : Set W → Prop) (ALT : Set (Set W)) (φ : Set W) : Set W :=
+  {x | x ∈ φ ∧ ∀ a, IsInnocentlyExcludable ALT φ a → R a → x ∉ a}
 
-/-! ## R-relativized exhaustification: the mandatoriness mechanism
+variable {R : Set W → Prop} {ALT : Set (Set W)}
 
-§3.2.2 (BH+MH above) states the *outcome* of [magri-2009]'s account:
-blind EXH mismatches CK, sentence sounds odd. §3.2.5 is the *mechanism*
-explaining why mismatching SIs are mandatory while standard SIs (e.g.
-the answer to (40c) "John is usually available after dinner") are not.
-The key is a contextually-supplied relevance predicate `R`, an
-R-relativized EXH operator (eq. (42)), and two postulates on R
-(eq. (43)).
+/-- (45): an alternative equivalent to the utterance given common knowledge is relevant. -/
+theorem IsRelevance.relevant (hR : IsRelevance Wck φ R) (h : ψ ∩ Wck = φ ∩ Wck) : R ψ :=
+  (hR.congr h).2 hR.uttered
 
-The mandatoriness consequence (p. 263): for *mismatching* SIs, the
-target φ and its scalar alternative ψ are contextually equivalent
-(φ ↔_{W_ck} ψ — common knowledge forces them to denote the same set
-within W_ck). By postulate (43b), R is closed under contextual
-equivalence, so R(ψ) = R(φ). By postulate (43a), R(φ) = 1 (the
-uttered proposition is always relevant). Hence R(ψ) = 1, and
-EXHᴿ(φ) negates ψ no matter how the context assigns R to other
-propositions. The SI is *mandatory*.
+/-- (45): a mismatching implicature is mandatory. When an excludable alternative is equivalent to
+the utterance given common knowledge, the strengthened meaning (42) contradicts common knowledge
+whatever relevance property the context supplies. -/
+theorem disjoint_exhR (hR : IsRelevance Wck φ R) (hψ : IsInnocentlyExcludable ALT φ ψ)
+    (h : ψ ∩ Wck = φ ∩ Wck) : Disjoint (exhR R ALT φ) Wck := by
+  refine disjoint_left.2 fun x hx hck ↦ hx.2 ψ hψ (hR.relevant h) ?_
+  have : x ∈ ψ ∩ Wck := h ▸ ⟨hx.1, hck⟩
+  exact this.1
 
-For *standard* SIs (φ and alternatives NOT contextually equivalent),
-R can be set independently — the context can make ψ irrelevant
-(R(ψ) = 0), in which case EXHᴿ(φ) does not negate ψ and the SI is
-not derived. Hence the SI is non-mandatory.
+/-- (40), (44): an implicature that does not mismatch is not mandatory. Relevance of exactly the
+propositions equivalent to the utterance given common knowledge satisfies (43) and sets aside
+every other alternative. -/
+theorem exists_isRelevance (h : ψ ∩ Wck ≠ φ ∩ Wck) : ∃ R, IsRelevance Wck φ R ∧ ¬ R ψ :=
+  ⟨fun p ↦ p ∩ Wck = φ ∩ Wck, ⟨rfl, fun hpq ↦ by rw [hpq]⟩, h⟩
 
-Without this machinery, `BlindScenario`'s `blindOdd` over-predicts
-deviance: it fires whenever any logically stronger CK-incompatible
-alternative exists, regardless of whether R would block it. The
-substrate below adds R as a field with the postulates as structure
-laws, and proves that for CK-equivalent (target, alternative) pairs
-the SI is mandatory. -/
+/-! ### Homogeneity (§3.4, §4.1) -/
 
-/-- Magri's relevance predicate, contextually supplied
-([magri-2009] §3.2.5). A property `R : Finset W → Bool` of
-propositions (extensions, as Finsets of CK-compatible-or-not worlds)
-satisfying:
+variable {α : Type*} {A B : W → α → Prop}
 
-- **(43a)** *Maximize Relevance*: an uttered proposition's denotation
-  is relevant. Hardwires the Gricean Maxim of Relevance.
-- **(43b)** *Contextual closure*: if two propositions are equivalent
-  given common knowledge (`p ∩ W_ck = q ∩ W_ck`), they share their
-  relevance status. Captures that R is a contextual variable.
+/-- Homogeneity of the scope `B` with respect to the restrictor `A`: all `A`s are `B`s or none
+are. It is the presupposition YES ∪ NO of the distributivity operator (67) and of GEN (137), and
+(71b) takes common knowledge to entail it. -/
+def Homogeneous (A B : α → Prop) : Prop := GQ.every A B ∨ GQ.no A B
 
-Together with mandatory EXH (eq. (41), an external assumption — Magri
-states it as a stipulation about matrix clauses), R determines whether
-SIs are mandatory: see `mismatching_alt_relevant` below. -/
-structure RelevantBlindScenario (W U : Type) [Fintype W] [DecidableEq W]
-    extends BlindScenario W U where
-  /-- R: which propositions (as Finsets of worlds) are contextually relevant. -/
-  relevant : Finset W → Bool
-  /-- [magri-2009] eq. (43a): every uttered proposition's denotation
-      is relevant. -/
-  uttered_relevant : ∀ u, relevant (predToFinset (toBlindScenario.meaning u)) = true
-  /-- [magri-2009] eq. (43b): R is closed under common-knowledge
-      equivalence. Two propositions agreeing on every CK-compatible world
-      have the same R-value. -/
-  relevant_ck_closed : ∀ p q : Finset W,
-    p ∩ toBlindScenario.cWorlds = q ∩ toBlindScenario.cWorlds →
-    relevant p = relevant q
+/-- (38), (73), (72b): a sentence with *some* is odd when common knowledge makes its scope
+homogeneous with respect to its restrictor, (71): its Horn-mate with *all* is logically but not
+contextually stronger. -/
+theorem odd_some (hck : ∀ x ∈ Wck, Homogeneous (A x) (B x))
+    (h : ∃ x, GQ.some (A x) (B x) ∧ ¬ GQ.every (A x) (B x)) :
+    Odd Wck {{x | GQ.some (A x) (B x)}, {x | GQ.every (A x) (B x)}} {x | GQ.some (A x) (B x)} :=
+  (odd_pair_iff h).2 fun x ⟨hs, hx⟩ ↦
+    (hck x hx).resolve_right fun hno ↦ (GQ.no_contradicts_some _ _).1 hno hs
 
-namespace RelevantBlindScenario
+/-- (61), (62), (63), (142): a sentence without presupposition, (68a), is odd by the Mismatch
+Hypothesis for presuppositions (66) when its Horn-mate presupposes `p`, (68b), which common
+knowledge entails but logic does not: the blind strengthened presupposition (64) is `pᶜ`. -/
+theorem odd_univ_iff {p : Set W} (h : pᶜ.Nonempty) : Odd Wck {univ, p} univ ↔ Wck ⊆ p := by
+  rw [odd_pair_iff (by rwa [← compl_eq_univ_sdiff]), univ_inter]
 
-variable {W U : Type} [Fintype W] [DecidableEq W] (s : RelevantBlindScenario W U)
+end Oddness
 
-/-- [magri-2009] eq. (42): R-relativized exhaustification.
-`EXHᴿ(φ) := φ ∧ ⋀_{ψ ∈ Excl(φ)} (¬ψ ∨ ¬R(ψ))`. A world `w` survives
-iff `w ∈ φ` AND, for every excludable alternative ψ, either `w ∉ ψ`
-or ψ is irrelevant. Equivalently: `w ∈ φ` and every *relevant*
-excludable alternative is false at `w`.
+/-! ### An existential in the scope of a universal (§3.3) -/
 
-Reduces to plain `strengthened` (Fox 2007 IE) when all excludable
-alternatives are relevant. -/
-def strengthenedR (u : U) (w : W) : Bool :=
-  let alts := altsFromPreds ((s.alternatives u).map s.meaning)
-  let φ := predToFinset (s.meaning u)
-  decide (w ∈ φ ∧ ∀ ψ ∈ innocent.excluded alts φ,
-                    s.relevant ψ = true → w ∉ ψ)
+section NarrowExistential
 
-/-- **Mandatoriness consequence of (43a) + (43b)** for mismatching SIs.
-When the uttered prejacent's denotation and an alternative's denotation
-are contextually equivalent (= agree on every CK-compatible world),
-postulate (43b) lifts the alternative's relevance to match the prejacent's,
-and (43a) forces the prejacent's relevance to 1. So the alternative
-is *mandatorily relevant* — no contextual choice of R can block it.
+variable {E I : Type*} {Wck : Set (E → I → Prop)} {N : E → Prop} {D : I → Prop}
+  {R : E → I → Prop}
 
-This is the formal core of [magri-2009]'s argument on p. 263:
-mismatching SIs are mandatory because the alternative cannot be
-R-blocked. The contrast with non-mismatching SIs (where φ and ψ are
-*not* CK-equivalent, so R(ψ) is free) explains why standard SIs are
-non-mandatory. -/
-theorem mismatching_alt_relevant (u alt : U)
-    (h_ck_equiv : predToFinset (s.meaning u) ∩ s.cWorlds =
-                   predToFinset (s.meaning alt) ∩ s.cWorlds) :
-    s.relevant (predToFinset (s.meaning alt)) = true := by
-  rw [← s.relevant_ck_closed _ _ h_ck_equiv]
-  exact s.uttered_relevant u
+/-- An existential over `N` in the scope of a universal over the index restrictor `D`: (48b),
+(56), (91b), (105). -/
+def narrowSome (N : E → Prop) (D : I → Prop) : Set (E → I → Prop) :=
+  {f | GQ.every D fun i ↦ GQ.some N fun x ↦ f x i}
 
-end RelevantBlindScenario
+/-- The alternative with *the N such and such*, a Horn-mate of the existential by (49) and (94),
+denoting `d`, with the index restricted by `R d`: (50b), (57), (93b), (106b). -/
+def definite (R : E → I → Prop) (d : E) : Set (E → I → Prop) :=
+  {f | GQ.every (R d) (f d)}
 
-/-! "# Some Italians come from a warm country" ([magri-2009])
+/-- The scalar alternatives (25) of `narrowSome N D`: itself and the definite alternative for
+each `N`. -/
+def alts (N : E → Prop) (D : I → Prop) (R : E → I → Prop) : Set (Set (E → I → Prop)) :=
+  insert (narrowSome N D) (range fun d : {d // N d} ↦ definite R d)
 
-Three worlds are needed because the strengthened meaning "some but not
-all" requires a world where some but not all Italians come from a warm
-country.
+/-- (52), (96), (108): the definite alternatives together amount to the reading with the
+existential taking widest scope, (51), (95), (107). -/
+theorem iUnion_definite :
+    ⋃ d : {d // N d}, definite R d = {f | GQ.some N fun d ↦ GQ.every (R d) (f d)} := by
+  ext f
+  simp [definite, GQ.some]
 
-CK: Italy is a warm country → all Italians come from a warm country.
-Only `allWarm` is CK-compatible. -/
+/-- (46a), (54a), (99): an existential in the scope of a universal is odd when, at every world
+compatible with common knowledge, an `N` true at some index of `D` is true throughout its own
+restrictor, and when logically it can hold with every definite alternative false, as at (98).
+Blind strengthening denies the widest-scope reading, which common knowledge makes it entail. -/
+theorem odd_narrowSome (hD : ∃ i, D i)
+    (hck : ∀ f ∈ Wck, ∀ x, N x → ∀ i, D i → f x i → ∀ j, R x j → f x j)
+    (h : (narrowSome N D \ ⋃ d : {d // N d}, definite R d).Nonempty) :
+    Odd Wck (alts N D R) (narrowSome N D) := by
+  refine (odd_insert_range_iff h).2 fun f ⟨hf, hfck⟩ ↦ ?_
+  obtain ⟨i, hi⟩ := hD
+  obtain ⟨x, hx, hxi⟩ := hf i hi
+  exact mem_iUnion.2 ⟨⟨x, hx⟩, hck f hfck x hx i hi hxi⟩
 
-inductive ItalyWorld₃ where
-  | allWarm     -- all Italians come from a warm country (CK-compatible)
-  | someNotAll  -- some but not all (not CK-compatible)
-  | noneWarm    -- none do (not CK-compatible)
-  deriving DecidableEq, Repr, Fintype
+/-- (46a): *#On every day, a fireman won* is odd when it is common knowledge that the same person
+was the winner on every day of `D`. -/
+theorem winner_odd (hD : ∃ i, D i) (hck : ∀ f ∈ Wck, ∃ g, ∀ x i, D i → (f x i ↔ x = g))
+    (h : (narrowSome N D \ ⋃ d : {d // N d}, definite (fun _ ↦ D) d).Nonempty) :
+    Odd Wck (alts N D fun _ ↦ D) (narrowSome N D) :=
+  odd_narrowSome hD (fun f hf x _ i hi hxi j hj ↦
+    let ⟨_, hg⟩ := hck f hf
+    (hg x j hj).2 ((hg x i hi).1 hxi)) h
 
-inductive ItalyUtt where
-  | some_ | all_
-  deriving DecidableEq, Repr, Fintype
+end NarrowExistential
 
-open ItalyWorld₃ ItalyUtt in
-def italianScenario : BlindScenario ItalyWorld₃ ItalyUtt where
-  meaning
-    | some_, allWarm => true  | some_, someNotAll => true  | some_, noneWarm => false
-    | all_,  allWarm => true  | all_,  someNotAll => false | all_,  noneWarm => false
-  alternatives
-    | some_ => [all_]  -- ⟨some, all⟩ scale partner
-    | all_  => [some_]
-  context
-    | allWarm => true | someNotAll => false | noneWarm => false
+/-! #### The context of (54) -/
 
-/-- Lift `italianScenario` to a `RelevantBlindScenario` by adding a
-canonical relevance predicate: `R(p) := 1` iff `p`'s CK-projection
-matches that of some uttered alternative. This is the *minimal* R
-satisfying both (43a) and (43b) — and crucially, it forces R(meaning all_)
-= R(meaning some_) = 1 because both denote `{allWarm}` in CK. -/
-def italianRelevantScenario : RelevantBlindScenario ItalyWorld₃ ItalyUtt where
-  toBlindScenario := italianScenario
-  -- p is relevant iff its CK-projection equals that of some utterance.
-  relevant p := decide (∃ u : ItalyUtt,
-    p ∩ italianScenario.cWorlds =
-      predToFinset (italianScenario.meaning u) ∩ italianScenario.cWorlds)
-  uttered_relevant u := by
-    -- exhibit u as the witness
-    refine decide_eq_true ?_
-    exact ⟨u, rfl⟩
-  relevant_ck_closed p q hpq := by
-    -- relevant unfolds to `decide (∃ u, p ∩ cWorlds = …)`; rewriting
-    -- the `p ∩ cWorlds` occurrences via hpq makes both sides identical.
-    rw [show p ∩ italianScenario.cWorlds = q ∩ italianScenario.cWorlds from hpq]
+section Table
 
-/-- **Mandatoriness consequence on the Italian example** (Magri eq. 43
-applied). The scalar alternative `all_` is mandatorily relevant when
-`some_` is uttered, because both denote `{allWarm}` in CK
-(the only CK-compatible world). The `R(meaning all_) = 1` conclusion
-follows from `mismatching_alt_relevant`, parametric in the choice of
-relevance variable — no contextual escape hatch exists. -/
-example : italianRelevantScenario.relevant
-    (predToFinset (italianRelevantScenario.meaning .all_)) = true := by
-  apply italianRelevantScenario.mismatching_alt_relevant .some_ .all_
-  -- show: predToFinset (meaning some_) ∩ cWorlds = predToFinset (meaning all_) ∩ cWorlds
+/-- The competitions of (54). -/
+inductive Competition where
+  | swimming
+  | running
+  | jumping
+  deriving DecidableEq, Fintype
+
+/-- The winners in the table of (54). -/
+inductive Winner where
+  | x
+  | y
+  | z
+  deriving DecidableEq, Fintype
+
+/-- The competition each person of (54) won on every day. -/
+def Winner.competition : Winner → Competition
+  | .x => .swimming
+  | .y => .running
+  | .z => .jumping
+
+/-- The table of (54): each of `x`, `y`, `z` won one competition on all five days. -/
+def table (g : Winner) (p : Competition × Fin 5) : Prop := p.1 = g.competition
+
+/-- The common knowledge of (54): the same person won each competition on all five days. -/
+def sameWinner : Set (Winner → Competition × Fin 5 → Prop) :=
+  {f | ∀ c, ∃ g, ∀ w t, f w (c, t) ↔ w = g}
+
+/-- (54a): *#Every day, a fireman won the running competition* is odd in the context of (54). -/
+theorem running_odd :
+    Odd sameWinner (alts (fun _ ↦ True) (fun p ↦ p.1 = .running) fun _ p ↦ p.1 = .running)
+      (narrowSome (fun _ ↦ True) fun p ↦ p.1 = .running) := by
+  refine winner_odd ⟨(.running, 0), rfl⟩ (fun f hf ↦ ?_)
+    ⟨fun g p ↦ g = if p.2 = 0 then .x else .y, ?_⟩
+  · obtain ⟨g, hg⟩ := hf .running
+    refine ⟨g, fun w ⟨c, t⟩ hc ↦ ?_⟩
+    obtain rfl : c = .running := hc
+    exact hg w t
+  · simp only [narrowSome, definite, GQ.every, GQ.some, mem_sdiff, mem_ofPred_eq, mem_iUnion,
+      not_exists]
+    decide
+
+/-- (54b): *Every day, for every competition, a fireman won* is fine in the context of (54): the
+table is compatible with common knowledge, verifies the sentence (56), and falsifies each
+definite alternative (57). -/
+theorem table_not_odd :
+    ¬ Odd sameWinner (alts (fun _ ↦ True) (fun _ ↦ True) fun _ _ ↦ True)
+      (narrowSome (fun _ ↦ True) fun _ ↦ True) := by
+  have h : table ∈ narrowSome (fun _ : Winner ↦ True) (fun _ : Competition × Fin 5 ↦ True) \
+      ⋃ d : {_d : Winner // True}, definite (fun _ _ ↦ True) d := by
+    simp only [table, narrowSome, definite, GQ.every, GQ.some, mem_sdiff, mem_ofPred_eq,
+      mem_iUnion, not_exists]
+    decide
+  rw [alts, odd_insert_range_iff ⟨_, h⟩]
+  refine fun hsub ↦ h.2 (hsub ⟨h.1, ?_⟩)
+  simp only [sameWinner, table, mem_ofPred_eq]
   decide
 
-/-- Strengthened "some" at allWarm is false:
-some(allWarm) ∧ ¬all(allWarm) = true ∧ false = false.
-The blind implicature "not all" kills the literal meaning at the CK world. -/
-theorem some_strengthened_false_at_ck :
-    italianScenario.strengthened .some_ .allWarm = false := by decide
-
-/-- Strengthened "some" at someNotAll is true:
-some(someNotAll) ∧ ¬all(someNotAll) = true ∧ true = true.
-But someNotAll is ruled out by CK — no help. -/
-theorem some_strengthened_true_at_nonck :
-    italianScenario.strengthened .some_ .someNotAll = true := by decide
-
-/-- [magri-2009] prediction: "some Italians" is odd.
-The blind implicature "not all" contradicts CK (Italy is warm). -/
-theorem italian_some_blind_odd :
-    italianScenario.blindOdd .some_ = true := by decide
-
-/-- "all Italians" is not odd: no stronger alternative to negate,
-so no blind implicature is generated. -/
-theorem italian_all_not_odd :
-    italianScenario.blindOdd .all_ = false := by decide
-
-/-! [magri-2009] ex. (3)/(72b): "# Sometimes, John is tall"
-
-The paper's main contribution derives oddness of Q-adverbs with
-individual-level predicates (ILPs) from BH + MH. The key assumption
-**homogeneity** (assumption (70)): if an i-predicate holds of
-an individual at any time in W_ck, it holds at all times. This rules
-out mixed worlds (tall at some times but not all) from the common
-ground.
-
-- Literal: at some times, John is tall
-- Strengthened (blind, via BH): at some but NOT ALL times, John is tall
-- CK: "tall" is an ILP → homogeneity → John is either always tall
-  or never tall. The "sometimes but not always" world is CK-incompatible.
-- Strengthened ∩ CK = ∅ → odd (via MH)
-
-Contrast with the stage-level predicate "Sometimes, John is available":
-since availability can genuinely vary over time, the "sometimes but not
-always" world is CK-compatible → strengthened meaning is satisfiable → OK.
-
-The ILP/SLP distinction is [carlson-1977]'s `PredicateLevel`:
-individual-level → homogeneity → oddness; stage-level → no homogeneity → fine.
--/
-
-section QAdverb
-
-inductive TallWorld where
-  | alwaysTall   -- tall at all times (CK-compatible: homogeneity (70))
-  | sometimesOnly -- tall at some but not all times (NOT CK-compatible)
-  | neverTall    -- tall at no time (CK-compatible: homogeneity (70))
-  deriving DecidableEq, Repr, Fintype
-
-inductive QAdvUtt where
-  | sometimes_ | always_
-  deriving DecidableEq, Repr
-
-open TallWorld QAdvUtt in
-/-- [magri-2009] §4.1: Q-adverbs with individual-level predicates.
-
-"Sometimes" and "always" form a ⟨sometimes, always⟩ scale analogous to
-⟨some, all⟩. Homogeneity (assumption (70)) rules out `sometimesOnly`
-from the common ground. -/
-def tallScenario : BlindScenario TallWorld QAdvUtt where
-  meaning
-    | sometimes_, alwaysTall => true   -- at some times = yes (all ⊆ some)
-    | sometimes_, sometimesOnly => true
-    | sometimes_, neverTall => false
-    | always_,    alwaysTall => true
-    | always_,    sometimesOnly => false
-    | always_,    neverTall => false
-  alternatives
-    | sometimes_ => [always_]  -- ⟨sometimes, always⟩ scale partner
-    | always_    => [sometimes_]
-  -- Homogeneity (70): only homogeneous worlds are CK-compatible
-  context
-    | alwaysTall => true | sometimesOnly => false | neverTall => true
-
-/-- Strengthened "sometimes" at alwaysTall is false:
-sometimes(alwaysTall) ∧ ¬always(alwaysTall) = true ∧ false = false. -/
-theorem tall_sometimes_strengthened_false :
-    tallScenario.strengthened .sometimes_ .alwaysTall = false := by decide
-
-/-- Strengthened "sometimes" at neverTall is also false:
-sometimes(neverTall) = false. -/
-theorem tall_sometimes_strengthened_false_never :
-    tallScenario.strengthened .sometimes_ .neverTall = false := by decide
-
-/-- [magri-2009] prediction: "# Sometimes, John is tall" is odd.
-The blind implicature "not always" contradicts homogeneity (70). -/
-theorem tall_sometimes_blind_odd :
-    tallScenario.blindOdd .sometimes_ = true := by decide
-
-/-- "Always, John is tall" is fine: no stronger alternative exists. -/
-theorem tall_always_not_odd :
-    tallScenario.blindOdd .always_ = false := by decide
-
-
-/-- Homogeneity determines which worlds are CK-compatible.
-
-[magri-2009] assumption (70): if an i-predicate holds of an individual
-at any time in a CK-compatible world, it holds at all times within that
-individual's lifespan. This makes the predicate "homogeneous."
-
-This maps [carlson-1977]'s `PredicateLevel` to a CK context:
-- Individual-level → only homogeneous worlds are CK-compatible
-- Stage-level → all worlds are CK-compatible (the predicate can
-  genuinely vary over time) -/
-def homogeneity : PredicateLevel → (TallWorld → Bool)
-  | .individualLevel => λ w => match w with
-    | .alwaysTall => true | .sometimesOnly => false | .neverTall => true
-  | .stageLevel => λ _ => true
-
-/-- The context function of `tallScenario` is exactly what ILP
-homogeneity predicts for individual-level predicates. -/
-theorem tall_context_from_ilp :
-    tallScenario.context = homogeneity .individualLevel := by
-  ext w; cases w <;> rfl
-
-open TallWorld QAdvUtt in
-/-- Stage-level contrast scenario: "Sometimes, John is available."
-
-Same literal semantics and scale as the tall scenario, but CK admits
-all worlds because availability is stage-level — it CAN genuinely
-vary over time. The homogeneity assumption (70) does not apply. -/
-def availableScenario : BlindScenario TallWorld QAdvUtt where
-  meaning := tallScenario.meaning
-  alternatives := tallScenario.alternatives
-  context := homogeneity .stageLevel
-
-/-- The context of `availableScenario` matches stage-level homogeneity:
-all worlds are CK-compatible. -/
-theorem available_context_from_slp :
-    availableScenario.context = homogeneity .stageLevel := rfl
-
-/-- "Sometimes, John is available" is NOT odd.
-Stage-level predicates don't trigger homogeneity (70), so `sometimesOnly`
-is CK-compatible and the strengthened meaning is satisfiable. -/
-theorem available_sometimes_not_odd :
-    availableScenario.blindOdd .sometimes_ = false := by decide
-
-/-- The ILP/SLP distinction determines oddness:
-individual-level + "sometimes" → odd; stage-level + "sometimes" → fine.
-
-This is the structural prediction: [carlson-1977]'s `PredicateLevel`
-feeds into [magri-2009]'s blindness mechanism via homogeneity (70). -/
-theorem predicate_level_determines_oddness :
-    tallScenario.blindOdd .sometimes_ = true ∧
-    availableScenario.blindOdd .sometimes_ = false := ⟨by decide, by decide⟩
-
-/-- The tall and available scenarios share literal semantics and alternatives
-— they differ ONLY in the CK context. -/
-theorem scenarios_share_semantics :
-    tallScenario.meaning = availableScenario.meaning ∧
-    tallScenario.alternatives = availableScenario.alternatives := ⟨rfl, rfl⟩
-
-/-- The contexts genuinely differ: `sometimesOnly` is CK-incompatible
-for individual-level (tall) but CK-compatible for stage-level (available). -/
-theorem contexts_differ_at_sometimesOnly :
-    tallScenario.context .sometimesOnly ≠
-    availableScenario.context .sometimesOnly := by
-  simp [tallScenario, availableScenario, homogeneity]
-
-/-- Homogeneity (70) is necessary and sufficient for Q-adverb oddness.
-
-The two scenarios have identical literal semantics, identical scale
-structure, and identical worlds. The ONLY difference is the CK context,
-which is determined by [carlson-1977]'s `PredicateLevel` via
-`homogeneity`. Yet this single difference flips the oddness prediction:
-
-- Individual-level ("tall"): context rules out `sometimesOnly` →
-  strengthened meaning contradicts CK → odd
-- Stage-level ("available"): context admits `sometimesOnly` →
-  strengthened meaning satisfiable at CK world → fine
-
-This proves that [carlson-1977]'s predicate-level classification
-is doing genuine explanatory work in [magri-2009]'s system:
-it is the SOLE factor determining oddness for Q-adverb sentences. -/
-theorem homogeneity_necessary_and_sufficient :
-    -- Same semantics
-    tallScenario.meaning = availableScenario.meaning ∧
-    tallScenario.alternatives = availableScenario.alternatives ∧
-    -- Different context (from different PredicateLevel)
-    tallScenario.context ≠ availableScenario.context ∧
-    -- Different oddness prediction
-    tallScenario.blindOdd .sometimes_ ≠ availableScenario.blindOdd .sometimes_ := by
-  refine ⟨rfl, rfl, ?_, ?_⟩
-  · intro h
-    have := congrFun h .sometimesOnly
-    simp [tallScenario, availableScenario, homogeneity] at this
-  · decide
-
-end QAdverb
-
-/-! ### Context characterization theorem
-
-The existing proofs show that *specific* context functions (homogeneity,
-stage-level) produce or prevent oddness. But what characterizes the oddness-
-producing contexts in general?
-
-For the ⟨sometimes, always⟩ scale, oddness of "sometimes" depends on a single
-Boolean condition: whether the "mixed" world (`sometimesOnly`) is CK-compatible.
-This is because the strengthened meaning "sometimes but not always" is true
-*only* at the mixed world — so EXH(φ) ∩ W_ck = ∅ iff the mixed world is
-excluded from CK.
-
-This theorem is universally quantified over all possible context functions,
-not just the two tested above. It explains *why* [carlson-1977]'s
-predicate-level classification does the right work: individual-level predicates
-produce oddness precisely because homogeneity rules out the mixed world. -/
-
-section ContextCharacterization
-
-open TallWorld QAdvUtt
-
-/-- For any context function on the ⟨sometimes, always⟩ scale, oddness
-of "sometimes" is equivalent to ruling out the mixed world from CK.
-
-This characterizes EXACTLY which contexts produce oddness, independently
-of any specific predicate-level classification. The proof factors the
-abstract context into its 3 constructor values (8 cases) and verifies
-each computationally. -/
-theorem oddness_iff_mixed_excluded (ctx : TallWorld → Bool) :
-    ({ tallScenario with context := ctx } :
-      BlindScenario TallWorld QAdvUtt).blindOdd .sometimes_ =
-    (!ctx .sometimesOnly) := by
-  -- Case-split on ctx at all 3 constructors (8 cases).
-  -- In each case, reconstruct ctx as a concrete function and compute.
-  cases ha : ctx .alwaysTall <;> cases hs : ctx .sometimesOnly <;>
-    cases hn : ctx .neverTall <;> {
-    have hfun : ctx = λ w => match w with
-        | .alwaysTall => ctx .alwaysTall
-        | .sometimesOnly => ctx .sometimesOnly
-        | .neverTall => ctx .neverTall := funext λ w => by cases w <;> rfl
-    simp only [ha, hs, hn] at hfun
-    rw [hfun]; decide
-  }
-
-/-- Homogeneity (70) produces oddness because it rules out the mixed world. -/
-theorem ilp_rules_out_mixed :
-    (homogeneity .individualLevel) .sometimesOnly = false := rfl
-
-/-- SLP permits "sometimes" because it admits the mixed world. -/
-theorem slp_admits_mixed :
-    (homogeneity .stageLevel) .sometimesOnly = true := rfl
-
-end ContextCharacterization
-
-/-! ### Bare plural subject restrictions
-
-[magri-2009] §4.2: the BPS *firemen* of the s-predicate *available*
-admits both the existential and generic readings (ex. (84a)):
-- ∃-BPS: "There are firemen who are available"
-- GEN-BPS: "Firemen are generally available"
-
-But the BPS of the i-predicate *tall* lacks the existential reading (84b):
-- #∃-BPS: "There are firemen who are tall"
-- GEN-BPS: "Firemen are (generally) tall"
-
-[magri-2009]'s key insight: the ∃-BPS reading of an ILP has
-the SAME abstract structure as "#Sometimes, John is tall" (§4.1). This is
-because existential BPs always take narrowest scope ([carlson-1977]),
-making narrow-scope ∃ over times equivalent to "sometimes." The definite
-description alternative plays the role of "always." Homogeneity (70) rules
-out the partial world, so the strengthened meaning contradicts CK.
-
-We model this with independent types and prove the meaning table is
-isomorphic to the Q-adverb scenario from §5. -/
-
-section BarePluralSubjects
-
-/-- Worlds for the bare plural ∃-reading of "Firemen are tall."
-
-[magri-2009] §4.2: the truth conditions (91b)/(92b) involve ∃ over
-firemen and time. The three worlds correspond to whether any fireman is
-tall throughout his lifespan within the contextually supplied restrictor. -/
-inductive BPSWorld where
-  | allThroughout  -- every fireman is tall throughout his lifespan
-  | partialOnly    -- some fireman tall at some times but not throughout
-  | noneTall       -- no fireman is ever tall
-  deriving DecidableEq, Repr, Fintype
-
-/-- The bare plural reading and its definite-description alternative.
-
-Following the Heim-Diesing framework: the BP introduces a free
-variable bound by a default existential operator (DEO) with VP scope.
-
-The Horn scale is ⟨bare plural, definite description⟩ (eq. (94)):
-the BP *firemen* alternates with *the fireman P* for each specific
-fireman P. In the 3-world model, the definite-description alternative
-ψ (eq. (95)) is extensionally equivalent to the GEN-BPS reading φ
-(eq. (91b)), so we model both as `generic_`. -/
-inductive BPSReading where
-  | existential_  -- ∃-BPS: there exist firemen who are tall (narrow scope)
-  | generic_      -- definite/GEN alternative: there is a fireman tall throughout
-  deriving DecidableEq, Repr
-
-open BPSWorld BPSReading in
-/-- [magri-2009] §4.2: bare plural existential reading of an ILP.
-
-- `existential_` (φ', (92b)): ∃_t[C̄(t)][∃x(fireman(x) ∧ tall(x,t))]
-  "for some time t in C̄, there exists a fireman who is tall at t"
-- `generic_` (φ, (91b)): GEN_t[C̄(t)][∃x(fireman(x) ∧ tall(x,t))]
-  "for generically all times t in C̄, there exists a fireman who is tall at t"
-
-Homogeneity (70) rules out `partialOnly`: if fireman d is tall at
-any time, d is tall at ALL times within his lifespan. -/
-def bpsScenario : BlindScenario BPSWorld BPSReading where
-  meaning
-    | existential_, allThroughout => true   -- ∃ fireman tall: yes (all are)
-    | existential_, partialOnly   => true   -- ∃ fireman tall: yes (at some times)
-    | existential_, noneTall      => false  -- none tall
-    | generic_,     allThroughout => true   -- all tall throughout: yes
-    | generic_,     partialOnly   => false  -- not all throughout: no
-    | generic_,     noneTall      => false  -- none: no
-  alternatives
-    | existential_ => [generic_]    -- ⟨BP, definite description⟩ Horn scale (eq. 94)
-    | generic_     => [existential_]
-  -- Homogeneity (70): partialOnly is CK-incompatible
-  context
-    | allThroughout => true | partialOnly => false | noneTall => true
-
-/-- The ∃-BPS reading of ILP "Firemen are tall" is odd.
-Blind strengthening derives "∃ fireman tall at some times BUT no fireman
-tall throughout" — contradicting homogeneity (70). -/
-theorem bps_existential_ilp_odd :
-    bpsScenario.blindOdd .existential_ = true := by decide
-
-/-- The GEN-BPS reading of ILP "Firemen are tall" is fine. -/
-theorem bps_generic_not_odd :
-    bpsScenario.blindOdd .generic_ = false := by decide
-
-open BPSWorld BPSReading in
-/-- Stage-level counterpart: ∃-BPS reading of "Firemen are available."
-
-Same meaning structure, but all worlds CK-compatible because
-availability can genuinely vary over time (no homogeneity). -/
-def bpsSLPScenario : BlindScenario BPSWorld BPSReading where
-  meaning := bpsScenario.meaning
-  alternatives := bpsScenario.alternatives
-  context := λ _ => true
-
-/-- The ∃-BPS reading of SLP "Firemen are available" is fine. -/
-theorem bps_existential_slp_not_odd :
-    bpsSLPScenario.blindOdd .existential_ = false := by decide
-
-/-- The BPS scenario's meaning table is isomorphic to the Q-adverb scenario:
-"∃-BPS at world w" has the same truth value as "sometimes at the
-corresponding Q-adverb world."
-
-This is [magri-2009]'s reduction (p. 275): "the existential reading
-of the BPS of sentence (84b) can be ruled out in exactly the same way
-as sentence (46a)." -/
-theorem bps_meaning_matches_qadverb :
-    ∀ (u : BPSReading) (w : BPSWorld),
-      bpsScenario.meaning u w =
-      tallScenario.meaning
-        (match u with | .existential_ => .sometimes_ | .generic_ => .always_)
-        (match w with | .allThroughout => .alwaysTall
-                      | .partialOnly => .sometimesOnly
-                      | .noneTall => .neverTall) := by
-  intro u w; cases u <;> cases w <;> rfl
-
-/-- The context functions match: homogeneity rules out the same
-"mixed" world in both scenarios. -/
-theorem bps_context_matches_qadverb :
-    ∀ (w : BPSWorld),
-      bpsScenario.context w =
-      tallScenario.context
-        (match w with | .allThroughout => .alwaysTall
-                      | .partialOnly => .sometimesOnly
-                      | .noneTall => .neverTall) := by
-  intro w; cases w <;> rfl
-
-end BarePluralSubjects
-
-/-! ### Universal quantifier rescue
-
-[magri-2009] §4.3, building on [fox-1995]: the ∃-BPS reading of
-an i-predicate becomes available when the BP is embedded under a universal
-quantifier.
-
-- (102a) "Jewish women are related to Chomsky" — no ∃ reading
-- (102b) "Jewish women are related to every Jewish man" — ∃ reading available
-
-In (102b) the existential over Jewish women takes wide scope over both the
-generic operator AND the universal quantifier *every Jewish man*. This creates
-a "distributed witnesses" world — woman a₁ related to man b₁, a₂ to b₂ —
-where EXH(φ) = φ ∧ ¬ψ is satisfiable.
-
-Under homogeneity, "related" is permanent: once a₁ is related to b₁, she
-always is. But this doesn't prevent different women from being related to
-different men. The distributed-witnesses world is CK-compatible, so the
-strengthened meaning is not vacuous at CK worlds → not odd.
-
-The structural insight: the rescue scenario has the SAME context as the
-stage-level scenario (all worlds CK-compatible), despite a different reason.
-For SLPs, variability over time admits the mixed world. For universal
-embedding, distributed witnesses admit the mixed world. [magri-2009]'s
-mechanism produces the correct prediction in both cases: the mixed world
-survives in CK. -/
-
-section UniversalRescue
-
-open TallWorld QAdvUtt
-
-/-- [magri-2009] §4.3: universal quantifier rescue of ∃-BPS reading.
-
-The meaning table matches the ⟨some, all⟩ pattern:
-- `sometimes_` (φ): "for every Jewish man, ∃ a related Jewish woman"
-- `always_` (ψ): "∃ a Jewish woman related to EVERY Jewish man"
-
-The three worlds under the correspondence:
-- `alwaysTall` → "concentrated": one woman related to all men (φ ∧ ψ)
-- `sometimesOnly` → "distributed": different women for different men (φ ∧ ¬ψ)
-- `neverTall` → "none": some man has no related woman (¬φ ∧ ¬ψ)
-
-All worlds are CK-compatible because homogeneity for "related" (each
-woman-man relationship is permanent) is compatible with distributed
-witnesses. -/
-def universalRescueScenario : BlindScenario TallWorld QAdvUtt where
-  meaning := tallScenario.meaning
-  alternatives := tallScenario.alternatives
-  context := λ _ => true
-
-/-- The ∃-BPS reading under a universal quantifier is NOT odd.
-The distributed-witnesses world is CK-compatible, so the strengthened
-meaning is satisfiable at a CK world. -/
-theorem universal_rescue_not_odd :
-    universalRescueScenario.blindOdd .sometimes_ = false := by decide
-
-/-- The rescue scenario shares literal semantics and scale with the
-ILP Q-adverb scenario — the ONLY difference is the CK context. -/
-theorem rescue_shares_semantics :
-    tallScenario.meaning = universalRescueScenario.meaning ∧
-    tallScenario.alternatives = universalRescueScenario.alternatives := ⟨rfl, rfl⟩
-
-/-- The rescue context matches the SLP context: both admit all worlds.
-
-For SLPs: the predicate can genuinely vary over time → no worlds ruled out.
-For universal rescue: distributed witnesses are CK-compatible → no worlds
-ruled out. Different reasons, same abstract effect. -/
-theorem rescue_context_equals_slp :
-    universalRescueScenario.context = availableScenario.context := by
-  funext w; cases w <;> rfl
-
-/-- Three-way structural comparison:
-
-| Scenario      | Context type    | Mixed world CK? | Odd?  |
-|---------------|-----------------|------------------|-------|
-| ILP Q-adverb  | Homogeneity (70) | No               | Yes   |
-| SLP Q-adverb  | All worlds      | Yes              | No    |
-| ILP + ∀       | All worlds      | Yes              | No    |
-
-All three share the same meaning table and alternatives. Oddness is
-entirely determined by whether the context rules out the mixed world —
-as proved by `oddness_iff_mixed_excluded`. -/
-theorem three_way_contrast :
-    -- Same semantics across all three
-    tallScenario.meaning = availableScenario.meaning ∧
-    tallScenario.meaning = universalRescueScenario.meaning ∧
-    tallScenario.alternatives = availableScenario.alternatives ∧
-    tallScenario.alternatives = universalRescueScenario.alternatives ∧
-    -- ILP is odd, SLP and rescue are not
-    tallScenario.blindOdd .sometimes_ = true ∧
-    availableScenario.blindOdd .sometimes_ = false ∧
-    universalRescueScenario.blindOdd .sometimes_ = false ∧
-    -- The reason: ILP context rules out mixed world, others don't
-    tallScenario.context .sometimesOnly = false ∧
-    availableScenario.context .sometimesOnly = true ∧
-    universalRescueScenario.context .sometimesOnly = true := by
-  refine ⟨rfl, rfl, rfl, rfl, ?_, ?_, ?_, rfl, rfl, rfl⟩
-  · decide
-  · decide
-  · decide
-
-end UniversalRescue
-
-/-! ### BH_prs and MH_prs
-
-[magri-2009] extends BH and MH to presuppositions (§3.4, eqs. 64–66):
-
-1. **BH_prs** (65): The strengthened presupposition EXH_prs(φ) is computed
-   using *logical* entailment, not entailment given common knowledge.
-
-2. **MH_prs** (66): If the blind strengthened presupposition contradicts
-   common knowledge (EXH_prs(φ) ∩ W_ck = ∅), then φ sounds odd.
-
-The strengthened presupposition mirrors standard EXH but operates on the
-presupposition dimension:
-
-    EXH_prs(φ) = φ_prs ∧ ∧_{ψ ∈ Excl_prs(φ)} ¬ψ_prs
-
-where Excl_prs uses [fox-2007]'s innocent exclusion applied to
-presuppositions. This reuses `exhB`/`ieIndices` directly — the same
-algorithm, applied to a different dimension of meaning. -/
-
-section PresuppositionalExtension
-
-/-- A scenario with both meanings and presuppositions for blind SI computation.
-
-[magri-2009] §3.4: presupposition strengthening runs in parallel
-to meaning strengthening, using the same [fox-2007] algorithm. -/
-structure BlindPresupScenario (W U : Type) [Fintype W] [DecidableEq W]
-    extends BlindScenario W U where
-  /-- Presupposition carried by each utterance. -/
-  presup : U → W → Bool
-
-namespace BlindPresupScenario
-
-variable {W U : Type} [Fintype W] [DecidableEq W] (s : BlindPresupScenario W U)
-
-/-- Strengthened presupposition via [fox-2007]'s EXH applied to
-presuppositions.
-
-Implements **BH_prs**: the strengthening uses logical entailment over W,
-not entailment given common knowledge. -/
-def strengthenedPresup (u : U) (w : W) : Bool :=
-  decide (w ∈ innocent.exh (altsFromPreds ((s.alternatives u).map s.presup))
-                    (predToFinset (s.presup u)))
-
-/-- Blind presuppositional oddness: EXH_prs(φ) ∩ W_ck = ∅.
-
-Implements **MH_prs** (66): if the blind strengthened presupposition
-contradicts common knowledge, the sentence sounds odd. -/
-def blindOddPrs (u : U) : Bool :=
-  let alts := altsFromPreds ((s.alternatives u).map s.presup)
-  let ψ := predToFinset (s.presup u)
-  decide (innocent.excluded alts ψ).Nonempty &&
-  decide (∀ w ∈ s.toBlindScenario.cWorlds, w ∉ innocent.exh alts ψ)
-
-end BlindPresupScenario
-
-end PresuppositionalExtension
-
-/-! ### "#John is always tall" via presuppositional mismatch
-
-[magri-2009] §4.6: *always* and covert GEN are Horn-mates with the
-same denotation but different presuppositions. Overt *always* carries
-no homogeneity presupposition; covert GEN carries the **homogeneity
-presupposition** (eq. (137)): either ALL atomic parts of the restrictor
-satisfy the scope or NONE do (YES ∪ NO).
-
-The oddness of "#John is always tall" is derived via MH_prs (66):
-
-1. φ_prs (*always*) = W (trivial presupposition)
-2. ψ_prs (GEN) = YES ∪ NO (homogeneity presupposition)
-3. ψ_prs asymmetrically entails φ_prs (YES ∪ NO ⊂ W)
-4. EXH_prs(φ) = φ_prs ∧ ¬ψ_prs = ¬(YES ∪ NO) = mixed worlds only
-5. CK (from assumption (70)): W_ck = YES ∪ NO (homogeneity for ILPs)
-6. EXH_prs(φ) ∩ W_ck = ∅ → odd via MH_prs
-
-The contrast with "John is tall" (= covert GEN): GEN has no stronger
-presuppositional alternative, so EXH_prs is vacuous and no mismatch
-arises.
-
-The reuse of `TallWorld` is structural: the three worlds — `alwaysTall`,
-`sometimesOnly`, `neverTall` — serve double duty across meaning (§5)
-and presupposition (§10). -/
-
-section OvertAlways
-
-open TallWorld
-
-/-- Utterance type for the ⟨always, GEN⟩ Horn scale. -/
-inductive AlwaysGENUtt where
-  | always_ | gen_
-  deriving DecidableEq, Repr
-
-open AlwaysGENUtt in
-/-- [magri-2009] §4.6: *always* vs covert GEN.
-
-The two utterances have IDENTICAL denotation (both mean "at all times,
-John is tall") but DIFFERENT presuppositions:
-- *always*: φ_prs = W (no homogeneity presupposition)
-- GEN: ψ_prs = {alwaysTall, neverTall} (homogeneity: YES ∪ NO) -/
-def alwaysGENScenario : BlindPresupScenario TallWorld AlwaysGENUtt where
-  -- Identical meanings: both mean "tall at all times"
-  meaning
-    | _, alwaysTall => true
-    | _, sometimesOnly => false
-    | _, neverTall => false
-  alternatives
-    | .always_ => [.gen_]    -- ⟨always, GEN⟩ Horn scale (assumption (81))
-    | .gen_    => [.always_]
-  context := homogeneity .individualLevel
-  -- Presuppositions differ:
-  presup
-    -- *always* has no homogeneity presupposition (φ_prs = W)
-    | .always_, _ => true
-    -- GEN has homogeneity presupposition (ψ_prs = YES ∪ NO)
-    | .gen_, alwaysTall => true      -- YES: tall at all times
-    | .gen_, sometimesOnly => false   -- mixed: neither YES nor NO
-    | .gen_, neverTall => true        -- NO: tall at no time
-
-/-- GEN's presupposition matches homogeneity: the same predicate as the
-CK context. This is not coincidence — assumption (70) says W_ck is
-exactly the set of homogeneous worlds, and GEN presupposes homogeneity. -/
-theorem gen_presup_matches_context :
-    ∀ w : TallWorld,
-      alwaysGENScenario.presup .gen_ w =
-      alwaysGENScenario.context w := by
-  intro w; cases w <;> rfl
-
-/-- *always* has trivial (universal) presupposition. -/
-theorem always_presup_trivial :
-    ∀ w : TallWorld, alwaysGENScenario.presup .always_ w = true := by
-  intro w; cases w <;> rfl
-
-/-- The strengthened presupposition of *always* asserts ¬(YES ∪ NO),
-i.e., that there ARE mixed worlds — which is exactly what homogeneity
-rules out. -/
-theorem always_strengthened_presup_false_at_ck :
-    alwaysGENScenario.strengthenedPresup .always_ .alwaysTall = false ∧
-    alwaysGENScenario.strengthenedPresup .always_ .neverTall = false := by
-  constructor <;> decide
-
-/-- [magri-2009] §4.6: "#John is always tall" is odd via MH_prs.
-
-The blind strengthened presupposition (= ¬homogeneity = mixed worlds
-only) contradicts CK (= homogeneity = no mixed worlds). -/
-theorem always_tall_blind_odd_prs :
-    alwaysGENScenario.blindOddPrs .always_ = true := by decide
-
-/-- "John is tall" (= covert GEN) is NOT odd via MH_prs.
-
-GEN has no stronger presuppositional alternative — *always* is
-presuppositionally weaker (trivial presupposition ⊂ homogeneity
-presupposition is backwards). Since GEN's presupposition entails
-*always*'s, *always* is not excludable w.r.t. GEN. -/
-theorem gen_tall_not_odd_prs :
-    alwaysGENScenario.blindOddPrs .gen_ = false := by decide
-
-/-- Meanings are identical but oddness differs — the presupposition
-is doing ALL the work. This is a pure presuppositional effect: the
-same mechanism (BH + MH) applied to a different dimension of meaning. -/
-theorem always_gen_same_meaning_different_presup :
-    alwaysGENScenario.meaning .always_ = alwaysGENScenario.meaning .gen_ ∧
-    alwaysGENScenario.presup .always_ ≠ alwaysGENScenario.presup .gen_ ∧
-    alwaysGENScenario.blindOddPrs .always_ ≠ alwaysGENScenario.blindOddPrs .gen_ := by
-  refine ⟨?_, ?_, ?_⟩
-  · funext w; cases w <;> rfl
-  · intro h
-    have := congrFun h .sometimesOnly
-    simp [alwaysGENScenario] at this
-  · decide
-
-end OvertAlways
-
-/-! ### Predictions match empirical BPS data
-
-[magri-2009]'s theory predicts that individual-level predicates block
-the existential reading of bare plural subjects. The rows in
-`Data/Examples/CohenErteschikShir2002.json` independently record these
-judgments as empirical observations ([cohen-erteschik-shir-2002]).
-
-The bridge theorems verify that every ILP row lacks an acceptable
-existential reading — exactly what the BH+MH mechanism predicts —
-and every SLP-with-locative-argument row has one. -/
-
-section BarePluralBridge
-
-open Data.Examples
-
-/-- The row's predicate level ([carlson-1977]), read from the
-    `predicate_level` feature. -/
-def predicateLevelOf (row : LinguisticExample) : Option PredicateLevel :=
-  match row.feature? "predicate_level" with
-  | some "individual" => some .individualLevel
-  | some "stage"      => some .stageLevel
-  | _                 => none
-
-/-- Is the existential reading of the bare plural subject acceptable? -/
-def existentialOK (row : LinguisticExample) : Bool :=
-  (row.readings.find? (·.1 == "existential")).map (·.2) == some .acceptable
-
-/-- Every individual-level row lacks the existential reading — matching
-[magri-2009]'s prediction that the ∃-BPS of an ILP is odd
-(BH + MH + homogeneity). -/
-theorem ilp_data_matches_magri_prediction :
-    ∀ row ∈ CohenErteschikShir2002.Examples.all,
-      predicateLevelOf row = some .individualLevel → existentialOK row = false := by
+end Table
+
+/-! ### Individual-level predicates (§4) -/
+
+section IndividualLevel
+
+variable {E T : Type*} (live : E → T → Prop)
+
+/-- (70): an extension of the predicate compatible with common knowledge about an
+individual-level predicate. True of an individual at some time, it is true of it throughout its
+lifespan `live d`. -/
+def Permanent (f : E → T → Prop) : Prop :=
+  ∀ d, (∃ t, f d t) → ∀ t, live d t → f d t
+
+variable {live} {Wck : Set (E → T → Prop)} {f : E → T → Prop} {j : E} {C D : T → Prop}
+  {t₁ t₂ : T}
+
+/-- (71): a permanent predicate is homogeneous over any restrictor within a lifespan. -/
+theorem Permanent.homogeneous (hf : Permanent live f) {d : E} {A : T → Prop}
+    (hA : ∀ t, A t → live d t) : Homogeneous A (f d) := by
+  by_cases h : ∃ t, f d t
+  · exact .inl fun t ht ↦ hf d h t (hA t ht)
+  · exact .inr fun t _ ht ↦ h ⟨t, ht⟩
+
+/-! #### Existential Q-adverbs (§4.1) -/
+
+/-- (79b): *Sometimes, John is tall*, the adverb restricted by `C` and, by (76) and (77), by
+John's lifespan. -/
+def sometimes (live : E → T → Prop) (j : E) (C : T → Prop) : Set (E → T → Prop) :=
+  {f | GQ.some (fun t ↦ live j t ∧ C t) (f j)}
+
+/-- (80b): its Horn-mate (81) with *always*. -/
+def always (live : E → T → Prop) (j : E) (C : T → Prop) : Set (E → T → Prop) :=
+  {f | GQ.every (fun t ↦ live j t ∧ C t) (f j)}
+
+/-- A world where John is tall at `t₁` only, so tall sometimes but not always. -/
+private theorem mem_sometimes_sdiff_always (h₁ : live j t₁ ∧ C t₁) (h₂ : live j t₂ ∧ C t₂)
+    (hne : t₁ ≠ t₂) : (fun _ t ↦ t = t₁) ∈ sometimes live j C \ always live j C :=
+  ⟨⟨t₁, h₁, rfl⟩, fun h ↦ hne (h t₂ h₂).symm⟩
+
+/-- (72b), (82): *#Sometimes, John is tall* is odd for every restrictor `C` of the adverb that
+meets John's lifespan at two times: its Horn-mate with *always* is logically stronger but
+equivalent given (70). -/
+theorem sometimes_odd (hck : ∀ f ∈ Wck, Permanent live f) (h₁ : live j t₁ ∧ C t₁)
+    (h₂ : live j t₂ ∧ C t₂) (hne : t₁ ≠ t₂) :
+    Odd Wck {sometimes live j C, always live j C} (sometimes live j C) :=
+  odd_some (A := fun (_ : E → T → Prop) t ↦ live j t ∧ C t) (B := fun f ↦ f j)
+    (fun f hf ↦ (hck f hf).homogeneous fun _ h ↦ h.1)
+    ⟨fun _ t ↦ t = t₁, mem_sometimes_sdiff_always h₁ h₂ hne⟩
+
+/-- (72a): *Sometimes, John is available* is fine, since common knowledge does not make a
+stage-level predicate permanent. -/
+example (h₁ : live j t₁ ∧ C t₁) (h₂ : live j t₂ ∧ C t₂) (hne : t₁ ≠ t₂) :
+    ¬ Odd univ {sometimes live j C, always live j C} (sometimes live j C) := by
+  have hw := mem_sometimes_sdiff_always h₁ h₂ hne
+  rw [odd_pair_iff ⟨_, hw⟩]
+  exact fun h ↦ hw.2 (h ⟨hw.1, trivial⟩)
+
+/-! #### Bare plural subjects (§4.2) -/
+
+/-- (84b), (99): the existential reading (91b) of the bare plural subject of *Firemen are tall* is
+odd. The existential has narrowest scope (88), below GEN over the restrictor `D` (the `C̃` of
+(90)); blind strengthening denies that some fireman is tall throughout the part of his lifespan in
+`C`, (97), and given (70) a fireman tall at a time of `D` is tall throughout his lifespan. -/
+theorem existential_odd {N : E → Prop} (hck : ∀ f ∈ Wck, Permanent live f) (hD : ∃ t, D t)
+    (h : (narrowSome N D \ ⋃ d : {d // N d}, definite (fun d t ↦ C t ∧ live d t) d).Nonempty) :
+    Odd Wck (alts N D fun d t ↦ C t ∧ live d t) (narrowSome N D) :=
+  odd_narrowSome hD (fun f hf x _ i _ hxi _ hj ↦ hck f hf x ⟨i, hxi⟩ _ hj.2) h
+
+/-- Common knowledge about a predicate of either level (§4): an individual-level predicate is
+permanent (70), a stage-level predicate is not constrained. -/
+def ck (live : E → T → Prop) : PredicateLevel → Set (E → T → Prop)
+  | .individualLevel => {f | Permanent live f}
+  | .stageLevel => univ
+
+end IndividualLevel
+
+/-! #### The world (98) -/
+
+section World98
+
+/-- The three firemen of (98). -/
+inductive Fireman where
+  | d₁
+  | d₂
+  | d₃
+  deriving DecidableEq, Fintype
+
+/-- The time of `C̃` at which each fireman of (98) is tall. -/
+def Fireman.tallAt : Fireman → Fin 3
+  | .d₁ => 2
+  | .d₂ => 1
+  | .d₃ => 0
+
+/-- The lifespans of (98) at the three times of `C̃`: `d₁` is born after the first, `d₃` dies
+before the last. -/
+def lifespan : Fireman → Fin 3 → Prop
+  | .d₁, t => t ≠ 0
+  | .d₂, _ => True
+  | .d₃, t => t ≠ 2
+
+instance : DecidableRel lifespan := fun d t ↦
+  match d with
+  | .d₁ => inferInstanceAs (Decidable (t ≠ 0))
+  | .d₂ => inferInstanceAs (Decidable True)
+  | .d₃ => inferInstanceAs (Decidable (t ≠ 2))
+
+/-- The world (98): at each time of `C̃` some fireman is tall, and none is tall throughout the
+part of his lifespan in `C̃`. -/
+def world98 (d : Fireman) (t : Fin 3) : Prop := t = d.tallAt
+
+/-- The existential reading (91b) and its definite alternatives (93b) in the model of (98), with
+`C` and `C̃` all three times. -/
+abbrev alts98 : Set (Set (Fireman → Fin 3 → Prop)) :=
+  alts (fun _ ↦ True) (fun _ ↦ True) fun d t ↦ True ∧ lifespan d t
+
+/-- The world (98) verifies the existential reading and falsifies every definite alternative. -/
+theorem world98_mem : world98 ∈ narrowSome (fun _ ↦ True) (fun _ ↦ True) \
+    ⋃ d : {_d : Fireman // True}, definite (fun d t ↦ True ∧ lifespan d t) d := by
+  simp only [world98, narrowSome, definite, GQ.every, GQ.some, mem_sdiff, mem_ofPred_eq,
+    mem_iUnion, not_exists]
   decide
 
-/-- Every stage-level row with a locative argument HAS the existential
-reading — matching [magri-2009]'s prediction that the ∃-BPS of an SLP
-is fine (no homogeneity → no mismatch). -/
-theorem slp_argument_data_matches_magri_prediction :
-    ∀ row ∈ CohenErteschikShir2002.Examples.all,
-      row.feature? "locative_status" = some "argument" →
-        predicateLevelOf row = some .stageLevel ∧ existentialOK row = true := by
-  decide
+/-- The existential reading of a bare plural subject is odd for a predicate of level `l`, in the
+model of (98). -/
+def ExistentialOdd (l : PredicateLevel) : Prop :=
+  Odd (ck lifespan l) alts98 (narrowSome (fun _ ↦ True) fun _ ↦ True)
 
-/-- The BPS scenario for ILPs is odd, AND the ILP rows independently
-confirm no existential reading. Cross-validation between theory (BH+MH)
-and empirical observation. -/
-theorem magri_predicts_ilp_no_existential :
-    bpsScenario.blindOdd .existential_ = true ∧
-    ∀ row ∈ CohenErteschikShir2002.Examples.all,
-      predicateLevelOf row = some .individualLevel → existentialOK row = false :=
-  ⟨by decide, ilp_data_matches_magri_prediction⟩
+/-- (84b): the existential reading of *Firemen are tall* is odd. -/
+theorem existentialOdd_individualLevel : ExistentialOdd .individualLevel :=
+  existential_odd (fun _ h ↦ h) ⟨0, trivial⟩ ⟨_, world98_mem⟩
 
-/-- The BPS scenario for SLPs is fine, AND the SLP-argument rows
-independently confirm the existential reading is available. -/
-theorem magri_predicts_slp_existential :
-    bpsSLPScenario.blindOdd .existential_ = false ∧
-    ∀ row ∈ CohenErteschikShir2002.Examples.all,
-      row.feature? "locative_status" = some "argument" → existentialOK row = true :=
-  ⟨by decide, λ row h hf => (slp_argument_data_matches_magri_prediction row h hf).2⟩
+/-- (84a): the existential reading of *Firemen are available* is fine: the world (98) is
+compatible with common knowledge about a stage-level predicate. -/
+theorem not_existentialOdd_stageLevel : ¬ ExistentialOdd .stageLevel := by
+  rw [ExistentialOdd, alts98, alts, odd_insert_range_iff ⟨_, world98_mem⟩]
+  exact fun h ↦ world98_mem.2 (h ⟨world98_mem.1, trivial⟩)
 
-end BarePluralBridge
+/-- The existential reading of a bare plural subject is odd exactly for an individual-level
+predicate. -/
+theorem existentialOdd_iff {l : PredicateLevel} : ExistentialOdd l ↔ l = .individualLevel := by
+  cases l
+  · simpa using not_existentialOdd_stageLevel
+  · simpa using existentialOdd_individualLevel
 
-/-! ### German word order (§4.5)
+end World98
 
-Magri takes Diesing's German contrast (8), repeated as (125). The bare plural subject
-*Feuerwehrmänner* 'firemen' sits on either side of the particles *ja doch* with the stage-level
-*verfügbar* 'available', but only to their left with the individual-level *intelligent*. To the
-right of the particles the subject is inside the VP and has only the existential reading, so the
-sentence is the existential bare plural sentence of §4.2 and is odd with an individual-level
-predicate; to their left the generic reading is available. Magri adds that universally
-quantified subjects are fine to the right of the particle, which his account predicts and
-Diesing's does not, and that definite subjects pattern with bare plurals, which his account
-leaves open. -/
+/-! #### Embedding under a universal (§4.3) -/
+
+section Universal
+
+/-- The two Jewish women of the world of §4.3. -/
+inductive Woman where
+  | a₁
+  | a₂
+  deriving DecidableEq, Fintype
+
+/-- The two Jewish men of the world of §4.3. -/
+inductive Man where
+  | b₁
+  | b₂
+  deriving DecidableEq, Fintype
+
+/-- The one man each woman of §4.3 is related to. -/
+def Woman.relative : Woman → Man
+  | .a₁ => .b₁
+  | .a₂ => .b₂
+
+/-- The world of §4.3: `a₁` is related only to `b₁` and `a₂` only to `b₂`, at all times. -/
+def distributed {T : Type*} (a : Woman) (p : Man × T) : Prop := p.1 = a.relative
+
+/-- (102b), (109): the existential reading (105) of the bare plural subject of *Jewish women are
+related to every Jewish man*, with the universal object scoping over GEN, is fine. Given
+restrictors that meet the lifespans, the world where `a₁` is related only to `b₁` and `a₂` only
+to `b₂` is compatible with (70) for *related*, verifies (105), and falsifies each definite
+alternative (106b). With the definite object of (102a) instead, the reading falls under
+`existential_odd`. -/
+theorem universal_not_odd {T : Type*} {live : Woman → T → Prop} {C D : Man → T → Prop}
+    (h₁ : ∃ t, C .b₂ t ∧ live .a₁ t) (h₂ : ∃ t, C .b₁ t ∧ live .a₂ t) :
+    ¬ Odd {f | ∀ b, Permanent live fun a t ↦ f a (b, t)}
+      (alts (fun _ ↦ True) (fun p ↦ D p.1 p.2) fun a p ↦ C p.1 p.2 ∧ live a p.2)
+      (narrowSome (fun _ ↦ True) fun p ↦ D p.1 p.2) := by
+  have h : distributed ∈ narrowSome (fun _ ↦ True) (fun p : Man × T ↦ D p.1 p.2) \
+      ⋃ a : {_a : Woman // True}, definite (fun a p ↦ C p.1 p.2 ∧ live a p.2) a := by
+    refine ⟨fun ⟨b, _⟩ _ ↦ ?_, ?_⟩
+    · cases b
+      exacts [⟨.a₁, trivial, rfl⟩, ⟨.a₂, trivial, rfl⟩]
+    · simp only [mem_iUnion, not_exists]
+      rintro ⟨_ | _, _⟩ ha
+      · obtain ⟨t, ht⟩ := h₁
+        exact absurd (ha (.b₂, t) ht) nofun
+      · obtain ⟨t, ht⟩ := h₂
+        exact absurd (ha (.b₁, t) ht) nofun
+  rw [alts, odd_insert_range_iff ⟨_, h⟩]
+  exact fun hsub ↦ h.2 (hsub ⟨h.1, fun _ _ ⟨_, ht⟩ _ _ ↦ ht⟩)
+
+end Universal
+
+/-! #### German word order (§4.5) -/
 
 section GermanWordOrder
 
 open Data.Examples
 
-/-- The blind scenario of a bare plural subject's predicate, homogeneous over times for an
-individual-level predicate. -/
-def scenarioOf : PredicateLevel → BlindScenario BPSWorld BPSReading
-  | .individualLevel => bpsScenario
-  | .stageLevel => bpsSLPScenario
+/-- The predicate level of a row ([carlson-1977]), read from its `predicate_level` feature. -/
+def predicateLevelOf (row : LinguisticExample) : Option PredicateLevel :=
+  match row.feature? "predicate_level" with
+  | some "individual" => some .individualLevel
+  | some "stage" => some .stageLevel
+  | _ => none
 
-/-- A row of (8) is predicted odd when its subject sits to the right of *ja doch*, where only the
-existential reading is available, and that reading is blind-odd for its predicate. -/
+/-- A row of (8) is predicted odd when its bare plural subject sits to the right of *ja doch*,
+where it has only the existential reading (§4.5.1), and that reading is odd for its predicate,
+(128), (129). -/
 def PredictedOdd (row : LinguisticExample) : Prop :=
-  row.feature? "position" = some "right" ∧
-    ∃ l ∈ predicateLevelOf row, (scenarioOf l).blindOdd .existential_ = true
+  row.feature? "position" = some "right" ∧ ∃ l ∈ predicateLevelOf row, ExistentialOdd l
 
-instance (row : LinguisticExample) : Decidable (PredictedOdd row) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- The rows of (8): a sentence is acceptable exactly when it is not predicted odd, and only the
-individual-level predicate with its subject to the right of *ja doch*, (8c), is odd. -/
+/-- (8), (125): a row is acceptable exactly when it is not predicted odd; only (8c), with the
+individual-level *intelligent* and its subject to the right of *ja doch*, is odd. -/
 theorem word_order_rows :
     ∀ row ∈ Examples.all, (row.judgment = .acceptable ↔ ¬ PredictedOdd row) := by
+  simp only [PredictedOdd, existentialOdd_iff]
   decide
 
 end GermanWordOrder
 
-/-! ### "Firemen are always tall" is fine (§4.6.2 Remark)
+/-! #### Overt universal Q-adverbs (§4.6) -/
 
-[magri-2009] §4.6.2: "#John is always tall" is odd (§10 above),
-but "Firemen are always tall" is FINE when the definite *John* is replaced
-by a bare plural.
+section Always
 
-The key difference: with a bare plural subject, the strengthened
-presupposition ¬ψ_prs asserts that homogeneity fails for the restrictor
-(some firemen are tall, others aren't). This is NOT a contradiction given
-common knowledge — there are CK-compatible worlds where some firemen are
-tall and others aren't.
+variable {E T : Type*} {live : E → T → Prop} {Wck : Set (E → T → Prop)} {j : E} {t₁ t₂ : T}
 
-This shows the presuppositional mechanism is sensitive to the logical
-form of the subject: definite subjects (John) produce oddness because
-homogeneity must hold for a single individual; bare plural subjects
-(firemen) don't because different individuals can differ. -/
+/-- (137): the homogeneity presupposition of GEN with restrictor `A`, the scope being the
+predicate's extension read through `B`: (138b) for *John is tall*, (141b) for *Firemen are
+tall*. -/
+def genPresup {α : Type*} (A : α → Prop) (B : (E → T → Prop) → α → Prop) :
+    Set (E → T → Prop) :=
+  {f | Homogeneous A (B f)}
 
-section BarePluralAlways
+/-- (134a), (138): *#John is always tall* is odd by the Mismatch Hypothesis for presuppositions.
+It presupposes nothing, (138a), while its Horn-mate *John is tall*, with GEN, presupposes that
+John is tall at all or at none of the times he is alive, (138b), which (70) entails. -/
+theorem always_odd (hck : ∀ f ∈ Wck, Permanent live f) (h₁ : live j t₁) (h₂ : live j t₂)
+    (hne : t₁ ≠ t₂) : Odd Wck {univ, genPresup (live j) fun f ↦ f j} univ :=
+  (odd_univ_iff ⟨fun _ t ↦ t = t₁,
+    fun h ↦ h.elim (fun h ↦ hne (h t₂ h₂).symm) fun h ↦ h t₁ h₁ rfl⟩).2
+    fun f hf ↦ (hck f hf).homogeneous fun _ h ↦ h
 
-open TallWorld
+/-- (139b), (141): *Firemen are always tall* is fine. The homogeneity presupposition of GEN is now
+over firemen and their times, and (70) is compatible with some firemen being tall and others
+not. -/
+theorem always_bare_not_odd {N : E → Prop} {d₁ d₂ : E} (h₁ : N d₁ ∧ live d₁ t₁)
+    (h₂ : N d₂ ∧ live d₂ t₂) (hne : d₁ ≠ d₂) :
+    ¬ Odd {f | Permanent live f}
+      {univ, genPresup (fun p : E × T ↦ N p.1 ∧ live p.1 p.2) fun f p ↦ f p.1 p.2} univ := by
+  have hf : (fun d _ ↦ d = d₁) ∉ genPresup (fun p : E × T ↦ N p.1 ∧ live p.1 p.2)
+      fun f p ↦ f p.1 p.2 :=
+    fun h ↦ h.elim (fun h ↦ hne (h (d₂, t₂) h₂).symm) fun h ↦ h (d₁, t₁) h₁ rfl
+  rw [odd_univ_iff ⟨_, hf⟩]
+  exact fun h ↦ hf (h (show Permanent live fun d _ ↦ d = d₁ from fun _ ⟨_, hd⟩ _ _ ↦ hd))
 
-/-- Worlds for "Firemen are always tall" with bare plural subject.
-
-With a bare plural, the homogeneity presupposition of GEN quantifies
-over firemen: either ALL firemen are tall or NONE are. But CK for
-a bare plural does NOT rule out mixed worlds (some tall, some not). -/
-inductive BPAlwaysWorld where
-  | allTall       -- all firemen always tall
-  | mixedFiremen  -- some firemen tall, others not
-  | noneTall      -- no fireman tall
-  deriving DecidableEq, Repr, Fintype
-
-open BPAlwaysWorld AlwaysGENUtt in
-/-- [magri-2009] §4.6.2: *always* vs GEN with bare plural subject.
-
-Meanings are identical (both: "all firemen are always tall"), but
-presuppositions differ. GEN's homogeneity presupposition says either
-all firemen are tall or none are (YES ∪ NO). But with a bare plural,
-the mixed world (some tall, some not) IS CK-compatible. -/
-def bpAlwaysScenario : BlindPresupScenario BPAlwaysWorld AlwaysGENUtt where
-  meaning
-    | _, allTall => true
-    | _, mixedFiremen => false
-    | _, noneTall => false
-  alternatives
-    | .always_ => [.gen_]
-    | .gen_    => [.always_]
-  -- CK: ALL worlds are compatible (some firemen could be tall, others not)
-  context := λ _ => true
-  presup
-    | .always_, _ => true                -- *always* has no homogeneity presup
-    | .gen_, allTall => true             -- YES: all firemen tall
-    | .gen_, mixedFiremen => false       -- mixed: neither YES nor NO
-    | .gen_, noneTall => true            -- NO: no fireman tall
-
-/-- "Firemen are always tall" is NOT odd via MH_prs.
-
-The strengthened presupposition ¬ψ_prs = {mixedFiremen} is satisfiable
-at a CK world (mixedFiremen is CK-compatible for bare plurals), so
-MH_prs does not fire. -/
-theorem bp_always_not_odd_prs :
-    bpAlwaysScenario.blindOddPrs .always_ = false := by decide
-
-/-- Contrast: same logical structure, different subjects, different oddness.
-
-- "#John is always tall" (definite): odd via MH_prs (§10)
-- "Firemen are always tall" (bare plural): fine (§4.6.2)
-
-The difference: CK for a definite (John) rules out the mixed world
-(homogeneity for one individual), while CK for a bare plural does not
-(different firemen can differ). -/
-theorem definite_vs_bp_always_contrast :
-    alwaysGENScenario.blindOddPrs .always_ = true ∧
-    bpAlwaysScenario.blindOddPrs .always_ = false :=
-  ⟨by decide, by decide⟩
-
-end BarePluralAlways
-
-section AlternativeSourceBridge
-
-/-- The Italian ⟨some, all⟩ scale as a plain alternative list. -/
-def italyAlternatives : List ItalyUtt := [.some_, .all_]
-
-/-- Exhaustifying via the alternative list agrees with BlindScenario.strengthened.
-
-    BlindScenario carries its own `alternatives` field; here we show that
-    deriving alternatives from `italyAlternatives` produces the same
-    exhaustified meaning. The key: including the assertion in the
-    alternative list doesn't change the result — `exhIE` filters it out
-    via the non-weaker check. -/
-theorem strengthened_eq_alternativeSource :
-    ∀ w : ItalyWorld₃,
-      italianScenario.strengthened .some_ w =
-      decide (w ∈ innocent.exh
-        (altsFromPreds
-          (italyAlternatives.map italianScenario.meaning))
-        (predToFinset (italianScenario.meaning ItalyUtt.some_))) := by
-  intro w; cases w <;> decide
-
-end AlternativeSourceBridge
-
-/-! ## The blind SI's content has no common-ground realizer
-
-States [magri-2009]'s mismatch consequence directly over the
-`BlindScenario`-derived strengthened meaning: the `Bool`-valued
-strengthening becomes the `Prop`-valued inferred content via
-`s.strengthened u w = true`.
-
-### Why NOT a non-cancellability theorem
-
-The [magri-2009] obligatoriness claim does *not* translate cleanly
-into `Implicature.IsCancellable` failure, even CK-relativized. For
-"#Some Italians come from a warm country" with CK = {allWarm},
-*"in fact all"* is a consistent continuation at the CK world that
-contradicts the EXH'd implicature — so `IsCancellable` (and
-`IsCancellableInContext`) both *hold*. The contentful Magri claim
-is a *different* diagnostic: **the strengthened meaning has no
-CK-realizer.** That is the theorem delivered here. See
-`Pragmatics/Implicature/Diagnostics.lean` docstring for the
-extended discussion of why Magri obligatoriness ≠ IsCancellable failure.
--/
-
-section ImplicatureSpineBridge
-
-variable {W U : Type} [Fintype W] [DecidableEq W]
-
-/-- The strengthened meaning as a `Prop`-valued inferred content. The
-strengthening is `innocent.exh` — [magri-2009] uses Fox's
-innocent-exclusion operator only (`innocent.exh` in
-`Semantics/Exhaustification/Excluder.lean`, implementing [fox-2007]'s
-IE algorithm), not the Bar-Lev–Fox 2020 IE+II extension that postdates
-the paper by 11 years. -/
-def magriContent (s : BlindScenario W U) (u : U) : W → Prop :=
-  λ w => s.strengthened u w = true
-
-/-- **Magri's mismatch consequence.** When EXH is applied to φ blind to
-CK ([magri-2009] §3.2.2 eq. (32), the Blindness Hypothesis), and the
-resulting strengthened meaning has no CK-realizer (eq. (33), the
-Mismatch Hypothesis), then the inferred content has no CK-compatible
-realizer.
-
-The deviance [magri-2009] predicts is **not** Sadock truth-conditional
-non-cancellability — for the "Some Italians" example, the continuation
-"in fact all" IS truth-conditionally consistent with the literal "some"
-and DOES contradict the EXH'd "not all" implicature, so `IsCancellable`
-holds. The load-bearing premise is [magri-2009] §3.2.5 eq. (41)
-"EXH is mandatory in matrix clauses" combined with the R-postulates
-(43a)/(43b): the speaker is grammatically committed to the SI even
-when uttering a cancellation continuation, and this commitment is what
-creates the deviance. The mandatoriness machinery is formalized below
-in `RelevantBlindScenario`; this theorem only states the *outcome*
-(eq. (33) antecedent). -/
-theorem magri_blindOdd_no_ck_realizer
-    (s : BlindScenario W U) (u : U) (h : s.blindOdd u = true) :
-    ¬ ∃ w, s.context w = true ∧ magriContent s u w := by
-  rintro ⟨w, hctx, hcontent⟩
-  have hExhMem :
-      w ∈ innocent.exh (altsFromPreds ((s.alternatives u).map s.meaning))
-                       (predToFinset (s.meaning u)) := by
-    simpa [magriContent, BlindScenario.strengthened] using hcontent
-  exact s.blindOdd_excludes_cWorlds u h w (s.mem_cWorlds_of_context w hctx) hExhMem
-
-end ImplicatureSpineBridge
+end Always
 
 end Magri2009

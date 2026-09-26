@@ -26,8 +26,8 @@ Magri-style obligatory SI ([magri-2009]) is **not** an `IsCancellable`
 failure, even common-ground-relativized: for "#Some Italians come from a
 warm country" with CK restricting to all-warm worlds, "in fact all" is a
 consistent continuation contradicting the EXH'd implicature, so
-`IsCancellable` holds. The contentful Magri claim — no CK-realizer of
-the strengthened meaning — is `magri_blindOdd_no_ck_realizer` in
+`IsCancellable` holds. The contentful Magri claim, that the strengthened
+meaning has no CK-realizer, is his Mismatch Hypothesis, `Odd` in
 `Studies/Magri2009.lean`.
 -/
 
