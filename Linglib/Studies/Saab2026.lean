@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.Romance.Spanish.Binominals
 public import Linglib.Syntax.Number.Basic
-public import Linglib.Syntax.Anaphora.Basic
+public import Linglib.Syntax.Minimalist.Ellipsis
 public import Linglib.Data.Examples.Saab2026
 public import Mathlib.Tactic.DeriveFintype
 
@@ -29,17 +29,17 @@ agreement and gap facts follow from the structure assigned to them (`ellipsis_ma
 
 ## Implementation notes
 
-Identity between an antecedent and an ellipsis site is taken modulo case and number, as the
-paper argues: case is assigned at PF or overwritten by D after identity is computed, and
-number sits on the licensing head outside the ellipsis domain. The paper's three kinds of
-nominal gap are distinguished by the recovery they need, a linguistic antecedent for
-ellipsis, a contextual assignment for the indexical empty noun and none for a silent noun.
-The first two are anaphoric, and their depth in the sense of [hankamer-sag-1976] is
-`Anaphor.Depth`: NP-ellipsis is a surface anaphor, and the indexical empty noun, which has no
-internal structure, a deep one. The sub-extraction and argument-structure diagnostics of the
-rows test for internal structure, and the context diagnostic for a deep anaphor. Pesetsky's
-derivation of genitive marking and the equations at the entity and proposition types are not
-formalized.
+Identity between an antecedent and an ellipsis site is taken modulo case and number, as the paper
+argues: case is assigned at PF or overwritten by D after identity is computed, and number sits on
+the licensing head outside the ellipsis domain. The paper's three kinds of nominal gap are
+distinguished by the recovery they need, a linguistic antecedent for ellipsis, a contextual
+assignment for the indexical empty noun and none for a silent noun. The first two are anaphoric, and
+their depth in the sense of [hankamer-sag-1976] is read from the Minimalist model of null sites
+(`Minimalist.NullSite`): NP-ellipsis is the nP that [E] on Num silences, a surface anaphor, and the
+indexical empty noun is a null pro-form at n, a deep one. The sub-extraction and argument-structure
+diagnostics of the rows test for internal structure, and the context diagnostic for a deep anaphor.
+Pesetsky's derivation of genitive marking and the equations at the entity and proposition types are
+not formalized.
 
 ## References
 
@@ -84,10 +84,26 @@ def descriptive : Structure := ⟨.first, none⟩
 empty noun, which the equative head relates to the coda in its specifier. -/
 def equative : Structure := ⟨.index, some .coda⟩
 
+/-- The gap a structure leaves when its coda is missing, as a null site of the nominal spine.
+With the indexical empty noun as the complement of Num the gap is that noun, a null pro-form at n
+whose value the assignment function supplies; otherwise it is the nP that [E] on Num silences. -/
+def Structure.site (s : Structure) : Minimalist.NullSite Minimalist.NominalSpinePosition :=
+  if s.head = .index then .proform .n else .elided Minimalist.Ellipsis.nPEllipsis ⟨.N, by decide⟩
+
+/-- The depth of the gap, read from the Minimalist model of null sites. -/
+def Structure.depth (s : Structure) : Anaphor.Depth := Anaphor.DepthModel.depth s.site
+
+/-- The gap has internal structure exactly when it contains the noun's position, where the noun's
+arguments and any sub-extracted material originate. -/
+theorem Structure.hasInternalStructure_depth_iff (s : Structure) :
+    s.depth.HasInternalStructure ↔ s.site.Silences .N := by
+  revert s; decide
+
 /-- A nominal can be elided when it is the complement of Num, whose [E]-feature licenses the
-ellipsis of its complement, and has internal structure: the indexical empty noun is an atomic
-index, so eliding it is vacuous. -/
-def Structure.Elidable (s : Structure) (x : Nominal) : Prop := s.head = x ∧ x ≠ .index
+ellipsis of its complement, and the gap has internal structure: the indexical empty noun is an
+atomic index, so eliding it is vacuous. -/
+def Structure.Elidable (s : Structure) (x : Nominal) : Prop :=
+  s.head = x ∧ s.depth.HasInternalStructure
 
 instance (s : Structure) (x : Nominal) : Decidable (s.Elidable x) :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -100,18 +116,6 @@ def Nominal.number (c : Number) : Nominal → Number
 
 /-- The verb agrees with the Num head, whose number is that of its complement. -/
 def Structure.agreement (s : Structure) (c : Number) : Number := s.head.number c
-
-/-- The gap left by a missing coda is a deep anaphor when the structure has an indexical empty
-noun, whose value the assignment function supplies from the context, and NP-ellipsis, a surface
-anaphor, otherwise. -/
-def Structure.depth (s : Structure) : Anaphor.Depth :=
-  if s.head = .index then .deep else .surface
-
-/-- The gap of a structure has internal structure exactly when the structure elides one of its
-nominals: NP-ellipsis is the surface anaphor. -/
-theorem Structure.hasInternalStructure_depth_iff (s : Structure) :
-    s.depth.HasInternalStructure ↔ ∃ x, s.Elidable x := by
-  revert s; decide
 
 /-- Nothing in the equative structure can be elided, since the coda has no licensor and the
 index is atomic. -/
@@ -143,8 +147,7 @@ def structureOf : BinominalType → Reading → Structure
 singular: both follow from the noun heading the projection. -/
 theorem elidable_first_iff_singular (b : BinominalType) (r : Reading) (hb : b ≠ .qualitative) :
     (structureOf b r).Elidable .first ↔ (structureOf b r).agreement .plural = .singular := by
-  cases b <;> cases r <;> simp_all [structureOf, Structure.Elidable, Structure.agreement,
-    Nominal.number, quantificational, descriptive]
+  cases b <;> cases r <;> decide
 
 /-! ### The paper's examples -/
 

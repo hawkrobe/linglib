@@ -32,24 +32,24 @@ open Minimalist.Ellipsis
 
 /-- Fragment answers move the remnant to Spec,CP and delete TP, the [E] position of sluicing
     ([merchant-2004]). -/
-def fragmentAnswers : Ellipsis := ⟨.C⟩
+def fragmentAnswers : Ellipsis SpinePosition := ⟨.C⟩
 
 /-- Gapping elides material containing VoiceP, with [E] at C or higher. -/
-def gapping : Ellipsis := ⟨.C⟩
+def gapping : Ellipsis SpinePosition := ⟨.C⟩
 
 /-- Stripping, bare argument ellipsis, is a subcase of gapping. -/
-def stripping : Ellipsis := ⟨.C⟩
+def stripping : Ellipsis SpinePosition := ⟨.C⟩
 
 /-- Pseudogapping extracts the remnant from vP and deletes a domain that includes VoiceP, with
     [E] at T or higher. -/
-def pseudogapping : Ellipsis := ⟨.T⟩
+def pseudogapping : Ellipsis SpinePosition := ⟨.T⟩
 
 /-- A voice mismatch datum across an ellipsis boundary. -/
 structure VoiceMismatchDatum where
   description : String
   antecedentVoice : Head
   targetVoice : Head
-  ellipsisType : Ellipsis
+  ellipsisType : Ellipsis SpinePosition
   grammatical : Bool
   language : String := "English"
   deriving Repr
@@ -136,7 +136,7 @@ theorem high_ellipsis_voice_predicted :
 structure ArgStructureDatum where
   description : String
   alternationType : Mismatch
-  ellipsisType : Ellipsis
+  ellipsisType : Ellipsis SpinePosition
   grammatical : Bool
   deriving Repr
 

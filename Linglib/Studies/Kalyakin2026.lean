@@ -226,7 +226,7 @@ survive ((90), after Toosarvandani), and British *do*, which tolerates voice and
 argument-structure mismatches alike ((97)–(98), after Silk), put [E] on v; Bangla puts it on
 Voice, where the restitutive reading is lost (94) and adjuncts are recovered (95), the light
 verb evacuating by head movement (after Haldar). -/
-def Language.ellipsis : Language → Ellipsis
+def Language.ellipsis : Language → Ellipsis SpinePosition
   | .bangla => vpEllipsis
   | _ => vStrandingVPE
 
