@@ -1,76 +1,54 @@
 module
 
-public import Linglib.Fragments.Mayan.Tseltalan
+public import Linglib.Fragments.Mayan.Agreement
 public import Linglib.Phonology.Segmental.Defs
 public import Linglib.Syntax.Reflex
 public import Linglib.Syntax.Clause.ArgumentRole
 
 /-!
-# Tseltal Agreement Fragment
+# Tseltal agreement
 
-Agreement morphology for Tseltal (Tseltalan, Mayan). Tseltal and Tsotsil are
-closely related within the Tseltalan subgroup of Western Mayan, sharing most
-syntactic properties relevant to possessor extraction ([aissen-polian-2025];
-[polian-2013]).
+Tseltal marks person with two sets of affixes. Set A, the prefixes *j-*, *a-* and *s-*, before a
+vowel *k-*, *aw-* and *y-*, indexes the transitive subject and the possessor and marks person
+only; a plural person adds a suffix, *-tik* for the inclusive first person and *-ik* for the
+second and the third, the exclusive first person varying by dialect. Set B, which indexes the
+intransitive subject and the transitive object, is suffixal throughout, *-on*, *-at* and zero,
+with the plurals *-otik*, *-ex* and *-ik*. The alignment is ergative in every aspect, the verbal
+complex runs aspect, Set A, stem, Set B, and Tseltal has no Agent Focus form, so a transitive
+subject extracts without a reflex on the verb. Polian's sketch of Tseltal and Tsotsil and
+Aissen and Polian's summary of the two sets are the sources.
 
-## Main declarations
+## Main definitions
 
-* `Tseltal.template`, `Tseltal.assignCase`: the verbal complex, with Set B
-  after the stem, and ergative-absolutive case in every aspect.
-* `Tseltal.setAExponent`, `Tseltal.setBExponent`: Oxchuc Tseltal exponent
-  tables ([polian-2013]).
-* `Tseltal.Extraction.realize`: unmarked extraction (no Agent Focus).
-
-## Implementation notes
-
-Tseltal has the same two agreement paradigms as Tsotsil: Set A (ERG/GEN)
-prefixes cross-reference the transitive agent and possessor; Set B (ABS)
-markers, consistently suffixal in Tseltal, cross-reference the absolutive
-argument (intransitive subject and transitive patient). The key difference
-from Tsotsil is Set B position — consistently suffixal in Tseltal, prefixal
-or suffixal by context in Tsotsil. 3rd person singular Set B has no overt
-exponent (∅). Grammatical-function classification is shared across Tseltalan
-(`Mayan.Tseltalan`).
-
-Tseltalan languages are uniformly **ergative-absolutive** with no
-aspect-conditioned split (in contrast with Cholan; per [polian-2013]): Set A
-indicates A, Set B indicates S and P alike.
+* `Tseltal.setAExponent`, `Tseltal.setAPlural`, `Tseltal.setBExponent`: the paradigms.
+* `Tseltal.template`, `Tseltal.assignCase`: the verbal complex and the ergative case function.
+* `Tseltal.Extraction.realize`: no reflex for any extraction.
 
 ## References
 
+* [polian-2017b]
 * [aissen-polian-2025]
-* [kaufman-norman-1984]
-* [polian-2013]
 -/
 
 @[expose] public section
 
-
 namespace Tseltal
 
-open Mayan (MarkerSet ExponentTable)
-open Agreement
-
--- Re-export shared Tseltalan types
-export Mayan.Tseltalan (GrammaticalFunction)
+open Mayan (ExponentTable)
 
 /-! ### The verbal complex -/
 
-/-- The position classes of the Tseltal verbal complex: the aspect marker and Set A before
-the stem, Set B, consistently suffixal, after it ([aissen-polian-2025]). -/
+/-- The position classes of the verbal complex, the aspect marker and Set A before the stem and
+Set B after it. -/
 def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setA], [.setB]⟩
 
-/-- Tseltal is ergative-absolutive in every aspect, with no aspect-conditioned split
-([polian-2013]). -/
+/-- Tseltal is ergative in every aspect. -/
 def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.ergative
 
-/-! ### Set A/B exponents (Oxchuc Tseltal) -/
+/-! ### The paradigms -/
 
-/-- Set A (ERG/GEN) exponents for Oxchuc Tseltal by following-segment
-    environment ([polian-2013]): prefixes on the verb or possessed noun,
-    `j-`/`a-`/`s-` pre-consonantally, `k-`/`aw-`/`y-` pre-vocalically
-    (person is not distinguished by number in Set A; plural is marked
-    by separate suffixes not part of the person marker). -/
+/-- The Set A markers by the following segment, the same prefix in both numbers since Set A
+marks person alone. -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
     [(.pn .first .singular, [.pref "j"]), (.pn .second .singular, [.pref "a"]),
@@ -81,25 +59,27 @@ def setAExponent : Phonology.Segment.Class → ExponentTable
      (.pn .third .singular, [.pref "y"]), (.pn .first .plural, [.pref "k"]),
      (.pn .second .plural, [.pref "aw"]), (.pn .third .plural, [.pref "y"])]
 
-/-- Set B (ABS) exponents for Oxchuc Tseltal ([polian-2013]): suffixes on
-    the verb stem; 3rd person singular has zero exponence. -/
+/-- The plural suffix that goes with a Set A prefix, *-tik* for the inclusive first person and
+*-ik* for the second and the third; the exclusive first person varies by dialect and is not
+recorded. -/
+def setAPlural : Person → List Morphology.Morph
+  | .first | .firstInclusive => [.suff "tik"]
+  | .second | .third => [.suff "ik"]
+  | .firstExclusive | .zero => []
+
+/-- The Set B suffixes, with a zero third person singular and the plural *-ik* alone in the
+third person. -/
 def setBExponent : ExponentTable :=
   [(.pn .first .singular, [.suff "on"]), (.pn .second .singular, [.suff "at"]),
    (.pn .third .singular, []), (.pn .first .plural, [.suff "otik"]),
    (.pn .second .plural, [.suff "ex"]), (.pn .third .plural, [.suff "ik"])]
 
-/-- Third person singular Set B is null, as across the Mayan branches with an ergative
-perfective ([kaufman-norman-1984]); San Juan Atitán Mam's default Set B surfaces there. -/
-theorem p3sg_abs_null : setBExponent.realize (.pn .third .singular) = some [] := rfl
-
-/-! ### Extraction marking -/
+/-! ### Extraction -/
 
 namespace Extraction
 
-/-- No Agent Focus morphology is required for A-extraction, consistent
-    with Tseltal being LOW-ABS. -/
-def realize : ArgumentRole → Finset (Reflex Empty) :=
-  fun _ ↦ ∅
+/-- No extraction leaves a reflex on the verb, since Tseltal has no Agent Focus form. -/
+def realize : ArgumentRole → Finset (Reflex Empty) := fun _ ↦ ∅
 
 end Extraction
 
