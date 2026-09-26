@@ -22,16 +22,16 @@ precondition, so that the trigger is evaluated in a context that includes it (§
 
 ## Main definitions
 
-* `EventType` — the indices where an event of the type occurs, and its preconditions.
-* `cos` — a change-of-state predicate, from the prior and result states of `Aspect.Phasal`.
-* `Presumes` — the speaker presumes a context entailing the preconditions.
+* `cosOccurs`, `cosPrecondition` — where a change of state occurs and where its precondition,
+  the prior state of `Aspect.Phasal`, holds.
 * `Cell` — the three cells of "Does Jane know that it's raining?" in §3.1.
 
 ## Main statements
 
-* `mem_cos_precondition_diff_occurs`, `stop_precondition_diff_occurs`,
-  `EventType.inter_compl_occurs_eq_empty` — a precondition is consistent with the negated
-  trigger, an entailment holding only where the event occurs is not (§3.1).
+* `cosOccurs_subset_cosPrecondition` — a change of state entails its precondition (§2.1).
+* `mem_cosPrecondition_diff_cosOccurs`, `stop_mem_cosPrecondition_diff_cosOccurs`,
+  `inter_compl_cosOccurs_eq_empty` — a precondition is consistent with the negated trigger, an
+  entailment holding only where the change occurs is not (§3.1).
 * `uniformOn_raining_compl_knows`, `uniformOn_knows_lt_one` — restricting the context to raining
   makes the negative answer less probable, so more informative, and the two answers
   equiprobable, while the affirmative is informative either way (§3.1).
@@ -78,46 +78,46 @@ variable {ι : Type*}
 
 /-! ### Ontological preconditions (§2) -/
 
-/-- An event type: the indices at which an event of the type occurs, and those at which its
-ontological preconditions hold. Any event of the type depends on its preconditions, so a
-sentence describing the event entails them (§2.1). -/
-structure EventType (ι : Type*) where
-  /-- The indices at which an event of the type occurs. -/
-  occurs : Set ι
-  /-- The indices at which the preconditions of the type hold. -/
-  precondition : Set ι
-  occurs_subset_precondition : occurs ⊆ precondition
+section ChangeOfState
 
-/-- A change-of-state predicate: the event occurs at an index when the prior state held at an
-earlier one and the result state holds at the index, and its precondition is the earlier prior
-state, as being on the ladder is for falling off it (5). -/
-def cos (t : Phasal) (r : ι → ι → Prop) (P : ι → Prop) : EventType ι where
-  occurs := {i | ∃ i', r i' i ∧ t.Transition (P i') (P i)}
-  precondition := {i | ∃ i', r i' i ∧ t.Prior (P i')}
-  occurs_subset_precondition := fun _ ⟨i', hr, hp, _⟩ ↦ ⟨i', hr, hp⟩
+variable (t : Phasal) (r : ι → ι → Prop) (P : ι → Prop)
+
+/-- A change of state occurs at an index when the prior state held at an earlier index and the
+result state holds at the index. -/
+def cosOccurs : Set ι := {i | ∃ i', r i' i ∧ t.Transition (P i') (P i)}
+
+/-- The ontological precondition of a change of state is its prior state at an earlier index, as
+being on the ladder is for falling off it (5). -/
+def cosPrecondition : Set ι := {i | ∃ i', r i' i ∧ t.Prior (P i')}
+
+variable {t r P}
+
+/-- A sentence describing a change of state entails its precondition (§2.1). -/
+theorem cosOccurs_subset_cosPrecondition : cosOccurs t r P ⊆ cosPrecondition t r P :=
+  fun _ ⟨i', hr, hp, _⟩ ↦ ⟨i', hr, hp⟩
 
 /-! ### Why preconditions project (§3.1) -/
 
 /-- The precondition of a change of state can hold without the change, as when John smoked and
 still smokes, so accommodating it is consistent with *John didn't stop smoking* (§3.1). -/
-theorem mem_cos_precondition_diff_occurs {t : Phasal} {r : ι → ι → Prop} {P : ι → Prop}
-    {i i' : ι} (hr : r i' i) (hp : t.Prior (P i')) (hn : ¬ t.Result (P i)) :
-    i ∈ (cos t r P).precondition \ (cos t r P).occurs :=
+theorem mem_cosPrecondition_diff_cosOccurs {i i' : ι} (hr : r i' i) (hp : t.Prior (P i'))
+    (hn : ¬ t.Result (P i)) : i ∈ cosPrecondition t r P \ cosOccurs t r P :=
   ⟨⟨i', hr, hp⟩, fun ⟨_, _, _, h⟩ ↦ hn h⟩
+
+/-- An entailment that holds only where the change occurs, as a consequence or concomitant of it
+does, is inconsistent with the negated trigger, which makes the precondition the safer thing to
+accommodate (§3.1). -/
+theorem inter_compl_cosOccurs_eq_empty {F : Set ι} (hF : F ⊆ cosOccurs t r P) :
+    F ∩ (cosOccurs t r P)ᶜ = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ ⟨h, hn⟩ ↦ hn (hF h)
 
 /-- *John didn't stop smoking* (§3.1), with *stop* the English Fragment's entry: John having
 smoked is consistent with the negated trigger, since he may still smoke. -/
-theorem stop_precondition_diff_occurs {r : ι → ι → Prop} {smokes : ι → Prop} {i i' : ι}
-    (hr : r i' i) (h' : smokes i') (h : smokes i) : ∃ t, English.stop.phasal = some t ∧
-      i ∈ (cos t r smokes).precondition \ (cos t r smokes).occurs :=
-  ⟨.cessation, rfl, mem_cos_precondition_diff_occurs hr h' (not_not_intro h)⟩
+theorem stop_mem_cosPrecondition_diff_cosOccurs {i i' : ι} (hr : r i' i) (h' : P i')
+    (h : P i) : ∃ t, English.stop.phasal = some t ∧ i ∈ cosPrecondition t r P \ cosOccurs t r P :=
+  ⟨.cessation, rfl, mem_cosPrecondition_diff_cosOccurs hr h' (not_not_intro h)⟩
 
-/-- An entailment that holds only where the event occurs, as a consequence or concomitant of the
-change does, is inconsistent with the negated trigger, which makes the precondition the safer
-thing to accommodate (§3.1). -/
-theorem EventType.inter_compl_occurs_eq_empty (e : EventType ι) {F : Set ι}
-    (hF : F ⊆ e.occurs) : F ∩ e.occursᶜ = ∅ :=
-  Set.eq_empty_of_forall_notMem fun _ ⟨h, hn⟩ ↦ hn (hF h)
+end ChangeOfState
 
 /-- The cells of the question "Does Jane know that it's raining?" in the §3.1 diagram: raining
 and Jane knows it, raining and she doesn't, and not raining. -/
@@ -163,25 +163,24 @@ theorem uniformOn_knows_lt_one :
   simp only [uniformOn_real_apply, h₁, h₂, ncard_raining, ncard_univ_cell, Set.ncard_singleton]
   norm_num
 
-/-! ### Suppression (§3.2) -/
+/-! ### Suppression (§3.2)
 
-/-- On the projective reading the speaker presumes a context entailing the preconditions of the
-event they raise (§3.1). -/
-def Presumes (C : Set ι) (e : EventType ι) : Prop := C ⊆ e.precondition
+On the projective reading the speaker presumes a context `C` entailing the precondition `pre` of
+the event they raise, `C ⊆ pre` (§3.1); suppression is the case in which that presumption cannot
+be attributed to them. -/
 
 /-- Cases 1 and 2 of §3.2.1: projection is suppressed where someone who must accept the presumed
 context does not take the precondition to hold, the hearer in (23), whom the speaker knows to
 reject it, or the doubting speaker in (24). In (23) the context itself is agnostic, so the
 suppression does not come from a contradiction in the context. -/
-theorem not_presumes_of_doubt {C S : Set ι} {e : EventType ι} (hS : S ⊆ C)
-    (h : ¬ S ⊆ e.precondition) : ¬ Presumes C e :=
+theorem not_presumes_of_doubt {C S pre : Set ι} (hS : S ⊆ C) (h : ¬ S ⊆ pre) : ¬ C ⊆ pre :=
   fun hp ↦ h (hS.trans hp)
 
 /-- Case 3 of §3.2.1: projection is suppressed where the precondition is at issue, since
 presuming a precondition that is an alternative of the question under discussion resolves it,
 which the speaker in (25) signals she cannot do. -/
-theorem resolves_of_presumes {C : Set ι} {e : EventType ι} {Q : Question ι}
-    (h : e.precondition ∈ alt Q) (hp : Presumes C e) : C ∈ Q :=
+theorem resolves_of_presumes {C pre : Set ι} {Q : Question ι} (h : pre ∈ alt Q) (hp : C ⊆ pre) :
+    C ∈ Q :=
   mem_of_exists_alt_subset ⟨_, h, hp⟩
 
 /-- (28c), *If I discover later that I have not told the truth*: *discover* has the agent's
