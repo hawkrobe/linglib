@@ -140,23 +140,15 @@ theorem not_grammatical_of_not_locallyCommanded {b : Nominal t} {c : BindingClas
 
 /-! ### Principle C and Reinhart's restriction -/
 
-/-- `pair a b` relates `a` and `b` to each other and nothing else. -/
-def pair (a b : Nominal t) (x y : Nominal t) : Prop := x = a ∧ y = b ∨ x = b ∧ y = a
-
 /-- For two noun phrases coindexed with each other alone, Principle C is Reinhart's restriction
 (10b) read with c-command, the R-expressions being the noun phrases outside `pron`. -/
 theorem permits_iff {a b : Nominal t} (hab : a ≠ b) (pron : List TreePath) :
     Reinhart1976.Permits (Reinhart1976.CCommands t) pron a.1.1 b.1.1 ↔
       (b.1.1 ∉ pron → ¬ (configuration t).Bound (pair a b) b) ∧
         (a.1.1 ∉ pron → ¬ (configuration t).Bound (pair a b) a) := by
-  have hb : (configuration t).Bound (pair a b) b ↔ Reinhart1976.CCommands t a.1.1 b.1.1 := by
-    rw [Configuration.bound_iff_binds (a := a) fun x hx ↦ by rcases hx with h | h <;> simp [h]]
-    exact ⟨fun h ↦ h.2.2, fun h ↦ ⟨hab, .inl ⟨rfl, rfl⟩, h⟩⟩
-  have ha : (configuration t).Bound (pair a b) a ↔ Reinhart1976.CCommands t b.1.1 a.1.1 := by
-    rw [Configuration.bound_iff_binds (a := b) fun x hx ↦ by rcases hx with h | h <;> simp [h]]
-    exact ⟨fun h ↦ h.2.2, fun h ↦ ⟨hab.symm, .inr ⟨rfl, rfl⟩, h⟩⟩
-  rw [hb, ha]
+  rw [Configuration.bound_pair_iff hab, pair_comm, Configuration.bound_pair_iff hab.symm]
   simp only [Reinhart1976.Permits, not_imp_not]
+  rfl
 
 /-! ### The paradigm -/
 

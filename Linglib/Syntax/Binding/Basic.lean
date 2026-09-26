@@ -41,7 +41,9 @@ inside it an anaphor meets its condition under any dependency, so both forms are
 
 * `Binding.BindingClass`, `Binding.bindingClassOf`: anaphor, pronominal or R-expression, read
   off a word's morphology.
-* `Binding.Configuration`: a command relation and a binding domain.
+* `Binding.Configuration`: a command relation and a binding domain, ordered pointwise;
+  `Configuration.monoclausal` is the configuration of a single binding domain.
+* `Binding.pair`: the dependency relating two positions to each other alone.
 * `Configuration.Binds`, `Bound`, `LocallyBound`, `LocallyCommanded`, `exempt`.
 * `Configuration.Condition`, `Configuration.Satisfies`: Conditions A, B and C.
 
@@ -54,6 +56,8 @@ inside it an anaphor meets its condition under any dependency, so both forms are
 * `Configuration.condition_empty_iff`: without exemption an anaphor must in addition be
   commanded in its domain.
 * `Configuration.condition_pronoun_of_rExpression`: Condition C entails Condition B.
+* `Configuration.condition_mono`, `condition_pronoun_anti`, `condition_rExpression_anti`: more
+  command binds more, so Condition A is monotone in the configuration and B and C antitone.
 
 ## Implementation notes
 
@@ -132,9 +136,50 @@ structure Configuration (ι : Type*) where
   /-- `domain b` is the binding domain of `b`. -/
   domain : ι → Set ι
 
+/-- `pair a b` is the dependency that relates `a` and `b` to each other and nothing else. -/
+def pair {ι : Type*} (a b : ι) (x y : ι) : Prop := x = a ∧ y = b ∨ x = b ∧ y = a
+
+instance {ι : Type*} [DecidableEq ι] (a b : ι) : DecidableRel (pair a b) :=
+  fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+theorem pair_comm {ι : Type*} (a b : ι) : pair a b = pair b a :=
+  funext fun _ ↦ funext fun _ ↦ propext or_comm
+
 namespace Configuration
 
-variable {ι : Type*} (s : Configuration ι) (L : ι → ι → Prop)
+variable {ι : Type*}
+
+/-- Configurations are ordered pointwise, `s ≤ t` when `t` commands whatever `s` commands and
+each domain of `s` lies in the corresponding domain of `t`. -/
+instance : PartialOrder (Configuration ι) :=
+  PartialOrder.lift (fun s ↦ (s.commands, s.domain)) fun ⟨_, _⟩ ⟨_, _⟩ h ↦ by
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+    rfl
+
+theorem le_def {s t : Configuration ι} :
+    s ≤ t ↔ s.commands ≤ t.commands ∧ s.domain ≤ t.domain :=
+  Iff.rfl
+
+/-- `monoclausal pos R` is the configuration of a single binding domain. The map `pos` reads a
+position as an object, one position commands another when its object `R`-commands the other's,
+and every position lies in every domain. -/
+def monoclausal {α : Type*} (pos : ι → Option α) (R : α → α → Prop) : Configuration ι where
+  commands a b := ∃ x ∈ pos a, ∃ y ∈ pos b, R x y
+  domain _ := Set.univ
+
+theorem monoclausal_mono {α : Type*} {pos : ι → Option α} {R R' : α → α → Prop} (h : R ≤ R') :
+    monoclausal pos R ≤ monoclausal pos R' :=
+  ⟨fun _ _ ⟨x, hx, y, hy, hr⟩ ↦ ⟨x, hx, y, hy, h x y hr⟩, le_rfl⟩
+
+instance {α : Type*} (pos : ι → Option α) (R : α → α → Prop) [DecidableRel R] :
+    DecidableRel (monoclausal pos R).commands :=
+  fun _ _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, ∃ _ ∈ _, _))
+
+instance {α : Type*} (pos : ι → Option α) (R : α → α → Prop) (b : ι) :
+    DecidablePred (· ∈ (monoclausal pos R).domain b) :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∈ Set.univ))
+
+variable (s : Configuration ι) (L : ι → ι → Prop)
 
 /-- `a` binds `b` along the dependency `L` when `a` is an antecedent of `b` other than `b`
 itself and commands `b`. -/
@@ -165,8 +210,8 @@ Condition A, when every position the classifier `cls` classifies meets its class
 def Satisfies (E : Set ι) (cls : ι → Option BindingClass) : Prop :=
   ∀ b c, cls b = some c → s.Condition L E b c
 
-variable {s L} {L' : ι → ι → Prop} {E E' : Set ι} {cls : ι → Option BindingClass} {a b : ι}
-  {c : BindingClass}
+variable {s L} {t : Configuration ι} {L' : ι → ι → Prop} {E E' : Set ι}
+  {cls : ι → Option BindingClass} {a b x : ι} {c : BindingClass}
 
 theorem Binds.commands (h : s.Binds L a b) : s.commands a b := h.2.2
 
@@ -180,6 +225,17 @@ theorem Bound.mono (hL : L ≤ L') (h : s.Bound L b) : s.Bound L' b :=
 theorem LocallyBound.mono (hL : L ≤ L') (h : s.LocallyBound L b) : s.LocallyBound L' b :=
   let ⟨a, hd, ha⟩ := h
   ⟨a, hd, ha.mono hL⟩
+
+theorem Binds.of_le (hst : s ≤ t) (h : s.Binds L a b) : t.Binds L a b :=
+  ⟨h.1, h.2.1, hst.1 a b h.2.2⟩
+
+theorem Bound.of_le (hst : s ≤ t) (h : s.Bound L b) : t.Bound L b :=
+  let ⟨a, ha⟩ := h
+  ⟨a, ha.of_le hst⟩
+
+theorem LocallyBound.of_le (hst : s ≤ t) (h : s.LocallyBound L b) : t.LocallyBound L b :=
+  let ⟨a, hd, ha⟩ := h
+  ⟨a, hst.2 b hd, ha.of_le hst⟩
 
 theorem LocallyBound.bound (h : s.LocallyBound L b) : s.Bound L b :=
   let ⟨a, _, ha⟩ := h
@@ -195,6 +251,30 @@ theorem not_locallyBound_of_mem_exempt (hb : b ∈ s.exempt) : ¬ s.LocallyBound
 /-- A position whose only antecedents are `a` and itself is bound exactly when `a` binds it. -/
 theorem bound_iff_binds (h : ∀ x, L x b → x = a ∨ x = b) : s.Bound L b ↔ s.Binds L a b :=
   ⟨fun ⟨x, hx⟩ ↦ (h x hx.2.1).elim (· ▸ hx) (absurd · hx.1), fun h ↦ ⟨a, h⟩⟩
+
+theorem binds_pair_iff (hab : a ≠ b) : s.Binds (pair a b) x b ↔ x = a ∧ s.commands a b := by
+  constructor
+  · rintro ⟨hxb, ⟨rfl, -⟩ | ⟨rfl, -⟩, hc⟩
+    · exact ⟨rfl, hc⟩
+    · exact absurd rfl hxb
+  · rintro ⟨rfl, hc⟩
+    exact ⟨hab, .inl ⟨rfl, rfl⟩, hc⟩
+
+/-- Under the dependency relating `a` and `b` alone, `b` is bound exactly when `a` commands
+it. -/
+theorem bound_pair_iff (hab : a ≠ b) : s.Bound (pair a b) b ↔ s.commands a b :=
+  ⟨fun ⟨_, h⟩ ↦ ((binds_pair_iff hab).1 h).2, fun hc ↦ ⟨a, (binds_pair_iff hab).2 ⟨rfl, hc⟩⟩⟩
+
+/-- Under the dependency relating `a` and `b` alone, `b` is locally bound exactly when `a` lies
+in its domain and commands it. -/
+theorem locallyBound_pair_iff (hab : a ≠ b) :
+    s.LocallyBound (pair a b) b ↔ a ∈ s.domain b ∧ s.commands a b := by
+  constructor
+  · rintro ⟨x, hd, h⟩
+    obtain ⟨rfl, hc⟩ := (binds_pair_iff hab).1 h
+    exact ⟨hd, hc⟩
+  · rintro ⟨hd, hc⟩
+    exact ⟨a, hd, (binds_pair_iff hab).2 ⟨rfl, hc⟩⟩
 
 theorem condition_anaphor (hc : c.IsAnaphor) :
     s.Condition L E b c ↔ b ∈ E ∨ s.LocallyBound L b := by
@@ -238,6 +318,22 @@ theorem Satisfies.mono_exempt (hE : E ⊆ E') (h : s.Satisfies L E cls) : s.Sati
   cases c with
   | reflexive | reciprocal => exact this.imp_left (hE ·)
   | pronoun | rExpression => exact this
+
+/-- An anaphor's condition is monotone in the configuration, since more command and larger
+domains bind more. -/
+theorem condition_mono (hc : c.IsAnaphor) :
+    Monotone fun s : Configuration ι ↦ s.Condition L E b c := fun _ _ hst h ↦
+  (condition_anaphor hc).2 (((condition_anaphor hc).1 h).imp_right (·.of_le hst))
+
+/-- A pronominal's condition is antitone in the configuration. -/
+theorem condition_pronoun_anti :
+    Antitone fun s : Configuration ι ↦ s.Condition L E b .pronoun :=
+  fun _ _ hst h hb ↦ h (hb.of_le hst)
+
+/-- An R-expression's condition is antitone in the configuration. -/
+theorem condition_rExpression_anti :
+    Antitone fun s : Configuration ι ↦ s.Condition L E b .rExpression :=
+  fun _ _ hst h hb ↦ h (hb.of_le hst)
 
 section Decidable
 
