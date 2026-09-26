@@ -14,7 +14,9 @@ public import Mathlib.Probability.Kernel.Disintegration.StandardBorel
 Pushing a product measure through `η ∥ₖ η'` pushes each factor through its kernel. Pushing a
 joint measure on `α × β` through `Kernel.id ∥ₖ η` keeps the first marginal and composes the
 second with `η`. The joint is disintegrated as `ρ.fst ⊗ₘ ρ.condKernel`. On finite types, a
-composition-product and a joint pushed through `Kernel.id ∥ₖ η` are computed at atoms.
+composition-product and a joint pushed through `Kernel.id ∥ₖ η` are computed at atoms, and
+each row of a kernel charged by the input measure is absolutely continuous with respect to the
+output marginal.
 `[UPSTREAM]` candidate for `Mathlib/Probability/Kernel/Composition/Lemmas.lean`.
 -/
 
@@ -120,5 +122,13 @@ theorem comp_apply_singleton [Fintype β] [MeasurableSingletonClass β]
     (η ∘ₖ κ) a {c} = ∑ b, κ a {b} * η b {c} := by
   rw [comp_apply' _ _ _ (.singleton c), lintegral_fintype]
   exact Finset.sum_congr rfl fun b _ => mul_comm _ _
+
+/-- A row of a kernel is absolutely continuous with respect to the output marginal of an input
+measure that charges its input. -/
+theorem absolutelyContinuous_comp [Fintype α] [MeasurableSingletonClass α] (κ : Kernel α β)
+    (μ : Measure α) {a : α} (ha : μ {a} ≠ 0) : κ a ≪ κ ∘ₘ μ := by
+  refine Measure.AbsolutelyContinuous.mk fun s hs h0 => ?_
+  rw [Measure.bind_apply hs κ.aemeasurable, lintegral_fintype] at h0
+  exact (mul_eq_zero.mp (Finset.sum_eq_zero_iff.mp h0 a (Finset.mem_univ a))).resolve_right ha
 
 end ProbabilityTheory.Kernel

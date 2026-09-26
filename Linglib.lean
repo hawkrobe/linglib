@@ -1127,8 +1127,6 @@ import Linglib.Pragmatics.Efficiency
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Pragmatics.Implicature.Diagnostics
 import Linglib.Pragmatics.Implicature.SomeAll
-import Linglib.Pragmatics.InformationTheory.Channel
-import Linglib.Pragmatics.InformationTheory.ChannelCapacity
 import Linglib.Pragmatics.NeoGricean.Basic
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Uniform
