@@ -1,149 +1,198 @@
 module
 
-public import Linglib.Semantics.Presupposition.Aboutness
+public import Linglib.Core.Probability.UniformOn
+public import Linglib.Fragments.English.Verbs
 public import Linglib.Semantics.Aspect.Phasal
 public import Linglib.Semantics.Questions.Resolution
 
 /-!
 # Roberts and Simons (2024): Preconditions and projection
 
-This file formalizes the paper's account of the projective content of change-of-state
-predicates, factives and selectional restrictions as the ontological preconditions of the
-event types they describe. A sentence refers to an event type and claims, according to its
-polarity, that the event's result obtains; its affirmative and negative forms share the
-reference, so the precondition projects while the claim flips, the substrate's
-`EventSentence`. The change-of-state predicates are read off `Aspect/Phasal.lean`,
-`cosEventPhase`, which makes *stop* and *start* telic and *continue* atelic; factives and
-selectional restrictions are the other two instances, *discover* carrying prior ignorance as
-a second precondition. Projection is a pragmatic default, the presumption that the speaker's
-context entails the preconditions of the events they raise, `Presumes`, and it is suppressed
-where that presumption cannot be attributed: when the context settles the precondition
-negatively, when the speaker is uncommitted, or when the precondition is at issue, since
-presuming an alternative of the question under discussion resolves it,
-`resolves_of_presumes`. Filtering in conjunction, conditional and disjunction is the case in
-which the trigger's local context already entails the precondition, `localContext_subset`, a
-condition on the pair of disjuncts that does not depend on their order.
+[roberts-simons-2024] explain the projective content of change-of-state predicates, factives and
+selectional restrictions without a lexical constraint on the context. That content describes the
+ontological preconditions of the event type the predicate denotes, the conditions any event of
+the type depends on, so a sentence describing the event entails them (§2). Projection is the
+listener's inference that the speaker presumes a context entailing them (§3), the model of
+[qing-goodman-lassiter-2016] and [warstadt-2022]: a negated trigger is more informative relative
+to a context restricted to the precondition, and a precondition, unlike a consequence of the
+event, can hold where the event does not, so it is the safe thing to accommodate (§3.1).
+Projection is suppressed where the presumption cannot be attributed to the speaker (§3.2.1), and
+filtering is the case in which the speaker has asserted, supposed or entertained the
+precondition, so that the trigger is evaluated in a context that includes it (§4).
+
+## Main definitions
+
+* `EventType` — the indices where an event of the type occurs, and its preconditions.
+* `cos` — a change-of-state predicate, from the prior and result states of `Aspect.Phasal`.
+* `Presumes` — the speaker presumes a context entailing the preconditions.
+* `Cell` — the three cells of "Does Jane know that it's raining?" in §3.1.
+
+## Main statements
+
+* `mem_cos_precondition_diff_occurs`, `stop_precondition_diff_occurs`,
+  `EventType.inter_compl_occurs_eq_empty` — a precondition is consistent with the negated
+  trigger, an entailment holding only where the event occurs is not (§3.1).
+* `uniformOn_raining_compl_knows`, `uniformOn_knows_lt_one` — restricting the context to raining
+  makes the negative answer less probable, so more informative, and the two answers
+  equiprobable, while the affirmative is informative either way (§3.1).
+* `not_presumes_of_doubt`, `resolves_of_presumes`, `not_subset_of_presumes_ignorance` — the
+  suppression cases (23)–(25) and *discover* in (28c).
+* `localContext_subset`, `disjunctive_antecedent_filters` — filtering in (41)–(44).
 
 ## Implementation notes
 
-Event types are the substrate's world-indexed phases, so a change of state is represented by
-its prior state and its result state rather than by a transition, and the occurrence of a
-change-of-state event is the coming about of its result. The paper's two diagnostics for
-preconditions, the "part of what allowed for" frame and the counterfactual, distinguish
-preconditions from consequences and concomitants ontologically rather than semantically, so
-they are not derived here, and neither is the informativity argument for the default nor the
-reference-time account of the *know* and *discover* contrast.
+Indices are world–time pairs, and a change of state relates the prior state at an earlier index,
+under a precedence relation `r`, to the result state at the index itself, so that its occurrence
+entails its precondition as §2.1 requires. The paper's two diagnostics for preconditions, the
+"part of what allowed for" frame and the counterfactual, sort entailments into preconditions,
+consequences and concomitants ontologically rather than semantically, so they are not derived
+here. The §3.1 cells are equiprobable, the paper's "roughly equal" probabilities.
+
+## TODO
+
+* (28) is [karttunen-1971b]'s *discover*/*regret* contrast (`Karttunen1971b.projection_rows`);
+  only the conditional (28c) is derived here, not the question (28b) or *regret*'s projection.
+* The reference-time account of the *know*/*discover* contrast in (32)–(34).
 
 ## References
 
-* [C. Roberts, M. Simons, *Preconditions and projection: explaining non-anaphoric
-  presupposition* (2024)][roberts-simons-2024]
-* [L. Karttunen, *Implicative verbs* (1971)][karttunen-1971]
-* [L. Karttunen, *Presuppositions of compound sentences* (1973)][karttunen-1973]
-* [R. C. Stalnaker, *Pragmatic presuppositions* (1974)][stalnaker-1974]
-* [I. Heim, *On the projection problem for presuppositions* (1983)][heim-1983]
-* [C. Qing, N. D. Goodman, D. Lassiter, *A rational speech-act model of projective content*
+* [C. Roberts, M. Simons, *Preconditions and Projection: Explaining Non-Anaphoric Presupposition*
+  (2024)][roberts-simons-2024]
+* [L. Karttunen, *Some observations on factivity* (1971)][karttunen-1971b]
+* [L. Karttunen, *Presuppositions of Compound Sentences* (1973)][karttunen-1973]
+* [R. C. Stalnaker, *Pragmatic Presuppositions* (1974)][stalnaker-1974]
+* [I. Heim, *On the Projection Problem for Presuppositions* (1983)][heim-1983]
+* [C. Qing, N. D. Goodman, D. Lassiter, *A Rational Speech-Act Model of Projective Content*
   (2016)][qing-goodman-lassiter-2016]
-* [A. Warstadt, *Presupposition triggering reflects pragmatic reasoning about utterance
-  utility* (2022)][warstadt-2022]
+* [A. Warstadt, *Presupposition Triggering Reflects Pragmatic Reasoning about Utterance Utility*
+  (2022)][warstadt-2022]
 -/
 
 @[expose] public section
 
 namespace RobertsSimons2024
 
-open Presupposition.Aboutness Aspect Question
+open Aspect Question MeasureTheory ProbabilityTheory
 
-variable {W : Type*}
+variable {ι : Type*}
 
-/-! ### The three verb classes -/
+/-! ### Ontological preconditions (§2) -/
 
-/-- A change-of-state predicate is the event type whose precondition is its prior state and
-whose consequence is its result state. -/
-def cosEventPhase (t : Phasal) (P : W → Prop) : EventPhase W where
-  precondition w := t.Prior (P w)
-  eventOccurs w := t.Result (P w)
-  consequence w := t.Result (P w)
+/-- An event type: the indices at which an event of the type occurs, and those at which its
+ontological preconditions hold. Any event of the type depends on its preconditions, so a
+sentence describing the event entails them (§2.1). -/
+structure EventType (ι : Type*) where
+  /-- The indices at which an event of the type occurs. -/
+  occurs : Set ι
+  /-- The indices at which the preconditions of the type hold. -/
+  precondition : Set ι
+  occurs_subset_precondition : occurs ⊆ precondition
 
-/-- *Stop* and *start* are telic, a change from the prior state to its negation, and
-*continue* is atelic, its result being its prior state. -/
-theorem cosEventPhase_isTelic_iff [Nonempty W] (t : Phasal) (P : W → Prop) :
-    (cosEventPhase t P).isTelic ↔ t ≠ .continuation := by
-  cases t
-  · exact ⟨fun _ ↦ nofun, fun _ ↦ ⟨Classical.arbitrary W, fun h ↦ iff_not_self (iff_of_eq h)⟩⟩
-  · exact ⟨fun _ ↦ nofun, fun _ ↦ ⟨Classical.arbitrary W, fun h ↦ iff_not_self (iff_of_eq h).symm⟩⟩
-  · exact ⟨fun ⟨_, h⟩ ↦ absurd rfl h, fun h ↦ absurd rfl h⟩
+/-- A change-of-state predicate: the event occurs at an index when the prior state held at an
+earlier one and the result state holds at the index, and its precondition is the earlier prior
+state, as being on the ladder is for falling off it (5). -/
+def cos (t : Phasal) (r : ι → ι → Prop) (P : ι → Prop) : EventType ι where
+  occurs := {i | ∃ i', r i' i ∧ t.Transition (P i') (P i)}
+  precondition := {i | ∃ i', r i' i ∧ t.Prior (P i')}
+  occurs_subset_precondition := fun _ ⟨i', hr, hp, _⟩ ↦ ⟨i', hr, hp⟩
 
-/-- A factive state has the truth of the complement as the precondition of the agent's state
-of knowing it. -/
-def factive (complement knows : W → Prop) : EventPhase W where
-  precondition := complement
-  eventOccurs := knows
-  consequence := knows
+/-! ### Why preconditions project (§3.1) -/
 
-/-- A cognitive change of state such as *discover* has the truth of the complement and the
-agent's prior ignorance of it as its preconditions, and knowing it as the result. -/
-def discover (complement ignorant knows : W → Prop) : EventPhase W where
-  precondition := fun w ↦ complement w ∧ ignorant w
-  eventOccurs := knows
-  consequence := knows
+/-- The precondition of a change of state can hold without the change, as when John smoked and
+still smokes, so accommodating it is consistent with *John didn't stop smoking* (§3.1). -/
+theorem mem_cos_precondition_diff_occurs {t : Phasal} {r : ι → ι → Prop} {P : ι → Prop}
+    {i i' : ι} (hr : r i' i) (hp : t.Prior (P i')) (hn : ¬ t.Result (P i)) :
+    i ∈ (cos t r P).precondition \ (cos t r P).occurs :=
+  ⟨⟨i', hr, hp⟩, fun ⟨_, _, _, h⟩ ↦ hn h⟩
 
-/-- An emotive factive such as *regret* has the agent's belief in the complement as the
-precondition of the emotive state, veridicality being a default rather than a
-precondition. -/
-def emotive (believes regrets : W → Prop) : EventPhase W where
-  precondition := believes
-  eventOccurs := regrets
-  consequence := regrets
+/-- *John didn't stop smoking* (§3.1), with *stop* the English Fragment's entry: John having
+smoked is consistent with the negated trigger, since he may still smoke. -/
+theorem stop_precondition_diff_occurs {r : ι → ι → Prop} {smokes : ι → Prop} {i i' : ι}
+    (hr : r i' i) (h' : smokes i') (h : smokes i) : ∃ t, English.stop.phasal = some t ∧
+      i ∈ (cos t r smokes).precondition \ (cos t r smokes).occurs :=
+  ⟨.cessation, rfl, mem_cos_precondition_diff_occurs hr h' (not_not_intro h)⟩
 
-/-- A selectional restriction is an event type whose requirement is a precondition of the
-event. -/
-def selectional (requirement event : W → Prop) : EventPhase W where
-  precondition := requirement
-  eventOccurs := event
-  consequence := event
+/-- An entailment that holds only where the event occurs, as a consequence or concomitant of the
+change does, is inconsistent with the negated trigger, which makes the precondition the safer
+thing to accommodate (§3.1). -/
+theorem EventType.inter_compl_occurs_eq_empty (e : EventType ι) {F : Set ι}
+    (hF : F ⊆ e.occurs) : F ∩ e.occursᶜ = ∅ :=
+  Set.eq_empty_of_forall_notMem fun _ ⟨h, hn⟩ ↦ hn (hF h)
 
-/-- *Discover* carries the factive precondition together with prior ignorance, the extra
-precondition that lets its factive implication be suppressed where *know*'s is not. -/
-theorem discover_precondition (complement ignorant knows : W → Prop) (w : W) :
-    (discover complement ignorant knows).precondition w ↔
-      (factive complement knows).precondition w ∧ ignorant w :=
-  Iff.rfl
+/-- The cells of the question "Does Jane know that it's raining?" in the §3.1 diagram: raining
+and Jane knows it, raining and she doesn't, and not raining. -/
+inductive Cell
+  | rainKnown
+  | rainUnknown
+  | noRain
+  deriving DecidableEq, Fintype
 
-/-- The projective implications of all three classes are their preconditions, shared by the
-affirmative and the negative sentence. -/
-theorem precondition_projects (e : EventPhase W) (w : W) :
-    (negative e).presupposition w ↔ e.precondition w :=
-  Iff.rfl
+instance : MeasurableSpace Cell := ⊤
+instance : DiscreteMeasurableSpace Cell := ⟨fun _ ↦ trivial⟩
 
-/-! ### Projection as a pragmatic default and its suppression -/
+/-- R, that it's raining. -/
+def raining : Set Cell := {.rainKnown, .rainUnknown}
 
-variable (C : Set W) (s : EventSentence W)
+/-- K(j,r), that Jane knows that it's raining. -/
+def knows : Set Cell := {.rainKnown}
 
-/-- On the projective reading the speaker is taken to presume a context entailing the
-precondition of the event they raise. -/
-def Presumes : Prop := C ⊆ {w | s.presupposition w}
+private theorem ncard_raining : raining.ncard = 2 := Set.ncard_pair nofun
 
-/-- Projection is suppressed where the precondition is taken to be false, since a nonempty context
-settling the precondition negatively admits no projective reading, and the precondition is merely
-locally entailed. -/
-theorem not_presumes_of_settled_false (hC : C.Nonempty)
-    (h : C ⊆ {w | ¬ s.presupposition w}) : ¬ Presumes C s :=
-  fun hp ↦ let ⟨_, hw⟩ := hC; h hw (hp hw)
+private theorem ncard_univ_cell : (Set.univ : Set Cell).ncard = 3 := by
+  rw [Set.ncard_univ, Nat.card_eq_fintype_card]; rfl
 
-/-- Projection is suppressed where the speaker is uncommitted, since a speaker whose commitments
-leave the precondition open cannot be presuming it. -/
-theorem not_presumes_of_open (hopen : ∃ w ∈ C, ¬ s.presupposition w) : ¬ Presumes C s :=
-  fun hp ↦ let ⟨_, hw, hn⟩ := hopen; hn (hp hw)
+/-- Relative to a context restricted to raining, the negative answer *Jane doesn't know that
+it's raining* is less probable than relative to one that leaves the rain open, so asserting it
+is more informative, and the two answers become equiprobable (§3.1). -/
+theorem uniformOn_raining_compl_knows :
+    (uniformOn raining).real knowsᶜ < (uniformOn Set.univ).real knowsᶜ ∧
+      (uniformOn raining).real knowsᶜ = (uniformOn raining).real knows := by
+  have h₁ : raining ∩ knowsᶜ = {.rainUnknown} := by ext x; cases x <;> simp [raining, knows]
+  have h₂ : raining ∩ knows = {.rainKnown} := by ext x; cases x <;> simp [raining, knows]
+  have h₃ : Set.univ ∩ knowsᶜ = {.rainUnknown, .noRain} := by ext x; cases x <;> simp [knows]
+  simp only [uniformOn_real_apply, h₁, h₂, h₃, ncard_raining, ncard_univ_cell,
+    Set.ncard_singleton, Set.ncard_pair (show Cell.rainUnknown ≠ .noRain from nofun)]
+  norm_num
 
-/-- Projection is suppressed where the precondition is at issue, since presuming a precondition
-that is one of the alternatives of the question under discussion resolves that question, which a
-speaker still addressing it cannot do. -/
-theorem resolves_of_presumes {Q : Question W} (h : {w | s.presupposition w} ∈ alt Q)
-    (hp : Presumes C s) : C ∈ Q :=
+/-- The affirmative *Jane knows that it's raining* is informative relative to either context
+(§3.1). -/
+theorem uniformOn_knows_lt_one :
+    (uniformOn Set.univ).real knows < 1 ∧ (uniformOn raining).real knows < 1 := by
+  have h₁ : Set.univ ∩ knows = {.rainKnown} := Set.univ_inter _
+  have h₂ : raining ∩ knows = {.rainKnown} := by ext x; cases x <;> simp [raining, knows]
+  simp only [uniformOn_real_apply, h₁, h₂, ncard_raining, ncard_univ_cell, Set.ncard_singleton]
+  norm_num
+
+/-! ### Suppression (§3.2) -/
+
+/-- On the projective reading the speaker presumes a context entailing the preconditions of the
+event they raise (§3.1). -/
+def Presumes (C : Set ι) (e : EventType ι) : Prop := C ⊆ e.precondition
+
+/-- Cases 1 and 2 of §3.2.1: projection is suppressed where someone who must accept the presumed
+context does not take the precondition to hold, the hearer in (23), whom the speaker knows to
+reject it, or the doubting speaker in (24). In (23) the context itself is agnostic, so the
+suppression does not come from a contradiction in the context. -/
+theorem not_presumes_of_doubt {C S : Set ι} {e : EventType ι} (hS : S ⊆ C)
+    (h : ¬ S ⊆ e.precondition) : ¬ Presumes C e :=
+  fun hp ↦ h (hS.trans hp)
+
+/-- Case 3 of §3.2.1: projection is suppressed where the precondition is at issue, since
+presuming a precondition that is an alternative of the question under discussion resolves it,
+which the speaker in (25) signals she cannot do. -/
+theorem resolves_of_presumes {C : Set ι} {e : EventType ι} {Q : Question ι}
+    (h : e.precondition ∈ alt Q) (hp : Presumes C e) : C ∈ Q :=
   mem_of_exists_alt_subset ⟨_, h, hp⟩
 
-/-! ### Filtering -/
+/-- (28c), *If I discover later that I have not told the truth*: *discover* has the agent's
+prior ignorance among its preconditions, and a speaker who presumes that she is ignorant whether
+`P`, where `Dox` gives her beliefs, cannot also presume `P`, since she believes what she
+presumes ([stalnaker-1974]'s explanation, sharpened by the ignorance precondition (29)). -/
+theorem not_subset_of_presumes_ignorance {Dox : ι → Set ι} {C P : Set ι} {w : ι} (hw : w ∈ C)
+    (hbel : Dox w ⊆ C) (hign : C ⊆ {v | ¬ Dox v ⊆ P}) : ¬ C ⊆ P :=
+  fun hP ↦ hign hw (hbel.trans hP)
+
+/-! ### Filtering (§4) -/
 
 /-- The filtering constructions (41), (42), (43) place the trigger in the second conjunct, in the
 consequent, or in a disjunct. -/
@@ -153,27 +202,26 @@ inductive Construction
   | disjunction
   deriving DecidableEq, Fintype
 
-/-- The local context of the trigger is the context updated with the first conjunct, with the
-antecedent, or with the negation of the other disjunct. -/
-def localContext (A : Set W) : Construction → Set W
+/-- The context in which the trigger is evaluated: the context updated with the first conjunct,
+with the antecedent, or with the negation of the other disjunct. -/
+def localContext (C A : Set ι) : Construction → Set ι
   | .conjunction => C ∩ A
   | .conditional => C ∩ A
   | .disjunction => C ∩ Aᶜ
 
 /-- Filtering arises where the first clause asserts or supposes the precondition, or the other
-disjunct is its negation, the trigger's local context entails the precondition, so no
-global presumption is attributable to the speaker; in disjunction the condition concerns the
-other disjunct whichever comes first. -/
-theorem localContext_subset {A pre : Set W} :
+disjunct is its negation: the trigger is evaluated in a context entailing the precondition, so
+no global presumption is attributable to the speaker; in disjunction the condition concerns the
+other disjunct whichever comes first (§4). -/
+theorem localContext_subset {C A pre : Set ι} :
     (A ⊆ pre → localContext C A .conjunction ⊆ pre ∧ localContext C A .conditional ⊆ pre) ∧
       (Aᶜ ⊆ pre → localContext C A .disjunction ⊆ pre) :=
   ⟨fun h ↦ ⟨fun _ hw ↦ h hw.2, fun _ hw ↦ h hw.2⟩, fun h _ hw ↦ h hw.2⟩
 
 /-- The contrast in (44) is that, in a context that leaves the precondition open, a disjunctive
-antecedent whose other disjunct negates the precondition filters it, whereas a simple
-antecedent leaves the precondition to be presumed globally, which the open context
-forbids. -/
-theorem disjunctive_antecedent_filters {pre : Set W} (hopen : ¬ C ⊆ pre) :
+antecedent whose other disjunct negates the precondition filters it, whereas a simple antecedent
+leaves the precondition to be presumed globally, which the open context forbids. -/
+theorem disjunctive_antecedent_filters {C pre : Set ι} (hopen : ¬ C ⊆ pre) :
     localContext C preᶜ .disjunction ⊆ pre ∧ ¬ localContext C Set.univ .conditional ⊆ pre :=
   ⟨fun _ hw ↦ not_not.mp hw.2, fun h ↦ hopen fun _ hw ↦ h ⟨hw, trivial⟩⟩
 
