@@ -6,16 +6,30 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Morphology.Morph
+public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Icelandic nouns
 
-The deverbal nouns of Icelandic, each segmented into its morphs: an optional prefixed preposition,
+Icelandic has three genders, the masculine, the feminine and the neuter, and the gender of a
+noun is only indirectly related to the sex of its referents: most nouns for women are feminine,
+but *skáld* 'poet' is neuter whoever the poet, as Thráinsson's overview of the nominal
+inflection notes. The gendered nouns are those of [adamson-anagnostopoulou-2025]'s Icelandic
+examples and of the coordinations [corbett-1991] resolves, each with its grammatical gender,
+the gender of its referents where they have one, and whether it denotes a human.
+
+The deverbal nouns are each segmented into their morphs: an optional prefixed preposition,
 the root, an optional overt verbalizer, and a nominalizing suffix. The nominalizers are many
 (*-un*, *-ing*, *-sla*, *-stur*, *-n*, *-ð*, and others); the verbalizers *-k* (the *-ka* of
 *seinka* 'delay') and *-er* (the *-era* of loanword verbs) appear before the nominalizer, while
 the final *-a* of the verb is absent from the noun. Some prepositions that a verb takes as a
 separate word are prefixed to its noun: *gera við* 'repair', *við-ger-ð*.
+
+## Main definitions
+
+* `Icelandic.Nouns.Noun`: a noun with its gender and whether it denotes a human.
+* `Icelandic.Nouns.Deverbal`, `Icelandic.Nouns.Deverbal.morphs`, `Icelandic.Nouns.deverbals`: a
+  deverbal noun segmented, its morphs in linear order, and the entries.
 
 ## Implementation notes
 
@@ -25,6 +39,9 @@ and *annast*.
 
 ## References
 
+* [adamson-anagnostopoulou-2025]
+* [corbett-1991]
+* [thrainsson-2007]
 * [wood-2023]
 -/
 
@@ -33,6 +50,68 @@ and *annast*.
 namespace Icelandic.Nouns
 
 open Morphology (Morph)
+
+/-! ### Gendered nouns -/
+
+/-- A noun with its grammatical gender and whether it denotes a human. -/
+structure Noun extends GenderedNoun _root_.Gender where
+  /-- Whether the noun denotes a human; the natural-gender flag marks the humans whose gender
+  is not fixed. -/
+  human : Bool
+  deriving DecidableEq, Repr
+
+/-- *maður* 'man', masculine. -/
+def madur : Noun :=
+  { form := "maður", gloss := "man", gender := .masculine,
+    naturalGender := some .masculine, human := true }
+
+/-- *kona* 'woman', feminine. -/
+def kona : Noun :=
+  { form := "kona", gloss := "woman", gender := .feminine,
+    naturalGender := some .feminine, human := true }
+
+/-- *Jón*, a man's name, masculine. -/
+def jon : Noun :=
+  { form := "Jón", gloss := "Jón", gender := .masculine,
+    naturalGender := some .masculine, human := true }
+
+/-- *skáld* 'poet', neuter whatever the sex of the poet. -/
+def skald : Noun := { form := "skáld", gloss := "poet", gender := .neuter, human := true }
+
+/-- *frægð* 'fame', feminine. -/
+def fraegd : Noun := { form := "frægð", gloss := "fame", gender := .feminine, human := false }
+
+/-- *frami* 'success', masculine. -/
+def frami : Noun := { form := "frami", gloss := "success", gender := .masculine, human := false }
+
+/-- *skeið* 'spoon', feminine. -/
+def skeid : Noun := { form := "skeið", gloss := "spoon", gender := .feminine, human := false }
+
+/-- *stóll* 'chair', masculine. -/
+def stoll : Noun := { form := "stóll", gloss := "chair", gender := .masculine, human := false }
+
+/-- *epli* 'apple', neuter. -/
+def epli : Noun := { form := "epli", gloss := "apple", gender := .neuter, human := false }
+
+/-- *drengur* 'boy', masculine. -/
+def drengur : Noun :=
+  { form := "drengur", gloss := "boy", gender := .masculine,
+    naturalGender := some .masculine, human := true }
+
+/-- *telpa* 'girl', feminine. -/
+def telpa : Noun :=
+  { form := "telpa", gloss := "girl", gender := .feminine,
+    naturalGender := some .feminine, human := true }
+
+/-- *ær* 'ewe', feminine, the *á* of [corbett-1991]'s ch. 9 (57) its accusative. -/
+def aer : Noun :=
+  { form := "ær", gloss := "ewe", gender := .feminine, naturalGender := some .feminine,
+    human := false }
+
+/-- *lamb* 'lamb', neuter. -/
+def lamb : Noun := { form := "lamb", gloss := "lamb", gender := .neuter, human := false }
+
+/-! ### Deverbal nouns -/
 
 /-- A deverbal noun, segmented. -/
 structure Deverbal where

@@ -15,6 +15,7 @@ public import Linglib.Fragments.Romanian.Gender
 public import Linglib.Fragments.Slavic.Russian.Gender
 public import Linglib.Fragments.Hausa.Gender
 public import Linglib.Fragments.Latin.Gender
+public import Linglib.Fragments.Icelandic.Nouns
 public import Linglib.Fragments.German.Determiners
 public import Linglib.Data.Examples.Corbett1991
 
@@ -69,8 +70,9 @@ never less semantic than its assignment. The judgments the book reports are the 
   fragment nouns as each language requires. Optional rules are recorded as rows. Number
   resolution is `Number.resolveIn` folded over the conjuncts, except that a coordination of
   plurals alone resolves nothing, the book's restriction that keeps gender resolution from
-  being triggered. The gender carriers of French, Lak, Slovene, Icelandic and Ojibwa are
-  declared in the study, there being no fragments for them.
+  being triggered. The gender carriers of French, Lak, Slovene and Ojibwa are declared in the
+  study, there being no fragments for them; the Icelandic rules run over the fragment's nouns,
+  as the Romanian ones do.
 * Not modelled: the psycholinguistic evidence of chapter 4, the morphology of agreement and
   its limits in chapter 5, syncretism and neutral agreement in chapter 7, the diachrony of
   chapters 8 to 10, Russian acronyms and indeclinables, Chichewa's target-gender rule for
@@ -828,16 +830,12 @@ end Slovene
 
 namespace Icelandic
 
-inductive Value where
-  | masc
-  | fem
-  | neut
-  deriving DecidableEq, Repr, Fintype
-
 /-- §9.4: homogeneous masculines or feminines keep their gender, any mixture takes the
-neuter, the semantically justified gender for beings of both sexes. -/
-def rules : List (ResolutionRule Value Value) :=
-  [⟨.all, (· = .masc), .masc⟩, ⟨.all, (· = .fem), .fem⟩, otherwise .neut]
+neuter, the semantically justified gender for beings of both sexes; the rules read the
+fragment's nouns by their gender alone. -/
+def rules : List (ResolutionRule _root_.Icelandic.Nouns.Noun _root_.Gender) :=
+  [⟨.all, (·.gender = .masculine), .masculine⟩, ⟨.all, (·.gender = .feminine), .feminine⟩,
+    otherwise .neuter]
 
 end Icelandic
 
@@ -987,9 +985,10 @@ theorem slovene_number_rows : ∀ row ∈ Examples.all, row.language = "slov1268
   decide +kernel
 
 theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = "icel1247" →
-    ∀ cs ∈ row.parse? "conjuncts" [("masc+fem", [Icelandic.Value.masc, .fem]),
-      ("fem+neut", [.fem, .neut])],
-      ∀ g ∈ row.parse? "resolved" [("neut", Icelandic.Value.neut)],
+    ∀ cs ∈ row.parse? "conjuncts"
+      [("masc+fem", [_root_.Icelandic.Nouns.drengur, _root_.Icelandic.Nouns.telpa]),
+        ("fem+neut", [_root_.Icelandic.Nouns.aer, _root_.Icelandic.Nouns.lamb])],
+      ∀ g ∈ row.parse? "resolved" [("neut", _root_.Gender.neuter)],
         (row.judgment = .acceptable ↔ resolve Icelandic.rules cs = some g) := by
   decide +kernel
 
