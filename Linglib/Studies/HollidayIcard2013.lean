@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Logic.ComparativeProbability.Patterns
 public import Linglib.Logic.ComparativeProbability.WorldOrdering
 public import Linglib.Core.Order.Probability.Completeness
 
@@ -30,12 +29,14 @@ from intuitive entailments.
 
 ## Implementation notes
 
-* The patterns, the order theory of both liftings and the measure classes are substrate; the
-  facts here bundle the paper's verdicts at its granularity. A world-ordering model carries a
-  preorder on worlds, so V2–V5 and V7, and for the m-lifting V11 and V12, follow from the
-  abstract pattern layer once a lift is registered as monotone, transitive and (for the
-  m-lifting of a finite preorder) complement-reversing; V6, V12 for the l-lifting and V13 for
-  the m-lifting use the lifts' own structure. V8–V10 are omitted, as in Figure 1.
+* The order theory of both liftings and the measure classes are substrate; Figure 1's patterns
+  and the paper's axiom schemas (`Mon`, `Tran`, `A`, `BT`, as unbundled mixin classes) are the
+  paper's own apparatus and live here. Each pattern is derived once from the weakest axioms,
+  and a model discharges it by instance resolution: the measures carry every axiom, and a
+  world-ordering model carries a preorder on worlds, so both lifts are monotone and
+  transitive and the m-lifting of a finite preorder reverses complements. V6, V12 for the
+  l-lifting and V13 for the m-lifting use the lifts' own structure. V8–V10 are omitted, as in
+  Figure 1.
 * The refutations are countermodels: the uniform measure on three worlds for the measure
   classes, and the indiscriminate world order (every world at least as good as every other) on
   two or three worlds for the liftings.
@@ -79,6 +80,207 @@ variable {W : Type*}
 private instance {α : Type*} : IsPreorder α fun _ _ ↦ True where
   refl _ := trivial
   trans _ _ _ _ _ := trivial
+
+/-! ### Figure 1: the patterns
+
+The intuitively valid (V1–V13) and invalid (I1–I3) patterns of [yalcin-2010] and Figure 1,
+stated for a likelihood relation `r` on a Boolean algebra. -/
+
+section Patterns
+
+variable {α : Type*} [BooleanAlgebra α] (r : α → α → Prop)
+
+/-- V1: `△a → ¬△aᶜ`. -/
+def patternV1 : Prop := ∀ a : α, Probably r a → ¬ Probably r aᶜ
+/-- V2: `△(a ⊓ b) → △a ∧ △b`. -/
+def patternV2 : Prop := ∀ a b : α, Probably r (a ⊓ b) → Probably r a ∧ Probably r b
+/-- V3: `△a → △(a ⊔ b)`. -/
+def patternV3 : Prop := ∀ a b : α, Probably r a → Probably r (a ⊔ b)
+/-- V4: `a ≽ ⊥`. -/
+def patternV4 : Prop := ∀ a : α, r a ⊥
+/-- V5: `⊤ ≽ a`. -/
+def patternV5 : Prop := ∀ a : α, r ⊤ a
+/-- V6: `□a → △a`, where `□a` is `⊥ ≽ aᶜ`. -/
+def patternV6 : Prop := ∀ a : α, r ⊥ aᶜ → Probably r a
+/-- V7: `△a → ◇a`. -/
+def patternV7 : Prop := ∀ a : α, Probably r a → Possibly r a
+/-- V11: `b ≽ a → △a → △b`. -/
+def patternV11 : Prop := ∀ a b : α, r b a → Probably r a → Probably r b
+/-- V12: `b ≽ a → a ≽ aᶜ → b ≽ bᶜ`. -/
+def patternV12 : Prop := ∀ a b : α, r b a → r a aᶜ → r b bᶜ
+/-- V13: `(a \ b) ≻ ⊥ → (a ⊔ b) ≻ b`. -/
+def patternV13 : Prop := ∀ a b : α, Strict r (a \ b) ⊥ → Strict r (a ⊔ b) b
+/-- I1: `a ≽ b → a ≽ c → a ≽ (b ⊔ c)`. -/
+def patternI1 : Prop := ∀ a b c : α, r a b → r a c → r a (b ⊔ c)
+/-- I2: `a ≽ aᶜ → a ≽ b`. -/
+def patternI2 : Prop := ∀ a b : α, r a aᶜ → r a b
+/-- I3: `△a → a ≽ b`. -/
+def patternI3 : Prop := ∀ a b : α, Probably r a → r a b
+
+end Patterns
+
+/-! ### The axiom schemas as mixins
+
+The paper's logics are axiom schemas over the comparative (Figures 4–6): monotonicity `Mon`,
+transitivity `Tran` (mathlib's `IsTrans`), qualitative additivity `A` and non-triviality `BT`.
+Complement reversal, `a ≽ b → bᶜ ≽ aᶜ`, is not an axiom of the paper's logics but the property
+through which `A` yields V11 and V12, and the one the m-lifting shares with the measures. Each
+is an unbundled `Prop`-class, so a pattern is proved once from the weakest axioms and every
+model discharges it by instance resolution. -/
+
+section Axioms
+
+variable {α : Type*} [BooleanAlgebra α]
+
+/-- `Mon` (monotonicity): larger events are at least as likely. -/
+class IsLikelihoodMono (r : α → α → Prop) : Prop where
+  mono : ∀ a b : α, a ≤ b → r b a
+
+/-- Complement reversal: `a ≽ b → bᶜ ≽ aᶜ`. -/
+class IsComplementReversing (r : α → α → Prop) : Prop where
+  complRev : ∀ a b : α, r a b → r bᶜ aᶜ
+
+/-- `A` (qualitative additivity): `a ≽ b ↔ (a \ b) ≽ (b \ a)`. -/
+class IsQualitativeAdditive (r : α → α → Prop) : Prop where
+  qadd : ∀ a b : α, r a b ↔ r (a \ b) (b \ a)
+
+/-- `BT` (non-triviality): `⊥` is not at least as likely as `⊤`. -/
+class IsNontrivial (r : α → α → Prop) : Prop where
+  bot_not_ge_top : ¬ r ⊥ ⊤
+
+export IsLikelihoodMono (mono)
+export IsComplementReversing (complRev)
+export IsQualitativeAdditive (qadd)
+
+/-- Qualitative additivity implies complement reversal: `bᶜ \ aᶜ = a \ b` and
+`aᶜ \ bᶜ = b \ a` turn the additivity equivalence for `bᶜ, aᶜ` into the one for `a, b`. -/
+instance (priority := 100) instComplementReversingOfQualitativeAdditive
+    {r : α → α → Prop} [h : IsQualitativeAdditive r] : IsComplementReversing r where
+  complRev a b hab := by
+    rw [h.qadd bᶜ aᶜ, compl_sdiff_compl, compl_sdiff_compl]
+    exact (h.qadd a b).mp hab
+
+variable {r : α → α → Prop}
+
+/-- V1 holds for **any** relation: it is pure logic about `Strict` and double complement. -/
+theorem patternV1_holds : patternV1 r := by
+  rintro a ⟨_, hanot⟩ ⟨hac, _⟩
+  rw [compl_compl] at hac; exact hanot hac
+
+/-- V2 from monotonicity and transitivity. -/
+theorem patternV2_of [IsLikelihoodMono r] [IsTrans α r] : patternV2 r := by
+  rintro a b ⟨hab, habnot⟩
+  have hsa : r a (a ⊓ b) := mono _ _ inf_le_left
+  have hsb : r b (a ⊓ b) := mono _ _ inf_le_right
+  have hca : r (a ⊓ b)ᶜ aᶜ := mono _ _ (compl_le_compl inf_le_left)
+  have hcb : r (a ⊓ b)ᶜ bᶜ := mono _ _ (compl_le_compl inf_le_right)
+  refine ⟨⟨Trans.trans (Trans.trans hsa hab) hca, ?_⟩,
+          ⟨Trans.trans (Trans.trans hsb hab) hcb, ?_⟩⟩
+  · exact fun hc ↦ habnot (Trans.trans (Trans.trans hca hc) hsa)
+  · exact fun hc ↦ habnot (Trans.trans (Trans.trans hcb hc) hsb)
+
+/-- V3 from monotonicity and transitivity. -/
+theorem patternV3_of [IsLikelihoodMono r] [IsTrans α r] : patternV3 r := by
+  rintro a b ⟨hA, hAnot⟩
+  have h1 : r (a ⊔ b) a := mono _ _ le_sup_left
+  have h2 : r aᶜ (aᶜ ⊓ bᶜ) := mono _ _ inf_le_left
+  refine ⟨?_, ?_⟩
+  · rw [compl_sup]; exact Trans.trans (Trans.trans h1 hA) h2
+  · rw [compl_sup]; exact fun hc ↦ hAnot (Trans.trans (Trans.trans h2 hc) h1)
+
+/-- V4 from monotonicity. -/
+theorem patternV4_of [IsLikelihoodMono r] : patternV4 r := fun _ ↦ mono _ _ bot_le
+
+/-- V5 from monotonicity. -/
+theorem patternV5_of [IsLikelihoodMono r] : patternV5 r := fun _ ↦ mono _ _ le_top
+
+/-- V6 from monotonicity, transitivity, additivity, and non-triviality. -/
+theorem patternV6_of [IsLikelihoodMono r] [IsTrans α r] [hq : IsQualitativeAdditive r]
+    [IsNontrivial r] : patternV6 r := by
+  intro a h0ac
+  have hA0 : r a ⊥ := mono _ _ bot_le
+  refine ⟨Trans.trans hA0 h0ac, ?_⟩
+  intro hAcA
+  have h0A : r ⊥ a := Trans.trans h0ac hAcA
+  have hAtop : r a ⊤ := by rw [hq.qadd a ⊤]; simpa using h0ac
+  exact IsNontrivial.bot_not_ge_top (Trans.trans h0A hAtop)
+
+/-- V7 from monotonicity and transitivity. -/
+theorem patternV7_of [IsLikelihoodMono r] [IsTrans α r] : patternV7 r := by
+  rintro a ⟨_, hAnot⟩ hempty
+  exact hAnot (IsTrans.trans aᶜ ⊥ a (mono ⊥ aᶜ bot_le) hempty)
+
+/-- V11 from transitivity and complement reversal. -/
+theorem patternV11_of [IsTrans α r] [IsComplementReversing r] : patternV11 r := by
+  rintro a b hba ⟨ha, hanot⟩
+  have h2 : r aᶜ bᶜ := complRev _ _ hba
+  refine ⟨Trans.trans (Trans.trans hba ha) h2, ?_⟩
+  exact fun hc ↦ hanot (Trans.trans (Trans.trans h2 hc) hba)
+
+/-- V12 from transitivity and complement reversal. -/
+theorem patternV12_of [IsTrans α r] [IsComplementReversing r] : patternV12 r := by
+  intro a b hba ha
+  exact Trans.trans (Trans.trans hba ha) (complRev _ _ hba)
+
+/-- V13 from monotonicity and additivity. -/
+theorem patternV13_of [IsLikelihoodMono r] [IsQualitativeAdditive r] : patternV13 r := by
+  rintro a b ⟨_, hABnot⟩
+  refine ⟨mono _ _ le_sup_right, ?_⟩
+  intro hc
+  apply hABnot
+  have hb : b \ (a ⊔ b) = ⊥ := sdiff_eq_bot_iff.mpr le_sup_right
+  have hab : (a ⊔ b) \ b = a \ b := sup_sdiff_right_self
+  have hx := (qadd b (a ⊔ b)).mp hc
+  rwa [hb, hab] at hx
+
+end Axioms
+
+/-! ### The models
+
+Every finitely and every qualitatively additive measure carries all four axioms. The lifts
+inherit transitivity from the world relation (`Core.Order.Domination`), monotonicity needs
+reflexivity, and complement reversal holds for the m-lifting of a finite preorder. -/
+
+section Models
+
+variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
+
+instance (m : FinAddMeasure K W) : IsLikelihoodMono m.inducedGe :=
+  ⟨m.toQualitativeProbability.mono'⟩
+
+instance (m : FinAddMeasure K W) : IsTrans (Set W) m.inducedGe :=
+  ⟨fun _ _ _ hab hbc ↦ m.toQualitativeProbability.trans hbc hab⟩
+
+instance (m : FinAddMeasure K W) : IsQualitativeAdditive m.inducedGe :=
+  ⟨fun A B ↦ m.toQualitativeProbability.additive B A⟩
+
+instance (m : FinAddMeasure K W) : IsNontrivial m.inducedGe :=
+  ⟨m.toQualitativeProbability.nonTrivial⟩
+
+instance (m : QualAddMeasure K W) : IsLikelihoodMono m.inducedGe :=
+  ⟨m.toQualitativeProbability.mono'⟩
+
+instance (m : QualAddMeasure K W) : IsTrans (Set W) m.inducedGe :=
+  ⟨fun _ _ _ hab hbc ↦ m.toQualitativeProbability.trans hbc hab⟩
+
+instance (m : QualAddMeasure K W) : IsQualitativeAdditive m.inducedGe :=
+  ⟨fun A B ↦ m.toQualitativeProbability.additive B A⟩
+
+instance (m : QualAddMeasure K W) : IsNontrivial m.inducedGe :=
+  ⟨m.toQualitativeProbability.nonTrivial⟩
+
+variable {ge_w : W → W → Prop}
+
+instance [Std.Refl ge_w] : IsLikelihoodMono (DominationLift ge_w) :=
+  ⟨fun _ _ h ↦ dominationLift_of_subset h⟩
+
+instance [Std.Refl ge_w] : IsLikelihoodMono (MatchingLift ge_w) :=
+  ⟨fun _ _ h ↦ matchingLift_of_subset h⟩
+
+instance [Finite W] [IsPreorder W ge_w] : IsComplementReversing (MatchingLift ge_w) :=
+  ⟨fun _ _ ↦ MatchingLift.compl⟩
+
+end Models
 
 /-! ### Fact 1: Kratzer's world-ordering semantics -/
 
