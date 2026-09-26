@@ -271,7 +271,7 @@ theorem singleRows_predicted :
   decide
 
 /-- The fragment entry named by a row's `matrixVerb` feature. -/
-def matrixVerb? (e : LinguisticExample) : Option HungarianVerbEntry :=
+def matrixVerb? (e : LinguisticExample) : Option Verb :=
   e.parse? "matrixVerb" [("lát", lat), ("hall", hall), ("álmodik", almodik), ("gondol", gondol),
     ("aggaszt", aggaszt), ("mond", mond), ("rikolt", rikolt), ("morog", morog)]
 
@@ -280,7 +280,7 @@ embeds a non-speech-reporting clause in (5) and the speech-reporting content of 
 (13), and *morog* 'growl' a non-speech-reporting reason adjunct in (9) and the speech-reporting
 content of the growl in (11): no assignment of clause types to verbs fits the rows. -/
 theorem clauseType_not_of_verb :
-    ¬ ∃ f : HungarianVerbEntry → ClauseType, ∀ e ∈ [ex_5, ex_13, ex_9, ex_11c],
+    ¬ ∃ f : Verb → ClauseType, ∀ e ∈ [ex_5, ex_13, ex_9, ex_11c],
       ∀ v ct, matrixVerb? e = some v → clauseType? e = some ct → f v = ct := by
   rintro ⟨f, hf⟩
   have h5 := hf ex_5 (by simp) hall .nonSpeechReporting rfl rfl
