@@ -122,13 +122,13 @@ theorem unary_eq_atomVar (N : M → Prop) (i : ℕ) : (unary N i : FCP W ℕ M) 
 
 /-- An indefinite is defined exactly when its card is novel. -/
 theorem admits_indef (i : ℕ) (N : M → Prop) (F : File W M) :
-    (indef i N).fcp.admits F ↔ State.Novel F i :=
+    (indef i N).fcp.Admits F ↔ State.Novel F i :=
   (FCP.admits_indef _).trans ⟨fun ⟨h, _⟩ ↦ h, fun h ↦ ⟨h, trivial⟩⟩
 
 /-- A definite is defined exactly when its card is familiar and the file
 entails its descriptive content. -/
 theorem admits_defNP (i : ℕ) (N : M → Prop) (F : File W M) :
-    (defNP i N).fcp.admits F ↔
+    (defNP i N).fcp.Admits F ↔
       State.Familiar F i ∧ (unary N i).supports F :=
   FCP.admits_def_ _
 
@@ -143,8 +143,8 @@ theorem fcp_pro (F : File W M) {i : ℕ} (h : State.Familiar F i) : (pro i).fcp 
   FCP.def_apply _ ⟨h, supports_unary_true F h⟩
 
 /-- A pronoun is defined exactly when its card is familiar. -/
-theorem admits_pro (F : File W M) (i : ℕ) : (pro i).fcp.admits F ↔ State.Familiar F i :=
-  ⟨fun ⟨h, _⟩ ↦ h.1, fun h ↦ by rw [PartialUpdate.admits, fcp_pro F h]; trivial⟩
+theorem admits_pro (F : File W M) (i : ℕ) : (pro i).fcp.Admits F ↔ State.Familiar F i :=
+  ⟨fun ⟨h, _⟩ ↦ h.1, fun h ↦ by rw [PartialUpdate.Admits, fcp_pro F h]; trivial⟩
 
 /-- The file change of an indefinite at a novel card: random assignment then
 filtering. -/
@@ -181,15 +181,15 @@ theorem subset_of_mem_fcp_every {φ₁ φ₂ : LF M} {F F' : File W M}
   exact fun _ hp ↦ hp.1
 
 theorem admits_seq_of_mem {φ ψ : LF M} {F F' : File W M} (h : F' ∈ φ.fcp F)
-    (h' : ψ.fcp.admits F') : (φ.seq ψ).fcp.admits F :=
+    (h' : ψ.fcp.Admits F') : (φ.seq ψ).fcp.Admits F :=
   Part.dom_iff_mem.mpr ⟨_, mem_fcp_seq.mpr ⟨F', h, Part.get_mem h'⟩⟩
 
 theorem admits_pro_seq {ψ : LF M} {F : File W M} {i : ℕ} (h : State.Familiar F i)
-    (h' : ψ.fcp.admits F) : ((pro i).seq ψ).fcp.admits F :=
+    (h' : ψ.fcp.Admits F) : ((pro i).seq ψ).fcp.Admits F :=
   admits_seq_of_mem (by rw [fcp_pro F h]; exact Part.mem_some F) h'
 
 theorem admits_every_of_mem {φ₁ φ₂ : LF M} {F F₁ : File W M} (h : F₁ ∈ φ₁.fcp F)
-    (h' : φ₂.fcp.admits F₁) : (every φ₁ φ₂).fcp.admits F :=
+    (h' : φ₂.fcp.Admits F₁) : (every φ₁ φ₂).fcp.Admits F :=
   Part.dom_iff_mem.mpr ⟨_, mem_fcp_every.mpr ⟨F₁, h, _, Part.get_mem h', rfl⟩⟩
 
 /-- Rule (III) is the negated conjunction `¬(φ₁ ∧ ¬φ₂)`. -/
@@ -210,7 +210,7 @@ theorem every_eq_cond (φ₁ φ₂ : LF M) :
 conditional: the restrictive term must be felicitous in the file, the nuclear
 scope in the file updated with it. -/
 theorem admits_every (φ₁ φ₂ : LF M) (F : File W M) :
-    (every φ₁ φ₂).fcp.admits F ↔ ∃ h : φ₁.fcp.admits F, φ₂.fcp.admits ((φ₁.fcp F).get h) := by
+    (every φ₁ φ₂).fcp.Admits F ↔ ∃ h : φ₁.fcp.Admits F, φ₂.fcp.Admits ((φ₁.fcp F).get h) := by
   rw [every_eq_cond]; exact FCP.admits_cond
 
 /-! ### Principle (A) of §1.2 and the cards through the rules
@@ -339,7 +339,7 @@ variable {dog cameIn layDown woman person pretzel king bit hit bought ate lunch}
 /-- (9) is felicitous whenever card 1 is novel: the indefinite's card is
 familiar for the pronoun of the next sentence. -/
 theorem admits_aDog {F : File W M} (h : State.Novel F 1) :
-    (aDog dog cameIn layDown).fcp.admits F := by
+    (aDog dog cameIn layDown).fcp.Admits F := by
   unfold aDog
   have m1 := mem_fcp_indef (F := F) (N := dog).mpr ⟨h, rfl⟩
   exact admits_seq_of_mem m1 (admits_seq_of_mem (Part.mem_some _) (admits_pro_seq
@@ -350,7 +350,7 @@ is true: `every` returns a subset of the file, at which card 1 is still novel,
 so the pronoun is undefined. -/
 theorem not_admits_everyDog {F : File W M} (h : State.Novel F 1)
     (ht : FCP.trueIn F (every (indef 1 dog) (pred₁ cameIn 1)).fcp) :
-    ¬ (everyDog dog cameIn layDown).fcp.admits F := by
+    ¬ (everyDog dog cameIn layDown).fcp.Admits F := by
   rintro ⟨hd, hrest⟩
   obtain ⟨F', hF', p, hp⟩ := ht
   obtain rfl := Part.get_eq_of_mem hF' hd
@@ -362,7 +362,7 @@ theorem not_admits_everyDog {F : File W M} (h : State.Novel F 1)
 true, for the same reason. -/
 theorem not_admits_noDog {F : File W M} (h : State.Novel F 1)
     (ht : FCP.trueIn F (neg ((indef 1 dog).seq (pred₁ cameIn 1))).fcp) :
-    ¬ (noDog dog cameIn layDown).fcp.admits F := by
+    ¬ (noDog dog cameIn layDown).fcp.Admits F := by
   rintro ⟨hd, hrest⟩
   obtain ⟨F', hF', p, hp⟩ := ht
   obtain rfl := Part.get_eq_of_mem hF' hd
@@ -374,7 +374,7 @@ theorem not_admits_noDog {F : File W M} (h : State.Novel F 1)
 file: the definites of its second sentence find their cards in the file the
 first sentence has produced. -/
 theorem admits_womanDog {F : File W M} (h1 : State.Novel F 1) (h2 : State.Novel F 2) :
-    (womanDog dog woman bit hit).fcp.admits F := by
+    (womanDog dog woman bit hit).fcp.Admits F := by
   unfold womanDog
   have m1 := mem_fcp_indef (F := F) (N := woman).mpr ⟨h1, rfl⟩
   have m2 := mem_fcp_indef (N := dog).mpr ⟨novel_of_mem (by simp [cards]) h2 m1, rfl⟩
@@ -388,7 +388,7 @@ theorem admits_womanDog {F : File W M} (h1 : State.Novel F 1) (h2 : State.Novel 
 "it₂" finds its card in the intermediate file produced by "a pretzel₂" inside
 the nuclear scope. -/
 theorem admits_pretzel {F : File W M} (h1 : State.Novel F 1) (h2 : State.Novel F 2) :
-    (pretzelText person pretzel bought ate).fcp.admits F := by
+    (pretzelText person pretzel bought ate).fcp.Admits F := by
   unfold pretzelText
   have m1 := mem_fcp_indef (F := F) (N := person).mpr ⟨h1, rfl⟩
   have m2 := mem_fcp_indef (N := pretzel).mpr ⟨novel_of_mem (by simp [cards]) h2 m1, rfl⟩

@@ -71,7 +71,7 @@ placed in the taxonomy of [tonhauser-beaver-roberts-simons-2013] here.
 
 namespace SolstadBott2024
 
-open Presupposition Presupposition.Context Presupposition.PartialProp
+open Presupposition Presupposition.PartialProp
 
 variable {W : Type*}
 
@@ -176,22 +176,22 @@ theorem andFilter_triggerFirst_presup (t : PartialProp W) (s : W → Prop) :
 /-- Under asymmetric filtering the trigger-last antecedent is filtered whenever the first
 conjunct entails the content. -/
 theorem andFilter_triggerLast_satisfied (c : Set W) {t : PartialProp W} {s : W → Prop}
-    (h : ∀ w, s w → t.presup w) : presupSatisfied c (andFilter (ofProp s) t) :=
+    (h : ∀ w, s w → t.presup w) : (andFilter (ofProp s) t).Admits c :=
   λ w _ => ⟨trivial, h w⟩
 
 /-- Under symmetric filtering the trigger-first antecedent is filtered too. -/
 theorem andSymmetric_triggerFirst_satisfied (c : Set W) {t : PartialProp W} {s : W → Prop}
-    (h : ∀ w, s w → t.presup w) : presupSatisfied c (andSymmetric t (ofProp s)) :=
+    (h : ∀ w, s w → t.presup w) : (andSymmetric t (ofProp s)).Admits c :=
   λ w _ => ⟨h w, λ _ => trivial⟩
 
 theorem andSymmetric_triggerLast_satisfied (c : Set W) {t : PartialProp W} {s : W → Prop}
-    (h : ∀ w, s w → t.presup w) : presupSatisfied c (andSymmetric (ofProp s) t) :=
+    (h : ∀ w, s w → t.presup w) : (andSymmetric (ofProp s) t).Admits c :=
   λ w _ => ⟨λ _ => trivial, h w⟩
 
 /-- Local accommodation never projects, whatever the antecedent. -/
-theorem localAccommodation_not_projects (c : Set W) (p : PartialProp W) :
-    ¬ presupProjects c (localAccommodation p) :=
-  λ h => h λ _ _ => trivial
+theorem localAccommodation_admits (c : Set W) (p : PartialProp W) :
+    (localAccommodation p).Admits c :=
+  λ _ _ => trivial
 
 /-- The three accounts on the three Experiment 3 antecedents, in an ignorance context with
 a world lacking the content and a conjunct entailing it. The trigger alone projects. Symmetric
@@ -200,16 +200,16 @@ order, levelling trigger-first with the trigger alone; local accommodation level
 Occasion verbs show the first pattern, the factive and aspectual triggers the second. -/
 theorem exp3_predictions {c : Set W} {t : PartialProp W} {s : W → Prop}
     (hc : ∃ w ∈ c, ¬ t.presup w) (h : ∀ w, s w → t.presup w) :
-    presupProjects c t ∧
-    presupSatisfied c (andSymmetric t (ofProp s)) ∧
-    presupSatisfied c (andSymmetric (ofProp s) t) ∧
-    presupProjects c (andFilter t (ofProp s)) ∧
-    presupSatisfied c (andFilter (ofProp s) t) ∧
-    ¬ presupProjects c (localAccommodation t) := by
+    ¬ t.Admits c ∧
+    (andSymmetric t (ofProp s)).Admits c ∧
+    (andSymmetric (ofProp s) t).Admits c ∧
+    ¬ (andFilter t (ofProp s)).Admits c ∧
+    (andFilter (ofProp s) t).Admits c ∧
+    (localAccommodation t).Admits c := by
   obtain ⟨w, hw, hm⟩ := hc
   refine ⟨λ hs => hm (hs hw), andSymmetric_triggerFirst_satisfied c h,
     andSymmetric_triggerLast_satisfied c h, λ hs => hm ?_,
-    andFilter_triggerLast_satisfied c h, localAccommodation_not_projects c t⟩
+    andFilter_triggerLast_satisfied c h, localAccommodation_admits c t⟩
   have := hs hw
   rwa [andFilter_triggerFirst_presup] at this
 

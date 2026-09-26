@@ -41,7 +41,7 @@ dynamic conjunction, conditional, and disjunction
 
 ## Main declarations
 
-- `PartialUpdate`, `PartialUpdate.admits`, `PartialUpdate.ofTotal`, `PartialUpdate.seq`
+- `PartialUpdate`, `PartialUpdate.Admits`, `PartialUpdate.ofTotal`, `PartialUpdate.seq`
 - `seq_eq_kleisliComp` — sequencing is Kleisli composition for `Part`:
   the partiality column of the effect view, beside `Collapse.lean`'s
   powerset column
@@ -56,7 +56,7 @@ dynamic conjunction, conditional, and disjunction
 - `CCP.Partial`, `ofPartialProp`, `neg`, `cond`, `disj` — Heim's partial CCPs
   ([heim-1983] gives CCPs for *not/and/if*; the disjunction clause with
   ¬φ local context follows [beaver-2001])
-- `admits_ofPartialProp` — admittance is `Context.presupSatisfied`
+- `admits_ofPartialProp` — admittance is `PartialProp.Admits`
 - `mem_ofPartialProp_self` — a context is a fixed point of an atomic update iff
   presupposition and assertion hold throughout it ([heim-1992]'s `c + φ = same`)
 - `admits_seq_ofPartialProp_iff`, `admits_cond_ofPartialProp_iff`,
@@ -86,15 +86,15 @@ namespace PartialUpdate
 
 variable {α : Type*} {φ ψ χ : PartialUpdate α} {s : α}
 
-/-- `u.admits s`: the update is defined at `s` ([heim-1983]'s "s admits u",
+/-- `u.Admits s`: the update is defined at `s` ([heim-1983]'s "s admits u",
     [karttunen-1974-presupposition]'s satisfaction). This is `Part.Dom`. -/
-def admits (u : PartialUpdate α) (s : α) : Prop := (u s).Dom
+def Admits (u : PartialUpdate α) (s : α) : Prop := (u s).Dom
 
 /-- Total updates are partial updates with trivial presupposition. -/
 def ofTotal (φ : α → α) : PartialUpdate α := fun s => Part.some (φ s)
 
 @[simp] theorem admits_ofTotal (φ : α → α) (s : α) :
-    (ofTotal φ).admits s := trivial
+    (ofTotal φ).Admits s := trivial
 
 /-- Sequencing (dynamic conjunction): `s[φ ∧ ψ] = s[φ][ψ]`. This is
     `PFun.comp`; the projection behavior of conjunction is the
@@ -172,13 +172,13 @@ theorem entails_bind_iff : Entails [(· >>= φ)] (· >>= ψ) ↔ ∀ s, ∀ s' �
     `s` admits `φ ∧ ψ` iff `s` admits `φ` and `s[φ]` admits `ψ`. The
     statement is the domain condition of `Part.bind`. -/
 theorem admits_seq (φ ψ : PartialUpdate α) (s : α) :
-    (seq φ ψ).admits s ↔ ∃ h : φ.admits s, ψ.admits ((φ s).get h) :=
+    (seq φ ψ).Admits s ↔ ∃ h : φ.Admits s, ψ.Admits ((φ s).get h) :=
   Iff.rfl
 
 /-- The satisfaction law, with admittance of the first conjunct given. -/
 theorem admits_seq_iff (φ ψ : PartialUpdate α) (s : α)
-    (h : φ.admits s) :
-    (seq φ ψ).admits s ↔ ψ.admits ((φ s).get h) :=
+    (h : φ.Admits s) :
+    (seq φ ψ).Admits s ↔ ψ.Admits ((φ s).get h) :=
   ⟨fun ⟨_, hb⟩ => hb, fun hb => ⟨h, hb⟩⟩
 
 end PartialUpdate
@@ -197,7 +197,7 @@ variable {P W : Type*} {φ ψ χ : CCP.Partial P} {s : Set P}
 
 /-- The Heimian update of a static partial proposition: defined iff the
     context globally satisfies the presupposition
-    (`Context.presupSatisfied`), updating by intersecting with the
+    (`PartialProp.Admits`), updating by intersecting with the
     assertion.
 
     The whole-state domain condition is what separates admittance from
@@ -205,7 +205,7 @@ variable {P W : Type*} {φ ψ χ : CCP.Partial P} {s : Set P}
     presupposition-failing world admits nothing, rather than silently
     discarding the world. -/
 def ofPartialProp (p : PartialProp W) : CCP.Partial W :=
-  fun s => ⟨Context.presupSatisfied s p, fun _ => { w ∈ s | p.assertion w }⟩
+  fun s => ⟨p.Admits s, fun _ => { w ∈ s | p.assertion w }⟩
 
 @[simp] theorem ofPartialProp_get (p : PartialProp W) (s : Set W)
     (h : ((ofPartialProp p) s).Dom) :
@@ -250,31 +250,31 @@ theorem isEliminative_cond (φ ψ : CCP.Partial P) : (cond φ ψ).IsEliminative 
 
 /-- Negation projects: `s` admits `¬φ` iff `s` admits `φ`. -/
 @[simp] theorem admits_neg (φ : CCP.Partial P) (s : Set P) :
-    (neg φ).admits s ↔ φ.admits s :=
+    (neg φ).Admits s ↔ φ.Admits s :=
   Iff.rfl
 
 /-- Conditional admittance: `s` admits `if φ, ψ` iff `s` admits `φ` and
     `s[φ]` admits `ψ` — the same condition as conjunction
     ([karttunen-1974-presupposition]). -/
 theorem admits_cond (φ ψ : CCP.Partial P) (s : Set P) :
-    (cond φ ψ).admits s ↔ ∃ h : φ.admits s, ψ.admits ((φ s).get h) :=
+    (cond φ ψ).Admits s ↔ ∃ h : φ.Admits s, ψ.Admits ((φ s).get h) :=
   Iff.rfl
 
 /-- Disjunction admittance: `s` admits `φ ∨ ψ` iff `s` admits `φ` and the
     ¬φ local context `s \ s[φ]` admits `ψ`. -/
 theorem admits_disj (φ ψ : CCP.Partial P) (s : Set P) :
-    (disj φ ψ).admits s ↔
-      ∃ h : φ.admits s, ψ.admits (s \ (φ s).get h) :=
+    (disj φ ψ).Admits s ↔
+      ∃ h : φ.Admits s, ψ.Admits (s \ (φ s).get h) :=
   Iff.rfl
 
 /-! ### The Stalnaker bridge -/
 
 /-- Admittance of an atomic update is the static layer's
-    `Context.presupSatisfied`, by construction: the dynamic definedness
+    `PartialProp.Admits`, by construction: the dynamic definedness
     condition and the satisfaction-theoretic context condition are one
     notion. -/
 theorem admits_ofPartialProp (p : PartialProp W) (s : Set W) :
-    (ofPartialProp p).admits s ↔ Context.presupSatisfied s p :=
+    (ofPartialProp p).Admits s ↔ p.Admits s :=
   Iff.rfl
 
 /-! ### Local contexts
@@ -288,47 +288,47 @@ open Presupposition (Connective)
 /-- Dynamic conjunction admits `s` iff `s` admits the first conjunct and the second conjunct's
 local context admits the second. -/
 theorem admits_seq_ofPartialProp_iff (p : PartialProp W) (ψ : CCP.Partial W) (s : Set W) :
-    (PartialUpdate.seq (ofPartialProp p) ψ).admits s ↔
-      Context.presupSatisfied s p ∧ ψ.admits (Connective.conj.localContext s p.assertion) :=
+    (PartialUpdate.seq (ofPartialProp p) ψ).Admits s ↔
+      p.Admits s ∧ ψ.Admits (Connective.conj.localContext s p.assertion) :=
   ⟨fun ⟨h, hψ⟩ ↦ ⟨h, hψ⟩, fun ⟨h, hψ⟩ ↦ ⟨h, hψ⟩⟩
 
 /-- The conditional admits `s` iff `s` admits the antecedent and the consequent's local context
 admits the consequent. -/
 theorem admits_cond_ofPartialProp_iff (p : PartialProp W) (ψ : CCP.Partial W) (s : Set W) :
-    (cond (ofPartialProp p) ψ).admits s ↔
-      Context.presupSatisfied s p ∧ ψ.admits (Connective.cond.localContext s p.assertion) :=
+    (cond (ofPartialProp p) ψ).Admits s ↔
+      p.Admits s ∧ ψ.Admits (Connective.cond.localContext s p.assertion) :=
   admits_seq_ofPartialProp_iff p ψ s
 
 /-- Disjunction admits `s` iff `s` admits the first disjunct and the second disjunct's local
 context admits the second. -/
 theorem admits_disj_ofPartialProp_iff (p : PartialProp W) (ψ : CCP.Partial W) (s : Set W) :
-    (disj (ofPartialProp p) ψ).admits s ↔
-      Context.presupSatisfied s p ∧ ψ.admits (Connective.disj.localContext s p.assertion) := by
+    (disj (ofPartialProp p) ψ).Admits s ↔
+      p.Admits s ∧ ψ.Admits (Connective.disj.localContext s p.assertion) := by
   have e : s \ {w ∈ s | p.assertion w} = Connective.disj.localContext s p.assertion :=
     Set.ext fun _ ↦ ⟨fun ⟨hs, hn⟩ ↦ ⟨hs, fun ha ↦ hn ⟨hs, ha⟩⟩, fun ⟨hs, hn⟩ ↦ ⟨hs, fun h ↦ hn h.2⟩⟩
   refine ⟨fun ⟨h, hψ⟩ ↦ ⟨h, ?_⟩, fun ⟨h, hψ⟩ ↦ ⟨h, ?_⟩⟩
   · rw [← e]; exact hψ
-  · change ψ.admits (s \ {w ∈ s | p.assertion w}); rw [e]; exact hψ
+  · change ψ.Admits (s \ {w ∈ s | p.assertion w}); rw [e]; exact hψ
 
 /-! ### Filtering connectives, derived
 
 Under `ofPartialProp`, the admittance conditions of the dynamic
 connectives are pointwise exactly the presuppositions of the *filtering*
 connectives of `Presupposition/Basic.lean`: both are satisfaction in the local contexts
-(`PartialProp.presupSatisfied_andFilter` and its siblings), so Karttunen filtering is the
+(`PartialProp.admits_andFilter` and its siblings), so Karttunen filtering is the
 composition law of partial updates, not a stipulation. -/
 
 /-- Dynamic conjunction admits `s` iff `s` satisfies `andFilter`'s
     presupposition pointwise. -/
 theorem admits_seq_ofPartialProp (p q : PartialProp W) (s : Set W) :
-    (PartialUpdate.seq (ofPartialProp p) (ofPartialProp q)).admits s ↔
+    (PartialUpdate.seq (ofPartialProp p) (ofPartialProp q)).Admits s ↔
       ∀ w ∈ s, (PartialProp.andFilter p q).presup w :=
-  (admits_seq_ofPartialProp_iff p _ s).trans PartialProp.presupSatisfied_andFilter.symm
+  (admits_seq_ofPartialProp_iff p _ s).trans PartialProp.admits_andFilter.symm
 
 /-- Dynamic conditional admits `s` iff `s` satisfies `impFilter`'s
     presupposition pointwise. -/
 theorem admits_cond_ofPartialProp (p q : PartialProp W) (s : Set W) :
-    (cond (ofPartialProp p) (ofPartialProp q)).admits s ↔
+    (cond (ofPartialProp p) (ofPartialProp q)).Admits s ↔
       ∀ w ∈ s, (PartialProp.impFilter p q).presup w :=
   admits_seq_ofPartialProp p q s
 
@@ -336,13 +336,13 @@ theorem admits_cond_ofPartialProp (p q : PartialProp W) (s : Set W) :
     presupposition pointwise: the ¬φ local context is Karttunen's
     negative-antecedent filtering. -/
 theorem admits_disj_ofPartialProp (p q : PartialProp W) (s : Set W) :
-    (disj (ofPartialProp p) (ofPartialProp q)).admits s ↔
+    (disj (ofPartialProp p) (ofPartialProp q)).Admits s ↔
       ∀ w ∈ s, (PartialProp.orFilter p q).presup w :=
-  (admits_disj_ofPartialProp_iff p _ s).trans PartialProp.presupSatisfied_orFilter.symm
+  (admits_disj_ofPartialProp_iff p _ s).trans PartialProp.admits_orFilter.symm
 
 /-- Negation projects the atomic presupposition unchanged. -/
 theorem admits_neg_ofPartialProp (p : PartialProp W) (s : Set W) :
-    (neg (ofPartialProp p)).admits s ↔ ∀ w ∈ s, p.presup w :=
+    (neg (ofPartialProp p)).Admits s ↔ ∀ w ∈ s, p.presup w :=
   Iff.rfl
 
 end CCP.Partial

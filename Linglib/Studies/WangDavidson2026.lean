@@ -169,9 +169,9 @@ def xorCCPs : List (CCP.Partial W) :=
    diff (chain true β true α) (chain false β false α)]
 
 /-- A presupposition satisfied on `C[α]` and on `C[¬α]` is satisfied on `C`. -/
-theorem presupSatisfied_of_split (h₁ : Context.presupSatisfied {w ∈ s | α.assertion w} β)
-    (h₂ : Context.presupSatisfied (s \ {w ∈ s | α.assertion w}) β) :
-    Context.presupSatisfied s β := λ w hw => by
+theorem admits_of_split (h₁ : β.Admits {w ∈ s | α.assertion w})
+    (h₂ : β.Admits (s \ {w ∈ s | α.assertion w})) :
+    β.Admits s := λ w hw => by
   by_cases ha : α.assertion w
   · exact h₁ ⟨hw, ha⟩
   · exact h₂ ⟨hw, λ h => ha h.2⟩
@@ -179,24 +179,24 @@ theorem presupSatisfied_of_split (h₁ : Context.presupSatisfied {w ∈ s | α.a
 /-- Every context change potential for exclusive disjunction is admitted only by a context
 satisfying both presuppositions: no filtering. -/
 theorem xorCCPs_admits :
-    ∀ u ∈ xorCCPs α β, u.admits s →
-      Context.presupSatisfied s α ∧ Context.presupSatisfied s β := by
+    ∀ u ∈ xorCCPs α β, u.Admits s →
+      α.Admits s ∧ β.Admits s := by
   simp only [xorCCPs, List.mem_cons, List.mem_nil_iff, or_false]
   rintro u (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl) ⟨⟨h₁, h₂⟩, ⟨h₃, h₄⟩⟩
   · exact ⟨h₁, h₃⟩
   · exact ⟨h₁, h₃⟩
-  · exact ⟨h₁, presupSatisfied_of_split α β h₂ h₄⟩
-  · exact ⟨presupSatisfied_of_split β α h₂ h₄, h₁⟩
+  · exact ⟨h₁, admits_of_split α β h₂ h₄⟩
+  · exact ⟨admits_of_split β α h₂ h₄, h₁⟩
   · exact ⟨h₁, h₃⟩
   · exact ⟨h₁, h₃⟩
-  · exact ⟨h₁, presupSatisfied_of_split α β h₂ h₄⟩
-  · exact ⟨presupSatisfied_of_split β α h₂ h₄, h₁⟩
+  · exact ⟨h₁, admits_of_split α β h₂ h₄⟩
+  · exact ⟨admits_of_split β α h₂ h₄, h₁⟩
 
 /-- Inclusive dynamic disjunction, by contrast, filters: a context can admit `α ∨ β` without
 satisfying `β`'s presupposition. -/
-theorem exists_disj_admits_not_presupSatisfied :
-    ∃ (α β : PartialProp Bool), (disj (ofPartialProp α) (ofPartialProp β)).admits Set.univ ∧
-      ¬ Context.presupSatisfied Set.univ β := by
+theorem exists_disj_admits_not_admits :
+    ∃ (α β : PartialProp Bool), (disj (ofPartialProp α) (ofPartialProp β)).Admits Set.univ ∧
+      ¬ β.Admits Set.univ := by
   refine ⟨{ presup := λ _ => True, assertion := (· = true) },
     { presup := (· = false), assertion := λ _ => True }, ⟨λ _ _ => trivial, ?_⟩, ?_⟩
   · rintro (_ | _) hw

@@ -33,7 +33,7 @@ place it in class A, while classes B, C and D are populated.
 
 A context is a set of worlds and a content a proposition, the paper's own characterization,
 and acceptability is a predicate on contexts that the diagnostics take as given. Local
-satisfaction is the substrate's `Context.presupSatisfied` at the matrix and
+satisfaction is the substrate's `PartialProp.Admits` at the matrix and
 `BeliefEmbedding.presupAttributedToHolder`, [schlenker-2009]'s local context under belief.
 Projection, (21), and its family-of-sentences diagnostic, (24), which tests acceptability
 across contexts for triggers with the constraint, after [matthewson-2004], and implication in
@@ -60,7 +60,7 @@ reported in prose. The examples are the rows of `Data.Examples.TonhauserEtAl2013
 
 namespace TonhauserEtAl2013
 
-open Presupposition Presupposition.Context Presupposition.BeliefEmbedding
+open Presupposition Presupposition.BeliefEmbedding
 
 /-! ### The taxonomy (Table 1) -/
 
@@ -148,7 +148,7 @@ variable (p : PartialProp W) (Dox : E → W → W → Prop) (a : E)
 
 /-- A trigger acceptable exactly where its local context entails its presupposition imposes
 the strong contextual felicity constraint. -/
-theorem scf_of_satisfaction : StrongContextualFelicity p.presup (presupSatisfied · p) :=
+theorem scf_of_satisfaction : StrongContextualFelicity p.presup (p.Admits ·) :=
   λ _ h => h
 
 /-- Under belief, local satisfaction is satisfaction in the holder's belief state, so the
