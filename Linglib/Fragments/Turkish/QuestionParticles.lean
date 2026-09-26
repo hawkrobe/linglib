@@ -1,20 +1,22 @@
 module
 
-public import Linglib.Semantics.Polarity.Operator
+public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # Turkish question particles
 
-Turkish polar questions carry the clitic *=mI*, with the vowel-harmony allomorphs *mı*, *mi*,
-*mu* and *mü*. It attaches to the focused constituent, by default rightmost, and contributes no
-propositional content beyond marking question force and focus, so its denotation is the
-identity `Polarity.affirm`, [atlamaz-2023], [turk-hirsch-2026]. The entry records the lexical
-primitives only; the syntactic category and head position the analyses assume live in the
-studies that adopt them.
+Turkish forms yes/no questions and alternative questions with the clitic *mI*, written as a
+separate word and harmonizing with the preceding vowel as *mı*, *mi*, *mu* or *mü*
+([goksel-kerslake-2005] §11.1, §11.1.1.5). It attaches to the predicate when the whole
+proposition is questioned and can instead attach to a subject, object or adverbial (§19.1.1,
+§19.1.3); in an alternative question it follows each alternative (§19.1.2). It is obligatory
+in polar questions ([turk-hirsch-2026]). Indirect alternative questions keep *mI* after each
+alternative, while indirect yes/no questions are formed with the -(y)Ip…-mA construction
+instead (§24.4.3.2).
 
 ## References
 
-* [atlamaz-2023]
+* [goksel-kerslake-2005]
 * [turk-hirsch-2026]
 -/
 
@@ -22,19 +24,14 @@ studies that adopt them.
 
 namespace Turkish.QuestionParticles
 
-open Polarity
-
-/-- A Turkish question particle has a citation form, its vowel-harmony allomorphs, and the
-operator on propositions it contributes, polymorphic in the world type. -/
-structure TurkishQParticle where
-  form : String
-  allomorphs : List String
-  denotation : ∀ {W : Type}, (W → Prop) → (W → Prop)
-
-/-- *=mI*, the polar question particle, semantically the identity. -/
-def mi : TurkishQParticle where
+/-- *mI*, the enclitic that forms yes/no and alternative questions. -/
+def mi : Particle where
   form := "mI"
-  allomorphs := ["mı", "mi", "mu", "mü"]
-  denotation := affirm _
+  position := some .postHost
+  distribution
+    | .polar, .matrix => some .obligatory
+    | .alternative, .matrix => some .obligatory
+    | .alternative, .subordinated => some .obligatory
+    | _, _ => none
 
 end Turkish.QuestionParticles

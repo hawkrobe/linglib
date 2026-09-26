@@ -6,6 +6,7 @@ public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Semantics.Questions.Exhaustivity
 public import Linglib.Semantics.Questions.Hamblin
 public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Fragments.Turkish.QuestionParticles
 public import Linglib.Data.Examples.TurkHirsch2026
 
@@ -41,14 +42,16 @@ without any bound, `Alternatives.hamblin_alternatives_subset`.
 
 ## Implementation notes
 
-Propositions are sets of worlds, the deontic modal is `Modality.necessity` over a modal
-base and an ordering source, and the lexicon is a finite set of terminals of `Syntax.Tree`, so
-that category match is the terminal clause of `Alternatives.hamblin`; the denotation of a tree
-is its terminal's operator and the identity elsewhere. Two-dimensional values are
-`WithAlternatives`, whose `<*>` is pointwise functional application. The embedding data, (14) and
-(18), in which *=mI* below the complementizer *diye* yields a declarative matrix clause and
-*=mI* above it a matrix question, so that *=mI* tracks the highest focus mark, are recorded as
-rows and not modelled. The examples are the rows of `Data.Examples.TurkHirsch2026`.
+Propositions are sets of worlds. Σ and NEG are the positive and the negative `Polarity`, and
+denote its action on propositions, the identity and complementation. The deontic modal is
+`Modality.necessity` over a modal base and an ordering source. The lexicon is a finite set of
+terminals of `Syntax.Tree`, so that category match is the terminal clause of
+`Alternatives.hamblin`; the denotation of a tree is its terminal's operator and the identity
+elsewhere. Two-dimensional values are `WithAlternatives`, whose `<*>` is pointwise functional
+application. *=mI* itself is vacuous and does not enter the composition. The embedding data,
+(14) and (18), in which *=mI* below the complementizer *diye* yields a declarative matrix clause
+and *=mI* above it a matrix question, so that *=mI* tracks the highest focus mark, are recorded
+as rows and not modelled. The examples are the rows of `Data.Examples.TurkHirsch2026`.
 
 ## References
 
@@ -78,21 +81,21 @@ inductive Cat where
   | modal
   deriving DecidableEq, Repr
 
-/-- The propositional operators of the lexicon. -/
+/-- The propositional operators of the lexicon: the polarity heads, Σ the positive and NEG the
+negative, and the deontic modal. -/
 inductive Word where
-  | sigma
-  | neg
+  | polarity (s : Polarity)
   | deontic
   deriving DecidableEq, Repr
 
 variable {W : Type} (f : ModalBase W) (g : OrderingSource W)
 
-/-- The operator a word denotes: Σ the identity, NEG complementation, and the deontic modal
-necessity over the modal base and ordering source. -/
+/-- The operator a word denotes: a polarity head acts on propositions, so that Σ is the identity
+and NEG complementation, and the deontic modal is necessity over the modal base and ordering
+source. -/
 def Word.den : Word → Set W → Set W
-  | .sigma => id
-  | .neg => compl
-  | .deontic => λ p => {w | necessity f g (· ∈ p) w}
+  | .polarity s => (s • ·)
+  | .deontic => fun p ↦ {w | necessity f g (· ∈ p) w}
 
 /-- The operator a tree denotes: its terminal's operator, and the identity elsewhere. -/
 def den : Tree Cat Word → Set W → Set W
@@ -102,10 +105,11 @@ def den : Tree Cat Word → Set W → Set W
 /-- (44): the lexicon of propositional operators, Σ and NEG of category Pol and the deontic modal
 of its own category. -/
 def lexicon : Finset (Tree Cat Word) :=
-  {.terminal .pol .sigma, .terminal .pol .neg, .terminal .modal .deontic}
+  {.terminal .pol (.polarity .positive), .terminal .pol (.polarity .negative),
+    .terminal .modal .deontic}
 
 /-- The focused polarity head Σ_F. -/
-def sigma : Tree Cat Word := .terminal .pol .sigma
+def sigma : Tree Cat Word := .terminal .pol (.polarity .positive)
 
 /-! ### Composing the question
 
@@ -134,14 +138,14 @@ def hamblinType (p : Set W) : Set (Set W) := hamblinSet (WithAlternatives.focuse
 
 /-- (28): the type-theoretic Hamblin set is every proposition. -/
 theorem hamblinType_eq_univ (p : Set W) : hamblinType p = Set.univ :=
-  Set.eq_univ_of_forall λ q => mem_hamblinSet.2 ⟨λ _ => q, Set.mem_univ _, rfl⟩
+  Set.eq_univ_of_forall fun q ↦ mem_hamblinSet.2 ⟨fun _ ↦ q, Set.mem_univ _, rfl⟩
 
 /-- Under type-theoretic alternatives the complete answer at `w` is total information about
 `w`: the responder must supply every true proposition. -/
 theorem isStrongestTrueAnswer_hamblinType (p : Set W) (w : W) :
     IsStrongestTrueAnswer (hamblinType p) w {w} := by
   rw [hamblinType_eq_univ]
-  exact ⟨⟨Set.mem_univ _, rfl⟩, λ _ hq => Set.singleton_subset_iff.2 hq.2⟩
+  exact ⟨⟨Set.mem_univ _, rfl⟩, fun _ hq ↦ Set.singleton_subset_iff.2 hq.2⟩
 
 /-- (31): the sample of the Hamblin set with the deontic propositions. -/
 def sample (p : Set W) : Set (Set W) :=
@@ -180,19 +184,10 @@ value is the interpretation of `Alternatives.hamblin`. -/
 def sigmaCat : WithAlternatives (Set W → Set W) := den f g <$> hamblin lexicon sigma
 
 /-- (45): the category-match alternatives of Σ_F are Σ and NEG. -/
-theorem hamblin_sigma : (hamblin lexicon sigma).alternatives = {sigma, .terminal .pol .neg} := by
+theorem hamblin_sigma :
+    (hamblin lexicon sigma).alternatives = {sigma, .terminal .pol (.polarity .negative)} := by
   ext ψ
-  simp only [hamblin, sigma, lexicon, Set.mem_insert_iff, Set.mem_ofPred_eq, Finset.mem_insert,
-    Finset.mem_singleton, Set.mem_singleton_iff]
-  constructor
-  · rintro (rfl | ⟨rfl | rfl | rfl, hc⟩)
-    · exact Or.inl rfl
-    · exact Or.inl rfl
-    · exact Or.inr rfl
-    · exact absurd hc (by decide)
-  · rintro (rfl | rfl)
-    · exact Or.inl rfl
-    · exact Or.inr ⟨by simp, rfl⟩
+  grind [hamblin, sigma, lexicon, Tree.cat]
 
 /-- The Hamblin set under category match. -/
 def hamblinCat (p : Set W) : Set (Set W) := hamblinSet (sigmaCat f g) p
@@ -220,23 +215,16 @@ theorem isStrongestTrueAnswer_hamblinCat {p : Set W} {w : W} (hw : w ∈ p) :
     IsStrongestTrueAnswer (hamblinCat f g p) w p := by
   rw [hamblinCat_eq]
   refine ⟨⟨Set.mem_insert _ _, hw⟩, ?_⟩
-  rintro q ⟨hq, hwq⟩
-  rcases hq with rfl | rfl
-  · exact le_rfl
-  · exact absurd hw hwq
+  rintro q ⟨rfl | rfl, hwq⟩ <;> [exact le_rfl; exact absurd hw hwq]
 
 /-- And the negative answer when the positive one is false. -/
 theorem isStrongestTrueAnswer_hamblinCat_compl {p : Set W} {w : W} (hw : w ∉ p) :
     IsStrongestTrueAnswer (hamblinCat f g p) w pᶜ := by
   rw [hamblinCat_eq]
   refine ⟨⟨Set.mem_insert_of_mem _ rfl, hw⟩, ?_⟩
-  rintro q ⟨hq, hwq⟩
-  rcases hq with rfl | rfl
-  · exact absurd hwq hw
-  · exact le_rfl
+  rintro q ⟨rfl | rfl, hwq⟩ <;> [exact absurd hwq hw; exact le_rfl]
 
-/-- *=mI* is vacuous: the fragment's entry is the identity, the ordinary value of Σ. -/
-theorem mi_denotation_eq {V : Type} (p : V → Prop) :
-    Turkish.QuestionParticles.mi.denotation p = p := rfl
+/-- *=mI* is obligatory in polar questions such as (4), as the fragment records. -/
+example : Turkish.QuestionParticles.mi.distribution .polar .matrix = some .obligatory := rfl
 
 end TurkHirsch2026
