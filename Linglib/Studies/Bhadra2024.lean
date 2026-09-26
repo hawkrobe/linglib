@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Set.Subsingleton
 public import Linglib.Semantics.ArgumentStructure.Affectedness
-public import Linglib.Semantics.ArgumentStructure.EventStructure
+public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Linglib.Semantics.ArgumentStructure.ThematicRole
 public import Linglib.Semantics.Events.Basic
 

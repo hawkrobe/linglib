@@ -445,7 +445,7 @@ the canonical realization of Rappaport Hovav and Levin. The book does not adopt 
 templates are used below only to state its hypothesis about the causative alternation. -/
 
 theorem flat_template : flat.template = .state := by decide
-theorem jog_template : jog.template = .activity := by decide
+theorem jog_template : jog.template = .act := by decide
 theorem blossom_template : blossom.template = .achievement := by decide
 theorem crack_template : crack.template = .accomplishment := by decide
 

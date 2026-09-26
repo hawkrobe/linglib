@@ -26,9 +26,9 @@ passives or by the CAUSE-less representation of internally caused verbs like *em
 The paper's second claim concerns the Monotonicity Hypothesis, that word formation
 operations never remove operators from lexical semantic representations. On the event
 templates of `ArgumentStructure.EventStructure`, the inchoativization rule of [grimshaw-1982]
-is `Template.intransitiveVariant`, which strips CAUSE from an accomplishment and so violates
-the hypothesis, whereas reflexivization identifies two argument positions and leaves the
-template intact.
+keeps the caused subevent of a causative, `Template.caused`, and so removes its CAUSE and
+violates the hypothesis, whereas reflexivization identifies two argument positions and leaves
+the template intact.
 
 ## Implementation notes
 
@@ -203,30 +203,29 @@ theorem not_licensesBySelf_inchoative :
 
 /-! ### The Monotonicity Hypothesis -/
 
-/-- The Monotonicity Hypothesis holds of a word formation operation on event templates when the
-output keeps CAUSE and BECOME wherever the input has them. -/
+/-- The Monotonicity Hypothesis (8) holds of a word formation operation on event templates when
+the output keeps every kind of operator the input has. -/
 def MonotonicityHypothesis (f : Template → Option Template) : Prop :=
-  ∀ t t', f t = some t' → (t.HasCause → t'.HasCause) ∧ (t.HasResultState → t'.HasResultState)
+  ∀ t t', f t = some t' → t.kinds ⊆ t'.kinds
 
-/-- The inchoativization rule of [grimshaw-1982] ((95)) is `Template.intransitiveVariant`,
-which strips CAUSE from an accomplishment; it violates the hypothesis. -/
-theorem not_monotonicityHypothesis_intransitiveVariant :
-    ¬ MonotonicityHypothesis Template.intransitiveVariant :=
-  fun h ↦ (h .accomplishment .achievement rfl).1 trivial
+/-- The inchoativization rule of [grimshaw-1982] ((95)) keeps the caused subevent, stripping
+CAUSE and the causing subevent from an accomplishment; it violates the hypothesis. -/
+theorem not_monotonicityHypothesis_caused : ¬ MonotonicityHypothesis Template.caused :=
+  fun h ↦ absurd (h .accomplishment .achievement rfl) (by decide)
 
-/-- Reflexivization on templates identifies the external-causer position with the undergoer,
-so it applies exactly to templates with that position and changes no operator. -/
+/-- Reflexivization on templates identifies the causer with the undergoer, so it applies
+exactly to templates with CAUSE and changes no operator. -/
 def reflexivizeTemplate (t : Template) : Option Template :=
-  if t.HasExternalCauser then some t else none
+  if t.HasCause then some t else none
 
 /-- Anticausativization as reflexivization satisfies the hypothesis. -/
 theorem monotonicityHypothesis_reflexivizeTemplate :
     MonotonicityHypothesis reflexivizeTemplate := by
   intro t t' h
   unfold reflexivizeTemplate at h
-  split at h
-  · cases h; exact ⟨id, id⟩
-  · exact absurd h (by simp)
+  split_ifs at h
+  cases h
+  exact Finset.Subset.refl _
 
 /-! ### Spanish verbs -/
 

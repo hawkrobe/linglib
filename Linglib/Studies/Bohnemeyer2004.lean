@@ -31,20 +31,21 @@ are recorded here.
 
 ## Main definitions
 
-* `Verb`, `stemEventType`, `stemTemplate` — the fragment's verbs with the paper's causation
-  type, and the event type and template of each stem class (§5)
+* `Verb`, `CausationType`, `stemTemplate` — the fragment's verbs with the paper's causation
+  type, and the event-structure template of each stem class (§5)
 * `Subevent`, `Subevent.causalGraph`, `linkingDefault`, `sMarkerFromViewpoint` — the thematic
   hierarchy of (31) as causal precedence along the CAUSE edge, the linking-by-viewpoint rule of
   (32), and the linking of (33)
 * `applicativeLinking`, `causativeLinking`, `verbLinking`, `addedTermRole` — the two
   transitivizations as `Voice`s, and the role their added participant takes
 * `TransitivizerSuffix`, `transitivizerSuffix` — the overt suffix, kept apart from the linking
-* `DetransitivizationType` — the antipassive, anticausative and passive of (28)–(30)
+* `DetransitivizationType`, `DetransitivizationType.template` — the antipassive, anticausative
+  and passive of (28)–(30), and the subevent each denotes
 
 ## Main results
 
 * `linking_derives_completive`, `linking_derives_incompletive` — the split follows from (31)–(33)
-* `causation_determines_linking` against `eventType_underdetermines_linking`,
+* `causation_determines_linking` against `template_underdetermines_linking`,
   `stemClass_underdetermines_linking`, `suffix_underdetermines_linking` — what fixes the linking
   and what does not
 * `linking_patterns_swap_roles`, `linking_markers` — the two alternations are mirror images, read
@@ -72,32 +73,30 @@ open Yukatek (sArgumentMarker VerbStemClass)
 
 /-! ### The verbs and their event structure
 
-The stem classes are the fragment's. The paper reads each class as an event type (§5), the
-actives as processes and the inactive, inchoative and positional classes as state changes,
-degree achievements included, and classifies each documented intransitive base by whether it
-entails internal causation (§6). -/
-
-/-- The event type of a stem class is a process for active stems and a state change for the
-rest. -/
-def stemEventType : VerbStemClass → EventType
-  | .active => .process
-  | .inactive | .inchoative | .positional | .transitiveActive => .stateChange
+The stem classes are the fragment's. The paper reads the active stems as processes and the
+inactive, inchoative and positional stems as state changes, degree achievements included (§5),
+so the template of an intransitive stem class has `BECOME` exactly when the class is one of
+state change. Each documented intransitive base is classified by whether it entails internal
+causation (§6). -/
 
 /-- The event-structure template of a stem class, the activity for actives, the achievement for
 the three state-change classes and the accomplishment for transitives. -/
 def stemTemplate : VerbStemClass → Template
-  | .active => .activity
+  | .active => .act
   | .inactive | .inchoative | .positional => .achievement
   | .transitiveActive => .accomplishment
 
-/-- The template of a stem class has the class's event type. -/
-theorem stemEventType_eq (c : VerbStemClass) : stemEventType c = (stemTemplate c).eventType := by
-  cases c <;> rfl
+/-- Whether an event is internally caused in the sense of [levin-hovav-1995], brought about by
+its instigator, a participant of the first event of a causal chain (§2). -/
+inductive CausationType where
+  | internal
+  | external
+  deriving DecidableEq, Repr
 
 /-- A verb of the paper's examples with the causation type of its intransitive base. -/
 structure Verb extends Yukatek.Verb where
   /-- Whether the base entails internal causation. -/
-  causationType : InternalExternalCause
+  causationType : CausationType
   deriving DecidableEq, Repr
 
 /-- *meyah* 'work', internally caused. -/
@@ -273,7 +272,7 @@ base's S surfacing as P: the causative unchanged. -/
 def causativeLinking : Voice := causative
 
 /-- The causation type of the intransitive base selects the alternation (rules 26–27). -/
-def predictLinking : InternalExternalCause → Voice
+def predictLinking : CausationType → Voice
   | .internal => applicativeLinking
   | .external => causativeLinking
 
@@ -351,10 +350,11 @@ theorem causation_determines_linking (v w : Verb)
     (h : v.causationType = w.causationType) : verbLinking v = verbLinking w := by
   simp [verbLinking, h]
 
-/-- Event type does not: *meyah* 'work' and *balak'* 'roll' are both processes, and they link
-differently — the counterexample to rule (14), which reads only lexical aspect ((4) vs (10)). -/
-theorem eventType_underdetermines_linking :
-    stemEventType meyah.stemClass = stemEventType balak'.stemClass ∧
+/-- Lexical aspect does not: *meyah* 'work' and *balak'* 'roll' are both processes, with the
+same template, and they link differently — the counterexample to rule (14), which reads only
+lexical aspect ((4) vs (10)). -/
+theorem template_underdetermines_linking :
+    stemTemplate meyah.stemClass = stemTemplate balak'.stemClass ∧
     addedTermRole meyah ≠ addedTermRole balak' := ⟨rfl, by decide⟩
 
 /-- Stem class does not: *hàan* 'eat' and *kim* 'die' are both inactive, and they link differently
@@ -392,11 +392,9 @@ theorem documented_linking :
     tired') and incorporates the universal quantifier *láah* ((20),
     *lúub-láah* 'they fell completely'), which active intransitives do not,
     despite behaving atelically under (15). -/
-theorem kaan_is_state_change :
-    stemEventType ka'n.stemClass = .stateChange := rfl
+theorem kaan_is_state_change : (stemTemplate ka'n.stemClass).HasResultState := by decide
 
-theorem naak_is_state_change :
-    stemEventType na'k.stemClass = .stateChange := rfl
+theorem naak_is_state_change : (stemTemplate na'k.stemClass).HasResultState := by decide
 
 /-- Degree achievements transitivize like state-change verbs, adding an instigator as A rather
 than an applied object as P.
@@ -426,7 +424,7 @@ a possible oblique agent), anticausative *suppresses* it (removed entirely). -/
     - Antipassive (rule 28): removes the caused event, retaining the causing
       process. Active intransitives inflect like antipassive stems.
     - Anticausative (rule 29): removes the causing event, retaining the caused
-      state/change. Inactive intransitives inflect like anticausative stems.
+      event. Inactive intransitives inflect like anticausative stems.
     - Passive (rule 30): like anticausative but adds PROC_C and instigator to
       the caused event. -/
 inductive DetransitivizationType where
@@ -461,34 +459,33 @@ theorem passive_anticausative_distinct_by_A_fate :
     (DetransitivizationType.toVoice .anticausative).fateOfRole .A = .suppressed := by
   decide
 
-/-! ### Template-level detransitivization -/
+/-! ### The subevent a detransitivized stem denotes
 
-/-- Detransitivization as a template-level operation. rules (28)–(30)
-    decompose detransitivization in terms of which subevent is retained:
+"Antipassives denote the causing event, while anticausatives and passives denote the caused
+event" (§6): each detransitivization keeps one subevent of its base's causal chain. (29) and
+(30) leave open whether the caused event is a state change, and the contact verbs that
+passivize and anticausativize may not entail one. -/
 
-    - Antipassive: retain the causing process → accomplishment → activity
-    - Anticausative: retain the caused change → accomplishment → achievement
-    - Passive: like anticausative but adds PROC_C + instigator (same template
-      output as anticausative, with additional participant structure) -/
-def DetransitivizationType.templateResult : DetransitivizationType → Template
-  | .antipassive => .activity       -- retain PROC, remove CAUSE+CHANGE
-  | .anticausative => .achievement  -- remove PROC+CAUSE, retain CHANGE
-  | .passive => .achievement        -- retain CHANGE, add instigator
+/-- The template a detransitivized stem denotes, a subevent of its base's template: the
+causing subevent for the antipassive (28), the caused one for the anticausative and passive
+((29)–(30)). The passive differs from the anticausative in participant structure, not in the
+subevent it denotes. -/
+def DetransitivizationType.template : DetransitivizationType → Template → Option Template
+  | .antipassive => Template.causing
+  | .anticausative | .passive => Template.caused
 
-/-- Antipassive yields a process (activity); anticausative/passive yield a
-    state change (achievement). This connects to the event type distinction
-    that governs verb class membership. -/
-theorem antipassive_yields_process :
-    (DetransitivizationType.templateResult .antipassive).eventType = .process := rfl
+/-- Rules (28)–(30) presuppose that only verbs encoding a causal relation between two subevents
+detransitivize. -/
+theorem DetransitivizationType.isSome_template_iff (d : DetransitivizationType) (t : Template) :
+    (d.template t).isSome ↔ ∃ c e, t = .cause c e := by
+  cases d <;> cases t <;>
+    simp [DetransitivizationType.template, Template.causing, Template.caused]
 
-theorem anticausative_yields_stateChange :
-    (DetransitivizationType.templateResult .anticausative).eventType = .stateChange := rfl
-
-/-- Anticausative template result matches `Template.intransitiveVariant` from
-    `EventStructure.lean`: both yield achievement from accomplishment. -/
-theorem anticausative_matches_intransitiveVariant :
-    some (DetransitivizationType.templateResult .anticausative)
-    = Template.intransitiveVariant .accomplishment := rfl
+/-- On a transitive stem, the antipassive denotes the causing process and the anticausative the
+caused change. -/
+example : DetransitivizationType.antipassive.template (stemTemplate .transitiveActive) = some .act ∧
+    DetransitivizationType.anticausative.template (stemTemplate .transitiveActive) =
+      some .achievement := ⟨rfl, rfl⟩
 
 /-! ### The rest of the inventory -/
 

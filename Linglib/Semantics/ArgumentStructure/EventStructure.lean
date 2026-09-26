@@ -1,420 +1,134 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-public import Linglib.Semantics.Aspect.Defs
-public import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
-public import Linglib.Semantics.ArgumentStructure.LevinClass
 public import Linglib.Semantics.Root.Defs
 
 /-!
-# Event Structure Templates
+# Event structure templates
 
-Verbs decompose into **templates** (structural meaning that determines
-argument realization) filled by **roots** (idiosyncratic content).
-Templates compose via CAUSE; which sub-predicate determines argument
-realization yields different syntactic frames.
+An event structure template is a term over a small set of primitive predicates: a state, an
+action `ACT`, a change `BECOME` and causation `CAUSE`, where `BECOME` and `CAUSE` take templates
+as arguments and so build larger templates out of smaller ones ([rappaport-hovav-levin-1998];
+[beavers-koontz-garboden-2020]). A verb's meaning pairs a template, which fixes its class, with a
+root, which tells it apart from the other members of the class. The basic inventory of
+[rappaport-hovav-levin-1998] is the state `[x ⟨STATE⟩]`, the activity `[x ACT⟨MANNER⟩]`, the
+achievement `[BECOME [x ⟨STATE⟩]]` and the accomplishment
+`[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]`.
 
-The templates here are [rappaport-hovav-levin-1998]'s, with their two
-accomplishment variants — `[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]`
-and `[x CAUSE [BECOME [y ⟨STATE⟩]]]` — collapsed into one
-`.accomplishment` case. The enriched two-predicate event structure for
-the wiping-verbs class ([rappaport-hovav-levin-2024]) is paper-anchored
-at `Studies/RappaportHovavLevin2024.lean`.
+The primitives are the four kinds of entailment of the root typology of
+[beavers-koontz-garboden-2020], whose collocational restrictions mirror the conditions on
+possible templates, so `Template.kinds` reads a template's primitives as a root signature. The
+diagnostics `HasCause` and `HasResultState` are membership in it, and a root's template is the
+canonical template of its signature.
 
-## Bridges
+## Main definitions
 
-- `Template.vendlerClass` → `VendlerClass` (aspect)
-- `HasResultState` → bieventive sub-event boundary ([krejci-2012]; [dowty-1979]; structural-scope alternative: [von-stechow-1996], [beck-2005])
-- `cause_implies_resultState` → CAUSE entails result state
-- `intransitiveVariant` → causative/inchoative alternation ([krejci-2012]; [rappaport-hovav-levin-1998])
+* `Template`: the terms, with `Template.achievement` and `Template.accomplishment`
+* `Template.kinds`: the kinds of entailment a template's primitives contribute
+* `Template.HasCause`, `Template.HasResultState`: the template has `CAUSE`, or `BECOME`
+* `Template.causing`, `Template.caused`: the two subevents of a causative template
+* `Template.ofKinds`, `Semantics.Root.template`: the canonical template of a signature, and of a
+  root
 
+## Implementation notes
+
+`CAUSE` relates a causing subevent to a caused one. The inventory's second accomplishment,
+`[x CAUSE [BECOME [y ⟨STATE⟩]]]`, has an individual causer, and is read here as the first, with
+an action by the causer as the causing subevent. Participants are not represented: a template is
+the shape of an event structure, and the interpretation of its primitives is
+`EventStructure.Interpretation`.
+
+## References
+
+* [rappaport-hovav-levin-1998]
+* [beavers-koontz-garboden-2020]
 -/
 
 @[expose] public section
 
 namespace ArgumentStructure.EventStructure
 
-open Aspect
-
-/-! ### Event structure templates -/
-
-/-- Event structure templates per [rappaport-hovav-levin-1998]'s basic
-inventory, with the two accomplishment variants collapsed. -/
-inductive Template where
-  | state          -- [x ⟨STATE⟩]
-  | activity       -- [x ACT⟨MANNER⟩]
-  | achievement    -- [BECOME [x ⟨STATE⟩]]
-  | accomplishment -- [[x ACT] CAUSE [BECOME [y ⟨STATE⟩]]]
-  deriving DecidableEq, Repr
-
-/-! ### Template properties -/
-
-/-- Does the template involve CAUSE? At the template level this coincides
-with having an external causer position: only `.accomplishment` decomposes
-as `[[x ACT] CAUSE [BECOME [y STATE]]]` per [rappaport-hovav-levin-1998]. -/
-def Template.HasCause : Template → Prop
-  | .accomplishment => True
-  | _ => False
-
-instance (t : Template) : Decidable t.HasCause := by
-  cases t <;> unfold Template.HasCause <;> infer_instance
-
-/-- The external-causer position is present iff the template has CAUSE
-in its decomposition. -/
-abbrev Template.HasExternalCauser : Template → Prop := Template.HasCause
-
-/-- How many grammatically relevant predicates? -/
-def Template.predicateCount : Template → Nat
-  | .state => 1
-  | .activity => 1
-  | .achievement => 1
-  | .accomplishment => 2  -- ACT + BECOME
-
-/-- The situation type a template predicts. -/
-def Template.vendlerClass : Template → VendlerClass
-  | .state => .state
-  | .activity => .activity
-  | .achievement => .achievement
-  | .accomplishment => .accomplishment
-
-/-! ### Bieventive structure diagnostics -/
-
-/-! Templates with complex internal structure — multiple sub-events connected
-    by CAUSE or embedding BECOME — license scopal ambiguities that
-    mono-eventive templates do not.
-
-    At the template level, three diagnostics from [dowty-1979] reduce
-    to two structural properties already defined above:
-
-    1. ***again*/*re-* ambiguity** tracks `HasResultState`: templates
-       embedding [BECOME [STATE]] allow restitutive readings where a
-       scopal modifier targets just the result sub-event. The
-       structural-scope rival ([von-stechow-1996], [beck-2005])
-       derives restitutive readings from adverbial attachment levels
-       rather than lexical entailment; the lexical-decomposition account
-       encoded here is one of two live analyses.
-    2. **Negation over CAUSE** ([koontz-garboden-2009]) tracks
-       `HasCause`: negation can scope narrowly over CAUSE, denying
-       the causal link while maintaining the result.
-    3. **"By itself" licensing** ([koontz-garboden-2009]) also tracks
-       `HasCause`: "without outside help" requires CAUSE in the meaning.
-
-    [krejci-2012]'s insight is that some verbs assigned simpler templates
-    (eat, wash, dress, learn) nonetheless pass all three diagnostics — evidence
-    that they have bieventive, causative event structures in their simple forms.
-    This verb-level property is captured in `Verb/Root/Classification.lean`, not at the
-    template level here. -/
-
-/-- Does the template embed a result state under BECOME?
-    Templates with [BECOME [STATE]] have a sub-event boundary that
-    scopal modifiers (*again*, *re-*, *almost*) can target independently. -/
-def Template.HasResultState : Template → Prop
-  | .achievement => True      -- [BECOME [x ⟨STATE⟩]]
-  | .accomplishment => True   -- [[x ACT] CAUSE [BECOME [y ⟨STATE⟩]]]
-  | _ => False
-
-instance (t : Template) : Decidable t.HasResultState := by
-  cases t <;> unfold Template.HasResultState <;> infer_instance
-
-/-- CAUSE implies a result state (accomplishment embeds BECOME). -/
-theorem cause_implies_resultState (t : Template) :
-    t.HasCause → t.HasResultState := by
-  cases t <;> decide
-
-/-! ### From root signature to template ([beavers-koontz-garboden-2020] §1.3)
-
-`Template` is a **function** of the root's collocational kind signature, not a
-parallel theory: `.cause` → accomplishment, `.result` → achievement, `.manner` →
-activity, else state. The `HasCause`/`HasResultState` diagnostics then reduce to
-signature membership (`ofKinds_hasCause_iff`/`hasResultState_iff`), so the
-denotational result entailment and `cause_implies_resultState` are one fact seen
-through the signature. -/
-
-section Signature
 open Semantics
 
-/-- The event-structure template determined by a root's (closed) kind signature. -/
-def Template.ofKinds (σ : Root.Kinds) : Template :=
-  if Root.Kind.cause ∈ σ then .accomplishment
-  else if Root.Kind.result ∈ σ then .achievement
-  else if Root.Kind.manner ∈ σ then .activity
-  else .state
+/-- An event structure template, a term over the primitive predicates. -/
+inductive Template where
+  /-- `[x ⟨STATE⟩]`. -/
+  | state
+  /-- `[x ACT⟨MANNER⟩]`, the activity. -/
+  | act
+  /-- `[BECOME t]`. -/
+  | become (t : Template)
+  /-- `[causing CAUSE caused]`. -/
+  | cause (causing caused : Template)
+  deriving DecidableEq, Repr
 
-/-- `HasCause` reduces to carrying the `cause` kind. -/
-theorem ofKinds_hasCause_iff (σ : Root.Kinds) :
-    (Template.ofKinds σ).HasCause ↔ Root.Kind.cause ∈ σ := by
-  unfold Template.ofKinds
-  split_ifs <;> simp_all [Template.HasCause]
+namespace Template
 
-/-- For a well-formed (collocationally closed) signature, `HasResultState`
-    reduces to carrying the `result` kind — via `cause` ⟹ `result`. -/
-theorem ofKinds_hasResultState_iff {σ : Root.Kinds}
-    (h : σ.WellFormed) :
-    (Template.ofKinds σ).HasResultState ↔ Root.Kind.result ∈ σ := by
+/-- The achievement `[BECOME [x ⟨STATE⟩]]`. -/
+def achievement : Template := become state
+
+/-- The accomplishment `[[x ACT⟨MANNER⟩] CAUSE [BECOME [y ⟨STATE⟩]]]`. -/
+def accomplishment : Template := cause act achievement
+
+/-- The kinds of entailment a template's primitives contribute: a state, the manner of an
+action, the change of `BECOME` and the causation of `CAUSE`. -/
+def kinds : Template → Root.Kinds
+  | state => {.state}
+  | act => {.manner}
+  | become t => insert .result t.kinds
+  | cause c e => insert .cause (c.kinds ∪ e.kinds)
+
+/-- The template has `CAUSE`. -/
+def HasCause (t : Template) : Prop := Root.Kind.cause ∈ t.kinds
+
+/-- The template has `BECOME`, and so a result state. -/
+def HasResultState (t : Template) : Prop := Root.Kind.result ∈ t.kinds
+
+instance (t : Template) : Decidable t.HasCause := inferInstanceAs (Decidable (_ ∈ _))
+
+instance (t : Template) : Decidable t.HasResultState := inferInstanceAs (Decidable (_ ∈ _))
+
+/-- The causing subevent of a causative template. -/
+def causing : Template → Option Template
+  | cause c _ => some c
+  | _ => none
+
+/-- The caused subevent of a causative template. -/
+def caused : Template → Option Template
+  | cause _ e => some e
+  | _ => none
+
+/-! ### The canonical template of a root -/
+
+/-- The canonical template of a kind signature: an accomplishment for a caused change, an
+achievement for a change, an activity for a manner, and otherwise a state. -/
+def ofKinds (σ : Root.Kinds) : Template :=
+  if Root.Kind.cause ∈ σ then accomplishment
+  else if Root.Kind.result ∈ σ then achievement
+  else if Root.Kind.manner ∈ σ then act
+  else state
+
+theorem ofKinds_hasCause_iff (σ : Root.Kinds) : (ofKinds σ).HasCause ↔ Root.Kind.cause ∈ σ := by
+  unfold ofKinds
+  split_ifs <;> simp_all [HasCause, kinds, accomplishment, achievement]
+
+/-- On a well-formed signature, whose `cause` brings its `result`, the canonical template has a
+result state iff the signature has a change. -/
+theorem ofKinds_hasResultState_iff {σ : Root.Kinds} (h : σ.WellFormed) :
+    (ofKinds σ).HasResultState ↔ Root.Kind.result ∈ σ := by
   have hcr : Root.Kind.cause ∈ σ → Root.Kind.result ∈ σ := h Root.Kind.LE.result_cause
-  unfold Template.ofKinds
-  split_ifs with hc hr hm <;> simp_all [Template.HasResultState]
+  unfold ofKinds
+  split_ifs <;> simp_all [HasResultState, kinds, accomplishment, achievement]
 
-/-- A root's event-structure template, read off its collocational closure. -/
+end Template
+
+/-- A root's template, the canonical template of its collocational closure. -/
 def _root_.Semantics.Root.template (r : Root) : Template :=
   Template.ofKinds r.closedKinds
 
-/-- A root entails a result state (template-level) iff it carries `result` —
-    the [beavers-koontz-garboden-2020] result entailment, bridged to the
-    `EventStructure` template diagnostic. -/
+/-- A root's template has a result state iff the root entails a change
+([beavers-koontz-garboden-2020]'s result entailment). -/
 theorem _root_.Semantics.Root.template_hasResultState_iff (r : Root) :
     r.template.HasResultState ↔ Root.Kind.result ∈ r.closedKinds :=
-  ofKinds_hasResultState_iff r.closedKinds_wellFormed
-
-end Signature
-
-/-! ### Causative/Inchoative Alternation
-
-    The accomplishment template [[x ACT] CAUSE [BECOME [y STATE]]]
-    has an intransitive variant. On the **deletion** analysis
-    ([rappaport-hovav-levin-1998]), this is
-    the achievement [BECOME [x STATE]], obtained by stripping the
-    external cause — yielding a monoeventive representation.
-
-    On the competing **reflexivization** analysis ([koontz-garboden-2009];
-    [chierchia-2004]), anticausativization does NOT delete CAUSE.
-    Instead, the reflexive clitic (*se*, *sich*) identifies the EFFECTOR
-    with the THEME: the derived inchoative retains the full causative
-    structure [∃v[CAUSE(v,e) ∧ EFFECTOR(v,x) ∧ BECOME(e,s) ∧ THEME(s,x)]].
-    This preserves the Monotonicity Hypothesis and explains the
-    cross-linguistic tendency for anticausative morphology to coincide
-    with reflexive morphology: in the survey of [haspelmath-1990] that
-    [koontz-garboden-2009] tabulates, the anticausative marker also has
-    reflexive uses in nine of the thirteen languages that have one (see
-    [alexiadou-schaefer-2015] for the modern cross-linguistic picture).
-
-    `Template.intransitiveVariant` below implements the deletion view at the
-    template level. The reflexivization analysis is formalized in
-    `KoontzGarboden2009`. -/
-
-/-- The intransitive variant of a template on the **deletion** analysis,
-    stripping the external cause. Only accomplishments have an alternation
-    partner.
-
-    NOTE: this implements one specific analysis. On the reflexivization
-    analysis ([koontz-garboden-2009]), the intransitive variant retains
-    CAUSE with reflexivized arguments. -/
-def Template.intransitiveVariant : Template → Option Template
-  | .accomplishment => some .achievement
-  | _ => none
-
-/-- The intransitive variant retains the result state
-    (BECOME STATE survives stripping of ACT CAUSE). -/
-theorem intransitive_has_resultState (t t' : Template) :
-    t.intransitiveVariant = some t' → t'.HasResultState := by
-  cases t <;> simp [Template.intransitiveVariant]
-  rintro rfl; decide
-
-/-- The intransitive variant loses CAUSE (on the deletion analysis).
-    [koontz-garboden-2009] disputes this on Monotonicity-Hypothesis
-    grounds; see `Studies/KoontzGarboden2009.lean`. -/
-theorem intransitive_no_cause (t t' : Template) :
-    t.intransitiveVariant = some t' → ¬ t'.HasCause := by
-  cases t <;> simp [Template.intransitiveVariant]
-  rintro rfl; decide
-
-/-- Only accomplishments have an intransitive variant
-    (only templates with CAUSE can undergo the alternation). -/
-theorem only_accomplishment_alternates (t : Template) :
-    t.intransitiveVariant.isSome → t = .accomplishment := by
-  cases t <;> simp [Template.intransitiveVariant]
-
-/-! ### Argument realization from templates -/
-
-/-- Predicted subject entailment profile for each template. The state
-default is the sentient state-holder (S+IE, the admire-type value); this
-conflates two Dowty-honest state profiles — sentience-entailed psych states
-vs. bare desire states (IE alone, [dowty-1991] (29e)) — which the class map
-separates as `psychState` vs `desire` in `LevinClassProfiles.lean` (not
-importable here: it sits downstream of this file). -/
-def Template.subjectProfile : Template → EntailmentProfile
-  | .state          => { sentience := true, independentExistence := true }
-  | .activity       => activitySubjectProfile
-  | .achievement    => achievementSubjectProfile
-  | .accomplishment => accomplishmentSubjectProfile
-
-/-- Predicted object entailment profile (if any). The accomplishment
-default carries no IT; per-verb IT additions live at the Fragment level. -/
-def Template.objectProfile : Template → Option EntailmentProfile
-  | .accomplishment => some accomplishmentObjectProfile
-  | _ => none
-
-/-- Accomplishment subject is a full agent (5 P-Agent entailments). -/
-theorem accomplishment_subject_is_agent :
-    (Template.subjectProfile .accomplishment).pAgentScore = 5 := by decide
-
-/-! ### Bridge to [levin-1993] verb classes -/
-
-/-! Levin classes map to event structure templates via meaning components
-    ([rappaport-hovav-levin-1998]; [rappaport-hovav-levin-2010]):
-
-    | Meaning component pattern | Template | Example class |
-    |---|---|---|
-    | CoS + causation | accomplishment | break (45.1), destroy (44) |
-    | CoS, no causation | achievement | appear (48.1), calve (28) |
-    | No CoS, no motion | state | exist (47.1), admire (31.2) |
-    | Otherwise | activity | hit (18.1), run (51.3) |
-
-    The wiping-verbs class (10.4) gets the activity template via the
-    decision tree, with its motion-and-sustained-contact substructure
-    formalized at `Studies/RappaportHovavLevin2024.lean`. -/
-
-/-! ### Process vs state-change ([bohnemeyer-2004]) -/
-
-/-- The fundamental binary distinction in event types: whether a predicate
-    encodes a process (PROC only) or a state change (involves CHANGE).
-
-    This crosscuts Vendler's four-way classification: degree achievements
-    are Vendler activities or accomplishments depending on scale boundedness
-    but are event-structurally state-change predicates ([bohnemeyer-2004]
-    on degree achievements within the Yukatek transitivity system).
-
-    [bohnemeyer-2004] argues this is the primary semantic distinction
-    governing verb classification in Yukatek Maya — more fundamental than
-    Vendler classes for predicting argument linking and transitivization. -/
-inductive EventType where
-  | process     -- PROC only: walk, sing, roll, buzz
-  | stateChange -- Involves CHANGE: die, break, grow, darken, sit
-  deriving DecidableEq, Repr
-
-/-- Derive event type from template. Activities are processes; states,
-    achievements, and accomplishments involve state change. -/
-def Template.eventType : Template → EventType
-  | .activity => .process
-  | _ => .stateChange
-
-/-- Whether a process is internally caused — the event is instigated by
-    a participant — or externally caused — occurring "spontaneously"
-    without an instigator.
-
-    This is a per-verb property of the ROOT, not of the template.
-    Two activity verbs can differ: *sing* (internal) vs *roll* (external).
-
-    [levin-hovav-1995] on the internal/external causation distinction
-    in Unaccusativity; [bohnemeyer-2004] on internal/external
-    causation in Yukatek argument linking.
-
-    [koontz-garboden-2009]: externally caused COS verbs have
-    CAUSE+EFFECTOR in their LSR and license *por sí solo* 'by itself'.
-    Internally caused COS verbs (*empeorar*, *hervir*, *crecer*) lack CAUSE
-    in their LSR and reject *por sí solo*. -/
-inductive InternalExternalCause where
-  | internal   -- instigated by a participant (sing, walk, write, play)
-  | external   -- no instigator; "spontaneous" (break, fall, roll, buzz)
-  deriving DecidableEq, Repr
-
-/-- Externally caused COS verbs have CAUSE in their LSR;
-    internally caused COS verbs do not ([koontz-garboden-2009];
-    [levin-hovav-1995]). Per [koontz-garboden-2009], this
-    licenses *por sí solo* / *by itself* modification on externally
-    caused inchoatives and rejects it on internally caused ones.
-
-    This determines whether derived inchoatives (on the reflexivization
-    analysis) retain a CAUSE operator. -/
-def InternalExternalCause.HasCauseInLSR : InternalExternalCause → Prop
-  | .external => True
-  | .internal => False
-
-instance (c : InternalExternalCause) : Decidable c.HasCauseInLSR := by
-  cases c <;> unfold InternalExternalCause.HasCauseInLSR <;> infer_instance
-
-end ArgumentStructure.EventStructure
-
-namespace ArgumentStructure
-
-/-- Predicted event structure template from meaning components. -/
-def MeaningComponents.predictedTemplate : MeaningComponents → ArgumentStructure.EventStructure.Template
-  | mc => if mc.changeOfState && mc.causation then .accomplishment
-    else if mc.changeOfState then .achievement
-    else if !mc.motion && !mc.contact then .state
-    else .activity
-
-end ArgumentStructure
-
-namespace ArgumentStructure.EventStructure
-
-/-! ### Bridge: Event Structure ↔ Diathesis Alternation
-
-`predictedTemplate` and `predictedAlternation` are two predictions computed from the
-same `MeaningComponents` feature vector. This section proves their agreement and shows
-that `MeaningComponents.fuse` simultaneously derives both template shift and new
-alternation predictions from a single componentwise OR operation.
-
-The central theorem — `ci_alternation_iff_template_alternates` — says the
-causative/inchoative alternation is exactly the syntactic reflex of having an
-accomplishment event template (which has an intransitive variant), modulo
-`instrumentSpec`. This connects [levin-1993]'s diathesis alternation diagnostics
-to [rappaport-hovav-levin-1998]'s event structure decomposition. -/
-
-/-- The causative/inchoative alternation is available iff the verb's event template
-    has an intransitive variant (i.e., is an accomplishment), given no instrumentSpec.
-
-    Both conditions reduce to `changeOfState ∧ causation`, making the alternation
-    prediction and the event structure prediction two views of a single semantic fact. -/
-theorem ci_alternation_iff_template_alternates (mc : MeaningComponents)
-    (h_inst : mc.instrumentSpec = false) :
-    mc.predictedAlternation .causativeInchoative = true ↔
-    mc.predictedTemplate.intransitiveVariant.isSome = true := by
-  rcases mc with ⟨cos, con, mot, caus, inst, man⟩
-  subst h_inst
-  cases cos <;> cases con <;> cases mot <;> cases caus <;>
-    simp_all [MeaningComponents.predictedAlternation, MeaningComponents.predictedTemplate,
-              Template.intransitiveVariant]
-
-/-- Fusion with CoS + causation yields accomplishment template regardless of
-    the verb's original template. The resultative construction adds
-    [CAUSE [BECOME [STATE]]], upgrading any verb to accomplishment. -/
-theorem fuse_cos_caus_yields_accomplishment (v c : MeaningComponents)
-    (hCoS : c.changeOfState = true) (hCaus : c.causation = true) :
-    (v.fuse c).predictedTemplate = .accomplishment := by
-  rcases v with ⟨cos, con, mot, caus, inst, man⟩
-  rcases c with ⟨cos', con', mot', caus', inst', man'⟩
-  simp_all [MeaningComponents.fuse, MeaningComponents.predictedTemplate]
-
-/-- One fusion, three consequences: accomplishment template, causative/inchoative
-    alternation, and intransitive variant — all from a single componentwise OR. -/
-theorem fuse_dual_prediction (v c : MeaningComponents)
-    (hCoS : c.changeOfState = true) (hCaus : c.causation = true)
-    (hInstV : v.instrumentSpec = false) (hInstC : c.instrumentSpec = false) :
-    (v.fuse c).predictedTemplate = .accomplishment ∧
-    (v.fuse c).predictedAlternation .causativeInchoative = true ∧
-    (v.fuse c).predictedTemplate.intransitiveVariant = some .achievement := by
-  have h_tmpl := fuse_cos_caus_yields_accomplishment v c hCoS hCaus
-  have h_inst : (v.fuse c).instrumentSpec = false := by
-    rcases v with ⟨_, _, _, _, inst, _⟩; rcases c with ⟨_, _, _, _, inst', _⟩
-    simp_all [MeaningComponents.fuse]
-  exact ⟨h_tmpl,
-    (ci_alternation_iff_template_alternates _ h_inst).mpr
-      (by simp [h_tmpl, Template.intransitiveVariant]),
-    by simp [h_tmpl, Template.intransitiveVariant]⟩
-
-/-- Fusion-induced Vendler class shift: fusion with CoS + causation
-    yields accomplishment Vendler class (telic, bounded). -/
-theorem fuse_vendler_class_shift (v c : MeaningComponents)
-    (hCoS : c.changeOfState = true) (hCaus : c.causation = true) :
-    (v.fuse c).predictedTemplate.vendlerClass = .accomplishment := by
-  rw [fuse_cos_caus_yields_accomplishment v c hCoS hCaus]; rfl
-
-/-- Fusion with CoS + causation yields result state, enabling *again*/*re-*
-    restitutive readings on the lexical-decomposition account
-    ([dowty-1979]; cf. structural-scope rival [von-stechow-1996],
-    [beck-2005]). -/
-theorem fuse_cos_caus_has_result_state (v c : MeaningComponents)
-    (hCoS : c.changeOfState = true) (hCaus : c.causation = true) :
-    (v.fuse c).predictedTemplate.HasResultState := by
-  rw [fuse_cos_caus_yields_accomplishment v c hCoS hCaus]; decide
-
-/-- Fusion with CoS + causation yields CAUSE structure, enabling
-    negation-over-CAUSE readings and *by itself* modification
-    ([koontz-garboden-2009]). -/
-theorem fuse_cos_caus_has_cause (v c : MeaningComponents)
-    (hCoS : c.changeOfState = true) (hCaus : c.causation = true) :
-    (v.fuse c).predictedTemplate.HasCause := by
-  rw [fuse_cos_caus_yields_accomplishment v c hCoS hCaus]; decide
+  Template.ofKinds_hasResultState_iff r.closedKinds_wellFormed
 
 end ArgumentStructure.EventStructure
