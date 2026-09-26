@@ -24,11 +24,10 @@ the causer and the causee of the lexical causative but stay with the causee of t
 periphrastic causative (`feed_not_makeEat`); denying the simple form while asserting the
 lexical causative is consistent on the bieventive representation (`not_eat_and_feed`) and
 contradictory under causer addition; the result state supports a restitutive reading of
-*again*, stated on `Presupposition.again`, that the repetitive reading does not exhaust; and
-*by itself* is licensed. The
-hierarchy is a linear order on `Tier`, a causative process is the set of tiers it reaches,
-and respecting the hierarchy is a lower-set condition (`Causative.RespectsHierarchy`),
-checked on the report's Table 2.8.
+*again*, with *again* on the result state (`againState`), that the repetitive reading does not
+exhaust; and *by itself* is licensed. The hierarchy is a linear order on `Tier`, a causative
+process is the set of tiers it reaches, and respecting the hierarchy is a lower-set condition
+(`Causative.RespectsHierarchy`), checked on the report's Table 2.8.
 
 ## Implementation notes
 
@@ -36,7 +35,9 @@ checked on the report's Table 2.8.
   existentially, as `KoontzGarboden2009.causative` does; *make eat* adds a second causing
   event with its own effector.
 * Of the report's three tests of event-structural complexity only *again* is formalized;
-  *re-* and *almost* have the same scopal structure.
+  *re-* and *almost* have the same scopal structure. States are times in the model, a change
+  giving rise to the state at its end, so that *again* on the result state has earlier states
+  to presuppose.
 * The Marathi evidence and the twenty surveyed languages outside Table 2.8 are not
   formalized.
 
@@ -83,13 +84,16 @@ def causerAddition (ingest : Entity → Event T → Prop) (y x : Entity) (e : Ev
 /-- An event precedes another when its run time is before the other's. -/
 abbrev Before (e' e : Event T) : Prop := e'.τ.isBefore e.τ
 
-/-- On the restitutive reading *again* modifies the result state, so the sentence presupposes
-that the state came about before. -/
-def Restitutive (P : Entity → Event T → Prop) (x : Entity) (e : Event T) : Prop :=
-  (Presupposition.again Before (M.vBecome S x)).presup e ∧ P x e
+/-- On the restitutive reading *again* modifies only the result state ((66a)): the state predicate
+holds of a state that an earlier state of it preceded, whether or not a change brought that
+earlier state about ((65a)). The restitutive reading of a verb is the verb over this
+predicate. -/
+def againState (ltS : State → State → Prop) (S : Entity → State → Prop) (x : Entity)
+    (s : State) : Prop :=
+  (Presupposition.again ltS (S x)).holds s
 
-/-- On the repetitive reading *again* modifies the whole predicate, so the sentence presupposes
-that the whole event happened before. -/
+/-- On the repetitive reading *again* modifies the whole predicate ((66b)), so the sentence
+presupposes that the whole event happened before. -/
 def Repetitive (P : Entity → Event T → Prop) (x : Entity) (e : Event T) : Prop :=
   (Presupposition.again Before (P x)).holds e
 
@@ -121,12 +125,6 @@ theorem ingest_of_causerAddition {ingest : Entity → Event T → Prop}
     (h : causerAddition M ingest y x e) : ingest x e :=
   let ⟨_, _, _, h⟩ := h; h
 
-/-- For a predicate with a result state, the repetitive reading of *again* entails the
-restitutive one. -/
-theorem restitutive_of_repetitive {P : Entity → Event T → Prop}
-    (hP : ∀ x e, P x e → M.vBecome S x e) (h : Repetitive P x e) : Restitutive M S P x e :=
-  ⟨Presupposition.again_presup_mono (hP x) e h.1, h.2⟩
-
 /-- Eating licenses *by itself* ((114a)), having a causing subevent whose effector is the
 eater, once manipulating food makes one an effector. -/
 theorem licensesBySelf_eat (h : ∀ x w, manip x w → M.effector x w) :
@@ -155,14 +153,15 @@ def w₁ : Event ℤ := ev 0 2
 def w₂ : Event ℤ := ev 3 4
 def e₁ : Event ℤ := ev 4 5
 
-/-- The state of potential digestion holds of John. -/
-def digesting (x : Participant) (_ : Unit) : Prop := x = .john
+/-- The state of potential digestion holds of John after each meal of the scenarios below, the
+states at the times 2 and 5. -/
+def digesting (x : Participant) (s : ℤ) : Prop := x = .john ∧ (s = 2 ∨ s = 5)
 
 /-- A model in which the events `causing` lists bring John to potential digestion, with `eff`
-the effectors of events. -/
+the effectors of events. States are times, and a change gives rise to the state at its end. -/
 def eating (causing : Event ℤ → Event ℤ → Prop) (eff : Participant → Event ℤ → Prop) :
-    ArgumentStructure.EventStructure.Interpretation Participant Unit (Event ℤ) where
-  become _ e := ∃ w, causing w e
+    ArgumentStructure.EventStructure.Interpretation Participant ℤ (Event ℤ) where
+  become s e := (∃ w, causing w e) ∧ s = e.τ.toProd.2
   cause := causing
   effector := eff
 
@@ -171,7 +170,7 @@ def spoonManip (y : Participant) (w : Event ℤ) : Prop := y = .mary ∧ At w 0 
 
 /-- In spoon feeding ((44a)) Mary's manipulation of the food causes John's change. -/
 def spoonFeeding :
-    ArgumentStructure.EventStructure.Interpretation Participant Unit (Event ℤ) :=
+    ArgumentStructure.EventStructure.Interpretation Participant ℤ (Event ℤ) :=
   eating (fun w e ↦ At w 0 1 ∧ At e 1 2) spoonManip
 
 /-- John manipulates the food. -/
@@ -180,7 +179,7 @@ def supManip (y : Participant) (w : Event ℤ) : Prop := y = .john ∧ At w 0 1
 /-- Under supervision ((48)) John's manipulation of the food and Mary's supervising action both
 cause John's change. -/
 def supervising :
-    ArgumentStructure.EventStructure.Interpretation Participant Unit (Event ℤ) :=
+    ArgumentStructure.EventStructure.Interpretation Participant ℤ (Event ℤ) :=
   eating (fun w e ↦ (At w 0 1 ∨ At w 0 2) ∧ At e 1 2)
     (fun y w ↦ (y = .john ∧ At w 0 1) ∨ (y = .mary ∧ At w 0 2))
 
@@ -190,7 +189,7 @@ def twoManip (y : Participant) (w : Event ℤ) : Prop :=
 
 /-- In the model of two meals Mary feeds John, and later John eats. -/
 def twoMeals :
-    ArgumentStructure.EventStructure.Interpretation Participant Unit (Event ℤ) :=
+    ArgumentStructure.EventStructure.Interpretation Participant ℤ (Event ℤ) :=
   eating (fun w e ↦ (At w 0 1 ∧ At e 1 2) ∨ (At w 3 4 ∧ At e 4 5)) twoManip
 
 /-- *I didn't eat pie; you fed pie to me* ((92), (106)) is consistent, since John, fed by Mary,
@@ -199,7 +198,7 @@ theorem not_eat_and_feed :
     ¬ eat spoonFeeding spoonManip digesting .john e₀ ∧
       feed spoonFeeding spoonManip digesting .mary .john e₀ :=
   ⟨fun ⟨_, ⟨h, _⟩, _⟩ ↦ Participant.noConfusion h,
-    ⟨w₀, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩, (), ⟨w₀, rfl, rfl⟩, rfl⟩⟩
+    ⟨w₀, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩, 2, ⟨⟨w₀, rfl, rfl⟩, rfl⟩, rfl, .inl rfl⟩⟩
 
 /-- Feeding is not making eat, since John, fed, was not made to eat, as whoever is made to eat
 manipulates food ((47a)). -/
@@ -212,25 +211,26 @@ theorem feed_not_makeEat :
 theorem makeEat_not_feed :
     makeEat supervising supManip digesting .mary .john e₀ ∧
       ¬ feed supervising supManip digesting .mary .john e₀ :=
-  ⟨⟨w₁, Or.inr ⟨rfl, rfl⟩, ⟨Or.inr rfl, rfl⟩, w₀, ⟨rfl, rfl⟩, ⟨Or.inl rfl, rfl⟩, (),
-      ⟨w₀, Or.inl rfl, rfl⟩, rfl⟩,
+  ⟨⟨w₁, Or.inr ⟨rfl, rfl⟩, ⟨Or.inr rfl, rfl⟩, w₀, ⟨rfl, rfl⟩, ⟨Or.inl rfl, rfl⟩, 2,
+      ⟨⟨w₀, Or.inl rfl, rfl⟩, rfl⟩, rfl, .inl rfl⟩,
     fun ⟨_, ⟨h, _⟩, _⟩ ↦ Participant.noConfusion h⟩
 
 /-- Being fed does not license *by itself* ((113d)), since John reaches the state but the
 effector of the causing event is Mary. -/
 theorem not_licensesBySelf_inchoative :
     ¬ LicensesBySelf spoonFeeding (spoonFeeding.vBecome digesting) := fun h ↦
-  let ⟨_, _, hw⟩ := h .john e₀ ⟨(), ⟨w₀, rfl, rfl⟩, rfl⟩
+  let ⟨_, _, hw⟩ := h .john e₀ ⟨2, ⟨⟨w₀, rfl, rfl⟩, rfl⟩, rfl, .inl rfl⟩
   Participant.noConfusion hw.1
 
-/-- When *John ate again* ((70), (79)) is said after Mary had fed him, the restitutive reading
-holds, the state of potential digestion having come about before, and the repetitive reading
-fails. -/
+/-- *John ate again* said after Mary had fed him, a second causer bringing about the result
+state as in the context of (70): the restitutive reading holds, *again* on the state of
+potential digestion ((66a)), which John had been in before, and the repetitive reading fails,
+since John had not eaten before. -/
 theorem restitutive_not_repetitive :
-    Restitutive twoMeals digesting (eat twoMeals twoManip digesting) .john e₁ ∧
+    eat twoMeals twoManip (againState (· < ·) digesting) .john e₁ ∧
       ¬ Repetitive (eat twoMeals twoManip digesting) .john e₁ :=
-  ⟨⟨⟨e₀, by decide, (), ⟨w₀, Or.inl ⟨rfl, rfl⟩⟩, rfl⟩,
-      w₂, Or.inr ⟨rfl, rfl⟩, Or.inr ⟨rfl, rfl⟩, (), ⟨w₂, Or.inr ⟨rfl, rfl⟩⟩, rfl⟩,
+  ⟨⟨w₂, Or.inr ⟨rfl, rfl⟩, Or.inr ⟨rfl, rfl⟩, 5, ⟨⟨w₂, Or.inr ⟨rfl, rfl⟩⟩, rfl⟩,
+      ⟨2, by decide, rfl, .inl rfl⟩, rfl, .inr rfl⟩,
     fun ⟨⟨e', hb, w, hm, hc, _⟩, _⟩ ↦ by
       rcases hm with ⟨h, _⟩ | ⟨_, hw⟩
       · exact Participant.noConfusion h
