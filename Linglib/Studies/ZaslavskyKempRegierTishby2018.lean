@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.InformationTheory.ChannelCapacity
-public import Linglib.Core.Probability.Kernel.OfWeights
+public import Linglib.Core.Probability.GibbsVariational
 public import Linglib.Pragmatics.Efficiency
 
 /-!
@@ -30,8 +30,8 @@ complexity (`objective_eq_weightedCost`), and a language's deviation from optima
 the substrate's `efficiencyLossAt` (`deviation_eq_efficiencyLossAt`). Below `β = 1` the
 meaning-blind lexicon is optimal (`objective_const_le`). Every minimizer of `F_β` has the
 self-consistent Boltzmann form in which a word's probability decays exponentially in its
-divergence from the meaning (`IsIBOptimum`, `isIBOptimum_of_forall_objective_le`), so that at
-finite `β` the optimal categories are soft (`IsIBOptimum.real_pos`).
+divergence from the meaning (`ibUpdate`, `IsIBOptimum`, `isIBOptimum_of_forall_objective_le`), so
+that at finite `β` the optimal categories are soft (`IsIBOptimum.real_pos`).
 
 ## Implementation notes
 
@@ -44,11 +44,14 @@ finite `β` the optimal categories are soft (`IsIBOptimum.real_pos`).
 * `distortion_eq` and `distortion_le` are the compensation identity
   `InformationTheory.sum_mul_toReal_klDiv` for the meanings channel, applied at each word's
   posterior over meanings.
-* `isIBOptimum_of_forall_objective_le` is proved variationally: `F_β + β I(M;U)` is bounded
-  above by the encoder's average divergence from a reference word marginal plus `β` times its
-  expected distortion under a reference decoder, with equality at its own marginal and Bayesian
-  decoder, and for fixed references the bound is least at the Boltzmann encoder. It assumes a
-  source and meanings of full support, as the paper's Gaussian meanings are.
+* Eq. 7 is a fixed-point equation: the Boltzmann encoder `ibUpdate` tilts the word marginal row
+  by row (`Measure.tilted`), and `isIBOptimum_of_forall_objective_le` is the Gibbs variational
+  principle of `Core.Probability.GibbsVariational` applied to each row. `F_β + β I(M;U)` is the
+  source average of the negative free energies of the encoder's rows against its own word
+  marginal and Bayesian decoder, and at most that average against any other; each row's free
+  energy is at most its log partition function, with equality only at the tilt
+  (`eq_tilted_of_freeEnergy_eq_cgf`). The theorem assumes a source and meanings of full
+  support, as the paper's Gaussian meanings are.
 * The efficiency loss `ε_l` divides the minimal deviation by the fitted `β_l`; the fit itself is
   a numerical optimization outside the formalization. The empirical encoders of the World Color
   Survey are not in the library.
@@ -178,7 +181,7 @@ theorem distortion_eq :
     rw [sourceInfo, measureMutualInfo_compProd, integral_compProd]
     refine sum_congr rfl fun m _ => ?_
     dsimp only
-    rw [← sum_mul, sum_measureReal_singleton, coe_univ, probReal_univ, one_mul]
+    rw [← sum_mul, sum_measureReal_singleton_eq_one, one_mul]
   rw [eq_sub_iff_add_eq, distortion, hsrc, accuracy, measureMutualInfo_compProd, decoder_comp,
     integral_compProd_eq_sum_posterior, integral_compProd_eq_sum_posterior, ← sum_add_distrib]
   refine sum_congr rfl fun w _ => ?_
@@ -244,27 +247,101 @@ theorem objective_const_le (ν : Measure W) [IsProbabilityMeasure ν] {β : ℝ}
   rw [objective, objective, complexity_const, h0]
   nlinarith [mul_nonneg (sub_nonneg.2 hβ) h2]
 
-/-- The self-consistent form of the Information Bottleneck optima (eq. 7): each word's
-probability decays exponentially, at rate `β`, in the divergence between the meaning and the
-word's interpretation. -/
-def IsIBOptimum (β : ℝ) : Prop :=
-  ∀ m w, (encoder m).real {w} =
-    (encoder ∘ₘ source).real {w}
-        * exp (-β * (klDiv (meanings m) (decoder meanings source encoder w)).toReal)
-      / ∑ w', (encoder ∘ₘ source).real {w'}
-        * exp (-β * (klDiv (meanings m) (decoder meanings source encoder w')).toReal)
+/-- The right side of eq. 7: the encoder whose row at a meaning tilts the word marginal by `−β`
+times the divergence of the meaning from each word's interpretation. -/
+noncomputable def ibUpdate (β : ℝ) : Kernel M W :=
+  Kernel.ofFunOfCountable fun m => (encoder ∘ₘ source).tilted
+    fun w => -β * (klDiv (meanings m) (decoder meanings source encoder w)).toReal
 
-omit [IsMarkovKernel meanings] [Fintype U] [MeasurableSingletonClass U]
+omit [IsMarkovKernel meanings] [Fintype U] [Fintype W] [MeasurableSingletonClass U]
   [MeasurableSingletonClass W] in
+theorem ibUpdate_apply (β : ℝ) (m : M) :
+    ibUpdate meanings source encoder β m = (encoder ∘ₘ source).tilted
+      fun w => -β * (klDiv (meanings m) (decoder meanings source encoder w)).toReal := rfl
+
+instance (β : ℝ) : IsMarkovKernel (ibUpdate meanings source encoder β) :=
+  ⟨fun _ => isProbabilityMeasure_tilted .of_finite⟩
+
+/-- The self-consistent form of the Information Bottleneck optima (eq. 7): the encoder is its
+own update. -/
+def IsIBOptimum (β : ℝ) : Prop := encoder = ibUpdate meanings source encoder β
+
+omit [IsMarkovKernel meanings] [Fintype U] [MeasurableSingletonClass U] in
+/-- Eq. 7 pointwise: each word's probability decays exponentially, at rate `β`, in the
+divergence between the meaning and the word's interpretation. -/
+theorem ibUpdate_real_singleton (β : ℝ) (m : M) (w : W) :
+    (ibUpdate meanings source encoder β m).real {w} =
+      (encoder ∘ₘ source).real {w}
+          * exp (-β * (klDiv (meanings m) (decoder meanings source encoder w)).toReal)
+        / ∑ w', (encoder ∘ₘ source).real {w'}
+          * exp (-β * (klDiv (meanings m) (decoder meanings source encoder w')).toReal) :=
+  tilted_real_singleton _ _ w
+
+omit [IsMarkovKernel meanings] [Fintype U] [MeasurableSingletonClass U] in
 /-- At finite `β` the IB optima induce soft categories: a word in use has positive probability
 under every meaning. -/
 theorem IsIBOptimum.real_pos {β : ℝ} (h : IsIBOptimum meanings source encoder β) {w : W}
     (hw : (encoder ∘ₘ source) {w} ≠ 0) (m : M) : 0 < (encoder m).real {w} := by
-  set g := fun w' => (encoder ∘ₘ source).real {w'}
-    * exp (-β * (klDiv (meanings m) (decoder meanings source encoder w')).toReal)
-  have hg : 0 < g w := mul_pos (ENNReal.toReal_pos hw (measure_ne_top _ _)) (exp_pos _)
-  rw [h m w]
-  exact div_pos hg (hg.trans_le (single_le_sum (fun _ _ => by positivity) (mem_univ w)))
+  rw [DFunLike.congr_fun h m]
+  exact ENNReal.toReal_pos (fun h0 => hw (absolutelyContinuous_tilted .of_finite h0))
+    (measure_ne_top _ _)
+
+omit [IsMarkovKernel meanings] [Fintype W] [MeasurableSingletonClass W] in
+/-- With meanings of full support, every meaning is absolutely continuous with respect to every
+interpretation. -/
+private theorem absolutelyContinuous_decoder (hmeanings : ∀ m u, meanings m {u} ≠ 0) (m : M)
+    (w : W) : meanings m ≪ decoder meanings source encoder w := by
+  refine Measure.absolutelyContinuous_of_forall_singleton fun u hu => absurd hu ?_
+  obtain ⟨m', hm'⟩ : ∃ m', (encoder†source) w {m'} ≠ 0 := by
+    by_contra! h
+    have := measure_univ (μ := (encoder†source) w)
+    rw [← coe_univ, ← sum_measure_singleton, sum_eq_zero fun m' _ => h m'] at this
+    exact zero_ne_one this
+  rw [show decoder meanings source encoder w {u} = _ from
+    Kernel.comp_apply_singleton meanings (encoder†source) w u]
+  exact fun h => mul_ne_zero hm' (hmeanings m' u) (sum_eq_zero_iff.1 h m' (mem_univ m'))
+
+omit [Nonempty M] [IsMarkovKernel meanings] [Fintype U] [MeasurableSingletonClass U] in
+/-- The source average of the negative free energies of an encoder's rows, tilted by `−β` times
+the divergences under a decoder `d`, splits into the average divergence of the rows from the
+reference `ρ` and `β` times the expected distortion under `d`. -/
+private theorem neg_sum_freeEnergy (q : Kernel M W) [IsMarkovKernel q] (ρ : Measure W)
+    (d : Kernel W U) (β : ℝ) :
+    -∑ m, source.real {m}
+        * ρ.freeEnergy (fun w => -β * (klDiv (meanings m) (d w)).toReal) (q m)
+      = ∑ m, source.real {m} * (klDiv (q m) ρ).toReal
+        + β * ∫ p, (klDiv (meanings p.1) (d p.2)).toReal ∂(source ⊗ₘ q) := by
+  rw [integral_compProd, mul_sum, ← sum_add_distrib, ← sum_neg_distrib]
+  refine sum_congr rfl fun m _ => ?_
+  simp only [Measure.freeEnergy, integral_fintype .of_finite, smul_eq_mul, mul_sum]
+  rw [mul_sub, mul_sum, neg_sub, sub_eq_add_neg, ← sum_neg_distrib]
+  congr 1
+  exact sum_congr rfl fun w _ => by ring
+
+/-- `F_β + β I(M;U)` is the source average of the negative free energies of the encoder's rows
+against its own word marginal and Bayesian decoder. -/
+private theorem objective_add_eq (β : ℝ) :
+    objective meanings source encoder β + β * sourceInfo meanings source
+      = -∑ m, source.real {m} * (encoder ∘ₘ source).freeEnergy
+          (fun w => -β * (klDiv (meanings m) (decoder meanings source encoder w)).toReal)
+          (encoder m) := by
+  rw [neg_sum_freeEnergy, ← complexity_eq, ← distortion, distortion_eq, objective]
+  ring
+
+/-- Against any reference word marginal and any decoder whose interpretations allow every state,
+`F_β + β I(M;U)` is at most the source average of the negative free energies of the rows. -/
+private theorem objective_add_le (q : Kernel M W) [IsMarkovKernel q] (ρ : Measure W)
+    [IsProbabilityMeasure ρ] (hq : ∀ m, q m ≪ ρ) (d : Kernel W U) [IsMarkovKernel d]
+    (hd : ∀ m w, meanings m ≪ d w) {β : ℝ} (hβ : 0 ≤ β) :
+    objective meanings source q β + β * sourceInfo meanings source
+      ≤ -∑ m, source.real {m}
+          * ρ.freeEnergy (fun w => -β * (klDiv (meanings m) (d w)).toReal) (q m) := by
+  rw [neg_sum_freeEnergy, sum_mul_toReal_klDiv q source ρ fun m _ => hq m, objective,
+    complexity]
+  have h := mul_le_mul_of_nonneg_left (distortion_le meanings source q d hd) hβ
+  rw [distortion_eq] at h
+  have : 0 ≤ (klDiv (q ∘ₘ source) ρ).toReal := ENNReal.toReal_nonneg
+  linarith
 
 /-- Eq. 7: for a source and meanings of full support, every minimizer of the objective at
 `β ≥ 0` has the self-consistent Boltzmann form. -/
@@ -273,122 +350,35 @@ theorem isIBOptimum_of_forall_objective_le {β : ℝ} (hβ : 0 ≤ β)
     (hmin : ∀ (q : Kernel M W) [IsMarkovKernel q],
       objective meanings source encoder β ≤ objective meanings source q β) :
     IsIBOptimum meanings source encoder β := by
-  classical
-  have hreal {ν : Measure W} [IsFiniteMeasure ν] {w : W} : ν.real {w} = 0 ↔ ν {w} = 0 :=
-    measureReal_eq_zero_iff (measure_ne_top _ _)
-  have hone (ν : Measure W) [IsProbabilityMeasure ν] : ∑ w, ν.real {w} = 1 := by
-    rw [sum_measureReal_singleton, coe_univ, probReal_univ]
-  -- the interpretations have full support, so every meaning is absolutely continuous to each
-  have hdac (m : M) (w : W) : meanings m ≪ decoder meanings source encoder w := by
-    refine Measure.absolutelyContinuous_of_forall_singleton fun u hu => absurd hu ?_
-    obtain ⟨m', hm'⟩ : ∃ m', (encoder†source) w {m'} ≠ 0 := by
-      by_contra! h
-      have := measure_univ (μ := (encoder†source) w)
-      rw [← coe_univ, ← sum_measure_singleton, sum_eq_zero fun m' _ => h m'] at this
-      exact zero_ne_one this
-    rw [show decoder meanings source encoder w {u} = _ from
-      Kernel.comp_apply_singleton meanings (encoder†source) w u]
-    exact fun h => mul_ne_zero hm' (hmeanings m' u) (sum_eq_zero_iff.1 h m' (mem_univ m'))
-  obtain ⟨D, hD⟩ : ∃ D : M → W → ℝ,
-      D = fun m w => (klDiv (meanings m) (decoder meanings source encoder w)).toReal := ⟨_, rfl⟩
-  obtain ⟨w₀, hw₀⟩ : ∃ w, 0 < (encoder ∘ₘ source).real {w} := by
-    by_contra! h
-    linarith [sum_nonpos fun w (_ : w ∈ univ) => h w, hone (encoder ∘ₘ source)]
-  have hnn (m : M) (w : W) : 0 ≤ (encoder ∘ₘ source).real {w} * exp (-β * D m w) :=
-    mul_nonneg measureReal_nonneg (exp_pos _).le
-  obtain ⟨Z, hZ⟩ : ∃ Z : M → ℝ,
-      Z = fun m => ∑ w, (encoder ∘ₘ source).real {w} * exp (-β * D m w) := ⟨_, rfl⟩
-  have hZpos (m : M) : 0 < Z m := by
-    rw [hZ]
-    exact (mul_pos hw₀ (exp_pos _)).trans_le (single_le_sum (fun w _ => hnn m w) (mem_univ w₀))
-  -- the Boltzmann encoder of eq. 7 built from the minimizer's word marginal and interpretations
-  obtain ⟨g, hgdef⟩ : ∃ g : Kernel M W, g = Kernel.ofWeights fun m w =>
-      ENNReal.ofReal ((encoder ∘ₘ source).real {w} * exp (-β * D m w)) := ⟨_, rfl⟩
-  have : IsMarkovKernel g := hgdef ▸ Kernel.isMarkovKernel_ofWeights
-    (fun _ => ⟨w₀, fun h => (mul_pos hw₀ (exp_pos _)).not_ge (ENNReal.ofReal_eq_zero.1 h)⟩)
-    fun _ _ => ENNReal.ofReal_ne_top
-  have hg (m : M) (w : W) :
-      (g m).real {w} = (encoder ∘ₘ source).real {w} * exp (-β * D m w) / Z m := by
-    rw [hgdef, Kernel.ofWeights_real_singleton _ m fun _ => ENNReal.ofReal_ne_top, hZ]
-    simp only [ENNReal.toReal_ofReal (hnn _ _)]
-  have hq_r (m : M) : encoder m ≪ encoder ∘ₘ source :=
+  have hq (m : M) : encoder m ≪ encoder ∘ₘ source :=
     encoder.absolutelyContinuous_comp source (hsource m)
-  have hr_g (m : M) : encoder ∘ₘ source ≪ g m :=
-    Measure.absolutelyContinuous_of_forall_singleton fun w hw => by
-      have h1 := (hreal (ν := g m)).2 hw
-      rw [hg, div_eq_zero_iff, mul_eq_zero] at h1
-      exact hreal.1 ((h1.resolve_right (hZpos m).ne').resolve_right (exp_pos _).ne')
-  have hg_r (m : M) : g m ≪ encoder ∘ₘ source :=
-    Measure.absolutelyContinuous_of_forall_singleton fun w hw => by
-      rw [← hreal, hg, hreal.2 hw, zero_mul, zero_div]
-  -- Gibbs: the divergence from the marginal plus the expected distortion is the divergence from
-  -- the Boltzmann row, less its log normalizer
-  have hgibbs (ν : Measure W) [IsProbabilityMeasure ν] (hν : ν ≪ encoder ∘ₘ source) (m : M) :
-      (klDiv ν (encoder ∘ₘ source)).toReal + β * ∑ w, ν.real {w} * D m w
-        = (klDiv ν (g m)).toReal - log (Z m) := by
-    rw [toReal_klDiv_eq_sum_log_div hν, toReal_klDiv_eq_sum_log_div (hν.trans (hr_g m)),
-      show log (Z m) = ∑ w, ν.real {w} * log (Z m) by rw [← sum_mul, hone, one_mul],
-      mul_sum, ← sum_add_distrib, ← sum_sub_distrib]
-    refine sum_congr rfl fun w _ => ?_
-    obtain hx | hx := eq_or_ne (ν.real {w}) 0
-    · simp [hx]
-    have hr : (encoder ∘ₘ source).real {w} ≠ 0 := fun h => hx (hreal.2 (hν (hreal.1 h)))
-    rw [hg, log_div hx (div_ne_zero (mul_ne_zero hr (exp_pos _).ne') (hZpos m).ne'),
-      log_div (mul_ne_zero hr (exp_pos _).ne') (hZpos m).ne', log_mul hr (exp_pos _).ne', log_exp,
-      log_div hx hr]
-    ring
-  -- the variational functional at the minimizer is its objective, and at the Boltzmann
-  -- encoder it bounds the Boltzmann encoder's objective
-  have hsplit (q : Kernel M W) : ∑ m, source.real {m}
-        * ((klDiv (q m) (encoder ∘ₘ source)).toReal + β * ∑ w, (q m).real {w} * D m w)
-      = ∑ m, source.real {m} * (klDiv (q m) (encoder ∘ₘ source)).toReal
-        + β * ∑ m, source.real {m} * ∑ w, (q m).real {w} * D m w := by
-    rw [mul_sum, ← sum_add_distrib]
-    exact sum_congr rfl fun m _ => by ring
-  have hLq : objective meanings source encoder β + β * sourceInfo meanings source
-      = ∑ m, source.real {m}
-        * ((klDiv (encoder m) (encoder ∘ₘ source)).toReal + β * ∑ w, (encoder m).real {w} * D m w)
-      := by
-    have h2 : distortion meanings source encoder
-        = ∑ m, source.real {m} * ∑ w, (encoder m).real {w} * D m w := by
-      rw [distortion, integral_compProd, hD]
-    rw [hsplit, ← complexity_eq, ← h2, objective, distortion_eq]
-    ring
-  have hLg : objective meanings source g β + β * sourceInfo meanings source
-      ≤ ∑ m, source.real {m}
-        * ((klDiv (g m) (encoder ∘ₘ source)).toReal + β * ∑ w, (g m).real {w} * D m w) := by
-    have h1 := sum_mul_toReal_klDiv g source (encoder ∘ₘ source) fun m _ => hg_r m
-    have h2 : distortion meanings source g
-        ≤ ∑ m, source.real {m} * ∑ w, (g m).real {w} * D m w := by
-      have := distortion_le meanings source g (decoder meanings source encoder) hdac
-      rw [integral_compProd] at this
-      rw [hD]
-      exact this
-    have h3 := distortion_eq meanings source g
-    have h4 : 0 ≤ (klDiv (g ∘ₘ source) (encoder ∘ₘ source)).toReal := ENNReal.toReal_nonneg
-    rw [hsplit, h1, objective, complexity]
-    nlinarith [mul_le_mul_of_nonneg_left h2 hβ]
-  have hq := sum_congr rfl fun m (_ : m ∈ univ) =>
-    congrArg (source.real {m} * ·) (hgibbs (encoder m) (hq_r m) m)
-  have hgg := sum_congr rfl fun m (_ : m ∈ univ) =>
-    congrArg (source.real {m} * ·) (hgibbs (g m) (hg_r m) m)
-  simp only [klDiv_self, ENNReal.toReal_zero, zero_sub, mul_sub, sum_sub_distrib] at hq hgg
-  have hsum : ∑ m, source.real {m} * (klDiv (encoder m) (g m)).toReal ≤ 0 := by
-    have := hmin g
-    simp only [mul_neg, sum_neg_distrib] at hgg
-    linarith
-  have hnn' (m : M) : 0 ≤ source.real {m} * (klDiv (encoder m) (g m)).toReal :=
-    mul_nonneg measureReal_nonneg ENNReal.toReal_nonneg
-  intro m w
-  have hterm := (sum_eq_zero_iff_of_nonneg fun m _ => hnn' m).1
-    (le_antisymm hsum (sum_nonneg fun m _ => hnn' m)) m (mem_univ m)
-  have hkl : klDiv (encoder m) (g m) = 0 := by
-    rcases (ENNReal.toReal_eq_zero_iff _).1
-      ((mul_eq_zero.1 hterm).resolve_left
-        (mt (measureReal_eq_zero_iff (measure_ne_top _ _)).1 (hsource m))) with h | h
-    · exact h
-    · exact absurd h (klDiv_eq_top_iff_not_ac.not.2 (not_not.2 ((hq_r m).trans (hr_g m))))
-  rw [klDiv_eq_zero_iff.1 hkl, hg, hZ, hD]
+  -- each row's free energy is at most the log partition function, attained at the Boltzmann row
+  have hle (m : M) := freeEnergy_le_cgf (encoder ∘ₘ source) (encoder m)
+    (f := fun w => -β * (klDiv (meanings m) (decoder meanings source encoder w)).toReal)
+    (hq m) .of_finite .of_finite .of_finite
+  have hg (m : M) := freeEnergy_tilted (encoder ∘ₘ source)
+    (f := fun w => -β * (klDiv (meanings m) (decoder meanings source encoder w)).toReal)
+    .of_finite .of_finite .of_finite
+  -- minimality forces the average to be attained too
+  have hsum : ∑ m, source.real {m} * (cgf (fun w => -β * (klDiv (meanings m)
+        (decoder meanings source encoder w)).toReal) (encoder ∘ₘ source) 1
+      - (encoder ∘ₘ source).freeEnergy (fun w => -β * (klDiv (meanings m)
+        (decoder meanings source encoder w)).toReal) (encoder m)) ≤ 0 := by
+    have := objective_add_le meanings source (ibUpdate meanings source encoder β)
+      (encoder ∘ₘ source) (fun _ => tilted_absolutelyContinuous _ _)
+      (decoder meanings source encoder) (absolutelyContinuous_decoder meanings source encoder
+        hmeanings) hβ
+    simp only [ibUpdate_apply, hg] at this
+    simp only [mul_sub, sum_sub_distrib]
+    linarith [objective_add_eq meanings source encoder β, hmin (ibUpdate meanings source encoder β)]
+  refine Kernel.ext fun m => eq_tilted_of_freeEnergy_eq_cgf _ _ (hq m) .of_finite .of_finite
+    .of_finite (le_antisymm (hle m) ?_)
+  have := (sum_eq_zero_iff_of_nonneg fun m _ => mul_nonneg measureReal_nonneg
+    (sub_nonneg.2 (hle m))).1 (hsum.antisymm (sum_nonneg fun m _ => mul_nonneg
+      measureReal_nonneg (sub_nonneg.2 (hle m)))) m (mem_univ m)
+  rw [mul_eq_zero, sub_eq_zero] at this
+  exact (this.resolve_left (mt (measureReal_eq_zero_iff (measure_ne_top _ _)).1
+    (hsource m))).le
 
 variable (encoder' : Kernel M W) [IsMarkovKernel encoder']
 

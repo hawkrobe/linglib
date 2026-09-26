@@ -105,7 +105,7 @@ theorem toReal_klDiv_eq {c : C} (hc : μ {c} ≠ 0) :
     rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
   rw [toReal_klDiv_eq_sum_log_div (κ.absolutelyContinuous_comp μ hc), expectedSurprisal,
     integral_fintype .of_finite, show log (μ.real {c}) = ∑ w, (κ c).real {w} * log (μ.real {c})
-      by rw [← sum_mul, sum_measureReal_singleton, coe_univ, probReal_univ, one_mul],
+      by rw [← sum_mul, sum_measureReal_singleton_eq_one, one_mul],
     ← sum_neg_distrib, ← sum_sub_distrib]
   refine sum_congr rfl fun w _ => ?_
   obtain hk | hk := eq_or_ne ((κ c).real {w}) 0
@@ -152,7 +152,7 @@ theorem capacityAchieving_iff :
       ring
     have hI : Im[μ ⊗ₘ κ] = log Z := by
       rw [measureMutualInfo_compProd, sum_congr rfl fun c _ => by rw [hD c], ← sum_mul,
-        sum_measureReal_singleton, coe_univ, probReal_univ, one_mul]
+        sum_measureReal_singleton_eq_one, one_mul]
     refine ⟨measureMutualInfo_compProd_eq_channelCapacity κ μ fun c => ?_, hμ⟩
     rw [hI, ← hD c, ENNReal.ofReal_toReal]
     exact (klDiv_eq_top_iff_not_ac.not.mpr (not_not.mpr (κ.absolutelyContinuous_comp μ (hμ c))))

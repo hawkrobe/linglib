@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.InformationTheory.Entropy
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
+public import Linglib.Core.MeasureTheory.Measure.Real
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 
@@ -62,11 +63,6 @@ variable {C W : Type*} [MeasurableSpace C] [MeasurableSpace W] [Fintype C] [Fint
 between its input and output. -/
 noncomputable def channelCapacity (κ : Kernel C W) : ℝ :=
   ⨆ μ : ProbabilityMeasure C, Im[(μ : Measure C) ⊗ₘ κ]
-
-omit [Fintype W] [MeasurableSingletonClass W] in
-private theorem sum_measureReal_singleton_eq_one (ρ : Measure C) [IsProbabilityMeasure ρ] :
-    ∑ c, ρ.real {c} = 1 := by
-  rw [sum_measureReal_singleton, Finset.coe_univ, probReal_univ]
 
 variable (κ : Kernel C W) [IsMarkovKernel κ] (μ : Measure C) [IsProbabilityMeasure μ]
 
