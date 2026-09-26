@@ -108,7 +108,7 @@ theorem prob_ordering_best_w0 (w : World) :
   refine ⟨?_, ?_⟩
   · rintro ⟨_, hMin⟩
     have hUniv : (0 : World) ∈ ModalBase.accessibleWorlds emptyBackground w := by
-      rw [empty_base_universal_access]; exact Set.mem_univ _
+      rw [accessibleWorlds_emptyBackground]; exact Set.mem_univ _
     have hDom : atLeastAsGoodAs (probToOrdering skewedProb w) 0 w' := by
       apply higher_prob_dominates
       match w' with
@@ -131,7 +131,7 @@ theorem prob_ordering_best_w0 (w : World) :
   · rintro rfl
     refine ⟨?_, ?_⟩
     · show (0 : World) ∈ ModalBase.accessibleWorlds emptyBackground w
-      rw [empty_base_universal_access]; exact Set.mem_univ _
+      rw [accessibleWorlds_emptyBackground]; exact Set.mem_univ _
     · intro w'' _ _
       apply higher_prob_dominates
       match w'' with
@@ -171,7 +171,7 @@ theorem prob_ordering_w0_strict_w1 :
     any proposition true at w0 is necessary (since best = {w0}). -/
 theorem prob_necessity_at_best (p : World → Prop) (w : World) (hp : p 0) :
     necessity emptyBackground (probToOrdering skewedProb) p w := by
-  rw [necessity_iff_all, prob_ordering_best_w0]
+  rw [necessity_iff, prob_ordering_best_w0]
   intro w' hw'
   rw [Set.mem_singleton_iff.mp hw']
   exact hp

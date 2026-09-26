@@ -29,7 +29,7 @@ open Modality
 variable {W : Type*} (G : List (Finset W)) (bel p : Set W)
 
 /-- The desires as an ordering source. -/
-def source : List (W → Prop) := G.map λ s w => w ∈ s
+def source : List (W → Prop) := G.map fun s w ↦ w ∈ s
 
 /-- `le G w z`: every desire in `G` satisfied at `z` is satisfied at `w`. -/
 abbrev le (w z : W) : Prop := w ≤[source G] z
@@ -45,7 +45,7 @@ theorem mem_bestAmong_source (w : W) :
   Iff.rfl
 
 theorem want_iff : Want G bel p ↔ ∀ w ∈ bel, (∀ z ∈ bel, le G z w → le G w z) → w ∈ p :=
-  ⟨λ h w hw hb => h w ⟨hw, hb⟩, λ h w hw => h w hw.1 hw.2⟩
+  ⟨fun h w hw hb ↦ h w ⟨hw, hb⟩, fun h w hw ↦ h w hw.1 hw.2⟩
 
 section Decidable
 
@@ -61,7 +61,7 @@ end Decidable
 variable {G bel p}
 
 theorem Want.not_compl [Finite W] (h : bel.Nonempty) (hp : Want G bel p) :
-    ¬ Want G bel pᶜ := λ hnp =>
+    ¬ Want G bel pᶜ := fun hnp ↦
   let ⟨w, hw⟩ := exists_mem_bestAmong (A := source G) h
   hnp w hw (hp w hw)
 
@@ -69,9 +69,9 @@ theorem Want.not_compl [Finite W] (h : bel.Nonempty) (hp : Want G bel p) :
 agent believes it to have, the doxastic-closure problem of [villalta-2008]. -/
 theorem Want.mono_on {q : Set W} (hpq : ∀ w ∈ bel, w ∈ p → w ∈ q) (h : Want G bel p) :
     Want G bel q :=
-  λ w hw => hpq w hw.1 (h w hw)
+  fun w hw ↦ hpq w hw.1 (h w hw)
 
 theorem Want.mono {q : Set W} (hpq : p ⊆ q) (h : Want G bel p) : Want G bel q :=
-  h.mono_on λ _ _ hw => hpq hw
+  h.mono_on fun _ _ hw ↦ hpq hw
 
 end Desire.BestWorlds

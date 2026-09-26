@@ -54,7 +54,7 @@ def rumor : World → Prop := (·.2 = true)
 /-- The rumor as evidence of things: the background at `w` records the rumor's status in
 `w`, so the accessible worlds are those with a counterpart of the actual rumor, or with
 none if there is none. -/
-def evidence : ModalBase World := λ w => [λ v => v.2 = w.2]
+def evidence : ModalBase World := fun w ↦ [fun v ↦ v.2 = w.2]
 
 /-- The rumor as a source of information: the background lists its content. -/
 def content : ModalBase World := Function.const World [chief]
@@ -62,9 +62,10 @@ def content : ModalBase World := Function.const World [chief]
 /-- Decide a claim about the backgrounds over the four worlds. -/
 scoped macro "decide_worlds" : tactic =>
   `(tactic| ((try simp only [simpleNecessity, simplePossibility, ModalLogic.box,
-      ModalLogic.diamond, kratzerR, ConvBackground.IsRealistic, evidence, content, chief, rumor,
-      Function.const_apply, List.forall_mem_cons, List.mem_nil_iff, false_implies,
-      implies_true, and_true]) <;> decide))
+      ModalLogic.diamond, kratzerR, ModalBase.accessibleWorlds, mem_propIntersection,
+      ConvBackground.IsRealistic, evidence, content, chief, rumor, Function.const_apply,
+      List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true, and_true]) <;>
+      decide))
 
 /-- The evidence-of-things background is realistic: every world has the rumor's status it
 has. -/
@@ -94,7 +95,7 @@ elected chief. Stated for any worlds and backgrounds. -/
 theorem must_of_reliable {W : Type*} (rumor chief reliable : W → Prop) (f : ModalBase W)
     (hf : ∀ w, rumor w → rumor ∈ f w ∧ reliable ∈ f w)
     (hrel : ∀ v, reliable v → rumor v → chief v) (w : W) (hw : rumor w) :
-    simpleNecessity f chief w := λ v hv =>
+    simpleNecessity f chief w := fun v hv ↦
   hrel v (hv reliable (hf w hw).2) (hv rumor (hf w hw).1)
 
 end Kratzer2012

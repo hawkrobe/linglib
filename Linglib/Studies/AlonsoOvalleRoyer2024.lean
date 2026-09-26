@@ -105,7 +105,8 @@ theorem claim_iff (s : Scenario) (e : Ev) (w : World) :
     claim s e w ↔ ∃ d ∈ s.worlds e, (∃ x, x ∈ w) ∧ ∀ y, ∃ w' ∈ d, y ∈ w' := by
   cases e <;> cases s.decision <;>
     simp [claim, Scenario.source, Scenario.worlds, modalIndefiniteSat, simplePossibility,
-      diamond, kratzerR, ModalSource.background, SpeechEvent.declarative, SpeechEvent.imperative,
+      diamond, kratzerR, ModalBase.accessibleWorlds, mem_propIntersection,
+      ModalSource.background, SpeechEvent.declarative, SpeechEvent.imperative,
       taken]
 
 instance (s : Scenario) (e : Ev) (w : World) : Decidable (claim s e w) :=
@@ -157,8 +158,9 @@ theorem notUpperBounded :
       ¬ denotes Spanish.ModalIndefinites.algún (scenario none {{0, 1}}) .assertion {0, 1} := by
   simp [denotes, Scenario.source, ModalIndefinite.denotation, PartialProp.holds,
     Chuj.ModalIndefinites.yalnhej, Spanish.ModalIndefinites.algún, upperBoundedSat,
-    modalIndefiniteSat, simplePossibility, diamond, kratzerR, ModalSource.background,
-    SpeechEvent.declarative, taken, AnchorConstraint.Admits]
+    modalIndefiniteSat, simplePossibility, diamond, kratzerR, ModalBase.accessibleWorlds,
+    mem_propIntersection, ModalSource.background, SpeechEvent.declarative, taken,
+    AnchorConstraint.Admits]
   decide
 
 /-- (67)–(68), (93): *uno cualquiera* admits only decisions as anchors, so anchored to the

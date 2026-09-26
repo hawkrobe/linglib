@@ -280,7 +280,7 @@ theorem Vertex.necessity_xg_false (xf : Bool) :
     Vertex.necessity ⟨xf, false⟩ sim f g p q w ↔
       strongNecessity (Vertex.base ⟨xf, false⟩ sim f q) g q w := by
   simp only [Vertex.necessity, Bool.false_eq_true, ite_false, bestOf_strictlyBetter,
-    strongNecessity, necessity_iff_all, bestWorlds]
+    strongNecessity, necessity_iff, bestWorlds]
 
 /-- With X-marking of the ordering source, a vertex is weak necessity over its base, the
 secondary ordering source `[p]`. -/
@@ -350,13 +350,13 @@ private theorem M1_acc (sim : OrderingSource Bool) (v : Vertex) :
   unfold Vertex.base
   split
   · exact Set.eq_univ_of_univ_subset
-      (empty_base_universal_access (W := Bool) true ▸ subset_accessibleWorlds_revise _ _ _ _)
-  · exact empty_base_universal_access _
+      (accessibleWorlds_emptyBackground (W := Bool) true ▸ subset_accessibleWorlds_revise _ _ _ _)
+  · exact accessibleWorlds_emptyBackground _
 
 private theorem M1_iff (sim : OrderingSource Bool) (v : Vertex) :
     v.necessity sim emptyBackground emptyBackground (· = true) (· = true) true ↔ v.xg = true := by
   obtain ⟨xf, _ | _⟩ := v
-  · rw [Vertex.necessity_xg_false, strongNecessity, necessity_iff_all, bestWorlds_emptyBackground,
+  · rw [Vertex.necessity_xg_false, strongNecessity, necessity_iff, bestWorlds_emptyBackground,
       M1_acc]
     simp only [Bool.false_eq_true, iff_false, not_forall]
     exact ⟨false, Set.mem_univ _, Bool.false_ne_true⟩
@@ -391,7 +391,7 @@ private theorem M2_iff (v : Vertex) :
     simp
   have htf : Vertex.necessity ⟨true, false⟩ simB (fun _ ↦ [(· = false)])
       (fun _ ↦ [(· = true)]) (· = true) (· = true) true := by
-    rw [Vertex.necessity_xg_false, strongNecessity, necessity_iff_all, bestWorlds]
+    rw [Vertex.necessity_xg_false, strongNecessity, necessity_iff, bestWorlds]
     simp only [Vertex.base, ↓reduceIte]
     rw [bestAmong_eq_of_exists ⟨true, M2_mem, by simp⟩]
     exact fun w' hw' ↦ hw'.2 _ (List.mem_singleton_self _)
@@ -966,7 +966,7 @@ theorem deve_guess (w : Day) :
     Vertex.necessity ⟨false, true⟩ sim emptyBackground normal workday atOffice w := by
   rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]
   simp only [Vertex.base, Bool.false_eq_true, ↓reduceIte]
-  rw [empty_base_universal_access, bestAmong_normal_univ, bestAmong_workday_pair]
+  rw [accessibleWorlds_emptyBackground, bestAmong_normal_univ, bestAmong_workday_pair]
   rintro _ rfl
   rfl
 

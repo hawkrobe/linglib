@@ -54,7 +54,7 @@ ordering source induces. -/
 theorem conditionalNecessity_iff_mem_orderingImp :
     conditionalNecessity f g α β w ↔
       w ∈ orderingImp (f.accessibleWorlds) (fun w ↦ kratzerPreorder (g w)) {v | α v} {v | β v} := by
-  rw [conditionalNecessity, necessity_iff_all, mem_orderingImp, bestWorlds, bestAmong,
+  rw [conditionalNecessity, necessity_iff, mem_orderingImp, bestWorlds, bestAmong,
     accessibleWorlds_restrict]
   rfl
 
@@ -66,7 +66,7 @@ theorem conditionalPossibility_iff_mem_might :
   rw [mem_might]
   change _ ↔ w ∉ orderingImp _ _ {v | α v} {v | ¬ β v}
   rw [← conditionalNecessity_iff_mem_orderingImp, conditionalPossibility, conditionalNecessity,
-    possibility_iff_any, necessity_iff_all]
+    possibility_iff, necessity_iff]
   push Not
   rfl
 

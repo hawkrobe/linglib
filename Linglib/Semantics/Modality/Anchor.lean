@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.Kratzer.ConversationalBackground
+public import Linglib.Semantics.Modality.Kratzer.Premise
 public import Linglib.Semantics.Mood.SpeechEvent
 
 /-!

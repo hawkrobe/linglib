@@ -42,7 +42,7 @@ def weakNecessity (f : ModalBase W) (g g' : OrderingSource W) (p : W → Prop) (
 `g`-best. -/
 theorem strong_entails_weak (f : ModalBase W) (g g' : OrderingSource W) (p : W → Prop) (w : W)
     (h : strongNecessity f g p w) : weakNecessity f g g' p w := by
-  rw [strongNecessity, necessity_iff_all] at h
+  rw [strongNecessity, necessity_iff] at h
   intro w' hw'
   exact h w' (bestAmong_subset _ _ hw')
 
@@ -92,6 +92,6 @@ theorem weak_eq_strong_no_secondary (f : ModalBase W) (g : OrderingSource W) (p 
   unfold weakNecessity strongNecessity
   rw [show bestAmong (bestWorlds f g w) ((emptyBackground (W := W)) w) =
     bestWorlds f g w from bestAmong_nil _]
-  exact (necessity_iff_all f g p w).symm
+  exact (necessity_iff f g p w).symm
 
 end Modality.Directive

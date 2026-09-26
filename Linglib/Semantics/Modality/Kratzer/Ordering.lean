@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.Kratzer.ConversationalBackground
+public import Linglib.Semantics.Modality.Kratzer.Premise
 public import Linglib.Core.Order.Minimals
 public import Mathlib.Order.Preorder.Finite
 
@@ -37,7 +37,6 @@ verifies the whole ordering source, the best worlds are exactly those that do
 
 @[expose] public section
 
-
 namespace Modality
 
 variable {W : Type*}
@@ -59,11 +58,12 @@ theorem atLeastAsGoodAs_iff (A : List (W → Prop)) (w z : W) :
     (w ≤[A] z) ↔ ∀ p ∈ A, p z → p w :=
   Iff.rfl
 
-theorem atLeastAsGoodAs_refl (A : List (W → Prop)) (w : W) : w ≤[A] w := fun _ _ h ↦ h
+theorem atLeastAsGoodAs_refl (A : List (W → Prop)) (w : W) : w ≤[A] w :=
+  (kratzerPreorder A).le_refl w
 
 theorem atLeastAsGoodAs_trans {A : List (W → Prop)} {u v w : W} (huv : u ≤[A] v)
     (hvw : v ≤[A] w) : u ≤[A] w :=
-  fun p hp h ↦ huv p hp (hvw p hp h)
+  (kratzerPreorder A).le_trans u v w huv hvw
 
 /-- With an empty ordering source every world is at least as good as every other. -/
 theorem atLeastAsGoodAs_nil (w z : W) : w ≤[([] : List (W → Prop))] z := fun _ h ↦ nomatch h

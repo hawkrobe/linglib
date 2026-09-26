@@ -255,10 +255,10 @@ private theorem favoredWorlds_ofIdeals (h g : List Ideal) (w : Revenue) :
     favoredWorlds (ofIdeals h g) w = {v | ∀ i ∈ h, i.holds v} := by
   have hall : (true, true) ∈ (ofIdeals h g).circumstances.accessibleWorlds w := by
     show (true, true) ∈ ModalBase.accessibleWorlds emptyBackground w
-    rw [empty_base_universal_access]; exact Set.mem_univ _
+    rw [accessibleWorlds_emptyBackground]; exact Set.mem_univ _
   rw [favoredWorlds_eq_bestWorlds, bestWorlds, bestAmong_eq_of_exists ⟨(true, true), hall, ?_⟩]
   · ext v
-    simp only [ofIdeals, empty_base_universal_access, Set.mem_univ, true_and,
+    simp only [ofIdeals, accessibleWorlds_emptyBackground, Set.mem_univ, true_and,
       List.forall_mem_map, Set.mem_ofPred_eq]
   · intro q hq
     obtain ⟨i, -, rfl⟩ := List.mem_map.1 hq
