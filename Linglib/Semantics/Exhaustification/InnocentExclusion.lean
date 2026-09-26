@@ -482,6 +482,26 @@ theorem exhMW_subset_exhIE : exhMW ALT φ ⊆ exhIE ALT φ := by
   -- u satisfies E, so ψ u
   exact hsat ψ hψ_in_E
 
+/-- A prejacent world at which only entailed alternatives hold is minimal. -/
+theorem exh_subset_exhMW : exh ALT φ ⊆ exhMW ALT φ :=
+  fun _ ⟨hu, hex⟩ ↦ ⟨hu, fun ⟨_, hv, _, hvu⟩ ↦ hvu fun a ha hau ↦ hex a ha hau hv⟩
+
+/-- Denying every alternative the prejacent does not entail is at least as strong as innocent
+exclusion. -/
+theorem exh_subset_exhIE : exh ALT φ ⊆ exhIE ALT φ :=
+  (exh_subset_exhMW ALT φ).trans (exhMW_subset_exhIE ALT φ)
+
+/-- When the prejacent is consistent with the denial of every alternative it does not entail,
+innocent exclusion denies them all ([fox-2007]). -/
+theorem exhIE_eq_exh_of_nonempty (h : (exh ALT φ).Nonempty) : exhIE ALT φ = exh ALT φ := by
+  obtain ⟨v, hv, hvex⟩ := h
+  refine (Set.Subset.antisymm (fun u hu ↦ ?_) (exh_subset_exhIE ALT φ))
+  refine ⟨exhIE_subset ALT φ hu, fun q hq huq ↦ by_contra fun hφq ↦ ?_⟩
+  have hIE : IsInnocentlyExcludable ALT φ q :=
+    .of_forall_subset_or_notMem hq hv (fun hvq ↦ hφq (hvex q hq hvq))
+      fun b hb ↦ or_iff_not_imp_left.2 fun hφb hvb ↦ hφb (hvex b hb hvb)
+  exact hu qᶜ hIE.2 huq
+
 /-- An alternative is innocently excludable iff it fails at every minimal world. -/
 theorem isInnocentlyExcludable_iff_exhMW_subset_compl (a : Set World) (ha : a ∈ ALT) :
     IsInnocentlyExcludable ALT φ a ↔ (exhMW ALT φ ⊆ aᶜ) := by
