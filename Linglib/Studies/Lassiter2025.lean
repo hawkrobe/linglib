@@ -295,7 +295,7 @@ def markerOf (row : LinguisticExample) : Option Marker :=
 
 /-- The fragment entry for the row's polarity item. -/
 def itemOf (row : LinguisticExample) : Option PolarityItem :=
-  (row.feature? "item").bind English.PolarityItems.lookup
+  row.parse? "item" (English.PolarityItems.allPolarityItems.map fun p ↦ (p.form, p))
 
 /-- The position of the row's polarity item. -/
 def positionOf (row : LinguisticExample) : Option Position :=
