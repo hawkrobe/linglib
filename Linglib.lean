@@ -643,7 +643,6 @@ import Linglib.Discourse.Gameboard.Defs
 import Linglib.Discourse.QUD.Basic
 import Linglib.Discourse.QUD.Issue
 import Linglib.Discourse.SpeechAct
-import Linglib.Fragments.ASL.Classifiers
 import Linglib.Fragments.ASL.Determiners
 import Linglib.Fragments.Abkhaz.Evidentiality
 import Linglib.Fragments.Afar.Gender
@@ -1326,7 +1325,6 @@ import Linglib.Semantics.Homogeneity.Collective
 import Linglib.Semantics.Homogeneity.Defs
 import Linglib.Semantics.Homogeneity.Plural
 import Linglib.Semantics.Homogeneity.Usable
-import Linglib.Semantics.Iconicity
 import Linglib.Semantics.Mereology
 import Linglib.Semantics.Modality.BranchingTime
 import Linglib.Semantics.Modality.Directive
