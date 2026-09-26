@@ -72,14 +72,15 @@ open ArgumentStructure Presupposition French.Verbs
 
 /-! ### Polymorphic types -/
 
-/-- The domain types of the paper's type system: entities, situations and forces. -/
+/-- The domain types of the paper's type system are entities, situations and forces. -/
 inductive SemDomain
   | e
   | s
   | f
   deriving DecidableEq, Repr
 
-/-- A preposition type `⟨η, ⟨θ, t⟩⟩`: the domain of the ground and the domain of the figure. -/
+/-- A preposition type `⟨η, ⟨θ, t⟩⟩` pairs the domain of the ground with the domain of the
+figure. -/
 structure PrepType where
   ground : SemDomain
   figure : SemDomain
@@ -104,13 +105,13 @@ section Causal
 
 variable {Entity S : Type u} (net : S → S → S)
 
-/-- *par* in a causal adjunct, at type `⟨f, ⟨s, t⟩⟩` (14b): the situation comes about through
-the force, the net force of some situation the force maps to it. -/
-def parCausal : Rel Entity S ⟨.f, .s⟩ := λ f s => ∃ s₀, net s₀ = f ∧ f s₀ = s
+/-- *par* in a causal adjunct, at type `⟨f, ⟨s, t⟩⟩` (14b), holds when the situation comes about
+through the force, the net force of some situation the force maps to it. -/
+def parCausal : Rel Entity S ⟨.f, .s⟩ := fun f s ↦ ∃ s₀, net s₀ = f ∧ f s₀ = s
 
-/-- *de* in a causal adjunct, at type `⟨s, ⟨s, t⟩⟩` (15b): the situation arises from the
-causing situation, whose net force maps it to the situation. -/
-def deCausal : Rel Entity S ⟨.s, .s⟩ := λ s s' => net s s = s'
+/-- *de* in a causal adjunct, at type `⟨s, ⟨s, t⟩⟩` (15b), holds when the situation arises from
+the causing situation, whose net force maps it to the situation. -/
+def deCausal : Rel Entity S ⟨.s, .s⟩ := fun s s' ↦ net s s = s'
 
 /-- A cause *de* names as a situation is, through its net force, a cause *par* names as a
 force: both prepositions describe the same causal event. -/
@@ -126,29 +127,29 @@ section Passive
 
 variable {Entity T : Type*} [LinearOrder T]
 
-/-- The by-phrase (10b): the agentive instantiation applied to its argument, a predicate of
+/-- The by-phrase (10b) is the agentive instantiation applied to its argument, a predicate of
 events at type `⟨s, t⟩`. -/
 def byPhrase (init : ThematicRel Entity T) (x : Entity) : Event T → Prop := init x
 
-/-- Passive Voice (9b): existential closure of the external argument. -/
-def voicePass (p : ThematicRel Entity T) : Event T → Prop := λ e => ∃ x, p x e
+/-- Passive Voice (9b) is the existential closure of the external argument. -/
+def voicePass (p : ThematicRel Entity T) : Event T → Prop := fun e ↦ ∃ x, p x e
 
-/-- (10): the by-phrase combines with the verb's denotation by Event Identification and the
+/-- In (10) the by-phrase combines with the verb's denotation by Event Identification and the
 closure passive Voice performs is redundant, since the by-phrase supplies the initiator. -/
 theorem voicePass_eventIdentification (init : ThematicRel Entity T) (body : Event T → Prop)
     (j : Entity) (e : Event T) :
-    voicePass (eventIdentification (λ x e => init x e ∧ body e) (byPhrase init j)) e ↔
+    voicePass (eventIdentification (fun x e ↦ init x e ∧ body e) (byPhrase init j)) e ↔
       init j e ∧ body e :=
-  ⟨λ ⟨_, ⟨_, hb⟩, hj⟩ => ⟨hj, hb⟩, λ ⟨hj, hb⟩ => ⟨j, ⟨hj, hb⟩, hj⟩⟩
+  ⟨fun ⟨_, ⟨_, hb⟩, hj⟩ ↦ ⟨hj, hb⟩, fun ⟨hj, hb⟩ ↦ ⟨j, ⟨hj, hb⟩, hj⟩⟩
 
-/-- *par* in a passive (35a): the initiator relation, presupposing high proto-agentivity of
+/-- *par* in a passive (35a) is the initiator relation, presupposing high proto-agentivity of
 the agent in the event. The evaluation point of the partial proposition is the event. -/
 def parAgentive (init : ThematicRel Entity T) (High : Entity → Event T → Prop) (x : Entity) :
     PartialProp (Event T) where
   presup := High x
   assertion := init x
 
-/-- *de* in a passive (35b): the initiator relation, presupposing low proto-agentivity. -/
+/-- *de* in a passive (35b) is the initiator relation, presupposing low proto-agentivity. -/
 def deAgentive (init : ThematicRel Entity T) (High : Entity → Event T → Prop) (x : Entity) :
     PartialProp (Event T) where
   presup e := ¬ High x e
@@ -179,8 +180,8 @@ structure Construal where
 
 namespace Construal
 
-/-- The order of proto-agentivity (34): change is primary, and among construals agreeing on
-change, more volitionality or telicity is more proto-agentive. -/
+/-- In the order of proto-agentivity (34), change is primary, and among construals agreeing
+on change, more volitionality or telicity is more proto-agentive. -/
 protected def LE (c d : Construal) : Prop :=
   (c.change = true → d.change = true) ∧
     (c.change = d.change →
@@ -198,13 +199,13 @@ instance : PartialOrder Construal where
 
 instance : DecidableLT Construal := decidableLTOfDecidableLE
 
-/-- (34a): a construal bringing about a change is more proto-agentive than any that does not,
-whatever their volitionality and telicity. -/
+/-- By (34a), a construal bringing about a change is more proto-agentive than any that does
+not, whatever their volitionality and telicity. -/
 theorem lt_of_change : ∀ c d : Construal, c.change = false → d.change = true → c < d := by
   decide
 
-/-- (34b): among construals that bring about no change, proto-agentivity is volitionality and
-telicity. -/
+/-- By (34b), among construals that bring about no change, proto-agentivity is volitionality
+and telicity. -/
 theorem le_iff_of_not_change :
     ∀ c d : Construal, c.change = false → d.change = false →
       (c ≤ d ↔ (c.volition = true → d.volition = true) ∧ (c.telic = true → d.telic = true)) := by
@@ -212,33 +213,33 @@ theorem le_iff_of_not_change :
 
 end Construal
 
-/-- The construal a verb entry lexicalizes: change is the subject's causation entailment,
-volitionality its volition entailment, and telicity that of the Vendler class. -/
-def construal (v : FrenchVerbEntry) : Construal :=
+/-- The construal a verb entry lexicalizes reads change off the subject's causation entailment,
+volitionality off its volition entailment, and telicity off the Vendler class. -/
+def construal (v : Verb) : Construal :=
   ⟨(v.subjectEntailments.getD {}).causation, (v.subjectEntailments.getD {}).volition,
     decide ((v.vendlerClass.map Aspect.VendlerClass.telicity).getD .atelic = .telic)⟩
 
 /-- *Par* selects a sense whose construal is at least as proto-agentive as that of every
 sense the verb makes available. -/
-def ParSelects (senses : List FrenchVerbEntry) (v : FrenchVerbEntry) : Prop :=
+def ParSelects (senses : List Verb) (v : Verb) : Prop :=
   ∀ u ∈ senses, construal u ≤ construal v
 
 /-- *De* selects a sense whose construal brings about no change and is at most as
 proto-agentive as that of every sense the verb makes available. -/
-def DeSelects (senses : List FrenchVerbEntry) (v : FrenchVerbEntry) : Prop :=
+def DeSelects (senses : List Verb) (v : Verb) : Prop :=
   (construal v).change = false ∧ ∀ u ∈ senses, construal v ≤ construal u
 
-instance (senses : List FrenchVerbEntry) (v : FrenchVerbEntry) :
+instance (senses : List Verb) (v : Verb) :
     Decidable (ParSelects senses v) := by
   unfold ParSelects; infer_instance
 
-instance (senses : List FrenchVerbEntry) (v : FrenchVerbEntry) :
+instance (senses : List Verb) (v : Verb) :
     Decidable (DeSelects senses v) := by
   unfold DeSelects; infer_instance
 
 /-- The prototypically transitive verbs of Table 1 bring about a change and exclude *de*. -/
 theorem change_verbs_exclude_de :
-    ∀ v ∈ [laver, ecrire, construire, tuer], ParSelects [v] v ∧ ¬ DeSelects [v] v := by
+    ∀ v ∈ [laver, briser, ecrire, construire, tuer], ParSelects [v] v ∧ ¬ DeSelects [v] v := by
   decide
 
 /-- The psych verbs of Table 1 bring about no change and allow both prepositions. -/
@@ -246,8 +247,8 @@ theorem psych_verbs_allow_both :
     ∀ v ∈ [aimer, adorer, respecter], ParSelects [v] v ∧ DeSelects [v] v := by
   decide
 
-/-- The two senses of *suivre*: goal-directed following and the positional relation. -/
-def suivreSenses : List FrenchVerbEntry := [suivreDyn, suivreStat]
+/-- The two senses of *suivre* are goal-directed following and the positional relation. -/
+def suivreSenses : List Verb := [suivreDyn, suivreStat]
 
 /-- *Par* selects the volitional sense of *suivre* (25b). -/
 theorem par_suivre : ParSelects suivreSenses suivreDyn ∧ ¬ ParSelects suivreSenses suivreStat := by
@@ -257,8 +258,8 @@ theorem par_suivre : ParSelects suivreSenses suivreDyn ∧ ¬ ParSelects suivreS
 theorem de_suivre : DeSelects suivreSenses suivreStat ∧ ¬ DeSelects suivreSenses suivreDyn := by
   decide
 
-/-- The two senses of *abandonner*: the telic abandoning and the stative neglect. -/
-def abandonnerSenses : List FrenchVerbEntry := [abandonner, abandonnerStat]
+/-- The two senses of *abandonner* are the telic abandoning and the stative neglect. -/
+def abandonnerSenses : List Verb := [abandonner, abandonnerStat]
 
 /-- *Par* selects the telic sense of *abandonner* (31a). -/
 theorem par_abandonner :
