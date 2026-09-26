@@ -26,9 +26,10 @@ The proof rests on two imported layers — conic Carathéodory
 (`SignVec.exists_antidom_pair`) — and adds the merge reduction: a valid family
 of comparisons whose vector sum is a single comparison vector proves that
 comparison (`merge_to_single`), by a four-rule recursion whose stuck case is
-discharged through the sign-vector core via `v1_tailored`.  The comparison
-vector calculus (`cmpVec`, `mergeCmp`, `cvSumList`) and the merge recursion
-itself are private plumbing; only the theorems above are exported.
+discharged through the sign-vector core via `v1_tailored`.  Comparison vectors
+are `Scott.lean`'s `comparisonVec`/`comparisonSum`; the merge calculus
+(`mergeCmp`) and the merge recursion itself are private plumbing, and only the
+theorems above are exported.
 -/
 
 @[expose] public section
@@ -41,10 +42,6 @@ A comparison is a pair of disjoint finsets `(pos, neg)`; its integer vector is
 `1_pos − 1_neg ∈ {−1,0,1}ⁿ`. `mergeCmp` combines two comparisons whose pos-parts and
 neg-parts are disjoint into the disjoint-normal-form of their vector sum. -/
 
-/-- Integer comparison vector of a finset pair. -/
-private def cmpVec {n : ℕ} (c : Finset (Fin n) × Finset (Fin n)) (i : Fin n) : ℤ :=
-  (if i ∈ c.1 then 1 else 0) - (if i ∈ c.2 then 1 else 0)
-
 /-- Merge two comparisons into the disjoint normal form of their vector sum. -/
 private def mergeCmp {n : ℕ} (c d : Finset (Fin n) × Finset (Fin n)) :
     Finset (Fin n) × Finset (Fin n) :=
@@ -52,12 +49,12 @@ private def mergeCmp {n : ℕ} (c d : Finset (Fin n) × Finset (Fin n)) :
 
 /-- The merged comparison's vector is the sum of the two vectors, provided pos-parts
     are disjoint and neg-parts are disjoint (so no coordinate doubles). -/
-private lemma cmpVec_mergeCmp {n : ℕ} (c d : Finset (Fin n) × Finset (Fin n))
+private lemma comparisonVec_mergeCmp {n : ℕ} (c d : Finset (Fin n) × Finset (Fin n))
     (hpos : Disjoint c.1 d.1) (hneg : Disjoint c.2 d.2) (i : Fin n) :
-    cmpVec (mergeCmp c d) i = cmpVec c i + cmpVec d i := by
+    comparisonVec (mergeCmp c d) i = comparisonVec c i + comparisonVec d i := by
   have h1 : i ∈ c.1 → i ∉ d.1 := fun h => Finset.disjoint_left.mp hpos h
   have h2 : i ∈ c.2 → i ∉ d.2 := fun h => Finset.disjoint_left.mp hneg h
-  simp only [cmpVec, mergeCmp, Finset.mem_sdiff, Finset.mem_union]; split_ifs <;> simp_all
+  simp only [comparisonVec, mergeCmp, Finset.mem_sdiff, Finset.mem_union]; split_ifs <;> simp_all
 
 /-- `mergeCmp` of two valid comparisons is valid, given the disjointness conditions.
     Uses `QualitativeProbability.sup_le_sup` then Axiom A to reach disjoint normal form. -/
@@ -78,19 +75,6 @@ private lemma mergeCmp_valid {n : ℕ} (sys : QualitativeProbability (Set (Fin n
     simp only [mergeCmp, Finset.coe_sdiff, Finset.coe_union]
   rwa [e2, e1] at hmerge
 
-/-- Pointwise integer vector-sum of a list of comparisons. -/
-private def cvSumList {n : ℕ} (L : List (Finset (Fin n) × Finset (Fin n))) (i : Fin n) : ℤ :=
-  (L.map (fun c => cmpVec c i)).sum
-
-@[simp] private lemma cvSumList_cons {n : ℕ} (c : Finset (Fin n) × Finset (Fin n))
-    (L : List (Finset (Fin n) × Finset (Fin n))) (i : Fin n) :
-    cvSumList (c :: L) i = cmpVec c i + cvSumList L i := by
-  simp only [cvSumList, List.map_cons, List.sum_cons]
-
-private lemma cvSumList_perm {n : ℕ} {L L' : List (Finset (Fin n) × Finset (Fin n))}
-    (h : L.Perm L') (i : Fin n) : cvSumList L i = cvSumList L' i := by
-  simp only [cvSumList]; exact (h.map _).sum_eq
-
 /-- **Two-member null-forcing**: if two valid disjoint comparisons have vector-sum `≤ 0`
     everywhere with a strict negative coordinate, some atom is null (`ge ∅ {i}`).
     Disjointness forces `A ⊆ D` and `C ⊆ B`, giving `ge C A → ge C B → (Axiom A) ge ∅ (B\C)`
@@ -99,20 +83,22 @@ private lemma null_from_pair (sys : QualitativeProbability (Set (Fin 4)))
     {A B C D : Finset (Fin 4)}
     (hAB : sys.ge ↑A ↑B) (hCD : sys.ge ↑C ↑D)
     (hABd : Disjoint A B) (hCDd : Disjoint C D)
-    (hle : ∀ i, cmpVec (A, B) i + cmpVec (C, D) i ≤ 0)
-    (i₀ : Fin 4) (hlt : cmpVec (A, B) i₀ + cmpVec (C, D) i₀ < 0) :
+    (hle : ∀ i, comparisonVec (A, B) i + comparisonVec (C, D) i ≤ 0)
+    (i₀ : Fin 4) (hlt : comparisonVec (A, B) i₀ + comparisonVec (C, D) i₀ < 0) :
     ∃ i, sys.ge (∅ : Set (Fin 4)) {i} := by
   -- A ⊆ D and C ⊆ B (membership facts from disjointness)
   have hAD : A ⊆ D := by
     intro a ha; by_contra haD
     have := hle a
-    simp only [cmpVec, ite_eq_left ha, ite_eq_right (Finset.disjoint_left.mp hABd ha), ite_eq_right haD,
+    simp only [comparisonVec, ite_eq_left ha, ite_eq_right (Finset.disjoint_left.mp hABd ha),
+      ite_eq_right haD,
       sub_zero] at this
     split_ifs at this <;> omega
   have hCB : C ⊆ B := by
     intro c hc; by_contra hcB
     have := hle c
-    simp only [cmpVec, ite_eq_left hc, ite_eq_right (Finset.disjoint_left.mp hCDd hc), ite_eq_right hcB,
+    simp only [comparisonVec, ite_eq_left hc, ite_eq_right (Finset.disjoint_left.mp hCDd hc),
+      ite_eq_right hcB,
       sub_zero] at this
     split_ifs at this <;> omega
   -- ge C A, ge C B
@@ -131,7 +117,7 @@ private lemma null_from_pair (sys : QualitativeProbability (Set (Fin 4)))
       Finset.sdiff_eq_empty_iff_subset.mpr hAD, Finset.coe_empty] at hax
   -- strict coordinate i₀ ∈ (B \ C) ∪ (D \ A)
   have hmem : i₀ ∈ B \ C ∨ i₀ ∈ D \ A := by
-    simp only [cmpVec, Finset.mem_sdiff] at hlt ⊢; split_ifs at hlt <;> simp_all
+    simp only [comparisonVec, Finset.mem_sdiff] at hlt ⊢; split_ifs at hlt <;> simp_all
   rcases hmem with hm | hm
   · exact ⟨i₀, sys.trans (sys.mono
       (by rw [Set.singleton_subset_iff]; exact Finset.mem_coe.mpr hm)) hBC⟩
@@ -142,11 +128,11 @@ private lemma null_from_pair (sys : QualitativeProbability (Set (Fin 4)))
 
 /-- ℚ-valued sign vector of a comparison. -/
 private def toQVec (c : Finset (Fin 4) × Finset (Fin 4)) : Fin 4 → ℚ :=
-  fun i => (cmpVec c i : ℚ)
+  fun i => (comparisonVec c i : ℚ)
 
 private lemma toQVec_apply (c : Finset (Fin 4) × Finset (Fin 4)) (k : Fin 4) :
     toQVec c k = (if k ∈ c.1 then (1 : ℚ) else 0) - (if k ∈ c.2 then 1 else 0) := by
-  simp only [toQVec, cmpVec]; split_ifs <;> norm_num
+  simp only [toQVec, comparisonVec]; split_ifs <;> norm_num
 
 private lemma posSupport_toQVec {c : Finset (Fin 4) × Finset (Fin 4)} (hc : Disjoint c.1 c.2) :
     SignVec.posSupport (toQVec c) = c.1 := by
@@ -162,14 +148,14 @@ private lemma negSupport_toQVec {c : Finset (Fin 4) × Finset (Fin 4)} (hc : Dis
   by_cases h1 : k ∈ c.1 <;> by_cases h2 : k ∈ c.2 <;>
     first | exact absurd h2 (Finset.disjoint_left.mp hc h1) | norm_num [h1, h2]
 
-private lemma cmpVec_swap (A B : Finset (Fin 4)) (i : Fin 4) :
-    cmpVec (B, A) i = -cmpVec (A, B) i := by
-  simp only [cmpVec]; ring
+private lemma comparisonVec_swap (A B : Finset (Fin 4)) (i : Fin 4) :
+    comparisonVec (B, A) i = -comparisonVec (A, B) i := by
+  simp only [comparisonVec]; ring
 
 /-- Comparisons with both parts empty contribute nothing to the vector sum. -/
-private lemma cvSumList_filter_ne_empty (L : List (Finset (Fin 4) × Finset (Fin 4)))
+private lemma comparisonSum_filter_ne_empty (L : List (Finset (Fin 4) × Finset (Fin 4)))
     (h0 : ∀ c ∈ L, c.1 = ∅ → c.2 = ∅) (i : Fin 4) :
-    cvSumList (L.filter (fun c => c.1 ≠ ∅)) i = cvSumList L i := by
+    comparisonSum (L.filter (fun c => c.1 ≠ ∅)) i = comparisonSum L i := by
   induction L with
   | nil => rfl
   | cons c rest ih =>
@@ -177,10 +163,10 @@ private lemma cvSumList_filter_ne_empty (L : List (Finset (Fin 4) × Finset (Fin
       fun c' hc' => h0 c' (List.mem_cons_of_mem _ hc')
     by_cases hc : c.1 = ∅
     · have hc2 := h0 c (List.mem_cons.mpr (Or.inl rfl)) hc
-      rw [List.filter_cons_of_neg (by simp [hc]), cvSumList_cons, ih h0',
-        show cmpVec c i = 0 from by simp [cmpVec, hc, hc2]]
+      rw [List.filter_cons_of_neg (by simp [hc]), comparisonSum_cons, ih h0',
+        show comparisonVec c i = 0 from by simp [comparisonVec, hc, hc2]]
       omega
-    · rw [List.filter_cons_of_pos (by simp [hc]), cvSumList_cons, cvSumList_cons, ih h0']
+    · rw [List.filter_cons_of_pos (by simp [hc]), comparisonSum_cons, comparisonSum_cons, ih h0']
 
 /-- **The (V1) consequence** the recursion needs (the combinatorial crux, isolated):
     a "stuck" family — no generalized-mergeable pair, no mono-dominating member,
@@ -198,13 +184,13 @@ private lemma v1_tailored
     (hdisj : ∀ c ∈ L, Disjoint c.1 c.2)
     {vpos vneg : Finset (Fin 4)}
     (hvpvn : Disjoint vpos vneg)
-    (hsum : ∀ i, cvSumList L i = cmpVec (vpos, vneg) i)
+    (hsum : ∀ i, comparisonSum L i = comparisonVec (vpos, vneg) i)
     (hne : vneg.Nonempty)
     (hnotdom : ∀ c ∈ L, c.1 ⊆ vpos → ¬ vneg ⊆ c.2)
     (hnogm : ¬ ∃ c d rest, L.Perm (c :: d :: rest) ∧ Disjoint c.1 d.1 ∧ Disjoint c.2 d.2) :
     (∃ c ∈ L, ∃ d ∈ L,
-        (∀ i, cmpVec (c.1, c.2) i + cmpVec (d.1, d.2) i ≤ 0) ∧
-        (∃ i, cmpVec (c.1, c.2) i + cmpVec (d.1, d.2) i < 0))
+        (∀ i, comparisonVec (c.1, c.2) i + comparisonVec (d.1, d.2) i ≤ 0) ∧
+        (∃ i, comparisonVec (c.1, c.2) i + comparisonVec (d.1, d.2) i < 0))
       ∨ (∃ c ∈ L, Disjoint vneg c.1 ∧ Disjoint vpos c.2) := by
   classical
   -- Step A: a member with empty positive part and nonempty negative part is
@@ -212,8 +198,8 @@ private lemma v1_tailored
   by_cases hemp : ∃ c ∈ L, c.1 = ∅ ∧ c.2.Nonempty
   · obtain ⟨c, hcL, hc1, k, hk⟩ := hemp
     refine Or.inl ⟨c, hcL, c, hcL, fun i => ?_, k, ?_⟩
-    · simp only [cmpVec, hc1, ite_eq_right (Finset.notMem_empty i)]; split_ifs <;> omega
-    · simp only [cmpVec, hc1, ite_eq_right (Finset.notMem_empty k), ite_eq_left hk]; omega
+    · simp only [comparisonVec, hc1, ite_eq_right (Finset.notMem_empty i)]; split_ifs <;> omega
+    · simp only [comparisonVec, hc1, ite_eq_right (Finset.notMem_empty k), ite_eq_left hk]; omega
   -- Step B: the right disjunct as an escape hatch
   by_cases hrd : ∃ c ∈ L, Disjoint vneg c.1 ∧ Disjoint vpos c.2
   · exact Or.inr hrd
@@ -224,8 +210,8 @@ private lemma v1_tailored
   set L' := L.filter (fun c => c.1 ≠ ∅) with hL'
   set l : List (Fin 4 → ℚ) := ((vneg, vpos) :: L').map toQVec with hl
   set S : Finset (Fin 4 → ℚ) := l.toFinset with hS
-  have hfil : ∀ i, cvSumList L' i = cvSumList L i := by
-    intro i; rw [hL']; exact cvSumList_filter_ne_empty L h0 i
+  have hfil : ∀ i, comparisonSum L' i = comparisonSum L i := by
+    intro i; rw [hL']; exact comparisonSum_filter_ne_empty L h0 i
   have hmem_shape : ∀ v ∈ S, ∃ c, (c = (vneg, vpos) ∨ c ∈ L') ∧ toQVec c = v := by
     intro v hv
     rw [hS, List.mem_toFinset, hl, List.mem_map] at hv
@@ -250,7 +236,8 @@ private lemma v1_tailored
       have hc1 : c.1 ≠ ∅ := by simpa using List.of_mem_filter hc
       obtain ⟨k, hk⟩ := Finset.nonempty_iff_ne_empty.mpr hc1
       refine ⟨k, ?_⟩
-      rw [toQVec_apply, ite_eq_left hk, ite_eq_right (Finset.disjoint_left.mp (hdisj c hcL) hk)]; norm_num
+      rw [toQVec_apply, ite_eq_left hk, ite_eq_right (Finset.disjoint_left.mp (hdisj c hcL) hk)]
+      norm_num
   have hSne : S.Nonempty := by
     refine ⟨toQVec (vneg, vpos), ?_⟩
     rw [hS, List.mem_toFinset, hl]
@@ -265,14 +252,15 @@ private lemma v1_tailored
     rw [hS, Finset.sum_congr rfl (fun v _ => (nsmul_eq_mul _ _).symm), ← hc, hl,
       List.map_map]
     simp only [Function.comp_def, List.map_cons, List.sum_cons]
-    have hLs : (L'.map (fun c => toQVec c i)).sum = ((cvSumList L' i : ℤ) : ℚ) := by
-      simp only [toQVec, cvSumList]; rw [Int.cast_list_sum, List.map_map]; rfl
+    have hLs : (L'.map (fun c => toQVec c i)).sum = ((comparisonSum L' i : ℤ) : ℚ) := by
+      simp only [toQVec, comparisonSum]; rw [Int.cast_list_sum, List.map_map]; rfl
     rw [hLs, hfil i, hsum i]
     simp only [toQVec]
-    rw [cmpVec_swap]; push_cast; ring
+    rw [comparisonVec_swap]; push_cast; ring
   -- no-g-merge transfers to the vector family
   have hSnogm : ∀ v ∈ S, ∀ w ∈ S, v ≠ w →
-      ¬(Disjoint (SignVec.posSupport v) (SignVec.posSupport w) ∧ Disjoint (SignVec.negSupport v) (SignVec.negSupport w)) := by
+      ¬(Disjoint (SignVec.posSupport v) (SignVec.posSupport w) ∧
+        Disjoint (SignVec.negSupport v) (SignVec.negSupport w)) := by
     rintro v hv w hw hvw ⟨hg1, hg2⟩
     obtain ⟨c, hc, rfl⟩ := hmem_shape v hv
     obtain ⟨c', hc', rfl⟩ := hmem_shape w hw
@@ -299,8 +287,10 @@ private lemma v1_tailored
   have hvS : v ∈ S := hS'S hvS'
   have hwS : w ∈ S := hS'S hwS'
   -- vector-level consequences of the anti-dominating pair
-  have hps : ∀ i, v i = 1 → w i = -1 := fun i h => SignVec.mem_negSupport.mp (had1 (SignVec.mem_posSupport.mpr h))
-  have hps' : ∀ i, w i = 1 → v i = -1 := fun i h => SignVec.mem_negSupport.mp (had2 (SignVec.mem_posSupport.mpr h))
+  have hps : ∀ i, v i = 1 → w i = -1 := fun i h =>
+    SignVec.mem_negSupport.mp (had1 (SignVec.mem_posSupport.mpr h))
+  have hps' : ∀ i, w i = 1 → v i = -1 := fun i h =>
+    SignVec.mem_negSupport.mp (had2 (SignVec.mem_posSupport.mpr h))
   have hvle : ∀ i, v i + w i ≤ 0 := by
     intro i
     rcases eq_or_ne (v i) 1 with h1 | h1
@@ -348,7 +338,7 @@ private lemma v1_tailored
 
 /-- **Recombine** (case 4 of the merge recursion): if a member `c` is valid, the
     reversed target `r = (vneg, vpos)` generalized-merges `c` (`Disjoint vneg c.1`,
-    `Disjoint vpos c.2`), and the residual target `t' = t − cmpVec c` — namely
+    `Disjoint vpos c.2`), and the residual target `t' = t − comparisonVec c` — namely
     `(p, q)` with `p = (vpos \ c.1) ∪ (c.2 \ vneg)`, `q = (vneg \ c.2) ∪ (c.1 \ vpos)`
     — is provable (`ge p q`, the IH), then `ge vpos vneg`. Proved by merging `(p,q)`
     with `c` via `mergeCmp_valid`; the disjoint-normal-form is exactly `(vpos, vneg)`. -/
@@ -395,7 +385,7 @@ private theorem merge_to_single (sys : QualitativeProbability (Set (Fin 4)))
     (hvalid : ∀ c ∈ L, sys.ge ↑c.1 ↑c.2)
     (vpos vneg : Finset (Fin 4))
     (hvpvn : Disjoint vpos vneg)
-    (hsum : ∀ i, cvSumList L i = cmpVec (vpos, vneg) i) :
+    (hsum : ∀ i, comparisonSum L i = comparisonVec (vpos, vneg) i) :
     sys.ge ↑vpos ↑vneg := by
   by_cases hne : vneg.Nonempty
   · by_cases hdom : ∃ c ∈ L, c.1 ⊆ vpos ∧ vneg ⊆ c.2
@@ -416,19 +406,20 @@ private theorem merge_to_single (sys : QualitativeProbability (Set (Fin 4)))
           exact absurd hi (hnull i)
         · -- reversed target g-merges `c`: peel `c`, recurse on residual target, recombine
           have hperm := List.perm_cons_erase hcL
-          have hsum' : ∀ i, cvSumList (L.erase c) i =
-              cmpVec ((vpos \ c.1) ∪ (c.2 \ vneg), (vneg \ c.2) ∪ (c.1 \ vpos)) i := by
+          have hsum' : ∀ i, comparisonSum (L.erase c) i =
+              comparisonVec ((vpos \ c.1) ∪ (c.2 \ vneg), (vneg \ c.2) ∪ (c.1 \ vpos)) i := by
             intro i
-            have h1 : cvSumList L i = cmpVec c i + cvSumList (L.erase c) i := by
-              rw [cvSumList_perm hperm i, cvSumList_cons]
-            have he : cvSumList (L.erase c) i = cmpVec (vpos, vneg) i - cmpVec c i := by
+            have h1 : comparisonSum L i = comparisonVec c i + comparisonSum (L.erase c) i := by
+              rw [congrFun (comparisonSum_perm hperm) i, comparisonSum_cons]
+            have he : comparisonSum (L.erase c) i =
+                comparisonVec (vpos, vneg) i - comparisonVec c i := by
               have := hsum i; omega
             rw [he]
             have a1 : i ∈ vpos → i ∉ vneg := fun h => Finset.disjoint_left.mp hvpvn h
             have a2 : i ∈ vpos → i ∉ c.2 := fun h => Finset.disjoint_left.mp hrc2 h
             have a3 : i ∈ vneg → i ∉ c.1 := fun h => Finset.disjoint_left.mp hrc1 h
             have a4 : i ∈ c.1 → i ∉ c.2 := fun h => Finset.disjoint_left.mp (hdisj c hcL) h
-            simp only [cmpVec, Finset.mem_union, Finset.mem_sdiff]
+            simp only [comparisonVec, Finset.mem_union, Finset.mem_sdiff]
             by_cases h1v : i ∈ vpos <;> by_cases h2v : i ∈ vneg <;>
               by_cases h3v : i ∈ c.1 <;> by_cases h4v : i ∈ c.2 <;> simp_all
           have hpq : Disjoint ((vpos \ c.1) ∪ (c.2 \ vneg)) ((vneg \ c.2) ∪ (c.1 \ vpos)) := by
@@ -458,10 +449,11 @@ private theorem merge_to_single (sys : QualitativeProbability (Set (Fin 4)))
         rcases List.mem_cons.mp hx with rfl | hx
         · exact mergeCmp_valid sys (hvalid c hcmem) (hvalid d hdmem) hpd hnd
         · exact hvalid x (hrestsub x hx)
-      have hsum' : ∀ i, cvSumList (mergeCmp c d :: rest) i = cmpVec (vpos, vneg) i := by
+      have hsum' : ∀ i, comparisonSum (mergeCmp c d :: rest) i = comparisonVec (vpos, vneg) i := by
         intro i
-        rw [cvSumList_cons, cmpVec_mergeCmp c d hpd hnd i, ← hsum i, cvSumList_perm hperm i]
-        simp only [cvSumList_cons]; omega
+        rw [comparisonSum_cons, comparisonVec_mergeCmp c d hpd hnd i, ← hsum i,
+          congrFun (comparisonSum_perm hperm) i]
+        simp only [comparisonSum_cons]; omega
       exact merge_to_single sys hnull (mergeCmp c d :: rest) hdisj' hvalid' vpos vneg hvpvn hsum'
   · -- trivial-target discharge: vneg = ∅
     rw [Finset.not_nonempty_iff_eq_empty] at hne
@@ -474,140 +466,18 @@ decreasing_by
     simp only [List.length_cons] at h ⊢
     omega
 
-/-! ### Denominator-clearing infrastructure
-
-To turn a rational-weighted neutral portfolio into an integer-balanced list of unit
-comparisons, multiply every weight by the common denominator `D` and replicate each
-comparison `wc.weight·D` times. The helpers below compute the vector sum of such a
-`flatMap`-of-`replicate` list and recover `D · weightedSum` after casting back to `ℚ`. -/
-
-private lemma cvSumList_flatMap {n : ℕ} {α : Type*} (P : List α)
-    (f : α → List (Finset (Fin n) × Finset (Fin n))) (i : Fin n) :
-    cvSumList (P.flatMap f) i = (P.map (fun a => cvSumList (f a) i)).sum := by
-  induction P with
-  | nil => simp [cvSumList]
-  | cons a P ih =>
-    rw [List.flatMap_cons,
-      show cvSumList (f a ++ List.flatMap f P) i
-          = cvSumList (f a) i + cvSumList (List.flatMap f P) i by
-        simp only [cvSumList, List.map_append, List.sum_append], ih,
-      List.map_cons, List.sum_cons]
-
-private lemma cvSumList_replicate {n : ℕ} (m : ℕ) (c : Finset (Fin n) × Finset (Fin n))
-    (i : Fin n) : cvSumList (List.replicate m c) i = (m : ℤ) * cmpVec c i := by
-  simp only [cvSumList, List.map_replicate, List.sum_replicate, nsmul_eq_mul]
-
-private lemma weight_mul_den (q : ℚ) : q * (q.den : ℚ) = (q.num : ℚ) := by
-  have h := Rat.num_div_den q
-  have hd : (q.den : ℚ) ≠ 0 := by exact_mod_cast q.den_ne_zero
-  rw [div_eq_iff hd] at h; exact h.symm
-
-private lemma den_prod_pos (P : List (WComparison 4)) :
-    0 < (P.map (fun wc => wc.weight.den)).prod := by
-  induction P with
-  | nil => simp
-  | cons a P ih => simp only [List.map_cons, List.prod_cons]; exact Nat.mul_pos a.weight.den_pos ih
-
-/-- Casting the integer multiplicities back to `ℚ` recovers `D · weightedSum`. -/
-private lemma cleared_sum_eq (P : Portfolio 4) (i : Fin 4) (D : ℕ)
-    (mult : WComparison 4 → ℕ)
-    (hcast : ∀ wc, List.Mem wc P → ((mult wc : ℤ) : ℚ) = wc.weight * (D : ℚ)) :
-    (((P.map (fun wc => (mult wc : ℤ) * cmpVec (wc.left, wc.right) i)).sum : ℤ) : ℚ)
-      = (D : ℚ) * P.weightedSum i := by
-  rw [Portfolio.weightedSum]
-  induction P with
-  | nil => simp
-  | cons a P ih =>
-    simp only [List.map_cons, List.sum_cons, Int.cast_add, Int.cast_mul]
-    rw [ih (fun wc h => hcast wc (List.Mem.tail a h)), mul_add]
-    congr 1
-    rw [hcast a (List.Mem.head P)]
-    show a.weight * ↑D * ↑(comparisonVec 4 a.left a.right i)
-        = ↑D * (a.weight * ↑(comparisonVec 4 a.left a.right i))
-    ring
-
-/-- **Integer-balance bridge**: from a valid neutral portfolio `P` with a member `s`,
-    clearing denominators yields a unit-weight list `R` of valid disjoint comparisons
-    with `cvSumList R = cmpVec (s.right, s.left)` — the denominator-cleared balanced
-    multiset with one copy of `s` removed. -/
-private theorem exists_balanced_list (sys : QualitativeProbability (Set (Fin 4)))
-    (P : Portfolio 4) (hvalid : P.isValid sys.ge) (hneutral : P.isNeutral)
-    (s : WComparison 4) (hsmem : List.Mem s P) :
-    ∃ R : List (Finset (Fin 4) × Finset (Fin 4)),
-      (∀ c ∈ R, Disjoint c.1 c.2) ∧ (∀ c ∈ R, sys.ge ↑c.1 ↑c.2) ∧
-      (∀ i, cvSumList R i = cmpVec (s.right, s.left) i) := by
-  set D : ℕ := (P.map (fun wc => wc.weight.den)).prod with hD
-  have hDpos : 0 < D := hD ▸ den_prod_pos P
-  have hdvd : ∀ wc, List.Mem wc P → wc.weight.den ∣ D := by
-    intro wc hwc
-    rw [hD]; exact List.dvd_prod (by simp only [List.mem_map]; exact ⟨wc, hwc, rfl⟩)
-  set mult : WComparison 4 → ℕ :=
-    fun wc => (wc.weight.num * (D / wc.weight.den : ℕ)).toNat with hmult
-  have hcast : ∀ wc, List.Mem wc P → ((mult wc : ℤ) : ℚ) = wc.weight * (D : ℚ) := by
-    intro wc hwc
-    obtain ⟨k, hk⟩ := hdvd wc hwc
-    have hdk : D / wc.weight.den = k := by
-      rw [hk]; exact Nat.mul_div_cancel_left k wc.weight.den_pos
-    have hnumpos : 0 < wc.weight.num := Rat.num_pos.mpr wc.weight_pos
-    have hkpos : 0 < k := Nat.pos_of_ne_zero (by rintro rfl; rw [Nat.mul_zero] at hk; omega)
-    have hmz : 0 ≤ wc.weight.num * (D / wc.weight.den : ℕ) := by rw [hdk]; positivity
-    rw [hmult]; simp only
-    rw [Int.toNat_of_nonneg hmz, hdk]; push_cast
-    rw [hk]; push_cast
-    rw [← mul_assoc, weight_mul_den]
-  have hmultpos : ∀ wc, List.Mem wc P → 1 ≤ mult wc := by
-    intro wc hwc
-    obtain ⟨k, hk⟩ := hdvd wc hwc
-    have hdk : D / wc.weight.den = k := by
-      rw [hk]; exact Nat.mul_div_cancel_left k wc.weight.den_pos
-    have hnumpos : 0 < wc.weight.num := Rat.num_pos.mpr wc.weight_pos
-    have hkpos : 0 < k := Nat.pos_of_ne_zero (by rintro rfl; rw [Nat.mul_zero] at hk; omega)
-    rw [hmult]; simp only; rw [hdk]
-    have hp : 0 < wc.weight.num * (k : ℤ) := by positivity
-    omega
-  set Lfull : List (Finset (Fin 4) × Finset (Fin 4)) :=
-    P.flatMap (fun wc => List.replicate (mult wc) (wc.left, wc.right)) with hLfull
-  have hmemLfull : ∀ c, c ∈ Lfull → ∃ wc, List.Mem wc P ∧ c = (wc.left, wc.right) := by
-    intro c hc
-    rw [hLfull, List.mem_flatMap] at hc
-    obtain ⟨wc, hwc, hc⟩ := hc
-    exact ⟨wc, hwc, List.eq_of_mem_replicate hc⟩
-  have hLdisj : ∀ c ∈ Lfull, Disjoint c.1 c.2 := by
-    intro c hc; obtain ⟨wc, _, rfl⟩ := hmemLfull c hc; exact wc.disjoint
-  have hLvalid : ∀ c ∈ Lfull, sys.ge ↑c.1 ↑c.2 := by
-    intro c hc; obtain ⟨wc, hwc, rfl⟩ := hmemLfull c hc; exact hvalid wc hwc
-  have hLsum : ∀ i, cvSumList Lfull i = 0 := by
-    intro i
-    have hstep : cvSumList Lfull i =
-        (P.map (fun wc => (mult wc : ℤ) * cmpVec (wc.left, wc.right) i)).sum := by
-      rw [hLfull, cvSumList_flatMap]
-      exact congrArg _ (List.map_congr_left fun wc _ => cvSumList_replicate _ _ _)
-    have hzero : ((cvSumList Lfull i : ℤ) : ℚ) = 0 := by
-      rw [hstep, cleared_sum_eq P i D mult hcast, hneutral i, mul_zero]
-    exact_mod_cast hzero
-  have hsLfull : (s.left, s.right) ∈ Lfull := by
-    rw [hLfull, List.mem_flatMap]
-    exact ⟨s, hsmem, List.mem_replicate.mpr ⟨by have := hmultpos s hsmem; omega, rfl⟩⟩
-  refine ⟨Lfull.erase (s.left, s.right), fun c hc => hLdisj c (List.mem_of_mem_erase hc),
-    fun c hc => hLvalid c (List.mem_of_mem_erase hc), fun i => ?_⟩
-  have hperm := List.perm_cons_erase hsLfull
-  have h1 : cvSumList Lfull i
-      = cmpVec (s.left, s.right) i + cvSumList (Lfull.erase (s.left, s.right)) i := by
-    rw [cvSumList_perm hperm i, cvSumList_cons]
-  have h2 : cvSumList (Lfull.erase (s.left, s.right)) i = - cmpVec (s.left, s.right) i := by
-    have := hLsum i; omega
-  rw [h2]; simp only [cmpVec]; split_ifs <;> omega
-
-/-- **No-null case** of Theorem 8a (Fin 4): when no atom is null, every valid neutral
-    portfolio is non-strict, via the merge reduction `merge_to_single`. -/
+/-- **No-null case** of Theorem 8a (Fin 4): when no atom is null, every
+    balanced list of valid comparisons reverses, via the merge reduction
+    `merge_to_single`. -/
 theorem no_null_cancellation (sys : QualitativeProbability (Set (Fin 4)))
-    (hnull : ∀ i : Fin 4, ¬ sys.ge ∅ {i}) :
-    Cancellation 4 sys.ge := by
-  intro P hvalid hneutral hstrict
-  obtain ⟨s, hsmem, hsstrict⟩ := hstrict
-  apply hsstrict
-  obtain ⟨R, hRdisj, hRvalid, hRsum⟩ := exists_balanced_list sys P hvalid hneutral s hsmem
-  exact merge_to_single sys hnull R hRdisj hRvalid s.right s.left s.disjoint.symm hRsum
+    (hnull : ∀ i : Fin 4, ¬ sys.ge ∅ {i}) : Cancellation sys.ge := by
+  intro L hdisj hvalid hsum c hc
+  refine merge_to_single sys hnull (L.erase c) (fun d hd ↦ hdisj d (List.mem_of_mem_erase hd))
+    (fun d hd ↦ hvalid d (List.mem_of_mem_erase hd)) c.2 c.1 (hdisj c hc).symm fun i ↦ ?_
+  have h := congrFun ((comparisonSum_perm (List.perm_cons_erase hc)).symm.trans hsum) i
+  rw [comparisonSum_cons, Pi.zero_apply] at h
+  simp only [comparisonVec] at h ⊢
+  omega
 
 /-! ### Fin 3 via lexicographic extension
 
@@ -717,81 +587,55 @@ private lemma restrict3_coe_map (s : Finset (Fin 3)) :
   rw [Finset.mem_coe, Finset.mem_map']
 
 /-- Embed a `Fin 3` comparison into `Fin 4` along `Fin.castSucc`. -/
-private def embedComparison (wc : WComparison 3) : WComparison 4 where
-  left := wc.left.map Fin.castSuccEmb
-  right := wc.right.map Fin.castSuccEmb
-  weight := wc.weight
-  disjoint := by rw [Finset.disjoint_map]; exact wc.disjoint
-  weight_pos := wc.weight_pos
+private def embed (c : Finset (Fin 3) × Finset (Fin 3)) : Finset (Fin 4) × Finset (Fin 4) :=
+  (c.1.map Fin.castSuccEmb, c.2.map Fin.castSuccEmb)
 
-private lemma comparisonVec_map_last (A B : Finset (Fin 3)) :
-    comparisonVec 4 (A.map Fin.castSuccEmb) (B.map Fin.castSuccEmb) (Fin.last 3) = 0 := by
-  unfold comparisonVec
-  rw [ite_eq_right (last_notMem_map A), ite_eq_right (last_notMem_map B), sub_zero]
+private lemma comparisonVec_embed_last (c : Finset (Fin 3) × Finset (Fin 3)) :
+    comparisonVec (embed c) (Fin.last 3) = 0 := by
+  show ((if Fin.last 3 ∈ c.1.map Fin.castSuccEmb then 1 else 0) -
+    (if Fin.last 3 ∈ c.2.map Fin.castSuccEmb then 1 else 0) : ℤ) = 0
+  rw [ite_eq_right (last_notMem_map _), ite_eq_right (last_notMem_map _), sub_zero]
 
-private lemma comparisonVec_map_castSucc (A B : Finset (Fin 3)) (i : Fin 3) :
-    comparisonVec 4 (A.map Fin.castSuccEmb) (B.map Fin.castSuccEmb) i.castSucc =
-      comparisonVec 3 A B i := by
-  show ((if Fin.castSuccEmb i ∈ A.map Fin.castSuccEmb then 1 else 0) -
-      (if Fin.castSuccEmb i ∈ B.map Fin.castSuccEmb then 1 else 0) : ℤ) =
-    comparisonVec 3 A B i
-  simp only [Finset.mem_map']; rfl
+private lemma comparisonVec_embed_castSucc (c : Finset (Fin 3) × Finset (Fin 3)) (i : Fin 3) :
+    comparisonVec (embed c) i.castSucc = comparisonVec c i := by
+  simp [comparisonVec, embed]
 
 /-- Cancellation transfers back along the lexicographic extension. -/
 private theorem cancellation_extendLex (sys : QualitativeProbability (Set (Fin 3)))
-    (h : Cancellation 4 (QualitativeProbability.extendLex sys).ge) : Cancellation 3 sys.ge := by
-  intro P hvalid hneutral hstrict
-  refine h (P.map embedComparison) ?_ ?_ ?_
-  · -- validity transfers through the restriction
-    intro wc' hmem
-    obtain ⟨wc, hwcP, rfl⟩ := List.mem_map.mp hmem
-    have hL : (embedComparison wc).left = wc.left.map Fin.castSuccEmb := rfl
-    have hR : (embedComparison wc).right = wc.right.map Fin.castSuccEmb := rfl
-    refine Or.inr ⟨iff_of_false ?_ ?_, ?_⟩
-    · rw [hL]; exact fun h3 => last_notMem_map _ (Finset.mem_coe.mp h3)
-    · rw [hR]; exact fun h3 => last_notMem_map _ (Finset.mem_coe.mp h3)
-    · rw [hL, hR, restrict3_coe_map, restrict3_coe_map]; exact hvalid wc hwcP
-  · -- neutrality: the new coordinate vanishes; the old ones are unchanged
-    refine Fin.lastCases ?_ ?_
-    · simp only [Portfolio.weightedSum, List.map_map]
-      apply List.sum_eq_zero
-      intro x hx
-      obtain ⟨wc, -, rfl⟩ := List.mem_map.mp hx
-      show (embedComparison wc).weight *
-        ((comparisonVec 4 (embedComparison wc).left (embedComparison wc).right
-          (Fin.last 3) : ℤ) : ℚ) = 0
-      rw [show (embedComparison wc).left = wc.left.map Fin.castSuccEmb from rfl,
-        show (embedComparison wc).right = wc.right.map Fin.castSuccEmb from rfl,
-        comparisonVec_map_last]
-      simp
-    · intro i
-      have he : Portfolio.weightedSum (P.map embedComparison) i.castSucc =
-          P.weightedSum i := by
-        simp only [Portfolio.weightedSum, List.map_map]
-        refine congrArg _ (List.map_congr_left fun wc _ => ?_)
-        show (embedComparison wc).weight *
-            ((comparisonVec 4 (embedComparison wc).left (embedComparison wc).right
-              i.castSucc : ℤ) : ℚ) =
-          wc.weight * ((comparisonVec 3 wc.left wc.right i : ℤ) : ℚ)
-        rw [show (embedComparison wc).left = wc.left.map Fin.castSuccEmb from rfl,
-          show (embedComparison wc).right = wc.right.map Fin.castSuccEmb from rfl,
-          comparisonVec_map_castSucc,
-          show (embedComparison wc).weight = wc.weight from rfl]
-      rw [he]; exact hneutral i
-  · -- strictness transfers
-    obtain ⟨wc, hwcP, hstr⟩ := hstrict
-    refine ⟨embedComparison wc, List.mem_map.mpr ⟨wc, hwcP, rfl⟩, fun hge => hstr ?_⟩
-    have hL : (embedComparison wc).left = wc.left.map Fin.castSuccEmb := rfl
-    have hR : (embedComparison wc).right = wc.right.map Fin.castSuccEmb := rfl
-    rcases hge with ⟨h3, -⟩ | ⟨-, hge⟩
-    · rw [hR] at h3; exact absurd (Finset.mem_coe.mp h3) (last_notMem_map _)
-    · rwa [hL, hR, restrict3_coe_map, restrict3_coe_map] at hge
+    (h : Cancellation (QualitativeProbability.extendLex sys).ge) : Cancellation sys.ge := by
+  intro L hdisj hvalid hsum c hc
+  have key := h (L.map embed) ?_ ?_ ?_ (embed c) (List.mem_map_of_mem hc)
+  · -- strictness transfers back
+    rcases key with ⟨h3, -⟩ | ⟨-, hge⟩
+    · exact absurd (Finset.mem_coe.mp h3) (last_notMem_map _)
+    · have hge' : sys.le (restrict3 ↑(c.1.map Fin.castSuccEmb))
+          (restrict3 ↑(c.2.map Fin.castSuccEmb)) := hge
+      rwa [restrict3_coe_map, restrict3_coe_map] at hge'
+  · intro d hd
+    obtain ⟨d, hdL, rfl⟩ := List.mem_map.mp hd
+    exact (Finset.disjoint_map _).mpr (hdisj d hdL)
+  · intro d hd
+    obtain ⟨d, hdL, rfl⟩ := List.mem_map.mp hd
+    refine Or.inr ⟨iff_of_false (fun h3 ↦ last_notMem_map _ (Finset.mem_coe.mp h3))
+      (fun h3 ↦ last_notMem_map _ (Finset.mem_coe.mp h3)), ?_⟩
+    show sys.le (restrict3 ↑(d.2.map Fin.castSuccEmb)) (restrict3 ↑(d.1.map Fin.castSuccEmb))
+    rw [restrict3_coe_map, restrict3_coe_map]
+    exact hvalid d hdL
+  · -- the new coordinate vanishes; the old ones are unchanged
+    funext i
+    refine Fin.lastCases ?_ (fun i ↦ ?_) i
+    · rw [comparisonSum, List.map_map]
+      refine List.sum_eq_zero fun x hx ↦ ?_
+      obtain ⟨d, -, rfl⟩ := List.mem_map.mp hx
+      exact comparisonVec_embed_last d
+    · simpa [comparisonSum, List.map_map, Function.comp_def, comparisonVec_embed_castSucc]
+        using congrFun hsum i
 
 /-- **Cancellation for Fin 3**, structurally: a null atom reduces to `Fin 2`
     representability; the no-null case extends lexicographically into `Fin 4`
     and pulls back through `no_null_cancellation`. -/
 theorem fa_cancellation_fin3 (sys : QualitativeProbability (Set (Fin 3))) :
-    Cancellation 3 sys.ge := by
+    Cancellation sys.ge := by
   by_cases h : ∃ j, sys.ge ∅ {j}
   · obtain ⟨j, hj⟩ := h
     exact cancellation_of_null_atom sys hj representable_fin2
@@ -809,7 +653,7 @@ theorem representable_fin3 (sys : QualitativeProbability (Set (Fin 3))) : Repres
     cancellation. A null atom reduces to `Fin 3`; the no-null case is the merge
     reduction `no_null_cancellation`. -/
 theorem fa_cancellation_fin4 (sys : QualitativeProbability (Set (Fin 4))) :
-    Cancellation 4 sys.ge := by
+    Cancellation sys.ge := by
   by_cases h : ∃ j, sys.ge ∅ {j}
   · obtain ⟨j, hj⟩ := h
     exact cancellation_of_null_atom sys hj representable_fin3
