@@ -4,19 +4,19 @@ public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Discourse.CommonGround
 
 /-!
-# Presupposition–Context Bridge
-[stalnaker-1974] [heim-1983] [lewis-1979]
+# Presuppositions in context
 
-Canonical operations connecting presuppositions (`PartialProp W`) to contexts
-(`Set W`): the shared vocabulary for projection, filtering,
-accommodation, and conceivability.
+Operations relating a presupposition (`PartialProp W`) to a context set (`Set W`), in the
+tradition of [stalnaker-1974] and [heim-1983]: filtering, projection and conceivability, and
+the local contexts of the satisfaction theory.
 
 ## Main declarations
 
 * `presupSatisfied` — the context entails the presupposition (filtering).
 * `presupSatisfiable` — some context world satisfies it (conceivability).
 * `presupProjects` — the context does not entail it (projection).
-* `accommodate` — restrict the context to presupposition worlds.
+* `localCtxConsequent`, `localCtxSecondDisjunct`, `localCtxNegation` — per-connective local
+  contexts.
 
 ## Conceivability
 
@@ -24,6 +24,16 @@ accommodation, and conceivability.
 [enguehard-2024]'s conceivability presupposition: a number feature's
 presupposition is *conceivable* in the common ground iff there exists some
 world in the context set satisfying it.
+
+## References
+
+* [stalnaker-1974]
+* [heim-1983]
+* [karttunen-1973]
+* [karttunen-1974-presupposition]
+* [peters-1979]
+* [schlenker-2009]
+* [enguehard-2024]
 -/
 
 @[expose] public section
@@ -56,22 +66,6 @@ abbrev presupSatisfiable (c : Set W) (p : PartialProp W) : Prop :=
 abbrev presupProjects (c : Set W) (p : PartialProp W) : Prop :=
   ¬ presupSatisfied c p
 
-/-- **Accommodate** a presupposition: restrict the context to worlds where
-    the presupposition holds.
-
-    [lewis-1979]: "presupposition P comes into existence." -/
-abbrev accommodate (c : Set W) (presup : Set W) : Set W := c ∩ presup
-
-/-- Accommodation is **informative** iff the presupposition is not already
-    entailed — accommodation actually changes the context. -/
-abbrev accommodationInformative (c : Set W) (presup : Set W) : Prop :=
-  ¬ c ⊆ presup
-
-/-- Accommodation is **consistent** iff the restricted context is non-empty —
-    the presupposition is compatible with the context. -/
-abbrev accommodationConsistent (c : Set W) (presup : Set W) : Prop :=
-  (accommodate c presup).Nonempty
-
 /-! ### Theorems -/
 
 /-- Satisfaction implies satisfiability (when the context is non-empty). -/
@@ -84,32 +78,6 @@ theorem satisfied_implies_satisfiable (c : Set W) (p : PartialProp W)
 theorem not_satisfiable_implies_projects (c : Set W) (p : PartialProp W)
     (hne : c.Nonempty) (h : ¬ presupSatisfiable c p) : presupProjects c p :=
   fun hsat => h (satisfied_implies_satisfiable c p hne hsat)
-
-/-- After accommodation, the presupposition is satisfied. -/
-theorem accommodate_entails_presup (c : Set W) (presup : Set W) :
-    accommodate c presup ⊆ presup :=
-  Set.inter_subset_right
-
-/-- Accommodation is idempotent: accommodating what's already satisfied
-    doesn't change the context. -/
-theorem accommodate_idempotent (c : Set W) (presup : Set W)
-    (h : c ⊆ presup) : accommodate c presup = c :=
-  Set.inter_eq_left.mpr h
-
-/-- Accommodation strengthens the context: fewer worlds survive. -/
-theorem accommodate_strengthens (c : Set W) (presup : Set W) :
-    accommodate c presup ⊆ c :=
-  Set.inter_subset_left
-
-/-- Accommodation consistency = presupposition satisfiable in context. -/
-theorem accommodationConsistent_iff_satisfiable (c : Set W) (p : PartialProp W) :
-    accommodationConsistent c p.presup ↔ presupSatisfiable c p := Iff.rfl
-
-/-- Accommodation via `PartialProp.defined`: accommodating `p.presup` restricts
-    to worlds where `p.defined` holds. -/
-theorem accommodate_eq_defined (c : Set W) (p : PartialProp W) (w : W) :
-    w ∈ accommodate c p.presup ↔ w ∈ c ∧ PartialProp.defined w p :=
-  Iff.rfl
 
 /-! ### Local contexts (satisfaction tradition)
 
