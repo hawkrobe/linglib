@@ -375,7 +375,12 @@
     "context": "You thought your friend was fishing. But you see his rod and tackle box are still at his house. You really don't know if he's fishing or not.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
+    "readings": [
+      {
+        "name": "possibility",
+        "judgment": "acceptable"
+      }
+    ],
     "paperFeatures": [
       [
         "section",
@@ -539,13 +544,217 @@
     "lgrConformance": ""
   },
   {
+    "id": "matthewson2016_ex42a",
+    "source": {
+      "bibkey": "matthewson-2016",
+      "paperLabel": "(42a)"
+    },
+    "reportedIn": null,
+    "language": "okan1243",
+    "primaryText": "Mary mat ac-qíc-əlx",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mary",
+        "Mary"
+      ],
+      [
+        "mat",
+        "MOD"
+      ],
+      [
+        "ac-qíc-əlx",
+        "CUST-run-LEX"
+      ]
+    ],
+    "translation": "Mary might be running.",
+    "context": "You know that Mary loves to go running and often goes on runs randomly. She could also be at the store or at school. I ask you, where is Mary?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "18.3.2"
+      ],
+      [
+        "modal",
+        "mat"
+      ],
+      [
+        "force",
+        "possibility"
+      ],
+      [
+        "reportedFrom",
+        "Menzies 2013, p. 2"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "matthewson2016_ex42b",
+    "source": {
+      "bibkey": "matthewson-2016",
+      "paperLabel": "(42b)"
+    },
+    "reportedIn": null,
+    "language": "okan1243",
+    "primaryText": "Mary cmay ac-qíc-əlx",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mary",
+        "Mary"
+      ],
+      [
+        "cmay",
+        "MOD"
+      ],
+      [
+        "ac-qíc-əlx",
+        "CUST-run-LEX"
+      ]
+    ],
+    "translation": "Mary might be running.",
+    "context": "You know that Mary loves to go running and often goes on runs randomly. She could also be at the store or at school. I ask you, where is Mary?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "18.3.2"
+      ],
+      [
+        "modal",
+        "cmay"
+      ],
+      [
+        "force",
+        "possibility"
+      ],
+      [
+        "reportedFrom",
+        "Menzies 2013, p. 2"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "matthewson2016_ex43a",
+    "source": {
+      "bibkey": "matthewson-2016",
+      "paperLabel": "(43a)"
+    },
+    "reportedIn": null,
+    "language": "okan1243",
+    "primaryText": "Mary mat ac-qíc-əlx",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mary",
+        "Mary"
+      ],
+      [
+        "mat",
+        "MOD"
+      ],
+      [
+        "ac-qíc-əlx",
+        "CUST-run-LEX"
+      ]
+    ],
+    "translation": "Mary must be running.",
+    "context": "Mary runs every day to train for a marathon. She usually runs at 6 pm on Tuesdays. Today is Tuesday and it's 6 pm. I ask you, where is Mary?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "18.3.2"
+      ],
+      [
+        "modal",
+        "mat"
+      ],
+      [
+        "force",
+        "necessity"
+      ],
+      [
+        "reportedFrom",
+        "Menzies 2013, p. 2"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "matthewson2016_ex43b",
+    "source": {
+      "bibkey": "matthewson-2016",
+      "paperLabel": "(43b)"
+    },
+    "reportedIn": null,
+    "language": "okan1243",
+    "primaryText": "Mary cmay ac-qíc-əlx",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mary",
+        "Mary"
+      ],
+      [
+        "cmay",
+        "MOD"
+      ],
+      [
+        "ac-qíc-əlx",
+        "CUST-run-LEX"
+      ]
+    ],
+    "translation": "Mary might be running.",
+    "context": "Mary runs every day to train for a marathon. She usually runs at 6 pm on Tuesdays. Today is Tuesday and it's 6 pm. I ask you, where is Mary?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "18.3.2"
+      ],
+      [
+        "modal",
+        "cmay"
+      ],
+      [
+        "force",
+        "necessity"
+      ],
+      [
+        "reportedFrom",
+        "Menzies 2013, p. 2"
+      ]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
     "id": "matthewson2016_ex57",
     "source": {
       "bibkey": "matthewson-2016",
       "paperLabel": "(57)"
     },
     "reportedIn": null,
-    "language": "blac1250",
+    "language": "siks1238",
     "primaryText": "matonni ni-maat-ssksini-'p-wa ot-aanist-a'pssi-wa piiksiksinaa-wa aahkam-omitaa-wa",
     "discourseSegments": [],
     "glossedTokens": [
@@ -1401,7 +1610,7 @@
       ],
       [
         "flavor",
-        "circumstantial"
+        "deontic"
       ],
       [
         "reportedFrom",

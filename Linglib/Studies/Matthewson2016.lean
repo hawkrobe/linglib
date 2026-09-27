@@ -7,6 +7,7 @@ public import Linglib.Fragments.Gitksan.Modals
 public import Linglib.Fragments.Statimcets.Modals
 public import Linglib.Fragments.NezPerce.Modals
 public import Linglib.Fragments.Niuean.Modals
+public import Linglib.Fragments.Nsyilxcen.Modals
 public import Linglib.Studies.Condoravdi2002
 public import Linglib.Studies.Deal2011
 public import Linglib.Studies.Kratzer2012
@@ -30,10 +31,14 @@ keeps its epistemic and circumstantial modals apart.
 On force, Gitksan *ima('a)* and *g̱at*, variable in force, and Nez Perce *o'qa*, a possibility
 modal that no necessity modal competes with ([deal-2011]), are modals without duals, and
 *o'qa*'s necessity uses vanish in downward-entailing contexts, as [deal-2011]'s account of
-modals without scales predicts. On
-modal–temporal interaction, Gitksan marks future orientation with the prospective *dim* where
-English marks past orientation with the perfect, a mirror image derived from the Gitksan
-fragment and from [condoravdi-2002]. On typology, Gitksan and Niuean, the chapter's cases of
+modals without scales predicts. Nsyilxcen *mat* is used in possibility and necessity contexts
+and *cmay* in possibility contexts only ([menzies-2013]), which raises questions for the view
+that possibility modals are weak through the scalar implicature a contrasting necessity modal
+induces: no lexical forces let the scalar account alone predict both. On modal–temporal
+interaction, epistemic modals take a past temporal perspective in Blackfoot, Ktunaxa,
+St'át'imcets and Gitksan, and Gitksan marks future orientation with the prospective *dim* where
+English marks past orientation with the perfect, a mirror image of [condoravdi-2002]'s scopings
+and [matthewson-2013]'s paradigms. On typology, Gitksan and Niuean, the chapter's cases of
 epistemic modals lacking duals, distinguish force among circumstantial modals and not among
 epistemic ones: in each, a circumstantial possibility modal and a necessity modal are duals and
 no epistemic modal has one. [vander-klok-2013b]'s refinement of [nauze-2008]'s universal, one
@@ -44,20 +49,29 @@ Gitksan.
 
 * A factual-mode base is realistic, the actual world holding the situation or evidence whose
   counterparts it projects, and a content-mode base is unconstrained. Deniability is stated for
-  necessity, the force of *must* in (23)–(24).
+  simple necessity, the force of *must* in (23)–(24), without the stereotypical ordering source
+  whose wiggle room the chapter allows the factual (23).
 * The rows are joined to the fragments through `parse?` tables, and every row naming a modal
   resolves (`rows_resolve`), so no row theorem holds by a failed lookup.
-* Force is compared on the chapter's two-point scale of necessity and possibility, weak necessity
-  counting as necessity (`ModalItem.classical`): Table 18.1's *sgi* is a (weak) necessity modal
-  varying only in flavour.
+* Duals, force distinctions and [nauze-2008]'s axes compare necessity with possibility, weak
+  necessity counting as necessity (`ModalItem.classical`): Table 18.1's *sgi* is a (weak)
+  necessity modal varying only in flavour. The chapter's weak necessity and graded modality
+  (§18.3.1) are not formalized.
+* A dual is a modal of the other force sharing a flavour, the necessity–possibility pairs of
+  §18.3.1 and the same-domain condition on [deal-2011]'s scales.
 * Table 18.4's hypothetical root system has a teleological flavour, which the library folds
   into circumstantial; bouletic stands in for it, which keeps the system ambiguous along both
   axes.
-* The English column of Table 18.3 is not formalized, no fragment recording the source or
-  mode of the English modals.
+* The English row of Table 18.3 (*can*, *might*, *must*) is not formalized, no fragment
+  recording the source or mode of the English modals.
 * §18.3.2 contrasts [peterson-2010]'s *ima('a)*, a possibility modal strengthened by an
   ordering source, with [deal-2011]'s *o'qa*; the two part only in downward-entailing contexts,
   where the chapter finds *ima('a)* untestable, so Peterson's analysis is not formalized.
+* The chapter says only that Nsyilxcen raises questions for the scalar account;
+  `nsyilxcen_not_scalar` sharpens this to the account without further tampering with the
+  modal's domain, such as [rullmann-matthewson-davis-2008]'s restriction of a necessity modal.
+* (63)'s three contexts are the rows (63a)–(63c), and (42)–(43)'s sentences are rows keyed by
+  the force of their context.
 
 ## References
 
@@ -67,6 +81,7 @@ Gitksan.
 * [rullmann-matthewson-davis-2008]
 * [peterson-2010]
 * [deal-2011]
+* [menzies-2013]
 * [nauze-2008]
 * [vander-klok-2013b]
 * [condoravdi-2002]
@@ -186,8 +201,8 @@ theorem BackgroundClass.projectionMode_ofMode (h : s = none → μ = .factual) :
 
 /-- The modals the chapter's rows name, keyed by their forms. -/
 def modalTable : List (String × ModalItem) :=
-  [Statimcets.kaInfer, Statimcets.lakw7a, Gitksan.imaa, NezPerce.oqa, Niuean.liga, Niuean.maeke,
-    Niuean.lata].map fun m ↦ (m.form, m)
+  [Statimcets.kaInfer, Statimcets.lakw7a, Gitksan.imaa, NezPerce.oqa, Nsyilxcen.mat,
+    Nsyilxcen.cmay, Niuean.liga, Niuean.maeke, Niuean.lata].map fun m ↦ (m.form, m)
 
 /-- Every row naming a modal names one of the fragments'. -/
 theorem rows_resolve :
@@ -242,13 +257,13 @@ a possibility modal usable in necessity contexts because no necessity modal comp
 induce a scalar implicature ([deal-2011]). -/
 
 /-- A modal has a dual in an inventory when it is fixed for one classical force and another item
-of the inventory expresses the dual force over its flavours. -/
+of the inventory, sharing one of its flavours, is fixed for the dual force. -/
 def HasDualIn (L : List ModalItem) (m : ModalItem) : Prop :=
-  m.classical.forces.card = 1 ∧
-    ∃ m' ∈ L, m'.classical.meaning = m.classical.meaning.image (Prod.map ModalForce.dual id)
+  m.classical.forces.card = 1 ∧ ∃ m' ∈ L, m'.classical.forces =
+    m.classical.forces.image ModalForce.dual ∧ ∃ fl ∈ m.flavors, fl ∈ m'.flavors
 
 instance (L : List ModalItem) (m : ModalItem) : Decidable (HasDualIn L m) :=
-  inferInstanceAs (Decidable (_ ∧ ∃ _ ∈ _, _ = _))
+  inferInstanceAs (Decidable (_ ∧ ∃ _ ∈ _, _ = _ ∧ ∃ _ ∈ _, _))
 
 /-- A modal varying in force has no dual. -/
 theorem not_hasDualIn_of_variesForce {L : List ModalItem} {m : ModalItem}
@@ -267,7 +282,8 @@ theorem no_duals :
 def forceTable : List (String × ModalForce) :=
   [("possibility", .possibility), ("necessity", .necessity)]
 
-/-- (37): ima('a) is read with each force it expresses. -/
+/-- (37)–(38): *ima('a)* is read with each force it expresses, and with possibility where
+English *must* would be infelicitous. -/
 theorem imaa_rows :
     ∀ e ∈ Examples.all, e.parse? "modal" modalTable = some Gitksan.imaa →
       ∀ r ∈ e.readings, ∃ fo ∈ forceTable.lookup r.1,
@@ -288,7 +304,38 @@ theorem oqa_rows :
             (Deal2011.HasScalemate Deal2011.lexicalForce NezPerce.modals NezPerce.oqa) fo) := by
   decide
 
+/-- (42)–(43): Nsyilxcen *mat* is accepted in possibility and necessity contexts and *cmay* in
+possibility contexts only, as the fragment records. -/
+theorem nsyilxcen_rows :
+    ∀ e ∈ Examples.all, ∀ m ∈ e.parse? "modal" modalTable, m ∈ Nsyilxcen.modals →
+      ∀ fo ∈ e.parse? "force" forceTable, (e.judgment = .acceptable ↔ fo ∈ m.forces) := by
+  decide
+
+/-- (42)–(43) against the scalar account: no lexical forces for *mat* and *cmay* let
+[deal-2011]'s account predict their uses. A strict possibility *cmay* needs a necessity
+scalemate, and a necessity *mat* serves only for necessity in an upward-entailing context. -/
+theorem nsyilxcen_not_scalar :
+    ¬ ∃ lex : ModalItem → ModalForce, ∀ m ∈ Nsyilxcen.modals, ∀ g,
+      g.classical ∈ m.classical.forces ↔
+        Deal2011.Usable .positive (lex m) (Deal2011.HasScalemate lex Nsyilxcen.modals m) g := by
+  rintro ⟨lex, h⟩
+  have hm := h Nsyilxcen.mat (by decide)
+  have hc := h Nsyilxcen.cmay (by decide)
+  simp only [Deal2011.HasScalemate, Deal2011.Scalemates, Nsyilxcen.modals, List.mem_cons,
+    List.not_mem_nil, or_false, exists_eq_or_imp, exists_eq_left] at hm hc
+  generalize lex Nsyilxcen.mat = a at hm hc
+  generalize lex Nsyilxcen.cmay = b at hm hc
+  cases a <;> cases b <;> revert hm hc <;> decide
+
 /-! ### Modal–temporal interaction (§18.4.3) -/
+
+/-- (57)–(62): an epistemic modal takes a past temporal perspective in Blackfoot, Ktunaxa,
+St'át'imcets and Gitksan, every past-perspective row being an accepted epistemic. -/
+theorem past_perspective_epistemics :
+    ∀ e ∈ Examples.all, e.feature? "perspective" = some "past" → e.judgment = .acceptable ∧
+      (e.feature? "flavor" = some "epistemic" ∨
+        ∃ m ∈ e.parse? "modal" modalTable, m.Epistemic) := by
+  decide
 
 /-- (60)–(63): ima('a) takes every orientation, and *dim* is present exactly when it is
 future-oriented, as in [matthewson-2013]'s paradigms. -/
@@ -328,8 +375,8 @@ theorem force_only_circumstantial :
         DistinguishesForce Niuean.modals ModalItem.Circumstantial := by
   decide
 
-/-- Gitksan's circumstantial *da'aḵhlxw* and *sgi* are duals, both ranging over deontic,
-circumstantial and bouletic readings; its epistemic *ima('a)* and *g̱at* have none. -/
+/-- Gitksan's circumstantial *da'aḵhlxw* and *sgi* are duals; its epistemic *ima('a)* and
+*g̱at* have none. -/
 theorem gitksan_duals :
     HasDualIn Gitksan.modals Gitksan.daakhlxw ∧ HasDualIn Gitksan.modals Gitksan.sgi ∧
       ¬ HasDualIn Gitksan.modals Gitksan.imaa ∧ ¬ HasDualIn Gitksan.modals Gitksan.gat :=
@@ -345,9 +392,9 @@ theorem niuean_duals :
 /-- The strength a Niuean row records. -/
 def strengthTable : List (String × ModalForce) := [("weak", .possibility), ("strong", .necessity)]
 
-/-- The flavour a Niuean row records. -/
+/-- The flavour a Niuean row records, (68)'s obligation reading being deontic. -/
 def flavorTable : List (String × ModalFlavor) :=
-  [("epistemic", .epistemic), ("circumstantial", .circumstantial)]
+  [("epistemic", .epistemic), ("circumstantial", .circumstantial), ("deontic", .deontic)]
 
 /-- (64)–(68): each Niuean example expresses a force and flavour its modal has, and *liga* is
 attested with each of its forces. -/
