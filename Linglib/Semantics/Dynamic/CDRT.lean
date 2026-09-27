@@ -30,6 +30,9 @@ as coordinates of a function type: `RegisterStructure V (V → E) E`.
   updates it supports, `Update.randomAssign`, `Update.dexists`, `Update.dforall`.
 - `Condition.atom1`, `Condition.atom2`, `Condition.eq`: atomic conditions
   from predicates and drefs.
+- `Update.Fixes`, `Update.maxAt`: an update leaves a register unchanged, and the outputs of an
+  update at which a register's value is maximal; `Update.maxAt_eq_of_fixes` makes maximizing a
+  fixed register vacuous.
 - `Update.mem_randomAssign`, `Update.mem_randomAssign_iff_eqOn`, `Update.dom_dexists`: at the
   canonical register structure a random assignment is `Function.update` at an arbitrary value,
   agreement off the register, and, under the weakest precondition, cylindrification.
@@ -102,6 +105,53 @@ theorem preimage_randomAssign (r : R) (t : Condition S) :
     (randomAssign r).preimage t = {i | ∃ e : E, RegisterStructure.extend i r e ∈ t} := by
   ext i
   exact ⟨fun ⟨_, hj, e, he⟩ => ⟨e, he ▸ hj⟩, fun ⟨e, he⟩ => ⟨_, he, e, rfl⟩⟩
+
+/-- A DRS `[r | C]`: introduce `r`, then test `C`. -/
+theorem mem_dexists_test {r : R} {C : Condition S} {i j : S} :
+    i ~[dexists r (test C)] j ↔ i ~[randomAssign r] j ∧ j ∈ C :=
+  ⟨fun ⟨_, h, rfl, hC⟩ ↦ ⟨h, hC⟩, fun ⟨h, hC⟩ ↦ ⟨j, h, rfl, hC⟩⟩
+
+/-! ### Frame conditions and maximization -/
+
+/-- `D` fixes the register `r`: no output of `D` changes its value. -/
+def Fixes (r : R) (D : Update S) : Prop :=
+  ∀ i j, i ~[D] j → RegisterStructure.val r j = RegisterStructure.val r i
+
+theorem Fixes.comp {r : R} {D₁ D₂ : Update S} (h₁ : Fixes r D₁) (h₂ : Fixes r D₂) :
+    Fixes r (D₁ ○ D₂) :=
+  fun _ _ ⟨k, hk, hj⟩ ↦ (h₂ k _ hj).trans (h₁ _ k hk)
+
+theorem fixes_id (r : R) : Fixes r (SetRel.id : Update S) :=
+  fun _ _ h ↦ SetRel.mem_id.mp h ▸ rfl
+
+theorem fixes_test (r : R) (C : Condition S) : Fixes r (test C) :=
+  fun _ _ h ↦ h.1 ▸ rfl
+
+/-- A random assignment fixes every other register (AX3). -/
+theorem fixes_randomAssign_of_ne {r r' : R} (h : r' ≠ r) : Fixes r' (randomAssign (S := S) r) :=
+  fun _ _ ⟨e, he⟩ ↦ he ▸ RegisterStructure.val_extend_of_ne _ r r' e h
+
+/-- Maximization over a register: the outputs of `D` at which no other output gives `r` a
+strictly greater value. -/
+def maxAt [Preorder E] (r : R) (D : Update S) : Update S :=
+  {(i, j) | i ~[D] j ∧ ∀ k, i ~[D] k →
+    ¬RegisterStructure.val r j < RegisterStructure.val r k}
+
+theorem maxAt_subset [Preorder E] (r : R) (D : Update S) : maxAt r D ⊆ D :=
+  fun _ h ↦ h.1
+
+theorem Fixes.maxAt [Preorder E] {r r' : R} {D : Update S} (h : Fixes r D) :
+    Fixes r (maxAt r' D) :=
+  fun _ _ hD ↦ h _ _ hD.1
+
+/-- Maximizing a register an update fixes is vacuous: every output agrees with the input
+there, so none is strictly greater. -/
+theorem maxAt_eq_of_fixes [Preorder E] {r : R} {D : Update S} (h : Fixes r D) :
+    maxAt r D = D := by
+  ext ⟨i, j⟩
+  refine ⟨And.left, fun hD ↦ ⟨hD, fun k hk hlt ↦ ?_⟩⟩
+  rw [h i j hD, h i k hk] at hlt
+  exact lt_irrefl _ hlt
 
 end Update
 
