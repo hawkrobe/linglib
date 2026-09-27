@@ -7,21 +7,37 @@ public import Linglib.Semantics.Polarity.Licensing
 
 Italian gives the negative polarity and free choice uses that English *any* combines to separate
 items ([chierchia-2006]). The n-words *nessuno* 'no one', *niente* 'nothing' and *neanche* 'not
-even, neither' take part in negative concord: after the verb they need a preceding negation, *Non ho
-detto niente a nessuno* 'I haven't said anything to anybody', while before the verb they are
-themselves negative, *Nessuno ha telefonato* 'Nobody called'; like strong NPIs they are restricted
-to roughly the anti-additive environments ([chierchia-2013]), and *nessuno* is not licensed in the
-restriction of *ogni* 'every' ([chierchia-2006]). *Mai* 'ever' and the high-register *alcuno* 'any'
-are weak NPIs without free choice uses. *Qualsiasi* and its variant *qualunque* head two free choice
-constructions, [*qualsiasi* N], read universally, and [*un* N *qualsiasi*], read existentially,
-neither of them an NPI ([chierchia-2006]). *Pur* 'even' needs its clause negated, and *affatto* 'at
-all' is an NPI as well ([napoli-nespor-1976]).
+even' take part in negative concord: after the verb they need *non* or another n-word before it,
+*Non ho detto niente a nessuno* 'I haven't said anything to anybody', while before the verb they are
+negative on their own, *Nessuno ha telefonato* 'Nobody called' ([chierchia-2013],
+[maiden-robustelli-2007]). [chierchia-2013] likens them to strong NPIs, restricted to roughly the
+anti-additive environments, and *nessuno* is not licensed in the restriction of *ogni* 'every'
+([chierchia-2006]); but *nessuno* and *niente* also follow *senza* 'without' and colloquially mean
+'anybody', 'anything' in questions ([maiden-robustelli-2007]). *Mai* 'never' takes the same two
+positions, and after the verb it is the weak NPI 'ever' of questions, superlatives and comparatives;
+the high-register *alcuno* 'any' is a weak NPI without free choice uses. *Qualsiasi* and its variant
+*qualunque* head two free choice constructions, [*qualsiasi* N], read universally, and [*un* N
+*qualsiasi*], read existentially, neither of them an NPI ([chierchia-2006]). *Pur con* 'even with'
+needs its clause negated, and *affatto* 'at all' is an NPI as well ([napoli-nespor-1976]), nowadays
+used only in negative sentences ([maiden-robustelli-2007]).
+
+## Implementation notes
+
+*Nessuno*, *niente* and *mai* carry the weak licensor, since the keystone licenses a question only
+for weak NPIs; *neanche*, attested only with a negation, carries the anti-additive licensor that
+[chierchia-2013] gives n-words.
 
 ## References
 
 * [chierchia-2006]
 * [chierchia-2013]
+* [maiden-robustelli-2007]
 * [napoli-nespor-1976]
+
+## TODO
+
+The strength licensing of `Semantics/Polarity/Licensing.lean` gives the restriction of a universal
+anti-additive strength, so it predicts *nessuno* there, against [chierchia-2006].
 -/
 
 @[expose] public section
@@ -34,26 +50,30 @@ open PolarityItem
 
 /-- *nessuno* 'no one', the n-word built on *uno* 'one': *Gianni non ha telefonato a nessuno*
 'Gianni didn't call anybody', *Nessuno ha telefonato* 'Nobody called', and with a second
-negation the double negation reading *Nessuno non ha protestato* 'everybody protested'. -/
+negation the double negation reading *Nessuno non ha protestato* 'everybody protested'. It
+follows *senza*, *senza incontrare nessuno* 'without meeting anyone', and colloquially means
+'anybody' in a question, *C'è nessuno lì dentro?* 'Is there anybody in there?'. -/
 def nessuno : PolarityItem :=
   { form := "nessuno"
-  , licensor := some .antiAdditive
+  , licensor := some .weak
   , baseForce := .existential
-  , licensingContexts := [.negation, .nobody, .withoutClause]
+  , licensingContexts := [.negation, .nobody, .withoutClause, .question]
   , scalarDirection := some .strengthening
   , alternativeType := .domain }
 
 /-- *niente*, or *nulla*, 'nothing': *Non ho detto niente a nessuno* 'I haven't said anything
-to anybody'. -/
+to anybody', *senza niente che mi aiutasse* 'without anything to help me', and colloquially
+*Hai dimenticato niente?* 'Have you forgotten anything?'. -/
 def niente : PolarityItem :=
   { form := "niente/nulla"
-  , licensor := some .antiAdditive
+  , licensor := some .weak
   , baseForce := .existential
-  , licensingContexts := [.negation, .nobody, .withoutClause]
+  , licensingContexts := [.negation, .nobody, .withoutClause, .question]
   , scalarDirection := some .strengthening }
 
-/-- *neanche* 'not even, neither', with the variants *nemmeno* and *neppure*: *Non vengo neanche
-io* 'I'm not coming either', against *\*Vengo neanche io*. -/
+/-- *neanche* 'not even', with the variants *nemmeno* and *neppure*: *Non si comporta bene
+neanche a scuola* 'He doesn't behave well even at school', *Neanche a scuola si comporta bene*
+'Not even at school does he behave well'. -/
 def neanche : PolarityItem :=
   { form := "neanche/nemmeno/neppure"
   , licensor := some .antiAdditive
@@ -63,19 +83,23 @@ def neanche : PolarityItem :=
 
 /-! ### Weak NPIs -/
 
-/-- *mai* 'ever', a weak NPI without free choice uses whose distribution is close to that of
-*any*. -/
+/-- *mai* 'never, ever', a weak NPI without free choice uses: *Non l'ho mai visto senza
+cappello* 'I've never seen him hatless', *Nessuno è mai arrivato puntuale* 'Nobody has ever
+arrived on time', *Hai mai letto I promessi sposi?* 'Have you ever read The Betrothed?',
+*l'uomo più dolce e più grande che abbia mai incontrato* 'the sweetest and greatest man I have
+ever encountered', *Piove più che mai* 'It rains more than ever'. -/
 def mai : PolarityItem :=
   { form := "mai"
   , licensor := some .weak
   , baseForce := .temporal
   , licensingContexts :=
-      [.negation, .nobody, .withoutClause, .question, .conditionalAntecedent]
+      [.negation, .nobody, .question, .superlative, .clausalComparative]
   , scalarDirection := some .strengthening
   , alternativeType := .domain }
 
-/-- *alcuno* 'any', a high-register weak NPI without free choice uses: *Non ho comprato alcun
-libro* 'I didn't buy any book', *Dubito che Gianni abbia comprato alcun libro* 'I doubt that
+/-- *alcuno* 'any', a weak NPI of formal and bureaucratic styles without free choice uses: *Non
+ho comprato alcun libro* 'I didn't buy any book', *senza aver visto alcuno* 'without having seen
+anyone', *Dubito che Gianni abbia comprato alcun libro* 'I doubt that
 Gianni bought any book', *Se Gianni avesse comprato alcun libro, ce lo avrebbe detto* 'If Gianni
 had bought any book, he would have told us', against *\*Ho comprato alcun libro*. The plural
 *alcuni* 'some' is a plain indefinite. -/
@@ -83,20 +107,24 @@ def alcuno : PolarityItem :=
   { form := "alcuno"
   , licensor := some .weak
   , baseForce := .existential
-  , licensingContexts := [.negation, .doubtVerb, .conditionalAntecedent]
+  , licensingContexts := [.negation, .withoutClause, .doubtVerb, .conditionalAntecedent]
   , scalarDirection := some .strengthening }
 
-/-- *pur* 'even' in *pur con tutta la fantasia del mondo* 'even with all the fantasy in the
-world', which needs the verb of its clause negated: *Non puoi immaginarlo, pur con tutta la
-fantasia del mondo* against *\*Puoi immaginarlo, …*. -/
+/-- *pur con* 'even with', as in *pur con tutta la fantasia del mondo* 'even with all the fantasy
+in the world', which needs the verb of its clause negated: *Non puoi immaginarlo, pur con tutta
+la fantasia del mondo* against *\*Puoi immaginarlo, …*. Elsewhere *pure* 'also, even' is not
+polarity sensitive, *Si è pure offerta di allevare lei il bastardo* 'She even offered to bring the
+bastard up herself'. -/
 def pur : PolarityItem :=
-  { form := "pur"
+  { form := "pur con"
   , licensor := some .weak
   , baseForce := .degree
   , licensingContexts := [.negation]
   , scalarDirection := some .strengthening }
 
-/-- *affatto* 'at all', a negative polarity item. -/
+/-- *affatto* 'at all', now used only in negative sentences, *Non sono affatto sparito* 'I
+haven't disappeared at all'; its non-negative use 'quite', *Affatto bello gli sembrò lo
+spettacolo* 'The show seemed quite beautiful to him', is very formal and literary. -/
 def affatto : PolarityItem :=
   { form := "affatto"
   , licensor := some .weak
@@ -106,22 +134,23 @@ def affatto : PolarityItem :=
 
 /-! ### Free choice items -/
 
-/-- *qualsiasi*, or *qualunque*, before the noun, the universal free choice item: *Prendi
-qualunque dolce* 'take any sweet'. Episodically it needs a modifier, *Ieri ho parlato con
-qualsiasi filosofo che fosse interessato a parlarmi* against *??Ieri ho parlato con qualsiasi
-filosofo*, and under negation an unmodified one has only the rhetorical 'not just any' reading,
-*Non leggerò qualunque libro*. -/
+/-- *qualsiasi*, or *qualunque*, before the noun, the universal free choice item: *Prendi qualunque
+dolce* 'take any sweet', *Mangia qualsiasi schifezza* 'He eats any old junk'. Episodically it needs
+a modifier, *Ieri ho parlato con qualsiasi filosofo che fosse interessato a parlarmi* against
+*??Ieri ho parlato con qualsiasi filosofo*, and under negation an unmodified one has only the
+rhetorical 'not just any' reading, *Non leggerò qualunque libro*. -/
 def qualsiasi : PolarityItem :=
   { form := "qualsiasi/qualunque"
   , freeChoice := true
   , baseForce := .existential
-  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative]
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
   , alternativeType := .domain }
 
 /-- *un* N *qualsiasi*, or *qualunque*, the existential free choice item: *Prendi un dolce
-qualunque* 'take a sweet whatever'. It is marginal in a plain episodic sentence, *??Ieri ho
-parlato con un qualsiasi filosofo*, and under negation it has only the rhetorical reading, *Non
-leggerò un libro qualunque*. -/
+qualunque* 'take a sweet whatever', *Pensa a un numero qualsiasi* 'Think of any number'. It is
+marginal in a plain episodic sentence, *??Ieri ho parlato con un qualsiasi filosofo*, and under
+negation it has only the rhetorical reading, *Io non sono un agricoltore qualunque* 'I'm not just
+any old farmer'. -/
 def unoQualsiasi : PolarityItem :=
   { form := "un N qualsiasi"
   , freeChoice := true
