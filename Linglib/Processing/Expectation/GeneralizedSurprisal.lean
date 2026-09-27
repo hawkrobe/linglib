@@ -21,10 +21,12 @@ the question [smith-levy-2013] ask of surprisal.
 
 Surprisal [levy-2008] is the model with the negative logarithm and the indicator score, and the
 next-unit probability the model with the identity and the indicator: every warping of the
-indicator score is a warping of the target's probability. Information value is the model with
-the identity and a distance score. A model is anticipatory when its score ignores the target and
-responsive otherwise; an anticipatory model assigns every target the same value, and entropy is
-the anticipatory model that scores each alternative by its own surprisal.
+indicator score is a warping of the target's probability. Information value
+[giulianelli-wallbridge-fernandez-2023], summarised by its mean, is the model with the identity and
+a distance score. A model is anticipatory when its score ignores the target and responsive
+otherwise, the distinction [pimentel-etal-2023] draw informally for reading times; an
+anticipatory model assigns every target the same value, and entropy is the anticipatory model
+that scores each alternative by its own surprisal.
 
 ## Main definitions
 
@@ -44,7 +46,9 @@ the anticipatory model that scores each alternative by its own surprisal.
 ## References
 
 * [giulianelli-opedal-cotterell-2024]
+* [giulianelli-wallbridge-fernandez-2023]
 * [levy-2008]
+* [pimentel-etal-2023]
 * [smith-levy-2013]
 -/
 
@@ -63,7 +67,8 @@ noncomputable def genSurprisal (L : Kernel C A) (f : ℝ → ℝ) (g : A → W �
     (w : W) : ℝ :=
   f (∫ a, g a w c ∂(L c))
 
-/-- Information value: the expected distance `d` from the alternatives to the target. -/
+/-- Information value with the mean as its summary statistic: the expected distance `d` from the
+alternatives to the target. -/
 noncomputable def informationValue (L : Kernel C A) (d : A → W → C → ℝ) (c : C) (w : W) : ℝ :=
   ∫ a, d a w c ∂(L c)
 
