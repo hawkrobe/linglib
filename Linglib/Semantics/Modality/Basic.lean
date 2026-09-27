@@ -20,9 +20,11 @@ modal claim in time.
 ## Main definitions
 
 * `Modality.ModalForce`, with the strength order `possibility < weakNecessity < necessity`,
-  the classical dual `ModalForce.dual`, and the concord class `ModalForce.IsUniversal`.
+  the classical dual `ModalForce.dual`, the concord class `ModalForce.IsUniversal`, and the
+  classical force `ModalForce.classical`, which reads weak necessity as necessity.
 * `Modality.ModalFlavor` and the pair type `Modality.ForceFlavor`.
-* `Modality.ModalItem`, with its domain and variation predicates.
+* `Modality.ModalItem`, with its domain and variation predicates and its classical reading
+  `ModalItem.classical`.
 * `Modality.ForceAnalysis`: fixed, variable or strengthened force, and its consistency with
   a meaning.
 * `Modality.TemporalPerspective`, `Modality.TemporalOrientation`.
@@ -36,6 +38,7 @@ modal claim in time.
 * [agha-jeretic-2026]
 * [imel-guo-steinert-threlkeld-2026]
 * [zeijlstra-2007]
+* [nauze-2008]
 * [matthewson-2013]
 * [matthewson-2016]
 * [deal-2011]
@@ -90,6 +93,27 @@ from possibility ([zeijlstra-2007]). -/
 def IsUniversal (f : ModalForce) : Prop := f ≠ possibility
 
 instance : DecidablePred IsUniversal := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
+
+/-- The classical force of a force, on the two-point scale of necessity and possibility along
+which [nauze-2008] and [matthewson-2016] compare modal systems: weak necessity quantifies
+universally ([von-fintel-iatridou-2008]) and counts as necessity. -/
+def classical : ModalForce → ModalForce
+  | possibility => possibility
+  | _ => necessity
+
+variable {f : ModalForce}
+
+/-- The classical dual is blind to the weak–strong distinction. -/
+@[simp]
+theorem dual_classical : f.classical.dual = f.dual := by cases f <;> rfl
+
+/-- The double dual of a force is its classical force: dualizing twice closes weak necessity
+up to necessity. -/
+theorem dual_dual : f.dual.dual = f.classical := by cases f <;> rfl
+
+@[simp]
+theorem classical_eq_necessity_iff : f.classical = necessity ↔ f.IsUniversal := by
+  cases f <;> decide
 
 end ModalForce
 
@@ -159,6 +183,19 @@ instance : DecidablePred Circumstantial := fun _ ↦ inferInstanceAs (Decidable 
 instance : DecidablePred VariesForce := fun _ ↦ inferInstanceAs (Decidable (_ ≤ _))
 
 instance : DecidablePred VariesFlavor := fun _ ↦ inferInstanceAs (Decidable (_ ≤ _))
+
+/-- A modal item on the classical force scale, its weak necessity read as necessity. -/
+def classical (m : ModalItem) : ModalItem :=
+  { m with meaning := m.meaning.image (Prod.map ModalForce.classical id) }
+
+@[simp]
+theorem forces_classical (m : ModalItem) :
+    m.classical.forces = m.forces.image ModalForce.classical := by
+  simp only [classical, forces, Finset.image_image, Prod.map_fst']
+
+@[simp]
+theorem flavors_classical (m : ModalItem) : m.classical.flavors = m.flavors := by
+  simp only [classical, flavors, Finset.image_image, Prod.map_snd', Function.id_comp]
 
 end ModalItem
 

@@ -26,14 +26,16 @@ circumstantial–evidential division, whether a background encodes an informatio
 modes give Table 18.3's three classes, which St'át'imcets lexicalizes in full, and Gitksan
 keeps its epistemic and circumstantial modals apart.
 
-On force, Gitksan *ima('a)* and *gat*, variable in force, and Nez Perce *o'qa*, a possibility
+On force, Gitksan *ima('a)* and *g̱at*, variable in force, and Nez Perce *o'qa*, a possibility
 modal that no necessity modal competes with ([deal-2011]), are modals without duals. On
 modal–temporal interaction, Gitksan marks future orientation with the prospective *dim* where
 English marks past orientation with the perfect, a mirror image derived from the Gitksan
-fragment and from [condoravdi-2002]. On typology, Gitksan and Niuean distinguish force among
-circumstantial modals and not among epistemic ones, and [vander-klok-2013b]'s refinement of
-[nauze-2008]'s universal, one axis of variation per modal domain, is strictly stronger than the
-universal and holds of the four inventories.
+fragment and from [condoravdi-2002]. On typology, Gitksan and Niuean, the chapter's cases of
+epistemic modals lacking duals, distinguish force among circumstantial modals and not among
+epistemic ones: in each, a circumstantial possibility modal and a necessity modal are duals and
+no epistemic modal has one. [vander-klok-2013b]'s refinement of [nauze-2008]'s universal, one
+axis of variation per modal domain, is strictly stronger than the universal and holds of the
+four inventories.
 
 ## Implementation notes
 
@@ -42,6 +44,9 @@ universal and holds of the four inventories.
   necessity, the force of *must* in (23)–(24).
 * The rows are joined to the fragments through `parse?` tables, and every row naming a modal
   resolves (`rows_resolve`), so no row theorem holds by a failed lookup.
+* Force is compared on the chapter's two-point scale of necessity and possibility, weak necessity
+  counting as necessity (`ModalItem.classical`): Table 18.1's *sgi* is a (weak) necessity modal
+  varying only in flavour.
 * Table 18.4's hypothetical root system has a teleological flavour, which the library folds
   into circumstantial; bouletic stands in for it, which keeps the system ambiguous along both
   axes.
@@ -234,25 +239,26 @@ theorem gitksan_absolute_split : Matthewson2013.TypeSelective Gitksan.modals :=
 /-! ### Modal force: modals without duals (§18.3.2)
 
 A modal without a dual comes in no necessity–possibility pair and is used in contexts
-supporting either claim: Gitksan *ima('a)* and *gat*, variable in force, and Nez Perce *o'qa*,
+supporting either claim: Gitksan *ima('a)* and *g̱at*, variable in force, and Nez Perce *o'qa*,
 a possibility modal usable in necessity contexts because no necessity modal competes with it to
 induce a scalar implicature ([deal-2011]). -/
 
-/-- A modal has a dual in an inventory when it is fixed for one force and another item of the
-inventory expresses the dual force over its flavours. -/
+/-- A modal has a dual in an inventory when it is fixed for one classical force and another item
+of the inventory expresses the dual force over its flavours. -/
 def HasDualIn (L : List ModalItem) (m : ModalItem) : Prop :=
-  m.forces.card = 1 ∧ ∃ m' ∈ L, m'.meaning = m.meaning.image (Prod.map ModalForce.dual id)
+  m.classical.forces.card = 1 ∧
+    ∃ m' ∈ L, m'.classical.meaning = m.classical.meaning.image (Prod.map ModalForce.dual id)
 
 instance (L : List ModalItem) (m : ModalItem) : Decidable (HasDualIn L m) :=
   inferInstanceAs (Decidable (_ ∧ ∃ _ ∈ _, _ = _))
 
 /-- A modal varying in force has no dual. -/
-theorem not_hasDualIn_of_variesForce {L : List ModalItem} {m : ModalItem} (h : m.VariesForce) :
-    ¬ HasDualIn L m :=
+theorem not_hasDualIn_of_variesForce {L : List ModalItem} {m : ModalItem}
+    (h : m.classical.VariesForce) : ¬ HasDualIn L m :=
   fun h' ↦ Nat.not_succ_le_self 1 (h.trans_eq h'.1)
 
-/-- Gitksan ima('a) and gat vary in force, and Nez Perce o'qa has no necessity counterpart, so
-none has a dual in its inventory. -/
+/-- Gitksan *ima('a)* and *g̱at* vary in force, and Nez Perce *o'qa* has no necessity
+counterpart, so none has a dual in its inventory. -/
 theorem no_duals :
     ¬ HasDualIn Gitksan.modals Gitksan.imaa ∧ ¬ HasDualIn Gitksan.modals Gitksan.gat ∧
       ¬ HasDualIn NezPerce.modals NezPerce.oqa :=
@@ -281,31 +287,30 @@ theorem oqa_rows :
 
 /-! ### Modal–temporal interaction (§18.4.3) -/
 
-/-- (60)–(63): under a fixed past perspective ima('a) takes every orientation, and is
-acceptable without the prospective *dim* exactly when not future-oriented, as
-[matthewson-2013]'s `RequiresDim` records. -/
+/-- (60)–(63): ima('a) takes every orientation, and *dim* is present exactly when it is
+future-oriented, as in [matthewson-2013]'s paradigms. -/
 theorem gitksan_orientation_rows :
     ∀ e ∈ Examples.all, e.parse? "modal" modalTable = some Gitksan.imaa →
       ∀ s ∈ e.feature? "orientation", ∃ o ∈ Matthewson2013.orientationOf s,
-        (e.judgment = .acceptable ↔
-          e.feature? "prospective" = some "true" ∨
-            ¬ Matthewson2013.RequiresDim Gitksan.imaa o) := by
+        (e.judgment = .acceptable ↔ (e.feature? "prospective" = some "true" ↔ o = .future)) := by
   decide
 
 /-- English marks past orientation, by the perfect under the modal among [condoravdi-2002]'s
-scopings, and Gitksan future orientation, by *dim*: the mirror image of §18.4.3. -/
+scopings, and Gitksan future orientation, by *dim* in [matthewson-2013]'s paradigms: the mirror
+image of §18.4.3. -/
 theorem marking_mirror :
     (∀ s : Condoravdi2002.Scope, s.orientation = .past ↔ s = .modalPerf) ∧
-      ∀ o : TemporalOrientation,
-        Matthewson2013.RequiresDim Gitksan.imaa o ↔ o = .future := by
-  decide
+      ∀ e ∈ Matthewson2013.Examples.all,
+        ∀ o ∈ (e.feature? "orientation").bind Matthewson2013.orientationOf,
+          (e.judgment = .acceptable ↔ (e.feature? "prospective" = some "true" ↔ o = .future)) :=
+  ⟨by decide, Matthewson2013.dim_rows⟩
 
 /-! ### Typology (§18.5) -/
 
 /-- An inventory distinguishes force within a domain when two of its modals there express
-different sets of forces. -/
+different sets of classical forces. -/
 def DistinguishesForce (L : List ModalItem) (D : ModalItem → Prop) : Prop :=
-  ∃ m ∈ L, ∃ m' ∈ L, D m ∧ D m' ∧ m.forces ≠ m'.forces
+  ∃ m ∈ L, ∃ m' ∈ L, D m ∧ D m' ∧ m.classical.forces ≠ m'.classical.forces
 
 instance (L : List ModalItem) (D : ModalItem → Prop) [DecidablePred D] :
     Decidable (DistinguishesForce L D) :=
@@ -319,6 +324,13 @@ theorem force_only_circumstantial :
       ¬ DistinguishesForce Niuean.modals ModalItem.Epistemic ∧
         DistinguishesForce Niuean.modals ModalItem.Circumstantial := by
   decide
+
+/-- Gitksan's circumstantial *da'aḵhlxw* and *sgi* are duals, both ranging over deontic,
+circumstantial and bouletic readings; its epistemic *ima('a)* and *g̱at* have none. -/
+theorem gitksan_duals :
+    HasDualIn Gitksan.modals Gitksan.daakhlxw ∧ HasDualIn Gitksan.modals Gitksan.sgi ∧
+      ¬ HasDualIn Gitksan.modals Gitksan.imaa ∧ ¬ HasDualIn Gitksan.modals Gitksan.gat :=
+  ⟨by decide, by decide, no_duals.1, no_duals.2.1⟩
 
 /-- Niuean's circumstantial *maeke* and *lata* are duals; its epistemic *liga* has none. -/
 theorem niuean_duals :
@@ -345,16 +357,17 @@ theorem niuean_rows :
           e.parse? "force" strengthTable = some fo := by
   decide
 
-/-- [nauze-2008]'s universal holds of the four inventories: every modal varies on one axis. -/
+/-- [nauze-2008]'s universal holds of the four inventories: every modal varies on one axis,
+between necessity and possibility or among flavours. -/
 theorem nauze :
     ∀ e ∈ Gitksan.modals ++ Statimcets.modals ++
-      NezPerce.modals ++ Niuean.modals, SingleAxis e.meaning := by
+      NezPerce.modals ++ Niuean.modals, SingleAxis e.classical.meaning := by
   decide
 
 /-- An inventory varies along one axis within a domain when its modals there do not vary in
 force and in flavour both. -/
 def OneAxisWithin (L : List ModalItem) (D : ModalItem → Prop) : Prop :=
-  ¬ ((∃ m ∈ L, D m ∧ m.VariesForce) ∧ ∃ m ∈ L, D m ∧ m.VariesFlavor)
+  ¬ ((∃ m ∈ L, D m ∧ m.classical.VariesForce) ∧ ∃ m ∈ L, D m ∧ m.VariesFlavor)
 
 instance (L : List ModalItem) (D : ModalItem → Prop) [DecidablePred D] :
     Decidable (OneAxisWithin L D) :=
@@ -362,8 +375,10 @@ instance (L : List ModalItem) (D : ModalItem → Prop) [DecidablePred D] :
 
 /-- A modal of a one-axis domain varies on one axis. -/
 theorem OneAxisWithin.singleAxis {L : List ModalItem} {D : ModalItem → Prop}
-    (h : OneAxisWithin L D) {m : ModalItem} (hm : m ∈ L) (hD : D m) : SingleAxis m.meaning :=
-  ModalItem.singleAxis_meaning_iff.2 fun hv ↦ h ⟨⟨m, hm, hD, hv.1⟩, m, hm, hD, hv.2⟩
+    (h : OneAxisWithin L D) {m : ModalItem} (hm : m ∈ L) (hD : D m) :
+    SingleAxis m.classical.meaning :=
+  ModalItem.singleAxis_meaning_iff.2 fun hv ↦
+    h ⟨⟨m, hm, hD, hv.1⟩, m, hm, hD, by simpa [ModalItem.VariesFlavor] using hv.2⟩
 
 /-- [vander-klok-2013b]'s refinement of the universal: within each domain, epistemic and
 non-epistemic, an inventory varies along one axis only. -/
@@ -375,7 +390,7 @@ instance (L : List ModalItem) : Decidable (VanderKlok L) :=
 
 /-- The refinement entails the universal, each modal lying in one of the two domains. -/
 theorem VanderKlok.singleAxis {L : List ModalItem} (h : VanderKlok L) {m : ModalItem}
-    (hm : m ∈ L) : SingleAxis m.meaning := by
+    (hm : m ∈ L) : SingleAxis m.classical.meaning := by
   by_cases he : m.Epistemic
   exacts [h.1.singleAxis hm he, h.2.singleAxis hm he]
 
@@ -396,7 +411,8 @@ def hypotheticalRootSystem : List ModalItem :=
 /-- The system satisfies the universal and violates the refinement, `x` varying in force and
 `y` in flavour within the root domain, so the refinement is strictly stronger. -/
 theorem hypotheticalRootSystem_singleAxis_not_vanderKlok :
-    (∀ m ∈ hypotheticalRootSystem, SingleAxis m.meaning) ∧ ¬ VanderKlok hypotheticalRootSystem := by
+    (∀ m ∈ hypotheticalRootSystem, SingleAxis m.classical.meaning) ∧
+      ¬ VanderKlok hypotheticalRootSystem := by
   decide
 
 end Matthewson2016

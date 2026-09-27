@@ -3,85 +3,68 @@ module
 public import Linglib.Semantics.Modality.Basic
 
 /-!
-# Gitksan Modal Inventory
+# Gitksan modals
 
-[matthewson-2013] [peterson-2010]
+The modal system of Gitksan (Tsimshianic, ISO 639-3 `git`) as described in [matthewson-2013],
+building on [peterson-2010]'s account of the epistemics. Every modal is specified for modality
+type. The epistemic modals are the second-position clitics *ima('a)* and the reportative *g̱at*,
+each compatible with contexts supporting possibility and necessity claims alike. The
+circumstantial modals are clause-initial verbs and a predicative particle: *da'aḵhlxw*, general
+circumstantial possibility; *anooḵ*, deontic possibility; and *sgi*, circumstantial (weak)
+necessity.
 
-Gitksan (Tsimshianic, ISO 639-3 `git`) modal system, spoken in northern British Columbia. The
-epistemic modals are second-position clitics, *ima('a)* and the reportative *gat*, each
-compatible with necessity and possibility contexts alike ([peterson-2010]); the circumstantial
-modals are verbs and predicative particles, *da'akhlxw* and *anook(xw)* for possibility and
-*sgi* for weak necessity, with no strong circumstantial necessity modal ([matthewson-2013]
-Fig. 1).
+| type           | subtype     | possibility   | (weak) necessity |
+|----------------|-------------|---------------|------------------|
+| circumstantial | plain       | *da'aḵhlxw*   | *sgi*            |
+| circumstantial | deontic     | *anooḵ*       | *sgi*            |
+| epistemic      | plain       | *ima('a)*     | *ima('a)*        |
+| epistemic      | reportative | *g̱at*         | *g̱at*            |
 
-|                  | Possibility  | (Weak) Necessity |
-|------------------|-------------|-----------------|
-| **Circumstantial** |             |                 |
-| Plain            | da'akhlxw   | sgi             |
-| Deontic          | anook(xw)   | sgi             |
-| **Epistemic**    |             |                 |
-| Plain            | ima('a)     | ima('a)         |
-| Reportative      | gat         | gat             |
+## Implementation notes
+
+* Forms follow [matthewson-2013] in the orthography of Hindle and Rigsby, with the underline
+  marking a uvular written as a combining macron below and the glottal apostrophe as ASCII `'`.
+* The library's circumstantial flavor covers the pure circumstantial, ability and teleological
+  readings the paper distinguishes.
+* *g̱at*'s reportative evidence requirement is not recorded: `ModalItem` has no information
+  source, and the epistemic flavor covers both clitics.
+
+## References
+
+* [matthewson-2013]
+* [peterson-2010]
+* [matthewson-2016]
 -/
 
 @[expose] public section
 
 namespace Gitksan
 
-open Modality (ForceFlavor ModalItem)
+open Modality
 
-abbrev ne : ForceFlavor := (.necessity, .epistemic)
-abbrev pe : ForceFlavor := (.possibility, .epistemic)
-abbrev wnd : ForceFlavor := (.weakNecessity, .deontic)
-abbrev wnc : ForceFlavor := (.weakNecessity, .circumstantial)
-abbrev pd : ForceFlavor := (.possibility, .deontic)
-abbrev pc : ForceFlavor := (.possibility, .circumstantial)
-abbrev pb : ForceFlavor := (.possibility, .bouletic)
+/-- The plain epistemic clitic *ima('a)*, felicitous in contexts supporting possibility and
+necessity claims alike. -/
+def imaa : ModalItem := ⟨"ima('a)", {.possibility, .necessity} ×ˢ {.epistemic}, .neutral⟩
 
-/-! ## Modal expressions -/
+/-- The reportative epistemic clitic *g̱at*, felicitous only on reported evidence and, like
+*ima('a)*, in contexts supporting either force. -/
+def gat : ModalItem := ⟨"g̱at", {.possibility, .necessity} ×ˢ {.epistemic}, .neutral⟩
 
-/-- Variable-force plain epistemic modal.
-    [peterson-2010]: analysed as a possibility modal strengthened via
-    ordering source, compatible with both necessity and possibility contexts.
-    [matthewson-2016] §18.3.2: not specialized for a particular force. -/
-def imaa : ModalItem := { form := "ima('a)", meaning := {pe, ne} }
+/-- The circumstantial possibility verb *da'aḵhlxw*: pure circumstantial and ability readings,
+and, acceptable but not preferred, the priority readings, teleological, bouletic and deontic,
+where it competes with *anooḵ*. -/
+def daakhlxw : ModalItem :=
+  ⟨"da'aḵhlxw", {.possibility} ×ˢ {.circumstantial, .deontic, .bouletic}, .neutral⟩
 
-/-- Variable-force reportative epistemic modal, distinguished from ima('a) by information
-    source: gat requires reportative evidence ([peterson-2010]). -/
-def gat : ModalItem := { form := "gat", meaning := {pe, ne} }
+/-- The deontic possibility verb *anooḵ*, 'allow'. -/
+def anook : ModalItem := ⟨"anooḵ", {.possibility} ×ˢ {.deontic}, .neutral⟩
 
-/-- General circumstantial possibility: pure circumstantial, ability,
-    bouletic, teleological, and (in competition with `anookxw`) deontic
-    permission. [matthewson-2013] §4.1, ex. 63–65: da'akhlxw allows
-    bouletic interpretations ('You could eat less cake'), teleological
-    interpretations (subsumed under circumstantial in linglib's flavor
-    inventory), and deontic permission ('My mother told me I could play').
-    Listed flavors: circumstantial (covering pure circumstantial, ability,
-    teleological), deontic (permission overlap with anookxw), bouletic. -/
-def daakhlxw : ModalItem := { form := "da'akhlxw", meaning := {pc, pd, pb} }
+/-- The circumstantial (weak) necessity particle *sgi*: deontic, non-deontic circumstantial,
+teleological and bouletic readings, of strong and of weak necessity. -/
+def sgi : ModalItem :=
+  ⟨"sgi", {.necessity, .weakNecessity} ×ˢ {.deontic, .circumstantial, .bouletic}, .neutral⟩
 
-/-- Specialized deontic possibility ('allowed to'). [matthewson-2013]
-    §4.2: anook competes with da'akhlxw in permission contexts but is
-    strictly deontic — infelicitous in pure circumstantial situations
-    (ex. 79). -/
-def anookxw : ModalItem := { form := "anook(xw)", meaning := {pd} }
-
-/-- Circumstantial **weak** necessity. [matthewson-2013] §4.3 (and
-    Figure 1: column header is "(WEAK) NECESSITY"): sgi expresses
-    obligation, deontic 'should', and weak circumstantial necessity. The
-    preferred English translation is 'should', a weak necessity modal.
-
-    Caveat: Matthewson herself hedges. *sgi* is INFELICITOUS in some
-    pure strong-necessity contexts (sneeze case, ex. 96–98), but IS
-    felicitous in others (ex. 100, "*k'ap sgi dim gwalga daxw-'m*"
-    'We must all die'). The §4.3 conclusion (p. 384) suggests the
-    infelicity may be a modality-TYPE issue (perhaps *sgi* requires a
-    non-empty priority ordering source) rather than a strict
-    weak-necessity restriction. The Fig. 1 parenthesization of
-    "(WEAK)" reflects this uncertainty. -/
-def sgi : ModalItem := { form := "sgi", meaning := {wnd, wnc} }
-
-def modals : List ModalItem :=
-  [imaa, gat, daakhlxw, anookxw, sgi]
+/-- The modal inventory of [matthewson-2013]. -/
+def modals : List ModalItem := [imaa, gat, daakhlxw, anook, sgi]
 
 end Gitksan
