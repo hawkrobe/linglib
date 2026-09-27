@@ -34,7 +34,7 @@ belief update.
 
 @[expose] public section
 
-namespace Processing.Expectation
+namespace Surprisal
 
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal ProbabilityTheory
@@ -71,4 +71,4 @@ theorem nextProb_eq_div [DiscreteMeasurableSpace T] (ws : List W) (w : W) :
     Set.inter_eq_right.mpr (consistent_anti str (List.prefix_append ws [w])), div_eq_mul_inv,
     mul_comm]
 
-end Processing.Expectation
+end Surprisal

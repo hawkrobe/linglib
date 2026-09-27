@@ -7,7 +7,7 @@ module
 
 public import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 public import Linglib.Core.InformationTheory.Surprisal
-public import Linglib.Processing.Expectation.PrefixProbability
+public import Linglib.Processing.Surprisal.PrefixProbability
 
 /-!
 # Levy (2008): Expectation-Based Syntactic Comprehension
@@ -28,7 +28,7 @@ the difficulty may be read through any next-word distribution matching those pro
 
 Structures live in an arbitrary discrete measurable space, covering the paper's normally
 infinite structure set; the generative process is a probability measure over them, and the
-prefix apparatus (`consistent`, `nextProb`) is `Processing.Expectation.PrefixProbability`. The
+prefix apparatus (`consistent`, `nextProb`) is `Processing/Surprisal/PrefixProbability.lean`. The
 prior is fixed throughout, matching the paper's caveat that the equivalence holds only when
 extra-sentential context does not change while the word is processed.
 
@@ -42,7 +42,7 @@ extra-sentential context does not change while the word is processed.
 
 namespace Levy2008
 
-open InformationTheory MeasureTheory ProbabilityTheory Processing.Expectation
+open InformationTheory MeasureTheory ProbabilityTheory Surprisal
 open scoped ENNReal ProbabilityTheory
 
 variable {T W : Type*} [MeasurableSpace T]

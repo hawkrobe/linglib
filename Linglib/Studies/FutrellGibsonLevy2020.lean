@@ -7,14 +7,14 @@ module
 
 public import Linglib.Core.InformationTheory.Entropy
 public import Linglib.Core.MeasureTheory.MeasurableSpace.Sum
-public import Linglib.Processing.Memory.LossyContext
+public import Linglib.Processing.Surprisal.LossyContext
 
 /-!
 # Futrell, Gibson and Levy (2020): Lossy-Context Surprisal
 
 This file formalizes [futrell-gibson-levy-2020]'s lossy-context surprisal, on which the
 difficulty of a word is its expected surprisal under a lossy memory representation of its
-context, carried by `Processing.LossyContext.MemoryProcess`. The comprehender of section 3.3
+context, carried by `LossyContext.MemoryProcess`. The comprehender of section 3.3
 predicts the next word from its memory representation by Bayesian inversion of the memory
 kernel (`bayes`), and averaged over contexts its difficulty is the conditional entropy of the
 word given the representation, which exceeds the difficulty of surprisal theory, the lossless
@@ -46,7 +46,7 @@ lossless case and certain erasure recovers the unigram prior.
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory InformationTheory Processing.LossyContext
+open MeasureTheory ProbabilityTheory InformationTheory LossyContext
 open scoped ProbabilityTheory unitInterval
 
 namespace FutrellGibsonLevy2020

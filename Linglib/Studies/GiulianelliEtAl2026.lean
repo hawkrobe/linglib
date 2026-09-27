@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Probability.Kernel.IonescuTulcea.PartialTraj
-public import Linglib.Processing.Expectation.GeneralizedSurprisal
+public import Linglib.Processing.Surprisal.Generalized
 
 /-!
 # Giulianelli, Wallbridge, Cotterell and Fernández (2026): Incremental Alternative Sampling as a Lens into the Temporal and Representational Resolution of Linguistic Prediction
@@ -48,7 +48,7 @@ the substrate (`iiv_zero`).
 
 @[expose] public section
 
-open Finset InformationTheory MeasureTheory ProbabilityTheory Processing.Expectation
+open Finset InformationTheory MeasureTheory ProbabilityTheory Surprisal
 
 namespace GiulianelliEtAl2026
 

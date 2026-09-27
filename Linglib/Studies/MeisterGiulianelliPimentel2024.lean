@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Processing.Expectation.GeneralizedSurprisal
+public import Linglib.Processing.Surprisal.Generalized
 
 /-!
 # Meister, Giulianelli and Pimentel (2024): Towards a Similarity-Adjusted Surprisal Theory
@@ -43,7 +43,7 @@ measures stand in a strictly increasing relationship
 
 namespace MeisterGiulianelliPimentel2024
 
-open InformationTheory MeasureTheory ProbabilityTheory Processing.Expectation Real
+open InformationTheory MeasureTheory ProbabilityTheory Surprisal Real
 
 variable {C A W : Type*} [MeasurableSpace C] [MeasurableSpace A]
 
