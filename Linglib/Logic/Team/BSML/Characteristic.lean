@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Team.BSML.Bridge
+public import Linglib.Logic.Team.BSML.Classical
 public import Linglib.Logic.Team.BSML.Bisimulation
 
 /-!
@@ -13,12 +13,12 @@ in `BSML/ExpressiveCompleteness.lean`) needs **characteristic formulas**: for
 each world `w` and depth `k`, an NE-free formula `χ_w^k` such that a singleton
 `{v}` supports it exactly when `v` is `k`-bisimilar to `w`. This file builds the
 foundation — finite conjunction over an NE-free language and the **depth-0
-(atomic type)** characterisation — and proves it against the classical
-single-world evaluation `classicalEval` (`BSML/Bridge.lean`).
+(atomic type)** characterisation — and proves it against classical single-world
+truth `Realize` (`BSML/Classical.lean`).
 
-Working through `classicalEval` is the simplification that makes this tractable:
-characteristic formulas are NE-free, so by `Bridge.neFree_flat_eq` their team
-support reduces to pointwise `classicalEval`, and the construction becomes the
+Working through `Realize` is the simplification that makes this tractable:
+characteristic formulas are NE-free, so by `support_iff_forall_realize` their team
+support reduces to pointwise `Realize`, and the construction becomes the
 standard *classical* modal Hintikka characterisation.
 
 ## Main declarations
@@ -28,7 +28,7 @@ standard *classical* modal Hintikka characterisation.
   literals true at `w`.
 * `charFormula M k w` — the depth-`k` Hintikka formula: atomic type, `◇` of
   each successor type, and `□` of the successor-type disjunction.
-* `classicalEval_charFormula_iff_bisim` — the characterisation: `v`
+* `realize_charFormula_iff_bisim` — the characterisation: `v`
   classically satisfies `χ_w^k` iff `w` and `v` are `k`-bisimilar.
 * `support_charFormula_singleton_iff_bisim` — the team-semantic face:
   singleton support of `χ_w^k` is `k`-bisimilarity.
@@ -57,9 +57,9 @@ variable {W : Type*} {Atom : Type*}
 def verum [Inhabited Atom] : Formula Atom :=
   .disj (.atom default) (.neg (.atom default))
 
-@[simp] theorem classicalEval_verum [Inhabited Atom] (M : KripkeModel W Atom) (w : W) :
-    classicalEval M verum w = true := by
-  simp [verum, classicalEval, Bool.or_not_self]
+@[simp] theorem realize_verum [Inhabited Atom] (M : KripkeModel W Atom) (w : W) :
+    Realize M verum w := by
+  cases M.val default w <;> simp [verum, Realize]
 
 @[simp] theorem neFree_verum [Inhabited Atom] : (verum : Formula Atom).NEFree :=
   ⟨trivial, trivial⟩
@@ -69,13 +69,12 @@ def bigConj [Inhabited Atom] : List (Formula Atom) → Formula Atom
   | [] => verum
   | φ :: rest => .conj φ (bigConj rest)
 
-theorem classicalEval_bigConj [Inhabited Atom] (M : KripkeModel W Atom) (w : W)
+theorem realize_bigConj [Inhabited Atom] (M : KripkeModel W Atom) (w : W)
     (l : List (Formula Atom)) :
-    classicalEval M (bigConj l) w = true ↔ ∀ φ ∈ l, classicalEval M φ w = true := by
+    Realize M (bigConj l) w ↔ ∀ φ ∈ l, Realize M φ w := by
   induction l with
   | nil => simp [bigConj]
-  | cons φ rest ih =>
-    simp only [bigConj, classicalEval, Bool.and_eq_true, List.forall_mem_cons, ih]
+  | cons φ rest ih => simp only [bigConj, Realize, List.forall_mem_cons, ih]
 
 theorem neFree_bigConj [Inhabited Atom] (l : List (Formula Atom))
     (h : ∀ φ ∈ l, φ.NEFree) : (bigConj l).NEFree := by
@@ -104,30 +103,26 @@ theorem neFree_atomicType [Fintype Atom] [Inhabited Atom]
 
 /-- The atomic type of `w` is classically satisfied at `v` exactly when `v` and
     `w` assign every atom the same value. -/
-theorem classicalEval_atomicType [Fintype Atom] [Inhabited Atom]
+theorem realize_atomicType [Fintype Atom] [Inhabited Atom]
     (M : KripkeModel W Atom) (w v : W) :
-    classicalEval M (atomicType M w) v = true ↔ ∀ p : Atom, M.val p v = M.val p w := by
-  rw [atomicType, classicalEval_bigConj]
+    Realize M (atomicType M w) v ↔ ∀ p : Atom, M.val p v = M.val p w := by
+  rw [atomicType, realize_bigConj]
   constructor
   · intro h p
     have hp := h _ (List.mem_map.mpr
       ⟨p, Finset.mem_toList.mpr (Finset.mem_univ p), rfl⟩)
-    cases hb : M.val p w with
-    | false => simp [hb, classicalEval] at hp; simp [hp]
-    | true => simp [hb, classicalEval] at hp; simp [hp]
+    cases hb : M.val p w <;> simp [hb, Realize] at hp <;> simp [hp]
   · intro h φ hφ
     obtain ⟨p, -, rfl⟩ := List.mem_map.mp hφ
-    cases hb : M.val p w with
-    | false => simp [hb, classicalEval, h p]
-    | true => simp [hb, classicalEval, h p]
+    cases hb : M.val p w <;> simp [hb, Realize, h p]
 
 /-- **Depth-0 characterisation**: `w`'s atomic type is classically satisfied at
     `v` iff `v` and `w` are 0-bisimilar. The base case of the characteristic-
     formula characterisation. -/
-theorem classicalEval_atomicType_iff_bisim0 [Fintype Atom] [Inhabited Atom]
+theorem realize_atomicType_iff_bisim0 [Fintype Atom] [Inhabited Atom]
     (M : KripkeModel W Atom) (w v : W) :
-    classicalEval M (atomicType M w) v = true ↔ WorldBisim 0 M w M v := by
-  rw [classicalEval_atomicType]
+    Realize M (atomicType M w) v ↔ WorldBisim 0 M w M v := by
+  rw [realize_atomicType]
   constructor
   · intro h p; exact (h p).symm
   · intro h p; exact (h p).symm
@@ -139,9 +134,9 @@ theorem classicalEval_atomicType_iff_bisim0 [Fintype Atom] [Inhabited Atom]
 def falsum [Inhabited Atom] : Formula Atom :=
   .conj (.atom default) (.neg (.atom default))
 
-@[simp] theorem classicalEval_falsum [Inhabited Atom] (M : KripkeModel W Atom) (w : W) :
-    classicalEval M falsum w = false := by
-  simp [falsum, classicalEval]
+@[simp] theorem not_realize_falsum [Inhabited Atom] (M : KripkeModel W Atom) (w : W) :
+    ¬ Realize M falsum w := by
+  simp [falsum, Realize]
 
 @[simp] theorem neFree_falsum [Inhabited Atom] : (falsum : Formula Atom).NEFree :=
   ⟨trivial, trivial⟩
@@ -151,12 +146,12 @@ def bigDisj [Inhabited Atom] : List (Formula Atom) → Formula Atom
   | [] => falsum
   | φ :: rest => .disj φ (bigDisj rest)
 
-theorem classicalEval_bigDisj [Inhabited Atom] (M : KripkeModel W Atom) (w : W)
+theorem realize_bigDisj [Inhabited Atom] (M : KripkeModel W Atom) (w : W)
     (l : List (Formula Atom)) :
-    classicalEval M (bigDisj l) w = true ↔ ∃ φ ∈ l, classicalEval M φ w = true := by
+    Realize M (bigDisj l) w ↔ ∃ φ ∈ l, Realize M φ w := by
   induction l with
   | nil => simp [bigDisj]
-  | cons φ rest ih => simp [bigDisj, classicalEval, ih]
+  | cons φ rest ih => simp [bigDisj, ih]
 
 theorem neFree_bigDisj [Inhabited Atom] (l : List (Formula Atom))
     (h : ∀ φ ∈ l, φ.NEFree) : (bigDisj l).NEFree := by
@@ -165,16 +160,6 @@ theorem neFree_bigDisj [Inhabited Atom] (l : List (Formula Atom))
   | cons φ rest ih =>
     exact ⟨h φ (List.mem_cons.mpr (Or.inl rfl)),
            ih (fun ψ hψ => h ψ (List.mem_cons.mpr (Or.inr hψ)))⟩
-
-/-! ### Modal clauses of classical evaluation -/
-
-theorem classicalEval_poss_iff (M : KripkeModel W Atom) (ψ : Formula Atom) (w : W) :
-    classicalEval M (.poss ψ) w = true ↔ ∃ v ∈ M.access w, classicalEval M ψ v = true := by
-  simp [classicalEval]
-
-theorem classicalEval_nec_iff (M : KripkeModel W Atom) (ψ : Formula Atom) (w : W) :
-    classicalEval M (Formula.nec ψ) w = true ↔ ∀ v ∈ M.access w, classicalEval M ψ v = true := by
-  simp [Formula.nec, classicalEval]
 
 /-! ### Characteristic formulas -/
 
@@ -207,37 +192,37 @@ theorem neFree_charFormula [Fintype Atom] [Inhabited Atom]
 /-- **Depth-`k` characterisation** (the Hintikka half of Theorem 3.3 of
     [aloni-anttila-yang-2024]): `w`'s depth-`k` characteristic formula is
     classically satisfied at `v` iff `w` and `v` are `k`-bisimilar. -/
-theorem classicalEval_charFormula_iff_bisim [Fintype Atom] [Inhabited Atom]
+theorem realize_charFormula_iff_bisim [Fintype Atom] [Inhabited Atom]
     (M : KripkeModel W Atom) (k : ℕ) (w v : W) :
-    classicalEval M (charFormula M k w) v = true ↔ WorldBisim k M w M v := by
+    Realize M (charFormula M k w) v ↔ WorldBisim k M w M v := by
   induction k generalizing w v with
-  | zero => exact classicalEval_atomicType_iff_bisim0 M w v
+  | zero => exact realize_atomicType_iff_bisim0 M w v
   | succ k ih =>
     constructor
     · intro h
-      simp only [charFormula, classicalEval, Bool.and_eq_true] at h
+      simp only [charFormula, Realize] at h
       obtain ⟨hA, hB, hC⟩ := h
-      refine ⟨fun p => ((classicalEval_atomicType M w v).mp hA p).symm, ?_, ?_⟩
+      refine ⟨fun p => ((realize_atomicType M w v).mp hA p).symm, ?_, ?_⟩
       · intro u hu
-        have hposs := (classicalEval_bigConj M v _).mp hB (.poss (charFormula M k u))
+        have hposs := (realize_bigConj M v _).mp hB (.poss (charFormula M k u))
           (List.mem_map.mpr ⟨u, Finset.mem_toList.mpr hu, rfl⟩)
-        obtain ⟨u', hu', hchar⟩ := (classicalEval_poss_iff M _ v).mp hposs
+        obtain ⟨u', hu', hchar⟩ := realize_poss.mp hposs
         exact ⟨u', hu', (ih u u').mp hchar⟩
       · intro u' hu'
-        have hd := (classicalEval_nec_iff M _ v).mp hC u' hu'
-        obtain ⟨φ, hφ, hval⟩ := (classicalEval_bigDisj M u' _).mp hd
+        have hd := realize_nec.mp hC u' hu'
+        obtain ⟨φ, hφ, hval⟩ := (realize_bigDisj M u' _).mp hd
         obtain ⟨u, hu, rfl⟩ := List.mem_map.mp hφ
         exact ⟨u, Finset.mem_toList.mp hu, (ih u u').mp hval⟩
     · intro hbisim
-      simp only [charFormula, classicalEval, Bool.and_eq_true]
-      refine ⟨(classicalEval_atomicType M w v).mpr (fun p => (hbisim.1 p).symm), ?_, ?_⟩
-      · refine (classicalEval_bigConj M v _).mpr (fun φ hφ => ?_)
+      simp only [charFormula, Realize]
+      refine ⟨(realize_atomicType M w v).mpr (fun p => (hbisim.1 p).symm), ?_, ?_⟩
+      · refine (realize_bigConj M v _).mpr (fun φ hφ => ?_)
         obtain ⟨u, hu, rfl⟩ := List.mem_map.mp hφ
         obtain ⟨u', hu', hb⟩ := hbisim.2.1 u (Finset.mem_toList.mp hu)
-        exact (classicalEval_poss_iff M _ v).mpr ⟨u', hu', (ih u u').mpr hb⟩
-      · refine (classicalEval_nec_iff M _ v).mpr (fun u' hu' => ?_)
+        exact realize_poss.mpr ⟨u', hu', (ih u u').mpr hb⟩
+      · refine realize_nec.mpr (fun u' hu' => ?_)
         obtain ⟨u, hu, hb⟩ := hbisim.2.2 u' hu'
-        exact (classicalEval_bigDisj M u' _).mpr
+        exact (realize_bigDisj M u' _).mpr
           ⟨charFormula M k u, List.mem_map.mpr ⟨u, Finset.mem_toList.mpr hu, rfl⟩,
            (ih u u').mpr hb⟩
 
@@ -246,20 +231,8 @@ theorem classicalEval_charFormula_iff_bisim [Fintype Atom] [Inhabited Atom]
 variable [DecidableEq W]
 
 theorem support_verum [Inhabited Atom] (M : KripkeModel W Atom) (t : Finset W) :
-    support M (verum (Atom := Atom)) t := by
-  refine ⟨t.filter (fun w => M.val default w = true),
-          t.filter (fun w => M.val default w = false), ?_, ?_, ?_⟩
-  · show t.filter _ ∪ t.filter _ = t
-    ext w
-    simp only [Finset.mem_union, Finset.mem_filter]
-    constructor
-    · rintro (⟨h, -⟩ | ⟨h, -⟩) <;> exact h
-    · intro hw
-      cases hb : M.val default w
-      · exact Or.inr ⟨hw, rfl⟩
-      · exact Or.inl ⟨hw, rfl⟩
-  · exact fun w hw => (Finset.mem_filter.mp hw).2
-  · exact fun w hw => (Finset.mem_filter.mp hw).2
+    support M (verum (Atom := Atom)) t :=
+  (support_iff_forall_realize neFree_verum).mpr fun w _ => realize_verum M w
 
 theorem support_bigConj_iff [Inhabited Atom] (M : KripkeModel W Atom)
     (l : List (Formula Atom)) (t : Finset W) :
@@ -279,18 +252,18 @@ theorem support_charDisj_iff [Fintype Atom] [Inhabited Atom]
     refine neFree_bigDisj _ (fun φ hφ => ?_)
     obtain ⟨w, -, rfl⟩ := List.mem_map.mp hφ
     exact neFree_charFormula M k w
-  rw [neFree_flat M _ t hNE]
+  rw [support_iff_forall_realize hNE]
   constructor
   · intro h v hv
-    obtain ⟨φ, hφ, hval⟩ := (classicalEval_bigDisj M v _).mp (h v hv)
+    obtain ⟨φ, hφ, hval⟩ := (realize_bigDisj M v _).mp (h v hv)
     obtain ⟨w, hw, rfl⟩ := List.mem_map.mp hφ
     exact ⟨w, Finset.mem_toList.mp hw,
-      (classicalEval_charFormula_iff_bisim M k w v).mp hval⟩
+      (realize_charFormula_iff_bisim M k w v).mp hval⟩
   · intro h v hv
     obtain ⟨w, hw, hb⟩ := h v hv
-    exact (classicalEval_bigDisj M v _).mpr
+    exact (realize_bigDisj M v _).mpr
       ⟨charFormula M k w, List.mem_map.mpr ⟨w, Finset.mem_toList.mpr hw, rfl⟩,
-       (classicalEval_charFormula_iff_bisim M k w v).mpr hb⟩
+       (realize_charFormula_iff_bisim M k w v).mpr hb⟩
 
 /-- On singleton teams, support of the characteristic formula is exactly
     `k`-bisimilarity — the team-semantic face of the characterisation, via
@@ -298,7 +271,7 @@ theorem support_charDisj_iff [Fintype Atom] [Inhabited Atom]
 theorem support_charFormula_singleton_iff_bisim [Fintype Atom] [Inhabited Atom]
     (M : KripkeModel W Atom) (k : ℕ) (w v : W) :
     support M (charFormula M k w) {v} ↔ WorldBisim k M w M v :=
-  (classicalCollapse M _ v (neFree_charFormula M k w)).trans
-    (classicalEval_charFormula_iff_bisim M k w v)
+  (support_singleton_iff_realize (neFree_charFormula M k w)).trans
+    (realize_charFormula_iff_bisim M k w v)
 
 end BSML

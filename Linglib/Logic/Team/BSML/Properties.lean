@@ -12,7 +12,7 @@ public import Linglib.Logic.Team.Definability
 For BSML's `support` relation, this file proves the three constituent
 properties from Anttila 2021 Proposition 2.2.8 (specialised to a logic
 without global disjunction ⨼) plus the flatness corollary from Anttila
-2.2.16 / [aloni-2022] Fact 15.
+2.2.16.
 
 ## Main declarations
 
@@ -24,7 +24,7 @@ without global disjunction ⨼) plus the flatness corollary from Anttila
 * `isLowerSet_support_of_neFree` — NE-free BSML formulas are
   downward-closed (Anttila 2.2.8 part 1).
 * `isFlat_support_of_neFree` — NE-free BSML formulas are flat
-  (Anttila 2.2.16 / [aloni-2022] Fact 15), derived via Anttila
+  (Anttila 2.2.16), derived via Anttila
   Proposition 2.2.2 from the three properties above.
 
 ## Implementation notes
@@ -34,11 +34,10 @@ anti-support of `φ`), so each property is proved as a *joint* statement
 over support + anti-support via a `private` helper, then the public form
 projects the support component.
 
-A direct flatness proof is also available in `Bridge.lean` as
-`neFree_flat_eq`, which proves the stronger statement `support t ↔ ∀ w ∈ t,
-classicalEval w` (flatness + classical-evaluation bridge). This file's
-proof routes through the foundational decomposition; `neFree_flat_eq`
-provides the additional bridge to classical Kripke semantics.
+Proposition 2.2.16 itself, `support t ↔ ∀ w ∈ t, Realize w` with `Realize`
+classical Kripke truth, is proved directly in `Classical.lean`
+(`support_iff_forall_realize`); this file's proof routes through the
+foundational decomposition instead.
 
 The decomposition through Anttila 2.2.8 + 2.2.2 is reusable: any future
 team-semantic logic in linglib (QBSML, inquisitive, dependence logic)
@@ -397,14 +396,14 @@ theorem ordConnected_support (M : KripkeModel W Atom) (φ : Formula Atom) :
 
 /-! ### Flatness corollary (Anttila 2.2.16) -/
 
-/-- **Anttila Proposition 2.2.16** (BSML specialisation of Fact 15 from
-    [aloni-2022]): NE-free BSML formulas are flat — team support
-    equals pointwise support at each world in the team.
+/-- **Anttila Proposition 2.2.16**, flatness form: NE-free BSML formulas
+    are flat — team support equals pointwise support at each world in the
+    team.
 
     Derived from Anttila 2.2.2 (`Team.isFlat_iff`) applied to
-    the three closure properties proved above. The same conclusion has a
-    direct classical-evaluation-bridge proof in `Bridge.lean` as
-    `neFree_flat_eq`. -/
+    the three closure properties proved above. The same conclusion follows
+    from the classical-truth form `support_iff_forall_realize` in
+    `Classical.lean`. -/
 theorem isFlat_support_of_neFree {φ : Formula Atom}
     (hNE : φ.NEFree) (M : KripkeModel W Atom) :
     IsFlat { t : Finset W | support M φ t } :=
@@ -441,7 +440,7 @@ theorem soundFor_convex_inter_unionClosed (M : KripkeModel W Atom) :
 
 open Team in
 /-- **The NE-free fragment of BSML is sound for the flat cell** (Anttila
-    Proposition 2.2.16 / [aloni-2022] Fact 15): NE-free BSML formulas define
+    Proposition 2.2.16): NE-free BSML formulas define
     flat properties. Companion to `soundFor_convex_inter_unionClosed`: NE is
     exactly what moves a formula off the `flat` cell into the strictly larger
     convex, union-closed cell. -/
