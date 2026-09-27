@@ -8,13 +8,13 @@ public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Finset.Lattice.Union
 
 /-!
-# Closure properties of team-sets
+# Closure properties of team properties
 
-A team-set `T : Set (Finset α)` is *flat* if its membership reduces
-pointwise: `s ∈ T ↔ ∀ w ∈ s, {w} ∈ T`. This file states Anttila's
-Definition 2.2.1 and proves the closure-property characterisation
-(Anttila Proposition 2.2.2): a flat team-set is downward-closed,
-sup-closed, and contains `∅`.
+A **team property** `T : TeamProperty α` is a class of teams, `Set (Finset α)`; a formula of a
+team logic defines the property of the teams supporting it. `T` is *flat* if its membership
+reduces pointwise: `s ∈ T ↔ ∀ w ∈ s, {w} ∈ T`. This file states the flatness property of
+[anttila-2021] (Definition 2.2.1) and proves its closure-property characterisation
+(Proposition 2.2.2): a flat team property is downward-closed, sup-closed, and contains `∅`.
 
 Over `SemilatticeSup`-with-`OrderBot` carriers (which `Finset α` is)
 the three closure properties coincide with the data of an
@@ -26,12 +26,13 @@ infrastructure to consumers of `IsFlat`.
 
 ## Main definitions
 
+* `Team.TeamProperty α` — a class of teams.
 * `Team.IsFlat T` — Anttila's pointwise flatness predicate.
 
 ## Main results
 
-* `Team.isFlat_iff` — Anttila Proposition 2.2.2.
-* `Team.isFlat_iff_isIdeal` — flat team-sets are precisely
+* `Team.isFlat_iff` — [anttila-2021] Proposition 2.2.2.
+* `Team.isFlat_iff_isIdeal` — flat team properties are precisely
   the carriers of order-ideals of `Finset α`.
 * `Team.isLowerSet_iff_ordConnected_of_empty` — given the
   empty-team property, downward closure coincides with **convexity**
@@ -42,9 +43,9 @@ infrastructure to consumers of `IsFlat`.
 
 ## References
 
-* Anttila, *The Logic of Free Choice*, MSc thesis 2021, Definition
-  2.2.1 + Proposition 2.2.2.
-* Väänänen, *Dependence Logic*, Cambridge University Press 2007.
+* [anttila-2021] Anttila, The Logic of Free Choice: Axiomatizations of State-based Modal Logics
+* [anttila-2025] Anttila, Not Nothing: Nonemptiness in Team Semantics
+* [vaananen-2007] Väänänen, Dependence Logic: A New Approach to Independence Friendly Logic
 
 ## TODO
 
@@ -58,23 +59,25 @@ namespace Team
 
 variable {α : Type*}
 
-/-- A team-set `T : Set (Finset α)` is **flat** iff membership reduces
+/-- A **team property** over points `α` is a class of teams. -/
+abbrev TeamProperty (α : Type*) : Type _ := Set (Finset α)
+
+/-- A team property `T` is **flat** iff membership reduces
     pointwise: `s ∈ T ↔ every singleton from s is in T`.
 
-    Anttila Definition 2.2.1 (the "for all w ∈ s" Yang-Väänänen
-    formulation). Equivalent characterisations: `isFlat_iff` (via
+    [anttila-2021] Definition 2.2.1. Equivalent characterisations: `isFlat_iff` (via
     closure properties), `isFlat_iff_isIdeal` (via `Order.IsIdeal`). -/
-def IsFlat (T : Set (Finset α)) : Prop :=
+def IsFlat (T : TeamProperty α) : Prop :=
   ∀ s : Finset α, s ∈ T ↔ ∀ w ∈ s, ({w} : Finset α) ∈ T
 
 section
 
 variable [DecidableEq α]
 
-/-- **Anttila Proposition 2.2.2**: a team-set is flat iff it is
+/-- **[anttila-2021] Proposition 2.2.2**: a team property is flat iff it is
     downward-closed under inclusion, closed under binary union, and
     contains the empty team. -/
-theorem isFlat_iff (T : Set (Finset α)) :
+theorem isFlat_iff (T : TeamProperty α) :
     IsFlat T ↔ IsLowerSet T ∧ SupClosed T ∧ ∅ ∈ T := by
   constructor
   · intro hFlat
@@ -113,28 +116,28 @@ theorem isFlat_iff (T : Set (Finset α)) :
           (Finset.singleton_union w t).symm]
         exact hSup hsing ht
 
-theorem isFlat_of_isLowerSet_supClosed_empty {T : Set (Finset α)}
+theorem isFlat_of_isLowerSet_supClosed_empty {T : TeamProperty α}
     (hLower : IsLowerSet T) (hSup : SupClosed T) (hEmpty : ∅ ∈ T) :
     IsFlat T :=
   (isFlat_iff T).mpr ⟨hLower, hSup, hEmpty⟩
 
-theorem IsFlat.isLowerSet {T : Set (Finset α)} (h : IsFlat T) : IsLowerSet T :=
+theorem IsFlat.isLowerSet {T : TeamProperty α} (h : IsFlat T) : IsLowerSet T :=
   ((isFlat_iff T).mp h).1
 
-theorem IsFlat.supClosed {T : Set (Finset α)} (h : IsFlat T) : SupClosed T :=
+theorem IsFlat.supClosed {T : TeamProperty α} (h : IsFlat T) : SupClosed T :=
   ((isFlat_iff T).mp h).2.1
 
-theorem IsFlat.empty_mem {T : Set (Finset α)} (h : IsFlat T) : ∅ ∈ T :=
+theorem IsFlat.empty_mem {T : TeamProperty α} (h : IsFlat T) : ∅ ∈ T :=
   ((isFlat_iff T).mp h).2.2
 
-/-- Anttila Proposition 2.2.2 restated via `Order.IsIdeal`: flat
-    team-sets are precisely the carriers of order-ideals of `Finset α`.
+/-- [anttila-2021] Proposition 2.2.2 restated via `Order.IsIdeal`: flat
+    team properties are precisely the carriers of order-ideals of `Finset α`.
 
     Over `SemilatticeSup` + `OrderBot` the three closure-property
     coordinates of `IsFlat` translate to the three ideal-axiom
     coordinates: `SupClosed ↔ DirectedOn (·≤·)` (in `SemilatticeSup`)
     and `∅ ∈ T ↔ T.Nonempty` (in `OrderBot`, for lower sets). -/
-theorem isFlat_iff_isIdeal (T : Set (Finset α)) :
+theorem isFlat_iff_isIdeal (T : TeamProperty α) :
     IsFlat T ↔ Order.IsIdeal T := by
   rw [isFlat_iff]
   refine ⟨fun ⟨hL, hS, hE⟩ => ⟨hL, ⟨∅, hE⟩, hS.directedOn⟩,
@@ -155,10 +158,10 @@ may fail. Mathlib's `Set.OrdConnected` is exactly this predicate
 `IsConvex`, mirroring the `IsFlat ↔ Order.IsIdeal` reuse above. The forward
 bridge `IsLowerSet.ordConnected` is already in mathlib. -/
 
-/-- A convex team-set with the empty-team property is downward-closed — the
+/-- A convex team property with the empty-team property is downward-closed — the
     reverse of mathlib's `IsLowerSet.ordConnected`. Together they give
     `isLowerSet_iff_ordConnected_of_empty`. -/
-theorem isLowerSet_of_ordConnected_empty {T : Set (Finset α)}
+theorem isLowerSet_of_ordConnected_empty {T : TeamProperty α}
     (hConv : T.OrdConnected) (hEmpty : ∅ ∈ T) : IsLowerSet T := by
   intro a b hab hb
   -- `IsLowerSet`: `hab : b ≤ a`, `hb : a ∈ T`, goal `b ∈ T`; `∅ ≤ b ≤ a`.
@@ -167,15 +170,15 @@ theorem isLowerSet_of_ordConnected_empty {T : Set (Finset α)}
   exact hConv.out hEmpty hb hmem
 
 /-- **Given the empty-team property, downward closure and convexity coincide**
-    ([anttila-2025]). For NE-bearing team-sets — which break the
+    ([anttila-2025]). For NE-bearing team properties — which break the
     empty-team property — convexity is the invariant that survives where
     downward closure does not. -/
-theorem isLowerSet_iff_ordConnected_of_empty {T : Set (Finset α)}
+theorem isLowerSet_iff_ordConnected_of_empty {T : TeamProperty α}
     (hEmpty : ∅ ∈ T) : IsLowerSet T ↔ T.OrdConnected :=
   ⟨IsLowerSet.ordConnected, fun h => isLowerSet_of_ordConnected_empty h hEmpty⟩
 
-/-- Flat team-sets are convex (`IsFlat → IsLowerSet → OrdConnected`). -/
-theorem IsFlat.ordConnected [DecidableEq α] {T : Set (Finset α)} (h : IsFlat T) :
+/-- Flat team properties are convex (`IsFlat → IsLowerSet → OrdConnected`). -/
+theorem IsFlat.ordConnected [DecidableEq α] {T : TeamProperty α} (h : IsFlat T) :
     T.OrdConnected :=
   h.isLowerSet.ordConnected
 

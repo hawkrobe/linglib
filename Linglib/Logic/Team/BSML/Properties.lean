@@ -5,12 +5,12 @@ public import Linglib.Logic.Team.Closure
 public import Linglib.Logic.Team.Definability
 
 /-!
-# BSML formula closure properties (Anttila 2021 Proposition 2.2.8)
+# BSML formula closure properties
 
 [anttila-2021] [aloni-2022]
 
 For BSML's `support` relation, this file proves the three constituent
-properties from Anttila 2021 Proposition 2.2.8 (specialised to a logic
+properties from [anttila-2021] Proposition 2.2.8 (specialised to a logic
 without global disjunction ⨼) plus the flatness corollary from Anttila
 2.2.16.
 
@@ -39,10 +39,16 @@ classical Kripke truth, is proved directly in `Classical.lean`
 (`support_iff_forall_realize`); this file's proof routes through the
 foundational decomposition instead.
 
-The decomposition through Anttila 2.2.8 + 2.2.2 is reusable: any future
-team-semantic logic in linglib (QBSML, inquisitive, dependence logic)
-needs the same structural argument — proving the three closure properties
-separately and composing them via `Team.isFlat_iff`.
+The decomposition through [anttila-2021] Propositions 2.2.8 and 2.2.2 is reusable: any
+team-semantic logic in linglib (QBSML, inquisitive, dependence logic) needs the same structural
+argument, proving the three closure properties separately and composing them via
+`Team.isFlat_iff`.
+
+## References
+
+* [aloni-2022] Aloni, Logic and Conversation: The Case of Free Choice
+* [anttila-2021] Anttila, The Logic of Free Choice: Axiomatizations of State-based Modal Logics
+* [anttila-2025] Anttila, Not Nothing: Nonemptiness in Team Semantics
 -/
 
 @[expose] public section
@@ -71,7 +77,7 @@ private theorem support_and_antiSupport_supClosed (φ : Formula Atom) (M : Kripk
   | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.tensor ih₂.1, ih₁.2.inter ih₂.2⟩
   | poss ψ _ => exact ⟨supClosed_flat _, supClosed_flat _⟩
 
-/-- BSML support is sup-closed (Anttila Proposition 2.2.8 part 2). BSML's
+/-- BSML support is sup-closed ([anttila-2021] Proposition 2.2.8, second part). BSML's
     connective set lacks the global disjunction ⨼, so the union-closure
     obstruction is absent and all formulas satisfy the property. -/
 theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
@@ -155,7 +161,7 @@ theorem ordConnected_support (M : KripkeModel W Atom) (φ : Formula Atom) :
 
 /-! ### Flatness corollary (Anttila 2.2.16) -/
 
-/-- **Anttila Proposition 2.2.16**, flatness form: NE-free BSML formulas
+/-- **[anttila-2021] Proposition 2.2.16**, flatness form: NE-free BSML formulas
     are flat — team support equals pointwise support at each world in the
     team.
 
@@ -174,10 +180,10 @@ theorem isFlat_support_of_neFree {φ : Formula Atom}
 /-! ### Soundness for the closure cell (Definability bridge) -/
 
 open Team in
-/-- **The NE-free fragment of BSML defines flat properties** (Anttila Proposition 2.2.16), the
-    fragment being the subtype of `NE`-free formulas. `NE` is exactly what moves a formula off
-    the flat properties into the convex, union-closed ones (`definableClass_support_subset` in
-    `BSML/ExpressiveCompleteness.lean`). -/
+/-- **The NE-free fragment of BSML defines flat properties** ([anttila-2021] Proposition
+    2.2.16), the fragment being the subtype of `NE`-free formulas. `NE` is exactly what moves a
+    formula off the flat properties into the convex, union-closed ones
+    (`definableClass_support_subset` in `BSML/ExpressiveCompleteness.lean`). -/
 theorem definableClass_support_neFree_subset (M : KripkeModel W Atom) :
     definableClass (fun φ : {φ : Formula Atom // φ.NEFree} ↦ support M φ.1) ⊆ {P | IsFlat P} :=
   definableClass_subset fun φ ↦ isFlat_support_of_neFree φ.2 M

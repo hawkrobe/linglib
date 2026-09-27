@@ -17,10 +17,10 @@ maps `f` and `g`:
 
 A team of assignments reads a tuple of variables through `f`; a team of Kripke worlds reads a
 tuple of propositional atoms through the valuation. So Väänänen's first-order atom `=(Z, u)`,
-here `Team.Dep`, and the modal atoms of `Team/Dependence.lean` and `Team/Inclusion.lean` are
-instances of the same properties, and their closure behaviour is proved once: dependence is
-inherited by subteams, variation by superteams, and inclusion by unions, while dependence is
-not union-closed and inclusion not downward-closed.
+here `Team.Dep`, and the modal atoms of `Team/ModalDependence.lean` and
+`Team/ModalInclusion.lean` are instances of the same properties, and their closure behaviour is
+proved once: dependence is inherited by subteams, variation by superteams, and inclusion by
+unions, while dependence is not union-closed and inclusion not downward-closed.
 
 Widening the parameters of `Team.Dep` weakens dependence and strengthens variation, which is how
 the atoms compose into the constancy and variation conditions of [degano-aloni-2025].
