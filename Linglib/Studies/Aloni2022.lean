@@ -176,7 +176,8 @@ example : ¬ support propositional aOrB {.onlyA, .onlyB, .nothing} ∧
     ¬ support propositional (enrich aOrB) {.onlyA, .onlyB, .nothing} := by decide
 
 -- Figure 3: indisputability against state-basedness on `{w_a, w_b}`.
-example : Team.IsIndisputable fig3a.access state ∧ ¬ Team.IsStateBased fig3a.access state := by decide
+example : Team.IsIndisputable fig3a.access state ∧ ¬ Team.IsStateBased fig3a.access state := by
+  decide
 example : Team.IsStateBased fig3b.access state := by decide
 example : ¬ Team.IsIndisputable fig3c.access state := by decide
 
@@ -196,8 +197,8 @@ example : support fig4b (enrich (.poss aOrB)) {.both} := by decide
 -- `◇[a]⁺ ∨ ◇[b]⁺` of the BSML◇ conjecture, refuted on the same pair.
 example : Team.IsIndisputable fig5a.access state ∧ support fig5a (.disj mayA mayB) state ∧
     ¬ support fig5a mayA state := by decide
-example : ¬ Team.IsIndisputable fig5b.access state ∧ support fig5b (enrich (.disj mayA mayB)) state ∧
-    ¬ support fig5b mayA state := by decide
+example : ¬ Team.IsIndisputable fig5b.access state ∧
+    support fig5b (enrich (.disj mayA mayB)) state ∧ ¬ support fig5b mayA state := by decide
 example : support fig5b (.disj (.poss (enrich (.atom .a))) (.poss (enrich (.atom .b)))) state := by
   decide
 

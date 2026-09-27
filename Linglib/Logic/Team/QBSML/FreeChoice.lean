@@ -186,7 +186,8 @@ theorem boxExiFC {x : Var} (hα : α.NEFree) (hβ : β.NEFree)
 when `R` is state-based, by transplanting the substate's worlds to every index. This is sound
 only because constant atoms are assignment-invariant. -/
 private theorem poss_predc_of_stateBased {P : Pred} {c : Const}
-    {t : Finset (Index W Var Domain)} (hSB : IsStateBased M.access (State.worldProj s)) (hts : t ⊆ s)
+    {t : Finset (Index W Var Domain)} (hSB : IsStateBased M.access (State.worldProj s))
+    (hts : t ⊆ s)
     (htne : t.Nonempty) (h : support M (.predc P c) t) :
     support M (.poss (.predc P c)) s := by
   intro i hi
