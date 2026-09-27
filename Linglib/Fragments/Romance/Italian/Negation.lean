@@ -10,13 +10,20 @@ changes, in any person or tense: *canto* 'I sing', *non canto* 'I do not sing'. 
 stand between *non* and the verb. The same *non* occurs expletively, contributing no negation,
 under *prima che* 'before', *dubitare* 'doubt', *appena* 'hardly', *per poco* 'nearly', *di
 quanto* 'than', *a meno che* 'unless', *finché* 'until' and *senza che* 'without', the triggers
-[jin-koenig-2021] record for the language. N-words and the other polarity-sensitive items are
-entered in `Fragments/Romance/Italian/PolarityItems.lean`. The examples are those of [miestamo-2005].
+[jin-koenig-2021] record for the language. The postverbal *mica*, from the Latin minimizer *micam*
+'crumb', co-occurs with *non*, *Gianni non ha mica la macchina* 'Gianni hasn't got a car', or
+replaces it before the verb, *Mica fa freddo* 'It's not cold'. It is felicitous only when the
+positive counterpart of the sentence is assumed in the discourse, a presuppositional negative
+marker ([zanuttini-1997]), and it also occurs in polar questions ([frana-rawlins-2019]). N-words
+and the other polarity-sensitive items are entered in
+`Fragments/Romance/Italian/PolarityItems.lean`. The examples are those of [miestamo-2005].
 
 ## References
 
 * [miestamo-2005]
 * [jin-koenig-2021]
+* [zanuttini-1997]
+* [frana-rawlins-2019]
 -/
 
 @[expose] public section

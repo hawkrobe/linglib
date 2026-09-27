@@ -20,9 +20,9 @@ between Dario and Paolo, comparative constructions, and an indirect question rec
 of each move with the reported judgment, and `paradigm_licensed_iff` shows the four conditions
 reproduce every judgment. Six morphosyntactic diagnostics witness the underlying negation:
 subjunctive mood and non-specific indefinites in the *than*-clause, the complementizer *che*, the
-predicative clitic *lo*, *neanche*-conjunction, and the weak NPI *pur*, whose contrast with
-*affatto* is read off the Italian Fragment's licensing registry (`pur_admissible`,
-`affatto_blocked`).
+predicative clitic *lo*, *neanche*-conjunction, and the weak NPI *pur*. The NPI *affatto*, which
+requires precise knowledge of the listener's belief, is excluded from every *non₂*-comparative by
+the precision condition (`pur_admissible`, `affatto_blocked`).
 
 ## Implementation notes
 
@@ -211,37 +211,42 @@ def predictedSpecificity (m : Move) : SpecificityProfile :=
   if m.Licensed then .nonspecificOnly else .unrestricted
 
 /-- *Di quanto* occurs with and without *non₂*; *che* only with it. -/
-def complementizerAdmissible (m : Move) : Complementizer → Prop
+def ComplementizerAdmissible (m : Move) : Complementizer → Prop
   | .diQuanto => True
   | .che => m.Licensed
 
 /-- A clitic-less comparative is always available; *lo* only under *non₂*, and optionally. -/
-def cliticAdmissible (m : Move) : Clitic → Prop
+def CliticAdmissible (m : Move) : Clitic → Prop
   | .present => m.Licensed
   | .absent => True
 
-/-- *Neanche*-conjunction is admissible iff its host clause is negated at some level, in a
-comparative iff *non₂* is licensed; the negation requirement is the Fragment's registry entry
-for *neanche*. -/
-def neancheConjunctionAdmissible (m : Move) : Prop :=
-  m.Licensed ∧ .negation ∈ neanche.licensingContexts
+/-- An item that needs its clause negated at some level, *neanche* in a conjunction or the NPI
+*pur*, is admissible in a comparative iff *non₂* is licensed there; the negation requirement is
+the item's Fragment entry. -/
+def NegationAdmissible (m : Move) (e : PolarityItem) : Prop :=
+  m.Licensed ∧ .negation ∈ e.licensingContexts
 
-/-- A weak NPI is admissible in a *non₂*-comparative iff its registry lists the clausal
-comparative slot and the move licenses *non₂*. -/
-def weakNPIAdmissible (m : Move) (npi : PolarityItem) : Prop :=
-  m.Licensed ∧ .clausalComparative ∈ npi.licensingContexts
+/-- *Affatto* 'at all' needs its clause negated and requires precise knowledge of the listener's
+belief, which a belief only inferred from the listener's discourse does not give. -/
+def AffattoAdmissible (m : Move) : Prop :=
+  NegationAdmissible m affatto ∧ m.priorBelief ≠ .inferred
 
 /-- *Neanche*-conjunction is admissible in the chess dialogue. -/
-theorem neanche_admissible : neancheConjunctionAdmissible chessContext.move :=
+theorem neanche_admissible : NegationAdmissible chessContext.move neanche :=
   ⟨by decide, by decide⟩
 
 /-- *Pur* is admissible wherever *non₂* is licensed. -/
-theorem pur_admissible {m : Move} (h : m.Licensed) : weakNPIAdmissible m pur :=
-  ⟨h, pur_licensed_in_comparative⟩
+theorem pur_admissible {m : Move} (h : m.Licensed) : NegationAdmissible m pur :=
+  ⟨h, by decide⟩
 
-/-- *Affatto* is inadmissible in *non₂*-comparatives whatever the move: it requires precise
-knowledge of the contradicted belief, and the block is registered in its lexical entry. -/
-theorem affatto_blocked (m : Move) : ¬ weakNPIAdmissible m affatto :=
-  λ ⟨_, h⟩ => affatto_not_licensed_in_comparative h
+/-- *Affatto* meets the negation requirement wherever *non₂* is licensed, like *pur*. -/
+theorem negationAdmissible_affatto {m : Move} (h : m.Licensed) :
+    NegationAdmissible m affatto :=
+  ⟨h, by decide⟩
+
+/-- *Affatto* is inadmissible in every *non₂*-comparative: *non₂* requires inferred and imprecise
+knowledge of the listener's belief, *affatto* precise knowledge. -/
+theorem affatto_blocked (m : Move) : ¬ AffattoAdmissible m :=
+  fun ⟨⟨h, _⟩, h'⟩ ↦ h' h.1
 
 end NapoliNespor1976
