@@ -6,7 +6,7 @@ public import Linglib.Semantics.Modality.Basic
 # Semantic universals for modal meanings
 
 This file defines the two proposed universals on modal meanings, sets of force-flavor pairs, as
-predicates on a `Finset ForceFlavor`, and the weaker property proposed as a fallback. A meaning has
+predicates on a finite set of pairs, and the weaker property proposed as a fallback. A meaning has
 independent force and flavor when it is the product of its forces and its flavors
 ([steinert-threlkeld-imel-guo-2023]), it varies on a single axis when its pairs all share a
 force or all share a flavor ([nauze-2008]), and it is path-connected when any two of its pairs
@@ -16,6 +16,11 @@ path-connected.
 On a Kratzer semantics ([kratzer-1981]) a modal's force and its flavor are set by separate
 parameters, so its meaning is a product and satisfies the universal; a fixed-force modal ranging
 over flavors, or a variable-force modal of one flavor, varies on a single axis besides.
+
+The forces and flavors are any two types, since [steinert-threlkeld-imel-guo-2023] leave open
+what the axes are: a modal's meaning is a `Finset ForceFlavor`, and an attitude verb's pairs its
+force with a flavor of its own, doxastic or assertive for Koryak *ivək*
+([mocnik-abramovitz-2019]).
 
 ## Main definitions
 
@@ -42,13 +47,14 @@ over flavors, or a variable-force modal of one flavor, varies on a single axis b
 * [nauze-2008]
 * [kratzer-1981]
 * [chemla-buccola-dautriche-2019]
+* [mocnik-abramovitz-2019]
 -/
 
 @[expose] public section
 
 namespace Modality
 
-variable (m : Finset ForceFlavor)
+variable {α β : Type*} [DecidableEq α] [DecidableEq β] (m : Finset (α × β))
 
 /-- A meaning has independent force and flavor when it is the product of its forces and its
 flavors, so that with `(fo₁, fl₁)` and `(fo₂, fl₂)` it expresses `(fo₁, fl₂)`. -/
@@ -73,7 +79,7 @@ variable {m}
 /-- The universal as the paper states it, closure under recombining two pairs into a third. -/
 theorem forceFlavorIndependent_iff :
     ForceFlavorIndependent m ↔ ∀ x ∈ m, ∀ y ∈ m, (x.1, y.2) ∈ m := by
-  refine ⟨λ h x hx y hy => ?_, λ h => Finset.subset_product.antisymm λ ⟨a, b⟩ hz => ?_⟩
+  refine ⟨fun h x hx y hy ↦ ?_, fun h ↦ Finset.subset_product.antisymm fun ⟨a, b⟩ hz ↦ ?_⟩
   · rw [ForceFlavorIndependent] at h
     rw [h]
     exact Finset.mk_mem_product (Finset.mem_image_of_mem _ hx) (Finset.mem_image_of_mem _ hy)
@@ -89,16 +95,16 @@ pairs, the pairs between them for the grid betweenness on the force-flavor space
 independence is convexity in that sense. -/
 theorem forceFlavorIndependent_iff_pair_product_subset :
     ForceFlavorIndependent m ↔ ∀ x ∈ m, ∀ y ∈ m,
-      ({x.1, y.1} : Finset ModalForce) ×ˢ ({x.2, y.2} : Finset ModalFlavor) ⊆ m := by
+      ({x.1, y.1} : Finset α) ×ˢ ({x.2, y.2} : Finset β) ⊆ m := by
   rw [forceFlavorIndependent_iff]
-  refine ⟨λ h x hx y hy ⟨a, b⟩ hz => ?_,
-    λ h x hx y hy => h x hx y hy (Finset.mk_mem_product (by simp) (by simp))⟩
+  refine ⟨fun h x hx y hy ⟨a, b⟩ hz ↦ ?_,
+    fun h x hx y hy ↦ h x hx y hy (Finset.mk_mem_product (by simp) (by simp))⟩
   simp only [Finset.mem_product, Finset.mem_insert, Finset.mem_singleton] at hz
   obtain ⟨rfl | rfl, rfl | rfl⟩ := hz
   exacts [hx, h x hx y hy, h y hy x hx, hy]
 
 theorem SingleAxis.forceFlavorIndependent (h : SingleAxis m) : ForceFlavorIndependent m := by
-  refine .of_mk_mem λ x hx y hy => ?_
+  refine .of_mk_mem fun x hx y hy ↦ ?_
   rcases h with h | h
   · rw [Finset.card_le_one.1 h _ (Finset.mem_image_of_mem _ hx) _ (Finset.mem_image_of_mem _ hy)]
     exact hy
@@ -106,9 +112,9 @@ theorem SingleAxis.forceFlavorIndependent (h : SingleAxis m) : ForceFlavorIndepe
     exact hx
 
 theorem ForceFlavorIndependent.pathConnected (h : ForceFlavorIndependent m) : PathConnected m :=
-  λ x hx y hy => Or.inl (h.mk_mem x hx y hy)
+  fun x hx y hy ↦ Or.inl (h.mk_mem x hx y hy)
 
-theorem ForceFlavorIndependent.singleton (x : ForceFlavor) : ForceFlavorIndependent {x} := by
+theorem ForceFlavorIndependent.singleton (x : α × β) : ForceFlavorIndependent {x} := by
   simp [ForceFlavorIndependent]
 
 /-- A modal item varies on a single axis exactly when it does not vary in both force and
@@ -122,18 +128,18 @@ theorem ModalItem.singleAxis_meaning_iff {i : ModalItem} :
 
 A modal whose force and flavor are set by separate parameters expresses a product. -/
 
-variable (F : Finset ModalForce) (Φ : Finset ModalFlavor)
+variable (F : Finset α) (Φ : Finset β)
 
 theorem forceFlavorIndependent_product : ForceFlavorIndependent (F ×ˢ Φ) :=
-  .of_mk_mem λ _ hx _ hy =>
+  .of_mk_mem fun _ hx _ hy ↦
     Finset.mk_mem_product (Finset.mem_product.1 hx).1 (Finset.mem_product.1 hy).2
 
 /-- A fixed-force modal ranging over flavors varies on a single axis. -/
-theorem singleAxis_singleton_product (fo : ModalForce) : SingleAxis ({fo} ×ˢ Φ) :=
+theorem singleAxis_singleton_product (fo : α) : SingleAxis ({fo} ×ˢ Φ) :=
   Or.inl ((Finset.card_le_card Finset.subset_product_image_fst).trans_eq (Finset.card_singleton fo))
 
 /-- A variable-force modal of one flavor varies on a single axis. -/
-theorem singleAxis_product_singleton (fl : ModalFlavor) : SingleAxis (F ×ˢ {fl}) :=
+theorem singleAxis_product_singleton (fl : β) : SingleAxis (F ×ˢ {fl}) :=
   Or.inr ((Finset.card_le_card Finset.subset_product_image_snd).trans_eq (Finset.card_singleton fl))
 
 end Modality

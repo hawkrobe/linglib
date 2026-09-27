@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Modality.Universals
 public import Linglib.Data.Examples.ImelGuoSteinertThrelkeld2026
 public import Linglib.Fragments.Washo.Modals
-public import Linglib.Fragments.Koryak.Modals
+public import Linglib.Studies.MocnikAbramovitz2019
 public import Linglib.Fragments.Greek.StandardModern.Modals
 public import Mathlib.Algebra.BigOperators.Expect
 public import Mathlib.Algebra.Order.Field.Rat
@@ -44,9 +44,9 @@ without them.
   complexity seven rather than eight.
 * *may* and St'át'imcets *k'a* are read off the paper's examples (2) and (3), whose rows record
   a force and a flavor each.
-* The Koryak verb *ivək* of the fragment expresses one flavor, doxastic and assertive both
-  mapping to epistemic, so in this encoding it satisfies the Single Axis of Variability
-  universal; Washo *-eʔ* is the counterexample proved here.
+* The paper's two counterexamples to the Single Axis of Variability universal, Washo *-eʔ* and
+  Koryak *ivək*, are not in its sample of 27 languages. *ivək*'s doxastic and assertive
+  flavors ([mocnik-abramovitz-2019]) lie outside the six-point space.
 
 ## References
 
@@ -55,6 +55,7 @@ without them.
 * [nauze-2008]
 * [rullmann-matthewson-davis-2008]
 * [bochnak-2015a]
+* [mocnik-abramovitz-2019]
 -/
 
 @[expose] public section
@@ -515,17 +516,22 @@ theorem washo_not_singleAxis_forceFlavorIndependent :
       ForceFlavorIndependent Washo.modalEq.meaning := by
   decide
 
+/-- Koryak *ivək* varies on both axes too, in force and between the doxastic and assertive
+flavors of [mocnik-abramovitz-2019], even without the existential 'say' they could not
+confirm. -/
+theorem ivek_not_singleAxis : ¬ SingleAxis MocnikAbramovitz2019.attested :=
+  MocnikAbramovitz2019.not_singleAxis_attested
+
 /-- The meaning the universal rules out, epistemic necessity with circumstantial possibility. -/
 theorem not_forceFlavorIndependent_diagonal :
-    ¬ ForceFlavorIndependent {(.necessity, .epistemic), (.possibility, .circumstantial)} := by
+    ¬ ForceFlavorIndependent
+      ({(.necessity, .epistemic), (.possibility, .circumstantial)} : Meaning) := by
   decide
 
 /-- Naturalness is graded: Modern Greek, one of the sampled languages, has one IFF modal in
-three, where the Washo and Koryak inventories are fully natural. -/
-theorem naturalness_greek_washo_koryak :
-    naturalness Greek.StandardModern.modals = 1 / 3 ∧
-      naturalness Washo.modals = 1 ∧
-      naturalness Koryak.modals = 1 := by
+three, where the Washo inventory is fully natural. -/
+theorem naturalness_greek_washo :
+    naturalness Greek.StandardModern.modals = 1 / 3 ∧ naturalness Washo.modals = 1 := by
   decide +kernel
 
 end ImelGuoSteinertThrelkeld2026

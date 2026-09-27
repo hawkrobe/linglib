@@ -1,0 +1,249 @@
+module
+
+public import Linglib.Semantics.Modality.Universals
+public import Linglib.Semantics.Attitudes.Doxastic
+public import Linglib.Data.Examples.MocnikAbramovitz2019
+
+/-!
+# Močnik and Abramovitz (2019): a variable-force variable-flavor attitude verb in Koryak
+
+[mocnik-abramovitz-2019] document the Koryak attitude verb *ivək*, translated 'say' out of
+context, which also means 'think' and 'allow for the possibility that'. It varies in force and
+in flavor, against the universal of [nauze-2008] that a modal varies on one axis only.
+
+Their entry (15) quantifies universally over the worlds a subset selection function picks from
+a domain, after [rullmann-matthewson-davis-2008], and closes the function existentially over a
+cover that the context resolves either to the identity, the default, or to all nonempty
+selections (`Cover`). The identity cover gives the box over the domain and the full cover the
+diamond (`Frame.ivek_identity_iff`, `Frame.ivek_all_iff`), so the force varies with the cover.
+A modal-base-like variable sets the domain to the holder's belief worlds or to the worlds
+compatible with what the holder says (`Flavor`), so the flavor varies with it. The two are
+independent parameters, and the entry's force-flavor pairs are the product of two forces and
+two flavors (`meaning_eq`), varying on both axes (`not_singleAxis_meaning`). The pairs the
+paper attests vary on both axes too (`not_singleAxis_attested`).
+
+The cover accounts for the conjunctions of §2. *ivək* of two incompatible complements is
+contradictory on the identity cover (`Frame.not_ivek_identity_and`) and consistent on the full
+cover (`Frame.ivek_all_and_iff`), the contrast between the necessity and possibility readings
+of (6) and (8a). The felicitous reading of (8b) is the negated box, and its full-cover reading
+is the one on which the ball is neither white nor black (`Frame.ex8b_all_iff`), false in the
+context of (8) (`Frame.ex8b_all_false`). The flavor accounts for §3: the two *ivək*s of (14),
+set apart by an adverb, are consistent on different flavors (`ex14_consistent`), while one
+*ivək* over clauses that contradict each other, (20), is false on every reading
+(`Frame.not_ivek_and_not`). On the doxastic flavor and the identity cover *ivək* is the
+non-veridical *believe* of [hintikka-1962] (`Frame.ivek_doxastic_identity_iff_holdsAt`).
+
+## Implementation notes
+
+* The entry's domain is a set of worlds; here it is the set accessible from the evaluation
+  world by the holder's belief or sayings relation.
+* (13) writes the second colour of (8b) as the negation of the first, which makes its
+  full-cover reading contradictory in every context. The prose reading, that the ball is half
+  white and half black, needs the two colours as separate predicates, and so they are here.
+* `attested` leaves out the existential 'say' of footnote 10, which the paper could not
+  confirm and the entry predicts (`attested_ssubset_meaning`).
+
+## TODO
+
+* §4: the bouletic readings, split at LF into the doxastic *ivək* and an item in the embedded
+  clause, the counterfactual mood (23) and the covert *des* (26), over the information-state
+  index of [yalcin-2007].
+
+## References
+
+* [mocnik-abramovitz-2019]
+* [nauze-2008]
+* [rullmann-matthewson-davis-2008]
+* [hintikka-1962]
+* [yalcin-2007]
+-/
+
+@[expose] public section
+
+namespace MocnikAbramovitz2019
+
+open Modality ModalLogic
+
+variable {W E : Type*}
+
+/-! ### Force: a universal over a selected subset -/
+
+/-- The resolutions of the cover `C` of (11): the identity on the domain, the default, or all
+subset selection functions, which pick a nonempty subset of it. -/
+inductive Cover
+  | identity
+  | all
+  deriving DecidableEq, Fintype
+
+namespace Cover
+
+/-- The selection functions a resolution admits over the domain `D`. -/
+def funs : Cover → Set W → Set (Set W → Set W)
+  | identity, D => {f | f D = D}
+  | all, D => {f | f D ⊆ D ∧ (f D).Nonempty}
+
+/-- The force of a resolution, by `holds_identity_iff` and `holds_all_iff`. -/
+def force : Cover → ModalForce
+  | identity => .necessity
+  | all => .possibility
+
+end Cover
+
+/-- The quantification of (11) over a domain `D`: some admitted selection function maps `D`
+into `p`. -/
+def Holds (c : Cover) (D : Set W) (p : W → Prop) : Prop :=
+  ∃ f ∈ c.funs D, ∀ v ∈ f D, p v
+
+variable {D : Set W} {p q : W → Prop}
+
+/-- On the identity cover the quantification is universal over the domain. -/
+theorem holds_identity_iff : Holds .identity D p ↔ ∀ v ∈ D, p v :=
+  ⟨fun ⟨f, (hf : f D = D), h⟩ v hv ↦ h v (by rwa [hf]), fun h ↦ ⟨id, rfl, h⟩⟩
+
+/-- On the full cover it is existential, a selection function picking out a single witness. -/
+theorem holds_all_iff : Holds .all D p ↔ ∃ v ∈ D, p v :=
+  ⟨fun ⟨_, ⟨hsub, v, hv⟩, h⟩ ↦ ⟨v, hsub hv, h v hv⟩, fun ⟨v, hv, hp⟩ ↦
+    ⟨fun _ ↦ {v}, ⟨Set.singleton_subset_iff.2 hv, v, rfl⟩, fun _ hu ↦ hu ▸ hp⟩⟩
+
+/-! ### Flavor: the domain of quantification -/
+
+/-- The flavors of *ivək*, the values its modal-base-like variable takes in (15): the holder's
+belief worlds or the worlds compatible with what the holder says. -/
+inductive Flavor
+  | doxastic
+  | assertive
+  deriving DecidableEq, Fintype
+
+/-- For a holder at a world, the worlds compatible with what the holder believes and with what
+the holder says. -/
+structure Frame (W E : Type*) where
+  belief : E → W → W → Prop
+  sayings : E → W → W → Prop
+
+namespace Frame
+
+/-- The accessibility relation a flavor selects. -/
+def access (F : Frame W E) : Flavor → E → W → W → Prop
+  | .doxastic => F.belief
+  | .assertive => F.sayings
+
+/-- The entry (15) of *ivək* on a flavor and a cover: some admitted selection from the holder's
+domain maps it into the complement. -/
+def ivek (F : Frame W E) (φ : Flavor) (c : Cover) (p : W → Prop) (x : E) (w : W) : Prop :=
+  Holds c {v | F.access φ x w v} p
+
+variable {F : Frame W E} {φ : Flavor} {x : E} {w : W}
+
+/-- On the identity cover *ivək* is the box over the flavor's accessibility relation. -/
+theorem ivek_identity_iff : F.ivek φ .identity p x w ↔ □[F.access φ x] p w :=
+  holds_identity_iff
+
+/-- On the full cover *ivək* is the diamond. -/
+theorem ivek_all_iff : F.ivek φ .all p x w ↔ ◇[F.access φ x] p w :=
+  holds_all_iff
+
+/-- On the doxastic flavor and the identity cover *ivək* is the non-veridical *believe* of
+[hintikka-1962]. -/
+theorem ivek_doxastic_identity_iff_holdsAt :
+    F.ivek .doxastic .identity p x w ↔
+      (⟨F.belief, .nonVeridical⟩ : Doxastic.DoxasticPredicate W E).HoldsAt x p w := by
+  rw [Doxastic.DoxasticPredicate.holdsAt_iff, ivek_identity_iff]
+  exact ⟨fun h ↦ ⟨trivial, h⟩, fun h ↦ h.2⟩
+
+/-! ### Conjunction and negation, §2 -/
+
+/-- On the identity cover *ivək* of two complements that are incompatible over a nonempty
+domain is contradictory: Option 1 of (12) for (6), and the necessity reading of (8a). -/
+theorem not_ivek_identity_and (h : ∃ v, F.access φ x w v)
+    (hpq : ∀ v, F.access φ x w v → p v → ¬ q v) :
+    ¬ (F.ivek φ .identity p x w ∧ F.ivek φ .identity q x w) := by
+  rintro ⟨hp, hq⟩
+  obtain ⟨v, hv⟩ := h
+  exact hpq v hv (ivek_identity_iff.1 hp v hv) (ivek_identity_iff.1 hq v hv)
+
+/-- On the full cover the two hold together when the domain leaves both complements open:
+Option 2 of (12) for (6), and the possibility reading of (8a). -/
+theorem ivek_all_and_iff :
+    F.ivek φ .all p x w ∧ F.ivek φ .all q x w ↔
+      (∃ v, F.access φ x w v ∧ p v) ∧ ∃ v, F.access φ x w v ∧ q v :=
+  and_congr ivek_all_iff ivek_all_iff
+
+/-- (8b) on the identity cover, the felicitous Option 1 of (13): the holder's beliefs leave
+open that the ball is not white and that it is not black. -/
+theorem ex8b_identity_iff {white black : W → Prop} :
+    ¬ F.ivek φ .identity white x w ∧ ¬ F.ivek φ .identity black x w ↔
+      (∃ v, F.access φ x w v ∧ ¬ white v) ∧ ∃ v, F.access φ x w v ∧ ¬ black v := by
+  simp only [ivek_identity_iff, not_box]
+  rfl
+
+/-- (8b) on the full cover is the reading on which the ball is neither white nor black, which
+the paper glosses as half white and half black. -/
+theorem ex8b_all_iff {white black : W → Prop} :
+    ¬ F.ivek φ .all white x w ∧ ¬ F.ivek φ .all black x w ↔
+      □[F.access φ x] (fun v ↦ ¬ white v ∧ ¬ black v) w := by
+  rw [box_and, ← not_diamond, ← not_diamond, ivek_all_iff, ivek_all_iff]
+
+/-- In the context of (8), where the ball is white or black in every world the domain admits,
+the full-cover reading of (8b) is false: the infelicitous Option 2 of (13). -/
+theorem ex8b_all_false {white black : W → Prop} (h : ∃ v, F.access φ x w v)
+    (hctx : ∀ v, F.access φ x w v → white v ∨ black v) :
+    ¬ (¬ F.ivek φ .all white x w ∧ ¬ F.ivek φ .all black x w) := by
+  rw [ex8b_all_iff]
+  obtain ⟨v, hv⟩ := h
+  intro hbox
+  exact (hctx v hv).elim (hbox v hv).1 (hbox v hv).2
+
+/-! ### One flavor for each *ivək*, §3 -/
+
+/-- One *ivək* over two clauses that contradict each other, as in (20), is false on every
+reading over a nonempty domain, the one flavor holding of both. -/
+theorem not_ivek_and_not (h : ∃ v, F.access φ x w v) (c : Cover) :
+    ¬ F.ivek φ c (fun v ↦ p v ∧ ¬ p v) x w := by
+  cases c
+  · obtain ⟨v, hv⟩ := h
+    exact fun hb ↦ (ivek_identity_iff.1 hb v hv).2 (ivek_identity_iff.1 hb v hv).1
+  · exact fun hd ↦ let ⟨_, _, hp, hnp⟩ := ivek_all_iff.1 hd; hnp hp
+
+end Frame
+
+/-- (14): the two *ivək*s of a discourse, set to the assertive and the doxastic flavor, say that
+the students study well and think that they study badly, on nonempty domains. -/
+theorem ex14_consistent : ∃ (F : Frame Bool Unit) (p : Bool → Prop),
+    (∃ v, F.sayings () true v) ∧ (∃ v, F.belief () true v) ∧
+      F.ivek .assertive .identity p () true ∧
+      F.ivek .doxastic .identity (fun v ↦ ¬ p v) () true :=
+  ⟨⟨fun _ _ v ↦ v = false, fun _ _ v ↦ v = true⟩, (· = true), ⟨true, rfl⟩, ⟨false, rfl⟩,
+    Frame.ivek_identity_iff.2 fun _ hv ↦ hv,
+    Frame.ivek_identity_iff.2 fun _ (hv : _ = false) hp ↦ Bool.false_ne_true (hv ▸ hp)⟩
+
+/-! ### The force-flavor pairs -/
+
+/-- The force-flavor pairs *ivək* expresses on the entry, one for each resolution of the cover
+and each flavor. -/
+def meaning : Finset (ModalForce × Flavor) :=
+  (Finset.univ : Finset (Cover × Flavor)).image fun r ↦ (r.1.force, r.2)
+
+/-- The cover and the flavor are independent parameters, so the pairs are the product of two
+forces and the two flavors. -/
+theorem meaning_eq : meaning = {.necessity, .possibility} ×ˢ Finset.univ := by
+  decide
+
+/-- *ivək* varies in force and in flavor, against the universal (1) of [nauze-2008]. -/
+theorem not_singleAxis_meaning : ¬ SingleAxis meaning := by
+  decide
+
+/-- The pairs the paper attests: 'think' (2), 'allow for the possibility' (4), (6), (8a), and
+'say' (2), (7). Footnote 10 could not confirm an existential 'say'. -/
+def attested : Finset (ModalForce × Flavor) :=
+  {(.necessity, .doxastic), (.possibility, .doxastic), (.necessity, .assertive)}
+
+/-- The entry predicts the existential 'say' that the paper could not confirm. -/
+theorem attested_ssubset_meaning :
+    attested ⊂ meaning ∧ (.possibility, .assertive) ∈ meaning \ attested := by
+  decide
+
+/-- The attested pairs alone vary on both axes. -/
+theorem not_singleAxis_attested : ¬ SingleAxis attested := by
+  decide
+
+end MocnikAbramovitz2019

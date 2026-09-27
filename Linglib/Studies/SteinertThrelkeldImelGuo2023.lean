@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Combinatorics.SimpleGraph.Prod
 public import Linglib.Semantics.Modality.Universals
 public import Linglib.Fragments.Washo.Modals
-public import Linglib.Fragments.Koryak.Modals
+public import Linglib.Studies.MocnikAbramovitz2019
 public import Linglib.Fragments.Javanese.Modals
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 
@@ -28,10 +28,19 @@ path-connectedness without independence, is connected in the grid and fails the 
 formulation: its weak teleological and strong epistemic points share no corner
 (`table1b_connected_not_pathConnected`).
 
+The Koryak attitude verb *ivək* is the paper's other counterexample to Nauze's universal, with
+the doxastic and assertive flavors of [mocnik-abramovitz-2019] on the flavor axis. Section 4.1
+reads them as reporting all four combinations of the two forces and the two flavors, which is
+what their lexical entry predicts (`ivek_forceFlavorIndependent`). Their footnote 10, however,
+could not confirm an existential 'say', and without it the attested uses are not a product;
+they satisfy only path-connectedness (`ivek_attested`).
+
 ## Implementation notes
 
 The paper's space has two forces, weak and strong, and the flavors epistemic, deontic and
-teleological; the library folds teleological into circumstantial.
+teleological; the library folds teleological into circumstantial. The doxastic and assertive
+flavors of *ivək* lie outside that space, and the universal is stated for any types of forces
+and flavors.
 
 ## References
 
@@ -56,11 +65,20 @@ theorem washo_modalEq :
       ForceFlavorIndependent Washo.modalEq.meaning := by
   decide
 
-/-- Koryak *ivək* ([mocnik-abramovitz-2019]) satisfies the universal; with its doxastic and
-assertive flavors both epistemic in the fragment's space it varies on a single axis too. -/
-theorem koryak_modalIvek :
-    ForceFlavorIndependent Koryak.modalIvek.meaning ∧
-      SingleAxis Koryak.modalIvek.meaning := by
+/-- Koryak *ivək*, on the lexical entry of [mocnik-abramovitz-2019], expresses all four pairs of
+two forces and its doxastic and assertive flavors, so it varies on both axes and satisfies the
+universal. -/
+theorem ivek_forceFlavorIndependent :
+    ForceFlavorIndependent MocnikAbramovitz2019.meaning ∧
+      ¬ SingleAxis MocnikAbramovitz2019.meaning :=
+  ⟨MocnikAbramovitz2019.meaning_eq ▸ forceFlavorIndependent_product _ _,
+    MocnikAbramovitz2019.not_singleAxis_meaning⟩
+
+/-- The pairs [mocnik-abramovitz-2019] attest for *ivək*, without the existential 'say' their
+footnote 10 could not confirm, fail the universal and satisfy path-connectedness. -/
+theorem ivek_attested :
+    ¬ ForceFlavorIndependent MocnikAbramovitz2019.attested ∧
+      PathConnected MocnikAbramovitz2019.attested := by
   decide
 
 /-- Paciran Javanese *mesthi*, *oleh* and *iso* express one pair each. -/
@@ -107,15 +125,15 @@ theorem reachable_of_fst_eq_or_snd_eq {m : Finset ForceFlavor} {p q : ForceFlavo
   refine Adj.reachable ?_
   rw [induce_adj, boxProd_adj, top_adj, top_adj]
   rcases h with h | h
-  · exact Or.inr ⟨λ h₂ => hpq (Prod.ext h h₂), h⟩
-  · exact Or.inl ⟨λ h₁ => hpq (Prod.ext h₁ h), h⟩
+  · exact Or.inr ⟨fun h₂ ↦ hpq (Prod.ext h h₂), h⟩
+  · exact Or.inl ⟨fun h₁ ↦ hpq (Prod.ext h₁ h), h⟩
 
 /-- A path-connected meaning induces a connected subgraph of the rook's graph, any two pairs
 being joined through a corner, so the "or" formulation implies the footnote's. -/
 theorem PathConnected.connected {m : Finset ForceFlavor} (h : PathConnected m) (hm : m.Nonempty) :
     (rookGraph.induce ↑m).Connected := by
   have := (Finset.coe_nonempty.2 hm).to_subtype
-  refine ⟨λ ⟨p, hp⟩ ⟨q, hq⟩ => ?_⟩
+  refine ⟨fun ⟨p, hp⟩ ⟨q, hq⟩ ↦ ?_⟩
   rcases h p hp q hq with hc | hc
   · exact (reachable_of_fst_eq_or_snd_eq hp hc (Or.inl rfl)).trans
       (reachable_of_fst_eq_or_snd_eq hc hq (Or.inr rfl))
