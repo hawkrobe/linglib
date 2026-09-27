@@ -5,30 +5,27 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.InformationTheory.Surprisal
 public import Linglib.Processing.Surprisal.PrefixProbability
-public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Mathlib.MeasureTheory.Measure.Real
 
 /-!
 # Hale (2001): A Probabilistic Earley Parser as a Psycholinguistic Model
 
-This file formalizes the linking hypothesis of [hale-2001]. Cognitive load is the total
-probability of the structural analyses the input so far has disconfirmed (section 4): for a
-consistent grammar, the effort spent on a prefix is one minus its prefix probability,
-`disconfirmed`, and word-by-word reading time is proportional to the log of the ratio of the
-prefix probability before the word to the one after it, the word's surprisal, `surprisal`,
-where the prefix probability is [stolcke-1995]'s, computed by a probabilistic Earley parser that
-is strong-competence, frequency-sensitive, and eager (Principles 1 to 3). The parser computes
-every parse, so the theory is one of total parallelism (section 3): garden-pathing needs no
-reanalysis and happens exactly at words where the disconfirmed analyses comprise most of the
-probability mass, `log_le_surprisal`, which is how the paper reads the spike at *fell* in *the
-horse raced past the barn fell*, where grammar (1) puts the prefix probability before the word
-at more than ten times the one after it (section 6.1), and the subject and object relative
-asymmetry of grammar (3) (section 6.3). The ratio form of surprisal is the negative log
-conditional probability of the word, `surprisal_eq_neg_log_nextProb`, the form [levy-2008]
-later grounds in relative entropy; and the two levels of the linking hypothesis agree, since
-prefix-level load only grows along a sentence, `disconfirmed_mono`, and word-level surprisals
-telescope to the negative log of the sentence's prefix mass, `totalSurprisal_nil_eq`.
+This file formalizes the linking hypothesis of [hale-2001]. Cognitive load is the total probability
+of the structural analyses the input so far has disconfirmed (section 4): for a consistent grammar,
+the effort spent on a prefix is one minus its prefix probability, `disconfirmed`, and word-by-word
+reading time is proportional to the log of the ratio of the prefix probability before the word to
+the one after it, the word's surprisal (`surprisal_nextWord_eq_log_div`), where the prefix
+probability is [stolcke-1995]'s, computed by a probabilistic Earley parser that is
+strong-competence, frequency-sensitive, and eager (Principles 1 to 3). The parser computes every
+parse, so the theory is one of total parallelism (section 3): garden-pathing needs no reanalysis and
+happens exactly at words where the disconfirmed analyses comprise most of the probability mass
+(`log_le_surprisal_nextWord`), which is how the paper reads the spike at *fell* in *the horse raced
+past the barn fell*, where grammar (1) puts the prefix probability before the word at more than ten
+times the one after it (section 6.1), and the subject and object relative asymmetry of grammar (3)
+(section 6.3). The two levels of the linking hypothesis agree, since prefix-level load only grows
+along a sentence (`disconfirmed_mono`) and word-level surprisals telescope to the negative log of
+the sentence's prefix mass (`totalSurprisal_nil_eq`).
 
 ## Implementation notes
 
@@ -36,6 +33,10 @@ The demonstrations' numerics, grammars (1) to (3) and the reading-time figures, 
 Stolcke's Earley chart over recursive probabilistic context-free grammars and await an Earley
 substrate; the theorems here are the grammar-independent content of the linking hypothesis,
 stated for any probability measure over structures with string yields.
+
+The paper defines a word's surprisal as the log ratio of prefix probabilities. Here it is the
+library's surprisal of the word under the law of the next word, `Surprisal.nextWord`, the
+negative log of its conditional probability, and the paper's ratio is a theorem about it.
 
 ## References
 
@@ -48,16 +49,11 @@ stated for any probability measure over structures with string yields.
 
 namespace Hale2001
 
-open MeasureTheory Surprisal
+open InformationTheory MeasureTheory Surprisal
 open scoped ENNReal
 
 variable {T W : Type*} [MeasurableSpace T] (P : Measure T) (str : T → List W) (ws : List W)
   (w : W)
-
-/-- Word-level cognitive load (section 4): the log of the ratio of the prefix probability
-before the word to the prefix probability after it. -/
-noncomputable def surprisal : ℝ :=
-  Real.log (P.real (consistent str ws) / P.real (consistent str (ws ++ [w])))
 
 /-- Prefix-level cognitive load (section 4): the total probability of the analyses the prefix
 has disconfirmed. -/
@@ -69,25 +65,31 @@ theorem disconfirmed_mono {ws ws' : List W} (h : ws <+: ws') :
     disconfirmed P str ws ≤ disconfirmed P str ws' :=
   tsub_le_tsub_left (measure_mono (consistent_anti str h)) 1
 
+variable [MeasurableSpace W]
+
 /-- The surprisals of the words of `rest`, read one by one after the prefix `acc`. -/
 noncomputable def totalSurprisal : List W → List W → ℝ
   | _, [] => 0
-  | acc, w :: rest => surprisal P str acc w + totalSurprisal (acc ++ [w]) rest
+  | acc, w :: rest => surprisal (nextWord P str acc) (some w) + totalSurprisal (acc ++ [w]) rest
 
-/-- The paper's ratio form of surprisal is the negative log conditional probability of the
-word, the form [levy-2008] derives as the relative entropy of the belief update. -/
-theorem surprisal_eq_neg_log_nextProb [DiscreteMeasurableSpace T] :
-    surprisal P str ws w = -Real.log (nextProb P str ws w).toReal := by
-  rw [surprisal, nextProb_eq_div, ENNReal.toReal_div, ← Real.log_inv, inv_div]
+variable [DiscreteMeasurableSpace T] [MeasurableSingletonClass W]
+
+/-- Word-level cognitive load (section 4): a word's surprisal is the log of the ratio of the
+prefix probability before the word to the prefix probability after it. -/
+theorem surprisal_nextWord_eq_log_div :
+    surprisal (nextWord P str ws) (some w) =
+      Real.log (P.real (consistent str ws) / P.real (consistent str (ws ++ [w]))) := by
+  rw [surprisal, measureReal_def, nextWord_singleton_some, nextProb_eq_div, ENNReal.toReal_div,
+    ← Real.log_inv, inv_div]
   rfl
 
 /-- Surprisal in disconfirmation form: the log of one plus the ratio of the mass disconfirmed
 at the word to the mass surviving it. -/
-theorem surprisal_eq_log_one_add (ha : 0 < P.real (consistent str (ws ++ [w]))) :
-    surprisal P str ws w =
+theorem surprisal_nextWord_eq_log_one_add (ha : 0 < P.real (consistent str (ws ++ [w]))) :
+    surprisal (nextWord P str ws) (some w) =
       Real.log (1 + (P.real (consistent str ws) - P.real (consistent str (ws ++ [w])))
         / P.real (consistent str (ws ++ [w]))) := by
-  rw [surprisal]
+  rw [surprisal_nextWord_eq_log_div]
   congr 1
   field_simp
   ring
@@ -95,11 +97,12 @@ theorem surprisal_eq_log_one_add (ha : 0 < P.real (consistent str (ws ++ [w]))) 
 /-- Garden-pathing (section 6.1): if the mass disconfirmed at a word is at least `k` times
 the surviving mass, the word's surprisal is at least `log (1 + k)`; difficulty spikes exactly
 where the disconfirmable analyses comprise a great amount of probability. -/
-theorem log_le_surprisal {k : ℝ} (hk : 0 ≤ k) (ha : 0 < P.real (consistent str (ws ++ [w])))
+theorem log_le_surprisal_nextWord {k : ℝ} (hk : 0 ≤ k)
+    (ha : 0 < P.real (consistent str (ws ++ [w])))
     (hdis : k * P.real (consistent str (ws ++ [w])) ≤
       P.real (consistent str ws) - P.real (consistent str (ws ++ [w]))) :
-    Real.log (1 + k) ≤ surprisal P str ws w := by
-  rw [surprisal_eq_log_one_add P str ws w ha]
+    Real.log (1 + k) ≤ surprisal (nextWord P str ws) (some w) := by
+  rw [surprisal_nextWord_eq_log_one_add P str ws w ha]
   refine Real.log_le_log (by linarith) ?_
   have hdiv : k ≤ (P.real (consistent str ws) - P.real (consistent str (ws ++ [w])))
       / P.real (consistent str (ws ++ [w])) :=
@@ -110,10 +113,12 @@ theorem log_le_surprisal {k : ℝ} (hk : 0 ≤ k) (ha : 0 < P.real (consistent s
 
 variable [IsProbabilityMeasure P]
 
+omit [MeasurableSpace W] [DiscreteMeasurableSpace T] [MeasurableSingletonClass W] in
 /-- No analysis has been disconfirmed before any input is seen. -/
 @[simp] theorem disconfirmed_nil : disconfirmed P str [] = 0 := by
   simp [disconfirmed]
 
+omit [MeasurableSpace W] [DiscreteMeasurableSpace T] [MeasurableSingletonClass W] in
 /-- A prefix of a prefix with positive mass has positive mass. -/
 private theorem real_consistent_pos_of_prefix {ws ws' : List W} (h : ws <+: ws')
     (hpos : 0 < P.real (consistent str ws')) : 0 < P.real (consistent str ws) :=
@@ -124,7 +129,8 @@ masses before and after, whenever the whole string has positive mass. -/
 theorem totalSurprisal_eq {acc rest : List W}
     (hpos : 0 < P.real (consistent str (acc ++ rest))) :
     totalSurprisal P str acc rest =
-      Real.log (P.real (consistent str acc)) - Real.log (P.real (consistent str (acc ++ rest))) := by
+      Real.log (P.real (consistent str acc)) -
+        Real.log (P.real (consistent str (acc ++ rest))) := by
   induction rest generalizing acc with
   | nil => simp [totalSurprisal]
   | cons w rest ih =>
@@ -135,7 +141,7 @@ theorem totalSurprisal_eq {acc rest : List W}
       real_consistent_pos_of_prefix P str (List.prefix_append _ rest) hpos'
     have h₀ : 0 < P.real (consistent str acc) :=
       real_consistent_pos_of_prefix P str (List.prefix_append acc [w]) h₁
-    rw [ih hpos', List.append_assoc, List.singleton_append, surprisal,
+    rw [ih hpos', List.append_assoc, List.singleton_append, surprisal_nextWord_eq_log_div,
       Real.log_div h₀.ne' h₁.ne']
     ring
 

@@ -19,16 +19,16 @@ and the difficulty of a word is the relative entropy of the updated distribution
 to the old one. Incremental update equals direct conditioning (`posterior_incremental`), and
 the paper's central result is that the difficulty so defined is exactly the word's surprisal
 (`klDiv_posterior_eq_surprisal`), [hale-2001]'s measure, for any generative process over
-structures. Surprisal is therefore a causal bottleneck: processes agreeing on conditional
-word probabilities incur identical difficulty whatever their structures (`bottleneck`), and
-the difficulty may be read through any next-word distribution matching those probabilities
-(`klDiv_posterior_eq_surprisal_of_apply_eq`).
+structures: the surprisal of the word under the law of the next word the process induces.
+Surprisal is therefore a causal bottleneck: processes agreeing on conditional word
+probabilities incur identical difficulty whatever their structures (`bottleneck`).
 
 ## Implementation notes
 
 Structures live in an arbitrary discrete measurable space, covering the paper's normally
 infinite structure set; the generative process is a probability measure over them, and the
-prefix apparatus (`consistent`, `nextProb`) is `Processing/Surprisal/PrefixProbability.lean`. The
+prefix apparatus (`consistent`, `nextProb`, `nextWord`) is
+`Processing/Surprisal/PrefixProbability.lean`. The
 prior is fixed throughout, matching the paper's caveat that the equivalence holds only when
 extra-sentential context does not change while the word is processed.
 
@@ -60,8 +60,10 @@ theorem posterior_consistent_append :
     posterior P str ws (consistent str (ws ++ [w])) = nextProb P str ws w :=
   rfl
 
-variable [DiscreteMeasurableSpace T] [IsProbabilityMeasure P]
+variable [DiscreteMeasurableSpace T] [IsProbabilityMeasure P] [MeasurableSpace W]
+  [MeasurableSingletonClass W]
 
+omit [MeasurableSpace W] [MeasurableSingletonClass W] in
 /-- Incremental update equals direct conditioning (eqs. (5)–(8)): conditioning
     the current posterior on consistency with the extended prefix is
     conditioning the prior on the extended prefix directly. -/
@@ -75,20 +77,14 @@ theorem posterior_incremental :
     the word that triggered the update. -/
 theorem klDiv_posterior_eq_surprisal (h : P (consistent str (ws ++ [w])) ≠ 0) :
     klDiv (posterior P str (ws ++ [w])) (posterior P str ws)
-      = ENNReal.ofReal (-Real.log (nextProb P str ws w).toReal) := by
-  have hws : P (consistent str ws) ≠ 0 := λ h0 =>
+      = ENNReal.ofReal (surprisal (nextWord P str ws) (some w)) := by
+  have hws : P (consistent str ws) ≠ 0 := fun h0 ↦
     h (measure_mono_null (consistent_anti str (List.prefix_append ws [w])) h0)
   have : IsProbabilityMeasure (posterior P str ws) := cond_isProbabilityMeasure hws
-  rw [← posterior_incremental, klDiv_cond_self _ .of_discrete, posterior_consistent_append]
+  rw [← posterior_incremental, klDiv_cond_self _ .of_discrete, posterior_consistent_append,
+    surprisal, measureReal_def, nextWord_singleton_some]
   rw [posterior_consistent_append, nextProb_eq_div]
   exact ENNReal.div_ne_zero.mpr ⟨h, measure_ne_top _ _⟩
-
-/-- The update difficulty read through any next-word distribution that matches
-    the process's conditional word probability is that distribution's surprisal. -/
-theorem klDiv_posterior_eq_surprisal_of_apply_eq [MeasurableSpace W] (μ : Measure W)
-    (hμ : μ {w} = nextProb P str ws w) (h : P (consistent str (ws ++ [w])) ≠ 0) :
-    klDiv (posterior P str (ws ++ [w])) (posterior P str ws) = ENNReal.ofReal (surprisal μ w) := by
-  rw [klDiv_posterior_eq_surprisal P str ws w h, surprisal, measureReal_def, hμ]
 
 /-- The causal bottleneck (§2.3, Fig. 1b): two generative processes assigning
     the same conditional word probability incur the same update difficulty,
@@ -100,6 +96,7 @@ theorem bottleneck {T' : Type*} [MeasurableSpace T'] [DiscreteMeasurableSpace T'
     klDiv (posterior P str (ws ++ [w])) (posterior P str ws)
       = klDiv (posterior P' str' (ws ++ [w])) (posterior P' str' ws) := by
   rw [klDiv_posterior_eq_surprisal P str ws w h, klDiv_posterior_eq_surprisal P' str' ws w h',
-    hagree]
+    surprisal, surprisal, measureReal_def, measureReal_def, nextWord_singleton_some,
+    nextWord_singleton_some, hagree]
 
 end Levy2008
