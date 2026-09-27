@@ -11,27 +11,27 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 # Pareto dominance and positive linearizations
 
 This file characterizes pointwise (Pareto) dominance between `ℕ`-valued cost vectors over
-finitely many dimensions by weighted sums: `f < g` pointwise iff every
-strictly positive weighting ranks `∑ i, w i * f i` below `∑ i, w i * g i`.
-Monotonicity of weighted sums gives one direction; a weighting concentrated on
-a violating coordinate separates the other. Consequently two vectors are
-incomparable iff two positive weightings disagree about them — the exact sense
-in which a weighted-sum model can, and Pareto reasoning cannot, break ties.
+finitely many dimensions by weighted sums. The vector `f` lies strictly below `g` pointwise iff
+every strictly positive weighting ranks `∑ i, w i * f i` below `∑ i, w i * g i`. Monotonicity of
+weighted sums gives one direction, and a weighting concentrated on a violating coordinate
+separates the other. Two vectors are therefore incomparable iff two positive weightings disagree
+about them, which is the exact sense in which a weighted-sum model can break ties that Pareto
+reasoning cannot.
 
-Weighted aggregation itself stays in consuming layers (`Core.Optimization.System`). `[UPSTREAM]`
-candidate: mathlib provides the pointwise order and the engine `Finset.sum_lt_sum`, but not the
-characterization; on upstreaming, generalize the codomain from `ℕ`.
+This is an `[UPSTREAM]` candidate. Mathlib provides the pointwise order and the engine
+`Finset.sum_lt_sum` but not the characterization, and an upstream version should generalize the
+codomain from `ℕ`.
 
 ## Main results
 
-* `sum_mul_lt_sum_mul` — pointwise `≤` and strictness at one positively
-  weighted coordinate give a strict weighted-sum inequality.
-* `exists_pos_weight_sum_mul_lt` — a coordinate-wise strict inequality admits
-  a strictly positive weighting whose weighted sums order strictly.
-* `le_iff_forall_pos_weight`, `lt_iff_forall_pos_weight` — Pareto `≤` / `<`
-  coincide with agreement of all strictly positive weightings.
-* `exists_pos_weights_disagree` — incomparable vectors are ordered oppositely
-  by two positive weightings.
+* `sum_mul_lt_sum_mul`: pointwise `≤` with strictness at one positively weighted coordinate
+  gives a strict weighted-sum inequality.
+* `exists_pos_weight_sum_mul_lt`: a coordinate-wise strict inequality admits a strictly positive
+  weighting whose weighted sums order strictly.
+* `le_iff_forall_pos_weight`, `lt_iff_forall_pos_weight`: Pareto `≤` and `<` coincide with
+  agreement of all strictly positive weightings.
+* `exists_pos_weights_disagree`: two strictly positive weightings order incomparable vectors
+  oppositely.
 -/
 
 @[expose] public section
