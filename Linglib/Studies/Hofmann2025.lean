@@ -201,17 +201,17 @@ theorem pronoun_fixes (φ : PVar) {v : IVar} {P : SemE W E} {φ' : PVar} (h : Fi
 /-- Negation fixes every dref other than the one it introduces that its prejacent fixes. -/
 theorem semNOT_fixes (φ : PVar) {φ' : PVar} {Sc : SemW W E} {φ₀ : PVar} (h : φ' ≠ φ)
     (hSc : Fixes φ (Sc φ')) : Fixes φ (semNOT φ' Sc φ₀) :=
-  ((fixes_randomAssign_of_ne h.symm).comp (fixes_test _ _)).comp hSc.maxAt
+  ((fixes_randomAssign_of_ne h.symm).comp (fixes_test _ _)).comp hSc.maxBy
 
 theorem semOR_fixes (φ : PVar) {φ' φ'' : PVar} {Sc' Sc'' : SemW W E} {φ₀ : PVar}
     (h₁ : φ ≠ φ') (h₂ : φ ≠ φ'') (h' : Fixes φ (Sc' φ')) (h'' : Fixes φ (Sc'' φ'')) :
     Fixes φ (semOR φ' φ'' Sc' Sc'' φ₀) :=
   (((fixes_randomAssign_of_ne h₁).comp ((fixes_randomAssign_of_ne h₂).comp
-    (fixes_test _ _))).comp h'.maxAt).comp h''.maxAt
+    (fixes_test _ _))).comp h'.maxBy).comp h''.maxBy
 
 theorem semDEC_fixes (φ : PVar) {φ_DC φ' : PVar} {Sc : SemW W E} (h : φ' ≠ φ)
     (hSc : Fixes φ (Sc φ')) : Fixes φ (semDEC φ_DC φ' Sc) :=
-  ((fixes_randomAssign_of_ne h.symm).comp (fixes_test _ _)).comp hSc.maxAt
+  ((fixes_randomAssign_of_ne h.symm).comp (fixes_test _ _)).comp hSc.maxBy
 
 /-! ### The model M₁ (§3.3.2) -/
 

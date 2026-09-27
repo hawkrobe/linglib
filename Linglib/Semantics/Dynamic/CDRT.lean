@@ -30,9 +30,9 @@ as coordinates of a function type: `RegisterStructure V (V → E) E`.
   updates it supports, `Update.randomAssign`, `Update.dexists`, `Update.dforall`.
 - `Condition.atom1`, `Condition.atom2`, `Condition.eq`: atomic conditions
   from predicates and drefs.
-- `Update.Fixes`, `Update.maxAt`: an update leaves a register unchanged, and the outputs of an
-  update at which a register's value is maximal; `Update.maxAt_eq_of_fixes` makes maximizing a
-  fixed register vacuous.
+- `Update.Fixes`, `Update.maxAt`: an update leaves a register unchanged, and the spine's
+  `Update.maxBy` at a register's value; `Update.maxAt_eq_of_fixes` makes maximizing a fixed
+  register vacuous.
 - `Update.mem_randomAssign`, `Update.mem_randomAssign_iff_eqOn`, `Update.dom_dexists`: at the
   canonical register structure a random assignment is `Function.update` at an arbitrary value,
   agreement off the register, and, under the weakest precondition, cylindrification.
@@ -133,25 +133,18 @@ theorem fixes_randomAssign_of_ne {r r' : R} (h : r' ≠ r) : Fixes r' (randomAss
 
 /-- Maximization over a register: the outputs of `D` at which no other output gives `r` a
 strictly greater value. -/
-def maxAt [Preorder E] (r : R) (D : Update S) : Update S :=
-  {(i, j) | i ~[D] j ∧ ∀ k, i ~[D] k →
-    ¬RegisterStructure.val r j < RegisterStructure.val r k}
+abbrev maxAt [Preorder E] (r : R) (D : Update S) : Update S :=
+  maxBy (RegisterStructure.val r) D
 
-theorem maxAt_subset [Preorder E] (r : R) (D : Update S) : maxAt r D ⊆ D :=
-  fun _ h ↦ h.1
-
-theorem Fixes.maxAt [Preorder E] {r r' : R} {D : Update S} (h : Fixes r D) :
-    Fixes r (maxAt r' D) :=
+theorem Fixes.maxBy {α : Type*} [Preorder α] {r : R} {f : S → α} {D : Update S}
+    (h : Fixes r D) : Fixes r (maxBy f D) :=
   fun _ _ hD ↦ h _ _ hD.1
 
 /-- Maximizing a register an update fixes is vacuous: every output agrees with the input
 there, so none is strictly greater. -/
 theorem maxAt_eq_of_fixes [Preorder E] {r : R} {D : Update S} (h : Fixes r D) :
-    maxAt r D = D := by
-  ext ⟨i, j⟩
-  refine ⟨And.left, fun hD ↦ ⟨hD, fun k hk hlt ↦ ?_⟩⟩
-  rw [h i j hD, h i k hk] at hlt
-  exact lt_irrefl _ hlt
+    maxAt r D = D :=
+  maxBy_eq_self h
 
 end Update
 

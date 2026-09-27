@@ -27,6 +27,7 @@ is in `Collapse.lean`.
 * `Update.test`, `Update.neg`, `Update.impl`, `Update.disj`: the test of a
   condition, and the conditions `D.domᶜ`, `D₁.core D₂.dom`, and `D₁.dom ∪ D₂.dom`.
 * `Update.IsTest`: updates that never change the state.
+* `Update.maxBy`: the outputs of an update at which a valuation is locally maximal.
 * `CCP.guard`, `CCP.might`, `CCP.must`, `CCP.negTest`: whole-state tests.
 * `CCP.IsEliminative`, `CCP.IsTest`, `CCP.IsDistributive`,
   `CCP.IsClassical`: the classification of transformers.
@@ -109,6 +110,14 @@ def impl (D₁ D₂ : Update S) : Condition S := D₁.core D₂.dom
 def disj (D₁ D₂ : Update S) : Condition S := D₁.dom ∪ D₂.dom
 
 @[simp] theorem mem_test : i ~[test C] j ↔ i = j ∧ j ∈ C := Iff.rfl
+
+/-- A test at the end of a sequence checks the output. -/
+theorem mem_comp_test : i ~[D ○ test C] j ↔ i ~[D] j ∧ j ∈ C :=
+  ⟨fun ⟨_, h, rfl, hC⟩ ↦ ⟨h, hC⟩, fun ⟨h, hC⟩ ↦ ⟨j, h, rfl, hC⟩⟩
+
+/-- A test at the start of a sequence checks the input. -/
+theorem mem_test_comp : i ~[test C ○ D] j ↔ i ∈ C ∧ i ~[D] j :=
+  ⟨fun ⟨_, ⟨rfl, hC⟩, h⟩ ↦ ⟨hC, h⟩, fun ⟨hC, h⟩ ↦ ⟨i, ⟨rfl, hC⟩, h⟩⟩
 
 @[simp] theorem mem_neg : i ∈ neg D ↔ ¬∃ k, i ~[D] k := Iff.rfl
 
@@ -223,6 +232,24 @@ theorem impl_comp (D₁ D₂ D₃ : Update S) : impl (D₁ ○ D₂) D₃ = impl
 /-- The domain of a sequence is the weakest precondition of the second domain. -/
 theorem dom_comp (D₁ D₂ : Update S) : (D₁ ○ D₂).dom = D₁.preimage D₂.dom := by
   rw [← preimage_univ_right, preimage_comp, preimage_univ_right]
+
+/-! ### Maximization -/
+
+/-- Maximization under a valuation `f`: the outputs of `D` at which no other output of `D` has
+a strictly greater value. The maxima are local, since a nondeterministic `D` may have several. -/
+def maxBy {α : Type*} [Preorder α] (f : S → α) (D : Update S) : Update S :=
+  {(i, j) | i ~[D] j ∧ ∀ k, i ~[D] k → ¬f j < f k}
+
+theorem maxBy_subset {α : Type*} [Preorder α] (f : S → α) (D : Update S) : maxBy f D ⊆ D :=
+  fun _ h ↦ h.1
+
+/-- Maximizing a valuation that no output of `D` changes is vacuous. -/
+theorem maxBy_eq_self {α : Type*} [Preorder α] {f : S → α}
+    (h : ∀ i j, i ~[D] j → f j = f i) : maxBy f D = D := by
+  ext ⟨i, j⟩
+  refine ⟨And.left, fun hD ↦ ⟨hD, fun k hk hlt ↦ ?_⟩⟩
+  rw [h i j hD, h i k hk] at hlt
+  exact lt_irrefl _ hlt
 
 end Update
 
