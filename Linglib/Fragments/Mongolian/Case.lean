@@ -42,7 +42,7 @@ def ditransitive : List PhasedNP :=
    { label := "IO", phase := .v, lexicalCase := some .dat }]
 
 /-- Its cases, with finite T probing the clause. -/
-def ditransitiveCases : List (NP × Valuation) := grammar.assign [(.T, .C)] ditransitive
+def ditransitiveCases : Valuation NP (Case × Mechanism) := grammar.assign [(.T, .C)] ditransitive
 
 /-- The direct object is valued accusative by the dependent rule, the subject being the
     caseless NP above it. -/

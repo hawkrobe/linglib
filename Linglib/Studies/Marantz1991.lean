@@ -126,10 +126,10 @@ def chains : List NP :=
     | .unfilled => if v then [{ label := "unfilled" }] else []
 
 /-- The case of the subject's chain, with what valued it. -/
-def subject : Valuation := ((r.assign (c.chains v)).map (·.2)).headD none
+def subject : Option (Case × Mechanism) := ((r.assign (c.chains v)).map (·.2)).headD none
 
 /-- The case of the object's chain, with what valued it, where there is one. -/
-def object? : Valuation :=
+def object? : Option (Case × Mechanism) :=
   match c.object with
   | .chain _ => ((r.assign (c.chains v)).map (·.2)).getD 1 none
   | .trace | .unfilled => none
@@ -351,7 +351,7 @@ theorem ecm :
     ((r.unmarkedPass (fun _ ↦ true) <|
       r.dependentPass (fun x ↦ x ≠ .embeddedObject) <|
       r.dependentPass (fun x ↦ x ≠ .matrixSubject) <|
-      initial (fun _ ↦ none)
+      lexicalValuation (fun _ ↦ none)
         [ECMArgument.matrixSubject, .embeddedSubject, .embeddedObject]).map (·.2.map (·.1))) =
       [some .nom, some .acc, some .acc] := by
   decide

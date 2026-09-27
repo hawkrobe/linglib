@@ -136,7 +136,8 @@ def Row.suffixes (r : Row) : List (Option Suffix) :=
   some r.subjectSuffix :: (r.object.map fun _ ↦ r.objectSuffix).toList
 
 /-- The suffixes a derivation spells out, nominal by nominal. -/
-def suffixes (st : State) : List (Option Suffix) := st.map (suffixOf ·.2)
+def suffixes (st : Case.Valuation PhasedNP CaseValue) : List (Option Suffix) :=
+  st.map (suffixOf ·.2)
 
 private theorem rows_agree_aux : ∀ r ∈ rows, ∀ subject : Bool,
     (r.grammatical = true ↔ Converges domains r.clause (r.nominals subject)) ∧

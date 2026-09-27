@@ -112,7 +112,8 @@ def cases (g : CaseAssigners) (probes : List (Cat × Cat)) (nps : List PhasedNP)
 /-! ### The constructions -/
 
 attribute [local simp] cases CaseAssigners.assign domainPass probePass
-  Rules.dependentPass Rules.unmarkedPass eligible markBy markByFrom initial CaseAssigners.rules
+  Rules.dependentPass Rules.unmarkedPass Valuation.unvalued Valuation.fill Valuation.fillFrom
+  lexicalValuation Valuation.initial CaseAssigners.derive CaseAssigners.rules
   CaseAssigners.agreeCase grammar pureMarantz PhasedNP.visible PhasedNP.spellOut subject internal
   possessor pro finite
 
@@ -228,11 +229,11 @@ def parseCase? : String → Option (Option Case)
 
 /-- A valuation realizes a gloss: the case it shows, or, for a bare NP, no case or the
     nominative, which is unmarked. -/
-def Realizes (v : Valuation) : Option Case → Prop
+def Realizes (v : Option (Case × Mechanism)) : Option Case → Prop
   | some c => v.map (·.1) = some c
   | none => v.map (·.1) = none ∨ v.map (·.1) = some .nom
 
-instance (v : Valuation) (o : Option Case) : Decidable (Realizes v o) := by
+instance (v : Option (Case × Mechanism)) (o : Option Case) : Decidable (Realizes v o) := by
   cases o <;> simp only [Realizes] <;> infer_instance
 
 /-- A row states a yes/no property. -/
@@ -305,25 +306,25 @@ def probes (r : LinguisticExample) : List (Cat × Cat) :=
 
 /-- The valuations of a domain, paired with its occupants. -/
 def derive (g : CaseAssigners) (r : LinguisticExample) (d : List Occupant) :
-    List (Occupant × Valuation) :=
+    Valuation Occupant (Case × Mechanism) :=
   d.zip ((g.assign (probes r) (d.map (·.np))).map (·.2))
 
 /-- The Case filter: a caseless overt NP must be pseudo-incorporated — an unshifted
     VP-internal NP adjacent to the verb. -/
-def Licensed (o : Occupant) (v : Valuation) : Prop :=
+def Licensed (o : Occupant) (v : Option (Case × Mechanism)) : Prop :=
   o.covert = true ∨ v.isSome ∨ (o.np.phase = .v ∧ o.np.shifted = false ∧ o.adjacent = true)
 
-instance (o : Occupant) (v : Valuation) : Decidable (Licensed o v) := by
+instance (o : Occupant) (v : Option (Case × Mechanism)) : Decidable (Licensed o v) := by
   unfold Licensed; infer_instance
 
 /-- T agrees with the NP it values nominative: where a row states the verb's agreement
     target, an overt NP is nominative by Agree exactly when it is that target, so default
     agreement means no NP is. -/
-def Agrees (r : LinguisticExample) (out : List (Occupant × Valuation)) : Prop :=
+def Agrees (r : LinguisticExample) (out : Valuation Occupant (Case × Mechanism)) : Prop :=
   (r.feature? "agreesWith").isSome → ∀ p ∈ out, p.1.covert = false →
     (p.2 = some (.nom, .agree) ↔ r.feature? "agreesWith" = some p.1.np.label)
 
-instance (r : LinguisticExample) (out : List (Occupant × Valuation)) :
+instance (r : LinguisticExample) (out : Valuation Occupant (Case × Mechanism)) :
     Decidable (Agrees r out) := by
   unfold Agrees; infer_instance
 
