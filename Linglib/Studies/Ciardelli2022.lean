@@ -49,13 +49,12 @@ open ModalLogic.Inquisitive
 /-! ### Knowing whether (§8.2) -/
 
 variable {W A : Type*} [DecidableEq W] (M : InquisitiveModalModel W A) (φ : Formula A)
-  (s : Finset W)
 
 /-- (3b): knowing whether `φ` is knowing that `φ` or knowing that `¬φ`, the polar instance of
 `support_nec_inqDisj`. -/
 theorem nec_polarQ :
-    support M (.nec φ.polarQ) s ↔ support M ((Formula.nec φ).disj (.nec φ.neg)) s :=
-  support_nec_inqDisj M φ φ.neg s
+    support M (.nec φ.polarQ) = support M ((Formula.nec φ).disj (.nec φ.neg)) :=
+  support_nec_inqDisj M φ φ.neg
 
 /-- `¬□μ ∧ ⊞μ`: the agent wonders about `μ` ([ciardelli-roelofsen-2015]; §8.3). -/
 abbrev wonders (μ : Formula A) : Formula A := (Formula.nec μ).neg.conj (.ent μ)
@@ -96,22 +95,23 @@ def fig81c : InquisitiveModalModel World Atom :=
     val⟩
 
 /-- In (a) the agent knows that `p`, hence knows whether `p`. -/
-theorem fig81a_knows : ∀ w, support fig81a (.nec p) {w} ∧ support fig81a (.nec p.polarQ) {w} := by
+theorem fig81a_knows :
+    ∀ w, {w} ∈ support fig81a (.nec p) ∧ {w} ∈ support fig81a (.nec p.polarQ) := by
   decide
 
 /-- In (b) the agent wonders whether `p`. -/
-theorem fig81b_wonders : ∀ w, support fig81b (wonders p.polarQ) {w} := by decide
+theorem fig81b_wonders : ∀ w, {w} ∈ support fig81b (wonders p.polarQ) := by decide
 
 /-- In (c) the agent neither knows whether `p` nor wonders about it. -/
 theorem fig81c_neither :
-    ∀ w, support fig81c ((Formula.nec p.polarQ).neg.conj (Formula.ent p.polarQ).neg) {w} := by
+    ∀ w, {w} ∈ support fig81c ((Formula.nec p.polarQ).neg.conj (Formula.ent p.polarQ).neg) := by
   decide
 
 /-- `⊞` does not pseudo-commute: in (b) the agent entertains whether `p` without entertaining
 `p` or entertaining `¬p`. -/
 theorem fig81b_ent_polarQ_not_disj :
-    ∀ w, support fig81b (.ent p.polarQ) {w} ∧
-      ¬ support fig81b ((Formula.ent p).disj (.ent p.neg)) {w} := by
+    ∀ w, {w} ∈ support fig81b (.ent p.polarQ) ∧
+      {w} ∉ support fig81b ((Formula.ent p).disj (.ent p.neg)) := by
   decide
 
 end Ciardelli2022
