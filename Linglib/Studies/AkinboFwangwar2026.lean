@@ -48,7 +48,7 @@ fragment's dataset (`m_verbs_uniform`, `mh_verbs_nonfinal_final`, `pluractional_
 namespace AkinboFwangwar2026
 
 open OptimalityTheory Constraints Autosegmental Mwaghavul
-open Tone (TRN TBU GTSpec integrityTone leftAnchorTone rightAnchorTone)
+open Tone (TRN TBU integrityTone leftAnchorTone rightAnchorTone)
 open Morphology (Morph)
 
 /-! ### Morphemes and autosegments -/
@@ -224,17 +224,18 @@ theorem winners_agree_with_overwrite :
       surfaceMelody Tableau26.candD = derivePluractional jalpat := by
   decide
 
-/-! ### The verbalisers as grammatical tone
-[rolle-2018] -/
+/-! ### The verbalisers as grammatical tone -/
 
-/-- VBZ₁ and VBZ₂ are replacive-dominant, word-level, and tone is their sole exponent. -/
-def verbM_GT : GTSpec :=
-  { verbM with dominance := .replaciveDominant, level := .word, exponence := .independent }
-def verbMH_GT : GTSpec :=
-  { verbMH with dominance := .replaciveDominant, level := .word, exponence := .independent }
-
-theorem verbalizers_dominant : verbM_GT.dominance.IsDominant ∧ verbMH_GT.dominance.IsDominant :=
-  ⟨by decide, by decide⟩
+/-- VBZ₁ and VBZ₂ are replacive-dominant grammatical tone ([rolle-2018] Def 1), tone being
+their sole exponent: the verb's tones depend on the ideophone only through its verbaliser and
+its syllables, never through its lexical tones. -/
+theorem verbalisers_dominant (i j : Ideophone) (hs : i.host.map TBU.seg = j.host.map TBU.seg)
+    (hv : i.singular = j.singular) : deriveVerb i = deriveVerb j := by
+  unfold deriveVerb
+  rw [hv]
+  congr 1
+  funext v
+  rw [Tone.overwrite_eq_of_map_seg_eq hs]
 
 /-! ### The descriptive generalisations (13) -/
 

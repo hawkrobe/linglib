@@ -472,7 +472,7 @@ namespace Autosegmental
 open Tone (TBU TRN)
 open Morphology (Morph)
 
-/-- Embed a `tonalOverwrite` output as a form with one morpheme `m` and links `(i, i)`. -/
+/-- Embed a `Tone.overwrite` output as a form with one morpheme `m` and links `(i, i)`. -/
 def Form.ofTBUList {S : Type*} (host : List (TBU S)) (m : Morph) : Form S TRN Morph :=
   .melody m (host.map TBU.tone) (host.map TBU.seg)
     ((List.range host.length).map fun i ↦ (i, i)).toFinset

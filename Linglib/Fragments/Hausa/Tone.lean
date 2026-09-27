@@ -29,7 +29,7 @@ plural *-ōCī*, with a copy of the base-final consonant, makes every tone high:
 * `Hausa.simplifyRising`, `Hausa.simplifyRisingWord` — the two rules removing a rise
 * `Hausa.dockLow` — the floating low of the definite article on a word's final syllable
 * `Hausa.polarOf`, `Hausa.polarAfter` — polar tone, and the polar tone after a syllable
-* `Hausa.pluralOCi` — the class 1 plural as a replacive-dominant grammatical tone
+* `Hausa.pluralOCi` — the class 1 plural as a replacive-dominant grammatical tone ([rolle-2018])
 
 ## Main results
 
@@ -48,13 +48,14 @@ other files; their tone is computed here from their host.
 ## References
 
 * [newman-2000]
+* [rolle-2018]
 -/
 
 @[expose] public section
 
 namespace Hausa
 
-open Tone (TRN GTSpec)
+open Tone (TRN Tune)
 
 /-! ### Surface tones and the absence of a rise -/
 
@@ -136,14 +137,14 @@ theorem polarAfter_fall : polarAfter [.H, .L] = polarAfter [.L] := rfl
 
 /-! ### Tone-integrating plurals -/
 
-/-- The class 1 plural *-ōCī*, whose all-high melody replaces the tones of the whole word. -/
-def pluralOCi : GTSpec :=
-  { name := "-ōCī", melody := [.H], window := .whole, dominance := .replaciveDominant,
-    level := .word, exponence := .auxiliary }
+/-- The class 1 plural *-ōCī*, whose all-high tune replaces the tones of the whole word: a
+replacive-dominant grammatical tone accompanying a segmental suffix, [rolle-2018]'s auxiliary
+prosodic exponence. -/
+def pluralOCi : Tune := ⟨[.H], .left⟩
 
 /-- The plural makes the low tones of *gyàlè* 'shawl' high, *gyalōlī* 'shawls'. -/
 example :
-    (Tone.tonalOverwrite [⟨"gya", .L⟩, ⟨"le", .L⟩] pluralOCi.toSpec).map (·.tone) = [.H, .H] :=
+    (Tone.overwrite [⟨"gya", .L⟩, ⟨"le", .L⟩] pluralOCi).map (·.tone) = [.H, .H] :=
   rfl
 
 end Hausa
