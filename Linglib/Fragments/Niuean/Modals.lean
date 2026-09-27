@@ -60,7 +60,6 @@ open Modality (ForceFlavor ModalItem)
 
 abbrev ne : ForceFlavor := (.necessity, .epistemic)
 abbrev pe : ForceFlavor := (.possibility, .epistemic)
-abbrev nc : ForceFlavor := (.necessity, .circumstantial)
 abbrev pc : ForceFlavor := (.possibility, .circumstantial)
 
 /-! ## Modal expressions -/
@@ -74,9 +73,9 @@ def liga : ModalItem := { form := "liga", meaning := {pe, ne} }
     [seiter-1980] p. 140. -/
 def maeke : ModalItem := { form := "maeke", meaning := {pc} }
 
-/-- Circumstantial necessity modal ('should', 'must').
-    [seiter-1980] p. 133. -/
-def lata : ModalItem := { form := "lata", meaning := {nc} }
+/-- Circumstantial necessity modal ('should', 'must'), with an obligation reading in
+    [seiter-1980] p. 133 as [matthewson-2016] reports it. -/
+def lata : ModalItem := { form := "lata", meaning := {.necessity} ×ˢ {.circumstantial, .deontic} }
 
 def modals : List ModalItem := [liga, maeke, lata]
 
