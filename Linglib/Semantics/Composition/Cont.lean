@@ -12,8 +12,8 @@ mirror `ContT`'s `run_*` set: a chain of binds evaluates in bind order
 and the applicative combination left-to-right, which is what lets bind
 order model quantifier scope. `ContT.reset` evaluates and re-lifts,
 delimiting scope the way scope islands do. For the linguistic
-applications see `Studies/BumfordCharlow2024.lean` and
-`Studies/Charlow2020.lean`.
+applications see `Studies/Charlow2014.lean`, `Studies/Barker2002.lean`
+and `Studies/Charlow2020.lean`.
 
 ## References
 

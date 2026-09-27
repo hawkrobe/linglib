@@ -43,11 +43,10 @@ by Predicate Abstraction, which is a capability of the effect (`PredAbs`) rather
 
 Binary nodes sequence effects in linear order, the left daughter's first whichever daughter is
 the function, so at `M = Cont R` surface scope is the default reading and inverse scope needs
-a reordered evaluation (`Composition/Cont.lean`, `Studies/BumfordCharlow2024.lean`). Predicate
-Abstraction needs a distributor `(E → M (Ty.Domain ty)) → M (E → Ty.Domain ty)`, which scope
-effects lack, so under them `.bind` nodes fail and binding comes from the order of effects
-instead; making the distributor optional turns that rivalry into a fact instance resolution
-checks. The abstraction's fallback value `valueAt` is never reached, since types do not depend
+a reordered evaluation (`Composition/Cont.lean`). Predicate Abstraction needs a distributor
+`(E → M (Ty.Domain ty)) → M (E → Ty.Domain ty)`, which scope effects lack, so under them `.bind`
+nodes fail and binding comes from the order of effects instead; making the distributor optional
+turns that rivalry into a fact instance resolution checks. The abstraction's fallback value `valueAt` is never reached, since types do not depend
 on the assignment. The category parameter of a tree is ignored, composition being type-driven.
 
 ## References
