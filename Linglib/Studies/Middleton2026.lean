@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.List.Permutation
 public import Linglib.Morphology.DistributedMorphology.Spellout
+public import Linglib.Fragments.Taos.Agreement
 
 /-!
 # Middleton (2026): the ordering of impoverishment rules in Taos and Basque
@@ -377,11 +378,22 @@ theorem firstSingularGoal_paradigmatic : firstSingularGoal.Paradigmatic :=
 /-- The 3S:3S transitive prefix, Table 15: ∅. -/
 def prefix3S3S : Prefix := ⟨some (third ++ singular), none, some (third ++ singular)⟩
 
+theorem form_3S3S :
+    Taos.form ⟨some (.third, .singular), none, some (.third .singular)⟩ = some "" := by
+  decide
+
 /-- The 3S:3I transitive prefix, Table 15: *í*, for any inverse third person object. -/
 def prefix3S3I (o : Arg) : Prefix := ⟨some (third ++ singular), none, some o⟩
 
+theorem form_3S3I :
+    Taos.form ⟨some (.third, .singular), none, some (.third .inverse)⟩ = some "i" := by
+  decide
+
 /-- The 3S:no transitive prefix, Table 16: ∅. -/
 def prefix3Sno : Prefix := ⟨some (third ++ singular), none, some []⟩
+
+theorem form_3Sno : Taos.form ⟨some (.third, .singular), none, some .dummy⟩ = some "" := by
+  decide
 
 /-- The 2S:3S transitive prefix, Table 17: *o*. -/
 def prefix2S3S : Prefix := ⟨some (second ++ singular), none, some (third ++ singular)⟩
@@ -389,15 +401,40 @@ def prefix2S3S : Prefix := ⟨some (second ++ singular), none, some (third ++ si
 /-- The 2S intransitive prefix, Table 17: *ǫ*. -/
 def prefix2S : Prefix := ⟨some (second ++ singular), none, none⟩
 
+/-- The transitive and intransitive 2S prefixes differ. -/
+theorem form_2S3S_ne_form_2S :
+    Taos.form ⟨some (.second, .singular), none, some (.third .singular)⟩ ≠
+      Taos.form ⟨some (.second, .singular), none, none⟩ := by
+  decide
+
 /-- The 1S:3S possessive prefix, Table 22: *ôn*. -/
 def prefix1S3S : Prefix := ⟨none, some (first ++ singular), some (third ++ singular)⟩
+
+/-- The 1S:3S possessive prefix has no *m*. -/
+theorem form_1S3S :
+    ∀ f ∈ Taos.form ⟨none, some (.first, .singular), some (.third .singular)⟩,
+      f = "ôn" ∧ 'm' ∉ f.toList := by
+  decide
 
 /-- The 1S:3I possessive prefix, Table 22: *ónôm*, for any inverse third person object. -/
 def prefix1S3I (o : Arg) : Prefix := ⟨none, some (first ++ singular), some o⟩
 
+/-- The 1S:3I possessive prefix keeps *n*. -/
+theorem form_1S3I :
+    ∀ f ∈ Taos.form ⟨none, some (.first, .singular), some (.third .inverse)⟩,
+      f = "ónôm" ∧ 'n' ∈ f.toList := by
+  decide
+
 /-- The 1D:3S:3S ditransitive prefix, Table 21: *opénôm*. -/
 def prefix1D3S3S : Prefix :=
   ⟨some (first ++ dual), some (third ++ singular), some (third ++ singular)⟩
+
+/-- The 1D:3S:3S ditransitive prefix keeps *m*. -/
+theorem form_1D3S3S :
+    ∀ f ∈ Taos.form
+        ⟨some (.first, .dual), some (.third, .singular), some (.third .singular)⟩,
+      f = "opénôm" ∧ 'm' ∈ f.toList := by
+  decide
 
 theorem thirdSingularObject_syntagmatic : thirdSingularObject.Syntagmatic := by
   intro h
@@ -625,6 +662,13 @@ def prefix1_3D : Prefix := ⟨some first, some (third ++ dual), some []⟩
 
 /-- The 1D:3:no prefix of (25), *opén* (Table 5), with the goal's number features gone. -/
 def prefix1D_3 : Prefix := ⟨some (first ++ dual), some third, some []⟩
+
+/-- Both prefixes of the two figures are *opén*. -/
+theorem form_opén :
+    Taos.form ⟨some (.first, .singular), some (.third, .dual), some .dummy⟩ = some "opén" ∧
+      Taos.form ⟨some (.first, .dual), some (.third, .singular), some .dummy⟩ =
+        some "opén" := by
+  decide
 
 /-- (24) puts the dual goal's features in the order of *o-pé-n*. -/
 theorem dualGoalMetathesis_prefix1_3D :
