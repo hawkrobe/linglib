@@ -9,15 +9,14 @@ public import Linglib.Logic.Assignment
 The lookup interface of dynamic semantics: `iLookup : Ctx → V → W → M E`
 returns the `M`-family of values for a variable at a world. Frameworks
 diverge on what a lookup *returns* when a variable has no referent —
-Hofmann's `.star` (`M = Entity`, instance in `ICDRT/Basic.lean`), plain values for
+the falsifier ⋆ of [hofmann-2025]'s intensional CDRT (`M = Option`), plain values for
 the extensional baseline (`M = Id`, the `Assignment` instance below) — and
 the shared signature is what makes per-family lookups comparable: the static
 pronoun selector of `Reference/Pronoun.lean` is its `Id` instance.
 
 The class is data-only (the `Membership`/`GetElem` pattern): update laws
 and accessibility predicates are each family's own commitments and live in
-the family's file; the comparisons live in the studies that draw them
-(`Studies/Hofmann2025.lean`).
+the family's file; the comparisons live in the studies that draw them.
 -/
 
 @[expose] public section

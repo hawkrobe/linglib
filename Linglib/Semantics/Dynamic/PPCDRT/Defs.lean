@@ -28,9 +28,7 @@ classes of eq 26 — see `Anaphora.lean`.
 Framework substrate. PPCDRT originates with [brasoveanu-2007] (PCDRT)
 and [haug-2014] (Partial CDRT); [haug-dalrymple-2020] composes
 them into PPCDRT. Initial linglib consumer:
-`Studies/HaugDalrymple2020.lean`. Mirrors
-`Semantics/Dynamic/ICDRT/Defs.lean` (ICDRT substrate, also single
-current consumer).
+`Studies/HaugDalrymple2020.lean`.
 -/
 
 @[expose] public section
