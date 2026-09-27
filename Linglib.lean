@@ -1127,7 +1127,6 @@ import Linglib.Pragmatics.RSA.Silence
 import Linglib.Pragmatics.SignalingGame.Basic
 import Linglib.Pragmatics.SignalingGame.Interpretation
 import Linglib.Pragmatics.SocialMeaning.IndexicalField
-import Linglib.Processing.Cost.Profile
 import Linglib.Processing.DiscriminativeLexicon.Coding
 import Linglib.Processing.DiscriminativeLexicon.Defs
 import Linglib.Processing.DiscriminativeLexicon.Measures
