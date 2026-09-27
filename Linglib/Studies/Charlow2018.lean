@@ -47,7 +47,7 @@ into being."
 
 * `momIntension`, `TypedAssignment`, `vfPronoun` — the paycheck intension, type-homogeneous
   assignments, and the variable-free pronoun
-* `composedPure`, `composedAp` — the composed applicative `Reader E₁ ∘ Reader E₂` of Fig. 5
+* `composedPure`, `composedAp` — the composed applicative `ReaderM E₁ ∘ ReaderM E₂` of Fig. 5
 
 ## Main results
 
@@ -197,7 +197,7 @@ end ContinuationApplicative
 /-! ### Composed applicatives (Fig. 5)
 
 Given two applicative type constructors F and G, their composition
-F ∘ G is applicative. For `Reader E₁ ∘ Reader E₂`:
+F ∘ G is applicative. For `ReaderM E₁ ∘ ReaderM E₂`:
 
 ```
 ρ_{F∘G}(x) = λe₁ λe₂. x
@@ -215,11 +215,11 @@ section ComposedApplicatives
 
 variable {E₁ E₂ A B C : Type}
 
-/-- Composed ρ for `Reader E₁ ∘ Reader E₂`. -/
+/-- Composed ρ for `ReaderM E₁ ∘ ReaderM E₂`. -/
 def composedPure (x : A) : E₁ → E₂ → A :=
   fun _ _ => x
 
-/-- Composed ⊛ for `Reader E₁ ∘ Reader E₂`. -/
+/-- Composed ⊛ for `ReaderM E₁ ∘ ReaderM E₂`. -/
 def composedAp (f : E₁ → E₂ → A → B) (x : E₁ → E₂ → A) : E₁ → E₂ → B :=
   fun e₁ e₂ => f e₁ e₂ (x e₁ e₂)
 
@@ -376,7 +376,7 @@ theorem typed_paycheck
 /-- The intension `λh. mom(h 0)` is compositionally derived as `ρ(mom) ⊛ pro₀` in the inner
 `Gₑ` applicative — the Reader monad's `pure` and `<*>` at the assignment sort. -/
 theorem typed_intension_is_rho_ap_pro (mom : E → E) :
-    ((pure mom : Reader (TypedAssignment E) (E → E)) <*> fun h => h 0) =
+    ((pure mom : ReaderM (TypedAssignment E) (E → E)) <*> fun h => h 0) =
       fun h => mom (h 0) := rfl
 
 /-- `G ∘ G` paycheck reading with `Assignment` sorts: the doubly
@@ -402,7 +402,7 @@ is structurally identical to the assignment-sensitive version — ρ and
 ("we've only replaced g-dependent e's with e-dependent e's").
 
 The striking observation: composing the VF applicative with itself
-(`Reader E ∘ Reader E`) yields two-pronoun readings where the pronouns
+(`ReaderM E ∘ ReaderM E`) yields two-pronoun readings where the pronouns
 resolve independently — uncurrying the result produces
 assignment-dependence "organically." -/
 
@@ -415,12 +415,12 @@ def vfPronoun : E → E := id
 
 /-- "She left" in VF: `ρ(left) ⊛ she = left`, the same Reader operations at environment `E`. -/
 theorem vf_she_left (left : E → Bool) :
-    ((pure left : Reader E (E → Bool)) <*> vfPronoun) = left := rfl
+    ((pure left : ReaderM E (E → Bool)) <*> vfPronoun) = left := rfl
 
 /-- "She saw her" with a single entity parameter: both pronouns resolve
 to the same entity, yielding `λe. saw e e` (reflexive reading). -/
 theorem vf_she_saw_her_single (saw : E → E → Bool) :
-    ((pure saw : Reader E (E → E → Bool)) <*> vfPronoun <*> vfPronoun) =
+    ((pure saw : ReaderM E (E → E → Bool)) <*> vfPronoun <*> vfPronoun) =
       fun e => saw e e := rfl
 
 /-- "She saw her" with the composed applicative (two entity

@@ -6,9 +6,9 @@ public import Mathlib.Control.Basic
 public import Mathlib.Control.Functor
 
 /-!
-# Bumford and Charlow 2024: effect-driven interpretation
+# Bumford and Charlow 2026: effect-driven interpretation
 
-[bumford-charlow-2024] treat pronouns, antecedents, indefinites and quantifiers as computations
+[bumford-charlow-2026] treat pronouns, antecedents, indefinites and quantifiers as computations
 with effects, and the modes of semantic combination as higher-order operations that lift a basic
 combinator through the algebra of an effect: maps for functors (chapter 2), structured
 application for applicatives (chapter 3), join for monads (chapter 4), and co-unit and eject for
@@ -58,24 +58,25 @@ grammar tracks a stack of effects per node. As in Appendix B, a writer is applic
 when its datum is `t`, every applicative effect of the grammar is monadic, and the only
 adjunction is `W i ⊣ R i`. Base types are `e` and `t`.
 
+The Element is forthcoming; equation, section and appendix locators are to the arXiv version of
+April 2025.
+
 ## TODO
 
 * Islands (section 5.4): the book filters the results at an island node by a predicate on
   their types; the grammar here has no syntax trees.
 * The denotations of derivations, the book's interpreter of section 5.5: `Combine` is a `Prop`,
   and the interpreter would be a type-valued version with a denotation for each rule.
-* The bibliography entry dates the Element by its 2024 manuscript; Cambridge lists it as
-  forthcoming, and the text read here is the arXiv version of April 2025.
 
 ## References
 
-* [bumford-charlow-2024]
+* [bumford-charlow-2026]
 * [barker-shan-2014]
 -/
 
 @[expose] public section
 
-namespace BumfordCharlow2024
+namespace BumfordCharlow2026
 
 open CategoryTheory
 
@@ -465,4 +466,4 @@ example {u : Ty} (h : Combine (comp (R e) (comp S e)) (comp (C t) (comp (W e) (f
     u.Reads :=
   h.reads (.inl trivial) ⟨id, id, trivial, trivial⟩
 
-end BumfordCharlow2024
+end BumfordCharlow2026

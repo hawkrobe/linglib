@@ -31,7 +31,7 @@ of a relational meaning from a DRT-style one, as a morphism
 ([visser-vermeulen-1996]).
 
 The powerset monad is one column of the effect view of dynamic semantics
-([moggi-1991], [shan-2001], [bumford-charlow-2024]): a framework's update
+([moggi-1991], [shan-2001], [bumford-charlow-2026]): a framework's update
 algebra is the Kleisli algebra of its chosen effect. Partiality is the
 `Part` column (`Partial.lean`'s `seq_eq_kleisliComp`); probabilistic and
 continuation-based systems choose further effects.
@@ -64,7 +64,7 @@ are unital, so the collapse lands in `RelCat` directly, with no setoid.
 ## References
 
 - [muskens-van-benthem-visser-2011], [charlow-2014]
-- [moggi-1991], [shan-2001], [bumford-charlow-2024]
+- [moggi-1991], [shan-2001], [bumford-charlow-2026]
 - [muskens-1996], [groenendijk-stokhof-1991]
 -/
 
