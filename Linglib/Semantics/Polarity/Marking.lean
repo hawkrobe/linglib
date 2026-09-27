@@ -11,7 +11,7 @@ sentence-internal affirmative particle, Verum focus on the finite verb, a polari
 particle, another device, or no marking. A `PolarityMarker.Env` is a position or discourse
 context in which a device is available, and a `PolarityMarker` is a language's device
 with its form, its prosodic target, its environments and its strategy. Fragments for Dutch,
-German, English, Italian, Spanish and French populate the schema.
+German, English, Italian and Spanish populate the schema.
 
 ## Implementation notes
 
@@ -22,7 +22,10 @@ specific lexical or prosodic devices; the polarity-reversing class follows [holm
 polarity, and [garassino-jacob-2018] concur; the non-equivalence of the two is stated in
 `Studies/MaticNikolaeva2018.lean`. Syntactic position beyond sentence-internality is not
 encoded, so entries under one strategy may differ in it. This is a separate system from the
-`PolarityItem` licensing API.
+`PolarityItem` licensing API. Answer particles, including the polarity-reversing Swedish *jo*
+and French *si* of [holmberg-2016], are typed by `Question.AnswerParticle`, whose REV feature
+derives the negative context that a marker's environments record; German *doch* has both
+entries, as an answer particle and as a separate utterance preceding a Verum focus utterance.
 
 ## References
 
@@ -45,12 +48,10 @@ inductive Strategy where
   | particle
   /-- Pitch accent on the finite verb ([hohle-1992] Verum focus) -/
   | verumFocus
-  /-- Polarity-reversing particle: affirms [+Pol] while contradicting a
-      negative context (e.g., German *doch*, Swedish *jo*, French *si*;
-      [holmberg-2016]). The cross-linguistic lumping under this
-      constructor records a shared functional role only — the surface
-      categories vary (response particle vs. clause-initial construction
-      vs. discourse particle); see [garassino-jacob-2018] fn 11. -/
+  /-- Polarity-reversing particle or construction: affirms [+Pol] against a negative or
+  contrasting context (German *doch* before a Verum focus utterance, Italian *sì che*, Spanish
+  *sí que*). The lumping records a shared functional role only: the surface categories vary
+  between a separate utterance and a clause-initial construction. -/
   | polarityReversal
   /-- Other strategy (e.g., pre-utterance particle, intonation pattern) -/
   | other

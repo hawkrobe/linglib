@@ -133,6 +133,16 @@ theorem answer_eq_none_of_reverses (hr : a.reverses = true) (h : ¬ q.NegationIn
     q.answer a = none := by
   simp [answer, hr, h]
 
+/-- A well-formed answer by a reversing particle confirms the particle's value against a
+negative primary alternative. -/
+theorem eq_assigns_and_polarity_of_reverses (hr : a.reverses = true) {s : Polarity}
+    (h : q.answer a = some s) : s = a.assigns ∧ q.polarity = .negative := by
+  by_cases hi : q.NegationInside
+  · rw [answer_of_reverses hr hi, Option.some_inj] at h
+    exact ⟨h.symm, by simp [polarity, hi]⟩
+  · rw [answer_eq_none_of_reverses hr hi] at h
+    cases h
+
 /-- A negation valuing the head: a plain negative particle agrees with it, confirming the
 negative alternative, and a plain affirmative one clashes with it. -/
 theorem answer_of_valuedByNegation (hr : a.reverses = false) (h : q.ValuedByNegation) :
