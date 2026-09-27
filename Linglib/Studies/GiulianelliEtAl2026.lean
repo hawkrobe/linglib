@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Probability.Kernel.IonescuTulcea.PartialTraj
-public import Linglib.Processing.Expectation.InformationValue
+public import Linglib.Processing.Expectation.GeneralizedSurprisal
 
 /-!
 # Giulianelli, Wallbridge, Cotterell and Fernández (2026): Incremental Alternative Sampling as a Lens into the Temporal and Representational Resolution of Linguistic Prediction
@@ -19,7 +19,7 @@ unit is the substrate's `genSurprisal` at that kernel. Standard surprisal is the
 negative logarithm and the prefix indicator at every horizon, because the alternatives' first
 unit is distributed as the model's next unit (`genSurprisal_prefixIndicator`); it thus evaluates
 alternatives by lexical identity alone, and the discrete distance shows what this conflates,
-since information value with it is the probability of error (`informationValue1_discrete`).
+since information value with it is the probability of error (`informationValue_discrete`).
 Incremental information value replaces the indicator by a representational distance between each
 alternative and the observed unit followed by the alternatives sampled after it, the double
 expectation of the paper's definition (`iiv`), whose horizon-one case is the information value of
@@ -48,7 +48,7 @@ the substrate (`iiv_zero`).
 
 @[expose] public section
 
-open Finset InformationTheory MeasureTheory ProbabilityTheory Processing.PredictiveUncertainty
+open Finset InformationTheory MeasureTheory ProbabilityTheory Processing.Expectation
 
 namespace GiulianelliEtAl2026
 
@@ -79,8 +79,8 @@ theorem integral_prefixIndicator (x : Π i : Iic n, X i) (w : X (n + 1)) :
 /-- Standard surprisal is the generalised surprisal with the negative logarithm and the prefix
 indicator, at every horizon. -/
 theorem genSurprisal_prefixIndicator (x : Π i : Iic n, X i) (w : X (n + 1)) :
-    genSurprisal (Kernel.partialTraj κ n (n + h + 1)) (λ r => -Real.log r)
-      (λ a w _ => prefixIndicator w a) x w = surprisal (κ n x) w := by
+    genSurprisal (Kernel.partialTraj κ n (n + h + 1)) (fun r ↦ -Real.log r)
+      (fun a w _ ↦ prefixIndicator w a) x w = surprisal (κ n x) w := by
   simp only [genSurprisal]
   rw [integral_prefixIndicator]
   rfl
@@ -89,13 +89,14 @@ theorem genSurprisal_prefixIndicator (x : Π i : Iic n, X i) (w : X (n + 1)) :
 
 /-- The discrete distance on units: an alternative is accurate only when identical to the
 unit. -/
-noncomputable def discrete (a w : X (n + 1)) : ℝ := 1 - ({w} : Set (X (n + 1))).indicator 1 a
+noncomputable def discrete (a w : X (n + 1)) (_ : Π i : Iic n, X i) : ℝ :=
+  1 - ({w} : Set (X (n + 1))).indicator 1 a
 
 /-- Information value with the discrete distance is the probability of error, `1 − p(w | c)`: the
 alternatives' similarity to the unit counts for nothing, as under surprisal. -/
-theorem informationValue1_discrete (x : Π i : Iic n, X i) (w : X (n + 1)) :
-    informationValue1 (κ n) discrete x w = 1 - (κ n x).real {w} := by
-  simp only [informationValue1, discrete]
+theorem informationValue_discrete (x : Π i : Iic n, X i) (w : X (n + 1)) :
+    informationValue (κ n) discrete x w = 1 - (κ n x).real {w} := by
+  simp only [informationValue, discrete]
   rw [integral_sub (integrable_const _)
       ((integrable_const 1).indicator (measurableSet_singleton w)),
     integral_const, integral_indicator_one (measurableSet_singleton w)]
@@ -116,8 +117,8 @@ with the distance read on the extended contexts. -/
 theorem iiv_zero [∀ n, Countable (X n)]
     (d : (Π i : Iic (n + 1), X i) → (Π i : Iic (n + 1), X i) → ℝ) (x : Π i : Iic n, X i)
     (w : X (n + 1)) :
-    iiv κ (h := 0) d x w = informationValue1 (κ n) (λ a w' => d (snoc x a) (snoc x w')) x w := by
-  simp only [iiv, informationValue1, Nat.add_zero, Kernel.partialTraj_self, Kernel.id_apply,
+    iiv κ (h := 0) d x w = informationValue (κ n) (fun a w' x ↦ d (snoc x a) (snoc x w')) x w := by
+  simp only [iiv, informationValue, Nat.add_zero, Kernel.partialTraj_self, Kernel.id_apply,
     integral_dirac, Kernel.partialTraj_succ_self_apply]
   rw [integral_map (by fun_prop) (measurable_of_countable _).aestronglyMeasurable]
   rfl
