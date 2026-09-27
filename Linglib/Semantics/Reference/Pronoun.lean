@@ -14,16 +14,16 @@ public import Linglib.Semantics.Composition.Assignment
 /-!
 # The denotation of a pronoun
 
-A `PersonalPronoun` entry denotes as a `Nominal` whose selector is the variable denotation
-`interpPronoun`, the value of the entry's index under the assignment, and whose intrinsic
-presupposition is that the resolved referent lies in the entry's φ-domain
-(`PersonalPronoun.phiDom`, `PersonalPronoun.denote`), the intersection of `Person.dom` at the
-context of utterance, `Number.dom` and `Gender.dom` at the entry's referential person and number
-and its gender. The selector does not vary with the world of evaluation
-(`PersonalPronoun.isRigid_denote_selector`): a pronoun refers directly. This is the survey of
-[buring-2012]: one denotation serves the bound, anaphoric and deictic uses, binding being an
-operator on the assignment (`Composition/Binding.lean`), and an absent or unmarked feature
-restricts nothing, the treatment of [sauerland-2003].
+This file defines the denotation of a personal pronoun. A `PersonalPronoun` entry denotes a
+`Nominal` whose selector is the variable denotation `interpPronoun`, the value of the entry's
+index under the assignment, and whose intrinsic presupposition is that the resolved referent lies
+in the entry's φ-domain (`PersonalPronoun.phiDom`, `PersonalPronoun.denote`). The φ-domain is the
+intersection of `Person.dom` at the context of utterance with `Number.dom` and `Gender.dom` at the
+entry's referential person and number and its gender. The selector does not vary with the world
+of evaluation (`PersonalPronoun.isRigid_denote_selector`), so a pronoun refers directly. This is
+the account Büring surveys: one denotation serves the bound, anaphoric and deictic uses, binding
+is abstraction over the assignment (`Semantics.Composition.lambdaAbsG`), and, as Sauerland
+proposes, an absent or unmarked feature restricts nothing.
 
 ## Implementation notes
 
@@ -49,9 +49,9 @@ namespace PersonalPronoun
 variable {E W P T : Type*} [PartialOrder E] [Gendered E] (e : PersonalPronoun) (i : ℕ)
   (c : Context W E P T)
 
-/-- The φ-domain of a pronoun entry over an entity domain `E`: the person domain of its
-referential person at the context of utterance, the number domain of its referential number and
-the gender domain of its gender, intersected. -/
+/-- The φ-domain of a pronoun entry over an entity domain `E` is the intersection of the person
+domain of its referential person at the context of utterance, the number domain of its referential
+number and the gender domain of its gender. -/
 def phiDom : Set E :=
   Person.dom c e.referentialPerson ∩
     Number.dom e.referentialNumber ∩
@@ -69,9 +69,9 @@ theorem phiDom_congr {e₁ e₂ : PersonalPronoun} (hr : e₁.referential = e₂
     (hg : e₁.gender = e₂.gender) : e₁.phiDom c = e₂.phiDom c := by
   simp only [phiDom, referentialPerson, referentialNumber, hr, hg]
 
-/-- A pronoun's denotation: the selector is the variable denotation `interpPronoun i`, always
-defined under a total assignment, and the intrinsic presupposition is that the resolved referent
-`g i` lies in the φ-domain. -/
+/-- A pronoun denotes the nominal whose selector is the variable denotation `interpPronoun i`,
+always defined under a total assignment, and whose intrinsic presupposition is that the resolved
+referent `g i` lies in the φ-domain. -/
 def denote : Nominal (Assignment E) W E where
   presup g _ := g i ∈ e.phiDom c
   selector g _ := some (Semantics.Composition.interpPronoun i g)
@@ -93,7 +93,7 @@ instance : Semantics.Denotes PersonalPronoun
     (e.denote i c).selector g w = some (g i) :=
   rfl
 
-/-- A pronoun's referent does not vary with the world: the selector is rigid. -/
+/-- A pronoun's selector is rigid, so its referent does not vary with the world. -/
 theorem isRigid_denote_selector (g : Assignment E) :
     IsRigid ((e.denote i c).selector g) :=
   isRigid_const _
