@@ -1546,7 +1546,6 @@ import Linglib.Studies.Bruening2021
 import Linglib.Studies.Bruening2025
 import Linglib.Studies.BrueningAlKhalaf2020
 import Linglib.Studies.Bubnov2026
-import Linglib.Studies.BumfordCharlow2024
 import Linglib.Studies.BumfordRett2021
 import Linglib.Studies.Buring2007
 import Linglib.Studies.Buring2012

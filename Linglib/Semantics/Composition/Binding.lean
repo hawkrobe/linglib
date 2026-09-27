@@ -15,11 +15,9 @@ Two renderings of binding and their agreement. In assignment-based binding
 ([heim-kratzer-1998]) a binder at index `n` updates the assignment and the bound pronoun reads
 it back (`hkBinding`); in the continuation rendering of [barker-shan-2014] binding is the
 duplicator `W κ x = κ x x` applied to the body (`bsBinding`), and the two agree on reflexive
-binding (`hk_bs_reflexive_equiv`). Assignment-indexed meanings are the reader monad `Reader E`,
-whose `pure` and `<*>` are the constant and pointwise application; and binding a pronoun at
-`κ` to a binder at `l` is the cylindric substitution of [henkin-monk-tarski-1971]
-(`subst_apply_iff_binding`), after which the two coordinates satisfy the diagonal
-(`diag_apply_binding`).
+binding (`hk_bs_reflexive_equiv`). Binding a pronoun at `κ` to a binder at `l` is the
+cylindric substitution of [henkin-monk-tarski-1971] (`subst_apply_iff_binding`), after which the
+two coordinates satisfy the diagonal (`diag_apply_binding`).
 
 ## References
 
@@ -51,13 +49,6 @@ def bsBinding (body : E → E → Prop) (binder : E) : Prop := W body binder
 theorem hk_bs_reflexive_equiv (n : ℕ) (body : E → E → Prop) (binder : E) (g : Assignment E) :
     body (g[n ↦ binder] n) (g[n ↦ binder] n) = bsBinding body binder := by
   simp only [bsBinding, W, Function.update_self]
-
-/-- Assignment-indexed meanings: the reader monad. -/
-abbrev Reader (E A : Type) := E → A
-
-instance : Monad (Reader E) where
-  pure a := λ _ => a
-  bind m f := λ e => f (m e) e
 
 /-- Binding the pronoun at `κ` to the binder at `l` is cylindric substitution, which equates the
 two coordinates and then cylindrifies along `κ`. -/

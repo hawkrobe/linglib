@@ -12,7 +12,7 @@ public import Linglib.Semantics.Modification.Basic
 This file is the composition engine of [heim-kratzer-1998]'s type-driven interpretation, with
 the intensional application of [von-fintel-heim-2011] and the event identification of
 [kratzer-1996], parameterized over an effect functor `M` in the style of
-[bumford-charlow-2024]. A node denotes an `M`-computation in the domain of its semantic type,
+[bumford-charlow-2026]. A node denotes an `M`-computation in the domain of its semantic type,
 a `Denotation`, and each composition principle lifts through the `Applicative` structure of
 `M`, so the pure Heim and Kratzer engine is the instance `M = Id`. A terminal node denotes
 what its leaf interpretation gives it, a string in a `Lexicon` or a fragment carrier through
@@ -54,7 +54,7 @@ on the assignment. The category parameter of a tree is ignored, composition bein
 * [heim-kratzer-1998]
 * [von-fintel-heim-2011]
 * [kratzer-1996]
-* [bumford-charlow-2024]
+* [bumford-charlow-2026]
 -/
 
 @[expose] public section

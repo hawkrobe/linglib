@@ -6,7 +6,7 @@ public import Linglib.Semantics.Composition.Ty
 # Lexicons
 
 A lexicon is a string-keyed lookup of Montague denotations, polymorphic over an effect
-functor `M` ([bumford-charlow-2024]): an entry is a `Denotation E W M D`, a semantic type with
+functor `M` ([bumford-charlow-2026]): an entry is a `Denotation E W M D`, a semantic type with
 an `M`-computation in its domain. It is the `String`-leaved case of the leaf interpretation
 `Tree.interp` takes, whose leaves may instead be a fragment carrier interpreted through its
 readings. Scope-takers live at `M = Cont R`, conventional-implicature
@@ -20,7 +20,7 @@ items at `M = Writer P`, and the default `M := Id` is the pure [heim-kratzer-199
 ## References
 
 * [heim-kratzer-1998]
-* [bumford-charlow-2024]
+* [bumford-charlow-2026]
 -/
 
 @[expose] public section
