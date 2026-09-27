@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Team.Kripke
-public import Linglib.Logic.Team.Definability
+public import Linglib.Logic.Team.Operations
 public import Linglib.Semantics.Questions.Basic
 
 /-!
@@ -34,7 +34,8 @@ places InqML with dependence logic in the downward-closed, empty-team cell of
 * `InquisitiveModalModel`: a valuation and a map from worlds to sets of information states, with
   the induced accessibility `access`; `KripkeModel.toInquisitive` embeds Kripke models.
 * `Formula` and `support`: the language with `□` and `⊞`, and support of a formula by a state.
-* `TruthConditional`: the statements, the formulas whose support is truth at every world.
+* `TruthConditional`: the statements, the formulas whose support is truth at every world,
+  which is flatness (`Team.IsFlat`) of the support set.
 * `proposition`: the inquisitive proposition `[φ]_M`, the support set as a `Question`.
 
 ## Main results
@@ -157,13 +158,13 @@ variable [DecidableEq W]
 
 /-- `support M φ s`: the information state `s` settles `φ` in `M`. -/
 def support (M : InquisitiveModalModel W Atom) : Formula Atom → Finset W → Prop
-  | .atom p, s => ∀ w ∈ s, M.val p w = true
-  | .bot, s => s = ∅
+  | .atom p, s => s ∈ Team.flat fun w ↦ M.val p w = true
+  | .bot, s => s ∈ ({∅} : Team.TeamProperty W)
   | .conj φ ψ, s => support M φ s ∧ support M ψ s
   | .impl φ ψ, s => ∀ t ⊆ s, support M φ t → support M ψ t
   | .inqDisj φ ψ, s => support M φ s ∨ support M ψ s
-  | .nec φ, s => ∀ w ∈ s, support M φ (M.access w)
-  | .ent φ, s => ∀ w ∈ s, ∀ t ∈ M.inq w, support M φ t
+  | .nec φ, s => s ∈ Team.nec M.access {t | support M φ t}
+  | .ent φ, s => s ∈ Team.flat fun w ↦ ∀ t ∈ M.inq w, support M φ t
 
 variable (M : InquisitiveModalModel W Atom) (φ ψ : Formula Atom) (s : Finset W) (w : W)
 
@@ -198,7 +199,7 @@ instance decidableSupport [Fintype W] :
     unfold support; have := decidableSupport φ; have := decidableSupport ψ; infer_instance
   | .inqDisj φ ψ, s => by
     unfold support; exact @instDecidableOr _ _ (decidableSupport φ s) (decidableSupport ψ s)
-  | .nec φ, s => by unfold support; have := decidableSupport φ; infer_instance
+  | .nec φ, s => by unfold support; exact @Team.nec.instDecidableMem _ _ _ (decidableSupport φ) s
   | .ent φ, s => by unfold support; have := decidableSupport φ; infer_instance
 
 /-! ### Persistence and the empty state (Proposition 3.3.1) -/
@@ -206,24 +207,24 @@ instance decidableSupport [Fintype W] :
 /-- **Persistence**: the support set of a formula is downward closed. -/
 theorem isLowerSet_support : IsLowerSet {s : Finset W | support M φ s} := by
   induction φ with
-  | atom p => exact fun s t hts hs w hw => hs w (hts hw)
-  | bot => exact fun s t hts hs => Finset.subset_empty.1 (hs ▸ hts)
-  | conj φ ψ ihφ ihψ => exact fun s t hts hs => ⟨ihφ hts hs.1, ihψ hts hs.2⟩
+  | atom p => exact Team.isLowerSet_flat _
+  | bot => exact Team.isLowerSet_singleton_empty
+  | conj φ ψ ihφ ihψ => exact ihφ.inter ihψ
   | impl φ ψ _ _ => exact fun s t hts hs u hut => hs u (hut.trans hts)
-  | inqDisj φ ψ ihφ ihψ => exact fun s t hts hs => hs.imp (ihφ hts) (ihψ hts)
-  | nec φ _ => exact fun s t hts hs w hw => hs w (hts hw)
-  | ent φ _ => exact fun s t hts hs w hw => hs w (hts hw)
+  | inqDisj φ ψ ihφ ihψ => exact ihφ.union ihψ
+  | nec φ _ => exact Team.isLowerSet_flat _
+  | ent φ _ => exact Team.isLowerSet_flat _
 
 /-- **The empty state property**: the inconsistent state supports every formula. -/
 theorem support_empty : support M φ ∅ := by
   induction φ with
-  | atom p => simp
+  | atom p => exact Team.empty_mem_flat _
   | bot => rfl
   | conj φ ψ ihφ ihψ => exact ⟨ihφ, ihψ⟩
   | impl φ ψ _ ihψ => exact fun t ht _ => by obtain rfl := Finset.subset_empty.1 ht; exact ihψ
   | inqDisj φ ψ ihφ _ => exact Or.inl ihφ
-  | nec φ _ => simp
-  | ent φ _ => simp
+  | nec φ _ => exact Team.empty_mem_flat _
+  | ent φ _ => exact Team.empty_mem_flat _
 
 /-! ### Truth (Proposition 3.1.7) -/
 
@@ -251,19 +252,24 @@ singleton state. -/
 def truthSet : Set W := {w | support M φ {w}}
 
 /-- `φ` is **truth-conditional** in `M` (Definitions 2.6.3 and 3.4.1) when a state supports it
-iff it is true at each of its worlds: a statement rather than a question. -/
-def TruthConditional : Prop := ∀ s : Finset W, support M φ s ↔ ∀ w ∈ s, support M φ {w}
+iff it is true at each of its worlds: a statement rather than a question. This is flatness
+(`Team.IsFlat`) of the support set. -/
+def TruthConditional : Prop := Team.IsFlat {s : Finset W | support M φ s}
 
-theorem truthConditional_atom (p : Atom) : TruthConditional M (.atom p) := fun s => by simp
+theorem truthConditional_atom (p : Atom) : TruthConditional M (.atom p) := Team.isFlat_flat _
 
 theorem truthConditional_bot : TruthConditional M (.bot : Formula Atom) := fun s => by
   simp [Finset.eq_empty_iff_forall_notMem]
 
-theorem truthConditional_nec : TruthConditional M (.nec φ) := fun s => by simp
+theorem truthConditional_nec : TruthConditional M (.nec φ) := Team.isFlat_flat _
 
-theorem truthConditional_ent : TruthConditional M (.ent φ) := fun s => by simp
+theorem truthConditional_ent : TruthConditional M (.ent φ) := Team.isFlat_flat _
 
 variable {M φ ψ}
+
+theorem TruthConditional.iff (h : TruthConditional M φ) :
+    support M φ s ↔ ∀ w ∈ s, support M φ {w} :=
+  h s
 
 theorem TruthConditional.support_iff (h : TruthConditional M φ) :
     support M φ s ↔ (↑s : Set W) ⊆ truthSet M φ :=
@@ -271,7 +277,8 @@ theorem TruthConditional.support_iff (h : TruthConditional M φ) :
 
 theorem TruthConditional.conj (hφ : TruthConditional M φ) (hψ : TruthConditional M ψ) :
     TruthConditional M (.conj φ ψ) := fun s => by
-  rw [support_conj, hφ s, hψ s]
+  show support M (.conj φ ψ) s ↔ ∀ w ∈ s, support M (.conj φ ψ) {w}
+  rw [support_conj, hφ.iff, hψ.iff]
   exact ⟨fun h w hw => ⟨h.1 w hw, h.2 w hw⟩,
     fun h => ⟨fun w hw => (h w hw).1, fun w hw => (h w hw).2⟩⟩
 
@@ -424,6 +431,7 @@ theorem truthConditional_iff_proposition_eq :
     · intro hs
       exact ⟨(Set.toFinite s).toFinset, by simp, (h _).2 fun w hw => hs (by simpa using hw)⟩
   · intro h s
+    show support M φ s ↔ ∀ w ∈ s, support M φ {w}
     rw [← coe_mem_proposition, h, Question.mem_ofSet]
     exact Iff.rfl
 
@@ -442,7 +450,7 @@ variable {M φ ψ}
 /-- Two statements that agree at every world agree at every state. -/
 theorem TruthConditional.iff_of_singleton (hφ : TruthConditional M φ) (hψ : TruthConditional M ψ)
     (h : ∀ w, support M φ {w} ↔ support M ψ {w}) : support M φ s ↔ support M ψ s := by
-  rw [hφ s, hψ s]
+  rw [hφ.iff, hψ.iff]
   exact forall₂_congr fun w _ => h w
 
 variable (M φ ψ)

@@ -115,13 +115,15 @@ theorem eval_iff_forall_realize (hNE : φ.NEFree) (b : Bool) (t : Finset W) :
     · simpa [eval, Realize] using ih hNE false t
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
-    · simp only [eval, ih₁ hNE.1, ih₂ hNE.2, Team.exists_splitsAs_forall_iff, Realize]
+    · simp only [eval, Team.mem_tensor, Set.mem_ofPred_eq, ih₁ hNE.1, ih₂ hNE.2,
+        Team.exists_splitsAs_forall_iff, Realize]
       simp [imp_iff_not_or]
     · simp [eval, ih₁ hNE.1, ih₂ hNE.2, Realize, forall_and]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
     · simp [eval, ih₁ hNE.1, ih₂ hNE.2, Realize, forall_and, not_or]
-    · simp only [eval, ih₁ hNE.1, ih₂ hNE.2, Team.exists_splitsAs_forall_iff, Realize]
+    · simp only [eval, Team.mem_tensor, Set.mem_ofPred_eq, ih₁ hNE.1, ih₂ hNE.2,
+        Team.exists_splitsAs_forall_iff, Realize]
       simp
   | poss ψ ih =>
     cases b

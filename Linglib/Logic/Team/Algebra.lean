@@ -51,9 +51,10 @@ directory. This substrate provides the closure predicates those theorems
 are stated in; formalised consumers so far are BSML, QBSML, MDL, MIL,
 InqML under `Logic/Modal/`.
 
-The shared abstraction is a `Definability` plus uniform-definability
-*lemma layer*, not a bundled `TeamLogic` class — no closure law is shared
-across cells. Refactor backward from concrete instances; do not extract
+The shared abstraction is a *lemma layer*, not a bundled `TeamLogic`
+class — no closure law is shared across cells: `Team/Operations.lean`
+defines the connectives as operations on team properties with their
+closure lemmas, and `Team/Definability.lean` the definable classes. Refactor backward from concrete instances; do not extract
 the abstraction forward (cf. the ≥ 3-systems rule). Full long-run shape,
 target tree, and dependency-ordered build phases:
 `Logic/Modal/README.md`.

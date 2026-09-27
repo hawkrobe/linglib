@@ -6,7 +6,7 @@ public import Linglib.Logic.Assignment
 public import Linglib.Logic.Modal.FirstOrder.Semantics
 public import Linglib.Core.ModelTheory.LanguageMap
 public import Linglib.Logic.Modal.FirstOrder.Semantics
-public import Linglib.Logic.Team.Algebra
+public import Linglib.Logic.Team.Operations
 public import Linglib.Logic.Bilateral.Defs
 
 /-!
@@ -41,6 +41,11 @@ by state non-emptiness.
 * The paper's requirement that all indices of a state share an assignment
   domain is not enforced at the type level; the state operations
   preserve it.
+* Each `eval` clause is an operation on team properties applied to the
+  support sets of the subformulas: the propositional and modal clauses are
+  those of `Team/Operations.lean` (`Team.flat`, `Team.tensor`, `Team.ne`),
+  the quantifier clauses `State.univ` and `State.exi` below. The closure
+  inductions of `QBSML/Properties.lean` are folds over their lemmas.
 -/
 
 @[expose] public section
@@ -237,6 +242,82 @@ theorem State.extendFunctional_filter_of_update_mem [Fintype Domain]
   · intro hj
     obtain ⟨i, hi, d, rfl⟩ := hpar j hj
     exact ⟨i, hi, d, Finset.mem_filter.mpr ⟨Finset.mem_univ d, hj⟩, rfl⟩
+
+/-! ### The quantifier clauses as operations on team properties
+
+The universal-extension clause is the preimage of a property along `s ↦ s[x]`, and the
+functional-extension clause asks for some functional, non-empty on the state, whose
+extension lies in the property. These are the operations the quantifier cases of the closure
+inductions in `QBSML/Properties.lean` consume, beside those of `Team/Operations.lean`. Union
+closure of the functional clause needs downward closure of the property, which is why
+QBSML's union closure is confined to the `NE`-free fragment. -/
+
+/-- The universal-extension clause: `s[x] ∈ P`. -/
+def State.univ [Fintype Domain] (x : Var) (P : Team.TeamProperty (Index W Var Domain)) :
+    Team.TeamProperty (Index W Var Domain) :=
+  (State.extendUniversal · x) ⁻¹' P
+
+/-- The functional-extension clause: `s[x/h] ∈ P` for some `h` non-empty on `s`. -/
+def State.exi (x : Var) (P : Team.TeamProperty (Index W Var Domain)) :
+    Team.TeamProperty (Index W Var Domain) :=
+  {s | ∃ h : Index W Var Domain → Finset Domain, (∀ i ∈ s, (h i).Nonempty) ∧
+    State.extendFunctional s x h ∈ P}
+
+section QuantifierClauses
+
+variable {x : Var} {P : Team.TeamProperty (Index W Var Domain)} {s : Finset (Index W Var Domain)}
+
+@[simp] theorem State.mem_univ [Fintype Domain] :
+    s ∈ State.univ x P ↔ State.extendUniversal s x ∈ P := Iff.rfl
+
+@[simp] theorem State.mem_exi :
+    s ∈ State.exi x P ↔ ∃ h : Index W Var Domain → Finset Domain,
+      (∀ i ∈ s, (h i).Nonempty) ∧ State.extendFunctional s x h ∈ P := Iff.rfl
+
+theorem State.isLowerSet_univ [Fintype Domain] (hP : IsLowerSet P) :
+    IsLowerSet (State.univ x P) :=
+  hP.preimage fun _ _ h ↦ State.extendUniversal_mono x h
+
+theorem State.supClosed_univ [Fintype Domain] (hP : SupClosed P) :
+    SupClosed (State.univ x P) :=
+  hP.preimage_of_map_union fun s t ↦ State.extendUniversal_union s t x
+
+theorem State.empty_mem_univ [Fintype Domain] (hP : ∅ ∈ P) : ∅ ∈ State.univ x P :=
+  Team.empty_mem_preimage hP (State.extendUniversal_empty x)
+
+theorem State.isLowerSet_exi (hP : IsLowerSet P) : IsLowerSet (State.exi x P) := by
+  rintro s t hts ⟨h, hne, hs⟩
+  exact ⟨h, fun i hi ↦ hne i (hts hi), hP (State.extendFunctional_mono x h hts) hs⟩
+
+/-- Union closure of the functional clause needs downward closure of `P`: the two
+    functionals are merged with `s`'s taking precedence, so the merged extension of
+    `s ∪ t` is the union of `s`'s extension with the extension of `t \ s`, a subteam of
+    `t`'s. -/
+theorem State.supClosed_exi (hP : IsLowerSet P) (hP' : SupClosed P) :
+    SupClosed (State.exi x P) := by
+  rintro s ⟨h_s, hne_s, hs⟩ t ⟨h_t, hne_t, ht⟩
+  classical
+  refine ⟨fun i ↦ if i ∈ s then h_s i else h_t i, fun i hi ↦ ?_, ?_⟩
+  · by_cases his : i ∈ s
+    · simpa [his] using hne_s i his
+    · simpa [his] using hne_t i ((Finset.mem_union.mp hi).resolve_left his)
+  · have eq1 : State.extendFunctional (s ∪ t) x (fun i ↦ if i ∈ s then h_s i else h_t i) =
+        State.extendFunctional s x h_s ∪ State.extendFunctional (t \ s) x h_t := by
+      rw [← Finset.union_sdiff_self_eq_union, State.extendFunctional_union]
+      congr 1
+      · unfold State.extendFunctional
+        exact Finset.biUnion_congr rfl fun i hi ↦ by simp [hi]
+      · unfold State.extendFunctional
+        exact Finset.biUnion_congr rfl fun i hi ↦ by simp [(Finset.mem_sdiff.mp hi).2]
+    show State.extendFunctional (s ∪ t) x _ ∈ P
+    rw [eq1]
+    exact hP' hs (hP (State.extendFunctional_mono x h_t Finset.sdiff_subset) ht)
+
+theorem State.empty_mem_exi (hP : ∅ ∈ P) : ∅ ∈ State.exi x P :=
+  ⟨fun _ ↦ ∅, fun _ hi ↦ absurd hi (Finset.notMem_empty _), by
+    rw [State.extendFunctional_empty]; exact hP⟩
+
+end QuantifierClauses
 
 end State
 
@@ -456,38 +537,32 @@ variable [Fintype Domain]
 def eval (M : Model W Domain Const Pred) :
     Bool → Formula Var Const Pred → Finset (Index W Var Domain) → Prop
   | true,  .pred P x, s =>
-      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ M.relInterp₁ (predSymb P) i.world d
+      s ∈ Team.flat fun i ↦ ∃ d, i.assign x = some d ∧ M.relInterp₁ (predSymb P) i.world d
   | false, .pred P x, s =>
-      ∀ i ∈ s, ∃ d, i.assign x = some d ∧ ¬ M.relInterp₁ (predSymb P) i.world d
+      s ∈ Team.flat fun i ↦ ∃ d, i.assign x = some d ∧ ¬ M.relInterp₁ (predSymb P) i.world d
   | true,  .predc P c, s =>
-      ∀ i ∈ s,
+      s ∈ Team.flat fun i ↦
         M.relInterp₁ (predSymb P) i.world (M.constInterp ((Language.monadic Pred).con c) i.world)
   | false, .predc P c, s =>
-      ∀ i ∈ s,
+      s ∈ Team.flat fun i ↦
         ¬ M.relInterp₁ (predSymb P) i.world (M.constInterp ((Language.monadic Pred).con c) i.world)
-  | true,  .ne, s => s.Nonempty
-  | false, .ne, s => s = ∅
+  | true,  .ne, s => s ∈ Team.ne
+  | false, .ne, s => s ∈ ({∅} : Team.TeamProperty (Index W Var Domain))
   | true,  .neg ψ, s => eval M false ψ s
   | false, .neg ψ, s => eval M true ψ s
   | true,  .conj φ ψ, s => eval M true φ s ∧ eval M true ψ s
-  | false, .conj φ ψ, s => ∃ t₁ t₂ : Finset (Index W Var Domain),
-      Team.splitsAs s t₁ t₂ ∧ eval M false φ t₁ ∧ eval M false ψ t₂
-  | true,  .disj φ ψ, s => ∃ t₁ t₂ : Finset (Index W Var Domain),
-      Team.splitsAs s t₁ t₂ ∧ eval M true φ t₁ ∧ eval M true ψ t₂
+  | false, .conj φ ψ, s => s ∈ Team.tensor {t | eval M false φ t} {t | eval M false ψ t}
+  | true,  .disj φ ψ, s => s ∈ Team.tensor {t | eval M true φ t} {t | eval M true ψ t}
   | false, .disj φ ψ, s => eval M false φ s ∧ eval M false ψ s
   | true,  .poss ψ, s =>
-      ∀ i ∈ s, ∃ X : Finset W, X ⊆ M.access i.world ∧ X.Nonempty ∧
-        eval M true ψ (State.modalLift X i.assign)
+      s ∈ Team.flat fun i ↦ ∃ X : Finset W, X ⊆ M.access i.world ∧ X.Nonempty ∧
+        State.modalLift X i.assign ∈ {t | eval M true ψ t}
   | false, .poss ψ, s =>
-      ∀ i ∈ s, eval M false ψ (State.modalLift (M.access i.world) i.assign)
-  | true,  .univ x ψ, s => eval M true ψ (State.extendUniversal s x)
-  | false, .univ x ψ, s =>
-      ∃ h : Index W Var Domain → Finset Domain, (∀ i ∈ s, (h i).Nonempty) ∧
-        eval M false ψ (State.extendFunctional s x h)
-  | true,  .exi x ψ, s =>
-      ∃ h : Index W Var Domain → Finset Domain, (∀ i ∈ s, (h i).Nonempty) ∧
-        eval M true ψ (State.extendFunctional s x h)
-  | false, .exi x ψ, s => eval M false ψ (State.extendUniversal s x)
+      s ∈ Team.flat fun i ↦ State.modalLift (M.access i.world) i.assign ∈ {t | eval M false ψ t}
+  | true,  .univ x ψ, s => s ∈ State.univ x {t | eval M true ψ t}
+  | false, .univ x ψ, s => s ∈ State.exi x {t | eval M false ψ t}
+  | true,  .exi x ψ, s => s ∈ State.exi x {t | eval M true ψ t}
+  | false, .exi x ψ, s => s ∈ State.univ x {t | eval M false ψ t}
 
 /-- Support: positive evaluation. -/
 abbrev support (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
