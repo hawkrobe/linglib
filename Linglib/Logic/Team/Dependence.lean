@@ -335,10 +335,9 @@ open Team in
     Composes `isLowerSet_support` (Lemma 4.2) and `support_empty` through the
     `Team/Definability.lean` bridge. The converse (every such property is
     MDL-definable) is the open half. -/
-theorem soundFor_downwardClosed_inter_empty (M : KripkeModel W Atom) :
-    SoundFor (support M) (downwardClosedProperties ∩ emptyTeamProperties) :=
-  Set.subset_inter (definableClass_subset (isLowerSet_support M))
-    (definableClass_subset (support_empty M))
+theorem definableClass_support_subset (M : KripkeModel W Atom) :
+    definableClass (support M) ⊆ {P | IsLowerSet P ∧ ∅ ∈ P} :=
+  definableClass_subset fun φ ↦ ⟨isLowerSet_support M φ, support_empty M φ⟩
 
 /-! ### Bisimulation invariance (Väänänen-style ◇)
 

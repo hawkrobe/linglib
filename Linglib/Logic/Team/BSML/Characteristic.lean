@@ -8,7 +8,7 @@ public import Linglib.Logic.Team.BSML.Bisimulation
 
 [aloni-anttila-yang-2024] [anttila-2025]
 
-The expressive-completeness converse for BSML (`expressiveCompleteness_converse`
+The expressive-completeness converse for BSML (`subset_definableClass_support`
 in `BSML/ExpressiveCompleteness.lean`) needs **characteristic formulas**: for
 each world `w` and depth `k`, an NE-free formula `χ_w^k` such that a singleton
 `{v}` supports it exactly when `v` is `k`-bisimilar to `w`. This file builds the
@@ -38,7 +38,7 @@ standard *classical* modal Hintikka characterisation.
 * Team characteristic formulas (`θ_s^k = ⋁_{w ∈ s} (χ_w^k ∧ NE)`,
   Definition 3.10 of [aloni-anttila-yang-2024]) and the convex,
   union-closed normal form that discharges
-  `expressiveCompleteness_converse`.
+  `subset_definableClass_support`.
 -/
 
 @[expose] public section

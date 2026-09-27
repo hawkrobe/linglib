@@ -73,25 +73,3 @@ instance [DecidableEq W] (R : W → Finset W) (t : Finset W) : Decidable (IsStat
   inferInstanceAs (Decidable (∀ w ∈ t, _))
 
 end Team
-
-namespace ModalLogic
-
-variable {W : Type*} {Atom : Type*}
-
-/-- `M` is indisputable on the team `t`: its accessibility is `Team.IsIndisputable` there. -/
-def KripkeModel.IsIndisputable (M : KripkeModel W Atom) (t : Finset W) : Prop :=
-  Team.IsIndisputable M.access t
-
-/-- `M` is state-based on the team `t`: its accessibility is `Team.IsStateBased` there. -/
-def KripkeModel.IsStateBased (M : KripkeModel W Atom) (t : Finset W) : Prop :=
-  Team.IsStateBased M.access t
-
-instance [DecidableEq W] (M : KripkeModel W Atom) (t : Finset W) :
-    Decidable (M.IsIndisputable t) :=
-  inferInstanceAs (Decidable (Team.IsIndisputable M.access t))
-
-instance [DecidableEq W] (M : KripkeModel W Atom) (t : Finset W) :
-    Decidable (M.IsStateBased t) :=
-  inferInstanceAs (Decidable (Team.IsStateBased M.access t))
-
-end ModalLogic

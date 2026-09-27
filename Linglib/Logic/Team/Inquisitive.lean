@@ -521,9 +521,8 @@ theorem not_supClosed_inqDisj_of_witness {p q : Atom} {w₁ w₂ : W}
 open Team in
 /-- InqML is sound for the downward-closed, empty-team cell of [anttila-2025]'s programme,
 which it shares with dependence logic. -/
-theorem soundFor_downwardClosed_inter_empty :
-    SoundFor (support M) (downwardClosedProperties ∩ emptyTeamProperties) :=
-  Set.subset_inter (definableClass_subset (isLowerSet_support M))
-    (definableClass_subset (support_empty M))
+theorem definableClass_support_subset :
+    definableClass (support M) ⊆ {P | IsLowerSet P ∧ ∅ ∈ P} :=
+  definableClass_subset fun φ ↦ ⟨isLowerSet_support M φ, support_empty M φ⟩
 
 end ModalLogic.Inquisitive

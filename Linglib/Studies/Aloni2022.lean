@@ -53,7 +53,7 @@ theorem witnesses_of_enrich_disj (hα : α.NEFree) (hβ : β.NEFree)
       support_of_support_enrich hβ h₂⟩⟩
 
 /-- Modal Disjunction (Fact 3) is `[α ∨ β]⁺ ⊨ ◇α ∧ ◇β` on a state-based `R`. -/
-theorem modalDisjunction (hα : α.NEFree) (hβ : β.NEFree) (hSB : M.IsStateBased t)
+theorem modalDisjunction (hα : α.NEFree) (hβ : β.NEFree) (hSB : Team.IsStateBased M.access t)
     (h : support M (enrich (.disj α β)) t) :
     support M (.poss α) t ∧ support M (.poss β) t :=
   have ⟨⟨s₁, hs₁, hne₁, h₁⟩, ⟨s₂, hs₂, hne₂, h₂⟩⟩ := witnesses_of_enrich_disj hα hβ h
@@ -79,7 +79,7 @@ theorem narrowScopeFC_dependent (hα : α.NEFree) (hβ : β.NEFree)
   narrowScopeFC hα ⟨hα, hβ⟩ h
 
 /-- Wide Scope FC (Fact 5) is `[◇α ∨ ◇β]⁺ ⊨ ◇α ∧ ◇β` on an indisputable `R`. -/
-theorem wideScopeFC (hα : α.NEFree) (hβ : β.NEFree) (hInd : M.IsIndisputable t)
+theorem wideScopeFC (hα : α.NEFree) (hβ : β.NEFree) (hInd : Team.IsIndisputable M.access t)
     (h : support M (enrich (.disj (.poss α) (.poss β))) t) :
     support M (.poss α) t ∧ support M (.poss β) t :=
   have ⟨⟨_, ht₁, ⟨w₁, hw₁⟩, h₁⟩, ⟨_, ht₂, ⟨w₂, hw₂⟩, h₂⟩⟩ :=
@@ -104,7 +104,7 @@ theorem doubleNegationFC (hα : α.NEFree) (hβ : β.NEFree)
 
 /-- Epistemic contradiction (§4.1) says that on a state-based `R`, `◇φ ∧ ¬φ` is supported
 only by `∅`, the sole team supporting the weak contradiction `⊥`. -/
-theorem epistemicContradiction (hSB : M.IsStateBased t)
+theorem epistemicContradiction (hSB : Team.IsStateBased M.access t)
     (h : support M (.conj (.poss φ) (.neg φ)) t) : t = ∅ :=
   Finset.eq_empty_of_forall_notMem fun w hw ↦
     have ⟨_, hs, ⟨_, hv⟩, hsupp⟩ := h.1 w hw
@@ -176,9 +176,9 @@ example : ¬ support propositional aOrB {.onlyA, .onlyB, .nothing} ∧
     ¬ support propositional (enrich aOrB) {.onlyA, .onlyB, .nothing} := by decide
 
 -- Figure 3: indisputability against state-basedness on `{w_a, w_b}`.
-example : fig3a.IsIndisputable state ∧ ¬ fig3a.IsStateBased state := by decide
-example : fig3b.IsStateBased state := by decide
-example : ¬ fig3c.IsIndisputable state := by decide
+example : Team.IsIndisputable fig3a.access state ∧ ¬ Team.IsStateBased fig3a.access state := by decide
+example : Team.IsStateBased fig3b.access state := by decide
+example : ¬ Team.IsIndisputable fig3c.access state := by decide
 
 -- §4.1 on Figure 3(b): `◇a` is supported but neither `a` (non-factivity) nor `¬a`
 -- is, so the epistemic contradiction `◇a ∧ ¬a` fails (`epistemicContradiction`).
@@ -194,9 +194,9 @@ example : support fig4b (enrich (.poss aOrB)) {.both} := by decide
 -- Figure 5: wide-scope FC fails (a) without enrichment on an indisputable `R` and
 -- (b) with enrichment on a non-indisputable `R`; (63b) is the locally enriched
 -- `◇[a]⁺ ∨ ◇[b]⁺` of the BSML◇ conjecture, refuted on the same pair.
-example : fig5a.IsIndisputable state ∧ support fig5a (.disj mayA mayB) state ∧
+example : Team.IsIndisputable fig5a.access state ∧ support fig5a (.disj mayA mayB) state ∧
     ¬ support fig5a mayA state := by decide
-example : ¬ fig5b.IsIndisputable state ∧ support fig5b (enrich (.disj mayA mayB)) state ∧
+example : ¬ Team.IsIndisputable fig5b.access state ∧ support fig5b (enrich (.disj mayA mayB)) state ∧
     ¬ support fig5b mayA state := by decide
 example : support fig5b (.disj (.poss (enrich (.atom .a))) (.poss (enrich (.atom .b)))) state := by
   decide

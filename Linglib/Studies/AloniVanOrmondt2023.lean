@@ -101,24 +101,24 @@ theorem classicality_univ (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
 
 /-- Universal access is indisputable on every state. -/
 theorem univAccessModel_indisputable (s : Finset (Index TwoAtomWorld QVar FCAtom)) :
-    univAccessModel.IsIndisputable s :=
+    Team.IsIndisputable univAccessModel.access (State.worldProj s) :=
   λ _ _ _ _ ↦ rfl
 
 /-- Universal access is state-based exactly on states whose world projection is
     everything — the epistemic reading (56) and (58) assume. -/
 theorem univAccessModel_stateBased_of_full (hfull : State.worldProj s = Finset.univ) :
-    univAccessModel.IsStateBased s :=
+    Team.IsStateBased univAccessModel.access (State.worldProj s) :=
   λ _ _ ↦ hfull.symm
 
 /-- A state of full world projection with the empty assignment. -/
 def fullState : Finset (Index TwoAtomWorld QVar FCAtom) :=
   Finset.univ.image (λ w ↦ (w, λ _ ↦ none))
 
-example : univAccessModel.IsStateBased fullState := by decide
+example : Team.IsStateBased univAccessModel.access (State.worldProj fullState) := by decide
 
 example :
-    ¬ univAccessModel.IsStateBased
-      ({(TwoAtomWorld.both, λ _ ↦ none)} : Finset (Index TwoAtomWorld QVar FCAtom)) := by
+    ¬ Team.IsStateBased univAccessModel.access (State.worldProj
+      ({(TwoAtomWorld.both, λ _ ↦ none)} : Finset (Index TwoAtomWorld QVar FCAtom))) := by
   decide
 
 /-! ### The results (56)–(61) -/
@@ -197,7 +197,8 @@ def fig14State : Finset (Index TwoAtomWorld QVar Fig14Atom) := {fig14Index}
 
 /-- The accessibility is state-based on the Fig. 14 state, so obviation is not an
     artefact of dropping the frame condition behind ignorance. -/
-theorem fig14_stateBased : fig14Model.IsStateBased fig14State := by decide
+theorem fig14_stateBased :
+    Team.IsStateBased fig14Model.access (State.worldProj fig14State) := by decide
 
 /-- Fig. 15: the universal extension splits into the `x/a` index supporting
     `[three(x)]⁺` and the `x/b` index supporting `[more(x)]⁺`. -/

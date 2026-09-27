@@ -11,16 +11,16 @@ public import Linglib.Logic.Team.BSML.Characteristic
 [anttila-2025] Chapter 3 (= [anttila-knudstorp-2025]) proves that BSML is
 **expressively complete** for the class of convex, union-closed,
 bounded-bisimulation-invariant modal team properties — solving the BSML
-expressive-power problem left open in [aloni-anttila-yang-2024]. In the `Team/Definability.lean` vocabulary this
-is `ExpressivelyCompleteFor (support M)` for the cell
-`convexProperties ∩ unionClosedProperties ∩ bisimClosedProperties M`.
+expressive-power problem left open in [aloni-anttila-yang-2024]. In the vocabulary of
+`Team/Definability.lean` this is `definableClass (support M) = {P | P.OrdConnected ∧
+SupClosed P ∧ BisimClosed M P}`.
 
 The theorem splits into two halves:
 
 * **Soundness** (`⟦BSML⟧ ⊆ cell`) — every definable property lies in the cell.
   Fully proved here, assembling the three closure pillars:
   `ordConnected_support` (convexity, Proposition 3.3.1), `supClosed_support`
-  (union closure), and `bisimClosed_definedBy` (Theorem 3.8 / bisimulation
+  (union closure), and `bisimClosed_support` (Theorem 3.8 / bisimulation
   invariance, `BSML/Bisimulation.lean`).
 * **Completeness** (`cell ⊆ ⟦BSML⟧`) — the converse: every property in the
   cell is BSML-definable, proved for finite atom types via the
@@ -30,13 +30,13 @@ The theorem splits into two halves:
 
 ## Main declarations
 
-* `BisimClosed M P`, `bisimClosedProperties M` — bounded-bisimulation closure of
-  a team property within `M` (the third soundness pillar as a closure cell).
+* `BisimClosed M P` — bounded-bisimulation closure of a team property within `M`.
 * `bisimInvariant_support` — Theorem 3.8 specialised to one model.
-* `bisimClosed_definedBy` — every BSML-definable property is bisim-closed.
-* `expressiveSoundness` — `⟦BSML⟧ ⊆` the convex/union-closed/bisim-closed cell.
-* `expressiveCompleteness_converse` — the converse.
-* `expressivelyComplete` — the headline equality.
+* `bisimClosed_support` — every BSML-definable property is bisim-closed.
+* `definableClass_support_subset` — `⟦BSML⟧ ⊆` the convex, union-closed, bisim-closed
+  properties.
+* `subset_definableClass_support` — the converse.
+* `definableClass_support_eq` — the headline equality.
 -/
 
 @[expose] public section
@@ -56,10 +56,6 @@ variable {W : Type*} [DecidableEq W] {Atom : Type*}
 def BisimClosed (M : KripkeModel W Atom) (P : TeamProperty W) : Prop :=
   ∃ k : ℕ, ∀ s s' : Finset W, StateBisim k M s M s' → (s ∈ P ↔ s' ∈ P)
 
-/-- The class of bounded-bisimulation-closed team properties of `M`. -/
-def bisimClosedProperties (M : KripkeModel W Atom) : Set (TeamProperty W) :=
-  { P | BisimClosed M P }
-
 /-- **BSML support is bounded-bisimulation invariant within a model**: if
     `s ⇌_k s'` and `k ≥ φ.modalDepth`, then `s` and `s'` agree on `φ`. Immediate
     from Theorem 3.8 (`bisim_invariant_eval`) at `M' := M`. -/
@@ -70,22 +66,19 @@ theorem bisimInvariant_support (M : KripkeModel W Atom) (φ : Formula Atom)
 
 /-- Every BSML-definable team property is bounded-bisimulation-closed, with
     witnessing depth the formula's modal depth. -/
-theorem bisimClosed_definedBy (M : KripkeModel W Atom) (φ : Formula Atom) :
-    BisimClosed M (definedBy (support M) φ) :=
+theorem bisimClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
+    BisimClosed M {t | support M φ t} :=
   ⟨φ.modalDepth, fun _ _ h => bisimInvariant_support M φ le_rfl h⟩
 
 /-! ### Expressive completeness -/
 
 /-- **Soundness half** ([anttila-2025] Ch 3): every BSML-definable team
     property is convex, union-closed, and bounded-bisimulation-closed. Assembles
-    `ordConnected_support`, `supClosed_support`, and `bisimClosed_definedBy`. -/
-theorem expressiveSoundness (M : KripkeModel W Atom) :
-    definableClass (support M) ⊆
-      convexProperties ∩ unionClosedProperties ∩ bisimClosedProperties M := by
-  intro P hP
-  simp only [mem_definableClass] at hP
-  obtain ⟨φ, rfl⟩ := hP
-  exact ⟨⟨ordConnected_support M φ, supClosed_support M φ⟩, bisimClosed_definedBy M φ⟩
+    `ordConnected_support`, `supClosed_support`, and `bisimClosed_support`. -/
+theorem definableClass_support_subset (M : KripkeModel W Atom) :
+    definableClass (support M) ⊆ {P | P.OrdConnected ∧ SupClosed P ∧ BisimClosed M P} :=
+  definableClass_subset fun φ ↦
+    ⟨ordConnected_support M φ, supClosed_support M φ, bisimClosed_support M φ⟩
 
 /-- **Completeness half** ([anttila-2025] Ch 3 — the hard direction, the
     BSML expressive-power problem left open by [aloni-anttila-yang-2024] —
@@ -101,18 +94,14 @@ theorem expressiveSoundness (M : KripkeModel W Atom) :
     which yields a team `s₀ ∈ P` whose classes `t` covers, and `s₀ ∪ (U`
     restricted to `t`'s classes`)` lies in `P` by convexity between `s₀`
     and `U` and is bisimilar to `t` — so `t ∈ P` by bisimulation closure. -/
-theorem expressiveCompleteness_converse [Fintype W] [Fintype Atom] [Inhabited Atom]
+theorem subset_definableClass_support [Fintype W] [Fintype Atom] [Inhabited Atom]
     (M : KripkeModel W Atom) :
-    convexProperties ∩ unionClosedProperties ∩ bisimClosedProperties M ⊆
-      definableClass (support M) := by
+    {P | P.OrdConnected ∧ SupClosed P ∧ BisimClosed M P} ⊆ definableClass (support M) := by
   classical
-  rintro P ⟨⟨hconv, hsup⟩, hbc⟩
-  obtain ⟨k, hbisim⟩ := hbc
-  have hconv' : Set.OrdConnected P := hconv
-  have hsup' : SupClosed P := hsup
+  rintro P ⟨hconv', hsup', k, hbisim⟩
   rw [mem_definableClass]
   rcases Set.eq_empty_or_nonempty P with rfl | hP
-  · refine ⟨.conj falsum .ne, ?_⟩
+  · refine ⟨.conj falsum .ne, Eq.symm ?_⟩
     ext t
     constructor
     · exact fun h => h.elim
@@ -130,7 +119,7 @@ theorem expressiveCompleteness_converse [Fintype W] [Fintype Atom] [Inhabited At
     set δ : Finset W → Formula Atom :=
       fun S => bigDisj (S.toList.map (charFormula M k)) with hδdef
     refine ⟨.conj (δ U)
-      (bigConj (𝒯.toList.map (fun T => .disj (.conj (δ T) .ne) (δ U)))), ?_⟩
+      (bigConj (𝒯.toList.map (fun T => .disj (.conj (δ T) .ne) (δ U)))), Eq.symm ?_⟩
     ext t
     constructor
     · intro htP
@@ -192,10 +181,9 @@ theorem expressiveCompleteness_converse [Fintype W] [Fintype Atom] [Inhabited At
 /-- **BSML is expressively complete** for the convex, union-closed,
     bounded-bisimulation-closed team properties ([anttila-2025] Ch 3, in
     within-model finite-atom form). -/
-theorem expressivelyComplete [Fintype W] [Fintype Atom] [Inhabited Atom]
+theorem definableClass_support_eq [Fintype W] [Fintype Atom] [Inhabited Atom]
     (M : KripkeModel W Atom) :
-    ExpressivelyCompleteFor (support M)
-      (convexProperties ∩ unionClosedProperties ∩ bisimClosedProperties M) :=
-  Set.Subset.antisymm (expressiveSoundness M) (expressiveCompleteness_converse M)
+    definableClass (support M) = {P | P.OrdConnected ∧ SupClosed P ∧ BisimClosed M P} :=
+  (definableClass_support_subset M).antisymm (subset_definableClass_support M)
 
 end BSML

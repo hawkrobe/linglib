@@ -186,7 +186,7 @@ theorem boxExiFC {x : Var} (hα : α.NEFree) (hβ : β.NEFree)
 when `R` is state-based, by transplanting the substate's worlds to every index. This is sound
 only because constant atoms are assignment-invariant. -/
 private theorem poss_predc_of_stateBased {P : Pred} {c : Const}
-    {t : Finset (Index W Var Domain)} (hSB : M.IsStateBased s) (hts : t ⊆ s)
+    {t : Finset (Index W Var Domain)} (hSB : IsStateBased M.access (State.worldProj s)) (hts : t ⊆ s)
     (htne : t.Nonempty) (h : support M (.predc P c) t) :
     support M (.poss (.predc P c)) s := by
   intro i hi
@@ -202,7 +202,7 @@ private theorem poss_predc_of_stateBased {P : Pred} {c : Const}
 /-- Ignorance (Fact 3) is `[Pc₁ ∨ Qc₂]⁺ ⊨ ◇Pc₁ ∧ ◇Qc₂` on a state-based `R`. It is stated
 for constant atoms, as in the paper's `Pa ∨ Pb`, since the transplant argument needs
 assignment-invariance and fails with a free variable in place of the constant. -/
-theorem ignorance {P Q : Pred} {c₁ c₂ : Const} (hSB : M.IsStateBased s)
+theorem ignorance {P Q : Pred} {c₁ c₂ : Const} (hSB : IsStateBased M.access (State.worldProj s))
     (h : support M
       (Formula.enrich (.disj (.predc P c₁) (.predc Q c₂))) s) :
     support M (.poss (.predc P c₁)) s ∧
@@ -269,7 +269,7 @@ the constant functional extension `s[x/d]` witnesses the existential, and state-
 `i₀.world` in every index's accessible set, so `{i₀.world}` witnesses each diamond. -/
 private theorem exi_poss_atom_of_subset_extendUniversal
     {P : Pred} {x : Var} {t : Finset (Index W Var Domain)}
-    (hSB : M.IsStateBased s)
+    (hSB : IsStateBased M.access (State.worldProj s))
     (htsub : t ⊆ State.extendUniversal s x) (htne : t.Nonempty)
     (hsupp : support M (.pred P x) t) :
     support M (.exi x (.poss (.pred P x))) s := by
@@ -307,7 +307,7 @@ private theorem exi_poss_atom_of_subset_extendUniversal
 /-- Epistemic distribution (Fact 6) is `[∀x(Px ∨ Qx)]⁺ ⊨ ∃x◇Px ∧ ∃x◇Qx` on a state-based
 `R`. It is stated for atoms, as in the paper, since the proof evaluates the atom pointwise at
 a single transplanted world. -/
-theorem distributionEpi {P Q : Pred} {x : Var} (hSB : M.IsStateBased s)
+theorem distributionEpi {P Q : Pred} {x : Var} (hSB : IsStateBased M.access (State.worldProj s))
     (h : support M
       (Formula.enrich (.univ x (.disj (.pred P x) (.pred Q x)))) s) :
     support M (.exi x (.poss (.pred P x))) s ∧
