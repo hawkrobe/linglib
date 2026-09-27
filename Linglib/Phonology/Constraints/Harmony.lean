@@ -8,28 +8,35 @@ module
 public import Linglib.Phonology.Constraints.Defs
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Linglib.Core.LinearAlgebra.Matrix.DotProduct
 
 /-!
 # Harmony evaluation
 
-Evaluation and order lemmas for `Constraints.harmonyScore` and
-`Constraints.weightedViolations`.
+This file proves evaluation and order lemmas for `Constraints.harmonyScore` and
+`Constraints.weightedViolations`. Harmony is additive over concatenated and jointly evaluated
+constraint sets, so constraint summation is innocuous for it, and with non-negative weights a
+candidate that incurs no more violations than another on every constraint has at least its
+harmony, which is harmonic bounding.
 
 ## Main results
 
-* `weightedViolations_cons`, `harmonyScore_cons`: `@[simp]` cons-recursion
-  evaluating harmony on literal grammars `![C₀, …]`, `![w₀, …]`.
+* `weightedViolations_cons`, `harmonyScore_cons`: `@[simp]` cons-recursion evaluating harmony on
+  literal grammars `![C₀, …]`, `![w₀, …]`.
 * `harmonyScore_congr`: harmony depends only on the violation profile.
-* `harmonyScore_append`, `harmonyScore_joint`: harmony is additive over a
-  concatenated constraint set and, for a jointly evaluated one, over the
-  mappings — constraint summation is innocuous for harmony
-  ([magri-storme-2021]).
-* `weightedViolations_mono`: for `0 ≤ w`, the weighted violation sum is
-  monotone in the violation profile.
-* `harmonyScore_le_of_forall_le`, `harmonyDominates_of_lt`: *harmonic
-  bounding* — a Pareto-dominant candidate has at least, and given a strict
-  advantage on a positively weighted constraint strictly greater, harmony
-  ([prince-smolensky-1993]).
+* `harmonyScore_append`, `harmonyScore_joint`: harmony is additive over a concatenated constraint
+  set and, for a jointly evaluated one, over the mappings.
+* `weightedViolations_mono`: for `0 ≤ w`, the weighted violation sum is monotone in the violation
+  profile.
+* `harmonyScore_le_of_forall_le`, `harmonyDominates_of_lt`: a Pareto-dominant candidate has at
+  least, and given a strict advantage on a positively weighted constraint strictly greater,
+  harmony.
+
+## References
+
+* [A. Prince and P. Smolensky, *Optimality Theory: Constraint Interaction in Generative Grammar*
+  (1993)][prince-smolensky-1993]
+* [G. Magri and B. Storme, *Constraint Summation in Phonological Theory* (2021)][magri-storme-2021]
 -/
 
 @[expose] public section
@@ -95,28 +102,24 @@ variable {con : CON C n} {w : Fin n → ℝ} {a b : C}
 /-- For non-negative weights, the weighted violation sum is monotone in the
 violation profile. -/
 theorem weightedViolations_mono (hw : 0 ≤ w) : Monotone (weightedViolations w) :=
-  fun _ _ h => Finset.sum_le_sum fun i _ =>
-    mul_le_mul_of_nonneg_left (by exact_mod_cast h i) (hw i)
+  fun _ _ h => dotProduct_le_dotProduct_of_nonneg_left (fun i => Nat.cast_le.2 (h i)) hw
 
 /-- Pointwise `≤` with a strict advantage on a positively weighted coordinate
 gives a strictly smaller weighted violation sum. -/
 theorem weightedViolations_lt_weightedViolations {va vb : Fin n → ℕ} (hw : 0 ≤ w)
     (hle : va ≤ vb) (hlt : ∃ i, 0 < w i ∧ va i < vb i) :
-    weightedViolations w va < weightedViolations w vb := by
-  obtain ⟨j, hwj, hvj⟩ := hlt
-  exact Finset.sum_lt_sum
-    (fun i _ => mul_le_mul_of_nonneg_left (by exact_mod_cast hle i) (hw i))
-    ⟨j, Finset.mem_univ j, mul_lt_mul_of_pos_left (by exact_mod_cast hvj) hwj⟩
+    weightedViolations w va < weightedViolations w vb :=
+  dotProduct_lt_dotProduct_of_nonneg_left (fun i => Nat.cast_le.2 (hle i)) hw
+    (hlt.imp fun _ h => ⟨h.1, Nat.cast_lt.2 h.2⟩)
 
-/-- Harmonic bounding: with non-negative weights, a candidate incurring no more
-violations than `b` on every constraint has at least `b`'s harmony
-([prince-smolensky-1993]). -/
+/-- With non-negative weights, a candidate incurring no more violations than `b` on every
+constraint has at least `b`'s harmony, which is harmonic bounding ([prince-smolensky-1993]). -/
 theorem harmonyScore_le_of_forall_le (hw : 0 ≤ w) (h : ∀ i, con i a ≤ con i b) :
     harmonyScore con w b ≤ harmonyScore con w a :=
   neg_le_neg (weightedViolations_mono hw h)
 
-/-- Strict harmonic bounding: strictly fewer violations on some positively
-weighted constraint gives strictly greater harmony. -/
+/-- Strictly fewer violations on some positively weighted constraint give strictly greater
+harmony. -/
 theorem harmonyDominates_of_lt (hw : 0 ≤ w) (hle : ∀ i, con i a ≤ con i b)
     (hlt : ∃ i, 0 < w i ∧ con i a < con i b) :
     harmonyDominates con w a b :=

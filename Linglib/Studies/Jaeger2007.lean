@@ -8,29 +8,24 @@ public import Mathlib.Basic.Sign.Basic
 /-!
 # Jäger (2007): Maximum Entropy Models and Stochastic Optimality Theory
 
-This file formalizes Jäger's demonstration that the Gradual Learning Algorithm of Boersma for
-Stochastic Optimality Theory is Stochastic Gradient Ascent on the log-likelihood of a maximum
-entropy model of the kind Goldwater and Johnson propose. The GLA
-raises the rank of a constraint by the plasticity times the sign of the excess of a sampled
-hypothesis's violations over the observation's, Section 2, which on binary constraints is the
-plain excess (`glaSign_eq_glaUpdate`); its expected adjustment is the plasticity times the excess
-of the expected violations over the observed, (1) (`expected_glaUpdate`), and the learner is at
-rest exactly when the two agree (`expected_glaUpdate_eq_self_iff`), the convergence criterion of
-Section 4. The per-weight gradient of the log-likelihood of an observation under the log-linear
-model is the observed feature less its expectation, (2) (`hasDerivAt_log_gjProb_update`), so the
-GLA step is the stochastic gradient step once violations are read as non-positive features
-(`gla_eq_sga`); the log-likelihood is concave
-(`GoldwaterJohnson2003.concaveOn_log_gjProb_update`), so the maximum entropy learner reaches its
-global maximum, the guarantee Stochastic OT lacks. Section 5 reruns the acquisition simulation of
-Boersma and Levelt over the five syllable-structure constraints (`con`): a ranking produces an
-input faithfully exactly when every markedness constraint the input violates is ranked below FAITH
-(`faithful_iff`), so the stages at which FAITH overtakes the markedness constraints one by one,
-from *CODA to *COMPLEXONSET, produce the syllable types in the nested order CV, CVC, {V, VC},
-{CVCC, VCC}, {CCV, CCVC, CCVCC} (`produced_stages`); and a learner producing CV, the initial state,
-lowers each markedness rank by the plasticity times the observation's violations
-(`initial_glaUpdate`), so over the corpus of Table 1 the ranks fall in the order of their violation
-rates, *CODA first and *COMPLEXONSET last (`corpusRate_order`), the order in which the simulation
-has FAITH overtake them.
+This file formalizes Jäger's result that Boersma's Gradual Learning Algorithm (GLA) for
+Stochastic Optimality Theory is stochastic gradient ascent on the log-likelihood of a maximum
+entropy model of the kind Goldwater and Johnson propose. The expected GLA adjustment is the
+plasticity times the excess of the expected violations over the observed, which is the gradient
+of the log-likelihood once violations are read as non-positive features. Since that
+log-likelihood is concave, the maximum entropy learner reaches its global maximum, the guarantee
+Stochastic OT lacks. The file also reruns Boersma and Levelt's acquisition simulation over five
+syllable-structure constraints.
+
+## Main results
+
+* `expected_glaUpdate`, `expected_glaUpdate_eq_self_iff`: the expected GLA adjustment, which
+  vanishes exactly when the expected and observed violations agree.
+* `gla_eq_sga`: the GLA step is the stochastic gradient step of the maximum entropy model.
+* `produced_stages`: as FAITH overtakes the markedness constraints one by one, the syllable types
+  are produced in the nested order CV, CVC, {V, VC}, {CVCC, VCC}, {CCV, CCVC, CCVCC}.
+* `corpusRate_order`: over the corpus of Table 1 the markedness ranks fall in the order of their
+  violation rates, *CODA first and *COMPLEXONSET last.
 
 ## Implementation notes
 
@@ -43,16 +38,17 @@ has FAITH overtake them.
 
 ## References
 
-* [jaeger-2007]
-* [boersma-1998]
-* [goldwater-johnson-2003]
+* [G. Jäger, *Maximum Entropy Models and Stochastic Optimality Theory* (2007)][jaeger-2007]
+* [P. Boersma, *Functional Phonology* (1998)][boersma-1998]
+* [S. Goldwater and M. Johnson, *Learning OT Constraint Rankings Using a Maximum Entropy Model*
+  (2003)][goldwater-johnson-2003]
 -/
 
 @[expose] public section
 
 namespace Jaeger2007
 
-open Core Constraints OptimalityTheory Finset Real Data.Examples GoldwaterJohnson2003
+open Constraints OptimalityTheory Finset Real Data.Examples GoldwaterJohnson2003
 
 /-! ### The Gradual Learning Algorithm as Stochastic Gradient Ascent -/
 

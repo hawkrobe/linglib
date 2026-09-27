@@ -202,8 +202,6 @@ import Linglib.Core.Data.UnorderedTree.Basic
 import Linglib.Core.Order.Bilattice.Kleene
 import Linglib.Logic.Trivalent.Prop3
 import Linglib.Logic.Trivalent.Propositional
-import Linglib.Core.Optimization.Linearization
-import Linglib.Core.Optimization.PermSubsetCombinatorics
 import Linglib.Core.Order.AllenRelation
 import Linglib.Core.Order.Antichain
 import Linglib.Core.Order.Argmax

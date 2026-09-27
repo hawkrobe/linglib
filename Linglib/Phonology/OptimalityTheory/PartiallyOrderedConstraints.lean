@@ -3,88 +3,82 @@ module
 public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 public import Linglib.Phonology.OptimalityTheory.Antimatroid
 public import Linglib.Phonology.OptimalityTheory.Grammar
-public import Linglib.Core.Optimization.PermSubsetCombinatorics
+public import Linglib.Core.GroupTheory.Perm.MinOn
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Data.Prod.Basic
 public import Mathlib.Order.Extension.Linear
 public import Mathlib.Order.Preorder.Finite
 
 /-!
-# Partially Ordered Constraints (POC)
+# Partially ordered constraints
 
-A POC grammar is a partial order on the constraint set ([anttila-1997];
-[kiparsky-1993b]) — represented as mathlib represents orders-as-data
-(`extend_partialOrder`): a bare relation `r : Fin n → Fin n → Prop` with
-`[IsPartialOrder (Fin n) r]`, and `[DecidableRel r]` where counting needs it.
-Each evaluation samples a total order consistent with the partial order — a
-linear extension — and the OT optimum under that ranking is the output, so a
-single grammar induces a distribution over outputs, uniform over consistent
-linear extensions. The load-bearing identities are division-free cardinality
-equations (`sum_card_filter_picksAt` here, the head-fiber counting in
-`Core.Optimization.PermSubsetCombinatorics`); `winProb` and its rate
-theorems are a ℚ veneer over them.
+This file defines the partially ordered constraints (POC) model of variation of Kiparsky and
+Anttila. A POC grammar is a partial order on the constraint set, and each evaluation samples a
+total order consistent with it, a linear extension, whose OT optimum is the output. A single
+grammar therefore induces a distribution over outputs, uniform over its consistent linear
+extensions. The central identities are division-free cardinality equations, and `winProb` and its
+rate theorems restate them over `ℚ`.
 
 ## Main definitions
 
-- Grammars: `Eq` (the discrete grammar — no rankings), `Ranking.toRel σ` (the
-  total order a ranking induces), and `stratified stratumOf inner`
-  (mutually-ranked strata refined by an inner order —
-  [tesar-smolensky-1995]'s Stratified Domination Hierarchies — defined as
-  mathlib's `Prod.Lex` pulled back along `a ↦ (stratumOf a, a)`, characterized
-  by `stratified_iff`).
-- `IsConsistent r σ`: σ is a linear extension of `r`, defined as containment
-  `r ≤ σ.toRel` in the pointwise lattice of relations.
-  `consistentTotalOrders r` is the (nonempty, by Szpilrajn) `Finset` of them.
-- `winProb cands vp r i o`: the probability that sampling under `r` selects
-  output `o` for input `i` — a genuine distribution (`winProb_nonneg`,
-  `winProb_le_one`, `sum_winProb_eq_one`).
-- `active vp i o o'` / `favoring vp i o o'`: the constraints distinguishing a
-  candidate pair, and those preferring `o`.
+* `stratified stratumOf inner`: Tesar and Smolensky's stratified domination hierarchies, pulled
+  back from mathlib's `Prod.Lex` along `a ↦ (stratumOf a, a)`. Equality is the discrete grammar,
+  with no ranking imposed.
+* `IsConsistent r σ`: the ranking `σ` is a linear extension of `r`, that is, `r ≤ σ.toRel`.
+* `consistentTotalOrders r`: the `Finset` of linear extensions of `r`, nonempty by Szpilrajn.
+* `toGrammar`, `orderIdealAntimatroid`: a POC grammar as a `Grammar`, and its order-ideal
+  antimatroid.
+* `winProb cands vp r i o`: the probability that sampling under `r` selects output `o` for input
+  `i`.
+* `active vp i o o'`, `favoring vp i o o'`: the constraints distinguishing a candidate pair, and
+  those preferring `o`.
 
-## Main statements
+## Main results
 
-- `consistentTotalOrders_eq_linearExtensions`: POC's linear extensions are the
-  ERC ones — the simple-ERC (Hasse-edge) encoding `toERCs` identifies
-  `consistentTotalOrders` with `ERC.linearExtensions`
-  ([merchant-riggle-2016]; [prince-2002]). `toGrammar` routes POC through the
-  `Grammar` hub, and `orderIdealAntimatroid` realizes the Birkhoff correspondence
-  with order-ideal antimatroids ([dilworth-1940]).
-- `winProb` produces intermediate frequencies (e.g. [coetzee-pater-2011]'s
-  8/24 vs 12/24 t/d-deletion rates) that no single ranking reproduces;
-  categorically, partial orders add nothing over OT
-  (`RealizationProblem.isOTRealizable_iff_isPartialOrderRealizable` in
-  `HarmonicGrammar.Expressivity`).
-- `card_filter_picksAt_discrete_binary` / `card_filter_picksAt_stratified_binary`:
-  closed-form win counts for binary competitions, with `winProb_discrete_binary_rate`
-  / `winProb_stratified_binary_rate` the rates. A ranking is decided by its
-  earliest active constraint (`picksAt_binary_iff_head_mem_favoring`), so
-  `chosen` wins at rate `|favoring ∩ active| / |active|` — restricted to the
-  deciding stratum in the stratified case — with no enumeration of rankings.
-- `winProb_stratified_eq_one`: a candidate that dominates every rival at the
-  deciding stratum is the categorical output.
+* `consistentTotalOrders_eq_linearExtensions`: the linear extensions of a POC grammar are those
+  of its simple ERC encoding `toERCs`.
+* `sum_winProb_eq_one`: `winProb` is a probability distribution, which produces intermediate
+  frequencies, such as Coetzee and Pater's t/d-deletion rates, that no single ranking reproduces.
+* `picksAt_binary_iff_exists_favoring_isMinOn`: a binary competition is decided by its
+  σ-earliest active constraint.
+* `winProb_discrete_binary_rate`, `winProb_stratified_binary_rate`: `chosen` wins at rate
+  `|favoring ∩ active| / |active|`, restricted to the deciding stratum in the stratified case.
+* `winProb_stratified_eq_one`: a candidate that dominates every rival at the deciding stratum is
+  the categorical output.
 
 ## Implementation notes
 
-Grammars are unbundled relations, never `PartialOrder (Fin n)` values: a
-class-typed binder would become a local instance and capture the `≤`/`<`
-notation that must keep meaning `Fin n`'s positional order. This is also
-mathlib's own idiom for orders treated as data (Szpilrajn's
-`extend_partialOrder`).
+Grammars are unbundled relations `r : Fin n → Fin n → Prop` with `[IsPartialOrder (Fin n) r]`,
+never `PartialOrder (Fin n)` values, since a class-typed binder would become a local instance and
+capture the `≤` and `<` notation that must keep meaning the positional order of `Fin n`. This is
+mathlib's own idiom for orders treated as data (Szpilrajn's `extend_partialOrder`).
+
+## References
+
+* [P. Kiparsky, *An OT Perspective on Phonological Variation* (1993)][kiparsky-1993b]
+* [A. Anttila, *Deriving Variation from Grammar* (1997)][anttila-1997]
+* [B. Tesar and P. Smolensky, *The Learnability of Optimality Theory* (1995)][tesar-smolensky-1995]
+* [A. Prince, *Entailed Ranking Arguments* (2002)][prince-2002]
+* [N. Merchant and J. Riggle, *OT grammars, beyond partial orders: ERC sets and antimatroids*
+  (2016)][merchant-riggle-2016]
+* [R. P. Dilworth, *Lattices with unique irreducible decompositions* (1940)][dilworth-1940]
+* [A. W. Coetzee and J. Pater, *The Place of Variation in Phonological Theory*
+  (2011)][coetzee-pater-2011]
 -/
 
 @[expose] public section
 
 namespace OptimalityTheory
 
-open Core.Optimization Finset
+open Finset
 
 variable {n : ℕ}
 
 /-! ### Grammars and their linear extensions -/
 
-/-- Equality is a partial order — the discrete order, relating nothing beyond
-    reflexivity. As a POC grammar it is [anttila-1997]'s "no ranking imposed"
-    baseline: every permutation is a consistent linear extension. -/
+/-- Equality is the discrete partial order, relating nothing beyond reflexivity. As a POC
+    grammar it is [anttila-1997]'s "no ranking imposed" baseline, of which every permutation is
+    a consistent linear extension. -/
 instance {α : Type*} : IsPartialOrder α (· = ·) where
   refl _ := rfl
   trans _ _ _ := Eq.trans
@@ -100,7 +94,7 @@ instance (r : Fin n → Fin n → Prop) [DecidableRel r] (σ : Ranking n) :
     Decidable (IsConsistent r σ) :=
   decidable_of_iff (∀ a b, r a b → σ.symm a ≤ σ.symm b) Iff.rfl
 
-/-- The (decidable, finite) set of linear extensions of `r`. -/
+/-- `consistentTotalOrders r` is the finite set of linear extensions of `r`. -/
 def consistentTotalOrders (r : Fin n → Fin n → Prop) [DecidableRel r] :
     Finset (Ranking n) :=
   Finset.univ.filter (IsConsistent r)
@@ -111,15 +105,15 @@ theorem mem_consistentTotalOrders {r : Fin n → Fin n → Prop} [DecidableRel r
     σ ∈ consistentTotalOrders r ↔ IsConsistent r σ := by
   simp [consistentTotalOrders]
 
-/-- Consistency transports along constraint relabeling: `g * σ` extends `r` iff
-    `σ` extends the `g`-pullback of `r`. -/
+/-- The ranking `g * σ` extends `r` iff `σ` extends the `g`-pullback of `r`, so consistency
+    transports along constraint relabeling. -/
 theorem isConsistent_mul_iff {r : Fin n → Fin n → Prop} {g σ : Ranking n} :
     IsConsistent r (g * σ) ↔ IsConsistent (fun a b => r (g a) (g b)) σ :=
   ⟨fun h a b hab => by simpa using h (g a) (g b) hab,
    fun h a b hab => by simpa using h (g⁻¹ a) (g⁻¹ b) (by simpa using hab)⟩
 
-/-- The linear extensions of a grammar are closed under its symmetries: a
-    relabeling that preserves `r` acts on the consistent rankings. -/
+/-- The linear extensions of a grammar are closed under its symmetries, since a relabeling that
+    preserves `r` acts on the consistent rankings. -/
 theorem IsConsistent.mul {r : Fin n → Fin n → Prop} {g σ : Ranking n}
     (hg : ∀ a b, r (g a) (g b) ↔ r a b) (hσ : IsConsistent r σ) :
     IsConsistent r (g * σ) :=
@@ -150,9 +144,9 @@ theorem consistentTotalOrders_toRel (σ : Ranking n) :
 
 /-! ### Szpilrajn — every grammar has a consistent linear extension -/
 
-/-- Every grammar has a consistent linear extension: Szpilrajn
-    (`extend_partialOrder`) extends `r` to a linear order, which is some
-    ranking's induced order (`Ranking.exists_toRel_eq`). -/
+/-- Every grammar has a consistent linear extension, since Szpilrajn's theorem
+    (`extend_partialOrder`) extends `r` to a linear order, which is the induced order of some
+    ranking (`Ranking.exists_toRel_eq`). -/
 theorem exists_isConsistent (r : Fin n → Fin n → Prop)
     [IsPartialOrder (Fin n) r] :
     ∃ σ : Ranking n, IsConsistent r σ := by
@@ -316,7 +310,7 @@ theorem toERCs_isSimple_or_isTrivial :
   obtain ⟨a, b, _, rfl⟩ := mem_toERCs.mp hα
   exact simpleERC_isSimple_or_isTrivial a b
 
-/-- `toERCs r` is consistent: any linear extension of `r` satisfies it. -/
+/-- Some linear extension of `r` satisfies `toERCs r`, so it is consistent. -/
 theorem toERCs_consistent : (ERC.linearExtensions (toERCs r)).Nonempty := by
   obtain ⟨σ, hσ⟩ := exists_isConsistent r
   exact ⟨σ, ERC.mem_linearExtensions.mpr (satisfiedBy_toERCs.mpr hσ)⟩
@@ -380,16 +374,15 @@ variable {Input Output : Type*}
 variable {cands : Input → Finset Output} {vp : Input → Output → Fin n → ℕ}
   {r : Fin n → Fin n → Prop} {σ : Ranking n} {i : Input} {o o' chosen other : Output}
 
-/-- The constraints **active** on the candidate pair `o, o'` at input `i` —
-    those assigning the two candidates different violation counts
-    ([anttila-1997]'s decisive constraints). Inactive constraints cannot
-    affect the competition. -/
+/-- The constraints **active** on the candidate pair `o, o'` at input `i` are those assigning the
+    two candidates different violation counts ([anttila-1997]'s decisive constraints). Inactive
+    constraints cannot affect the competition. -/
 def active (vp : Input → Output → Fin n → ℕ) (i : Input) (o o' : Output) :
     Finset (Fin n) :=
   Finset.univ.filter fun c => vp i o c ≠ vp i o' c
 
-/-- The constraints **favoring** `o` over `o'` at input `i` — those assigning
-    `o` strictly fewer violations. -/
+/-- The constraints **favoring** `o` over `o'` at input `i` are those assigning `o` strictly
+    fewer violations. -/
 def favoring (vp : Input → Output → Fin n → ℕ) (i : Input) (o o' : Output) :
     Finset (Fin n) :=
   Finset.univ.filter fun c => vp i o c < vp i o' c
@@ -562,51 +555,46 @@ theorem winProb_binary_add_eq_one [IsPartialOrder (Fin n) r] [DecidableRel r]
   rw [← add_div, ← Nat.cast_add, card_filter_picksAt_binary_add h_two h_ne h_vp]
   exact div_self (by exact_mod_cast (consistentTotalOrders_card_pos r).ne')
 
-/-! ### Bridge — binary PicksAt is decided by the σ-earliest active constraint
+/-! ### Binary competitions are decided by the earliest active constraint
 
-For binary candidate sets `cands i = {chosen, other}`, `PicksAt σ i chosen`
-reduces to lex domination of `chosen`'s permuted profile, which is decided at
-the first position where the profiles differ — i.e., `chosen` wins iff the
-σ-earliest constraint of `active vp i chosen other` lies in
-`favoring vp i chosen other`. Combined with the head-fiber counting of
-`Core.Optimization.PermSubsetCombinatorics`, this yields closed-form rates
-for binary POC competitions without enumerating rankings. -/
-
-open Core.Optimization.PermSubsetCombinatorics
+For binary candidate sets `cands i = {chosen, other}`, `PicksAt σ i chosen` reduces to lex
+domination of the permuted profile of `chosen`, which is decided at the first position where the
+profiles differ. So `chosen` wins exactly when the σ-earliest constraint of
+`active vp i chosen other`, the one at which `σ.symm` is least, lies in
+`favoring vp i chosen other`. Counting rankings by their σ-earliest active constraint
+(`Equiv.Perm.card_filter_isMinOn_symm_mul_card`) then gives closed-form rates for binary POC
+competitions without enumerating rankings. -/
 
 omit [DecidableEq Output] in
-/-- `o` lex-dominates `o'` under σ exactly when the σ-earliest active
-    constraint favors `o`. -/
-theorem lex_lt_iff_head_mem_favoring (σ : Ranking n) :
+/-- The output `o` lex-dominates `o'` under `σ` exactly when the σ-earliest active constraint
+favors `o`. -/
+theorem lex_lt_iff_exists_favoring_isMinOn (σ : Ranking n) :
     toLex (fun k : Fin n => vp i o (σ k)) < toLex (fun k : Fin n => vp i o' (σ k)) ↔
-    ∃ x ∈ favoring vp i o o', (permDList σ (active vp i o o')).head? = some x := by
-  classical
+    ∃ x ∈ favoring vp i o o' ∩ active vp i o o', IsMinOn σ.symm (active vp i o o') x := by
   show (∃ k : Fin n, (∀ j, j < k → vp i o (σ j) = vp i o' (σ j)) ∧
     vp i o (σ k) < vp i o' (σ k)) ↔ _
   constructor
   · -- the first strict-difference position holds the σ-earliest active constraint
     rintro ⟨k, h_tie, h_lt⟩
-    refine ⟨σ k, mem_favoring.mpr h_lt,
-      (permDList_head?_eq_some_iff_min σ _ (σ k)).mpr
-        ⟨mem_active.mpr (Nat.ne_of_lt h_lt), fun y hy => ?_⟩⟩
+    refine ⟨σ k, mem_inter.2 ⟨mem_favoring.2 h_lt, mem_active.2 h_lt.ne⟩,
+      isMinOn_iff.2 fun y hy => ?_⟩
     rw [Equiv.symm_apply_apply]
     by_contra h
-    exact mem_active.mp hy (by simpa using h_tie (σ.symm y) (lt_of_not_ge h))
+    exact mem_active.1 hy (by simpa using h_tie (σ.symm y) (lt_of_not_ge h))
   · -- the σ-earliest active constraint marks the first strict difference
-    rintro ⟨x, hxF, hhead⟩
-    obtain ⟨-, hmin⟩ := (permDList_head?_eq_some_iff_min σ _ x).mp hhead
-    refine ⟨σ.symm x, fun j hj => ?_, by simpa using mem_favoring.mp hxF⟩
+    rintro ⟨x, hx, hmin⟩
+    refine ⟨σ.symm x, fun j hj => ?_, by simpa using mem_favoring.1 (mem_inter.1 hx).1⟩
     by_contra h_ne'
-    exact absurd (hmin (σ j) (mem_active.mpr h_ne')) (by simpa using not_le.mpr hj)
+    exact absurd (isMinOn_iff.1 hmin (σ j) (mem_active.2 h_ne')) (by simpa using hj)
 
-/-- For binary candidate sets, `PicksAt σ i chosen` holds exactly when the
-    σ-earliest active constraint favors `chosen`. -/
-theorem picksAt_binary_iff_head_mem_favoring
+/-- For binary candidate sets, `PicksAt σ i chosen` holds exactly when the σ-earliest active
+constraint favors `chosen`. -/
+theorem picksAt_binary_iff_exists_favoring_isMinOn
     (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) (σ : Ranking n) :
     PicksAt cands vp σ i chosen ↔
-    ∃ x ∈ favoring vp i chosen other,
-      (permDList σ (active vp i chosen other)).head? = some x := by
-  rw [← lex_lt_iff_head_mem_favoring]
+    ∃ x ∈ favoring vp i chosen other ∩ active vp i chosen other,
+      IsMinOn σ.symm (active vp i chosen other) x := by
+  rw [← lex_lt_iff_exists_favoring_isMinOn]
   unfold PicksAt
   constructor
   · rintro ⟨_, h⟩
@@ -623,63 +611,71 @@ theorem picksAt_binary_iff_head_mem_favoring
 /-! ### Closed-form rate for binary candidates -/
 
 /-- With binary candidates, the rankings picking `chosen` number
-    `n! · |favoring ∩ active| / |active|`, in multiplied form: each ranking is
-    decided by its σ-earliest active constraint, and every active constraint is
-    equally likely to come first. -/
+`n! · |favoring ∩ active| / |active|`, stated without division. Each ranking is decided by its
+σ-earliest active constraint, and every active constraint comes first equally often. -/
 theorem card_filter_picksAt_discrete_binary
     (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) :
     (Finset.univ.filter (fun σ : Ranking n => PicksAt cands vp σ i chosen)).card *
         (active vp i chosen other).card =
       n.factorial * (favoring vp i chosen other ∩ active vp i chosen other).card := by
-  rw [Finset.filter_congr fun σ _ => picksAt_binary_iff_head_mem_favoring h_two h_ne σ]
-  exact perm_filter_head_in_card _ _
+  classical
+  rw [Finset.filter_congr fun σ _ => picksAt_binary_iff_exists_favoring_isMinOn h_two h_ne σ]
+  simpa using Equiv.Perm.card_filter_isMinOn_symm_univ_mul_card (active vp i chosen other)
+    (favoring vp i chosen other)
 
-/-- The fraction of all `n!` rankings picking `chosen` is
-    `|favoring ∩ active| / |active|`. -/
+/-- The fraction of all `n!` rankings picking `chosen` is `|favoring ∩ active| / |active|`. -/
 theorem winProb_discrete_binary_rate
     (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) :
     winProb cands vp (· = ·) i chosen =
       ((favoring vp i chosen other ∩ active vp i chosen other).card : ℚ) /
         ((active vp i chosen other).card : ℚ) := by
-  rw [winProb_discrete, Finset.card_univ, Fintype.card_perm, Fintype.card_fin,
-    Finset.filter_congr fun σ _ =>
-      picksAt_binary_iff_head_mem_favoring h_two h_ne σ]
-  exact perm_filter_head_in_rate _ _
+  rcases (active vp i chosen other).eq_empty_or_nonempty with h | h
+  · -- no constraint distinguishes the pair, so no ranking picks `chosen`
+    rw [winProb_discrete, h, inter_empty, card_empty, Nat.cast_zero, zero_div,
+      Finset.filter_false_of_mem fun σ _ => by
+        simp [picksAt_binary_iff_exists_favoring_isMinOn h_two h_ne σ, h],
+      card_empty, Nat.cast_zero, zero_div]
+  · rw [winProb_discrete, Finset.card_univ, Fintype.card_perm, Fintype.card_fin,
+      div_eq_div_iff (by positivity) (by exact_mod_cast h.card_pos.ne')]
+    exact_mod_cast (card_filter_picksAt_discrete_binary h_two h_ne).trans (Nat.mul_comm _ _)
 
 /-! ### Deciding-stratum rate for stratified grammars
 
-A binary competition whose variants tie on every stratum before `k` is decided
-within stratum `k`, with later strata — including any inner rankings among
-them — provably irrelevant. This is [anttila-1997]'s tableau-count shortcut
-stated against the full grammar rather than a per-stratum sub-grammar. -/
+A binary competition whose variants tie on every stratum before `k` is decided within stratum
+`k`, and later strata, including any inner rankings among them, are provably irrelevant. This is
+[anttila-1997]'s tableau-count shortcut stated against the full grammar rather than a per-stratum
+sub-grammar. -/
 
 omit [DecidableEq Output] in
-/-- On a consistent ranking of a stratified grammar, the σ-earliest active
-    constraint lies in the deciding stratum: earlier strata are inactive
-    (`h_tie`), and constraints of later strata come after all of stratum `k`. -/
-theorem permDList_head?_active_filter_stratum
+/-- On a consistent ranking of a stratified grammar, the σ-earliest active constraint is the
+σ-earliest active constraint of the deciding stratum `k`, since earlier strata are inactive
+(`h_tie`) and every constraint of stratum `k` precedes the later strata. -/
+theorem isMinOn_active_iff_isMinOn_filter_stratum
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop} {k : Fin s}
     (hσ : IsConsistent (stratified stratumOf inner) σ)
     (h_tie : ∀ c, stratumOf c < k → vp i chosen c = vp i other c)
-    (h_dec : ((active vp i chosen other).filter (stratumOf · = k)).Nonempty) :
-    (permDList σ (active vp i chosen other)).head? =
-      (permDList σ ((active vp i chosen other).filter (stratumOf · = k))).head? := by
-  obtain ⟨x, hx_mem, hx⟩ := exists_permDList_head?_eq_some h_dec σ
-  obtain ⟨hxD, hxk⟩ := Finset.mem_filter.mp hx_mem
-  obtain ⟨-, hmin⟩ := (permDList_head?_eq_some_iff_min σ _ x).mp hx
-  rw [hx]
-  refine (permDList_head?_eq_some_iff_min σ _ x).mpr ⟨hxD, fun y hyD => ?_⟩
-  rcases lt_trichotomy (stratumOf y) k with hlt | heq | hgt
-  · exact absurd (h_tie y hlt) (mem_active.mp hyD)
-  · exact hmin y (Finset.mem_filter.mpr ⟨hyD, heq⟩)
-  · exact (hσ.symm_lt_of_stratum_lt (by rw [hxk]; exact hgt)).le
+    (h_dec : ((active vp i chosen other).filter (stratumOf · = k)).Nonempty) {x : Fin n} :
+    x ∈ active vp i chosen other ∧ IsMinOn σ.symm (active vp i chosen other) x ↔
+      x ∈ (active vp i chosen other).filter (stratumOf · = k) ∧
+        IsMinOn σ.symm ((active vp i chosen other).filter (stratumOf · = k)) x := by
+  refine ⟨fun ⟨hx, hmin⟩ => ⟨mem_filter.2 ⟨hx, ?_⟩, hmin.on_subset (filter_subset _ _)⟩,
+    fun ⟨hx, hmin⟩ => ⟨(mem_filter.1 hx).1, isMinOn_iff.2 fun y hy => ?_⟩⟩
+  · obtain ⟨z, hz⟩ := h_dec
+    rcases lt_trichotomy (stratumOf x) k with hlt | heq | hgt
+    · exact absurd (h_tie x hlt) (mem_active.1 hx)
+    · exact heq
+    · exact absurd (isMinOn_iff.1 hmin z (mem_filter.1 hz).1)
+        (not_le.2 (hσ.symm_lt_of_stratum_lt (by rw [(mem_filter.1 hz).2]; exact hgt)))
+  · rcases lt_trichotomy (stratumOf y) k with hlt | heq | hgt
+    · exact absurd (h_tie y hlt) (mem_active.1 hy)
+    · exact isMinOn_iff.1 hmin y (mem_filter.2 ⟨hy, heq⟩)
+    · exact (hσ.symm_lt_of_stratum_lt (by rw [(mem_filter.1 hx).2]; exact hgt)).le
 
-/-- Under a stratified grammar, a binary competition whose variants tie on
-    every stratum before `k` — with `k` freely ranked internally (`h_triv`)
-    and containing an active constraint (`h_dec`) — is decided within stratum
-    `k`: the rankings picking `chosen`, times the active constraints `Dₖ` of
-    that stratum, equal all consistent rankings times those favoring `chosen`.
-    Later strata cannot affect the outcome. -/
+/-- Under a stratified grammar, a binary competition whose variants tie on every stratum before
+`k`, with `k` freely ranked internally (`h_triv`) and containing an active constraint (`h_dec`),
+is decided within stratum `k`. The rankings picking `chosen`, times the active constraints `Dₖ`
+of that stratum, equal all consistent rankings times those favoring `chosen`, and later strata
+cannot affect the outcome. -/
 theorem card_filter_picksAt_stratified_binary
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
     [IsPartialOrder (Fin n) inner] [DecidableRel inner] {k : Fin s}
@@ -694,16 +690,26 @@ theorem card_filter_picksAt_stratified_binary
         (favoring vp i chosen other ∩
           (active vp i chosen other).filter (stratumOf · = k)).card := by
   classical
-  rw [Finset.filter_congr fun σ hσ =>
-    (picksAt_binary_iff_head_mem_favoring h_two h_ne σ).trans
-      (by rw [permDList_head?_active_filter_stratum
-        (mem_consistentTotalOrders.mp hσ) h_tie h_dec])]
-  exact filter_head_in_card_of_swaps _ _ _
+  set D := (active vp i chosen other).filter (stratumOf · = k)
+  have key (σ) (hσ : σ ∈ consistentTotalOrders (stratified stratumOf inner)) :
+      PicksAt cands vp σ i chosen ↔ ∃ x ∈ favoring vp i chosen other ∩ D, IsMinOn σ.symm D x := by
+    have h := fun x => isMinOn_active_iff_isMinOn_filter_stratum (x := x)
+      (mem_consistentTotalOrders.mp hσ) h_tie h_dec
+    rw [picksAt_binary_iff_exists_favoring_isMinOn h_two h_ne σ]
+    constructor
+    · rintro ⟨x, hx, hmin⟩
+      obtain ⟨hxD, hminD⟩ := (h x).1 ⟨(mem_inter.1 hx).2, hmin⟩
+      exact ⟨x, mem_inter.2 ⟨(mem_inter.1 hx).1, hxD⟩, hminD⟩
+    · rintro ⟨x, hx, hmin⟩
+      obtain ⟨hxA, hminA⟩ := (h x).2 ⟨(mem_inter.1 hx).2, hmin⟩
+      exact ⟨x, mem_inter.2 ⟨(mem_inter.1 hx).1, hxA⟩, hminA⟩
+  rw [Finset.filter_congr key]
+  convert Equiv.Perm.card_filter_isMinOn_symm_mul_card _ D _
     fun y₁ h₁ y₂ h₂ σ hσ => mem_consistentTotalOrders.mpr
       (isConsistent_swap_mul h_triv (Finset.mem_filter.mp h₁).2 (Finset.mem_filter.mp h₂).2
         (mem_consistentTotalOrders.mp hσ))
 
-/-- The deciding-stratum rate: `chosen` wins at `|favoring ∩ Dₖ| / |Dₖ|`. -/
+/-- The deciding-stratum rate is `|favoring ∩ Dₖ| / |Dₖ|`. -/
 theorem winProb_stratified_binary_rate
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
     [IsPartialOrder (Fin n) inner] [DecidableRel inner] {k : Fin s}
@@ -724,9 +730,8 @@ theorem winProb_stratified_binary_rate
 /-! ### Categorical outcomes under stratified grammars -/
 
 omit [DecidableEq Output] in
-/-- Under a stratified grammar, a consistent ranking picks `o` when, against
-    every rival, the first stratum on which they differ has all its active
-    constraints favoring `o`. -/
+/-- Under a stratified grammar, a consistent ranking picks `o` when, against every rival, the
+first stratum on which they differ has all its active constraints favoring `o`. -/
 theorem picksAt_stratified_of_dominates
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
     (hσ : IsConsistent (stratified stratumOf inner) σ) (ho : o ∈ cands i)
@@ -737,12 +742,11 @@ theorem picksAt_stratified_of_dominates
     PicksAt cands vp σ i o := by
   refine ⟨ho, fun o' ho' hne => ?_⟩
   obtain ⟨k, h_tie, h_dec, h_sub⟩ := h o' ho' hne
-  obtain ⟨x, hx, hhead⟩ := exists_permDList_head?_eq_some h_dec σ
-  exact (lex_lt_iff_head_mem_favoring σ).mpr
-    ⟨x, h_sub hx, (permDList_head?_active_filter_stratum hσ h_tie h_dec).trans hhead⟩
+  obtain ⟨x, hx, hmin⟩ := Equiv.Perm.exists_isMinOn_symm h_dec σ
+  obtain ⟨hxA, hminA⟩ := (isMinOn_active_iff_isMinOn_filter_stratum hσ h_tie h_dec).2 ⟨hx, hmin⟩
+  exact (lex_lt_iff_exists_favoring_isMinOn σ).2 ⟨x, mem_inter.2 ⟨h_sub hx, hxA⟩, hminA⟩
 
-/-- A candidate dominating every rival at the deciding stratum wins with
-    probability one. -/
+/-- A candidate dominating every rival at the deciding stratum wins with probability one. -/
 theorem winProb_stratified_eq_one
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
     [IsPartialOrder (Fin n) inner] [DecidableRel inner] (ho : o ∈ cands i)
