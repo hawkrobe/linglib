@@ -7,6 +7,7 @@ public import Linglib.Fragments.English.Auxiliaries
 public import Linglib.Fragments.Statimcets.Modals
 public import Linglib.Fragments.Javanese.Modals
 public import Linglib.Studies.Condoravdi2002
+public import Linglib.Studies.Deal2011
 
 /-!
 # Matthewson (2013): Gitksan Modals
@@ -16,7 +17,11 @@ is a mixed system (Fig. 1): every modal is specified for modality type, epistemi
 circumstantial, and modal strength is encoded among the circumstantial modals, *da'aḵhlxw* and
 *anooḵ* for possibility against *sgi* for (weak) necessity, but not among the epistemic clitics
 *ima('a)* and *g̱at*, which are compatible with necessity and possibility contexts alike
-([peterson-2010]). The system fills the empty diagonal of the classification of modal systems
+([peterson-2010]). With the paper's lexical forces, existential for all but *sgi*,
+[deal-2011]'s account of modals without scales predicts every modal's uses: the epistemics
+share a force and so form no scale, and are used for both, while *sgi* is the scalemate of
+*da'aḵhlxw* and *anooḵ*, and each circumstantial modal is used for its own force. The system
+fills the empty diagonal of the classification of modal systems
 by selectivity for type and for strength (Fig. 2), whose other cells English, St'át'imcets and
 Javanese occupy in the fragments.
 
@@ -37,9 +42,10 @@ out of the perfective configuration of [hacquard-2006].
 
 * The paper is agnostic between [peterson-2010]'s analysis of *ima('a)* as a possibility modal
   strengthened by an ordering source and a possibility modal without a scale, as [deal-2011]
-  analyses Nez Perce *o'qa*, the negation diagnostic (30) not separating them; the force
-  analysis recorded is Fig. 1's, whose two columns are the classical forces, weak necessity
-  counting as necessity.
+  analyses Nez Perce *o'qa*, the negation diagnostic (30) not separating them, and adopts what
+  the two share, an existential quantifier over worlds. The prediction of the modals' uses
+  follows [deal-2011]'s mechanism, which the paper raises for the circumstantial modals
+  (§5.1); forces are compared on Fig. 1's two columns, weak necessity counting as necessity.
 * The rows record the paper's flavour labels; its pure circumstantial and teleological readings
   are the library's circumstantial flavour. A row's force is recorded only where the paper
   labels the context's strength.
@@ -63,14 +69,23 @@ open Modality Data.Examples Gitksan
 
 /-! ### The modal system (Fig. 1) -/
 
-/-- Fig. 1's classification by force: the epistemic clitics span both columns, *da'aḵhlxw* and
-*anooḵ* are possibility modals, and *sgi* a (weak) necessity modal. -/
-def forceAnalysis (m : ModalItem) : ForceAnalysis :=
-  if m = imaa ∨ m = gat then .variableForce
-  else if m = sgi then .fixed .necessity else .fixed .possibility
+/-- The modals' lexical forces: *ima('a)* and *g̱at* introduce an existential quantifier over
+worlds (§3.1–3.2), *da'aḵhlxw* and *anooḵ* are possibility modals, and *sgi* a (weak) necessity
+modal (§4). -/
+def lexicalForce (m : ModalItem) : ModalForce := if m = sgi then .necessity else .possibility
 
-theorem forceAnalysis_consistent :
-    ∀ m ∈ modals, (forceAnalysis m).Consistent m.classical.meaning := by
+/-- Fig. 1 from the lexical forces: in an upward-entailing context each modal serves, on
+[deal-2011]'s account, for exactly the forces it is used with. The epistemics have no
+scalemate and serve for both; *sgi* shares its flavours with *da'aḵhlxw* and *anooḵ*, so each
+of the three serves for its own. -/
+theorem forces_usable : ∀ m ∈ modals, ∀ g, g.classical ∈ m.classical.forces ↔
+    Deal2011.Usable .positive (lexicalForce m) (Deal2011.HasScalemate lexicalForce modals m) g := by
+  decide
+
+/-- The epistemic clitics are modals without scales, and the circumstantial modals all belong
+to one. -/
+theorem hasScalemate_iff : ∀ m ∈ modals,
+    Deal2011.HasScalemate lexicalForce modals m ↔ m.Circumstantial := by
   decide
 
 /-! ### Rows -/

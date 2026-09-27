@@ -13,9 +13,8 @@ This file defines the vocabulary of modal typology. A modal force is a quantific
 strength, necessity, weak necessity or possibility, ordered by strength; a modal flavor is a
 source of modality, epistemic, deontic, bouletic or circumstantial ([kratzer-1981]); and a
 modal item pairs a form with the force-flavor pairs it can express, the representation of a
-modal's meaning in [imel-guo-steinert-threlkeld-2026]. A force analysis records how an item
-comes by its force, and the temporal perspective and orientation of [condoravdi-2002] locate a
-modal claim in time.
+modal's meaning in [imel-guo-steinert-threlkeld-2026]. The temporal perspective and orientation
+of [condoravdi-2002] locate a modal claim in time.
 
 ## Main definitions
 
@@ -25,8 +24,6 @@ modal claim in time.
 * `Modality.ModalFlavor` and the pair type `Modality.ForceFlavor`.
 * `Modality.ModalItem`, with its domain and variation predicates and its classical reading
   `ModalItem.classical`.
-* `Modality.ForceAnalysis`: fixed, variable or strengthened force, and its consistency with
-  a meaning.
 * `Modality.TemporalPerspective`, `Modality.TemporalOrientation`.
 
 ## References
@@ -39,10 +36,7 @@ modal claim in time.
 * [imel-guo-steinert-threlkeld-2026]
 * [zeijlstra-2007]
 * [nauze-2008]
-* [matthewson-2013]
 * [matthewson-2016]
-* [deal-2011]
-* [peterson-2010]
 * [condoravdi-2002]
 -/
 
@@ -146,7 +140,7 @@ abbrev ForceFlavor.flavor : ForceFlavor → ModalFlavor := Prod.snd
 `Auxiliary.toModalItem` projects onto and which a modal adverb's entry instantiates directly. -/
 structure ModalItem where
   form : String
-  /-- The force-flavor pairs the item can express. -/
+  /-- The force-flavor pairs the item can express, in an upward-entailing context. -/
   meaning : Finset ForceFlavor
   register : SocialMeaning.Register := .neutral
   deriving DecidableEq
@@ -198,40 +192,6 @@ theorem flavors_classical (m : ModalItem) : m.classical.flavors = m.flavors := b
   simp only [classical, flavors, Finset.image_image, Prod.map_snd', Function.id_comp]
 
 end ModalItem
-
-/-! ### Force analysis
-
-Three mechanisms give a modal its force, which a set of force-flavor pairs conflates: a fixed
-lexical force, as with English *must* and *can*; variable force, compatibility with necessity
-and possibility contexts alike without ambiguity, as with Gitksan *ima('a)* and *gat*
-([matthewson-2013]); and a base force strengthened by restricting the modal's domain, as
-[peterson-2010] analyses *ima('a)*, a possibility modal strengthened by an ordering source. A
-fixed force can itself pass for variable: Nez Perce *o'qa* is a possibility modal without a
-necessity dual, so no scalar implicature keeps it out of necessity contexts ([deal-2011]). -/
-
-/-- How a modal comes by its force. -/
-inductive ForceAnalysis where
-  | fixed (force : ModalForce)
-  | variableForce
-  | strengthened (base : ModalForce)
-  deriving DecidableEq, Repr
-
-/-- A force analysis is consistent with a meaning when the meaning attests only the force the
-analysis fixes; when the strengthened base is the weakest force it attests, the stronger ones
-arising by strengthening; or when it attests two forces, for a variable-force analysis. -/
-def ForceAnalysis.Consistent : ForceAnalysis → Finset ForceFlavor → Prop
-  | .fixed fo, m => m.image Prod.fst = {fo}
-  | .strengthened fo, m => fo ∈ m.image Prod.fst ∧ ∀ g ∈ m.image Prod.fst, fo ≤ g
-  | .variableForce, m => 2 ≤ (m.image Prod.fst).card
-
-instance (a : ForceAnalysis) (m : Finset ForceFlavor) : Decidable (a.Consistent m) := by
-  cases a <;> unfold ForceAnalysis.Consistent <;> infer_instance
-
-/-- A strengthened base force is consistent with a meaning exactly when it is the least force the
-meaning attests. -/
-theorem ForceAnalysis.consistent_strengthened_iff {fo : ModalForce} {m : Finset ForceFlavor} :
-    (strengthened fo).Consistent m ↔ IsLeast (m.image Prod.fst : Set ModalForce) fo :=
-  Iff.rfl
 
 /-! ### Modal-temporal axes
 

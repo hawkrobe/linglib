@@ -523,7 +523,7 @@ def ex_28a : LinguisticExample :=
 
 def ex_43 : LinguisticExample :=
   { id := "aghajeretic2026_43"
-    source := ⟨"deal-2011", "(43)"⟩
+    source := ⟨"deal-2011", "(1)"⟩
     reportedIn := some ⟨"agha-jeretic-2026", "(43)"⟩
     language := "nezp1238"
     primaryText := "'inéhne-no'qa 'ee kii lepít cíickan"
@@ -541,7 +541,7 @@ def ex_43 : LinguisticExample :=
 
 def ex_44 : LinguisticExample :=
   { id := "aghajeretic2026_44"
-    source := ⟨"deal-2011", "(44)"⟩
+    source := ⟨"deal-2011", "(49)"⟩
     reportedIn := some ⟨"agha-jeretic-2026", "(44)"⟩
     language := "nezp1238"
     primaryText := "wéet'u 'ee kiy-ó'qa"
@@ -559,7 +559,7 @@ def ex_44 : LinguisticExample :=
 
 def ex_45 : LinguisticExample :=
   { id := "aghajeretic2026_45"
-    source := ⟨"deal-2011", "(45)"⟩
+    source := ⟨"deal-2011", "(60)"⟩
     reportedIn := some ⟨"agha-jeretic-2026", "(45)"⟩
     language := "nezp1238"
     primaryText := "c'alawi 'a-múu-no'qa saykiptaw'atóo-na, kaa 'e-múu-nu'"
