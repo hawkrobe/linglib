@@ -1359,7 +1359,6 @@ import Linglib.Semantics.Questions.Hamblin
 import Linglib.Semantics.Questions.Highlighting
 import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Semantics.Questions.Resolution
-import Linglib.Semantics.Questions.Singleton
 import Linglib.Semantics.Questions.Support
 import Linglib.Semantics.Reference.Acquaintance
 import Linglib.Semantics.Reference.Context.Basic
