@@ -1025,6 +1025,15 @@ theorem info_mem_iff_alt_eq_singleton (P : Question W) :
     have hinfo : P.info ∈ alt P := by rw [halt]; rfl
     exact hinfo.1
 
+/-- A normal content has a single alternative iff it is declarative: its alternatives
+generate it, so a lone alternative is its informative content. Normality is needed, since
+over an infinite `W` a content can have one alternative and resolving states beyond it. -/
+theorem IsNormal.exists_alt_eq_singleton_iff {P : Question W} (hP : P.IsNormal) :
+    (∃ p, alt P = {p}) ↔ P.info ∈ P := by
+  refine ⟨fun ⟨p, hp⟩ ↦ ?_, fun h ↦ ⟨_, (info_mem_iff_alt_eq_singleton P).mp h⟩⟩
+  rw [hP.info_eq_sUnion_alt, hp, Set.sUnion_singleton]
+  exact mem_of_mem_alt (hp ▸ rfl)
+
 /-! ### Heyting derivatives: complement, projection, division law
 
 The `CompleteDistribLattice` structure registered above gives us a

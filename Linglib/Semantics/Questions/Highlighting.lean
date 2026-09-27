@@ -39,9 +39,6 @@ This substrate landed alongside [martinez-vera-2026]'s formalisation;
 existing files that use highlighting-shaped notions but have not yet been
 migrated:
 
-* `Semantics/Questions/Singleton.lean` — `IsSingleton` documents itself in
-  [roelofsen-farkas-2015] terminology but is a different abstraction
-  (property of a `Question`, not a discourse context).
 * `Semantics/Questions/Bias.lean` — the contextual evidence and prior
   belief a question is sensitive to cover adjacent ground (prior-discourse
   bias) with a different shape; bridge not yet written.
