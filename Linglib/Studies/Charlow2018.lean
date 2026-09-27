@@ -1,76 +1,57 @@
 module
 
-public import Mathlib.Data.Set.Functor
-public import Linglib.Semantics.Composition.Ty
 public import Linglib.Semantics.Composition.Assignment
-public import Linglib.Logic.Assignment
+public import Mathlib.Control.Applicative
+public import Mathlib.Control.Basic
 public import Mathlib.Control.Monad.Cont
-public import Linglib.Semantics.Composition.Binding
+public import Mathlib.Data.Set.Functor
 
 /-!
 # Charlow 2018: a modular theory of pronouns and binding
 
-## Thesis
+The standard theory of pronouns ([heim-kratzer-1998]) makes every meaning depend on an
+assignment and composes by handing one assignment to both daughters. [charlow-2018] factors this
+into two operations: a lift `ρ x := λg. x` for meanings that do not depend on the assignment, and
+an application `m ⊛ n := λg. m g (n g)` used only where it is needed. Together they make
+assignment-dependent meanings an applicative functor. A flattener `μ m := λg. m g g` for pronouns
+whose value is an intension then makes them a monad. These are the `pure`, `<*>` and `joinM` of
+Lean's reader monad, so the laws the paper lists are the reader monad's own. Abstraction becomes
+an ordinary operation on meanings where the standard rule can only have it as a special rule, and
+paycheck pronouns and binding reconstruction follow from pronouns whose values are intensions.
 
-The standard [heim-kratzer-1998] treatment of assignment-sensitivity
-factors into two algebraic operations (§3.1, eqs 11–12):
-
-* `ρ x := λg. x` — lift assignment-independent values
-* `m ⊛ n := λg. m g (n g)` — assignment-friendly functional application
-
-These form an **applicative functor** ([mcbride-paterson-2008]) for
-`G a := g → a`, satisfying the four laws of §3.3 (Homomorphism,
-Identity, Interchange, Composition). The modularization (i) keeps the
-lexicon maximally simple — nothing is assignment-sensitive unless it
-really is — and (ii) makes predicate abstraction `Λᵢ` categorematic
-(eq. 13), eliminating H&K's syncategorematic rule.
-
-Adding a **join** `μ m := λg. m g g` (eq. 19) upgrades the structure to
-a monad (§4.3), enabling **higher-order variables** anaphoric to
-*intensions* rather than *extensions* — yielding immediate analyses of
-paycheck pronouns (Fig. 6) and binding reconstruction (Fig. 7) with the
-unitary pronoun semantics `⟦proᵢ⟧ := λg. gᵢ`.
-
-§3.3 shows applicative functors are *already implicit* in existing
-semantic theory: Hamblin alternative semantics is the Set applicative
-(eqs 14–15), and Shan & Barker's continuation-based composition is the
-Cont applicative (eqs 16–17). Applicatives compose (Fig. 5) — unlike
-monads (§4.3 end: `S ∘ G` is not monadic) — which §5 exploits: with
-type-homogeneous assignments `gᵣ := ℕ → r` (§5.2), the composed
-applicative `G_e ∘ G_{g_e→e}` handles paychecks *without* monads.
-§6 plays us out with variable-free semantics ([jacobson-1999]): the
-same ρ/⊛ with `Entity` as the environment type, where composing the VF
-applicative with itself makes assignment-dependence "spring organically
-into being."
-
-## Main definitions
-
-* `momIntension`, `TypedAssignment`, `vfPronoun` — the paycheck intension, type-homogeneous
-  assignments, and the variable-free pronoun
-* `composedPure`, `composedAp` — the composed applicative `ReaderM E₁ ∘ ReaderM E₂` of Fig. 5
+Those analyses store intensions in assignments. Assignments that can store every intension exist
+only over a one-element domain, by Cantor's diagonal argument. This is the difficulty the paper
+cites in section 5, whose type-homogeneous assignments avoid it: two composed reader applicatives
+derive the paycheck reading with no flattener. The pronouns of variable-free semantics
+([jacobson-1999]) use the same applicative at the entity type.
 
 ## Main results
 
-* `hk_decomposition`, `hk_lexical_lift` — Heim and Kratzer's interpretation function is `applyG`
-  on binary branching and `constDenot` on non-pronominal entries, so ρ and ⊛ are the substrate's
-  own operations, whose four applicative laws it already proves
-* `lambda_pronoun`, `lambda_rho_ap_pronoun` — Λᵢ as a categorematic operation, `lambdaAbsG`
-* `hamblin_seq`, `hamblin_pure` — Hamblin alternative semantics is `Set`'s own applicative
-* `cont_pure_eq`, `cont_ap_eq` — Shan and Barker's combinators are `Cont`'s
-* `composed_homomorphism` … `composed_composition` — applicatives compose (monads do not)
-* `paycheck_truth_conditions`, `paycheck_reading`, `reconstruction_predicate` — paychecks and
-  binding reconstruction from μ and higher-order variables
-* `typed_paycheck`, `composed_paycheck` — the same without monads, on two assignments
-* `vf_she_saw_her_composed` — composing the variable-free applicative with itself makes
-  assignment-dependence spring into being
+* `not_exists_abstraction_denotation`: under the standard rule no denotation of `Λᵢ` binds
+* `hamblin_seq`: Hamblin's pointwise application is the `<*>` of sets
+* `joinM_joinM`, `joinM_pure_seq_pure`: the monad laws in the paper's form
+* `paycheck`, `reconstruction`: the paycheck reading and binding reconstruction
+* `subsingleton_of_forall_store`: assignments storing every intension are trivial
+* `typed_paycheck`: the paycheck reading on type-homogeneous assignments
+
+## Implementation notes
+
+`ρ`, `⊛` and `μ` are not defined here: they are `pure`, `<*>` and `joinM` of
+`ReaderM (Assignment E)`, and the composition of two applicatives (Fig. 5) is mathlib's
+`Functor.Comp`. For section 4, `G` is an abstract type of assignments with lookups for individual
+variables and for variables over individual concepts, and a shift `g^{i→x}` for each; each
+derivation assumes only the laws it uses, for the one intension it stores. As in the paper,
+`likes x y` is "`y` likes `x`".
+
+## TODO
+
+* Section 4.3: composing sets with the reader (`S ∘ G`) admits no lawful flattener.
 
 ## References
 
 * [charlow-2018]
 * [heim-kratzer-1998]
-* [mcbride-paterson-2008]
 * [jacobson-1999]
-* [charlow-2020]
 -/
 
 @[expose] public section
@@ -78,360 +59,249 @@ into being."
 namespace Charlow2018
 
 open Semantics.Composition
-
-/-! ## §3.1–3.2 Getting modular: ρ and ⊛
-
-The paper's ρ and ⊛ — lift a value into a constant function from assignments, apply two
-assignment-dependent meanings pointwise — are the substrate's `constDenot` and `applyG`, and the
-four applicative-functor laws of the §3.3 table are the substrate's theorems about them:
-Homomorphism is `constDenot_applyG`, Identity `applyG_constDenot_id`, Interchange
-`applyG_constDenot_interchange`, Composition `applyG_composition`. Nothing is restated here; the
-sections below put the operations to the paper's uses. -/
-
-/-! ### The ρ/⊛ decomposition of H&K's interpretation function
-
-§3.1–3.2: the standard H&K interpretation function
-`⟦α β⟧ := λg. ⟦α⟧ g (⟦β⟧ g)` decomposes into ρ (for trivially
-assignment-dependent lexical entries: `⟦John⟧ = ρ(j)`) and ⊛ (for
-binary branching). This decomposition is directly visible in linglib's
-`interp` (`Composition/Tree.lean`): its binary case computes
-`FA(⟦α⟧^g, ⟦β⟧^g)`, which is `applyG ⟦α⟧ ⟦β⟧` evaluated at `g`. -/
-
-section HKDecomposition
-
-variable {E α β : Type}
-
-/-- H&K's interpretation function `⟦α β⟧ = λg. ⟦α⟧ g (⟦β⟧ g)` is
-definitionally `applyG`: ⊛ *is* `⟦·⟧` restricted to binary branching. -/
-theorem hk_decomposition (f : Assignment E → α → β) (x : Assignment E → α) :
-    applyG f x = fun g => f g (x g) := rfl
-
-/-- Non-pronominal entries in H&K are trivially assignment-dependent:
-`⟦John⟧ := λg. j`. This is exactly ρ(j). -/
-theorem hk_lexical_lift (d : α) :
-    constDenot d = fun (_ : Assignment E) => d := rfl
-
-end HKDecomposition
-
-/-! ### Λᵢ: categorematic predicate abstraction
-
-Eq. (13): `Λᵢ := λf. λg. λx. f g^{i→x}`. In H&K, predicate abstraction
-is a syncategorematic rule; with ρ/⊛ there is no grammatical default
-about how assignments get passed around, so Λᵢ becomes a *categorematic*
-operation — linglib's `lambdaAbsG`. -/
-
-section CategorematicAbstraction
+open scoped Assignment
 
 variable {E : Type}
 
-/-- Λᵢ applied to a pronoun recovers the identity function:
-`Λₙ(proₙ) = λg λx. x`. -/
-theorem lambda_pronoun (n : Nat) (g : Assignment E) (x : E) :
-    lambdaAbsG n (interpPronoun n) g x = x := by
-  simp [lambdaAbsG, interpPronoun]
+/-! ### Abstraction under the standard theory
 
-/-- Λᵢ applied to `ρ(left) ⊛ proₙ` yields `ρ(left)`:
-`Λₙ(ρ(left) ⊛ proₙ) = λg λx. left(x) = ρ(left)`. -/
-theorem lambda_rho_ap_pronoun (n : Nat)
-    (left : E → Prop)
-    (g : Assignment E) (x : E) :
-    lambdaAbsG n (applyG (constDenot left) (interpPronoun n)) g x =
-    left x := by
-  simp [lambdaAbsG, applyG, constDenot, interpPronoun]
+The standard rule interprets a branching node by giving both daughters the same assignment,
+`⟦α β⟧ := λg. ⟦α⟧ g (⟦β⟧ g)` (6). Binding needs the sister of `Λᵢ` evaluated at shifted
+assignments, which the rule never supplies. -/
 
-end CategorematicAbstraction
+/-- No denotation for `Λᵢ` binds under the standard rule (section 2.2): whatever `L` is,
+`λg. L g (⟦α⟧ g)` sees `⟦α⟧` only at `g`, while binding needs `λg. λx. ⟦α⟧ g^{i→x}`. -/
+theorem not_exists_abstraction_denotation [Nontrivial E] (i : ℕ) :
+    ¬ ∃ L : Assignment E → Prop → E → Prop,
+      ∀ α : Assignment E → Prop, (fun g => L g (α g)) = lambdaAbsG i α := by
+  rintro ⟨L, hL⟩
+  obtain ⟨a, b, hab⟩ := exists_pair_ne E
+  have h₁ := congrFun (congrFun (hL fun g => g i = a) fun _ => a) b
+  have h₂ := congrFun (congrFun (hL fun _ => True) fun _ => a) b
+  simp only [lambdaAbsG, Function.update_self, eq_self] at h₁ h₂
+  exact hab (of_eq_true (h₁.symm.trans h₂)).symm
 
-/-! ## §3.3 Applicatives already in semantic theory
+/-! ### The reader applicative
 
-"Applicative functors can be factored out of a great deal of existing
-semantic theory." Two examples, then the composition property. -/
+The lift `ρ` (11) and application `⊛` (12) are the `pure` and `<*>` of the reader monad, and the
+four laws of section 3.3 are its `LawfulApplicative` instance. Abstraction is the operation
+`Λᵢ f := λg. λx. f g^{i→x}` (13), `lambdaAbsG`. -/
 
-/-! ### The Set applicative (eqs 14–15)
+example {α : Type} (x : α) : (pure x : ReaderM (Assignment E) α) = fun _ => x := rfl
 
-Hamblin alternative semantics is the Set applicative: ρ is `pure`, the singleton, and ⊛ is
-`Seq.seq`, pointwise application across sets. The operations and the four laws of the §3.3 table
-are mathlib's own — `LawfulApplicative Set` — so what is proved here is the identification of
-Hamblin's clauses with them. The monadic extension of this applicative, and why the monad rather
-than the applicative is what exceptional scope needs, is [charlow-2020], formalized in
-`Studies/Charlow2020.lean`. -/
+example {α β : Type} (m : ReaderM (Assignment E) (α → β)) (n : ReaderM (Assignment E) α) :
+    m <*> n = fun g => m g (n g) := rfl
 
-section SetApplicative
+example : LawfulApplicative (ReaderM (Assignment E)) := inferInstance
 
-variable {A B : Type}
+/-- *She₀ left* and *John saw her₀* (Fig. 3). -/
+example (left : E → Prop) :
+    (pure left <*> interpPronoun 0 : ReaderM (Assignment E) Prop) = fun g => left (g 0) := rfl
 
-/-- Eq. (15): Hamblin's pointwise application `{f x | f ∈ m, x ∈ n}` is `Set`'s `<*>`. -/
-theorem hamblin_seq (m : Set (A → B)) (n : Set A) :
+example (saw : E → E → Prop) (j : E) :
+    (pure saw <*> interpPronoun 0 <*> pure j : ReaderM (Assignment E) Prop) =
+      fun g => saw (g 0) j := rfl
+
+/-- *Bill Λ₀ t₀ left* and *everyone Λ₀ t₀ likes their₀ mom* (Fig. 4). -/
+example (left : E → Prop) (b : E) :
+    (lambdaAbsG 0 (pure left <*> interpPronoun 0 : ReaderM (Assignment E) Prop) <*> pure b :
+      ReaderM (Assignment E) Prop) = fun _ => left b := by
+  funext g
+  exact congrArg left (Function.update_self ..)
+
+example (likes : E → E → Prop) (mom : E → E) (everyone : (E → Prop) → Prop) :
+    (pure everyone <*> lambdaAbsG 0
+        (pure likes <*> (pure mom <*> interpPronoun 0) <*> interpPronoun 0 :
+          ReaderM (Assignment E) Prop) : ReaderM (Assignment E) Prop) =
+      fun _ => everyone fun x => likes (mom x) x := by
+  funext g
+  show everyone (fun x => likes (mom ((g[0 ↦ x]) 0)) ((g[0 ↦ x]) 0)) = _
+  simp only [Function.update_self]
+
+/-! ### Applicatives elsewhere in semantics -/
+
+section Applicatives
+
+variable {α β : Type}
+
+/-- Hamblin's pointwise application `{f x | f ∈ m, x ∈ n}` (15) is the `<*>` of sets. -/
+theorem hamblin_seq (m : Set (α → β)) (n : Set α) :
     m <*> n = {b | ∃ f ∈ m, ∃ x ∈ n, f x = b} := by
-  ext b; simp only [Set.seq_eq_set_seq, Set.mem_seq_iff, Set.mem_ofPred_eq]
+  ext b
+  simp only [Set.seq_eq_set_seq, Set.mem_seq_iff, Set.mem_ofPred_eq]
 
-/-- Eq. (14): Hamblin's `ρ x = {x}` is `Set`'s `pure`. -/
-theorem hamblin_pure (x : A) : (pure x : Set A) = {x} := rfl
+/-- Hamblin's `ρ x := {x}` (14). -/
+example (x : α) : (pure x : Set α) = {x} := rfl
 
-/-- The §3.3 table's four laws, for free. -/
-example : LawfulApplicative Set := inferInstance
+/-- The continuation combinators of Shan and Barker (16), (17). -/
+example {R : Type} (x : α) : (pure x : Cont R α) = fun κ => κ x := rfl
 
-end SetApplicative
+example {R : Type} (m : Cont R (α → β)) (n : Cont R α) :
+    m <*> n = fun κ => m fun f => n fun x => κ (f x) := rfl
 
-/-! ### The Cont applicative (eqs 16–17)
+/-- Applicatives compose (Fig. 5). -/
+example {F G : Type → Type} [Applicative F] [LawfulApplicative F] [Applicative G]
+    [LawfulApplicative G] : LawfulApplicative (Functor.Comp F G) := inferInstance
 
-Shan & Barker's continuation-based composition is built on two
-combinators (Lift/Scope) that directly instantiate the applicative
-functor for continuations `Cᵣ a := (a → r) → r`. The operations are
-definitionally `pure` and `<*>` for `Cont R`
-(`Mathlib.Control.Monad.Cont`). -/
+/-- The reader composed with itself: `ρ x = λg. λh. x` and `m ⊛ n = λg. λh. m g h (n g h)`. -/
+example {E₁ E₂ : Type} (x : α) :
+    (pure x : Functor.Comp (ReaderM E₁) (ReaderM E₂) α).run = fun _ _ => x := rfl
 
-section ContinuationApplicative
+example {E₁ E₂ : Type} (m : Functor.Comp (ReaderM E₁) (ReaderM E₂) (α → β))
+    (n : Functor.Comp (ReaderM E₁) (ReaderM E₂) α) :
+    (m <*> n).run = fun g h => m.run g h (n.run g h) := rfl
 
-variable {R A B : Type}
+end Applicatives
 
-/-- Eq. (16): `ρ x := λκ. κ x` = `pure`. -/
-theorem cont_pure_eq (x : A) :
-    (fun (κ : A → R) => κ x) = (pure x : Cont R A) := rfl
+/-! ### The flattener
 
-/-- Eq. (17): `m ⊛ n := λκ. m(λf. n(λx. κ(f x)))` = Cont `<*>`. -/
-theorem cont_ap_eq (m : Cont R (A → B)) (n : Cont R A) :
-    (fun (κ : B → R) => m (fun f => n (fun x => κ (f x)))) = m <*> n := rfl
+A pronoun whose value is an intension has type `g → g → e` (18). The flattener `μ m := λg. m g g`
+(19) is the reader monad's `joinM`. Section 4.3 states the monad laws with `ρ`, `⊛` and `μ`; they
+hold in every lawful monad. -/
 
-end ContinuationApplicative
+example {α : Type} (m : ReaderM (Assignment E) (ReaderM (Assignment E) α)) :
+    joinM m = fun g => m g g := rfl
 
-/-! ### Composed applicatives (Fig. 5)
+section MonadLaws
 
-Given two applicative type constructors F and G, their composition
-F ∘ G is applicative. For `ReaderM E₁ ∘ ReaderM E₂`:
+variable {M : Type → Type} [Monad M] [LawfulMonad M] {α : Type}
 
-```
-ρ_{F∘G}(x) = λe₁ λe₂. x
-(m ⊛_{F∘G} n)(e₁)(e₂) = m e₁ e₂ (n e₁ e₂)
-```
+/-- Associativity: `μ ∘ μ = λm. μ (ρ μ ⊛ m)`. -/
+theorem joinM_joinM (m : M (M (M α))) : joinM (joinM m) = joinM (pure joinM <*> m) := by
+  rw [pure_seq, joinM_map_joinM]
 
-This closure guarantees modularity: any two applicative-based analyses
-combine without additional machinery. `G ∘ S` yields
-assignment-dependent alternative sets; `S ∘ G` alternative
-assignment-dependent meanings; `G ∘ G` doubly assignment-dependent
-meanings (the §5 paycheck composite). Monads, by contrast, are NOT
-closed under composition (§4.3 end: `S ∘ G` is not monadic). -/
+/-- Identity: `λm. μ (ρ ρ ⊛ m) = λm. m`; the other half, `μ ∘ ρ = id`, is `joinM_pure`. -/
+theorem joinM_pure_seq_pure (m : M α) : joinM (pure pure <*> m) = m := by
+  rw [pure_seq, joinM_map_pure]
 
-section ComposedApplicatives
+end MonadLaws
 
-variable {E₁ E₂ A B C : Type}
+/-! ### Higher-order variables
 
-/-- Composed ρ for `ReaderM E₁ ∘ ReaderM E₂`. -/
-def composedPure (x : A) : E₁ → E₂ → A :=
-  fun _ _ => x
+For the analyses of section 4 an assignment values both individual variables and variables over
+individual concepts. Here `G` is a type of assignments, `ind i` and `con i` look up variable `i`
+of each sort, and `shift i x` and `shiftCon i n` are the shifted assignments `g^{i→x}`. -/
 
-/-- Composed ⊛ for `ReaderM E₁ ∘ ReaderM E₂`. -/
-def composedAp (f : E₁ → E₂ → A → B) (x : E₁ → E₂ → A) : E₁ → E₂ → B :=
-  fun e₁ e₂ => f e₁ e₂ (x e₁ e₂)
+section HigherOrder
 
-theorem composed_homomorphism (f : A → B) (x : A) :
-    composedAp (composedPure (E₁ := E₁) (E₂ := E₂) f) (composedPure x) =
-    composedPure (f x) := rfl
+variable {G : Type} (ind : ℕ → ReaderM G E) (con : ℕ → ReaderM G (ReaderM G E))
 
-theorem composed_identity (v : E₁ → E₂ → A) :
-    composedAp (composedPure id) v = v := rfl
+/-- Abstraction `Λᵢ f := λg. λx. f g^{i→x}` (13), given the shift `x ↦ g^{i→x}`. -/
+def abstraction {α β : Type} (shift : α → G → G) (f : ReaderM G β) : ReaderM G (α → β) :=
+  fun g x => f (shift x g)
 
-theorem composed_interchange (u : E₁ → E₂ → A → B) (y : A) :
-    composedAp u (composedPure y) =
-    composedAp (composedPure (fun f => f y)) u := rfl
+example {α : Type} (i : ℕ) (f : ReaderM (Assignment E) α) :
+    abstraction (fun x g => g[i ↦ x]) f = lambdaAbsG i f := rfl
 
-theorem composed_composition (u : E₁ → E₂ → B → C)
-    (v : E₁ → E₂ → A → B) (w : E₁ → E₂ → A) :
-    composedAp (composedAp (composedAp (composedPure Function.comp) u) v) w =
-    composedAp u (composedAp v w) := rfl
+variable (shift : ℕ → E → G → G) (shiftCon : ℕ → ReaderM G E → G → G)
 
-end ComposedApplicatives
+/-- The paycheck reading (Fig. 6): *Bill Λ₀ t₀ likes her₁*, with `her₁` anaphoric to an intension
+and flattened by `μ`. If the input assignment gives variable 1 the intension of *his₀ mom*, the
+sentence says that Bill likes Bill's mom. -/
+theorem paycheck (likes : E → E → Prop) (mom : E → E) (b : E) (g : G)
+    (hg : con 1 g = pure mom <*> ind 0)
+    (hcon : ∀ x g, con 1 (shift 0 x g) = con 1 g) (hind : ∀ x g, ind 0 (shift 0 x g) = x) :
+    (abstraction (shift 0) (pure likes <*> joinM (con 1) <*> ind 0) <*> pure b) g =
+      likes (mom b) b := by
+  show likes (con 1 (shift 0 b g) (shift 0 b g)) (ind 0 (shift 0 b g)) = _
+  rw [hcon, hg, hind]
+  exact congrArg (likes · b) (congrArg mom (hind b g))
 
-/-! ## §4 Getting higher-order: paychecks and reconstruction
+/-- Binding reconstruction (Fig. 7): *[his₀ mom] Λ₁ every boy Λ₀ t₀ likes t₁*. The fronted
+phrase's intension is stored at variable 1, the trace `t₁` is flattened by `μ`, and the sentence
+says that every boy likes his own mom. -/
+theorem reconstruction (likes : E → E → Prop) (mom : E → E) (everyBoy : (E → Prop) → Prop)
+    (g : G) (hstore : ∀ g, con 1 (shiftCon 1 (pure mom <*> ind 0) g) = pure mom <*> ind 0)
+    (hcon : ∀ x g, con 1 (shift 0 x g) = con 1 g) (hind : ∀ x g, ind 0 (shift 0 x g) = x) :
+    (abstraction (shiftCon 1)
+        (pure everyBoy <*> abstraction (shift 0) (pure likes <*> joinM (con 1) <*> ind 0)) <*>
+      pure (pure mom <*> ind 0)) g = everyBoy fun x => likes (mom x) x := by
+  show everyBoy (fun x =>
+    likes (con 1 (shift 0 x (shiftCon 1 (pure mom <*> ind 0) g))
+      (shift 0 x (shiftCon 1 (pure mom <*> ind 0) g)))
+      (ind 0 (shift 0 x (shiftCon 1 (pure mom <*> ind 0) g)))) = _
+  simp only [hcon, hstore, hind]
+  exact congrArg everyBoy (funext fun x => congrArg (likes · x) (congrArg mom (hind x _)))
 
-Higher-order variables (eq. 18: `pro ::= g → e | g → pro`) are
-anaphoric to *intensions* rather than *extensions*. The flattener μ
-(eq. 19: `μ m := λg. m g g`) converts a higher-order meaning to a
-garden-variety one. ρ, ⊛, and μ together form a monad (§4.3) — the
-Reader monad.
+/-- The laws `reconstruction` assumes are satisfiable over any domain: take assignments of
+individuals whose variable 1 constantly holds the intension of *his₀ mom*. -/
+example (mom : E → E) :
+    ∃ (G : Type) (ind : ℕ → ReaderM G E) (con : ℕ → ReaderM G (ReaderM G E))
+      (shift : ℕ → E → G → G) (shiftCon : ℕ → ReaderM G E → G → G),
+      (∀ g, con 1 (shiftCon 1 (pure mom <*> ind 0) g) = pure mom <*> ind 0) ∧
+      (∀ x g, con 1 (shift 0 x g) = con 1 g) ∧ ∀ x g, ind 0 (shift 0 x g) = x :=
+  ⟨Assignment E, interpPronoun, fun _ _ => (pure mom <*> interpPronoun 0 : ReaderM _ E),
+    fun i x g => g[i ↦ x], fun _ _ g => g, fun _ => rfl, fun _ _ => rfl,
+    fun _ _ => by simp only [interpPronoun, Function.update_self]⟩
 
-The `Assignment E = Nat → E` type can only store
-entities, not intensions; §5.1 proposes type-homogeneous assignments
-`gᵣ := ℕ → r` to fix this (next section). Here we show the paycheck
-truth conditions using externally-provided intensions. -/
+/-- Assignments that can store every intension exist only over a one-element domain. Storing
+makes the lookup `con i` a surjection from `G` onto `G → E`, which Cantor's diagonal argument
+rules out once `E` has two elements. This is why the laws above store only the intension a
+derivation needs, and the difficulty section 5.1 cites for such assignments. -/
+theorem subsingleton_of_forall_store [Nonempty G] (i : ℕ)
+    (h : ∀ n g, con i (shiftCon i n g) = n) : Subsingleton E := by
+  classical
+  refine ⟨fun a b => by_contra fun hab => ?_⟩
+  obtain ⟨g₀⟩ := ‹Nonempty G›
+  let d : ReaderM G E := fun g => if con i g g = a then b else a
+  have hd := congrFun (h d g₀) (shiftCon i d g₀)
+  simp only [d] at hd
+  split_ifs at hd with h'
+  exacts [hab (h'.symm.trans hd), h' hd]
 
-section Paycheck
+end HigherOrder
 
-variable {E W : Type}
+/-! ### Type-homogeneous assignments
 
-/-- The intension `⟦his₀ mom⟧ = ρ(mom) ⊛ pro₀ = λg. mom(g₀)`. -/
-def momIntension (mom : E → E) (n : Nat) : Assignment E → E :=
-  fun g => mom (g n)
+Section 5 gives each type `r` its own assignments, `g_r := ℕ → r`, which is `Assignment r`. A
+meaning that depends on assignments of two sorts lives in the composite of two reader
+applicatives. -/
 
-/-- `momIntension` is compositionally derived: `ρ(mom) ⊛ proₙ`. -/
-theorem momIntension_eq_rho_ap_pro (mom : E → E) (n : Nat) :
-    momIntension mom n =
-    applyG (constDenot mom) (interpPronoun n) := rfl
+section TypeHomogeneous
 
-/-- Paycheck truth conditions: `likes(mom(g n), bill)`. -/
-theorem paycheck_truth_conditions
-    (mom : E → E)
-    (likes : E → E → Prop)
-    (bill : E) (n : Nat) (g : Assignment E) :
-    applyG (applyG (constDenot likes) (momIntension mom n))
-           (constDenot bill) g =
-    likes (mom (g n)) bill := rfl
+/-- *…and buy the couch Λ₀ she₁ did t₀* (20): a pronoun over individuals and a trace over
+properties give `λg. λh. h₀ g₁`. -/
+example :
+    (Functor.Comp.mk (fun _ h => h 0) <*> Functor.Comp.mk (fun g _ => g 1) :
+      Functor.Comp (ReaderM (Assignment E)) (ReaderM (Assignment (E → Prop))) Prop).run =
+      fun g h => h 0 (g 1) := rfl
 
-/-- When `g(n) = bill`, the paycheck pronoun denotes Bill's mom. -/
-theorem paycheck_reading
-    (mom : E → E)
-    (likes : E → E → Prop)
-    (bill : E) (n : Nat) (g : Assignment E) (h : g n = bill) :
-    applyG (applyG (constDenot likes) (momIntension mom n))
-           (constDenot bill) g =
-    likes (mom bill) bill := by
-  simp only [paycheck_truth_conditions, h]
+/-- Meanings that depend on an assignment of individual concepts and then on an assignment of
+individuals: the composite `G_{G_e e} ∘ G_e` of section 5.2. -/
+abbrev ConceptThenIndividual (E : Type) : Type → Type :=
+  Functor.Comp (ReaderM (Assignment (Assignment E → E))) (ReaderM (Assignment E))
 
-end Paycheck
+/-- The paycheck reading on type-homogeneous assignments (section 5.2): `her₁` reads an intension
+from the outer assignment and evaluates it at the inner one, and `Λ₀` binds the subject's trace
+in the inner layer. The meaning is `λg. λh. likes (g₁ h^{0→b}) b`, with no flattener. -/
+theorem typed_paycheck (likes : E → E → Prop) (mom : E → E) (b : E)
+    (g : Assignment (Assignment E → E)) (h : Assignment E) (hg : g 1 = fun h => mom (h 0)) :
+    (Functor.Comp.mk (lambdaAbsG 0 <$> (pure likes <*>
+          (Functor.Comp.mk fun g h => g 1 h : ConceptThenIndividual E E) <*>
+          (Functor.Comp.mk fun _ h => h 0 : ConceptThenIndividual E E)).run) <*> pure b :
+      ConceptThenIndividual E Prop).run g h = likes (mom b) b := by
+  show likes (g 1 (h[0 ↦ b])) ((h[0 ↦ b]) 0) = _
+  simp only [hg, Function.update_self]
 
-/-! ### Binding reconstruction via higher-order trace + Λᵢ (Fig. 7)
+end TypeHomogeneous
 
-"[His₁ mom]ⱼ, every boy₁ likes tⱼ." The bound pronoun *his₁* is inside
-a fronted constituent syntactically *higher* than the binder *every
-boy₁*. The analysis uses Λ₁ to abstract over the quantifier variable,
-producing the reconstructed predicate `λx. likes(mom(x), x)` without
-LF c-command — and without triggering Weak Crossover, since the
-bound-into expression *originates* lower than the binder. -/
+/-! ### Variable-free pronouns
 
-section BindingReconstruction
+A variable-free pronoun is the identity `λx. x` (Fig. 8), composed with the same `ρ` and `⊛` at
+the entity type (section 6). -/
 
-variable {E W : Type}
+/-- *She left*. -/
+example (left : E → Prop) : (pure left <*> (fun x => x) : ReaderM E Prop) = left := rfl
 
-/-- The reconstructed VP predicate: `λx. likes(mom(x), x)`. -/
-theorem reconstruction_predicate
-    (mom : E → E)
-    (likes : E → E → Prop)
-    (n : Nat) (g : Assignment E) (x : E) :
-    lambdaAbsG n
-      (applyG (applyG (constDenot likes) (momIntension mom n))
-              (interpPronoun n))
-      g x =
-    likes (mom x) x := by
-  simp only [lambdaAbsG, momIntension, applyG, constDenot, interpPronoun,
-             Function.update_self]
+/-- *She saw her* in the variable-free applicative composed with itself is `λx. λy. saw y x`, and
+uncurried it depends on a pair of individuals, as a meaning depends on an assignment. -/
+example (saw : E → E → Prop) :
+    (pure saw <*> Functor.Comp.mk (fun _ y => y) <*> Functor.Comp.mk (fun x _ => x) :
+      Functor.Comp (ReaderM E) (ReaderM E) Prop).run = fun x y => saw y x := rfl
 
-/-- The reconstruction predicate is assignment-independent. -/
-theorem reconstruction_independent
-    (mom : E → E)
-    (likes : E → E → Prop)
-    (n : Nat) (g₁ g₂ : Assignment E) :
-    lambdaAbsG n
-      (applyG (applyG (constDenot likes) (momIntension mom n))
-              (interpPronoun n)) g₁ =
-    lambdaAbsG n
-      (applyG (applyG (constDenot likes) (momIntension mom n))
-              (interpPronoun n)) g₂ := by
-  funext x
-  simp only [lambdaAbsG, momIntension, applyG, constDenot, interpPronoun,
-             Function.update_self]
-
-end BindingReconstruction
-
-/-! ## §5 Stepping back, to applicatives: typed assignments
-
-§5.1–5.2: type-homogeneous assignments `gᵣ := ℕ → r` avoid the
-inconsistency worries of a single polymorphic assignment type (Muskens
-1995). Each type `r` gets its own assignment sort: `gₑ` maps indices
-to individuals, `g_{gₑ→e}` to individual concepts. The composed
-applicative `Gₑ ∘ G_{gₑ→e}` then handles paycheck pronouns *without*
-monadic μ: the paycheck pronoun reads an intension from the
-intension-assignment and evaluates it at the entity-assignment.
-"We needn't exploit the extra power of monads to treat paychecks and
-reconstruction; the only price is needing multiple assignments to
-extract propositional content from certain utterances." -/
-
-section TypedAssignments
-
-variable {E : Type}
-
-/-- Type-homogeneous assignment over carrier `r` (§5.2: `gᵣ := ℕ → r`).
-Equal to `Assignment r`; aliased to read naturally in the paycheck
-composition where `r` ranges over both entity and intension carriers
-within one derivation. -/
-abbrev TypedAssignment (r : Type) := Assignment r
-
-/-- Self-contained paycheck derivation via composed `Gₑ ∘ G_{gₑ→e}`.
-
-The intension-assignment `gᵢ` maps index `j` to the intension
-`λh. mom(h 0)` (= "his₀ mom"). The entity-assignment `gₑ` maps index 0
-to Bill. The paycheck pronoun `herⱼ` reads from `gᵢ` and evaluates at
-`gₑ`, yielding `mom(bill)` — "virtually identical to what we
-monadically derived in Figure 6, but depending on two assignments
-rather than one." -/
-theorem typed_paycheck
-    (likes : E → E → Bool) (mom : E → E) (bill : E)
-    (j : Nat) (gᵢ : TypedAssignment (TypedAssignment E → E))
-    (gₑ : TypedAssignment E)
-    (h_intension : gᵢ j = fun h => mom (h 0))
-    (h_bill : gₑ 0 = bill) :
-    composedAp (composedAp (composedPure likes)
-      (fun gᵢ' gₑ' => gᵢ' j gₑ')) (composedPure bill) gᵢ gₑ =
-    likes (mom bill) bill := by
-  simp only [composedAp, composedPure, h_intension, h_bill]
-
-/-- The intension `λh. mom(h 0)` is compositionally derived as `ρ(mom) ⊛ pro₀` in the inner
-`Gₑ` applicative — the Reader monad's `pure` and `<*>` at the assignment sort. -/
-theorem typed_intension_is_rho_ap_pro (mom : E → E) :
-    ((pure mom : ReaderM (TypedAssignment E) (E → E)) <*> fun h => h 0) =
-      fun h => mom (h 0) := rfl
-
-/-- `G ∘ G` paycheck reading with `Assignment` sorts: the doubly
-assignment-dependent meaning `λg λh. likes(g₁ h)(b)` depends on two
-assignments. -/
-theorem composed_paycheck
-    (likes : E → E → Bool) (mom : E → E) (b : E)
-    (g : Nat → E) (h : Nat → E) (j : Nat)
-    (h_stored : g j = mom (h 0)) :
-    composedAp (composedAp (composedPure likes)
-      (fun g' _ => g' j)) (composedPure b) g h =
-    likes (mom (h 0)) b := by
-  simp only [composedAp, composedPure, h_stored]
-
-end TypedAssignments
-
-/-! ## §6 A bit of variable-free semantics to play us out
-
-[jacobson-1999]'s variable-free semantics treats pronouns as identity
-functions `⟦she⟧ := λx. x` (type `e → e`). The composition apparatus
-is structurally identical to the assignment-sensitive version — ρ and
-⊛ with `Entity` as the environment type instead of assignments
-("we've only replaced g-dependent e's with e-dependent e's").
-
-The striking observation: composing the VF applicative with itself
-(`ReaderM E ∘ ReaderM E`) yields two-pronoun readings where the pronouns
-resolve independently — uncurrying the result produces
-assignment-dependence "organically." -/
-
-section VariableFree
-
-variable {E : Type}
-
-/-- VF pronoun: the identity function `⟦she⟧ := λx. x`. -/
-def vfPronoun : E → E := id
-
-/-- "She left" in VF: `ρ(left) ⊛ she = left`, the same Reader operations at environment `E`. -/
-theorem vf_she_left (left : E → Bool) :
-    ((pure left : ReaderM E (E → Bool)) <*> vfPronoun) = left := rfl
-
-/-- "She saw her" with a single entity parameter: both pronouns resolve
-to the same entity, yielding `λe. saw e e` (reflexive reading). -/
-theorem vf_she_saw_her_single (saw : E → E → Bool) :
-    ((pure saw : ReaderM E (E → E → Bool)) <*> vfPronoun <*> vfPronoun) =
-      fun e => saw e e := rfl
-
-/-- "She saw her" with the composed applicative (two entity
-parameters): the two pronouns resolve independently, yielding
-`λx λy. saw y x`. Assignment-dependence "springs organically into
-being" from uncurrying. -/
-theorem vf_she_saw_her_composed (saw : E → E → Bool) :
-    composedAp (composedAp (composedPure saw)
-      (fun _ (e₂ : E) => e₂)) (fun (e₁ : E) _ => e₁) =
-    fun (e₁ : E) (e₂ : E) => saw e₂ e₁ := rfl
-
-end VariableFree
+example (saw : E → E → Prop) :
+    Function.uncurry (pure saw <*> Functor.Comp.mk (fun _ y => y) <*>
+      Functor.Comp.mk (fun x _ => x) : Functor.Comp (ReaderM E) (ReaderM E) Prop).run =
+      fun p => saw p.2 p.1 := rfl
 
 end Charlow2018
