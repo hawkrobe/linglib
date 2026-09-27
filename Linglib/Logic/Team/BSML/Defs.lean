@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Data.Fintype.Powerset
-public import Linglib.Logic.Team.Algebra
+public import Linglib.Logic.Team.Operations
 public import Linglib.Logic.Bilateral.Defs
 public import Linglib.Logic.Team.Kripke
 
@@ -50,6 +50,10 @@ atoms flip truth value:
 | □φ | ∀w∈s: R[w] ⊨⁺ φ | ∀w∈s: ∃ ne t⊆R[w]: t ⊨⁻ φ |
 | NE | s ≠ ∅ | s = ∅ |
 
+Each clause is an operation of `Team/Operations.lean` applied to the support sets of the
+subformulas — atoms and the modalities are `Team.flat`, `Team.poss` and `Team.nec`, the
+split clauses `Team.tensor`, `NE` is `Team.ne` with anti-support `{∅}` — so the closure
+properties of `Properties.lean` are folds over the per-connective lemmas there.
 Encoding both polarities in one `eval` makes the duality a single recursion
 and double-negation elimination a `rfl`: `eval M true (.neg (.neg φ)) t`
 reduces to `eval M true φ t` by two negation clauses. Models are the shared
@@ -138,22 +142,18 @@ variable {W : Type*} [DecidableEq W]
     conjunction-anti-support) quantify over `Team.splitsAs` decompositions
     `t₁ ∪ t₂ = t`. -/
 def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
-  | true,  .atom p,       t => ∀ w ∈ t, M.val p w = true
-  | false, .atom p,       t => ∀ w ∈ t, M.val p w = false
-  | true,  .ne,           t => t.Nonempty
-  | false, .ne,           t => t = ∅
+  | true,  .atom p,       t => t ∈ Team.flat fun w ↦ M.val p w = true
+  | false, .atom p,       t => t ∈ Team.flat fun w ↦ M.val p w = false
+  | true,  .ne,           t => t ∈ Team.ne
+  | false, .ne,           t => t ∈ ({∅} : Team.TeamProperty W)
   | true,  .neg ψ,        t => eval M false ψ t
   | false, .neg ψ,        t => eval M true ψ t
   | true,  .conj ψ₁ ψ₂,  t => eval M true ψ₁ t ∧ eval M true ψ₂ t
-  | false, .conj ψ₁ ψ₂,  t => ∃ t₁ t₂ : Finset W,
-                                Team.splitsAs t t₁ t₂ ∧
-                                eval M false ψ₁ t₁ ∧ eval M false ψ₂ t₂
-  | true,  .disj ψ₁ ψ₂,  t => ∃ t₁ t₂ : Finset W,
-                                Team.splitsAs t t₁ t₂ ∧
-                                eval M true ψ₁ t₁ ∧ eval M true ψ₂ t₂
+  | false, .conj ψ₁ ψ₂,  t => t ∈ Team.tensor {s | eval M false ψ₁ s} {s | eval M false ψ₂ s}
+  | true,  .disj ψ₁ ψ₂,  t => t ∈ Team.tensor {s | eval M true ψ₁ s} {s | eval M true ψ₂ s}
   | false, .disj ψ₁ ψ₂,  t => eval M false ψ₁ t ∧ eval M false ψ₂ t
-  | true,  .poss ψ,       t => ∀ w ∈ t, ∃ s ⊆ M.access w, s.Nonempty ∧ eval M true ψ s
-  | false, .poss ψ,       t => ∀ w ∈ t, eval M false ψ (M.access w)
+  | true,  .poss ψ,       t => t ∈ Team.poss M.access {s | eval M true ψ s}
+  | false, .poss ψ,       t => t ∈ Team.nec M.access {s | eval M false ψ s}
 
 /-- Support: positive evaluation. -/
 abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
@@ -288,7 +288,8 @@ def consequenceStar (φ ψ : Formula Atom) : Prop :=
 
 /-! ### Decidability of evaluation -/
 
-/-- Decidability of `eval` by structural recursion on the formula. -/
+/-- Decidability of `eval` by structural recursion on the formula, through the operators'
+    instances. -/
 def decidableEval [Fintype W] (M : KripkeModel W Atom) :
     (pol : Bool) → (φ : Formula Atom) → (t : Finset W) → Decidable (eval M pol φ t)
   | true,  .atom _, t => by unfold eval; infer_instance
@@ -302,56 +303,21 @@ def decidableEval [Fintype W] (M : KripkeModel W Atom) :
       exact @instDecidableAnd _ _ (decidableEval M true ψ₁ t) (decidableEval M true ψ₂ t)
   | false, .conj ψ₁ ψ₂, t => by
       unfold eval
-      exact @Fintype.decidableExistsFintype (Finset W)
-        (fun t₁ => ∃ t₂ : Finset W,
-            Team.splitsAs t t₁ t₂ ∧
-            eval M false ψ₁ t₁ ∧ eval M false ψ₂ t₂)
-        (fun t₁ => @Fintype.decidableExistsFintype (Finset W)
-          (fun t₂ => Team.splitsAs t t₁ t₂ ∧
-                     eval M false ψ₁ t₁ ∧ eval M false ψ₂ t₂)
-          (fun t₂ => @instDecidableAnd _ _
-            inferInstance
-            (@instDecidableAnd _ _
-              (decidableEval M false ψ₁ t₁)
-              (decidableEval M false ψ₂ t₂)))
-          inferInstance)
-        inferInstance
+      exact @Team.tensor.instDecidableMem _ _ _ _ _
+        (decidableEval M false ψ₁) (decidableEval M false ψ₂) t
   | true,  .disj ψ₁ ψ₂, t => by
       unfold eval
-      exact @Fintype.decidableExistsFintype (Finset W)
-        (fun t₁ => ∃ t₂ : Finset W,
-            Team.splitsAs t t₁ t₂ ∧
-            eval M true ψ₁ t₁ ∧ eval M true ψ₂ t₂)
-        (fun t₁ => @Fintype.decidableExistsFintype (Finset W)
-          (fun t₂ => Team.splitsAs t t₁ t₂ ∧
-                     eval M true ψ₁ t₁ ∧ eval M true ψ₂ t₂)
-          (fun t₂ => @instDecidableAnd _ _
-            inferInstance
-            (@instDecidableAnd _ _
-              (decidableEval M true ψ₁ t₁)
-              (decidableEval M true ψ₂ t₂)))
-          inferInstance)
-        inferInstance
+      exact @Team.tensor.instDecidableMem _ _ _ _ _
+        (decidableEval M true ψ₁) (decidableEval M true ψ₂) t
   | false, .disj ψ₁ ψ₂, t => by
       unfold eval
       exact @instDecidableAnd _ _ (decidableEval M false ψ₁ t) (decidableEval M false ψ₂ t)
   | true,  .poss ψ, t => by
       unfold eval
-      exact @Finset.decidableDforallFinset _ t
-        (fun w _ => ∃ s ⊆ M.access w, s.Nonempty ∧ eval M true ψ s)
-        (fun w _ => @Fintype.decidableExistsFintype (Finset W)
-          (fun s => s ⊆ M.access w ∧ s.Nonempty ∧ eval M true ψ s)
-          (fun s => @instDecidableAnd _ _
-            inferInstance
-            (@instDecidableAnd _ _
-              inferInstance
-              (decidableEval M true ψ s)))
-          inferInstance)
+      exact @Team.poss.instDecidableMem _ _ _ _ _ (decidableEval M true ψ) t
   | false, .poss ψ, t => by
       unfold eval
-      exact @Finset.decidableDforallFinset _ t
-        (fun w _ => eval M false ψ (M.access w))
-        (fun w _ => decidableEval M false ψ (M.access w))
+      exact @Team.nec.instDecidableMem _ _ _ (decidableEval M false ψ) t
 
 instance instDecidableEval [Fintype W] (M : KripkeModel W Atom) (pol : Bool) (φ : Formula Atom)
     (t : Finset W) : Decidable (eval M pol φ t) := decidableEval M pol φ t

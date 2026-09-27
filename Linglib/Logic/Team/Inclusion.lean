@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Team.Kripke
-public import Linglib.Logic.Team.Algebra
+public import Linglib.Logic.Team.Operations
 public import Linglib.Logic.Team.Closure
 public import Linglib.Logic.Team.Definability
 
@@ -53,6 +53,12 @@ in the union).
   inclusion atom breaks downward closure.
 
 ## Implementation notes
+
+The `eval` clauses are the operations of `Team/Operations.lean` — `Team.flat`
+for atoms and negation, `Team.tensor` for disjunction, the lax modality
+`Team.possLax` and the image modality `Team.necImage` — so union closure and
+the empty-team property are folds over their per-connective lemmas, the
+inclusion atom being the one case argued directly.
 
 The paper's inclusion atom takes equal-length lists of *classical
 formulas* `α₁...αₙ ⊆ β₁...βₙ`. We simplify to lists of *atoms* — each
@@ -127,21 +133,16 @@ inductive Formula (Atom : Type*) where
 
 /-- Single-polarity team-semantic evaluation. -/
 def eval (M : KripkeModel W Atom) : Formula Atom → Finset W → Prop
-  | .atom p,        t => ∀ w ∈ t, M.val p w = true
-  | .bot,           t => t = ∅
+  | .atom p,        t => t ∈ Team.flat fun w ↦ M.val p w = true
+  | .bot,           t => t ∈ ({∅} : Team.TeamProperty W)
   | .incl xys,      t =>
       ∀ w₁ ∈ t, ∃ w₂ ∈ t,
         ∀ xy ∈ xys, M.val (Prod.fst xy) w₁ = true ↔ M.val (Prod.snd xy) w₂ = true
-  | .neg ψ,         t => ∀ w ∈ t, ¬ eval M ψ {w}
+  | .neg ψ,         t => t ∈ Team.flat fun w ↦ ¬ eval M ψ {w}
   | .conj ψ₁ ψ₂,    t => eval M ψ₁ t ∧ eval M ψ₂ t
-  | .disj ψ₁ ψ₂,    t => ∃ t₁ t₂ : Finset W,
-                          Team.splitsAs t t₁ t₂ ∧
-                          eval M ψ₁ t₁ ∧ eval M ψ₂ t₂
-  | .poss ψ,        t => ∃ S : Finset W,
-                          S ⊆ t.biUnion M.access ∧
-                          (∀ w ∈ t, ∃ s ∈ S, s ∈ M.access w) ∧
-                          eval M ψ S
-  | .nec ψ,         t => eval M ψ (t.biUnion M.access)
+  | .disj ψ₁ ψ₂,    t => t ∈ Team.tensor {s | eval M ψ₁ s} {s | eval M ψ₂ s}
+  | .poss ψ,        t => t ∈ Team.possLax M.access {s | eval M ψ s}
+  | .nec ψ,         t => t ∈ Team.necImage M.access {s | eval M ψ s}
 
 /-- Support: alias for `eval`. MIL is unilateral (no separate
     anti-support), but the name `support` is the conventional one
@@ -198,103 +199,40 @@ def Formula.modalDepth : Formula Atom → ℕ
     (AHY 2024 §2 — "Union closure: if M, Tᵢ ⊨ φ for all i ∈ I ≠ ∅,
     then M, ⋃_{i ∈ I} Tᵢ ⊨ φ") -/
 
-/-- Every MIL formula has sup-closed support. Single-polarity induction
-    is cleaner than BSML's joint-bilateral form because there's no
-    antiSupport to track. -/
+/-- Every MIL formula has sup-closed support: each case is the closure lemma of its
+    connective in `Team/Operations.lean`; a world's inclusion witness in either team is a
+    witness in the union. -/
 theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     SupClosed { t : Finset W | support M φ t } := by
   induction φ with
-  | atom p =>
-    intro s hs t ht w hw
-    rcases Finset.mem_union.mp hw with h | h
-    · exact hs w h
-    · exact ht w h
-  | bot =>
-    intro s hs t ht
-    show s ∪ t = ∅
-    rw [hs, ht]; simp
+  | atom p => exact Team.supClosed_flat _
+  | bot => exact Team.supClosed_singleton_empty
   | incl xys =>
-    -- support .incl: every w in t has a witness w' in t with matching truth-values.
-    -- Under union: a world in s ∪ t is in s or t; its witness from the
-    -- corresponding side lifts to s ∪ t.
     intro s hs t ht w₁ hw₁
     rcases Finset.mem_union.mp hw₁ with hw₁s | hw₁t
     · obtain ⟨w₂, hw₂, hagree⟩ := hs w₁ hw₁s
       exact ⟨w₂, Finset.mem_union.mpr (Or.inl hw₂), hagree⟩
     · obtain ⟨w₂, hw₂, hagree⟩ := ht w₁ hw₁t
       exact ⟨w₂, Finset.mem_union.mpr (Or.inr hw₂), hagree⟩
-  | neg ψ _ih =>
-    -- support .neg ψ t = ∀ w ∈ t, ¬ support ψ {w}. Union-closed:
-    -- the condition holds for each w ∈ s ∪ t via the corresponding side.
-    intro s hs t ht w hw
-    rcases Finset.mem_union.mp hw with h | h
-    · exact hs w h
-    · exact ht w h
-  | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    intro s ⟨hs₁, hs₂⟩ t ⟨ht₁, ht₂⟩
-    exact ⟨ih₁ hs₁ ht₁, ih₂ hs₂ ht₂⟩
-  | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    intro s ⟨s₁, s₂, hsplit_s, hs_s₁, hs_s₂⟩ t ⟨t₁, t₂, hsplit_t, hs_t₁, hs_t₂⟩
-    refine ⟨s₁ ∪ t₁, s₂ ∪ t₂, ?_, ih₁ hs_s₁ hs_t₁, ih₂ hs_s₂ hs_t₂⟩
-    show (s₁ ∪ t₁) ∪ (s₂ ∪ t₂) = s ∪ t
-    have h1 : s₁ ∪ s₂ = s := hsplit_s
-    have h2 : t₁ ∪ t₂ = t := hsplit_t
-    rw [show (s₁ ∪ t₁) ∪ (s₂ ∪ t₂) = (s₁ ∪ s₂) ∪ (t₁ ∪ t₂) from by
-      ext x; simp [Finset.mem_union]; tauto]
-    rw [h1, h2]
-  | poss ψ ih =>
-    -- support .poss ψ t: ∃ S ⊆ t.biUnion R, ... ∧ support ψ S.
-    -- Under union: take S = S_s ∪ S_t (witnesses from each side).
-    intro s ⟨S_s, hS_s_sub, hS_s_wit, hS_s_supp⟩ t ⟨S_t, hS_t_sub, hS_t_wit, hS_t_supp⟩
-    refine ⟨S_s ∪ S_t, ?_, ?_, ih hS_s_supp hS_t_supp⟩
-    · -- S_s ∪ S_t ⊆ (s ∪ t).biUnion R
-      intro x hx
-      rcases Finset.mem_union.mp hx with hx_s | hx_t
-      · have := hS_s_sub hx_s
-        rw [Finset.mem_biUnion] at this ⊢
-        obtain ⟨w, hw, hxw⟩ := this
-        exact ⟨w, Finset.mem_union.mpr (Or.inl hw), hxw⟩
-      · have := hS_t_sub hx_t
-        rw [Finset.mem_biUnion] at this ⊢
-        obtain ⟨w, hw, hxw⟩ := this
-        exact ⟨w, Finset.mem_union.mpr (Or.inr hw), hxw⟩
-    · -- Every w in s ∪ t has a witness in S_s ∪ S_t
-      intro w hw
-      rcases Finset.mem_union.mp hw with hws | hwt
-      · obtain ⟨s', hs', hacc⟩ := hS_s_wit w hws
-        exact ⟨s', Finset.mem_union.mpr (Or.inl hs'), hacc⟩
-      · obtain ⟨s', hs', hacc⟩ := hS_t_wit w hwt
-        exact ⟨s', Finset.mem_union.mpr (Or.inr hs'), hacc⟩
-  | nec ψ ih =>
-    -- support .nec ψ t = support ψ (t.biUnion R).
-    -- (s ∪ t).biUnion R = s.biUnion R ∪ t.biUnion R; UC of support of ψ.
-    intro s hs t ht
-    show support M ψ ((s ∪ t).biUnion M.access)
-    rw [Finset.union_biUnion]
-    exact ih hs ht
+  | neg ψ _ => exact Team.supClosed_flat _
+  | conj ψ₁ ψ₂ ih₁ ih₂ => exact ih₁.inter ih₂
+  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ih₁.tensor ih₂
+  | poss ψ ih => exact ih.possLax
+  | nec ψ ih => exact ih.necImage
 
 /-! ### Empty team property (AHY 2024 §2) -/
 
 theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
     support M φ ∅ := by
   induction φ with
-  | atom p => intro w hw; exact absurd hw (Finset.notMem_empty w)
+  | atom p => exact Team.empty_mem_flat _
   | bot => rfl
-  | incl xys => intro w₁ hw₁; exact absurd hw₁ (Finset.notMem_empty w₁)
-  | neg ψ _ih => intro w hw; exact absurd hw (Finset.notMem_empty w)
+  | incl xys => exact fun w₁ hw₁ ↦ absurd hw₁ (Finset.notMem_empty w₁)
+  | neg ψ _ => exact Team.empty_mem_flat _
   | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁, ih₂⟩
-  | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    refine ⟨∅, ∅, ?_, ih₁, ih₂⟩
-    show ∅ ∪ ∅ = ∅
-    simp
-  | poss ψ ih =>
-    refine ⟨∅, ?_, ?_, ih⟩
-    · intro x hx; exact absurd hx (Finset.notMem_empty x)
-    · intro w hw; exact absurd hw (Finset.notMem_empty w)
-  | nec ψ ih =>
-    show support M ψ ((∅ : Finset W).biUnion M.access)
-    rw [Finset.biUnion_empty]
-    exact ih
+  | disj ψ₁ ψ₂ ih₁ ih₂ => exact Team.empty_mem_tensor ih₁ ih₂
+  | poss ψ ih => exact Team.empty_mem_possLax ih
+  | nec ψ ih => exact Team.empty_mem_necImage ih
 
 /-! ### Inclusion breaks downward closure (the defining feature) -/
 
@@ -356,18 +294,8 @@ open Team in
     converse (every such property is MIL-definable, via the inclusion normal
     form) is the open half. -/
 theorem soundFor_unionClosed_inter_empty (M : KripkeModel W Atom) :
-    SoundFor (support M) (unionClosedProperties ∩ emptyTeamProperties) := by
-  unfold SoundFor
-  apply Set.subset_inter
-  · intro P hP
-    simp only [mem_definableClass] at hP
-    obtain ⟨φ, rfl⟩ := hP
-    show SupClosed (definedBy (support M) φ)
-    exact supClosed_support M φ
-  · intro P hP
-    simp only [mem_definableClass] at hP
-    obtain ⟨φ, rfl⟩ := hP
-    show ∅ ∈ definedBy (support M) φ
-    exact support_empty M φ
+    SoundFor (support M) (unionClosedProperties ∩ emptyTeamProperties) :=
+  Set.subset_inter (definableClass_subset (supClosed_support M))
+    (definableClass_subset (support_empty M))
 
 end ModalLogic.Inclusion

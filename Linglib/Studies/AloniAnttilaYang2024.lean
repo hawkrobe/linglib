@@ -449,8 +449,8 @@ theorem eval_ofBSML (b : Bool) (φ : BSML.Formula Atom) :
         ⟨t₁, t₂, hsplit, (ih₁ t₁ true).mpr h₁, (ih₂ t₂ true).mpr h₂⟩]
   | poss ψ ih =>
     cases b
-    · simp only [ofBSML, eval, BSML.eval, ih]
-    · simp only [ofBSML, eval, BSML.eval]
+    · simp only [ofBSML, eval, BSML.eval, Team.mem_nec, Set.mem_ofPred_eq, ih]
+    · simp only [ofBSML, eval, BSML.eval, Team.mem_poss, Set.mem_ofPred_eq]
       constructor <;> intro h w hw <;> obtain ⟨s, hsub, hne, hsupp⟩ := h w hw
       exacts [⟨s, hsub, hne, (ih s true).mp hsupp⟩, ⟨s, hsub, hne, (ih s true).mpr hsupp⟩]
 

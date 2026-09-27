@@ -3,7 +3,7 @@ module
 public import Linglib.Logic.Team.Kripke
 public import Linglib.Logic.Team.Bisimulation
 public import Linglib.Logic.Bilateral.Defs
-public import Linglib.Logic.Team.Algebra
+public import Linglib.Logic.Team.Operations
 public import Linglib.Logic.Team.Closure
 public import Linglib.Logic.Team.Definability
 
@@ -84,7 +84,11 @@ worlds with matching `x⃗`).
 
 ## Implementation notes
 
-The MDL eval uses Väänänen's exact clauses, not BSML's. The disjunction
+The MDL eval is a fold over the operations of `Team/Operations.lean`:
+`Team.flat` for atoms, `Team.tensor` for the split clauses, and Väänänen's
+single-witness and image modalities `Team.possWitness` and `Team.necImage`,
+whose closure lemmas give Lemma 4.2 and the empty-team property case by
+case. The MDL eval uses Väänänen's exact clauses, not BSML's. The disjunction
 clause is the under-DC simplified form `X = Y ∪ Z` (paper's (T6)'
 under Lemma 4.2 part 1) rather than the literal `X ⊆ Y ∪ Z` from
 (T6); under downward closure they are equivalent.
@@ -160,26 +164,20 @@ inductive Formula (Atom : Type*) where
     BSML's per-world form; the two formulations diverge for non-union-
     closed logics like MDL. -/
 def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
-  | true,  .atom p,        t => ∀ w ∈ t, M.val p w = true
-  | false, .atom p,        t => ∀ w ∈ t, M.val p w = false
+  | true,  .atom p,        t => t ∈ Team.flat fun w ↦ M.val p w = true
+  | false, .atom p,        t => t ∈ Team.flat fun w ↦ M.val p w = false
   | true,  .dep xs y,      t => ∀ w₁ ∈ t, ∀ w₂ ∈ t,
                                   (∀ x ∈ xs, M.val x w₁ = M.val x w₂) →
                                   M.val y w₁ = M.val y w₂
-  | false, .dep _ _,       t => t = ∅
+  | false, .dep _ _,       t => t ∈ ({∅} : Team.TeamProperty W)
   | true,  .neg ψ,         t => eval M false ψ t
   | false, .neg ψ,         t => eval M true ψ t
   | true,  .conj ψ₁ ψ₂,    t => eval M true ψ₁ t ∧ eval M true ψ₂ t
-  | false, .conj ψ₁ ψ₂,    t => ∃ t₁ t₂ : Finset W,
-                                  Team.splitsAs t t₁ t₂ ∧
-                                  eval M false ψ₁ t₁ ∧ eval M false ψ₂ t₂
-  | true,  .disj ψ₁ ψ₂,    t => ∃ t₁ t₂ : Finset W,
-                                  Team.splitsAs t t₁ t₂ ∧
-                                  eval M true ψ₁ t₁ ∧ eval M true ψ₂ t₂
+  | false, .conj ψ₁ ψ₂,    t => t ∈ Team.tensor {s | eval M false ψ₁ s} {s | eval M false ψ₂ s}
+  | true,  .disj ψ₁ ψ₂,    t => t ∈ Team.tensor {s | eval M true ψ₁ s} {s | eval M true ψ₂ s}
   | false, .disj ψ₁ ψ₂,    t => eval M false ψ₁ t ∧ eval M false ψ₂ t
-  | true,  .poss ψ,        t => ∃ Y : Finset W,
-                                  (∀ w ∈ t, ∃ y ∈ Y, y ∈ M.access w) ∧
-                                  eval M true ψ Y
-  | false, .poss ψ,        t => eval M false ψ (t.biUnion M.access)
+  | true,  .poss ψ,        t => t ∈ Team.possWitness M.access {s | eval M true ψ s}
+  | false, .poss ψ,        t => t ∈ Team.necImage M.access {s | eval M false ψ s}
 
 /-- Support: positive evaluation. -/
 abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
@@ -256,129 +254,42 @@ def Formula.modalDepth : Formula Atom → ℕ
 
 /-! ### Lemma 4.2: Downward closure -/
 
-/-- Joint downward closure for both polarities. Mirrors the BSML pattern:
-    each clause preserves the ⊆-direction, including the new dep clause
-    (subteam of functionally-dependent is functionally dependent). -/
-private theorem support_and_antiSupport_downward (φ : Formula Atom)
+/-- Joint downward closure for both polarities: each case is the closure lemma of its
+    connective in `Team/Operations.lean`; the dependence atom is inherited by subteams. -/
+private theorem support_and_antiSupport_isLowerSet (φ : Formula Atom)
     (M : KripkeModel W Atom) :
-    (∀ s t : Finset W, t ⊆ s → support M φ s → support M φ t) ∧
-    (∀ s t : Finset W, t ⊆ s → antiSupport M φ s → antiSupport M φ t) := by
+    IsLowerSet {t | support M φ t} ∧ IsLowerSet {t | antiSupport M φ t} := by
   induction φ with
-  | atom p =>
-    refine ⟨?_, ?_⟩
-    · intro s t hsub hsupp w hw; exact hsupp w (hsub hw)
-    · intro s t hsub hsupp w hw; exact hsupp w (hsub hw)
+  | atom p => exact ⟨Team.isLowerSet_flat _, Team.isLowerSet_flat _⟩
   | dep xs y =>
-    refine ⟨?_, ?_⟩
-    · -- support .dep s = functional dependence in s. Subteams inherit.
-      intro s t hsub hsupp w₁ hw₁ w₂ hw₂ hagree
-      exact hsupp w₁ (hsub hw₁) w₂ (hsub hw₂) hagree
-    · -- antiSupport .dep s = s = ∅. Subteam of ∅ is ∅.
-      intro s t hsub hsupp
-      show t = ∅
-      rw [hsupp] at hsub
-      exact Finset.subset_empty.mp hsub
-  | neg ψ ih =>
-    have ⟨ihs, iha⟩ := ih
-    exact ⟨iha, ihs⟩
-  | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    have ⟨ihs₁, iha₁⟩ := ih₁
-    have ⟨ihs₂, iha₂⟩ := ih₂
-    refine ⟨?_, ?_⟩
-    · -- support: conjunction of supports, both halves survive ⊆
-      intro s t hsub ⟨hs₁, hs₂⟩
-      exact ⟨ihs₁ s t hsub hs₁, ihs₂ s t hsub hs₂⟩
-    · -- antiSupport: ∃ split, restrict t-intersect
-      intro s t hsub ⟨t₁, t₂, hsplit, ha₁, ha₂⟩
-      refine ⟨t₁ ∩ t, t₂ ∩ t, ?_, ?_, ?_⟩
-      · show (t₁ ∩ t) ∪ (t₂ ∩ t) = t
-        rw [(Finset.union_inter_distrib_right t₁ t₂ t).symm]
-        have heq : t₁ ∪ t₂ = s := hsplit
-        rw [heq]; exact Finset.inter_eq_right.mpr hsub
-      · exact iha₁ t₁ (t₁ ∩ t) Finset.inter_subset_left ha₁
-      · exact iha₂ t₂ (t₂ ∩ t) Finset.inter_subset_left ha₂
-  | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    have ⟨ihs₁, iha₁⟩ := ih₁
-    have ⟨ihs₂, iha₂⟩ := ih₂
-    refine ⟨?_, ?_⟩
-    · -- support: ∃ split, restrict t-intersect
-      intro s t hsub ⟨t₁, t₂, hsplit, hs₁, hs₂⟩
-      refine ⟨t₁ ∩ t, t₂ ∩ t, ?_, ?_, ?_⟩
-      · show (t₁ ∩ t) ∪ (t₂ ∩ t) = t
-        rw [(Finset.union_inter_distrib_right t₁ t₂ t).symm]
-        have heq : t₁ ∪ t₂ = s := hsplit
-        rw [heq]; exact Finset.inter_eq_right.mpr hsub
-      · exact ihs₁ t₁ (t₁ ∩ t) Finset.inter_subset_left hs₁
-      · exact ihs₂ t₂ (t₂ ∩ t) Finset.inter_subset_left hs₂
-    · -- antiSupport: conjunction, both halves survive ⊆
-      intro s t hsub ⟨ha₁, ha₂⟩
-      exact ⟨iha₁ s t hsub ha₁, iha₂ s t hsub ha₂⟩
-  | poss ψ ih =>
-    have ⟨_ihs, iha⟩ := ih
-    refine ⟨?_, ?_⟩
-    · -- support .poss: ∃ Y, (∀ w ∈ s, ∃ y ∈ Y, y ∈ R[w]) ∧ support ψ Y.
-      -- Same Y witnesses for subteam t ⊆ s (the per-world condition holds
-      -- vacuously for w ∈ s \ t, and unchanged for w ∈ t).
-      intro s t hsub ⟨Y, hwit, hsupp⟩
-      refine ⟨Y, ?_, hsupp⟩
-      intro w hw; exact hwit w (hsub hw)
-    · -- antiSupport .poss s = antiSupport ψ (s.biUnion R). For t ⊆ s,
-      -- (t.biUnion R) ⊆ (s.biUnion R), so by IH (downward closure on ψ).
-      intro s t hsub hsupp
-      apply iha (s.biUnion M.access) (t.biUnion M.access) ?_ hsupp
-      exact Finset.biUnion_subset_biUnion_of_subset_left M.access hsub
+    exact ⟨fun _ _ hts h w₁ hw₁ w₂ hw₂ ↦ h w₁ (hts hw₁) w₂ (hts hw₂),
+      Team.isLowerSet_singleton_empty⟩
+  | neg ψ ih => exact ih.symm
+  | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.inter ih₂.1, ih₁.2.tensor ih₂.2⟩
+  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.tensor ih₂.1, ih₁.2.inter ih₂.2⟩
+  | poss ψ ih => exact ⟨Team.isLowerSet_possWitness _ _, ih.2.necImage⟩
 
 /-- **Lemma 4.2 of [vaananen-2008]**: every MDL formula's support
     is downward-closed. The defining closure property of the dependence
     family — what BSML loses when it adds NE. -/
 theorem isLowerSet_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     IsLowerSet { t : Finset W | support M φ t } :=
-  fun _ _ hab hb =>
-    (support_and_antiSupport_downward φ M).1 _ _ hab hb
+  (support_and_antiSupport_isLowerSet φ M).1
 
 /-! ### Empty team property -/
 
-/-- Joint empty-team property: every MDL formula has both empty support
-    and empty anti-support. Proved by structural induction; differs
-    from BSML in that no `NE` constructor breaks it. -/
+/-- Joint empty-team property: every MDL formula has both empty support and empty
+    anti-support; no `NE` constructor breaks it. -/
 private theorem support_and_antiSupport_empty
     (φ : Formula Atom) (M : KripkeModel W Atom) :
     support M φ ∅ ∧ antiSupport M φ ∅ := by
   induction φ with
-  | atom p =>
-    exact ⟨fun w hw => absurd hw (Finset.notMem_empty w),
-           fun w hw => absurd hw (Finset.notMem_empty w)⟩
-  | dep xs y =>
-    refine ⟨?_, rfl⟩
-    -- support .dep ∅ = ∀ w₁ w₂ ∈ ∅, ... — vacuously true
-    intro w₁ hw₁; exact absurd hw₁ (Finset.notMem_empty w₁)
-  | neg ψ ih =>
-    have ⟨hs, ha⟩ := ih
-    exact ⟨ha, hs⟩
-  | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    have ⟨hs₁, ha₁⟩ := ih₁
-    have ⟨hs₂, ha₂⟩ := ih₂
-    refine ⟨⟨hs₁, hs₂⟩, ?_⟩
-    refine ⟨∅, ∅, ?_, ha₁, ha₂⟩
-    show ∅ ∪ ∅ = ∅
-    simp
-  | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    have ⟨hs₁, ha₁⟩ := ih₁
-    have ⟨hs₂, ha₂⟩ := ih₂
-    refine ⟨?_, ⟨ha₁, ha₂⟩⟩
-    refine ⟨∅, ∅, ?_, hs₁, hs₂⟩
-    show ∅ ∪ ∅ = ∅
-    simp
-  | poss ψ ih =>
-    have ⟨_hs, ha⟩ := ih
-    refine ⟨?_, ?_⟩
-    · -- support .poss ψ ∅ = ∃ Y, (∀ w ∈ ∅, ...) ∧ support ψ Y. Take Y = ∅.
-      refine ⟨∅, ?_, _hs⟩
-      intro w hw; exact absurd hw (Finset.notMem_empty w)
-    · -- antiSupport .poss ψ ∅ = antiSupport ψ (∅.biUnion M.access) = antiSupport ψ ∅
-      show antiSupport M ψ ((∅ : Finset W).biUnion M.access)
-      rw [Finset.biUnion_empty]
-      exact ha
+  | atom p => exact ⟨Team.empty_mem_flat _, Team.empty_mem_flat _⟩
+  | dep xs y => exact ⟨fun w₁ hw₁ ↦ absurd hw₁ (Finset.notMem_empty w₁), rfl⟩
+  | neg ψ ih => exact ih.symm
+  | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨⟨ih₁.1, ih₂.1⟩, Team.empty_mem_tensor ih₁.2 ih₂.2⟩
+  | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨Team.empty_mem_tensor ih₁.1 ih₂.1, ⟨ih₁.2, ih₂.2⟩⟩
+  | poss ψ ih => exact ⟨Team.empty_mem_possWitness ih.1, Team.empty_mem_necImage ih.2⟩
 
 /-- Every MDL formula is supported on the empty team. -/
 theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
@@ -436,19 +347,9 @@ open Team in
     `Team/Definability.lean` bridge. The converse (every such property is
     MDL-definable) is the open half. -/
 theorem soundFor_downwardClosed_inter_empty (M : KripkeModel W Atom) :
-    SoundFor (support M) (downwardClosedProperties ∩ emptyTeamProperties) := by
-  unfold SoundFor
-  apply Set.subset_inter
-  · intro P hP
-    simp only [mem_definableClass] at hP
-    obtain ⟨φ, rfl⟩ := hP
-    show IsLowerSet (definedBy (support M) φ)
-    exact isLowerSet_support M φ
-  · intro P hP
-    simp only [mem_definableClass] at hP
-    obtain ⟨φ, rfl⟩ := hP
-    show ∅ ∈ definedBy (support M) φ
-    exact support_empty M φ
+    SoundFor (support M) (downwardClosedProperties ∩ emptyTeamProperties) :=
+  Set.subset_inter (definableClass_subset (isLowerSet_support M))
+    (definableClass_subset (support_empty M))
 
 /-! ### Bisimulation invariance (Väänänen-style ◇)
 
