@@ -481,9 +481,9 @@ open CCG.Intonation Prosody
 "Manny", with "married" unaccented. -/
 def annaMannyAccents : AccentAssignment := fun w ↦
   match w with
-  | "Anna" => .L_plus_H_star
-  | "Manny" => .H_star
-  | _ => .null
+  | "Anna" => some (.leading .L .H)
+  | "Manny" => some (.mono .H)
+  | _ => none
 
 /-- "ANNA married" is the composed theme constituent, of category `S/NP`. -/
 def anna_married : Derivation Atom (S / NP) :=
@@ -548,11 +548,11 @@ theorem ipToTune_terminal (ip : IntonationPhrase) (accent : PitchAccent) :
 
 /-- A declarative intonation phrase, L phrase accent and L% boundary. -/
 def declarativeIP : IntonationPhrase :=
-  { ips := [{ aps := [accentedAP], phraseAccent := .L }], boundaryTone := .L_pct }
+  { ips := [{ aps := [accentedAP], phraseAccent := .L }], boundaryTone := .L }
 
 /-- A continuation-rise intonation phrase, L phrase accent and H% boundary. -/
 def continuationIP : IntonationPhrase :=
-  { ips := [{ aps := [accentedAP], phraseAccent := .L }], boundaryTone := .H_pct }
+  { ips := [{ aps := [accentedAP], phraseAccent := .L }], boundaryTone := .H }
 
 /-- The declarative phrase carries the rheme tune's terminal and the continuation-rise phrase
 the theme tune's. -/

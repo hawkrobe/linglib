@@ -5,6 +5,7 @@ public import Mathlib.Data.List.ReduceOption
 public import Mathlib.Data.Nat.PSub
 public import Linglib.Phonology.Constraints.Defs
 public import Linglib.Fragments.Japanese.Prosody
+public import Linglib.Phonology.Prosody.Intonation
 import all Init.Data.List.Scan.Basic  -- for unfolding `List.scanl`
 
 /-!
@@ -17,8 +18,9 @@ the antepenultimate accent rule ([mccawley-1968]) with the Latin Stress Rule ([h
 is decided on the eight trisyllabic weight profiles, the accent-to-tone derivation of
 Section 1.4 is proved culminative for every accent location and word length
 (`accentToTones_culminative`), and the compound accent rules of Section 4 never yield a final
-accent, the NonFinality of [prince-smolensky-1993]. The affix accent lexicon of Section 6
-lives in `Fragments/Japanese/Prosody.lean`.
+accent, the NonFinality of [prince-smolensky-1993]. The affixes of Section 6 carry their effect
+on the root's accent, and the recessive and dominant classes are properties of that effect:
+no affix is both (`Affix.Recessive.not_dominant`), and the accent-shifting suffix is neither.
 
 ## References
 
@@ -66,7 +68,7 @@ def trisyllabicConditions : List (List Syllable.Weight) :=
 /-- The AAR and the LSR agree on six of the eight trisyllabic weight
     conditions and diverge exactly on HLH and LLH (Table 1). -/
 theorem aar_lsr_mismatches :
-    trisyllabicConditions.filter (λ w => defaultAccentAAR w != latinStressRule w) =
+    trisyllabicConditions.filter (fun w ↦ defaultAccentAAR w != latinStressRule w) =
       [[.heavy, .light, .heavy], [.light, .light, .heavy]] := by decide
 
 /-- On HLH the AAR accents σ₂, the syllable containing the antepenultimate
@@ -134,15 +136,8 @@ theorem amerika_beyond_default_rules :
 
 /-! ### From accent to surface tones (§1.4)
 
-Tones are specified by the accentual HL and the initial rise, then spread
-rightward ((7)–(9)). -/
-
-/-- A level tone. Japanese distinguishes only H and L at the lexical level
-    (§1.3). -/
-inductive LevelTone where
-  | H
-  | L
-  deriving DecidableEq, Repr
+Japanese lexically uses only the two level tones H and L (§1.3). Tones are specified by the
+accentual HL and the initial rise, then spread rightward ((7)–(9)). -/
 
 /-- The accentual HL — H on the accented mora, L on its successor ((4)). -/
 def accentualHL (accentMora : Option ℕ) (i : ℕ) : Option LevelTone :=
@@ -164,7 +159,7 @@ def toneSpec (accentMora : Option ℕ) (i : ℕ) : Option LevelTone :=
     the most recent specified tone rightward ((7)–(9)). The seed is never
     consulted, since mora 0 is always specified. -/
 def accentToTones (accentMora : Option ℕ) (nMorae : ℕ) : List LevelTone :=
-  (((List.range nMorae).map (toneSpec accentMora)).scanl (λ t o => o.getD t) .H).tail
+  (((List.range nMorae).map (toneSpec accentMora)).scanl (fun t o ↦ o.getD t) .H).tail
 
 /-- Unaccented *ame(+ga)* 'candy' surfaces LHH by initial rise and
     spreading ((6b)). -/
@@ -224,7 +219,7 @@ theorem hlFallCount_cons_self (t : LevelTone) (l : List LevelTone) :
 /-- Spreading is fall-invariant, since copying a tone neither creates nor
     destroys an HL fall. -/
 theorem hlFallCount_cons_scanl (spec : List (Option LevelTone)) (x t : LevelTone) :
-    hlFallCount (x :: spec.scanl (λ t o => o.getD t) t) =
+    hlFallCount (x :: spec.scanl (fun t o ↦ o.getD t) t) =
       hlFallCount (x :: t :: spec.reduceOption) := by
   induction spec generalizing x t with
   | nil => rfl
@@ -257,9 +252,9 @@ theorem count_L_toneSpec_dense (a : Option ℕ) (l : List ℕ) (hnd : l.Nodup)
     (l.filterMap (toneSpec a)).count .L ≤ 1 := by
   rw [List.count_filterMap]
   rcases a with _ | p
-  · rw [List.countP_eq_zero.mpr λ j hj => by simp [toneSpec_eq_L (hpos j hj)]]
+  · rw [List.countP_eq_zero.mpr fun j hj ↦ by simp [toneSpec_eq_L (hpos j hj)]]
     exact Nat.zero_le _
-  · rw [List.countP_congr (q := (· == p + 1)) λ j hj => by
+  · rw [List.countP_congr (q := (· == p + 1)) fun j hj ↦ by
         simp only [beq_iff_eq, toneSpec_eq_L (hpos j hj), Option.map_some,
           Option.some.injEq]
         omega,
@@ -274,7 +269,7 @@ theorem accentToTones_culminative (a : Option ℕ) (n : ℕ) :
   · exact Nat.zero_le _
   · obtain ⟨t₀, ht₀⟩ : ∃ t, toneSpec a 0 = some t := ⟨_, toneSpec_zero a⟩
     have hpeel : accentToTones a (m + 1) =
-        (((List.range m).map Nat.succ).map (toneSpec a)).scanl (λ t o => o.getD t) t₀ := by
+        (((List.range m).map Nat.succ).map (toneSpec a)).scanl (fun t o ↦ o.getD t) t₀ := by
       simp only [accentToTones, List.range_succ_eq_map, List.map_cons, ht₀,
         List.scanl_cons, List.tail_cons, Option.getD_some]
     rw [hpeel, ← hlFallCount_L_cons, hlFallCount_cons_scanl, hlFallCount_L_cons]
@@ -283,7 +278,7 @@ theorem accentToTones_culminative (a : Option ℕ) (n : ℕ) :
     simp only [List.reduceOption]
     rw [List.filterMap_map, Function.id_comp]
     exact count_L_toneSpec_dense a _ (List.nodup_range.map Nat.succ_injective)
-      λ j hj => by simp only [List.mem_map] at hj; omega
+      fun j hj ↦ by simp only [List.mem_map] at hj; omega
 
 /-! ### Compound accent (§4)
 
@@ -314,7 +309,7 @@ def longN2CompoundAccent (n1Morae n2Morae : ℕ) (n2Accent : Option ℕ) : Optio
     once when the accent sits on the final mora ([prince-smolensky-1993];
     §4.1 invokes it for the loss of final accent in compounds). -/
 def nonFinality : Constraint (Option ℕ × ℕ) :=
-  Constraint.binary λ an => an.1.map (· + 1) = some an.2
+  Constraint.binary fun an ↦ an.1.map (· + 1) = some an.2
 
 /-- In *fa'asuto+ki'su → faasuto+ki'su* 'first kiss', the short N2 retains
     its accent on *ki* ((21a)). -/
@@ -359,5 +354,126 @@ theorem longN2_nonfinal (n1Morae n2Morae : ℕ) (n2Accent : Option ℕ) (h2 : 3 
     rw [bne_iff_ne] at hpos
     simp [longN2CompoundAccent, hX]
     omega
+
+/-! ### Affix accent (§6)
+
+Section 6 describes each affix by what it does to an unaccented root and to an accented one.
+A *recessive* affix acts only on unaccented roots, so an accented root keeps its accent; a
+*dominant* affix acts the same way whatever the root's accent. Each affix below carries its
+effect, the affixed word's accent as a function of the root's, and both classes are
+properties of that function.
+
+An accented root keeps its accent on its own syllable, as the nominal roots of (31e–h) do.
+Verbs contrast only accented against unaccented, and their inflection places the accent (§5),
+so the accented verb roots of (29e–g) surface with the accent elsewhere; that placement is not
+modelled. -/
+
+/-- The accented syllable of an affixed word: the root's `i`-th syllable, or the affix's own
+accented syllable. -/
+inductive Locus where
+  | root (i : ℕ)
+  | affix
+  deriving DecidableEq, Repr
+
+/-- An affix with its accentual effect: the accent of the affixed word (`none` if it is
+unaccented), given a root of `n + 1` syllables and the root's accented syllable (`none` if
+the root is unaccented). -/
+structure Affix where
+  form : String
+  gloss : String
+  accent : (n : ℕ) → Option (Fin (n + 1)) → Option Locus
+
+namespace Affix
+
+/-- A recessive affix leaves an accented root's accent where it is. -/
+def Recessive (x : Affix) : Prop :=
+  ∀ n (i : Fin (n + 1)), x.accent n (some i) = some (.root i)
+
+/-- A dominant affix gives the same accent whatever the root's accent. -/
+def Dominant (x : Affix) : Prop :=
+  ∀ n (a b : Option (Fin (n + 1))), x.accent n a = x.accent n b
+
+/-- No affix is both recessive and dominant: on a root of two syllables, keeping either
+accent in place gives two different words. -/
+theorem Recessive.not_dominant {x : Affix} (h : x.Recessive) : ¬x.Dominant := fun hd ↦ by
+  simpa using (h 1 0).symm.trans ((hd 1 (some 0) (some 1)).trans (h 1 1))
+
+end Affix
+
+/-- The recessive conditional suffix */+ta'ra/*: accented on unaccented roots, losing its
+accent to an accented root ((29)). -/
+def taraSuffix : Affix where
+  form := "-ta'ra"
+  gloss := "conditional"
+  accent _ a := some (a.elim .affix fun i ↦ .root i)
+
+/-- The dominant suffix */+ppo'i/* '-ish', which keeps its accent and deletes the root's
+((30)). -/
+def ppoiSuffix : Affix where
+  form := "-ppo'i"
+  gloss := "-ish"
+  accent _ _ := some .affix
+
+/-- The recessive pre-accenting suffix */+si/* 'Mr.', which accents the root-final syllable
+of an unaccented root only ((31)). -/
+def siSuffix : Affix where
+  form := "-si"
+  gloss := "Mr."
+  accent n a := some (a.elim (.root n) fun i ↦ .root i)
+
+/-- The dominant pre-accenting suffix */+'ke/* 'family of', which accents the root-final
+syllable of every root ((32)). -/
+def keSuffix : Affix where
+  form := "-ke"
+  gloss := "family of"
+  accent n _ := some (.root n)
+
+/-- The accent-shifting suffix */+mono/* 'thing', which moves an accented root's accent to the
+root-final syllable and leaves an unaccented root unaccented ((33)). -/
+def monoSuffix : Affix where
+  form := "-mono"
+  gloss := "thing"
+  accent n a := a.map fun _ ↦ .root n
+
+/-- The post-accenting honorific prefix */o+/*, which accents the syllable after it, the
+root-initial one, whatever the root's accent ((34)). -/
+def oPrefix : Affix where
+  form := "o-"
+  gloss := "honorific"
+  accent _ _ := some (.root 0)
+
+/-- The deaccenting suffix */+teki/* '-like', which leaves the word unaccented ((36)). -/
+def tekiSuffix : Affix where
+  form := "-teki"
+  gloss := "-like"
+  accent _ _ := none
+
+/-- The group-name suffix */+zu/*, which accents the root-initial syllable. The roots in (39)
+are all unaccented; the text states the root-initial accent without condition. -/
+def zuSuffix : Affix where
+  form := "-zu"
+  gloss := "group"
+  accent _ _ := some (.root 0)
+
+theorem taraSuffix_recessive : taraSuffix.Recessive := fun _ _ ↦ rfl
+
+theorem siSuffix_recessive : siSuffix.Recessive := fun _ _ ↦ rfl
+
+theorem ppoiSuffix_dominant : ppoiSuffix.Dominant := fun _ _ _ ↦ rfl
+
+theorem keSuffix_dominant : keSuffix.Dominant := fun _ _ _ ↦ rfl
+
+theorem oPrefix_dominant : oPrefix.Dominant := fun _ _ _ ↦ rfl
+
+theorem tekiSuffix_dominant : tekiSuffix.Dominant := fun _ _ _ ↦ rfl
+
+theorem zuSuffix_dominant : zuSuffix.Dominant := fun _ _ _ ↦ rfl
+
+/-- The accent-shifting suffix is neither recessive nor dominant: it acts only on accented
+roots, the mirror image of a recessive affix. -/
+theorem monoSuffix_not_recessive_not_dominant :
+    ¬monoSuffix.Recessive ∧ ¬monoSuffix.Dominant :=
+  ⟨fun h ↦ by simpa [monoSuffix] using h 1 0,
+    fun h ↦ by simpa [monoSuffix] using h 0 none (some 0)⟩
 
 end Kawahara2015

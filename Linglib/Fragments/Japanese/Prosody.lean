@@ -1,21 +1,18 @@
 module
 
-public import Linglib.Phonology.Prosody.Intonation
+public import Mathlib.Data.Nat.Notation
 
 /-!
 # Japanese prosody
 
 Tokyo Japanese has a lexical pitch accent, at most one per word, on a mora: *ame* 'candy'
 is unaccented and *a'me* 'rain' accented on its first mora, *uma'i* 'delicious' accented and
-*amai* 'sweet' not. Affixes fall into Kawahara's eight accentual classes by whether they bear
-an accent, keep or delete the root's, and place one before or after themselves. The entries
-are the minimal pairs and accentual-phrase materials of Kawahara and of Beckman and
-Pierrehumbert.
+*amai* 'sweet' not. The entries are the minimal pairs and accentual-phrase materials of
+Kawahara and of Beckman and Pierrehumbert.
 
 ## Main definitions
 
 * `Japanese.Prosody.ProsodicEntry` — a word with its mora count and accent position
-* `Japanese.Prosody.AffixEntry` — an affix with its accentual class
 
 ## References
 
@@ -26,8 +23,6 @@ Pierrehumbert.
 @[expose] public section
 
 namespace Japanese.Prosody
-
-open _root_.Prosody
 
 /-- A Japanese lexical entry with its prosodic specification. The accent is
     the 0-indexed mora position of the linked H tone, and unaccented words
@@ -78,60 +73,5 @@ def amai : ProsodicEntry :=
     where AP-grouping with *uma'i* deletes this accent). -/
 def mame : ProsodicEntry :=
   { form := "mame", gloss := "beans", accentMora := some 1, nMorae := 2 }
-
-/-! ### Affix accent lexicon
-
-One canonical affix per accent type of [kawahara-2015] §6's eight-way
-typology, encoded by `Prosody.AffixAccentType`. -/
-
-/-- A Japanese affix with its accentual behavior class. -/
-structure AffixEntry where
-  form : String
-  gloss : String
-  accentType : AffixAccentType
-  deriving Repr
-
-/-- The recessive conditional suffix *-ta'ra*, which bears accent but loses
-    it to an accented root ([kawahara-2015] (29)). -/
-def taraSuffix : AffixEntry :=
-  { form := "-tara", gloss := "conditional", accentType := .recessive }
-
-/-- The dominant suffix *-ppo'i* '-ish', which bears accent and deletes
-    root accent ([kawahara-2015] (30)). -/
-def ppoiSuffix : AffixEntry :=
-  { form := "-ppoi", gloss := "-ish", accentType := .dominant }
-
-/-- The recessive pre-accenting suffix *-si* (氏 'Mr.'), which inserts
-    accent on the root-final syllable when the root is unaccented and
-    preserves root accent when present ([kawahara-2015] (31)). -/
-def siSuffix : AffixEntry :=
-  { form := "-si", gloss := "Mr.", accentType := .recessivePreAccent }
-
-/-- The dominant pre-accenting suffix *-ke* 'family of', which always
-    inserts accent on the root-final syllable, deleting any root accent
-    ([kawahara-2015] (32)). -/
-def keSuffix : AffixEntry :=
-  { form := "-ke", gloss := "family of", accentType := .dominantPreAccent }
-
-/-- The accent-shifting suffix *-mono* 'thing', which shifts existing root
-    accent to pre-suffix position but never creates new accent
-    ([kawahara-2015] (33)). -/
-def monoSuffix : AffixEntry :=
-  { form := "-mono", gloss := "thing", accentType := .accentShifting }
-
-/-- The post-accenting honorific prefix *o-*, which inserts accent after
-    the prefix ([kawahara-2015] (34)). -/
-def oPrefix : AffixEntry :=
-  { form := "o-", gloss := "honorific", accentType := .postAccenting }
-
-/-- The deaccenting suffix *-teki* (的 '-like'), which deletes root accent
-    and inserts none ([kawahara-2015] (36)). -/
-def tekiSuffix : AffixEntry :=
-  { form := "-teki", gloss := "的 -like", accentType := .deaccenting }
-
-/-- The initial-accenting suffix *-zu* of group names, which inserts accent
-    on the root-initial syllable ([kawahara-2015] (39)). -/
-def zuSuffix : AffixEntry :=
-  { form := "-zu", gloss := "group", accentType := .initialAccenting }
 
 end Japanese.Prosody

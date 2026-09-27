@@ -26,7 +26,7 @@ construction ([steedman-2000] ch. 2).
 * `InfoFeature`: the INFORMATION feature — theme `θ`, rheme `ρ`, `unmarked` (the `⊥`
   of a flat subsumption order), and phrasal `φ`; `InfoFeature.unify` is its partial
   join, a `PartialUnify` instance.
-* `accentInfo`: the marking a pitch accent contributes (L+H* ⇒ `θ`, null ⇒
+* `accentInfo`: the marking an accent slot contributes (L+H* ⇒ `θ`, no accent ⇒
   `unmarked`, other accents ⇒ `ρ`).
 * `Derivation.infoFeature`: the feature a derivation projects under an accent
   assignment for its leaf forms — combination unifies, type-raising preserves;
@@ -126,16 +126,17 @@ instance : PartialUnify InfoFeature where
 
 /-! ### Projecting information structure through a derivation -/
 
-/-- The information marking a pitch accent contributes ([steedman-2000]: L+H* marks
+/-- The information marking an accent slot contributes ([steedman-2000]: L+H* marks
 the theme, unaccented material is unmarked, and H* with the remaining accents mark
 the rheme). -/
-def accentInfo : PitchAccent → InfoFeature
-  | .L_plus_H_star => .θ
-  | .null => .unmarked
-  | _ => .ρ
+def accentInfo : Option PitchAccent → InfoFeature
+  | some (.leading .L .H) => .θ
+  | none => .unmarked
+  | some _ => .ρ
 
-/-- An assignment of pitch accents to the leaf forms of a derivation. -/
-def AccentAssignment := String → PitchAccent
+/-- An assignment of pitch accents to the leaf forms of a derivation, `none` for an
+unaccented form. -/
+def AccentAssignment := String → Option PitchAccent
 
 /-- The INFORMATION feature a derivation projects under an accent assignment: leaves
 contribute `accentInfo` of their accent, combination unifies the daughters' features,
@@ -155,11 +156,11 @@ structure Tune where
   terminal : TerminalContour
   deriving Repr, DecidableEq
 
-/-- The theme tune: L+H* with continuation rise (LH%). -/
-def themeTune : Tune := ⟨.L_plus_H_star, .continuation⟩
+/-- The theme tune: L+H* with the rise LH%. -/
+def themeTune : Tune := ⟨.leading .L .H, ⟨.L, .H⟩⟩
 
-/-- The rheme tune: H* with declarative fall (LL%). -/
-def rhemeTune : Tune := ⟨.H_star, .declarative⟩
+/-- The rheme tune: H* with the fall LL%. -/
+def rhemeTune : Tune := ⟨.mono .H, ⟨.L, .L⟩⟩
 
 /-- A prosodic phrase: a tune-marked CCG constituent. Because `deriv` is an
 intrinsically typed derivation, only constituents can be phrases — the Sense Unit
