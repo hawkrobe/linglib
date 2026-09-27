@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.Compare
 public import Mathlib.Data.Finset.BooleanAlgebra
 public import Linglib.Semantics.Denotation
 public import Linglib.Syntax.Category.Verb.Tense
@@ -22,10 +23,11 @@ of tense denotations rather than further tenses. Klecha's nonpast is `⟦present
 unconstrained cell is `⊤`.
 
 The `compare_mem_*` simp lemmas reduce each constraint to `<`, `=` or `≤` on the underlying
-order. Cells compose: `comp R S` collects the orderings of `a` to `c` compatible with `a` to `b`
-in `R` and `b` to `c` in `S`, so a relation between non-adjacent times is derived by
-`compare_mem_comp`. Composition distributes over joins and has the present as its identity; the
-past and the future are each idempotent and compose with one another to the unconstrained cell.
+order. Cells compose through `Ordering.comp` of `Core/Order/Compare.lean`: `comp R S`
+collects the orderings of `a` to `c` compatible with `a` to `b` in `R` and `b` to `c` in `S`,
+so a relation between non-adjacent times is derived by `compare_mem_comp`. Composition
+distributes over joins and has the present as its identity; the past and the future are each
+idempotent and compose with one another to the unconstrained cell.
 
 ## Main declarations
 
@@ -40,17 +42,6 @@ past and the future are each idempotent and compose with one another to the unco
 -/
 
 @[expose] public section
-
-/-- The orderings of `a` to `c` compatible with an ordering of `a` to `b` and one of `b` to `c`
-in a linear order. -/
-def Ordering.comp : Ordering → Ordering → Finset Ordering
-  | .lt, .lt => {.lt}
-  | .lt, .eq => {.lt}
-  | .lt, .gt => ⊤
-  | .eq, o => {o}
-  | .gt, .lt => ⊤
-  | .gt, .eq => {.gt}
-  | .gt, .gt => {.gt}
 
 namespace Tense
 
@@ -143,17 +134,8 @@ theorem comp_sup_right (R S S' : Finset Ordering) : comp R (S ⊔ S') = comp R S
 /-- A future followed by a past leaves the relation of the outer times open. -/
 @[simp] theorem comp_future_past : comp ⟦future⟧ ⟦past⟧ = ⊤ := by decide
 
-theorem compare_mem_comp_compare (a b c : T) :
-    compare a c ∈ (compare a b).comp (compare b c) := by
-  rcases h₁ : compare a b with _ | _ | _ <;> rcases h₂ : compare b c with _ | _ | _ <;>
-    simp only [compare_lt_iff_lt, compare_eq_iff_eq, compare_gt_iff_gt] at h₁ h₂ <;>
-    simp [Ordering.comp, compare_lt_iff_lt, compare_gt_iff_gt, h₁, h₂] <;>
-    first
-      | exact h₁.trans h₂ | exact h₂.trans h₁ | exact h₁.trans_eq h₂ | exact h₁.trans_lt h₂
-      | exact h₂.symm.trans_lt h₁
-
 theorem compare_mem_comp {R S : Finset Ordering} {a b c : T} (h₁ : compare a b ∈ R)
     (h₂ : compare b c ∈ S) : compare a c ∈ comp R S :=
-  Finset.mem_filter.2 ⟨Finset.mem_univ _, _, h₁, _, h₂, compare_mem_comp_compare a b c⟩
+  Finset.mem_filter.2 ⟨Finset.mem_univ _, _, h₁, _, h₂, Ordering.compare_mem_comp a b c⟩
 
 end Tense

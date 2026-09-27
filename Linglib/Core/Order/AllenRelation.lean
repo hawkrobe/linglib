@@ -1,7 +1,9 @@
 module
 
+public import Linglib.Core.Order.Compare
 public import Linglib.Core.Order.Interval
 public import Mathlib.Data.Finset.BooleanAlgebra
+public import Mathlib.Data.Finset.Sort
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.Order
@@ -24,12 +26,20 @@ mathlib's containment order on `NonemptyInterval` are such sets: `isBefore` is
 `{precedes, meets}`, `i ≤ j` is `{starts, equal, finishes, during}`, and `overlaps` is the
 complement of `{precedes, precededBy}`.
 
+Composing two atoms gives the set of atoms that can hold between `i` and `k` when the first
+holds between `i` and `j` and the second between `j` and `k`. Allen tabulates it as the
+transitivity table of the algebra; `comp` is that table, and `holdsIn_comp` proves it sound.
+On point intervals the atoms collapse to `precedes`, `equal` and `precededBy`, and the table to
+the composition of comparisons `Ordering.comp` of `Core/Order/Compare.lean`
+(`mem_comp_ofOrdering`).
+
 ## Main definitions
 
 * `AllenRelation`: the thirteen atoms, with `inverse` swapping the two intervals.
 * `AllenRelation.holds`: the endpoint inequalities defining each atom.
 * `NonemptyInterval.allenRel`: the atom holding between two intervals.
 * `AllenRelation.holdsIn`: a set of atoms holds when one of its members does.
+* `AllenRelation.comp`: Allen's transitivity table.
 
 ## Main results
 
@@ -39,14 +49,20 @@ complement of `{precedes, precededBy}`.
   and between proper intervals the only one.
 * `NonemptyInterval.le_iff_holdsIn`, `overlaps_iff_holdsIn`, and the other bridges: each interval
   relation as a set of atoms.
+* `AllenRelation.holdsIn_comp`: between proper intervals the atom holding between `i` and `k`
+  lies in the composition of the atoms holding between `i` and `j` and between `j` and `k`.
 
 ## Implementation notes
 
 Allen assumes that every interval is proper. Mathlib's `NonemptyInterval` admits points, between
 which uniqueness fails: at a single point `meets`, `metBy` and `equal` all hold. Existence and the
 bridges to the interval vocabulary hold between all intervals, and only the uniqueness results
-carry the two properness hypotheses. Allen's transitivity table, the composition of two atoms as a
-set of atoms, is not formalized.
+carry the properness hypotheses. The transitivity table is transcribed from Allen's figure, whose
+cells `dur` and `con` abbreviate `{during, starts, finishes}` and
+`{contains, startedBy, finishedBy}`; the transcription was checked against an exhaustive
+enumeration of the order types of six endpoints, and the soundness proof checks every cell
+again. Properness matters for composition too: with `j` a point, `meets` followed by `meets` is
+`meets`, not `precedes`.
 
 ## References
 
@@ -340,3 +356,266 @@ theorem initialOverlap_iff_holdsIn : i.initialOverlap j ↔
       exact ⟨⟨by order, by order⟩, by order, by order⟩
 
 end NonemptyInterval
+
+/-! ### Composition
+
+Composing two atoms gives the atoms that can hold between the outer intervals of a chain of
+three proper intervals; Allen tabulates it as the transitivity table of the algebra. -/
+
+namespace AllenRelation
+
+open Finset NonemptyInterval
+
+variable {T : Type*} [LinearOrder T] {i j k : NonemptyInterval T}
+
+/-- Allen's transitivity table, the atoms that can hold between `i` and `k` when `r` holds
+between `i` and `j` and `s` between `j` and `k`, all three intervals proper. -/
+def comp : AllenRelation → AllenRelation → Finset AllenRelation
+  | equal, s => {s}
+  | r, equal => {r}
+  | precedes,     precedes     => {.precedes}
+  | precedes,     precededBy   => univ
+  | precedes,     during       => {.precedes, .meets, .overlaps, .starts, .during}
+  | precedes,     contains     => {.precedes}
+  | precedes,     overlaps     => {.precedes}
+  | precedes,     overlappedBy => {.precedes, .meets, .overlaps, .starts, .during}
+  | precedes,     meets        => {.precedes}
+  | precedes,     metBy        => {.precedes, .meets, .overlaps, .starts, .during}
+  | precedes,     starts       => {.precedes}
+  | precedes,     startedBy    => {.precedes}
+  | precedes,     finishes     => {.precedes, .meets, .overlaps, .starts, .during}
+  | precedes,     finishedBy   => {.precedes}
+  | precededBy,   precedes     => univ
+  | precededBy,   precededBy   => {.precededBy}
+  | precededBy,   during       => {.during, .finishes, .overlappedBy, .metBy, .precededBy}
+  | precededBy,   contains     => {.precededBy}
+  | precededBy,   overlaps     => {.during, .finishes, .overlappedBy, .metBy, .precededBy}
+  | precededBy,   overlappedBy => {.precededBy}
+  | precededBy,   meets        => {.during, .finishes, .overlappedBy, .metBy, .precededBy}
+  | precededBy,   metBy        => {.precededBy}
+  | precededBy,   starts       => {.during, .finishes, .overlappedBy, .metBy, .precededBy}
+  | precededBy,   startedBy    => {.precededBy}
+  | precededBy,   finishes     => {.precededBy}
+  | precededBy,   finishedBy   => {.precededBy}
+  | during,       precedes     => {.precedes}
+  | during,       precededBy   => {.precededBy}
+  | during,       during       => {.during}
+  | during,       contains     => univ
+  | during,       overlaps     => {.precedes, .meets, .overlaps, .starts, .during}
+  | during,       overlappedBy => {.during, .finishes, .overlappedBy, .metBy, .precededBy}
+  | during,       meets        => {.precedes}
+  | during,       metBy        => {.precededBy}
+  | during,       starts       => {.during}
+  | during,       startedBy    => {.during, .finishes, .overlappedBy, .metBy, .precededBy}
+  | during,       finishes     => {.during}
+  | during,       finishedBy   => {.precedes, .meets, .overlaps, .starts, .during}
+  | contains,     precedes     => {.precedes, .meets, .overlaps, .finishedBy, .contains}
+  | contains,     precededBy   => {.contains, .startedBy, .overlappedBy, .metBy, .precededBy}
+  | contains,     during       =>
+    {.overlaps, .finishedBy, .contains, .starts, .equal, .startedBy, .during, .finishes,
+     .overlappedBy}
+  | contains,     contains     => {.contains}
+  | contains,     overlaps     => {.overlaps, .finishedBy, .contains}
+  | contains,     overlappedBy => {.contains, .startedBy, .overlappedBy}
+  | contains,     meets        => {.overlaps, .finishedBy, .contains}
+  | contains,     metBy        => {.contains, .startedBy, .overlappedBy}
+  | contains,     starts       => {.overlaps, .finishedBy, .contains}
+  | contains,     startedBy    => {.contains}
+  | contains,     finishes     => {.contains, .startedBy, .overlappedBy}
+  | contains,     finishedBy   => {.contains}
+  | overlaps,     precedes     => {.precedes}
+  | overlaps,     precededBy   => {.contains, .startedBy, .overlappedBy, .metBy, .precededBy}
+  | overlaps,     during       => {.overlaps, .starts, .during}
+  | overlaps,     contains     => {.precedes, .meets, .overlaps, .finishedBy, .contains}
+  | overlaps,     overlaps     => {.precedes, .meets, .overlaps}
+  | overlaps,     overlappedBy =>
+    {.overlaps, .finishedBy, .contains, .starts, .equal, .startedBy, .during, .finishes,
+     .overlappedBy}
+  | overlaps,     meets        => {.precedes}
+  | overlaps,     metBy        => {.contains, .startedBy, .overlappedBy}
+  | overlaps,     starts       => {.overlaps}
+  | overlaps,     startedBy    => {.overlaps, .finishedBy, .contains}
+  | overlaps,     finishes     => {.overlaps, .starts, .during}
+  | overlaps,     finishedBy   => {.precedes, .meets, .overlaps}
+  | overlappedBy, precedes     => {.precedes, .meets, .overlaps, .finishedBy, .contains}
+  | overlappedBy, precededBy   => {.precededBy}
+  | overlappedBy, during       => {.during, .finishes, .overlappedBy}
+  | overlappedBy, contains     => {.contains, .startedBy, .overlappedBy, .metBy, .precededBy}
+  | overlappedBy, overlaps     =>
+    {.overlaps, .finishedBy, .contains, .starts, .equal, .startedBy, .during, .finishes,
+     .overlappedBy}
+  | overlappedBy, overlappedBy => {.overlappedBy, .metBy, .precededBy}
+  | overlappedBy, meets        => {.overlaps, .finishedBy, .contains}
+  | overlappedBy, metBy        => {.precededBy}
+  | overlappedBy, starts       => {.during, .finishes, .overlappedBy}
+  | overlappedBy, startedBy    => {.overlappedBy, .metBy, .precededBy}
+  | overlappedBy, finishes     => {.overlappedBy}
+  | overlappedBy, finishedBy   => {.contains, .startedBy, .overlappedBy}
+  | meets,        precedes     => {.precedes}
+  | meets,        precededBy   => {.contains, .startedBy, .overlappedBy, .metBy, .precededBy}
+  | meets,        during       => {.overlaps, .starts, .during}
+  | meets,        contains     => {.precedes}
+  | meets,        overlaps     => {.precedes}
+  | meets,        overlappedBy => {.overlaps, .starts, .during}
+  | meets,        meets        => {.precedes}
+  | meets,        metBy        => {.finishedBy, .equal, .finishes}
+  | meets,        starts       => {.meets}
+  | meets,        startedBy    => {.meets}
+  | meets,        finishes     => {.overlaps, .starts, .during}
+  | meets,        finishedBy   => {.precedes}
+  | metBy,        precedes     => {.precedes, .meets, .overlaps, .finishedBy, .contains}
+  | metBy,        precededBy   => {.precededBy}
+  | metBy,        during       => {.during, .finishes, .overlappedBy}
+  | metBy,        contains     => {.precededBy}
+  | metBy,        overlaps     => {.during, .finishes, .overlappedBy}
+  | metBy,        overlappedBy => {.precededBy}
+  | metBy,        meets        => {.starts, .equal, .startedBy}
+  | metBy,        metBy        => {.precededBy}
+  | metBy,        starts       => {.during, .finishes, .overlappedBy}
+  | metBy,        startedBy    => {.precededBy}
+  | metBy,        finishes     => {.metBy}
+  | metBy,        finishedBy   => {.metBy}
+  | starts,       precedes     => {.precedes}
+  | starts,       precededBy   => {.precededBy}
+  | starts,       during       => {.during}
+  | starts,       contains     => {.precedes, .meets, .overlaps, .finishedBy, .contains}
+  | starts,       overlaps     => {.precedes, .meets, .overlaps}
+  | starts,       overlappedBy => {.during, .finishes, .overlappedBy}
+  | starts,       meets        => {.precedes}
+  | starts,       metBy        => {.metBy}
+  | starts,       starts       => {.starts}
+  | starts,       startedBy    => {.starts, .equal, .startedBy}
+  | starts,       finishes     => {.during}
+  | starts,       finishedBy   => {.precedes, .meets, .overlaps}
+  | startedBy,    precedes     => {.precedes, .meets, .overlaps, .finishedBy, .contains}
+  | startedBy,    precededBy   => {.precededBy}
+  | startedBy,    during       => {.during, .finishes, .overlappedBy}
+  | startedBy,    contains     => {.contains}
+  | startedBy,    overlaps     => {.overlaps, .finishedBy, .contains}
+  | startedBy,    overlappedBy => {.overlappedBy}
+  | startedBy,    meets        => {.overlaps, .finishedBy, .contains}
+  | startedBy,    metBy        => {.metBy}
+  | startedBy,    starts       => {.starts, .equal, .startedBy}
+  | startedBy,    startedBy    => {.startedBy}
+  | startedBy,    finishes     => {.overlappedBy}
+  | startedBy,    finishedBy   => {.contains}
+  | finishes,     precedes     => {.precedes}
+  | finishes,     precededBy   => {.precededBy}
+  | finishes,     during       => {.during}
+  | finishes,     contains     => {.contains, .startedBy, .overlappedBy, .metBy, .precededBy}
+  | finishes,     overlaps     => {.overlaps, .starts, .during}
+  | finishes,     overlappedBy => {.overlappedBy, .metBy, .precededBy}
+  | finishes,     meets        => {.meets}
+  | finishes,     metBy        => {.precededBy}
+  | finishes,     starts       => {.during}
+  | finishes,     startedBy    => {.overlappedBy, .metBy, .precededBy}
+  | finishes,     finishes     => {.finishes}
+  | finishes,     finishedBy   => {.finishedBy, .equal, .finishes}
+  | finishedBy,   precedes     => {.precedes}
+  | finishedBy,   precededBy   => {.contains, .startedBy, .overlappedBy, .metBy, .precededBy}
+  | finishedBy,   during       => {.overlaps, .starts, .during}
+  | finishedBy,   contains     => {.contains}
+  | finishedBy,   overlaps     => {.overlaps}
+  | finishedBy,   overlappedBy => {.contains, .startedBy, .overlappedBy}
+  | finishedBy,   meets        => {.meets}
+  | finishedBy,   metBy        => {.contains, .startedBy, .overlappedBy}
+  | finishedBy,   starts       => {.overlaps}
+  | finishedBy,   startedBy    => {.contains}
+  | finishedBy,   finishes     => {.finishedBy, .equal, .finishes}
+  | finishedBy,   finishedBy   => {.finishedBy}
+
+@[simp] theorem equal_comp (s : AllenRelation) : equal.comp s = {s} := rfl
+
+@[simp] theorem comp_equal (r : AllenRelation) : r.comp equal = {r} := by cases r <;> rfl
+
+/-- Inverting both atoms inverts the composition. -/
+theorem image_inverse_comp (r s : AllenRelation) :
+    (r.comp s).image inverse = s.inverse.comp r.inverse := by
+  revert r s; decide
+
+/-- The atom a comparison of points denotes. -/
+def ofOrdering : Ordering → AllenRelation
+  | .lt => precedes
+  | .eq => equal
+  | .gt => precededBy
+
+theorem ofOrdering_injective : Function.Injective ofOrdering := by decide
+
+theorem ofOrdering_compare_holds (a b : T) :
+    (ofOrdering (compare a b)).holds (pure a) (pure b) := by
+  rcases lt_trichotomy a b with h | rfl | h
+  · rw [compare_lt_iff_lt.2 h]; exact h
+  · rw [compare_eq_iff_eq.2 rfl]; exact ⟨rfl, rfl⟩
+  · rw [compare_gt_iff_gt.2 h]; exact h
+
+/-- On the atoms of point intervals the table is the composition of comparisons. -/
+theorem mem_comp_ofOrdering (o o₁ o₂ : Ordering) :
+    ofOrdering o ∈ (ofOrdering o₁).comp (ofOrdering o₂) ↔ o ∈ o₁.comp o₂ := by
+  revert o o₁ o₂; decide
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/-- `NonemptyInterval.map` along an order embedding preserves and reflects every atom. -/
+@[simp] theorem holds_map {U : Type*} [LinearOrder U] (f : T ↪o U) (r : AllenRelation)
+    (i j : NonemptyInterval T) :
+    r.holds (i.map f.toOrderHom) (j.map f.toOrderHom) ↔ r.holds i j := by
+  cases r <;> simp [holds, NonemptyInterval.map, f.lt_iff_lt, f.injective.eq_iff]
+
+/-- `allenRel` is invariant under an order embedding. -/
+@[simp] theorem _root_.NonemptyInterval.allenRel_map {U : Type*} [LinearOrder U] (f : T ↪o U)
+    (i j : NonemptyInterval T) :
+    allenRel (i.map f.toOrderHom) (j.map f.toOrderHom) = allenRel i j := by
+  simp [allenRel, NonemptyInterval.map, f.lt_iff_lt, f.injective.eq_iff]
+
+/-- The nonempty interval with the given proper endpoints. -/
+private def mk (a b : Fin 6) (h : a < b) : NonemptyInterval (Fin 6) := ⟨(a, b), h.le⟩
+
+/-- Soundness of the table over the six endpoints of three proper intervals, decided by the
+kernel over `Fin 6`. -/
+private theorem comp_aux : ∀ a b c d e g : Fin 6, ∀ hab : a < b, ∀ hcd : c < d, ∀ heg : e < g,
+    allenRel (mk a b hab) (mk e g heg) ∈
+      (allenRel (mk a b hab) (mk c d hcd)).comp (allenRel (mk c d hcd) (mk e g heg)) := by
+  decide +kernel
+
+/-- **Soundness of the table.** Between proper intervals, an atom holding between `i` and `j`
+and one holding between `j` and `k` compose to a set containing the atom holding between `i`
+and `k`. The six endpoints are ranked into `Fin 6`, where `comp_aux` decides the claim, and
+`allenRel_map` carries it back. -/
+theorem holdsIn_comp (hi : i.fst < i.snd) (hj : j.fst < j.snd) (hk : k.fst < k.snd)
+    {r s : AllenRelation} (hr : r.holds i j) (hs : s.holds j k) : holdsIn (r.comp s) i k := by
+  let S : Finset T := {i.fst, i.snd, j.fst, j.snd, k.fst, k.snd}
+  let φ : S ↪o Fin 6 :=
+    (S.orderIsoOfFin rfl).symm.toOrderEmbedding.trans (Fin.castLEOrderEmb Finset.card_le_six)
+  let ι : S ↪o T := OrderEmbedding.subtype _
+  let lift (a : NonemptyInterval T) (ha : a.fst ∈ S) (hb : a.snd ∈ S) : NonemptyInterval S :=
+    ⟨(⟨a.fst, ha⟩, ⟨a.snd, hb⟩), a.fst_le_snd⟩
+  have hlt (a : NonemptyInterval S) (h : (a.fst : T) < a.snd) :
+      (a.map φ.toOrderHom).fst < (a.map φ.toOrderHom).snd := φ.lt_iff_lt.2 h
+  have e (a b : NonemptyInterval S) :
+      allenRel (a.map φ.toOrderHom) (b.map φ.toOrderHom) =
+        allenRel (a.map ι.toOrderHom) (b.map ι.toOrderHom) :=
+    (allenRel_map φ a b).trans (allenRel_map ι a b).symm
+  set i₀ := lift i (by simp [S]) (by simp [S])
+  set j₀ := lift j (by simp [S]) (by simp [S])
+  set k₀ := lift k (by simp [S]) (by simp [S])
+  have h : allenRel (i₀.map φ.toOrderHom) (k₀.map φ.toOrderHom) ∈
+      (allenRel (i₀.map φ.toOrderHom) (j₀.map φ.toOrderHom)).comp
+        (allenRel (j₀.map φ.toOrderHom) (k₀.map φ.toOrderHom)) :=
+    comp_aux _ _ _ _ _ _ (hlt i₀ hi) (hlt j₀ hj) (hlt k₀ hk)
+  rw [e, e, e] at h
+  change allenRel i k ∈ (allenRel i j).comp (allenRel j k) at h
+  rw [(holds_iff_allenRel_eq hi hj).1 hr, (holds_iff_allenRel_eq hj hk).1 hs] at h
+  exact ⟨_, h, allenRel_holds i k⟩
+
+end AllenRelation
