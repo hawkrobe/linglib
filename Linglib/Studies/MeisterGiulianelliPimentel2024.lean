@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Processing.Expectation.GenSurprisal
+public import Linglib.Processing.Expectation.GeneralizedSurprisal
 
 /-!
 # Meister, Giulianelli and Pimentel (2024): Towards a Similarity-Adjusted Surprisal Theory
