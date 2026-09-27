@@ -1,81 +1,93 @@
 module
 
+public import Linglib.Syntax.Category.Verb.Basic
+
 /-!
-# Colloquial Sinhala verb fragment
+# Sinhala verbs
 
-[beavers-zubair-2013] [gair-paolillo-1997] [inman-1993]
+A Colloquial Sinhala verb root occurs in a volitive stem, an involitive stem, or both. Involitive
+stems have front root vowels and the thematic vowel *-e-* in the present tense, while volitive
+stems take *-a-* or *-i-*. Subjects of volitives tend to be read as volitional, and involitives
+always convey non-volitionality, unexpectedness to the speaker or ironic denial. A root that
+requires volition, as *minimarannə* 'murder' does, has no involitive stem, and a psych verb such
+as *ridennə* 'ache' has no volitive one. Some causative roots also have an intransitive
+inchoative, which is always involitive, as *gilannə* 'drown' has *Nimal giluna* 'Nimal drowned'.
 
-The verb roots whose anticausatives [beavers-zubair-2013] analyze, with their volitive and
-involitive stems.
+The entries are the roots whose anticausatives Beavers and Zubair analyze. An entry is cited by
+its volitive infinitive, records its involitive infinitive where it has one, and has an
+unaccusative frame when the root has an inchoative.
 
-## Volitive/involitive stem alternation
+## Implementation notes
 
-Every Sinhala verb root has a volitive stem and most have an involitive stem. The stems are
-distinguished by a thematic-vowel alternation: front vowel + *-e-* in the present for
-involitive, *-a-* or *-i-* otherwise. The volitive defaults to a volitional / intentional
-reading and the involitive to a non-volitional / accidental one, but the contrast is not
-truth-conditional. *minimarann* 'murder' and *kapann* 'cut' have no involitive stem.
+Forms are transliterated as printed in Beavers and Zubair, whose PDF text layer drops *ə*. They
+give the involitives of *kapannə* 'cut' and *vinaashə-kərannə* 'destroy' only in the past,
+*kæpuna* and *vinaashə-wuna*. The infinitives *kæpennə* and *vinaashə-wennə* follow their stem
+formation, in which a compound's volitive *-kərə-* 'do' pairs with the involitive *-we-*.
 
-The causer sorts [beavers-zubair-2013] assign these roots, and the analysis that derives the
-missing involitives and anticausatives from them, are in `Studies/BeaversZubair2013.lean`.
+## References
+
+* [J. Beavers and C. Zubair, *Anticausatives in Sinhala: Involitivity and causer suppression*
+  (2013)][beavers-zubair-2013]
 -/
 
 @[expose] public section
 
-namespace Sinhala.Verbs
+namespace Sinhala
 
-/-- A Colloquial Sinhala verb root, with its volitive stem and its involitive stem, if any. -/
-structure SinhalaVerb where
-  gloss : String
-  volitiveForm : String
-  involitiveForm : Option String
-  deriving Repr, BEq
+/-- A Sinhala verb is cited by its volitive infinitive and records its involitive infinitive
+when the root has an involitive stem. -/
+structure Verb extends _root_.Verb where
+  /-- The involitive infinitive, if the root has an involitive stem. -/
+  involitive : Option String := none
 
-/-- *kadann* (vol) / *kædenn* (invol) 'break'. -/
-def kadann : SinhalaVerb :=
-  { gloss := "break",
-    volitiveForm := "kadann",
-    involitiveForm := some "kædenn" }
+/-- A verb has an involitive stem when it records an involitive infinitive. -/
+def Verb.HasInvolitive (v : Verb) : Prop := v.involitive.isSome
 
-/-- *gilann* (vol) / *gilenn* (invol) 'drown'. Volitive with a nominative subject is
-    intentional drowning, involitive with the postposition *atiŋ* accidental drowning, and
-    intransitive *gilenn* the anticausative 'drown' ([beavers-zubair-2013] exx. (2)–(3)). -/
-def gilann : SinhalaVerb :=
-  { gloss := "drown",
-    volitiveForm := "gilann",
-    involitiveForm := some "gilenn" }
+instance : DecidablePred Verb.HasInvolitive := fun v ↦
+  inferInstanceAs (Decidable (v.involitive.isSome = true))
 
-/-- *marann* (vol) / *mærenn* (invol) 'kill/die', one of the detransitivizing roots of
-    [beavers-zubair-2013] §3.2, exx. (14) and (17). -/
-def marann : SinhalaVerb :=
-  { gloss := "kill",
-    volitiveForm := "marann",
-    involitiveForm := some "mærenn" }
+/-- *kadannə* 'break' has the involitive *kædennə* and an inchoative, as in
+*Eewa okkomə ibeemə kædenəwa* 'They all just break by themselves'. -/
+def kadann : Verb where
+  form := "kadannə"
+  involitive := some "kædennə"
+  frames := [.np, .unaccusative]
 
-/-- *minimarann* 'murder', with no involitive form. -/
-def minimarann : SinhalaVerb :=
-  { gloss := "murder",
-    volitiveForm := "minimarann",
-    involitiveForm := none }
+/-- *gilannə* 'drown' has the involitive *gilennə* and an inchoative, as in *Nimal giluna*
+'Nimal drowned'. -/
+def gilann : Verb where
+  form := "gilannə"
+  involitive := some "gilennə"
+  frames := [.np, .unaccusative]
 
-/-- *kapann* 'cut', with no involitive form. -/
-def kapann : SinhalaVerb :=
-  { gloss := "cut",
-    volitiveForm := "kapann",
-    involitiveForm := none }
+/-- *marannə* 'kill' has the involitive *mærennə* 'die', which occurs only intransitively, as in
+*Nimal mæruna* 'Nimal died'. -/
+def marann : Verb where
+  form := "marannə"
+  involitive := some "mærennə"
+  frames := [.np, .unaccusative]
 
-/-- *vinaash-karann* (vol) / *vinaash-kerenn* (invol) 'destroy'. Unlike English and German
-    *destroy*, it alternates ([beavers-zubair-2013] §7.4). -/
-def vinaashKarann : SinhalaVerb :=
-  { gloss := "destroy",
-    volitiveForm := "vinaash-karann",
-    involitiveForm := some "vinaash-kerenn" }
+/-- *minimarannə* 'murder' requires volition and so has neither an involitive stem nor an
+inchoative. -/
+def minimarann : Verb where
+  form := "minimarannə"
+  frames := [.np]
 
-/-- The canonical inventory used in B&Z 2013's empirical arguments. -/
-def allVerbs : List SinhalaVerb :=
-  [kadann, gilann, marann, minimarann, kapann, vinaashKarann]
+/-- *kapannə* 'cut' has an involitive stem, as in *Joon atiŋ pan kæpuna* 'John cut the bread
+(accidentally)', but no inchoative. -/
+def kapann : Verb where
+  form := "kapannə"
+  involitive := some "kæpennə"
+  frames := [.np]
 
-/-- Whether a verb has an involitive stem form. -/
-def hasInvolitive (v : SinhalaVerb) : Bool := v.involitiveForm.isSome
+/-- *vinaashə-kərannə* 'destroy' has the involitive *vinaashə-wennə* and, unlike English
+*destroy*, an inchoative. -/
+def vinaashKarann : Verb where
+  form := "vinaashə-kərannə"
+  involitive := some "vinaashə-wennə"
+  frames := [.np, .unaccusative]
 
-end Sinhala.Verbs
+/-- The verbs of this file. -/
+def verbs : List Verb := [kadann, gilann, marann, minimarann, kapann, vinaashKarann]
+
+end Sinhala

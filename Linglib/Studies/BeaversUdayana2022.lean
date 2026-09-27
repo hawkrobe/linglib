@@ -174,10 +174,10 @@ the individual sort alone. Their verbs take the causer first. -/
 
 section CauserSuppression
 
-open BeaversZubair2013 Causation
+open BeaversZubair2013
 
-variable {E : Type} {c : CauserSort} (h : c.admitsIndividual) (V : E → E → Prop) (P : E → Prop)
-  (s : E)
+variable {E : Type} {c : CauserSort} (h : CauserSort.individual ≤ c) (V : E → E → Prop)
+  (P : E → Prop) (s : E)
 
 /-- Causer suppression is *ber-* under a condition on the sort of the causer. -/
 theorem causerSuppress_eq_ber {α : Type} (z : E) (vp : E → α) :

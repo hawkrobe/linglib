@@ -1,130 +1,202 @@
 module
 
-public import Linglib.Semantics.Causation.CauserSort
+public import Linglib.Semantics.Events.Basic
 public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Voice.Basic
 public import Linglib.Fragments.Sinhala.Verbs
+public import Linglib.Studies.KoontzGarboden2009
+public import Mathlib.Order.Cover
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Anticausatives in Sinhala
+# Beavers and Zubair (2013): Anticausatives in Sinhala
 
-Formalization of [beavers-zubair-2013] (NLLT 31). Colloquial Sinhala detransitivizes a
-causative root two ways, both formally inchoative: a nominative-subject anticausative
-with no external-causer entailment, and an accusative-subject one entailing a distinct
-external causer. One operation derives both — causer suppression ((77), p. 37), which
-deletes the causer syntactically, preserves CAUSE, and sortally restricts the suppressed
-variable to individuals (U_I) — the two subject cases reflecting reflexive vs.
-existential resolution of that variable ((78), p. 38). The U_I restriction is the
-predictive engine: roots selecting event-sort causers (*minimarann* 'murder', *kapann*
-'cut') fail the operator's well-formedness condition, so they do not anticausativize;
-and since the volitive ((71), p. 35) demands an event-sort subject while suppression
-outputs an individual, anticausatives are obligatorily involitive
-(`Causation.CauserSort.not_admitsVolitive_individual`).
-
-The operator is `causerSuppress`; the sort lattice is
-`Causation.CauserSort` ((81), p. 40); the verbs are `Fragments/Sinhala/Verbs`. §6
-rejects [koontz-garboden-2009]'s reflexivization-only analysis because the accusative
-variant's causer is not coidentified with the patient; §4.2 rejects deletion analyses
-([grimshaw-1982], [reinhart-2002], [haertl-2003], [bohnemeyer-2007]) on
-[koontz-garboden-2009]'s Monotonicity-Hypothesis argument and the *ibeem* 'by itself'
-facts. The accusative-as-semantic-case analysis follows [beavers-zubair-2010].
+This file formalizes Beavers and Zubair's analysis of anticausatives in Colloquial Sinhala. A
+causative root has two involitive detransitives, one with a nominative subject and no entailed
+external causer and one with an accusative subject and an entailed external causer. Causer
+suppression (77) derives both. It removes the causer from the verb's arguments, keeps the
+causation and restricts the suppressed causer to individuals, and that causer is then either the
+patient, as in Chierchia's and Koontz-Garboden's reflexivization, or existentially bound, as in
+Levin and Rappaport Hovav's analysis (78). The accusative marks the second reading, as a semantic
+case in Beavers and Zubair's earlier work. A verb selects the sort of its causer from the typology
+(81), and suppression applies only when that sort includes the individuals, so *minimarannə*
+'murder' and *kapannə* 'cut', which select events, have no inchoative. Since the volitive (71)
+requires an event subject and an anticausative's subject is an individual, anticausatives are
+involitive.
 
 ## Main definitions
 
-* `Reading`, `Reading.resolve` — the two resolutions of the suppressed causer, as
-  denotations over `causerSuppress`.
-* `caseOfReading` — the §7.3 semantic-case convention: accusative signals existential
-  resolution.
-* `Root.causerSort` — the causer sort the paper assigns each root.
-* `anticausativizes` — the operator's well-formedness condition, read off the root's
-  `CauserSort`.
+* `CauserSort`: the typology (81), ordered by inclusion of basic sorts.
+* `causerSuppress`, `Reading.resolve`: causer suppression and the two resolutions of the
+  suppressed causer.
+* `caseOfReading`: accusative marks existential resolution.
+* `Root.causerSort`, `Anticausativizes`: the sort each root selects, and the condition of (77).
 
 ## Main results
 
-* `causative_entails_existential`, `reflexive_entails_existential` — inchoatives are
-  true in agentive contexts ((51)), so the volitive ban is formal, not
-  truth-conditional (§5.3).
-* `ibeem_incompatible_with_external` — the 'by itself' diagnostic excludes the
-  accusative variant ((58)).
-* `drown_anticausativizes`, `murder_no_anticausative` — the U_I engine on the
-  fragment: the *murder*-class gap is a type-checking failure, not a stipulated
-  exception.
+* `CauserSort.not_event_le_individual`: anticausatives are never volitive.
+* `reflexive_resolve_eq_reflexivize`: reflexive resolution is Koontz-Garboden's reflexivization.
+* `causative_entails_existential`: the inchoative is true whenever the causative is.
+* `ibeem_incompatible_with_external`: *ibeemə* 'by itself' excludes the accusative variant.
+* `anticausativizes_iff_alternates`: the roots that meet (77) are those with an inchoative.
+* `hasInvolitive_of_anticausativizes`, `exists_hasInvolitive_not_anticausativizes`: a root with
+  an inchoative has an involitive stem, but the involitive does not mark anticausatives.
+
+## Implementation notes
+
+Sorts are checked rather than denoted. `causerSuppress` takes a proof that the root's causer sort
+includes the individuals in place of the conjunct `x ∈ U_I` of (77), and the volitive's sort
+condition is `CauserSort.event ≤ s`. *kada-* 'break' selects the whole domain as in (76), which
+revises the eventualities of (65a).
 
 ## References
 
-* [beavers-zubair-2013] — the paper; [beavers-zubair-2010] — the semantic-case and
-  involitive-meaning groundwork.
-* [koontz-garboden-2009], [chierchia-2004], [levin-hovav-1995] — the reflexivization
-  and existential-binding analyses the paper unifies.
-* [grimshaw-1982], [reinhart-2002], [haertl-2003], [bohnemeyer-2007] — deletion
-  analyses rejected in §4.2.
-* [inman-1993], [henadeerage-2002], [gair-paolillo-1997] — the Sinhala sources.
+* [J. Beavers and C. Zubair, *Anticausatives in Sinhala: Involitivity and causer suppression*
+  (2013)][beavers-zubair-2013]
+* [J. Beavers and C. Zubair, *The Interaction of Transitivity Features in the Sinhala
+  Involitive* (2010)][beavers-zubair-2010]
+* [A. Koontz-Garboden, *Anticausativization* (2009)][koontz-garboden-2009]
+* [G. Chierchia, *A Semantics for Unaccusatives and its Syntactic Consequences*
+  (2004)][chierchia-2004b]
+* [B. Levin and M. Rappaport Hovav, *Unaccusativity: At the Syntax-Lexical Semantics Interface*
+  (1995)][levin-hovav-1995]
 -/
 
 @[expose] public section
 
 namespace BeaversZubair2013
 
-open Causation
-open Sinhala.Verbs
+/-! ### Sorts
+
+The domain is sorted into individuals and eventualities, and the eventualities into events and
+states (§4.3). A verb's causer ranges over one of the sorts of the typology (81). -/
+
+/-- The basic sorts of the domain are the individuals and the eventualities of each kind, the
+events being the actions. -/
+inductive BasicSort where
+  | individual
+  | eventuality (k : Event.Kind)
+  deriving DecidableEq
+
+/-- A causer sort is a node of the typology (81). -/
+inductive CauserSort where
+  /-- `U_E` comprises the events, the causers that *murder* verbs select. -/
+  | event
+  /-- `U_S` comprises the states, which (81) assigns to *bloom* verbs and negligence readings. -/
+  | state
+  /-- `U_V` comprises the eventualities, the causers that *destroy* verbs select (80). -/
+  | eventuality
+  /-- `U_I` comprises the individuals, the subjects of anticausatives. -/
+  | individual
+  /-- `U` is the whole domain, the causers that transitive *break* verbs select (76). -/
+  | any
+  deriving DecidableEq, Fintype
+
+namespace CauserSort
+
+/-- The basic sorts that a causer sort comprises. -/
+def basicSorts : CauserSort → Finset BasicSort
+  | event => {.eventuality .action}
+  | state => {.eventuality .state}
+  | eventuality => {.eventuality .action, .eventuality .state}
+  | individual => {.individual}
+  | any => {.individual, .eventuality .action, .eventuality .state}
+
+theorem basicSorts_injective : Function.Injective basicSorts := by decide
+
+/-- One causer sort lies below another when its basic sorts are among the other's. -/
+instance : PartialOrder CauserSort := PartialOrder.lift basicSorts basicSorts_injective
+
+instance : DecidableLE CauserSort := fun s t ↦
+  inferInstanceAs (Decidable (s.basicSorts ⊆ t.basicSorts))
+
+instance : DecidableLT CauserSort := decidableLTOfDecidableLE
+
+/-- The typology (81) is a tree whose leaves are the events, the states and the individuals. -/
+theorem covBy_tree :
+    event ⋖ eventuality ∧ state ⋖ eventuality ∧ eventuality ⋖ any ∧ individual ⋖ any := by
+  unfold CovBy
+  decide
+
+/-- Causer suppression (77) applies to the roots whose causer sort includes the individuals,
+those that select the individuals or the whole domain. -/
+theorem individual_le_iff {s : CauserSort} : individual ≤ s ↔ s = individual ∨ s = any := by
+  cases s <;> decide
+
+/-- The volitive (71) applies to a predicate whose subject sort includes the events. These are
+the sorts of *murder*, *destroy* and *break* verbs, the three kinds of causative of §7.3. -/
+theorem event_le_iff {s : CauserSort} :
+    event ≤ s ↔ s = event ∨ s = eventuality ∨ s = any := by
+  cases s <;> decide
+
+/-- An individual subject cannot be resolved to an event, so an anticausative, whose subject is
+an individual, has no volitive (§7.3). -/
+theorem not_event_le_individual : ¬ event ≤ individual := by decide
+
+end CauserSort
 
 /-! ### Causer suppression -/
 
-/-- Causer suppression ((77), p. 37) saturates the causer argument of `vp` with the open
-    variable `z`. It is defined only for a root whose causer sort admits individuals. -/
-def causerSuppress {E α : Type} (s : CauserSort) (_h : s.admitsIndividual) (z : E)
+/-- Causer suppression (77) saturates the causer argument of `vp` with the open variable `z`.
+It is defined only for a root whose causer sort includes the individuals. -/
+def causerSuppress {E α : Type} (s : CauserSort) (_h : CauserSort.individual ≤ s) (z : E)
     (vp : E → α) : α :=
   vp z
 
 /-! ### The two resolutions of the suppressed causer -/
 
-/-- The two readings of an anticausativized verb ((78), p. 38): the suppressed causer
-    is coindexed with the patient, or existentially closed. -/
+/-- An anticausativized verb has two readings (78), on which the suppressed causer is coindexed
+with the patient or existentially closed. -/
 inductive Reading where
   | reflexive
   | existential
   deriving DecidableEq, Repr
 
-/-- A reading's denotation: `causerSuppress` leaves the causer as an open variable;
-    reflexive resolution binds it to the patient, existential resolution closes it.
-    The verb is causer-first (`vp x y`: causer `x`, patient `y`). -/
+/-- A reading's denotation binds the open causer that `causerSuppress` leaves to the patient
+under reflexive resolution and closes it under existential resolution. The verb takes its causer
+first, so `vp x y` has causer `x` and patient `y`. -/
 def Reading.resolve {E : Type} {s : CauserSort} (r : Reading)
-    (h : s.admitsIndividual) (vp : E → E → Prop) :
-    E → Prop :=
+    (h : CauserSort.individual ≤ s) (vp : E → E → Prop) : E → Prop :=
   match r with
-  | .reflexive   => fun y => causerSuppress s h y vp y
-  | .existential => fun y => ∃ x, causerSuppress s h x vp y
+  | .reflexive   => fun y ↦ causerSuppress s h y vp y
+  | .existential => fun y ↦ ∃ x, causerSuppress s h x vp y
 
-/-- Case ↔ resolution (§7.3): Sinhala accusative is a semantic case marking a patient
-    caused by a distinct external agent ([beavers-zubair-2010]), so it surfaces only
-    under existential resolution; nominative is the elsewhere case. Accusative is
-    animacy-conditioned and optional (fn. 27), so the converse is not stated. -/
+/-- Reflexive resolution is Koontz-Garboden's reflexivization, the null reflexive (37). -/
+theorem reflexive_resolve_eq_reflexivize {E : Type} {s : CauserSort}
+    (h : CauserSort.individual ≤ s) (vp : E → E → Prop) :
+    Reading.reflexive.resolve h vp = KoontzGarboden2009.reflexivize vp :=
+  rfl
+
+/-- An anticausative's subject is accusative under existential resolution and nominative, the
+elsewhere case, under reflexive resolution (§7.3). Accusative is optional and limited to animates
+(fn. 27), so the converse is not stated. -/
 def caseOfReading : Reading → Case
   | .reflexive   => .nom
   | .existential => .acc
 
-/-- Any causative claim entails the existentially-resolved inchoative: inchoatives are
-    true in agentive contexts ((51), §5.3), so the ban on volitive inchoatives must be
-    formal rather than truth-conditional. -/
+/-- Any causative claim entails the existentially resolved inchoative. Inchoatives are true in
+agentive contexts ((51), §5.3), so the ban on volitive inchoatives is formal rather than
+truth-conditional. -/
 theorem causative_entails_existential {E : Type} {s : CauserSort}
-    (h : s.admitsIndividual) (vp : E → E → Prop) (x y : E)
+    (h : CauserSort.individual ≤ s) (vp : E → E → Prop) (x y : E)
     (hxy : vp x y) : Reading.existential.resolve h vp y :=
   ⟨x, hxy⟩
 
-/-- The reflexive resolution entails the existential one: (78a) supplies the patient
-    itself as witness for (78b). -/
+/-- The reflexive resolution entails the existential one, with the patient itself as witness. -/
 theorem reflexive_entails_existential {E : Type} {s : CauserSort}
-    (h : s.admitsIndividual) (vp : E → E → Prop) (y : E)
+    (h : CauserSort.individual ≤ s) (vp : E → E → Prop) (y : E)
     (hy : Reading.reflexive.resolve h vp y) : Reading.existential.resolve h vp y :=
   ⟨y, hy⟩
 
-/-- The *ibeem* 'by itself' diagnostic ((58)): no-external-causation contradicts the
-    accusative's distinct-external-causer requirement — accusative-subject
-    anticausatives reject *ibeem*; nominative ones accept it. -/
+/-- The *ibeemə* 'by itself' diagnostic (58) denies external causation, which contradicts the
+accusative's distinct external causer, so accusative-subject anticausatives reject *ibeemə*. -/
 theorem ibeem_incompatible_with_external {E : Type} (vp : E → E → Prop) (y : E) :
     ¬ ((∀ x, vp x y → x = y) ∧ ∃ x, x ≠ y ∧ vp x y) :=
-  fun ⟨hno, _, hne, hvp⟩ => hne (hno _ hvp)
+  fun ⟨hno, _, hne, hvp⟩ ↦ hne (hno _ hvp)
 
 /-! ### The roots and their causer sorts -/
+
+open Sinhala
 
 /-- The Sinhala roots the paper analyzes. -/
 inductive Root where
@@ -132,7 +204,7 @@ inductive Root where
   deriving DecidableEq, Fintype, Repr
 
 /-- The fragment verb of each root. -/
-def Root.verb : Root → SinhalaVerb
+def Root.verb : Root → Sinhala.Verb
   | .kada => kadann
   | .gila => gilann
   | .mara => marann
@@ -140,60 +212,41 @@ def Root.verb : Root → SinhalaVerb
   | .kapa => kapann
   | .vinaashKara => vinaashKarann
 
-/-- The sort each root's causer must satisfy, a point of the lattice (81), p. 40.
-    *minimara-* 'murder' selects an event causer, `[[minimara-]] = λyλv∈U_E λe[...]`
-    ((65b)), and *kapa-* 'cut' patterns with it; *kada-* 'break' selects none,
-    `[[kada-]] = λyλv∈U λe[...]` ((76)), like the other alternating roots. The eventuality
-    sort of (80) is motivated by English and German *destroy*, which do not alternate; the
-    Sinhala equivalent does (§7.4), so *vinaash-kara-* selects no sort either. -/
+/-- The causer sort of each root. The agent-subject roots *minimara-* 'murder' ((65b)) and
+*kapa-* 'cut' select events, and the effector-subject roots select the whole domain, as
+*kada-* 'break' does (76) and as 'destroy' does in Sinhala, where it alternates (p. 40). -/
 def Root.causerSort : Root → CauserSort
   | .minimara | .kapa => .event
   | .kada | .gila | .mara | .vinaashKara => .any
 
-/-! ### The predictive engine -/
+/-- A root anticausativizes when its causer sort includes the individuals, the condition of
+causer suppression (77). -/
+def Anticausativizes (r : Root) : Prop := CauserSort.individual ≤ r.causerSort
 
-/-- A root anticausativizes iff its causer sort admits individuals — the
-    well-formedness condition of the suppression operator ((77)). The operator is
-    partial: `CauserSort.admitsIndividual_iff` confines it to `individual` and `any`. -/
-def anticausativizes (r : Root) : Prop :=
-  r.causerSort.admitsIndividual
+instance : DecidablePred Anticausativizes := fun r ↦
+  inferInstanceAs (Decidable (CauserSort.individual ≤ r.causerSort))
 
-instance (r : Root) : Decidable (anticausativizes r) :=
-  inferInstanceAs (Decidable r.causerSort.admitsIndividual)
-
-/-- *kada-* 'break' anticausativizes (causer sort `any`, (76)). -/
-theorem break_anticausativizes : anticausativizes .kada := by decide
-
-/-- *gila-* 'drown' anticausativizes (exx. (2)–(3)). -/
-theorem drown_anticausativizes : anticausativizes .gila := by decide
-
-/-- *minimara-* 'murder' does not anticausativize: its event-sort causer ((65b)) is
-    incompatible with U_I, so `causerSuppress` cannot even be instantiated at this
-    root. -/
-theorem murder_no_anticausative : ¬ anticausativizes .minimara := by decide
-
-/-- *kapa-* 'cut' patterns with *minimara-*. -/
-theorem cut_no_anticausative : ¬ anticausativizes .kapa := by decide
-
-/-- The volitive ((71)) admits both *minimara-* and *kada-* — their causer sorts
-    include events. After suppression the surviving subject is an individual, which
-    `CauserSort.not_admitsVolitive_individual` bars from the volitive: anticausatives
-    are always involitive (§8). -/
-theorem volitive_admitted :
-    Root.minimara.causerSort.admitsVolitive ∧ Root.kada.causerSort.admitsVolitive := by
-  decide
-
-/-- The operator instantiates for *kada-*: the `decide`-discharged obligation is the
-    predictive engine at work. -/
+/-- The operator instantiates for *kada-*. -/
 example {E : Type} (z : E) (vp : E → Prop) : Prop :=
   causerSuppress Root.kada.causerSort (by decide) z vp
 
-/-- Among these roots, those with an involitive stem are exactly those that
-    anticausativize. This is a correlation in the data, not a prediction: the involitive is
-    the elsewhere form (p. 38), and experiencer verbs such as *dænenn* 'feel' and *ridenn*
-    'ache' (around (74)) take individual subjects but have no volitive stem. -/
-theorem hasInvolitive_iff_anticausativizes (r : Root) :
-    hasInvolitive r.verb ↔ anticausativizes r := by
+/-- The roots that meet the condition of causer suppression are exactly those whose verbs have
+an inchoative. -/
+theorem anticausativizes_iff_alternates (r : Root) :
+    Anticausativizes r ↔ r.verb.Alternates Voice.anticausative := by
   cases r <;> decide
+
+/-- A root that anticausativizes has an involitive stem, where its inchoative surfaces since the
+volitive is barred (§7.3). -/
+theorem hasInvolitive_of_anticausativizes {r : Root} (h : Anticausativizes r) :
+    r.verb.HasInvolitive := by
+  revert h
+  cases r <;> decide
+
+/-- The involitive does not mark anticausatives, since *kapa-* 'cut' has an involitive stem
+((7c)) and no inchoative ((26)). -/
+theorem exists_hasInvolitive_not_anticausativizes :
+    ∃ r : Root, r.verb.HasInvolitive ∧ ¬ Anticausativizes r :=
+  ⟨.kapa, by decide, by decide⟩
 
 end BeaversZubair2013
