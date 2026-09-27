@@ -1,6 +1,8 @@
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import Linglib.Core.Analysis.SpecialFunctions.Softmax
+public import Linglib.Core.InformationTheory.Surprisal
+public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Pragmatics.Efficiency
 public import Linglib.Data.Examples.XuEtAl2024
 
@@ -14,8 +16,9 @@ expected length of the form, and information loss, the expected surprisal of the
 concept under the listener's distribution (`costs`). The speaker produces from the expanded
 lexicon while the listener, who has not yet acquired the new pairs, interprets each form as
 the label of a category with a prototype, assigning concepts probability by a similarity
-choice rule (`listener`), so the listener's distribution is positive, normalized, and
-decreasing in the distance to the prototype (`listener_pos`, `sum_listener`, `listener_anti`).
+choice rule (`listener`), the softmax of the negative distances to the prototype
+(`real_listener`), so that under a form a concept closer to the prototype is less surprising
+and incurs less information loss (`surprisal_listener_le`).
 The combined objective weights the two costs by a tradeoff parameter and, with need held
 fixed, decomposes into an item-level objective, so an encoding that is optimal concept by
 concept is optimal overall (`weightedCost_costs`, `weightedCost_le_of_forall`). Along the
@@ -23,9 +26,7 @@ frontier the optimal encodings trade length for informativeness as the parameter
 (`Pragmatics.Efficiency.frontier_antitone`), and a compound is longer than the constituent it
 reuses (`length_compound`), the length half of the tradeoff the paper reports between the two
 strategies. An item is literal when the intended concept is a hyponym of an existing sense of
-the reused form or of the compound's head (`Literal`), and the model predicts that a form
-whose prototype lies closer to the intended concept incurs less information loss
-(`surprisal_anti`).
+the reused form or of the compound's head (`Literal`).
 
 ## Implementation notes
 
@@ -35,7 +36,8 @@ the production policy enter through one weight per concept over a deterministic 
 case under which the paper computes its frontier. The corpus results, the fitted sensitivity
 parameter, the sentence-encoder prototypes, and the baseline encodings are not restated; the
 attested items of the paper's first table and the near-synonyms of its second are recorded
-as examples.
+as examples. Surprisal is measured in nats; bits differ by the factor `log 2`, which rescales
+the tradeoff parameter.
 
 ## References
 
@@ -49,46 +51,46 @@ as examples.
 
 namespace XuEtAl2024
 
-open Pragmatics.Efficiency Finset
-
-/-- Surprisal in bits. -/
-noncomputable def surprisal (x : ℝ) : ℝ := -Real.logb 2 x
-
-/-- Surprisal decreases as probability grows. -/
-theorem surprisal_anti {x y : ℝ} (hx : 0 < x) (hxy : x ≤ y) : surprisal y ≤ surprisal x :=
-  neg_le_neg (Real.logb_le_logb_of_le (by norm_num) hx hxy)
+open InformationTheory MeasureTheory ProbabilityTheory Pragmatics.Efficiency Finset
 
 /-! ### The listener -/
 
 section Listener
 
-variable {C W Q : Type*} [Fintype C]
+variable {C W Q : Type*} [Fintype C] [MeasurableSpace C] [MeasurableSingletonClass C]
+  [Countable W] [MeasurableSpace W] [MeasurableSingletonClass W]
 
-/-- The similarity choice listener: the probability of a concept given a form falls off
-exponentially, at rate `γ`, with the concept's distance from the form's prototype. -/
-noncomputable def listener (γ : ℝ) (d : C → Q → ℝ) (q : W → Q) (w : W) (c : C) : ℝ :=
-  Real.exp (-γ * d c (q w)) / ∑ c', Real.exp (-γ * d c' (q w))
+/-- The similarity choice listener: on hearing a form, a distribution over concepts whose weight
+falls off exponentially, at rate `γ`, with the concept's distance from the form's prototype. -/
+noncomputable def listener (γ : ℝ) (d : C → Q → ℝ) (q : W → Q) : Kernel W C :=
+  Kernel.ofWeights fun w c ↦ ENNReal.ofReal (Real.exp (-γ * d c (q w)))
 
-variable (γ : ℝ) (d : C → Q → ℝ) (q : W → Q) (w : W)
+variable (γ : ℝ) (d : C → Q → ℝ) (q : W → Q)
 
-/-- The listener never assigns zero probability. -/
-theorem listener_pos [Nonempty C] (c : C) : 0 < listener γ d q w c :=
-  div_pos (Real.exp_pos _) (sum_pos (λ _ _ => Real.exp_pos _) univ_nonempty)
+instance [Nonempty C] : IsMarkovKernel (listener γ d q) :=
+  Kernel.isMarkovKernel_ofWeights
+    (fun _ ↦ ⟨Classical.arbitrary C, (ENNReal.ofReal_pos.2 (Real.exp_pos _)).ne'⟩)
+    fun _ _ ↦ ENNReal.ofReal_ne_top
 
-/-- The listener's distribution is normalized. -/
-theorem sum_listener [Nonempty C] : ∑ c, listener γ d q w c = 1 := by
-  unfold listener
-  rw [← sum_div, div_self (sum_pos (λ _ _ => Real.exp_pos _) univ_nonempty).ne']
+/-- The listener's probability of a concept is the softmax of the negative scaled distances. -/
+theorem real_listener (w : W) (c : C) :
+    (listener γ d q w).real {c} = Real.softmax (fun c ↦ -γ * d c (q w)) c := by
+  rw [listener, Kernel.ofWeights_real_singleton _ _ fun _ ↦ ENNReal.ofReal_ne_top,
+    Real.softmax_def]
+  simp only [ENNReal.toReal_ofReal (Real.exp_pos _).le]
 
-/-- A concept closer to the prototype is more probable. -/
-theorem listener_anti (hγ : 0 ≤ γ) {c c' : C} (h : d c (q w) ≤ d c' (q w)) :
-    listener γ d q w c' ≤ listener γ d q w c :=
-  div_le_div_of_nonneg_right
-    (Real.exp_le_exp.2 (by nlinarith)) (sum_nonneg λ _ _ => (Real.exp_pos _).le)
+/-- Under a form, a concept closer to the prototype is less surprising to the listener, so it
+incurs less information loss. -/
+theorem surprisal_listener_le [Nonempty C] (hγ : 0 ≤ γ) {w : W} {c c' : C}
+    (h : d c (q w) ≤ d c' (q w)) :
+    surprisal (listener γ d q w) c ≤ surprisal (listener γ d q w) c' := by
+  rw [surprisal, surprisal, real_listener, real_listener, neg_le_neg_iff]
+  exact Real.log_le_log (Real.softmax_pos _ _) (Real.softmax_le_softmax_iff.2 (by nlinarith))
 
 /-- With no sensitivity the listener is uniform. -/
-theorem listener_zero (c : C) : listener 0 d q w c = 1 / Fintype.card C := by
-  simp [listener]
+theorem real_listener_zero (w : W) (c : C) :
+    (listener 0 d q w).real {c} = 1 / Fintype.card C := by
+  simp [real_listener, Real.softmax_def]
 
 end Listener
 
@@ -96,35 +98,31 @@ end Listener
 
 section Costs
 
-variable {C W : Type*} [Fintype C]
+variable {C W : Type*} [Fintype C] [MeasurableSpace C] [MeasurableSpace W]
 
 /-- The costs of an encoding `f` of the emerging concepts under need `p`, form length `l`,
 and listener `m`: expected length and expected surprisal of the intended concept. -/
-noncomputable def costs (p : C → ℝ) (l : W → ℝ) (m : W → C → ℝ) (f : C → W) :
-    CostPair :=
-  ⟨∑ c, p c * l (f c), ∑ c, p c * surprisal (m (f c) c)⟩
+noncomputable def costs (p : C → ℝ) (l : W → ℝ) (m : Kernel W C) (f : C → W) : CostPair :=
+  ⟨∑ c, p c * l (f c), ∑ c, p c * surprisal (m (f c)) c⟩
 
 /-- The item-level objective: the surprisal of the concept under the form, plus the weighted
 length of the form. -/
-noncomputable def itemObjective (l : W → ℝ) (m : W → C → ℝ) (β : ℝ) (c : C) (w : W) :
-    ℝ :=
-  surprisal (m w c) + β * l w
+noncomputable def itemObjective (l : W → ℝ) (m : Kernel W C) (β : ℝ) (c : C) (w : W) : ℝ :=
+  surprisal (m w) c + β * l w
 
 /-- The combined objective is the need-weighted sum of the item-level objectives. -/
-theorem weightedCost_costs (p : C → ℝ) (l : W → ℝ) (m : W → C → ℝ) (f : C → W)
-    (β : ℝ) :
+theorem weightedCost_costs (p : C → ℝ) (l : W → ℝ) (m : Kernel W C) (f : C → W) (β : ℝ) :
     weightedCost (costs p l m f) β = ∑ c, p c * itemObjective l m β c (f c) := by
   simp only [weightedCost, costs, itemObjective, mul_add, sum_add_distrib, mul_sum]
   congr 1
-  exact sum_congr rfl λ _ _ => by ring
+  exact sum_congr rfl fun _ _ ↦ by ring
 
 /-- An encoding that is optimal for every concept is optimal overall. -/
-theorem weightedCost_le_of_forall {p : C → ℝ} (hp : ∀ c, 0 ≤ p c) (l : W → ℝ)
-    (m : W → C → ℝ) {f g : C → W} (β : ℝ)
-    (h : ∀ c, itemObjective l m β c (f c) ≤ itemObjective l m β c (g c)) :
+theorem weightedCost_le_of_forall {p : C → ℝ} (hp : ∀ c, 0 ≤ p c) (l : W → ℝ) (m : Kernel W C)
+    {f g : C → W} (β : ℝ) (h : ∀ c, itemObjective l m β c (f c) ≤ itemObjective l m β c (g c)) :
     weightedCost (costs p l m f) β ≤ weightedCost (costs p l m g) β := by
   rw [weightedCost_costs, weightedCost_costs]
-  exact sum_le_sum λ c _ => mul_le_mul_of_nonneg_left (h c) (hp c)
+  exact sum_le_sum fun c _ ↦ mul_le_mul_of_nonneg_left (h c) (hp c)
 
 end Costs
 
