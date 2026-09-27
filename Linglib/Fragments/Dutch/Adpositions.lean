@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Adposition.Basic
-public import Linglib.Syntax.Case.Order
+public import Linglib.Semantics.Events.PathDir
 
 /-!
 # Dutch adpositions
@@ -70,7 +70,7 @@ structure Adposition extends _root_.Adposition where
   /-- `direction l` is `.place` when a use in position `l` is locational and `.goal`, `.source`
   or `.route` when it denotes a path whose endpoint, starting point or interior is the
   reference object; a position the entry does not take is `.place`. -/
-  direction : _root_.Adposition.Linearization → Case.PathDir := fun _ ↦ .place
+  direction : _root_.Adposition.Linearization → Spatial.PathDir := fun _ ↦ .place
   /-- The entry is used with its complement omitted, as *op* in *Jan zet een hoed op* 'Jan
   puts a hat on'. -/
   intransitive : Bool := false
@@ -87,18 +87,18 @@ def preposition (form : String) (relation : _root_.Adposition.RelationType := .s
 
 /-- `directional form d` is the preposition over a noun phrase denoting a path in direction
 `d`. -/
-def directional (form : String) (d : Case.PathDir) : Adposition :=
+def directional (form : String) (d : Spatial.PathDir) : Adposition :=
   { preposition form with direction := fun _ ↦ d }
 
 /-- `ambipositional form d` is the spatial adposition over a noun phrase that is locational
 before its complement and denotes a path in direction `d` after it. -/
-def ambipositional (form : String) (d : Case.PathDir) : Adposition :=
+def ambipositional (form : String) (d : Spatial.PathDir) : Adposition :=
   { preposition form with
     linearization := [.pre, .post], direction := fun | .post => d | _ => .place }
 
 /-- `circumposition first second d` is the circumposition *first … second* over a noun phrase,
 denoting a path in direction `d`, or locational when `d` is `.place`. -/
-def circumposition (first second : String) (d : Case.PathDir) : Adposition :=
+def circumposition (first second : String) (d : Spatial.PathDir) : Adposition :=
   { form := .complex [first, second], relation := .spatial, complement := [.np],
     linearization := [.circum], direction := fun | .circum => d | _ => .place }
 

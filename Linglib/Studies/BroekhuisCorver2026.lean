@@ -133,7 +133,7 @@ inductive ComplementKind where
 phrase-internal functional projection, and a nominal complement only when the phrase is
 directional, under a semantic condition the chapter leaves open and this file idealizes to
 directionality. -/
-def Raises : ComplementKind → Case.PathDir → Prop
+def Raises : ComplementKind → Spatial.PathDir → Prop
   | .nominal, d => d ≠ .place
   | .prePP, _ => True
   | .rPronoun, _ => True
@@ -145,7 +145,7 @@ instance : ∀ k, DecidablePred (Raises k)
 
 section Phrase
 
-variable (k : ComplementKind) (d : Case.PathDir)
+variable (k : ComplementKind) (d : Spatial.PathDir)
 
 /-- The three positions of the phrase, the specifier of the functional projection, the adposition,
 and the complement's base position, and where the complement is pronounced: in the specifier
@@ -183,7 +183,7 @@ end Phrase
 precedes an in-situ complement and follows a raised one; a raised prepositional phrase carries
 its own head before the noun phrase, so the whole is a circumposition; and *er op* counts as a use
 of the preposition, since an R-pronoun proforms the locational prepositional phrase. -/
-def linearization : Option ComplementKind → Case.PathDir → Option Adposition.Linearization
+def linearization : Option ComplementKind → Spatial.PathDir → Option Adposition.Linearization
   | none, _ => none
   | some k, d =>
     some <| match k, headDirection k d with
@@ -193,20 +193,20 @@ def linearization : Option ComplementKind → Case.PathDir → Option Adposition
 
 /-- A postposition is nothing but a directional adposition with a raised nominal complement, which
 is why the postpositional use of an adposition is always the directional one. -/
-theorem linearization_eq_post_iff (k : ComplementKind) (d : Case.PathDir) :
+theorem linearization_eq_post_iff (k : ComplementKind) (d : Spatial.PathDir) :
     linearization (some k) d = some .post ↔ k = .nominal ∧ d ≠ .place := by
   cases k <;> cases d <;> decide
 
 /-- A circumposition is nothing but an adposition whose complement is a prepositional phrase: the
 second adpositional element is the head, and the first is the head of the raised complement. -/
-theorem linearization_eq_circum_iff (k : ComplementKind) (d : Case.PathDir) :
+theorem linearization_eq_circum_iff (k : ComplementKind) (d : Spatial.PathDir) :
     linearization (some k) d = some .circum ↔ k = .prePP := by
   cases k <;> cases d <;> decide
 
 /-- An R-pronoun never yields the postpositional order: *de wandeling er op* 'the hike on it'
 has only the locational reading, so R-pronominalization is confined to prepositional phrases,
 and a circumpositional phrase R-pronominalizes through its prepositional complement. -/
-theorem linearization_rPronoun (d : Case.PathDir) :
+theorem linearization_rPronoun (d : Spatial.PathDir) :
     linearization (some .rPronoun) d = some .pre := by
   cases d <;> rfl
 
@@ -229,21 +229,21 @@ theorem range_linearization :
 /-- The nominal complement of a plain preposition stays behind and cannot be extracted, which is
 the resistance to preposition stranding, while the raised complement of a directional
 postposition can be. -/
-theorem extractable_nominal_iff (d : Case.PathDir) : Extractable .nominal d ↔ d ≠ .place :=
+theorem extractable_nominal_iff (d : Spatial.PathDir) : Extractable .nominal d ↔ d ≠ .place :=
   extractable_iff_raises
 
 /-- An R-pronoun has raised and can be extracted, whether the adposition it leaves behind is
 stranded or pied-piped. -/
-theorem extractable_rPronoun (d : Case.PathDir) : Extractable .rPronoun d :=
+theorem extractable_rPronoun (d : Spatial.PathDir) : Extractable .rPronoun d :=
   extractable_iff_raises.2 trivial
 
 /-- From a prepositional phrase only an R-pronoun can be extracted. -/
-theorem extractable_iff_of_linearization_eq_pre {k : ComplementKind} {d : Case.PathDir}
+theorem extractable_iff_of_linearization_eq_pre {k : ComplementKind} {d : Spatial.PathDir}
     (h : linearization (some k) d = some .pre) : Extractable k d ↔ k = .rPronoun := by
   revert h; cases k <;> cases d <;> decide
 
 /-- From a postpositional or a circumpositional phrase the complement can be extracted. -/
-theorem extractable_of_linearization_ne_pre {k : ComplementKind} {d : Case.PathDir}
+theorem extractable_of_linearization_ne_pre {k : ComplementKind} {d : Spatial.PathDir}
     (h : linearization (some k) d ≠ some .pre) : Extractable k d := by
   revert h; cases k <;> cases d <;> decide
 
@@ -261,7 +261,7 @@ theorem circumP_patterns_with_preP :
 adposition is not inherently directional: a directional phrase raises its nominal complement
 when its directionality is syntactic rather than lexical, and that raising entails the chapter's
 idealized rule. -/
-theorem raises_nominal_of_dpRaises {inherent : Prop} {d : Case.PathDir}
+theorem raises_nominal_of_dpRaises {inherent : Prop} {d : Spatial.PathDir}
     (h : Helmantel2002.DPRaises (d ≠ .place) inherent) : Raises .nominal d :=
   h.1
 
@@ -342,12 +342,12 @@ theorem op_van_paths : op.direction .post = .goal ∧ van.direction .pre = .sour
 
 /-- The transitivity class of a verb of motion with a spatial complementive: a path makes the
 event a change of location and the verb unaccusative, a location leaves it unergative. -/
-def verbClass (d : Case.PathDir) : TransitivityClass :=
+def verbClass (d : Spatial.PathDir) : TransitivityClass :=
   if d = .place then .unergative else .unaccusative
 
 /-- Under any selection rule the verb takes *zijn* 'be' exactly when its complementive denotes a
 path. -/
-theorem selection_verbClass_eq_be_iff (r : Bool) (d : Case.PathDir) :
+theorem selection_verbClass_eq_be_iff (r : Bool) (d : Spatial.PathDir) :
     selection r (verbClass d) = .be ↔ d ≠ .place := by
   unfold verbClass; split <;> simp [*, selection]
 

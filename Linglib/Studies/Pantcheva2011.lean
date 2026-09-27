@@ -1,14 +1,14 @@
 module
 
 public import Linglib.Morphology.Paradigm.Contiguity
-public import Linglib.Syntax.Case.Order
+public import Linglib.Semantics.Events.PathDir
 
 /-!
 # Pantcheva (2011): Decomposing Path
 
 This file formalizes the syncretism typology of the ninth chapter of [pantcheva-2011]. The
 directional heads Place, Goal, Source, and Route form the containment sequence of
-`Case.PathDir`, and a syncretism pattern over the four is a paradigm over that sequence
+`Spatial.PathDir`, and a syncretism pattern over the four is a paradigm over that sequence
 (`Pattern`). Two constraints restrict the patterns: the *ABA generalization of Bobaljik
 ([bobaljik-2012], then circulating in manuscript), on which a syncretism targets only
 adjacent heads of the sequence, the same contiguity that governs nominal case in
@@ -125,9 +125,9 @@ Goal marker, as in Quechua *-man* against *-man-da*: the shell containment of `P
 
 /-- Source contains Goal contains Place, as shell-stack inclusion. -/
 theorem source_contains_goal :
-    Case.PathDir.place.shells ⊂ Case.PathDir.goal.shells ∧
-      Case.PathDir.goal.shells ⊂ Case.PathDir.source.shells ∧
-      Case.PathDir.source.shells ⊂ Case.PathDir.route.shells := by
+    Spatial.PathDir.place.shells ⊂ Spatial.PathDir.goal.shells ∧
+      Spatial.PathDir.goal.shells ⊂ Spatial.PathDir.source.shells ∧
+      Spatial.PathDir.source.shells ⊂ Spatial.PathDir.route.shells := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-- Georgian's Location=Goal syncretism (Table 9.1) is Type 3. -/
@@ -135,9 +135,18 @@ theorem georgian_loc_goal_possible : Possible ![0, 0, 1, 2] := by decide
 
 /-! ### The semantic ground of *A&¬A (§5.4) -/
 
-/-- Goal and Source have distinct denotations, Source reversing Goal, so a single marker for
-both would be contradictory: the ground of the *A&¬A constraint. -/
-theorem goalSource_distinct_denotation :
-    Case.PathDir.goal.denote ≠ Case.PathDir.source.denote := by decide
+/-- A Source path is a Goal path traversed the other way, so no path is both, and a single
+marker for Goal and Source would denote a path and its reverse at once: the ground of the
+*A&¬A constraint. -/
+theorem goalSource_disjoint {Loc : Type*} (R : Set Loc) :
+    Disjoint (Spatial.PathDir.goal.denote R) (Spatial.PathDir.source.denote R) :=
+  Spatial.PathDir.disjoint_denote_goal_source R
+
+/-- A path from outside a place into it is a Goal path and not a Source path, and its reverse is
+a Source path. -/
+example : let p : Spatial.Path ℕ := ⟨0, [1]⟩
+    p ∈ Spatial.PathDir.goal.denote {1} ∧ p ∉ Spatial.PathDir.source.denote {1} ∧
+      p.reverse ∈ Spatial.PathDir.source.denote {1} := by
+  simp [Spatial.PathDir.denote, Spatial.Path.goal, Spatial.Path.reverse, Spatial.Path.points]
 
 end Pantcheva2011

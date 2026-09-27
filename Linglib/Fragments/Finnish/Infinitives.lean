@@ -84,7 +84,7 @@ theorem cases_subset_inventory (i : Infinitive) : i.cases ⊆ Case.inventory := 
 
 /-- Of the local cases the MA infinitive takes the interior series and, of the exterior
 series, the adessive alone. -/
-theorem toCase_mem_cases_ma_iff {r : Case.Region} {d : Case.PathDir} {c : Case}
+theorem toCase_mem_cases_ma_iff {r : Spatial.Localization} {d : Spatial.PathDir} {c : Case}
     (h : Case.toCase r d = some c) : c ∈ ma.cases ↔ r = .interior ∨ r = .exterior ∧ d = .place := by
   cases r <;> cases d <;> cases h <;> decide
 
