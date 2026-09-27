@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Team.BSML.Defs
+public import Linglib.Logic.Team.BSML.Properties
 
 /-!
 # Pragmatic enrichment in BSML
@@ -27,7 +27,7 @@ BSML* is BSML with the empty team removed from the possible states.
   (Fact 2).
 * `BSML.antiSupport_enrich_iff`: on positive formulas enrichment is vacuous under a single
   negation (Fact 9).
-* `BSML.support_neg_enrich_neg_iff`, `BSML.not_support_neg_neg_enrich_iff`: under a
+* `BSML.support_neg_enrich_neg_iff`, `BSML.not_forall_support_neg_neg_enrich_iff`: under a
   double negation it is not (Fact 10).
 * `BSML.consequenceStar_iff_consequencePlus`: BSML* and BSML⁺ consequence coincide on
   classical positive formulas (Fact 13).
@@ -161,12 +161,14 @@ theorem support_neg_enrich_neg_iff (M : KripkeModel W Atom) (φ : Formula Atom) 
     support M (.neg (enrich (.neg φ))) t ↔ support M (.neg (.neg (enrich φ))) t :=
   antiSupport_conj_ne M _ t
 
-/-- Enrichment is not vacuous under a double negation, `¬¬[p]⁺ ≢ ¬¬p` (Fact 10). The empty
-team supports `¬¬p` but not `¬¬[p]⁺`. -/
-theorem not_support_neg_neg_enrich_iff (p : Atom) :
+/-- Enrichment is not vacuous under a double negation, `¬¬[α]⁺ ≢ ¬¬α` for `NE`-free `α`
+(Fact 10). The empty team supports `¬¬α` but not `¬¬[α]⁺`. -/
+theorem not_forall_support_neg_neg_enrich_iff (hNE : φ.NEFree) :
     ¬ ∀ (M : KripkeModel W Atom) (t : Finset W),
-      support M (.neg (.neg (enrich (.atom p)))) t ↔ support M (.neg (.neg (.atom p))) t :=
-  fun h ↦ ((h ⟨fun _ ↦ ∅, fun _ _ ↦ false⟩ ∅).mpr (empty_supports_atom _ p)).2.ne_empty rfl
+      support M (.neg (.neg (enrich φ))) t ↔ support M (.neg (.neg φ)) t := fun h ↦
+  have h₀ := (h ⟨fun _ ↦ ∅, fun _ _ ↦ false⟩ ∅).mpr
+    (support_empty_of_neFree (φ := .neg (.neg φ)) hNE _)
+  (nonempty_of_support_enrich (φ := φ) h₀).ne_empty rfl
 
 /-! ### BSML⁺ and BSML* (Facts 13 and 14) -/
 
