@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Minimalist.Probe.Basic
 public import Linglib.Syntax.Agreement.Paradigm
 public import Linglib.Syntax.Minimalist.Phi.Geometry
-public import Linglib.Syntax.Minimalist.Case.Licensing
+public import Linglib.Syntax.Case.Basic
 
 /-!
 # φ-probes: the φ-feature specialization of `Probe`
@@ -20,7 +20,7 @@ Condition built on it.
 - `Agreement.Bundle.visibleTo` — a cell bears the feature a target seeks.
 - `Agreement.Bundle.IsParticipant` — a cell bears an interpretable 1st/2nd person feature.
 - `Probe.Target.toProbe` — a target's denotation as a `Probe` over φ-cells.
-- `PhiGoal` — a nominal as a φ-goal: its Case-licensing state with its φ-cell.
+- `PhiGoal` — a nominal as a φ-goal: its case, if already valued, with its φ-cell.
 - `PLC` — the Person Licensing Condition over φ-bearing goal tokens.
 -/
 
@@ -46,38 +46,34 @@ instance : DecidablePred Agreement.Bundle.IsParticipant := fun c =>
 def Probe.Target.toProbe (t : Probe.Target) : Probe Agreement.Bundle :=
   .relativized (·.visibleTo t)
 
-/-- A nominal as the goal of a φ-probe: its Case-licensing state (`LicensedNP`) together
-with its φ-cell. A relativized probe reads the cell for visibility; Agree reads the Case
-state for activity (`LicensedNP.isActive`, the Active Goal Hypothesis of [chomsky-2000]). -/
-structure PhiGoal extends Licensing.LicensedNP where
+/-- A nominal as the goal of a φ-probe: the case a head of its own has valued, if any, and its
+φ-cell. A relativized probe reads the cell for visibility, and Agree reads the case for activity:
+a goal is active iff its case is unvalued, the Active Goal Hypothesis of [chomsky-2000]. -/
+structure PhiGoal where
+  valuedCase : Option Case
   cell : Agreement.Bundle
   deriving DecidableEq, Repr
 
-/-- A nominal whose Case `c` a head of its own has already valued: inactive for Agree. -/
-def PhiGoal.valued (c : Case) (cell : Agreement.Bundle) : PhiGoal :=
-  { label := "", lexicalCase := some c, needsLicensing := true, cell := cell }
+/-- A goal is active, visible to Agree, iff its case is unvalued. -/
+def PhiGoal.isActive (g : PhiGoal) : Bool := g.valuedCase.isNone
 
-/-- A nominal with unvalued Case: active for Agree. -/
-def PhiGoal.unvalued (cell : Agreement.Bundle) : PhiGoal :=
-  { label := "", lexicalCase := none, needsLicensing := true, cell := cell }
+/-- A nominal whose case `c` a head of its own has already valued: inactive for Agree. -/
+def PhiGoal.valued (c : Case) (cell : Agreement.Bundle) : PhiGoal := ⟨some c, cell⟩
+
+/-- A nominal with unvalued case: active for Agree. -/
+def PhiGoal.unvalued (cell : Agreement.Bundle) : PhiGoal := ⟨none, cell⟩
 
 @[simp] theorem PhiGoal.cell_valued (c : Case) (cell : Agreement.Bundle) :
     (PhiGoal.valued c cell).cell = cell := rfl
 
-@[simp] theorem PhiGoal.lexicalCase_valued (c : Case) (cell : Agreement.Bundle) :
-    (PhiGoal.valued c cell).lexicalCase = some c := rfl
-
-@[simp] theorem PhiGoal.needsLicensing_valued (c : Case) (cell : Agreement.Bundle) :
-    (PhiGoal.valued c cell).needsLicensing = true := rfl
+@[simp] theorem PhiGoal.valuedCase_valued (c : Case) (cell : Agreement.Bundle) :
+    (PhiGoal.valued c cell).valuedCase = some c := rfl
 
 @[simp] theorem PhiGoal.cell_unvalued (cell : Agreement.Bundle) :
     (PhiGoal.unvalued cell).cell = cell := rfl
 
-@[simp] theorem PhiGoal.lexicalCase_unvalued (cell : Agreement.Bundle) :
-    (PhiGoal.unvalued cell).lexicalCase = none := rfl
-
-@[simp] theorem PhiGoal.needsLicensing_unvalued (cell : Agreement.Bundle) :
-    (PhiGoal.unvalued cell).needsLicensing = true := rfl
+@[simp] theorem PhiGoal.valuedCase_unvalued (cell : Agreement.Bundle) :
+    (PhiGoal.unvalued cell).valuedCase = none := rfl
 
 @[simp] theorem PhiGoal.isActive_valued (c : Case) (cell : Agreement.Bundle) :
     (PhiGoal.valued c cell).isActive = false := rfl

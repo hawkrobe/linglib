@@ -116,22 +116,23 @@ def raising : Clause := ⟨false, none, .chain none⟩
 
 variable (c : Clause) (r : Rules) (v : Bool)
 
-/-- The chains with a link in a position the verb and its inflection govern, highest first.
+/-- The chains with a link in a position the verb and its inflection govern, highest first, each
+given by the case a lexical head has valued on it, if any.
 An unfilled object position is listed when the language sees it. -/
-def chains : List NP :=
-  { label := "subject", lexicalCase := c.subjectCase } ::
+def chains : List (Option Case) :=
+  c.subjectCase ::
     match c.object with
-    | .chain l => [{ label := "object", lexicalCase := l }]
+    | .chain l => [l]
     | .trace => []
-    | .unfilled => if v then [{ label := "unfilled" }] else []
+    | .unfilled => if v then [none] else []
 
 /-- The case of the subject's chain, with what valued it. -/
-def subject : Option (Case × Mechanism) := ((r.assign (c.chains v)).map (·.2)).headD none
+def subject : Option (Case × Mechanism) := ((r.assign id (c.chains v)).map (·.2)).headD none
 
 /-- The case of the object's chain, with what valued it, where there is one. -/
 def object? : Option (Case × Mechanism) :=
   match c.object with
-  | .chain _ => ((r.assign (c.chains v)).map (·.2)).getD 1 none
+  | .chain _ => ((r.assign id (c.chains v)).map (·.2)).getD 1 none
   | .trace | .unfilled => none
 
 /-- A case a lexical head determines is kept, under any rules. -/

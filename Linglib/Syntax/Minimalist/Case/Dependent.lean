@@ -22,10 +22,11 @@ probes present with the domain each agrees into.
 ## Main definitions
 
 * `agreeValue`: Agree into a domain, valuing the highest NP there whose case is unvalued.
-* `PhasedNP`: an NP with the phase head whose domain merges it, and whether it has shifted
-  to the clause edge.
+* `PhasedNP`: an NP's position for case, its lexical case, the phase head whose domain merges
+  it, and whether it has shifted to the clause edge.
 * `CaseAssigners`: the phase heads in spell-out order with their rules, and the Agree cases.
-* `CaseAssigners.assign`: case for every NP of a derivation.
+* `CaseAssigners.assign`: case for every NP of a derivation, the NPs of any type, each with its
+  position.
 
 ## Main results
 
@@ -173,9 +174,11 @@ theorem agreeValue_map {α' β' : Type*} {P' : α' → Bool} {v' : β'} (f : α 
 
 end Agree
 
-/-- An NP with its position: the phase head whose spell-out domain merges it, and whether it
-    has shifted to the clause edge, where C's domain spells it out. -/
-structure PhasedNP extends Case.NP where
+/-- An NP's position for case: any case a lexical head has valued, the phase head whose spell-out
+    domain merges it, and whether it has shifted to the clause edge, where C's domain spells it
+    out. -/
+structure PhasedNP where
+  lexicalCase : Option Case := none
   phase : Cat := .C
   shifted : Bool := false
   deriving DecidableEq, Repr
@@ -206,31 +209,37 @@ def CaseAssigners.agreeCase (g : CaseAssigners) (h : Cat) : Option Case :=
 def CaseAssigners.cases (g : CaseAssigners) : List Case :=
   g.domains.flatMap (·.2.cases) ++ g.agree.map (·.2)
 
-/-- The head `h` probing the domain of `c`: it values what the assigners let it. -/
-def probePass (g : CaseAssigners) (c h : Cat) (s : Valuation PhasedNP (Case × Mechanism)) :
-    Valuation PhasedNP (Case × Mechanism) :=
+section Assign
+
+variable {α : Type*} (g : CaseAssigners) (np : α → PhasedNP)
+
+/-- The head `h` probing the domain of `c`: it values what the assigners let it. The NPs are of
+    any type, `np` giving each its position. -/
+def probePass (c h : Cat) (s : Valuation α (Case × Mechanism)) : Valuation α (Case × Mechanism) :=
   match g.agreeCase h with
-  | some k => agreeValue (·.visible c) (k, .agree) s
+  | some k => agreeValue (fun x ↦ (np x).visible c) (k, .agree) s
   | none => s
 
 /-- One spell-out domain: its dependent rules, then its probes in order, then its elsewhere
     case. -/
-def domainPass (g : CaseAssigners) (probes : List (Cat × Cat)) (c : Cat)
-    (s : Valuation PhasedNP (Case × Mechanism)) : Valuation PhasedNP (Case × Mechanism) :=
-  (g.rules c).unmarkedPass (·.spellOut == c) <|
-    (probes.filter (·.2 == c)).foldl (fun st hp ↦ probePass g c hp.1 st)
-      ((g.rules c).dependentPass (·.visible c) s)
+def domainPass (probes : List (Cat × Cat)) (c : Cat) (s : Valuation α (Case × Mechanism)) :
+    Valuation α (Case × Mechanism) :=
+  (g.rules c).unmarkedPass (fun x ↦ (np x).spellOut == c) <|
+    (probes.filter (·.2 == c)).foldl (fun st hp ↦ probePass g np c hp.1 st)
+      ((g.rules c).dependentPass (fun x ↦ (np x).visible c) s)
 
 /-- The domains spelling out in the assigners' order. -/
-def CaseAssigners.derive (g : CaseAssigners) (probes : List (Cat × Cat))
-    (s : Valuation PhasedNP (Case × Mechanism)) : Valuation PhasedNP (Case × Mechanism) :=
-  (g.domains.map (·.1)).foldl (fun st c ↦ domainPass g probes c st) s
+def CaseAssigners.derive (probes : List (Cat × Cat)) (s : Valuation α (Case × Mechanism)) :
+    Valuation α (Case × Mechanism) :=
+  (g.domains.map (·.1)).foldl (fun st c ↦ domainPass g np probes c st) s
 
 /-- Case for every NP, the domains spelling out in the assigners' order. `probes` lists the
     functional heads present with the phase head whose domain each agrees into. -/
-def CaseAssigners.assign (g : CaseAssigners) (probes : List (Cat × Cat)) (nps : List PhasedNP) :
-    Valuation Case.NP (Case × Mechanism) :=
-  (g.derive probes (lexicalValuation (·.lexicalCase) nps)).map (Prod.map (·.toNP) id)
+def CaseAssigners.assign (probes : List (Cat × Cat)) (xs : List α) :
+    Valuation α (Case × Mechanism) :=
+  g.derive np probes (lexicalValuation (fun x ↦ (np x).lexicalCase) xs)
+
+end Assign
 
 /-! ### What the assigners value -/
 
@@ -261,73 +270,70 @@ theorem CaseAssigners.fst_mem_cases {g : CaseAssigners} {v : Case × Mechanism}
   · exact List.mem_append_left _ (List.mem_flatMap.2 ⟨d, hd, Rules.fst_mem_cases hv⟩)
   · exact g.agreeCase_mem_cases hh
 
-theorem extends_probePass (g : CaseAssigners) (c h : Cat)
-    (s : Valuation PhasedNP (Case × Mechanism)) :
-    s.Extends (· ∈ g.valuations) (probePass g c h s) := by
+section Assign
+
+variable {α : Type*} (g : CaseAssigners) (np : α → PhasedNP)
+
+theorem extends_probePass (c h : Cat) (s : Valuation α (Case × Mechanism)) :
+    s.Extends (· ∈ g.valuations) (probePass g np c h s) := by
   unfold probePass
   split
   · exact extends_agreeValue (.inr ⟨rfl, h, ‹_›⟩) s
   · exact .refl s
 
-theorem extends_domainPass (g : CaseAssigners) (probes : List (Cat × Cat)) (c : Cat)
-    (s : Valuation PhasedNP (Case × Mechanism)) :
-    s.Extends (· ∈ g.valuations) (domainPass g probes c s) :=
+theorem extends_domainPass (probes : List (Cat × Cat)) (c : Cat)
+    (s : Valuation α (Case × Mechanism)) :
+    s.Extends (· ∈ g.valuations) (domainPass g np probes c s) :=
   (((g.rules c).extends_dependentPass _ s).mono fun _ h ↦ g.rules_valuations_subset c h).trans <|
-    (Valuation.Extends.foldl _ (fun (hp : Cat × Cat) _ ↦ extends_probePass g c hp.1) _).trans <|
+    (Valuation.Extends.foldl _ (fun (hp : Cat × Cat) _ ↦ extends_probePass g np c hp.1) _).trans <|
       ((g.rules c).extends_unmarkedPass _ _).mono fun _ h ↦ g.rules_valuations_subset c h
 
 /-- A derivation extends the valuation by what the assigners value. -/
-theorem CaseAssigners.extends_derive (g : CaseAssigners) (probes : List (Cat × Cat))
-    (s : Valuation PhasedNP (Case × Mechanism)) :
-    s.Extends (· ∈ g.valuations) (g.derive probes s) :=
-  Valuation.Extends.foldl _ (fun c _ st ↦ extends_domainPass g probes c st) s
+theorem CaseAssigners.extends_derive (probes : List (Cat × Cat))
+    (s : Valuation α (Case × Mechanism)) :
+    s.Extends (· ∈ g.valuations) (g.derive np probes s) :=
+  Valuation.Extends.foldl _ (fun c _ st ↦ extends_domainPass g np probes c st) s
 
 /-- Assignment extends the lexical valuation by what the assigners value. -/
-theorem CaseAssigners.extends_assign (g : CaseAssigners) (probes : List (Cat × Cat))
-    (nps : List PhasedNP) :
-    (lexicalValuation (·.lexicalCase) (nps.map (·.toNP))).Extends (· ∈ g.valuations)
-      (g.assign probes nps) := by
-  have h := (g.extends_derive probes (lexicalValuation (·.lexicalCase) nps)).map (·.toNP)
-  have e : (lexicalValuation (·.lexicalCase) nps).map (Prod.map (·.toNP) id) =
-      lexicalValuation (·.lexicalCase) (nps.map (·.toNP)) := by
-    simp [lexicalValuation, Valuation.initial, Function.comp_def]
-  rw [e] at h
-  exact h
+theorem CaseAssigners.extends_assign (probes : List (Cat × Cat)) (xs : List α) :
+    (lexicalValuation (fun x ↦ (np x).lexicalCase) xs).Extends (· ∈ g.valuations)
+      (g.assign np probes xs) :=
+  g.extends_derive np probes _
 
 /-- Assignment is total: one valuation per NP. -/
-@[simp] theorem CaseAssigners.assign_length (g : CaseAssigners) (probes : List (Cat × Cat))
-    (nps : List PhasedNP) : (g.assign probes nps).length = nps.length := by
-  simp [← (g.extends_assign probes nps).length_eq, lexicalValuation]
+@[simp] theorem CaseAssigners.assign_length (probes : List (Cat × Cat)) (xs : List α) :
+    (g.assign np probes xs).length = xs.length := by
+  simp [← (g.extends_assign np probes xs).length_eq, lexicalValuation]
+
+variable {g np} {probes : List (Cat × Cat)} {xs : List α} {i : ℕ} {x : α}
 
 /-- Lexical case is kept through every domain. -/
-theorem CaseAssigners.assign_getElem?_of_some (g : CaseAssigners) (probes : List (Cat × Cat))
-    {nps : List PhasedNP} {i : ℕ} {np : PhasedNP} {c : Case} (hnp : nps[i]? = some np)
-    (hc : np.lexicalCase = some c) :
-    (g.assign probes nps)[i]? = some (np.toNP, some (c, .lexical)) :=
-  (g.extends_assign probes nps).getElem?_of_some
-    (lexicalValuation_getElem?_of_some _ (by simp [hnp]) hc)
+theorem CaseAssigners.assign_getElem?_of_some {c : Case} (hx : xs[i]? = some x)
+    (hc : (np x).lexicalCase = some c) :
+    (g.assign np probes xs)[i]? = some (x, some (c, .lexical)) :=
+  (g.extends_assign np probes xs).getElem?_of_some (lexicalValuation_getElem?_of_some _ hx hc)
 
 /-- A caseless NP is valued only with a case the assigners mention. -/
-theorem CaseAssigners.case_mem_cases (g : CaseAssigners) (probes : List (Cat × Cat))
-    {nps : List PhasedNP} {i : ℕ} {np : Case.NP} {c : Case} {m : Mechanism}
-    (hlex : np.lexicalCase = none) (h : (g.assign probes nps)[i]? = some (np, some (c, m))) :
+theorem CaseAssigners.case_mem_cases {c : Case} {m : Mechanism}
+    (hlex : (np x).lexicalCase = none) (h : (g.assign np probes xs)[i]? = some (x, some (c, m))) :
     c ∈ g.cases := by
-  rcases (g.extends_assign probes nps).of_getElem? h with h | h
+  rcases (g.extends_assign np probes xs).of_getElem? h with h | h
   · exact absurd (lexicalValuation_getElem? h).1 (by simp [hlex])
   · exact CaseAssigners.fst_mem_cases h
 
 /-- Assigners with no elsewhere case in any domain never value an NP as unmarked: an NP that
     no rule and no head reaches stays caseless. -/
-theorem CaseAssigners.mechanism_ne_unmarked (g : CaseAssigners) (probes : List (Cat × Cat))
-    (hg : ∀ d ∈ g.domains, d.2.unmarked = none) {nps : List PhasedNP} {i : ℕ} {np : Case.NP}
-    {c : Case} {m : Mechanism} (h : (g.assign probes nps)[i]? = some (np, some (c, m))) :
+theorem CaseAssigners.mechanism_ne_unmarked (hg : ∀ d ∈ g.domains, d.2.unmarked = none)
+    {c : Case} {m : Mechanism} (h : (g.assign np probes xs)[i]? = some (x, some (c, m))) :
     m ≠ .unmarked := by
   rintro rfl
-  rcases (g.extends_assign probes nps).of_getElem? h with h | h
+  rcases (g.extends_assign np probes xs).of_getElem? h with h | h
   · simpa using (lexicalValuation_getElem? h).2
   · rcases h with ⟨d, hd, ⟨hm, -⟩ | ⟨-, hu⟩⟩ | ⟨hm, -⟩
     · cases hm
     · simp [hg d hd] at hu
     · cases hm
+
+end Assign
 
 end Minimalist

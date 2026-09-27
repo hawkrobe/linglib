@@ -92,10 +92,6 @@ structure LicensedNP extends PhasedNP where
   needsLicensing : Bool
   deriving DecidableEq, Repr
 
-/-- A nominal is active, visible to a probe, iff its Case is unvalued. Every nominal bears
-unvalued Case unless a lexical head has valued it, whether or not it needs licensing. -/
-def LicensedNP.isActive (np : LicensedNP) : Bool := np.lexicalCase.isNone
-
 /-- What valued a nominal's Case: a lexical head, with the case it assigned, or a licenser. -/
 inductive CaseValue where
   | lexical (c : _root_.Case)
@@ -301,40 +297,41 @@ assign what the licensing derivation does, each licenser read as that case. -/
 theorem _root_.Minimalist.CaseAssigners.assign_eq_map_license (g : CaseAssigners)
     (hg : ∀ d ∈ g.domains, d.2 = {}) (κ : Cat → _root_.Case) {ls : List Licenser}
     (hκ : ∀ l ∈ ls, g.agreeCase l.head = some (κ l.head)) (nps : List PhasedNP) :
-    g.assign (ls.map fun l ↦ (l.head, l.domain)) nps =
+    g.assign id (ls.map fun l ↦ (l.head, l.domain)) nps =
       (license (g.domains.map (·.1)) ls nps).map
-        fun p ↦ (p.1.toNP, p.2.map (CaseValue.assigned κ)) := by
+        (Prod.map id (Option.map (CaseValue.assigned κ))) := by
   set φ : PhasedNP × Option CaseValue → PhasedNP × Option (_root_.Case × _root_.Case.Mechanism) :=
     Prod.map id (Option.map (CaseValue.assigned κ))
   have key (c : Cat) (L : List Licenser)
       (hL : ∀ l ∈ L, l.domain = c ∧ g.agreeCase l.head = some (κ l.head))
       (st : Valuation PhasedNP CaseValue) :
-      L.foldl (fun st l ↦ probePass g c l.head st) (st.map φ) =
+      L.foldl (fun st l ↦ probePass g id c l.head st) (st.map φ) =
         (L.foldl (fun st l ↦ l.agree st) st).map φ := by
     induction L generalizing st with
     | nil => rfl
     | cons l L ih =>
       obtain ⟨hdom, hcase⟩ := hL l (mem_cons_self ..)
-      have hstep : probePass g c l.head (st.map φ) = (l.agree st).map φ := by
+      have hstep : probePass g id c l.head (st.map φ) = (l.agree st).map φ := by
         simp only [probePass, hcase, Licenser.agree, hdom]
         exact agreeValue_map (P := (·.visible c)) (P' := (·.visible c)) (v := .licenser l)
           id (CaseValue.assigned κ) (fun _ ↦ rfl) rfl st
       rw [foldl_cons, foldl_cons, hstep, ih (fun l hl ↦ hL l (mem_cons_of_mem _ hl))]
   have hcycle (c : Cat) (st : Valuation PhasedNP CaseValue) :
-      domainPass g (ls.map fun l ↦ (l.head, l.domain)) c (st.map φ) = (cycle ls c st).map φ := by
+      domainPass g id (ls.map fun l ↦ (l.head, l.domain)) c (st.map φ) = (cycle ls c st).map φ := by
     rw [domainPass, rules_eq_of g hg, _root_.Case.Rules.unmarkedPass_of_none _ _ rfl,
       _root_.Case.Rules.dependentPass_of_none _ _ rfl rfl, filter_map, foldl_map, cycle]
     exact key c _ (fun l hl ↦ by
       obtain ⟨hl, hc⟩ := mem_filter.1 hl
       exact ⟨by simpa using hc, hκ l hl⟩) st
-  have hinit : _root_.Case.lexicalValuation (·.lexicalCase) nps = (initial nps).map φ := by
+  have hinit : _root_.Case.lexicalValuation (fun x ↦ (id x).lexicalCase) nps =
+      (initial nps).map φ := by
     simp [_root_.Case.lexicalValuation, initial, Valuation.initial, φ, Option.map_map,
       Function.comp_def, CaseValue.assigned]
   rw [CaseAssigners.assign, CaseAssigners.derive, license, hinit]
   suffices ∀ st : Valuation PhasedNP CaseValue, (g.domains.map (·.1)).foldl
-      (fun st c ↦ domainPass g (ls.map fun l ↦ (l.head, l.domain)) c st) (st.map φ) =
+      (fun st c ↦ domainPass g id (ls.map fun l ↦ (l.head, l.domain)) c st) (st.map φ) =
       ((g.domains.map (·.1)).foldl (fun st c ↦ cycle ls c st) st).map φ by
-    rw [this, map_map]; rfl
+    exact this _
   intro st
   induction g.domains.map (·.1) generalizing st with
   | nil => rfl

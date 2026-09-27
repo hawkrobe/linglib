@@ -88,9 +88,9 @@ def controller (t : CaseCategory) (domain : Valuation α (Case × Mechanism)) : 
 /-- Whether an argument controls agreement in a clause of the given alignment, in a language
 whose least accessible category is `t`. -/
 def controls (a : Alignment.AlignmentType) (t : CaseCategory) : ArgumentRole → Bool
-  | .S => controller t (assignCases a [{ label := "S" }]) = some 0
-  | .A => controller t (assignCases a [{ label := "A" }, { label := "P" }]) = some 0
-  | .P => controller t (assignCases a [{ label := "A" }, { label := "P" }]) = some 1
+  | .S => controller t (assignCases a (fun _ ↦ none) [ArgumentRole.S]) = some 0
+  | .A => controller t (assignCases a (fun _ ↦ none) [ArgumentRole.A, .P]) = some 0
+  | .P => controller t (assignCases a (fun _ ↦ none) [ArgumentRole.A, .P]) = some 1
   | .R | .T => false
 
 /-! ### The predicted agreement alignments -/
@@ -122,17 +122,17 @@ theorem not_isErgative_controls_accusative (t : CaseCategory) :
 /-- Below a subject with lexical case, as the dative subjects of Icelandic, the verb agrees
 with the nominative object unless lexical case is itself accessible. -/
 theorem controller_quirky (c : Case) (t : CaseCategory) (ht : t ≠ .lexical) :
-    controller t (assignCases .accusative
-      [{ label := "subject", lexicalCase := some c }, { label := "object" }]) = some 1 := by
+    controller t (assignCases .accusative (fun r ↦ if r = ArgumentRole.A then some c else none)
+      [ArgumentRole.A, .P]) = some 1 := by
   cases t <;> first | exact absurd rfl ht | rfl
 
 /-- In the Hindi perfective the verb agrees with the unmarked object past the ergative subject,
 and in the imperfective with the subject. -/
 theorem hindi_controller :
-    controller .unmarked (assignCases (Hindi.Case.alignment .perfective)
-      [{ label := "A" }, { label := "P" }]) = some 1 ∧
-    controller .unmarked (assignCases (Hindi.Case.alignment .imperfective)
-      [{ label := "A" }, { label := "P" }]) = some 0 := by
+    controller .unmarked (assignCases (Hindi.Case.alignment .perfective) (fun _ ↦ none)
+      [ArgumentRole.A, .P]) = some 1 ∧
+    controller .unmarked (assignCases (Hindi.Case.alignment .imperfective) (fun _ ↦ none)
+      [ArgumentRole.A, .P]) = some 0 := by
   decide
 
 end Bobaljik2008
