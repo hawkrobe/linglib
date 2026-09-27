@@ -1115,7 +1115,6 @@ import Linglib.Pragmatics.NeoGricean.Basic
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Uniform
 import Linglib.Pragmatics.RSA.Profile
-import Linglib.Pragmatics.RSA.Gibbs
 import Linglib.Pragmatics.RSA.Incremental
 import Linglib.Pragmatics.RSA.QUD
 import Linglib.Pragmatics.RSA.Silence

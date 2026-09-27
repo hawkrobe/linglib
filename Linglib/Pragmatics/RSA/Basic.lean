@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 public import Linglib.Core.MeasureTheory.Measure.WithDensity
+public import Linglib.Core.Probability.GibbsVariational
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
@@ -41,6 +42,12 @@ over them. The uniform-prior Boolean specialization with its decision procedure 
 * `RSA.speaker_literalListener_indicator_congr` — with Boolean meanings the speaker sees a
   state only through the utterances true at it.
 * `RSA.jointListener_apply_singleton` — exact Bayes for the joint listener.
+* `RSA.speakerOfScore_eq_tilted`, `RSA.isGreatest_freeEnergy_speakerOfScore` — a score-speaker
+  row is the Gibbs measure of its score over the applicable utterances, and so the rational
+  optimizer: it maximizes the expected score less the divergence from the uniform measure on
+  them (the Gibbs variational principle).
+* `RSA.tendsto_speaker_real_singleton_atTop` — as rationality grows the speaker puts all its mass
+  on the utterance the listener most favors.
 * `RSA.jointListener_fst_real_lt_iff`, `RSA.jointListener_snd_real_lt_iff`,
   `RSA.familyListener_fst_real_lt_iff`, `RSA.familyListener_snd_real_lt_iff` — listener
   preference as prior-weighted speaker sums.
@@ -496,6 +503,119 @@ theorem speaker_eq_speakerOfScore (α : ℝ) (cost : U → ℝ≥0∞) (L : Kern
   rw [EReal.exp_add, EReal.exp_mul, ENNReal.exp_log, ENNReal.exp_log]
 
 end ScoreSpeaker
+
+/-! #### The speaker as a Gibbs measure
+
+A score-speaker row is the Gibbs measure of its score over the applicable utterances, the
+uniform measure on them tilted by the score. The Gibbs variational principle then makes the
+speaker the rational optimizer: its row maximizes the expected score less the divergence from the
+uniform measure on the applicable utterances, with the log partition function as the maximum. -/
+
+section Gibbs
+
+open InformationTheory
+
+variable {score : W → U → EReal} {w : W}
+
+/-- A score-speaker row is the uniform measure on the applicable utterances tilted by the
+score. -/
+theorem speakerOfScore_eq_tilted (htop : ∀ u, score w u ≠ ⊤) (h0 : ∃ u, score w u ≠ ⊥) :
+    speakerOfScore score w =
+      (uniformOn {u | score w u ≠ ⊥}).tilted fun u ↦ (score w u).toReal := by
+  classical
+  set S : Set U := {u | score w u ≠ ⊥}
+  have := isProbabilityMeasure_uniformOn S.toFinite h0
+  set c : ℝ := ((Measure.count S)⁻¹).toReal
+  have hc : c ≠ 0 := ENNReal.toReal_ne_zero.2
+    ⟨ENNReal.inv_ne_zero.2 (Measure.count_apply_lt_top.2 S.toFinite).ne,
+      ENNReal.inv_ne_top.2 (Measure.count_ne_zero_iff.2 h0)⟩
+  have hν (b : U) : (uniformOn S).real {b} = S.indicator (fun _ ↦ c) b := by
+    rw [measureReal_def, uniformOn, cond_apply S.toFinite.measurableSet]
+    by_cases hb : b ∈ S
+    · rw [Set.inter_eq_right.2 (Set.singleton_subset_iff.2 hb), Measure.count_singleton, mul_one,
+        Set.indicator_of_mem hb]
+    · rw [Set.inter_singleton_eq_empty.2 hb, measure_empty, mul_zero, ENNReal.toReal_zero,
+        Set.indicator_of_notMem hb]
+  have he (b : U) : (EReal.exp (score w b)).toReal =
+      S.indicator (fun b ↦ Real.exp (score w b).toReal) b := by
+    by_cases hb : score w b = ⊥
+    · rw [hb, EReal.exp_bot, ENNReal.toReal_zero, Set.indicator_of_notMem (by simpa [S] using hb)]
+    · rw [Set.indicator_of_mem hb, ← EReal.coe_toReal (htop b) hb, EReal.exp_coe,
+        ENNReal.toReal_ofReal (Real.exp_pos _).le, EReal.toReal_coe]
+  have key (b : U) : S.indicator (fun _ ↦ c) b * Real.exp (score w b).toReal =
+      c * S.indicator (fun b ↦ Real.exp (score w b).toReal) b := by
+    by_cases hb : b ∈ S <;> simp [hb]
+  refine Measure.ext_iff_singleton.2 fun a ↦ ?_
+  rw [← ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _), ← measureReal_def,
+    ← measureReal_def, speakerOfScore,
+    Kernel.ofWeights_real_singleton (fun w u ↦ EReal.exp (score w u)) w
+      (fun u ↦ mt EReal.exp_eq_top_iff.mp (htop u)),
+    tilted_real_singleton]
+  simp_rw [he, hν, key, ← Finset.mul_sum, mul_div_mul_left _ _ hc]
+
+/-- The score speaker attains the log partition function as its free energy relative to the
+uniform measure on the applicable utterances. -/
+theorem freeEnergy_speakerOfScore (htop : ∀ u, score w u ≠ ⊤) (h0 : ∃ u, score w u ≠ ⊥) :
+    (uniformOn {u | score w u ≠ ⊥}).freeEnergy (fun u ↦ (score w u).toReal)
+        (speakerOfScore score w) =
+      cgf (fun u ↦ (score w u).toReal) (uniformOn {u | score w u ≠ ⊥}) 1 := by
+  have := isProbabilityMeasure_uniformOn (Set.toFinite {u | score w u ≠ ⊥}) h0
+  rw [speakerOfScore_eq_tilted htop h0]
+  exact freeEnergy_tilted _ .of_finite .of_finite .of_finite
+
+/-- The score speaker is the rational optimizer: among the distributions absolutely continuous
+with respect to the uniform measure on the applicable utterances, its row has the greatest
+expected score less divergence from that uniform measure. -/
+theorem isGreatest_freeEnergy_speakerOfScore (htop : ∀ u, score w u ≠ ⊤)
+    (h0 : ∃ u, score w u ≠ ⊥) :
+    IsGreatest ((uniformOn {u | score w u ≠ ⊥}).freeEnergy (fun u ↦ (score w u).toReal) ''
+        {q | IsProbabilityMeasure q ∧ q ≪ uniformOn {u | score w u ≠ ⊥} ∧
+          Integrable (llr q (uniformOn {u | score w u ≠ ⊥})) q ∧
+          Integrable (fun u ↦ (score w u).toReal) q})
+      ((uniformOn {u | score w u ≠ ⊥}).freeEnergy (fun u ↦ (score w u).toReal)
+        (speakerOfScore score w)) := by
+  have := isProbabilityMeasure_uniformOn (Set.toFinite {u | score w u ≠ ⊥}) h0
+  rw [freeEnergy_speakerOfScore htop h0]
+  exact isGreatest_cgf _ .of_finite .of_finite .of_finite
+
+end Gibbs
+
+open Filter Topology in
+/-- As rationality grows, the speaker puts all its mass on the utterance the listener most favors
+at `w`: the fully rational speaker is the argmax speaker. -/
+theorem tendsto_speaker_real_singleton_atTop {cost : U → ℝ≥0∞} (hc0 : ∀ u, cost u ≠ 0)
+    (hctop : ∀ u, cost u ≠ ∞) {L : Kernel U W} {w : W} (hle : ∀ u, L u {w} ≤ 1) {u : U}
+    (hu : L u {w} ≠ 0) (hmax : ∀ u' ≠ u, L u' {w} < L u {w}) :
+    Tendsto (fun α ↦ (speaker α cost L w).real {u}) atTop (𝓝 1) := by
+  classical
+  set ℓ : U → ℝ := fun v ↦ (L v {w}).toReal
+  set κ : U → ℝ := fun v ↦ (cost v).toReal
+  have hℓ0 (v : U) : 0 ≤ ℓ v := ENNReal.toReal_nonneg
+  have hℓu : 0 < ℓ u := ENNReal.toReal_pos hu (ne_top_of_le_ne_top ENNReal.one_ne_top (hle u))
+  have hκ (v : U) : 0 < κ v := ENNReal.toReal_pos (hc0 v) (hctop v)
+  have hform : ∀ᶠ α in atTop,
+      (∑ v, (ℓ v / ℓ u) ^ α * (κ v / κ u))⁻¹ = (speaker α cost L w).real {u} := by
+    filter_upwards [eventually_ge_atTop 0] with α hα
+    have hsum : ∑ v, (ℓ v / ℓ u) ^ α * (κ v / κ u) = (∑ v, ℓ v ^ α * κ v) / (ℓ u ^ α * κ u) := by
+      rw [Finset.sum_div]
+      refine Finset.sum_congr rfl fun v _ ↦ ?_
+      rw [Real.div_rpow (hℓ0 v) hℓu.le, div_mul_div_comm]
+    rw [speaker_real_singleton hα hctop hle, hsum, inv_div]
+    simp only [ℓ, κ, ENNReal.toReal_rpow]
+  have hlim : Tendsto (fun α : ℝ ↦ ∑ v, (ℓ v / ℓ u) ^ α * (κ v / κ u)) atTop
+      (𝓝 (∑ v, if v = u then (1 : ℝ) else 0)) := by
+    refine tendsto_finsetSum _ fun v _ ↦ ?_
+    by_cases hv : v = u
+    · subst hv
+      simp [div_self hℓu.ne', div_self (hκ v).ne']
+    · have hlt : ℓ v / ℓ u < 1 := (div_lt_one hℓu).2
+        (ENNReal.toReal_strict_mono (ne_top_of_le_ne_top ENNReal.one_ne_top (hle u)) (hmax v hv))
+      have h1 := (tendsto_rpow_atTop_of_base_lt_one _
+        (by linarith [div_nonneg (hℓ0 v) hℓu.le]) hlt).mul_const (κ v / κ u)
+      rw [zero_mul] at h1
+      simpa only [hv, ite_false] using h1
+  rw [Finset.sum_ite_eq' Finset.univ u, ite_eq_left (Finset.mem_univ u)] at hlim
+  simpa using (hlim.inv₀ one_ne_zero).congr' hform
 
 /-- With Boolean meanings and a constant cost, a state two utterances both fit produces the
 utterance with the smaller extension more often: informativity is the inverse of extension
