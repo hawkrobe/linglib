@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.Probability.Lift
+public import Linglib.Logic.ComparativeProbability.WorldOrdering
 public import Linglib.Logic.ComparativeProbability.Patterns
 public import Linglib.Core.Order.Probability.Completeness
 public import Linglib.Logic.ComparativeProbability.Defs
@@ -44,7 +44,7 @@ from intuitive entailments.
   classes, and the indiscriminate world order (every world at least as good as every other) on
   two or three worlds for the liftings.
 * The completeness theorems are represented by the model-theoretic results they rest on:
-  Theorem 2 by `dominationLift_repr_iff` ([halpern-2003]), Theorem 6 by
+  Theorem 2 by `lewisLift_repr_iff` ([halpern-2003]), Theorem 6 by
   `exists_qualAddMeasure_repr` ([van-der-hoek-1996]), Theorem 8 by the Kraft–Pratt–Seidenberg
   representation theorems. Theorems 3–5 and 7 and Fact 4 concern the logics themselves and are
   not formalized.
@@ -90,12 +90,12 @@ V1–V12 and I1–I3 are [yalcin-2010]'s, stated in `Logic/ComparativeProbabilit
 the figure adds V13. -/
 
 /-- V13: `(a \ b) ≻ ⊥ → (a ⊔ b) ≻ b`, the pattern Lassiter suggested to the authors. -/
-def patternV13 {α : Type*} [BooleanAlgebra α] (r : α → α → Prop) : Prop :=
+def StrictDisjunctionIntro {α : Type*} [BooleanAlgebra α] (r : α → α → Prop) : Prop :=
   ∀ a b : α, Strict r (a \ b) ⊥ → Strict r (a ⊔ b) b
 
 /-- V13 from monotonicity and additivity. -/
-theorem patternV13_of {α : Type*} [BooleanAlgebra α] {r : α → α → Prop} [IsLikelihoodMono r]
-    [IsQualitativeAdditive r] : patternV13 r := by
+theorem strictDisjunctionIntro_of {α : Type*} [BooleanAlgebra α] {r : α → α → Prop}
+    [IsLikelihoodMono r] [IsQualitativeAdditive r] : StrictDisjunctionIntro r := by
   rintro a b ⟨_, hABnot⟩
   refine ⟨mono _ _ le_sup_right, ?_⟩
   intro hc
@@ -115,44 +115,44 @@ omit [IsPreorder W ge_w] in
 /-- V6 for the l-lifting: only `W` itself is dominated by the empty set, and on a nonempty
 domain `W` is strictly more likely than its complement. -/
 theorem lLift_V6 [Nonempty W] :
-    patternV6 (DominationLift ge_w) (fun A ↦ DominationLift ge_w ⊥ Aᶜ) := by
+    MustToProbably (LewisLift ge_w) (fun A ↦ LewisLift ge_w ⊥ Aᶜ) := by
   intro A hA
-  obtain rfl : A = Set.univ := by simpa using dominationLift_empty_left_iff.1 hA
+  obtain rfl : A = Set.univ := by simpa using lewisLift_empty_left_iff.1 hA
   rw [Probably, Strict, Set.compl_univ]
-  exact ⟨dominationLift_empty _,
-    fun h ↦ Set.univ_nonempty.ne_empty (dominationLift_empty_left_iff.1 h)⟩
+  exact ⟨lewisLift_empty _,
+    fun h ↦ Set.univ_nonempty.ne_empty (lewisLift_empty_left_iff.1 h)⟩
 
 /-- V12 for the l-lifting: a world of `Bᶜ` outside `A` is dominated through `A` and then
 through `B`. -/
-theorem lLift_V12 : patternV12 (DominationLift ge_w) := by
+theorem lLift_V12 : ComplementTransfer (LewisLift ge_w) := by
   intro A B hBA hA y hy
   by_cases hyA : y ∈ A
-  · exact hBA y hyA
-  · obtain ⟨a, ha, hay⟩ := hA y hyA
-    obtain ⟨b, hb, hba⟩ := hBA a ha
+  · exact hBA hyA
+  · obtain ⟨a, ha, hay⟩ := hA hyA
+    obtain ⟨b, hb, hba⟩ := hBA ha
     exact ⟨b, hb, _root_.trans hba hay⟩
 
 /-- **Fact 1**, validities: over a nonempty preorder on worlds the l-lifting validates V1–V7 and
 V12. -/
 theorem lLift_validities [Nonempty W] :
-    patternV1 (DominationLift ge_w) ∧ patternV2 (DominationLift ge_w) ∧
-      patternV3 (DominationLift ge_w) ∧ patternV4 (DominationLift ge_w) ∧
-      patternV5 (DominationLift ge_w) ∧
-      patternV6 (DominationLift ge_w) (fun A ↦ DominationLift ge_w ⊥ Aᶜ) ∧
-      patternV7 (DominationLift ge_w) (Possibly (DominationLift ge_w)) ∧
-      patternV12 (DominationLift ge_w) :=
-  ⟨patternV1_holds, patternV2_of, patternV3_of, patternV4_of, patternV5_of, lLift_V6 ge_w,
-    patternV7_of, lLift_V12 ge_w⟩
+    ProbablyToNotProbablyNot (LewisLift ge_w) ∧ ProbablyDistribInf (LewisLift ge_w) ∧
+      ChancyDisjunctionIntro (LewisLift ge_w) ∧ Minimality (LewisLift ge_w) ∧
+      Maximality (LewisLift ge_w) ∧
+      MustToProbably (LewisLift ge_w) (fun A ↦ LewisLift ge_w ⊥ Aᶜ) ∧
+      ProbablyToMight (LewisLift ge_w) (Possibly (LewisLift ge_w)) ∧
+      ComplementTransfer (LewisLift ge_w) :=
+  ⟨probablyToNotProbablyNot, probablyDistribInf_of, chancyDisjunctionIntro_of, minimality_of,
+    maximality_of, lLift_V6 ge_w, probablyToMight_of, lLift_V12 ge_w⟩
 
 /-- **Fact 1**, the disjunction problem: the l-lifting of any preorder on worlds validates the
 three measure-invalid patterns I1–I3, since it is right-union closed. -/
 theorem disjunction_problem :
-    patternI1 (DominationLift ge_w) ∧ patternI2 (DominationLift ge_w) ∧
-      patternI3 (DominationLift ge_w) :=
-  have hI2 : patternI2 (DominationLift ge_w) := fun A B hA ↦
-    (rightUnion_dominationLift A A Aᶜ (refl_of _ A) hA).anti_right
-      (Set.union_compl_self A ▸ Set.subset_univ B)
-  ⟨rightUnion_dominationLift, hI2, fun A B hA ↦ hI2 A B hA.1⟩
+    RightUnion (LewisLift ge_w) ∧ EquiprobabilityCollapse (LewisLift ge_w) ∧
+      HamblinCollapse (LewisLift ge_w) :=
+  have hI2 : EquiprobabilityCollapse (LewisLift ge_w) := fun A B hA ↦
+    (rightUnion_lewisLift A A Aᶜ (refl_of _ A) hA).anti_right
+      (by show B ⊆ A ∪ Aᶜ; rw [Set.union_compl_self]; exact Set.subset_univ B)
+  ⟨rightUnion_lewisLift, hI2, fun A B hA ↦ hI2 A B hA.1⟩
 
 end LLift
 
@@ -162,19 +162,19 @@ worlds, `W` is probable and `{0}` is at least as likely as `W`, yet `{0}` is not
 likely than `{1}` (V13). -/
 theorem lLift_refutes_V11_V13 :
     (∃ (W : Type) (ge_w : W → W → Prop),
-      IsPreorder W ge_w ∧ ¬patternV11 (DominationLift ge_w)) ∧
+      IsPreorder W ge_w ∧ ¬PositiveFormTransfer (LewisLift ge_w)) ∧
     (∃ (W : Type) (ge_w : W → W → Prop),
-      IsPreorder W ge_w ∧ ¬patternV13 (DominationLift ge_w)) := by
+      IsPreorder W ge_w ∧ ¬StrictDisjunctionIntro (LewisLift ge_w)) := by
   refine ⟨⟨Fin 2, fun _ _ ↦ True, inferInstance, fun h ↦ ?_⟩,
     ⟨Fin 2, fun _ _ ↦ True, inferInstance, fun h ↦ ?_⟩⟩
-  · have hA : Probably (DominationLift fun _ _ : Fin 2 ↦ True) Set.univ := by
+  · have hA : Probably (LewisLift fun _ _ : Fin 2 ↦ True) Set.univ := by
       rw [Probably, Strict, Set.compl_univ]
-      exact ⟨dominationLift_empty _,
-        fun h ↦ Set.univ_nonempty.ne_empty (dominationLift_empty_left_iff.1 h)⟩
+      exact ⟨lewisLift_empty _,
+        fun h ↦ Set.univ_nonempty.ne_empty (lewisLift_empty_left_iff.1 h)⟩
     exact (h Set.univ {0} (fun _ _ ↦ ⟨0, rfl, trivial⟩) hA).2 fun _ _ ↦ ⟨1, by simp, trivial⟩
   · have hsd : ({0} : Set (Fin 2)) \ {1} = {0} := Set.sdiff_singleton_eq_self (by simp)
-    refine (h {0} {1} ⟨dominationLift_empty _, fun h' ↦ ?_⟩).2 fun _ _ ↦ ⟨1, rfl, trivial⟩
-    exact Set.singleton_ne_empty 0 (hsd ▸ dominationLift_empty_left_iff.1 h')
+    refine (h {0} {1} ⟨lewisLift_empty _, fun h' ↦ ?_⟩).2 fun _ _ ↦ ⟨1, rfl, trivial⟩
+    exact Set.singleton_ne_empty 0 (hsd ▸ lewisLift_empty_left_iff.1 h')
 
 /-- [kratzer-2012]'s k-lifting: `A` is at least as likely as `B` unless some world in `B`
 outside `A` strictly dominates every world in `A` outside `B`. -/
@@ -201,76 +201,72 @@ variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
 
 /-- **Fact 2**, validities: every finitely additive measure validates V1–V13. -/
 theorem measure_validities (m : FinAddMeasure K W) :
-    patternV1 m.inducedGe ∧ patternV2 m.inducedGe ∧ patternV3 m.inducedGe ∧
-      patternV4 m.inducedGe ∧ patternV5 m.inducedGe ∧
-      patternV6 m.inducedGe (fun A ↦ m.inducedGe ⊥ Aᶜ) ∧
-      patternV7 m.inducedGe (Possibly m.inducedGe) ∧ patternV11 m.inducedGe ∧
-      patternV12 m.inducedGe ∧
-      patternV13 m.inducedGe :=
-  ⟨patternV1_holds, patternV2_of, patternV3_of, patternV4_of, patternV5_of, patternV6_of,
-    patternV7_of, patternV11_of, patternV12_of, patternV13_of⟩
+    ProbablyToNotProbablyNot m.inducedGe ∧ ProbablyDistribInf m.inducedGe ∧
+      ChancyDisjunctionIntro m.inducedGe ∧ Minimality m.inducedGe ∧ Maximality m.inducedGe ∧
+      MustToProbably m.inducedGe (fun A ↦ m.inducedGe ⊥ Aᶜ) ∧
+      ProbablyToMight m.inducedGe (Possibly m.inducedGe) ∧ PositiveFormTransfer m.inducedGe ∧
+      ComplementTransfer m.inducedGe ∧ StrictDisjunctionIntro m.inducedGe :=
+  ⟨probablyToNotProbablyNot, probablyDistribInf_of, chancyDisjunctionIntro_of, minimality_of,
+    maximality_of, mustToProbably_of, probablyToMight_of, positiveFormTransfer_of,
+    complementTransfer_of, strictDisjunctionIntro_of⟩
 
 /-- The uniform measure on three worlds. -/
-private noncomputable def uniform3 : FinAddMeasure ℚ (Fin 3) :=
-  .ofFintype (fun _ ↦ 1 / 3) (fun _ ↦ by norm_num)
-    (by simp [Finset.sum_const, Fintype.card_fin, nsmul_eq_mul])
+local notation "uniform3" => FinAddMeasure.uniform (K := ℚ) (Fin 3)
 
-private theorem uniform3_singleton (i : Fin 3) : uniform3 {i} = 1 / 3 := by simp [uniform3]
+private theorem uniform3_singleton (i : Fin 3) : uniform3 {i} = 1 / 3 := by simp
 
 private theorem uniform3_pair (i j : Fin 3) (h : i ≠ j) : uniform3 {i, j} = 2 / 3 := by
-  rw [Set.insert_eq, uniform3.additive (Set.disjoint_singleton.2 h), uniform3_singleton,
-    uniform3_singleton]
-  norm_num
+  rw [FinAddMeasure.uniform_apply, Set.ncard_pair h]; norm_num
 
 /-- I1 fails for the uniform measure: `{0}` is at least as likely as `{1}` and as `{2}` but not
 as `{1, 2}`. -/
-private theorem uniform3_not_I1 : ¬patternI1 uniform3.inducedGe := fun h ↦ by
-  have := h {0} {1} {2} (by simp [FinAddMeasure.inducedGe, uniform3_singleton])
-    (by simp [FinAddMeasure.inducedGe, uniform3_singleton])
+private theorem uniform3_not_I1 : ¬RightUnion (uniform3).inducedGe := fun h ↦ by
+  have := h {0} {1} {2} (by simp [FinAddMeasure.inducedGe])
+    (by simp [FinAddMeasure.inducedGe])
   simp only [FinAddMeasure.inducedGe, Set.sup_eq_union, Set.singleton_union, uniform3_singleton,
     uniform3_pair 1 2 (by decide)] at this
   norm_num at this
 
 /-- `{0, 1}` beats its complement under the uniform measure … -/
-private theorem uniform3_probably_pair : Probably uniform3.inducedGe {0, 1} := by
-  have := uniform3.mu_compl {0, 1}
+private theorem uniform3_probably_pair : Probably (uniform3).inducedGe {0, 1} := by
+  have := (uniform3).mu_compl {0, 1}
   rw [uniform3_pair 0 1 (by decide)] at this
   constructor <;> simp only [FinAddMeasure.inducedGe, uniform3_pair 0 1 (by decide)] <;> linarith
 
 /-- … but is not at least as likely as `W`. -/
-private theorem uniform3_not_pair_univ : ¬uniform3.inducedGe {0, 1} Set.univ := by
-  simp only [FinAddMeasure.inducedGe, uniform3_pair 0 1 (by decide), uniform3.total]
+private theorem uniform3_not_pair_univ : ¬(uniform3).inducedGe {0, 1} Set.univ := by
+  simp only [FinAddMeasure.inducedGe, uniform3_pair 0 1 (by decide), (uniform3).total]
   norm_num
 
 /-- **Fact 2**, invalidities: the uniform measure on three worlds refutes each of I1–I3. -/
 theorem measures_refute_I_patterns :
-    (∃ m : FinAddMeasure ℚ (Fin 3), ¬patternI1 m.inducedGe) ∧
-    (∃ m : FinAddMeasure ℚ (Fin 3), ¬patternI2 m.inducedGe) ∧
-    (∃ m : FinAddMeasure ℚ (Fin 3), ¬patternI3 m.inducedGe) :=
+    (∃ m : FinAddMeasure ℚ (Fin 3), ¬RightUnion m.inducedGe) ∧
+    (∃ m : FinAddMeasure ℚ (Fin 3), ¬EquiprobabilityCollapse m.inducedGe) ∧
+    (∃ m : FinAddMeasure ℚ (Fin 3), ¬HamblinCollapse m.inducedGe) :=
   ⟨⟨uniform3, uniform3_not_I1⟩,
     ⟨uniform3, fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair.1)⟩,
     ⟨uniform3, fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair)⟩⟩
 
 /-- **Fact 3**, validities: qualitative additivity already yields V1–V13. -/
 theorem qualAddMeasure_validities (m : QualAddMeasure K W) :
-    patternV1 m.inducedGe ∧ patternV2 m.inducedGe ∧ patternV3 m.inducedGe ∧
-      patternV4 m.inducedGe ∧ patternV5 m.inducedGe ∧
-      patternV6 m.inducedGe (fun A ↦ m.inducedGe ⊥ Aᶜ) ∧
-      patternV7 m.inducedGe (Possibly m.inducedGe) ∧ patternV11 m.inducedGe ∧
-      patternV12 m.inducedGe ∧
-      patternV13 m.inducedGe :=
-  ⟨patternV1_holds, patternV2_of, patternV3_of, patternV4_of, patternV5_of, patternV6_of,
-    patternV7_of, patternV11_of, patternV12_of, patternV13_of⟩
+    ProbablyToNotProbablyNot m.inducedGe ∧ ProbablyDistribInf m.inducedGe ∧
+      ChancyDisjunctionIntro m.inducedGe ∧ Minimality m.inducedGe ∧ Maximality m.inducedGe ∧
+      MustToProbably m.inducedGe (fun A ↦ m.inducedGe ⊥ Aᶜ) ∧
+      ProbablyToMight m.inducedGe (Possibly m.inducedGe) ∧ PositiveFormTransfer m.inducedGe ∧
+      ComplementTransfer m.inducedGe ∧ StrictDisjunctionIntro m.inducedGe :=
+  ⟨probablyToNotProbablyNot, probablyDistribInf_of, chancyDisjunctionIntro_of, minimality_of,
+    maximality_of, mustToProbably_of, probablyToMight_of, positiveFormTransfer_of,
+    complementTransfer_of, strictDisjunctionIntro_of⟩
 
 /-- **Fact 3**, invalidities: the uniform measure, read as a qualitatively additive measure,
 refutes each of I1–I3. -/
 theorem qualAddMeasures_refute_I_patterns :
-    (∃ m : QualAddMeasure ℚ (Fin 3), ¬patternI1 m.inducedGe) ∧
-    (∃ m : QualAddMeasure ℚ (Fin 3), ¬patternI2 m.inducedGe) ∧
-    (∃ m : QualAddMeasure ℚ (Fin 3), ¬patternI3 m.inducedGe) :=
-  ⟨⟨uniform3.toQualAdd, uniform3_not_I1⟩,
-    ⟨uniform3.toQualAdd, fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair.1)⟩,
-    ⟨uniform3.toQualAdd, fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair)⟩⟩
+    (∃ m : QualAddMeasure ℚ (Fin 3), ¬RightUnion m.inducedGe) ∧
+    (∃ m : QualAddMeasure ℚ (Fin 3), ¬EquiprobabilityCollapse m.inducedGe) ∧
+    (∃ m : QualAddMeasure ℚ (Fin 3), ¬HamblinCollapse m.inducedGe) :=
+  ⟨⟨(uniform3).toQualAdd, uniform3_not_I1⟩,
+    ⟨(uniform3).toQualAdd, fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair.1)⟩,
+    ⟨(uniform3).toQualAdd, fun h ↦ uniform3_not_pair_univ (h _ _ uniform3_probably_pair)⟩⟩
 
 /-- **Theorem 6** ([van-der-hoek-1996]): every FA order on a finite carrier is represented by a
 qualitatively additive measure. -/
@@ -289,7 +285,8 @@ variable (ge_w : W → W → Prop) [IsPreorder W ge_w]
 
 omit [IsPreorder W ge_w] in
 /-- V6 for the m-lifting, as for the l-lifting. -/
-theorem mLift_V6 [Nonempty W] : patternV6 (MatchingLift ge_w) (fun A ↦ MatchingLift ge_w ⊥ Aᶜ) := by
+theorem mLift_V6 [Nonempty W] :
+    MustToProbably (MatchingLift ge_w) (fun A ↦ MatchingLift ge_w ⊥ Aᶜ) := by
   intro A hA
   obtain rfl : A = Set.univ := by simpa using matchingLift_empty_left_iff.1 hA
   rw [Probably, Strict, Set.compl_univ]
@@ -298,7 +295,7 @@ theorem mLift_V6 [Nonempty W] : patternV6 (MatchingLift ge_w) (fun A ↦ Matchin
 
 /-- V13 for the m-lifting on a finite domain: `B ⊆ A ∪ B` gives the weak half, and a matching of
 `A ∪ B` into `B` would contradict `|B| < |A ∪ B|`, which holds as `A \ B` is nonempty. -/
-theorem mLift_V13 [Finite W] : patternV13 (MatchingLift ge_w) := by
+theorem mLift_V13 [Finite W] : StrictDisjunctionIntro (MatchingLift ge_w) := by
   rintro A B ⟨-, hne⟩
   have hsub : B ⊂ A ∪ B := Set.ssubset_iff_subset_ne.2 ⟨Set.subset_union_right, fun h ↦ hne ?_⟩
   · refine ⟨matchingLift_of_subset Set.subset_union_right, fun h ↦ ?_⟩
@@ -311,15 +308,16 @@ theorem mLift_V13 [Finite W] : patternV13 (MatchingLift ge_w) := by
 /-- **Fact 5**, validities: on a finite nonempty preorder the m-lifting validates V1–V7 and
 V11–V13. -/
 theorem mLift_validities [Finite W] [Nonempty W] :
-    patternV1 (MatchingLift ge_w) ∧ patternV2 (MatchingLift ge_w) ∧
-      patternV3 (MatchingLift ge_w) ∧ patternV4 (MatchingLift ge_w) ∧
-      patternV5 (MatchingLift ge_w) ∧
-      patternV6 (MatchingLift ge_w) (fun A ↦ MatchingLift ge_w ⊥ Aᶜ) ∧
-      patternV7 (MatchingLift ge_w) (Possibly (MatchingLift ge_w)) ∧
-      patternV11 (MatchingLift ge_w) ∧
-      patternV12 (MatchingLift ge_w) ∧ patternV13 (MatchingLift ge_w) :=
-  ⟨patternV1_holds, patternV2_of, patternV3_of, patternV4_of, patternV5_of, mLift_V6 ge_w,
-    patternV7_of, patternV11_of, patternV12_of, mLift_V13 ge_w⟩
+    ProbablyToNotProbablyNot (MatchingLift ge_w) ∧ ProbablyDistribInf (MatchingLift ge_w) ∧
+      ChancyDisjunctionIntro (MatchingLift ge_w) ∧ Minimality (MatchingLift ge_w) ∧
+      Maximality (MatchingLift ge_w) ∧
+      MustToProbably (MatchingLift ge_w) (fun A ↦ MatchingLift ge_w ⊥ Aᶜ) ∧
+      ProbablyToMight (MatchingLift ge_w) (Possibly (MatchingLift ge_w)) ∧
+      PositiveFormTransfer (MatchingLift ge_w) ∧
+      ComplementTransfer (MatchingLift ge_w) ∧ StrictDisjunctionIntro (MatchingLift ge_w) :=
+  ⟨probablyToNotProbablyNot, probablyDistribInf_of, chancyDisjunctionIntro_of, minimality_of,
+    maximality_of, mLift_V6 ge_w, probablyToMight_of, positiveFormTransfer_of,
+    complementTransfer_of, mLift_V13 ge_w⟩
 
 end MLift
 
@@ -329,11 +327,11 @@ but not `{0, 1}` (I1), and on three worlds `{0, 1}` is strictly more likely than
 complement but cannot match all of `W` (I2, I3). -/
 theorem mLift_refutes_I_patterns :
     (∃ (W : Type) (ge_w : W → W → Prop),
-      IsPreorder W ge_w ∧ ¬patternI1 (MatchingLift ge_w)) ∧
+      IsPreorder W ge_w ∧ ¬RightUnion (MatchingLift ge_w)) ∧
     (∃ (W : Type) (ge_w : W → W → Prop),
-      IsPreorder W ge_w ∧ ¬patternI2 (MatchingLift ge_w)) ∧
+      IsPreorder W ge_w ∧ ¬EquiprobabilityCollapse (MatchingLift ge_w)) ∧
     (∃ (W : Type) (ge_w : W → W → Prop),
-      IsPreorder W ge_w ∧ ¬patternI3 (MatchingLift ge_w)) := by
+      IsPreorder W ge_w ∧ ¬HamblinCollapse (MatchingLift ge_w)) := by
   have hcard : ∀ {n : ℕ} {A B : Set (Fin n)}, A.ncard < B.ncard →
       ¬MatchingLift (fun _ _ : Fin n ↦ True) A B :=
     fun h hm ↦ (not_le.2 h) hm.ncard_le
@@ -381,7 +379,7 @@ Worlds are `Fin 4`, with `0` the best; `ge_w u v` is `u ≤ v`. -/
 /-- Both liftings make `{a, b}` more likely than `{b, c}`. -/
 theorem chain_pair_gt_pair :
     Strict (MatchingLift (· ≤ · : Fin 4 → Fin 4 → Prop)) {0, 1} {1, 2} ∧
-      Strict (DominationLift (· ≤ · : Fin 4 → Fin 4 → Prop)) {0, 1} {1, 2} := by
+      Strict (LewisLift (· ≤ · : Fin 4 → Fin 4 → Prop)) {0, 1} {1, 2} := by
   have hm : MatchingLift (· ≤ · : Fin 4 → Fin 4 → Prop) {0, 1} {1, 2} :=
     ⟨fun b ↦ b - 1, fun b hb ↦ by
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hb
@@ -389,21 +387,21 @@ theorem chain_pair_gt_pair :
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hb₁ hb₂
       rcases hb₁ with rfl | rfl <;> rcases hb₂ with rfl | rfl <;>
         first | rfl | exact absurd hf (by decide)⟩
-  have hl : ¬ DominationLift (· ≤ · : Fin 4 → Fin 4 → Prop) {1, 2} {0, 1} := by
+  have hl : ¬ LewisLift (· ≤ · : Fin 4 → Fin 4 → Prop) {1, 2} {0, 1} := by
     intro hd
-    obtain ⟨a, ha, hle⟩ := hd 0 (Set.mem_insert 0 {1})
+    obtain ⟨a, ha, hle⟩ := hd (Set.mem_insert 0 {1})
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
     rcases ha with rfl | rfl <;> exact absurd hle (by decide)
-  exact ⟨⟨hm, fun h ↦ hl h.dominationLift⟩, ⟨hm.dominationLift, hl⟩⟩
+  exact ⟨⟨hm, fun h ↦ hl h.lewisLift⟩, ⟨hm.lewisLift, hl⟩⟩
 
 /-- Only the l-lifting makes `{a}` more likely than `{b, c}`: the m-lifting leaves the two
 incomparable, since two worlds cannot be matched injectively into one. -/
 theorem chain_singleton_vs_pair :
-    Strict (DominationLift (· ≤ · : Fin 4 → Fin 4 → Prop)) {0} {1, 2} ∧
+    Strict (LewisLift (· ≤ · : Fin 4 → Fin 4 → Prop)) {0} {1, 2} ∧
       ¬ MatchingLift (· ≤ · : Fin 4 → Fin 4 → Prop) {0} {1, 2} ∧
       ¬ MatchingLift (· ≤ · : Fin 4 → Fin 4 → Prop) {1, 2} {0} := by
   refine ⟨⟨fun b _ ↦ ⟨0, rfl, Fin.zero_le b⟩, fun hd ↦ ?_⟩, fun h ↦ ?_, ?_⟩
-  · obtain ⟨a, ha, hle⟩ := hd 0 rfl
+  · obtain ⟨a, ha, hle⟩ := hd rfl
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
     rcases ha with rfl | rfl <;> exact absurd hle (by decide)
   · have := h.ncard_le

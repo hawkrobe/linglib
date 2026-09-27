@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.ComparativeProbability.Patterns
-public import Linglib.Core.Order.Probability.Lift
+public import Linglib.Logic.ComparativeProbability.WorldOrdering
 public import Linglib.Core.Order.Probability.Content
 public import Linglib.Semantics.Modality.Kratzer.Operators
 public import Linglib.Data.Examples.Yalcin2010
@@ -34,7 +34,8 @@ Conjunctivitis; the probability space account validates V1–V12 and none of I1�
   probability mixins, so V1–V5 and (where valid) V8–V12 come from
   `Logic/ComparativeProbability/Patterns` by instance resolution; V6 and V7 take each
   account's own modals, [kratzer-1991]'s human necessity and possibility for the relative
-  likelihood account and the quantifiers over the epistemic space for the other two, and
+  likelihood account and, for the other two, the quantifiers over the epistemic space
+  (`A = Set.univ` and `A.Nonempty`, simple necessity and possibility over the empty base), and
   V8–V10 take Kratzer's restricted necessity or, for the probability space, entailment.
 * The refutations are the paper's: the two tied worlds of footnote 8's limit-assumption
   variant against V11, the coin against I1 and I2, the twelve-sided die against E1.
@@ -64,13 +65,6 @@ namespace Yalcin2010
 
 open ComparativeProbability Modality
 
-/-- The quantificational epistemic modals of §4 and §5: *must* holds throughout the epistemic
-space. -/
-def necessary {W : Type*} (A : Set W) : Prop := ∀ w, w ∈ A
-
-/-- *Might*: some world of the epistemic space. -/
-def possible {W : Type*} (A : Set W) : Prop := ∃ w, w ∈ A
-
 /-! ### §3: the relative likelihood approach
 
 The ordering source `O` induces the preorder `v ≤[O] u`, `v` at least as high as `u`
@@ -86,7 +80,7 @@ instance : IsPreorder W (atLeastAsGoodAs O) where
 
 /-- Kratzer's *at least as likely as*: every world of the second proposition is matched by an
 at least as high world of the first. -/
-abbrev likelihood : Set W → Set W → Prop := DominationLift (atLeastAsGoodAs O)
+abbrev likelihood : Set W → Set W → Prop := LewisLift (atLeastAsGoodAs O)
 
 /-- Epistemic *must* at `w`: [kratzer-1991]'s human necessity over the whole space. -/
 def must (A : Set W) (w : W) : Prop :=
@@ -111,15 +105,15 @@ theorem ifThen_iff (A B : Set W) (w : W) :
   simp only [ifThen, humanNecessity, mem_accessibleWorlds_restrict,
     accessibleWorlds_emptyBackground, Set.mem_univ, true_and]
 
-theorem kratzer_V1 : patternV1 (likelihood O) := patternV1_holds
-theorem kratzer_V2 : patternV2 (likelihood O) := patternV2_of
-theorem kratzer_V3 : patternV3 (likelihood O) := patternV3_of
-theorem kratzer_V4 : patternV4 (likelihood O) := patternV4_of
-theorem kratzer_V5 : patternV5 (likelihood O) := patternV5_of
+theorem kratzer_V1 : ProbablyToNotProbablyNot (likelihood O) := probablyToNotProbablyNot
+theorem kratzer_V2 : ProbablyDistribInf (likelihood O) := probablyDistribInf_of
+theorem kratzer_V3 : ChancyDisjunctionIntro (likelihood O) := chancyDisjunctionIntro_of
+theorem kratzer_V4 : Minimality (likelihood O) := minimality_of
+theorem kratzer_V5 : Maximality (likelihood O) := maximality_of
 
 /-- V6 for Kratzer's modals: a necessary proposition is probable, since its complement is
 dominated by the witnesses of necessity and cannot dominate them. -/
-theorem kratzer_V6 [Nonempty W] (w : W) : patternV6 (likelihood O) (must O · w) := by
+theorem kratzer_V6 [Nonempty W] (w : W) : MustToProbably (likelihood O) (must O · w) := by
   intro A hA
   rw [must_iff] at hA
   refine ⟨fun u _ ↦ ?_, fun h ↦ ?_⟩
@@ -127,16 +121,16 @@ theorem kratzer_V6 [Nonempty W] (w : W) : patternV6 (likelihood O) (must O · w)
     exact ⟨v, hv v (atLeastAsGoodAs_refl O v), hvu⟩
   · obtain ⟨w₀⟩ := ‹Nonempty W›
     obtain ⟨v, -, hv⟩ := hA w₀
-    obtain ⟨u, hu, huv⟩ := h v (hv v (atLeastAsGoodAs_refl O v))
+    obtain ⟨u, hu, huv⟩ := h (hv v (atLeastAsGoodAs_refl O v))
     exact hu (hv u huv)
 
 /-- V7 for Kratzer's modals, from V6 and V1. -/
-theorem kratzer_V7 [Nonempty W] (w : W) : patternV7 (likelihood O) (might O · w) :=
-  fun A hA hmust ↦ patternV1_holds A hA (kratzer_V6 O w Aᶜ hmust)
+theorem kratzer_V7 [Nonempty W] (w : W) : ProbablyToMight (likelihood O) (might O · w) :=
+  fun A hA hmust ↦ probablyToNotProbablyNot A hA (kratzer_V6 O w Aᶜ hmust)
 
 /-- V10 for the restricted necessity: the antecedent's worlds are matched by the witnesses,
 which are consequent worlds. -/
-theorem kratzer_V10 (w : W) : patternV10 (likelihood O) (ifThen O · · w) := by
+theorem kratzer_V10 (w : W) : ConditionalToComparative (likelihood O) (ifThen O · · w) := by
   intro A B hAB u hu
   obtain ⟨v, hvA, hvu, hall⟩ := (ifThen_iff O A B w).1 hAB u hu
   exact ⟨v, hall v hvA (atLeastAsGoodAs_refl O v), hvu⟩
@@ -144,14 +138,14 @@ theorem kratzer_V10 (w : W) : patternV10 (likelihood O) (ifThen O · · w) := by
 /-- V8 for the restricted necessity: a world outside the consequent is dominated through the
 antecedent, and a consequent world undominated by the complement is found above the
 antecedent world the probability of the antecedent leaves undominated. -/
-theorem kratzer_V8 (w : W) : patternV8 (likelihood O) (ifThen O · · w) := by
+theorem kratzer_V8 (w : W) : ChancyModusPonens (likelihood O) (ifThen O · · w) := by
   intro A B hAB ⟨hA, hAnot⟩
   rw [ifThen_iff] at hAB
   refine ⟨fun u hu ↦ ?_, fun h ↦ ?_⟩
   · by_cases huA : u ∈ A
     · obtain ⟨v, hvA, hvu, hall⟩ := hAB u huA
       exact ⟨v, hall v hvA (atLeastAsGoodAs_refl O v), hvu⟩
-    · obtain ⟨a, ha, hau⟩ := hA u huA
+    · obtain ⟨a, ha, hau⟩ := hA huA
       obtain ⟨v, hvA, hva, hall⟩ := hAB a ha
       exact ⟨v, hall v hvA (atLeastAsGoodAs_refl O v), atLeastAsGoodAs_trans hva hau⟩
   · apply hAnot
@@ -162,46 +156,46 @@ theorem kratzer_V8 (w : W) : patternV8 (likelihood O) (ifThen O · · w) := by
       exact hcon fun a ha ↦ hall a ha
     obtain ⟨a, ha, hnone⟩ := hex
     obtain ⟨v, hvA, hva, hall⟩ := hAB a ha
-    obtain ⟨u, hu, huv⟩ := h v (hall v hvA (atLeastAsGoodAs_refl O v))
+    obtain ⟨u, hu, huv⟩ := h (hall v hvA (atLeastAsGoodAs_refl O v))
     have huA : u ∈ A := by
       by_contra huA
       exact hnone u huA (atLeastAsGoodAs_trans huv hva)
     exact hu (hall u huA huv)
 
 /-- V9 for the restricted necessity, the contrapositive of V8. -/
-theorem kratzer_V9 (w : W) : patternV9 (likelihood O) (ifThen O · · w) :=
+theorem kratzer_V9 (w : W) : ChancyModusTollens (likelihood O) (ifThen O · · w) :=
   fun A B hAB hB hA ↦ hB (kratzer_V8 O w A B hAB hA)
 
 /-- Complement transfer holds for the lift of every preorder: a world of `Bᶜ` outside `A` is
 dominated through `A` and then through `B`. The paper lists V12 with V11 among Kratzer's
 failures; its footnote 8 countermodel refutes only V11. -/
-theorem kratzer_V12 : patternV12 (likelihood O) := by
+theorem kratzer_V12 : ComplementTransfer (likelihood O) := by
   intro A B hBA hA y hy
   by_cases hyA : y ∈ A
-  · exact hBA y hyA
-  · obtain ⟨a, ha, hay⟩ := hA y hyA
-    obtain ⟨b, hb, hba⟩ := hBA a ha
+  · exact hBA hyA
+  · obtain ⟨a, ha, hay⟩ := hA hyA
+    obtain ⟨b, hb, hba⟩ := hBA ha
     exact ⟨b, hb, atLeastAsGoodAs_trans hba hay⟩
 
 /-- The union property I1 is the lift's right-union closure ([halpern-2003]). -/
-theorem kratzer_I1 : patternI1 (likelihood O) := rightUnion_dominationLift
+theorem kratzer_I1 : RightUnion (likelihood O) := rightUnion_lewisLift
 
 /-- I2, the collapse of equiprobability into certainty. -/
-theorem kratzer_I2 : patternI2 (likelihood O) := fun A B hA ↦
-  (rightUnion_dominationLift A A Aᶜ (refl_of _ A) hA).anti_right
-    (Set.union_compl_self A ▸ Set.subset_univ B)
+theorem kratzer_I2 : EquiprobabilityCollapse (likelihood O) := fun A B hA ↦
+  (rightUnion_lewisLift A A Aᶜ (refl_of _ A) hA).anti_right
+    (by show B ⊆ A ∪ Aᶜ; rw [Set.union_compl_self]; exact Set.subset_univ B)
 
 end Kratzer
 
 /-- Footnote 8, the limit-assumption variant: with two tied maximal worlds, the empty ordering
 source, `p` the whole space and `q` one world, `p` is probable and `q` as likely as `p`, but
 `q` is not probable, since its complement is as high as it. -/
-theorem kratzer_refutes_V11 : ¬patternV11 (likelihood ([] : List (Fin 2 → Prop))) := by
+theorem kratzer_refutes_V11 : ¬PositiveFormTransfer (likelihood ([] : List (Fin 2 → Prop))) := by
   intro h
   have hA : Probably (likelihood ([] : List (Fin 2 → Prop))) Set.univ := by
     rw [Probably, Strict, Set.compl_univ]
-    exact ⟨dominationLift_empty _,
-      fun h ↦ Set.univ_nonempty.ne_empty (dominationLift_empty_left_iff.1 h)⟩
+    exact ⟨lewisLift_empty _,
+      fun h ↦ Set.univ_nonempty.ne_empty (lewisLift_empty_left_iff.1 h)⟩
   exact (h Set.univ {0} (fun _ _ ↦ ⟨0, rfl, atLeastAsGoodAs_nil _ _⟩) hA).2
     fun _ _ ↦ ⟨1, by simp, atLeastAsGoodAs_nil _ _⟩
 
@@ -210,7 +204,7 @@ the one world each lacks is tied with a world it has, but their conjunction `{2,
 since it dominates neither `0` nor `1`. So Kratzer's account does not validate
 Conjunctivitis, as the paper says. -/
 theorem kratzer_refutes_E1 :
-    ¬patternE1 (likelihood [(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))]) := by
+    ¬Conjunctivitis (likelihood [(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))]) := by
   intro h
   have hle : ∀ v u : Fin 4, (v ≤[[(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))]] u)
       ↔ (u ∈ ({0, 1} : Set (Fin 4)) → v ∈ ({0, 1} : Set (Fin 4))) ∧
@@ -219,12 +213,14 @@ theorem kratzer_refutes_E1 :
   have hφ : Probably (likelihood [(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))])
       {0, 2, 3} := by
     refine ⟨fun u hu ↦ ⟨0, by simp, ?_⟩, fun hc ↦ ?_⟩
-    · rw [hle]
+    · simp only [Set.mem_ofPred_eq]
+      rw [hle]
       have : u = 1 := by
         simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hu
         omega
       subst this; simp
-    · obtain ⟨u, hu, hu2⟩ := hc 2 (by simp)
+    · obtain ⟨u, hu, hu2⟩ := @hc 2 (by simp)
+      simp only [Set.mem_ofPred_eq] at hu2
       rw [hle] at hu2
       simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hu
       have : u = 1 := by omega
@@ -232,12 +228,14 @@ theorem kratzer_refutes_E1 :
   have hψ : Probably (likelihood [(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))])
       {1, 2, 3} := by
     refine ⟨fun u hu ↦ ⟨1, by simp, ?_⟩, fun hc ↦ ?_⟩
-    · rw [hle]
+    · simp only [Set.mem_ofPred_eq]
+      rw [hle]
       have : u = 0 := by
         simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hu
         omega
       subst this; simp
-    · obtain ⟨u, hu, hu2⟩ := hc 2 (by simp)
+    · obtain ⟨u, hu, hu2⟩ := @hc 2 (by simp)
+      simp only [Set.mem_ofPred_eq] at hu2
       rw [hle] at hu2
       simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hu
       have : u = 0 := by omega
@@ -246,7 +244,8 @@ theorem kratzer_refutes_E1 :
     ext x; fin_cases x <;> simp
   have := (h _ _ hφ hψ).1
   simp only [Set.inf_eq_inter, hinter] at this
-  obtain ⟨a, ha, ha0⟩ := this 0 (by simp)
+  obtain ⟨a, ha, ha0⟩ := @this 0 (by simp)
+  simp only [Set.mem_ofPred_eq] at ha0
   rw [hle] at ha0
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
   rcases ha with rfl | rfl <;> simp at ha0
@@ -340,32 +339,30 @@ theorem measure_eq_one_of_probably {A : Set W} (h : Probably m.likelihood A) :
   · exact ⟨h1, h1 ▸ hlt⟩
   · exact absurd (h1 ▸ hlt) (not_lt.2 (m.measure_le_one A))
 
-theorem hamblin_V1 : patternV1 m.likelihood := patternV1_holds
-theorem hamblin_V2 : patternV2 m.likelihood := patternV2_of
-theorem hamblin_V3 : patternV3 m.likelihood := patternV3_of
-theorem hamblin_V4 : patternV4 m.likelihood := patternV4_of
-theorem hamblin_V5 : patternV5 m.likelihood := patternV5_of
+theorem hamblin_V1 : ProbablyToNotProbablyNot m.likelihood := probablyToNotProbablyNot
+theorem hamblin_V2 : ProbablyDistribInf m.likelihood := probablyDistribInf_of
+theorem hamblin_V3 : ChancyDisjunctionIntro m.likelihood := chancyDisjunctionIntro_of
+theorem hamblin_V4 : Minimality m.likelihood := minimality_of
+theorem hamblin_V5 : Maximality m.likelihood := maximality_of
 
-/-- V6 with the quantificational *must*. -/
-theorem hamblin_V6 : patternV6 m.likelihood necessary := by
-  intro A hA
-  have hA : A = Set.univ := Set.eq_univ_iff_forall.2 hA
-  subst hA
+/-- V6 with the quantificational *must* of §4, simple necessity over the whole space. -/
+theorem hamblin_V6 : MustToProbably m.likelihood (· = Set.univ) := by
+  rintro A rfl
   rw [Probably, Strict, likelihood, likelihood, Set.compl_univ, m.measure_univ, m.measure_empty]
   exact ⟨zero_le_one, fun h ↦ absurd h (not_le.2 zero_lt_one)⟩
 
-/-- V7 with the quantificational *might*. -/
-theorem hamblin_V7 : patternV7 m.likelihood possible := by
+/-- V7 with the quantificational *might*, simple possibility over the whole space. -/
+theorem hamblin_V7 : ProbablyToMight m.likelihood Set.Nonempty := by
   intro A hA
   by_contra hne
-  have hA' : A = ∅ := Set.eq_empty_iff_forall_notMem.2 fun w hw ↦ hne ⟨w, hw⟩
-  subst hA'
+  rw [Set.not_nonempty_iff_eq_empty] at hne
+  subst hne
   have := (m.measure_eq_one_of_probably hA).2
   rw [Set.compl_empty, m.measure_univ] at this
   exact lt_irrefl _ this
 
 /-- V12: the more likely of two fully possible propositions is fully possible. -/
-theorem hamblin_V12 : patternV12 m.likelihood := by
+theorem hamblin_V12 : ComplementTransfer m.likelihood := by
   intro A B hBA hA
   have h1 : m.measure A = 1 := by
     rcases m.measure_eq_one_or_compl A with h | h
@@ -376,7 +373,7 @@ theorem hamblin_V12 : patternV12 m.likelihood := by
 
 /-- Conjunctivitis holds: the fully possible worlds of two probable propositions lie in both,
 and the complement of the conjunction is the join of two complements below `1`. -/
-theorem hamblin_E1 : patternE1 m.likelihood := by
+theorem hamblin_E1 : Conjunctivitis m.likelihood := by
   intro A B hA hB
   obtain ⟨hA1, hAc⟩ := m.measure_eq_one_of_probably hA
   obtain ⟨hB1, hBc⟩ := m.measure_eq_one_of_probably hB
@@ -396,12 +393,12 @@ theorem hamblin_E1 : patternE1 m.likelihood := by
     fun h ↦ absurd (hAB ▸ h) (not_le.2 hABc)⟩
 
 /-- I1, the union property, since the measure of a union is the greater measure. -/
-theorem hamblin_I1 : patternI1 m.likelihood := fun A B C hAB hAC ↦ by
+theorem hamblin_I1 : RightUnion m.likelihood := fun A B C hAB hAC ↦ by
   show m.measure (B ∪ C) ≤ m.measure A
   rw [m.measure_union]; exact max_le hAB hAC
 
 /-- I2: a proposition at least as possible as its complement is fully possible. -/
-theorem hamblin_I2 : patternI2 m.likelihood := fun A B hA ↦ by
+theorem hamblin_I2 : EquiprobabilityCollapse m.likelihood := fun A B hA ↦ by
   have h1 : m.measure A = 1 := by
     rcases m.measure_eq_one_or_compl A with h | h
     · exact h
@@ -410,7 +407,7 @@ theorem hamblin_I2 : patternI2 m.likelihood := fun A B hA ↦ by
   exact h1 ▸ m.measure_le_one B
 
 /-- I3, Hamblin's collapse: a probable proposition is at least as possible as any. -/
-theorem hamblin_I3 : patternI3 m.likelihood := fun A B hA ↦ hamblin_I2 m A B hA.1
+theorem hamblin_I3 : HamblinCollapse m.likelihood := fun A B hA ↦ hamblin_I2 m A B hA.1
 
 end Possibility
 
@@ -421,7 +418,7 @@ it fails. -/
 def threeWorlds : Possibility (Fin 3) :=
   ⟨![1, 1, 1 / 2], fun w ↦ by fin_cases w <;> norm_num, ⟨0, rfl⟩⟩
 
-theorem hamblin_refutes_V11 : ¬patternV11 threeWorlds.likelihood := by
+theorem hamblin_refutes_V11 : ¬PositiveFormTransfer threeWorlds.likelihood := by
   intro h
   have hpair : ∀ a b : Fin 3, threeWorlds.measure {a, b} =
       threeWorlds.poss a ⊔ threeWorlds.poss b := fun a b ↦ by
@@ -459,35 +456,33 @@ section Probability
 
 variable {W : Type*} (P : FinAddMeasure ℚ W)
 
-theorem prob_V1 : patternV1 P.inducedGe := patternV1_holds
-theorem prob_V2 : patternV2 P.inducedGe := patternV2_of
-theorem prob_V3 : patternV3 P.inducedGe := patternV3_of
-theorem prob_V4 : patternV4 P.inducedGe := patternV4_of
-theorem prob_V5 : patternV5 P.inducedGe := patternV5_of
+theorem prob_V1 : ProbablyToNotProbablyNot P.inducedGe := probablyToNotProbablyNot
+theorem prob_V2 : ProbablyDistribInf P.inducedGe := probablyDistribInf_of
+theorem prob_V3 : ChancyDisjunctionIntro P.inducedGe := chancyDisjunctionIntro_of
+theorem prob_V4 : Minimality P.inducedGe := minimality_of
+theorem prob_V5 : Maximality P.inducedGe := maximality_of
 
 /-- V6 with the quantificational *must*: the whole space has probability one. -/
-theorem prob_V6 : patternV6 P.inducedGe necessary := by
-  intro A hA
-  have hA : A = Set.univ := Set.eq_univ_iff_forall.2 hA
-  subst hA
+theorem prob_V6 : MustToProbably P.inducedGe (· = Set.univ) := by
+  rintro A rfl
   simp only [Probably, Strict, FinAddMeasure.inducedGe, Set.compl_univ, P.total, P.mu_empty]
   norm_num
 
 /-- V7 with the quantificational *might*: the empty proposition is not probable. -/
-theorem prob_V7 : patternV7 P.inducedGe possible := by
+theorem prob_V7 : ProbablyToMight P.inducedGe Set.Nonempty := by
   intro A hA
   by_contra hne
-  have hA' : A = ∅ := Set.eq_empty_iff_forall_notMem.2 fun w hw ↦ hne ⟨w, hw⟩
-  subst hA'
+  rw [Set.not_nonempty_iff_eq_empty] at hne
+  subst hne
   simp only [Probably, Strict, FinAddMeasure.inducedGe, Set.compl_empty, P.total,
     P.mu_empty] at hA
   norm_num at hA
 
-theorem prob_V8 : patternV8 P.inducedGe (· ⊆ ·) := patternV8_of
-theorem prob_V9 : patternV9 P.inducedGe (· ⊆ ·) := patternV9_of
-theorem prob_V10 : patternV10 P.inducedGe (· ⊆ ·) := patternV10_of
-theorem prob_V11 : patternV11 P.inducedGe := patternV11_of
-theorem prob_V12 : patternV12 P.inducedGe := patternV12_of
+theorem prob_V8 : ChancyModusPonens P.inducedGe (· ⊆ ·) := chancyModusPonens_of
+theorem prob_V9 : ChancyModusTollens P.inducedGe (· ⊆ ·) := chancyModusTollens_of
+theorem prob_V10 : ConditionalToComparative P.inducedGe (· ⊆ ·) := conditionalToComparative_of
+theorem prob_V11 : PositiveFormTransfer P.inducedGe := positiveFormTransfer_of
+theorem prob_V12 : ComplementTransfer P.inducedGe := complementTransfer_of
 
 end Probability
 
@@ -495,8 +490,8 @@ end Probability
 tails, refuting the union property I1, and heads is as likely as its complement without
 being as likely as everything, refuting I2. -/
 theorem prob_refutes_I1_I2 :
-    ¬patternI1 (FinAddMeasure.uniform (K := ℚ) (Fin 2)).inducedGe ∧
-      ¬patternI2 (FinAddMeasure.uniform (K := ℚ) (Fin 2)).inducedGe := by
+    ¬RightUnion (FinAddMeasure.uniform (K := ℚ) (Fin 2)).inducedGe ∧
+      ¬EquiprobabilityCollapse (FinAddMeasure.uniform (K := ℚ) (Fin 2)).inducedGe := by
   have h0 : (FinAddMeasure.uniform (K := ℚ) (Fin 2)) {0} = 1 / 2 := by simp
   have h1 : (FinAddMeasure.uniform (K := ℚ) (Fin 2)) {1} = 1 / 2 := by simp
   have hc : ({0} : Set (Fin 2))ᶜ = {1} := by ext x; fin_cases x <;> simp
@@ -514,7 +509,7 @@ theorem prob_refutes_I1_I2 :
 
 /-- Three equiprobable worlds: `{0, 1}` is probable but not as likely as everything, refuting
 Hamblin's collapse I3. -/
-theorem prob_refutes_I3 : ¬patternI3 (FinAddMeasure.uniform (K := ℚ) (Fin 3)).inducedGe := by
+theorem prob_refutes_I3 : ¬HamblinCollapse (FinAddMeasure.uniform (K := ℚ) (Fin 3)).inducedGe := by
   intro h
   have hA : (FinAddMeasure.uniform (K := ℚ) (Fin 3)) {0, 1} = 2 / 3 := by
     rw [FinAddMeasure.uniform_apply, Set.ncard_pair (by decide)]; norm_num
@@ -529,7 +524,7 @@ theorem prob_refutes_I3 : ¬patternI3 (FinAddMeasure.uniform (K := ℚ) (Fin 3))
 /-- The twelve-sided die of §4: a number below nine and a number above four are each probable,
 eight faces of twelve, but a number above four and below nine is not, four faces. Conjunctivitis
 fails for the probability space semantics. -/
-theorem prob_refutes_E1 : ¬patternE1 (FinAddMeasure.uniform (K := ℚ) (Fin 12)).inducedGe := by
+theorem prob_refutes_E1 : ¬Conjunctivitis (FinAddMeasure.uniform (K := ℚ) (Fin 12)).inducedGe := by
   intro h
   have hval : ∀ A : Set (Fin 12), (FinAddMeasure.uniform (K := ℚ) (Fin 12)) A = A.ncard / 12 :=
     fun A ↦ by rw [FinAddMeasure.uniform_apply]; simp
@@ -569,7 +564,8 @@ section Threshold
 
 variable {W : Type*} (P : FinAddMeasure ℚ W)
 
-/-- *Probably* with threshold `n`: `Pr(A) > n`. -/
+/-- *Probably* with threshold `n`: `Pr(A) > n`, the strict form of the positive-form threshold
+semantics `EpistemicThreshold.meetsThreshold` (which reads `≥`). -/
 def probablyAt (n : ℚ) (A : Set W) : Prop := n < P A
 
 /-- With a threshold of at least one half, a proposition and its complement are not both
