@@ -9,41 +9,46 @@ public import Mathlib.Data.Fintype.BigOperators
 /-!
 # The softmax function
 
-`Real.softmax s i = exp (s i) / ∑ j, exp (s j)`, the normalized exponential of a
-score vector over a finite type: Luce's choice rule with exponential scores
-([luce-1959]), the multinomial logit of [mcfadden-1974], and the
-Boltzmann–Gibbs distribution. An inverse temperature enters by scaling the
-argument, `softmax (α • s)`. With two alternatives it is `Real.sigmoid` of the
-score difference, and `Real.logit` inverts `Real.sigmoid`.
+This file defines the softmax function `Real.softmax s i = exp (s i) / ∑ j, exp (s j)`, which
+normalizes the exponentials of a score vector over a finite type. It is Luce's choice rule with
+exponential scores, McFadden's multinomial logit, and the Boltzmann–Gibbs distribution. An
+inverse temperature enters by scaling the argument, as in `softmax (α • s)`. With two
+alternatives softmax is `Real.sigmoid` of the score difference, and `Real.logit` inverts
+`Real.sigmoid`.
 
-`softmax s` is the density of the exponentially tilted counting measure
-`Measure.count.tilted s`; that face — the partition function as `mgf`,
-log-sum-exp as `cgf` — is `Core.Probability.SoftmaxTheory`.
+The function `softmax s` is also the density of the exponentially tilted counting measure
+`Measure.count.tilted s`. `Core.Probability.SoftmaxTheory` develops that side, with the
+partition function as an `mgf` and log-sum-exp as a `cgf`.
 
 ## Main definitions
 
-* `Real.softmax` — the normalized exponential of a score vector.
-* `Real.logit` — the inverse of `Real.sigmoid`.
+* `Real.softmax`: the normalized exponential of a score vector.
+* `Real.logit`: the inverse of `Real.sigmoid`.
 
 ## Main results
 
-* `Real.sum_softmax`, `Real.softmax_pos` — `softmax s` is a probability
-  distribution.
-* `Real.softmax_div_softmax`, `Real.log_softmax_div_softmax` — odds are
-  exponentiated score differences (independence of irrelevant alternatives).
-* `Real.softmax_le_softmax_iff`, `Real.softmax_update_strictMono` — monotonicity
-  in the scores.
-* `Real.softmax_add_const` — translation invariance.
-* `Real.softmax_fin_two` — two alternatives give `Real.sigmoid`.
+* `Real.sum_softmax`, `Real.softmax_pos`: `softmax s` is a probability distribution.
+* `Real.softmax_div_softmax`, `Real.log_softmax_div_softmax`: odds are exponentiated score
+  differences (independence of irrelevant alternatives).
+* `Real.softmax_le_softmax_iff`, `Real.softmax_update_strictMono`: monotonicity in the scores.
+* `Real.softmax_add_const`, `Real.softmax_const`: translation invariance, and the uniform
+  distribution for constant scores.
+* `Real.softmax_eq_sigmoid_of_univ_eq_pair`, `Real.softmax_fin_two`: two alternatives give
+  `Real.sigmoid`.
 * `Real.tendsto_softmax_nhds_zero`, `Real.tendsto_softmax_atTop`,
-  `Real.tendsto_softmax_atTop_pi`, `Real.tendsto_softmax_atBot` — softmax in
-  the inverse temperature: uniform at `0`, a point mass on a strict maximizer
-  (minimizer) as `α → ∞` (`α → -∞`).
-* `Real.tendsto_sum_negMulLog_softmax_atTop` — its entropy vanishes in the
-  hard limit.
-* `Real.softmax_sum_apply`, `Real.sum_softmax_eval_eq` — a separable score on a
-  product type gives a product distribution, with coordinate marginals.
-* `Real.rpow_div_sum_rpow` — Luce's power rule is softmax of log-scores.
+  `Real.tendsto_softmax_atTop_pi`, `Real.tendsto_softmax_atBot`: softmax is uniform at inverse
+  temperature `0` and tends to a point mass on a strict maximizer (minimizer) as `α → ∞`
+  (`α → -∞`).
+* `Real.tendsto_sum_negMulLog_softmax_atTop`: the entropy vanishes in the hard limit.
+* `Real.softmax_sum_apply`, `Real.sum_softmax_eval_eq`: a separable score on a product type gives
+  a product distribution, with coordinate marginals.
+* `Real.rpow_div_sum_rpow`: Luce's power rule is the softmax of the log-scores.
+
+## References
+
+* [R. D. Luce, *Individual Choice Behavior: A Theoretical Analysis* (1959)][luce-1959]
+* [D. McFadden, *Conditional logit analysis of qualitative choice behavior*
+  (1974)][mcfadden-1974]
 -/
 
 @[expose] public section
@@ -54,8 +59,8 @@ open Finset
 
 variable {ι : Type*} [Fintype ι]
 
-/-- The softmax function `softmax s i = exp (s i) / ∑ j, exp (s j)`. An inverse
-temperature enters by scaling the argument, `softmax (α • s)`. -/
+/-- The softmax function sends a score vector `s` to `i ↦ exp (s i) / ∑ j, exp (s j)`. An
+inverse temperature enters by scaling the argument, as in `softmax (α • s)`. -/
 noncomputable def softmax (s : ι → ℝ) : ι → ℝ := fun i => exp (s i) / ∑ j, exp (s j)
 
 theorem softmax_def (s : ι → ℝ) (i : ι) : softmax s i = exp (s i) / ∑ j, exp (s j) := rfl
@@ -68,6 +73,11 @@ theorem softmax_add_const (s : ι → ℝ) (c : ℝ) : softmax (fun i => s i + c
 
 @[simp] theorem softmax_zero : softmax (0 : ι → ℝ) = fun _ => (Fintype.card ι : ℝ)⁻¹ := by
   funext i; simp [softmax_def, card_univ]
+
+/-- Equal scores give the uniform distribution. -/
+@[simp] theorem softmax_const (c : ℝ) :
+    softmax (fun _ : ι => c) = fun _ => (Fintype.card ι : ℝ)⁻¹ := by
+  simpa using softmax_add_const (0 : ι → ℝ) c
 
 section Nonempty
 
@@ -85,8 +95,8 @@ theorem sum_exp_pos : 0 < ∑ j, exp (s j) := sum_pos (fun _ _ => exp_pos _) uni
 @[bound] theorem softmax_le_one : softmax s i ≤ 1 :=
   (single_le_sum (fun j _ => softmax_nonneg s j) (mem_univ i)).trans_eq (sum_softmax s)
 
-/-- Odds are exponentiated score differences: independence of irrelevant
-alternatives. -/
+/-- The odds of two alternatives are their exponentiated score difference, whatever the other
+alternatives are. -/
 theorem softmax_div_softmax : softmax s i / softmax s j = exp (s i - s j) := by
   rw [softmax_def, softmax_def, div_div_div_cancel_right₀ (sum_exp_pos s).ne', exp_sub]
 
@@ -146,9 +156,9 @@ end Update
 
 /-! ### Limits in the inverse temperature
 
-`softmax (α • s)` is continuous in the inverse temperature `α`: uniform at
-`α = 0`, concentrating on a strict maximizer as `α → ∞` and on a strict
-minimizer as `α → -∞`, with its entropy vanishing in the limit. -/
+`softmax (α • s)` is continuous in the inverse temperature `α`. It is uniform at `α = 0`,
+concentrates on a strict maximizer as `α → ∞` and on a strict minimizer as `α → -∞`, and its
+entropy vanishes in the limit. -/
 
 section Limit
 
@@ -234,11 +244,15 @@ end Limit
 
 /-- With two alternatives, softmax is the logistic function of the score
 difference. -/
-theorem softmax_fin_two (s : Fin 2 → ℝ) : softmax s 0 = sigmoid (s 0 - s 1) := by
-  rw [softmax_def, Fin.sum_univ_two, sigmoid_def, neg_sub, exp_sub,
-    ← div_self (exp_pos (s 0)).ne', ← add_div, inv_div]
+theorem softmax_eq_sigmoid_of_univ_eq_pair [DecidableEq ι] {i j : ι} (hij : i ≠ j)
+    (h : (univ : Finset ι) = {i, j}) (s : ι → ℝ) : softmax s i = sigmoid (s i - s j) := by
+  rw [softmax_def, h, sum_pair hij, sigmoid_def, neg_sub, exp_sub,
+    ← div_self (exp_pos (s i)).ne', ← add_div, inv_div]
 
-/-- The logit function `log (p / (1 - p))`, the inverse of `Real.sigmoid`. -/
+theorem softmax_fin_two (s : Fin 2 → ℝ) : softmax s 0 = sigmoid (s 0 - s 1) :=
+  softmax_eq_sigmoid_of_univ_eq_pair zero_ne_one (by decide) s
+
+/-- The logit function `log (p / (1 - p))` is the inverse of `Real.sigmoid`. -/
 noncomputable def logit (p : ℝ) : ℝ := log (p / (1 - p))
 
 @[simp] theorem logit_sigmoid (x : ℝ) : logit (sigmoid x) = x := by

@@ -202,15 +202,8 @@ import Linglib.Core.Data.UnorderedTree.Basic
 import Linglib.Core.Order.Bilattice.Kleene
 import Linglib.Logic.Trivalent.Prop3
 import Linglib.Logic.Trivalent.Propositional
-import Linglib.Core.Optimization.Decoder
-import Linglib.Core.Optimization.Dequantization.LogSumExp.Basic
-import Linglib.Core.Optimization.Dequantization.LogSumExp.Limit
-import Linglib.Core.Optimization.Dequantization.LogSumExp.Softmax
 import Linglib.Core.Optimization.Linearization
-import Linglib.Core.Optimization.NoiseKernel
 import Linglib.Core.Optimization.PermSubsetCombinatorics
-import Linglib.Core.Optimization.Semiring
-import Linglib.Core.Optimization.System
 import Linglib.Core.Order.AllenRelation
 import Linglib.Core.Order.Antichain
 import Linglib.Core.Order.Argmax
@@ -1082,7 +1075,6 @@ import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 import Linglib.Phonology.OptimalityTheory.Ranking
 import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Phonology.OptimalityTheory.Tableau
-import Linglib.Phonology.OptimalityTheory.TableauSystem
 import Linglib.Phonology.Prosody.Foot
 import Linglib.Phonology.Prosody.Grid
 import Linglib.Phonology.Prosody.Mora

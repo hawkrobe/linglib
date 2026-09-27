@@ -5,44 +5,54 @@ public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
-public import Linglib.Core.Optimization.Semiring
-public import Linglib.Core.Optimization.Dequantization.LogSumExp.Softmax
 
 /-!
-# Expressivity: OT, Harmonic Grammar, and MaxEnt
+# Expressivity of OT, Harmonic Grammar, and MaxEnt
 
-How the frameworks' expressive powers relate ([prince-smolensky-1993];
-[smolensky-legendre-2006] ch. 14; [pater-2009]; [coetzee-pater-2011]):
-with exponentially separated weights HG's argmax agrees with OT's
-lexicographic comparison, so OT ⊆ HG; as the rationality parameter α → ∞,
-MaxEnt recovers categorical OT; and the containment is strict —
-*cumulativity*, summed low-weight violations overpowering a single
-high-weight one, is HG-expressible but not OT-expressible.
+This file compares the expressive power of Optimality Theory (OT), Harmonic Grammar (HG), and
+maximum-entropy grammar (MaxEnt). With exponentially separated weights the harmony order of HG
+agrees with the lexicographic comparison of OT, so every OT grammar is an HG grammar, and as the
+inverse temperature grows MaxEnt concentrates on the OT winner. The containment of OT in HG is
+strict because of *cumulativity*, in which several low-weight violations together outweigh a
+single high-weight one. The comparison follows Smolensky and Legendre, Pater, and Coetzee and
+Pater, and the cumulativity witness is Coetzee and Pater's version of Itô and Mester's Lyman's
+Law data.
 
 ## Main definitions
 
-- `expWeights`, `ExponentiallySeparated`: the HG reading of an OT ranking.
-- `RealizationProblem`: inputs, per-input candidates, violation profiles,
-  and the target mapping a grammar must realize; `IsHGRealizable`,
-  `IsOTRealizable` — realizability by a non-negative weighting / a ranking.
-- `RealizationProblem.ercs`: the problem's winner–loser ERCs
-  ([prince-2002]).
+* `ExponentiallySeparated`, `expWeights`: the HG reading of an OT ranking.
+* `RealizationProblem`: a target mapping that one grammar must realize on every input.
+* `RealizationProblem.IsHGRealizable`, `RealizationProblem.IsOTRealizable`: realizability by a
+  non-negative weighting and by a ranking.
+* `RealizationProblem.ercs`: the winner–loser ERCs of a problem.
 
 ## Main results
 
-- `ot_lex_imp_higher_harmony`: lex dominance gives higher harmony under
-  exponentially separated weights.
-- `maxent_ot_limit`: as α → ∞, MaxEnt concentrates on the OT winner.
-- `RealizationProblem.realizedByRanking_iff_satisfiedBy`: OT-realization is
-  ERC satisfaction, so OT-realizability is consistency of the problem's ERC
-  set (`isOTRealizable_iff_linearExtensions_nonempty`; [prince-2002]).
-- `RealizationProblem.IsOTRealizable.isHGRealizable` and
-  `hg_strictly_contains_ot`: OT ⊆ HG, strictly — the witness is
-  [coetzee-pater-2011]'s abstract Lyman's Law instance (eq 18-19, after
-  [ito-mester-1986]).
-- `RealizationProblem.isOTRealizable_iff_isPartialOrderRealizable`:
-  categorically, partially ordered grammars add nothing over OT — their
-  advantage is probabilistic (`OptimalityTheory.winProb`).
+* `ot_lex_imp_higher_harmony`: lexicographic dominance gives higher harmony under exponentially
+  separated weights.
+* `maxent_ot_limit`: MaxEnt concentrates on the OT winner as the inverse temperature grows.
+* `RealizationProblem.realizedByRanking_iff_satisfiedBy`: OT-realization is ERC satisfaction.
+* `RealizationProblem.IsOTRealizable.isHGRealizable`, `hg_strictly_contains_ot`: OT is strictly
+  contained in HG.
+* `RealizationProblem.isOTRealizable_iff_isPartialOrderRealizable`: partially ordered grammars
+  realize exactly the OT-realizable targets, so their advantage is probabilistic.
+
+## References
+
+* [A. Prince and P. Smolensky, *Optimality Theory: Constraint Interaction in Generative Grammar*
+  (1993)][prince-smolensky-1993]
+* [P. Smolensky and G. Legendre, *The Harmonic Mind: From Neural Computation to
+  Optimality-Theoretic Grammar* (2006)][smolensky-legendre-2006]
+* [J. Pater, *Morpheme-specific phonology: Constraint indexation and inconsistency resolution*
+  (2009)][pater-2009]
+* [A. W. Coetzee and J. Pater, *The Place of Variation in Phonological Theory*
+  (2011)][coetzee-pater-2011]
+* [J. Itô and A. Mester, *The Phonology of Voicing in Japanese* (1986)][ito-mester-1986]
+* [B. Hayes and C. Wilson, *A Maximum Entropy Model of Phonotactics and Phonotactic Learning*
+  (2008)][hayes-wilson-2008]
+* [B. Tesar and P. Smolensky, *The Learnability of Optimality Theory* (1995)][tesar-smolensky-1995]
+* [A. Prince, *Entailed Ranking Arguments* (2002)][prince-2002]
+* [J. Riggle, *Violation Semirings in Optimality Theory* (2009)][riggle-2009b]
 -/
 
 @[expose] public section
@@ -63,18 +73,15 @@ weighted-constraint object. -/
 
 /-! ### Exponentially separated weights -/
 
-/-- Weights are **exponentially separated** with violation bound M:
-    each weight exceeds M times the sum of all lower-ranked weights.
-
-    This ensures that no combination of lower-constraint violations
-    can override a single higher-constraint violation difference,
-    matching OT's strict ranking semantics. -/
+/-- Weights are **exponentially separated** with violation bound `M` when each weight exceeds `M`
+    times the sum of all lower-ranked weights. No combination of lower-ranked violations can then
+    override a single higher-ranked violation difference, as under OT's strict ranking. -/
 def ExponentiallySeparated {n : Nat} (w : Fin n → ℝ) (M : Nat) : Prop :=
   (∀ i, 0 < w i) ∧
   ∀ k : Fin n, (M : ℝ) * (univ.filter (· > k)).sum w < w k
 
-/-- Concrete exponential weights: wᵢ = (M+1)^(n−1−i).
-    Constraint 0 (highest-ranked) gets the largest weight (M+1)^(n−1). -/
+/-- The exponential weights give constraint `i` the weight `(M+1)^(n−1−i)`, so the
+    highest-ranked constraint `0` gets the largest weight `(M+1)^(n−1)`. -/
 def expWeights (n : Nat) (M : Nat) : Fin n → ℝ :=
   fun i => ((M + 1 : ℝ) ^ (n - 1 - i.val))
 
@@ -125,21 +132,15 @@ theorem expWeights_separated (n : Nat) (M : Nat) (hM : 0 < M) :
 
 /-! ### Ganging (complement of exponential separation) -/
 
-/-- **Ganging**: two constraints with individual weights w₁, w₂ each weaker
-    than a third weight w₃, but jointly stronger.
-
-    This is the hallmark of weighted constraint interaction that distinguishes
-    MaxEnt/HG from OT ([hayes-wilson-2008]). In OT (strict ranking), a
-    lower-ranked constraint can never override a higher-ranked one regardless
-    of how many violations accumulate. In MaxEnt, constraint effects are
-    *additive*, so multiple weak constraints can "gang up" to outweigh a
-    strong one. -/
+/-- Two constraints with weights `w₁` and `w₂` **gang** against a third with weight `w₃` when each
+    is weaker than `w₃` but together they are stronger. Under OT's strict ranking a lower-ranked
+    constraint never overrides a higher-ranked one, however many violations accumulate. -/
 def Ganging (w₁ w₂ w₃ : ℝ) : Prop :=
   0 < w₁ ∧ 0 < w₂ ∧ 0 < w₃ ∧
   w₁ < w₃ ∧ w₂ < w₃ ∧
   w₃ < w₁ + w₂
 
-/-- Ganging is achievable: weights (2, 2, 3) exhibit ganging. -/
+/-- The weights `2`, `2`, and `3` exhibit ganging. -/
 theorem ganging_example : Ganging 2 2 3 := by
   unfold Ganging; norm_num
 
@@ -152,11 +153,9 @@ theorem no_ganging_when_separated {n : Nat} (w : Fin n → ℝ)
   simp only [Nat.cast_one, one_mul] at h
   exact h
 
-/-- **Ganging is precluded by exponential separation**: with exponentially
-    separated weights (M = 1), no two distinct lower-ranked constraints `i`,
-    `j` can gang up against a higher-ranked `k`. Their combined weight is at
-    most the total lower weight, which `no_ganging_when_separated` bounds
-    strictly below `w k` — contradicting ganging's `w k < w i + w j`. -/
+/-- With exponentially separated weights (`M = 1`), no two distinct lower-ranked constraints `i`
+    and `j` gang against a higher-ranked `k`, since their combined weight is at most the total
+    lower weight, which `no_ganging_when_separated` bounds strictly below `w k`. -/
 theorem exponential_separation_precludes_ganging {n : Nat} (w : Fin n → ℝ)
     (hw : ExponentiallySeparated w 1) (k i j : Fin n)
     (hi : k < i) (hj : k < j) (hij : i ≠ j) :
@@ -175,19 +174,12 @@ theorem exponential_separation_precludes_ganging {n : Nat} (w : Fin n → ℝ)
 
 /-! ### HG–OT agreement -/
 
-/-- **HG–OT agreement lemma** ([smolensky-legendre-2006]): with
-    exponentially separated weights and bounded violations, lexicographic
-    dominance implies strictly lower weighted violations.
-
-    Since `harmonyScore = -weightedViolations`, this means the
-    lexicographically better candidate has strictly higher harmony.
-
-    Proof sketch: decompose the violation-difference sum at the first
-    differing position k.
-    - For i < k: terms cancel (va(i) = vb(i) by `hlex`)
-    - At i = k: wₖ · (vb(k) − va(k)) ≥ wₖ  (since vb(k) > va(k))
-    - For i > k: |wᵢ · (vb(i) − va(i))| ≤ wᵢ · M  (by `hM`)
-    - Net: ≥ wₖ − M · Σᵢ₍ᵢ>ₖ₎ wᵢ > 0  (by `hw`) -/
+/-- The **HG–OT agreement lemma** states that with exponentially separated weights and bounded
+    violations, lexicographic dominance implies strictly lower weighted violations, so the
+    lexicographically better candidate has strictly higher harmony. The proof splits the
+    difference of the weighted sums at the first coordinate `k` where the profiles differ.
+    Earlier terms cancel, the term at `k` contributes at least `wₖ`, and the later terms total at
+    most `M` times the sum of the lower weights, which separation bounds below `wₖ`. -/
 theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℝ) (M : Nat)
     (va vb : Fin n → Nat)
     (hM : ∀ i, va i ≤ M ∧ vb i ≤ M)
@@ -259,22 +251,18 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℝ) (M : Nat)
   -- Combine: w_k − M · Σ_{i>k} w_i > 0 from ExponentiallySeparated
   linarith [hw.2 k, hlt_zero]
 
-/-- The algebraic form of the agreement kernel: an exponentially separated
-weighting reads the `M`-bounded fragment of the lex order strictly
-monotonically — [riggle-2009b]'s order-preserving weight map from the violation
-semiring to tropical costs, in concrete form. -/
+/-- An exponentially separated weighting is strictly monotone on the `M`-bounded part of the
+lexicographic order. This is a concrete form of [riggle-2009b]'s order-preserving map from the
+violation semiring to tropical costs. -/
 theorem strictMonoOn_weightedViolations {n : Nat} {w : Fin n → ℝ} {M : Nat}
     (hw : ExponentiallySeparated w M) :
     StrictMonoOn (fun v : ViolationProfile n => weightedViolations w (ofLex v))
       {v | ∀ i, ofLex v i ≤ M} :=
   fun _ ha _ hb hlex => lex_imp_lower_violations w M _ _ (fun i => ⟨ha i, hb i⟩) hw hlex
 
-/-- HG–OT agreement for a concrete candidate type: if candidate `a`
-    lexicographically beats `b` on the violation profile induced by `ranking`,
-    then `a` has strictly higher harmony than `b` under the ranking's exponential
-    weights `expWeights ranking.length M`, provided `M` bounds all violations.
-    With `harmonyScore con w c = -weightedViolations w (· c)`, the bridge to
-    `lex_imp_lower_violations` is definitional. -/
+/-- If candidate `a` lexicographically beats `b` on the violation profile induced by `ranking`
+    and `M` bounds all violations, then `a` has strictly higher harmony than `b` under the
+    exponential weights `expWeights ranking.length M`. -/
 theorem ot_lex_imp_higher_harmony {C : Type*}
     (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M)
     (a b : C)
@@ -293,12 +281,8 @@ theorem ot_lex_imp_higher_harmony {C : Type*}
 
 /-! ### MaxEnt → OT limit -/
 
-/-- **MaxEnt concentration on HG winner**: as α → ∞, MaxEnt probability
-    concentrates on the candidate with the highest harmony score.
-
-    This is `Real.tendsto_softmax_atTop` instantiated with harmony scores.
-    The interesting content is in the *hypotheses*: showing that the
-    HG winner equals the OT winner (§4). -/
+/-- As the inverse temperature grows, MaxEnt probability concentrates on the candidate with the
+    highest harmony. This instantiates `Real.tendsto_softmax_atTop` with harmony scores. -/
 theorem maxent_concentrates_on_hg_winner {C : Type*} [Fintype C] [Nonempty C]
     [DecidableEq C] {n : Nat} (con : CON C n) (w : Fin n → ℝ)
     (c_opt : C)
@@ -307,16 +291,9 @@ theorem maxent_concentrates_on_hg_winner {C : Type*} [Fintype C] [Nonempty C]
     Tendsto (fun α : ℝ => softmax (α • harmonyScore con w) c_opt) atTop (𝓝 1) :=
   tendsto_softmax_atTop h_opt
 
-/-- **MaxEnt → OT limit** ([smolensky-legendre-2006]): as α → ∞,
-    MaxEnt probability concentrates on the OT winner.
-
-    Given a constraint ranking with violation bound M and a candidate `c_opt`
-    that lexicographically beats all competitors,
-    `Tendsto (softmax (α • H) c_opt) atTop (𝓝 1)`.
-
-    The proof combines:
-    1. `ot_lex_imp_higher_harmony`: lex-better ⟹ higher harmony (HG–OT agreement)
-    2. `Real.tendsto_softmax_atTop`: MaxEnt concentrates on harmony maximizer -/
+/-- As the inverse temperature grows, MaxEnt probability concentrates on a candidate `c_opt`
+    that lexicographically beats every competitor under a ranking with violation bound `M`. The
+    proof combines `ot_lex_imp_higher_harmony` with `Real.tendsto_softmax_atTop`. -/
 theorem maxent_ot_limit {C : Type*} [Fintype C] [Nonempty C] [DecidableEq C]
     (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M)
     (c_opt : C)
@@ -330,83 +307,53 @@ theorem maxent_ot_limit {C : Type*} [Fintype C] [Nonempty C] [DecidableEq C]
   exact tendsto_softmax_atTop fun c hc => ot_lex_imp_higher_harmony ranking M hM c_opt c
     (fun con hcon => ⟨hbound c_opt con hcon, hbound c con hcon⟩) (hlex c hc)
 
-/-! ### The warped-semiring view of the limit -/
-
-open Core.Optimization in
-/-- The `lseFinset α` aggregator on harmony scores converges to the OT
-    winner's harmony as `α → ∞` — the warped-semiring restatement of
-    `maxent_ot_limit` ([litvinov-2005]'s Maslov dequantization applied to
-    the constraint-framework family): where `maxent_ot_limit` concentrates
-    the softmax *probability* on the OT winner, this realises the winner's
-    harmony as the dequantized limit of the warped semiring's additive
-    operator. Composes `ot_lex_imp_higher_harmony` with
-    `argmax_winner_iff_lse_max_limit`. -/
-theorem lse_aggregator_tendsto_winner_harmony {C : Type*} [DecidableEq C]
-    (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M)
-    (cands : Finset C) (c_opt : C) (hc_opt : c_opt ∈ cands)
-    (hbound : ∀ c ∈ cands, ∀ con ∈ ranking, con c ≤ M)
-    (hlex : ∀ c ∈ cands, c ≠ c_opt →
-      toLex (fun i : Fin ranking.length => (ranking.get i) c_opt) <
-      toLex (fun i : Fin ranking.length => (ranking.get i) c)) :
-    Tendsto (fun α : ℝ =>
-        lseFinset α cands (harmonyScore ranking.get (expWeights ranking.length M))) atTop
-      (𝓝 (harmonyScore ranking.get (expWeights ranking.length M) c_opt)) := by
-  have hne : cands.Nonempty := ⟨c_opt, hc_opt⟩
-  apply (argmax_winner_iff_lse_max_limit hne hc_opt).mp
-  intro c' hc'
-  by_cases h : c' = c_opt
-  · subst h; exact le_refl _
-  · exact le_of_lt (ot_lex_imp_higher_harmony ranking M hM c_opt c'
-      (fun con hcon => ⟨hbound c_opt hc_opt con hcon, hbound c' hc' con hcon⟩)
-      (hlex c' hc' h))
-
 /-! ## Realizability
 
-Which target mappings each framework realizes. -/
+A framework realizes a target mapping when one of its grammars selects the target output on
+every input. -/
 
 variable {Input Output : Type*} {n : ℕ}
 
 /-! ### Realization problems -/
 
-/-- A multi-input optimization problem: a target mapping that a single
-    grammar must realize for every input simultaneously (for OT, the data of
-    [tesar-smolensky-1995]'s ranking problem). -/
+/-- A realization problem is a target mapping that a single grammar must realize on every input
+    at once. For OT it is the data of [tesar-smolensky-1995]'s ranking problem. -/
 structure RealizationProblem (Input : Type*) (Output : Type*) (n : ℕ) where
-  /-- The set of inputs the grammar handles. -/
+  /-- The grammar handles a finite set of inputs. -/
   inputs : Finset Input
-  /-- Candidate set for each input. -/
+  /-- Each input has a finite candidate set. -/
   cands : Input → Finset Output
-  /-- Violation profile: `vp i o k` is the count of constraint `k` violations
-      incurred by output `o` from input `i`. -/
+  /-- `vp i o k` counts the violations of constraint `k` by output `o` from
+      input `i`. -/
   vp : Input → Output → Fin n → ℕ
-  /-- The output the grammar must select for each input. -/
+  /-- The grammar must select the target output on each input. -/
   target : Input → Output
   /-- Each target output is in its input's candidate set. -/
   target_mem : ∀ i ∈ inputs, target i ∈ cands i
 
 namespace RealizationProblem
 
-/-- `w` *HG-realizes* the target: for every input, the target strictly
-    minimizes the weighted violation sum among candidates. -/
+/-- The weighting `w` *HG-realizes* the target when on every input the target strictly
+    minimizes the weighted violation sum among the candidates. -/
 def realizedByWeighting (P : RealizationProblem Input Output n) (w : Fin n → ℝ) : Prop :=
   ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, o ≠ P.target i →
     weightedViolations w (P.vp i (P.target i)) <
     weightedViolations w (P.vp i o)
 
-/-- Some non-negative weighting realizes the target. Non-negativity is
-    [pater-2009]'s standard HG; [coetzee-pater-2011] §4.4 discusses negative
+/-- A problem is HG-realizable when some non-negative weighting realizes its target.
+    Non-negativity is [pater-2009]'s standard HG; [coetzee-pater-2011] also discuss negative
     weights. -/
 def IsHGRealizable (P : RealizationProblem Input Output n) : Prop :=
   ∃ w : Fin n → ℝ, (∀ k, 0 ≤ w k) ∧ P.realizedByWeighting w
 
-/-- `σ` *OT-realizes* the target: for every input, the target strictly
-    lex-dominates every alternative under the ranking `σ`. -/
+/-- The ranking `σ` *OT-realizes* the target when on every input the target strictly
+    lex-dominates every alternative under `σ`. -/
 def realizedByRanking (P : RealizationProblem Input Output n) (σ : Ranking n) : Prop :=
   ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, o ≠ P.target i →
     toLex (fun k : Fin n => P.vp i (P.target i) (σ k)) <
     toLex (fun k : Fin n => P.vp i o (σ k))
 
-/-- Some constraint ranking realizes the target. -/
+/-- A problem is OT-realizable when some constraint ranking realizes its target. -/
 def IsOTRealizable (P : RealizationProblem Input Output n) : Prop :=
   ∃ σ : Ranking n, P.realizedByRanking σ
 
@@ -432,8 +379,8 @@ theorem realizedByRanking_iff_optimal [DecidableEq Output]
 
 /-! ### OT-realization is ERC satisfaction -/
 
-/-- The winner–loser ERCs of a systemic problem: one comparative row per input
-    and non-target candidate ([prince-2002]). -/
+/-- The winner–loser ERCs of a problem have one comparative row for each input and non-target
+    candidate ([prince-2002]). -/
 def ercs [DecidableEq Output] (P : RealizationProblem Input Output n) : Finset (ERC n) :=
   P.inputs.biUnion fun i => ((P.cands i).erase (P.target i)).image fun o =>
     ercOfProfiles (P.vp i (P.target i)) (P.vp i o)
@@ -444,9 +391,8 @@ theorem mem_ercs [DecidableEq Output] {P : RealizationProblem Input Output n} {�
   simp only [ercs, Finset.mem_biUnion, Finset.mem_image, Finset.mem_erase]
   tauto
 
-/-- OT-realization is ERC satisfaction ([prince-2002]): provided no
-    competitor ties the target's violation profile, `σ` realizes the target
-    iff `σ` satisfies every winner–loser ERC. -/
+/-- Provided no competitor ties the target's violation profile, `σ` realizes the target iff `σ`
+    satisfies every winner–loser ERC ([prince-2002]). -/
 theorem realizedByRanking_iff_satisfiedBy [DecidableEq Output]
     {P : RealizationProblem Input Output n} {σ : Ranking n}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, o ≠ P.target i →
@@ -486,10 +432,8 @@ private theorem weightedViolations_perm_reindex
   intro k _
   simp [Equiv.symm_apply_apply]
 
-/-- Forward containment: an OT-realizable problem is HG-realizable, via
-    exponentially separated weights permuted by the ranking
-    (`lex_imp_lower_violations`, with separation bound the supremum of the
-    finitely many violation counts). -/
+/-- An OT-realizable problem is HG-realizable by exponentially separated weights permuted by the
+    ranking, with the largest violation count as the separation bound. -/
 theorem RealizationProblem.IsOTRealizable.isHGRealizable
     {P : RealizationProblem Input Output n} (h : P.IsOTRealizable) : P.IsHGRealizable := by
   obtain ⟨σ, hσ⟩ := h
@@ -510,14 +454,12 @@ theorem RealizationProblem.IsOTRealizable.isHGRealizable
 
 /-! ### Strict containment — the cumulativity gap -/
 
-/-- The cumulativity gap: HG with non-negative weights strictly contains OT.
-    The inline witness is [coetzee-pater-2011]'s abstract Lyman's Law
-    instance (eq 18-19, after [ito-mester-1986]): faithful candidates
-    violating `{M1}`, `{M2}`, `{M1, M2}` against an unfaithful `{F}`, with
-    the third input alone targeted unfaithful. Weights `[3, 2, 2]` realize
-    this (`2 + 2 > 3` on the third input only), while the winner–loser ERCs
-    `F ≫ M1`, `F ≫ M2`, and "some markedness constraint above `F`" are
-    inconsistent. -/
+/-- HG with non-negative weights strictly contains OT. The witness is [coetzee-pater-2011]'s
+    abstract Lyman's Law instance after [ito-mester-1986], in which faithful candidates violate
+    `{M1}`, `{M2}`, and `{M1, M2}` against an unfaithful `{F}` and only the third input targets
+    the unfaithful output. The weights `[3, 2, 2]` realize it, since `2 + 2 > 3` holds on the
+    third input only, while the winner–loser ERCs `F ≫ M1`, `F ≫ M2`, and "some markedness
+    constraint above `F`" are inconsistent. -/
 theorem hg_strictly_contains_ot :
     ∃ (Input Output : Type) (n : ℕ) (P : RealizationProblem Input Output n),
       P.IsHGRealizable ∧ ¬ P.IsOTRealizable := by
