@@ -154,6 +154,18 @@ noncomputable def ofFintype [Fintype W] (w : W → K) (hw : ∀ i, 0 ≤ w i)
   simp [ofFintype, Set.mem_singleton_iff, Finset.sum_ite_eq' Finset.univ i w]
 
 
+/-- The singleton masses of a finite type sum to one. -/
+theorem sum_singleton [Fintype W] (m : FinAddMeasure K W) : ∑ w, m {w} = 1 := by
+  rw [m.sum_mu_singleton, Finset.coe_univ, m.total]
+
+/-- The point mass at `w`. -/
+noncomputable def dirac [Fintype W] [DecidableEq W] (w : W) : FinAddMeasure K W :=
+  ofFintype (fun v ↦ if v = w then 1 else 0) (fun _ ↦ by split_ifs <;> simp) (by simp)
+
+@[simp] theorem dirac_singleton [Fintype W] [DecidableEq W] (w v : W) :
+    dirac (K := K) w {v} = if v = w then 1 else 0 := by
+  simp [dirac]
+
 /-- The uniform measure on a finite nonempty type. -/
 noncomputable def uniform (W : Type*) [Fintype W] [Nonempty W] : FinAddMeasure K W :=
   ofFintype (fun _ ↦ 1 / Fintype.card W) (fun _ ↦ div_nonneg zero_le_one (Nat.cast_nonneg _))
