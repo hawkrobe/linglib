@@ -5,6 +5,7 @@ public import Linglib.Logic.Modal.Defs
 public import Linglib.Logic.Team.Bisimulation
 public import Linglib.Logic.Bilateral.Defs
 public import Linglib.Logic.Team.Operations
+public import Linglib.Logic.Team.Atoms
 public import Linglib.Logic.Team.Closure
 public import Linglib.Logic.Team.Definability
 
@@ -89,7 +90,8 @@ worlds with matching `x⃗`).
 ## Implementation notes
 
 The MDL eval is a fold over the operations of `Team/Operations.lean`:
-`Team.flat` for atoms, `Team.tensor` for the split clauses, and Väänänen's
+`Team.flat` for atoms, `Team.dep` of `Team/Atoms.lean` for the dependence atom read
+through the valuation, `Team.tensor` for the split clauses, and Väänänen's
 single-witness and image modalities `Team.possWitness` and `Team.necImage`,
 whose closure lemmas give Lemma 4.2 and the empty-team property case by
 case. The MDL eval uses Väänänen's exact clauses, not BSML's. The disjunction
@@ -101,28 +103,13 @@ The `KripkeModel` carrier from `Logic/Team/Kripke.lean` is the
 shared substrate consumed by BSML, QBSML, and the AAY-2024
 extensions (BSMLOr/BSMLEmpty) alike.
 
-## Sibling logics in `Logic/Modal/`
-
-This directory houses modal-logic variants that share Kripke-model
-infrastructure but differ in atom flavor:
-
-* `Modal/Kripke.lean` — the carrier type, shared.
-* `Modal/Dependence.lean` (this file) — MDL with dependence atoms.
-* `Modal/Inclusion.lean` (future) — modal inclusion logic ML(⊆),
-  introduced by Galliani; axiomatized in [anttila-2025] Ch 5.
-* `Modal/Independence.lean` (future) — modal independence logic
-  (Grädel and Väänänen).
-* `Modal/Bilateral.lean` (future, after BSML's eventual Core/
-  graduation) — BSML's bilateral negation + NE atom.
-* `Modal/Bisimulation.lean` — the shared bisimulation substrate.
-
 ## Todo
 
 * [lohmann-vollmer-2013] — adds classical disjunction `⓿` (the
   BSML∨ analogue) and complete satisfiability complexity classification.
   Natural second consumer paper, with a Studies file anchored on it.
-* Modal independence logic (Grädel and Väänänen's independence atoms) —
-  sibling at `Logic/Modal/Independence.lean`.
+* Modal independence logic, with Grädel and Väänänen's independence atom beside
+  `Team.dep` in `Team/Atoms.lean`.
 -/
 
 @[expose] public section
@@ -198,9 +185,7 @@ variable [DecidableEq W]
 def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .atom p,        t => t ∈ Team.flat fun w ↦ M.val p w = true
   | false, .atom p,        t => t ∈ Team.flat fun w ↦ M.val p w = false
-  | true,  .dep xs y,      t => ∀ w₁ ∈ t, ∀ w₂ ∈ t,
-                                  (∀ x ∈ xs, M.val x w₁ = M.val x w₂) →
-                                  M.val y w₁ = M.val y w₂
+  | true,  .dep xs y,      t => t ∈ Team.dep (fun w ↦ xs.map (M.val · w)) (M.val y)
   | false, .dep _ _,       t => t ∈ ({∅} : Team.TeamProperty W)
   | true,  .neg ψ,         t => eval M false ψ t
   | false, .neg ψ,         t => eval M true ψ t
@@ -229,7 +214,8 @@ abbrev antiSupport (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     (t : Finset W) :
     support M (.dep xs y) t ↔
       ∀ w₁ ∈ t, ∀ w₂ ∈ t,
-        (∀ x ∈ xs, M.val x w₁ = M.val x w₂) → M.val y w₁ = M.val y w₂ := Iff.rfl
+        (∀ x ∈ xs, M.val x w₁ = M.val x w₂) → M.val y w₁ = M.val y w₂ := by
+  simp only [support, eval, Team.mem_dep, List.map_inj_left]
 
 @[simp] lemma antiSupport_dep (M : KripkeModel W Atom) (xs : List Atom) (y : Atom)
     (t : Finset W) :
@@ -291,9 +277,7 @@ private theorem support_and_antiSupport_isLowerSet (φ : Formula Atom)
     IsLowerSet {t | support M φ t} ∧ IsLowerSet {t | antiSupport M φ t} := by
   induction φ with
   | atom p => exact ⟨Team.isLowerSet_flat _, Team.isLowerSet_flat _⟩
-  | dep xs y =>
-    exact ⟨fun _ _ hts h w₁ hw₁ w₂ hw₂ ↦ h w₁ (hts hw₁) w₂ (hts hw₂),
-      Team.isLowerSet_singleton_empty⟩
+  | dep xs y => exact ⟨Team.isLowerSet_dep _ _, Team.isLowerSet_singleton_empty⟩
   | neg ψ ih => exact ih.symm
   | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.inter ih₂.1, ih₁.2.tensor ih₂.2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.tensor ih₂.1, ih₁.2.inter ih₂.2⟩
@@ -315,7 +299,7 @@ private theorem support_and_antiSupport_empty
     support M φ ∅ ∧ antiSupport M φ ∅ := by
   induction φ with
   | atom p => exact ⟨Team.empty_mem_flat _, Team.empty_mem_flat _⟩
-  | dep xs y => exact ⟨fun w₁ hw₁ ↦ absurd hw₁ (Finset.notMem_empty w₁), rfl⟩
+  | dep xs y => exact ⟨Team.empty_mem_dep, rfl⟩
   | neg ψ ih => exact ih.symm
   | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨⟨ih₁.1, ih₂.1⟩, Team.empty_mem_tensor ih₁.2 ih₂.2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨Team.empty_mem_tensor ih₁.1 ih₂.1, ⟨ih₁.2, ih₂.2⟩⟩
@@ -334,35 +318,10 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
     each support `=(p; q)` vacuously (each is a singleton, so the
     functional-dependence condition is trivial), but `{w₁, w₂}` does not. -/
 theorem not_supClosed_dep_of_witness {p q : Atom} {w₁ w₂ : W}
-    {M : KripkeModel W Atom}
-    (_hp : M.val p w₁ = M.val p w₂)
-    (hq : M.val q w₁ ≠ M.val q w₂) :
+    {M : KripkeModel W Atom} (hp : M.val p w₁ = M.val p w₂) (hq : M.val q w₁ ≠ M.val q w₂) :
     ¬ SupClosed { t : Finset W | support M (.dep [p] q) t } := by
-  intro hSC
-  have h₁ : support M (.dep [p] q) ({w₁} : Finset W) := by
-    intro u₁ hu₁ u₂ hu₂ _
-    rw [Finset.mem_singleton] at hu₁ hu₂
-    rw [hu₁, hu₂]
-  have h₂ : support M (.dep [p] q) ({w₂} : Finset W) := by
-    intro u₁ hu₁ u₂ hu₂ _
-    rw [Finset.mem_singleton] at hu₁ hu₂
-    rw [hu₁, hu₂]
-  -- SupClosed gives support on {w₁} ⊔ {w₂} = {w₁, w₂}
-  have hSC' : support M (.dep [p] q) (({w₁} : Finset W) ⊔ ({w₂} : Finset W)) :=
-    hSC h₁ h₂
-  -- But this requires q-values to match on {w₁, w₂}, contradicting hq
-  have hmem₁ : w₁ ∈ ({w₁} : Finset W) ⊔ ({w₂} : Finset W) := by
-    show w₁ ∈ ({w₁} ∪ ({w₂} : Finset W))
-    simp
-  have hmem₂ : w₂ ∈ ({w₁} : Finset W) ⊔ ({w₂} : Finset W) := by
-    show w₂ ∈ ({w₁} ∪ ({w₂} : Finset W))
-    simp
-  have hagree : ∀ x ∈ [p], M.val x w₁ = M.val x w₂ := by
-    intro x hx
-    rw [List.mem_singleton] at hx
-    rw [hx]
-    exact _hp
-  exact hq (hSC' w₁ hmem₁ w₂ hmem₂ hagree)
+  simpa only [support, eval, Set.ofPred_mem_eq] using
+    Team.not_supClosed_dep (f := fun w ↦ [p].map (M.val · w)) (by simp [hp]) hq
 
 /-! ### Soundness for the closure cell (Definability bridge) -/
 
@@ -426,6 +385,8 @@ theorem bisim_invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
       exact hbisim.eq_empty_iff
     · -- support (dep xs y): functional dependence, a property of the
       -- valuation profiles, which bisim preserves (`val_eq`).
+      change support M _ s ↔ support M' _ s'
+      rw [support_dep, support_dep]
       constructor
       · intro h w₁' hw₁' w₂' hw₂' hagree'
         obtain ⟨w₁, hw₁, hb₁⟩ := hbisim.2 w₁' hw₁'

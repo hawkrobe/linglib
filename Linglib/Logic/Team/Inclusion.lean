@@ -5,6 +5,7 @@ public import Linglib.Logic.Modal.Defs
 public import Linglib.Logic.Team.Operations
 public import Linglib.Logic.Team.Closure
 public import Linglib.Logic.Team.Definability
+public import Linglib.Logic.Team.Atoms
 
 /-!
 # Modal Inclusion Logic (MIL)
@@ -60,9 +61,9 @@ in the union).
 
 The `eval` clauses are the operations of `Team/Operations.lean` — `Team.flat`
 for atoms and negation, `Team.tensor` for disjunction, the lax modality
-`Team.possLax` and the image modality `Team.necImage` — so union closure and
-the empty-team property are folds over their per-connective lemmas, the
-inclusion atom being the one case argued directly.
+`Team.possLax` and the image modality `Team.necImage` — and the inclusion atom
+`Team.incl` of `Team/Atoms.lean` read through the valuation, so union closure and
+the empty-team property are folds over their per-case lemmas.
 
 The paper's inclusion atom takes equal-length lists of *classical
 formulas* `α₁...αₙ ⊆ β₁...βₙ`. We simplify to lists of *atoms* — each
@@ -82,13 +83,6 @@ successor team `S` must satisfy both `S ⊆ R[T]` (the reach constraint)
 and `T ⊆ R⁻¹[S]` (the back constraint). The paper's footnote 1 notes
 that with the **strict semantics** (functional successor selection),
 MIL would lose union closure. We follow the paper in using lax.
-
-## Sibling logics in `Logic/Modal/`
-
-* `Modal/Kripke.lean` — the carrier type.
-* `Modal/Dependence.lean` — MDL (Väänänen 2008), bilateral, dep atoms.
-* `Modal/Inclusion.lean` (this file) — MIL, unilateral, inclusion atoms.
-* `Modal/Independence.lean` (future) — modal independence logic.
 
 ## Todo
 
@@ -173,8 +167,7 @@ def eval (M : KripkeModel W Atom) : Formula Atom → Finset W → Prop
   | .atom p,        t => t ∈ Team.flat fun w ↦ M.val p w = true
   | .bot,           t => t ∈ ({∅} : Team.TeamProperty W)
   | .incl xys,      t =>
-      ∀ w₁ ∈ t, ∃ w₂ ∈ t,
-        ∀ xy ∈ xys, M.val (Prod.fst xy) w₁ = true ↔ M.val (Prod.snd xy) w₂ = true
+      t ∈ Team.incl (fun w ↦ xys.map (M.val ·.1 w)) (fun w ↦ xys.map (M.val ·.2 w))
   | .neg ψ,         t => t ∈ Team.flat fun w ↦ ¬ eval M ψ {w}
   | .conj ψ₁ ψ₂,    t => eval M ψ₁ t ∧ eval M ψ₂ t
   | .disj ψ₁ ψ₂,    t => t ∈ Team.tensor {s | eval M ψ₁ s} {s | eval M ψ₂ s}
@@ -196,9 +189,8 @@ abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Pro
 @[simp] lemma support_incl (M : KripkeModel W Atom) (xys : List (Atom × Atom))
     (t : Finset W) :
     support M (.incl xys) t ↔
-      ∀ w₁ ∈ t, ∃ w₂ ∈ t,
-        ∀ xy ∈ xys, M.val (Prod.fst xy) w₁ = true ↔ M.val (Prod.snd xy) w₂ = true :=
-  Iff.rfl
+      ∀ w₁ ∈ t, ∃ w₂ ∈ t, ∀ xy ∈ xys, M.val xy.1 w₁ = M.val xy.2 w₂ := by
+  simp only [support, eval, Team.mem_incl, List.map_inj_left]
 
 @[simp] lemma support_neg (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     support M (.neg φ) t ↔ ∀ w ∈ t, ¬ support M φ {w} := Iff.rfl
@@ -243,13 +235,7 @@ theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
   induction φ with
   | atom p => exact Team.supClosed_flat _
   | bot => exact Team.supClosed_singleton_empty
-  | incl xys =>
-    intro s hs t ht w₁ hw₁
-    rcases Finset.mem_union.mp hw₁ with hw₁s | hw₁t
-    · obtain ⟨w₂, hw₂, hagree⟩ := hs w₁ hw₁s
-      exact ⟨w₂, Finset.mem_union.mpr (Or.inl hw₂), hagree⟩
-    · obtain ⟨w₂, hw₂, hagree⟩ := ht w₁ hw₁t
-      exact ⟨w₂, Finset.mem_union.mpr (Or.inr hw₂), hagree⟩
+  | incl xys => exact Team.supClosed_incl _ _
   | neg ψ _ => exact Team.supClosed_flat _
   | conj ψ₁ ψ₂ ih₁ ih₂ => exact ih₁.inter ih₂
   | disj ψ₁ ψ₂ ih₁ ih₂ => exact ih₁.tensor ih₂
@@ -263,7 +249,7 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
   induction φ with
   | atom p => exact Team.empty_mem_flat _
   | bot => rfl
-  | incl xys => exact fun w₁ hw₁ ↦ absurd hw₁ (Finset.notMem_empty w₁)
+  | incl xys => exact Team.empty_mem_incl _ _
   | neg ψ _ => exact Team.empty_mem_flat _
   | conj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁, ih₂⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ => exact Team.empty_mem_tensor ih₁ ih₂
@@ -272,49 +258,18 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
 
 /-! ### Inclusion breaks downward closure (the defining feature) -/
 
-/-- **The inclusion atom breaks downward closure**: a constructive
-    counterexample. With two distinct worlds `w₁, w₂` where:
-    * `M.val a w₁ = M.val b w₂` (so w₂ witnesses w₁'s a-as-b in {w₁,w₂})
-    * `M.val a w₂ = M.val b w₂` (so w₂ self-witnesses)
-    * `M.val a w₁ ≠ M.val b w₁` (so {w₁} alone fails)
-    the team `{w₁, w₂}` supports `a ⊆ b` but the subteam `{w₁}` does not.
-
-    This shows MIL's inclusion atom violates downward closure (the
-    defining negative property of the inclusion family — Anttila Ch 5
-    contrasts MIL with dependence logic on exactly this axis). -/
-theorem not_isLowerSet_incl_of_witness {a b : Atom} {w₁ w₂ : W}
-    {M : KripkeModel W Atom}
-    (hne : w₁ ≠ w₂)
-    (hpair : M.val a w₁ = true ↔ M.val b w₂ = true)
-    (hself : M.val a w₂ = true ↔ M.val b w₂ = true)
-    (hwit : ¬ (M.val a w₁ = true ↔ M.val b w₁ = true)) :
+/-- **The inclusion atom breaks downward closure** (`Team.not_isLowerSet_incl`): if `w₂`
+    supplies the `b`-value matching both its own and `w₁`'s `a`-value, but `w₁` does not match
+    itself, then `{w₁, w₂}` supports `a ⊆ b` and `{w₁}` does not. Anttila Ch. 5 contrasts MIL with
+    dependence logic on exactly this axis. -/
+theorem not_isLowerSet_incl_of_witness {a b : Atom} {w₁ w₂ : W} {M : KripkeModel W Atom}
+    (hpair : M.val a w₁ = M.val b w₂) (hself : M.val a w₂ = M.val b w₂)
+    (hwit : M.val a w₁ ≠ M.val b w₁) :
     ¬ IsLowerSet { t : Finset W | support M (.incl [(a, b)]) t } := by
-  intro hLS
-  -- {w₁, w₂} supports a ⊆ b: w₂ witnesses both w₁'s and w₂'s a-values
-  have h_full : support M (.incl [(a, b)]) ({w₁, w₂} : Finset W) := by
-    intro w hw
-    refine ⟨w₂, Finset.mem_insert_of_mem (Finset.mem_singleton.mpr rfl), ?_⟩
-    intro xy hxy
-    rw [List.mem_singleton] at hxy
-    subst hxy
-    rcases Finset.mem_insert.mp hw with hw1 | hw2
-    · subst hw1; exact hpair
-    · rw [Finset.mem_singleton] at hw2
-      subst hw2; exact hself
-  -- {w₁} ⊆ {w₁, w₂}, so IsLowerSet gives support on {w₁}
-  have hsub : ({w₁} : Finset W) ⊆ ({w₁, w₂} : Finset W) := by
-    intro x hx
-    rw [Finset.mem_singleton] at hx
-    rw [hx]; exact Finset.mem_insert_self w₁ {w₂}
-  have h_small : support M (.incl [(a, b)]) ({w₁} : Finset W) :=
-    hLS hsub h_full
-  -- But {w₁}'s a-witness must be in {w₁}, and {w₁}'s own values don't agree
-  obtain ⟨w', hw', hagree⟩ := h_small w₁ (Finset.mem_singleton.mpr rfl)
-  rw [Finset.mem_singleton] at hw'
-  have hag := hagree (a, b) (List.mem_singleton.mpr rfl)
-  simp only at hag
-  rw [hw'] at hag
-  exact hwit hag
+  simpa only [support, eval, Set.ofPred_mem_eq] using
+    Team.not_isLowerSet_incl (f := fun w ↦ [(a, b)].map (M.val ·.1 w))
+      (g := fun w ↦ [(a, b)].map (M.val ·.2 w)) (a := w₁) (b := w₂) (by simp [hpair])
+      (by simp [hself]) (by simp [hwit])
 
 /-! ### Soundness for the closure cell (Definability bridge) -/
 
