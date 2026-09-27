@@ -20,7 +20,7 @@ trigger's tune interacts with the tones of its target-host. A dominant trigger i
 pattern whatever the target's tones, a recessive one only on an unvalued target, and a neutral
 one leaves the target to the general phonology. Dominance is the neutralisation of the target's
 valued–unvalued contrast, which [rolle-2018] calls transparadigmatic uniformity, and
-`GTDominance.isDominant_iff_uniform` derives his classification from it.
+`Dominance.isDominant_iff_uniform` derives his classification from it.
 
 ## Main definitions
 
@@ -31,7 +31,7 @@ valued–unvalued contrast, which [rolle-2018] calls transparadigmatic uniformit
   tone reached spreading over the remainder.
 * `overwrite`, `unvalue` — replacement of a host's tones by a tune, and their deletion.
 * `Uniform` — transparadigmatic uniformity of an operation on hosts.
-* `GTDominance`, `GTDominance.apply` — [rolle-2018]'s replacive-dominant, subtractive-dominant,
+* `Dominance`, `Dominance.apply` — [rolle-2018]'s replacive-dominant, subtractive-dominant,
   recessive, and neutral triggers, and the automatic operation each performs on its
   target-host.
 
@@ -39,7 +39,7 @@ valued–unvalued contrast, which [rolle-2018] calls transparadigmatic uniformit
 
 * `overwrite_unvalue` — overwriting erases: a host and its unvalued projection are overwritten
   alike.
-* `GTDominance.isDominant_iff_uniform` — a trigger is dominant exactly when its operation is
+* `Dominance.isDominant_iff_uniform` — a trigger is dominant exactly when its operation is
   uniform across targets of the same segments.
 
 ## Implementation notes
@@ -240,49 +240,51 @@ a replacive trigger neutralises the target's tones. -/
 
 /-! ### Dominance effects -/
 
-/-- [rolle-2018]'s four types of trigger (Defs 1–4, Table 2), by how the trigger's tune
-interacts with the tonal value of its target-host. Dominance is a lexical idiosyncrasy of the
-trigger, predictable neither from its segments and prosody nor from the markedness of the tune
-nor from its position relative to the target ([inkelas-1998]); the terms are those of the
-accentual morphology of [kiparsky-halle-1977]. -/
-inductive GTDominance where
-  /-- Def 1: the underlying tones within the valuation window are replaced by the tune, whether
-  by a floating tone or by spreading from the sponsor. Valued and unvalued targets come out
-  alike, an intentional neutralisation in [hyman-2018a]'s sense. -/
-  | replaciveDominant
-  /-- Def 2: the underlying tones within the valuation window are deleted, with no tune to
-  revalue them; the surface tones are supplied later by default. -/
-  | subtractiveDominant
-  /-- Def 3: the tune does not apply to a target valued within the valuation window, so it docks
-  only to unvalued targets, as in privative systems with one contrastive tone. -/
+/-- [rolle-2018]'s dominance effects, his four types of trigger (Defs 1–4, Table 2) by how the
+trigger's tune interacts with the tonal value of its target-host. Dominance is a lexical
+idiosyncrasy of the trigger, predictable neither from its segments and prosody nor from the
+markedness of the tune nor from its position relative to the target ([inkelas-1998]); the
+terms are those of the accentual morphology of [kiparsky-halle-1977]. -/
+inductive Dominance where
+  /-- Replacive-dominant, Def 1: the underlying tones within the valuation window are replaced
+  by the tune, whether by a floating tone or by spreading from the sponsor. Valued and unvalued
+  targets come out alike, an intentional neutralisation in [hyman-2018a]'s sense. -/
+  | replacive
+  /-- Subtractive-dominant, Def 2: the underlying tones within the valuation window are
+  deleted, with no tune to revalue them; the surface tones are supplied later by default. -/
+  | subtractive
+  /-- Recessive non-dominant, Def 3: the tune does not apply to a target valued within the
+  valuation window, so it docks only to unvalued targets, as in privative systems with one
+  contrastive tone. -/
   | recessive
-  /-- Def 4: neither automatic replacement or deletion nor automatic non-application; the tune
-  concatenates with the target and the general phonology decides its docking. -/
+  /-- Neutral non-dominant, Def 4: neither automatic replacement or deletion nor automatic
+  non-application; the tune concatenates with the target and the general phonology decides its
+  docking. -/
   | neutral
   deriving DecidableEq, Repr
 
-namespace GTDominance
+namespace Dominance
 
 /-- The dominant types, which neutralise the target's valued–unvalued contrast. -/
-def IsDominant (d : GTDominance) : Prop := d = .replaciveDominant ∨ d = .subtractiveDominant
+def IsDominant (d : Dominance) : Prop := d = .replacive ∨ d = .subtractive
 
 instance : DecidablePred IsDominant := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The automatic operation a trigger of each type performs on its target-host, the valuation
 window being the whole host: replacement by the tune, deletion, docking of the tune only to a
 wholly unvalued host, and nothing. -/
-def apply (d : GTDominance) (u : Tune) (host : List (TBU S)) : List (TBU S) :=
+def apply (d : Dominance) (u : Tune) (host : List (TBU S)) : List (TBU S) :=
   match d with
-  | .replaciveDominant => overwrite host u
-  | .subtractiveDominant => unvalue host
+  | .replacive => overwrite host u
+  | .subtractive => unvalue host
   | .recessive => if ∃ τ ∈ host, τ.IsValued then host else overwrite host u
   | .neutral => host
 
-@[simp] theorem apply_replaciveDominant (u : Tune) (host : List (TBU S)) :
-    replaciveDominant.apply u host = overwrite host u := rfl
+@[simp] theorem apply_replacive (u : Tune) (host : List (TBU S)) :
+    replacive.apply u host = overwrite host u := rfl
 
-@[simp] theorem apply_subtractiveDominant (u : Tune) (host : List (TBU S)) :
-    subtractiveDominant.apply u host = unvalue host := rfl
+@[simp] theorem apply_subtractive (u : Tune) (host : List (TBU S)) :
+    subtractive.apply u host = unvalue host := rfl
 
 @[simp] theorem apply_neutral (u : Tune) (host : List (TBU S)) : neutral.apply u host = host :=
   rfl
@@ -300,7 +302,7 @@ theorem apply_recessive_of_unvalued (u : Tune) {host : List (TBU S)}
   rintro ⟨τ, hτ, hv⟩
   exact h τ hτ hv
 
-theorem uniform_apply_of_isDominant {d : GTDominance} (hd : d.IsDominant) (u : Tune) :
+theorem uniform_apply_of_isDominant {d : Dominance} (hd : d.IsDominant) (u : Tune) :
     Uniform (d.apply (S := S) u) := by
   rcases hd with rfl | rfl
   · exact uniform_overwrite u
@@ -308,12 +310,12 @@ theorem uniform_apply_of_isDominant {d : GTDominance} (hd : d.IsDominant) (u : T
 
 /-- Dominance as transparadigmatic uniformity ([rolle-2018] ch. 5): a trigger is dominant
 exactly when its operation gives the same output for every target of the same segments. -/
-theorem isDominant_iff_uniform [Inhabited S] (d : GTDominance) :
+theorem isDominant_iff_uniform [Inhabited S] (d : Dominance) :
     d.IsDominant ↔ ∀ u : Tune, Uniform (d.apply (S := S) u) := by
   refine ⟨fun hd u ↦ uniform_apply_of_isDominant hd u, fun hu ↦ ?_⟩
   cases d with
-  | replaciveDominant => exact Or.inl rfl
-  | subtractiveDominant => exact Or.inr rfl
+  | replacive => exact Or.inl rfl
+  | subtractive => exact Or.inr rfl
   | recessive =>
     have := hu ⟨[.H], .left⟩ (h := [⟨default, .L⟩]) (h' := [⟨default, .empty⟩]) rfl
     simp [apply, TBU.IsValued, overwrite, withTier, Tune.realize, Tune.realizeLeft,
@@ -322,6 +324,6 @@ theorem isDominant_iff_uniform [Inhabited S] (d : GTDominance) :
     have := hu ⟨[.H], .left⟩ (h := [⟨default, .L⟩]) (h' := [⟨default, .H⟩]) rfl
     simp [TRN.L, TRN.H] at this
 
-end GTDominance
+end Dominance
 
 end Tone
