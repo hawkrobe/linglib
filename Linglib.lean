@@ -802,7 +802,6 @@ import Linglib.Fragments.Korean.Phonology
 import Linglib.Fragments.Korean.PolarityItems
 import Linglib.Fragments.Korean.Pronouns
 import Linglib.Fragments.Korean.Relativization
-import Linglib.Fragments.Koryak.Modals
 import Linglib.Fragments.Laal.Prosody
 import Linglib.Fragments.Lakhota.Determiners
 import Linglib.Fragments.Lango.Coordination
