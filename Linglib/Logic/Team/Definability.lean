@@ -21,7 +21,6 @@ subtype of its formulas. Soundness is `definableClass s ⊆ C` and completeness
 
 ## Main definitions
 
-* `Team.TeamProperty α`: a class of teams.
 * `Team.definableClass s`: the properties definable under `s`, written `⟦L⟧` in [anttila-2025].
 
 ## Main results
@@ -38,10 +37,6 @@ subtype of its formulas. Soundness is `definableClass s ⊆ C` and completeness
 namespace Team
 
 variable {α : Type*} {Form : Type*}
-
-/-- A **team property** over points `α` is a class of teams; `Team/Closure.lean` states its
-closure properties. -/
-abbrev TeamProperty (α : Type*) : Type _ := Set (Finset α)
 
 /-- The class `⟦L⟧` of team properties **definable** under the support relation `s`: the support
 sets of the formulas. -/

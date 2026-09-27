@@ -177,8 +177,6 @@ import Linglib.Logic.Team.BSML.Scenarios
 import Linglib.Logic.Modal.Basic
 import Linglib.Logic.Team.Bisimulation
 import Linglib.Logic.Modal.Defs
-import Linglib.Logic.Team.Dependence
-import Linglib.Logic.Team.Inclusion
 import Linglib.Logic.Team.Inquisitive
 import Linglib.Logic.Team.Kripke
 import Linglib.Logic.Team.QBSML.Compactness

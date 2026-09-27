@@ -260,8 +260,7 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
 
 /-- **The inclusion atom breaks downward closure** (`Team.not_isLowerSet_incl`): if `w₂`
     supplies the `b`-value matching both its own and `w₁`'s `a`-value, but `w₁` does not match
-    itself, then `{w₁, w₂}` supports `a ⊆ b` and `{w₁}` does not. Anttila Ch. 5 contrasts MIL with
-    dependence logic on exactly this axis. -/
+    itself, then `{w₁, w₂}` supports `a ⊆ b` and `{w₁}` does not. -/
 theorem not_isLowerSet_incl_of_witness {a b : Atom} {w₁ w₂ : W} {M : KripkeModel W Atom}
     (hpair : M.val a w₁ = M.val b w₂) (hself : M.val a w₂ = M.val b w₂)
     (hwit : M.val a w₁ ≠ M.val b w₁) :

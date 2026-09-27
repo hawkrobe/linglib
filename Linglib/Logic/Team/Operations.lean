@@ -248,7 +248,7 @@ theorem supClosed_singleton_empty : SupClosed ({∅} : TeamProperty α) := by
   rw [hs, ht]
   exact sup_idem _
 
-/-! ### Tensor disjunction (Anttila Proposition 2.2.8)
+/-! ### Tensor disjunction ([anttila-2021] Proposition 2.2.8)
 
 The closure lemmas are those of `⊻` in the distributive lattice `Finset α`. -/
 
@@ -306,7 +306,7 @@ theorem _root_.SupClosed.possLax (hP : SupClosed P) : SupClosed (possLax R P) :=
 theorem empty_mem_possLax (hP : ∅ ∈ P) : ∅ ∈ possLax R P :=
   ⟨∅, Finset.empty_subset _, fun _ hx ↦ absurd hx (Finset.notMem_empty _), hP⟩
 
-/-! ### `flat` commutes with tensor disjunction (Anttila Proposition 2.2.16) -/
+/-! ### `flat` commutes with tensor disjunction ([anttila-2021] Proposition 2.2.16) -/
 
 /-- A team of points satisfying `p ∨ q` splits into its `p`-points and its `¬p`-points. -/
 theorem mem_tensor_flat : t ∈ tensor (flat p) (flat q) ↔ ∀ x ∈ t, p x ∨ q x where
