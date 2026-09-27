@@ -239,7 +239,7 @@ def FinAddMeasure.toSymmetricFuzzy (P : FinAddMeasure ℚ W) : SymmetricFuzzyMea
 open scoped Classical in
 /-- (48)'s scenario: Sam may go to school (`1`), more likely to the movies (`0`), or elsewhere
 (`2`); the movies alone measure `0.6`, as much as the movies or school. -/
-noncomputable def wax : SymmetricFuzzyMeasure (Fin 3) where
+noncomputable def cutClass : SymmetricFuzzyMeasure (Fin 3) where
   mu A := if 0 ∈ A then (if 1 ∈ A then (if 2 ∈ A then 1 else 6 / 10) else
       (if 2 ∈ A then 8 / 10 else 6 / 10))
     else (if 1 ∈ A then (if 2 ∈ A then 4 / 10 else 2 / 10) else (if 2 ∈ A then 4 / 10 else 0))
@@ -257,16 +257,16 @@ noncomputable def wax : SymmetricFuzzyMeasure (Fin 3) where
         | exact absurd (h a2) b2
         | norm_num
 
-/-- (48): under `wax`, going to the movies is exactly as likely as going to school or to the
+/-- (48): under `cutClass`, going to the movies is exactly as likely as going to school or to the
 movies, although going to school is possible; the measure is not qualitatively additive. -/
 theorem fuzzy_counterexample :
-    wax.mu {0} = wax.mu ({1} ∪ {0}) ∧ 0 < wax.mu {1} ∧
-      ¬(wax.mu ({1} ∪ {0}) ≤ wax.mu {0} ↔
-        wax.mu (({1} ∪ {0}) \ {0}) ≤ wax.mu ({0} \ ({1} ∪ {0}))) := by
+    cutClass.mu {0} = cutClass.mu ({1} ∪ {0}) ∧ 0 < cutClass.mu {1} ∧
+      ¬(cutClass.mu ({1} ∪ {0}) ≤ cutClass.mu {0} ↔
+        cutClass.mu (({1} ∪ {0}) \ {0}) ≤ cutClass.mu ({0} \ ({1} ∪ {0}))) := by
   have h1 : ({1} ∪ {0} : Set (Fin 3)) \ {0} = {1} := by ext x; fin_cases x <;> simp
   have h2 : ({0} : Set (Fin 3)) \ ({1} ∪ {0}) = ∅ := by ext x; fin_cases x <;> simp
   rw [h1, h2]
-  norm_num [wax]
+  norm_num [cutClass]
 
 /-- (49) with (47): under a qualitatively additive measure, a proposition as likely as a
 disjunction it is part of leaves the other disjunct no mass, so (48) forces school out. -/
@@ -391,7 +391,8 @@ theorem probMust_one_iff (A : Set W) : probMust P 1 A ↔ P A = 1 := by
     show 1 ≤ P A
     rw [h]
 
-/-- (64): under the strong auxiliaries, what is more likely than something might be. -/
+/-- (64): under the strong probabilistic auxiliaries, what is more likely than something might
+be, since it has positive mass. -/
 theorem moreLikely_might {A B : Set W} (h : Strict P.inducedGe A B) : probMight P 1 A := by
   obtain ⟨hle, hnot⟩ := h
   simp only [FinAddMeasure.inducedGe, ge_iff_le, not_le] at hle hnot
