@@ -233,7 +233,6 @@ import Linglib.Core.Order.Probability.Content
 import Linglib.Core.Order.Probability.Defs
 import Linglib.Core.Order.Probability.Representability
 import Linglib.Core.Order.Probability.Scott
-import Linglib.Core.Order.SetPreimage
 import Linglib.Core.Order.SignVectors
 import Linglib.Core.Order.StrictBounds
 import Linglib.Core.Order.SuccPred.Tree
