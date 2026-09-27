@@ -9,6 +9,7 @@ public import Linglib.Core.Analysis.SpecificLimits.ProdOneSub
 public import Linglib.Core.MeasureTheory.Constructions.List
 public import Linglib.Core.MeasureTheory.Constructions.Option
 public import Mathlib.Probability.Kernel.Basic
+public import Mathlib.Probability.Kernel.Composition.MapComap
 
 /-!
 # Autoregressive sequence models
@@ -32,6 +33,7 @@ by a divergent series suffices.
 * `condPrefixProb`, `prefixProb`, `stringProb`, `stringMeasure`.
 * `IsTight`: the string probabilities sum to one.
 * `survival`, `stopProb`, `eosHazard`.
+* `after`: the model after a context.
 
 ## Main results
 
@@ -45,6 +47,9 @@ by a divergent series suffices.
 * `survival_le_pow`: a constant lower bound makes survival decay geometrically.
 * `isTight_iff_of_next_none_eq`: the criterion when the end probability depends only on length.
 * `tsum_length_mul_stringProb_le`: expected length is at most total survival.
+* `stringProb_append`, `IsTight.after`, `IsTight.stringMeasure_setOf_prefix`: a string's
+  probability factors through the model after its prefix, which inherits tightness, so in a tight
+  model the strings extending a prefix have total probability its prefix probability.
 
 ## Implementation notes
 
@@ -137,6 +142,66 @@ def IsTight : Prop := ∑' x, M.stringProb x = 1
 theorem isTight_iff_isProbabilityMeasure : M.IsTight ↔ IsProbabilityMeasure M.stringMeasure :=
   ⟨fun h ↦ ⟨by rw [stringMeasure_univ, h]⟩, fun h ↦ by
     rw [IsTight, ← stringMeasure_univ, measure_univ]⟩
+
+/-! ### Continuations -/
+
+/-- The model after the context `c`: after each prefix `u` it continues as the model does after
+`c ++ u`. -/
+noncomputable def after (c : List α) : AutoregressiveSequenceModel α where
+  next := M.next.comap (c ++ ·) .of_discrete
+
+@[simp] theorem next_after (c u : List α) : (M.after c).next u = M.next (c ++ u) := rfl
+
+theorem condPrefixProb_append_left (c c' z : List α) :
+    M.condPrefixProb (c ++ c') z = (M.after c).condPrefixProb c' z := by
+  induction z generalizing c' with
+  | nil => simp
+  | cons a z ih => simp [← ih, List.append_assoc]
+
+theorem prefixProb_after (c z : List α) : (M.after c).prefixProb z = M.condPrefixProb c z := by
+  rw [prefixProb, ← condPrefixProb_append_left, List.append_nil]
+
+theorem prefixProb_append (x z : List α) :
+    M.prefixProb (x ++ z) = M.prefixProb x * (M.after x).prefixProb z := by
+  rw [prefixProb, condPrefixProb_append, prefixProb_after, List.nil_append]
+  rfl
+
+theorem stringProb_append (x z : List α) :
+    M.stringProb (x ++ z) = M.prefixProb x * (M.after x).stringProb z := by
+  rw [stringProb, stringProb, prefixProb_append, next_after, mul_assoc]
+
+theorem condPrefixProb_le_one (c x : List α) : M.condPrefixProb c x ≤ 1 := by
+  induction x generalizing c with
+  | nil => simp
+  | cons a x ih => exact mul_le_one' prob_le_one (ih _)
+
+theorem prefixProb_ne_top (x : List α) : M.prefixProb x ≠ ∞ :=
+  ne_top_of_le_ne_top ENNReal.one_ne_top (M.condPrefixProb_le_one [] x)
+
+/-- A model whose every continuation has positive probability gives every prefix positive
+probability. -/
+theorem condPrefixProb_ne_zero (h : ∀ c a, M.next c {some a} ≠ 0) (c x : List α) :
+    M.condPrefixProb c x ≠ 0 := by
+  induction x generalizing c with
+  | nil => simp
+  | cons a x ih => exact mul_ne_zero (h c a) (ih _)
+
+/-- The strings extending `x` have total probability the prefix probability of `x` times the
+total probability of the model after `x`. -/
+theorem stringMeasure_setOf_prefix (x : List α) :
+    M.stringMeasure {y | x <+: y} = M.prefixProb x * ∑' z, (M.after x).stringProb z := by
+  classical
+  let e : List α ≃ ({y | x <+: y} : Set (List α)) :=
+    { toFun z := ⟨x ++ z, List.prefix_append x z⟩
+      invFun y := y.1.drop x.length
+      left_inv z := by simp
+      right_inv y := Subtype.ext (List.prefix_iff_eq_append.1 y.2) }
+  rw [stringMeasure, Measure.sum_apply _ .of_discrete, ← ENNReal.tsum_mul_left]
+  have hind (y : List α) : (M.stringProb y • Measure.dirac y) {y | x <+: y} =
+      {y | x <+: y}.indicator M.stringProb y := by
+    simp [Measure.dirac_apply' _ MeasurableSet.of_discrete, Set.indicator_apply]
+  rw [tsum_congr hind, ← _root_.tsum_subtype, ← e.tsum_eq]
+  exact tsum_congr fun z ↦ M.stringProb_append x z
 
 /-! ### Survival -/
 
@@ -339,5 +404,44 @@ theorem tsum_length_mul_stringProb_le :
   have hpos (k : ℕ) : j < k + (j + 1) := by omega
   simp only [hpos, ite_true]
   exact M.tsum_stopProb_add_le (j + 1)
+
+/-- The string probabilities of any model sum to at most one. -/
+theorem tsum_stringProb_le_one : ∑' x, M.stringProb x ≤ 1 := by
+  rw [tsum_stringProb, ENNReal.tsum_eq_iSup_nat]
+  exact iSup_le fun n ↦ le_self_add.trans (M.sum_range_stopProb_add_survival n).le
+
+omit [Countable α] [MeasurableSingletonClass α] in
+/-- Surviving `n` steps after `x` is surviving `n + |x|` steps through `x`. -/
+theorem prefixProb_mul_survival_after_le (x : List α) (n : ℕ) :
+    M.prefixProb x * (M.after x).survival n ≤ M.survival (n + x.length) := by
+  calc M.prefixProb x * (M.after x).survival n
+      = ∑' z : {z : List α // z.length = n}, M.prefixProb (x ++ z.1) := by
+        rw [survival, ← ENNReal.tsum_mul_left]
+        exact tsum_congr fun z ↦ (M.prefixProb_append x z).symm
+    _ ≤ M.survival (n + x.length) :=
+      ENNReal.tsum_comp_le_tsum_of_injective
+        (f := fun z ↦
+          (⟨x ++ z.1, by simp [z.2, add_comm]⟩ : {y : List α // y.length = n + x.length}))
+        (fun z z' h ↦ Subtype.ext (List.append_cancel_left (congrArg Subtype.val h)))
+        fun y ↦ M.prefixProb y.1
+
+/-- The model after a prefix of positive probability inherits tightness. -/
+theorem IsTight.after {M : AutoregressiveSequenceModel α} (hM : M.IsTight) {x : List α}
+    (hx : M.prefixProb x ≠ 0) : (M.after x).IsTight := by
+  rw [isTight_iff_tendsto_survival] at hM ⊢
+  have hlim : Tendsto (fun n ↦ M.survival (n + x.length) / M.prefixProb x) atTop (𝓝 0) := by
+    simpa using ENNReal.Tendsto.div_const ((tendsto_add_atTop_iff_nat x.length).2 hM) (.inr hx)
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hlim (fun _ ↦ bot_le)
+    fun n ↦ ?_
+  rw [ENNReal.le_div_iff_mul_le (.inl hx) (.inl (M.prefixProb_ne_top x)), mul_comm]
+  exact M.prefixProb_mul_survival_after_le x n
+
+/-- In a tight model the strings extending `x` have total probability its prefix probability. -/
+theorem IsTight.stringMeasure_setOf_prefix {M : AutoregressiveSequenceModel α} (hM : M.IsTight)
+    (x : List α) : M.stringMeasure {y | x <+: y} = M.prefixProb x := by
+  rw [M.stringMeasure_setOf_prefix]
+  by_cases hx : M.prefixProb x = 0
+  · rw [hx, zero_mul]
+  · rw [hM.after hx, mul_one]
 
 end AutoregressiveSequenceModel

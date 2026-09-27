@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.MeasureTheory.Constructions.Option
+public import Linglib.Core.Probability.AutoregressiveSequenceModel
 public import Mathlib.Data.List.Infix
 public import Mathlib.Probability.ConditionalProbability
 
@@ -34,6 +35,8 @@ belief update.
 * `nextProb_eq_div`: the next-word probability as a ratio of prefix probabilities.
 * `nextWord_singleton_some`, `nextWord_singleton_none`: the law of the next word gives each word
   its conditional probability and the end the probability that the yield is the prefix.
+* `nextWord_stringMeasure`: a tight autoregressive model's conditional distributions are the
+  next-word laws of the language model it defines ([du-etal-2023]).
 * `cond_consistent_append`: the chain rule for conditional prefix probabilities.
 
 ## References
@@ -41,6 +44,7 @@ belief update.
 * [stolcke-1995]
 * [hale-2001]
 * [levy-2008]
+* [du-etal-2023]
 -/
 
 @[expose] public section
@@ -142,5 +146,25 @@ theorem nextWord_singleton_none (ws : List W) :
   simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff, consistent,
     Set.mem_ofPred_eq]
   exact and_congr_right getElem?_length_eq_none_iff
+
+omit [MeasurableSpace T] [DiscreteMeasurableSpace T] in
+/-- A tight autoregressive model's conditional distribution after a prefix of positive
+probability is the next-word law of the language model it defines. -/
+theorem nextWord_stringMeasure [Countable W] (M : AutoregressiveSequenceModel W) (hM : M.IsTight)
+    {x : List W} (hx : M.prefixProb x ≠ 0) : nextWord M.stringMeasure id x = M.next x := by
+  refine Measure.ext_of_singleton fun o ↦ ?_
+  cases o with
+  | some a =>
+    rw [nextWord_singleton_some, nextProb_eq_div]
+    change M.stringMeasure {y | x ++ [a] <+: y} / M.stringMeasure {y | x <+: y} = _
+    rw [hM.stringMeasure_setOf_prefix, hM.stringMeasure_setOf_prefix, M.prefixProb_concat]
+    exact ((ENNReal.eq_div_iff hx (M.prefixProb_ne_top x)).2 rfl).symm
+  | none =>
+    rw [nextWord_singleton_none, cond_apply (measurableSet_consistent _ x)]
+    change (M.stringMeasure {y | x <+: y})⁻¹ * M.stringMeasure ({y | x <+: y} ∩ {y | y = x}) = _
+    have hsub : {y : List W | y = x} ⊆ {y | x <+: y} := fun y (hy : y = x) ↦ hy ▸ List.prefix_refl y
+    rw [Set.inter_eq_right.mpr hsub, show {y : List W | y = x} = {x} from rfl,
+      M.stringMeasure_singleton, hM.stringMeasure_setOf_prefix,
+      AutoregressiveSequenceModel.stringProb, ENNReal.inv_mul_cancel_left hx (M.prefixProb_ne_top x)]
 
 end Surprisal
