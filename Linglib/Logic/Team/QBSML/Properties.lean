@@ -59,8 +59,10 @@ namespace QBSML
 open Team
 
 variable {W Var Domain Const Pred : Type*}
-variable [DecidableEq W]
-variable [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
+
+section Closure
+
+variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 
 /-! ### Empty-team property for NE-free formulas -/
 
@@ -173,6 +175,8 @@ theorem soundFor_flat_neFree (M : Model W Domain Const Pred) :
   exact definableClassWhere_subset (C := IsFlat)
     fun _φ hφ => isFlat_support_of_neFree hφ M
 
+end Closure
+
 /-! ### Fact 1: classical validities
 
 [aloni-vanormondt-2023] Fact 1 lists the classical equivalences QBSML
@@ -183,6 +187,7 @@ arranged in De Morgan pairs — so each is `Iff.rfl`. -/
 
 section Fact1
 
+variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 variable (M : Model W Domain Const Pred) (φ ψ : Formula Var Const Pred)
   (x : Var) (s : Finset (Index W Var Domain))
 
@@ -221,6 +226,10 @@ theorem support_neg_exi :
   Iff.rfl
 
 end Fact1
+
+section Fragment
+
+variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 
 /-! ### Flatness as pointwise evaluation -/
 
@@ -381,6 +390,8 @@ theorem support_exi_of_update_closure (M : Model W Domain Const Pred)
   · rw [State.extendFunctional_filter_of_update_mem hpar]
     exact hsupp
 
+end Fragment
+
 /-! ### Classicality: the modal-free Realize bridge
 
 [aloni-vanormondt-2023] Proposition 4.1 reduces the NE-free fragment to
@@ -397,7 +408,6 @@ bridge: their right-hand side is classical *modal* logic, which mathlib's
 
 open FirstOrder Language
 
-omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain] in
 @[simp] theorem _root_.FirstOrder.Language.ModalStructure.realizeAt_rel₁
     (M : Model W Domain Const Pred)
     (P : Pred) (x : Var) (w : W) (v : Var → Domain) :
@@ -408,7 +418,6 @@ omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Finty
   rw [Formula.realize_rel₁, Term.realize_var, Matrix.cons_fin_one]
   exact Iff.rfl
 
-omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain] in
 @[simp] theorem _root_.FirstOrder.Language.ModalStructure.realizeAt_rel₁_const
     (M : Model W Domain Const Pred) (P : Pred) (c : Const) (w : W)
     (v : Var → Domain) :
@@ -425,7 +434,7 @@ omit [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Finty
     formulas over the monadic signature: quantifiers via the computable named
     binders `Formula.all₁` / `Formula.ex₁` (`none` on `NE` and modal
     formulas). -/
-def Formula.toFormula? :
+def Formula.toFormula? [DecidableEq Var] :
     Formula Var Const Pred → Option (((Language.monadic Pred)[[Const]]).Formula Var)
   | .pred P x => some ((predSymb P).formula₁ (Term.var x))
   | .predc P c => some ((predSymb P).formula₁ (((Language.monadic Pred).con c).term))
@@ -436,9 +445,8 @@ def Formula.toFormula? :
   | .univ x φ => φ.toFormula?.map (Formula.all₁ x ·)
   | _ => none
 
-omit [DecidableEq W] [Fintype Var] in
 /-- Translatable formulas are NE-free. -/
-theorem neFree_of_toFormula? :
+theorem neFree_of_toFormula? [DecidableEq Var] :
     ∀ {φ : Formula Var Const Pred} {ψ : ((Language.monadic Pred)[[Const]]).Formula Var},
       φ.toFormula? = some ψ → φ.NEFree := by
   intro φ
@@ -479,9 +487,8 @@ theorem neFree_of_toFormula? :
   | ne => intro ψ hψ; simp [Formula.toFormula?] at hψ
   | poss _ _ => intro ψ hψ; simp [Formula.toFormula?] at hψ
 
-omit [DecidableEq W] [Fintype Var] [DecidableEq Domain] [Fintype Domain] in
 /-- Updating an index's assignment refines the matching valuation update. -/
-private lemma update_refines {i : Index W Var Domain} {v : Var → Domain}
+private lemma update_refines [DecidableEq Var] {i : Index W Var Domain} {v : Var → Domain}
     (hv : ∀ y, i.assign y = some (v y)) (x : Var) (d : Domain) :
     ∀ y, (i.update x d).assign y = some (Function.update v x d y) := by
   intro y
@@ -491,6 +498,10 @@ private lemma update_refines {i : Index W Var Domain} {v : Var → Domain}
     rw [Function.update_self, Function.update_self]
   · rw [Function.update_of_ne hy, Function.update_of_ne hy]
     exact hv y
+
+section RealizeAt
+
+variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 
 /-- Joint singleton bridge: support of a translatable formula at `{i}` is
     classical satisfaction at `i.world`, and anti-support its negation. The
@@ -760,6 +771,8 @@ theorem support_iff_forall_realizeAt (M : Model W Domain Const Pred)
   exact forall₂_congr fun i hi =>
     support_singleton_iff_realizeAt M hψ (hv i hi)
 
+end RealizeAt
+
 /-! ### Classicality II: the full modal bridge
 
 The complete [aloni-vanormondt-2023] Proposition 4.1: `Formula.toModal?`
@@ -771,7 +784,7 @@ every index. The translation is total on exactly the NE-free fragment. -/
 /-- Translate QBSML into modal formulas over the monadic signature: atoms
     embed as classical formulas, `◇` becomes the derived `ModalFormula.diamond`,
     quantifiers become named binders; only `NE` returns `none`. -/
-def Formula.toModal? :
+def Formula.toModal? [DecidableEq Var] :
     Formula Var Const Pred →
       Option (ModalFormula ((Language.monadic Pred)[[Const]]) Var)
   | .pred P x => some ((predSymb P).modalFormula₁ (Term.var x))
@@ -787,9 +800,8 @@ def Formula.toModal? :
   | .exi x φ => φ.toModal?.map (ModalFormula.ex x ·)
   | .univ x φ => φ.toModal?.map (ModalFormula.all x ·)
 
-omit [DecidableEq W] [DecidableEq Var] [Fintype Var] in
 /-- Modally translatable formulas are NE-free. -/
-theorem neFree_of_toModal? :
+theorem neFree_of_toModal? [DecidableEq Var] :
     ∀ {φ : Formula Var Const Pred}
       {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var},
       φ.toModal? = some τ → φ.NEFree := by
@@ -835,11 +847,10 @@ theorem neFree_of_toModal? :
     | some α => exact .univ x (ih hφ)
   | ne => intro τ hτ; simp [Formula.toModal?] at hτ
 
-omit [DecidableEq W] [DecidableEq Var] [Fintype Var] in
 /-- The modal translation is total on the NE-free fragment: together with
     `neFree_of_toModal?`, the translatable and NE-free fragments
     coincide. -/
-theorem exists_toModal?_of_neFree :
+theorem exists_toModal?_of_neFree [DecidableEq Var] :
     ∀ {φ : Formula Var Const Pred}, φ.NEFree →
       ∃ τ, φ.toModal? = some τ := by
   intro φ h
@@ -866,6 +877,10 @@ theorem exists_toModal?_of_neFree :
   | @univ x _ _ ih =>
     obtain ⟨τ, hτ⟩ := ih
     exact ⟨.all x τ, by simp [Formula.toModal?, hτ]⟩
+
+section Realize
+
+variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 
 /-- Joint singleton bridge for the **full** NE-free fragment: support of a
     modally translatable formula at `{i}` is Kripke satisfaction at
@@ -1181,5 +1196,7 @@ theorem support_iff_forall_realize (M : Model W Domain Const Pred)
   rw [support_iff_forall_singleton (neFree_of_toModal? hτ)]
   exact forall₂_congr fun i hi =>
     support_singleton_iff_realize M hτ (hv i hi)
+
+end Realize
 
 end QBSML

@@ -39,7 +39,8 @@ connectives defines a flat property, pointwise its classical truth.
 
 * `Team.isFlat_flat`, `IsLowerSet.tensor`, `SupClosed.tensor`, `Team.empty_mem_tensor`,
   `Set.OrdConnected.tensor` — closure per connective.
-* `Team.flat_inter`, `Team.tensor_flat`, `Team.poss_flat`, `Team.nec_flat` — `flat` is a
+* `Team.flat_inter`, `Team.tensor_flat`, `Team.poss_flat`, `Team.nec_flat`,
+  `Team.possWitness_flat`, `Team.possLax_flat`, `Team.necImage_flat` — `flat` is a
   homomorphism.
 
 ## Implementation notes
@@ -306,5 +307,42 @@ theorem mem_tensor_flat : t ∈ tensor (flat p) (flat q) ↔ ∀ x ∈ t, p x �
 
 theorem tensor_flat (p q : α → Prop) : tensor (flat p) (flat q) = flat fun x ↦ p x ∨ q x :=
   Set.ext fun _ ↦ mem_tensor_flat
+
+/-! ### `flat` commutes with the image modalities
+
+On flat properties the single-witness, lax and image modalities agree with the flat ones:
+the witness team may be taken to be the `p`-successors of the team. -/
+
+theorem mem_possWitness_flat : t ∈ possWitness R (flat p) ↔ ∀ x ∈ t, ∃ y ∈ R x, p y where
+  mp := fun ⟨_, hY, hYp⟩ x hx ↦ (hY x hx).imp fun _ ⟨hyY, hyR⟩ ↦ ⟨hyR, hYp _ hyY⟩
+  mpr h := by
+    classical
+    exact ⟨(t.biUnion R).filter p, fun x hx ↦ (h x hx).imp fun _ ⟨hyR, hy⟩ ↦
+      ⟨Finset.mem_filter.mpr ⟨Finset.mem_biUnion.mpr ⟨x, hx, hyR⟩, hy⟩, hyR⟩,
+      fun _ hy ↦ (Finset.mem_filter.mp hy).2⟩
+
+theorem possWitness_flat (R : α → Finset α) (p : α → Prop) :
+    possWitness R (flat p) = flat fun x ↦ ∃ y ∈ R x, p y :=
+  Set.ext fun _ ↦ mem_possWitness_flat
+
+theorem mem_possLax_flat : t ∈ possLax R (flat p) ↔ ∀ x ∈ t, ∃ y ∈ R x, p y where
+  mp := fun ⟨_, _, hS, hSp⟩ x hx ↦ (hS x hx).imp fun _ ⟨hyS, hyR⟩ ↦ ⟨hyR, hSp _ hyS⟩
+  mpr h := by
+    classical
+    exact ⟨(t.biUnion R).filter p, Finset.filter_subset _ _, fun x hx ↦ (h x hx).imp
+      fun _ ⟨hyR, hy⟩ ↦ ⟨Finset.mem_filter.mpr ⟨Finset.mem_biUnion.mpr ⟨x, hx, hyR⟩, hy⟩, hyR⟩,
+      fun _ hy ↦ (Finset.mem_filter.mp hy).2⟩
+
+theorem possLax_flat (R : α → Finset α) (p : α → Prop) :
+    possLax R (flat p) = flat fun x ↦ ∃ y ∈ R x, p y :=
+  Set.ext fun _ ↦ mem_possLax_flat
+
+theorem mem_necImage_flat : t ∈ necImage R (flat p) ↔ ∀ x ∈ t, ∀ y ∈ R x, p y := by
+  simp only [mem_necImage, mem_flat, Finset.mem_biUnion, forall_exists_index, and_imp]
+  exact ⟨fun h x hx y hy ↦ h y x hx hy, fun h y x hx hy ↦ h x hx y hy⟩
+
+theorem necImage_flat (R : α → Finset α) (p : α → Prop) :
+    necImage R (flat p) = flat fun x ↦ ∀ y ∈ R x, p y :=
+  Set.ext fun _ ↦ mem_necImage_flat
 
 end Team

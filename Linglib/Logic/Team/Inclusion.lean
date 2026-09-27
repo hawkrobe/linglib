@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Logic.Team.Kripke
+public import Linglib.Logic.Modal.Defs
 public import Linglib.Logic.Team.Operations
 public import Linglib.Logic.Team.Closure
 public import Linglib.Logic.Team.Definability
@@ -51,6 +52,9 @@ in the union).
   (AHY 2024 §2, "Empty Team Property").
 * `not_isLowerSet_incl_of_witness` — constructive witness that the
   inclusion atom breaks downward closure.
+* `Formula.InclFree`, `Realize`, `support_iff_forall_realize` — without
+  inclusion atoms MIL is classical modal logic: support is pointwise Kripke
+  truth.
 
 ## Implementation notes
 
@@ -101,7 +105,7 @@ MIL would lose union closure. We follow the paper in using lax.
 
 namespace ModalLogic.Inclusion
 
-variable {W : Type*} [DecidableEq W] {Atom : Type*}
+variable {W : Type*} {Atom : Type*}
 
 open ModalLogic (KripkeModel)
 
@@ -128,6 +132,39 @@ inductive Formula (Atom : Type*) where
   /-- Necessity modal `□`. -/
   | nec (φ : Formula Atom)
   deriving Repr
+
+/-! ### Classical truth
+
+Without inclusion atoms MIL is classical modal logic ([anttila-2021]'s Proposition 2.2.16
+for the lax and image modalities, `support_iff_forall_realize` below). -/
+
+/-- `Formula.InclFree φ` holds when `φ` contains no inclusion atom. -/
+def Formula.InclFree : Formula Atom → Prop
+  | .atom _ | .bot => True
+  | .incl _ => False
+  | .neg φ | .poss φ | .nec φ => φ.InclFree
+  | .conj φ ψ | .disj φ ψ => φ.InclFree ∧ ψ.InclFree
+
+open scoped ModalLogic in
+/-- Classical Kripke truth of a MIL formula at a world, with `◇` and `□` the shared
+    `ModalLogic.diamond` and `ModalLogic.box`; an inclusion atom is true at every world. -/
+def Realize (M : KripkeModel W Atom) : Formula Atom → W → Prop
+  | .atom p, w => M.val p w = true
+  | .bot, _ => False
+  | .incl _, _ => True
+  | .neg ψ, w => ¬ Realize M ψ w
+  | .conj ψ₁ ψ₂, w => Realize M ψ₁ w ∧ Realize M ψ₂ w
+  | .disj ψ₁ ψ₂, w => Realize M ψ₁ w ∨ Realize M ψ₂ w
+  | .poss ψ, w => ◇[M.Accessible] (Realize M ψ) w
+  | .nec ψ, w => □[M.Accessible] (Realize M ψ) w
+
+theorem realize_poss {M : KripkeModel W Atom} {ψ : Formula Atom} {w : W} :
+    Realize M (.poss ψ) w ↔ ∃ v ∈ M.access w, Realize M ψ v := Iff.rfl
+
+theorem realize_nec {M : KripkeModel W Atom} {ψ : Formula Atom} {w : W} :
+    Realize M (.nec ψ) w ↔ ∀ v ∈ M.access w, Realize M ψ v := Iff.rfl
+
+variable [DecidableEq W]
 
 /-! ### Semantics (AHY 2024 Definition 2.2) -/
 
@@ -296,5 +333,40 @@ theorem soundFor_unionClosed_inter_empty (M : KripkeModel W Atom) :
     SoundFor (support M) (unionClosedProperties ∩ emptyTeamProperties) :=
   Set.subset_inter (definableClass_subset (supClosed_support M))
     (definableClass_subset (support_empty M))
+
+/-! ### The classical fragment
+
+On `incl`-free formulas support is pointwise classical truth: the lax and image modalities
+agree with the flat ones on flat properties (`Team.possLax_flat`, `Team.necImage_flat`). -/
+
+section Classical
+
+variable {M : KripkeModel W Atom} {φ : Formula Atom} {w : W} {t : Finset W}
+
+/-- On `incl`-free formulas, support is pointwise classical truth. -/
+theorem support_iff_forall_realize (hI : φ.InclFree) (t : Finset W) :
+    support M φ t ↔ ∀ w ∈ t, Realize M φ w := by
+  induction φ generalizing t with
+  | atom p => simp [support, eval, Realize]
+  | bot => simp [support, eval, Realize, Finset.eq_empty_iff_forall_notMem]
+  | incl xys => exact hI.elim
+  | neg ψ ih =>
+    simp only [support, eval, Team.mem_flat, Realize]
+    exact forall₂_congr fun w _ ↦ not_congr ((ih hI {w}).trans (by simp))
+  | conj ψ₁ ψ₂ ih₁ ih₂ => simp [support, eval, ih₁ hI.1, ih₂ hI.2, Realize, forall_and]
+  | disj ψ₁ ψ₂ ih₁ ih₂ =>
+    simp only [support, eval, ih₁ hI.1, ih₂ hI.2]
+    exact Team.mem_tensor_flat.trans (by simp [Realize])
+  | poss ψ ih =>
+    simp only [support, eval, ih hI]
+    exact Team.mem_possLax_flat.trans (by simp [realize_poss])
+  | nec ψ ih =>
+    simp only [support, eval, ih hI]
+    exact Team.mem_necImage_flat.trans (by simp [realize_nec])
+
+theorem support_singleton_iff_realize (hI : φ.InclFree) : support M φ {w} ↔ Realize M φ w := by
+  simp [support_iff_forall_realize hI]
+
+end Classical
 
 end ModalLogic.Inclusion

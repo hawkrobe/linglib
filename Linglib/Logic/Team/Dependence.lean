@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Logic.Team.Kripke
+public import Linglib.Logic.Modal.Defs
 public import Linglib.Logic.Team.Bisimulation
 public import Linglib.Logic.Bilateral.Defs
 public import Linglib.Logic.Team.Operations
@@ -77,6 +78,9 @@ worlds with matching `x⃗`).
 * `isBilateral` — `Bilateral.IsBilateral` instance.
 * `isLowerSet_support` — Lemma 4.2's downward-closure property.
 * `support_empty` — every formula is supported on the empty team.
+* `Formula.DepFree`, `Realize`, `support_iff_forall_realize` — without
+  dependence atoms MDL is classical modal logic: support is pointwise
+  Kripke truth.
 * `not_supClosed_dep_of_witness` — the witness that `dep` breaks
   union-closure: in any model with two worlds sharing a `p`-value but
   differing on `q`, the singleton teams support `=(p; q)` but their
@@ -125,7 +129,7 @@ infrastructure but differ in atom flavor:
 
 namespace ModalLogic.Dependence
 
-variable {W : Type*} [DecidableEq W] {Atom : Type*}
+variable {W : Type*} {Atom : Type*}
 
 open ModalLogic (KripkeModel)
 
@@ -153,6 +157,34 @@ inductive Formula (Atom : Type*) where
   /-- Possibility modal `◇`. -/
   | poss (φ : Formula Atom)
   deriving Repr
+
+/-! ### Classical truth
+
+Without dependence atoms MDL is classical modal logic ([anttila-2021]'s Proposition 2.2.16
+for Väänänen's modalities, `support_iff_forall_realize` below). -/
+
+/-- `Formula.DepFree φ` holds when `φ` contains no dependence atom. -/
+def Formula.DepFree : Formula Atom → Prop
+  | .atom _ => True
+  | .dep _ _ => False
+  | .neg φ | .poss φ => φ.DepFree
+  | .conj φ ψ | .disj φ ψ => φ.DepFree ∧ ψ.DepFree
+
+open scoped ModalLogic in
+/-- Classical Kripke truth of an MDL formula at a world, with `◇` the shared
+    `ModalLogic.diamond`; a dependence atom is true at every world. -/
+def Realize (M : KripkeModel W Atom) : Formula Atom → W → Prop
+  | .atom p, w => M.val p w = true
+  | .dep _ _, _ => True
+  | .neg ψ, w => ¬ Realize M ψ w
+  | .conj ψ₁ ψ₂, w => Realize M ψ₁ w ∧ Realize M ψ₂ w
+  | .disj ψ₁ ψ₂, w => Realize M ψ₁ w ∨ Realize M ψ₂ w
+  | .poss ψ, w => ◇[M.Accessible] (Realize M ψ) w
+
+theorem realize_poss {M : KripkeModel W Atom} {ψ : Formula Atom} {w : W} :
+    Realize M (.poss ψ) w ↔ ∃ v ∈ M.access w, Realize M ψ v := Iff.rfl
+
+variable [DecidableEq W]
 
 /-! ### Semantics (Definition 4.1) -/
 
@@ -488,5 +520,60 @@ theorem bisim_invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
               (isLowerSet_support M' ψ Finset.inter_subset_left hY'supp)⟩
 
 end Bisimulation
+
+/-! ### The classical fragment
+
+On `dep`-free formulas support is pointwise classical truth and anti-support pointwise
+classical falsity: Väänänen's single-witness and image modalities agree with the flat ones
+on flat properties (`Team.possWitness_flat`, `Team.necImage_flat`). -/
+
+section Classical
+
+variable {M : KripkeModel W Atom} {φ : Formula Atom} {w : W} {t : Finset W}
+
+/-- On `dep`-free formulas, support is pointwise classical truth and anti-support pointwise
+    classical falsity. -/
+theorem eval_iff_forall_realize (hD : φ.DepFree) (b : Bool) (t : Finset W) :
+    eval M b φ t ↔ ∀ w ∈ t, (Realize M φ w ↔ b) := by
+  induction φ generalizing b t with
+  | atom p => cases b <;> simp [eval, Realize]
+  | dep xs y => exact hD.elim
+  | neg ψ ih =>
+    cases b
+    · simpa [eval, Realize] using ih hD true t
+    · simpa [eval, Realize] using ih hD false t
+  | conj ψ₁ ψ₂ ih₁ ih₂ =>
+    cases b
+    · simp only [eval, ih₁ hD.1, ih₂ hD.2]
+      refine Team.mem_tensor_flat.trans ?_
+      simp [Realize, imp_iff_not_or]
+    · simp [eval, ih₁ hD.1, ih₂ hD.2, Realize, forall_and]
+  | disj ψ₁ ψ₂ ih₁ ih₂ =>
+    cases b
+    · simp [eval, ih₁ hD.1, ih₂ hD.2, Realize, forall_and, not_or]
+    · simp only [eval, ih₁ hD.1, ih₂ hD.2]
+      refine Team.mem_tensor_flat.trans ?_
+      simp [Realize]
+  | poss ψ ih =>
+    cases b
+    · simp only [eval, ih hD false]
+      refine Team.mem_necImage_flat.trans ?_
+      simp [realize_poss]
+    · simp only [eval, ih hD true]
+      refine Team.mem_possWitness_flat.trans ?_
+      simp [realize_poss]
+
+theorem support_iff_forall_realize (hD : φ.DepFree) :
+    support M φ t ↔ ∀ w ∈ t, Realize M φ w := by
+  simpa using eval_iff_forall_realize hD true t
+
+theorem antiSupport_iff_forall_not_realize (hD : φ.DepFree) :
+    antiSupport M φ t ↔ ∀ w ∈ t, ¬ Realize M φ w := by
+  simpa using eval_iff_forall_realize hD false t
+
+theorem support_singleton_iff_realize (hD : φ.DepFree) : support M φ {w} ↔ Realize M φ w := by
+  simp [support_iff_forall_realize hD]
+
+end Classical
 
 end ModalLogic.Dependence
