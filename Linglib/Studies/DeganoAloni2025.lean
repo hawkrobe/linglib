@@ -171,13 +171,13 @@ variable [DecidableEq (V → E)] {a b : E}
 
 private theorem renders_unknown (hab : a ≠ b) :
     Renders ({fun _ ↦ a, fun _ ↦ b} : Finset (V → E)) v x .specificUnknown := by
-  refine ⟨dep_iff.2 ?_, fun _ ↦ a, by simp, fun _ ↦ b, by simp, by simp, hab⟩
+  refine ⟨dep_iff.2 ?_, var_iff.2 ⟨fun _ ↦ a, by simp, fun _ ↦ b, by simp, by simp, hab⟩⟩
   simp [hab, hab.symm]
 
 private theorem renders_nonSpecific [DecidableEq V] (hab : a ≠ b) (hvx : v ≠ x) :
     Renders ({fun _ ↦ a, Function.update (fun _ ↦ a) x b} : Finset (V → E)) v x
       .nonSpecific :=
-  ⟨fun _ ↦ a, by simp, Function.update (fun _ ↦ a) x b, by simp, by simp [hvx],
+  var_iff.2 ⟨fun _ ↦ a, by simp, Function.update (fun _ ↦ a) x b, by simp, by simp [hvx],
     by simpa using hab⟩
 
 end Witnesses
