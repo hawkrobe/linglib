@@ -9,6 +9,7 @@ public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Core.InformationTheory.Surprisal
 public import Linglib.Core.Probability.AutoregressiveSequenceModel
 public import Linglib.Core.Probability.Kernel.OfWeights
+public import Linglib.Processing.Surprisal.PrefixProbability
 
 /-!
 # Cotterell (2026): Surprisal Theory is Tautological (without Rational Grounding)
@@ -23,7 +24,10 @@ the claim holds with slope one and the negative log partition function as baseli
 condition is that the model be a language model, i.e. tight. When the end difficulty is bounded
 along a series whose exponentials diverge, the softmax model ends with probability at least those
 exponentials over the size of the extended alphabet, and it is tight by [du-etal-2023]'s
-sufficient condition (`isTight_softmaxModel`), which gives the tautology
+sufficient condition (`isTight_softmaxModel`). A tight model's next-unit distributions are the
+next-unit laws of the language model it defines (`Surprisal.nextWord_stringMeasure`), so the
+difficulty is the surprisal of the unit under that language model up to a context-dependent
+baseline (`surprisal_nextWord_softmaxModel`), the tautology
 (`exists_isTight_difficulty_eq_surprisal`); a constant bound also gives it finite expected length
 (`tsum_length_mul_stringProb_softmaxModel_ne_top`). Without the bound the construction can fail:
 an end difficulty growing linearly in the length of the prefix leaves the softmax model non-tight
@@ -132,15 +136,28 @@ theorem not_isTight_softmaxModel_length [Nonempty α] :
         ENNReal.tsum_le_tsum fun n ↦ pow_le_pow_of_le_one bot_le hr.le n.le_succ
       _ < ∞ := by rw [ENNReal.tsum_geometric]; exact ENNReal.inv_lt_top.2 (tsub_pos_of_lt hr)
 
+/-- Under a tight softmax model, the surprisal of a unit under the next-unit law of the language
+model is the difficulty plus the log partition function of the prefix. -/
+theorem surprisal_nextWord_softmaxModel (hd : ∀ o u, 0 ≤ d o u) {f : ℕ → ℝ}
+    (hf : ∀ u, d none u ≤ f (u.length + 1)) (hdiv : ∑' t, ENNReal.ofReal (exp (-f (t + 1))) = ∞)
+    (u : List α) (o : Option α) :
+    surprisal (Surprisal.nextWord (softmaxModel d).stringMeasure id u) o =
+      d o u + log (∑ o', exp (-d o' u)) := by
+  have hpos : (softmaxModel d).prefixProb u ≠ 0 :=
+    (softmaxModel d).condPrefixProb_ne_zero (fun _ _ ↦ Kernel.ofWeights_apply_singleton_ne_zero
+      (ENNReal.ofReal_pos.2 (exp_pos _)).ne' fun _ ↦ ENNReal.ofReal_ne_top) [] u
+  rw [Surprisal.nextWord_stringMeasure _ (isTight_softmaxModel hd hf hdiv) hpos,
+    surprisal_softmaxModel]
+
 /-- The tautology: a nonnegative difficulty measure whose end difficulty is bounded along a
-series with divergent exponentials is the surprisal of some language model up to a
-context-dependent baseline. -/
+series with divergent exponentials is the surprisal of the next unit under some language model,
+up to a context-dependent baseline. -/
 theorem exists_isTight_difficulty_eq_surprisal (hd : ∀ o u, 0 ≤ d o u) {f : ℕ → ℝ}
     (hf : ∀ u, d none u ≤ f (u.length + 1)) (hdiv : ∑' t, ENNReal.ofReal (exp (-f (t + 1))) = ∞) :
-    ∃ M : AutoregressiveSequenceModel α, M.IsTight ∧
-      ∃ b : List α → ℝ, ∀ o u, d o u = surprisal (M.next u) o + b u :=
+    ∃ M : AutoregressiveSequenceModel α, M.IsTight ∧ ∃ b : List α → ℝ,
+      ∀ o u, d o u = surprisal (Surprisal.nextWord M.stringMeasure id u) o + b u :=
   ⟨softmaxModel d, isTight_softmaxModel hd hf hdiv, fun u ↦ -log (∑ o', exp (-d o' u)),
-    fun o u ↦ by rw [surprisal_softmaxModel]; ring⟩
+    fun o u ↦ by rw [surprisal_nextWord_softmaxModel hd hf hdiv]; ring⟩
 
 /-- Proposition 1(b): a constant bound on the end difficulty gives the softmax model finite
 expected length. -/
