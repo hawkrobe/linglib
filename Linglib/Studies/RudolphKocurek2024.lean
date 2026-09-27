@@ -6,7 +6,7 @@ public import Linglib.Core.ModelTheory.LanguageMap
 public import Linglib.Core.ModelTheory.Semantics
 public import Mathlib.Order.Antisymmetrization
 public import Mathlib.Order.Defs.Unbundled
-public import Linglib.Core.Order.Probability.Lift
+public import Linglib.Logic.ComparativeProbability.WorldOrdering
 public import Linglib.Semantics.Degree.Basic
 public import Linglib.Semantics.Degree.Delineation
 
@@ -186,21 +186,21 @@ def coneDiff (le : W → W → Prop) (P Q : W → Prop) (i : W) : Set W :=
 
 /-- Whenever `below` is the strict form of the total `ge_w`, strict domination lifting is an ∃∀
 clause in `below`. -/
-theorem strict_dominationLift_iff_below {below : W → W → Prop}
+theorem strict_lewisLift_iff_below {below : W → W → Prop}
     (hTotal : ∀ a b, ge_w a b ∨ ge_w b a)
     (hBelow : ∀ a b, below a b ↔ ge_w b a ∧ ¬ ge_w a b) (A B : Set W) :
-    Strict (DominationLift ge_w) A B ↔ ∃ a ∈ A, ∀ b ∈ B, below b a := by
-  rw [strict_dominationLift_iff hTotal]
+    Strict (LewisLift ge_w) A B ↔ ∃ a ∈ A, ∀ b ∈ B, below b a := by
+  rw [strict_lewisLift_iff hTotal]
   exact exists_congr fun a ↦ and_congr_right fun _ ↦ forall₂_congr fun b _ ↦ (hBelow b a).symm
 
 /-- Whenever `below` is the strict form of the total `ge_w`, the cone-localized clause is the
 strict domination lift on the cone difference sets. -/
-theorem coneStrictLift_iff_strict_dominationLift {le below : W → W → Prop}
+theorem coneStrictLift_iff_strict_lewisLift {le below : W → W → Prop}
     (hTotal : ∀ a b, ge_w a b ∨ ge_w b a)
     (hBelow : ∀ a b, below a b ↔ ge_w b a ∧ ¬ ge_w a b) (P Q : W → Prop) (i : W) :
     coneStrictLift le below P Q i ↔
-      Strict (DominationLift ge_w) (coneDiff le P Q i) (coneDiff le Q P i) := by
-  rw [strict_dominationLift_iff_below hTotal hBelow]
+      Strict (LewisLift ge_w) (coneDiff le P Q i) (coneDiff le Q P i) := by
+  rw [strict_lewisLift_iff_below hTotal hBelow]
   unfold coneStrictLift coneDiff
   simp only [Set.mem_ofPred_eq, and_imp, and_assoc]
 
@@ -314,12 +314,12 @@ theorem ComparativeFree.realize_congr :
 
 /-- The comparative is the strict domination lift of Holliday and Icard, Lewis's lifting, applied to
 the cone at the evaluation index. -/
-theorem realize_comp_iff_strict_dominationLift :
+theorem realize_comp_iff_strict_lewisLift :
     Realize interp (.comp A B) ord.le i w ↔
-    Strict (DominationLift (flip ord.le))
+    Strict (LewisLift (flip ord.le))
       (coneDiff ord.le (Realize interp A ord.le · w) (Realize interp B ord.le · w) i)
       (coneDiff ord.le (Realize interp B ord.le · w) (Realize interp A ord.le · w) i) :=
-  coneStrictLift_iff_strict_dominationLift (fun a b ↦ ord.le_total b a) (fun _ _ ↦ Iff.rfl) _ _ _
+  coneStrictLift_iff_strict_lewisLift (fun a b ↦ ord.le_total b a) (fun _ _ ↦ Iff.rfl) _ _ _
 
 /-- The comparative is irreflexive, since a witness would make `A` both true and false. -/
 theorem not_realize_comp_self : ¬ Realize interp (.comp A A) le i w :=
@@ -550,13 +550,13 @@ variable (φ ψ : ComparativeFormula L E) (ord : SemanticOrdering I)
 /-- ≫ is the strict l-lifting under the coarser total preorder "not far below". The axioms on the
 distance function are exactly what make that relation total, so the lift of Holliday and Icard
 applies with ≪ in the role of <. -/
-theorem evalMuchMore_iff_strict_dominationLift :
+theorem evalMuchMore_iff_strict_lewisLift :
     EvalMuchMore interp φ ψ ord d i w ↔
     Strict
-      (DominationLift (fun a b ↦ ¬ FarBelow ord d a b))
+      (LewisLift (fun a b ↦ ¬ FarBelow ord d a b))
       (coneDiff ord.le (Eval interp φ ord · w) (Eval interp ψ ord · w) i)
       (coneDiff ord.le (Eval interp ψ ord · w) (Eval interp φ ord · w) i) :=
-  coneStrictLift_iff_strict_dominationLift
+  coneStrictLift_iff_strict_lewisLift
     (fun a b ↦ not_farBelow_total d a b)
     (fun _ _ ↦ ⟨fun h ↦ ⟨FarBelow.asymm d h, not_not_intro h⟩,
       fun h ↦ not_not.mp h.2⟩) _ _ i
@@ -564,13 +564,13 @@ theorem evalMuchMore_iff_strict_dominationLift :
 /-- *mostly* is the strict l-lifting comparing levels that are uniform for `φ`, the classes of
 `ord.equiv`, mathlib's `AntisymmRel.setoid`. Some reasonably high level where `φ` holds throughout,
 strictly below the index, dominates every level below it where `φ` fails throughout. -/
-theorem evalMostly_iff_strict_dominationLift :
+theorem evalMostly_iff_strict_lewisLift :
     EvalMostly interp φ ord d i w ↔
     Strict
-      (DominationLift (fun a b ↦ ord.le b a))
+      (LewisLift (fun a b ↦ ord.le b a))
       {x | ord.lt x i ∧ d.close i x ∧ ∀ j, ord.equiv j x → Eval interp φ ord j w}
       {x | ord.lt x i ∧ ∀ j, ord.equiv j x → ¬ Eval interp φ ord j w} := by
-  rw [strict_dominationLift_iff_below
+  rw [strict_lewisLift_iff_below
     (fun a b ↦ ord.le_total b a) (fun _ _ ↦ Iff.rfl)]
   simp only [Set.mem_ofPred_eq, and_imp, and_assoc]
   rfl
