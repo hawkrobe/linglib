@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Case.Basic
 public import Linglib.Syntax.Case.Alignment
+public import Linglib.Syntax.Case.Valuation
 
 /-!
 # Dependent case
@@ -21,14 +22,17 @@ domain.
   case.
 * `Rules`: the high, low and elsewhere cases of one domain, and `Rules.ofAlignment`, the rules
   of an alignment.
-* `NP`, `Valuation`: an NP before assignment, and its case with what valued it.
+* `NP`, `lexicalValuation`: an NP before assignment, and the valuation of NPs by lexical case.
 * `Rules.dependentPass`, `Rules.unmarkedPass`: the passes, over the NPs a predicate selects.
+* `Rules.valuations`: the valuations the rules can assign.
 * `Rules.assign`, `assignCases`: the one-domain algorithm, and its form for an alignment.
 
 ## Main results
 
 * `Rules.dependentPass_high`, `Rules.dependentPass_low`, `Rules.dependentPass_alone`: what the
   dependent rules do to an NP with a caseless NP below it, above it, or neither.
+* `Rules.extends_dependentPass`, `Rules.extends_unmarkedPass`, `Rules.extends_assign`: each pass
+  extends the valuation by what the rules assign.
 * `Rules.assign_length`: the algorithm is total.
 * `Rules.assign_getElem?_of_some`: lexical case is kept, so it bleeds the dependent rules.
 * `Rules.case_mem_cases`: a caseless NP is valued only with a case the rules mention.
@@ -38,7 +42,8 @@ domain.
 ## Implementation notes
 
 List position encodes structural height: earlier is higher, and c-commands everything later.
-Labels are inert; `getCaseOf` and `getMechanismOf` look them up.
+Labels are inert; `getCaseOf` and `getMechanismOf` look them up. The passes are `Valuation.fill`,
+so what they share (totality, persistence of values) comes from `Case.Valuation.Extends`.
 
 ## References
 
@@ -103,280 +108,168 @@ structure NP where
   lexicalCase : Option Case := none
   deriving DecidableEq, Repr
 
-/-- A case together with what valued it, or nothing if no rule has reached the NP. -/
-abbrev Valuation := Option (Case × Mechanism)
-
 /-- Every NP with its lexical case valued and nothing else. -/
-def initial (lexicalCase : α → Option Case) (xs : List α) : List (α × Valuation) :=
-  xs.map λ x => (x, (lexicalCase x).map (·, .lexical))
+def lexicalValuation (lexicalCase : α → Option Case) (xs : List α) :
+    Valuation α (Case × Mechanism) :=
+  Valuation.initial (fun x ↦ (lexicalCase x).map (·, .lexical)) xs
 
 /-- The case of the NP labelled `label`, if any. -/
-def getCaseOf (label : String) (out : List (NP × Valuation)) : Option Case :=
+def getCaseOf (label : String) (out : Valuation NP (Case × Mechanism)) : Option Case :=
   (out.find? (·.1.label == label)).bind (·.2.map (·.1))
 
 /-- What valued the NP labelled `label`, if anything. -/
-def getMechanismOf (label : String) (out : List (NP × Valuation)) : Option Mechanism :=
+def getMechanismOf (label : String) (out : Valuation NP (Case × Mechanism)) :
+    Option Mechanism :=
   (out.find? (·.1.label == label)).bind (·.2.map (·.2))
 
 /-! ### The passes -/
 
-/-- `markBy`, with indices counted from `i`. -/
-def markByFrom (f : ℕ → α × Valuation → Valuation) :
-    ℕ → List (α × Valuation) → List (α × Valuation)
-  | _, [] => []
-  | i, s :: rest => (if s.2.isNone then (s.1, f i s) else s) :: markByFrom f (i + 1) rest
-
-/-- Value every unvalued NP for which `f` proposes a value. -/
-def markBy (f : ℕ → α × Valuation → Valuation) (states : List (α × Valuation)) :
-    List (α × Valuation) :=
-  markByFrom f 0 states
-
-theorem markByFrom_getElem? (f : ℕ → α × Valuation → Valuation) (i j : ℕ)
-    (states : List (α × Valuation)) :
-    (markByFrom f i states)[j]? =
-      states[j]?.map λ s => if s.2.isNone then (s.1, f (i + j) s) else s := by
-  induction states generalizing i j with
-  | nil => simp [markByFrom]
-  | cons s rest ih =>
-    cases j with
-    | zero => simp [markByFrom]
-    | succ j => simp [markByFrom, ih, Nat.add_assoc, Nat.add_comm 1 j]
-
-theorem markBy_getElem? (f : ℕ → α × Valuation → Valuation) (states : List (α × Valuation))
-    (j : ℕ) :
-    (markBy f states)[j]? = states[j]?.map λ s => if s.2.isNone then (s.1, f j s) else s := by
-  simp [markBy, markByFrom_getElem?]
-
-/-- The indices of the unvalued NPs `P` selects, highest first. -/
-def eligible (P : α → Bool) (states : List (α × Valuation)) : List ℕ :=
-  (states.zipIdx.filter λ s => s.1.2.isNone && P s.1.1).map (·.2)
-
-theorem mem_eligible_iff {P : α → Bool} {states : List (α × Valuation)} {i : ℕ} :
-    i ∈ eligible P states ↔ ∃ x, states[i]? = some (x, none) ∧ P x := by
-  simp only [eligible, List.mem_map, List.mem_filter, List.mem_zipIdx_iff_getElem?,
-    Bool.and_eq_true, Option.isNone_iff_eq_none]
-  constructor
-  · rintro ⟨⟨⟨x, v⟩, j⟩, ⟨hj, rfl, hx⟩, rfl⟩
-    exact ⟨x, hj, hx⟩
-  · rintro ⟨x, hx, hP⟩
-    exact ⟨((x, none), i), ⟨hx, rfl, hP⟩, rfl⟩
-
 /-- The dependent rules over the NPs `P` selects: the high case goes to those c-commanding
     another and the low case to those c-commanded by another, both read off the same
     configuration; an NP in both positions takes the high case. -/
-def Rules.dependentPass (r : Rules) (P : α → Bool) (states : List (α × Valuation)) :
-    List (α × Valuation) :=
-  let e := eligible P states
-  markBy (λ i _ =>
+def Rules.dependentPass (r : Rules) (P : α → Bool) (s : Valuation α (Case × Mechanism)) :
+    Valuation α (Case × Mechanism) :=
+  let e := s.unvalued P
+  s.fill fun i _ ↦
     if i ∈ e then
       if r.high.isSome && e.any (i < ·) then r.high.map (·, .dependent)
       else if e.any (· < i) then r.low.map (·, .dependent)
       else none
-    else none) states
+    else none
 
 /-- The elsewhere case to the unvalued NPs `P` selects. -/
-def Rules.unmarkedPass (r : Rules) (P : α → Bool) (states : List (α × Valuation)) :
-    List (α × Valuation) :=
-  markBy (λ _ s => if P s.1 then r.unmarked.map (·, .unmarked) else none) states
+def Rules.unmarkedPass (r : Rules) (P : α → Bool) (s : Valuation α (Case × Mechanism)) :
+    Valuation α (Case × Mechanism) :=
+  s.fill fun _ x ↦ if P x then r.unmarked.map (·, .unmarked) else none
 
 /-- Case for every NP of one domain: the dependent rules, then the elsewhere case. -/
-def Rules.assign (r : Rules) (nps : List NP) : List (NP × Valuation) :=
-  r.unmarkedPass (λ _ => true) (r.dependentPass (λ _ => true) (initial NP.lexicalCase nps))
+def Rules.assign (r : Rules) (nps : List NP) : Valuation NP (Case × Mechanism) :=
+  r.unmarkedPass (fun _ ↦ true) <|
+    r.dependentPass (fun _ ↦ true) (lexicalValuation (·.lexicalCase) nps)
 
 /-- The one-domain algorithm of an alignment. -/
-def assignCases (a : Alignment.AlignmentType) (nps : List NP) : List (NP × Valuation) :=
+def assignCases (a : Alignment.AlignmentType) (nps : List NP) : Valuation NP (Case × Mechanism) :=
   (Rules.ofAlignment a).assign nps
 
-/-! ### Totality -/
+/-! ### What the passes assign -/
 
-theorem markByFrom_length (f : ℕ → α × Valuation → Valuation) (i : ℕ)
-    (states : List (α × Valuation)) : (markByFrom f i states).length = states.length := by
-  induction states generalizing i with
-  | nil => rfl
-  | cons _ _ ih => simp [markByFrom, ih]
+/-- The valuations the rules can assign: a dependent case, or the elsewhere case. -/
+def Rules.valuations (r : Rules) : Set (Case × Mechanism) :=
+  {v | v.2 = .dependent ∧ (r.high = some v.1 ∨ r.low = some v.1) ∨
+    v.2 = .unmarked ∧ r.unmarked = some v.1}
 
-@[simp] theorem markBy_length (f : ℕ → α × Valuation → Valuation) (states : List (α × Valuation)) :
-    (markBy f states).length = states.length := markByFrom_length ..
+theorem Rules.fst_mem_cases {r : Rules} {v : Case × Mechanism} (h : v ∈ r.valuations) :
+    v.1 ∈ r.cases := by
+  rcases h with ⟨-, h | h⟩ | ⟨-, h⟩
+  · exact high_mem_cases h
+  · exact low_mem_cases h
+  · exact unmarked_mem_cases h
 
-@[simp] theorem Rules.dependentPass_length (r : Rules) (P : α → Bool)
-    (states : List (α × Valuation)) : (r.dependentPass P states).length = states.length :=
-  markBy_length ..
+theorem Rules.extends_dependentPass (r : Rules) (P : α → Bool)
+    (s : Valuation α (Case × Mechanism)) :
+    s.Extends (· ∈ r.valuations) (r.dependentPass P s) :=
+  Valuation.extends_fill (fun _ _ v hv ↦ by
+    split_ifs at hv <;>
+      first
+      | cases hv
+      | (obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 hv
+         first | exact .inl ⟨rfl, .inl hc⟩ | exact .inl ⟨rfl, .inr hc⟩)) s
 
-@[simp] theorem Rules.unmarkedPass_length (r : Rules) (P : α → Bool)
-    (states : List (α × Valuation)) : (r.unmarkedPass P states).length = states.length :=
-  markBy_length ..
+theorem Rules.extends_unmarkedPass (r : Rules) (P : α → Bool)
+    (s : Valuation α (Case × Mechanism)) :
+    s.Extends (· ∈ r.valuations) (r.unmarkedPass P s) :=
+  Valuation.extends_fill (fun _ _ v hv ↦ by
+    split_ifs at hv
+    obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 hv
+    exact .inr ⟨rfl, hc⟩) s
 
-@[simp] theorem initial_length (lexicalCase : α → Option Case) (xs : List α) :
-    (initial lexicalCase xs).length = xs.length := List.length_map ..
+/-- Assignment extends the lexical valuation by what the rules assign. -/
+theorem Rules.extends_assign (r : Rules) (nps : List NP) :
+    (lexicalValuation (·.lexicalCase) nps).Extends (· ∈ r.valuations) (r.assign nps) :=
+  (r.extends_dependentPass _ _).trans (r.extends_unmarkedPass _ _)
 
 /-- The algorithm is total: one valuation per NP. -/
 @[simp] theorem Rules.assign_length (r : Rules) (nps : List NP) :
     (r.assign nps).length = nps.length := by
-  simp [Rules.assign]
+  rw [← (r.extends_assign nps).length_eq, lexicalValuation, Valuation.length_initial]
 
-/-! ### What each pass does -/
+theorem lexicalValuation_getElem?_of_some (lexicalCase : α → Option Case) {xs : List α} {i : ℕ}
+    {x : α} {c : Case} (hx : xs[i]? = some x) (hc : lexicalCase x = some c) :
+    (lexicalValuation lexicalCase xs)[i]? = some (x, some (c, .lexical)) := by
+  simp [lexicalValuation, Valuation.initial_getElem?, hx, hc]
 
-theorem markBy_getElem?_of_some (f : ℕ → α × Valuation → Valuation)
-    {states : List (α × Valuation)} {i : ℕ} {x : α} {v : Case × Mechanism}
-    (h : states[i]? = some (x, some v)) : (markBy f states)[i]? = some (x, some v) := by
-  simp [markBy_getElem?, h]
-
-theorem markBy_getElem?_of_none (f : ℕ → α × Valuation → Valuation)
-    {states : List (α × Valuation)} {i : ℕ} {x : α} (h : states[i]? = some (x, none)) :
-    (markBy f states)[i]? = some (x, f i (x, none)) := by
-  simp [markBy_getElem?, h]
-
-theorem Rules.dependentPass_getElem?_of_some (r : Rules) (P : α → Bool)
-    {states : List (α × Valuation)} {i : ℕ} {x : α} {v : Case × Mechanism}
-    (h : states[i]? = some (x, some v)) : (r.dependentPass P states)[i]? = some (x, some v) :=
-  markBy_getElem?_of_some _ h
-
-theorem Rules.unmarkedPass_getElem?_of_some (r : Rules) (P : α → Bool)
-    {states : List (α × Valuation)} {i : ℕ} {x : α} {v : Case × Mechanism}
-    (h : states[i]? = some (x, some v)) : (r.unmarkedPass P states)[i]? = some (x, some v) :=
-  markBy_getElem?_of_some _ h
-
-theorem initial_getElem?_of_some (lexicalCase : α → Option Case) {xs : List α} {i : ℕ} {x : α}
-    {c : Case} (hx : xs[i]? = some x) (hc : lexicalCase x = some c) :
-    (initial lexicalCase xs)[i]? = some (x, some (c, .lexical)) := by
-  simp [initial, hx, hc]
-
-/-- A caseless NP with a caseless NP below it in the domain takes the high case. -/
-theorem Rules.dependentPass_high (r : Rules) (P : α → Bool) {states : List (α × Valuation)}
-    {i j : ℕ} {x : α} {c : Case} (hx : states[i]? = some (x, none)) (hP : P x)
-    (hj : j ∈ eligible P states) (hij : i < j) (hc : r.high = some c) :
-    (r.dependentPass P states)[i]? = some (x, some (c, .dependent)) := by
-  have hi : i ∈ eligible P states := mem_eligible_iff.2 ⟨x, hx, hP⟩
-  have hany : ∃ k ∈ eligible P states, i < k := ⟨j, hj, hij⟩
-  simp [Rules.dependentPass, markBy_getElem?_of_none _ hx, hi, hany, hc]
-
-/-- A caseless NP with a caseless NP above it in the domain, and none below it that the high
-    rule could mark it for, takes the low case. -/
-theorem Rules.dependentPass_low (r : Rules) (P : α → Bool) {states : List (α × Valuation)}
-    {i j : ℕ} {x : α} {c : Case} (hx : states[i]? = some (x, none)) (hP : P x)
-    (hj : j ∈ eligible P states) (hji : j < i)
-    (hhigh : r.high = none ∨ ∀ k ∈ eligible P states, ¬ i < k) (hc : r.low = some c) :
-    (r.dependentPass P states)[i]? = some (x, some (c, .dependent)) := by
-  have hi : i ∈ eligible P states := mem_eligible_iff.2 ⟨x, hx, hP⟩
-  have hany : ∃ k ∈ eligible P states, k < i := ⟨j, hj, hji⟩
-  rcases hhigh with h | h
-  · simp [Rules.dependentPass, markBy_getElem?_of_none _ hx, hi, hany, h, hc]
-  · have hno : ¬ ∃ k ∈ eligible P states, i < k := λ ⟨k, hk, hik⟩ => h k hk hik
-    simp [Rules.dependentPass, markBy_getElem?_of_none _ hx, hi, hany, hno, hc]
-
-/-- A caseless NP alone in its domain is untouched by the dependent rules. -/
-theorem Rules.dependentPass_alone (r : Rules) (P : α → Bool) {states : List (α × Valuation)}
-    {i : ℕ} {x : α} (hx : states[i]? = some (x, none))
-    (halone : ∀ j ∈ eligible P states, j = i) :
-    (r.dependentPass P states)[i]? = some (x, none) := by
-  have h1 : ¬ ∃ k ∈ eligible P states, i < k :=
-    λ ⟨k, hk, hik⟩ => lt_irrefl i (halone k hk ▸ hik)
-  have h2 : ¬ ∃ k ∈ eligible P states, k < i :=
-    λ ⟨k, hk, hki⟩ => lt_irrefl i (halone k hk ▸ hki)
-  simp [Rules.dependentPass, markBy_getElem?_of_none _ hx, h1, h2]
+theorem lexicalValuation_getElem? {lexicalCase : α → Option Case} {xs : List α} {i : ℕ} {x : α}
+    {v : Case × Mechanism} (h : (lexicalValuation lexicalCase xs)[i]? = some (x, some v)) :
+    lexicalCase x = some v.1 ∧ v.2 = .lexical := by
+  simp only [lexicalValuation, Valuation.initial_getElem?] at h
+  obtain ⟨y, -, hy⟩ := Option.map_eq_some_iff.1 h
+  obtain ⟨rfl, hv⟩ := Prod.mk.injEq .. ▸ hy
+  obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 hv
+  exact ⟨hc, rfl⟩
 
 /-- Lexical case is kept, so it bleeds the dependent rules. -/
 theorem Rules.assign_getElem?_of_some (r : Rules) {nps : List NP} {i : ℕ} {np : NP} {c : Case}
     (hnp : nps[i]? = some np) (hc : np.lexicalCase = some c) :
     (r.assign nps)[i]? = some (np, some (c, .lexical)) :=
-  r.unmarkedPass_getElem?_of_some _
-    (r.dependentPass_getElem?_of_some _ (initial_getElem?_of_some _ hnp hc))
-
-/-! ### The cases the rules value -/
-
-theorem markBy_value {f : ℕ → α × Valuation → Valuation} {states : List (α × Valuation)} {i : ℕ}
-    {x : α} {v : Case × Mechanism} (h : (markBy f states)[i]? = some (x, some v)) :
-    states[i]? = some (x, some v) ∨ ∃ s, states[i]? = some s ∧ s.1 = x ∧ f i s = some v := by
-  simp only [markBy_getElem?] at h
-  obtain ⟨s, hs, hfs⟩ := Option.map_eq_some_iff.1 h
-  by_cases hnone : s.2.isNone
-  · simp only [hnone, ↓reduceIte, Prod.mk.injEq] at hfs
-    exact .inr ⟨s, hs, hfs.1, hfs.2⟩
-  · simp only [hnone, Bool.false_eq_true, ↓reduceIte] at hfs
-    exact .inl (hfs ▸ hs)
-
-theorem Rules.dependentPass_case (r : Rules) (P : α → Bool) {states : List (α × Valuation)}
-    {i : ℕ} {x : α} {v : Case × Mechanism}
-    (h : (r.dependentPass P states)[i]? = some (x, some v)) :
-    states[i]? = some (x, some v) ∨ v.1 ∈ r.cases := by
-  refine (markBy_value h).imp_right λ ⟨s, _, _, hf⟩ => ?_
-  split_ifs at hf
-  all_goals first
-    | cases hf
-    | (obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 hf
-       first | exact high_mem_cases hc | exact low_mem_cases hc)
-
-theorem Rules.unmarkedPass_case (r : Rules) (P : α → Bool) {states : List (α × Valuation)}
-    {i : ℕ} {x : α} {v : Case × Mechanism}
-    (h : (r.unmarkedPass P states)[i]? = some (x, some v)) :
-    states[i]? = some (x, some v) ∨ v.1 ∈ r.cases := by
-  refine (markBy_value h).imp_right λ ⟨s, _, _, hf⟩ => ?_
-  split_ifs at hf
-  obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 hf
-  exact unmarked_mem_cases hc
-
-theorem initial_value {lexicalCase : α → Option Case} {xs : List α} {i : ℕ} {x : α}
-    {v : Case × Mechanism} (h : (initial lexicalCase xs)[i]? = some (x, some v)) :
-    lexicalCase x = some v.1 := by
-  simp only [initial, List.getElem?_map] at h
-  obtain ⟨y, -, hy⟩ := Option.map_eq_some_iff.1 h
-  obtain ⟨rfl, hv⟩ := Prod.mk.injEq .. ▸ hy
-  obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 hv
-  exact hc
+  (r.extends_assign nps).getElem?_of_some (lexicalValuation_getElem?_of_some _ hnp hc)
 
 /-- A caseless NP is valued only with a case the rules mention. -/
 theorem Rules.case_mem_cases (r : Rules) {nps : List NP} {i : ℕ} {np : NP} {c : Case}
     {m : Mechanism} (hlex : np.lexicalCase = none)
     (h : (r.assign nps)[i]? = some (np, some (c, m))) : c ∈ r.cases := by
-  rcases r.unmarkedPass_case _ h with h | h
-  · rcases r.dependentPass_case _ h with h | h
-    · exact absurd (initial_value h) (by simp [hlex])
-    · exact h
-  · exact h
+  rcases (r.extends_assign nps).of_getElem? h with h | h
+  · exact absurd (lexicalValuation_getElem? h).1 (by simp [hlex])
+  · exact Rules.fst_mem_cases h
 
-/-! ### What each pass values as -/
+/-! ### What the dependent rules do -/
 
-theorem markBy_none (states : List (α × Valuation)) : markBy (λ _ _ => none) states = states := by
-  apply List.ext_getElem?
-  intro i
-  simp only [markBy_getElem?]
-  rcases states[i]? with _ | ⟨x, _ | v⟩ <;> simp
+/-- A caseless NP with a caseless NP below it in the domain takes the high case. -/
+theorem Rules.dependentPass_high (r : Rules) (P : α → Bool) {s : Valuation α (Case × Mechanism)}
+    {i j : ℕ} {x : α} {c : Case} (hx : s[i]? = some (x, none)) (hP : P x)
+    (hj : j ∈ s.unvalued P) (hij : i < j) (hc : r.high = some c) :
+    (r.dependentPass P s)[i]? = some (x, some (c, .dependent)) := by
+  have hi : i ∈ s.unvalued P := Valuation.mem_unvalued_iff.2 ⟨x, hx, hP⟩
+  have hany : ∃ k ∈ s.unvalued P, i < k := ⟨j, hj, hij⟩
+  simp [Rules.dependentPass, Valuation.fill_getElem?_of_none hx, hi, hany, hc]
+
+/-- A caseless NP with a caseless NP above it in the domain, and none below it that the high
+    rule could mark it for, takes the low case. -/
+theorem Rules.dependentPass_low (r : Rules) (P : α → Bool) {s : Valuation α (Case × Mechanism)}
+    {i j : ℕ} {x : α} {c : Case} (hx : s[i]? = some (x, none)) (hP : P x)
+    (hj : j ∈ s.unvalued P) (hji : j < i)
+    (hhigh : r.high = none ∨ ∀ k ∈ s.unvalued P, ¬ i < k) (hc : r.low = some c) :
+    (r.dependentPass P s)[i]? = some (x, some (c, .dependent)) := by
+  have hi : i ∈ s.unvalued P := Valuation.mem_unvalued_iff.2 ⟨x, hx, hP⟩
+  have hany : ∃ k ∈ s.unvalued P, k < i := ⟨j, hj, hji⟩
+  rcases hhigh with h | h
+  · simp [Rules.dependentPass, Valuation.fill_getElem?_of_none hx, hi, hany, h, hc]
+  · have hno : ¬ ∃ k ∈ s.unvalued P, i < k := fun ⟨k, hk, hik⟩ ↦ h k hk hik
+    simp [Rules.dependentPass, Valuation.fill_getElem?_of_none hx, hi, hany, hno, hc]
+
+/-- A caseless NP alone in its domain is untouched by the dependent rules. -/
+theorem Rules.dependentPass_alone (r : Rules) (P : α → Bool) {s : Valuation α (Case × Mechanism)}
+    {i : ℕ} {x : α} (hx : s[i]? = some (x, none)) (halone : ∀ j ∈ s.unvalued P, j = i) :
+    (r.dependentPass P s)[i]? = some (x, none) := by
+  have h1 : ¬ ∃ k ∈ s.unvalued P, i < k :=
+    fun ⟨k, hk, hik⟩ ↦ lt_irrefl i (halone k hk ▸ hik)
+  have h2 : ¬ ∃ k ∈ s.unvalued P, k < i :=
+    fun ⟨k, hk, hki⟩ ↦ lt_irrefl i (halone k hk ▸ hki)
+  simp [Rules.dependentPass, Valuation.fill_getElem?_of_none hx, h1, h2]
 
 /-- With no elsewhere case the pass does nothing. -/
 theorem Rules.unmarkedPass_of_none (r : Rules) (P : α → Bool) (h : r.unmarked = none)
-    (states : List (α × Valuation)) : r.unmarkedPass P states = states := by
-  simp [Rules.unmarkedPass, h, markBy_none]
+    (s : Valuation α (Case × Mechanism)) : r.unmarkedPass P s = s := by
+  simp [Rules.unmarkedPass, h]
 
 /-- With neither dependent case the pass does nothing. -/
 theorem Rules.dependentPass_of_none (r : Rules) (P : α → Bool) (hh : r.high = none)
-    (hl : r.low = none) (states : List (α × Valuation)) : r.dependentPass P states = states := by
-  simp [Rules.dependentPass, hh, hl, markBy_none]
-
-/-- The dependent rules value as such. -/
-theorem Rules.dependentPass_mechanism (r : Rules) (P : α → Bool) {states : List (α × Valuation)}
-    {i : ℕ} {x : α} {v : Case × Mechanism}
-    (h : (r.dependentPass P states)[i]? = some (x, some v)) :
-    states[i]? = some (x, some v) ∨ v.2 = .dependent := by
-  refine (markBy_value h).imp_right λ ⟨s, _, _, hf⟩ => ?_
-  split_ifs at hf
-  all_goals first
-    | cases hf
-    | (obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 hf; rfl)
-
-/-- The initial valuation is lexical. -/
-theorem initial_mechanism {lexicalCase : α → Option Case} {xs : List α} {i : ℕ} {x : α}
-    {v : Case × Mechanism} (h : (initial lexicalCase xs)[i]? = some (x, some v)) :
-    v.2 = .lexical := by
-  simp only [initial, List.getElem?_map] at h
-  obtain ⟨y, -, hy⟩ := Option.map_eq_some_iff.1 h
-  obtain ⟨rfl, hv⟩ := Prod.mk.injEq .. ▸ hy
-  obtain ⟨c, -, rfl⟩ := Option.map_eq_some_iff.1 hv
-  rfl
+    (hl : r.low = none) (s : Valuation α (Case × Mechanism)) : r.dependentPass P s = s := by
+  simp [Rules.dependentPass, hh, hl]
 
 /-! ### Domains of one and two NPs -/
 
 /-- The valuation of an NP no dependent rule reaches: its lexical case, or the elsewhere case. -/
-def Rules.elsewhere (r : Rules) (np : NP) : Valuation :=
+def Rules.elsewhere (r : Rules) (np : NP) : Option (Case × Mechanism) :=
   (np.lexicalCase.map (·, Mechanism.lexical)).or (r.unmarked.map (·, .unmarked))
 
 /-- A sole NP is never reached by a dependent rule. -/

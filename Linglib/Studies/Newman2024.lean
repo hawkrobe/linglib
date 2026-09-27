@@ -520,7 +520,7 @@ def caseOf (es : List Transitive) (a : Transitive) : Option Case :=
     | s :: _ => if s = .obj then [Transitive.obj] else [s, .obj]
     | [] => [.obj]
   match ((r.unmarkedPass (fun _ ↦ true) <| r.dependentPass (fun _ ↦ true) <|
-      Case.initial (fun _ ↦ none) dom).lookup a) with
+      Case.lexicalValuation (fun _ ↦ none) dom).lookup a) with
   | some v => v.map (·.1)
   | none => r.unmarked
 

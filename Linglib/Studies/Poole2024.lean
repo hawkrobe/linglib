@@ -60,7 +60,7 @@ open Case Minimalist Data.Examples Examples
 
 /-- A goal as a head sees it: an NP with its current valuation, at its position among the
 goals the head encounters. -/
-abbrev Goal := (NP × Valuation) × ℕ
+abbrev Goal := (NP × Option (Case × Mechanism)) × ℕ
 
 /-- The φ-probe relativized to unmarked case: it sees exactly the caseless DPs. -/
 def unmarkedProbe : Probe Goal := Probe.relativized λ g => g.1.2.isNone
@@ -68,23 +68,24 @@ def unmarkedProbe : Probe Goal := Probe.relativized λ g => g.1.2.isNone
 /-- The stack (8) over the goals a head encounters in order: the position of the DP assigned
 dependent case, if the first probe finds a caseless DP to unlock the second and the second,
 ignoring that DP, finds another. -/
-def stack (goals : List (NP × Valuation)) : Option ℕ :=
+def stack (goals : Valuation NP (Case × Mechanism)) : Option ℕ :=
   (unmarkedProbe.search goals.zipIdx).bind λ g =>
     (unmarkedProbe.search (goals.zipIdx.filter (·.2 ≠ g.2))).map (·.2)
 
 /-- The stack assigning the case `c`: the DP it finds is valued `c` by Agree, every other goal
 is left as it was. -/
-def assignDep (c : Case) (goals : List (NP × Valuation)) : List (NP × Valuation) :=
+def assignDep (c : Case) (goals : Valuation NP (Case × Mechanism)) :
+    Valuation NP (Case × Mechanism) :=
   match stack goals with
   | none => goals
   | some j => goals.zipIdx.map λ g => if g.2 = j then (g.1.1, some (c, .agree)) else g.1
 
 /-- The cases a list of valued NPs carries. -/
-def surface (out : List (NP × Valuation)) : List (Option Case) := out.map (·.2.map (·.1))
+def surface (out : Valuation NP (Case × Mechanism)) : List (Option Case) := out.map (·.2.map (·.1))
 
 /-- With fewer than two caseless DPs among its goals the stack assigns nothing: the first probe
 is never valued, or the second finds no DP. -/
-theorem stack_eq_none_of_subsingleton {goals : List (NP × Valuation)}
+theorem stack_eq_none_of_subsingleton {goals : Valuation NP (Case × Mechanism)}
     (h : ∀ i j, ∀ g ∈ goals.zipIdx, ∀ g' ∈ goals.zipIdx, g.2 = i → g'.2 = j →
       g.1.2 = none → g'.1.2 = none → i = j) :
     stack goals = none := by
@@ -100,7 +101,7 @@ theorem stack_eq_none_of_subsingleton {goals : List (NP × Valuation)}
     exact hne (h g'.2 g.2 g' hg' g hg rfl rfl hvis hv)
 
 /-- Minimal compliance: the DP that unlocks the stack is not the one it marks. -/
-theorem stack_ne_unlocker {goals : List (NP × Valuation)} {g : Goal} {j : ℕ}
+theorem stack_ne_unlocker {goals : Valuation NP (Case × Mechanism)} {g : Goal} {j : ℕ}
     (hs : unmarkedProbe.search goals.zipIdx = some g) (hj : stack goals = some j) : j ≠ g.2 := by
   unfold stack at hj
   rw [hs, Option.bind_some, Option.map_eq_some_iff] at hj
@@ -113,9 +114,9 @@ theorem stack_ne_unlocker {goals : List (NP × Valuation)} {g : Goal} {j : ℕ}
 assigns the lower one what the low dependent rule assigns, whatever lexical case either
 carries. -/
 theorem low_eq_dependentPass (c : Case) (a b : NP) :
-    surface (assignDep c (initial NP.lexicalCase [a, b]))
+    surface (assignDep c (lexicalValuation NP.lexicalCase [a, b]))
       = surface (({ low := some c } : Rules).dependentPass (λ _ => true)
-          (initial NP.lexicalCase [a, b])) := by
+          (lexicalValuation NP.lexicalCase [a, b])) := by
   obtain ⟨_, ca⟩ := a
   obtain ⟨_, cb⟩ := b
   cases ca <;> cases cb <;> rfl
@@ -124,9 +125,9 @@ theorem low_eq_dependentPass (c : Case) (a b : NP) :
 complement first and its specifier last, and assigns the specifier what the high dependent
 rule assigns, whatever lexical case either carries. -/
 theorem high_eq_dependentPass (c : Case) (spec comp : NP) :
-    (surface (assignDep c (initial NP.lexicalCase [comp, spec]))).reverse
+    (surface (assignDep c (lexicalValuation NP.lexicalCase [comp, spec]))).reverse
       = surface (({ high := some c } : Rules).dependentPass (λ _ => true)
-          (initial NP.lexicalCase [spec, comp])) := by
+          (lexicalValuation NP.lexicalCase [spec, comp])) := by
   obtain ⟨_, cs⟩ := spec
   obtain ⟨_, cc⟩ := comp
   cases cs <;> cases cc <;> rfl
@@ -135,9 +136,9 @@ theorem high_eq_dependentPass (c : Case) (spec comp : NP) :
 whereas the low dependent rule marks every DP c-commanded by a caseless one. -/
 theorem stack_marks_once (c : Case) (a b d : NP) (ha : a.lexicalCase = none)
     (hb : b.lexicalCase = none) (hd : d.lexicalCase = none) :
-    surface (assignDep c (initial NP.lexicalCase [a, b, d])) = [none, some c, none] ∧
+    surface (assignDep c (lexicalValuation NP.lexicalCase [a, b, d])) = [none, some c, none] ∧
       surface (({ low := some c } : Rules).dependentPass (λ _ => true)
-        (initial NP.lexicalCase [a, b, d])) = [none, some c, some c] := by
+        (lexicalValuation NP.lexicalCase [a, b, d])) = [none, some c, some c] := by
   obtain ⟨_, _⟩ := a
   obtain ⟨_, _⟩ := b
   obtain ⟨_, _⟩ := d
@@ -162,12 +163,14 @@ def doNP : NP := ⟨"DO", none⟩
 
 /-- The goals V meets: its complement, the direct object, then its specifier, the indirect
 object. -/
-def Shape.vGoals (s : Shape) : List (NP × Valuation) :=
-  (s.dobj.map λ _ => (doNP, (none : Valuation))).toList ++ (if s.io then [(ioNP, none)] else [])
+def Shape.vGoals (s : Shape) : Valuation NP (Case × Mechanism) :=
+  (s.dobj.map λ _ => (doNP, (none : Option (Case × Mechanism)))).toList ++
+    (if s.io then [(ioNP, none)] else [])
 
 /-- The goals T meets after V's stack has run: the external argument, then the direct object if
 it has shifted out of VP; the indirect object stays in the VP phase. -/
-def Shape.tGoals (s : Shape) (vp : List (NP × Valuation)) : List (NP × Valuation) :=
+def Shape.tGoals (s : Shape) (vp : Valuation NP (Case × Mechanism)) :
+    Valuation NP (Case × Mechanism) :=
   (if s.ea then [(eaNP, none)] else []) ++
     (if s.dobj = some true then vp.filter (·.1 = doNP) else [])
 
@@ -176,7 +179,7 @@ dative stack on V and the accusative stack on T ([poole-2024] (16), (17)). -/
 def Shape.agree (s : Shape) : Option Case × Option Case × Option Case :=
   let vp := assignDep .dat s.vGoals
   let tp := assignDep .acc (s.tGoals vp)
-  let caseOf (n : NP) (l : List (NP × Valuation)) : Option Case :=
+  let caseOf (n : NP) (l : Valuation NP (Case × Mechanism)) : Option Case :=
     (l.find? (·.1 = n)).bind (·.2.map (·.1))
   (caseOf eaNP tp, caseOf ioNP vp, (caseOf doNP tp).orElse λ _ => caseOf doNP vp)
 
@@ -185,9 +188,9 @@ object, and the accusative rule (14b) in the clause. -/
 def Shape.bakerVinokurova (s : Shape) : Option Case × Option Case × Option Case :=
   let vp := ({ high := some .dat } : Rules).dependentPass (λ _ => true)
     ((if s.io then [(ioNP, none)] else []) ++
-      (s.dobj.map λ _ => (doNP, (none : Valuation))).toList)
+      (s.dobj.map λ _ => (doNP, (none : Option (Case × Mechanism)))).toList)
   let tp := ({ low := some .acc } : Rules).dependentPass (λ _ => true) (s.tGoals vp)
-  let caseOf (n : NP) (l : List (NP × Valuation)) : Option Case :=
+  let caseOf (n : NP) (l : Valuation NP (Case × Mechanism)) : Option Case :=
     (l.find? (·.1 = n)).bind (·.2.map (·.1))
   (caseOf eaNP tp, caseOf ioNP vp, (caseOf doNP tp).orElse λ _ => caseOf doNP vp)
 
@@ -199,7 +202,7 @@ theorem sakha_eq_bakerVinokurova (s : Shape) : s.agree = s.bakerVinokurova := by
 
 /-- The goals of T's accusative stack in (15), (18) and (20): another caseless DP, if any, then
 the DP in question, if accessible to T. -/
-def tGoals (licensor accessible : Bool) : List (NP × Valuation) :=
+def tGoals (licensor accessible : Bool) : Valuation NP (Case × Mechanism) :=
   (if licensor then [(eaNP, none)] else []) ++ (if accessible then [(doNP, none)] else [])
 
 /-- A row's accusative marking, accessibility, and licensor, read from its features. -/
