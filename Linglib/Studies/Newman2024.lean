@@ -515,7 +515,7 @@ def heightOrder (es : List Transitive) : List Transitive :=
 the arguments then in vP, highest first and without the moved object's lower copy. A specifier
 merged later is unmarked. -/
 def caseOf (es : List Transitive) (a : Transitive) : Option Case :=
-  let r := Case.Rules.ofAlignment .ergative
+  let r := DependentCase.Rules.ofAlignment .ergative
   let dom := match es with
     | s :: _ => if s = .obj then [Transitive.obj] else [s, .obj]
     | [] => [.obj]

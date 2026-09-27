@@ -52,7 +52,7 @@ agreement violations, and a purely Agree-based grammar never values a dative.
 
 namespace BakerVinokurova2010
 
-open Data.Examples Minimalist Case Yakut.Case
+open Data.Examples Minimalist Case DependentCase Yakut.Case
 
 /-! ### The grammars -/
 

@@ -319,8 +319,8 @@ theorem assign_eq_map_license (g : CaseAssigners)
       rw [foldl_cons, foldl_cons, hstep, ih (fun l hl ↦ hL l (mem_cons_of_mem _ hl))]
   have hcycle (c : Cat) (st : Valuation PhasedNP CaseValue) :
       domainPass g id (ls.map fun l ↦ (l.head, l.domain)) c (st.map φ) = (cycle ls c st).map φ := by
-    rw [domainPass, rules_eq_of g hg, _root_.Case.Rules.unmarkedPass_of_none _ _ rfl,
-      _root_.Case.Rules.dependentPass_of_none _ _ rfl rfl, filter_map, foldl_map, cycle]
+    rw [domainPass, rules_eq_of g hg, DependentCase.Rules.unmarkedPass_of_none _ _ rfl,
+      DependentCase.Rules.dependentPass_of_none _ _ rfl rfl, filter_map, foldl_map, cycle]
     exact key c _ (fun l hl ↦ by
       obtain ⟨hl, hc⟩ := mem_filter.1 hl
       exact ⟨by simpa using hc, hκ l hl⟩) st
@@ -511,7 +511,7 @@ theorem toy_inanimate_object (subject : Bool) :
 an accusative language value a specific perfective object accusative, but licensing leaves it
 unvalued, and the derivation crashes whatever the specificity of the subject. -/
 theorem dependentCase_values_banned_object (subject : Bool) :
-    ((_root_.Case.assignCases .accusative (·.lexicalCase) (transitive subject true))[1]?.bind
+    ((DependentCase.assignCases .accusative (·.lexicalCase) (transitive subject true))[1]?.bind
         (·.2.map (·.1))) = some .acc ∧
     ¬ Converges domains perfective (transitive subject true) := by
   cases subject <;> decide

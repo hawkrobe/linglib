@@ -54,7 +54,7 @@ formalized.
 
 namespace Poole2024
 
-open Case Minimalist Data.Examples Examples
+open Case DependentCase Minimalist Data.Examples Examples
 
 /-! ### The dependent-case probe stack (8) -/
 

@@ -31,6 +31,8 @@ alignments in genitive rather than nominative clothing.
 * `Alignment.AlignmentType`: the observational classification of WALS chapters 98 to 100
   ([comrie-2013]), with `AlignmentType.MarksAgent` and `AlignmentType.MarksPatient`; a split
   conditioned by tense, aspect or a nominal hierarchy is a function into it.
+* `Alignment.AlignmentType.Classifies`: the alignment a type names, as a property of a
+  marking.
 
 ## Implementation notes
 
@@ -171,5 +173,23 @@ instance (a : AlignmentType) : Decidable a.MarksAgent := inferInstanceAs (Decida
 def AlignmentType.MarksPatient (a : AlignmentType) : Prop := a = .accusative ∨ a = .tripartite
 
 instance (a : AlignmentType) : Decidable a.MarksPatient := inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The alignment a type names, as a property of a marking: the split-S type names none, since
+it identifies no fixed pair of roles. -/
+def AlignmentType.Classifies {κ : Type*} (a : AlignmentType) (m : ArgumentRole → κ) : Prop :=
+  match a with
+  | .neutral => IsNeutral m
+  | .accusative => IsAccusative m
+  | .ergative => IsErgative m
+  | .tripartite => IsTripartite m
+  | .active => False
+
+instance {κ : Type*} [DecidableEq κ] (m : ArgumentRole → κ) :
+    (a : AlignmentType) → Decidable (a.Classifies m)
+  | .neutral => inferInstanceAs (Decidable (IsNeutral m))
+  | .accusative => inferInstanceAs (Decidable (IsAccusative m))
+  | .ergative => inferInstanceAs (Decidable (IsErgative m))
+  | .tripartite => inferInstanceAs (Decidable (IsTripartite m))
+  | .active => inferInstanceAs (Decidable False)
 
 end Alignment

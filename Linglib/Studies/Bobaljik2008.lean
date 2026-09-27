@@ -52,7 +52,7 @@ agreement with a functional head, which those rules also provide for, counts as 
 
 namespace Bobaljik2008
 
-open Case
+open Case DependentCase
 
 /-- The categories of morphological case, in their order of accessibility for agreement, with
 lexical case the least accessible and unmarked case the most. -/

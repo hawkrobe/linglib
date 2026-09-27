@@ -253,10 +253,10 @@ theorem oagrOnS_examples :
 /-! ### Configurational rules (§1, §4.1) -/
 
 /-- Rule (1) ([baker-2015]) values the higher of two caseless NPs in one domain ergative whatever
-    their persons, as `Case.assignCases` does; Shawi withholds ergative at 2→1, 3→1 and 3→2
+    their persons, as `DependentCase.assignCases` does; Shawi withholds ergative at 2→1, 3→1 and 3→2
     with the object in v's domain ((7a–c)). -/
 theorem rule1_overgenerates :
-    ((Case.assignCases .ergative (fun _ : Fin 2 ↦ none) [0, 1]).valueOf 0).map (·.1) =
+    ((DependentCase.assignCases .ergative (fun _ : Fin 2 ↦ none) [0, 1]).valueOf 0).map (·.1) =
       some .erg ∧
     ¬ Ergative .second .first .high ∧ ¬ Ergative .third .first .high ∧
     ¬ Ergative .third .second .high := by

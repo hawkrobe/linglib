@@ -56,8 +56,9 @@ probes present with the domain each agrees into.
 
 namespace Minimalist
 
-open Case (Rules Mechanism Valuation lexicalValuation lexicalValuation_getElem?_of_some
+open Case (Mechanism Valuation lexicalValuation lexicalValuation_getElem?_of_some
   lexicalValuation_getElem?)
+open DependentCase
 
 /-! ### Agree -/
 

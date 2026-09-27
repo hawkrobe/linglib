@@ -36,7 +36,7 @@ how the unmarked case is realized.
 
 namespace Baker2015
 
-open Data.Examples Case
+open Data.Examples Case DependentCase
 
 /-- The book's languages of focus by alignment type: accusative Sakha, Tamil, Amharic, Cuzco
     Quechua, Korean and Finnish; ergative Shipibo, Burushaski, Chukchi, Lezgian, Ingush,
