@@ -6,12 +6,12 @@ public import Linglib.Core.Data.RoseTree.Get
 /-!
 # Constituency trees
 
-A **constituency tree** over a category type `C` and a word type `W`: a terminal carries a
-category and a word, an internal node a category and an ordered list of daughters, and the
-two nodes of Heim and Kratzer's trace theory of movement, an indexed trace and an indexed
-binder over a body, carry a category each. Type-driven interpretation reads the tree with
-`C = Unit`; structural operations on parse trees read it with a category system such as
-`Syntax.Cat`.
+This file defines **constituency trees** over a category type `C` and a word type `W`. A
+terminal carries a category and a word, an internal node a category and an ordered list of
+daughters, and the two nodes of Heim and Kratzer's trace theory of movement, an indexed trace
+and an indexed binder over a body, carry a category each. Type-driven interpretation reads the
+tree with `C = Unit`; structural operations on parse trees read it with a category system such
+as `Syntax.Cat`.
 
 ## Main declarations
 
@@ -24,6 +24,7 @@ binder over a body, carry a category each. Type-driven interpretation reads the 
   binds, and the trees with none.
 * The `Core.Order.Branching` instance, through which a tree takes Gorn addresses, the
   dominance order on its positions and the command relations.
+* `Syntax.Tree.replaceAt`: replacement of the subtree at a Gorn address.
 * `Syntax.Tree.toRoseTree` and `Syntax.Tree.ofRoseTree?`: the rose tree underlying a
   constituency tree, its nodes labelled by their constructors' data, and the decoding that
   makes the constituency trees a retract of the rose trees; positions are inherited along it.
@@ -48,7 +49,7 @@ the instance is built by mutual recursion with the daughter list.
 
 namespace Syntax
 
-/-- A constituency tree: `terminal c w` is the word `w` under category `c`, `node c cs` the
+/-- In a constituency tree, `terminal c w` is the word `w` under category `c`, `node c cs` the
 category `c` over daughters `cs`, `trace n c` a trace of index `n` and `bind n c t` a binder
 of index `n` over `t`. -/
 inductive Tree (C W : Type*) where
@@ -123,7 +124,7 @@ theorem sizeOf_lt_of_mem [SizeOf C] [SizeOf W] {c : C} {cs : List (Tree C W)} {t
   simp only [node.sizeOf_spec]
   omega
 
-/-- **Structural induction** for `Tree`: the node case has the motive at every daughter. -/
+/-- **Structural induction** for `Tree` gives the node case the motive at every daughter. -/
 @[elab_as_elim, induction_eliminator]
 def rec' {motive : Tree C W → Sort*} (terminal : ∀ c w, motive (terminal c w))
     (node : ∀ c cs, (∀ t ∈ cs, motive t) → motive (node c cs))
@@ -248,7 +249,7 @@ def numNodes : Tree C W → ℕ :=
 def terminals : Tree C W → List (C × W) :=
   fold (fun c w => [(c, w)]) (fun _ => List.flatten) (fun _ _ => []) fun _ _ ws => ws
 
-/-- The yield: the words at the terminals, left to right. -/
+/-- The yield of a tree is the words at its terminals, left to right. -/
 def yield (t : Tree C W) : List W := t.terminals.map Prod.snd
 
 @[simp] theorem terminals_terminal (c : C) (w : W) : (terminal c w).terminals = [(c, w)] := rfl
@@ -342,8 +343,8 @@ theorem map_cat_subtrees (t : Tree C W) : t.subtrees.map cat = t.cats := by
 
 /-! ### Free traces -/
 
-/-- The indices of the traces free in a tree: every trace index, less those a dominating binder
-of the same index binds. -/
+/-- The free indices of a tree are the indices of its traces, less those a dominating binder of
+the same index binds. -/
 def freeIndices : Tree C W → Finset ℕ :=
   fold (fun _ _ => ∅) (fun _ => List.foldr (· ∪ ·) ∅) (fun n _ => {n}) fun n _ s => s.erase n
 
@@ -422,6 +423,24 @@ instance : Branching (Tree C W) where
 @[simp] theorem children_bind (n : ℕ) (c : C) (t : Tree C W) :
     Branching.children (bind n c t) = [t] := rfl
 
+/-- Replace the subtree at a Gorn address; an address outside the tree leaves it unchanged. -/
+def replaceAt : Tree C W → List ℕ → Tree C W → Tree C W
+  | _, [], new => new
+  | node c cs, i :: p, new => node c (cs.modify i (·.replaceAt p new))
+  | bind n c t, 0 :: p, new => bind n c (t.replaceAt p new)
+  | t, _ :: _, _ => t
+
+@[simp] theorem replaceAt_nil (t new : Tree C W) : t.replaceAt [] new = new := by
+  cases t <;> rfl
+
+/-- Replacing below the root replaces inside one daughter. -/
+theorem children_replaceAt_cons (t : Tree C W) (i : ℕ) (p : List ℕ) (new : Tree C W) :
+    Branching.children (t.replaceAt (i :: p) new) =
+      (Branching.children t).modify i (·.replaceAt p new) := by
+  cases t with
+  | bind n c t => cases i <;> simp [replaceAt]
+  | _ => simp [replaceAt]
+
 /-! ### The underlying rose tree
 
 A constituency tree is a rose tree whose nodes carry the data of their constructor, with the
@@ -454,7 +473,7 @@ def toRoseTree : Tree C W → RoseTree (Label C W) :=
 @[simp] theorem toRoseTree_bind (n : ℕ) (c : C) (t : Tree C W) :
     (bind n c t).toRoseTree = .node (.bind n c) [t.toRoseTree] := rfl
 
-/-- `toRoseTree` commutes with `children`: it is a map of `Branching` carriers. -/
+/-- `toRoseTree` commutes with `children`, so it is a map of `Branching` trees. -/
 theorem children_toRoseTree (t : Tree C W) :
     Branching.children t.toRoseTree = (Branching.children t).map toRoseTree := by
   cases t <;> simp
