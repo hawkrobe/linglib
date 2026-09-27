@@ -1234,8 +1234,6 @@ import Linglib.Semantics.Dynamic.DRS.Presheaf
 import Linglib.Semantics.Dynamic.DRS.Reduction
 import Linglib.Semantics.Dynamic.DRS.Verification
 import Linglib.Semantics.Dynamic.FileChange
-import Linglib.Semantics.Dynamic.ICDRT.Basic
-import Linglib.Semantics.Dynamic.ICDRT.Defs
 import Linglib.Semantics.Dynamic.Lookup
 import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
