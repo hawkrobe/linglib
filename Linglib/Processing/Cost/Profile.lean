@@ -9,41 +9,42 @@ public import Mathlib.Order.Basic
 
 /-!
 # Processing profiles and Pareto comparison
-[lewis-vasishth-2005]
 
-A `ProcessingProfile` records the ordinal difficulty of a linguistic dependency
-along four dimensions (locality, boundaries crossed, referential load, retrieval
-ease). Profiles are compared by Pareto dominance — the partial order that is the
-product of the three cost dimensions with the dualized ease dimension — so a
-condition counts as harder only when it is worse-or-equal on every dimension and
-strictly worse on one; conflicting dimensions are honestly `incomparable`.
-`Core.Optimization.Linearization` characterizes this order: dominance is exactly
-agreement of every strictly positive weighted-sum reading, so no magic weights
-are chosen here.
+This file defines processing profiles, which record the ordinal difficulty of a linguistic
+dependency along four dimensions, namely locality, boundaries crossed, referential load, and
+retrieval ease. Profiles are compared by Pareto dominance, the product order of the three cost
+dimensions with the dualized ease dimension. A condition counts as harder only when it is at
+least as hard on every dimension and strictly harder on one, so two profiles that conflict on
+some dimensions are `incomparable` rather than weighed against each other.
 
 ## Main definitions
 
-* `ProcessingProfile` — the four ordinal dimensions, with the `PartialOrder`
-  instance `a ≤ b` = "`a` at most as hard as `b`".
-* `ProcessingProfile.compare` — the four-way readout of the order
-  (`harder` / `easier` / `equal` / `incomparable`).
-* `HasProcessingProfile`, `OrderingPrediction`, `verifyOrdering` — the interface
-  studies use to state and `decide` ordinal difficulty predictions.
+* `ProcessingProfile`: the four ordinal dimensions, with the `PartialOrder` in which `a ≤ b`
+  says that `a` is at most as hard as `b`.
+* `ProcessingProfile.compare`: the four-way readout of the order (`harder`, `easier`, `equal`,
+  `incomparable`).
+* `HasProcessingProfile`, `OrderingPrediction`, `verifyOrdering`: the interface studies use to
+  state and `decide` ordinal difficulty predictions.
 
 ## Main results
 
-* `compare_eq_harder` (and siblings) — `compare` answers exactly the order.
-* `locality_monotone` (and siblings) — increasing a cost dimension cannot make
+* `ProcessingProfile.compare_eq_harder` and its siblings: `compare` answers exactly the order.
+* `ProcessingProfile.locality_monotone` and its siblings: increasing a cost dimension cannot make
   processing easier.
+
+## References
+
+* [R. L. Lewis and S. Vasishth, *An Activation-Based Model of Sentence Processing as Skilled
+  Memory Retrieval* (2005)][lewis-vasishth-2005]
 -/
 
 @[expose] public section
 
 namespace ProcessingModel
 
-/-- A processing profile characterizing the difficulty of a linguistic
-    dependency. Each dimension is ordinal (higher = more of that factor);
-    comparison is via Pareto dominance — no numeric aggregation. -/
+/-- A processing profile records the difficulty of a linguistic dependency on four ordinal
+    dimensions, where a higher value means more of that factor. Profiles are compared by Pareto
+    dominance, without numeric aggregation. -/
 structure ProcessingProfile where
   /-- Distance (words/nodes) between filler and integration site -/
   locality : Nat
@@ -52,8 +53,8 @@ structure ProcessingProfile where
   /-- Referential processing load from intervening material
   (0 = none/pronominal, 1 = indefinite, 2 = definite/proper name) -/
   referentialLoad : Nat
-  /-- Retrieval facilitation: richer fillers, higher predictability
-  (higher = easier retrieval, so this dimension is dualized in comparison) -/
+  /-- Retrieval facilitation, which richer fillers and higher predictability increase. A higher
+  value means easier retrieval, so comparison dualizes this dimension. -/
   ease : Nat
   deriving Repr, DecidableEq
 
@@ -71,8 +72,8 @@ inductive CompareResult where
 
 namespace ProcessingProfile
 
-/-- Pareto order: `a ≤ b` iff `a` is at most as hard as `b` — at most as high
-    on every cost dimension and at least as high on `ease`. -/
+/-- `a ≤ b` iff `a` is at most as hard as `b`, that is, at most as high on every cost
+    dimension and at least as high on `ease`. -/
 instance : LE ProcessingProfile :=
   ⟨fun a b => a.locality ≤ b.locality ∧ a.boundaries ≤ b.boundaries ∧
     a.referentialLoad ≤ b.referentialLoad ∧ b.ease ≤ a.ease⟩
@@ -101,7 +102,7 @@ instance : DecidableLE ProcessingProfile := fun _ _ =>
 instance : DecidableLT ProcessingProfile := fun a b =>
   decidable_of_iff (a ≤ b ∧ ¬ b ≤ a) lt_iff_le_not_ge.symm
 
-/-- The four-way readout of the Pareto order. -/
+/-- `compare a b` reads off how `a` relates to `b` in the Pareto order. -/
 def compare (a b : ProcessingProfile) : CompareResult :=
   if a = b then .equal
   else if b < a then .harder
@@ -138,28 +139,28 @@ theorem compare_eq_incomparable {a b : ProcessingProfile} :
 
 /-! ### Monotonicity
 
-Increasing a cost dimension (or decreasing ease) cannot make processing easier
-— one-line consequences of the order. -/
+Increasing a cost dimension, or decreasing ease, cannot make processing easier. -/
 
-/-- More locality → not easier (working memory decay). -/
+/-- More locality never makes processing easier, as working-memory decay predicts. -/
 theorem locality_monotone (p : ProcessingProfile) (k : Nat) :
     ({ p with locality := p.locality + k + 1 } |>.compare p) ≠ .easier := by
   rw [Ne, compare_eq_easier]
   exact fun h => absurd h.le (by simp [le_def]; omega)
 
-/-- More boundaries → not easier (interference at retrieval). -/
+/-- More boundaries never make processing easier, as interference at retrieval predicts. -/
 theorem boundaries_monotone (p : ProcessingProfile) (k : Nat) :
     ({ p with boundaries := p.boundaries + k + 1 } |>.compare p) ≠ .easier := by
   rw [Ne, compare_eq_easier]
   exact fun h => absurd h.le (by simp [le_def]; omega)
 
-/-- More referential load → not easier (similarity-based interference). -/
+/-- More referential load never makes processing easier, as similarity-based interference
+    predicts. -/
 theorem referentialLoad_monotone (p : ProcessingProfile) (k : Nat) :
     ({ p with referentialLoad := p.referentialLoad + k + 1 } |>.compare p) ≠ .easier := by
   rw [Ne, compare_eq_easier]
   exact fun h => absurd h.le (by simp [le_def]; omega)
 
-/-- More ease → not harder (facilitation aids retrieval). -/
+/-- More ease never makes processing harder, since facilitation aids retrieval. -/
 theorem ease_monotone (p : ProcessingProfile) (k : Nat) :
     ({ p with ease := p.ease + k + 1 } |>.compare p) ≠ .harder := by
   rw [Ne, compare_eq_harder]
@@ -167,19 +168,19 @@ theorem ease_monotone (p : ProcessingProfile) (k : Nat) :
 
 end ProcessingProfile
 
-/-- Typeclass for types that can be mapped to processing profiles: the shared
-    vocabulary modules use to state processing-based predictions. -/
+/-- A type has processing profiles when each of its values maps to a `ProcessingProfile`, the
+    shared vocabulary that modules use to state processing-based predictions. -/
 class HasProcessingProfile (α : Type) where
   profile : α → ProcessingProfile
 
-/-- An ordering prediction: condition `harder` should be harder than `easier`. -/
+/-- An ordering prediction says that condition `harder` is harder to process than `easier`. -/
 structure OrderingPrediction (α : Type) [HasProcessingProfile α] where
   harder : α
   easier : α
   description : String
   deriving Repr
 
-/-- Verify that Pareto ordering matches the predicted direction. -/
+/-- `verifyOrdering` checks that the Pareto order matches the predicted direction. -/
 def verifyOrdering {α : Type} [HasProcessingProfile α]
     (pred : OrderingPrediction α) : Bool :=
   (HasProcessingProfile.profile pred.harder |>.compare

@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Core.Optimization.Linearization
+public import Linglib.Core.LinearAlgebra.Matrix.DotProduct
 public import Linglib.Data.Examples.BakayEtAl2026
 public import Linglib.Fragments.Turkish.Anaphors
 public import Linglib.Syntax.Binding.Tree
@@ -43,8 +43,8 @@ available antecedents (`privileged_iff_available`), so no distractor is accessed
 * The trees keep the noun phrases, the heads that embed them and the verbal spine, and omit
   adverbs. The embedded clause is the complement of the matrix verb, and an adjunct is a sister
   of the lowest verb phrase.
-* Argumenthood in Kush's feature is read off attachment: a noun phrase is local when its mother
-  is a clause or verb-phrase node of the retrieval site's clause.
+* Argumenthood in Kush's feature is read off attachment, so a noun phrase is local when its
+  mother is a clause or verb-phrase node of the retrieval site's clause.
 * A cue is matched either against the hierarchical feature or against an item-level feature,
   and activation is the count of matched cues weighted by where they are matched.
 
@@ -210,7 +210,7 @@ theorem weightedActivation_lt {w : CueSource → ℕ} {a b : List F} {cues : Lis
     (hle : ∀ s, matchCount b cues s ≤ matchCount a cues s)
     (hlt : ∃ s, 0 < w s ∧ matchCount b cues s < matchCount a cues s) :
     weightedActivation w b cues < weightedActivation w a cues :=
-  Core.Optimization.sum_mul_lt_sum_mul hle hlt
+  dotProduct_lt_dotProduct_of_nonneg_left hle (fun _ ↦ Nat.zero_le _) hlt
 
 end Activation
 

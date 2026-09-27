@@ -59,7 +59,7 @@ Law data.
 
 namespace HarmonicGrammar
 
-open Core Constraints Real Finset Filter Topology
+open Constraints Real Finset Filter Topology
 open OptimalityTheory
 
 /-! ### OT → HG weights
