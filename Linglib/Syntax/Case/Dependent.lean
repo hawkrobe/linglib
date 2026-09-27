@@ -370,6 +370,11 @@ theorem Rules.unmarkedPass_of_none (r : Rules) (P : α → Bool) (h : r.unmarked
     (states : List (α × Valuation)) : r.unmarkedPass P states = states := by
   simp [Rules.unmarkedPass, h, markBy_none]
 
+/-- With neither dependent case the pass does nothing. -/
+theorem Rules.dependentPass_of_none (r : Rules) (P : α → Bool) (hh : r.high = none)
+    (hl : r.low = none) (states : List (α × Valuation)) : r.dependentPass P states = states := by
+  simp [Rules.dependentPass, hh, hl, markBy_none]
+
 /-- The dependent rules value as such. -/
 theorem Rules.dependentPass_mechanism (r : Rules) (P : α → Bool) {states : List (α × Valuation)}
     {i : ℕ} {x : α} {v : Case × Mechanism}
