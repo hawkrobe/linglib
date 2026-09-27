@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Particle.Basic
+public import Linglib.Semantics.Questions.Answering
 
 /-!
 # Japanese particles
@@ -10,16 +11,21 @@ and quoted clauses: the question particle *ka*, obligatory in embedded questions
 in matrix ones, its informal counterpart *no*, the declarative complementizer *koto*, the
 meta-question particle *kke*, which asks the addressee to remind the speaker of an answer and
 occurs only in matrix questions and quotations, and the conjectural *darō*, which embeds
-declaratives and questions alike.
+declaratives and questions alike. The colloquial answer particles *un* 'yes' and *uun* 'no' are
+pro-sentential and typed by `Question.AnswerParticle`: in the truth-based system of
+[holmberg-2016], *un* confirms the negative alternative of a negative question, *Kimi tukarete
+nai? — Un (tukarete nai)* 'Are you not tired? — Yes (I'm not tired)'.
 
 ## Main definitions
 
 * `Japanese.Particles.ka`, `no_`, `koto`, `kke`, `daroo` — the clause-typing particles with
   their embedding distributions
+* `Japanese.Particles.un`, `uun` — the answer particles
 
 ## References
 
 * [dayal-2025]
+* [holmberg-2016]
 * [roelofsen-uegaki-2020]
 * [sauerland-yatsushiro-2017]
 * [uegaki-roelofsen-2018]
@@ -114,5 +120,14 @@ def daroo : Particle where
 
 /-- The clause-typing particles. -/
 def allParticles : List Particle := [ka, no_, koto, kke, daroo]
+
+/-! ### Answer particles -/
+
+/-- *un* 'yes', the colloquial affirmative answer particle. -/
+def un : Question.AnswerParticle := { form := "un", assigns := .positive }
+
+/-- *uun* 'no', the colloquial negative answer particle: *Kare-wa koohii-o noma nai no?* 'Does he
+not drink coffee?' — *Uun, nomu yo* 'No, he drinks'. -/
+def uun : Question.AnswerParticle := { form := "uun", assigns := .negative }
 
 end Japanese.Particles

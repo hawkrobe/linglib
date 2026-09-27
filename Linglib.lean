@@ -872,7 +872,6 @@ import Linglib.Fragments.Romance.French.Modals
 import Linglib.Fragments.Romance.French.Negation
 import Linglib.Fragments.Romance.French.Nouns
 import Linglib.Fragments.Romance.French.PolarityItems
-import Linglib.Fragments.Romance.French.PolarityMarking
 import Linglib.Fragments.Romance.French.Reciprocals
 import Linglib.Fragments.Romance.French.Relativization
 import Linglib.Fragments.Romance.Galician.Pronouns

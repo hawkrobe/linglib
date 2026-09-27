@@ -2,6 +2,9 @@ module
 
 public import Linglib.Semantics.Questions.Answering
 public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Fragments.English.Particles
+public import Linglib.Fragments.Japanese.Particles
+public import Linglib.Fragments.Romance.French.Particles
 public import Linglib.Fragments.Swedish.Particles
 public import Linglib.Data.Examples.Holmberg2016
 
@@ -27,8 +30,10 @@ Section 4.4 defines the polarity-based system as the one lacking low negation
 language has no negative neutralization (`PolarityBased.answer_ne_negative`); Swedish, whose
 negation is never low, is one (`swedish_polarityBased`), so confirming the positive alternative
 of a negative question takes the polarity-reversing *jo* (`swedish_negative_question`), which a
-truth-based configuration never needs (`no_reversal_needed_truth_based`). Positive-bias questions
-carry a high negation outside the PolP and are answered like neutral questions
+truth-based configuration never needs (`no_reversal_needed_truth_based`). Crediting the REV
+feature to [farkas-bruce-2010], the mechanism derives their characterization of a reversing
+affirmative as [reverse, +] (`reverse_pos_of_answer_eq_some`). Positive-bias questions carry a
+high negation outside the PolP and are answered like neutral questions
 (`high_answers_like_neutral`). The mechanism predicts the judgment of every example answered by
 a single particle of the study, whose question is neutral or whose negation the annotation
 locates (`judgment_iff_predicted`).
@@ -47,13 +52,10 @@ locates (`judgment_iff_predicted`).
   the table of languages with a reversing affirmative particle, and the global survey of
   Section 4.2.
 
-## TODO
-
-* The English, French and Japanese particles are defined here; they belong in fragments.
-
 ## References
 
 * [holmberg-2016]
+* [farkas-bruce-2010]
 -/
 
 @[expose] public section
@@ -106,11 +108,7 @@ def screened : PolP := ⟨some .middle, true⟩
 
 /-! ### English (Section 4.3) -/
 
-/-- English *yes*. -/
-def yes : AnswerParticle := { form := "yes", assigns := .positive }
-
-/-- English *no*. -/
-def no : AnswerParticle := { form := "no", assigns := .negative }
+open English.Particles (yes no)
 
 /-- Negative neutralization: speakers who read *not* low take *yes* to confirm that John is not
 coming, speakers who read it middle take *no* to, so the two answers mean the same. -/
@@ -182,16 +180,24 @@ theorem swedish_adverb :
     screened.answer ja = some .negative ∧ screened.answer nej = some .positive := by
   decide
 
-/-- French *si*: the reversing affirmative that *oui* cannot replace after a negative
-question. -/
-def si : AnswerParticle := { form := "si", assigns := .positive, reverses := true }
+open French.Particles (oui si)
 
-/-- French *oui*. -/
-def oui : AnswerParticle := { form := "oui", assigns := .positive }
-
+/-- To *Tu n'es pas fatigué?* the plain affirmative *oui* is ill formed and the reversing *si*
+confirms the positive alternative. -/
 theorem french_negative_question :
     negMiddle.answer oui = none ∧ negMiddle.answer si = some .positive := by
   decide
+
+/-- A reversing affirmative particle such as *si* or *jo* is [reverse, +] in the terms of
+[farkas-bruce-2010], to whom the REV feature is credited and who so characterize *si* and German
+*doch*: a well-formed answer by it confirms the positive alternative, whose polarity relative to
+the question's primary alternative is negative. -/
+theorem reverse_pos_of_answer_eq_some {a : AnswerParticle} (hr : a.reverses = true)
+    (ha : a.assigns = .positive) {q : PolP} {s : Polarity} (h : q.answer a = some s) :
+    s = .positive ∧ s * q.polarity = .negative := by
+  obtain ⟨rfl, hq⟩ := PolP.eq_assigns_and_polarity_of_reverses hr h
+  rw [ha, hq]
+  exact ⟨rfl, rfl⟩
 
 /-- Reversing particles are needed only where a negation values the polarity head: in a
 truth-based configuration every particle yields a well-formed answer, which is why no language
@@ -201,11 +207,7 @@ theorem no_reversal_needed_truth_based (a : AnswerParticle) : negLow.answer a �
 
 /-! ### Japanese (Section 4.1) -/
 
-/-- Japanese *un*. -/
-def un : AnswerParticle := { form := "un", assigns := .positive }
-
-/-- Japanese *uun*. -/
-def uun : AnswerParticle := { form := "uun", assigns := .negative }
+open Japanese.Particles (un uun)
 
 /-- On the prediction of Section 4.10 that the Japanese negation in a negative-bias question does
 not value the polarity head, being low, *un* confirms that he does not drink coffee and *uun*
