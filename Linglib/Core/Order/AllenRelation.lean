@@ -1,615 +1,344 @@
 module
 
 public import Linglib.Core.Order.Interval
+public import Mathlib.Data.Finset.BooleanAlgebra
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.Order
 
 /-!
 # Allen's interval relations
-[allen-1983]
 
-The thirteen jointly-exhaustive, pairwise-disjoint relations that can hold
-between two intervals on a linear order. Originally introduced by James F.
-Allen for temporal reasoning in AI, this is the canonical relation algebra
-that Reichenbach, Klein, Pancheva, and Declerck all draw from — every
-temporal predicate in linglib is a (possibly singleton) subset of these
-thirteen atomic relations.
+This file defines the thirteen relations of Allen's interval algebra between two nonempty
+intervals on a linear order, and proves that exactly one of them holds between two proper
+intervals, those with `fst < snd`. Allen introduced the algebra for temporal reasoning: the
+relations *before*, *meets*, *overlaps*, *starts*, *during* and *finishes*, their inverses, and
+*equal*, each defined by inequalities between the four endpoints. The names here are Allen's,
+except that *before* and *after* are `precedes` and `precededBy`, so that they do not collide with
+the weak `NonemptyInterval.isBefore`, and the inverses are spelled out as `metBy`, `overlappedBy`,
+`startedBy`, `contains` and `finishedBy`.
 
-| Atom         | Symbol | Inverse        | Defining inequality              |
-|--------------|--------|----------------|----------------------------------|
-| precedes     | p      | precededBy     | i.snd < j.fst               |
-| meets        | m      | metBy          | i.snd = j.fst               |
-| overlaps     | o      | overlappedBy   | i.fst < j.fst < i.snd < j.snd |
-| finishedBy   | F      | finishes       | i.fst < j.fst, i.snd = j.snd |
-| contains     | D      | during         | i.fst < j.fst, j.snd < i.snd |
-| starts       | s      | startedBy      | i.fst = j.fst, i.snd < j.snd |
-| equal        | e      | equal          | i.fst = j.fst, i.snd = j.snd |
-| startedBy    | S      | starts         | i.fst = j.fst, j.snd < i.snd |
-| during       | d      | contains       | j.fst < i.fst, i.snd < j.snd |
-| finishes     | f      | finishedBy     | j.fst < i.fst, i.snd = j.snd |
-| overlappedBy | O      | overlaps       | j.fst < i.fst < j.snd < i.snd |
-| metBy        | M      | meets          | i.fst = j.snd               |
-| precededBy   | P      | precedes       | j.snd < i.fst               |
+A general relation of the algebra is a set of atoms, a `Finset AllenRelation`, which holds when
+one of its atoms does (`holdsIn`). The relational vocabulary of `Core/Order/Interval.lean` and
+mathlib's containment order on `NonemptyInterval` are such sets: `isBefore` is
+`{precedes, meets}`, `i ≤ j` is `{starts, equal, finishes, during}`, and `overlaps` is the
+complement of `{precedes, precededBy}`.
 
-For any two intervals on a linear order, at least one atomic relation
-holds (`holds_exists`). When both intervals are non-degenerate
-(`fst < snd`), **exactly** one holds (`holds_unique`). The
-non-degeneracy hypothesis matches [allen-1983]'s original setup: on
-point intervals at the same location, `meets`, `metBy`, and `equal` all
-hold simultaneously, so uniqueness genuinely fails on degenerate inputs.
-Both proofs use mathlib's `order` decision procedure for `LinearOrder`.
+## Main definitions
 
-The `NonemptyInterval` relational vocabulary (the containment order `≤`,
-`isBefore`, `finalSubinterval`, …) consists of *unions* of atomic Allen
-relations — see the **Predicate Bridges** section.
+* `AllenRelation`: the thirteen atoms, with `inverse` swapping the two intervals.
+* `AllenRelation.holds`: the endpoint inequalities defining each atom.
+* `NonemptyInterval.allenRel`: the atom holding between two intervals.
+* `AllenRelation.holdsIn`: a set of atoms holds when one of its members does.
 
-The Allen algebra also has a 13×13 composition table giving, for each
-pair `(r, s)`, the set of relations consistent with `i r j ∧ j s k`. We
-provide identity laws and the principal compositions used by tense theory;
-the full table is left as a TODO.
+## Main results
 
-The **point** analogue needs no bespoke type: a set of admissible point
-comparisons is a `Finset Ordering` with `compare a b ∈ s` as the constraint
-(the tense cells of `Semantics/Tense/Defs.lean`); on point intervals the Allen
-algebra collapses to `{precedes, equal, precededBy}` (the only three Allen
-relations consistent with zero-length intervals).
+* `AllenRelation.holds_iff_signature`: between proper intervals an atom holds exactly when the
+  four endpoint comparisons are the atom's signature, so at most one atom holds (`holds_unique`).
+* `NonemptyInterval.allenRel_holds`, `holds_iff_allenRel_eq`: `allenRel` is an atom that holds,
+  and between proper intervals the only one.
+* `NonemptyInterval.le_iff_holdsIn`, `overlaps_iff_holdsIn`, and the other bridges: each interval
+  relation as a set of atoms.
+
+## Implementation notes
+
+Allen assumes that every interval is proper. Mathlib's `NonemptyInterval` admits points, between
+which uniqueness fails: at a single point `meets`, `metBy` and `equal` all hold. Existence and the
+bridges to the interval vocabulary hold between all intervals, and only the uniqueness results
+carry the two properness hypotheses. Allen's transitivity table, the composition of two atoms as a
+set of atoms, is not formalized.
+
+## References
+
+* [allen-1983]
 -/
 
 @[expose] public section
 
-
--- ════════════════════════════════════════════════════
--- § The Thirteen Atoms
--- ════════════════════════════════════════════════════
-
-/-- The thirteen atomic Allen relations between two intervals on a linear
-    order ([allen-1983]). Naming follows Allen 1983; each atom has an
-    inverse obtained by swapping the two interval arguments — see
-    `AllenRelation.inverse`. -/
+/-- The thirteen atoms of Allen's interval algebra, each defined by inequalities between the
+endpoints of two intervals `i` and `j` (`AllenRelation.holds`). -/
 inductive AllenRelation where
-  /-- `i.snd < j.fst` — i ends strictly before j starts. -/
+  /-- `i` ends strictly before `j` starts, `i.snd < j.fst`; Allen's *before*. -/
   | precedes
-  /-- `i.snd = j.fst` — i's right endpoint is j's left endpoint. -/
+  /-- `i` ends exactly where `j` starts, `i.snd = j.fst`. -/
   | meets
-  /-- `i.fst < j.fst < i.snd < j.snd` — proper overlap on the right of i. -/
+  /-- `i` starts first and the two properly overlap, `i.fst < j.fst < i.snd < j.snd`. -/
   | overlaps
-  /-- `i.fst < j.fst ∧ i.snd = j.snd` — j is a final subinterval of i. -/
+  /-- `j` is a proper final part of `i`, `i.fst < j.fst` and `i.snd = j.snd`. -/
   | finishedBy
-  /-- `i.fst < j.fst ∧ j.snd < i.snd` — j strictly inside i. -/
+  /-- `j` lies strictly inside `i`, `i.fst < j.fst` and `j.snd < i.snd`. -/
   | contains
-  /-- `i.fst = j.fst ∧ i.snd < j.snd` — i is a proper initial subinterval of j. -/
+  /-- `i` is a proper initial part of `j`, `i.fst = j.fst` and `i.snd < j.snd`. -/
   | starts
-  /-- `i.fst = j.fst ∧ i.snd = j.snd` — identical intervals. -/
+  /-- `i` and `j` have the same endpoints. -/
   | equal
-  /-- `i.fst = j.fst ∧ j.snd < i.snd` — j is a proper initial subinterval of i. -/
+  /-- `j` is a proper initial part of `i`, `i.fst = j.fst` and `j.snd < i.snd`. -/
   | startedBy
-  /-- `j.fst < i.fst ∧ i.snd < j.snd` — i strictly inside j. -/
+  /-- `i` lies strictly inside `j`, `j.fst < i.fst` and `i.snd < j.snd`. -/
   | during
-  /-- `j.fst < i.fst ∧ i.snd = j.snd` — i is a final subinterval of j. -/
+  /-- `i` is a proper final part of `j`, `j.fst < i.fst` and `i.snd = j.snd`. -/
   | finishes
-  /-- `j.fst < i.fst < j.snd < i.snd` — proper overlap on the left of i. -/
+  /-- `j` starts first and the two properly overlap, `j.fst < i.fst < j.snd < i.snd`. -/
   | overlappedBy
-  /-- `i.fst = j.snd` — i's left endpoint is j's right endpoint. -/
+  /-- `i` starts exactly where `j` ends, `i.fst = j.snd`. -/
   | metBy
-  /-- `j.snd < i.fst` — j ends strictly before i starts. -/
+  /-- `j` ends strictly before `i` starts, `j.snd < i.fst`; Allen's *after*. -/
   | precededBy
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Fintype, Repr
 
 namespace AllenRelation
 
-/-- The inverse of an atom: the relation that holds when the two intervals
-    are swapped. `equal` is the unique self-inverse atom. -/
+theorem card : Fintype.card AllenRelation = 13 := rfl
+
+/-! ### The inverse -/
+
+/-- The inverse of an atom, the relation holding when the two intervals are swapped. -/
 def inverse : AllenRelation → AllenRelation
-  | .precedes     => .precededBy
-  | .meets        => .metBy
-  | .overlaps     => .overlappedBy
-  | .finishedBy   => .finishes
-  | .contains     => .during
-  | .starts       => .startedBy
-  | .equal        => .equal
-  | .startedBy    => .starts
-  | .during       => .contains
-  | .finishes     => .finishedBy
-  | .overlappedBy => .overlaps
-  | .metBy        => .meets
-  | .precededBy   => .precedes
+  | precedes     => precededBy
+  | meets        => metBy
+  | overlaps     => overlappedBy
+  | finishedBy   => finishes
+  | contains     => during
+  | starts       => startedBy
+  | equal        => equal
+  | startedBy    => starts
+  | during       => contains
+  | finishes     => finishedBy
+  | overlappedBy => overlaps
+  | metBy        => meets
+  | precededBy   => precedes
 
-@[simp] theorem inverse_inverse (r : AllenRelation) : r.inverse.inverse = r := by
-  cases r <;> rfl
+@[simp] theorem inverse_inverse (r : AllenRelation) : r.inverse.inverse = r := by cases r <;> rfl
 
-/-- `equal` is the unique self-inverse atom. -/
-theorem inverse_eq_self_iff (r : AllenRelation) : r.inverse = r ↔ r = .equal := by
+theorem inverse_involutive : Function.Involutive inverse := inverse_inverse
+
+/-- `equal` is the only self-inverse atom. -/
+theorem inverse_eq_self_iff {r : AllenRelation} : r.inverse = r ↔ r = equal := by
   cases r <;> simp [inverse]
 
-/-- The set of all thirteen atoms — useful for stating exhaustiveness. -/
-def all : List AllenRelation :=
-  [.precedes, .meets, .overlaps, .finishedBy, .contains, .starts, .equal,
-   .startedBy, .during, .finishes, .overlappedBy, .metBy, .precededBy]
-
-theorem all_length : all.length = 13 := rfl
-
-theorem mem_all (r : AllenRelation) : r ∈ all := by
-  cases r <;> simp [all]
-
-end AllenRelation
-
--- ════════════════════════════════════════════════════
--- § Holds Predicate
--- ════════════════════════════════════════════════════
+/-! ### The atoms as relations -/
 
 variable {T : Type*} [LinearOrder T]
 
-namespace AllenRelation
-
-/-- `r.holds i j` is true iff atomic Allen relation `r` is the one that
-    holds between intervals `i` and `j`. The defining inequalities follow
-    [allen-1983]. -/
+/-- The endpoint inequalities defining each atom. -/
 def holds : AllenRelation → NonemptyInterval T → NonemptyInterval T → Prop
-  | .precedes,     i, j => i.snd < j.fst
-  | .meets,        i, j => i.snd = j.fst
-  | .overlaps,     i, j => i.fst < j.fst ∧ j.fst < i.snd ∧ i.snd < j.snd
-  | .finishedBy,   i, j => i.fst < j.fst ∧ i.snd = j.snd
-  | .contains,     i, j => i.fst < j.fst ∧ j.snd < i.snd
-  | .starts,       i, j => i.fst = j.fst ∧ i.snd < j.snd
-  | .equal,        i, j => i.fst = j.fst ∧ i.snd = j.snd
-  | .startedBy,    i, j => i.fst = j.fst ∧ j.snd < i.snd
-  | .during,       i, j => j.fst < i.fst ∧ i.snd < j.snd
-  | .finishes,     i, j => j.fst < i.fst ∧ i.snd = j.snd
-  | .overlappedBy, i, j => j.fst < i.fst ∧ i.fst < j.snd ∧ j.snd < i.snd
-  | .metBy,        i, j => i.fst = j.snd
-  | .precededBy,   i, j => j.snd < i.fst
+  | precedes,     i, j => i.snd < j.fst
+  | meets,        i, j => i.snd = j.fst
+  | overlaps,     i, j => i.fst < j.fst ∧ j.fst < i.snd ∧ i.snd < j.snd
+  | finishedBy,   i, j => i.fst < j.fst ∧ i.snd = j.snd
+  | contains,     i, j => i.fst < j.fst ∧ j.snd < i.snd
+  | starts,       i, j => i.fst = j.fst ∧ i.snd < j.snd
+  | equal,        i, j => i.fst = j.fst ∧ i.snd = j.snd
+  | startedBy,    i, j => i.fst = j.fst ∧ j.snd < i.snd
+  | during,       i, j => j.fst < i.fst ∧ i.snd < j.snd
+  | finishes,     i, j => j.fst < i.fst ∧ i.snd = j.snd
+  | overlappedBy, i, j => j.fst < i.fst ∧ i.fst < j.snd ∧ j.snd < i.snd
+  | metBy,        i, j => i.fst = j.snd
+  | precededBy,   i, j => j.snd < i.fst
 
-/-- Holds is symmetric under inversion: r holds of (i, j) iff r⁻¹ holds of
-    (j, i). This is the central algebraic property of the inverse operation. -/
-theorem holds_inverse (r : AllenRelation) (i j : NonemptyInterval T) :
-    r.holds i j ↔ r.inverse.holds j i := by
+instance (r : AllenRelation) (i j : NonemptyInterval T) : Decidable (r.holds i j) := by
+  cases r <;> dsimp only [holds] <;> infer_instance
+
+variable {i j : NonemptyInterval T}
+
+@[simp] theorem inverse_holds (r : AllenRelation) : r.inverse.holds j i ↔ r.holds i j := by
   cases r <;> simp [holds, inverse, and_comm, and_left_comm, eq_comm]
 
-/-- **Exhaustiveness** (constructive witness): every interval pair satisfies
-    at least one atomic Allen relation, computably. The case-split mirrors
-    [allen-1983]'s exhaustive enumeration: trichotomy on
-    `i.snd vs j.fst`, then `i.fst vs j.snd`, then refinement on
-    `i.fst vs j.fst` and `i.snd vs j.snd`. Used to derive the
-    constructive `NonemptyInterval.allenRel` projection. -/
-def witness (i j : NonemptyInterval T) : { r : AllenRelation // r.holds i j } :=
-  if h₁ : i.snd < j.fst then ⟨.precedes, h₁⟩
-  else if h₁' : i.snd = j.fst then ⟨.meets, h₁'⟩
-  else
-    have hfgs : j.fst < i.snd := lt_of_le_of_ne (le_of_not_gt h₁) (Ne.symm h₁')
-    if h₂ : j.snd < i.fst then ⟨.precededBy, h₂⟩
-    else if h₂' : i.fst = j.snd then ⟨.metBy, h₂'⟩
-    else
-      have hsgf : i.fst < j.snd := lt_of_le_of_ne (le_of_not_gt h₂) h₂'
-      if h₃ : i.fst < j.fst then
-        if h₄ : i.snd < j.snd then ⟨.overlaps, h₃, hfgs, h₄⟩
-        else if h₄' : i.snd = j.snd then ⟨.finishedBy, h₃, h₄'⟩
-        else
-          have h₄g : j.snd < i.snd := lt_of_le_of_ne (le_of_not_gt h₄) (Ne.symm h₄')
-          ⟨.contains, h₃, h₄g⟩
-      else if h₃' : i.fst = j.fst then
-        if h₄ : i.snd < j.snd then ⟨.starts, h₃', h₄⟩
-        else if h₄' : i.snd = j.snd then ⟨.equal, h₃', h₄'⟩
-        else
-          have h₄g : j.snd < i.snd := lt_of_le_of_ne (le_of_not_gt h₄) (Ne.symm h₄')
-          ⟨.startedBy, h₃', h₄g⟩
-      else
-        have h₃g : j.fst < i.fst := lt_of_le_of_ne (le_of_not_gt h₃) (Ne.symm h₃')
-        if h₄ : i.snd < j.snd then ⟨.during, h₃g, h₄⟩
-        else if h₄' : i.snd = j.snd then ⟨.finishes, h₃g, h₄'⟩
-        else
-          have h₄g : j.snd < i.snd := lt_of_le_of_ne (le_of_not_gt h₄) (Ne.symm h₄')
-          ⟨.overlappedBy, h₃g, hsgf, h₄g⟩
+@[simp] theorem equal_holds_iff : equal.holds i j ↔ i = j := by
+  rw [NonemptyInterval.ext_iff, Prod.ext_iff]; exact Iff.rfl
 
-/-- **Exhaustiveness** (existence half): every interval pair satisfies at
-    least one atomic Allen relation. Existential projection of `witness`. -/
-theorem holds_exists (i j : NonemptyInterval T) : ∃ r : AllenRelation, r.holds i j :=
-  ⟨_, (witness i j).2⟩
+/-! ### Uniqueness between proper intervals
 
--- ════════════════════════════════════════════════════
--- § Signature and Uniqueness
--- ════════════════════════════════════════════════════
+Between proper intervals each atom fixes the comparison of every endpoint of `i` with every
+endpoint of `j`, its *signature*, and distinct atoms have distinct signatures. -/
 
-/-! Each non-degenerate interval pair `(i, j)` has a four-tuple
-    *signature*: the pairwise `sgn` (lt/eq/gt) of every endpoint of `i`
-    with every endpoint of `j`. The thirteen Allen atoms correspond
-    bijectively to thirteen of the 81 possible signature tuples (the
-    other 68 are excluded by `i.fst < i.snd` and `j.fst < j.snd`).
-    Factoring uniqueness through this signature reduces the 169-case
-    cross-product `cases r₁ <;> cases r₂` (which needs 6× the default
-    heartbeat budget) into two 13-case lemmas. -/
+/-- The comparisons of `i.fst` with `j.fst`, `i.fst` with `j.snd`, `i.snd` with `j.fst` and
+`i.snd` with `j.snd` that an atom forces between proper intervals. -/
+def signature : AllenRelation → Ordering × Ordering × Ordering × Ordering
+  | precedes     => (.lt, .lt, .lt, .lt)
+  | meets        => (.lt, .lt, .eq, .lt)
+  | overlaps     => (.lt, .lt, .gt, .lt)
+  | finishedBy   => (.lt, .lt, .gt, .eq)
+  | contains     => (.lt, .lt, .gt, .gt)
+  | starts       => (.eq, .lt, .gt, .lt)
+  | equal        => (.eq, .lt, .gt, .eq)
+  | startedBy    => (.eq, .lt, .gt, .gt)
+  | during       => (.gt, .lt, .gt, .lt)
+  | finishes     => (.gt, .lt, .gt, .eq)
+  | overlappedBy => (.gt, .lt, .gt, .gt)
+  | metBy        => (.gt, .eq, .gt, .gt)
+  | precededBy   => (.gt, .gt, .gt, .gt)
 
-/-- Three-way sign of `a vs b` on a linear order. -/
-def sgn (a b : T) : Ordering :=
-  if a < b then .lt else if a = b then .eq else .gt
+theorem signature_injective : Function.Injective signature := by decide
 
-theorem sgn_lt {a b : T} (h : a < b) : sgn a b = .lt := ite_eq_left h
+/-- Between proper intervals an atom holds exactly when the endpoint comparisons are its
+signature. -/
+theorem holds_iff_signature (r : AllenRelation) (hi : i.fst < i.snd) (hj : j.fst < j.snd) :
+    r.holds i j ↔
+      (compare i.fst j.fst, compare i.fst j.snd, compare i.snd j.fst, compare i.snd j.snd) =
+        r.signature := by
+  cases r <;> simp only [holds, signature, Prod.mk.injEq, compare_lt_iff_lt, compare_eq_iff_eq,
+    compare_gt_iff_gt, iff_def, and_imp] <;> constructor <;> intros <;>
+    (repeat' apply And.intro) <;> order
 
-theorem sgn_eq {a b : T} (h : a = b) : sgn a b = .eq := by
-  subst h; simp [sgn]
-
-theorem sgn_gt {a b : T} (h : b < a) : sgn a b = .gt := by
-  unfold sgn; rw [ite_eq_right (lt_asymm h), ite_eq_right (ne_of_gt h)]
-
-/-- The 4-tuple signature of an interval pair: pairwise comparisons of
-    `(i.fst vs j.fst, i.fst vs j.snd, i.snd vs j.fst,
-    i.snd vs j.snd)`. -/
-def signature (i j : NonemptyInterval T) : Ordering × Ordering × Ordering × Ordering :=
-  (sgn i.fst j.fst, sgn i.fst j.snd, sgn i.snd j.fst, sgn i.snd j.snd)
-
-/-- The expected signature of each Allen atom — the unique 4-tuple of
-    pairwise endpoint comparisons forced by the atom's defining
-    inequalities together with non-degeneracy of both intervals. -/
-def expectedSig : AllenRelation → Ordering × Ordering × Ordering × Ordering
-  | .precedes     => (.lt, .lt, .lt, .lt)
-  | .meets        => (.lt, .lt, .eq, .lt)
-  | .overlaps     => (.lt, .lt, .gt, .lt)
-  | .finishedBy   => (.lt, .lt, .gt, .eq)
-  | .contains     => (.lt, .lt, .gt, .gt)
-  | .starts       => (.eq, .lt, .gt, .lt)
-  | .equal        => (.eq, .lt, .gt, .eq)
-  | .startedBy    => (.eq, .lt, .gt, .gt)
-  | .during       => (.gt, .lt, .gt, .lt)
-  | .finishes     => (.gt, .lt, .gt, .eq)
-  | .overlappedBy => (.gt, .lt, .gt, .gt)
-  | .metBy        => (.gt, .eq, .gt, .gt)
-  | .precededBy   => (.gt, .gt, .gt, .gt)
-
-/-- The thirteen expected signatures are pairwise distinct: any two atoms
-    with the same signature are equal. (13-case diagonal + 156 trivial
-    `simp` contradictions on `Ordering` constructor mismatch.) -/
-theorem expectedSig_injective (r₁ r₂ : AllenRelation)
-    (h : r₁.expectedSig = r₂.expectedSig) : r₁ = r₂ := by
-  cases r₁ <;> cases r₂ <;> first | rfl | (simp [expectedSig] at h)
-
-/-- If atom `r` holds of a non-degenerate interval pair, the pair's
-    signature is exactly `r.expectedSig`. (13 cases, each computing
-    four `sgn` components via `Prod.ext` + the appropriate `sgn_*`
-    lemma + `order`.) -/
-theorem signature_of_holds (r : AllenRelation) (i j : NonemptyInterval T)
-    (hi : i.fst < i.snd) (hj : j.fst < j.snd) (h : r.holds i j) :
-    signature i j = r.expectedSig := by
-  cases r <;> simp only [holds] at h
-  all_goals (
-    try obtain ⟨_, _, _⟩ := h
-    try obtain ⟨_, _⟩ := h
-    simp only [signature, expectedSig]
-    refine Prod.ext ?_ (Prod.ext ?_ (Prod.ext ?_ ?_)) <;>
-      first
-      | (apply sgn_lt; order)
-      | (apply sgn_eq; order)
-      | (apply sgn_gt; order))
-
-/-- **Uniqueness** (pairwise disjointness): on non-degenerate intervals
-    (`i.fst < i.snd` and `j.fst < j.snd`), at most one atom
-    holds of a given pair. Combined with `holds_exists`, this gives the
-    key property of Allen's algebra: the thirteen atoms partition the
-    space of (proper) interval pairs into thirteen exhaustive,
-    pairwise-disjoint cases.
-
-    The non-degeneracy hypothesis is essential: at a single time point
-    `t`, taking `i = j = ⟨⟨t, t⟩, le_refl t⟩` makes `meets` (`t = t`),
-    `metBy` (`t = t`), and `equal` (`t = t ∧ t = t`) all hold
-    simultaneously. [allen-1983] sidesteps this by assuming strict
-    intervals throughout.
-
-    Proof: factor through the 4-tuple `signature`. Both `r₁` and `r₂`
-    force the same signature (`signature_of_holds`), and distinct atoms
-    have distinct signatures (`expectedSig_injective`). -/
-theorem holds_unique (i j : NonemptyInterval T)
-    (hi : i.fst < i.snd) (hj : j.fst < j.snd)
-    (r₁ r₂ : AllenRelation)
-    (h₁ : r₁.holds i j) (h₂ : r₂.holds i j) : r₁ = r₂ :=
-  expectedSig_injective _ _
-    ((signature_of_holds r₁ i j hi hj h₁).symm.trans
-     (signature_of_holds r₂ i j hi hj h₂))
+/-- Between proper intervals at most one atom holds. -/
+theorem holds_unique (hi : i.fst < i.snd) (hj : j.fst < j.snd) {r s : AllenRelation}
+    (hr : r.holds i j) (hs : s.holds i j) : r = s :=
+  signature_injective <|
+    ((holds_iff_signature r hi hj).1 hr).symm.trans ((holds_iff_signature s hi hj).1 hs)
 
 end AllenRelation
 
--- ════════════════════════════════════════════════════
--- § Atom Sets and `holdsIn`
--- ════════════════════════════════════════════════════
+/-! ### The atom holding between two intervals -/
 
-/-! Many natural temporal predicates correspond to **unions** of Allen
-    atoms — "at least one of these atoms holds." We express this
-    uniformly via `holdsIn`, and name the atom-sets that appear in the
-    `NonemptyInterval` predicate API. Each existing `NonemptyInterval` predicate is
-    then a *projection* from a named atom-set: this exposes the
-    algebraic structure (`S₁ ⊆ S₂ ⇒ holdsIn S₁ ⇒ holdsIn S₂`) and
-    grounds each predicate in the Allen algebra by construction.
+namespace NonemptyInterval
 
-    Singleton sets (`precedesSet`, `meetsSet`) recover individual atoms
-    as predicates; longer sets give the union predicates that linguistic
-    theory typically works with. The atom sets are first-class data, so
-    later modules (`Domain`, `RelationOrigin`, …) can manipulate them
-    uniformly without committing to a specific predicate at the
-    type level. -/
+open AllenRelation
+
+variable {T : Type*} [LinearOrder T] (i j : NonemptyInterval T)
+
+/-- The Allen atom holding between two intervals, read off their endpoint comparisons. -/
+def allenRel : AllenRelation :=
+  if i.snd < j.fst then .precedes
+  else if i.snd = j.fst then .meets
+  else if j.snd < i.fst then .precededBy
+  else if i.fst = j.snd then .metBy
+  else if i.fst < j.fst then
+    if i.snd < j.snd then .overlaps else if i.snd = j.snd then .finishedBy else .contains
+  else if i.fst = j.fst then
+    if i.snd < j.snd then .starts else if i.snd = j.snd then .equal else .startedBy
+  else if i.snd < j.snd then .during else if i.snd = j.snd then .finishes else .overlappedBy
+
+/-- Some atom holds between any two intervals. -/
+theorem allenRel_holds : (allenRel i j).holds i j := by
+  unfold allenRel
+  split_ifs <;> simp only [holds] <;> (repeat' apply And.intro) <;> order
+
+variable {i j}
+
+/-- Between proper intervals `allenRel` is the only atom that holds. -/
+theorem holds_iff_allenRel_eq (hi : i.fst < i.snd) (hj : j.fst < j.snd) {r : AllenRelation} :
+    r.holds i j ↔ allenRel i j = r :=
+  ⟨fun h ↦ holds_unique hi hj (allenRel_holds i j) h, fun h ↦ h ▸ allenRel_holds i j⟩
+
+theorem allenRel_swap (hi : i.fst < i.snd) (hj : j.fst < j.snd) :
+    allenRel j i = (allenRel i j).inverse :=
+  (holds_iff_allenRel_eq hj hi).1 ((inverse_holds _).2 (allenRel_holds i j))
+
+end NonemptyInterval
+
+/-! ### Sets of atoms
+
+A general relation of Allen's algebra is a set of atoms, holding when one of its atoms does. -/
 
 namespace AllenRelation
 
-/-- "`holdsIn S i j`" iff some atom in the list `S` is the relation
-    holding between `i` and `j`. Singleton lists yield exact-atom
-    predicates; longer lists yield union predicates. -/
-def holdsIn (S : List AllenRelation) (i j : NonemptyInterval T) : Prop :=
-  ∃ r ∈ S, r.holds i j
+open Finset NonemptyInterval
 
-@[simp] theorem holdsIn_nil (i j : NonemptyInterval T) :
-    holdsIn [] i j ↔ False := by simp [holdsIn]
+variable {T : Type*} [LinearOrder T] {S S' : Finset AllenRelation} {i j : NonemptyInterval T}
 
-@[simp] theorem holdsIn_singleton (r : AllenRelation) (i j : NonemptyInterval T) :
-    holdsIn [r] i j ↔ r.holds i j := by simp [holdsIn]
+/-- A set of atoms holds between two intervals when one of its atoms does. -/
+def holdsIn (S : Finset AllenRelation) (i j : NonemptyInterval T) : Prop := ∃ r ∈ S, r.holds i j
 
-theorem holdsIn_cons (r : AllenRelation) (S : List AllenRelation)
-    (i j : NonemptyInterval T) :
-    holdsIn (r :: S) i j ↔ r.holds i j ∨ holdsIn S i j := by
+instance (S : Finset AllenRelation) (i j : NonemptyInterval T) : Decidable (holdsIn S i j) :=
+  inferInstanceAs (Decidable (∃ r ∈ S, r.holds i j))
+
+@[simp] theorem holdsIn_empty : ¬ holdsIn ∅ i j := by simp [holdsIn]
+
+@[simp] theorem holdsIn_singleton {r : AllenRelation} : holdsIn {r} i j ↔ r.holds i j := by
+  simp [holdsIn]
+
+@[simp] theorem holdsIn_insert {r : AllenRelation} :
+    holdsIn (insert r S) i j ↔ r.holds i j ∨ holdsIn S i j := by
   simp [holdsIn, or_and_right, exists_or]
 
-/-- Subset monotonicity: enlarging the atom set weakens the predicate. -/
-theorem holdsIn_mono {S₁ S₂ : List AllenRelation} (h : ∀ r ∈ S₁, r ∈ S₂)
-    (i j : NonemptyInterval T) : holdsIn S₁ i j → holdsIn S₂ i j := by
-  rintro ⟨r, hr, hrij⟩; exact ⟨r, h r hr, hrij⟩
+@[simp] theorem holdsIn_union : holdsIn (S ∪ S') i j ↔ holdsIn S i j ∨ holdsIn S' i j := by
+  simp [holdsIn, or_and_right, exists_or]
 
--- ──── Named atom-sets corresponding to existing `NonemptyInterval` predicates ────
+@[simp] theorem holdsIn_univ : holdsIn univ i j := ⟨_, mem_univ _, allenRel_holds i j⟩
 
-/-- `{precedes}` — i.e., `NonemptyInterval.precedes`. -/
-def precedesSet : List AllenRelation := [.precedes]
+@[simp] theorem holdsIn_image_inverse : holdsIn (S.image inverse) j i ↔ holdsIn S i j := by
+  simp [holdsIn]
 
-/-- `{equal}` — interval coincidence; on point intervals collapses to
-    point equality, the relation behind Reichenbach's `R = P` etc. -/
-def equalSet : List AllenRelation := [.equal]
+theorem holdsIn_mono (h : S ⊆ S') : holdsIn S i j → holdsIn S' i j :=
+  fun ⟨r, hr, h'⟩ ↦ ⟨r, h hr, h'⟩
 
-/-- `{meets}` — i.e., `NonemptyInterval.meets`. -/
-def meetsSet : List AllenRelation := [.meets]
-
-/-- `{precedes, meets}` — i.e., `NonemptyInterval.isBefore`: strict precedence
-    plus meeting (the conflation `i.snd ≤ j.fst` represents). -/
-def beforeSet : List AllenRelation := [.precedes, .meets]
-
-/-- `{precededBy, metBy}` — i.e., `NonemptyInterval.isAfter`. -/
-def afterSet : List AllenRelation := [.precededBy, .metBy]
-
-/-- `{starts, equal, finishes, during}` — i.e., the containment order
-    `i ≤ j`: every way `i` can be contained in `j`. -/
-def containmentSet : List AllenRelation := [.starts, .equal, .finishes, .during]
-
-/-- `{starts, finishes, during}` — i.e., strict containment `i < j`:
-    proper containment (excludes `equal`). -/
-def properContainmentSet : List AllenRelation := [.starts, .finishes, .during]
-
-/-- `{finishes, equal}` — i.e., `NonemptyInterval.finalSubinterval`: contained
-    and sharing the right endpoint. -/
-def finalContainmentSet : List AllenRelation := [.finishes, .equal]
-
-/-- `{startedBy, equal, finishedBy, contains}` — the **inverse** of
-    `containmentSet`: every way `i` can contain `j`. -/
-def reverseContainmentSet : List AllenRelation :=
-  [.startedBy, .equal, .finishedBy, .contains]
-
-/-- Eleven atoms — every relation except strict precedence in either
-    direction — i.e., `NonemptyInterval.overlaps`'s union characterization. -/
-def overlapSet : List AllenRelation :=
-  [.meets, .overlaps, .finishedBy, .contains, .starts, .equal,
-   .startedBy, .during, .finishes, .overlappedBy, .metBy]
+/-- Between proper intervals a set of atoms holds exactly when it contains `allenRel`. -/
+theorem holdsIn_iff_allenRel_mem (hi : i.fst < i.snd) (hj : j.fst < j.snd) :
+    holdsIn S i j ↔ allenRel i j ∈ S :=
+  ⟨fun ⟨_, hr, h⟩ ↦ (holds_iff_allenRel_eq hi hj).1 h ▸ hr, fun h ↦ ⟨_, h, allenRel_holds i j⟩⟩
 
 end AllenRelation
 
--- ════════════════════════════════════════════════════
--- § Predicate Bridges
--- ════════════════════════════════════════════════════
+/-! ### The interval vocabulary as sets of atoms
 
-/-! The `NonemptyInterval` relational vocabulary equated to projections
-    from named Allen atom-sets via `holdsIn`. The singleton-atom predicates
-    (`precedes`, `meets`) collapse to `Iff.rfl`; the union predicates
-    require structural-form ↔ disjunction-form translations. These are
-    the only place where the structural definitions in
-    `Core/Order/Interval.lean` (and mathlib's containment order `≤`/`<`)
-    meet the Allen algebra; downstream modules should depend on the
-    Allen side. -/
+Each relation of `Core/Order/Interval.lean`, and mathlib's containment order, is a set of Allen
+atoms; the three that are atoms themselves are so by definition. -/
 
 namespace NonemptyInterval
 
-variable (i j : NonemptyInterval T)
+open AllenRelation
 
-/-- `NonemptyInterval.precedes` is exactly the Allen `precedes` atom. -/
-theorem precedes_iff_allen : i.precedes j ↔ AllenRelation.holdsIn AllenRelation.precedesSet i j := by
-  simp [AllenRelation.precedesSet, AllenRelation.holds]; rfl
+variable {T : Type*} [LinearOrder T] (i j : NonemptyInterval T)
 
-/-- `NonemptyInterval.meets` is exactly the Allen `meets` atom. -/
-theorem meets_iff_allen : i.meets j ↔ AllenRelation.holdsIn AllenRelation.meetsSet i j := by
-  simp [AllenRelation.meetsSet, AllenRelation.holds]; rfl
+theorem precedes_iff_holds : i.precedes j ↔ AllenRelation.precedes.holds i j := Iff.rfl
 
-/-- `NonemptyInterval.isBefore` (≤) is the union `{precedes, meets}` — Allen's
-    strict `precedes` plus `meets`. This conflation of two atoms into
-    one weakened predicate is exactly the kind of imprecision the
-    Allen algebra removes. -/
-theorem isBefore_iff_allen :
-    i.isBefore j ↔ AllenRelation.holdsIn AllenRelation.beforeSet i j := by
-  simp [AllenRelation.beforeSet, AllenRelation.holdsIn, AllenRelation.holds, isBefore]
-  exact le_iff_lt_or_eq
+theorem meets_iff_holds : i.meets j ↔ AllenRelation.meets.holds i j := Iff.rfl
 
-/-- `NonemptyInterval.isAfter` is the inverse of `isBefore`: `{precededBy, metBy}`. -/
-theorem isAfter_iff_allen :
-    i.isAfter j ↔ AllenRelation.holdsIn AllenRelation.afterSet i j := by
-  simp [AllenRelation.afterSet, AllenRelation.holdsIn, AllenRelation.holds, isAfter]
-  rw [le_iff_lt_or_eq]
+theorem during_iff_holds : i.during j ↔ AllenRelation.during.holds i j := Iff.rfl
+
+theorem isBefore_iff_holdsIn : i.isBefore j ↔ holdsIn {.precedes, .meets} i j := by
+  simp [isBefore, holds, le_iff_lt_or_eq]
+
+theorem isAfter_iff_holdsIn : i.isAfter j ↔ holdsIn {.precededBy, .metBy} i j := by
+  simp [isAfter, holds, le_iff_lt_or_eq, eq_comm]
+
+theorem le_iff_holdsIn : i ≤ j ↔ holdsIn {.starts, .equal, .finishes, .during} i j := by
+  simp only [le_def, holdsIn_insert, holdsIn_singleton, holds]
   constructor
-  · rintro (h | h)
-    · exact Or.inl h
-    · exact Or.inr h.symm
-  · rintro (h | h)
-    · exact Or.inl h
-    · exact Or.inr h.symm
+  · rintro ⟨h₁, h₂⟩
+    rcases h₁.lt_or_eq with h₁ | h₁ <;> rcases h₂.lt_or_eq with h₂ | h₂ <;> simp [*]
+  · rintro (⟨h₁, h₂⟩ | ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩) <;> exact ⟨by order, by order⟩
 
-/-- The containment order `i ≤ j` is the union
-    `{starts, equal, finishes, during}` — every way `i` can be contained
-    in `j` without sharing the wrong boundary. -/
-theorem le_iff_allen :
-    i ≤ j ↔ AllenRelation.holdsIn AllenRelation.containmentSet i j := by
-  simp [AllenRelation.containmentSet, AllenRelation.holdsIn, AllenRelation.holds, le_def]
+theorem lt_iff_holdsIn : i < j ↔ holdsIn {.starts, .finishes, .during} i j := by
+  simp only [lt_def, le_def, holdsIn_insert, holdsIn_singleton, holds]
   constructor
-  · intro ⟨h₁, h₂⟩
-    rcases lt_or_eq_of_le h₁ with hs | hs
-    · rcases lt_or_eq_of_le h₂ with hf | hf
-      · exact Or.inr (Or.inr (Or.inr ⟨hs, hf⟩))   -- during
-      · exact Or.inr (Or.inr (Or.inl ⟨hs, hf⟩))   -- finishes
-    · rcases lt_or_eq_of_le h₂ with hf | hf
-      · exact Or.inl ⟨hs.symm, hf⟩                  -- starts
-      · exact Or.inr (Or.inl ⟨hs.symm, hf⟩)         -- equal
-  · rintro (⟨hs, hf⟩ | ⟨hs, hf⟩ | ⟨hs, hf⟩ | ⟨hs, hf⟩)
-    · exact ⟨le_of_eq hs.symm, le_of_lt hf⟩         -- starts
-    · exact ⟨le_of_eq hs.symm, le_of_eq hf⟩         -- equal
-    · exact ⟨le_of_lt hs, le_of_eq hf⟩              -- finishes
-    · exact ⟨le_of_lt hs, le_of_lt hf⟩              -- during
+  · rintro ⟨⟨h₁, h₂⟩, h₃⟩
+    rcases h₁.lt_or_eq with h₁ | h₁ <;> rcases h₂.lt_or_eq with h₂ | h₂ <;> simp_all
+  · rintro (⟨h₁, h₂⟩ | ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩) <;> exact ⟨⟨by order, by order⟩, by order⟩
 
-/-- `NonemptyInterval.finalSubinterval` is the union `{finishes, equal}` —
-    contained in `j` and sharing `j`'s right endpoint. -/
-theorem finalSubinterval_iff_allen :
-    i.finalSubinterval j ↔ AllenRelation.holdsIn AllenRelation.finalContainmentSet i j := by
-  simp [AllenRelation.finalContainmentSet, AllenRelation.holdsIn, AllenRelation.holds,
-        finalSubinterval, le_def]
+theorem finalSubinterval_iff_holdsIn : i.finalSubinterval j ↔ holdsIn {.finishes, .equal} i j := by
+  simp only [finalSubinterval, le_def, holdsIn_insert, holdsIn_singleton, holds]
   constructor
-  · intro ⟨⟨h₁, _⟩, hf⟩
-    rcases lt_or_eq_of_le h₁ with hs | hs
-    · exact Or.inl ⟨hs, hf⟩
-    · exact Or.inr ⟨hs.symm, hf⟩
-  · rintro (⟨hs, hf⟩ | ⟨hs, hf⟩)
-    · exact ⟨⟨le_of_lt hs, le_of_eq hf⟩, hf⟩
-    · exact ⟨⟨le_of_eq hs.symm, le_of_eq hf⟩, hf⟩
+  · rintro ⟨⟨h₁, -⟩, h₂⟩
+    rcases h₁.lt_or_eq with h₁ | h₁ <;> simp [*]
+  · rintro (⟨h₁, h₂⟩ | ⟨h₁, h₂⟩) <;> exact ⟨⟨by order, by order⟩, by order⟩
 
-/-- Strict containment `i < j` is the union `{starts, finishes, during}`
-    — containment that excludes the `equal` case. -/
-theorem lt_iff_allen :
-    i < j ↔ AllenRelation.holdsIn AllenRelation.properContainmentSet i j := by
-  simp [AllenRelation.properContainmentSet, AllenRelation.holdsIn, AllenRelation.holds,
-        lt_def, le_def]
+theorem overlaps_iff_holdsIn : i.overlaps j ↔ holdsIn {.precedes, .precededBy}ᶜ i j := by
+  rw [overlaps_iff_not_precedes]
   constructor
-  · rintro ⟨⟨h₁, h₂⟩, hstrict⟩
-    rcases hstrict with hs | hf
-    · -- j.fst < i.fst ⇒ during or finishes
-      rcases lt_or_eq_of_le h₂ with hf' | hf'
-      · exact Or.inr (Or.inr ⟨hs, hf'⟩)            -- during
-      · exact Or.inr (Or.inl ⟨hs, hf'⟩)            -- finishes
-    · -- i.snd < j.snd ⇒ starts or during
-      rcases lt_or_eq_of_le h₁ with hs' | hs'
-      · exact Or.inr (Or.inr ⟨hs', hf⟩)            -- during
-      · exact Or.inl ⟨hs'.symm, hf⟩                  -- starts
-  · rintro (⟨hs, hf⟩ | ⟨hs, hf⟩ | ⟨hs, hf⟩)
-    · exact ⟨⟨le_of_eq hs.symm, le_of_lt hf⟩, Or.inr hf⟩  -- starts
-    · exact ⟨⟨le_of_lt hs, le_of_eq hf⟩, Or.inl hs⟩       -- finishes
-    · exact ⟨⟨le_of_lt hs, le_of_lt hf⟩, Or.inl hs⟩        -- during
+  · rintro ⟨h₁, h₂⟩
+    refine ⟨allenRel i j, ?_, allenRel_holds i j⟩
+    have h := allenRel_holds i j
+    simp only [Finset.mem_compl, Finset.mem_insert, Finset.mem_singleton, not_or]
+    exact ⟨fun e ↦ h₁ (by rwa [e] at h), fun e ↦ h₂ (by rwa [e] at h)⟩
+  · rintro ⟨r, hr, h⟩
+    have := i.fst_le_snd; have := j.fst_le_snd
+    simp only [Finset.mem_compl, Finset.mem_insert, Finset.mem_singleton, not_or] at hr
+    revert h
+    cases r <;> simp only [holds, precedes, not_lt, and_imp] <;> intros <;>
+      first | exact absurd rfl hr.1 | exact absurd rfl hr.2 | exact ⟨by order, by order⟩
+
+/-- Initial overlap is the union of the atoms placing `j.fst` inside `i`. -/
+theorem initialOverlap_iff_holdsIn : i.initialOverlap j ↔
+    holdsIn {.meets, .overlaps, .finishedBy, .contains, .starts, .equal, .startedBy} i j := by
+  simp only [initialOverlap, overlaps, mem_def, holdsIn_insert, holdsIn_singleton, holds]
+  have := i.fst_le_snd; have := j.fst_le_snd
+  constructor
+  · rintro ⟨-, h₁, h₂⟩
+    rcases h₁.lt_or_eq with h₁ | h₁ <;> rcases h₂.lt_or_eq with h₂ | h₂ <;>
+      rcases lt_trichotomy i.snd j.snd with h | h | h <;> simp_all
+  · rintro (h | ⟨h₁, h₂, h₃⟩ | ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩) <;>
+      exact ⟨⟨by order, by order⟩, by order, by order⟩
 
 end NonemptyInterval
-
--- ════════════════════════════════════════════════════
--- § Decidability
--- ════════════════════════════════════════════════════
-
-namespace AllenRelation
-
-/-- `holds` is decidable on a linear order (provided `<` and `=` are). -/
-instance holds_decidable [DecidableEq T] [DecidableRel (α := T) (· < ·)]
-    (r : AllenRelation) (i j : NonemptyInterval T) : Decidable (r.holds i j) := by
-  cases r <;> unfold holds <;> infer_instance
-
-end AllenRelation
-
--- ════════════════════════════════════════════════════
--- § Identity Compositions and Principal Transitives
--- ════════════════════════════════════════════════════
-
-/-! The full Allen composition table assigns to each pair `(r, s)` the set
-    of relations consistent with `i r j ∧ j s k`. The table has 169 entries
-    and is left as a TODO. We provide the identity laws plus the principal
-    transitive closures used by tense theory.
-
-    Convention: `holds_*_trans` reads "if r holds of (i, j) and r holds
-    of (j, k), then r holds of (i, k)" for the relations that are transitive. -/
-
-namespace AllenRelation
-
-variable {i j k : NonemptyInterval T}
-
-/-- `equal` is a left identity: if i = j and j r k, then i r k. -/
-theorem holds_equal_left (r : AllenRelation)
-    (h₁ : AllenRelation.equal.holds i j) (h₂ : r.holds j k) : r.holds i k := by
-  obtain ⟨hs, hf⟩ := h₁
-  cases r <;> simp_all [holds]
-
-/-- `equal` is a right identity: if i r j and j = k, then i r k. -/
-theorem holds_equal_right (r : AllenRelation)
-    (h₁ : r.holds i j) (h₂ : AllenRelation.equal.holds j k) : r.holds i k := by
-  obtain ⟨hs, hf⟩ := h₂
-  cases r <;> simp_all [holds]
-
-/-- `precedes` is transitive: i p j ∧ j p k → i p k. (The composition table
-    entry `precedes ∘ precedes` is the singleton `{precedes}`.) The proof
-    chains `i.snd < j.fst ≤ j.snd < k.fst` via `j.fst_le_snd`. -/
-theorem holds_precedes_trans
-    (h₁ : AllenRelation.precedes.holds i j) (h₂ : AllenRelation.precedes.holds j k) :
-    AllenRelation.precedes.holds i k := by
-  simp only [holds] at h₁ h₂ ⊢
-  exact lt_of_lt_of_le h₁ (le_trans j.fst_le_snd (le_of_lt h₂))
-
-/-- The `during` relation is transitive: i ⊏ j ∧ j ⊏ k → i ⊏ k. (Composition
-    entry `during ∘ during = {during}`.) -/
-theorem holds_during_trans
-    (h₁ : AllenRelation.during.holds i j) (h₂ : AllenRelation.during.holds j k) :
-    AllenRelation.during.holds i k := by
-  simp only [holds] at h₁ h₂ ⊢
-  exact ⟨lt_trans h₂.1 h₁.1, lt_trans h₁.2 h₂.2⟩
-
-/-- The `contains` relation is transitive (mirror of `during`). -/
-theorem holds_contains_trans
-    (h₁ : AllenRelation.contains.holds i j) (h₂ : AllenRelation.contains.holds j k) :
-    AllenRelation.contains.holds i k := by
-  simp only [holds] at h₁ h₂ ⊢
-  exact ⟨lt_trans h₁.1 h₂.1, lt_trans h₂.2 h₁.2⟩
-
-end AllenRelation
-
--- ════════════════════════════════════════════════════
--- § The Projection Function `NonemptyInterval.allenRel`
--- ════════════════════════════════════════════════════
-
-/-! The projection from interval pairs to Allen atoms — the inverse
-    direction of `holds`. Defined by the constructive `AllenRelation.witness`,
-    which case-splits on endpoint trichotomies. By `holds_unique`, on
-    non-degenerate intervals the projection is forced — any atom that holds
-    equals it. Together with `holdsIn`, this gives a full
-    abstraction-and-projection layer over the algebra. -/
-
-namespace NonemptyInterval
-
-/-- The Allen atom currently holding between two intervals. Computable;
-    extracted from the constructive `AllenRelation.witness`. For
-    non-degenerate intervals this is well-defined: `allenRel_unique`
-    proves every witness equals the projection. -/
-def allenRel (i j : NonemptyInterval T) : AllenRelation :=
-  (AllenRelation.witness i j).1
-
-/-- The projected atom does hold between the intervals. -/
-theorem allenRel_holds (i j : NonemptyInterval T) : (allenRel i j).holds i j :=
-  (AllenRelation.witness i j).2
-
-/-- For non-degenerate intervals, the projection is **unique**: every
-    atom that holds equals `allenRel i j`. This is the core "well-
-    definedness" theorem for the projection — it justifies treating
-    `allenRel i j` as **the** Allen relation between the two intervals. -/
-theorem allenRel_unique (i j : NonemptyInterval T)
-    (hi : i.fst < i.snd) (hj : j.fst < j.snd)
-    {r : AllenRelation} (h : r.holds i j) : r = allenRel i j :=
-  AllenRelation.holds_unique i j hi hj r (allenRel i j) h (allenRel_holds i j)
-
-/-- The projection lands in the named atom-set iff the corresponding
-    `holdsIn` predicate holds. (For non-degenerate intervals; uses
-    uniqueness to convert membership to existence.) -/
-theorem allenRel_mem_iff_holdsIn (i j : NonemptyInterval T)
-    (hi : i.fst < i.snd) (hj : j.fst < j.snd)
-    (S : List AllenRelation) :
-    allenRel i j ∈ S ↔ AllenRelation.holdsIn S i j := by
-  constructor
-  · intro h
-    exact ⟨allenRel i j, h, allenRel_holds i j⟩
-  · rintro ⟨r, hrS, hrij⟩
-    rwa [allenRel_unique i j hi hj hrij] at hrS
-
-end NonemptyInterval
-

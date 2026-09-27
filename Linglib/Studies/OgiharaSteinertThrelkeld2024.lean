@@ -92,13 +92,13 @@ def eventBefore (P Q : Event T → Prop) : Prop :=
 
 theorem eventAfter_iff_allen (P Q : Event T → Prop) :
     eventAfter P Q ↔ ∃ e₁ e₂ : Event T, P e₁ ∧ Q e₂ ∧
-      AllenRelation.holdsIn AllenRelation.precedesSet e₂.τ e₁.τ := by
-  simp only [eventAfter, NonemptyInterval.precedes_iff_allen]
+      AllenRelation.precedes.holds e₂.τ e₁.τ :=
+  Iff.rfl
 
 theorem eventBefore_iff_allen (P Q : Event T → Prop) :
     eventBefore P Q ↔ ∃ e₁ : Event T, P e₁ ∧ ∀ e₂ : Event T, Q e₂ →
-      AllenRelation.holdsIn AllenRelation.precedesSet e₁.τ e₂.τ := by
-  simp only [eventBefore, NonemptyInterval.precedes_iff_allen]
+      AllenRelation.precedes.holds e₁.τ e₂.τ :=
+  Iff.rfl
 
 /-- *After*'s veridicality follows from its double existential. -/
 theorem after_veridicality_derived {P Q : Event T → Prop} (h : eventAfter P Q) :
