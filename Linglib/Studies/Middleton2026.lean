@@ -13,9 +13,10 @@ metathesis applies; and within Feature Markedness the paradigmatic rules, condit
 features of the node they change, apply as a block before the syntagmatic rules, conditioned by
 the features of more than one node (their (72), §4.8). [middleton-2026] tests both orderings
 against the verbal agreement prefixes of Taos (Kiowa-Tanoan) and finds them unequal: the
-Basque and Taos data both need impoverishment before metathesis (§3), but four Taos
-interactions need a syntagmatic rule to feed a paradigmatic one (§4.2.1–§4.2.4) while a fifth
-needs the reverse (§4.2.5), so the two kinds of impoverishment interleave.
+Basque and Taos data both need impoverishment before metathesis (§3), but in four Taos
+interactions a syntagmatic rule must precede a paradigmatic rule that would otherwise bleed it
+(§4.2.1–§4.2.4) while in a fifth the paradigmatic rule bleeds the syntagmatic one (§4.2.5), so
+the two kinds of impoverishment interleave.
 
 The paper's online appendix gives the whole analysis: thirty-odd rules of impoverishment in
 seven ordered sets, three rules of metathesis, the rules of exponence with their portmanteaux,
@@ -26,44 +27,79 @@ the slot it changes and an `ImpoverishmentRule` at that slot's `Neighborhood`, s
 paper's paradigmatic/syntagmatic labels are the library's `Paradigmatic` and `Syntagmatic`;
 the appendix's numbering names the rules (`r34a` is its (34a)) and the paper's numbering is
 in each docstring. `derive` runs the pipeline from a cell of the fragment to a surface form,
-and `derive_eq_form` checks it against every cell of the paradigm but the eleven the appendix
+and `derive_eq_form` checks it against every cell of the paradigm but the nine the appendix
 itself leaves unaccounted for (`unaccounted`). The block architecture is the order
 `ParaThenSyn` on rule sequences; a paradigmatic and a syntagmatic rule have one
 block-conforming order (`run_eq_of_paraThenSyn`), so the five interactions of §4.2 are
-theorems about which order reaches the attested cell. The Basque half runs the domain-level
+theorems about which order reaches the attested cell, under the paper's own classification of
+its rules (see the implementation notes on `r40` and `r26`). The Basque half runs the domain-level
 rules of `Spellout.lean` over the auxiliary.
 
 ## Implementation notes
 
 * Inverse number is one feature, `Feat.inverse`, and `Arg.has` counts the dual's values
-  `[−atomic +minimal]` as present in it, the containment the appendix's §3.1 states; so the
-  appendix's bare-feature contexts are containment tests while its category labels *s*, *d*,
-  *p*, *i* are exact tests on the number features (`Arg.isS` and kin). `r38a` alone reads *s*
-  as `[+atomic]` without inverse, since by its turn the 1s agent has lost `[+minimal]`.
+  `[−atomic +minimal]` as present in it, the containment the appendix's §3.1 states and the
+  fragment's `Taos.dual_le_inverse` derives from Harbour's valuations; so the appendix's
+  bare-feature contexts are containment tests while its category labels *s*, *d*, *p*, *i*
+  are exact tests on the number features (`Arg.isS` and kin, which read the features in the
+  order Spell-Out gives them, which deletion preserves). `r38a` alone reads *s* as
+  `[+atomic]` without inverse, because of the widened `r44` below. `Feat` is a study-local
+  inventory rather than `Minimalist.FeatureVal`, which has no inverse, dummy or reflexive
+  feature and would cost the kernel more in `derive_eq_form`.
+* The paper labels its (35) and (43), the appendix's (40) and (26), paradigmatic; as the
+  appendix prints them, `3s → E / [[A __](O)]` and `[+atomic] → E / [[G 1 __ +minimal]`, each
+  carries a bracket condition on another slot (no goal; no agent), under which the library
+  classifies both as syntagmatic. `r40` and `r26` drop those conditions to match the paper's
+  labels, `r40'` and `r26'` keep them, and `derive_eq_form_printed` shows the two rule sets
+  derive the same paradigm. Cases 1, 2 and 4 therefore count against
+  the block architecture under the paper's classification, not under its printed rules; case
+  3, whose paradigmatic rule (11a) is conditioned by the agent alone, stands either way.
 * Rules the appendix writes with an agent bracket immediately followed by an object bracket
   are confined to prefixes without a goal; the "leftmost" bundles are the first slot with a
-  person, or number, feature. Where the appendix's prose orders two rules of one set
-  differently from its listing, the prose wins: (33) before (32), (32) after (7), (45) before
-  (40), (44) after (43), (5) bleeds (7); and (2), (3) read "3" as `[−author]`, since (24) may
-  already have removed the goal's `[−participant]`.
+  person, or number, feature; (2) and (3) read "3" as `[−author]`, since (24) may already
+  have removed the goal's `[−participant]`, as the appendix remarks at its (33).
+* Orderings within the appendix's sets. Its prose supports (33) before (32) (§3.7.1) and
+  (5) bleeding (7) (the "remaining prefixes" of §3.4, so `r7b` runs before `r7a` and both
+  need the agent's number); the paper's §4.2.2 supports (45) before (40). Three further
+  choices are this study's repairs, forced by cells the appendix's listing would not derive:
+  (32) moved from the first set to after (7), or 2:1s:3s *môm* comes out *mǫ́*; (44) moved
+  from the first set to after (43), or 1s:∅ comes out *ti*; and (44)'s context widened from
+  the printed intransitive `[[A +author +atomic __]]` to an absent or plural object, or 1s:3p
+  comes out *pi*.
+* Exponence is the appendix's rule list as a function of the token and its prefix, with three
+  additions the appendix uses but never states: a portmanteau *mây* for the 2:1 prefixes
+  without an object (its §3.4 says they "are exponed as mây" and §4.3 lists no exponent), the
+  single-argument portmanteaux (41) and (49) matching an argument's remaining bundle exactly,
+  and portmanteau forms taking no tone rule, without which (6) *ku* would come out *kú*. The
+  epenthetic vowel follows an onset consonant and precedes a coda one, as *mó* and *ôn*
+  show; *w* alone is *u*.
 * Metathesis reorders the linearized string of feature terminals with the library's
-  `TerminalMetathesisRule`, and only where the second argument holds the leftmost number
-  bundle, the one Vocabulary Insertion expones. Exponence is the appendix's rule list as a
-  function of the token and its prefix, portmanteaux first; the epenthetic vowel follows an
-  onset consonant and precedes a coda one, as *mó* and *ôn* show; *w* alone is *u*.
+  `TerminalMetathesisRule`; (18) and (22) act on the goal as their G subscript says, (23) on
+  the second argument, goal or object, as its unlabelled bracket allows. For (50a), an object
+  silenced by the allomorphs (39b,d) does not count as an argument, as the appendix's §3.11
+  says of the dual-agent 3p and reflexive prefixes.
+* Tone: the appendix prints (51f) as toneless but its prose and Table 3 make the ∅:3s
+  possessives high, which `exception` follows; (51h) it applies as printed, against Table 3
+  (see the TODO).
 * The Basque terminals are clitics with a case feature and T with `[+tense]`, standing in for
   Arregi and Nevins's `[+past]`. Ergative Metathesis fronts the first ergative clitic after a
-  word-initial T, their (105), and L-Support and Ergative Metathesis form one module, as in
-  their §6.2.4.
+  word-initial T, their (105), without its dative-clitic conditions, and Participant
+  Dissimilation omits their `[+motion]` restriction and their First Singular Clitic
+  Impoverishment, none of which the two auxiliaries reach; L-Support and Ergative Metathesis
+  form one module, as in their §6.2.4.
 
 ## TODO
 
-* The eleven cells in `unaccounted`: ∅:2s:∅ and 1:2s:∅ (the appendix says it will return to
-  them and does not), 3i:3p and 3i:refl (its footnotes 5 and 6 call the printed tones typos),
-  the three 3d possessives with an object (its tone rule (51h) contradicts its own Table 3),
-  and 3d:3p and 3d:refl (toneless in Table 3, but no rule removes their second argument).
+* The nine cells in `unaccounted`, with what the pipeline gives them in
+  `derive_unaccounted`: ∅:2s:∅ and 1:2s:∅ (*o*; the appendix says it will return to them and
+  does not, and the rules give *kǫ*), 3i:3p (printed toneless; footnote 5 calls that a typo
+  for high, but (50c) gives a closed final syllable falling, *îw*), 3i:refl (printed *ímó*;
+  the rules give footnote 6's corrected *ímo*), and the three 3d possessives with an object
+  (Table 3 prints *ónôm* and *ónôw*, but the tone rule (51h) and the appendix's Tables 8, 14,
+  17 and 38 have *ónóm* and *ónów*, which the rules give).
 * The paper's (13) is an adjacent swap; the study follows Arregi and Nevins's fronting rule,
-  which the Zamudio auxiliary of (19) needs.
+  which the Zamudio auxiliary of (19) needs, and its rejected-order outputs are Arregi and
+  Nevins's stranded forms rather than the paper's starred (17b) and (19b).
 
 ## References
 
@@ -147,15 +183,12 @@ def inverse : Arg := [.inverse]
 
 namespace Arg
 
-/-- `a` has `f`; an inverse valuation contains the dual's values. -/
+/-- `a` has `f`; an inverse valuation contains the dual's values (`Taos.dual_le_inverse`). -/
 def has (a : Arg) (f : Feat) : Bool :=
   a.contains f || (a.contains .inverse && (f == .atomic false || f == .minimal true))
 
 /-- `a` has every feature of `fs`. -/
 def bears (a fs : Arg) : Bool := fs.all a.has
-
-/-- The person features. -/
-def person (a : Arg) : Arg := a.filter Feat.isPerson
 
 /-- The number features. -/
 def number (a : Arg) : Arg := a.filter Feat.isNumber
@@ -400,8 +433,7 @@ def r12 : Rule :=
       p.goal.has (.minimal true))
     (.delete [.participant true])
 
-/-- (24), the paper's (27): a `[−author]` second argument loses `[−participant]` after a dual
-agent. -/
+/-- (24), the paper's (27): a `[−author]` goal loses `[−participant]` after a dual agent. -/
 def r24 : Rule :=
   .syntagmatic .goal (fun p ↦ p.agent.isD && p.goal.has (.author false))
     (.delete [.participant false])
@@ -498,6 +530,16 @@ def r45b : Rule :=
 /-- (40), the paper's (35), paradigmatic: a third singular agent is obliterated. -/
 def r40 : Rule := .paradigmatic .agent (fun a ↦ a.is3 && a.isS) .obliterate
 
+/-- (40) as the appendix prints it, `[[A __](O)]`: with no goal. -/
+def r40' : Rule :=
+  .syntagmatic .agent (fun p ↦ p.agent.is3 && p.agent.isS && !p.goal.present) .obliterate
+
+/-- (26) as the appendix prints it, `[[G 1 __ +minimal]`: with no agent. -/
+def r26' : Rule :=
+  .syntagmatic .goal
+    (fun p ↦ !p.agent.present && p.goal.has (.author true) && p.goal.has (.minimal true))
+    (.delete [.atomic true])
+
 /-- (47): an inverse object loses `[−author]` after a singular agent. -/
 def r47 : Rule :=
   .syntagmatic .object (fun p ↦ p.agent.isS && !p.goal.present && p.object.isI)
@@ -537,7 +579,8 @@ def r43 : Rule :=
       (!p.object.present || p.object.has (.atomic false)))
     (.delete [.participant true])
 
-/-- (44): a first singular agent loses `[+minimal]` before no object or a plural one. -/
+/-- (44): a first singular agent loses `[+minimal]` before no object or, this study's widening,
+a plural one. -/
 def r44 : Rule :=
   .syntagmatic .agent
     (fun p ↦ p.agent.has (.author true) && p.agent.has (.atomic true) && !p.goal.present &&
@@ -578,6 +621,14 @@ def impoverishment (optional : Bool) : List Rule :=
   [r1, r4] ++ (if optional then [r5] else []) ++
     [r9, r12, r24, r33, r34a, r34b, r14, r35, r46,
      r2, r7b, r7a, r32, r15, r26, r45a, r45b, r40, r47,
+     r3, r11a, r11b, r29 .agent, r29 .goal, r43, r44,
+     r38b, r42, r38a, r48a, r48b]
+
+/-- The same sets with (40) and (26) as printed. -/
+def impoverishmentPrinted (optional : Bool) : List Rule :=
+  [r1, r4] ++ (if optional then [r5] else []) ++
+    [r9, r12, r24, r33, r34a, r34b, r14, r35, r46,
+     r2, r7b, r7a, r32, r15, r26', r45a, r45b, r40', r47,
      r3, r11a, r11b, r29 .agent, r29 .goal, r43, r44,
      r38b, r42, r38a, r48a, r48b]
 
@@ -636,6 +687,18 @@ theorem r32_syntagmatic : r32.Syntagmatic := by
   exact absurd ((h (prefix1S3S.around .object) (prefix3S3S.around .object) rfl).mp (by decide))
     (by decide)
 
+theorem r40'_syntagmatic : r40'.Syntagmatic := by
+  intro h
+  exact absurd ((h (prefix3S3S.around .agent)
+    ((⟨third ++ singular, third ++ singular, third ++ singular⟩ : Prefix).around .agent) rfl).mp
+    (by decide)) (by decide)
+
+theorem r26'_syntagmatic : r26'.Syntagmatic := by
+  intro h
+  exact absurd ((h (prefix1S3S.around .goal)
+    ((⟨third ++ singular, first ++ singular, third ++ singular⟩ : Prefix).around .goal) rfl).mp
+    (by decide)) (by decide)
+
 theorem r33_syntagmatic : r33.Syntagmatic := by
   intro h
   exact absurd ((h (prefix1D3S3S.around .goal)
@@ -646,7 +709,9 @@ theorem r33_syntagmatic : r33.Syntagmatic := by
 
 The 3S:3S prefix is ∅ (Table 15), so no *m*, the exponent of a third person object (31), is
 inserted: the object's third person must be gone at Vocabulary Insertion, which (34a) does only
-while the agent is still there for its context. -/
+while the agent is still there for its context. The theorems are about the feature bundles the
+two orders leave; that the block order conflicts with Arregi and Nevins rests on the paper's
+labelling of (40) as paradigmatic (see the implementation notes). -/
 
 theorem form_3S3S :
     Taos.form ⟨some (.third, .singular), none, some (.third .singular)⟩ = some "" := by
@@ -659,7 +724,7 @@ theorem case1_para_syn : run [r40, r34a] prefix3S3S = ⟨[], [], third ++ singul
 theorem case1_orders_differ : run [r34a, r40] prefix3S3S ≠ run [r40, r34a] prefix3S3S := by
   decide
 
-/-- The block architecture keeps the object's third person, and so inserts *m*. -/
+/-- The block architecture keeps the object's third person, which (31) would expone as *m*. -/
 theorem case1_block (l : List Rule) (hl : ParaThenSyn l) (hperm : l.Perm [r40, r34a]) :
     (run l prefix3S3S).object = third ++ singular := by
   rw [run_eq_of_paraThenSyn r40_paradigmatic r34a_syntagmatic hl hperm, case1_para_syn]
@@ -673,8 +738,11 @@ theorem case1_inverse :
 
 /-! ### Case 2 (§4.2.2): dummy object impoverishment precedes agent impoverishment
 
-The 3S:no and 3S:3S prefixes are ∅ and toneless (Table 16), so the object is obliterated and its
-singular features deleted by (45), which need the singular agent that (40) removes. -/
+The 3S:no and 3S:3S prefixes are ∅ and toneless (Table 16), so the paper has the object
+obliterated and its singular features deleted by (45), which need the singular agent that (40)
+removes. The 3S:3S half reaches the surface (the block order leaves a singular object, which
+would be exponed); the dummy half is featural only, since a one-argument prefix with a
+featureless dummy object is ∅ and toneless under either order. -/
 
 theorem form_3Sno : Taos.form ⟨some (.third, .singular), none, some .dummy⟩ = some "" := by
   decide
@@ -731,8 +799,8 @@ deleted by (32), which needs the singular goal that (26) makes non-singular. -/
 
 /-- The 1S:3S possessive prefix has no *m*. -/
 theorem form_1S3S :
-    ∀ f ∈ Taos.form ⟨none, some (.first, .singular), some (.third .singular)⟩,
-      f = "ôn" ∧ 'm' ∉ f.toList := by
+    Taos.form ⟨none, some (.first, .singular), some (.third .singular)⟩ = some "ôn" ∧
+      'm' ∉ "ôn".toList := by
   decide
 
 theorem case4_syn_para :
@@ -746,7 +814,7 @@ theorem case4_para_syn :
 theorem case4_orders_differ : run [r32, r26] prefix1S3S ≠ run [r26, r32] prefix1S3S := by
   decide
 
-/-- The block architecture keeps the object's third person, and so inserts *m*. -/
+/-- The block architecture keeps the object's third person, which (31) would expone as *m*. -/
 theorem case4_block (l : List Rule) (hl : ParaThenSyn l) (hperm : l.Perm [r26, r32]) :
     (run l prefix1S3S).object = third ++ singular := by
   rw [run_eq_of_paraThenSyn r26_paradigmatic r32_syntagmatic hl hperm, case4_para_syn]
@@ -760,9 +828,9 @@ theorem r33_bleeds_r32 :
 
 /-- The 1D:3S:3S ditransitive prefix keeps *m*. -/
 theorem form_1D3S3S :
-    ∀ f ∈ Taos.form
-        ⟨some (.first, .dual), some (.third, .singular), some (.third .singular)⟩,
-      f = "opénôm" ∧ 'm' ∈ f.toList := by
+    Taos.form ⟨some (.first, .dual), some (.third, .singular), some (.third .singular)⟩ =
+        some "opénôm" ∧
+      'm' ∈ "opénôm".toList := by
   decide
 
 /-! ### Case 5 (§4.2.5): a paradigmatic rule before a syntagmatic one
@@ -772,8 +840,8 @@ the goal's `[+atomic]` first and bleeds (29), which would delete the `[+minimal]
 
 /-- The 1S:3I possessive prefix keeps *n*. -/
 theorem form_1S3I :
-    ∀ f ∈ Taos.form ⟨none, some (.first, .singular), some (.third .inverse)⟩,
-      f = "ónôm" ∧ 'n' ∈ f.toList := by
+    Taos.form ⟨none, some (.first, .singular), some (.third .inverse)⟩ = some "ónôm" ∧
+      'n' ∈ "ónôm".toList := by
   decide
 
 theorem case5_para_syn :
@@ -788,8 +856,7 @@ theorem case5_syn_para :
 
 After Linearization the prefix is a string of feature terminals, each tagged with its slot,
 in the order of (4) and (5); the appendix's rules of metathesis swap adjacent terminals, the
-library's `TerminalMetathesisRule`, and only where the second argument holds the leftmost
-number bundle. Exponence then reads each terminal in its prefix. -/
+library's `TerminalMetathesisRule`. Exponence then reads each terminal in its prefix. -/
 
 /-- A terminal of the linearized prefix: its slot and feature. -/
 abbrev Tok := Slot × Feat
@@ -799,11 +866,11 @@ def linearize (p : Prefix) : List Tok :=
   [Slot.agent, .goal, .object].flatMap fun s ↦
     ((List.range 6).flatMap fun k ↦ (p.get s).filter (Feat.rank · == k)).map ((s, ·))
 
-/-- (18), the second argument's `[−author]` swaps with its following inverse feature, when an
-agent is present and the second argument holds the leftmost number. -/
+/-- (18): the goal's `[−author]` swaps with its following inverse feature, when an agent is
+present. -/
 def m18 (p : Prefix) : TerminalMetathesisRule Tok :=
-  .ofBool fun n ↦ p.agent.present && p.leftmostNumber == some p.secondArg &&
-    n.focus == (p.secondArg, .author false) && n.rightCtx.head? == some (p.secondArg, .inverse)
+  .ofBool fun n ↦ p.agent.present && n.focus == (.goal, .author false) &&
+    n.rightCtx.head? == some (.goal, .inverse)
 
 /-- (23), the paper's (26): a `[−atomic]` agent's `[+minimal]` swaps with the second
 argument's following `[−author]`. -/
@@ -811,13 +878,11 @@ def m23 (p : Prefix) : TerminalMetathesisRule Tok :=
   .ofBool fun n ↦ p.agent.has (.atomic false) && n.focus == (.agent, .minimal true) &&
     n.rightCtx.head? == some (p.secondArg, .author false)
 
-/-- (22), the paper's (24): the second argument's `[−author]` swaps with its following
-`[−atomic]` before `[+minimal]`, when an agent is present and it holds the leftmost
-number. -/
+/-- (22), the paper's (24): the goal's `[−author]` swaps with its following `[−atomic]` before
+`[+minimal]`, when an agent is present. -/
 def m22 (p : Prefix) : TerminalMetathesisRule Tok :=
-  .ofBool fun n ↦ p.agent.present && p.leftmostNumber == some p.secondArg &&
-    n.focus == (p.secondArg, .author false) &&
-    n.rightCtx.take 2 == [(p.secondArg, .atomic false), (p.secondArg, .minimal true)]
+  .ofBool fun n ↦ p.agent.present && n.focus == (.goal, .author false) &&
+    n.rightCtx.take 2 == [(.goal, .atomic false), (.goal, .minimal true)]
 
 /-- The appendix's two sets of rules of metathesis in order. -/
 def metathesis (p : Prefix) : List Tok → List Tok :=
@@ -881,7 +946,7 @@ def expone (p : Prefix) (toks : List Tok) : List Morph × Bool :=
 
 /-! ### Epenthesis and tone -/
 
-/-- The concatenation of a list of strings. -/
+/-- The concatenation of a list of strings (`String.join` does not reduce under `decide`). -/
 def concat (l : List String) : String := l.foldl (· ++ ·) ""
 
 /-- A vowel of the exponents, before tone is assigned. -/
@@ -1002,13 +1067,24 @@ def spellOut (c : Taos.Cell) : Prefix where
     | some .reflexive => [.refl]
     | some (.third n) => third ++ numberFeats n
 
-/-- The surface form of a cell: Spell-Out, the seven sets of impoverishment, Linearization,
+/-- The arguments a prefix expones: its present arguments, less an object silenced by the
+allomorphs (39b,d). -/
+def Prefix.exponed (p : Prefix) : ℕ :=
+  p.args.length -
+    if p.agent.isD && !p.goal.present && (p.object.isRefl || (p.object.is3 && p.object.isP))
+    then 1 else 0
+
+/-- The surface form of a cell under a rule system: Spell-Out, impoverishment, Linearization,
 metathesis, exponence, epenthesis and tone. -/
-def derive (optional : Bool) (c : Taos.Cell) : String :=
-  let p := run (impoverishment optional) (spellOut c)
+def deriveWith (rules : List Rule) (c : Taos.Cell) : String :=
+  let p := run rules (spellOut c)
   let (morphs, fixed) := expone p (metathesis p (linearize p))
   let morphs := if morphs.map (·.1) == ["w"] then [("u", .full)] else morphs
-  tone c p.args.length (epenthesis none morphs) fixed
+  tone c p.exponed (epenthesis none morphs) fixed
+
+/-- The surface form of a cell under the appendix's seven sets, with or without the optional
+(5). -/
+def derive (optional : Bool) : Taos.Cell → String := deriveWith (impoverishment optional)
 
 /-- The cells of the paradigm the appendix leaves unaccounted for (see the TODO). -/
 def unaccounted : List Taos.Cell :=
@@ -1020,15 +1096,26 @@ def unaccounted : List Taos.Cell :=
    ⟨some (.third, .inverse), none, some .reflexive⟩,
    ⟨none, some (.third, .dual), some (.third .singular)⟩,
    ⟨none, some (.third, .dual), some (.third .inverse)⟩,
-   ⟨none, some (.third, .dual), some (.third .plural)⟩,
-   ⟨some (.third, .dual), none, some (.third .plural)⟩,
-   ⟨some (.third, .dual), none, some .reflexive⟩]
+   ⟨none, some (.third, .dual), some (.third .plural)⟩]
 
 /-- Every other cell of the paradigm derives, with or without the optional (5). -/
 theorem derive_eq_form :
-    (Taos.prefixes.all fun r ↦
-      decide (r.1 ∈ unaccounted) || r.2 == derive false r.1 || r.2 == derive true r.1) =
-      true := by
+    ∀ r ∈ Taos.prefixes, r.1 ∉ unaccounted →
+      r.2 = derive false r.1 ∨ r.2 = derive true r.1 := by
+  decide +kernel
+
+/-- What the pipeline gives the unaccounted cells. -/
+theorem derive_unaccounted :
+    unaccounted.map (derive false) =
+      ["kǫ", "kǫ", "kǫ", "kǫ", "îw", "ímo", "ónóm", "ónóm", "ónów"] := by
+  decide +kernel
+
+/-- With (40) and (26) as printed, the same cells derive; the bundles differ only where a
+3S:3S:O ditransitive keeps its agent, whose exponent is ∅ anyway. -/
+theorem derive_eq_form_printed :
+    ∀ r ∈ Taos.prefixes, r.1 ∉ unaccounted →
+      r.2 = deriveWith (impoverishmentPrinted false) r.1 ∨
+        r.2 = deriveWith (impoverishmentPrinted true) r.1 := by
   decide +kernel
 
 /-! ### Impoverishment precedes metathesis in Taos (§3.2)
@@ -1050,7 +1137,9 @@ theorem metathesis_prefix1D3no :
 
 /-- Without (24), (23) finds `[−participant]` in the way and does nothing. -/
 theorem metathesis_without_r24 :
-    let p := run ((impoverishment false).filter fun r ↦ r.slot != .goal)
+    let p := run [r1, r4, r9, r12, r33, r34a, r34b, r14, r35, r46, r2, r7b, r7a, r32, r15,
+        r26, r45a, r45b, r40, r47, r3, r11a, r11b, r29 .agent, r29 .goal, r43, r44, r38b, r42,
+        r38a, r48a, r48b]
       (spellOut ⟨some (.first, .dual), some (.third, .singular), some .dummy⟩)
     metathesis p (linearize p) = linearize p := by
   decide
@@ -1089,7 +1178,9 @@ def lSupport : Terminal := []
 def Terminal.bears (fs a : Terminal) : Bool := fs.all a.contains
 
 /-- Participant Dissimilation: a `[+participant +author]` clitic is obliterated when another
-clitic of the word bears `trigger`. -/
+clitic of the word bears `trigger`; Arregi and Nevins's `[+motion]` restriction and their
+First Singular Clitic Impoverishment, which keep first singular clitics out of it, are not
+modelled. -/
 def participantDissimilation (trigger : Terminal) : ObliterationRule Terminal :=
   .ofBool fun n ↦ firstφ.bears n.focus && (n.leftCtx ++ n.rightCtx).any (trigger.bears ·)
 
@@ -1101,7 +1192,8 @@ def ondarru : ObliterationRule Terminal :=
 def zamudio : ObliterationRule Terminal := participantDissimilation [.participant true]
 
 /-- Ergative Metathesis, the paper's (13) after Arregi and Nevins's (105): a word-initial T is
-preceded by the first ergative clitic that follows it. -/
+preceded by the first ergative clitic that follows it, without (105a)'s conditions on an
+intervening dative clitic. -/
 def ergativeMetathesis : SpelloutDomain Terminal → SpelloutDomain Terminal :=
   rewriteFirst
     (fun n ↦ n.leftCtx = [] ∧ n.focus.contains (.tense true) ∧
@@ -1162,7 +1254,7 @@ theorem ondarru_markedness_then_linear :
   decide
 
 /-- Ondarru, linear module first: T is not initial, so neither repair applies, and after the
-absolutive clitic goes T is stranded initial. -/
+absolutive clitic goes T is stranded initial, Arregi and Nevins's (17b) *eu-su-n*. -/
 theorem ondarru_linear_then_markedness :
     linearThenMarkedness ondarru auxiliary17 =
       [pastT, clitic .erg (secondφ ++ [.atomic true, .minimal true])] := by
@@ -1180,7 +1272,8 @@ theorem zamudio_markedness_then_linear :
   decide
 
 /-- Zamudio, linear module first: Ergative Metathesis fronts the ergative clitic, which
-Participant Dissimilation then obliterates, stranding T initial. -/
+Participant Dissimilation then obliterates, stranding T initial, the form Arregi and Nevins's
+§6.2.4 rejects. -/
 theorem zamudio_linear_then_markedness :
     linearThenMarkedness zamudio auxiliary19 =
       [pastT, clitic .dat (secondφ ++ [.atomic false, .minimal false])] := by

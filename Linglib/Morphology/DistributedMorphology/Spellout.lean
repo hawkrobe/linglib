@@ -139,9 +139,11 @@ theorem length_apply_le (rule : ObliterationRule Bundle)
 end ObliterationRule
 
 /-- An adjacent-terminal swap rule — the terminal-order metathesis of
-[arregi-nevins-2012]'s Metathesis module (Basque Ergative Metathesis,
-[middleton-2026] (13)): where `condition` holds of a neighborhood, its focus
-swaps with the terminal to its right. -/
+[arregi-nevins-2012]'s Metathesis module (the feature metathesis of the Taos
+prefix in `Studies/Middleton2026.lean`): where `condition` holds of a
+neighborhood, its focus swaps with the terminal to its right. Ergative
+Metathesis, which fronts a clitic across intervening terminals, is a
+`rewriteFirst` of its own there. -/
 structure TerminalMetathesisRule (Bundle : Type*) where
   /-- Does the focus swap with the terminal to its right? -/
   condition : Neighborhood Bundle → Prop

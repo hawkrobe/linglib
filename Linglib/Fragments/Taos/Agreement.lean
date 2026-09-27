@@ -31,7 +31,8 @@ transcribed here cell by cell; `form` looks a cell up.
   reflexives of possessive and ditransitive prefixes appear in its Table 16 and are not
   transcribed here.
 * Rows whose label spans several numbers in the source (a bare person, or *1s/d*) are
-  expanded to one row per cell.
+  expanded to one row per cell; the cells two such labels both cover (*1 3i* and *1i 3*,
+  *3 3i* and *3i 3*) appear once.
 
 ## References
 
@@ -246,10 +247,6 @@ def prefixes : List (Cell × String) := [
   (⟨some (.first, .inverse), some (.third, .dual), some (.third .singular)⟩, "ipîm"),
   (⟨some (.first, .inverse), some (.third, .dual), some (.third .inverse)⟩, "ipîm"),
   (⟨some (.first, .inverse), some (.third, .dual), some (.third .plural)⟩, "ipîw"),
-  (⟨some (.first, .inverse), some (.third, .inverse), some .dummy⟩, "ipí"),
-  (⟨some (.first, .inverse), some (.third, .inverse), some (.third .singular)⟩, "ipîm"),
-  (⟨some (.first, .inverse), some (.third, .inverse), some (.third .inverse)⟩, "ipîm"),
-  (⟨some (.first, .inverse), some (.third, .inverse), some (.third .plural)⟩, "ipîw"),
   (⟨some (.second, .singular), some (.first, .singular), none⟩, "mây"),
   (⟨some (.second, .singular), some (.first, .singular), some .dummy⟩, "mó"),
   (⟨some (.second, .singular), some (.first, .singular), some (.third .singular)⟩, "môm"),
@@ -372,11 +369,7 @@ def prefixes : List (Cell × String) := [
   (⟨some (.third, .inverse), some (.third, .dual), some .dummy⟩, "ipí"),
   (⟨some (.third, .inverse), some (.third, .dual), some (.third .singular)⟩, "ipîm"),
   (⟨some (.third, .inverse), some (.third, .dual), some (.third .inverse)⟩, "ipîm"),
-  (⟨some (.third, .inverse), some (.third, .dual), some (.third .plural)⟩, "ipîw"),
-  (⟨some (.third, .inverse), some (.third, .inverse), some .dummy⟩, "ipí"),
-  (⟨some (.third, .inverse), some (.third, .inverse), some (.third .singular)⟩, "ipîm"),
-  (⟨some (.third, .inverse), some (.third, .inverse), some (.third .inverse)⟩, "ipîm"),
-  (⟨some (.third, .inverse), some (.third, .inverse), some (.third .plural)⟩, "ipîw")
+  (⟨some (.third, .inverse), some (.third, .dual), some (.third .plural)⟩, "ipîw")
 ]
 
 /-- The prefix of a cell. -/

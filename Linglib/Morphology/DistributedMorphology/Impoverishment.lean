@@ -35,16 +35,15 @@ the post-impoverishment VI winner the retreat-to-the-general exponent
   are paradigmatic by construction
 * `chain_pointwise` — impoverishment only deletes: chains never
   introduce or alter feature values
-* `runChain_append` — chains compose sequentially (the ground for the
-  strict-vs-interleaved equivalence in `Middleton2026`)
+* `runChain_append` — chains compose sequentially
 
 ## Implementation notes
 
 The rule is parametric so that non-Minimalist bundle types (a future
 DM `Terminal`) instantiate it; the deletion operation is a parameter of
 `apply`, not of the rule, since it is shared across a rule system.
-`Middleton2026`'s `MetathesisRule` follows the same template with a
-different rewrite. On the tree carrier, impoverishment is derivable
+`Studies/Middleton2026.lean` builds its prefix-level rules on it, one per slot of the
+Taos agreement prefix. On the tree carrier, impoverishment is derivable
 from fission and the coproduct (`Studies/SenturiaMarcolli2025.lean`).
 
 ## References
@@ -134,16 +133,14 @@ def ImpoverishmentRule.syntagmatic (cond : Neighborhood Bundle → Bool) (target
 
 /-- Generic postsyntactic chain: apply a list of rules to a
 neighborhood, threading the *focus* bundle through each step while
-holding the surrounding context fixed. One cycle of Impoverishment and
-one cycle of Metathesis (`Middleton2026`) share this shape. -/
+holding the surrounding context fixed. -/
 def runChain {R : Type*} (apply : R → Neighborhood Bundle → Bundle)
     (rules : List R) (n : Neighborhood Bundle) : Bundle :=
   rules.foldl (init := n.focus)
     (λ focusAcc rule => apply rule { n with focus := focusAcc })
 
 /-- Concatenated chains run sequentially: the second chain starts where
-the first left off. This underwrites the strict-vs-interleaved
-equivalence (`Middleton2026.runStrict_eq_interleaved_paraSyn`). -/
+the first left off. -/
 theorem runChain_append {R : Type*} (apply : R → Neighborhood Bundle → Bundle)
     (rs₁ rs₂ : List R) (n : Neighborhood Bundle) :
     runChain apply (rs₁ ++ rs₂) n =
