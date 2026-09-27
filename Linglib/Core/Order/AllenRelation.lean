@@ -273,7 +273,7 @@ end AllenRelation
 /-! ### The interval vocabulary as sets of atoms
 
 Each relation of `Core/Order/Interval.lean`, and mathlib's containment order, is a set of Allen
-atoms; the three that are atoms themselves are so by definition. -/
+atoms; the two that are atoms themselves are so by definition. -/
 
 namespace NonemptyInterval
 
@@ -282,8 +282,6 @@ open AllenRelation
 variable {T : Type*} [LinearOrder T] (i j : NonemptyInterval T)
 
 theorem precedes_iff_holds : i.precedes j ↔ AllenRelation.precedes.holds i j := Iff.rfl
-
-theorem meets_iff_holds : i.meets j ↔ AllenRelation.meets.holds i j := Iff.rfl
 
 theorem during_iff_holds : i.during j ↔ AllenRelation.during.holds i j := Iff.rfl
 
