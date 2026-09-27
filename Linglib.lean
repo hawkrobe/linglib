@@ -1308,7 +1308,6 @@ import Linglib.Semantics.Modality.Orthologic.Frames
 import Linglib.Semantics.Modality.Orthologic.Lifting
 import Linglib.Semantics.Modality.Orthologic.Modal
 import Linglib.Semantics.Modality.Orthologic.RegularProp
-import Linglib.Semantics.Modality.ProbabilityOrdering
 import Linglib.Semantics.Modification.Basic
 import Linglib.Semantics.Modification.Classification
 import Linglib.Semantics.Modification.Coercion
