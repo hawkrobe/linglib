@@ -1,23 +1,41 @@
 module
 
 public import Linglib.Logic.Assignment
+public import Mathlib.Logic.Function.DependsOn
 
 /-!
 # Assignment-relative denotations
 
-Denotations of expressions with free variables, relative to an assignment `g : ℕ → E` of
-entities to indices ([heim-kratzer-1998]): a pronoun with index `n` denotes `g n`, a binder
-at `n` abstracts over the value of `n` by updating `g`, and composition threads the assignment
-through. An assignment-relative denotation in `α` is a function `Assignment E → α`, a
-computation of Lean's reader monad `ReaderM (Assignment E)`, whose `pure`, `<*>` and `joinM` are
-the lift, application and flattener of [charlow-2018]. Situation pronouns are the same
-construction at an assignment of indices.
+This file defines the denotations of pronouns and binders relative to a variable assignment
+`g : ℕ → E`, which gives each index a value. In the textbook of Heim and Kratzer, the Traces and
+Pronouns Rule has a pronoun or trace with index `n` denote `g n`, and Predicate Abstraction has a
+binder at `n` abstract over the value of `n` by updating `g`. An assignment-relative denotation in
+`α` is a function `Assignment E → α`, a computation of Lean's reader monad
+`ReaderM (Assignment E)`. Charlow factors the standard theory through this monad: its `pure`,
+`<*>` and `joinM` are his lift `ρ`, application `⊛` and flattener `μ`, and `lambdaAbsG` is his
+categorematic abstraction `Λᵢ`.
+
+The indices a denotation reads are those it depends on, in the sense of mathlib's `DependsOn`. A
+pronoun reads its own index, an abstraction over `n` reads the indices its body reads other than
+`n`, and abstracting over an index the body does not read gives a constant function.
 
 ## Main definitions
 
-* `interpPronoun`, `lambdaAbsG`: the pronoun and abstraction of assignment-relative
-  denotations.
-* `SitAssignment`, `interpSitPronoun`: situation assignments and situation pronouns.
+* `interpPronoun`: the denotation of a pronoun or trace.
+* `lambdaAbsG`: abstraction over an index.
+
+## Main results
+
+* `dependsOn_interpPronoun`: a pronoun depends only on its index.
+* `dependsOn_lambdaAbsG`: abstraction over `n` removes `n` from the indices a body depends on.
+* `lambdaAbsG_eq_const_iff`: abstraction over `n` is constant at every assignment exactly when
+  the body does not depend on `n`.
+
+## Implementation notes
+
+Assignments are total, where Heim and Kratzer's are partial, so a pronoun denotes at every
+assignment. Nothing fixes `E` to entities: at an assignment of situations, `interpPronoun`
+is a situation pronoun.
 
 ## References
 
@@ -29,38 +47,46 @@ construction at an assignment of indices.
 
 namespace Semantics.Composition
 
+open Function
 open scoped Assignment
 
-variable {E α : Type*}
+variable {E α : Type*} {n : ℕ}
 
-/-- Pronoun/variable denotation: ⟦xₙ⟧^g = g(n). -/
+/-- `interpPronoun n` is the denotation of a pronoun or trace with index `n`, the value `g n` of
+the index under the assignment `g`. -/
 def interpPronoun (n : ℕ) : Assignment E → E := fun g ↦ g n
 
-/-- Lambda abstraction with variable binding. -/
+@[simp]
+theorem interpPronoun_apply (g : Assignment E) : interpPronoun n g = g n := rfl
+
+/-- `lambdaAbsG n body` is the abstraction of `body` over index `n`, which at the assignment `g`
+maps `x` to the value of `body` at `g[n ↦ x]`. -/
 def lambdaAbsG (n : ℕ) (body : Assignment E → α) : Assignment E → E → α :=
   fun g x ↦ body (g[n ↦ x])
 
-theorem lambdaAbsG_apply (n : ℕ) (body : Assignment E → α) (arg : E) (g : Assignment E) :
-    lambdaAbsG n body g arg = body (g[n ↦ arg]) := rfl
+@[simp]
+theorem lambdaAbsG_apply (body : Assignment E → α) (g : Assignment E) (x : E) :
+    lambdaAbsG n body g x = body (g[n ↦ x]) := rfl
 
-/-! ### Situation pronouns as the type-level dual of entity pronouns
+/-- A pronoun depends only on its index. -/
+theorem dependsOn_interpPronoun (n : ℕ) : DependsOn (interpPronoun (E := E) n) {n} :=
+  fun _ _ h ↦ h n rfl
 
-Hanink (2018, 2021), Bondarenko (2022, 2023) and the broader post-Schwarz
-literature on situational vs anaphoric definites argue that a situation
-argument can be a *bound variable* (a "situation pronoun"), not just a free
-parameter handed to an interpretation function.
+/-- Abstraction over `n` binds `n`, so the abstract depends only on the indices other than `n`
+that its body depends on. -/
+theorem dependsOn_lambdaAbsG {s : Set ℕ} {body : Assignment E → α} (h : DependsOn body s)
+    (n : ℕ) : DependsOn (lambdaAbsG n body) (s \ {n}) := by
+  refine fun g g' hg ↦ funext fun x ↦ h fun i hi ↦ ?_
+  obtain rfl | hin := eq_or_ne i n
+  · simp
+  · simp [update_of_ne hin, hg i ⟨hi, hin⟩]
 
-Where entity pronouns are interpreted relative to `Assignment E := ℕ → E`,
-situation pronouns are interpreted relative to `SitAssignment W := ℕ → W`.
-Both reuse `Assignment` at different instantiations, so mathlib's
-`Function.update` lemmas apply to both. -/
-
-/-- Situation assignment: maps situation-pronoun indices to frame indices.
-    Reuses `Assignment` at type `W`. -/
-abbrev SitAssignment (W : Type*) := Assignment W
-
-/-- Situation-pronoun denotation: ⟦sₙ⟧^{gs} = gs(n). Parallels `interpPronoun`. -/
-def interpSitPronoun {W : Type*} (n : ℕ) : SitAssignment W → W :=
-  fun gs ↦ gs n
+/-- Abstraction over `n` is vacuous, the constant function at the body's value at every
+assignment, exactly when the body does not depend on `n`. -/
+theorem lambdaAbsG_eq_const_iff {body : Assignment E → α} :
+    (∀ g, lambdaAbsG n body g = const E (body g)) ↔ DependsOn body {n}ᶜ := by
+  refine ⟨fun h g g' hg ↦ ?_, fun h g ↦ funext fun x ↦ h fun i hi ↦ update_of_ne hi ..⟩
+  rw [(eq_update_iff.2 ⟨rfl, hg⟩ : g = g'[n ↦ g n])]
+  exact congrFun (h g') (g n)
 
 end Semantics.Composition

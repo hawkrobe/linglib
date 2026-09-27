@@ -68,102 +68,97 @@ variable {E W : Type}
 
 /-! ### The two meanings of the index, (80) -/
 
-/-- (80a), (14): the index as a variable, the property of being its value. -/
-def idxVar (n : ℕ) : Assignment E → E → Prop := λ g x => x = g n
+/-- The index as a variable, (80a) and (14), denotes the property of being its value. -/
+def idxVar (n : ℕ) : Assignment E → E → Prop := fun g x ↦ x = g n
 
-/-- (80b): the index as a binder, taking the open proposition of its complement to the property
-of the values of the variable that verify it: the substrate's abstraction over `n`, achieved
+/-- The index as a binder, (80b), takes the open proposition of its complement to the property of
+the values of the variable that verify it. It is the substrate's abstraction over `n`, achieved
 without movement. -/
 abbrev idxBind (n : ℕ) (φ : Assignment E → Prop) : Assignment E → E → Prop := lambdaAbsG n φ
 
-/-- (15), (35b), (97), and (106): a familiar DP, D's ι over the restriction modified by the index
-as a variable, is the substrate's anaphoric description: the antecedent, if it satisfies the
-restriction. -/
+/-- A familiar DP, D's ι over the restriction modified by the index as a variable ((15), (35b),
+(97) and (106)), is the substrate's anaphoric description, which denotes the antecedent if it
+satisfies the restriction. -/
 theorem denote_anaphoric_eq_russellIota (R : Restrictor E W) (d : ℕ) (g : Assignment E) (s : W) :
-    ⟦Description.anaphoric R d⟧ g s = russellIota (λ x => R g s x ∧ idxVar d g x) := rfl
+    ⟦Description.anaphoric R d⟧ g s = russellIota (fun x ↦ R g s x ∧ idxVar d g x) := rfl
 
-/-- (34b), (34c): the demonstrative D heads *hádi* and *wídi* add a deictic presupposition and
-otherwise contribute ι, so a demonstrative refers as the anaphoric DP does. -/
+/-- The demonstrative D heads *hádi* and *wídi* of (34b) and (34c) add a deictic presupposition
+and otherwise contribute ι, so a demonstrative refers as the anaphoric DP does. -/
 theorem denote_demonstrative_eq_russellIota (R : Restrictor E W) (deictic : Reference.Deixis)
     (d : ℕ) (g : Assignment E) (s : W) :
-    ⟦Description.demonstrative R deictic d⟧ g s = russellIota (λ x => R g s x ∧ idxVar d g x) :=
+    ⟦Description.demonstrative R deictic d⟧ g s = russellIota (fun x ↦ R g s x ∧ idxVar d g x) :=
   rfl
 
 /-! ### Internally headed relatives, section 4 -/
 
-/-- (69), (70): the embedded clause of an internally headed relative, an open proposition whose
-semantic head is the restricted variable `n`: the restriction `P` holds of its value, and the
-clause `ψ` says the rest of it. -/
+/-- The embedded clause of an internally headed relative, (69) and (70), is an open proposition
+whose semantic head is the restricted variable `n`. The restriction `P` holds of the variable's
+value, and the clause `ψ` says the rest of it. -/
 def openClause (n : ℕ) (P : E → Prop) (ψ : Assignment E → Prop) : Assignment E → Prop :=
-  λ g => P (g n) ∧ ψ g
+  fun g ↦ P (g n) ∧ ψ g
 
-/-- (71) is (59): the index binding the restricted variable in situ yields the property an
-externally headed relative builds by abstracting over the trace and intersecting with the
-head noun. -/
+/-- The property (71) that the index yields by binding the restricted variable in situ is the
+property (59) that an externally headed relative builds by abstracting over the trace and
+intersecting with the head noun. -/
 theorem idxBind_openClause (n : ℕ) (P : E → Prop) (ψ : Assignment E → Prop) (g : Assignment E) :
-    idxBind n (openClause n P ψ) g = λ x => P x ∧ lambdaAbsG n ψ g x := by
+    idxBind n (openClause n P ψ) g = fun x ↦ P x ∧ lambdaAbsG n ψ g x := by
   funext x
   simp only [idxBind, lambdaAbsG, openClause, Function.update_self]
 
-/-- (72) is (60): the silent D over the bound clause refers to what the definite over the
-externally headed relative refers to, the same meaning by different steps. -/
+/-- The silent D over the bound clause, (72), refers to what the definite over the externally
+headed relative, (60), refers to, the same meaning reached by different steps. -/
 theorem russellIota_idxBind (n : ℕ) (P : E → Prop) (ψ : Assignment E → Prop) (g : Assignment E) :
     russellIota (idxBind n (openClause n P ψ) g) =
-      russellIota (λ x => P x ∧ lambdaAbsG n ψ g x) := by
+      russellIota (fun x ↦ P x ∧ lambdaAbsG n ψ g x) := by
   rw [idxBind_openClause]
 
-/-- The index has a free occurrence in `φ`: some value of the variable changes its truth. -/
-def BindsIn (n : ℕ) (φ : Assignment E → Prop) : Prop := ∃ g x, ¬ (φ (g[n ↦ x]) ↔ φ g)
-
-/-- (86), the Prohibition against Vacuous Binding: without a free occurrence of the index the
-binder meaning is constant and binds nothing, so only the variable meaning survives, which is
-why a perception nominalization (106), a property of events with no open variable, is a
-familiar DP. -/
-theorem idxBind_eq_const_of_not_bindsIn {n : ℕ} {φ : Assignment E → Prop} (h : ¬ BindsIn n φ)
-    (g : Assignment E) : idxBind n φ g = λ _ => φ g := by
-  funext x
-  simp only [BindsIn, not_exists, not_not] at h
-  exact propext (h g x)
+/-- Without a free occurrence of the index, when `φ` depends only on the other indices, the
+binder meaning is constant and binds nothing. The Prohibition against Vacuous Binding (86) then
+leaves only the variable meaning, which is why a perception nominalization (106), a property of
+events with no open variable, is a familiar DP. -/
+theorem idxBind_eq_const {n : ℕ} {φ : Assignment E → Prop} (h : DependsOn φ {n}ᶜ)
+    (g : Assignment E) : idxBind n φ g = fun _ ↦ φ g :=
+  lambdaAbsG_eq_const_iff.2 h g
 
 /-! ### The exponence of idx and D, section 6 -/
 
-/-- The features Vocabulary Insertion reads at idx and D and on their complements: the index
-head, dependent (accusative) case, the D head with its deixis, and the complement's category, an
-overt NP, a CP, an RP, or a nominal under ellipsis, which lacks the phonological features that
-make an NP overt (section 6.3). -/
+/-- The features Vocabulary Insertion reads at idx and D and on their complements are the index
+head, dependent (accusative) case, the D head with its deixis, and the complement's category. The
+complement is an overt NP, a CP, an RP, or a nominal under ellipsis, which lacks the phonological
+features that make an NP overt (section 6.3). -/
 inductive Feat where
   | idx | dep | np | cp | rp | elided
   | d | deixis (f : Reference.Deixis)
   deriving DecidableEq, Repr
 
-/-- (119), (131): the Vocabulary entries for idx, *gi* elsewhere, *ge* under dependent case, and
-null before an overt NP. -/
+/-- The Vocabulary entries for idx, (119) and (131), are *gi* elsewhere, *ge* under dependent
+case, and null before an overt NP. -/
 def idxItems : List (VocabularyItem Feat String) :=
   [[Feat.idx] ⟷ "gi", [Feat.idx, .dep] ⟷ "ge", ⟨⟨[.idx], [], [[.np]]⟩, ""⟩]
 
-/-- (130): the Vocabulary entries for D, null elsewhere, *hádi* distal, *wídi* proximal. -/
+/-- The Vocabulary entries for D, (130), are null elsewhere, *hádi* distal and *wídi* proximal. -/
 def dItems : List (VocabularyItem Feat String) :=
   [[Feat.d] ⟷ "", [Feat.d, .deixis .distal] ⟷ "hádi", [Feat.d, .deixis .proximal] ⟷ "wídi"]
 
-/-- (118): contextual specificity takes precedence over the Elsewhere Principle, the ordering of
-[arregi-nevins-2012]: an item is ranked first by the features it demands of the context and
-then by those it spells out. -/
+/-- Under (118), contextual specificity takes precedence over the Elsewhere Principle, the
+ordering of [arregi-nevins-2012]. An item is ranked first by the features it demands of the
+context and then by those it spells out. -/
 def contextualSpecificity (i : VocabularyItem Feat String) : ℕ ×ₗ ℕ :=
   toLex ((i.site.leftCtx ++ i.site.rightCtx).flatten.length, i.site.focus.length)
 
-/-- The exponent of idx in a neighborhood. -/
+/-- `idxExponent n` is the exponent of idx in the neighborhood `n`. -/
 def idxExponent (n : Neighborhood (List Feat)) : Option String :=
   realize contextualSpecificity idxItems n
 
-/-- The exponent of D in a neighborhood. -/
+/-- `dExponent n` is the exponent of D in the neighborhood `n`. -/
 def dExponent (n : Neighborhood (List Feat)) : Option String :=
   realize contextualSpecificity dItems n
 
-/-- The distribution of *gi ~ ge* (108) to (115) and (127) to (129): overt in pronouns, whose NP
-is elided (113), at the edge of clausal nominalizations (114), and in demonstratives, whose
-complement is RP (129), each alternating for case ((44), (45)); null before the overt NP of an
-anaphoric bare definite (115), and still null under dependent case (22), where the contextual
-entry outranks the case entry. -/
+/-- The exponent *gi ~ ge* is distributed as in (108) to (115) and (127) to (129). It is overt in
+pronouns, whose NP is elided (113), at the edge of clausal nominalizations (114), and in
+demonstratives, whose complement is RP (129), each alternating for case ((44), (45)). It is null
+before the overt NP of an anaphoric bare definite (115), and still null under dependent case
+(22), where the contextual entry outranks the case entry. -/
 theorem idxExponent_distribution :
     idxExponent ⟨[.idx], [], [[.elided]]⟩ = some "gi" ∧
       idxExponent ⟨[.idx, .dep], [], [[.elided]]⟩ = some "ge" ∧
@@ -181,14 +176,14 @@ theorem subsetPrinciple_accusative_bare :
     subsetPrinciple idxItems ⟨[.idx, .dep], [], [[.np]]⟩ = some "ge" := by
   decide
 
-/-- (25), (127): the demonstratives *hádigi* and *wídigi* decompose as the D exponent followed by
-the idx exponent. -/
+/-- The demonstratives *hádigi* and *wídigi* of (25) and (127) decompose as the D exponent
+followed by the idx exponent. -/
 theorem demonstrative_forms :
     (dExponent ⟨[.d, .deixis .distal], [], [[.idx]]⟩).bind
-        (λ a => (idxExponent ⟨[.idx], [[.d, .deixis .distal]], [[.rp]]⟩).map (a ++ ·)) =
+        (fun a ↦ (idxExponent ⟨[.idx], [[.d, .deixis .distal]], [[.rp]]⟩).map (a ++ ·)) =
       some "hádigi" ∧
     (dExponent ⟨[.d, .deixis .proximal], [], [[.idx]]⟩).bind
-        (λ a => (idxExponent ⟨[.idx], [[.d, .deixis .proximal]], [[.rp]]⟩).map (a ++ ·)) =
+        (fun a ↦ (idxExponent ⟨[.idx], [[.d, .deixis .proximal]], [[.rp]]⟩).map (a ++ ·)) =
       some "wídigi" := by
   decide
 
