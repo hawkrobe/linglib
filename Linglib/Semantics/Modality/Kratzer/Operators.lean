@@ -8,17 +8,17 @@ public import Linglib.Logic.Modal.Basic
 
 This file defines necessity and possibility over a modal base and an ordering source,
 [kratzer-1981]'s operators, as the box and diamond of `Logic.Modal` over the accessibility
-relations the two backgrounds induce: simple necessity quantifies over the accessible worlds
-(`ModalBase.Accessible`, `simpleNecessity`), necessity over the best accessible worlds
-(`BestAccessible`, `necessity`). The paper's own definition needs no Limit Assumption: human
+relations the two backgrounds induce. Simple necessity quantifies over the accessible worlds
+(`ModalBase.Accessible`, `simpleNecessity`), and necessity over the best accessible worlds
+(`BestAccessible`, `necessity`). The paper's own definition needs no Limit Assumption. Human
 necessity asks each accessible world to see, at least as good, a witness below which only
 `p`-worlds occur (`humanNecessity`), and it is universal quantification over the best worlds
-exactly under the Limit Assumption (`humanNecessity_iff_necessity`). The modal axioms follow
-from the frame conditions the backgrounds impose (`duality`, `necessity_K`,
-`ConvBackground.IsTotallyRealistic.necessity_le_id`), a realistic base being exactly one over
-which simple necessity is veridical (`isRealistic_iff_simpleNecessity_le_id`), and a
-conditional antecedent restricts the modal base (`ModalBase.restrict`,
-`accessibleWorlds_restrict`).
+exactly under the Limit Assumption (`humanNecessity_iff_necessity`), which every finite frame
+satisfies (`LimitAssumption.of_finite`). The modal axioms follow from the frame conditions the
+backgrounds impose (`duality`, `necessity_K`, `ConvBackground.IsTotallyRealistic.necessity_le_id`),
+a realistic base being exactly one over which simple necessity is veridical
+(`isRealistic_iff_simpleNecessity_le_id`), and a conditional antecedent restricts the modal base
+(`ModalBase.restrict`, `accessibleWorlds_restrict`).
 
 ## Implementation notes
 
@@ -44,13 +44,13 @@ variable {W : Type*}
 
 /-! ### Accessibility relations -/
 
-/-- The accessibility relation of a modal base: `w'` is accessible from `w` when it satisfies
-every premise of `f w`, Kratzer's `w' ∈ ⋂f(w)`. -/
+/-- Under a modal base, `w'` is accessible from `w` when it satisfies every premise of `f w`,
+Kratzer's `w' ∈ ⋂f(w)`. -/
 def ModalBase.Accessible (f : ModalBase W) (w w' : W) : Prop :=
   w' ∈ f.accessibleWorlds w
 
-/-- The best-worlds accessibility relation of a modal base and an ordering source: `w'` is
-accessible from `w` when it is among the best worlds accessible from `w`. -/
+/-- Under a modal base and an ordering source, `w'` is best-accessible from `w` when it is among
+the best worlds accessible from `w`. -/
 def BestAccessible (f : ModalBase W) (g : OrderingSource W) (w w' : W) : Prop :=
   w' ∈ bestWorlds f g w
 
@@ -61,36 +61,36 @@ theorem bestAccessible_emptyBackground (f : ModalBase W) (w w' : W) :
 
 /-! ### Operators -/
 
-/-- Simple necessity: `p` holds at every accessible world,
+/-- Simple necessity holds when `p` holds at every accessible world,
 `⟦must⟧_f(p)(w) = ∀w' ∈ ⋂f(w). p(w')`, Definition 5 of [kratzer-1977]. -/
 def simpleNecessity (f : ModalBase W) (p : W → Prop) (w : W) : Prop :=
   box f.Accessible p w
 
-/-- Simple possibility: `p` holds at some accessible world,
+/-- Simple possibility holds when `p` holds at some accessible world,
 `⟦can⟧_f(p)(w) = ∃w' ∈ ⋂f(w). p(w')`, Definition 6 of [kratzer-1977]. -/
 def simplePossibility (f : ModalBase W) (p : W → Prop) (w : W) : Prop :=
   diamond f.Accessible p w
 
-/-- Necessity with an ordering source: `p` holds at every best world,
+/-- Necessity with an ordering source holds when `p` holds at every best world,
 `⟦must⟧_{f,g}(p)(w) = ∀w' ∈ Best(f,g,w). p(w')`, the Limit Assumption form of
 `humanNecessity`. -/
 def necessity (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) : Prop :=
   box (BestAccessible f g) p w
 
-/-- Possibility with an ordering source: `p` holds at some best world,
+/-- Possibility with an ordering source holds when `p` holds at some best world,
 `⟦can⟧_{f,g}(p)(w) = ∃w' ∈ Best(f,g,w). p(w')`. -/
 def possibility (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) : Prop :=
   diamond (BestAccessible f g) p w
 
 /-! ### Human necessity
 
-[kratzer-1981]'s official definition needs no Limit Assumption: it asks each accessible world
-to see, at least as good, a witness below which only `p`-worlds occur. `necessity`, universal
+[kratzer-1981]'s official definition needs no Limit Assumption, asking each accessible world to
+see, at least as good, a witness below which only `p`-worlds occur. `necessity`, universal
 quantification over `bestWorlds`, is its Limit Assumption collapse. -/
 
-/-- Human necessity ([kratzer-1981], restated as necessity in [kratzer-2012]): every
-accessible world has an accessible world at least as good, below which `p` holds throughout.
-Neutral with respect to the Limit Assumption, after Lewis's counterfactual semantics. -/
+/-- Human necessity holds when every accessible world has an accessible world at least as good,
+below which `p` holds throughout ([kratzer-1981], restated as necessity in [kratzer-2012]). It is
+neutral with respect to the Limit Assumption, after Lewis's counterfactual semantics. -/
 def humanNecessity (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) : Prop :=
   ∀ u ∈ f.accessibleWorlds w, ∃ v ∈ f.accessibleWorlds w,
     atLeastAsGoodAs (g w) v u ∧ ∀ z ∈ f.accessibleWorlds w, atLeastAsGoodAs (g w) z v → p z
@@ -105,6 +105,12 @@ theorem necessity_of_humanNecessity {f : ModalBase W} {g : OrderingSource W} {p 
 /-- The Limit Assumption at `w`: every accessible world sees a best world at least as good. -/
 def LimitAssumption (f : ModalBase W) (g : OrderingSource W) (w : W) : Prop :=
   ∀ u ∈ f.accessibleWorlds w, ∃ v ∈ bestWorlds f g w, atLeastAsGoodAs (g w) v u
+
+/-- The Limit Assumption holds on a finite frame, where every accessible world lies above a best
+one. -/
+theorem LimitAssumption.of_finite [Finite W] (f : ModalBase W) (g : OrderingSource W) (w : W) :
+    LimitAssumption f g w := fun _ hu ↦
+  Preorder.exists_le_mem_minimals (letI := premisePreorder (g w); wellFounded_lt) hu
 
 /-- Under the Limit Assumption, best-worlds necessity implies human necessity. -/
 theorem humanNecessity_of_necessity {f : ModalBase W} {g : OrderingSource W} {p : W → Prop}
@@ -185,7 +191,7 @@ theorem necessity_empty_iff_simple (f : ModalBase W) (p : W → Prop) (w : W) :
 
 /-- Premise growth preserves simple necessity, since more evidence leaves fewer accessible
 worlds and so at least as many necessities. This is [kratzer-2012]'s point about epistemic
-change over time, the approaching-man dialogue: one conversational background can represent
+change over time, the approaching-man dialogue, where one conversational background represents
 evidence that grows as time goes by, and what *must* hold on the earlier evidence still must on
 the later. -/
 theorem simpleNecessity_mono {f f' : ModalBase W} {p : W → Prop} {w : W} (h : f w ⊆ f' w)
@@ -221,7 +227,7 @@ theorem isRealistic_iff_refl {f : ModalBase W} : f.IsRealistic ↔ Std.Refl f.Ac
   ⟨ConvBackground.IsRealistic.refl, fun h w ↦ h.refl w⟩
 
 /-- A modal base is realistic exactly when simple necessity over it is veridical, what must be
-the case being the case: **T** defines realism. -/
+the case being the case, so **T** defines realism. -/
 theorem isRealistic_iff_simpleNecessity_le_id {f : ModalBase W} :
     f.IsRealistic ↔ simpleNecessity f ≤ id :=
   isRealistic_iff_refl.trans box_T_iff.symm
@@ -251,13 +257,13 @@ theorem duality (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W
   rw [necessity, possibility, not_diamond]
   simp [box]
 
-/-- The K axiom, distribution: `□(p → q) → □p → □q`. -/
+/-- Necessity distributes over implication, the K axiom `□(p → q) → □p → □q`. -/
 theorem necessity_K (f : ModalBase W) (g : OrderingSource W) (p q : W → Prop) (w : W)
     (hImpl : necessity f g (fun w' ↦ p w' → q w') w) (hP : necessity f g p w) :
     necessity f g q w :=
   box_K hImpl hP
 
-/-- Over a totally realistic base, necessity is veridical whatever the ordering source: the T
+/-- Over a totally realistic base, necessity is veridical whatever the ordering source, the T
 axiom for full necessity. -/
 theorem ConvBackground.IsTotallyRealistic.necessity_le_id {f : ModalBase W}
     (hTotal : f.IsTotallyRealistic) (g : OrderingSource W) : necessity f g ≤ id := by
