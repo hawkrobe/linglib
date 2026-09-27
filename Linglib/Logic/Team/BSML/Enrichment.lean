@@ -77,8 +77,10 @@ theorem nonempty_of_support_enrich (h : support M (enrich φ) t) : t.Nonempty :=
 anti-support of `φ`. -/
 theorem antiSupport_conj_ne (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     antiSupport M (.conj φ .ne) t ↔ antiSupport M φ t where
-  mp := fun ⟨_, _, hu, h, h₂⟩ ↦ by subst h₂; simpa [← hu] using h
-  mpr h := ⟨t, ∅, by simp, h, rfl⟩
+  mp := fun ⟨_, h, _, h₂, hu⟩ ↦ by
+    obtain rfl : _ = (∅ : Finset W) := h₂
+    simpa [← hu] using h
+  mpr h := ⟨t, h, ∅, rfl, Finset.union_empty t⟩
 
 /-- `[¬¬φ]⁺` and `[φ]⁺` have the same support, since the two `NE` conjuncts added by the
 negations are absorbed. -/
@@ -104,15 +106,15 @@ theorem eval_of_eval_enrich (hNE : φ.NEFree) (h : eval M pol (enrich φ) t) :
     · exact ih (pol := false) hNE h.1
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     cases pol
-    · obtain ⟨s₁, s₂, hs, h₁, h₂⟩ := (antiSupport_conj_ne M _ t).mp h
-      exact ⟨s₁, s₂, hs, ih₁ hNE.1 h₁, ih₂ hNE.2 h₂⟩
+    · obtain ⟨s₁, h₁, s₂, h₂, hs⟩ := (antiSupport_conj_ne M _ t).mp h
+      exact ⟨s₁, ih₁ hNE.1 h₁, s₂, ih₂ hNE.2 h₂, hs⟩
     · exact ⟨ih₁ hNE.1 h.1.1, ih₂ hNE.2 h.1.2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     cases pol
     · obtain ⟨h₁, h₂⟩ := (antiSupport_conj_ne M _ t).mp h
       exact ⟨ih₁ hNE.1 h₁, ih₂ hNE.2 h₂⟩
-    · obtain ⟨s₁, s₂, hs, h₁, h₂⟩ := h.1
-      exact ⟨s₁, s₂, hs, ih₁ hNE.1 h₁, ih₂ hNE.2 h₂⟩
+    · obtain ⟨s₁, h₁, s₂, h₂, hs⟩ := h.1
+      exact ⟨s₁, ih₁ hNE.1 h₁, s₂, ih₂ hNE.2 h₂, hs⟩
   | poss ψ ih =>
     cases pol
     · exact fun w hw ↦ ih hNE ((antiSupport_conj_ne M _ t).mp h w hw)
@@ -145,7 +147,8 @@ theorem antiSupport_enrich_iff (hPos : φ.Positive) :
   | neg _ => exact hPos.elim
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     rw [enrich, antiSupport_conj_ne]
-    exact exists₂_congr fun _ _ ↦ and_congr_right fun _ ↦ and_congr (ih₁ hPos.1) (ih₂ hPos.2)
+    exact exists_congr fun _ ↦ and_congr (ih₁ hPos.1)
+      (exists_congr fun _ ↦ and_congr_left fun _ ↦ ih₂ hPos.2)
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     rw [enrich, antiSupport_conj_ne]
     exact and_congr (ih₁ hPos.1) (ih₂ hPos.2)
@@ -195,11 +198,11 @@ theorem support_enrich_iff_supportStar (hCP : φ.ClassicalPositive) :
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     have ih₁ := fun t ↦ ih₁ (t := t) ⟨hCP.1.1, hCP.2.1⟩
     have ih₂ := fun t ↦ ih₂ (t := t) ⟨hCP.1.2, hCP.2.2⟩
-    exact ⟨fun ⟨⟨t₁, t₂, hu, h₁, h₂⟩, hne⟩ ↦
+    exact ⟨fun ⟨⟨t₁, h₁, t₂, h₂, hu⟩, hne⟩ ↦
         ⟨⟨t₁, t₂, ⟨hu, ((ih₁ t₁).mp h₁).2, ((ih₂ t₂).mp h₂).2⟩, ((ih₁ t₁).mp h₁).1,
           ((ih₂ t₂).mp h₂).1⟩, hne⟩,
       fun ⟨⟨t₁, t₂, ⟨hu, hne₁, hne₂⟩, h₁, h₂⟩, hne⟩ ↦
-        ⟨⟨t₁, t₂, hu, (ih₁ t₁).mpr ⟨h₁, hne₁⟩, (ih₂ t₂).mpr ⟨h₂, hne₂⟩⟩, hne⟩⟩
+        ⟨⟨t₁, (ih₁ t₁).mpr ⟨h₁, hne₁⟩, t₂, (ih₂ t₂).mpr ⟨h₂, hne₂⟩, hu⟩, hne⟩⟩
   | poss ψ ih =>
     have ih := fun s ↦ ih (t := s) hCP
     exact ⟨fun ⟨h, hne⟩ ↦ ⟨fun w hw ↦ (h w hw).imp fun _ ⟨hs, hs', h'⟩ ↦

@@ -76,9 +76,9 @@ theorem diamond_split {X : Finset W} {g : PartialAssign Var Domain}
     (hsupp : support M (Formula.disj α β).enrich (State.modalLift X g)) :
     (∃ Y, Y ⊆ X ∧ Y.Nonempty ∧ support M α (State.modalLift Y g)) ∧
     (∃ Y, Y ⊆ X ∧ Y.Nonempty ∧ support M β (State.modalLift Y g)) := by
-  obtain ⟨t₁, t₂, hsplit, h₁, h₂⟩ := hsupp.1
-  exact ⟨poss_of_subset_modalLift M hα (splitsAs_left_subset hsplit) h₁,
-    poss_of_subset_modalLift M hβ (splitsAs_right_subset hsplit) h₂⟩
+  obtain ⟨t₁, h₁, t₂, h₂, hsplit⟩ := hsupp.1
+  exact ⟨poss_of_subset_modalLift M hα (le_sup_left.trans_eq hsplit) h₁,
+    poss_of_subset_modalLift M hβ (le_sup_right.trans_eq hsplit) h₂⟩
 
 /-- A state whose every index sees an enriched split disjunction supports both diamonds. -/
 private theorem possFC_on (hα : α.NEFree) (hβ : β.NEFree)
@@ -170,14 +170,14 @@ theorem boxExiFC {x : Var} (hα : α.NEFree) (hβ : β.NEFree)
   rw [support_enrich_nec_iff] at h
   refine ⟨fun i hi ↦ ?_, fun i hi ↦ ?_⟩
   · obtain ⟨hf, -, hD⟩ := (h.1 i hi).1
-    obtain ⟨t₁, t₂, hsplit, h₁, -⟩ := hD.1
+    obtain ⟨t₁, h₁, t₂, -, hsplit⟩ := hD.1
     exact poss_exi_of_subset_extendFunctional M
-      (splitsAs_left_subset hsplit)
+      (le_sup_left.trans_eq hsplit)
       (nonempty_of_support_enrich h₁) (support_of_support_enrich hα h₁)
   · obtain ⟨hf, -, hD⟩ := (h.1 i hi).1
-    obtain ⟨t₁, t₂, hsplit, -, h₂⟩ := hD.1
+    obtain ⟨t₁, -, t₂, h₂, hsplit⟩ := hD.1
     exact poss_exi_of_subset_extendFunctional M
-      (splitsAs_right_subset hsplit)
+      (le_sup_right.trans_eq hsplit)
       (nonempty_of_support_enrich h₂) (support_of_support_enrich hβ h₂)
 
 /-! ### Ignorance (Fact 3) -/
@@ -207,10 +207,10 @@ theorem ignorance {P Q : Pred} {c₁ c₂ : Const} (hSB : M.IsStateBased s)
       (Formula.enrich (.disj (.predc P c₁) (.predc Q c₂))) s) :
     support M (.poss (.predc P c₁)) s ∧
     support M (.poss (.predc Q c₂)) s := by
-  obtain ⟨t₁, t₂, hsplit, h₁, h₂⟩ := h.1
-  exact ⟨poss_predc_of_stateBased M hSB (splitsAs_left_subset hsplit)
+  obtain ⟨t₁, h₁, t₂, h₂, hsplit⟩ := h.1
+  exact ⟨poss_predc_of_stateBased M hSB (le_sup_left.trans_eq hsplit)
       h₁.2 h₁.1,
-    poss_predc_of_stateBased M hSB (splitsAs_right_subset hsplit)
+    poss_predc_of_stateBased M hSB (le_sup_right.trans_eq hsplit)
       h₂.2 h₂.1⟩
 
 /-! ### Negation behaviour (Fact 10) -/
@@ -256,11 +256,11 @@ theorem distribution {x : Var} {i : Index W Var Domain}
     (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (Formula.enrich (.univ x (.disj α β))) {i}) :
     support M (.exi x α) {i} ∧ support M (.exi x β) {i} := by
-  obtain ⟨t₁, t₂, hsplit, h₁, h₂⟩ := h.1.1
+  obtain ⟨t₁, h₁, t₂, h₂, hsplit⟩ := h.1.1
   exact ⟨exi_of_subset_extendUniversal_singleton M
-      (splitsAs_left_subset hsplit)
+      (le_sup_left.trans_eq hsplit)
       (nonempty_of_support_enrich h₁) (support_of_support_enrich hα h₁),
-    exi_of_subset_extendUniversal_singleton M (splitsAs_right_subset hsplit)
+    exi_of_subset_extendUniversal_singleton M (le_sup_right.trans_eq hsplit)
       (nonempty_of_support_enrich h₂) (support_of_support_enrich hβ h₂)⟩
 
 /-- A non-empty subset `t` of `s[x]` supporting the atom `Px` yields `∃x◇Px` on `s` when `R`
@@ -312,12 +312,12 @@ theorem distributionEpi {P Q : Pred} {x : Var} (hSB : M.IsStateBased s)
       (Formula.enrich (.univ x (.disj (.pred P x) (.pred Q x)))) s) :
     support M (.exi x (.poss (.pred P x))) s ∧
     support M (.exi x (.poss (.pred Q x))) s := by
-  obtain ⟨t₁, t₂, hsplit, h₁, h₂⟩ := h.1.1
+  obtain ⟨t₁, h₁, t₂, h₂, hsplit⟩ := h.1.1
   exact ⟨exi_poss_atom_of_subset_extendUniversal M hSB
-      (splitsAs_left_subset hsplit)
+      (le_sup_left.trans_eq hsplit)
       (nonempty_of_support_enrich h₁) h₁.1,
     exi_poss_atom_of_subset_extendUniversal M hSB
-      (splitsAs_right_subset hsplit)
+      (le_sup_right.trans_eq hsplit)
       (nonempty_of_support_enrich h₂) h₂.1⟩
 
 end QBSML

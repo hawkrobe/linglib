@@ -46,10 +46,10 @@ variable {W : Type*} [DecidableEq W] {Atom : Type*} {M : KripkeModel W Atom}
 theorem witnesses_of_enrich_disj (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (enrich (.disj α β)) t) :
     (∃ s ⊆ t, s.Nonempty ∧ support M α s) ∧ ∃ s ⊆ t, s.Nonempty ∧ support M β s :=
-  have ⟨t₁, t₂, hu, h₁, h₂⟩ := h.1
-  ⟨⟨t₁, hu ▸ Finset.subset_union_left, nonempty_of_support_enrich h₁,
+  have ⟨t₁, h₁, t₂, h₂, hu⟩ := h.1
+  ⟨⟨t₁, le_sup_left.trans_eq hu, nonempty_of_support_enrich h₁,
       support_of_support_enrich hα h₁⟩,
-    ⟨t₂, hu ▸ Finset.subset_union_right, nonempty_of_support_enrich h₂,
+    ⟨t₂, le_sup_right.trans_eq hu, nonempty_of_support_enrich h₂,
       support_of_support_enrich hβ h₂⟩⟩
 
 /-- Modal Disjunction (Fact 3) is `[α ∨ β]⁺ ⊨ ◇α ∧ ◇β` on a state-based `R`. -/
@@ -238,9 +238,9 @@ theorem positiveFC_plus :
   fun M t h ↦
     have hw : ∀ w ∈ t, (∃ s ⊆ M.access w, s.Nonempty ∧ support M (enrich α) s) ∧
         ∃ s ⊆ M.access w, s.Nonempty ∧ support M (enrich β) s := fun w hw ↦
-      have ⟨_, hs, _, ⟨_, _, hu, h₁, h₂⟩, _⟩ := h.1 w hw
-      ⟨⟨_, (Team.splitsAs_left_subset hu).trans hs, nonempty_of_support_enrich h₁, h₁⟩,
-        ⟨_, (Team.splitsAs_right_subset hu).trans hs, nonempty_of_support_enrich h₂, h₂⟩⟩
+      have ⟨_, hs, _, ⟨_, h₁, _, h₂, hu⟩, _⟩ := h.1 w hw
+      ⟨⟨_, (le_sup_left.trans_eq hu).trans hs, nonempty_of_support_enrich h₁, h₁⟩,
+        ⟨_, (le_sup_right.trans_eq hu).trans hs, nonempty_of_support_enrich h₂, h₂⟩⟩
     ⟨⟨⟨fun w hw' ↦ (hw w hw').1, h.2⟩, ⟨fun w hw' ↦ (hw w hw').2, h.2⟩⟩, h.2⟩
 
 /-- Positive FC fails in BSML∅: Figure 4(a) supports `◇(a ∨ b)` but not `◇b`. -/

@@ -33,7 +33,7 @@ then coincide with their classical definitions: this is [aloni-2022]'s Fact 15 a
 `Realize` is total: `NE` is true at every world, since singletons are non-empty, so the
 equations of Proposition 2.2.16 are stated for `NE`-free formulas only, as in the sources.
 The proposition is one induction over the polarity parameter of `eval`, with the split
-clauses discharged by `Team.exists_splitsAs_forall_iff` and the `◇`-support clause by
+clauses discharged by `Team.mem_tensor_flat` and the `◇`-support clause by
 `Team.exists_nonempty_subset_forall_iff`. Flatness of the `NE`-free fragment is also
 derived from its closure properties in `Properties.lean` (`isFlat_support_of_neFree`).
 
@@ -115,16 +115,16 @@ theorem eval_iff_forall_realize (hNE : φ.NEFree) (b : Bool) (t : Finset W) :
     · simpa [eval, Realize] using ih hNE false t
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
-    · simp only [eval, Team.mem_tensor, Set.mem_ofPred_eq, ih₁ hNE.1, ih₂ hNE.2,
-        Team.exists_splitsAs_forall_iff, Realize]
-      simp [imp_iff_not_or]
+    · simp only [eval, ih₁ hNE.1, ih₂ hNE.2]
+      refine Team.mem_tensor_flat.trans ?_
+      simp [Realize, imp_iff_not_or]
     · simp [eval, ih₁ hNE.1, ih₂ hNE.2, Realize, forall_and]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
     · simp [eval, ih₁ hNE.1, ih₂ hNE.2, Realize, forall_and, not_or]
-    · simp only [eval, Team.mem_tensor, Set.mem_ofPred_eq, ih₁ hNE.1, ih₂ hNE.2,
-        Team.exists_splitsAs_forall_iff, Realize]
-      simp
+    · simp only [eval, ih₁ hNE.1, ih₂ hNE.2]
+      refine Team.mem_tensor_flat.trans ?_
+      simp [Realize]
   | poss ψ ih =>
     cases b
     · simp [eval, ih hNE, realize_poss]

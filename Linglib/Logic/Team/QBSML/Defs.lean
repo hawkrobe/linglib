@@ -252,10 +252,21 @@ inductions in `QBSML/Properties.lean` consume, beside those of `Team/Operations.
 closure of the functional clause needs downward closure of the property, which is why
 QBSML's union closure is confined to the `NE`-free fragment. -/
 
+/-- Universal extension `s ↦ s[x]` as a map of the bounded join-semilattice of states. -/
+def State.extendUniversalHom [Fintype Domain] (x : Var) :
+    SupBotHom (Finset (Index W Var Domain)) (Finset (Index W Var Domain)) where
+  toFun s := State.extendUniversal s x
+  map_sup' s t := State.extendUniversal_union s t x
+  map_bot' := State.extendUniversal_empty x
+
+@[simp] theorem State.extendUniversalHom_apply [Fintype Domain] (x : Var)
+    (s : Finset (Index W Var Domain)) : State.extendUniversalHom x s = State.extendUniversal s x :=
+  rfl
+
 /-- The universal-extension clause: `s[x] ∈ P`. -/
 def State.univ [Fintype Domain] (x : Var) (P : Team.TeamProperty (Index W Var Domain)) :
     Team.TeamProperty (Index W Var Domain) :=
-  (State.extendUniversal · x) ⁻¹' P
+  State.extendUniversalHom x ⁻¹' P
 
 /-- The functional-extension clause: `s[x/h] ∈ P` for some `h` non-empty on `s`. -/
 def State.exi (x : Var) (P : Team.TeamProperty (Index W Var Domain)) :
@@ -276,14 +287,14 @@ variable {x : Var} {P : Team.TeamProperty (Index W Var Domain)} {s : Finset (Ind
 
 theorem State.isLowerSet_univ [Fintype Domain] (hP : IsLowerSet P) :
     IsLowerSet (State.univ x P) :=
-  hP.preimage fun _ _ h ↦ State.extendUniversal_mono x h
+  hP.preimage (OrderHomClass.mono (State.extendUniversalHom x))
 
 theorem State.supClosed_univ [Fintype Domain] (hP : SupClosed P) :
     SupClosed (State.univ x P) :=
-  hP.preimage_of_map_union fun s t ↦ State.extendUniversal_union s t x
+  hP.preimage (State.extendUniversalHom x)
 
 theorem State.empty_mem_univ [Fintype Domain] (hP : ∅ ∈ P) : ∅ ∈ State.univ x P :=
-  Team.empty_mem_preimage hP (State.extendUniversal_empty x)
+  bot_mem_preimage (State.extendUniversalHom x) hP
 
 theorem State.isLowerSet_exi (hP : IsLowerSet P) : IsLowerSet (State.exi x P) := by
   rintro s t hts ⟨h, hne, hs⟩

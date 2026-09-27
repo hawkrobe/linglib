@@ -115,7 +115,7 @@ theorem eq_empty_of_support_antiSupport {φ : Formula Atom}
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     have h₁ := hNE.1
     have h₂ := hNE.2
-    rintro s ⟨hs₁, hs₂⟩ ⟨t₁, t₂, hsp, ha₁, ha₂⟩
+    rintro s ⟨hs₁, hs₂⟩ ⟨t₁, ha₁, t₂, ha₂, hsp⟩
     have hsub₁ : t₁ ⊆ s := hsp ▸ Finset.subset_union_left
     have hsub₂ : t₂ ⊆ s := hsp ▸ Finset.subset_union_right
     have he₁ := ih₁ h₁ t₁ (isLowerSet_support_of_neFree h₁ M hsub₁ hs₁) ha₁
@@ -124,7 +124,7 @@ theorem eq_empty_of_support_antiSupport {φ : Formula Atom}
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     have h₁ := hNE.1
     have h₂ := hNE.2
-    rintro s ⟨t₁, t₂, hsp, hs₁, hs₂⟩ ⟨ha₁, ha₂⟩
+    rintro s ⟨t₁, hs₁, t₂, hs₂, hsp⟩ ⟨ha₁, ha₂⟩
     have hsub₁ : t₁ ⊆ s := hsp ▸ Finset.subset_union_left
     have hsub₂ : t₂ ⊆ s := hsp ▸ Finset.subset_union_right
     have he₁ := ih₁ h₁ t₁ hs₁
@@ -162,18 +162,16 @@ theorem support_singleton_or_antiSupport_singleton {φ : Formula Atom}
     rcases ih₁ h₁ w with hs₁ | ha₁
     · rcases ih₂ h₂ w with hs₂ | ha₂
       · exact Or.inl ⟨hs₁, hs₂⟩
-      · exact Or.inr ⟨∅, {w}, by simp,
-          support_empty_of_neFree (φ := .neg ψ₁) h₁ M, ha₂⟩
-    · exact Or.inr ⟨{w}, ∅, by simp, ha₁,
-        support_empty_of_neFree (φ := .neg ψ₂) h₂ M⟩
+      · exact Or.inr ⟨∅, support_empty_of_neFree (φ := .neg ψ₁) h₁ M, {w}, ha₂, by simp⟩
+    · exact Or.inr ⟨{w}, ha₁, ∅, support_empty_of_neFree (φ := .neg ψ₂) h₂ M, by simp⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     have h₁ := hNE.1
     have h₂ := hNE.2
     intro w
     rcases ih₁ h₁ w with hs₁ | ha₁
-    · exact Or.inl ⟨{w}, ∅, by simp, hs₁, support_empty_of_neFree h₂ M⟩
+    · exact Or.inl ⟨{w}, hs₁, ∅, support_empty_of_neFree h₂ M, by simp⟩
     · rcases ih₂ h₂ w with hs₂ | ha₂
-      · exact Or.inl ⟨∅, {w}, by simp, support_empty_of_neFree h₁ M, hs₂⟩
+      · exact Or.inl ⟨∅, support_empty_of_neFree h₁ M, {w}, hs₂, by simp⟩
       · exact Or.inr ⟨ha₁, ha₂⟩
   | poss ψ ih =>
     intro w
@@ -354,22 +352,21 @@ theorem soundness {Γ : Set (Formula Atom)} {φ : Formula Atom}
     exact fun s hΓ => (support_bot_iff M p s).mp (ih s hΓ)
   | disjI hψ _ ih =>
     exact fun s hΓ =>
-      ⟨s, ∅, by simp, ih s hΓ, support_empty_of_neFree hψ M⟩
+      ⟨s, ih s hΓ, ∅, support_empty_of_neFree hψ M, by simp⟩
   | disjW _ ih =>
-    exact fun s hΓ => ⟨s, s, by simp, ih s hΓ, ih s hΓ⟩
+    exact fun s hΓ => ⟨s, ih s hΓ, s, ih s hΓ, by simp⟩
   | disjCom _ ih =>
     intro s hΓ
-    obtain ⟨t₁, t₂, hsp, h1, h2⟩ := ih s hΓ
-    exact ⟨t₂, t₁, by show t₂ ∪ t₁ = s; rw [Finset.union_comm]; exact hsp, h2, h1⟩
+    obtain ⟨t₁, h1, t₂, h2, hsp⟩ := ih s hΓ
+    exact ⟨t₂, h2, t₁, h1, by rw [Finset.union_comm]; exact hsp⟩
   | disjAss _ ih =>
     intro s hΓ
-    obtain ⟨t₁, t₂₃, hsp, h1, t₂, t₃, hsp', h2, h3⟩ := ih s hΓ
-    exact ⟨t₁ ∪ t₂, t₃,
-      by show t₁ ∪ t₂ ∪ t₃ = s; rw [Finset.union_assoc, hsp']; exact hsp,
-      ⟨t₁, t₂, rfl, h1, h2⟩, h3⟩
+    obtain ⟨t₁, h1, t₂₃, ⟨t₂, h2, t₃, h3, hsp'⟩, hsp⟩ := ih s hΓ
+    exact ⟨t₁ ∪ t₂, ⟨t₁, h1, t₂, h2, rfl⟩, t₃, h3,
+      by rw [Finset.union_assoc, hsp']; exact hsp⟩
   | @disjE Γ Δ₁ Δ₂ φ ψ χ hΔ₁ hΔ₂ _ _ _ ihmaj ih₁ ih₂ =>
     intro s hΓ
-    obtain ⟨t₁, t₂, hsp, hφ, hψ⟩ := ihmaj s (fun γ hγ =>
+    obtain ⟨t₁, hφ, t₂, hψ, hsp⟩ := ihmaj s (fun γ hγ =>
       hΓ γ (Set.mem_union_left _ (Set.mem_union_left _ hγ)))
     have hsub₁ : t₁ ⊆ s := hsp ▸ Finset.subset_union_left
     have hsub₂ : t₂ ⊆ s := hsp ▸ Finset.subset_union_right
@@ -386,7 +383,7 @@ theorem soundness {Γ : Set (Formula Atom)} {φ : Formula Atom}
     exact hsp ▸ supClosed_support M χ hχ₁ hχ₂
   | @disjMon Γ Δ φ ψ χ hΔ _ _ ihmaj ih =>
     intro s hΓ
-    obtain ⟨t₁, t₂, hsp, hφ, hψ⟩ := ihmaj s (fun γ hγ =>
+    obtain ⟨t₁, hφ, t₂, hψ, hsp⟩ := ihmaj s (fun γ hγ =>
       hΓ γ (Set.mem_union_left _ hγ))
     have hsub₂ : t₂ ⊆ s := hsp ▸ Finset.subset_union_right
     have hχ := ih t₂ (fun γ hγ => by
@@ -394,10 +391,10 @@ theorem soundness {Γ : Set (Formula Atom)} {φ : Formula Atom}
       · exact hψ
       · exact isLowerSet_support_of_neFree (hΔ γ hγ) M hsub₂
           (hΓ γ (Set.mem_union_right _ hγ)))
-    exact ⟨t₁, t₂, hsp, hφ, hχ⟩
+    exact ⟨t₁, hφ, t₂, hχ, hsp⟩
   | @botE Γ p φ _ ih =>
     intro s hΓ
-    obtain ⟨t₁, t₂, hsp, hbot, hφ⟩ := ih s hΓ
+    obtain ⟨t₁, hbot, t₂, hφ, hsp⟩ := ih s hΓ
     have ht₁ : t₁ = ∅ := (support_bot_iff M p t₁).mp hbot
     subst ht₁
     have hsp' : ∅ ∪ t₂ = s := hsp
@@ -405,7 +402,7 @@ theorem soundness {Γ : Set (Formula Atom)} {φ : Formula Atom}
     exact ht₂ ▸ hφ
   | @botbotCtr Γ p φ ψ _ ih =>
     intro s hΓ
-    obtain ⟨t₁, _, _, hbb, _⟩ := ih s hΓ
+    obtain ⟨t₁, hbb, _, _, _⟩ := ih s hΓ
     exact absurd hbb (not_support_botbot M p t₁)
   | possMon _ _ ihD ihPoss =>
     intro s hΓ w hw
@@ -419,7 +416,7 @@ theorem soundness {Γ : Set (Formula Atom)} {φ : Formula Atom}
   | interI _ ih => exact ih
   | possSep _ ih =>
     intro s hΓ w hw
-    obtain ⟨t, hsub, _, t₁, t₂, hsp, _, hψ, hne⟩ := ih s hΓ w hw
+    obtain ⟨t, hsub, _, t₁, -, t₂, ⟨hψ, hne⟩, hsp⟩ := ih s hΓ w hw
     exact ⟨t₂, (hsp ▸ Finset.subset_union_right).trans hsub, hne, hψ⟩
   | possJoin _ _ ih₁ ih₂ =>
     intro s hΓ w hw
@@ -429,7 +426,7 @@ theorem soundness {Γ : Set (Formula Atom)} {φ : Formula Atom}
       ih₂ s (fun γ hγ => hΓ γ (Set.mem_union_right _ hγ)) w hw
     obtain ⟨v, hv⟩ := hne₁
     exact ⟨t₁ ∪ t₂, Finset.union_subset hsub₁ hsub₂,
-      ⟨v, Finset.mem_union_left _ hv⟩, t₁, t₂, rfl, hφ, hψ⟩
+      ⟨v, Finset.mem_union_left _ hv⟩, t₁, hφ, t₂, hψ, rfl⟩
   | necInst _ ih =>
     intro s hΓ w hw
     obtain ⟨hφ, hne⟩ := ih s hΓ w hw
@@ -439,7 +436,7 @@ theorem soundness {Γ : Set (Formula Atom)} {φ : Formula Atom}
     have hφ := ih₁ s (fun γ hγ => hΓ γ (Set.mem_union_left _ hγ)) w hw
     obtain ⟨t, hsub, _, hψ⟩ :=
       ih₂ s (fun γ hγ => hΓ γ (Set.mem_union_right _ hγ)) w hw
-    exact ⟨M.access w, t, Finset.union_eq_left.mpr hsub, hφ, hψ⟩
+    exact ⟨M.access w, hφ, t, hψ, Finset.union_eq_left.mpr hsub⟩
 
 /-- Syntactic narrow-scope free choice: pragmatic enrichment puts `∧ NE` on
     the disjuncts, and one `◇Sep` extracts each conjunct-possibility — the

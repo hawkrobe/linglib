@@ -140,14 +140,14 @@ theorem expressiveCompleteness_converse [Fintype W] [Fintype Atom] [Inhabited At
       obtain ⟨T, hT, rfl⟩ := List.mem_map.mp hψ
       have hTtrans := (Finset.mem_filter.mp (Finset.mem_toList.mp hT)).2
       obtain ⟨v, hvt, w, hwT, hb⟩ := hTtrans t (Set.mem_toFinset.mpr htP)
-      refine ⟨{v}, t, ?_, ⟨?_, Finset.singleton_nonempty v⟩, ?_⟩
-      · show {v} ∪ t = t
-        exact Finset.union_eq_right.mpr (Finset.singleton_subset_iff.mpr hvt)
+      refine ⟨{v}, ⟨?_, Finset.singleton_nonempty v⟩, t, ?_, ?_⟩
       · refine (support_charDisj_iff M k T {v}).mpr (fun x hx => ?_)
         obtain rfl := Finset.mem_singleton.mp hx
         exact ⟨w, hwT, hb⟩
       · exact (support_charDisj_iff M k U t).mpr
           (fun x hx => ⟨x, hsubU t htP hx, WorldBisim.refl k M x⟩)
+      · show {v} ∪ t = t
+        exact Finset.union_eq_right.mpr (Finset.singleton_subset_iff.mpr hvt)
     · rintro ⟨hupper, hhits⟩
       have hcov : ∀ v ∈ t, ∃ w ∈ U, WorldBisim k M w M v :=
         (support_charDisj_iff M k U t).mp hupper
@@ -157,11 +157,11 @@ theorem expressiveCompleteness_converse [Fintype W] [Fintype Atom] [Inhabited At
         intro hmem
         have hhit := (support_bigConj_iff M _ t).mp hhits _
           (List.mem_map.mpr ⟨T₀, Finset.mem_toList.mpr hmem, rfl⟩)
-        obtain ⟨t₁, t₂, hsplit, ⟨hδ₁, hne₁⟩, -⟩ := hhit
+        obtain ⟨t₁, ⟨hδ₁, hne₁⟩, t₂, -, hsplit⟩ := hhit
         obtain ⟨x, hx⟩ := hne₁
         obtain ⟨w, hwT₀, hb⟩ := (support_charDisj_iff M k T₀ t₁).mp hδ₁ x hx
         exact (Finset.mem_filter.mp hwT₀).2
-          ⟨x, Team.splitsAs_left_subset hsplit hx, hb⟩
+          ⟨x, le_sup_left.trans_eq hsplit hx, hb⟩
       have hs₀ : ∃ s₀ ∈ PF, ∀ w ∈ s₀, ∃ v ∈ t, WorldBisim k M w M v := by
         by_contra hno
         refine hT₀notin (Finset.mem_filter.mpr ⟨Finset.mem_univ _, fun s hs => ?_⟩)

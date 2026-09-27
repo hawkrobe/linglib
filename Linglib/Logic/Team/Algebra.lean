@@ -31,8 +31,9 @@ a set of (world, assignment) pairs (QBSML), a set of assignments
 
 ## Two layers in this file
 
-1. **Team partition** (`splitsAs`, `splitsAsNE`): the structural condition
-   underlying team-semantic split disjunction.
+1. **Non-empty team splits** (`splitsAsNE`): the structural condition
+   underlying BSML*'s split disjunction; the plain split is the pointwise
+   sup `⊻` behind `Team.tensor` in `Team/Operations.lean`.
 
 2. **Frame conditions on accessibility** (`IsStateBased`, `IsIndisputable`):
    Anttila Definition 2.2.10-equivalent properties of a relation
@@ -64,84 +65,24 @@ target tree, and dependency-ordered build phases:
 
 namespace Team
 
-variable {α : Type*} [DecidableEq α]
+variable {α : Type*}
 
-/-! ### Team partition (split disjunction primitive) -/
+/-! ### Non-empty team splits -/
 
-/-- Binary cover: team `s` is the union of teams `t₁` and `t₂`. The two
-    sub-teams may overlap; only their union must equal `s`. This is the
-    structural condition under team-semantic split disjunction (also called
-    *tensor disjunction* in dependence logic; cf. Anttila 2021 Definition
-    2.1.5, Yang & Väänänen 2017).
-
-    Argument order `s t₁ t₂` reads as "splits team s into t₁ and t₂".
-
-    Defined as `abbrev` so that `t₁ ∪ t₂ = s` reduces transparently in proofs
-    — consumers don't need `unfold splitsAs` and can pattern-match on the
-    underlying union equation directly. -/
-abbrev splitsAs (s t₁ t₂ : Finset α) : Prop :=
-  t₁ ∪ t₂ = s
-
-/-- Binary cover with both parts non-empty. Used by pragmatically-enriched
-    split disjunction in BSML+ / QBSML+ (Aloni 2022 §3.3): `[φ ∨ ψ]⁺` requires
-    both sub-teams to be non-empty (forced by the NE conjunct propagating
-    through enrichment). -/
-abbrev splitsAsNE (s t₁ t₂ : Finset α) : Prop :=
+/-- Binary cover with both parts non-empty, `t₁ ∪ t₂ = s` with `t₁` and `t₂` non-empty. Used
+    by pragmatically-enriched split disjunction in BSML* ([aloni-2022] §6.3.1). The plain
+    split, `t₁ ∪ t₂ = s`, needs no name: the split clauses are `Team.tensor`, the pointwise
+    sup `⊻` of team properties. -/
+abbrev splitsAsNE [DecidableEq α] (s t₁ t₂ : Finset α) : Prop :=
   t₁ ∪ t₂ = s ∧ t₁.Nonempty ∧ t₂.Nonempty
 
-theorem splitsAsNE_imp_splitsAs (s t₁ t₂ : Finset α)
-    (h : splitsAsNE s t₁ t₂) : splitsAs s t₁ t₂ := h.1
+theorem splitsAsNE_symm [DecidableEq α] {s t₁ t₂ : Finset α}
+    (h : splitsAsNE s t₁ t₂) : splitsAsNE s t₂ t₁ :=
+  ⟨(Finset.union_comm t₂ t₁).trans h.1, h.2.2, h.2.1⟩
 
-/-- The trivial split: `s = s ∪ ∅`. Used by classical formulas, which are
-    supported on the empty team vacuously. -/
-theorem splitsAs_self_empty (s : Finset α) : splitsAs s s ∅ :=
-  Finset.union_empty s
-
-theorem splitsAs_empty_self (s : Finset α) : splitsAs s ∅ s :=
-  Finset.empty_union s
-
-/-- The reflexive split: `s = s ∪ s` (parts may overlap). -/
-theorem splitsAs_self_self (s : Finset α) : splitsAs s s s :=
-  Finset.union_idempotent s
-
-theorem splitsAs_symm {s t₁ t₂ : Finset α}
-    (h : splitsAs s t₁ t₂) : splitsAs s t₂ t₁ :=
-  (Finset.union_comm t₂ t₁).trans h
-
-theorem splitsAsNE_symm {s t₁ t₂ : Finset α}
-    (h : splitsAsNE s t₁ t₂) : splitsAs s t₂ t₁ ∧ t₂.Nonempty ∧ t₁.Nonempty :=
-  ⟨splitsAs_symm h.1, h.2.2, h.2.1⟩
-
-/-- Substate property: if `splitsAs s t₁ t₂`, then `t₁ ⊆ s`. -/
-theorem splitsAs_left_subset {s t₁ t₂ : Finset α}
-    (h : splitsAs s t₁ t₂) : t₁ ⊆ s :=
-  h ▸ Finset.subset_union_left
-
-theorem splitsAs_right_subset {s t₁ t₂ : Finset α}
-    (h : splitsAs s t₁ t₂) : t₂ ⊆ s :=
-  h ▸ Finset.subset_union_right
-
-instance (s t₁ t₂ : Finset α) : Decidable (splitsAs s t₁ t₂) :=
-  decEq _ _
-
-instance (s t₁ t₂ : Finset α) : Decidable (splitsAsNE s t₁ t₂) :=
+instance [DecidableEq α] (s t₁ t₂ : Finset α) : Decidable (splitsAsNE s t₁ t₂) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- A split of `s` into a part where `P` holds pointwise and a part where `Q` does exists
-    exactly when `P ∨ Q` holds pointwise on `s`: a split disjunction of flat disjuncts is
-    flat. The parts are `s.filter P` and `s.filter (¬ P ·)`. -/
-theorem exists_splitsAs_forall_iff (s : Finset α) (P Q : α → Prop) :
-    (∃ t₁ t₂, splitsAs s t₁ t₂ ∧ (∀ x ∈ t₁, P x) ∧ ∀ x ∈ t₂, Q x) ↔ ∀ x ∈ s, P x ∨ Q x where
-  mp := fun ⟨_, _, hs, h₁, h₂⟩ x hx ↦ by
-    subst hs
-    exact (Finset.mem_union.mp hx).imp (h₁ x) (h₂ x)
-  mpr h := by
-    classical
-    exact ⟨s.filter P, s.filter (¬ P ·), Finset.filter_union_filter_not_eq _ _,
-      fun x hx ↦ (Finset.mem_filter.mp hx).2,
-      fun x hx ↦ (h x (Finset.mem_filter.mp hx).1).resolve_left (Finset.mem_filter.mp hx).2⟩
-
-omit [DecidableEq α] in
 /-- A non-empty subteam of `u` on which `P` holds pointwise exists exactly when `P` holds
     somewhere in `u`: the witness may be taken to be a singleton. -/
 theorem exists_nonempty_subset_forall_iff (u : Finset α) (P : α → Prop) :

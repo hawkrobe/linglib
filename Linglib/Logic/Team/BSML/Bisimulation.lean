@@ -105,23 +105,14 @@ theorem bisim_invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
     have hd₁ : ψ₁.modalDepth ≤ k := (le_max_left _ _).trans hd
     have hd₂ : ψ₂.modalDepth ≤ k := (le_max_right _ _).trans hd
     cases b
-    · -- antiSupport (conj ψ₁ ψ₂): ∃ t u, splitsAs ∧ antiSupport ψ₁ t ∧ antiSupport ψ₂ u
+    · -- antiSupport (conj ψ₁ ψ₂): a split into antiSupport ψ₁ and antiSupport ψ₂ parts
       constructor
-      · rintro ⟨t, u, hsplit, h₁, h₂⟩
-        obtain ⟨t', u', hsplit', hbt, hbu⟩ :=
-          hbisim.splitPreserve hsplit
-            (Team.splitsAs_left_subset hsplit)
-            (Team.splitsAs_right_subset hsplit)
-        exact ⟨t', u', hsplit', (ih₁ hd₁ hbt false).mp h₁,
-               (ih₂ hd₂ hbu false).mp h₂⟩
-      · rintro ⟨t', u', hsplit', h₁, h₂⟩
-        obtain ⟨t, u, hsplit, hbt, hbu⟩ :=
-          StateBisim.splitPreserve hbisim.symm hsplit'
-            (Team.splitsAs_left_subset hsplit')
-            (Team.splitsAs_right_subset hsplit')
-        refine ⟨t, u, hsplit, ?_, ?_⟩
-        · exact (ih₁ hd₁ hbt.symm false).mpr h₁
-        · exact (ih₂ hd₂ hbu.symm false).mpr h₂
+      · rintro ⟨t, h₁, u, h₂, hsplit⟩
+        obtain ⟨t', u', hsplit', hbt, hbu⟩ := hbisim.splitPreserve hsplit
+        exact ⟨t', (ih₁ hd₁ hbt false).mp h₁, u', (ih₂ hd₂ hbu false).mp h₂, hsplit'⟩
+      · rintro ⟨t', h₁, u', h₂, hsplit'⟩
+        obtain ⟨t, u, hsplit, hbt, hbu⟩ := StateBisim.splitPreserve hbisim.symm hsplit'
+        exact ⟨t, (ih₁ hd₁ hbt.symm false).mpr h₁, u, (ih₂ hd₂ hbu.symm false).mpr h₂, hsplit⟩
     · -- support (conj ψ₁ ψ₂) = support ψ₁ ∧ support ψ₂
       constructor
       · rintro ⟨h₁, h₂⟩
@@ -138,23 +129,14 @@ theorem bisim_invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
         exact ⟨(ih₁ hd₁ hbisim false).mp h₁, (ih₂ hd₂ hbisim false).mp h₂⟩
       · rintro ⟨h₁, h₂⟩
         exact ⟨(ih₁ hd₁ hbisim false).mpr h₁, (ih₂ hd₂ hbisim false).mpr h₂⟩
-    · -- support (disj ψ₁ ψ₂): ∃ t u, splitsAs ∧ support ψ₁ t ∧ support ψ₂ u
+    · -- support (disj ψ₁ ψ₂): a split into support ψ₁ and support ψ₂ parts
       constructor
-      · rintro ⟨t, u, hsplit, h₁, h₂⟩
-        obtain ⟨t', u', hsplit', hbt, hbu⟩ :=
-          hbisim.splitPreserve hsplit
-            (Team.splitsAs_left_subset hsplit)
-            (Team.splitsAs_right_subset hsplit)
-        exact ⟨t', u', hsplit', (ih₁ hd₁ hbt true).mp h₁,
-               (ih₂ hd₂ hbu true).mp h₂⟩
-      · rintro ⟨t', u', hsplit', h₁, h₂⟩
-        obtain ⟨t, u, hsplit, hbt, hbu⟩ :=
-          StateBisim.splitPreserve hbisim.symm hsplit'
-            (Team.splitsAs_left_subset hsplit')
-            (Team.splitsAs_right_subset hsplit')
-        refine ⟨t, u, hsplit, ?_, ?_⟩
-        · exact (ih₁ hd₁ hbt.symm true).mpr h₁
-        · exact (ih₂ hd₂ hbu.symm true).mpr h₂
+      · rintro ⟨t, h₁, u, h₂, hsplit⟩
+        obtain ⟨t', u', hsplit', hbt, hbu⟩ := hbisim.splitPreserve hsplit
+        exact ⟨t', (ih₁ hd₁ hbt true).mp h₁, u', (ih₂ hd₂ hbu true).mp h₂, hsplit'⟩
+      · rintro ⟨t', h₁, u', h₂, hsplit'⟩
+        obtain ⟨t, u, hsplit, hbt, hbu⟩ := StateBisim.splitPreserve hbisim.symm hsplit'
+        exact ⟨t, (ih₁ hd₁ hbt.symm true).mpr h₁, u, (ih₂ hd₂ hbu.symm true).mpr h₂, hsplit⟩
   | poss ψ ih =>
     -- modalDepth (poss ψ) = ψ.modalDepth + 1, so `k` is a successor and the
     -- recursion through `accessStateBisim` happens one depth down.
