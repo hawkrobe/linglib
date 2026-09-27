@@ -10,7 +10,7 @@ public import Linglib.Fragments.Romance.Spanish.Verbs
 
 This file formalizes the reflexivization analysis of anticausativization, the derivation of an
 inchoative verb from its causative counterpart as in Spanish *romper* 'break (tr.)' ~ *romperse*
-'break (intr.)'. The reflexive clitic denotes the operator `λℜλx[ℜ(x,x)]` ([chierchia-2004]), so a
+'break (intr.)'. The reflexive clitic denotes the operator `λℜλx[ℜ(x,x)]` ([chierchia-2004b]), so a
 derived inchoative is its causative restricted to the diagonal and keeps the CAUSE operator. Stated
 on the library's interpretations of the event-structure primitives
 (`EventStructure.Interpretation`), the analysis yields the paper's predictions as theorems. The
@@ -45,7 +45,7 @@ tabulates is a typological argument left in prose.
 ## References
 
 * [koontz-garboden-2009]
-* [chierchia-2004] — the reflexivization operator and *da sé* 'by itself'
+* [chierchia-2004b] — the reflexivization operator and *da sé* 'by itself'
 * [van-valin-wilkins-1996] — the EFFECTOR role
 * [grimshaw-1982], [reinhart-siloni-2005] — deletion analyses
 * [levin-hovav-1995], [rappaport-hovav-levin-1998] — internally and externally caused
@@ -138,7 +138,7 @@ end Model
 
 /-! ### Juan and the glass
 
-The model of (56)–(57) and (60): Juan breaks the glass. Whether the glass counts as an
+The model of (56)–(57) and (60) has Juan break the glass. Whether the glass counts as an
 effector of the causing event is a parameter; the denial in (56) has it that it does not,
 the discourse in (60) that both the glass and Juan do. -/
 
@@ -235,14 +235,14 @@ inductive Causer
   | agent
   deriving DecidableEq, Repr
 
-/-- The causer specification, derived from the verb's stated proto-role subject profile: a
+/-- A verb's causer specification is derived from its stated proto-role subject profile. A
 causer that must be an agent entails volition, one that need only cause the change is an
 EFFECTOR, and a subject that causes nothing is no causer. -/
 def causer (v : Verb) : Option Causer :=
   v.subjectEntailments.bind fun p ↦
     if p.volition then some .agent else if p.causation then some .effector else none
 
-/-- Only causative verbs with underspecified causers have derived inchoatives (§3.1–§3.2):
+/-- Only causative verbs with underspecified causers have derived inchoatives (§3.1–§3.2), so
 among the fragment's verbs that have a causer, the alternating ones are the EFFECTOR verbs. -/
 theorem alternates_iff_effector :
     ∀ v ∈ allVerbs, ∀ c ∈ causer v.toVerb, (v.Alternates ↔ c = .effector) := by
