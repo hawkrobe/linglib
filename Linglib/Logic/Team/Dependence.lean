@@ -214,13 +214,11 @@ abbrev antiSupport (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
 
 @[simp] lemma antiSupport_conj (M : KripkeModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     antiSupport M (.conj φ ψ) t ↔
-      ∃ t₁ t₂ : Finset W, Team.splitsAs t t₁ t₂ ∧
-        antiSupport M φ t₁ ∧ antiSupport M ψ t₂ := Iff.rfl
+      ∃ t₁, antiSupport M φ t₁ ∧ ∃ t₂, antiSupport M ψ t₂ ∧ t₁ ∪ t₂ = t := Iff.rfl
 
 @[simp] lemma support_disj (M : KripkeModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     support M (.disj φ ψ) t ↔
-      ∃ t₁ t₂ : Finset W, Team.splitsAs t t₁ t₂ ∧
-        support M φ t₁ ∧ support M ψ t₂ := Iff.rfl
+      ∃ t₁, support M φ t₁ ∧ ∃ t₂, support M ψ t₂ ∧ t₁ ∪ t₂ = t := Iff.rfl
 
 @[simp] lemma antiSupport_disj (M : KripkeModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     antiSupport M (.disj φ ψ) t ↔ antiSupport M φ t ∧ antiSupport M ψ t := Iff.rfl
@@ -419,20 +417,12 @@ theorem bisim_invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
     cases b
     · -- antiSupport (conj): split into (t, u)
       constructor
-      · rintro ⟨t, u, hsplit, h₁, h₂⟩
-        obtain ⟨t', u', hsplit', hbt, hbu⟩ :=
-          hbisim.splitPreserve hsplit
-            (Team.splitsAs_left_subset hsplit)
-            (Team.splitsAs_right_subset hsplit)
-        exact ⟨t', u', hsplit', (ih₁ hd₁ hbt false).mp h₁,
-               (ih₂ hd₂ hbu false).mp h₂⟩
-      · rintro ⟨t', u', hsplit', h₁, h₂⟩
-        obtain ⟨t, u, hsplit, hbt, hbu⟩ :=
-          StateBisim.splitPreserve hbisim.symm hsplit'
-            (Team.splitsAs_left_subset hsplit')
-            (Team.splitsAs_right_subset hsplit')
-        exact ⟨t, u, hsplit, (ih₁ hd₁ hbt.symm false).mpr h₁,
-               (ih₂ hd₂ hbu.symm false).mpr h₂⟩
+      · rintro ⟨t, h₁, u, h₂, hsplit⟩
+        obtain ⟨t', u', hsplit', hbt, hbu⟩ := hbisim.splitPreserve hsplit
+        exact ⟨t', (ih₁ hd₁ hbt false).mp h₁, u', (ih₂ hd₂ hbu false).mp h₂, hsplit'⟩
+      · rintro ⟨t', h₁, u', h₂, hsplit'⟩
+        obtain ⟨t, u, hsplit, hbt, hbu⟩ := StateBisim.splitPreserve hbisim.symm hsplit'
+        exact ⟨t, (ih₁ hd₁ hbt.symm false).mpr h₁, u, (ih₂ hd₂ hbu.symm false).mpr h₂, hsplit⟩
     · -- support (conj) = support ψ₁ ∧ support ψ₂
       constructor
       · rintro ⟨h₁, h₂⟩
@@ -451,20 +441,12 @@ theorem bisim_invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
         exact ⟨(ih₁ hd₁ hbisim false).mpr h₁, (ih₂ hd₂ hbisim false).mpr h₂⟩
     · -- support (disj): split into (t, u)
       constructor
-      · rintro ⟨t, u, hsplit, h₁, h₂⟩
-        obtain ⟨t', u', hsplit', hbt, hbu⟩ :=
-          hbisim.splitPreserve hsplit
-            (Team.splitsAs_left_subset hsplit)
-            (Team.splitsAs_right_subset hsplit)
-        exact ⟨t', u', hsplit', (ih₁ hd₁ hbt true).mp h₁,
-               (ih₂ hd₂ hbu true).mp h₂⟩
-      · rintro ⟨t', u', hsplit', h₁, h₂⟩
-        obtain ⟨t, u, hsplit, hbt, hbu⟩ :=
-          StateBisim.splitPreserve hbisim.symm hsplit'
-            (Team.splitsAs_left_subset hsplit')
-            (Team.splitsAs_right_subset hsplit')
-        exact ⟨t, u, hsplit, (ih₁ hd₁ hbt.symm true).mpr h₁,
-               (ih₂ hd₂ hbu.symm true).mpr h₂⟩
+      · rintro ⟨t, h₁, u, h₂, hsplit⟩
+        obtain ⟨t', u', hsplit', hbt, hbu⟩ := hbisim.splitPreserve hsplit
+        exact ⟨t', (ih₁ hd₁ hbt true).mp h₁, u', (ih₂ hd₂ hbu true).mp h₂, hsplit'⟩
+      · rintro ⟨t', h₁, u', h₂, hsplit'⟩
+        obtain ⟨t, u, hsplit, hbt, hbu⟩ := StateBisim.splitPreserve hbisim.symm hsplit'
+        exact ⟨t, (ih₁ hd₁ hbt.symm true).mpr h₁, u, (ih₂ hd₂ hbu.symm true).mpr h₂, hsplit⟩
   | poss ψ ih =>
     cases k with
     | zero => exact absurd hd (Nat.not_succ_le_zero _)

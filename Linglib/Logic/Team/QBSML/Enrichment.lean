@@ -75,8 +75,10 @@ anti-support of `φ`. -/
 theorem antiSupport_conj_ne (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
     (s : Finset (Index W Var Domain)) :
     antiSupport M (.conj φ .ne) s ↔ antiSupport M φ s where
-  mp := fun ⟨_, _, hu, h, h₂⟩ ↦ by subst h₂; simpa [← hu] using h
-  mpr h := ⟨s, ∅, Team.splitsAs_self_empty s, h, rfl⟩
+  mp := fun ⟨_, h, _, h₂, hu⟩ ↦ by
+    obtain rfl : _ = (∅ : Finset (Index W Var Domain)) := h₂
+    simpa [← hu] using h
+  mpr h := ⟨s, h, ∅, rfl, sup_bot_eq s⟩
 
 /-! ### Enrichment strengthens -/
 
@@ -98,15 +100,15 @@ theorem eval_of_eval_enrich (hNE : φ.NEFree) (h : eval M pol φ.enrich s) : eva
     · exact ih (pol := false) h.1
   | conj _ _ ih₁ ih₂ =>
     cases pol
-    · obtain ⟨t₁, t₂, ht, h₁, h₂⟩ := (antiSupport_conj_ne M _ s).mp h
-      exact ⟨t₁, t₂, ht, ih₁ h₁, ih₂ h₂⟩
+    · obtain ⟨t₁, h₁, t₂, h₂, ht⟩ := (antiSupport_conj_ne M _ s).mp h
+      exact ⟨t₁, ih₁ h₁, t₂, ih₂ h₂, ht⟩
     · exact ⟨ih₁ h.1.1, ih₂ h.1.2⟩
   | disj _ _ ih₁ ih₂ =>
     cases pol
     · obtain ⟨h₁, h₂⟩ := (antiSupport_conj_ne M _ s).mp h
       exact ⟨ih₁ h₁, ih₂ h₂⟩
-    · obtain ⟨t₁, t₂, ht, h₁, h₂⟩ := h.1
-      exact ⟨t₁, t₂, ht, ih₁ h₁, ih₂ h₂⟩
+    · obtain ⟨t₁, h₁, t₂, h₂, ht⟩ := h.1
+      exact ⟨t₁, ih₁ h₁, t₂, ih₂ h₂, ht⟩
   | poss _ ih =>
     cases pol
     · exact fun i hi ↦ ih ((antiSupport_conj_ne M _ s).mp h i hi)

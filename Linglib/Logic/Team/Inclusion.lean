@@ -171,8 +171,7 @@ abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Pro
 
 @[simp] lemma support_disj (M : KripkeModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     support M (.disj φ ψ) t ↔
-      ∃ t₁ t₂ : Finset W, Team.splitsAs t t₁ t₂ ∧
-        support M φ t₁ ∧ support M ψ t₂ := Iff.rfl
+      ∃ t₁, support M φ t₁ ∧ ∃ t₂, support M ψ t₂ ∧ t₁ ∪ t₂ = t := Iff.rfl
 
 @[simp] lemma support_poss (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     support M (.poss φ) t ↔

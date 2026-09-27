@@ -139,8 +139,8 @@ variable {W : Type*} [DecidableEq W]
 /-- Bilateral evaluation with polarity parameter: `eval M true φ t` is
     support (`⊨⁺`), `eval M false φ t` is anti-support (`⊨⁻`), and negation
     flips the polarity. The split clauses (disjunction-support,
-    conjunction-anti-support) quantify over `Team.splitsAs` decompositions
-    `t₁ ∪ t₂ = t`. -/
+    conjunction-anti-support) are `Team.tensor`, the pointwise sup of the
+    parts' support sets. -/
 def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .atom p,       t => t ∈ Team.flat fun w ↦ M.val p w = true
   | false, .atom p,       t => t ∈ Team.flat fun w ↦ M.val p w = false

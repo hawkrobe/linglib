@@ -223,12 +223,11 @@ theorem StateBisim.biUnionAccess {k : ℕ} {M : KripkeModel W Atom} {s : Finset 
     `t ⇌_k t'`, and `u ⇌_k u'`. -/
 theorem StateBisim.splitPreserve {k : ℕ} {M : KripkeModel W Atom}
     {s t u : Finset W} {M' : KripkeModel W' Atom} {s' : Finset W'}
-    (h : StateBisim k M s M' s') (hsplit : Team.splitsAs s t u)
-    (htsub : t ⊆ s) (husub : u ⊆ s) :
-    ∃ t' u' : Finset W',
-      Team.splitsAs s' t' u' ∧
-      StateBisim k M t M' t' ∧ StateBisim k M u M' u' := by
+    (h : StateBisim k M s M' s') (hsplit : t ∪ u = s) :
+    ∃ t' u' : Finset W', t' ∪ u' = s' ∧ StateBisim k M t M' t' ∧ StateBisim k M u M' u' := by
   classical
+  have htsub : t ⊆ s := hsplit ▸ Finset.subset_union_left
+  have husub : u ⊆ s := hsplit ▸ Finset.subset_union_right
   let t' : Finset W' := s'.filter (fun w' => ∃ w ∈ t, WorldBisim k M w M' w')
   let u' : Finset W' := s'.filter (fun w' => ∃ w ∈ u, WorldBisim k M w M' w')
   refine ⟨t', u', ?_, ?_, ?_⟩

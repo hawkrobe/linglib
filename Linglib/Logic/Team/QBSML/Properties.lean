@@ -275,19 +275,19 @@ theorem eval_mapAtoms_iff (M : Model W Domain Const Pred)
     | true => exact and_congr (ih₁ true s) (ih₂ true s)
     | false =>
       constructor
-      · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
-        exact ⟨t₁, t₂, hsplit, (ih₁ false t₁).mp h₁, (ih₂ false t₂).mp h₂⟩
-      · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
-        exact ⟨t₁, t₂, hsplit, (ih₁ false t₁).mpr h₁, (ih₂ false t₂).mpr h₂⟩
+      · rintro ⟨t₁, h₁, t₂, h₂, hsplit⟩
+        exact ⟨t₁, (ih₁ false t₁).mp h₁, t₂, (ih₂ false t₂).mp h₂, hsplit⟩
+      · rintro ⟨t₁, h₁, t₂, h₂, hsplit⟩
+        exact ⟨t₁, (ih₁ false t₁).mpr h₁, t₂, (ih₂ false t₂).mpr h₂, hsplit⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     intro b s
     cases b with
     | true =>
       constructor
-      · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
-        exact ⟨t₁, t₂, hsplit, (ih₁ true t₁).mp h₁, (ih₂ true t₂).mp h₂⟩
-      · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
-        exact ⟨t₁, t₂, hsplit, (ih₁ true t₁).mpr h₁, (ih₂ true t₂).mpr h₂⟩
+      · rintro ⟨t₁, h₁, t₂, h₂, hsplit⟩
+        exact ⟨t₁, (ih₁ true t₁).mp h₁, t₂, (ih₂ true t₂).mp h₂, hsplit⟩
+      · rintro ⟨t₁, h₁, t₂, h₂, hsplit⟩
+        exact ⟨t₁, (ih₁ true t₁).mpr h₁, t₂, (ih₂ true t₂).mpr h₂, hsplit⟩
     | false => exact and_congr (ih₁ false s) (ih₂ false s)
   | poss ψ ih =>
     intro b s
@@ -339,7 +339,7 @@ theorem support_disj_inl (M : Model W Domain Const Pred)
     {α β : Formula Var Const Pred} (hβ : β.NEFree)
     {s : Finset (Index W Var Domain)} (h : support M α s) :
     support M (.disj α β) s :=
-  ⟨s, ∅, splitsAs_self_empty s, h, support_empty_of_neFree hβ M⟩
+  ⟨s, h, ∅, support_empty_of_neFree hβ M, sup_bot_eq s⟩
 
 /-- Support of the derived `□` is pointwise support at the full accessible
     lift — definitional, by the `neg`/`poss` clauses of `eval`. -/
@@ -591,9 +591,9 @@ private theorem support_and_antiSupport_singleton_realizeAt
           exact and_congr ih₁s ih₂s
         · rw [Formula.realizeAt_inf, not_and_or]
           constructor
-          · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
+          · rintro ⟨t₁, h₁, t₂, h₂, hsplit⟩
             have hsub₁ : t₁ ⊆ ({i} : Finset (Index W Var Domain)) :=
-              hsplit ▸ Finset.subset_union_left
+              le_sup_left.trans_eq hsplit
             rcases Finset.subset_singleton_iff.mp hsub₁ with ht₁ | ht₁
             · have ht₂ : t₂ = {i} := by
                 subst ht₁
@@ -602,14 +602,10 @@ private theorem support_and_antiSupport_singleton_realizeAt
               exact Or.inr (ih₂a.mp (ht₂ ▸ h₂))
             · exact Or.inl (ih₁a.mp (ht₁ ▸ h₁))
           · rintro (h | h)
-            · exact ⟨{i}, ∅, Team.splitsAs_self_empty _,
-                ih₁a.mpr h,
-                (support_and_antiSupport_empty_of_neFree
-                  (neFree_of_toFormula? hφ₂) M).2⟩
-            · exact ⟨∅, {i}, Team.splitsAs_empty_self _,
-                (support_and_antiSupport_empty_of_neFree
-                  (neFree_of_toFormula? hφ₁) M).2,
-                ih₂a.mpr h⟩
+            · exact ⟨{i}, ih₁a.mpr h, ∅, (support_and_antiSupport_empty_of_neFree
+                  (neFree_of_toFormula? hφ₂) M).2, sup_bot_eq _⟩
+            · exact ⟨∅, (support_and_antiSupport_empty_of_neFree
+                  (neFree_of_toFormula? hφ₁) M).2, {i}, ih₂a.mpr h, bot_sup_eq _⟩
   | disj φ₁ φ₂ ih₁ ih₂ =>
     intro ψ hψ i v hv
     cases hφ₁ : φ₁.toFormula? with
@@ -626,9 +622,9 @@ private theorem support_and_antiSupport_singleton_realizeAt
         constructor
         · rw [Formula.realizeAt_sup]
           constructor
-          · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
+          · rintro ⟨t₁, h₁, t₂, h₂, hsplit⟩
             have hsub₁ : t₁ ⊆ ({i} : Finset (Index W Var Domain)) :=
-              hsplit ▸ Finset.subset_union_left
+              le_sup_left.trans_eq hsplit
             rcases Finset.subset_singleton_iff.mp hsub₁ with ht₁ | ht₁
             · have ht₂ : t₂ = {i} := by
                 subst ht₁
@@ -637,14 +633,10 @@ private theorem support_and_antiSupport_singleton_realizeAt
               exact Or.inr (ih₂s.mp (ht₂ ▸ h₂))
             · exact Or.inl (ih₁s.mp (ht₁ ▸ h₁))
           · rintro (h | h)
-            · exact ⟨{i}, ∅, Team.splitsAs_self_empty _,
-                ih₁s.mpr h,
-                (support_and_antiSupport_empty_of_neFree
-                  (neFree_of_toFormula? hφ₂) M).1⟩
-            · exact ⟨∅, {i}, Team.splitsAs_empty_self _,
-                (support_and_antiSupport_empty_of_neFree
-                  (neFree_of_toFormula? hφ₁) M).1,
-                ih₂s.mpr h⟩
+            · exact ⟨{i}, ih₁s.mpr h, ∅, (support_and_antiSupport_empty_of_neFree
+                  (neFree_of_toFormula? hφ₂) M).1, sup_bot_eq _⟩
+            · exact ⟨∅, (support_and_antiSupport_empty_of_neFree
+                  (neFree_of_toFormula? hφ₁) M).1, {i}, ih₂s.mpr h, bot_sup_eq _⟩
         · rw [Formula.realizeAt_sup, not_or]
           exact and_congr ih₁a ih₂a
   | exi x φ ih =>
@@ -974,9 +966,9 @@ private theorem support_and_antiSupport_singleton_realize
           exact and_congr ih₁s ih₂s
         · rw [ModalFormula.realize_inf, not_and_or]
           constructor
-          · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
+          · rintro ⟨t₁, h₁, t₂, h₂, hsplit⟩
             have hsub₁ : t₁ ⊆ ({i} : Finset (Index W Var Domain)) :=
-              hsplit ▸ Finset.subset_union_left
+              le_sup_left.trans_eq hsplit
             rcases Finset.subset_singleton_iff.mp hsub₁ with ht₁ | ht₁
             · have ht₂ : t₂ = {i} := by
                 subst ht₁
@@ -986,14 +978,10 @@ private theorem support_and_antiSupport_singleton_realize
               exact Or.inr (ih₂a.mp (ht₂ ▸ h₂))
             · exact Or.inl (ih₁a.mp (ht₁ ▸ h₁))
           · rintro (h | h)
-            · exact ⟨{i}, ∅, Team.splitsAs_self_empty _,
-                ih₁a.mpr h,
-                (support_and_antiSupport_empty_of_neFree
-                  (neFree_of_toModal? hφ₂) M).2⟩
-            · exact ⟨∅, {i}, Team.splitsAs_empty_self _,
-                (support_and_antiSupport_empty_of_neFree
-                  (neFree_of_toModal? hφ₁) M).2,
-                ih₂a.mpr h⟩
+            · exact ⟨{i}, ih₁a.mpr h, ∅, (support_and_antiSupport_empty_of_neFree
+                  (neFree_of_toModal? hφ₂) M).2, sup_bot_eq _⟩
+            · exact ⟨∅, (support_and_antiSupport_empty_of_neFree
+                  (neFree_of_toModal? hφ₁) M).2, {i}, ih₂a.mpr h, bot_sup_eq _⟩
   | disj φ₁ φ₂ ih₁ ih₂ =>
     intro τ hτ i v hv
     cases hφ₁ : φ₁.toModal? with
@@ -1010,9 +998,9 @@ private theorem support_and_antiSupport_singleton_realize
         constructor
         · rw [ModalFormula.realize_sup]
           constructor
-          · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
+          · rintro ⟨t₁, h₁, t₂, h₂, hsplit⟩
             have hsub₁ : t₁ ⊆ ({i} : Finset (Index W Var Domain)) :=
-              hsplit ▸ Finset.subset_union_left
+              le_sup_left.trans_eq hsplit
             rcases Finset.subset_singleton_iff.mp hsub₁ with ht₁ | ht₁
             · have ht₂ : t₂ = {i} := by
                 subst ht₁
@@ -1022,14 +1010,10 @@ private theorem support_and_antiSupport_singleton_realize
               exact Or.inr (ih₂s.mp (ht₂ ▸ h₂))
             · exact Or.inl (ih₁s.mp (ht₁ ▸ h₁))
           · rintro (h | h)
-            · exact ⟨{i}, ∅, Team.splitsAs_self_empty _,
-                ih₁s.mpr h,
-                (support_and_antiSupport_empty_of_neFree
-                  (neFree_of_toModal? hφ₂) M).1⟩
-            · exact ⟨∅, {i}, Team.splitsAs_empty_self _,
-                (support_and_antiSupport_empty_of_neFree
-                  (neFree_of_toModal? hφ₁) M).1,
-                ih₂s.mpr h⟩
+            · exact ⟨{i}, ih₁s.mpr h, ∅, (support_and_antiSupport_empty_of_neFree
+                  (neFree_of_toModal? hφ₂) M).1, sup_bot_eq _⟩
+            · exact ⟨∅, (support_and_antiSupport_empty_of_neFree
+                  (neFree_of_toModal? hφ₁) M).1, {i}, ih₂s.mpr h, bot_sup_eq _⟩
         · rw [ModalFormula.realize_sup, not_or]
           exact and_congr ih₁a ih₂a
   | poss φ ih =>

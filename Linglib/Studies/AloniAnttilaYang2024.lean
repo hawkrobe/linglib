@@ -128,10 +128,8 @@ def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true, .neg ψ, t => eval M false ψ t
   | false, .neg ψ, t => eval M true ψ t
   | true, .conj ψ₁ ψ₂, t => eval M true ψ₁ t ∧ eval M true ψ₂ t
-  | false, .conj ψ₁ ψ₂, t =>
-    ∃ t₁ t₂ : Finset W, Team.splitsAs t t₁ t₂ ∧ eval M false ψ₁ t₁ ∧ eval M false ψ₂ t₂
-  | true, .disj ψ₁ ψ₂, t =>
-    ∃ t₁ t₂ : Finset W, Team.splitsAs t t₁ t₂ ∧ eval M true ψ₁ t₁ ∧ eval M true ψ₂ t₂
+  | false, .conj ψ₁ ψ₂, t => t ∈ Team.tensor {s | eval M false ψ₁ s} {s | eval M false ψ₂ s}
+  | true, .disj ψ₁ ψ₂, t => t ∈ Team.tensor {s | eval M true ψ₁ s} {s | eval M true ψ₂ s}
   | false, .disj ψ₁ ψ₂, t => eval M false ψ₁ t ∧ eval M false ψ₂ t
   | true, .gdisj ψ₁ ψ₂, t => eval M true ψ₁ t ∨ eval M true ψ₂ t
   | false, .gdisj ψ₁ ψ₂, t => eval M false ψ₁ t ∧ eval M false ψ₂ t
@@ -182,10 +180,10 @@ theorem support_conj_gdisj :
 theorem support_disj_gdisj :
     support M (.disj φ (.gdisj ψ χ)) t ↔ support M (.gdisj (.disj φ ψ) (.disj φ χ)) t := by
   constructor
-  · rintro ⟨t₁, t₂, h, h₁, h₂ | h₂⟩
-    exacts [Or.inl ⟨t₁, t₂, h, h₁, h₂⟩, Or.inr ⟨t₁, t₂, h, h₁, h₂⟩]
-  · rintro (⟨t₁, t₂, h, h₁, h₂⟩ | ⟨t₁, t₂, h, h₁, h₂⟩)
-    exacts [⟨t₁, t₂, h, h₁, Or.inl h₂⟩, ⟨t₁, t₂, h, h₁, Or.inr h₂⟩]
+  · rintro ⟨t₁, h₁, t₂, h₂ | h₂, h⟩
+    exacts [Or.inl ⟨t₁, h₁, t₂, h₂, h⟩, Or.inr ⟨t₁, h₁, t₂, h₂, h⟩]
+  · rintro (⟨t₁, h₁, t₂, h₂, h⟩ | ⟨t₁, h₁, t₂, h₂, h⟩)
+    exacts [⟨t₁, h₁, t₂, Or.inl h₂, h⟩, ⟨t₁, h₁, t₂, Or.inr h₂, h⟩]
 
 /-- `◇(φ ⨼ ψ) ≡ ◇φ ∨ ◇ψ`: the diamond converts the global disjunction into the
     tensor one (the soundness of Conv◇⨼∨ in Theorem 4.3). -/
@@ -194,17 +192,16 @@ theorem support_poss_gdisj :
   classical
   constructor
   · intro h
-    refine ⟨t.filter λ w ↦ ∃ s ⊆ M.access w, s.Nonempty ∧ support M φ s,
-      t.filter λ w ↦ ∃ s ⊆ M.access w, s.Nonempty ∧ support M ψ s, ?_, ?_, ?_⟩
-    · show _ ∪ _ = t
-      ext w
+    refine ⟨t.filter λ w ↦ ∃ s ⊆ M.access w, s.Nonempty ∧ support M φ s, ?_,
+      t.filter λ w ↦ ∃ s ⊆ M.access w, s.Nonempty ∧ support M ψ s, ?_, ?_⟩
+    · intro w hw; exact (Finset.mem_filter.mp hw).2
+    · intro w hw; exact (Finset.mem_filter.mp hw).2
+    · ext w
       simp only [Finset.mem_union, Finset.mem_filter]
       refine ⟨λ h' ↦ h'.elim And.left And.left, λ hw ↦ ?_⟩
       obtain ⟨s, hs, hne, hφ | hψ⟩ := h w hw
       exacts [Or.inl ⟨hw, s, hs, hne, hφ⟩, Or.inr ⟨hw, s, hs, hne, hψ⟩]
-    · intro w hw; exact (Finset.mem_filter.mp hw).2
-    · intro w hw; exact (Finset.mem_filter.mp hw).2
-  · rintro ⟨t₁, t₂, h, h₁, h₂⟩ w hw
+  · rintro ⟨t₁, h₁, t₂, h₂, h⟩ w hw
     rcases Finset.mem_union.mp (h ▸ hw) with hw | hw
     · obtain ⟨s, hs, hne, hφ⟩ := h₁ w hw; exact ⟨s, hs, hne, Or.inl hφ⟩
     · obtain ⟨s, hs, hne, hψ⟩ := h₂ w hw; exact ⟨s, hs, hne, Or.inr hψ⟩
@@ -218,11 +215,9 @@ private theorem eval_empty_of_neFree (hNE : φ.NEFree) : support M φ ∅ ∧ an
   | ne => exact hNE.elim
   | neg ψ ih => exact (ih hNE).symm
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    exact ⟨⟨(ih₁ hNE.1).1, (ih₂ hNE.2).1⟩,
-      ⟨∅, ∅, Finset.empty_union ∅, (ih₁ hNE.1).2, (ih₂ hNE.2).2⟩⟩
+    exact ⟨⟨(ih₁ hNE.1).1, (ih₂ hNE.2).1⟩, Team.empty_mem_tensor (ih₁ hNE.1).2 (ih₂ hNE.2).2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    exact ⟨⟨∅, ∅, Finset.empty_union ∅, (ih₁ hNE.1).1, (ih₂ hNE.2).1⟩,
-      ⟨(ih₁ hNE.1).2, (ih₂ hNE.2).2⟩⟩
+    exact ⟨Team.empty_mem_tensor (ih₁ hNE.1).1 (ih₂ hNE.2).1, ⟨(ih₁ hNE.1).2, (ih₂ hNE.2).2⟩⟩
   | gdisj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨Or.inl (ih₁ hNE.1).1, ⟨(ih₁ hNE.1).2, (ih₂ hNE.2).2⟩⟩
   | empt ψ ih => exact ⟨Or.inr rfl, (ih hNE).2⟩
   | poss ψ _ => exact ⟨λ w hw ↦ absurd hw (by simp), λ w hw ↦ absurd hw (by simp)⟩
@@ -231,96 +226,57 @@ private theorem eval_empty_of_neFree (hNE : φ.NEFree) : support M φ ∅ ∧ an
 theorem support_empty_of_neFree (hNE : φ.NEFree) : support M φ ∅ :=
   (eval_empty_of_neFree M φ hNE).1
 
-private theorem splitsAs_inter {s t t₁ t₂ : Finset W} (h : Team.splitsAs s t₁ t₂) (hsub : t ⊆ s) :
-    Team.splitsAs t (t₁ ∩ t) (t₂ ∩ t) := by
-  show (t₁ ∩ t) ∪ (t₂ ∩ t) = t
-  rw [← Finset.union_inter_distrib_right, show t₁ ∪ t₂ = s from h]
+private theorem union_inter_of_union_eq {s t t₁ t₂ : Finset W} (h : t₁ ∪ t₂ = s) (hsub : t ⊆ s) :
+    (t₁ ∩ t) ∪ (t₂ ∩ t) = t := by
+  rw [← Finset.union_inter_distrib_right, h]
   exact Finset.inter_eq_right.mpr hsub
 
 private theorem eval_lower_of_neFree (hNE : φ.NEFree) :
-    (∀ s t : Finset W, t ⊆ s → support M φ s → support M φ t) ∧
-    ∀ s t : Finset W, t ⊆ s → antiSupport M φ s → antiSupport M φ t := by
+    IsLowerSet {t : Finset W | support M φ t} ∧ IsLowerSet {t : Finset W | antiSupport M φ t} := by
   induction φ with
-  | atom p => exact ⟨λ _ _ h hs w hw ↦ hs w (h hw), λ _ _ h hs w hw ↦ hs w (h hw)⟩
-  | bot => exact ⟨λ _ _ h hs ↦ Finset.subset_empty.mp (hs ▸ h), λ _ _ _ _ ↦ trivial⟩
+  | atom p => exact ⟨Team.isLowerSet_flat _, Team.isLowerSet_flat _⟩
+  | bot => exact ⟨Team.isLowerSet_singleton_empty, isLowerSet_univ⟩
   | ne => exact hNE.elim
   | neg ψ ih => exact (ih hNE).symm
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    obtain ⟨ihs₁, iha₁⟩ := ih₁ hNE.1
-    obtain ⟨ihs₂, iha₂⟩ := ih₂ hNE.2
-    refine ⟨λ s t h ⟨h₁, h₂⟩ ↦ ⟨ihs₁ s t h h₁, ihs₂ s t h h₂⟩, ?_⟩
-    rintro s t h ⟨t₁, t₂, hsplit, h₁, h₂⟩
-    exact ⟨t₁ ∩ t, t₂ ∩ t, splitsAs_inter hsplit h,
-      iha₁ t₁ _ Finset.inter_subset_left h₁, iha₂ t₂ _ Finset.inter_subset_left h₂⟩
+    exact ⟨(ih₁ hNE.1).1.inter (ih₂ hNE.2).1, (ih₁ hNE.1).2.tensor (ih₂ hNE.2).2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    obtain ⟨ihs₁, iha₁⟩ := ih₁ hNE.1
-    obtain ⟨ihs₂, iha₂⟩ := ih₂ hNE.2
-    refine ⟨?_, λ s t h ⟨h₁, h₂⟩ ↦ ⟨iha₁ s t h h₁, iha₂ s t h h₂⟩⟩
-    rintro s t h ⟨t₁, t₂, hsplit, h₁, h₂⟩
-    exact ⟨t₁ ∩ t, t₂ ∩ t, splitsAs_inter hsplit h,
-      ihs₁ t₁ _ Finset.inter_subset_left h₁, ihs₂ t₂ _ Finset.inter_subset_left h₂⟩
+    exact ⟨(ih₁ hNE.1).1.tensor (ih₂ hNE.2).1, (ih₁ hNE.1).2.inter (ih₂ hNE.2).2⟩
   | gdisj ψ₁ ψ₂ ih₁ ih₂ =>
-    obtain ⟨ihs₁, iha₁⟩ := ih₁ hNE.1
-    obtain ⟨ihs₂, iha₂⟩ := ih₂ hNE.2
-    exact ⟨λ s t h hs ↦ hs.imp (ihs₁ s t h) (ihs₂ s t h),
-      λ s t h ⟨h₁, h₂⟩ ↦ ⟨iha₁ s t h h₁, iha₂ s t h h₂⟩⟩
-  | empt ψ ih =>
-    obtain ⟨ihs, iha⟩ := ih hNE
-    refine ⟨?_, iha⟩
-    rintro s t h (hs | rfl)
-    · exact Or.inl (ihs s t h hs)
-    · exact Or.inr (Finset.subset_empty.mp h)
-  | poss ψ _ => exact ⟨λ _ _ h hs w hw ↦ hs w (h hw), λ _ _ h hs w hw ↦ hs w (h hw)⟩
+    exact ⟨(ih₁ hNE.1).1.union (ih₂ hNE.2).1, (ih₁ hNE.1).2.inter (ih₂ hNE.2).2⟩
+  | empt ψ ih => exact ⟨(ih hNE).1.union Team.isLowerSet_singleton_empty, (ih hNE).2⟩
+  | poss ψ _ => exact ⟨Team.isLowerSet_flat _, Team.isLowerSet_flat _⟩
 
 /-- NE-free formulas are downward closed. -/
 theorem isLowerSet_support_of_neFree (hNE : φ.NEFree) :
     IsLowerSet { t : Finset W | support M φ t } :=
-  λ _ _ h hs ↦ (eval_lower_of_neFree M φ hNE).1 _ _ h hs
-
-private theorem splitsAs_union {s s' s₁ s₂ t₁ t₂ : Finset W} (h : Team.splitsAs s s₁ s₂)
-    (h' : Team.splitsAs s' t₁ t₂) : Team.splitsAs (s ∪ s') (s₁ ∪ t₁) (s₂ ∪ t₂) := by
-  show (s₁ ∪ t₁) ∪ (s₂ ∪ t₂) = s ∪ s'
-  rw [← h, ← h']; ac_rfl
+  (eval_lower_of_neFree M φ hNE).1
 
 private theorem eval_supClosed_of_gdFree (hGD : φ.GDFree) :
-    (∀ s t : Finset W, support M φ s → support M φ t → support M φ (s ∪ t)) ∧
-    ∀ s t : Finset W, antiSupport M φ s → antiSupport M φ t → antiSupport M φ (s ∪ t) := by
+    SupClosed {t : Finset W | support M φ t} ∧ SupClosed {t : Finset W | antiSupport M φ t} := by
   induction φ with
-  | atom p =>
-    exact ⟨λ _ _ hs ht w hw ↦ (Finset.mem_union.mp hw).elim (hs w) (ht w),
-      λ _ _ hs ht w hw ↦ (Finset.mem_union.mp hw).elim (hs w) (ht w)⟩
-  | bot => exact ⟨λ _ _ hs ht ↦ by rw [hs, ht]; rfl, λ _ _ _ _ ↦ trivial⟩
-  | ne => exact ⟨λ _ _ hs _ ↦ hs.mono Finset.subset_union_left, λ _ _ hs ht ↦ by rw [hs, ht]; rfl⟩
+  | atom p => exact ⟨Team.supClosed_flat _, Team.supClosed_flat _⟩
+  | bot => exact ⟨Team.supClosed_singleton_empty, supClosed_univ⟩
+  | ne => exact ⟨Team.supClosed_ne, Team.supClosed_singleton_empty⟩
   | neg ψ ih => exact (ih hGD).symm
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    obtain ⟨ihs₁, iha₁⟩ := ih₁ hGD.1
-    obtain ⟨ihs₂, iha₂⟩ := ih₂ hGD.2
-    refine ⟨λ s t ⟨hs₁, hs₂⟩ ⟨ht₁, ht₂⟩ ↦ ⟨ihs₁ s t hs₁ ht₁, ihs₂ s t hs₂ ht₂⟩, ?_⟩
-    rintro s t ⟨s₁, s₂, hs, hs₁, hs₂⟩ ⟨t₁, t₂, ht, ht₁, ht₂⟩
-    exact ⟨s₁ ∪ t₁, s₂ ∪ t₂, splitsAs_union hs ht, iha₁ _ _ hs₁ ht₁, iha₂ _ _ hs₂ ht₂⟩
+    exact ⟨(ih₁ hGD.1).1.inter (ih₂ hGD.2).1, (ih₁ hGD.1).2.tensor (ih₂ hGD.2).2⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    obtain ⟨ihs₁, iha₁⟩ := ih₁ hGD.1
-    obtain ⟨ihs₂, iha₂⟩ := ih₂ hGD.2
-    refine ⟨?_, λ s t ⟨hs₁, hs₂⟩ ⟨ht₁, ht₂⟩ ↦ ⟨iha₁ s t hs₁ ht₁, iha₂ s t hs₂ ht₂⟩⟩
-    rintro s t ⟨s₁, s₂, hs, hs₁, hs₂⟩ ⟨t₁, t₂, ht, ht₁, ht₂⟩
-    exact ⟨s₁ ∪ t₁, s₂ ∪ t₂, splitsAs_union hs ht, ihs₁ _ _ hs₁ ht₁, ihs₂ _ _ hs₂ ht₂⟩
+    exact ⟨(ih₁ hGD.1).1.tensor (ih₂ hGD.2).1, (ih₁ hGD.1).2.inter (ih₂ hGD.2).2⟩
   | gdisj => exact hGD.elim
   | empt ψ ih =>
-    obtain ⟨ihs, iha⟩ := ih hGD
-    refine ⟨?_, iha⟩
-    rintro s t (hs | rfl) (ht | rfl)
-    · exact Or.inl (ihs s t hs ht)
+    refine ⟨fun s hs t ht ↦ ?_, (ih hGD).2⟩
+    rcases hs with hs | rfl <;> rcases ht with ht | rfl
+    · exact Or.inl ((ih hGD).1 hs ht)
     · simpa using Or.inl hs
     · simpa using Or.inl ht
     · simp
-  | poss ψ _ =>
-    exact ⟨λ _ _ hs ht w hw ↦ (Finset.mem_union.mp hw).elim (hs w) (ht w),
-      λ _ _ hs ht w hw ↦ (Finset.mem_union.mp hw).elim (hs w) (ht w)⟩
+  | poss ψ _ => exact ⟨Team.supClosed_flat _, Team.supClosed_flat _⟩
 
 /-- ⨼-free formulas are union closed; in particular every BSML⊘ formula is. -/
 theorem supClosed_support_of_gdFree (hGD : φ.GDFree) :
     SupClosed { t : Finset W | support M φ t } :=
-  λ _ hs _ ht ↦ (eval_supClosed_of_gdFree M φ hGD).1 _ _ hs ht
+  (eval_supClosed_of_gdFree M φ hGD).1
 
 /-- Classical formulas — NE-free and ⨼-free — are flat. -/
 theorem isFlat_support_of_neFree_gdFree (hNE : φ.NEFree) (hGD : φ.GDFree) :
@@ -345,22 +301,22 @@ theorem isLowerSet_of_support_empty (hGD : φ.GDFree) (hE : φ.EmptFree) :
     obtain ⟨ihs₁, iha₁⟩ := ih₁ hGD.1 hE.1
     obtain ⟨ihs₂, iha₂⟩ := ih₂ hGD.2 hE.2
     refine ⟨λ ⟨e₁, e₂⟩ s t h ⟨h₁, h₂⟩ ↦ ⟨ihs₁ e₁ s t h h₁, ihs₂ e₂ s t h h₂⟩, ?_⟩
-    rintro ⟨u₁, u₂, hu, e₁, e₂⟩ s t h ⟨t₁, t₂, hsplit, h₁, h₂⟩
-    have hu₁ : u₁ = ∅ := Finset.subset_empty.mp (Team.splitsAs_left_subset hu)
-    have hu₂ : u₂ = ∅ := Finset.subset_empty.mp (Team.splitsAs_right_subset hu)
+    rintro ⟨u₁, e₁, u₂, e₂, hu⟩ s t h ⟨t₁, h₁, t₂, h₂, hsplit⟩
+    have hu₁ : u₁ = ∅ := Finset.subset_empty.mp (le_sup_left.trans_eq hu)
+    have hu₂ : u₂ = ∅ := Finset.subset_empty.mp (le_sup_right.trans_eq hu)
     subst hu₁ hu₂
-    exact ⟨t₁ ∩ t, t₂ ∩ t, splitsAs_inter hsplit h,
-      iha₁ e₁ t₁ _ Finset.inter_subset_left h₁, iha₂ e₂ t₂ _ Finset.inter_subset_left h₂⟩
+    exact ⟨t₁ ∩ t, iha₁ e₁ t₁ _ Finset.inter_subset_left h₁, t₂ ∩ t, iha₂ e₂ t₂ _ Finset.inter_subset_left h₂,
+      union_inter_of_union_eq hsplit h⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨ihs₁, iha₁⟩ := ih₁ hGD.1 hE.1
     obtain ⟨ihs₂, iha₂⟩ := ih₂ hGD.2 hE.2
     refine ⟨?_, λ ⟨e₁, e₂⟩ s t h ⟨h₁, h₂⟩ ↦ ⟨iha₁ e₁ s t h h₁, iha₂ e₂ s t h h₂⟩⟩
-    rintro ⟨u₁, u₂, hu, e₁, e₂⟩ s t h ⟨t₁, t₂, hsplit, h₁, h₂⟩
-    have hu₁ : u₁ = ∅ := Finset.subset_empty.mp (Team.splitsAs_left_subset hu)
-    have hu₂ : u₂ = ∅ := Finset.subset_empty.mp (Team.splitsAs_right_subset hu)
+    rintro ⟨u₁, e₁, u₂, e₂, hu⟩ s t h ⟨t₁, h₁, t₂, h₂, hsplit⟩
+    have hu₁ : u₁ = ∅ := Finset.subset_empty.mp (le_sup_left.trans_eq hu)
+    have hu₂ : u₂ = ∅ := Finset.subset_empty.mp (le_sup_right.trans_eq hu)
     subst hu₁ hu₂
-    exact ⟨t₁ ∩ t, t₂ ∩ t, splitsAs_inter hsplit h,
-      ihs₁ e₁ t₁ _ Finset.inter_subset_left h₁, ihs₂ e₂ t₂ _ Finset.inter_subset_left h₂⟩
+    exact ⟨t₁ ∩ t, ihs₁ e₁ t₁ _ Finset.inter_subset_left h₁, t₂ ∩ t, ihs₂ e₂ t₂ _ Finset.inter_subset_left h₂,
+      union_inter_of_union_eq hsplit h⟩
   | gdisj => exact hGD.elim
   | empt => exact hE.elim
   | poss ψ _ => exact ⟨λ _ _ _ h hs w hw ↦ hs w (h hw), λ _ _ _ h hs w hw ↦ hs w (h hw)⟩
@@ -384,11 +340,11 @@ theorem bsml_not_complete_for_unionClosed :
   rintro ⟨φ, hGD, hE, h⟩
   have hempty : support twoWorlds φ ∅ := (h ∅).mpr (Or.inr rfl)
   have hboth : support twoWorlds φ {true, false} := (h _).mpr <| Or.inl
-    ⟨{true}, {false}, rfl, ⟨λ w hw ↦ by simpa [twoWorlds] using hw, by simp⟩,
-      ⟨λ w hw ↦ by simpa [twoWorlds] using hw, by simp⟩⟩
+    ⟨{true}, ⟨λ w hw ↦ by simpa [twoWorlds] using hw, by simp⟩,
+      {false}, ⟨λ w hw ↦ by simpa [twoWorlds] using hw, by simp⟩, rfl⟩
   have htrue := (h {true}).mp
     ((isLowerSet_of_support_empty twoWorlds φ hGD hE).1 hempty _ _ (by simp) hboth)
-  rcases htrue with ⟨t₁, t₂, hsplit, _, hp, hne⟩ | h1
+  rcases htrue with ⟨t₁, -, t₂, ⟨hp, hne⟩, hsplit⟩ | h1
   · obtain ⟨w, hw⟩ := hne
     have : w ∈ ({true} : Finset Bool) := hsplit ▸ Finset.mem_union_right _ hw
     have hw' := hp w hw
@@ -436,17 +392,17 @@ theorem eval_ofBSML (b : Bool) (φ : BSML.Formula Atom) :
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
     · simp only [ofBSML, eval, BSML.eval]
-      constructor <;> rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
-      exacts [⟨t₁, t₂, hsplit, (ih₁ t₁ false).mp h₁, (ih₂ t₂ false).mp h₂⟩,
-        ⟨t₁, t₂, hsplit, (ih₁ t₁ false).mpr h₁, (ih₂ t₂ false).mpr h₂⟩]
+      constructor <;> rintro ⟨t₁, h₁, t₂, h₂, hsplit⟩
+      exacts [⟨t₁, (ih₁ t₁ false).mp h₁, t₂, (ih₂ t₂ false).mp h₂, hsplit⟩,
+        ⟨t₁, (ih₁ t₁ false).mpr h₁, t₂, (ih₂ t₂ false).mpr h₂, hsplit⟩]
     · simp only [ofBSML, eval, BSML.eval, ih₁, ih₂]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
     · simp only [ofBSML, eval, BSML.eval, ih₁, ih₂]
     · simp only [ofBSML, eval, BSML.eval]
-      constructor <;> rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
-      exacts [⟨t₁, t₂, hsplit, (ih₁ t₁ true).mp h₁, (ih₂ t₂ true).mp h₂⟩,
-        ⟨t₁, t₂, hsplit, (ih₁ t₁ true).mpr h₁, (ih₂ t₂ true).mpr h₂⟩]
+      constructor <;> rintro ⟨t₁, h₁, t₂, h₂, hsplit⟩
+      exacts [⟨t₁, (ih₁ t₁ true).mp h₁, t₂, (ih₂ t₂ true).mp h₂, hsplit⟩,
+        ⟨t₁, (ih₁ t₁ true).mpr h₁, t₂, (ih₂ t₂ true).mpr h₂, hsplit⟩]
   | poss ψ ih =>
     cases b
     · simp only [ofBSML, eval, BSML.eval, Team.mem_nec, Set.mem_ofPred_eq, ih]
@@ -504,14 +460,12 @@ theorem bisim_invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
     have hd₂ : ψ₂.modalDepth ≤ k := (le_max_right _ _).trans hd
     cases b
     · constructor
-      · rintro ⟨t, u, hsplit, h₁, h₂⟩
+      · rintro ⟨t, h₁, u, h₂, hsplit⟩
         obtain ⟨t', u', hsplit', hbt, hbu⟩ := hbisim.splitPreserve hsplit
-          (Team.splitsAs_left_subset hsplit) (Team.splitsAs_right_subset hsplit)
-        exact ⟨t', u', hsplit', (ih₁ hd₁ hbt false).mp h₁, (ih₂ hd₂ hbu false).mp h₂⟩
-      · rintro ⟨t', u', hsplit', h₁, h₂⟩
+        exact ⟨t', (ih₁ hd₁ hbt false).mp h₁, u', (ih₂ hd₂ hbu false).mp h₂, hsplit'⟩
+      · rintro ⟨t', h₁, u', h₂, hsplit'⟩
         obtain ⟨t, u, hsplit, hbt, hbu⟩ := StateBisim.splitPreserve hbisim.symm hsplit'
-          (Team.splitsAs_left_subset hsplit') (Team.splitsAs_right_subset hsplit')
-        exact ⟨t, u, hsplit, (ih₁ hd₁ hbt.symm false).mpr h₁, (ih₂ hd₂ hbu.symm false).mpr h₂⟩
+        exact ⟨t, (ih₁ hd₁ hbt.symm false).mpr h₁, u, (ih₂ hd₂ hbu.symm false).mpr h₂, hsplit⟩
     · exact and_congr (ih₁ hd₁ hbisim true) (ih₂ hd₂ hbisim true)
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     have hd₁ : ψ₁.modalDepth ≤ k := (le_max_left _ _).trans hd
@@ -519,14 +473,12 @@ theorem bisim_invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
     cases b
     · exact and_congr (ih₁ hd₁ hbisim false) (ih₂ hd₂ hbisim false)
     · constructor
-      · rintro ⟨t, u, hsplit, h₁, h₂⟩
+      · rintro ⟨t, h₁, u, h₂, hsplit⟩
         obtain ⟨t', u', hsplit', hbt, hbu⟩ := hbisim.splitPreserve hsplit
-          (Team.splitsAs_left_subset hsplit) (Team.splitsAs_right_subset hsplit)
-        exact ⟨t', u', hsplit', (ih₁ hd₁ hbt true).mp h₁, (ih₂ hd₂ hbu true).mp h₂⟩
-      · rintro ⟨t', u', hsplit', h₁, h₂⟩
+        exact ⟨t', (ih₁ hd₁ hbt true).mp h₁, u', (ih₂ hd₂ hbu true).mp h₂, hsplit'⟩
+      · rintro ⟨t', h₁, u', h₂, hsplit'⟩
         obtain ⟨t, u, hsplit, hbt, hbu⟩ := StateBisim.splitPreserve hbisim.symm hsplit'
-          (Team.splitsAs_left_subset hsplit') (Team.splitsAs_right_subset hsplit')
-        exact ⟨t, u, hsplit, (ih₁ hd₁ hbt.symm true).mpr h₁, (ih₂ hd₂ hbu.symm true).mpr h₂⟩
+        exact ⟨t, (ih₁ hd₁ hbt.symm true).mpr h₁, u, (ih₂ hd₂ hbu.symm true).mpr h₂, hsplit⟩
   | gdisj ψ₁ ψ₂ ih₁ ih₂ =>
     have hd₁ : ψ₁.modalDepth ≤ k := (le_max_left _ _).trans hd
     have hd₂ : ψ₂.modalDepth ≤ k := (le_max_right _ _).trans hd

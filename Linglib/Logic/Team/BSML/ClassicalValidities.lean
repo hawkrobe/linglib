@@ -138,13 +138,13 @@ private theorem notMem_of_antiSupport_of_support
     exact ih t s ht hs w htw hsw
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     intro s t hs ht w hsw htw
-    obtain ⟨s₁, s₂, hunion, h₁, h₂⟩ := hs
+    obtain ⟨s₁, h₁, s₂, h₂, hunion⟩ := hs
     rcases Finset.mem_union.mp (hunion ▸ hsw) with h | h
     · exact ih₁ s₁ t h₁ ht.1 w h htw
     · exact ih₂ s₂ t h₂ ht.2 w h htw
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     intro s t hs ht w hsw htw
-    obtain ⟨t₁, t₂, hunion, h₁, h₂⟩ := ht
+    obtain ⟨t₁, h₁, t₂, h₂, hunion⟩ := ht
     rcases Finset.mem_union.mp (hunion ▸ htw) with h | h
     · exact ih₁ s t₁ hs.1 h₁ w hsw h
     · exact ih₂ s t₂ hs.2 h₂ w hsw h
@@ -193,9 +193,8 @@ theorem replacement_failure_counterexample :
                      fun w hw => absurd hw (Finset.notMem_empty w)⟩⟩
   · intro h
     have hne : (∅ : Finset Bool).Nonempty := h.mp
-      ⟨∅, ∅, by simp,
-       fun w hw => absurd hw (Finset.notMem_empty w),
-       fun w hw => absurd hw (Finset.notMem_empty w)⟩
+      ⟨∅, fun w hw => absurd hw (Finset.notMem_empty w),
+       ∅, fun w hw => absurd hw (Finset.notMem_empty w), by simp⟩
     exact Finset.not_nonempty_empty hne
 
 end BSML

@@ -56,7 +56,7 @@ infrastructure to consumers of `IsFlat`.
 
 namespace Team
 
-variable {α : Type*} [DecidableEq α]
+variable {α : Type*}
 
 /-- A team-set `T : Set (Finset α)` is **flat** iff membership reduces
     pointwise: `s ∈ T ↔ every singleton from s is in T`.
@@ -66,6 +66,10 @@ variable {α : Type*} [DecidableEq α]
     closure properties), `isFlat_iff_isIdeal` (via `Order.IsIdeal`). -/
 def IsFlat (T : Set (Finset α)) : Prop :=
   ∀ s : Finset α, s ∈ T ↔ ∀ w ∈ s, ({w} : Finset α) ∈ T
+
+section
+
+variable [DecidableEq α]
 
 /-- **Anttila Proposition 2.2.2**: a team-set is flat iff it is
     downward-closed under inclusion, closed under binary union, and
@@ -139,6 +143,8 @@ theorem isFlat_iff_isIdeal (T : Set (Finset α)) :
   obtain ⟨c, hc, hac, hbc⟩ := hd a ha b hb
   exact hL (sup_le hac hbc) hc
 
+end
+
 /-! ### Convexity
 
 Convexity — `Set.OrdConnected` on `(Finset α, ⊆)`, i.e. `s ⊆ t ⊆ u` with
@@ -149,7 +155,6 @@ may fail. Mathlib's `Set.OrdConnected` is exactly this predicate
 `IsConvex`, mirroring the `IsFlat ↔ Order.IsIdeal` reuse above. The forward
 bridge `IsLowerSet.ordConnected` is already in mathlib. -/
 
-omit [DecidableEq α] in
 /-- A convex team-set with the empty-team property is downward-closed — the
     reverse of mathlib's `IsLowerSet.ordConnected`. Together they give
     `isLowerSet_iff_ordConnected_of_empty`. -/
@@ -161,7 +166,6 @@ theorem isLowerSet_of_ordConnected_empty {T : Set (Finset α)}
     rw [Set.mem_Icc]; exact ⟨Finset.empty_subset b, hab⟩
   exact hConv.out hEmpty hb hmem
 
-omit [DecidableEq α] in
 /-- **Given the empty-team property, downward closure and convexity coincide**
     ([anttila-2025]). For NE-bearing team-sets — which break the
     empty-team property — convexity is the invariant that survives where
@@ -171,7 +175,7 @@ theorem isLowerSet_iff_ordConnected_of_empty {T : Set (Finset α)}
   ⟨IsLowerSet.ordConnected, fun h => isLowerSet_of_ordConnected_empty h hEmpty⟩
 
 /-- Flat team-sets are convex (`IsFlat → IsLowerSet → OrdConnected`). -/
-theorem IsFlat.ordConnected {T : Set (Finset α)} (h : IsFlat T) :
+theorem IsFlat.ordConnected [DecidableEq α] {T : Set (Finset α)} (h : IsFlat T) :
     T.OrdConnected :=
   h.isLowerSet.ordConnected
 

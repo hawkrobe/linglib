@@ -206,18 +206,18 @@ theorem fig14_premise :
   refine ⟨?_, Finset.singleton_nonempty _⟩
   show support fig14Model (Formula.disj three more).enrich
     (State.extendUniversal fig14State QVar.x)
-  refine ⟨⟨{fig14Index.update .x .a}, {fig14Index.update .x .b},
-    ?_, ⟨?_, Finset.singleton_nonempty _⟩, ⟨?_, Finset.singleton_nonempty _⟩⟩,
+  refine ⟨⟨{fig14Index.update .x .a}, ⟨?_, Finset.singleton_nonempty _⟩,
+    {fig14Index.update .x .b}, ⟨?_, Finset.singleton_nonempty _⟩, ?_⟩,
     ⟨fig14Index.update .x .a, ?_⟩⟩
-  · show ({fig14Index.update .x .a} ∪ {fig14Index.update .x .b} : Finset _)
-      = State.extendUniversal fig14State QVar.x
-    decide
   · intro j hj
     obtain rfl := Finset.mem_singleton.mp hj
     exact ⟨.a, rfl, rfl, rfl⟩
   · intro j hj
     obtain rfl := Finset.mem_singleton.mp hj
     exact ⟨.b, rfl, rfl, rfl⟩
+  · show ({fig14Index.update .x .a} ∪ {fig14Index.update .x .b} : Finset _)
+      = State.extendUniversal fig14State QVar.x
+    decide
   · decide
 
 /-- Fig. 16: at the `x/b` index the only accessible world is `w_{PaQb}`, where

@@ -133,13 +133,14 @@ private theorem eval_within_disj_without (P Q : Pred) (x : Var) (b : Bool)
   cases b with
   | true =>
     constructor
-    · rintro ⟨t₁, t₂, hsplit, ⟨-, hQ₁⟩, ⟨-, hQ₂⟩⟩ i hi
+    · rintro ⟨t₁, ⟨-, hQ₁⟩, t₂, ⟨-, hQ₂⟩, hsplit⟩ i hi
       rw [← hsplit] at hi
       exact (Finset.mem_union.mp hi).elim (hQ₁ i) (hQ₂ i)
     · intro hQ
       refine ⟨s.filter (λ i => ∀ d, i.assign x = some d → M.relInterp₁ (predSymb P) i.world d),
+        ⟨?_, ?_⟩,
         s.filter (λ i => ¬ ∀ d, i.assign x = some d → M.relInterp₁ (predSymb P) i.world d),
-        Finset.filter_union_filter_not_eq _ s, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩
+        ⟨?_, ?_⟩, Finset.filter_union_filter_not_eq _ s⟩
       · intro i hi
         obtain ⟨his, hcond⟩ := Finset.mem_filter.mp hi
         obtain ⟨d, hd, -⟩ := hQ i his
@@ -152,7 +153,7 @@ private theorem eval_within_disj_without (P Q : Pred) (x : Var) (b : Bool)
       · exact λ i hi => hQ i (Finset.mem_of_mem_filter i hi)
   | false =>
     constructor
-    · rintro ⟨⟨t₁, t₂, hsplit₁, hnP, hnQ₁⟩, ⟨u₁, u₂, hsplit₂, hP, hnQ₂⟩⟩ i hi
+    · rintro ⟨⟨t₁, hnP, t₂, hnQ₁, hsplit₁⟩, ⟨u₁, hP, u₂, hnQ₂, hsplit₂⟩⟩ i hi
       rcases Finset.mem_union.mp (hsplit₁ ▸ hi) with hit₁ | hit₂
       · rcases Finset.mem_union.mp (hsplit₂ ▸ hi) with hiu₁ | hiu₂
         · obtain ⟨d, hd, hnp⟩ := hnP i hit₁
@@ -162,8 +163,8 @@ private theorem eval_within_disj_without (P Q : Pred) (x : Var) (b : Bool)
         · exact hnQ₂ i hiu₂
       · exact hnQ₁ i hit₂
     · intro h
-      exact ⟨⟨∅, s, Team.splitsAs_empty_self s, support_empty_of_neFree (.neg (.pred P x)) M, h⟩,
-        ⟨∅, s, Team.splitsAs_empty_self s, support_empty_of_neFree (.pred P x) M, h⟩⟩
+      exact ⟨⟨∅, support_empty_of_neFree (.neg (.pred P x)) M, s, h, bot_sup_eq s⟩,
+        ⟨∅, support_empty_of_neFree (.pred P x) M, s, h, bot_sup_eq s⟩⟩
 
 private theorem eval_predc_disj (P Q : Pred) (c : Const) (b : Bool)
     (s : Finset (Index W Var Domain)) :
@@ -174,30 +175,30 @@ private theorem eval_predc_disj (P Q : Pred) (c : Const) (b : Bool)
   cases b with
   | true =>
     constructor
-    · rintro ⟨t₁, t₂, hsplit, ⟨-, hQ₁⟩, ⟨-, hQ₂⟩⟩ i hi
+    · rintro ⟨t₁, ⟨-, hQ₁⟩, t₂, ⟨-, hQ₂⟩, hsplit⟩ i hi
       rw [← hsplit] at hi
       exact (Finset.mem_union.mp hi).elim (hQ₁ i) (hQ₂ i)
     · intro hQ
       refine ⟨s.filter (λ i => M.relInterp₁ (predSymb P) i.world
-          (M.constInterp ((Language.monadic Pred).con c) i.world)),
+          (M.constInterp ((Language.monadic Pred).con c) i.world)), ⟨?_, ?_⟩,
         s.filter (λ i => ¬ M.relInterp₁ (predSymb P) i.world
-          (M.constInterp ((Language.monadic Pred).con c) i.world)),
-        Finset.filter_union_filter_not_eq _ s, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩
+          (M.constInterp ((Language.monadic Pred).con c) i.world)), ⟨?_, ?_⟩,
+        Finset.filter_union_filter_not_eq _ s⟩
       · exact λ i hi => (Finset.mem_filter.mp hi).2
       · exact λ i hi => hQ i (Finset.mem_of_mem_filter i hi)
       · exact λ i hi => (Finset.mem_filter.mp hi).2
       · exact λ i hi => hQ i (Finset.mem_of_mem_filter i hi)
   | false =>
     constructor
-    · rintro ⟨⟨t₁, t₂, hsplit₁, hnP, hnQ₁⟩, ⟨u₁, u₂, hsplit₂, hP, hnQ₂⟩⟩ i hi
+    · rintro ⟨⟨t₁, hnP, t₂, hnQ₁, hsplit₁⟩, ⟨u₁, hP, u₂, hnQ₂, hsplit₂⟩⟩ i hi
       rcases Finset.mem_union.mp (hsplit₁ ▸ hi) with hit₁ | hit₂
       · rcases Finset.mem_union.mp (hsplit₂ ▸ hi) with hiu₁ | hiu₂
         · exact absurd (hP i hiu₁) (hnP i hit₁)
         · exact hnQ₂ i hiu₂
       · exact hnQ₁ i hit₂
     · intro h
-      exact ⟨⟨∅, s, Team.splitsAs_empty_self s, support_empty_of_neFree (.neg (.predc P c)) M, h⟩,
-        ⟨∅, s, Team.splitsAs_empty_self s, support_empty_of_neFree (.predc P c) M, h⟩⟩
+      exact ⟨⟨∅, support_empty_of_neFree (.neg (.predc P c)) M, s, h, bot_sup_eq s⟩,
+        ⟨∅, support_empty_of_neFree (.predc P c) M, s, h, bot_sup_eq s⟩⟩
 
 variable (sub : Pred → Pred → Prop) [DecidableRel sub] (P : Pred) (φ : Formula Var Const Pred)
   (s : Finset (Index W Var Domain))
