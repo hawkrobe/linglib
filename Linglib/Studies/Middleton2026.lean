@@ -1,45 +1,69 @@
 module
 
-public import Linglib.Morphology.DistributedMorphology.Impoverishment
+public import Mathlib.Data.List.Permutation
 public import Linglib.Morphology.DistributedMorphology.Spellout
-public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-public import Linglib.Fragments.Taos.Agreement
-public import Linglib.Fragments.Basque.Postsyntax
 
 /-!
-# Middleton (2026): Ordering of Impoverishment Rules in Taos and Basque
+# Middleton (2026): the ordering of impoverishment rules in Taos and Basque
 
-This file formalizes the architectural argument of [middleton-2026] within Distributed
-Morphology ([halle-marantz-1993]). [arregi-nevins-2012] propose a strictly modular
-postsyntax in which paradigmatic impoverishment applies as a block before syntagmatic
-impoverishment and metathesis follows all impoverishment; Taos verbal agreement shows that
-the second claim survives but the first does not, a syntagmatic rule having to feed a
-paradigmatic one, and the Basque half re-establishes the second claim with whole-terminal
-deletion and adjacent-terminal metathesis. A schematic pair of rules exhibits the divergence
-at a Taos-shaped witness (`paraAtomicRule`, `synMinimalRule`), the strict pipeline is shown
-strictly less expressive than the interleaved one whenever a syntagmatic rule must feed a
-paradigmatic one (`runStrict_forces_paraSyn_order`, `runInterleaved_admits_synPara`), a
-small vocabulary demonstrates insertion by the subset principle, and the Basque rules are
-stated on the domain-level rule shapes with the Ondarru divergence witness.
+[arregi-nevins-2012] organise the postsyntax into modules: Feature Markedness, where
+impoverishment applies, precedes Linearization and the Linear Operations module, where
+metathesis applies; and within Feature Markedness the paradigmatic rules, conditioned by the
+features of the node they change, apply as a block before the syntagmatic rules, conditioned by
+the features of more than one node (their (72), §4.8). [middleton-2026] tests both orderings
+against the verbal agreement prefixes of Taos (Kiowa-Tanoan) and finds them unequal: the
+Basque and Taos data both need impoverishment before metathesis (§3), but four Taos
+interactions need a syntagmatic rule to feed a paradigmatic one (§4.2.1–§4.2.4) while a fifth
+needs the reverse (§4.2.5), so the two kinds of impoverishment interleave.
+
+The prefix is the `Prefix` of the paper's (1), an agent, a goal and an object, each a list of
+[harbour-2016]'s person and [harbour-2014]'s number features. A Taos rule is a `Rule`: the slot
+it changes and an `ImpoverishmentRule` at that slot's `Neighborhood`, so that the paper's
+paradigmatic/syntagmatic labels are the library's `Paradigmatic` and `Syntagmatic` and each is
+proved. The block architecture is the order `ParaThenSyn` on rule sequences; a paradigmatic and
+a syntagmatic rule have one block-conforming order (`run_eq_of_paraThenSyn`), so wherever the
+paper shows the two orders differ (`case1_orders_differ` through `case4_orders_differ`) the
+block architecture is committed to the wrong prefix. The Basque half runs the domain-level
+rules of `Spellout.lean` over the auxiliary: Participant Dissimilation obliterates a clitic, the
+T-Noninitiality repairs move an ergative clitic or insert L, and the Ondarru and Zamudio
+auxiliaries come out right only with markedness before the linear module.
 
 ## Implementation notes
 
-The conditioning features come from the decomposition of [harbour-2014]; the rules are
-minimal witnesses to the ordering interaction, not literal transcriptions, and the full Taos
-paradigm, the containment constraints on feature bundles, and real vocabulary competition
-are not represented.
+* The dummy object *no* is an object with no features; an absent argument is `none`. Inverse
+  agreement is the paper's (8), both values of one number feature (`Inverse`), so the inverse
+  witnesses are quantified over any such bundle rather than fixed to one.
+* The paper's (27) and (44) mention positions ("the leftmost number bundle", a goal after a
+  dual agent); `leftmostMinimal` takes the slot it targets and checks that no earlier slot has
+  number features, and the Taos metathesis section works on the linearized feature string,
+  where (27) is the deletion of a feature terminal.
+* The Basque terminals are clitics with a case feature and T with `[+tense]`, standing in for
+  Arregi and Nevins's `[+past]`, which the library's feature inventory lacks; every auxiliary
+  here is past tense, so the value never discriminates. Ergative Metathesis fronts the first
+  ergative clitic after a word-initial T, Arregi and Nevins's (105), rather than swapping
+  adjacent terminals as the paper's (13) has it: the Zamudio auxiliary of (19) has a dative
+  clitic between T and the ergative. L-Support and Ergative Metathesis are the two repairs of
+  T-Noninitiality and form one module, as in Arregi and Nevins §6.2.4, which is why the
+  markedness-after-linear order strands a T-initial auxiliary in `ondarru_linear_then_markedness`
+  and `zamudio_linear_then_markedness` rather than producing the paper's starred forms (17b) and
+  (19b) verbatim.
+* Vocabulary Insertion is not modelled: each theorem ends at the feature bundle the paper reads
+  off the exponents, and the docstring names the exponence rule and the table cell.
 
 ## TODO
 
-The paper is not on file; section and rule numbers are transcribed from an earlier version
-of this file and are UNVERIFIED.
+* The complete derivation of Table 1 is in the paper's online appendix, not on file; the
+  exponence rules (20)–(22), (31), (33), (34), (38) and (42) and the paradigm itself await it.
 
 ## References
 
-* [middleton-2026]
-* [arregi-nevins-2012]
-* [halle-marantz-1993]
-* [harbour-2014]
+* [J. Middleton, *A remark on the ordering of impoverishment rules: differences between Taos
+  and Basque*][middleton-2026]
+* [K. Arregi and A. Nevins, *Morphotactics*][arregi-nevins-2012]
+* [D. Harbour, *Paucity, abundance, and the theory of number*][harbour-2014]
+* [D. Harbour, *Impossible persons*][harbour-2016]
+* [C. Kontak and J. Kunkel, *Grammar sketch of Northern Tiwa, Taos dialect*][kontak-kunkel-1987]
+* [L. J. Watkins, *A grammar of Kiowa*][watkins-1984]
 -/
 
 @[expose] public section
@@ -47,613 +71,696 @@ of this file and are UNVERIFIED.
 namespace Middleton2026
 
 open Minimalist DistributedMorphology
-     Taos.Agreement Basque.Postsyntax
 
-/-! ### Metathesis Rule
+/-- A terminal: its features, in the decomposition of [harbour-2014] and [harbour-2016]. -/
+abbrev Arg := List FeatureVal
 
-`MetathesisRule` parallels `ImpoverishmentRule`: keyed on a `Neighborhood FeatureBundle`,
-carries a decidable condition. The structural change is to swap two
-distinguished feature *types* in the focus bundle — the rule names a pair
-of feature types and exchanges the positions of the first occurrences of
-each. The directionality matches [arregi-nevins-2012]'s
-`[[X] ⟩ ⟨ [Y]] / Z` notation: "swap X and Y in environment Z."
--/
+/-! ### Person and number
 
-structure MetathesisRule where
-  condition : Neighborhood FeatureBundle → Prop
-  decCond : DecidablePred condition
-  swapFst : FeatureVal
-  swapSnd : FeatureVal
+The paper's (2) and (3): Taos distinguishes three persons and three numbers. -/
 
-instance (rule : MetathesisRule) (n : Neighborhood FeatureBundle) :
-    Decidable (rule.condition n) := rule.decCond n
+/-- First person, `[+participant +author]`. -/
+def first : Arg := [.participant true, .author true]
 
-/-- Build a metathesis rule from a Boolean condition over the focus
-    bundle (paradigmatic-style — the most common case in the Taos rules
-    of [middleton-2026], where the condition refers only to the
-    feature inventory of the same node being reordered). -/
-def focusRule (focusCheck : FeatureBundle → Bool)
-    (swapFst swapSnd : FeatureVal) : MetathesisRule where
-  condition n := focusCheck n.focus = true
-  decCond n := inferInstanceAs (Decidable (focusCheck n.focus = true))
-  swapFst := swapFst
-  swapSnd := swapSnd
+/-- Second person, `[+participant −author]`. -/
+def second : Arg := [.participant true, .author false]
 
-/-- Index of the first feature in `l` whose type matches `fv`. -/
-def indexOfType (l : List GramFeature) (fv : FeatureVal) : Option Nat :=
-  l.findIdx? (λ f => f.featureType.sameType fv)
+/-- Third person, `[−participant −author]`. -/
+def third : Arg := [.participant false, .author false]
 
-/-- Swap the elements at positions `i` and `j` in a list. Out-of-bounds
-    indices leave the list unchanged. -/
-def swapAt {α : Type _} (l : List α) (i j : Nat) : List α :=
-  match l[i]?, l[j]? with
-  | some xi, some xj => (l.set i xj).set j xi
-  | _, _ => l
+/-- Singular, `[+atomic +minimal]`. -/
+def singular : Arg := [.atomic true, .minimal true]
 
-/-- Reorder the focus exponents by swapping the first occurrences of
-    `swapFst` and `swapSnd` (their *linear positions* in the terminal's
-    exponent string). Metathesis is inherently an operation on linear
-    order, so it acts on the ordered `toGramFeatures` view. -/
-def swapInBundle (fb : FeatureBundle) (swapFst swapSnd : FeatureVal) :
-    List GramFeature :=
-  let l := FeatureBundle.toGramFeatures fb
-  match indexOfType l swapFst, indexOfType l swapSnd with
-  | some i, some j => swapAt l i j
-  | _, _ => l
+/-- Dual, `[−atomic +minimal]`. -/
+def dual : Arg := [.atomic false, .minimal true]
 
-/-- Apply a metathesis rule at a neighborhood, returning the resulting
-    *bundle*. When the condition holds, swap the positions of `swapFst`
-    and `swapSnd` in the focus exponent string.
+/-- Plural, `[−atomic −minimal]`. -/
+def plural : Arg := [.atomic false, .minimal false]
 
-    NB: the canonical `FeatureBundle` is a total assignment keyed by feature
-    *dimension*, hence order-insensitive; folding the swapped exponent list
-    back via `ofGramFeatures` therefore launders the reordering away. The
-    bundle-level result is thus a no-op whenever the swapped types differ,
-    which is correct for the *pipeline* below (`runStrict`/`runInterleaved`
-    only ever carry an empty metathesis chain). The empirically contentful,
-    order-sensitive focus-level metathesis of [middleton-2026] is stated on
-    the exponent-string view directly (`derivIM`/`derivMI`). -/
-def applyMetathesis (rule : MetathesisRule) (n : Neighborhood FeatureBundle) :
-    FeatureBundle :=
-  if rule.condition n then
-    FeatureBundle.ofGramFeatures (swapInBundle n.focus rule.swapFst rule.swapSnd)
-  else n.focus
+/-- `a` bears every feature of `fs`. -/
+def Arg.bears (fs a : Arg) : Bool := fs.all a.contains
 
-/-- Apply a sequence of metathesis rules left-to-right. Each rule sees
-    the focus as updated by prior rules; surrounding context is held
-    fixed (one cycle of metathesis). Specializes `runChain`. -/
-def applyMetathesisChain (rules : List MetathesisRule) (n : Neighborhood FeatureBundle) :
-    FeatureBundle :=
-  runChain applyMetathesis rules n
+/-- `a` has a number feature. -/
+def Arg.hasNumber (a : Arg) : Bool :=
+  a.any fun | .atomic _ | .minimal _ => true | _ => false
 
-/-- `applyMetathesisChain` distributes over list concatenation. -/
-theorem applyMetathesisChain_append (rs₁ rs₂ : List MetathesisRule)
-    (n : Neighborhood FeatureBundle) :
-    applyMetathesisChain (rs₁ ++ rs₂) n =
-      applyMetathesisChain rs₂
-        { n with focus := applyMetathesisChain rs₁ n } :=
-  runChain_append _ _ _ _
+/-- Inverse agreement, the paper's (8): D hosts both values of one number feature. -/
+def Inverse (a : Arg) : Prop :=
+  (FeatureVal.atomic true ∈ a ∧ FeatureVal.atomic false ∈ a) ∨
+    (FeatureVal.minimal true ∈ a ∧ FeatureVal.minimal false ∈ a)
 
-/-- Convenience: apply a rule to a bare focus bundle with no context. -/
-def MetathesisRule.applyToBundle (rule : MetathesisRule)
-    (fb : FeatureBundle) : FeatureBundle :=
-  applyMetathesis rule (Neighborhood.ofBundle fb)
+instance : DecidablePred Inverse := fun a ↦
+  inferInstanceAs (Decidable ((_ ∈ a ∧ _ ∈ a) ∨ (_ ∈ a ∧ _ ∈ a)))
 
-/-! ### Strict vs Interleaved Postsyntactic Pipelines
+/-! ### The agreement prefix
 
-Two architectures for the postsyntactic component:
+The prefix of the paper's (1) agrees with the agent, the goal and the object, linearized in
+that order ([watkins-1984]). -/
 
-* **`runStrict` ([arregi-nevins-2012], Fig. 1).** Postsyntax is a
-  strict modular pipeline: paradigmatic Impoverishment → syntagmatic
-  Impoverishment → Metathesis → VI. Within Feature Markedness,
-  paradigmatic rules apply *as a block* before any syntagmatic rule.
+/-- The three daughters of AgrP in (1), in linear order. -/
+inductive Slot where
+  | agent
+  | goal
+  | object
+  deriving DecidableEq
 
-* **`runInterleaved` ([middleton-2026]).** Impoverishment rules
-  apply in whatever order the analysis demands — paradigmatic and
-  syntagmatic may interleave. Metathesis still follows all
-  impoverishment (this ordering is preserved).
+/-- The slots before a slot in the linear order of (1). -/
+def Slot.before : Slot → List Slot
+  | .agent => []
+  | .goal => [.agent]
+  | .object => [.agent, .goal]
 
-The two pipelines coincide on inputs whose impoverishment list is in
-para-then-syn order (`runStrict_eq_interleaved_paraSyn`). They diverge
-when a syntagmatic rule must precede a paradigmatic one
-([middleton-2026] §4.2.1–§4.2.4) *or* when a paradigmatic rule
-must precede a syntagmatic one and one cannot guarantee the strict
-block ordering ([middleton-2026] §4.2.5).
--/
+/-- The argument in slot `t`, as a rule at slot `s` sees it: the focus, or the context at the
+offset between the two positions of (1). -/
+def Slot.view : Slot → Slot → Neighborhood (Option Arg) → Option Arg
+  | .agent, .agent, n | .goal, .goal, n | .object, .object, n => n.focus
+  | .agent, .goal, n | .goal, .object, n => n.rightCtx.getD 0 none
+  | .agent, .object, n => n.rightCtx.getD 1 none
+  | .goal, .agent, n | .object, .goal, n => n.leftCtx.getD 0 none
+  | .object, .agent, n => n.leftCtx.getD 1 none
 
-/-- The Arregi & Nevins postsyntax (Fig. 1, simplified to the two
-    contested layers): paradigmatic Impoverishment, then syntagmatic
-    Impoverishment, then Metathesis. Exponence Conversion and
-    Morphological Concord are abstracted away — their internal ordering
-    is not at issue in [middleton-2026]. -/
-structure ModularPostsyntax where
-  paradigmatic : List (ImpoverishmentRule FeatureBundle FeatureVal)
-  syntagmatic  : List (ImpoverishmentRule FeatureBundle FeatureVal)
-  metathesis   : List MetathesisRule
+/-- The position of a feature within its argument after Linearization, the paper's (4) and
+(5): `[±participant] [±author] [±atomic] [±minimal]`. -/
+def rank : FeatureVal → ℕ
+  | .participant _ => 0
+  | .author _ => 1
+  | .atomic _ => 2
+  | .minimal _ => 3
+  | _ => 4
 
-/-- A&N's strict pipeline: para-block, then syn-block, then metathesis. -/
-def runStrict (M : ModularPostsyntax) (n : Neighborhood FeatureBundle) : FeatureBundle :=
-  let afterPara := applyImpoverishmentChain M.paradigmatic n
-  let afterSyn  := applyImpoverishmentChain M.syntagmatic { n with focus := afterPara }
-  applyMetathesisChain M.metathesis { n with focus := afterSyn }
+/-- The agreement prefix of (1): the agent, goal and object, each possibly absent. The dummy
+object *no* is an object with no features. -/
+structure Prefix where
+  /-- The agent. -/
+  agent : Option Arg
+  /-- The goal. -/
+  goal : Option Arg
+  /-- The object. -/
+  object : Option Arg
+  deriving DecidableEq
 
-/-- Middleton's interleaved postsyntax: a single impoverishment list
-    (whose entries may be paradigmatic or syntagmatic in any order),
-    then metathesis. -/
-structure InterleavedPostsyntax where
-  impoverishment : List (ImpoverishmentRule FeatureBundle FeatureVal)
-  metathesis     : List MetathesisRule
+namespace Prefix
 
-def runInterleaved (M : InterleavedPostsyntax) (n : Neighborhood FeatureBundle) :
-    FeatureBundle :=
-  let afterImp := applyImpoverishmentChain M.impoverishment n
-  applyMetathesisChain M.metathesis { n with focus := afterImp }
+/-- The argument in a slot. -/
+def get (p : Prefix) : Slot → Option Arg
+  | .agent => p.agent
+  | .goal => p.goal
+  | .object => p.object
 
-/-- Promote a strict pipeline to an interleaved one in para-then-syn
-    order. The two then compute the same output. -/
-def ModularPostsyntax.toInterleaved (M : ModularPostsyntax) :
-    InterleavedPostsyntax where
-  impoverishment := M.paradigmatic ++ M.syntagmatic
-  metathesis     := M.metathesis
+/-- Replace the argument in a slot. -/
+def set (p : Prefix) : Slot → Option Arg → Prefix
+  | .agent, a => { p with agent := a }
+  | .goal, a => { p with goal := a }
+  | .object, a => { p with object := a }
 
-/-- The strict pipeline is exactly the interleaved pipeline run on the
-    paradigmatic-then-syntagmatic concatenation. Hence `runStrict` is
-    strictly *less expressive* than `runInterleaved`: anything strict
-    can derive, interleaved can derive too (with the same rules). -/
-theorem runStrict_eq_interleaved_paraSyn
-    (M : ModularPostsyntax) (n : Neighborhood FeatureBundle) :
-    runStrict M n = runInterleaved M.toInterleaved n := by
-  simp only [runStrict, runInterleaved, ModularPostsyntax.toInterleaved,
-             applyImpoverishmentChain_append]
+/-- The neighborhood of a slot: its argument in focus, the other two as context in the order
+of (1). -/
+def around (p : Prefix) : Slot → Neighborhood (Option Arg)
+  | .agent => ⟨p.agent, [], [p.goal, p.object]⟩
+  | .goal => ⟨p.goal, [p.agent], [p.object]⟩
+  | .object => ⟨p.object, [p.goal, p.agent], []⟩
 
-/-- A two-rule strict pipeline (one paradigmatic, one syntagmatic, no
-    metathesis) reduces to applying `[p, s]` in order. -/
-@[simp] theorem runStrict_singleton (p s : ImpoverishmentRule FeatureBundle FeatureVal)
-    (n : Neighborhood FeatureBundle) :
-    runStrict ⟨[p], [s], []⟩ n = applyImpoverishmentChain [p, s] n := by
-  simp only [runStrict, applyImpoverishmentChain, runChain,
-             applyMetathesisChain, List.foldl_nil, List.foldl_cons]
+/-- Seen from any slot's neighborhood, slot `t` holds the prefix's argument for `t`. -/
+@[simp] theorem view_around (p : Prefix) (s t : Slot) : s.view t (p.around s) = p.get t := by
+  cases s <;> cases t <;> rfl
 
-/-- An interleaved pipeline with no metathesis reduces to the
-    impoverishment chain. -/
-@[simp] theorem runInterleaved_no_metathesis
-    (rs : List (ImpoverishmentRule FeatureBundle FeatureVal))
-    (n : Neighborhood FeatureBundle) :
-    runInterleaved ⟨rs, []⟩ n = applyImpoverishmentChain rs n := by
-  simp only [runInterleaved, applyMetathesisChain, runChain, List.foldl_nil]
+/-- The features of the prefix after Linearization: each argument's features in the order of
+(1), and within an argument `[±participant] [±author] [±atomic] [±minimal]`, the paper's (4)
+and (5). -/
+def linearize (p : Prefix) : SpelloutDomain FeatureVal :=
+  ([p.agent, p.goal, p.object].filterMap id).flatMap fun a ↦
+    (List.range 5).flatMap fun k ↦ a.filter (rank · == k)
 
-/-- **The structural inadequacy of `runStrict`.** Whenever a paradigmatic
-    rule `p` and a syntagmatic rule `s` produce different outputs depending
-    on whether they fire in `[s, p]` or `[p, s]` order at some neighborhood
-    `n`, the strict pipeline ⟨[p], [s], []⟩ is *forced* to yield the
-    `[p, s]` answer — the `[s, p]` derivation is unreachable.
+end Prefix
 
-    This is the formal counterpart of [middleton-2026]'s argument
-    that A&N's modular ordering cannot derive Taos: the four cases in
-    §4.2.1–§4.2.4 require precisely the syn-before-para derivation that
-    `runStrict` excludes by construction. -/
-theorem runStrict_forces_paraSyn_order
-    (p s : ImpoverishmentRule FeatureBundle FeatureVal) (n : Neighborhood FeatureBundle) :
-    runStrict ⟨[p], [s], []⟩ n = applyImpoverishmentChain [p, s] n :=
-  runStrict_singleton p s n
+/-! ### Rules of impoverishment
 
-/-- The interleaved pipeline can deliver the syn-first derivation that
-    `runStrict` cannot. -/
-theorem runInterleaved_admits_synPara
-    (p s : ImpoverishmentRule FeatureBundle FeatureVal) (n : Neighborhood FeatureBundle) :
-    runInterleaved ⟨[s, p], []⟩ n = applyImpoverishmentChain [s, p] n :=
-  runInterleaved_no_metathesis _ _
+A rule is the paper's `X → ↯ / context`: the slot whose argument changes, and an
+`ImpoverishmentRule` at that slot's neighborhood whose target is the structural change. -/
 
-/-- **Inadequacy theorem.** If `[p, s]` and `[s, p]` give different focuses
-    at `n`, then the strict pipeline ⟨[p], [s], []⟩ cannot match the
-    interleaved pipeline ⟨[s, p], []⟩ at `n`. -/
-theorem runStrict_neq_runInterleaved_of_diverges
-    (p s : ImpoverishmentRule FeatureBundle FeatureVal) (n : Neighborhood FeatureBundle)
-    (h : applyImpoverishmentChain [p, s] n ≠ applyImpoverishmentChain [s, p] n) :
-    runStrict ⟨[p], [s], []⟩ n ≠ runInterleaved ⟨[s, p], []⟩ n := by
-  rw [runStrict_singleton, runInterleaved_no_metathesis]
-  exact h
+/-- The structural change of a rule: delete features, or the whole argument. -/
+inductive Change where
+  | delete (fs : Arg)
+  | obliterate
 
-/-- A two-step pipeline that runs impoverishment then metathesis at a
-    neighborhood (the order both A&N and Middleton endorse). -/
-def runImpovThenMeta (rs : List (ImpoverishmentRule FeatureBundle FeatureVal))
-    (ms : List MetathesisRule)
-    (n : Neighborhood FeatureBundle) : FeatureBundle :=
-  applyMetathesisChain ms { n with focus := applyImpoverishmentChain rs n }
+/-- Apply a change to an argument. -/
+def Change.apply : Change → Option Arg → Option Arg
+  | .delete fs, some a => some (a.filter fun f ↦ !fs.contains f)
+  | .delete _, none => none
+  | .obliterate, _ => none
 
-/-- The reversed two-step pipeline: metathesis first, then impoverishment
-    (the order both A&N and Middleton reject — supported by Basque in §3.1
-    and by Taos in §3.2 of [middleton-2026]). -/
-def runMetaThenImpov (rs : List (ImpoverishmentRule FeatureBundle FeatureVal))
-    (ms : List MetathesisRule)
-    (n : Neighborhood FeatureBundle) : FeatureBundle :=
-  applyImpoverishmentChain rs { n with focus := applyMetathesisChain ms n }
+/-- A rule of impoverishment over the prefix. -/
+structure Rule where
+  /-- The slot whose argument the rule changes. -/
+  slot : Slot
+  /-- The rule at that slot's neighborhood. -/
+  rule : ImpoverishmentRule (Option Arg) Change
 
-/-- **Metathesis-after-impoverishment is non-trivial.** If a single
-    impoverishment rule `r` and a single metathesis rule `m` produce
-    different focuses depending on order at `n`, then `runImpovThenMeta`
-    and `runMetaThenImpov` differ — i.e., the architectural choice has
-    empirical content. -/
-theorem runImpov_neq_runMeta_of_diverges
-    (r : ImpoverishmentRule FeatureBundle FeatureVal) (m : MetathesisRule)
-    (n : Neighborhood FeatureBundle)
-    (h : applyMetathesisChain [m] { n with focus := applyImpoverishment r n } ≠
-         applyImpoverishment r { n with focus := applyMetathesis m n }) :
-    runImpovThenMeta [r] [m] n ≠ runMetaThenImpov [r] [m] n := by
-  intro heq
-  apply h
-  simp only [runImpovThenMeta, runMetaThenImpov, applyImpoverishmentChain,
-             runChain, List.foldl_cons, List.foldl_nil] at heq
-  exact heq
+namespace Rule
 
-/-! ### Two Schematic Rules in Distinct Phases -/
+/-- A rule conditioned by its own slot's argument. -/
+def paradigmatic (s : Slot) (check : Option Arg → Bool) (c : Change) : Rule :=
+  ⟨s, .paradigmatic check c⟩
 
-/-- A **paradigmatic** rule: deletes `[+atomic]` whenever the focus
-    contains both `[+author]` and `[+minimal]`. The condition refers
-    only to the focus, so the rule is paradigmatic by construction
-    (`paradigmatic_isParadigmatic`).
+/-- A rule conditioned by the neighborhood. -/
+def syntagmatic (s : Slot) (cond : Neighborhood (Option Arg) → Bool) (c : Change) : Rule :=
+  ⟨s, .syntagmatic cond c⟩
 
-    This is a minimal stand-in for the paradigmatic rules involved in
-    [middleton-2026] §4.2.1–§4.2.4 — it is not a transcription of
-    any specific paper rule. -/
-def paraAtomicRule : ImpoverishmentRule FeatureBundle FeatureVal :=
-  ImpoverishmentRule.paradigmatic
-    (λ fb =>
-      (FeatureBundle.toGramFeatures fb).any (λ f => f.featureType.sameType (fAuthor true)) &&
-      (FeatureBundle.toGramFeatures fb).any (λ f => f.featureType.sameType (fMinimal true)))
-    (fAtomic true)
+/-- Apply the rule to the prefix. -/
+def apply (r : Rule) (p : Prefix) : Prefix :=
+  p.set r.slot (r.rule.apply (fun a c ↦ c.apply a) (p.around r.slot))
 
-theorem paraAtomicRule_isParadigmatic : ImpoverishmentRule.Paradigmatic paraAtomicRule :=
-  ImpoverishmentRule.paradigmatic_isParadigmatic _ _
+/-- The rule is paradigmatic: its condition factors through its own slot. -/
+def Paradigmatic (r : Rule) : Prop := r.rule.Paradigmatic
 
-/-- A **syntagmatic** rule: deletes `[+minimal]` when the focus
-    contains `[+atomic]` *and* there is at least one bundle of
-    object-context to the right (the schematic `[O 3i]` condition,
-    weakened to bare presence — sufficient for the bleeding/feeding
-    interaction the paper diagnoses). The dependence on `rightCtx`
-    is what makes the rule syntagmatic, and `synMinimalRule_isSyntagmatic`
-    proves it. -/
-def synMinimalRule : ImpoverishmentRule FeatureBundle FeatureVal where
-  condition n :=
-    ((FeatureBundle.toGramFeatures n.focus).any
-        (λ f => f.featureType.sameType (fAtomic true)) = true)
-    ∧ (n.rightCtx.length > 0)
-  decCond _ := inferInstance
-  target := fMinimal true
+/-- The rule is syntagmatic: its condition reads another slot. -/
+def Syntagmatic (r : Rule) : Prop := r.rule.Syntagmatic
 
-/-- The two rules are genuinely in distinct phases: `synMinimalRule`
-    actually depends on its right-context (it is *not* paradigmatic).
-    Witness: two neighborhoods that share a focus but differ on
-    `rightCtx`. -/
-theorem synMinimalRule_isSyntagmatic : ImpoverishmentRule.Syntagmatic synMinimalRule := by
-  intro hPara
-  let fb : FeatureBundle :=
-    .ofGramFeatures [.valued (fAtomic true), .valued (fMinimal true)]
-  let n₁ : Neighborhood FeatureBundle :=
-    { focus := fb, leftCtx := [], rightCtx := [argBundle person3 numSg] }
-  let n₂ : Neighborhood FeatureBundle := { focus := fb, leftCtx := [], rightCtx := [] }
-  have hfoc : n₁.focus = n₂.focus := rfl
-  have h := hPara n₁ n₂ hfoc
-  have h₁ : synMinimalRule.condition n₁ := by decide
-  have h₂ : ¬ synMinimalRule.condition n₂ := by decide
-  exact h₂ (h.mp h₁)
+theorem paradigmatic_isParadigmatic (s : Slot) (check : Option Arg → Bool) (c : Change) :
+    (paradigmatic s check c).Paradigmatic :=
+  ImpoverishmentRule.paradigmatic_isParadigmatic check c
 
-/-! ### A Real-Shaped Taos Witness -/
+end Rule
 
-/-- Witness focus: a 1s-style bundle `[+author, +atomic, +minimal]`
-    (suppressing `[+participant]`, which is irrelevant to either rule). -/
-def witnessFocus : FeatureBundle :=
-  .ofGramFeatures
-    [.valued (fAuthor true),
-     .valued (fAtomic true),
-     .valued (fMinimal true)]
+/-- Apply a sequence of rules in order. -/
+def run (rs : List Rule) (p : Prefix) : Prefix := rs.foldl (fun p r ↦ r.apply p) p
 
-/-- Witness neighborhood: the 1s-style focus, with a real 3s
-    bundle to the right standing in for the Taos object slot
-    that conditions `synMinimalRule`. -/
-def witness : Neighborhood FeatureBundle :=
-  { focus := witnessFocus,
-    leftCtx := [],
-    rightCtx := [argBundle person3 numSg] }
+@[simp] theorem run_nil (p : Prefix) : run [] p = p := rfl
 
-/-- Run para-then-syn (the order A&N's strict pipeline forces). -/
-def stripParaSyn : FeatureBundle :=
-  applyImpoverishmentChain [paraAtomicRule, synMinimalRule] witness
+@[simp] theorem run_cons (r : Rule) (rs : List Rule) (p : Prefix) :
+    run (r :: rs) p = run rs (r.apply p) := rfl
 
-/-- Run syn-then-para (the order Middleton's interleaved pipeline can
-    choose). -/
-def stripSynPara : FeatureBundle :=
-  applyImpoverishmentChain [synMinimalRule, paraAtomicRule] witness
+/-! ### The block architecture
 
-/-! ### The Two Orderings Yield Different Outputs -/
+Arregi and Nevins's (72), `Exponence Conversion > Paradigmatic > Syntagmatic`: the
+paradigmatic rules form a block before the syntagmatic ones. -/
 
-/-- Para-then-syn (= A&N): `paraAtomicRule` deletes `[+atomic]` first;
-    `synMinimalRule` then can't fire (no `[+atomic]` left in focus).
-    The `[+minimal]` survives. -/
-theorem stripParaSyn_eq :
-    stripParaSyn =
-      .ofGramFeatures [.valued (fAuthor true), .valued (fMinimal true)] := by
+/-- A rule sequence respects the block architecture: no syntagmatic rule precedes a
+paradigmatic one. -/
+def ParaThenSyn (rs : List Rule) : Prop :=
+  rs.Pairwise fun r r' ↦ r'.Paradigmatic → r.Paradigmatic
+
+/-- A paradigmatic block followed by a syntagmatic block respects the architecture. -/
+theorem paraThenSyn_append {A B : List Rule} (hA : ∀ r ∈ A, r.Paradigmatic)
+    (hB : ∀ r ∈ B, r.Syntagmatic) : ParaThenSyn (A ++ B) :=
+  List.pairwise_append.mpr
+    ⟨List.pairwise_of_forall_mem_list fun r hr _ _ _ ↦ hA r hr,
+     List.pairwise_of_forall_mem_list fun _ _ r' hr' h ↦ absurd h (hB r' hr'),
+     fun r hr _ _ _ ↦ hA r hr⟩
+
+/-- A paradigmatic and a syntagmatic rule have exactly one order that respects the
+architecture. -/
+theorem ParaThenSyn.eq_of_perm {p s : Rule} (hp : p.Paradigmatic) (hs : s.Syntagmatic)
+    {l : List Rule} (hl : ParaThenSyn l) (hperm : l.Perm [p, s]) : l = [p, s] := by
+  rcases List.perm_pair.mp hperm with rfl | rfl
+  · rfl
+  · exact absurd ((List.pairwise_cons.mp hl).1 p (List.mem_singleton_self p) hp) hs
+
+/-- Under the block architecture, a paradigmatic and a syntagmatic rule apply in that order. -/
+theorem run_eq_of_paraThenSyn {p s : Rule} (hp : p.Paradigmatic) (hs : s.Syntagmatic)
+    {l : List Rule} (hl : ParaThenSyn l) (hperm : l.Perm [p, s]) (q : Prefix) :
+    run l q = run [p, s] q := by
+  rw [hl.eq_of_perm hp hs hperm]
+
+/-! ### The Taos rules
+
+The paper's rules of impoverishment, by number. Each syntagmatic rule is proved syntagmatic by
+two neighborhoods that share a focus and differ on the condition. -/
+
+/-- (32a), syntagmatic: a singular object loses its third person in the presence of an
+agent. -/
+def thirdSingularObject : Rule :=
+  .syntagmatic .object
+    (fun n ↦ (Slot.object.view .agent n).isSome && n.focus.any (singular.bears ·))
+    (.delete third)
+
+/-- (32b), syntagmatic: an inverse `[−author]` object loses `[−participant]` in the presence
+of an agent. -/
+def inverseObject : Rule :=
+  .syntagmatic .object
+    (fun n ↦ (Slot.object.view .agent n).isSome &&
+      n.focus.any fun o ↦ Arg.bears [FeatureVal.author false] o && decide (Inverse o))
+    (.delete [FeatureVal.participant false])
+
+/-- (35), paradigmatic: a third singular agent is obliterated, with or without an object. -/
+def thirdSingularAgent : Rule :=
+  .paradigmatic .agent (·.any ((third ++ singular).bears ·)) .obliterate
+
+/-- (36a), syntagmatic: the dummy object is obliterated after a singular agent. -/
+def dummyObject : Rule :=
+  .syntagmatic .object
+    (fun n ↦ (Slot.object.view .agent n).any (Arg.bears [FeatureVal.atomic true] ·) &&
+      n.focus == some [])
+    .obliterate
+
+/-- (36b), syntagmatic: the object loses its singular features after a singular agent. -/
+def singularObject : Rule :=
+  .syntagmatic .object
+    (fun n ↦ (Slot.object.view .agent n).any (Arg.bears [FeatureVal.atomic true] ·))
+    (.delete singular)
+
+/-- (37), syntagmatic: a first or second singular agent loses `[+minimal]` before a singular
+or dummy object. -/
+def agentMinimal : Rule :=
+  .syntagmatic .agent
+    (fun n ↦ n.focus.any (Arg.bears [FeatureVal.participant true, .atomic true] ·) &&
+      (Slot.agent.view .object n).any fun o ↦ singular.bears o || o == [])
+    (.delete [FeatureVal.minimal true])
+
+/-- (39), paradigmatic: a second singular agent loses `[+participant]`. -/
+def secondSingularAgent : Rule :=
+  .paradigmatic .agent (·.any (Arg.bears [FeatureVal.author false, .atomic true] ·))
+    (.delete [FeatureVal.participant true])
+
+/-- (40), syntagmatic: a singular object loses its third person after a singular goal. -/
+def thirdObjectOfSingularGoal : Rule :=
+  .syntagmatic .object
+    (fun n ↦ (Slot.object.view .goal n).any (singular.bears ·) &&
+      n.focus.any (singular.bears ·))
+    (.delete third)
+
+/-- (41), syntagmatic: a `[−author]` goal loses its singular features between a dual agent
+and a third singular object. -/
+def singularGoal : Rule :=
+  .syntagmatic .goal
+    (fun n ↦ (Slot.goal.view .agent n).any (dual.bears ·) &&
+      n.focus.any (Arg.bears [FeatureVal.author false] ·) &&
+      (Slot.goal.view .object n).any ((third ++ singular).bears ·))
+    (.delete singular)
+
+/-- (43), paradigmatic: a first person `[+minimal]` goal loses `[+atomic]`. -/
+def firstSingularGoal : Rule :=
+  .paradigmatic .goal (·.any ((first ++ [FeatureVal.minimal true]).bears ·))
+    (.delete [FeatureVal.atomic true])
+
+/-- Slot `s` holds the leftmost number features of the neighborhood. -/
+def leftmostNumber (s : Slot) (n : Neighborhood (Option Arg)) : Bool :=
+  s.before.all fun t ↦ !(s.view t n).any Arg.hasNumber
+
+/-- (44), syntagmatic: the leftmost number bundle, in slot `s`, loses `[+minimal]` when it is
+singular and the object is third person inverse. -/
+def leftmostMinimal (s : Slot) : Rule :=
+  .syntagmatic s
+    (fun n ↦ leftmostNumber s n && n.focus.any (Arg.bears [FeatureVal.atomic true] ·) &&
+      (s.view .object n).any fun o ↦ third.bears o && decide (Inverse o))
+    (.delete [FeatureVal.minimal true])
+
+theorem thirdSingularAgent_paradigmatic : thirdSingularAgent.Paradigmatic :=
+  Rule.paradigmatic_isParadigmatic _ _ _
+
+theorem secondSingularAgent_paradigmatic : secondSingularAgent.Paradigmatic :=
+  Rule.paradigmatic_isParadigmatic _ _ _
+
+theorem firstSingularGoal_paradigmatic : firstSingularGoal.Paradigmatic :=
+  Rule.paradigmatic_isParadigmatic _ _ _
+
+/-- The 3S:3S transitive prefix, Table 15: ∅. -/
+def prefix3S3S : Prefix := ⟨some (third ++ singular), none, some (third ++ singular)⟩
+
+/-- The 3S:3I transitive prefix, Table 15: *í*, for any inverse third person object. -/
+def prefix3S3I (o : Arg) : Prefix := ⟨some (third ++ singular), none, some o⟩
+
+/-- The 3S:no transitive prefix, Table 16: ∅. -/
+def prefix3Sno : Prefix := ⟨some (third ++ singular), none, some []⟩
+
+/-- The 2S:3S transitive prefix, Table 17: *o*. -/
+def prefix2S3S : Prefix := ⟨some (second ++ singular), none, some (third ++ singular)⟩
+
+/-- The 2S intransitive prefix, Table 17: *ǫ*. -/
+def prefix2S : Prefix := ⟨some (second ++ singular), none, none⟩
+
+/-- The 1S:3S possessive prefix, Table 22: *ôn*. -/
+def prefix1S3S : Prefix := ⟨none, some (first ++ singular), some (third ++ singular)⟩
+
+/-- The 1S:3I possessive prefix, Table 22: *ónôm*, for any inverse third person object. -/
+def prefix1S3I (o : Arg) : Prefix := ⟨none, some (first ++ singular), some o⟩
+
+/-- The 1D:3S:3S ditransitive prefix, Table 21: *opénôm*. -/
+def prefix1D3S3S : Prefix :=
+  ⟨some (first ++ dual), some (third ++ singular), some (third ++ singular)⟩
+
+theorem thirdSingularObject_syntagmatic : thirdSingularObject.Syntagmatic := by
+  intro h
+  exact absurd ((h (prefix3S3S.around .object)
+    ((⟨none, none, some (third ++ singular)⟩ : Prefix).around .object) rfl).mp (by decide))
+    (by decide)
+
+theorem dummyObject_syntagmatic : dummyObject.Syntagmatic := by
+  intro h
+  exact absurd ((h (prefix3Sno.around .object) ((⟨none, none, some []⟩ : Prefix).around .object)
+    rfl).mp (by decide)) (by decide)
+
+theorem singularObject_syntagmatic : singularObject.Syntagmatic := by
+  intro h
+  exact absurd ((h (prefix3S3S.around .object)
+    ((⟨none, none, some (third ++ singular)⟩ : Prefix).around .object) rfl).mp (by decide))
+    (by decide)
+
+theorem agentMinimal_syntagmatic : agentMinimal.Syntagmatic := by
+  intro h
+  exact absurd ((h (prefix2S3S.around .agent) (prefix2S.around .agent) rfl).mp (by decide))
+    (by decide)
+
+theorem thirdObjectOfSingularGoal_syntagmatic : thirdObjectOfSingularGoal.Syntagmatic := by
+  intro h
+  exact absurd ((h (prefix1S3S.around .object) (prefix3S3S.around .object) rfl).mp (by decide))
+    (by decide)
+
+theorem singularGoal_syntagmatic : singularGoal.Syntagmatic := by
+  intro h
+  exact absurd ((h (prefix1D3S3S.around .goal)
+    ((⟨none, some (third ++ singular), some (third ++ singular)⟩ : Prefix).around .goal) rfl).mp
+    (by decide)) (by decide)
+
+/-! ### Case 1 (§4.2.1): object impoverishment precedes agent impoverishment
+
+The 3S:3S prefix is ∅ (Table 15), so no *m*, the exponent of a third person object (31), is
+inserted: the object's third person must be gone at Vocabulary Insertion, which (32a) does only
+while the agent is still there for its context. -/
+
+theorem case1_syn_para :
+    run [thirdSingularObject, thirdSingularAgent] prefix3S3S = ⟨none, none, some singular⟩ := by
   decide
 
-/-- Syn-then-para (= Middleton): `synMinimalRule` fires first (focus
-    has `[+atomic]`, rightCtx non-empty), deleting `[+minimal]`;
-    `paraAtomicRule` then can't fire (no `[+minimal]` left in focus).
-    The `[+atomic]` survives instead. -/
-theorem stripSynPara_eq :
-    stripSynPara =
-      .ofGramFeatures [.valued (fAuthor true), .valued (fAtomic true)] := by
+theorem case1_para_syn :
+    run [thirdSingularAgent, thirdSingularObject] prefix3S3S =
+      ⟨none, none, some (third ++ singular)⟩ := by
   decide
 
-/-- The two orders produce different feature bundles at this
-    neighborhood. -/
-theorem orderings_diverge : stripParaSyn ≠ stripSynPara := by
-  rw [stripParaSyn_eq, stripSynPara_eq]
+theorem case1_orders_differ :
+    run [thirdSingularObject, thirdSingularAgent] prefix3S3S ≠
+      run [thirdSingularAgent, thirdSingularObject] prefix3S3S := by
   decide
 
-/-! ### A&N's Strict Pipeline Cannot Reach the Syn-First Output -/
+/-- The block architecture keeps the object's third person, and so inserts *m*. -/
+theorem case1_block (l : List Rule) (hl : ParaThenSyn l)
+    (hperm : l.Perm [thirdSingularAgent, thirdSingularObject]) :
+    (run l prefix3S3S).object = some (third ++ singular) := by
+  rw [run_eq_of_paraThenSyn thirdSingularAgent_paradigmatic thirdSingularObject_syntagmatic hl
+    hperm, case1_para_syn]
 
-/-- The schematic A&N postsyntax that contains exactly `paraAtomicRule`
-    in the paradigmatic phase and `synMinimalRule` in the syntagmatic
-    phase, with no metathesis. -/
-def arregiNevinsPostsyntax : ModularPostsyntax :=
-  { paradigmatic := [paraAtomicRule]
-    syntagmatic  := [synMinimalRule]
-    metathesis   := [] }
+/-- The same for the 3S:3I prefix and (32b): syntagmatic first, the object loses
+`[−participant]`; paradigmatic first, it keeps it. -/
+theorem case1_inverse (o : Arg) (ho : third.bears o ∧ Inverse o) :
+    (∀ x ∈ (run [inverseObject, thirdSingularAgent] (prefix3S3I o)).object,
+        FeatureVal.participant false ∉ x) ∧
+      (run [thirdSingularAgent, inverseObject] (prefix3S3I o)).object = some o := by
+  obtain ⟨h₁, h₂⟩ := ho
+  simp only [Arg.bears, third, List.all_cons, List.all_nil, Bool.and_true, Bool.and_eq_true,
+    List.contains_iff_mem] at h₁
+  simp [run, Rule.apply, Prefix.set, Prefix.around, Slot.view, inverseObject, thirdSingularAgent,
+    Rule.syntagmatic, Rule.paradigmatic, ImpoverishmentRule.apply, ImpoverishmentRule.syntagmatic,
+    ImpoverishmentRule.paradigmatic, Change.apply, prefix3S3I, h₁, h₂, third, singular,
+    Arg.bears]
 
-/-- The schematic Middleton interleaved postsyntax, with the
-    syntagmatic rule scheduled first — the order required by the
-    §4.2.1–§4.2.4 Taos cases. -/
-def middletonPostsyntax : InterleavedPostsyntax :=
-  { impoverishment := [synMinimalRule, paraAtomicRule]
-    metathesis     := [] }
+/-! ### Case 2 (§4.2.2): dummy object impoverishment precedes agent impoverishment
 
-/-- A&N's pipeline computes the para-first answer at the witness. -/
-theorem arregiNevins_witness :
-    runStrict arregiNevinsPostsyntax witness =
-      .ofGramFeatures [.valued (fAuthor true), .valued (fMinimal true)] := by
-  show runStrict { paradigmatic := [paraAtomicRule]
-                   syntagmatic := [synMinimalRule]
-                   metathesis := [] } witness = _
-  rw [runStrict_forces_paraSyn_order paraAtomicRule synMinimalRule witness]
-  exact stripParaSyn_eq
+The 3S:no and 3S:3S prefixes are ∅ and toneless (Table 16), so the object is obliterated and its
+singular features deleted by (36), which need the singular agent that (35) removes. -/
 
-/-- Middleton's pipeline computes the (different) syn-first answer. -/
-theorem middleton_witness :
-    runInterleaved middletonPostsyntax witness =
-      .ofGramFeatures [.valued (fAuthor true), .valued (fAtomic true)] := by
-  show runInterleaved { impoverishment := [synMinimalRule, paraAtomicRule]
-                        metathesis := [] } witness = _
-  rw [runInterleaved_admits_synPara paraAtomicRule synMinimalRule witness]
-  exact stripSynPara_eq
-
-/-- **Architectural inadequacy of `runStrict` for Taos.** At the
-    witness neighborhood, the strict A&N pipeline and Middleton's
-    interleaved one return different feature bundles. Hence no
-    `ModularPostsyntax` built from `paraAtomicRule` (paradigmatic) and
-    `synMinimalRule` (syntagmatic) — and no extension that adds
-    further rules to the same phases — can yield the syn-first output
-    that Taos requires in [middleton-2026] §4.2.1–§4.2.4. -/
-theorem arregiNevins_neq_middleton_at_witness :
-    runStrict arregiNevinsPostsyntax witness ≠
-      runInterleaved middletonPostsyntax witness := by
-  rw [arregiNevins_witness, middleton_witness]
+theorem case2_dummy_syn_para :
+    run [dummyObject, thirdSingularAgent] prefix3Sno = ⟨none, none, none⟩ := by
   decide
 
-/-! ### Metathesis Still Follows Impoverishment (the Uphold) -/
-
-/-- A metathesis rule that swaps `[+author]` with `[+atomic]` when the
-    focus contains all three of `[+author]`, `[+atomic]`, `[+minimal]`.
-    Schematic of [middleton-2026]'s metathesis rules: a metathesis
-    triggered in the presence of a particular number feature. The
-    dependence on `[+minimal]` is what couples this rule to
-    `synMinimalRule` (which deletes `[+minimal]`), so that the IM/MI
-    orders diverge — the empirically motivated witness of "metathesis
-    after impoverishment, not before." -/
-def authorAtomicMetathesis : MetathesisRule :=
-  focusRule
-    (λ fb =>
-      (FeatureBundle.toGramFeatures fb).any (λ f => f.featureType.sameType (fAuthor true)) &&
-      (FeatureBundle.toGramFeatures fb).any (λ f => f.featureType.sameType (fAtomic true)) &&
-      (FeatureBundle.toGramFeatures fb).any (λ f => f.featureType.sameType (fMinimal true)))
-    (fAuthor true)
-    (fAtomic true)
-
-/-! Metathesis reorders the *exponent string* of a terminal; the canonical
-`FeatureBundle` (a dimension-keyed total assignment) is order-insensitive
-and cannot witness that reordering. The order-sensitive content of
-[middleton-2026]'s "metathesis must follow impoverishment" claim is
-therefore stated on the ordered exponent view `List GramFeature`. (The
-whole-terminal Basque half below, where order lives at the *phrase* level
-in `List FeatureBundle`, is unaffected and witnesses the same claim with a
-different rule shape.) -/
-
-/-- Apply a metathesis rule to an ordered exponent string: when the rule's
-    condition holds at the corresponding bundle, swap the first occurrences
-    of `swapFst` and `swapSnd` in the list; otherwise leave it unchanged. -/
-def applyMetathesisExp (rule : MetathesisRule) (l : List GramFeature) :
-    List GramFeature :=
-  if rule.condition (Neighborhood.ofBundle (.ofGramFeatures l)) then
-    match indexOfType l rule.swapFst, indexOfType l rule.swapSnd with
-    | some i, some j => swapAt l i j
-    | _, _ => l
-  else l
-
-/-- Apply an impoverishment rule to an ordered exponent string in the
-    witness context: when the rule fires, drop every exponent of the
-    target's dimension, preserving the order of the survivors. -/
-def applyImpovExp (rule : ImpoverishmentRule FeatureBundle FeatureVal) (l : List GramFeature) :
-    List GramFeature :=
-  if rule.condition { witness with focus := .ofGramFeatures l } then
-    l.filter (λ f => ! f.featureType.sameType rule.target)
-  else l
-
-/-- Witness exponent string: `[+author, +atomic, +minimal]`, the ordered
-    view of `witnessFocus`. -/
-def witnessExp : List GramFeature :=
-  FeatureBundle.toGramFeatures witnessFocus
-
-/-- Impoverishment-then-metathesis (Middleton's and A&N's shared
-    order), on the exponent string. -/
-def derivIM : List GramFeature :=
-  applyMetathesisExp authorAtomicMetathesis (applyImpovExp synMinimalRule witnessExp)
-
-/-- Metathesis-then-impoverishment (the order both authors reject), on the
-    exponent string. -/
-def derivMI : List GramFeature :=
-  applyImpovExp synMinimalRule (applyMetathesisExp authorAtomicMetathesis witnessExp)
-
-/-- The two orders of impoverishment vs. metathesis genuinely diverge
-    at the witness, witnessing the architectural fact that metathesis
-    must follow impoverishment. In `derivIM`, `synMinimalRule` first
-    deletes `[+minimal]`, bleeding the metathesis condition, so the
-    exponents stay in `[+author, +atomic]` order; in `derivMI`,
-    metathesis fires first and swaps them to `[+atomic, +author]` before
-    `[+minimal]` is deleted. -/
-theorem impov_before_meta_diverges_from_meta_before_impov :
-    derivIM ≠ derivMI := by
+theorem case2_dummy_para_syn :
+    run [thirdSingularAgent, dummyObject] prefix3Sno = ⟨none, none, some []⟩ := by
   decide
 
-/-! ### Postsyntax Feeds Vocabulary Insertion -/
-
-/-- The post-postsyntactic focus bundle from A&N's strict pipeline at
-    the witness — extracted as a top-level def so it is the input to
-    Vocabulary Insertion below. -/
-def arregiNevinsOutput : FeatureBundle :=
-  runStrict arregiNevinsPostsyntax witness
-
-/-- The post-postsyntactic focus bundle from Middleton's interleaved
-    pipeline at the witness. -/
-def middletonOutput : FeatureBundle :=
-  runInterleaved middletonPostsyntax witness
-
-/-- A small schematic Vocabulary Item set keyed on `FeatureVal`. The
-    Subset Principle ([halle-marantz-1993]) selects the longest
-    matching entry. We use `Morpheme.surface` for the exponents to
-    keep the connection to the Taos morpheme inventory in the
-    Fragment. -/
-def viSet : List (VocabularyItem FeatureVal String) :=
-  [ -- specific: 1st-person + minimal (surfaces with `n` per [middleton-2026] rule 21)
-    [fAuthor true, fMinimal true] ⟷ Morpheme.n.surface
-  , -- specific: 1st-person + atomic
-    [fAuthor true, fAtomic true] ⟷ Morpheme.o.surface
-  , -- elsewhere: empty feature spec, matches anything
-    [] ⟷ Morpheme.ô.surface ]
-
-/-- A&N's output feeds VI as `[+author, +minimal]`; the Subset
-    Principle selects the `[+author, +minimal]` entry over the
-    elsewhere `ô`. Surface form: `n`. -/
-theorem arregiNevinsOutput_inserts_n :
-    subsetPrinciple viSet
-        ((FeatureBundle.toGramFeatures arregiNevinsOutput).map GramFeature.featureType) =
-      some Morpheme.n.surface := by
+theorem case2_singular_syn_para :
+    run [thirdSingularObject, singularObject, thirdSingularAgent] prefix3S3S =
+      ⟨none, none, some []⟩ := by
   decide
 
-/-- Middleton's output feeds VI as `[+author, +atomic]`; the Subset
-    Principle selects the `[+author, +atomic]` entry. Surface form:
-    `o`. The two architectures predict *different surface forms* at
-    the same input — the empirical bite of the architectural
-    divergence. -/
-theorem middletonOutput_inserts_o :
-    subsetPrinciple viSet
-        ((FeatureBundle.toGramFeatures middletonOutput).map GramFeature.featureType) =
-      some Morpheme.o.surface := by
+theorem case2_singular_para_syn :
+    run [thirdSingularAgent, thirdSingularObject, singularObject] prefix3S3S =
+      ⟨none, none, some (third ++ singular)⟩ := by
   decide
 
-/-- The architectural divergence shows up at the level of surface
-    exponents, not just feature bundles: the same input neighborhood
-    yields different morphemes under the two pipelines. -/
-theorem arregiNevins_vs_middleton_surface :
-    subsetPrinciple viSet
-        ((FeatureBundle.toGramFeatures arregiNevinsOutput).map GramFeature.featureType) ≠
-      subsetPrinciple viSet
-        ((FeatureBundle.toGramFeatures middletonOutput).map GramFeature.featureType) := by
-  rw [arregiNevinsOutput_inserts_n, middletonOutput_inserts_o]
+theorem case2_orders_differ :
+    run [dummyObject, thirdSingularAgent] prefix3Sno ≠
+      run [thirdSingularAgent, dummyObject] prefix3Sno := by
   decide
 
-/-! ### Basque — Whole-Terminal Postsyntax (Middleton §3.1)
+/-- The block architecture keeps the dummy object. -/
+theorem case2_block (l : List Rule) (hl : ParaThenSyn l)
+    (hperm : l.Perm [thirdSingularAgent, dummyObject]) :
+    (run l prefix3Sno).object = some [] := by
+  rw [run_eq_of_paraThenSyn thirdSingularAgent_paradigmatic dummyObject_syntagmatic hl hperm,
+    case2_dummy_para_syn]
 
-The Basque half of the paper operates on whole terminals, not features
-within a terminal. The domain-level rule shapes are
-`DistributedMorphology.ObliterationRule` (whole-terminal deletion) and
-`DistributedMorphology.TerminalMetathesisRule` (adjacent-terminal swap)
-from `Spellout.lean`; this section instantiates them as Participant
-Dissimilation and Ergative Metathesis and states the Ondarru divergence
-witness. Embick & Noyer 2001 call rules of the terminal-metathesis shape
-"Local Dislocation". -/
+/-! ### Case 3 (§4.2.3): `[+minimal]` impoverishment precedes `[+participant]` impoverishment
 
-/-- Run obliteration first, then terminal metathesis — the endorsed
-    pipeline of both [arregi-nevins-2012] and [middleton-2026]. -/
-def runPhraseImpovThenMeta
-    (impovs : List (ObliterationRule FeatureBundle))
-    (metas : List (TerminalMetathesisRule FeatureBundle))
-    (phrase : SpelloutDomain FeatureBundle) : SpelloutDomain FeatureBundle :=
-  runModules (impovs.map (·.apply) ++ metas.map (·.apply)) phrase
+The 2S:3S transitive prefix *o* differs from the 2S intransitive *ǫ* (Table 17), so the two
+agents differ at Vocabulary Insertion. (37) makes them differ by deleting `[+minimal]` from the
+transitive agent, and needs the `[+participant]` that (39) deletes. -/
 
-/-- Run terminal metathesis first, then obliteration — the order both
-    authors reject; the Basque Ondarru `*s-endu-s-n` form
-    [middleton-2026] (17b) is the diagnostic witness. -/
-def runPhraseMetaThenImpov
-    (impovs : List (ObliterationRule FeatureBundle))
-    (metas : List (TerminalMetathesisRule FeatureBundle))
-    (phrase : SpelloutDomain FeatureBundle) : SpelloutDomain FeatureBundle :=
-  runModules (metas.map (·.apply) ++ impovs.map (·.apply)) phrase
+theorem case3_syn_para :
+    (run [agentMinimal, secondSingularAgent] prefix2S3S).agent =
+      some [.author false, .atomic true] := by
+  decide
 
-/-- **Participant Dissimilation** ([middleton-2026] (16),
-    [arregi-nevins-2012] §4.6). Delete a 1p absolutive clitic
-    (`[CL +participant +author]`) when there is a participant ergative
-    clitic somewhere to the right in the same auxiliary. The rule
-    operates at the terminal level — it deletes a whole bundle, not a
-    feature within one. -/
-def participantDissimilation : ObliterationRule FeatureBundle :=
-  .ofBool fun n ↦ isAbsParticipantAuthor n.focus && n.rightCtx.any isErgParticipant
+theorem case3_para_syn :
+    (run [secondSingularAgent, agentMinimal] prefix2S3S).agent =
+      (run [secondSingularAgent] prefix2S).agent := by
+  decide
 
-/-- **Ergative Metathesis** ([middleton-2026] (13),
-    [arregi-nevins-2012] §3.2). Swap T with an immediately
-    following ergative clitic when T is leftmost in the auxiliary.
-    The leftmost requirement (`n.leftCtx.isEmpty`) is what lets
-    Participant Dissimilation *feed* Ergative Metathesis: only
-    after PD deletes the absolutive clitic does T become leftmost. -/
-def ergativeMetathesis : TerminalMetathesisRule FeatureBundle :=
-  .ofBool fun n ↦ n.leftCtx.isEmpty && isT n.focus && n.rightCtx.head?.any isErgClitic
+theorem case3_orders_differ :
+    run [agentMinimal, secondSingularAgent] prefix2S3S ≠
+      run [secondSingularAgent, agentMinimal] prefix2S3S := by
+  decide
 
-/-- The Ondarru witness phrase from [middleton-2026] (17a):
-    `s-endu-n` `[1pABS, T:past, 2sERG]`. The complementizer is
-    suppressed — it does not participate in either rule. -/
-def basqueWitnessPhrase : SpelloutDomain FeatureBundle :=
-  [abs1pAuthor, tPast, erg2s]
+/-- The block architecture makes the transitive and intransitive 2S agents identical. -/
+theorem case3_block (l : List Rule) (hl : ParaThenSyn l)
+    (hperm : l.Perm [secondSingularAgent, agentMinimal]) :
+    (run l prefix2S3S).agent = (run [secondSingularAgent] prefix2S).agent := by
+  rw [run_eq_of_paraThenSyn secondSingularAgent_paradigmatic agentMinimal_syntagmatic hl hperm,
+    case3_para_syn]
 
-/-- **PD-then-Meta surface form (the grammatical s-endu-n order).**
-    PD deletes the absolutive 1p, leaving `[T, ERG]`; with T now
-    leftmost, Ergative Metathesis swaps to `[ERG, T]` — the order
-    that surfaces as `s-endu-n`. -/
-theorem basqueImpovThenMeta_eq :
-    runPhraseImpovThenMeta [participantDissimilation] [ergativeMetathesis]
-        basqueWitnessPhrase
-      = [erg2s, tPast] := by decide
+/-! ### Case 4 (§4.2.4): third singular object impoverishment precedes possessive impoverishment
 
-/-- **Meta-then-PD surface form (the rejected *17b order).**
-    Ergative Metathesis cannot fire at the input — T is not
-    leftmost (the absolutive clitic precedes it). PD then deletes
-    the absolutive clitic, but it is too late to feed metathesis;
-    the result is the T-leftmost order `[T, ERG]`, the form
-    [middleton-2026] marks ungrammatical (would require
-    L-Support repair `*d-endu-s-n`). -/
-theorem basqueMetaThenImpov_eq :
-    runPhraseMetaThenImpov [participantDissimilation] [ergativeMetathesis]
-        basqueWitnessPhrase
-      = [tPast, erg2s] := by decide
+The 1S:3S possessive prefix is *ôn* (Table 22), with no *m*: the object's third person is
+deleted by (40), which needs the singular goal that (43) makes non-singular. -/
 
-/-- **The two phrase-level pipelines diverge on the Ondarru witness.**
-    This is the Basque counterpart to
-    `arregiNevins_neq_middleton_at_witness`; together they are the two
-    empirical legs of [middleton-2026]'s claim that metathesis must
-    follow impoverishment. -/
-theorem basque_orderings_diverge :
-    runPhraseImpovThenMeta [participantDissimilation] [ergativeMetathesis]
-        basqueWitnessPhrase
-      ≠ runPhraseMetaThenImpov [participantDissimilation] [ergativeMetathesis]
-        basqueWitnessPhrase := by
-  rw [basqueImpovThenMeta_eq, basqueMetaThenImpov_eq]
+theorem case4_syn_para :
+    run [thirdObjectOfSingularGoal, firstSingularGoal] prefix1S3S =
+      ⟨none, some (first ++ [FeatureVal.minimal true]), some singular⟩ := by
+  decide
+
+theorem case4_para_syn :
+    run [firstSingularGoal, thirdObjectOfSingularGoal] prefix1S3S =
+      ⟨none, some (first ++ [FeatureVal.minimal true]), some (third ++ singular)⟩ := by
+  decide
+
+theorem case4_orders_differ :
+    run [thirdObjectOfSingularGoal, firstSingularGoal] prefix1S3S ≠
+      run [firstSingularGoal, thirdObjectOfSingularGoal] prefix1S3S := by
+  decide
+
+/-- The block architecture keeps the object's third person, and so inserts *m*. -/
+theorem case4_block (l : List Rule) (hl : ParaThenSyn l)
+    (hperm : l.Perm [firstSingularGoal, thirdObjectOfSingularGoal]) :
+    (run l prefix1S3S).object = some (third ++ singular) := by
+  rw [run_eq_of_paraThenSyn firstSingularGoal_paradigmatic thirdObjectOfSingularGoal_syntagmatic
+    hl hperm, case4_para_syn]
+
+/-- (41) before (40) keeps the third person of the object of *opénôm* (Table 21), the *m*, by
+making the goal non-singular before (40) looks at it. -/
+theorem singularGoal_bleeds_thirdObjectOfSingularGoal :
+    (run [singularGoal, thirdObjectOfSingularGoal] prefix1D3S3S).object =
+        some (third ++ singular) ∧
+      (run [thirdObjectOfSingularGoal, singularGoal] prefix1D3S3S).object = some singular := by
+  decide
+
+/-! ### Case 5 (§4.2.5): a paradigmatic rule before a syntagmatic one
+
+The 1S:3I possessive prefix *ónôm* keeps *n*, the exponent of `[+minimal]` (21): (43) deletes
+the goal's `[+atomic]` first and bleeds (44), which would delete the `[+minimal]`. -/
+
+theorem case5_para_syn (o : Arg) (ho : third.bears o ∧ Inverse o) :
+    (run [firstSingularGoal, leftmostMinimal .goal] (prefix1S3I o)).goal =
+      some (first ++ [FeatureVal.minimal true]) := by
+  obtain ⟨_, h₂⟩ := ho
+  simp [run, Rule.apply, Prefix.set, Prefix.around, Slot.view, leftmostMinimal, leftmostNumber,
+    firstSingularGoal, Rule.syntagmatic, Rule.paradigmatic,
+    ImpoverishmentRule.apply, ImpoverishmentRule.syntagmatic, ImpoverishmentRule.paradigmatic,
+    Change.apply, prefix1S3I, h₂, first, singular, Arg.bears, Slot.before]
+
+theorem case5_syn_para (o : Arg) (ho : third.bears o ∧ Inverse o) :
+    (run [leftmostMinimal .goal, firstSingularGoal] (prefix1S3I o)).goal =
+      some (first ++ [FeatureVal.atomic true]) := by
+  obtain ⟨h₁, h₂⟩ := ho
+  simp only [Arg.bears, third, List.all_cons, List.all_nil, Bool.and_true, Bool.and_eq_true,
+    List.contains_iff_mem] at h₁
+  simp [run, Rule.apply, Prefix.set, Prefix.around, Slot.view, leftmostMinimal, leftmostNumber,
+    firstSingularGoal, Rule.syntagmatic, Rule.paradigmatic,
+    ImpoverishmentRule.apply, ImpoverishmentRule.syntagmatic, ImpoverishmentRule.paradigmatic,
+    Change.apply, prefix1S3I, h₁, h₂, first, third, singular, Arg.bears, Slot.before]
+
+/-! ### Impoverishment precedes metathesis in Taos (§3.2)
+
+After Linearization the prefix is a string of feature terminals, and the paper's metathesis
+rules swap adjacent ones: the library's `TerminalMetathesisRule` over `FeatureVal`. *opén*
+(Table 5, the 1D:3:no prefix of (25)) expones `[−atomic]` as *o*, `[−author]` as *pé* and
+`[+minimal]` as *n* ((20)–(22)), so its features must stand in the order `[−atomic] [−author]
+[+minimal]` at Vocabulary Insertion. -/
+
+/-- (24): in a goal, `[−author]` swaps with a following `[−atomic]` before `[+minimal]`. -/
+def dualGoalMetathesis : TerminalMetathesisRule FeatureVal :=
+  .ofBool fun n ↦ n.focus == .author false && n.rightCtx.take 2 == [.atomic false, .minimal true]
+
+/-- (26): after a dual agent's `[−atomic]`, its `[+minimal]` swaps with a following
+`[−author]`. -/
+def dualAgentMetathesis : TerminalMetathesisRule FeatureVal :=
+  .ofBool fun n ↦ n.leftCtx.contains (.atomic false) && n.focus == .minimal true &&
+    n.rightCtx.head? == some (.author false)
+
+/-- (27), on the linearized string: a `[−author]` goal's `[−participant]` is deleted after a
+dual agent. -/
+def goalParticipant : ObliterationRule FeatureVal :=
+  .ofBool fun n ↦ n.focus == .participant false && n.rightCtx.head? == some (.author false) &&
+    n.leftCtx.contains (.atomic false) && n.leftCtx.contains (.minimal true)
+
+/-- The 1:3D:no prefix of (23), *opén* (Table 4), with the agent's number features gone. -/
+def prefix1_3D : Prefix := ⟨some first, some (third ++ dual), some []⟩
+
+/-- The 1D:3:no prefix of (25), *opén* (Table 5), with the goal's number features gone. -/
+def prefix1D_3 : Prefix := ⟨some (first ++ dual), some third, some []⟩
+
+/-- (24) puts the dual goal's features in the order of *o-pé-n*. -/
+theorem dualGoalMetathesis_prefix1_3D :
+    dualGoalMetathesis.apply prefix1_3D.linearize =
+      [.participant true, .author true, .participant false, .atomic false, .author false,
+        .minimal true] := by
+  decide
+
+/-- Impoverishment then metathesis: (27) removes the goal's `[−participant]` and (26) then
+finds `[+minimal]` next to `[−author]`; the order is that of *o-pé-n*. -/
+theorem taos_impoverishment_then_metathesis :
+    runModules [goalParticipant.apply, dualAgentMetathesis.apply] prefix1D_3.linearize =
+      [.participant true, .author true, .atomic false, .author false, .minimal true] := by
+  decide
+
+/-- Metathesis then impoverishment: (26) finds `[−participant]` in the way and does nothing,
+and after (27) the order is that of the unattested *o-n-pé*. -/
+theorem taos_metathesis_then_impoverishment :
+    runModules [dualAgentMetathesis.apply, goalParticipant.apply] prefix1D_3.linearize =
+      [.participant true, .author true, .atomic false, .minimal true, .author false] := by
+  decide
+
+theorem taos_orders_differ :
+    runModules [goalParticipant.apply, dualAgentMetathesis.apply] prefix1D_3.linearize ≠
+      runModules [dualAgentMetathesis.apply, goalParticipant.apply] prefix1D_3.linearize := by
+  decide
+
+/-! ### Impoverishment precedes metathesis in Basque (§3.1)
+
+The finite auxiliary of (10) is a string of terminals: the absolutive clitic, T, and the
+ergative and dative clitics. Participant Dissimilation, the paper's (16) and (18) after Arregi
+and Nevins's (25), obliterates a clitic in the Feature Markedness module; T-Noninitiality, the
+paper's (12), is repaired in the Linear Operations module by Ergative Metathesis (13) or
+L-Support. -/
+
+/-- A clitic: its case and person and number features. -/
+def clitic (c : Case) (φ : Arg) : Arg := .case c :: φ
+
+/-- T, past tense (see the implementation notes). -/
+def pastT : Arg := [.tense true]
+
+/-- The epenthetic L of L-Support, a terminal without features. -/
+def lSupport : Arg := []
+
+/-- Participant Dissimilation: a `[+participant +author]` clitic is obliterated when another
+clitic of the word bears `trigger`. -/
+def participantDissimilation (trigger : Arg) : ObliterationRule Arg :=
+  .ofBool fun n ↦ first.bears n.focus && (n.leftCtx ++ n.rightCtx).any (trigger.bears ·)
+
+/-- Ondarru, the paper's (16): the trigger is an ergative participant clitic. -/
+def ondarru : ObliterationRule Arg := participantDissimilation [.case .erg, .participant true]
+
+/-- Zamudio, the paper's (18): the trigger is any participant clitic. -/
+def zamudio : ObliterationRule Arg := participantDissimilation [.participant true]
+
+/-- Ergative Metathesis, the paper's (13) after Arregi and Nevins's (105): a word-initial T is
+preceded by the first ergative clitic that follows it. -/
+def ergativeMetathesis : SpelloutDomain Arg → SpelloutDomain Arg :=
+  rewriteFirst
+    (fun n ↦ n.leftCtx = [] ∧ n.focus.contains (.tense true) ∧
+      n.rightCtx.any (·.contains (.case .erg)))
+    fun n ↦ match n.rightCtx.find? (·.contains (.case .erg)) with
+      | some e => n.leftCtx.reverse ++ e :: n.focus :: n.rightCtx.erase e
+      | none => n.toList
+
+/-- Ergative Metathesis preserves the number of terminals. -/
+theorem length_ergativeMetathesis (d : SpelloutDomain Arg) :
+    (ergativeMetathesis d).length = d.length := by
+  unfold ergativeMetathesis
+  refine length_rewriteFirst (fun n ↦ ?_) d
+  cases h : n.rightCtx.find? (·.contains (.case .erg)) with
+  | none => rfl
+  | some e =>
+    have hmem := List.mem_of_find?_eq_some h
+    simp only [List.length_cons, Neighborhood.toList, List.length_append, List.length_reverse,
+      List.length_erase_of_mem hmem]
+    have := List.length_pos_of_mem hmem
+    omega
+
+/-- L-Support: an L before a word-initial T. -/
+def lSupportRepair (d : SpelloutDomain Arg) : SpelloutDomain Arg :=
+  if d.head?.any (·.contains (.tense true)) then lSupport :: d else d
+
+/-- The Linear Operations module: the two repairs of T-Noninitiality. -/
+def linearOperations : SpelloutDomain Arg → SpelloutDomain Arg :=
+  lSupportRepair ∘ ergativeMetathesis
+
+/-- Feature Markedness before Linear Operations, the order of Figure 1. -/
+def markednessThenLinear (pd : ObliterationRule Arg) : SpelloutDomain Arg → SpelloutDomain Arg :=
+  runModules [pd.apply, linearOperations]
+
+/-- Linear Operations before Feature Markedness, the order both papers reject. -/
+def linearThenMarkedness (pd : ObliterationRule Arg) : SpelloutDomain Arg → SpelloutDomain Arg :=
+  runModules [linearOperations, pd.apply]
+
+/-- The Ondarru auxiliary of (17), *s-endu-n* 'you saw us': a first plural absolutive clitic,
+past T, and a second singular ergative clitic. -/
+def auxiliary17 : SpelloutDomain Arg :=
+  [clitic .abs (first ++ plural), pastT, clitic .erg (second ++ singular)]
+
+/-- The Zamudio auxiliary of (19), *y-a-tzu-e-n* 'we accompanied you lot': past T, a second
+plural dative clitic, and a first plural ergative clitic. -/
+def auxiliary19 : SpelloutDomain Arg :=
+  [pastT, clitic .dat (second ++ plural), clitic .erg (first ++ plural)]
+
+/-- Ondarru, markedness first: Participant Dissimilation obliterates the absolutive clitic,
+leaving T initial, and Ergative Metathesis then fronts the ergative clitic: *s-endu-n*. -/
+theorem ondarru_markedness_then_linear :
+    markednessThenLinear ondarru auxiliary17 = [clitic .erg (second ++ singular), pastT] := by
+  decide
+
+/-- Ondarru, linear module first: T is not initial, so neither repair applies, and after the
+absolutive clitic goes T is stranded initial. -/
+theorem ondarru_linear_then_markedness :
+    linearThenMarkedness ondarru auxiliary17 = [pastT, clitic .erg (second ++ singular)] := by
+  decide
+
+theorem ondarru_orders_differ :
+    markednessThenLinear ondarru auxiliary17 ≠ linearThenMarkedness ondarru auxiliary17 := by
+  decide
+
+/-- Zamudio, markedness first: Participant Dissimilation obliterates the ergative clitic, so
+no ergative is left to front and L-Support repairs the initial T: *y-a-tzu-e-n*. -/
+theorem zamudio_markedness_then_linear :
+    markednessThenLinear zamudio auxiliary19 =
+      [lSupport, pastT, clitic .dat (second ++ plural)] := by
+  decide
+
+/-- Zamudio, linear module first: Ergative Metathesis fronts the ergative clitic, which
+Participant Dissimilation then obliterates, stranding T initial. -/
+theorem zamudio_linear_then_markedness :
+    linearThenMarkedness zamudio auxiliary19 = [pastT, clitic .dat (second ++ plural)] := by
+  decide
+
+theorem zamudio_orders_differ :
+    markednessThenLinear zamudio auxiliary19 ≠ linearThenMarkedness zamudio auxiliary19 := by
   decide
 
 end Middleton2026

@@ -645,7 +645,6 @@ import Linglib.Fragments.Arabic.ModernStandard.Relativization
 import Linglib.Fragments.Aymara.Evidentiality
 import Linglib.Fragments.Bantu.Params
 import Linglib.Fragments.Basque.Agreement
-import Linglib.Fragments.Basque.Postsyntax
 import Linglib.Fragments.Basque.Pronouns
 import Linglib.Fragments.Basque.Relativization
 import Linglib.Fragments.Bayso.Number
@@ -949,7 +948,6 @@ import Linglib.Fragments.Tamil.Gender
 import Linglib.Fragments.Tamil.Pronouns
 import Linglib.Fragments.Tangale.Phonology
 import Linglib.Fragments.Tangale.TAM
-import Linglib.Fragments.Taos.Agreement
 import Linglib.Fragments.Tariana.Evidentiality
 import Linglib.Fragments.Tarifit.ConsonantalRoots
 import Linglib.Fragments.Tarifit.Phonology
