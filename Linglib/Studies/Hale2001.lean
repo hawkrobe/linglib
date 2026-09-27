@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Processing.Expectation.PrefixProbability
+public import Linglib.Processing.Surprisal.PrefixProbability
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.MeasureTheory.Measure.Real
 
@@ -48,7 +48,7 @@ stated for any probability measure over structures with string yields.
 
 namespace Hale2001
 
-open MeasureTheory Processing.Expectation
+open MeasureTheory Surprisal
 open scoped ENNReal
 
 variable {T W : Type*} [MeasurableSpace T] (P : Measure T) (str : T → List W) (ws : List W)

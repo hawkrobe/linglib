@@ -47,7 +47,7 @@ theory is the lossless special case.
 open MeasureTheory ProbabilityTheory InformationTheory
 open scoped ProbabilityTheory unitInterval
 
-namespace Processing.LossyContext
+namespace LossyContext
 
 variable {C R W : Type*} [MeasurableSpace C] [MeasurableSpace R] [MeasurableSpace W]
 
@@ -117,4 +117,4 @@ theorem expectedSurprisal_eq_surprisal_of_lossless {L : Kernel C W} (h : mp.IsLo
 
 end MemoryProcess
 
-end Processing.LossyContext
+end LossyContext

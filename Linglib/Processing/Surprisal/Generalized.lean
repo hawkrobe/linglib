@@ -54,7 +54,7 @@ that scores each alternative by its own surprisal.
 
 @[expose] public section
 
-namespace Processing.Expectation
+namespace Surprisal
 
 open InformationTheory MeasureTheory ProbabilityTheory
 
@@ -132,4 +132,4 @@ theorem genSurprisal_id_surprisal [Countable A] [MeasurableSingletonClass A] (L 
   rw [genSurprisal, id, integral_countable hL, measureEntropy_eq_tsum_mul_surprisal]
   rfl
 
-end Processing.Expectation
+end Surprisal

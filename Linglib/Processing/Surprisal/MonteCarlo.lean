@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Processing.Expectation.GeneralizedSurprisal
+public import Linglib.Processing.Surprisal.Generalized
 public import Mathlib.Probability.StrongLaw
 
 /-!
@@ -42,7 +42,7 @@ large numbers the mean score converges almost surely to the expected score
 
 @[expose] public section
 
-namespace Processing.Expectation
+namespace Surprisal
 
 open MeasureTheory ProbabilityTheory Filter Finset Topology
 
@@ -93,4 +93,4 @@ theorem integral_mcEstimate_id (hV : ∀ n, Measurable (V n)) (hlaw : ∀ n, P.m
   rw [sum_const, card_range, nsmul_eq_mul, ← mul_assoc, inv_mul_cancel₀ (Nat.cast_ne_zero.2 hN),
     one_mul]
 
-end Processing.Expectation
+end Surprisal
