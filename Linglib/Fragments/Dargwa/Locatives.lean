@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Order
+public import Linglib.Syntax.Case.Spatial
 public import Linglib.Fragments.Dargwa.Case
 public import Linglib.Fragments.Dargwa.Agreement
 
@@ -92,7 +92,7 @@ def Localization.suffix : Localization → Morph
 
 /-- The region of the comparative decomposition a localization falls in. *super* is the
 surface, *in* and *inter* are the interior and the rest are the exterior. -/
-def Localization.region : Localization → Case.Region
+def Localization.region : Localization → Spatial.Localization
   | .super => .surface
   | .in_ | .inter => .interior
   | .sub | .ante | .apud | .ad | .post => .exterior
@@ -126,7 +126,7 @@ def Orientation.morphs : Orientation → Gender.Marker → List Morph
   | .translative, _ => [.suff "tːi"]
 
 /-- The path head of the comparative decomposition an orientation expresses. -/
-def Orientation.pathDir : Orientation → Case.PathDir
+def Orientation.pathDir : Orientation → Spatial.PathDir
   | .essive => .place
   | .lative => .goal
   | .elative => .source
@@ -223,7 +223,7 @@ theorem isSpatial_post_iff {o : Orientation} {d : Option Direction} :
 
 /-- The forms fill the grid of regions and path heads except for the route, which the
 translative expresses, outside the exterior. -/
-theorem exists_isSpatial_iff (r : Case.Region) (d : Case.PathDir) :
+theorem exists_isSpatial_iff (r : Spatial.Localization) (d : Spatial.PathDir) :
     (∃ f : LocativeForm,
       f.IsSpatial ∧ f.localization.region = r ∧ f.orientation.pathDir = d) ↔
       d ≠ .route ∨ r = .exterior := by

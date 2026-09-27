@@ -148,7 +148,7 @@ theorem toPP_bounded (x : Loc) : Bounded Path.IsConcat (toPP x) :=
 
 /-- Strict source PPs are bounded, exactly like goal PPs — there is no
     aspectual source/goal asymmetry (12a). Grounds the telic marking of
-    source-directionality PPs (`Spatial.Path.Directionality`). -/
+    source-directionality PPs (`Spatial.PathDir.source`). -/
 theorem fromPP_bounded (x : Loc) : Bounded Path.IsConcat (fromPP x) := by
   rintro ⟨⟨p, hp, q, hq, r, hr⟩, -⟩
   exact hp.2 (hr.1.trans hq.1)

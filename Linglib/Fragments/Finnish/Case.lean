@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Order
+public import Linglib.Syntax.Case.Spatial
 
 /-!
 # Finnish case
@@ -25,7 +25,7 @@ foot', is the instrumental.
 ## Main results
 
 * `Finnish.Case.toCase_mem_inventory_iff`: the local cases are the interior and exterior series
-  of the shared `Region × PathDir` decomposition.
+  of the shared `Localization × PathDir` decomposition.
 
 The endings, spelled in segments, are in `Finnish.Declension`.
 
@@ -46,7 +46,7 @@ def inventory : Finset Case :=
 
 /-- The local cases are the interior and exterior series: a cell of the shared spatial
 decomposition is a Finnish case exactly when its region is not the surface. -/
-theorem toCase_mem_inventory_iff {r : Case.Region} {d : Case.PathDir} {c : Case}
+theorem toCase_mem_inventory_iff {r : Spatial.Localization} {d : Spatial.PathDir} {c : Case}
     (h : Case.toCase r d = some c) : c ∈ inventory ↔ r ≠ .surface := by
   cases r <;> cases d <;> cases h <;> decide
 

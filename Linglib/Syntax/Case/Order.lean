@@ -4,41 +4,30 @@ public import Mathlib.Data.Finset.Basic
 public import Mathlib.Order.Interval.Finset.Fin
 public import Linglib.Core.Order.PartialRank
 public import Linglib.Syntax.Case.Basic
-public import Linglib.Semantics.Denotation
 /-!
-# Containment orders on Case
-[caha-2009] [pantcheva-2011] [mcfadden-2018]
+# The containment order on Case
 
-The **object**: a case feature carries a containment structure — its
-value is a downward-closed stack of nested feature shells, and one value
-*contains* another iff its shell stack does. The order is then the
-partial-rank order `Core.Order.partialOrderOfRank` over a shell-rank
-(unranked elements isolated), and the empirical *ABA syncretism law over
-it is the framework-neutral `Morphology.IsContiguous`
-(syncretism targets only adjacent cells). Both the order gadget and the
-*ABA predicate name no paper.
+A case feature carries a containment structure: its value is a downward-closed stack of nested
+feature shells, and one value contains another iff its shell stack does ([caha-2009]):
+NOM ⊂ ACC ⊂ GEN ⊂ DAT ⊂ LOC. The order is the partial-rank order
+`Core.Order.partialOrderOfRank` over the containment rank, so that the cases off the hierarchy,
+ERG, ABS, INST and the rest, are incomparable with every other case, and that silence is the
+theoretical content. The empirical *ABA syncretism law over it is the framework-neutral
+`Morphology.IsContiguous`. The order is certified as the shadow of the shell decomposition
+(`cahaLT_iff_kshells_ssubset`), and is a scoped instance (`open scoped Case.Caha`): a
+theoretical order is an opt-in commitment, never a global instance on the inventory.
+[mcfadden-2018]'s natural classes of nonnominative and oblique cases are read off it.
 
-This file holds the two case-feature **instances** of that object,
-organized by the object, not by author:
+The directional containment of spatial cases, Place ⊂ Goal ⊂ Source ⊂ Route, is
+`Spatial.PathDir`, and the decomposition of spatial cases into localization and direction is in
+`Syntax/Case/Spatial.lean`.
 
-* **Nominal containment** ([caha-2009]): NOM ⊂ ACC ⊂ GEN ⊂ DAT ⊂ LOC,
-  via `containmentRank`/`kshells`. ERG/ABS/INST/… are off-hierarchy
-  (silent — `containmentRank → none`), and that silence is the
-  theoretical content.
-* **Directional containment** ([pantcheva-2011]): Place ⊂ Goal ⊂ Source
-  ⊂ Route on the orthogonal *path* dimension, via `PathDir`/`dirRank`.
-  The spatial case cells (`ine`/`ela`/`ill`, `ade`/`abl`/`all`,
-  `sup`/`del`/`sub`) decompose as `Region × PathDir` (`spatialDecomp`),
-  so cells inert under the nominal hierarchy gain structure.
+## References
 
-Both reuse the *same* `partialOrderOfRank` gadget and certify the order
-as the shadow of the shell decomposition (`*_iff_kshells_ssubset` /
-`*_iff_shells_ssubset`) — derived, not stipulated.
-
-Orders are **scoped** instances (`open scoped Case.Caha`): theoretical
-orders are opt-in commitments, never global instances on the inventory.
-Declarations live in the root `Case` namespace (the namespace follows the
-subject; the file stays in `Syntax/Case/` as nanosyntactic substrate).
+* [caha-2009]
+* [mcfadden-2018]
+* [blake-1994]
+* [smith-moskal-xu-kang-bobaljik-2019]
 -/
 
 @[expose] public section
@@ -176,173 +165,5 @@ example : (.dat : Case) ≤ .loc := by decide
 /-- Off-hierarchy cases (ERG) are incomparable with on-hierarchy cases. -/
 example : ¬ ((.erg : Case) ≤ .nom) := by decide
 example : ¬ ((.nom : Case) ≤ .erg) := by decide
-
-/-! ### Directional containment ([pantcheva-2011])
-
-The second instance of the containment object, on the orthogonal *path*
-dimension: Place ⊂ Goal ⊂ Source ⊂ Route ([pantcheva-2011]'s functional
-sequence, ex. 2). A Source path structurally contains a Goal path —
-reflected morphologically where the Source marker contains the Goal
-marker (Imbabura Quechua Goal `-man` ⊂ Source `-man-da`; Estonian
-`-l` ⊂ `-l-le` ⊂ `-l-t`). Unlike the nominal containment, every path
-head is on the chain, so the order is total. -/
-
-/-- The path-direction heads, in containment order
-    Place ⊂ Goal ⊂ Source ⊂ Route ([pantcheva-2011] ex. 2). -/
-inductive PathDir where
-  /-- Place: static location (the locative base; no motion). -/
-  | place
-  /-- Goal: motion *to* (built on Place). -/
-  | goal
-  /-- Source: motion *from* (built on Goal — the reversal). -/
-  | source
-  /-- Route: motion *via/through* (built on Source). -/
-  | route
-  deriving DecidableEq, Repr, Fintype
-
-/-- Containment rank: how many path heads the direction nests.
-    Place=0 ⊂ Goal=1 ⊂ Source=2 ⊂ Route=3. -/
-def PathDir.rank : PathDir → Fin 4
-  | .place => 0
-  | .goal => 1
-  | .source => 2
-  | .route => 3
-
-/-- The shell stack of a path direction: the downward-closed set of path
-    heads its structure contains ([pantcheva-2011]'s nested
-    [Route [Source [Goal [Place]]]]). **Derived** as the down-set `Iic` of
-    `PathDir.rank`, not stipulated alongside it; `lt_iff_shells_ssubset` is
-    then the structural shadow fact (mathlib's `Finset.Iic_ssubset_Iic`). -/
-def PathDir.shells (d : PathDir) : Finset (Fin 4) := Finset.Iic d.rank
-
-/-- **The order is the shadow of the decomposition**: directional
-    containment (strict rank) coincides with strict inclusion of shell
-    stacks — the directional analogue of `cahaLT_iff_kshells_ssubset`, here
-    just `Finset.Iic_ssubset_Iic` since the shells *are* `Iic` of the rank. -/
-theorem PathDir.lt_iff_shells_ssubset (d₁ d₂ : PathDir) :
-    d₁.rank < d₂.rank ↔ d₁.shells ⊂ d₂.shells := by
-  simp [PathDir.shells]
-
-/-! ### Directional denotation ([pantcheva-2011] Ch. 5)
-
-The `interpret` affordance for the directional dimension. Each path head
-denotes a phase profile over the path interval — whether the Figure
-occupies the Place-region at the start / middle / end (Pantcheva's `+`/`−`
-sequences). Place is stative (located throughout); Goal is a transition
-*into* the region (`−−−−−+++++`, ends located, ex. 5); Source is the
-**reversal** of Goal (`+++++−−−−−`, starts located, §5.4); Route passes
-*through* it (`−−−−+++−−−−`, located in the middle, ex. 10). -/
-
-/-- Whether the Figure occupies the Place-region at the start, middle, and
-    end of the path — [pantcheva-2011]'s `+`/`−` phase profile sampled at
-    three points. -/
-structure PathProfile where
-  /-- The Figure is in the Place-region at the path's start. -/
-  atStart : Bool
-  /-- … at the middle. -/
-  atMid : Bool
-  /-- … at the end. -/
-  atEnd : Bool
-  deriving DecidableEq, Repr
-
-/-- Reverse a profile (swap start and end) — the Source head's semantic
-    operation ([pantcheva-2011] §5.4). -/
-def PathProfile.reverse (p : PathProfile) : PathProfile :=
-  ⟨p.atEnd, p.atMid, p.atStart⟩
-
-/-- The denotation of a path direction ([pantcheva-2011] Ch. 5): the phase
-    profile of the Figure–Place-region relation. -/
-def PathDir.denote : PathDir → PathProfile
-  | .place  => ⟨true, true, true⟩        -- stative: located throughout
-  | .goal   => ⟨false, false, true⟩      -- −−+ : transition INTO (ex. 5)
-  | .source => ⟨true, false, false⟩      -- +−− : reversal of Goal (§5.4)
-  | .route  => ⟨false, true, false⟩      -- −+− : through the region (ex. 10)
-
-instance : Semantics.Denotes PathDir PathProfile := ⟨PathDir.denote⟩
-
-/-- **Source is the reversal of Goal** ([pantcheva-2011] §5.4): the Source
-    head reverses the Goal path. This *grounds* the `*A&¬A` syncretism
-    constraint — a single Goal=Source marker would denote a path and its
-    reverse, a contradiction (cf. `Studies/Pantcheva2011.lean`). -/
-theorem PathDir.source_denote_eq_goal_reverse :
-    PathDir.source.denote = PathDir.goal.denote.reverse := rfl
-
-/-- Goal ends in the region; Source starts in it — the mirror-image
-    structure of the two mono-transitional paths (§5.4). -/
-theorem PathDir.goal_ends_source_starts :
-    PathDir.goal.denote.atEnd = true ∧
-    PathDir.source.denote.atStart = true := by decide
-
-/-- The path direction a spatial case expresses, if any. Robust across
-    the inventory — direction is determinable even on the cells where
-    region is conflated (`regionOf` is the partial companion). The
-    spatial case cells decompose as `Region × PathDir`. -/
-def dirOf : Case → Option PathDir
-  | .loc | .ine | .ade | .sup => some .place
-  | .ill | .all | .sub => some .goal
-  | .ela | .abl | .del => some .source
-  | .perl => some .route
-  | _ => none
-
-/-! ### The orthogonal Region axis
-
-The `Place`-internal localization Pantcheva does *not* decompose
-(interior/surface/exterior), orthogonal to `PathDir`. Spatial case
-systems (Finnish, Hungarian, Daghestanian) cross it with direction. -/
-
-/-- The spatial region a case localizes in. Orthogonal to `PathDir`. -/
-inductive Region where
-  /-- Interior: in/into/out-of (Finnish inessive/illative/elative). -/
-  | interior
-  /-- Surface: on/onto/off-of (Hungarian superessive/sublative/delative). -/
-  | surface
-  /-- Exterior: at/to/from (Finnish adessive/allative/ablative). -/
-  | exterior
-  deriving DecidableEq, Repr, Fintype
-
-/-- Build a spatial case from its `Region × PathDir` decomposition — the
-    constructor direction spatial-case fragments consume. The 3 × 3
-    region-specific cells; `route` is region-neutral in these
-    inventories (`none`). -/
-def toCase : Region → PathDir → Option Case
-  | .interior, .place => some .ine
-  | .interior, .goal => some .ill
-  | .interior, .source => some .ela
-  | .surface, .place => some .sup
-  | .surface, .goal => some .sub
-  | .surface, .source => some .del
-  | .exterior, .place => some .ade
-  | .exterior, .goal => some .all
-  | .exterior, .source => some .abl
-  | _, .route => none
-
-/-- The region a case localizes in, under the spatial reading. The
-    exterior series is `ade`/`all`/`abl` (Finnish's external local
-    cases). **Conflation caveat**: `all`/`abl` double as the *general*
-    allative/ablative (Latin-type, region-neutral); the spatial
-    decomposition reads them as exterior-goal/source, the use the
-    analytical split `Syntax/Case/Basic.lean` anticipates separating.
-    `loc` is the genuinely region-neutral general locative (`none`). -/
-def regionOf : Case → Option Region
-  | .ine | .ela | .ill => some .interior
-  | .sup | .del | .sub => some .surface
-  | .ade | .all | .abl => some .exterior
-  | _ => none
-
-/-- Analyze a spatial case into `Region × PathDir`, where both are
-    determinable (lossy on region-conflated cells; the faithful inverse
-    of `toCase` on the 3 × 3 region-specific cells). -/
-def spatialDecomp (c : Case) : Option (Region × PathDir) :=
-  match regionOf c, dirOf c with
-  | some r, some d => some (r, d)
-  | _, _ => none
-
-/-- `toCase` and `spatialDecomp` are inverse on the region-specific
-    cells — the decomposition round-trips where region is not conflated.
-    (`route` is region-neutral, hence `none` on both sides.) -/
-theorem spatialDecomp_toCase (r : Region) (d : PathDir) :
-    (toCase r d).bind spatialDecomp =
-      (toCase r d).map (fun _ => (r, d)) := by
-  cases r <;> cases d <;> decide
 
 end Case

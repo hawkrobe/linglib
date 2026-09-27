@@ -28,9 +28,10 @@ every operation computable.
   (`Path.subpath_iff_infix`), whence a scoped `PartialOrder`
   (`open scoped Spatial.Path`).
 * `Path.adjacent`: endpoint-sharing spatial adjacency ([krifka-1998]).
-* `Path.Directionality`: the source/goal/route trichotomy of directional
-  prepositions ([zwarts-2005]); paired with `Aspect.Telicity` at use sites
-  — the paper's two independent classificatory axes.
+* `Path.reverse`: the path traversed the other way, from its goal to its source.
+
+The directions a path can take relative to a place, Place ⊂ Goal ⊂ Source ⊂ Route, are
+`Spatial.PathDir` in `Semantics/Events/PathDir.lean`.
 -/
 
 @[expose] public section
@@ -179,21 +180,29 @@ theorem IsConcat.adjacent {p q r : Path Loc} (h : IsConcat p q r) :
     p.adjacent q :=
   Or.inl h.1
 
-/-! ### Directionality -/
+/-! ### Reversal -/
 
-/-- The source/goal/route trichotomy of directional prepositions
-    ([zwarts-2005]): source prepositions (*from*, *out of*) locate the
-    starting point p(0), goal prepositions (*to*, *into*) the endpoint
-    p(1), route prepositions (*over*, *through*, *via*) an interior point.
-    Independent of prepositional aspect — *to* is goal-directed telic,
-    *towards* goal-directed atelic — so consumers pair it with
-    `Aspect.Telicity`; the aspect axis is grounded in
-    `Studies/Zwarts2005.lean`. -/
-inductive Directionality where
-  | source
-  | goal
-  | route
-  deriving DecidableEq, Repr
+/-- The path traversed the other way, from its goal to its source. -/
+def reverse (p : Path Loc) : Path Loc := ⟨p.goal, p.points.reverse.tail⟩
+
+@[simp] theorem source_reverse (p : Path Loc) : p.reverse.source = p.goal := rfl
+
+@[simp] theorem points_reverse (p : Path Loc) : p.reverse.points = p.points.reverse := by
+  obtain ⟨s, l⟩ := p
+  induction l using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton l x _ => simp [reverse, points, goal]
+
+@[simp] theorem goal_reverse (p : Path Loc) : p.reverse.goal = p.source := by
+  have h : p.reverse.points.getLast (points_ne_nil _) = p.reverse.goal := by
+    obtain ⟨s, l⟩ := p.reverse
+    cases l using List.reverseRecOn <;> simp [points, goal]
+  rw [← h]
+  simp only [points_reverse, List.getLast_reverse]
+  rfl
+
+@[simp] theorem reverse_reverse (p : Path Loc) : p.reverse.reverse = p :=
+  points_injective (by simp)
 
 end Path
 
