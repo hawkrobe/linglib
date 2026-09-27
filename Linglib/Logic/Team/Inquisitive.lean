@@ -3,6 +3,7 @@ module
 public import Linglib.Logic.Team.Kripke
 public import Linglib.Logic.Team.Operations
 public import Linglib.Semantics.Questions.Basic
+public import Linglib.Core.Order.UpperLower.Heyting
 
 /-!
 # Inquisitive modal logic
@@ -33,19 +34,20 @@ places InqML with dependence logic in the downward-closed, empty-team cell of
 
 * `InquisitiveModalModel`: a valuation and a map from worlds to sets of information states, with
   the induced accessibility `access`; `KripkeModel.toInquisitive` embeds Kripke models.
-* `Formula` and `support`: the language with `□` and `⊞`, and support of a formula by a state.
+* `Formula` and `support`: the language with `□` and `⊞`, and the support set of a formula, the
+  lower set of states supporting it, on which the connectives are the Heyting operations.
 * `TruthConditional`: the statements, the formulas whose support is truth at every world,
   which is flatness (`Team.IsFlat`) of the support set.
 * `proposition`: the inquisitive proposition `[φ]_M`, the support set as a `Question`.
 
 ## Main results
 
-* `isLowerSet_support` and `support_empty`: support is persistent and holds at the empty state,
-  so the support set is a proposition on which the connectives are the Heyting operations.
+* `empty_mem_support`: the empty state supports every formula; persistence is the lower-set
+  structure of `support`.
 * `truthConditional_of_isClassical`, `truthConditional_nec` and `truthConditional_ent`: classical
-  and modal formulas are statements, and `truthConditional_iff_neg_neg`: the double negation law
-  holds exactly for statements.
-* `support_nec_inqDisj` and `support_ent_iff_nec_of_truthConditional`: `□` distributes over
+  and modal formulas are statements, and `truthConditional_iff_support_neg_neg`: the double
+  negation law holds exactly for statements.
+* `support_nec_inqDisj` and `support_ent_eq_nec_of_truthConditional`: `□` distributes over
   inquisitive disjunction, and `⊞` agrees with `□` on statements.
 
 ## References
@@ -156,105 +158,113 @@ theorem isLowerSet_image_coe [Fintype W] {S : Set (Finset W)} (hS : IsLowerSet S
 
 variable [DecidableEq W]
 
-/-- `support M φ s`: the information state `s` settles `φ` in `M`. -/
-def support (M : InquisitiveModalModel W Atom) : Formula Atom → Finset W → Prop
-  | .atom p, s => s ∈ Team.flat fun w ↦ M.val p w = true
-  | .bot, s => s ∈ ({∅} : Team.TeamProperty W)
-  | .conj φ ψ, s => support M φ s ∧ support M ψ s
-  | .impl φ ψ, s => ∀ t ⊆ s, support M φ t → support M ψ t
-  | .inqDisj φ ψ, s => support M φ s ∨ support M ψ s
-  | .nec φ, s => s ∈ Team.nec M.access {t | support M φ t}
-  | .ent φ, s => s ∈ Team.flat fun w ↦ ∀ t ∈ M.inq w, support M φ t
+/-- The **support set** of `φ` in `M`: the information states that settle it. Support is
+persistent (Proposition 3.3.1), so the support set is a lower set of states, and conjunction,
+implication and inquisitive disjunction are the operations `⊓`, `⇨`, `⊔` of the Heyting algebra
+of lower sets ([ciardelli-groenendijk-roelofsen-2018]); `⊥` is supported by the empty state
+alone. -/
+def support (M : InquisitiveModalModel W Atom) : Formula Atom → LowerSet (Finset W)
+  | .atom p => ⟨Team.flat fun w ↦ M.val p w = true, Team.isLowerSet_flat _⟩
+  | .bot => LowerSet.Iic ∅
+  | .conj φ ψ => support M φ ⊓ support M ψ
+  | .impl φ ψ => support M φ ⇨ support M ψ
+  | .inqDisj φ ψ => support M φ ⊔ support M ψ
+  | .nec φ => ⟨Team.nec M.access (support M φ : Set (Finset W)), Team.isLowerSet_flat _⟩
+  | .ent φ => ⟨Team.flat fun w ↦ ∀ t ∈ M.inq w, t ∈ support M φ, Team.isLowerSet_flat _⟩
 
 variable (M : InquisitiveModalModel W Atom) (φ ψ : Formula Atom) (s : Finset W) (w : W)
 
-@[simp] theorem support_atom (p : Atom) :
-    support M (.atom p) s ↔ ∀ w ∈ s, M.val p w = true := Iff.rfl
+@[simp] theorem mem_support_atom (p : Atom) :
+    s ∈ support M (.atom p) ↔ ∀ w ∈ s, M.val p w = true := Iff.rfl
 
-@[simp] theorem support_bot : support M (.bot : Formula Atom) s ↔ s = ∅ := Iff.rfl
+@[simp] theorem mem_support_bot : s ∈ support M (.bot : Formula Atom) ↔ s = ∅ :=
+  LowerSet.mem_Iic_iff.trans Finset.subset_empty
 
-@[simp] theorem support_conj :
-    support M (.conj φ ψ) s ↔ support M φ s ∧ support M ψ s := Iff.rfl
+@[simp] theorem mem_support_conj :
+    s ∈ support M (.conj φ ψ) ↔ s ∈ support M φ ∧ s ∈ support M ψ := Iff.rfl
 
-@[simp] theorem support_impl :
-    support M (.impl φ ψ) s ↔ ∀ t ⊆ s, support M φ t → support M ψ t := Iff.rfl
+@[simp] theorem mem_support_impl :
+    s ∈ support M (.impl φ ψ) ↔ ∀ t ⊆ s, t ∈ support M φ → t ∈ support M ψ :=
+  LowerSet.mem_himp
 
-@[simp] theorem support_inqDisj :
-    support M (.inqDisj φ ψ) s ↔ support M φ s ∨ support M ψ s := Iff.rfl
+@[simp] theorem mem_support_inqDisj :
+    s ∈ support M (.inqDisj φ ψ) ↔ s ∈ support M φ ∨ s ∈ support M ψ := Iff.rfl
 
-@[simp] theorem support_nec :
-    support M (.nec φ) s ↔ ∀ w ∈ s, support M φ (M.access w) := Iff.rfl
+@[simp] theorem mem_support_nec :
+    s ∈ support M (.nec φ) ↔ ∀ w ∈ s, M.access w ∈ support M φ := Iff.rfl
 
-@[simp] theorem support_ent :
-    support M (.ent φ) s ↔ ∀ w ∈ s, ∀ t ∈ M.inq w, support M φ t := Iff.rfl
+@[simp] theorem mem_support_ent :
+    s ∈ support M (.ent φ) ↔ ∀ w ∈ s, ∀ t ∈ M.inq w, t ∈ support M φ := Iff.rfl
 
 /-- Support is decidable over a finite set of worlds, by structural recursion. -/
-instance decidableSupport [Fintype W] :
-    (φ : Formula Atom) → (s : Finset W) → Decidable (support M φ s)
-  | .atom _, _ => by unfold support; infer_instance
-  | .bot, _ => by unfold support; infer_instance
-  | .conj φ ψ, s => by
-    unfold support; exact @instDecidableAnd _ _ (decidableSupport φ s) (decidableSupport ψ s)
-  | .impl φ ψ, s => by
-    unfold support; have := decidableSupport φ; have := decidableSupport ψ; infer_instance
-  | .inqDisj φ ψ, s => by
-    unfold support; exact @instDecidableOr _ _ (decidableSupport φ s) (decidableSupport ψ s)
-  | .nec φ, s => by unfold support; exact @Team.nec.instDecidableMem _ _ _ (decidableSupport φ) s
-  | .ent φ, s => by unfold support; have := decidableSupport φ; infer_instance
+def decidableMemSupport [Fintype W] :
+    (φ : Formula Atom) → (s : Finset W) → Decidable (s ∈ support M φ)
+  | .atom p, s => decidable_of_iff _ (mem_support_atom M s p).symm
+  | .bot, s => decidable_of_iff _ (mem_support_bot M s).symm
+  | .conj φ ψ, s =>
+    have := decidableMemSupport φ s; have := decidableMemSupport ψ s
+    decidable_of_iff _ (mem_support_conj M φ ψ s).symm
+  | .impl φ ψ, s =>
+    have := decidableMemSupport φ; have := decidableMemSupport ψ
+    decidable_of_iff _ (mem_support_impl M φ ψ s).symm
+  | .inqDisj φ ψ, s =>
+    have := decidableMemSupport φ s; have := decidableMemSupport ψ s
+    decidable_of_iff _ (mem_support_inqDisj M φ ψ s).symm
+  | .nec φ, s =>
+    have := decidableMemSupport φ
+    decidable_of_iff _ (mem_support_nec M φ s).symm
+  | .ent φ, s =>
+    have := decidableMemSupport φ
+    decidable_of_iff _ (mem_support_ent M φ s).symm
 
-/-! ### Persistence and the empty state (Proposition 3.3.1) -/
+instance [Fintype W] (φ : Formula Atom) (s : Finset W) : Decidable (s ∈ support M φ) :=
+  decidableMemSupport M φ s
 
-/-- **Persistence**: the support set of a formula is downward closed. -/
-theorem isLowerSet_support : IsLowerSet {s : Finset W | support M φ s} := by
-  induction φ with
-  | atom p => exact Team.isLowerSet_flat _
-  | bot => exact Team.isLowerSet_singleton_empty
-  | conj φ ψ ihφ ihψ => exact ihφ.inter ihψ
-  | impl φ ψ _ _ => exact fun s t hts hs u hut => hs u (hut.trans hts)
-  | inqDisj φ ψ ihφ ihψ => exact ihφ.union ihψ
-  | nec φ _ => exact Team.isLowerSet_flat _
-  | ent φ _ => exact Team.isLowerSet_flat _
+/-! ### The empty state (Proposition 3.3.1) -/
 
 /-- **The empty state property**: the inconsistent state supports every formula. -/
-theorem support_empty : support M φ ∅ := by
+theorem empty_mem_support : ∅ ∈ support M φ := by
   induction φ with
   | atom p => exact Team.empty_mem_flat _
-  | bot => rfl
+  | bot => exact (mem_support_bot M ∅).2 rfl
   | conj φ ψ ihφ ihψ => exact ⟨ihφ, ihψ⟩
-  | impl φ ψ _ ihψ => exact fun t ht _ => by obtain rfl := Finset.subset_empty.1 ht; exact ihψ
+  | impl φ ψ _ ihψ =>
+    exact (mem_support_impl M φ ψ ∅).2 fun t ht _ ↦ Finset.subset_empty.1 ht ▸ ihψ
   | inqDisj φ ψ ihφ _ => exact Or.inl ihφ
   | nec φ _ => exact Team.empty_mem_flat _
   | ent φ _ => exact Team.empty_mem_flat _
 
 /-! ### Truth (Proposition 3.1.7) -/
 
-theorem support_neg : support M φ.neg s ↔ ∀ t ⊆ s, support M φ t → t = ∅ := Iff.rfl
+theorem mem_support_neg : s ∈ support M φ.neg ↔ ∀ t ⊆ s, t ∈ support M φ → t = ∅ := by
+  simp [Formula.neg]
 
-theorem support_singleton_impl :
-    support M (.impl φ ψ) {w} ↔ (support M φ {w} → support M ψ {w}) := by
-  refine ⟨fun h => h _ subset_rfl, fun h t ht hφ => ?_⟩
+theorem singleton_mem_support_impl :
+    {w} ∈ support M (.impl φ ψ) ↔ ({w} ∈ support M φ → {w} ∈ support M ψ) := by
+  rw [mem_support_impl]
+  refine ⟨fun h ↦ h _ subset_rfl, fun h t ht hφ ↦ ?_⟩
   rcases Finset.subset_singleton_iff.1 ht with rfl | rfl
-  · exact support_empty M ψ
+  · exact empty_mem_support M ψ
   · exact h hφ
 
-theorem support_singleton_neg : support M φ.neg {w} ↔ ¬ support M φ {w} := by
-  simp only [Formula.neg, support_singleton_impl, support_bot, Finset.singleton_ne_empty,
+theorem singleton_mem_support_neg : {w} ∈ support M φ.neg ↔ {w} ∉ support M φ := by
+  simp only [Formula.neg, singleton_mem_support_impl, mem_support_bot, Finset.singleton_ne_empty,
     imp_false]
 
-theorem support_singleton_disj :
-    support M (φ.disj ψ) {w} ↔ support M φ {w} ∨ support M ψ {w} := by
-  simp only [Formula.disj, support_singleton_neg, support_conj, not_and_or, not_not]
+theorem singleton_mem_support_disj :
+    {w} ∈ support M (φ.disj ψ) ↔ {w} ∈ support M φ ∨ {w} ∈ support M ψ := by
+  simp only [Formula.disj, singleton_mem_support_neg, mem_support_conj, not_and_or, not_not]
 
 /-! ### Truth-conditional formulas (§3.4) -/
 
 /-- The truth set `|φ|_M` (§3.1): the worlds at which `φ` is true, truth being support at the
 singleton state. -/
-def truthSet : Set W := {w | support M φ {w}}
+def truthSet : Set W := {w | {w} ∈ support M φ}
 
 /-- `φ` is **truth-conditional** in `M` (Definitions 2.6.3 and 3.4.1) when a state supports it
 iff it is true at each of its worlds: a statement rather than a question. This is flatness
 (`Team.IsFlat`) of the support set. -/
-def TruthConditional : Prop := Team.IsFlat {s : Finset W | support M φ s}
+def TruthConditional : Prop := Team.IsFlat (support M φ : Set (Finset W))
 
 theorem truthConditional_atom (p : Atom) : TruthConditional M (.atom p) := Team.isFlat_flat _
 
@@ -268,17 +278,17 @@ theorem truthConditional_ent : TruthConditional M (.ent φ) := Team.isFlat_flat 
 variable {M φ ψ}
 
 theorem TruthConditional.iff (h : TruthConditional M φ) :
-    support M φ s ↔ ∀ w ∈ s, support M φ {w} :=
+    s ∈ support M φ ↔ ∀ w ∈ s, {w} ∈ support M φ :=
   h s
 
 theorem TruthConditional.support_iff (h : TruthConditional M φ) :
-    support M φ s ↔ (↑s : Set W) ⊆ truthSet M φ :=
+    s ∈ support M φ ↔ (↑s : Set W) ⊆ truthSet M φ :=
   h s
 
 theorem TruthConditional.conj (hφ : TruthConditional M φ) (hψ : TruthConditional M ψ) :
     TruthConditional M (.conj φ ψ) := fun s => by
-  show support M (.conj φ ψ) s ↔ ∀ w ∈ s, support M (.conj φ ψ) {w}
-  rw [support_conj, hφ.iff, hψ.iff]
+  show s ∈ support M (.conj φ ψ) ↔ ∀ w ∈ s, {w} ∈ support M (.conj φ ψ)
+  rw [mem_support_conj, hφ.iff, hψ.iff]
   exact ⟨fun h w hw => ⟨h.1 w hw, h.2 w hw⟩,
     fun h => ⟨fun w hw => (h w hw).1, fun w hw => (h w hw).2⟩⟩
 
@@ -286,10 +296,11 @@ theorem TruthConditional.conj (hφ : TruthConditional M φ) (hψ : TruthConditio
 whatever its antecedent. -/
 theorem TruthConditional.impl (hψ : TruthConditional M ψ) (φ : Formula Atom) :
     TruthConditional M (.impl φ ψ) := fun s => by
-  refine ⟨fun h w hw => isLowerSet_support M (.impl φ ψ) (Finset.singleton_subset_iff.2 hw) h,
-    fun h t hts hφ => (hψ t).2 fun w hw => ?_⟩
-  exact (support_singleton_impl M φ ψ w).1 (h w (hts hw))
-    (isLowerSet_support M φ (Finset.singleton_subset_iff.2 hw) hφ)
+  show s ∈ support M (.impl φ ψ) ↔ ∀ w ∈ s, {w} ∈ support M (.impl φ ψ)
+  refine ⟨fun h w hw ↦ (support M _).lower (Finset.singleton_subset_iff.2 hw) h,
+    fun h ↦ (mem_support_impl M φ ψ s).2 fun t hts hφ ↦ (hψ t).2 fun w hw ↦ ?_⟩
+  exact (singleton_mem_support_impl M φ ψ w).1 (h w (hts hw))
+    ((support M φ).lower (Finset.singleton_subset_iff.2 hw) hφ)
 
 variable (M φ ψ)
 
@@ -310,8 +321,8 @@ theorem truthConditional_of_isClassical (h : φ.IsClassical) : TruthConditional 
   | ent φ _ => exact truthConditional_ent M φ
 
 /-- Proposition 3.4.9: `¬¬φ` is supported exactly where `φ` is true at every world. -/
-theorem support_neg_neg : support M φ.neg.neg s ↔ ∀ w ∈ s, support M φ {w} := by
-  simp only [Formula.neg, support_impl, support_bot]
+theorem mem_support_neg_neg : s ∈ support M φ.neg.neg ↔ ∀ w ∈ s, {w} ∈ support M φ := by
+  simp only [Formula.neg, mem_support_impl, mem_support_bot]
   constructor
   · intro h w hw
     by_contra hφ
@@ -325,22 +336,23 @@ theorem support_neg_neg : support M φ.neg.neg s ↔ ∀ w ∈ s, support M φ {
     exact Finset.singleton_ne_empty w (ht {w} (Finset.singleton_subset_iff.2 hw) (h w (hts hw)))
 
 theorem truthSet_neg_neg : truthSet M φ.neg.neg = truthSet M φ :=
-  Set.ext fun w => (support_neg_neg M φ {w}).trans (by simp [truthSet])
+  Set.ext fun w => (mem_support_neg_neg M φ {w}).trans (by simp [truthSet])
 
 /-- Proposition 3.4.10: the double negation law holds exactly for statements. -/
-theorem truthConditional_iff_neg_neg :
-    TruthConditional M φ ↔ ∀ s, (support M φ.neg.neg s ↔ support M φ s) := by
-  simp only [TruthConditional, support_neg_neg]
+theorem truthConditional_iff_support_neg_neg :
+    TruthConditional M φ ↔ support M φ.neg.neg = support M φ := by
+  simp only [TruthConditional, SetLike.ext_iff, mem_support_neg_neg]
   exact forall_congr' fun s => Iff.comm
 
 /-- Proposition 2.5.2, the Ramsey test: for a statement `α`, `α → ψ` is supported at `s` iff
 `ψ` is supported at the `α`-worlds of `s`. -/
-theorem support_impl_iff_of_truthConditional [Fintype W] {α : Formula Atom}
+theorem mem_support_impl_iff_of_truthConditional [Fintype W] {α : Formula Atom}
     (hα : TruthConditional M α) :
-    support M (.impl α ψ) s ↔ support M ψ (s.filter fun w => support M α {w}) :=
-  ⟨fun h => h _ (Finset.filter_subset _ _) ((hα _).2 fun _ hw => (Finset.mem_filter.1 hw).2),
-    fun h t hts hαt => isLowerSet_support M ψ
-      (fun w hw => Finset.mem_filter.2 ⟨hts hw, (hα t).1 hαt w hw⟩) h⟩
+    s ∈ support M (.impl α ψ) ↔ s.filter (fun w => {w} ∈ support M α) ∈ support M ψ := by
+  rw [mem_support_impl]
+  refine ⟨fun h => h _ (Finset.filter_subset _ _) ((hα _).2 fun _ hw => (Finset.mem_filter.1 hw).2),
+    fun h t hts hαt => (support M ψ).lower ?_ h⟩
+  exact fun w hw => Finset.mem_filter.2 ⟨hts hw, (hα t).1 hαt w hw⟩
 
 /-! ### The proposition expressed (Proposition 3.3.1, §3.5) -/
 
@@ -348,23 +360,23 @@ section Proposition
 
 variable [Fintype W]
 
-/-- The inquisitive proposition `[φ]_M` expressed by `φ`: its support set, a `Question` by
-persistence and the empty state property. -/
+/-- The inquisitive proposition `[φ]_M` expressed by `φ` as a `Question`: the support set, carried
+from finite states to sets of worlds. -/
 def proposition : Question W :=
-  Question.ofLowerSet ((fun t : Finset W => (↑t : Set W)) '' {t | support M φ t})
-    ⟨∅, support_empty M φ, by simp⟩ (isLowerSet_image_coe (isLowerSet_support M φ))
+  Question.ofLowerSet ((fun t : Finset W => (↑t : Set W)) '' (support M φ : Set (Finset W)))
+    ⟨∅, empty_mem_support M φ, by simp⟩ (isLowerSet_image_coe (support M φ).lower)
 
 @[simp] theorem mem_proposition {s : Set W} :
-    s ∈ proposition M φ ↔ ∃ t : Finset W, ↑t = s ∧ support M φ t := by
-  simp only [proposition, Question.mem_ofLowerSet, Set.mem_image, Set.mem_ofPred_eq, and_comm]
+    s ∈ proposition M φ ↔ ∃ t : Finset W, ↑t = s ∧ t ∈ support M φ := by
+  simp only [proposition, Question.mem_ofLowerSet, Set.mem_image, SetLike.mem_coe, and_comm]
 
-@[simp] theorem coe_mem_proposition : (↑s : Set W) ∈ proposition M φ ↔ support M φ s := by
+@[simp] theorem coe_mem_proposition : (↑s : Set W) ∈ proposition M φ ↔ s ∈ support M φ := by
   simp
 
 /-- Conjunction is the meet of propositions. -/
 theorem proposition_conj : proposition M (.conj φ ψ) = proposition M φ ⊓ proposition M ψ := by
   ext s
-  simp only [mem_proposition, support_conj, Question.mem_inf]
+  simp only [mem_proposition, mem_support_conj, Question.mem_inf]
   constructor
   · rintro ⟨t, hts, hφ, hψ⟩
     exact ⟨⟨t, hts, hφ⟩, ⟨t, hts, hψ⟩⟩
@@ -376,7 +388,7 @@ theorem proposition_conj : proposition M (.conj φ ψ) = proposition M φ ⊓ pr
 theorem proposition_inqDisj :
     proposition M (.inqDisj φ ψ) = proposition M φ ⊔ proposition M ψ := by
   ext s
-  simp only [mem_proposition, support_inqDisj, Question.mem_sup]
+  simp only [mem_proposition, mem_support_inqDisj, Question.mem_sup]
   constructor
   · rintro ⟨t, hts, hφ | hψ⟩
     · exact Or.inl ⟨t, hts, hφ⟩
@@ -389,7 +401,7 @@ theorem proposition_inqDisj :
 theorem proposition_impl : proposition M (.impl φ ψ) = proposition M φ ⇨ proposition M ψ := by
   ext s
   rw [Question.mem_himp]
-  simp only [mem_proposition, support_impl]
+  simp only [mem_proposition, mem_support_impl]
   constructor
   · rintro ⟨t, rfl, hsupp⟩ r hrs ⟨a, ha, haφ⟩
     exact ⟨a, ha, hsupp a (Finset.coe_subset.1 (ha.le.trans hrs)) haφ⟩
@@ -403,7 +415,7 @@ theorem proposition_impl : proposition M (.impl φ ψ) = proposition M φ ⇨ pr
 /-- `⊥` is the bottom. -/
 theorem proposition_bot : proposition M (.bot : Formula Atom) = ⊥ := by
   ext s
-  simp only [mem_proposition, support_bot, Question.mem_bot]
+  simp only [mem_proposition, mem_support_bot, Question.mem_bot]
   constructor
   · rintro ⟨t, rfl, rfl⟩; simp
   · rintro rfl; exact ⟨∅, by simp, rfl⟩
@@ -414,7 +426,7 @@ theorem info_proposition : (proposition M φ).info = truthSet M φ := by
   simp only [Question.info, Set.mem_sUnion]
   constructor
   · rintro ⟨_, ⟨t, ht, rfl⟩, hw⟩
-    exact isLowerSet_support M φ (Finset.singleton_subset_iff.2 (Finset.mem_coe.1 hw)) ht
+    exact (support M φ).lower (Finset.singleton_subset_iff.2 (Finset.mem_coe.1 hw)) ht
   · exact fun h => ⟨_, ⟨{w}, h, rfl⟩, by simp⟩
 
 /-- Definition 3.4.1 on propositions: `φ` is a statement iff it expresses the declarative
@@ -431,7 +443,7 @@ theorem truthConditional_iff_proposition_eq :
     · intro hs
       exact ⟨(Set.toFinite s).toFinset, by simp, (h _).2 fun w hw => hs (by simpa using hw)⟩
   · intro h s
-    show support M φ s ↔ ∀ w ∈ s, support M φ {w}
+    show s ∈ support M φ ↔ ∀ w ∈ s, {w} ∈ support M φ
     rw [← coe_mem_proposition, h, Question.mem_ofSet]
     exact Iff.rfl
 
@@ -447,65 +459,66 @@ end Proposition
 
 variable {M φ ψ}
 
-/-- Two statements that agree at every world agree at every state. -/
-theorem TruthConditional.iff_of_singleton (hφ : TruthConditional M φ) (hψ : TruthConditional M ψ)
-    (h : ∀ w, support M φ {w} ↔ support M ψ {w}) : support M φ s ↔ support M ψ s := by
-  rw [hφ.iff, hψ.iff]
-  exact forall₂_congr fun w _ => h w
+/-- Two statements that agree at every world have the same support. -/
+theorem TruthConditional.support_eq (hφ : TruthConditional M φ) (hψ : TruthConditional M ψ)
+    (h : ∀ w, {w} ∈ support M φ ↔ {w} ∈ support M ψ) : support M φ = support M ψ :=
+  SetLike.ext fun s ↦ by rw [hφ.iff, hψ.iff]; exact forall₂_congr fun w _ => h w
 
 variable (M φ ψ)
 
 /-- `□` commutes with `∧` (§8.2). -/
-theorem support_nec_conj :
-    support M (.nec (.conj φ ψ)) s ↔ support M (.conj (.nec φ) (.nec ψ)) s := by
-  simp [imp_and, forall_and]
+theorem support_nec_conj : support M (.nec (.conj φ ψ)) = support M (.conj (.nec φ) (.nec ψ)) :=
+  SetLike.ext fun _ ↦ by simp [imp_and, forall_and]
 
 /-- The K axiom for `□` (§8.2). -/
 theorem support_nec_impl_nec :
-    support M (.impl (.nec (.impl φ ψ)) (.impl (.nec φ) (.nec ψ))) s :=
-  fun _ _ ht _ hut hu w hw => ht w (hut hw) _ subset_rfl (hu w hw)
+    support M (.impl (.nec (.impl φ ψ)) (.impl (.nec φ) (.nec ψ))) = ⊤ :=
+  top_unique fun _ _ ↦ by
+    simp only [SetLike.mem_coe, mem_support_impl, mem_support_nec]
+    exact fun _ _ ht _ hut hu w hw ↦ ht w (hut hw) _ subset_rfl (hu w hw)
 
 /-- Necessitation for `□` (§8.2). -/
-theorem support_nec_of_forall (h : ∀ s, support M φ s) (s : Finset W) : support M (.nec φ) s :=
-  fun _ _ => h _
+theorem support_nec_of_eq_top (h : support M φ = ⊤) : support M (.nec φ) = ⊤ :=
+  top_unique fun _ _ _ _ ↦ h ▸ trivial
 
 /-- `□` distributes over inquisitive disjunction (§8.2): `□(φ \\/ ψ) ≡ □φ ∨ □ψ`. -/
 theorem support_nec_inqDisj :
-    support M (.nec (.inqDisj φ ψ)) s ↔ support M ((Formula.nec φ).disj (.nec ψ)) s :=
-  (truthConditional_nec M _).iff_of_singleton s (truthConditional_disj M _ _) fun w => by
-    rw [support_singleton_disj]; simp
+    support M (.nec (.inqDisj φ ψ)) = support M ((Formula.nec φ).disj (.nec ψ)) :=
+  (truthConditional_nec M _).support_eq (truthConditional_disj M _ _) fun w => by
+    rw [singleton_mem_support_disj]; simp
 
 /-- `⊞` commutes with `∧` (§8.3). -/
-theorem support_ent_conj :
-    support M (.ent (.conj φ ψ)) s ↔ support M (.conj (.ent φ) (.ent ψ)) s := by
-  simp [imp_and, forall_and]
+theorem support_ent_conj : support M (.ent (.conj φ ψ)) = support M (.conj (.ent φ) (.ent ψ)) :=
+  SetLike.ext fun _ ↦ by simp [imp_and, forall_and]
 
 /-- The K axiom for `⊞` (§8.3). -/
 theorem support_ent_impl_ent :
-    support M (.impl (.ent (.impl φ ψ)) (.impl (.ent φ) (.ent ψ))) s :=
-  fun _ _ ht _ hut hu w hw v hv => ht w (hut hw) v hv _ subset_rfl (hu w hw v hv)
+    support M (.impl (.ent (.impl φ ψ)) (.impl (.ent φ) (.ent ψ))) = ⊤ :=
+  top_unique fun _ _ ↦ by
+    simp only [SetLike.mem_coe, mem_support_impl, mem_support_ent]
+    exact fun _ _ ht _ hut hu w hw v hv ↦ ht w (hut hw) v hv _ subset_rfl (hu w hw v hv)
 
 /-- Necessitation for `⊞` (§8.3). -/
-theorem support_ent_of_forall (h : ∀ s, support M φ s) (s : Finset W) : support M (.ent φ) s :=
-  fun _ _ _ _ => h _
+theorem support_ent_of_eq_top (h : support M φ = ⊤) : support M (.ent φ) = ⊤ :=
+  top_unique fun _ _ _ _ _ _ ↦ h ▸ trivial
 
 /-- `□φ` entails `⊞φ`: each related state lies in the epistemic state, and support is
 persistent (§8.3). -/
-theorem support_ent_of_nec (h : support M (.nec φ) s) : support M (.ent φ) s :=
-  fun w hw _ ht => isLowerSet_support M φ (M.subset_access ht) (h w hw)
+theorem support_nec_le_ent : support M (.nec φ) ≤ support M (.ent φ) :=
+  fun _ h w hw _ ht ↦ (support M φ).lower (M.subset_access ht) (h w hw)
 
 /-- On statements the two modalities coincide (§8.3). -/
-theorem support_ent_iff_nec_of_truthConditional (h : TruthConditional M φ) :
-    support M (.ent φ) s ↔ support M (.nec φ) s :=
-  ⟨fun hent w hw => (h _).2 fun v hv => by
+theorem support_ent_eq_nec_of_truthConditional (h : TruthConditional M φ) :
+    support M (.ent φ) = support M (.nec φ) :=
+  le_antisymm (fun _ hent w hw ↦ (h _).2 fun v hv => by
       obtain ⟨t, ht, hvt⟩ := M.mem_access.1 hv
-      exact (h t).1 (hent w hw t ht) v hvt,
-    support_ent_of_nec M φ s⟩
+      exact (h t).1 (hent w hw t ht) v hvt)
+    (support_nec_le_ent M φ)
 
 /-- On a Kripke model `⊞` is `□`, the only related state being `R[w]` (§8.2). -/
 theorem support_ent_toInquisitive (M : KripkeModel W Atom) :
-    support M.toInquisitive (.ent φ) s ↔ support M.toInquisitive (.nec φ) s := by
-  simp [KripkeModel.toInquisitive, InquisitiveModalModel.access]
+    support M.toInquisitive (.ent φ) = support M.toInquisitive (.nec φ) :=
+  SetLike.ext fun _ ↦ by simp [KripkeModel.toInquisitive, InquisitiveModalModel.access]
 
 /-! ### The closure cell -/
 
@@ -514,7 +527,7 @@ theorem support_ent_toInquisitive (M : KripkeModel W Atom) :
 theorem not_supClosed_inqDisj_of_witness {p q : Atom} {w₁ w₂ : W}
     (hp₁ : M.val p w₁ = true) (hq₁ : M.val q w₁ = false)
     (hp₂ : M.val p w₂ = false) (hq₂ : M.val q w₂ = true) :
-    ¬ SupClosed {s : Finset W | support M (.inqDisj (.atom p) (.atom q)) s} := fun h => by
+    ¬ SupClosed (support M (.inqDisj (.atom p) (.atom q)) : Set (Finset W)) := fun h => by
   have := h (a := {w₁}) (b := {w₂}) (by simp [hp₁]) (by simp [hq₂])
   simp [hp₂, hq₁] at this
 
@@ -522,7 +535,7 @@ open Team in
 /-- InqML is sound for the downward-closed, empty-team cell of [anttila-2025]'s programme,
 which it shares with dependence logic. -/
 theorem definableClass_support_subset :
-    definableClass (support M) ⊆ {P | IsLowerSet P ∧ ∅ ∈ P} :=
-  definableClass_subset fun φ ↦ ⟨isLowerSet_support M φ, support_empty M φ⟩
+    definableClass (fun φ t ↦ t ∈ support M φ) ⊆ {P | IsLowerSet P ∧ ∅ ∈ P} :=
+  definableClass_subset fun φ ↦ ⟨(support M φ).lower, empty_mem_support M φ⟩
 
 end ModalLogic.Inquisitive
