@@ -12,7 +12,6 @@ This file defines the atoms of team semantics as team properties, alongside the 
 maps `f` and `g`:
 
 * the dependence atom `Team.dep f g` of [vaananen-2007]: on the team, `g` is a function of `f`;
-* its failure, the variation atom `Team.var f g`: two points agree on `f` and differ on `g`;
 * the inclusion atom `Team.incl f g` ([anttila-haggblom-yang-2024]): every value of `f` on the
   team is a value of `g` there.
 
@@ -28,12 +27,13 @@ the atoms compose into the constancy and variation conditions of [degano-aloni-2
 
 ## Main definitions
 
-* `Team.dep`, `Team.var`, `Team.incl`: the atoms as team properties.
-* `Team.Dep`, `Team.Var`: the first-order atoms over a team of assignments.
+* `Team.dep`, `Team.incl`: the atoms as team properties.
+* `Team.Dep`, `Team.Var`: the first-order dependence atom over a team of assignments, and the
+  variation atom of [degano-aloni-2025], its failure witnessed by two assignments.
 
 ## Main results
 
-* `Team.isLowerSet_dep`, `Team.isUpperSet_var`, `Team.supClosed_incl`: closure of the atoms.
+* `Team.isLowerSet_dep`, `Team.supClosed_incl`, `Team.isUpperSet_var`: closure of the atoms.
 * `Team.not_supClosed_dep`, `Team.not_isLowerSet_incl`: the closure properties they break.
 * `Team.dep_iff_exists`: the dependent variable is a function of the parameters on the team.
 * `Team.Dep.trans`: dependence composes.
@@ -58,10 +58,6 @@ variable {α β γ : Type*}
 /-- The dependence atom: on the team, `g` is a function of `f`. -/
 def dep (f : α → β) (g : α → γ) : TeamProperty α := {T | Function.FactorsThroughOn g f T}
 
-/-- The variation atom: two points of the team agree on `f` and differ on `g`. -/
-def var (f : α → β) (g : α → γ) : TeamProperty α :=
-  {T | ∃ a ∈ T, ∃ b ∈ T, f a = f b ∧ g a ≠ g b}
-
 /-- The inclusion atom: every value of `f` on the team is a value of `g` on the team. -/
 def incl (f g : α → β) : TeamProperty α := {T | ∀ a ∈ T, ∃ b ∈ T, f a = g b}
 
@@ -70,30 +66,16 @@ variable {f : α → β} {g : α → γ} {T T' : Finset α}
 theorem mem_dep : T ∈ dep f g ↔ ∀ a ∈ T, ∀ b ∈ T, f a = f b → g a = g b :=
   ⟨fun h _ ha _ hb ↦ h ha hb, fun h _ _ ha hb ↦ h _ ha _ hb⟩
 
-@[simp] theorem mem_var : T ∈ var f g ↔ ∃ a ∈ T, ∃ b ∈ T, f a = f b ∧ g a ≠ g b := Iff.rfl
-
 @[simp] theorem mem_incl {f g : α → β} : T ∈ incl f g ↔ ∀ a ∈ T, ∃ b ∈ T, f a = g b := Iff.rfl
 
 instance [DecidableEq β] [DecidableEq γ] (T : Finset α) : Decidable (T ∈ dep f g) :=
   decidable_of_iff _ mem_dep.symm
 
-instance [DecidableEq β] [DecidableEq γ] (T : Finset α) : Decidable (T ∈ var f g) :=
-  inferInstanceAs (Decidable (∃ a ∈ T, ∃ b ∈ T, _))
-
 instance [DecidableEq β] (f g : α → β) (T : Finset α) : Decidable (T ∈ incl f g) :=
   inferInstanceAs (Decidable (∀ a ∈ T, ∃ b ∈ T, _))
 
-/-- Variation is the failure of dependence. -/
-@[simp] theorem notMem_dep : T ∉ dep f g ↔ T ∈ var f g := by
-  simp only [mem_dep, mem_var, not_forall, exists_prop]
-
-@[simp] theorem notMem_var : T ∉ var f g ↔ T ∈ dep f g := by rw [← notMem_dep, not_not]
-
 theorem isLowerSet_dep (f : α → β) (g : α → γ) : IsLowerSet (dep f g) :=
   fun _ _ hT h ↦ Function.FactorsThroughOn.mono h (Finset.coe_subset.2 hT)
-
-theorem isUpperSet_var (f : α → β) (g : α → γ) : IsUpperSet (var f g) :=
-  fun _ _ hT ⟨a, ha, b, hb, hf, hg⟩ ↦ ⟨a, hT ha, b, hT hb, hf, hg⟩
 
 theorem singleton_mem_dep (a : α) : {a} ∈ dep f g :=
   mem_dep.2 fun _ hx _ hy _ ↦ by rw [Finset.mem_singleton.1 hx, Finset.mem_singleton.1 hy]
@@ -139,10 +121,11 @@ team. -/
 def Dep (T : Finset (V → E)) (Z : Finset V) (u : V) : Prop :=
   T ∈ dep (Z : Set V).domRestrict (· u)
 
-/-- The first-order variation atom: two assignments of the team agree on `Z` and differ on
-`u`. -/
+/-- The variation atom `var(Z, u)` of [degano-aloni-2025]: two assignments of the team agree on
+`Z` and differ on `u`. It is the failure of `=(Z, u)` (`Team.not_dep`), stated by its
+witnesses. -/
 def Var (T : Finset (V → E)) (Z : Finset V) (u : V) : Prop :=
-  T ∈ var (Z : Set V).domRestrict (· u)
+  ∃ i ∈ T, ∃ j ∈ T, (∀ z ∈ Z, i z = j z) ∧ i u ≠ j u
 
 private theorem domRestrict_eq_iff {i j : V → E} :
     (Z : Set V).domRestrict i = (Z : Set V).domRestrict j ↔ ∀ z ∈ Z, i z = j z :=
@@ -152,14 +135,13 @@ private theorem domRestrict_eq_iff {i j : V → E} :
 theorem dep_iff : Dep T Z u ↔ ∀ i ∈ T, ∀ j ∈ T, (∀ z ∈ Z, i z = j z) → i u = j u := by
   simp only [Dep, mem_dep, domRestrict_eq_iff]
 
-theorem var_iff : Var T Z u ↔ ∃ i ∈ T, ∃ j ∈ T, (∀ z ∈ Z, i z = j z) ∧ i u ≠ j u := by
-  simp only [Var, mem_var, domRestrict_eq_iff]
+theorem var_iff : Var T Z u ↔ ∃ i ∈ T, ∃ j ∈ T, (∀ z ∈ Z, i z = j z) ∧ i u ≠ j u := Iff.rfl
 
 instance [DecidableEq E] (T : Finset (V → E)) (Z : Finset V) (u : V) : Decidable (Dep T Z u) :=
   decidable_of_iff _ dep_iff.symm
 
 instance [DecidableEq E] (T : Finset (V → E)) (Z : Finset V) (u : V) : Decidable (Var T Z u) :=
-  decidable_of_iff _ var_iff.symm
+  inferInstanceAs (Decidable (∃ i ∈ T, ∃ j ∈ T, _))
 
 /-- Functional dependence, existentially: on the team, the value of `u` is a function of the
 values of the variables of `Z`. -/
@@ -168,9 +150,10 @@ theorem dep_iff_exists [Nonempty E] :
   Function.factorsThroughOn_iff_exists_eqOn
 
 /-- Variation is the failure of dependence. -/
-@[simp] theorem not_dep : ¬ Dep T Z u ↔ Var T Z u := notMem_dep
+@[simp] theorem not_dep : ¬ Dep T Z u ↔ Var T Z u := by
+  simp only [dep_iff, Var, not_forall, exists_prop]
 
-@[simp] theorem not_var : ¬ Var T Z u ↔ Dep T Z u := notMem_var
+@[simp] theorem not_var : ¬ Var T Z u ↔ Dep T Z u := by rw [← not_dep, not_not]
 
 /-- Dependence excludes variation on the same parameters. -/
 theorem Dep.not_var (h : Dep T Z u) : ¬ Var T Z u := Team.not_var.2 h
@@ -187,8 +170,8 @@ theorem Dep.mono (hZ : Z ⊆ Z') (h : Dep T Z u) : Dep T Z' u :=
 
 /-- Variation on more parameters is variation on fewer. -/
 theorem Var.anti (hZ : Z ⊆ Z') (h : Var T Z' u) : Var T Z u :=
-  let ⟨i, hi, j, hj, hagree, hne⟩ := var_iff.1 h
-  var_iff.2 ⟨i, hi, j, hj, fun z hz ↦ hagree z (hZ hz), hne⟩
+  let ⟨i, hi, j, hj, hagree, hne⟩ := h
+  ⟨i, hi, j, hj, fun z hz ↦ hagree z (hZ hz), hne⟩
 
 /-- Dependence composes: a variable depending on variables that all depend on `Z` depends on
 `Z`. -/
@@ -200,6 +183,11 @@ theorem Dep.trans (hZ : ∀ z ∈ Z', Dep T Z z) (h : Dep T Z' u) : Dep T Z u :=
 theorem Dep.subset (hT : T' ⊆ T) (h : Dep T Z u) : Dep T' Z u := isLowerSet_dep _ _ hT h
 
 /-- Variation is inherited by superteams. -/
-theorem Var.superset (hT : T ⊆ T') (h : Var T Z u) : Var T' Z u := isUpperSet_var _ _ hT h
+theorem Var.superset (hT : T ⊆ T') (h : Var T Z u) : Var T' Z u :=
+  let ⟨i, hi, j, hj, hagree, hne⟩ := h
+  ⟨i, hT hi, j, hT hj, hagree, hne⟩
+
+theorem isUpperSet_var (Z : Finset V) (u : V) : IsUpperSet {T : Finset (V → E) | Var T Z u} :=
+  fun _ _ hT h ↦ h.superset hT
 
 end Team

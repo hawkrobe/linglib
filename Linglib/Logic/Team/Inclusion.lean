@@ -284,10 +284,9 @@ open Team in
     `Team/Definability.lean` bridge — the first consumer of that substrate. The
     converse (every such property is MIL-definable, via the inclusion normal
     form) is the open half. -/
-theorem soundFor_unionClosed_inter_empty (M : KripkeModel W Atom) :
-    SoundFor (support M) (unionClosedProperties ∩ emptyTeamProperties) :=
-  Set.subset_inter (definableClass_subset (supClosed_support M))
-    (definableClass_subset (support_empty M))
+theorem definableClass_support_subset (M : KripkeModel W Atom) :
+    definableClass (support M) ⊆ {P | SupClosed P ∧ ∅ ∈ P} :=
+  definableClass_subset fun φ ↦ ⟨supClosed_support M φ, support_empty M φ⟩
 
 /-! ### The classical fragment
 

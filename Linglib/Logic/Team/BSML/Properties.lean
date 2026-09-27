@@ -174,29 +174,12 @@ theorem isFlat_support_of_neFree {φ : Formula Atom}
 /-! ### Soundness for the closure cell (Definability bridge) -/
 
 open Team in
-/-- **BSML is sound for its closure cell**: every BSML-definable team property is
-    convex and union-closed — the soundness half of BSML's expressive
-    completeness ([anttila-2025] Proposition 3.3.1: BSML is complete for the
-    convex, union-closed modal properties, modulo bounded bisimulation).
-
-    Composes `ordConnected_support` and `supClosed_support` through the
-    `Team/Definability.lean` bridge. The converse (every such property is
-    BSML-definable) is the open half. -/
-theorem soundFor_convex_inter_unionClosed (M : KripkeModel W Atom) :
-    SoundFor (support M) (convexProperties ∩ unionClosedProperties) :=
-  Set.subset_inter (definableClass_subset (ordConnected_support M))
-    (definableClass_subset (supClosed_support M))
-
-open Team in
-/-- **The NE-free fragment of BSML is sound for the flat cell** (Anttila
-    Proposition 2.2.16): NE-free BSML formulas define
-    flat properties. Companion to `soundFor_convex_inter_unionClosed`: NE is
-    exactly what moves a formula off the `flat` cell into the strictly larger
-    convex, union-closed cell. -/
-theorem soundFor_flat_neFree (M : KripkeModel W Atom) :
-    definableClassWhere (support M) Formula.NEFree ⊆ flatProperties := by
-  unfold flatProperties
-  exact definableClassWhere_subset (C := IsFlat)
-    fun _φ hφ => isFlat_support_of_neFree hφ M
+/-- **The NE-free fragment of BSML defines flat properties** (Anttila Proposition 2.2.16), the
+    fragment being the subtype of `NE`-free formulas. `NE` is exactly what moves a formula off
+    the flat properties into the convex, union-closed ones (`definableClass_support_subset` in
+    `BSML/ExpressiveCompleteness.lean`). -/
+theorem definableClass_support_neFree_subset (M : KripkeModel W Atom) :
+    definableClass (fun φ : {φ : Formula Atom // φ.NEFree} ↦ support M φ.1) ⊆ {P | IsFlat P} :=
+  definableClass_subset fun φ ↦ isFlat_support_of_neFree φ.2 M
 
 end BSML

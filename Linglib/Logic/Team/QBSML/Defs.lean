@@ -31,8 +31,6 @@ by state non-emptiness.
 * `Model`, `Model.ofMonadic`: models, as `ModalStructure`s over the monadic
   signature with constants `(Language.monadic Pred)[[Const]]`.
 * `eval`, `support`, `antiSupport`: bilateral evaluation.
-* `ModalStructure.IsStateBased`, `ModalStructure.IsIndisputable`: frame
-  conditions via `s↓`.
 
 ## Implementation notes
 
@@ -602,37 +600,5 @@ theorem isBilateral (M : Model W Domain Const Pred) :
   Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
 
 end Evaluation
-
-/-! ### Frame conditions via the world projection -/
-
-section FrameConditions
-
-variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain]
-
-/-- `R` is state-based on `(M, s)`: every world in `s↓` sees exactly `s↓`
-    ([aloni-vanormondt-2023] Definition 4.10). Defined via
-    `Team.IsStateBased` applied to `State.worldProj s`, sharing
-    BSML's frame-condition substrate. -/
-def _root_.FirstOrder.Language.ModalStructure.IsStateBased
-    (M : Model W Domain Const Pred)
-    (s : Finset (Index W Var Domain)) : Prop :=
-  Team.IsStateBased M.access (State.worldProj s)
-
-/-- `R` is indisputable on `(M, s)`: all worlds in `s↓` see the same
-    accessible set ([aloni-vanormondt-2023] Definition 4.10). -/
-def _root_.FirstOrder.Language.ModalStructure.IsIndisputable
-    (M : Model W Domain Const Pred)
-    (s : Finset (Index W Var Domain)) : Prop :=
-  Team.IsIndisputable M.access (State.worldProj s)
-
-instance [Fintype W] (M : Model W Domain Const Pred)
-    (s : Finset (Index W Var Domain)) : Decidable (M.IsStateBased s) := by
-  unfold FirstOrder.Language.ModalStructure.IsStateBased; infer_instance
-
-instance [Fintype W] (M : Model W Domain Const Pred)
-    (s : Finset (Index W Var Domain)) : Decidable (M.IsIndisputable s) := by
-  unfold FirstOrder.Language.ModalStructure.IsIndisputable; infer_instance
-
-end FrameConditions
 
 end QBSML

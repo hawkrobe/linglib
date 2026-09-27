@@ -23,8 +23,7 @@ empty-team support, hence flat support, via the same
   `supClosed_support_of_neFree` — the three closure properties.
 * `isFlat_support_of_neFree` — flatness of the NE-free fragment
   ([anttila-2021] Proposition 2.2.16, QBSML specialisation).
-* `soundFor_flat_neFree` — the NE-free fragment is sound for the flat cell
-  of `Team/Definability.lean`.
+* `definableClass_support_neFree_subset` — the NE-free fragment defines flat properties.
 * `Formula.toFormula?`,
   `support_iff_forall_realizeAt` — the modal-free case of
   [aloni-vanormondt-2023] Proposition 4.1: support of a translatable formula
@@ -168,12 +167,10 @@ theorem isFlat_support_of_neFree {φ : Formula Var Const Pred}
     docstring), which NE breaks. So QBSML has no unconditional all-formula
     cell — unlike BSML, whose NE-bearing formulas still land in the convex,
     union-closed cell. -/
-theorem soundFor_flat_neFree (M : Model W Domain Const Pred) :
-    definableClassWhere (support M)
-      (fun φ : Formula Var Const Pred => φ.NEFree) ⊆ flatProperties := by
-  unfold flatProperties
-  exact definableClassWhere_subset (C := IsFlat)
-    fun _φ hφ => isFlat_support_of_neFree hφ M
+theorem definableClass_support_neFree_subset (M : Model W Domain Const Pred) :
+    definableClass (fun φ : {φ : Formula Var Const Pred // φ.NEFree} ↦ support M φ.1) ⊆
+      {P | IsFlat P} :=
+  definableClass_subset fun φ ↦ isFlat_support_of_neFree φ.2 M
 
 end Closure
 

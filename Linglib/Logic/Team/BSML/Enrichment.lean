@@ -18,7 +18,6 @@ BSML* is BSML with the empty team removed from the possible states.
 
 * `BSML.enrich`: the enrichment function `[·]⁺`.
 * `BSML.consequencePlus`: BSML⁺ consequence, consequence between the enriched formulas.
-* `BSML.Formula.ClassicalPositive`: the formulas with neither `NE` nor negation.
 
 ## Main results
 
@@ -177,36 +176,30 @@ theorem not_forall_support_neg_neg_enrich_iff (hNE : φ.NEFree) :
 def consequencePlus (φ ψ : Formula Atom) : Prop :=
   consequence (W := W) (enrich φ) (enrich ψ)
 
-/-- A formula is classical positive when it contains neither `NE` nor negation. -/
-def Formula.ClassicalPositive (φ : Formula Atom) : Prop :=
-  φ.NEFree ∧ φ.Positive
-
-instance (φ : Formula Atom) : Decidable φ.ClassicalPositive :=
-  inferInstanceAs (Decidable (φ.NEFree ∧ φ.Positive))
-
-/-- On classical positive formulas, support of the enrichment is BSML* support on a non-empty
-team: the `NE` conjunct at each subformula is the exclusion of `∅` from each split. -/
-theorem support_enrich_iff_supportStar (hCP : φ.ClassicalPositive) :
+/-- On classical positive formulas, those with neither `NE` nor negation, support of the
+enrichment is BSML* support on a non-empty team: the `NE` conjunct at each subformula is the
+exclusion of `∅` from each split. -/
+theorem support_enrich_iff_supportStar (hNE : φ.NEFree) (hPos : φ.Positive) :
     support M (enrich φ) t ↔ supportStar M φ t ∧ t.Nonempty := by
   induction φ generalizing t with
-  | ne => exact hCP.1.elim
-  | neg _ => exact hCP.2.elim
+  | ne => exact hNE.elim
+  | neg _ => exact hPos.elim
   | atom _ => exact Iff.rfl
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    have ih₁ := ih₁ (t := t) ⟨hCP.1.1, hCP.2.1⟩
-    have ih₂ := ih₂ (t := t) ⟨hCP.1.2, hCP.2.2⟩
+    have ih₁ := ih₁ (t := t) hNE.1 hPos.1
+    have ih₂ := ih₂ (t := t) hNE.2 hPos.2
     exact ⟨fun ⟨⟨h₁, h₂⟩, hne⟩ ↦ ⟨⟨(ih₁.mp h₁).1, (ih₂.mp h₂).1⟩, hne⟩,
       fun ⟨⟨h₁, h₂⟩, hne⟩ ↦ ⟨⟨ih₁.mpr ⟨h₁, hne⟩, ih₂.mpr ⟨h₂, hne⟩⟩, hne⟩⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     have e₁ : {s | support M (enrich ψ₁) s} = {s | supportStar M ψ₁ s} ∩ Team.ne :=
-      Set.ext fun _ ↦ ih₁ ⟨hCP.1.1, hCP.2.1⟩
+      Set.ext fun _ ↦ ih₁ hNE.1 hPos.1
     have e₂ : {s | support M (enrich ψ₂) s} = {s | supportStar M ψ₂ s} ∩ Team.ne :=
-      Set.ext fun _ ↦ ih₂ ⟨hCP.1.2, hCP.2.2⟩
+      Set.ext fun _ ↦ ih₂ hNE.2 hPos.2
     change t ∈ Team.tensor _ _ ∧ t.Nonempty ↔ _
     rw [e₁, e₂]
     exact Iff.rfl
   | poss ψ ih =>
-    have ih := fun s ↦ ih (t := s) hCP
+    have ih := fun s ↦ ih (t := s) hNE hPos
     exact ⟨fun ⟨h, hne⟩ ↦ ⟨fun w hw ↦ (h w hw).imp fun _ ⟨hs, hs', h'⟩ ↦
           ⟨hs, hs', ((ih _).mp h').1⟩, hne⟩,
       fun ⟨h, hne⟩ ↦ ⟨fun w hw ↦ (h w hw).imp fun _ ⟨hs, hs', h'⟩ ↦
@@ -214,22 +207,22 @@ theorem support_enrich_iff_supportStar (hCP : φ.ClassicalPositive) :
 
 /-- BSML* and BSML⁺ consequence coincide on classical positive formulas (Fact 13). Excluding
 the empty team from the states and excluding it syntactically through `[·]⁺` agree. -/
-theorem consequenceStar_iff_consequencePlus (hφ : φ.ClassicalPositive)
-    (hψ : ψ.ClassicalPositive) :
+theorem consequenceStar_iff_consequencePlus (hφ : φ.NEFree) (hφ' : φ.Positive)
+    (hψ : ψ.NEFree) (hψ' : ψ.Positive) :
     consequenceStar (W := W) φ ψ ↔ consequencePlus (W := W) φ ψ where
   mp h M t h' :=
-    have ⟨hs, hne⟩ := (support_enrich_iff_supportStar hφ).mp h'
-    (support_enrich_iff_supportStar hψ).mpr ⟨h M t hne hs, hne⟩
+    have ⟨hs, hne⟩ := (support_enrich_iff_supportStar hφ hφ').mp h'
+    (support_enrich_iff_supportStar hψ hψ').mpr ⟨h M t hne hs, hne⟩
   mpr h M t hne hs :=
-    ((support_enrich_iff_supportStar hψ).mp
-      (h M t ((support_enrich_iff_supportStar hφ).mpr ⟨hs, hne⟩))).1
+    ((support_enrich_iff_supportStar hψ hψ').mp
+      (h M t ((support_enrich_iff_supportStar hφ hφ').mpr ⟨hs, hne⟩))).1
 
 /-- Negative free choice holds in BSML*, `◇¬(α ∧ β) ⊨* ◇¬α` (Fact 14). A BSML* anti-support
 split of `α ∧ β` has two non-empty parts, and the part anti-supporting `α` is the witness. -/
 theorem negativeFC_star_poss (α β : Formula Atom) :
     consequenceStar (W := W) (.poss (.neg (.conj α β))) (.poss (.neg α)) :=
-  fun M _ _ h w hw ↦
-    have ⟨s, hs, _, s₁, ⟨h₁, hne₁⟩, s₂, _, hu⟩ := h w hw
+  fun _ _ _ h w hw ↦
+    have ⟨_, hs, _, s₁, ⟨h₁, hne₁⟩, _, _, hu⟩ := h w hw
     ⟨s₁, (hu ▸ Finset.subset_union_left).trans hs, hne₁, h₁⟩
 
 /-- The `□` form of negative free choice in BSML*, `¬□(α ∧ β) ⊨* ¬□α` (Fact 14), by the
