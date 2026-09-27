@@ -47,8 +47,6 @@ theorem exists_isMinOn_symm (hD : D.Nonempty) (σ : Perm α) : ∃ x ∈ D, IsMi
   obtain ⟨x, hx, h⟩ := D.exists_min_image σ.symm hD
   exact ⟨x, hx, isMinOn_iff.2 h⟩
 
-variable [DecidableEq α]
-
 /-- Composing with the swap of two elements `y` and `y'` of `D` exchanges them as the first
 element of `D`. -/
 theorem isMinOn_symm_swap_mul_iff {σ : Perm α} {y y' x : α} (hy : y ∈ D) (hy' : y' ∈ D) :
