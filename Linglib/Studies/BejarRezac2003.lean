@@ -16,7 +16,7 @@ a further person probe: embedding the theme's competitor under a preposition, or
 dative–nominative construction whose dative cannot satisfy the EPP, raising the nominative
 over the dative so that the projection of T probes again.
 
-Goals are `Minimalist.PhiGoal`s — a Case-licensing state with a φ-cell — and the person
+Goals are `Minimalist.PhiGoal`s — a case, valued or not, with a φ-cell — and the person
 probe is `Probe.ofInt`, the probe gated only by the Active Goal Hypothesis.
 
 ## Main definitions

@@ -22,7 +22,7 @@ domain.
   case.
 * `Rules`: the high, low and elsewhere cases of one domain, and `Rules.ofAlignment`, the rules
   of an alignment.
-* `NP`, `lexicalValuation`: an NP before assignment, and the valuation of NPs by lexical case.
+* `lexicalValuation`: the valuation of NPs by lexical case.
 * `Rules.dependentPass`, `Rules.unmarkedPass`: the passes, over the NPs a predicate selects.
 * `Rules.valuations`: the valuations the rules can assign.
 * `Rules.assign`, `assignCases`: the one-domain algorithm, and its form for an alignment.
@@ -42,8 +42,10 @@ domain.
 ## Implementation notes
 
 List position encodes structural height: earlier is higher, and c-commands everything later.
-Labels are inert; `getCaseOf` and `getMechanismOf` look them up. The passes are `Valuation.fill`,
-so what they share (totality, persistence of values) comes from `Case.Valuation.Extends`.
+The NPs are of any type, identified by that type rather than by a label; a study's NPs are
+its own positions, and `Valuation.valueOf` reads off the case of one. The passes are
+`Valuation.fill`, so what they share (totality, persistence of values) comes from
+`Case.Valuation.Extends`.
 
 ## References
 
@@ -102,25 +104,10 @@ def Rules.ofAlignment : Alignment.AlignmentType → Rules
 
 /-! ### NPs and valuations -/
 
-/-- An NP as the rules see it: its label and any case a lexical head has valued. -/
-structure NP where
-  label : String
-  lexicalCase : Option Case := none
-  deriving DecidableEq, Repr
-
 /-- Every NP with its lexical case valued and nothing else. -/
 def lexicalValuation (lexicalCase : α → Option Case) (xs : List α) :
     Valuation α (Case × Mechanism) :=
   Valuation.initial (fun x ↦ (lexicalCase x).map (·, .lexical)) xs
-
-/-- The case of the NP labelled `label`, if any. -/
-def getCaseOf (label : String) (out : Valuation NP (Case × Mechanism)) : Option Case :=
-  (out.find? (·.1.label == label)).bind (·.2.map (·.1))
-
-/-- What valued the NP labelled `label`, if anything. -/
-def getMechanismOf (label : String) (out : Valuation NP (Case × Mechanism)) :
-    Option Mechanism :=
-  (out.find? (·.1.label == label)).bind (·.2.map (·.2))
 
 /-! ### The passes -/
 
@@ -142,14 +129,16 @@ def Rules.unmarkedPass (r : Rules) (P : α → Bool) (s : Valuation α (Case × 
     Valuation α (Case × Mechanism) :=
   s.fill fun _ x ↦ if P x then r.unmarked.map (·, .unmarked) else none
 
-/-- Case for every NP of one domain: the dependent rules, then the elsewhere case. -/
-def Rules.assign (r : Rules) (nps : List NP) : Valuation NP (Case × Mechanism) :=
-  r.unmarkedPass (fun _ ↦ true) <|
-    r.dependentPass (fun _ ↦ true) (lexicalValuation (·.lexicalCase) nps)
+/-- Case for every NP of one domain, `lex` giving the case a lexical head has valued: the
+    dependent rules, then the elsewhere case. -/
+def Rules.assign (r : Rules) (lex : α → Option Case) (xs : List α) :
+    Valuation α (Case × Mechanism) :=
+  r.unmarkedPass (fun _ ↦ true) <| r.dependentPass (fun _ ↦ true) (lexicalValuation lex xs)
 
 /-- The one-domain algorithm of an alignment. -/
-def assignCases (a : Alignment.AlignmentType) (nps : List NP) : Valuation NP (Case × Mechanism) :=
-  (Rules.ofAlignment a).assign nps
+def assignCases (a : Alignment.AlignmentType) (lex : α → Option Case) (xs : List α) :
+    Valuation α (Case × Mechanism) :=
+  (Rules.ofAlignment a).assign lex xs
 
 /-! ### What the passes assign -/
 
@@ -184,14 +173,14 @@ theorem Rules.extends_unmarkedPass (r : Rules) (P : α → Bool)
     exact .inr ⟨rfl, hc⟩) s
 
 /-- Assignment extends the lexical valuation by what the rules assign. -/
-theorem Rules.extends_assign (r : Rules) (nps : List NP) :
-    (lexicalValuation (·.lexicalCase) nps).Extends (· ∈ r.valuations) (r.assign nps) :=
+theorem Rules.extends_assign (r : Rules) (lex : α → Option Case) (xs : List α) :
+    (lexicalValuation lex xs).Extends (· ∈ r.valuations) (r.assign lex xs) :=
   (r.extends_dependentPass _ _).trans (r.extends_unmarkedPass _ _)
 
 /-- The algorithm is total: one valuation per NP. -/
-@[simp] theorem Rules.assign_length (r : Rules) (nps : List NP) :
-    (r.assign nps).length = nps.length := by
-  rw [← (r.extends_assign nps).length_eq, lexicalValuation, Valuation.length_initial]
+@[simp] theorem Rules.assign_length (r : Rules) (lex : α → Option Case) (xs : List α) :
+    (r.assign lex xs).length = xs.length := by
+  rw [← (r.extends_assign lex xs).length_eq, lexicalValuation, Valuation.length_initial]
 
 theorem lexicalValuation_getElem?_of_some (lexicalCase : α → Option Case) {xs : List α} {i : ℕ}
     {x : α} {c : Case} (hx : xs[i]? = some x) (hc : lexicalCase x = some c) :
@@ -208,16 +197,16 @@ theorem lexicalValuation_getElem? {lexicalCase : α → Option Case} {xs : List 
   exact ⟨hc, rfl⟩
 
 /-- Lexical case is kept, so it bleeds the dependent rules. -/
-theorem Rules.assign_getElem?_of_some (r : Rules) {nps : List NP} {i : ℕ} {np : NP} {c : Case}
-    (hnp : nps[i]? = some np) (hc : np.lexicalCase = some c) :
-    (r.assign nps)[i]? = some (np, some (c, .lexical)) :=
-  (r.extends_assign nps).getElem?_of_some (lexicalValuation_getElem?_of_some _ hnp hc)
+theorem Rules.assign_getElem?_of_some (r : Rules) {lex : α → Option Case} {xs : List α} {i : ℕ}
+    {x : α} {c : Case} (hx : xs[i]? = some x) (hc : lex x = some c) :
+    (r.assign lex xs)[i]? = some (x, some (c, .lexical)) :=
+  (r.extends_assign lex xs).getElem?_of_some (lexicalValuation_getElem?_of_some _ hx hc)
 
 /-- A caseless NP is valued only with a case the rules mention. -/
-theorem Rules.case_mem_cases (r : Rules) {nps : List NP} {i : ℕ} {np : NP} {c : Case}
-    {m : Mechanism} (hlex : np.lexicalCase = none)
-    (h : (r.assign nps)[i]? = some (np, some (c, m))) : c ∈ r.cases := by
-  rcases (r.extends_assign nps).of_getElem? h with h | h
+theorem Rules.case_mem_cases (r : Rules) {lex : α → Option Case} {xs : List α} {i : ℕ} {x : α}
+    {c : Case} {m : Mechanism} (hlex : lex x = none)
+    (h : (r.assign lex xs)[i]? = some (x, some (c, m))) : c ∈ r.cases := by
+  rcases (r.extends_assign lex xs).of_getElem? h with h | h
   · exact absurd (lexicalValuation_getElem? h).1 (by simp [hlex])
   · exact Rules.fst_mem_cases h
 
@@ -269,40 +258,42 @@ theorem Rules.dependentPass_of_none (r : Rules) (P : α → Bool) (hh : r.high =
 /-! ### Domains of one and two NPs -/
 
 /-- The valuation of an NP no dependent rule reaches: its lexical case, or the elsewhere case. -/
-def Rules.elsewhere (r : Rules) (np : NP) : Option (Case × Mechanism) :=
-  (np.lexicalCase.map (·, Mechanism.lexical)).or (r.unmarked.map (·, .unmarked))
+def Rules.elsewhere (r : Rules) (lexical : Option Case) : Option (Case × Mechanism) :=
+  (lexical.map (·, Mechanism.lexical)).or (r.unmarked.map (·, .unmarked))
 
 /-- A sole NP is never reached by a dependent rule. -/
-theorem Rules.assign_singleton (r : Rules) (np : NP) : r.assign [np] = [(np, r.elsewhere np)] := by
+theorem Rules.assign_singleton (r : Rules) (lex : α → Option Case) (x : α) :
+    r.assign lex [x] = [(x, r.elsewhere (lex x))] := by
   obtain ⟨hi, lo, un⟩ := r
-  obtain ⟨lbl, _ | l⟩ := np <;> cases hi <;> cases lo <;> cases un <;> rfl
+  simp only [Rules.assign, lexicalValuation, Valuation.initial, List.map_cons, List.map_nil]
+  cases lex x <;> cases hi <;> cases lo <;> cases un <;> rfl
 
 /-- Of two NPs the dependent rules reach both or neither: when neither has lexical case, the
     higher takes the high case and the lower the low case, where the rules have one. -/
-theorem Rules.assign_pair (r : Rules) (x y : NP) :
-    r.assign [x, y] =
-      [(x, if x.lexicalCase = none ∧ y.lexicalCase = none ∧ r.high.isSome
-            then r.high.map (·, .dependent) else r.elsewhere x),
-       (y, if x.lexicalCase = none ∧ y.lexicalCase = none ∧ r.low.isSome
-            then r.low.map (·, .dependent) else r.elsewhere y)] := by
+theorem Rules.assign_pair (r : Rules) (lex : α → Option Case) (x y : α) :
+    r.assign lex [x, y] =
+      [(x, if lex x = none ∧ lex y = none ∧ r.high.isSome
+            then r.high.map (·, .dependent) else r.elsewhere (lex x)),
+       (y, if lex x = none ∧ lex y = none ∧ r.low.isSome
+            then r.low.map (·, .dependent) else r.elsewhere (lex y))] := by
   obtain ⟨hi, lo, un⟩ := r
-  obtain ⟨lx, _ | cx⟩ := x <;> obtain ⟨ly, _ | cy⟩ := y <;>
-    cases hi <;> cases lo <;> cases un <;> rfl
+  simp only [Rules.assign, lexicalValuation, Valuation.initial, List.map_cons, List.map_nil]
+  cases lex x <;> cases lex y <;> cases hi <;> cases lo <;> cases un <;> rfl
 
 /-! ### Alignments on a transitive and an intransitive clause -/
 
 /-- Two caseless NPs: the accusative rules value the lower accusative and leave the higher
     nominative, the ergative rules mirror this, and the tripartite rules do both. -/
 theorem assignCases_transitive :
-    let nps : List NP := [{ label := "higher" }, { label := "lower" }]
-    (assignCases .accusative nps).map (·.2.map (·.1)) = [some .nom, some .acc] ∧
-    (assignCases .ergative nps).map (·.2.map (·.1)) = [some .erg, some .abs] ∧
-    (assignCases .tripartite nps).map (·.2.map (·.1)) = [some .erg, some .acc] := by
+    let xs : List (Fin 2) := [0, 1]
+    (assignCases .accusative (fun _ ↦ none) xs).map (·.2.map (·.1)) = [some .nom, some .acc] ∧
+    (assignCases .ergative (fun _ ↦ none) xs).map (·.2.map (·.1)) = [some .erg, some .abs] ∧
+    (assignCases .tripartite (fun _ ↦ none) xs).map (·.2.map (·.1)) = [some .erg, some .acc] := by
   decide
 
 /-- A sole caseless NP takes the elsewhere case under every alignment. -/
 theorem assignCases_intransitive (a : Alignment.AlignmentType) :
-    getMechanismOf "sole" (assignCases a [{ label := "sole" }]) = some .unmarked := by
+    ((assignCases a (fun _ : Unit ↦ none) [()]).valueOf ()).map (·.2) = some .unmarked := by
   cases a <;> decide
 
 end Case

@@ -135,7 +135,7 @@ def specTP : Site := ⟨4, [⟨2, some .inst⟩, io], true⟩
 object of a ditransitive, and the presubject position is none. -/
 theorem vpEdge_dependentAcc :
     vpEdge.DependentAcc ∧ ¬ presubject.HasCase ∧
-      Case.getMechanismOf "DO" Mongolian.Case.ditransitiveCases = some .dependent := by
+      (Mongolian.Case.ditransitiveCases.valueOf .directObject).map (·.2) = some .dependent := by
   decide
 
 /-! ### The scrambling constructions and their chains -/
@@ -291,19 +291,31 @@ theorem mongolian_differs_from_sakha_in_dat_only :
     Mongolian.Case.grammar.rules .C = Yakut.Case.grammar.rules .C ∧
     Mongolian.Case.grammar.agree = Yakut.Case.grammar.agree := by decide
 
-/-- The Sakha ditransitive: a subject, a VP-internal goal, and a theme shifted to the phase
-edge. -/
-def sakhaDitransitive : List PhasedNP :=
-  [{ label := "subject" }, { label := "goal", phase := .v },
-   { label := "theme", phase := .v, shifted := true }]
+/-- The arguments of a Sakha ditransitive. -/
+inductive SakhaArg
+  | subject
+  | goal
+  | theme
+  deriving DecidableEq, Repr
+
+/-- Their positions: a subject, a VP-internal goal, and a theme shifted to the phase edge. -/
+def SakhaArg.position : SakhaArg → Minimalist.PhasedNP
+  | .subject => {}
+  | .goal => { phase := .v }
+  | .theme => { phase := .v, shifted := true }
+
+/-- The Sakha ditransitive, highest first. -/
+def sakhaDitransitive : List SakhaArg := [.subject, .goal, .theme]
 
 /-- The Mongolian grammar values no NP of the Sakha ditransitive dative, so the goal Sakha
 values dative comes out otherwise: the dative of a Mongolian goal is nonstructural. -/
 theorem mongolian_derives_no_dative :
-    (∀ s ∈ Mongolian.Case.grammar.assign [(.T, .C)] sakhaDitransitive,
+    (∀ s ∈ Mongolian.Case.grammar.assign SakhaArg.position [(.T, .C)] sakhaDitransitive,
       s.2.map (·.1) ≠ some .dat) ∧
-    Case.getCaseOf "goal" (Mongolian.Case.grammar.assign [(.T, .C)] sakhaDitransitive) ≠
-      Case.getCaseOf "goal" (Yakut.Case.grammar.assign [(.T, .C)] sakhaDitransitive) := by
+    ((Mongolian.Case.grammar.assign SakhaArg.position [(.T, .C)] sakhaDitransitive).valueOf
+        .goal).map (·.1) ≠
+      ((Yakut.Case.grammar.assign SakhaArg.position [(.T, .C)] sakhaDitransitive).valueOf
+        .goal).map (·.1) := by
   decide
 
 end Gong2022

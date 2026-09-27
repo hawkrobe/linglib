@@ -83,12 +83,11 @@ def suffixOf : Option CaseValue → Option Suffix
   | _ => none
 
 /-- A Senaya nominal, which needs licensing exactly when specific, (40) to (42). -/
-def nominal (label : String) (specific : Bool) : LicensedNP :=
-  { label, needsLicensing := specific }
+def nominal (specific : Bool) : LicensedNP := { needsLicensing := specific }
 
 /-- A transitive clause's subject and object. -/
 def transitive (subject object : Bool) : List LicensedNP :=
-  [nominal "subj" subject, nominal "obj" object]
+  [nominal subject, nominal object]
 
 /-! ### The agreement data (Section 2.1) -/
 
@@ -129,7 +128,7 @@ def rows : List Row := Examples.all.filterMap Row.ofExample
 
 /-- The nominals of a row: a subject of the given specificity, and the row's object if any. -/
 def Row.nominals (r : Row) (subject : Bool) : List LicensedNP :=
-  nominal "subj" subject :: (r.object.map (nominal "obj")).toList
+  nominal subject :: (r.object.map nominal).toList
 
 /-- The suffixes of a row: the subject's, then the object's if there is an object. -/
 def Row.suffixes (r : Row) : List (Option Suffix) :=
@@ -192,8 +191,7 @@ def toyDomains : List Cat := [.v, .C]
 /-- A transitive clause of the toy language, in which a nominal needs licensing exactly when
 animate: the subject above v, the object in its domain. -/
 def toyTransitive (subject object : Bool) : List LicensedNP :=
-  [{ label := "subj", needsLicensing := subject },
-   { label := "obj", phase := .v, needsLicensing := object }]
+  [{ needsLicensing := subject }, { phase := .v, needsLicensing := object }]
 
 /-- An animate object activates v, which licenses it: T licenses the subject whatever its
 animacy and never the object, so without v the derivation crashes, (24). -/
@@ -218,9 +216,8 @@ theorem toy_inanimate_object (subject : Bool) :
 an accusative language value a specific perfective object accusative, but licensing leaves it
 unvalued, and the derivation crashes whatever the specificity of the subject. -/
 theorem dependentCase_values_banned_object (subject : Bool) :
-    _root_.Case.getCaseOf "obj"
-        (_root_.Case.assignCases .accusative ((transitive subject true).map (·.toNP))) =
-      some .acc ∧
+    ((_root_.Case.assignCases .accusative (·.lexicalCase) (transitive subject true))[1]?.bind
+        (·.2.map (·.1))) = some .acc ∧
     ¬ Converges domains perfective (transitive subject true) := by
   cases subject <;> decide
 

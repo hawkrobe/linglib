@@ -26,6 +26,8 @@ in which adding an assigner may change what values a nominal but never leaves on
 * `Case.Valuation.initial`, `Case.Valuation.fill`, `Case.Valuation.unvalued`: the valuation with
   given values, the simultaneous valuation of the unvalued nominals, and the positions of the
   unvalued ones.
+* `Case.Valuation.valueOf`: the value of a nominal, the nominals being identified by their own
+  type rather than by a label.
 * `Case.Valuation.Extends`: one valuation extends another by values satisfying a predicate.
 * `Case.Valuation.ValuedLE`: one valuation values every nominal another does.
 
@@ -74,6 +76,9 @@ def fillFrom (f : ℕ → α → Option β) : ℕ → Valuation α β → Valuat
 
 /-- Value every unvalued nominal with what `f` proposes for its position, simultaneously. -/
 def fill (f : ℕ → α → Option β) (s : Valuation α β) : Valuation α β := fillFrom f 0 s
+
+/-- The value of nominal `a`, if it has one. -/
+def valueOf [DecidableEq α] (a : α) (s : Valuation α β) : Option β := (s.lookup a).join
 
 /-- The positions of the unvalued nominals `P` selects, highest first. -/
 def unvalued (P : α → Bool) (s : Valuation α β) : List ℕ :=

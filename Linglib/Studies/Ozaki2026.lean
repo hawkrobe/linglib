@@ -93,36 +93,44 @@ theorem not_directPassivizable :
 
 /-! ### Case assignment (§3) -/
 
-/-- The accusative variant (28): leaver and source are caseless noun phrases in the one
-Spell-Out domain, the leaver c-commanding the source. -/
-def accVariant : List NP := [⟨"leaver", none⟩, ⟨"source", none⟩]
+/-- The participants of *hanareru* 'leave': the leaver and the source, the leaver
+c-commanding the source in the one Spell-Out domain. -/
+inductive Participant
+  | leaver
+  | source
+  deriving DecidableEq, Repr
+
+/-- The accusative variant (28): leaver and source are caseless noun phrases. -/
+def accVariant : Participant → Option Case := fun _ ↦ none
 
 /-- The ablative variant (29): the postposition has valued the source ablative. -/
-def ablVariant : List NP := [⟨"leaver", none⟩, ⟨"source", some .abl⟩]
+def ablVariant : Participant → Option Case
+  | .leaver => none
+  | .source => some .abl
+
+/-- The cases of a variant. -/
+def cases (lex : Participant → Option Case) : Valuation Participant (Case × Mechanism) :=
+  assignCases .accusative lex [.leaver, .source]
 
 /-- In the accusative variant the source receives dependent accusative by (27) and the
 leaver unmarked nominative. -/
 theorem acc_variant :
-    getCaseOf "source" (assignCases .accusative accVariant) = some .acc ∧
-      getMechanismOf "source" (assignCases .accusative accVariant) = some .dependent ∧
-      getCaseOf "leaver" (assignCases .accusative accVariant) = some .nom ∧
-      getMechanismOf "leaver" (assignCases .accusative accVariant) = some .unmarked := by
+    (cases accVariant).valueOf .source = some (.acc, .dependent) ∧
+      (cases accVariant).valueOf .leaver = some (.nom, .unmarked) := by
   decide
 
 /-- In the ablative variant the lexical ablative bleeds dependent accusative, and the leaver
 is unaffected. -/
 theorem abl_variant :
-    getCaseOf "source" (assignCases .accusative ablVariant) = some .abl ∧
-      getMechanismOf "source" (assignCases .accusative ablVariant) = some .lexical ∧
-      getCaseOf "leaver" (assignCases .accusative ablVariant) = some .nom ∧
-      getMechanismOf "leaver" (assignCases .accusative ablVariant) = some .unmarked := by
+    (cases ablVariant).valueOf .source = some (.abl, .lexical) ∧
+      (cases ablVariant).valueOf .leaver = some (.nom, .unmarked) := by
   decide
 
 /-- Accusative without thematic Voice: the non-thematic head assigns no θ-role, and the
 source's accusative is configurational rather than assigned by a functional head. -/
 theorem accusative_without_voice :
     ¬ anticausative.AssignsTheta ∧
-      getMechanismOf "source" (assignCases .accusative accVariant) = some .dependent := by
+      ((cases accVariant).valueOf .source).map (·.2) = some .dependent := by
   decide
 
 end Ozaki2026

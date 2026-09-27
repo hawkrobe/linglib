@@ -76,21 +76,32 @@ def Realizes (c : Case) (src : Mechanism) : Observed → Prop
 instance (c : Case) (src : Mechanism) (o : Observed) : Decidable (Realizes c src o) := by
   cases o <;> simp only [Realizes] <;> infer_instance
 
-/-- The NPs of a row's clause, subject first: it c-commands the object. -/
-def domain (r : LinguisticExample) : List NP :=
-  ⟨"subject", none⟩ :: if r.feature? "transitive" = some "yes" then [⟨"object", none⟩] else []
+/-- The arguments of a clause. -/
+inductive Arg
+  | subject
+  | object
+  deriving DecidableEq, Repr
 
-/-- The observed case of a row's NP. -/
-def observed? (r : LinguisticExample) (np : String) : Option Observed :=
-  (r.feature? (np ++ "Case")).bind Observed.parse?
+/-- The feature a row records an argument's case under. -/
+def Arg.feature : Arg → String
+  | .subject => "subjectCase"
+  | .object => "objectCase"
+
+/-- The arguments of a row's clause, subject first: it c-commands the object. -/
+def domain (r : LinguisticExample) : List Arg :=
+  .subject :: if r.feature? "transitive" = some "yes" then [.object] else []
+
+/-- The observed case of a row's argument. -/
+def observed? (r : LinguisticExample) (np : Arg) : Option Observed :=
+  (r.feature? np.feature).bind Observed.parse?
 
 /-- Every clause the book introduces its languages with is derived by the algorithm from the
     language's alignment type: the ergative and accusative NPs are the dependent-case NPs and
     the nominative, absolutive and unmarked NPs the leftovers. -/
 theorem rows_case :
-    ∀ r ∈ Examples.all, ∀ lang ∈ alignment? r.language, ∀ np ∈ ["subject", "object"],
-      ∀ o ∈ observed? r np, ∀ c ∈ getCaseOf np (assignCases lang (domain r)),
-        ∀ src ∈ getMechanismOf np (assignCases lang (domain r)), Realizes c src o := by
+    ∀ r ∈ Examples.all, ∀ lang ∈ alignment? r.language, ∀ np ∈ [Arg.subject, .object],
+      ∀ o ∈ observed? r np, ∀ v ∈ (assignCases lang (fun _ ↦ none) (domain r)).valueOf np,
+        Realizes v.1 v.2 o := by
   decide
 
 /-- Agreement does not enter the algorithm: a subject is ergative in a transitive clause and
@@ -98,7 +109,7 @@ theorem rows_case :
     Burushaski. -/
 theorem ergative_subject_independent_of_agreement :
     ∀ r ∈ Examples.all, alignment? r.language = some .ergative →
-      getCaseOf "subject" (assignCases .ergative (domain r)) =
+      ((assignCases .ergative (fun _ ↦ none) (domain r)).valueOf .subject).map (·.1) =
         some (if r.feature? "transitive" = some "yes" then .erg else .abs) := by
   decide
 

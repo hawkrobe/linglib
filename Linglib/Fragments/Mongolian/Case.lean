@@ -35,28 +35,39 @@ def grammar : CaseAssigners where
 def inventory : Finset Case :=
   {.nom, .acc, .gen, .dat, .abl, .inst, .com}
 
-/-- A Mongolian ditransitive: the subject above the direct object, shifted to the clause
-    edge, above the dative indirect object. -/
-def ditransitive : List PhasedNP :=
-  [{ label := "subject" }, { label := "DO", phase := .v, shifted := true },
-   { label := "IO", phase := .v, lexicalCase := some .dat }]
+/-- The arguments of a ditransitive. -/
+inductive DitransitiveArg
+  | subject
+  | directObject
+  | indirectObject
+  deriving DecidableEq, Repr
+
+/-- Their positions in a Mongolian ditransitive: the subject above the direct object, shifted to
+    the clause edge, above the dative indirect object. -/
+def DitransitiveArg.position : DitransitiveArg → PhasedNP
+  | .subject => {}
+  | .directObject => { phase := .v, shifted := true }
+  | .indirectObject => { phase := .v, lexicalCase := some .dat }
+
+/-- A ditransitive's arguments, highest first. -/
+def ditransitive : List DitransitiveArg := [.subject, .directObject, .indirectObject]
 
 /-- Its cases, with finite T probing the clause. -/
-def ditransitiveCases : Valuation NP (Case × Mechanism) := grammar.assign [(.T, .C)] ditransitive
+def ditransitiveCases : Valuation DitransitiveArg (Case × Mechanism) :=
+  grammar.assign DitransitiveArg.position [(.T, .C)] ditransitive
 
 /-- The direct object is valued accusative by the dependent rule, the subject being the
     caseless NP above it. -/
 theorem do_gets_dependent_acc :
-    getCaseOf "DO" ditransitiveCases = some .acc ∧
-    getMechanismOf "DO" ditransitiveCases = some .dependent := by decide
+    ditransitiveCases.valueOf .directObject = some (.acc, .dependent) := by decide
 
 /-- The subject is valued nominative by T, not by a dependent rule. -/
 theorem subject_gets_nom_by_agree :
-    getCaseOf "subject" ditransitiveCases = some .nom ∧
-    getMechanismOf "subject" ditransitiveCases = some .agree := by decide
+    ditransitiveCases.valueOf .subject = some (.nom, .agree) := by decide
 
 /-- The indirect object keeps its lexical dative and neither competes for dependent case nor
     creates a case position. -/
-theorem io_has_lexical_case : getMechanismOf "IO" ditransitiveCases = some .lexical := by decide
+theorem io_has_lexical_case :
+    ditransitiveCases.valueOf .indirectObject = some (.dat, .lexical) := by decide
 
 end Mongolian.Case
