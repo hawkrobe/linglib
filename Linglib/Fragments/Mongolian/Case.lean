@@ -26,7 +26,7 @@ open Minimalist _root_.Case
 
 /-- The Mongolian grammar of structural case: accusative on the lower of two NPs in the
     clause, nominative from T and genitive from D under Agree, and no dependent dative. -/
-def grammar : CaseGrammar where
+def grammar : CaseAssigners where
   domains := [(.D, {}), (.v, {}), (.C, { low := some .acc })]
   agree := [(.T, .nom), (.D, .gen)]
 

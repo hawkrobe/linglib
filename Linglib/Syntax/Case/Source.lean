@@ -3,26 +3,25 @@ module
 public import Linglib.Syntax.Case.Basic
 
 /-!
-# Case assignment provenance — the neutral source ontology
-[marantz-1991] [kalin-2018] [woolford-2006]
+# Case assignment provenance
 
-`Case.Source` is the coarsened *provenance* of an assigned case — the
-dimension on which the formalized assignment accounts agree that a case
-"comes from" somewhere. It is **not** a theory-neutral universal: it is the
-common quotient that Marantz dependent case (`Syntax/Case/Dependent.lean`'s
-`CaseSource`) and Kalin hybrid licensing (`Syntax/Case/Licensing.lean`'s
-`LicensingOutcome`) both map into, so a cross-theory comparison can ask
-whether two accounts agree on *provenance*, not merely on the surface case.
-Each account keeps its own finer source enum; `Source` is where they become
-commensurable.
+`Case.Source` is the coarsened provenance of an assigned case, the dimension on which the
+formalized accounts of case assignment agree that a case comes from somewhere. It is not a
+theory-neutral universal but the common quotient of their finer mechanisms: `Case.Mechanism` of
+`Syntax/Case/Dependent.lean` projects onto it, and so does the Agree-based licensing of
+[kalin-2018] through the mechanisms it is read as (`Syntax/Minimalist/Case/Licensing.lean`). Two
+accounts can then be asked whether they agree on provenance, not merely on the surface case.
 
-Living in `Features/` — below the assignment theories — lets both theories
-project into it (and lets a future pooled comparison name it). The
-structural-vs-inherent split lives here, on the *provenance*, not on the
-inventory cell (`Syntax/Case/Basic.lean`): whether a given case, e.g.
-ergative, is "structural" is a contested claim about its *source*
-([woolford-2006]), which different accounts answer differently — so it is
+The structural-inherent split lives here, on the provenance, not on the inventory cell of
+`Syntax/Case/Basic.lean`: whether a given case, such as the ergative, is structural is a contested
+claim about its source ([woolford-2006]), which different accounts answer differently, so it is
 not a property of the `Case` value.
+
+## References
+
+* [marantz-1991]
+* [kalin-2018]
+* [woolford-2006]
 -/
 
 @[expose] public section

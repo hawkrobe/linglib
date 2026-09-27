@@ -2225,9 +2225,7 @@ import Linglib.Syntax.CCG.Grammar
 import Linglib.Syntax.CCG.Interface
 import Linglib.Syntax.CCG.Intonation
 import Linglib.Syntax.Case.Alignment
-import Linglib.Syntax.Case.Assigner
 import Linglib.Syntax.Case.Dependent
-import Linglib.Syntax.Case.Licensing
 import Linglib.Syntax.Case.Order
 import Linglib.Syntax.Category.Adjective.Basic
 import Linglib.Syntax.Category.Adjective.ClauseEmbedding

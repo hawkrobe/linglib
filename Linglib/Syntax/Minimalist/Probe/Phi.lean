@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Minimalist.Probe.Basic
 public import Linglib.Syntax.Agreement.Paradigm
 public import Linglib.Syntax.Minimalist.Phi.Geometry
-public import Linglib.Syntax.Case.Licensing
+public import Linglib.Syntax.Minimalist.Case.Licensing
 
 /-!
 # φ-probes: the φ-feature specialization of `Probe`
@@ -49,7 +49,7 @@ def Probe.Target.toProbe (t : Probe.Target) : Probe Agreement.Bundle :=
 /-- A nominal as the goal of a φ-probe: its Case-licensing state (`LicensedNP`) together
 with its φ-cell. A relativized probe reads the cell for visibility; Agree reads the Case
 state for activity (`LicensedNP.isActive`, the Active Goal Hypothesis of [chomsky-2000]). -/
-structure PhiGoal extends Case.Licensing.LicensedNP where
+structure PhiGoal extends Licensing.LicensedNP where
   cell : Agreement.Bundle
   deriving DecidableEq, Repr
 
@@ -79,10 +79,10 @@ def PhiGoal.unvalued (cell : Agreement.Bundle) : PhiGoal :=
 @[simp] theorem PhiGoal.needsLicensing_unvalued (cell : Agreement.Bundle) :
     (PhiGoal.unvalued cell).needsLicensing = true := rfl
 
-theorem PhiGoal.isActive_valued (c : Case) (cell : Agreement.Bundle) :
+@[simp] theorem PhiGoal.isActive_valued (c : Case) (cell : Agreement.Bundle) :
     (PhiGoal.valued c cell).isActive = false := rfl
 
-theorem PhiGoal.isActive_unvalued (cell : Agreement.Bundle) :
+@[simp] theorem PhiGoal.isActive_unvalued (cell : Agreement.Bundle) :
     (PhiGoal.unvalued cell).isActive = true := rfl
 
 @[simp] theorem PhiGoal.valued_ne_unvalued (c : Case) (cell cell' : Agreement.Bundle) :

@@ -59,13 +59,13 @@ open Data.Examples Minimalist Case Yakut.Case
 /-- A purely configurational grammar: dependent dative and accusative with elsewhere
     nominative in the clause and verb phrase, elsewhere genitive in the noun phrase, and no
     Agree. -/
-def pureMarantz : CaseGrammar where
+def pureMarantz : CaseAssigners where
   domains := [(.D, { unmarked := some .gen }), (.v, { high := some .dat, unmarked := some .nom }),
     (.C, { low := some .acc, unmarked := some .nom })]
 
 /-- A purely Agree-based grammar: nominative from T, accusative from v, genitive from D, and
     no dependent rule. -/
-def pureChomsky : CaseGrammar where
+def pureChomsky : CaseAssigners where
   domains := [(.D, {}), (.v, {}), (.C, {})]
   agree := [(.T, .nom), (.v, .acc), (.D, .gen)]
 
@@ -105,15 +105,15 @@ def pro : PhasedNP := { label := "PRO" }
 def finite : List (Cat × Cat) := [(.T, .C)]
 
 /-- The cases of a derivation, positionally. -/
-def cases (g : CaseGrammar) (probes : List (Cat × Cat)) (nps : List PhasedNP) :
+def cases (g : CaseAssigners) (probes : List (Cat × Cat)) (nps : List PhasedNP) :
     List (Option Case) :=
   (g.assign probes nps).map (·.2.map (·.1))
 
 /-! ### The constructions -/
 
-attribute [local simp] cases CaseGrammar.assign domainPass probePass agreePass
-  Rules.dependentPass Rules.unmarkedPass eligible markBy markByFrom initial CaseGrammar.rules
-  CaseGrammar.agreeCase grammar pureMarantz PhasedNP.visible PhasedNP.spellOut subject internal
+attribute [local simp] cases CaseAssigners.assign domainPass probePass
+  Rules.dependentPass Rules.unmarkedPass eligible markBy markByFrom initial CaseAssigners.rules
+  CaseAssigners.agreeCase grammar pureMarantz PhasedNP.visible PhasedNP.spellOut subject internal
   possessor pro finite
 
 
@@ -304,7 +304,7 @@ def probes (r : LinguisticExample) : List (Cat × Cat) :=
     (if yes r "possesseeAgreement" then [(Cat.D, Cat.D)] else [])
 
 /-- The valuations of a domain, paired with its occupants. -/
-def derive (g : CaseGrammar) (r : LinguisticExample) (d : List Occupant) :
+def derive (g : CaseAssigners) (r : LinguisticExample) (d : List Occupant) :
     List (Occupant × Valuation) :=
   d.zip ((g.assign (probes r) (d.map (·.np))).map (·.2))
 
@@ -330,21 +330,21 @@ instance (r : LinguisticExample) (out : List (Occupant × Valuation)) :
 /-- A domain derives the row under a grammar: every overt NP gets the case its gloss shows,
     and under the Chomskian half — the Case filter and the case–agreement link — is licensed
     and agreed with accordingly. -/
-def Derives (g : CaseGrammar) (chomskian : Bool) (r : LinguisticExample) (d : List Occupant) :
+def Derives (g : CaseAssigners) (chomskian : Bool) (r : LinguisticExample) (d : List Occupant) :
     Prop :=
   (∀ p ∈ derive g r d, p.1.covert = false →
     Realizes p.2 p.1.observed ∧ (chomskian = true → Licensed p.1 p.2)) ∧
   (chomskian = true → Agrees r (derive g r d))
 
-instance (g : CaseGrammar) (chomskian : Bool) (r : LinguisticExample) (d : List Occupant) :
+instance (g : CaseAssigners) (chomskian : Bool) (r : LinguisticExample) (d : List Occupant) :
     Decidable (Derives g chomskian r d) := by
   unfold Derives; infer_instance
 
 /-- Some choice of structure derives the row. -/
-def Derivable (g : CaseGrammar) (chomskian : Bool) (r : LinguisticExample) : Prop :=
+def Derivable (g : CaseAssigners) (chomskian : Bool) (r : LinguisticExample) : Prop :=
   ∃ d ∈ candidates r, Derives g chomskian r d
 
-instance (g : CaseGrammar) (chomskian : Bool) (r : LinguisticExample) :
+instance (g : CaseAssigners) (chomskian : Bool) (r : LinguisticExample) :
     Decidable (Derivable g chomskian r) := by
   unfold Derivable; infer_instance
 
