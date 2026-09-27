@@ -94,7 +94,7 @@ def Formula.nec (φ : Formula Atom) : Formula Atom :=
 
 /-- `Formula.NEFree φ` holds when `φ` contains no `NE` atom — the fragment
     on which BSML collapses to classical modal logic on singleton teams
-    (`BSML/Bridge.lean`). -/
+    (`BSML/Classical.lean`). -/
 def Formula.NEFree : Formula Atom → Prop
   | .atom _ => True
   | .ne => False

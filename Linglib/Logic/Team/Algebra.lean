@@ -126,6 +126,30 @@ instance (s t₁ t₂ : Finset α) : Decidable (splitsAs s t₁ t₂) :=
 instance (s t₁ t₂ : Finset α) : Decidable (splitsAsNE s t₁ t₂) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
+/-- A split of `s` into a part where `P` holds pointwise and a part where `Q` does exists
+    exactly when `P ∨ Q` holds pointwise on `s`: a split disjunction of flat disjuncts is
+    flat. The parts are `s.filter P` and `s.filter (¬ P ·)`. -/
+theorem exists_splitsAs_forall_iff (s : Finset α) (P Q : α → Prop) :
+    (∃ t₁ t₂, splitsAs s t₁ t₂ ∧ (∀ x ∈ t₁, P x) ∧ ∀ x ∈ t₂, Q x) ↔ ∀ x ∈ s, P x ∨ Q x where
+  mp := fun ⟨_, _, hs, h₁, h₂⟩ x hx ↦ by
+    subst hs
+    exact (Finset.mem_union.mp hx).imp (h₁ x) (h₂ x)
+  mpr h := by
+    classical
+    exact ⟨s.filter P, s.filter (¬ P ·), Finset.filter_union_filter_not_eq _ _,
+      fun x hx ↦ (Finset.mem_filter.mp hx).2,
+      fun x hx ↦ (h x (Finset.mem_filter.mp hx).1).resolve_left (Finset.mem_filter.mp hx).2⟩
+
+omit [DecidableEq α] in
+/-- A non-empty subteam of `u` on which `P` holds pointwise exists exactly when `P` holds
+    somewhere in `u`: the witness may be taken to be a singleton. -/
+theorem exists_nonempty_subset_forall_iff (u : Finset α) (P : α → Prop) :
+    (∃ t ⊆ u, t.Nonempty ∧ ∀ x ∈ t, P x) ↔ ∃ x ∈ u, P x where
+  mp := fun ⟨_, htu, ⟨x, hx⟩, h⟩ ↦ ⟨x, htu hx, h x hx⟩
+  mpr := fun ⟨x, hxu, hx⟩ ↦
+    ⟨{x}, Finset.singleton_subset_iff.mpr hxu, Finset.singleton_nonempty x,
+      fun _ hy ↦ Finset.mem_singleton.mp hy ▸ hx⟩
+
 end Team
 
 namespace Team

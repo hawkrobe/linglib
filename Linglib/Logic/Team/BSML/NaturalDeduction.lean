@@ -90,7 +90,8 @@ theorem not_support_botbot (M : KripkeModel W Atom) (p : Atom) (s : Finset W) :
 /-! ### Classical-fragment lemmas
 
 NE-free formulas behave classically: bilaterally consistent off the empty
-team, and bilaterally determined on singletons ([aloni-2022] Fact 15;
+team, and bilaterally determined on singletons (`support_singleton_iff_realize`
+in `BSML/Classical.lean`;
 [aloni-anttila-yang-2024]'s `α, β ∈ ML` metavariable convention rests on
 these). Anti-support facts come free from support facts at `.neg φ`, which
 is NE-free exactly when `φ` is. -/
