@@ -34,6 +34,8 @@ model-theoretic core of WJR's completeness.
 * `MatchingLift.ncard_le`, `matchingLift_compl_compl` and the `IsComplementReversing`
   instance.
 * `strict_lewisLift_iff` — over a total relation the strict lift is Lewis's ∃∀ clause.
+* `KratzerLift`, [kratzer-2012]'s revised comparative possibility, with
+  `kratzerLift_rightUnion_of_disjoint`, the disjoint-alternatives disjunction puzzle it keeps.
 * `exists_lewisLift_repr`, `lewisLift_repr_iff` — the WJR representation and its round
   trip.
 
@@ -41,6 +43,7 @@ model-theoretic core of WJR's completeness.
 
 * [lewis-1973]
 * [kratzer-1991]
+* [kratzer-2012]
 * [holliday-icard-2013]
 * [harrison-trainor-holliday-icard-2018]
 * [halpern-2003]
@@ -342,5 +345,52 @@ theorem lewisLift_repr_iff (hMono : ∀ A B : Set W, A ⊆ B → ge B A)
     exact ⟨ge_w, hrefl, hiff⟩
 
 end Representation
+
+/-! ### Kratzer's revised comparative possibility -/
+
+/-- [kratzer-2012]'s revised comparative possibility, the k-lifting of [holliday-icard-2013]:
+`A` is at least as likely as `B` unless some world in `B` outside `A` strictly dominates every
+world in `A` outside `B`; only the worlds in exactly one of the two propositions count. -/
+def KratzerLift (r : α → α → Prop) (A B : Set α) : Prop :=
+  ¬ ∃ b ∈ B \ A, ∀ a ∈ A \ B, r b a ∧ ¬ r a b
+
+theorem kratzerLift_iff : KratzerLift r A B ↔ ∀ b ∈ B \ A, ∃ a ∈ A \ B, ¬(r b a ∧ ¬ r a b) := by
+  simp only [KratzerLift, not_exists, not_and, not_forall]
+  exact forall₂_congr fun _ _ ↦ by simp
+
+/-- A proposition is at least as likely as the whole space only when it is the whole space. -/
+theorem kratzerLift_univ_iff' (r : α → α → Prop) (A : Set α) :
+    KratzerLift r A Set.univ ↔ A = Set.univ := by
+  rw [kratzerLift_iff]
+  constructor
+  · intro h
+    by_contra hne
+    obtain ⟨b, hb⟩ := (Set.ne_univ_iff_exists_notMem A).1 hne
+    obtain ⟨a, ha, -⟩ := h b ⟨Set.mem_univ b, hb⟩
+    exact ha.2 (Set.mem_univ a)
+  · rintro rfl b hb
+    exact absurd hb.1 hb.2
+
+/-- Lassiter's observation, reported by [holliday-icard-2013]: when `A` is disjoint from both
+alternatives, the revised lift is right-union closed, so the disjunction puzzle survives it. -/
+theorem kratzerLift_rightUnion_of_disjoint (r : α → α → Prop) {A B C : Set α}
+    (hB : Disjoint A B) (hC : Disjoint A C) (hAB : KratzerLift r A B) (hAC : KratzerLift r A C) :
+    KratzerLift r A (B ∪ C) := by
+  rintro ⟨b, ⟨hb | hb, hbA⟩, hall⟩
+  · exact hAB ⟨b, ⟨hb, hbA⟩, fun a ha ↦
+      hall a ⟨ha.1, fun h ↦ h.elim (Set.disjoint_left.mp hB ha.1) (Set.disjoint_left.mp hC ha.1)⟩⟩
+  · exact hAC ⟨b, ⟨hb, hbA⟩, fun a ha ↦
+      hall a ⟨ha.1, fun h ↦ h.elim (Set.disjoint_left.mp hB ha.1) (Set.disjoint_left.mp hC ha.1)⟩⟩
+
+/-- Right-union closure extends to finite unions. -/
+theorem RightUnion.biUnion {r : Set α → Set α → Prop} (hJ : RightUnion r) {ι : Type*}
+    {s : Finset ι} (hs : s.Nonempty) {A : Set α} {B : ι → Set α} (h : ∀ i ∈ s, r A (B i)) :
+    r A (⋃ i ∈ s, B i) := by
+  classical
+  induction hs using Finset.Nonempty.cons_induction with
+  | singleton i => simpa using h i (Finset.mem_singleton_self i)
+  | cons i s hi hs ih =>
+    rw [Finset.cons_eq_insert, Finset.set_biUnion_insert]
+    exact hJ _ _ _ (h i (Finset.mem_cons_self i s)) (ih fun j hj ↦ h j (Finset.mem_cons_of_mem hj))
 
 end ComparativeProbability

@@ -1,0 +1,292 @@
+[
+  {
+    "id": "lassiter2015_ex4",
+    "source": {"bibkey": "lassiter-2015", "paperLabel": "(4)"},
+    "language": "stan1293",
+    "primaryText": "Sam is as likely to win the lottery as anyone else is.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A lottery with a million tickets; three siblings, Sam, Mary and Sue, buy two tickets each, and nobody else buys more than two.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"],
+      ["form", "φ ⪰ ψ_i for each i"]
+    ],
+    "comment": "True, since Sam holds as many tickets as anyone; the starting point of the iterated disjunction puzzle.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "lassiter2015_ex8",
+    "source": {"bibkey": "lassiter-2015", "paperLabel": "(8)"},
+    "language": "stan1293",
+    "primaryText": "It is as likely that Sam will win as it is that Mary or Sue will win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The same lottery.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "φ ⪰ (ψ ∨ χ)", "judgment": "unacceptable"},
+      {"name": "φ ⪰ ψ ∧ φ ⪰ χ", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "1.1"],
+      ["form", "φ ⪰ (ψ ∨ χ)"]
+    ],
+    "comment": "False on the reading equivalent to (9): Mary and Sue hold four tickets together against Sam's two; the conjunctive reading of the disjunction in a comparative complement is set aside.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "lassiter2015_ex9",
+    "source": {"bibkey": "lassiter-2015", "paperLabel": "(9)"},
+    "language": "stan1293",
+    "primaryText": "It is as likely that Sam will win as it is that one of his sisters will win.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The same lottery.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"],
+      ["form", "φ ⪰ (ψ ∨ χ)"]
+    ],
+    "comment": "Unambiguously false; the reading (8) shares.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "lassiter2015_ex12",
+    "source": {"bibkey": "lassiter-2015", "paperLabel": "(12)"},
+    "language": "stan1293",
+    "primaryText": "It is as likely that Sam will win as it is that Mary, Sue, Tom, Alice, Bob, Hank or Murray will.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The lottery, with five more people holding two tickets each.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"],
+      ["form", "φ ⪰ (ψ₁ ∨ … ∨ ψ₇)"]
+    ],
+    "comment": "Iterating the puzzle; feeding each conclusion back as a premise reaches (14), that Sam is as likely to win as not.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "lassiter2015_ex33c",
+    "source": {"bibkey": "lassiter-2015", "paperLabel": "(33c)"},
+    "language": "stan1293",
+    "primaryText": "It is as likely that Sam will win (and Mary and Sue will not) as it is that either Mary or Sue will win (and Sam will not).",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The lottery with three siblings.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.4"],
+      ["form", "(φ ∧ ¬ψ ∧ ¬χ) ⪰ ((¬φ ∧ ψ ∧ ¬χ) ∨ (¬φ ∧ ¬ψ ∧ χ))"]
+    ],
+    "comment": "The modified disjunction puzzle's conclusion: as invalid as (8), yet valid for the revised comparative possibility once the alternatives are stated as disjoint.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "lassiter2015_ex35",
+    "source": {"bibkey": "lassiter-2015", "paperLabel": "(35)"},
+    "language": "stan1293",
+    "primaryText": "If φ must be the case, then φ is more likely than ¬φ.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.5"],
+      ["pattern", "must to more likely than not"]
+    ],
+    "comment": "Intuitively obvious, weaker than (3); invalid when the m-lifting is combined with Kratzer's semantics for must.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "lassiter2015_ex48",
+    "source": {"bibkey": "lassiter-2015", "paperLabel": "(48)"},
+    "language": "stan1293",
+    "primaryText": "It is exactly as likely that Sam will go to the movies as it is that he will either go to school or go to the movies.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Sam might go to school, but he is somewhat more likely to cut class and go to the movies.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.2"],
+      ["measure", "symmetric fuzzy"]
+    ],
+    "comment": "Compatible with a symmetric fuzzy measure for likely; clearly wrong unless going to school is impossible, which the equal-shares axiom enforces.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "lassiter2015_ex50",
+    "source": {"bibkey": "lassiter-2015", "paperLabel": "(50)"},
+    "language": "stan1293",
+    "primaryText": "You are exactly three times as likely to throw an odd number as you are to throw a two.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "You are about to throw a fair die.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.2"],
+      ["modifier", "ratio"]
+    ],
+    "comment": "Ratio modifiers are acceptable with likely, as with adjectives on additive scales.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "lassiter2015_ex51",
+    "source": {"bibkey": "lassiter-2015", "paperLabel": "(51)"},
+    "language": "stan1293",
+    "primaryText": "You are exactly twice as likely to draw a jack as you are to draw a red queen.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "You are about to draw a card at random from a well-shuffled pack.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.2"],
+      ["modifier", "ratio"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "lassiter2015_ex53",
+    "source": {"bibkey": "lassiter-2015", "paperLabel": "(53)"},
+    "language": "stan1293",
+    "primaryText": "Mary is exactly three times as tall as Bill is.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.2"],
+      ["modifier", "ratio"],
+      ["scale", "additive"]
+    ],
+    "comment": "The paper prints the variants tall, old and heavy with a single check mark.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "lassiter2015_ex54",
+    "source": {"bibkey": "lassiter-2015", "paperLabel": "(54)"},
+    "language": "stan1293",
+    "primaryText": "Mary is exactly three times as angry as Bill is.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.2"],
+      ["modifier", "ratio"],
+      ["scale", "non-additive"]
+    ],
+    "comment": "Printed with two question marks, with the variants hungry and lecherous; ratio modifiers resist adjectives on non-additive scales.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "lassiter2015_ex56",
+    "source": {"bibkey": "lassiter-2015", "paperLabel": "(56)"},
+    "language": "stan1293",
+    "primaryText": "Sam must be at home. Therefore it is much more likely that Sam is at home than it is that he is not at home.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3"],
+      ["pattern", "must to much more likely than not"]
+    ],
+    "comment": "Clearly valid; none of the bridging rules BR1–BR3 validates it, and the quantificational and strong probabilistic auxiliaries do.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "lassiter2015_ex62",
+    "source": {"bibkey": "lassiter-2015", "paperLabel": "(62)"},
+    "language": "stan1293",
+    "primaryText": "The 1880 census shows her living with mom, two brothers and her daughter. So David must have died before 1880.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "An online genealogy discussion; David is the father.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4"],
+      ["issue", "weakness of must"]
+    ],
+    "comment": "The conclusion is presented as the best explanation of the evidence, not as the only possibility: a marital split would be an obvious alternative.",
+    "lgrConformance": ""
+  },
+  {
+    "id": "lassiter2015_ex65a",
+    "source": {"bibkey": "lassiter-2015", "paperLabel": "(65a)"},
+    "language": "stan1293",
+    "primaryText": "Yale is more likely to win the NCAA basketball championship than Harvard is.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A year in which Yale is a much better team than Harvard, and the odds against either winning are astronomical.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4"],
+      ["pattern", "more likely than to might"]
+    ],
+    "comment": "",
+    "lgrConformance": ""
+  },
+  {
+    "id": "lassiter2015_ex65b",
+    "source": {"bibkey": "lassiter-2015", "paperLabel": "(65b)"},
+    "language": "stan1293",
+    "primaryText": "Yale might win the NCAA basketball championship.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The same year.",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4"],
+      ["pattern", "more likely than to might"]
+    ],
+    "comment": "Not obviously inferable from (65a); if the inference fails, the weak probabilistic auxiliaries are favoured.",
+    "lgrConformance": ""
+  }
+]

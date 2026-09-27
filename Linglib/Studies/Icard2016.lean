@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.FourierMotzkin
+public import Linglib.Core.Probability.Decision.Basic
 public import Linglib.Studies.HollidayIcard2013
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Tactic.FinCases
@@ -37,8 +38,10 @@ the cost.
 * Judgments are a finite family of compared pairs with a `Finset` of strict indices, the
   paper's `E ⊆ ℘(Ω) × ℘(Ω)` with `X` and `Y`; `X ≠ ∅` is a hypothesis where the paper assumes
   it. A pure act picks a side of each pair, so the paper's `Σ` is `ι → Bool`.
-* Mixed acts and nature's beliefs are both `FinAddMeasure ℚ`, and every quantity is rational,
-  since the dominance direction rests on the rational Farkas lemma.
+* The pure acts against nature form a `DecisionProblem` (`Core/Probability/Decision`) whose
+  prior is the belief's singleton masses; mixed acts and beliefs are both `FinAddMeasure ℚ`,
+  and every quantity is rational, since the dominance direction rests on the rational Farkas
+  lemma.
 * In the refutation direction of the Main Lemma the better mixed act is the pushforward of
   `Q★` along a change of one coordinate rather than the paper's half mixture.
 * The explorer's preferred act is dominated by the pure act gambling on the other side of
@@ -69,17 +72,6 @@ section Game
 
 variable {A : Type*} [Fintype A]
 
-theorem sum_singleton (μ : FinAddMeasure ℚ A) : ∑ a, μ {a} = 1 := by
-  rw [μ.sum_mu_singleton, Finset.coe_univ, μ.total]
-
-/-- The point mass at `a`, the pure act `a` as a mixed act. -/
-noncomputable def dirac [DecidableEq A] (a : A) : FinAddMeasure ℚ A :=
-  .ofFintype (fun b ↦ if b = a then 1 else 0) (fun _ ↦ by split_ifs <;> norm_num) (by simp)
-
-@[simp] theorem dirac_singleton [DecidableEq A] (a b : A) :
-    dirac a {b} = if b = a then 1 else 0 := by
-  simp [dirac]
-
 variable (U : A → Ω → ℚ)
 
 /-- The payoff of the mixed act `μ` in state `ω`, for the payoff table `U`. -/
@@ -87,16 +79,26 @@ def mixedPayoff (μ : FinAddMeasure ℚ A) (ω : Ω) : ℚ := ∑ a, μ {a} * U 
 
 omit [Fintype Ω] in
 @[simp] theorem mixedPayoff_dirac [DecidableEq A] (a : A) (ω : Ω) :
-    mixedPayoff U (dirac a) ω = U a ω := by
+    mixedPayoff U (FinAddMeasure.dirac a) ω = U a ω := by
   simp [mixedPayoff, ite_mul, Finset.sum_ite_eq']
 
-/-- The expected utility of `μ` under the belief `P`. -/
+/-- The decision problem against nature with payoff table `U` and belief `P`. -/
+def toDecisionProblem (P : FinAddMeasure ℚ Ω) : Core.DecisionTheory.DecisionProblem ℚ Ω A :=
+  ⟨fun ω a ↦ U a ω, fun ω ↦ P {ω}⟩
+
+/-- The expected utility of the mixed act `μ` under the belief `P`: the `μ`-average of the
+pure acts' expected utilities in the decision problem. -/
 def expectedUtility (P : FinAddMeasure ℚ Ω) (μ : FinAddMeasure ℚ A) : ℚ :=
-  ∑ ω, P {ω} * mixedPayoff U μ ω
+  ∑ a, μ {a} * (toDecisionProblem U P).expectedUtility a
 
 theorem expectedUtility_eq_sum (P : FinAddMeasure ℚ Ω) (μ : FinAddMeasure ℚ A) :
-    expectedUtility U P μ = ∑ a, μ {a} * ∑ ω, P {ω} * U a ω := by
-  simp only [expectedUtility, mixedPayoff, Finset.mul_sum]
+    expectedUtility U P μ = ∑ a, μ {a} * ∑ ω, P {ω} * U a ω := rfl
+
+/-- Expected utility is the belief-average of the state payoffs. -/
+theorem expectedUtility_eq (P : FinAddMeasure ℚ Ω) (μ : FinAddMeasure ℚ A) :
+    expectedUtility U P μ = ∑ ω, P {ω} * mixedPayoff U μ ω := by
+  simp only [expectedUtility, Core.DecisionTheory.DecisionProblem.expectedUtility,
+    toDecisionProblem, mixedPayoff, Finset.mul_sum]
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun a _ ↦ Finset.sum_congr rfl fun ω _ ↦ by ring
 
@@ -113,7 +115,7 @@ omit [Fintype A] in
 theorem exists_pos_singleton (P : FinAddMeasure ℚ Ω) : ∃ ω, 0 < P {ω} := by
   by_contra hall
   push Not at hall
-  have := sum_singleton P
+  have := FinAddMeasure.sum_singleton P
   have : ∑ ω, P {ω} ≤ 0 := Finset.sum_nonpos fun ω _ ↦ hall ω
   linarith
 
@@ -121,6 +123,7 @@ theorem exists_pos_singleton (P : FinAddMeasure ℚ Ω) : ∃ ω, 0 < P {ω} := 
 theorem expectedUtility_lt_of_forall_lt (P : FinAddMeasure ℚ Ω) {μ ν : FinAddMeasure ℚ A}
     (h : ∀ ω, mixedPayoff U μ ω < mixedPayoff U ν ω) :
     expectedUtility U P μ < expectedUtility U P ν := by
+  rw [expectedUtility_eq, expectedUtility_eq]
   obtain ⟨ω₀, hω₀⟩ := exists_pos_singleton P
   exact Finset.sum_lt_sum (fun ω _ ↦ mul_le_mul_of_nonneg_left (h ω).le (P.nonneg _))
     ⟨ω₀, Finset.mem_univ _, mul_lt_mul_of_pos_left (h ω₀) hω₀⟩
@@ -156,7 +159,7 @@ theorem neverBest_iff_strictlyDominated (σ : FinAddMeasure ℚ A) :
       have key : mixedPayoff U ν ω - mixedPayoff U σ ω =
           (∑ i, y i)⁻¹ * ∑ i, y i * D (eA.symm i) ω := by
         have h1 : mixedPayoff U σ ω = ∑ a, ν {a} * mixedPayoff U σ ω := by
-          rw [← Finset.sum_mul, sum_singleton, one_mul]
+          rw [← Finset.sum_mul, FinAddMeasure.sum_singleton, one_mul]
         rw [mixedPayoff, h1, ← Finset.sum_sub_distrib, Finset.mul_sum, ← Equiv.sum_comp eA]
         refine Finset.sum_congr rfl fun a _ ↦ ?_
         simp only [hν, Equiv.symm_apply_apply, D]
@@ -182,9 +185,10 @@ theorem neverBest_iff_strictlyDominated (σ : FinAddMeasure ℚ A) :
           = ∑ a, ν {a} * ∑ ω, P {ω} * D a ω := by
             rw [expectedUtility_eq_sum, show expectedUtility U P σ =
               ∑ a, ν {a} * expectedUtility U P σ by
-                rw [← Finset.sum_mul, sum_singleton, one_mul], ← Finset.sum_sub_distrib]
+                rw [← Finset.sum_mul, FinAddMeasure.sum_singleton, one_mul],
+              ← Finset.sum_sub_distrib]
             refine Finset.sum_congr rfl fun a _ ↦ ?_
-            rw [← mul_sub, expectedUtility, ← Finset.sum_sub_distrib]
+            rw [← mul_sub, expectedUtility_eq, ← Finset.sum_sub_distrib]
             congr 1
             exact Finset.sum_congr rfl fun ω _ ↦ by simp only [D]; ring
         _ ≤ 0 := Finset.sum_nonpos fun a _ ↦ mul_nonpos_iff.2 (Or.inl ⟨ν.nonneg _, hexp a⟩)
@@ -310,7 +314,7 @@ open scoped Classical in
 private theorem sum_mu_ite (A : Set Ω) (a b : ℚ) :
     ∑ ω, P {ω} * (if ω ∈ A then a else b) = P A * a + (1 - P A) * b := by
   classical
-  have h1 : ∑ ω, P {ω} = 1 := sum_singleton P
+  have h1 : ∑ ω, P {ω} = 1 := FinAddMeasure.sum_singleton P
   have h2 : ∑ ω, (if ω ∈ A then P {ω} else 0) = P A := by
     rw [← Finset.sum_filter, P.sum_mu_singleton]
     congr 1
@@ -338,7 +342,7 @@ theorem sum_mu_utility (c : ℚ) (φ : Act ι) :
       rw [Finset.mul_sum]; exact Finset.sum_congr rfl fun ω _ ↦ by ring]
     rw [sum_mu_ite]
     rfl
-  · rw [← Finset.sum_mul, sum_singleton, one_mul]
+  · rw [← Finset.sum_mul, FinAddMeasure.sum_singleton, one_mul]
 
 theorem expectedUtility_eq (c : ℚ) (μ : FinAddMeasure ℚ (Act ι)) :
     expectedUtility (J.utility s c) P μ =
@@ -432,7 +436,7 @@ theorem expectedUtility_le_of_represents {P} (hP : J.Represents P) (hX : J.stric
         · rw [J.pureValue_of_preferred s hP hφ, ite_eq_left hφ]
         · rw [ite_eq_right hφ, sub_zero]
           linarith [J.pureValue_le_of_not_preferred s hP hX hφ]
-    _ = J.preferredValue s P - c := by rw [← Finset.sum_mul, sum_singleton, one_mul]
+    _ = J.preferredValue s P - c := by rw [← Finset.sum_mul, FinAddMeasure.sum_singleton, one_mul]
 
 theorem expectedUtility_uniformPreferred_of_represents {P} (hP : J.Represents P) (c : ℚ) :
     expectedUtility (J.utility s c) P J.uniformPreferred = J.preferredValue s P - c := by
@@ -629,7 +633,7 @@ theorem explorer_not_representable : ¬explorer.Representable := by
 dominated; gambling on the other side of each comparison pays `1` on every island. -/
 theorem explorer_dominated {c : ℚ} (hc : 0 < c) :
     StrictlyDominated (explorer.utility (unitStakes (Fin 3)) c) explorer.uniformPreferred := by
-  refine ⟨dirac fun _ ↦ false, fun ω ↦ ?_⟩
+  refine ⟨FinAddMeasure.dirac fun _ ↦ false, fun ω ↦ ?_⟩
   rw [mixedPayoff_uniformPreferred_of_strict_eq_univ explorer rfl, mixedPayoff_dirac]
   simp only [Judgments.utility, ite_eq_left explorer.preferred_const_true,
     ite_eq_right (explorer.not_preferred_const_false ⟨0, Finset.mem_univ _⟩)]
@@ -661,7 +665,7 @@ theorem ellsberg_not_representable : ¬ellsberg.Representable := by
 and option 2 pays `50`. -/
 theorem ellsberg_dominated {c : ℚ} (hc : 0 < c) :
     StrictlyDominated (ellsberg.utility coinStakes c) ellsberg.uniformPreferred := by
-  refine ⟨dirac fun _ ↦ false, fun ω ↦ ?_⟩
+  refine ⟨FinAddMeasure.dirac fun _ ↦ false, fun ω ↦ ?_⟩
   rw [mixedPayoff_uniformPreferred_of_strict_eq_univ ellsberg rfl, mixedPayoff_dirac]
   simp only [Judgments.utility, ite_eq_left ellsberg.preferred_const_true,
     ite_eq_right (ellsberg.not_preferred_const_false ⟨0, Finset.mem_univ _⟩)]
@@ -690,7 +694,7 @@ theorem worldCup_not_representable : ¬worldCup.Representable := by
 nothing whichever team wins, so paying for the trade is strict dominance. -/
 theorem worldCup_dominated {c : ℚ} (hc : 0 < c) :
     StrictlyDominated (worldCup.utility (unitStakes (Fin 4)) c) worldCup.uniformPreferred := by
-  refine ⟨dirac fun _ ↦ false, fun ω ↦ ?_⟩
+  refine ⟨FinAddMeasure.dirac fun _ ↦ false, fun ω ↦ ?_⟩
   rw [mixedPayoff_uniformPreferred_of_strict_eq_univ worldCup rfl, mixedPayoff_dirac]
   simp only [Judgments.utility, ite_eq_left worldCup.preferred_const_true,
     ite_eq_right (worldCup.not_preferred_const_false ⟨0, Finset.mem_univ _⟩)]

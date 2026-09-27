@@ -15,7 +15,7 @@ semantics lifts a preorder on worlds to propositions by [lewis-1973]'s l-lifting
 the invalid patterns and misses V11 and V13 (`lLift_validities`, `disjunction_problem`,
 `lLift_refutes_V11_V13`): from *φ ⩾ ψ* and *φ ⩾ χ* it licenses *φ ⩾ ψ ∨ χ*. The k-lifting of
 [kratzer-2012] does no better when the compared propositions are disjoint
-(`kLift_rightUnion_of_disjoint`). Finitely additive measures validate exactly the intended
+(`kratzerLift_rightUnion_of_disjoint`). Finitely additive measures validate exactly the intended
 patterns, but so do the paper's two qualitative alternatives: qualitatively additive measures,
 whose logic FA is complete by representation, and the m-lifting, which asks for an injection from
 the ways one proposition can happen into the ways the other can (`mLift_validities`,
@@ -175,23 +175,6 @@ theorem lLift_refutes_V11_V13 :
   · have hsd : ({0} : Set (Fin 2)) \ {1} = {0} := Set.sdiff_singleton_eq_self (by simp)
     refine (h {0} {1} ⟨lewisLift_empty _, fun h' ↦ ?_⟩).2 fun _ _ ↦ ⟨1, rfl, trivial⟩
     exact Set.singleton_ne_empty 0 (hsd ▸ lewisLift_empty_left_iff.1 h')
-
-/-- [kratzer-2012]'s k-lifting: `A` is at least as likely as `B` unless some world in `B`
-outside `A` strictly dominates every world in `A` outside `B`. -/
-def kLift (ge_w : W → W → Prop) (A B : Set W) : Prop :=
-  ¬ ∃ b ∈ B \ A, ∀ a ∈ A \ B, ge_w b a ∧ ¬ ge_w a b
-
-/-- Lassiter's observation reported in the paper: when the `φ`-worlds are disjoint from the
-`ψ`- and `χ`-worlds, the k-lifting still validates the J axiom behind the disjunction
-problem. -/
-theorem kLift_rightUnion_of_disjoint (ge_w : W → W → Prop) {A B C : Set W}
-    (hB : Disjoint A B) (hC : Disjoint A C) (hAB : kLift ge_w A B) (hAC : kLift ge_w A C) :
-    kLift ge_w A (B ∪ C) := by
-  rintro ⟨b, ⟨hb | hb, hbA⟩, hall⟩
-  · exact hAB ⟨b, ⟨hb, hbA⟩, fun a ha ↦ hall a
-      ⟨ha.1, fun h ↦ h.elim (Set.disjoint_left.mp hB ha.1) (Set.disjoint_left.mp hC ha.1)⟩⟩
-  · exact hAC ⟨b, ⟨hb, hbA⟩, fun a ha ↦ hall a
-      ⟨ha.1, fun h ↦ h.elim (Set.disjoint_left.mp hB ha.1) (Set.disjoint_left.mp hC ha.1)⟩⟩
 
 /-! ### Facts 2 and 3: finitely and qualitatively additive measures -/
 
