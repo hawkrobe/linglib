@@ -1,0 +1,892 @@
+[
+  {
+    "id": "wilder2013_ex10b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(10b)"},
+    "language": "stan1293",
+    "primaryText": "He does have a lot of patients.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "They said he didn't have a lot of patients, but …",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "root"],
+      ["antecedent", "assertedNegation"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex11b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(11b)"},
+    "language": "stan1293",
+    "primaryText": "Well, he does have a lot of patients.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: Is he a good doctor?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "root"],
+      ["ctConstituent", "vp"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex12b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(12b)"},
+    "language": "stan1293",
+    "primaryText": "Mary does have a lot of patients.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "I can't imagine that Bill has a lot of patients, but..",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "root"],
+      ["ctConstituent", "subject"]
+    ],
+    "comment": "The source prints *have lot of patients*."
+  },
+  {
+    "id": "wilder2013_ex51",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(51)"},
+    "language": "stan1293",
+    "primaryText": "You're wrong – she did leave her husband.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: Sue didn't leave her husband.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "root"],
+      ["antecedent", "assertedNegation"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex52",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(52)"},
+    "language": "stan1293",
+    "primaryText": "In fact, she did leave her husband.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: Sue might have left her husband.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "root"],
+      ["antecedent", "modal"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex53",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(53)"},
+    "language": "stan1293",
+    "primaryText": "But she did leave her husband.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: We are surprised that Sue didn't leave her husband.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "root"],
+      ["antecedent", "presupposedNegation"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex74b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(74b)"},
+    "language": "stan1293",
+    "primaryText": "Mary does have a lot of patients.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Bill doesn't have a lot of patients, but …",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "root"],
+      ["antecedent", "parallelNegation"]
+    ],
+    "comment": "The source prints *have lot of patients*."
+  },
+  {
+    "id": "wilder2013_ex27a",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(27a)"},
+    "language": "stan1293",
+    "primaryText": "I believe that he does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Although you say that your doctor doesn't treat his patients politely, …",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "believeComplement"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex27b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(27b)"},
+    "language": "stan1293",
+    "primaryText": "I believe that he does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Is he good doctor? …",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "believeComplement"],
+      ["ctConstituent", "vp"]
+    ],
+    "comment": "Continuation in the source: …but he doesn't diagnose very well."
+  },
+  {
+    "id": "wilder2013_ex27c",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(27c)"},
+    "language": "stan1293",
+    "primaryText": "I believe that Dr. Smith does treat them politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Do the doctors in this hospital treat their patients politely? …",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "believeComplement"],
+      ["ctConstituent", "subject"]
+    ],
+    "comment": "Continuation in the source: …but I don't know about the others."
+  },
+  {
+    "id": "wilder2013_ex27d",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(27d)"},
+    "language": "stan1293",
+    "primaryText": "However, it would appear that they did win it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Nobody expected that France would win their first game.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "believeComplement"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex27e",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(27e)"},
+    "language": "stan1293",
+    "primaryText": "It would appear that the French did win against England.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Is the French team doing well this time?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "believeComplement"],
+      ["ctConstituent", "vp"]
+    ],
+    "comment": "Continuation in the source: …but they aren't going to beat the Italians."
+  },
+  {
+    "id": "wilder2013_ex27f",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(27f)"},
+    "language": "stan1293",
+    "primaryText": "It seems that Spain did beat the Italians.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Did the French beat the Italians?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "believeComplement"],
+      ["ctConstituent", "subject"]
+    ],
+    "comment": "Continuation in the source: …but I don't suppose that the French did."
+  },
+  {
+    "id": "wilder2013_ex28a",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(28a)"},
+    "language": "stan1293",
+    "primaryText": "I'm beginning to wonder if he does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A: We heard that your doctor doesn't treat his patients politely.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "interrogativeComplement"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex28b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(28b)"},
+    "language": "stan1293",
+    "primaryText": "I'm beginning to wonder if he does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Is he good doctor? …",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "interrogativeComplement"],
+      ["ctConstituent", "vp"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex28c",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(28c)"},
+    "language": "stan1293",
+    "primaryText": "I don't know if Dr. Smith does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Do the doctors in this hospital treat their patients politely? …",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "interrogativeComplement"],
+      ["ctConstituent", "subject"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex28d",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(28d)"},
+    "language": "stan1293",
+    "primaryText": "She asked which doctor does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "When she heard that your doctor doesn't treat his patients politely,",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "interrogativeComplement"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex28e",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(28e)"},
+    "language": "stan1293",
+    "primaryText": "Mary asked me which doctor does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Is he good doctor? …",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "interrogativeComplement"],
+      ["ctConstituent", "vp"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex29a",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(29a)"},
+    "language": "stan1293",
+    "primaryText": "Sue resents it that he does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Paul would be horrified if he wouldn't treat his patients politely, while",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "factiveComplement"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex29b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(29b)"},
+    "language": "stan1293",
+    "primaryText": "Sue resents it that he does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Is he good doctor? …",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "factiveComplement"],
+      ["ctConstituent", "vp"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex29c",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(29c)"},
+    "language": "stan1293",
+    "primaryText": "Sue resents it that Dr. Smith does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Do the doctors in this hospital treat their patients politely? …",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "factiveComplement"],
+      ["ctConstituent", "subject"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex30a",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(30a)"},
+    "language": "stan1293",
+    "primaryText": "It's precisely this doctor who does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Sue claimed that Dr. Smith doesn't treat his patients politely, but",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "itCleft"]
+    ],
+    "comment": "The source parenthesizes *precisely*."
+  },
+  {
+    "id": "wilder2013_ex30b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(30b)"},
+    "language": "stan1293",
+    "primaryText": "It's precisely this doctor who does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Is Dr. Smith a good doctor? …",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "itCleft"],
+      ["ctConstituent", "vp"]
+    ],
+    "comment": "The source parenthesizes *precisely*."
+  },
+  {
+    "id": "wilder2013_ex30c",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(30c)"},
+    "language": "stan1293",
+    "primaryText": "It's his patients that he does treat politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Although Sue claimed that he doesn't treat his patients politely,",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "itCleft"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex30d",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(30d)"},
+    "language": "stan1293",
+    "primaryText": "It's his patients that he does treat politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Is Dr. Smith a good doctor? …",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "itCleft"],
+      ["ctConstituent", "vp"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex31a",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(31a)"},
+    "language": "stan1293",
+    "primaryText": "I've chosen another doctor who does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Dr. Smith doesn't treat his patients politely, so",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "restrictiveRelative"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex31b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(31b)"},
+    "language": "stan1293",
+    "primaryText": "I've chosen another doctor who does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Is Dr. Smith a good doctor? …",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "restrictiveRelative"],
+      ["ctConstituent", "vp"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex31c",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(31c)"},
+    "language": "stan1293",
+    "primaryText": "I've spoken to several patients who he does treat politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Although Sue claimed that Dr. Smith doesn't treat patients politely,",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "restrictiveRelative"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex31d",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(31d)"},
+    "language": "stan1293",
+    "primaryText": "I've spoken to several patients who he does treat politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Is Dr. Smith a good doctor? …",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "restrictiveRelative"],
+      ["ctConstituent", "vp"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex32a",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(32a)"},
+    "language": "stan1293",
+    "primaryText": "I chose him precisely because he does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "She claimed that he doesn't treat his patients politely, but …",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "adverbialClause"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex32b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(32b)"},
+    "language": "stan1293",
+    "primaryText": "Sue likes him because he does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Is he good doctor? …",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "adverbialClause"],
+      ["ctConstituent", "vp"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex33a",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(33a)"},
+    "language": "stan1293",
+    "primaryText": "I refused to pay him until he did treat her politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "She told me that he didn't treat her politely, so …",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "adverbialClause"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex33b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(33b)"},
+    "language": "stan1293",
+    "primaryText": "People won't choose him until he does have a lot of patients.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Is he good doctor? …",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "adverbialClause"],
+      ["ctConstituent", "vp"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex40b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(40b)"},
+    "language": "stan1293",
+    "primaryText": "Which doctor does treat his patients politely?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "We heard that your doctor doesn't treat his patients politely.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "whSubjectQuestion"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex41b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(41b)"},
+    "language": "stan1293",
+    "primaryText": "Which doctor does treat his patients politely?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Is he good doctor? …",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "whSubjectQuestion"],
+      ["ctConstituent", "vp"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex44b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(44b)"},
+    "language": "stan1293",
+    "primaryText": "His patients, he does treat politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "We heard that your doctor doesn't treat his patients politely.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "VF"],
+      ["environment", "objectPreposing"]
+    ],
+    "comment": "Continuation in the source: but as for his staff, that's another matter …."
+  },
+  {
+    "id": "wilder2013_ex45b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(45b)"},
+    "language": "stan1293",
+    "primaryText": "His patients, he does treat politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Is he good doctor? …",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CT"],
+      ["environment", "objectPreposing"],
+      ["ctConstituent", "vp"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "wilder2013_ex113b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(113b)"},
+    "language": "stan1293",
+    "primaryText": "Fred did eat the beans.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "What about Fred? What did he eat?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CTwh"],
+      ["environment", "root"],
+      ["ctConstituent", "subject"]
+    ],
+    "comment": "The CT-marked subject answers a constituent question; (113a) *Fred ate the beans* without *do* is fine."
+  },
+  {
+    "id": "wilder2013_ex114b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(114b)"},
+    "language": "stan1293",
+    "primaryText": "Fred did eat the beans.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "What about the beans? Who ate those?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "CTwh"],
+      ["environment", "root"],
+      ["ctConstituent", "object"]
+    ],
+    "comment": "The CT-marked object answers a constituent question; (114a) without *do* is fine."
+  },
+  {
+    "id": "wilder2013_ex126a",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(126a)"},
+    "language": "stan1293",
+    "primaryText": "Yes, I believe that he does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Does he treat his patients politely?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "yesAnswer"],
+      ["environment", "believeComplement"]
+    ],
+    "comment": "The source parenthesizes the VP after *does*."
+  },
+  {
+    "id": "wilder2013_ex126b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(126b)"},
+    "language": "stan1293",
+    "primaryText": "Yes, it would appear that he does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Does he treat his patients politely?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "yesAnswer"],
+      ["environment", "believeComplement"]
+    ],
+    "comment": "The source parenthesizes the VP after *does*."
+  },
+  {
+    "id": "wilder2013_ex127a",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(127a)"},
+    "language": "stan1293",
+    "primaryText": "Yes, I wonder if he does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Does he treat his patients politely?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "yesAnswer"],
+      ["environment", "interrogativeComplement"]
+    ],
+    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*."
+  },
+  {
+    "id": "wilder2013_ex127b",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(127b)"},
+    "language": "stan1293",
+    "primaryText": "Yes, Mary asked me which doctor does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Does he treat his patients politely?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "yesAnswer"],
+      ["environment", "interrogativeComplement"]
+    ],
+    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*."
+  },
+  {
+    "id": "wilder2013_ex127c",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(127c)"},
+    "language": "stan1293",
+    "primaryText": "Yes, Sue resents it that he does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Does he treat his patients politely?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "yesAnswer"],
+      ["environment", "factiveComplement"]
+    ],
+    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*."
+  },
+  {
+    "id": "wilder2013_ex127d",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(127d)"},
+    "language": "stan1293",
+    "primaryText": "Yes, it's precisely this doctor who does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Does he treat his patients politely?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "yesAnswer"],
+      ["environment", "itCleft"]
+    ],
+    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*. The source parenthesizes *precisely*."
+  },
+  {
+    "id": "wilder2013_ex127e",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(127e)"},
+    "language": "stan1293",
+    "primaryText": "Yes, I've chosen another doctor who does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Does he treat his patients politely?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "yesAnswer"],
+      ["environment", "restrictiveRelative"]
+    ],
+    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*."
+  },
+  {
+    "id": "wilder2013_ex127f",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(127f)"},
+    "language": "stan1293",
+    "primaryText": "Yes, Sue likes him because he does treat his patients politely.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Does he treat his patients politely?",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "yesAnswer"],
+      ["environment", "adverbialClause"]
+    ],
+    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*."
+  },
+  {
+    "id": "wilder2013_ex137c",
+    "source": {"bibkey": "wilder-2013", "paperLabel": "(137c)"},
+    "language": "stan1293",
+    "primaryText": "Yes, he works hard.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Does he work hard?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "yesAnswer"],
+      ["environment", "root"]
+    ],
+    "comment": "The source parenthesizes *Yes*."
+  }
+]
