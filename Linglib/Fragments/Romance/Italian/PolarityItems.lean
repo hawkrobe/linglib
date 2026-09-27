@@ -3,18 +3,25 @@ module
 public import Linglib.Semantics.Polarity.Licensing
 
 /-!
-# Italian Polarity-Sensitive Items
-[chierchia-2006] [chierchia-2013]
+# Italian polarity items
 
-Lexical entries for Italian PSIs, typed by the theory-neutral categories
-from `Polarity`.
+Italian gives the negative polarity and free choice uses that English *any* combines to separate
+items ([chierchia-2006]). The n-words *nessuno* 'no one', *niente* 'nothing' and *neanche* 'not
+even, neither' take part in negative concord: after the verb they need a preceding negation, *Non ho
+detto niente a nessuno* 'I haven't said anything to anybody', while before the verb they are
+themselves negative, *Nessuno ha telefonato* 'Nobody called'; like strong NPIs they are restricted
+to roughly the anti-additive environments ([chierchia-2013]), and *nessuno* is not licensed in the
+restriction of *ogni* 'every' ([chierchia-2006]). *Mai* 'ever' and the high-register *alcuno* 'any'
+are weak NPIs without free choice uses. *Qualsiasi* and its variant *qualunque* head two free choice
+constructions, [*qualsiasi* N], read universally, and [*un* N *qualsiasi*], read existentially,
+neither of them an NPI ([chierchia-2006]). *Pur* 'even' needs its clause negated, and *affatto* 'at
+all' is an NPI as well ([napoli-nespor-1976]).
 
-## The Italian PSI system
+## References
 
-Italian lexicalizes the NPI/FCI distinction that English *any* collapses:
-- **nessuno/niente/mai**: Pure NPIs (negative concord, DE only)
-- **qualsiasi/qualunque**: Pure universal FCIs (FC only, positive polarity)
-- **un N qualsiasi**: Existential FCIs (FC under modals)
+* [chierchia-2006]
+* [chierchia-2013]
+* [napoli-nespor-1976]
 -/
 
 @[expose] public section
@@ -23,30 +30,41 @@ namespace Italian.PolarityItems
 
 open PolarityItem
 
-/-! ### Pure NPIs -/
+/-! ### N-words -/
 
-/-- *nessuno/nessuna* — N-word, pure NPI.
-    Requires negative concord (postverbal: *non* ... *nessuno*).
-    Base existential force; negative force from concord, not lexical. -/
+/-- *nessuno* 'no one', the n-word built on *uno* 'one': *Gianni non ha telefonato a nessuno*
+'Gianni didn't call anybody', *Nessuno ha telefonato* 'Nobody called', and with a second
+negation the double negation reading *Nessuno non ha protestato* 'everybody protested'. -/
 def nessuno : PolarityItem :=
-  { form := "nessuno/nessuna"
-  , licensor := some .weak
+  { form := "nessuno"
+  , licensor := some .antiAdditive
   , baseForce := .existential
-  , licensingContexts :=
-      [.negation, .nobody, .withoutClause, .conditionalAntecedent, .question]
+  , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := some .strengthening
   , alternativeType := .domain }
 
-/-- *niente/nulla* — N-word for non-human, pure NPI. -/
+/-- *niente*, or *nulla*, 'nothing': *Non ho detto niente a nessuno* 'I haven't said anything
+to anybody'. -/
 def niente : PolarityItem :=
   { form := "niente/nulla"
-  , licensor := some .weak
+  , licensor := some .antiAdditive
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := some .strengthening }
 
-/-- *mai* — Temporal pure NPI (= English *ever*).
-    Disallows FC use (contrast with English *any*). -/
+/-- *neanche* 'not even, neither', with the variants *nemmeno* and *neppure*: *Non vengo neanche
+io* 'I'm not coming either', against *\*Vengo neanche io*. -/
+def neanche : PolarityItem :=
+  { form := "neanche/nemmeno/neppure"
+  , licensor := some .antiAdditive
+  , baseForce := .additive
+  , licensingContexts := [.negation, .nobody]
+  , scalarDirection := some .strengthening }
+
+/-! ### Weak NPIs -/
+
+/-- *mai* 'ever', a weak NPI without free choice uses whose distribution is close to that of
+*any*. -/
 def mai : PolarityItem :=
   { form := "mai"
   , licensor := some .weak
@@ -56,146 +74,67 @@ def mai : PolarityItem :=
   , scalarDirection := some .strengthening
   , alternativeType := .domain }
 
-/-- *alcuno* — Pure NPI (formal register).
-    Listed in [chierchia-2006] table (76)/(94) alongside *mai* and *ever*.
-    Restricted distribution: negation + formal contexts. -/
+/-- *alcuno* 'any', a high-register weak NPI without free choice uses: *Non ho comprato alcun
+libro* 'I didn't buy any book', *Dubito che Gianni abbia comprato alcun libro* 'I doubt that
+Gianni bought any book', *Se Gianni avesse comprato alcun libro, ce lo avrebbe detto* 'If Gianni
+had bought any book, he would have told us', against *\*Ho comprato alcun libro*. The plural
+*alcuni* 'some' is a plain indefinite. -/
 def alcuno : PolarityItem :=
   { form := "alcuno"
   , licensor := some .weak
   , baseForce := .existential
-  , licensingContexts := [.negation, .nobody]
+  , licensingContexts := [.negation, .doubtVerb, .conditionalAntecedent]
   , scalarDirection := some .strengthening }
 
-/-- *neanche/nemmeno/neppure* — Additive focus NPI (*not even*).
-    Three near-synonymous register variants. -/
-def neanche : PolarityItem :=
-  { form := "neanche/nemmeno/neppure"
-  , licensor := some .weak
-  , baseForce := .degree
-  , licensingContexts := [.negation, .nobody]
-  , scalarDirection := some .strengthening }
-
-/-- *mica* — Emphatic negation reinforcer / colloquial NPI.
-    Co-occurs with *non* postverbally to add emphasis: *Non mi piace mica*
-    "I don't like it AT ALL". The load-bearing diagnostic in
-    [cinque-1999]'s adverb hierarchy and Zanuttini's NegP cartography:
-    *mica* sits in a dedicated functional projection above the lexical-VP
-    negation slot. Morphologically a frozen noun ("crumb"), grammaticalized
-    into a focus particle in northern Italian especially. Distinct from
-    additive *neanche* (which adds a discourse-given alternative) — *mica*
-    contradicts an inferred prior expectation. -/
-def mica : PolarityItem :=
-  { form := "mica"
+/-- *pur* 'even' in *pur con tutta la fantasia del mondo* 'even with all the fantasy in the
+world', which needs the verb of its clause negated: *Non puoi immaginarlo, pur con tutta la
+fantasia del mondo* against *\*Puoi immaginarlo, …*. -/
+def pur : PolarityItem :=
+  { form := "pur"
   , licensor := some .weak
   , baseForce := .degree
   , licensingContexts := [.negation]
   , scalarDirection := some .strengthening }
 
-/-- *pur* (in *con tutta la fantasia che pur si possa avere*, "with all the
-    fantasy in the world that one could have") — weak NPI licensed in
-    DE/comparative environments where the speaker presupposes a contradicted
-    prior belief.
-
-    [napoli-nespor-1976]: licensed under comparative *non₂* alongside
-    subjunctive co-occurrence and *neanche*-conjunction. Treated by N&N as
-    a diagnostic for underlying negation in the comparative clause: where
-    *pur* surfaces, *non₂* is licensed too. -/
-def pur : PolarityItem :=
-  { form := "pur"
-  , licensor := some .weak
-  , baseForce := .degree
-  , licensingContexts := [.negation, .clausalComparative]
-  , scalarDirection := some .strengthening }
-
-/-- *affatto* ("at all", "completely") — weak NPI requiring *precise*
-    knowledge of the listener's belief; blocked in N&N's comparative *non₂*
-    on independent precision grounds.
-
-    [napoli-nespor-1976] observe in a footnote that *affatto* is *not*
-    licensed by bias-conditioned negation, though it is a weak NPI elsewhere. The
-    block is semantic — *affatto* requires the listener's belief to be
-    explicit, which fails N&N's "imprecise/inferred" Condition 4. The
-    distributional fact is therefore *orthogonal* to NPI licensing.
-    Bottom-line: *affatto* is licensed by negation in general but blocked
-    by the imprecise condition that bias-conditioned negation requires. -/
+/-- *affatto* 'at all', a negative polarity item. -/
 def affatto : PolarityItem :=
   { form := "affatto"
   , licensor := some .weak
   , baseForce := .degree
-  , licensingContexts := [.negation]  -- not .clausalComparative: blocked by precision
+  , licensingContexts := [.negation]
   , scalarDirection := some .strengthening }
 
-/-- N&N's central diagnostic: *pur* is licensed in comparative-clause
-    contexts (which encode bias-conditioned negation in Italian), *affatto*
-    is not. The contrast is structural in the registry — *pur*'s
-    `licensingContexts` includes `.clausalComparative` while *affatto*'s does
-    not, so the Italian Fragment alone witnesses the distributional
-    contrast that motivated the *non₂* analysis.
+/-! ### Free choice items -/
 
-    `.clausalComparative` is the relevant slot:
-    [hoeksema-1983] establishes that surface NP-comparatives are
-    Boolean homomorphisms (monotone) and not NPI environments —
-    `.phrasalComparative` therefore licenses nothing. -/
-theorem pur_licensed_in_comparative :
-    .clausalComparative ∈ pur.licensingContexts := by decide
-
-theorem affatto_not_licensed_in_comparative :
-    .clausalComparative ∉ affatto.licensingContexts := by decide
-
-/-! ### Pure Universal FCIs -/
-
-/-- *qualsiasi* — Pure universal FCI.
-    Universal force in positive/modal contexts.
-    Under negation: only rhetorical ¬∀ reading ("not just any").
-    Does NOT have NPI use (unlike English *any*). -/
+/-- *qualsiasi*, or *qualunque*, before the noun, the universal free choice item: *Prendi
+qualunque dolce* 'take any sweet'. Episodically it needs a modifier, *Ieri ho parlato con
+qualsiasi filosofo che fosse interessato a parlarmi* against *??Ieri ho parlato con qualsiasi
+filosofo*, and under negation an unmodified one has only the rhetorical 'not just any' reading,
+*Non leggerò qualunque libro*. -/
 def qualsiasi : PolarityItem :=
-  { form := "qualsiasi"
+  { form := "qualsiasi/qualunque"
   , freeChoice := true
   , baseForce := .existential
-  , licensingContexts :=
-      [.modalPossibility, .modalNecessity, .imperative, .generic]
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative]
   , alternativeType := .domain }
 
-/-- *qualunque* — Pure universal FCI (post-nominal only). -/
-def qualunque : PolarityItem :=
-  { form := "qualunque"
-  , freeChoice := true
-  , baseForce := .existential
-  , licensingContexts :=
-      [.modalPossibility, .modalNecessity, .imperative, .generic]
-  , alternativeType := .domain }
-
-/-! ### Existential FCIs -/
-
-/-- *un N qualsiasi* — Existential FCI.
-    Both domain and scalar alternatives active.
-    Requires modal context; ungrammatical in plain episodic. -/
-def uno_qualsiasi : PolarityItem :=
+/-- *un* N *qualsiasi*, or *qualunque*, the existential free choice item: *Prendi un dolce
+qualunque* 'take a sweet whatever'. It is marginal in a plain episodic sentence, *??Ieri ho
+parlato con un qualsiasi filosofo*, and under negation it has only the rhetorical reading, *Non
+leggerò un libro qualunque*. -/
+def unoQualsiasi : PolarityItem :=
   { form := "un N qualsiasi"
   , freeChoice := true
   , baseForce := .existential
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative]
   , alternativeType := .domain }
 
-/-! ### Joint -/
-
-/-- The Italian polarity-item inventory: the Fragment-side joint listing
-    every polarity item this fragment defines. Every
-    `Fragments/{Lang}/PolarityItems.lean` exposes `def items` of this type
-    (see the operator/lexical-reactive split in `Core/Lexical/NegMarker.lean`). -/
+/-- The polarity items. -/
 def items : List PolarityItem :=
-  [nessuno, niente, mai, alcuno, neanche, mica, pur, affatto,
-   qualsiasi, qualunque, uno_qualsiasi]
-
-/-! ### Verification -/
+  [nessuno, niente, neanche, mai, alcuno, pur, affatto, qualsiasi, unoQualsiasi]
 
 /-- Every attested context of every entry is predicted licensed. -/
 theorem italian_licensing_sound :
     ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.licenses e := by decide
-
-/-- All Italian NPIs have strengthening scalar direction. -/
-theorem italian_npis_strengthening :
-    [nessuno, niente, mai, alcuno, neanche].all
-      (λ e => e.scalarDirection == some .strengthening) = true := by decide
 
 end Italian.PolarityItems
