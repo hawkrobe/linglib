@@ -4,210 +4,178 @@ public import Mathlib.Order.Hom.WithTopBot
 public import Mathlib.Order.Interval.Basic
 
 /-!
-# Relational vocabulary for intervals
+# Relations between intervals
 
-[allen-1983] [kamp-reyle-1993] [klein-1994]
-[pancheva-2003] [sagey-1986] [smith-1997]
+This file defines the relations between two nonempty intervals of an ordered type that mathlib's
+`NonemptyInterval` API leaves implicit, and their counterparts on `Interval`, the intervals with
+a null element. Two intervals overlap when neither lies strictly beyond the other, `i₁` precedes
+`i₂` when it ends strictly before `i₂` starts, and the weak forms `isBefore` and `isAfter` let the
+endpoints touch. `during`, `finalSubinterval` and `initialOverlap` refine containment, and
+`IsPoint` singles out the intervals with a single element. In a linear order two intervals occupy
+exactly one of three positions, precedence either way or overlap, and `position` records which as
+an `Ordering`, so that on point intervals it is `compare`; the finer classification into Allen's
+thirteen relations is in `Core/Order/AllenRelation.lean`.
 
-Extends mathlib's `NonemptyInterval` with the relational algebra
-linguistic semantics consumes: overlap, precedence, meets, plus the
-nuclear cluster needed by aspectual semantics (final subinterval,
-initial overlap, isAfter/isBefore). Consumed as the time axis by tense,
-aspect, and event semantics, and as the timing tier by autosegmental
-phonology ([sagey-1986]).
+Containment, the subinterval order and point intervals are mathlib's own: `t ∈ i` (`mem_def`),
+`i₁ ≤ i₂` (`le_def`), `i₁ < i₂` (`lt_def`) and `pure t`. On `Interval α`, where `≤` is inclusion
+and `⊓` intersection, `Interval.Precedes` is Allen's *before* stated pointwise, a left endpoint is
+`IsLeast` of the coerced set, `NonemptyInterval.withTop` embeds a bounded interval into
+`WithTop α`, and `Interval.Ici a` is the ray `[a, ⊤]`.
 
-Containment, the subinterval order, and point intervals are mathlib's
-own API: `t ∈ i` (`mem_def`), `i₁ ≤ i₂` (`le_def`), `i₁ < i₂`
-(strict containment, see `lt_def`), `pure t`.
+## Main definitions
 
-The same vocabulary on mathlib's `Interval α`, the closed intervals with
-the null interval `⊥`, where `≤` is inclusion and `⊓` intersection:
-`Interval.Precedes` is [allen-1983]'s *before*, a left endpoint is
-`IsLeast` of the coerced set, `NonemptyInterval.withTop` embeds a bounded
-interval into `WithTop α`, and `Interval.Ici a` is the ray from `a` to the
-end of time.
+* `NonemptyInterval.overlaps`, `NonemptyInterval.precedes`, `NonemptyInterval.isBefore`,
+  `NonemptyInterval.isAfter`: the order of two intervals.
+* `NonemptyInterval.during`, `NonemptyInterval.finalSubinterval`,
+  `NonemptyInterval.initialOverlap`: refinements of containment.
+* `NonemptyInterval.position`: the position of two intervals in a linear order as an `Ordering`.
+* `Interval.Precedes`, `Interval.Ici`: pointwise precedence and rays on intervals with a null
+  element.
+
+## References
+
+* [allen-1983]
 -/
 
 @[expose] public section
 
 namespace NonemptyInterval
 
-/-! ### Relational vocabulary -/
+/-! ### Relations between intervals -/
 
 section LE
 
-variable {α : Type*} [LE α]
+variable {α : Type*} [LE α] {i₁ i₂ : NonemptyInterval α}
 
-/-- Intervals overlap: neither lies strictly beyond the other. -/
+/-- Two intervals overlap when neither lies strictly beyond the other. -/
 def overlaps (i₁ i₂ : NonemptyInterval α) : Prop :=
   i₁.fst ≤ i₂.snd ∧ i₂.fst ≤ i₁.snd
 
-/-- i₁ meets i₂ (i₁ ends exactly when i₂ starts). -/
-def meets (i₁ i₂ : NonemptyInterval α) : Prop :=
-  i₁.snd = i₂.fst
-
-/-- An interval is a *point* iff its endpoints coincide.
-    The atomic case in the time dimension — used by Bennett-Partee 1972
-    strict subinterval property and Zhao 2025 ATOM-DIST_t at the atomic
-    granularity. -/
+/-- An interval is a point when its endpoints coincide. -/
 def IsPoint (i : NonemptyInterval α) : Prop :=
   i.fst = i.snd
 
-/-- i₁ is entirely after i₂ (i₁ starts at or after i₂ finishes). -/
+/-- `i₁` is after `i₂` when `i₁` starts at or after `i₂` ends. -/
 def isAfter (i₁ i₂ : NonemptyInterval α) : Prop :=
   i₂.snd ≤ i₁.fst
 
-/-- i₁ is entirely before i₂. -/
+/-- `i₁` is before `i₂` when `i₁` ends at or before `i₂` starts. -/
 def isBefore (i₁ i₂ : NonemptyInterval α) : Prop :=
   i₁.snd ≤ i₂.fst
 
-/-- Final subinterval: i₁ ⊆ i₂ and they share the same right endpoint.
-    [pancheva-2003]: PTS(i', i) iff i is a final subinterval of i'. -/
+/-- `i₁` is a final subinterval of `i₂` when it lies within `i₂` and shares its right endpoint. -/
 def finalSubinterval (i₁ i₂ : NonemptyInterval α) : Prop :=
   i₁ ≤ i₂ ∧ i₁.snd = i₂.snd
 
-theorem isAfter_iff_isBefore (i₁ i₂ : NonemptyInterval α) :
-    i₁.isAfter i₂ ↔ i₂.isBefore i₁ :=
+theorem isAfter_iff_isBefore (i₁ i₂ : NonemptyInterval α) : i₁.isAfter i₂ ↔ i₂.isBefore i₁ :=
   Iff.rfl
 
 section Decidability
 
-variable [DecidableLE α] [DecidableEq α] {i₁ i₂ : NonemptyInterval α}
+variable [DecidableLE α] [DecidableEq α]
 
-instance : Decidable (i₁.overlaps i₂) := by unfold overlaps; infer_instance
-instance : Decidable (i₁.meets i₂) := by unfold meets; infer_instance
-instance {i : NonemptyInterval α} : Decidable i.IsPoint := by unfold IsPoint; infer_instance
-instance : Decidable (i₁.isAfter i₂) := by unfold isAfter; infer_instance
-instance : Decidable (i₁.isBefore i₂) := by unfold isBefore; infer_instance
-instance : Decidable (i₁.finalSubinterval i₂) := by unfold finalSubinterval; infer_instance
+instance : Decidable (i₁.overlaps i₂) := inferInstanceAs (Decidable (_ ∧ _))
+instance {i : NonemptyInterval α} : Decidable i.IsPoint := inferInstanceAs (Decidable (_ = _))
+instance : Decidable (i₁.isAfter i₂) := inferInstanceAs (Decidable (_ ≤ _))
+instance : Decidable (i₁.isBefore i₂) := inferInstanceAs (Decidable (_ ≤ _))
+instance : Decidable (i₁.finalSubinterval i₂) := inferInstanceAs (Decidable (_ ∧ _))
 
 end Decidability
 
-/-- Final subintervals are subintervals. -/
-theorem le_of_finalSubinterval {i₁ i₂ : NonemptyInterval α}
-    (h : i₁.finalSubinterval i₂) : i₁ ≤ i₂ :=
-  h.1
-
-/-- Overlap is reflexive: every interval overlaps itself. -/
 @[simp] theorem overlaps_refl (i : NonemptyInterval α) : i.overlaps i :=
   ⟨i.fst_le_snd, i.fst_le_snd⟩
 
-/-- Overlap is symmetric. -/
-theorem overlaps_symm {i₁ i₂ : NonemptyInterval α} (h : i₁.overlaps i₂) :
-    i₂.overlaps i₁ :=
+theorem overlaps_symm (h : i₁.overlaps i₂) : i₂.overlaps i₁ :=
   ⟨h.2, h.1⟩
 
-/-- Overlap is symmetric (iff version). -/
-theorem overlaps_comm (i₁ i₂ : NonemptyInterval α) :
-    i₁.overlaps i₂ ↔ i₂.overlaps i₁ :=
+theorem overlaps_comm (i₁ i₂ : NonemptyInterval α) : i₁.overlaps i₂ ↔ i₂.overlaps i₁ :=
   ⟨overlaps_symm, overlaps_symm⟩
 
 end LE
 
 section Preorder
 
-variable {α : Type*} [Preorder α]
+variable {α : Type*} [Preorder α] {i₁ i₂ : NonemptyInterval α}
 
-/-- Membership in a nonempty interval is decidable when `≤` is. -/
 instance {a : α} {s : NonemptyInterval α} [DecidableLE α] : Decidable (a ∈ s) :=
   decidable_of_iff' _ mem_def
 
-/-- Strict containment is decidable when `≤` is. -/
 instance {s t : NonemptyInterval α} [DecidableLE α] : Decidable (s < t) :=
   decidable_of_iff' _ lt_iff_le_not_ge
 
-/-- i₁ precedes i₂ (no overlap, i₁ entirely before i₂). -/
+/-- `i₁` precedes `i₂` when `i₁` ends strictly before `i₂` starts. -/
 def precedes (i₁ i₂ : NonemptyInterval α) : Prop :=
   i₁.snd < i₂.fst
 
-/-- Initial overlap (∂): i₁ and i₂ overlap, and the start of i₂ is in i₁.
-    [pancheva-2003]: i ∂τ(e) — the beginning of the eventuality is included
-    in the reference interval but the end may not be.
-    [smith-1997]: the neutral viewpoint uses the same interval relation. -/
+/-- `i₁` initially overlaps `i₂` when the two overlap and `i₂` starts within `i₁`. -/
 def initialOverlap (i₁ i₂ : NonemptyInterval α) : Prop :=
   i₁.overlaps i₂ ∧ i₂.fst ∈ i₁
 
-instance [DecidableLE α] {i₁ i₂ : NonemptyInterval α} : Decidable (i₁.initialOverlap i₂) := by
-  unfold initialOverlap; infer_instance
-
-instance [DecidableLE α] {i₁ i₂ : NonemptyInterval α} : Decidable (i₁.precedes i₂) := by
-  unfold precedes
-  exact decidable_of_iff' _ lt_iff_le_not_ge
-
-/-- i₁ lies during i₂ ([allen-1983]'s *during*): strictly inside on both sides. -/
+/-- `i₁` lies during `i₂` when it is strictly inside `i₂` on both sides. -/
 def during (i₁ i₂ : NonemptyInterval α) : Prop :=
   i₂.fst < i₁.fst ∧ i₁.snd < i₂.snd
 
-instance [DecidableLE α] {i₁ i₂ : NonemptyInterval α} : Decidable (i₁.during i₂) :=
+instance [DecidableLE α] : Decidable (i₁.initialOverlap i₂) := inferInstanceAs (Decidable (_ ∧ _))
+
+instance [DecidableLE α] : Decidable (i₁.precedes i₂) :=
+  decidable_of_iff' _ lt_iff_le_not_ge
+
+instance [DecidableLE α] : Decidable (i₁.during i₂) :=
   @instDecidableAnd _ _ (decidable_of_iff' _ lt_iff_le_not_ge)
     (decidable_of_iff' _ lt_iff_le_not_ge)
 
-theorem during_irrefl (i : NonemptyInterval α) : ¬ i.during i := λ h => lt_irrefl _ h.1
+theorem during_irrefl (i : NonemptyInterval α) : ¬ i.during i := fun h ↦ lt_irrefl _ h.1
 
-theorem during_asymm {i₁ i₂ : NonemptyInterval α} (h : i₁.during i₂) : ¬ i₂.during i₁ :=
-  λ h' => lt_asymm h.1 h'.1
+theorem during_asymm (h : i₁.during i₂) : ¬ i₂.during i₁ := fun h' ↦ lt_asymm h.1 h'.1
 
-theorem during_trans {i₁ i₂ i₃ : NonemptyInterval α} (h₁ : i₁.during i₂) (h₂ : i₂.during i₃) :
+theorem during_trans {i₃ : NonemptyInterval α} (h₁ : i₁.during i₂) (h₂ : i₂.during i₃) :
     i₁.during i₃ :=
   ⟨h₂.1.trans h₁.1, h₁.2.trans h₂.2⟩
 
 /-- An interval during another neither precedes nor follows it. -/
-theorem not_precedes_of_during {i₁ i₂ : NonemptyInterval α} (h : i₁.during i₂) :
-    ¬ i₁.precedes i₂ ∧ ¬ i₂.precedes i₁ :=
-  ⟨λ h' => lt_irrefl _ ((h.1.trans_le i₁.fst_le_snd).trans h'),
-   λ h' => lt_irrefl _ ((i₁.fst_le_snd.trans_lt h.2).trans h')⟩
+theorem not_precedes_of_during (h : i₁.during i₂) : ¬ i₁.precedes i₂ ∧ ¬ i₂.precedes i₁ :=
+  ⟨fun h' ↦ lt_irrefl _ ((h.1.trans_le i₁.fst_le_snd).trans h'),
+   fun h' ↦ lt_irrefl _ ((i₁.fst_le_snd.trans_lt h.2).trans h')⟩
 
-/-- Every interval is a final subinterval of itself. -/
-theorem finalSubinterval_refl (i : NonemptyInterval α) : i.finalSubinterval i :=
+@[simp] theorem finalSubinterval_refl (i : NonemptyInterval α) : i.finalSubinterval i :=
   ⟨le_refl i, rfl⟩
 
 /-- Subintervals overlap their containing intervals. -/
-theorem overlaps_of_le {i₁ i₂ : NonemptyInterval α}
-    (h : i₁ ≤ i₂) : i₁.overlaps i₂ :=
-  ⟨le_trans i₁.fst_le_snd (le_def.mp h).2, le_trans (le_def.mp h).1 i₁.fst_le_snd⟩
+theorem overlaps_of_le (h : i₁ ≤ i₂) : i₁.overlaps i₂ :=
+  ⟨i₁.fst_le_snd.trans (le_def.1 h).2, (le_def.1 h).1.trans i₁.fst_le_snd⟩
 
-/-- Precedence is irreflexive: no interval precedes itself. -/
 theorem precedes_irrefl (i : NonemptyInterval α) : ¬ i.precedes i :=
-  fun h => absurd i.fst_le_snd (not_le_of_gt h)
+  fun h ↦ absurd i.fst_le_snd (not_le_of_gt h)
 
-/-- Precedence is asymmetric. -/
-theorem precedes_asymm {i₁ i₂ : NonemptyInterval α}
-    (h : i₁.precedes i₂) : ¬ i₂.precedes i₁ :=
-  fun h' => absurd (le_trans i₂.fst_le_snd (le_trans (le_of_lt h') i₁.fst_le_snd))
-    (not_le_of_gt h)
+theorem precedes_asymm (h : i₁.precedes i₂) : ¬ i₂.precedes i₁ :=
+  fun h' ↦ absurd (i₂.fst_le_snd.trans (h'.le.trans i₁.fst_le_snd)) (not_le_of_gt h)
 
-/-- Precedence is transitive. -/
-theorem precedes_trans {i₁ i₂ i₃ : NonemptyInterval α}
-    (h₁₂ : i₁.precedes i₂) (h₂₃ : i₂.precedes i₃) : i₁.precedes i₃ :=
-  lt_trans (lt_of_lt_of_le h₁₂ i₂.fst_le_snd) h₂₃
+theorem precedes_trans {i₃ : NonemptyInterval α} (h₁₂ : i₁.precedes i₂) (h₂₃ : i₂.precedes i₃) :
+    i₁.precedes i₃ :=
+  (h₁₂.trans_le i₂.fst_le_snd).trans h₂₃
 
 /-- Precedence and overlap are mutually exclusive. -/
-theorem precedes_not_overlaps {i₁ i₂ : NonemptyInterval α}
-    (h : i₁.precedes i₂) : ¬ i₁.overlaps i₂ :=
-  fun ⟨_, h₂⟩ => absurd (lt_of_lt_of_le h h₂) (lt_irrefl _)
+theorem precedes_not_overlaps (h : i₁.precedes i₂) : ¬ i₁.overlaps i₂ :=
+  fun ⟨_, h₂⟩ ↦ lt_irrefl _ (h.trans_le h₂)
 
 end Preorder
 
 section LinearOrder
 
-variable {α : Type*} [LinearOrder α]
+variable {α : Type*} [LinearOrder α] {i₁ i₂ : NonemptyInterval α}
 
-/-- Strict containment unfolded to endpoints: `i₁ < i₂` iff `i₁ ≤ i₂`
-    with at least one strictly interior endpoint. The shape the IMPF
-    semantics consumes (reference time PROPERLY inside event runtime). -/
-theorem lt_def {i₁ i₂ : NonemptyInterval α} :
-    i₁ < i₂ ↔ i₁ ≤ i₂ ∧ (i₂.fst < i₁.fst ∨ i₁.snd < i₂.snd) := by
+/-- Strict containment unfolded to endpoints, `i₁ ≤ i₂` with a strictly interior endpoint. -/
+theorem lt_def : i₁ < i₂ ↔ i₁ ≤ i₂ ∧ (i₂.fst < i₁.fst ∨ i₁.snd < i₂.snd) := by
   rw [lt_iff_le_not_ge]
   exact and_congr_right' (by rw [le_def, not_and_or, not_le, not_le])
 
 /-- An interval containing an overlapping interval overlaps. -/
-theorem overlaps.mono_left {i₁ i₁' i₂ : NonemptyInterval α} (h : i₁.overlaps i₂)
-    (hle : i₁ ≤ i₁') : i₁'.overlaps i₂ :=
+theorem overlaps.mono_left {i₁' : NonemptyInterval α} (h : i₁.overlaps i₂) (hle : i₁ ≤ i₁') :
+    i₁'.overlaps i₂ :=
   ⟨(le_def.1 hle).1.trans h.1, h.2.trans (le_def.1 hle).2⟩
 
 /-- In a linear order two intervals overlap exactly when neither precedes the other. -/
-theorem overlaps_iff_not_precedes {i₁ i₂ : NonemptyInterval α} :
-    i₁.overlaps i₂ ↔ ¬ i₁.precedes i₂ ∧ ¬ i₂.precedes i₁ := by
+theorem overlaps_iff_not_precedes : i₁.overlaps i₂ ↔ ¬ i₁.precedes i₂ ∧ ¬ i₂.precedes i₁ := by
   simp only [overlaps, precedes, not_lt, and_comm]
 
 /-! ### Relative position
@@ -217,12 +185,10 @@ second, the second precedes the first, or they overlap. `position` records which
 `Ordering`, so that a set of admissible positions is a `Finset Ordering`, as a set of admissible
 comparisons of points is; on point intervals it is `compare`. -/
 
-/-- The position of `i₁` relative to `i₂`: `lt` when `i₁` precedes `i₂`, `gt` when `i₂` precedes
-`i₁`, and `eq` when the two overlap. -/
+/-- The position of `i₁` relative to `i₂` is `lt` when `i₁` precedes `i₂`, `gt` when `i₂`
+precedes `i₁`, and `eq` when the two overlap. -/
 def position (i₁ i₂ : NonemptyInterval α) : Ordering :=
   if i₁.precedes i₂ then .lt else if i₂.precedes i₁ then .gt else .eq
-
-variable {i₁ i₂ : NonemptyInterval α} {a b : α}
 
 @[simp] theorem position_eq_lt : i₁.position i₂ = .lt ↔ i₁.precedes i₂ := by
   unfold position; split_ifs <;> simp [*]
@@ -257,21 +223,6 @@ theorem swap_position (i₁ i₂ : NonemptyInterval α) : (i₁.position i₂).s
 theorem position_eq_eq_of_le {i₁' : NonemptyInterval α} (h : i₁.position i₂ = .eq)
     (hle : i₁ ≤ i₁') : i₁'.position i₂ = .eq :=
   position_eq_eq.2 ((position_eq_eq.1 h).mono_left hle)
-
-/-- Overlap is NOT transitive: [0,1] overlaps [1,2] and [1,2] overlaps [2,3],
-    but [0,1] does not overlap [2,3].
-
-    This is the cornerstone property that distinguishes overlap from
-    simultaneity (identity) and makes the No-Crossing Constraint derivable
-    from temporal precedence alone ([sagey-1986] §5.2.3, fn. 6). -/
-theorem overlaps_not_transitive :
-    ¬ ∀ (i₁ i₂ i₃ : NonemptyInterval ℤ),
-      i₁.overlaps i₂ → i₂.overlaps i₃ → i₁.overlaps i₃ := by
-  intro h
-  have := h ⟨⟨0, 1⟩, by omega⟩ ⟨⟨1, 2⟩, by omega⟩ ⟨⟨2, 3⟩, by omega⟩
-    (by simp only [overlaps]; omega) (by simp only [overlaps]; omega)
-  simp only [overlaps] at this
-  omega
 
 end LinearOrder
 
@@ -309,8 +260,8 @@ section PartialOrder
 
 variable {α : Type*} [PartialOrder α] {s t : Interval α} {i j : NonemptyInterval α} {a b x : α}
 
-/-- `s` precedes `t`: every element of `s` is below every element of `t` ([allen-1983]'s
-*before*), vacuously so at the null interval. -/
+/-- `s` precedes `t` when every element of `s` is below every element of `t`, Allen's *before*
+stated pointwise, vacuously so at the null interval. -/
 def Precedes (s t : Interval α) : Prop := ∀ ⦃x⦄, x ∈ s → ∀ ⦃y⦄, y ∈ t → x < y
 
 @[simp] theorem notMem_bot : x ∉ (⊥ : Interval α) := by
@@ -319,30 +270,32 @@ def Precedes (s t : Interval α) : Prop := ∀ ⦃x⦄, x ∈ s → ∀ ⦃y⦄,
 /-- A nonempty interval lies within `s` exactly when its endpoints do. -/
 theorem coe_le_iff : (↑i : Interval α) ≤ s ↔ i.fst ∈ s ∧ i.snd ∈ s := by
   induction s using recBotCoe with
-  | bot => exact iff_of_false (λ h => WithBot.coe_ne_bot (le_bot_iff.1 h)) (λ h => notMem_bot h.1)
+  | bot =>
+    exact iff_of_false (fun h ↦ WithBot.coe_ne_bot (le_bot_iff.1 h)) (fun h ↦ notMem_bot h.1)
   | coe j =>
-    refine ⟨λ h => ?_, λ ⟨h₁, h₂⟩ => WithBot.coe_le_coe.2 (NonemptyInterval.le_def.2
+    refine ⟨fun h ↦ ?_, fun ⟨h₁, h₂⟩ ↦ WithBot.coe_le_coe.2 (NonemptyInterval.le_def.2
       ⟨(NonemptyInterval.mem_def.1 h₁).1, (NonemptyInterval.mem_def.1 h₂).2⟩)⟩
     obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 (WithBot.coe_le_coe.1 h)
-    exact ⟨NonemptyInterval.mem_def.2 ⟨h₁, le_trans i.fst_le_snd h₂⟩,
-      NonemptyInterval.mem_def.2 ⟨le_trans h₁ i.fst_le_snd, h₂⟩⟩
+    exact ⟨NonemptyInterval.mem_def.2 ⟨h₁, i.fst_le_snd.trans h₂⟩,
+      NonemptyInterval.mem_def.2 ⟨h₁.trans i.fst_le_snd, h₂⟩⟩
 
 @[simp] theorem pure_le_iff : pure a ≤ s ↔ a ∈ s := by
   simp [← coe_subset_coe]
 
 /-- The left endpoint is the least element. -/
 theorem isLeast_coe_fst : IsLeast (↑(↑i : Interval α) : Set α) i.fst :=
-  ⟨NonemptyInterval.mem_def.2 ⟨le_rfl, i.fst_le_snd⟩, λ _ hx => (NonemptyInterval.mem_def.1 hx).1⟩
+  ⟨NonemptyInterval.mem_def.2 ⟨le_rfl, i.fst_le_snd⟩,
+    fun _ hx ↦ (NonemptyInterval.mem_def.1 hx).1⟩
 
 theorem isLeast_pure : IsLeast (↑(pure a : Interval α) : Set α) a := isLeast_coe_fst
 
 /-- Nonempty intervals precede exactly when the one ends before the other starts, the
 endpoint form of the relation. -/
 theorem precedes_coe_coe : (↑i : Interval α).Precedes ↑j ↔ i.precedes j :=
-  ⟨λ h => h (NonemptyInterval.mem_def.2 ⟨i.fst_le_snd, le_rfl⟩)
+  ⟨fun h ↦ h (NonemptyInterval.mem_def.2 ⟨i.fst_le_snd, le_rfl⟩)
       (NonemptyInterval.mem_def.2 ⟨le_rfl, j.fst_le_snd⟩),
-    λ h _ hx _ hy => lt_of_le_of_lt (NonemptyInterval.mem_def.1 hx).2
-      (lt_of_lt_of_le h (NonemptyInterval.mem_def.1 hy).1)⟩
+    fun h _ hx _ hy ↦ (NonemptyInterval.mem_def.1 hx).2.trans_lt
+      (h.trans_le (NonemptyInterval.mem_def.1 hy).1)⟩
 
 @[simp] theorem precedes_pure_pure : (pure a).Precedes (pure b) ↔ a < b := precedes_coe_coe
 
@@ -361,8 +314,8 @@ theorem not_disjoint_coe_coe {i j : NonemptyInterval α} :
   rw [not_disjoint_iff]
   constructor
   · rintro ⟨x, hx, hy⟩
-    exact ⟨le_trans (NonemptyInterval.mem_def.1 hx).1 (NonemptyInterval.mem_def.1 hy).2,
-      le_trans (NonemptyInterval.mem_def.1 hy).1 (NonemptyInterval.mem_def.1 hx).2⟩
+    exact ⟨(NonemptyInterval.mem_def.1 hx).1.trans (NonemptyInterval.mem_def.1 hy).2,
+      (NonemptyInterval.mem_def.1 hy).1.trans (NonemptyInterval.mem_def.1 hx).2⟩
   · rintro ⟨h₁, h₂⟩
     exact ⟨i.fst ⊔ j.fst, NonemptyInterval.mem_def.2 ⟨le_sup_left, sup_le i.fst_le_snd h₂⟩,
       NonemptyInterval.mem_def.2 ⟨le_sup_right, sup_le h₁ j.fst_le_snd⟩⟩
@@ -374,13 +327,13 @@ variable [DecidableLE α]
 
 end Lattice
 
-/-! ### Rays to the end of time -/
+/-! ### Rays -/
 
 section WithTop
 
 variable {α : Type*} [PartialOrder α] {i : NonemptyInterval α} {a b : α} {x : WithTop α}
 
-/-- The interval from `a` to the end of time, `[a, ⊤]`. -/
+/-- The ray `[a, ⊤]` as an interval of `WithTop α`. -/
 def Ici (a : α) : Interval (WithTop α) := ↑(⟨(↑a, ⊤), le_top⟩ : NonemptyInterval (WithTop α))
 
 @[simp] theorem mem_Ici : x ∈ Ici a ↔ ↑a ≤ x := by
@@ -389,29 +342,29 @@ def Ici (a : α) : Interval (WithTop α) := ↑(⟨(↑a, ⊤), le_top⟩ : None
 @[simp] theorem Ici_le_Ici : Ici a ≤ Ici b ↔ b ≤ a := by
   simp [Ici, NonemptyInterval.le_def]
 
-theorem antitone_Ici : Antitone (Ici : α → Interval (WithTop α)) := λ _ _ h => Ici_le_Ici.2 h
+theorem antitone_Ici : Antitone (Ici : α → Interval (WithTop α)) := fun _ _ h ↦ Ici_le_Ici.2 h
 
 theorem isLeast_Ici : IsLeast (↑(Ici a) : Set (WithTop α)) ↑a := isLeast_coe_fst
 
 @[simp] theorem pure_le_Ici : pure (↑b : WithTop α) ≤ Ici a ↔ a ≤ b := by
   simp
 
-/-- An interval lies within the ray from `a` exactly when all its times are at or after `a`. -/
+/-- An interval lies within the ray from `a` exactly when all its elements are at or above `a`. -/
 theorem le_Ici_iff {s : Interval (WithTop α)} : s ≤ Ici a ↔ ∀ x ∈ s, ↑a ≤ x := by
   simp [← coe_subset_coe, Set.subset_def]
 
-/-- A bounded interval lies within the ray from `a` exactly when it starts at or after `a`. -/
+/-- A bounded interval lies within the ray from `a` exactly when it starts at or above `a`. -/
 theorem withTop_le_Ici : (↑i.withTop : Interval (WithTop α)) ≤ Ici a ↔ a ≤ i.fst := by
   simp only [coe_le_iff, NonemptyInterval.fst_withTop, NonemptyInterval.snd_withTop, mem_Ici,
     WithTop.coe_le_coe]
-  exact ⟨And.left, λ h => ⟨h, le_trans h i.fst_le_snd⟩⟩
+  exact ⟨And.left, fun h ↦ ⟨h, h.trans i.fst_le_snd⟩⟩
 
-/-- A bounded interval precedes the ray from `a` exactly when it ends before `a`. -/
+/-- A bounded interval precedes the ray from `a` exactly when it ends below `a`. -/
 theorem precedes_withTop_Ici :
     (↑i.withTop : Interval (WithTop α)).Precedes (Ici a) ↔ i.snd < a := by
   rw [Ici, precedes_coe_coe]; simp [NonemptyInterval.precedes]
 
-/-- A bounded interval precedes the point `a` exactly when it ends before `a`. -/
+/-- A bounded interval precedes the point `a` exactly when it ends below `a`. -/
 theorem precedes_withTop_pure :
     (↑i.withTop : Interval (WithTop α)).Precedes (pure ↑a) ↔ i.snd < a := by
   rw [pure, precedes_coe_coe]; simp [NonemptyInterval.precedes]
@@ -422,7 +375,7 @@ section WithTopLattice
 
 variable {α : Type*} [Lattice α] {i : NonemptyInterval α} {a : α}
 
-/-- A bounded interval meets the ray from `a` exactly when it ends at or after `a`. -/
+/-- A bounded interval meets the ray from `a` exactly when it ends at or above `a`. -/
 theorem not_disjoint_withTop_Ici :
     ¬ Disjoint (↑i.withTop : Interval (WithTop α)) (Ici a) ↔ a ≤ i.snd := by
   rw [Ici, not_disjoint_coe_coe]; simp [NonemptyInterval.overlaps]
