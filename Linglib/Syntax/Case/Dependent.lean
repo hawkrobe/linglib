@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Syntax.Case.Basic
-public import Linglib.Syntax.Case.Source
 public import Linglib.Syntax.Case.Alignment
 
 /-!
@@ -18,10 +17,10 @@ domain.
 
 ## Main definitions
 
-* `Mechanism`: what valued a case — a lexical head, a dependent rule, Agree, or the elsewhere
-  case — projecting onto the account-neutral `Case.Source`.
-* `Rules`: the high, low and elsewhere cases of one domain; `Rules.alignment` and
-  `Rules.ofAlignment` relate them to the alignment they show.
+* `Mechanism`: what valued a case, a lexical head, a dependent rule, Agree, or the elsewhere
+  case.
+* `Rules`: the high, low and elsewhere cases of one domain, and `Rules.ofAlignment`, the rules
+  of an alignment.
 * `NP`, `Valuation`: an NP before assignment, and its case with what valued it.
 * `Rules.dependentPass`, `Rules.unmarkedPass`: the passes, over the NPs a predicate selects.
 * `Rules.assign`, `assignCases`: the one-domain algorithm, and its form for an alignment.
@@ -35,7 +34,6 @@ domain.
 * `Rules.case_mem_cases`: a caseless NP is valued only with a case the rules mention.
 * `Rules.assign_singleton`, `Rules.assign_pair`: the algorithm in closed form on domains of one
   and two NPs.
-* `alignment_ofAlignment`: the rules of an alignment show that alignment.
 
 ## Implementation notes
 
@@ -65,14 +63,6 @@ inductive Mechanism
   | unmarked
   deriving DecidableEq, Repr
 
-/-- The account-neutral provenance: lexical case is inherent, dependent and Agree-valued case
-    structural, the elsewhere case default. -/
-def Mechanism.toSource : Mechanism → Source
-  | .lexical => .inherent
-  | .dependent => .structural
-  | .agree => .structural
-  | .unmarked => .default
-
 /-! ### Rules -/
 
 /-- The rules of one domain: the case of an NP c-commanding a distinct caseless NP in it, the
@@ -95,14 +85,6 @@ theorem low_mem_cases {r : Rules} {c : Case} (h : r.low = some c) : c ∈ r.case
 theorem unmarked_mem_cases {r : Rules} {c : Case} (h : r.unmarked = some c) : c ∈ r.cases := by
   simp [Rules.cases, h]
 
-/-- The alignment a domain's rules show: which of the two dependent rules it has. -/
-def Rules.alignment (r : Rules) : Alignment.AlignmentType :=
-  match r.high, r.low with
-  | none, none => .neutral
-  | none, some _ => .accusative
-  | some _, none => .ergative
-  | some _, some _ => .tripartite
-
 /-- The clausal rules of an alignment: accusative on the lower NP, ergative on the higher,
     both, or neither, with the elsewhere case nominative where the lower NP is marked and
     absolutive otherwise. A split-S system is not a dependent-case setting and gets the
@@ -112,11 +94,6 @@ def Rules.ofAlignment : Alignment.AlignmentType → Rules
   | .ergative => { high := some .erg, unmarked := some .abs }
   | .tripartite => { high := some .erg, low := some .acc, unmarked := some .abs }
   | .neutral | .active => { unmarked := some .nom }
-
-/-- The rules of an alignment show that alignment. -/
-theorem alignment_ofAlignment (a : Alignment.AlignmentType) (ha : a ≠ .active) :
-    (Rules.ofAlignment a).alignment = a := by
-  cases a <;> first | rfl | exact absurd rfl ha
 
 /-! ### NPs and valuations -/
 

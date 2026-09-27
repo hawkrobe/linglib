@@ -238,9 +238,6 @@ def CaseAssigners.agreeCase (g : CaseAssigners) (h : Cat) : Option Case :=
 def CaseAssigners.cases (g : CaseAssigners) : List Case :=
   g.domains.flatMap (·.2.cases) ++ g.agree.map (·.2)
 
-/-- The alignment the clausal rules show. -/
-def CaseAssigners.alignment (g : CaseAssigners) : Alignment.AlignmentType := (g.rules .C).alignment
-
 /-- The head `h` probing the domain of `c`: it values what the assigners let it. -/
 def probePass (g : CaseAssigners) (c h : Cat) (states : List (PhasedNP × Valuation)) :
     List (PhasedNP × Valuation) :=
