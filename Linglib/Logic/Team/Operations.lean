@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.Hom.BoundedLattice
 public import Linglib.Core.Order.Sups
-public import Linglib.Logic.Team.Algebra
+public import Mathlib.Data.Finset.Lattice.Union
 public import Linglib.Logic.Team.Closure
 public import Linglib.Logic.Team.Definability
 
@@ -52,6 +52,10 @@ operation unfolds definitionally (`mem_flat`, `mem_tensor`, …), so a logic's e
 clauses written through these operations are the same propositions as the paper's; a
 split of a team appears as a witness `t₁ ∪ t₂ = t`.
 
+The points of a team are left abstract: worlds for BSML, world–assignment indices for
+QBSML, assignments for first-order dependence logic. "Team" is the term of [vaananen-2007];
+Aloni's state-based modal logics call the same object a "state".
+
 ## References
 
 * [aloni-2022] Aloni, Logic and Conversation: The Case of Free Choice
@@ -60,6 +64,7 @@ split of a team appears as a witness `t₁ ∪ t₂ = t`.
 * [anttila-2025] Anttila, Not Nothing: Nonemptiness in Team Semantics
 * [anttila-haggblom-yang-2024] Anttila, Häggblom and Yang, Axiomatizing modal inclusion logic
   and its variants
+* [vaananen-2007] Väänänen, Dependence Logic: A New Approach to Independence Friendly Logic
 * [vaananen-2008] Väänänen, Modal Dependence Logic
 -/
 
@@ -143,6 +148,15 @@ theorem empty_mem_possWitness (hP : ∅ ∈ P) : ∅ ∈ possWitness R P :=
 /-- `flat` commutes with conjunction. -/
 theorem flat_inter (p q : α → Prop) : flat p ∩ flat q = flat fun x ↦ p x ∧ q x :=
   Set.ext fun _ ↦ by simp [flat, forall_and]
+
+/-- A non-empty subteam of `u` on which `p` holds pointwise exists exactly when `p` holds
+somewhere in `u`: the witness may be taken to be a singleton. -/
+theorem exists_nonempty_subset_forall_iff (u : Finset α) (p : α → Prop) :
+    (∃ t ⊆ u, t.Nonempty ∧ ∀ x ∈ t, p x) ↔ ∃ x ∈ u, p x where
+  mp := fun ⟨_, htu, ⟨x, hx⟩, h⟩ ↦ ⟨x, htu hx, h x hx⟩
+  mpr := fun ⟨x, hxu, hx⟩ ↦
+    ⟨{x}, Finset.singleton_subset_iff.mpr hxu, Finset.singleton_nonempty x,
+      fun _ hy ↦ Finset.mem_singleton.mp hy ▸ hx⟩
 
 /-- `flat` commutes with the flat possibility modality. -/
 theorem poss_flat (R : α → Finset α) (p : α → Prop) :

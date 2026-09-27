@@ -189,7 +189,6 @@ import Linglib.Logic.Team.QBSML.Properties
 import Linglib.Logic.Orthologic
 import Linglib.Logic.Orthologic.FrameSemantics
 import Linglib.Logic.RankingFunction
-import Linglib.Logic.Team.Algebra
 import Linglib.Logic.Team.Atoms
 import Linglib.Logic.Team.Closure
 import Linglib.Logic.Team.Definability

@@ -50,11 +50,10 @@ per-logic work the roadmap tracks.
 
 * `definableClass_subset` — the reusable soundness bridge.
 
-## Roadmap
+## Implementation notes
 
-This file is phase 1 of the team-semantics family roadmap; see
-`Logic/Modal/README.md`. The closure predicates it packages come from
-`Team/Closure.lean` (themselves mathlib `Order/` predicates).
+The closure predicates it packages come from `Team/Closure.lean` (themselves mathlib `Order/`
+predicates).
 -/
 
 @[expose] public section
@@ -151,8 +150,7 @@ end Definability
 /-! ### Closure cells
 
 The classes of team properties the expressive-completeness theorems
-characterise logics against. The "cell" a logic occupies (see the cell map in
-`Logic/Modal/README.md`) is an intersection of these: BSML is
+characterise logics against. The "cell" a logic occupies is an intersection of these: BSML is
 `convexProperties ∩ unionClosedProperties`, ML(⊆) and BSML⊘ are
 `unionClosedProperties ∩ emptyTeamProperties`, dependence and inquisitive logic
 are `downwardClosedProperties ∩ emptyTeamProperties`. -/

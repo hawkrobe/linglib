@@ -198,13 +198,13 @@ theorem support_enrich_iff_supportStar (hCP : φ.ClassicalPositive) :
     exact ⟨fun ⟨⟨h₁, h₂⟩, hne⟩ ↦ ⟨⟨(ih₁.mp h₁).1, (ih₂.mp h₂).1⟩, hne⟩,
       fun ⟨⟨h₁, h₂⟩, hne⟩ ↦ ⟨⟨ih₁.mpr ⟨h₁, hne⟩, ih₂.mpr ⟨h₂, hne⟩⟩, hne⟩⟩
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    have ih₁ := fun t ↦ ih₁ (t := t) ⟨hCP.1.1, hCP.2.1⟩
-    have ih₂ := fun t ↦ ih₂ (t := t) ⟨hCP.1.2, hCP.2.2⟩
-    exact ⟨fun ⟨⟨t₁, h₁, t₂, h₂, hu⟩, hne⟩ ↦
-        ⟨⟨t₁, t₂, ⟨hu, ((ih₁ t₁).mp h₁).2, ((ih₂ t₂).mp h₂).2⟩, ((ih₁ t₁).mp h₁).1,
-          ((ih₂ t₂).mp h₂).1⟩, hne⟩,
-      fun ⟨⟨t₁, t₂, ⟨hu, hne₁, hne₂⟩, h₁, h₂⟩, hne⟩ ↦
-        ⟨⟨t₁, (ih₁ t₁).mpr ⟨h₁, hne₁⟩, t₂, (ih₂ t₂).mpr ⟨h₂, hne₂⟩, hu⟩, hne⟩⟩
+    have e₁ : {s | support M (enrich ψ₁) s} = {s | supportStar M ψ₁ s} ∩ Team.ne :=
+      Set.ext fun _ ↦ ih₁ ⟨hCP.1.1, hCP.2.1⟩
+    have e₂ : {s | support M (enrich ψ₂) s} = {s | supportStar M ψ₂ s} ∩ Team.ne :=
+      Set.ext fun _ ↦ ih₂ ⟨hCP.1.2, hCP.2.2⟩
+    change t ∈ Team.tensor _ _ ∧ t.Nonempty ↔ _
+    rw [e₁, e₂]
+    exact Iff.rfl
   | poss ψ ih =>
     have ih := fun s ↦ ih (t := s) hCP
     exact ⟨fun ⟨h, hne⟩ ↦ ⟨fun w hw ↦ (h w hw).imp fun _ ⟨hs, hs', h'⟩ ↦
@@ -229,11 +229,8 @@ split of `α ∧ β` has two non-empty parts, and the part anti-supporting `α` 
 theorem negativeFC_star_poss (α β : Formula Atom) :
     consequenceStar (W := W) (.poss (.neg (.conj α β))) (.poss (.neg α)) :=
   fun M _ _ h w hw ↦
-    have ⟨s, hs, _, hstar⟩ := h w hw
-    have ⟨s₁, s₂, ⟨hsplit, hne₁, _⟩, h₁, _⟩ :
-        ∃ s₁ s₂, Team.splitsAsNE s s₁ s₂ ∧ antiSupportStar M α s₁ ∧ antiSupportStar M β s₂ :=
-      hstar
-    ⟨s₁, fun _ hx ↦ hs (hsplit ▸ Finset.mem_union_left s₂ hx), hne₁, h₁⟩
+    have ⟨s, hs, _, s₁, ⟨h₁, hne₁⟩, s₂, _, hu⟩ := h w hw
+    ⟨s₁, (hu ▸ Finset.subset_union_left).trans hs, hne₁, h₁⟩
 
 /-- The `□` form of negative free choice in BSML*, `¬□(α ∧ β) ⊨* ¬□α` (Fact 14), by the
 duality `□φ := ¬◇¬φ`. -/
