@@ -25,6 +25,11 @@ belief update.
 * `consistent`: the structures whose yield extends a prefix.
 * `nextProb`: the induced conditional probability of the next word.
 
+## Main results
+
+* `nextProb_eq_div`: the next-word probability as a ratio of prefix probabilities.
+* `cond_consistent_append`: the chain rule for conditional prefix probabilities.
+
 ## References
 
 * [stolcke-1995]
@@ -45,12 +50,12 @@ variable {T W : Type*}
 def consistent (str : T → List W) (ws : List W) : Set T := {t | ws <+: str t}
 
 @[simp] theorem consistent_nil (str : T → List W) : consistent str [] = Set.univ :=
-  Set.eq_univ_of_forall λ _ => List.nil_prefix
+  Set.eq_univ_of_forall fun _ ↦ List.nil_prefix
 
 /-- Longer prefixes select fewer structures. -/
 theorem consistent_anti (str : T → List W) {ws ws' : List W} (h : ws <+: ws') :
     consistent str ws' ⊆ consistent str ws :=
-  λ _ ht => h.trans ht
+  fun _ ht ↦ h.trans ht
 
 variable [MeasurableSpace T] (P : Measure T) (str : T → List W)
 
@@ -70,5 +75,19 @@ theorem nextProb_eq_div [DiscreteMeasurableSpace T] (ws : List W) (w : W) :
   rw [nextProb, cond_apply (measurableSet_consistent str ws),
     Set.inter_eq_right.mpr (consistent_anti str (List.prefix_append ws [w])), div_eq_mul_inv,
     mul_comm]
+
+/-- The chain rule: the probability of extending a prefix by `xs ++ ys` is the probability of
+extending it by `xs` times the probability of then extending by `ys`. -/
+theorem cond_consistent_append [DiscreteMeasurableSpace T] [IsFiniteMeasure P] (ws xs ys : List W) :
+    P[consistent str (ws ++ xs ++ ys) | consistent str ws] =
+      P[consistent str (ws ++ xs) | consistent str ws] *
+        P[consistent str (ws ++ xs ++ ys) | consistent str (ws ++ xs)] := by
+  have hB := consistent_anti str (List.prefix_append ws xs)
+  have hA := consistent_anti str (List.prefix_append (ws ++ xs) ys)
+  simp only [cond_apply (measurableSet_consistent str _), Set.inter_eq_right.mpr hA,
+    Set.inter_eq_right.mpr hB, Set.inter_eq_right.mpr (hA.trans hB)]
+  by_cases h0 : P (consistent str (ws ++ xs)) = 0
+  · rw [h0, measure_mono_null hA h0]; simp
+  · rw [mul_assoc, ← mul_assoc (P _), ENNReal.mul_inv_cancel h0 (measure_ne_top _ _), one_mul]
 
 end Surprisal
