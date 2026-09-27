@@ -28,8 +28,6 @@ runs the same recursion over quantified atoms.
   parameter; `support`/`antiSupport` fix the polarity.
 * `Formula.NEFree`, `Formula.Positive` — the `NE`-free and negation-free
   syntactic fragments.
-* `ModalLogic.KripkeModel.IsIndisputable`, `ModalLogic.KripkeModel.IsStateBased` —
-  the frame conditions governing wide-scope free choice.
 * `consequence`, `equivalent` — support consequence and bilateral
   equivalence.
 * `evalStar`, `consequenceStar` — BSML*, the variant excluding `∅` from
@@ -205,28 +203,6 @@ lemma empty_supports_atom (M : KripkeModel W Atom) (p : Atom) :
     support M (.atom p) ∅ :=
   fun w hw => absurd hw (Finset.notMem_empty w)
 
-/-! ### Frame conditions -/
-
-/-- Indisputable accessibility: all worlds in the team see the same
-    accessible worlds — the frame condition for wide-scope free choice.
-    Defined via `Team.IsIndisputable`, sharing substrate with QBSML. -/
-def _root_.ModalLogic.KripkeModel.IsIndisputable (M : KripkeModel W Atom) (t : Finset W) : Prop :=
-  Team.IsIndisputable M.access t
-
-/-- State-based accessibility: every world in the team has the team itself
-    as its accessible worlds. Strictly stronger than indisputability.
-    Defined via `Team.IsStateBased`. -/
-def _root_.ModalLogic.KripkeModel.IsStateBased (M : KripkeModel W Atom) (t : Finset W) : Prop :=
-  Team.IsStateBased M.access t
-
-instance [Fintype W] (M : KripkeModel W Atom) (t : Finset W) :
-    Decidable (M.IsIndisputable t) :=
-  inferInstanceAs (Decidable (Team.IsIndisputable M.access t))
-
-instance [Fintype W] (M : KripkeModel W Atom) (t : Finset W) :
-    Decidable (M.IsStateBased t) :=
-  inferInstanceAs (Decidable (Team.IsStateBased M.access t))
-
 /-! ### Consequence and equivalence -/
 
 /-- Semantic consequence: every team supporting `φ` supports `ψ`. -/
@@ -240,30 +216,28 @@ def equivalent (φ ψ : Formula Atom) : Prop :=
 
 /-! ### BSML* -/
 
-/-- Bilateral evaluation for BSML* ([aloni-2022] §6.3.1): like `eval`, but
-    `∅` is not among the possible states, so the split clauses
-    (disjunction-support, conjunction-anti-support) quantify over
-    `Team.splitsAsNE` decompositions into non-empty parts. The exclusion is
-    imposed wherever states are quantified — the splits here and the outer
-    team in `consequenceStar` — while the atom, `ne`, and modal clauses
-    keep their BSML form. -/
+/-- Bilateral evaluation for BSML* ([aloni-2022] §6.3.1): like `eval`, but `∅` is not among
+    the possible states, so each part of a split (disjunction-support, conjunction-anti-support)
+    is intersected with `Team.ne`. The exclusion is imposed wherever states are quantified, in
+    the splits here and on the outer team in `consequenceStar`, while the atom, `ne` and modal
+    clauses keep their BSML form (the `◇` witness is non-empty already). -/
 def evalStar (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
-  | true,  .atom p,       t => ∀ w ∈ t, M.val p w = true
-  | false, .atom p,       t => ∀ w ∈ t, M.val p w = false
-  | true,  .ne,           t => t.Nonempty
-  | false, .ne,           t => t = ∅
+  | true,  .atom p,       t => t ∈ Team.flat fun w ↦ M.val p w = true
+  | false, .atom p,       t => t ∈ Team.flat fun w ↦ M.val p w = false
+  | true,  .ne,           t => t ∈ Team.ne
+  | false, .ne,           t => t ∈ ({∅} : Team.TeamProperty W)
   | true,  .neg ψ,        t => evalStar M false ψ t
   | false, .neg ψ,        t => evalStar M true ψ t
   | true,  .conj ψ₁ ψ₂,  t => evalStar M true ψ₁ t ∧ evalStar M true ψ₂ t
-  | false, .conj ψ₁ ψ₂,  t => ∃ t₁ t₂ : Finset W,
-                                Team.splitsAsNE t t₁ t₂ ∧
-                                evalStar M false ψ₁ t₁ ∧ evalStar M false ψ₂ t₂
-  | true,  .disj ψ₁ ψ₂,  t => ∃ t₁ t₂ : Finset W,
-                                Team.splitsAsNE t t₁ t₂ ∧
-                                evalStar M true ψ₁ t₁ ∧ evalStar M true ψ₂ t₂
+  | false, .conj ψ₁ ψ₂,  t =>
+      t ∈ Team.tensor ({s | evalStar M false ψ₁ s} ∩ Team.ne)
+        ({s | evalStar M false ψ₂ s} ∩ Team.ne)
+  | true,  .disj ψ₁ ψ₂,  t =>
+      t ∈ Team.tensor ({s | evalStar M true ψ₁ s} ∩ Team.ne)
+        ({s | evalStar M true ψ₂ s} ∩ Team.ne)
   | false, .disj ψ₁ ψ₂,  t => evalStar M false ψ₁ t ∧ evalStar M false ψ₂ t
-  | true,  .poss ψ,       t => ∀ w ∈ t, ∃ s ⊆ M.access w, s.Nonempty ∧ evalStar M true ψ s
-  | false, .poss ψ,       t => ∀ w ∈ t, evalStar M false ψ (M.access w)
+  | true,  .poss ψ,       t => t ∈ Team.poss M.access {s | evalStar M true ψ s}
+  | false, .poss ψ,       t => t ∈ Team.nec M.access {s | evalStar M false ψ s}
 
 /-- BSML* support: positive evaluation with non-empty intermediate states. -/
 abbrev supportStar (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=

@@ -5,8 +5,8 @@ public import Mathlib.Data.Fintype.Basic
 public import Linglib.Logic.Assignment
 public import Linglib.Logic.Modal.FirstOrder.Semantics
 public import Linglib.Core.ModelTheory.LanguageMap
-public import Linglib.Logic.Modal.FirstOrder.Semantics
 public import Linglib.Logic.Team.Operations
+public import Linglib.Logic.Team.Kripke
 public import Linglib.Logic.Bilateral.Defs
 
 /-!

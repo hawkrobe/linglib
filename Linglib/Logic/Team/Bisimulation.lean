@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Team.Kripke
-public import Linglib.Logic.Team.Algebra
+public import Mathlib.Data.Finset.Lattice.Union
 
 /-!
 # Bisimulation for modal team logics
