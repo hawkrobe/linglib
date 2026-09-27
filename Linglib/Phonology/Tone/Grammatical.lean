@@ -5,57 +5,62 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Prosody.Intonation
+public import Linglib.Core.Computability.Definite
 public import Linglib.Phonology.Tone.Basic
 
 /-!
-# Grammatical Tone
+# Grammatical tone
 
-Grammatical tone (GT) is a tonological operation "restricted to a specific
-morpheme or construction... and not attributable to the general tonal
-phonology" ([lionnet-etal-2022]:386). More precisely, GT is a
-tonological operation which is not general across the phonological grammar,
-and is restricted to the context of a specific morpheme or construction, or
-a natural class of morphemes or constructions ([rolle-2018] Def 5).
+Grammatical tone is a tonological operation restricted to a specific morpheme or construction,
+or a natural class of them, and not attributable to the general tonal phonology
+([lionnet-mcpherson-rolle-2022], [rolle-2018]). This file gives [rolle-2018]'s vocabulary for
+it over strings of tone-bearing units: the **grammatical tune** that covaries with the
+construction, anchored at an edge of its host, and the four **dominance effects** by which a
+trigger's tune interacts with the tones of its target-host. A dominant trigger imposes its
+pattern whatever the target's tones, a recessive one only on an unvalued target, and a neutral
+one leaves the target to the general phonology. Dominance is the neutralisation of the target's
+valued–unvalued contrast, which [rolle-2018] calls transparadigmatic uniformity, and
+`GTDominance.isDominant_iff_uniform` derives his classification from it.
 
 ## Main definitions
 
-* `TBU` — a tone-bearing unit carrying a tonal specification, parameterized
-  over segmental content type.
-* `TonalValue`, `GTOperation`, `GTDominance`, `GTLevel`, `ExponenceType`,
-  `ValuationWindow`, `IndomitabilityType`, `GTRepair` — typological
-  classifications from [rolle-2018] and [hyman-etal-2021].
-* `Spec`, `GTSpec` — grammatical tone specifications bundling the five
-  components (grammatical tune, trigger, target, host, valuation window).
-* `tonalOverwrite` — apply a grammatical tone to a host word, overwriting
-  lexical tones in the valuation window (replacive-dominant GT).
+* `TBU`, `TBU.IsValued` — a tone-bearing unit with its tonal root node, valued when the node
+  is specified.
+* `Tune`, `Tune.realize` — a grammatical tune, a melody anchored at an edge of the host, and
+  its realisation over a number of units: one tone per unit from the anchored edge, the last
+  tone reached spreading over the remainder.
+* `overwrite`, `unvalue` — replacement of a host's tones by a tune, and their deletion.
+* `Uniform` — transparadigmatic uniformity of an operation on hosts.
+* `GTDominance`, `GTDominance.apply` — [rolle-2018]'s replacive-dominant, subtractive-dominant,
+  recessive, and neutral triggers, and the automatic operation each performs on its
+  target-host.
+
+## Main results
+
+* `overwrite_unvalue` — overwriting erases: a host and its unvalued projection are overwritten
+  alike.
+* `GTDominance.isDominant_iff_uniform` — a trigger is dominant exactly when its operation is
+  uniform across targets of the same segments.
 
 ## Implementation notes
 
-[rolle-2018] proposes a formal framework with five components for
-cross-linguistic classification: grammatical tune, trigger, target, host,
-and valuation window. The **sponsor** is the morpheme (or natural class
-of morphemes) which covaries with the grammatical tune. In most cases,
-the trigger is coextensive with the sponsor and the target with the host.
-
-Interactions between the trigger-sponsor and the target-host based on
-their morphosyntactic identity and tonal value are GT dominance effects
-(à la [kiparsky-halle-1977], [kiparsky-1982],
-[inkelas-1998]). These split into dominant (replacive vs subtractive)
-and non-dominant (recessive vs neutral) types.
-
-[hyman-etal-2021] distinguish two broad categories of GT: word-level
-(tone is the sole exponent of inflectional/derivational morphology, e.g.,
-Kalabari imperative H-L melody) and phrase-level (a phrasal construction
-triggers tonal modification of its complement, e.g., Kalabari associative
-L-H melody on nouns).
-
-This module provides the core types and operations. Language-specific
-instantiations live in `Fragments/`; empirical applications in `Studies/`.
+A tone-bearing unit carries one root node, so contours are not represented and a tune longer
+than its host is truncated at the anchored edge. The valuation window is coextensive with the
+host, Rolle's default; local windows are not modelled. The neutral trigger's tune floats and
+its docking is left to the general phonology, so its automatic operation is the identity on
+the host. Which edge a tune anchors at is a property of the construction:
+[akinbo-fwangwar-2026]'s M-H verbaliser anchors right, putting H on the final unit and M on the
+rest.
 
 ## References
 
-[rolle-2018] [hyman-etal-2021]
+* [rolle-2018]
+* [lionnet-mcpherson-rolle-2022]
+* [inkelas-1998]
+* [kiparsky-halle-1977]
+* [hyman-2018a]
+* [clements-goldsmith-1984]
+* [akinbo-fwangwar-2026]
 -/
 
 @[expose] public section
@@ -64,329 +69,259 @@ namespace Tone
 
 /-! ### Tone-bearing units -/
 
-/-- A tone-bearing unit carrying a tonal specification. Parameterized over
-    the segmental content type `S` (syllables, moras, etc.). -/
+/-- A tone-bearing unit: segmental content of type `S`, a syllable or a mora, carrying one
+tonal root node. -/
 structure TBU (S : Type*) where
-  seg  : S
+  seg : S
   tone : TRN
   deriving DecidableEq, Repr
 
-/-! ### Tonal values -/
+namespace TBU
 
-/-- Whether a TBU is tonally **valued** (has a linked toneme T) or
-    **unvalued** (a 'free TBU' — [clements-goldsmith-1984]).
+variable {S : Type*}
 
-    The distinction between valued and unvalued targets is critical for
-    defining GT dominance effects: dominant triggers impose their pattern
-    regardless of tonal value, while recessive triggers only apply to
-    unvalued targets ([rolle-2018] §3.1, Table 2). -/
-inductive TonalValue where
-  | valued    -- TBU τ is linked to a toneme T
-  | unvalued  -- TBU τ has no linked toneme (free TBU)
+/-- A unit is valued when its root node is specified and unvalued when it is a free unit
+([rolle-2018] Table 1, after [clements-goldsmith-1984]). -/
+def IsValued (τ : TBU S) : Prop := τ.tone ≠ .empty
+
+instance : DecidablePred (IsValued (S := S)) := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
+
+end TBU
+
+/-! ### Grammatical tunes -/
+
+/-- A grammatical tune ([rolle-2018] (1a)): the tone sequence that covaries with the
+construction, anchored at an edge of its host. -/
+structure Tune where
+  melody : List TRN
+  anchor : Edge
   deriving DecidableEq, Repr
 
-/-! ### Tonological operations -/
+namespace Tune
 
-/-- The inventory of grammatically-conditioned tonological operations
-    ([rolle-2018] Table 3). Each variant represents a distinct type
-    of input→output tonal mapping that can be triggered by a specific
-    morpheme or construction. -/
-inductive GTOperation where
-  /-- Floating tone docks to an unvalued TBU without replacing any
-      existing tone. -/
-  | floatingToneDocking
-  /-- Toneme of the target is deleted, leaving the TBU unvalued. -/
-  | deletion
-  /-- Underlying tone of the target is replaced by a new tone
-      (the grammatical tune). -/
-  | replacement
-  /-- Tone shifts from one TBU to an adjacent one (e.g., rightward
-      shift in Jita — [downing-2014]). -/
-  | shifting
-  /-- Target tone changes to avoid identity with an adjacent tone
-      (e.g., L→H next to L). -/
-  | dissimilation
-  /-- Target acquires the opposite value of an adjacent tone
-      (e.g., L→H regardless of distance). -/
-  | polarization
-  /-- A contour tone on the target loses one component (e.g., HL→H). -/
-  | absorption
-  /-- Target assimilates to the pitch level of an adjacent tone on the
-      same tier (horizontal spreading — [hyman-2007]). -/
-  | horizontalAssimilation
-  /-- Target shifts to a nearby pitch level (e.g., L→M next to H). -/
-  | verticalAssimilation
-  /-- A tone spreads from the sponsor to one or more TBUs of the
-      target (e.g., H spreading in Bantu). -/
-  | toneSpreading
-  deriving DecidableEq, Repr
+/-- A melody over `n` units from the left: one tone per unit, the last tone spreading over the
+remaining units, an empty melody leaving them unvalued. -/
+def realizeLeft : ℕ → List TRN → List TRN
+  | 0, _ => []
+  | n + 1, [] => List.replicate (n + 1) .empty
+  | n + 1, [t] => t :: realizeLeft n [t]
+  | n + 1, t :: t' :: ts => t :: realizeLeft n (t' :: ts)
 
-/-! ### GT dominance effects -/
+/-- The tune realised over `n` units: from the anchored edge, one tone per unit, the last tone
+reached spreading over the remainder. -/
+def realize (u : Tune) (n : ℕ) : List TRN :=
+  match u.anchor with
+  | .left => realizeLeft n u.melody
+  | .right => (realizeLeft n u.melody.reverse).reverse
 
-/-- The four-way typology of GT dominance effects, based on the
-    interaction between trigger-sponsor and target-host tonal values
-    ([rolle-2018] §3.1, Table 2).
+@[simp] theorem length_realizeLeft (n : ℕ) (m : List TRN) : (realizeLeft n m).length = n := by
+  induction n generalizing m with
+  | zero => rfl
+  | succ n ih =>
+    match m with
+    | [] => simp [realizeLeft]
+    | [t] => simp [realizeLeft, ih]
+    | t :: t' :: ts => simp [realizeLeft, ih]
 
-    This is the tonal instantiation of `Prosody.ProsodicDominance`,
-    which captures the abstract dominant/recessive/neutral distinction
-    across both accentual and tonal morphology. The GT-specific split
-    of dominant into replacive vs subtractive reflects whether the
-    trigger provides a replacement melody or just deletes the base tone.
+@[simp] theorem length_realize (u : Tune) (n : ℕ) : (u.realize n).length = n := by
+  obtain ⟨m, e⟩ := u
+  cases e <;> simp [realize]
 
-    Dominance is a **lexical idiosyncrasy** of the trigger: it cannot
-    be predicted from segmental or prosodic properties, the markedness
-    of the grammatical tune, or the morphosyntactic position of the
-    trigger relative to the target ([inkelas-1998]:128). -/
+theorem realizeLeft_singleton (n : ℕ) (t : TRN) : realizeLeft n [t] = List.replicate n t := by
+  induction n with
+  | zero => rfl
+  | succ n ih => simp [realizeLeft, ih, List.replicate_succ]
+
+/-- A one-tone tune spreads its tone over every unit, whichever edge it anchors at. -/
+@[simp] theorem realize_singleton (t : TRN) (e : Edge) (n : ℕ) :
+    realize ⟨[t], e⟩ n = List.replicate n t := by
+  cases e <;> simp [realize, realizeLeft_singleton]
+
+/-- A two-tone tune anchored right puts its second tone on the final unit and its first on
+the rest. -/
+theorem realize_pair_right (t₁ t₂ : TRN) (n : ℕ) :
+    realize ⟨[t₁, t₂], .right⟩ (n + 1) = List.replicate n t₁ ++ [t₂] := by
+  simp [realize, realizeLeft, realizeLeft_singleton]
+
+end Tune
+
+/-! ### Operations on a target-host -/
+
+variable {S : Type*}
+
+/-- The host with its tonal tier replaced. -/
+def withTier (host : List (TBU S)) (tier : List TRN) : List (TBU S) :=
+  host.zipWith (fun τ t ↦ { τ with tone := t }) tier
+
+theorem withTier_eq_of_map_seg_eq : ∀ {h h' : List (TBU S)} (tier : List TRN),
+    h.map TBU.seg = h'.map TBU.seg → withTier h tier = withTier h' tier
+  | [], [], _, _ => rfl
+  | [], _ :: _, _, hs | _ :: _, [], _, hs => by simp at hs
+  | τ :: h, τ' :: h', [], _ => rfl
+  | τ :: h, τ' :: h', t :: tier, hs => by
+    simp only [List.map_cons, List.cons.injEq] at hs
+    simp only [withTier, List.zipWith_cons_cons, hs.1]
+    exact congrArg _ (withTier_eq_of_map_seg_eq tier hs.2)
+
+theorem map_seg_withTier : ∀ (h : List (TBU S)) (tier : List TRN), tier.length = h.length →
+    (withTier h tier).map TBU.seg = h.map TBU.seg
+  | [], _, _ => by simp [withTier]
+  | _ :: _, [], hl => by simp at hl
+  | τ :: h, t :: tier, hl => by
+    simp only [withTier, List.zipWith_cons_cons, List.map_cons]
+    exact congrArg _ (map_seg_withTier h tier (by simpa using hl))
+
+theorem map_tone_withTier : ∀ (h : List (TBU S)) (tier : List TRN), tier.length = h.length →
+    (withTier h tier).map TBU.tone = tier
+  | [], [], _ => rfl
+  | [], _ :: _, hl | _ :: _, [], hl => by simp at hl
+  | τ :: h, t :: tier, hl => by
+    simp only [withTier, List.zipWith_cons_cons, List.map_cons]
+    exact congrArg _ (map_tone_withTier h tier (by simpa using hl))
+
+/-- Replacement of the host's tones by the tune ([rolle-2018] Def 1): the tune realised over
+the host's units. -/
+def overwrite (host : List (TBU S)) (u : Tune) : List (TBU S) :=
+  withTier host (u.realize host.length)
+
+/-- Deletion of the host's tones ([rolle-2018] Def 2): every unit left unvalued. -/
+def unvalue (host : List (TBU S)) : List (TBU S) :=
+  host.map fun τ ↦ { τ with tone := .empty }
+
+@[simp] theorem overwrite_nil (u : Tune) : overwrite ([] : List (TBU S)) u = [] := rfl
+
+@[simp] theorem map_seg_overwrite (host : List (TBU S)) (u : Tune) :
+    (overwrite host u).map TBU.seg = host.map TBU.seg :=
+  map_seg_withTier _ _ (Tune.length_realize _ _)
+
+/-- The tonal tier of an overwritten host is the tune realised over it. -/
+@[simp] theorem map_tone_overwrite (host : List (TBU S)) (u : Tune) :
+    (overwrite host u).map TBU.tone = u.realize host.length :=
+  map_tone_withTier _ _ (Tune.length_realize _ _)
+
+@[simp] theorem length_overwrite (host : List (TBU S)) (u : Tune) :
+    (overwrite host u).length = host.length := by
+  have := congrArg List.length (map_seg_overwrite host u)
+  simpa only [List.length_map] using this
+
+/-- A one-tone tune makes every unit's tone that tone. -/
+theorem map_tone_overwrite_singleton (host : List (TBU S)) (t : TRN) (e : Edge) :
+    (overwrite host ⟨[t], e⟩).map TBU.tone = host.map fun _ ↦ t := by
+  rw [map_tone_overwrite, Tune.realize_singleton, List.map_const']
+
+@[simp] theorem map_seg_unvalue (host : List (TBU S)) :
+    (unvalue host).map TBU.seg = host.map TBU.seg := by
+  simp [unvalue]
+
+/-- Transparadigmatic uniformity ([rolle-2018] ch. 5): an operation on target-hosts gives the
+same output for hosts of the same segments, whatever their tones. -/
+def Uniform (op : List (TBU S) → List (TBU S)) : Prop :=
+  ∀ ⦃h h' : List (TBU S)⦄, h.map TBU.seg = h'.map TBU.seg → op h = op h'
+
+theorem overwrite_eq_of_map_seg_eq {h h' : List (TBU S)} (hs : h.map TBU.seg = h'.map TBU.seg)
+    (u : Tune) : overwrite h u = overwrite h' u := by
+  have hl : h.length = h'.length := by simpa using congrArg List.length hs
+  show withTier h (u.realize h.length) = withTier h' (u.realize h'.length)
+  rw [hl, withTier_eq_of_map_seg_eq _ hs]
+
+theorem uniform_overwrite (u : Tune) : Uniform (overwrite (S := S) · u) :=
+  fun _ _ hs ↦ overwrite_eq_of_map_seg_eq hs u
+
+theorem uniform_unvalue : Uniform (unvalue (S := S)) := fun h h' hs ↦ by
+  have : ∀ l : List (TBU S), unvalue l = (l.map TBU.seg).map fun s ↦ ⟨s, .empty⟩ := fun l ↦ by
+    simp [unvalue, List.map_map, Function.comp_def]
+  rw [this, this, hs]
+
+/-- Overwriting erases: a host and its unvalued projection are overwritten alike, which is why
+a replacive trigger neutralises the target's tones. -/
+@[simp] theorem overwrite_unvalue (host : List (TBU S)) (u : Tune) :
+    overwrite (unvalue host) u = overwrite host u :=
+  overwrite_eq_of_map_seg_eq (map_seg_unvalue host) u
+
+/-! ### Dominance effects -/
+
+/-- [rolle-2018]'s four types of trigger (Defs 1–4, Table 2), by how the trigger's tune
+interacts with the tonal value of its target-host. Dominance is a lexical idiosyncrasy of the
+trigger, predictable neither from its segments and prosody nor from the markedness of the tune
+nor from its position relative to the target ([inkelas-1998]); the terms are those of the
+accentual morphology of [kiparsky-halle-1977]. -/
 inductive GTDominance where
-  /-- **Replacive-dominant**: automatic replacement of the underlying
-      tone within the valuation window of the target-host, revalued
-      with the grammatical tune (whether via floating tone, spreading
-      from the sponsor, etc.).
-
-      Neutralizes the distinction between valued and unvalued targets:
-      both receive the same output tone pattern. This neutralization
-      is "intentional" in the sense of [hyman-2018a].
-
-      Examples: Hausa plural -óoCíí ([inkelas-1998]),
-      Kalabari demonstrative /mí/ ([harry-hyman-2014]),
-      Mwaghavul verbalisers ([akinbo-fwangwar-2026]). -/
+  /-- Def 1: the underlying tones within the valuation window are replaced by the tune, whether
+  by a floating tone or by spreading from the sponsor. Valued and unvalued targets come out
+  alike, an intentional neutralisation in [hyman-2018a]'s sense. -/
   | replaciveDominant
-  /-- **Subtractive-dominant**: automatic deletion of the underlying
-      tone within the valuation window, WITHOUT revaluation by a
-      grammatical tune. The surface form receives a default pattern
-      at a later stage.
-
-      Examples: Japanese -teki ([kawahara-2015]),
-      Baka 3sg/1pl/3pl inflection ([waag-phodunze-2013]). -/
+  /-- Def 2: the underlying tones within the valuation window are deleted, with no tune to
+  revalue them; the surface tones are supplied later by default. -/
   | subtractiveDominant
-  /-- **Recessive-non-dominant**: the grammatical tune applies only
-      when the target-host is unvalued within its valuation window.
-      If the target is valued, the tune does not dock.
-
-      Found primarily in privative-culminative systems where the
-      tonal contrast is presence vs. absence (e.g., /H/ vs. Ø).
-
-      Examples: Japanese -si 'Mr.' ([kawahara-2015]),
-      Giphende floating tones ([hyman-2017]). -/
+  /-- Def 3: the tune does not apply to a target valued within the valuation window, so it docks
+  only to unvalued targets, as in privative systems with one contrastive tone. -/
   | recessive
-  /-- **Neutral-non-dominant**: the trigger-sponsor concatenates
-      with the target-host without automatic replacement, deletion,
-      or non-application of the grammatical tune. The output is
-      determined by the general phonological grammar (e.g., OCP
-      resolution, markedness constraints).
-
-      Most cases of "floating tones" in the literature are neutral.
-
-      Examples: Hausa referential -ⁿn ([newman-2000]),
-      Igbo associative construction ([hyman-schuh-1974]). -/
+  /-- Def 4: neither automatic replacement or deletion nor automatic non-application; the tune
+  concatenates with the target and the general phonology decides its docking. -/
   | neutral
   deriving DecidableEq, Repr
 
-/-- Dominant GT neutralizes the lexical tonal contrast of the target:
-    whether the target is valued or unvalued, the output is the same.
-    This property is what [rolle-2018] calls **dominance as
-    transparadigmatic uniformity**. -/
-abbrev GTDominance.IsDominant (d : GTDominance) : Prop :=
-  d = .replaciveDominant ∨ d = .subtractiveDominant
+namespace GTDominance
 
-/-- Non-dominant GT preserves the lexical tonal contrast: the output
-    differs depending on whether the target is valued or unvalued. -/
-abbrev GTDominance.IsNonDominant (d : GTDominance) : Prop := ¬ d.IsDominant
+/-- The dominant types, which neutralise the target's valued–unvalued contrast. -/
+def IsDominant (d : GTDominance) : Prop := d = .replaciveDominant ∨ d = .subtractiveDominant
 
-open Prosody (ProsodicDominance)
+instance : DecidablePred IsDominant := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- Collapse the GT-specific 4-way dominance to the abstract 3-way.
-    Both replacive and subtractive dominant map to `ProsodicDominance.dominant`. -/
-def GTDominance.toProsodicDominance : GTDominance → ProsodicDominance
-  | .replaciveDominant   => .dominant
-  | .subtractiveDominant => .dominant
-  | .recessive           => .recessive
-  | .neutral             => .neutral
+/-- The automatic operation a trigger of each type performs on its target-host, the valuation
+window being the whole host: replacement by the tune, deletion, docking of the tune only to a
+wholly unvalued host, and nothing. -/
+def apply (d : GTDominance) (u : Tune) (host : List (TBU S)) : List (TBU S) :=
+  match d with
+  | .replaciveDominant => overwrite host u
+  | .subtractiveDominant => unvalue host
+  | .recessive => if ∃ τ ∈ host, τ.IsValued then host else overwrite host u
+  | .neutral => host
 
-/-- The collapse preserves the dominant/non-dominant boundary. -/
-theorem GTDominance.toProsodicDominance_preserves_isDominant (d : GTDominance) :
-    d.toProsodicDominance.IsDominant ↔ d.IsDominant := by
-  cases d <;> simp [ProsodicDominance.IsDominant, GTDominance.IsDominant,
-                    GTDominance.toProsodicDominance]
+@[simp] theorem apply_replaciveDominant (u : Tune) (host : List (TBU S)) :
+    replaciveDominant.apply u host = overwrite host u := rfl
 
-/-! ### GT level -/
+@[simp] theorem apply_subtractiveDominant (u : Tune) (host : List (TBU S)) :
+    subtractiveDominant.apply u host = unvalue host := rfl
 
-/-- The morphosyntactic level at which the GT construction operates.
-    [hyman-etal-2021] distinguish word-level from phrase-level GT. -/
-inductive GTLevel where
-  /-- Tone is the sole exponent of word-level (inflectional or
-      derivational) morphology. -/
-  | word
-  /-- A phrasal construction triggers tonal modification of its
-      complement. -/
-  | phrase
-  deriving DecidableEq, Repr
+@[simp] theorem apply_neutral (u : Tune) (host : List (TBU S)) : neutral.apply u host = host :=
+  rfl
 
-/-! ### Exponence types -/
+/-- A recessive tune does not apply to a valued target. -/
+theorem apply_recessive_of_valued (u : Tune) {host : List (TBU S)}
+    (h : ∃ τ ∈ host, τ.IsValued) : recessive.apply u host = host := by
+  simp [apply, h]
 
-/-- How the GT construction relates to segmental exponence of
-    grammatical meaning ([rolle-2018] Defs 16–17). -/
-inductive ExponenceType where
-  /-- **Independent prosodic exponence** (Def 16): the grammatical
-      category is exponed only by prosodic units of contrast (tonemes,
-      accent, etc.) with no segmental material. Also called 'tonal
-      morpheme', 'tonal affix', 'tonal overlay', etc. -/
-  | independent
-  /-- **Auxiliary prosodic exponence** (Def 17): the grammatical
-      category is exponed by segmental units AND co-occurring prosodic
-      units separately. -/
-  | auxiliary
-  deriving DecidableEq, Repr
+/-- A recessive tune docks to an unvalued target. -/
+theorem apply_recessive_of_unvalued (u : Tune) {host : List (TBU S)}
+    (h : ∀ τ ∈ host, ¬ τ.IsValued) : recessive.apply u host = overwrite host u := by
+  simp only [apply]
+  rw [ite_eq_right]
+  rintro ⟨τ, hτ, hv⟩
+  exact h τ hτ hv
 
-/-! ### Valuation window and grammatical tone specification -/
+theorem uniform_apply_of_isDominant {d : GTDominance} (hd : d.IsDominant) (u : Tune) :
+    Uniform (d.apply (S := S) u) := by
+  rcases hd with rfl | rfl
+  · exact uniform_overwrite u
+  · exact uniform_unvalue
 
-/-- A tonal melody: a sequence of tones to be associated with TBUs. -/
-abbrev TonalMelody := List TRN
+/-- Dominance as transparadigmatic uniformity ([rolle-2018] ch. 5): a trigger is dominant
+exactly when its operation gives the same output for every target of the same segments. -/
+theorem isDominant_iff_uniform [Inhabited S] (d : GTDominance) :
+    d.IsDominant ↔ ∀ u : Tune, Uniform (d.apply (S := S) u) := by
+  refine ⟨fun hd u ↦ uniform_apply_of_isDominant hd u, fun hu ↦ ?_⟩
+  cases d with
+  | replaciveDominant => exact Or.inl rfl
+  | subtractiveDominant => exact Or.inr rfl
+  | recessive =>
+    have := hu ⟨[.H], .left⟩ (h := [⟨default, .L⟩]) (h' := [⟨default, .empty⟩]) rfl
+    simp [apply, TBU.IsValued, overwrite, withTier, Tune.realize, Tune.realizeLeft,
+      TRN.L, TRN.H, TRN.empty] at this
+  | neutral =>
+    have := hu ⟨[.H], .left⟩ (h := [⟨default, .L⟩]) (h' := [⟨default, .H⟩]) rfl
+    simp [TRN.L, TRN.H] at this
 
-/-- Valuation window: the portion of the host that the grammatical tune
-    targets. Determines which TBUs are overwritten.
-
-    [rolle-2018] (Def 15): the portion of the target-host which
-    is evaluated with respect to whether its TBUs are valued or unvalued;
-    this can be coextensive with the target-host, or strictly a local
-    subconstituent. -/
-inductive ValuationWindow where
-  /-- The entire host (every TBU). Coextensive valuation window. -/
-  | whole
-  /-- All nonfinal TBUs get one tone, the final TBU gets another.
-      Used for melodies like M-H where the last TBU is special. -/
-  | nonfinalFinal
-  /-- A local subconstituent of the host (e.g., only the final mora,
-      only the TBU adjacent to the trigger). Used in
-      subtractive-dominant GT with local scope, e.g., Japanese
-      genitive -no ([kawahara-2015]). -/
-  | local
-  deriving DecidableEq, Repr
-
-/-- A grammatical tone specification following [rolle-2018].
-
-    Captures the tonal exponent of a morpheme or construction:
-    what tonal melody it imposes, and on which portion of the host. -/
-structure Spec where
-  /-- Label for the morpheme (e.g., "VBZ-M", "VBZ-MH") -/
-  name : String
-  /-- The tonal melody imposed. For `whole`, the single tone spreads
-      to all TBUs. For `nonfinalFinal`, the first tone targets nonfinal
-      TBUs and the second targets the final TBU. -/
-  melody : TonalMelody
-  /-- Which portion of the host is targeted. -/
-  window : ValuationWindow
-  deriving Repr
-
-/-- Full GT specification extending `Spec` with the dominance type,
-    morphosyntactic level, and exponence type from [rolle-2018]'s
-    typological framework. This bundles all five GT components plus the
-    typological classification into a single record. -/
-structure GTSpec extends Spec where
-  /-- The dominance type of this GT trigger. -/
-  dominance : GTDominance
-  /-- Word-level or phrase-level GT ([hyman-etal-2021]). -/
-  level : GTLevel
-  /-- Whether the tonal exponent is the sole exponent (independent)
-      or co-occurs with segmental material (auxiliary). -/
-  exponence : ExponenceType
-  deriving Repr
-
-/-! ### Tonal overwrite (replacive-dominant GT) -/
-
-/-- Apply a grammatical tone to a host word, overwriting lexical tones
-    in the valuation window. This implements **replacive-dominant GT**
-    ([rolle-2018] Def 1): the underlying tones of the target-host
-    are automatically replaced by the grammatical tune.
-
-    - `whole` + `[t]`: every TBU gets tone `t`
-    - `nonfinalFinal` + `[t₁, t₂]`: nonfinal TBUs get `t₁`, final gets `t₂`
-
-    Returns the input unchanged if the melody is empty or the window
-    is `local` (local valuation requires language-specific logic). -/
-def tonalOverwrite {S : Type*} [DecidableEq S] [BEq S] [Repr S]
-    (host : List (TBU S)) (spec : Spec) : List (TBU S) :=
-  match spec.window, spec.melody with
-  | .whole, [t] =>
-    host.map (λ tbu => { tbu with tone := t })
-  | .nonfinalFinal, [tNonfin, tFin] =>
-    match host.reverse with
-    | [] => []
-    | last :: init =>
-      (init.reverse.map (λ tbu => { tbu with tone := tNonfin }))
-        ++ [{ last with tone := tFin }]
-  | _, _ => host  -- no change if melody doesn't match window pattern
-
-/-! ### GT indomitability -/
-
-/-- Types of GT indomitability: exceptional targets that fail to undergo
-    a tonological operation despite being within the scope of the trigger
-    ([rolle-2018] §3.3.2). -/
-inductive IndomitabilityType where
-  /-- **Morphemic**: specific morphemes or morpheme classes resist
-      the GT operation (e.g., Jita -lí NEG.DIST.FUT —
-      [downing-2014]). -/
-  | morphemic
-  /-- **Morphosyntactic**: certain syntactic constituents are
-      transparent or opaque to the GT operation (e.g., Tommo So
-      alienable possessors — [mcpherson-heath-2016]). -/
-  | morphosyntactic
-  /-- **Tonological**: targets with specific input tone melodies
-      resist (e.g., Nzadi /LH/ targets — [crane-etal-2011]). -/
-  | tonological
-  /-- **Phonological**: targets with specific phonological properties
-      resist (e.g., monomoraic targets with Japanese -no genitive —
-      [kawahara-2015]). -/
-  | phonological
-  deriving DecidableEq, Repr
-
-/-! ### Repairs in GT application -/
-
-/-- Repair strategies when a grammatical tune cannot dock to its
-    intended target ([rolle-2018] §3.3.3). -/
-inductive GTRepair where
-  /-- The grammatical tune is deleted (the most common repair). -/
-  | tuneDeactivation
-  /-- The tune docks to the trigger-sponsor itself. -/
-  | selfDocking
-  /-- The tune docks to a non-local host, skipping the intended
-      target. -/
-  | nonLocalDocking
-  /-- The underlying tone of the target is undocked from TBUs within
-      the valuation window (but not deleted), and may redock outside
-      the window or remain floating. -/
-  | tonalDefenestration
-  deriving DecidableEq, Repr
-
-/-! ### Verification -/
-
-/-- Whole-word overwrite with a single tone produces uniform output. -/
-theorem tonalOverwrite_whole_uniform {S : Type*} [DecidableEq S] [BEq S] [Repr S]
-    (host : List (TBU S)) (t : TRN) :
-    (tonalOverwrite host ⟨"", [t], .whole⟩).map TBU.tone =
-    host.map (λ _ => t) := by
-  simp [tonalOverwrite, List.map_map, Function.comp_def]
-
-/-- Overwrite of an empty host is empty. -/
-theorem tonalOverwrite_nil {S : Type*} [DecidableEq S] [BEq S] [Repr S]
-    (spec : Spec) : tonalOverwrite ([] : List (TBU S)) spec = [] := by
-  simp [tonalOverwrite]
-  split <;> simp_all
-
-/-- Replacive-dominant GT is dominant (sanity check on the classification). -/
-theorem replaciveDominant_isDominant :
-    GTDominance.IsDominant .replaciveDominant := by decide
-
-/-- Subtractive-dominant GT is dominant. -/
-theorem subtractiveDominant_isDominant :
-    GTDominance.IsDominant .subtractiveDominant := by decide
-
-/-- Recessive GT is non-dominant. -/
-theorem recessive_isNonDominant :
-    GTDominance.IsNonDominant .recessive := by decide
-
-/-- Neutral GT is non-dominant. -/
-theorem neutral_isNonDominant :
-    GTDominance.IsNonDominant .neutral := by decide
+end GTDominance
 
 end Tone

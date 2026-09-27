@@ -26,7 +26,7 @@ the base. Data from [akinbo-fwangwar-2026] (7)–(10) and [fwangwar-2018].
 
 namespace Mwaghavul
 
-open Tone (TRN TBU Spec)
+open Tone (TRN TBU Tune)
 
 /-- Mwaghavul's tone-bearing unit is the syllable. -/
 def tbuKind : Tone.TBUKind := .syllable
@@ -40,13 +40,14 @@ inductive Verbalizer where
   deriving DecidableEq, Repr
 
 /-- VBZ₁: M on every TBU of the host. -/
-def verbM : Spec := { name := "VBZ₁", melody := [.M], window := .whole }
+def verbM : Tune := ⟨[.M], .left⟩
 
-/-- VBZ₂ on a single host: M on every nonfinal TBU, H on the final one. -/
-def verbMH : Spec := { name := "VBZ₂", melody := [.M, .H], window := .nonfinalFinal }
+/-- VBZ₂ on a single host: its M-H tune anchored at the right edge, H on the final TBU and M
+on every nonfinal one. -/
+def verbMH : Tune := ⟨[.M, .H], .right⟩
 
 /-- The H of VBZ₂ on its own host, as in pluractional verbs. -/
-def verbMHBase : Spec := { name := "VBZ₂", melody := [.H], window := .whole }
+def verbMHBase : Tune := ⟨[.H], .left⟩
 
 /-! ### Ideophones -/
 
@@ -72,20 +73,19 @@ def Ideophone.host (i : Ideophone) : List (TBU Syl) := i.tones.map fun t => ⟨�
 /-- The singular verb's tones, if the ideophone has a singular verb. -/
 def deriveVerb (i : Ideophone) : Option (List TRN) :=
   i.singular.map fun v =>
-    (Tone.tonalOverwrite i.host (match v with | .m => verbM | .mh => verbMH)).map (·.tone)
+    (Tone.overwrite i.host (match v with | .m => verbM | .mh => verbMH)).map (·.tone)
 
 /-- The pluractional verb's tones: the M of VBZ₂ on every TBU of the reduplicant and its H
 on every TBU of the base. -/
 def derivePluractional (i : Ideophone) : List TRN :=
-  (Tone.tonalOverwrite i.host verbM ++ Tone.tonalOverwrite i.host verbMHBase).map (·.tone)
+  (Tone.overwrite i.host verbM ++ Tone.overwrite i.host verbMHBase).map (·.tone)
 
 /-- Reduplication without a tonal alternation, expressing intensity ((9)). -/
 def intensity (i : Ideophone) : List TRN := i.tones ++ i.tones
 
 theorem derivePluractional_eq (i : Ideophone) :
     derivePluractional i = i.tones.map (fun _ => .M) ++ i.tones.map (fun _ => .H) := by
-  simp [derivePluractional, Ideophone.host, verbM, verbMHBase, Tone.tonalOverwrite,
-    List.map_map, Function.comp_def]
+  simp [derivePluractional, Ideophone.host, verbM, verbMHBase]
 
 /-! ### The dataset
 [akinbo-fwangwar-2026] (7)–(10). -/

@@ -81,7 +81,7 @@ noncomputable instance : LinearOrder Position := LinearOrder.lift' toFin toFin_i
 /-- A dependent position: any position but the head. -/
 def IsDependent (p : Position) : Prop := p ≠ .head
 
-instance : DecidablePred IsDependent := λ p => inferInstanceAs (Decidable (p ≠ .head))
+instance : DecidablePred IsDependent := fun p ↦ inferInstanceAs (Decidable (p ≠ .head))
 
 end Position
 
@@ -89,7 +89,7 @@ end Position
 located inwardly, so that `p`'s subranking governs the constituent containing both. -/
 def ScopesOver (p q : Position) : Prop := q < p
 
-noncomputable instance : DecidableRel ScopesOver := λ p q => inferInstanceAs (Decidable (q < p))
+noncomputable instance : DecidableRel ScopesOver := fun p q ↦ inferInstanceAs (Decidable (q < p))
 
 /-- Only the specifier's item scopes over the head: a dominant trigger targeting a lexical head
 is a dependent, and an object imposes dominant tone on its verb because it sits in specifier
@@ -147,7 +147,7 @@ def Row.DominantAttested : Row → Prop
   | .affixRoot | .outerAffixStem | .modifierNoun | .outerModifierNoun | .objectVerb => True
   | .rootAffix | .innerAffixOuter | .nounModifier | .innerModifierOuter | .verbObject => False
 
-instance : DecidablePred Row.DominantAttested := λ r => by
+instance : DecidablePred Row.DominantAttested := fun r ↦ by
   cases r <;> unfold Row.DominantAttested <;> infer_instance
 
 /-- The typology table falls out of cophonology-scope: dominant tone is attested for a
@@ -158,11 +158,6 @@ theorem Row.dominant_iff (r : Row) : r.DominantAttested ↔ ScopesOver r.trigger
 /-! ### Matrix–basemap correspondence -/
 
 variable {S : Type}
-
-/-- Basemap induction: the target with its tones unvalued, the structure common to the
-vocabulary items that the constraint's similarity condition picks out. -/
-def deficientProjection (host : List (TBU S)) : List (TBU S) :=
-  host.map λ tbu => { tbu with tone := TRN.empty }
 
 /-- The tonal tier, the projection along which matrix and basemap outputs are compared: the
 total tier projection of the tone of each tone-bearing unit. -/
@@ -198,7 +193,7 @@ theorem eq_of_basemapViolations_eq_zero {t₁ t₂ : List TRN} (hLen : t₁.leng
 /-- The matrix–basemap constraint of a trigger's subranking: a candidate's tonal tier against
 the basemap output's. -/
 def mxbm {C : Type} (basemapTier : List TRN) (extractTier : C → List TRN) : Constraint C :=
-  λ c => basemapViolations (extractTier c) basemapTier
+  fun c ↦ basemapViolations (extractTier c) basemapTier
 
 open OptimalityTheory.Cophonology (cophonologicalEval mergeRanking)
 
@@ -232,30 +227,28 @@ theorem recessive (host : List (TBU S))
   coph_selects_basemap_faithful extractTier l defaultRanking candidates h _
     (by simpa using hLen) hFaithful
 
-variable [DecidableEq S] [BEq S] [Repr S]
+/-- The basemap output: the trigger's tune docked onto the target's deficient projection, the
+target with its tones unvalued, which is the structure common to the vocabulary items that the
+constraint's similarity condition picks out. -/
+def basemapOutput (host : List (TBU S)) (u : Tune) : List (TBU S) :=
+  overwrite (unvalue host) u
 
-/-- The basemap output: the trigger's tune docked onto the unvalued projection. -/
-def basemapOutput (host : List (TBU S)) (spec : Spec) : List (TBU S) :=
-  tonalOverwrite (deficientProjection host) spec
-
-/-- For a whole-word tune the basemap output carries the tune on every unit, whatever the
+/-- For a one-tone tune the basemap output carries the tune on every unit, whatever the
 target's own tones: the locus of erasure. -/
-theorem tonalTier_basemapOutput_whole (host : List (TBU S)) (t : TRN) :
-    tonalTier (basemapOutput host ⟨"", [t], .whole⟩) = host.map λ _ => t := by
-  rw [tonalTier_eq_map, basemapOutput, tonalOverwrite_whole_uniform, deficientProjection,
-    List.map_map]
-  rfl
+theorem tonalTier_basemapOutput_singleton (host : List (TBU S)) (t : TRN) :
+    tonalTier (basemapOutput host ⟨[t], .left⟩) = host.map fun _ ↦ t := by
+  rw [tonalTier_eq_map, basemapOutput, overwrite_unvalue, map_tone_overwrite_singleton]
 
 /-- Dominant grammatical tone: under a subranking promoting faithfulness to the induced
 basemap, every optimal candidate carries the trigger's whole-word tune, whatever the target's
 underlying tones were. -/
 theorem dominant (host : List (TBU S)) (t : TRN)
     (hLen : ∀ c ∈ candidates, (extractTier c).length = host.length)
-    (hFaithful : ∃ c ∈ candidates, extractTier c = host.map λ _ => t) :
+    (hFaithful : ∃ c ∈ candidates, extractTier c = host.map fun _ ↦ t) :
     ∀ c ∈ cophonologicalEval defaultRanking
-        [(l, mxbm (tonalTier (basemapOutput host ⟨"", [t], .whole⟩)) extractTier)] candidates h,
-      extractTier c = host.map λ _ => t := by
-  rw [tonalTier_basemapOutput_whole]
+        [(l, mxbm (tonalTier (basemapOutput host ⟨[t], .left⟩)) extractTier)] candidates h,
+      extractTier c = host.map fun _ ↦ t := by
+  rw [tonalTier_basemapOutput_singleton]
   exact coph_selects_basemap_faithful extractTier l defaultRanking candidates h _
     (by simpa using hLen) hFaithful
 

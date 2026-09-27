@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Phonology.Tone.Basic
-public import Linglib.Phonology.Tone.Grammatical
 public import Linglib.Phonology.Autosegmental.Melody
 public import Linglib.Morphology.Word.Tree
 
