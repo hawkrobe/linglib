@@ -8,6 +8,7 @@ public import Linglib.Fragments.Statimcets.Modals
 public import Linglib.Fragments.NezPerce.Modals
 public import Linglib.Fragments.Niuean.Modals
 public import Linglib.Studies.Condoravdi2002
+public import Linglib.Studies.Deal2011
 public import Linglib.Studies.Kratzer2012
 public import Linglib.Studies.Matthewson2013
 
@@ -27,15 +28,17 @@ modes give Table 18.3's three classes, which St'át'imcets lexicalizes in full, 
 keeps its epistemic and circumstantial modals apart.
 
 On force, Gitksan *ima('a)* and *g̱at*, variable in force, and Nez Perce *o'qa*, a possibility
-modal that no necessity modal competes with ([deal-2011]), are modals without duals. On
+modal that no necessity modal competes with ([deal-2011]), are modals without duals, and
+*o'qa*'s necessity uses vanish in downward-entailing contexts, as [deal-2011]'s account of
+modals without scales predicts. On
 modal–temporal interaction, Gitksan marks future orientation with the prospective *dim* where
 English marks past orientation with the perfect, a mirror image derived from the Gitksan
 fragment and from [condoravdi-2002]. On typology, Gitksan and Niuean, the chapter's cases of
 epistemic modals lacking duals, distinguish force among circumstantial modals and not among
 epistemic ones: in each, a circumstantial possibility modal and a necessity modal are duals and
 no epistemic modal has one. [vander-klok-2013b]'s refinement of [nauze-2008]'s universal, one
-axis of variation per modal domain, is strictly stronger than the universal and holds of the
-four inventories.
+axis of variation per modal domain, is strictly stronger than the universal and holds of
+Gitksan.
 
 ## Implementation notes
 
@@ -52,14 +55,9 @@ four inventories.
   axes.
 * The English column of Table 18.3 is not formalized, no fragment recording the source or
   mode of the English modals.
-
-## TODO
-
-* §18.3.2 contrasts [peterson-2010]'s *ima('a)*, a possibility modal strengthened by an ordering
-  source, with [deal-2011]'s *o'qa*, a possibility modal without a scale, whose use in necessity
-  contexts reflects only the absence of a scalar implicature: the two agree in upward-entailing
-  contexts and part in downward-entailing ones, where necessity no longer entails possibility.
-  `oqa_rows` records the pattern; deriving it from the monotonicity of the context is open.
+* §18.3.2 contrasts [peterson-2010]'s *ima('a)*, a possibility modal strengthened by an
+  ordering source, with [deal-2011]'s *o'qa*; the two part only in downward-entailing contexts,
+  where the chapter finds *ima('a)* untestable, so Peterson's analysis is not formalized.
 
 ## References
 
@@ -262,7 +260,8 @@ counterpart, so none has a dual in its inventory. -/
 theorem no_duals :
     ¬ HasDualIn Gitksan.modals Gitksan.imaa ∧ ¬ HasDualIn Gitksan.modals Gitksan.gat ∧
       ¬ HasDualIn NezPerce.modals NezPerce.oqa :=
-  ⟨not_hasDualIn_of_variesForce (by decide), not_hasDualIn_of_variesForce (by decide), by decide⟩
+  ⟨not_hasDualIn_of_variesForce (by decide), not_hasDualIn_of_variesForce (by decide),
+    not_hasDualIn_of_variesForce (by decide)⟩
 
 /-- The force a reading names. -/
 def forceTable : List (String × ModalForce) :=
@@ -275,14 +274,18 @@ theorem imaa_rows :
         (r.2 = .acceptable ↔ fo ∈ Gitksan.imaa.forces) := by
   decide
 
-/-- (39)–(40): o'qa takes a possibility translation everywhere and a necessity translation
-exactly outside a downward-entailing context, the profile of a possibility modal without a
-necessity competitor. -/
+/-- The polarity of a row's context. -/
+def polarityTable : List (String × Polarity) := [("false", .positive), ("true", .negative)]
+
+/-- (39)–(40): *o'qa* takes a possibility translation everywhere and a necessity translation
+only outside a downward-entailing context, as [deal-2011]'s account of a possibility modal
+without a scale predicts. -/
 theorem oqa_rows :
     ∀ e ∈ Examples.all, e.parse? "modal" modalTable = some NezPerce.oqa →
-      ∀ r ∈ e.readings, ∃ fo ∈ forceTable.lookup r.1,
-        (r.2 = .acceptable ↔
-          fo ∈ NezPerce.oqa.forces ∨ e.feature? "downwardEntailing" = some "false") := by
+      ∀ π ∈ e.parse? "downwardEntailing" polarityTable, ∀ r ∈ e.readings,
+        ∃ fo ∈ forceTable.lookup r.1, (r.2 = .acceptable ↔
+          Deal2011.Usable π (Deal2011.lexicalForce NezPerce.oqa)
+            (Deal2011.HasScalemate Deal2011.lexicalForce NezPerce.modals NezPerce.oqa) fo) := by
   decide
 
 /-! ### Modal–temporal interaction (§18.4.3) -/
@@ -357,13 +360,6 @@ theorem niuean_rows :
           e.parse? "force" strengthTable = some fo := by
   decide
 
-/-- [nauze-2008]'s universal holds of the four inventories: every modal varies on one axis,
-between necessity and possibility or among flavours. -/
-theorem nauze :
-    ∀ e ∈ Gitksan.modals ++ Statimcets.modals ++
-      NezPerce.modals ++ Niuean.modals, SingleAxis e.classical.meaning := by
-  decide
-
 /-- An inventory varies along one axis within a domain when its modals there do not vary in
 force and in flavour both. -/
 def OneAxisWithin (L : List ModalItem) (D : ModalItem → Prop) : Prop :=
@@ -394,11 +390,14 @@ theorem VanderKlok.singleAxis {L : List ModalItem} (h : VanderKlok L) {m : Modal
   by_cases he : m.Epistemic
   exacts [h.1.singleAxis hm he, h.2.singleAxis hm he]
 
-/-- The four inventories satisfy the refinement. -/
-theorem inventories_vanderKlok :
-    VanderKlok Gitksan.modals ∧ VanderKlok Statimcets.modals ∧
-      VanderKlok NezPerce.modals ∧ VanderKlok Niuean.modals := by
-  decide
+/-- Gitksan satisfies the refinement, its epistemic modals varying in force and its
+circumstantial modals in flavour. -/
+theorem gitksan_vanderKlok : VanderKlok Gitksan.modals := by decide
+
+/-- [nauze-2008]'s universal holds of Gitksan: every modal varies on one axis, between necessity
+and possibility or among flavours. -/
+theorem gitksan_nauze : ∀ m ∈ Gitksan.modals, SingleAxis m.classical.meaning :=
+  fun _ hm ↦ gitksan_vanderKlok.singleAxis hm
 
 /-- Table 18.4's hypothetical root system: a deontic modal `x` of either force, a necessity
 modal `y` over two flavours, and possibility modals `w` and `z` for one flavour each. -/
