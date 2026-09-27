@@ -9,7 +9,8 @@ public import Linglib.Logic.Assignment
 The lookup interface of dynamic semantics: `iLookup : Ctx → V → W → M E`
 returns the `M`-family of values for a variable at a world. Frameworks
 diverge on what a lookup *returns* when a variable has no referent —
-the falsifier ⋆ of [hofmann-2025]'s intensional CDRT (`M = Option`), plain values for
+the falsifier ⋆ of [hofmann-2025]'s intensional CDRT (`M = Option`, the instance on
+`ICDRT.State`), plain values for
 the extensional baseline (`M = Id`, the `Assignment` instance below) — and
 the shared signature is what makes per-family lookups comparable: the static
 pronoun selector of `Reference/Pronoun.lean` is its `Id` instance.
