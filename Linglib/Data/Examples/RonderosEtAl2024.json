@@ -23,13 +23,9 @@
       [
         "condition",
         "contrast"
-      ],
-      [
-        "contrastEffect",
-        "present"
       ]
     ],
-    "comment": "Contrast condition: a same-kind object of the opposite size is present. Results: a significant cluster for scalar adjectives from 260 to 500 ms after noun onset and a significant effect of condition on the target-advantage score.",
+    "comment": "Contrast condition: a same-kind object of the opposite size is present.",
     "metaLanguage": "stan1293"
   },
   {
@@ -58,7 +54,7 @@
         "noContrast"
       ]
     ],
-    "comment": "No-contrast condition: the same-kind object is replaced by a distractor. Results: looks to target and competitor over the noun window are lower than for colour and material adjectives, the intercept of the total-looks model.",
+    "comment": "No-contrast condition: the same-kind object is replaced by a distractor.",
     "metaLanguage": "stan1293"
   },
   {
@@ -85,13 +81,9 @@
       [
         "condition",
         "contrast"
-      ],
-      [
-        "contrastEffect",
-        "present"
       ]
     ],
-    "comment": "Contrast condition: a same-kind object of another colour is present. Results: a significant cluster for colour adjectives from 240 to 600 ms after noun onset and a significant effect of condition on the target-advantage score.",
+    "comment": "Contrast condition: a same-kind object of another colour is present.",
     "metaLanguage": "stan1293"
   },
   {
@@ -118,13 +110,9 @@
       [
         "condition",
         "noContrast"
-      ],
-      [
-        "baselineVsScalar",
-        "higher"
       ]
     ],
-    "comment": "No-contrast condition. Results: significantly more looks to target and competitor than for scalar adjectives.",
+    "comment": "No-contrast condition.",
     "metaLanguage": "stan1293"
   },
   {
@@ -151,13 +139,9 @@
       [
         "condition",
         "contrast"
-      ],
-      [
-        "contrastEffect",
-        "absent"
       ]
     ],
-    "comment": "Contrast condition: a same-kind object of another material is present. Results: no cluster for material adjectives and no significant effect of condition on the target-advantage score.",
+    "comment": "Contrast condition: a same-kind object of another material is present.",
     "metaLanguage": "stan1293"
   },
   {
@@ -184,13 +168,9 @@
       [
         "condition",
         "noContrast"
-      ],
-      [
-        "baselineVsScalar",
-        "higher"
       ]
     ],
-    "comment": "No-contrast condition. Results: significantly more looks to target and competitor than for scalar adjectives.",
+    "comment": "No-contrast condition.",
     "metaLanguage": "stan1293"
   }
 ]

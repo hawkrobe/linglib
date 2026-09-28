@@ -1,8 +1,9 @@
 module
 
 public import Linglib.Data.Examples.RonderosEtAl2024
-public import Linglib.Processing.VisualWorld
+public import Linglib.Data.Experiments.RonderosEtAl2024
 public import Linglib.Semantics.Degree.Adjective
+public import Linglib.Semantics.Reference.Iota
 public import Mathlib.Data.Finset.Basic
 
 /-!
@@ -24,13 +25,12 @@ comparison class the listener must find in the display, so looks to the two prop
 objects are lower for scalar adjectives than for the non-gradable colour and material ones.
 
 `Display.contrastive` is the contrastive interpretation over a display of the paper's four
-objects, and `Account.PredictsEffect` derives an account's contrast effect from whether the noun
-is anticipated in each condition. `perceptual_matches` and `pragmatic_fails` compare the two
-accounts with the effects found, for colour and scalar but not material adjectives, and
-`baseline_higher_iff_not_relative` checks the baseline against the adjective classes, where
-salience cannot explain material adjectives exceeding scalar ones. Language (English, Hindi,
-Hungarian) enters the paper's models as a grouping unit only, and the rows are the pooled
-findings.
+objects. The noun is anticipated when the definite description already has the target as its
+referent under the interpretation (`Anticipates`), and `Account.PredictsEffect` derives an
+account's contrast effect from anticipation in each condition. `perceptual_matches` and
+`pragmatic_fails` compare the two accounts with the effects found, for colour and scalar but not
+material adjectives, and `baseline_higher_iff_not_relative` checks the baseline against the
+adjective classes, where salience cannot explain material adjectives exceeding scalar ones.
 
 ## Implementation notes
 
@@ -39,6 +39,10 @@ findings.
   perceived as contrasting.
 * Salience and informativity are the paper's premises per adjective type, with size contrasts
   taken as perceptible, as the replicated scalar effect requires.
+* The findings are the statistics of the Results section, in
+  `Data/Experiments/RonderosEtAl2024.json`, pooled over English, Hindi and Hungarian, which the
+  paper's models treat as a grouping unit only. An effect is significant when its printed p-value
+  is below 0.05.
 
 ## References
 
@@ -56,7 +60,7 @@ findings.
 
 namespace RonderosEtAl2024
 
-open Data.Examples VisualWorld
+open Data.Experiments
 
 /-! ### The paradigm (Figure 1) -/
 
@@ -86,7 +90,7 @@ def descriptive : Finset Object := d.has
 /-- The contrastive interpretation: the objects with the property that an object of their kind
 lacks. -/
 def contrastive : Finset Object :=
-  d.has.filter λ o => ∃ o', d.kind o' = d.kind o ∧ o' ∉ d.has
+  d.has.filter fun o ↦ ∃ o', d.kind o' = d.kind o ∧ o' ∉ d.has
 
 theorem contrastive_subset_descriptive : d.contrastive ⊆ d.descriptive := Finset.filter_subset _ _
 
@@ -94,7 +98,7 @@ theorem contrastive_subset_descriptive : d.contrastive ⊆ d.descriptive := Fins
 it: how a property whose contrast is not perceived is taken in. -/
 def blur : Display where
   kind := d.kind
-  has := Finset.univ.filter λ o => ∃ o', d.kind o' = d.kind o ∧ o' ∈ d.has
+  has := Finset.univ.filter fun o ↦ ∃ o', d.kind o' = d.kind o ∧ o' ∈ d.has
 
 /-- A blurred display never shows a contrast within a kind. -/
 theorem contrastive_blur : d.blur.contrastive = ∅ := by
@@ -106,10 +110,15 @@ theorem contrastive_blur : d.blur.contrastive = ∅ := by
 
 end Display
 
-/-- An interpretation anticipates the noun when it already singles out the target. -/
-def Anticipates (S : Finset Object) : Prop := S = {.target}
+/-- An interpretation anticipates the noun when the definite description already refers under
+it, and to the target. -/
+def Anticipates (S : Finset Object) : Prop := Reference.russellIota (· ∈ S) = some .target
 
-instance (S : Finset Object) : Decidable (Anticipates S) := inferInstanceAs (Decidable (_ = _))
+/-- An interpretation anticipates the noun exactly when it is the target alone. -/
+theorem anticipates_iff {S : Finset Object} : Anticipates S ↔ S = {.target} := by
+  rw [Anticipates, Reference.russellIota_eq_some_iff, Finset.eq_singleton_iff_unique_mem]
+
+instance (S : Finset Object) : Decidable (Anticipates S) := decidable_of_iff _ anticipates_iff.symm
 
 /-- The display of the contrast condition: the contrasting object is of the target's kind and
 lacks the property, the competitor has it. -/
@@ -126,7 +135,7 @@ def noContrastDisplay : Display where
   has := {.target, .competitor}
 
 /-- The display of each condition. -/
-def display : ContrastCondition → Display
+def display : Condition → Display
   | .contrast => contrastDisplay
   | .noContrast => noContrastDisplay
 
@@ -144,14 +153,6 @@ theorem descriptive_noContrast : noContrastDisplay.descriptive = {.target, .comp
   decide
 
 /-! ### The three factors -/
-
-/-- The adjective types crossed with the contrast manipulation: colour (*black*, *blue*, …),
-scalar (*large*, *narrow*, *short*, …), and material (*cotton*, *glass*, *leather*, …). -/
-inductive AdjType where
-  | color
-  | scalar
-  | material
-  deriving DecidableEq, Repr, Fintype
 
 /-- Whether the contrast in the property is visually salient during preview: material contrasts
 are not ([kursat-degen-2021], [jara-ettinger-rubio-fernandez-2022]), colour and size contrasts
@@ -222,36 +223,31 @@ theorem perceptual_predictsEffect_iff (t : AdjType) :
 
 /-! ### The findings -/
 
-/-- The row key of an adjective type. -/
-def AdjType.key : AdjType → String
-  | .color => "color"
-  | .scalar => "scalar"
-  | .material => "material"
+/-- A printed p-value is below 0.05: an upper bound at most 0.05, or a value under it. -/
+def Bound.Significant : Bound → Decimal → Prop
+  | .below, p => p.toRat ≤ 5 / 100
+  | .exact, p => p.toRat < 5 / 100
 
-/-- The row key of a condition. -/
-def conditionKey : ContrastCondition → String
-  | .contrast => "contrast"
-  | .noContrast => "noContrast"
+instance : ∀ b p, Decidable (Bound.Significant b p)
+  | .below, _ => inferInstanceAs (Decidable (_ ≤ _))
+  | .exact, _ => inferInstanceAs (Decidable (_ < _))
 
-/-- A feature of the row for an adjective type in a condition. -/
-def finding (t : AdjType) (c : ContrastCondition) (key : String) : Option String :=
-  (Examples.all.find? λ r =>
-    r.feature? "adjType" == some t.key && r.feature? "condition" == some (conditionKey c)).bind
-    (·.feature? key)
+/-- Whether the paper found a contrast effect for an adjective type: a significant cluster of
+condition effects on target looks in the noun window, and a significant effect of condition on
+the target-advantage score. -/
+def Effect (t : AdjType) : Prop :=
+  (∃ p ∈ (clusters t).p, Bound.below.Significant p) ∧
+    (targetAdvantage t).bound.Significant (targetAdvantage t).p
 
-/-- Whether the paper found a contrast effect for an adjective type: a cluster of condition
-effects on target looks after noun onset and an effect of condition on the target-advantage
-score. -/
-def Effect (t : AdjType) : Prop := finding t .contrast "contrastEffect" = some "present"
+instance : DecidablePred Effect := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-instance : DecidablePred Effect := λ _ => inferInstanceAs (Decidable (_ = _))
-
-/-- Whether looks to the target and the competitor in the no-contrast baseline were higher for
-an adjective type than for scalar adjectives. -/
+/-- Whether looks to the target and the competitor in the no-contrast baseline were significantly
+higher for an adjective type than for scalar adjectives, the intercept of the model. -/
 def BaselineHigherThanScalar (t : AdjType) : Prop :=
-  finding t .noContrast "baselineVsScalar" = some "higher"
+  ∃ r ∈ baselineLooks, r.adjType = t ∧ 0 < r.beta.toRat ∧ r.bound.Significant r.p
 
-instance : DecidablePred BaselineHigherThanScalar := λ _ => inferInstanceAs (Decidable (_ = _))
+instance : DecidablePred BaselineHigherThanScalar := fun _ ↦
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The perceptual account predicts the effects found: for colour and scalar adjectives, not for
 material ones. -/

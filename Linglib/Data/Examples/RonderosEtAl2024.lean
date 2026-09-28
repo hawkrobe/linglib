@@ -30,8 +30,8 @@ def ronderos2024_1a : LinguisticExample :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("adjType", "scalar"), ("condition", "contrast"), ("contrastEffect", "present")]
-    comment := "Contrast condition: a same-kind object of the opposite size is present. Results: a significant cluster for scalar adjectives from 260 to 500 ms after noun onset and a significant effect of condition on the target-advantage score."
+    paperFeatures := [("adjType", "scalar"), ("condition", "contrast")]
+    comment := "Contrast condition: a same-kind object of the opposite size is present."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -49,7 +49,7 @@ def ronderos2024_1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("adjType", "scalar"), ("condition", "noContrast")]
-    comment := "No-contrast condition: the same-kind object is replaced by a distractor. Results: looks to target and competitor over the noun window are lower than for colour and material adjectives, the intercept of the total-looks model."
+    comment := "No-contrast condition: the same-kind object is replaced by a distractor."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -66,8 +66,8 @@ def ronderos2024_2a : LinguisticExample :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("adjType", "color"), ("condition", "contrast"), ("contrastEffect", "present")]
-    comment := "Contrast condition: a same-kind object of another colour is present. Results: a significant cluster for colour adjectives from 240 to 600 ms after noun onset and a significant effect of condition on the target-advantage score."
+    paperFeatures := [("adjType", "color"), ("condition", "contrast")]
+    comment := "Contrast condition: a same-kind object of another colour is present."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -84,8 +84,8 @@ def ronderos2024_2b : LinguisticExample :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("adjType", "color"), ("condition", "noContrast"), ("baselineVsScalar", "higher")]
-    comment := "No-contrast condition. Results: significantly more looks to target and competitor than for scalar adjectives."
+    paperFeatures := [("adjType", "color"), ("condition", "noContrast")]
+    comment := "No-contrast condition."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -102,8 +102,8 @@ def ronderos2024_3a : LinguisticExample :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("adjType", "material"), ("condition", "contrast"), ("contrastEffect", "absent")]
-    comment := "Contrast condition: a same-kind object of another material is present. Results: no cluster for material adjectives and no significant effect of condition on the target-advantage score."
+    paperFeatures := [("adjType", "material"), ("condition", "contrast")]
+    comment := "Contrast condition: a same-kind object of another material is present."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -120,8 +120,8 @@ def ronderos2024_3b : LinguisticExample :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("adjType", "material"), ("condition", "noContrast"), ("baselineVsScalar", "higher")]
-    comment := "No-contrast condition. Results: significantly more looks to target and competitor than for scalar adjectives."
+    paperFeatures := [("adjType", "material"), ("condition", "noContrast")]
+    comment := "No-contrast condition."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
