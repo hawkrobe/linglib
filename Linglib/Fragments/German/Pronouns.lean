@@ -30,8 +30,8 @@ no dative.
 * `German.Pronouns.addressee_honorific`, `German.Pronouns.addressee_polite`,
   `German.Pronouns.sie_formal_referential` — the addressee pronouns come in two honorific
   levels, and the single polite form denotes what the two familiar forms denote together
-* `German.Pronouns.wer_isSome_iff`, `German.Pronouns.was_isSome_iff` — the paradigms are
-  defined on the German case inventory, *was* lacking the dative
+* `German.Pronouns.wer_isSome`, `German.Pronouns.was_isSome_iff` — *wer* has a form in every
+  case, *was* in every case but the dative
 
 ## References
 
@@ -133,21 +133,19 @@ def wer : Case → Option String
   | .acc => some "wen"
   | .dat => some "wem"
   | .gen => some "wessen"
-  | _ => none
 
 /-- The paradigm of *was* 'what'. -/
 def was : Case → Option String
   | .nom | .acc => some "was"
   | .gen => some "wessen"
-  | _ => none
+  | .dat => none
 
-/-- *wer* has a form for exactly the German cases. -/
-theorem wer_isSome_iff (c : Case) : (wer c).isSome ↔ c ∈ German.Case.inventory := by
+/-- *wer* has a form for every case. -/
+theorem wer_isSome (c : Case) : (wer c).isSome := by
   cases c <;> decide
 
-/-- *was* has a form for exactly the German cases other than the dative. -/
-theorem was_isSome_iff (c : Case) :
-    (was c).isSome ↔ c ∈ German.Case.inventory.erase .dat := by
+/-- *was* has a form for every case but the dative. -/
+theorem was_isSome_iff (c : Case) : (was c).isSome ↔ c ≠ .dat := by
   cases c <;> decide
 
 end German.Pronouns

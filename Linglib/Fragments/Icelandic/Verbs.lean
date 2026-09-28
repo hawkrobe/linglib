@@ -25,7 +25,7 @@ are entries like any other.
 
 ## Main results
 
-* `subject_cases`, `object_cases`: each of the four cases of `Icelandic.Case.inventory` is the
+* `subject_cases`, `object_cases`: each of the four cases of `Icelandic.Case` is the
   case of some subject and of some object.
 * `subject_eq_nom_of_ditransitive`: a verb with two objects has a nominative subject.
 
@@ -50,7 +50,7 @@ namespace Icelandic.Verbs
 
 /-- An Icelandic verb is the root entry with its case array, the case of its subject and the
 cases of its objects in linear order. -/
-structure Verb extends _root_.Verb, _root_.Verb.CaseArray
+structure Verb extends _root_.Verb, _root_.Verb.CaseArray Case
   deriving BEq
 
 namespace Verb
@@ -242,10 +242,10 @@ objects of (4.56) to (4.58). The triadic verbs of its table (4.62) all have nomi
 subjects. -/
 
 /-- Each of the four cases is the case of some subject. -/
-theorem subject_cases : (verbs.map (·.subject)).toFinset = Case.inventory := by decide
+theorem subject_cases : (verbs.map (·.subject)).toFinset = Finset.univ := by decide
 
 /-- Each of the four cases is the case of some object. -/
-theorem object_cases : (verbs.flatMap (·.objects)).toFinset = Case.inventory := by decide
+theorem object_cases : (verbs.flatMap (·.objects)).toFinset = Finset.univ := by decide
 
 /-- A verb with two objects has a nominative subject. -/
 theorem subject_eq_nom_of_ditransitive :

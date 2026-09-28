@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Verb.Defs
+public import Linglib.Syntax.Case.Basic
 public import Linglib.Syntax.Category.Verb.CaseArray
 
 /-!
@@ -27,7 +28,8 @@ leaves open.
 namespace German.Zurich
 
 /-- A Zürich German verb is the root entry with its case array and its inflected forms. -/
-structure Verb extends _root_.Verb, _root_.Verb.CaseArray where
+structure Verb extends _root_.Verb, _root_.Verb.CaseArray _root_.Case where
+  subject := .nom
   /-- These are the inflected forms recorded besides the citation form. -/
   inflected : List String := []
   deriving BEq

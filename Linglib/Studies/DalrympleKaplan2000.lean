@@ -146,52 +146,58 @@ theorem requirements_not_compatible :
 theorem mem_pair_iff {α : Type*} [DecidableEq α] (x a b : α) :
     x ∈ ({a, b} : Finset α) ↔ x = a ∨ x = b := by simp
 
+section Indeterminacy
+
+variable {C : Type*} [Fintype C]
+
 /-- A flat slot as a set value, a determinate commitment its singleton and no commitment, the
     underspecification of (22), the universal set; subsumption becomes reverse inclusion, so
     the flat order is the determinate fragment of the set order. -/
-def toIndet : Flat Case → Finset Case
+def toIndet : Flat C → Finset C
   | ⊥ => Finset.univ
-  | (x : Case) => {x}
+  | (x : C) => {x}
 
-private theorem univ_ne_singleton (y : Case) : (Finset.univ : Finset Case) ≠ {y} := by
+private theorem univ_ne_singleton [Nontrivial C] (y : C) : (Finset.univ : Finset C) ≠ {y} := by
   intro h
-  have hc : (Finset.univ : Finset Case).card = 1 := by rw [h, Finset.card_singleton]
-  rw [Finset.card_univ] at hc
-  exact absurd hc (by decide)
+  obtain ⟨z, hz⟩ := exists_ne y
+  exact hz (Finset.mem_singleton.1 (h ▸ Finset.mem_univ z))
 
-theorem le_iff_toIndet_superset (a b : Flat Case) : a ≤ b ↔ toIndet b ⊆ toIndet a := by
+theorem le_iff_toIndet_superset [Nontrivial C] (a b : Flat C) :
+    a ≤ b ↔ toIndet b ⊆ toIndet a := by
   cases a with
   | bot => exact iff_of_true bot_le (Finset.subset_univ _)
   | coe x =>
     cases b with
     | bot =>
-      refine iff_of_false (Flat.not_coe_le_bot x) λ h => ?_
+      refine iff_of_false (Flat.not_coe_le_bot x) fun h ↦ ?_
       exact univ_ne_singleton x (Finset.Subset.antisymm h (Finset.subset_univ _))
     | coe z => simp [toIndet, eq_comm]
+
+end Indeterminacy
 
 open German.Pronouns in
 /-- The case values of the German relative pronouns are the cells their forms realize, *wer*
     the nominative, *wem* the dative, *was* the nominative and the accusative ((26), (32)). -/
 theorem german_cases :
-    formCells wer (some "wer") = {Case.nom} ∧ formCells wer (some "wem") = {Case.dat} ∧
-      formCells was (some "was") = {Case.nom, Case.acc} := by
+    formCells wer (some "wer") = {German.Case.nom} ∧ formCells wer (some "wem") = {.dat} ∧
+      formCells was (some "was") = {.nom, .acc} := by
   decide
 
 open German.Pronouns in
 /-- In the set order the two requirements do have a join, and it is the value of *was*, the
     minimal model of `ACC ∈ v` and `NOM ∈ v` ((28)–(31), (36)). -/
 theorem was_isLeast :
-    IsLeast {v | ({Case.acc} : Finset Case) ⊆ v ∧ {Case.nom} ⊆ v} (formCells was (some "was")) := by
+    IsLeast {v | ({.acc} : Finset German.Case) ⊆ v ∧ {.nom} ⊆ v} (formCells was (some "was")) := by
   rw [german_cases.2.2,
-    show ({Case.nom, Case.acc} : Finset Case) = {Case.acc} ∪ {Case.nom} by decide]
+    show ({.nom, .acc} : Finset German.Case) = {.acc} ∪ {.nom} by decide]
   exact union_isLeast _ _
 
 open German.Pronouns in
 /-- Underspecification overgenerates where the set value does not, *was* admitting no dative or
     genitive context and the universal set admitting every one (§3.2). -/
 theorem underspecification_overgenerates :
-    Case.dat ∈ toIndet ⊥ ∧ Case.dat ∉ formCells was (some "was") ∧
-      Case.gen ∉ formCells was (some "was") := by
+    German.Case.dat ∈ toIndet ⊥ ∧ German.Case.dat ∉ formCells was (some "was") ∧
+      German.Case.gen ∉ formCells was (some "was") := by
   decide
 
 open German.Pronouns in
@@ -199,9 +205,11 @@ open German.Pronouns in
     ((28), (30)), and *wem* meets *vertraust* but not *muss* ((32), (33)). -/
 theorem free_relatives :
     AcceptableIff Examples.ex_17
-        (Case.acc ∈ formCells was (some "was") ∧ Case.nom ∈ formCells was (some "was")) ∧
+        (German.Case.acc ∈ formCells was (some "was") ∧
+          German.Case.nom ∈ formCells was (some "was")) ∧
       AcceptableIff Examples.ex_32
-        (Case.dat ∈ formCells wer (some "wem") ∧ Case.nom ∈ formCells wer (some "wem")) := by
+        (German.Case.dat ∈ formCells wer (some "wem") ∧
+          German.Case.nom ∈ formCells wer (some "wem")) := by
   decide
 
 open Polish.Pronouns in

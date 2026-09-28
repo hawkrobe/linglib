@@ -212,7 +212,8 @@ Ancient Greek (beside its vocative), German and Icelandic, the six of the Slavon
 the vocative of Polish, Czech and Serbo-Croat) and of Turkish, the seven of Classical Armenian and
 the eight of Tamil. -/
 def systems : List (Finset Case) :=
-  [Finset.univ.image Greek.Ancient.Case.label, German.Case.inventory, Icelandic.Case.inventory,
+  [Finset.univ.image Greek.Ancient.Case.label, Finset.univ.image German.Case.label,
+    Finset.univ.image Icelandic.Case.label,
     Finset.univ.image Polish.Case.label, Finset.univ.image Czech.Case.label,
     Finset.univ.image Slovak.Case.label, Finset.univ.image Serbian.Case.label,
     Turkish.Case.inventory, classicalArmenian, Tamil.Case.inventory]

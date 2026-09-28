@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.German.Case
 public import Linglib.Fragments.German.Conjugation
 public import Linglib.Semantics.Presupposition.Verb
 public import Linglib.Syntax.Category.Verb.Basic
@@ -44,7 +45,8 @@ agreement.
 namespace German
 
 /-- A German verb is the root entry with its case array and its stem. -/
-structure Verb extends _root_.Verb, _root_.Verb.CaseArray where
+structure Verb extends _root_.Verb, _root_.Verb.CaseArray Case where
+  subject := .nom
   /-- The stem, from which the verb conjugates. -/
   stem : Conjugation.Stem
   deriving BEq
