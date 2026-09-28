@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Causation.CausalModel.Development
 public import Linglib.Core.Relation.ReflTransGen
@@ -118,60 +119,70 @@ inductive V
   | A | X | B
   deriving DecidableEq, Fintype
 
-/-- A one-link model with the given equation at B, B's only parent being A; the context settles
-A and the accessory X. -/
-def oneLinkModel (f : Bool → Bool) : CausalModel (Bool × Bool) V fun _ ↦ Bool where
-  graph := ⟨fun w v ↦ w = .A ∧ v = .B⟩
-  eqn | .A => fun u _ ↦ u.1 | .X => fun u _ ↦ u.2 | .B => fun _ x ↦ f (x .A)
+/-- The context settles the cause A and the accessory X. -/
+structure Context where
+  A : Bool
+  X : Bool
+  deriving DecidableEq, Fintype, Inhabited, Repr
+
+/-- B reads its only parent A. -/
+def oneLinkEdges : Finset (V × V) := {(.A, .B)}
+
+/-- B reads A and the accessory X. -/
+def twoLinkEdges : Finset (V × V) := {(.A, .B), (.X, .B)}
+
+/-- A one-link model with the given equation at B, B's only parent being A. -/
+def oneLinkModel (f : Bool → Bool) : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ oneLinkEdges⟩
+  eqn | .A => fun u _ ↦ u.A | .X => fun u _ ↦ u.X | .B => fun _ x ↦ f (x .A)
 
 /-- A two-link model with the given equation at B over A and the accessory X. -/
-def twoLinkModel (f : Bool → Bool → Bool) : CausalModel (Bool × Bool) V fun _ ↦ Bool where
-  graph := ⟨fun w v ↦ (w = .A ∨ w = .X) ∧ v = .B⟩
-  eqn | .A => fun u _ ↦ u.1 | .X => fun u _ ↦ u.2 | .B => fun _ x ↦ f (x .A) (x .X)
+def twoLinkModel (f : Bool → Bool → Bool) : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ twoLinkEdges⟩
+  eqn | .A => fun u _ ↦ u.A | .X => fun u _ ↦ u.X | .B => fun _ x ↦ f (x .A) (x .X)
 
 instance (f : Bool → Bool) : DecidableRel (oneLinkModel f).graph.Adj := fun w v ↦
-  inferInstanceAs (Decidable (w = .A ∧ v = .B))
+  inferInstanceAs (Decidable ((w, v) ∈ oneLinkEdges))
 
 instance (f : Bool → Bool → Bool) : DecidableRel (twoLinkModel f).graph.Adj := fun w v ↦
-  inferInstanceAs (Decidable ((w = .A ∨ w = .X) ∧ v = .B))
+  inferInstanceAs (Decidable ((w, v) ∈ twoLinkEdges))
 
 instance (f : Bool → Bool) : (oneLinkModel f).IsAcyclic :=
-  Finite.wellFounded_of_irrefl_transGen (r := fun w v ↦ w = V.A ∧ v = V.B) (by decide)
+  Finite.wellFounded_of_irrefl_transGen (r := fun w v ↦ (w, v) ∈ oneLinkEdges) (by decide)
 
 instance (f : Bool → Bool → Bool) : (twoLinkModel f).IsAcyclic :=
-  Finite.wellFounded_of_irrefl_transGen (r := fun w v ↦ (w = V.A ∨ w = V.X) ∧ v = V.B)
-    (by decide)
+  Finite.wellFounded_of_irrefl_transGen (r := fun w v ↦ (w, v) ∈ twoLinkEdges) (by decide)
 
 /-- (2) *A causes B*: `B := A`. -/
-abbrev causes : CausalModel (Bool × Bool) V fun _ ↦ Bool := oneLinkModel id
+abbrev causes : CausalModel Context V fun _ ↦ Bool := oneLinkModel id
 
 /-- (3) *A enables B*: `B := A ∧ X`. -/
-abbrev enables : CausalModel (Bool × Bool) V fun _ ↦ Bool := twoLinkModel (· && ·)
+abbrev enables : CausalModel Context V fun _ ↦ Bool := twoLinkModel (· && ·)
 
 /-- (4a) *A prevents B* with no accessory: `B := ¬A`. -/
-abbrev prevents : CausalModel (Bool × Bool) V fun _ ↦ Bool := oneLinkModel (!·)
+abbrev prevents : CausalModel Context V fun _ ↦ Bool := oneLinkModel (!·)
 
 /-- (4b) *A prevents B* with an accessory: `B := ¬A ∧ X`. -/
-abbrev preventsAnd : CausalModel (Bool × Bool) V fun _ ↦ Bool := twoLinkModel (fun a x ↦ !a && x)
+abbrev preventsAnd : CausalModel Context V fun _ ↦ Bool := twoLinkModel (fun a x ↦ !a && x)
 
 /-- (4c) *A prevents B* with an accessory: `B := ¬(A ∧ X)`. -/
-abbrev preventsNand : CausalModel (Bool × Bool) V fun _ ↦ Bool :=
+abbrev preventsNand : CausalModel Context V fun _ ↦ Bool :=
   twoLinkModel (fun a x ↦ !(a && x))
 
 /-- The accessory present. -/
-def accessory : V → Flat Bool := Function.update ⊥ .X ↑true
+def accessory : V → Flat Bool := [.X ← true]
 
 /-- *A causes B* holds of (2), and the model realizes `B := A`. -/
 theorem causes_Causes : Causes causes .A .B ∧ EqCauses causes ⊥ .A .B :=
   ⟨by decide, fun v ↦ by cases v <;> decide⟩
 
 /-- Experiments 2 and 3: from *A causes B* and A, B follows with no accessory settled. -/
-theorem causes_entails : causes.CausallyEntails (Function.update ⊥ .A ↑true) .B true :=
+theorem causes_entails : causes.CausallyEntails [.A ← true] .B true :=
   causes_Causes.2 true
 
 /-- Experiment 4: the one-link model is not an enabling relation. -/
 theorem causes_not_Enables : ¬ Enables causes .A .B :=
-  not_enables_of_forall_adj fun _ h ↦ h.1
+  not_enables_of_forall_adj (by decide)
 
 /-- *A enables B* holds of (3), which has the link, the accessory, and the necessity of A, B
 being the conjunction of A and X. -/
@@ -184,7 +195,7 @@ theorem enables_Enables : Enables enables .A .B := by
 /-- Experiments 1 and 3: from *A enables B* and A alone, B does not follow, the accessory being
 unknown. -/
 theorem enables_not_entails :
-    ¬ enables.CausallyEntails (Function.update ⊥ .A ↑true) .B true := by
+    ¬ enables.CausallyEntails [.A ← true] .B true := by
   decide
 
 /-- With the accessory present, B follows from A. -/
@@ -217,42 +228,46 @@ inductive W
   | A | X | B | C
   deriving DecidableEq, Fintype
 
+/-- B reads A, and C reads B. -/
+def composeOneEdges : Finset (W × W) := {(.A, .B), (.B, .C)}
+
+/-- B reads A and the accessory X, and C reads B. -/
+def composeTwoEdges : Finset (W × W) := {(.A, .B), (.X, .B), (.B, .C)}
+
 /-- The composition of a first premise `B := f A` with a second premise `C := g B`. -/
-def composeOne (f g : Bool → Bool) : CausalModel (Bool × Bool) W fun _ ↦ Bool where
-  graph := ⟨fun w v ↦ w = .A ∧ v = .B ∨ w = .B ∧ v = .C⟩
+def composeOne (f g : Bool → Bool) : CausalModel Context W fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ composeOneEdges⟩
   eqn
-    | .A => fun u _ ↦ u.1
-    | .X => fun u _ ↦ u.2
+    | .A => fun u _ ↦ u.A
+    | .X => fun u _ ↦ u.X
     | .B => fun _ x ↦ f (x .A)
     | .C => fun _ x ↦ g (x .B)
 
 /-- The composition of a first premise `B := f A X` with a second premise `C := g B`. -/
 def composeTwo (f : Bool → Bool → Bool) (g : Bool → Bool) :
-    CausalModel (Bool × Bool) W fun _ ↦ Bool where
-  graph := ⟨fun w v ↦ (w = .A ∨ w = .X) ∧ v = .B ∨ w = .B ∧ v = .C⟩
+    CausalModel Context W fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ composeTwoEdges⟩
   eqn
-    | .A => fun u _ ↦ u.1
-    | .X => fun u _ ↦ u.2
+    | .A => fun u _ ↦ u.A
+    | .X => fun u _ ↦ u.X
     | .B => fun _ x ↦ f (x .A) (x .X)
     | .C => fun _ x ↦ g (x .B)
 
 instance (f g : Bool → Bool) : DecidableRel (composeOne f g).graph.Adj := fun w v ↦
-  inferInstanceAs (Decidable (w = .A ∧ v = .B ∨ w = .B ∧ v = .C))
+  inferInstanceAs (Decidable ((w, v) ∈ composeOneEdges))
 
 instance (f : Bool → Bool → Bool) (g : Bool → Bool) :
     DecidableRel (composeTwo f g).graph.Adj := fun w v ↦
-  inferInstanceAs (Decidable ((w = .A ∨ w = .X) ∧ v = .B ∨ w = .B ∧ v = .C))
+  inferInstanceAs (Decidable ((w, v) ∈ composeTwoEdges))
 
 instance (f g : Bool → Bool) : (composeOne f g).IsAcyclic :=
-  Finite.wellFounded_of_irrefl_transGen
-    (r := fun w v ↦ w = W.A ∧ v = W.B ∨ w = W.B ∧ v = W.C) (by decide)
+  Finite.wellFounded_of_irrefl_transGen (r := fun w v ↦ (w, v) ∈ composeOneEdges) (by decide)
 
 instance (f : Bool → Bool → Bool) (g : Bool → Bool) : (composeTwo f g).IsAcyclic :=
-  Finite.wellFounded_of_irrefl_transGen
-    (r := fun w v ↦ (w = W.A ∨ w = W.X) ∧ v = W.B ∨ w = W.B ∧ v = W.C) (by decide)
+  Finite.wellFounded_of_irrefl_transGen (r := fun w v ↦ (w, v) ∈ composeTwoEdges) (by decide)
 
 /-- The first premise's accessory present. -/
-def chainAccessory : W → Flat Bool := Function.update ⊥ .X ↑true
+def chainAccessory : W → Flat Bool := [.X ← true]
 
 /-- (5) and (6): *A causes B*, *B causes C* compose to `C := A`, the conclusion *A causes C*. -/
 theorem causesCauses_causes : EqCauses (composeOne id id) ⊥ .A .C :=
@@ -274,18 +289,26 @@ inductive T
   | A | B | C | D
   deriving DecidableEq, Fintype
 
+/-- B reads A, C reads B, and D reads C. -/
+def threePremiseEdges : Finset (T × T) := {(.A, .B), (.B, .C), (.C, .D)}
+
+/-- The context of the three-premise argument settles A. -/
+structure ThreePremiseContext where
+  A : Bool
+  deriving DecidableEq, Fintype, Inhabited, Repr
+
 /-- The premises *A causes B*, *B causes not C* and *C causes not D* are `B := A`, `C := ¬B` and
-`D := ¬C`, the context settling A. -/
-def threePremise : CausalModel Bool T fun _ ↦ Bool where
-  graph := ⟨fun w v ↦ w = .A ∧ v = .B ∨ w = .B ∧ v = .C ∨ w = .C ∧ v = .D⟩
+`D := ¬C`. -/
+def threePremise : CausalModel ThreePremiseContext T fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ threePremiseEdges⟩
   eqn
-    | .A => fun u _ ↦ u
+    | .A => fun u _ ↦ u.A
     | .B => fun _ x ↦ x .A
     | .C => fun _ x ↦ !x .B
     | .D => fun _ x ↦ !x .C
 
 instance : DecidableRel threePremise.graph.Adj := fun w v ↦
-  inferInstanceAs (Decidable (w = .A ∧ v = .B ∨ w = .B ∧ v = .C ∨ w = .C ∧ v = .D))
+  inferInstanceAs (Decidable ((w, v) ∈ threePremiseEdges))
 
 instance : threePremise.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 

@@ -128,7 +128,7 @@ def Prog (c : V) (s₀ s : Situation V) : Prop := Init M c s₀ s ∧ ¬ (Cul M 
 /-- A globally necessary condition (42): the fact ⟨v, b⟩ is globally necessary for `c` when its
 negation together with non-culmination is a sufficient set for non-culmination. -/
 def GloballyNecessary (c v : V) (b : Bool) : Prop :=
-  IsSufficient M (Function.update (Function.update ⊥ v ↑(!b)) c ↑false) c false
+  IsSufficient M [c ← false, v ← !b] c false
 
 /-- Definedness (45): the progressive is defined when every globally necessary condition is
 settled at reference time. -/
@@ -173,26 +173,27 @@ end Model
 
 /-! ### The dual-route door (Section 4.2) -/
 
-open BarAsherSiegal2026 (model valuation)
+open BarAsherSiegal2026 (V model)
 open BarAsherSiegal2026.V
 
 /-- The mechanical procedure (38a): handle turned, door unlocked, door open. -/
-def sMech := valuation [(handle, true), (lock, false), (doorOpens, true)]
+def sMech : Situation V := [handle ← true, lock ← false, doorOpens ← true]
 
 /-- The electronic procedure (38b): door unlocked, power on, button pressed, circuit closed, door
 open. -/
-def sElec := valuation
-  [(lock, false), (electricity, true), (button, true), (circuit, true), (doorOpens, true)]
+def sElec : Situation V :=
+  [lock ← false, electricity ← true, button ← true, circuit ← true, doorOpens ← true]
 
 /-- Non-culmination by the lock (39a). -/
-def sLock := valuation [(lock, true), (doorOpens, false)]
+def sLock : Situation V := [lock ← true, doorOpens ← false]
 
 /-- Non-culmination with the handle unturned and no power (39b), with the effect fact. -/
-def sNotElec := valuation [(handle, false), (electricity, false), (doorOpens, false)]
+def sNotElec : Situation V := [handle ← false, electricity ← false, doorOpens ← false]
 
 /-- Non-culmination with the handle unturned and the button unpressed (39c), with the effect
 fact. -/
-def sNotCirc := valuation [(handle, false), (button, false), (circuit, false), (doorOpens, false)]
+def sNotCirc : Situation V :=
+  [handle ← false, button ← false, circuit ← false, doorOpens ← false]
 
 theorem sMech_sufficient : IsSufficient model sMech doorOpens true := by decide +kernel
 
@@ -207,7 +208,7 @@ theorem sNotCirc_sufficient : IsSufficient model sNotCirc doorOpens false := by 
 /-- (39b) as printed, without the effect fact, is not a sufficient set under Definition (30b),
 which puts the effect in every sufficient set. -/
 theorem not_sufficient_as_printed :
-    ¬ IsSufficient model (valuation [(handle, false), (electricity, false)]) doorOpens false := by
+    ¬ IsSufficient model [handle ← false, electricity ← false] doorOpens false := by
   decide
 
 /-- *open the door* has a culmination procedure, so its progressive is felicitous (33a). -/
@@ -217,16 +218,16 @@ theorem felicitous : Felicitous model doorOpens := ⟨sMech, sMech_sufficient⟩
 equation reads the button, is settled against an undetermined equation value. -/
 theorem not_sufficient_without_button :
     ¬ IsSufficient model
-      (valuation [(lock, false), (electricity, true), (circuit, true), (doorOpens, true)])
+      [lock ← false, electricity ← true, circuit ← true, doorOpens ← true]
       doorOpens true := by
   decide
 
 /-- Just before reference time the door is unlocked and the power is off. -/
-def beforeSwitch := valuation [(lock, false), (electricity, false)]
+def beforeSwitch : Situation V := [lock ← false, electricity ← false]
 
 /-- At reference time Nur has switched the power on; handle and button are unsettled, as in the
 first highlighted row of Table 2. -/
-def switchedOn := valuation [(lock, false), (electricity, true)]
+def switchedOn : Situation V := [lock ← false, electricity ← true]
 
 /-- (40) *Nur is opening the door* is true once the power is switched on: the electronic
 procedure is initiated by the power, and neither culmination nor non-culmination is settled. -/
@@ -236,9 +237,9 @@ theorem prog_opening : Prog model doorOpens beforeSwitch switchedOn :=
 
 /-- The realistic context of (40), the second highlighted row of Table 2: Nur has turned neither
 the handle nor the button, so the door is closed. -/
-def realistic := valuation
-  [(handle, false), (lock, false), (electricity, true), (button, false), (circuit, false),
-    (doorOpens, false)]
+def realistic : Situation V :=
+  [handle ← false, lock ← false, electricity ← true, button ← false, circuit ← false,
+    doorOpens ← false]
 
 /-- In the realistic context the unturned handle and unpressed button complete a sufficient set
 for non-culmination (39c), so (40) comes out false, against intuition, as the paper observes. -/

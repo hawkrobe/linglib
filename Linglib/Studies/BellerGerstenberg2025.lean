@@ -296,20 +296,25 @@ inductive Var
   deriving DecidableEq, Fintype, Repr
 
 /-- The outcome depends on the candidate cause alone. -/
-abbrev launchGraph : Digraph Var := ⟨fun w v ↦ (w, v) ∈ ({(.cause, .effect)} : Finset _)⟩
+def launchEdges : Finset (Var × Var) := {(.cause, .effect)}
 
-/-- In Michottean launching the context settles whether the candidate cause occurs, and the
-outcome takes its value. -/
-def launch : CausalModel Bool Var fun _ ↦ Bool where
-  graph := launchGraph
+/-- The context settles whether the candidate cause occurs. -/
+structure LaunchContext where
+  cause : Bool
+
+/-- In Michottean launching the outcome takes the candidate cause's value. -/
+def launch : CausalModel LaunchContext Var fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ launchEdges⟩
   eqn
-    | .cause => fun u _ ↦ u
+    | .cause => fun u _ ↦ u.cause
     | .effect => fun _ x ↦ x .cause
 
-instance : DecidableRel launch.graph.Adj := inferInstanceAs (DecidableRel launchGraph.Adj)
+instance : DecidableRel launch.graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable ((w, v) ∈ launchEdges))
 
-instance : launch.IsAcyclic :=
-  Finite.wellFounded_of_irrefl_transGen (r := launchGraph.Adj) (by decide)
+instance : launch.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
+
+open CausalModel
 
 variable {U V : Type*} [Fintype V] [DecidableEq V]
 
@@ -320,14 +325,14 @@ a direct law, and `S` is sufficient-causation (3), whether-causation under the i
 noncomputable def CausalWorld.ofModel (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
     [DecidableRel M.graph.Adj] (removed : V → Flat Bool) (u : U) (cause effect : V) :
     CausalWorld where
-  whether := decide (M.solve (Function.update ⊥ cause ↑false) u effect ≠ true)
+  whether := decide (M.solve [cause ← false] u effect ≠ true)
   how := decide (M.graph.Adj cause effect)
   sufficient := decide (M.solve (Function.update removed cause ↑false) u effect ≠ true)
 
 /-- Michottean launching, in the context where the cause occurs, computes the profile of the
 first scenario: with no alternative causes to remove, sufficient-causation is whether-causation. -/
 theorem launch_ofModel :
-    CausalWorld.ofModel launch ⊥ true .cause .effect = Scenario.s1.aspects := by
+    CausalWorld.ofModel launch ⊥ ⟨true⟩ .cause .effect = Scenario.s1.aspects := by
   decide
 
 end Structural

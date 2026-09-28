@@ -25,10 +25,10 @@ attestation table of [glass-2025] follows, `attested_iff`.
 
 ## Implementation notes
 
-Models are deterministic Boolean causal models whose exogenous variables read the context. The
-paper's first link makes the fact sufficient but not necessary for its indicators; in the
-normative model, without forged evidence, the indicator copies the fact. The normative context
-makes the experience conditions true and every other exogenous variable false, and the
+Models are deterministic Boolean causal models whose exogenous variables are the fields of a
+context. The paper's first link makes the fact sufficient but not necessary for its indicators;
+in the normative model, without forged evidence, the indicator copies the fact. The normative
+context makes the experience conditions true and every other exogenous variable false, and the
 manipulation test intervenes on the presupposed fact alone. The paper's causal chain is a template
 over the choice of proposition and attitude holder, and the model is that template.
 
@@ -50,7 +50,7 @@ open Glass2025 CausalModel Relation
 setting it false give `e` different values. -/
 def Upstream {U V : Type*} [DecidableEq V] (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
     (u : U) (c e : V) : Prop :=
-  M.solve (Function.update ⊥ c ↑true) u e ≠ M.solve (Function.update ⊥ c ↑false) u e
+  M.solve [c ← true] u e ≠ M.solve [c ← false] u e
 
 noncomputable instance {U V : Type*} [Fintype V] [DecidableEq V]
     (M : CausalModel U V fun _ ↦ Bool)
@@ -73,37 +73,45 @@ inductive V
   | notP | indicNotP | expNotP | acqNotP | beliefNotP
   deriving DecidableEq, Fintype, Repr
 
-/-- The causal graph: a fact generates an indicator for itself, experience of the indicator
-gives acquaintance with it, and acquaintance forms belief; the chains for a proposition and
-for its negation do not cross. -/
-abbrev graph : Digraph V := ⟨fun w v ↦ (w, v) ∈ ({
-  (.p, .indicP), (.indicP, .acqP), (.expP, .acqP), (.acqP, .beliefP),
-  (.notP, .indicNotP), (.indicNotP, .acqNotP), (.expNotP, .acqNotP), (.acqNotP, .beliefNotP)}
-  : Finset (V × V))⟩
+/-- A fact generates an indicator for itself, experience of the indicator gives acquaintance
+with it, and acquaintance forms belief; the chains for a proposition and for its negation do
+not cross. -/
+def edges : Finset (V × V) :=
+  {(.p, .indicP), (.indicP, .acqP), (.expP, .acqP), (.acqP, .beliefP),
+    (.notP, .indicNotP), (.indicNotP, .acqNotP), (.expNotP, .acqNotP), (.acqNotP, .beliefNotP)}
 
-theorem graph_wellFounded : WellFounded graph.Adj :=
-  Finite.wellFounded_of_irrefl_transGen (by decide)
+/-- The context settles the facts and whether the agent experiences their indicators, each
+false unless set. -/
+structure Context where
+  p : Bool := false
+  expP : Bool := false
+  notP : Bool := false
+  expNotP : Bool := false
 
 /-- The normative model of belief formation: an indicator exists when its fact holds,
 acquaintance is the existence of the indicator together with experience of it, and belief
 follows acquaintance. The context settles the facts and the experience conditions. -/
-def beliefModel : CausalModel (V → Bool) V fun _ ↦ Bool where
-  graph := graph
+def beliefModel : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
   eqn
+    | .p => fun u _ ↦ u.p
     | .indicP => fun _ x ↦ x .p
+    | .expP => fun u _ ↦ u.expP
     | .acqP => fun _ x ↦ x .indicP && x .expP
     | .beliefP => fun _ x ↦ x .acqP
+    | .notP => fun u _ ↦ u.notP
     | .indicNotP => fun _ x ↦ x .notP
+    | .expNotP => fun u _ ↦ u.expNotP
     | .acqNotP => fun _ x ↦ x .indicNotP && x .expNotP
     | .beliefNotP => fun _ x ↦ x .acqNotP
-    | v => fun u _ ↦ u v
 
-instance : beliefModel.IsAcyclic := graph_wellFounded
+instance : DecidableRel beliefModel.graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable ((w, v) ∈ edges))
+
+instance : beliefModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- In the normative context the agent experiences whatever indicators exist. -/
-def normative : V → Bool
-  | .expP | .expNotP => true
-  | _ => false
+def normative : Context := { expP := true, expNotP := true }
 
 /-! ### The Predicate Lexicalization Constraint -/
 
@@ -115,12 +123,12 @@ theorem know_plc : Upstream beliefModel normative .p .beliefP := by decide
 manipulate belief in it, because a fact generates indicators only for itself, so no path runs
 from the falsity to the belief. -/
 theorem contra_plc : ¬ Upstream beliefModel normative .notP .beliefP :=
-  not_upstream_of_not_reflTransGen (by decide : ¬ ReflTransGen graph.Adj .notP .beliefP) _
+  not_upstream_of_not_reflTransGen (by decide) _
 
 /-- The template of the generalized constraint, oriented as the paper draws it: the fact does
 not manipulate belief in its negation. -/
 theorem contra_plc' : ¬ Upstream beliefModel normative .p .beliefNotP :=
-  not_upstream_of_not_reflTransGen (by decide : ¬ ReflTransGen graph.Adj .p .beliefNotP) _
+  not_upstream_of_not_reflTransGen (by decide) _
 
 /-- The constraint's verdict on the profiles of [glass-2025]: for a factive and for the
 hypothetical strong contrafactive, whether the presupposed fact manipulates belief in the
@@ -148,27 +156,32 @@ inductive W
 
 /-- Falsity and prior lack of belief are jointly necessary for fooling, which is sufficient
 for the belief. -/
-abbrev wijsmakenGraph : Digraph W := ⟨fun w v ↦ (w, v) ∈
-  ({(.notRich, .fool), (.notBeliefPrior, .fool), (.fool, .beliefRich)} : Finset (W × W))⟩
+def wijsmakenEdges : Finset (W × W) :=
+  {(.notRich, .fool), (.notBeliefPrior, .fool), (.fool, .beliefRich)}
 
-theorem wijsmakenGraph_wellFounded : WellFounded wijsmakenGraph.Adj :=
-  Finite.wellFounded_of_irrefl_transGen (by decide)
+/-- The context settles the complement's falsity and the object's prior lack of the belief. -/
+structure WijsmakenContext where
+  notRich : Bool := false
+  notBeliefPrior : Bool := false
 
 /-- The model of *wijsmaken*, and the model with the eventive node cut, on which the belief
 no longer depends on anything. -/
-def wijsmaken (eventive : Bool) : CausalModel (W → Bool) W fun _ ↦ Bool where
-  graph := wijsmakenGraph
+def wijsmaken (eventive : Bool) : CausalModel WijsmakenContext W fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ wijsmakenEdges⟩
   eqn
+    | .notRich => fun u _ ↦ u.notRich
+    | .notBeliefPrior => fun u _ ↦ u.notBeliefPrior
     | .fool => fun _ x ↦ x .notRich && x .notBeliefPrior
     | .beliefRich => fun _ x ↦ eventive && x .fool
-    | v => fun u _ ↦ u v
 
-instance (eventive : Bool) : (wijsmaken eventive).IsAcyclic := wijsmakenGraph_wellFounded
+instance (eventive : Bool) : DecidableRel (wijsmaken eventive).graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable ((w, v) ∈ wijsmakenEdges))
+
+instance (eventive : Bool) : (wijsmaken eventive).IsAcyclic :=
+  Finite.wellFounded_of_irrefl_transGen (r := fun w v ↦ (w, v) ∈ wijsmakenEdges) (by decide)
 
 /-- The context in which the object did not already hold the belief. -/
-def noPriorBelief : W → Bool
-  | .notBeliefPrior => true
-  | _ => false
+def noPriorBelief : WijsmakenContext := { notBeliefPrior := true }
 
 /-- *Wijsmaken* satisfies the constraint: the complement's falsity manipulates the object's
 belief, through the act of fooling. -/
@@ -187,31 +200,35 @@ inductive H
   deriving DecidableEq, Fintype, Repr
 
 /-- Falsity is necessary for distortion, which is necessary for the belief. -/
-abbrev hallucinateGraph : Digraph H := ⟨fun w v ↦ (w, v) ∈
-  ({(.notLoves, .distortion), (.distortion, .beliefLoves)} : Finset (H × H))⟩
+def hallucinateEdges : Finset (H × H) := {(.notLoves, .distortion), (.distortion, .beliefLoves)}
 
-theorem hallucinateGraph_wellFounded : WellFounded hallucinateGraph.Adj :=
-  Finite.wellFounded_of_irrefl_transGen (by decide)
+/-- The context settles the complement's falsity. -/
+structure HallucinateContext where
+  notLoves : Bool := false
 
 /-- The model of *hallucinate*, and the model with the distortion cut. -/
-def hallucinate (eventive : Bool) : CausalModel (H → Bool) H fun _ ↦ Bool where
-  graph := hallucinateGraph
+def hallucinate (eventive : Bool) : CausalModel HallucinateContext H fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ hallucinateEdges⟩
   eqn
+    | .notLoves => fun u _ ↦ u.notLoves
     | .distortion => fun _ x ↦ x .notLoves
     | .beliefLoves => fun _ x ↦ eventive && x .distortion
-    | .notLoves => fun u _ ↦ u .notLoves
 
-instance (eventive : Bool) : (hallucinate eventive).IsAcyclic := hallucinateGraph_wellFounded
+instance (eventive : Bool) : DecidableRel (hallucinate eventive).graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable ((w, v) ∈ hallucinateEdges))
+
+instance (eventive : Bool) : (hallucinate eventive).IsAcyclic :=
+  Finite.wellFounded_of_irrefl_transGen (r := fun w v ↦ (w, v) ∈ hallucinateEdges) (by decide)
 
 /-- *Hallucinate* satisfies the constraint through the distortion. -/
 theorem hallucinate_plc :
-    Upstream (hallucinate true) (fun _ ↦ false) .notLoves .beliefLoves := by
+    Upstream (hallucinate true) {} .notLoves .beliefLoves := by
   decide
 
 /-- With the distortion cut, the falsity presupposition is no longer upstream of the
 belief. -/
 theorem hallucinate_cut :
-    ¬ Upstream (hallucinate false) (fun _ ↦ false) .notLoves .beliefLoves := by
+    ¬ Upstream (hallucinate false) {} .notLoves .beliefLoves := by
   decide
 
 end RobertsOzyildiz2025

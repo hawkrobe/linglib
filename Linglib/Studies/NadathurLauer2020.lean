@@ -114,27 +114,36 @@ namespace Fire
     G=grass inflammable, L=line down, F=fire. -/
 inductive V | P | D | G | L | F deriving DecidableEq, Fintype, Repr
 
+/-- Inflammability reads drought, and fire reads inflammability, power, and line contact. -/
+def edges : Finset (V × V) := {(.D, .G), (.G, .F), (.P, .F), (.L, .F)}
+
+/-- The context settles power restoration, drought, and the line's condition. -/
+structure Context where
+  P : Bool
+  D : Bool
+  L : Bool
+  deriving DecidableEq, Fintype, Inhabited, Repr
+
 /-- Fire dynamics: G := D (inflammability tracks drought); F := G ∧ P ∧ L
-    (fire ignites only when grass inflammable, power on, line touching). The context settles the
-    exogenous P, D and L. -/
-def fireModel : CausalModel (Bool × Bool × Bool) V fun _ ↦ Bool where
-  graph := ⟨fun w v ↦ w = .D ∧ v = .G ∨ (w = .G ∨ w = .P ∨ w = .L) ∧ v = .F⟩
+    (fire ignites only when grass inflammable, power on, line touching). -/
+def fireModel : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
   eqn
-    | .P => fun u _ ↦ u.1
-    | .D => fun u _ ↦ u.2.1
-    | .L => fun u _ ↦ u.2.2
+    | .P => fun u _ ↦ u.P
+    | .D => fun u _ ↦ u.D
+    | .L => fun u _ ↦ u.L
     | .G => fun _ x ↦ x .D
     | .F => fun _ x ↦ x .G && x .P && x .L
 
 instance : DecidableRel fireModel.graph.Adj := fun w v ↦
-  inferInstanceAs (Decidable (w = .D ∧ v = .G ∨ (w = .G ∨ w = .P ∨ w = .L) ∧ v = .F))
+  inferInstanceAs (Decidable ((w, v) ∈ edges))
 
 instance : fireModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- Background s_b: drought conditions and inflammable grass observed,
     line condition unknown. (Per N&L p. 19, footnote 21: realistic
     epistemic ignorance about whether the line was already down.) -/
-def s_b : V → Flat Bool := Function.update (Function.update ⊥ .D ↑true) .G ↑true
+def s_b : V → Flat Bool := [.D ← true, .G ← true]
 
 /-- Extended background s_b1: the line is also known to be down. -/
 def s_b1 : V → Flat Bool := Function.update s_b .L ↑true
@@ -163,29 +172,39 @@ namespace Bus
     Rn=rain forecast, Bk=bike gone, Bs=Lia takes the bus. -/
 inductive V | Vis | Tr | Rn | Bk | Bs deriving DecidableEq, Fintype, Repr
 
+/-- The bike's absence reads the visit and the training; the bus reads the rain and the bike. -/
+def edges : Finset (V × V) := {(.Vis, .Bk), (.Tr, .Bk), (.Rn, .Bs), (.Bk, .Bs)}
+
+/-- The context settles Ava's visit, her training, and the rain forecast. -/
+structure Context where
+  Vis : Bool
+  Tr : Bool
+  Rn : Bool
+  deriving DecidableEq, Fintype, Inhabited, Repr
+
 /-- Bus dynamics: Bk := Vis ∧ Tr (bike taken when Ava visits AND trains);
     Bs := Rn ∨ Bk (bus taken when rain OR bike gone). The OR for Bs
     matches Fig 3's `f_B` table on p. 20: B=1 iff R=1 or G=1. This
     creates the "sufficient but unnecessary" structure for T: T=1 forces
     Bs=1 (sufficient via Bk), but Rn=1 alone also forces Bs=1 (so T not
-    necessary). The context settles the exogenous Vis, Tr and Rn. -/
-def busModel : CausalModel (Bool × Bool × Bool) V fun _ ↦ Bool where
-  graph := ⟨fun w v ↦ (w = .Vis ∨ w = .Tr) ∧ v = .Bk ∨ (w = .Rn ∨ w = .Bk) ∧ v = .Bs⟩
+    necessary). -/
+def busModel : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
   eqn
-    | .Vis => fun u _ ↦ u.1
-    | .Tr => fun u _ ↦ u.2.1
-    | .Rn => fun u _ ↦ u.2.2
+    | .Vis => fun u _ ↦ u.Vis
+    | .Tr => fun u _ ↦ u.Tr
+    | .Rn => fun u _ ↦ u.Rn
     | .Bk => fun _ x ↦ x .Vis && x .Tr
     | .Bs => fun _ x ↦ x .Rn || x .Bk
 
 instance : DecidableRel busModel.graph.Adj := fun w v ↦
-  inferInstanceAs (Decidable ((w = .Vis ∨ w = .Tr) ∧ v = .Bk ∨ (w = .Rn ∨ w = .Bk) ∧ v = .Bs))
+  inferInstanceAs (Decidable ((w, v) ∈ edges))
 
 instance : busModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- Background s_b: Ava visiting, rain forecast. Training status Tr is the
     purported cause of bus-taking (via bike taken). -/
-def s_b : V → Flat Bool := Function.update (Function.update ⊥ .Vis ↑true) .Rn ↑true
+def s_b : V → Flat Bool := [.Vis ← true, .Rn ← true]
 
 /-- (33a) `Ava's training made Lia take the bus to work.` Make-side:
     T=true is sufficient for B=true relative to s_b: under the strict
@@ -213,17 +232,26 @@ namespace Lighthouse
     (time 3). -/
 inductive V | Q | S | L deriving DecidableEq, Fintype, Repr
 
+/-- The collapse reads the earthquake and the storms. -/
+def edges : Finset (V × V) := {(.Q, .L), (.S, .L)}
+
+/-- The context settles the earthquake and the storms. -/
+structure Context where
+  Q : Bool
+  S : Bool
+  deriving DecidableEq, Fintype, Inhabited, Repr
+
 /-- In the lighthouse dynamics L := Q ∧ S: collapse requires both earthquake-induced foundation
-damage and extreme storms. The context settles the exogenous Q and S. -/
-def lighthouseModel : CausalModel (Bool × Bool) V fun _ ↦ Bool where
-  graph := ⟨fun w v ↦ (w = .Q ∨ w = .S) ∧ v = .L⟩
+damage and extreme storms. -/
+def lighthouseModel : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
   eqn
-    | .Q => fun u _ ↦ u.1
-    | .S => fun u _ ↦ u.2
+    | .Q => fun u _ ↦ u.Q
+    | .S => fun u _ ↦ u.S
     | .L => fun _ x ↦ x .Q && x .S
 
 instance : DecidableRel lighthouseModel.graph.Adj := fun w v ↦
-  inferInstanceAs (Decidable ((w = .Q ∨ w = .S) ∧ v = .L))
+  inferInstanceAs (Decidable ((w, v) ∈ edges))
 
 instance : lighthouseModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
@@ -244,7 +272,7 @@ def validBackgroundFor (idx : V → Nat) (t : Nat) (s : V → Flat Bool) : Prop 
     background fixing Q=true (the earlier necessary cause), S=true
     suffices for L=true. -/
 theorem make_felicitous_for_storms :
-    lighthouseModel.CausallySufficient (Function.update ⊥ .Q ↑true) .S true .L true := by
+    lighthouseModel.CausallySufficient [.Q ← true] .S true .L true := by
   decide
 
 /-- (35c) `#The earthquake made the tower collapse.` Infelicitous via
@@ -267,8 +295,8 @@ theorem make_infelicitous_for_earthquake :
     rcases causallyEntails_iff.1 h with h | ⟨-, h⟩
     · rw [hunset .S (by decide)] at h; exact Flat.bot_ne_coe h
     · have hno : ∀ w, ¬ lighthouseModel.graph.Adj w .S := by decide
-      have h₁ := h.2 (false, true) (fun _ ↦ false) fun w hw ↦ absurd hw (hno w)
-      have h₀ := h.2 (false, false) (fun _ ↦ false) fun w hw ↦ absurd hw (hno w)
+      have h₁ := h.2 ⟨false, true⟩ (fun _ ↦ false) fun w hw ↦ absurd hw (hno w)
+      have h₀ := h.2 ⟨false, false⟩ (fun _ ↦ false) fun w hw ↦ absurd hw (hno w)
       exact absurd (h₁.trans h₀.symm) (by decide)
   rcases causallyEntails_iff.1 hb with h | ⟨-, hpar, -⟩
   · rw [hunset .L (by decide)] at h; exact Flat.bot_ne_coe h
@@ -312,20 +340,29 @@ open Volitional (volitionalActionConstraint IntentionMap)
     D = children dance. -/
 inductive V | WD | G | D deriving DecidableEq, Fintype, Repr
 
+/-- The dancing reads the desire and the permission. -/
+def edges : Finset (V × V) := {(.WD, .D), (.G, .D)}
+
+/-- The context settles the children's desire and Gurung's permission. -/
+structure Context where
+  WD : Bool
+  G : Bool
+  deriving DecidableEq, Fintype, Inhabited, Repr
+
 /-- In the permission dynamics (Fig 5) D := W_D ∧ G, both desire and permission being needed for
-dancing. The context settles W_D and G. -/
-def permissionModel : CausalModel (Bool × Bool) V fun _ ↦ Bool where
-  graph := ⟨fun w v ↦ (w = .WD ∨ w = .G) ∧ v = .D⟩
-  eqn | .WD => fun u _ ↦ u.1 | .G => fun u _ ↦ u.2 | .D => fun _ x ↦ x .WD && x .G
+dancing. -/
+def permissionModel : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
+  eqn | .WD => fun u _ ↦ u.WD | .G => fun u _ ↦ u.G | .D => fun _ x ↦ x .WD && x .G
 
 instance : DecidableRel permissionModel.graph.Adj := fun w v ↦
-  inferInstanceAs (Decidable ((w = .WD ∨ w = .G) ∧ v = .D))
+  inferInstanceAs (Decidable ((w, v) ∈ edges))
 
 instance : permissionModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- Background: children eager to dance (W_D := true). Cause is G
     (Gurung's permission); effect is D (dancing). -/
-def bg : V → Flat Bool := Function.update ⊥ .WD ↑true
+def bg : V → Flat Bool := [.WD ← true]
 
 /-- Intention map: dancing's intention vertex is W_D. -/
 def intentions : IntentionMap V := fun
@@ -365,14 +402,23 @@ open Volitional (volitionalActionConstraint IntentionMap)
     once G fires. -/
 inductive V | WD | G | D deriving DecidableEq, Fintype, Repr
 
+/-- The dancing reads the desire and the command. -/
+def edges : Finset (V × V) := {(.WD, .D), (.G, .D)}
+
+/-- The context settles the children's desire and Gurung's command. -/
+structure Context where
+  WD : Bool
+  G : Bool
+  deriving DecidableEq, Fintype, Inhabited, Repr
+
 /-- In the command dynamics (Fig 6) D := W_D ∨ G, either authority alone or independent desire
-sufficing for dancing. The context settles W_D and G. -/
-def commandModel : CausalModel (Bool × Bool) V fun _ ↦ Bool where
-  graph := ⟨fun w v ↦ (w = .WD ∨ w = .G) ∧ v = .D⟩
-  eqn | .WD => fun u _ ↦ u.1 | .G => fun u _ ↦ u.2 | .D => fun _ x ↦ x .WD || x .G
+sufficing for dancing. -/
+def commandModel : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
+  eqn | .WD => fun u _ ↦ u.WD | .G => fun u _ ↦ u.G | .D => fun _ x ↦ x .WD || x .G
 
 instance : DecidableRel commandModel.graph.Adj := fun w v ↦
-  inferInstanceAs (Decidable ((w = .WD ∨ w = .G) ∧ v = .D))
+  inferInstanceAs (Decidable ((w, v) ∈ edges))
 
 instance : commandModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
@@ -381,10 +427,10 @@ def intentions : IntentionMap V := fun
   | _ => none
 
 /-- (41) context: the children are independently eager (W_D = 1). -/
-def bgEager : V → Flat Bool := Function.update ⊥ .WD ↑true
+def bgEager : V → Flat Bool := [.WD ← true]
 
 /-- (42) context: the children are reluctant (W_D = 0). -/
-def bgReluctant : V → Flat Bool := Function.update ⊥ .WD ↑false
+def bgReluctant : V → Flat Bool := [.WD ← false]
 
 /-- (41) Bare sufficiency holds in the eager context. With W_D = 1 observed, D = W_D ∨ G is
 settled by the strict dynamics only once G is, and G := 1 settles it. N&L's (41)/(42) contexts
@@ -425,14 +471,22 @@ open Volitional (volitionalActionConstraint IntentionMap)
     Distinct mechanism: G acts via the agent's desire, not in parallel. -/
 inductive V | WD | G | D deriving DecidableEq, Fintype, Repr
 
+/-- The desire reads Gurung's action, and the dancing reads the desire. -/
+def edges : Finset (V × V) := {(.G, .WD), (.WD, .D)}
+
+/-- The context settles Gurung's action. -/
+structure Context where
+  G : Bool
+  deriving DecidableEq, Fintype, Inhabited, Repr
+
 /-- In the persuasion dynamics (Fig 7) W_D := G, Gurung's action shaping desires, and D := W_D,
-the children dancing iff they want to. The context settles G. -/
-def persuasionModel : CausalModel Bool V fun _ ↦ Bool where
-  graph := ⟨fun w v ↦ w = .G ∧ v = .WD ∨ w = .WD ∧ v = .D⟩
-  eqn | .G => fun u _ ↦ u | .WD => fun _ x ↦ x .G | .D => fun _ x ↦ x .WD
+the children dancing iff they want to. -/
+def persuasionModel : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
+  eqn | .G => fun u _ ↦ u.G | .WD => fun _ x ↦ x .G | .D => fun _ x ↦ x .WD
 
 instance : DecidableRel persuasionModel.graph.Adj := fun w v ↦
-  inferInstanceAs (Decidable (w = .G ∧ v = .WD ∨ w = .WD ∧ v = .D))
+  inferInstanceAs (Decidable ((w, v) ∈ edges))
 
 instance : persuasionModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 

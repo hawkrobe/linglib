@@ -25,6 +25,7 @@ finite model computes it.
 * `CausalModel.IsAcyclic`: the graph is well founded
 * `CausalModel.step`: one round of the equations, with the intervened variables held fixed
 * `CausalModel.solve`: the solution under an intervention in a context
+* `[c ← x, d ← y]`: the partial assignment settling `c` and `d`, scoped in `CausalModel`
 
 ## Main results
 
@@ -43,6 +44,17 @@ the edges a paper draws, and bounds what an equation may read rather than record
 read. An intervention is a partial assignment `∀ v, Flat (α v)`, the variables it settles being the
 intervened ones. The solution is `WellFounded.fixedPoint` of `step`, whose construction fills the
 coordinates an equation ignores arbitrarily, hence `[∀ v, Nonempty (α v)]`.
+
+A concrete model in a study is written to one recipe. The exogenous context is a structure whose
+fields name what the paper leaves to the world (`structure Context where match : Bool`, with
+`deriving DecidableEq, Fintype, Inhabited, Repr`), never a positional tuple. The edges are a
+`Finset (V × V)` (`def edges : Finset (V × V) := {(.match, .fire)}`) with `graph :=
+⟨fun w v ↦ (w, v) ∈ edges⟩`, adjacency is decided by `fun w v ↦ inferInstanceAs (Decidable
+((w, v) ∈ edges))`, and acyclicity by `Finite.wellFounded_of_irrefl_transGen (by decide)`.
+Partial assignments are written in the scoped notation, `[c ← x, d ← y]`, and updates of a named
+assignment as `Function.update s c ↑x`. A theorem quantifying over assignments or settlements
+(necessity, sufficient sets) is proved structurally through the equations rather than by
+`decide`, which enumerates them.
 
 ## References
 
@@ -77,6 +89,15 @@ abbrev IsAcyclic : Prop := WellFounded M.graph.Adj
 theorem IsAcyclic.of_depth (depth : V → ℕ) (h : ∀ {w v}, M.graph.Adj w v → depth w < depth v) :
     M.IsAcyclic :=
   RelHomClass.wellFounded (⟨depth, h⟩ : M.graph.Adj →r (· < ·)) wellFounded_lt
+
+/-- `[c ← x]` is the partial assignment settling `c` to `x` and leaving every other variable
+open, in the notation of Halpern and Pearl; `[c ← x, d ← y]` settles both. It serves as an
+intervention and as an observation. -/
+scoped syntax (name := partialAssignment) "[" (term " ← " term),+ "]" : term
+
+macro_rules (kind := partialAssignment)
+  | `([$c ← $x]) => `(Function.update ⊥ $c (Flat.some $x))
+  | `([$c ← $x, $[$cs ← $xs],*]) => `(Function.update [$[$cs ← $xs],*] $c (Flat.some $x))
 
 /-- `M.step I u x` applies the equations once in the context `u`. A variable the intervention
 `I` settles takes its intervened value, and any other variable takes the value its equation

@@ -46,7 +46,7 @@ variable {U W : Type*} [DecidableEq W] (M : CausalModel U W fun _ ↦ Bool) [M.I
 occurred, the counterfactual being an intervention setting the cause to `false` in the actual
 context `u`. -/
 def lewisButFor (cause effect : W) : Prop :=
-  M.solve (Function.update ⊥ cause ↑false) u effect ≠ true
+  M.solve [cause ← false] u effect ≠ true
 
 /-- The effect depends causally on the cause (p. 562) when both occur and the effect would not
 have occurred without the cause. -/
@@ -86,23 +86,29 @@ inductive V | a | b
   deriving DecidableEq, Fintype, Repr
 
 /-- `b` follows `a`. -/
-abbrev graph : Digraph V := ⟨fun w v ↦ (w, v) ∈ ({(.a, .b)} : Finset (V × V))⟩
+def edges : Finset (V × V) := {(.a, .b)}
 
-/-- The context settles whether `a` occurs, and `b` occurs when `a` does. -/
-def sem : CausalModel Bool V fun _ ↦ Bool where
-  graph := graph
-  eqn | .a => fun u _ ↦ u | .b => fun _ x ↦ x .a
+/-- The context settles whether `a` occurs. -/
+structure Context where
+  a : Bool
 
-instance : sem.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (r := graph.Adj) (by decide)
+/-- `b` occurs when `a` does. -/
+def sem : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
+  eqn | .a => fun u _ ↦ u.a | .b => fun _ x ↦ x .a
+
+instance : DecidableRel sem.graph.Adj := fun w v ↦ inferInstanceAs (Decidable ((w, v) ∈ edges))
+
+instance : sem.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- A single cause passes the but-for test. -/
-theorem simple_butfor : lewisButFor sem true .a .b := by decide
+theorem simple_butfor : lewisButFor sem ⟨true⟩ .a .b := by decide
 
 /-- The effect depends on its single cause. -/
-theorem simple_dependence : lewisDependence sem true .a .b := by decide
+theorem simple_dependence : lewisDependence sem ⟨true⟩ .a .b := by decide
 
 /-- A single cause is a cause. -/
-theorem simple_causation : lewisCausation sem true .a .b :=
+theorem simple_causation : lewisCausation sem ⟨true⟩ .a .b :=
   dependence_implies_causation simple_dependence
 
 end SimpleCause
@@ -113,26 +119,32 @@ inductive V | a | b | c
   deriving DecidableEq, Fintype, Repr
 
 /-- `b` follows `a`, and `c` follows `b`. -/
-abbrev graph : Digraph V := ⟨fun w v ↦ (w, v) ∈ ({(.a, .b), (.b, .c)} : Finset (V × V))⟩
+def edges : Finset (V × V) := {(.a, .b), (.b, .c)}
 
-/-- The context settles whether `a` occurs, and the chain passes it on. -/
-def sem : CausalModel Bool V fun _ ↦ Bool where
-  graph := graph
-  eqn | .a => fun u _ ↦ u | .b => fun _ x ↦ x .a | .c => fun _ x ↦ x .b
+/-- The context settles whether `a` occurs. -/
+structure Context where
+  a : Bool
 
-instance : sem.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (r := graph.Adj) (by decide)
+/-- The chain passes `a` on to `b` and `b` on to `c`. -/
+def sem : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
+  eqn | .a => fun u _ ↦ u.a | .b => fun _ x ↦ x .a | .c => fun _ x ↦ x .b
+
+instance : DecidableRel sem.graph.Adj := fun w v ↦ inferInstanceAs (Decidable ((w, v) ∈ edges))
+
+instance : sem.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- In a chain the distal cause passes the but-for test for the final effect. -/
-theorem chain_direct_butfor : lewisButFor sem true .a .c := by decide
+theorem chain_direct_butfor : lewisButFor sem ⟨true⟩ .a .c := by decide
 
 /-- The middle event depends on the first. -/
-theorem chain_step_AB : lewisDependence sem true .a .b := by decide
+theorem chain_step_AB : lewisDependence sem ⟨true⟩ .a .b := by decide
 
 /-- The final event depends on the middle one. -/
-theorem chain_step_BC : lewisDependence sem true .b .c := by decide
+theorem chain_step_BC : lewisDependence sem ⟨true⟩ .b .c := by decide
 
 /-- The first event causes the last through the chain. -/
-theorem chain_causation : lewisCausation sem true .a .c :=
+theorem chain_causation : lewisCausation sem ⟨true⟩ .a .c :=
   Relation.TransGen.trans
     (Relation.TransGen.single chain_step_AB)
     (Relation.TransGen.single chain_step_BC)
@@ -149,35 +161,39 @@ inductive V | pressure | barometer | storm
   deriving DecidableEq, Fintype, Repr
 
 /-- The pressure bears on the barometer and on the storm. -/
-abbrev graph : Digraph V :=
-  ⟨fun w v ↦ (w, v) ∈ ({(.pressure, .barometer), (.pressure, .storm)} : Finset (V × V))⟩
+def edges : Finset (V × V) := {(.pressure, .barometer), (.pressure, .storm)}
 
-/-- The context settles the pressure, and the barometer and the storm both follow it. -/
-def sem : CausalModel Bool V fun _ ↦ Bool where
-  graph := graph
+/-- The context settles the pressure. -/
+structure Context where
+  pressure : Bool
+
+/-- The barometer and the storm both follow the pressure. -/
+def sem : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
   eqn
-    | .pressure => fun u _ ↦ u
+    | .pressure => fun u _ ↦ u.pressure
     | .barometer => fun _ x ↦ x .pressure
     | .storm => fun _ x ↦ x .pressure
 
-instance : sem.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (r := graph.Adj) (by decide)
+instance : DecidableRel sem.graph.Adj := fun w v ↦ inferInstanceAs (Decidable ((w, v) ∈ edges))
+
+instance : sem.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- Pressure causes the barometer reading. -/
-theorem pressure_causes_barometer : lewisDependence sem true .pressure .barometer := by decide
+theorem pressure_causes_barometer : lewisDependence sem ⟨true⟩ .pressure .barometer := by
+  decide
 
 /-- Pressure causes the storm. -/
-theorem pressure_causes_storm : lewisDependence sem true .pressure .storm := by decide
+theorem pressure_causes_storm : lewisDependence sem ⟨true⟩ .pressure .storm := by decide
 
 /-- The barometer does not cause the storm. No path runs from the barometer to the storm, so
 intervening on the barometer leaves the pressure, and so the storm, in place. -/
-theorem barometer_not_causes_storm (u : Bool) : ¬ lewisDependence sem u .barometer .storm :=
-  not_lewisDependence_of_not_reflTransGen
-    (by decide : ¬ ReflTransGen graph.Adj .barometer .storm)
+theorem barometer_not_causes_storm (u : Context) : ¬ lewisDependence sem u .barometer .storm :=
+  not_lewisDependence_of_not_reflTransGen (by decide)
 
 /-- The storm does not cause the barometer reading. -/
-theorem storm_not_causes_barometer (u : Bool) : ¬ lewisDependence sem u .storm .barometer :=
-  not_lewisDependence_of_not_reflTransGen
-    (by decide : ¬ ReflTransGen graph.Adj .storm .barometer)
+theorem storm_not_causes_barometer (u : Context) : ¬ lewisDependence sem u .storm .barometer :=
+  not_lewisDependence_of_not_reflTransGen (by decide)
 
 end Epiphenomena
 
@@ -190,25 +206,32 @@ inductive V | a | b | e
   deriving DecidableEq, Fintype, Repr
 
 /-- Both causes bear on the effect. -/
-abbrev graph : Digraph V := ⟨fun w v ↦ (w, v) ∈ ({(.a, .e), (.b, .e)} : Finset (V × V))⟩
+def edges : Finset (V × V) := {(.a, .e), (.b, .e)}
 
-/-- The context settles the two causes, and the effect occurs when either does. -/
-def sem : CausalModel (Bool × Bool) V fun _ ↦ Bool where
-  graph := graph
-  eqn | .a => fun u _ ↦ u.1 | .b => fun u _ ↦ u.2 | .e => fun _ x ↦ x .a || x .b
+/-- The context settles the two causes. -/
+structure Context where
+  a : Bool
+  b : Bool
 
-instance : sem.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (r := graph.Adj) (by decide)
+/-- The effect occurs when either cause does. -/
+def sem : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
+  eqn | .a => fun u _ ↦ u.a | .b => fun u _ ↦ u.b | .e => fun _ x ↦ x .a || x .b
+
+instance : DecidableRel sem.graph.Adj := fun w v ↦ inferInstanceAs (Decidable ((w, v) ∈ edges))
+
+instance : sem.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- Neither overdetermining cause passes the but-for test, both being present. -/
-theorem overdetermination_no_butfor_a : ¬ lewisButFor sem (true, true) .a .e := by decide
+theorem overdetermination_no_butfor_a : ¬ lewisButFor sem ⟨true, true⟩ .a .e := by decide
 
-theorem overdetermination_no_butfor_b : ¬ lewisButFor sem (true, true) .b .e := by decide
+theorem overdetermination_no_butfor_b : ¬ lewisButFor sem ⟨true, true⟩ .b .e := by decide
 
 /-- Neither overdetermining cause is one the effect depends on. -/
-theorem overdetermination_no_dependence_a : ¬ lewisDependence sem (true, true) .a .e := by
+theorem overdetermination_no_dependence_a : ¬ lewisDependence sem ⟨true, true⟩ .a .e := by
   decide
 
-theorem overdetermination_no_dependence_b : ¬ lewisDependence sem (true, true) .b .e := by
+theorem overdetermination_no_dependence_b : ¬ lewisDependence sem ⟨true, true⟩ .b .e := by
   decide
 
 end Overdetermination
