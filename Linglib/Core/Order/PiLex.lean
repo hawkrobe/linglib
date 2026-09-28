@@ -11,20 +11,36 @@ public import Mathlib.Data.Finset.Max
 /-!
 # The lexicographic order on finite tuples
 
-This file relates `Pi.Lex` on `Fin n → α` to the lexicographic order on lists and characterizes
-it by the first differing coordinate. The order on `Fin (n + 1)`-tuples compares heads and then
-tails (`Pi.toLex_lt_toLex_iff_succ`), so it is the order of the tuples' lists
-(`List.ofFn_lex_lt_iff`, `List.ofFn_le_ofFn_iff`); since the list order is decidable, so is the
-tuple order (`Pi.Lex.decidableLT`, `Pi.Lex.decidableLE`), where mathlib's `LinearOrder` on
-`Pi.Lex` carries only a classical instance. A tuple is lexicographically at most another when
-every coordinate where it exceeds the other is preceded by one where it falls short
-(`Pi.lex_le_iff_forall`), which is to say that it falls short at the first coordinate where
-they differ (`Pi.lex_le_iff_find`).
+This file relates `Pi.Lex` on `Fin n → α` to the lexicographic order on lists and characterizes it
+by the first differing coordinate. The order on `Fin (n + 1)`-tuples compares heads and then tails
+(`Pi.toLex_lt_toLex_iff_succ`), so it is the order of the tuples' lists (`List.ofFn_lex_lt_iff`,
+`List.ofFn_le_ofFn_iff`); since the list order is decidable, so is the tuple order
+(`Pi.Lex.decidableLT`, `Pi.Lex.decidableLE`), where mathlib's `LinearOrder` on `Pi.Lex` carries only
+a classical instance. A tuple is lexicographically at most another when every coordinate where it
+exceeds the other is preceded by one where it falls short (`Pi.lex_le_iff_forall`), which is to say
+that it falls short at the first coordinate where they differ (`Pi.lex_le_iff_find`). Reindexing
+both tuples along an equivalence transports the index relation (`Pi.lex_comp_equiv`).
 
 [UPSTREAM] candidates for `Mathlib/Order/PiLex.lean` and `Mathlib/Data/List/OfFn.lean`.
 -/
 
 @[expose] public section
+
+namespace Pi
+
+/-- Reindexing both tuples along an equivalence `e : κ ≃ ι` transports the index relation of
+the lexicographic order to its preimage along `e.symm`. -/
+theorem lex_comp_equiv {κ ι β : Type*} (e : κ ≃ ι) (r : κ → κ → Prop) (s : β → β → Prop)
+    (x y : ι → β) :
+    Pi.Lex r (fun {_} ↦ s) (x ∘ e) (y ∘ e) ↔
+      Pi.Lex (fun i j ↦ r (e.symm i) (e.symm j)) (fun {_} ↦ s) x y := by
+  constructor
+  · rintro ⟨k, hk, hs⟩
+    exact ⟨e k, fun j hj ↦ by simpa using hk (e.symm j) (by simpa using hj), hs⟩
+  · rintro ⟨i, hi, hs⟩
+    exact ⟨e.symm i, fun k hk ↦ by simpa using hi (e k) (by simpa using hk), by simpa using hs⟩
+
+end Pi
 
 namespace Pi
 

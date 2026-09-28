@@ -49,22 +49,23 @@ variable {I O : Type*} [Fintype O] {n : ℕ}
 
 /-- Eq. (1): the conditional probability of an output is the softmax of its harmony over the
 candidate set. -/
-noncomputable def gjProb (con : ConstraintSet (I × O) n) (w : Fin n → ℝ) (i : I) (o : O) : ℝ :=
+noncomputable def gjProb (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ) (i : I)
+    (o : O) : ℝ :=
   softmax (λ o' => harmonyScore con w (i, o')) o
 
 /-- Eq. (2), logged: the log pseudo-likelihood of the training pairs. -/
-noncomputable def logPseudoLikelihood (con : ConstraintSet (I × O) n) (w : Fin n → ℝ)
+noncomputable def logPseudoLikelihood (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ)
     (data : List (I × O)) : ℝ :=
   (data.map λ p => log (gjProb con w p.1 p.2)).sum
 
 /-- Eq. (3) with the paper's common prior, mean zero and deviation σ for every weight. -/
-noncomputable def regularizedObjective (con : ConstraintSet (I × O) n) (w : Fin n → ℝ)
+noncomputable def regularizedObjective (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ)
     (data : List (I × O)) (σ : ℝ) : ℝ :=
   logPseudoLikelihood con w data - ∑ j, w j ^ 2 / (2 * σ ^ 2)
 
 /-- Replicating the corpus r times while dividing the prior's variance by r multiplies the
 objective by r: the weights learned depend on nσ² alone. -/
-theorem regularizedObjective_replicate (con : ConstraintSet (I × O) n) (w : Fin n → ℝ)
+theorem regularizedObjective_replicate (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ)
     (data : List (I × O)) {r : ℕ} (hr : 0 < r) {σ σ' : ℝ} (hσ : 0 < σ)
     (h : (r : ℝ) * σ' ^ 2 = σ ^ 2) :
     regularizedObjective con w (List.replicate r data).flatten σ' =
@@ -81,8 +82,8 @@ theorem regularizedObjective_replicate (con : ConstraintSet (I × O) n) (w : Fin
   field_simp
 
 /-- The same weights maximize the objective before and after replication. -/
-theorem regularizedObjective_replicate_le_iff (con : ConstraintSet (I × O) n) (w w' : Fin n → ℝ)
-    (data : List (I × O)) {r : ℕ} (hr : 0 < r) {σ σ' : ℝ} (hσ : 0 < σ)
+theorem regularizedObjective_replicate_le_iff (con : ConstraintSet (I × O) (Fin n))
+    (w w' : Fin n → ℝ) (data : List (I × O)) {r : ℕ} (hr : 0 < r) {σ σ' : ℝ} (hσ : 0 < σ)
     (h : (r : ℝ) * σ' ^ 2 = σ ^ 2) :
     regularizedObjective con w' (List.replicate r data).flatten σ' ≤
         regularizedObjective con w (List.replicate r data).flatten σ' ↔
@@ -94,8 +95,8 @@ theorem regularizedObjective_replicate_le_iff (con : ConstraintSet (I × O) n) (
 /-- With the other weights held fixed, the probability of an observation is the softmax of an
 affine function of weight j: the negated violations of constraint j as the score, the other
 constraints' harmony as the offset. -/
-theorem gjProb_update (con : ConstraintSet (I × O) n) (w : Fin n → ℝ) (j : Fin n) (i : I) (o : O)
-    (t : ℝ) :
+theorem gjProb_update (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ) (j : Fin n) (i : I)
+    (o : O) (t : ℝ) :
     gjProb con (Function.update w j t) i o =
       softmax (t • (λ o' => -((con j (i, o') : ℕ) : ℝ)) +
         λ o' => -∑ k ∈ ({j}ᶜ : Finset (Fin n)), w k * (con k (i, o') : ℝ)) o := by
@@ -111,14 +112,15 @@ theorem gjProb_update (con : ConstraintSet (I × O) n) (w : Fin n → ℝ) (j : 
 /-- Footnote 4: with the other weights held fixed, the log probability of an observation is
 concave in weight j, since the harmony is then affine in that weight and the log-partition
 function convex. -/
-theorem concaveOn_log_gjProb_update (con : ConstraintSet (I × O) n) (w : Fin n → ℝ) (j : Fin n)
+theorem concaveOn_log_gjProb_update (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ)
+    (j : Fin n)
     (i : I) (o : O) : ConcaveOn ℝ Set.univ λ t => log (gjProb con (Function.update w j t) i o) := by
   have : Nonempty O := ⟨o⟩
   simp_rw [gjProb_update]
   exact concaveOn_log_softmax _ _ o
 
 /-- The log pseudo-likelihood of a corpus is concave in each weight, as a sum of concave terms. -/
-theorem concaveOn_logPseudoLikelihood_update (con : ConstraintSet (I × O) n) (w : Fin n → ℝ)
+theorem concaveOn_logPseudoLikelihood_update (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ)
     (j : Fin n) (data : List (I × O)) :
     ConcaveOn ℝ Set.univ λ t => logPseudoLikelihood con (Function.update w j t) data := by
   induction data with
@@ -130,7 +132,7 @@ theorem concaveOn_logPseudoLikelihood_update (con : ConstraintSet (I × O) n) (w
 /-! ### Two candidates: learning from differences (section 3.2) -/
 
 /-- Two candidates as a constraint set over one input: the winner at 0, the loser at 1. -/
-def pairConstraintSet (win lose : Fin n → ℕ) : ConstraintSet (Unit × Fin 2) n :=
+def pairConstraintSet (win lose : Fin n → ℕ) : ConstraintSet (Unit × Fin 2) (Fin n) :=
   λ j c => if c.2 = 0 then win j else lose j
 
 /-- A two-candidate model sees the violations only through their difference: the winner's

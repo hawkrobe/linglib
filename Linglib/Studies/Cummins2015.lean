@@ -177,13 +177,13 @@ def qpri (ctx : Context) : Constraint Candidate := λ c =>
 
 /-- The six constraints in the book's order: informativeness, granularity, quantifier
 simplicity, numeral salience, numeral priming, quantifier priming. -/
-def con (ctx : Context) : ConstraintSet Candidate 6 :=
+def con (ctx : Context) : ConstraintSet Candidate (Fin 6) :=
   ![info ctx, gran ctx, qsimp, nsal, npri ctx, qpri ctx]
 
 /-! ### Constraint interaction in the toy system (§3.1, Tables 3.1–3.3) -/
 
 /-- The toy system: informativeness, numeral salience and numeral priming. -/
-def toy (ctx : Context) : ConstraintSet Candidate 3 := ![info ctx, nsal, npri ctx]
+def toy (ctx : Context) : ConstraintSet Candidate (Fin 3) := ![info ctx, nsal, npri ctx]
 
 /-- The speaker knows the value to be at least 22. -/
 def atLeast22 : Context := { lo := some 22 }
@@ -194,20 +194,20 @@ def atLeast22Primed : Context := { atLeast22 with primedNumeral := some 21 }
 /-- Unprimed (Table 3.1), a speaker ranking informativeness above salience prefers *more than
 21* and one ranking salience above informativeness *more than 20*; priming, violated by
 neither, never adjudicates (Table 3.3). -/
-theorem atLeast22_optimal (r : Ranking 3) :
+theorem atLeast22_optimal (r : Ranking (Fin 3) 3) :
     (Tableau.ofPerm (toy atLeast22) r [moreThan 21, moreThan 20]).optimal =
       if r.Dominates 0 1 then {moreThan 21} else {moreThan 20} := by
   revert r; decide
 
 /-- With 21 salient (Table 3.2), only a speaker ranking salience above both informativeness
 and priming keeps *more than 20* (Table 3.3). -/
-theorem atLeast22Primed_optimal (r : Ranking 3) :
+theorem atLeast22Primed_optimal (r : Ranking (Fin 3) 3) :
     (Tableau.ofPerm (toy atLeast22Primed) r [moreThan 21, moreThan 20]).optimal =
       if r.Dominates 1 0 ∧ r.Dominates 1 2 then {moreThan 20} else {moreThan 21} := by
   revert r; decide
 
 /-- Priming over salience over informativeness, the last ranking of Table 3.3. -/
-def primingFirst : Ranking 3 := Equiv.swap 0 2
+def primingFirst : Ranking (Fin 3) 3 := Equiv.swap 0 2
 
 /-- A speaker ranking priming over salience over informativeness prefers *more than 20*
 unprimed and *more than 21* primed: variation within a speaker across contexts. -/
@@ -238,12 +238,12 @@ def Situation.info : Situation → Constraint Candidate
       (if c.form = .bare ∧ EntirelyRound c.numeral then 1 else 0)
 
 /-- The approximation system: informativeness, numeral salience, quantifier simplicity. -/
-def approx (s : Situation) : ConstraintSet Candidate 3 := ![s.info, nsal, qsimp]
+def approx (s : Situation) : ConstraintSet Candidate (Fin 3) := ![s.info, nsal, qsimp]
 
 /-- For an exact value the rounder numeral harmonically bounds a less round one: *50*
 bounds *51* (Table 3.4). -/
 theorem bare_notMem_optimal_of_roundness_lt {n m : ℕ} (hmn : roundness m < roundness n)
-    (r : Ranking 3) {cands : List Candidate} (hc : bare n ∈ cands) (h : cands ≠ []) :
+    (r : Ranking (Fin 3) 3) {cands : List Candidate} (hc : bare n ∈ cands) (h : cands ≠ []) :
     bare m ∉ (Tableau.ofPerm (approx (.exact n)) r cands h).optimal := by
   have hne : m ≠ n := ne_of_apply_ne roundness hmn.ne
   refine Tableau.ofPerm_notMem_optimal_of_lt hc (Pi.lt_def.2 ⟨λ i => ?_, 1, ?_⟩)
@@ -260,21 +260,21 @@ theorem bare_notMem_optimal_of_roundness_lt {n m : ℕ} (hmn : roundness m < rou
 
 /-- For the exact value 51, informativeness above salience prefers *51* and salience above
 informativeness *50* (Table 3.5). -/
-theorem exact51_optimal (r : Ranking 3) :
+theorem exact51_optimal (r : Ranking (Fin 3) 3) :
     (Tableau.ofPerm (approx (.exact 51)) r [bare 50, bare 51]).optimal =
       if r.Dominates 0 1 then {bare 51} else {bare 50} := by
   revert r; decide
 
 /-- For the exact value 100, *100* bounds *about 100*, both bound *about 99*, and the choice
 is between *exactly 100*, for informativeness above simplicity, and *100* (Table 3.6). -/
-theorem exact100_optimal (r : Ranking 3) :
+theorem exact100_optimal (r : Ranking (Fin 3) 3) :
     (Tableau.ofPerm (approx (.exact 100)) r [bare 100, exactly 100, about 100, about 99]).optimal
       = if r.Dominates 0 2 then {exactly 100} else {bare 100} := by
   revert r; decide
 
 /-- For the approximate value 100, informativeness above simplicity prefers *about 100* and
 simplicity above informativeness *100* (Table 3.7). -/
-theorem about100_optimal (r : Ranking 3) :
+theorem about100_optimal (r : Ranking (Fin 3) 3) :
     (Tableau.ofPerm (approx (.about 100)) r [bare 100, about 100]).optimal =
       if r.Dominates 0 2 then {about 100} else {bare 100} := by
   revert r; decide
@@ -282,7 +282,7 @@ theorem about100_optimal (r : Ranking 3) :
 /-- For the exact value 99, *99* bounds *exactly 99*, and the winner is *99* when
 informativeness dominates salience, *100* when simplicity dominates informativeness, and
 *about 100* otherwise (Table 3.8). -/
-theorem exact99_optimal (r : Ranking 3) :
+theorem exact99_optimal (r : Ranking (Fin 3) 3) :
     (Tableau.ofPerm (approx (.exact 99)) r [bare 99, exactly 99, bare 100, about 100]).optimal
       = if r.Dominates 0 1 then {bare 99}
         else if r.Dominates 2 0 then {bare 100} else {about 100} := by
@@ -321,20 +321,20 @@ def correctionContext (n : ℕ) (form : Form) (numeral : ℕ) : Context :=
 
 /-- The correction system: quantifier priming, numeral priming, quantifier simplicity,
 informativeness. -/
-def corr (ctx : Context) : ConstraintSet Candidate 4 := ![qpri ctx, npri ctx, qsimp, info ctx]
+def corr (ctx : Context) : ConstraintSet Candidate (Fin 4) := ![qpri ctx, npri ctx, qsimp, info ctx]
 
 /-- The correction system on the four corrections. -/
-def corrOn (ctx : Context) (n : ℕ) : ConstraintSet Correction 4 :=
+def corrOn (ctx : Context) (n : ℕ) : ConstraintSet Correction (Fin 4) :=
   (corr ctx).comap (Correction.candidate n)
 
 /-- The printed marks of Table 3.9, after *more than n*: quantifier and numeral priming
 against the corrections that change them, simplicity against the superlatives. -/
-def table3_9 : ConstraintSet Correction 4 :=
+def table3_9 : ConstraintSet Correction (Fin 4) :=
   ![Constraint.binary (· ≠ .moreThan), Constraint.binary (· ≠ .atLeast),
     Constraint.binary (λ c => c = .atLeast ∨ c = .atMost), 0]
 
 /-- The printed marks of Table 3.10, after *at least n − 1*. -/
-def table3_10 : ConstraintSet Correction 4 :=
+def table3_10 : ConstraintSet Correction (Fin 4) :=
   ![Constraint.binary (· ≠ .atLeast), Constraint.binary (· ≠ .moreThan),
     Constraint.binary (λ c => c = .atLeast ∨ c = .atMost), 0]
 
@@ -363,14 +363,14 @@ theorem corrOn_atLeast {n : ℕ} (hn : 1 ≤ n) :
 /-- After *more than n*, *more than n − 1* bounds *at most n + 1* and *fewer than n + 2*, and
 wins when quantifier priming or simplicity dominates numeral priming, *at least n* winning
 when numeral priming dominates both. -/
-theorem moreThan_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking 4) :
+theorem moreThan_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking (Fin 4) 4) :
     (Tableau.ofPerm (corrOn (correctionContext n .moreThan n) n) r Correction.all).optimal =
       if r.Dominates 0 1 ∨ r.Dominates 2 1 then {.moreThan} else {.atLeast} := by
   rw [corrOn_moreThan hn]; revert r; decide +kernel
 
 /-- After *at least n − 1*, *more than n − 1* wins when numeral priming or simplicity
 dominates quantifier priming, *at least n* when quantifier priming dominates both. -/
-theorem atLeast_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking 4) :
+theorem atLeast_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking (Fin 4) 4) :
     (Tableau.ofPerm (corrOn (correctionContext n .atLeast (n - 1)) n) r
       Correction.all).optimal =
       if r.Dominates 1 0 ∨ r.Dominates 2 0 then {.moreThan} else {.atLeast} := by
@@ -380,7 +380,7 @@ theorem atLeast_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking 4) :
 
 /-- *About 100* is never optimal for a speaker who knows the value to be exactly 100, so its
 use signals imprecision. -/
-theorem about100_notMem_optimal_of_exact (r : Ranking 3) :
+theorem about100_notMem_optimal_of_exact (r : Ranking (Fin 3) 3) :
     about 100 ∉ (Tableau.ofPerm (approx (.exact 100)) r [bare 100, about 100]).optimal := by
   revert r; decide
 
@@ -391,7 +391,7 @@ granularity-scale implicature of [cummins-sauerland-solt-2012]. -/
 theorem moreThan_notMem_optimal {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = some L)
     (hnm : n < m) (hm : m < L) (hsal : roundness n ≤ roundness m)
     (hgran : ctx.granularity = none ∨ granularityLevel m = granularityLevel n)
-    (hp : ctx.primedNumeral ≠ some n) (r : Ranking 6) {cands : List Candidate}
+    (hp : ctx.primedNumeral ≠ some n) (r : Ranking (Fin 6) 6) {cands : List Candidate}
     (hc : moreThan m ∈ cands) (h : cands ≠ []) :
     moreThan n ∉ (Tableau.ofPerm (con ctx) r cands h).optimal := by
   refine Tableau.ofPerm_notMem_optimal_of_lt hc (Pi.lt_def.2 ⟨λ i => ?_, 0, ?_⟩)
@@ -425,7 +425,7 @@ on its own *more than 70* ~ *more than 80*, 80 is the rounder. -/
 theorem moreThan_optimal_iff_of_primed {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = some L)
     (hnm : n < m) (hm : m < L) (hsal : roundness n ≤ roundness m)
     (hgran : ctx.granularity = none ∨ granularityLevel m = granularityLevel n)
-    (hp : ctx.primedNumeral = some n) (r : Ranking 6) :
+    (hp : ctx.primedNumeral = some n) (r : Ranking (Fin 6) 6) :
     (Tableau.ofPerm (con ctx) r [moreThan n, moreThan m]).optimal = {moreThan n} ↔
       r.Dominates 4 0 ∧ (roundness n < roundness m → r.Dominates 4 3) := by
   have h0 : con ctx 0 (moreThan m) < con ctx 0 (moreThan n) := by

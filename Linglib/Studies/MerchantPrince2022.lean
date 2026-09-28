@@ -46,7 +46,7 @@ def rowGrammar (t : Tableau C n) (w : C)
   Grammar.ofERCs (rowERCs t w) h
 
 @[simp] theorem mem_rowGrammar_legs {t : Tableau C n} {w : C}
-    {h : (ERC.linearExtensions (rowERCs t w)).Nonempty} {r : Ranking n} :
+    {h : (ERC.linearExtensions (rowERCs t w)).Nonempty} {r : Ranking (Fin n) n} :
     r ∈ (rowGrammar t w h).legs ↔ ∀ α ∈ rowERCs t w, ERC.SatisfiedBy r α := by
   simp only [rowGrammar, Grammar.legs_ofERCs, ERC.mem_linearExtensions]
 
@@ -56,7 +56,7 @@ dominates every competitor's — i.e. the rankings that select `w` as optimum
 ([prince-smolensky-1993]). This connects the abstract `Grammar` hub back to the
 tableau's lexicographic evaluation. -/
 theorem mem_rowGrammar_legs_iff_lex {t : Tableau C n} {w : C}
-    {h : (ERC.linearExtensions (rowERCs t w)).Nonempty} {r : Ranking n} :
+    {h : (ERC.linearExtensions (rowERCs t w)).Nonempty} {r : Ranking (Fin n) n} :
     r ∈ (rowGrammar t w h).legs ↔
       ∀ l ∈ t.candidates.erase w,
         toLex (λ p => t.profile w (r p)) ≤ toLex (λ p => t.profile l (r p)) := by

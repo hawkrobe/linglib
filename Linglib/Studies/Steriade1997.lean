@@ -105,10 +105,10 @@ theorem lexP_singleton (b t : Form) : lexP [b] P t = 0 ↔ (P t → P b) := by
 /-- The constraints of the paper's (30) are the precedent condition for the desired property
 `P`, the phonological constraint demanding it, and the base-identity condition for the
 property `Q` of the listed allomorphs carrying the feature `M`. -/
-def con30 : ConstraintSet Form 3 := ![lexP L P, wellFormed P, lexPM L Q M]
+def con30 : ConstraintSet Form (Fin 3) := ![lexP L P, wellFormed P, lexPM L Q M]
 
 /-- The reverse ranking, with the base-identity condition above the phonological one. -/
-def con30' : ConstraintSet Form 3 := ![lexP L P, lexPM L Q M, wellFormed P]
+def con30' : ConstraintSet Form (Fin 3) := ![lexP L P, lexPM L Q M, wellFormed P]
 
 /-- The profile of a form under the ranking of (30), constraint by constraint. -/
 theorem con30_profile (t : Form) :
@@ -248,14 +248,14 @@ theorem noHiatus_vain :
 /-- Speakers ranking Lex 'V-gender above Lex σ' select the split-base form *[vɛ̃n] espoir*
 over both citation forms. -/
 theorem vain_split :
-    let con : ConstraintSet Adjective 4 := ![lexC, noHiatus, lexVGender, lexSyllable]
+    let con : ConstraintSet Adjective (Fin 4) := ![lexC, noHiatus, lexVGender, lexSyllable]
     buildViolationProfile con vainBlend < buildViolationProfile con vainMasc ∧
       buildViolationProfile con vainBlend < buildViolationProfile con vainFem := by
   decide
 
 /-- Speakers ranking Lex σ' above Lex 'V-gender select the citation feminine *[vɛn] espoir*. -/
 theorem vain_feminine :
-    let con : ConstraintSet Adjective 4 := ![lexC, noHiatus, lexSyllable, lexVGender]
+    let con : ConstraintSet Adjective (Fin 4) := ![lexC, noHiatus, lexSyllable, lexVGender]
     buildViolationProfile con vainFem < buildViolationProfile con vainMasc ∧
       buildViolationProfile con vainFem < buildViolationProfile con vainBlend := by
   decide

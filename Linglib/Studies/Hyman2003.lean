@@ -208,7 +208,7 @@ def candidates (i : Input) : Finset Candidate :=
 
 /-- The constraint at rank `k` of a ranking of licensors: violated by a candidate the top
 `k + 1` licensors do not license. -/
-def constraints (i : Input) (order : List Licensor) : ConstraintSet Candidate order.length :=
+def constraints (i : Input) (order : List Licensor) : ConstraintSet Candidate (Fin order.length) :=
   fun k ↦ Constraint.binary fun c ↦ ¬ LicensedBy i (order.take (k + 1)) c
 
 /-- Hyman's evaluation under a ranking: a candidate succeeds at the first licensor down the
@@ -238,10 +238,11 @@ namespace Grammar
 variable (G : Grammar)
 
 /-- The linear extensions of the grammar's order. -/
-def rankings : Finset (Ranking G.n) := consistentTotalOrders G.order
+def rankings : Finset (Ranking (Fin G.n) G.n) := consistentTotalOrders G.order
 
 /-- The licensors in the order of a ranking, most dominant first. -/
-def ranked (σ : Ranking G.n) : List Licensor := (List.finRange G.n).map fun p ↦ G.licensor (σ p)
+def ranked (σ : Ranking (Fin G.n) G.n) : List Licensor :=
+    (List.finRange G.n).map fun p ↦ G.licensor (σ p)
 
 /-- The outputs of an input: the winners under some linear extension. -/
 def outputs (i : Input) : Finset Candidate :=

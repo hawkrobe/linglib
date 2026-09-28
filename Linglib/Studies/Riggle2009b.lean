@@ -55,15 +55,15 @@ variable {n : ℕ}
 /-- Harmonic inequality (Definition 1) under a ranking: the ranking's reading of `A` is
 lexicographically below that of `B`, so `A` has fewer violations of the highest-ranked
 constraint on which the two differ. -/
-def HarmonicLT (r : Ranking n) (A B : ViolationProfile n) : Prop := r • A < r • B
+def HarmonicLT (r : Ranking (Fin n) n) (A B : ViolationProfile n) : Prop := r • A < r • B
 
 /-- Merge is ranking-independent (section 3): a ranking reads a merged profile as the merge
 of its readings, so one merged constraint set serves every ranking. -/
-theorem smul_add (r : Ranking n) (A B : ViolationProfile n) :
+theorem smul_add (r : Ranking (Fin n) n) (A B : ViolationProfile n) :
     r • (A + B) = r • A + r • B := rfl
 
 /-- Merging the same profile on both sides preserves harmonic inequality. -/
-theorem HarmonicLT.add_right {r : Ranking n} {A B : ViolationProfile n}
+theorem HarmonicLT.add_right {r : Ranking (Fin n) n} {A B : ViolationProfile n}
     (h : HarmonicLT r A B) (C : ViolationProfile n) : HarmonicLT r (A + C) (B + C) := by
   unfold HarmonicLT at *
   rw [smul_add, smul_add]
@@ -71,18 +71,19 @@ theorem HarmonicLT.add_right {r : Ranking n} {A B : ViolationProfile n}
 
 /-- A profile is optimal in a set under a ranking when it belongs to the set and no member
 is more harmonic. -/
-def Optimal (r : Ranking n) (S : Set (ViolationProfile n)) (A : ViolationProfile n) : Prop :=
+def Optimal (r : Ranking (Fin n) n) (S : Set (ViolationProfile n))
+    (A : ViolationProfile n) : Prop :=
   A ∈ S ∧ ∀ B ∈ S, ¬ HarmonicLT r B A
 
 /-- Dijkstra's principle for harmonic optimization (section 2): a merge that is optimal among
 the merges of two sets has an optimal first part, so every piece of an optimal mapping is
 itself an optimal mapping. -/
-theorem Optimal.left_of_add {r : Ranking n} {S T : Set (ViolationProfile n)}
+theorem Optimal.left_of_add {r : Ranking (Fin n) n} {S T : Set (ViolationProfile n)}
     {A B : ViolationProfile n} (h : Optimal r (S + T) (A + B)) (hA : A ∈ S) (hB : B ∈ T) :
     Optimal r S A :=
   ⟨hA, λ C hC hlt => h.2 (C + B) (Set.add_mem_add hC hB) (hlt.add_right B)⟩
 
-theorem Optimal.right_of_add {r : Ranking n} {S T : Set (ViolationProfile n)}
+theorem Optimal.right_of_add {r : Ranking (Fin n) n} {S T : Set (ViolationProfile n)}
     {A B : ViolationProfile n} (h : Optimal r (S + T) (A + B)) (hA : A ∈ S) (hB : B ∈ T) :
     Optimal r T B := by
   rw [add_comm S, add_comm A] at h

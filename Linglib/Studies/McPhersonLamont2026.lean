@@ -132,38 +132,10 @@ example : ercB maxHIdx = .L ∧ ercB depLinkHIdx = .W ∧
 
 /-! ### The ranking paradox (eq. 59) -/
 
-/-- **Parallel OT cannot model Poko** (eq. 59): the derived support is ERC-inconsistent.
-    Structural proof — `Equiv.Perm (Fin n)`'s `Fintype` doesn't kernel-reduce under `decide`. -/
+/-- **Parallel OT cannot model Poko** (eq. 59): the derived support is ERC-inconsistent, since no
+ranking of the four constraints satisfies both of its ERCs. -/
 theorem parallel_OT_inadequate : ¬ (ERC.linearExtensions pokoSupport).Nonempty := by
-  rintro ⟨r, hr⟩
-  rw [ERC.mem_linearExtensions] at hr
-  have hA := (ERC.satisfiedBy_iff_dominance r ercA).mp (hr ercA (by simp [pokoSupport]))
-  have hB := (ERC.satisfiedBy_iff_dominance r ercB).mp (hr ercB (by simp [pokoSupport]))
-  -- per-position decide: reduction through `ercOfProfiles` stalls on the quantified form
-  have ercA_only_W_at_zero : ∀ (w : Fin numConstraints), ercA w = .W → w = 0 := by
-    intro w hw
-    match w, hw with
-    | 0, _ => rfl
-    | 1, h => exact absurd h (by decide)
-    | 2, h => exact absurd h (by decide)
-    | 3, h => exact absurd h (by decide)
-  have hMAX_H_dominates : ∀ (l : Fin numConstraints), ercA l = .L →
-      r.symm 0 < r.symm l := by
-    intro l hl
-    obtain ⟨w, hwW, hdom⟩ := hA l hl
-    rw [ercA_only_W_at_zero w hwW] at hdom
-    exact hdom
-  have h01 : r.symm 0 < r.symm 1 := hMAX_H_dominates 1 (by decide)
-  have h02 : r.symm 0 < r.symm 2 := hMAX_H_dominates 2 (by decide)
-  have h03 : r.symm 0 < r.symm 3 := hMAX_H_dominates 3 (by decide)
-  -- ercB's Ws sit at positions 1-3; each contradicts h01/h02/h03
-  obtain ⟨w, hwW, hdom⟩ := hB 0 (by decide)
-  have hw_dom : r.symm w < r.symm 0 := hdom
-  match w, hwW with
-  | 0, h => exact absurd h (by decide)
-  | 1, _ => omega
-  | 2, _ => omega
-  | 3, _ => omega
+  decide +kernel
 
 /-! ### Weighted HG inadequacy -/
 

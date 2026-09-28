@@ -64,7 +64,7 @@ open OptimalityTheory
 
 /-! ### OT → HG weights
 
-An OT ranking is a `List (Constraint C)`; as a `ConstraintSet C ranking.length` it is just
+An OT ranking is a `List (Constraint C)`; as a `ConstraintSet C (Fin ranking.length)` it is just
 `ranking.get`. The Harmonic-Grammar reading of that ranking with violation bound
 `M` weights coordinate `i` (0 = highest) by `(M+1)^(n−1−i)` — the `expWeights`
 vector below. So the HG harmony of an OT ranking is
@@ -284,8 +284,7 @@ theorem ot_lex_imp_higher_harmony {C : Type*}
 /-- As the inverse temperature grows, MaxEnt probability concentrates on the candidate with the
     highest harmony. This instantiates `Real.tendsto_softmax_atTop` with harmony scores. -/
 theorem maxent_concentrates_on_hg_winner {C : Type*} [Fintype C] [Nonempty C]
-    [DecidableEq C] {n : Nat} (con : ConstraintSet C n) (w : Fin n → ℝ)
-    (c_opt : C)
+    [DecidableEq C] {n : Nat} (con : ConstraintSet C (Fin n)) (w : Fin n → ℝ) (c_opt : C)
     (h_opt : ∀ c, c ≠ c_opt →
       harmonyScore con w c < harmonyScore con w c_opt) :
     Tendsto (fun α : ℝ => softmax (α • harmonyScore con w) c_opt) atTop (𝓝 1) :=
@@ -348,16 +347,16 @@ def IsHGRealizable (P : RealizationProblem Input Output n) : Prop :=
 
 /-- The ranking `σ` *OT-realizes* the target when on every input the target strictly
     lex-dominates every alternative under `σ`. -/
-def realizedByRanking (P : RealizationProblem Input Output n) (σ : Ranking n) : Prop :=
+def realizedByRanking (P : RealizationProblem Input Output n) (σ : Ranking (Fin n) n) : Prop :=
   ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, o ≠ P.target i →
     toLex (fun k : Fin n => P.vp i (P.target i) (σ k)) <
     toLex (fun k : Fin n => P.vp i o (σ k))
 
 /-- A problem is OT-realizable when some constraint ranking realizes its target. -/
 def IsOTRealizable (P : RealizationProblem Input Output n) : Prop :=
-  ∃ σ : Ranking n, P.realizedByRanking σ
+  ∃ σ : Ranking (Fin n) n, P.realizedByRanking σ
 
-instance [DecidableEq Output] (P : RealizationProblem Input Output n) (σ : Ranking n) :
+instance [DecidableEq Output] (P : RealizationProblem Input Output n) (σ : Ranking (Fin n) n) :
     Decidable (P.realizedByRanking σ) := by
   unfold realizedByRanking; infer_instance
 
@@ -368,7 +367,7 @@ instance [DecidableEq Output] (P : RealizationProblem Input Output n) :
 /-- `σ` OT-realizes `P` iff for every input the target is the unique
     `Tableau.optimal` of the σ-permuted tableau. -/
 theorem realizedByRanking_iff_optimal [DecidableEq Output]
-    (P : RealizationProblem Input Output n) (σ : Ranking n) :
+    (P : RealizationProblem Input Output n) (σ : Ranking (Fin n) n) :
     P.realizedByRanking σ ↔ ∀ i (hi : i ∈ P.inputs),
       Tableau.optimal ⟨P.cands i, fun o => toLex (fun k => P.vp i o (σ k)),
         ⟨P.target i, P.target_mem i hi⟩⟩ = {P.target i} := by
@@ -394,7 +393,7 @@ theorem mem_ercs [DecidableEq Output] {P : RealizationProblem Input Output n} {�
 /-- Provided no competitor ties the target's violation profile, `σ` realizes the target iff `σ`
     satisfies every winner–loser ERC ([prince-2002]). -/
 theorem realizedByRanking_iff_satisfiedBy [DecidableEq Output]
-    {P : RealizationProblem Input Output n} {σ : Ranking n}
+    {P : RealizationProblem Input Output n} {σ : Ranking (Fin n) n}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, o ≠ P.target i →
       P.vp i (P.target i) ≠ P.vp i o) :
     P.realizedByRanking σ ↔ ∀ α ∈ P.ercs, α.SatisfiedBy σ := by

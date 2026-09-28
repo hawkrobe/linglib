@@ -260,7 +260,7 @@ def tableauVp (_ : Shape) (cand : List Syllable) (c : Fin 20) : ℕ :=
   (constraint c).violations cand
 
 /-- The total rankings consistent with the Finnish grammar. -/
-def rankings : Finset (Ranking 20) := consistentTotalOrders finnishGrammar
+def rankings : Finset (Ranking (Fin 20) 20) := consistentTotalOrders finnishGrammar
 
 /-- A tableau candidate that every consistent ranking picks. -/
 def Shape.Categorical (s : Shape) (cand : List Syllable) : Prop :=
@@ -332,7 +332,7 @@ def word : Motif → Variant → List Syllable
 def vp (m : Motif) (v : Variant) (c : Fin 20) : ℕ := (constraint c).violations (word m v)
 
 /-- The rankings under which variant `v` wins motif `m`. -/
-def wins (m : Motif) (v : Variant) : Finset (Ranking 20) :=
+def wins (m : Motif) (v : Variant) : Finset (Ranking (Fin 20) 20) :=
   rankings.filter fun σ => PicksAt (fun _ => Finset.univ) vp σ m v
 
 /-- The deciding-stratum count: once the strata above `k` tie, the rankings won by `v`

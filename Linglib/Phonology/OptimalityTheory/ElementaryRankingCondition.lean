@@ -92,7 +92,7 @@ end ERC
 
 namespace ERC
 
-variable (r : Ranking n) (α : ERC n)
+variable (r : Ranking (Fin n) n) (α : ERC n)
 
 /-- A ranking `r` *satisfies* ERC `α` iff its sign vector, read in `r`'s priority
 order, is lexicographically nonnegative. -/
@@ -162,7 +162,7 @@ theorem satisfiedBy_iff_exists_dominant [NeZero n] :
   · exact ⟨0, fun c hc => (he (exists_ne_of_L r α hc)).elim⟩
 
 /-- A trivial ERC is satisfied by every ranking. -/
-theorem trivial_satisfiedBy {α : ERC n} (htriv : α.IsTrivial) (r : Ranking n) :
+theorem trivial_satisfiedBy {α : ERC n} (htriv : α.IsTrivial) (r : Ranking (Fin n) n) :
     α.SatisfiedBy r :=
   (satisfiedBy_iff_dominance r α).mpr fun l hl => absurd hl (htriv l)
 
@@ -179,10 +179,10 @@ namespace ERC
 
 /-- The rankings satisfying every member of a set of ERCs, as a `Finset` — its
 *linear extensions* ([merchant-riggle-2016]). -/
-def linearExtensions (E : Finset (ERC n)) : Finset (Ranking n) :=
+def linearExtensions (E : Finset (ERC n)) : Finset (Ranking (Fin n) n) :=
   Finset.univ.filter fun r => ∀ α ∈ E, ERC.SatisfiedBy r α
 
-@[simp] theorem mem_linearExtensions {E : Finset (ERC n)} {r : Ranking n} :
+@[simp] theorem mem_linearExtensions {E : Finset (ERC n)} {r : Ranking (Fin n) n} :
     r ∈ linearExtensions E ↔ ∀ α ∈ E, ERC.SatisfiedBy r α := by
   simp [linearExtensions]
 
@@ -224,7 +224,7 @@ theorem simpleERC_self_isTrivial (i : Fin n) : (simpleERC i i).IsTrivial := fun 
 
 /-- A simple ERC `i ≫ j` (with `i ≠ j`) is satisfied by `r` iff `i` dominates
 `j` under `r`. -/
-theorem simpleERC_satisfiedBy_iff (hij : i ≠ j) (r : Ranking n) :
+theorem simpleERC_satisfiedBy_iff (hij : i ≠ j) (r : Ranking (Fin n) n) :
     (simpleERC i j).SatisfiedBy r ↔ r.Dominates i j := by
   rw [ERC.satisfiedBy_iff_dominance]
   constructor
@@ -238,7 +238,7 @@ theorem simpleERC_satisfiedBy_iff (hij : i ≠ j) (r : Ranking n) :
 /-- Side-condition-free form: `simpleERC i j` is satisfied by `r` iff `i` is
 ranked at least as high as `j` (`Ranking.toRel`). On the diagonal the ERC is
 trivial and the relation reflexive, so no `i ≠ j` guard is needed. -/
-theorem simpleERC_satisfiedBy_toRel_iff (i j : Fin n) (r : Ranking n) :
+theorem simpleERC_satisfiedBy_toRel_iff (i j : Fin n) (r : Ranking (Fin n) n) :
     (simpleERC i j).SatisfiedBy r ↔ r.toRel i j := by
   rcases eq_or_ne i j with rfl | hij
   · exact iff_of_true (ERC.trivial_satisfiedBy (simpleERC_self_isTrivial i) r) (le_refl _)
@@ -311,7 +311,7 @@ theorem lex_nonneg_ercOfProfiles_iff (w l : ViolationProfile n) :
 winner/loser pair iff the winner's profile, read in `r`'s priority order, is lex-≤
 the loser's ([prince-2002]). Precomposition with the ranking is absorbed by
 instantiating `lex_nonneg_ercOfProfiles_iff` at the ranked readings `r • w`, `r • l`. -/
-theorem satisfiedBy_ercOfProfiles_iff_le (r : Ranking n) (w l : ViolationProfile n) :
+theorem satisfiedBy_ercOfProfiles_iff_le (r : Ranking (Fin n) n) (w l : ViolationProfile n) :
     (ercOfProfiles w l).SatisfiedBy r ↔ r • w ≤ r • l :=
   lex_nonneg_ercOfProfiles_iff (r • w) (r • l)
 
@@ -323,7 +323,7 @@ def tableauERC {C : Type*} [DecidableEq C] (t : Tableau C n) (w l : C) : ERC n :
 /-- Tableau form of the bridge: the winner-loser ERC is satisfied by `r` iff `r`
 ranks the winner at-or-above the loser under the tableau's lex evaluation. -/
 theorem tableauERC_satisfiedBy_iff {C : Type*} [DecidableEq C]
-    (t : Tableau C n) (r : Ranking n) (w l : C) :
+    (t : Tableau C n) (r : Ranking (Fin n) n) (w l : C) :
     (tableauERC t w l).SatisfiedBy r ↔ r • t.profile w ≤ r • t.profile l :=
   satisfiedBy_ercOfProfiles_iff_le r (t.profile w) (t.profile l)
 
@@ -349,8 +349,8 @@ theorem mem_optimal_iff_forall_satisfiedBy {C : Type*} [DecidableEq C]
 satisfied by `r` — factorial typology and ERC consistency are two readouts of one
 symmetric-group action. -/
 theorem Tableau.ofPerm_mem_optimal_iff_satisfiedBy {C : Type*} [DecidableEq C] {n : ℕ}
-    (con : ConstraintSet C n) (r : Ranking n) (candidates : List C) (h : candidates ≠ [])
-    (w : C) :
+    (con : ConstraintSet C (Fin n)) (r : Ranking (Fin n) n) (candidates : List C)
+    (h : candidates ≠ []) (w : C) :
     w ∈ (Tableau.ofPerm con r candidates h).optimal ↔
       w ∈ candidates.toFinset ∧
         ∀ l ∈ candidates.toFinset,

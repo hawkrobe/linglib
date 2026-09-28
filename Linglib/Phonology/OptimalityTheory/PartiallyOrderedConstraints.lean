@@ -87,34 +87,34 @@ instance {α : Type*} : IsPartialOrder α (· = ·) where
 /-- A permutation σ is **consistent** with grammar `r` when `r` is contained
     in the total order σ induces (`Ranking.toRel`) — σ is a linear extension
     of `r`. Unfolds to `∀ a b, r a b → σ.symm a ≤ σ.symm b`. -/
-def IsConsistent (r : Fin n → Fin n → Prop) (σ : Ranking n) : Prop :=
+def IsConsistent (r : Fin n → Fin n → Prop) (σ : Ranking (Fin n) n) : Prop :=
   r ≤ σ.toRel
 
-instance (r : Fin n → Fin n → Prop) [DecidableRel r] (σ : Ranking n) :
+instance (r : Fin n → Fin n → Prop) [DecidableRel r] (σ : Ranking (Fin n) n) :
     Decidable (IsConsistent r σ) :=
   decidable_of_iff (∀ a b, r a b → σ.symm a ≤ σ.symm b) Iff.rfl
 
 /-- `consistentTotalOrders r` is the finite set of linear extensions of `r`. -/
 def consistentTotalOrders (r : Fin n → Fin n → Prop) [DecidableRel r] :
-    Finset (Ranking n) :=
+    Finset (Ranking (Fin n) n) :=
   Finset.univ.filter (IsConsistent r)
 
 @[simp]
 theorem mem_consistentTotalOrders {r : Fin n → Fin n → Prop} [DecidableRel r]
-    {σ : Ranking n} :
+    {σ : Ranking (Fin n) n} :
     σ ∈ consistentTotalOrders r ↔ IsConsistent r σ := by
   simp [consistentTotalOrders]
 
 /-- The ranking `g * σ` extends `r` iff `σ` extends the `g`-pullback of `r`, so consistency
     transports along constraint relabeling. -/
-theorem isConsistent_mul_iff {r : Fin n → Fin n → Prop} {g σ : Ranking n} :
+theorem isConsistent_mul_iff {r : Fin n → Fin n → Prop} {g σ : Ranking (Fin n) n} :
     IsConsistent r (g * σ) ↔ IsConsistent (fun a b => r (g a) (g b)) σ :=
   ⟨fun h a b hab => by simpa using h (g a) (g b) hab,
    fun h a b hab => by simpa using h (g⁻¹ a) (g⁻¹ b) (by simpa using hab)⟩
 
 /-- The linear extensions of a grammar are closed under its symmetries, since a relabeling that
     preserves `r` acts on the consistent rankings. -/
-theorem IsConsistent.mul {r : Fin n → Fin n → Prop} {g σ : Ranking n}
+theorem IsConsistent.mul {r : Fin n → Fin n → Prop} {g σ : Ranking (Fin n) n}
     (hg : ∀ a b, r (g a) (g b) ↔ r a b) (hσ : IsConsistent r σ) :
     IsConsistent r (g * σ) :=
   isConsistent_mul_iff.mpr fun a b hab => hσ a b ((hg a b).mp hab)
@@ -127,14 +127,14 @@ theorem consistentTotalOrders_discrete (n : ℕ) :
 
 /-- σ is consistent with the total order it induces — reflexivity of the
     relation lattice. -/
-theorem isConsistent_toRel (σ : Ranking n) : IsConsistent σ.toRel σ :=
+theorem isConsistent_toRel (σ : Ranking (Fin n) n) : IsConsistent σ.toRel σ :=
   le_refl σ.toRel
 
 /-- A ranking-induced order has its ranking as *unique* consistent linear
     extension, by the rigidity of `Ranking.toRel`
     (`Ranking.toRel_le_toRel_iff`). -/
 @[simp]
-theorem consistentTotalOrders_toRel (σ : Ranking n) :
+theorem consistentTotalOrders_toRel (σ : Ranking (Fin n) n) :
     consistentTotalOrders σ.toRel = {σ} := by
   ext τ
   rw [mem_consistentTotalOrders, Finset.mem_singleton]
@@ -149,10 +149,10 @@ theorem consistentTotalOrders_toRel (σ : Ranking n) :
     ranking (`Ranking.exists_toRel_eq`). -/
 theorem exists_isConsistent (r : Fin n → Fin n → Prop)
     [IsPartialOrder (Fin n) r] :
-    ∃ σ : Ranking n, IsConsistent r σ := by
+    ∃ σ : Ranking (Fin n) n, IsConsistent r σ := by
   obtain ⟨s, hs, hsub⟩ := extend_partialOrder r
   have := hs
-  obtain ⟨σ, rfl⟩ := Ranking.exists_toRel_eq s
+  obtain ⟨σ, rfl⟩ := Ranking.exists_toRel_eq (n := n) s
   exact ⟨σ, hsub⟩
 
 theorem consistentTotalOrders_nonempty (r : Fin n → Fin n → Prop)
@@ -187,7 +187,7 @@ def stratified (stratumOf : Fin n → Fin s) (inner : Fin n → Fin n → Prop) 
   fun a b => Prod.Lex (· < ·) inner (stratumOf a, a) (stratumOf b, b)
 
 variable {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop} {k : Fin s}
-  {d d' : Fin n} {σ : Ranking n}
+  {d d' : Fin n} {σ : Ranking (Fin n) n}
 
 /-- Dominance in a stratified grammar holds iff a's stratum strictly precedes
     b's, or they share a stratum and the inner order relates them. -/
@@ -276,7 +276,7 @@ theorem mem_toERCs {r : Fin n → Fin n → Prop} [DecidableRel r] {α : ERC n} 
 /-- A ranking satisfies `toERCs r` exactly when it is a linear extension of
 `r`: per pair, satisfaction of `simpleERC a b` *is* `σ.toRel a b`. -/
 theorem satisfiedBy_toERCs {r : Fin n → Fin n → Prop} [DecidableRel r]
-    {σ : Ranking n} :
+    {σ : Ranking (Fin n) n} :
     (∀ α ∈ toERCs r, ERC.SatisfiedBy σ α) ↔ IsConsistent r σ := by
   constructor
   · intro h a b hrel
@@ -372,7 +372,7 @@ def toGrammar (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r]
 
 variable {Input Output : Type*}
 variable {cands : Input → Finset Output} {vp : Input → Output → Fin n → ℕ}
-  {r : Fin n → Fin n → Prop} {σ : Ranking n} {i : Input} {o o' chosen other : Output}
+  {r : Fin n → Fin n → Prop} {σ : Ranking (Fin n) n} {i : Input} {o o' chosen other : Output}
 
 /-- The constraints **active** on the candidate pair `o, o'` at input `i` are those assigning the
     two candidates different violation counts ([anttila-1997]'s decisive constraints). Inactive
@@ -401,7 +401,7 @@ theorem favoring_subset_active : favoring vp i o o' ⊆ active vp i o o' :=
 /-- σ **picks** output o for input i if o is the unique strict OT winner —
     every other in-set candidate is lex-strictly worse than o under σ. -/
 def PicksAt (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
-    (σ : Ranking n) (i : Input) (o : Output) : Prop :=
+    (σ : Ranking (Fin n) n) (i : Input) (o : Output) : Prop :=
   o ∈ cands i ∧
   ∀ o' ∈ cands i, o' ≠ o →
     toLex (fun k : Fin n => vp i o (σ k)) <
@@ -418,7 +418,7 @@ theorem picksAt_unique (h : PicksAt cands vp σ i o) (h' : PicksAt cands vp σ i
     output — the candidate with the lex-minimal permuted profile wins
     strictly. -/
 theorem exists_picksAt (h_ne : (cands i).Nonempty)
-    (h_inj : Set.InjOn (vp i) (cands i)) (σ : Ranking n) :
+    (h_inj : Set.InjOn (vp i) (cands i)) (σ : Ranking (Fin n) n) :
     ∃ o ∈ cands i, PicksAt cands vp σ i o := by
   obtain ⟨m, hm, hmin⟩ := Finset.exists_min_image (cands i)
     (fun o => toLex (fun j : Fin n => vp i o (σ j))) h_ne
@@ -431,7 +431,7 @@ theorem exists_picksAt (h_ne : (cands i).Nonempty)
 variable [DecidableEq Output]
 
 instance (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
-    (σ : Ranking n) (i : Input) (o : Output) :
+    (σ : Ranking (Fin n) n) (i : Input) (o : Output) :
     Decidable (PicksAt cands vp σ i o) := by
   unfold PicksAt; infer_instance
 
@@ -462,8 +462,8 @@ theorem winProb_toRel :
 theorem winProb_discrete :
     winProb cands vp (· = ·) i o =
     ((Finset.univ.filter
-      (fun σ : Ranking n => PicksAt cands vp σ i o)).card : ℚ) /
-    (Finset.univ : Finset (Ranking n)).card := by
+      (fun σ : Ranking (Fin n) n => PicksAt cands vp σ i o)).card : ℚ) /
+    (Finset.univ : Finset (Ranking (Fin n) n)).card := by
   simp only [winProb, consistentTotalOrders_discrete]
 
 /-! #### `winProb` is a probability distribution -/
@@ -568,7 +568,7 @@ competitions without enumerating rankings. -/
 omit [DecidableEq Output] in
 /-- The output `o` lex-dominates `o'` under `σ` exactly when the σ-earliest active constraint
 favors `o`. -/
-theorem lex_lt_iff_exists_favoring_isMinOn (σ : Ranking n) :
+theorem lex_lt_iff_exists_favoring_isMinOn (σ : Ranking (Fin n) n) :
     toLex (fun k : Fin n => vp i o (σ k)) < toLex (fun k : Fin n => vp i o' (σ k)) ↔
     ∃ x ∈ favoring vp i o o' ∩ active vp i o o', IsMinOn σ.symm (active vp i o o') x := by
   show (∃ k : Fin n, (∀ j, j < k → vp i o (σ j) = vp i o' (σ j)) ∧
@@ -590,7 +590,7 @@ theorem lex_lt_iff_exists_favoring_isMinOn (σ : Ranking n) :
 /-- For binary candidate sets, `PicksAt σ i chosen` holds exactly when the σ-earliest active
 constraint favors `chosen`. -/
 theorem picksAt_binary_iff_exists_favoring_isMinOn
-    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) (σ : Ranking n) :
+    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) (σ : Ranking (Fin n) n) :
     PicksAt cands vp σ i chosen ↔
     ∃ x ∈ favoring vp i chosen other ∩ active vp i chosen other,
       IsMinOn σ.symm (active vp i chosen other) x := by
@@ -615,7 +615,7 @@ theorem picksAt_binary_iff_exists_favoring_isMinOn
 σ-earliest active constraint, and every active constraint comes first equally often. -/
 theorem card_filter_picksAt_discrete_binary
     (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) :
-    (Finset.univ.filter (fun σ : Ranking n => PicksAt cands vp σ i chosen)).card *
+    (Finset.univ.filter (fun σ : Ranking (Fin n) n => PicksAt cands vp σ i chosen)).card *
         (active vp i chosen other).card =
       n.factorial * (favoring vp i chosen other ∩ active vp i chosen other).card := by
   classical

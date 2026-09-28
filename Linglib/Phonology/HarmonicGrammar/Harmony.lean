@@ -17,8 +17,8 @@ A Harmonic Grammar ([smolensky-legendre-2006]) weights each constraint of a cons
 number, real in the usual statement, and the harmony of a candidate is the negated weighted sum of
 its violations, `H(c) = -Σⱼ wⱼ · Cⱼ(c)`, a linear functional of the candidate's violation vector.
 The weight vector `w : Fin n → R` is the grammar's parameter, the Harmonic-Grammar twin of an OT
-`Ranking n`, and both act on one `ConstraintSet`. The weight ring is a parameter so that a grammar
-with rational or integer weights keeps its scores exactly computable.
+`Ranking (Fin n) n`, and both act on one `ConstraintSet`. The weight ring is a parameter so that a
+grammar with rational or integer weights keeps its scores exactly computable.
 
 Harmony is additive over concatenated and jointly evaluated constraint sets, so constraint
 summation is innocuous for it, and with non-negative weights a candidate that incurs no more
@@ -70,20 +70,21 @@ def weightedViolations [Semiring R] (w : Fin n → R) (v : Fin n → ℕ) : R :=
 /-- The **harmony** `H(c) = -Σⱼ wⱼ · Cⱼ(c)` of a candidate ([smolensky-legendre-2006]) is the
 negated weighted sum of its violations under the weight vector `w`, and higher harmony is more
 grammatical. -/
-def harmonyScore [Ring R] (con : ConstraintSet C n) (w : Fin n → R) (c : C) : R :=
+def harmonyScore [Ring R] (con : ConstraintSet C (Fin n)) (w : Fin n → R) (c : C) : R :=
   -weightedViolations w (fun j ↦ con j c)
 
 /-- `harmonyScore` is a negated `Finset.sum`. -/
-theorem harmonyScore_eq_neg_sum [Ring R] (con : ConstraintSet C n) (w : Fin n → R) (c : C) :
+theorem harmonyScore_eq_neg_sum [Ring R] (con : ConstraintSet C (Fin n)) (w : Fin n → R) (c : C) :
     harmonyScore con w c = -∑ j, w j * (con j c : R) := rfl
 
 /-- The candidate `a` harmonically dominates `b` when `H(a) > H(b)`. The relation is the
 pullback of `>` along `harmonyScore con w` (`Order.Preimage`), so it inherits `IsStrictOrder`
 from the weight ring. -/
-def harmonyDominates [Ring R] [LT R] (con : ConstraintSet C n) (w : Fin n → R) : C → C → Prop :=
+def harmonyDominates [Ring R] [LT R] (con : ConstraintSet C (Fin n))
+    (w : Fin n → R) : C → C → Prop :=
   harmonyScore con w ⁻¹'o (· > ·)
 
-@[simp] theorem harmonyDominates_iff [Ring R] [LT R] (con : ConstraintSet C n) (w : Fin n → R)
+@[simp] theorem harmonyDominates_iff [Ring R] [LT R] (con : ConstraintSet C (Fin n)) (w : Fin n → R)
     (a b : C) : harmonyDominates con w a b ↔ harmonyScore con w b < harmonyScore con w a :=
   Iff.rfl
 
@@ -98,11 +99,11 @@ def harmonyDominates [Ring R] [LT R] (con : ConstraintSet C n) (w : Fin n → R)
       w₀ * (v₀ : ℝ) + weightedViolations w v := by
   simp [weightedViolations, Fin.sum_univ_succ]
 
-@[simp] theorem harmonyScore_nil (con : ConstraintSet C 0) (w : Fin 0 → ℝ) (x : C) :
+@[simp] theorem harmonyScore_nil (con : ConstraintSet C (Fin 0)) (w : Fin 0 → ℝ) (x : C) :
     harmonyScore con w x = 0 := by
   rw [harmonyScore, weightedViolations_nil, neg_zero]
 
-@[simp] theorem harmonyScore_cons (c₀ : Constraint C) (con : ConstraintSet C n)
+@[simp] theorem harmonyScore_cons (c₀ : Constraint C) (con : ConstraintSet C (Fin n))
     (w₀ : ℝ) (w : Fin n → ℝ) (x : C) :
     harmonyScore (Matrix.vecCons c₀ con) (Matrix.vecCons w₀ w) x =
       -(w₀ * (c₀ x : ℝ)) + harmonyScore con w x := by
@@ -110,19 +111,19 @@ def harmonyDominates [Ring R] [LT R] (con : ConstraintSet C n) (w : Fin n → R)
     funext (Fin.cases rfl fun _ => rfl)
   rw [harmonyScore, h, weightedViolations_cons, neg_add, harmonyScore]
 
-@[simp] theorem harmonyScore_zero_weight (con : ConstraintSet C n) (x : C) :
+@[simp] theorem harmonyScore_zero_weight (con : ConstraintSet C (Fin n)) (x : C) :
     harmonyScore con (0 : Fin n → ℝ) x = 0 := by
   simp [harmonyScore, weightedViolations]
 
 /-- Harmony depends only on the violation profile. -/
-theorem harmonyScore_congr {con : ConstraintSet C n} {w : Fin n → ℝ} {a b : C}
+theorem harmonyScore_congr {con : ConstraintSet C (Fin n)} {w : Fin n → ℝ} {a b : C}
     (h : ∀ j, con j a = con j b) : harmonyScore con w a = harmonyScore con w b := by
   simp [harmonyScore, weightedViolations, h]
 
 /-! ### Concatenated and jointly evaluated constraint sets -/
 
 /-- Harmony is additive over a concatenated constraint set and weight vector. -/
-theorem harmonyScore_append {m : ℕ} (c₁ : ConstraintSet C n) (c₂ : ConstraintSet C m)
+theorem harmonyScore_append {m : ℕ} (c₁ : ConstraintSet C (Fin n)) (c₂ : ConstraintSet C (Fin m))
     (w₁ : Fin n → ℝ) (w₂ : Fin m → ℝ) (x : C) :
     harmonyScore (Fin.append c₁ c₂) (Fin.append w₁ w₂) x =
       harmonyScore c₁ w₁ x + harmonyScore c₂ w₂ x := by
@@ -131,7 +132,7 @@ theorem harmonyScore_append {m : ℕ} (c₁ : ConstraintSet C n) (c₂ : Constra
 /-- The harmony of a jointly evaluated constraint set is the sum of the mappings'
 harmonies — constraint summation is innocuous for harmony ([magri-storme-2021]). -/
 theorem harmonyScore_joint {ι I O : Type*} [Fintype ι] (inputs : ι → I)
-    (con : ConstraintSet (I × O) n) (w : Fin n → ℝ) (f : ι → O) :
+    (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ) (f : ι → O) :
     harmonyScore (con.joint inputs) w f = ∑ i, harmonyScore con w (inputs i, f i) := by
   simp only [harmonyScore, weightedViolations, ConstraintSet.joint_apply, Constraint.joint_apply,
     Nat.cast_sum, Finset.mul_sum, Finset.sum_neg_distrib]
@@ -139,7 +140,7 @@ theorem harmonyScore_joint {ι I O : Type*} [Fintype ι] (inputs : ι → I)
 
 /-! ### Harmonic bounding (Pareto dominance) -/
 
-variable {con : ConstraintSet C n} {w : Fin n → ℝ} {a b : C}
+variable {con : ConstraintSet C (Fin n)} {w : Fin n → ℝ} {a b : C}
 
 /-- For non-negative weights, the weighted violation sum is monotone in the
 violation profile. -/

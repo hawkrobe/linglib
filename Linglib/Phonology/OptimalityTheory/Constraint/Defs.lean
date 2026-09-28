@@ -25,7 +25,7 @@ vanishes on the identity candidate, and a constraint over an opaque candidate ty
 * `Constraint.binary`: the indicator constraint of a decidable predicate.
 * `Constraint.comap`, `ConstraintSet.comap`: the pullback of a constraint or constraint set along
   a candidate map.
-* `ConstraintSet C n`: a grammar's constraint set, CON, an indexed family of `n` constraints.
+* `ConstraintSet C ι`: a grammar's constraint set, CON, a family of constraints indexed by `ι`.
 * `Constraint.joint`, `ConstraintSet.joint`: joint evaluation on output tuples by constraint
   summation.
 
@@ -98,42 +98,42 @@ def Constraint.comap (f : C → D) (con : Constraint D) : Constraint C := con �
 /-! ### Joint evaluation
 
 A **systemic** constraint — \*HOMOPHONY, a distinctiveness constraint — scores a
-whole system of outputs, so its candidate is an output tuple `f : ι → O` assigning
+whole system of outputs, so its candidate is an output tuple `f : κ → O` assigning
 each input `inputs i` its output. A per-mapping constraint on `I × O` is lifted to
 output tuples by **constraint summation** ([prince-2015], [magri-storme-2021]), which
 sums its violations on `f` over the mappings `(inputs i, f i)`. -/
 
-variable {ι I O : Type*} [Fintype ι]
+variable {κ I O : Type*} [Fintype κ]
 
 /-- The joint evaluation of a per-mapping constraint on an output tuple sums its violations
 over the mappings `(inputs i, f i)`. -/
-def Constraint.joint (inputs : ι → I) (con : Constraint (I × O)) : Constraint (ι → O) :=
+def Constraint.joint (inputs : κ → I) (con : Constraint (I × O)) : Constraint (κ → O) :=
   fun f => ∑ i, con (inputs i, f i)
 
-@[simp] theorem Constraint.joint_apply (inputs : ι → I) (con : Constraint (I × O)) (f : ι → O) :
+@[simp] theorem Constraint.joint_apply (inputs : κ → I) (con : Constraint (I × O)) (f : κ → O) :
     con.joint inputs f = ∑ i, con (inputs i, f i) := rfl
 
-/-- A grammar's **constraint set**, CON in [prince-smolensky-1993], is an indexed family of `n`
-constraints over candidates `C`. An OT grammar ranks the violation profiles it assigns
-(`buildViolationProfile`) under a `Ranking n`, a Harmonic Grammar weights the violations by a
-`Fin n → ℝ` vector, and MaxEnt takes the softmax of the resulting harmonies. -/
-abbrev ConstraintSet (C : Type*) (n : ℕ) := Fin n → Constraint C
+/-- A grammar's **constraint set**, CON in [prince-smolensky-1993], is a family of constraints over
+candidates `C` indexed by the constraint names `ι`. An OT grammar ranks it (a `Ranking ι n`), a
+Harmonic Grammar weights its violations by a vector `ι → ℝ`, and MaxEnt takes the softmax of the
+resulting harmonies. A constraint set written as a vector `![C₀, …]` is indexed by `Fin n`. -/
+abbrev ConstraintSet (C : Type*) (ι : Type*) := ι → Constraint C
 
 namespace ConstraintSet
 
-variable {n : ℕ}
+variable {ι : Type*}
 
 /-- The pullback of a constraint set along a candidate map pulls back each constraint. -/
-def comap (f : C → D) (con : ConstraintSet D n) : ConstraintSet C n := fun i ↦ (con i).comap f
+def comap (f : C → D) (con : ConstraintSet D ι) : ConstraintSet C ι := fun i ↦ (con i).comap f
 
-@[simp] theorem comap_apply (f : C → D) (con : ConstraintSet D n) (i : Fin n) (c : C) :
+@[simp] theorem comap_apply (f : C → D) (con : ConstraintSet D ι) (i : ι) (c : C) :
     con.comap f i c = con i (f c) := rfl
 
 /-- The joint evaluation of a constraint set evaluates each constraint jointly. -/
-def joint (inputs : ι → I) (con : ConstraintSet (I × O) n) : ConstraintSet (ι → O) n :=
+def joint (inputs : κ → I) (con : ConstraintSet (I × O) ι) : ConstraintSet (κ → O) ι :=
   fun j ↦ (con j).joint inputs
 
-@[simp] theorem joint_apply (inputs : ι → I) (con : ConstraintSet (I × O) n) (j : Fin n) :
+@[simp] theorem joint_apply (inputs : κ → I) (con : ConstraintSet (I × O) ι) (j : ι) :
     con.joint inputs j = (con j).joint inputs := rfl
 
 end ConstraintSet
