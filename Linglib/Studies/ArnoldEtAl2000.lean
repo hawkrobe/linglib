@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Linglib.Discourse.Givenness
 public import Linglib.Data.Examples.ArnoldEtAl2000
 public import Mathlib.Tactic.Linarith

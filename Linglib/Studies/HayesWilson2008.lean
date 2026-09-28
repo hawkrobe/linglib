@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Linglib.Core.Probability.SoftmaxTheory
-public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Linglib.Phonology.Segmental.Defs
 public import Linglib.Data.Examples.HayesWilson2008
 

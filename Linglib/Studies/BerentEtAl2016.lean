@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.Constraints.ForbiddenPairs
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
 public import Linglib.Phonology.OptimalityTheory.Correspondence
 public import Linglib.Phonology.OptimalityTheory.Tableau
 

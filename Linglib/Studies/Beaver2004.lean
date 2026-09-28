@@ -1,9 +1,8 @@
 module
 
 public import Linglib.Discourse.Centering.Basic
-public import Linglib.Discourse.Centering.Basic
 public import Linglib.Discourse.Centering.GrammaticalRole
-public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Data.Examples.Beaver2004
 import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`

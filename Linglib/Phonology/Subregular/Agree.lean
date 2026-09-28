@@ -6,19 +6,19 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Subregular.StrictlyPiecewise
-public import Linglib.Phonology.Constraints.ForbiddenPairs
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
 
 /-!
 # AGREE as a tier-based strictly 2-local language
 
 This file characterizes AGREE-style markedness as a tier-based strictly 2-local (TSL₂) language.
-AGREE requires tier-adjacent symbols to be equal, so it is the dual of the OCP, which requires
-them to differ. Both specialize the forbidden-pair constraint `Constraint.forbidPairs` of
-`Constraints/ForbiddenPairs.lean`, AGREE with `R := (· ≠ ·)` and the OCP with `R := (· = ·)`.
-Consonant harmony, vowel harmony, and tone spreading factor through
+AGREE requires tier-adjacent symbols to be equal, so it is the dual of the OCP, which requires them
+to differ. Both specialize the forbidden-pair constraint `Constraint.forbidPairs` of
+`OptimalityTheory/Constraint/ForbiddenPairs.lean`, AGREE with `R := (· ≠ ·)` and the OCP with
+`R := (· = ·)`. Consonant harmony, vowel harmony, and tone spreading factor through
 `TierStrictlyLocalGrammar.agree`, while dissimilation, anti-gemination, and Meeussen's rule factor
-through `TierStrictlyLocalGrammar.ocp`, and asymmetric patterns instantiate the generic
-constructor with their own relation.
+through `TierStrictlyLocalGrammar.ocp`, and asymmetric patterns instantiate the generic constructor
+with their own relation.
 
 Because equality is transitive, AGREE is also strictly piecewise, and the tier projection is
 dispensable. This lets transparent long-distance harmony be described either way, as McMullin

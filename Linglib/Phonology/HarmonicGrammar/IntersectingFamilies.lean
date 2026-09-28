@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Mathlib.LinearAlgebra.Pi
 

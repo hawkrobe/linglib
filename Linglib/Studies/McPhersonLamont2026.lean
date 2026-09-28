@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 public import Linglib.Phonology.OptimalityTheory.HarmonicSerialism

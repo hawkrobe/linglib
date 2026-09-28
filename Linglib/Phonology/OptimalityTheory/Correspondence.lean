@@ -11,7 +11,7 @@ public import Mathlib.Data.List.Chain
 public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Hom.Set
 public import Mathlib.Data.Fintype.Card
-public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 
 /-!
 # Correspondence Theory

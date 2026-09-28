@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Phonology.Prosody.Foot
-public import Linglib.Phonology.Constraints.Directional
+public import Linglib.Phonology.OptimalityTheory.Constraint.Directional
 public import Linglib.Phonology.OptimalityTheory.HarmonicSerialism
 
 /-!

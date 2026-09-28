@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.FinCases
-public import Linglib.Phonology.Constraints.Profile
+public import Linglib.Phonology.OptimalityTheory.ViolationProfile
 public import Linglib.Phonology.Hiatus
 
 /-!

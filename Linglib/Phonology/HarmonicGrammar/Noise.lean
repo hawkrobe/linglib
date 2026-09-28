@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Linglib.Core.Probability.Choice.RandomUtility
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
@@ -27,10 +27,10 @@ the probit choice rule) — the Gaussian sibling of softmax. They ground directl
 that pure-math fact, not in Thurstone's psychophysics: Noisy HG and Thurstone Case V
 are sibling applications of the same probit RUM, neither depending on the other.
 
-A grammar here is a constraint set `con : CON C n` and a weight vector `w : Fin n → ℝ`
-(from `Constraints.Defs`); there is no weighted-constraint record. Violation-difference
-quantities (`violationDiffSqSum`, `nhgCovariance`) read only `con`; harmony quantities
-read `con` and `w`.
+A grammar here is a constraint set `con : CON C n` and a weight vector `w : Fin n → ℝ` (from
+`OptimalityTheory/Constraint/Defs.lean`); there is no weighted-constraint record.
+Violation-difference quantities (`violationDiffSqSum`, `nhgCovariance`) read only `con`; harmony
+quantities read `con` and `w`.
 
 ## MaxEnt logit-harmony identity
 

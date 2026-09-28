@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Reference.Prominence
 public import Linglib.Fragments.Turkish.ObjectMarking
-public import Linglib.Phonology.Constraints.ForbiddenPairs
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
 public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!

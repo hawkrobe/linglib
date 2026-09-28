@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Constraints.ForbiddenPairs
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
 public import Linglib.Phonology.OCP
 public import Linglib.Phonology.Subregular.ISL
 
@@ -15,11 +15,11 @@ public import Linglib.Phonology.Subregular.ISL
 This file characterizes the Obligatory Contour Principle (OCP) of Goldsmith and McCarthy as a
 tier-based strictly 2-local (TSL₂) language. The OCP constraint `Constraint.ocp` is the identity
 instance of the forbidden-pair constraint `Constraint.forbidPairs` of
-`Constraints/ForbiddenPairs.lean`. Its forbidden 2-factor is `[some x, some x]`, and its TSL₂
-grammar is `TierStrictlyLocalGrammar.ofForbiddenPairs (· = ·) p`. Without a tier, the OCP is the
-linguistic instance of Thue's square-free words. Thue showed that infinite square-free words exist over
-three letters, while every binary string of length at least 4 contains a square, so a binary
-tonal alphabet cannot satisfy a strict OCP at length.
+`OptimalityTheory/Constraint/ForbiddenPairs.lean`. Its forbidden 2-factor is `[some x, some x]`, and
+its TSL₂ grammar is `TierStrictlyLocalGrammar.ofForbiddenPairs (· = ·) p`. Without a tier, the OCP
+is the linguistic instance of Thue's square-free words. Thue showed that infinite square-free words
+exist over three letters, while every binary string of length at least 4 contains a square, so a
+binary tonal alphabet cannot satisfy a strict OCP at length.
 
 The satisfaction predicate of the TSL₂ language is exactly `OCP.IsClean`, which the fusion
 repair `OCP.collapse` also lands in, and the repair is itself a 2-input strictly local map
