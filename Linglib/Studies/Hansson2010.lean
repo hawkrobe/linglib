@@ -67,16 +67,16 @@ def ur (e : LinguisticExample) : List Sibilant := tierOf ((e.feature? "underlyin
 def sr (e : LinguisticExample) : List Sibilant := tierOf e.primaryText
 
 /-- The sibilants of a word, in order. -/
-abbrev sibilants (w : List Sibilant) : List Sibilant := tierProject Sibilant.onTier w
+abbrev sibilants (w : List Sibilant) : List Sibilant := w.filter (Sibilant.onTier ·)
 
 theorem mem_sibilants_onTier {w : List Sibilant} {s : Sibilant} (h : s ∈ sibilants w) :
     s.onTier := by
-  rw [sibilants, tierProject_eq_filter, List.mem_filter] at h
+  rw [sibilants, List.mem_filter] at h
   exact of_decide_eq_true h.2
 
 theorem mem_sibilants {w : List Sibilant} {s : Sibilant} (hs : s ∈ w) (h : s.onTier) :
     s ∈ sibilants w := by
-  rw [sibilants, tierProject_eq_filter, List.mem_filter]
+  rw [sibilants, List.mem_filter]
   exact ⟨hs, decide_eq_true h⟩
 
 /-! ### The surface language -/
@@ -96,7 +96,7 @@ theorem isBTSL : Language.IsBTSL 2 navajoSibilantHarmony.language :=
 theorem mem_language_iff (w : List Sibilant) :
     w ∈ navajoSibilantHarmony.language ↔ (sibilants w).IsChain (· = ·) := by
   rw [navajoSibilantHarmony, TierStrictlyLocalGrammar.agree,
-    mem_ofForbiddenPairs_language_iff_filter_isChain, sibilants, tierProject_eq_filter]
+    mem_ofForbiddenPairs_language_iff_filter_isChain, sibilants]
   simp only [ne_eq, not_not]
 
 /-! ### Anticipatory harmony, section 1.1 -/
@@ -134,7 +134,7 @@ theorem onTier_harmonize {t : Option Sibilant} (ht : ∀ s ∈ t, s.onTier) (s :
 
 theorem sibilants_map_harmonize {t : Option Sibilant} (ht : ∀ s ∈ t, s.onTier)
     (w : List Sibilant) : sibilants (w.map (harmonize t)) = (sibilants w).map (harmonize t) := by
-  simp only [sibilants, tierProject_eq_filter, List.filter_map]
+  simp only [sibilants, List.filter_map]
   congr 1
   exact List.filter_congr λ s _ => by simp [onTier_harmonize ht]
 
@@ -202,7 +202,7 @@ theorem anticipatory_cons_eq {a b : Sibilant} {w : List Sibilant} (ha : a.onTier
     anticipatory (a :: w) = anticipatory (b :: w) := by
   have htr : ∀ c : Sibilant, c.onTier → trigger (c :: w) = some t := λ c hc => by
     have hc' : sibilants (c :: w) = c :: sibilants w := by
-      simp [sibilants, tierProject_eq_filter, hc]
+      simp [sibilants, hc]
     rw [trigger, hc', List.getLast?_cons, ← trigger, ht]
     rfl
   simp only [anticipatory, List.map_cons, htr a ha, htr b hb, harmonize_some_of_onTier ha,
@@ -262,7 +262,7 @@ theorem pattern_onTier_iff (s : Sibilant) : navajo.pattern.OnTier s ↔ s.onTier
   cases s <;> simp [navajo, Pattern.OnTier]
 
 theorem pattern_tier (w : List Sibilant) : navajo.pattern.tier w = sibilants w := by
-  rw [Pattern.tier, sibilants, tierProject_eq_filter]
+  rw [Pattern.tier, sibilants]
   exact List.filter_congr fun s _ => by simp [pattern_onTier_iff]
 
 /-- Every sibilant is a participating target. -/
@@ -297,7 +297,7 @@ theorem anticipatory_eq_apply (w : List Sibilant) :
   show anticipatory w = (navajo.searchCopy.scan w.reverse).reverse
   rw [scan_eq, List.map_reverse, List.reverse_reverse, anticipatory]
   congr 1
-  simp [first, trigger, sibilants, tierProject_eq_filter, List.filter_reverse,
+  simp [first, trigger, sibilants, List.filter_reverse,
     List.head?_reverse]
 
 end Hansson2010

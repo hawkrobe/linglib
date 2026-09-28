@@ -34,7 +34,8 @@ keystone (`Monoid.Pseudovariety.langs_*`) rather than hand-written syntactic-mon
 
 * `Language.IsStarFree.compl` / `.inter` / `.union`: boolean closure.
 * `Language.IsStarFree.of_recognizes`: recognized by a finite aperiodic monoid ⟹ star-free.
-* `Language.IsStarFree.comap`: closure under inverse homomorphism.
+* `Language.IsStarFree.comap`: closure under inverse homomorphism, and
+  `Language.IsStarFree.preimage_filter` its erasing instance.
 -/
 
 @[expose] public section
@@ -90,7 +91,7 @@ theorem IsStarFree.of_recognizes {M : Type*} [Monoid M] [Finite M]
     hker.of_surjective hsurj⟩
 
 /-- **Star-free languages are closed under inverse homomorphism.** The engine for transferring a
-star-free upper bound across a string-rewriting projection (e.g. tier erasure: `TSL ⊆ SF`). -/
+star-free upper bound across a string-rewriting projection. -/
 theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)
     (φ : FreeMonoid α →* FreeMonoid β) :
     Language.IsStarFree {w : List α | φ (FreeMonoid.ofList w) ∈ L} := by
@@ -99,6 +100,22 @@ theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)
     {m | ∃ u : FreeMonoid β, L.toSyntacticMonoid u = m ∧ u ∈ L} fun w => ?_
   refine ⟨fun hw => ⟨φ (FreeMonoid.ofList w), rfl, hw⟩, fun ⟨u, hu, hmem⟩ => ?_⟩
   exact (SyntacticEquiv.mem_iff ((toSyntacticMonoid_eq_iff (L := L)).mp hu)).mp hmem
+
+/-- **Star-free languages are closed under preimage by erasure.** `List.filter p` is the
+free-monoid homomorphism fixing each symbol satisfying `p` and sending the rest to `1`, so this
+is the erasing instance of `IsStarFree.comap`. -/
+theorem IsStarFree.preimage_filter (h : L.IsStarFree) (p : α → Bool) :
+    IsStarFree {w | w.filter p ∈ L} := by
+  have e (w : List α) : (FreeMonoid.lift fun a ↦ if p a then FreeMonoid.of a else 1)
+      (FreeMonoid.ofList w) = FreeMonoid.ofList (w.filter p) := by
+    induction w with
+    | nil => rfl
+    | cons a w ih =>
+      rw [FreeMonoid.ofList_cons, map_mul, FreeMonoid.lift_eval_of, ih, List.filter_cons]
+      split <;> rfl
+  have := h.comap (FreeMonoid.lift fun a ↦ if p a then FreeMonoid.of a else 1)
+  simp only [e] at this
+  exact this
 
 /-- **The full language is star-free** — recognized by the trivial monoid. -/
 theorem isStarFree_univ : IsStarFree (Set.univ : Language α) :=

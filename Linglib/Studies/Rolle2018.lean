@@ -3,7 +3,6 @@ module
 public import Linglib.Phonology.Tone.Grammatical
 public import Linglib.Phonology.OptimalityTheory.Correspondence
 public import Linglib.Phonology.OptimalityTheory.Cophonology
-public import Linglib.Phonology.Subregular.TierProjection
 
 /-!
 # Rolle (2018): Grammatical tone: typology and theory
@@ -159,13 +158,12 @@ theorem Row.dominant_iff (r : Row) : r.DominantAttested ↔ ScopesOver r.trigger
 
 variable {S : Type}
 
-/-- The tonal tier, the projection along which matrix and basemap outputs are compared: the
-total tier projection of the tone of each tone-bearing unit. -/
-def tonalTier (tbus : List (TBU S)) : List TRN :=
-  TierProjection.apply (TierProjection.total TBU.tone) tbus
+/-- The tonal tier, the tone of each tone-bearing unit, along which matrix and basemap outputs are
+compared. -/
+def tonalTier (tbus : List (TBU S)) : List TRN := tbus.map TBU.tone
 
 @[simp] theorem tonalTier_eq_map (tbus : List (TBU S)) : tonalTier tbus = tbus.map TBU.tone :=
-  TierProjection.apply_total _ _
+  rfl
 
 /-- Matrix–basemap correspondence on the tonal tier: the identity violations between two
 tiers, the substrate's output–output identity restricted to tone. -/
