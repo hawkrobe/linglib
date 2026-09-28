@@ -38,14 +38,14 @@ On the dual-route door of Section 4.2 (`BarAsherSiegal2026.model`) the file chec
 
 ## Implementation notes
 
-Situations are `Valuation`s over `Bool`. The three-valued value of an equation is the value on
-which every completion of its parents' values agrees (`Determines`), which is Table 2's value for
-the door's equations. The situations over the same variables as `s` are its reassignments
-(`reassign`), so necessity quantifies over `V → Bool`. The paper times the initiating fact
-against the interval just before reference time; here a single pre-reference situation `s₀`
-stands in for that interval. The paper prints the sufficient sets (39b) and (39c) without the
-effect fact ⟨O,0⟩, which Definition (30b) puts in every sufficient set; `sNotElec` and `sNotCirc`
-include it.
+Situations are partial assignments over `Bool`. The three-valued value of an equation is the value
+on which every completion of its parents' values agrees in every context (`Determines`), which is
+Table 2's value for the door's equations. The situations over the same variables as `s` are its
+reassignments (`reassign`), so necessity quantifies over `V → Bool`. The paper times the initiating
+fact against the interval just before reference time; here a single pre-reference situation `s₀`
+stands in for that interval. The paper prints the sufficient sets (39b) and (39c) without the effect
+fact ⟨O,0⟩, which Definition (30b) puts in every sufficient set; `sNotElec` and `sNotCirc` include
+it.
 
 ## TODO
 
@@ -64,42 +64,45 @@ open, as it is in the paper.
 
 namespace BarAsherSiegalNadathur2026
 
-open Causation
+open CausalModel
 
 /-! ### Situations and causal consistency -/
 
 /-- A situation (28b): each variable is 1, 0, or undetermined. -/
-abbrev Situation (V : Type*) := Valuation (fun _ : V => Bool)
+abbrev Situation (V : Type*) := V → Flat Bool
 
 section Model
 
-variable {V : Type*} (M : BoolSEM V)
+variable {U V : Type*} (M : CausalModel U V fun _ ↦ Bool)
 
-/-- The equation for `v` gives `b` under `s`: every completion of the values `s` assigns to
-`v`'s parents yields `b`. -/
+/-- The equation for `v` gives `b` under `s` when, in every context, every completion of the
+values `s` assigns to `v`'s parents yields `b`. -/
 def Determines (s : Situation V) (v : V) (b : Bool) : Prop :=
-  ∀ σ : M.graph.parents v → Bool, (∀ u c, s u.val = some c → σ u = c) →
-    M.mech v σ = b
+  ∀ u (y : V → Bool), (∀ w, M.graph.Adj w v → ∀ c : Bool, s w = ↑c → y w = c) →
+    M.eqn v u y = b
 
 /-- Causal consistency (29): every settled dependent variable carries the value its equation
 gives. -/
 def Consistent (s : Situation V) : Prop :=
-  ∀ v, M.graph.parents v ≠ ∅ → ∀ b, s v = some b → Determines M s v b
+  ∀ v, (∃ w, M.graph.Adj w v) → ∀ b : Bool, s v = ↑b → Determines M s v b
 
 /-- The situation over the same variables as `s` that assigns them the values of `b`. -/
-def reassign (s : Situation V) (b : V → Bool) : Situation V := fun v ↦ (s v).map fun _ ↦ b v
+def reassign [DecidableEq V] (s : Situation V) (b : V → Bool) : Situation V :=
+  fun v ↦ if s v = ⊥ then ⊥ else ↑(b v)
 
 /-- Causal necessity (30a): the fact `s` settles at `x` is necessary for the one it settles at
 `y` when `x` is a causal ancestor of `y` and every consistent situation over the same variables
 that changes `x` changes `y`. -/
-def Necessary (s : Situation V) (x y : V) : Prop :=
-  M.graph.IsStrictAncestor x y ∧
+def Necessary [DecidableEq V] (s : Situation V) (x y : V) : Prop :=
+  Relation.TransGen M.graph.Adj x y ∧
     ∀ b : V → Bool, Consistent M (reassign s b) → reassign s b x ≠ s x → reassign s b y ≠ s y
 
 /-- Causal sufficiency (30b): `s` is consistent, settles `y` at `b`, and each of its other facts
 is necessary for that one. The kernel of `s` is then a sufficient set for ⟨y, b⟩. -/
-def IsSufficient (s : Situation V) (y : V) (b : Bool) : Prop :=
-  Consistent M s ∧ s y = some b ∧ ∀ x, x ≠ y → (s x).isSome → Necessary M s x y
+def IsSufficient [DecidableEq V] (s : Situation V) (y : V) (b : Bool) : Prop :=
+  Consistent M s ∧ s y = ↑b ∧ ∀ x, x ≠ y → s x ≠ ⊥ → Necessary M s x y
+
+variable [DecidableEq V]
 
 /-! ### The progressive -/
 
@@ -110,7 +113,7 @@ def Felicitous (c : V) : Prop := ∃ S, IsSufficient M S c true
 /-- INIT (36a): some fact of a culmination procedure holds at reference time `s` and did not hold
 just before, in `s₀`. -/
 def Init (c : V) (s₀ s : Situation V) : Prop :=
-  ∃ S, IsSufficient M S c true ∧ ∃ v b, S v = some b ∧ s v = some b ∧ s₀ v ≠ some b
+  ∃ S, IsSufficient M S c true ∧ ∃ v, ∃ b : Bool, S v = ↑b ∧ s v = ↑b ∧ s₀ v ≠ ↑b
 
 /-- CUL (36b-i): some culmination procedure is completely realized. -/
 def Cul (c : V) (s : Situation V) : Prop := ∃ S, IsSufficient M S c true ∧ S ≤ s
@@ -123,17 +126,17 @@ def Prog (c : V) (s₀ s : Situation V) : Prop := Init M c s₀ s ∧ ¬ (Cul M 
 
 /-- A globally necessary condition (42): the fact ⟨v, b⟩ is globally necessary for `c` when its
 negation together with non-culmination is a sufficient set for non-culmination. -/
-def GloballyNecessary [DecidableEq V] (c v : V) (b : Bool) : Prop :=
-  IsSufficient M ((Valuation.empty.extend v (!b)).extend c false) c false
+def GloballyNecessary (c v : V) (b : Bool) : Prop :=
+  IsSufficient M (Function.update (Function.update ⊥ v ↑(!b)) c ↑false) c false
 
 /-- Definedness (45): the progressive is defined when every globally necessary condition is
 settled at reference time. -/
-def Defined [DecidableEq V] (c : V) (s : Situation V) : Prop :=
-  ∀ v b, GloballyNecessary M c v b → (s v).isSome
+def Defined (c : V) (s : Situation V) : Prop :=
+  ∀ v b, GloballyNecessary M c v b → s v ≠ ⊥
 
 section Decidable
 
-variable [Fintype V] [DecidableEq V]
+variable [Fintype V] [Fintype U] [DecidableRel M.graph.Adj]
 
 instance (s : Situation V) (v : V) (b : Bool) : Decidable (Determines M s v b) := by
   unfold Determines; infer_instance
@@ -156,14 +159,14 @@ variable {M}
 
 /-- A sufficient set contains its effect, so a situation that realizes one settles the effect. -/
 theorem IsSufficient.eq_of_le {S s : Situation V} {y : V} {b : Bool}
-    (h : IsSufficient M S y b) (hle : S ≤ s) : s y = some b :=
-  (Valuation.le_def (α := fun _ : V => Bool)).1 hle y b h.2.1
+    (h : IsSufficient M S y b) (hle : S ≤ s) : s y = ↑b :=
+  Flat.coe_le_iff.1 (h.2.1 ▸ hle y)
 
 /-- A situation that leaves the culmination condition unsettled neither culminates nor
 terminates: every sufficient set contains its effect. -/
-theorem not_cul_or_term {c : V} {s : Situation V} (h : s c = none) :
+theorem not_cul_or_term {c : V} {s : Situation V} (h : s c = ⊥) :
     ¬ (Cul M c s ∨ Term M c s) := by
-  rintro (⟨S, hS, hle⟩ | ⟨S, hS, hle⟩) <;> simp [hS.eq_of_le hle] at h
+  rintro (⟨S, hS, hle⟩ | ⟨S, hS, hle⟩) <;> exact Flat.coe_ne_bot ((hS.eq_of_le hle).symm.trans h)
 
 end Model
 
@@ -239,7 +242,7 @@ def realistic := valuation
 /-- In the realistic context the unturned handle and unpressed button complete a sufficient set
 for non-culmination (39c), so (40) comes out false, against intuition, as the paper observes. -/
 theorem not_prog_realistic : ¬ Prog model doorOpens beforeSwitch realistic :=
-  fun h ↦ h.2 (Or.inr ⟨sNotCirc, sNotCirc_sufficient, Valuation.le_def.2 (by decide)⟩)
+  fun h ↦ h.2 (Or.inr ⟨sNotCirc, sNotCirc_sufficient, by decide⟩)
 
 /-- The door's being unlocked is globally necessary for it to open (42): the lock alone makes a
 sufficient set for non-culmination. -/
@@ -248,8 +251,8 @@ theorem lock_globallyNecessary : GloballyNecessary model doorOpens lock false :=
 
 /-- (43a) *??Nur is opening the door*: while the lock's state is unknown, the progressive is not
 defined, whatever Nur has done (45). -/
-theorem not_defined_of_lock_unknown {s : Situation BarAsherSiegal2026.V} (h : s lock = none) :
+theorem not_defined_of_lock_unknown {s : Situation BarAsherSiegal2026.V} (h : s lock = ⊥) :
     ¬ Defined model doorOpens s :=
-  fun hd ↦ by simpa [h] using hd lock false lock_globallyNecessary
+  fun hd ↦ hd lock false lock_globallyNecessary h
 
 end BarAsherSiegalNadathur2026

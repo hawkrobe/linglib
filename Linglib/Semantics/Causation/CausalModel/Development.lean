@@ -300,4 +300,95 @@ end Decidable
 
 end Develop
 
+section DevelopKleene
+
+/-! ### Computing the Kleene development
+
+A variable the Kleene development forces takes the value its equation gives at any completion of
+what is known about its parents, in any context. `developKleene` computes it by testing the value
+at one completion against every completion and context, one value per variable. -/
+
+variable (M) [Fintype U] [Inhabited U] [∀ v, Inhabited (α v)] [∀ v, DecidableEq (α v)]
+  [∀ v, Fintype (α v)] [Fintype V] [DecidableEq V] [DecidableRel M.graph.Adj]
+
+/-- `M.developKleeneStep s p` is one round of the Kleene development as values. A variable `s`
+settles keeps its value; one `s` leaves open is settled when its equation gives the same value in
+every context on every assignment extending what `p` settles about its parents. -/
+def developKleeneStep (s p : ∀ v, Flat (α v)) : ∀ v, Flat (α v) := fun v ↦
+  if s v = ⊥ then
+    if ∀ u (y : ∀ w, α w), (∀ w, M.graph.Adj w v → p w ≤ ↑(y w)) →
+        M.eqn v u y = M.eqn v default fun w ↦ (p w).unbotD default then
+      ↑(M.eqn v default fun w ↦ (p w).unbotD default)
+    else ⊥
+  else s v
+
+variable {M}
+
+omit hM [∀ v, Nonempty (α v)] in
+theorem dependsOn_developKleeneStep (s : ∀ v, Flat (α v)) (v : V) :
+    DependsOn (M.developKleeneStep s · v) {w | M.graph.Adj w v} := fun p q h ↦ by
+  have heqn : ∀ u, M.eqn v u (fun w ↦ (p w).unbotD default) =
+      M.eqn v u (fun w ↦ (q w).unbotD default) := fun u ↦
+    M.dependsOn_eqn v u fun w hw ↦ by simp only [h w hw]
+  have hcond : ∀ y : ∀ w, α w, (∀ w, M.graph.Adj w v → p w ≤ ↑(y w)) ↔
+      ∀ w, M.graph.Adj w v → q w ≤ ↑(y w) :=
+    fun _ ↦ forall₂_congr fun w hw ↦ by rw [h w hw]
+  simp only [developKleeneStep, heqn, hcond]
+
+variable (M) in
+/-- The Kleene development of the observation `s`, as values. -/
+noncomputable def developKleene (s : ∀ v, Flat (α v)) : ∀ v, Flat (α v) :=
+  hM.fixedPoint (M.developKleeneStep s)
+
+omit [∀ v, Nonempty (α v)] in
+theorem developKleene_apply (s : ∀ v, Flat (α v)) (v : V) :
+    M.developKleene s v = M.developKleeneStep s (M.developKleene s) v :=
+  WellFounded.fixedPoint_apply (dependsOn_developKleeneStep s) v
+
+omit [∀ v, Nonempty (α v)] in
+/-- The Kleene development forces `v` to `x` exactly when its computation settles it so. -/
+theorem forced_iff_developKleene {s : ∀ v, Flat (α v)} {v : V} {x : α v} :
+    M.Forced s v x ↔ M.developKleene s v = ↑x := by
+  induction v using hM.induction with
+  | _ v ih =>
+    have hcons : ∀ y : ∀ w, α w, (∀ w, M.graph.Adj w v → ∀ z, M.Forced s w z → y w = z) ↔
+        ∀ w, M.graph.Adj w v → M.developKleene s w ≤ ↑(y w) := fun y ↦
+      forall₂_congr fun w hw ↦ by
+        simp only [ih w hw]
+        cases M.developKleene s w with
+        | bot => simp
+        | coe a => simp [Flat.coe_le_coe, eq_comm]
+    rw [forced_iff, developKleene_apply, developKleeneStep]
+    simp only [hcons]
+    set y₀ : ∀ w, α w := fun w ↦ (M.developKleene s w).unbotD default
+    have hy₀ : ∀ w, M.graph.Adj w v → M.developKleene s w ≤ ↑(y₀ w) := fun w _ ↦ by
+      simp only [y₀]; cases M.developKleene s w with
+      | bot => exact bot_le
+      | coe a => exact le_rfl
+    cases hs : s v with
+    | coe a => simp [Flat.coe_inj]
+    | bot =>
+      simp only [Flat.bot_ne_coe, false_or, true_and, ↓reduceIte]
+      constructor
+      · intro h
+        have hx : ∀ u, M.eqn v u y₀ = x := fun u ↦ h u y₀ hy₀
+        rw [ite_eq_left_of_eq_true (h := eq_true fun u y hy ↦ (h u y hy).trans (hx default).symm),
+          hx default]
+      · intro h u y hy
+        split_ifs at h with hc
+        · exact (hc u y hy).trans (Flat.coe_inj.1 h)
+        · exact absurd h Flat.bot_ne_coe
+
+omit [∀ v, Nonempty (α v)] in
+theorem forced_iff_iterate {s : ∀ v, Flat (α v)} {v : V} {x : α v} :
+    M.Forced s v x ↔ (M.developKleeneStep s)^[Fintype.card V] ⊥ v = ↑x := by
+  rw [forced_iff_developKleene, developKleene,
+    WellFounded.fixedPoint_eq_iterate_card (dependsOn_developKleeneStep s) ⊥]
+
+/-- In a finite model, being forced is decided by computing the Kleene development. -/
+instance (s : ∀ v, Flat (α v)) (v : V) (x : α v) : Decidable (M.Forced s v x) :=
+  decidable_of_iff _ forced_iff_iterate.symm
+
+end DevelopKleene
+
 end CausalModel

@@ -968,7 +968,6 @@ import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Attitudes.Preference
-import Linglib.Semantics.Causation.CCSelection
 import Linglib.Semantics.Causation.Graph.Basic
 import Linglib.Semantics.Causation.Graph.Defs
 import Linglib.Semantics.Causation.Implicative
