@@ -31,7 +31,8 @@ the actual world of every context in which the observation holds
 
 * `CausalModel.forced_iff`, `CausalModel.causallyEntails_iff`: the defining equations
 * `CausalModel.Forced.of_causallyEntails`: the strict development settles less
-* `CausalModel.Forced.solve_eq`, `CausalModel.CausallyEntails.solve_eq`: soundness
+* `CausalModel.Forced.solve_eq`, `CausalModel.CausallyEntails.solve_eq`: soundness, and
+  `CausalModel.Forced.solve_eq_of_intervene` for the observation imposed as an intervention
 * `CausalModel.causallyEntails_iff_develop`: the strict development computed one value per
   variable (`CausalModel.develop`), so that `decide` evaluates it in a finite model
 
@@ -158,6 +159,21 @@ theorem Forced.solve_eq (h : M.Forced s v x) {u : U} (hu : u ∈ M.contexts s) :
 theorem CausallyEntails.solve_eq (h : M.CausallyEntails s v x) {u : U}
     (hu : u ∈ M.contexts s) : M.solve ⊥ u v = x :=
   (Forced.of_causallyEntails h).solve_eq hu
+
+/-- The Kleene development is sound for the interventional reading too. What it forces from `s`
+holds in every context when `s` is imposed as an intervention. -/
+theorem Forced.solve_eq_of_intervene (h : M.Forced s v x) (u : U) : M.solve s u v = x := by
+  induction v using hM.induction with
+  | _ v ih =>
+    rcases forced_iff.1 h with hs | ⟨hs, h⟩
+    · exact solve_of_eq_coe hs u
+    · rw [solve_of_eq_bot hs u]
+      exact h u _ fun w hw _ hz ↦ ih w hw hz
+
+/-- The strict development is sound for the interventional reading. -/
+theorem CausallyEntails.solve_eq_of_intervene (h : M.CausallyEntails s v x) (u : U) :
+    M.solve s u v = x :=
+  (Forced.of_causallyEntails h).solve_eq_of_intervene u
 
 section Develop
 

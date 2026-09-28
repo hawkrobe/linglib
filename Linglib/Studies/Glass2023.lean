@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Causation.SEM.Counterfactual
 public import Linglib.Studies.NadathurLauer2020
 
 /-!
@@ -16,7 +15,7 @@ the effect (`GloballySufficient`, `LocallySufficient`, `GloballyNecessary`, `Loc
 (`LocallySufficient.of_globally`, `LocallyNecessary.of_globally`). *C causes E* asserted on a
 state of knowledge requires that the effect develop in every settlement of what is unknown
 (`Cause`), so knowing the cause alone it is assertable exactly when the cause is globally
-sufficient (`cause_extend_empty_iff`): a globally sufficient cause licenses *cause* under
+sufficient (`cause_update_bot_iff`): a globally sufficient cause licenses *cause* under
 uncertainty, a merely necessary one only under full information, which is the asymmetry of the
 paper's Table 2, worked out on its lightbulb (`Light`). Since the Anna Karenina Principle assigns
 desired outcomes conjunctive models, in which each factor is necessary but insufficient, and
@@ -27,9 +26,9 @@ states of knowledge when E is bad. Glass's *cause* asserts only local sufficienc
 
 ## Implementation notes
 
-* Backgrounds are the substrate's partial valuations developed by the eager deterministic
-  dynamics, which settles an unspecified exogenous variable by its mechanism's default; "no matter
-  what happens to any other variable" quantifies over all backgrounds leaving the effect open.
+* A background is a setting of some variables, imposed on a causal model in a context; "no
+  matter what happens to any other variable" quantifies over every context and every setting
+  leaving the effect open.
 * The lightbulb of the paper's figures, on exactly when both switches are, is the conjunctive
   model for the light being on and the disjunctive model for its being off.
 * The derivation of the Anna Karenina Principle from strategic model construction, the experiment
@@ -48,46 +47,40 @@ states of knowledge when E is bad. Glass's *cause* asserts only local sufficienc
 
 namespace Glass2023
 
-open Causation Causation.SEM Causation.Mechanism
+open CausalModel
 
 section General
 
-variable {V : Type*} (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
+variable {U V : Type*} (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
 
 /-! ### Local and global necessity and sufficiency -/
 
-/-- `C = c` is globally sufficient for `E = e`: in every background leaving `E` open in which
-`C = c`, the model develops `E = e`. -/
+/-- `C = c` is globally sufficient for `E = e` when, in every context and under every background
+leaving `E` open in which `C = c`, `E = e`. -/
 def GloballySufficient (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
-  ∀ bg : Valuation (λ _ : V => Bool),
-    bg.get E = none → bg.hasValue C c → (M.developDet bg).hasValue E e
+  ∀ u (I : V → Flat Bool), I E = ⊥ → I C = ↑c → M.solve I u E = e
 
-/-- `C = c` is locally sufficient for `E = e`: in some background leaving `E` open in which
-`C = c`, the model develops `E = e`. -/
+/-- `C = c` is locally sufficient for `E = e` when, in some context and under some background
+leaving `E` open in which `C = c`, `E = e`. -/
 def LocallySufficient (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
-  ∃ bg : Valuation (λ _ : V => Bool),
-    bg.get E = none ∧ bg.hasValue C c ∧ (M.developDet bg).hasValue E e
+  ∃ u, ∃ I : V → Flat Bool, I E = ⊥ ∧ I C = ↑c ∧ M.solve I u E = e
 
-/-- `C = c` is globally necessary for `E = e`: without it, in every background leaving `E` open,
-`E = e` fails. -/
+/-- `C = c` is globally necessary for `E = e` when, without it, `E = e` fails in every context and
+under every background leaving `E` open. -/
 def GloballyNecessary (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
-  ∀ bg : Valuation (λ _ : V => Bool),
-    bg.get E = none → bg.hasValue C (!c) → (M.developDet bg).hasValue E (!e)
+  ∀ u (I : V → Flat Bool), I E = ⊥ → I C = ↑(!c) → M.solve I u E = !e
 
-/-- `C = c` is locally necessary for `E = e`: without it, in some background leaving `E` open,
-`E = e` fails. -/
+/-- `C = c` is locally necessary for `E = e` when, without it, `E = e` fails in some context and
+under some background leaving `E` open. -/
 def LocallyNecessary (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
-  ∃ bg : Valuation (λ _ : V => Bool),
-    bg.get E = none ∧ bg.hasValue C (!c) ∧ (M.developDet bg).hasValue E (!e)
+  ∃ u, ∃ I : V → Flat Bool, I E = ⊥ ∧ I C = ↑(!c) ∧ M.solve I u E = !e
 
-/-- *C causes E* asserted on the state of knowledge `k`: the cause is known, and the effect
-develops in every background that settles the unknown variables, keeping what is known. -/
-def Cause (k : Valuation (λ _ : V => Bool)) (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
-  k.hasValue C c ∧
-    ∀ bg : Valuation (λ _ : V => Bool), (∀ v x, k.hasValue v x → bg.hasValue v x) →
-      bg.get E = none → (M.developDet bg).hasValue E e
+/-- *C causes E* is assertable on the state of knowledge `k` when the cause is known and the effect
+holds in every context under every background that keeps what is known and leaves it open. -/
+def Cause (k : V → Flat Bool) (C : V) (c : Bool) (E : V) (e : Bool) : Prop :=
+  k C = ↑c ∧ ∀ u (I : V → Flat Bool), k ≤ I → I E = ⊥ → M.solve I u E = e
 
-variable {M} {C E : V} {c e : Bool} {k : Valuation (λ _ : V => Bool)}
+variable {M} {C E : V} {c e : Bool} {k : V → Flat Bool}
 
 /-- Necessity is the mirror image of sufficiency: the absence of a necessary cause suffices for
 the absence of the effect. -/
@@ -98,41 +91,33 @@ theorem locallyNecessary_iff :
     LocallyNecessary M C c E e ↔ LocallySufficient M C (!c) E (!e) := Iff.rfl
 
 /-- A globally sufficient cause licenses *cause* whatever else is known or unknown. -/
-theorem Cause.of_globallySufficient (h : GloballySufficient M C c E e) (hk : k.hasValue C c) :
+theorem Cause.of_globallySufficient (h : GloballySufficient M C c E e) (hk : k C = ↑c) :
     Cause M k C c E e :=
-  ⟨hk, λ bg hkb hE => h bg hE (hkb C c hk)⟩
+  ⟨hk, fun u I hkI hE ↦ h u I hE (Flat.coe_le_iff.1 (hk ▸ hkI C))⟩
 
 variable [DecidableEq V]
 
 /-- Global sufficiency entails local sufficiency (22a). -/
-theorem LocallySufficient.of_globally (hCE : C ≠ E) (h : GloballySufficient M C c E e) :
-    LocallySufficient M C c E e :=
-  ⟨Valuation.empty.extend C c, by rw [Valuation.extend_get_ne hCE.symm]; rfl,
-    Valuation.extend_get_same _ _ _,
-    h _ (by rw [Valuation.extend_get_ne hCE.symm]; rfl) (Valuation.extend_get_same _ _ _)⟩
+theorem LocallySufficient.of_globally [Inhabited U] (hCE : C ≠ E)
+    (h : GloballySufficient M C c E e) : LocallySufficient M C c E e :=
+  ⟨default, Function.update ⊥ C ↑c, by rw [Function.update_of_ne hCE.symm]; rfl,
+    Function.update_self .., h _ _ (by rw [Function.update_of_ne hCE.symm]; rfl)
+      (Function.update_self ..)⟩
 
 /-- Global necessity entails local necessity (21a). -/
-theorem LocallyNecessary.of_globally (hCE : C ≠ E) (h : GloballyNecessary M C c E e) :
-    LocallyNecessary M C c E e :=
+theorem LocallyNecessary.of_globally [Inhabited U] (hCE : C ≠ E)
+    (h : GloballyNecessary M C c E e) : LocallyNecessary M C c E e :=
   LocallySufficient.of_globally hCE h
 
 /-- Knowing the cause alone, *C causes E* is assertable exactly when the cause is globally
 sufficient: the asymmetry of the paper's Table 2. -/
-theorem cause_extend_empty_iff (hCE : C ≠ E) :
-    Cause M (Valuation.empty.extend C c) C c E e ↔ GloballySufficient M C c E e := by
-  constructor
-  · rintro ⟨-, h⟩ bg hE hC
-    refine h bg (λ v x hv => ?_) hE
-    by_cases hvC : v = C
-    · subst hvC
-      unfold Valuation.hasValue at hv
-      rw [Valuation.extend_get_same, Option.some.injEq] at hv
-      subst hv
-      exact hC
-    · unfold Valuation.hasValue at hv
-      rw [Valuation.extend_get_ne hvC] at hv
-      exact absurd hv (by simp)
-  · exact λ h => Cause.of_globallySufficient h (Valuation.extend_get_same _ _ _)
+theorem cause_update_bot_iff :
+    Cause M (Function.update ⊥ C ↑c) C c E e ↔ GloballySufficient M C c E e := by
+  refine ⟨fun h u I hE hC ↦ h.2 u I (fun v ↦ ?_) hE,
+    fun h ↦ Cause.of_globallySufficient h (Function.update_self ..)⟩
+  by_cases hvC : v = C
+  · subst hvC; rw [Function.update_self, hC]
+  · rw [Function.update_of_ne hvC]; exact bot_le
 
 end General
 
@@ -150,87 +135,55 @@ inductive V
   | L
   deriving DecidableEq, Fintype, Repr
 
-def graph : CausalGraph V := ⟨λ | .S1 => ∅ | .S2 => ∅ | .L => {.S1, .S2}⟩
+/-- The light is on exactly when both switches are; the context settles the switches. -/
+def light : CausalModel (Bool × Bool) V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w = .S1 ∨ w = .S2) ∧ v = .L⟩
+  eqn | .S1 => fun u _ ↦ u.1 | .S2 => fun u _ ↦ u.2 | .L => fun _ x ↦ x .S1 && x .S2
 
-instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
+instance : DecidableRel light.graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable ((w = .S1 ∨ w = .S2) ∧ v = .L))
 
-/-- The light is on exactly when both switches are. -/
-def light : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .S1 => const (G := graph) false
-      | .S2 => const (G := graph) false
-      | .L => fun ρ ↦ ρ ⟨.S1, by simp [graph]⟩ && ρ ⟨.S2, by simp [graph]⟩ }
+instance : light.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
-instance : CausalGraph.IsDAG light.graph := inferInstanceAs (CausalGraph.IsDAG graph)
-
-/-- The light develops as the conjunction of the developed switches. -/
-theorem developDetVtx_L {bg : Valuation (λ _ : V => Bool)} (h : bg.get .L = none) :
-    developDetVtx light bg .L = (developDetVtx light bg .S1 && developDetVtx light bg .S2) := by
-  rw [developDetVtx_undet _ _ _ h]
-  rfl
+/-- The light's equation, under a background that leaves it open. -/
+theorem solve_L {I : V → Flat Bool} (h : I .L = ⊥) (u : Bool × Bool) :
+    light.solve I u .L = (light.solve I u .S1 && light.solve I u .S2) :=
+  solve_of_eq_bot h u
 
 /-- Switch 1 being off is globally sufficient for the light to be off. -/
-theorem s1_off_globallySufficient : GloballySufficient light .S1 false .L false := by
-  intro bg hL hS1
-  rw [developDet_hasValue_iff, developDetVtx_L hL, developDetVtx_extended _ _ _ _ hS1]
-  rfl
+theorem s1_off_globallySufficient : GloballySufficient light .S1 false .L false :=
+  fun u _ hL hS1 ↦ by rw [solve_L hL, solve_of_eq_coe hS1, Bool.false_and]
 
-/-- Switch 1 being on is globally necessary for the light to be on: the mirror image. -/
+/-- Switch 1 being on is globally necessary for the light to be on. -/
 theorem s1_on_globallyNecessary : GloballyNecessary light .S1 true .L true :=
   s1_off_globallySufficient
 
-/-- The background with switch 1 on and switch 2 off. -/
-def s1OnS2Off : Valuation (λ _ : V => Bool) :=
-  Valuation.empty.extend .S1 true |>.extend .S2 false
-
-/-- Switch 1 being on is not globally sufficient for the light to be on. -/
-theorem s1_on_not_globallySufficient : ¬ GloballySufficient light .S1 true .L true := by
-  intro h
-  have hL : s1OnS2Off.get .L = none := by
-    rw [s1OnS2Off, Valuation.extend_get_ne (show (V.L : V) ≠ .S2 by decide),
-      Valuation.extend_get_ne (show (V.L : V) ≠ .S1 by decide)]
-    rfl
-  have hS1 : s1OnS2Off.hasValue .S1 true := by
-    unfold Valuation.hasValue
-    rw [s1OnS2Off, Valuation.extend_get_ne (show (V.S1 : V) ≠ .S2 by decide),
-      Valuation.extend_get_same]
-  have hS2 : s1OnS2Off.get .S2 = some false := by
-    rw [s1OnS2Off, Valuation.extend_get_same]
-  have := h s1OnS2Off hL hS1
-  rw [developDet_hasValue_iff, developDetVtx_L hL, developDetVtx_extended _ _ _ _ hS2] at this
-  simp at this
+/-- Switch 1 being on is not globally sufficient for the light to be on, since with switch 2 off
+the light stays off. -/
+theorem s1_on_not_globallySufficient : ¬ GloballySufficient light .S1 true .L true :=
+  fun h ↦ absurd (h (true, false) (Function.update ⊥ .S1 ↑true) (by decide) (by decide))
+    (by decide)
 
 /-- Bottom right of Table 2: knowing only that switch 1 is off, it caused the light to be off. -/
 theorem s1_off_causes_off_uncertain :
-    Cause light (Valuation.empty.extend .S1 false) .S1 false .L false :=
-  (cause_extend_empty_iff (by decide)).2 s1_off_globallySufficient
+    Cause light (Function.update ⊥ .S1 ↑false) .S1 false .L false :=
+  cause_update_bot_iff.2 s1_off_globallySufficient
 
 /-- Bottom left of Table 2: knowing only that switch 1 is on, one cannot say it caused the light
 to be on. -/
 theorem not_s1_on_causes_on_uncertain :
-    ¬ Cause light (Valuation.empty.extend .S1 true) .S1 true .L true :=
-  λ h => s1_on_not_globallySufficient ((cause_extend_empty_iff (by decide)).1 h)
+    ¬ Cause light (Function.update ⊥ .S1 ↑true) .S1 true .L true :=
+  fun h ↦ s1_on_not_globallySufficient (cause_update_bot_iff.1 h)
 
 /-- The background with both switches on. -/
-def bothOn : Valuation (λ _ : V => Bool) :=
-  Valuation.empty.extend .S1 true |>.extend .S2 true
-
-theorem bothOn_S1 : bothOn.hasValue .S1 true := by
-  unfold Valuation.hasValue
-  rw [bothOn, Valuation.extend_get_ne (show (V.S1 : V) ≠ .S2 by decide),
-    Valuation.extend_get_same]
-
-theorem bothOn_S2 : bothOn.hasValue .S2 true := by
-  unfold Valuation.hasValue
-  rw [bothOn, Valuation.extend_get_same]
+def bothOn : V → Flat Bool := Function.update (Function.update ⊥ .S1 ↑true) .S2 ↑true
 
 /-- Top left of Table 2: with both switches known to be on, switch 1 caused the light to be on. -/
 theorem s1_on_causes_on_certain : Cause light bothOn .S1 true .L true := by
-  refine ⟨bothOn_S1, λ bg hle hL => ?_⟩
-  rw [developDet_hasValue_iff, developDetVtx_L hL,
-    developDetVtx_extended _ _ _ _ (hle _ _ bothOn_S1),
-    developDetVtx_extended _ _ _ _ (hle _ _ bothOn_S2)]
+  refine ⟨by decide, fun u I hk hL ↦ ?_⟩
+  have h1 : I .S1 = ↑true := Flat.coe_le_iff.1 ((by decide : bothOn .S1 = ↑true) ▸ hk .S1)
+  have h2 : I .S2 = ↑true := Flat.coe_le_iff.1 ((by decide : bothOn .S2 = ↑true) ▸ hk .S2)
+  rw [solve_L hL, solve_of_eq_coe h1, solve_of_eq_coe h2]
   rfl
 
 end Light
@@ -241,27 +194,20 @@ namespace Bus
 
 open NadathurLauer2020.Bus
 
-/-- Lia takes the bus when it rains or her bike is gone. -/
-theorem developDetVtx_Bs {bg : Valuation (λ _ : V => Bool)} (h : bg.get .Bs = none) :
-    developDetVtx busSEM bg .Bs =
-      (developDetVtx busSEM bg .Rn || developDetVtx busSEM bg .Bk) := by
-  rw [developDetVtx_undet _ _ _ h]
-  rfl
-
-theorem s_b_Rn : (s_b.extend .Tr true).hasValue .Rn true := by
-  unfold Valuation.hasValue
-  rw [Valuation.extend_get_ne (show (V.Rn : V) ≠ .Tr by decide), s_b, Valuation.extend_get_same]
-
 /-- In the bus scenario, with Ava's visit and the rain forecast known, Ava's training is a
-locally sufficient cause of Lia's taking the bus, so Glass's *cause* accepts "Ava's training
-caused Lia to take the bus", which [nadathur-lauer-2020]'s necessity-based *cause* rejects: the
-same verb, the same scenario, opposite verdicts. -/
+sufficient cause of Lia's taking the bus in every settlement of the rest, rain alone sufficing,
+so Glass's *cause* accepts "Ava's training caused Lia to take the bus", which
+[nadathur-lauer-2020]'s necessity-based *cause* rejects: the same verb, the same scenario,
+opposite verdicts. -/
 theorem glass_nl_diverge_on_bus :
-    Cause busSEM (s_b.extend .Tr true) .Tr true .Bs true ∧
-      ¬ Necessity.causeSem busSEM s_b .Tr true .Bs true := by
-  refine ⟨⟨Valuation.extend_get_same _ _ _, λ bg hle hBs => ?_⟩, cause_infelicitous_for_bus⟩
-  rw [developDet_hasValue_iff, developDetVtx_Bs hBs,
-    developDetVtx_extended _ _ _ _ (hle _ _ s_b_Rn)]
+    Cause busModel (Function.update s_b .Tr ↑true) .Tr true .Bs true ∧
+      ¬ NadathurLauer2020.denotation busModel .cause s_b .Tr true .Bs true := by
+  refine ⟨⟨by decide, fun u I hk hBs ↦ ?_⟩, cause_infelicitous_for_bus⟩
+  have hRn : I .Rn = ↑true :=
+    Flat.coe_le_iff.1 ((by decide : Function.update s_b .Tr ↑true .Rn = ↑true) ▸ hk .Rn)
+  rw [solve_of_eq_bot hBs]
+  show (busModel.solve I u .Rn || busModel.solve I u .Bk) = true
+  rw [solve_of_eq_coe hRn]
   rfl
 
 end Bus

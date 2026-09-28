@@ -1,9 +1,10 @@
 module
 
-public import Linglib.Semantics.Causation.Necessity
-public import Linglib.Semantics.Causation.Sufficiency
-public import Linglib.Semantics.Causation.Prevention
-public import Linglib.Semantics.Causation.Implicative
+public import Mathlib.Data.Fintype.Prod
+public import Linglib.Semantics.Causation.CausalModel.Dependence
+public import Linglib.Semantics.Causation.VerbClass
+public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Studies.Karttunen1971a
 public import Linglib.Fragments.English.Verbs.Inventory
 
@@ -11,39 +12,42 @@ public import Linglib.Fragments.English.Verbs.Inventory
 # Nadathur and Lauer (2020): Causal Necessity, Causal Sufficiency, and Causative Verbs
 
 This file formalizes the lexical entries, the three scenarios, and the constraint on volitional
-action of Nadathur and Lauer. Periphrastic *cause* asserts causal necessity and periphrastic
-*make* causal sufficiency (`denotation`), two notions that come apart over a structural-equation
-dynamics after Pearl: in the fire scenario the drought is necessary but not sufficient for the
-fire, so *cause* is felicitous and *make* is not until the missing precondition is fixed
+action of Nadathur and Lauer. Periphrastic *cause* asserts causal necessity and periphrastic *make*
+causal sufficiency (`denotation`), two notions that come apart over a structural-equation dynamics
+after Pearl: in the fire scenario the drought is necessary but not sufficient for the fire, so
+*cause* is felicitous and *make* is not until the missing precondition is fixed
 (`Fire.make_infelicitous_for_fire`, `Fire.make_felicitous_for_fire_with_known_line`); in the bus
 scenario the visit is sufficient but not necessary (`Bus.make_felicitous_for_bus`,
-`Bus.cause_infelicitous_for_bus`); and in the lighthouse scenario the temporal location
-constraint blocks *make* for the earlier of two necessary causes while *cause* survives for both
-(`Lighthouse.make_felicitous_for_storms`, `Lighthouse.make_infelicitous_for_earthquake`). *Let*
-and *force* are sufficiency causatives as well (`denotation_eq_makeSem`), and the constraint on
-volitional action separates *make* from *let*: a permission scenario satisfies bare sufficiency
-yet fails it (`Volitional.volitionalActionConstraint`), while command and persuasion satisfy it.
-The paper's observation against an entailment-based taxonomy, that necessity implications are
+`Bus.cause_infelicitous_for_bus`); and in the lighthouse scenario the temporal location constraint
+blocks *make* for the earlier of two necessary causes while *cause* survives for both
+(`Lighthouse.make_felicitous_for_storms`, `Lighthouse.make_infelicitous_for_earthquake`). *Let* and
+*force* are sufficiency causatives as well (`denotation_eq_causallySufficient`), and the constraint
+on volitional action separates *make* from *let*: a permission scenario satisfies bare sufficiency
+yet fails it (`Volitional.volitionalActionConstraint`), while command and persuasion satisfy it. The
+paper's observation against an entailment-based taxonomy, that necessity implications are
 cancellable and reinforceable while sufficiency implications are not, closes the file.
 
 ## Implementation notes
 
-The substrate's necessity semantics implements Nadathur's 2023 actual-cause formulation rather
-than the paper's own definition, a move the paper itself anticipates in suggesting that
-necessity causatives may be better explicated through a definition of actual cause; the
-sufficiency semantics is the paper's Definition (23), both clauses, over the strict development.
+The scenarios are causal models whose exogenous variables read the context, and backgrounds are
+observations. The necessity semantics is Nadathur's 2023 actual-cause formulation
+(`CausalModel.CausallyNecessary`) rather than the paper's own definition, a move the paper itself
+anticipates in suggesting that necessity causatives may be better explicated through a definition
+of actual cause; the sufficiency semantics is the paper's Definition (23), both clauses, over the
+strict development (`CausalModel.CausallySufficient`).
 `denotation` takes the background situation as given: the entries in (25) also remove the cause
 from the background and require that the cause occurred, and neither step is represented.
 Preemption is not formalized, following the paper's decision to set it aside. The paper gives no
 entry for *prevent*; `denotation` fills that class with the blocking semantics of Sloman, Barbey
-and Hotaling.
+and Hotaling, read like the other entries by strict entailment: the preventer's value does not
+settle the effect, and some other value of it does.
 
 ## TODO
 
-One necessity proof runs under a raised recursion limit; a structural proof through the
-parent equations would remove it. The concluding section suggests that lexical causatives
-assert both necessity and sufficiency; the English fragment classes *kill* and *melt* with
-*make*, and `denotation` has no class for the conjunction.
+The necessity verdict is decided in the kernel over every exogenous settlement; a structural proof
+through the parent equations would be more informative. The concluding section suggests that lexical
+causatives assert both necessity and sufficiency; the English fragment classes *kill* and *melt*
+with *make*, and `denotation` has no class for the conjunction.
 
 ## References
 
@@ -58,17 +62,13 @@ assert both necessity and sufficiency; the English fragment classes *kill* and *
 
 namespace NadathurLauer2020
 
-open Causation Causation.Mechanism Causation.SEM
-open Causation.Sufficiency (makeSem)
-open Causation.Necessity (causeSem)
-open Causation.Prevention (preventSem)
+open CausalModel
 
 /-! ### Lexical entries -/
 
 section Denotation
 
-variable {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V] [DecidableValuation α]
-  (M : SEM V α) [CausalGraph.IsDAG M.graph]
+variable {U V : Type*} {α : V → Type*} [DecidableEq V] (M : CausalModel U V α) [M.IsAcyclic]
 
 /-- A sufficiency causative asserts causal sufficiency. Besides *make* the class holds *let*,
 which differs from *make* only in its constraint on background situations (Section 4.1), and
@@ -79,28 +79,32 @@ def IsSufficiencyCausative (b : Causative) : Prop :=
 instance : DecidablePred IsSufficiencyCausative := fun _ ↦
   inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
-/-- `denotation M b` is the truth condition of the causative class `b` over the dynamics `M`.
-*Cause* asserts causal necessity and the sufficiency causatives assert causal sufficiency
+/-- `denotation M b` is the truth condition of the causative class `b` over the dynamics `M`,
+relative to a background observation. *Cause* asserts that the cause settles the effect and is
+causally necessary for it, and the sufficiency causatives assert causal sufficiency
 (Section 3.4); *prevent*, which the paper leaves aside, takes the blocking semantics of
 [sloman-barbey-hotaling-2009]. -/
-def denotation : Causative → Valuation α → ∀ c : V, α c → ∀ e : V, α e → Prop
-  | .cause => causeSem M
-  | .make | .force | .enable => makeSem M
-  | .prevent => preventSem M
+def denotation (b : Causative) (s : ∀ v, Flat (α v)) (c : V) (x : α c) (e : V) (y : α e) :
+    Prop :=
+  match b with
+  | .cause => M.CausallyEntails (Function.update s c ↑x) e y ∧ M.CausallyNecessary s c x e y
+  | .make | .force | .enable => M.CausallySufficient s c x e y
+  | .prevent => ¬ M.CausallyEntails (Function.update s c ↑x) e y ∧
+      ∃ x', x' ≠ x ∧ M.CausallyEntails (Function.update s c ↑x') e y
 
 variable {M}
 
-theorem denotation_eq_makeSem {b : Causative} (h : IsSufficiencyCausative b) :
-    denotation M b = makeSem M := by
+theorem denotation_eq_causallySufficient {b : Causative} (h : IsSufficiencyCausative b) :
+    denotation M b = M.CausallySufficient := by
   rcases h with rfl | rfl | rfl <;> rfl
 
-/-- A sufficiency causative entails that the cause suffices for the effect by the eager
-counterfactual test (`causallySufficient`), which is weaker than `makeSem`'s strict development. -/
-theorem causallySufficient_of_denotation {b : Causative} (hb : IsSufficiencyCausative b)
-    {bg : Valuation α} {c : V} {xC : α c} {e : V} {xE : α e}
-    (h : denotation M b bg c xC e xE) : causallySufficient M bg c xC e xE := by
-  rw [denotation_eq_makeSem hb] at h
-  exact causallySufficient_of_causallyEntails h.2
+/-- A sufficiency causative entails that imposing the background and the cause settles the
+effect in every context. -/
+theorem solve_update_eq_of_denotation {b : Causative} (hb : IsSufficiencyCausative b)
+    {s : ∀ v, Flat (α v)} {c : V} {x : α c} {e : V} {y : α e} (h : denotation M b s c x e y)
+    [∀ v, Nonempty (α v)] (u : U) : M.solve (Function.update s c ↑x) u e = y := by
+  rw [denotation_eq_causallySufficient hb] at h
+  exact h.2.solve_eq_of_intervene u
 
 end Denotation
 
@@ -110,45 +114,37 @@ namespace Fire
     G=grass inflammable, L=line down, F=fire. -/
 inductive V | P | D | G | L | F deriving DecidableEq, Fintype, Repr
 
-/-- Causal graph: G←{D}; F←{G,P,L}; P,D,L exogenous. -/
-def graph : CausalGraph V := ⟨λ
-  | .P => ∅ | .D => ∅ | .L => ∅
-  | .G => {.D}
-  | .F => {.G, .P, .L}⟩
-
-instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
-
 /-- Fire dynamics: G := D (inflammability tracks drought); F := G ∧ P ∧ L
-    (fire ignites only when grass inflammable, power on, line touching). -/
-def fireSEM : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .P => const (G := graph) false
-      | .D => const (G := graph) false
-      | .L => const (G := graph) false
-      | .G => fun ρ ↦ ρ ⟨.D, by simp [graph]⟩
-      | .F => fun ρ ↦
-          ρ ⟨.G, by simp [graph]⟩ &&
-          ρ ⟨.P, by simp [graph]⟩ &&
-          ρ ⟨.L, by simp [graph]⟩ }
+    (fire ignites only when grass inflammable, power on, line touching). The context settles the
+    exogenous P, D and L. -/
+def fireModel : CausalModel (Bool × Bool × Bool) V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ w = .D ∧ v = .G ∨ (w = .G ∨ w = .P ∨ w = .L) ∧ v = .F⟩
+  eqn
+    | .P => fun u _ ↦ u.1
+    | .D => fun u _ ↦ u.2.1
+    | .L => fun u _ ↦ u.2.2
+    | .G => fun _ x ↦ x .D
+    | .F => fun _ x ↦ x .G && x .P && x .L
 
-instance : CausalGraph.IsDAG fireSEM.graph := inferInstanceAs (CausalGraph.IsDAG graph)
+instance : DecidableRel fireModel.graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable (w = .D ∧ v = .G ∨ (w = .G ∨ w = .P ∨ w = .L) ∧ v = .F))
+
+instance : fireModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- Background s_b: drought conditions and inflammable grass observed,
     line condition unknown. (Per N&L p. 19, footnote 21: realistic
     epistemic ignorance about whether the line was already down.) -/
-def s_b : Valuation (λ _ : V => Bool) :=
-  Valuation.empty.extend .D true |>.extend .G true
+def s_b : V → Flat Bool := Function.update (Function.update ⊥ .D ↑true) .G ↑true
 
 /-- Extended background s_b1: the line is also known to be down. -/
-def s_b1 : Valuation (λ _ : V => Bool) := s_b.extend .L true
+def s_b1 : V → Flat Bool := Function.update s_b .L ↑true
 
 /-- (31a) `#Restoring power made the field catch fire.` Make-side: P=true
     is NOT sufficient for F=true relative to s_b. With L undetermined,
     the fire mechanism `G ∧ P ∧ L` stays unsettled (Def 23's clause (b)
     fails). -/
 theorem make_infelicitous_for_fire :
-    ¬ makeSem fireSEM s_b .P true .F true := by
+    ¬ fireModel.CausallySufficient s_b .P true .F true := by
   decide
 
 /-- (31b, with extended background s_b1 where L is also known) `Restoring
@@ -156,7 +152,7 @@ theorem make_infelicitous_for_fire :
     With s_b1 fixing D=G=L=1, P=true is both sufficient and necessary
     for F=true. -/
 theorem make_felicitous_for_fire_with_known_line :
-    makeSem fireSEM s_b1 .P true .F true := by
+    fireModel.CausallySufficient s_b1 .P true .F true := by
   decide
 
 end Fire
@@ -167,63 +163,49 @@ namespace Bus
     Rn=rain forecast, Bk=bike gone, Bs=Lia takes the bus. -/
 inductive V | Vis | Tr | Rn | Bk | Bs deriving DecidableEq, Fintype, Repr
 
-/-- Causal graph: Bk←{Vis,Tr}; Bs←{Rn,Bk}; Vis,Tr,Rn exogenous. -/
-def graph : CausalGraph V := ⟨λ
-  | .Vis => ∅ | .Tr => ∅ | .Rn => ∅
-  | .Bk => {.Vis, .Tr}
-  | .Bs => {.Rn, .Bk}⟩
-
-instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
-
 /-- Bus dynamics: Bk := Vis ∧ Tr (bike taken when Ava visits AND trains);
     Bs := Rn ∨ Bk (bus taken when rain OR bike gone). The OR for Bs
     matches Fig 3's `f_B` table on p. 20: B=1 iff R=1 or G=1. This
     creates the "sufficient but unnecessary" structure for T: T=1 forces
     Bs=1 (sufficient via Bk), but Rn=1 alone also forces Bs=1 (so T not
-    necessary). -/
-def busSEM : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .Vis => const (G := graph) false
-      | .Tr => const (G := graph) false
-      | .Rn => const (G := graph) false
-      | .Bk => fun ρ ↦
-          ρ ⟨.Vis, by simp [graph]⟩ &&
-          ρ ⟨.Tr, by simp [graph]⟩
-      | .Bs => fun ρ ↦
-          ρ ⟨.Rn, by simp [graph]⟩ ||
-          ρ ⟨.Bk, by simp [graph]⟩ }
+    necessary). The context settles the exogenous Vis, Tr and Rn. -/
+def busModel : CausalModel (Bool × Bool × Bool) V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w = .Vis ∨ w = .Tr) ∧ v = .Bk ∨ (w = .Rn ∨ w = .Bk) ∧ v = .Bs⟩
+  eqn
+    | .Vis => fun u _ ↦ u.1
+    | .Tr => fun u _ ↦ u.2.1
+    | .Rn => fun u _ ↦ u.2.2
+    | .Bk => fun _ x ↦ x .Vis && x .Tr
+    | .Bs => fun _ x ↦ x .Rn || x .Bk
 
-instance : CausalGraph.IsDAG busSEM.graph := inferInstanceAs (CausalGraph.IsDAG graph)
+instance : DecidableRel busModel.graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable ((w = .Vis ∨ w = .Tr) ∧ v = .Bk ∨ (w = .Rn ∨ w = .Bk) ∧ v = .Bs))
+
+instance : busModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- Background s_b: Ava visiting, rain forecast. Training status Tr is the
     purported cause of bus-taking (via bike taken). -/
-def s_b : Valuation (λ _ : V => Bool) :=
-  Valuation.empty.extend .Vis true |>.extend .Rn true
+def s_b : V → Flat Bool := Function.update (Function.update ⊥ .Vis ↑true) .Rn ↑true
 
 /-- (33a) `Ava's training made Lia take the bus to work.` Make-side:
     T=true is sufficient for B=true relative to s_b: under the strict
     dynamics Bs stays unsettled in the background (Bk waits on Tr), so
     Def 23's non-inevitability clause (a) holds, and Tr:=1 forces
     Bk:=1 forces Bs:=1 for clause (b). -/
-theorem make_felicitous_for_bus :
-    makeSem busSEM s_b .Tr true .Bs true := by
+theorem make_felicitous_for_bus : busModel.CausallySufficient s_b .Tr true .Bs true := by
   decide
 
 /-- (33b) `#Ava's training caused Lia to take the bus.` Cause-side: fails
     Def 10b necessity via the **no-alternative** clause, exactly N&L's
     route: the exogenous settlement `s_b[Tr ↦ 0]` still entails Bs = 1
     (rain alone suffices via the OR mechanism) without entailing Tr = 1. -/
-theorem cause_infelicitous_for_bus :
-    ¬ causeSem busSEM s_b .Tr true .Bs true := by
-  decide +kernel
+theorem cause_infelicitous_for_bus : ¬ denotation busModel .cause s_b .Tr true .Bs true :=
+  fun h ↦ absurd h.2 (by decide +kernel)
 
 end Bus
 
 /-! Per-vertex temporal index and the temporal-location constraint
-    ([nadathur-lauer-2020] Def 28). Local to this study file —
-    promote to substrate (`Core/Causal/SEM/Temporal.lean`) if a second
-    consumer emerges. -/
+    ([nadathur-lauer-2020] Def 28). -/
 
 namespace Lighthouse
 
@@ -231,25 +213,19 @@ namespace Lighthouse
     (time 3). -/
 inductive V | Q | S | L deriving DecidableEq, Fintype, Repr
 
-def graph : CausalGraph V := ⟨λ
-  | .Q => ∅ | .S => ∅
-  | .L => {.Q, .S}⟩
+/-- In the lighthouse dynamics L := Q ∧ S: collapse requires both earthquake-induced foundation
+damage and extreme storms. The context settles the exogenous Q and S. -/
+def lighthouseModel : CausalModel (Bool × Bool) V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w = .Q ∨ w = .S) ∧ v = .L⟩
+  eqn
+    | .Q => fun u _ ↦ u.1
+    | .S => fun u _ ↦ u.2
+    | .L => fun _ x ↦ x .Q && x .S
 
-instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
+instance : DecidableRel lighthouseModel.graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable ((w = .Q ∨ w = .S) ∧ v = .L))
 
-/-- Lighthouse dynamics: L := Q ∧ S (collapse requires both
-    earthquake-induced foundation damage AND extreme storms). -/
-def lighthouseSEM : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .Q => const (G := graph) false
-      | .S => const (G := graph) false
-      | .L => fun ρ ↦
-          ρ ⟨.Q, by simp [graph]⟩ &&
-          ρ ⟨.S, by simp [graph]⟩ }
-
-instance : CausalGraph.IsDAG lighthouseSEM.graph :=
-  inferInstanceAs (CausalGraph.IsDAG graph)
+instance : lighthouseModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- Temporal index: per-vertex timestamp. Q happens at time 1, S at 2,
     L at 3. -/
@@ -261,59 +237,43 @@ def lighthouseTimes : V → Nat
     evaluation time `t` iff every vertex `s` fixes has time ≤ t.
 
     Default evaluation time is the cause's time. -/
-def validBackgroundFor (idx : V → Nat) (t : Nat)
-    (s : Valuation (λ _ : V => Bool)) : Prop :=
-  ∀ v, (s.get v).isSome → idx v ≤ t
+def validBackgroundFor (idx : V → Nat) (t : Nat) (s : V → Flat Bool) : Prop :=
+  ∀ v, s v ≠ ⊥ → idx v ≤ t
 
 /-- (35d) `The storms made the tower collapse.` Felicitous: with
     background fixing Q=true (the earlier necessary cause), S=true
     suffices for L=true. -/
 theorem make_felicitous_for_storms :
-    makeSem lighthouseSEM (Valuation.empty.extend .Q true) .S true .L true := by
+    lighthouseModel.CausallySufficient (Function.update ⊥ .Q ↑true) .S true .L true := by
   decide
 
 /-- (35c) `#The earthquake made the tower collapse.` Infelicitous via
     Def 28 temporal-location constraint: the only background under which
     Q=true would be sufficient for L=true is one fixing S=true, but S
     happens at time 2 > 1 = time of Q. So no temporally-valid background
-    supports the make-claim.
-
-    Concretely: for the make-claim to hold per Def 23(b), the strict
-    development of `s + (Q := true)` must fix L = 1, which requires S to
-    be fixed in s. But `lighthouseTimes .S = 2 > 1`, so any such `s`
-    violates `validBackgroundFor lighthouseTimes 1` — S stays u-valued
-    and L = Q ∧ S stays unsettled. -/
+    supports the make-claim: S, exogenous and unobserved, is settled in no development, and
+    L = Q ∧ S waits on it. -/
 theorem make_infelicitous_for_earthquake :
     ∀ s, validBackgroundFor lighthouseTimes 1 s →
-      ¬ makeSem lighthouseSEM s .Q true .L true := by
-  intro s hValid
-  rintro ⟨-, hb⟩
-  -- S is fixed by neither s (time 2 > 1) nor the Q-extension, so the
-  -- strict dynamics leaves L = Q ∧ S unsettled.
-  have hSnone : (s.extend V.Q true).get V.S = none := by
-    rw [Valuation.extend_get_ne (by decide : V.S ≠ V.Q)]
-    by_contra hSome
-    have hIsSome : (s.get V.S).isSome := by
-      cases h' : s.get V.S
-      · exact absurd h' hSome
-      · rfl
-    have := hValid V.S hIsSome
-    simp [lighthouseTimes] at this
-  have hSdev : developDetVtx? lighthouseSEM (s.extend V.Q true) V.S = none :=
-    developDetVtx?_exogenous _ hSnone (by decide)
-  have hLnone : (s.extend V.Q true).get V.L = none := by
-    rw [Valuation.extend_get_ne (by decide : V.L ≠ V.Q)]
-    by_contra hSome
-    have hIsSome : (s.get V.L).isSome := by
-      cases h' : s.get V.L
-      · exact absurd h' hSome
-      · rfl
-    have := hValid V.L hIsSome
-    simp [lighthouseTimes] at this
-  have hLdev : developDetVtx? lighthouseSEM (s.extend V.Q true) V.L = none :=
-    developDetVtx?_inner_none _ hLnone ⟨V.S, by decide⟩ hSdev
-  rw [SEM.causallyEntails, hLdev] at hb
-  simp at hb
+      ¬ lighthouseModel.CausallySufficient s .Q true .L true := by
+  rintro s hValid ⟨-, hb⟩
+  have hunset : ∀ v, lighthouseTimes v > 1 → Function.update s .Q ↑true v = ⊥ := fun v hv ↦ by
+    have hvQ : v ≠ .Q := by rintro rfl; simp [lighthouseTimes] at hv
+    rw [Function.update_of_ne hvQ]
+    by_contra h
+    exact absurd (hValid v h) (by omega)
+  have hS : ∀ z, ¬ lighthouseModel.CausallyEntails (Function.update s .Q ↑true) .S z := by
+    intro z h
+    rcases causallyEntails_iff.1 h with h | ⟨-, h⟩
+    · rw [hunset .S (by decide)] at h; exact Flat.bot_ne_coe h
+    · have hno : ∀ w, ¬ lighthouseModel.graph.Adj w .S := by decide
+      have h₁ := h.2 (false, true) (fun _ ↦ false) fun w hw ↦ absurd hw (hno w)
+      have h₀ := h.2 (false, false) (fun _ ↦ false) fun w hw ↦ absurd hw (hno w)
+      exact absurd (h₁.trans h₀.symm) (by decide)
+  rcases causallyEntails_iff.1 hb with h | ⟨-, hpar, -⟩
+  · rw [hunset .L (by decide)] at h; exact Flat.bot_ne_coe h
+  · obtain ⟨z, hz⟩ := hpar .S (by decide)
+    exact hS z hz
 
 end Lighthouse
 
@@ -332,18 +292,13 @@ def IntentionMap (V : Type*) := V → Option V
     in the evaluation of a make-causative with cause `C` and effect `E`,
     no intention vertex `W_E` paired with `E` may be such that BOTH
     (i) `W_E := false` is sufficient for `E := false` relative to
-    `bg + (C := true)` AND (ii) `W_E` is determined by `bg \ (C := true)`.
-
-    For deterministic SEMs `makeSem ... wE false eff false` is the
-    sufficiency check; `(bg.remove cause).get wE ≠ none` is the
-    determined-ness check. -/
-def volitionalActionConstraint {V : Type*} [Fintype V] [DecidableEq V]
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    (intentions : IntentionMap V) (bg : Valuation (λ _ : V => Bool))
-    (cause effect : V) : Prop :=
+    `bg + (C := true)` AND (ii) `W_E` is determined by `bg \ (C := true)`. -/
+def volitionalActionConstraint {U V : Type*} [DecidableEq V]
+    (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
+    (intentions : IntentionMap V) (bg : V → Flat Bool) (cause effect : V) : Prop :=
   ∀ wE, intentions effect = some wE →
-    ¬ (makeSem M (bg.extend cause true) wE false effect false ∧
-       (bg.remove cause).get wE ≠ none)
+    ¬ (M.CausallySufficient (Function.update bg cause ↑true) wE false effect false ∧
+       Function.update bg cause ⊥ wE ≠ ⊥)
 
 end Volitional
 
@@ -357,72 +312,44 @@ open Volitional (volitionalActionConstraint IntentionMap)
     D = children dance. -/
 inductive V | WD | G | D deriving DecidableEq, Fintype, Repr
 
-def graph : CausalGraph V := ⟨λ
-  | .WD => ∅ | .G => ∅
-  | .D => {.WD, .G}⟩
+/-- In the permission dynamics (Fig 5) D := W_D ∧ G, both desire and permission being needed for
+dancing. The context settles W_D and G. -/
+def permissionModel : CausalModel (Bool × Bool) V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w = .WD ∨ w = .G) ∧ v = .D⟩
+  eqn | .WD => fun u _ ↦ u.1 | .G => fun u _ ↦ u.2 | .D => fun _ x ↦ x .WD && x .G
 
-instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
+instance : DecidableRel permissionModel.graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable ((w = .WD ∨ w = .G) ∧ v = .D))
 
-/-- Permission dynamics (Fig 5): D := W_D ∧ G. Both desire AND
-    permission needed for dancing. -/
-def permissionSEM : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .WD => const (G := graph) false
-      | .G => const (G := graph) false
-      | .D => fun ρ ↦
-          ρ ⟨.WD, by simp [graph]⟩ &&
-          ρ ⟨.G, by simp [graph]⟩ }
-
-instance : CausalGraph.IsDAG permissionSEM.graph :=
-  inferInstanceAs (CausalGraph.IsDAG graph)
+instance : permissionModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- Background: children eager to dance (W_D := true). Cause is G
     (Gurung's permission); effect is D (dancing). -/
-def bg : Valuation (λ _ : V => Bool) :=
-  Valuation.empty.extend .WD true
+def bg : V → Flat Bool := Function.update ⊥ .WD ↑true
 
 /-- Intention map: dancing's intention vertex is W_D. -/
-def intentions : IntentionMap V := λ
+def intentions : IntentionMap V := fun
   | .D => some .WD
   | _ => none
 
 /-- Bare sufficiency holds: G:=true is sufficient for D=true given W_D=true. -/
-theorem permission_makeSem :
-    makeSem permissionSEM bg .G true .D true := by
+theorem permission_makeSem : permissionModel.CausallySufficient bg .G true .D true := by
   decide
 
-/-- (40a) `??Gurung made the children dance.` Volitional-action
-    constraint VIOLATED: with W_D fixed in bg, W_D := false is sufficient
-    for D := false (W_D ∧ G with W_D=false gives false), and W_D is
-    determined by bg \ {G} (W_D was in bg, removing G doesn't unfix it).
-    Per Def 43, this rules out felicitous use of *make*. -/
+/-- (40a) `??Gurung made the children dance.` Volitional-action constraint VIOLATED: with W_D
+    fixed in bg, W_D := false is sufficient for D := false (W_D ∧ G with W_D=false gives false),
+    and W_D is determined by bg \ {G}. Per Def 43, this rules out felicitous use of *make*. -/
 theorem permission_violates_volitional_constraint :
-    ¬ volitionalActionConstraint permissionSEM intentions bg .G .D := by
-  intro h
-  -- Specialize to W_D
-  apply h .WD rfl
-  refine ⟨?_, ?_⟩
-  · -- makeSem permissionSEM (bg + G:=true) WD false D false: with G granted,
-    -- D = W_D ∧ G is settled true (so D = false is not inevitable), and
-    -- revoking the desire settles D = false.
-    decide
-  · -- (bg.remove .G).get .WD ≠ none. bg fixes .WD=true; removing .G doesn't change that.
-    intro hNone
-    -- (bg.remove .G).get .WD: .WD ≠ .G so remove doesn't touch it; equals bg.get .WD = some true.
-    have : (bg.remove .G).get .WD = some true := by
-      simp [Valuation.remove, Valuation.get, bg, Valuation.extend]
-    rw [this] at hNone
-    exact Option.some_ne_none _ hNone
+    ¬ volitionalActionConstraint permissionModel intentions bg .G .D :=
+  fun h ↦ h .WD rfl ⟨by decide, by decide⟩
 
 /-- (40a) Combined predicate: bare make-sufficiency AND volitional constraint
     must BOTH hold for *make* to be felicitous. Permission scenario gives
     the former but fails the latter — N&L's headline §4.1 prediction. -/
 theorem permission_make_infelicitous :
-    ¬ (makeSem permissionSEM bg .G true .D true ∧
-       volitionalActionConstraint permissionSEM intentions bg .G .D) := by
-  intro ⟨_, hConstraint⟩
-  exact permission_violates_volitional_constraint hConstraint
+    ¬ (permissionModel.CausallySufficient bg .G true .D true ∧
+       volitionalActionConstraint permissionModel intentions bg .G .D) :=
+  fun ⟨_, hConstraint⟩ ↦ permission_violates_volitional_constraint hConstraint
 
 end Permission
 
@@ -438,50 +365,36 @@ open Volitional (volitionalActionConstraint IntentionMap)
     once G fires. -/
 inductive V | WD | G | D deriving DecidableEq, Fintype, Repr
 
-def graph : CausalGraph V := ⟨λ
-  | .WD => ∅ | .G => ∅
-  | .D => {.WD, .G}⟩
+/-- In the command dynamics (Fig 6) D := W_D ∨ G, either authority alone or independent desire
+sufficing for dancing. The context settles W_D and G. -/
+def commandModel : CausalModel (Bool × Bool) V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w = .WD ∨ w = .G) ∧ v = .D⟩
+  eqn | .WD => fun u _ ↦ u.1 | .G => fun u _ ↦ u.2 | .D => fun _ x ↦ x .WD || x .G
 
-instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
+instance : DecidableRel commandModel.graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable ((w = .WD ∨ w = .G) ∧ v = .D))
 
-/-- Command dynamics (Fig 6): D := W_D ∨ G. Either authority alone OR
-    independent desire suffices for dancing. -/
-def commandSEM : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .WD => const (G := graph) false
-      | .G => const (G := graph) false
-      | .D => fun ρ ↦
-          ρ ⟨.WD, by simp [graph]⟩ ||
-          ρ ⟨.G, by simp [graph]⟩ }
+instance : commandModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
-instance : CausalGraph.IsDAG commandSEM.graph :=
-  inferInstanceAs (CausalGraph.IsDAG graph)
-
-def intentions : IntentionMap V := λ
+def intentions : IntentionMap V := fun
   | .D => some .WD
   | _ => none
 
 /-- (41) context: the children are independently eager (W_D = 1). -/
-def bgEager : Valuation (λ _ : V => Bool) :=
-  Valuation.empty.extend .WD true
+def bgEager : V → Flat Bool := Function.update ⊥ .WD ↑true
 
 /-- (42) context: the children are reluctant (W_D = 0). -/
-def bgReluctant : Valuation (λ _ : V => Bool) :=
-  Valuation.empty.extend .WD false
+def bgReluctant : V → Flat Bool := Function.update ⊥ .WD ↑false
 
-/-- (41) Bare sufficiency in the eager context: with W_D = 1 fixed,
-    D = W_D ∨ G stays unsettled while G is (Def 23a holds under the
-    strict dynamics), and G := 1 settles it. N&L's (41)/(42) contexts
-    differ only in the background setting of W_D; *make* is felicitous
-    in both. -/
-theorem command_makeSem_eager :
-    makeSem commandSEM bgEager .G true .D true := by
+/-- (41) Bare sufficiency holds in the eager context. With W_D = 1 observed, D = W_D ∨ G is
+settled by the strict dynamics only once G is, and G := 1 settles it. N&L's (41)/(42) contexts
+differ only in the background setting of W_D; *make* is felicitous in both. -/
+theorem command_makeSem_eager : commandModel.CausallySufficient bgEager .G true .D true := by
   decide
 
 /-- (42) Bare sufficiency in the reluctant context (W_D = 0). -/
 theorem command_makeSem_reluctant :
-    makeSem commandSEM bgReluctant .G true .D true := by
+    commandModel.CausallySufficient bgReluctant .G true .D true := by
   decide
 
 /-- (42a) `Gurung made the children dance` (reluctant context).
@@ -489,17 +402,15 @@ theorem command_makeSem_reluctant :
     sufficient for D := false (D = W_D ∨ G with G = 1 settles true
     regardless), so Def 43's bad condition fails on its first conjunct. -/
 theorem command_satisfies_volitional_constraint :
-    volitionalActionConstraint commandSEM intentions bgReluctant .G .D := by
-  intro wE hWE
-  -- intentions .D = some .WD; so wE = .WD.
-  cases hWE
+    volitionalActionConstraint commandModel intentions bgReluctant .G .D := by
+  rintro wE ⟨⟩
   decide
 
 /-- (42a) Combined: the reluctant command scenario gives BOTH bare
     sufficiency AND volitional-constraint satisfaction → make-felicitous. -/
 theorem command_make_felicitous :
-    makeSem commandSEM bgReluctant .G true .D true ∧
-    volitionalActionConstraint commandSEM intentions bgReluctant .G .D :=
+    commandModel.CausallySufficient bgReluctant .G true .D true ∧
+    volitionalActionConstraint commandModel intentions bgReluctant .G .D :=
   ⟨command_makeSem_reluctant, command_satisfies_volitional_constraint⟩
 
 end Command
@@ -514,32 +425,23 @@ open Volitional (volitionalActionConstraint IntentionMap)
     Distinct mechanism: G acts via the agent's desire, not in parallel. -/
 inductive V | WD | G | D deriving DecidableEq, Fintype, Repr
 
-def graph : CausalGraph V := ⟨λ
-  | .G => ∅
-  | .WD => {.G}
-  | .D => {.WD}⟩
+/-- In the persuasion dynamics (Fig 7) W_D := G, Gurung's action shaping desires, and D := W_D,
+the children dancing iff they want to. The context settles G. -/
+def persuasionModel : CausalModel Bool V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ w = .G ∧ v = .WD ∨ w = .WD ∧ v = .D⟩
+  eqn | .G => fun u _ ↦ u | .WD => fun _ x ↦ x .G | .D => fun _ x ↦ x .WD
 
-instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
+instance : DecidableRel persuasionModel.graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable (w = .G ∧ v = .WD ∨ w = .WD ∧ v = .D))
 
-/-- Persuasion dynamics (Fig 7): W_D := G (Gurung's action shapes
-    desires); D := W_D (children dance iff they want to). -/
-def persuasionSEM : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .G => const (G := graph) false
-      | .WD => fun ρ ↦ ρ ⟨.G, by simp [graph]⟩
-      | .D => fun ρ ↦ ρ ⟨.WD, by simp [graph]⟩ }
+instance : persuasionModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
-instance : CausalGraph.IsDAG persuasionSEM.graph :=
-  inferInstanceAs (CausalGraph.IsDAG graph)
-
-def intentions : IntentionMap V := λ
+def intentions : IntentionMap V := fun
   | .D => some .WD
   | _ => none
 
 /-- Bare sufficiency: G:=true forces W_D=true forces D=true. -/
-theorem persuasion_makeSem :
-    makeSem persuasionSEM Valuation.empty .G true .D true := by
+theorem persuasion_makeSem : persuasionModel.CausallySufficient ⊥ .G true .D true := by
   decide
 
 /-- (44a) `Gurung made the children dance (by playing their favourite song).`
@@ -548,19 +450,13 @@ theorem persuasion_makeSem :
     background (empty bg leaves W_D undetermined). Second conjunct of
     Def 43's bad condition fails. -/
 theorem persuasion_satisfies_volitional_constraint :
-    volitionalActionConstraint persuasionSEM intentions Valuation.empty .G .D := by
-  intro wE hWE
-  cases hWE
-  intro ⟨_, hDet⟩
-  -- hDet : (Valuation.empty.remove .G).get .WD ≠ none
-  -- But Valuation.empty.get .WD = none, and remove only sets vertices to none.
-  apply hDet
-  show ((Valuation.empty : Valuation (λ _ : V => Bool)).remove V.G).get V.WD = none
-  simp [Valuation.remove, Valuation.get, Valuation.empty]
+    volitionalActionConstraint persuasionModel intentions ⊥ .G .D := by
+  rintro wE ⟨⟩
+  decide
 
 theorem persuasion_make_felicitous :
-    makeSem persuasionSEM Valuation.empty .G true .D true ∧
-    volitionalActionConstraint persuasionSEM intentions Valuation.empty .G .D :=
+    persuasionModel.CausallySufficient ⊥ .G true .D true ∧
+    volitionalActionConstraint persuasionModel intentions ⊥ .G .D :=
   ⟨persuasion_makeSem, persuasion_satisfies_volitional_constraint⟩
 
 end Persuasion
@@ -592,8 +488,8 @@ end Persuasion
     entail necessity, this scenario would be contradictory; since it's
     not, the necessity inference must be cancellable. -/
 theorem necessity_cancellable :
-    makeSem Bus.busSEM Bus.s_b .Tr true .Bs true ∧
-    ¬ causeSem Bus.busSEM Bus.s_b .Tr true .Bs true :=
+    denotation Bus.busModel .make Bus.s_b .Tr true .Bs true ∧
+    ¬ denotation Bus.busModel .cause Bus.s_b .Tr true .Bs true :=
   ⟨Bus.make_felicitous_for_bus, Bus.cause_infelicitous_for_bus⟩
 
 /-- **Reinforceability witness** (cf. (50)): the fire scenario with
@@ -602,7 +498,7 @@ theorem necessity_cancellable :
     otherwise" reinforces necessity onto a sufficiency-asserting
     *make*-claim — felicitous because the two assertions are independent. -/
 theorem necessity_reinforceable :
-    makeSem Fire.fireSEM Fire.s_b1 .P true .F true :=
+    Fire.fireModel.CausallySufficient Fire.s_b1 .P true .F true :=
   Fire.make_felicitous_for_fire_with_known_line
 
 /-! N&L's central observation against entailment-based taxonomy:
@@ -656,7 +552,7 @@ different relations: in the bus scenario *make* holds and *cause* fails
 (`necessity_cancellable`). -/
 theorem cause_make_same_cell_different_denotation :
     karttunenOfCausative .cause = karttunenOfCausative .make ∧
-    denotation Bus.busSEM .cause ≠ denotation Bus.busSEM .make :=
+    denotation Bus.busModel .cause ≠ denotation Bus.busModel .make :=
   ⟨rfl, fun h ↦ necessity_cancellable.2 <|
     (congrArg (· Bus.s_b .Tr true .Bs true) h).mpr necessity_cancellable.1⟩
 
@@ -669,8 +565,7 @@ paper's predictions. -/
 
 section English
 
-variable {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V] [DecidableValuation α]
-  (M : SEM V α) [CausalGraph.IsDAG M.graph]
+variable {U V : Type*} {α : V → Type*} [DecidableEq V] (M : CausalModel U V α) [M.IsAcyclic]
 
 /-- *Let* asserts the causal sufficiency *make* does (Section 4.1); the volitional action
 constraint, not the dependence relation, separates them
@@ -679,8 +574,7 @@ theorem let_denotation_eq_make :
     English.Verbs.let_.causative.map (denotation M) =
       English.Verbs.make.causative.map (denotation M) := rfl
 
-example : English.Verbs.cause.causative.map (denotation M) = some (causeSem M) := rfl
-example : English.Verbs.force.causative.map (denotation M) = some (makeSem M) := rfl
+example : English.Verbs.force.causative.map (denotation M) = some M.CausallySufficient := rfl
 
 end English
 
