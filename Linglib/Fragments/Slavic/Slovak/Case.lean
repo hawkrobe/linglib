@@ -1,9 +1,9 @@
 module
 
-public import Linglib.Fragments.Slavic.Case
+public import Linglib.Syntax.Case.Basic
 
 /-!
-# Slovak case inventory
+# Slovak case
 
 This file defines the Slovak cases, the six the Slavic languages share: "The case system has shrunk
 from seven members to six, the vocative being replaced by the nominative. Some vocative forms
@@ -16,9 +16,31 @@ survive, but are not considered part of their respective paradigms" ([short-1993
 
 @[expose] public section
 
-namespace Slovak.Case
+namespace Slovak
 
-/-- The Slovak cases are the six the Slavic languages share. -/
-abbrev inventory : Finset Case := Slavic.Case.coreInventory
+/-- The six Slovak cases. -/
+inductive Case where
+  /-- The nominative. -/
+  | nom
+  /-- The accusative. -/
+  | acc
+  /-- The genitive. -/
+  | gen
+  /-- The dative. -/
+  | dat
+  /-- The instrumental. -/
+  | inst
+  /-- The locative. -/
+  | loc
+  deriving DecidableEq, Fintype, Repr
 
-end Slovak.Case
+/-- The comparative value a case is named for. -/
+def Case.label : Case → _root_.Case
+  | nom => .nom
+  | acc => .acc
+  | gen => .gen
+  | dat => .dat
+  | inst => .inst
+  | loc => .loc
+
+end Slovak

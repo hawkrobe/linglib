@@ -1,12 +1,12 @@
 module
 
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Fragments.Slavic.Polish.Case
 
 /-!
 # Polish interrogative pronouns
 
-*kto* 'who' and *co* 'what' by case: *kogo* serves *kto* as both genitive and
-accusative, and *co* serves as both nominative and accusative.
+*kto* 'who' and *co* 'what' by case, neither having a vocative: *kogo* serves *kto* as both
+genitive and accusative, and *co* serves as both nominative and accusative.
 
 ## References
 
@@ -26,7 +26,7 @@ def kto : Case → Option String
   | .acc => some "kogo"
   | .inst => some "kim"
   | .loc => some "kim"
-  | _ => none
+  | .voc => none
 
 /-- *co* 'what' by case. -/
 def co : Case → Option String
@@ -36,6 +36,6 @@ def co : Case → Option String
   | .acc => some "co"
   | .inst => some "czym"
   | .loc => some "czym"
-  | _ => none
+  | .voc => none
 
 end Polish.Pronouns

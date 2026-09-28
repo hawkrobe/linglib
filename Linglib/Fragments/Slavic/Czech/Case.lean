@@ -1,16 +1,15 @@
 module
 
-public import Linglib.Fragments.Slavic.Case
+public import Linglib.Syntax.Case.Basic
 
 /-!
-# Czech case inventory
+# Czech case
 
-This file defines the Czech cases, the seven of the Slavic inventory: "The full seven cases
-survive" (Short, p. 465). About half the singular noun paradigms have a vocative "shared by no
-other case", and "no adjectival, pronominal, numeral or plural noun paradigms have distinct
-vocative forms (vocative = nominative)" (p. 465). A singular noun paradigm without a distinct
-vocative may share it with a case other than the nominative, as *muži* 'man' and *stroji*
-'machine' do with the dative and the locative (p. 466).
+This file defines the seven Czech cases: "The full seven cases survive" (Short, p. 465). About half
+the singular noun paradigms have a vocative "shared by no other case", and "no adjectival,
+pronominal, numeral or plural noun paradigms have distinct vocative forms (vocative = nominative)"
+(p. 465). A singular noun paradigm without a distinct vocative may share it with a case other than
+the nominative, as *muži* 'man' and *stroji* 'machine' do with the dative and the locative (p. 466).
 
 ## References
 
@@ -19,9 +18,34 @@ vocative may share it with a case other than the nominative, as *muži* 'man' an
 
 @[expose] public section
 
-namespace Czech.Case
+namespace Czech
 
-/-- The Czech cases are the seven of the Slavic inventory. -/
-abbrev inventory : Finset Case := Slavic.Case.fullInventory
+/-- The seven Czech cases. -/
+inductive Case where
+  /-- The nominative. -/
+  | nom
+  /-- The vocative. -/
+  | voc
+  /-- The accusative. -/
+  | acc
+  /-- The genitive. -/
+  | gen
+  /-- The dative. -/
+  | dat
+  /-- The instrumental. -/
+  | inst
+  /-- The locative. -/
+  | loc
+  deriving DecidableEq, Fintype, Repr
 
-end Czech.Case
+/-- The comparative value a case is named for. -/
+def Case.label : Case → _root_.Case
+  | nom => .nom
+  | voc => .voc
+  | acc => .acc
+  | gen => .gen
+  | dat => .dat
+  | inst => .inst
+  | loc => .loc
+
+end Czech

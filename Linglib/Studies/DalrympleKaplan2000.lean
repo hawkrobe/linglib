@@ -209,9 +209,11 @@ open Polish.Pronouns in
     conjuncts ((40), (46)), and *co* does not ((41)). -/
 theorem polish_coordination :
     AcceptableIff Examples.ex_40
-        (Case.acc ∈ formCells kto (some "kogo") ∧ Case.gen ∈ formCells kto (some "kogo")) ∧
+        (Polish.Case.acc ∈ formCells kto (some "kogo") ∧
+          Polish.Case.gen ∈ formCells kto (some "kogo")) ∧
       AcceptableIff Examples.ex_41
-        (Case.acc ∈ formCells co (some "co") ∧ Case.gen ∈ formCells co (some "co")) := by
+        (Polish.Case.acc ∈ formCells co (some "co") ∧
+          Polish.Case.gen ∈ formCells co (some "co")) := by
   decide
 
 open English
