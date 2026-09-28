@@ -2,8 +2,6 @@ module
 
 public import Linglib.Discourse.QUD.Basic
 public import Linglib.Semantics.Questions.Exhaustivity
-public import Linglib.Fragments.Romance.Italian.PolarityMarking
-public import Linglib.Fragments.Romance.Spanish.PolarityMarking
 public import Linglib.Studies.FarkasBruce2010
 public import Linglib.Data.Examples.GarassinoJacob2018
 
@@ -24,12 +22,14 @@ questions of a family are its partition question.
 
 The rows are the chapter's examples with the lexical and syntactic means they use, the kind of
 antecedent, the dislocated constituent and, where the chapter says, whether the utterance stands
-to its antecedent in situational identity or analogy and whether it answers a subquestion. The
-contexts attested for *sì che* and *sí que* lie within the environments the fragments record
-(`rows_siChe_env`, `rows_siQue_env`). French *si*, unlike them, is limited to answering a
-preceding opposite turn: every attested *si* is a response of the kind [farkas-bruce-2010] say
-it marks, [reverse, +] (`rows_si_mem_reversePositive`), while *sì che* and *sí que* are
-attested in responses outside it (`rows_siChe_siQue_not_mem_reversePositive`).
+to its antecedent in situational identity or analogy and whether it answers a subquestion. In
+situational identity a positive answer contradicts the negative proposition the context gives;
+in situational analogy it does not exclude its truth. Whether polarity focus reacts to a denial
+of the proposition is a separate criterion of the chapter, and the rows attest denials in both
+relations (`rows_denies_identity_and_analogy`). French *si* is limited to answering a preceding
+opposite turn: every attested *si* is a response of the kind [farkas-bruce-2010] say it marks,
+[reverse, +] (`rows_si_mem_reversePositive`), while *sì che* and *sí que* are attested in
+responses outside it (`rows_siChe_siQue_not_mem_reversePositive`).
 
 ## Implementation notes
 
@@ -39,8 +39,7 @@ attested in responses outside it (`rows_siChe_siQue_not_mem_reversePositive`).
   distribution and Spanish's preference for a transparent assertive particle from these figures
   and offers no quantitative analysis, so the counts stay in prose.
 * The chapter endorses [matic-nikolaeva-2018]'s view that dislocation is no structural means of
-  polarity focus but makes the reading available in context; the fragments' `polarityReversal`
-  classification of the particles is the form-class view that study contests.
+  polarity focus but makes the reading available in context.
 * An utterance with a preceding turn, a statement or a polar question, is a
   `Discourse.Response` to it (`Antecedent.response`), positive since it affirms; an inferred
   negation, an open question, a modal statement or no antecedent is no such turn.
@@ -90,7 +89,7 @@ theorem query_ofSet_eq_iSup (p : Set W) :
 
 theorem alt_query_ofSet {p : Set W} (hp : p.Nonempty) (hpc : pᶜ.Nonempty) :
     alt (ofSet p).query = {p, pᶜ} := by
-  rw [query_ofSet_eq_iSup, alt_iSup_ofSet (λ i j h => by
+  rw [query_ofSet_eq_iSup, alt_iSup_ofSet (fun i j h ↦ by
       cases i <;> cases j
       · rfl
       · exact absurd (h hpc.some_mem) hpc.some_mem
@@ -110,22 +109,22 @@ theorem polarFocus_eq_alt_query {p : Set W} (hp : p.Nonempty) (hpc : pᶜ.Nonemp
 /-- A *wh*-question over candidates pursued through the polar question for each: the tree of the
 sitting-back passage. -/
 def agentStrategy (agents : List F) (P : F → Set W) : Strategy W :=
-  .node (⨆ w, ofSet (strongAnswer (Set.range P) w)) (agents.map λ f => .leaf (ofSet (P f)).query)
+  .node (⨆ w, ofSet (strongAnswer (Set.range P) w)) (agents.map fun f ↦ .leaf (ofSet (P f)).query)
 
 /-- The polar subquestions for all candidates jointly resolve the *wh*-question. -/
 theorem agentStrategy_isComplete {agents : List F} (hcov : ∀ f, f ∈ agents)
     (P : F → Set W) : (agentStrategy agents P).IsComplete := by
-  refine .node (λ _ => ?_) (λ c hc => ?_)
-  · have hmem : ∀ q, q ∈ ((agents.map λ f => RoseTree.leaf (ofSet (P f)).query).map RoseTree.value :
+  refine .node (fun _ ↦ ?_) (fun c hc ↦ ?_)
+  · have hmem : ∀ q, q ∈ ((agents.map fun f ↦ RoseTree.leaf (ofSet (P f)).query).map RoseTree.value :
         Multiset (Question W)) ↔ ∃ f, (ofSet (P f)).query = q := by
       intro q
       simp only [Multiset.mem_coe, List.mem_map, List.map_map, Function.comp_def, RoseTree.leaf,
         RoseTree.value_node]
-      exact ⟨λ ⟨f, _, h⟩ => ⟨f, h⟩, λ ⟨f, h⟩ => ⟨f, hcov f, h⟩⟩
+      exact ⟨fun ⟨f, _, h⟩ ↦ ⟨f, h⟩, fun ⟨f, h⟩ ↦ ⟨f, hcov f, h⟩⟩
     rw [← iInf_query_ofSet_eq_iSup_ofSet_strongAnswer]
     refine (le_antisymm ?_ ?_).le
-    · exact le_iInf λ f => Multiset.inf_le ((hmem _).mpr ⟨f, rfl⟩)
-    · exact Multiset.le_inf.mpr λ q hq => by obtain ⟨f, rfl⟩ := (hmem q).mp hq; exact iInf_le _ f
+    · exact le_iInf fun f ↦ Multiset.inf_le ((hmem _).mpr ⟨f, rfl⟩)
+    · exact Multiset.le_inf.mpr fun q hq ↦ by obtain ⟨f, rfl⟩ := (hmem q).mp hq; exact iInf_le _ f
   · obtain ⟨f, _, rfl⟩ := List.mem_map.mp hc
     exact .leaf _
 
@@ -135,7 +134,7 @@ def scalarStrategy (p q : Set W) : Strategy W :=
   .node (ofSet (p ∪ q)).query [.leaf (ofSet p).query, .leaf (ofSet q).query]
 
 theorem scalarStrategy_isComplete (p q : Set W) : (scalarStrategy p q).IsComplete := by
-  refine .node_pair (le_def.mpr λ σ hσ => ?_) (.leaf _) (.leaf _)
+  refine .node_pair (le_def.mpr fun σ hσ ↦ ?_) (.leaf _) (.leaf _)
   rw [RoseTree.leaf, RoseTree.leaf, RoseTree.value_node, RoseTree.value_node, inf_eq_conj] at hσ
   obtain ⟨h₁, h₂⟩ := hσ
   have h₁' : σ ∈ (ofSet p).query := h₁
@@ -146,7 +145,7 @@ theorem scalarStrategy_isComplete (p q : Set W) : (scalarStrategy p q).IsComplet
   · exact Or.inl (h₁'.trans Set.subset_union_left)
   · exact Or.inl (h₁'.trans Set.subset_union_left)
   · exact Or.inl (h₂'.trans Set.subset_union_right)
-  · exact Or.inr λ w hw => (Set.compl_union p q).symm ▸ ⟨h₁' hw, h₂' hw⟩
+  · exact Or.inr fun w hw ↦ (Set.compl_union p q).symm ▸ ⟨h₁' hw, h₂' hw⟩
 
 /-! ### The chapter's examples -/
 
@@ -180,11 +179,14 @@ def Antecedent.response : Antecedent → Option Discourse.Response
   | .explicitQuestion => some ⟨.polarQuestion, .positive, .positive⟩
   | .inferredNegation | .modal | .openQuestion | .absent => none
 
-/-- The environment a polarity-focus utterance occupies: correction after a negative antecedent,
-contrast otherwise. -/
-def Antecedent.env : Antecedent → PolarityMarker.Env
-  | .explicitNegation | .inferredNegation => .correction
-  | _ => .contrast
+/-- The antecedent is a previous denial of the proposition, explicit or inferable: polarity focus
+after it presupposes the negation rather than an open question or a given affirmation. -/
+def Antecedent.Denies : Antecedent → Prop
+  | .explicitNegation | .inferredNegation => True
+  | _ => False
+
+instance : DecidablePred Antecedent.Denies := fun a ↦ by
+  cases a <;> simp only [Antecedent.Denies] <;> infer_instance
 
 structure Row where
   means : Means
@@ -212,16 +214,12 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofExample
 
-/-- *Sì che* is attested answering a polar question as well as a denial, both environments the
-Italian fragment licenses. -/
-theorem rows_siChe_env : ∀ r ∈ rows, r.means = .siChe →
-    r.antecedent.env ∈ Italian.PolarityMarking.siChe.environments := by
-  decide
-
-/-- *Sí que* is attested after denials, in non-contradictory contexts and as emphatic
-reinforcement, all within the Spanish fragment's environments. -/
-theorem rows_siQue_env : ∀ r ∈ rows, r.means = .siQue →
-    r.antecedent.env ∈ Spanish.PolarityMarking.siQue.environments := by
+/-- Polarity focus after a denial of the proposition is attested in situational identity and in
+situational analogy alike: presupposing the negation does not decide the relation to the
+antecedent. -/
+theorem rows_denies_identity_and_analogy :
+    (∃ r ∈ rows, r.antecedent.Denies ∧ r.relation = .identity) ∧
+      ∃ r ∈ rows, r.antecedent.Denies ∧ r.relation = .analogy := by
   decide
 
 /-- Every attested French *si* answers a preceding opposite turn: it is a [reverse, +]

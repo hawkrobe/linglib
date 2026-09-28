@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Fragments.English.PolarityMarking
 public import Linglib.Data.Examples.Wilder2013
 public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Semantics.Focus.Control
@@ -49,8 +48,6 @@ constituent question rejects *do* altogether.
   when its subquestions decide the superquestion.
 * `ct_acceptable_iff_hostsYesAnswer`: across the embedding environments, a contrastive-topic
   sentence with emphatic *do* is acceptable exactly where a Yes-answer can be embedded.
-* `environments_attested`: the antecedent types of the paper's dialogues are the environments the
-  fragment records for emphatic *do*.
 
 ## Implementation notes
 
@@ -69,7 +66,9 @@ constituent question rejects *do* altogether.
 ## TODO
 
 * The optionality of *do* in contrastive-topic sentences (section 7) and the Givenness of the
-  subject and verb phrase under composition (section 4.2) are not formalized.
+  subject and verb phrase under composition (section 4.2) are not formalized; the latter is what
+  the antecedents of section 4.1, an asserted, presupposed or modalised negation and the negation
+  of a parallel predication, constrain.
 
 ## References
 
@@ -85,7 +84,7 @@ constituent question rejects *do* altogether.
 
 namespace Wilder2013
 
-open Data.Examples English.PolarityMarking Focus
+open Data.Examples Focus
 
 /-! ### The auxiliary system -/
 
@@ -336,25 +335,9 @@ inductive Environment
   | restrictiveRelative | adverbialClause | whSubjectQuestion | objectPreposing
   deriving DecidableEq, Repr
 
-/-- What the emphatic *do* sentences of section 4.1 respond to: an asserted negation (51), a
-presupposed negation (53), a modalised antecedent (52), or the negation of the same predication
-of another subject (74). -/
-inductive AntecedentKind
-  | assertedNegation | presupposedNegation | modal | parallelNegation
-  deriving DecidableEq, Repr
-
-/-- The environment of the fragment's schema an antecedent instantiates: contradiction of the
-same predication is correction, the same predication of another subject is contrast, and a
-modalised antecedent is neither. -/
-def AntecedentKind.env : AntecedentKind → Option PolarityMarker.Env
-  | .assertedNegation | .presupposedNegation => some .correction
-  | .parallelNegation => some .contrast
-  | .modal => none
-
 structure Row where
   kind : Kind
   environment : Environment
-  antecedent : Option AntecedentKind
   acceptable : Bool
   deriving DecidableEq, Repr
 
@@ -375,10 +358,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
     ("factiveComplement", .factiveComplement), ("itCleft", .itCleft),
     ("restrictiveRelative", .restrictiveRelative), ("adverbialClause", .adverbialClause),
     ("whSubjectQuestion", .whSubjectQuestion), ("objectPreposing", .objectPreposing)]
-  let antecedent := ex.parse? "antecedent" [("assertedNegation", AntecedentKind.assertedNegation),
-    ("presupposedNegation", .presupposedNegation), ("modal", .modal),
-    ("parallelNegation", .parallelNegation)]
-  pure ⟨kind, environment, antecedent, ex.judgment = .acceptable⟩
+  pure ⟨kind, environment, ex.judgment = .acceptable⟩
 
 def rows : List Row := Examples.all.filterMap Row.ofExample
 
@@ -427,21 +407,6 @@ theorem ct_not_objectPreposing :
 emphatic *do*, as `not_admits_polarityFocus_of_constituentQuestion` predicts. -/
 theorem ctConstituentQuestion_unacceptable :
     ∀ r ∈ rows, r.kind.IsCTConstituentQuestion → ¬r.acceptable := by
-  decide
-
-/-- The environments of the paper's dialogues are among those the fragment records for emphatic
-*do*. -/
-theorem environments_attested :
-    ∀ r ∈ rows, ∀ e, r.antecedent.bind AntecedentKind.env = some e →
-      e ∈ emphaticDo.environments := by
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-  decide
-
-/-- Both discourse environments the fragment records are attested: correction by (51) and
-contrast by (74). -/
-theorem attested_environments :
-    ∀ e ∈ [PolarityMarker.Env.correction, .contrast],
-      ∃ r ∈ rows, r.acceptable ∧ r.antecedent.bind AntecedentKind.env = some e := by
   decide
 
 end Wilder2013

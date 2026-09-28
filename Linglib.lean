@@ -488,7 +488,6 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.NumeralModifiers
 import Linglib.Fragments.English.Phonology
 import Linglib.Fragments.English.PolarityItems
-import Linglib.Fragments.English.PolarityMarking
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Reciprocals
 import Linglib.Fragments.English.Relativization
@@ -1098,7 +1097,6 @@ import Linglib.Semantics.Polarity.ExpletiveNegation
 import Linglib.Semantics.Polarity.Strength
 import Linglib.Semantics.Polarity.Item
 import Linglib.Semantics.Polarity.Licensing
-import Linglib.Semantics.Polarity.Marking
 import Linglib.Semantics.Polarity.Witnesses
 import Linglib.Semantics.Possession.Basic
 import Linglib.Semantics.Possession.Defs

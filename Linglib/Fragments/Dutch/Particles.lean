@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Polarity.Marking
+public import Linglib.Syntax.Category.Particle.Basic
 
 /-!
 # Dutch polarity particles
@@ -23,15 +23,10 @@ strategy in polarity contrast and in polarity correction, where German uses Veru
 
 namespace Dutch.Particles
 
-open PolarityMarker
-
-/-- *wel* is the affirmative polarity particle, sentence-internal, accented and available in
-contrast and in correction. -/
-abbrev wel : PolarityMarker where
-  label := "wel"
-  form := some "wel"
-  prosodicTarget := some "particle"
-  environments := {.sentenceInternal, .contrast, .correction}
-  strategy := .particle
+/-- *wel*, the affirmative polarity particle, in the middle field where the negation *niet*
+stands. -/
+def wel : Particle where
+  form := "wel"
+  position := some .clauseMedial
 
 end Dutch.Particles
