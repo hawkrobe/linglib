@@ -1,7 +1,9 @@
 module
 
 public import Linglib.Phonology.HarmonicGrammar.Expressivity
-public import Linglib.Core.Probability.SoftmaxTheory
+public import Linglib.Core.Analysis.SpecialFunctions.Softmax
+public import Linglib.Core.Probability.Moments.MGFAnalytic
+public import Mathlib.MeasureTheory.Measure.Tilted
 public import Linglib.Data.Examples.GoldwaterJohnson2003
 
 /-!
@@ -109,15 +111,35 @@ theorem gjProb_update (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ)
       rw [Function.update_of_ne (Finset.notMem_singleton.mp (Finset.mem_compl.mp hk))]]
   ring
 
+open MeasureTheory ProbabilityTheory in
 /-- Footnote 4: with the other weights held fixed, the log probability of an observation is
 concave in weight j, since the harmony is then affine in that weight and the log-partition
-function convex. -/
+function convex. The log-partition function is, up to a constant, the cumulant generating
+function of the negated violations under the counting measure tilted by the other constraints'
+harmony, which is convex by `ProbabilityTheory.convexOn_cgf`. -/
 theorem concaveOn_log_gjProb_update (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ)
     (j : Fin n)
     (i : I) (o : O) : ConcaveOn ℝ Set.univ λ t => log (gjProb con (Function.update w j t) i o) := by
   have : Nonempty O := ⟨o⟩
   simp_rw [gjProb_update]
-  exact concaveOn_log_softmax _ _ o
+  suffices ∀ s r : O → ℝ, ConcaveOn ℝ Set.univ fun t : ℝ ↦ log (softmax (t • s + r) o) from
+    this _ _
+  intro s r
+  let _ : MeasurableSpace O := ⊤
+  have hZ : 0 < ∑ x, exp (r x) := sum_exp_pos r
+  have hcgf (t : ℝ) : log (∑ x, exp (t * s x + r x)) =
+      cgf s (Measure.count.tilted r) t + log (∑ x, exp (r x)) := by
+    have hmgf : mgf s (Measure.count.tilted r) t =
+        (∑ x, exp (t * s x + r x)) / ∑ x, exp (r x) := by
+      simp only [mgf, integral_tilted, integral_count, smul_eq_mul, Finset.sum_div, exp_add]
+      exact Finset.sum_congr rfl fun x _ ↦ by ring
+    rw [cgf, hmgf, log_div (sum_exp_pos _).ne' hZ.ne', sub_add_cancel]
+  have hconv : ConvexOn ℝ Set.univ (cgf s (Measure.count.tilted r)) := by
+    convert convexOn_cgf (X := s) (μ := Measure.count.tilted r)
+    exact (Set.eq_univ_of_forall fun t ↦ Integrable.of_finite).symm
+  simp only [log_softmax, Pi.add_apply, Pi.smul_apply, smul_eq_mul, hcgf]
+  exact (((LinearMap.mulRight ℝ (s o)).concaveOn convex_univ).add
+    (concaveOn_const (r o) convex_univ)).sub (hconv.add_const _)
 
 /-- The log pseudo-likelihood of a corpus is concave in each weight, as a sum of concave terms. -/
 theorem concaveOn_logPseudoLikelihood_update (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ)

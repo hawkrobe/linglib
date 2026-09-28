@@ -258,7 +258,6 @@ import Linglib.Core.Probability.UniformOn
 import Linglib.Core.Probability.LikelihoodRatio
 import Linglib.Core.Probability.PitmanYor
 import Linglib.Core.Probability.PolyaUrn
-import Linglib.Core.Probability.SoftmaxTheory
 import Linglib.Core.Relation.ReflTransGen
 import Linglib.Core.RingTheory.Bialgebra.Basic
 import Linglib.Core.RingTheory.Bialgebra.Primitive

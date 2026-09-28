@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Linglib.Core.Probability.SoftmaxTheory
+public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Linglib.Phonology.Segmental.Defs
 public import Linglib.Data.Examples.HayesWilson2008
@@ -282,8 +282,8 @@ theorem hasDerivAt_log_prob (viol : Fin n → Ω → ℕ) (w : Fin n → ℝ) (i
   have hf : (λ t => log (prob viol (Function.update w i t) x)) =
       λ t => log (softmax (t • s + r) x) := funext λ t => by rw [hp]
   rw [hf]
-  convert hasDerivAt_log_softmax s r x (w i) using 1
-  simp only [expected, hw, s, mul_neg, Finset.sum_neg_distrib]
+  convert (((hasDerivAt_id' (w i)).smul_const s).add_const r).log_softmax x using 1
+  simp only [expected, hw, s, one_smul, mul_neg, Finset.sum_neg_distrib]
   ring
 
 /-- The partial derivative of the log probability of the data in the weight of constraint `i`
@@ -428,7 +428,7 @@ theorem onsetProb_eq_softmax : onsetProb = softmax fun o : candidates => -(h o :
   congr 1
   funext o
   simp only [h, score, dotProduct, Function.comp_apply, viol, Nat.cast_sum, Nat.cast_mul,
-    Nat.cast_id, neg_div, Finset.sum_div, div_mul_eq_mul_div]
+    neg_div, Finset.sum_div, div_mul_eq_mul_div]
 
 /-- On the candidate set, the probability (6) orders forms as the score does. -/
 theorem onsetProb_lt_iff {o₁ o₂ : candidates} : onsetProb o₁ < onsetProb o₂ ↔ h o₂ < h o₁ := by
