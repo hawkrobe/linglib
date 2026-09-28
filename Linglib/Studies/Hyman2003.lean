@@ -216,7 +216,7 @@ ranking by which all of its demands are licensed, the lexicographic minimum of t
 profile. -/
 def tableau (i : Input) (order : List Licensor) : Tableau Candidate order.length where
   candidates := candidates i
-  profile := buildViolationProfile (constraints i order)
+  profile c := toLex (constraints i order · c)
   nonempty := ⟨templatic i, Finset.mem_insert_self _ _⟩
 
 /-- A grammar: licensors under a partial order ([anttila-1997]'s partially ordered
@@ -254,7 +254,7 @@ def free {n : ℕ} (licensor : Fin n → Licensor) : Grammar :=
 
 /-- A grammar of two licensors, the first ranked above the second. -/
 def two (l₁ l₂ : Licensor) : Grammar :=
-  { n := 2, licensor := ![l₁, l₂], order := (Ranking.id 2).toRel }
+  { n := 2, licensor := ![l₁, l₂], order := (1 : Ranking (Fin 2) 2).toRel }
 
 end Grammar
 
@@ -358,7 +358,7 @@ theorem chimwiini_outputs (i : Input) : chimwiini.outputs i = {templatic i} := b
   rw [Tableau.optimal_eq_singleton_iff (templatic_mem_candidates i)]
   intro c hc hne
   have hcl : ¬ LicensedBy i [.template] c := fun h ↦ hne ((licensedBy_iff_templatic hc).mp h)
-  show buildViolationProfile (constraints i [.template]) _ < buildViolationProfile _ _
+  show toLex (constraints i [.template] · (templatic i)) < toLex (constraints i [.template] · c)
   have : Unique (Fin [Licensor.template].length) := inferInstanceAs (Unique (Fin 1))
   rw [Pi.Lex.lt_iff_of_unique]
   simp [constraints, hcl, licensedBy_template_templatic]

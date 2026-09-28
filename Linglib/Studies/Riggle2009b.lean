@@ -103,7 +103,7 @@ theorem le_mul (a b : V n) : a ≤ a * b := by
   refine le_add_of_nonneg_right ?_
   induction untrop b using WithTop.recTopCoe with
   | top => exact le_top
-  | coe x => exact WithTop.coe_le_coe.mpr (ViolationProfile.zero_le x)
+  | coe x => exact WithTop.coe_le_coe.mpr bot_le
 
 /-- In semiring terms, the minimum of a profile and any merge extending it is the profile. -/
 theorem add_mul_self (a b : V n) : a + a * b = a := add_eq_left (le_mul a b)
@@ -113,12 +113,12 @@ theorem add_mul_self (a b : V n) : a + a * b = a := add_eq_left (le_mul a b)
 /-- A weighting read as a homomorphism from the merge monoid of profiles to the additive
 reals: the weighted violation sum. -/
 def weightMap (w : Fin n → ℝ) : ViolationProfile n →+ ℝ where
-  toFun v := weightedViolations w (ofLex v)
+  toFun v := w ⬝ᵥ (Nat.cast ∘ ofLex v)
   map_zero' := by
     show ∑ i, w i * ((0 : ℕ) : ℝ) = 0
     simp
   map_add' a b := by
-    simp only [weightedViolations, ← Finset.sum_add_distrib]
+    simp only [dotProduct, Function.comp_apply, ← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl λ i _ => by
       show w i * ((a i + b i : ℕ) : ℝ) = w i * (a i : ℝ) + w i * (b i : ℝ)
       push_cast

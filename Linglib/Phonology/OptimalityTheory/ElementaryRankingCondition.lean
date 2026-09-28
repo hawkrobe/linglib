@@ -331,7 +331,7 @@ theorem tableauERC_satisfiedBy_iff {C : Type*} [DecidableEq C]
 comparison — connecting ERC inference to the tableau's winner set. -/
 theorem tableauERC_satisfiedBy_id_iff {C : Type*} [DecidableEq C]
     (t : Tableau C n) (w l : C) :
-    (tableauERC t w l).SatisfiedBy (Ranking.id n) ↔ t.profile w ≤ t.profile l := by
+    (tableauERC t w l).SatisfiedBy (1 : Ranking (Fin n) n) ↔ t.profile w ≤ t.profile l := by
   rw [tableauERC_satisfiedBy_iff]; exact Iff.rfl
 
 /-- A candidate is the tableau's optimum iff, under the identity ranking, its ERC
@@ -340,7 +340,7 @@ theorem mem_optimal_iff_forall_satisfiedBy {C : Type*} [DecidableEq C]
     (t : Tableau C n) (w : C) :
     w ∈ t.optimal ↔
       w ∈ t.candidates ∧
-        ∀ l ∈ t.candidates, (tableauERC t w l).SatisfiedBy (Ranking.id n) :=
+        ∀ l ∈ t.candidates, (tableauERC t w l).SatisfiedBy (1 : Ranking (Fin n) n) :=
   Tableau.mem_optimal_iff.trans <| and_congr_right fun _ =>
     forall₂_congr fun l _ => (tableauERC_satisfiedBy_id_iff t w l).symm
 

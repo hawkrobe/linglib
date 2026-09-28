@@ -72,7 +72,7 @@ intervenes. -/
 def allFeetRight : Constraint Word := λ fc => (Footing.feet fc.dropLast).length
 
 /-- The three prosodic-word size restrictor constraints. -/
-def restrictors : List (Constraint Word) := [ftBin, parseMora, allFeetRight]
+def restrictors : ConstraintSet Word (Fin 3) := ![ftBin, parseMora, allFeetRight]
 
 /-- The perfect prosodic word: a single bimoraic foot and nothing else. -/
 def IsPerfect (fc : Word) : Prop :=
@@ -127,45 +127,27 @@ theorem isPerfect_iff {fc : Word} (hpos : ∀ s ∈ fc.strays, s ≠ 0) :
       · simp [allFeetRight, Footing.feet] at ha
       · simp [Footing.strays] at hs
 
+/-- A perfect word violates none of the restrictors. -/
+theorem IsPerfect.restrictors_eq_zero {fc : Word} (h : IsPerfect fc) :
+    ∀ i, restrictors i fc = 0
+  | 0 => h.ftBin
+  | 1 => h.parseMora
+  | 2 => h.allFeetRight
+
 /-- A perfect candidate is optimal under every ranking of the restrictors. -/
 theorem isPerfect_mem_optimal {cands : List Word} {fc : Word} (hc : fc ∈ cands)
-    (h : IsPerfect fc) {rk : List (Constraint Word)} (hrk : rk ∈ restrictors.permutations')
-    (hne : cands ≠ []) : fc ∈ (Tableau.ofRanking cands rk hne).optimal :=
-  Tableau.ofRanking_zero_mem_optimal_allRankings hc
-    (λ con hcon => by
-      simp only [restrictors, List.mem_cons, List.not_mem_nil, or_false] at hcon
-      rcases hcon with rfl | rfl | rfl
-      · exact h.ftBin
-      · exact h.parseMora
-      · exact h.allFeetRight)
-    hrk
+    (h : IsPerfect fc) (r : Ranking (Fin 3) 3) (hne : cands ≠ []) :
+    fc ∈ (Tableau.ofPerm restrictors r cands hne).optimal :=
+  Tableau.ofPerm_zero_mem_optimal hc h.restrictors_eq_zero
 
 /-- When some candidate is perfect, only perfect candidates are optimal under the restrictors,
 whatever their ranking. -/
 theorem isPerfect_of_mem_optimal {cands : List Word} {fc₀ fc : Word} (hc₀ : fc₀ ∈ cands)
     (h₀ : IsPerfect fc₀) (hfc : fc ≠ []) (hpos : ∀ s ∈ fc.strays, s ≠ 0)
-    {rk : List (Constraint Word)} (hrk : rk ∈ restrictors.permutations') (hne : cands ≠ [])
-    (hc : fc ∈ (Tableau.ofRanking cands rk hne).optimal) : IsPerfect fc := by
-  have hperm := List.mem_permutations'.mp hrk
-  have hzero : ∀ con ∈ restrictors, con fc = 0 := by
-    have hle := Tableau.le_of_mem_optimal hc (List.mem_toFinset.mpr hc₀)
-    have h0 : (Tableau.ofRanking cands rk hne).profile fc₀ = 0 := by
-      funext i
-      have hi : rk.get i ∈ restrictors := hperm.subset (rk.get_mem i)
-      simp only [restrictors, List.mem_cons, List.not_mem_nil, or_false] at hi
-      show rk.get i fc₀ = 0
-      rcases hi with hi | hi | hi <;> rw [hi]
-      · exact h₀.ftBin
-      · exact h₀.parseMora
-      · exact h₀.allFeetRight
-    rw [h0] at hle
-    have hbot : (Tableau.ofRanking cands rk hne).profile fc = 0 :=
-      le_antisymm hle (ViolationProfile.zero_le _)
-    intro con hcon
-    obtain ⟨i, rfl⟩ := List.mem_iff_get.mp (hperm.symm.subset hcon)
-    exact congrFun hbot i
-  exact (isPerfect_iff hpos).2 ⟨hfc, hzero _ (by simp [restrictors]),
-    hzero _ (by simp [restrictors]), hzero _ (by simp [restrictors])⟩
+    (r : Ranking (Fin 3) 3) (hne : cands ≠ [])
+    (hc : fc ∈ (Tableau.ofPerm restrictors r cands hne).optimal) : IsPerfect fc := by
+  have hzero := Tableau.ofPerm_eq_zero_of_mem_optimal hc₀ h₀.restrictors_eq_zero hc
+  exact (isPerfect_iff hpos).2 ⟨hfc, hzero 0, hzero 1, hzero 2⟩
 
 /-! ### Lengthening and truncation -/
 
@@ -182,7 +164,7 @@ def lengtheningCandidates : List Word :=
 
 /-- (15): the lengthened bimoraic foot is the sole optimum. -/
 theorem lengthening :
-    (Tableau.ofRanking lengtheningCandidates restrictors).optimal =
+    (Tableau.ofPerm restrictors (Equiv.refl _) lengtheningCandidates).optimal =
       {[.inl (Foot.monosyllable heavy)]} := by
   decide +kernel
 
@@ -195,7 +177,7 @@ def truncationCandidates : List Word :=
 
 /-- (45): the truncated bimoraic foot is the sole optimum. -/
 theorem truncation :
-    (Tableau.ofRanking truncationCandidates restrictors).optimal =
+    (Tableau.ofPerm restrictors (Equiv.refl _) truncationCandidates).optimal =
       {[.inl (Foot.trochee light light)]} := by
   decide +kernel
 

@@ -468,7 +468,7 @@ theorem loanwordDevoicing_realizedByWeighting :
     loanwordDevoicing.realizedByWeighting ![3/2, 1, 1] := by
   intro i _ o _ hne
   cases i <;> cases o <;>
-    simp [loanwordDevoicing, weightedViolations, Fin.sum_univ_three] at hne ⊢ <;> norm_num
+    simp [loanwordDevoicing, dotProduct, Fin.sum_univ_three] at hne ⊢ <;> norm_num
 
 /-- No ranking realizes the pattern, the instance behind `hg_strictly_contains_ot`. -/
 theorem loanwordDevoicing_not_isOTRealizable : ¬ loanwordDevoicing.IsOTRealizable := by decide
@@ -476,13 +476,14 @@ theorem loanwordDevoicing_not_isOTRealizable : ¬ loanwordDevoicing.IsOTRealizab
 /-- With IDENT-VOICE weighted 2 over 1 and 1, *guddo* and *gutto* tie at harmony −2 and
 MaxEnt-HG gives each probability ½ (tableau (22)). -/
 theorem guddo_maxEnt_half :
-    softmax (fun o => -weightedViolations ![2, 1, 1] (loanwordDevoicing.vp .guddo o)) =
+    softmax (fun o => -(![2, 1, 1] ⬝ᵥ (Nat.cast ∘ loanwordDevoicing.vp .guddo o))) =
       fun _ => 2⁻¹ := by
-  have h : (fun o => -weightedViolations ![2, 1, 1] (loanwordDevoicing.vp .guddo o)) =
+  have h : (fun o => -(![2, 1, 1] ⬝ᵥ (Nat.cast ∘ loanwordDevoicing.vp .guddo o))) =
       fun _ => (-2 : ℝ) := by
     funext o
-    cases o <;> norm_num [loanwordDevoicing, weightedViolations, Fin.sum_univ_three]
-  simp [h]
+    cases o <;> norm_num [loanwordDevoicing, dotProduct, Fin.sum_univ_three]
+  rw [h]
+  simp
 
 /-! ### MaxEnt-HG (§4.3–4.4) -/
 

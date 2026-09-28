@@ -15,16 +15,15 @@ public import Mathlib.Algebra.Order.Group.PiLex
 A candidate's violation profile under a constraint set is its violation vector ordered
 lexicographically, `Lex (Fin n → ℕ)` from `Mathlib/Order/PiLex` ([riggle-2009b]). The
 lexicographic order is Optimality Theory's strict domination, so the profile is OT's. Harmonic
-Grammar weights the same vector without ordering it (`HarmonicGrammar.weightedViolations`).
+Grammar weights the same vector without ordering it (`HarmonicGrammar.harmonyScore`).
 
 ## Main definitions
 
-* `ViolationProfile n` — `Lex (Fin n → Nat)`, a fixed-length violation vector.
-* `buildViolationProfile` — assemble a profile from a constraint vector.
+* `ViolationProfile n` — `Lex (Fin n → Nat)`, a fixed-length violation vector. The profile of a
+  candidate `c` under a constraint set `con` read in rank order `r` is `toLex fun p ↦ con (r p) c`.
 
 ## Main results
 
-* `ViolationProfile.zero_le` — the zero profile is the bottom element.
 * `ViolationProfile.le_apply_zero` — first-component extraction from `≤`.
 
 ## References
@@ -40,20 +39,7 @@ namespace OptimalityTheory
 order. -/
 abbrev ViolationProfile (n : Nat) := Lex (Fin n → Nat)
 
-variable {C : Type*} {n : Nat}
-
-/-- The profile of a candidate under a constraint set is its violations in ranking order. -/
-abbrev buildViolationProfile (con : ConstraintSet C (Fin n)) (c : C) : ViolationProfile n :=
-  toLex fun i ↦ con i c
-
-@[simp] theorem buildViolationProfile_apply (con : ConstraintSet C (Fin n)) (c : C) (i : Fin n) :
-    buildViolationProfile con c i = con i c := rfl
-
-/-- The zero profile is the bottom element: `0 ≤ p` for every profile `p`, so a
-    candidate with no violations wins under any ranking. -/
-theorem ViolationProfile.zero_le (p : ViolationProfile n) :
-    (0 : ViolationProfile n) ≤ p :=
-  bot_le
+variable {n : Nat}
 
 /-- A profile at most another is at most it on the first constraint. -/
 theorem ViolationProfile.le_apply_zero

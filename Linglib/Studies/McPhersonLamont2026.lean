@@ -110,8 +110,8 @@ abbrev maxLinkMIdx   : Fin numConstraints := 3
 
 /-- ERC of a winner/loser pair via `ercOfProfiles` ([prince-2002]). -/
 def ercFor (winner loser : Cand) : ERC numConstraints :=
-  ercOfProfiles (buildViolationProfile ranking.get winner)
-    (buildViolationProfile ranking.get loser)
+  ercOfProfiles (toLex (ranking.get · winner))
+    (toLex (ranking.get · loser))
 
 /-- ERC for the `/nān + rī^H + nā/` winner-loser pair. -/
 def ercA : ERC numConstraints := ercFor .nanWinner .nanLoser
