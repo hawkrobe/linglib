@@ -20,8 +20,10 @@ these operations applied to declarative contents (Chapter 5).
 
 The substrate `Semantics/Questions/` is this theory: `Question W` is the proposition, `info`,
 `alt`, `isInformative` and `isInquisitive` its attributes, the lattice order its entailment with
-`⊤`, `⊥`, `⊓`, `⊔` and `⇨` the operations, `proj` and `nonInfo` the two projections with
-`proj_inf_nonInfo` the division law, and `polar` and `which` the polar and mention-some forms.
+`⊤`, `⊥`, `⊓`, `⊔` and `⇨` the operations, the double complement `Pᶜᶜ` and `query` the two
+projections with `compl_compl_inf_query` the division law, the regular elements
+(`Heyting.IsRegular`) the non-inquisitive propositions, and `polar` and `which` the polar and
+mention-some forms.
 This file proves the one Chapter 2 fact stated over two contents at once,
 `update_nonInquisitive` (Fact 2.36). The logical language of Chapter 4 is the modal-free
 fragment of `Inquisitive.Formula` (`Inquisitive.Formula.IsModalFree`); Chapters 6–9 are not

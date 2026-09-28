@@ -98,7 +98,7 @@ def proposition : Formula A → Question W
   | atom a => Question.ofSet (v a)
   | neg φ => (proposition φ)ᶜ
   | inqDisj φ ψ => proposition φ ⊔ proposition ψ
-  | bang φ => (proposition φ).bang
+  | bang φ => (proposition φ)ᶜᶜ
   | query φ => (proposition φ).query
 
 /-- The possibilities a formula highlights, each with its polarity (60). -/
@@ -178,8 +178,7 @@ theorem proposition_toInquisitive [Fintype W] [DecidableEq W] (M : Inquisitive.M
   | inqDisj φ ψ ihφ ihψ =>
     simp only [toInquisitive, Inquisitive.proposition_inqDisj, proposition, ihφ, ihψ]
   | bang φ ih =>
-    rw [toInquisitive, Inquisitive.proposition_neg_neg, ih]
-    rfl
+    rw [toInquisitive, Inquisitive.proposition_neg_neg, ih, proposition]
   | query φ ih =>
     simp only [toInquisitive, Inquisitive.Formula.polarQ, Inquisitive.Formula.neg,
       Inquisitive.proposition_inqDisj, Inquisitive.proposition_impl, Inquisitive.proposition_bot,
