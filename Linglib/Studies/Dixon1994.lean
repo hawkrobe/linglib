@@ -244,7 +244,7 @@ the perfective, never in the imperfective alone. -/
 def AspectOriented (s : Aspect.Perfectivity → AlignmentType) : Prop :=
   s .imperfective = .ergative → s .perfective = .ergative
 
-theorem aspectOriented_hindi : AspectOriented Hindi.Case.alignment := fun h ↦ nomatch h
+theorem aspectOriented_hindi : AspectOriented Hindi.alignment := fun h ↦ nomatch h
 
 /-! ### Passive, antipassive and pivots, §6.1 and §6.2 -/
 

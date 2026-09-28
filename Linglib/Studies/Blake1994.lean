@@ -117,10 +117,12 @@ theorem Position.rank_injective : Function.Injective Position.rank := by decide
 instance : LinearOrder Position := LinearOrder.lift' Position.rank Position.rank_injective
 
 /-- The position of a case. A local case goes by its direction, a case of rest with the locative
-and a case of source with the ablative, and the vocative has no position. -/
+and a case of source with the ablative, and the vocative has no position. The oblique of a
+two-case system is at the second position, the case that is likely to cover P or A but for which
+Blake finds the label oblique more appropriate (p. 156). -/
 def position : Case → Option Position
   | .nom | .abs => some .nom
-  | .acc | .erg => some .accErg
+  | .acc | .erg | .obl => some .accErg
   | .gen => some .gen
   | .dat => some .dat
   | .inst => some .ablInst
@@ -278,10 +280,11 @@ theorem latin_dat_functions_ssubset_ancient_greek :
 
 /-- Modern Greek, Modern Standard Arabic, Hindi, Telugu and the Slavic languages not among
 Blake's systems conform. Blake gives Modern Greek and Classical Arabic as three-case systems of
-nominative, accusative and genitive ([blake-2001] p. 156). -/
+nominative, accusative and genitive ([blake-2001] p. 156), and the inflectional cases of
+Hindi–Urdu, leaving aside the vocative, as nominative and oblique (p. 10). -/
 theorem fragments_conform :
     ∀ inv ∈ [Finset.univ.image Greek.StandardModern.Case.label,
-      Finset.univ.image Arabic.ModernStandard.Case.label, Hindi.Case.inventory,
+      Finset.univ.image Arabic.ModernStandard.Case.label, Finset.univ.image Hindi.Case.label,
       Finset.univ.image Telugu.Case.label, Finset.univ.image Belarusian.Case.label,
       Finset.univ.image Cassubian.Case.label, Finset.univ.image Russian.Case.label,
       Finset.univ.image Slovenian.Case.label,

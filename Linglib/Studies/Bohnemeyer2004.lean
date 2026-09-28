@@ -560,7 +560,7 @@ theorem linking_consistent_with_split :
     use perfective → ergative, imperfective → accusative (modulo
     language-specific factor types). -/
 theorem aspect_conditioned_split_family :
-    Yukatek.alignment .completive = Hindi.Case.alignment .perfective := rfl
+    Yukatek.alignment .completive = Hindi.alignment .perfective := rfl
 
 /-! ### Stem classes vs Lucy's root classes
 

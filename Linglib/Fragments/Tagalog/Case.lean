@@ -19,8 +19,9 @@ it gives an approximative reading instead, and as restricted with mass nouns.
 
 ## Main definitions
 
-* `Tagalog.marker` — the common-noun case markers
-* `Tagalog.personalMarker` — the personal-name case markers by number
+* `Tagalog.Case` — the three case series, named for their common-noun markers
+* `Tagalog.Case.label` — the comparative value of each series under Kroeger's labels
+* `Tagalog.Case.personalMarker` — the personal-name marker of each series by number
 * `Tagalog.plural` — the plural proclitic *mga* of common nouns
 
 ## References
@@ -34,23 +35,39 @@ it gives an approximative reading instead, and as restricted with mass nouns.
 
 namespace Tagalog
 
-/-- The common-noun case markers *ang*, *ng* and *sa*. -/
-def marker : Case → Option String
-  | .nom => some "ang"
-  | .gen => some "ng"
-  | .dat => some "sa"
-  | _ => none
+/-- The three case series, named for their common-noun markers: *ang* for the subject, *ng* for
+possessors and for non-subject agents and objects, and *sa* for obliques. -/
+inductive Case where
+  /-- The *ang* series. -/
+  | ang
+  /-- The *ng* series. -/
+  | ng
+  /-- The *sa* series. -/
+  | sa
+  deriving DecidableEq, Fintype, Repr
 
-/-- The personal-name case markers, singular *si*, *ni*, *kay* and plural *sina*, *nina*,
+namespace Case
+
+/-- The comparative value of a series under Kroeger's labels, the nominative, the genitive and
+the dative. Himmelmann's labels, specifier, possessive and locative, would give the *sa* series
+the locative. -/
+def label : Case → _root_.Case
+  | ang => .nom
+  | ng => .gen
+  | sa => .dat
+
+/-- The personal-name marker of a series: singular *si*, *ni* and *kay*, plural *sina*, *nina* and
 *kina*. -/
 def personalMarker : Case → Number → Option String
-  | .nom, .singular => some "si"
-  | .gen, .singular => some "ni"
-  | .dat, .singular => some "kay"
-  | .nom, .plural => some "sina"
-  | .gen, .plural => some "nina"
-  | .dat, .plural => some "kina"
+  | ang, .singular => some "si"
+  | ng, .singular => some "ni"
+  | sa, .singular => some "kay"
+  | ang, .plural => some "sina"
+  | ng, .plural => some "nina"
+  | sa, .plural => some "kina"
   | _, _ => none
+
+end Case
 
 /-- The plural proclitic *mga* of common nouns. -/
 def plural : String := "mga"
