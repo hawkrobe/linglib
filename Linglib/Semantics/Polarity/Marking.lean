@@ -11,7 +11,8 @@ sentence-internal affirmative particle, Verum focus on the finite verb, a polari
 particle, another device, or no marking. A `PolarityMarker.Env` is a position or discourse
 context in which a device is available, and a `PolarityMarker` is a language's device
 with its form, its prosodic target, its environments and its strategy. Fragments for Dutch,
-German, English, Italian and Spanish populate the schema.
+English, Italian and Spanish populate the schema, and the German Verum focus of
+[turco-braun-dimroth-2014] is recorded in that study.
 
 ## Implementation notes
 
@@ -25,8 +26,7 @@ encoded, so entries under one strategy may differ in it. This is a separate syst
 `PolarityItem` licensing API. Polarity particles, including the polarity-reversing Swedish
 *jo* and French *si* of [holmberg-2016], are a language's `PolarityParticle`s, which each
 framework interprets; under [holmberg-2016]'s `AnswerFeature.reversing` the negative context a
-marker's environments record is derived. German *doch* is both, a polarity particle and, as a
-separate utterance preceding a Verum focus utterance, a marker.
+marker's environments record is derived.
 
 ## References
 
@@ -49,10 +49,8 @@ inductive Strategy where
   | particle
   /-- Pitch accent on the finite verb ([hohle-1992] Verum focus) -/
   | verumFocus
-  /-- Polarity-reversing particle or construction: affirms [+Pol] against a negative or
-  contrasting context (German *doch* before a Verum focus utterance, Italian *sì che*, Spanish
-  *sí que*). The lumping records a shared functional role only: the surface categories vary
-  between a separate utterance and a clause-initial construction. -/
+  /-- Polarity-reversing construction: affirms [+Pol] against a negative or contrasting
+  context, clause-initially (Italian *sì che*, Spanish *sí que*). -/
   | polarityReversal
   /-- Other strategy (e.g., pre-utterance particle, intonation pattern) -/
   | other

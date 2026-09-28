@@ -19,9 +19,10 @@ statement into a question expecting the answer yes, and with *wohl* it hopes tha
 the case. A sentence type the grammar says nothing about is left unrecorded.
 
 The polarity particles *ja*, *nein* and *doch*, answering and responding, are
-`German.PolarityParticle`, and the analyses
-of the modal particles are with the studies of them: Gutzmann's typing of *ja*, *denn* and *wohl*
-with his own examples, Theiler's *denn*, Seeliger and Repp's *doch wohl*.
+`German.PolarityParticle`; the response *doch* is also used as a separate utterance before a
+Verum focus correction (`TurcoBraunDimroth2014`). The analyses of the modal particles are with
+the studies of them: Gutzmann's typing of *ja*, *denn* and *wohl* with his own examples,
+Theiler's *denn*, Seeliger and Repp's *doch wohl*.
 
 ## References
 

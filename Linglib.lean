@@ -717,7 +717,6 @@ import Linglib.Fragments.German.ModalIndefinites
 import Linglib.Fragments.German.Negation
 import Linglib.Fragments.German.Particles
 import Linglib.Fragments.German.PolarityItems
-import Linglib.Fragments.German.PolarityMarking
 import Linglib.Fragments.German.Pronouns
 import Linglib.Fragments.German.Reciprocals
 import Linglib.Fragments.German.Relativization
