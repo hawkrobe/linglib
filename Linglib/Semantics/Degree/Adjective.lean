@@ -89,8 +89,8 @@ inductive InformationalStrength where
 
 /-- The evaluative valence of a gradable predicate records whether it denotes a good, a bad or
 an evaluatively neutral property, which is distinct from scalar polarity ([nouwen-2024]).
-Negative valence yields high-degree intensifiers and positive valence medium-degree ones, the
-Goldilocks effect. -/
+Negative valence yields high-degree intensifiers and positive valence moderate-degree ones, which
+Nouwen explains by the Goldilocks effect, the negative evaluation of a scale's extremes. -/
 inductive EvaluativeValence where
   | positive
   | negative
@@ -121,8 +121,8 @@ inductive SpatialConfigType where
     positive standard and adjective class are derived from its dimension and polarity. -/
 structure GradableAdjective extends Adjective where
   /-- The lexically fixed positive standard, for a partial adjective on a closed scale or for an
-      adjective like *good* with a necessity or contextual standard on an open scale
-      ([beltrama-2025]); `none` takes the scale's default. -/
+      adjective on an open scale whose standard its lexicon fixes, such as the necessity standard
+      of *decent* ([beltrama-2025]); `none` takes the scale's default. -/
   lexicalStandard : Option PositiveStandard := none
   /-- The logical relation to the lexical antonym, contrary or contradictory. -/
   antonymRelation : Option AntonymRelation := none
@@ -276,7 +276,7 @@ private theorem not_any_eq_all_not_map :
 
 /-- Negated conjunctive binding is disjunctive binding over the negated dimensions, so under a
     negation theory of antonymy a conjunctive positive form has a disjunctive antonym
-    ([sassoon-2013], Hypothesis 2). -/
+    ([sassoon-2013], Hypotheses-set 2, (19a)). -/
 theorem deMorgan_conjunctive_disjunctive
     (dims : List (α → Bool)) (x : α) :
     (!conjunctiveBinding dims x) =
@@ -303,7 +303,7 @@ theorem negate_involutive (b : DimensionBindingType) :
 
 /-- The binding type a standard predicts is conjunctive for the maximum standard of a total
     adjective, disjunctive for the minimum standard of a partial one, and mixed for a contextual
-    standard ([sassoon-2013], Hypothesis 3). -/
+    standard ([sassoon-2013], Hypothesis set 3, (23)). -/
 def predictedBinding : Degree.PositiveStandard → DimensionBindingType
   | .maxEndpoint  => .conjunctive
   | .minEndpoint  => .disjunctive

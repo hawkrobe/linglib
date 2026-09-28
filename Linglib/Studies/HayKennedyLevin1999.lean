@@ -24,9 +24,9 @@ open-range adjectives are checked against the scales of the English fragment.
 
 ## Implementation notes
 
-* Degrees form a densely ordered abelian group, so the paper's degree addition is the group's, its
-  maximal scale value is a degree `top` rather than a top element, and density makes "some
-  amount" and *slightly* unbounded.
+* Degrees form a densely ordered abelian group, whose addition extends the paper's degree addition
+  (15), defined only when a summand is positive. The maximal scale value is a degree `top` rather
+  than a top element, and density makes "some amount" and *slightly* unbounded.
 * The readings of a description are its admissible difference values. Overt material fixes one;
   with none there is the literal "some amount" and, when a maximal or conventional value is
   salient, the bounded value it implicates. The in-adverbial and for-adverbial tests are read as

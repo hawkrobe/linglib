@@ -14,8 +14,9 @@ degree achievements measure, such as height, temperature and fullness. A dimensi
 perceptual domain, the shape of its scale in its increasing direction, and, when it is a dimension
 of physical measurement, the physical dimension its degrees are measured in. Evaluative and
 psychological scales have none, which is why they reject measure phrases (*six feet tall* but not
-*six feet happy*), and speed is a primitive lexical scale although physically a quotient, since on
-Bale and Schwarz's No Division Hypothesis the grammar does not compose the ratio. The degrees of a
+*six feet happy*), and speed is a primitive lexical scale although physically a quotient, in line
+with Bale and Schwarz's hypothesis that semantic composition has no quantity division. The degrees
+of a
 dimension are the canonical linear order of its scale's shape, and the default Vendler class of a
 degree achievement is read off that shape.
 
@@ -87,11 +88,11 @@ def ScalarDimension.domain : ScalarDimension → PropertyDomain
   | .color => .color
 
 /-- The shape of a dimension's scale in its increasing direction ([kennedy-mcnally-2005]
-    (24)–(27), [kennedy-2007] (33), (60)). Wetness is lower closed, by *completely dry* against
-    *??completely wet*, straightness upper closed, by *fully straight* against *??fully bent*, and
-    fullness closed, by *100% full* and *100% empty*. The negative member of an antonym pair
-    measures on the dual scale. The definition is reducible, so that order instances on the
-    degrees of a dimension see through it. -/
+    (24)–(27), [kennedy-2007] (33), (49)–(50), (60)). Wetness is lower closed, *wet* taking a
+    minimum standard and *dry* a maximum one, straightness upper closed, by *fully straight*
+    against *??fully bent*, and fullness closed, by *100% full* and *100% empty*. The negative
+    member of an antonym pair measures on the dual scale. The definition is reducible, so that
+    order instances on the degrees of a dimension see through it. -/
 abbrev ScalarDimension.boundedness : ScalarDimension → Boundedness
   | .openness | .curvature | .cracking | .denting | .scratching | .boiling
   | .alive | .freedom | .fullness | .shattering | .tightness | .pregnancy => .closed
