@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Probability.Choice.RandomUtility
 public import Linglib.Core.Probability.Distributions.Gaussian
+public import Linglib.Core.Probability.Distributions.Logistic
 
 /-!
 # Signal detection theory
@@ -55,6 +56,10 @@ choice is the binary probit rule, with proportion correct `Φ (d' / √2)`
 * `SignalDetection.likelihoodRatio_gaussianReal`: the likelihood ratio of the normal model.
 * `SignalDetection.forcedChoice_one_gaussianReal`: in the normal model the two-alternative
   proportion correct is `Φ (d' / √2)`, [macmillan-creelman-2005]'s eq. (7.6).
+* `SignalDetection.log_odds_hitRate_sub_log_odds_falseAlarmRate`,
+  `SignalDetection.log_odds_hitRate_add_log_odds_falseAlarmRate`: in the logistic model the
+  sensitivity and the criterion are the difference and minus the mean of the log-odds of the rates,
+  [macmillan-creelman-2005]'s eqs. (4.10) and (4.12).
 
 ## Implementation notes
 
@@ -71,8 +76,9 @@ reprint.
 * The optimal criterion is the Bayes estimator of the experiment under 0-1 loss, and a larger
   sensitivity gives a more informative experiment in the order of
   `Linglib/Core/Probability/Decision/Blackwell.lean`.
-* Choice Theory's logistic model needs the logistic distribution, and its yes-no and
-  forced-choice predictions are [luce-1959]'s section 2.E.
+* The axiom-1 forced choice of [luce-1959] (section 2.E) is a logistic Yes-No model at twice the
+  sensitivity, which is not the forced choice of the logistic model: the difference of two logistic
+  observations is not logistic.
 
 ## References
 
@@ -253,5 +259,45 @@ theorem forcedChoice_one_gaussianReal :
     add_halves]
 
 end Normal
+
+/-! ### The logistic model -/
+
+section Logistic
+
+variable (δ k : ℝ)
+
+theorem hitRate_logisticMeasure :
+    hitRate (locationExperiment logisticMeasure δ) k = Real.sigmoid (δ / 2 - k) := by
+  rw [hitRate_locationExperiment, logisticMeasure_real_Ioi, neg_sub]
+
+theorem falseAlarmRate_logisticMeasure :
+    falseAlarmRate (locationExperiment logisticMeasure δ) k = Real.sigmoid (-(δ / 2) - k) := by
+  rw [falseAlarmRate_locationExperiment, logisticMeasure_real_Ioi]
+  ring_nf
+
+/-- In the logistic model the sensitivity is the difference of the log-odds of the rates, whatever
+the criterion: on log-odds axes the receiver operating characteristic is a line of unit slope, `δ`
+above the chance line, [macmillan-creelman-2005]'s eq. (4.10) with `δ = 2 ln α`. -/
+theorem log_odds_hitRate_sub_log_odds_falseAlarmRate :
+    Real.log (hitRate (locationExperiment logisticMeasure δ) k /
+        (1 - hitRate (locationExperiment logisticMeasure δ) k)) -
+      Real.log (falseAlarmRate (locationExperiment logisticMeasure δ) k /
+        (1 - falseAlarmRate (locationExperiment logisticMeasure δ) k)) = δ := by
+  rw [hitRate_logisticMeasure, falseAlarmRate_logisticMeasure,
+    Real.log_sigmoid_div_one_sub_sigmoid, Real.log_sigmoid_div_one_sub_sigmoid]
+  ring
+
+/-- In the logistic model the criterion is minus the mean of the log-odds of the rates,
+[macmillan-creelman-2005]'s bias `ln b` of eq. (4.12). -/
+theorem log_odds_hitRate_add_log_odds_falseAlarmRate :
+    -(Real.log (hitRate (locationExperiment logisticMeasure δ) k /
+        (1 - hitRate (locationExperiment logisticMeasure δ) k)) +
+      Real.log (falseAlarmRate (locationExperiment logisticMeasure δ) k /
+        (1 - falseAlarmRate (locationExperiment logisticMeasure δ) k))) / 2 = k := by
+  rw [hitRate_logisticMeasure, falseAlarmRate_logisticMeasure,
+    Real.log_sigmoid_div_one_sub_sigmoid, Real.log_sigmoid_div_one_sub_sigmoid]
+  ring
+
+end Logistic
 
 end SignalDetection
