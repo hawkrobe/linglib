@@ -1,444 +1,257 @@
 module
 
-public import Linglib.Core.Probability.Choice.GumbelLuce
+public import Linglib.Core.Probability.Choice.RandomUtility
 public import Linglib.Core.Probability.Distributions.Gaussian
 
 /-!
 # Signal detection theory
 
-This file defines the equal-variance Gaussian model of signal detection theory, the account of
-how an observer discriminates "signal present" from "noise only" when each hypothesis produces
-a noisy internal response. The model follows the presentations of Green and Swets and of
-Macmillan and Creelman, and its link to choice theory follows Luce and McFadden.
+Signal detection theory accounts for a yes-no judgment as a criterion on a noisy decision variable
+([macmillan-creelman-2005]). A trial holds a signal or only noise, the observer receives an
+observation whose law depends on which, and it responds "yes" when the observation exceeds a
+criterion `k`. The experiment is a kernel `P : Kernel Bool ℝ` from the state of the trial to the
+law of the observation, and the observer's response rates are the masses its two laws give to
+`(k, ∞)`: the hit rate on signal trials and the false-alarm rate on noise trials. In a
+forced-choice task one interval holds the signal and the rest noise, and the observer picks the
+interval with the largest observation, so the proportion correct is the choice probability of
+the signal interval in the random utility model of the intervals' laws (`forcedChoice`). It is
+the probability that every noise observation falls below the signal observation, which for two
+intervals is the area under the yes-no receiver operating characteristic, the area theorem of
+[green-swets-1966] (`forcedChoice_eq_lintegral`).
 
-The parameterization is symmetric. The noise distribution is `N(-d'/2, 1)` and the
-signal-plus-noise distribution is `N(d'/2, 1)`, so the sensitivity `d'` is the distance between
-the two means, nonnegative by convention. The criterion `c` is measured from the midpoint
-between the means, so `c = 0` is unbiased, and the observer responds "signal" when the internal
-response exceeds `c`. With `tailProb m μ = P(X > c)` for `X` distributed as `N(μ, 1)`, which
-equals `Φ(μ - c)` for the standard normal distribution function `Φ`, the hit rate is
-`H = Φ(d'/2 - c)` and the false-alarm rate is `F = Φ(-d'/2 - c)`. The receiver operating
-characteristic traces the pairs `(F, H)` as `c` varies at fixed `d'`, and lies above the
-diagonal when `d' > 0`.
-
-An observer is described by three quantities, two free and one derived. The sensitivity is
-recovered from the rates as `z(H) - z(F)` and the criterion as `-(z(H) + z(F)) / 2`. The third,
-`β = exp (d' * c)`, is the likelihood ratio at the criterion, and it is one for an unbiased
-observer.
-
-The likelihood ratio of signal to noise at an observation `x` is defined by its closed form
-`L(x) = exp (d' * x)`, and the report of signal or noise is a binary Gumbel random-utility model
-with utilities `(d' * x, 0)` at unit scale (`SDTModel.reportUtility`), a Luce rule whose odds are
-`L(x)`. Its signal probability `L(x) / (L(x) + 1)` (`SDTModel.rumChoiceProb_report`) is the
-Bayesian posterior under a uniform prior (`SDTModel.posteriorAt_uniform`). That posterior
-exceeds one half exactly when the observation is positive
-(`SDTModel.posterior_gt_half_iff_pos_obs`), which is the sense in which the criterion `c = 0` is
-optimal under a uniform prior.
+The models [macmillan-creelman-2005] compare are location experiments (`locationExperiment`): a
+noise law `ν` shifted by `δ / 2` on signal trials and by `-(δ / 2)` on noise trials, the
+sensitivity `δ` being the distance between the two laws. The normal model takes `ν` standard
+normal, and the Choice Theory of [luce-1959] takes it logistic ([macmillan-creelman-2005], ch. 4,
+p. 98). In every location experiment the hit rate of a criterion is the false-alarm rate of the
+criterion lower by `δ` (`hitRate_eq_falseAlarmRate_sub`). For a symmetric `ν`, such as both of
+these, the receiver operating characteristic on axes transformed by the quantile function of `ν` is
+therefore a line of unit slope, `δ` above the chance line. In the normal model the axes are
+z-scores: whatever the criterion `k`, the sensitivity is `d' = z(H) - z(F)` and
+`k = -(z(H) + z(F)) / 2` (`probit_hitRate_sub_probit_falseAlarmRate`,
+`probit_hitRate_add_probit_falseAlarmRate`). The likelihood ratio of signal to noise at an
+observation `x` is `exp (d' * x)` (`likelihoodRatio_gaussianReal`), and the two-alternative forced
+choice is the binary probit rule, with proportion correct `Φ (d' / √2)`
+(`forcedChoice_one_gaussianReal`).
 
 ## Main definitions
 
-* `SDTModel`: the sensitivity and criterion of an observer.
-* `SDTModel.hitRate`, `SDTModel.falseAlarmRate`: the two response rates.
-* `dPrimeFromRates`, `biasFromRates`: the sensitivity and criterion recovered from the rates.
-* `SDTModel.beta`: the likelihood ratio at the criterion.
-* `rocCurve`: the hit rate as a function of the false-alarm rate at fixed sensitivity.
-* `SDTModel.reportUtility`: the utilities of the report at an observation.
-* `SDTModel.posteriorAt`: the posterior probability of signal at an observation.
-* `logisticApproxConst`: the variance-matching constant `π/√3` of the logistic approximation.
+* `SignalDetection.hitRate`, `SignalDetection.falseAlarmRate`: the response rates of a criterion.
+* `SignalDetection.forcedChoice`: the proportion correct of a forced-choice task.
+* `SignalDetection.locationExperiment`: the experiment of a noise law at a sensitivity.
+
+## Main results
+
+* `SignalDetection.forcedChoice_eq_lintegral`: the forced-choice proportion correct as an integral
+  over the signal observation, [green-swets-1966]'s eq. (2.13).
+* `SignalDetection.hitRate_eq_falseAlarmRate_sub`: in a location experiment the hit rate of `k` is
+  the false-alarm rate of `k - δ`.
+* `SignalDetection.falseAlarmRate_lt_hitRate`: at positive sensitivity the receiver operating
+  characteristic lies above the chance line.
+* `SignalDetection.probit_hitRate_sub_probit_falseAlarmRate`: in the normal model
+  `z(H) = z(F) + d'`, [macmillan-creelman-2005]'s eq. (1.8).
+* `SignalDetection.probit_hitRate_add_probit_falseAlarmRate`: in the normal model the criterion is
+  `c = -(z(H) + z(F)) / 2`, [macmillan-creelman-2005]'s eq. (2.1).
+* `SignalDetection.likelihoodRatio_gaussianReal`: the likelihood ratio of the normal model.
+* `SignalDetection.forcedChoice_one_gaussianReal`: in the normal model the two-alternative
+  proportion correct is `Φ (d' / √2)`, [macmillan-creelman-2005]'s eq. (7.6).
+
+## Implementation notes
+
+The forced-choice observer picks the interval with the largest observation, where
+[green-swets-1966] (p. 46) pick the interval with the largest likelihood ratio. The two rules agree
+whenever the likelihood ratio increases with the observation, as it does in the normal model
+(`likelihoodRatio_gaussianReal`). Page numbers of [green-swets-1966] are those of its 1988
+reprint.
 
 ## TODO
 
-The likelihood ratio is defined as `exp (d' * x)`; that this is the ratio of the two Gaussian
-densities is derived on paper and not proved here.
-
-UNVERIFIED: that Luce's monograph gives the choice-theoretic framing of detection in its §2.E.
-
-UNVERIFIED: that it gives the discriminal-process theory, of which detection theory is the
-two-alternative case, in its §2.B-D.
-
-UNVERIFIED: that the Bayes-optimal criterion under prior odds `π_N / π_S` is
-`log (π_N / π_S) / d'`, a standard result attributed to Green and Swets and to Macmillan and
-Creelman's first chapter. It is not formalized, since it needs Bayesian decision theory over a
-continuous observation.
+* The slope of the receiver operating characteristic at a criterion is the likelihood ratio there
+  ([macmillan-creelman-2005], ch. 2); for the normal model this needs the derivative of `Φ`.
+* The optimal criterion is the Bayes estimator of the experiment under 0-1 loss, and a larger
+  sensitivity gives a more informative experiment in the order of
+  `Linglib/Core/Probability/Decision/Blackwell.lean`.
+* Choice Theory's logistic model needs the logistic distribution, and its yes-no and
+  forced-choice predictions are [luce-1959]'s section 2.E.
 
 ## References
 
-* [R. D. Luce, *Individual Choice Behavior: A Theoretical Analysis* (1959)][luce-1959]
-* [D. M. Green and J. A. Swets, *Signal Detection Theory and Psychophysics*
-  (1966)][green-swets-1966]
-* [N. A. Macmillan and C. D. Creelman, *Detection Theory: A User's Guide*
-  (2005)][macmillan-creelman-2005]
-* [D. McFadden, *Conditional logit analysis of qualitative choice behavior* (1974)][mcfadden-1974]
+* [macmillan-creelman-2005]
+* [green-swets-1966]
+* [luce-1959]
 -/
 
 @[expose] public section
 
-namespace Core
+open MeasureTheory ProbabilityTheory Set
+open scoped ENNReal NNReal
 
-open Real MeasureTheory ProbabilityTheory BigOperators
+namespace SignalDetection
 
-section Model
+/-! ### Response rates and forced choice -/
 
-/-! ## SDT model -/
+section Experiment
 
-/-- A signal detection model with equal-variance Gaussian distributions in the symmetric
-parameterization. Neither field is constrained by the structure, and theorems that need `0 ≤ dPrime`
-or `0 < dPrime` take it as a hypothesis, as mathlib's `gaussianReal μ v` leaves its parameters
-unconstrained. -/
-@[ext]
-structure SDTModel where
-  /-- The sensitivity is the signed distance between the signal-plus-noise mean and the noise mean
-  in standard deviation units, nonnegative by convention. -/
-  dPrime : ℝ
-  /-- The criterion is the threshold for a "signal" response, measured from the midpoint between the
-  two means, so that zero is unbiased, positive values favour "noise" and negative values favour
-  "signal". -/
-  criterion : ℝ
+variable (P : Kernel Bool ℝ) (k : ℝ)
 
-end Model
+/-- The hit rate of the criterion `k`: the probability that the observation on a signal trial
+exceeds `k`, so that the observer responds "yes". -/
+noncomputable def hitRate : ℝ := (P true).real (Ioi k)
 
-section TailProbabilities
+/-- The false-alarm rate of the criterion `k`: the probability that the observation on a noise
+trial exceeds `k`. -/
+noncomputable def falseAlarmRate : ℝ := (P false).real (Ioi k)
 
-/-! ## Hit and false-alarm rates as instances of `tailProb`
+/-- The proportion correct of the forced-choice task with one signal interval and `n` noise
+intervals, in which the observer picks the interval with the largest observation: the choice
+probability of the signal interval in the random utility model of the intervals' laws. -/
+noncomputable def forcedChoice (n : ℕ) : ℝ≥0∞ :=
+  rumChoiceProb (fun j : Fin (n + 1) ↦ P (decide (j = 0))) 0
 
-Both rates are tail probabilities of a unit-variance Gaussian shifted by ±d'/2:
-hit rate is the tail at the *signal* mean, false-alarm rate is the tail at the
-*noise* mean. Factoring the shared structure makes the bound proofs apply
-uniformly. -/
+/-- The forced-choice proportion correct is the probability that all `n` noise observations fall
+below the signal observation `k`, integrated over `k` ([green-swets-1966], eqs. (2.7) and (2.13),
+p. 47). With one noise interval it is the area under the yes-no receiver operating
+characteristic, the hit rate integrated over the false-alarm rate. -/
+theorem forcedChoice_eq_lintegral [IsFiniteKernel P] (n : ℕ) :
+    forcedChoice P n = ∫⁻ k, P false (Iio k) ^ n ∂(P true) := by
+  rw [forcedChoice, rumChoiceProb_eq_lintegral]
+  refine lintegral_congr fun k ↦ ?_
+  rw [Finset.prod_congr rfl fun j hj ↦ by rw [decide_eq_false (Finset.ne_of_mem_erase hj)],
+    Finset.prod_const, Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ,
+    Fintype.card_fin, Nat.add_sub_cancel]
 
-/-- The tail probability is the probability that a response distributed as `N(μ, 1)` exceeds the
-model's criterion `c`. -/
-noncomputable def SDTModel.tailProb (m : SDTModel) (μ : ℝ) : ℝ :=
-  (gaussianReal μ 1).real (Set.Ioi m.criterion)
+end Experiment
 
-/-- The tail probability equals `Φ(μ - c)`. -/
-@[simp]
-theorem SDTModel.tailProb_eq_normalCDF (m : SDTModel) (μ : ℝ) :
-    m.tailProb μ = normalCDF (μ - m.criterion) := by
-  simp [SDTModel.tailProb, gaussianReal_real_Ioi]
+/-! ### Location experiments -/
 
-/-- The tail probability lies in `[0, 1]`. -/
-theorem SDTModel.tailProb_mem_Icc (m : SDTModel) (μ : ℝ) :
-    m.tailProb μ ∈ Set.Icc (0 : ℝ) 1 :=
-  ⟨measureReal_nonneg, measureReal_le_one⟩
+section Location
 
-/-- The upper-tail probability is strictly monotone in the mean of the distribution, so shifting the
-distribution rightward makes it larger. -/
-theorem SDTModel.tailProb_strictMono (m : SDTModel) : StrictMono m.tailProb := fun _ _ h ↦ by
-  simpa using normalCDF_strictMono (sub_lt_sub_right h m.criterion)
+variable (ν : Measure ℝ) (δ : ℝ)
 
-/-- The hit rate is the probability of a "signal" response when the signal is present, the tail
-probability at mean `d'/2`. -/
-noncomputable def SDTModel.hitRate (m : SDTModel) : ℝ := m.tailProb (m.dPrime / 2)
+/-- The location experiment of a noise law `ν` at sensitivity `δ`: the observation is `ν` shifted
+by `δ / 2` on signal trials and by `-(δ / 2)` on noise trials. -/
+noncomputable def locationExperiment : Kernel Bool ℝ :=
+  Kernel.ofFunOfCountable fun b ↦ ν.map (· + if b then δ / 2 else -(δ / 2))
 
-/-- The false-alarm rate is the probability of a "signal" response to noise alone, the tail
-probability at mean `-d'/2`. -/
-noncomputable def SDTModel.falseAlarmRate (m : SDTModel) : ℝ := m.tailProb (-(m.dPrime / 2))
+theorem locationExperiment_apply (b : Bool) :
+    locationExperiment ν δ b = ν.map (· + if b then δ / 2 else -(δ / 2)) := rfl
 
-/-- The hit rate lies in `[0, 1]`. -/
-@[simp]
-theorem SDTModel.hitRate_mem_Icc (m : SDTModel) : m.hitRate ∈ Set.Icc (0 : ℝ) 1 :=
-  m.tailProb_mem_Icc _
+variable {ν δ}
 
-/-- The false-alarm rate lies in `[0, 1]`. -/
-@[simp]
-theorem SDTModel.falseAlarmRate_mem_Icc (m : SDTModel) :
-    m.falseAlarmRate ∈ Set.Icc (0 : ℝ) 1 :=
-  m.tailProb_mem_Icc _
-
-/-- The hit rate is nonnegative. -/
-theorem SDTModel.hitRate_nonneg (m : SDTModel) : 0 ≤ m.hitRate := m.hitRate_mem_Icc.1
-
-/-- The hit rate is at most one. -/
-theorem SDTModel.hitRate_le_one (m : SDTModel) : m.hitRate ≤ 1 := m.hitRate_mem_Icc.2
-
-/-- The false-alarm rate is nonnegative. -/
-theorem SDTModel.falseAlarmRate_nonneg (m : SDTModel) : 0 ≤ m.falseAlarmRate :=
-  m.falseAlarmRate_mem_Icc.1
-
-/-- The false-alarm rate is at most one. -/
-theorem SDTModel.falseAlarmRate_le_one (m : SDTModel) : m.falseAlarmRate ≤ 1 :=
-  m.falseAlarmRate_mem_Icc.2
-
-/-- The proportion correct under equal presentation rates is `(H + (1 - F)) / 2`. -/
-noncomputable def SDTModel.proportionCorrect (m : SDTModel) : ℝ :=
-  (m.hitRate + (1 - m.falseAlarmRate)) / 2
-
-end TailProbabilities
-
-section Recovery
-
-/-! ## Recovering `(d', c)` from observed rates
-
-Standard SDT diagnostics come in pairs: from observed `(H, F)` an experimenter
-recovers both the sensitivity `d' = z(H) - z(F)` and the response bias
-`c = -(z(H) + z(F)) / 2`. Both are roundtrip-exact under the model. -/
-
-variable (m : SDTModel)
-
-/-- The sensitivity recovered from a hit rate and a false-alarm rate is `z(H) - z(F)`, where `z` is
-the standard normal quantile function `probit`. -/
-noncomputable def dPrimeFromRates (hitRate falseAlarmRate : ℝ) : ℝ :=
-  probit hitRate - probit falseAlarmRate
-
-/-- The criterion recovered from a hit rate and a false-alarm rate is `-(z(H) + z(F)) / 2`, where
-`z` is the standard normal quantile function `probit`. -/
-noncomputable def biasFromRates (hitRate falseAlarmRate : ℝ) : ℝ :=
-  -(probit hitRate + probit falseAlarmRate) / 2
-
-/-- Under the model the z-score of the hit rate is `d'/2 - c`. -/
-private theorem probit_hitRate :
-    probit m.hitRate = m.dPrime / 2 - m.criterion := by
-  rw [SDTModel.hitRate, SDTModel.tailProb_eq_normalCDF, probit_normalCDF]
-
-/-- Under the model the z-score of the false-alarm rate is `-d'/2 - c`. -/
-private theorem probit_falseAlarmRate :
-    probit m.falseAlarmRate = -(m.dPrime / 2) - m.criterion := by
-  rw [SDTModel.falseAlarmRate, SDTModel.tailProb_eq_normalCDF, probit_normalCDF]
-
-/-- The sensitivity recovered from the model's rates is the model's sensitivity. -/
-@[simp]
-theorem dPrimeFromRates_roundtrip :
-    dPrimeFromRates m.hitRate m.falseAlarmRate = m.dPrime := by
-  rw [dPrimeFromRates, probit_hitRate, probit_falseAlarmRate]; ring
-
-/-- The criterion recovered from the model's rates is the model's criterion. -/
-@[simp]
-theorem biasFromRates_roundtrip :
-    biasFromRates m.hitRate m.falseAlarmRate = m.criterion := by
-  rw [biasFromRates, probit_hitRate, probit_falseAlarmRate]; ring
-
-/-- For rates strictly between zero and one, the recovered sensitivity is positive exactly when the
-hit rate exceeds the false-alarm rate. -/
-theorem dPrimeFromRates_pos_iff {H F : ℝ} (hH : H ∈ Set.Ioo 0 1) (hF : F ∈ Set.Ioo 0 1) :
-    0 < dPrimeFromRates H F ↔ F < H := by
-  rw [dPrimeFromRates, sub_pos, probit_lt_probit_iff hF hH]
-
-end Recovery
-
-section OperatingCharacteristic
-
-/-! ## Operating characteristic `β` and unbiased observers -/
-
-/-- The operating likelihood ratio `β = exp (d' * c)` is the model's likelihood ratio at its
-criterion. -/
-noncomputable def SDTModel.beta (m : SDTModel) : ℝ :=
-  Real.exp (m.dPrime * m.criterion)
-
-/-- The operating likelihood ratio is positive. -/
-theorem SDTModel.beta_pos (m : SDTModel) : 0 < m.beta := exp_pos _
-
-/-- An observer is unbiased when its criterion is zero. -/
-def SDTModel.IsUnbiased (m : SDTModel) : Prop := m.criterion = 0
-
-/-- The operating likelihood ratio of an unbiased observer is one. -/
-theorem SDTModel.IsUnbiased.beta_eq_one {m : SDTModel} (h : m.IsUnbiased) :
-    m.beta = 1 := by
-  simp [SDTModel.beta, show m.criterion = 0 from h]
-
-/-- With positive sensitivity an observer is unbiased exactly when its operating likelihood ratio is
-one. -/
-theorem SDTModel.isUnbiased_iff_beta_eq_one_of_pos
-    (m : SDTModel) (hd : 0 < m.dPrime) :
-    m.IsUnbiased ↔ m.beta = 1 := by
-  refine ⟨SDTModel.IsUnbiased.beta_eq_one, fun h => ?_⟩
-  have hlog : m.dPrime * m.criterion = 0 := by
-    have := congrArg Real.log h
-    rwa [SDTModel.beta, Real.log_exp, Real.log_one] at this
-  rcases mul_eq_zero.mp hlog with hd0 | hc
-  · exact absurd hd0 (ne_of_gt hd)
-  · exact hc
-
-/-- The hit rate and the false-alarm rate of an unbiased observer sum to one. -/
-theorem SDTModel.IsUnbiased.hit_plus_fa_eq_one {m : SDTModel} (h : m.IsUnbiased) :
-    m.hitRate + m.falseAlarmRate = 1 := by
-  rw [SDTModel.hitRate, SDTModel.falseAlarmRate, m.tailProb_eq_normalCDF,
-    m.tailProb_eq_normalCDF, show m.criterion = 0 from h, sub_zero, sub_zero, normalCDF_neg,
-    add_sub_cancel]
-
-/-- The proportion correct of an unbiased observer of positive sensitivity exceeds one half. -/
-theorem SDTModel.IsUnbiased.proportionCorrect_gt_half {m : SDTModel}
-    (h : m.IsUnbiased) (hd : 0 < m.dPrime) :
-    1/2 < m.proportionCorrect := by
-  have hsum : m.hitRate + m.falseAlarmRate = 1 := h.hit_plus_fa_eq_one
-  have hroc : m.falseAlarmRate < m.hitRate :=
-    m.tailProb_strictMono (by linarith : -(m.dPrime / 2) < m.dPrime / 2)
-  simp only [SDTModel.proportionCorrect]
-  linarith
-
-end OperatingCharacteristic
-
-section ROC
-
-/-! ## ROC curve -/
-
-/-- The receiver operating characteristic at a sensitivity maps a false-alarm rate `F` to the hit
-rate `1 - Φ(Φ⁻¹(1 - F) - d')` at the same criterion. -/
-noncomputable def rocCurve (dPrime : ℝ) (falseAlarmRate : ℝ) : ℝ :=
-  1 - normalCDF (probit (1 - falseAlarmRate) - dPrime)
-
-/-- At zero sensitivity the receiver operating characteristic is the diagonal on the open unit
-interval. -/
-theorem roc_diagonal {f : ℝ} (hf : f ∈ Set.Ioo 0 1) : rocCurve 0 f = f := by
-  rw [rocCurve, sub_zero, probit_one_sub, normalCDF_neg, normalCDF_probit hf, sub_sub_cancel]
-
-/-- At positive sensitivity the hit rate exceeds the false-alarm rate, so the receiver operating
-characteristic lies above the diagonal. -/
-theorem roc_above_diagonal (m : SDTModel) (hd : 0 < m.dPrime) :
-    m.falseAlarmRate < m.hitRate :=
-  m.tailProb_strictMono (by linarith : -(m.dPrime / 2) < m.dPrime / 2)
-
-/-! The AUC integral identity
-`∫₀¹ rocCurve d' f df = Φ(d'/√2)` (Green & Swets 1966 [green-swets-1966])
-is correct but unproved — integrating `rocCurve` requires additional measure-
-theoretic infrastructure not currently developed. -/
-
-end ROC
-
-section LuceEmbedding
-
-/-! ## The report as a Gumbel random utility model
-
-Reporting signal or noise at an observation `x` is a binary random utility model with utilities
-`d' * x` for signal and `0` for noise under unit-scale Gumbel noise. By
-`rumChoiceProb_gumbelMeasure_fin_two` its signal probability is the logistic function of `d' * x`,
-which is `L(x) / (L(x) + 1)` for the likelihood ratio `L(x) = exp (d' * x)`: a Luce rule whose
-odds are the likelihood ratio. -/
-
-/-- The likelihood ratio at an observation `x` is `exp (d' * x)`, the closed form of the ratio of
-the density of `N(d'/2, 1)` to that of `N(-d'/2, 1)` at `x`. -/
-noncomputable def likelihoodRatio (dPrime x : ℝ) : ℝ :=
-  Real.exp (dPrime * x)
-
-/-- The likelihood ratio is positive. -/
-theorem likelihoodRatio_pos (dPrime x : ℝ) : 0 < likelihoodRatio dPrime x :=
-  exp_pos _
-
-/-- The likelihood ratio of a model at an observation is `likelihoodRatio` at the model's
-sensitivity. -/
-noncomputable def SDTModel.likelihoodRatioAt (m : SDTModel) (x : ℝ) : ℝ :=
-  likelihoodRatio m.dPrime x
-
-/-- The likelihood ratio of a model is positive. -/
-theorem SDTModel.likelihoodRatioAt_pos (m : SDTModel) (x : ℝ) :
-    0 < m.likelihoodRatioAt x := likelihoodRatio_pos _ _
-
-/-- The utilities of the report at an observation `x`: `d' * x` for signal and `0` for noise.
-They depend on the sensitivity and the observation and not on the criterion, which enters only
-in the observer's response rule. -/
-noncomputable def SDTModel.reportUtility (m : SDTModel) (x : ℝ) : Fin 2 → ℝ :=
-  ![m.dPrime * x, 0]
-
-/-- Under unit-scale Gumbel noise on the report utilities, the probability of reporting signal is
-`L(x) / (L(x) + 1)` for the likelihood ratio `L(x)`. -/
-theorem SDTModel.rumChoiceProb_report (m : SDTModel) (x : ℝ) :
-    rumChoiceProb (fun j ↦ gumbelMeasure (m.reportUtility x j) 1) 0 =
-      ENNReal.ofReal (m.likelihoodRatioAt x / (m.likelihoodRatioAt x + 1)) := by
-  rw [rumChoiceProb_gumbelMeasure_fin_two _ one_pos]
+private theorem locationExperiment_real_Ioi (b : Bool) (k : ℝ) :
+    (locationExperiment ν δ b).real (Ioi k) =
+      ν.real (Ioi (k - if b then δ / 2 else -(δ / 2))) := by
+  rw [locationExperiment_apply, map_measureReal_apply (by fun_prop) measurableSet_Ioi]
   congr 1
-  simp only [SDTModel.reportUtility, Matrix.cons_val_zero, Matrix.cons_val_one,
-    Matrix.cons_val_fin_one, sub_zero, div_one, Real.sigmoid_def, SDTModel.likelihoodRatioAt,
-    likelihoodRatio, Real.exp_neg]
-  have h := (Real.exp_pos (m.dPrime * x)).ne'
-  field_simp
+  ext x
+  simp [sub_lt_iff_lt_add]
 
-end LuceEmbedding
+theorem hitRate_locationExperiment (k : ℝ) :
+    hitRate (locationExperiment ν δ) k = ν.real (Ioi (k - δ / 2)) :=
+  locationExperiment_real_Ioi true k
 
-section BayesianInterpretation
+theorem falseAlarmRate_locationExperiment (k : ℝ) :
+    falseAlarmRate (locationExperiment ν δ) k = ν.real (Ioi (k + δ / 2)) := by
+  rw [falseAlarmRate, locationExperiment_real_Ioi false k]
+  simp
 
-/-! ## Bayesian posterior interpretation
+/-- In a location experiment the hit rate of a criterion is the false-alarm rate of the criterion
+lower by the sensitivity, so that on axes transformed by the inverse of the survival function of
+`ν` the receiver operating characteristic is the chance line shifted by `δ`. -/
+theorem hitRate_eq_falseAlarmRate_sub (k : ℝ) :
+    hitRate (locationExperiment ν δ) k = falseAlarmRate (locationExperiment ν δ) (k - δ) := by
+  rw [hitRate_locationExperiment, falseAlarmRate_locationExperiment]
+  ring_nf
 
-The SDT Luce choice probability is exactly the Bayesian posterior on "signal present"
-under uniform prior odds. Under non-uniform prior `π_S` for signal, the
-posterior is `π_S · L(x) / (π_S · L(x) + (1 - π_S))` — the same formula but
-with prior-weighted likelihoods. With `π_S = 1/2`, this reduces to `L(x) / (L(x) + 1)`, the
-signal probability of the report.
+/-- At zero sensitivity the hit rate is the false-alarm rate: the receiver operating
+characteristic is the chance line. -/
+theorem hitRate_locationExperiment_zero (k : ℝ) :
+    hitRate (locationExperiment ν 0) k = falseAlarmRate (locationExperiment ν 0) k := by
+  rw [hitRate_eq_falseAlarmRate_sub, sub_zero]
 
-### Why `posteriorAt` is a closed form
+/-- At nonnegative sensitivity the false-alarm rate is at most the hit rate. -/
+theorem falseAlarmRate_le_hitRate [IsFiniteMeasure ν] (hδ : 0 ≤ δ) (k : ℝ) :
+    falseAlarmRate (locationExperiment ν δ) k ≤ hitRate (locationExperiment ν δ) k := by
+  rw [hitRate_locationExperiment, falseAlarmRate_locationExperiment]
+  exact measureReal_mono (Ioi_subset_Ioi (by linarith))
 
-The SDT observer's hypothesis space is binary (`{signal, noise} = Fin 2`)
-and finite, but the *observation* `x : ℝ` is *continuous* (a real-valued
-internal response). The discrete Bayes lemmas of
-`Core/Probability/Kernel/Posterior.lean` evaluate a kernel posterior at
-observations of positive mass, which a continuous observation never has.
-The right mathlib substrate for the continuous binary case is a posterior
-kernel against a density, which is not set up here, so
-`SDTModel.posteriorAt` states the closed-form Bayes' rule directly. -/
+/-- At positive sensitivity the false-alarm rate is below the hit rate when `ν` charges every
+nonempty open set: the receiver operating characteristic lies above the chance line. -/
+theorem falseAlarmRate_lt_hitRate [IsProbabilityMeasure ν] [ν.IsOpenPosMeasure] (hδ : 0 < δ)
+    (k : ℝ) :
+    falseAlarmRate (locationExperiment ν δ) k < hitRate (locationExperiment ν δ) k := by
+  rw [hitRate_locationExperiment, falseAlarmRate_locationExperiment, ← compl_Iic, ← compl_Iic,
+    probReal_compl_eq_one_sub measurableSet_Iic, probReal_compl_eq_one_sub measurableSet_Iic,
+    ← cdf_eq_real, ← cdf_eq_real, sub_lt_sub_iff_left]
+  exact strictMono_cdf ν (by linarith)
 
-variable (m : SDTModel)
+end Location
 
-/-- The posterior probability of signal at an observation `x` under a prior probability
-`priorSignal` of signal is `π * L(x) / (π * L(x) + (1 - π))`, Bayes' rule for the two hypotheses at
-likelihood ratio `L(x)`. -/
-noncomputable def SDTModel.posteriorAt (x : ℝ) (priorSignal : ℝ) : ℝ :=
-  priorSignal * m.likelihoodRatioAt x /
-    (priorSignal * m.likelihoodRatioAt x + (1 - priorSignal))
+/-! ### The normal model -/
 
-/-- For a positive likelihood ratio `L` the posterior under a uniform prior is `L / (L + 1)`. -/
-private lemma posterior_uniform_eq_div {L : ℝ} (hL : 0 < L) :
-    (1 : ℝ) / 2 * L / ((1 : ℝ) / 2 * L + (1 - 1 / 2)) = L / (L + 1) := by
-  have hLp1 : (0 : ℝ) < L + 1 := by linarith
-  have hLp1_ne : L + 1 ≠ 0 := ne_of_gt hLp1
-  field_simp; ring
+section Normal
 
-/-- For positive `L` the quantity `L / (L + 1)` exceeds one half exactly when `L` exceeds one. -/
-private lemma half_lt_div_add_one_iff {L : ℝ} (hL : 0 < L) :
-    1 / 2 < L / (L + 1) ↔ 1 < L := by
-  have hLp1 : (0 : ℝ) < L + 1 := by linarith
-  rw [lt_div_iff₀ hLp1]; constructor <;> intro h <;> linarith
+variable (δ k : ℝ)
 
-/-- Under a uniform prior the posterior probability of signal at an observation is the
-probability that the Gumbel random-utility report is signal. -/
-theorem SDTModel.posteriorAt_uniform (x : ℝ) :
-    ENNReal.ofReal (m.posteriorAt x (1/2)) =
-      rumChoiceProb (fun j ↦ gumbelMeasure (m.reportUtility x j) 1) 0 := by
-  rw [m.rumChoiceProb_report, SDTModel.posteriorAt,
-    posterior_uniform_eq_div (m.likelihoodRatioAt_pos x)]
+/-- In the normal model the observation is `N(δ / 2, 1)` on signal trials and `N(-(δ / 2), 1)` on
+noise trials. -/
+theorem locationExperiment_gaussianReal (b : Bool) :
+    locationExperiment (gaussianReal 0 1) δ b =
+      gaussianReal (if b then δ / 2 else -(δ / 2)) 1 := by
+  rw [locationExperiment_apply, gaussianReal_map_add_const, zero_add]
 
-/-- With positive sensitivity and a uniform prior the posterior probability of signal exceeds one
-half exactly when the observation is positive. -/
-theorem SDTModel.posterior_gt_half_iff_pos_obs (x : ℝ) (hd : 0 < m.dPrime) :
-    1/2 < m.posteriorAt x (1/2) ↔ 0 < x := by
-  rw [SDTModel.posteriorAt, posterior_uniform_eq_div (m.likelihoodRatioAt_pos x),
-      half_lt_div_add_one_iff (m.likelihoodRatioAt_pos x),
-      SDTModel.likelihoodRatioAt, likelihoodRatio,
-      show (1 : ℝ) = Real.exp 0 from exp_zero.symm, Real.exp_lt_exp]
-  exact ⟨fun h => (mul_pos_iff_of_pos_left hd).mp h, fun h => mul_pos hd h⟩
+theorem hitRate_gaussianReal :
+    hitRate (locationExperiment (gaussianReal 0 1) δ) k = normalCDF (δ / 2 - k) := by
+  rw [hitRate_locationExperiment, gaussianReal_real_Ioi 0 one_ne_zero]
+  simp
 
-end BayesianInterpretation
+theorem falseAlarmRate_gaussianReal :
+    falseAlarmRate (locationExperiment (gaussianReal 0 1) δ) k = normalCDF (-(δ / 2) - k) := by
+  rw [falseAlarmRate_locationExperiment, gaussianReal_real_Ioi 0 one_ne_zero]
+  simp only [NNReal.coe_one, Real.sqrt_one, div_one]
+  ring_nf
 
-section LogisticApproximation
+/-- In the normal model the sensitivity is the difference of the z-scores of the rates, whatever
+the criterion: the receiver operating characteristic on z-score axes is the line
+`z(H) = z(F) + d'` of unit slope ([macmillan-creelman-2005], eq. (1.8)). -/
+theorem probit_hitRate_sub_probit_falseAlarmRate :
+    probit (hitRate (locationExperiment (gaussianReal 0 1) δ) k) -
+      probit (falseAlarmRate (locationExperiment (gaussianReal 0 1) δ) k) = δ := by
+  rw [hitRate_gaussianReal, falseAlarmRate_gaussianReal, probit_normalCDF, probit_normalCDF]
+  ring
 
-/-! ## Logistic approximation constant
+/-- In the normal model the criterion is minus the mean of the z-scores of the rates,
+`c = -(z(H) + z(F)) / 2` ([macmillan-creelman-2005], eq. (2.1)). -/
+theorem probit_hitRate_add_probit_falseAlarmRate :
+    -(probit (hitRate (locationExperiment (gaussianReal 0 1) δ) k) +
+      probit (falseAlarmRate (locationExperiment (gaussianReal 0 1) δ) k)) / 2 = k := by
+  rw [hitRate_gaussianReal, falseAlarmRate_gaussianReal, probit_normalCDF, probit_normalCDF]
+  ring
 
-The SDT hit rate `Φ(d'/2 - c)` is well-approximated by `logistic(k · (d'/2 - c))`
-where `k = π/√3 ≈ 1.814` is the variance-matching constant:
+/-- In the normal model the likelihood ratio of signal to noise at an observation `x`, the ratio of
+the two densities there, is `exp (δ * x)`: it is one midway between the means and increases with
+the observation. -/
+theorem likelihoodRatio_gaussianReal (x : ℝ) :
+    gaussianPDFReal (δ / 2) 1 x / gaussianPDFReal (-(δ / 2)) 1 x = Real.exp (δ * x) := by
+  rw [gaussianPDFReal_div_gaussianPDFReal _ _ one_ne_zero]
+  congr 1
+  push_cast
+  ring
 
-  `Φ(x) ≈ logistic(x · π/√3)` with max error `≈ 0.023`.
+/-- In the normal model the two-alternative forced choice is the binary probit rule: the
+difference of the two observations is `N(δ, 2)`, so the proportion correct is `Φ (δ / √2)`
+([macmillan-creelman-2005], eq. (7.6)). -/
+theorem forcedChoice_one_gaussianReal :
+    forcedChoice (locationExperiment (gaussianReal 0 1) δ) 1 =
+      ENNReal.ofReal (normalCDF (δ / √2)) := by
+  have h : (fun j : Fin 2 ↦ locationExperiment (gaussianReal 0 1) δ (decide (j = 0))) =
+      fun j ↦ gaussianReal (![δ / 2, -(δ / 2)] j) 1 := by
+    funext j
+    fin_cases j <;> simp [locationExperiment_gaussianReal]
+  rw [forcedChoice, h, rumChoiceProb_gaussianReal _ one_ne_zero]
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, NNReal.coe_one, mul_one, sub_neg_eq_add,
+    add_halves]
 
-This is the Thurstone-Luce bridge for the detection context: both SDT
-(Gaussian noise) and the Gumbel-Luce model (Gumbel noise) are Random
-Utility Models. The Gumbel-Luce model gives **exactly** logistic
-probabilities (Lemma 1 of [mcfadden-1974]; see `integral_gumbelPDFReal_mul_prod_cdf`
-in `Core/Probability/Gumbel.lean`). The Gaussian model gives `Φ`. These agree up to the
-numerical approximation `Φ ≈ logistic`.
+end Normal
 
-The variance-matching constant `π/√3 ≈ 1.8138` is exact (logistic has
-variance `π²/3`, so scaling `Φ` by `π/√3` matches unit-variance normal).
-The optimal sup-norm constant for `Φ(x) ≈ σ(k · x)` is approximately
-`1.7009` (Page 1977). We use `π/√3` rather than the sup-norm optimum
-because it has a clean variance-matching derivation. UNVERIFIED: the sup-error figure `≈ 0.023` is
-quoted from secondary sources; verify against Bowling et al. 2009 or
-Page 1977 before relying on it. -/
-
-/-- The logistic approximation constant `π/√3` is the scale that matches the variance `π²/3` of the
-standard logistic distribution to the unit variance of the standard normal. -/
-noncomputable def logisticApproxConst : ℝ := Real.pi / Real.sqrt 3
-
-/-- The logistic approximation constant is positive. -/
-theorem logisticApproxConst_pos : 0 < logisticApproxConst :=
-  div_pos Real.pi_pos (Real.sqrt_pos.mpr (by norm_num))
-
-end LogisticApproximation
-
-end Core
+end SignalDetection

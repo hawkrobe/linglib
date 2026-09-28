@@ -29,6 +29,8 @@ probit is its inverse, extended by `0` outside `(0, 1)` as `Real.log` is extende
   `cdf (gaussianReal μ v) x = Φ ((x - μ) / √v)`.
 * `ProbabilityTheory.gaussianReal_real_Ioi`: the upper tail of a Gaussian is `Φ ((μ - x) / √v)`.
 * `ProbabilityTheory.probit_one_sub`: `Φ⁻¹ (1 - p) = -Φ⁻¹ p`, for every real `p`.
+* `ProbabilityTheory.gaussianPDFReal_div_gaussianPDFReal`: the ratio of two Gaussian densities of a
+  common variance is the exponential of an affine function.
 
 ## Implementation notes
 
@@ -171,5 +173,18 @@ theorem probit_one_sub (p : ℝ) : probit (1 - p) = -probit p := by
     rw [normalCDF_probit hp', normalCDF_neg, normalCDF_probit hp]
   · have hp' : 1 - p ∉ Ioo 0 1 := fun h ↦ hp ⟨by linarith [h.2], by linarith [h.1]⟩
     rw [probit_of_notMem hp, probit_of_notMem hp', neg_zero]
+
+/-! ### Densities -/
+
+/-- The ratio of two Gaussian densities of a common nonzero variance is the exponential of an affine
+function, zero midway between the means. -/
+theorem gaussianPDFReal_div_gaussianPDFReal (μ₁ μ₀ : ℝ) {v : ℝ≥0} (hv : v ≠ 0) (x : ℝ) :
+    gaussianPDFReal μ₁ v x / gaussianPDFReal μ₀ v x =
+      Real.exp ((μ₁ - μ₀) * (x - (μ₀ + μ₁) / 2) / v) := by
+  have hv' : (v : ℝ) ≠ 0 := NNReal.coe_ne_zero.2 hv
+  rw [gaussianPDFReal, gaussianPDFReal, mul_div_mul_left _ _ (by positivity), ← Real.exp_sub]
+  congr 1
+  field_simp
+  ring
 
 end ProbabilityTheory
