@@ -6,6 +6,7 @@ public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Semantics.Questions.Hamblin
 public import Linglib.Semantics.Questions.Bias
+public import Linglib.Syntax.PolarInterrogative
 public import Mathlib.Order.Interval.Set.Defs
 
 /-!
@@ -35,10 +36,11 @@ The common ground at a world is a filter of propositions, so acceptance is close
 and conjunction where the paper speaks of a set of propositions. VERUM is not a named operator of
 its own: other analyses built on it, [repp-2013]'s FALSUM among them, are necessities along the same
 relation of the common ground's acceptance of a proposition or its failure to. Speaker belief is the
-epistemic proposition of the states settling a proposition, `Set.Iic`. Question forms are the
-substrate's `PolarQuestionForm`, preposed negation being the high-negation form, and a bias is the
-sign of the proposition the speaker's belief supports. The Principle of Economy that makes VERUM
-questions biased is stated in the paper in prose and is not formalized.
+epistemic proposition of the states settling a proposition, `Set.Iic`. A question's form is the
+position of its negation, `Option NegationPosition`, what matters being its position relative to the
+rest of the clause, preposed or not; a bias is the sign of the proposition the speaker's belief
+supports. The Principle of Economy that makes VERUM questions biased is stated in the paper in prose
+and is not formalized.
 
 ## References
 
@@ -156,10 +158,10 @@ instance (e : PolarityItem) (f : Form) : Decidable (Licensed e f) := by
 
 /-! ### The paper's examples -/
 
-/-- An example: its question form by the position of negation, its reported bias, its VERUM
+/-- An example: the position of its negation, if any, its reported bias, its VERUM
 form and its polarity item, each when the paper gives one, and its judgment. -/
 structure Datum where
-  polarQuestionForm : Option PolarQuestionForm
+  negation : Option (Option NegationPosition)
   bias : Option SignType
   form : Option Form
   item : Option PolarityItem
@@ -167,9 +169,9 @@ structure Datum where
 
 /-- An example read into its datum. -/
 def datum (e : LinguisticExample) : Datum where
-  polarQuestionForm := e.parse? "negation"
-    [("preposed", PolarQuestionForm.highNegation), ("nonPreposed", .lowNegation),
-      ("none", .positive)]
+  negation := e.parse? "negation"
+    [("preposed", some NegationPosition.preposed), ("nonPreposed", some .nonPreposed),
+      ("none", none)]
   bias := e.parse? "bias" [("positive", (1 : SignType)), ("negative", -1), ("none", 0)]
   form := e.parse? "form" [("pi", Form.pi), ("ni", .ni), ("really", .really),
     ("notFocus", .notFocus)]
@@ -188,9 +190,9 @@ theorem licensed_iff_acceptable :
 
 /-- Preposed negation carries a positive bias in every language of the survey, (1), (5) and
 (14) to (18), and non-preposed negation none. -/
-theorem bias_of_pqForm :
-    ∀ d ∈ data, ∀ pq ∈ d.polarQuestionForm.toList, ∀ b ∈ d.bias.toList,
-      (pq = .highNegation → b = 1) ∧ (pq = .lowNegation → b = 0) := by
+theorem bias_of_negation :
+    ∀ d ∈ data, ∀ n ∈ d.negation.toList, ∀ b ∈ d.bias.toList,
+      (n = some .preposed → b = 1) ∧ (n = some .nonPreposed → b = 0) := by
   decide
 
 /-- The bias reported for a VERUM form is the belief the model implicates. -/

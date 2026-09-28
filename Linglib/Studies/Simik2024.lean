@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Studies.BuringGunlogson2000
+public import Linglib.Syntax.PolarInterrogative
 public import Linglib.Semantics.Questions.Hamblin
 public import Linglib.Semantics.Questions.Exhaustivity
 public import Linglib.Semantics.Presupposition.Defs
@@ -27,7 +28,7 @@ profile of the Serbian strategies reported from [todorovic-2023] (`serbianBiasPr
 The Czech cleaning-service scenarios (11)–(18) are typed rows, and the table predicts each
 judgment (`cleaning_examples_match_table2`); declaratives need evidence
 (`declarative_requires_evidence`) and Czech InterNPQ, unlike English high negation, is
-felicitous under positive evidence (`interNPQ_broader_than_english_highNegation`), while Serbian
+felicitous under positive evidence (`interNPQ_broader_than_english_outer`), while Serbian
 high negation is narrower than English (`serbian_hnpq_narrower_than_english`). The quiz
 scenario (24) diagnoses each of ten languages' default strategy: its positive form is the
 quiz-felicitous one (`default_quiz_felicitous`), declaratives never are
@@ -78,10 +79,11 @@ def evidence (s : Polarity) : SignType := s
 double-checks: against the prejacent as asked. -/
 def prior (s : Polarity) : SignType := -(s : SignType)
 
-/-- The polarity of a [romero-2024] question form. -/
-def polarityOf : PolarQuestionForm → Polarity
-  | .positive => .positive
-  | .lowNegation | .highNegation => .negative
+/-- The polarity of a question with the given reading: positive without negation, negative with
+either reading of it. -/
+def polarityOf : Option Polarity → Polarity
+  | none => .positive
+  | some _ => .negative
 
 /-! ### The Czech forms and their bias profile (§3.2, Table 2) -/
 
@@ -94,11 +96,12 @@ inductive CzechPQForm
   | declNPQ
   deriving DecidableEq, Repr, Fintype
 
-/-- The [romero-2024] form of each grid cell: InterNPQ is high negation, DeclNPQ low. -/
-def CzechPQForm.toPolarQuestionForm : CzechPQForm → PolarQuestionForm
-  | .interPPQ | .declPPQ => .positive
-  | .interNPQ => .highNegation
-  | .declNPQ => .lowNegation
+/-- The position of the negation of each grid cell ([romero-2024]'s forms): the verb-initial
+InterNPQ preposes its negated verb, a high negation question, and DeclNPQ does not, a low one. -/
+def CzechPQForm.negation : CzechPQForm → Option NegationPosition
+  | .interPPQ | .declPPQ => none
+  | .interNPQ => some .preposed
+  | .declNPQ => some .nonPreposed
 
 /-- Declarative word order. -/
 def CzechPQForm.Declarative : CzechPQForm → Prop
@@ -160,9 +163,9 @@ theorem declarative_requires_evidence (f : CzechPQForm) (hf : f.Declarative)
 
 /-- Czech high negation is broader than English: felicitous under positive evidence, which the
 evidence condition of [buring-gunlogson-2000] on outer negation excludes. -/
-theorem interNPQ_broader_than_english_highNegation :
+theorem interNPQ_broader_than_english_outer :
     .interNPQ ∈ czechBiasProfile 1 0 ∧
-      ¬ BuringGunlogson2000.Felicitous .highNegation 1 := by
+      ¬ BuringGunlogson2000.Felicitous (some .positive) 1 := by
   decide
 
 /-! ### The cleaning scenarios (11)–(18) -/
@@ -332,10 +335,10 @@ def SerbianPQForm.particle : SerbianPQForm → Particle
   | .hnpq => Serbian.QuestionParticles.li
 
 /-- The [romero-2024] form of each strategy. -/
-def SerbianPQForm.toPolarQuestionForm : SerbianPQForm → PolarQuestionForm
-  | .daLiPPQ | .jeLiPPQ => .positive
-  | .hnpq => .highNegation
-  | .lnpq => .lowNegation
+def SerbianPQForm.negation : SerbianPQForm → Option NegationPosition
+  | .daLiPPQ | .jeLiPPQ => none
+  | .hnpq => some .preposed
+  | .lnpq => some .nonPreposed
 
 /-- Table 1: the Serbian strategies natural in each cell, after [todorovic-2023]. -/
 def serbianBiasProfile : SignType → SignType → Finset SerbianPQForm
@@ -360,7 +363,7 @@ theorem jeLiPPQ_of_daLiPPQ (h : .daLiPPQ ∈ serbianBiasProfile ev ob) :
   revert h; decide +revert
 
 /-- Positive questions are incompatible with negative biases. -/
-theorem ppq_no_negative_bias (f : SerbianPQForm) (hf : f.toPolarQuestionForm = .positive)
+theorem ppq_no_negative_bias (f : SerbianPQForm) (hf : f.negation = none)
     (h : f ∈ serbianBiasProfile ev ob) : ev ≠ -1 ∧ ob ≠ -1 := by
   revert hf h; decide +revert
 
@@ -378,7 +381,7 @@ theorem lnpq_of_hnpq (h : .hnpq ∈ serbianBiasProfile ev ob) :
 /-- Serbian high negation is narrower than English: neutral evidence, which the evidence
 condition of [buring-gunlogson-2000] on outer negation admits, admits no Serbian HNPQ. -/
 theorem serbian_hnpq_narrower_than_english :
-    BuringGunlogson2000.Felicitous .highNegation 0 ∧ ∀ ob, .hnpq ∉ serbianBiasProfile 0 ob := by
+    BuringGunlogson2000.Felicitous (some .positive) 0 ∧ ∀ ob, .hnpq ∉ serbianBiasProfile 0 ob := by
   decide
 
 /-- The quiz rows of (31) carry the markers of the Table 1 strategies. -/
@@ -432,24 +435,25 @@ end Wonder
 
 /-! ### Russian *razve* and its kin (§4.2.4) -/
 
-/-- The bias profile of a *razve* question by form: evidence for the prejacent as asked
+/-- The bias profile of a *razve* question by reading: evidence for the prejacent as asked
 against a prior for its negation (the conflict-resolving profile of §3.1). -/
-def razveProfile (f : PolarQuestionForm) : SignType × SignType :=
-  (evidence (polarityOf f), prior (polarityOf f))
+def razveProfile (r : Option Polarity) : SignType × SignType :=
+  (evidence (polarityOf r), prior (polarityOf r))
 
 /-- The profile of *razve* negative questions is the same under inner negation (VERUM)
 and outer negation (FALSUM): negative evidence, positive prior. -/
 theorem razveProfile_negation_invariant :
-    razveProfile .lowNegation = razveProfile .highNegation ∧
-      razveProfile .highNegation = (-1, 1) :=
+    razveProfile (some .negative) = razveProfile (some .positive) ∧
+      razveProfile (some .positive) = (-1, 1) :=
   ⟨rfl, rfl⟩
 
 /-- *Razve* is compatible with both negations ([repp-geist-2022]'s LFs (40), diagnosed
-by the polarity items in (41)), *neuželi* with inner negation only. -/
-def razveNegations : Finset PolarQuestionForm := {.lowNegation, .highNegation}
+by the polarity items in (41)), *neuželi* with inner negation only: the readings double-checking
+the negation of the prejacent, `some .negative`, and the prejacent itself, `some .positive`. -/
+def razveNegations : Finset (Option Polarity) := {some .negative, some .positive}
 
 /-- *Neuželi* lexicalizes VERUM and so tolerates inner negation only. -/
-def neuzeliNegations : Finset PolarQuestionForm := {.lowNegation}
+def neuzeliNegations : Finset (Option Polarity) := {some .negative}
 
 theorem neuzeliNegations_ssubset : neuzeliNegations ⊂ razveNegations := by decide
 
@@ -498,41 +502,37 @@ theorem assertion_of_falsum [Std.Refl (Relation.Comp epi conv)] {w : W}
 
 end Falsum
 
-/-- The two readings of negation in a polar question (the chapter's (14), after
-[ladd-1981] and [repp-2013]): inner negation is the classical propositional operator,
-diagnosed by negative polarity items; outer negation is the non-propositional operator
-FALSUM, diagnosed by positive polarity items. -/
-inductive Negation
-  | inner
-  | outer
-  deriving DecidableEq, Repr, Fintype
+/-- *Náhodou* is licensed by outer negation and by nothing else (43). The two readings of negation
+in a polar question (the chapter's (14), after [ladd-1981] and [repp-2013]) are polarities of the
+proposition the question double-checks: inner negation, the classical propositional operator
+diagnosed by negative polarity items, double-checks the negation of the prejacent, `.negative`;
+outer negation, the non-propositional FALSUM diagnosed by positive polarity items, the prejacent
+itself, `.positive`. -/
+def NahodouLicensed (pol : Polarity) (r : Polarity) : Prop :=
+  pol = .negative ∧ r = .positive
 
-/-- *Náhodou* is licensed by outer negation and by nothing else (43). -/
-def NahodouLicensed (pol : Polarity) (n : Negation) : Prop :=
-  pol = .negative ∧ n = .outer
-
-instance (pol : Polarity) (n : Negation) : Decidable (NahodouLicensed pol n) := by
+instance (pol : Polarity) (r : Polarity) : Decidable (NahodouLicensed pol r) := by
   unfold NahodouLicensed; infer_instance
 
 /-- *Náhodou* needs negation (43e). -/
-theorem nahodou_requires_negation (n : Negation) : ¬ NahodouLicensed .positive n :=
+theorem nahodou_requires_negation (r : Polarity) : ¬ NahodouLicensed .positive r :=
   fun h => Polarity.noConfusion h.1
 
 /-- *Náhodou* needs outer negation (43d). -/
-theorem nahodou_requires_outer (pol : Polarity) (n : Negation)
-    (h : NahodouLicensed pol n) : n = .outer := h.2
+theorem nahodou_requires_outer (pol : Polarity) (r : Polarity)
+    (h : NahodouLicensed pol r) : r = .positive := h.2
 
-/-- The negation reading an indefinite diagnoses: the polarity item outer, the concord
-item inner. -/
-def indefiniteNegation? (e : LinguisticExample) : Option Negation :=
-  e.parse? "indefinite" [("ppi", .outer), ("nci", .inner)]
+/-- The reading of negation an indefinite diagnoses: the polarity item the outer one, the
+concord item the inner one. -/
+def indefiniteReading? (e : LinguisticExample) : Option Polarity :=
+  e.parse? "indefinite" [("ppi", .positive), ("nci", .negative)]
 
 /-- The (43) rows with *náhodou* are acceptable exactly when the particle is licensed by
 the polarity and the reading the indefinite diagnoses. -/
 theorem nahodou_examples :
     ∀ e ∈ Examples.all, e.feature? "nahodou" = some "true" →
-      ∀ pol ∈ polarity? e, ∀ n ∈ indefiniteNegation? e,
-        (e.judgment = .acceptable ↔ NahodouLicensed pol n) := by
+      ∀ pol ∈ polarity? e, ∀ r ∈ indefiniteReading? e,
+        (e.judgment = .acceptable ↔ NahodouLicensed pol r) := by
   decide
 
 end Simik2024

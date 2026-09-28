@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Questions.Bias
+public import Linglib.Syntax.PolarInterrogative
 public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Fragments.German.PolarityItems
 
@@ -17,9 +18,11 @@ negation, or negated in turn, and the morphosyntactic probes of [ladd-1981] — 
 ein*, *no* vs *not some*, and the polarity items they admit — classify a question independently of
 those judgements.
 
-The three question types are the substrate's `PolarQuestionForm`: `positive` is the paper's PPQ,
-`lowNegation` its inner-negation NPQ, `highNegation` its outer-negation NPQ. The contextual evidence
-of a situation is the sign of `p` it supports, and reading it relative to `¬p` negates it.
+The three question types are readings, `Option Polarity`: `none` is the paper's PPQ, and a
+negative question is an inner-negation NPQ, `some .negative`, when the negation sits inside the
+questioned proposition, and an outer-negation NPQ, `some .positive`, when it sits outside. The
+contextual evidence of a situation is the sign of `p` it supports, and reading it relative to `¬p`
+negates it.
 
 ## Main definitions
 
@@ -29,11 +32,11 @@ of a situation is the sign of `p` it supports, and reading it relative to `¬p` 
 
 ## Main results
 
-* `positive_condition`, `highNegation_condition`, `lowNegation_condition` — the three evidence
-  conditions
-* `felicity_separates_forms` — no two question types share a felicity profile
+* `felicitous_none_iff`, `felicitous_some_positive_iff`, `felicitous_some_negative_iff` — the
+  three evidence conditions
+* `felicity_separates_readings` — no two question types share a felicity profile
 * `outer_is_interrogative_only` — only inner-negation determiners occur in declaratives
-* `form_eq_lowNegation_of_isNPI`, `form_eq_highNegation_of_isPPI` — a polarity item forces the
+* `polarity_eq_negative_of_isNPI`, `polarity_eq_positive_of_isPPI` — a polarity item forces the
   reading the determiner gives
 
 ## References
@@ -76,50 +79,51 @@ instance (ev : SignType) : Decidable (E ev) := inferInstanceAs (Decidable ¬ _)
 /-- The felicity condition of each question type, as one proto-condition applied three ways: a
 positive question imposes it on its own proposition, an outer-negation question on the negation,
 and an inner-negation question imposes its negation. -/
-def Felicitous : PolarQuestionForm → SignType → Prop
-  | .positive, ev => E ev
-  | .lowNegation, ev => ¬ E ev
-  | .highNegation, ev => E (-ev)
+def Felicitous : Option Polarity → SignType → Prop
+  | none, ev => E ev
+  | some .negative, ev => ¬ E ev
+  | some .positive, ev => E (-ev)
 
-instance : ∀ (f : PolarQuestionForm) (ev : SignType), Decidable (Felicitous f ev)
-  | .positive, ev => inferInstanceAs (Decidable (E ev))
-  | .lowNegation, ev => inferInstanceAs (Decidable ¬ E ev)
-  | .highNegation, ev => inferInstanceAs (Decidable (E (-ev)))
+instance : ∀ (r : Option Polarity) (ev : SignType), Decidable (Felicitous r ev)
+  | none, ev => inferInstanceAs (Decidable (E ev))
+  | some .negative, ev => inferInstanceAs (Decidable ¬ E ev)
+  | some .positive, ev => inferInstanceAs (Decidable (E (-ev)))
 
 /-- A positive question requires no compelling evidence against `p`. -/
-theorem positive_condition (ev : SignType) :
-    Felicitous .positive ev ↔ ¬ CompellingAgainst ev := Iff.rfl
+theorem felicitous_none_iff (ev : SignType) :
+    Felicitous none ev ↔ ¬ CompellingAgainst ev := Iff.rfl
 
 /-- An outer-negation question requires no compelling evidence *for* `p`. -/
-theorem highNegation_condition (ev : SignType) :
-    Felicitous .highNegation ev ↔ ¬ CompellingFor ev := by
+theorem felicitous_some_positive_iff (ev : SignType) :
+    Felicitous (some .positive) ev ↔ ¬ CompellingFor ev := by
   decide +revert
 
 /-- An inner-negation question requires compelling evidence against `p`. -/
-theorem lowNegation_condition (ev : SignType) :
-    Felicitous .lowNegation ev ↔ CompellingAgainst ev := by
+theorem felicitous_some_negative_iff (ev : SignType) :
+    Felicitous (some .negative) ev ↔ CompellingAgainst ev := by
   decide +revert
 
 /-- A positive question is barred by compelling evidence against `p` — *Is it sunny?* asked of
 someone in a dripping raincoat. -/
-theorem positive_infelicitous_against : ¬ Felicitous .positive (-1) := by decide
+theorem not_felicitous_none_neg_one : ¬ Felicitous none (-1) := by decide
 
 /-- An inner-negation question is felicitous only against `p`, the neutral context included in the
 exclusion. -/
-theorem lowNegation_only_against (ev : SignType) : Felicitous .lowNegation ev ↔ ev = -1 := by
+theorem felicitous_some_negative_iff_eq (ev : SignType) :
+    Felicitous (some .negative) ev ↔ ev = -1 := by
   decide +revert
 
 /-- An outer-negation question tolerates a neutral context, unlike an inner-negation one. -/
-theorem highNegation_neutral_lowNegation_not :
-    Felicitous .highNegation 0 ∧ ¬ Felicitous .lowNegation 0 := by
+theorem felicitous_some_positive_zero_not_negative :
+    Felicitous (some .positive) 0 ∧ ¬ Felicitous (some .negative) 0 := by
   decide
 
 /-- No two question types share a felicity profile: the predicted synonymies of a Hamblin
 denotation ([hamblin-1973b]) are not real. -/
-theorem felicity_separates_forms (f g : PolarQuestionForm)
-    (h : ∀ ev, Felicitous f ev ↔ Felicitous g ev) :
-    f = g := by
-  cases f <;> cases g <;>
+theorem felicity_separates_readings (r s : Option Polarity)
+    (h : ∀ ev, Felicitous r ev ↔ Felicitous s ev) :
+    r = s := by
+  rcases r with _ | _ | _ <;> rcases s with _ | _ | _ <;>
     first
       | rfl
       | exact absurd (h 0) (by decide)
@@ -127,20 +131,16 @@ theorem felicity_separates_forms (f g : PolarQuestionForm)
 
 /-! ### The morphosyntactic probes -/
 
-/-- Where the negation sits relative to the questioned proposition. -/
-inductive Scope | inner | outer
-  deriving DecidableEq
-
 /-- The negative determiners that probe the distinction: German *kein* and *nicht ein*, English
 *no* and *not some*. -/
 inductive Determiner | kein | nichtEin | no | notSome
   deriving DecidableEq
 
-/-- *nicht ein* and *not some* leave the negation outside the questioned proposition; *kein* and
-*no* place it inside. -/
-def Determiner.scope : Determiner → Scope
-  | .kein | .no => .inner
-  | .nichtEin | .notSome => .outer
+/-- The polarity of the proposition a question with the determiner double-checks: *nicht ein* and
+*not some* leave the negation outside it, so it is positive; *kein* and *no* place it inside. -/
+def Determiner.polarity : Determiner → Polarity
+  | .kein | .no => .negative
+  | .nichtEin | .notSome => .positive
 
 /-- Whether the determiner also occurs in a declarative. The non-amalgamated forms do not, even
 under rising intonation. -/
@@ -154,7 +154,8 @@ instance : ∀ d : Determiner, Decidable d.declarativeOK
 
 /-- An outer-negation construal is confined to the syntactic category of interrogative: exactly the
 determiners that fail in declaratives are the outer-negation ones. -/
-theorem outer_is_interrogative_only (d : Determiner) : d.scope = .outer ↔ ¬ d.declarativeOK := by
+theorem outer_is_interrogative_only (d : Determiner) :
+    d.polarity = .positive ↔ ¬ d.declarativeOK := by
   cases d <;> decide
 
 /-- A polar question as its two probes: a negative determiner and, optionally, a polarity item,
@@ -167,19 +168,14 @@ structure Question where
 requires the inner construal, and a positive polarity item must escape it, so it requires the outer
 one. -/
 def Question.WellFormed (q : Question) : Prop :=
-  ∀ e ∈ q.item, (e.isNPI → q.determiner.scope = .inner) ∧ (e.isPPI → q.determiner.scope = .outer)
+  ∀ e ∈ q.item,
+    (e.isNPI → q.determiner.polarity = .negative) ∧ (e.isPPI → q.determiner.polarity = .positive)
 
 instance : ∀ q : Question, Decidable q.WellFormed
   | ⟨_, none⟩ => isTrue (by simp [Question.WellFormed])
   | ⟨d, some e⟩ =>
-    decidable_of_iff ((e.isNPI → d.scope = .inner) ∧ (e.isPPI → d.scope = .outer))
+    decidable_of_iff ((e.isNPI → d.polarity = .negative) ∧ (e.isPPI → d.polarity = .positive))
       (by simp [Question.WellFormed])
-
-/-- The question type a well-formed question realizes: inner negation is an inner-negation NPQ,
-outer negation an outer-negation one. -/
-def Scope.form : Scope → PolarQuestionForm
-  | .inner => .lowNegation
-  | .outer => .highNegation
 
 /-- *Is there no vegetarian restaurant either/\*too?* (14a): the inner-negation determiner takes
 the negative polarity item and refuses the positive one. -/
@@ -199,16 +195,14 @@ theorem brauchen_takes_kein_not_nichtEin :
     (Question.mk .kein (some brauchen)).WellFormed ∧
       ¬ (Question.mk .nichtEin (some brauchen)).WellFormed := by decide
 
-/-- A negative polarity item forces the inner-negation reading (13a): in a well-formed question
-the determiner makes it a `lowNegation`. -/
-theorem form_eq_lowNegation_of_isNPI {d : Determiner} {e : PolarityItem} (he : e.isNPI)
-    (h : (Question.mk d (some e)).WellFormed) : d.scope.form = .lowNegation := by
-  rw [((h e rfl).1 he)]; rfl
+/-- A negative polarity item forces the inner-negation reading (13a). -/
+theorem polarity_eq_negative_of_isNPI {d : Determiner} {e : PolarityItem} (he : e.isNPI)
+    (h : (Question.mk d (some e)).WellFormed) : d.polarity = .negative :=
+  (h e rfl).1 he
 
-/-- A positive polarity item forces the outer-negation reading (13b): in a well-formed question
-the determiner makes it an `highNegation`. -/
-theorem form_eq_highNegation_of_isPPI {d : Determiner} {e : PolarityItem} (he : e.isPPI)
-    (h : (Question.mk d (some e)).WellFormed) : d.scope.form = .highNegation := by
-  rw [((h e rfl).2 he)]; rfl
+/-- A positive polarity item forces the outer-negation reading (13b). -/
+theorem polarity_eq_positive_of_isPPI {d : Determiner} {e : PolarityItem} (he : e.isPPI)
+    (h : (Question.mk d (some e)).WellFormed) : d.polarity = .positive :=
+  (h e rfl).2 he
 
 end BuringGunlogson2000

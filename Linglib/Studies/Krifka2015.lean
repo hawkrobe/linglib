@@ -20,7 +20,7 @@ both answers (24); the issue projection of the library sees the bipolar question
 monopolar one (`monopolar_not_inquisitive`). Low negation is a monopolar question about `¬φ`
 (29); high negation projects the addressee's refusal `¬S₂⊢φ` (39), weaker than `S₂⊢¬φ`, since
 a consistent commitment to `¬φ` already excludes a commitment to `φ`. The licensing of the
-three question forms by the contextual evidence of [buring-gunlogson-2000] then reproduces the
+three question types by the contextual evidence of [buring-gunlogson-2000] then reproduces the
 paper's Table 1 (`table1`). A matching tag conjoins an assertion with the monopolar question of
 the same content (44), and a reverse tag disjoins the assertion with the monopolar question of
 the negation (`reverseTag`, (45)).
@@ -38,7 +38,7 @@ the negation (`reverseTag`, (45)).
 
 * [krifka-2015]
 * [farkas-bruce-2010] — the Table and the rejection operator
-* [buring-gunlogson-2000] — contextual evidence and the three question forms
+* [buring-gunlogson-2000] — contextual evidence and the three question types
 -/
 
 @[expose] public section
@@ -219,12 +219,14 @@ def BipolarLicensed (E φ : Set Weather) : Prop := ¬ E ⊆ φ ∧ ¬ E ⊆ φ�
 evidence is not for `φ`. -/
 def HighNegationLicensed (E φ : Set Weather) : Prop := ¬ E ⊆ φ
 
-/-- The question without negation is licensed on either of its readings; the question with low
-negation only on the monopolar reading of `¬φ`; the question with high negation as such. -/
-def Licensed (E φ : Set Weather) : PolarQuestionForm → Prop
-  | .positive => MonopolarLicensed E φ ∨ BipolarLicensed E φ
-  | .lowNegation => MonopolarLicensed E φᶜ
-  | .highNegation => HighNegationLicensed E φ
+/-- A question by its reading: the question without negation, `none`, is licensed on either of
+its readings; the question with low negation, about `¬φ` (`some .negative`), only on the
+monopolar reading of `¬φ`; the question with high negation, about `φ` (`some .positive`), as
+such. -/
+def Licensed (E φ : Set Weather) : Option Polarity → Prop
+  | none => MonopolarLicensed E φ ∨ BipolarLicensed E φ
+  | some .negative => MonopolarLicensed E φᶜ
+  | some .positive => HighNegationLicensed E φ
 
 theorem raining_ne_empty : raining ≠ ∅ := (Set.singleton_nonempty _).ne_empty
 
@@ -236,21 +238,21 @@ monopolar; with neutral evidence the question without negation, read bipolar, an
 high-negation question; with evidence against `φ` both negated questions and not the question
 without negation. -/
 theorem table1 (e : SignType) :
-    (Licensed (evidence raining e) raining .positive ↔ e ≠ -1) ∧
-      (Licensed (evidence raining e) raining .lowNegation ↔ e = -1) ∧
-      (Licensed (evidence raining e) raining .highNegation ↔ e ≠ 1) := by
+    (Licensed (evidence raining e) raining none ↔ e ≠ -1) ∧
+      (Licensed (evidence raining e) raining (some .negative) ↔ e = -1) ∧
+      (Licensed (evidence raining e) raining (some .positive) ↔ e ≠ 1) := by
   cases e <;> simp [Licensed, MonopolarLicensed, BipolarLicensed,
     HighNegationLicensed, evidence, raining_ne_empty, raining_ne_univ]
 
 /-- The licensing conditions are the evidence conditions of [buring-gunlogson-2000]. -/
-theorem licensed_iff_felicitous (f : PolarQuestionForm) (e : SignType) :
-    Licensed (evidence raining e) raining f ↔ BuringGunlogson2000.Felicitous f e := by
-  have h : ∀ e : SignType, (e ≠ -1 ↔ BuringGunlogson2000.Felicitous .positive e) ∧
-      (e = -1 ↔ BuringGunlogson2000.Felicitous .lowNegation e) ∧
-      (e ≠ 1 ↔ BuringGunlogson2000.Felicitous .highNegation e) := by decide
-  cases f
-  exacts [(table1 e).1.trans (h e).1, (table1 e).2.1.trans (h e).2.1,
-    (table1 e).2.2.trans (h e).2.2]
+theorem licensed_iff_felicitous (r : Option Polarity) (e : SignType) :
+    Licensed (evidence raining e) raining r ↔ BuringGunlogson2000.Felicitous r e := by
+  have h : ∀ e : SignType, (e ≠ -1 ↔ BuringGunlogson2000.Felicitous none e) ∧
+      (e = -1 ↔ BuringGunlogson2000.Felicitous (some .negative) e) ∧
+      (e ≠ 1 ↔ BuringGunlogson2000.Felicitous (some .positive) e) := by decide
+  rcases r with _ | _ | _
+  exacts [(table1 e).1.trans (h e).1, (table1 e).2.2.trans (h e).2.2,
+    (table1 e).2.1.trans (h e).2.1]
 
 /-! ### Question tags (44), (45) -/
 

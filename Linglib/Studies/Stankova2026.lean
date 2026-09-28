@@ -23,7 +23,7 @@ three LF positions (her (16)) — outer (PolP), medial (ModP), inner (TP)
 | inner    | ✗         | ✓   | ✗       | ✓     | ✓    |
 
 The positions refine [simik-2024]'s two readings of negation
-(`Position.ofNegation`): medial negation is the paper's addition, low
+(`Position.ofReading`): medial negation is the paper's addition, low
 like inner negation but non-propositional like FALSUM.
 
 ## Main results
@@ -36,8 +36,8 @@ like inner negation but non-propositional like FALSUM.
   (`licenses_nciLicensed_iff_licensedAt`).
 * `nahodou_identifies_outer`, `jeste_identifies_inner`,
   `fakt_plus_no_jeste_identifies_medial` — per-particle pinning.
-* `czech_refines_lowNegation` — Czech splits [romero-2024]'s LoNQ into inner
-  and medial.
+* `czech_refines_nonPreposed` — Czech splits [romero-2024]'s LoNQ, the form with
+  non-preposed negation, into inner and medial.
 * `examples_match_table1` — the paper's examples
   (`Data.Examples.Stankova2026`) check against Table 1.
 
@@ -69,10 +69,11 @@ inductive Position where
   | outer
   deriving DecidableEq, Repr, Fintype
 
-/-- [simik-2024]'s two readings as positions: inner and outer negation. -/
-def Position.ofNegation : Negation → Position
-  | .inner => .inner
-  | .outer => .outer
+/-- [simik-2024]'s two readings as positions: the inner reading, double-checking the negation of
+the prejacent (`.negative`), and the outer one, double-checking the prejacent (`.positive`). -/
+def Position.ofReading : Polarity → Position
+  | .negative => .inner
+  | .positive => .outer
 
 /-- The evidential bias strength of a negation position (the paper's §3.1): inner negation
 presupposes evidence for ¬p, medial negation only the absence of evidence for p, and FALSUM
@@ -141,14 +142,14 @@ theorem licenses_fakt_iff : Licenses pos .fakt ↔ pos ≠ .outer := by
 
 /-- On the two readings of [simik-2024], the concord column of Table 1 is
 [stankova-2025]'s licensing of *žádný*. -/
-theorem licenses_nciLicensed_iff_licensedAt (n : Negation) :
-    Licenses (.ofNegation n) .nciLicensed ↔ LicensedAt StankovaSimik2025.Indefinite.nci.entry n := by
+theorem licenses_nciLicensed_iff_licensedAt (n : Polarity) :
+    Licenses (.ofReading n) .nciLicensed ↔ LicensedAt StankovaSimik2025.Indefinite.nci.entry n := by
   cases n <;> decide
 
 /-- On the two readings of [simik-2024], the polarity column of Table 1 is
 [stankova-2025]'s licensing of *nějaký*. -/
-theorem licenses_ppiOutscoping_iff_licensedAt (n : Negation) :
-    Licenses (.ofNegation n) .ppiOutscoping ↔
+theorem licenses_ppiOutscoping_iff_licensedAt (n : Polarity) :
+    Licenses (.ofReading n) .ppiOutscoping ↔
       LicensedAt StankovaSimik2025.Indefinite.ppi.entry n := by
   cases n <;> decide
 
@@ -227,11 +228,12 @@ that established it, in `StankovaSimik2025`. Crossing word order with
 polarity gives [simik-2024]'s 2×2 grid of PQ forms (`Simik2024.CzechPQForm`),
 which maps onto [romero-2024]'s PosQ/LoNQ/HiNQ typology. -/
 
-/-- [romero-2024] PQ form of a negation position: outer is high
-negation (HiNQ), inner and medial are both low (LoNQ). -/
-def Position.toPolarQuestionForm : Position → PolarQuestionForm
-  | .inner | .medial => .lowNegation
-  | .outer => .highNegation
+/-- The position of the negated verb for a negation position: outer negation preposes it, V1,
+[romero-2024]'s high negation form (HiNQ); inner and medial negation leave it in situ, the low
+negation form (LoNQ). -/
+def Position.negationPosition : Position → NegationPosition
+  | .inner | .medial => .nonPreposed
+  | .outer => .preposed
 
 /-- Only outer negation (FALSUM) is obligatorily focused
 ([stankova-2026] §3.2). -/
@@ -256,15 +258,15 @@ def Position.toCzechPQForm : Position → CzechPQForm
 
 /-- The two form typologies agree: [simik-2024]'s grid refines
 [romero-2024]'s. -/
-theorem czechPQForm_consistent_with_polarQuestionForm :
-    ∀ pos : Position, pos.toCzechPQForm.toPolarQuestionForm = pos.toPolarQuestionForm := by
-  intro pos; cases pos <;> rfl
+theorem czechPQForm_negation (pos : Position) :
+    pos.toCzechPQForm.negation = some pos.negationPosition := by
+  cases pos <;> rfl
 
 /-- Czech refines [romero-2024]'s LoNQ: inner and medial share the LoNQ
 form but differ in evidential bias strength and in Table 1
 signatures. -/
-theorem czech_refines_lowNegation :
-    Position.inner.toPolarQuestionForm = Position.medial.toPolarQuestionForm ∧
+theorem czech_refines_nonPreposed :
+    Position.inner.negationPosition = Position.medial.negationPosition ∧
     Position.inner.biasStrength ≠ Position.medial.biasStrength ∧
     licensed .inner ≠ licensed .medial :=
   ⟨rfl, by decide, by decide⟩
@@ -283,8 +285,8 @@ the link to evidential bias strength. -/
 /-- Context sensitivity tracks evidential bias strength: V1/outer none,
 nonV1/inner strong. -/
 theorem context_tracks_bias_strength :
-    (Position.ofNegation VerbPosition.v1.defaultReading).biasStrength = .none_ ∧
-    (Position.ofNegation VerbPosition.nonV1.defaultReading).biasStrength = .strong :=
+    (Position.ofReading VerbPosition.v1.defaultReading).biasStrength = .none_ ∧
+    (Position.ofReading VerbPosition.nonV1.defaultReading).biasStrength = .strong :=
   ⟨rfl, rfl⟩
 
 /-! ### The paper's examples
