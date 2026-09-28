@@ -32,15 +32,17 @@ variable {V : Type*} {α : V → Type*}
 
 /-- A structural equation model is a causal model with a single exogenous context. -/
 def toCausalModel (M : SEM V α) : CausalModel Unit V α where
-  graph := M.graph
+  graph := ⟨fun w v ↦ w ∈ M.graph.parents v⟩
   eqn v _ x := M.mech v fun w ↦ x w
   dependsOn_eqn v _ _ _ h := congrArg (M.mech v) (funext fun w ↦ h w w.2)
 
 variable (M : SEM V α)
 
-@[simp] theorem toCausalModel_graph : M.toCausalModel.graph = M.graph := rfl
+@[simp] theorem toCausalModel_adj {w v : V} :
+    M.toCausalModel.graph.Adj w v ↔ w ∈ M.graph.parents v := Iff.rfl
 
-instance [h : M.graph.IsDAG] : M.toCausalModel.graph.IsDAG := h
+instance [h : M.graph.IsDAG] : M.toCausalModel.IsAcyclic :=
+  Subrelation.wf (fun h ↦ .single h) h
 
 variable [M.graph.IsDAG] [∀ v, Nonempty (α v)]
 
@@ -49,7 +51,7 @@ intervention. -/
 theorem developDetVtx_eq_solve (s : Valuation α) :
     developDetVtx M s = M.toCausalModel.solve s () := by
   refine CausalModel.eq_solve_of_isFixedPt (funext fun v ↦ ?_)
-  rw [CausalModel.step_apply, developDetVtx_unfold]
-  cases s.get v <;> rfl
+  rw [CausalModel.step_apply, developDetVtx_unfold, Valuation.get]
+  cases s v <;> rfl
 
 end Causation.SEM
