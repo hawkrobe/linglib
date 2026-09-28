@@ -9,8 +9,9 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Scale boundedness
 
-This file defines `Degree.Boundedness`, the classification of scales by the endpoints they have
-that Kennedy and McNally introduced and Rotstein and Winter found independently. A boundedness is
+This file defines `Degree.Boundedness`, the classification of scales by the endpoints they have,
+for which Kennedy and McNally and, independently, Rotstein and Winter gave evidence from degree
+modifiers. A boundedness is
 the endpoint profile of an order, and `Boundedness.ofOrder D` reads it off `D` from the existence of
 a least and a greatest element, so that a scale's tag is a fact about its degrees. The tag is what a
 lexical entry stores, since a record field cannot hold an `OrderTop` instance.
@@ -266,9 +267,10 @@ inductive PositiveStandard where
   deriving DecidableEq, Repr
 
 /-- A standard requires a comparison class when fixing it needs contextual information about a
-domain. [kennedy-2007] replaces the comparison-class argument of *pos* in [klein-1980] with a
-standard-fixing function, `⟦pos⟧ = λg.λx. g(x) ≥ s(g)`, which still needs that information for
-the contextual and necessity standards. -/
+domain. [kennedy-2007] argues against a comparison-class argument of the positive form, as in
+[klein-1980], and states the positive form with a standard-fixing function,
+`⟦pos⟧ = λg.λx. g(x) ⪰ s(g)` ((27)), which still needs that information for the contextual and
+necessity standards. -/
 def PositiveStandard.RequiresComparisonClass : PositiveStandard → Prop
   | .contextual  => True
   | .minEndpoint => False

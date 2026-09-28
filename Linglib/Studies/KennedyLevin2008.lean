@@ -9,9 +9,9 @@ public import Linglib.Studies.HayKennedyLevin1999
 # Kennedy and Levin (2008): Measure of Change
 
 This file formalizes Kennedy and Levin's account of variable telicity in degree achievements.
-Following Kennedy and McNally, a comparative such as *wider than the carpet* denotes a difference
-function, the adjective's measure function onto the part of its scale from the comparative
-standard up. A degree achievement is built on a measure of change, the difference function at the
+Following Kennedy and McNally, a comparative such as *wider than the carpet* measures on the part
+of its adjective's scale from the comparative standard up, which Kennedy and Levin call a difference
+function. A degree achievement is built on a measure of change, the difference function at the
 degree its argument has when the event begins, applied when it ends. The scale of a measure of
 change always has a least degree and inherits any greatest degree of the adjective's scale, so
 Interpretive Economy admits a minimum standard for every degree achievement, giving the atelic
@@ -38,8 +38,8 @@ Vendler class that Interpretive Economy gives their base scales.
 * An ordered additive group with a greatest element is trivial, so the comparison with Hay,
   Kennedy and Levin's additive difference values is stated against a maximal degree `top`, as
   their study does, not `⊤`.
-* In the manuscript consulted, the denotation of *slightly* has both relations reversed; the file
-  follows the prose, a degree above the minimum and at most a small one.
+* As printed, the denotation of *slightly* in (34b) has both relations reversed; the file follows
+  the prose, a degree above the minimum and at most a small one.
 
 ## TODO
 
@@ -78,7 +78,7 @@ theorem comparative_iff : ⊥ < projIci (μ b) (μ a) ↔ comparativeSem μ a b 
   rw [bot_lt_projIci, comparativeSem_positive]
 
 /-- At a maximum standard, a comparative would hold exactly when the positive form does,
-unless the standard already has the greatest degree (fn. 15). -/
+unless the standard already has the greatest degree (fn. 16). -/
 theorem comparative_eq_top_iff [OrderTop δ] (h : μ b ≠ ⊤) :
     projIci (μ b) (μ a) = ⊤ ↔ μ a = ⊤ := by
   rw [projIci_eq_top, or_iff_right h]
@@ -93,7 +93,7 @@ variable {α δ T : Type*} [LinearOrder δ] (m : α → T → δ) (x : α) (i f 
 
 /-- Interpretive Economy admits the minimum standard on the scale of a measure of change, the
 maximum exactly when the adjective's scale has a greatest degree, and never the contextual
-standard (§3.3). -/
+standard (§7.3.3). -/
 theorem admits_iff {s : PositiveStandard} :
     (Boundedness.ofOrder (Ici (m x i))).Admits s ↔
       s = .minEndpoint ∨ s = .maxEndpoint ∧ (Boundedness.ofOrder δ).HasMax := by
