@@ -29,7 +29,7 @@ satisfying rankings.
 
 ## Main definitions
 
-* `Grammar n` — a realizable leg set: a `Finset (Ranking n)` equal to the linear
+* `Grammar n` — a realizable leg set: a `Finset (Ranking (Fin n) n)` equal to the linear
   extensions of some consistent ERC set.
 * `Grammar.ofERCs` — the canonical grammar of a consistent ERC set (the ERC face,
   as a constructor).
@@ -46,7 +46,7 @@ satisfying rankings.
 ## Categorical structure
 
 All the structure here is the order-theoretic specialization of category theory —
-the categories are *thin* (posetal), not monoidal. `(Set (Ranking n), ⊆)` and
+the categories are *thin* (posetal), not monoidal. `(Set (Ranking (Fin n) n), ⊆)` and
 `(Set (ERC n), ⊆)` are thin categories; `subset_models_iff` exhibits `conditions`
 and `models` as a **(dual) adjunction** between them. The induced monad
 `grammarClosure = models ∘ conditions` is the **idempotent closure monad**, and its
@@ -83,47 +83,48 @@ Grammars are exactly the closed sets `models (conditions R)`, the *extents* of
 this context. -/
 
 /-- The rankings satisfying every condition in `A` (the extent polarity). -/
-def models (A : Set (ERC n)) : Set (Ranking n) := {r | ∀ α ∈ A, ERC.SatisfiedBy r α}
+def models (A : Set (ERC n)) : Set (Ranking (Fin n) n) := {r | ∀ α ∈ A, ERC.SatisfiedBy r α}
 
 /-- The conditions satisfied by every ranking in `R` (the intent polarity). -/
-def conditions (R : Set (Ranking n)) : Set (ERC n) := {α | ∀ r ∈ R, ERC.SatisfiedBy r α}
+def conditions (R : Set (Ranking (Fin n) n)) : Set (ERC n) := {α | ∀ r ∈ R, ERC.SatisfiedBy r α}
 
-@[simp] theorem mem_models {A : Set (ERC n)} {r : Ranking n} :
+@[simp] theorem mem_models {A : Set (ERC n)} {r : Ranking (Fin n) n} :
     r ∈ models A ↔ ∀ α ∈ A, ERC.SatisfiedBy r α := Iff.rfl
 
-@[simp] theorem mem_conditions {R : Set (Ranking n)} {α : ERC n} :
+@[simp] theorem mem_conditions {R : Set (Ranking (Fin n) n)} {α : ERC n} :
     α ∈ conditions R ↔ ∀ r ∈ R, ERC.SatisfiedBy r α := Iff.rfl
 
 /-- **The grammar–condition Galois connection.** `R ⊆ models A ↔ A ⊆ conditions R`:
 both sides say every ranking in `R` satisfies every condition in `A`. -/
-theorem subset_models_iff {A : Set (ERC n)} {R : Set (Ranking n)} :
+theorem subset_models_iff {A : Set (ERC n)} {R : Set (Ranking (Fin n) n)} :
     R ⊆ models A ↔ A ⊆ conditions R := by
   constructor
   · intro h α hα r hr; exact h hr α hα
   · intro h r hr α hα; exact h hα r hr
 
-theorem models_antitone : Antitone (models : Set (ERC n) → Set (Ranking n)) := by
+theorem models_antitone : Antitone (models : Set (ERC n) → Set (Ranking (Fin n) n)) := by
   intro A B hAB r hr α hα; exact hr α (hAB hα)
 
-theorem conditions_antitone : Antitone (conditions : Set (Ranking n) → Set (ERC n)) := by
+theorem conditions_antitone : Antitone (conditions : Set (Ranking (Fin n) n) → Set (ERC n)) := by
   intro R S hRS α hα r hr; exact hα r (hRS hr)
 
 /-- The closure operator on ranking-space — the **reflector** onto the grammars,
 i.e. the idempotent monad `models ∘ conditions` induced by the Galois adjunction.
 Its fixed points (the algebras / closed objects) are exactly the grammars. -/
-def grammarClosure (R : Set (Ranking n)) : Set (Ranking n) := models (conditions R)
+def grammarClosure (R : Set (Ranking (Fin n) n)) : Set (Ranking (Fin n) n) := models (conditions R)
 
-theorem subset_grammarClosure (R : Set (Ranking n)) : R ⊆ grammarClosure R := by
+theorem subset_grammarClosure (R : Set (Ranking (Fin n) n)) : R ⊆ grammarClosure R := by
   intro r hr α hα; exact hα r hr
 
-theorem grammarClosure_mono : Monotone (grammarClosure : Set (Ranking n) → Set (Ranking n)) :=
+theorem grammarClosure_mono :
+    Monotone (grammarClosure : Set (Ranking (Fin n) n) → Set (Ranking (Fin n) n)) :=
   fun _ _ h => models_antitone (conditions_antitone h)
 
-theorem conditions_grammarClosure (R : Set (Ranking n)) :
+theorem conditions_grammarClosure (R : Set (Ranking (Fin n) n)) :
     conditions (grammarClosure R) = conditions R :=
   le_antisymm (conditions_antitone (subset_grammarClosure R)) (subset_models_iff.mp le_rfl)
 
-theorem grammarClosure_idem (R : Set (Ranking n)) :
+theorem grammarClosure_idem (R : Set (Ranking (Fin n) n)) :
     grammarClosure (grammarClosure R) = grammarClosure R := by
   show models (conditions (grammarClosure R)) = models (conditions R)
   rw [conditions_grammarClosure]
@@ -132,12 +133,12 @@ theorem grammarClosure_idem (R : Set (Ranking n)) :
 models of some condition set. These are the closure monad's algebras (the closed
 objects of the reflective subcategory), exactly the leg sets of grammars
 (`Grammar.coe_legs_isGrammarClosed`, `Grammar.exists_grammar_of_isGrammarClosed`). -/
-def IsGrammarClosed (R : Set (Ranking n)) : Prop := grammarClosure R = R
+def IsGrammarClosed (R : Set (Ranking (Fin n) n)) : Prop := grammarClosure R = R
 
 theorem isGrammarClosed_models (A : Set (ERC n)) : IsGrammarClosed (models A) :=
   le_antisymm (models_antitone (subset_models_iff.mp le_rfl)) (subset_grammarClosure (models A))
 
-theorem isGrammarClosed_iff_exists_models {R : Set (Ranking n)} :
+theorem isGrammarClosed_iff_exists_models {R : Set (Ranking (Fin n) n)} :
     IsGrammarClosed R ↔ ∃ A, R = models A :=
   ⟨fun h => ⟨conditions R, h.symm⟩, by rintro ⟨A, rfl⟩; exact isGrammarClosed_models A⟩
 
@@ -155,12 +156,12 @@ theorem models_union (A B : Set (ERC n)) : models (A ∪ B) = models A ∩ model
 
 /-- The closure of any set is closed: `grammarClosure R` is a grammar (the
 super-grammar generated by `R`). -/
-theorem isGrammarClosed_grammarClosure (R : Set (Ranking n)) :
+theorem isGrammarClosed_grammarClosure (R : Set (Ranking (Fin n) n)) :
     IsGrammarClosed (grammarClosure R) := isGrammarClosed_models _
 
 /-- **Meet.** The intersection of two grammars' leg sets is again closed — the
 greatest grammar contained in both. -/
-theorem isGrammarClosed_inter {R R' : Set (Ranking n)}
+theorem isGrammarClosed_inter {R R' : Set (Ranking (Fin n) n)}
     (hR : IsGrammarClosed R) (hR' : IsGrammarClosed R') : IsGrammarClosed (R ∩ R') := by
   refine le_antisymm (Set.subset_inter ?_ ?_) (subset_grammarClosure _)
   · exact (grammarClosure_mono Set.inter_subset_left).trans hR.le
@@ -169,7 +170,7 @@ theorem isGrammarClosed_inter {R R' : Set (Ranking n)}
 /-- The `Finset` and `Set` granularities of satisfaction agree: the coerced
 linear-extension set is the `models` of the coerced ERC set. -/
 theorem coe_linearExtensions_eq_models (E : Finset (ERC n)) :
-    (↑(ERC.linearExtensions E) : Set (Ranking n)) = models ↑E := by
+    (↑(ERC.linearExtensions E) : Set (Ranking (Fin n) n)) = models ↑E := by
   ext r; simp [mem_models]
 
 /-- An OT **grammar**: a set of rankings realizable as the linear extensions of
@@ -177,7 +178,7 @@ some consistent ERC set ([merchant-riggle-2016]). The leg set is the grammar's
 canonical identity; the ERC-set and antimatroid presentations are views. -/
 structure Grammar (n : ℕ) where
   /-- The grammar's legs: the rankings that select its language's optima. -/
-  legs : Finset (Ranking n)
+  legs : Finset (Ranking (Fin n) n)
   /-- Every grammar is the linear-extension set of some consistent ERC set. -/
   realizable : ∃ E : Finset (ERC n),
     (ERC.linearExtensions E).Nonempty ∧ legs = ERC.linearExtensions E
@@ -198,13 +199,13 @@ def ofERCs (E : Finset (ERC n)) (hcons : (ERC.linearExtensions E).Nonempty) : Gr
     (ofERCs E hcons).legs = ERC.linearExtensions E := rfl
 
 /-- Membership: `r ∈ G` means `r` is one of `G`'s legs. -/
-instance : Membership (Ranking n) (Grammar n) where
+instance : Membership (Ranking (Fin n) n) (Grammar n) where
   mem G r := r ∈ G.legs
 
-@[simp] theorem mem_iff {G : Grammar n} {r : Ranking n} : r ∈ G ↔ r ∈ G.legs := Iff.rfl
+@[simp] theorem mem_iff {G : Grammar n} {r : Ranking (Fin n) n} : r ∈ G ↔ r ∈ G.legs := Iff.rfl
 
 @[simp] theorem mem_ofERCs {E : Finset (ERC n)} {hcons : (ERC.linearExtensions E).Nonempty}
-    {r : Ranking n} :
+    {r : Ranking (Fin n) n} :
     r ∈ ofERCs E hcons ↔ ∀ α ∈ E, ERC.SatisfiedBy r α := by
   simp [mem_iff, ofERCs]
 
@@ -233,7 +234,7 @@ theorem ofERCs_eq_iff {E E' : Finset (ERC n)}
 antimatroid `MChain` family directly off the legs, independent of any ERC
 presentation. -/
 def feasible (G : Grammar n) (S : Set (Fin n)) : Prop :=
-  ∃ r : Ranking n, r ∈ G.legs ∧ ∃ k : Fin (n + 1), maximalChain r k = S
+  ∃ r : Ranking (Fin n) n, r ∈ G.legs ∧ ∃ k : Fin (n + 1), maximalChain r k = S
 
 /-- The feasible family of `ofERCs E` is exactly `MChain E`: the antimatroid face
 agrees with [merchant-riggle-2016]'s `Antimat E` construction. -/
@@ -289,7 +290,7 @@ theorem toAntimatroid_ofERCs_isFeasible (E : Finset (ERC n))
 /-- A grammar's legs form a closed set of ranking-space — the extent of its
 conditions. -/
 theorem coe_legs_isGrammarClosed (G : Grammar n) :
-    IsGrammarClosed (↑G.legs : Set (Ranking n)) := by
+    IsGrammarClosed (↑G.legs : Set (Ranking (Fin n) n)) := by
   obtain ⟨E, _, hlegs⟩ := G.realizable
   rw [hlegs, coe_linearExtensions_eq_models]
   exact isGrammarClosed_models _
@@ -297,13 +298,13 @@ theorem coe_legs_isGrammarClosed (G : Grammar n) :
 /-- Conversely, every nonempty grammar-closed set of rankings is some grammar's
 leg set. With `coe_legs_isGrammarClosed`, grammars *are* the nonempty closed sets
 of the grammar–condition Galois connection. -/
-theorem exists_grammar_of_isGrammarClosed {R : Set (Ranking n)}
+theorem exists_grammar_of_isGrammarClosed {R : Set (Ranking (Fin n) n)}
     (hcl : IsGrammarClosed R) (hne : R.Nonempty) :
-    ∃ G : Grammar n, (↑G.legs : Set (Ranking n)) = R := by
+    ∃ G : Grammar n, (↑G.legs : Set (Ranking (Fin n) n)) = R := by
   obtain ⟨E, hAeq⟩ : ∃ E : Finset (ERC n), (↑E : Set (ERC n)) = conditions R := by
     refine ⟨(Set.toFinite (conditions R)).toFinset, ?_⟩
     ext α; simp
-  have hReq : (↑(ERC.linearExtensions E) : Set (Ranking n)) = R := by
+  have hReq : (↑(ERC.linearExtensions E) : Set (Ranking (Fin n) n)) = R := by
     rw [coe_linearExtensions_eq_models, hAeq]; exact hcl
   have hcons : (ERC.linearExtensions E).Nonempty := by
     obtain ⟨r, hr⟩ := hne
@@ -345,7 +346,7 @@ instance : OrderTop (Grammar n) where
   le_top G := by rw [le_iff_legs, legs_trivial]; exact Finset.subset_univ _
 
 theorem grammarClosure_union_nonempty (G G' : Grammar n) :
-    (grammarClosure (↑G.legs ∪ ↑G'.legs : Set (Ranking n))).Nonempty := by
+    (grammarClosure (↑G.legs ∪ ↑G'.legs : Set (Ranking (Fin n) n))).Nonempty := by
   obtain ⟨r, hr⟩ := G.legs_nonempty
   exact ⟨r, subset_grammarClosure _ (Set.mem_union_left _ (Finset.mem_coe.mpr hr))⟩
 
@@ -358,8 +359,8 @@ noncomputable def superGrammar (G G' : Grammar n) : Grammar n :=
     (grammarClosure_union_nonempty G G')).choose
 
 theorem coe_superGrammar_legs (G G' : Grammar n) :
-    (↑(superGrammar G G').legs : Set (Ranking n))
-      = grammarClosure (↑G.legs ∪ ↑G'.legs : Set (Ranking n)) :=
+    (↑(superGrammar G G').legs : Set (Ranking (Fin n) n))
+      = grammarClosure (↑G.legs ∪ ↑G'.legs : Set (Ranking (Fin n) n)) :=
   (exists_grammar_of_isGrammarClosed (isGrammarClosed_grammarClosure _)
     (grammarClosure_union_nonempty G G')).choose_spec
 
@@ -375,7 +376,8 @@ theorem le_superGrammar_right (G G' : Grammar n) : G' ≤ superGrammar G G' := b
 — the coproduct of `G` and `G'` in the thin category of grammars. -/
 theorem superGrammar_le {G G' K : Grammar n} (hG : G ≤ K) (hG' : G' ≤ K) :
     superGrammar G G' ≤ K := by
-  have hK : grammarClosure (↑K.legs : Set (Ranking n)) = ↑K.legs := coe_legs_isGrammarClosed K
+  have hK : grammarClosure (↑K.legs : Set (Ranking (Fin n) n)) = ↑K.legs :=
+    coe_legs_isGrammarClosed K
   rw [le_iff_legs, ← Finset.coe_subset, coe_superGrammar_legs]
   refine Set.Subset.trans (grammarClosure_mono (Set.union_subset ?_ ?_)) hK.subset
   · exact Finset.coe_subset.mpr (le_iff_legs.mp hG)

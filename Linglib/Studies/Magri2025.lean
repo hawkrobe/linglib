@@ -64,7 +64,7 @@ variable {n : ℕ} {H : (Fin n → ℕ) → ℝ}
 
 /-- The log-odds of candidate `a` against `b` for form `x` under harmony `H`: the log of the
 ratio of their harmonies (§3.3). -/
-noncomputable def logOdds {X Y : Type*} (H : (Fin n → ℕ) → ℝ) (con : ConstraintSet (X × Y) n)
+noncomputable def logOdds {X Y : Type*} (H : (Fin n → ℕ) → ℝ) (con : ConstraintSet (X × Y) (Fin n))
     (a b : Y) (x : X) : ℝ :=
   log (H (con · (x, a)) / H (con · (x, b)))
 
@@ -72,7 +72,7 @@ noncomputable def logOdds {X Y : Type*} (H : (Fin n → ℕ) → ℝ) (con : Con
 are independent relative to a constraint set, the log-odds of two candidates have zero
 interaction. -/
 def PredictsHZ (H : (Fin n → ℕ) → ℝ) : Prop :=
-  ∀ (X Y : Type) (sq : Square X) (con : ConstraintSet (X × Y) n), sq.Independent con →
+  ∀ (X Y : Type) (sq : Square X) (con : ConstraintSet (X × Y) (Fin n)), sq.Independent con →
     ∀ a b : Y, sq.interaction (logOdds H con a b) = 0
 
 /-- A harmony is separable (30): a product of powers of unary functions, each fed the violations
@@ -105,7 +105,8 @@ theorem Separable.predictsHZ (hH : Separable H) (hne : ∀ v, H v ≠ 0) : Predi
 /-- The square of the converse: constraint `k` is violated `c` times by candidate `true` of the
 top row, and every other constraint `j` is violated `u j` times by candidate `true` of the left
 column. -/
-private def witness (u : Fin n → ℕ) (k : Fin n) (c : ℕ) : ConstraintSet ((Bool × Bool) × Bool) n :=
+private def witness (u : Fin n → ℕ) (k : Fin n) (c : ℕ) : ConstraintSet ((Bool × Bool) × Bool)
+    (Fin n) :=
   fun j p ↦ if p.2 then if j = k then (if p.1.1 then c else 0) else (if p.1.2 then u j else 0)
     else 0
 
@@ -219,7 +220,7 @@ def tagalogSquare : Square (Prefix × Zuraw2010.StemC) := square .mangOther .man
 
 /-- The six constraints of §2.3: `NasSub`, *NC̥, *[stem ŋ, *[stem ŋ/n, and the Uniformity
 constraints of the two prefixes. -/
-def tagalogConstraints : ConstraintSet Candidate 6 :=
+def tagalogConstraints : ConstraintSet Candidate (Fin 6) :=
   ![nasSub, starNC, starRootVelar, starRootCorVel, unif .mangOther, unif .mangRed]
 
 /-- Prefixes and stems are independent dimensions (§2.3, Figure 3): the markedness constraints

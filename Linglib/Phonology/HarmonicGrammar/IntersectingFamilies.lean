@@ -82,7 +82,7 @@ def InsensitiveToCol (f : X → α) : Prop := f sq.tl = f sq.tr ∧ f sq.bl = f 
 /-- The rows and columns are independent dimensions relative to `con` (§2.4 of [magri-2025]):
 each constraint is insensitive to the rows or to the columns, reading its violations of all the
 candidates of a form at once. -/
-def Independent (con : ConstraintSet (X × Y) n) : Prop :=
+def Independent (con : ConstraintSet (X × Y) (Fin n)) : Prop :=
   ∀ k, sq.InsensitiveToRow (curry (con k)) ∨ sq.InsensitiveToCol (curry (con k))
 
 variable {sq}
@@ -142,7 +142,8 @@ theorem InsensitiveToCol.interaction_eq_zero {f : X → R} (h : sq.InsensitiveTo
 
 /-- Under independence, a sum of per-constraint terms, each reading only its constraint's
 violations of the candidates of a form, has zero interaction. -/
-theorem Independent.interaction_sum_eq_zero {con : ConstraintSet (X × Y) n} (h : sq.Independent con)
+theorem Independent.interaction_sum_eq_zero {con : ConstraintSet (X × Y) (Fin n)}
+    (h : sq.Independent con)
     (φ : Fin n → (Y → ℕ) → R) : sq.interaction (fun x ↦ ∑ k, φ k (curry (con k) x)) = 0 := by
   rw [show (fun x ↦ ∑ k, φ k (curry (con k) x)) = ∑ k, φ k ∘ curry (con k) by ext; simp,
     map_sum]
@@ -151,7 +152,7 @@ theorem Independent.interaction_sum_eq_zero {con : ConstraintSet (X × Y) n} (h 
 
 /-- Under independence, the harmony difference between two candidates has zero interaction, for
 every weighting. -/
-theorem Independent.interaction_harmonyScore_sub {con : ConstraintSet (X × Y) n}
+theorem Independent.interaction_harmonyScore_sub {con : ConstraintSet (X × Y) (Fin n)}
     (h : sq.Independent con) (w : Fin n → R) (a b : Y) :
     sq.interaction (fun x ↦ harmonyScore con w (x, a) - harmonyScore con w (x, b)) = 0 := by
   convert h.interaction_sum_eq_zero (fun k v ↦ w k * v b - w k * v a) using 2
@@ -163,7 +164,7 @@ end Interaction
 
 /-- MaxEnt predicts HZ's generalization ((22) of [magri-2025]): under independence, the MaxEnt
 log-odds of two candidates have zero interaction, for every weighting and every candidate set. -/
-theorem Independent.interaction_logOdds_softmax [Fintype Y] {con : ConstraintSet (X × Y) n}
+theorem Independent.interaction_logOdds_softmax [Fintype Y] {con : ConstraintSet (X × Y) (Fin n)}
     (h : sq.Independent con) (w : Fin n → ℝ) (a b : Y) :
     sq.interaction (fun x ↦ log (softmax (fun y ↦ harmonyScore con w (x, y)) a /
       softmax (fun y ↦ harmonyScore con w (x, y)) b)) = 0 := by

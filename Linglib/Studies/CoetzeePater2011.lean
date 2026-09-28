@@ -172,7 +172,7 @@ def maxPreV : Constraint Candidate := Constraint.binary λ c => c.2 = .delete �
 def maxFinal : Constraint Candidate := Constraint.binary λ c => c.2 = .delete ∧ c.1 = .pause
 
 /-- The constraint set (11) lists the constraints in the paper's order. -/
-def con : ConstraintSet Candidate 4 := ![starCT, maxC, maxPreV, maxFinal]
+def con : ConstraintSet Candidate (Fin 4) := ![starCT, maxC, maxPreV, maxFinal]
 
 /-- The violation profiles take the shape that POC's `winProb` consumes. -/
 def vp (ctx : Context) (o : Output) (i : Fin 4) : ℕ := con i (ctx, o)
@@ -185,24 +185,24 @@ theorem cands_eq (ctx : Context) : cands ctx = {.delete, .retain} := by cases ct
 /-! ### Categorical systems (table (12)) -/
 
 /-- Ranking `σ` deletes in `ctx` if deletion is its unique optimum. -/
-def Deletes (σ : Ranking 4) (ctx : Context) : Prop := PicksAt cands vp σ ctx .delete
+def Deletes (σ : Ranking (Fin 4) 4) (ctx : Context) : Prop := PicksAt cands vp σ ctx .delete
 
-instance (σ : Ranking 4) (ctx : Context) : Decidable (Deletes σ ctx) :=
+instance (σ : Ranking (Fin 4) 4) (ctx : Context) : Decidable (Deletes σ ctx) :=
   inferInstanceAs (Decidable (PicksAt cands vp σ ctx .delete))
 
 /-- Pre-consonantal deletion needs only \*CT ≫ MAX. -/
-theorem deletes_preC_iff : ∀ σ : Ranking 4, Deletes σ .preC ↔ σ.Dominates 0 1 := by decide
+theorem deletes_preC_iff : ∀ σ : Ranking (Fin 4) 4, Deletes σ .preC ↔ σ.Dominates 0 1 := by decide
 
 /-- Pre-vocalic deletion needs \*CT above both MAX and MAX-PRE-V. -/
 theorem deletes_preV_iff :
-    ∀ σ : Ranking 4, Deletes σ .preV ↔ σ.Dominates 0 1 ∧ σ.Dominates 0 2 := by decide
+    ∀ σ : Ranking (Fin 4) 4, Deletes σ .preV ↔ σ.Dominates 0 1 ∧ σ.Dominates 0 2 := by decide
 
 /-- Phrase-final deletion needs \*CT above both MAX and MAX-FINAL. -/
 theorem deletes_pause_iff :
-    ∀ σ : Ranking 4, Deletes σ .pause ↔ σ.Dominates 0 1 ∧ σ.Dominates 0 3 := by decide
+    ∀ σ : Ranking (Fin 4) 4, Deletes σ .pause ↔ σ.Dominates 0 1 ∧ σ.Dominates 0 3 := by decide
 
 /-- The categorical system of `σ` is the set of contexts in which it deletes. -/
-def system (σ : Ranking 4) : Finset Context := univ.filter (Deletes σ)
+def system (σ : Ranking (Fin 4) 4) : Finset Context := univ.filter (Deletes σ)
 
 /-- The five systems of table (12), rows (a)–(e), from no deletion to deletion in all three
 contexts. -/
@@ -315,7 +315,7 @@ theorem deletionProb_starCT_maxFinal :
 
 /-- Pre-vocalic or phrase-final deletion entails pre-consonantal deletion, so no ranking
 deletes only where a contextual faithfulness constraint protects t/d. -/
-theorem deletes_preC_of_deletes {σ : Ranking 4} {ctx : Context} (h : Deletes σ ctx) :
+theorem deletes_preC_of_deletes {σ : Ranking (Fin 4) 4} {ctx : Context} (h : Deletes σ ctx) :
     Deletes σ .preC := by
   cases ctx
   · exact (deletes_preC_iff σ).mpr ((deletes_preV_iff σ).mp h).1
@@ -324,7 +324,7 @@ theorem deletes_preC_of_deletes {σ : Ranking 4} {ctx : Context} (h : Deletes σ
 
 /-- Any distribution over rankings, POC's or stochastic OT's, deletes at least as often
 pre-consonantally as in either other context. -/
-theorem sum_le_sum_preC (μ : Ranking 4 → ℝ) (hμ : 0 ≤ μ) (ctx : Context) :
+theorem sum_le_sum_preC (μ : Ranking (Fin 4) 4 → ℝ) (hμ : 0 ≤ μ) (ctx : Context) :
     ∑ σ ∈ univ.filter (Deletes · ctx), μ σ ≤
       ∑ σ ∈ univ.filter (Deletes · .preC), μ σ :=
   sum_le_sum_of_subset_of_nonneg (monotone_filter_right _ λ _ _ => deletes_preC_of_deletes)

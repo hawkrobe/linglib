@@ -71,16 +71,16 @@ namespace OptimalityTheory
     Each maximal chain corresponds to a total order (ranking) on
     `Fin n`: the element added at step `k` is the constraint ranked
     at position `k`. -/
-def maximalChain {n : Nat} (r : Ranking n) : Fin (n + 1) → Set (Fin n) :=
+def maximalChain {n : Nat} (r : Ranking (Fin n) n) : Fin (n + 1) → Set (Fin n) :=
   fun k => { i : Fin n | (r.symm i : Nat) < (k : Nat) }
 
 /-- The maximal chain starts at the empty set. -/
-theorem maximalChain_zero {n : Nat} (r : Ranking n) :
+theorem maximalChain_zero {n : Nat} (r : Ranking (Fin n) n) :
     maximalChain r ⟨0, Nat.zero_lt_succ n⟩ = ∅ := by
   ext i; simp [maximalChain]
 
 /-- The maximal chain ends at the full set. -/
-theorem maximalChain_last {n : Nat} (r : Ranking n) :
+theorem maximalChain_last {n : Nat} (r : Ranking (Fin n) n) :
     maximalChain r ⟨n, Nat.lt_succ_of_le le_rfl⟩ = Set.univ := by
   ext i; simp [maximalChain]
 
@@ -97,7 +97,7 @@ theorem maximalChain_last {n : Nat} (r : Ranking n) :
 
     [merchant-riggle-2016] Definition 1. -/
 def MChain {n : Nat} (E : Finset (ERC n)) : Set (Fin n) → Prop :=
-  fun S => ∃ r : Ranking n, (∀ α ∈ E, ERC.SatisfiedBy r α) ∧
+  fun S => ∃ r : Ranking (Fin n) n, (∀ α ∈ E, ERC.SatisfiedBy r α) ∧
     ∃ k : Fin (n + 1), maximalChain r k = S
 
 /-! ### Local feasibility — a decidable sound over-approximation -/
@@ -140,17 +140,17 @@ theorem Feasible.union_closed {n : Nat} (E : Finset (ERC n)) {S T : Finset (Fin 
 
 /-- The top-`k` constraints under ranking `r`, as a `Finset` (the decidable
 counterpart of `maximalChain r k`). -/
-def prefixFinset {n : Nat} (r : Ranking n) (k : Fin (n + 1)) : Finset (Fin n) :=
+def prefixFinset {n : Nat} (r : Ranking (Fin n) n) (k : Fin (n + 1)) : Finset (Fin n) :=
   Finset.univ.filter (fun i => (r.symm i : Nat) < k.val)
 
-@[simp] theorem mem_prefixFinset {n : Nat} (r : Ranking n) (k : Fin (n + 1)) (i : Fin n) :
+@[simp] theorem mem_prefixFinset {n : Nat} (r : Ranking (Fin n) n) (k : Fin (n + 1)) (i : Fin n) :
     i ∈ prefixFinset r k ↔ (r.symm i : Nat) < k.val := by simp [prefixFinset]
 
 /-- **Forward representation** (the easy half of [merchant-riggle-2016]'s
 isomorphism): a prefix of a ranking that satisfies `E` is locally feasible.
 Winners dominate their losers, so a loser inside the prefix drags its winner in
 (`maximalChain_dominance` in `Finset` form). -/
-theorem feasible_of_satisfiedBy {n : Nat} {E : Finset (ERC n)} {r : Ranking n}
+theorem feasible_of_satisfiedBy {n : Nat} {E : Finset (ERC n)} {r : Ranking (Fin n) n}
     (hr : ∀ α ∈ E, ERC.SatisfiedBy r α) (k : Fin (n + 1)) : Feasible E (prefixFinset r k) := by
   intro α hα ⟨l, hlL, hlmem⟩
   rw [mem_prefixFinset] at hlmem
@@ -161,10 +161,10 @@ theorem feasible_of_satisfiedBy {n : Nat} {E : Finset (ERC n)} {r : Ranking n}
 
 /-- **Faithful feasibility**: `S` is the top-`k` constraints of *some* ranking
 satisfying `E` — the `Finset`-valued form of `MChain`. Decidable by finite search
-over `Ranking n` (a `Fintype`) and `Fin (n+1)`, so `decide` reduces — *and*
+over `Ranking (Fin n) n` (a `Fintype`) and `Fin (n+1)`, so `decide` reduces — *and*
 unlike `Feasible` it is the genuine antimatroid family, not an over-approximation. -/
 def FeasiblePrefix {n : Nat} (E : Finset (ERC n)) (S : Finset (Fin n)) : Prop :=
-  ∃ r : Ranking n, (∀ α ∈ E, ERC.SatisfiedBy r α) ∧ ∃ k : Fin (n + 1), prefixFinset r k = S
+  ∃ r : Ranking (Fin n) n, (∀ α ∈ E, ERC.SatisfiedBy r α) ∧ ∃ k : Fin (n + 1), prefixFinset r k = S
 
 instance {n : Nat} (E : Finset (ERC n)) : DecidablePred (FeasiblePrefix E) :=
   fun _ => Fintype.decidableExistsFintype
@@ -175,7 +175,7 @@ theorem feasible_of_feasiblePrefix {n : Nat} {E : Finset (ERC n)} {S : Finset (F
   obtain ⟨r, hr, k, rfl⟩ := h; exact feasible_of_satisfiedBy hr k
 
 /-- `prefixFinset` coerces to `maximalChain`. -/
-@[simp] theorem prefixFinset_coe {n : Nat} (r : Ranking n) (k : Fin (n + 1)) :
+@[simp] theorem prefixFinset_coe {n : Nat} (r : Ranking (Fin n) n) (k : Fin (n + 1)) :
     (↑(prefixFinset r k) : Set (Fin n)) = maximalChain r k := by
   ext i; simp [prefixFinset, maximalChain]
 
@@ -215,7 +215,7 @@ theorem feasible_not_accessible :
     This is the key insight enabling the direct construction proof of
     union closure: any W-witness for an L-constraint in a prefix set
     must itself be in that prefix set. -/
-theorem maximalChain_dominance {n : Nat} (r : Ranking n) (k : Fin (n + 1))
+theorem maximalChain_dominance {n : Nat} (r : Ranking (Fin n) n) (k : Fin (n + 1))
     (w l : Fin n) (hw : r.Dominates w l) (hl : l ∈ maximalChain r k) :
     w ∈ maximalChain r k := by
   simp only [maximalChain, Set.mem_ofPred_eq] at hl ⊢
@@ -224,18 +224,18 @@ theorem maximalChain_dominance {n : Nat} (r : Ranking n) (k : Fin (n + 1))
 -- Helpers for the union closure construction
 
 /-- Count elements in finset `s` ranked strictly below `i` by `r`. -/
-private def countBelow {n : Nat} (r : Ranking n)
+private def countBelow {n : Nat} (r : Ranking (Fin n) n)
     (s : Finset (Fin n)) (i : Fin n) : Nat :=
   (s.filter (fun j => (r.symm j : Nat) < (r.symm i : Nat))).card
 
-private theorem countBelow_lt_card {n : Nat} (r : Ranking n)
+private theorem countBelow_lt_card {n : Nat} (r : Ranking (Fin n) n)
     (s : Finset (Fin n)) (i : Fin n) (hi : i ∈ s) :
     countBelow r s i < s.card := by
   unfold countBelow; apply Finset.card_lt_card; constructor
   · exact Finset.filter_subset _ _
   · intro h; have := h hi; simp only [Finset.mem_filter] at this; omega
 
-private theorem countBelow_strict_mono {n : Nat} (r : Ranking n)
+private theorem countBelow_strict_mono {n : Nat} (r : Ranking (Fin n) n)
     (s : Finset (Fin n)) (a b : Fin n) (ha : a ∈ s) (_hb : b ∈ s)
     (hlt : (r.symm a : Nat) < (r.symm b : Nat)) :
     countBelow r s a < countBelow r s b := by
@@ -245,7 +245,7 @@ private theorem countBelow_strict_mono {n : Nat} (r : Ranking n)
       simp only [Finset.mem_filter]; exact ⟨ha, hlt⟩
     have hh := hall hmem; simp only [Finset.mem_filter] at hh; omega
 
-private theorem countBelow_injOn {n : Nat} (r : Ranking n)
+private theorem countBelow_injOn {n : Nat} (r : Ranking (Fin n) n)
     (s : Finset (Fin n)) (a b : Fin n) (ha : a ∈ s) (hb : b ∈ s)
     (hab : countBelow r s a = countBelow r s b) : a = b := by
   by_contra hne
@@ -256,7 +256,7 @@ private theorem countBelow_injOn {n : Nat} (r : Ranking n)
   · exact absurd hab (Nat.ne_of_gt (countBelow_strict_mono r s b a hb ha h))
 
 /-- The prefix set `{ i | r.symm i < k }` has exactly `k` elements. -/
-private theorem prefix_card {n : Nat} (r : Ranking n) (k : Fin (n + 1)) :
+private theorem prefix_card {n : Nat} (r : Ranking (Fin n) n) (k : Fin (n + 1)) :
     (Finset.univ.filter (fun i : Fin n => (r.symm i : Nat) < k.val)).card = k.val := by
   have heq : Finset.univ.filter (fun i : Fin n => (r.symm i : Nat) < k.val) =
       (Finset.univ : Finset (Fin k.val)).image
@@ -377,7 +377,7 @@ theorem MChain.union_closed {n : Nat} (E : Finset (ERC n))
   -- Bijective, build r₃
   have hff_bij := Finite.injective_iff_bijective.mp hff_inj
   let e := Equiv.ofBijective ff hff_bij
-  let r₃ : Ranking n := e.symm
+  let r₃ : Ranking (Fin n) n := e.symm
   let k₃ : Fin (n + 1) := ⟨k₁.val + sTmS.card, by omega⟩
   -- r₃.symm = ff
   have hr₃ : ∀ i, r₃.symm i = ff i := by
@@ -560,7 +560,7 @@ theorem feasible_iff_feasiblePrefix_of_simple {n : Nat} {E : Finset (ERC n)}
         (Finset.mem_compl.mpr ha) (Finset.mem_compl.mpr hb) (by omega)
   have hff_bij := Finite.injective_iff_bijective.mp hff_inj
   let e := Equiv.ofBijective ff hff_bij
-  let r : Ranking n := e.symm
+  let r : Ranking (Fin n) n := e.symm
   have hr : ∀ i, (r.symm i : Nat) = f i := by
     intro i; show (e.symm.symm i : Nat) = f i; rw [Equiv.symm_symm]; rfl
   refine ⟨r, ?_, ⟨S.card, Nat.lt_succ_of_le hScard⟩, ?_⟩
@@ -726,7 +726,7 @@ theorem RCErc_single_eq_W_iff {n : Nat} (A : Antimatroid (Fin n))
   · exact iff_of_false (by decide) fun h => h.2 h2
   · exact iff_of_false (by decide) h1
 
-private theorem maximalChain_succ_eq {n : Nat} (r : Ranking n) {m : ℕ} (hm : m < n)
+private theorem maximalChain_succ_eq {n : Nat} (r : Ranking (Fin n) n) {m : ℕ} (hm : m < n)
     {h1 : m + 1 < n + 1} {h0 : m < n + 1} :
     maximalChain r ⟨m + 1, h1⟩ = insert (r ⟨m, hm⟩) (maximalChain r ⟨m, h0⟩) := by
   ext i
@@ -747,7 +747,7 @@ private theorem maximalChain_succ_eq {n : Nat} (r : Ranking n) {m : ℕ} (hm : m
     Lemmas 7, 9): on a full-support antimatroid, a ranking satisfies the
     rooted-circuit ERCs iff its every prefix is feasible. -/
 theorem satisfiedBy_RCErc_iff_forall_prefix {n : Nat} (A : Antimatroid (Fin n))
-    (hE : A.E = Set.univ) (r : Ranking n) :
+    (hE : A.E = Set.univ) (r : Ranking (Fin n) n) :
     (∀ α ∈ RCErc A, ERC.SatisfiedBy r α) ↔
       ∀ k : Fin (n + 1), A.IsFeasible (maximalChain r k) := by
   constructor
@@ -926,7 +926,7 @@ private theorem exists_feasible_ext_list {n : Nat} (A : Antimatroid (Fin n))
 theorem Antimat_RCErc_inv {n : Nat} (A : Antimatroid (Fin n))
     (hE : A.E = Set.univ) (S : Set (Fin n)) :
     A.IsFeasible S ↔
-      ∃ r : Ranking n, (∀ α ∈ RCErc A, ERC.SatisfiedBy r α) ∧
+      ∃ r : Ranking (Fin n) n, (∀ α ∈ RCErc A, ERC.SatisfiedBy r α) ∧
         ∃ k, maximalChain r k = S := by
   classical
   constructor
@@ -985,7 +985,7 @@ theorem Antimat_RCErc_inv {n : Nat} (A : Antimatroid (Fin n))
     ranking satisfying `E`: the witness for the prefix through the loser
     already contains the dominating winner. -/
 theorem satisfiedBy_iff_forall_prefix_mChain {n : Nat} (E : Finset (ERC n))
-    (r : Ranking n) :
+    (r : Ranking (Fin n) n) :
     (∀ α ∈ E, ERC.SatisfiedBy r α) ↔
       ∀ k : Fin (n + 1), MChain E (maximalChain r k) := by
   constructor
@@ -1028,7 +1028,7 @@ theorem satisfiedBy_iff_forall_prefix_mChain {n : Nat} (E : Finset (ERC n))
     [merchant-riggle-2016] actually proves. -/
 theorem RCErc_Antimat_inv {n : Nat} (E : Finset (ERC n))
     (hcons : (ERC.linearExtensions E).Nonempty) :
-    ∀ r : Ranking n,
+    ∀ r : Ranking (Fin n) n,
       (∀ α ∈ RCErc (Antimat E hcons), ERC.SatisfiedBy r α) ↔
         ∀ α ∈ E, ERC.SatisfiedBy r α := by
   intro r
@@ -1055,7 +1055,7 @@ theorem Antimat_entailment {n : Nat} (E F : Finset (ERC n))
 theorem RCErc_entailment {n : Nat} (A B : Antimatroid (Fin n))
     (hA : A.E = Set.univ) (hB : B.E = Set.univ)
     (h : ∀ S, A.IsFeasible S → B.IsFeasible S) :
-    ∀ r : Ranking n, (∀ α ∈ RCErc A, ERC.SatisfiedBy r α) →
+    ∀ r : Ranking (Fin n) n, (∀ α ∈ RCErc A, ERC.SatisfiedBy r α) →
       (∀ α ∈ RCErc B, ERC.SatisfiedBy r α) := by
   intro r hr
   rw [satisfiedBy_RCErc_iff_forall_prefix B hB]
@@ -1075,12 +1075,12 @@ the type of `Ranking` (which stays a permutation, [merchant-riggle-2016]):
 `rankingChainEquiv` records the bijection without retyping rankings as chains. -/
 
 /-- The prefix `∅` at height `0`. -/
-theorem prefixFinset_zero {n : Nat} (r : Ranking n) : prefixFinset r 0 = ∅ := by
+theorem prefixFinset_zero {n : Nat} (r : Ranking (Fin n) n) : prefixFinset r 0 = ∅ := by
   ext i; simp [mem_prefixFinset]
 
 /-- The constraint at rank position `k` is the new element added passing from the
 height-`k` prefix to the height-`k+1` prefix. -/
-theorem prefixFinset_succ_eq {n : Nat} (r : Ranking n) (k : Fin n) :
+theorem prefixFinset_succ_eq {n : Nat} (r : Ranking (Fin n) n) (k : Fin n) :
     prefixFinset r k.succ = insert (r k) (prefixFinset r k.castSucc) := by
   ext i
   simp only [mem_prefixFinset, Finset.mem_insert, Fin.val_succ, Fin.val_castSucc]
@@ -1095,7 +1095,7 @@ theorem prefixFinset_succ_eq {n : Nat} (r : Ranking n) (k : Fin n) :
     · rw [Equiv.symm_apply_apply]; omega
     · omega
 
-theorem prefixFinset_apply_notMem {n : Nat} (r : Ranking n) (k : Fin n) :
+theorem prefixFinset_apply_notMem {n : Nat} (r : Ranking (Fin n) n) (k : Fin n) :
     r k ∉ prefixFinset r k.castSucc := by
   simp [mem_prefixFinset, Equiv.symm_apply_apply]
 
@@ -1171,7 +1171,7 @@ theorem toFun_last : C.toFun (Fin.last n) = Finset.univ := by
 
 /-- The ranking recovered from a maximal chain: position `k` holds the element
 added at step `k`. -/
-noncomputable def toRanking : Ranking n := Equiv.ofBijective C.added C.added_bijective
+noncomputable def toRanking : Ranking (Fin n) n := Equiv.ofBijective C.added C.added_bijective
 
 theorem toRanking_apply (k : Fin n) : C.toRanking k = C.added k := rfl
 
@@ -1195,7 +1195,7 @@ theorem prefixFinset_toRanking (k : Fin (n + 1)) :
 end MaximalChain
 
 /-- The maximal chain of a ranking: its sequence of prefixes. -/
-def prefixChain {n : Nat} (r : Ranking n) : MaximalChain n where
+def prefixChain {n : Nat} (r : Ranking (Fin n) n) : MaximalChain n where
   toFun := prefixFinset r
   bot := prefixFinset_zero r
   step := fun k => ⟨r k, prefixFinset_apply_notMem r k, prefixFinset_succ_eq r k⟩
@@ -1203,7 +1203,7 @@ def prefixChain {n : Nat} (r : Ranking n) : MaximalChain n where
 /-- **Rankings are maximal chains** ([merchant-riggle-2016]). A ranking and the
 maximal chain of its prefixes carry the same information — the "ranking is a chain"
 intuition, as a bijection rather than a retyping of `Ranking`. -/
-noncomputable def rankingChainEquiv (n : ℕ) : Ranking n ≃ MaximalChain n where
+noncomputable def rankingChainEquiv (n : ℕ) : Ranking (Fin n) n ≃ MaximalChain n where
   toFun := prefixChain
   invFun := MaximalChain.toRanking
   left_inv r := by

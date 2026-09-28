@@ -142,7 +142,7 @@ theorem initialIdentity_theta :
 /-- The preference for reduplication carries over to the image of the constituents under
 an injective relabelling, so it extends to handshapes the language lacks. -/
 theorem optimal_morphology_map [DecidableEq β] (hf : Function.Injective f) (h : x ≠ y)
-    (r : Ranking 2) :
+    (r : Ranking (Fin 2) 2) :
     (tableau (f x) (f y) .morphology r).optimal = {.reduplicated [f x]} :=
   optimal_morphology (hf.ne h) r
 
@@ -155,7 +155,7 @@ analysis. The constituents `x` and `y` range over any type, syllables of speech 
 alike, and the dependence on the spoken language is
 `BerentEtAl2016.exists_optimal_surface_iff`. -/
 theorem amodal_doubling_reversal {α : Type*} [DecidableEq α] {x y : α} (h : x ≠ y)
-    (r : Ranking 2) :
+    (r : Ranking (Fin 2) 2) :
     (tableau x y .phonology r).optimal = {.simplex [x, y]} ∧
       (tableau x y .morphology r).optimal = {.reduplicated [x]} :=
   ⟨optimal_phonology h r, optimal_morphology h r⟩

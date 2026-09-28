@@ -100,8 +100,8 @@ variable {I : Type*} {n : ℕ}
 /-- With the other weights held fixed, the derivative of the log probability of an observation in
 weight j is its expected violations of constraint j less the observed ones, which is the observed
 feature less its expectation once violations are read as non-positive features (equation (2)). -/
-theorem hasDerivAt_log_gjProb_update (con : ConstraintSet (I × O) n) (w : Fin n → ℝ) (j : Fin n)
-    (i : I) (o : O) (t : ℝ) :
+theorem hasDerivAt_log_gjProb_update (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ)
+    (j : Fin n) (i : I) (o : O) (t : ℝ) :
     HasDerivAt (fun t ↦ log (gjProb con (Function.update w j t) i o))
       (∑ o', gjProb con (Function.update w j t) i o' * con j (i, o') - con j (i, o)) t := by
   have : Nonempty O := ⟨o⟩
@@ -169,7 +169,7 @@ def faith : Constraint (Syl × Syl) := Constraint.binary fun c ↦ c.1 ≠ c.2
 
 /-- The constraint set, in the order of the converged ranking FAITH ≫ *COMPLEXONSET ≫
 *COMPLEXCODA ≫ ONSET ≫ *CODA. -/
-def con : ConstraintSet (Syl × Syl) 5 :=
+def con : ConstraintSet (Syl × Syl) (Fin 5) :=
   ![faith, starComplexOnset, starComplexCoda, onset, starCoda]
 
 /-- Violation profiles. -/
@@ -180,7 +180,7 @@ def cands : Syl → Finset Syl := fun _ ↦ univ
 
 /-- A ranking produces an input faithfully exactly when every markedness constraint the input
 violates is ranked below FAITH. -/
-theorem faithful_iff (σ : Ranking 5) (i : Syl) :
+theorem faithful_iff (σ : Ranking (Fin 5) 5) (i : Syl) :
     PicksAt cands vp σ i i ↔ ∀ k, vp i i k = 1 → σ.Dominates 0 k := by
   revert σ i; decide +kernel
 
@@ -189,7 +189,7 @@ FAITH, namely those violating no other markedness constraint. -/
 def produced (S : Finset (Fin 5)) : Finset Syl := univ.filter fun i ↦ ∀ k, vp i i k = 1 → k ∈ S
 
 /-- The types a ranking produces faithfully are those of the stage it is at. -/
-theorem mem_produced_iff (σ : Ranking 5) (i : Syl) :
+theorem mem_produced_iff (σ : Ranking (Fin 5) 5) (i : Syl) :
     i ∈ produced (univ.filter (σ.Dominates 0)) ↔ PicksAt cands vp σ i i := by
   simp [produced, faithful_iff]
 

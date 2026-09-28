@@ -224,7 +224,7 @@ theorem position?_eq_some_iff {i : Fin 5} {p : Prominence} :
 /-- The constraint set consists of the constraints of word-initial position, of lexical
 material, of morpheme-initial position and of morphemes of one segment, followed by the
 general constraint against deletion. -/
-def con : ConstraintSet Elision 5 := fun i ↦ (position? i).elim (max c) (maxP c)
+def con : ConstraintSet Elision (Fin 5) := fun i ↦ (position? i).elim (max c) (maxP c)
 
 @[simp] theorem con_index (p : Prominence) (e : Elision) :
     con c (index p) e = if c.Prominent e p then 1 else 0 := by
@@ -235,9 +235,9 @@ theorem con_of_position?_eq_none {i : Fin 5} (hi : position? i = none) (e : Elis
   rw [con, hi]; exact max_apply c e
 
 /-- The tableau of the two elisions under the ranking `r`. -/
-abbrev tableau (r : Ranking 5) : Tableau Elision 5 := Tableau.ofPerm (con c) r [.v1, .v2]
+abbrev tableau (r : Ranking (Fin 5) 5) : Tableau Elision 5 := Tableau.ofPerm (con c) r [.v1, .v2]
 
-theorem candidates_tableau (r : Ranking 5) : (tableau c r).candidates = {.v1, .v2} := rfl
+theorem candidates_tableau (r : Ranking (Fin 5) 5) : (tableau c r).candidates = {.v1, .v2} := rfl
 
 variable {c}
 
@@ -263,7 +263,7 @@ theorem con_lt_iff {e e' : Elision} {i : Fin 5} :
 /-- One vowel is the sole one to elide exactly when some position protecting only the other
 outranks every position protecting only it, which is the elementary ranking condition stated
 over positions. -/
-theorem optimal_eq_singleton_iff {e e' : Elision} (hne : e ≠ e') (r : Ranking 5) :
+theorem optimal_eq_singleton_iff {e e' : Elision} (hne : e ≠ e') (r : Ranking (Fin 5) 5) :
     (tableau c r).optimal = {e} ↔ ∃ p, ¬ c.Prominent e p ∧ c.Prominent e' p ∧
       ∀ q, c.Prominent e q → ¬ c.Prominent e' q → r.Dominates (index p) (index q) := by
   have hcand : (tableau c r).candidates = {e, e'} := by
@@ -291,7 +291,7 @@ theorem exists_optimal_eq {e e' : Elision} (hne : e ≠ e') {p : Prominence}
 /-- A vowel whose prominent positions are all positions of the other vowel too, and which
 lacks one of them, harmonically bounds the other, which elides under no ranking. -/
 theorem notMem_optimal {e e' : Elision} (hle : ∀ p, c.Prominent e p → c.Prominent e' p)
-    {p : Prominence} (he : ¬ c.Prominent e p) (he' : c.Prominent e' p) (r : Ranking 5) :
+    {p : Prominence} (he : ¬ c.Prominent e p) (he' : c.Prominent e' p) (r : Ranking (Fin 5) 5) :
     e' ∉ (tableau c r).optimal :=
   Tableau.ofPerm_notMem_optimal_of_lt (c := e) (by cases e <;> simp) <|
     Pi.lt_def.2 ⟨con_le hle, index p, by simp [he, he']⟩
@@ -343,7 +343,7 @@ structure Context.IsPrefixRoot (c : Context) : Prop where
 /-- With the constraint on lexical material on top, the first vowel elides after a prefix and
 the second before a suffix of any length, the asymmetry within one language that the paper
 reports for Chichewa. -/
-theorem lexical_on_top {r : Ranking 5}
+theorem lexical_on_top {r : Ranking (Fin 5) 5}
     (hr : ∀ j, j ≠ index .lexical → r.Dominates (index .lexical) j) {c c' : Context}
     (hc : c.IsPrefixRoot) (hc' : c'.IsRootSuffix) :
     (tableau c r).optimal = {.v1} ∧ (tableau c' r).optimal = {.v2} := by
@@ -357,7 +357,7 @@ theorem lexical_on_top {r : Ranking 5}
 /-- With the constraint on morphemes of one segment over the constraint on lexical material,
 and that over the morpheme-initial constraint, the first vowel elides before a suffix of one
 segment and the second before a longer one, as in the paper's tableaux (19) and (20). -/
-theorem soleSegment_over_lexical {r : Ranking 5}
+theorem soleSegment_over_lexical {r : Ranking (Fin 5) 5}
     (h₁ : r.Dominates (index .soleSegment) (index .lexical))
     (h₂ : r.Dominates (index .lexical) (index .morphemeInitial)) (hc : c.IsRootSuffix) :
     (tableau c r).optimal = {if c.suffixBody = [] then .v1 else .v2} := by
