@@ -5,13 +5,12 @@ public import Linglib.Syntax.Category.Verb.Basic
 /-!
 # Korean causative verbs
 
-Korean has two causatives, which Sohn calls the long and the short form. The long form
-*-ge ha-* 'make do' denotes indirect causation and, in Song's terms, is purposive and not
-implicative: *Keeho-ka Jinee-ka wus-ke ha-ess-ta* 'Keeho caused Jinee to smile' does not
-entail that Jinee smiled. The short form suffixes *-i-*, *-hi-*, *-li-*, *-ki-* and their
-allomorphs to the stem and denotes immediate causation, as in *jug-i-da* 'kill' from *jug-da*
-'die', Sohn's *koyangi-ka cwi-lul cwuk-i-ess-ta* 'a cat killed a rat'. The entries keep Song's
-Yale forms.
+Korean has two causatives, which Sohn calls the long and the short form. The long form *-ge ha-*
+'make do' denotes indirect causation and does not entail its effect: Song's *kiho-ka cini-ka wus-ke
+ha-əss-ɨna cini-ka wus-ci=an-əss-ta* 'Keeho caused Jinee to smile, but she didn't smile' is not
+contradictory. The short form suffixes *-i-*, *-hi-*, *-li-*, *-ki-* and their allomorphs to the
+stem and denotes immediate causation, as in *jug-i-da* 'kill' from *jug-da* 'die', Sohn's
+*koyangi-ka cwi-lul cwuk-i-ess-ta* 'a cat killed a rat'. The entries keep Song's Yale forms.
 
 ## Main definitions
 
