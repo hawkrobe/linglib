@@ -15,11 +15,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "positive"],
       ["response", "positive"],
+      ["relative", "agree"],
       ["particle", "yes"]
     ],
-    "comment": "[agree, +], agreement. p. 361."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_6a_no",
@@ -37,11 +39,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "positive"],
       ["response", "positive"],
+      ["relative", "agree"],
       ["particle", "no"]
     ],
-    "comment": "[agree, +], agreement. p. 361."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_6b_yes",
@@ -59,11 +63,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "positive"],
       ["response", "negative"],
+      ["relative", "reverse"],
       ["particle", "yes"]
     ],
-    "comment": "[reverse, −], disagreement. p. 361."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_6b_no",
@@ -81,11 +87,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "positive"],
       ["response", "negative"],
+      ["relative", "reverse"],
       ["particle", "no"]
     ],
-    "comment": "[reverse, −], disagreement. p. 361."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_7a_yes",
@@ -103,11 +111,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "negative"],
       ["response", "negative"],
+      ["relative", "agree"],
       ["particle", "yes"]
     ],
-    "comment": "[agree, −], agreement. p. 361."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_7a_no",
@@ -125,11 +135,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "negative"],
       ["response", "negative"],
+      ["relative", "agree"],
       ["particle", "no"]
     ],
-    "comment": "[agree, −], agreement. p. 361."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_7b_yes",
@@ -147,11 +159,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "negative"],
       ["response", "positive"],
+      ["relative", "reverse"],
       ["particle", "yes"]
     ],
-    "comment": "[reverse, +], disagreement; small capitals mark obligatory contrastive stress. p. 361."
+    "comment": "Small capitals mark obligatory contrastive stress."
   },
   {
     "id": "roelofsenfarkas2015_7b_no",
@@ -169,11 +183,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "negative"],
       ["response", "positive"],
+      ["relative", "reverse"],
       ["particle", "no"]
     ],
-    "comment": "[reverse, +], disagreement; small capitals mark obligatory contrastive stress. p. 361."
+    "comment": "Small capitals mark obligatory contrastive stress."
   },
   {
     "id": "roelofsenfarkas2015_119_oui",
@@ -191,11 +207,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "positive"],
       ["response", "positive"],
+      ["relative", "agree"],
       ["particle", "oui"]
     ],
-    "comment": "[agree, +]. p. 398."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_119_non",
@@ -213,11 +231,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "positive"],
       ["response", "positive"],
+      ["relative", "agree"],
       ["particle", "non"]
     ],
-    "comment": "[agree, +]. p. 398."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_119_si",
@@ -235,11 +255,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "positive"],
       ["response", "positive"],
+      ["relative", "agree"],
       ["particle", "si"]
     ],
-    "comment": "[agree, +]. p. 398."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_120_oui",
@@ -257,11 +279,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "negative"],
       ["response", "negative"],
+      ["relative", "agree"],
       ["particle", "oui"]
     ],
-    "comment": "[agree, −]. p. 398."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_120_non",
@@ -279,11 +303,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "negative"],
       ["response", "negative"],
+      ["relative", "agree"],
       ["particle", "non"]
     ],
-    "comment": "[agree, −]. p. 398."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_120_si",
@@ -301,11 +327,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "negative"],
       ["response", "negative"],
+      ["relative", "agree"],
       ["particle", "si"]
     ],
-    "comment": "[agree, −]. p. 398."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_121_oui",
@@ -323,11 +351,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "negative"],
       ["response", "positive"],
+      ["relative", "reverse"],
       ["particle", "oui"]
     ],
-    "comment": "[reverse, +]. p. 399."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_121_non",
@@ -345,11 +375,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "negative"],
       ["response", "positive"],
+      ["relative", "reverse"],
       ["particle", "non"]
     ],
-    "comment": "[reverse, +]. p. 399."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_121_si",
@@ -367,11 +399,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "negative"],
       ["response", "positive"],
+      ["relative", "reverse"],
       ["particle", "si"]
     ],
-    "comment": "[reverse, +]. p. 399."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_122_oui",
@@ -389,11 +423,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "positive"],
       ["response", "negative"],
+      ["relative", "reverse"],
       ["particle", "oui"]
     ],
-    "comment": "[reverse, −]. p. 399."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_122_non",
@@ -411,11 +447,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "positive"],
       ["response", "negative"],
+      ["relative", "reverse"],
       ["particle", "non"]
     ],
-    "comment": "[reverse, −]. p. 399."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_122_si",
@@ -433,11 +471,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "positive"],
       ["response", "negative"],
+      ["relative", "reverse"],
       ["particle", "si"]
     ],
-    "comment": "[reverse, −]. p. 399."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_124_ja",
@@ -455,11 +495,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "positive"],
       ["response", "positive"],
+      ["relative", "agree"],
       ["particle", "ja"]
     ],
-    "comment": "[agree, +]. p. 399."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_124_nein",
@@ -477,11 +519,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "positive"],
       ["response", "positive"],
+      ["relative", "agree"],
       ["particle", "nein"]
     ],
-    "comment": "[agree, +]. p. 399."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_124_doch",
@@ -499,11 +543,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "positive"],
       ["response", "positive"],
+      ["relative", "agree"],
       ["particle", "doch"]
     ],
-    "comment": "[agree, +]. p. 399."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_125_ja",
@@ -521,11 +567,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "negative"],
       ["response", "negative"],
+      ["relative", "agree"],
       ["particle", "ja"]
     ],
-    "comment": "[agree, −]. p. 399."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_125_nein",
@@ -543,11 +591,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "negative"],
       ["response", "negative"],
+      ["relative", "agree"],
       ["particle", "nein"]
     ],
-    "comment": "[agree, −]. p. 399."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_125_doch",
@@ -565,11 +615,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "negative"],
       ["response", "negative"],
+      ["relative", "agree"],
       ["particle", "doch"]
     ],
-    "comment": "[agree, −]. p. 399."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_126_ja",
@@ -587,11 +639,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "negative"],
       ["response", "positive"],
+      ["relative", "reverse"],
       ["particle", "ja"]
     ],
-    "comment": "[reverse, +]. p. 399."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_126_nein",
@@ -609,11 +663,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "negative"],
       ["response", "positive"],
+      ["relative", "reverse"],
       ["particle", "nein"]
     ],
-    "comment": "[reverse, +]. p. 399."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_126_doch",
@@ -631,11 +687,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "negative"],
       ["response", "positive"],
+      ["relative", "reverse"],
       ["particle", "doch"]
     ],
-    "comment": "[reverse, +]. p. 399."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_127_ja",
@@ -653,11 +711,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "positive"],
       ["response", "negative"],
+      ["relative", "reverse"],
       ["particle", "ja"]
     ],
-    "comment": "[reverse, −]. p. 399."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_127_nein",
@@ -675,11 +735,13 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "positive"],
       ["response", "negative"],
+      ["relative", "reverse"],
       ["particle", "nein"]
     ],
-    "comment": "[reverse, −]. p. 399."
+    "comment": ""
   },
   {
     "id": "roelofsenfarkas2015_127_doch",
@@ -697,10 +759,206 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["reaction", "assertion"],
       ["antecedent", "positive"],
       ["response", "negative"],
+      ["relative", "reverse"],
       ["particle", "doch"]
     ],
-    "comment": "[reverse, −]. p. 399."
+    "comment": ""
+  },
+  {
+    "id": "roelofsenfarkas2015_49_yes",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(49)"},
+    "language": "stan1293",
+    "primaryText": "Yes, it is.",
+    "discourseSegments": [
+      "Is the number of planets even?",
+      "Yes, it is."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reaction", "question"],
+      ["radical", "even"],
+      ["antecedent", "positive"],
+      ["response", "positive"],
+      ["particle", "yes"],
+      ["conveys", "even"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roelofsenfarkas2015_49_no",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(49)"},
+    "language": "stan1293",
+    "primaryText": "No, it isn't.",
+    "discourseSegments": [
+      "Is the number of planets even?",
+      "No, it isn't."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reaction", "question"],
+      ["radical", "even"],
+      ["antecedent", "positive"],
+      ["response", "negative"],
+      ["particle", "no"],
+      ["conveys", "odd"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roelofsenfarkas2015_50_yes",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(50)"},
+    "language": "stan1293",
+    "primaryText": "Yes, it is.",
+    "discourseSegments": [
+      "Is the number of planets odd?",
+      "Yes, it is."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reaction", "question"],
+      ["radical", "odd"],
+      ["antecedent", "positive"],
+      ["response", "positive"],
+      ["particle", "yes"],
+      ["conveys", "odd"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roelofsenfarkas2015_50_no",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(50)"},
+    "language": "stan1293",
+    "primaryText": "No, it isn't.",
+    "discourseSegments": [
+      "Is the number of planets odd?",
+      "No, it isn't."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reaction", "question"],
+      ["radical", "odd"],
+      ["antecedent", "positive"],
+      ["response", "negative"],
+      ["particle", "no"],
+      ["conveys", "even"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roelofsenfarkas2015_51_yes",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(51)"},
+    "language": "stan1293",
+    "primaryText": "Yes, it is.",
+    "discourseSegments": [
+      "Is the number of planets even↑, or odd↓?",
+      "Yes, it is."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reaction", "alternativeQuestion"],
+      ["response", "positive"],
+      ["particle", "yes"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roelofsenfarkas2015_51_no",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(51)"},
+    "language": "stan1293",
+    "primaryText": "No, it isn't.",
+    "discourseSegments": [
+      "Is the number of planets even↑, or odd↓?",
+      "No, it isn't."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reaction", "alternativeQuestion"],
+      ["response", "negative"],
+      ["particle", "no"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roelofsenfarkas2015_52_no",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(52)"},
+    "language": "stan1293",
+    "primaryText": "No, it isn't.",
+    "discourseSegments": [
+      "Is the number of planets odd↑?",
+      "No, it isn't."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reaction", "question"],
+      ["radical", "odd"],
+      ["antecedent", "positive"],
+      ["response", "negative"],
+      ["particle", "no"],
+      ["conveys", "not odd"]
+    ],
+    "comment": ""
+  },
+  {
+    "id": "roelofsenfarkas2015_53_no",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(53)"},
+    "language": "stan1293",
+    "primaryText": "No, it isn't.",
+    "discourseSegments": [
+      "Is the number of planets not even↑?",
+      "No, it isn't."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["reaction", "question"],
+      ["radical", "even"],
+      ["antecedent", "negative"],
+      ["response", "negative"],
+      ["particle", "no"],
+      ["conveys", "not even"]
+    ],
+    "comment": ""
   }
 ]

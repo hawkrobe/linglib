@@ -12,9 +12,9 @@ This file formalizes [roelofsen-farkas-2015]'s account of polarity particle resp
 carries a relative feature, [agree] or [reverse], and an absolute feature, [+] or [−], each
 presupposing something of the possibilities its prejacent and its antecedent highlight; together
 they fix what the response expresses (`absolutePresup_and_relativePresup_iff`). So *yes, it is*
-conveys the even answer after *Is it even?* and the odd one after *Is it odd?*, and on a response
-sharing its antecedent's radical the relative feature is Farkas and Bruce's relative polarity
-(`relativePresup_smul_iff`).
+conveys the even answer after *Is it even?* and the odd one after *Is it odd?*
+(`presup_query_ofPolarity`), and on a response sharing its antecedent's radical the relative
+feature is Farkas and Bruce's relative polarity (`relativePresup_smul_iff`).
 
 Languages differ in which particles realize which features, and a particle dedicated to a
 combination blocks the others. English *yes* and *no* each realize a natural class of features,
@@ -28,6 +28,8 @@ English particles mark (`usable_english_iff_mem`).
   discourse context of the paper is not modelled.
 * Features are polarities, [agree] and [+] being positive, so the prejacent of a relative feature
   `r` highlights `r • β` for the antecedent possibility `β`.
+* In the planets examples *odd* is the complement of *even*, so each proposition is recorded as
+  the polarity whose action yields it from *even*.
 * French (9) prints its French sentences in the opposite order to their glosses; the French rows
   are (119)–(122).
 
@@ -108,43 +110,20 @@ theorem proposition_query_even_eq_odd (hodd : v o = (v e)ᶜ) :
     (query (atom e)).proposition v = (query (atom o)).proposition v := by
   simp only [proposition, Question.query_ofSet, hodd, Question.polar_compl]
 
-/-- An [agree, +] response to *Is it `a`?*, such as *yes, it is*, expresses `a`, the even
-answer after *Is it even?* and the odd one after *Is it odd?* (49), (50). -/
-theorem agreePositive_iff (a : A) (q : Question W) (H : Set (Polarity × Set W)) :
-    AbsolutePresup .positive q H ∧ RelativePresup .positive H ((query (atom a)).highlights v) ↔
-      q = Question.ofSet (v a) ∧ H = {(.positive, v a)} := by
-  simp only [absolutePresup_and_relativePresup_iff, highlights,
-    Highlighting.project_singleton, Set.singleton_eq_singleton_iff, Prod.mk.injEq,
-    Polarity.positive_mul, Polarity.positive_smul, true_and, exists_eq_left']
-
-/-- A negative response to *Is it odd?*, *no, it isn't*, expresses that the number is not odd
-(52). -/
-theorem negative_response_query_odd (hodd : v o = (v e)ᶜ) (q : Question W)
-    (H : Set (Polarity × Set W)) (r : Polarity)
-    (h : AbsolutePresup .negative q H ∧ RelativePresup r H ((query (atom o)).highlights v)) :
-    q = Question.ofSet (v e) := by
+/-- A response of polarity `s` to a polar question of polarity `t` on `a` expresses `s • v a`,
+with the relative feature `s / t`: *yes, it is* conveys the even answer after *Is it even?* and
+the odd one after *Is it odd?*, and *no, it isn't* conveys that the number is not odd after *Is it
+odd?* and that it is not even after *Is it not even?* (49), (50), (52), (53). -/
+theorem presup_query_ofPolarity {r s t : Polarity} (a : A) {q : Question W}
+    {H : Set (Polarity × Set W)}
+    (h : AbsolutePresup s q H ∧ RelativePresup r H ((query (ofPolarity t a)).highlights v)) :
+    q = Question.ofSet (s • v a) ∧ r = s / t := by
   obtain ⟨α, hant, hq, -⟩ := absolutePresup_and_relativePresup_iff.1 h
-  simp only [highlights, Highlighting.project_singleton, Set.singleton_eq_singleton_iff,
-    Prod.mk.injEq] at hant
-  obtain ⟨hr, rfl⟩ := hant
-  cases r
-  · exact absurd hr (by decide)
-  · rw [hq, Polarity.negative_smul_set, hodd, compl_compl]
-
-/-- A negative response to *Is it not even?*, *no, it isn't*, expresses that the number is not
-even, although the question highlights the same worlds as *Is it odd?* (53). -/
-theorem negative_response_query_not_even (q : Question W) (H : Set (Polarity × Set W))
-    (r : Polarity)
-    (h : AbsolutePresup .negative q H ∧
-      RelativePresup r H ((query (neg (atom e))).highlights v)) :
-    q = Question.ofSet (v e)ᶜ := by
-  obtain ⟨α, hant, hq, -⟩ := absolutePresup_and_relativePresup_iff.1 h
-  simp only [highlights, Highlighting.neg_singleton, Highlighting.project_singleton,
-    Set.singleton_eq_singleton_iff, Prod.mk.injEq] at hant
-  obtain ⟨hr, rfl⟩ := hant
-  cases r
-  · rw [hq, Polarity.positive_smul]
-  · exact absurd hr (by decide)
+  simp only [highlights, highlights_ofPolarity, Highlighting.project_singleton, Prod.smul_mk,
+    smul_eq_mul, Polarity.mul_positive, Set.singleton_eq_singleton_iff, Prod.mk.injEq] at hant
+  obtain ⟨rfl, rfl⟩ := hant
+  refine ⟨?_, by cases r <;> cases s <;> decide⟩
+  rw [hq, smul_smul, ← mul_assoc, Polarity.mul_self, Polarity.positive_mul]
 
 /-- The alternative question *Is it even↑, or odd↓?* highlights two possibilities, so no
 relative feature, and no particle response, is licensed after it (51). -/
@@ -300,30 +279,85 @@ def particleTable : List (String × List (String × Particle)) :=
 def polarityTable : List (String × Polarity) := [("positive", .positive), ("negative", .negative)]
 
 /-- A row records a particle response to an assertion, with the polarities of the antecedent
-and of the response, the particle, and the judgment. -/
+and of the response, the relative feature the paper assigns it, the particle, and the judgment. -/
 structure Row where
   response : Response
+  relative : Polarity
   particle : Particle
   judgment : Judgment
   deriving DecidableEq, Repr
 
+def relativeTable : List (String × Polarity) := [("agree", .positive), ("reverse", .negative)]
+
 def Row.ofExample (ex : LinguisticExample) : Option Row := do
+  guard (ex.feature? "reaction" = some "assertion")
   let table ← List.lookup ex.language particleTable
   let antecedent ← ex.parse? "antecedent" polarityTable
   let polarity ← ex.parse? "response" polarityTable
+  let relative ← ex.parse? "relative" relativeTable
   let particle ← ex.parse? "particle" table
-  pure ⟨⟨.assertion, antecedent, polarity⟩, particle, ex.judgment⟩
-
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+  pure ⟨⟨.assertion, antecedent, polarity⟩, relative, particle, ex.judgment⟩
 
 def rows : List Row := Examples.all.filterMap Row.ofExample
 
-/-- Every example is judged acceptable exactly when its particle is usable in its response,
-whose relative feature is the relative polarity of the response to its antecedent
-(`relativePresup_smul_iff`). -/
+/-- The relative feature of every response, the quotient of its polarity by its antecedent's
+(`relativePresup_smul_iff`), is the one the paper assigns it. -/
+theorem relative_eq : ∀ r ∈ rows, r.response.relative = r.relative := by
+  decide
+
+/-- Every example is judged acceptable exactly when its particle is usable in its response. -/
 theorem judgment_iff_usable :
     ∀ r ∈ rows, (r.judgment = .acceptable ↔
       r.particle.Usable r.response.relative r.response.polarity) := by
+  decide
+
+/-- The propositions of the planets examples are *even* and its complement *odd*, each recorded
+as the polarity whose action yields it from *even*. -/
+def planetTable : List (String × Polarity) :=
+  [("even", .positive), ("odd", .negative), ("not even", .negative), ("not odd", .positive)]
+
+/-- A question row records a response by an English particle to a question about the number of
+planets: the polarity and radical of a polar question, or none for the alternative question, the
+polarity of the response, its particle, what it conveys, and the judgment. -/
+structure QuestionRow where
+  question : Option (Polarity × Polarity)
+  response : Polarity
+  particle : English.PolarityParticle
+  conveys : Option Polarity
+  judgment : Judgment
+  deriving DecidableEq, Repr
+
+def QuestionRow.ofExample (ex : LinguisticExample) : Option QuestionRow := do
+  let particle ← ex.parse? "particle" [("yes", English.PolarityParticle.yes), ("no", .no)]
+  let response ← ex.parse? "response" polarityTable
+  if ex.feature? "reaction" = some "question" then
+    let t ← ex.parse? "antecedent" polarityTable
+    let radical ← ex.parse? "radical" planetTable
+    pure ⟨some (t, radical), response, particle, ex.parse? "conveys" planetTable, ex.judgment⟩
+  else if ex.feature? "reaction" = some "alternativeQuestion" then
+    pure ⟨none, response, particle, none, ex.judgment⟩
+  else none
+
+def questionRows : List QuestionRow := Examples.all.filterMap QuestionRow.ofExample
+
+theorem ofExample_isSome :
+    ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome ∨ (QuestionRow.ofExample ex).isSome := by
+  decide
+
+/-- The prediction for a question row: a response of polarity `s` to a polar question of
+polarity `t` is acceptable when its particle is usable with the relative feature `s / t` and
+conveys `s` applied to the radical (`presup_query_ofPolarity`); no particle response to the
+alternative question is acceptable (`not_relativePresup_disj`). -/
+def QuestionRow.Predicted : QuestionRow → Prop
+  | ⟨some (t, a), s, p, c, j⟩ => (j = .acceptable ↔ Usable english p (s / t) s) ∧ c = some (s * a)
+  | ⟨none, _, _, _, j⟩ => j ≠ .acceptable
+
+instance : DecidablePred QuestionRow.Predicted := fun r ↦ by
+  obtain ⟨_ | ⟨t, a⟩, s, p, c, j⟩ := r <;> unfold QuestionRow.Predicted <;> infer_instance
+
+/-- The account predicts the judgment and the conveyed proposition of every response to the
+questions of (49)–(53). -/
+theorem questionRows_predicted : ∀ r ∈ questionRows, r.Predicted := by
   decide
 
 end RoelofsenFarkas2015
