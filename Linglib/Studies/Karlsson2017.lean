@@ -167,11 +167,11 @@ structure Word where
   endings : List (Σ σ, Nominal.Exponent σ)
 
 /-- The case endings, the nominative having none. -/
-def caseLabels : List (String × Option Case) :=
+def caseLabels : List (String × Option Finnish.Case) :=
   [("nom", none), ("gen", some .gen), ("acc", some .acc), ("part", some .part),
     ("ine", some .ine), ("ela", some .ela), ("ill", some .ill), ("ade", some .ade),
     ("abl", some .abl), ("all", some .all), ("ess", some .ess), ("transl", some .transl),
-    ("com", some .com), ("abess", some .abess), ("inst", some .inst)]
+    ("com", some .com), ("abess", some .abess), ("inst", some .instr)]
 
 def possessorLabels : List (String × Agreement.Bundle) :=
   [("1sg", .pn .first .singular), ("2sg", .pn .second .singular), ("3sg", .pn .third .singular),

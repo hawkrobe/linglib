@@ -216,7 +216,7 @@ def systems : List (Finset Case) :=
     Finset.univ.image Icelandic.Case.label,
     Finset.univ.image Polish.Case.label, Finset.univ.image Czech.Case.label,
     Finset.univ.image Slovak.Case.label, Finset.univ.image Serbian.Case.label,
-    Turkish.Case.inventory, classicalArmenian, Tamil.Case.inventory]
+    Finset.univ.image Turkish.Case.label, classicalArmenian, Finset.univ.image Tamil.Case.label]
 
 theorem systems_conform : ∀ inv ∈ systems, Conforms inv := by
   simp only [systems, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,
@@ -292,21 +292,22 @@ theorem fragments_conform :
   decide
 
 /-- Finnish has no dative, the allative marking the recipient. -/
-theorem gaps_finnish : gaps Finnish.Case.inventory = {.dat} := by decide
+theorem gaps_finnish : gaps (Finset.univ.image Finnish.Case.label) = {.dat} := by decide
 
 /-- Hungarian has no genitive, the dative marking the possessor, as in the Pama-Nyungan languages
 Blake mentions. -/
-theorem gaps_hungarian : gaps Hungarian.Case.inventory = {.gen} := by decide
+theorem gaps_hungarian : gaps (Finset.univ.image Hungarian.Case.label) = {.gen} := by decide
 
 /-- The grammatical cases of Dargwa skip the locative and the ablative, which belong to its
 separate series of local cases. -/
-theorem gaps_dargwa : gaps Dargwa.Case.inventory = {.loc, .ablInst} := by decide
+theorem gaps_dargwa : gaps (Finset.univ.image Dargwa.Case.label) = {.loc, .ablInst} := by
+  decide
 
 /-- Mongolian has no locative, which postpositions express. -/
-theorem gaps_mongolian : gaps Mongolian.Case.inventory = {.loc} := by decide
+theorem gaps_mongolian : gaps (Finset.univ.image Mongolian.Case.label) = {.loc} := by decide
 
 /-- Yakut has no locative. -/
-theorem gaps_yakut : gaps Yakut.Case.inventory = {.loc} := by decide
+theorem gaps_yakut : gaps (Finset.univ.image Yakut.Case.label) = {.loc} := by decide
 
 /-- Basel German has no genitive, its possessor a dative construction. -/
 theorem gaps_basel : gaps (Finset.univ.image German.Basel.Case.label) = {.gen} := by decide

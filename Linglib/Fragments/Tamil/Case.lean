@@ -15,7 +15,7 @@ cases. Blake takes Tamil as the eight-case stage of his hierarchy (`Studies/Blak
 
 ## Main definitions
 
-* `Tamil.Case.inventory`: the eight cases.
+* `Tamil.Case`, `Tamil.Case.label`: the eight cases, and the comparative value each is named for.
 
 ## References
 
@@ -24,9 +24,37 @@ cases. Blake takes Tamil as the eight-case stage of his hierarchy (`Studies/Blak
 
 @[expose] public section
 
-namespace Tamil.Case
+namespace Tamil
 
 /-- The eight cases. -/
-def inventory : Finset Case := {.nom, .acc, .gen, .dat, .loc, .abl, .inst, .com}
+inductive Case where
+  /-- The nominative. -/
+  | nom
+  /-- The accusative. -/
+  | acc
+  /-- The genitive. -/
+  | gen
+  /-- The dative. -/
+  | dat
+  /-- The locative. -/
+  | loc
+  /-- The ablative. -/
+  | abl
+  /-- The instrumental. -/
+  | inst
+  /-- The comitative. -/
+  | com
+  deriving DecidableEq, Fintype, Repr
 
-end Tamil.Case
+/-- The comparative value a case is named for. -/
+def Case.label : Case → _root_.Case
+  | nom => .nom
+  | acc => .acc
+  | gen => .gen
+  | dat => .dat
+  | loc => .loc
+  | abl => .abl
+  | inst => .inst
+  | com => .com
+
+end Tamil

@@ -401,7 +401,7 @@ def Licensed (w : List (Σ σ, Exponent σ)) : Prop := w.map Sigma.fst ∈ templ
 
 instance : DecidablePred Licensed := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
 
-/-- The comparative label of a case exponent. -/
+/-- The case a case exponent realizes. -/
 def Exponent.toCase : Exponent .case → Case
   | .accusative => .acc
   | .dative => .dat
@@ -409,12 +409,17 @@ def Exponent.toCase : Exponent .case → Case
   | .ablative => .abl
   | .genitive => .gen
 
-/-- The case inventory is the unmarked nominative with the cases the five exponents
-realize. -/
-theorem toCase_inventory :
-    Case.inventory = {.nom, Exponent.accusative.toCase, Exponent.dative.toCase,
-      Exponent.locative.toCase, Exponent.ablative.toCase, Exponent.genitive.toCase} :=
-  rfl
+/-- The five case exponents realize five distinct cases. -/
+theorem Exponent.toCase_injective : Function.Injective Exponent.toCase := by
+  intro a b h; cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
+
+/-- The case exponents realize every case but the nominative, which is unmarked. -/
+theorem exists_toCase_eq_iff (c : Case) : (∃ e : Exponent .case, e.toCase = c) ↔ c ≠ .nom := by
+  refine ⟨fun ⟨e, he⟩ ↦ he ▸ by cases e <;> decide, fun h ↦ ?_⟩
+  cases c
+  · exact absurd rfl h
+  exacts [⟨.accusative, rfl⟩, ⟨.dative, rfl⟩, ⟨.locative, rfl⟩, ⟨.ablative, rfl⟩,
+    ⟨.genitive, rfl⟩]
 
 end Nominal
 

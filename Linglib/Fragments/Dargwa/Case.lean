@@ -17,16 +17,16 @@ alignment is ergative without a split, A ergative and S and P absolutive.
 
 ## Main definitions
 
-* `Dargwa.Case.obliqueStem`: the oblique stem suffix *-li*
-* `Dargwa.Case.exponent`: the suffixes of a case after the direct stem, `none` for a case
-  Tanti lacks
-* `Dargwa.Case.inventory`: the cases, those with an exponent
-* `Dargwa.Case.marking`: the ergative marking of the core arguments
+* `Dargwa.Case`, `Dargwa.Case.label`: the six cases, and the comparative value each is named for
+* `Dargwa.obliqueStem`: the oblique stem suffix *-li*
+* `Dargwa.Case.exponent`: the suffixes of a case after the direct stem
+* `Dargwa.marking`: the ergative marking of the core arguments
 
 ## Main results
 
 * `Dargwa.Case.builtOnOblique_iff`: the ergative, dative and comitative are the cases built
   on the oblique stem
+* `Dargwa.label_comp_marking`: the marking is the ergative alignment
 
 ## Implementation notes
 
@@ -42,7 +42,7 @@ alignment is ergative without a split, A ergative and S and P absolutive.
 
 @[expose] public section
 
-namespace Dargwa.Case
+namespace Dargwa
 
 open Morphology
 
@@ -50,34 +50,64 @@ open Morphology
 is the ergative singular. -/
 def obliqueStem : Morph := .suff "li"
 
+/-- The six grammatical cases. -/
+inductive Case where
+  /-- The absolutive, the direct stem. -/
+  | abs
+  /-- The ergative, the oblique stem. -/
+  | erg
+  /-- The genitive. -/
+  | gen
+  /-- The dative. -/
+  | dat
+  /-- The comitative. -/
+  | com
+  /-- The adverbial, of nominal and secondary predicates. -/
+  | adv
+  deriving DecidableEq, Fintype, Repr
+
+namespace Case
+
+/-- The comparative value a case is named for, the essive for the adverbial. -/
+def label : Case → _root_.Case
+  | abs => .abs
+  | erg => .erg
+  | gen => .gen
+  | dat => .dat
+  | com => .com
+  | adv => .ess
+
 /-- The suffixes of a case after the direct singular stem. The absolutive is unmarked, the
 ergative is the oblique stem, the genitive takes *-la*, the dative *-ž* and the comitative
-*-cːele* on the oblique stem, and the adverbial, the essive under its comparative label,
-*-le*. -/
-def exponent : Case → Option (List Morph)
-  | .abs => some []
-  | .erg => some [obliqueStem]
-  | .gen => some [.suff "la"]
-  | .dat => some [obliqueStem, .suff "ž"]
-  | .com => some [obliqueStem, .suff "cːele"]
-  | .ess => some [.suff "le"]
-  | _ => none
-
-/-- The cases of Tanti, those with an exponent. -/
-def inventory : Finset Case := Finset.univ.filter fun c ↦ (exponent c).isSome
+*-cːele* on the oblique stem, and the adverbial *-le*. -/
+def exponent : Case → List Morph
+  | abs => []
+  | erg => [obliqueStem]
+  | gen => [.suff "la"]
+  | dat => [obliqueStem, .suff "ž"]
+  | com => [obliqueStem, .suff "cːele"]
+  | adv => [.suff "le"]
 
 /-- A case is built on the oblique stem when its exponent begins with the stem suffix. -/
-def BuiltOnOblique (c : Case) : Prop := (exponent c).bind List.head? = some obliqueStem
+def BuiltOnOblique (c : Case) : Prop := c.exponent.head? = some obliqueStem
 
-instance : DecidablePred BuiltOnOblique := fun c ↦ by unfold BuiltOnOblique; infer_instance
+instance : DecidablePred BuiltOnOblique := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 /-- The ergative, dative and comitative are the cases built on the oblique stem. -/
 theorem builtOnOblique_iff (c : Case) :
     BuiltOnOblique c ↔ c = .erg ∨ c = .dat ∨ c = .com := by
   cases c <;> decide
 
+end Case
+
 /-- The marking of the core arguments is ergative, A ergative and S and P absolutive, with no
 split by tense or aspect. -/
-abbrev marking : ArgumentRole → Case := Alignment.ergative
+def marking : ArgumentRole → Case
+  | .A => .erg
+  | .S | .P | .R | .T => .abs
 
-end Dargwa.Case
+/-- The marking is the ergative alignment. -/
+theorem label_comp_marking : Case.label ∘ marking = Alignment.ergative := by
+  funext r; cases r <;> rfl
+
+end Dargwa
