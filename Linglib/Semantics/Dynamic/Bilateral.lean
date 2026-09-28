@@ -2,7 +2,6 @@ module
 
 public import Linglib.Semantics.Dynamic.State
 public import Linglib.Semantics.Dynamic.Update
-public import Linglib.Logic.Bilateral.Defs
 public import Mathlib.Algebra.Group.Defs
 
 /-!
@@ -46,8 +45,6 @@ paper's separation of assertability (54) from Heimian familiarity rests.
   and random assignment now live at the root, in `State.lean` — this
   file's vocabulary became the module's.)
 - `egli`: Egli's theorem for the positive dimension, definitionally.
-- `isBilateral`: the update algebra is a bilateral logic in the sense of
-  `Bilateral`.
 
 ## Implementation notes
 
@@ -111,20 +108,14 @@ def neg (φ : BilateralDen W V E) : BilateralDen W V E where
   positive := φ.negative
   negative := φ.positive
 
-@[inherit_doc] prefix:max "~" => neg
+@[inherit_doc] scoped prefix:max "~" => neg
 
 /-- Double negation is the identity, definitionally. -/
 @[simp] theorem neg_neg (φ : BilateralDen W V E) : ~~φ = φ := rfl
 
-theorem dne_positive (φ : BilateralDen W V E) (s) :
-    (~~φ).positive s = φ.positive s := rfl
-
-theorem dne_negative (φ : BilateralDen W V E) (s) :
-    (~~φ).negative s = φ.negative s := rfl
-
-theorem neg_involutive :
-    Function.Involutive (neg : BilateralDen W V E → BilateralDen W V E) :=
-  neg_neg
+instance : InvolutiveNeg (BilateralDen W V E) where
+  neg := neg
+  neg_neg := neg_neg
 
 /-! ### The unknown update and assertability -/
 
@@ -193,7 +184,7 @@ def conj (φ ψ : BilateralDen W V E) : BilateralDen W V E where
       ∪ ψ.unknownUpdate (φ.negative s) ∪ ψ.negative (φ.positive s)
       ∪ ψ.negative (φ.unknownUpdate s)
 
-@[inherit_doc] infixl:65 " ⊙ " => conj
+@[inherit_doc] scoped infixl:65 " ⊙ " => conj
 
 /-- Disjunction ([elliott-sudo-2025], (64)): verification via the first
 disjunct (the `s[φ]⁺` row) or via the second (the `[ψ]⁺` column); denial
@@ -207,7 +198,7 @@ def disj (φ ψ : BilateralDen W V E) : BilateralDen W V E where
       ∪ ψ.positive (φ.unknownUpdate s)
   negative s := ψ.negative (φ.negative s)
 
-@[inherit_doc] infixl:60 " ⊕ " => disj
+@[inherit_doc] scoped infixl:60 " ⊕ " => disj
 
 /-- Conjunction associates in the positive dimension. -/
 theorem conj_assoc_positive (φ ψ χ : BilateralDen W V E) (s) :
@@ -273,7 +264,7 @@ def entails (φ ψ : BilateralDen W V E) : Prop :=
   ∀ s : Set (Possibility W V (Part E)),
     (φ.positive s).Nonempty → supports (φ.positive s) ψ
 
-@[inherit_doc] notation:50 φ " ⊨ᵇ " ψ => entails φ ψ
+@[inherit_doc] scoped notation:50 φ " ⊨ᵇ " ψ => entails φ ψ
 
 /-! ### Structural lemmas -/
 
@@ -332,60 +323,6 @@ theorem pred2_positive_eliminative (P : E → E → W → Prop) (t₁ t₂ : V) 
 theorem pred2_negative_eliminative (P : E → E → W → Prop) (t₁ t₂ : V) :
     CCP.IsEliminative (pred2 P t₁ t₂ (W := W)).negative :=
   (CCP.isClassical_up _).1
-
-/-! ### The bilateral algebra -/
-
-/-- View a bilateral denotation as a pair of updates. -/
-def toPair (φ : BilateralDen W V E) :=
-  (φ.positive, φ.negative)
-
-/-- Construct a bilateral denotation from a pair of updates. -/
-def ofPair (u : (Set (Possibility W V (Part E)) → Set (Possibility W V (Part E))) ×
-    (Set (Possibility W V (Part E)) → Set (Possibility W V (Part E)))) :
-    BilateralDen W V E where
-  positive := u.1
-  negative := u.2
-
-theorem toPair_ofPair (u) : toPair (ofPair (W := W) (V := V) (E := E) u) = u := rfl
-
-theorem ofPair_toPair (φ : BilateralDen W V E) : ofPair (toPair φ) = φ := rfl
-
-/-- Negation is the swap on pairs; DNE is `swap ∘ swap = id`. -/
-theorem neg_eq_swap (φ : BilateralDen W V E) :
-    toPair (~φ) = Prod.swap (toPair φ) := rfl
-
-instance : InvolutiveNeg (BilateralDen W V E) where
-  neg := neg
-  neg_neg := neg_neg
-
-/-- BUS is a paraconsistent bilateral logic (`Bilateral`): the
-denotation is the formula, the dimensions are the projections, and `neg`
-swaps them by definition. -/
-theorem isBilateral :
-    Bilateral.IsBilateral
-      (Form := BilateralDen W V E)
-      (Result := Set (Possibility W V (Part E)) → Set (Possibility W V (Part E)))
-      (·.positive) (·.negative) neg where
-  positive_negate _ := rfl
-  negative_negate _ := rfl
-
-/-- The pointwise order: both dimensions componentwise. -/
-instance : PartialOrder (BilateralDen W V E) where
-  le φ ψ := (∀ s, φ.positive s ≤ ψ.positive s) ∧ (∀ s, φ.negative s ≤ ψ.negative s)
-  le_refl _ := ⟨fun _ => le_refl _, fun _ => le_refl _⟩
-  le_trans _ _ _ h1 h2 :=
-    ⟨fun s => le_trans (h1.1 s) (h2.1 s), fun s => le_trans (h1.2 s) (h2.2 s)⟩
-  le_antisymm _ _ h1 h2 := BilateralDen.ext
-    (funext fun s => le_antisymm (h1.1 s) (h2.1 s))
-    (funext fun s => le_antisymm (h1.2 s) (h2.2 s))
-
-/-- Negation is monotone: the swap rearranges the componentwise checks. -/
-theorem neg_monotone : Monotone (neg : BilateralDen W V E → BilateralDen W V E) :=
-  fun _ _ ⟨hp, hn⟩ => ⟨hn, hp⟩
-
-/-- Negation preserves and reflects the order. -/
-theorem neg_le_neg_iff : ~φ ≤ ~ψ ↔ φ ≤ ψ :=
-  ⟨fun ⟨hp, hn⟩ => ⟨hn, hp⟩, fun ⟨hp, hn⟩ => ⟨hn, hp⟩⟩
 
 end BilateralDen
 

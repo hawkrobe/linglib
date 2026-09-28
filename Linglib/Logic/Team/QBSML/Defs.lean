@@ -7,7 +7,6 @@ public import Linglib.Logic.Modal.FirstOrder.Semantics
 public import Linglib.Core.ModelTheory.LanguageMap
 public import Linglib.Logic.Team.Operations
 public import Linglib.Logic.Team.Kripke
-public import Linglib.Logic.Bilateral.Defs
 
 /-!
 # Quantified bilateral state-based modal logic (QBSML)
@@ -590,14 +589,6 @@ abbrev antiSupport (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
 @[simp] lemma antiSupport_neg (M : Model W Domain Const Pred)
     (φ : Formula Var Const Pred) (s : Finset (Index W Var Domain)) :
     antiSupport M (.neg φ) s ↔ support M φ s := Iff.rfl
-
-/-- `support` and `antiSupport` form a paraconsistent bilateral logic
-    (`Bilateral.IsBilateral`) under `Formula.neg`, like
-    BSML's `isBilateral` at the point type `Index W Var Domain`. -/
-theorem isBilateral (M : Model W Domain Const Pred) :
-    Bilateral.IsBilateral (Form := Formula Var Const Pred)
-      (support M) (antiSupport M) Formula.neg :=
-  Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
 
 end Evaluation
 
