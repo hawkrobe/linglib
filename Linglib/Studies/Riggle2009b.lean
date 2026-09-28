@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.ViolationProfile
+public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Linglib.Phonology.OptimalityTheory.Ranking
 public import Mathlib.Algebra.Group.Pointwise.Set.Basic
@@ -34,7 +34,7 @@ of the H-Opt algorithm are not formalized.
 
 ## References
 
-* [J. Riggle, *Violation semirings in Optimality Theory* (2009)][riggle-2009b]
+* [J. Riggle, *Violation Semirings in Optimality Theory* (2009)][riggle-2009b]
 * [E. W. Dijkstra, *A note on two problems in connexion with graphs* (1959)][dijkstra-1959]
 * [A. Prince, P. Smolensky, *Optimality Theory: constraint interaction in generative
   grammar* (1993)][prince-smolensky-1993]

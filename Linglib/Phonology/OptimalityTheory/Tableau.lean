@@ -1,22 +1,33 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Phonology.OptimalityTheory.Ranking
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
-public import Linglib.Phonology.OptimalityTheory.ViolationProfile
+public import Linglib.Core.Order.PiLex
+public import Mathlib.Algebra.Order.Group.PiLex
 public import Mathlib.GroupTheory.Perm.Basic
 public import Mathlib.Data.List.Permutation
 
 /-!
 # Tableaux
 
-The OT evaluation vocabulary and machinery. A `Tableau` is the lexicographic
-minimisation problem [prince-smolensky-1993] solves — a finite candidate set ranked by a
-`ViolationProfile`-valued objective, whose winners are the candidates with a profile at most
-every candidate's under mathlib's `Pi.Lex` order. On top of the vocabulary:
-smart constructors and the structural optimality theorems.
+The OT evaluation vocabulary and machinery. A candidate's violation profile under a constraint
+set is its violation vector ordered lexicographically, `Lex (Fin n → ℕ)` ([riggle-2009b]); the
+lexicographic order is Optimality Theory's strict domination, while Harmonic Grammar weights the
+same vector without ordering it (`HarmonicGrammar.harmonyScore`). A `Tableau` is the
+lexicographic minimisation problem [prince-smolensky-1993] solves — a finite candidate set ranked
+by a `ViolationProfile`-valued objective, whose winners are the candidates with a profile at most
+every candidate's under mathlib's `Pi.Lex` order. On top of the vocabulary: smart constructors and
+the structural optimality theorems.
 
 ## Main definitions
 
+* `ViolationProfile n` — `Lex (Fin n → ℕ)`, a fixed-length violation vector. The profile of a
+  candidate `c` under a constraint set `con` read in rank order `r` is `toLex fun p ↦ con (r p) c`.
 * `Tableau C n` — a finite OT tableau over candidates `C` with `n` constraints.
 * `Tableau.optimal` — the winner set; optimality is plain membership.
 * `Ranking ι n` — a constraint ranking ([prince-2002]'s domination order).
@@ -44,12 +55,30 @@ smart constructors and the structural optimality theorems.
   no violations wins under every ranking, and `Tableau.ofPerm_eq_zero_of_mem_optimal` — then
   every winner has no violations.
 * `Tableau.ofRanking_optimal_zero_first` — a satisfiable top constraint forces all
-  winners to satisfy it.
+  winners to satisfy it, via `ViolationProfile.le_apply_zero`.
+
+## References
+
+* [A. Prince and P. Smolensky, *Optimality Theory: Constraint Interaction in Generative Grammar*
+  (1993)][prince-smolensky-1993]
+* [A. Prince, *Entailed Ranking Arguments* (2002)][prince-2002]
+* [J. Riggle, *Violation Semirings in Optimality Theory* (2009)][riggle-2009b]
 -/
 
 @[expose] public section
 
 namespace OptimalityTheory
+
+/-! ### Violation profiles -/
+
+/-- A fixed-length violation profile, the violation vector `Fin n → ℕ` under its lexicographic
+order. -/
+abbrev ViolationProfile (n : Nat) := Lex (Fin n → Nat)
+
+/-- A profile at most another is at most it on the first constraint. -/
+theorem ViolationProfile.le_apply_zero {n : Nat}
+    {a b : ViolationProfile (n + 1)} (h : a ≤ b) : a 0 ≤ b 0 :=
+  Pi.apply_le_of_toLex (x := ofLex a) (y := ofLex b) h fun j hj ↦ absurd hj (Fin.not_lt_zero j)
 
 /-! ### The tableau vocabulary -/
 

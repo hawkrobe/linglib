@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Phonology.OptimalityTheory.ViolationProfile
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Mathlib.GroupTheory.Perm.Basic
 public import Mathlib.Basic.Sign.Basic
