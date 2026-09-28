@@ -22,7 +22,7 @@ stay unmarked. The agreement tables are those of [clem-deal-2024], compiled from
 
 * `subjectMarker`: the indicative subject agreement suffix of a person–number cell.
 * `objectMarker`: the object agreement suffix of a cell; third person has none.
-* `caseInventory`, `caseMarker`: the two morphological cases and their exponents.
+* `Case`, `Case.marker`: the two morphological cases and their exponents.
 
 ## Implementation notes
 
@@ -68,11 +68,21 @@ def objectMarker : Person → Number → Option String
 
 /-- The morphological cases: an unmarked nominative and the ergative *-ri* of some transitive
     subjects ([clem-deal-2024] (4)). -/
-def caseInventory : Finset Case := {.nom, .erg}
+inductive Case where
+  /-- The nominative, unmarked. -/
+  | nom
+  /-- The ergative. -/
+  | erg
+  deriving DecidableEq, Fintype, Repr
 
-/-- The exponent of each case. -/
-def caseMarker : Case → Option String
-  | .erg => some "-ri"
-  | _ => none
+/-- The comparative value a case is named for. -/
+def Case.label : Case → _root_.Case
+  | nom => .nom
+  | erg => .erg
+
+/-- The exponent of each case, none for the unmarked nominative. -/
+def Case.marker : Case → Option String
+  | nom => none
+  | erg => some "-ri"
 
 end Kawapanan.Shawi

@@ -1,8 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.LateMerger
-public import Linglib.Fragments.Mongolian.Case
-public import Linglib.Fragments.Yakut.Case
+public import Linglib.Studies.BakerVinokurova2010
 public import Linglib.Data.Examples.Gong2022
 
 /-!
@@ -131,11 +130,54 @@ def matrixPresubject : Site := ⟨8, [⟨7, some .nom⟩, ⟨5, some .dat⟩], f
 so T values the derived subject nominative. -/
 def specTP : Site := ⟨4, [⟨2, some .inst⟩, io], true⟩
 
-/-- The VP edge is a dependent-case position, as the fragment's grammar values the shifted direct
-object of a ditransitive, and the presubject position is none. -/
+/-! ### The Mongolian grammar of structural case (26) -/
+
+/-- The Mongolian grammar of structural case: accusative on the lower of two NPs in the
+    clause, nominative from T and genitive from D under Agree, and no dependent dative. -/
+def grammar : CaseAssigners where
+  domains := [(.D, {}), (.v, {}), (.C, { low := some .acc })]
+  agree := [(.T, .nom), (.D, .gen)]
+
+/-- The arguments of a ditransitive. -/
+inductive DitransitiveArg
+  | subject
+  | directObject
+  | indirectObject
+  deriving DecidableEq, Repr
+
+/-- Their positions in a Mongolian ditransitive: the subject above the direct object, shifted to
+    the clause edge, above the dative indirect object. -/
+def DitransitiveArg.position : DitransitiveArg → PhasedNP
+  | .subject => {}
+  | .directObject => { phase := .v, shifted := true }
+  | .indirectObject => { phase := .v, lexicalCase := some .dat }
+
+/-- A ditransitive's arguments, highest first. -/
+def ditransitive : List DitransitiveArg := [.subject, .directObject, .indirectObject]
+
+/-- Its cases, with finite T probing the clause. -/
+def ditransitiveCases : Case.Valuation DitransitiveArg (Case × Case.Mechanism) :=
+  grammar.assign DitransitiveArg.position [(.T, .C)] ditransitive
+
+/-- The direct object is valued accusative by the dependent rule, the subject being the
+    caseless NP above it. -/
+theorem do_gets_dependent_acc :
+    ditransitiveCases.valueOf .directObject = some (.acc, .dependent) := by decide
+
+/-- The subject is valued nominative by T, not by a dependent rule. -/
+theorem subject_gets_nom_by_agree :
+    ditransitiveCases.valueOf .subject = some (.nom, .agree) := by decide
+
+/-- The indirect object keeps its lexical dative and neither competes for dependent case nor
+    creates a case position. -/
+theorem io_has_lexical_case :
+    ditransitiveCases.valueOf .indirectObject = some (.dat, .lexical) := by decide
+
+/-- The VP edge is a dependent-case position, as the grammar values the shifted direct object of
+a ditransitive, and the presubject position is none. -/
 theorem vpEdge_dependentAcc :
     vpEdge.DependentAcc ∧ ¬ presubject.HasCase ∧
-      (Mongolian.Case.ditransitiveCases.valueOf .directObject).map (·.2) = some .dependent := by
+      (ditransitiveCases.valueOf .directObject).map (·.2) = some .dependent := by
   decide
 
 /-! ### The scrambling constructions and their chains -/
@@ -287,9 +329,9 @@ theorem acc_subjects :
 
 /-- Mongolian differs from Sakha in the verb phrase's high case alone: no dependent dative. -/
 theorem mongolian_differs_from_sakha_in_dat_only :
-    Mongolian.Case.grammar.rules .v = { Yakut.Case.grammar.rules .v with high := none } ∧
-    Mongolian.Case.grammar.rules .C = Yakut.Case.grammar.rules .C ∧
-    Mongolian.Case.grammar.agree = Yakut.Case.grammar.agree := by decide
+    grammar.rules .v = { BakerVinokurova2010.grammar.rules .v with high := none } ∧
+    grammar.rules .C = BakerVinokurova2010.grammar.rules .C ∧
+    grammar.agree = BakerVinokurova2010.grammar.agree := by decide
 
 /-- The arguments of a Sakha ditransitive. -/
 inductive SakhaArg
@@ -310,11 +352,11 @@ def sakhaDitransitive : List SakhaArg := [.subject, .goal, .theme]
 /-- The Mongolian grammar values no NP of the Sakha ditransitive dative, so the goal Sakha
 values dative comes out otherwise: the dative of a Mongolian goal is nonstructural. -/
 theorem mongolian_derives_no_dative :
-    (∀ s ∈ Mongolian.Case.grammar.assign SakhaArg.position [(.T, .C)] sakhaDitransitive,
+    (∀ s ∈ grammar.assign SakhaArg.position [(.T, .C)] sakhaDitransitive,
       s.2.map (·.1) ≠ some .dat) ∧
-    ((Mongolian.Case.grammar.assign SakhaArg.position [(.T, .C)] sakhaDitransitive).valueOf
+    ((grammar.assign SakhaArg.position [(.T, .C)] sakhaDitransitive).valueOf
         .goal).map (·.1) ≠
-      ((Yakut.Case.grammar.assign SakhaArg.position [(.T, .C)] sakhaDitransitive).valueOf
+      ((BakerVinokurova2010.grammar.assign SakhaArg.position [(.T, .C)] sakhaDitransitive).valueOf
         .goal).map (·.1) := by
   decide
 

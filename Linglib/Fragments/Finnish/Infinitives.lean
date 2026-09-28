@@ -35,7 +35,6 @@ in *sano-a* 'say' and *huomat-a* 'notice'. The E infinitive changes the -A to -e
 
 ## Main results
 
-* `Finnish.Infinitive.cases_subset_inventory`: an infinitive takes cases of the noun.
 * `Finnish.Infinitive.toCase_mem_cases_ma_iff`: of the local cases the MA infinitive takes the
   interior series and, of the exterior series, the adessive alone.
 * `Finnish.Infinitive.surface_base_e`: the E infinitive of Karlsson's stems in -e.
@@ -74,18 +73,15 @@ namespace Infinitive
 /-- The cases an infinitive takes. -/
 def cases : Infinitive → Finset Case
   | .a => {.nom, .transl}
-  | .e => {.ine, .inst}
-  | .ma => {.ine, .ela, .ill, .ade, .abess, .inst}
+  | .e => {.ine, .instr}
+  | .ma => {.ine, .ela, .ill, .ade, .abess, .instr}
   | .minen => {.nom, .part}
-
-/-- An infinitive takes cases of the noun. -/
-theorem cases_subset_inventory (i : Infinitive) : i.cases ⊆ Case.inventory := by
-  cases i <;> decide
 
 /-- Of the local cases the MA infinitive takes the interior series and, of the exterior
 series, the adessive alone. -/
-theorem toCase_mem_cases_ma_iff {r : Spatial.Localization} {d : Spatial.PathDir} {c : Case}
-    (h : Case.toCase r d = some c) : c ∈ ma.cases ↔ r = .interior ∨ r = .exterior ∧ d = .place := by
+theorem toCase_mem_cases_ma_iff {r : Spatial.Localization} {d : Spatial.PathDir}
+    {c : _root_.Case} (h : _root_.Case.toCase r d = some c) :
+    c ∈ ma.cases.image Case.label ↔ r = .interior ∨ r = .exterior ∧ d = .place := by
   cases r <;> cases d <;> cases h <;> decide
 
 /-- The ending of the A infinitive after its stem: -dA after a long vowel or a diphthong, -tA

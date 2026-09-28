@@ -20,11 +20,11 @@ foot', is the instrumental.
 
 ## Main definitions
 
-* `Finnish.Case.inventory`: the cases, under their comparative labels.
+* `Finnish.Case`, `Finnish.Case.label`: the cases, and the comparative value each is named for.
 
 ## Main results
 
-* `Finnish.Case.toCase_mem_inventory_iff`: the local cases are the interior and exterior series
+* `Finnish.Case.toCase_mem_image_label_iff`: the local cases are the interior and exterior series
   of the shared `Localization × PathDir` decomposition.
 
 The endings, spelled in segments, are in `Finnish.Declension`.
@@ -37,17 +37,69 @@ The endings, spelled in segments, are in `Finnish.Declension`.
 
 @[expose] public section
 
-namespace Finnish.Case
+namespace Finnish
 
-/-- The Finnish cases under their comparative labels. -/
-def inventory : Finset Case :=
-  {.nom, .gen, .acc, .part, .ine, .ela, .ill, .ade, .abl, .all, .ess, .transl, .com, .abess,
-    .inst}
+/-- The fifteen cases. -/
+inductive Case where
+  /-- The nominative. -/
+  | nom
+  /-- The genitive. -/
+  | gen
+  /-- The accusative. -/
+  | acc
+  /-- The partitive. -/
+  | part
+  /-- The inessive. -/
+  | ine
+  /-- The elative. -/
+  | ela
+  /-- The illative. -/
+  | ill
+  /-- The adessive. -/
+  | ade
+  /-- The ablative. -/
+  | abl
+  /-- The allative. -/
+  | all
+  /-- The essive. -/
+  | ess
+  /-- The translative. -/
+  | transl
+  /-- The comitative. -/
+  | com
+  /-- The abessive. -/
+  | abess
+  /-- The instructive, of manner and means. -/
+  | instr
+  deriving DecidableEq, Fintype, Repr
+
+namespace Case
+
+/-- The comparative value a case is named for, the instrumental for the instructive. -/
+def label : Case → _root_.Case
+  | nom => .nom
+  | gen => .gen
+  | acc => .acc
+  | part => .part
+  | ine => .ine
+  | ela => .ela
+  | ill => .ill
+  | ade => .ade
+  | abl => .abl
+  | all => .all
+  | ess => .ess
+  | transl => .transl
+  | com => .com
+  | abess => .abess
+  | instr => .inst
 
 /-- The local cases are the interior and exterior series: a cell of the shared spatial
-decomposition is a Finnish case exactly when its region is not the surface. -/
-theorem toCase_mem_inventory_iff {r : Spatial.Localization} {d : Spatial.PathDir} {c : Case}
-    (h : Case.toCase r d = some c) : c ∈ inventory ↔ r ≠ .surface := by
+decomposition is the label of a Finnish case exactly when its region is not the surface. -/
+theorem toCase_mem_image_label_iff {r : Spatial.Localization} {d : Spatial.PathDir}
+    {c : _root_.Case} (h : _root_.Case.toCase r d = some c) :
+    c ∈ Finset.univ.image label ↔ r ≠ .surface := by
   cases r <;> cases d <;> cases h <;> decide
 
-end Finnish.Case
+end Case
+
+end Finnish

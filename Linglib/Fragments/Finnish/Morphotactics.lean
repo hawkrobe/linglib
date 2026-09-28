@@ -158,11 +158,11 @@ instance (es : List (Σ σ, Exponent σ)) : Decidable (HasPossessive es) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- A string of endings makes a word when they are in the order of the template, no position is
-determined twice, its case is a Finnish case, a comitative is followed by a possessive ending,
-and an infinitive is in one of its cases, its translative with a possessive ending. -/
+determined twice, a comitative is followed by a possessive ending, and an infinitive is in one
+of its cases, its translative with a possessive ending. -/
 def WellFormed (es : List (Σ σ, Exponent σ)) : Prop :=
   es.map Sigma.fst ∈ template.matches' ∧ (es.flatMap (·.2.fills)).Nodup ∧
-    caseOf es ∈ Case.inventory ∧ (caseOf es = .com → HasPossessive es) ∧
+    (caseOf es = .com → HasPossessive es) ∧
     ∀ i ∈ es.findSome? (·.2.infinitive?),
       caseOf es ∈ i.cases ∧ (i = .a ∧ caseOf es = .transl → HasPossessive es)
 

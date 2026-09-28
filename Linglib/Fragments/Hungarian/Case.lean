@@ -20,12 +20,12 @@ genitive as a superficial exception to the case hierarchy.
 
 ## Main definitions
 
-* `Hungarian.Case.inventory`: the cases the comparative labels cover.
+* `Hungarian.Case`, `Hungarian.Case.label`: the cases with a comparative label, and that label.
 
 ## Implementation notes
 
 The essive-formal, the distributive, the distributive-temporal and the sociative have no
-comparative label and are not in the inventory; the instrumental *-val ~ -vel* also expresses
+comparative label and are left out; the instrumental *-val ~ -vel* also expresses
 accompaniment, and no separate comitative is recorded.
 
 ## References
@@ -37,13 +37,68 @@ accompaniment, and no separate comitative is recorded.
 
 @[expose] public section
 
-namespace Hungarian.Case
+namespace Hungarian
 
-/-- The cases under their comparative labels are the three grammatical cases, the nine local
-cases, the instrumental, the causal, the essive, the translative, the terminative and the
-temporal. -/
-def inventory : Finset Case :=
-  {.nom, .acc, .dat, .ine, .ade, .sup, .ela, .abl, .del, .ill, .all, .sub, .inst, .caus, .ess,
-    .transl, .ter, .tem}
+/-- The cases with a comparative label: the three grammatical cases, the nine local cases, the
+instrumental, the causal, the essive, the translative, the terminative and the temporal. -/
+inductive Case where
+  /-- The nominative. -/
+  | nom
+  /-- The accusative. -/
+  | acc
+  /-- The dative. -/
+  | dat
+  /-- The inessive. -/
+  | ine
+  /-- The adessive. -/
+  | ade
+  /-- The superessive. -/
+  | sup
+  /-- The elative. -/
+  | ela
+  /-- The ablative. -/
+  | abl
+  /-- The delative. -/
+  | del
+  /-- The illative. -/
+  | ill
+  /-- The allative. -/
+  | all
+  /-- The sublative. -/
+  | sub
+  /-- The instrumental. -/
+  | inst
+  /-- The causal. -/
+  | caus
+  /-- The essive. -/
+  | ess
+  /-- The translative. -/
+  | transl
+  /-- The terminative. -/
+  | ter
+  /-- The temporal. -/
+  | tem
+  deriving DecidableEq, Fintype, Repr
 
-end Hungarian.Case
+/-- The comparative value a case is named for. -/
+def Case.label : Case → _root_.Case
+  | nom => .nom
+  | acc => .acc
+  | dat => .dat
+  | ine => .ine
+  | ade => .ade
+  | sup => .sup
+  | ela => .ela
+  | abl => .abl
+  | del => .del
+  | ill => .ill
+  | all => .all
+  | sub => .sub
+  | inst => .inst
+  | caus => .caus
+  | ess => .ess
+  | transl => .transl
+  | ter => .ter
+  | tem => .tem
+
+end Hungarian

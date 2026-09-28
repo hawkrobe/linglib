@@ -22,8 +22,7 @@ illative have alternants that the shape of the stem selects: the partitive -tA a
 
 ## Main results
 
-* `Finnish.Declension.isSome_ending_iff`: the cases with an ending are the cases of the
-  inventory.
+* `Finnish.Declension.isSome_ending`: every case has an ending.
 
 ## Implementation notes
 
@@ -57,14 +56,13 @@ def endings : Case → List (List Segment)
   | .transl => [[k, s, i]]
   | .com => [[i, n, e]]
   | .abess => [[t, t, A]]
-  | .inst => [[n]]
-  | _ => []
+  | .instr => [[n]]
 
 /-- The ending of a case after a stem in a short vowel. -/
 def ending (c : Case) : Option (List Segment) := (endings c).head?
 
-/-- The cases with an ending are the cases of the inventory. -/
-theorem isSome_ending_iff (c : Case) : (ending c).isSome ↔ c ∈ Case.inventory := by
+/-- Every case has an ending. -/
+theorem isSome_ending (c : Case) : (ending c).isSome := by
   cases c <;> decide
 
 end Finnish.Declension

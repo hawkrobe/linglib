@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Yakut.Case
+public import Linglib.Syntax.Minimalist.Case.Dependent
 public import Linglib.Data.Examples.BakerVinokurova2010
 
 /-!
@@ -21,7 +21,8 @@ agreement violations, and a purely Agree-based grammar never values a dative.
 
 ## Main definitions
 
-* `pureMarantz`, `pureChomsky`: the two pure grammars beside the Yakut fragment's.
+* `grammar`: the two-modality grammar of Sakha.
+* `pureMarantz`, `pureChomsky`: the two pure grammars beside it.
 * `subject`, `internal`, `possessor`, `pro`, `finite`: the NP positions and the finite probe
   the paper's derivations use.
 * `Slot`, `candidates`: the NPs of a row's domain from the slots the rows name, highest first;
@@ -52,9 +53,16 @@ agreement violations, and a purely Agree-based grammar never values a dative.
 
 namespace BakerVinokurova2010
 
-open Data.Examples Minimalist Case DependentCase Yakut.Case
+open Data.Examples Minimalist Case DependentCase
 
 /-! ### The grammars -/
+
+/-- The Sakha grammar of structural case: dative on the higher of two NPs in the verb phrase,
+    accusative on the lower of two in the clause, nominative from T and genitive from D under
+    Agree, and no elsewhere case in any domain. -/
+def grammar : CaseAssigners where
+  domains := [(.D, {}), (.v, { high := some .dat }), (.C, { low := some .acc })]
+  agree := [(.T, .nom), (.D, .gen)]
 
 /-- A purely configurational grammar: dependent dative and accusative with elsewhere
     nominative in the clause and verb phrase, elsewhere genitive in the noun phrase, and no

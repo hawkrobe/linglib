@@ -8,14 +8,14 @@ public import Linglib.Syntax.Case.Basic
 This file defines the cases of Turkish. Göksel and Kerslake list five case suffixes, the
 accusative *-(y)I*, the dative *-(y)A*, the locative *-DA*, the ablative *-DAn* and the genitive
 *-(n)In*, and Blake's table adds the unmarked nominative for a system of six cases. The
-suffixes are the case exponents of the nominal in `Morphotactics.lean`, which maps each to its
-label here and proves that the inventory is the nominative with the cases they realize. The
+suffixes are the case exponents of the nominal in `Morphotactics.lean`, which maps each to the
+case it realizes and proves that they realize every case but the nominative, once each. The
 comitative and instrumental *-(y)lA* is not a case suffix in the grammar's analysis but an
 unstressable marker that forms postpositional phrases.
 
 ## Main definitions
 
-* `Turkish.Case.inventory`: the six cases
+* `Turkish.Case`, `Turkish.Case.label`: the six cases, and the comparative value each is named for
 
 ## References
 
@@ -25,9 +25,31 @@ unstressable marker that forms postpositional phrases.
 
 @[expose] public section
 
-namespace Turkish.Case
+namespace Turkish
 
 /-- The six cases. -/
-def inventory : Finset Case := {.nom, .acc, .dat, .loc, .abl, .gen}
+inductive Case where
+  /-- The nominative, unmarked. -/
+  | nom
+  /-- The accusative. -/
+  | acc
+  /-- The dative. -/
+  | dat
+  /-- The locative. -/
+  | loc
+  /-- The ablative. -/
+  | abl
+  /-- The genitive. -/
+  | gen
+  deriving DecidableEq, Fintype, Repr
 
-end Turkish.Case
+/-- The comparative value a case is named for. -/
+def Case.label : Case → _root_.Case
+  | nom => .nom
+  | acc => .acc
+  | dat => .dat
+  | loc => .loc
+  | abl => .abl
+  | gen => .gen
+
+end Turkish
