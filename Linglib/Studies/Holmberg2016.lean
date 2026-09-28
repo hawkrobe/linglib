@@ -30,19 +30,23 @@ an adverb preceding *not* forces the low reading, and in Swedish, which has no l
 adverb screens the middle negation from the polarity head to the same effect
 (`swedish_adverb`).
 
-Section 4.4 defines the polarity-based system as the one lacking low negation
-(`PolarityBased`, equivalently every negation height polarity-based, `polarityBased_iff`). Such a
-language has no negative neutralization (`PolarityBased.answer_ne_negative`); Swedish, whose
-negation is never low, is one (`swedish_polarityBased`), so confirming the positive alternative
-of a negative question takes the polarity-reversing *jo* (`swedish_negative_question`), which a
-truth-based configuration never needs (`no_reversal_needed_truth_based`). Crediting the REV
-feature to [farkas-bruce-2010], the mechanism derives what they say *si* and *doch* mark: the
-answers a reversing feature gives are their [reverse, +] answers
-(`responses_reversing_eq_reversePositive`). Positive-bias questions carry a high negation
-outside the inherited clause and are answered like neutral questions
-(`high_answers_like_neutral`). The mechanism predicts the judgment of every example answered by
-a single particle of the study, whose question is neutral or whose negation the annotation
-locates (`judgment_iff_predicted`).
+Section 4.4 defines the polarity-based system as the one lacking low negation (`PolarityBased`,
+equivalently every negation height polarity-based, `polarityBased_iff`). Such a language has no
+negative neutralization (`PolarityBased.answer_ne_negative`); Swedish, whose negation is never low,
+is one (`swedish_polarityBased`), so confirming the positive alternative of a negative question
+takes the polarity-reversing *jo* (`swedish_negative_question`), which a truth-based configuration
+never needs (`no_reversal_needed_truth_based`). Crediting the REV feature to [farkas-bruce-2010],
+the mechanism derives what they say *si* and *doch* mark: the answers a reversing feature gives are
+their [reverse, +] answers (`responses_reversing_eq_reversePositive`). Positive-bias questions carry
+a high negation outside the inherited clause and are answered like neutral questions
+(`high_answers_like_neutral`). Which negations an English polar question form carries depends on the
+speaker's variety (`negations`): a question with *not* has the inner reading for all speakers
+(`primaryPolarity_of_mem_negations_nonPreposed`), and one with *-n't* only the outer reading in the
+restrictive variety (`primaryPolarity_of_mem_negations_restrictive`), where it is answered like a
+neutral question (`answer_of_mem_negations_restrictive`), and also the inner one in the tolerant
+variety (`exists_mem_negations_tolerant_primaryPolarity`, `exists_mem_negations_tolerant`). The
+mechanism predicts the judgment of every example answered by a single particle of the study, whose
+question is neutral or whose negation the annotation locates (`judgment_iff_predicted`).
 
 ## Implementation notes
 
@@ -57,6 +61,9 @@ locates (`judgment_iff_predicted`).
   of *no* of Section 4.4, the higher-order alternative of positive-bias questions (Section 4.8),
   the table of languages with a reversing affirmative particle, and the global survey of
   Section 4.2.
+* The very formal English that does not use *-n't* at all, where a question with *not* must,
+  as the book says presumably, carry the positive-bias reading as well, is not modelled: `negations`
+  is stated for the varieties that use *-n't*.
 * The book discusses French *oui* and *si* but not *non*, which `french` gives [−Pol], as the
   negative particle of every language the book discusses.
 
@@ -64,6 +71,7 @@ locates (`judgment_iff_predicted`).
 
 * [holmberg-2016]
 * [farkas-bruce-2010]
+* [ladd-1981]
 -/
 
 @[expose] public section
@@ -220,6 +228,58 @@ head, is answered like a neutral question. -/
 theorem high_answers_like_neutral (f : AnswerFeature) :
     f.answer (.height .high) = f.answer .absent := by
   cases f <;> rfl
+
+/-! ### Negative question forms in English -/
+
+/-- The two varieties of English the book distinguishes by negative questions with *-n't*: in the
+restrictive one such a question conveys only an expected positive answer; in the tolerant one it
+can also convey an expected negative answer, and then licenses *either* ([ladd-1981]). -/
+inductive EnglishVariety where
+  | restrictive
+  | tolerant
+  deriving DecidableEq, Repr
+
+/-- The negations an English polar question with its negation in a given position can carry in a
+variety: none for the positive question; for non-preposed *not* a low or a middle negation, as
+speakers differ; for preposed *-n't* the high negation of the positive-bias reading and, in the
+tolerant variety, a negation inside the clause, at a height the book does not fix. -/
+def negations : EnglishVariety → Option NegationPosition → Set ClauseNegation
+  | _, none => {.absent}
+  | _, some .nonPreposed => {.height .low, .height .middle}
+  | .restrictive, some .preposed => {.height .high}
+  | .tolerant, some .preposed => {.height .low, .height .middle, .height .high}
+
+/-- A question with *not* makes the negative alternative primary for all speakers: it has the
+inner reading, conveying an expected negative answer. -/
+theorem primaryPolarity_of_mem_negations_nonPreposed {v : EnglishVariety} {n : ClauseNegation}
+    (hn : n ∈ negations v (some .nonPreposed)) : n.primaryPolarity = .negative := by
+  cases v <;> rcases hn with rfl | rfl <;> rfl
+
+/-- In the restrictive variety a question with *-n't* has only the outer reading. -/
+theorem primaryPolarity_of_mem_negations_restrictive {n : ClauseNegation}
+    (hn : n ∈ negations .restrictive (some .preposed)) : n.primaryPolarity = .positive := by
+  rw [show n = .height .high from hn]
+  rfl
+
+/-- In the tolerant variety it also has the inner reading. -/
+theorem exists_mem_negations_tolerant_primaryPolarity :
+    ∃ n ∈ negations .tolerant (some .preposed), n.primaryPolarity = .negative :=
+  ⟨.height .middle, by simp [negations], rfl⟩
+
+/-- In the restrictive variety a question with *-n't* is answered like its positive counterpart,
+whatever the particle. -/
+theorem answer_of_mem_negations_restrictive {n : ClauseNegation}
+    (hn : n ∈ negations .restrictive (some .preposed)) (f : AnswerFeature) :
+    f.answer n = f.answer .absent := by
+  rw [show n = .height .high from hn]
+  exact high_answers_like_neutral f
+
+/-- In the tolerant variety it need not be: on a reading with the negation inside the clause, a
+bare *yes* does not answer it as it answers the positive question. -/
+theorem exists_mem_negations_tolerant :
+    ∃ n ∈ negations .tolerant (some .preposed),
+      (english .yes).answer n ≠ (english .yes).answer .absent :=
+  ⟨.height .middle, by simp [negations], by decide⟩
 
 /-! ### The examples -/
 

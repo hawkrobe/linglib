@@ -24,7 +24,7 @@ none (`v1_ppi_any_context`, `v1_nci_never`, `v1_context_invariant`), and declara
 contextual evidence, the concord item negative evidence and the polarity item any evidence
 (`nonV1_nci_iff`, `nonV1_ppi_iff`, `nonV1_neutral_infelicitous`). Czech FALSUM is thereby broader
 than English high negation, felicitous even with positive evidence
-(`falsum_broader_than_english_hiNQ`). The particle *náhodou* is licensed by FALSUM alone
+(`falsum_broader_than_english_outer`). The particle *náhodou* is licensed by FALSUM alone
 (`Simik2024.NahodouLicensed`), so it excludes concord items whatever the word order
 (`nahodou_excludes_nci`), and *copak* needs contextual evidence matching the question's polarity,
 against the speaker's prior belief (`copak_requires_bias`, `copak_prior_ne_evidence`); the two
@@ -68,23 +68,25 @@ inductive VerbPosition
   | nonV1
   deriving DecidableEq, Repr, Fintype
 
-/-- The readings of negation available at a verb position: the clause-initial verb raises
+/-- The readings of negation available at a verb position, as the polarity of the proposition the
+question double-checks: FALSUM, the outer reading, `.positive`; the canonical operator, the inner
+reading, `.negative`. The clause-initial verb raises
 above the canonical operator and is licensed by FALSUM alone, the verb in situ by FALSUM or
 by the canonical operator (the paper's (11) and (12)). -/
-def VerbPosition.availableReadings : VerbPosition → List Negation
-  | .v1 => [.outer]
-  | .nonV1 => [.inner, .outer]
+def VerbPosition.availableReadings : VerbPosition → List Polarity
+  | .v1 => [.positive]
+  | .nonV1 => [.negative, .positive]
 
 /-- A reading is available exactly when its operator c-commands the negated verb: FALSUM
 always, the canonical operator only over the verb in situ. -/
-theorem mem_availableReadings_iff (wp : VerbPosition) (n : Negation) :
-    n ∈ wp.availableReadings ↔ n = .outer ∨ wp = .nonV1 := by
+theorem mem_availableReadings_iff (wp : VerbPosition) (n : Polarity) :
+    n ∈ wp.availableReadings ↔ n = .positive ∨ wp = .nonV1 := by
   cases wp <;> cases n <;> decide
 
 /-- The unmarked reading at a verb position: the lowest available operator. -/
-def VerbPosition.defaultReading : VerbPosition → Negation
-  | .v1 => .outer
-  | .nonV1 => .inner
+def VerbPosition.defaultReading : VerbPosition → Polarity
+  | .v1 => .positive
+  | .nonV1 => .negative
 
 theorem defaultReading_mem (wp : VerbPosition) : wp.defaultReading ∈ wp.availableReadings := by
   cases wp <;> decide
@@ -106,15 +108,15 @@ def Indefinite.entry : Indefinite → PolarityItem
 /-- A polarity item is licensed at a reading of negation when a positive polarity item
 falls under FALSUM and a negative one under the canonical operator (the paper's (11) and
 (12)). -/
-def LicensedAt (e : PolarityItem) (n : Negation) : Prop :=
-  (e.isPPI → n = .outer) ∧ (e.isNPI → n = .inner)
+def LicensedAt (e : PolarityItem) (n : Polarity) : Prop :=
+  (e.isPPI → n = .positive) ∧ (e.isNPI → n = .negative)
 
-instance (e : PolarityItem) (n : Negation) : Decidable (LicensedAt e n) := by
+instance (e : PolarityItem) (n : Polarity) : Decidable (LicensedAt e n) := by
   unfold LicensedAt; infer_instance
 
 /-- The two indefinites split the readings: the polarity item is licensed exactly where the
 concord item is not. -/
-theorem licensedAt_ppi_iff_not_nci (n : Negation) :
+theorem licensedAt_ppi_iff_not_nci (n : Polarity) :
     LicensedAt Indefinite.ppi.entry n ↔ ¬ LicensedAt Indefinite.nci.entry n := by
   cases n <;> decide
 
@@ -123,11 +125,11 @@ theorem licensedAt_ppi_iff_not_nci (n : Negation) :
 /-- The contextual evidence a reading of negation requires: the canonical operator
 negative evidence, as in the evidentially biased contexts of [gunlogson-2002] and
 [sudo-2013]; FALSUM, conveying epistemic rather than evidential bias, nothing. -/
-def readingEvidenceOK : Negation → SignType → Prop
-  | .inner, ctx => ctx = -1
-  | .outer, _ => True
+def readingEvidenceOK : Polarity → SignType → Prop
+  | .negative, ctx => ctx = -1
+  | .positive, _ => True
 
-instance (n : Negation) (ctx : SignType) : Decidable (readingEvidenceOK n ctx) := by
+instance (n : Polarity) (ctx : SignType) : Decidable (readingEvidenceOK n ctx) := by
   cases n <;> unfold readingEvidenceOK <;> infer_instance
 
 /-- Declarative word order requires contextual evidence ([gunlogson-2002]); interrogative
@@ -185,8 +187,8 @@ theorem nonV1_neutral_infelicitous (ind : Indefinite) : ¬ Felicitous .nonV1 ind
 /-- Czech FALSUM is broader than English high negation: an interrogative question with the
 polarity item is felicitous under positive evidence (the paper's (14)), which the evidence
 condition of [buring-gunlogson-2000] on English outer negation excludes. -/
-theorem falsum_broader_than_english_hiNQ :
-    ¬ BuringGunlogson2000.Felicitous .hiNQ 1 ∧
+theorem falsum_broader_than_english_outer :
+    ¬ BuringGunlogson2000.Felicitous (some .positive) 1 ∧
       Felicitous .v1 .ppi 1 :=
   ⟨by decide, v1_ppi_any_context _⟩
 
@@ -226,7 +228,7 @@ theorem copak_prior_ne_evidence (pol : Polarity) :
 /-- The two particles part on context: *náhodou* is licensed by FALSUM whatever the
 evidence, *copak* only under evidence. -/
 theorem nahodou_copak_opposite (ctx : SignType) :
-    NahodouLicensed .negative .outer ∧ (CopakLicensed .negative ctx → ctx ≠ 0) := by
+    NahodouLicensed .negative .positive ∧ (CopakLicensed .negative ctx → ctx ≠ 0) := by
   decide +revert
 
 /-- Semantic classification of the Czech polar-question particles: the paper's two, and the

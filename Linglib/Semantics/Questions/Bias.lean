@@ -15,7 +15,8 @@ neither, so its state is a sign, `1`, `-1` or `0`, and reading it relative to `�
 A bias value in the scheme of [sudo-2013] is the set of states a question is compatible with:
 [+s] (`BiasValue.plus`), its complement [−s] (`BiasValue.minus`) and [neutral]. A `BiasProfile`
 pairs an evidential and an epistemic value, and its `felicity` is the set of situations it admits.
-`PQForm` names the three polar-question forms.
+The forms and readings of polar questions are `NegationPosition` and `Option Polarity` in
+`Syntax/PolarInterrogative`.
 
 ## References
 
@@ -23,22 +24,11 @@ pairs an evidential and an epistemic value, and its `felicity` is the set of sit
 * [ladd-1981]
 * [romero-han-2004]
 * [sudo-2013]
-* [romero-2024]
 -/
 
 @[expose] public section
 
 namespace Question
-
-/-- The three polar question forms ([romero-2024] §1). -/
-inductive PQForm where
-  /-- Positive question: [p?]. "Is Jane coming?" -/
-  | posQ
-  /-- Low negation question: [not p?]. "Is Jane not coming?" -/
-  | loNQ
-  /-- High negation question: [n't p?]. "Isn't Jane coming?" -/
-  | hiNQ
-  deriving DecidableEq, Repr, Fintype
 
 /-- A bias value ([sudo-2013]): the states of a body of information, the sign of the prejacent
 it supports, that a question is compatible with. -/
