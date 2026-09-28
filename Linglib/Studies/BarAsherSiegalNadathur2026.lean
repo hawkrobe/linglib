@@ -76,10 +76,11 @@ section Model
 variable {U V : Type*} (M : CausalModel U V fun _ ↦ Bool)
 
 /-- The equation for `v` gives `b` under `s` when, in every context, every completion of the
-values `s` assigns to `v`'s parents yields `b`. -/
+values `s` assigns to `v`'s parents yields `b`. A completion assigns the parents alone, the other
+variables being fixed at `false`, which the equation does not read. -/
 def Determines (s : Situation V) (v : V) (b : Bool) : Prop :=
-  ∀ u (y : V → Bool), (∀ w, M.graph.Adj w v → ∀ c : Bool, s w = ↑c → y w = c) →
-    M.eqn v u y = b
+  ∀ y : V → Bool, (∀ w, ¬ M.graph.Adj w v → y w = false) →
+    (∀ w, M.graph.Adj w v → ∀ c : Bool, s w = ↑c → y w = c) → ∀ u, M.eqn v u y = b
 
 /-- Causal consistency (29): every settled dependent variable carries the value its equation
 gives. -/

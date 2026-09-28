@@ -32,14 +32,13 @@ negation, or neither, as its class predicts (`rows_agree`).
 
 The Dreyfus scenario is a causal model whose exogenous variables read the context, and the
 background is an observation. The theorems are stated over the strict development of the paper's
-definitions and decided over the finite model, the supersituation quantifiers ranging over the
-exogenous settlements of the background.
+definitions. The sufficiency verdicts are decided over the finite model; the necessity
+verdicts are proved through the equations, which make every path to the effect run through the
+nerve.
 
 ## TODO
 
-The necessity presuppositions are decided by brute force over the partial assignments under a
-raised recursion limit; a structural proof through the parent equations
-would remove them. The *manage* examples need set-valued prerequisites, one of them the
+The *manage* examples need set-valued prerequisites, one of them the
 conjunction of courage, a listener, and an ungarbled message, while the substrate's
 sufficiency semantics takes a single prerequisite vertex.
 
@@ -110,12 +109,64 @@ theorem dare_semantics_via_manageSem :
 theorem nrv_sufficient_for_msg : manageSem dreyfusModel dreyfusBg .NRV true .MSG true := by
   decide
 
-set_option maxRecDepth 400000 in
+/-! The no-alternative clauses follow from the equations: a variable the development settles has
+settled parents and takes its equation's value at theirs, so settling MSG true needs NRV true
+(MSG = INT ∧ NRV), settling COM true needs MSG true, and settling SPY true needs COM true. -/
+
+section Equations
+
+variable {s : V → Flat Bool}
+
+private theorem parent_settled {v : V} {x : Bool} (h : dreyfusModel.CausallyEntails s v x)
+    (hv : s v = ⊥) {w : V} (hw : dreyfusModel.graph.Adj w v) :
+    ∃ z, dreyfusModel.CausallyEntails s w z := by
+  rcases causallyEntails_iff.1 h with h | ⟨-, hpar, -⟩
+  · rw [hv] at h; exact absurd h Flat.bot_ne_coe
+  · exact hpar w hw
+
+/-- Settling MSG true, unobserved, settles NRV true: MSG = INT ∧ NRV. -/
+theorem nrv_of_msg (hs : s .MSG = ⊥) (h : dreyfusModel.CausallyEntails s .MSG true) :
+    dreyfusModel.CausallyEntails s .NRV true := by
+  obtain ⟨a, ha⟩ := parent_settled h hs (w := .INT) (by decide)
+  obtain ⟨b, hb⟩ := parent_settled h hs (w := .NRV) (by decide)
+  have hab : (a && b) = true := h.eqn_eq hs (y := fun w ↦ if w = .NRV then b else a) (fun w hw ↦ by
+    rcases (by decide : ∀ w, dreyfusModel.graph.Adj w .MSG → w = .INT ∨ w = .NRV) w hw with
+      rfl | rfl <;> simpa) default
+  rwa [(Bool.and_eq_true_iff.1 hab).2] at hb
+
+/-- Settling COM true, unobserved, settles MSG true: COM = MSG ∧ LST ∧ ¬BRK. -/
+theorem msg_of_com (hs : s .COM = ⊥) (h : dreyfusModel.CausallyEntails s .COM true) :
+    dreyfusModel.CausallyEntails s .MSG true := by
+  obtain ⟨m, hm⟩ := parent_settled h hs (w := .MSG) (by decide)
+  obtain ⟨l, hl⟩ := parent_settled h hs (w := .LST) (by decide)
+  obtain ⟨k, hk⟩ := parent_settled h hs (w := .BRK) (by decide)
+  have hmlk : (m && l && !k) = true := h.eqn_eq hs
+    (y := fun w ↦ if w = .MSG then m else if w = .LST then l else k) (fun w hw ↦ by
+      rcases (by decide : ∀ w, dreyfusModel.graph.Adj w .COM →
+        w = .MSG ∨ w = .LST ∨ w = .BRK) w hw with rfl | rfl | rfl <;> simpa) default
+  rwa [(Bool.and_eq_true_iff.1 (Bool.and_eq_true_iff.1 hmlk).1).1] at hm
+
+/-- Settling SPY true, unobserved, settles COM true: SPY = SEC ∧ COM. -/
+theorem com_of_spy (hs : s .SPY = ⊥) (h : dreyfusModel.CausallyEntails s .SPY true) :
+    dreyfusModel.CausallyEntails s .COM true := by
+  obtain ⟨a, ha⟩ := parent_settled h hs (w := .SEC) (by decide)
+  obtain ⟨c, hc⟩ := parent_settled h hs (w := .COM) (by decide)
+  have hac : (a && c) = true := h.eqn_eq hs (y := fun w ↦ if w = .COM then c else a) (fun w hw ↦ by
+    rcases (by decide : ∀ w, dreyfusModel.graph.Adj w .SPY → w = .SEC ∨ w = .COM) w hw with
+      rfl | rfl <;> simpa) default
+  rwa [(Bool.and_eq_true_iff.1 hac).2] at hc
+
+end Equations
+
+/-- The Dreyfus background with the nerve, listener and ungarbled message settled. -/
+def resolved : V → Flat Bool :=
+  Function.update (Function.update (Function.update dreyfusBg .NRV ↑true) .LST ↑true) .BRK ↑false
+
 /-- Necessity presupposition (32i) for (34a): NRV is causally necessary
     (Def 10b) for MSG. -/
 theorem nrv_necessary_for_msg :
-    Implicative.necessityPresup dreyfusModel dreyfusBg .NRV true .MSG true := by
-  decide +kernel
+    Implicative.necessityPresup dreyfusModel dreyfusBg .NRV true .MSG true :=
+  ⟨by decide, ⟨_, .refl _, by decide, by decide⟩, fun _ _ hc h ↦ nrv_of_msg hc h⟩
 
 /-- (34a) *Dreyfus dared to send a message to the Germans* — felicitous:
     "NRV is the only undetermined condition for the truth of MSG: it is
@@ -139,20 +190,21 @@ theorem dare_infelicitous_for_com : failSem dreyfusModel dreyfusBg .NRV true .CO
 theorem dare_infelicitous_for_spy : failSem dreyfusModel dreyfusBg .NRV true .SPY true := by
   decide
 
-set_option maxRecDepth 400000 in
 /-- (34c), necessity half: "⟨NRV,1⟩ is causally necessary but not
     sufficient for COM" — achievability settles the exogenous LST = 1,
     BRK = 0; every path to COM = 1 runs through NRV = 1. -/
 theorem nrv_necessary_for_com :
-    Implicative.necessityPresup dreyfusModel dreyfusBg .NRV true .COM true := by
-  decide +kernel
+    Implicative.necessityPresup dreyfusModel dreyfusBg .NRV true .COM true :=
+  ⟨by decide, ⟨resolved, by decide, by decide, by decide⟩, fun _ hset hc h ↦
+    nrv_of_msg (hset.eq_bot (by decide) ⟨.INT, by decide⟩) (msg_of_com hc h)⟩
 
-set_option maxRecDepth 400000 in
 /-- (34d), necessity half: NRV is causally necessary but not sufficient
     for SPY ("BRK, LST, COM ∈ Anc(SPY) are all undetermined"). -/
 theorem nrv_necessary_for_spy :
-    Implicative.necessityPresup dreyfusModel dreyfusBg .NRV true .SPY true := by
-  decide +kernel
+    Implicative.necessityPresup dreyfusModel dreyfusBg .NRV true .SPY true :=
+  ⟨by decide, ⟨resolved, by decide, by decide, by decide⟩, fun _ hset hc h ↦
+    nrv_of_msg (hset.eq_bot (by decide) ⟨.INT, by decide⟩)
+      (msg_of_com (hset.eq_bot (by decide) ⟨.MSG, by decide⟩) (com_of_spy hc h))⟩
 
 /-- (34c)/(34d) complete profiles: NRV is causally **necessary but not
     sufficient** for COM and for SPY — the paper's exact §6.1.1 verdicts,
