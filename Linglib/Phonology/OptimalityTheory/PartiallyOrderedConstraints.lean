@@ -265,11 +265,11 @@ consistent total orders are exactly `ERC.linearExtensions` ([prince-2002]). -/
 matching `toRel`'s reflexivity. Transitively-implied pairs are entailed by the
 covering pairs, so the encoding has the same linear extensions as the
 Hasse-edge one. -/
-def toERCs (r : Fin n → Fin n → Prop) [DecidableRel r] : Finset (ERC n) :=
+def toERCs (r : Fin n → Fin n → Prop) [DecidableRel r] : Finset (ERC (Fin n)) :=
   (Finset.univ.filter fun p : Fin n × Fin n => r p.1 p.2).image
     fun p => simpleERC p.1 p.2
 
-theorem mem_toERCs {r : Fin n → Fin n → Prop} [DecidableRel r] {α : ERC n} :
+theorem mem_toERCs {r : Fin n → Fin n → Prop} [DecidableRel r] {α : ERC (Fin n)} :
     α ∈ toERCs r ↔ ∃ a b, r a b ∧ simpleERC a b = α := by
   simp [toERCs, Prod.exists]
 
