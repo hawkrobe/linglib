@@ -175,8 +175,8 @@ inductive LNum | sg | pl
 inductive LGen | masc | fem
   deriving DecidableEq, Fintype, Repr
 
-/-- The case a member of the triplet is. -/
-def Case3.toCase : Case3 → Case
+/-- The Latvian case a member of the triplet is. -/
+def Case3.toLatvian : Case3 → Latvian.Case
   | .nom => .nom | .acc => .acc | .dat => .dat
 
 /-- The number a value of `LNum` is. -/
@@ -207,7 +207,7 @@ def latvianRules : List (Rule LCell latvian String) :=
 /-- The stem of Table 20 at a cell: the root of the form of *pats* in the
 cell's case, number and gender. -/
 def table20stem (c : LCell) : Option String :=
-  (Latvian.Pronouns.pats c.case.toCase c.num.toNumber c.gen.toGender).bind
+  (Latvian.Pronouns.pats c.case.toLatvian c.num.toNumber c.gen.toGender).bind
     fun ms ↦ (ms.find? (·.kind = .root)).map (·.form)
 
 /-- Rules (7) generate Table 20's stem distribution. -/
