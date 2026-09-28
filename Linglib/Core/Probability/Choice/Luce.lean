@@ -13,8 +13,7 @@ score — the **Luce choice rule**, whose choice axiom ([luce-1959], Axiom 1,
 p. 6) makes the odds of two actions independent of the rest of the menu. This
 is the shared substrate for the library's soft-rational agents: softmax agents
 (`LuceModel.fromSoftmax`, with the exponential core in
-`Core.Analysis.SpecialFunctions.Softmax` and its variational theory in
-`Core.Probability.SoftmaxTheory`), Gumbel random-utility agents
+`Core.Analysis.SpecialFunctions.Softmax`), Gumbel random-utility agents
 (`Core.Probability.Choice.GumbelLuce`), and signal-detection observers
 (`Processing.Psychophysics.SignalDetection`).
 

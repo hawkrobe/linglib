@@ -106,8 +106,8 @@ theorem hasDerivAt_log_gjProb_update (con : ConstraintSet (I × O) (Fin n)) (w :
       (∑ o', gjProb con (Function.update w j t) i o' * con j (i, o') - con j (i, o)) t := by
   have : Nonempty O := ⟨o⟩
   simp_rw [gjProb_update]
-  convert hasDerivAt_log_softmax _ _ o t using 1
-  simp only [mul_neg, sum_neg_distrib]
+  convert (((hasDerivAt_id' t).smul_const _).add_const _).log_softmax o using 1
+  simp only [one_smul, mul_neg, sum_neg_distrib]
   ring
 
 /-- The Stochastic Gradient Ascent step of Section 4 on a single weight, which follows the

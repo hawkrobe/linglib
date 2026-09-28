@@ -3,6 +3,8 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Sigmoid
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
+public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+public import Mathlib.Analysis.Calculus.Deriv.Prod
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Data.Fintype.BigOperators
 
@@ -16,9 +18,11 @@ inverse temperature enters by scaling the argument, as in `softmax (α • s)`. 
 alternatives softmax is `Real.sigmoid` of the score difference, and `Real.logit` inverts
 `Real.sigmoid`.
 
-The function `softmax s` is also the density of the exponentially tilted counting measure
-`Measure.count.tilted s`. `Core.Probability.SoftmaxTheory` develops that side, with the
-partition function as an `mgf` and log-sum-exp as a `cgf`.
+Log-sum-exp `x ↦ log (∑ i, exp (x i))` is the log-partition function, and its derivative along
+a curve of scores is the softmax expectation of the score derivative. Along a line of scores
+`t ↦ t • s + r` it is, up to an additive constant, the cumulant generating function
+`ProbabilityTheory.cgf s` under the counting measure tilted by `r`, which is convex by
+`ProbabilityTheory.convexOn_cgf`.
 
 ## Main definitions
 
@@ -31,6 +35,8 @@ partition function as an `mgf` and log-sum-exp as a `cgf`.
 * `Real.softmax_div_softmax`, `Real.log_softmax_div_softmax`: odds are exponentiated score
   differences (independence of irrelevant alternatives).
 * `Real.softmax_le_softmax_iff`, `Real.softmax_update_strictMono`: monotonicity in the scores.
+* `HasDerivAt.log_sum_exp`, `HasDerivAt.log_softmax`: along a curve of scores, log-sum-exp has
+  the softmax expectation of the score derivative as its derivative.
 * `Real.softmax_add_const`, `Real.softmax_const`: translation invariance, and the uniform
   distribution for constant scores.
 * `Real.softmax_eq_sigmoid_of_univ_eq_pair`, `Real.softmax_fin_two`: two alternatives give
@@ -125,6 +131,31 @@ alias ⟨_, softmax_le_softmax⟩ := softmax_le_softmax_iff
 alias ⟨_, softmax_lt_softmax⟩ := softmax_lt_softmax_iff
 
 end Nonempty
+
+/-! ### Derivatives along a curve of scores -/
+
+section Deriv
+
+variable [Nonempty ι] {f : ℝ → ι → ℝ} {f' : ι → ℝ} {x : ℝ}
+
+/-- The derivative of log-sum-exp along a curve is the softmax-weighted derivative of the
+scores. -/
+theorem _root_.HasDerivAt.log_sum_exp (hf : HasDerivAt f f' x) :
+    HasDerivAt (fun t ↦ log (∑ i, exp (f t i))) (∑ i, softmax (f x) i * f' i) x := by
+  have hsum : HasDerivAt (fun t ↦ ∑ i, exp (f t i)) (∑ i, exp (f x i) * f' i) x :=
+    .fun_sum fun i _ ↦ (hasDerivAt_pi.1 hf i).exp
+  convert hsum.log (sum_exp_pos (f x)).ne' using 1
+  rw [Finset.sum_div]
+  exact Finset.sum_congr rfl fun i _ ↦ by rw [softmax_def]; ring
+
+/-- The derivative of a log-softmax coordinate along a curve is that coordinate's score
+derivative minus its softmax expectation. -/
+theorem _root_.HasDerivAt.log_softmax (hf : HasDerivAt f f' x) (i : ι) :
+    HasDerivAt (fun t ↦ log (softmax (f t) i)) (f' i - ∑ j, softmax (f x) j * f' j) x := by
+  simp only [Real.log_softmax]
+  exact (hasDerivAt_pi.1 hf i).sub hf.log_sum_exp
+
+end Deriv
 
 section Update
 
