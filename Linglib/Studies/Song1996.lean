@@ -1,439 +1,283 @@
 module
 
-public import Linglib.Data.WALS.Features.F110A
-public import Linglib.Data.WALS.Features.F111A
+public import Mathlib.Data.Finset.Lattice.Fold
+public import Mathlib.Logic.Function.Basic
+public import Mathlib.Tactic.DeriveFintype
+public import Mathlib.Tactic.IntervalCases
 public import Linglib.Semantics.Causation.Morphological
+public import Linglib.Data.Examples.Song1996
 
 /-!
-# Song 1996: Causative Construction Typology
-[song-1996]
+# Song (1996): Causatives and causation
 
-[song-1996]'s typology of causative constructions, classifying how
-causative meaning is **expressed** (morphosyntactic packaging). Three
-types: COMPACT (English *kill*, Turkish *-dür*), AND (Vata *le*),
-PURP (Korean *-ke ha-*).
+[song-1996] classifies causative constructions by what joins the expression of cause to the
+expression of effect. In the COMPACT type [Vcause] and [Veffect] share one clause, fused (English
+*kill*), bound (Turkish *öl-dür*) or free (French *faire lire*); in the AND type a clause of cause
+and a clause of effect are coordinated, in that order (Vata *le*); in the PURP type the clause of
+effect is a clause of purpose (Korean *-ke*) (chapter 2). The traditional typology, lexical,
+morphological and syntactic, splits the COMPACT type and lumps the other two together (§1.2). The
+COMPACT type being the diachronic residue of the other two, what distinguishes those is
+implicativity: the AND type expresses the EVENT and RESULT stages of the cognitive structure of
+causation GOAL → EVENT → RESULT and entails its effect, the PURP type expresses GOAL and EVENT and
+does not, except through the inference that people realize the goals they act for (chapter 5).
+The grammatical relation of the causee follows no hierarchy of its own: a language caps the core
+NPs of a simplex clause, causative or not, and its causatives keep within the cap (chapter 6).
 
-This file owns Song's typology + 6 per-language datums + WALS Ch 110A/111A
-grounding theorems + the Comrie-Song complexity bridge. The orthogonal
-Pylkkänen 2008 Voice-bundling × selection typology lives at
-`Studies/Pylkkanen2008.lean` (Pylkkänen's
-substrate; not subsumed by Song's). Comrie 1989's compact/morphological/
-periphrastic complexity scale lives at
-`Semantics/Causation/Morphological.CausativeComplexity` (the
-substrate Song's `toComplexity` projects into).
+`Form.type` computes the type of a form and `Form.traditional` its traditional class, and on
+Song's examples neither classification refines the other (`not_factorsThrough_type`,
+`not_factorsThrough_traditional`). A biclausal type entails its effect in every model exactly
+when it expresses RESULT (`forall_meaning_subset_iff`), so the AND type is implicative and the
+PURP type is not (`and_meaning_subset`, `purp_not_implicative`), as the example (7) bears out
+(`effectNegated_rows`), while COMPACT causatives go either way (`compact_implicativity_varies`);
+the success assumption restores implicativity (`meaning_subset_of_success`). The paradigm
+causative of [comrie-1989]'s case hierarchy never has more than three core NPs
+(`paradigmCoreNPs_le_three`), so a language capped at two refutes the hierarchy for transitive
+bases (`paradigmCoreNPs_two`).
 
-This file replaces a previous 41-LOC `Studies/Song1996.lean` that was an
-editorial-bridge anti-pattern (HahnDegenFutrell ↔ Causation Typology).
-The Causation/Typology.lean file (542 LOC) was simultaneously dissolved
-and renamed here.
+## Implementation notes
 
-## Cross-paper context (deferred)
+* A form records the structure Song reads off an example: one clause and how [Vcause] is
+  realized, or two clauses, their link and their order. The forms of the examples are row
+  features, and their types are computed.
+* The traditional class of a free [Vcause] is morphological, after [comrie-1989]'s treatment of
+  the French causative as quasi-morphological, which Song reports (p. 161); Song's own
+  description of the traditional typology (p. 135) does not place it.
+* The semantic structures are those of the prototypical types. A model interprets the three
+  stages by arbitrary propositions, so that entailing the effect is doing so in every model. The
+  cline of implicativity within the PURP type (p. 136; a survey of sixteen Korean speakers, §4.5)
+  and the implicativity of COMPACT causatives are outside the model.
+* `paradigmCoreNPs` counts the indirect object as a core NP, as in a language capped at three
+  (p. 174). That the paradigm case keeps within a cap of three is drawn here rather than stated
+  by Song, who argues the reinterpretation for extended demotion and doubling (§6.5).
 
-Song's COMPACT/AND/PURP three-way is **defensible but coarse**, and
-the file-level typology should be read against:
+## TODO
 
-- [dixon-2000-causatives]: nine semantic parameters × three formal types
-  (lexical/morphological/periphrastic). Dixon's parameters cut across Song's
-  COMPACT (e.g., directness, naturalness, volition) and arguably reduce
-  Song's three-way to a special case of his finer parameter space.
-- [shibatani-pardeshi-2002]: a **causative continuum** (direct → sociative
-  → indirect) where the SOCIATIVE middle category (joint-action causation:
-  Japanese *-(s)ase* in its assistive reading; Marathi sociative; dedicated
-  Bantu/Korean/Tamil sociative morphology) is missing from Song's tripartite
-  partition. Song collapses sociative into PURP or COMPACT depending on
-  language, losing a robust typological generalization.
-- [wood-marantz-2017], [cuervo-2014]: generative-side updates of
-  Pylkkänen 2008's Voice-bundling × selection typology — see
-  `Pylkkanen2008.lean`.
+* The diachronic model of causative affixes (chapter 3): four stages from a construction whose
+  [Vcause] is obligatory to a causative affix, and the argument that PURP, overt and meaningful,
+  can take over [Vcause] while AND, often covert and empty, cannot (pp. 80–85).
+* The measures by which causatives keep within the cap (§§6.4–6.6): omission, demotion to an
+  adjunct, doubling and detransitivization.
 
-The internal `CausativeMorphology` enum (suffix / freeMorpheme / lexical)
-within COMPACT is closer to current field consensus than Song's COMPACT/AND/
-PURP partition itself — the file documents the typology Song proposed,
-not the typology the field has converged on.
+## References
 
-## Key Typology (Song §5.1-5.3 — UNVERIFIED location refs)
-
-| Type | Structure | Implicative? | Example |
-|------|-----------|-------------|---------|
-| COMPACT | Vcause ⊕ Veffect fused | Yes | English *kill*, Turkish *-dür* |
-| AND | Two clauses, sequential | Yes | Vata *le* |
-| PURP | Two clauses, purposive | No | Korean *-ke ha-* |
-
-The COMPACT type subsumes both lexical causatives (English *kill*) and
-morphological causatives (Turkish *-dür*, Japanese *-ase*, French *faire*).
+* [song-1996]
+* [comrie-1989]
 -/
 
 @[expose] public section
 
 namespace Song1996
 
-/-- Morphosyntactic type of causative construction (Song 1996).
+open Data.Examples (LinguisticExample)
+open Causation.Morphological (CausativeComplexity causeeDemotion)
 
-    Orthogonal to the force-dynamic builder: a `.make` builder
-    can be realized as COMPACT (English *make*), AND, or PURP depending
-    on the language.
+/-! ### Forms and types (chapter 2) -/
 
-    - `compact`: Cause and effect fused into a single predicate.
-      Includes lexical (*kill*) and morphological (*-dür*, *-ase*).
-    - `and_`: Two clauses joined sequentially. Effect clause is factual.
-    - `purp`: Two clauses, with purposive semantics. Effect clause is
-      non-implicative (not entailed to have occurred). -/
-inductive CausativeConstructionType where
-  /-- Cause + effect fused (lexical: *kill*; morphological: Turkish *-dür*) -/
-  | compact
-  /-- Two clauses, sequential (Vata *le*; effect is factual) -/
+/-- How [Vcause] is realized in a one-clause causative (§2.3): fused with [Veffect] beyond
+morphological analysis (English *kill*), bound to it (Turkish *-dür*), or a free verb beside it
+(French *faire*). -/
+inductive Vcause where
+  | fused
+  | bound
+  | free
+  deriving DecidableEq, Repr, Fintype
+
+/-- The term joining the two clauses of a biclausal causative: AND, a coordinator or nothing, the
+order of the clauses registering their sequence (§2.4), or PURP, a marker of goal or purpose on
+the clause of effect (§2.5). -/
+inductive Link where
   | and_
-  /-- Two clauses, purposive (Korean *-ke ha-*; effect not entailed) -/
+  | purp
+  deriving DecidableEq, Repr, Fintype
+
+/-- The order of the clause of cause and the clause of effect. -/
+inductive ClauseOrder where
+  | causeEffect
+  | effectCause
+  deriving DecidableEq, Repr, Fintype
+
+/-- A causative construction's form in Song's operating terms (§2.2): [Vcause] and [Veffect] in
+one clause, or a clause of cause and a clause of effect joined by a link. -/
+inductive Form where
+  | oneClause (v : Vcause)
+  | twoClauses (link : Link) (order : ClauseOrder)
+  deriving DecidableEq, Repr
+
+/-- The three types of causative construction; the names are mnemonic (p. 9). -/
+inductive CausativeType where
+  | compact
+  | and_
   | purp
   deriving DecidableEq, Repr
 
-/-- Whether a causative construction type is implicative.
+namespace Form
 
-    Implicative = the cause clause entails the effect clause.
+/-- The type of a form, by the schemas (3), (29) and (60): one clause is COMPACT whatever the
+order of [Vcause] and [Veffect]; a clause of purpose makes PURP in either order of the clauses;
+coordinated clauses make AND only with the clause of cause first, their order being fixed
+(p. 35). -/
+def type : Form → Option CausativeType
+  | oneClause _ => some .compact
+  | twoClauses .purp _ => some .purp
+  | twoClauses .and_ .causeEffect => some .and_
+  | twoClauses .and_ .effectCause => none
 
-    - COMPACT: Yes — *kill* entails death occurred
-    - AND: Yes — sequential structure implies effect is factual
-    - PURP: No — purposive structure leaves effect open -/
-def CausativeConstructionType.isImplicative : CausativeConstructionType → Bool
-  | .compact => true
-  | .and_ => true
-  | .purp => false
+/-- The class of a form in the traditional typology, on [comrie-1989]'s scale (§1.1, p. 135):
+lexical when [Vcause] and [Veffect] are fused, morphological when [Vcause] is bound or a free verb
+forming one unit with [Veffect], syntactic when they stand in different clauses. -/
+def traditional : Form → CausativeComplexity
+  | oneClause .fused => .lexical
+  | oneClause .bound => .morphological
+  | oneClause .free => .morphological
+  | twoClauses _ _ => .periphrastic
 
-/-- Morphosyntactic realization of the causative morpheme.
+/-- The COMPACT type is the traditional lexical and morphological types together (p. 9). -/
+theorem type_eq_compact_iff {f : Form} :
+    f.type = some .compact ↔ f.traditional ≠ .periphrastic := by
+  cases f with
+  | oneClause v => cases v <;> decide
+  | twoClauses l o => cases l <;> cases o <;> decide
 
-    Within COMPACT causatives, the causal element can be realized as:
-    - A bound morpheme (Turkish *-dür*, Japanese *-ase*)
-    - A free morpheme forming a tight unit (French *faire*)
-    - A lexical fusion with no separable morpheme (English *kill*)
+/-- The form of an example, as Song describes it. -/
+def ofRow (e : LinguisticExample) : Option Form :=
+  match e.feature? "clauses" with
+  | some "one" => oneClause <$> e.parse? "vcause" [("fused", .fused), ("bound", .bound),
+      ("free", .free)]
+  | some "two" => twoClauses <$> e.parse? "link" [("AND", .and_), ("PURP", .purp)] <*>
+      e.parse? "order" [("cause-effect", .causeEffect), ("effect-cause", .effectCause)]
+  | _ => none
 
-    Note: `CausativeMorphology.lexical` (no separable morpheme) and
-    `Semantics/Causation/Morphological.CausativeComplexity.lexical`
-    (most-compact end of Comrie's complexity scale) share the constructor
-    name `lexical` but are NOT semantically equivalent. The first is a
-    morpheme-shape claim; the second is a construction-complexity claim.
-    English *kill* satisfies both, but the inferential content differs:
-    one says "no separable causal morpheme", the other says "construction
-    is at the most-compact end of Comrie's continuum". -/
-inductive CausativeMorphology where
-  /-- Bound morpheme (affix): Turkish *-dür*, Japanese *-(s)ase* -/
-  | suffix
-  /-- Free morpheme forming tight unit: French *faire* -/
-  | freeMorpheme
-  /-- No separable morpheme: English *kill* (lexical causative) -/
-  | lexical
-  deriving DecidableEq, Repr
+end Form
 
-/-- A cross-linguistic causative construction datum. -/
-structure CausativeConstructionDatum where
-  /-- Language name -/
-  language : String
-  /-- Surface form or morpheme -/
-  form : String
-  /-- Construction type in Song's typology -/
-  constructionType : CausativeConstructionType
-  /-- Morphological realization (for compact types) -/
-  morphology : Option CausativeMorphology := none
-  /-- Gloss / translation -/
-  gloss : String := ""
-  deriving Repr, BEq
+/-- Song's typology does not refine the traditional one: English *kill* (1.b) and Turkish
+*öl-dür* (2.b) are both COMPACT, the one lexical and the other morphological (pp. 3, 9). -/
+theorem not_factorsThrough_type : ¬ Function.FactorsThrough Form.traditional Form.type :=
+  fun h ↦ absurd (h (a := (Form.ofRow Examples.ex_1b).get (by decide))
+    (b := (Form.ofRow Examples.ex_2b).get (by decide)) (by decide)) (by decide)
 
-/-! ## Cross-linguistic data -/
+/-- The traditional typology does not refine Song's: Vata *le* (5) and Korean *-ke* (3.b) are
+both syntactic, the one AND and the other PURP (p. 10). -/
+theorem not_factorsThrough_traditional : ¬ Function.FactorsThrough Form.type Form.traditional :=
+  fun h ↦ absurd (h (a := (Form.ofRow Examples.ex_5).get (by decide))
+    (b := (Form.ofRow Examples.ex_3b).get (by decide)) (by decide)) (by decide)
 
-/-- English *kill* — lexical COMPACT causative (kill = cause-to-die) -/
-def englishKill : CausativeConstructionDatum :=
-  { language := "English"
-  , form := "kill"
-  , constructionType := .compact
-  , morphology := some .lexical
-  , gloss := "cause to die (lexical)" }
+/-! ### Implicativity and the cognitive structure of causation (chapter 5) -/
 
-/-- Turkish *-dür* — morphological COMPACT causative suffix -/
-def turkishDur : CausativeConstructionDatum :=
-  { language := "Turkish"
-  , form := "-dür"
-  , constructionType := .compact
-  , morphology := some .suffix
-  , gloss := "öl-dür 'die-CAUS = kill'" }
+/-- The stages of the cognitive structure of causation, in their temporal order (10): the
+perception of a desire or wish (GOAL), the deliberate attempt to realize it (EVENT), and its
+accomplishment (RESULT). -/
+inductive Stage where
+  | goal
+  | event
+  | result
+  deriving DecidableEq, Repr, Fintype
 
-/-- Japanese *-(s)ase* — morphological COMPACT causative suffix -/
-def japaneseAse : CausativeConstructionDatum :=
-  { language := "Japanese"
-  , form := "-(s)ase"
-  , constructionType := .compact
-  , morphology := some .suffix
-  , gloss := "ik-ase 'go-CAUS = make go'" }
+section Meaning
 
-/-- French *faire* — COMPACT causative with free morpheme.
-    NB: this is the empirically disputed boundary case — Song calls
-    French *faire* a free-morpheme COMPACT, while Comrie 1989 / Folli &
-    Harley 2005 analyse French *faire-V* as periphrastic (two words,
-    analytic). The `toComplexity` bridge below maps it to
-    `morphological`, lossily collapsing the disagreement. -/
-def frenchFaire : CausativeConstructionDatum :=
-  { language := "French"
-  , form := "faire"
-  , constructionType := .compact
-  , morphology := some .freeMorpheme
-  , gloss := "faire lire 'make read'" }
+variable {W : Type*}
 
-/-- Korean *-ke ha-* — PURP-type causative (non-implicative) -/
-def koreanKeHa : CausativeConstructionDatum :=
-  { language := "Korean"
-  , form := "-ke ha-"
-  , constructionType := .purp
-  , gloss := "wus-ke ha- 'smile-PURP do = cause to smile'" }
+/-- The proposition a stage contributes, given the causer's goal that the effect come about, the
+causing event, and the effect. -/
+def Stage.prop (goal event effect : Set W) : Stage → Set W
+  | .goal => goal
+  | .event => event
+  | .result => effect
 
-/-- Vata *le* — AND-type causative (sequential, implicative) -/
-def vataLe : CausativeConstructionDatum :=
-  { language := "Vata"
-  , form := "le"
-  , constructionType := .and_
-  , gloss := "le ... 'and' (overt coordinator)" }
+/-- The semantic structure of the type a link forms (11): EVENT and RESULT for the AND type, GOAL
+and EVENT for the PURP type. -/
+def Link.stages : Link → Finset Stage
+  | .and_ => {.event, .result}
+  | .purp => {.goal, .event}
 
-def allData : List CausativeConstructionDatum :=
-  [englishKill, turkishDur, japaneseAse, frenchFaire, koreanKeHa, vataLe]
+/-- What a biclausal causative asserts: every stage its semantic structure expresses. -/
+def Link.meaning (l : Link) (goal event effect : Set W) : Set W :=
+  l.stages.inf (Stage.prop goal event effect)
 
-/-! ## Implicativity theorems -/
+/-- Both types express the causer's attempt, without which there is no causation (pp. 142–143). -/
+theorem event_mem_stages (l : Link) : Stage.event ∈ l.stages := by
+  cases l <;> decide
 
-/-- COMPACT causatives are implicative. -/
-theorem compact_is_implicative :
-    CausativeConstructionType.compact.isImplicative = true := rfl
+/-- A biclausal type entails its effect in every model exactly when it expresses RESULT: the AND
+type's clause of effect is factual, the PURP type's only a goal (p. 142). -/
+theorem forall_meaning_subset_iff (l : Link) :
+    (∀ (W : Type) (goal event effect : Set W), l.meaning goal event effect ⊆ effect) ↔
+      Stage.result ∈ l.stages := by
+  refine ⟨fun h ↦ by_contra fun hr ↦ ?_, fun hr W goal event effect ↦ Finset.inf_le hr⟩
+  have htop : l.meaning (W := Unit) Set.univ Set.univ ∅ = Set.univ :=
+    (Finset.inf_eq_top_iff _ _).2 fun s hs ↦ by cases s <;> first | rfl | exact absurd hs hr
+  exact (h Unit Set.univ Set.univ ∅ (by rw [htop]; trivial) : () ∈ (∅ : Set Unit))
 
-/-- AND-type causatives are implicative. -/
-theorem and_is_implicative :
-    CausativeConstructionType.and_.isImplicative = true := rfl
+/-- The AND type is fully implicative (p. 136). -/
+theorem and_meaning_subset (goal event effect : Set W) :
+    Link.and_.meaning goal event effect ⊆ effect :=
+  Finset.inf_le (by decide : Stage.result ∈ Link.and_.stages)
 
-/-- PURP-type causatives are NOT implicative. -/
+/-- The prototypical PURP type is nonimplicative (p. 136). -/
 theorem purp_not_implicative :
-    CausativeConstructionType.purp.isImplicative = false := rfl
+    ¬ ∀ (W : Type) (goal event effect : Set W), Link.purp.meaning goal event effect ⊆ effect :=
+  fun h ↦ absurd ((forall_meaning_subset_iff .purp).1 h) (by decide)
 
--- ============================================================================
--- WALS Abbreviations
--- ============================================================================
+/-- Implicativity restored (§5.4): under the assumption (19) that people generally succeed in
+realizing the goals they act for, a causative of either type entails its effect, the PURP type by
+the inference from (20) to (21). -/
+theorem meaning_subset_of_success (l : Link) {goal event effect : Set W}
+    (h : goal ∩ event ⊆ effect) : l.meaning goal event effect ⊆ effect := by
+  cases l
+  · exact and_meaning_subset goal event effect
+  · simpa [Link.meaning, Link.stages, Stage.prop] using h
 
-/-- The WALS 110A coding. -/
-abbrev ch110 := Data.WALS.F110A.allData
-/-- The WALS 111A coding. -/
-abbrev ch111 := Data.WALS.F111A.allData
+end Meaning
 
--- ============================================================================
--- WALS Converter Functions
--- ============================================================================
-
-/-- Map WALS 110A periphrastic causative type to Song's construction type.
-
-    - `sequentialOnly` → AND (two clauses, sequential, implicative)
-    - `purposiveOnly` → PURP (two clauses, purposive, non-implicative)
-    - `both` → no single mapping (language has both) -/
-def fromWALS110A : Data.WALS.F110A.PeriphrasticCausativeType →
-    Option CausativeConstructionType
-  | .sequentialOnly => some .and_
-  | .purposiveOnly => some .purp
-  | .both => none
-
-/-- Map WALS 111A nonperiphrastic causative type to whether the language
-    has COMPACT causatives. -/
-def fromWALS111A_hasCompact : Data.WALS.F111A.NonperiphrCausativeType → Bool
-  | .neither => false
-  | .morphologicalOnly => true
-  | .compoundOnly => true
-  | .both => true
-
-/-- Map WALS 111A to a `CausativeMorphology` when a unique mapping exists.
-
-    - `morphologicalOnly` → `.suffix` (bound morpheme)
-    - `compoundOnly` → `.freeMorpheme` (compound = free morpheme in tight unit)
-    - `both`, `neither` → no unique mapping -/
-def fromWALS111A_morphology :
-    Data.WALS.F111A.NonperiphrCausativeType → Option CausativeMorphology
-  | .morphologicalOnly => some .suffix
-  | .compoundOnly => some .freeMorpheme
-  | .neither => none
-  | .both => none
-
--- ============================================================================
--- WALS Grounding: Ch 110A (Periphrastic Causatives)
--- ============================================================================
-
-/-- English periphrastic causatives are sequential (AND-type) per WALS 110A. -/
-theorem english_ch110 :
-    (ch110.lookup "eng").map fromWALS110A =
-      some (some CausativeConstructionType.and_) := by
+/-- Song's diagnostic on his biclausal examples: denying the effect is acceptable exactly when the
+link's semantic structure lacks RESULT, as for the PURP causative (7) (pp. 12–13). -/
+theorem effectNegated_rows : ∀ e ∈ Examples.all, e.feature? "effect" = some "negated" →
+    ∀ l o, Form.ofRow e = some (.twoClauses l o) →
+      (e.judgment = .acceptable ↔ Stage.result ∉ l.stages) := by
   decide +kernel
 
-/-- Turkish periphrastic causatives are purposive (PURP-type) per WALS 110A. -/
-theorem turkish_ch110 :
-    (ch110.lookup "tur").map fromWALS110A =
-      some (some CausativeConstructionType.purp) := by
-  decide +kernel
+/-- Every example's form parses, so that `effectNegated_rows` reads each row. -/
+example : ∀ e ∈ Examples.all, (Form.ofRow e).isSome := by decide +kernel
 
-/-- Korean periphrastic causatives are purposive (PURP-type) per WALS 110A,
-    consistent with the `-ke ha-` construction being PURP in Song's typology. -/
-theorem korean_ch110 :
-    (ch110.lookup "kor").map fromWALS110A =
-      some (some CausativeConstructionType.purp) := by
-  decide +kernel
+/-- The PURP causative (7) meets the premises of `effectNegated_rows`. -/
+example : Examples.ex_7.feature? "effect" = some "negated" ∧
+    Form.ofRow Examples.ex_7 = some (.twoClauses .purp .effectCause) := by decide +kernel
 
-/-- Korean's WALS 110A classification matches our datum's construction type. -/
-theorem korean_ch110_matches_datum :
-    (ch110.lookup "kor").map fromWALS110A =
-      some (some koreanKeHa.constructionType) := by
-  decide +kernel
+/-- Compactness does not settle implicativity (§2.6; Figure 5.2, points A and B): denying the
+effect of a COMPACT causative is contradictory for English *kill* (6) and acceptable for the
+Kammu *p-* causative (104). -/
+theorem compact_implicativity_varies : ∃ e₁ ∈ Examples.all, ∃ e₂ ∈ Examples.all,
+    e₁.feature? "effect" = some "negated" ∧ e₂.feature? "effect" = some "negated" ∧
+    (Form.ofRow e₁).bind Form.type = some .compact ∧
+    (Form.ofRow e₂).bind Form.type = some .compact ∧
+    e₁.judgment = .unacceptable ∧ e₂.judgment = .acceptable :=
+  ⟨Examples.ex_6, by simp [Examples.all], Examples.ex_104, by simp [Examples.all],
+    by decide +kernel⟩
 
--- ============================================================================
--- WALS Grounding: Ch 111A (Nonperiphrastic Causatives)
--- ============================================================================
+/-! ### NP density control and the case hierarchy (chapter 6) -/
 
-/-- English has nonperiphrastic (compact) causatives per WALS 111A. -/
-theorem english_ch111 :
-    (ch111.lookup "eng").map fromWALS111A_hasCompact =
-      some true := by
-  decide +kernel
+/-- The core NPs of the paradigm causative of [comrie-1989]'s case hierarchy on a base of valency
+`v`: the causer, the base's other arguments keeping their relations, and the causee unless the
+hierarchy makes it an oblique, which is no core NP (p. 178). -/
+def paradigmCoreNPs (v : ℕ) : ℕ :=
+  v + if causeeDemotion v = .oblique then 0 else 1
 
-/-- English nonperiphrastic causatives are morphological per WALS 111A
-    (corresponding to lexical causatives like *kill*). -/
-theorem english_ch111_morphology :
-    (ch111.lookup "eng").map fromWALS111A_morphology =
-      some (some CausativeMorphology.suffix) := by
-  decide +kernel
+/-- The paradigm causative of an intransitive, transitive or ditransitive base never has more than
+three core NPs: it keeps within the cap of three that Song finds in languages causativizing
+transitive bases (p. 175). -/
+theorem paradigmCoreNPs_le_three {v : ℕ} (hv : v ∈ Set.Icc 1 3) : paradigmCoreNPs v ≤ 3 := by
+  obtain ⟨h₁, h₃⟩ := hv
+  interval_cases v <;> decide
 
-/-- Turkish has nonperiphrastic (compact) causatives per WALS 111A. -/
-theorem turkish_ch111 :
-    (ch111.lookup "tur").map fromWALS111A_hasCompact =
-      some true := by
-  decide +kernel
+/-- In a language capped at two core NPs, such as Lamang, Uradhi or Urubu-Kaapor, the paradigm
+causative of a transitive base, with its causee an indirect object, exceeds the cap: such a
+language has no morphological causative of transitives (§6.4, p. 174). -/
+theorem paradigmCoreNPs_two : causeeDemotion 2 = .indirectObject ∧ 2 < paradigmCoreNPs 2 := by
+  decide
 
-/-- Turkish nonperiphrastic causatives are morphological (suffix `-dür`) per WALS 111A,
-    matching our datum. -/
-theorem turkish_ch111_morphology :
-    (ch111.lookup "tur").map fromWALS111A_morphology =
-      some turkishDur.morphology := by
-  decide +kernel
-
-/-- Japanese has nonperiphrastic (compact) causatives per WALS 111A. -/
-theorem japanese_ch111 :
-    (ch111.lookup "jpn").map fromWALS111A_hasCompact =
-      some true := by
-  decide +kernel
-
-/-- Japanese nonperiphrastic causatives are morphological (suffix `-(s)ase`) per WALS 111A,
-    matching our datum. -/
-theorem japanese_ch111_morphology :
-    (ch111.lookup "jpn").map fromWALS111A_morphology =
-      some japaneseAse.morphology := by
-  decide +kernel
-
-/-- French has nonperiphrastic (compact) causatives per WALS 111A.
-    WALS classifies French as `both` (morphological and compound). -/
-theorem french_ch111 :
-    (ch111.lookup "fre").map fromWALS111A_hasCompact =
-      some true := by
-  decide +kernel
-
-/-- Korean has nonperiphrastic (compact) causatives per WALS 111A,
-    in addition to the periphrastic `-ke ha-` construction. -/
-theorem korean_ch111 :
-    (ch111.lookup "kor").map fromWALS111A_hasCompact =
-      some true := by
-  decide +kernel
-
-/-- Korean nonperiphrastic causatives are morphological per WALS 111A. -/
-theorem korean_ch111_morphology :
-    (ch111.lookup "kor").map fromWALS111A_morphology =
-      some (some CausativeMorphology.suffix) := by
-  decide +kernel
-
--- ============================================================================
--- WALS Distribution Theorems
--- ============================================================================
-
-/-- WALS 110A total: 118 languages with periphrastic causative data. -/
-theorem ch110_total : ch110.length = 118 := by decide +kernel
-
-/-- WALS 111A total: 310 languages with nonperiphrastic causative data. -/
-theorem ch111_total : ch111.length = 310 := by decide +kernel
-
-/-- WALS 110A: 35 languages have sequential-only periphrastic causatives. -/
-theorem ch110_sequentialOnly :
-    (ch110.filter (·.2 == .sequentialOnly)).length = 35 := by decide +kernel
-
-/-- WALS 110A: 68 languages have purposive-only periphrastic causatives. -/
-theorem ch110_purposiveOnly :
-    (ch110.filter (·.2 == .purposiveOnly)).length = 68 := by decide +kernel
-
-/-- WALS 110A: 15 languages have both sequential and purposive. -/
-theorem ch110_both :
-    (ch110.filter (·.2 == .both)).length = 15 := by decide +kernel
-
-/-- WALS 111A: 254 languages have morphological-only nonperiphrastic causatives. -/
-theorem ch111_morphologicalOnly :
-    (ch111.filter (·.2 == .morphologicalOnly)).length = 254 := by decide +kernel
-
-/-- WALS 111A: 9 languages have compound-only nonperiphrastic causatives. -/
-theorem ch111_compoundOnly :
-    (ch111.filter (·.2 == .compoundOnly)).length = 9 := by decide +kernel
-
-/-- WALS 111A: 24 languages have both morphological and compound. -/
-theorem ch111_both :
-    (ch111.filter (·.2 == .both)).length = 24 := by decide +kernel
-
-/-- WALS 111A: 23 languages have neither morphological nor compound. -/
-theorem ch111_neither :
-    (ch111.filter (·.2 == .neither)).length = 23 := by decide +kernel
-
-/-- Purposive periphrastic causatives (PURP-type) are the dominant pattern
-    cross-linguistically, outnumbering sequential (AND-type) roughly 2:1. -/
-theorem purp_dominates_and :
-    (ch110.filter (·.2 == .purposiveOnly)).length >
-    (ch110.filter (·.2 == .sequentialOnly)).length := by decide +kernel
-
-/-- Morphological causatives overwhelmingly dominate nonperiphrastic strategies:
-    254 out of 310 languages (82%) have morphological-only. -/
-theorem morphological_dominates :
-    (ch111.filter (·.2 == .morphologicalOnly)).length * 100 / ch111.length ≥ 81 := by
-  decide +kernel
-
--- ============================================================================
--- Bridge: Song's Typology ↔ Comrie's Complexity Scale
--- ============================================================================
-
-open Causation.Morphological (CausativeComplexity)
-
-/-- Song's construction types map to [comrie-1989]'s complexity scale.
-
-    The mapping is many-to-one and **lossy** at the COMPACT/freeMorpheme
-    boundary: French *faire-V* is `compact + freeMorpheme` in Song's
-    typology but `periphrastic` (analytic, two-word) in Comrie's. We
-    collapse this disagreement by mapping COMPACT → morphological
-    uniformly; the cost is invisibility for the *faire* case.
-
-    See [folli-harley-2005] for the syntactic-structure dispute
-    over French *faire-infinitive* vs *faire-par* that this collapse
-    obscures. -/
-def CausativeConstructionType.toComplexity :
-    CausativeConstructionType → CausativeComplexity
-  | .compact => .morphological
-  | .and_    => .periphrastic
-  | .purp    => .periphrastic
-
-/-- All non-compact (multi-clause) types are periphrastic. -/
-theorem multiclause_is_periphrastic (t : CausativeConstructionType) :
-    t ≠ .compact → t.toComplexity = CausativeComplexity.periphrastic := by
-  cases t <;> simp [CausativeConstructionType.toComplexity]
-
-/-- Compact causatives are at most morphological — never periphrastic. -/
-theorem compact_not_periphrastic :
-    CausativeConstructionType.compact.toComplexity ≠
-      CausativeComplexity.periphrastic := by
-  simp [CausativeConstructionType.toComplexity]
-
-/-- Both multi-clause Song types map to Comrie's `periphrastic`.
-    Relocated here from `Studies/Comrie1989.lean` per the
-    chronology-discipline rule (Comrie 1989 cannot cite Song 1996; the
-    cross-paper bridge belongs in the later paper's study file). -/
-theorem song_multiclause_both_periphrastic :
-    CausativeConstructionType.and_.toComplexity = CausativeComplexity.periphrastic ∧
-    CausativeConstructionType.purp.toComplexity = CausativeComplexity.periphrastic :=
-  ⟨rfl, rfl⟩
+/-- Under a cap of `n` core NPs, the bases whose morphological causative stays within it form a
+lower set of valencies: productivity declines from intransitive to transitive to ditransitive
+bases (p. 172). -/
+theorem isLowerSet_setOf_add_one_le (n : ℕ) : IsLowerSet {v : ℕ | v + 1 ≤ n} :=
+  fun _ _ h h' ↦ le_trans (Nat.add_le_add_right h 1) h'
 
 end Song1996

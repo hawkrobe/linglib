@@ -7,8 +7,6 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Morphological causation: compactness and directness
 
-[comrie-1989] [song-1996]
-
 Causative constructions vary along two scales: **morphological complexity**, from compact
 (lexical) to analytic (periphrastic), and **directness of mediation**, from a causer that brings
 about the result itself to one that acts through a causee. [comrie-1989]'s generalization is that
@@ -20,7 +18,6 @@ base valency rises (`causeeDemotion_antitoneOn`).
 ## References
 
 * [comrie-1989]
-* [song-1996]
 -/
 
 @[expose] public section
@@ -56,15 +53,7 @@ instance : LinearOrder Mediation :=
 continuum:
 - **lexical**: suppletive or idiosyncratic (*kill* ~ *die*, *fell* ~ *fall*)
 - **morphological**: a productive affix (Japanese *-(s)ase*)
-- **periphrastic**: an analytic multi-word construction (English *make X do Y*)
-
-`CausativeComplexity.lexical` is a construction-level claim ("this causative sits at the compact
-end of Comrie's continuum"), while [song-1996]'s `CausativeMorphology.lexical` in
-`Studies/Song1996.lean` is a morpheme-shape claim ("no separable causal morpheme exists"). English
-*kill* satisfies both, but the two enums are not interconvertible: the bridge
-`CausativeConstructionType.toComplexity` there sends Song's `compact / freeMorpheme` (French
-*faire*-V) to `morphological`, although [folli-harley-2005] analyse French *faire* as
-periphrastic. -/
+- **periphrastic**: an analytic multi-word construction (English *make X do Y*) -/
 inductive CausativeComplexity where
   | lexical
   | morphological

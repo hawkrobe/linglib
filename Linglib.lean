@@ -416,8 +416,6 @@ import Linglib.Data.ProtoRoles.Dowty1991
 import Linglib.Data.ProtoRoles.Schema
 import Linglib.Data.WALS.Features.F101A
 import Linglib.Data.WALS.Features.F106A
-import Linglib.Data.WALS.Features.F110A
-import Linglib.Data.WALS.Features.F111A
 import Linglib.Data.WALS.Features.F113A
 import Linglib.Data.WALS.Features.F115A
 import Linglib.Data.WALS.Features.F121A

@@ -1,0 +1,420 @@
+[
+ {
+  "id": "song1996_1b",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "(1.b), p. 3"
+  },
+  "language": "stan1293",
+  "primaryText": "The policewoman killed the terrorist.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "The policewoman killed the terrorist.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "clauses",
+    "one"
+   ],
+   [
+    "vcause",
+    "fused"
+   ]
+  ],
+  "comment": "The lexical causative: kill and the basic verb die of (1.a) share no form; the COMPACT type at maximal fusion (pp. 3, 9)."
+ },
+ {
+  "id": "song1996_6",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "(6), p. 12"
+  },
+  "language": "stan1293",
+  "primaryText": "The policewoman killed the terrorist, but he didn't die.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "The policewoman killed the terrorist, but he didn't die.",
+  "context": "",
+  "judgment": "unacceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "clauses",
+    "one"
+   ],
+   [
+    "vcause",
+    "fused"
+   ],
+   [
+    "effect",
+    "negated"
+   ]
+  ],
+  "comment": "Song's diagnostic of implicativity: kill entails the death of the terrorist, so its denial is contradictory (p. 12, citing Karttunen 1971a)."
+ },
+ {
+  "id": "song1996_2b",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "(2.b), p. 3"
+  },
+  "language": "nucl1301",
+  "primaryText": "Ali Hasan-ı öl-dür-dü",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "Ali",
+    "Ali"
+   ],
+   [
+    "Hasan-ı",
+    "Hasan-DO"
+   ],
+   [
+    "öl-dür-dü",
+    "die-CS-PST"
+   ]
+  ],
+  "translation": "Ali killed Hasan.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "clauses",
+    "one"
+   ],
+   [
+    "vcause",
+    "bound"
+   ]
+  ],
+  "comment": "The morphological causative: the suffix -dür attached to the basic verb öl- 'die' of (2.a) (p. 3)."
+ },
+ {
+  "id": "song1996_3b",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "(3.b), p. 3"
+  },
+  "language": "kore1280",
+  "primaryText": "kiho-ka cini-ka wus-ke ha-əss-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "kiho-ka",
+    "Keeho-NOM"
+   ],
+   [
+    "cini-ka",
+    "Jinee-NOM"
+   ],
+   [
+    "wus-ke",
+    "smile-COMP"
+   ],
+   [
+    "ha-əss-ta",
+    "cause-PST-IND"
+   ]
+  ],
+  "translation": "Keeho caused Jinee to smile.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "clauses",
+    "two"
+   ],
+   [
+    "link",
+    "PURP"
+   ],
+   [
+    "order",
+    "effect-cause"
+   ]
+  ],
+  "comment": "Glossed COMP here after the traditional analysis of -ke as a complementizer; Song identifies it as purposive and glosses it PURP from (7) on (pp. 10, 12)."
+ },
+ {
+  "id": "song1996_4a",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "(4.a), p. 5"
+  },
+  "language": "nucl1643",
+  "primaryText": "Hanako ga Ziroo o ik-ase-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "Hanako",
+    "Hanako"
+   ],
+   [
+    "ga",
+    "NOM"
+   ],
+   [
+    "Ziroo",
+    "Ziroo"
+   ],
+   [
+    "o",
+    "ACC"
+   ],
+   [
+    "ik-ase-ta",
+    "go-CS-PST"
+   ]
+  ],
+  "translation": "Hanako made Ziroo go.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "clauses",
+    "one"
+   ],
+   [
+    "vcause",
+    "bound"
+   ]
+  ],
+  "comment": "The morphological causative in -ase, the causee in the accusative; the dative version (4.b) is 'Hanako got Ziroo to go' (pp. 5, 9)."
+ },
+ {
+  "id": "song1996_5",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "(5), p. 10"
+  },
+  "language": "lako1244",
+  "primaryText": "ǹ gbā le yÒ-Ò lī",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "ǹ",
+    "I"
+   ],
+   [
+    "gbā",
+    "speak"
+   ],
+   [
+    "le",
+    "CONJ"
+   ],
+   [
+    "yÒ-Ò",
+    "child-DEF"
+   ],
+   [
+    "lī",
+    "eat"
+   ]
+  ],
+  "translation": "I make the child eat.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "clauses",
+    "two"
+   ],
+   [
+    "link",
+    "AND"
+   ],
+   [
+    "order",
+    "cause-effect"
+   ]
+  ],
+  "comment": "The AND type: the clause of cause and the clause of effect coordinated by le, in that order; Song's source is Koopman (1984: 24-25) (pp. 10, 36). The glottocode is WALS's for Koopman's Vata."
+ },
+ {
+  "id": "song1996_7",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "(7), p. 13"
+  },
+  "language": "kore1280",
+  "primaryText": "kiho-ka cini-ka wus-ke ha-əss-ɨna cini-ka wus-ci=an-əss-ta",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "kiho-ka",
+    "Keeho-NOM"
+   ],
+   [
+    "cini-ka",
+    "Jinee-NOM"
+   ],
+   [
+    "wus-ke",
+    "smile-PURP"
+   ],
+   [
+    "ha-əss-ɨna",
+    "cause-PST-but"
+   ],
+   [
+    "cini-ka",
+    "Jinee-NOM"
+   ],
+   [
+    "wus-ci=an-əss-ta",
+    "smile-NEG-PST-IND"
+   ]
+  ],
+  "translation": "Keeho caused Jinee to smile, but she didn't smile.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "clauses",
+    "two"
+   ],
+   [
+    "link",
+    "PURP"
+   ],
+   [
+    "order",
+    "effect-cause"
+   ],
+   [
+    "effect",
+    "negated"
+   ]
+  ],
+  "comment": "The PURP causative of (3.b) with its effect denied: fully grammatical, so the prototypical PURP type is nonimplicative (pp. 12-13)."
+ },
+ {
+  "id": "song1996_24",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "(24), p. 33"
+  },
+  "language": "stan1290",
+  "primaryText": "Je ferai lire le livre à Nicole",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "Je",
+    "I"
+   ],
+   [
+    "ferai",
+    "make + FUT"
+   ],
+   [
+    "lire",
+    "read"
+   ],
+   [
+    "le",
+    "the"
+   ],
+   [
+    "livre",
+    "book (ACC)"
+   ],
+   [
+    "à",
+    "DAT"
+   ],
+   [
+    "Nicole",
+    "Nicole"
+   ]
+  ],
+  "translation": "I'll make Nicole read the book.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "clauses",
+    "one"
+   ],
+   [
+    "vcause",
+    "free"
+   ]
+  ],
+  "comment": "The COMPACT type with [Vcause] a free morpheme: faire and the verb of effect adjacent (§2.3.2). Song glosses à Nicole jointly as 'Nicole (DAT)'."
+ },
+ {
+  "id": "song1996_104",
+  "source": {
+   "bibkey": "song-1996",
+   "paperLabel": "(104), p. 68"
+  },
+  "language": "khmu1256",
+  "primaryText": "kə̀ə p-ŋ̀mɔ́ɔŋ nàa, nàa pə́ə mɔ́ɔŋ",
+  "discourseSegments": [],
+  "glossedTokens": [
+   [
+    "kə̀ə",
+    "he"
+   ],
+   [
+    "p-ŋ̀mɔ́ɔŋ",
+    "CP-sad"
+   ],
+   [
+    "nàa,",
+    "she"
+   ],
+   [
+    "nàa",
+    "she"
+   ],
+   [
+    "pə́ə",
+    "not"
+   ],
+   [
+    "mɔ́ɔŋ",
+    "sad"
+   ]
+  ],
+  "translation": "He tried to make her sad, but she didn't become sad.",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "clauses",
+    "one"
+   ],
+   [
+    "vcause",
+    "bound"
+   ],
+   [
+    "effect",
+    "negated"
+   ]
+  ],
+  "comment": "A COMPACT causative in p- that is fully nonimplicative; Song's source is Svantesson (1983: 106), and the translation's 'tried' is added because the literal one is ungrammatical in English (p. 68, note 21; repeated as (35.a), p. 103)."
+ }
+]
