@@ -6,6 +6,8 @@ public import Linglib.Semantics.Questions.Highlighting
 public import Linglib.Semantics.Evidential.Defs
 public import Linglib.Discourse.Role
 public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Logic.Modal.Defs
+public import Mathlib.Order.Filter.Basic
 public import Linglib.Studies.Faller2019
 
 /-!
@@ -373,54 +375,25 @@ theorem mi_infelicitous_after_assert
   simp [BiLayered.ofProp] at this
   exact absurd hw this
 
-/-! ### § 6. Cross-framework divergence: MV's partition vs R&H's verum partition
+/-! ### § 6. MV's partition and [romero-han-2004]'s VERUM partition
 
-Romero & Han 2004 analyse verum as a CommonGround-modal operator `RomeroHan2004.verum`
-producing an *unbalanced* polar partition `{VERUM p, ¬VERUM p}`
-(line-b account). MV implicitly takes a line-a (focus over polarity)
-position: the partition over which `=mi` operates is the standard polar
-`{p, pᶜ}`. These two partitions are in general distinct — the line-a/b
-debate (Goodhue 2022a §1) is non-vacuous.
+The partition over which `=mi` operates is the polar `{p, pᶜ}`. [romero-han-2004]'s VERUM,
+the necessity `□[R] (p ∈ cg ·)` along the knowledge and conversational goals of an
+individual, yields instead the partition on whether `p` is for sure to be added to the common
+ground.
 -/
 
-/-- The MV polar partition `{p, pᶜ}` and the R&H verum partition
-    `{VERUM p, ¬VERUM p}` are in general distinct. There exist
-    contexts (witness: any model where VERUM p ≠ p) in which MV's
-    line-a focus partition and R&H's line-b VERUM partition pick out
-    different cells.
-
-    Witness construction: the VERUM operator can fail to coincide
-    with `p` whenever the speaker's epistemic state and conversational
-    goals don't trivially settle p — which is the very case that makes
-    verum interesting (cf. R&H §3 on biased polar questions). -/
+open scoped ModalLogic in
+/-- MV's polar partition and [romero-han-2004]'s VERUM partition differ in general: where the
+common ground accepts nothing contingent, VERUM of a contingent proposition holds nowhere, so
+its partition is `{∅, univ}`. -/
 theorem mv_partition_can_diverge_from_romeroHan_partition :
-    ∃ (W : Type) (p : Set W) (verumP : Set W),
-      verumP ≠ p ∧ ({p, pᶜ} : Set (Set W)) ≠ {verumP, verumPᶜ} := by
-  -- Two-world model. Take p = {w₀} (a non-trivial proposition) and the
-  -- R&H verum reading verumP = ∅ (the speaker is NOT for-sure committed
-  -- to p — bias-evidence model where verum picks out a strictly weaker
-  -- statement). The partitions differ because {p, pᶜ} = {{w₀}, {w₁}}
-  -- while {verumP, verumPᶜ} = {∅, univ}, and {w₀} is not in the latter.
-  refine ⟨Bool, ({true} : Set Bool), (∅ : Set Bool), ?_, ?_⟩
-  · -- ∅ ≠ {true}: rewrite reverses the singleton-empty difference
-    intro h
-    have h1 : true ∈ ({true} : Set Bool) := rfl
-    rw [← h] at h1
-    exact h1
-  · -- {{true}, {true}ᶜ} ≠ {∅, ∅ᶜ}: LHS has {true} as a member; RHS has only
-    -- {∅, univ}. {true} is neither ∅ nor univ.
-    intro h
-    have hmem : ({true} : Set Bool) ∈
-        (({{true}, ({true} : Set Bool)ᶜ}) : Set (Set Bool)) := by simp
-    rw [h] at hmem
-    rcases hmem with h1 | h1
-    · -- {true} = ∅
-      have h2 : true ∈ ({true} : Set Bool) := rfl
-      rw [h1] at h2
-      exact h2
-    · -- {true} = ∅ᶜ = Set.univ; but false ∉ {true} while false ∈ univ
-      have h2 : false ∈ ({true} : Set Bool) := by rw [h1]; trivial
-      exact (by simp at h2 : False)
+    ∃ (R : Bool → Bool → Prop) (cg : Bool → Filter Bool) (p : Set Bool),
+      ({p, pᶜ} : Set (Set Bool)) ≠ {{w | □[R] (p ∈ cg ·) w}, {w | □[R] (p ∈ cg ·) w}ᶜ} := by
+  refine ⟨fun _ _ ↦ True, fun _ ↦ ⊤, {true}, fun h ↦ ?_⟩
+  have hmem : ({true} : Set Bool) ∈ ({{true}, {true}ᶜ} : Set (Set Bool)) := Or.inl rfl
+  rw [h] at hmem
+  simp [ModalLogic.box, Set.ext_iff] at hmem
 
 /-! ### § 7. The defining commitment contrast (corollary of substrate)
 
