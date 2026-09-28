@@ -170,7 +170,7 @@ def ocp : Constraint (Parse α) := fun p ↦ (p.morphemes.map Constraint.ocp).su
 /-! ### The competition between a doubled name and its control -/
 
 /-- The OCP and DEP against the input of the level. -/
-def con (x : α) (l : Level) : CON (Parse α) 2 := ![ocp, dep (l.input x)]
+def con (x : α) (l : Level) : ConstraintSet (Parse α) 2 := ![ocp, dep (l.input x)]
 
 /-- The competition between XX and XY at a level, under a ranking of the OCP and DEP. -/
 def tableau (x y : α) (l : Level) (r : Ranking 2) : Tableau (Parse α) 2 :=

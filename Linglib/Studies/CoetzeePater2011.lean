@@ -172,7 +172,7 @@ def maxPreV : Constraint Candidate := Constraint.binary λ c => c.2 = .delete �
 def maxFinal : Constraint Candidate := Constraint.binary λ c => c.2 = .delete ∧ c.1 = .pause
 
 /-- The constraint set (11) lists the constraints in the paper's order. -/
-def con : CON Candidate 4 := ![starCT, maxC, maxPreV, maxFinal]
+def con : ConstraintSet Candidate 4 := ![starCT, maxC, maxPreV, maxFinal]
 
 /-- The violation profiles take the shape that POC's `winProb` consumes. -/
 def vp (ctx : Context) (o : Output) (i : Fin 4) : ℕ := con i (ctx, o)

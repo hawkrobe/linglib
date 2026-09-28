@@ -49,23 +49,24 @@ variable {I O : Type*} [Fintype O] {n : ℕ}
 
 /-- Eq. (1): the conditional probability of an output is the softmax of its harmony over the
 candidate set. -/
-noncomputable def gjProb (con : CON (I × O) n) (w : Fin n → ℝ) (i : I) (o : O) : ℝ :=
+noncomputable def gjProb (con : ConstraintSet (I × O) n) (w : Fin n → ℝ) (i : I) (o : O) : ℝ :=
   softmax (λ o' => harmonyScore con w (i, o')) o
 
 /-- Eq. (2), logged: the log pseudo-likelihood of the training pairs. -/
-noncomputable def logPseudoLikelihood (con : CON (I × O) n) (w : Fin n → ℝ)
+noncomputable def logPseudoLikelihood (con : ConstraintSet (I × O) n) (w : Fin n → ℝ)
     (data : List (I × O)) : ℝ :=
   (data.map λ p => log (gjProb con w p.1 p.2)).sum
 
 /-- Eq. (3) with the paper's common prior, mean zero and deviation σ for every weight. -/
-noncomputable def regularizedObjective (con : CON (I × O) n) (w : Fin n → ℝ) (data : List (I × O))
-    (σ : ℝ) : ℝ :=
+noncomputable def regularizedObjective (con : ConstraintSet (I × O) n) (w : Fin n → ℝ)
+    (data : List (I × O)) (σ : ℝ) : ℝ :=
   logPseudoLikelihood con w data - ∑ j, w j ^ 2 / (2 * σ ^ 2)
 
 /-- Replicating the corpus r times while dividing the prior's variance by r multiplies the
 objective by r: the weights learned depend on nσ² alone. -/
-theorem regularizedObjective_replicate (con : CON (I × O) n) (w : Fin n → ℝ) (data : List (I × O))
-    {r : ℕ} (hr : 0 < r) {σ σ' : ℝ} (hσ : 0 < σ) (h : (r : ℝ) * σ' ^ 2 = σ ^ 2) :
+theorem regularizedObjective_replicate (con : ConstraintSet (I × O) n) (w : Fin n → ℝ)
+    (data : List (I × O)) {r : ℕ} (hr : 0 < r) {σ σ' : ℝ} (hσ : 0 < σ)
+    (h : (r : ℝ) * σ' ^ 2 = σ ^ 2) :
     regularizedObjective con w (List.replicate r data).flatten σ' =
       r * regularizedObjective con w data σ := by
   have hr' : (r : ℝ) ≠ 0 := by positivity
@@ -80,7 +81,7 @@ theorem regularizedObjective_replicate (con : CON (I × O) n) (w : Fin n → ℝ
   field_simp
 
 /-- The same weights maximize the objective before and after replication. -/
-theorem regularizedObjective_replicate_le_iff (con : CON (I × O) n) (w w' : Fin n → ℝ)
+theorem regularizedObjective_replicate_le_iff (con : ConstraintSet (I × O) n) (w w' : Fin n → ℝ)
     (data : List (I × O)) {r : ℕ} (hr : 0 < r) {σ σ' : ℝ} (hσ : 0 < σ)
     (h : (r : ℝ) * σ' ^ 2 = σ ^ 2) :
     regularizedObjective con w' (List.replicate r data).flatten σ' ≤
@@ -93,7 +94,8 @@ theorem regularizedObjective_replicate_le_iff (con : CON (I × O) n) (w w' : Fin
 /-- With the other weights held fixed, the probability of an observation is the softmax of an
 affine function of weight j: the negated violations of constraint j as the score, the other
 constraints' harmony as the offset. -/
-theorem gjProb_update (con : CON (I × O) n) (w : Fin n → ℝ) (j : Fin n) (i : I) (o : O) (t : ℝ) :
+theorem gjProb_update (con : ConstraintSet (I × O) n) (w : Fin n → ℝ) (j : Fin n) (i : I) (o : O)
+    (t : ℝ) :
     gjProb con (Function.update w j t) i o =
       softmax (t • (λ o' => -((con j (i, o') : ℕ) : ℝ)) +
         λ o' => -∑ k ∈ ({j}ᶜ : Finset (Fin n)), w k * (con k (i, o') : ℝ)) o := by
@@ -109,15 +111,15 @@ theorem gjProb_update (con : CON (I × O) n) (w : Fin n → ℝ) (j : Fin n) (i 
 /-- Footnote 4: with the other weights held fixed, the log probability of an observation is
 concave in weight j, since the harmony is then affine in that weight and the log-partition
 function convex. -/
-theorem concaveOn_log_gjProb_update (con : CON (I × O) n) (w : Fin n → ℝ) (j : Fin n) (i : I)
-    (o : O) : ConcaveOn ℝ Set.univ λ t => log (gjProb con (Function.update w j t) i o) := by
+theorem concaveOn_log_gjProb_update (con : ConstraintSet (I × O) n) (w : Fin n → ℝ) (j : Fin n)
+    (i : I) (o : O) : ConcaveOn ℝ Set.univ λ t => log (gjProb con (Function.update w j t) i o) := by
   have : Nonempty O := ⟨o⟩
   simp_rw [gjProb_update]
   exact concaveOn_log_softmax _ _ o
 
 /-- The log pseudo-likelihood of a corpus is concave in each weight, as a sum of concave terms. -/
-theorem concaveOn_logPseudoLikelihood_update (con : CON (I × O) n) (w : Fin n → ℝ) (j : Fin n)
-    (data : List (I × O)) :
+theorem concaveOn_logPseudoLikelihood_update (con : ConstraintSet (I × O) n) (w : Fin n → ℝ)
+    (j : Fin n) (data : List (I × O)) :
     ConcaveOn ℝ Set.univ λ t => logPseudoLikelihood con (Function.update w j t) data := by
   induction data with
   | nil => simpa [logPseudoLikelihood] using concaveOn_const (0 : ℝ) convex_univ
@@ -128,25 +130,25 @@ theorem concaveOn_logPseudoLikelihood_update (con : CON (I × O) n) (w : Fin n �
 /-! ### Two candidates: learning from differences (section 3.2) -/
 
 /-- Two candidates as a constraint set over one input: the winner at 0, the loser at 1. -/
-def pairCON (win lose : Fin n → ℕ) : CON (Unit × Fin 2) n :=
+def pairConstraintSet (win lose : Fin n → ℕ) : ConstraintSet (Unit × Fin 2) n :=
   λ j c => if c.2 = 0 then win j else lose j
 
 /-- A two-candidate model sees the violations only through their difference: the winner's
 probability is the sigmoid of the weighted difference vector. -/
 theorem gjProb_pair (w : Fin n → ℝ) (win lose : Fin n → ℕ) :
-    gjProb (pairCON win lose) w () 0 = sigmoid (∑ j, w j * ((lose j : ℝ) - win j)) := by
+    gjProb (pairConstraintSet win lose) w () 0 = sigmoid (∑ j, w j * ((lose j : ℝ) - win j)) := by
   unfold gjProb
   rw [softmax_fin_two]
   congr 1
-  simp only [harmonyScore_eq_neg_sum, pairCON, Fin.isValue, ite_true, ite_false, one_ne_zero,
-    mul_sub, Finset.sum_sub_distrib]
+  simp only [harmonyScore_eq_neg_sum, pairConstraintSet, Fin.isValue, ite_true, ite_false,
+    one_ne_zero, mul_sub, Finset.sum_sub_distrib]
   ring
 
 /-- Two candidate pairs with the same difference vector get the same winner probability under
 every weighting. -/
 theorem gjProb_pair_eq_of_diff_eq (w : Fin n → ℝ) {win lose win' lose' : Fin n → ℕ}
     (h : (λ j => (lose j : ℤ) - win j) = λ j => (lose' j : ℤ) - win' j) :
-    gjProb (pairCON win lose) w () 0 = gjProb (pairCON win' lose') w () 0 := by
+    gjProb (pairConstraintSet win lose) w () 0 = gjProb (pairConstraintSet win' lose') w () 0 := by
   rw [gjProb_pair, gjProb_pair]
   congr 1
   refine Finset.sum_congr rfl λ j _ => ?_
@@ -211,8 +213,8 @@ theorem rows_collapse : ∃ r₁ ∈ rows, ∃ r₂ ∈ rows, r₁.winner ≠ r�
 /-- The two classes receive the same winner probability under every weighting. -/
 theorem rows_collapse_prob :
     ∃ r₁ ∈ rows, ∃ r₂ ∈ rows, r₁ ≠ r₂ ∧
-      ∀ w, gjProb (pairCON r₁.winner r₁.loser) w () 0 =
-        gjProb (pairCON r₂.winner r₂.loser) w () 0 := by
+      ∀ w, gjProb (pairConstraintSet r₁.winner r₁.loser) w () 0 =
+        gjProb (pairConstraintSet r₂.winner r₂.loser) w () 0 := by
   obtain ⟨r₁, h₁, r₂, h₂, hne, hd⟩ := rows_collapse
   exact ⟨r₁, h₁, r₂, h₂, λ h => hne (congrArg Row.winner h), λ w => gjProb_pair_eq_of_diff_eq w hd⟩
 

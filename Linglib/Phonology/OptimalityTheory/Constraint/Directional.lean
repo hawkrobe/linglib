@@ -20,7 +20,7 @@ to an entire constraint set in OT". So a directional constraint with **single-se
 loci** over a **length-preserving** GEN *is* a position-indexed block of binary
 constraints, spliced into a ranking and compared under the canonical `ViolationProfile`
 lex order (`List.ofFn_le_ofFn_iff`) — no new mechanism beyond the
-`CON`/`ViolationProfile` substrate already present.
+`ConstraintSet`/`ViolationProfile` substrate already present.
 
 `directionalBlock n locus` is that block: at each position `i < n` it flags whether
 `locus i` holds. Splice it into a ranking forward for left-to-right evaluation (`⇒`),

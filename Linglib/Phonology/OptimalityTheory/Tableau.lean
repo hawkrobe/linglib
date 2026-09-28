@@ -21,7 +21,7 @@ computation.
 * `Tableau C n` — a finite OT tableau over candidates `C` with `n` constraints.
 * `Tableau.optimal` — the winner set; optimality is plain membership.
 * `Ranking n` — a constraint ranking ([prince-2002]'s domination order).
-* `Tableau.ofPerm` — a tableau from a fixed constraint set `CON C n` under a ranking
+* `Tableau.ofPerm` — a tableau from a fixed constraint set `ConstraintSet C n` under a ranking
   `r : Ranking n` (priority position `p` reads constraint `r p`).
 * `Tableau.ofRanking` — the list form: ranked constraint list, list order = priority
   (position `0` most dominant); `Tableau.ofPerm` under the identity ranking.
@@ -145,12 +145,12 @@ theorem notMem_optimal_of_lt {d : C} (hc : c ∈ t.candidates) (h : t.profile c 
 
 /-! ### Tableau constructors -/
 
-variable (con : CON C n) (r : Ranking n) (candidates : List C)
+variable (con : ConstraintSet C n) (r : Ranking n) (candidates : List C)
   (ranking : List (Constraint C)) (h : candidates ≠ [])
 
-/-- `ofPerm con r candidates` is the tableau of a fixed constraint set `con : CON C n` under a
-ranking `r : Ranking n`. Priority position `p` reads constraint `r p`, so coordinate `0` of the
-lexicographic profile is the most dominant constraint. Candidates are deduplicated via
+/-- `ofPerm con r candidates` is the tableau of a fixed constraint set `con : ConstraintSet C n`
+under a ranking `r : Ranking n`. Priority position `p` reads constraint `r p`, so coordinate `0` of
+the lexicographic profile is the most dominant constraint. Candidates are deduplicated via
 `List.toFinset`. -/
 def ofPerm (h : candidates ≠ [] := by first | decide | simp) : Tableau C n where
   candidates := candidates.toFinset

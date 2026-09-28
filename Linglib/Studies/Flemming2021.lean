@@ -71,27 +71,27 @@ variable {C : Type*} [Fintype C] [Nonempty C] {n : ℕ}
 /-- MaxEnt is the Gumbel random utility model (§4): when the candidates' harmonies are perturbed by
 independent standard Gumbel noise, the probability that `c` has the highest perturbed harmony is the
 softmax of (4), by Lemma 1 of [mcfadden-1974]. -/
-theorem maxent_eq_gumbelRUM [DecidableEq C] (con : CON C n) (w : Fin n → ℝ) (c : C) :
+theorem maxent_eq_gumbelRUM [DecidableEq C] (con : ConstraintSet C n) (w : Fin n → ℝ) (c : C) :
     rumChoiceProb (fun c' ↦ gumbelMeasure (harmonyScore con w c') 1) c =
       ENNReal.ofReal (softmax (harmonyScore con w) c) := by
   rw [rumChoiceProb_gumbelMeasure _ one_pos c]
   norm_num [one_smul]
 
 /-- (10): between two candidates, the MaxEnt logit of the first is the harmony difference. -/
-theorem logit_maxent (con : CON (Fin 2) n) (w : Fin n → ℝ) :
+theorem logit_maxent (con : ConstraintSet (Fin 2) n) (w : Fin n → ℝ) :
     logit (softmax (harmonyScore con w) 0) = harmonyScore con w 0 - harmonyScore con w 1 :=
   logit_softmax_fin_two _
 
 omit [Fintype C] [Nonempty C] in
 /-- (16): the NHG probit of the first candidate is the harmony difference over `σ_d`. -/
-theorem probit_nhg (con : CON C n) (w : Fin n → ℝ) (σ : ℝ) (a b : C) :
+theorem probit_nhg (con : ConstraintSet C n) (w : Fin n → ℝ) (σ : ℝ) (a b : C) :
     probit (nhgChoiceProb con w σ a b) =
       (harmonyScore con w a - harmonyScore con w b) / nhgSigmaD con σ a b := by
   rw [nhg_choiceProb_eq, probit_normalCDF]
 
 omit [Fintype C] [Nonempty C] in
 /-- (18): the normal MaxEnt probit is the harmony difference over the constant `ε√2`. -/
-theorem probit_normalMaxEnt (con : CON C n) (w : Fin n → ℝ) (ε : ℝ) (a b : C) :
+theorem probit_normalMaxEnt (con : ConstraintSet C n) (w : Fin n → ℝ) (ε : ℝ) (a b : C) :
     probit (normalMaxEntChoiceProb con w ε a b) =
       (harmonyScore con w a - harmonyScore con w b) / normalMaxEntSigmaD ε := by
   rw [normalMaxEnt_choiceProb_eq, probit_normalCDF]
@@ -158,7 +158,7 @@ candidate after two consonants. -/
 def starCluster (x : Context) : Constraint Cand := .binary λ c => c = 1 ∨ x.onset = .cc
 
 /-- [smith-pater-2020]'s constraint set in the order of (35). -/
-def constraints (x : Context) : CON Cand 6
+def constraints (x : Context) : ConstraintSet Cand 6
   | 0 => noSchwa x
   | 1 => starCCC x
   | 2 => starClash x
@@ -348,7 +348,7 @@ def corr (x : Context) : Constraint Cand :=
   .binary λ c => (c = 1 ∧ x.underlying = .schwa) ∨ (c = 0 ∧ x.underlying = .zero)
 
 /-- The revised constraint set of Table 4: NoSchwa, \*CCC, \*CCC/iP, \*Clash, Max/Dep, \*Cluster. -/
-def revised (x : Context) : CON Cand 6
+def revised (x : Context) : ConstraintSet Cand 6
   | 0 => noSchwa x
   | 1 => starCCC x
   | 2 => starCCCiP x
@@ -372,7 +372,7 @@ theorem hDiffRevised_onset (u : Underlying) (f : Following) (w : Fin 6 → ℝ) 
 /-! ### Three candidates (§9): tableau (45) -/
 
 /-- The tableau of (1), (3), (5) and (45): candidates `a`, `b`, `c` as `0`, `1`, `2`. -/
-def tableCon : CON (Fin 3) 3
+def tableCon : ConstraintSet (Fin 3) 3
   | 0 => λ c => if c = 0 then 1 else 0
   | 1 => λ c => if c = 1 then 2 else if c = 2 then 1 else 0
   | 2 => λ c => if c = 2 then 1 else 0

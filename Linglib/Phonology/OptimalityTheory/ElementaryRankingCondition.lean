@@ -344,12 +344,12 @@ theorem mem_optimal_iff_forall_satisfiedBy {C : Type*} [DecidableEq C]
   Tableau.mem_optimal_iff.trans <| and_congr_right fun _ =>
     forall₂_congr fun l _ => (tableauERC_satisfiedBy_id_iff t w l).symm
 
-/-- **The `Sₙ` action on a fixed `CON` is the ERC theory**: `w` is optimal in
+/-- **The `Sₙ` action on a fixed `ConstraintSet` is the ERC theory**: `w` is optimal in
 `Tableau.ofPerm con r` iff every winner–loser ERC of the identity-ranked tableau is
 satisfied by `r` — factorial typology and ERC consistency are two readouts of one
 symmetric-group action. -/
 theorem Tableau.ofPerm_mem_optimal_iff_satisfiedBy {C : Type*} [DecidableEq C] {n : ℕ}
-    (con : CON C n) (r : Ranking n) (candidates : List C) (h : candidates ≠ [])
+    (con : ConstraintSet C n) (r : Ranking n) (candidates : List C) (h : candidates ≠ [])
     (w : C) :
     w ∈ (Tableau.ofPerm con r candidates h).optimal ↔
       w ∈ candidates.toFinset ∧

@@ -86,7 +86,7 @@ def newFirst : Constraint Candidate
   | ((th, gl), .goalLast) => if th.discourse = .new ∧ gl.discourse = .given then 1 else 0
 
 /-- The two constraints. -/
-def con : CON Candidate 2 := ![heavyFirst, newFirst]
+def con : ConstraintSet Candidate 2 := ![heavyFirst, newFirst]
 
 /-- The weights: `wH` for heaviness, `wN` for newness. -/
 def weights (wH wN : ℝ) : Fin 2 → ℝ := ![wH, wN]

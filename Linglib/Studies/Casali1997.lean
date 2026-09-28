@@ -224,7 +224,7 @@ theorem position?_eq_some_iff {i : Fin 5} {p : Prominence} :
 /-- The constraint set consists of the constraints of word-initial position, of lexical
 material, of morpheme-initial position and of morphemes of one segment, followed by the
 general constraint against deletion. -/
-def con : CON Elision 5 := fun i ↦ (position? i).elim (max c) (maxP c)
+def con : ConstraintSet Elision 5 := fun i ↦ (position? i).elim (max c) (maxP c)
 
 @[simp] theorem con_index (p : Prominence) (e : Elision) :
     con c (index p) e = if c.Prominent e p then 1 else 0 := by
