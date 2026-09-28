@@ -4,6 +4,7 @@ public import Mathlib.Data.Rat.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Pragmatics.RSA.Uniform
 public import Linglib.Semantics.Causation.CausalModel.Defs
+public import Linglib.Core.Relation.ReflTransGen
 
 /-!
 # Beller and Gerstenberg 2025: causal expressions from counterfactual simulation
@@ -294,23 +295,23 @@ inductive Var
   | effect
   deriving DecidableEq, Fintype, Repr
 
+/-- The outcome depends on the candidate cause alone. -/
+abbrev launchGraph : Digraph Var := ⟨fun w v ↦ (w, v) ∈ ({(.cause, .effect)} : Finset _)⟩
+
 /-- In Michottean launching the context settles whether the candidate cause occurs, and the
 outcome takes its value. -/
 def launch : CausalModel Bool Var fun _ ↦ Bool where
-  graph := ⟨fun w v ↦ w = .cause ∧ v = .effect⟩
+  graph := launchGraph
   eqn
     | .cause => fun u _ ↦ u
     | .effect => fun _ x ↦ x .cause
-  dependsOn_eqn
-    | .cause => fun _ _ _ _ ↦ rfl
-    | .effect => fun _ _ _ h ↦ h .cause ⟨rfl, rfl⟩
 
-instance : DecidableRel launch.graph.Adj := fun w v ↦
-  inferInstanceAs (Decidable (w = .cause ∧ v = .effect))
+instance : DecidableRel launch.graph.Adj := inferInstanceAs (DecidableRel launchGraph.Adj)
 
-instance : launch.IsAcyclic := .of_depth _ (fun | .cause => 0 | .effect => 1) (by decide)
+instance : launch.IsAcyclic :=
+  Finite.wellFounded_of_irrefl_transGen (r := launchGraph.Adj) (by decide)
 
-variable {U V : Type*} [DecidableEq V]
+variable {U V : Type*} [Fintype V] [DecidableEq V]
 
 /-- The aspect profile of `cause → effect` in the context `u` of a deterministic model. `W` is
 whether-causation (1): had the cause been absent, the effect would not have been present. `H` is
@@ -327,7 +328,6 @@ noncomputable def CausalWorld.ofModel (M : CausalModel U V fun _ ↦ Bool) [M.Is
 first scenario: with no alternative causes to remove, sufficient-causation is whether-causation. -/
 theorem launch_ofModel :
     CausalWorld.ofModel launch ⊥ true .cause .effect = Scenario.s1.aspects := by
-  simp only [CausalWorld.ofModel, launch.solve_eq_iterate_card (x := fun _ ↦ false)]
   decide
 
 end Structural

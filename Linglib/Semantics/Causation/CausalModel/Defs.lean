@@ -31,12 +31,14 @@ finite model computes it.
 * `CausalModel.isFixedPt_solve`, `CausalModel.eq_solve_of_isFixedPt`: the solution is the unique
   fixed point of `step`
 * `CausalModel.solve_eq_iterate`, `CausalModel.solve_eq_iterate_card`: iterating `step` past a
-  ranking of the graph reaches it
+  ranking of the graph reaches it, so in a finite model `decide` evaluates the solution
+  (`CausalModel.decidableEqSolve`)
 
 ## Implementation notes
 
 An equation reads the whole assignment, and `dependsOn_eqn` says that it only reads the parents
-(mathlib's `DependsOn`), so equations are written without the parents' subtype. The graph is data,
+(mathlib's `DependsOn`), so equations are written without the parents' subtype. For a finite
+inductive type of variables the default proof of `dependsOn_eqn` discharges it. The graph is data,
 the edges a paper draws, and bounds what an equation may read rather than recording what it does
 read. An intervention is a partial assignment `∀ v, Flat (α v)`, the variables it settles being the
 intervened ones. The solution is `WellFounded.fixedPoint` of `step`, whose construction fills the
@@ -58,8 +60,11 @@ structure CausalModel (U V : Type*) (α : V → Type*) where
   graph : Digraph V
   /-- The structural equation of each variable, read in a context. -/
   eqn : ∀ v, U → (∀ w, α w) → α v
-  /-- Each equation reads only the variable's parents. -/
-  dependsOn_eqn : ∀ v u, DependsOn (eqn v u) {w | graph.Adj w v}
+  /-- Each equation reads only the variable's parents. For a finite inductive type of variables
+  whose equations match on the variable, the default proof rewrites each variable an equation
+  reads by the hypothesis, deciding that it is a parent. -/
+  dependsOn_eqn : ∀ v u, DependsOn (eqn v u) {w | graph.Adj w v} := by
+    intro v u x y h; cases v <;> simp (disch := decide) [h]
 
 namespace CausalModel
 
@@ -146,6 +151,24 @@ theorem solve_eq_iterate (r : M.graph.Adj →r ((· < ·) : ℕ → ℕ → Prop
 theorem solve_eq_iterate_card [Fintype V] (I : ∀ v, Flat (α v)) (u : U) (x : ∀ v, α v) :
     M.solve I u = (M.step I u)^[Fintype.card V] x :=
   WellFounded.fixedPoint_eq_iterate_card (dependsOn_step I u) x
+
+/-- In a finite model the value of the solution at a variable is decided by iterating the
+equations. It takes priority over the value type's own decidable equality, which cannot evaluate
+`solve`. -/
+instance (priority := high) decidableEqSolve [Fintype V] [∀ v, Inhabited (α v)]
+    [∀ v, DecidableEq (α v)] (I : ∀ v, Flat (α v)) (u : U) (v : V) (x : α v) :
+    Decidable (M.solve I u v = x) :=
+  decidable_of_iff ((M.step I u)^[Fintype.card V] default v = x) <| by
+    rw [solve_eq_iterate_card I u default]
+
+/-- In a finite model, whether two solutions agree at a variable is decided by iterating the
+equations for both. -/
+instance (priority := high + 1) decidableEqSolveSolve [Fintype V] [∀ v, Inhabited (α v)]
+    [∀ v, DecidableEq (α v)] (I J : ∀ v, Flat (α v)) (u u' : U) (v : V) :
+    Decidable (M.solve I u v = M.solve J u' v) :=
+  decidable_of_iff ((M.step I u)^[Fintype.card V] default v =
+      (M.step J u')^[Fintype.card V] default v) <| by
+    rw [solve_eq_iterate_card I u default, solve_eq_iterate_card J u' default]
 
 end Solve
 

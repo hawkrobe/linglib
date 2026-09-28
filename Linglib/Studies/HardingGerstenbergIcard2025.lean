@@ -3,9 +3,9 @@ module
 public import Linglib.Pragmatics.RSA.Uniform
 public import Linglib.Pragmatics.RSA.Decision
 public import Linglib.Core.Probability.Kernel.Posterior
-public import Linglib.Semantics.Causation.SEM.Bool
-public import Linglib.Semantics.Causation.SEM.Counterfactual
-public import Linglib.Semantics.Causation.CCSelection
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Causation.CausalModel.Basic
+public import Linglib.Core.Relation.ReflTransGen
 public import Mathlib.Analysis.SpecialFunctions.Sigmoid
 
 /-!
@@ -33,15 +33,16 @@ from her not doing so that tardiness alone is the cause, and the goodness of the
 positive, `LateMeeting.goodness_pos`. In the milk example (Example 4) citing both culprits is
 worth more than citing one, but a sufficient cost difference makes the speaker prefer the
 shorter message, `MilkTheft.speaker_prefers_short`. The interpretation sets are the paper's,
-and for the late meeting the positive memberships are derived from actual causation in the
-worlds' structural causal models.
+and for the late meeting they are derived from actual causation in the worlds' causal models.
 
 ## Implementation notes
 
 The agents are kept at finite rationality, where the paper takes the limit, and each claim is
 stated for the rationalities it needs. Actual causation is the witness form of the
-Halpern–Pearl definition, `actualCause`, which the paper leaves open to any extant account; the
-negative memberships are not derived. Priors are uniform, as in the examples.
+Halpern–Pearl definition, `actualCause`, which the paper leaves open to any extant account: some
+contingency, an intervention on other variables, under which the cause is but-for the effect in
+the actual context. A negative membership follows from the graph when no path runs from the
+cited variable to the fact. Priors are uniform, as in the examples.
 
 ## TODO
 
@@ -120,33 +121,29 @@ end Framework
 
 section ManipulationGame
 
-open Causation Causation.SEM
+variable {U V : Type*} [DecidableEq V] [Fintype U]
 
-variable {V Ctx : Type*} [Fintype V] [DecidableEq V] [Fintype Ctx]
-
-/-- The reward of intervening on `X` in a model (Definition 2): the probability over contexts
-that some intervention on `X` changes FACT. -/
-noncomputable def manipulationReward (P : Ctx → ℝ) (ctx : Ctx → Valuation (λ _ : V => Bool))
-    (M : BoolSEM V) [CausalGraph.IsDAG M.graph] (X fact : V) : ℝ :=
-  ∑ u, P u * (haveI := Classical.dec (BoolSEM.manipulates M (ctx u) X fact)
-    if BoolSEM.manipulates M (ctx u) X fact then 1 else 0)
+open Classical in
+/-- The reward of intervening on `X` in a model (Definition 2) is the probability, over contexts
+drawn with weights `P`, that intervening on `X` changes FACT. -/
+noncomputable def manipulationReward (P : U → ℝ) (M : CausalModel U V fun _ ↦ Bool)
+    [M.IsAcyclic] (X fact : V) : ℝ :=
+  ∑ u, P u * if M.solve (Function.update ⊥ X ↑true) u fact ≠
+    M.solve (Function.update ⊥ X ↑false) u fact then 1 else 0
 
 end ManipulationGame
 
 /-! ### Actual causation, the literal meaning of "because" -/
 
-open Causation Causation.Mechanism Causation.SEM
-
-/-- Actual causation in witness form: the cause and the effect hold at the actual world, and
-at some witness valuation the cause is but-for the effect
-(`CCSelection.completesForEffect`), [halpern-pearl-2005]'s definition without the contingency
-clause the paper leaves to any extant account. -/
-def actualCause {V : Type*} [Fintype V] [DecidableEq V] (M : BoolSEM V)
-    [CausalGraph.IsDAG M.graph] (u : Valuation (λ _ : V => Bool))
-    (cause effect : V) : Prop :=
-  u.hasValue cause true ∧ (M.developDet u).hasValue effect true ∧
-    ∃ s' : Valuation (λ _ : V => Bool),
-      CCSelection.completesForEffect M s' cause true false effect true
+/-- In the context `u`, `cause` is an actual cause of `effect` in witness form when both hold
+and, under some contingency `I` intervening on other variables, the cause is but-for the effect.
+This is [halpern-pearl-2005]'s definition without the restriction on contingencies that the paper
+leaves to any extant account. -/
+def actualCause {U V : Type*} [DecidableEq V] (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
+    (u : U) (cause effect : V) : Prop :=
+  M.solve ⊥ u cause = true ∧ M.solve ⊥ u effect = true ∧
+    ∃ I : V → Flat Bool, M.solve (Function.update I cause ↑true) u effect = true ∧
+      M.solve (Function.update I cause ↑false) u effect ≠ true
 
 /-! ### Example 3: the late meeting -/
 
@@ -157,56 +154,49 @@ crossness. -/
 inductive V | T | B | C
   deriving DecidableEq, Fintype, Repr
 
-def graphT : CausalGraph V := ⟨λ | .T => ∅ | .B => ∅ | .C => {.T}⟩
+/-- The graph in which tardiness alone bears on crossness. -/
+abbrev graphT : Digraph V := ⟨fun w v ↦ (w, v) ∈ ({(.T, .C)} : Finset (V × V))⟩
 
-def graphConj : CausalGraph V := ⟨λ | .T => ∅ | .B => ∅ | .C => {.T, .B}⟩
+/-- The graph in which tardiness and the forgotten birthday both bear on crossness. -/
+abbrev graphConj : Digraph V := ⟨fun w v ↦ (w, v) ∈ ({(.T, .C), (.B, .C)} : Finset (V × V))⟩
 
-/-- The model in which tardiness alone causes crossness. -/
-def semT : BoolSEM V :=
-  { graph := graphT
-    mech := λ v => match v with
-      | .T => const (G := graphT) false
-      | .B => const (G := graphT) false
-      | .C => fun ρ ↦ ρ ⟨.T, by simp [graphT]⟩ }
+/-- The model in which tardiness alone causes crossness; the context settles whether Bob was late
+and whether he forgot the birthday. -/
+def semT : CausalModel (Bool × Bool) V fun _ ↦ Bool where
+  graph := graphT
+  eqn | .T => fun u _ ↦ u.1 | .B => fun u _ ↦ u.2 | .C => fun _ x ↦ x .T
 
 /-- The conjunctive model, in which both are needed. -/
-def semConj : BoolSEM V :=
-  { graph := graphConj
-    mech := λ v => match v with
-      | .T => const (G := graphConj) false
-      | .B => const (G := graphConj) false
-      | .C => fun ρ ↦ ρ ⟨.T, by simp [graphConj]⟩ && ρ ⟨.B, by simp [graphConj]⟩ }
+def semConj : CausalModel (Bool × Bool) V fun _ ↦ Bool where
+  graph := graphConj
+  eqn | .T => fun u _ ↦ u.1 | .B => fun u _ ↦ u.2 | .C => fun _ x ↦ x .T && x .B
 
-instance : CausalGraph.IsDAG semT.graph := .of_irrefl (by decide)
+instance : semT.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (r := graphT.Adj) (by decide)
 
-instance : CausalGraph.IsDAG semConj.graph := .of_irrefl (by decide)
+instance : semConj.IsAcyclic :=
+  Finite.wellFounded_of_irrefl_transGen (r := graphConj.Adj) (by decide)
 
 /-- The context Bob knows: he was late and forgot the birthday. -/
-def context : Valuation (λ _ : V => Bool) :=
-  Valuation.empty.extend .T true |>.extend .B true
+def context : Bool × Bool := (true, true)
 
 /-- "Because T" is true in both worlds and "because B" in the conjunctive world: the
-interpretation sets of Example 3, derived from actual causation. -/
-theorem actualCause_T_semT : actualCause semT context .T .C := by
-  refine ⟨by decide, ?_, context, ?_⟩
-  · decide
-  · decide
+interpretation sets of Example 3, derived from actual causation with the empty contingency. -/
+theorem actualCause_T_semT : actualCause semT context .T .C :=
+  ⟨by decide, by decide, ⊥, by decide, by decide⟩
 
-theorem actualCause_T_semConj : actualCause semConj context .T .C := by
-  refine ⟨by decide, ?_, context, ?_⟩
-  · decide
-  · decide
+theorem actualCause_T_semConj : actualCause semConj context .T .C :=
+  ⟨by decide, by decide, ⊥, by decide, by decide⟩
 
-theorem actualCause_B_semConj : actualCause semConj context .B .C := by
-  refine ⟨by decide, ?_, context, ?_⟩
-  · decide
-  · decide
+theorem actualCause_B_semConj : actualCause semConj context .B .C :=
+  ⟨by decide, by decide, ⊥, by decide, by decide⟩
 
-/-- In the tardiness-only world the birthday is not but-for crossness at the actual context:
-crossness reads tardiness alone. -/
-theorem not_completesForEffect_B_semT :
-    ¬ CCSelection.completesForEffect semT context .B true false .C true := by
-  decide
+/-- "Because B" is false in the tardiness-only world, the negative membership of Example 3: no
+path runs from the birthday to crossness, so under no contingency is it but-for crossness. -/
+theorem not_actualCause_B_semT : ¬ actualCause semT context .B .C := by
+  rintro ⟨-, -, I, h1, h2⟩
+  have hB : ¬ Relation.ReflTransGen graphT.Adj .B .C := by decide
+  rw [CausalModel.solve_update_of_not_reflTransGen hB] at h1 h2
+  exact h2 h1
 
 /-- The worlds: `0` the tardiness-only model, `1` the conjunctive model. -/
 abbrev World := Fin 2
