@@ -1,12 +1,8 @@
 module
 
 public import Mathlib.Combinatorics.Digraph.Basic
-public import Mathlib.Data.Fintype.Card
-public import Mathlib.Dynamics.FixedPoints.Basic
-public import Mathlib.Logic.Function.DependsOn
-public import Mathlib.Logic.Function.Iterate
-public import Mathlib.Order.RelIso.Basic
 public import Linglib.Core.Order.Flat
+public import Linglib.Core.Order.WellFoundedFixedPoint
 
 /-!
 # Causal models
@@ -43,8 +39,8 @@ An equation reads the whole assignment, and `dependsOn_eqn` says that it only re
 (mathlib's `DependsOn`), so equations are written without the parents' subtype. The graph is data,
 the edges a paper draws, and bounds what an equation may read rather than recording what it does
 read. An intervention is a partial assignment `∀ v, Flat (α v)`, the variables it settles being the
-intervened ones. Building the solution by well-founded recursion feeds each equation the recursive
-values at the parents and an arbitrary value elsewhere, hence `[∀ v, Nonempty (α v)]`.
+intervened ones. The solution is `WellFounded.fixedPoint` of `step`, whose construction fills the
+coordinates an equation ignores arbitrarily, hence `[∀ v, Nonempty (α v)]`.
 
 ## References
 
@@ -88,57 +84,46 @@ variable {M}
 theorem step_apply (I : ∀ v, Flat (α v)) (u : U) (x : ∀ v, α v) (v : V) :
     M.step I u x v = (I v).unbotD (M.eqn v u x) := rfl
 
+/-- Each round computes a variable from its parents. -/
+theorem dependsOn_step (I : ∀ v, Flat (α v)) (u : U) (v : V) :
+    DependsOn (M.step I u · v) {w | M.graph.Adj w v} :=
+  fun _ _ h ↦ congrArg (Flat.unbotD · (I v)) (M.dependsOn_eqn v u h)
+
 /-- After `k` rounds of the equations, a variable of rank below `k` no longer depends on the
 assignment the rounds started from. -/
 theorem iterate_step_apply_eq (r : M.graph.Adj →r ((· < ·) : ℕ → ℕ → Prop))
     (I : ∀ v, Flat (α v)) (u : U) {k : ℕ} {v : V} (hv : r v < k) (x y : ∀ v, α v) :
-    (M.step I u)^[k] x v = (M.step I u)^[k] y v := by
-  induction k generalizing v with
-  | zero => omega
-  | succ k ih =>
-    rw [Function.iterate_succ_apply', Function.iterate_succ_apply', step_apply, step_apply]
-    congr 1
-    exact M.dependsOn_eqn v u fun w hw ↦ ih (by have := r.map_rel hw; omega)
+    (M.step I u)^[k] x v = (M.step I u)^[k] y v :=
+  WellFounded.iterate_apply_eq_of_dependsOn (dependsOn_step I u) r hv x y
 
 section Solve
 
 variable (M) [∀ v, Nonempty (α v)] [hM : M.IsAcyclic]
 
-open Classical in
-/-- The solution of the model under the intervention `I` in the context `u`, by well-founded
-recursion on the graph. -/
+/-- The solution of the model under the intervention `I` in the context `u`, the unique fixed
+point of `step`. -/
 noncomputable def solve (I : ∀ v, Flat (α v)) (u : U) : ∀ v, α v :=
-  hM.fix fun v rec ↦ (I v).unbotD <| M.eqn v u fun w ↦
-    if h : M.graph.Adj w v then rec w h else Classical.arbitrary _
+  hM.fixedPoint (M.step I u)
 
 /-- The solution satisfies the equations. -/
 theorem isFixedPt_solve (I : ∀ v, Flat (α v)) (u : U) :
-    Function.IsFixedPt (M.step I u) (M.solve I u) := by
-  funext v
-  conv_rhs => rw [solve, WellFounded.fix_eq]
-  rw [step_apply]
-  congr 1
-  exact M.dependsOn_eqn v u fun w (hw : M.graph.Adj w v) ↦ by simp only [hw, ↓reduceDIte]; rfl
+    Function.IsFixedPt (M.step I u) (M.solve I u) :=
+  hM.isFixedPt_fixedPoint (dependsOn_step I u)
 
 variable {M}
 
 /-- An assignment satisfying the equations is the solution. -/
 theorem eq_solve_of_isFixedPt {I : ∀ v, Flat (α v)} {u : U} {x : ∀ v, α v}
-    (hx : Function.IsFixedPt (M.step I u) x) : x = M.solve I u := by
-  funext v
-  induction v using hM.induction with
-  | _ v ih =>
-    rw [← congrFun hx v, ← congrFun (M.isFixedPt_solve I u) v, step_apply, step_apply]
-    congr 1
-    exact M.dependsOn_eqn v u fun w hw ↦ ih w hw
+    (hx : Function.IsFixedPt (M.step I u) x) : x = M.solve I u :=
+  WellFounded.eq_fixedPoint_of_isFixedPt (dependsOn_step I u) hx
 
 theorem isFixedPt_iff_eq_solve {I : ∀ v, Flat (α v)} {u : U} {x : ∀ v, α v} :
     Function.IsFixedPt (M.step I u) x ↔ x = M.solve I u :=
-  ⟨eq_solve_of_isFixedPt, fun h ↦ h ▸ M.isFixedPt_solve I u⟩
+  WellFounded.isFixedPt_iff_eq_fixedPoint (dependsOn_step I u)
 
 theorem solve_apply (I : ∀ v, Flat (α v)) (u : U) (v : V) :
     M.solve I u v = (I v).unbotD (M.eqn v u (M.solve I u)) :=
-  (congrFun (M.isFixedPt_solve I u) v).symm
+  WellFounded.fixedPoint_apply (dependsOn_step I u) v
 
 /-- An intervened variable takes its intervened value. -/
 theorem solve_of_eq_coe {I : ∀ v, Flat (α v)} {v : V} {x : α v} (h : I v = ↑x) (u : U) :
@@ -153,34 +138,14 @@ theorem solve_of_eq_bot {I : ∀ v, Flat (α v)} {v : V} (h : I v = ⊥) (u : U)
 /-- Iterating the equations from any assignment past a ranking of the graph reaches the
 solution. -/
 theorem solve_eq_iterate (r : M.graph.Adj →r ((· < ·) : ℕ → ℕ → Prop)) {n : ℕ}
-    (hn : ∀ v, r v < n)
-    (I : ∀ v, Flat (α v)) (u : U) (x : ∀ v, α v) : M.solve I u = (M.step I u)^[n] x := by
-  funext v
-  rw [← (M.isFixedPt_solve I u).iterate n]
-  exact iterate_step_apply_eq r I u (hn v) _ _
-
-omit [∀ v, Nonempty (α v)] in
-open Classical in
-/-- In a finite acyclic model, the number of a variable's strict ancestors ranks it below the
-number of variables. -/
-private theorem exists_ranking_lt_card [Fintype V] :
-    ∃ r : M.graph.Adj →r ((· < ·) : ℕ → ℕ → Prop), ∀ v, r v < Fintype.card V := by
-  have hT := hM.transGen
-  have irrefl : ∀ v, ¬ Relation.TransGen M.graph.Adj v v := fun v h ↦
-    @WellFounded.asymmetric _ _ hT v v h h
-  refine ⟨⟨fun v ↦ (Finset.univ.filter (Relation.TransGen M.graph.Adj · v)).card,
-    fun {w v} h ↦ Finset.card_lt_card ?_⟩, fun v ↦ Finset.card_lt_card ?_⟩
-  · refine (Finset.ssubset_iff_of_subset fun a ha ↦ ?_).2 ⟨w, ?_, fun hw ↦ irrefl w ?_⟩
-    · simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha ⊢; exact ha.tail h
-    · simpa using Relation.TransGen.single h
-    · simpa using hw
-  · exact Finset.filter_ssubset.2 ⟨v, Finset.mem_univ v, irrefl v⟩
+    (hn : ∀ v, r v < n) (I : ∀ v, Flat (α v)) (u : U) (x : ∀ v, α v) :
+    M.solve I u = (M.step I u)^[n] x :=
+  WellFounded.fixedPoint_eq_iterate (dependsOn_step I u) r hn x
 
 /-- In a finite model, iterating the equations once per variable reaches the solution. -/
 theorem solve_eq_iterate_card [Fintype V] (I : ∀ v, Flat (α v)) (u : U) (x : ∀ v, α v) :
     M.solve I u = (M.step I u)^[Fintype.card V] x :=
-  let ⟨r, hr⟩ := M.exists_ranking_lt_card
-  solve_eq_iterate r hr I u x
+  WellFounded.fixedPoint_eq_iterate_card (dependsOn_step I u) x
 
 end Solve
 
