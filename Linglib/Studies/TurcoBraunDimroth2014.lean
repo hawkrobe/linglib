@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Polarity.Marking
 public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Fragments.Dutch.Particles
 public import Linglib.Fragments.German.Particles
@@ -18,22 +17,23 @@ and correction of [umbach-2004]: `Sentence`, `Switch`, `IsContrast`, `IsCorrecti
 `Switch.disjoint_iff`, `IsCorrection.disjoint`, `exists_isContrast_not_disjoint`. In both
 contexts German speakers produced Verum focus, a high-falling pitch accent on the finite verb,
 [hohle-1992], and never a sentence-internal affirmative particle, whereas Dutch speakers mostly
-produced the accented affirmative particle *wel*, the entries `verumFocus` and
-`Dutch.Particles.wel`. The paper's theoretical claim is that the two devices, though
-functionally equivalent, operate on different levels: a sentence contains a polarity operator
-and, above it, an assertion operator carried by the finite verb; *wel* is the overt affirmative
-value of the polarity operator, the counterpart of *niet*, [sudhoff-2012], whereas Verum focus
-highlights the assertion operator, `PolarityOperator`, `Sentence.verumFocus`, `Level`,
-`strategyLevel`. Truth conditions do not depend on Verum focus or on whether affirmation is
-overt, `denotation_verumFocus` and `denotation_affirmation`, the functional equivalence; Verum
-focus but not *wel* can occur in a negated sentence, `exists_verumFocus_negative` and
-`pol_of_affirmation`, which is why the assertion operator takes effect above polarity, as in
-[bluhdorn-2012].
+produced the accented affirmative particle *wel*, `Dutch.Particles.wel`. The paper's
+theoretical claim is that the two devices, though functionally equivalent, operate on different
+levels: a sentence contains a polarity operator and, above it, an assertion operator carried by
+the finite verb; *wel* is the overt affirmative value of the polarity operator, the counterpart
+of *niet*, [sudhoff-2012], whereas Verum focus highlights the assertion operator,
+`Sentence.polarityOp` and `Sentence.verumFocus`. Truth conditions do not depend on Verum focus
+or on whether affirmation is overt, `denotation_verumFocus` and `denotation_affirmation`, the
+functional equivalence; an overt polarity value fixes the polarity of its sentence, so *wel*
+cannot occur in a negated sentence, while Verum focus can, `pol_of_polarityOp_eq_some` and
+`exists_verumFocus_negative`, which is why the assertion operator takes effect above polarity,
+as in [bluhdorn-2012].
 
 ## Implementation notes
 
-The polarity operator is a single slot of the sentence, so a sentence with the affirmative
-particle is positive by construction and *Het kind heeft wel niet gehuild* is not a `Sentence`.
+The polarity operator is a single slot of the sentence holding its overt value, if any, with
+unmarked affirmation as the default, so a sentence with the affirmative particle is positive by
+construction and *Het kind heeft wel niet gehuild* is not a `Sentence`.
 The production results are not formalized. Dutch speakers used *wel* in most utterances of both
 contexts, fewer in correction, an effect the paper leaves unexplained, and Verum focus never in
 contrast and rarely in correction; German speakers used Verum focus in more than 70% of the
@@ -63,30 +63,7 @@ before the comment. The examples are the rows of `Data.Examples.TurcoBraunDimrot
 
 namespace TurcoBraunDimroth2014
 
-open PolarityMarker
-
 /-! ### The polarity operator and the assertion operator -/
-
-/-- German Verum focus, a high-falling pitch accent on the finite verb, as the study found it:
-sentence-internal, and produced in polarity contrast and in polarity correction alike. -/
-def verumFocus : PolarityMarker where
-  label := "Verum focus"
-  prosodicTarget := some "finite verb"
-  environments := {.sentenceInternal, .contrast, .correction}
-  strategy := .verumFocus
-
-/-- The value of a sentence's polarity operator: negation, an overt affirmative particle such
-as Dutch *wel*, or the unmarked default affirmation. -/
-inductive PolarityOperator where
-  | negation
-  | affirmation
-  | unmarked
-  deriving DecidableEq, Repr
-
-/-- The polarity a polarity operator expresses. -/
-def PolarityOperator.value : PolarityOperator → Polarity
-  | .negation => .negative
-  | .affirmation | .unmarked => .positive
 
 /-- A sentence predicates a descriptive property, given per topic situation as the set of worlds
 where it holds there, of a topic situation, through a polarity operator and, above it, the
@@ -94,15 +71,17 @@ assertion operator carried by the finite verb, which Verum focus accents. -/
 structure Sentence (S W : Type*) where
   property : S → Set W
   situation : S
-  polarityOp : PolarityOperator
+  /-- The overt value of the polarity operator: negation, or an affirmative particle such as
+  Dutch *wel*; `none` when affirmation is unmarked. -/
+  polarityOp : Option Polarity
   verumFocus : Bool
 
 variable {S W : Type*}
 
 namespace Sentence
 
-/-- The polarity of a sentence, the value of its polarity operator. -/
-def pol (s : Sentence S W) : Polarity := s.polarityOp.value
+/-- The polarity of a sentence, the value of its polarity operator, positive by default. -/
+def pol (s : Sentence S W) : Polarity := s.polarityOp.getD .positive
 
 /-- The proposition a sentence asserts. -/
 def denotation (s : Sentence S W) : Set W := s.pol • s.property s.situation
@@ -114,39 +93,21 @@ theorem denotation_verumFocus (s : Sentence S W) (b : Bool) :
 /-- An overt affirmative particle leaves the truth conditions of the unmarked affirmative
 sentence unchanged: *wel* and Verum focus are functionally equivalent on a positive sentence. -/
 theorem denotation_affirmation (s : Sentence S W) :
-    { s with polarityOp := .affirmation }.denotation =
-      { s with polarityOp := .unmarked }.denotation := rfl
+    { s with polarityOp := some .positive }.denotation =
+      { s with polarityOp := none }.denotation := rfl
 
-/-- A sentence with an affirmative particle is positive: the particle is the polarity
-operator, so it cannot occur in a negated sentence. -/
-theorem pol_of_affirmation {s : Sentence S W} (h : s.polarityOp = .affirmation) :
-    s.pol = .positive := by
-  simp only [pol, h, PolarityOperator.value]
+/-- An overt value of the polarity operator is the polarity of the sentence: a sentence with
+the affirmative particle is positive, so the particle cannot occur in a negated sentence. -/
+theorem pol_of_polarityOp_eq_some {s : Sentence S W} {p : Polarity} (h : s.polarityOp = some p) :
+    s.pol = p := by
+  simp only [pol, h, Option.getD_some]
 
 /-- Verum focus can occur in a negated sentence, *Das Kind HAT nicht geweint*. -/
 theorem exists_verumFocus_negative [Nonempty S] :
     ∃ s : Sentence S W, s.verumFocus = true ∧ s.pol = .negative :=
-  ⟨⟨λ _ => ∅, Classical.arbitrary S, .negation, true⟩, rfl, rfl⟩
+  ⟨⟨fun _ ↦ ∅, Classical.arbitrary S, some .negative, true⟩, rfl, rfl⟩
 
 end Sentence
-
-/-- The two levels of meaning at which a polarity-marking device operates. -/
-inductive Level where
-  | polarity
-  | assertion
-  deriving DecidableEq, Repr
-
-/-- The level of a marking strategy: affirmative and polarity-reversing particles are values of
-the polarity operator, Verum focus highlights the assertion operator. -/
-def strategyLevel : Strategy → Option Level
-  | .particle | .polarityReversal => some .polarity
-  | .verumFocus => some .assertion
-  | .other | .unmarked => none
-
-/-- Dutch *wel* and German Verum focus operate at different levels. -/
-theorem strategyLevel_wel_ne_verumFocus :
-    strategyLevel Dutch.Particles.wel.strategy ≠ strategyLevel verumFocus.strategy := by
-  decide
 
 /-! ### Polarity contrast and polarity correction -/
 
@@ -178,8 +139,8 @@ theorem IsCorrection.disjoint {a b : Sentence S W} (h : IsCorrection a b) :
 contrast whose claims are jointly true. -/
 theorem exists_isContrast_not_disjoint [Nonempty W] {s₁ s₂ : S} (h : s₁ ≠ s₂) :
     ∃ a b : Sentence S W, IsContrast a b ∧ ¬ Disjoint a.denotation b.denotation := by
-  refine ⟨⟨λ s => {_w | s = s₂}, s₁, .negation, false⟩,
-    ⟨λ s => {_w | s = s₂}, s₂, .unmarked, false⟩, ⟨⟨rfl, rfl, rfl⟩, h⟩, ?_⟩
+  refine ⟨⟨fun s ↦ {_w | s = s₂}, s₁, some .negative, false⟩,
+    ⟨fun s ↦ {_w | s = s₂}, s₂, none, false⟩, ⟨⟨rfl, rfl, rfl⟩, h⟩, ?_⟩
   exact Set.not_disjoint_iff.2 ⟨Classical.arbitrary W, h, rfl⟩
 
 end TurcoBraunDimroth2014
