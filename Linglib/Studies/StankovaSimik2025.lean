@@ -8,29 +8,27 @@ public import Linglib.Studies.Simik2024
 /-!
 # Staňková and Šimík (2025): Negation in Czech Polar Questions
 
-This file formalizes [stankova-2025]'s analysis of negation in Czech polar questions. The
-negative prefix moves with the finite verb, so verb position fixes the position of negation:
-a clause-initial verb sits above the canonical negation operator and can only be licensed by
-the commitment operator FALSUM of [repp-2013] (`Simik2024.falsum`), while a verb in situ is licensed
-either by the operator or by FALSUM (`mem_availableReadings_iff`). The canonical operator
-licenses negative concord items and is tied to negative contextual evidence; FALSUM allows
-positive polarity items and conveys weak epistemic bias, indifferent to contextual evidence;
-and declarative word order requires contextual evidence ([gunlogson-2002]). Which reading
-licenses which indefinite is read off the lexical entries' polarity classes (`LicensedAt`),
-so the two indefinites split the readings (`licensedAt_ppi_iff_not_nci`). Felicity of a
-question in a context follows from these three sources (`Felicitous`), which yields the
-predictions the paper's naturalness study tests: in interrogative questions the positive
-polarity item is felicitous in every context and the negative concord item in none
-(`v1_ppi_any_context`, `v1_nci_never`, `v1_context_invariant`), and declarative questions
-need contextual evidence, the concord item negative evidence and the polarity item any
-evidence (`nonV1_nci_iff`, `nonV1_ppi_iff`, `nonV1_neutral_infelicitous`). Czech FALSUM is
-thereby broader than English high negation, felicitous even with positive evidence
+This file formalizes [stankova-2025]'s analysis of negation in Czech polar questions. The negative
+prefix moves with the finite verb, so verb position fixes the position of negation: a clause-initial
+verb sits above the canonical negation operator and can only be licensed by the commitment operator
+FALSUM of [repp-2013] (`Simik2024.assertion_of_falsum`), while a verb in situ is licensed either by
+the operator or by FALSUM (`mem_availableReadings_iff`). The canonical operator licenses negative
+concord items and is tied to negative contextual evidence; FALSUM allows positive polarity items and
+conveys weak epistemic bias, indifferent to contextual evidence; and declarative word order requires
+contextual evidence ([gunlogson-2002]). Which reading licenses which indefinite is read off the
+lexical entries' polarity classes (`LicensedAt`), so the two indefinites split the readings
+(`licensedAt_ppi_iff_not_nci`). Felicity of a question in a context follows from these three sources
+(`Felicitous`), which yields the predictions the paper's naturalness study tests: in interrogative
+questions the positive polarity item is felicitous in every context and the negative concord item in
+none (`v1_ppi_any_context`, `v1_nci_never`, `v1_context_invariant`), and declarative questions need
+contextual evidence, the concord item negative evidence and the polarity item any evidence
+(`nonV1_nci_iff`, `nonV1_ppi_iff`, `nonV1_neutral_infelicitous`). Czech FALSUM is thereby broader
+than English high negation, felicitous even with positive evidence
 (`falsum_broader_than_english_hiNQ`). The particle *náhodou* is licensed by FALSUM alone
 (`Simik2024.NahodouLicensed`), so it excludes concord items whatever the word order
-(`nahodou_excludes_nci`), and *copak* needs contextual evidence
-matching the question's polarity, against the speaker's prior belief (`copak_requires_bias`,
-`copak_prior_ne_evidence`); the two particles part on context sensitivity
-(`nahodou_copak_opposite`).
+(`nahodou_excludes_nci`), and *copak* needs contextual evidence matching the question's polarity,
+against the speaker's prior belief (`copak_requires_bias`, `copak_prior_ne_evidence`); the two
+particles part on context sensitivity (`nahodou_copak_opposite`).
 
 ## Implementation notes
 

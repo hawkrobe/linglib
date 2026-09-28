@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Basic.Logic.Basic
+public import Mathlib.Logic.Relation
 public import Mathlib.Logic.Relator
 public import Mathlib.Order.Defs.Unbundled
 public import Mathlib.Order.PropInstances
@@ -12,7 +13,9 @@ This file defines the relational `box`/`diamond` of Kripke semantics,
 the frame conditions of modal correspondence theory for accessibility
 relations `W → W → Prop`, and the per-axiom correspondences (K, T, D, B,
 4, 5) connecting them; the `Set`-valued mathlib counterparts of the
-operators are `Rel.core` and `Rel.preimage`.
+operators are `Rel.core` and `Rel.preimage`. Along a composite relation, `Relation.Comp R S`,
+necessity is necessity nested in necessity and possibility possibility nested in possibility
+(`box_comp`, `diamond_comp`).
 
 ## References
 
@@ -57,6 +60,17 @@ theorem box_and (p q : W → Prop) (w : W) :
     □[R] (fun v => p v ∧ q v) w ↔ □[R] p w ∧ □[R] q w := by
   simp only [box, imp_and, forall_and]
 
+/-- Necessity along a composite relation is necessity nested in necessity. -/
+theorem box_comp (S : W → W → Prop) (p : W → Prop) :
+    □[Relation.Comp R S] p = □[R] (□[S] p) :=
+  funext fun _ ↦ propext ⟨fun h _ hv _ hu ↦ h _ ⟨_, hv, hu⟩, fun h _ ⟨_, hv, hu⟩ ↦ h _ hv _ hu⟩
+
+/-- Possibility along a composite relation is possibility nested in possibility. -/
+theorem diamond_comp (S : W → W → Prop) (p : W → Prop) :
+    ◇[Relation.Comp R S] p = ◇[R] (◇[S] p) :=
+  funext fun _ ↦ propext ⟨fun ⟨u, ⟨v, hv, hu⟩, hp⟩ ↦ ⟨v, hv, u, hu, hp⟩,
+    fun ⟨v, hv, u, hu, hp⟩ ↦ ⟨u, ⟨v, hv, hu⟩, hp⟩⟩
+
 /-- Necessity depends only on the worlds accessed: two worlds accessing the same worlds
 carry the same box. -/
 theorem box_congr_left {R : W → W → Prop} {p : W → Prop} {w w' : W}
@@ -80,6 +94,16 @@ variable {R}
 
 instance : Std.Refl (⊤ : W → W → Prop) := ⟨fun _ => trivial⟩
 instance : IsEuclidean (⊤ : W → W → Prop) := ⟨fun _ _ _ _ _ => trivial⟩
+
+/-- A composite of reflexive relations is reflexive. -/
+instance {S : W → W → Prop} [hR : Std.Refl R] [hS : Std.Refl S] :
+    Std.Refl (Relation.Comp R S) where
+  refl w := ⟨w, hR.refl w, hS.refl w⟩
+
+/-- A composite of serial relations is serial. -/
+instance {S : W → W → Prop} [hR : IsSerial R] [hS : IsSerial S] :
+    IsSerial (Relation.Comp R S) where
+  serial w := let ⟨v, hv⟩ := hR.serial w; let ⟨u, hu⟩ := hS.serial v; ⟨u, v, hv, hu⟩
 
 /-- Reflexive relations are serial. -/
 instance [hR : Std.Refl R] : IsSerial R where serial w := ⟨w, hR.refl w⟩

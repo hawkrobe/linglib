@@ -11,29 +11,34 @@ public import Mathlib.Order.Interval.Set.Defs
 /-!
 # Romero and Han (2004): On negative yes/no questions
 
-This file formalizes the paper's derivation of the epistemic bias of yes/no questions with
-preposed negation from one assumption: preposing negation contributes the conversational
-epistemic operator VERUM, `verum`, true at a world when the proposition is in the common
-ground at every world compatible with the speaker's knowledge and conversational goals. A
-question over VERUM partitions on certainty about adding the proposition to the common
-ground rather than on the proposition, `denotation_eq`, a meta-conversational move licit
-only under a prior bias; the paper's positive and negative readings are the two scopes of
-negation relative to VERUM, distinguished by which polarity items they license, `Licensed`.
-The polarity of the implicature is fixed not by the partition, which the positive reading
-shares with a *really*-question, but by the pronounced cell: pronouncing certainty asks for
-conclusive evidence, so the speaker believes the negation, and pronouncing uncertainty asks
-for doubts, so the speaker believes the proposition, `speakerBelief_eq`. The paper's
-examples are rows: the polarity-item judgments follow licensing, and the bias of every
-question with preposed negation and of every VERUM form is the one the model implicates,
-`bias_of_form`.
+This file formalizes the paper's derivation of the epistemic bias of yes/no questions with preposed
+negation from one assumption: preposing negation contributes the conversational epistemic operator
+VERUM, FOR-SURE-CG (43), true at a world when the proposition is in the common ground at every world
+satisfying the conversational goals of an individual `x` at every world conforming to the knowledge
+of `x`, `x` being the addressee, or the addressee and the speaker together. With `epi` and `conv`
+the accessibility relations of `x`, it is the necessity `□[Relation.Comp epi conv] (p ∈ cg ·)`,
+which `ModalLogic.box_comp` unfolds into the paper's two quantifiers. A question over VERUM
+partitions on certainty about adding the proposition to the common ground rather than on the
+proposition, `denotation_eq`, a meta-conversational move licit only under a prior bias; the paper's
+positive and negative readings are the two scopes of negation relative to VERUM, distinguished by
+which polarity items they license, `Licensed`. The polarity of the implicature is fixed not by the
+partition, which the positive reading shares with a *really*-question, but by the pronounced cell:
+pronouncing certainty asks for conclusive evidence, so the speaker believes the negation, and
+pronouncing uncertainty asks for doubts, so the speaker believes the proposition,
+`speakerBelief_eq`. The paper's examples are rows: the polarity-item judgments follow licensing, and
+the bias of every question with preposed negation and of every VERUM form is the one the model
+implicates, `bias_of_form`.
 
 ## Implementation notes
 
-Speaker belief is the epistemic proposition of the states settling a proposition,
-`Set.Iic`. Question forms are the substrate's `Question.PQForm`, preposed negation being the
-high-negation form, and a bias is the sign of the proposition the speaker's belief supports. The Principle of
-Economy that makes VERUM questions biased is stated in the paper in prose and is not
-formalized.
+The common ground at a world is a filter of propositions, so acceptance is closed under entailment
+and conjunction where the paper speaks of a set of propositions. VERUM is not a named operator of
+its own: other analyses built on it, [repp-2013]'s FALSUM among them, are necessities along the same
+relation of the common ground's acceptance of a proposition or its failure to. Speaker belief is the
+epistemic proposition of the states settling a proposition, `Set.Iic`. Question forms are the
+substrate's `Question.PQForm`, preposed negation being the high-negation form, and a bias is the
+sign of the proposition the speaker's belief supports. The Principle of Economy that makes VERUM
+questions biased is stated in the paper in prose and is not formalized.
 
 ## References
 
@@ -41,30 +46,20 @@ formalized.
 * [D. R. Ladd, *A first look at the semantics and pragmatics of negative questions and tag
   questions* (1981)][ladd-1981]
 * [T. N. Höhle, *Über Verum-Fokus im Deutschen* (1992)][hohle-1992]
+* [S. Repp, *Common ground management: Modal particles, illocutionary negation and VERUM*
+  (2013)][repp-2013]
 -/
 
 @[expose] public section
 
 namespace RomeroHan2004
 
-open ModalLogic (box)
+open scoped ModalLogic
 open Question (polar polar_compl PQForm)
 open Set (Iic)
 open Data.Examples
 
 variable {W : Type*} (epi conv : W → W → Prop) (cg : W → Filter W) (p : Set W)
-
-/-! ### VERUM -/
-
-/-- The VERUM operator (43): the proposition is in the common ground at every world
-compatible with the conversational goals of every world compatible with the speaker's
-knowledge. -/
-def verum : Set W :=
-  {w | ∀ w', epi w w' → ∀ w'', conv w' w'' → p ∈ cg w''}
-
-/-- VERUM is a necessity nested in a necessity. -/
-theorem verum_eq_box_box :
-    verum epi conv cg p = box epi (box conv λ w => p ∈ cg w) := rfl
 
 /-! ### The four VERUM questions -/
 
@@ -92,9 +87,10 @@ def Form.Doubt : Form → Prop
 
 instance : DecidablePred Form.Doubt := λ f => by cases f <;> unfold Form.Doubt <;> infer_instance
 
-/-- The cell a form pronounces. -/
+/-- The cell a form pronounces: VERUM of the prejacent, or its complement. -/
 def pronounced (f : Form) : Set W :=
-  if f.Doubt then (verum epi conv cg (prejacent p f))ᶜ else verum epi conv cg (prejacent p f)
+  if f.Doubt then {w | □[Relation.Comp epi conv] (prejacent p f ∈ cg ·) w}ᶜ
+  else {w | □[Relation.Comp epi conv] (prejacent p f ∈ cg ·) w}
 
 /-- The question denoted: the polar question over the pronounced cell. -/
 def denotation (f : Form) : Question W := polar (pronounced epi conv cg p f)
@@ -102,7 +98,8 @@ def denotation (f : Form) : Question W := polar (pronounced epi conv cg p f)
 /-- Every VERUM question denotes the partition on certainty about its prejacent (48), (69),
 (74), whichever cell it pronounces. -/
 theorem denotation_eq (f : Form) :
-    denotation epi conv cg p f = polar (verum epi conv cg (prejacent p f)) := by
+    denotation epi conv cg p f =
+      polar {w | □[Relation.Comp epi conv] (prejacent p f ∈ cg ·) w} := by
   unfold denotation pronounced
   split_ifs <;> simp
 
