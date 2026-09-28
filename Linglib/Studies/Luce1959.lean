@@ -4,6 +4,7 @@ public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 public import Mathlib.Probability.ConditionalProbability
 public import Linglib.Core.Probability.Distributions.Gaussian
 public import Linglib.Core.Probability.Choice.RandomUtility
+public import Linglib.Processing.Psychophysics.SignalDetection
 public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Probability.Kernel.WithDensity
@@ -22,30 +23,34 @@ and the just noticeable difference: a threshold splits pairwise choice into disc
 preference and indistinguishability, which form a semiorder, and the induced trace is the weak order
 of the ratio scale. From the second chapter it takes the psychophysical scales. Pairwise choice
 that depends only on differences of a real-valued scale is logistic in them (`logistic_unique`).
-The power law of Stevens is the ratio scale of the choice axiom in the coordinates of raw
-intensity, where Fechner's law is the same scale in log intensity, and it yields the linear
-generalization of Weber's law; independent stimulus continua multiply. Thurstone's Case V model of discriminal processes is
-strongly stochastically transitive, and its extension to three alternatives is incompatible with the
-choice axiom (`theorem7`). The ranking postulate makes the probability of a rank ordering the
-product of successive first choices from the shrinking set of alternatives, now the Plackett–Luce
-model; these probabilities sum to one, marginalize to the choice probabilities, and order expected
-rank by scale value. From the third chapter it takes the theory of choices among gambles: a
-decomposable preference structure couples a choice function over gambles with one over chance
-events, the events fall into at most three classes of subjective likelihood, exactly three under the
-complementation axioms, and the choice function over events is constant across classes. From the
-fourth chapter it takes the alpha, beta, and gamma learning operators on response strengths. An
-alpha-model matrix changes the total strength by a fixed proportion exactly when each of its columns
-sums to that proportion, so its probability operator is linear, and with two alternatives it is the
-linear operator of Bush and Mosteller. The independence-of-unit condition makes the beta model
-multiply each strength by a constant; its probability operator applies the same multipliers to the
-probabilities and renormalizes, so the beta operators commute. The gamma model adds a constant to
-each strength, which makes its probability operator no function of the probabilities. In a partial
-reinforcement experiment Theorem 14 fixes the product of the strengths of the two gambles, and an
-alpha or gamma operator that keeps the product fixed either confines the strengths to a few values
-or does not learn, while a beta operator that keeps it fixed is a simple one. For the beta model
-with two alternatives and two outcomes it takes the asymptotic theory: the ratio of the strengths is
-a Markov chain whose moments obey three equations, and these tie the limit of the mean choice
-probability to the limits of the moments of the ratio and of its reciprocal.
+The power law of Stevens is the ratio scale of the choice axiom in the coordinates of raw intensity,
+where Fechner's law is the same scale in log intensity, and it yields the linear generalization of
+Weber's law; independent stimulus continua multiply. Thurstone's Case V model of discriminal
+processes is strongly stochastically transitive, and its extension to three alternatives is
+incompatible with the choice axiom (`theorem7`). In signal detection the choice axiom applies to the
+responses, with a response bias where signal detectability theory has a criterion; the Yes-No model
+is nevertheless exactly a logistic observer with a criterion (`yesNoProb_eq_logistic`), and the
+forced choice squares its signal parameter (`forcedChoiceProb_eq_yesNoProb`). The ranking postulate
+makes the probability of a rank ordering the product of successive first choices from the shrinking
+set of alternatives, now the Plackett–Luce model; these probabilities sum to one, marginalize to the
+choice probabilities, and order expected rank by scale value. From the third chapter it takes the
+theory of choices among gambles: a decomposable preference structure couples a choice function over
+gambles with one over chance events, the events fall into at most three classes of subjective
+likelihood, exactly three under the complementation axioms, and the choice function over events is
+constant across classes. From the fourth chapter it takes the alpha, beta, and gamma learning
+operators on response strengths. An alpha-model matrix changes the total strength by a fixed
+proportion exactly when each of its columns sums to that proportion, so its probability operator is
+linear, and with two alternatives it is the linear operator of Bush and Mosteller. The
+independence-of-unit condition makes the beta model multiply each strength by a constant; its
+probability operator applies the same multipliers to the probabilities and renormalizes, so the beta
+operators commute. The gamma model adds a constant to each strength, which makes its probability
+operator no function of the probabilities. In a partial reinforcement experiment Theorem 14 fixes
+the product of the strengths of the two gambles, and an alpha or gamma operator that keeps the
+product fixed either confines the strengths to a few values or does not learn, while a beta operator
+that keeps it fixed is a simple one. For the beta model with two alternatives and two outcomes it
+takes the asymptotic theory: the ratio of the strengths is a Markov chain whose moments obey three
+equations, and these tie the limit of the mean choice probability to the limits of the moments of
+the ratio and of its reciprocal.
 
 ## Implementation notes
 
@@ -1344,6 +1349,102 @@ theorem theorem7 {x y z : ℝ} (hx : 0 < x) (hy : 0 < y) (hz : 0 < z)
   nlinarith [mul_pos (mul_pos hx hy) hz]
 
 end Thurstone
+
+section Detection
+
+open Real MeasureTheory ProbabilityTheory Set SignalDetection
+
+/-! ### §2.E: Signal detectability theory (pp. 58–64)
+
+In the Yes-No experiment (§2.E.2) the axiom-1 analysis applies the choice axiom to the two
+responses, affirm and not affirm. On signal trials their scale values are `α` and `v`, on noise
+trials `1` and `v`, where `α` measures the signal and `v` is a response bias (p. 60), so the
+affirmative probabilities are `P₁₁ = α / (α + v)` and `P₂₁ = 1 / (1 + v)` (p. 61). Eliminating `v`
+gives the receiver operating characteristic `P₁₁ = α P₂₁ / ((α - 1) P₂₁ + 1)`
+(`yesNoProb_roc`). Luce finds these curves practically indistinguishable from those of the normal
+model, and contrasts the two interpretations: the observer of signal detectability theory sets a
+cutoff on a decision axis, the axiom-1 observer a response bias. The curves are exactly those of
+the logistic model, whose observer does set a cutoff: the axiom-1 observer at bias `v` responds as
+the logistic observer at sensitivity `log α` and criterion `log v - log α / 2`
+(`yesNoProb_eq_logistic`).
+
+In the two-alternative forced choice (§2.E.3, p. 62) the scale values of responding with the first
+and the second interval are `α` and `v` when the signal is in the first interval, `1` and `α v` when
+it is in the second. This is the Yes-No model with `α²` in place of `α`
+(`forcedChoiceProb_eq_yesNoProb`), since "in the forced-choice experiment the subject makes, in
+effect, two Yes-No decisions". Its logistic sensitivity is therefore `2 log α`
+(`forcedChoiceProb_eq_logistic`): forced choice doubles the sensitivity, where in the normal model
+the unbiased forced choice at sensitivity `d'` is the unbiased Yes-No at `√2 d'`
+(`SignalDetection.forcedChoice_one_gaussianReal`).
+-/
+
+/-- The probability of affirming the signal in the axiom-1 Yes-No model (p. 61), with signal
+parameter `α` and response bias `v`, on signal trials (`true`) and noise trials (`false`). -/
+noncomputable def yesNoProb (α v : ℝ) : Bool → ℝ
+  | true => α / (α + v)
+  | false => 1 / (1 + v)
+
+/-- The probability of responding with the first interval in the axiom-1 two-alternative forced
+choice (p. 62), when the signal is in the first interval (`true`) or the second (`false`). -/
+noncomputable def forcedChoiceProb (α v : ℝ) : Bool → ℝ
+  | true => α / (α + v)
+  | false => 1 / (1 + α * v)
+
+variable {α v : ℝ}
+
+/-- The receiver operating characteristic of the axiom-1 Yes-No model (p. 61). -/
+theorem yesNoProb_roc (hα : 0 < α) (hv : 0 < v) :
+    yesNoProb α v true = α * yesNoProb α v false / ((α - 1) * yesNoProb α v false + 1) := by
+  have h : 1 + v ≠ 0 := by positivity
+  simp only [yesNoProb]
+  rw [show (α - 1) * (1 / (1 + v)) + 1 = (α + v) / (1 + v) by field_simp; ring]
+  field_simp
+
+/-- The forced choice is the Yes-No model with the signal parameter squared (p. 62). -/
+theorem forcedChoiceProb_eq_yesNoProb (hα : 0 < α) :
+    forcedChoiceProb α v = yesNoProb (α ^ 2) (α * v) := by
+  funext b
+  cases b
+  · simp [forcedChoiceProb, yesNoProb]
+  · simp only [forcedChoiceProb, yesNoProb]
+    rw [sq, ← mul_add, mul_div_mul_left _ _ hα.ne']
+
+/-- The receiver operating characteristic of the axiom-1 forced choice, the Yes-No curve with `α²`
+in place of `α` (p. 62). -/
+theorem forcedChoiceProb_roc (hα : 0 < α) (hv : 0 < v) :
+    forcedChoiceProb α v true =
+      α ^ 2 * forcedChoiceProb α v false / ((α ^ 2 - 1) * forcedChoiceProb α v false + 1) := by
+  rw [forcedChoiceProb_eq_yesNoProb hα]
+  exact yesNoProb_roc (by positivity) (by positivity)
+
+/-- The axiom-1 Yes-No observer responds as the logistic observer at sensitivity `log α` and
+criterion `log v - log α / 2`: its probability of affirming on a trial is the probability that the
+trial's logistic observation exceeds the criterion. -/
+theorem yesNoProb_eq_logistic (hα : 0 < α) (hv : 0 < v) (b : Bool) :
+    yesNoProb α v b =
+      (locationExperiment logisticMeasure (log α) b).real (Ioi (log v - log α / 2)) := by
+  cases b
+  · rw [← falseAlarmRate, falseAlarmRate_logisticMeasure,
+      show -(log α / 2) - (log v - log α / 2) = -log v by ring, sigmoid_neg, sigmoid_log hv,
+      yesNoProb]
+    field_simp
+    ring
+  · rw [← hitRate, hitRate_logisticMeasure,
+      show log α / 2 - (log v - log α / 2) = log (α / v) by rw [log_div hα.ne' hv.ne']; ring,
+      sigmoid_log (div_pos hα hv), yesNoProb]
+    field_simp
+
+/-- The axiom-1 forced choice responds as the logistic observer at sensitivity `2 log α` and
+criterion `log v`. -/
+theorem forcedChoiceProb_eq_logistic (hα : 0 < α) (hv : 0 < v) (b : Bool) :
+    forcedChoiceProb α v b =
+      (locationExperiment logisticMeasure (2 * log α) b).real (Ioi (log v)) := by
+  rw [forcedChoiceProb_eq_yesNoProb hα, yesNoProb_eq_logistic (by positivity) (by positivity),
+    log_pow, log_mul hα.ne' hv.ne']
+  congr 3
+  ring
+
+end Detection
 
 section Ranking
 
