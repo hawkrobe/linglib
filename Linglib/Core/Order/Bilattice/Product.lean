@@ -39,6 +39,10 @@ essentially introduced by Ginsberg [ginsberg-1988], and further generalized by F
 
 * `Bilattice.Product.isExact_iff`, `Bilattice.Product.isConsistent_iff`,
   `Bilattice.Product.isAnticonsistent_iff`: the three classes in coordinates.
+* `Bilattice.Product.disjoint_pro_con_inf`, `Bilattice.Product.disjoint_pro_con_sup`: pairs with
+  disjoint coordinates are closed under the truth operations;
+  `Bilattice.Product.isConsistent_iff_disjoint` identifies them with the consistent pairs over a
+  Boolean factor.
 * `Bilattice.Product.decomposeProdIso`: the representation theorem applied to a product recovers
   its factors.
 
@@ -302,6 +306,33 @@ theorem isAnticonsistent_iff (x : L ⊙ L) : IsAnticonsistent x ↔ x.proᶜ ≤
     (LatticeWithInvolution.compl_compl x.pro).le, h⟩⟩
 
 end Conflation
+
+/-! ### Disjoint coordinates
+
+The pairs whose evidence for and against are disjoint are closed under the truth operations over
+a distributive factor, and under negation by the symmetry of `Disjoint`. Over a Boolean factor disjointness is Fitting's consistency;
+over a De Morgan factor it is stronger (`⟨indet, indet⟩` in `Trivalent ⊙ Trivalent` is consistent),
+and over a Heyting factor, whose pseudocomplement is no involution, it is the only notion
+available. -/
+
+section Disjoint
+
+variable [DistribLattice L] [OrderBot L] {x y : L ⊙ L}
+
+theorem disjoint_pro_con_inf (hx : Disjoint x.pro x.con) (hy : Disjoint y.pro y.con) :
+    Disjoint (x ⊓ y).pro (x ⊓ y).con :=
+  (hx.inf_left _).sup_right (hy.inf_left' _)
+
+theorem disjoint_pro_con_sup (hx : Disjoint x.pro x.con) (hy : Disjoint y.pro y.con) :
+    Disjoint (x ⊔ y).pro (x ⊔ y).con :=
+  (hx.inf_right _).sup_left (hy.inf_right' _)
+
+end Disjoint
+
+/-- Over a Boolean factor, Fitting's consistency is disjointness of the evidence for and against. -/
+theorem isConsistent_iff_disjoint [BooleanAlgebra L] (x : L ⊙ L) :
+    IsConsistent x ↔ Disjoint x.pro x.con :=
+  (isConsistent_iff x).trans le_compl_iff_disjoint_left
 
 /-! ### Recovering the factors
 

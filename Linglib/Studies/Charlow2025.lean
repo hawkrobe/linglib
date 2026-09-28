@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.Bilattice.Product
 public import Linglib.Studies.GroenendijkStokhof1991
 
 /-!
@@ -292,25 +293,24 @@ private theorem rel_ext {φ ψ : Update (Assignment E)} (h : ∀ g k, (g, k) ∈
 
 end DPL
 
-/-! ### Instance 1: two-dimensional DPL -/
+/-! ### Instance 1: two-dimensional DPL
 
-/-- [krahmer-muskens-1995]'s pairs of an update and its anti-extension, recast as a lift: `up`
-pairs an update with its substrate negation, `down` forgets the anti-extension and the lifted
-negation swaps. -/
-structure TwoDimensional (δ : Type*) where
-  positive : δ
-  negative : δ
+[krahmer-muskens-1995]'s pairs of an update and its anti-extension, recast as a lift on the
+diagonal product `δ ⊙ δ`: `up` pairs an update with its substrate negation, `down` forgets the
+anti-extension, and the lifted negation is the product's swap `ᶜ`. -/
 
-namespace TwoDimensional
+section TwoDimensional
+
+open Bilattice Product
 
 variable {δ : Type*} [Substrate δ]
 
-instance : Lift δ (TwoDimensional δ) where
-  up m := ⟨m, Substrate.neg m⟩
-  down M := M.positive
-  neg M := ⟨M.negative, M.positive⟩
+instance : Lift δ (δ ⊙ δ) where
+  up m := mk m (Substrate.neg m)
+  down M := M.pro
+  neg M := Mᶜ
 
-instance : LawfulLift δ (TwoDimensional δ) where
+instance : LawfulLift δ (δ ⊙ δ) where
   down_up _ := rfl
   neg_neg _ := rfl
   down_neg_up _ := rfl
