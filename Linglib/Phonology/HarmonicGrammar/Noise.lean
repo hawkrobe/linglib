@@ -60,11 +60,6 @@ variable {C : Type*} {n : Nat}
 noncomputable def violationDiffSqSum (con : ConstraintSet C (Fin n)) (a b : C) : ℝ :=
   ∑ i, ((con i a : ℝ) - (con i b : ℝ)) ^ 2
 
-/-- Sum of squared violation differences (ℚ, computable).
-    Use this for concrete examples with `decide`. -/
-def violationDiffSqSumQ (con : ConstraintSet C (Fin n)) (a b : C) : ℚ :=
-  ∑ i, ((con i a : ℚ) - (con i b : ℚ)) ^ 2
-
 /-- NHG noise standard deviation for binary choice:
     σ_d = σ · √(Σⱼ (cⱼ(a) − cⱼ(b))²).
 
@@ -246,11 +241,6 @@ theorem censored_nhg_weight_sensitivity (w₁ w₂ : ℝ) (hw : w₁ < w₂) :
 noncomputable def nhgCovariance (con : ConstraintSet C (Fin n)) (sigma : ℝ) (a b c : C) : ℝ :=
   sigma ^ 2 * ∑ i, ((con i b : ℝ) - (con i a : ℝ)) *
                    ((con i c : ℝ) - (con i a : ℝ))
-
-/-- NHG covariance (ℚ, computable). -/
-def nhgCovarianceQ (con : ConstraintSet C (Fin n)) (a b c : C) : ℚ :=
-  ∑ i, ((con i b : ℚ) - (con i a : ℚ)) *
-       ((con i c : ℚ) - (con i a : ℚ))
 
 /-- The NHG self-covariance `Cov(ε_b − ε_a, ε_b − ε_a)` equals
     the variance `σ² · violationDiffSqSum`, recovering the binary case. -/

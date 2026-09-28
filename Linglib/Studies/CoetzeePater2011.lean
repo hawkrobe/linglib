@@ -174,9 +174,6 @@ def maxFinal : Constraint Candidate := Constraint.binary λ c => c.2 = .delete �
 /-- The constraint set (11) lists the constraints in the paper's order. -/
 def con : ConstraintSet Candidate (Fin 4) := ![starCT, maxC, maxPreV, maxFinal]
 
-/-- The violation profiles take the shape that POC's `winProb` consumes. -/
-def vp (ctx : Context) (o : Output) (i : Fin 4) : ℕ := con i (ctx, o)
-
 /-- Both outputs compete in every context. -/
 def cands : Context → Finset Output := λ _ => univ
 
@@ -185,10 +182,10 @@ theorem cands_eq (ctx : Context) : cands ctx = {.delete, .retain} := by cases ct
 /-! ### Categorical systems (table (12)) -/
 
 /-- Ranking `σ` deletes in `ctx` if deletion is its unique optimum. -/
-def Deletes (σ : Ranking (Fin 4) 4) (ctx : Context) : Prop := PicksAt cands vp σ ctx .delete
+def Deletes (σ : Ranking (Fin 4) 4) (ctx : Context) : Prop := PicksAt cands con σ ctx .delete
 
 instance (σ : Ranking (Fin 4) 4) (ctx : Context) : Decidable (Deletes σ ctx) :=
-  inferInstanceAs (Decidable (PicksAt cands vp σ ctx .delete))
+  inferInstanceAs (Decidable (PicksAt cands con σ ctx .delete))
 
 /-- Pre-consonantal deletion needs only \*CT ≫ MAX. -/
 theorem deletes_preC_iff : ∀ σ : Ranking (Fin 4) 4, Deletes σ .preC ↔ σ.Dominates 0 1 := by decide
@@ -228,20 +225,20 @@ theorem card_system_univ : (univ.filter (system · = univ)).card = 6 := by decid
 /-- The probability that grammar `r` deletes in `ctx` is the fraction of its linear extensions
 picking deletion (9). -/
 def deletionProb (r : Fin 4 → Fin 4 → Prop) [DecidableRel r] (ctx : Context) : ℚ :=
-  winProb cands vp r ctx .delete
+  winProb cands con r ctx .delete
 
 /-- Only \*CT favors deletion, in every context. -/
-theorem favoring_eq (ctx : Context) : favoring vp ctx .delete .retain = {0} := by
+theorem favoring_eq (ctx : Context) : favoring con ctx .delete .retain = {0} := by
   cases ctx <;> decide
 
 /-- MAX alone protects t/d pre-consonantally. -/
-theorem active_preC : active vp .preC .delete .retain = {0, 1} := by decide
+theorem active_preC : active con .preC .delete .retain = {0, 1} := by decide
 
 /-- MAX-PRE-V joins MAX pre-vocalically. -/
-theorem active_preV : active vp .preV .delete .retain = {0, 1, 2} := by decide
+theorem active_preV : active con .preV .delete .retain = {0, 1, 2} := by decide
 
 /-- MAX-FINAL joins MAX phrase-finally. -/
-theorem active_pause : active vp .pause .delete .retain = {0, 1, 3} := by decide
+theorem active_pause : active con .pause .delete .retain = {0, 1, 3} := by decide
 
 /-- With no ranking imposed (row (a)), 8 of the 24 rankings delete pre-vocalically, since
 \*CT must outrank both protecting constraints. -/
@@ -445,18 +442,24 @@ inductive Loan
   | guddo
   deriving DecidableEq, Fintype
 
+/-- IDENT-VOICE is violated by the devoiced output. -/
+def identVoice : Constraint (Loan × Bool) := Constraint.binary (·.2 = false)
+
+/-- OCP-VOICE is violated by two voiced obstruents in one root, in faithful *bobu* and *guddo*. -/
+def ocpVoice : Constraint (Loan × Bool) := Constraint.binary fun x ↦ x.2 = true ∧ x.1 ≠ .webbu
+
+/-- \*VOICED-GEMINATE is violated by a voiced geminate, in faithful *webbu* and *guddo*. -/
+def voicedGeminate : Constraint (Loan × Bool) :=
+  Constraint.binary fun x ↦ x.2 = true ∧ x.1 ≠ .bobu
+
 /-- The tableaux (18)–(19) form a realization problem over IDENT-VOICE, OCP-VOICE and
-\*VOICED-GEMINATE, after Itô and Mester and Kawahara. The faithful output (`true`) violates
+\*VOICED-GEMINATE, after Itô and Mester and Kawahara: the faithful output (`true`) violates
 OCP-VOICE in *bobu*, \*VOICED-GEMINATE in *webbu* and both in *guddo*, the devoiced output
 violates IDENT-VOICE, and only *guddo* devoices. -/
-def loanwordDevoicing : RealizationProblem Loan Bool 3 where
+def loanwordDevoicing : RealizationProblem Loan Bool (Fin 3) where
   inputs := univ
   cands _ := univ
-  vp
-    | .bobu, true => ![0, 1, 0]
-    | .webbu, true => ![0, 0, 1]
-    | .guddo, true => ![0, 1, 1]
-    | _, false => ![1, 0, 0]
+  con := ![identVoice, ocpVoice, voicedGeminate]
   target
     | .guddo => false
     | _ => true
@@ -468,7 +471,8 @@ theorem loanwordDevoicing_realizedByWeighting :
     loanwordDevoicing.realizedByWeighting ![3/2, 1, 1] := by
   intro i _ o _ hne
   cases i <;> cases o <;>
-    simp [loanwordDevoicing, dotProduct, Fin.sum_univ_three] at hne ⊢ <;> norm_num
+    simp [loanwordDevoicing, harmonyScore, dotProduct, Fin.sum_univ_three, identVoice, ocpVoice,
+      voicedGeminate] at hne ⊢ <;> norm_num
 
 /-- No ranking realizes the pattern, the instance behind `hg_strictly_contains_ot`. -/
 theorem loanwordDevoicing_not_isOTRealizable : ¬ loanwordDevoicing.IsOTRealizable := by decide
@@ -476,12 +480,13 @@ theorem loanwordDevoicing_not_isOTRealizable : ¬ loanwordDevoicing.IsOTRealizab
 /-- With IDENT-VOICE weighted 2 over 1 and 1, *guddo* and *gutto* tie at harmony −2 and
 MaxEnt-HG gives each probability ½ (tableau (22)). -/
 theorem guddo_maxEnt_half :
-    softmax (fun o => -(![2, 1, 1] ⬝ᵥ (Nat.cast ∘ loanwordDevoicing.vp .guddo o))) =
+    softmax (fun o ↦ harmonyScore loanwordDevoicing.con ![2, 1, 1] (.guddo, o)) =
       fun _ => 2⁻¹ := by
-  have h : (fun o => -(![2, 1, 1] ⬝ᵥ (Nat.cast ∘ loanwordDevoicing.vp .guddo o))) =
+  have h : (fun o ↦ harmonyScore loanwordDevoicing.con ![2, 1, 1] (.guddo, o)) =
       fun _ => (-2 : ℝ) := by
     funext o
-    cases o <;> norm_num [loanwordDevoicing, dotProduct, Fin.sum_univ_three]
+    cases o <;> norm_num [loanwordDevoicing, harmonyScore, dotProduct, Fin.sum_univ_three,
+      identVoice, ocpVoice, voicedGeminate]
   rw [h]
   simp
 

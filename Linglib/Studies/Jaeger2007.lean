@@ -172,25 +172,22 @@ def faith : Constraint (Syl × Syl) := Constraint.binary fun c ↦ c.1 ≠ c.2
 def con : ConstraintSet (Syl × Syl) (Fin 5) :=
   ![faith, starComplexOnset, starComplexCoda, onset, starCoda]
 
-/-- Violation profiles. -/
-def vp (i o : Syl) (k : Fin 5) : ℕ := con k (i, o)
-
 /-- Every syllable type is a candidate output for every input. -/
 def cands : Syl → Finset Syl := fun _ ↦ univ
 
 /-- A ranking produces an input faithfully exactly when every markedness constraint the input
 violates is ranked below FAITH. -/
 theorem faithful_iff (σ : Ranking (Fin 5) 5) (i : Syl) :
-    PicksAt cands vp σ i i ↔ ∀ k, vp i i k = 1 → σ.Dominates 0 k := by
+    PicksAt cands con σ i i ↔ ∀ k, con k (i, i) = 1 → σ.Dominates 0 k := by
   revert σ i; decide +kernel
 
 /-- The syllable types produced faithfully once the markedness constraints in `S` are below
 FAITH, namely those violating no other markedness constraint. -/
-def produced (S : Finset (Fin 5)) : Finset Syl := univ.filter fun i ↦ ∀ k, vp i i k = 1 → k ∈ S
+def produced (S : Finset (Fin 5)) : Finset Syl := univ.filter fun i ↦ ∀ k, con k (i, i) = 1 → k ∈ S
 
 /-- The types a ranking produces faithfully are those of the stage it is at. -/
 theorem mem_produced_iff (σ : Ranking (Fin 5) 5) (i : Syl) :
-    i ∈ produced (univ.filter (σ.Dominates 0)) ↔ PicksAt cands vp σ i i := by
+    i ∈ produced (univ.filter (σ.Dominates 0)) ↔ PicksAt cands con σ i i := by
   simp [produced, faithful_iff]
 
 /-- The stages at which FAITH overtakes *CODA, ONSET, *COMPLEXCODA and *COMPLEXONSET in turn
@@ -201,21 +198,22 @@ theorem produced_stages :
   decide
 
 /-- CV violates no markedness constraint. -/
-theorem cv_unmarked : ∀ i : Syl, ∀ k : Fin 5, k ≠ 0 → vp i cv k = 0 := by decide
+theorem cv_unmarked : ∀ i : Syl, ∀ k : Fin 5, k ≠ 0 → con k (i, cv) = 0 := by decide
 
 /-- A learner producing CV with certainty, the initial state with FAITH at 0 and the markedness
 constraints at 10, lowers each markedness rank by the plasticity times the observation's
 violations, (1). -/
 theorem initial_glaUpdate (r η : ℝ) (o : Syl) (k : Fin 5) (hk : k ≠ 0) :
-    ∑ h, Pi.single (M := fun _ ↦ ℝ) cv 1 h * glaUpdate r η (vp o o k) (vp o h k) =
-      r - η * vp o o k := by
-  have h := expected_glaUpdate (Pi.single (M := fun _ ↦ ℝ) cv 1) (by simp) (fun h ↦ vp o h k) o r η
+    ∑ h, Pi.single (M := fun _ ↦ ℝ) cv 1 h * glaUpdate r η (con k (o, o)) (con k (o, h)) =
+      r - η * con k (o, o) := by
+  have h :=
+    expected_glaUpdate (Pi.single (M := fun _ ↦ ℝ) cv 1) (by simp) (fun h ↦ con k (o, h)) o r η
   rw [h]
   simp [Pi.single_apply, cv_unmarked o k hk]
   ring
 
 /-- The violation rate of a constraint in the corpus of Table 1, in permyriad. -/
-def corpusRate (k : Fin 5) : ℕ := (rows.map fun r ↦ r.2 * vp r.1 r.1 k).sum
+def corpusRate (k : Fin 5) : ℕ := (rows.map fun r ↦ r.2 * con k (r.1, r.1)).sum
 
 /-- FAITH is never violated in the corpus, and the markedness ranks fall fastest for *CODA, then
 ONSET, *COMPLEXCODA and *COMPLEXONSET, the order in which FAITH overtakes them. -/
