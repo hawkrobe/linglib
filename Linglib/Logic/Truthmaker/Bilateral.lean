@@ -28,6 +28,7 @@ fusion of all its verifiers and falsifiers.
 * `Truthmaker.BilProp.subjectMatter`: the fusion of all verifiers and falsifiers.
 * `Truthmaker.Canonical.possible`, `Truthmaker.Canonical.atom`: Fine's canonical space, whose
   states are sets of literals, and its atomic propositions.
+* `Truthmaker.Canonical.mirror`: the literal with the same atom and the opposite polarity.
 
 ## Main results
 
@@ -36,8 +37,11 @@ fusion of all its verifiers and falsifiers.
   exclusivity and exhaustivity, and so do negation and disjunction.
 * `Truthmaker.BilProp.exclusive_iff`: a proposition is exclusive exactly when no possible state
   makes it both true and false.
-* `Truthmaker.BilProp.Exhaustive.mem_upperClosure`: an exhaustive proposition is true or false at
-  every world.
+* `Truthmaker.BilProp.exhaustive_iff`: when every possible state is part of a world, a
+  proposition is exhaustive exactly when it is true or false at every world.
+* `Truthmaker.Canonical.maximal_possible_iff`, `Truthmaker.Canonical.exists_le_maximal_possible`:
+  the worlds of the canonical space contain exactly one of each literal and its mirror, and every
+  consistent set of literals is part of one.
 * `Truthmaker.BilProp.subjectMatter_neg`, `Truthmaker.BilProp.subjectMatter_conj`: negation keeps
   the subject-matter, and conjunction fuses subject-matters.
 * `Truthmaker.Canonical.mem_upperClosure_disj_neg_atom`,
@@ -181,6 +185,17 @@ theorem Exhaustive.mem_upperClosure (h : A.Exhaustive P) {w : S} (hw : Maximal (
   · exact .inl ⟨t, ht, le_sup_right.trans (hw.le_of_ge hwt le_sup_left)⟩
   · exact .inr ⟨t, ht, le_sup_right.trans (hw.le_of_ge hwt le_sup_left)⟩
 
+/-- When every possible state is part of a world, a proposition is exhaustive exactly when it is
+true or false at every world. -/
+theorem exhaustive_iff (hP : ∀ s ∈ P, ∃ w, s ≤ w ∧ Maximal (· ∈ P) w) :
+    A.Exhaustive P ↔
+      ∀ w, Maximal (· ∈ P) w → w ∈ upperClosure A.ver ∨ w ∈ upperClosure A.fal := by
+  refine ⟨fun h w hw ↦ h.mem_upperClosure hw, fun h s hs ↦ ?_⟩
+  obtain ⟨w, hsw, hw⟩ := hP s hs
+  rcases h w hw with h | h <;> obtain ⟨t, ht, htw⟩ := mem_upperClosure.1 h
+  · exact .inl ⟨t, ht, P.lower (sup_le hsw htw) hw.prop⟩
+  · exact .inr ⟨t, ht, P.lower (sup_le hsw htw) hw.prop⟩
+
 /-- The excluded middle of an exhaustive proposition is true at every world. -/
 theorem Exhaustive.mem_upperClosure_disj_neg (h : A.Exhaustive P) {w : S}
     (hw : Maximal (· ∈ P) w) : w ∈ upperClosure (A.disj (-A)).ver := by
@@ -230,38 +245,83 @@ open BilProp
 
 variable {α : Type*}
 
-/-- The possible states of the canonical space are the consistent sets of literals, where
-`(a, true)` asserts the atom `a` and `(a, false)` denies it. -/
-def possible : LowerSet (Set (α × Bool)) where
-  carrier := {L | ∀ a, (a, true) ∈ L → (a, false) ∉ L}
-  lower' := by
-    intro L K hKL hL a ht hf
-    exact hL a (hKL ht) (hKL hf)
+/-- The mirror image of a literal has the same atom and the opposite polarity. -/
+def mirror (x : α × Bool) : α × Bool :=
+  (x.1, !x.2)
 
-theorem mem_possible {L : Set (α × Bool)} :
-    L ∈ possible ↔ ∀ a, (a, true) ∈ L → (a, false) ∉ L :=
+@[simp] theorem mirror_mk (a : α) (b : Bool) : mirror (a, b) = (a, !b) :=
+  rfl
+
+@[simp] theorem mirror_mirror (x : α × Bool) : mirror (mirror x) = x := by
+  simp [mirror]
+
+theorem mirror_involutive : Function.Involutive (mirror (α := α)) :=
+  mirror_mirror
+
+theorem mirror_ne (x : α × Bool) : mirror x ≠ x :=
+  fun h ↦ Bool.not_ne_self x.2 (congrArg Prod.snd h)
+
+/-- The possible states of the canonical space are the consistent sets of literals, those
+containing no literal together with its mirror image. The literal `(a, true)` asserts the atom
+`a` and `(a, false)` denies it. -/
+def possible : LowerSet (Set (α × Bool)) where
+  carrier := {L | ∀ x ∈ L, mirror x ∉ L}
+  lower' := by
+    intro L K hKL hL x hx hx'
+    exact hL x (hKL hx) (hKL hx')
+
+theorem mem_possible {L : Set (α × Bool)} : L ∈ possible ↔ ∀ x ∈ L, mirror x ∉ L :=
   Iff.rfl
+
+/-- The worlds of the canonical space are the sets of literals that contain exactly one of each
+literal and its mirror image. -/
+theorem maximal_possible_iff {w : Set (α × Bool)} :
+    Maximal (· ∈ possible) w ↔ ∀ x, x ∈ w ↔ mirror x ∉ w := by
+  refine ⟨fun hw x ↦ ⟨hw.prop x, fun hx ↦ ?_⟩, fun h ↦ ⟨fun x hx ↦ (h x).1 hx, ?_⟩⟩
+  · refine hw.le_of_ge (fun y hy hy' ↦ ?_) (Set.subset_insert x w) (Set.mem_insert x w)
+    rcases hy with rfl | hy <;> rcases hy' with hy' | hy'
+    · exact mirror_ne _ hy'
+    · exact hx hy'
+    · exact hx (hy' ▸ (mirror_mirror y).symm ▸ hy)
+    · exact hw.prop y hy hy'
+  · intro s hs hws y hy
+    by_contra hyw
+    exact hs y hy (hws (not_not.1 (mt (h y).2 hyw)))
+
+/-- A world of the canonical space contains every literal or its mirror image. -/
+theorem mem_or_mirror_mem_of_maximal {w : Set (α × Bool)} (hw : Maximal (· ∈ possible) w)
+    (x : α × Bool) : x ∈ w ∨ mirror x ∈ w :=
+  or_iff_not_imp_left.2 fun hx ↦ not_not.1 (mt (maximal_possible_iff.1 hw x).2 hx)
+
+/-- Every consistent set of literals is part of a world, so the canonical space is a W-space. -/
+theorem exists_le_maximal_possible {L : Set (α × Bool)} (hL : L ∈ possible) :
+    ∃ w, L ≤ w ∧ Maximal (· ∈ possible) w := by
+  refine ⟨{x | x ∈ L ∨ x.2 = true ∧ mirror x ∉ L}, fun x hx ↦ .inl hx,
+    maximal_possible_iff.2 fun ⟨a, b⟩ ↦ ?_⟩
+  have h₁ := hL (a, true)
+  have h₂ := hL (a, false)
+  cases b <;> simp only [Set.mem_ofPred_eq, mirror_mk, Bool.not_true, Bool.not_false] at h₁ h₂ ⊢ <;>
+    tauto
 
 /-- The atomic proposition `a` is verified by its assertion and falsified by its denial. -/
 def atom (a : α) : BilProp (Set (α × Bool)) :=
   ⟨{{(a, true)}}, {{(a, false)}}⟩
 
+@[simp] theorem ver_atom (a : α) : (atom a).ver = {{(a, true)}} :=
+  rfl
+
+@[simp] theorem fal_atom (a : α) : (atom a).fal = {{(a, false)}} :=
+  rfl
+
 theorem exclusive_atom (a : α) : (atom a).Exclusive possible := by
   rintro _ rfl _ rfl h
-  exact h a (.inl rfl) (.inr rfl)
+  exact h (a, true) (.inl rfl) (.inr rfl)
 
-theorem exhaustive_atom (a : α) : (atom a).Exhaustive possible := by
-  intro L hL
-  by_cases hf : (a, false) ∈ L
-  · refine .inr ⟨{(a, false)}, rfl, ?_⟩
-    rwa [show L ⊔ {(a, false)} = L from Set.union_eq_left.2 (Set.singleton_subset_iff.2 hf)]
-  · refine .inl ⟨{(a, true)}, rfl, fun b hb hb' ↦ ?_⟩
-    rcases hb' with hb' | hb'
-    · rcases hb with hb | hb
-      · exact hL b hb hb'
-      · obtain rfl := (Prod.mk.inj hb).1
-        exact hf hb'
-    · exact Bool.false_ne_true (Prod.mk.inj hb').2
+theorem exhaustive_atom (a : α) : (atom a).Exhaustive possible :=
+  (exhaustive_iff fun _ ↦ exists_le_maximal_possible).2 fun _ hw ↦
+    (mem_or_mirror_mem_of_maximal hw (a, true)).imp
+      (fun h ↦ mem_upperClosure.2 ⟨_, rfl, Set.singleton_subset_iff.2 h⟩)
+      (fun h ↦ mem_upperClosure.2 ⟨_, rfl, Set.singleton_subset_iff.2 h⟩)
 
 theorem subjectMatter_atom (a : α) : (atom a).subjectMatter = {(a, true), (a, false)} := by
   simpa [subjectMatter, atom] using Set.pair_comm _ _
@@ -279,7 +339,7 @@ theorem subjectMatter_disj_neg_atom (a : α) :
 theorem subjectMatter_disj_neg_atom_not_mem (a : α) :
     ((atom a).disj (-atom a)).subjectMatter ∉ possible := by
   rw [subjectMatter_disj_neg_atom]
-  exact fun h ↦ h a (.inl rfl) (.inr rfl)
+  exact fun h ↦ h (a, true) (.inl rfl) (.inr rfl)
 
 /-- Excluded middles of distinct atoms have distinct subject-matters. -/
 theorem subjectMatter_disj_neg_atom_injective :
