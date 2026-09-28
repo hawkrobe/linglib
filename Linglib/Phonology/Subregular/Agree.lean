@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Subregular.StrictlyPiecewise
-public import Linglib.Phonology.Subregular.ForbidPairs
+public import Linglib.Phonology.Constraints.ForbiddenPairs
 
 /-!
 # AGREE as a tier-based strictly 2-local language
@@ -14,10 +14,11 @@ public import Linglib.Phonology.Subregular.ForbidPairs
 This file characterizes AGREE-style markedness as a tier-based strictly 2-local (TSL₂) language.
 AGREE requires tier-adjacent symbols to be equal, so it is the dual of the OCP, which requires
 them to differ. Both specialize the forbidden-pair constraint `Constraint.forbidPairs` of
-`ForbidPairs.lean`, AGREE with `R := (· ≠ ·)` and the OCP with `R := (· = ·)`. Consonant harmony,
-vowel harmony, and tone spreading factor through `TierStrictlyLocalGrammar.agree`, while
-dissimilation, anti-gemination, and Meeussen's rule factor through `TierStrictlyLocalGrammar.ocp`,
-and asymmetric patterns instantiate the generic constructor with their own relation.
+`Constraints/ForbiddenPairs.lean`, AGREE with `R := (· ≠ ·)` and the OCP with `R := (· = ·)`.
+Consonant harmony, vowel harmony, and tone spreading factor through
+`TierStrictlyLocalGrammar.agree`, while dissimilation, anti-gemination, and Meeussen's rule factor
+through `TierStrictlyLocalGrammar.ocp`, and asymmetric patterns instantiate the generic
+constructor with their own relation.
 
 Because equality is transitive, AGREE is also strictly piecewise, and the tier projection is
 dispensable. This lets transparent long-distance harmony be described either way, as McMullin
@@ -46,15 +47,11 @@ observes, whereas the OCP has no such reading.
 
 namespace Subregular
 
-open Constraints OptimalityTheory
-
--- `α : Type` (rather than `Type*`) is forced by `OptimalityTheory`, which is monomorphic in
--- universe 0. See the parallel comment in `OCP.lean`.
-variable {α : Type}
+variable {α : Type*}
 
 /-- The forbidden 2-factors for AGREE are the pairs `[some x, some y]` of two distinct
 non-boundary symbols, the inequality instance of `forbiddenPairs`. -/
-def agreeForbidden (α : Type) [DecidableEq α] : Set (Augmented α) :=
+def agreeForbidden (α : Type*) [DecidableEq α] : Set (Augmented α) :=
   forbiddenPairs (α := α) (· ≠ ·)
 
 /-- The TSL₂ grammar of AGREE forbids two adjacent distinct symbols on the tier defined by `p`,
@@ -70,10 +67,8 @@ def AgreeCleanPair [DecidableEq α] : Option α → Option α → Prop :=
   CleanPair (α := α) (· ≠ ·)
 
 lemma agreeCleanPair_some_some [DecidableEq α] (a b : α) :
-    AgreeCleanPair (some a) (some b) ↔ a = b := by
-  rw [show AgreeCleanPair (some a) (some b) ↔ ¬ a ≠ b from
-        CleanPair.some_some a b]
-  exact not_not
+    AgreeCleanPair (some a) (some b) ↔ a = b :=
+  (CleanPair.some_some a b).trans not_not
 
 /-- The AGREE relation is boundary-vacuous, the inequality instance of
 `CleanPair.isBoundaryVacuous`. -/
@@ -130,9 +125,9 @@ end Piecewise
 
 end Subregular
 
-namespace Constraints.Constraint
+namespace OptimalityTheory.Constraint
 
-variable {α : Type} [DecidableEq α]
+variable {α : Type*} [DecidableEq α]
 
 /-- A string satisfies AGREE iff its adjacent elements are equal, so that all its elements are
 equal. -/
@@ -147,5 +142,5 @@ theorem zeroSet_comap_filter_agree (p : α → Prop) [DecidablePred p] :
       (Subregular.TierStrictlyLocalGrammar.agree p).language :=
   zeroSet_comap_filter_forbidPairs (· ≠ ·) p
 
-end Constraints.Constraint
+end OptimalityTheory.Constraint
 

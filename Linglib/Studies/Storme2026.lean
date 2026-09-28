@@ -53,7 +53,7 @@ is not formalized.
 
 namespace Storme2026
 
-open Constraints OptimalityTheory Phonology Farsi Finset Real
+open OptimalityTheory HarmonicGrammar Phonology Farsi Finset Real
 
 /-! ### Systemic constraints, joint evaluation, and marginalization -/
 

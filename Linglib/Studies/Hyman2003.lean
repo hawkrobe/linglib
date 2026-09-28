@@ -88,7 +88,7 @@ affix order, so the Mirror Principle holds, if at all, as a violable constraint 
 
 namespace Hyman2003
 
-open Morphology Data.Examples OptimalityTheory Constraints
+open Morphology Data.Examples OptimalityTheory
 
 /-! ### The template -/
 

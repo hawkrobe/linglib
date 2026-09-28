@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Mathlib.Data.Finset.Image
@@ -51,13 +56,26 @@ relations: [dolatian-heinz-2020]).
   graph of an order isomorphism between the two position orders.
 * `Correspondence.diagram_isSymmetric` — a diagonal diagram over a symmetric role
   predicate is symmetric.
+* `Correspondence.isMarkedness_iff_exists_comap` — a markedness constraint is exactly a
+  constraint on strings pulled back along the output form.
+
+## References
+
+* [J. J. McCarthy and A. Prince, *Faithfulness and Reduplicative Identity*
+  (1995)][mccarthy-prince-1995]
+* [L. Benua, *Transderivational Identity: Phonological Relations between Words*
+  (1997)][benua-1997]
+* [A. Payne, M. H. Vu and J. Heinz, *A Formal Analysis of Correspondence Theory*
+  (2017)][payne-vu-heinz-2017]
+* [C. Potts and G. K. Pullum, *Model Theory and the Content of OT Constraints*
+  (2002)][potts-pullum-2002]
+* [H. Dolatian and J. Heinz, *Computing and Classifying Reduplication with 2-Way Finite-State
+  Transducers* (2020)][dolatian-heinz-2020]
 -/
 
 @[expose] public section
 
 namespace OptimalityTheory
-
-open Constraints
 
 /-- A correspondence diagram consists of a string for each role and, for each ordered pair of
 roles, a directed relation between their positions. -/
@@ -541,7 +559,18 @@ def IsFaithfulness (k : Constraint (Correspondence BinaryRole α)) : Prop :=
 /-- A constraint is **markedness** for the role `out` when it depends only on
 `form out`. -/
 def IsMarkedness (out : Role) (k : Constraint (Correspondence Role α)) : Prop :=
-  ∀ c₁ c₂ : Correspondence Role α, c₁.form out = c₂.form out → k c₁ = k c₂
+  k.FactorsThrough (·.form out)
+
+/-- A constraint on strings pulled back along the output form is markedness. -/
+theorem isMarkedness_comap (out : Role) (m : Constraint (List α)) :
+    IsMarkedness out (m.comap (·.form out)) :=
+  Function.FactorsThrough.rfl.comp_left m
+
+/-- A constraint is markedness for the role `out` exactly when it is a constraint on strings
+pulled back along `form out`. -/
+theorem isMarkedness_iff_exists_comap (out : Role) (k : Constraint (Correspondence Role α)) :
+    IsMarkedness out k ↔ ∃ m : Constraint (List α), k = m.comap (·.form out) :=
+  Function.factorsThrough_iff k
 
 theorem isFaithfulness_maxViol : IsFaithfulness (α := α) (maxViol · .lhs .rhs) :=
   maxViol_identity

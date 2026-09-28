@@ -189,7 +189,7 @@ The recursive prosodic constituent ([ito-mester-2003]): the Core ordered rose tr
 `RoseTree` labeled by prosodic-level `Constituent`s — the **violable OT candidate
 carrier** for ω/φ/… structures, including the ill-formed ones (a footless ω, a stray under
 φ) that `IsWord` rules out. Its OT constraints are
-`Constraints.Constraint Tree` values, defined alongside `IsWord`. Homed here because
+`OptimalityTheory.Constraint Tree` values, defined alongside `IsWord`. Homed here because
 `Constituent.weight`/`.syl` need `Syllable.Weight`; it inherits `DecidableEq`/`map` from
 `RoseTree`. -/
 

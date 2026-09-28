@@ -59,7 +59,6 @@ ERC sets and antimatroids
 @[expose] public section
 
 namespace OptimalityTheory
-open Constraints
 
 -- ============================================================================
 -- § 9: Maximal Chains (Definition 1)

@@ -1038,10 +1038,8 @@ import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.NormalForm
 import Linglib.Phonology.Autosegmental.OCP
 import Linglib.Phonology.Autosegmental.Realization
-import Linglib.Phonology.Constraints.Basic
 import Linglib.Phonology.Constraints.Defs
 import Linglib.Phonology.Constraints.Directional
-import Linglib.Phonology.Constraints.Lift
 import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.FeatureGeometry
 import Linglib.Phonology.HarmonicGrammar.Expressivity
@@ -1075,7 +1073,6 @@ import Linglib.Phonology.Subregular.BMRS
 import Linglib.Phonology.Subregular.Boundary
 import Linglib.Phonology.Subregular.ContainsFactor
 import Linglib.Phonology.Subregular.Dependence
-import Linglib.Phonology.Subregular.ForbidPairs
 import Linglib.Phonology.Subregular.ForbiddenPairs
 import Linglib.Phonology.Subregular.ISL
 import Linglib.Phonology.Subregular.LocalRewrite

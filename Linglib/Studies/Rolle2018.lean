@@ -52,7 +52,7 @@ case studies and the treatment of apparent outward dominance are not formalized.
 
 namespace Rolle2018
 
-open Tone Constraints OptimalityTheory
+open Tone OptimalityTheory
 
 /-! ### Cophonology-scope -/
 

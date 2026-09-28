@@ -60,7 +60,7 @@ discussion are not formalized.
 namespace Casali2003
 
 open Phonology OptimalityTheory
-open Constraints (Constraint)
+open OptimalityTheory (Constraint)
 
 /-! ### Inventory types (1) -/
 

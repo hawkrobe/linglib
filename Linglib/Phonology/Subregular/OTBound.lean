@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Subregular.ForbidPairs
+public import Linglib.Phonology.Constraints.ForbiddenPairs
 public import Linglib.Core.Computability.NonRegular.AnBn
 
 /-!
@@ -28,7 +28,7 @@ distinct prefixes `aⁿ` give distinct left quotients of `{ aⁿ bⁿ }`, so the
 Phonologically the takeaway is negative: `Constraint`s are too expressive to be classified by
 subregular complexity alone, and a subregular guarantee on a constraint set needs the
 schema-specific constructors, since an arbitrary violation count admits supraregular zero sets.
-The positive bridges are in `ForbidPairs.lean`, `OCP.lean` and `Agree.lean`.
+The positive bridges are in `Constraints/ForbiddenPairs.lean`, `OCP.lean` and `Agree.lean`.
 
 ## References
 
@@ -40,7 +40,7 @@ The positive bridges are in `ForbidPairs.lean`, `OCP.lean` and `Agree.lean`.
 
 namespace Subregular.OTBound
 
-open Constraints OptimalityTheory
+open OptimalityTheory
 
 /-! ### A supraregular constraint -/
 

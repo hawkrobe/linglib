@@ -62,7 +62,7 @@ Harmonic Grammar's tug-of-war the difference vanishes in both directions
 
 namespace ZurawHayes2017
 
-open Real Constraints HarmonicGrammar ProbabilityTheory Finset
+open Real OptimalityTheory HarmonicGrammar ProbabilityTheory Finset
 open Zuraw2010 (StemC SubSt NSCand)
 
 /-! ### Inputs and candidates -/

@@ -69,7 +69,7 @@ tables (14), (21), (23) and (32) are Praat simulations and are not formalized.
 
 namespace CoetzeePater2011
 
-open Constraints OptimalityTheory HarmonicGrammar Finset Real
+open OptimalityTheory HarmonicGrammar Finset Real
 
 /-! ### Deletion rates by context and by morphology (tables (10) and (7)) -/
 

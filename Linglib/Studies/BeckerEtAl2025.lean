@@ -54,7 +54,7 @@ foot/word carries `isHead := true`.
 
 namespace BeckerEtAl2025
 
-open Prosody Constraints OptimalityTheory
+open Prosody OptimalityTheory
 
 /-! ### Words in isolation ([becker-etal-2025] §3) -/
 

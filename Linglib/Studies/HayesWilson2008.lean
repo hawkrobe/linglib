@@ -58,7 +58,7 @@ in prose.
 
 namespace HayesWilson2008
 
-open Data.Examples Phonology Constraints Real
+open Data.Examples Phonology OptimalityTheory HarmonicGrammar Real
 
 /-! ### The segments of Table 3 -/
 

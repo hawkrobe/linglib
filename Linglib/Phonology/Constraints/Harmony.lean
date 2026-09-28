@@ -13,8 +13,8 @@ public import Linglib.Core.LinearAlgebra.Matrix.DotProduct
 /-!
 # Harmony evaluation
 
-This file proves evaluation and order lemmas for `Constraints.harmonyScore` and
-`Constraints.weightedViolations`. Harmony is additive over concatenated and jointly evaluated
+This file proves evaluation and order lemmas for `HarmonicGrammar.harmonyScore` and
+`HarmonicGrammar.weightedViolations`. Harmony is additive over concatenated and jointly evaluated
 constraint sets, so constraint summation is innocuous for it, and with non-negative weights a
 candidate that incurs no more violations than another on every constraint has at least its
 harmony, which is harmonic bounding.
@@ -41,7 +41,9 @@ harmony, which is harmonic bounding.
 
 @[expose] public section
 
-namespace Constraints
+namespace HarmonicGrammar
+
+open OptimalityTheory
 
 variable {C : Type*} {n : ℕ}
 
@@ -125,4 +127,4 @@ theorem harmonyDominates_of_lt (hw : 0 ≤ w) (hle : ∀ i, con i a ≤ con i b)
     harmonyDominates con w a b :=
   neg_lt_neg (weightedViolations_lt_weightedViolations hw hle hlt)
 
-end Constraints
+end HarmonicGrammar

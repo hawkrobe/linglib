@@ -30,7 +30,7 @@ parsed (`monosyllable_never_optimal`), and `Parse(σ)` orders the placements of 
 A footing is the library's `Prosody.Footing`, a flat sequence of feet and stray syllables
 with no head foot, since the paper does not distinguish primary from secondary stress; a
 syllable carries no weight, and for Waorani only its affiliation to stem or suffix. Directional
-constraints are `Constraints.directionalBlock`s, one binary constraint per syllable position,
+constraints are `OptimalityTheory.directionalBlock`s, one binary constraint per syllable position,
 the block reversed for right-to-left evaluation; a foot-form violation is charged at the
 rightmost syllable of its foot, as under left-to-right evaluation, which the paper shows is the
 only direction that matters for these constraints in iterative footing. The prosodic-word
@@ -50,7 +50,7 @@ convergence checked at the last step; the factorial typology of §4 is not forma
 
 namespace Lamont2022c
 
-open Prosody Constraints OptimalityTheory
+open Prosody OptimalityTheory
 
 variable {S : Type*} [DecidableEq S]
 

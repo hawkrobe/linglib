@@ -45,7 +45,7 @@ above the constraint that every prosodic word correspond to a morphological word
 
 namespace Bennett2018
 
-open Prosody Constraints OptimalityTheory
+open Prosody OptimalityTheory
 
 /-! ### Parses -/
 

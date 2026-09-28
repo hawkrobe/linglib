@@ -47,7 +47,7 @@ kernel. The paper's examples are the rows of `Data.Examples.Wang2023`.
 
 namespace Wang2023
 
-open Agreement Constraints OptimalityTheory
+open Agreement OptimalityTheory
 
 /-! ### The recruited values are the least specified cells (§4.1) -/
 

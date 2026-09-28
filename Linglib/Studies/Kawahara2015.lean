@@ -32,7 +32,7 @@ no affix is both (`Affix.Recessive.not_dominant`), and the accent-shifting suffi
 
 namespace Kawahara2015
 
-open Prosody Japanese.Prosody Constraints
+open Prosody Japanese.Prosody OptimalityTheory
 
 /-! ### Default accent: the AAR vs the Latin Stress Rule
 

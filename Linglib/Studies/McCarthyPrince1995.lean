@@ -63,7 +63,7 @@ those of the Akan fragment.
 
 namespace McCarthyPrince1995
 
-open Phonology Constraints OptimalityTheory
+open Phonology OptimalityTheory
 
 /-! ### Phonological constraints on a surface string -/
 

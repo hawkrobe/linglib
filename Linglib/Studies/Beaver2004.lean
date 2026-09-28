@@ -50,7 +50,7 @@ filters out.
 
 namespace Beaver2004
 
-open Discourse.Centering Constraints OptimalityTheory
+open Discourse.Centering OptimalityTheory
 
 /-! ### Candidates -/
 

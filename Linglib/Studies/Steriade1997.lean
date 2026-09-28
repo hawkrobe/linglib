@@ -58,7 +58,7 @@ not reproduced. The lapse constraint is the paper's three-stressless-syllable ve
 
 namespace Steriade1997
 
-open Constraints Phonology
+open OptimalityTheory Phonology
 
 /-! ### Lexical conservatism conditions -/
 

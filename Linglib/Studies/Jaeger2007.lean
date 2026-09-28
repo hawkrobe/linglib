@@ -48,7 +48,7 @@ syllable-structure constraints.
 
 namespace Jaeger2007
 
-open Constraints OptimalityTheory Finset Real Data.Examples GoldwaterJohnson2003
+open OptimalityTheory Finset Real Data.Examples GoldwaterJohnson2003
 
 /-! ### The Gradual Learning Algorithm as Stochastic Gradient Ascent -/
 

@@ -43,7 +43,7 @@ derivations are the substrate's harmonic-serialism and tableau apparatus.
 namespace McPhersonLamont2026
 
 open OptimalityTheory
-open Constraints Autosegmental Poko Tone
+open OptimalityTheory Autosegmental Poko Tone
 
 /-! ### Candidates (eqs. 57, 58) -/
 
