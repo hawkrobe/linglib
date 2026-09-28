@@ -9,7 +9,6 @@ public import Linglib.Fragments.German.Determiners
 public import Linglib.Fragments.Mandarin.Determiners
 public import Linglib.Fragments.Thai.Determiners
 public import Linglib.Fragments.Shan.Determiners
-public import Linglib.Fragments.Shan.Determiners
 public import Linglib.Studies.Jenks2018
 
 /-!

@@ -5,19 +5,30 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Linglib.Core.LinearAlgebra.Matrix.DotProduct
 
 /-!
-# Harmony evaluation
+# Harmony
 
-This file proves evaluation and order lemmas for `HarmonicGrammar.harmonyScore` and
-`HarmonicGrammar.weightedViolations`. Harmony is additive over concatenated and jointly evaluated
-constraint sets, so constraint summation is innocuous for it, and with non-negative weights a
-candidate that incurs no more violations than another on every constraint has at least its
-harmony, which is harmonic bounding.
+A Harmonic Grammar ([smolensky-legendre-2006]) weights each constraint of a constraint set `CON`
+by a number, real in the usual statement, and the harmony of a candidate is the negated weighted
+sum of its violations, `H(c) = -Σⱼ wⱼ · Cⱼ(c)`, a linear functional of the candidate's violation
+vector. The weight vector `w : Fin n → R` is the grammar's parameter, the Harmonic-Grammar twin of
+an OT `Ranking n`, and both act on one `CON`. The weight ring is a parameter so that a grammar with
+rational or integer weights keeps its scores exactly computable.
+
+Harmony is additive over concatenated and jointly evaluated constraint sets, so constraint
+summation is innocuous for it, and with non-negative weights a candidate that incurs no more
+violations than another on every constraint has at least its harmony, which is harmonic bounding.
+
+## Main definitions
+
+* `weightedViolations`: the weighted sum `Σⱼ wⱼ · vⱼ` of a violation vector.
+* `harmonyScore`: the harmony `H(c) = -Σⱼ wⱼ · Cⱼ(c)` of a candidate.
+* `harmonyDominates`: harmonic dominance, `H(a) > H(b)`.
 
 ## Main results
 
@@ -34,6 +45,8 @@ harmony, which is harmonic bounding.
 
 ## References
 
+* [P. Smolensky and G. Legendre, *The Harmonic Mind: From Neural Computation to
+  Optimality-Theoretic Grammar* (2006)][smolensky-legendre-2006]
 * [A. Prince and P. Smolensky, *Optimality Theory: Constraint Interaction in Generative Grammar*
   (1993)][prince-smolensky-1993]
 * [G. Magri and B. Storme, *Constraint Summation in Phonological Theory* (2021)][magri-storme-2021]
@@ -45,7 +58,34 @@ namespace HarmonicGrammar
 
 open OptimalityTheory
 
-variable {C : Type*} {n : ℕ}
+variable {C : Type*} {n : ℕ} {R : Type*}
+
+/-! ### Weighted violations and harmony -/
+
+/-- The **weighted violation sum** of a violation vector `v` under a weight vector `w` is the
+linear functional `Σⱼ wⱼ · vⱼ`. Harmony is its negation (`harmonyScore`). -/
+def weightedViolations [Semiring R] (w : Fin n → R) (v : Fin n → ℕ) : R :=
+  ∑ j, w j * (v j : R)
+
+/-- The **harmony** `H(c) = -Σⱼ wⱼ · Cⱼ(c)` of a candidate ([smolensky-legendre-2006]) is the
+negated weighted sum of its violations under the weight vector `w`, and higher harmony is more
+grammatical. -/
+def harmonyScore [Ring R] (con : CON C n) (w : Fin n → R) (c : C) : R :=
+  -weightedViolations w (fun j ↦ con j c)
+
+/-- `harmonyScore` is a negated `Finset.sum`. -/
+theorem harmonyScore_eq_neg_sum [Ring R] (con : CON C n) (w : Fin n → R) (c : C) :
+    harmonyScore con w c = -∑ j, w j * (con j c : R) := rfl
+
+/-- The candidate `a` harmonically dominates `b` when `H(a) > H(b)`. The relation is the
+pullback of `>` along `harmonyScore con w` (`Order.Preimage`), so it inherits `IsStrictOrder`
+from the weight ring. -/
+def harmonyDominates [Ring R] [LT R] (con : CON C n) (w : Fin n → R) : C → C → Prop :=
+  harmonyScore con w ⁻¹'o (· > ·)
+
+@[simp] theorem harmonyDominates_iff [Ring R] [LT R] (con : CON C n) (w : Fin n → R)
+    (a b : C) : harmonyDominates con w a b ↔ harmonyScore con w b < harmonyScore con w a :=
+  Iff.rfl
 
 /-! ### Evaluation by cons-recursion -/
 

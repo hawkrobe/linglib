@@ -2,7 +2,7 @@ module
 
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Linglib.Phonology.HarmonicGrammar.Expressivity
-public import Linglib.Phonology.Constraints.Harmony
+public import Linglib.Phonology.HarmonicGrammar.Harmony
 
 /-!
 # Coetzee and Pater (2011): the place of variation in phonological theory

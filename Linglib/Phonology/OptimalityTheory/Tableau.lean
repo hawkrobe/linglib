@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Phonology.OptimalityTheory.Ranking
-public import Linglib.Phonology.Constraints.Defs
-public import Linglib.Phonology.Constraints.Profile
+public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
+public import Linglib.Phonology.OptimalityTheory.ViolationProfile
 public import Mathlib.GroupTheory.Perm.Basic
 public import Mathlib.Data.List.Permutation
 

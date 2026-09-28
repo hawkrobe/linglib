@@ -45,8 +45,6 @@ under those hypotheses.
 When upstreaming, replace the imports with
 ```
 module
-public import Mathlib.RingTheory.Bialgebra.SymmetricAlgebra
-public import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 ```
 plus `@[expose] public section`.
 -/

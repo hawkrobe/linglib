@@ -1038,15 +1038,11 @@ import Linglib.Phonology.Autosegmental.NonCrossing
 import Linglib.Phonology.Autosegmental.NormalForm
 import Linglib.Phonology.Autosegmental.OCP
 import Linglib.Phonology.Autosegmental.Realization
-import Linglib.Phonology.Constraints.Defs
-import Linglib.Phonology.Constraints.Directional
-import Linglib.Phonology.Constraints.Profile
 import Linglib.Phonology.FeatureGeometry
 import Linglib.Phonology.HarmonicGrammar.Expressivity
 import Linglib.Phonology.HarmonicGrammar.Noise
 import Linglib.Phonology.Hiatus
 import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
-import Linglib.Phonology.Constraints.Harmony
 import Linglib.Studies.Ginzburg2012
 import Linglib.Studies.Heim1982
 import Linglib.Studies.Just2024

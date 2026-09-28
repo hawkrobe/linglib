@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Phonology.Constraints.Profile
+public import Linglib.Phonology.OptimalityTheory.ViolationProfile
+public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Linglib.Phonology.OptimalityTheory.Ranking
 public import Mathlib.Algebra.Group.Pointwise.Set.Basic
 public import Mathlib.Algebra.Tropical.Basic

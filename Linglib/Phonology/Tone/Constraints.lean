@@ -7,7 +7,7 @@ module
 
 public import Linglib.Phonology.Autosegmental.Floating
 public import Linglib.Phonology.Tone.Basic
-public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 
 /-!
 # Tonal constraints

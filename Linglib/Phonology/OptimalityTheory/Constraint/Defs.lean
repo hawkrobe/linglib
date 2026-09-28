@@ -12,13 +12,12 @@ public import Mathlib.Algebra.BigOperators.Fin
 # Constraints
 
 This file defines the violable constraints of Optimality Theory ([prince-smolensky-1993]), which
-Harmonic Grammar, MaxEnt and optimality-theoretic work in syntax and semantics adopt, and the
-Harmonic Grammar scores built on them. A constraint is a function `C → ℕ` that counts the violations
-of each candidate. It stores no name and no faithfulness or markedness tag, since a constraint is
-its evaluation function. The faithfulness–markedness distinction is a structural property of
-correspondence candidates (`OptimalityTheory.Correspondence`), where markedness factors through the
-output and faithfulness vanishes on the identity candidate, and a constraint over an opaque
-candidate type has no family.
+Harmonic Grammar, MaxEnt and optimality-theoretic work in syntax and semantics adopt. A constraint
+is a function `C → ℕ` that counts the violations of each candidate. It stores no name and no
+faithfulness or markedness tag, since a constraint is its evaluation function. The
+faithfulness–markedness distinction is a structural property of correspondence candidates
+(`OptimalityTheory.Correspondence`), where markedness factors through the output and faithfulness
+vanishes on the identity candidate, and a constraint over an opaque candidate type has no family.
 
 ## Main definitions
 
@@ -28,8 +27,8 @@ candidate type has no family.
   candidate map.
 * `CON C n`: a grammar's constraint set, an indexed family of `n` constraints.
 * `Constraint.joint`, `CON.joint`: joint evaluation on output tuples by constraint summation.
-* `HarmonicGrammar.weightedViolations`, `HarmonicGrammar.harmonyScore`: the Harmonic-Grammar
-  weighted sum `Σⱼ wⱼ · Cⱼ(c)` and its negation `H(c) = -Σⱼ wⱼ · Cⱼ(c)`.
+
+The Harmonic Grammar scores of a constraint set are in `HarmonicGrammar/Harmony.lean`.
 
 ## References
 
@@ -39,8 +38,6 @@ candidate type has no family.
   (2001)][alderete-2001]
 * [A. Prince, *One Tableau Suffices* (2015)][prince-2015]
 * [G. Magri and B. Storme, *Constraint Summation in Phonological Theory* (2021)][magri-storme-2021]
-* [P. Smolensky and G. Legendre, *The Harmonic Mind: From Neural Computation to
-  Optimality-Theoretic Grammar* (2006)][smolensky-legendre-2006]
 -/
 
 @[expose] public section
@@ -116,10 +113,9 @@ def Constraint.joint (inputs : ι → I) (con : Constraint (I × O)) : Constrain
     con.joint inputs f = ∑ i, con (inputs i, f i) := rfl
 
 /-- A grammar's **constraint set** `CON` ([prince-smolensky-1993]) is an indexed family of `n`
-constraints over candidates `C`. It sends each candidate to a `ViolationProfile n`
-(`buildViolationProfile`, in `Constraints/Profile.lean`), which an OT grammar ranks (a `Ranking n`)
-and a Harmonic Grammar weights (a `Fin n → ℝ` vector); MaxEnt takes the softmax of the resulting
-harmonies. -/
+constraints over candidates `C`. An OT grammar ranks the violation profiles it assigns
+(`buildViolationProfile`) under a `Ranking n`, a Harmonic Grammar weights the violations by a
+`Fin n → ℝ` vector, and MaxEnt takes the softmax of the resulting harmonies. -/
 abbrev CON (C : Type*) (n : ℕ) := Fin n → Constraint C
 
 /-- The pullback of a constraint set along a candidate map pulls back each constraint. -/
@@ -136,46 +132,3 @@ def CON.joint {n : ℕ} (inputs : ι → I) (con : CON (I × O) n) : CON (ι →
     con.joint inputs j = (con j).joint inputs := rfl
 
 end OptimalityTheory
-
-/-! ### Harmony (Harmonic Grammar)
-
-A Harmonic Grammar weights each constraint in `CON` by a number, real in the usual
-statement; the **harmony** of a candidate is the negated weighted sum of its violations,
-`H(c) = -Σⱼ wⱼ · Cⱼ(c)` ([smolensky-legendre-2006]) — a linear functional of
-the candidate's raw violation vector. The weight vector `w : Fin n → R` is the
-*grammar's* parameter (the HG twin of an OT `Ranking n`); both act on one `CON`. The
-weight ring is a parameter so that a grammar with rational or integer weights keeps its
-scores exactly computable. -/
-
-namespace HarmonicGrammar
-
-open OptimalityTheory
-
-variable {C : Type*} {n : ℕ} {R : Type*}
-
-/-- The **weighted violation sum** of a violation vector `v` under a weight vector `w` is the
-linear functional `Σⱼ wⱼ · vⱼ`. Harmony is its negation (`harmonyScore`). -/
-def weightedViolations [Semiring R] (w : Fin n → R) (v : Fin n → ℕ) : R :=
-  ∑ j, w j * (v j : R)
-
-/-- The **harmony** `H(c) = -Σⱼ wⱼ · Cⱼ(c)` of a candidate ([smolensky-legendre-2006]) is the
-negated weighted sum of its violations under the weight vector `w`, and higher harmony is more
-grammatical. -/
-def harmonyScore [Ring R] (con : CON C n) (w : Fin n → R) (c : C) : R :=
-  -weightedViolations w (fun j ↦ con j c)
-
-/-- `harmonyScore` is a negated `Finset.sum`. -/
-theorem harmonyScore_eq_neg_sum [Ring R] (con : CON C n) (w : Fin n → R) (c : C) :
-    harmonyScore con w c = -∑ j, w j * (con j c : R) := rfl
-
-/-- The candidate `a` harmonically dominates `b` when `H(a) > H(b)`. The relation is the
-pullback of `>` along `harmonyScore con w` (`Order.Preimage`), so it inherits `IsStrictOrder`
-from the weight ring. -/
-def harmonyDominates [Ring R] [LT R] (con : CON C n) (w : Fin n → R) : C → C → Prop :=
-  harmonyScore con w ⁻¹'o (· > ·)
-
-@[simp] theorem harmonyDominates_iff [Ring R] [LT R] (con : CON C n) (w : Fin n → R)
-    (a b : C) : harmonyDominates con w a b ↔ harmonyScore con w b < harmonyScore con w a :=
-  Iff.rfl
-
-end HarmonicGrammar

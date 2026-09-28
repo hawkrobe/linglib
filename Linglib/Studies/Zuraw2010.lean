@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.Constraints.ForbiddenPairs
+public import Linglib.Phonology.OptimalityTheory.Constraint.ForbiddenPairs
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Linglib.Fragments.Tagalog.Phonology
 

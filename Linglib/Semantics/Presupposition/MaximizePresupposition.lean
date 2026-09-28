@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Agreement.ContainmentPair
-public import Linglib.Phonology.Constraints.Defs
+public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Semantics.Alternatives.Competition

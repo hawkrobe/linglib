@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.Constraints.Harmony
+public import Linglib.Phonology.HarmonicGrammar.Harmony
 public import Linglib.Phonology.Hiatus
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Erase
 public import Linglib.Fragments.Farsi.Phonology
