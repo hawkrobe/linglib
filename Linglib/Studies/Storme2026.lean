@@ -249,8 +249,8 @@ def ajW (wh : ℝ) (w : Fin 3 → ℝ) : Fin 4 → ℝ := Matrix.vecCons wh w
 into the per-mapping scores. -/
 theorem harmonyScore_jointCon (wh : ℝ) (w : Fin 3 → ℝ) (f : Fin 2 → Resolution) :
     harmonyScore jointCon (jointW wh w) f = ∑ k, harmonyScore ajCon (ajW wh w) (inputs k, f k) := by
-  simp [jointCon, jointW, ajCon, ajW, harmonyScore_append, harmonyScore_joint,
-    starHomophony_eq_joint_realizeMorpheme, Fin.sum_univ_two]
+  rw [jointCon, jointW, harmonyScore_append]
+  simp [ajCon, ajW, harmonyScore_joint, starHomophony_eq_joint_realizeMorpheme, Fin.sum_univ_two]
   ring
 
 /-- The marginalized model is [ariyaee-jurgec-2021]'s classical one: the joint
@@ -271,7 +271,7 @@ theorem ajScore_eq (wh : ℝ) (w : Fin 3 → ℝ) (k : Fin 2) (o : Resolution) :
       | .epenthesis => w 0
       | .deletion => w 2 + if k = 0 then wh else 0) := by
   fin_cases k <;> cases o <;>
-    simp [harmonyScore, weightedViolations, Fin.sum_univ_four, ajCon, ajW, classicalCon,
+    simp [harmonyScore, dotProduct, Fin.sum_univ_four, ajCon, ajW, classicalCon,
       realizeMorpheme_eq, depConstraint_eq, starHiatus_eq, maxConstraint_eq]
   simp [inputs, definite, possessive]
   ring

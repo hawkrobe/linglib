@@ -234,11 +234,11 @@ theorem tagalog_independent : tagalogSquare.Independent tagalogConstraints := by
 /-- The inverse harmony (27): the weighted violations fed to `h(x) = 1/(1+x)` in place of maximum
 entropy's `exp(−x)`. -/
 noncomputable def inverseHarmony (w : Fin n → ℝ) (v : Fin n → ℕ) : ℝ :=
-  (1 + weightedViolations w v)⁻¹
+  (1 + w ⬝ᵥ (Nat.cast ∘ v))⁻¹
 
 theorem inverseHarmony_pos {w : Fin n → ℝ} (hw : ∀ k, 0 ≤ w k) (v : Fin n → ℕ) :
     0 < inverseHarmony w v := by
-  unfold inverseHarmony weightedViolations
+  unfold inverseHarmony dotProduct
   have := sum_nonneg fun k (_ : k ∈ univ) ↦ mul_nonneg (hw k) (Nat.cast_nonneg (v k))
   positivity
 
@@ -248,7 +248,7 @@ footnote 11). -/
 theorem inverseHarmony_hz_tagalog_iff {w : Fin 6 → ℝ} (hw : ∀ k, 0 ≤ w k) :
     tagalogSquare.interaction (logOdds (inverseHarmony w) tagalogConstraints .yes .no) = 0 ↔
       w 4 = w 5 ∨ w 2 = 0 ∧ w 3 = 0 := by
-  simp [logOdds, inverseHarmony, weightedViolations, Fin.sum_univ_six, tagalogSquare, square,
+  simp [logOdds, inverseHarmony, dotProduct, Fin.sum_univ_six, tagalogSquare, square,
     tagalogConstraints, nasSub, starNC, starRootVelar, starRootCorVel, unif, Zuraw2010.nasSub,
     Zuraw2010.starNC, Zuraw2010.starInitVelar, Zuraw2010.starInitCorVel, project]
   have hp (k : Fin 6) : 0 < 1 + w k := by linarith [hw k]

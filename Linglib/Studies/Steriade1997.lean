@@ -112,15 +112,15 @@ def con30' : ConstraintSet Form (Fin 3) := ![lexP L P, lexPM L Q M, wellFormed P
 
 /-- The profile of a form under the ranking of (30), constraint by constraint. -/
 theorem con30_profile (t : Form) :
-    buildViolationProfile (con30 L P Q M) t =
+    toLex ((con30 L P Q M) · t) =
       toLex ![lexP L P t, wellFormed P t, lexPM L Q M t] := by
-  rw [buildViolationProfile, toLex_inj]
+  rw [toLex_inj]
   funext i; fin_cases i <;> rfl
 
 theorem con30'_profile (t : Form) :
-    buildViolationProfile (con30' L P Q M) t =
+    toLex ((con30' L P Q M) · t) =
       toLex ![lexP L P t, lexPM L Q M t, wellFormed P t] := by
-  rw [buildViolationProfile, toLex_inj]
+  rw [toLex_inj]
   funext i; fin_cases i <;> rfl
 
 theorem lexPM_eq_one {μ t : Form} (h : μ ∈ L) (hP : P μ) (hM : M μ) (ht : ¬ P t) :
@@ -136,7 +136,7 @@ form with `P` and `Q` violates none of the three constraints, while `μ₁` viol
 phonological constraint and `μ₂` the base-identity condition. -/
 theorem split_base {μ₁ μ₂ t : Form} (h₁ : μ₁ ∈ L) (hM₁ : M μ₁) (hQ₁ : Q μ₁) (hP₁ : ¬ P μ₁)
     (h₂ : μ₂ ∈ L) (hP₂ : P μ₂) (hQ₂ : ¬ Q μ₂) (hPt : P t) (hQt : Q t) :
-    buildViolationProfile (con30 L P Q M) t = toLex ![0, 0, 0] ∧ wellFormed P μ₁ = 1 ∧
+    toLex ((con30 L P Q M) · t) = toLex ![0, 0, 0] ∧ wellFormed P μ₁ = 1 ∧
       lexPM L Q M μ₂ = 1 :=
   ⟨by rw [con30_profile, (lexP_eq_zero_iff L P t).mpr fun _ ↦ ⟨μ₂, h₂, hP₂⟩,
       (wellFormed_eq_zero_iff P t).mpr hPt, (lexPM_eq_zero_iff L Q M t).mpr fun _ ↦ hQt],
@@ -147,7 +147,7 @@ faithful to the base's `Q` but lacking `P`. -/
 theorem split_wins_of_phono_over_lexPM {μ₁ μ₂ a b : Form} (h₁ : μ₁ ∈ L) (hM₁ : M μ₁)
     (hQ₁ : Q μ₁) (h₂ : μ₂ ∈ L) (hP₂ : P μ₂) (hPa : P a) (hQa : ¬ Q a) (hPb : ¬ P b)
     (hQb : Q b) :
-    buildViolationProfile (con30 L P Q M) a < buildViolationProfile (con30 L P Q M) b := by
+    toLex ((con30 L P Q M) · a) < toLex ((con30 L P Q M) · b) := by
   rw [con30_profile, con30_profile, (lexP_eq_zero_iff L P a).mpr fun _ ↦ ⟨μ₂, h₂, hP₂⟩,
     (wellFormed_eq_zero_iff P a).mpr hPa, lexPM_eq_one L Q M h₁ hQ₁ hM₁ hQa,
     (lexP_eq_zero_iff L P b).mpr fun h ↦ absurd h hPb, wellFormed_eq_one P hPb,
@@ -158,7 +158,7 @@ theorem split_wins_of_phono_over_lexPM {μ₁ μ₂ a b : Form} (h₁ : μ₁ �
 theorem base_wins_of_lexPM_over_phono {μ₁ μ₂ a b : Form} (h₁ : μ₁ ∈ L) (hM₁ : M μ₁)
     (hQ₁ : Q μ₁) (h₂ : μ₂ ∈ L) (hP₂ : P μ₂) (hPa : P a) (hQa : ¬ Q a) (hPb : ¬ P b)
     (hQb : Q b) :
-    buildViolationProfile (con30' L P Q M) b < buildViolationProfile (con30' L P Q M) a := by
+    toLex ((con30' L P Q M) · b) < toLex ((con30' L P Q M) · a) := by
   rw [con30'_profile, con30'_profile, (lexP_eq_zero_iff L P a).mpr fun _ ↦ ⟨μ₂, h₂, hP₂⟩,
     (wellFormed_eq_zero_iff P a).mpr hPa, lexPM_eq_one L Q M h₁ hQ₁ hM₁ hQa,
     (lexP_eq_zero_iff L P b).mpr fun h ↦ absurd h hPb, wellFormed_eq_one P hPb,
@@ -249,15 +249,15 @@ theorem noHiatus_vain :
 over both citation forms. -/
 theorem vain_split :
     let con : ConstraintSet Adjective (Fin 4) := ![lexC, noHiatus, lexVGender, lexSyllable]
-    buildViolationProfile con vainBlend < buildViolationProfile con vainMasc ∧
-      buildViolationProfile con vainBlend < buildViolationProfile con vainFem := by
+    toLex (con · vainBlend) < toLex (con · vainMasc) ∧
+      toLex (con · vainBlend) < toLex (con · vainFem) := by
   decide
 
 /-- Speakers ranking Lex σ' above Lex 'V-gender select the citation feminine *[vɛn] espoir*. -/
 theorem vain_feminine :
     let con : ConstraintSet Adjective (Fin 4) := ![lexC, noHiatus, lexSyllable, lexVGender]
-    buildViolationProfile con vainFem < buildViolationProfile con vainMasc ∧
-      buildViolationProfile con vainFem < buildViolationProfile con vainBlend := by
+    toLex (con · vainFem) < toLex (con · vainMasc) ∧
+      toLex (con · vainFem) < toLex (con · vainBlend) := by
   decide
 
 end French
@@ -310,27 +310,27 @@ def lexStressLexcat (L : List Stem) : Constraint Stem :=
 /-- *remédiable* wins under the ranking Lex [±stress] ≫ *Lapse ≫ Lex([±stress], lexcat) and
 *rémediable* under Lex [±stress] ≫ Lex([±stress], lexcat) ≫ *Lapse, the paper's (18). -/
 theorem remediable :
-    buildViolationProfile (con30 remedyListed (·.stress = .amphibrach) (·.stress = .dactyl)
-        (·.lexcat = .verb)) amphibrachAble <
-      buildViolationProfile (con30 remedyListed (·.stress = .amphibrach) (·.stress = .dactyl)
-        (·.lexcat = .verb)) dactylAble ∧
-    buildViolationProfile (con30' remedyListed (·.stress = .amphibrach) (·.stress = .dactyl)
-        (·.lexcat = .verb)) dactylAble <
-      buildViolationProfile (con30' remedyListed (·.stress = .amphibrach) (·.stress = .dactyl)
-        (·.lexcat = .verb)) amphibrachAble := by
+    toLex ((con30 remedyListed (·.stress = .amphibrach) (·.stress = .dactyl)
+        (·.lexcat = .verb)) · amphibrachAble) <
+      toLex ((con30 remedyListed (·.stress = .amphibrach) (·.stress = .dactyl)
+        (·.lexcat = .verb)) · dactylAble) ∧
+    toLex ((con30' remedyListed (·.stress = .amphibrach) (·.stress = .dactyl)
+        (·.lexcat = .verb)) · dactylAble) <
+      toLex ((con30' remedyListed (·.stress = .amphibrach) (·.stress = .dactyl)
+        (·.lexcat = .verb)) · amphibrachAble) := by
   decide
 
 /-- With no amphibrachic allomorph listed, *paródiable* violates Lex [±stress], so
 *párodiable* wins under either ranking despite its lapse. -/
 theorem parodiable :
-    buildViolationProfile (con30 parodyListed (·.stress = .amphibrach) (·.stress = .dactyl)
-        (·.lexcat = .verb)) dactylAble <
-      buildViolationProfile (con30 parodyListed (·.stress = .amphibrach) (·.stress = .dactyl)
-        (·.lexcat = .verb)) amphibrachAble ∧
-    buildViolationProfile (con30' parodyListed (·.stress = .amphibrach) (·.stress = .dactyl)
-        (·.lexcat = .verb)) dactylAble <
-      buildViolationProfile (con30' parodyListed (·.stress = .amphibrach) (·.stress = .dactyl)
-        (·.lexcat = .verb)) amphibrachAble := by
+    toLex ((con30 parodyListed (·.stress = .amphibrach) (·.stress = .dactyl)
+        (·.lexcat = .verb)) · dactylAble) <
+      toLex ((con30 parodyListed (·.stress = .amphibrach) (·.stress = .dactyl)
+        (·.lexcat = .verb)) · amphibrachAble) ∧
+    toLex ((con30' parodyListed (·.stress = .amphibrach) (·.stress = .dactyl)
+        (·.lexcat = .verb)) · dactylAble) <
+      toLex ((con30' parodyListed (·.stress = .amphibrach) (·.stress = .dactyl)
+        (·.lexcat = .verb)) · amphibrachAble) := by
   decide
 
 end English

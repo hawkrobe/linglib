@@ -86,11 +86,8 @@ theorem toLex_comp_lt_iff {β : Type*} [LT β] (v w : ι → β) :
     toLex (v ∘ r) < toLex (w ∘ r) ↔ Pi.Lex r.Dominates (· < ·) v w :=
   Pi.lex_comp_equiv r (· < ·) (· < ·) v w
 
-/-- Under the identity ranking the rank position of a constraint is its index. -/
-def id (n : ℕ) : Ranking (Fin n) n := Equiv.refl _
-
-/-- Under the identity ranking, dominance is index order. -/
-@[simp] theorem id_dominates_iff {i j : Fin n} : (Ranking.id n).Dominates i j ↔ i < j :=
+/-- Under the identity ranking `1`, dominance is index order. -/
+@[simp] theorem one_dominates_iff {i j : Fin n} : (1 : Ranking (Fin n) n).Dominates i j ↔ i < j :=
   Iff.rfl
 
 /-- The ranking's *reading* of a lex-ordered vector: coordinate `p` of `r • v` is the
@@ -104,14 +101,15 @@ instance {α : Type*} : SMul (Ranking (Fin n) n) (Lex (Fin n → α)) :=
 @[simp] theorem smul_apply {α : Type*} (r : Ranking (Fin n) n) (v : Lex (Fin n → α)) (p : Fin n) :
     ofLex (r • v) p = ofLex v (r p) := rfl
 
-@[simp] theorem id_smul {α : Type*} (v : Lex (Fin n → α)) : Ranking.id n • v = v := rfl
+@[simp] theorem one_smul {α : Type*} (v : Lex (Fin n → α)) : (1 : Ranking (Fin n) n) • v = v :=
+  rfl
 
 /-- Any two distinct constraints can be ranked either way, so some ranking makes `i` dominate
 `j`. -/
 theorem exists_dominates {i j : Fin n} (hij : i ≠ j) :
     ∃ r : Ranking (Fin n) n, r.Dominates i j := by
   rcases lt_or_gt_of_ne hij with h | h
-  · exact ⟨Ranking.id n, id_dominates_iff.mpr h⟩
+  · exact ⟨1, one_dominates_iff.mpr h⟩
   · exact ⟨Equiv.swap i j, by simpa [Dominates] using h⟩
 
 /-- Any constraint can be ranked above all the others. -/

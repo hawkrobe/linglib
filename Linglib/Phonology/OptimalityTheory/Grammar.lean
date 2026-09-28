@@ -336,7 +336,7 @@ theorem le_iff_legs {G G' : Grammar n} : G ≤ G' ↔ G.legs ⊆ G'.legs := Iff.
 
 /-- The **trivial grammar** — the terminal object of the specificity order: all
 rankings, no ranking conditions (`ofERCs ∅`). -/
-def trivial : Grammar n := ofERCs ∅ ⟨Ranking.id n, by simp⟩
+def trivial : Grammar n := ofERCs ∅ ⟨1, by simp⟩
 
 @[simp] theorem legs_trivial : (Grammar.trivial : Grammar n).legs = Finset.univ := by
   simp only [Grammar.trivial, legs_ofERCs, ERC.linearExtensions_empty]

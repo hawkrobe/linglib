@@ -185,10 +185,10 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℝ) (M : Nat)
     (hM : ∀ i, va i ≤ M ∧ vb i ≤ M)
     (hw : ExponentiallySeparated w M)
     (hlex : toLex va < toLex vb) :
-    weightedViolations w va < weightedViolations w vb := by
+    w ⬝ᵥ (Nat.cast ∘ va) < w ⬝ᵥ (Nat.cast ∘ vb) := by
   obtain ⟨k, h_agree, h_lt⟩ :
       ∃ k : Fin n, (∀ i, i < k → va i = vb i) ∧ va k < vb k := hlex
-  simp only [weightedViolations]
+  simp only [dotProduct, Function.comp_apply]
   -- Suffices: 0 < Σ w_i · (vb_i − va_i)
   suffices hpos : (0 : ℝ) <
       univ.sum (λ i => w i * ((vb i : ℝ) - (va i : ℝ))) by
@@ -254,9 +254,9 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℝ) (M : Nat)
 /-- An exponentially separated weighting is strictly monotone on the `M`-bounded part of the
 lexicographic order. This is a concrete form of [riggle-2009b]'s order-preserving map from the
 violation semiring to tropical costs. -/
-theorem strictMonoOn_weightedViolations {n : Nat} {w : Fin n → ℝ} {M : Nat}
+theorem strictMonoOn_dotProduct {n : Nat} {w : Fin n → ℝ} {M : Nat}
     (hw : ExponentiallySeparated w M) :
-    StrictMonoOn (fun v : ViolationProfile n => weightedViolations w (ofLex v))
+    StrictMonoOn (fun v : ViolationProfile n => w ⬝ᵥ (Nat.cast ∘ ofLex v))
       {v | ∀ i, ofLex v i ≤ M} :=
   fun _ ha _ hb hlex => lex_imp_lower_violations w M _ _ (fun i => ⟨ha i, hb i⟩) hw hlex
 
@@ -271,8 +271,8 @@ theorem ot_lex_imp_higher_harmony {C : Type*}
             toLex (fun i : Fin ranking.length => (ranking.get i) b)) :
     harmonyScore ranking.get (expWeights ranking.length M) a >
     harmonyScore ranking.get (expWeights ranking.length M) b := by
-  show -weightedViolations (expWeights ranking.length M) (fun i => ranking.get i b) <
-       -weightedViolations (expWeights ranking.length M) (fun i => ranking.get i a)
+  show -(expWeights ranking.length M ⬝ᵥ (Nat.cast ∘ fun i => ranking.get i b)) <
+       -(expWeights ranking.length M ⬝ᵥ (Nat.cast ∘ fun i => ranking.get i a))
   rw [neg_lt_neg_iff]
   exact lex_imp_lower_violations (expWeights ranking.length M) M
     (fun i => ranking.get i a) (fun i => ranking.get i b)
@@ -336,8 +336,7 @@ namespace RealizationProblem
     minimizes the weighted violation sum among the candidates. -/
 def realizedByWeighting (P : RealizationProblem Input Output n) (w : Fin n → ℝ) : Prop :=
   ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, o ≠ P.target i →
-    weightedViolations w (P.vp i (P.target i)) <
-    weightedViolations w (P.vp i o)
+    w ⬝ᵥ (Nat.cast ∘ P.vp i (P.target i)) < w ⬝ᵥ (Nat.cast ∘ P.vp i o)
 
 /-- A problem is HG-realizable when some non-negative weighting realizes its target.
     Non-negativity is [pater-2009]'s standard HG; [coetzee-pater-2011] also discuss negative
@@ -420,17 +419,6 @@ end RealizationProblem
 
 /-! ### Forward containment — OT ⊆ HG -/
 
-/-- Permuting weights is dual to permuting constraints. -/
-private theorem weightedViolations_perm_reindex
-    (σ : Equiv.Perm (Fin n)) (w : Fin n → ℝ) (v : Fin n → ℕ) :
-    weightedViolations (fun j => w (σ.symm j)) v =
-    weightedViolations w (v ∘ σ) := by
-  simp only [weightedViolations, Function.comp_apply]
-  rw [← Equiv.sum_comp σ (fun j => w (σ.symm j) * (v j : ℝ))]
-  apply Finset.sum_congr rfl
-  intro k _
-  simp [Equiv.symm_apply_apply]
-
 /-- An OT-realizable problem is HG-realizable by exponentially separated weights permuted by the
     ranking, with the largest violation count as the separation bound. -/
 theorem RealizationProblem.IsOTRealizable.isHGRealizable
@@ -442,9 +430,9 @@ theorem RealizationProblem.IsOTRealizable.isHGRealizable
       ((Finset.le_sup (f := fun o => Finset.univ.sup (P.vp i o)) ho).trans
         (Finset.le_sup (f := fun i => (P.cands i).sup fun o => Finset.univ.sup (P.vp i o))
           hi))).trans (Nat.le_succ _)
-  refine ⟨fun j => expWeights n M (σ.symm j), fun k => (expWeights_pos n M (σ.symm k)).le, ?_⟩
+  refine ⟨expWeights n M ∘ σ.symm, fun k => (expWeights_pos n M (σ.symm k)).le, ?_⟩
   intro i hi o ho hne
-  rw [weightedViolations_perm_reindex σ, weightedViolations_perm_reindex σ]
+  rw [comp_equiv_symm_dotProduct, comp_equiv_symm_dotProduct]
   apply lex_imp_lower_violations _ M
   · intro k
     exact ⟨hbound i hi (P.target i) (P.target_mem i hi) (σ k), hbound i hi o ho (σ k)⟩
@@ -470,7 +458,7 @@ theorem hg_strictly_contains_ot :
       target_mem := fun _ _ => Finset.mem_univ _ },
     ⟨![3, 2, 2], fun k => by fin_cases k <;> norm_num, ?_⟩, ?_⟩
   · intro i _ o _ hne
-    simp only [weightedViolations, Fin.sum_univ_three]
+    simp only [dotProduct, Function.comp_apply, Fin.sum_univ_three]
     fin_cases i <;> cases o <;>
       first
       | (exfalso; exact hne rfl)

@@ -184,11 +184,11 @@ variable {C : Type*} [DecidableEq C] (D : HSDerivation C) (c : C)
 /-- The inner tableau on an explicit nonempty candidate set, scored by `D.ranking`. -/
 def tableauFor (cands : Finset C) (h : cands.Nonempty) : Tableau C D.ranking.length where
   candidates := cands
-  profile := buildViolationProfile D.ranking.get
+  profile c := toLex (D.ranking.get · c)
   nonempty := h
 
 @[simp] theorem tableauFor_profile (cands : Finset C) (h : cands.Nonempty) :
-    (D.tableauFor cands h).profile = buildViolationProfile D.ranking.get := rfl
+    (D.tableauFor cands h).profile = fun c ↦ toLex (D.ranking.get · c) := rfl
 
 /-- Filter a candidate set to its optimal subset under `D.ranking`; `∅` on empty
 input. This is the one-step EVAL of the serial search. -/

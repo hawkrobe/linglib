@@ -156,7 +156,7 @@ theorem harmony_sub (w : Weights) (it : Item) :
       = w.markedness + w.n2 * pull it.n2 + w.compound * pull it.compound := by
   obtain ⟨n2, c⟩ := it
   rcases n2 with _ | ⟨_ | _, a⟩ <;> rcases c with _ | ⟨_ | _, b⟩ <;>
-    simp [harmonyScore, weightedViolations, Fin.sum_univ_three, con, scaledWeights, idNasal, pull,
+    simp [harmonyScore, dotProduct, Fin.sum_univ_three, con, scaledWeights, idNasal, pull,
       activation, Constraint.binary] <;> ring
 
 /-- The probability of nasalisation is the sigmoid of the markedness weight plus the weighted pulls
@@ -239,9 +239,9 @@ theorem tableau7 :
     pNasal w78 (novel (7 / 10)) = sigmoid (13 / 10) ∧
     pNasal w78 (novel (7 / 10)) < pNasal w78 (novel (3 / 10)) := by
   refine ⟨?_, ?_, ?_, novel_strictAnti_n2 w78 (by norm_num [w78]) (by norm_num)⟩
-  · norm_num [harmonyScore, weightedViolations, Fin.sum_univ_three, con, scaledWeights, idNasal,
+  · norm_num [harmonyScore, dotProduct, Fin.sum_univ_three, con, scaledWeights, idNasal,
       activation, novel, freeN2, w78, Constraint.binary]
-  · norm_num [harmonyScore, weightedViolations, Fin.sum_univ_three, con, scaledWeights, idNasal,
+  · norm_num [harmonyScore, dotProduct, Fin.sum_univ_three, con, scaledWeights, idNasal,
       activation, novel, freeN2, w78, Constraint.binary]
   · rw [pNasal_novel]; norm_num [w78]
 

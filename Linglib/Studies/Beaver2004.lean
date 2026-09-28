@@ -202,18 +202,18 @@ the core of the equivalence Theorem (20). -/
 theorem cot_iff_bfp [DecidableEq E] [LinearOrder R]
     (prev : Utterance E R) (priorTopic : Option E) (c1 c2 : Candidate E R)
     (h : ∀ i : Fin 6, i.val < 4 →
-      buildViolationProfile (cotRanking prev priorTopic).get c1 i =
-        buildViolationProfile (cotRanking prev priorTopic).get c2 i) :
-    buildViolationProfile (cotRanking prev priorTopic).get c1 <
-        buildViolationProfile (cotRanking prev priorTopic).get c2 ↔
+      toLex ((cotRanking prev priorTopic).get · c1) i =
+        toLex ((cotRanking prev priorTopic).get · c2) i) :
+    toLex ((cotRanking prev priorTopic).get · c1) <
+        toLex ((cotRanking prev priorTopic).get · c2) ↔
       (bfpTransition prev priorTopic c2).rank <
         (bfpTransition prev priorTopic c1).rank := by
   rw [profile_lt_iff_last_two h]
   have e1 : ∀ c : Candidate E R,
-      buildViolationProfile (cotRanking prev priorTopic).get c (4 : Fin 6) =
+      toLex ((cotRanking prev priorTopic).get · c) (4 : Fin 6) =
         (cohere prev priorTopic) c := fun _ => rfl
   have e2 : ∀ c : Candidate E R,
-      buildViolationProfile (cotRanking prev priorTopic).get c (5 : Fin 6) =
+      toLex ((cotRanking prev priorTopic).get · c) (5 : Fin 6) =
         (align prev) c := fun _ => rfl
   rw [e1 c1, e1 c2, e2 c1, e2 c2]
   have b1 : (cohere prev priorTopic) c1 ≤ 1 := Constraint.binary_le_one _ _
@@ -261,11 +261,11 @@ end D12
 
 /-- The (12c) winner's profile under the canonical ranking. -/
 def d12_profile_l_eq_i : ViolationProfile 6 :=
-  buildViolationProfile (cotRanking D12.b D12.priorTopic).get D12.cand_l_eq_i
+  toLex ((cotRanking D12.b D12.priorTopic).get · D12.cand_l_eq_i)
 
 /-- The (12c) loser's profile. -/
 def d12_profile_l_eq_j : ViolationProfile 6 :=
-  buildViolationProfile (cotRanking D12.b D12.priorTopic).get D12.cand_l_eq_j
+  toLex ((cotRanking D12.b D12.priorTopic).get · D12.cand_l_eq_j)
 
 /-- Tableau (13): the her = Jane candidate wins the lexicographic
 comparison. -/
@@ -316,17 +316,17 @@ end D2
 /-- Under the canonical ranking (18), the two-Marys reading wins — BFP's
 (incorrect) prediction, driven by PRO-TOP over FAM-DEF. -/
 theorem d2_canonical_picks_two_marys :
-    buildViolationProfile (cotRanking D2.b D2.priorTopic).get D2.cand_two_marys <
-      buildViolationProfile (cotRanking D2.b D2.priorTopic).get D2.cand_bound := by
+    toLex ((cotRanking D2.b D2.priorTopic).get · D2.cand_two_marys) <
+      toLex ((cotRanking D2.b D2.priorTopic).get · D2.cand_bound) := by
   decide
 
 /-- Under the demoted ranking (21), the coreferential reading wins: FAM-DEF
 now outranks PRO-TOP, so introducing a second Mary costs more than leaving
 the topic unpronominalized. -/
 theorem d2_demoted_picks_bound :
-    buildViolationProfile (cotRankingDemoted D2.b D2.priorTopic).get D2.cand_bound <
-      buildViolationProfile (cotRankingDemoted D2.b D2.priorTopic).get
-        D2.cand_two_marys := by
+    toLex ((cotRankingDemoted D2.b D2.priorTopic).get · D2.cand_bound) <
+      toLex ((cotRankingDemoted D2.b D2.priorTopic).get ·
+        D2.cand_two_marys) := by
   decide
 
 /-! ### ALIGN and Strube's cheapness -/

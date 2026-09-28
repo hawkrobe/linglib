@@ -170,7 +170,7 @@ def any : Matrix := .cls (Segment.ofSpecs [])
 /-- The score (4) of a form is its weighted violation count, with weights in hundredths. -/
 def score {n : ℕ} (spec : α → Segment) (con : Fin n → Cx) (w : Fin n → ℕ)
     (form : List α) : ℕ :=
-  weightedViolations w λ j => (con j).violations spec form
+  w ⬝ᵥ fun j ↦ (con j).violations spec form
 
 /-- The maxent value (5) of a form whose score in hundredths is `k` is `exp (−h(x))`. -/
 noncomputable def maxentValue (k : ℕ) : ℝ := exp (-(k : ℝ) / 100)
@@ -233,14 +233,13 @@ theorem table1_maxentValues :
 /-! ### Learning the weights (§3.3) -/
 
 /-- Updating one weight splits the weighted sum into that constraint's term and the rest. -/
-theorem weightedViolations_update {n : ℕ} (w : Fin n → ℝ) (i : Fin n) (t : ℝ)
-    (v : Fin n → ℕ) :
-    weightedViolations (Function.update w i t) v =
-      t * v i + ∑ j ∈ Finset.univ.erase i, w j * v j := by
-  rw [weightedViolations, ← Finset.sum_erase_add _ _ (Finset.mem_univ i), Function.update_self,
+theorem update_dotProduct {n : ℕ} (w : Fin n → ℝ) (i : Fin n) (t : ℝ) (v : Fin n → ℕ) :
+    Function.update w i t ⬝ᵥ (Nat.cast ∘ v) = t * v i + ∑ j ∈ Finset.univ.erase i, w j * v j := by
+  rw [dotProduct, ← Finset.sum_erase_add _ _ (Finset.mem_univ i), Function.update_self,
     add_comm]
   congr 1
-  exact Finset.sum_congr rfl λ j hj => by rw [Function.update_of_ne (Finset.ne_of_mem_erase hj)]
+  exact Finset.sum_congr rfl fun j hj ↦ by
+    rw [Function.update_of_ne (Finset.ne_of_mem_erase hj)]; rfl
 
 section Learning
 
@@ -249,7 +248,7 @@ variable {Ω : Type*} [Fintype Ω] [Nonempty Ω] {n : ℕ}
 /-- The probability (6) of each form of a finite form space under real weights `w` and
     violation counts `viol` is the softmax of the negated scores. -/
 noncomputable def prob (viol : Fin n → Ω → ℕ) (w : Fin n → ℝ) : Ω → ℝ :=
-  softmax λ x => -weightedViolations w λ j => viol j x
+  softmax fun x ↦ -(w ⬝ᵥ (Nat.cast ∘ (viol · x)))
 
 /-- The expected number of violations (8) of constraint `i` averages its counts under `prob`. -/
 noncomputable def expected (viol : Fin n → Ω → ℕ) (w : Fin n → ℝ) (i : Fin n) : ℝ :=
@@ -276,7 +275,7 @@ theorem hasDerivAt_log_prob (viol : Fin n → Ω → ℕ) (w : Fin n → ℝ) (i
     unfold prob
     congr 1
     funext y
-    simp only [weightedViolations_update, Pi.add_apply, Pi.smul_apply, smul_eq_mul, s, r]
+    simp only [update_dotProduct, Pi.add_apply, Pi.smul_apply, smul_eq_mul, s, r]
     ring
   have hw : prob viol w = softmax ((w i) • s + r) := by
     rw [← hp, Function.update_eq_self]
@@ -428,8 +427,8 @@ theorem onsetProb_eq_softmax : onsetProb = softmax fun o : candidates => -(h o :
   unfold onsetProb prob
   congr 1
   funext o
-  simp only [h, score, weightedViolations, viol, Nat.cast_sum, Nat.cast_mul, Nat.cast_id,
-    neg_div, Finset.sum_div, div_mul_eq_mul_div]
+  simp only [h, score, dotProduct, Function.comp_apply, viol, Nat.cast_sum, Nat.cast_mul,
+    Nat.cast_id, neg_div, Finset.sum_div, div_mul_eq_mul_div]
 
 /-- On the candidate set, the probability (6) orders forms as the score does. -/
 theorem onsetProb_lt_iff {o₁ o₂ : candidates} : onsetProb o₁ < onsetProb o₂ ↔ h o₂ < h o₁ := by
