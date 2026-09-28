@@ -1,15 +1,14 @@
 module
 
-public import Linglib.Fragments.Slavic.Case
+public import Linglib.Syntax.Case.Basic
 
 /-!
-# Serbo-Croat case inventory
+# Serbo-Croat case
 
-This file defines the Serbo-Croat cases, the seven of the Slavic inventory: "There are seven cases:
-nominative, vocative, accusative, genitive, dative, instrumental, locative. Dative and locative
-have merged; only certain inanimate monosyllabic nouns distinguish them accentually in the
-singular" ([browne-1993], p. 318). The directory is named for Serbian; Browne's chapter describes
-the Serbo-Croat standard.
+This file defines the seven Serbo-Croat cases: "There are seven cases: nominative, vocative,
+accusative, genitive, dative, instrumental, locative. Dative and locative have merged; only certain
+inanimate monosyllabic nouns distinguish them accentually in the singular" ([browne-1993], p. 318).
+The directory is named for Serbian; Browne's chapter describes the Serbo-Croat standard.
 
 ## References
 
@@ -18,9 +17,34 @@ the Serbo-Croat standard.
 
 @[expose] public section
 
-namespace Serbian.Case
+namespace Serbian
 
-/-- The Serbo-Croat cases are the seven of the Slavic inventory. -/
-abbrev inventory : Finset Case := Slavic.Case.fullInventory
+/-- The seven Serbo-Croat cases. -/
+inductive Case where
+  /-- The nominative. -/
+  | nom
+  /-- The vocative. -/
+  | voc
+  /-- The accusative. -/
+  | acc
+  /-- The genitive. -/
+  | gen
+  /-- The dative. -/
+  | dat
+  /-- The instrumental. -/
+  | inst
+  /-- The locative. -/
+  | loc
+  deriving DecidableEq, Fintype, Repr
 
-end Serbian.Case
+/-- The comparative value a case is named for. -/
+def Case.label : Case → _root_.Case
+  | nom => .nom
+  | voc => .voc
+  | acc => .acc
+  | gen => .gen
+  | dat => .dat
+  | inst => .inst
+  | loc => .loc
+
+end Serbian

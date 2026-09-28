@@ -695,7 +695,6 @@ import Linglib.Fragments.Slavic.Belarusian.Case
 import Linglib.Fragments.Slavic.Bulgarian.Evidentiality
 import Linglib.Fragments.Slavic.Bulgarian.QuestionParticles
 import Linglib.Fragments.Slavic.Bulgarian.Verbs
-import Linglib.Fragments.Slavic.Case
 import Linglib.Fragments.Slavic.Cassubian.Case
 import Linglib.Fragments.Slavic.Czech.Case
 import Linglib.Fragments.Slavic.Czech.Determiners

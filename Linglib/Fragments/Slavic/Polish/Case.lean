@@ -1,15 +1,15 @@
 module
 
-public import Linglib.Fragments.Slavic.Case
+public import Linglib.Syntax.Case.Basic
 
 /-!
-# Polish case inventory
+# Polish case
 
-This file defines the Polish cases, the seven of the Slavic inventory: "Polish has preserved the
-full inherited case system, including the vocative, but there is a growing tendency to use the
-nominative instead of the vocative for personal names. The vocative is consistently used with
-titles and with personal names when they are used as part of a vocative phrase"
-([rothstein-1993], p. 696), as in *panie Janku* and *kochana Basiu* 'dear Basia'.
+This file defines the seven Polish cases: "Polish has preserved the full inherited case system,
+including the vocative, but there is a growing tendency to use the nominative instead of the
+vocative for personal names. The vocative is consistently used with titles and with personal names
+when they are used as part of a vocative phrase" ([rothstein-1993], p. 696), as in *panie Janku* and
+*kochana Basiu* 'dear Basia'.
 
 ## References
 
@@ -18,9 +18,34 @@ titles and with personal names when they are used as part of a vocative phrase"
 
 @[expose] public section
 
-namespace Polish.Case
+namespace Polish
 
-/-- The Polish cases are the seven of the Slavic inventory. -/
-abbrev inventory : Finset Case := Slavic.Case.fullInventory
+/-- The seven Polish cases. -/
+inductive Case where
+  /-- The nominative. -/
+  | nom
+  /-- The vocative. -/
+  | voc
+  /-- The accusative. -/
+  | acc
+  /-- The genitive. -/
+  | gen
+  /-- The dative. -/
+  | dat
+  /-- The instrumental. -/
+  | inst
+  /-- The locative. -/
+  | loc
+  deriving DecidableEq, Fintype, Repr
 
-end Polish.Case
+/-- The comparative value a case is named for. -/
+def Case.label : Case → _root_.Case
+  | nom => .nom
+  | voc => .voc
+  | acc => .acc
+  | gen => .gen
+  | dat => .dat
+  | inst => .inst
+  | loc => .loc
+
+end Polish

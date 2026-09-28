@@ -1,15 +1,15 @@
 module
 
-public import Linglib.Fragments.Slavic.Case
+public import Linglib.Syntax.Case.Basic
 
 /-!
-# Russian case inventory
+# Russian case
 
 This file defines the Russian cases, the six the Slavic languages share. [timberlake-1993] (p. 836)
 takes Russian to have "six primary cases and two secondary cases (second genitive and second
-locative), the secondary cases being available for a decreasing number of masculines", and finds
-the historical vocative moribund. The secondary cases are cells of the paradigms of some nouns and
-not cases of the inventory.
+locative), the secondary cases being available for a decreasing number of masculines", and finds the
+historical vocative moribund. The cases here are the six primary ones; the secondary cases have
+forms of their own in some masculines only, and are left out.
 
 ## References
 
@@ -18,9 +18,31 @@ not cases of the inventory.
 
 @[expose] public section
 
-namespace Russian.Case
+namespace Russian
 
-/-- The Russian cases are the six primary cases, those the Slavic languages share. -/
-abbrev inventory : Finset Case := Slavic.Case.coreInventory
+/-- The six Russian cases. -/
+inductive Case where
+  /-- The nominative. -/
+  | nom
+  /-- The accusative. -/
+  | acc
+  /-- The genitive. -/
+  | gen
+  /-- The dative. -/
+  | dat
+  /-- The instrumental. -/
+  | inst
+  /-- The locative. -/
+  | loc
+  deriving DecidableEq, Fintype, Repr
 
-end Russian.Case
+/-- The comparative value a case is named for. -/
+def Case.label : Case → _root_.Case
+  | nom => .nom
+  | acc => .acc
+  | gen => .gen
+  | dat => .dat
+  | inst => .inst
+  | loc => .loc
+
+end Russian

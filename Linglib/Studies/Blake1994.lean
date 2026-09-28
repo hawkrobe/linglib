@@ -215,7 +215,8 @@ the vocative of Polish, Czech and Serbo-Croat) and of Turkish, the seven of Clas
 the eight of Tamil. -/
 def systems : List (Finset Case) :=
   [Finset.univ.image Greek.Ancient.Case.label, German.Case.inventory, Icelandic.Case.inventory,
-    Polish.Case.inventory, Czech.Case.inventory, Slovak.Case.inventory, Serbian.Case.inventory,
+    Finset.univ.image Polish.Case.label, Finset.univ.image Czech.Case.label,
+    Finset.univ.image Slovak.Case.label, Finset.univ.image Serbian.Case.label,
     Turkish.Case.inventory, classicalArmenian, Tamil.Case.inventory]
 
 theorem systems_conform : ∀ inv ∈ systems, Conforms inv := by
@@ -283,9 +284,10 @@ theorem fragments_conform :
     ∀ inv ∈ [Finset.univ.image Greek.StandardModern.Case.label,
       Finset.univ.image Arabic.ModernStandard.Case.label, Hindi.Case.inventory,
       Japanese.Case.inventory, Korean.Case.inventory, Telugu.Case.inventory,
-      Belarusian.Case.inventory,
-      Cassubian.Case.inventory, Russian.Case.inventory, Slovenian.Case.inventory,
-      Sorbian.Upper.Case.inventory, Sorbian.Lower.Case.inventory, Ukrainian.Case.inventory],
+      Finset.univ.image Belarusian.Case.label, Finset.univ.image Cassubian.Case.label,
+      Finset.univ.image Russian.Case.label, Finset.univ.image Slovenian.Case.label,
+      Finset.univ.image Sorbian.Upper.Case.label, Finset.univ.image Sorbian.Lower.Case.label,
+      Finset.univ.image Ukrainian.Case.label],
       Conforms inv := by
   simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
   decide

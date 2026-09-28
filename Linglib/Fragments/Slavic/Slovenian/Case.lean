@@ -1,9 +1,9 @@
 module
 
-public import Linglib.Fragments.Slavic.Case
+public import Linglib.Syntax.Case.Basic
 
 /-!
-# Slovene case inventory
+# Slovene case
 
 This file defines the Slovene cases, the six the Slavic languages share: "There are six cases:
 nominative, accusative, genitive, dative, instrumental and locative. There is no separate vocative
@@ -17,9 +17,31 @@ phrases. The directory is named for Slovenian; Priestly's chapter is "Slovene".
 
 @[expose] public section
 
-namespace Slovenian.Case
+namespace Slovenian
 
-/-- The Slovene cases are the six the Slavic languages share. -/
-abbrev inventory : Finset Case := Slavic.Case.coreInventory
+/-- The six Slovene cases. -/
+inductive Case where
+  /-- The nominative. -/
+  | nom
+  /-- The accusative. -/
+  | acc
+  /-- The genitive. -/
+  | gen
+  /-- The dative. -/
+  | dat
+  /-- The instrumental. -/
+  | inst
+  /-- The locative. -/
+  | loc
+  deriving DecidableEq, Fintype, Repr
 
-end Slovenian.Case
+/-- The comparative value a case is named for. -/
+def Case.label : Case → _root_.Case
+  | nom => .nom
+  | acc => .acc
+  | gen => .gen
+  | dat => .dat
+  | inst => .inst
+  | loc => .loc
+
+end Slovenian

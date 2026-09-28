@@ -4,6 +4,7 @@ public import Linglib.Data.Forms.Stump2006
 public import Linglib.Morphology.Paradigm.Linkage
 public import Linglib.Morphology.Exponence.Domain
 public import Linglib.Fragments.Slavic.Czech.Nouns
+public import Linglib.Fragments.Slavic.Russian.Case
 public import Linglib.Fragments.Slavic.Russian.Gender
 public import Linglib.Syntax.Number.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
@@ -162,10 +163,11 @@ def CzNoun.paramId : CzNoun → String
   | .filolog => "philologist" | .muz => "man"
 
 /-- The attested forms of a cell are the segments of every row of the forms data for the noun
-whose case and number codes decode to the cell's, so a cell with two alternants has two. -/
+whose case code decodes to the comparative value of the cell's case and whose number code to its
+number, so a cell with two alternants has two. -/
 def attested (l : CzNoun) (σ : CzCell) : Finset (List String) :=
   ((czForms.filter fun f ↦ f.parameterId == l.paramId &&
-      f.columnAs? "Case" caseLabels == some σ.case &&
+      f.columnAs? "Case" caseLabels == some σ.case.label &&
       f.columnAs? "Number" numberLabels == some σ.number).map Form.segments).toFinset
 
 /-- Every cell has an attested form, so no statement about the attested forms holds for want
@@ -1420,9 +1422,9 @@ theorem pcr_skt : SatisfiesPCR sktClasses sktNominalRules := by
 /-- The Russian numbers are the singular and the plural. -/
 abbrev RuNumber : Finset Number := {.singular, .plural}
 
-/-- A Russian content cell pairs a case of the six-case core with a number; the prepositional
-is the locative. -/
-abbrev RuCell : Type := Slavic.Case.coreInventory × RuNumber
+/-- A Russian content cell pairs one of the six cases with a number; the prepositional is the
+locative. -/
+abbrev RuCell : Type := Russian.Case × RuNumber
 
 /-- MAT' is the one Russian lexeme considered. -/
 inductive RuNoun
@@ -1445,7 +1447,7 @@ def RuStem.decl : RuStem → Russian.Gender.DeclClass
 *mater'* elsewhere. -/
 def matLinkage : Linkage RuNoun RuStem RuCell RuCell :=
   Linkage.ofFun id fun _ σ ↦
-    if σ.2.1 = .singular ∧ (σ.1.1 = .nom ∨ σ.1.1 = .acc) then .mat else .mater
+    if σ.2.1 = .singular ∧ (σ.1 = .nom ∨ σ.1 = .acc) then .mat else .mater
 
 /-- MAT' is suppletive but not heteroclite, for "suppletion in itself does not necessitate
 heteroclisis" (p. 283). -/

@@ -1,16 +1,15 @@
 module
 
-public import Linglib.Fragments.Slavic.Case
+public import Linglib.Syntax.Case.Basic
 
 /-!
-# Cassubian case inventory
+# Cassubian case
 
-This file defines the Cassubian cases, the seven of the Slavic inventory: "The seven cases are the
-same as in Polish, but the tendency for the nominative to replace the vocative is greater than in
-Polish. The locative never occurs without a preposition, and there is a strong tendency for the
-instrumental to acquire the preposition z(s)/ze(se) 'with', when used with its basic function as
-an expression of instrument (but not in the complement of the copula)" ([stone-1993-cassubian],
-p. 768).
+This file defines the seven Cassubian cases: "The seven cases are the same as in Polish, but the
+tendency for the nominative to replace the vocative is greater than in Polish. The locative never
+occurs without a preposition, and there is a strong tendency for the instrumental to acquire the
+preposition z(s)/ze(se) 'with', when used with its basic function as an expression of instrument
+(but not in the complement of the copula)" ([stone-1993-cassubian], p. 768).
 
 ## References
 
@@ -19,9 +18,34 @@ p. 768).
 
 @[expose] public section
 
-namespace Cassubian.Case
+namespace Cassubian
 
-/-- The Cassubian cases are the seven of the Slavic inventory. -/
-abbrev inventory : Finset Case := Slavic.Case.fullInventory
+/-- The seven Cassubian cases. -/
+inductive Case where
+  /-- The nominative. -/
+  | nom
+  /-- The vocative. -/
+  | voc
+  /-- The accusative. -/
+  | acc
+  /-- The genitive. -/
+  | gen
+  /-- The dative. -/
+  | dat
+  /-- The instrumental. -/
+  | inst
+  /-- The locative. -/
+  | loc
+  deriving DecidableEq, Fintype, Repr
 
-end Cassubian.Case
+/-- The comparative value a case is named for. -/
+def Case.label : Case → _root_.Case
+  | nom => .nom
+  | voc => .voc
+  | acc => .acc
+  | gen => .gen
+  | dat => .dat
+  | inst => .inst
+  | loc => .loc
+
+end Cassubian
