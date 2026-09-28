@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Probability.Gumbel
 public import Linglib.Core.Probability.Choice.RandomUtility
-public import Linglib.Core.Probability.Choice.RationalAction
+public import Linglib.Core.Probability.Choice.Luce
 
 /-!
 # Gumbel–Luce equivalence [mcfadden-1974]
@@ -25,7 +25,7 @@ gives it the random-utility reading.
 
 ## Main definitions
 
-* `RationalAction.fromGumbelRUM`: the Luce agent of a Gumbel RUM, defined as
+* `LuceModel.fromGumbelRUM`: the Luce agent of a Gumbel RUM, defined as
   `fromSoftmax` at inverse temperature `β⁻¹`.
 
 ## Main results
@@ -101,7 +101,7 @@ theorem rumChoiceProb_gumbelMeasure_fin_two (u : Fin 2 → ℝ) {β : ℝ} (hβ 
   simp only [Pi.smul_apply, smul_eq_mul]
   congr 2; ring
 
-/-! ### The Gumbel RUM as a `RationalAction` -/
+/-! ### The Gumbel RUM as a `LuceModel` -/
 
 section RationalAgent
 
@@ -110,14 +110,14 @@ variable {ι : Type*} [Fintype ι]
 /-- The Luce agent of a Gumbel RUM: score `exp(uᵢ/β)`. This is `fromSoftmax`
     at inverse temperature `β⁻¹` — exact under i.i.d. Gumbel(0, β) noise by
     Lemma 1 of [mcfadden-1974], not an approximation. -/
-noncomputable def RationalAction.fromGumbelRUM (u : ι → ℝ) (β : ℝ) :
-    RationalAction Unit ι :=
-  RationalAction.fromSoftmax (fun _ => u) β⁻¹
+noncomputable def LuceModel.fromGumbelRUM (u : ι → ℝ) (β : ℝ) :
+    LuceModel Unit ι :=
+  LuceModel.fromSoftmax (fun _ => u) β⁻¹
 
-/-- The Gumbel RUM policy is softmax at inverse temperature `β⁻¹`. -/
-theorem RationalAction.fromGumbelRUM_policy [Nonempty ι] (u : ι → ℝ) {β : ℝ} (i : ι) :
-    (RationalAction.fromGumbelRUM u β).policy () i = softmax (β⁻¹ • u) i := by
-  rw [RationalAction.fromGumbelRUM, RationalAction.fromSoftmax_policy_eq]
+/-- The Gumbel RUM choice probabilities are softmax at inverse temperature `β⁻¹`. -/
+theorem LuceModel.fromGumbelRUM_prob [Nonempty ι] (u : ι → ℝ) {β : ℝ} (i : ι) :
+    (LuceModel.fromGumbelRUM u β).prob () i = softmax (β⁻¹ • u) i := by
+  rw [LuceModel.fromGumbelRUM, LuceModel.fromSoftmax_prob_eq]
 
 end RationalAgent
 
