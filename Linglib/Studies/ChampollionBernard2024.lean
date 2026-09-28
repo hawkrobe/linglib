@@ -21,20 +21,22 @@ negation is exclusive and exhaustive in Fine's sense (`exclusive_mk_neg`, `exhau
 With symmetric exclusion, conflict is an orthogonality relation on the possible events
 (`conflictOrthoframe`).
 
-The paper departs from Fine in admitting emergent exclusion, where an event excludes the fusion
-of two events without conflicting with either. Such an event verifies `¬(P ∧ Q)` but not
-`¬P ∨ ¬Q` (`mem_neg_sups_diff`), as the third egg's being in a basket with room for two does
+The paper departs from Fine in admitting emergent exclusion, where an event excludes the fusion of
+two events without conflicting with either. Such an event verifies `¬(P ∧ Q)` but not `¬P ∨ ¬Q`
+(`mem_neg_sups_diff`), as the third egg's being in a basket with room for two does
 (`eggs_mem_neg_sups_diff`). The two sides of de Morgan's law still hold at the same worlds
-(`mem_upperClosure_neg_sups_iff`). Fine's Downward Exclusion rules such excluders out
-(`DownwardExclusion.exists_conflict`), and under it his negation obeys the law exactly
-(`Truthmaker.exclusionaryNeg_sups_singleton`). Under Fine's Upward Exclusion the paper's negation
-is contained in Fine's exclusive negation (`neg_subset_exclusiveNeg`), Rashōmon is Fine's second
-condition on classical exclusion (`possibleFusion_iff_exists_le_excl`), and the paper's axioms
-make exclusion classical (`classicalExclusion_possible`). Cumulativity of exclusion adds the
-further verifiers of `¬(P ∧ Q)` that Ciardelli, Zhang and Champollion's counterfactual data call
-for (`neg_sups_neg_subset`). In the canonical frame a literal excludes its mirror image. There the
-derived possibility is Fine's consistency (`Truthmaker.Canonical.possible_excl`), negation
-recovers Fine's falsifiers (`neg_ver_atom`, `neg_ver_conj_atom`), and the axioms hold.
+(`mem_upperClosure_neg_sups_iff`). Emergent exclusion is exactly the failure of a state that
+conflicts with a fusion to conflict with one of its members
+(`Truthmaker.forall_exists_conflict_iff`). Fine's Downward Exclusion rules it out
+(`Truthmaker.DownwardExclusion.exists_conflict`), and under it his negation obeys the law exactly
+(`Truthmaker.exclusionaryNeg_iSups`). Under Fine's Upward Exclusion the paper's negation is
+contained in Fine's exclusive negation (`neg_subset_exclusiveNeg`), Rashōmon is Fine's second
+condition on classical exclusion (`possibleFusion_iff_exists_le_excl`), and the paper's axioms make
+exclusion classical (`classicalExclusion_possible`). Cumulativity of exclusion adds the further
+verifiers of `¬(P ∧ Q)` that Ciardelli, Zhang and Champollion's counterfactual data call for
+(`neg_sups_neg_subset`). In the canonical frame a literal excludes its mirror image. There the
+derived possibility is Fine's consistency (`Truthmaker.Canonical.possible_excl`), negation recovers
+Fine's falsifiers (`neg_ver_atom`, `neg_ver_conj_atom`), and the axioms hold.
 
 ## Implementation notes
 
@@ -67,7 +69,8 @@ variable {E : Type*} [CompleteLattice E] {excl : E → E → Prop}
 
 variable (excl) in
 /-- With symmetric exclusion, conflict is an orthogonality relation on the possible events, the
-counterpart the paper draws with orthologic (§3). -/
+counterpart the paper draws with orthologic (§3). Its polar of a proposition is, inexactly, Fine's
+exclusionary negation (`Truthmaker.coe_upperClosure_exclusionaryNeg`). -/
 def conflictOrthoframe [Std.Symm excl] : Orthoframe (possible excl) where
   ortho e₁ e₂ := Conflict excl e₁ e₂
   ortho_symm := ⟨fun _ _ h ↦ h.symm⟩
@@ -171,13 +174,6 @@ theorem not_mem_regularClosure_excluders {P : Set E} {s : E}
   fun ⟨hs, _⟩ ↦
     let ⟨r, ⟨p, hp, hx⟩, hrs⟩ := mem_upperClosure.1 hs
     hc p hp ⟨r, hrs, p, le_rfl, hx⟩
-
-/-- Under Downward Exclusion an event that excludes the fusion of `P` conflicts with a member of
-`P`, so there are no emergent excluders. -/
-theorem DownwardExclusion.exists_conflict (hD : DownwardExclusion excl) {P : Set E} {s : E}
-    (hs : excl s (sSup P)) : ∃ p ∈ P, Conflict excl s p := by
-  by_contra h
-  exact not_mem_regularClosure_excluders (fun p hp hc ↦ h ⟨p, hp, hc⟩) (hD hs)
 
 /-- An event that excludes `p ⊔ q` while cohering with `p` and with `q` verifies `¬(P ∧ Q)` but not
 `¬P ∨ ¬Q`, where `P` is verified by `p` alone and `Q` by `q` alone (§7). -/

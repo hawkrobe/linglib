@@ -40,20 +40,22 @@ pooled inexact verifiers of `s` and `t`.
 * `Truthmaker.isClosed_regularClosure_iff`: the regular propositions are those closed under
   nonempty fusions and convex.
 * `Truthmaker.isConjunctivePart_regularClosure_iff`: regular closure does not change containment.
-* `Truthmaker.regularClosure_sups`: in a distributive space, regular closure distributes over
-  conjunction.
+* `Truthmaker.regularClosure_eq_iff`: a regular proposition is determined by its inexact verifiers
+  and its subject-matter.
+* `Truthmaker.regularClosure_sups`, `Truthmaker.regularClosure_iSups`: in a distributive space,
+  regular closure distributes over conjunction.
 * `Truthmaker.regularClosure_union_sups`: disjunction distributes over conjunction in a regular
   domain.
 
 ## Implementation notes
 
 Fine defines conjunctive parthood only between propositions with a verifier. The relation here is
-total, and the empty proposition is a conjunctive part only of itself. Fine's closure condition
-asks for closure under arbitrary nonempty fusions, which `isClosed_regularClosure_iff` states and
-of which `SupClosed` is the finitary version. Fine states the distribution of regular closure over conjunction, and the distribution of
-disjunction over conjunction, for regular propositions, but his proofs apply them to unions and
-to sets of excluders that need not be regular. They are stated here for arbitrary nonempty
-propositions. His distributivity assumption is mathlib's `Order.Frame`.
+total, and the empty proposition is a conjunctive part only of itself. Fine's closure condition asks
+for closure under arbitrary nonempty fusions, which `isClosed_regularClosure_iff` states and of
+which `SupClosed` is the finitary version. Fine states the distribution of regular closure over
+conjunction, and the distribution of disjunction over conjunction, for regular propositions, but his
+proofs apply them to unions and to sets of excluders that need not be regular. They are stated here
+for arbitrary nonempty propositions. His distributivity assumption is mathlib's `Order.Frame`.
 
 ## References
 
@@ -232,6 +234,16 @@ theorem sSup_mem_regularClosure (hs : s.Nonempty) : sSup s ∈ regularClosure s 
     upperClosure (regularClosure s) = upperClosure s :=
   le_antisymm (upperClosure_anti (regularClosure.le_closure s)) (le_upperClosure.2 fun _ hx ↦ hx.1)
 
+/-- Two propositions have the same regular closure exactly when they have the same inexact
+verifiers and the same subject-matter. -/
+theorem regularClosure_eq_iff :
+    regularClosure s = regularClosure t ↔ upperClosure s = upperClosure t ∧ sSup s = sSup t := by
+  refine ⟨fun h ↦ ⟨?_, ?_⟩, fun ⟨h₁, h₂⟩ ↦ ?_⟩
+  · rw [← upperClosure_regularClosure s, h, upperClosure_regularClosure]
+  · rw [← sSup_regularClosure s, h, sSup_regularClosure]
+  · change ↑(upperClosure s) ∩ Set.Iic (sSup s) = ↑(upperClosure t) ∩ Set.Iic (sSup t)
+    rw [h₁, h₂]
+
 /-- The regular propositions, the closed sets of `regularClosure`, are those closed under nonempty
 fusions and convex. -/
 theorem isClosed_regularClosure_iff :
@@ -303,6 +315,26 @@ theorem regularClosure_sups (hs : s.Nonempty) (ht : t.Nonempty) :
     refine ⟨mem_upperClosure.2 ⟨a ⊔ b, Set.sup_mem_sups ha hb, sup_le_sup hay hbz⟩, ?_⟩
     rw [Set.sSup_sups hs ht]
     exact sup_le_sup hy₂ hz₂
+
+/-- In a distributive space, regular closure distributes over the conjunction of a family of
+propositions with verifiers. -/
+theorem regularClosure_iSups {ι : Type*} {s : ι → Set S} (hs : ∀ i, (s i).Nonempty) :
+    regularClosure (Set.iSups s) = Set.iSups fun i ↦ regularClosure (s i) := by
+  ext x
+  constructor
+  · rintro ⟨hx₁, hx₂⟩
+    obtain ⟨_, hy, hyx⟩ := mem_upperClosure.1 hx₁
+    obtain ⟨f, hf, rfl⟩ := Set.mem_iSups.1 hy
+    rw [Set.sSup_iSups hs] at hx₂
+    refine Set.mem_iSups.2 ⟨fun i ↦ x ⊓ sSup (s i), fun i ↦ ⟨mem_upperClosure.2 ⟨f i, hf i,
+      le_inf ((le_iSup f i).trans hyx) (le_sSup (hf i))⟩, inf_le_right⟩, ?_⟩
+    rw [← inf_iSup_eq, inf_eq_left.2 hx₂]
+  · intro hx
+    obtain ⟨g, hg, rfl⟩ := Set.mem_iSups.1 hx
+    choose f hf hfg using fun i ↦ mem_upperClosure.1 (hg i).1
+    refine ⟨mem_upperClosure.2 ⟨_, Set.iSup_mem_iSups hf, iSup_mono hfg⟩, ?_⟩
+    rw [Set.sSup_iSups hs]
+    exact iSup_mono fun i ↦ (hg i).2
 
 /-- In a distributive space, the conjunction of regular propositions is regular. -/
 theorem isClosed_regularClosure_sups (hs : regularClosure.IsClosed s)
