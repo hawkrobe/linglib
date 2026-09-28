@@ -1,54 +1,49 @@
 module
 
-public import Linglib.Core.Order.Bilattice.Interlaced
+public import Linglib.Core.Order.Bilattice.Representation
+public import Linglib.Core.Order.Hom.Basic
 public import Mathlib.Data.Fintype.Prod
 
 /-!
 # The Ginsberg–Fitting product bilattice
-[avron-1996] [ginsberg-1988]
 
-The fundamental bilattice construction ([avron-1996] Def 2.4): the **product**
-`L ⊙ R` of two lattices carries pairs `(a, b)` recording evidence *for*
-(`a ∈ L`) and *against* (`b ∈ R`) a proposition, ordered two ways:
+The fundamental bilattice construction ([avron-1996] Def 2.4): the product `L ⊙ R` of two
+lattices carries pairs `(a, b)` recording evidence for (`a ∈ L`) and against (`b ∈ R`) a
+proposition, ordered two ways.
 
-* the **truth** order — more for, less against — is the carrier's `≤`: as a
-  type, `L ⊙ R := L × Rᵒᵈ`, so the `Prod`/`OrderDual` instances provide the
-  truth lattice, its bounds `t = (⊤, ⊥)` and `f = (⊥, ⊤)`, and distributivity
-  outright;
-* the **knowledge** order — more evidence both ways — is the plain `Prod`
-  order, installed on the synonym `Know (L ⊙ R)`
-  (see `Core.Order.Bilattice.Interlaced`).
+* The truth order, more for and less against, is the carrier's `≤`. As a type
+  `L ⊙ R := L × Rᵒᵈ`, so the `Prod` and `OrderDual` instances provide the truth lattice, its
+  bounds `t = (⊤, ⊥)` and `f = (⊥, ⊤)`, and distributivity.
+* The knowledge order, more evidence both ways, is the plain `Prod` order, installed on the
+  synonym `Know (L ⊙ R)`.
 
-The `Interlaced (L ⊙ R)` instance packages the four monotonicity laws
-([avron-1996] Def 2.1(3)): the product is an interlaced bilattice — the
-constructive half of the structure theory ([avron-1996] Thm 2.5). The converse
-representation theorem is `Bilattice.decompose` (ibid. Thm 4.3). On the
-diagonal `L ⊙ L`, swapping the coordinates is Ginsberg's negation
-([ginsberg-1988]; [avron-1996] Thm 2.5(2)).
-
-The construction "was essentially introduced by Ginsberg [ginsberg-1988], and
-further generalized by Fitting" ([avron-1996]). The algebraic-logic literature
-sometimes calls the diagonal case with swap-negation a *twist structure*; that
-term names an older single-factor lineage, so this file keeps Avron's name.
-`[UPSTREAM]` candidate (mathlib has no bilattices).
+The `IsInterlaced (L ⊙ R)` instance packages the four monotonicity laws ([avron-1996]
+Def 2.1(3)), so the product is an interlaced bilattice ([avron-1996] Thm 2.5); the converse is
+`Bilattice.decompose` (ibid. Thm 4.3). On the diagonal `L ⊙ L`, swapping the coordinates is
+Ginsberg's negation ([ginsberg-1988]; [avron-1996] Thm 2.5(2)). The construction "was
+essentially introduced by Ginsberg [ginsberg-1988], and further generalized by Fitting"
+([avron-1996]). `[UPSTREAM]` candidate: mathlib has no bilattices.
 
 ## Main definitions
 
-* `Bilattice.Product` (`L ⊙ R`) — the carrier, with truth-order instances from
-  `L × Rᵒᵈ` and knowledge-order instances on `Know (L ⊙ R)` from `L × R`
-* `Product.mk`/`pro`/`con` — plain-coordinate constructor and projections
-* the `Interlaced (L ⊙ R)` instance — the four interlacing laws
-* `Product.neg` — Ginsberg negation on the diagonal `L ⊙ L`
+* `Bilattice.Product` (`L ⊙ R`): the carrier, with truth-order instances from `L × Rᵒᵈ` and
+  knowledge-order instances on `Know (L ⊙ R)` from `L × R`.
+* `Bilattice.Product.mk`, `Bilattice.Product.pro`, `Bilattice.Product.con`: the plain-coordinate
+  constructor and projections.
+* `Bilattice.Product.neg`: Ginsberg negation on the diagonal `L ⊙ L`.
+
+## Main results
+
+* `Bilattice.Product.decomposeProdIso`: the representation theorem applied to a product recovers
+  its factors.
+
+## References
+
+* [avron-1996]
+* [ginsberg-1988]
 -/
 
 @[expose] public section
-
-/-- Componentwise product of order isomorphisms. `[UPSTREAM]` candidate:
-mathlib has `Equiv.prodCongr` but no order-iso version. -/
-def OrderIso.prodCongr {α β γ δ : Type*} [Preorder α] [Preorder β] [Preorder γ]
-    [Preorder δ] (e₁ : α ≃o β) (e₂ : γ ≃o δ) : α × γ ≃o β × δ where
-  toEquiv := e₁.toEquiv.prodCongr e₂.toEquiv
-  map_rel_iff' := and_congr e₁.map_rel_iff e₂.map_rel_iff
 
 namespace Bilattice
 
@@ -156,8 +151,8 @@ end ProjBounds
 /-! ### The knowledge order
 
 The instances on the synonym `Know (L ⊙ R)`, transported from the plain
-`Prod` order on `L × R`; `⊗`/`⊕`/`≤ₖ` are then the generic knowledge
-operations of `Core.Order.Bilattice.Interlaced`. -/
+`Prod` order on `L × R`; `⊓ₖ`/`⊔ₖ`/`≤ₖ` are then the generic knowledge
+operations of `Core.Order.Bilattice.Defs`. -/
 
 instance [Preorder L] [Preorder R] : Preorder (Know (L ⊙ R)) :=
   inferInstanceAs (Preorder (L × R))
@@ -179,13 +174,13 @@ instance [Preorder L] [Preorder R] [DecidableLE L] [DecidableLE R] :
 @[simp] theorem mk_kLE_mk [Preorder L] [Preorder R] {a₁ a₂ : L} {b₁ b₂ : R} :
     mk a₁ b₁ ≤ₖ mk a₂ b₂ ↔ a₁ ≤ a₂ ∧ b₁ ≤ b₂ := Iff.rfl
 
-/-- Knowledge meet `⊗` (consensus) in plain coordinates ([avron-1996] Def 2.4). -/
+/-- Knowledge meet `⊓ₖ` (consensus) in plain coordinates ([avron-1996] Def 2.4). -/
 @[simp] theorem mk_kInf_mk [Lattice L] [Lattice R] {a₁ a₂ : L} {b₁ b₂ : R} :
-    mk a₁ b₁ ⊗ mk a₂ b₂ = mk (a₁ ⊓ a₂) (b₁ ⊓ b₂) := rfl
+    mk a₁ b₁ ⊓ₖ mk a₂ b₂ = mk (a₁ ⊓ a₂) (b₁ ⊓ b₂) := rfl
 
-/-- Knowledge join `⊕` (gullibility) in plain coordinates ([avron-1996] Def 2.4). -/
+/-- Knowledge join `⊔ₖ` (gullibility) in plain coordinates ([avron-1996] Def 2.4). -/
 @[simp] theorem mk_kSup_mk [Lattice L] [Lattice R] {a₁ a₂ : L} {b₁ b₂ : R} :
-    (mk a₁ b₁ ⊕ mk a₂ b₂ : L ⊙ R) = mk (a₁ ⊔ a₂) (b₁ ⊔ b₂) := rfl
+    (mk a₁ b₁ ⊔ₖ mk a₂ b₂) = mk (a₁ ⊔ a₂) (b₁ ⊔ b₂) := rfl
 
 /-- The knowledge top `⊤ = (⊤, ⊤)` ([avron-1996] Def 2.4(vii)). -/
 theorem know_top_eq [Preorder L] [Preorder R] [BoundedOrder L] [BoundedOrder R] :
@@ -203,16 +198,16 @@ section KProj
 
 variable [Lattice L] [Lattice R] (x y : L ⊙ R)
 
-@[simp] theorem pro_kInf : (x ⊗ y).pro = x.pro ⊓ y.pro := rfl
-@[simp] theorem con_kInf : (x ⊗ y).con = x.con ⊓ y.con := rfl
-@[simp] theorem pro_kSup : (x ⊕ y : L ⊙ R).pro = x.pro ⊔ y.pro := rfl
-@[simp] theorem con_kSup : (x ⊕ y : L ⊙ R).con = x.con ⊔ y.con := rfl
+@[simp] theorem pro_kInf : (x ⊓ₖ y).pro = x.pro ⊓ y.pro := rfl
+@[simp] theorem con_kInf : (x ⊓ₖ y).con = x.con ⊓ y.con := rfl
+@[simp] theorem pro_kSup : (x ⊔ₖ y).pro = x.pro ⊔ y.pro := rfl
+@[simp] theorem con_kSup : (x ⊔ₖ y).con = x.con ⊔ y.con := rfl
 
 end KProj
 
 /-- **The product is an interlaced bilattice** ([avron-1996] Thm 2.5): each
 order's meet and join are monotone for the other order. -/
-instance [Lattice L] [Lattice R] : Interlaced (L ⊙ R) where
+instance [Lattice L] [Lattice R] : IsInterlaced (L ⊙ R) where
   inf_kmono h _ := ⟨inf_le_inf h.1 le_rfl, sup_le_sup h.2 le_rfl⟩
   sup_kmono h _ := ⟨sup_le_sup h.1 le_rfl, inf_le_inf h.2 le_rfl⟩
   kInf_tmono h _ := ⟨inf_le_inf h.1 le_rfl, inf_le_inf h.2 le_rfl⟩

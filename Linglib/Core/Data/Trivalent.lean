@@ -50,7 +50,7 @@ truth-named constructors is this library's ergonomic choice; the name follows th
 
 - `Trivalent.orderIsoSignType` — the truth order's mathlib carrier is `SignType`
   (`-1 < 0 < 1`), the iso commuting with negation. The knowledge order and the
-  Kleene bilattice live in `Core/Order/Bilattice/Kleene.lean`.
+  Kleene bilattice live in `Core/Data/Trivalent/Flat.lean`.
 
 ## References
 

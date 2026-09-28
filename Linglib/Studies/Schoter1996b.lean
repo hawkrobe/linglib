@@ -158,18 +158,18 @@ theorem four_semiDesignated_iff_designated :
   decide
 
 /-- The consistent fragment of `FOUR` is closed under negation, the truth operations and
-consensus `⊗` (§2.2). -/
+consensus `⊓ₖ` (§2.2). -/
 theorem four_consistent_closed :
     ∀ x y : FOUR, FOUR.Consistent x → FOUR.Consistent y →
       FOUR.Consistent (Product.neg x) ∧ FOUR.Consistent (x ⊓ y)
-        ∧ FOUR.Consistent (x ⊔ y) ∧ FOUR.Consistent (x ⊗ y) := by
+        ∧ FOUR.Consistent (x ⊔ y) ∧ FOUR.Consistent (x ⊓ₖ y) := by
   decide
 
-/-- The consistent fragment is not closed under gullibility `⊕`: credulously combining
+/-- The consistent fragment is not closed under gullibility `⊔ₖ`: credulously combining
 consistent evidence can produce the glut, so paraconsistency is localized rather than absent. -/
 theorem four_consistent_not_closed_kSup :
     ¬ ∀ x y : FOUR, FOUR.Consistent x → FOUR.Consistent y →
-      FOUR.Consistent (x ⊕ y) := by
+      FOUR.Consistent (x ⊔ₖ y) := by
   decide
 
 /-- The classical fragment of `FOUR` is closed under negation and the truth operations
@@ -204,8 +204,8 @@ def semiDesignation (x : Evidential S) : Evidential S :=
 presumably true if the value is semi-designated, presumably false if its negation is, the two
 unified informationally. -/
 def presumably (v : Evidential S) : Evidential S :=
-  (guard (semiDesignation v) (.mk ⊤ ⊥) ⊕
-    guard (semiDesignation (Product.neg v)) (.mk ⊥ ⊤) : Evidential S)
+  (guard (semiDesignation v) (.mk ⊤ ⊥) ⊔ₖ
+    guard (semiDesignation (Product.neg v)) (.mk ⊥ ⊤))
 
 /-- `presumably` fixes the definite values and the gap, and raises a presumption to
 definite truth. -/
@@ -235,9 +235,9 @@ theorem weight_mem_default :
   decide
 
 /-- The weighting is not a bilattice homomorphism onto the default bilattice (Definition 16):
-it fails to commute with gullibility `⊕`. -/
+it fails to commute with gullibility `⊔ₖ`. -/
 theorem weight_not_kSup_hom :
-    ¬ ∀ x y : PRESUP, weight (x ⊕ y) = (weight x ⊕ weight y : PRESUP) := by
+    ¬ ∀ x y : PRESUP, weight (x ⊔ₖ y) = weight x ⊔ₖ weight y := by
   decide
 
 end Connectives

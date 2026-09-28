@@ -138,7 +138,6 @@ import Linglib.Logic.Aristotelian.Square
 import Linglib.Logic.Assignment
 import Linglib.Logic.BeliefRevision.Iterated
 import Linglib.Core.Order.Bilattice.Basic
-import Linglib.Core.Order.Bilattice.Interlaced
 import Linglib.Core.Order.Bilattice.Product
 import Linglib.Core.Order.Bilattice.Representation
 import Linglib.Logic.ComparativeProbability.Defs
@@ -194,7 +193,6 @@ import Linglib.Logic.Temporal.Defs
 import Linglib.Logic.Temporal.Soundness
 import Linglib.Core.Data.Trivalent
 import Linglib.Core.Data.UnorderedTree.Basic
-import Linglib.Core.Order.Bilattice.Kleene
 import Linglib.Logic.Trivalent.Prop3
 import Linglib.Logic.Trivalent.Propositional
 import Linglib.Core.Order.AllenRelation

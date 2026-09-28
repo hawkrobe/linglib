@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Order.Lattice
 public import Linglib.Core.Order.Bilattice.Basic
-public import Linglib.Core.Order.Bilattice.Kleene
+public import Linglib.Core.Data.Trivalent.Flat
 public import Linglib.Core.Order.DeMorganAlgebra.Defs
 
 /-!
@@ -101,8 +101,8 @@ theorem sup_ofTruth (a b : Trivalent) : ofTruth (a ⊔ b) = ofTruth a ⊔ ofTrut
 
 /-! ### Formulas and the semantics behind the tableaux (§4) -/
 
-/-- Formulas over the bilattice connectives: the truth connectives and negation, consensus `⊗`,
-gullibility `⊕`, and the guard `P : Q` of §5. -/
+/-- Formulas over the bilattice connectives: the truth connectives and negation, consensus `⊓ₖ`,
+gullibility `⊔ₖ`, and the guard `P : Q` of §5. -/
 inductive Formula (Atom : Type*) where
   | atom : Atom → Formula Atom
   | inf : Formula Atom → Formula Atom → Formula Atom
@@ -122,8 +122,8 @@ def eval (v : Atom → L ⊙ L) : Formula Atom → L ⊙ L
   | inf φ ψ => eval v φ ⊓ eval v ψ
   | sup φ ψ => eval v φ ⊔ eval v ψ
   | neg φ => Bilattice.neg (eval v φ)
-  | kInf φ ψ => eval v φ ⊗ eval v ψ
-  | kSup φ ψ => (eval v φ ⊕ eval v ψ : L ⊙ L)
+  | kInf φ ψ => eval v φ ⊓ₖ eval v ψ
+  | kSup φ ψ => (eval v φ ⊔ₖ eval v ψ)
   | guard φ ψ => Evidential.guard (eval v φ) (eval v ψ)
 
 /-- Definition 4.2: `X` restricts `Y` when, under every valuation in `FOUR`, `Y` is at most true
@@ -165,33 +165,33 @@ section Guard
 
 variable {L : Type*} [DistribLattice L] (x y z : L ⊙ L)
 
-/-- Figure 4: `(P ⊗ Q) : R = (P ∧ Q) : R`. -/
+/-- Figure 4: `(P ⊓ₖ Q) : R = (P ∧ Q) : R`. -/
 theorem guard_kInf_left :
-    Evidential.guard (x ⊗ y) z = Evidential.guard (x ⊓ y) z := by ext <;> simp [Evidential.guard]
+    Evidential.guard (x ⊓ₖ y) z = Evidential.guard (x ⊓ y) z := by ext <;> simp [Evidential.guard]
 
-/-- Figure 4: `(P ⊗ Q) : R = (P : R) ⊗ (Q : R)`. -/
+/-- Figure 4: `(P ⊓ₖ Q) : R = (P : R) ⊓ₖ (Q : R)`. -/
 theorem guard_kInf_left_eq :
-    Evidential.guard (x ⊗ y) z = Evidential.guard x z ⊗ Evidential.guard y z := by
+    Evidential.guard (x ⊓ₖ y) z = Evidential.guard x z ⊓ₖ Evidential.guard y z := by
   ext <;> simp only [Evidential.guard, pro_mk, con_mk, pro_kInf, con_kInf] <;>
     exact inf_inf_distrib_right _ _ _
 
-/-- Figure 4: `(P ⊗ Q) : R = (P : Q) : R`. -/
+/-- Figure 4: `(P ⊓ₖ Q) : R = (P : Q) : R`. -/
 theorem guard_kInf_left_eq_guard_guard :
-    Evidential.guard (x ⊗ y) z = Evidential.guard (Evidential.guard x y) z := by
+    Evidential.guard (x ⊓ₖ y) z = Evidential.guard (Evidential.guard x y) z := by
   ext <;> simp [Evidential.guard]
 
-/-- Figure 4: `(P ⊗ Q) : R = P : (Q : R)`. -/
+/-- Figure 4: `(P ⊓ₖ Q) : R = P : (Q : R)`. -/
 theorem guard_kInf_left_eq_guard_guard' :
-    Evidential.guard (x ⊗ y) z = Evidential.guard x (Evidential.guard y z) := by
+    Evidential.guard (x ⊓ₖ y) z = Evidential.guard x (Evidential.guard y z) := by
   ext <;> simp [Evidential.guard, inf_assoc]
 
-/-- Figure 4: `(P ⊕ Q) : R = (P ∨ Q) : R`. -/
+/-- Figure 4: `(P ⊔ₖ Q) : R = (P ∨ Q) : R`. -/
 theorem guard_kSup_left :
-    Evidential.guard (x ⊕ y) z = Evidential.guard (x ⊔ y) z := by ext <;> simp [Evidential.guard]
+    Evidential.guard (x ⊔ₖ y) z = Evidential.guard (x ⊔ y) z := by ext <;> simp [Evidential.guard]
 
-/-- Figure 4: `(P ⊕ Q) : R = (P : R) ⊕ (Q : R)`. -/
+/-- Figure 4: `(P ⊔ₖ Q) : R = (P : R) ⊔ₖ (Q : R)`. -/
 theorem guard_kSup_left_eq :
-    Evidential.guard (x ⊕ y) z = (Evidential.guard x z ⊕ Evidential.guard y z : L ⊙ L) := by
+    Evidential.guard (x ⊔ₖ y) z = Evidential.guard x z ⊔ₖ Evidential.guard y z := by
   ext <;> simp [Evidential.guard, inf_sup_right]
 
 /-- Figure 4: `P : ¬Q = ¬(P : Q)`. -/
@@ -211,24 +211,24 @@ theorem guard_sup : Evidential.guard x (y ⊔ z) = Evidential.guard x y ⊔ Evid
   · exact inf_sup_left _ _ _
   · exact inf_inf_distrib_left _ _ _
 
-/-- Figure 4: `P : (Q ⊗ R) = (P : Q) ⊗ (P : R)`. -/
-theorem guard_kInf : Evidential.guard x (y ⊗ z) = Evidential.guard x y ⊗ Evidential.guard x z := by
+/-- Figure 4: `P : Q ⊓ₖ R = (P : Q) ⊓ₖ (P : R)`. -/
+theorem guard_kInf : Evidential.guard x (y ⊓ₖ z) = Evidential.guard x y ⊓ₖ Evidential.guard x z := by
   ext <;> simp only [Evidential.guard, pro_mk, con_mk, pro_kInf, con_kInf] <;>
     exact inf_inf_distrib_left _ _ _
 
-/-- Figure 4: `P : (Q ⊕ R) = (P : Q) ⊕ (P : R)`. -/
+/-- Figure 4: `P : Q ⊔ₖ R = (P : Q) ⊔ₖ (P : R)`. -/
 theorem guard_kSup :
-    Evidential.guard x (y ⊕ z) = (Evidential.guard x y ⊕ Evidential.guard x z : L ⊙ L) := by
+    Evidential.guard x (y ⊔ₖ z) = Evidential.guard x y ⊔ₖ Evidential.guard x z := by
   ext <;> simp only [Evidential.guard, pro_mk, con_mk, pro_kSup, con_kSup] <;>
     exact inf_sup_left _ _ _
 
-/-- Figure 4: `P ⊕ (Q : P) = P`. -/
-theorem kSup_guard_self : (x ⊕ Evidential.guard y x : L ⊙ L) = x := by
+/-- Figure 4: `P ⊔ₖ (Q : P) = P`. -/
+theorem kSup_guard_self : x ⊔ₖ Evidential.guard y x = x := by
   ext <;> simp only [Evidential.guard, pro_mk, con_mk, pro_kSup, con_kSup] <;> rw [inf_comm] <;>
     exact sup_inf_self
 
-/-- Figure 4: `P ⊗ (Q : P) = Q : P`. -/
-theorem kInf_guard_self : x ⊗ Evidential.guard y x = Evidential.guard y x := by
+/-- Figure 4: `P ⊓ₖ (Q : P) = Q : P`. -/
+theorem kInf_guard_self : x ⊓ₖ Evidential.guard y x = Evidential.guard y x := by
   ext <;> simp only [Evidential.guard, pro_mk, con_mk, pro_kInf, con_kInf] <;>
     rw [inf_comm y.pro, inf_left_idem]
 
@@ -263,18 +263,18 @@ def landL (x y : L ⊙ L) : L ⊙ L := x ⊓ Evidential.guard x y
 /-- Definition 5.1: Lisp disjunction `P ∨⃗ Q = P ∨ (¬P : Q)`. -/
 def lorL (x y : L ⊙ L) : L ⊙ L := x ⊔ Evidential.guard (neg x) y
 
-/-- Definition 5.1: weak Kleene conjunction `P ∧ʷ Q = (P ∧⃗ Q) ⊗ (Q ∧⃗ P)`, the consensus of the
+/-- Definition 5.1: weak Kleene conjunction `P ∧ʷ Q = (P ∧⃗ Q) ⊓ₖ (Q ∧⃗ P)`, the consensus of the
 two evaluation orders. -/
-def landW (x y : L ⊙ L) : L ⊙ L := landL x y ⊗ landL y x
+def landW (x y : L ⊙ L) : L ⊙ L := landL x y ⊓ₖ landL y x
 
-/-- Definition 5.1: weak Kleene disjunction `P ∨ʷ Q = (P ∨⃗ Q) ⊗ (Q ∨⃗ P)`. -/
-def lorW (x y : L ⊙ L) : L ⊙ L := lorL x y ⊗ lorL y x
+/-- Definition 5.1: weak Kleene disjunction `P ∨ʷ Q = (P ∨⃗ Q) ⊓ₖ (Q ∨⃗ P)`. -/
+def lorW (x y : L ⊙ L) : L ⊙ L := lorL x y ⊓ₖ lorL y x
 
 variable (x y : L ⊙ L)
 
 /-- Strong Kleene conjunction is the gullible combination of the two Lisp evaluations,
-`P ∧ Q = (P ∧⃗ Q) ⊕ (Q ∧⃗ P)`, in every product. -/
-theorem inf_eq_landL_kSup_landL : x ⊓ y = (landL x y ⊕ landL y x : L ⊙ L) := by
+`P ∧ Q = (P ∧⃗ Q) ⊔ₖ (Q ∧⃗ P)`, in every product. -/
+theorem inf_eq_landL_kSup_landL : x ⊓ y = landL x y ⊔ₖ landL y x := by
   ext
   · simp only [landL, Evidential.guard, pro_kSup, pro_inf, pro_mk]
     rw [inf_left_idem, inf_left_idem, inf_comm y.pro, sup_idem]
@@ -284,8 +284,8 @@ theorem inf_eq_landL_kSup_landL : x ⊓ y = (landL x y ⊕ landL y x : L ⊙ L) 
         (sup_le le_sup_right (inf_le_right.trans le_sup_left)))
 
 /-- Strong Kleene disjunction is the gullible combination of the two Lisp evaluations,
-`P ∨ Q = (P ∨⃗ Q) ⊕ (Q ∨⃗ P)`. -/
-theorem sup_eq_lorL_kSup_lorL : x ⊔ y = (lorL x y ⊕ lorL y x : L ⊙ L) := by
+`P ∨ Q = (P ∨⃗ Q) ⊔ₖ (Q ∨⃗ P)`. -/
+theorem sup_eq_lorL_kSup_lorL : x ⊔ y = lorL x y ⊔ₖ lorL y x := by
   ext
   · simp only [lorL, Evidential.guard, pro_kSup, pro_sup, pro_mk, pro_neg]
     exact le_antisymm (sup_le (le_sup_of_le_left le_sup_left) (le_sup_of_le_right le_sup_left))
@@ -330,9 +330,9 @@ section Product
 variable {L : Type*} [Lattice L] [BoundedOrder L]
 
 /-- The extremal identities (§6) in `L ⊙ L`, with `(⊤, ⊤)` and `(⊥, ⊥)` the knowledge bounds:
-`true ⊕ false = ⊤`, `true ⊗ false = ⊥`, `⊤ ∧ ⊥ = false`, `⊤ ∨ ⊥ = true`. -/
+`true ⊔ₖ false = ⊤`, `true ⊓ₖ false = ⊥`, `⊤ ∧ ⊥ = false`, `⊤ ∨ ⊥ = true`. -/
 theorem extremal :
-    ((⊤ : L ⊙ L) ⊕ ⊥ : L ⊙ L) = mk ⊤ ⊤ ∧ (⊤ : L ⊙ L) ⊗ ⊥ = mk ⊥ ⊥ ∧
+    ((⊤ : L ⊙ L) ⊔ₖ ⊥) = mk ⊤ ⊤ ∧ (⊤ : L ⊙ L) ⊓ₖ ⊥ = mk ⊥ ⊥ ∧
       (mk ⊤ ⊤ : L ⊙ L) ⊓ mk ⊥ ⊥ = ⊥ ∧ (mk ⊤ ⊤ : L ⊙ L) ⊔ mk ⊥ ⊥ = ⊤ := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> ext <;> simp
 
@@ -362,35 +362,35 @@ theorem not_isExact_kBot [Nontrivial L] : ¬ IsExact (mk ⊥ ⊥ : L ⊙ L) := b
   rw [isExact_iff]
   simp
 
-/-- Theorem 9.2: the exact values are not closed under `⊗`: `true ⊗ false = ⊥`. -/
-theorem not_isExact_kInf [Nontrivial L] : ¬ IsExact ((⊤ : L ⊙ L) ⊗ ⊥) := by
+/-- Theorem 9.2: the exact values are not closed under `⊓ₖ`: `true ⊓ₖ false = ⊥`. -/
+theorem not_isExact_kInf [Nontrivial L] : ¬ IsExact ((⊤ : L ⊙ L) ⊓ₖ ⊥) := by
   rw [isExact_iff]
   simp
 
-/-- Theorem 9.2: the exact values are not closed under `⊕`: `true ⊕ false = ⊤`. -/
-theorem not_isExact_kSup [Nontrivial L] : ¬ IsExact ((⊤ : L ⊙ L) ⊕ ⊥ : L ⊙ L) := by
+/-- Theorem 9.2: the exact values are not closed under `⊔ₖ`: `true ⊔ₖ false = ⊤`. -/
+theorem not_isExact_kSup [Nontrivial L] : ¬ IsExact ((⊤ : L ⊙ L) ⊔ₖ ⊥) := by
   rw [isExact_iff]
   simp
 
-/-- Theorem 9.3: the consistent values are closed under consensus `⊗` — indeed the consensus of a
+/-- Theorem 9.3: the consistent values are closed under consensus `⊓ₖ` — indeed the consensus of a
 consistent value with any value is consistent. -/
-theorem isConsistent_kInf (hx : IsConsistent x) (y : L ⊙ L) : IsConsistent (x ⊗ y) := by
+theorem isConsistent_kInf (hx : IsConsistent x) (y : L ⊙ L) : IsConsistent (x ⊓ₖ y) := by
   rw [isConsistent_iff] at *
   simpa using inf_le_left.trans (hx.trans le_sup_left)
 
-/-- Theorem 9.3: the consistent values are closed under gullibility `⊕` below a common consistent
+/-- Theorem 9.3: the consistent values are closed under gullibility `⊔ₖ` below a common consistent
 upper bound. -/
 theorem isConsistent_kSup (hx : IsConsistent x) (hy : IsConsistent y)
-    (hz : IsConsistent z) (hxz : x ≤ₖ z) (hyz : y ≤ₖ z) : IsConsistent (x ⊕ y) := by
+    (hz : IsConsistent z) (hxz : x ≤ₖ z) (hyz : y ≤ₖ z) : IsConsistent (x ⊔ₖ y) := by
   rw [isConsistent_iff] at *
   simp only [pro_kSup, con_kSup, LatticeWithInvolution.compl_sup]
   exact sup_le (le_inf hx (hxz.2.trans (hz.trans (LatticeWithInvolution.compl_le_compl hyz.1))))
     (le_inf (hyz.2.trans (hz.trans (LatticeWithInvolution.compl_le_compl hxz.1))) hy)
 
 /-- The generalized guard of Definition 9.4, `(a, b) : (c, d) = (a ∧ c, a ∧ d)`, characterized
-as `[(P ⊗ true) ⊕ ¬(P ⊗ true)] ⊗ Q` (§9). -/
+as `[(P ⊓ₖ true) ⊔ₖ ¬(P ⊓ₖ true)] ⊓ₖ Q` (§9). -/
 theorem guard_eq_kSup_neg (x y : L ⊙ L) :
-    Evidential.guard x y = ((x ⊗ ⊤ ⊕ neg (x ⊗ ⊤) : L ⊙ L) ⊗ y) := by
+    Evidential.guard x y = (x ⊓ₖ ⊤ ⊔ₖ neg (x ⊓ₖ ⊤)) ⊓ₖ y := by
   ext <;> simp [Evidential.guard]
 
 /-- §9: the guard of a consistent value is consistent. -/
@@ -493,10 +493,10 @@ theorem theta_inf : theta a (x ⊓ y) = theta a x ⊓ theta a y := by
 theorem theta_sup : theta a (x ⊔ y) = theta a x ⊔ theta a y := by
   ext <;> simp only [theta, pro_mk, con_mk, pro_sup, con_sup, decide_inf, decide_sup]
 
-theorem theta_kInf : theta a (x ⊗ y) = theta a x ⊗ theta a y := by
+theorem theta_kInf : theta a (x ⊓ₖ y) = theta a x ⊓ₖ theta a y := by
   ext <;> simp only [theta, pro_mk, con_mk, pro_kInf, con_kInf, decide_inf]
 
-theorem theta_kSup : theta a (x ⊕ y) = (theta a x ⊕ theta a y : FOUR) := by
+theorem theta_kSup : theta a (x ⊔ₖ y) = theta a x ⊔ₖ theta a y := by
   ext <;> simp only [theta, pro_mk, con_mk, pro_kSup, con_kSup, decide_sup]
 
 theorem theta_guard :

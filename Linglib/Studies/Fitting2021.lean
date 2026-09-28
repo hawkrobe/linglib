@@ -86,7 +86,7 @@ theorem eval_isExact {v : α → B} (hv : ∀ p, IsExact (v p)) :
   | .or φ ψ => (eval_isExact hv φ).sup (eval_isExact hv ψ)
   | .not φ => (eval_isExact hv φ).neg
 
-variable [Interlaced B]
+variable [IsInterlaced B]
 
 /-- Anticonsistent valuations evaluate to anticonsistent values ([fitting-2021] Prop 8.6.3). -/
 theorem eval_isAnticonsistent {v : α → B} (hv : ∀ p, IsAnticonsistent (v p)) :
@@ -103,15 +103,15 @@ theorem eval_kLE_eval {v w : α → B} (h : ∀ p, v p ≤ₖ w p) :
   | .atom p => h p
   | .and φ ψ => by
     calc φ.eval v ⊓ ψ.eval v
-        ≤ₖ φ.eval w ⊓ ψ.eval v := Interlaced.inf_kmono (eval_kLE_eval h φ) _
+        ≤ₖ φ.eval w ⊓ ψ.eval v := IsInterlaced.inf_kmono (eval_kLE_eval h φ) _
       _ = ψ.eval v ⊓ φ.eval w := inf_comm ..
-      _ ≤ₖ ψ.eval w ⊓ φ.eval w := Interlaced.inf_kmono (eval_kLE_eval h ψ) _
+      _ ≤ₖ ψ.eval w ⊓ φ.eval w := IsInterlaced.inf_kmono (eval_kLE_eval h ψ) _
       _ = φ.eval w ⊓ ψ.eval w := inf_comm ..
   | .or φ ψ => by
     calc φ.eval v ⊔ ψ.eval v
-        ≤ₖ φ.eval w ⊔ ψ.eval v := Interlaced.sup_kmono (eval_kLE_eval h φ) _
+        ≤ₖ φ.eval w ⊔ ψ.eval v := IsInterlaced.sup_kmono (eval_kLE_eval h φ) _
       _ = ψ.eval v ⊔ φ.eval w := sup_comm ..
-      _ ≤ₖ ψ.eval w ⊔ φ.eval w := Interlaced.sup_kmono (eval_kLE_eval h ψ) _
+      _ ≤ₖ ψ.eval w ⊔ φ.eval w := IsInterlaced.sup_kmono (eval_kLE_eval h ψ) _
       _ = φ.eval w ⊔ ψ.eval w := sup_comm ..
   | .not φ => neg_kLE_neg (eval_kLE_eval h φ)
 
@@ -132,16 +132,16 @@ structure PrimeBifilter (B : Type*) [Lattice B] [Lattice (Know B)] where
   nonempty : carrier.Nonempty
   ne_univ : carrier ≠ Set.univ
   inf_mem_iff {a b : B} : a ⊓ b ∈ carrier ↔ a ∈ carrier ∧ b ∈ carrier
-  kInf_mem_iff {a b : B} : (a ⊗ b : B) ∈ carrier ↔ a ∈ carrier ∧ b ∈ carrier
+  kInf_mem_iff {a b : B} : (a ⊓ₖ b) ∈ carrier ↔ a ∈ carrier ∧ b ∈ carrier
   sup_mem_iff {a b : B} : a ⊔ b ∈ carrier ↔ a ∈ carrier ∨ b ∈ carrier
-  kSup_mem_iff {a b : B} : (a ⊕ b : B) ∈ carrier ↔ a ∈ carrier ∨ b ∈ carrier
+  kSup_mem_iff {a b : B} : (a ⊔ₖ b) ∈ carrier ↔ a ∈ carrier ∨ b ∈ carrier
 
 instance : Membership B (PrimeBifilter B) := ⟨fun F a ↦ a ∈ F.carrier⟩
 
 /-- Prime bifilters are upward closed in the knowledge order ([fitting-2021] Prop 8.6.6). -/
 theorem PrimeBifilter.mem_of_kLE (F : PrimeBifilter B) {a b : B} (ha : a ∈ F) (h : a ≤ₖ b) :
     b ∈ F := by
-  have hab : (a ⊕ b : B) = b :=
+  have hab : a ⊔ₖ b = b :=
     toKnow.injective (by simpa only [toKnow_kSup] using sup_eq_right.mpr h)
   exact hab ▸ F.kSup_mem_iff.mpr (Or.inl ha)
 
@@ -197,7 +197,7 @@ instance {F : PrimeBifilter B} [DecidablePred (· ∈ F)]
     [DecidablePred (IsAnticonsistent (B := B))] (a : B) : Decidable (TolerantlyDesignated F a) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-variable [Interlaced B] [NegConfComm B]
+variable [IsInterlaced B] [NegConfComm B]
 
 /-- [fitting-2021] Prop 8.7.2: the strict/tolerant and classical logics of a logical bilattice
 validate exactly the same sequents. Both directions are model correspondences
@@ -215,7 +215,7 @@ theorem stValid_iff_cValid (F : PrimeBifilter B) (Γ Δ : List (Fml α)) :
     ⟨F.mem_of_kLE hψ.1 (eval_kLE_eval (hle v) ψ), eval_isAnticonsistent v.2 ψ⟩
   rwa [(eval_isExact (he v) φ).eq_of_kLE hφ.2 (eval_kLE_eval (hle v) φ)]
 
-omit [Interlaced B] [NegConfComm B] in
+omit [IsInterlaced B] [NegConfComm B] in
 /-- Cut is locally valid in `C⟨B, F⟩` ([fitting-2021] Prop 8.7.3): a valuation satisfying both
 premises of a cut instance satisfies its conclusion. -/
 theorem cut_cSatisfies (F : PrimeBifilter B) {Γ Δ : List (Fml α)} {A : Fml α} {v : α → B}
@@ -224,7 +224,7 @@ theorem cut_cSatisfies (F : PrimeBifilter B) {Γ Δ : List (Fml α)} {A : Fml α
 
 variable [BoundedOrder (Know B)]
 
-omit [Interlaced B] [NegConfComm B] in
+omit [IsInterlaced B] [NegConfComm B] in
 /-- [fitting-2021] Prop 8.7.3, the `ST` half: the cut scheme fails locally in `ST⟨B, F⟩` when the
 knowledge order is nontrivial. The countermodel sends a letter to the knowledge top — designated
 and anticonsistent but not exact — so both cut premises hold while the empty conclusion fails. -/
