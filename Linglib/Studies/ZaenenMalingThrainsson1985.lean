@@ -67,7 +67,7 @@ inductive Role
 it, if any, as in the paper's (60). -/
 structure Arg where
   role : Role
-  lexicalCase : Option Case := none
+  lexicalCase : Option Icelandic.Case := none
   deriving DecidableEq, Repr
 
 /-- The grammatical functions a bare NP argument may bear. -/
@@ -147,7 +147,7 @@ def unmarkedAbove (r : List (Arg × Option GF)) (g : GF) : ℕ :=
 /-- The surface case of an argument bearing a function: its idiosyncratic case if it has
 one, else by default the nominative if no unmarked function outranks it and the accusative
 if one does, (61d). -/
-def surfaceCase (r : List (Arg × Option GF)) (p : Arg × Option GF) : Option Case :=
+def surfaceCase (r : List (Arg × Option GF)) (p : Arg × Option GF) : Option Icelandic.Case :=
   p.2.bind fun g ↦
     p.1.lexicalCase.orElse fun _ ↦
       match unmarkedAbove r g with
@@ -157,17 +157,17 @@ def surfaceCase (r : List (Arg × Option GF)) (p : Arg × Option GF) : Option Ca
 
 /-- Idiosyncratic case is preserved under passive and raising: an argument bearing a function
 surfaces in its idiosyncratic case. -/
-theorem surfaceCase_lexical {r : List (Arg × Option GF)} {x : Arg} {g : GF} {c : Case}
+theorem surfaceCase_lexical {r : List (Arg × Option GF)} {x : Arg} {g : GF} {c : Icelandic.Case}
     (h : x.lexicalCase = some c) : surfaceCase r (x, some g) = some c := by
   simp [surfaceCase, h]
 
 /-- The case array: the subject's case and then the objects' in the order of their functions,
 the immediately postverbal NP the OBJ. -/
-def cases (r : List (Arg × Option GF)) : List Case :=
+def cases (r : List (Arg × Option GF)) : List Icelandic.Case :=
   ([GF.subj, .obj, .obj2].filterMap fun g ↦ r.find? (·.2 = some g)).filterMap (surfaceCase r)
 
 /-- The case arrays a thematic structure yields in a voice, one per association. -/
-def arrays (t : List Arg) (v : Voice) : List (List Case) :=
+def arrays (t : List Arg) (v : Voice) : List (List Icelandic.Case) :=
   (associations t).map fun a ↦ cases (realize t a v)
 
 /-- The argument with a role bears SUBJ under some association in the voice. -/
@@ -250,7 +250,7 @@ def roleTable : List (String × Role) :=
     ("experiencer", .experiencer)]
 
 /-- The case arrays as the rows write them. -/
-def casesTable : List (String × List Case) :=
+def casesTable : List (String × List Icelandic.Case) :=
   [("", []), ("dat", [.dat]), ("gen", [.gen]), ("nom dat", [.nom, .dat]),
     ("nom gen", [.nom, .gen]), ("dat nom", [.dat, .nom]), ("acc acc", [.acc, .acc]),
     ("dat dat", [.dat, .dat]), ("dat gen", [.dat, .gen]), ("nom acc dat", [.nom, .acc, .dat]),
@@ -258,7 +258,7 @@ def casesTable : List (String × List Case) :=
     ("nom dat dat", [.nom, .dat, .dat]), ("nom dat gen", [.nom, .dat, .gen])]
 
 /-- A row attesting a case array, as the thematic structure, the voice and the array. -/
-def ofCasesRow (ex : LinguisticExample) : Option (List Arg × Voice × List Case) := do
+def ofCasesRow (ex : LinguisticExample) : Option (List Arg × Voice × List Icelandic.Case) := do
   let t ← ex.parse? "verb" verbTable
   let v ← ex.parse? "voice" voiceTable
   let cs ← ex.parse? "cases" casesTable

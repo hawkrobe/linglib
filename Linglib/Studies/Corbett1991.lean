@@ -396,11 +396,11 @@ end French
 
 namespace German
 
-open _root_.German.Case _root_.German.Determiners in
+open _root_.German.Determiners in
 /-- The three genders and the definite article, three forms in the nominative singular and one in
 the plural: Figure 6.7. -/
 theorem convergent :
-    Gender.Convergent (fun g ↦ definite (.sg g) (cell .nom)) fun _ ↦ definite .pl (cell .nom) := by
+    Gender.Convergent (fun g ↦ definite (.sg g) .nom) fun _ ↦ definite .pl .nom := by
   decide
 
 end German

@@ -53,7 +53,7 @@ familiarity, and Moroney classes a language by how its articles mark the two.
 
 namespace German.Determiners
 
-open German.Case (Cell cell forms)
+open German.Case (forms)
 
 /-- A determiner agrees with its noun in a gender in the singular, and only in number in the plural,
 where the genders fall together. -/
@@ -65,7 +65,7 @@ inductive GenderNumber where
 /-! ### Declensions -/
 
 /-- `strongEnding x c` is the strong ending of the cell, the ending *dieser* takes there. -/
-def strongEnding : GenderNumber → Cell → String
+def strongEnding : GenderNumber → Case → String
   | .sg .masc => forms "er" "en" "es" "em"
   | .sg .fem => forms "e" "e" "er" "er"
   | .sg .neut => forms "es" "es" "es" "em"
@@ -73,31 +73,31 @@ def strongEnding : GenderNumber → Cell → String
 
 /-- *dieser* 'this' declines with the strong endings on the stem *dies-*, and *jener* 'that'
 declines like it. -/
-def dieser (x : GenderNumber) (c : Cell) : String := "dies" ++ strongEnding x c
+def dieser (x : GenderNumber) (c : Case) : String := "dies" ++ strongEnding x c
 
 /-- `Endingless x c` holds of the nominative singular masculine and the nominative and accusative
 singular neuter, the cells where *ein*, *kein* and the possessives have no ending. -/
-def Endingless (x : GenderNumber) (c : Cell) : Prop :=
-  x = .sg .masc ∧ c = cell .nom ∨ x = .sg .neut ∧ (c = cell .nom ∨ c = cell .acc)
+def Endingless (x : GenderNumber) (c : Case) : Prop :=
+  x = .sg .masc ∧ c = .nom ∨ x = .sg .neut ∧ (c = .nom ∨ c = .acc)
 
-instance (x : GenderNumber) (c : Cell) : Decidable (Endingless x c) :=
+instance (x : GenderNumber) (c : Case) : Decidable (Endingless x c) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
 /-- `einWord stem` declines an *ein*-word, such as *kein* or the possessive *mein*, on the stem
 `stem`, with the strong endings except in the endingless cells, where it has none. -/
-def einWord (stem : String) (x : GenderNumber) (c : Cell) : String :=
+def einWord (stem : String) (x : GenderNumber) (c : Case) : String :=
   if Endingless x c then stem else stem ++ strongEnding x c
 
 /-- *kein* 'no' is an *ein*-word. -/
-def kein : GenderNumber → Cell → String := einWord "kein"
+def kein : GenderNumber → Case → String := einWord "kein"
 
 /-- The indefinite article *ein* is an *ein*-word in the singular and has no plural. -/
-def ein : GenderNumber → Cell → Option String
+def ein : GenderNumber → Case → Option String
   | .pl, _ => none
   | x, c => some (einWord "ein" x c)
 
 /-- `definite x c` is the form of the definite article in the cell. -/
-def definite : GenderNumber → Cell → String
+def definite : GenderNumber → Case → String
   | .sg .masc => forms "der" "den" "des" "dem"
   | .sg .fem => forms "die" "die" "der" "der"
   | .sg .neut => forms "das" "das" "des" "dem"
@@ -111,29 +111,29 @@ theorem injective_definite_sg_masc : Function.Injective (definite (.sg .masc)) :
 /-- The nominative and the accusative of the definite article fall together everywhere but in the
 masculine singular. -/
 theorem definite_nom_eq_acc_iff (x : GenderNumber) :
-    definite x (cell .nom) = definite x (cell .acc) ↔ x ≠ .sg .masc := by
+    definite x .nom = definite x .acc ↔ x ≠ .sg .masc := by
   revert x; decide
 
 /-- The genitive and the dative of the definite article fall together in the feminine singular
 only. -/
 theorem definite_gen_eq_dat_iff (x : GenderNumber) :
-    definite x (cell .gen) = definite x (cell .dat) ↔ x = .sg .fem := by
+    definite x .gen = definite x .dat ↔ x = .sg .fem := by
   revert x; decide
 
 /-! ### Gender agreement -/
 
 /-- The nominative singular of the definite article keeps the three genders apart. -/
-theorem injective_definite_sg_nom : Function.Injective fun g ↦ definite (.sg g) (cell .nom) := by
+theorem injective_definite_sg_nom : Function.Injective fun g ↦ definite (.sg g) .nom := by
   decide
 
 /-- The dative singular does not, the masculine and the neuter both being *dem*. -/
 theorem not_injective_definite_sg_dat :
-    ¬ Function.Injective fun g ↦ definite (.sg g) (cell .dat) := by
+    ¬ Function.Injective fun g ↦ definite (.sg g) .dat := by
   decide
 
 /-- The three-gender carrier is faithful to the definite article. -/
 theorem faithful : Gender.Faithful fun g ↦ definite (.sg g) :=
-  fun _ _ h ↦ injective_definite_sg_nom (congrFun h (cell .nom))
+  fun _ _ h ↦ injective_definite_sg_nom (congrFun h .nom)
 
 /-! ### The inventory -/
 
@@ -143,10 +143,10 @@ demonstrative *dieser*; and the possessive *mein*. -/
 def inventory : Determiner.Inventory :=
   [ .article { form := "im", definiteness := .definite, exponent := .dedicatedMorpheme,
                uses := {.immediateSituation, .largerSituation} },
-    .article { form := definite (.sg .masc) (cell .dat), definiteness := .definite,
+    .article { form := definite (.sg .masc) .dat, definiteness := .definite,
                exponent := .dedicatedMorpheme, uses := {.anaphoric, .donkey} },
     .article { form := "ein", definiteness := .indefinite, exponent := .dedicatedMorpheme },
-    .demonstrative { form := dieser (.sg .masc) (cell .nom), deictic := .unspecified },
+    .demonstrative { form := dieser (.sg .masc) .nom, deictic := .unspecified },
     .possessive { form := "mein" } ]
 
 /-- German derives the `.bipartite` Moroney cell. -/

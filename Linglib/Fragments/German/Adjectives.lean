@@ -41,18 +41,17 @@ referent: *ein junges Mädchen* 'a young girl'.
 
 namespace German.Adjectives
 
-open German.Case (Cell cell)
 open German.Determiners (GenderNumber Endingless strongEnding)
 
 /-- `strong x c` is the strong ending of the cell, the ending of *dieser* except for *-en* in the
 genitive singular masculine and neuter. -/
-def strong (x : GenderNumber) (c : Cell) : String :=
-  if c = cell .gen ∧ (x = .sg .masc ∨ x = .sg .neut) then "en" else strongEnding x c
+def strong (x : GenderNumber) (c : Case) : String :=
+  if c = .gen ∧ (x = .sg .masc ∨ x = .sg .neut) then "en" else strongEnding x c
 
 /-- `weak x c` is the weak ending of the cell, *-e* in the nominative singular and in the
 accusative singular feminine and neuter and *-en* everywhere else. -/
-def weak (x : GenderNumber) (c : Cell) : String :=
-  if c = cell .nom ∧ x ≠ .pl ∨ c = cell .acc ∧ (x = .sg .fem ∨ x = .sg .neut) then "e"
+def weak (x : GenderNumber) (c : Case) : String :=
+  if c = .nom ∧ x ≠ .pl ∨ c = .acc ∧ (x = .sg .fem ∨ x = .sg .neut) then "e"
   else "en"
 
 /-- An adjective is preceded in its noun phrase by no determiner, by a determiner with an ending in
@@ -64,19 +63,19 @@ inductive Preceding where
   deriving DecidableEq, Repr, Fintype
 
 /-- `p.HasEnding x c` holds when the preceding determiner has an ending in the cell. -/
-def Preceding.HasEnding : Preceding → GenderNumber → Cell → Prop
+def Preceding.HasEnding : Preceding → GenderNumber → Case → Prop
   | .none, _, _ => False
   | .inflected, _, _ => True
   | .einWord, x, c => ¬ Endingless x c
 
-instance : (p : Preceding) → (x : GenderNumber) → (c : Cell) → Decidable (p.HasEnding x c)
+instance : (p : Preceding) → (x : GenderNumber) → (c : Case) → Decidable (p.HasEnding x c)
   | .none, _, _ => inferInstanceAs (Decidable False)
   | .inflected, _, _ => inferInstanceAs (Decidable True)
   | .einWord, x, c => inferInstanceAs (Decidable (¬ Endingless x c))
 
 /-- An adjective takes the weak ending when the preceding determiner has an ending, and the strong
 ending when there is none. -/
-def ending (p : Preceding) (x : GenderNumber) (c : Cell) : String :=
+def ending (p : Preceding) (x : GenderNumber) (c : Case) : String :=
   if p.HasEnding x c then weak x c else strong x c
 
 /-- With no determiner an adjective takes the strong endings. -/
@@ -89,7 +88,7 @@ def ending (p : Preceding) (x : GenderNumber) (c : Cell) : String :=
 
 /-- After an *ein*-word an adjective departs from the weak endings exactly in the cells where the
 determiner has no ending. -/
-theorem ending_einWord_ne_weak_iff (x : GenderNumber) (c : Cell) :
+theorem ending_einWord_ne_weak_iff (x : GenderNumber) (c : Case) :
     ending .einWord x c ≠ weak x c ↔ Endingless x c := by
   revert x c; decide
 
@@ -97,10 +96,10 @@ theorem ending_einWord_ne_weak_iff (x : GenderNumber) (c : Cell) :
 *Mädchen* is neuter, *ein* has no ending in the nominative singular neuter, and the adjective
 takes the strong *-es*. The feminine, the sex of the referent, would give *eine junge*. -/
 theorem ein_junges_maedchen :
-    Determiners.ein (.sg Gender.maedchen.gender) (cell .nom) = some "ein" ∧
-      "jung" ++ ending .einWord (.sg Gender.maedchen.gender) (cell .nom) = "junges" ∧
-      Determiners.ein (.sg .fem) (cell .nom) = some "eine" ∧
-      "jung" ++ ending .einWord (.sg .fem) (cell .nom) = "junge" := by
+    Determiners.ein (.sg Gender.maedchen.gender) .nom = some "ein" ∧
+      "jung" ++ ending .einWord (.sg Gender.maedchen.gender) .nom = "junges" ∧
+      Determiners.ein (.sg .fem) .nom = some "eine" ∧
+      "jung" ++ ending .einWord (.sg .fem) .nom = "junge" := by
   decide
 
 end German.Adjectives
