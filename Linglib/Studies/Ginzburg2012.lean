@@ -12,11 +12,12 @@ the questions under discussion and, once metacommunication enters, the ungrounde
 PENDING. A rule is a partial map from gameboards meeting its preconditions to updated gameboards
 (`Rule.apply`: the inventory of Appendix B, with the utterance, question or turn a
 nondeterministic rule chooses made an argument), a conversation composes rules (`run`), and an
-utterance is coherent when some rule makes it the latest move (`Coherent`). The Question
-Introduction Appropriateness Condition survives QUD-incrementation and is restored by FACTS update
-(`askQud_nonResolveCond`, `factUpdate_nonResolveCond`); a genre makes an initiating move a relevant
-Free Speech move (`IsInitiating`, `coherent_of_isInitiating`); and self-repair is Parameter
-Identification with the turn held (`parameterIdentification_eq_repair_swapTurn`).
+utterance is coherent when some rule makes it the latest move (`Coherent`). Asking a question
+keeps `non-resolve-cond` exactly when no fact resolves it, the Question Introduction
+Appropriateness Condition, and FACTS update restores the condition (`askQud_nonResolveCond_iff`,
+`factUpdate_nonResolveCond`); a genre makes an initiating move a relevant Free Speech move
+(`IsInitiating`, `coherent_of_isInitiating`); and self-repair is Parameter Identification with the
+turn held (`parameterIdentification_eq_repair_swapTurn`).
 
 The worked traces of Ch. 4 reach the tabulated gameboards (`Ex66.trace`, `Ex66.trace68_table`,
 `Ex79.trace`), and after "Is George here? / Is WHO here?" the two participants' gameboards differ
@@ -47,20 +48,22 @@ clarification request, a self-repair and a bare follow-up question, as the rules
 
 namespace Ginzburg2012
 
-open Discourse.Gameboard Question Data.Examples
+open Discourse.Gameboard Data.Examples
 
 /-- What a gameboard's content types supply: the polar question `p?`, the
-aboutness and influence relations of q-specificity, and resolution (`⊨`), with
-`p` resolving `p?`. -/
-class Content (Fact Q : Type) extends DecidableSupport Fact Q where
+aboutness and influence relations of q-specificity, and resolution, with `p`
+resolving `p?`. -/
+class Content (Fact Q : Type) where
   polar : Fact → Q
   About : Fact → Q → Prop
   Influences : Q → Q → Prop
+  Resolves : Fact → Q → Prop
   decAbout : DecidableRel About
   decInfluences : DecidableRel Influences
-  supports_polar (p : Fact) : supports p (polar p)
+  decResolves : DecidableRel Resolves
+  resolves_polar (p : Fact) : Resolves p (polar p)
 
-attribute [reducible, instance] Content.decAbout Content.decInfluences
+attribute [reducible, instance] Content.decAbout Content.decInfluences Content.decResolves
 
 /-- The questions clarification accommodates: `λx.Mean(A, u, x)`, what `A`
 meant by the sub-utterance `u` (Parameter Identification), and `λx.v(u ↦ x)`,
@@ -197,7 +200,8 @@ def Rule.apply : Rule P Fact Q → Board P Fact Q → Option (Board P Fact Q)
     | _, _ => none
   | .factUpdate, d => match d.latestContent with
     | some (.accept p) | some (.confirm p) =>
-      if d.maxQud = some (Content.polar p) then some (d.addFact p).downdateQud else none
+      if d.maxQud = some (Content.polar p) then some ((d.addFact p).downdateQud Content.Resolves)
+      else none
     | _ => none
   | .qcoord u, d => match d.latestContent, u.cont, d.qud with
     | some (.ask q), .ask q₁, i :: rest =>
@@ -241,7 +245,7 @@ def Rule.apply : Rule P Fact Q → Board P Fact Q → Option (Board P Fact Q)
 
 /-- Apply a trace of rules in sequence (the composition of conversational rules). -/
 def run (trace : List (Rule P Fact Q)) (d : Board P Fact Q) : Option (Board P Fact Q) :=
-  trace.foldlM (λ d r => r.apply d) d
+  trace.foldlM (fun d r ↦ r.apply d) d
 
 /-- An utterance is coherent relative to a gameboard when some rule makes it the
 latest move (Ch. 4 M-Coherence; Appendix B Utterance Coherence). -/
@@ -253,25 +257,25 @@ def Reachable (d d' : Board P Fact Q) : Prop := ∃ trace, run trace d = some d'
 
 /-! ### QUD well-formedness
 
-The Question Introduction Appropriateness Condition — a question enters QUD
-only if no established fact resolves it — is built into the gameboard type as
-`non-resolve-cond` (`DGB.nonResolveCond`). -/
+The Question Introduction Appropriateness Condition (52) p. 89 lets a question
+enter QUD only if no fact resolves it; (53) builds it into the gameboard type
+as `non-resolve-cond`, here the predicate `DGB.NonResolveCond`. -/
 
-/-- Ask QUD-incrementation keeps `non-resolve-cond` when no fact resolves the
-question asked. -/
-theorem askQud_nonResolveCond {d d' : Board P Fact Q} {q : Q} (hd : d.nonResolveCond)
-    (hm : d.latestContent = some (.ask q)) (hq : ∀ f ∈ d.facts, ¬ f ⊨ q)
-    (h : Rule.askQud.apply d = some d') : d'.nonResolveCond := by
+/-- Ask QUD-incrementation keeps `non-resolve-cond` exactly when no fact
+resolves the question asked. -/
+theorem askQud_nonResolveCond_iff {d d' : Board P Fact Q} {q : Q}
+    (hm : d.latestContent = some (.ask q)) (h : Rule.askQud.apply d = some d') :
+    d'.NonResolveCond Content.Resolves ↔
+      (¬∃ f ∈ d.facts, Content.Resolves f q) ∧ d.NonResolveCond Content.Resolves := by
   simp only [Rule.apply, hm, Option.some.injEq] at h
-  subst h
-  exact List.forall_mem_cons.2 ⟨λ ⟨f, hf, hfq⟩ => hq f hf hfq, hd⟩
+  exact h ▸ d.nonResolveCond_pushQud_iff _
 
 /-- Fact update/QUD-downdate restores `non-resolve-cond`. -/
 theorem factUpdate_nonResolveCond {d d' : Board P Fact Q}
-    (h : Rule.factUpdate.apply d = some d') : d'.nonResolveCond := by
+    (h : Rule.factUpdate.apply d = some d') : d'.NonResolveCond Content.Resolves := by
   unfold Rule.apply at h
   split at h <;> simp only [Option.ite_none_right_eq_some, reduceCtorEq] at h <;>
-    exact Option.some.inj h.2 ▸ downdateQud_restores_nonResolveCond _
+    exact Option.some.inj h.2 ▸ DGB.nonResolveCond_downdateQud _ _
 
 /-- Accepting `p` downdates `p?`. -/
 theorem factUpdate_polar {d d' : Board P Fact Q} {p : Fact}
@@ -279,7 +283,7 @@ theorem factUpdate_polar {d d' : Board P Fact Q} {p : Fact}
     (h : Rule.factUpdate.apply d = some d') : ∀ i ∈ d'.qud, i.q ≠ Content.polar p := by
   have := factUpdate_nonResolveCond h
   intro i hi hq
-  refine this i hi ⟨p, ?_, hq ▸ Content.supports_polar p⟩
+  refine this i hi ⟨p, ?_, hq ▸ Content.resolves_polar p⟩
   simp only [Rule.apply, hm, Option.ite_none_right_eq_some] at h
   exact Option.some.inj h.2 ▸ List.mem_cons_self
 
@@ -297,7 +301,7 @@ relevant to the genre in the private part of their information state
 
 /-- The outcome of `d` relative to `G` is fulfilled. -/
 def Fulfilled (G : GenreType Fact Q) (d : Board P Fact Q) : Prop :=
-  d.qud = [] ∧ ∀ q ∈ G.qnud, ∃ f ∈ d.facts, f ⊨ q
+  d.qud = [] ∧ ∀ q ∈ G.qnud, ∃ f ∈ d.facts, Content.Resolves f q
 
 instance (G : GenreType Fact Q) (d : Board P Fact Q) : Decidable (Fulfilled G d) :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -365,14 +369,14 @@ inductive Q
   deriving DecidableEq, Repr
 
 instance : Content Fact Q where
-  supports f q := q = .polar f ∨ f = .p₁ ∧ q = .q₁
-  decSupports _ _ := inferInstanceAs (Decidable (_ ∨ _))
+  Resolves f q := q = .polar f ∨ f = .p₁ ∧ q = .q₁
+  decResolves _ _ := inferInstanceAs (Decidable (_ ∨ _))
   polar := .polar
   About f q := f = .p₁ ∧ q = .q₁ ∨ f = .p₂ ∧ q = .q₀
   Influences q q' := q = .q₁ ∧ q' = .q₀
   decAbout _ _ := inferInstanceAs (Decidable (_ ∨ _))
   decInfluences _ _ := inferInstanceAs (Decidable (_ ∧ _))
-  supports_polar _ := Or.inl rfl
+  resolves_polar _ := Or.inl rfl
 
 instance : Clarifiable Agent Fact Q where
   mean _ _ := .q₀
@@ -419,14 +423,14 @@ inductive Q
   deriving DecidableEq, Repr
 
 instance : Content Fact Q where
-  supports f q := q = .polar f ∨ f = .p₀ ∧ q = .q₀
-  decSupports _ _ := inferInstanceAs (Decidable (_ ∨ _))
+  Resolves f q := q = .polar f ∨ f = .p₀ ∧ q = .q₀
+  decResolves _ _ := inferInstanceAs (Decidable (_ ∨ _))
   polar := .polar
   About f q := f = .p₀ ∧ q = .q₀ ∨ f = .p₁ ∧ q = .q₁
   Influences _ _ := False
   decAbout _ _ := inferInstanceAs (Decidable (_ ∨ _))
   decInfluences _ _ := inferInstanceAs (Decidable False)
-  supports_polar _ := Or.inl rfl
+  resolves_polar _ := Or.inl rfl
 
 instance : Clarifiable Agent Fact Q where
   mean _ _ := .q₀
@@ -466,14 +470,14 @@ inductive Q
   deriving DecidableEq, Repr
 
 instance : Content Fact Q where
-  supports f q := q = .polar f ∨ f = .here ∧ q = .howA ∨ f = .off ∧ q = .howB
-  decSupports _ _ := inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+  Resolves f q := q = .polar f ∨ f = .here ∧ q = .howA ∨ f = .off ∧ q = .howB
+  decResolves _ _ := inferInstanceAs (Decidable (_ ∨ _ ∨ _))
   polar := .polar
   About f q := f = .off ∧ q = .howB
   Influences _ _ := False
   decAbout _ _ := inferInstanceAs (Decidable (_ ∧ _))
   decInfluences _ _ := inferInstanceAs (Decidable False)
-  supports_polar _ := Or.inl rfl
+  resolves_polar _ := Or.inl rfl
 
 instance : Clarifiable Agent Fact Q where
   mean _ _ := .howA
@@ -514,14 +518,14 @@ inductive Q
   deriving DecidableEq, Repr
 
 instance : Content Fact Q where
-  supports f q := q = .polar f
-  decSupports _ _ := inferInstanceAs (Decidable (_ = _))
+  Resolves f q := q = .polar f
+  decResolves _ _ := inferInstanceAs (Decidable (_ = _))
   polar := .polar
   About _ _ := False
   Influences _ _ := False
   decAbout _ _ := inferInstanceAs (Decidable False)
   decInfluences _ _ := inferInstanceAs (Decidable False)
-  supports_polar _ := rfl
+  resolves_polar _ := rfl
 
 instance : Clarifiable Agent Fact Q where
   mean _ u := .meant u
@@ -572,7 +576,7 @@ theorem differ : ∀ dA ∈ run traceA initial, ∀ dB ∈ run traceB initial,
 MaxQUD and the request is no longer pending. -/
 theorem accommodate :
     (run (traceA ++ [.crAccommodation george]) initial).map
-        (λ d => (d.qud.map (·.q), d.pending)) =
+        (fun d ↦ (d.qud.map (·.q), d.pending)) =
       some ([.whoAsked, .polar .georgeHere], []) := by decide
 
 end George
@@ -645,14 +649,14 @@ inductive Q
   deriving DecidableEq, Repr
 
 instance : Content Fact Q where
-  supports f q := q = .polar f
-  decSupports _ _ := inferInstanceAs (Decidable (_ = _))
+  Resolves f q := q = .polar f
+  decResolves _ _ := inferInstanceAs (Decidable (_ = _))
   polar := .polar
   About _ _ := False
   Influences q' q := q' = .why ∧ q = .q₀
   decAbout _ _ := inferInstanceAs (Decidable False)
   decInfluences _ _ := inferInstanceAs (Decidable (_ ∧ _))
-  supports_polar _ := rfl
+  resolves_polar _ := rfl
 
 instance : Clarifiable Agent Fact Q where
   mean _ u := .meant u
@@ -682,9 +686,9 @@ structure Row where
 
 def Row.ofExample (ex : LinguisticExample) : Option Row :=
   (ex.parse? (α := Row) "speaker" [("addressee", ⟨.clarification, .change⟩),
-      ("original speaker", ⟨.selfRepair, .keep⟩)]).orElse λ _ =>
+      ("original speaker", ⟨.selfRepair, .keep⟩)]).orElse fun _ ↦
     (ex.parse? "repair" [("other-initiated", ⟨.clarification, .change⟩),
-        ("self-initiated", ⟨.selfRepair, .keep⟩)]).orElse λ _ =>
+        ("self-initiated", ⟨.selfRepair, .keep⟩)]).orElse fun _ ↦
       ex.parse? "turn" [("kept", ⟨.followUp, .keep⟩), ("taken", ⟨.followUp, .change⟩)]
 
 /-- The gameboard the row's second utterance meets: A's question pending, for a clarification

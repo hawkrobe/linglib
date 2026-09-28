@@ -8,8 +8,8 @@ public import Linglib.Semantics.Questions.Hamblin
 
 This file defines the answerhood predicates over the inquisitive substrate `Question W`, with
 the question as subject so that dot notation reads in the right direction. Resolution is
-membership, `σ ∈ Q`, the support relation of [ciardelli-groenendijk-roelofsen-2018]
-(`Question.Support`), which on normal questions is settling some alternative
+membership, `σ ∈ Q`, the support relation of [ciardelli-groenendijk-roelofsen-2018],
+which on normal questions is settling some alternative
 (`mem_iff_exists_alt_subset`), the mention-some reading of [groenendijk-stokhof-1984]. A state
 completely answers a question when it decides every alternative (`CompletelyAnsweredBy`), the
 mention-all reading, and partially answers it when it decides some alternative

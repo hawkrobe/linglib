@@ -14,7 +14,6 @@ public import Mathlib.Order.Preorder.Finite
 public import Mathlib.Order.Closure
 public import Mathlib.Order.GaloisConnection.Basic
 public import Mathlib.Order.UpperLower.Closure
-public import Linglib.Semantics.Questions.Support
 
 /-!
 # Question — core type, lattice, Heyting derivatives
@@ -1246,21 +1245,6 @@ theorem isInquisitive_ofSet_sup :
 theorem ofSet_sup_ne :
     (ofSet {true} ⊔ ofSet {false} : Question Bool) ≠ ofSet ({true} ∪ {false}) :=
   fun h => not_isInquisitive_ofSet _ (h ▸ isInquisitive_ofSet_sup)
-
-/-! ### `Question.Support` instance
-
-The cross-tradition `s ⊨ Q` interface (`Question.Support`) is satisfied
-by `Question` in the standard inquisitive way: an information state `s : Set W`
-supports / resolves the issue `P` iff `s` is one of the resolving propositions
-(`s ∈ P.props`). This is the inquisitive notion of support
-([ciardelli-groenendijk-roelofsen-2018]). -/
-
-/-- Inquisitive support: `s ⊨ P` iff the state `s` resolves the issue `P`. -/
-instance instSupport : Question.Support (Set W) (Question W) where
-  supports s P := s ∈ P
-
-theorem supports_iff (s : Set W) (P : Question W) :
-    Question.Support.supports s P ↔ s ∈ P := Iff.rfl
 
 end Question
 
