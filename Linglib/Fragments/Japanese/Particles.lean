@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Particle.Basic
-public import Linglib.Semantics.Questions.Answering
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Japanese particles
@@ -11,16 +11,16 @@ and quoted clauses: the question particle *ka*, obligatory in embedded questions
 in matrix ones, its informal counterpart *no*, the declarative complementizer *koto*, the
 meta-question particle *kke*, which asks the addressee to remind the speaker of an answer and
 occurs only in matrix questions and quotations, and the conjectural *darō*, which embeds
-declaratives and questions alike. The colloquial answer particles *un* 'yes' and *uun* 'no' are
-pro-sentential and typed by `Question.AnswerParticle`: in the truth-based system of
-[holmberg-2016], *un* confirms the negative alternative of a negative question, *Kimi tukarete
-nai? — Un (tukarete nai)* 'Are you not tired? — Yes (I'm not tired)'.
+declaratives and questions alike. The colloquial polarity particles *un* 'yes' and *uun* 'no' are
+`Japanese.PolarityParticle`: in the truth-based system of [holmberg-2016], *un* confirms the
+negative alternative of a negative question, *Kimi tukarete nai? — Un (tukarete nai)* 'Are you
+not tired? — Yes (I'm not tired)'.
 
 ## Main definitions
 
 * `Japanese.Particles.ka`, `no_`, `koto`, `kke`, `daroo` — the clause-typing particles with
   their embedding distributions
-* `Japanese.Particles.un`, `uun` — the answer particles
+* `Japanese.PolarityParticle` — the polarity particles
 
 ## References
 
@@ -121,13 +121,22 @@ def daroo : Particle where
 /-- The clause-typing particles. -/
 def allParticles : List Particle := [ka, no_, koto, kke, daroo]
 
-/-! ### Answer particles -/
-
-/-- *un* 'yes', the colloquial affirmative answer particle. -/
-def un : Question.AnswerParticle := { form := "un", assigns := .positive }
-
-/-- *uun* 'no', the colloquial negative answer particle: *Kare-wa koohii-o noma nai no?* 'Does he
-not drink coffee?' — *Uun, nomu yo* 'No, he drinks'. -/
-def uun : Question.AnswerParticle := { form := "uun", assigns := .negative }
-
 end Japanese.Particles
+
+namespace Japanese
+
+/-- The Japanese colloquial polarity particles. -/
+inductive PolarityParticle where
+  /-- *un* 'yes'. -/
+  | un
+  /-- *uun* 'no': *Kare-wa koohii-o noma nai no?* 'Does he not drink coffee?' — *Uun, nomu
+  yo* 'No, he drinks'. -/
+  | uun
+  deriving DecidableEq, Repr, Fintype
+
+/-- The spelling of a polarity particle. -/
+def PolarityParticle.form : PolarityParticle → String
+  | .un => "un"
+  | .uun => "uun"
+
+end Japanese

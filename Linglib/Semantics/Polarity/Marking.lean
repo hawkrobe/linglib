@@ -22,10 +22,11 @@ specific lexical or prosodic devices; the polarity-reversing class follows [holm
 polarity, and [garassino-jacob-2018] concur; the non-equivalence of the two is stated in
 `Studies/MaticNikolaeva2018.lean`. Syntactic position beyond sentence-internality is not
 encoded, so entries under one strategy may differ in it. This is a separate system from the
-`PolarityItem` licensing API. Answer particles, including the polarity-reversing Swedish *jo*
-and French *si* of [holmberg-2016], are typed by `Question.AnswerParticle`, whose REV feature
-derives the negative context that a marker's environments record; German *doch* has both
-entries, as an answer particle and as a separate utterance preceding a Verum focus utterance.
+`PolarityItem` licensing API. Polarity particles, including the polarity-reversing Swedish
+*jo* and French *si* of [holmberg-2016], are a language's `PolarityParticle`s, which each
+framework interprets; under [holmberg-2016]'s `AnswerFeature.reversing` the negative context a
+marker's environments record is derived. German *doch* is both, a polarity particle and, as a
+separate utterance preceding a Verum focus utterance, a marker.
 
 ## References
 

@@ -44,7 +44,6 @@ the costs the winners beat.
 namespace CitkoGracaninYuksek2025
 
 open Minimalist Minimalist.PlanarSyntacticObject RoseTree.Pathed
-open Question (MWFParameter)
 
 /-! ### The lexicon -/
 

@@ -11,8 +11,7 @@ covert movement at LF ([huang-1982]), the overt-then-covert partial movement tha
 in island sensitivity. `MWFParameter` is [rudin-1988]'s multiple-wh-fronting parameter in the
 three-valued form of [citko-gracanin-yuksek-2025], who split the languages without multiple
 fronting by the phase edges at which several wh-specifiers incur a PF asterisk
-(`MWFParameter.EdgeAsterisk`). The declarations share the root `Question` namespace with the
-semantics of questions in `Semantics/Questions/`.
+(`MWFParameter.EdgeAsterisk`).
 
 ## Implementation notes
 
@@ -32,8 +31,6 @@ directly and is not re-labelled here.
 -/
 
 @[expose] public section
-
-namespace Question
 
 /-- How a wh-phrase is interpreted at the syntax-semantics interface. The mechanism is distinct
 from the surface position of the phrase: a phrase in situ may move covertly or be bound without
@@ -93,7 +90,7 @@ instance (m : WhInterpMechanism) : Decidable m.HasCovertStep := by
     a necessary truth: a future mechanism (e.g., long-distance Agree) could
     be island-sensitive without reaching Spec-CP, or reach Spec-CP without
     island sensitivity. The predicates are kept separate for this reason. -/
-theorem reachesSpecCP_iff_islandSensitive (m : WhInterpMechanism) :
+theorem WhInterpMechanism.reachesSpecCP_iff_islandSensitive (m : WhInterpMechanism) :
     m.ReachesSpecCP ↔ m.IslandSensitive := by
   cases m <;> exact Iff.rfl
 
@@ -153,6 +150,4 @@ instance (p : MWFParameter) (e : PhaseEdge) (n : Nat) :
   cases p <;> cases e <;> unfold EdgeAsterisk <;> infer_instance
 
 end MWFParameter
-
-end Question
 

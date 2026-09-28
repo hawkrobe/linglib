@@ -29,7 +29,7 @@ island-sensitive; an in-situ wh-phrase is bound unselectively and never moves
 
 namespace Singlish.Questions
 
-open Question WhModifier
+open WhModifier
 
 /-- The three question-formation strategies: full movement, partial movement, in situ. -/
 def strategies : Finset WhInterpMechanism :=

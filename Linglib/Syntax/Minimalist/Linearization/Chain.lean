@@ -53,7 +53,6 @@ once.
 namespace Minimalist
 
 open RoseTree RoseTree.Pathed SyntacticObject Core.Order.Branching
-open Question (MWFParameter PhaseEdge)
 
 /-! ### Occurrences and chains -/
 
