@@ -103,7 +103,7 @@ def idNasal : Option Base → Constraint Velar
   | none => 0
 
 /-- The constraint set (6): `*INTERNAL-[g]`, ID-[nasal] to the N2, ID-[nasal] to the compound. -/
-def con (it : Item) : CON Velar 3 :=
+def con (it : Item) : ConstraintSet Velar 3 :=
   ![Constraint.binary (· = .oral), idNasal it.n2, idNasal it.compound]
 
 /-- Constraint weights, indexed like `con`. -/

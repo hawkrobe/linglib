@@ -27,10 +27,10 @@ the probit choice rule) — the Gaussian sibling of softmax. They ground directl
 that pure-math fact, not in Thurstone's psychophysics: Noisy HG and Thurstone Case V
 are sibling applications of the same probit RUM, neither depending on the other.
 
-A grammar here is a constraint set `con : CON C n` and a weight vector `w : Fin n → ℝ` (from
-`OptimalityTheory/Constraint/Defs.lean`); there is no weighted-constraint record.
-Violation-difference quantities (`violationDiffSqSum`, `nhgCovariance`) read only `con`; harmony
-quantities read `con` and `w`.
+A grammar here is a constraint set `con : ConstraintSet C n` and a weight vector
+`w : Fin n → ℝ` (from `OptimalityTheory/Constraint/Defs.lean`); there is no weighted-constraint
+record. Violation-difference quantities (`violationDiffSqSum`, `nhgCovariance`) read only `con`;
+harmony quantities read `con` and `w`.
 
 ## MaxEnt logit-harmony identity
 
@@ -57,12 +57,12 @@ variable {C : Type*} {n : Nat}
 
 /-- Sum of squared violation differences between two candidates.
     This determines the NHG noise variance: σ_d² = σ² · violationDiffSqSum. -/
-noncomputable def violationDiffSqSum (con : CON C n) (a b : C) : ℝ :=
+noncomputable def violationDiffSqSum (con : ConstraintSet C n) (a b : C) : ℝ :=
   ∑ i, ((con i a : ℝ) - (con i b : ℝ)) ^ 2
 
 /-- Sum of squared violation differences (ℚ, computable).
     Use this for concrete examples with `decide`. -/
-def violationDiffSqSumQ (con : CON C n) (a b : C) : ℚ :=
+def violationDiffSqSumQ (con : ConstraintSet C n) (a b : C) : ℚ :=
   ∑ i, ((con i a : ℚ) - (con i b : ℚ)) ^ 2
 
 /-- NHG noise standard deviation for binary choice:
@@ -70,7 +70,7 @@ def violationDiffSqSumQ (con : CON C n) (a b : C) : ℚ :=
 
     The noise is **context-dependent**: it scales with the violation
     difference profile, not just the per-weight noise σ. -/
-noncomputable def nhgSigmaD (con : CON C n) (sigma : ℝ) (a b : C) : ℝ :=
+noncomputable def nhgSigmaD (con : ConstraintSet C n) (sigma : ℝ) (a b : C) : ℝ :=
   sigma * Real.sqrt (violationDiffSqSum con a b)
 
 /-! ### NHG binary choice (Gaussian random utility model) -/
@@ -82,13 +82,14 @@ noncomputable def nhgSigmaD (con : CON C n) (sigma : ℝ) (a b : C) : ℝ :=
     probit choice rule) applied to the harmony gap, with the context-dependent
     NHG noise `σ_d = σ·√(Σⱼ(cⱼ(a)−cⱼ(b))²)` (`nhgSigmaD`). It grounds directly
     in the Gaussian RUM — *not* through Thurstone's psychophysics. -/
-noncomputable def nhgChoiceProb (con : CON C n) (w : Fin n → ℝ) (sigma : ℝ) (a b : C) : ℝ :=
+noncomputable def nhgChoiceProb (con : ConstraintSet C n) (w : Fin n → ℝ) (sigma : ℝ)
+    (a b : C) : ℝ :=
   gaussianChoiceProb (harmonyScore con w a - harmonyScore con w b)
     (nhgSigmaD con sigma a b)
 
 /-- NHG choice probability in closed form: `Φ((H(a) − H(b)) / σ_d)`
     ([flemming-2021] eq (15)). -/
-theorem nhg_choiceProb_eq (con : CON C n) (w : Fin n → ℝ) (sigma : ℝ) (a b : C) :
+theorem nhg_choiceProb_eq (con : ConstraintSet C n) (w : Fin n → ℝ) (sigma : ℝ) (a b : C) :
     nhgChoiceProb con w sigma a b =
     normalCDF ((harmonyScore con w a - harmonyScore con w b) /
                nhgSigmaD con sigma a b) := by
@@ -111,7 +112,7 @@ noncomputable def normalMaxEntSigmaD (epsilon : ℝ) : ℝ :=
     Like NHG, the Gaussian random utility model (`gaussianChoiceProb`) applied
     to the harmony gap — but with the *constant* noise `σ_d = ε√2`
     (`normalMaxEntSigmaD`) rather than NHG's context-dependent `σ_d`. -/
-noncomputable def normalMaxEntChoiceProb (con : CON C n) (w : Fin n → ℝ)
+noncomputable def normalMaxEntChoiceProb (con : ConstraintSet C n) (w : Fin n → ℝ)
     (epsilon : ℝ) (a b : C) : ℝ :=
   gaussianChoiceProb (harmonyScore con w a - harmonyScore con w b)
     (normalMaxEntSigmaD epsilon)
@@ -119,7 +120,7 @@ noncomputable def normalMaxEntChoiceProb (con : CON C n) (w : Fin n → ℝ)
 /-- The constant `σ_d = ε√2` is derived and not stipulated: when the harmonies of `a` and `b` are
     perturbed by independent `N(0, ε²)` noise, the probability that `a` has the higher perturbed
     harmony is `normalMaxEntChoiceProb`. -/
-theorem rumChoiceProb_eq_normalMaxEntChoiceProb (con : CON C n) (w : Fin n → ℝ)
+theorem rumChoiceProb_eq_normalMaxEntChoiceProb (con : ConstraintSet C n) (w : Fin n → ℝ)
     {epsilon : ℝ} (hε : 0 < epsilon) (a b : C) :
     rumChoiceProb (fun j ↦ gaussianReal (![harmonyScore con w a, harmonyScore con w b] j)
       (.mk (epsilon ^ 2) (sq_nonneg _))) 0 =
@@ -128,7 +129,7 @@ theorem rumChoiceProb_eq_normalMaxEntChoiceProb (con : CON C n) (w : Fin n → �
 
 /-- Normal MaxEnt choice probability in closed form: `Φ((H(a) − H(b)) / (ε√2))`
     ([flemming-2021] eq (17)). -/
-theorem normalMaxEnt_choiceProb_eq (con : CON C n) (w : Fin n → ℝ)
+theorem normalMaxEnt_choiceProb_eq (con : ConstraintSet C n) (w : Fin n → ℝ)
     (epsilon : ℝ) (a b : C) :
     normalMaxEntChoiceProb con w epsilon a b =
     normalCDF ((harmonyScore con w a - harmonyScore con w b) /
@@ -161,7 +162,7 @@ theorem logit_uniformity {ι : Type*} [Fintype ι] [Nonempty ι]
 
     Instantiation of `logit_uniformity` with harmony scores. -/
 theorem maxent_logit_harmony [Fintype C] [Nonempty C]
-    (con : CON C n) (w : Fin n → ℝ) (a b : C) :
+    (con : ConstraintSet C n) (w : Fin n → ℝ) (a b : C) :
     log (softmax (harmonyScore con w) a /
          softmax (harmonyScore con w) b) =
     harmonyScore con w a - harmonyScore con w b :=
@@ -175,7 +176,7 @@ theorem maxent_logit_harmony [Fintype C] [Nonempty C]
     Adding or removing other candidates from the competition doesn't
     change the ratio. Corollary of `softmax_div_softmax` with α = 1. -/
 theorem maxent_iia [Fintype C] [Nonempty C]
-    (con : CON C n) (w : Fin n → ℝ) (a b : C) :
+    (con : ConstraintSet C n) (w : Fin n → ℝ) (a b : C) :
     softmax (harmonyScore con w) a /
     softmax (harmonyScore con w) b =
     exp (harmonyScore con w a - harmonyScore con w b) := by
@@ -190,7 +191,7 @@ theorem maxent_iia [Fintype C] [Nonempty C]
 
     This is the bridge between abstract harmony scores and the constraint
     violation patterns used in empirical analyses (e.g., French schwa). -/
-theorem harmonyScore_diff (con : CON C n) (w : Fin n → ℝ) (a b : C) :
+theorem harmonyScore_diff (con : ConstraintSet C n) (w : Fin n → ℝ) (a b : C) :
     harmonyScore con w a - harmonyScore con w b =
     -∑ i, w i * ((con i a : ℝ) - (con i b : ℝ)) := by
   rw [harmonyScore_eq_neg_sum, harmonyScore_eq_neg_sum]
@@ -242,18 +243,18 @@ theorem censored_nhg_weight_sensitivity (w₁ w₂ : ℝ) (hw : w₁ < w₂) :
     non-diagonal covariance — not reducible to independent binary
     comparisons. This is why NHG violates IIA for 3+ candidates
     ([flemming-2021] §9). -/
-noncomputable def nhgCovariance (con : CON C n) (sigma : ℝ) (a b c : C) : ℝ :=
+noncomputable def nhgCovariance (con : ConstraintSet C n) (sigma : ℝ) (a b c : C) : ℝ :=
   sigma ^ 2 * ∑ i, ((con i b : ℝ) - (con i a : ℝ)) *
                    ((con i c : ℝ) - (con i a : ℝ))
 
 /-- NHG covariance (ℚ, computable). -/
-def nhgCovarianceQ (con : CON C n) (a b c : C) : ℚ :=
+def nhgCovarianceQ (con : ConstraintSet C n) (a b c : C) : ℚ :=
   ∑ i, ((con i b : ℚ) - (con i a : ℚ)) *
        ((con i c : ℚ) - (con i a : ℚ))
 
 /-- The NHG self-covariance `Cov(ε_b − ε_a, ε_b − ε_a)` equals
     the variance `σ² · violationDiffSqSum`, recovering the binary case. -/
-theorem nhgCovariance_self (con : CON C n) (sigma : ℝ) (a b : C) :
+theorem nhgCovariance_self (con : ConstraintSet C n) (sigma : ℝ) (a b : C) :
     nhgCovariance con sigma a b b =
     sigma ^ 2 * violationDiffSqSum con b a := by
   simp only [nhgCovariance, violationDiffSqSum]

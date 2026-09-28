@@ -177,13 +177,13 @@ def qpri (ctx : Context) : Constraint Candidate := λ c =>
 
 /-- The six constraints in the book's order: informativeness, granularity, quantifier
 simplicity, numeral salience, numeral priming, quantifier priming. -/
-def con (ctx : Context) : CON Candidate 6 :=
+def con (ctx : Context) : ConstraintSet Candidate 6 :=
   ![info ctx, gran ctx, qsimp, nsal, npri ctx, qpri ctx]
 
 /-! ### Constraint interaction in the toy system (§3.1, Tables 3.1–3.3) -/
 
 /-- The toy system: informativeness, numeral salience and numeral priming. -/
-def toy (ctx : Context) : CON Candidate 3 := ![info ctx, nsal, npri ctx]
+def toy (ctx : Context) : ConstraintSet Candidate 3 := ![info ctx, nsal, npri ctx]
 
 /-- The speaker knows the value to be at least 22. -/
 def atLeast22 : Context := { lo := some 22 }
@@ -238,7 +238,7 @@ def Situation.info : Situation → Constraint Candidate
       (if c.form = .bare ∧ EntirelyRound c.numeral then 1 else 0)
 
 /-- The approximation system: informativeness, numeral salience, quantifier simplicity. -/
-def approx (s : Situation) : CON Candidate 3 := ![s.info, nsal, qsimp]
+def approx (s : Situation) : ConstraintSet Candidate 3 := ![s.info, nsal, qsimp]
 
 /-- For an exact value the rounder numeral harmonically bounds a less round one: *50*
 bounds *51* (Table 3.4). -/
@@ -321,19 +321,20 @@ def correctionContext (n : ℕ) (form : Form) (numeral : ℕ) : Context :=
 
 /-- The correction system: quantifier priming, numeral priming, quantifier simplicity,
 informativeness. -/
-def corr (ctx : Context) : CON Candidate 4 := ![qpri ctx, npri ctx, qsimp, info ctx]
+def corr (ctx : Context) : ConstraintSet Candidate 4 := ![qpri ctx, npri ctx, qsimp, info ctx]
 
 /-- The correction system on the four corrections. -/
-def corrOn (ctx : Context) (n : ℕ) : CON Correction 4 := (corr ctx).comap (Correction.candidate n)
+def corrOn (ctx : Context) (n : ℕ) : ConstraintSet Correction 4 :=
+  (corr ctx).comap (Correction.candidate n)
 
 /-- The printed marks of Table 3.9, after *more than n*: quantifier and numeral priming
 against the corrections that change them, simplicity against the superlatives. -/
-def table3_9 : CON Correction 4 :=
+def table3_9 : ConstraintSet Correction 4 :=
   ![Constraint.binary (· ≠ .moreThan), Constraint.binary (· ≠ .atLeast),
     Constraint.binary (λ c => c = .atLeast ∨ c = .atMost), 0]
 
 /-- The printed marks of Table 3.10, after *at least n − 1*. -/
-def table3_10 : CON Correction 4 :=
+def table3_10 : ConstraintSet Correction 4 :=
   ![Constraint.binary (· ≠ .atLeast), Constraint.binary (· ≠ .moreThan),
     Constraint.binary (λ c => c = .atLeast ∨ c = .atMost), 0]
 

@@ -74,8 +74,8 @@ evaluated classical constraints `con` — marginalized at input `i`
 zero it returns the classical MaxEnt probability of each mapping: joint
 evaluation plus marginalization conservatively extends the classical
 pipeline. -/
-theorem marginal_eq_classical_of_systemic_zero (inputs : ι → I) (scon : CON (ι → O) k)
-    (con : CON (I × O) m) (w : Fin m → ℝ) (i : ι) (o : O) :
+theorem marginal_eq_classical_of_systemic_zero (inputs : ι → I) (scon : ConstraintSet (ι → O) k)
+    (con : ConstraintSet (I × O) m) (w : Fin m → ℝ) (i : ι) (o : O) :
     ∑ f with f i = o,
         softmax (harmonyScore (Fin.append scon (con.joint inputs)) (Fin.append 0 w)) f =
       softmax (fun o' ↦ harmonyScore con w (inputs i, o')) o := by
@@ -175,7 +175,7 @@ theorem starHiatus_eq (k : Fin 2) (o : Resolution) :
   revert k o; decide
 
 /-- The classical constraint set consists of DEP, \*HIATUS and MAX. -/
-def classicalCon : CON (Hiatus.Juncture × Resolution) 3 :=
+def classicalCon : ConstraintSet (Hiatus.Juncture × Resolution) 3 :=
   ![depConstraint, starHiatus, maxConstraint]
 
 /-- The fitted classical weights, posterior means with MAX fixed at one. -/
@@ -197,7 +197,7 @@ noncomputable def homophonyWeight : ℝ := 2.27
 /-- The constraint set of the joint tableau puts \*HOMOPHONY beside the jointly evaluated
 classical constraints. These are the columns of the paper's Table 4, over its nine output
 tuples. -/
-def jointCon : CON (Fin 2 → Resolution) 4 :=
+def jointCon : ConstraintSet (Fin 2 → Resolution) 4 :=
   Fin.append ![starHomophony] (classicalCon.joint inputs)
 
 /-- The weights of the joint tableau are `wh` for \*HOMOPHONY and `w` for the classical
@@ -237,7 +237,8 @@ theorem starHomophony_eq_joint_realizeMorpheme :
 
 /-- [ariyaee-jurgec-2021]'s classical constraint set, REALIZEMORPHEME beside DEP, \*HIATUS
 and MAX. -/
-def ajCon : CON (Hiatus.Juncture × Resolution) 4 := Matrix.vecCons realizeMorpheme classicalCon
+def ajCon : ConstraintSet (Hiatus.Juncture × Resolution) 4 :=
+  Matrix.vecCons realizeMorpheme classicalCon
 
 /-- The weights of `ajCon`, REALIZEMORPHEME at the \*HOMOPHONY weight. -/
 def ajW (wh : ℝ) (w : Fin 3 → ℝ) : Fin 4 → ℝ := Matrix.vecCons wh w

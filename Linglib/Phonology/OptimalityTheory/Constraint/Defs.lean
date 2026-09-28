@@ -23,10 +23,11 @@ vanishes on the identity candidate, and a constraint over an opaque candidate ty
 
 * `OptimalityTheory.Constraint C`: a violation-counting function `C → ℕ`.
 * `Constraint.binary`: the indicator constraint of a decidable predicate.
-* `Constraint.comap`, `CON.comap`: the pullback of a constraint or constraint set along a
-  candidate map.
-* `CON C n`: a grammar's constraint set, an indexed family of `n` constraints.
-* `Constraint.joint`, `CON.joint`: joint evaluation on output tuples by constraint summation.
+* `Constraint.comap`, `ConstraintSet.comap`: the pullback of a constraint or constraint set along
+  a candidate map.
+* `ConstraintSet C n`: a grammar's constraint set, CON, an indexed family of `n` constraints.
+* `Constraint.joint`, `ConstraintSet.joint`: joint evaluation on output tuples by constraint
+  summation.
 
 The Harmonic Grammar scores of a constraint set are in `HarmonicGrammar/Harmony.lean`.
 
@@ -112,23 +113,29 @@ def Constraint.joint (inputs : ι → I) (con : Constraint (I × O)) : Constrain
 @[simp] theorem Constraint.joint_apply (inputs : ι → I) (con : Constraint (I × O)) (f : ι → O) :
     con.joint inputs f = ∑ i, con (inputs i, f i) := rfl
 
-/-- A grammar's **constraint set** `CON` ([prince-smolensky-1993]) is an indexed family of `n`
+/-- A grammar's **constraint set**, CON in [prince-smolensky-1993], is an indexed family of `n`
 constraints over candidates `C`. An OT grammar ranks the violation profiles it assigns
 (`buildViolationProfile`) under a `Ranking n`, a Harmonic Grammar weights the violations by a
 `Fin n → ℝ` vector, and MaxEnt takes the softmax of the resulting harmonies. -/
-abbrev CON (C : Type*) (n : ℕ) := Fin n → Constraint C
+abbrev ConstraintSet (C : Type*) (n : ℕ) := Fin n → Constraint C
+
+namespace ConstraintSet
+
+variable {n : ℕ}
 
 /-- The pullback of a constraint set along a candidate map pulls back each constraint. -/
-def CON.comap {n : ℕ} (f : C → D) (con : CON D n) : CON C n := fun i ↦ (con i).comap f
+def comap (f : C → D) (con : ConstraintSet D n) : ConstraintSet C n := fun i ↦ (con i).comap f
 
-@[simp] theorem CON.comap_apply {n : ℕ} (f : C → D) (con : CON D n) (i : Fin n) (c : C) :
+@[simp] theorem comap_apply (f : C → D) (con : ConstraintSet D n) (i : Fin n) (c : C) :
     con.comap f i c = con i (f c) := rfl
 
 /-- The joint evaluation of a constraint set evaluates each constraint jointly. -/
-def CON.joint {n : ℕ} (inputs : ι → I) (con : CON (I × O) n) : CON (ι → O) n :=
-  fun j => (con j).joint inputs
+def joint (inputs : ι → I) (con : ConstraintSet (I × O) n) : ConstraintSet (ι → O) n :=
+  fun j ↦ (con j).joint inputs
 
-@[simp] theorem CON.joint_apply {n : ℕ} (inputs : ι → I) (con : CON (I × O) n) (j : Fin n) :
+@[simp] theorem joint_apply (inputs : ι → I) (con : ConstraintSet (I × O) n) (j : Fin n) :
     con.joint inputs j = (con j).joint inputs := rfl
+
+end ConstraintSet
 
 end OptimalityTheory

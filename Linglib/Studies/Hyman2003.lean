@@ -208,7 +208,7 @@ def candidates (i : Input) : Finset Candidate :=
 
 /-- The constraint at rank `k` of a ranking of licensors: violated by a candidate the top
 `k + 1` licensors do not license. -/
-def constraints (i : Input) (order : List Licensor) : CON Candidate order.length :=
+def constraints (i : Input) (order : List Licensor) : ConstraintSet Candidate order.length :=
   fun k ↦ Constraint.binary fun c ↦ ¬ LicensedBy i (order.take (k + 1)) c
 
 /-- Hyman's evaluation under a ranking: a candidate succeeds at the first licensor down the

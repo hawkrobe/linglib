@@ -118,7 +118,7 @@ def unif (q : Prefix) : Constraint Candidate :=
   Constraint.binary fun c ↦ c.1.1 = q ∧ c.2 = .yes
 
 /-- The eleven constraints, in the order of Table 1. -/
-def constraints : CON Candidate 11 :=
+def constraints : ConstraintSet Candidate 11 :=
   ![nasSub, starNC, starRootNasal, starRootCorVel, starRootVelar, unif .mangOther, unif .pangRed,
     unif .mangAdv, unif .mangRed, unif .pangNoun, unif .pangRes]
 

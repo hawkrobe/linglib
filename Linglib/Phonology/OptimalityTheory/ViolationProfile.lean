@@ -42,12 +42,11 @@ abbrev ViolationProfile (n : Nat) := Lex (Fin n → Nat)
 
 variable {C : Type*} {n : Nat}
 
-/-- The profile of a candidate under a constraint set `CON C n`: its violations, in ranking
-order. -/
-abbrev buildViolationProfile (con : CON C n) (c : C) : ViolationProfile n :=
+/-- The profile of a candidate under a constraint set is its violations in ranking order. -/
+abbrev buildViolationProfile (con : ConstraintSet C n) (c : C) : ViolationProfile n :=
   toLex fun i ↦ con i c
 
-@[simp] theorem buildViolationProfile_apply (con : CON C n) (c : C) (i : Fin n) :
+@[simp] theorem buildViolationProfile_apply (con : ConstraintSet C n) (c : C) (i : Fin n) :
     buildViolationProfile con c i = con i c := rfl
 
 /-- The zero profile is the bottom element: `0 ≤ p` for every profile `p`, so a

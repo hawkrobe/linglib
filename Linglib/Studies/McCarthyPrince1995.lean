@@ -140,7 +140,7 @@ def surface (c : Candidate) : List Seg := c.base ++ c.reduplicant ++ [.e]
 end Candidate
 
 /-- The constraints of (39) are MAX-BR, *VhV and MAX-IO. -/
-def con : CON Candidate 3 :=
+def con : ConstraintSet Candidate 3 :=
   ![fun c ↦ c.correspondence.maxViol .base .reduplicant,
     fun c ↦ intervocalic Seg.IsVowel .h c.surface,
     fun c ↦ c.correspondence.maxViol .input .base]
@@ -275,7 +275,7 @@ def surface (c : Candidate) : List Seg := c.reduplicant ++ c.base
 end Candidate
 
 /-- The constraints of (106) are MAX-IO, NO-CODA and MAX-BR. -/
-def con : CON Candidate 3 :=
+def con : ConstraintSet Candidate 3 :=
   ![fun c ↦ c.correspondence.maxViol .input .base,
     fun c ↦ codas Seg.IsVowel c.surface,
     fun c ↦ c.correspondence.maxViol .base .reduplicant]
@@ -403,7 +403,7 @@ end Candidate
 
 /-- The constraints of (131) are OCP(+cor), IDENT-BR(−cor), PAL and IDENT-IO(−cor). An
 IDENT(−cor) constraint is violated by a [−coronal] segment whose correspondent is not [−coronal]. -/
-def con : CON Candidate 4 :=
+def con : ConstraintSet Candidate 4 :=
   ![fun c ↦ ocpCoronal c.surface,
     fun c ↦ c.correspondence.maxViolFeature (·.HasValue .coronal false) .base .reduplicant,
     fun c ↦ pal c.surface,

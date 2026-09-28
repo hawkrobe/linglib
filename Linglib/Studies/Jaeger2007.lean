@@ -100,8 +100,8 @@ variable {I : Type*} {n : ℕ}
 /-- With the other weights held fixed, the derivative of the log probability of an observation in
 weight j is its expected violations of constraint j less the observed ones, which is the observed
 feature less its expectation once violations are read as non-positive features (equation (2)). -/
-theorem hasDerivAt_log_gjProb_update (con : CON (I × O) n) (w : Fin n → ℝ) (j : Fin n) (i : I)
-    (o : O) (t : ℝ) :
+theorem hasDerivAt_log_gjProb_update (con : ConstraintSet (I × O) n) (w : Fin n → ℝ) (j : Fin n)
+    (i : I) (o : O) (t : ℝ) :
     HasDerivAt (fun t ↦ log (gjProb con (Function.update w j t) i o))
       (∑ o', gjProb con (Function.update w j t) i o' * con j (i, o') - con j (i, o)) t := by
   have : Nonempty O := ⟨o⟩
@@ -169,7 +169,8 @@ def faith : Constraint (Syl × Syl) := Constraint.binary fun c ↦ c.1 ≠ c.2
 
 /-- The constraint set, in the order of the converged ranking FAITH ≫ *COMPLEXONSET ≫
 *COMPLEXCODA ≫ ONSET ≫ *CODA. -/
-def con : CON (Syl × Syl) 5 := ![faith, starComplexOnset, starComplexCoda, onset, starCoda]
+def con : ConstraintSet (Syl × Syl) 5 :=
+  ![faith, starComplexOnset, starComplexCoda, onset, starCoda]
 
 /-- Violation profiles. -/
 def vp (i o : Syl) (k : Fin 5) : ℕ := con k (i, o)
