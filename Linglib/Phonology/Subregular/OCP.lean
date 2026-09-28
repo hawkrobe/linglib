@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Subregular.ForbidPairs
-public import Linglib.Phonology.Subregular.TierProjection
 public import Linglib.Phonology.OCP
 public import Linglib.Phonology.Subregular.ISL
 
@@ -85,14 +84,13 @@ lemma OCPCleanPair.isBoundaryVacuous [DecidableEq α] :
     IsBoundaryVacuous (OCPCleanPair (α := α)) :=
   CleanPair.isBoundaryVacuous
 
-/-- A candidate's OCP score is zero iff its raw string projects under `TierProjection.byClass p`
-to a list with no two adjacent identical elements. This is the identity instance of
+/-- A candidate's OCP score is zero iff its raw string projects onto the tier `p` as a list with
+no two adjacent identical elements. This is the identity instance of
 `mkForbidPairsOnTier_zero_iff_isChain`. -/
 theorem mkOCPOnTier_zero_iff_isChain [DecidableEq α] {C : Type}
     (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkOCPOnTier (TierProjection.byClass p) extract) c = 0 ↔
-      ((extract c).filter (fun x => decide (p x))).IsChain (· ≠ ·) :=
+    mkOCPOnTier p extract c = 0 ↔ ((extract c).filter (p ·)).IsChain (· ≠ ·) :=
   mkForbidPairsOnTier_zero_iff_isChain (· = ·) p extract c
 
 /-- A candidate's OCP score is zero iff its tier projection is `OCP.IsClean`. Since the fusion
@@ -101,8 +99,7 @@ two faces of one principle rather than parallel formalizations. -/
 theorem mkOCPOnTier_zero_iff_isClean [DecidableEq α] {C : Type}
     (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkOCPOnTier (TierProjection.byClass p) extract) c = 0 ↔
-      OCP.IsClean ((extract c).filter (fun x => decide (p x))) :=
+    mkOCPOnTier p extract c = 0 ↔ OCP.IsClean ((extract c).filter (p ·)) :=
   mkOCPOnTier_zero_iff_isChain p extract c
 
 /-- The optimality-theoretic OCP markedness constraint `mkOCP` scores zero iff its projection is
@@ -120,8 +117,7 @@ are co-extensive. This is the identity instance of `mkForbidPairsOnTier_zero_iff
 theorem mkOCPOnTier_zero_iff_in_ocp_language [DecidableEq α] {C : Type}
     (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkOCPOnTier (TierProjection.byClass p) extract) c = 0 ↔
-      extract c ∈ (TierStrictlyLocalGrammar.ocp p).language :=
+    mkOCPOnTier p extract c = 0 ↔ extract c ∈ (TierStrictlyLocalGrammar.ocp p).language :=
   mkForbidPairsOnTier_zero_iff_in_language (· = ·) p extract c
 
 /-- The zero set of the OCP markedness constraint is the corresponding TSL₂ language. This
@@ -129,7 +125,7 @@ restates `mkOCPOnTier_zero_iff_in_ocp_language` in `Language α` form, with `ext
 `mkForbidPairsOnTier_zeroSet_eq` in `OTBound.lean` does in general. -/
 theorem mkOCPOnTier_zeroSet_eq [DecidableEq α]
     (p : α → Prop) [DecidablePred p] :
-    (mkOCPOnTier (TierProjection.byClass p) (id : List α → List α)).zeroSet =
+    (mkOCPOnTier p (id : List α → List α)).zeroSet =
       (TierStrictlyLocalGrammar.ocp p).language := by
   ext w
   exact mkOCPOnTier_zero_iff_in_ocp_language p id w

@@ -1088,7 +1088,6 @@ import Linglib.Phonology.Subregular.OTBound
 import Linglib.Phonology.Subregular.Sibilant
 import Linglib.Phonology.Subregular.StrictlyLocal
 import Linglib.Phonology.Subregular.StrictlyPiecewise
-import Linglib.Phonology.Subregular.TierProjection
 import Linglib.Phonology.Subregular.TierStrictlyLocal
 import Linglib.Phonology.Subregular.Transduction
 import Linglib.Phonology.Segmental.Basic

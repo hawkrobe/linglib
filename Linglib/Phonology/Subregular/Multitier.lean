@@ -35,14 +35,18 @@ tier projection.
 ## Main results
 
 * `IsBTC.mono`: monotonicity in the base class.
+* `isTierStrictlyLocal_iff_isTierBased`: TSL_k is the tier-based closure of SL_k.
+* `IsBTC.isStarFree`: the multitier closure of a star-free base class is star-free, so
+  `IsBTSL.isStarFree` and `IsBTSP.isStarFree`.
 * `IsBTC.mem_iff_of_indist` and `not_isBTC_of_indist`: membership respects
   tier-indistinguishability, yielding the standard non-membership argument.
 
 ## Implementation notes
 
 `IsTierBased`/`IsBTC.Indist` quantify over `Bool` tiers `T : α → Bool`, avoiding an
-`∃ T, ∃ _ : DecidablePred T, …` witness; the `Prop`-with-`[DecidablePred]` form used by
-`tierProject`/`TierStrictlyLocalGrammar` converts via `T x ↔ tier x = true`.
+`∃ T, ∃ _ : DecidablePred T, …` witness. A `Prop` tier with `[DecidablePred]`, as in
+`TierStrictlyLocalGrammar`, projects by the filter of its `decide`, which is already a `Bool`
+tier, so `isTierStrictlyLocal_iff_isTierBased` needs no conversion lemma.
 -/
 
 @[expose] public section
@@ -62,8 +66,7 @@ Boolean tier predicate `T : α → Bool` and some `L' : Language α` with
 `T`: `w ∈ L ↔ w.filter T ∈ L'`.
 
 The Bool tier shape is the existence-friendly form (no instance
-quantifier issues). For the Prop+DecidablePred form used by
-`tierProject` and `TierStrictlyLocalGrammar`, convert via `T x ↔ tier x = true`. -/
+quantifier issues). -/
 def IsTierBased (𝒞 : Language α → Prop) (L : Language α) : Prop :=
   ∃ T : α → Bool, ∃ L' : Language α,
     L = { w | w.filter T ∈ L' } ∧ 𝒞 L'
@@ -207,21 +210,23 @@ theorem isBTK_ofPrefix (hk : xs.length ≤ k) : IsBTK k (ofPrefix xs) :=
 theorem isBTD_ofSuffix (hk : xs.length ≤ k) : IsBTD k (ofSuffix xs) :=
   .of_class ((isDefinite_ofSuffix xs).mono hk)
 
-/-! ## TSL ⊆ multitier SL -/
+/-! ## TSL is tier-based SL -/
 
-/-- **TSL_k → BTSL_k**: every tier-based strictly local language is in the
-multitier closure of strictly local languages. A `TierStrictlyLocalGrammar` witness presents
-its language as the preimage of an SL language under the tier projection, hence
-`IsTierBased (Language.IsStrictlyLocal · k)`, hence in the closure via
-`IsBTC.base`. -/
-theorem IsTierStrictlyLocal.toIsBTSL (h : IsTierStrictlyLocal k L) : IsBTSL k L := by
-  apply IsBTC.base
-  obtain ⟨G, rfl⟩ := h
-  refine ⟨fun x => decide (G.tier x), StrictlyLocalGrammar.language k G.permitted, ?_, ⟨_, rfl⟩⟩
-  ext w
-  show (∀ f ∈ List.kFactors k (boundary k (tierProject G.tier w)), f ∈ G.permitted) ↔
-       ∀ f ∈ List.kFactors k (boundary k (List.filter _ w)), f ∈ G.permitted
-  rw [tierProject_eq_filter]
+/-- The tier-based strictly `k`-local languages are the tier-based closure of the strictly
+`k`-local ones, since a `TierStrictlyLocalGrammar` is a tier together with an `SL_k` language
+pulled back along erasure of the off-tier symbols. -/
+theorem isTierStrictlyLocal_iff_isTierBased :
+    IsTierStrictlyLocal k L ↔ IsTierBased (IsStrictlyLocal · k) L := by
+  constructor
+  · rintro ⟨G, rfl⟩
+    exact ⟨fun x ↦ decide (G.tier x), _, rfl, G.permitted, rfl⟩
+  · rintro ⟨T, _, rfl, G, rfl⟩
+    exact ⟨⟨(T · = true), G⟩, by simp [TierStrictlyLocalGrammar.language]⟩
+
+/-- Every tier-based strictly local language lies in the multitier closure of strictly local
+languages. -/
+theorem IsTierStrictlyLocal.toIsBTSL (h : IsTierStrictlyLocal k L) : IsBTSL k L :=
+  .base (isTierStrictlyLocal_iff_isTierBased.mp h)
 
 /-! ## Indistinguishability framework for refuting `IsBTC` membership
 
@@ -285,5 +290,38 @@ theorem IsBTC.indist_isGenDef_of_tierAffixes
   intro T L' hL'
   obtain ⟨h_pre, h_suf⟩ := h T
   exact Language.isGeneralizedDefinite_iff_edges.mp hL' h_pre h_suf
+
+/-! ## Star-freeness
+
+Star-free languages are closed under preimage by erasure (`IsStarFree.preimage_filter`) and under
+the Boolean operations, so the multitier closure of a star-free base class stays star-free. -/
+
+/-- A tier-based language over a star-free base class is star-free. -/
+theorem IsTierBased.isStarFree (h𝒞 : ∀ L, 𝒞 L → L.IsStarFree) (h : IsTierBased 𝒞 L) :
+    L.IsStarFree := by
+  obtain ⟨T, L', rfl, hL'⟩ := h
+  exact (h𝒞 L' hL').preimage_filter T
+
+/-- The multitier closure of a star-free base class is star-free. -/
+theorem IsBTC.isStarFree (h𝒞 : ∀ L, 𝒞 L → L.IsStarFree) (h : IsBTC 𝒞 L) : L.IsStarFree := by
+  induction h using BooleanSubalgebra.closure_bot_sup_induction with
+  | mem L' hL' => exact hL'.isStarFree h𝒞
+  | bot => exact Monoid.aperiodicVariety.langs_bot
+  | sup _ _ _ _ ih₁ ih₂ => exact ih₁.union ih₂
+  | compl _ _ ih => exact ih.compl
+
+section Finite
+
+variable [Finite α]
+
+/-- **Multitier strictly local languages are star-free.** -/
+theorem IsBTSL.isStarFree (h : IsBTSL k L) : L.IsStarFree :=
+  IsBTC.isStarFree (fun _ ↦ IsStrictlyLocal.isStarFree) h
+
+/-- **Multitier strictly piecewise languages are star-free.** -/
+theorem IsBTSP.isStarFree (h : IsBTSP k L) : L.IsStarFree :=
+  IsBTC.isStarFree (fun _ ↦ IsStrictlyPiecewise.isStarFree) h
+
+end Finite
 
 end Language

@@ -7,7 +7,6 @@ module
 
 public import Linglib.Phonology.Subregular.StrictlyPiecewise
 public import Linglib.Phonology.Subregular.ForbidPairs
-public import Linglib.Phonology.Subregular.TierProjection
 
 /-!
 # AGREE as a tier-based strictly 2-local language
@@ -82,15 +81,14 @@ lemma AgreeCleanPair.isBoundaryVacuous [DecidableEq α] :
     IsBoundaryVacuous (AgreeCleanPair (α := α)) :=
   CleanPair.isBoundaryVacuous
 
-/-- A candidate's AGREE score is zero iff its raw string projects under
-`TierProjection.byClass p` to a list with no two adjacent distinct elements, so that all on-tier
-elements are equal. This is the inequality instance of `mkForbidPairsOnTier_zero_iff_isChain`. -/
+/-- A candidate's AGREE score is zero iff its raw string projects onto the tier `p` as a list
+whose adjacent elements are equal, so that all on-tier elements are equal. This is the
+inequality instance of `mkForbidPairsOnTier_zero_iff_isChain`. -/
 theorem mkAgreeOnTier_zero_iff_isChain [DecidableEq α] {C : Type}
     (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkAgreeOnTier (TierProjection.byClass p) extract) c = 0 ↔
-      ((extract c).filter (fun x => decide (p x))).IsChain (fun a b => ¬ a ≠ b) :=
-  mkForbidPairsOnTier_zero_iff_isChain (· ≠ ·) p extract c
+    mkAgreeOnTier p extract c = 0 ↔ ((extract c).filter (p ·)).IsChain (· = ·) :=
+  (mkForbidPairsOnTier_zero_iff_isChain (· ≠ ·) p extract c).trans (by simp only [ne_eq, not_not])
 
 /-- A candidate's AGREE score is zero iff its raw string lies in the language of the TSL₂
 grammar `TierStrictlyLocalGrammar.agree p`, so the optimality-theoretic constraint and the
@@ -99,8 +97,7 @@ subregular class are co-extensive. This is the inequality instance of
 theorem mkAgreeOnTier_zero_iff_in_agree_language [DecidableEq α] {C : Type}
     (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkAgreeOnTier (TierProjection.byClass p) extract) c = 0 ↔
-      extract c ∈ (TierStrictlyLocalGrammar.agree p).language :=
+    mkAgreeOnTier p extract c = 0 ↔ extract c ∈ (TierStrictlyLocalGrammar.agree p).language :=
   mkForbidPairsOnTier_zero_iff_in_language (· ≠ ·) p extract c
 
 /-- The zero set of the AGREE markedness constraint is the corresponding TSL₂ language. This
@@ -108,7 +105,7 @@ restates `mkAgreeOnTier_zero_iff_in_agree_language` in `Language α` form, with 
 as `mkOCPOnTier_zeroSet_eq` does for the OCP. -/
 theorem mkAgreeOnTier_zeroSet_eq [DecidableEq α]
     (p : α → Prop) [DecidablePred p] :
-    (mkAgreeOnTier (TierProjection.byClass p) (id : List α → List α)).zeroSet =
+    (mkAgreeOnTier p (id : List α → List α)).zeroSet =
       (TierStrictlyLocalGrammar.agree p).language := by
   ext w
   exact mkAgreeOnTier_zero_iff_in_agree_language p id w

@@ -32,7 +32,7 @@ carrying blocking/transparency [mcmullin-2016]) are other choices of `R`.
 ## Implementation notes
 
 Out of scope (they need a richer-than-segmental alphabet): \*Lapse/\*Clash (SL_2
-over a syllable alphabet) and \*Coda (SL_1, via `mkForbidSingletonOnTier`).
+over a syllable alphabet) and \*Coda (SL_1).
 Similarity-graded [hansson-2010] and interval-conditioned (ITSL) harmony, and
 cross-tier dependencies (MTSL), also fall outside this single-tier constructor.
 -/
@@ -101,8 +101,7 @@ lemma mem_ofForbiddenPairs_language_iff_filter_isChain (p : α → Prop) [Decida
   rw [TierStrictlyLocalGrammar.mem_language]
   simp only [TierStrictlyLocalGrammar.ofForbiddenPairs, Set.mem_compl_iff]
   rw [forbiddenPairFree_iff_isChain,
-      CleanPair.isBoundaryVacuous.isChain_boundary_two_iff,
-      tierProject_eq_filter, List.isChain_map]
+      CleanPair.isBoundaryVacuous.isChain_boundary_two_iff, List.isChain_map]
   rfl
 
 /-! ### Adjacent-pair counting

@@ -14,9 +14,9 @@ public import Linglib.Phonology.Subregular.ForbiddenPairs
 
 The single generic bridge connecting Optimality-theoretic forbidden-pair
 markedness constraints (`mkForbidPairsOnTier`, defined in
-`OptimalityTheory/Constraints.lean`) to tier-based strictly 2-local
+`Phonology/Constraints/Basic.lean`) to tier-based strictly 2-local
 languages (`TierStrictlyLocalGrammar.ofForbiddenPairs`, defined in
-`Subregular.TierStrictlyLocalGrammar.ofForbiddenPairs`).
+`Phonology/Subregular/ForbiddenPairs.lean`).
 
 A candidate's `mkForbidPairsOnTier` score is zero iff its raw string
 belongs to the corresponding TSL_2 language — for any choice of
@@ -59,29 +59,22 @@ variable {α : Type}
 -- `Subregular.ForbiddenPairs` (alongside `countAdjacent`
 -- itself) since it is alphabet-generic.
 
-/-- **Bridge** (relational form): a candidate's forbidden-pair score is zero
-iff its raw string projects (under `TierProjection.byClass p`) to a list with no
-two adjacent elements related by `R`. The chain-side payoff of the
-generic forbidden-pair design. -/
+/-- A candidate's forbidden-pair score is zero iff its raw string projects onto the tier `p` as
+a list with no two adjacent elements related by `R`. -/
 theorem mkForbidPairsOnTier_zero_iff_isChain {C : Type}
     (R : α → α → Prop) [DecidableRel R] (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkForbidPairsOnTier R (TierProjection.byClass p) extract) c = 0 ↔
-      ((extract c).filter (fun x => decide (p x))).IsChain (fun a b => ¬ R a b) := by
-  show countAdjacent R (TierProjection.apply (TierProjection.byClass p) (extract c)) = 0 ↔ _
-  rw [TierProjection.apply_byClass]
-  exact countAdjacent_eq_zero_iff_isChain _ _
+    mkForbidPairsOnTier R p extract c = 0 ↔
+      ((extract c).filter (p ·)).IsChain (fun a b => ¬ R a b) :=
+  countAdjacent_eq_zero_iff_isChain _ _
 
-/-- **Bridge** (TSL_2 language form): a candidate's forbidden-pair score is
-zero iff its raw string is in the language of
-`TierStrictlyLocalGrammar.ofForbiddenPairs R p`. The single generic bridge that every
-adjacency-based markedness constraint inherits. Composes the relational
-bridge `mkForbidPairsOnTier_zero_iff_isChain` with the carrier-level
-language characterization `mem_ofForbiddenPairs_language_iff_filter_isChain`. -/
+/-- A candidate's forbidden-pair score is zero iff its raw string is in the language of
+`TierStrictlyLocalGrammar.ofForbiddenPairs R p`, the generic bridge that every adjacency-based
+markedness constraint inherits. -/
 theorem mkForbidPairsOnTier_zero_iff_in_language {C : Type}
     (R : α → α → Prop) [DecidableRel R] (p : α → Prop) [DecidablePred p]
     (extract : C → List α) (c : C) :
-    (mkForbidPairsOnTier R (TierProjection.byClass p) extract) c = 0 ↔
+    mkForbidPairsOnTier R p extract c = 0 ↔
       extract c ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language := by
   rw [mkForbidPairsOnTier_zero_iff_isChain,
       mem_ofForbiddenPairs_language_iff_filter_isChain]
