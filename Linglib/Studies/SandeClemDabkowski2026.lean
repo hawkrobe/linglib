@@ -60,7 +60,7 @@ namespace SandeClemDabkowski2026
 
 open List Data.Examples
 open Minimalist.Linearization (Consistent)
-open Constraints (Constraint)
+open OptimalityTheory (Constraint)
 open OptimalityTheory
 
 /-- The particle's lexical [ATR] value (`true` = [+ATR]), surfacing when no harmony trigger is

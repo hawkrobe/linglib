@@ -62,7 +62,7 @@ equal-harmony candidates by their noise covariance (§9).
 
 namespace Flemming2021
 
-open Core Real Constraints HarmonicGrammar ProbabilityTheory
+open Core Real OptimalityTheory HarmonicGrammar ProbabilityTheory
 
 /-! ### Stochastic Harmonic Grammars as random utility models (§§4–5) -/
 

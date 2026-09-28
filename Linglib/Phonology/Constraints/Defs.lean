@@ -11,23 +11,25 @@ public import Mathlib.Algebra.BigOperators.Fin
 /-!
 # Constraints
 
-This file defines constraints in the sense of Optimality Theory and Harmonic Grammar. A
-constraint is a function `C → ℕ` that counts the violations of each candidate. It stores no name
-and no faithfulness or markedness tag, since a constraint is its evaluation function. The
-faithfulness–markedness distinction is a structural property of correspondence candidates
-(`OptimalityTheory.Correspondence`), where markedness factors through the output and faithfulness
-vanishes on the identity candidate, and a constraint over an opaque candidate type has no family.
+This file defines the violable constraints of Optimality Theory ([prince-smolensky-1993]), which
+Harmonic Grammar, MaxEnt and optimality-theoretic work in syntax and semantics adopt, and the
+Harmonic Grammar scores built on them. A constraint is a function `C → ℕ` that counts the violations
+of each candidate. It stores no name and no faithfulness or markedness tag, since a constraint is
+its evaluation function. The faithfulness–markedness distinction is a structural property of
+correspondence candidates (`OptimalityTheory.Correspondence`), where markedness factors through the
+output and faithfulness vanishes on the identity candidate, and a constraint over an opaque
+candidate type has no family.
 
 ## Main definitions
 
-* `Constraint C`: a violation-counting function `C → ℕ`.
+* `OptimalityTheory.Constraint C`: a violation-counting function `C → ℕ`.
 * `Constraint.binary`: the indicator constraint of a decidable predicate.
 * `Constraint.comap`, `CON.comap`: the pullback of a constraint or constraint set along a
   candidate map.
 * `CON C n`: a grammar's constraint set, an indexed family of `n` constraints.
 * `Constraint.joint`, `CON.joint`: joint evaluation on output tuples by constraint summation.
-* `weightedViolations`, `harmonyScore`: the Harmonic-Grammar weighted sum `Σⱼ wⱼ · Cⱼ(c)` and its
-  negation `H(c) = -Σⱼ wⱼ · Cⱼ(c)`.
+* `HarmonicGrammar.weightedViolations`, `HarmonicGrammar.harmonyScore`: the Harmonic-Grammar
+  weighted sum `Σⱼ wⱼ · Cⱼ(c)` and its negation `H(c) = -Σⱼ wⱼ · Cⱼ(c)`.
 
 ## References
 
@@ -43,7 +45,7 @@ vanishes on the identity candidate, and a constraint over an opaque candidate ty
 
 @[expose] public section
 
-namespace Constraints
+namespace OptimalityTheory
 
 /-- An OT or Harmonic-Grammar **constraint** is a function counting the violations of each
 candidate. Whether it is a faithfulness or a markedness constraint is a structural property (see
@@ -115,13 +117,13 @@ def Constraint.joint (inputs : ι → I) (con : Constraint (I × O)) : Constrain
 
 /-- A grammar's **constraint set** `CON` ([prince-smolensky-1993]) is an indexed family of `n`
 constraints over candidates `C`. It sends each candidate to a `ViolationProfile n`
-(`buildViolationProfile`, in `Constraints.Profile`), which an OT grammar ranks (a `Ranking n`)
+(`buildViolationProfile`, in `Constraints/Profile.lean`), which an OT grammar ranks (a `Ranking n`)
 and a Harmonic Grammar weights (a `Fin n → ℝ` vector); MaxEnt takes the softmax of the resulting
 harmonies. -/
 abbrev CON (C : Type*) (n : ℕ) := Fin n → Constraint C
 
 /-- The pullback of a constraint set along a candidate map pulls back each constraint. -/
-def CON.comap {n : ℕ} (f : C → D) (con : CON D n) : CON C n := λ i => (con i).comap f
+def CON.comap {n : ℕ} (f : C → D) (con : CON D n) : CON C n := fun i ↦ (con i).comap f
 
 @[simp] theorem CON.comap_apply {n : ℕ} (f : C → D) (con : CON D n) (i : Fin n) (c : C) :
     con.comap f i c = con i (f c) := rfl
@@ -133,6 +135,8 @@ def CON.joint {n : ℕ} (inputs : ι → I) (con : CON (I × O) n) : CON (ι →
 @[simp] theorem CON.joint_apply {n : ℕ} (inputs : ι → I) (con : CON (I × O) n) (j : Fin n) :
     con.joint inputs j = (con j).joint inputs := rfl
 
+end OptimalityTheory
+
 /-! ### Harmony (Harmonic Grammar)
 
 A Harmonic Grammar weights each constraint in `CON` by a number, real in the usual
@@ -143,7 +147,11 @@ the candidate's raw violation vector. The weight vector `w : Fin n → R` is the
 weight ring is a parameter so that a grammar with rational or integer weights keeps its
 scores exactly computable. -/
 
-variable {n : ℕ} {R : Type*}
+namespace HarmonicGrammar
+
+open OptimalityTheory
+
+variable {C : Type*} {n : ℕ} {R : Type*}
 
 /-- The **weighted violation sum** of a violation vector `v` under a weight vector `w` is the
 linear functional `Σⱼ wⱼ · vⱼ`. Harmony is its negation (`harmonyScore`). -/
@@ -154,7 +162,7 @@ def weightedViolations [Semiring R] (w : Fin n → R) (v : Fin n → ℕ) : R :=
 negated weighted sum of its violations under the weight vector `w`, and higher harmony is more
 grammatical. -/
 def harmonyScore [Ring R] (con : CON C n) (w : Fin n → R) (c : C) : R :=
-  -weightedViolations w (λ j => con j c)
+  -weightedViolations w (fun j ↦ con j c)
 
 /-- `harmonyScore` is a negated `Finset.sum`. -/
 theorem harmonyScore_eq_neg_sum [Ring R] (con : CON C n) (w : Fin n → R) (c : C) :
@@ -170,4 +178,4 @@ def harmonyDominates [Ring R] [LT R] (con : CON C n) (w : Fin n → R) : C → C
     (a b : C) : harmonyDominates con w a b ↔ harmonyScore con w b < harmonyScore con w a :=
   Iff.rfl
 
-end Constraints
+end HarmonicGrammar

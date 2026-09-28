@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.Constraints.Basic
+public import Linglib.Phonology.Constraints.ForbiddenPairs
 public import Linglib.Phonology.OptimalityTheory.Correspondence
 public import Linglib.Phonology.OptimalityTheory.Tableau
 
@@ -67,7 +67,7 @@ where the base and the doubled form name objects of different kinds, are not mod
 
 namespace BerentEtAl2016
 
-open Constraints OptimalityTheory
+open OptimalityTheory
 
 variable {α M : Type*} {x y : α}
 

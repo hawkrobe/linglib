@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Core.Order.PiLex
@@ -5,11 +10,12 @@ public import Linglib.Phonology.Constraints.Defs
 public import Mathlib.Algebra.Order.Group.PiLex
 
 /-!
-# Violation Profiles
+# Violation profiles
 
-OT-tradition names for the lexicographically ordered violation vectors of `Mathlib/Order/PiLex`,
-shared by Optimality Theory (lexicographic comparison) and Harmonic Grammar (weighted aggregation,
-[riggle-2009b]).
+A candidate's violation profile under a constraint set is its violation vector ordered
+lexicographically, `Lex (Fin n → ℕ)` from `Mathlib/Order/PiLex` ([riggle-2009b]). The
+lexicographic order is Optimality Theory's strict domination, so the profile is OT's. Harmonic
+Grammar weights the same vector without ordering it (`HarmonicGrammar.weightedViolations`).
 
 ## Main definitions
 
@@ -28,9 +34,10 @@ shared by Optimality Theory (lexicographic comparison) and Harmonic Grammar (wei
 
 @[expose] public section
 
-namespace Constraints
+namespace OptimalityTheory
 
-/-- OT-named alias for `Lex (Fin n → Nat)` — fixed-length violation profile. -/
+/-- A fixed-length violation profile, the violation vector `Fin n → ℕ` under its lexicographic
+order. -/
 abbrev ViolationProfile (n : Nat) := Lex (Fin n → Nat)
 
 variable {C : Type*} {n : Nat}
@@ -54,4 +61,4 @@ theorem ViolationProfile.le_apply_zero
     {a b : ViolationProfile (n + 1)} (h : a ≤ b) : a 0 ≤ b 0 :=
   Pi.apply_le_of_toLex (x := ofLex a) (y := ofLex b) h fun j hj ↦ absurd hj (Fin.not_lt_zero j)
 
-end Constraints
+end OptimalityTheory

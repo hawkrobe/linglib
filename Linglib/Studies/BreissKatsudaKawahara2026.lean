@@ -60,7 +60,7 @@ whereas the fitted grammar puts the markedness weight at zero.
 
 namespace BreissKatsudaKawahara2026
 
-open Constraints Real
+open OptimalityTheory HarmonicGrammar Real
 
 /-- The compound-medial velar, oral [g] or nasal [ŋ]. -/
 inductive Velar | oral | nasal

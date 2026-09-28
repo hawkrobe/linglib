@@ -56,7 +56,7 @@ counts and which of them are zero.
 
 namespace Magri2025
 
-open Real Constraints HarmonicGrammar Function Finset ZurawHayes2017
+open Real OptimalityTheory HarmonicGrammar Function Finset ZurawHayes2017
 
 variable {n : ℕ} {H : (Fin n → ℕ) → ℝ}
 

@@ -57,7 +57,7 @@ priming for arbitrary numerals.
 
 namespace Cummins2015
 
-open Constraints OptimalityTheory Numerals.Roundness
+open OptimalityTheory Numerals.Roundness
 
 /-! ### Numeral salience (§2.4.4) -/
 

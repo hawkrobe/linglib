@@ -54,8 +54,6 @@ computation.
 
 namespace OptimalityTheory
 
-open Constraints
-
 /-! ### The tableau vocabulary -/
 
 /-- An OT tableau: a finite candidate set scored by a fixed-length violation profile, with a

@@ -39,7 +39,7 @@ guttural CODACOND (§4.3.3), opacity (§4.4.3), and the serial alternatives (§3
 
 namespace Benua1997
 
-open Constraints OptimalityTheory
+open OptimalityTheory
 
 variable {α : Type*} {ρ : Type*}
 

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Phonology.Constraints.Basic
+public import Linglib.Phonology.Constraints.ForbiddenPairs
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Linglib.Fragments.Tagalog.Phonology
 
@@ -46,7 +46,7 @@ substitution on voiced velar *g* entails substitution on every stop (`g_implies_
 
 namespace Zuraw2010
 
-open Constraints OptimalityTheory Finset
+open OptimalityTheory Finset
 
 /-! ### Stems and substitution decisions -/
 

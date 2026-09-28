@@ -14,7 +14,7 @@ public import Linglib.Phonology.Constraints.Defs
 
 OT/HS constraint constructors over the candidates `Candidate u` of an autosegmental form
 `u : Form S TRN M` (`Phonology/Autosegmental/Floating.lean`), generic over the segment type
-`S` and the opaque sponsor type `M`. Each is a canonical `Constraints.Constraint`, a scalar
+`S` and the opaque sponsor type `M`. Each is a canonical `OptimalityTheory.Constraint`, a scalar
 `· → ℕ` violation count. Equation numbers below are [mcpherson-lamont-2026]'s.
 
 ## Main definitions
@@ -56,7 +56,7 @@ namespace Tone
 
 open Autosegmental
 open Tone (TRN)
-open Constraints
+open OptimalityTheory
 
 variable {S M : Type*} [DecidableEq S] [DecidableEq M] {u : Form S TRN M}
 

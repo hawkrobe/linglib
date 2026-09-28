@@ -47,7 +47,7 @@ fragment's dataset (`m_verbs_uniform`, `mh_verbs_nonfinal_final`, `pluractional_
 
 namespace AkinboFwangwar2026
 
-open OptimalityTheory Constraints Autosegmental Mwaghavul
+open OptimalityTheory Autosegmental Mwaghavul
 open Tone (TRN TBU integrityTone leftAnchorTone rightAnchorTone)
 open Morphology (Morph)
 

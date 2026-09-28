@@ -56,8 +56,6 @@ iterates the candidate; Stratal OT varies the ranking and chains the candidate
 
 namespace OptimalityTheory
 
-open Constraints
-
 /-! ### The serial search -/
 
 /-- Lift a relation to `Option`, with `none` a bottom below every `some`: the
@@ -177,7 +175,7 @@ structure HSDerivation (C : Type*) [DecidableEq C] where
   /-- The one-step candidate-generation function. -/
   gen : C → Finset C
   /-- The constraint ranking, durable across rounds (head = highest). -/
-  ranking : List (Constraints.Constraint C)
+  ranking : List (OptimalityTheory.Constraint C)
 
 namespace HSDerivation
 

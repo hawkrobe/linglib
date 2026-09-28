@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Reference.Prominence
 public import Linglib.Fragments.Turkish.ObjectMarking
-public import Linglib.Phonology.Constraints.Basic
+public import Linglib.Phonology.Constraints.ForbiddenPairs
 public import Linglib.Phonology.OptimalityTheory.Tableau
 
 /-!
@@ -50,7 +50,7 @@ Boersma's sense) are noted in docstrings but not represented.
 namespace Aissen2003
 
 open Reference.Prominence
-open Constraints OptimalityTheory
+open OptimalityTheory
 
 /-! ### The DOM systems of the paper
 

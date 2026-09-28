@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Subregular.ForbidPairs
+public import Linglib.Phonology.Constraints.ForbiddenPairs
 public import Linglib.Phonology.OCP
 public import Linglib.Phonology.Subregular.ISL
 
@@ -14,10 +14,10 @@ public import Linglib.Phonology.Subregular.ISL
 
 This file characterizes the Obligatory Contour Principle (OCP) of Goldsmith and McCarthy as a
 tier-based strictly 2-local (TSL₂) language. The OCP constraint `Constraint.ocp` is the identity
-instance of the forbidden-pair constraint `Constraint.forbidPairs` of `ForbidPairs.lean`. Its
-forbidden 2-factor is `[some x, some x]`, and its TSL₂ grammar is
-`TierStrictlyLocalGrammar.ofForbiddenPairs (· = ·) p`. Without a tier, the OCP is the linguistic
-instance of Thue's square-free words. Thue showed that infinite square-free words exist over
+instance of the forbidden-pair constraint `Constraint.forbidPairs` of
+`Constraints/ForbiddenPairs.lean`. Its forbidden 2-factor is `[some x, some x]`, and its TSL₂
+grammar is `TierStrictlyLocalGrammar.ofForbiddenPairs (· = ·) p`. Without a tier, the OCP is the
+linguistic instance of Thue's square-free words. Thue showed that infinite square-free words exist over
 three letters, while every binary string of length at least 4 contains a square, so a binary
 tonal alphabet cannot satisfy a strict OCP at length.
 
@@ -53,15 +53,11 @@ retraction onto it, both subregular.
 
 namespace Subregular
 
-open Constraints OptimalityTheory
-
--- `α : Type` (rather than `Type*`) is forced by `OptimalityTheory`, which is monomorphic in
--- universe 0.
-variable {α : Type}
+variable {α : Type*}
 
 /-- The forbidden 2-factors for the OCP are the pairs `[some x, some x]` of two identical
 non-boundary symbols, the identity instance of `forbiddenPairs`. -/
-def ocpForbidden (α : Type) [DecidableEq α] : Set (Augmented α) :=
+def ocpForbidden (α : Type*) [DecidableEq α] : Set (Augmented α) :=
   forbiddenPairs (α := α) (· = ·)
 
 /-- The TSL₂ grammar of the OCP forbids two adjacent identical symbols on the tier defined by
@@ -131,9 +127,9 @@ theorem collapse_isISL [DecidableEq α] :
 
 end Subregular
 
-namespace Constraints.Constraint
+namespace OptimalityTheory.Constraint
 
-variable {α : Type} [DecidableEq α]
+variable {α : Type*} [DecidableEq α]
 
 /-- A string satisfies the OCP iff it is `OCP.IsClean`. Since the fusion repair `OCP.collapse`
 also characterizes `OCP.IsClean`, the prohibition and the repair are two faces of one principle
@@ -149,4 +145,4 @@ theorem zeroSet_comap_filter_ocp (p : α → Prop) [DecidablePred p] :
       (Subregular.TierStrictlyLocalGrammar.ocp p).language :=
   zeroSet_comap_filter_forbidPairs (· = ·) p
 
-end Constraints.Constraint
+end OptimalityTheory.Constraint

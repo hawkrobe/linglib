@@ -45,7 +45,7 @@ of the H-Opt algorithm are not formalized.
 
 namespace Riggle2009b
 
-open Constraints OptimalityTheory MinTropical Pointwise
+open OptimalityTheory HarmonicGrammar MinTropical Pointwise
 
 variable {n : ℕ}
 

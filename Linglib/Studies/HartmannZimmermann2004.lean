@@ -64,7 +64,7 @@ example numbers and sections were checked against the journal version of the pap
 namespace HartmannZimmermann2004
 
 open Exhaustification Focus Reflex
-open Constraints (Constraint)
+open OptimalityTheory (Constraint)
 open OptimalityTheory (Tableau)
 
 /-! ## The marking system (§4.1, §5.2, §6.2) -/

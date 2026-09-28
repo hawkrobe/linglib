@@ -49,7 +49,7 @@ the generalization for every weighting and every candidate set.
 
 namespace HarmonicGrammar
 
-open Real Constraints Function
+open Real OptimalityTheory Function
 
 /-- Four underlying forms crossing two binary factors, rows by columns ((12) of [magri-2025]). -/
 structure Square (X : Type*) where

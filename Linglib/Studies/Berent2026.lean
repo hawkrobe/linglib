@@ -60,7 +60,7 @@ is built. The acoustic, articulatory and neural measures of Figure 1 are not mod
 
 namespace Berent2026
 
-open Phonology Morphology Constraints OptimalityTheory BerentEtAl2016
+open Phonology Morphology OptimalityTheory BerentEtAl2016
 
 /-! ### Abstract: the syllable hierarchy -/
 

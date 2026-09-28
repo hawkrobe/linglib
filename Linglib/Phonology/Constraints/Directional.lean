@@ -12,7 +12,7 @@ public import Linglib.Phonology.Constraints.Defs
 
 [lamont-2022b]'s **directional constraint evaluation**, realized in the canonical
 constraint substrate. A directional constraint maps each candidate to a per-position
-violation *vector* compared lexicographically (Eisner 2000; [lamont-2022b]). The key
+violation *vector* compared lexicographically ([eisner-2000], [lamont-2022b]). The key
 observation ([lamont-2022b] §1.3) is that "a locus at position `i` relates to one at
 `i+1` exactly as a higher-ranked constraint relates to a lower one … violation vectors
 are ordered lexicographically, which is exactly how candidates are ordered with respect
@@ -44,11 +44,20 @@ the position count). [lamont-2022b]'s general formulation additionally handles
 multi-segment loci (the opposite-edge projection that rules out "locus folding", §2.3)
 and length-changing GEN (step-relative positions, fn. 10); those are deferred until a
 consumer exercises them.
+
+## References
+
+* [J. Eisner, *Directional Constraint Evaluation in Optimality Theory* (2000)][eisner-2000]
+* [A. Lamont, *Directional Harmonic Serialism* (2022)][lamont-2022b]
+* [A. Lamont, *A Restrictive, Parsimonious Theory of Footing in Directional Harmonic Serialism*
+  (2022)][lamont-2022c]
+* [L. McPherson and A. Lamont, *Poko postlexical tone requires serial, directional evaluation*
+  (2026)][mcpherson-lamont-2026]
 -/
 
 @[expose] public section
 
-namespace Constraints
+namespace OptimalityTheory
 
 /-- A **directional constraint** with single-segment loci over length-preserving GEN
 ([lamont-2022b]): the position-indexed block of binary constraints `i ↦ ⟦locus i⟧`,
@@ -61,4 +70,4 @@ def directionalBlock {C : Type*} (n : ℕ) (locus : Fin n → C → Prop)
     [∀ i, DecidablePred (locus i)] : List (Constraint C) :=
   (List.finRange n).map (fun i => Constraint.binary (locus i))
 
-end Constraints
+end OptimalityTheory

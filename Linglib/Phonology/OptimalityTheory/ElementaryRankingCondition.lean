@@ -34,9 +34,7 @@ is lex-nonnegative — equivalently (`ERC.satisfiedBy_iff_dominance`), every
 
 @[expose] public section
 
-
 namespace OptimalityTheory
-open Constraints
 
 variable {n : ℕ}
 

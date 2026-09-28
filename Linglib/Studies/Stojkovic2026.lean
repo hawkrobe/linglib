@@ -59,7 +59,7 @@ support and which changes no outcome.
 
 namespace Stojkovic2026
 
-open Phonology Constraints OptimalityTheory Data.Forms
+open Phonology OptimalityTheory Data.Forms
 
 /-! ### Segments -/
 

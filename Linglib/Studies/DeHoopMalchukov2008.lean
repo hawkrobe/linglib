@@ -54,7 +54,7 @@ blocking relation gives, the first person marked and the intermediate types case
 
 namespace DeHoopMalchukov2008
 
-open BidirectionalOT Constraints
+open BidirectionalOT OptimalityTheory
 
 /-! ### Strength and position -/
 

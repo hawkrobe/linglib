@@ -54,7 +54,7 @@ rows of `Data.Forms.UchiharaMendozaRuiz2021`.
 
 namespace UchiharaMendozaRuiz2021
 
-open Prosody Constraints OptimalityTheory
+open Prosody OptimalityTheory
 
 /-- A syllable is its mora count. -/
 abbrev Word := Footing Syllable.Weight

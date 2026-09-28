@@ -36,7 +36,7 @@ evidence of Section 3 supports for English and German, selects the recursive wor
 
 namespace ItoMester2009
 
-open Prosody RootedTree Constraints OptimalityTheory
+open Prosody RootedTree OptimalityTheory
 
 /-! ### Function-word constraints -/
 

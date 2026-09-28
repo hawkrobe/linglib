@@ -63,7 +63,7 @@ cross-referencing highest and has no AF.
 
 namespace Erlewine2016
 
-open Constraints OptimalityTheory Data.Examples Erlewine2016.Examples
+open OptimalityTheory Data.Examples Erlewine2016.Examples
 
 /-- The arguments of a verb. -/
 inductive Arg

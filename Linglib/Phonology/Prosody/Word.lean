@@ -49,13 +49,13 @@ namespace Prosody
 
 /-! ### Prosodic OT constraints over the `Tree` carrier
 
-The violable constraints scoring prosodic candidates are `Constraints.Constraint Tree`
+The violable constraints scoring prosodic candidates are `OptimalityTheory.Constraint Tree`
 values ([prince-smolensky-1993]); a grammar ranks them and scores with the OT engine
 (`OptimalityTheory.Tableau.ofRanking`). They are defined on the **carrier** `Tree` (which
 holds the ill-formed candidates `IsWord` rules out). List-recursion auxes
 are local `where`s. -/
 
-open Constraints
+open OptimalityTheory
 
 /-- **No-Recursion** ([ito-mester-2009]): parent–child pairs sharing a level (an element
     parsed into the same category twice). -/

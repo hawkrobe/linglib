@@ -48,7 +48,6 @@ Guébie discontinuous harmony).
 
 namespace OptimalityTheory.Cophonology
 
-open Constraints OptimalityTheory
 open Minimalist (Phase SyntacticObject)
 
 variable {L C : Type*}

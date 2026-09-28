@@ -35,7 +35,7 @@ paper's tableaux: `luo_exchange` (11), `dominant_accented` (21), `recessive` (22
 
 namespace Alderete2001
 
-open Constraints OptimalityTheory
+open OptimalityTheory
 
 /-! ### Transderivational correspondence -/
 

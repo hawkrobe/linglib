@@ -32,7 +32,7 @@ the paper's ranking.
 
 namespace McCarthy2005
 
-open Constraints OptimalityTheory
+open OptimalityTheory
 
 variable {α ι : Type*}
 

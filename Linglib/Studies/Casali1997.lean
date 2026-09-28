@@ -52,7 +52,7 @@ report is one the analysis allows (`survey_allowed`), and none is reported where
 
 namespace Casali1997
 
-open Phonology Constraints OptimalityTheory
+open Phonology OptimalityTheory
 
 /-- A prominent position, whose segments a faithfulness constraint protects from deletion. -/
 inductive Prominence where

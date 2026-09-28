@@ -37,7 +37,7 @@ file and are UNVERIFIED.
 
 namespace MarcoRasin2026
 
-open Constraints OptimalityTheory McCarthy2005 McCarthy2005.Arabic
+open OptimalityTheory McCarthy2005 McCarthy2005.Arabic
 
 /-- The CCəC realisation of the root /C₁C₂C₃/ in a cell, the schwa epenthetic. -/
 def schwaMedial (c₁ c₂ c₃ : Seg) (suffix : List Seg) : Member Seg (List Seg) :=
