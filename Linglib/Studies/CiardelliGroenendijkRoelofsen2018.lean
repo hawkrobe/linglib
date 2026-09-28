@@ -23,8 +23,9 @@ The substrate `Semantics/Questions/` is this theory: `Question W` is the proposi
 `⊤`, `⊥`, `⊓`, `⊔` and `⇨` the operations, `proj` and `nonInfo` the two projections with
 `proj_inf_nonInfo` the division law, and `polar` and `which` the polar and mention-some forms.
 This file proves the one Chapter 2 fact stated over two contents at once,
-`update_nonInquisitive` (Fact 2.36). The logical language of Chapter 4 is the propositional
-fragment of `Logic/Team/Inquisitive.lean`; Chapters 6–9 are not represented.
+`update_nonInquisitive` (Fact 2.36). The logical language of Chapter 4 is the modal-free
+fragment of `Inquisitive.Formula` (`Inquisitive.Formula.IsModalFree`); Chapters 6–9 are not
+represented.
 
 ## References
 

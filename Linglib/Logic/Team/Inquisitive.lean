@@ -6,49 +6,30 @@ public import Linglib.Semantics.Questions.Basic
 public import Linglib.Core.Order.UpperLower.Heyting
 
 /-!
-# Inquisitive modal logic
+# Inquisitive logic
 
-Inquisitive logic evaluates formulas at information states, sets of possible worlds, by a
-relation of support in place of truth ([ciardelli-2022]). The propositional system InqB
-extends the classical connectives `⊥`, `∧`, `→` with the inquisitive disjunction `\\/`,
-supported by a state that supports either disjunct (Definitions 3.1.3 and 3.2.3); negation and
-classical disjunction are defined (Definition 3.1.2) and `?φ := φ \\/ ¬φ` is the polar question
-(Definition 3.2.2). Inquisitive modal logic adds two modalities over an inquisitive modal
-model, which relates each world `w` to a set `Σ(w)` of states with the induced accessibility
-`σ(w) = ⋃ Σ(w)` (Chapter 8; [ciardelli-2014], [ciardelli-roelofsen-2015]): `□φ` is supported
-when `σ(w)` supports `φ` at every world `w` of the state (§8.2), `⊞φ` when every state in
-`Σ(w)` does (§8.3). Support is persistent and holds at the empty state (Proposition 3.3.1), so
-the support set of a formula is an inquisitive proposition `[φ]_M`, a `Question` (Definition
-2.4.2), on which the connectives act as the operations of the Heyting algebra of propositions
-([ciardelli-groenendijk-roelofsen-2018]). Truth at a world is support at its singleton
-(Proposition 3.1.7), and a formula is truth-conditional, a statement rather than a question,
-when support is truth at every world of the state (Definitions 2.6.3 and 3.4.1): classical
-formulas are (Proposition 3.1.8), `∧` and `→` preserve truth-conditionality (Proposition
-3.4.7), `¬¬φ` is the statement with `φ`'s truth set (Proposition 3.4.9), and every modal
-formula is a statement (§8.2, §8.3), so that the two modalities agree on statements while `□`,
-but not `⊞`, distributes over `\\/`. Inquisitive disjunction breaks union closure, which
-places InqML with dependence logic in the downward-closed, empty-team cell of
-[anttila-2025]'s definability programme.
+Inquisitive logic interprets formulas by support at information states, sets of possible worlds,
+rather than by truth at worlds, so that questions and statements share one language: the
+inquisitive disjunction `φ \\/ ψ` is supported by a state that supports either disjunct. The
+propositional system InqB has `⊥`, `∧`, `→` and `\\/` over atoms, and inquisitive modal logic adds
+the modalities `□` and `⊞`, interpreted over a model that relates each world to a set of states.
+This file develops basic results about support, including persistence, truth-conditionality, the
+proposition a formula expresses, and the validities of the two modalities.
 
 ## Main definitions
 
-* `InquisitiveModalModel`: a valuation and a map from worlds to sets of information states, with
-  the induced accessibility `access`; `KripkeModel.toInquisitive` embeds Kripke models.
-* `Formula` and `support`: the language with `□` and `⊞`, and the support set of a formula, the
-  lower set of states supporting it, on which the connectives are the Heyting operations.
-* `TruthConditional`: the statements, the formulas whose support is truth at every world,
-  which is flatness (`Team.IsFlat`) of the support set.
-* `proposition`: the inquisitive proposition `[φ]_M`, the support set as a `Question`.
+* `Inquisitive.Model`: a valuation and a map from worlds to sets of information states.
+* `Inquisitive.Formula`: formulas with `\\/`, `□` and `⊞`; the modal-free ones
+  (`Inquisitive.Formula.IsModalFree`) are those of InqB.
+* `Inquisitive.support`: the lower set of states supporting a formula.
+* `Inquisitive.TruthConditional`: the statements, whose support is truth at every world.
+* `Inquisitive.proposition`: the proposition a formula expresses, as a `Question`.
 
-## Main results
+## Implementation notes
 
-* `empty_mem_support`: the empty state supports every formula; persistence is the lower-set
-  structure of `support`.
-* `truthConditional_of_isClassical`, `truthConditional_nec` and `truthConditional_ent`: classical
-  and modal formulas are statements, and `truthConditional_iff_support_neg_neg`: the double
-  negation law holds exactly for statements.
-* `support_nec_inqDisj` and `support_ent_eq_nec_of_truthConditional`: `□` distributes over
-  inquisitive disjunction, and `⊞` agrees with `□` on statements.
+The support of a modal-free formula depends only on the valuation
+(`Inquisitive.support_eq_of_isModalFree`), so InqB is the modal-free fragment of the modal
+language rather than a language of its own. States are finite sets of worlds.
 
 ## References
 
@@ -65,24 +46,24 @@ places InqML with dependence logic in the downward-closed, empty-team cell of
 
 @[expose] public section
 
-namespace ModalLogic.Inquisitive
+namespace Inquisitive
 
 variable {W Atom : Type*}
 
 /-! ### Models (§8.3) -/
 
-/-- An **inquisitive modal model**: a valuation and, at each world `w`, the set `Σ(w)` of
-information states related to it — under the epistemic reading, the states in which the
-agent's issues are settled. -/
-structure InquisitiveModalModel (W Atom : Type*) where
+/-- An inquisitive model has a valuation and relates each world `w` to a set `Σ(w)` of
+information states, under the epistemic reading the states in which the agent's issues are
+settled. -/
+structure Model (W Atom : Type*) where
   /-- `Σ(w)`, the states related to `w`. -/
   inq : W → Finset (Finset W)
   /-- The valuation. -/
   val : Atom → W → Bool
 
-namespace InquisitiveModalModel
+namespace Model
 
-variable [DecidableEq W] (M : InquisitiveModalModel W Atom)
+variable [DecidableEq W] (M : Model W Atom)
 
 /-- The induced accessibility `σ(w) = ⋃ Σ(w)`, the agent's epistemic state at `w`. -/
 def access (w : W) : Finset W := (M.inq w).sup id
@@ -93,22 +74,22 @@ def access (w : W) : Finset W := (M.inq w).sup id
 theorem subset_access {w : W} {t : Finset W} (ht : t ∈ M.inq w) : t ⊆ M.access w :=
   Finset.le_sup (f := id) ht
 
-end InquisitiveModalModel
+end Model
 
 /-- A Kripke model as the inquisitive modal model relating each world to its single successor
 state `R[w]` (§8.2). -/
-def _root_.ModalLogic.KripkeModel.toInquisitive (M : KripkeModel W Atom) :
-    InquisitiveModalModel W Atom :=
+def _root_.ModalLogic.KripkeModel.toInquisitive (M : ModalLogic.KripkeModel W Atom) :
+    Model W Atom :=
   ⟨fun w => {M.access w}, M.val⟩
 
 @[simp] theorem _root_.ModalLogic.KripkeModel.access_toInquisitive [DecidableEq W]
-    (M : KripkeModel W Atom) (w : W) : M.toInquisitive.access w = M.access w :=
+    (M : ModalLogic.KripkeModel W Atom) (w : W) : M.toInquisitive.access w = M.access w :=
   Finset.sup_singleton
 
 /-! ### Syntax (Definition 3.2.1; §8.2, §8.3) -/
 
-/-- Formulas of InqML: the classical base `⊥`, `∧`, `→` over atoms, inquisitive disjunction
-`\\/` and the two modalities. -/
+/-- A formula is built from atoms and `⊥` by `∧`, `→`, inquisitive disjunction `\\/` and the two
+modalities. -/
 inductive Formula (Atom : Type*) where
   | atom (p : Atom)
   | bot
@@ -135,6 +116,16 @@ abbrev disj : Formula Atom := (conj φ.neg ψ.neg).neg
 
 /-- The polar question `?φ := φ \\/ ¬φ` (Definition 3.2.2). -/
 abbrev polarQ : Formula Atom := inqDisj φ φ.neg
+
+/-- The modal-free formulas are those of the propositional system InqB (Definition 3.2.1). -/
+def IsModalFree : Formula Atom → Prop
+  | atom _ => True
+  | bot => True
+  | conj φ ψ => φ.IsModalFree ∧ ψ.IsModalFree
+  | impl φ ψ => φ.IsModalFree ∧ ψ.IsModalFree
+  | inqDisj φ ψ => φ.IsModalFree ∧ ψ.IsModalFree
+  | nec _ => False
+  | ent _ => False
 
 /-- The classical formulas, those without inquisitive disjunction (§3.1, §8.2). -/
 def IsClassical : Formula Atom → Prop
@@ -163,7 +154,7 @@ persistent (Proposition 3.3.1), so the support set is a lower set of states, and
 implication and inquisitive disjunction are the operations `⊓`, `⇨`, `⊔` of the Heyting algebra
 of lower sets ([ciardelli-groenendijk-roelofsen-2018]); `⊥` is supported by the empty state
 alone. -/
-def support (M : InquisitiveModalModel W Atom) : Formula Atom → LowerSet (Finset W)
+def support (M : Model W Atom) : Formula Atom → LowerSet (Finset W)
   | .atom p => ⟨Team.flat fun w ↦ M.val p w = true, Team.isLowerSet_flat _⟩
   | .bot => LowerSet.Iic ∅
   | .conj φ ψ => support M φ ⊓ support M ψ
@@ -172,7 +163,7 @@ def support (M : InquisitiveModalModel W Atom) : Formula Atom → LowerSet (Fins
   | .nec φ => ⟨Team.nec M.access (support M φ : Set (Finset W)), Team.isLowerSet_flat _⟩
   | .ent φ => ⟨Team.flat fun w ↦ ∀ t ∈ M.inq w, t ∈ support M φ, Team.isLowerSet_flat _⟩
 
-variable (M : InquisitiveModalModel W Atom) (φ ψ : Formula Atom) (s : Finset W) (w : W)
+variable (M : Model W Atom) (φ ψ : Formula Atom) (s : Finset W) (w : W)
 
 @[simp] theorem mem_support_atom (p : Atom) :
     s ∈ support M (.atom p) ↔ ∀ w ∈ s, M.val p w = true := Iff.rfl
@@ -219,6 +210,20 @@ def decidableMemSupport [Fintype W] :
 
 instance [Fintype W] (φ : Formula Atom) (s : Finset W) : Decidable (s ∈ support M φ) :=
   decidableMemSupport M φ s
+
+/-- The support of a modal-free formula depends only on the valuation. -/
+theorem support_eq_of_isModalFree {M M' : Model W Atom} (hval : M.val = M'.val) :
+    ∀ {φ : Formula Atom}, φ.IsModalFree → support M φ = support M' φ
+  | .atom p, _ => by simp only [support, hval]
+  | .bot, _ => rfl
+  | .conj φ ψ, h => by
+    simp only [support, support_eq_of_isModalFree hval h.1, support_eq_of_isModalFree hval h.2]
+  | .impl φ ψ, h => by
+    simp only [support, support_eq_of_isModalFree hval h.1, support_eq_of_isModalFree hval h.2]
+  | .inqDisj φ ψ, h => by
+    simp only [support, support_eq_of_isModalFree hval h.1, support_eq_of_isModalFree hval h.2]
+  | .nec _, h => h.elim
+  | .ent _, h => h.elim
 
 /-! ### The empty state (Proposition 3.3.1) -/
 
@@ -516,9 +521,9 @@ theorem support_ent_eq_nec_of_truthConditional (h : TruthConditional M φ) :
     (support_nec_le_ent M φ)
 
 /-- On a Kripke model `⊞` is `□`, the only related state being `R[w]` (§8.2). -/
-theorem support_ent_toInquisitive (M : KripkeModel W Atom) :
+theorem support_ent_toInquisitive (M : ModalLogic.KripkeModel W Atom) :
     support M.toInquisitive (.ent φ) = support M.toInquisitive (.nec φ) :=
-  SetLike.ext fun _ ↦ by simp [KripkeModel.toInquisitive, InquisitiveModalModel.access]
+  SetLike.ext fun _ ↦ by simp [ModalLogic.KripkeModel.toInquisitive, Model.access]
 
 /-! ### The closure cell -/
 
@@ -532,10 +537,10 @@ theorem not_supClosed_inqDisj_of_witness {p q : Atom} {w₁ w₂ : W}
   simp [hp₂, hq₁] at this
 
 open Team in
-/-- InqML is sound for the downward-closed, empty-team cell of [anttila-2025]'s programme,
-which it shares with dependence logic. -/
+/-- Inquisitive modal logic is sound for the downward-closed, empty-team cell of
+[anttila-2025]'s programme, which it shares with dependence logic. -/
 theorem definableClass_support_subset :
     definableClass (fun φ t ↦ t ∈ support M φ) ⊆ {P | IsLowerSet P ∧ ∅ ∈ P} :=
   definableClass_subset fun φ ↦ ⟨(support M φ).lower, empty_mem_support M φ⟩
 
-end ModalLogic.Inquisitive
+end Inquisitive
