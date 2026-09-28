@@ -5,8 +5,8 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.Probability.Distributions.Uniform
 public import Linglib.Core.Probability.Constructions
 public import Linglib.Data.Examples.CaoWhiteLassiter2025
+public import Mathlib.Probability.ConditionalProbability
 public import Linglib.Studies.NadathurLauer2020
-public import Linglib.Semantics.Causation.SEM.Entailment
 
 /-!
 # Cao, White and Lassiter 2025: graded causative verb semantics
@@ -14,12 +14,12 @@ public import Linglib.Semantics.Causation.SEM.Entailment
 This file formalizes the graded-causative analysis of English *cause*, *make*, and *force* in
 [cao-white-lassiter-2025]. Where [nadathur-lauer-2020] give *make* and *force* a single
 categorical truth condition, this account measures three quantities in one structural causal
-model of tic-tac-toe — Pearl's probability of sufficiency ([pearl-2019],
-`Causation.SEM.probSufficiency`), a simplified [halpern-kleiman-weiner-2018] degree of intention,
+model of tic-tac-toe — Pearl's probability of sufficiency ([pearl-2019], `suf`), a simplified
+[halpern-kleiman-weiner-2018] degree of intention,
 and the number of alternative actions open to the causee — and finds that no one of them
 determines which verb speakers accept, each verb instead having its own set of reliable
 interactions. The model apparatus is shared with [cao-geiger-kreiss-icard-gerstenberg-2023]:
-models are time-indexed (`CausalGraph.TimeIndex`) and their agents play a soft-optimality policy.
+models are time-indexed (`TimeIndex`) and their agents play a soft-optimality policy.
 
 The paper's in-text judgments, its examples (3)–(11), are rows in
 `Data/Examples/CaoWhiteLassiter2025.json`; the regression estimates stay in prose.
@@ -28,7 +28,8 @@ The paper's in-text judgments, its examples (3)–(11), are rows in
 
 * `softOptimalPolicy` — the move distribution of a player of skill `ρ`
 * `altCount`, `intentionDegree`, `modelIntention` — the ALT and INT measures
-* `deterministicSuf` — the {0,1} collapse of SUF in the deterministic limit
+* `suf` — the SUF measure, Pearl's probability of sufficiency over a causal model
+* `TimeIndex` — the paper's time-indexed causal models (definition 1)
 
 ## Main results
 
@@ -36,14 +37,13 @@ The paper's in-text judgments, its examples (3)–(11), are rows in
 * `intentionDegree_eq_one_of_altCount_eq_zero` — an action with no alternative comes out
   maximally intentional, so the simplified INT drops the alternative-possibilities condition
   ([frankfurt-1969], [halpern-kleiman-weiner-2018]) and ALT carries it instead
-* `probSufficiency_empty_eq_deterministicSuf` — at the vacuous context Pearl's SUF is
-  [nadathur-lauer-2020]'s categorical causal sufficiency
-* `probSufficiency_empty_eq_one_of_make` — the categorical *make* semantics is strictly stronger
-  than maximal graded SUF
+* `suf_dirac` — with a certain context SUF is the {0,1} indicator of the counterfactual outcome
+* `suf_eq_one_of_make` — where [nadathur-lauer-2020]'s categorical *make* holds, SUF is 1 under
+  every distribution over contexts
 * `make_semantics_eq_force`, `judgment_differs_make_force` — Nadathur and Lauer's semantics does
   not distinguish the two verbs the paper's (8) separates
-* `ProbabilisticExample.probSufficiency_eq` — with an uncertain background, SUF is the
-  background's probability rather than 0 or 1
+* `ProbabilisticExample.suf_eq` — with an uncertain background, SUF is the background's
+  probability rather than 0 or 1
 
 ## References
 
@@ -59,7 +59,7 @@ The paper's in-text judgments, its examples (3)–(11), are rows in
 
 namespace CaoWhiteLassiter2025
 
-open Causation Causation.Mechanism Causation.SEM
+open CausalModel
 open scoped ENNReal NNReal
 
 /-! ### Soft-optimality policy
@@ -178,57 +178,72 @@ theorem intentionDegree_eq_one_of_altCount_eq_zero
 
 end
 
-/-- The paper's INT over a `SEM` instantiates `intentionDegree` with `pr a′` the probability,
-    over outcomes `ω` of the background, that the development of the context, completed by the
-    background valuation `u ω`, gives the action vertex the value `a′` and satisfies the goal:
-    the paper's `Pr((M,u⃗) ⊨ A = a⃗′ ∧ G = g⃗)`. -/
-noncomputable def modelIntention {V : Type*} {α : V → Type*} {Ω : Type*} [MeasurableSpace Ω]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    (μ : MeasureTheory.Measure Ω) (u : Ω → Valuation α) (ctx : Valuation α)
-    (act : V) [Fintype (α act)] (goal : Set (Valuation α)) (w : α act → ℝ≥0)
-    (a : α act) : ℝ≥0∞ :=
-  intentionDegree
-    (fun a' => μ {ω | (M.developDet (ctx.or (u ω))).hasValue act a' ∧
-      M.developDet (ctx.or (u ω)) ∈ goal}) w a
+section Model
+
+variable {U V : Type*} {α : V → Type*} [DecidableEq V] [MeasurableSpace U]
+  (M : CausalModel U V α) [M.IsAcyclic] [∀ v, Nonempty (α v)]
+
+/-- The paper's INT over a causal model instantiates `intentionDegree` with `pr a′` the
+    probability, over contexts drawn from `ν`, that under the intervention `I` the action variable
+    takes the value `a′` and the outcome satisfies the goal: the paper's
+    `Pr((M,u⃗) ⊨ A = a⃗′ ∧ G = g⃗)`. -/
+noncomputable def modelIntention (ν : MeasureTheory.Measure U) (I : ∀ v, Flat (α v))
+    (act : V) [Fintype (α act)] (goal : Set (∀ v, α v)) (w : α act → ℝ≥0) (a : α act) : ℝ≥0∞ :=
+  intentionDegree (fun a' ↦ ν {u | M.solve I u act = a' ∧ M.solve I u ∈ goal}) w a
+
+/-- SUF, Pearl's probability of sufficiency ([pearl-2019]): among the contexts drawn from `ν`
+    in which the observation `obs` holds, the probability that setting `c := x` makes `e = y`. -/
+noncomputable def suf (ν : MeasureTheory.Measure U) (obs : ∀ v, Flat (α v)) (c : V) (x : α c)
+    (e : V) (y : α e) : ℝ≥0∞ :=
+  ProbabilityTheory.cond ν (M.contexts obs) {u | M.solve (Function.update ⊥ c ↑x) u e = y}
+
+variable {M}
+
+/-- With nothing observed, SUF is the probability that the intervention yields the effect. -/
+theorem suf_bot (ν : MeasureTheory.Measure U) [MeasureTheory.IsProbabilityMeasure ν] (c : V)
+    (x : α c) (e : V) (y : α e) :
+    suf M ν ⊥ c x e y = ν {u | M.solve (Function.update ⊥ c ↑x) u e = y} := by
+  rw [suf, contexts_bot, ProbabilityTheory.cond_univ]
 
 /-! ### Deterministic limit
 
-With a certain background SUF collapses to a {0,1} indicator
-(`Causation.SEM.probSufficiency_dirac`). At the vacuous context, nothing observed and nothing
-left to the background, this is [nadathur-lauer-2020]'s categorical causal sufficiency: Pearl's
-counterfactual degenerates to the bare interventional development of `cause := true`. -/
+With a certain context SUF collapses to a {0,1} indicator, and wherever [nadathur-lauer-2020]'s
+categorical *make* holds of the empty background, SUF is 1 whatever the distribution over
+contexts. The converse fails: a single context can make the intervention yield the effect without
+the effect being settled by the strict development, so the categorical *make* semantics is
+strictly stronger than maximal graded SUF. -/
 
-section
-variable {V : Type*} [Fintype V] [DecidableEq V] (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
+open Classical in
+/-- With a certain context, SUF is the indicator of the counterfactual outcome there. -/
+theorem suf_dirac [MeasurableSingletonClass U] (u₀ : U) (c : V) (x : α c) (e : V) (y : α e) :
+    suf M (MeasureTheory.Measure.dirac u₀) ⊥ c x e y =
+      if M.solve (Function.update ⊥ c ↑x) u₀ e = y then 1 else 0 := by
+  rw [suf_bot, MeasureTheory.Measure.dirac_apply, Set.indicator_apply]
+  simp only [Set.mem_ofPred_eq, Pi.one_apply]
 
-/-- The {0,1} indicator of categorical causal sufficiency
-    (`causallySufficient`). -/
-noncomputable def deterministicSuf (background : Valuation (fun _ : V => Bool))
-    (cause effect : V) : ENNReal :=
-  if BoolSEM.causallySufficient M background cause effect then 1 else 0
+/-- [nadathur-lauer-2020]'s *make* entails maximal SUF: whenever the categorical *make* holds of
+the empty background, SUF is 1 under every distribution over contexts. -/
+theorem suf_eq_one_of_make (ν : MeasureTheory.Measure U) [MeasureTheory.IsProbabilityMeasure ν]
+    {c e : V} {x : α c} {y : α e} (h : NadathurLauer2020.denotation M .make ⊥ c x e y) :
+    suf M ν ⊥ c x e y = 1 := by
+  have hall : {u | M.solve (Function.update ⊥ c ↑x) u e = y} = Set.univ :=
+    Set.eq_univ_of_forall fun u ↦ NadathurLauer2020.solve_update_eq_of_denotation (.inl rfl) h u
+  rw [suf_bot, hall, MeasureTheory.measure_univ]
 
-variable (c e : V)
+end Model
 
-theorem probSufficiency_empty_eq_deterministicSuf :
-    BoolSEM.probSufficiency M (MeasureTheory.Measure.dirac ()) (fun _ ↦ Valuation.empty)
-      Valuation.empty c e = deterministicSuf M Valuation.empty c e := by
-  simp only [BoolSEM.probSufficiency, probSufficiency_dirac, Valuation.or_empty, cfSeed_empty]
-  unfold deterministicSuf
-  congr 1
+/-- A time index for a causal model (the paper's definition 1) places each parent exactly one
+timestep before its child. -/
+structure TimeIndex {U V : Type*} {α : V → Type*} (M : CausalModel U V α) where
+  /-- The timestep of each variable. -/
+  time : V → ℕ
+  /-- Parents immediately precede their children. -/
+  parent_succ : ∀ {w v : V}, M.graph.Adj w v → time w + 1 = time v
 
-/-- [nadathur-lauer-2020]'s *make* entails maximal SUF at the vacuous context: whenever
-`makeSem` holds, Pearl's probability of sufficiency is 1. The converse fails, since the eager
-development fills undetermined exogenous vertices from their mechanisms; the categorical *make*
-semantics is strictly stronger than maximal graded SUF. -/
-theorem probSufficiency_empty_eq_one_of_make
-    (h : NadathurLauer2020.denotation M .make Valuation.empty c true e true) :
-    BoolSEM.probSufficiency M (MeasureTheory.Measure.dirac ()) (fun _ ↦ Valuation.empty)
-      Valuation.empty c e = 1 := by
-  rw [probSufficiency_empty_eq_deterministicSuf]
-  unfold deterministicSuf
-  exact ite_eq_left (NadathurLauer2020.causallySufficient_of_denotation (.inl rfl) h)
-
-end
+/-- A time-indexed model is acyclic. -/
+theorem TimeIndex.isAcyclic {U V : Type*} {α : V → Type*} {M : CausalModel U V α}
+    (ti : TimeIndex M) : M.IsAcyclic :=
+  .of_depth _ ti.time fun h ↦ by have := ti.parent_succ h; omega
 
 /-! ### The paper's judgment data
 
@@ -239,9 +254,8 @@ could-have-done-otherwise pair (8), the intent-denial continuations (9)–(10), 
 
 /-- [nadathur-lauer-2020] give *make* and *force* the same truth conditions, both being
 sufficiency causatives. -/
-theorem make_semantics_eq_force
-    {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] :
+theorem make_semantics_eq_force {U V : Type*} {α : V → Type*} [DecidableEq V]
+    (M : CausalModel U V α) [M.IsAcyclic] :
     NadathurLauer2020.denotation M .make = NadathurLauer2020.denotation M .force := rfl
 
 /-- The paper's (8) separates them anyway: in one frame with a could-have-done-otherwise
@@ -271,55 +285,43 @@ namespace ProbabilisticExample
 inductive V | cause | noise | effect
   deriving DecidableEq, Fintype, Repr
 
-def graph : CausalGraph V := ⟨fun | .effect => {.cause, .noise} | _ => ∅⟩
+/-- The effect holds when the cause and the noise both do; the context settles the noise, and the
+cause is off unless set. -/
+def model : CausalModel Bool V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w = .cause ∨ w = .noise) ∧ v = .effect⟩
+  eqn
+    | .cause => fun _ _ ↦ false
+    | .noise => fun u _ ↦ u
+    | .effect => fun _ x ↦ x .cause && x .noise
 
-/-- The effect holds when the cause and the noise both do. -/
-def model : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .cause => const (G := graph) false
-      | .noise => const (G := graph) false
-      | .effect =>
-        fun ρ ↦ ρ ⟨.cause, by simp [graph]⟩ && ρ ⟨.noise, by simp [graph]⟩ }
-
-/-- The graph is time-indexed in the sense of the paper's definition 1, with `cause` and `noise`
+/-- The model is time-indexed in the sense of the paper's definition 1, with `cause` and `noise`
 at step 0 and `effect` at step 1. -/
-def timeIndex : CausalGraph.TimeIndex graph where
+def timeIndex : TimeIndex model where
   time := fun | .effect => 1 | _ => 0
   parent_succ := by
-    intro u v h
-    cases v <;> simp [graph] at h
-    rcases h with rfl | rfl <;> rfl
+    intro w v h
+    obtain ⟨hw | hw, rfl⟩ := h <;> subst hw <;> rfl
 
-instance : CausalGraph.IsDAG graph := timeIndex.isDAG
-
-instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
+instance : model.IsAcyclic := timeIndex.isAcyclic
 
 /-- The background: the noise is true with probability `p`. -/
 noncomputable def background (p : ℝ≥0∞) : MeasureTheory.Measure Bool :=
   p • MeasureTheory.Measure.dirac true + (1 - p) • MeasureTheory.Measure.dirac false
 
-/-- Each outcome of the background settles the noise. -/
-def noiseValuation (b : Bool) : Valuation (fun _ : V => Bool) :=
-  Valuation.empty.extend .noise b
-
 /-- Setting the cause, the effect holds exactly when the noise is true. -/
 theorem effect_iff (b : Bool) :
-    (model.developDet ((cfSeed model Valuation.empty .cause true).or (noiseValuation b))).hasValue
-      .effect true ↔ b = true := by
-  rw [cfSeed_empty, developDet_hasValue_iff, developDetVtx_undet _ _ _ (by cases b <;> decide)]
-  change (developDetVtx model _ .cause && developDetVtx model _ .noise) = true ↔ _
-  rw [developDetVtx_extended _ _ _ true (by cases b <;> decide),
-    developDetVtx_extended _ _ _ b (by cases b <;> decide)]
-  simp
+    model.solve (Function.update ⊥ .cause ↑true) b .effect = true ↔ b = true := by
+  cases b <;> decide
 
 /-- SUF is the probability of the noise: graded, as the paper's measure requires. -/
-theorem probSufficiency_eq (p : ℝ≥0∞) :
-    BoolSEM.probSufficiency model (background p) noiseValuation Valuation.empty .cause .effect =
-      p := by
-  have h : {b : Bool | (model.developDet ((cfSeed model Valuation.empty .cause true).or
-      (noiseValuation b))).hasValue .effect true} = {true} := Set.ext fun b ↦ effect_iff b
-  simp [BoolSEM.probSufficiency, probSufficiency, h, background]
+theorem suf_eq {p : ℝ≥0∞} (hp : p ≤ 1) :
+    suf model (background p) ⊥ .cause true .effect true = p := by
+  have : MeasureTheory.IsProbabilityMeasure (background p) :=
+    ⟨by simp [background, add_tsub_cancel_of_le hp]⟩
+  have h : {b : Bool | model.solve (Function.update ⊥ .cause ↑true) b .effect = true} = {true} :=
+    Set.ext fun b ↦ effect_iff b
+  rw [suf_bot, h]
+  simp [background]
 
 end ProbabilisticExample
 
