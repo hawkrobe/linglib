@@ -2,264 +2,154 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 public import Mathlib.Order.Basic
+public import Mathlib.Order.Monotone.Defs
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Affectedness
 
-[beavers-2011]'s scalar-theoretic affectedness hierarchy: the four-level
-degree scale, two independent typeclass primitives (result states, force
-recipients), the Beavers (60a–c) predicates and eq. (62) implication
-chain over them, stackable mixin classes, and the projection of
-[dowty-1991]'s P-Patient entailments onto the scale ([beavers-2010]).
+This file defines Beavers's affectedness hierarchy. A predicate affects a theme to one of four
+degrees according to how specific it is about the theme's change along a scale. It may entail that
+the theme reaches a goal the predicate fixes (a quantized change), that the theme reaches some goal
+(a non-quantized change), that the theme is related to a scale without necessarily changing
+(potential for change), or nothing about change at all. Each degree is an existential
+generalization of the one above it, over the goal, over the result and over the scalar relation, so
+the degrees form a chain of weakening truth conditions.
 
 ## Main definitions
 
-- `AffectednessDegree` — the four-level scale, a `LinearOrder`
-- `HasScalarResult`, `HasLatentScale` — the two scalar primitives
-- `Quantized`, `NonQuantized`, `Potential` — Beavers (60a–c) on a thematic
-  relation, with the eq. (62) chain (`nonQuantized_of_quantized`,
-  `potential_of_nonQuantized`) and its hypothesis `ScalarToLatent`
-- `LawfulScalarLatent` — the forgetful link as a coherence mixin between
-  the two primitives
-- `IsQuantizedAffected`, `IsNonQuantizedAffected`, `IsPotentialAffected` —
-  eq. (62) as stackable mixin classes
-- `AffectednessDegree.holdsAt` — the predicate each degree names, with
-  eq. (62) as the order's semantics (`holdsAt_antitone`)
-- `profileToDegree` — projection of `EntailmentProfile` onto the scale
+* `AffectednessDegree`: the four degrees, ordered by strength.
+* `QuantizedChange`: the predicate entails that the theme reaches a goal it fixes.
+* `NonQuantizedChange`: the predicate entails that the theme reaches some goal.
+* `PotentialChange`: the predicate relates the theme to a scale.
+* `AffectednessDegree.Holds`: the condition each degree names.
+* `profileToDegree`: an approximate projection of Dowty's proto-patient entailments onto the
+  degrees.
+
+## Main results
+
+* `AffectednessDegree.holds_antitone`: each degree entails every weaker one.
 
 ## Implementation notes
 
-The two primitives are formally independent; the eq. (62) middle arrow
-takes `ScalarToLatent` as an explicit hypothesis. The affectedness classes
-are stackable mixins, not an `extends` chain: declare the strongest class
-that holds and the weaker ones are derived (the ordered-algebra
-`IsOrderedRing` precedent) — the leftmost arrow by instance, the middle
-arrow by `IsNonQuantizedAffected.isPotential'`. The middle arrow is
-deliberately *not* an instance: its `δ` would be a metavariable during
-synthesis, and the forgetful link is a modeling assumption that should
-stay visible at use sites. `IsQuantizedAffected` is
-Type-valued so the verb's named final degree survives as data. (60d) is
-trivially satisfied by any argument of `θ` (take `θ′ := θ`) — Beavers'
-point that the rightmost degree is mere participation; a degree tag only
-here, since participation is carried by `θ`'s typing (in the paper both
-(60c) and (60d) are contentful under quantification restricted to the
-predicate's role inventory). Accordingly the file formalizes two of
-(62)'s three arrows; the rightmost is trivial under this typing. One of
-three `EntailmentProfile` projections
-(`Agentivity` P-Agent, this file P-Patient strength → MAP
-(`Studies/Beavers2010.lean`), `PersistenceLevel` → case regions); distinct
-from the surface (`MeaningComponents.changeOfState`) and root
-(`Root.Kind.result`) change-of-state notions ([beavers-koontz-garboden-2020]).
+* A predicate `φ x e` comes with its scalar θ-relation `θ x s e`, relating its theme to a scale in
+  an event, and a result relation `R x s g e`, the theme reaching the state `g` on the scale `s`.
+  Beavers defines the result only together with the predicate's scalar relation, so the result
+  conditions conjoin the two, and every step of the hierarchy is then existential generalization.
+* Potential for change is lexical data, not a consequence of the predicate's truth conditions.
+  Beavers's existential over θ-relations is trivial unless it ranges over the predicate's own roles,
+  so the scalar relation `θ` is a parameter, and any predicate has potential for change under
+  `θ := fun _ _ _ ↦ True`. For the same reason the unspecified degree holds of every predicate.
+* A quantized change fixes one goal for every event of the predicate, and a non-quantized change
+  one goal for each event, `∃ g, ∀ x e` against `∀ x e, ∃ g`.
+* The paper binds the event existentially and states the degrees of a sentence; here they are
+  stated of a relation between themes and events.
+* `profileToDegree` is not Beavers's projection. His correspondence with Dowty's proto-patient
+  entailments (Beavers 2010, Table 5) sends the incremental theme to total traversal, a different
+  hierarchy, and the holistic theme to quantized change. It marks the stationary and causally
+  affected entailments as uncertain, and assigns no Dowty entailment to potential for change.
+
+## References
+
+* [J. Beavers, *On Affectedness* (2011)][beavers-2011]
+* [J. Beavers, *The structure of lexical meaning: Why semantics really matters*
+  (2010)][beavers-2010]
+* [D. Dowty, *Thematic Proto-Roles and Argument Selection* (1991)][dowty-1991]
 -/
 
 @[expose] public section
 
 namespace ArgumentStructure
 
-variable {α β δ : Type*}
+/-! ### The degrees -/
 
-/-! ### The affectedness degree scale -/
-
-/-- [beavers-2011] eq. (62): four affectedness degrees, ordered by
-truth-conditional strength, weakest first. -/
+/-- The degrees of affectedness, weakest first ([beavers-2011] (62)). -/
 inductive AffectednessDegree where
-  /-- Mere event participation (*see*, *follow*, *ponder* — Beavers'
-  "other activities/states"). -/
+  /-- Nothing is entailed about change, as for the object of *see* or *ponder*. -/
   | unspecified
-  /-- Force recipient: latent scale exists (*hit*, *wipe*). -/
+  /-- The theme is related to a scale without necessarily changing, as for *hit* or *wipe*. -/
   | potential
-  /-- Some result state entailed (*cool*, *widen*). -/
+  /-- The theme reaches some goal on a scale, as for *widen* or *cool*. -/
   | nonquantized
-  /-- Specific final degree entailed (*break*, *destroy*). -/
+  /-- The theme reaches a goal the predicate fixes, as for *break* or *destroy*. -/
   | quantized
   deriving DecidableEq, Fintype, Repr, Inhabited
 
 namespace AffectednessDegree
 
-/-- Numeric strength: higher index = stronger truth conditions. -/
-def strength : AffectednessDegree → Nat
+/-- The strength of a degree is its position in the chain. -/
+def strength : AffectednessDegree → ℕ
   | .unspecified => 0
   | .potential => 1
   | .nonquantized => 2
   | .quantized => 3
 
 instance : LinearOrder AffectednessDegree :=
-  .lift' strength fun a b => by cases a <;> cases b <;> simp [strength]
+  .lift' strength fun a b ↦ by cases a <;> cases b <;> simp [strength]
+
+theorem le_iff_strength_le {a b : AffectednessDegree} : a ≤ b ↔ a.strength ≤ b.strength :=
+  Iff.rfl
 
 end AffectednessDegree
 
-/-! ### Scalar-result and latent-scale primitives -/
+/-! ### The affectedness conditions -/
 
-/-- `resultAt x g e`: theme `x` ends event `e` holding degree `g` on the
-verb's lexical dimension `δ` ([beavers-2011] eq. 60a–b). Beavers' own
-`result′(x, s, g, e)` carries a first-class *scale* token `s` (not a
-state); typing the scale away as `δ` is why `ScalarToLatent` is a
-hypothesis here where the paper's (62) middle arrow is free existential
-generalization, and it puts the §4 Figure/Path mereology out of this
-interface's reach. -/
-class HasScalarResult (α δ β : Type*) where
-  /-- Theme x ends event e holding degree g on dimension δ. -/
-  resultAt : α → δ → β → Prop
+section Conditions
 
-/-- `latentScale x e`: theme `x` is a force-recipient at event `e` — a
-latent scale, no transition entailed ([beavers-2011] eq. 60c). The
-force-recipient category is [rappaport-hovav-levin-2001]'s (following
-Croft); its codification as a latent *scale* is Beavers' own proposal,
-building on [tenny-1992]'s latent aspectual structure. -/
-class HasLatentScale (α β : Type*) where
-  /-- Theme x is a force-recipient at event e (latent scale relation). -/
-  latentScale : α → β → Prop
+variable {α S G β : Type*} (θ : α → S → β → Prop) (R : α → S → G → β → Prop)
+  (φ : α → β → Prop)
 
-/-! ### Beavers (60a–c) affectedness predicates -/
+/-- A predicate effects a **quantized change** to the goal `g` when every event of it relates its
+theme to a scale on which the theme reaches `g` ([beavers-2011] (60a)). -/
+def QuantizedChange (g : G) : Prop := ∀ x e, φ x e → ∃ s, θ x s e ∧ R x s g e
 
-section
-variable [HasScalarResult α δ β] (θ : α → β → Prop)
+/-- A predicate effects a **non-quantized change** when every event of it relates its theme to a
+scale on which the theme reaches some goal ([beavers-2011] (60b)). -/
+def NonQuantizedChange : Prop := ∀ x e, φ x e → ∃ s, θ x s e ∧ ∃ g, R x s g e
 
-/-- [beavers-2011] eq. (60a): `θ` entails the theme ends the event at the
-specific degree `g_φ` the verb names (*break*, *destroy*). -/
-def Quantized (g_φ : δ) : Prop :=
-  ∀ x e, θ x e → HasScalarResult.resultAt x g_φ e
+/-- A predicate gives its theme **potential for change** when every event of it relates the theme
+to a scale ([beavers-2011] (60c)). -/
+def PotentialChange : Prop := ∀ x e, φ x e → ∃ s, θ x s e
 
-/-- [beavers-2011] eq. (60b): `θ` entails the theme ends the event at
-some degree (*widen*, *cool*). Scalar change without a net scalar
-RESULT (doubling-back motion, [beavers-koontz-garboden-2020] ch. 4
-recapping their 2017 typology) is a boundary case this predicate
-formalizes as result-at-event's-end. -/
-def NonQuantized : Prop :=
-  ∀ x e, θ x e → ∃ g : δ, HasScalarResult.resultAt x g e
+variable {θ R φ}
 
-end
+theorem QuantizedChange.nonQuantizedChange {g : G} (h : QuantizedChange θ R φ g) :
+    NonQuantizedChange θ R φ :=
+  fun x e hx ↦ let ⟨s, hs, hg⟩ := h x e hx; ⟨s, hs, g, hg⟩
 
-section
-variable [HasLatentScale α β] (θ : α → β → Prop)
+theorem NonQuantizedChange.potentialChange (h : NonQuantizedChange θ R φ) :
+    PotentialChange θ φ :=
+  fun x e hx ↦ let ⟨s, hs, _⟩ := h x e hx; ⟨s, hs⟩
 
-/-- [beavers-2011] eq. (60c): `θ` entails the theme is a force-recipient
-(*hit*, *wipe*). -/
-def Potential : Prop :=
-  ∀ x e, θ x e → HasLatentScale.latentScale x e
+variable (θ R φ)
 
-end
-
-/-- The forgetful link: a result-bearing theme is a force-recipient.
-Hypothesis of eq. (62)'s middle arrow: free in the paper's formulation
-(existential generalization over the θ-relation); a hypothesis here only
-because the encoding discards the scale token. -/
-def ScalarToLatent (α δ β : Type*) [HasScalarResult α δ β] [HasLatentScale α β] : Prop :=
-  ∀ (x : α) (e : β),
-    (∃ g : δ, HasScalarResult.resultAt x g e) → HasLatentScale.latentScale x e
-
-/-- The forgetful link as a coherence mixin between the two primitives:
-holds in the canonical model; per-model instances declare it. -/
-class LawfulScalarLatent (α δ β : Type*) [HasScalarResult α δ β]
-    [HasLatentScale α β] : Prop where
-  /-- The `ScalarToLatent` witness. -/
-  toLatent : ScalarToLatent α δ β
-
-/-! ### Implication chain (Beavers eq. 62) -/
-
-section
-variable [HasScalarResult α δ β] {θ : α → β → Prop}
-
-/-- [beavers-2011] eq. (62), leftmost arrow. -/
-theorem nonQuantized_of_quantized {g_φ : δ} (h : Quantized θ g_φ) :
-    NonQuantized (δ := δ) θ :=
-  fun x e hxe => ⟨g_φ, h x e hxe⟩
-
-/-- [beavers-2011] eq. (62), middle arrow, under the forgetful link. -/
-theorem potential_of_nonQuantized [HasLatentScale α β]
-    (forget : ScalarToLatent α δ β) (h : NonQuantized (δ := δ) θ) : Potential θ :=
-  fun x e hxe => forget x e (h x e hxe)
-
-end
-
-/-! ### Typeclass mixins (Beavers eq. 62) -/
-
-section
-variable [HasLatentScale α β] (θ : α → β → Prop)
-
-/-- Eq. (60c) as the bottom of the mixin stack (*hit*, *wipe*). -/
-class IsPotentialAffected : Prop where
-  /-- Beavers (60c): every event of θ has a force-receiving theme. -/
-  isPotential : Potential θ
-
-end
-
-section
-variable [HasScalarResult α δ β] (θ : α → β → Prop)
-
-/-- Eq. (60b): a result-state commitment (*widen*, *cool*). -/
-class IsNonQuantizedAffected : Prop where
-  /-- Beavers (60b): every event of θ ends with some result degree. -/
-  isNonQuantized : NonQuantized (δ := δ) θ
-
-/-- Eq. (60a): the verb's specific final degree, kept as data (*break*,
-*destroy*; the SINC bridge is in `Semantics/Aspect/Telicity.lean`). -/
-class IsQuantizedAffected where
-  /-- The lexically-named specific final degree `g_φ`. -/
-  finalDegree : δ
-  /-- Witness that θ entails the theme ends the event with this degree. -/
-  isQuantized : Quantized θ finalDegree
-
-variable {θ}
-
-/-- Eq. (62), leftmost arrow, free at the class level: quantized-affected
-verbs are non-quantized-affected. -/
-instance IsQuantizedAffected.toIsNonQuantizedAffected
-    [inst : IsQuantizedAffected (δ := δ) θ] :
-    IsNonQuantizedAffected (δ := δ) θ :=
-  ⟨nonQuantized_of_quantized inst.isQuantized⟩
-
-/-- Eq. (62), middle arrow at the class level, under the
-`LawfulScalarLatent` mixin. Deliberately a theorem, not an instance (see
-Implementation notes). -/
-theorem IsNonQuantizedAffected.isPotential' [HasLatentScale α β]
-    [LawfulScalarLatent α δ β] [inst : IsNonQuantizedAffected (δ := δ) θ] :
-    IsPotentialAffected θ :=
-  ⟨potential_of_nonQuantized LawfulScalarLatent.toLatent inst.isNonQuantized⟩
-
-end
-
-/-! ### Degree interpretation (Beavers eq. 60 and 62) -/
-
-section
-variable [HasScalarResult α δ β] [HasLatentScale α β]
-
-/-- The predicate each degree names, for a fixed θ ([beavers-2011] eq. 60):
-`unspecified` is participation itself, carried by θ's typing. -/
-def AffectednessDegree.holdsAt (θ : α → β → Prop) : AffectednessDegree → Prop
+/-- The condition an affectedness degree names is a quantized change to some goal, a non-quantized
+change, potential for change, or nothing ([beavers-2011] (60)). -/
+def AffectednessDegree.Holds : AffectednessDegree → Prop
   | .unspecified => True
-  | .potential => Potential θ
-  | .nonquantized => NonQuantized (δ := δ) θ
-  | .quantized => ∃ g : δ, Quantized θ g
+  | .potential => PotentialChange θ φ
+  | .nonquantized => NonQuantizedChange θ R φ
+  | .quantized => ∃ g, QuantizedChange θ R φ g
 
-/-- Eq. (62) as the order's semantics: a degree entails every weaker one.
-The scale-token elision makes the potential step depend on
-`LawfulScalarLatent` (see `HasScalarResult`'s docstring). -/
-theorem AffectednessDegree.holdsAt_antitone [LawfulScalarLatent α δ β]
-    {θ : α → β → Prop} {d d' : AffectednessDegree} (hle : d' ≤ d)
-    (h : holdsAt (δ := δ) θ d) : holdsAt (δ := δ) θ d' := by
+/-- Each degree entails every weaker one, the Affectedness Hierarchy ([beavers-2011] (62)). -/
+theorem AffectednessDegree.holds_antitone : Antitone (AffectednessDegree.Holds θ R φ) := by
+  intro d d' h
   cases d <;> cases d' <;> first
-    | exact absurd hle (by decide)
-    | trivial
-    | exact h
-    | exact Exists.elim h fun _ hg => nonQuantized_of_quantized hg
-    | exact potential_of_nonQuantized LawfulScalarLatent.toLatent h
-    | exact Exists.elim h fun _ hg =>
-        potential_of_nonQuantized LawfulScalarLatent.toLatent
-          (nonQuantized_of_quantized hg)
+    | exact absurd h (by decide)
+    | exact fun _ ↦ trivial
+    | exact id
+    | exact fun ⟨_, hq⟩ ↦ hq.nonQuantizedChange
+    | exact NonQuantizedChange.potentialChange
+    | exact fun ⟨_, hq⟩ ↦ hq.nonQuantizedChange.potentialChange
 
-end
+end Conditions
 
-/-! ### Projection from EntailmentProfile -/
+/-! ### Dowty's proto-patient entailments -/
 
-/-- Approximating adapter (linglib's, not Beavers') from [dowty-1991]
-entailments, via [beavers-2010]'s reduction of Dowty's P-Patient
-entailments to the affectedness entailments: CoS/IT split
-quantized/nonquantized; CA/St split potential/unspecified. Known misfits
-on Beavers' own exemplars (*break*, *shatter* are quantized without
-incrementality; *cut*, *slice* non-quantized with it) — the faithful
-route is the scalar witness (`finalDegree`), per the bridge note below. -/
+/-- An approximate projection of Dowty's proto-patient entailments onto the degrees. A change of
+state with an incremental theme goes to `quantized`, a change of state alone to `nonquantized`,
+causal affectedness or stationariness to `potential`, and none of these to `unspecified`. The
+projection is linglib's, not Beavers's; see the implementation notes. -/
 def profileToDegree (p : EntailmentProfile) : AffectednessDegree :=
   if p.incrementalTheme && p.changeOfState then .quantized
   else if p.changeOfState then .nonquantized
@@ -268,8 +158,8 @@ def profileToDegree (p : EntailmentProfile) : AffectednessDegree :=
 
 variable (p q : EntailmentProfile)
 
-/-- Profiles agreeing on {CoS, IT, CA, St} map to the same degree — the
-remaining six features are irrelevant. -/
+/-- Profiles that agree on change of state, incremental theme, causal affectedness and
+stationariness project to the same degree. -/
 theorem profileToDegree_depends_only_on_patient
     (hcos : p.changeOfState = q.changeOfState)
     (hit : p.incrementalTheme = q.incrementalTheme)
@@ -278,21 +168,18 @@ theorem profileToDegree_depends_only_on_patient
     profileToDegree p = profileToDegree q := by
   simp only [profileToDegree, hcos, hit, hca, hst]
 
-/-- The `quantized` fiber: exactly IT ∧ CoS. -/
 @[simp]
 theorem profileToDegree_eq_quantized_iff :
     profileToDegree p = .quantized ↔
       p.incrementalTheme = true ∧ p.changeOfState = true := by
   unfold profileToDegree; split_ifs <;> simp_all
 
-/-- The `nonquantized` fiber: exactly CoS without IT. -/
 @[simp]
 theorem profileToDegree_eq_nonquantized_iff :
     profileToDegree p = .nonquantized ↔
       p.changeOfState = true ∧ p.incrementalTheme = false := by
   unfold profileToDegree; split_ifs <;> simp_all
 
-/-- The `potential` fiber: exactly no CoS with CA or St. -/
 @[simp]
 theorem profileToDegree_eq_potential_iff :
     profileToDegree p = .potential ↔
@@ -300,7 +187,6 @@ theorem profileToDegree_eq_potential_iff :
         (p.causallyAffected = true ∨ p.stationary = true) := by
   unfold profileToDegree; split_ifs <;> simp_all
 
-/-- The `unspecified` fiber: exactly no CoS, no CA, no St. -/
 @[simp]
 theorem profileToDegree_eq_unspecified_iff :
     profileToDegree p = .unspecified ↔
@@ -308,12 +194,5 @@ theorem profileToDegree_eq_unspecified_iff :
         p.stationary = false := by
   unfold profileToDegree
   split_ifs <;> simp_all [or_iff_not_imp_left]
-
-/-! ### Bridge to the typeclass chain
-
-Connecting `profileToDegree` to `IsQuantizedAffected` structurally needs
-per-verb substrate binding a fragment verb's profile to its θ; until that
-lands, consumers declare the strongest mixin the verb's scalar witnesses
-support. -/
 
 end ArgumentStructure
