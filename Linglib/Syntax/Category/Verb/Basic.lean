@@ -8,9 +8,8 @@ public import Linglib.Semantics.Root.Defs
 The entry-level readers of a verb: lookup by citation form and sense, the root's content, and
 the argument profiles with their Levin-class fallback. The semantic classifications of an
 entry live with their theories, each under the `Verb` namespace: factivity and trigger status
-in `Semantics/Presupposition/Verb.lean`, the attitude in `Semantics/Attitudes/Verb.lean`,
-causatives in `Semantics/Causation/Verb.lean`, and unaccusativity in
-`Semantics/ArgumentStructure/Unaccusativity.lean`.
+in `Semantics/Presupposition/Verb.lean`, the attitude in `Semantics/Attitudes/Verb.lean`, and
+unaccusativity in `Semantics/ArgumentStructure/Unaccusativity.lean`.
 
 ## References
 

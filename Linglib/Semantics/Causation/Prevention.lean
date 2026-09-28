@@ -8,8 +8,8 @@ public import Linglib.Semantics.Causation.SEM.Counterfactual
 `preventSem` states the behavioural reading of *prevent* after
 [sloman-barbey-hotaling-2009]: setting the preventer to `xPrev` does not suffice for the effect,
 while some other value of the preventer does. With Bool models and `xPrev = true`, the only
-alternative is `false`. The predicate takes the same arguments as the other causative
-semantics, so `Causative.toSemantics` dispatches uniformly.
+alternative is `false`. The predicate takes the same arguments as `Sufficiency.makeSem` and
+`Necessity.causeSem`.
 
 ## References
 
