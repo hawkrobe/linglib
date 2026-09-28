@@ -1,124 +1,158 @@
 module
 
-public import Linglib.Semantics.Questions.Basic
 public import Linglib.Semantics.Questions.Hamblin
+public import Mathlib.Algebra.Group.Action.Prod
 
 /-!
 # Highlighting
-[roelofsen-vangool-2010] [roelofsen-farkas-2015]
-[simons-tonhauser-beaver-roberts-2010] [krifka-2017]
 
-A *highlighted* proposition is one that has been made salient by a recent
-utterance and that addresses the current question under discussion (QUD).
-The notion was introduced by [roelofsen-vangool-2010] for disjunctive
-questions (the affirmative disjunct is highlighted and feeds the polarity
-particle response in [roelofsen-farkas-2015]). It generalises in
-[krifka-2017] and the verum-marker literature
-(e.g. [martinez-vera-2026]) to a discourse-management primitive
-shared across focus, biased polar questions, and verum strategies.
+Besides the proposition it expresses, a sentence highlights some possibilities, making them
+salient as antecedents for anaphora such as polarity particles, and each highlighted possibility
+is negative when the sentence introducing it is negative. Roelofsen and Farkas compute the
+highlights of a formula compositionally beside its inquisitive proposition, so that `?p` and
+`?¬p` express the same issue but highlight `p` positively and its complement negatively. This
+file develops basic results about highlighting, including that the highlights of a formula are
+not a function of its proposition and that `!p` and `¬¬p` differ in what they highlight.
 
-## What this module provides
+## Main definitions
 
-- `HighlightingContext W` — bundles a set of salient propositions with
-  the current QUD.
-- `AddressesQUD` — a proposition is comparable to a QUD alternative,
-  the simplest [simons-tonhauser-beaver-roberts-2010] version of
-  "contextually entails an answer".
-- `Highlighted` — the conjunction `salient ∧ addresses-QUD`. This is
-  exactly the [martinez-vera-2026] (38) presupposition.
-The commitment of a polarity-particle response to a highlighted proposition `p`
-([roelofsen-farkas-2015]) is its relative polarity, a `Polarity`, acting on `p`: `s • p`.
+* `Highlighting.Formula`: formulas built from atoms by negation, inquisitive disjunction, `!` and
+  `?`.
+* `Highlighting.Formula.proposition`: the proposition a formula expresses.
+* `Highlighting.Formula.highlights`: the possibilities a formula highlights, with their polarity.
 
-Consumers (verum studies, biased polar question studies, evidential
-discourse studies) import this file rather than re-stipulating the
-predicate locally.
+## Implementation notes
 
-## Known unmigrated consumers (deferred)
-
-This substrate landed alongside [martinez-vera-2026]'s formalisation;
-existing files that use highlighting-shaped notions but have not yet been
-migrated:
-
-* `Semantics/Questions/Bias.lean` — the contextual evidence and prior
-  belief a question is sensitive to cover adjacent ground (prior-discourse
-  bias) with a different shape; bridge not yet written.
-
-Migration to consume `Highlighting.HighlightingContext` is queued for
-follow-up work; landing the substrate first lets the new MartinezVera2026
-study consume it without forcing an immediate four-file refactor.
+The projections `!` and `?` are primitive, since `!p` and `¬¬p` highlight differently; in the
+presentation of Ciardelli, Groenendijk and Roelofsen they are defined from `⊥`, `∧` and `→`,
+which are omitted here as in Roelofsen and Farkas.
 
 ## References
 
-* [krifka-2017]
-* [martinez-vera-2026]
 * [roelofsen-farkas-2015]
 * [roelofsen-vangool-2010]
-* [simons-tonhauser-beaver-roberts-2010]
+* [ciardelli-groenendijk-roelofsen-2018]
 -/
 
 @[expose] public section
 
-namespace Semantics.Highlighting
-
-/-- A highlighting context: the set of propositions made salient by recent
-    utterances, paired with the QUD they should address. -/
-structure HighlightingContext (W : Type*) where
-  /-- Propositions made salient by recent utterances. -/
-  salient : Set (Set W)
-  /-- The current question under discussion. -/
-  qud : Question W
-
 variable {W : Type*}
 
-/-- A proposition `p` *addresses* a question `q` iff it is comparable to
-    some alternative — entailing it or being entailed by it. The simplest
-    Set-valued version of [simons-tonhauser-beaver-roberts-2010]'s
-    "contextually entails an answer". -/
-def AddressesQUD (q : Question W) (p : Set W) : Prop :=
-  ∃ a ∈ q.alt, p ⊆ a ∨ a ⊆ p
+namespace Highlighting
 
-/-- [martinez-vera-2026] (38): proposition `p` is **highlighted** in
-    context `c` iff it has been made salient by an utterance and addresses
-    the current QUD. -/
-def Highlighted (c : HighlightingContext W) (p : Set W) : Prop :=
-  p ∈ c.salient ∧ AddressesQUD c.qud p
+/-- The negation of a formula highlights, negatively, the complement of everything the formula
+highlights. -/
+def neg (H : Set (Polarity × Set W)) : Set (Polarity × Set W) :=
+  {(.negative, (⋃₀ (Prod.snd '' H))ᶜ)}
 
-theorem highlighted_imp_salient {c : HighlightingContext W} {p : Set W}
-    (h : Highlighted c p) : p ∈ c.salient := h.1
+open Classical in
+/-- A projection of a formula keeps a single negative possibility and otherwise highlights,
+positively, the union of what the formula highlights. -/
+noncomputable def project (H : Set (Polarity × Set W)) : Set (Polarity × Set W) :=
+  if ∃ α, H = {(.negative, α)} then H else {(.positive, ⋃₀ (Prod.snd '' H))}
 
-theorem highlighted_imp_addressesQUD {c : HighlightingContext W} {p : Set W}
-    (h : Highlighted c p) : AddressesQUD c.qud p := h.2
+/-- The negation of a formula highlighting a single possibility highlights its complement. -/
+@[simp] theorem neg_singleton (s : Polarity) (α : Set W) :
+    neg {(s, α)} = {(.negative, αᶜ)} := by
+  simp [neg]
 
-instance (c : HighlightingContext W) (p : Set W)
-    [Decidable (p ∈ c.salient)] [Decidable (AddressesQUD c.qud p)] :
-    Decidable (Highlighted c p) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+/-- Projection keeps a single negative possibility. -/
+@[simp] theorem project_singleton_negative (α : Set W) :
+    project {(.negative, α)} = {(.negative, α)} :=
+  ite_eq_left ⟨α, rfl⟩
 
-/-- The empty highlighting context: no salient propositions, the trivial
-    QUD that is resolved by anything. -/
-def empty : HighlightingContext W :=
-  { salient := ∅, qud := Question.ofSet Set.univ }
+/-- Projection keeps a single positive possibility. -/
+@[simp] theorem project_singleton_positive (α : Set W) :
+    project {(.positive, α)} = {(.positive, α)} := by
+  have h : ¬ ∃ β, ({(.positive, α)} : Set (Polarity × Set W)) = {(.negative, β)} := by
+    rintro ⟨β, h⟩
+    simpa using Set.singleton_eq_singleton_iff.mp h
+  rw [project, ite_eq_right h]
+  simp
 
-/-- A highlighting context built from a single salient proposition that
-    declaratively resolves its own QUD. -/
-def singleton (p : Set W) : HighlightingContext W :=
-  { salient := {p}, qud := Question.ofSet p }
+/-- Projection keeps a single possibility, whatever its polarity. -/
+@[simp] theorem project_singleton (x : Polarity × Set W) : project {x} = {x} := by
+  obtain ⟨_ | _, α⟩ := x
+  · exact project_singleton_positive α
+  · exact project_singleton_negative α
 
-/-- Add a proposition to the salient set without touching the QUD. -/
-def addSalient (c : HighlightingContext W) (p : Set W) : HighlightingContext W :=
-  { c with salient := insert p c.salient }
+/-- A formula is built from atoms by negation, inquisitive disjunction, and the non-inquisitive
+and non-informative projections `!` and `?` ([roelofsen-farkas-2015]). -/
+inductive Formula (A : Type*) where
+  | atom (a : A)
+  | neg (φ : Formula A)
+  | inqDisj (φ ψ : Formula A)
+  | bang (φ : Formula A)
+  | query (φ : Formula A)
+  deriving DecidableEq, Repr
 
-@[simp] theorem mem_salient_addSalient (c : HighlightingContext W) (p q : Set W) :
-    q ∈ (addSalient c p).salient ↔ q = p ∨ q ∈ c.salient := by
-  simp [addSalient]
+namespace Formula
 
-@[simp] theorem qud_addSalient (c : HighlightingContext W) (p : Set W) :
-    (addSalient c p).qud = c.qud := rfl
+variable {A : Type*} (v : A → Set W)
 
-@[simp] theorem salient_singleton (p : Set W) :
-    (singleton p : HighlightingContext W).salient = {p} := rfl
+/-- The proposition a formula expresses under the valuation `v` of its atoms (26). -/
+def proposition : Formula A → Question W
+  | atom a => Question.ofSet (v a)
+  | neg φ => (proposition φ)ᶜ
+  | inqDisj φ ψ => proposition φ ⊔ proposition ψ
+  | bang φ => (proposition φ).bang
+  | query φ => (proposition φ).query
 
-@[simp] theorem qud_singleton (p : Set W) :
-    (singleton p : HighlightingContext W).qud = Question.ofSet p := rfl
+/-- The possibilities a formula highlights, each with its polarity (60). -/
+noncomputable def highlights : Formula A → Set (Polarity × Set W)
+  | atom a => {(.positive, v a)}
+  | neg φ => Highlighting.neg (highlights φ)
+  | inqDisj φ ψ => highlights φ ∪ highlights ψ
+  | bang φ => project (highlights φ)
+  | query φ => project (highlights φ)
 
-end Semantics.Highlighting
+attribute [simp] proposition highlights
+
+/-- The basic formula of polarity `s` on the atom `a` is `a` or `¬a`. -/
+def ofPolarity : Polarity → A → Formula A
+  | .positive, a => atom a
+  | .negative, a => neg (atom a)
+
+/-- A basic formula of polarity `s` on `a` expresses the proposition `s • v a`. -/
+@[simp] theorem proposition_ofPolarity (s : Polarity) (a : A) :
+    (ofPolarity s a).proposition v = Question.ofSet (s • v a) := by
+  cases s
+  · rfl
+  · simp [ofPolarity, Question.compl_eq, Question.info_ofSet]
+
+/-- A basic formula of polarity `s` on `a` highlights the image of `(positive, v a)` under `s`,
+the negative polarity complementing the possibility and reversing its polarity. -/
+@[simp] theorem highlights_ofPolarity (s : Polarity) (a : A) :
+    (ofPolarity s a).highlights v = {s • (.positive, v a)} := by
+  cases s <;> simp [ofPolarity, Prod.smul_mk]
+
+/-- The polar interrogatives on `a` and on `¬a` express the same issue. -/
+theorem proposition_query_ofPolarity (s : Polarity) (a : A) :
+    (query (ofPolarity s a)).proposition v = Question.polar (v a) := by
+  rw [proposition, proposition_ofPolarity, Question.query_ofSet, Question.polar_smul]
+
+/-- The highlights of a formula are not a function of its proposition, since `?a` and `?¬a`
+express the same issue but highlight different possibilities. -/
+theorem not_exists_highlights_eq_comp_proposition [Nonempty A] :
+    ¬ ∃ f : Question W → Set (Polarity × Set W),
+      ∀ φ : Formula A, φ.highlights v = f (φ.proposition v) := by
+  rintro ⟨f, hf⟩
+  obtain ⟨a⟩ := ‹Nonempty A›
+  have h := (hf (query (ofPolarity .positive a))).trans
+    ((congrArg f ((proposition_query_ofPolarity v .positive a).trans
+      (proposition_query_ofPolarity v .negative a).symm)).trans
+        (hf (query (ofPolarity .negative a))).symm)
+  simp [ofPolarity, Set.singleton_eq_singleton_iff] at h
+
+/-- The formulas `!a` and `¬¬a` express the same proposition, but `!a` highlights `a`
+positively and `¬¬a` negatively. -/
+theorem highlights_bang_ne_highlights_neg_neg (a : A) :
+    (bang (atom a)).proposition v = (neg (neg (atom a))).proposition v ∧
+      (bang (atom a)).highlights v ≠ (neg (neg (atom a))).highlights v := by
+  refine ⟨?_, ?_⟩
+  · simp [Question.bang, Question.compl_eq, Question.info_ofSet]
+  · simp [Set.singleton_eq_singleton_iff]
+
+end Formula
+
+end Highlighting
