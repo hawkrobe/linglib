@@ -4,7 +4,7 @@ public import Linglib.Semantics.Attitudes.Basic
 public import Linglib.Semantics.Causation.VerbClass
 public import Linglib.Semantics.ArgumentStructure.LevinClass
 public import Linglib.Semantics.ArgumentStructure.MeaningComponents
-public import Linglib.Semantics.Causation.SEM.Entailment
+public import Linglib.Semantics.Causation.CausalModel.Dependence
 public import Linglib.Semantics.Polarity.Basic
 
 /-!
@@ -29,23 +29,18 @@ The chief dimension of variation is the type of prerequisite:
 - *jaksaa* → strength
 - *manage/onnistua* → underspecified
 
-## V2 substrate
+## Causal semantics
 
-Polymorphic V2 forms over `SEM V α`. The legacy `ImplicativeScenario`
-struct + `manageSem`/`failSem` over `CausalDynamics`,
-`PrerequisiteAccount`, `ConcreteExample` (swim/manage), the
-`ComplementEntailing.CausalFrame` abstraction (with abilityFrame/
-viewpoint-aspect bridges), and `Implicative.toSemantics` over scenarios
-were deleted in Phase D-H. The polymorphic V2 versions
-(`manageSem`, `failSem`, `necessityPresup`, `Implicative.toSemantics`
-dispatch) are promoted to canonical here.
+The presuppositions and the assertion are stated over a causal model (`CausalModel`), relative to
+a background observation: sufficiency is Definition 10a with the preamble of Definition 10
+(`manageSem`), and necessity is Definition 10b (`CausalModel.CausallyNecessary`).
 -/
 
 @[expose] public section
 
 namespace Implicative
 
-open Causation (SEM CausalGraph Valuation DecidableValuation)
+open CausalModel
 
 /-! ### Prerequisite Types ([nadathur-2023-implicatives]) -/
 
@@ -70,185 +65,146 @@ def Prerequisite.isSpecific : Prerequisite → Bool
   | .unspecified => false
   | _ => true
 
-/-! ### V2 Polymorphic Semantics -/
+/-! ### Causal semantics -/
 
-/-- V2 manage-sem ([nadathur-2023-implicatives] Definition 10a with the
-    Definition 10 preamble, over the strict T_D development):
-    prerequisite-as-`xP` is causally sufficient for complement-as-`xC` —
-    the background entails neither fact, and augmenting it with the
-    prerequisite causally entails the complement. Polymorphic over value
-    types. -/
-def manageSem {V : Type*} {α : V → Type*}
-    [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    (background : Valuation α)
-    (prerequisite : V) (xP : α prerequisite)
-    (complement : V) (xC : α complement) : Prop :=
-  SEM.causallyNecessary.precondition M background prerequisite xP complement xC ∧
-  SEM.causallyEntails M (background.extend prerequisite xP) complement xC
+section Semantics
 
-instance {V : Type*} {α : V → Type*}
-    [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    (background : Valuation α)
-    (prerequisite : V) (xP : α prerequisite)
-    (complement : V) (xC : α complement) :
-    Decidable (manageSem M background prerequisite xP complement xC) :=
+variable {U V : Type*} {α : V → Type*} [DecidableEq V] (M : CausalModel U V α) [M.IsAcyclic]
+
+/-- *manage*-semantics ([nadathur-2023-implicatives] Definition 10a with the preamble of
+Definition 10): the prerequisite `p = xP` is causally sufficient for the complement `c = xC`
+relative to the background `s`. The background settles neither fact, and the background with the
+prerequisite added settles the complement. -/
+def manageSem (s : ∀ v, Flat (α v)) (p : V) (xP : α p) (c : V) (xC : α c) : Prop :=
+  (¬ M.CausallyEntails s p xP ∧ ¬ M.CausallyEntails s c xC) ∧
+    M.CausallyEntails (Function.update s p ↑xP) c xC
+
+/-- *fail*-semantics: the prerequisite is not causally sufficient for the complement.
+
+TODO: this is the denial of the sufficiency presupposition, which is what the Dreyfus
+infelicity judgments test, but it is not Proposal 32's semantics for negative implicative
+assertions (assert ¬A(x) with both presuppositions intact); the `.negative` case of
+`Implicative.toSemantics` inherits the same caveat. -/
+abbrev failSem (s : ∀ v, Flat (α v)) (p : V) (xP : α p) (c : V) (xC : α c) : Prop :=
+  ¬ manageSem M s p xP c xC
+
+/-- The necessity presupposition says that the prerequisite is causally necessary
+([nadathur-2023-implicatives] Definition 10b) for the complement. -/
+abbrev necessityPresup (s : ∀ v, Flat (α v)) (p : V) (xP : α p) (c : V) (xC : α c) : Prop :=
+  M.CausallyNecessary s p xP c xC
+
+instance [Fintype U] [Inhabited U] [∀ v, Inhabited (α v)] [∀ v, DecidableEq (α v)] [Fintype V]
+    [DecidableRel M.graph.Adj] (s : ∀ v, Flat (α v)) (p : V) (xP : α p) (c : V) (xC : α c) :
+    Decidable (manageSem M s p xP c xC) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- V2 fail-sem: prerequisite-as-`xP` is NOT causally sufficient for
-    complement-as-`xC`.
-
-    TODO: this is denial of the sufficiency presupposition, which is what
-    the Dreyfus infelicity judgments test, but it is NOT Proposal 32's
-    semantics for negative implicative *assertions* (assert ¬A(x) with
-    both presuppositions intact); the `Implicative.toSemantics`
-    `.negative` dispatch below inherits the same caveat. -/
-abbrev failSem {V : Type*} {α : V → Type*}
-    [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    (background : Valuation α)
-    (prerequisite : V) (xP : α prerequisite)
-    (complement : V) (xC : α complement) : Prop :=
-  ¬ manageSem M background prerequisite xP complement xC
-
-/-- V2 necessity presupposition: prerequisite-as-`xP` is causally
-    necessary (Nadathur 2023 Def 10b) for complement-as-`xC`. -/
-abbrev necessityPresup {V : Type*} {α : V → Type*}
-    [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    (background : Valuation α)
-    (prerequisite : V) (xP : α prerequisite)
-    (complement : V) (xC : α complement) : Prop :=
-  SEM.causallyNecessary M background prerequisite xP complement xC
+end Semantics
 
 /-! ### Characteristic entailments (Facts B–C) -/
 
 /-! [nadathur-2023-implicatives] (pp. 316–317) takes Facts A–C as the
 class-level data any account of implicatives must derive. On the
 prerequisite account they fall out of the presupposition + assertion
-split of Proposal 32, for an arbitrary deterministic SEM:
-
+split of Proposal 32, for an arbitrary causal model whose prerequisite is an exogenous variable
+the background leaves open:
 - **Fact B, positive half** (`complement_of_positive_assertion`):
   asserting the prerequisite realizes the complement — the sufficiency
   presupposition's entailment clause.
 - **Fact B, negative half** (`no_complement_of_negative_assertion`):
   given the necessity presupposition, the negative assertion leaves no
-  consistent completion realizing the complement.
+  exogenous settlement realizing the complement.
 - **Fact C** (`complement_iff_prerequisite`): in a felicitous two-way
-  context the prerequisite is sufficient *and* necessary — a consistent
-  completion realizes the complement exactly when it realizes the
-  prerequisite.
-
+  context the prerequisite is sufficient *and* necessary — an exogenous settlement of the
+  background realizes the complement exactly when it realizes the prerequisite.
 Fact A (the existence of a potential obstacle, blocking the entailment
 from complement to implicative claim) is carried by the presuppositional
-preamble itself (`SEM.causallyNecessary.precondition`). -/
+preamble itself. -/
 
 section CharacteristicEntailments
 
-variable {V : Type*} {α : V → Type*}
-  [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
-  (M : SEM V α) [CausalGraph.IsDAG M.graph]
+variable {U V : Type*} {α : V → Type*} [DecidableEq V] {M : CausalModel U V α} [M.IsAcyclic]
+  {s : ∀ v, Flat (α v)} {p : V} {xP : α p} {c : V} {xC : α c}
 
-omit [∀ v, Fintype (α v)] in
 /-- **Fact B, positive half**: a positive two-way implicative claim
     entails its complement — the background updated with the asserted
     prerequisite causally entails the complement. -/
-theorem complement_of_positive_assertion
-    {background : Valuation α} {p : V} {xP : α p} {c : V} {xC : α c}
-    (h : manageSem M background p xP c xC) :
-    SEM.causallyEntails M (background.extend p xP) c xC := h.2
+theorem complement_of_positive_assertion (h : manageSem M s p xP c xC) :
+    M.CausallyEntails (Function.update s p ↑xP) c xC := h.2
 
 /-- **Fact B, negative half**: given the necessity presupposition, a
     negative implicative claim (asserting the prerequisite took a value
-    other than `xP`) leaves no consistent completion realizing the
-    complement: by no-alternative, every consistent path to the
+    other than `xP`) leaves no exogenous settlement realizing the
+    complement: by no-alternative, every path to the
     complement runs through the prerequisite value the assertion denies. -/
-theorem no_complement_of_negative_assertion
-    {background : Valuation α} {p : V} {xP xP' : α p} {c : V} {xC : α c}
-    (hexo : M.graph.parents p = ∅) (hp : background.get p = none)
-    (hne : xP' ≠ xP)
-    (hnec : necessityPresup M background p xP c xC) :
-    ∀ s', SEM.IsExogenousSettlement M (background.extend p xP') s' →
-      s'.get c = none → ¬ SEM.causallyEntails M s' c xC := by
+theorem no_complement_of_negative_assertion {xP' : α p} (hroot : ∀ w, ¬ M.graph.Adj w p)
+    (hopen : ∀ x, ¬ M.CausallyEntails s p x) (hne : xP' ≠ xP)
+    (hnec : necessityPresup M s p xP c xC) :
+    ∀ s', M.IsExogenousSettlement (Function.update s p ↑xP') s' → s' c = ⊥ →
+      ¬ M.CausallyEntails s' c xC := by
   intro s' hset hc hent
-  have hEntP : SEM.causallyEntails M s' p xP :=
-    hnec.2.2 s' (hset.of_extend hexo hp) hc hent
-  have hp' : s'.get p = some xP' :=
-    Valuation.le_def.1 hset.1 p xP' (Valuation.extend_get_same _ _ _)
-  have hEntP' : SEM.causallyEntails M s' p xP' :=
-    SEM.developDetVtx?_determined M hp'
-  exact hne (SEM.causallyEntails_unique hEntP' hEntP)
+  have hEntP : M.CausallyEntails s' p xP :=
+    hnec.2.2 s' ((isExogenousSettlement_update hroot hopen xP').trans hset) hc hent
+  have hp' : s' p = ↑xP' := Flat.coe_le_iff.1 (Function.update_self (β := fun v ↦ Flat (α v))
+    p (↑xP') s ▸ hset.1 p)
+  rcases causallyEntails_iff.1 hEntP with h | ⟨h, -⟩
+  · exact hne (Flat.coe_injective (hp'.symm.trans h))
+  · rw [hp'] at h; exact Flat.coe_ne_bot h
 
 /-- **Fact C**: in a felicitous two-way context (both presuppositions in
-    force), a consistent completion of the background realizes the
+    force), an exogenous settlement of the background realizes the
     complement exactly when it realizes the prerequisite. The forward
     direction is no-alternative; the converse composes the sufficiency
-    clause with `causallyEntails_mono` (determinations cannot be undone). -/
-theorem complement_iff_prerequisite
-    {background : Valuation α} {p : V} {xP : α p} {c : V} {xC : α c}
-    (hexo : M.graph.parents p = ∅) (hp : background.get p = none)
-    (hsuf : manageSem M background p xP c xC)
-    (hnec : necessityPresup M background p xP c xC) :
-    ∀ s', SEM.IsExogenousSettlement M background s' → s'.get c = none →
-      (SEM.causallyEntails M s' c xC ↔ SEM.causallyEntails M s' p xP) := by
+    clause with the monotonicity of settlement. -/
+theorem complement_iff_prerequisite (hroot : ∀ w, ¬ M.graph.Adj w p)
+    (hopen : ∀ x, ¬ M.CausallyEntails s p x) (hsuf : manageSem M s p xP c xC)
+    (hnec : necessityPresup M s p xP c xC) :
+    ∀ s', M.IsExogenousSettlement s s' → s' c = ⊥ →
+      (M.CausallyEntails s' c xC ↔ M.CausallyEntails s' p xP) := by
   intro s' hset hc
-  constructor
-  · exact hnec.2.2 s' hset hc
-  · intro hEntP
-    -- the prerequisite is exogenous, so its entailment is a syntactic fix
-    have hp' : s'.get p = some xP := by
-      cases hgp : s'.get p with
-      | some y =>
-          have := SEM.causallyEntails_unique
-            (SEM.developDetVtx?_determined M hgp (x := y)) hEntP
-          exact congrArg some this
-      | none =>
-          rw [SEM.causallyEntails, SEM.developDetVtx?_exogenous M hgp hexo] at hEntP
-          simp at hEntP
-    -- s' consistently extends background + prerequisite
-    have hle : background.extend p xP ≤ s' := by
-      rw [Valuation.le_def]
-      intro v x hv
-      by_cases hvp : v = p
-      · subst hvp
-        rw [Valuation.hasValue, Valuation.extend_get_same] at hv
-        rw [Valuation.hasValue, hp']
-        exact hv
-      · rw [Valuation.hasValue, Valuation.extend_get_ne hvp] at hv
-        exact Valuation.le_def.1 hset.1 v x hv
-    have hcons : SEM.isConsistentSuper M (background.extend p xP) s' := by
-      refine ⟨hle, fun x xv hn hs yv _ hent => ?_⟩
-      have hxp : x ≠ p := by
-        intro hxp; subst hxp
-        rw [Valuation.extend_get_same] at hn
-        simp at hn
-      have hbgx : background.get x = none := by
-        rw [Valuation.extend_get_ne hxp] at hn; exact hn
-      have hExoX : M.graph.parents x = ∅ :=
-        hset.2 x hbgx (by rw [hs]; rfl)
-      rw [SEM.causallyEntails, SEM.developDetVtx?_exogenous M hn hExoX] at hent
-      simp at hent
-    exact SEM.causallyEntails_mono hcons hsuf.2
+  refine ⟨hnec.2.2 s' hset hc, fun hEntP ↦ ?_⟩
+  have hsp : s p = ⊥ := by
+    by_contra h
+    obtain ⟨y, hy⟩ := Flat.ne_bot_iff_exists.1 h
+    exact hopen y (causallyEntails_iff.2 (.inl hy))
+  -- the prerequisite is open in the background, so its entailment is an observation
+  have hp' : s' p = ↑xP := by
+    by_contra h
+    have hs'p : s' p = ⊥ := by
+      by_contra h'
+      obtain ⟨y, hy⟩ := Flat.ne_bot_iff_exists.1 h'
+      rcases causallyEntails_iff.1 hEntP with h'' | ⟨h'', -⟩
+      · exact h h''
+      · rw [hy] at h''; exact Flat.coe_ne_bot h''
+    exact hopen xP ((causallyEntails_root_iff hroot hsp).2
+      ((causallyEntails_root_iff hroot hs'p).1 hEntP))
+  -- the settlement also settles the background with the prerequisite added
+  have hset' : M.IsExogenousSettlement (Function.update s p ↑xP) s' := by
+    refine ⟨fun v ↦ ?_, fun v hv hne ↦ ?_⟩
+    · by_cases hvp : v = p
+      · subst hvp; rw [Function.update_self, hp']
+      · rw [Function.update_of_ne hvp]; exact hset.1 v
+    · have hvp : v ≠ p := by rintro rfl; rw [Function.update_self] at hv; exact Flat.coe_ne_bot hv
+      rw [Function.update_of_ne hvp] at hv
+      obtain ⟨hr, ho⟩ := hset.2 v hv hne
+      refine ⟨hr, fun x hx ↦ ho x ((causallyEntails_root_iff hr hv).2 ?_)⟩
+      exact (causallyEntails_root_iff hr (by rwa [Function.update_of_ne hvp])).1 hx
+  exact hsuf.2.of_isExogenousSettlement hset'
 
 /-- **The two-way entailment profile** — [karttunen-1971]'s defining
     criterion for the *manage* class — follows from the prerequisite
     account: in a context satisfying both presuppositions, the positive
     assertion entails the complement (Fact B, positive) and any negative
-    assertion precludes it in every consistent completion (Fact B,
+    assertion precludes it in every exogenous settlement (Fact B,
     negative). This is the derivation [nadathur-2023-implicatives]
     advertises for Facts A–C at the class level. -/
-theorem twoWay_entailment_profile
-    {background : Valuation α} {p : V} {xP : α p} {c : V} {xC : α c}
-    (hexo : M.graph.parents p = ∅) (hp : background.get p = none)
-    (hsuf : manageSem M background p xP c xC)
-    (hnec : necessityPresup M background p xP c xC) :
-    SEM.causallyEntails M (background.extend p xP) c xC ∧
-    ∀ xP', xP' ≠ xP → ∀ s',
-      SEM.IsExogenousSettlement M (background.extend p xP') s' →
-      s'.get c = none → ¬ SEM.causallyEntails M s' c xC :=
-  ⟨complement_of_positive_assertion M hsuf,
-   fun _ hne s' h1 h2 => no_complement_of_negative_assertion M hexo hp hne hnec s' h1 h2⟩
+theorem twoWay_entailment_profile (hroot : ∀ w, ¬ M.graph.Adj w p)
+    (hopen : ∀ x, ¬ M.CausallyEntails s p x) (hsuf : manageSem M s p xP c xC)
+    (hnec : necessityPresup M s p xP c xC) :
+    M.CausallyEntails (Function.update s p ↑xP) c xC ∧
+    ∀ xP', xP' ≠ xP → ∀ s', M.IsExogenousSettlement (Function.update s p ↑xP') s' →
+      s' c = ⊥ → ¬ M.CausallyEntails s' c xC :=
+  ⟨complement_of_positive_assertion hsuf,
+   fun _ hne s' h1 h2 ↦ no_complement_of_negative_assertion hroot hopen hne hnec s' h1 h2⟩
 
 end CharacteristicEntailments
 
@@ -350,22 +306,13 @@ theorem specific_vs_bleached :
 
 end Implicative
 
-/-! ### `Implicative.toSemantics` dispatch (V2 polymorphic) -/
-
-/-! Lives here rather than in `Semantics/Causation/VerbClass.lean` because the
-dispatch needs `Causation.SEM` + the `Implicative.manageSem`/`failSem`
-machinery defined above; `VerbClass.lean` is kept import-free. -/
+/-! ### `Implicative.toSemantics` dispatch -/
 
 namespace Implicative
 
-open Causation (SEM CausalGraph Valuation DecidableValuation)
-
-/-- V2 dispatch: map an implicative verb's polarity to its V2 polymorphic
-    semantic function. -/
-def toSemantics {V : Type*} {α : V → Type*}
-    [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph] :
-    Polarity → Valuation α → ∀ p : V, α p → ∀ c : V, α c → Prop
+/-- Map an implicative verb's polarity to its semantics over a causal model. -/
+def toSemantics {U V : Type*} {α : V → Type*} [DecidableEq V] (M : CausalModel U V α)
+    [M.IsAcyclic] : Polarity → (∀ v, Flat (α v)) → ∀ p : V, α p → ∀ c : V, α c → Prop
   | .positive => Implicative.manageSem M
   | .negative => Implicative.failSem M
 

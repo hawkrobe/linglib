@@ -23,14 +23,21 @@ Nadathur's Definition 10b).
 * `CausalModel.IsExogenousSettlement`: an extension of an observation at exogenous variables
 * `CausalModel.CausallyNecessary`: Nadathur's causal necessity
 
+## Main results
+
+* `CausalModel.CausallyEntails.of_isExogenousSettlement`: settling exogenous variables settles
+  no less
+* `CausalModel.isExogenousSettlement_update`, `CausalModel.IsExogenousSettlement.trans`
+
 ## Implementation notes
 
-Necessity quantifies over settlements of the exogenous variables, the variables with no parents,
-not over every consistent extension of the background: on the literal quantification, settling an
-inner variable can reach the effect around the cause and falsify the verdicts of Nadathur's worked
-examples, which consider only background settlements. In a finite model each relation is decided
-through the computed strict development (`CausalModel.causallyEntails_iff_develop`), the
-quantified settlements ranging over the finitely many partial assignments.
+Necessity quantifies over settlements of the exogenous variables, the variables with no parents that
+the background leaves open, not over every consistent extension of the background: on the literal
+quantification, settling an inner variable can reach the effect around the cause and falsify the
+verdicts of Nadathur's worked examples, which consider only background settlements. In a finite
+model each relation is decided through the computed strict development
+(`CausalModel.causallyEntails_iff_develop`), the quantified settlements ranging over the finitely
+many partial assignments.
 
 ## References
 
@@ -50,9 +57,10 @@ the cause does. -/
 def CausallySufficient (s : ∀ v, Flat (α v)) (c : V) (x : α c) (e : V) (y : α e) : Prop :=
   ¬ M.CausallyEntails s e y ∧ M.CausallyEntails (Function.update s c ↑x) e y
 
-/-- `s'` extends the observation `s` at exogenous variables only, those with no parents. -/
+/-- `s'` settles the observation `s` further at exogenous variables only, those with no parents
+that the strict development of `s` leaves open. -/
 def IsExogenousSettlement (s s' : ∀ v, Flat (α v)) : Prop :=
-  s ≤ s' ∧ ∀ v, s v = ⊥ → s' v ≠ ⊥ → ∀ w, ¬ M.graph.Adj w v
+  s ≤ s' ∧ ∀ v, s v = ⊥ → s' v ≠ ⊥ → (∀ w, ¬ M.graph.Adj w v) ∧ ∀ x, ¬ M.CausallyEntails s v x
 
 /-- `M.CausallyNecessary s c x e y` says that `c = x` is causally necessary for `e = y` relative to
 the background `s`. The background settles neither fact; some exogenous settlement of the
@@ -66,6 +74,50 @@ def CausallyNecessary (s : ∀ v, Flat (α v)) (c : V) (x : α c) (e : V) (y : �
     M.CausallyEntails s' c x
 
 variable {M}
+
+omit [DecidableEq V] in
+/-- Settling exogenous variables settles no less. What the strict development of an observation
+settles, that of any exogenous settlement of it settles too. -/
+theorem CausallyEntails.of_isExogenousSettlement {s s' : ∀ v, Flat (α v)}
+    (hs : M.IsExogenousSettlement s s') {v : V} {x : α v} (h : M.CausallyEntails s v x) :
+    M.CausallyEntails s' v x := by
+  induction v using ‹M.IsAcyclic›.induction with
+  | _ v ih =>
+    rcases causallyEntails_iff.1 h with hv | ⟨hv, hpar, heq⟩
+    · exact causallyEntails_iff.2 (.inl (Flat.coe_le_iff.1 (hv ▸ hs.1 v)))
+    · have hv' : s' v = ⊥ := by
+        by_contra hne
+        exact (hs.2 v hv hne).2 x h
+      refine causallyEntails_iff.2 (.inr ⟨hv', fun w hw ↦ ?_, fun u y hy ↦ ?_⟩)
+      · obtain ⟨z, hz⟩ := hpar w hw
+        exact ⟨z, ih w hw hz⟩
+      · exact heq u y fun w hw z hz ↦ hy w hw z (ih w hw hz)
+
+/-- Settling an open exogenous variable is an exogenous settlement. -/
+theorem isExogenousSettlement_update {s : ∀ v, Flat (α v)} {p : V}
+    (hroot : ∀ w, ¬ M.graph.Adj w p) (hopen : ∀ x, ¬ M.CausallyEntails s p x) (x : α p) :
+    M.IsExogenousSettlement s (Function.update s p ↑x) := by
+  have hsp : s p = ⊥ := by
+    by_contra h
+    obtain ⟨y, hy⟩ := Flat.ne_bot_iff_exists.1 h
+    exact hopen y (causallyEntails_iff.2 (.inl hy))
+  refine ⟨fun v ↦ ?_, fun v hv hne ↦ ?_⟩
+  · by_cases hvp : v = p
+    · subst hvp; rw [hsp]; exact bot_le
+    · rw [Function.update_of_ne hvp]
+  · by_cases hvp : v = p
+    · subst hvp; exact ⟨hroot, hopen⟩
+    · rw [Function.update_of_ne hvp] at hne; exact absurd hv hne
+
+omit [DecidableEq V] in
+/-- Exogenous settlements compose. -/
+theorem IsExogenousSettlement.trans {s s' s'' : ∀ v, Flat (α v)}
+    (h₁ : M.IsExogenousSettlement s s') (h₂ : M.IsExogenousSettlement s' s'') :
+    M.IsExogenousSettlement s s'' := by
+  refine ⟨h₁.1.trans h₂.1, fun v hv hne ↦ ?_⟩
+  by_cases hv' : s' v = ⊥
+  · exact ⟨(h₂.2 v hv' hne).1, fun x hx ↦ (h₂.2 v hv' hne).2 x (hx.of_isExogenousSettlement h₁)⟩
+  · exact h₁.2 v hv hv'
 
 /-- A causally sufficient cause settles the effect in every context where the background and the
 cause are observed. -/
@@ -83,10 +135,12 @@ instance (s : ∀ v, Flat (α v)) (c : V) (x : α c) (e : V) (y : α e) :
     Decidable (M.CausallySufficient s c x e y) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-instance (s s' : ∀ v, Flat (α v)) : Decidable (M.IsExogenousSettlement s s') :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
 variable [∀ v, Fintype (α v)]
+
+instance (s s' : ∀ v, Flat (α v)) : Decidable (M.IsExogenousSettlement s s') :=
+  haveI : ∀ v, Decidable (s v = ⊥ → s' v ≠ ⊥ →
+      (∀ w, ¬ M.graph.Adj w v) ∧ ∀ x, ¬ M.CausallyEntails s v x) := fun _ ↦ inferInstance
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Partial assignments over finitely many variables of finite types are finitely many. Not an
 instance: a `Fintype` instance on `Flat` would change how `decide` evaluates flat-valued
