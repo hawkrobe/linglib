@@ -3,7 +3,7 @@ module
 public import Linglib.Fragments.Mayan.Yukatek.VerbClasses
 public import Linglib.Fragments.Hindi.Case
 public import Linglib.Semantics.ArgumentStructure.EventStructure
-public import Linglib.Semantics.Causation.Graph.Basic
+public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Studies.Lucy1994
 public import Linglib.Syntax.Voice.Basic
 
@@ -33,7 +33,7 @@ are recorded here.
 
 * `Verb`, `CausationType`, `stemTemplate` — the fragment's verbs with the paper's causation
   type, and the event-structure template of each stem class (§5)
-* `Subevent`, `Subevent.causalGraph`, `linkingDefault`, `sMarkerFromViewpoint` — the thematic
+* `Subevent`, `Subevent.Causes`, `linkingDefault`, `sMarkerFromViewpoint` — the thematic
   hierarchy of (31) as causal precedence along the CAUSE edge, the linking-by-viewpoint rule of
   (32), and the linking of (33)
 * `applicativeLinking`, `causativeLinking`, `verbLinking`, `addedTermRole` — the two
@@ -195,16 +195,15 @@ inductive Subevent where
   deriving DecidableEq, Fintype, Repr
 
 /-- The causal edge of (31): the causing subevent causes the caused subevent. -/
-def Subevent.causalGraph : Causation.CausalGraph Subevent where
-  parents
-    | .causing => ∅
-    | .caused => {.causing}
+def Subevent.Causes (a b : Subevent) : Prop := a = .causing ∧ b = .caused
+
+instance : DecidableRel Subevent.Causes := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Subevents in order of causal precedence, the causing subevent first. The thematic hierarchy
 (31) ranks the participant of a causing subevent above the participant of the subevent it causes,
 so a participant of `a` outranks a participant of `b` exactly when `a < b`. -/
 instance : LinearOrder Subevent :=
-  Subevent.causalGraph.linearOrder (.of_depth _ Subevent.ctorIdx (by decide)) (by decide)
+  linearOrderOfCovers Subevent.Causes (OrderDual.toDual ∘ Subevent.ctorIdx) (by decide) (by decide)
 
 instance : BoundedOrder Subevent where
   bot := .causing

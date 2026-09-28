@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.Tay2024
 public import Linglib.Fragments.Mandarin.Resultatives
 public import Linglib.Studies.Kim2024
-public import Linglib.Semantics.Causation.Graph.Basic
+public import Linglib.Core.Relation.ReflTransGen
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.NormNum
@@ -49,20 +49,20 @@ with Mandarin's *pò* (684)–(686) the witness, `po_not_alternating`.
 
 ## Implementation notes
 
-Predicates take their arguments as tuples `Fin n → D`, so a family of null affixes indexed by
-the arities of V1 and V2 is one definition. The causal relation, the factor, the participant
-relation and the causal chain of each macroevent, (136), are the primitives of a `Model`; the
-thesis takes the causal relation to be Lewis's counterfactual causation and leaves its
-characterization open. Events are partially ordered by causal precedence, the initial event of
-a chain is its least event, and the Onset Condition is [kim-2024]'s, `Kim2024.OnsetCondition`.
-The model of (136) draws the chain as a causal graph, `Causation.CausalGraph`, ordered by
-ancestry, so the macroevent, no link in the chain, is unordered with respect to its subevents.
-Temporal traces are rational intervals. The compounds are entries of
-`Fragments/Mandarin/Resultatives.lean`, which record no orientation: the apparent
-subject-oriented transitives *chī-bǎo* (3) and *qí-lèi* (330) are the hybrid resultatives of
-chapter 4, whose postverbal phrase is an argument of V2, and that chapter, the V-*de*
-construction's syntax (chapter 6), the case against the No Argument Theory (chapter 5) and the
-null head ∅+C+B for adjectival X (693) are not formalized.
+Predicates take their arguments as tuples `Fin n → D`, so a family of null affixes indexed by the
+arities of V1 and V2 is one definition. The causal relation, the factor, the participant relation
+and the causal chain of each macroevent, (136), are the primitives of a `Model`; the thesis takes
+the causal relation to be Lewis's counterfactual causation and leaves its characterization open.
+Events are partially ordered by causal precedence, the initial event of a chain is its least event,
+and the Onset Condition is [kim-2024]'s, `Kim2024.OnsetCondition`. The model of (136) draws the
+chain as a relation of immediate causation (`SinkingEvent.Causes`), ordered by its reflexive
+transitive closure, so the macroevent, no link in the chain, is unordered with respect to its
+subevents. Temporal traces are rational intervals. The compounds are entries of
+`Fragments/Mandarin/Resultatives.lean`, which record no orientation: the apparent subject-oriented
+transitives *chī-bǎo* (3) and *qí-lèi* (330) are the hybrid resultatives of chapter 4, whose
+postverbal phrase is an argument of V2, and that chapter, the V-*de* construction's syntax (chapter
+6), the case against the No Argument Theory (chapter 5) and the null head ∅+C+B for adjectival X
+(693) are not formalized.
 
 ## References
 
@@ -170,18 +170,17 @@ namespace SinkingEvent
 
 /-- The arrows of (136). The macroevent is no link in the chain, so it neither precedes nor
 follows its subevents. -/
-def causalGraph : Causation.CausalGraph SinkingEvent where
-  parents
-    | .rush => {strike}
-    | .descend => {rush}
-    | .below => {descend}
-    | _ => ∅
+def Causes (a b : SinkingEvent) : Prop :=
+  a = strike ∧ b = rush ∨ a = rush ∧ b = descend ∨ a = descend ∧ b = below
+
+instance : DecidableRel Causes := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The events in order of causal precedence. -/
 instance : PartialOrder SinkingEvent :=
-  causalGraph.partialOrder (.of_depth _ SinkingEvent.ctorIdx (by decide))
+  partialOrderOfCovers Causes (OrderDual.toDual ∘ SinkingEvent.ctorIdx) (by decide)
 
-instance : DecidableLE SinkingEvent := Causation.CausalGraph.IsAncestor.decidable causalGraph
+instance : DecidableLE SinkingEvent := fun a b ↦
+  inferInstanceAs (Decidable (Relation.ReflTransGen Causes a b))
 
 /-- The causal chain the sinking comprises. -/
 def chain : Set SinkingEvent := {strike, rush, descend, below}

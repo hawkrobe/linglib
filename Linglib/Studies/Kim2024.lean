@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Order.Bounds.Basic
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Semantics.Causation.Graph.Basic
+public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Studies.Pesetsky1995
 
 /-!
@@ -43,12 +43,12 @@ The thesis reads three properties off where the Cause sits on this chain.
 
 The Onset Condition is stated for any causal chain, a set of events partially ordered by causal
 precedence, whose onset is its least event, `IsLeast`. Each chain of the thesis is drawn as a
-causal graph, `Causation.CausalGraph`, and ordered by ancestry in it. The chain of an emotion is
-`EmotionChain`, and the chain a Class II predicate denotes is the final segment `Set.Ici` from
-the member its Cause refers to. The thesis finds no reliable diagnostic that tells Target from
-Subject Matter and calls every object of emotion a Subject Matter, so both of [pesetsky-1995]'s
-stimulus types refer to the one member `EmotionChain.subjectMatter`. The agentive reading, which
-the thesis sets aside with the literature, is not represented.
+relation of immediate causation (`Causes`), and ordered by its reflexive transitive closure. The
+chain of an emotion is `EmotionChain`, and the chain a Class II predicate denotes is the final
+segment `Set.Ici` from the member its Cause refers to. The thesis finds no reliable diagnostic that
+tells Target from Subject Matter and calls every object of emotion a Subject Matter, so both of
+[pesetsky-1995]'s stimulus types refer to the one member `EmotionChain.subjectMatter`. The agentive
+reading, which the thesis sets aside with the literature, is not represented.
 
 ## TODO
 
@@ -104,15 +104,15 @@ inductive KillingEvent where
   deriving DecidableEq, Fintype, Repr
 
 /-- The causal chain of (312): the hiring causes the shooting, which causes the dying. -/
-def KillingEvent.causalGraph : Causation.CausalGraph KillingEvent where
-  parents
-    | .hiring => ∅
-    | .shooting => {.hiring}
-    | .dying => {.shooting}
+def KillingEvent.Causes (a b : KillingEvent) : Prop :=
+  a = .hiring ∧ b = .shooting ∨ a = .shooting ∧ b = .dying
+
+instance : DecidableRel KillingEvent.Causes := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The events in order of causal precedence. -/
 instance : LinearOrder KillingEvent :=
-  KillingEvent.causalGraph.linearOrder (.of_depth _ KillingEvent.ctorIdx (by decide)) (by decide)
+  linearOrderOfCovers KillingEvent.Causes (OrderDual.toDual ∘ KillingEvent.ctorIdx) (by decide)
+    (by decide)
 
 /-- (313): *John killed the water deer by hiring a poacher*. The hiring, in which John takes
 part, is the onset of the chain the sentence denotes, so a *by*-phrase naming it is
@@ -145,15 +145,14 @@ namespace EmotionChain
 
 /-- The arrows of (185): the Experiencer's evaluation of the percept yields the subject matter,
 and the Experiencer's attention to the subject matter gives rise to the emotion. -/
-def causalGraph : Causation.CausalGraph EmotionChain where
-  parents
-    | .percept => ∅
-    | .subjectMatter => {.percept}
-    | .emotion => {.subjectMatter}
+def Causes (a b : EmotionChain) : Prop :=
+  a = .percept ∧ b = .subjectMatter ∨ a = .subjectMatter ∧ b = .emotion
+
+instance : DecidableRel Causes := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The members of the chain in order of causal precedence. -/
 instance : LinearOrder EmotionChain :=
-  causalGraph.linearOrder (.of_depth _ EmotionChain.ctorIdx (by decide)) (by decide)
+  linearOrderOfCovers Causes (OrderDual.toDual ∘ EmotionChain.ctorIdx) (by decide) (by decide)
 
 /-- A reading is eventive when the chain from the member its Cause refers to contains the
 Experiencer's evaluation of a percept. The evaluation brings a new subject matter into being and
