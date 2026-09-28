@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Polarity.Marking
 public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Fragments.Dutch.Particles
-public import Linglib.Fragments.German.PolarityMarking
+public import Linglib.Fragments.German.Particles
 public import Linglib.Data.Examples.TurcoBraunDimroth2014
 
 /-!
@@ -18,8 +18,8 @@ and correction of [umbach-2004]: `Sentence`, `Switch`, `IsContrast`, `IsCorrecti
 `Switch.disjoint_iff`, `IsCorrection.disjoint`, `exists_isContrast_not_disjoint`. In both
 contexts German speakers produced Verum focus, a high-falling pitch accent on the finite verb,
 [hohle-1992], and never a sentence-internal affirmative particle, whereas Dutch speakers mostly
-produced the accented affirmative particle *wel*, the entries `German.PolarityMarking.verumFocus`
-and `Dutch.Particles.wel`. The paper's theoretical claim is that the two devices, though
+produced the accented affirmative particle *wel*, the entries `verumFocus` and
+`Dutch.Particles.wel`. The paper's theoretical claim is that the two devices, though
 functionally equivalent, operate on different levels: a sentence contains a polarity operator
 and, above it, an assertion operator carried by the finite verb; *wel* is the overt affirmative
 value of the polarity operator, the counterpart of *niet*, [sudhoff-2012], whereas Verum focus
@@ -36,10 +36,12 @@ The polarity operator is a single slot of the sentence, so a sentence with the a
 particle is positive by construction and *Het kind heeft wel niet gehuild* is not a `Sentence`.
 The production results are not formalized. Dutch speakers used *wel* in most utterances of both
 contexts, fewer in correction, an effect the paper leaves unexplained, and Verum focus never in
-contrast and rarely in correction; German speakers used Verum focus in more than two thirds of
-the utterances of both contexts, never a sentence-internal particle, and *doch* as a separate
-utterance before a Verum focus utterance in correction only, the entry
-`German.PolarityMarking.dochPreUtterance`. *Wel* was mostly accented, as a downstepped fall in
+contrast and rarely in correction; German speakers used Verum focus in more than 70% of the
+utterances of both contexts and never a sentence-internal particle. In correction only, some
+German speakers produced the polarity particle *doch*, `German.PolarityParticle.doch`, as a
+separate utterance before a Verum focus utterance; the paper codes the combination as another
+realization, not an affirmative particle, since *doch* never carried the correction by
+itself. *Wel* was mostly accented, as a downstepped fall in
 contrast and as a fall in correction, and the pitch range of German Verum focus was larger in
 correction than in contrast; the paper attributes the greater prominence of correction either to
 the strength of undoing a denial, [hogeweg-2009], or to the absence of a contrastive topic accent
@@ -64,6 +66,14 @@ namespace TurcoBraunDimroth2014
 open PolarityMarker
 
 /-! ### The polarity operator and the assertion operator -/
+
+/-- German Verum focus, a high-falling pitch accent on the finite verb, as the study found it:
+sentence-internal, and produced in polarity contrast and in polarity correction alike. -/
+def verumFocus : PolarityMarker where
+  label := "Verum focus"
+  prosodicTarget := some "finite verb"
+  environments := {.sentenceInternal, .contrast, .correction}
+  strategy := .verumFocus
 
 /-- The value of a sentence's polarity operator: negation, an overt affirmative particle such
 as Dutch *wel*, or the unmarked default affirmation. -/
@@ -135,8 +145,7 @@ def strategyLevel : Strategy → Option Level
 
 /-- Dutch *wel* and German Verum focus operate at different levels. -/
 theorem strategyLevel_wel_ne_verumFocus :
-    strategyLevel Dutch.Particles.wel.strategy ≠
-      strategyLevel German.PolarityMarking.verumFocus.strategy := by
+    strategyLevel Dutch.Particles.wel.strategy ≠ strategyLevel verumFocus.strategy := by
   decide
 
 /-! ### Polarity contrast and polarity correction -/
