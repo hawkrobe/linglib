@@ -2,7 +2,6 @@ module
 
 public import Mathlib.Data.Set.Insert
 public import Linglib.Semantics.Presupposition.ContentLayer
-public import Linglib.Semantics.Questions.Highlighting
 public import Linglib.Semantics.Evidential.Defs
 public import Linglib.Discourse.Role
 public import Linglib.Semantics.Questions.Hamblin
@@ -27,8 +26,10 @@ partition is in general distinct from the verum partition of [romero-han-2004]
 
 ## Implementation notes
 
-The bilayered content, highlighting, evidential illocution, evidential sources, and polar
-questions are substrate; the felicity apparatus is paper-specific and stays here, while the
+The bilayered content, evidential illocution, evidential sources, and polar questions are
+substrate; the paper's notion of a highlighted proposition, one made salient by an utterance
+and addressing the question under discussion (its (38)), and the felicity apparatus are
+paper-specific and stay here, while the
 three-way evidential paradigm of Saraguro Kichwa lives in its fragment. The paper's data is
 original fieldwork with six speakers following [matthewson-2004].
 
@@ -82,10 +83,29 @@ theorem composeI_eq_composeII (atFn naiFn : (W → Prop) → (W → Prop)) (β :
   · rfl
   · simp [composeI, composeII, hβ]
 
-open Semantics.Highlighting (HighlightingContext Highlighted AddressesQUD addSalient)
 open Evidential
 
 variable {W : Type*}
+
+/-! ### Highlighting (38) -/
+
+/-- A context for highlighting: the propositions made salient by recent utterances, and the
+question under discussion. -/
+structure HighlightingContext (W : Type*) where
+  /-- Propositions made salient by recent utterances. -/
+  salient : Set (Set W)
+  /-- The question under discussion. -/
+  qud : Question W
+
+/-- A proposition addresses a question when it is comparable to one of its alternatives,
+entailing it or entailed by it. -/
+def AddressesQUD (q : Question W) (p : Set W) : Prop :=
+  ∃ a ∈ q.alt, p ⊆ a ∨ a ⊆ p
+
+/-- (38): a proposition is highlighted when an utterance has made it salient and it addresses
+the question under discussion. -/
+def Highlighted (c : HighlightingContext W) (p : Set W) : Prop :=
+  p ∈ c.salient ∧ AddressesQUD c.qud p
 
 /-! ### § 0. Evidential illocutionary operators (Faller / Murray)
 

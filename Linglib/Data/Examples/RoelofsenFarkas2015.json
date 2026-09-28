@@ -1,0 +1,706 @@
+[
+  {
+    "id": "roelofsenfarkas2015_6a_yes",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(6a)"},
+    "language": "stan1293",
+    "primaryText": "Yes, he did.",
+    "discourseSegments": [
+      "Peter passed the test.",
+      "Yes, he did."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, he did.",
+    "context": "Responding to the assertion 'Peter passed the test.'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "positive"],
+      ["response", "positive"],
+      ["particle", "yes"]
+    ],
+    "comment": "[agree, +], agreement. p. 361."
+  },
+  {
+    "id": "roelofsenfarkas2015_6a_no",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(6a)"},
+    "language": "stan1293",
+    "primaryText": "No, he did.",
+    "discourseSegments": [
+      "Peter passed the test.",
+      "No, he did."
+    ],
+    "glossedTokens": [],
+    "translation": "No, he did.",
+    "context": "Responding to the assertion 'Peter passed the test.'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "positive"],
+      ["response", "positive"],
+      ["particle", "no"]
+    ],
+    "comment": "[agree, +], agreement. p. 361."
+  },
+  {
+    "id": "roelofsenfarkas2015_6b_yes",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(6b)"},
+    "language": "stan1293",
+    "primaryText": "Yes, he didn't.",
+    "discourseSegments": [
+      "Peter passed the test.",
+      "Yes, he didn't."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, he didn't.",
+    "context": "Responding to the assertion 'Peter passed the test.'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "positive"],
+      ["response", "negative"],
+      ["particle", "yes"]
+    ],
+    "comment": "[reverse, −], disagreement. p. 361."
+  },
+  {
+    "id": "roelofsenfarkas2015_6b_no",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(6b)"},
+    "language": "stan1293",
+    "primaryText": "No, he didn't.",
+    "discourseSegments": [
+      "Peter passed the test.",
+      "No, he didn't."
+    ],
+    "glossedTokens": [],
+    "translation": "No, he didn't.",
+    "context": "Responding to the assertion 'Peter passed the test.'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "positive"],
+      ["response", "negative"],
+      ["particle", "no"]
+    ],
+    "comment": "[reverse, −], disagreement. p. 361."
+  },
+  {
+    "id": "roelofsenfarkas2015_7a_yes",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(7a)"},
+    "language": "stan1293",
+    "primaryText": "Yes, he didn't.",
+    "discourseSegments": [
+      "Peter didn't pass the test.",
+      "Yes, he didn't."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, he didn't.",
+    "context": "Responding to the assertion 'Peter didn't pass the test.'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "negative"],
+      ["response", "negative"],
+      ["particle", "yes"]
+    ],
+    "comment": "[agree, −], agreement. p. 361."
+  },
+  {
+    "id": "roelofsenfarkas2015_7a_no",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(7a)"},
+    "language": "stan1293",
+    "primaryText": "No, he didn't.",
+    "discourseSegments": [
+      "Peter didn't pass the test.",
+      "No, he didn't."
+    ],
+    "glossedTokens": [],
+    "translation": "No, he didn't.",
+    "context": "Responding to the assertion 'Peter didn't pass the test.'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "negative"],
+      ["response", "negative"],
+      ["particle", "no"]
+    ],
+    "comment": "[agree, −], agreement. p. 361."
+  },
+  {
+    "id": "roelofsenfarkas2015_7b_yes",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(7b)"},
+    "language": "stan1293",
+    "primaryText": "Yes, he DID.",
+    "discourseSegments": [
+      "Peter didn't pass the test.",
+      "Yes, he DID."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, he DID.",
+    "context": "Responding to the assertion 'Peter didn't pass the test.'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "negative"],
+      ["response", "positive"],
+      ["particle", "yes"]
+    ],
+    "comment": "[reverse, +], disagreement; small capitals mark obligatory contrastive stress. p. 361."
+  },
+  {
+    "id": "roelofsenfarkas2015_7b_no",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(7b)"},
+    "language": "stan1293",
+    "primaryText": "No, he DID.",
+    "discourseSegments": [
+      "Peter didn't pass the test.",
+      "No, he DID."
+    ],
+    "glossedTokens": [],
+    "translation": "No, he DID.",
+    "context": "Responding to the assertion 'Peter didn't pass the test.'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "negative"],
+      ["response", "positive"],
+      ["particle", "no"]
+    ],
+    "comment": "[reverse, +], disagreement; small capitals mark obligatory contrastive stress. p. 361."
+  },
+  {
+    "id": "roelofsenfarkas2015_119_oui",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(119)"},
+    "language": "stan1290",
+    "primaryText": "Oui, elle y est.",
+    "discourseSegments": [
+      "Claude est à la maison.",
+      "Oui, elle y est."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, she is.",
+    "context": "Responding to the assertion 'Claude est à la maison.'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "positive"],
+      ["response", "positive"],
+      ["particle", "oui"]
+    ],
+    "comment": "[agree, +]. p. 398."
+  },
+  {
+    "id": "roelofsenfarkas2015_119_non",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(119)"},
+    "language": "stan1290",
+    "primaryText": "Non, elle y est.",
+    "discourseSegments": [
+      "Claude est à la maison.",
+      "Non, elle y est."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, she is.",
+    "context": "Responding to the assertion 'Claude est à la maison.'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "positive"],
+      ["response", "positive"],
+      ["particle", "non"]
+    ],
+    "comment": "[agree, +]. p. 398."
+  },
+  {
+    "id": "roelofsenfarkas2015_119_si",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(119)"},
+    "language": "stan1290",
+    "primaryText": "Si, elle y est.",
+    "discourseSegments": [
+      "Claude est à la maison.",
+      "Si, elle y est."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, she is.",
+    "context": "Responding to the assertion 'Claude est à la maison.'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "positive"],
+      ["response", "positive"],
+      ["particle", "si"]
+    ],
+    "comment": "[agree, +]. p. 398."
+  },
+  {
+    "id": "roelofsenfarkas2015_120_oui",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(120)"},
+    "language": "stan1290",
+    "primaryText": "Oui, elle n'y est pas.",
+    "discourseSegments": [
+      "Claude n'est pas à la maison.",
+      "Oui, elle n'y est pas."
+    ],
+    "glossedTokens": [],
+    "translation": "No, she isn't.",
+    "context": "Responding to the assertion 'Claude n'est pas à la maison.'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "negative"],
+      ["response", "negative"],
+      ["particle", "oui"]
+    ],
+    "comment": "[agree, −]. p. 398."
+  },
+  {
+    "id": "roelofsenfarkas2015_120_non",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(120)"},
+    "language": "stan1290",
+    "primaryText": "Non, elle n'y est pas.",
+    "discourseSegments": [
+      "Claude n'est pas à la maison.",
+      "Non, elle n'y est pas."
+    ],
+    "glossedTokens": [],
+    "translation": "No, she isn't.",
+    "context": "Responding to the assertion 'Claude n'est pas à la maison.'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "negative"],
+      ["response", "negative"],
+      ["particle", "non"]
+    ],
+    "comment": "[agree, −]. p. 398."
+  },
+  {
+    "id": "roelofsenfarkas2015_120_si",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(120)"},
+    "language": "stan1290",
+    "primaryText": "Si, elle n'y est pas.",
+    "discourseSegments": [
+      "Claude n'est pas à la maison.",
+      "Si, elle n'y est pas."
+    ],
+    "glossedTokens": [],
+    "translation": "No, she isn't.",
+    "context": "Responding to the assertion 'Claude n'est pas à la maison.'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "negative"],
+      ["response", "negative"],
+      ["particle", "si"]
+    ],
+    "comment": "[agree, −]. p. 398."
+  },
+  {
+    "id": "roelofsenfarkas2015_121_oui",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(121)"},
+    "language": "stan1290",
+    "primaryText": "Oui, elle y est.",
+    "discourseSegments": [
+      "Claude n'est pas à la maison.",
+      "Oui, elle y est."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, she IS.",
+    "context": "Responding to the assertion 'Claude n'est pas à la maison.'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "negative"],
+      ["response", "positive"],
+      ["particle", "oui"]
+    ],
+    "comment": "[reverse, +]. p. 399."
+  },
+  {
+    "id": "roelofsenfarkas2015_121_non",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(121)"},
+    "language": "stan1290",
+    "primaryText": "Non, elle y est.",
+    "discourseSegments": [
+      "Claude n'est pas à la maison.",
+      "Non, elle y est."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, she IS.",
+    "context": "Responding to the assertion 'Claude n'est pas à la maison.'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "negative"],
+      ["response", "positive"],
+      ["particle", "non"]
+    ],
+    "comment": "[reverse, +]. p. 399."
+  },
+  {
+    "id": "roelofsenfarkas2015_121_si",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(121)"},
+    "language": "stan1290",
+    "primaryText": "Si, elle y est.",
+    "discourseSegments": [
+      "Claude n'est pas à la maison.",
+      "Si, elle y est."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, she IS.",
+    "context": "Responding to the assertion 'Claude n'est pas à la maison.'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "negative"],
+      ["response", "positive"],
+      ["particle", "si"]
+    ],
+    "comment": "[reverse, +]. p. 399."
+  },
+  {
+    "id": "roelofsenfarkas2015_122_oui",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(122)"},
+    "language": "stan1290",
+    "primaryText": "Oui, elle n'y est pas.",
+    "discourseSegments": [
+      "Claude est à la maison.",
+      "Oui, elle n'y est pas."
+    ],
+    "glossedTokens": [],
+    "translation": "No, she isn't.",
+    "context": "Responding to the assertion 'Claude est à la maison.'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "positive"],
+      ["response", "negative"],
+      ["particle", "oui"]
+    ],
+    "comment": "[reverse, −]. p. 399."
+  },
+  {
+    "id": "roelofsenfarkas2015_122_non",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(122)"},
+    "language": "stan1290",
+    "primaryText": "Non, elle n'y est pas.",
+    "discourseSegments": [
+      "Claude est à la maison.",
+      "Non, elle n'y est pas."
+    ],
+    "glossedTokens": [],
+    "translation": "No, she isn't.",
+    "context": "Responding to the assertion 'Claude est à la maison.'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "positive"],
+      ["response", "negative"],
+      ["particle", "non"]
+    ],
+    "comment": "[reverse, −]. p. 399."
+  },
+  {
+    "id": "roelofsenfarkas2015_122_si",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(122)"},
+    "language": "stan1290",
+    "primaryText": "Si, elle n'y est pas.",
+    "discourseSegments": [
+      "Claude est à la maison.",
+      "Si, elle n'y est pas."
+    ],
+    "glossedTokens": [],
+    "translation": "No, she isn't.",
+    "context": "Responding to the assertion 'Claude est à la maison.'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "positive"],
+      ["response", "negative"],
+      ["particle", "si"]
+    ],
+    "comment": "[reverse, −]. p. 399."
+  },
+  {
+    "id": "roelofsenfarkas2015_124_ja",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(124)"},
+    "language": "stan1295",
+    "primaryText": "Ja, sie ist zu Hause.",
+    "discourseSegments": [
+      "Katharina ist zu Hause.",
+      "Ja, sie ist zu Hause."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, she is at home.",
+    "context": "Responding to the assertion 'Katharina ist zu Hause.'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "positive"],
+      ["response", "positive"],
+      ["particle", "ja"]
+    ],
+    "comment": "[agree, +]. p. 399."
+  },
+  {
+    "id": "roelofsenfarkas2015_124_nein",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(124)"},
+    "language": "stan1295",
+    "primaryText": "Nein, sie ist zu Hause.",
+    "discourseSegments": [
+      "Katharina ist zu Hause.",
+      "Nein, sie ist zu Hause."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, she is at home.",
+    "context": "Responding to the assertion 'Katharina ist zu Hause.'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "positive"],
+      ["response", "positive"],
+      ["particle", "nein"]
+    ],
+    "comment": "[agree, +]. p. 399."
+  },
+  {
+    "id": "roelofsenfarkas2015_124_doch",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(124)"},
+    "language": "stan1295",
+    "primaryText": "Doch, sie ist zu Hause.",
+    "discourseSegments": [
+      "Katharina ist zu Hause.",
+      "Doch, sie ist zu Hause."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, she is at home.",
+    "context": "Responding to the assertion 'Katharina ist zu Hause.'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "positive"],
+      ["response", "positive"],
+      ["particle", "doch"]
+    ],
+    "comment": "[agree, +]. p. 399."
+  },
+  {
+    "id": "roelofsenfarkas2015_125_ja",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(125)"},
+    "language": "stan1295",
+    "primaryText": "Ja, sie ist nicht zu Hause.",
+    "discourseSegments": [
+      "Katharina ist nicht zu Hause.",
+      "Ja, sie ist nicht zu Hause."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, she is not at home.",
+    "context": "Responding to the assertion 'Katharina ist nicht zu Hause.'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "negative"],
+      ["response", "negative"],
+      ["particle", "ja"]
+    ],
+    "comment": "[agree, −]. p. 399."
+  },
+  {
+    "id": "roelofsenfarkas2015_125_nein",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(125)"},
+    "language": "stan1295",
+    "primaryText": "Nein, sie ist nicht zu Hause.",
+    "discourseSegments": [
+      "Katharina ist nicht zu Hause.",
+      "Nein, sie ist nicht zu Hause."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, she is not at home.",
+    "context": "Responding to the assertion 'Katharina ist nicht zu Hause.'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "negative"],
+      ["response", "negative"],
+      ["particle", "nein"]
+    ],
+    "comment": "[agree, −]. p. 399."
+  },
+  {
+    "id": "roelofsenfarkas2015_125_doch",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(125)"},
+    "language": "stan1295",
+    "primaryText": "Doch, sie ist nicht zu Hause.",
+    "discourseSegments": [
+      "Katharina ist nicht zu Hause.",
+      "Doch, sie ist nicht zu Hause."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, she is not at home.",
+    "context": "Responding to the assertion 'Katharina ist nicht zu Hause.'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "negative"],
+      ["response", "negative"],
+      ["particle", "doch"]
+    ],
+    "comment": "[agree, −]. p. 399."
+  },
+  {
+    "id": "roelofsenfarkas2015_126_ja",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(126)"},
+    "language": "stan1295",
+    "primaryText": "Ja, sie ist zu Hause.",
+    "discourseSegments": [
+      "Katharina ist nicht zu Hause.",
+      "Ja, sie ist zu Hause."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, she IS.",
+    "context": "Responding to the assertion 'Katharina ist nicht zu Hause.'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "negative"],
+      ["response", "positive"],
+      ["particle", "ja"]
+    ],
+    "comment": "[reverse, +]. p. 399."
+  },
+  {
+    "id": "roelofsenfarkas2015_126_nein",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(126)"},
+    "language": "stan1295",
+    "primaryText": "Nein, sie ist zu Hause.",
+    "discourseSegments": [
+      "Katharina ist nicht zu Hause.",
+      "Nein, sie ist zu Hause."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, she IS.",
+    "context": "Responding to the assertion 'Katharina ist nicht zu Hause.'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "negative"],
+      ["response", "positive"],
+      ["particle", "nein"]
+    ],
+    "comment": "[reverse, +]. p. 399."
+  },
+  {
+    "id": "roelofsenfarkas2015_126_doch",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(126)"},
+    "language": "stan1295",
+    "primaryText": "Doch, sie ist zu Hause.",
+    "discourseSegments": [
+      "Katharina ist nicht zu Hause.",
+      "Doch, sie ist zu Hause."
+    ],
+    "glossedTokens": [],
+    "translation": "Yes, she IS.",
+    "context": "Responding to the assertion 'Katharina ist nicht zu Hause.'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "negative"],
+      ["response", "positive"],
+      ["particle", "doch"]
+    ],
+    "comment": "[reverse, +]. p. 399."
+  },
+  {
+    "id": "roelofsenfarkas2015_127_ja",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(127)"},
+    "language": "stan1295",
+    "primaryText": "Ja, sie ist nicht zu Hause.",
+    "discourseSegments": [
+      "Katharina ist zu Hause.",
+      "Ja, sie ist nicht zu Hause."
+    ],
+    "glossedTokens": [],
+    "translation": "No, she is not at home.",
+    "context": "Responding to the assertion 'Katharina ist zu Hause.'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "positive"],
+      ["response", "negative"],
+      ["particle", "ja"]
+    ],
+    "comment": "[reverse, −]. p. 399."
+  },
+  {
+    "id": "roelofsenfarkas2015_127_nein",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(127)"},
+    "language": "stan1295",
+    "primaryText": "Nein, sie ist nicht zu Hause.",
+    "discourseSegments": [
+      "Katharina ist zu Hause.",
+      "Nein, sie ist nicht zu Hause."
+    ],
+    "glossedTokens": [],
+    "translation": "No, she is not at home.",
+    "context": "Responding to the assertion 'Katharina ist zu Hause.'.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "positive"],
+      ["response", "negative"],
+      ["particle", "nein"]
+    ],
+    "comment": "[reverse, −]. p. 399."
+  },
+  {
+    "id": "roelofsenfarkas2015_127_doch",
+    "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(127)"},
+    "language": "stan1295",
+    "primaryText": "Doch, sie ist nicht zu Hause.",
+    "discourseSegments": [
+      "Katharina ist zu Hause.",
+      "Doch, sie ist nicht zu Hause."
+    ],
+    "glossedTokens": [],
+    "translation": "No, she is not at home.",
+    "context": "Responding to the assertion 'Katharina ist zu Hause.'.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["antecedent", "positive"],
+      ["response", "negative"],
+      ["particle", "doch"]
+    ],
+    "comment": "[reverse, −]. p. 399."
+  }
+]

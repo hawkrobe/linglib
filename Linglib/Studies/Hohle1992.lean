@@ -2,7 +2,6 @@ module
 
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Syntax.Command
-public import Linglib.Semantics.Questions.Highlighting
 
 /-!
 # Höhle (1992): Über Verum-Fokus im Deutschen
@@ -36,7 +35,7 @@ verbs, relative and interrogative pronouns without a particle, and verb-final ve
   pseudo-reconstruction, and Höhle's relation SR is left open in the paper.
 * VERUM is the identity on propositions, so the two scopings of (56) have the same content
   (`content_focusBackground`) and differ only in what is background.
-* "Known from the context" is membership in the salient set of a `HighlightingContext`; the
+* "Known from the context" is membership in a set of propositions the context makes known; the
   question under discussion plays no role.
 * The assumption of §7 that there is no verum focus on a verb-final finite verb, and the
   copula and full-verb judgments of (71) and (72), are recorded in the example rows only.
@@ -50,7 +49,7 @@ verbs, relative and interrogative pronouns without a particle, and verb-final ve
 
 namespace Hohle1992
 
-open Core.Order Core.Order.Branching Syntax Semantics.Highlighting
+open Core.Order Core.Order.Branching Syntax
 
 /-! ### The peripheral structure of (76) -/
 
@@ -202,15 +201,15 @@ theorem content_focusBackground (p : Set W) (s : Scoping) :
   cases s <;> rfl
 
 /-- Höhle's condition on verum focus: the background thought is known from the context. A
-negated clause expressing the thought `p` is appropriate in `ctx` when some scoping that (60)
-admits has its background among the propositions `ctx` has made salient. -/
-def Appropriate (ctx : HighlightingContext W) (c : Configuration) (p : Set W) : Prop :=
-  ∃ s : Scoping, s.Admissible c ∧ (s.focusBackground p).background ∈ ctx.salient
+negated clause expressing the thought `p` is appropriate when some scoping that (60) admits
+has its background among the propositions `known` from the context. -/
+def Appropriate (known : Set (Set W)) (c : Configuration) (p : Set W) : Prop :=
+  ∃ s : Scoping, s.Admissible c ∧ (s.focusBackground p).background ∈ known
 
 /-- Verum focus on the fronted verb is appropriate whenever the thought or its negation is
 known. -/
-theorem appropriate_negatedF_iff (ctx : HighlightingContext W) (p : Set W) :
-    Appropriate ctx negatedF p ↔ p ∈ ctx.salient ∨ pᶜ ∈ ctx.salient := by
+theorem appropriate_negatedF_iff (known : Set (Set W)) (p : Set W) :
+    Appropriate known negatedF p ↔ p ∈ known ∨ pᶜ ∈ known := by
   constructor
   · rintro ⟨s, -, hs⟩
     cases s
@@ -221,25 +220,25 @@ theorem appropriate_negatedF_iff (ctx : HighlightingContext W) (p : Set W) :
     · exact ⟨.verumOverNeg, verumOverNeg_admissible_negatedF, h⟩
 
 /-- Verum focus on the complementizer is appropriate only if the negated thought is known. -/
-theorem appropriate_negatedC_iff (ctx : HighlightingContext W) (p : Set W) :
-    Appropriate ctx negatedC p ↔ pᶜ ∈ ctx.salient := by
+theorem appropriate_negatedC_iff (known : Set (Set W)) (p : Set W) :
+    Appropriate known negatedC p ↔ pᶜ ∈ known := by
   constructor
   · rintro ⟨s, hs, hb⟩
     cases s
     · exact absurd hs not_negOverVerum_admissible_negatedC
     · exact hb
-  · exact λ h => ⟨.verumOverNeg, verumOverNeg_admissible_negatedC, h⟩
+  · exact fun h ↦ ⟨.verumOverNeg, verumOverNeg_admissible_negatedC, h⟩
 
 /-- (55a) after (55c): *ich hoffe, daß Karl ihr zuhört* makes the thought known, and the
 verb-second reply *er HÖRT ihr nicht zu* is appropriate. -/
-theorem appropriate_negatedF_singleton (p : Set W) : Appropriate (singleton p) negatedF p :=
+theorem appropriate_negatedF_singleton (p : Set W) : Appropriate {p} negatedF p :=
   (appropriate_negatedF_iff _ p).2 (Or.inl rfl)
 
 /-- (55b) after (55c): the reply *daß er ihr nicht zuhört* is inappropriate, since the negated
 thought its *daß* must take as background is not known. -/
 theorem not_appropriate_negatedC_singleton [Nonempty W] (p : Set W) :
-    ¬ Appropriate (singleton p) negatedC p := by
-  rw [appropriate_negatedC_iff, salient_singleton, Set.mem_singleton_iff]
+    ¬ Appropriate {p} negatedC p := by
+  rw [appropriate_negatedC_iff, Set.mem_singleton_iff]
   intro h
   obtain ⟨w⟩ := ‹Nonempty W›
   by_cases hw : w ∈ p
