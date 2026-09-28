@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Logic.Team.Inquisitive
 public import Mathlib.Algebra.Group.Action.Prod
 
 /-!
@@ -11,8 +12,9 @@ salient as antecedents for anaphora such as polarity particles, and each highlig
 is negative when the sentence introducing it is negative. Roelofsen and Farkas compute the
 highlights of a formula compositionally beside its inquisitive proposition, so that `?p` and
 `?¬p` express the same issue but highlight `p` positively and its complement negatively. This
-file develops basic results about highlighting, including that the highlights of a formula are
-not a function of its proposition and that `!p` and `¬¬p` differ in what they highlight.
+file develops basic results about highlighting, including that every formula expresses the
+proposition of the InqB formula it abbreviates, while its highlights are a function neither of
+that proposition nor of that InqB formula.
 
 ## Main definitions
 
@@ -20,12 +22,13 @@ not a function of its proposition and that `!p` and `¬¬p` differ in what they 
   `?`.
 * `Highlighting.Formula.proposition`: the proposition a formula expresses.
 * `Highlighting.Formula.highlights`: the possibilities a formula highlights, with their polarity.
+* `Highlighting.Formula.toInquisitive`: the InqB formula a formula abbreviates.
 
 ## Implementation notes
 
-The projections `!` and `?` are primitive, since `!p` and `¬¬p` highlight differently; in the
-presentation of Ciardelli, Groenendijk and Roelofsen they are defined from `⊥`, `∧` and `→`,
-which are omitted here as in Roelofsen and Farkas.
+The projections `!` and `?` are primitive, since `!p` and `¬¬p` highlight differently, although
+in InqB they abbreviate `¬¬φ` and `φ \\/ ¬φ`; conjunction and implication are omitted, as in
+Roelofsen and Farkas.
 
 ## References
 
@@ -144,14 +147,53 @@ theorem not_exists_highlights_eq_comp_proposition [Nonempty A] :
         (hf (query (ofPolarity .negative a))).symm)
   simp [ofPolarity, Set.singleton_eq_singleton_iff] at h
 
-/-- The formulas `!a` and `¬¬a` express the same proposition, but `!a` highlights `a`
-positively and `¬¬a` negatively. -/
-theorem highlights_bang_ne_highlights_neg_neg (a : A) :
-    (bang (atom a)).proposition v = (neg (neg (atom a))).proposition v ∧
-      (bang (atom a)).highlights v ≠ (neg (neg (atom a))).highlights v := by
-  refine ⟨?_, ?_⟩
-  · simp [Question.bang, Question.compl_eq, Question.info_ofSet]
-  · simp [Set.singleton_eq_singleton_iff]
+/-- The InqB formula a formula abbreviates, with `!φ` as `¬¬φ` and `?φ` as `φ \\/ ¬φ`. -/
+def toInquisitive : Formula A → Inquisitive.Formula A
+  | atom a => .atom a
+  | neg φ => φ.toInquisitive.neg
+  | inqDisj φ ψ => .inqDisj φ.toInquisitive ψ.toInquisitive
+  | bang φ => φ.toInquisitive.neg.neg
+  | query φ => φ.toInquisitive.polarQ
+
+theorem isModalFree_toInquisitive : ∀ φ : Formula A, φ.toInquisitive.IsModalFree
+  | atom _ => trivial
+  | neg φ => ⟨isModalFree_toInquisitive φ, trivial⟩
+  | inqDisj φ ψ => ⟨isModalFree_toInquisitive φ, isModalFree_toInquisitive ψ⟩
+  | bang φ => ⟨⟨isModalFree_toInquisitive φ, trivial⟩, trivial⟩
+  | query φ => ⟨isModalFree_toInquisitive φ, isModalFree_toInquisitive φ, trivial⟩
+
+/-- A formula expresses the proposition of the InqB formula it abbreviates, under the valuation
+of the atoms by their truth sets in `M`. -/
+theorem proposition_toInquisitive [Fintype W] [DecidableEq W] (M : Inquisitive.Model W A)
+    (φ : Formula A) :
+    Inquisitive.proposition M φ.toInquisitive = φ.proposition fun a ↦ {w | M.val a w = true} := by
+  induction φ with
+  | atom a =>
+    rw [toInquisitive, (Inquisitive.truthConditional_iff_proposition_eq M _).1
+      (Inquisitive.truthConditional_atom M a)]
+    simp [Inquisitive.truthSet]
+  | neg φ ih =>
+    simp only [toInquisitive, Inquisitive.Formula.neg, Inquisitive.proposition_impl,
+      Inquisitive.proposition_bot, himp_bot, proposition, ih]
+  | inqDisj φ ψ ihφ ihψ =>
+    simp only [toInquisitive, Inquisitive.proposition_inqDisj, proposition, ihφ, ihψ]
+  | bang φ ih =>
+    rw [toInquisitive, Inquisitive.proposition_neg_neg, ih]
+    rfl
+  | query φ ih =>
+    simp only [toInquisitive, Inquisitive.Formula.polarQ, Inquisitive.Formula.neg,
+      Inquisitive.proposition_inqDisj, Inquisitive.proposition_impl, Inquisitive.proposition_bot,
+      himp_bot, proposition, ih, Question.query, Question.compl_eq, Question.sup_eq_inqDisj]
+
+/-- The highlights of a formula are not a function of the InqB formula it abbreviates, since `!a`
+and `¬¬a` abbreviate the same formula but highlight `a` with opposite polarities. -/
+theorem not_exists_highlights_eq_comp_toInquisitive [Nonempty A] :
+    ¬ ∃ f : Inquisitive.Formula A → Set (Polarity × Set W),
+      ∀ φ : Formula A, φ.highlights v = f φ.toInquisitive := by
+  rintro ⟨f, hf⟩
+  obtain ⟨a⟩ := ‹Nonempty A›
+  have h := (hf (bang (atom a))).trans (hf (neg (neg (atom a)))).symm
+  simp [Set.singleton_eq_singleton_iff] at h
 
 end Formula
 
