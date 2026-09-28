@@ -1,6 +1,8 @@
 module
 
+public import Mathlib.Data.Fintype.Prod
 public import Linglib.Semantics.Causation.Implicative
+public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Studies.Karttunen1971a
 public import Linglib.Fragments.Finnish.Verbs
 public import Linglib.Data.Examples.Nadathur2023
@@ -28,12 +30,14 @@ negation, or neither, as its class predicts (`rows_agree`).
 
 ## Implementation notes
 
-The theorems are stated over the strict development of the paper's definitions and decided
-over the finite model, the supersituation quantifiers ranging over the finite valuation space.
+The Dreyfus scenario is a causal model whose exogenous variables read the context, and the
+background is an observation. The theorems are stated over the strict development of the paper's
+definitions and decided over the finite model, the supersituation quantifiers ranging over the
+exogenous settlements of the background.
 
 ## TODO
 
-The necessity presuppositions are decided by brute force over the valuation space under a
+The necessity presuppositions are decided by brute force over the partial assignments under a
 raised recursion limit; a structural proof through the parent equations
 would remove them. The *manage* examples need set-valued prerequisites, one of them the
 conjunction of courage, a listener, and an ungarbled message, while the substrate's
@@ -50,7 +54,7 @@ sufficiency semantics takes a single prerequisite vertex.
 
 namespace Nadathur2023
 
-open Causation Causation.Mechanism Causation.SEM
+open CausalModel
 open Implicative (manageSem failSem ImplicativeClass Prerequisite)
 
 /-- Dreyfus scenario vertices ([nadathur-2023-implicatives] §6.1.1, Figure 3):
@@ -61,60 +65,56 @@ open Implicative (manageSem failSem ImplicativeClass Prerequisite)
 inductive V | INT | NRV | LST | BRK | SEC | MSG | COM | SPY
   deriving DecidableEq, Fintype, Repr
 
-/-- Causal graph: SEC←{INT}, MSG←{INT,NRV}, COM←{MSG,LST,BRK},
-    SPY←{SEC,COM}; INT, NRV, LST, BRK exogenous. -/
-def graph : CausalGraph V := ⟨fun
-  | .INT | .NRV | .LST | .BRK => ∅
-  | .SEC => {.INT}
-  | .MSG => {.INT, .NRV}
-  | .COM => {.MSG, .LST, .BRK}
-  | .SPY => {.SEC, .COM}⟩
+/-- In the causal graph SEC←{INT}, MSG←{INT,NRV}, COM←{MSG,LST,BRK} and SPY←{SEC,COM}, with INT,
+NRV, LST and BRK exogenous. -/
+def adj (w v : V) : Prop :=
+  w = .INT ∧ v = .SEC ∨ (w = .INT ∨ w = .NRV) ∧ v = .MSG ∨
+    (w = .MSG ∨ w = .LST ∨ w = .BRK) ∧ v = .COM ∨ (w = .SEC ∨ w = .COM) ∧ v = .SPY
 
-instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
+instance : DecidableRel adj := fun w v ↦ by unfold adj; infer_instance
 
-/-- Dreyfus SEM, with the negative `¬BRK` precondition encoded directly in
-    the COM mechanism. -/
-def dreyfusSEM : BoolSEM V :=
-  { graph := graph
-    mech := fun
-      | .INT | .NRV | .LST | .BRK => const (G := graph) false
-      | .SEC => fun ρ ↦ ρ ⟨.INT, by decide⟩
-      | .MSG => fun ρ ↦
-          ρ ⟨.INT, by decide⟩ && ρ ⟨.NRV, by decide⟩
-      | .COM => fun ρ ↦
-          ρ ⟨.MSG, by decide⟩ && ρ ⟨.LST, by decide⟩ && !ρ ⟨.BRK, by decide⟩
-      | .SPY => fun ρ ↦
-          ρ ⟨.SEC, by decide⟩ && ρ ⟨.COM, by decide⟩ }
+/-- The Dreyfus model, with the negative `¬BRK` precondition encoded directly in the COM equation;
+the context settles INT, NRV, LST and BRK. -/
+def dreyfusModel : CausalModel (Bool × Bool × Bool × Bool) V fun _ ↦ Bool where
+  graph := ⟨adj⟩
+  eqn
+    | .INT => fun u _ ↦ u.1
+    | .NRV => fun u _ ↦ u.2.1
+    | .LST => fun u _ ↦ u.2.2.1
+    | .BRK => fun u _ ↦ u.2.2.2
+    | .SEC => fun _ x ↦ x .INT
+    | .MSG => fun _ x ↦ x .INT && x .NRV
+    | .COM => fun _ x ↦ x .MSG && x .LST && !x .BRK
+    | .SPY => fun _ x ↦ x .SEC && x .COM
 
-instance : CausalGraph.IsDAG dreyfusSEM.graph :=
-  inferInstanceAs (CausalGraph.IsDAG graph)
+instance : DecidableRel dreyfusModel.graph.Adj := inferInstanceAs (DecidableRel adj)
+
+instance : dreyfusModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- Background: Dreyfus intends to spy and has already collected secrets
     (INT = SEC = 1); NRV, LST, BRK are unresolved. -/
-def dreyfusBg : Valuation (fun _ : V ↦ Bool) :=
-  Valuation.empty.extend .INT true |>.extend .SEC true
+def dreyfusBg : V → Flat Bool := Function.update (Function.update ⊥ .INT ↑true) .SEC ↑true
 
 /-- *dare* dispatches to the sufficiency semantics the theorems below are
     stated through, and its lexical prerequisite is courage — instantiated
     in the Dreyfus scenario by the NRV vertex. -/
 theorem dare_semantics_via_manageSem :
-    Implicative.toSemantics dreyfusSEM ImplicativeClass.dare.polarity =
-      manageSem dreyfusSEM ∧
+    Implicative.toSemantics dreyfusModel ImplicativeClass.dare.polarity =
+      manageSem dreyfusModel ∧
     ImplicativeClass.dare.prerequisite = some Prerequisite.courage :=
   ⟨rfl, rfl⟩
 
 /-- Sufficiency presupposition (32iii) for (34a): NRV is causally
     sufficient (Def 10a) for MSG — neither fact is entailed by the
     background, and adding NRV = 1 causally entails MSG = 1. -/
-theorem nrv_sufficient_for_msg :
-    manageSem dreyfusSEM dreyfusBg .NRV true .MSG true := by
+theorem nrv_sufficient_for_msg : manageSem dreyfusModel dreyfusBg .NRV true .MSG true := by
   decide
 
 set_option maxRecDepth 400000 in
 /-- Necessity presupposition (32i) for (34a): NRV is causally necessary
     (Def 10b) for MSG. -/
 theorem nrv_necessary_for_msg :
-    Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .MSG true := by
+    Implicative.necessityPresup dreyfusModel dreyfusBg .NRV true .MSG true := by
   decide +kernel
 
 /-- (34a) *Dreyfus dared to send a message to the Germans* — felicitous:
@@ -123,74 +123,73 @@ theorem nrv_necessary_for_msg :
     ([nadathur-2023-implicatives] §6.1.1). Both presuppositions of two-way
     *dare* (Proposal 32 i, iii) are satisfied in context. -/
 theorem dare_felicitous_for_msg :
-    Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .MSG true ∧
-    manageSem dreyfusSEM dreyfusBg .NRV true .MSG true :=
+    Implicative.necessityPresup dreyfusModel dreyfusBg .NRV true .MSG true ∧
+    manageSem dreyfusModel dreyfusBg .NRV true .MSG true :=
   ⟨nrv_necessary_for_msg, nrv_sufficient_for_msg⟩
 
 /-- (34c) *?/# Dreyfus dared to establish communication with the Germans* —
     infelicitous: NRV is not causally sufficient for COM, which stays
     unsettled while LST and BRK are unresolved in the background. -/
-theorem dare_infelicitous_for_com :
-    failSem dreyfusSEM dreyfusBg .NRV true .COM true := by
+theorem dare_infelicitous_for_com : failSem dreyfusModel dreyfusBg .NRV true .COM true := by
   decide
 
 /-- (34d) *?/# Dreyfus dared to spy for the Germans* — infelicitous: NRV
     is not causally sufficient for SPY (its conditions LST, BRK, COM are
     all undetermined). -/
-theorem dare_infelicitous_for_spy :
-    failSem dreyfusSEM dreyfusBg .NRV true .SPY true := by
+theorem dare_infelicitous_for_spy : failSem dreyfusModel dreyfusBg .NRV true .SPY true := by
   decide
 
 set_option maxRecDepth 400000 in
 /-- (34c), necessity half: "⟨NRV,1⟩ is causally necessary but not
     sufficient for COM" — achievability settles the exogenous LST = 1,
-    BRK = 0; every consistent path to COM = 1 runs through NRV = 1. Was
-    unprovable under the eager-default dynamics (achievability could
-    never resolve an exogenous unknown). -/
+    BRK = 0; every path to COM = 1 runs through NRV = 1. -/
 theorem nrv_necessary_for_com :
-    Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .COM true := by
+    Implicative.necessityPresup dreyfusModel dreyfusBg .NRV true .COM true := by
   decide +kernel
 
 set_option maxRecDepth 400000 in
 /-- (34d), necessity half: NRV is causally necessary but not sufficient
     for SPY ("BRK, LST, COM ∈ Anc(SPY) are all undetermined"). -/
 theorem nrv_necessary_for_spy :
-    Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .SPY true := by
+    Implicative.necessityPresup dreyfusModel dreyfusBg .NRV true .SPY true := by
   decide +kernel
 
 /-- (34c)/(34d) complete profiles: NRV is causally **necessary but not
     sufficient** for COM and for SPY — the paper's exact §6.1.1 verdicts,
     as single statements. -/
 theorem nrv_necessary_not_sufficient_for_com_and_spy :
-    (Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .COM true ∧
-     failSem dreyfusSEM dreyfusBg .NRV true .COM true) ∧
-    (Implicative.necessityPresup dreyfusSEM dreyfusBg .NRV true .SPY true ∧
-     failSem dreyfusSEM dreyfusBg .NRV true .SPY true) :=
+    (Implicative.necessityPresup dreyfusModel dreyfusBg .NRV true .COM true ∧
+     failSem dreyfusModel dreyfusBg .NRV true .COM true) ∧
+    (Implicative.necessityPresup dreyfusModel dreyfusBg .NRV true .SPY true ∧
+     failSem dreyfusModel dreyfusBg .NRV true .SPY true) :=
   ⟨⟨nrv_necessary_for_com, dare_infelicitous_for_com⟩,
    ⟨nrv_necessary_for_spy, dare_infelicitous_for_spy⟩⟩
 
+/-- NRV is exogenous and open in the Dreyfus background. -/
+theorem nrv_root : ∀ w, ¬ dreyfusModel.graph.Adj w .NRV := by decide
+
+theorem nrv_open : ∀ x, ¬ dreyfusModel.CausallyEntails dreyfusBg .NRV x := by decide
+
 /-- Fact B, negative half, at (34b): *Dreyfus did not dare to send a
-    message* — no consistent completion of the negative-assertion context
+    message* — no exogenous settlement of the negative-assertion context
     realizes MSG. Instantiates
     `Implicative.no_complement_of_negative_assertion` at the Dreyfus
     model. -/
 theorem no_msg_without_nerve :
-    ∀ s', SEM.IsExogenousSettlement dreyfusSEM (dreyfusBg.extend .NRV false) s' →
-      s'.get .MSG = none → ¬ SEM.causallyEntails dreyfusSEM s' .MSG true :=
-  Implicative.no_complement_of_negative_assertion dreyfusSEM
-    (by decide) (by decide) (by decide) nrv_necessary_for_msg
+    ∀ s', dreyfusModel.IsExogenousSettlement (Function.update dreyfusBg .NRV ↑false) s' →
+      s' .MSG = ⊥ → ¬ dreyfusModel.CausallyEntails s' .MSG true :=
+  Implicative.no_complement_of_negative_assertion nrv_root nrv_open (by decide)
+    nrv_necessary_for_msg
 
-/-- Fact C at (34a): in the Dreyfus context, a consistent completion
+/-- Fact C at (34a). In the Dreyfus context, an exogenous settlement
     realizes MSG exactly when Dreyfus has the nerve — the prerequisite is
     sufficient and necessary, so the *dare* claim's truth value tracks
-    NRV across all consistent resolutions. -/
+    NRV across all resolutions. -/
 theorem msg_iff_nerve :
-    ∀ s', SEM.IsExogenousSettlement dreyfusSEM dreyfusBg s' →
-      s'.get .MSG = none →
-      (SEM.causallyEntails dreyfusSEM s' .MSG true ↔
-       SEM.causallyEntails dreyfusSEM s' .NRV true) :=
-  Implicative.complement_iff_prerequisite dreyfusSEM
-    (by decide) (by decide) nrv_sufficient_for_msg nrv_necessary_for_msg
+    ∀ s', dreyfusModel.IsExogenousSettlement dreyfusBg s' → s' .MSG = ⊥ →
+      (dreyfusModel.CausallyEntails s' .MSG true ↔ dreyfusModel.CausallyEntails s' .NRV true) :=
+  Implicative.complement_iff_prerequisite nrv_root nrv_open nrv_sufficient_for_msg
+    nrv_necessary_for_msg
 
 /-! ### The Finnish implicatives -/
 
@@ -283,20 +282,15 @@ theorem karttunen_manage_matches :
 theorem karttunen_fail_matches :
     Schema.fail.toImplicativeClass = ImplicativeClass.fail := rfl
 
-open Causation (SEM CausalGraph Valuation DecidableValuation) in
 /-- The causal account validates Karttunen's (37): in a felicitous two-way context, at
-every consistent completion the prerequisite is realized iff the complement is — the
+every exogenous settlement the prerequisite is realized iff the complement is — the
 presupposition `Schema.manage` carries, with causal entailment as the condition. -/
-theorem schema_manage_presup {V : Type*} {α : V → Type*}
-    [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
-    (M : SEM V α) [CausalGraph.IsDAG M.graph]
-    {background : Valuation α} {p : V} {xP : α p} {c : V} {xC : α c}
-    (hexo : M.graph.parents p = ∅) (hp : background.get p = none)
-    (hsuf : manageSem M background p xP c xC)
-    (hnec : necessityPresup M background p xP c xC) (s' : Valuation α)
-    (hset : SEM.IsExogenousSettlement M background s') (hc : s'.get c = none) :
-    Schema.manage.condition.presup (SEM.causallyEntails M s' p xP)
-      (SEM.causallyEntails M s' c xC) :=
-  (complement_iff_prerequisite M hexo hp hsuf hnec s' hset hc).symm
+theorem schema_manage_presup {U V : Type*} {α : V → Type*} [DecidableEq V]
+    {M : CausalModel U V α} [M.IsAcyclic] {s : ∀ v, Flat (α v)} {p : V} {xP : α p} {c : V}
+    {xC : α c} (hroot : ∀ w, ¬ M.graph.Adj w p) (hopen : ∀ x, ¬ M.CausallyEntails s p x)
+    (hsuf : manageSem M s p xP c xC) (hnec : necessityPresup M s p xP c xC)
+    (s' : ∀ v, Flat (α v)) (hset : M.IsExogenousSettlement s s') (hc : s' c = ⊥) :
+    Schema.manage.condition.presup (M.CausallyEntails s' p xP) (M.CausallyEntails s' c xC) :=
+  (complement_iff_prerequisite hroot hopen hsuf hnec s' hset hc).symm
 
 end Karttunen1971a

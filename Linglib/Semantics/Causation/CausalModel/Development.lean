@@ -123,6 +123,16 @@ theorem causallyEntails_iff : M.CausallyEntails s v x ↔ s v = ↑x ∨ s v = �
       M.eqn v u y = x :=
   Iff.of_eq (congrFun (WellFounded.fixedPoint_apply (dependsOn_entailsStep s) v) x)
 
+/-- A root the observation leaves unobserved is settled exactly when its equation is constant. -/
+theorem causallyEntails_root_iff {t : ∀ v, Flat (α v)} {v : V} {x : α v}
+    (hroot : ∀ w, ¬ M.graph.Adj w v) (hv : t v = ⊥) :
+    M.CausallyEntails t v x ↔ ∀ u y, M.eqn v u y = x := by
+  rw [causallyEntails_iff, hv]
+  refine ⟨?_, fun h ↦ .inr ⟨rfl, fun w hw ↦ absurd hw (hroot w), fun u y _ ↦ h u y⟩⟩
+  rintro (h | ⟨-, -, h⟩)
+  · exact absurd h Flat.bot_ne_coe
+  · exact fun u y ↦ h u y fun w hw ↦ absurd hw (hroot w)
+
 /-- The strict development settles less than the Kleene one. -/
 theorem Forced.of_causallyEntails (h : M.CausallyEntails s v x) : M.Forced s v x :=
   WellFounded.fixedPoint_le_fixedPoint (dependsOn_entailsStep s) (dependsOn_forcedStep s)
