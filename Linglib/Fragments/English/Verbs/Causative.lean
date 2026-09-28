@@ -100,9 +100,7 @@ def force : Verb := .mkRegular {
 
 /-- "prevent" — blocking causative (barrier addition).
     "X prevented Y from V-ing" entails the effect did NOT occur
-    (¬p in w₀) but would have without X's intervention.
-    Its semantics `preventSem` is the blocking dual of the necessity reading
-    [nadathur-lauer-2020] give *cause*. -/
+    (¬p in w₀) but would have without X's intervention. -/
 def prevent : Verb := .mkRegular {
   form := "prevent"
   frames := [ArgumentFrame.gerund]
