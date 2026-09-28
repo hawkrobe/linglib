@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Duality
-public import Linglib.Core.Order.Bilattice.Kleene
+public import Linglib.Core.Data.Trivalent.Flat
 
 /-!
 # Supervaluation over specification spaces

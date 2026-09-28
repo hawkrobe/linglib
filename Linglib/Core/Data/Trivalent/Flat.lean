@@ -9,23 +9,37 @@ public import Linglib.Core.Data.Trivalent
 public import Linglib.Core.Order.Flat
 
 /-!
-# The knowledge order: `Flat Bool` and the Kleene bilattice
+# The knowledge order on three-valued truth
 
+`Trivalent`'s own order is the truth order `false < indet < true`. Transported along
+`equivFlatBool`, the flat domain `Flat Bool` gives the same carrier its knowledge order, in which
+`indet` lies below both `true` and `false`. Strong Kleene conjunction and disjunction are the
+truth-order operations `⊓`/`⊔`, and they are also monotone for the knowledge order, which is
+[kleene-1952]'s regularity condition; Weak Kleene conjunction is not even monotone for the truth
+order (`meetWeak_not_truthMono`).
 
-`Trivalent`'s native order is the *truth* order `false < indet < true`; `Flat Bool`
-(`equivFlatBool`) carries the *knowledge* order `⊥ ⊑ true`, `⊥ ⊑ false`. Two orders
-on one carrier is a *bilattice*. Strong Kleene `∧`/`∨` are the truth-order lattice
-operations `⊓`/`⊔`; what makes them canonical is **interlacing** — they are monotone
-for the knowledge order as well ([kleene-1952]'s regularity condition), while Weak
-Kleene is not (`meetWeak_not_truthMono`).
+`Flat Bool` has a knowledge meet but only a partial knowledge join (`PartialUnify`): the three
+values lack the glut of Belnap's four-valued bilattice, of which `Trivalent` is the consistent
+part.
 
-`Flat Bool`'s `SemilatticeInf` meet `⊓` is the *consensus* `⊗`; its partial join
-(`PartialUnify`) is the *gullibility* `⊕`, partial because three values lack the `⊤`
-("both") of a full four-valued bilattice — so `Trivalent` is the *consistent fragment*
-of that bilattice. -/
+## Main definitions
+
+* `Trivalent.toFlat`, `Trivalent.equivFlatBool`: `indet ↦ ⊥`, `true ↦ true`, `false ↦ false`.
+
+## Main results
+
+* `Trivalent.truthOrder_ne_knowledgeOrder`: the two orders differ.
+* `Trivalent.toFlat_neg_mono`, `Trivalent.toFlat_inf_mono_left`, `Trivalent.toFlat_sup_mono_left`:
+  Strong Kleene connectives are knowledge-monotone.
+* `Trivalent.meetWeak_not_truthMono`, `Trivalent.joinWeak_not_truthMono`: Weak Kleene ones are
+  not truth-monotone.
+
+## References
+
+* [kleene-1952]
+-/
 
 @[expose] public section
-
 
 namespace Trivalent
 
@@ -79,12 +93,12 @@ theorem toFlat_sup_mono_left {a a' : Trivalent} (b : Trivalent)
 Kleene `⊓` it is not a bilattice operation. -/
 theorem meetWeak_not_truthMono :
     ¬ ∀ a a' b : Trivalent, a ≤ a' → meetWeak a b ≤ meetWeak a' b :=
-  λ h => absurd (h .indet .true .false (by decide)) (by decide)
+  fun h ↦ absurd (h .indet .true .false (by decide)) (by decide)
 
 /-- Weak Kleene disjunction is likewise not interlaced. -/
 theorem joinWeak_not_truthMono :
     ¬ ∀ a a' b : Trivalent, a ≤ a' → joinWeak a b ≤ joinWeak a' b :=
-  λ h => absurd (h .false .indet .true (by decide)) (by decide)
+  fun h ↦ absurd (h .false .indet .true (by decide)) (by decide)
 
 end KnowledgeOrder
 
