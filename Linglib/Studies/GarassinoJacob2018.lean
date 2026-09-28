@@ -4,7 +4,7 @@ public import Linglib.Discourse.QUD.Basic
 public import Linglib.Semantics.Questions.Exhaustivity
 public import Linglib.Fragments.Romance.Italian.PolarityMarking
 public import Linglib.Fragments.Romance.Spanish.PolarityMarking
-public import Linglib.Fragments.Romance.French.Particles
+public import Linglib.Studies.FarkasBruce2010
 public import Linglib.Data.Examples.GarassinoJacob2018
 
 /-!
@@ -27,10 +27,9 @@ antecedent, the dislocated constituent and, where the chapter says, whether the 
 to its antecedent in situational identity or analogy and whether it answers a subquestion. The
 contexts attested for *sì che* and *sí que* lie within the environments the fragments record
 (`rows_siChe_env`, `rows_siQue_env`). French *si*, unlike them, is limited to answering a
-preceding opposite turn, which is what the REV feature of a polarity-reversing answer particle
-([holmberg-2016]) requires: every attested *si* reverses the negation of its antecedent
-(`rows_si_reply`), while *sì che* and *sí que* are attested after antecedents with no negation
-for *si* to reverse (`rows_siChe_siQue_not_reply`).
+preceding opposite turn: every attested *si* is a response of the kind [farkas-bruce-2010] say
+it marks, [reverse, +] (`rows_si_mem_reversePositive`), while *sì che* and *sí que* are
+attested in responses outside it (`rows_siChe_siQue_not_mem_reversePositive`).
 
 ## Implementation notes
 
@@ -42,9 +41,9 @@ for *si* to reverse (`rows_siChe_siQue_not_reply`).
 * The chapter endorses [matic-nikolaeva-2018]'s view that dislocation is no structural means of
   polarity focus but makes the reading available in context; the fragments' `polarityReversal`
   classification of the particles is the form-class view that study contests.
-* A bare reply inherits the PolP of its antecedent turn, as [holmberg-2016] has short rejoinders
-  co-constructed with the PolP of the preceding statement (`Antecedent.polP`). Only an explicit
-  negation puts a negation in it; an inferred one leaves the antecedent's syntax positive.
+* An utterance with a preceding turn, a statement or a polar question, is a
+  `Discourse.Response` to it (`Antecedent.response`), positive since it affirms; an inferred
+  negation, an open question, a modal statement or no antecedent is no such turn.
 * The discourse trees are stated for finitely many worlds, which is what the substrate's strategy
   completeness needs to pass from lattice entailment to alternative entailment.
 
@@ -56,7 +55,6 @@ for *si* to reverse (`rows_siChe_siQue_not_reply`).
 * [buring-2003]
 * [roberts-2012]
 * [hohle-1992]
-* [holmberg-2016]
 * [batllori-hernanz-2013]
 * [poletto-zanuttini-2013]
 -/
@@ -174,18 +172,13 @@ inductive Relation
   | identity | analogy | unstated
   deriving DecidableEq, Repr
 
-/-- The PolP a bare reply inherits from the antecedent: a middle negation from an explicit
-negation, a positive PolP from a polar question or a statement without one, and none from an
-open question or an absent antecedent. -/
-def Antecedent.polP : Antecedent → Option PolP
-  | .explicitNegation => some NegationHeight.middle.toPolP
-  | .explicitQuestion | .inferredNegation | .modal | .positive => some {}
-  | .openQuestion | .absent => none
-
-/-- The alternative a bare answer particle replying to the antecedent confirms, relative to the
-positive alternative, or `none` when the reply is ill formed or has no PolP to inherit. -/
-def Antecedent.reply (x : Antecedent) (a : AnswerParticle) : Option Polarity :=
-  x.polP.bind (·.answer a)
+/-- The response a polarity-focus utterance makes to a preceding turn, if the antecedent is one:
+an affirmation after a negative statement, a positive statement or a polar question. -/
+def Antecedent.response : Antecedent → Option Discourse.Response
+  | .explicitNegation => some ⟨.assertion, .negative, .positive⟩
+  | .positive => some ⟨.assertion, .positive, .positive⟩
+  | .explicitQuestion => some ⟨.polarQuestion, .positive, .positive⟩
+  | .inferredNegation | .modal | .openQuestion | .absent => none
 
 /-- The environment a polarity-focus utterance occupies: correction after a negative antecedent,
 contrast otherwise. -/
@@ -231,17 +224,19 @@ theorem rows_siQue_env : ∀ r ∈ rows, r.means = .siQue →
     r.antecedent.env ∈ Spanish.PolarityMarking.siQue.environments := by
   decide
 
-/-- Every attested French *si* is a well-formed reversing reply to its antecedent, confirming the
-positive alternative. -/
-theorem rows_si_reply : ∀ r ∈ rows, r.means = .siParticle →
-    r.antecedent.reply French.Particles.si = some .positive := by
+/-- Every attested French *si* answers a preceding opposite turn: it is a [reverse, +]
+response. -/
+theorem rows_si_mem_reversePositive : ∀ r ∈ rows, r.means = .siParticle →
+    ∃ x ∈ r.antecedent.response, x ∈ FarkasBruce2010.reversePositive := by
   decide
 
-/-- *Sì che* and *sí que* are attested where a reply by *si* would be ill formed, after a polar
+/-- *Sì che* and *sí que* are attested in responses that are not [reverse, +], after a polar
 question and after a positive statement: they are not limited to answering an opposite turn. -/
-theorem rows_siChe_siQue_not_reply :
-    (∃ r ∈ rows, r.means = .siChe ∧ r.antecedent.reply French.Particles.si = none) ∧
-      ∃ r ∈ rows, r.means = .siQue ∧ r.antecedent.reply French.Particles.si = none := by
+theorem rows_siChe_siQue_not_mem_reversePositive :
+    (∃ r ∈ rows, r.means = .siChe ∧
+      ∃ x ∈ r.antecedent.response, x ∉ FarkasBruce2010.reversePositive) ∧
+    ∃ r ∈ rows, r.means = .siQue ∧
+      ∃ x ∈ r.antecedent.response, x ∉ FarkasBruce2010.reversePositive := by
   decide
 
 /-- Every utterance the chapter reads as answering a subquestion stands in situational analogy to

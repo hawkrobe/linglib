@@ -1,29 +1,34 @@
 module
 
-public import Linglib.Semantics.Questions.Answering
+public import Linglib.Syntax.PolarInterrogative
 public import Linglib.Semantics.Questions.Hamblin
 public import Linglib.Fragments.English.Particles
 public import Linglib.Fragments.Japanese.Particles
 public import Linglib.Fragments.Romance.French.Particles
 public import Linglib.Fragments.Swedish.Particles
+public import Linglib.Studies.FarkasBruce2010
 public import Linglib.Data.Examples.Holmberg2016
 
 /-!
 # Holmberg (2016): The Syntax of Yes and No
 
-This file formalizes [holmberg-2016]'s account of answers to yes–no questions. A question
-contains an unvalued polarity head whose two values yield the Hamblin set of the question
-(`questionSet`), and an answer is a full sentence: a focused valued polarity feature, spelled
-out by a particle or an echoed verb, merged with the PolP inherited from the question and
-eliding it, so that it chooses one of the two alternatives (`smul_mem_alt`). The two systems for
-answering negative questions follow from the syntax of negation (`Question.PolP.answer`): a
-middle negation values the polarity head before the particle can, so a plain affirmative clashes
-and the negative particle confirms the negative alternative, while a low negation is out of
-reach, so *yes* confirms the negative alternative and *no* is a double negation. English
-speakers who read *not* low and those who read it middle both take a bare answer to *Is John
-not coming?* to mean that he is not coming (`negative_neutralization`); an adverb preceding
-*not* forces the low reading, and in Swedish, which has no low negation, an adverb screens the
-middle negation from the polarity head to the same effect (`swedish_adverb`).
+This file formalizes [holmberg-2016]'s account of answers to yes–no questions. A polar
+interrogative contains an unvalued polarity head whose two values yield the Hamblin set it
+denotes, the same for a negative interrogative as for its positive counterpart
+(`PolarInterrogative.denote_eq_polar_radical`), and an answer is a full sentence: a focused
+valued polarity feature, spelled out by a particle or an echoed verb, merged with the clause
+inherited from the question and eliding it, so that it chooses one of the two alternatives
+(`smul_mem_alt`). The particles of
+English, Swedish, French and Japanese spell out the features `english`, `swedish`, `french` and
+`japanese`. The two systems for answering negative questions follow from the syntax of negation
+(`AnswerFeature.answer`): a middle negation values the polarity head before the particle can,
+so a plain affirmative clashes and the negative particle confirms the negative alternative,
+while a low negation is out of reach, so *yes* confirms the negative alternative and *no* is a
+double negation. English speakers who read *not* low and those who read it middle both take a
+bare answer to *Is John not coming?* to mean that he is not coming (`negative_neutralization`);
+an adverb preceding *not* forces the low reading, and in Swedish, which has no low negation, an
+adverb screens the middle negation from the polarity head to the same effect
+(`swedish_adverb`).
 
 Section 4.4 defines the polarity-based system as the one lacking low negation
 (`PolarityBased`, equivalently every negation height polarity-based, `polarityBased_iff`). Such a
@@ -31,9 +36,10 @@ language has no negative neutralization (`PolarityBased.answer_ne_negative`); Sw
 negation is never low, is one (`swedish_polarityBased`), so confirming the positive alternative
 of a negative question takes the polarity-reversing *jo* (`swedish_negative_question`), which a
 truth-based configuration never needs (`no_reversal_needed_truth_based`). Crediting the REV
-feature to [farkas-bruce-2010], the mechanism derives their characterization of a reversing
-affirmative as [reverse, +] (`reverse_pos_of_answer_eq_some`). Positive-bias questions carry a
-high negation outside the PolP and are answered like neutral questions
+feature to [farkas-bruce-2010], the mechanism derives what they say *si* and *doch* mark: the
+answers a reversing feature gives are their [reverse, +] answers
+(`responses_reversing_eq_reversePositive`). Positive-bias questions carry a high negation
+outside the inherited clause and are answered like neutral questions
 (`high_answers_like_neutral`). The mechanism predicts the judgment of every example answered by
 a single particle of the study, whose question is neutral or whose negation the annotation
 locates (`judgment_iff_predicted`).
@@ -41,16 +47,18 @@ locates (`judgment_iff_predicted`).
 ## Implementation notes
 
 * An answer is computed as a polarity relative to the question's positive alternative
-  (`Question.PolP.answer`); the alternative it confirms is that polarity acting on the positive
+  (`AnswerFeature.answer`); the alternative it confirms is that polarity acting on the positive
   alternative. For *Har Johan nångång inte kommit i tid?* the positive alternative is that Johan
   has always been on time.
 * Section 4.7 revises the height criterion: what matters is whether the negation can value the
-  polarity head (`Question.PolP.ValuedByNegation`), which is how Thai questions come out
+  polarity head (`ClauseNegation.ValuesHead`), which is how Thai questions come out
   truth-based. Thai and the Chinese question types (Section 4.9) are not formalized, nor are
   verb-echo answers and the structure of Finnish and Thai answers (Chapter 3), the two versions
   of *no* of Section 4.4, the higher-order alternative of positive-bias questions (Section 4.8),
   the table of languages with a reversing affirmative particle, and the global survey of
   Section 4.2.
+* The book discusses French *oui* and *si* but not *non*, which `french` gives [−Pol], as the
+  negative particle of every language the book discusses.
 
 ## References
 
@@ -62,67 +70,59 @@ locates (`judgment_iff_predicted`).
 
 namespace Holmberg2016
 
-open Question
+open Question Discourse Semantics
 
 variable {W : Type*}
 
 /-! ### The question variable -/
 
-/-- The Hamblin set of the question with PolP `q` and positive alternative `p`: the primary
-alternative and its negation. -/
-def questionSet (q : PolP) (p : Set W) : Question W := polar (q.polarity • p)
-
-/-- Every question with positive alternative `p`, negative or not, denotes the Hamblin set of
-`p`; the questions differ in which alternative is primary (`PolP.polarity`). -/
-theorem questionSet_eq (q : PolP) (p : Set W) : questionSet q p = polar p := polar_smul _ _
-
-/-- A yes–no question with nontrivial positive alternative offers exactly two alternatives, the
-two values of its polarity variable. -/
-theorem alt_questionSet (q : PolP) {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    alt (questionSet q p) = {p, pᶜ} := by
-  rw [questionSet_eq]
-  exact alt_polar_of_nontrivial hne hnu
-
 /-- An answer does not assert but chooses between the two alternatives of the question
 (Section 5.1): whatever polarity it gives the positive alternative yields one of them. -/
-theorem smul_mem_alt (q : PolP) {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
-    (s : Polarity) : s • p ∈ alt (questionSet q p) := by
-  rw [alt_questionSet q hne hnu]
+theorem smul_mem_alt {q : PolarInterrogative W} (hne : q.radical ≠ ∅)
+    (hnu : q.radical ≠ Set.univ) (s : Polarity) : s • q.radical ∈ alt ⟦q⟧ := by
+  rw [PolarInterrogative.alt_denote hne hnu]
   cases s <;> simp
 
-/-- A neutral question. -/
-def neutral : PolP := {}
+/-! ### The particles -/
 
-/-- The negative question with a low negation. -/
-def negLow : PolP := NegationHeight.low.toPolP
+/-- The features of the English particles. -/
+def english : English.PolarityParticle → AnswerFeature
+  | .yes => .value .positive
+  | .no => .value .negative
 
-/-- The negative question with a middle negation. -/
-def negMiddle : PolP := NegationHeight.middle.toPolP
+/-- The features of the Swedish particles: *jo* is [+Pol, REV]. -/
+def swedish : Swedish.PolarityParticle → AnswerFeature
+  | .ja => .value .positive
+  | .nej => .value .negative
+  | .jo => .reversing
 
-/-- The positive-bias negative question, with a high negation. -/
-def negHigh : PolP := NegationHeight.high.toPolP
+/-- The features of the French particles: *si* is [+Pol, REV]. -/
+def french : French.PolarityParticle → AnswerFeature
+  | .oui => .value .positive
+  | .non => .value .negative
+  | .si => .reversing
 
-/-- A middle negation screened from the polarity head by a preceding adverb, as in Swedish
-*Har Johan nångång inte kommit i tid?*. -/
-def screened : PolP := ⟨some .middle, true⟩
+/-- The features of the Japanese particles. -/
+def japanese : Japanese.PolarityParticle → AnswerFeature
+  | .un => .value .positive
+  | .uun => .value .negative
 
 /-! ### English (Section 4.3) -/
-
-open English.Particles (yes no)
 
 /-- Negative neutralization: speakers who read *not* low take *yes* to confirm that John is not
 coming, speakers who read it middle take *no* to, so the two answers mean the same. -/
 theorem negative_neutralization :
-    negLow.answer yes = some .negative ∧ negMiddle.answer no = some .negative := by
+    (english .yes).answer (.height .low) = some .negative ∧
+      (english .no).answer (.height .middle) = some .negative := by
   decide
 
 /-- With the middle reading of *not*, bare *yes* is not a well-formed answer. -/
-theorem yes_ill_formed_middle : negMiddle.answer yes = none := by decide
+theorem yes_ill_formed_middle : (english .yes).answer (.height .middle) = none := by decide
 
 /-- With the low reading, *no* is grammatically a double negation confirming the positive
 alternative; since bare *no* is parsed as the simpler plain negation, the continuation of *No,
 he is* is compulsory. -/
-theorem no_double_negation : negLow.answer no = some .positive := by decide
+theorem no_double_negation : (english .no).answer (.height .low) = some .positive := by decide
 
 /-! ### The polarity-based system (Section 4.4) -/
 
@@ -135,24 +135,20 @@ instance (N : Finset NegationHeight) : Decidable (PolarityBased N) :=
 
 /-- A language is polarity-based iff each of its negation heights is. -/
 theorem polarityBased_iff {N : Finset NegationHeight} :
-    PolarityBased N ↔ ∀ n ∈ N, n.predictedSystem = .polarityBased := by
-  refine ⟨fun hN n hn ↦ ?_, fun H hl ↦ absurd (H _ hl) (by decide)⟩
-  cases n
-  exacts [absurd hn hN, rfl, rfl]
+    PolarityBased N ↔ ∀ h ∈ N, h.predictedSystem = .polarityBased := by
+  refine ⟨fun hN h hh ↦ ?_, fun H hl ↦ absurd (H _ hl) (by decide)⟩
+  cases h
+  exacts [absurd hh hN, rfl, rfl]
 
-/-- A polarity-based language has no negative neutralization: no plain affirmative particle
-confirms the negative alternative of a negative question, unless an adverb screens the
-negation. -/
+/-- A polarity-based language has no negative neutralization: no affirmative feature confirms
+the negative alternative of a negative question, unless an adverb screens the negation. -/
 theorem PolarityBased.answer_ne_negative {N : Finset NegationHeight} (hN : PolarityBased N)
-    {n : NegationHeight} (hn : n ∈ N) {a : AnswerParticle} (ha : a.assigns = .positive)
-    (hr : a.reverses = false) : n.toPolP.answer a ≠ some .negative := by
-  rw [ne_eq, ← NegationHeight.predictedSystem_eq_truthBased_iff n ha hr,
-    polarityBased_iff.1 hN n hn]
+    {h : NegationHeight} (hh : h ∈ N) :
+    (AnswerFeature.value .positive).answer (.height h) ≠ some .negative := by
+  rw [ne_eq, ← NegationHeight.predictedSystem_eq_truthBased_iff h, polarityBased_iff.1 hN h hh]
   decide
 
 /-! ### Swedish (Section 4.5) and the reversing particles -/
-
-open Swedish.Particles (ja nej jo)
 
 /-- The heights of Swedish negation: middle, and high in positive-bias questions
 (Section 4.8). Swedish has no low negation, hence no double negation
@@ -162,88 +158,94 @@ def swedishNegation : Finset NegationHeight := {.middle, .high}
 theorem swedish_polarityBased : PolarityBased swedishNegation := by decide
 
 /-- *Ja* never confirms the negative alternative of a Swedish negative question. -/
-theorem swedish_ja_ne_negative {n : NegationHeight} (hn : n ∈ swedishNegation) :
-    n.toPolP.answer ja ≠ some .negative :=
-  swedish_polarityBased.answer_ne_negative hn rfl rfl
+theorem swedish_ja_ne_negative {h : NegationHeight} (hh : h ∈ swedishNegation) :
+    (swedish .ja).answer (.height h) ≠ some .negative :=
+  swedish_polarityBased.answer_ne_negative hh
 
 /-- To *Har Johan inte kommit?* the plain affirmative *ja* is ill formed, *nej* confirms that he
 has not come, and the reversing *jo* confirms that he has. -/
 theorem swedish_negative_question :
-    negMiddle.answer ja = none ∧ negMiddle.answer nej = some .negative ∧
-      negMiddle.answer jo = some .positive := by
+    (swedish .ja).answer (.height .middle) = none ∧
+      (swedish .nej).answer (.height .middle) = some .negative ∧
+      (swedish .jo).answer (.height .middle) = some .positive := by
   decide
 
 /-- *Har Johan nångång inte kommit i tid?*: the adverb intervening between the negation and the
 polarity head lets *ja* confirm the negative alternative, although Swedish has no low
 negation. -/
 theorem swedish_adverb :
-    screened.answer ja = some .negative ∧ screened.answer nej = some .positive := by
+    (swedish .ja).answer .screened = some .negative ∧
+      (swedish .nej).answer .screened = some .positive := by
   decide
-
-open French.Particles (oui si)
 
 /-- To *Tu n'es pas fatigué?* the plain affirmative *oui* is ill formed and the reversing *si*
 confirms the positive alternative. -/
 theorem french_negative_question :
-    negMiddle.answer oui = none ∧ negMiddle.answer si = some .positive := by
+    (french .oui).answer (.height .middle) = none ∧
+      (french .si).answer (.height .middle) = some .positive := by
   decide
 
-/-- A reversing affirmative particle such as *si* or *jo* is [reverse, +] in the terms of
-[farkas-bruce-2010], to whom the REV feature is credited and who so characterize *si* and German
-*doch*: a well-formed answer by it confirms the positive alternative, whose polarity relative to
-the question's primary alternative is negative. -/
-theorem reverse_pos_of_answer_eq_some {a : AnswerParticle} (hr : a.reverses = true)
-    (ha : a.assigns = .positive) {q : PolP} {s : Polarity} (h : q.answer a = some s) :
-    s = .positive ∧ s * q.polarity = .negative := by
-  obtain ⟨rfl, hq⟩ := PolP.eq_assigns_and_polarity_of_reverses hr h
-  rw [ha, hq]
-  exact ⟨rfl, rfl⟩
+/-- REV, credited to [farkas-bruce-2010], is what they say *si* and *doch* mark: to questions
+whose negations include one inside the inherited clause, a reversing feature such as that of
+*si* or *jo* gives exactly the answers that are [reverse, +]. -/
+theorem responses_reversing_eq_reversePositive {N : Set ClauseNegation}
+    (hN : ∃ n ∈ N, n.InClause) :
+    AnswerFeature.reversing.responses N =
+      FarkasBruce2010.reversePositive ∩ {x | x.reactsTo = .polarQuestion} := by
+  rw [AnswerFeature.responses_reversing hN]
+  ext x
+  simp only [FarkasBruce2010.reversePositive, Set.mem_inter_iff, Set.mem_ofPred_eq]
+  tauto
 
 /-- Reversing particles are needed only where a negation values the polarity head: in a
 truth-based configuration every particle yields a well-formed answer, which is why no language
 with a reversing affirmative particle clearly employs the truth-based system. -/
-theorem no_reversal_needed_truth_based (a : AnswerParticle) : negLow.answer a ≠ none :=
-  PolP.answer_ne_none_of_negationInside (by decide) (by decide)
+theorem no_reversal_needed_truth_based (f : AnswerFeature) : f.answer (.height .low) ≠ none :=
+  f.answer_ne_none_of_inClause (by decide) (by decide)
 
 /-! ### Japanese (Section 4.1) -/
-
-open Japanese.Particles (un uun)
 
 /-- On the prediction of Section 4.10 that the Japanese negation in a negative-bias question does
 not value the polarity head, being low, *un* confirms that he does not drink coffee and *uun*
 that he does. -/
 theorem japanese_negative_question :
-    negLow.answer un = some .negative ∧ negLow.answer uun = some .positive := by
+    (japanese .un).answer (.height .low) = some .negative ∧
+      (japanese .uun).answer (.height .low) = some .positive := by
   decide
 
 /-! ### Positive-bias questions (Section 4.8) -/
 
 /-- A positive-bias negative question, with the negation in the C-domain above the polarity
 head, is answered like a neutral question. -/
-theorem high_answers_like_neutral (a : AnswerParticle) : negHigh.answer a = neutral.answer a :=
-  rfl
+theorem high_answers_like_neutral (f : AnswerFeature) :
+    f.answer (.height .high) = f.answer .absent := by
+  cases f <;> rfl
 
 /-! ### The examples -/
 
 open Data.Examples
 
-/-- The answer particles of the examples. -/
-def particles : List AnswerParticle := [yes, no, ja, nej, jo, oui, si, un, uun]
+/-- The features of each language's particles, by Glottocode and spelling. -/
+def featureTable : List (String × List (String × AnswerFeature)) :=
+  [("stan1293", [English.PolarityParticle.yes, .no].map fun p ↦ (p.form, english p)),
+    ("swed1254", [Swedish.PolarityParticle.ja, .nej, .jo].map fun p ↦ (p.form, swedish p)),
+    ("stan1290", [French.PolarityParticle.oui, .non, .si].map fun p ↦ (p.form, french p)),
+    ("nucl1643", [Japanese.PolarityParticle.un, .uun].map fun p ↦ (p.form, japanese p))]
 
-/-- The PolP of a negative question, by where the annotation locates its negation. -/
-def negationTable : List (String × PolP) :=
-  [("low", negLow), ("middle", negMiddle), ("middle behind an adverb", screened),
-    ("high", negHigh)]
+/-- The negation of a question, by where the annotation locates it. -/
+def negationTable : List (String × ClauseNegation) :=
+  [("low", .height .low), ("middle", .height .middle), ("middle behind an adverb", .screened),
+    ("high", .height .high)]
 
 /-- The alternatives an example confirms, as polarities relative to the positive alternative. -/
 def polarityTable : List (String × Polarity) := [("p", .positive), ("not p", .negative)]
 
-/-- An example of a single particle answering a question whose PolP the example fixes. -/
+/-- An example of a single particle answering a question whose negation the example fixes. -/
 structure Row where
-  /-- The PolP of the question. -/
-  polP : PolP
-  /-- The answer. -/
-  particle : AnswerParticle
+  /-- The negation of the question. -/
+  negation : ClauseNegation
+  /-- The feature of the answer. -/
+  feature : AnswerFeature
   /-- The alternative the answer confirms or is intended to confirm, if the example says. -/
   target : Option Polarity
   /-- The judgment of the answer. -/
@@ -251,27 +253,29 @@ structure Row where
   deriving DecidableEq, Repr
 
 /-- The row of an example: its question is neutral or its negation located, and its answer is a
-single particle of `particles`. -/
+single particle of one of the four languages. -/
 def Row.ofExample (ex : LinguisticExample) : Option Row := do
-  let polP ← if ex.feature? "question" = some "neutral" then some neutral
+  let negation ← if ex.feature? "question" = some "neutral" then some .absent
     else ex.parse? "negation" negationTable
-  let particle ← particles.find? (ex.feature? "answer" == some ·.form)
+  let table ← List.lookup ex.language featureTable
+  let feature ← ex.parse? "answer" table
   let target := ex.parse? "confirms" polarityTable <|> ex.parse? "intended" polarityTable
-  pure ⟨polP, particle, target, ex.judgment⟩
+  pure ⟨negation, feature, target, ex.judgment⟩
 
 /-- The rows of the examples. -/
 def rows : List Row := Examples.all.filterMap Row.ofExample
 
 /-- The answer is well formed and confirms the alternative the example targets, if any. -/
 def Row.Predicted (r : Row) : Prop :=
-  r.polP.answer r.particle ≠ none ∧ (r.target = none ∨ r.polP.answer r.particle = r.target)
+  r.feature.answer r.negation ≠ none ∧
+    (r.target = none ∨ r.feature.answer r.negation = r.target)
 
 instance : DecidablePred Row.Predicted := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The rows include *Har Johan inte kommit?* answered by *\*Ja* and by *Jo* (Section 4.5). -/
 theorem kommit_mem_rows :
-    ⟨negMiddle, ja, none, .unacceptable⟩ ∈ rows ∧
-      ⟨negMiddle, jo, some .positive, .acceptable⟩ ∈ rows := by
+    ⟨.height .middle, swedish .ja, none, .unacceptable⟩ ∈ rows ∧
+      ⟨.height .middle, swedish .jo, some .positive, .acceptable⟩ ∈ rows := by
   decide
 
 /-- The mechanism predicts the judgment of every example answered by a single particle of the

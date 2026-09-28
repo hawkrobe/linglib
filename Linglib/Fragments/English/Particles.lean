@@ -1,44 +1,52 @@
 module
 
 public import Linglib.Syntax.Category.Particle.Basic
-public import Linglib.Semantics.Questions.Answering
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # English particles
 
-This file defines the English answer particles and the meta-question adverb *quick*. The
-answer particles *yes* and *no* are pro-sentential: *yes* assigns positive and *no* negative
-polarity to the elided clause, and English has no polarity-reversing particle. In answer to a
-negative question, as Holmberg describes, a bare *no* confirms the negative alternative, *Is
-John not coming? No*, and the affirmative answer needs a continuation, *No, he is*, since the
-double-negation reading of the bare particle is not taken up. *Quick* or *quickly* before a
+This file defines the English polarity particles and the meta-question adverb *quick*. The
+polarity particles *yes* and *no* answer polar questions and respond to assertions, and English
+has no polarity-reversing particle ([holmberg-2016]). What each particle marks is a matter of
+analysis: a valued polarity feature for [holmberg-2016], features of the response for
+[farkas-bruce-2010]. *Quick* or *quickly* before a
 question tells the addressee to answer without delay; Dayal groups it with the meta-question
 particles, which occur in matrix questions and quotations and are ungrammatical embedded,
 *Mary asked Sue quick where she hid the matza*.
 
 ## Main definitions
 
-* `English.Particles.yes`, `English.Particles.no`: the answer particles.
+* `English.PolarityParticle`: the polarity particles.
 * `English.Particles.quick`: the meta-question adverb.
 
 ## References
 
 * [holmberg-2016]
+* [farkas-bruce-2010]
 * [dayal-2025]
 -/
 
 @[expose] public section
 
+namespace English
+
+/-- The English polarity particles. -/
+inductive PolarityParticle where
+  /-- *yes*. -/
+  | yes
+  /-- *no*. -/
+  | no
+  deriving DecidableEq, Repr, Fintype
+
+/-- The spelling of a polarity particle. -/
+def PolarityParticle.form : PolarityParticle → String
+  | .yes => "yes"
+  | .no => "no"
+
+end English
+
 namespace English.Particles
-
-/-! ### Answer particles -/
-
-/-- *yes*, the affirmative answer particle. -/
-def yes : Question.AnswerParticle := { form := "yes", assigns := .positive }
-
-/-- *no*, the negative answer particle, which alone confirms the negative alternative of a
-negative question. -/
-def no : Question.AnswerParticle := { form := "no", assigns := .negative }
 
 /-! ### Meta-question adverb -/
 

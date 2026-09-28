@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Polarity.Marking
-public import Linglib.Semantics.Questions.Answering
 
 /-!
 # German polarity marking
@@ -10,8 +9,8 @@ German marks a switch from negative to positive polarity with Verum focus, a hig
 accent on the finite verb, [hohle-1992], and not with a sentence-internal affirmative particle:
 in the production study of [turco-braun-dimroth-2014] speakers never produced *schon* or
 *wohl* in that function, and used *doch* only as a separate utterance preceding a Verum focus
-utterance in corrections. The answer particles *ja*, *nein* and the polarity-reversing *doch*
-follow [holmberg-2016]. The clause-internal modal particle *doch* lives in `German/Particles`,
+utterance in corrections. The polarity particles *ja*, *nein* and *doch* and the
+clause-internal modal particle *doch* live in `German/Particles`,
 and VERUM in questions in `Question.VerumFocus`.
 
 ## References
@@ -42,17 +41,5 @@ abbrev dochPreUtterance : PolarityMarker where
   form := some "doch"
   environments := {.correction}
   strategy := .polarityReversal
-
-/-! ### Answer particles -/
-
-/-- *ja*, the affirmative answer particle. -/
-def jaAnswer : Question.AnswerParticle := { form := "ja", assigns := .positive }
-
-/-- *nein*, the negative answer particle. -/
-def nein : Question.AnswerParticle := { form := "nein", assigns := .negative }
-
-/-- *doch*, the polarity-reversing answer particle: *Kommt er nicht?* -- *Doch*, he is coming. -/
-def dochAnswer : Question.AnswerParticle :=
-  { form := "doch", assigns := .positive, reverses := true }
 
 end German.PolarityMarking
