@@ -23,9 +23,9 @@ complement, negative ones (*fail*, *forget*) its negation.
 /-! ### Force-dynamic causatives -/
 
 /-- Force-dynamic classification of causative verbs by the causal mechanism
-the verb lexicalizes. `Causative.toSemantics` (in
-`Semantics/Causation/Interpretation.lean`) maps each variant to its truth
-conditions. -/
+the verb lexicalizes. Studies interpret the classes: [nadathur-lauer-2020] analyse *cause* as
+causal necessity and *make* as causal sufficiency, and count *let* and *force* as sufficiency
+causatives too. -/
 inductive Causative where
   /-- Counterfactual dependence: removing the cause blocks the effect (*cause*). -/
   | cause
@@ -38,16 +38,3 @@ inductive Causative where
   /-- Blocking: the causer adds a barrier so the effect cannot occur (*prevent*). -/
   | prevent
   deriving DecidableEq, Repr
-
-namespace Causative
-
-/-- The variant asserts causal sufficiency: `make`, `force`, and `enable`
-share sufficiency truth conditions (`AssertsSufficiency.toSemantics_eq`). -/
-def AssertsSufficiency (b : Causative) : Prop :=
-  b = make ∨ b = force ∨ b = enable
-
-instance : DecidablePred AssertsSufficiency := fun b => by
-  unfold AssertsSufficiency; infer_instance
-
-end Causative
-

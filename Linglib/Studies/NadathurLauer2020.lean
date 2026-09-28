@@ -2,44 +2,48 @@ module
 
 public import Linglib.Semantics.Causation.Necessity
 public import Linglib.Semantics.Causation.Sufficiency
+public import Linglib.Semantics.Causation.Prevention
 public import Linglib.Semantics.Causation.Implicative
 public import Linglib.Studies.Karttunen1971a
 public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Semantics.Causation.Interpretation
-public import Linglib.Semantics.Causation.Verb
 
 /-!
 # Nadathur and Lauer (2020): Causal Necessity, Causal Sufficiency, and Causative Verbs
 
-This file formalizes the three scenarios of [nadathur-lauer-2020] and its constraint on
-volitional action. Periphrastic *cause* asserts causal necessity and periphrastic *make*
-causal sufficiency, two notions that come apart over a structural-equation dynamics after
-[pearl-2000]: in the fire scenario the drought is necessary but not sufficient for the
+This file formalizes the lexical entries, the three scenarios, and the constraint on volitional
+action of Nadathur and Lauer. Periphrastic *cause* asserts causal necessity and periphrastic
+*make* causal sufficiency (`denotation`), two notions that come apart over a structural-equation
+dynamics after Pearl: in the fire scenario the drought is necessary but not sufficient for the
 fire, so *cause* is felicitous and *make* is not until the missing precondition is fixed
-(`Fire.make_infelicitous_for_fire`, `Fire.make_felicitous_for_fire_with_known_line`); in the
-bus scenario the visit is sufficient but not necessary (`Bus.make_felicitous_for_bus`,
+(`Fire.make_infelicitous_for_fire`, `Fire.make_felicitous_for_fire_with_known_line`); in the bus
+scenario the visit is sufficient but not necessary (`Bus.make_felicitous_for_bus`,
 `Bus.cause_infelicitous_for_bus`); and in the lighthouse scenario the temporal location
-constraint blocks *make* for the earlier of two necessary causes while *cause* survives for
-both (`Lighthouse.make_felicitous_for_storms`, `Lighthouse.make_infelicitous_for_earthquake`).
-The constraint on volitional action separates *make* from *let*: a permission scenario
-satisfies bare sufficiency yet fails it (`Volitional.volitionalActionConstraint`), while
-command and persuasion satisfy it. The paper's observation against an entailment-based
-taxonomy, that necessity implications are cancellable and reinforceable while sufficiency
-implications are not, closes the file.
+constraint blocks *make* for the earlier of two necessary causes while *cause* survives for both
+(`Lighthouse.make_felicitous_for_storms`, `Lighthouse.make_infelicitous_for_earthquake`). *Let*
+and *force* are sufficiency causatives as well (`denotation_eq_makeSem`), and the constraint on
+volitional action separates *make* from *let*: a permission scenario satisfies bare sufficiency
+yet fails it (`Volitional.volitionalActionConstraint`), while command and persuasion satisfy it.
+The paper's observation against an entailment-based taxonomy, that necessity implications are
+cancellable and reinforceable while sufficiency implications are not, closes the file.
 
 ## Implementation notes
 
-The substrate's necessity semantics implements the actual-cause formulation of
-[nadathur-2023-implicatives] rather than the paper's own definition, a move the paper
-itself anticipates in suggesting that necessity causatives may be better explicated through
-a definition of actual cause; the sufficiency semantics is the sufficiency clause of the
-paper's definition, and its non-inevitability precondition is not represented. Preemption
-is not formalized, following the paper's decision to set it aside.
+The substrate's necessity semantics implements Nadathur's 2023 actual-cause formulation rather
+than the paper's own definition, a move the paper itself anticipates in suggesting that
+necessity causatives may be better explicated through a definition of actual cause; the
+sufficiency semantics is the paper's Definition (23), both clauses, over the strict development.
+`denotation` takes the background situation as given: the entries in (25) also remove the cause
+from the background and require that the cause occurred, and neither step is represented.
+Preemption is not formalized, following the paper's decision to set it aside. The paper gives no
+entry for *prevent*; `denotation` fills that class with the blocking semantics of Sloman, Barbey
+and Hotaling.
 
 ## TODO
 
 One necessity proof runs under a raised recursion limit; a structural proof through the
-parent equations would remove it.
+parent equations would remove it. The concluding section suggests that lexical causatives
+assert both necessity and sufficiency; the English fragment classes *kill* and *melt* with
+*make*, and `denotation` has no class for the conjunction.
 
 ## References
 
@@ -47,6 +51,7 @@ parent equations would remove it.
 * [pearl-2000]
 * [nadathur-2023-implicatives]
 * [karttunen-1971]
+* [sloman-barbey-hotaling-2009]
 -/
 
 @[expose] public section
@@ -56,6 +61,48 @@ namespace NadathurLauer2020
 open Causation Causation.Mechanism Causation.SEM
 open Causation.Sufficiency (makeSem)
 open Causation.Necessity (causeSem)
+open Causation.Prevention (preventSem)
+
+/-! ### Lexical entries -/
+
+section Denotation
+
+variable {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V] [DecidableValuation α]
+  (M : SEM V α) [CausalGraph.IsDAG M.graph]
+
+/-- A sufficiency causative asserts causal sufficiency. Besides *make* the class holds *let*,
+which differs from *make* only in its constraint on background situations (Section 4.1), and
+*force* (footnote 25). -/
+def IsSufficiencyCausative (b : Causative) : Prop :=
+  b = .make ∨ b = .force ∨ b = .enable
+
+instance : DecidablePred IsSufficiencyCausative := fun _ ↦
+  inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+
+/-- `denotation M b` is the truth condition of the causative class `b` over the dynamics `M`.
+*Cause* asserts causal necessity and the sufficiency causatives assert causal sufficiency
+(Section 3.4); *prevent*, which the paper leaves aside, takes the blocking semantics of
+[sloman-barbey-hotaling-2009]. -/
+def denotation : Causative → Valuation α → ∀ c : V, α c → ∀ e : V, α e → Prop
+  | .cause => causeSem M
+  | .make | .force | .enable => makeSem M
+  | .prevent => preventSem M
+
+variable {M}
+
+theorem denotation_eq_makeSem {b : Causative} (h : IsSufficiencyCausative b) :
+    denotation M b = makeSem M := by
+  rcases h with rfl | rfl | rfl <;> rfl
+
+/-- A sufficiency causative entails that the cause suffices for the effect by the eager
+counterfactual test (`causallySufficient`), which is weaker than `makeSem`'s strict development. -/
+theorem causallySufficient_of_denotation {b : Causative} (hb : IsSufficiencyCausative b)
+    {bg : Valuation α} {c : V} {xC : α c} {e : V} {xE : α e}
+    (h : denotation M b bg c xC e xE) : causallySufficient M bg c xC e xE := by
+  rw [denotation_eq_makeSem hb] at h
+  exact causallySufficient_of_causallyEntails h.2
+
+end Denotation
 
 namespace Fire
 
@@ -582,7 +629,7 @@ def karttunenOfImplicative (b : Polarity) : Schema := ⟨.necessaryAndSufficient
 
     [nadathur-lauer-2020]'s insight: these verbs differ in causal
     MECHANISM (sufficiency vs necessity) despite sharing the same
-    ENTAILMENT PATTERN. See `cause_make_same_cell_different_mechanism`. -/
+    ENTAILMENT PATTERN. See `cause_make_same_cell_different_denotation`. -/
 def karttunenOfCausative : Causative → Schema
   | .make | .force | .enable | .cause => ⟨.sufficient, .positive⟩
   | .prevent => ⟨.sufficient, .negative⟩
@@ -604,127 +651,37 @@ theorem prevent_karttunen_class :
 theorem cause_karttunen_class :
     karttunenOfCausative .cause = Schema.force := rfl
 
-/-- `cause` and `make` have the same Karttunen entailment cell
-    (sufficient-only) despite having different causal mechanisms.
-    This is the central insight of [nadathur-lauer-2020]: same
-    entailment pattern ≠ same truth conditions. The difference is
-    kernel-checked at `NadathurLauer2020.necessity_cancellable` (the Bus
-    scenario: `makeSem` holds while `causeSem` fails). -/
-theorem cause_make_same_cell_different_mechanism :
+/-- *cause* and *make* share [karttunen-1971]'s sufficient-only entailment cell yet denote
+different relations: in the bus scenario *make* holds and *cause* fails
+(`necessity_cancellable`). -/
+theorem cause_make_same_cell_different_denotation :
     karttunenOfCausative .cause = karttunenOfCausative .make ∧
-    Causative.cause ≠ .make := ⟨rfl, by decide⟩
+    denotation Bus.busSEM .cause ≠ denotation Bus.busSEM .make :=
+  ⟨rfl, fun h ↦ necessity_cancellable.2 <|
+    (congrArg (· Bus.s_b .Tr true .Bs true) h).mpr necessity_cancellable.1⟩
 
 end KarttunenCells
 
-/-! ### The English lexicon -/
+/-! ### The English causatives
 
+The English fragment records each causative's class; composing it with `denotation` gives the
+paper's predictions. -/
 
-/-! The causative annotations are consistent with the formal semantics in
-`Causation`; the semantic-dispatch versions over an arbitrary `SEM V α` follow. -/
+section English
 
-/-- "make" asserts sufficiency — derived from its builder. -/
-theorem make_asserts_sufficiency : English.Verbs.make.toVerb.AssertsSufficiency := by decide
-
-/-- "cause" does NOT assert sufficiency. -/
-theorem cause_not_sufficiency : ¬ English.Verbs.cause.toVerb.AssertsSufficiency := by decide
-
-/-- make-type verbs (make, have, get) share the `.make` builder. -/
-theorem make_type_verbs_share_semantics :
-    English.Verbs.make.causative = English.Verbs.have_caus.causative ∧
-    English.Verbs.make.causative = English.Verbs.get_caus.causative := ⟨rfl, rfl⟩
-
-/-- "prevent" asserts neither sufficiency nor necessity —
-    it uses the dual `preventSem` (blocking). -/
-theorem prevent_not_sufficiency :
-    ¬ English.Verbs.prevent.toVerb.AssertsSufficiency := by decide
-
-/-- make, force, and let have different builders despite shared truth conditions. -/
-theorem causative_builders_distinguished :
-    English.Verbs.make.causative ≠ English.Verbs.force.causative ∧
-    English.Verbs.make.causative ≠ English.Verbs.let_.causative ∧
-    English.Verbs.force.causative ≠ English.Verbs.let_.causative := by
-  refine ⟨by decide, by decide, by decide⟩
-
-/-! ## Lexical causative theorems -/
-
-/-- All lexical causatives use the `.make` builder. -/
-theorem lexical_causatives_use_make :
-    English.Verbs.kill.causative = some .make ∧
-    English.Verbs.break_.causative = some .make ∧
-    English.Verbs.burn.causative = some .make ∧
-    English.Verbs.destroy.causative = some .make ∧
-    English.Verbs.melt.causative = some .make := ⟨rfl, rfl, rfl, rfl, rfl⟩
-
-/-- Lexical causatives all assert sufficiency — like periphrastic "make". -/
-theorem lexical_causatives_assert_sufficiency :
-    English.Verbs.kill.toVerb.AssertsSufficiency ∧
-    English.Verbs.break_.toVerb.AssertsSufficiency ∧
-    English.Verbs.burn.toVerb.AssertsSufficiency ∧
-    English.Verbs.destroy.toVerb.AssertsSufficiency ∧
-    English.Verbs.melt.toVerb.AssertsSufficiency := by
-  refine ⟨by decide, by decide, by decide,
-          by decide, by decide⟩
-
-/-- Lexical causatives differ from periphrastic "cause" in truth conditions. -/
-theorem lexical_causatives_differ_from_cause :
-    English.Verbs.kill.causative ≠ English.Verbs.cause.causative ∧
-    English.Verbs.break_.causative ≠ English.Verbs.cause.causative := by
-  constructor <;> decide
-
-/-! ### Semantic dispatch
-
-Each statement is parameterized by an arbitrary deterministic acyclic SEM `M`;
-`Causative.toSemantics M` dispatches to `Sufficiency.makeSem`, `Necessity.causeSem` and
-`Prevention.preventSem`. -/
-
-variable {V : Type*} {α : V → Type*}
-  [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]
+variable {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V] [DecidableValuation α]
   (M : SEM V α) [CausalGraph.IsDAG M.graph]
 
-/-- "make" → `Sufficiency.makeSem` (polymorphic). -/
-theorem make_semantics :
-    English.Verbs.make.causative.map (Causative.toSemantics M) =
-    some (Causation.Sufficiency.makeSem M) := rfl
+/-- *Let* asserts the causal sufficiency *make* does (Section 4.1); the volitional action
+constraint, not the dependence relation, separates them
+(`Permission.permission_make_infelicitous`). -/
+theorem let_denotation_eq_make :
+    English.Verbs.let_.causative.map (denotation M) =
+      English.Verbs.make.causative.map (denotation M) := rfl
 
-/-- "cause" → `Necessity.causeSem` (polymorphic). -/
-theorem cause_semantics :
-    English.Verbs.cause.causative.map (Causative.toSemantics M) =
-    some (Causation.Necessity.causeSem M) := rfl
+example : English.Verbs.cause.causative.map (denotation M) = some (causeSem M) := rfl
+example : English.Verbs.force.causative.map (denotation M) = some (makeSem M) := rfl
 
-/-- "prevent" → `Prevention.preventSem` (polymorphic). -/
-theorem prevent_semantics :
-    English.Verbs.prevent.causative.map (Causative.toSemantics M) =
-    some (Causation.Prevention.preventSem M) := rfl
-
-/-- make/force/let/have/get share `Sufficiency.makeSem` truth conditions. -/
-theorem sufficiency_verbs_share_truth_conditions :
-    English.Verbs.make.causative.map (Causative.toSemantics M) =
-      English.Verbs.force.causative.map (Causative.toSemantics M) ∧
-    English.Verbs.make.causative.map (Causative.toSemantics M) =
-      English.Verbs.let_.causative.map (Causative.toSemantics M) ∧
-    English.Verbs.make.causative.map (Causative.toSemantics M) =
-      English.Verbs.have_caus.causative.map (Causative.toSemantics M) ∧
-    English.Verbs.make.causative.map (Causative.toSemantics M) =
-      English.Verbs.get_caus.causative.map (Causative.toSemantics M) :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-/-- lexical causatives (kill, break) share truth conditions with periphrastic "make". -/
-theorem lexical_causatives_match_make :
-    English.Verbs.kill.causative.map (Causative.toSemantics M) =
-      English.Verbs.make.causative.map (Causative.toSemantics M) ∧
-    English.Verbs.break_.causative.map (Causative.toSemantics M) =
-      English.Verbs.make.causative.map (Causative.toSemantics M) := ⟨rfl, rfl⟩
-
-omit [∀ v, Fintype (α v)] in
-/-- "manage" → polymorphic `Implicative.manageSem`. -/
-theorem manage_semantics_implicative :
-    English.Verbs.manage.implicative.map (Implicative.toSemantics M) =
-    some (Implicative.manageSem M) := rfl
-
-omit [∀ v, Fintype (α v)] in
-/-- "fail" → polymorphic `Implicative.failSem`. -/
-theorem fail_semantics_implicative :
-    English.Verbs.fail.implicative.map (Implicative.toSemantics M) =
-    some (Implicative.failSem M) := rfl
+end English
 
 end NadathurLauer2020

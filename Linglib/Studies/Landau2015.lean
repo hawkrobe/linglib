@@ -5,7 +5,6 @@ public import Linglib.Syntax.Control.Head
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Semantics.Presupposition.Verb
-public import Linglib.Semantics.Causation.Verb
 
 /-!
 # Landau (2015): A Two-Tiered Theory of Control
@@ -180,7 +179,7 @@ where the fields decide nothing, as for *try*. -/
 def derivedLandauClass (v : Verb) : Option PredicateClass :=
   if v.phasal ≠ none then some .aspectual
   else if v.implicative ≠ none then some .implicative
-  else if v.IsCausative then some .implicative
+  else if v.causative ≠ none then some .implicative
   else if v.IsFactive then some .factive
   else if v.TakesQuestion ∧ v.attitude = none then some .interrogative
   else match v.attitude with

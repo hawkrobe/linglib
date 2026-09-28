@@ -5,7 +5,7 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.Probability.Distributions.Uniform
 public import Linglib.Core.Probability.Constructions
 public import Linglib.Data.Examples.CaoWhiteLassiter2025
-public import Linglib.Semantics.Causation.Interpretation
+public import Linglib.Studies.NadathurLauer2020
 public import Linglib.Semantics.Causation.SEM.Entailment
 
 /-!
@@ -40,8 +40,8 @@ The paper's in-text judgments, its examples (3)–(11), are rows in
   [nadathur-lauer-2020]'s categorical causal sufficiency
 * `probSufficiency_empty_eq_one_of_make` — the categorical *make* semantics is strictly stronger
   than maximal graded SUF
-* `make_semantics_eq_force`, `judgment_differs_make_force` — the force-dynamic semantics does not
-  distinguish the two verbs the paper's (8) separates
+* `make_semantics_eq_force`, `judgment_differs_make_force` — Nadathur and Lauer's semantics does
+  not distinguish the two verbs the paper's (8) separates
 * `ProbabilisticExample.probSufficiency_eq` — with an uncertain background, SUF is the
   background's probability rather than 0 or 1
 
@@ -216,20 +216,17 @@ theorem probSufficiency_empty_eq_deterministicSuf :
   unfold deterministicSuf
   congr 1
 
-/-- The hub denotation for *make* entails maximal SUF at the vacuous
-    context — whenever `Causative.toSemantics M .make` holds (both
-    clauses of [nadathur-lauer-2020]'s definition (23), over the strict
-    development), Pearl's probability of sufficiency is 1. The converse
-    fails, since the eager development fills undetermined exogenous
-    vertices from their mechanisms; the categorical *make* semantics is
-    strictly stronger than maximal graded SUF. -/
+/-- [nadathur-lauer-2020]'s *make* entails maximal SUF at the vacuous context: whenever
+`makeSem` holds, Pearl's probability of sufficiency is 1. The converse fails, since the eager
+development fills undetermined exogenous vertices from their mechanisms; the categorical *make*
+semantics is strictly stronger than maximal graded SUF. -/
 theorem probSufficiency_empty_eq_one_of_make
-    (h : Causative.toSemantics M .make Valuation.empty c true e true) :
+    (h : NadathurLauer2020.denotation M .make Valuation.empty c true e true) :
     BoolSEM.probSufficiency M (MeasureTheory.Measure.dirac ()) (fun _ ↦ Valuation.empty)
       Valuation.empty c e = 1 := by
   rw [probSufficiency_empty_eq_deterministicSuf]
   unfold deterministicSuf
-  exact ite_eq_left (causallySufficient_of_causallyEntails h.2)
+  exact ite_eq_left (NadathurLauer2020.causallySufficient_of_denotation (.inl rfl) h)
 
 end
 
@@ -240,12 +237,12 @@ non-interchangeability triplets (3)–(4), the gym gradability triplets (5)–(7
 could-have-done-otherwise pair (8), the intent-denial continuations (9)–(10), and the
 *make*/*let* sufficiency pair (11). -/
 
-/-- The force-dynamic dispatch gives *make* and *force* the same truth conditions, since both
-assert causal sufficiency ([nadathur-lauer-2020]). -/
+/-- [nadathur-lauer-2020] give *make* and *force* the same truth conditions, both being
+sufficiency causatives. -/
 theorem make_semantics_eq_force
     {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V] [DecidableValuation α]
-    [∀ v, Fintype (α v)] (M : SEM V α) [CausalGraph.IsDAG M.graph] :
-    Causative.toSemantics M .make = Causative.toSemantics M .force := rfl
+    (M : SEM V α) [CausalGraph.IsDAG M.graph] :
+    NadathurLauer2020.denotation M .make = NadathurLauer2020.denotation M .force := rfl
 
 /-- The paper's (8) separates them anyway: in one frame with a could-have-done-otherwise
 continuation, *made* tolerates the continuation and *forced* resists it. What the shared
