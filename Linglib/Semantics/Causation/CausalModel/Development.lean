@@ -282,6 +282,16 @@ theorem CausallyEntails.unique {s : ∀ v, Flat (α v)} {v : V} {x y : α v}
   Flat.coe_injective ((causallyEntails_iff_develop.1 hx).symm.trans
     (causallyEntails_iff_develop.1 hy))
 
+omit [∀ v, Nonempty (α v)] in
+/-- A variable the strict development settles, unobserved, takes its equation's value at the values
+the development settles for its parents, in every context. -/
+theorem CausallyEntails.eqn_eq {s : ∀ v, Flat (α v)} {v : V} {x : α v}
+    (h : M.CausallyEntails s v x) (hv : s v = ⊥) {y : ∀ w, α w}
+    (hy : ∀ w, M.graph.Adj w v → M.CausallyEntails s w (y w)) (u : U) : M.eqn v u y = x := by
+  rcases causallyEntails_iff.1 h with h | ⟨-, -, h⟩
+  · rw [hv] at h; exact absurd h Flat.bot_ne_coe
+  · exact h u y fun w hw _ hz ↦ (hy w hw).unique hz
+
 section Decidable
 
 variable {s : ∀ v, Flat (α v)} {v : V} {x : α v}

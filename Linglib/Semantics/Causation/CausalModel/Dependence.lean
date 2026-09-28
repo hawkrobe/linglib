@@ -110,6 +110,20 @@ theorem isExogenousSettlement_update {s : ∀ v, Flat (α v)} {p : V}
     · rw [Function.update_of_ne hvp] at hne; exact absurd hv hne
 
 omit [DecidableEq V] in
+/-- Every observation is an exogenous settlement of itself. -/
+theorem IsExogenousSettlement.refl (s : ∀ v, Flat (α v)) : M.IsExogenousSettlement s s :=
+  ⟨le_rfl, fun _ hv hne ↦ absurd hv hne⟩
+
+omit [DecidableEq V] in
+/-- An exogenous settlement leaves open every variable with a parent that the observation leaves
+open. -/
+theorem IsExogenousSettlement.eq_bot {s s' : ∀ v, Flat (α v)} (h : M.IsExogenousSettlement s s')
+    {v : V} (hv : s v = ⊥) (hpar : ∃ w, M.graph.Adj w v) : s' v = ⊥ := by
+  by_contra hne
+  obtain ⟨w, hw⟩ := hpar
+  exact (h.2 v hv hne).1 w hw
+
+omit [DecidableEq V] in
 /-- Exogenous settlements compose. -/
 theorem IsExogenousSettlement.trans {s s' s'' : ∀ v, Flat (α v)}
     (h₁ : M.IsExogenousSettlement s s') (h₂ : M.IsExogenousSettlement s' s'') :
