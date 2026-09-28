@@ -19,16 +19,22 @@ A polarity particle is used in some responses and not others, so what a theory s
 particle is a set of responses. Each framework interpreting the particles of a language assigns
 them such sets, which form a Boolean algebra: rival interpretations of one particle are compared
 by inclusion, and an interpretation is tested against the acceptable responses of the data.
+Properties of a particle are properties of its set: the typology of answering negative questions
+asks which particle confirms the negative alternative (`Response.ConfirmsNegativeQuestion`).
 
 ## Main definitions
 
 * `Discourse.InitiatingMove`: an assertion or a polar question.
 * `Discourse.Response`: the move a response reacts to, the antecedent polarity and its own.
 * `Discourse.Response.relative`: the relative polarity of a response.
+* `Discourse.Response.ConfirmsNegativeQuestion`: a set of responses includes the confirmation of
+  a negative question, [same, −].
 
 ## References
 
 * [farkas-bruce-2010]
+* [sadock-zwicky-1985]
+* [holmberg-2016]
 -/
 
 @[expose] public section
@@ -67,6 +73,18 @@ def relative (x : Response) : Polarity := x.polarity / x.antecedent
 theorem relative_eq_positive_iff {x : Response} :
     x.relative = .positive ↔ x.polarity = x.antecedent :=
   div_eq_one
+
+/-- The responses `S` include the answer confirming the negative alternative of a negative polar
+question, [same, −]. Which particle of a language does so tells its system of answering negative
+questions: the affirmative one in a system of relative polarity particles, agree/disagree or
+truth-based; the negative one in a system of absolute polarity particles, yes/no or
+polarity-based ([farkas-bruce-2010], [sadock-zwicky-1985], [holmberg-2016]). -/
+def ConfirmsNegativeQuestion (S : Set Response) : Prop :=
+  ⟨.polarQuestion, .negative, .negative⟩ ∈ S
+
+instance (S : Set Response) [h : Decidable (⟨.polarQuestion, .negative, .negative⟩ ∈ S)] :
+    Decidable (ConfirmsNegativeQuestion S) :=
+  h
 
 end Response
 

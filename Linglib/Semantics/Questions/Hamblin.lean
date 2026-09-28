@@ -55,10 +55,6 @@ def polar (p : Set W) : Question W :=
 @[simp] theorem polar_compl (p : Set W) : polar pᶜ = polar p := by
   rw [polar, polar, compl_compl, sup_comm]
 
-/-- Nor on the polarity of the proposition asked about. -/
-@[simp] theorem polar_smul (s : Polarity) (p : Set W) : polar (s • p) = polar p := by
-  cases s <;> simp
-
 /-- `polar` is, by definition, the inquisitive disjunction of the two
     declaratives. *Not* `@[simp]`: `polar p` is a meaningful surface
     primitive (it's the polar interrogative), and unfolding it to its
@@ -66,6 +62,21 @@ def polar (p : Set W) : Question W :=
     explicitly when reasoning about the lattice structure. -/
 theorem polar_eq_sup (p : Set W) :
     polar p = ofSet p ⊔ ofSet pᶜ := rfl
+
+/-- The polar question is the Hamblin question over the polarity alternatives of its
+proposition. -/
+theorem polar_eq_iSup_orbit (p : Set W) :
+    polar p = ⨆ q ∈ MulAction.orbit Polarity p, ofSet q := by
+  rw [polar_eq_sup, Polarity.orbit_eq_pair_compl, iSup_insert, iSup_singleton]
+
+/-- A polar question depends only on the polarity alternatives of its proposition, so not on
+the polarity of the proposition asked about. -/
+@[simp] theorem polar_smul (s : Polarity) (p : Set W) : polar (s • p) = polar p := by
+  rw [polar_eq_iSup_orbit, polar_eq_iSup_orbit, MulAction.orbit_smul]
+
+/-- The query of a declarative is the polar question of its proposition. -/
+theorem query_ofSet (p : Set W) : (ofSet p).query = polar p := by
+  rw [query, info_ofSet, ← sup_eq_inqDisj, polar_eq_sup]
 
 /-- **Membership in `polar p`**: a state resolves the polar question iff
     it is contained in `p` or in `pᶜ` (i.e. it settles the issue either
@@ -111,6 +122,12 @@ theorem alt_polar_of_nontrivial {p : Set W}
   alt_eq_of_coe_eq_lowerClosure
     (Set.pairwise_pair.mpr fun _ ↦ ⟨fun h ↦ hne (le_compl_self.mp h),
       fun h ↦ hnu (compl_le_self.mp h)⟩) (coe_polar p)
+
+/-- The alternatives of a polar question with a non-trivial proposition are its polarity
+alternatives. -/
+theorem alt_polar_eq_orbit {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
+    alt (polar p) = MulAction.orbit Polarity p := by
+  rw [alt_polar_of_nontrivial hne hnu, Polarity.orbit_eq_pair_compl]
 
 /-! ### Polar degenerate-case identities -/
 

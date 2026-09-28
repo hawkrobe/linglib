@@ -14,7 +14,8 @@ the negation of the clause, if any, with its height relative to the polarity hea
 alternative is the radical under the polarity the negation gives it, and it denotes the polar
 question of that alternative; a negative interrogative and its positive counterpart denote the
 same question, differing only in which alternative is primary
-(`PolarInterrogative.denote_eq_polar_radical`).
+(`PolarInterrogative.denote_eq_polar_radical`), whose alternatives are the polarity alternatives
+of the radical (`PolarInterrogative.alt_denote`).
 
 The polarity head is merged unvalued, and a short answer merges a focused valued polarity
 feature, spelled out by an answer particle, with the clause inherited from the question,
@@ -29,14 +30,19 @@ into the alternative itself.
 A negation out of the polarity head's reach, such as a low, VP-internal one, leaves the particle
 to value the head, and the value composes with the negation: an affirmative particle confirms
 the negative alternative, a negative one is a double negation. A middle negation values the head
-itself: a negative particle agrees with it and a plain affirmative clashes with it. These are
-the truth-based and the polarity-based systems for answering negative questions
-(`AnsweringSystem`, `NegationHeight.predictedSystem`).
+itself: a negative particle agrees with it and a plain affirmative clashes with it.
 
 The answers a feature gives to the questions whose negations a language allows form a set of
 `Discourse.Response`s (`AnswerFeature.responses`), the carrier of the polarity features of
 [farkas-bruce-2010], to whom [holmberg-2016] credits REV: a reversing feature gives exactly the
-[reverse, +] answers (`AnswerFeature.responses_reversing`).
+[reverse, +] answers (`AnswerFeature.responses_reversing`). The systems for answering negative
+questions are properties of these sets (`Discourse.Response.ConfirmsNegativeQuestion`), and the
+mechanism derives them from the height of the negation: the affirmative feature confirms the
+negative alternative just when the negation is low, the truth-based system
+(`AnswerFeature.confirmsNegativeQuestion_responses_positive_iff`), and the negative feature just
+when it is middle, the polarity-based system
+(`AnswerFeature.confirmsNegativeQuestion_responses_negative_iff`); after a high negation neither
+does, the question being answered like a neutral one.
 
 ## Implementation notes
 
@@ -73,16 +79,6 @@ The answers a feature gives to the questions whose negations a language allows f
 -/
 
 @[expose] public section
-
-/-- The two systems for answering negative yes–no questions ([holmberg-2016]), told apart by the
-particle that confirms the negative alternative of *Does John not drink coffee?*. -/
-inductive AnsweringSystem where
-  /-- The affirmative particle confirms the negative alternative (Japanese, Cantonese, Thai). -/
-  | truthBased
-  /-- The negative particle confirms the negative alternative (Swedish, Finnish, English with
-  the middle reading of *not*). -/
-  | polarityBased
-  deriving DecidableEq, Repr
 
 /-- The feature an answer particle spells out ([holmberg-2016]): a valued polarity feature, or
 the affirmative polarity-reversing feature of *jo*, `[jo, +Pol, REV]`. -/
@@ -186,12 +182,12 @@ decides which alternative is primary, not what the alternatives are. -/
 @[simp] theorem denote_eq_polar_radical : ⟦q⟧ = Question.polar q.radical :=
   Question.polar_smul _ _
 
-/-- A polar interrogative with a nontrivial radical offers exactly two alternatives, the two
-values of its polarity variable. -/
+/-- The alternatives of a polar interrogative with a nontrivial radical are the values of its
+polarity variable applied to the radical, its polarity alternatives. -/
 theorem alt_denote {q : PolarInterrogative W} (hne : q.radical ≠ ∅)
-    (hnu : q.radical ≠ Set.univ) : Question.alt ⟦q⟧ = {q.radical, q.radicalᶜ} := by
+    (hnu : q.radical ≠ Set.univ) : Question.alt ⟦q⟧ = MulAction.orbit Polarity q.radical := by
   rw [denote_eq_polar_radical]
-  exact Question.alt_polar_of_nontrivial hne hnu
+  exact Question.alt_polar_eq_orbit hne hnu
 
 end PolarInterrogative
 
@@ -270,18 +266,34 @@ theorem responses_reversing {N : Set ClauseNegation} (hN : ∃ n ∈ N, n.InClau
     · exact absurd ha (by decide)
     · rfl
 
+/-- The answers of a feature to questions whose negations are among `N` confirm the negative
+alternative of a negative question iff some negation of `N` inside the clause yields it. -/
+theorem confirmsNegativeQuestion_responses_iff {f : AnswerFeature} {N : Set ClauseNegation} :
+    Discourse.Response.ConfirmsNegativeQuestion (f.responses N) ↔
+      ∃ n ∈ N, n.InClause ∧ f.answer n = some .negative := by
+  simp only [Discourse.Response.ConfirmsNegativeQuestion, responses, Set.mem_ofPred_eq,
+    true_and]
+  refine exists_congr fun n ↦ and_congr_right fun _ ↦ and_congr_left fun _ ↦ ?_
+  simp only [primaryPolarity]
+  split_ifs with h <;> simp [h]
+
+/-- The truth-based system: the affirmative feature confirms the negative alternative of a
+question whose negation has height `h` iff the negation is low, out of the polarity head's
+reach. -/
+theorem confirmsNegativeQuestion_responses_positive_iff (h : NegationHeight) :
+    Discourse.Response.ConfirmsNegativeQuestion ((value .positive).responses {.height h}) ↔
+      h = .low := by
+  rw [confirmsNegativeQuestion_responses_iff]
+  cases h <;> simp [answer, ClauseNegation.InClause, ClauseNegation.ValuesHead,
+    primaryPolarity]
+
+/-- The polarity-based system: the negative feature confirms the negative alternative of a
+question whose negation has height `h` iff the negation is middle, valuing the polarity head. -/
+theorem confirmsNegativeQuestion_responses_negative_iff (h : NegationHeight) :
+    Discourse.Response.ConfirmsNegativeQuestion ((value .negative).responses {.height h}) ↔
+      h = .middle := by
+  rw [confirmsNegativeQuestion_responses_iff]
+  cases h <;> simp [answer, ClauseNegation.InClause, ClauseNegation.ValuesHead,
+    primaryPolarity]
+
 end AnswerFeature
-
-/-- The answering system a negative-bias question exhibits at each height of its negation:
-truth-based for the low negation, polarity-based otherwise. -/
-def NegationHeight.predictedSystem : NegationHeight → AnsweringSystem
-  | .low    => .truthBased
-  | .middle => .polarityBased
-  | .high   => .polarityBased
-
-/-- The classification is read off the mechanism: a height is truth-based iff an affirmative
-feature confirms the negative alternative of the question with that negation. -/
-theorem NegationHeight.predictedSystem_eq_truthBased_iff (h : NegationHeight) :
-    h.predictedSystem = .truthBased ↔
-      (AnswerFeature.value .positive).answer (.height h) = some .negative := by
-  cases h <;> decide

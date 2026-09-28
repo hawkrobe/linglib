@@ -154,35 +154,26 @@ theorem emphaticDo_sigma {c : Clause} (h : EmphaticDo c) : ∃ f, c.sigma = some
 variable {W : Type*}
 
 /-- F-marking Σ: the proposition of the clause with the alternatives obtained by applying each
-value of Σ, affirmation and negation, to it (73). -/
+value of Σ, affirmation and negation, to it (73), its polarity alternatives. -/
 def polarityFocus (p : Set W) : WithAlternatives (Set W) :=
-  ⟨p, Set.range fun s : Polarity ↦ s • p⟩
+  ⟨p, MulAction.orbit Polarity p⟩
 
 @[simp] theorem polarityFocus_ordinary (p : Set W) : (polarityFocus p).ordinary = p := rfl
 
 /-- The alternatives of polarity focus are the proposition and its negation. -/
 theorem polarityFocus_alternatives (p : Set W) :
-    (polarityFocus p).alternatives = {p, pᶜ} := by
-  ext q
-  simp only [polarityFocus, Set.mem_range, Set.mem_insert_iff, Set.mem_singleton_iff]
-  constructor
-  · rintro ⟨s, rfl⟩
-    cases s <;> simp
-  · rintro (rfl | rfl)
-    · exact ⟨.positive, by simp⟩
-    · exact ⟨.negative, rfl⟩
+    (polarityFocus p).alternatives = {p, pᶜ} :=
+  Polarity.orbit_eq_pair_compl p
 
 /-- Polarity focus is well formed: the proposition is among its alternatives. -/
-theorem polarityFocus_wellFormed (p : Set W) : (polarityFocus p).WellFormed := by
-  show p ∈ (polarityFocus p).alternatives
-  rw [polarityFocus_alternatives]
-  simp
+theorem polarityFocus_wellFormed (p : Set W) : (polarityFocus p).WellFormed :=
+  MulAction.mem_orbit_self p
 
 /-- The alternative set of an emphatic *do* sentence is the meaning of the polar question it
 answers (section 4.1). -/
 theorem polarityFocus_alternatives_eq_alt_polar {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    (polarityFocus p).alternatives = (Question.polar p).alt := by
-  rw [polarityFocus_alternatives, Question.alt_polar_of_nontrivial hne hnu]
+    (polarityFocus p).alternatives = (Question.polar p).alt :=
+  (Question.alt_polar_eq_orbit hne hnu).symm
 
 /-- (59), (60): a context that evokes the polar question admits the polarity focus of an answer
 to it. -/

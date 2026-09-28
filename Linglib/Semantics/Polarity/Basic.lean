@@ -5,6 +5,7 @@ public import Mathlib.Algebra.Group.Action.Units
 public import Mathlib.Algebra.Module.NatInt
 public import Mathlib.Algebra.Ring.Int.Units
 public import Mathlib.Basic.Sign.Defs
+public import Mathlib.GroupTheory.GroupAction.Defs
 public import Mathlib.Order.BooleanAlgebra.Set
 public import Mathlib.Order.Monotone.Defs
 public import Mathlib.Tactic.DeriveFintype
@@ -17,7 +18,9 @@ two, a negation cancelling a negation; they are the units of `ℤ` (`Polarity.un
 notion of polarity in the library is an action of this one group:
 
 * the polarity of a sentence acts on propositions, the negative polarity by complement
-  (`negative • p = pᶜ`);
+  (`negative • p = pᶜ`), and the orbit of a proposition, the proposition and its negation, is
+  the set of its polarity alternatives (`orbit_eq_pair_compl`): the focus value of a focused
+  polarity and the answers of the polar question;
 * the polarity of an antonym acts on degrees by negation (`negative • x = -x`) and on scales by
   duality (`Semantics/Degree/Antonymy`);
 * the relative polarity of a response to an antecedent, [same] or [reverse], is the product of
@@ -34,6 +37,11 @@ records what a polarity cannot, the absence of a direction: the monotonicity of 
 upward, downward or neither (`NaturalLogic.Signature.sign`), and a body of evidence or belief
 bearing on a proposition, for it, against it or neither (`Question.BiasValue`). `UD.Polarity`, a
 morphological feature of the annotation scheme, is a distinct type.
+
+## References
+
+* [wilder-2013]
+* [gutzmann-2012]
 -/
 
 @[expose] public section
@@ -117,6 +125,18 @@ instance : MulAction Polarity (Set α) where
   mul_smul s t p := by cases s <;> cases t <;> first | rfl | exact (compl_compl p).symm
 
 @[simp] theorem negative_smul_set (p : Set α) : negative • p = pᶜ := rfl
+
+/-- The polarity alternatives of a proposition, its orbit under the polarity group, are the
+proposition and its negation: the focus value of a focused polarity ([wilder-2013],
+[gutzmann-2012]) and the answers of the polar question. -/
+theorem orbit_eq_pair_compl (p : Set α) : MulAction.orbit Polarity p = {p, pᶜ} := by
+  ext q
+  simp only [MulAction.mem_orbit_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨s, rfl⟩
+    cases s <;> simp
+  · rintro (rfl | rfl)
+    exacts [⟨positive, positive_smul _⟩, ⟨negative, negative_smul_set _⟩]
 
 /-- A polarity acts on an additive group through the units of `ℤ`: the negative polarity
 negates. -/

@@ -12,7 +12,7 @@ This file formalizes [garassino-jacob-2018]'s account of clitic left dislocation
 ~ *sí que* constructions as realizations of polarity focus. Polarity focus is focus whose
 background is the whole proposition and whose alternatives are the proposition and its negation,
 so a polarity-focus utterance is a congruent answer to a polar question under discussion
-(`polarFocus_eq_alt_query`). The chapter's corpus passages are read as discourse trees in the
+(`orbit_eq_alt_query`). The chapter's corpus passages are read as discourse trees in the
 manner of [buring-2003] and [roberts-2012]: a *wh*-question such as *who has been sitting back?*
 is pursued through the polar question for each candidate, each answered with a polarity-focus
 utterance, and a polar question about a hyperonymous proposition through the polar questions of
@@ -68,41 +68,12 @@ variable {W F : Type*}
 
 /-! ### Polarity focus as a polar question under discussion -/
 
-/-- The focus value of a polarity-focus utterance: the proposition and its negation. -/
-def polarFocus (p : Set W) : Set (Set W) := {p, pᶜ}
-
-/-- The polar question of a proposition is the join of the proposition and its negation. -/
-theorem query_ofSet_eq_iSup (p : Set W) :
-    (ofSet p).query = ⨆ b : Bool, ofSet (bif b then p else pᶜ) := by
-  apply Question.ext
-  intro σ
-  rw [mem_iSup_ofSet, mem_query, mem_ofSet, info_ofSet]
-  constructor
-  · rintro (h | h)
-    · exact Or.inr ⟨true, h⟩
-    · exact Or.inr ⟨false, h⟩
-  · rintro (rfl | ⟨b, hb⟩)
-    · exact Or.inl (Set.empty_subset _)
-    · cases b
-      · exact Or.inr hb
-      · exact Or.inl hb
-
-theorem alt_query_ofSet {p : Set W} (hp : p.Nonempty) (hpc : pᶜ.Nonempty) :
-    alt (ofSet p).query = {p, pᶜ} := by
-  rw [query_ofSet_eq_iSup, alt_iSup_ofSet (fun i j h ↦ by
-      cases i <;> cases j
-      · rfl
-      · exact absurd (h hpc.some_mem) hpc.some_mem
-      · exact absurd hp.some_mem (h hp.some_mem)
-      · rfl)]
-  ext q
-  simp only [Set.mem_range, Bool.exists_bool, Bool.cond_false, Bool.cond_true, Set.mem_insert_iff,
-    Set.mem_singleton_iff, eq_comm, or_comm]
-
-/-- A polarity-focus utterance is a congruent answer to the polar question of its proposition. -/
-theorem polarFocus_eq_alt_query {p : Set W} (hp : p.Nonempty) (hpc : pᶜ.Nonempty) :
-    polarFocus p = alt (ofSet p).query :=
-  (alt_query_ofSet hp hpc).symm
+/-- A polarity-focus utterance is a congruent answer to the polar question of its proposition:
+its focus value, the polarity alternatives of the proposition, is the set of alternatives of that
+question. -/
+theorem orbit_eq_alt_query {p : Set W} (hp : p.Nonempty) (hpc : pᶜ.Nonempty) :
+    MulAction.orbit Polarity p = alt (ofSet p).query := by
+  rw [query_ofSet, alt_polar_eq_orbit hp.ne_empty (Set.nonempty_compl.mp hpc)]
 
 /-! ### Discourse strategies of polar subquestions -/
 
@@ -115,8 +86,8 @@ def agentStrategy (agents : List F) (P : F → Set W) : Strategy W :=
 theorem agentStrategy_isComplete {agents : List F} (hcov : ∀ f, f ∈ agents)
     (P : F → Set W) : (agentStrategy agents P).IsComplete := by
   refine .node (fun _ ↦ ?_) (fun c hc ↦ ?_)
-  · have hmem : ∀ q, q ∈ ((agents.map fun f ↦ RoseTree.leaf (ofSet (P f)).query).map RoseTree.value :
-        Multiset (Question W)) ↔ ∃ f, (ofSet (P f)).query = q := by
+  · have hmem : ∀ q, q ∈ ((agents.map fun f ↦ RoseTree.leaf (ofSet (P f)).query).map
+        RoseTree.value : Multiset (Question W)) ↔ ∃ f, (ofSet (P f)).query = q := by
       intro q
       simp only [Multiset.mem_coe, List.mem_map, List.map_map, Function.comp_def, RoseTree.leaf,
         RoseTree.value_node]
