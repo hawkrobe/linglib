@@ -35,6 +35,7 @@ The order skeleton follows the `WithBot` mold (`Mathlib/Order/TypeTags.lean`,
 * `Flat.coe_le_coe`, `Flat.not_coe_le_bot` — the order, characterized
 * `Flat.coe_inf_coe`, `Flat.disjoint_coe_coe`, `Flat.not_disjoint_iff`,
   `Flat.compat_coe_coe` — the meet, disjointness and compatibility of committed slots
+* `Flat.unbotD` — the value, or a default at `⊥`, as `WithBot.unbotD`
 * `Flat.or` — left-biased total merge, with `le_or_left`/`or_le`
 * `Flat.ωSup_mem_range` — chains attain their supremum (the domain has height ≤ 2)
 * `Flat.ωScottContinuous_of_monotone` — monotone maps out of `Flat` are continuous
@@ -134,6 +135,14 @@ def recBotCoe {C : Flat α → Sort*} (bot : C ⊥) (coe : ∀ a : α, C a) : �
 
 theorem ne_bot_iff_exists : x ≠ ⊥ ↔ ∃ a : α, x = ↑a := by
   cases x <;> simp
+
+/-- The value of an element, or the default `d` at `⊥`, as `WithBot.unbotD`. -/
+def unbotD (d : α) (x : Flat α) : α :=
+  recBotCoe d id x
+
+@[simp] theorem unbotD_bot (d : α) : unbotD d (⊥ : Flat α) = d := rfl
+
+@[simp] theorem unbotD_coe (d b : α) : unbotD d (b : Flat α) = b := rfl
 
 /-! ### The flat order -/
 
