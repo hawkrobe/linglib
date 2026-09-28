@@ -209,12 +209,9 @@ negation of `φ`. -/
 theorem neg_subset_exclusiveNeg (hU : UpwardExclusion excl) (φ : Set E) :
     neg excl φ ⊆ exclusiveNeg excl φ := by
   rintro _ ⟨h, hh, rfl⟩
-  refine ⟨h '' φ, ⟨?_, fun f hf ↦ ?_⟩, rfl⟩
-  · rintro _ ⟨f, hf, rfl⟩
-    obtain ⟨g, hgf, hx⟩ := hh f hf
-    exact ⟨f, hf, hU hx hgf⟩
-  · obtain ⟨g, hgf, hx⟩ := hh f hf
-    exact ⟨h f, Set.mem_image_of_mem h hf, hU hx hgf⟩
+  exact sSup_image_mem_exclusiveNeg fun f hf ↦
+    let ⟨_, hgf, hx⟩ := hh f hf
+    hU hx hgf
 
 /- Fine's exclusive negation also admits the fusion of two excluders of one verifier. -/
 example : ∃ excl : Set (Fin 3) → Set (Fin 3) → Prop, UpwardExclusion excl ∧

@@ -235,14 +235,17 @@ theorem sSup_mem_regularClosure (hs : s.Nonempty) : sSup s ∈ regularClosure s 
   le_antisymm (upperClosure_anti (regularClosure.le_closure s)) (le_upperClosure.2 fun _ hx ↦ hx.1)
 
 /-- Two propositions have the same regular closure exactly when they have the same inexact
-verifiers and the same subject-matter. -/
-theorem regularClosure_eq_iff :
-    regularClosure s = regularClosure t ↔ upperClosure s = upperClosure t ∧ sSup s = sSup t := by
-  refine ⟨fun h ↦ ⟨?_, ?_⟩, fun ⟨h₁, h₂⟩ ↦ ?_⟩
+verifiers and, if they have verifiers, the same subject-matter. -/
+theorem regularClosure_eq_iff : regularClosure s = regularClosure t ↔
+    upperClosure s = upperClosure t ∧ (s.Nonempty → sSup s = sSup t) := by
+  refine ⟨fun h ↦ ⟨?_, fun _ ↦ ?_⟩, fun ⟨h₁, h₂⟩ ↦ ?_⟩
   · rw [← upperClosure_regularClosure s, h, upperClosure_regularClosure]
   · rw [← sSup_regularClosure s, h, sSup_regularClosure]
-  · change ↑(upperClosure s) ∩ Set.Iic (sSup s) = ↑(upperClosure t) ∩ Set.Iic (sSup t)
-    rw [h₁, h₂]
+  · rcases s.eq_empty_or_nonempty with rfl | hs
+    · rw [eq_comm, upperClosure_empty, upperClosure_eq_top_iff] at h₁
+      rw [h₁]
+    · change ↑(upperClosure s) ∩ Set.Iic (sSup s) = ↑(upperClosure t) ∩ Set.Iic (sSup t)
+      rw [h₁, h₂ hs]
 
 /-- The regular propositions, the closed sets of `regularClosure`, are those closed under nonempty
 fusions and convex. -/
