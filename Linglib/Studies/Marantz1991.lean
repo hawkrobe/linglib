@@ -300,13 +300,14 @@ def series : List Georgian.Series := [.present, .aorist]
 
 /-- The rules derive the subject case of the Fragment for every class in both series. -/
 theorem georgian_subject_eq_pattern : ∀ v : Georgian.VerbClass, ∀ s ∈ series,
-    (georgian s).subjectCases (clause v) = {some (Georgian.pattern v s).subject.case} := by
+    (georgian s).subjectCases (clause v) = {some (Georgian.pattern v s).subject.case.label} := by
   decide +kernel
 
 /-- The rules derive the object case of the Fragment for the two classes with an object. -/
 theorem georgian_object_eq_pattern : ∀ v ∈ [Georgian.VerbClass.transitive, .indirect],
     ∀ s ∈ series,
-      (georgian s).objectCases (clause v) = {some (Georgian.pattern v s).directObject.case} := by
+      (georgian s).objectCases (clause v) =
+        {some (Georgian.pattern v s).directObject.case.label} := by
   decide +kernel
 
 /-! ### Agreement across the split -/

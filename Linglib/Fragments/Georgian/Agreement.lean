@@ -3,7 +3,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Agreement.Paradigm
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Fragments.Georgian.Case
 
 /-!
 # Georgian case marking and verbal agreement

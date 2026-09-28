@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.Latvian.Case
 public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Category.Pronoun.Interrogative
 
@@ -56,8 +57,8 @@ def kurš : InterrogativePronoun := { form := "kurš", ontology := .determiner }
 /-! ### The emphatic pronoun -/
 
 /-- The emphatic pronoun *pats* 'self', feminine *pati*, as stem and ending in each case,
-number and gender ([kalnaca-lokmane-2021], Table 2.21); `none` outside the six cases, the two
-numbers and the two genders. -/
+number and gender ([kalnaca-lokmane-2021], Table 2.21); `none` in the vocative and outside the
+two numbers and the two genders. -/
 def pats : Case → Number → Gender → Option (List Morph)
   | .nom, .singular, .masculine => some [.root "pat", .suff "s"]
   | .gen, .singular, .masculine => some [.root "paš", .suff "a"]
@@ -84,5 +85,13 @@ def pats : Case → Number → Gender → Option (List Morph)
   | .inst, .plural, .feminine => some [.root "paš", .suff "ām"]
   | .loc, .plural, .feminine => some [.root "paš", .suff "ās"]
   | _, _, _ => none
+
+/-- The instrumental of *pats* is its accusative in the singular and its dative in the plural,
+as in every Latvian declension ([kalnaca-lokmane-2021] p. 118): the instrumental has no form of
+its own. -/
+theorem pats_inst_eq (g : Gender) :
+    pats .inst .singular g = pats .acc .singular g ∧
+      pats .inst .plural g = pats .dat .plural g := by
+  cases g <;> decide
 
 end Latvian.Pronouns
