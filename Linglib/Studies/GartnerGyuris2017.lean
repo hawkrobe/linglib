@@ -31,11 +31,12 @@ and the infelicity judgments of examples (1), (2), (8), and (9) follow from the 
 
 ## Implementation notes
 
-The three question forms are the substrate's `PQForm`, whose `posQ`, `loNQ`, and `hiNQ` are the
-paper's PPQ, IN-NPQ, and ON-NPQ; the six cells and the seven choices are enumerated types, so that
-every decision the kernel makes ranges over a literal list. The Hungarian *e*-interrogative cannot
-express an inside-negation question, so it is a partial profile kept apart from the five total
-ones; the paper's Czech and Romero comparisons belong to the later papers' studies.
+The three question forms are the substrate's `PolarQuestionForm`, whose `positive`, `lowNegation`,
+and `highNegation` are the paper's PPQ, IN-NPQ, and ON-NPQ; the six cells and the seven choices are
+enumerated types, so that every decision the kernel makes ranges over a literal list. The Hungarian
+*e*-interrogative cannot express an inside-negation question, so it is a partial profile kept apart
+from the five total ones; the paper's Czech and Romero comparisons belong to the later papers'
+studies.
 
 ## References
 
@@ -101,10 +102,10 @@ inductive Cell where
   deriving DecidableEq, Fintype
 
 /-- The question form of a cell. -/
-def Cell.form : Cell → PQForm
-  | .ppqEv | .ppqEp => .posQ
-  | .inEv | .inEp => .loNQ
-  | .onEv | .onEp => .hiNQ
+def Cell.form : Cell → PolarQuestionForm
+  | .ppqEv | .ppqEp => .positive
+  | .inEv | .inEp => .lowNegation
+  | .onEv | .onEp => .highNegation
 
 /-- The dimension of a cell. -/
 def Cell.dim : Cell → Dimension
@@ -112,13 +113,13 @@ def Cell.dim : Cell → Dimension
   | .ppqEp | .inEp | .onEp => .epistemic
 
 /-- The cell of a form in a dimension. -/
-def Cell.of : PQForm → Dimension → Cell
-  | .posQ, .evidential => .ppqEv
-  | .posQ, .epistemic => .ppqEp
-  | .loNQ, .evidential => .inEv
-  | .loNQ, .epistemic => .inEp
-  | .hiNQ, .evidential => .onEv
-  | .hiNQ, .epistemic => .onEp
+def Cell.of : PolarQuestionForm → Dimension → Cell
+  | .positive, .evidential => .ppqEv
+  | .positive, .epistemic => .ppqEp
+  | .lowNegation, .evidential => .inEv
+  | .lowNegation, .epistemic => .inEp
+  | .highNegation, .evidential => .onEv
+  | .highNegation, .epistemic => .onEp
 
 /-- A bias profile: a choice for each cell. -/
 abbrev Profile := Cell → Choice
@@ -137,44 +138,48 @@ theorem card_cellwise (A : Cell → Choice → Prop) [∀ c, DecidablePred (A c)
   (Fintype.card_congr (Equiv.subtypePiEquivPi (p := A))).trans Fintype.card_pi
 
 /-- A profile by dimension. -/
-def byDim (p : Profile) (d : Dimension) : PQForm → Choice := λ q => p (.of q d)
+def byDim (p : Profile) (d : Dimension) : PolarQuestionForm → Choice := λ q => p (.of q d)
 
 /-- A form's evidential and epistemic choices. -/
-def pair (p : Profile) (q : PQForm) : Choice × Choice :=
+def pair (p : Profile) (q : PolarQuestionForm) : Choice × Choice :=
   (p (.of q .evidential), p (.of q .epistemic))
 
 /-- A principle relating the positive question's value to each negative question's value factors
 through the positive question's value. -/
 def formEquiv {X : Type*} (R : X → X → Prop) :
-    {g : PQForm → X // R (g .posQ) (g .loNQ) ∧ R (g .posQ) (g .hiNQ)} ≃
+    {g : PolarQuestionForm → X //
+      R (g .positive) (g .lowNegation) ∧ R (g .positive) (g .highNegation)} ≃
       Σ x : X, {y // R x y} × {y // R x y} where
-  toFun g := ⟨g.1 .posQ, ⟨g.1 .loNQ, g.2.1⟩, ⟨g.1 .hiNQ, g.2.2⟩⟩
+  toFun g := ⟨g.1 .positive, ⟨g.1 .lowNegation, g.2.1⟩, ⟨g.1 .highNegation, g.2.2⟩⟩
   invFun s :=
-    ⟨λ q => match q with | .posQ => s.1 | .loNQ => s.2.1.1 | .hiNQ => s.2.2.1, s.2.1.2, s.2.2.2⟩
+    ⟨λ q => match q with
+      | .positive => s.1 | .lowNegation => s.2.1.1 | .highNegation => s.2.2.1,
+      s.2.1.2, s.2.2.2⟩
   left_inv g := Subtype.ext (funext λ q => by cases q <;> rfl)
   right_inv s := by rcases s with ⟨x, ⟨y, hy⟩, ⟨z, hz⟩⟩; rfl
 
 theorem card_form {X : Type*} [Fintype X] [DecidableEq X] (R : X → X → Prop) [DecidableRel R] :
-    Fintype.card {g : PQForm → X // R (g .posQ) (g .loNQ) ∧ R (g .posQ) (g .hiNQ)} =
+    Fintype.card {g : PolarQuestionForm → X //
+      R (g .positive) (g .lowNegation) ∧ R (g .positive) (g .highNegation)} =
       ∑ x : X, Fintype.card {y // R x y} * Fintype.card {y // R x y} :=
   (Fintype.card_congr (formEquiv R)).trans (Fintype.card_sigma.trans (by simp [Fintype.card_prod]))
 
 /-- Profiles as functions from dimensions to form triples. -/
-def dimEquiv : Profile ≃ (Dimension → PQForm → Choice) where
+def dimEquiv : Profile ≃ (Dimension → PolarQuestionForm → Choice) where
   toFun p d q := p (.of q d)
   invFun f c := f c.dim c.form
   left_inv p := funext λ c => by cases c <;> rfl
   right_inv f := funext λ d => funext λ q => by cases d <;> cases q <;> rfl
 
 /-- A principle imposed within each dimension counts as the square of the per-dimension count. -/
-theorem card_perDim (Q : (PQForm → Choice) → Prop) [DecidablePred Q] :
+theorem card_perDim (Q : (PolarQuestionForm → Choice) → Prop) [DecidablePred Q] :
     Fintype.card {p : Profile // ∀ d, Q (byDim p d)} = Fintype.card {g // Q g} ^ 2 :=
   (Fintype.card_congr ((Equiv.subtypeEquiv dimEquiv λ _ => Iff.rfl).trans
     (Equiv.subtypePiEquivPi (p := λ _ => Q)))).trans
     (Fintype.card_pi.trans (by simp only [Finset.prod_const, Finset.card_univ]; rfl))
 
 /-- Profiles as functions from forms to pairs of choices. -/
-def formsEquiv : Profile ≃ (PQForm → Choice × Choice) where
+def formsEquiv : Profile ≃ (PolarQuestionForm → Choice × Choice) where
   toFun p q := pair p q
   invFun f c := match c.dim with | .evidential => (f c.form).1 | .epistemic => (f c.form).2
   left_inv p := funext λ c => by cases c <;> rfl
@@ -183,7 +188,7 @@ def formsEquiv : Profile ≃ (PQForm → Choice × Choice) where
 /-- A principle relating each negative question's pair of choices to the positive question's. -/
 theorem card_byForm (R : Choice × Choice → Choice × Choice → Prop) [DecidableRel R] :
     Fintype.card {p : Profile //
-        R (pair p .posQ) (pair p .loNQ) ∧ R (pair p .posQ) (pair p .hiNQ)} =
+        R (pair p .positive) (pair p .lowNegation) ∧ R (pair p .positive) (pair p .highNegation)} =
       ∑ x : Choice × Choice, Fintype.card {y // R x y} * Fintype.card {y // R x y} :=
   (Fintype.card_congr (Equiv.subtypeEquiv formsEquiv λ _ => Iff.rfl)).trans (card_form R)
 
@@ -211,22 +216,22 @@ theorem card_noUniformity : Fintype.card {p : Profile // NoUniformity p} = 11764
 
 /-- Section 2.2, PPQ ≠ NPQ: in each dimension, negation changes the bias. -/
 abbrev PPQNeqNPQ (p : Profile) : Prop :=
-  ∀ d, byDim p d .posQ ≠ byDim p d .loNQ ∧ byDim p d .posQ ≠ byDim p d .hiNQ
+  ∀ d, byDim p d .positive ≠ byDim p d .lowNegation ∧ byDim p d .positive ≠ byDim p d .highNegation
 
 theorem card_ppqNeqNpq : Fintype.card {p : Profile // PPQNeqNPQ p} = 63504 :=
-  (card_perDim (λ g => g .posQ ≠ g .loNQ ∧ g .posQ ≠ g .hiNQ)).trans
+  (card_perDim (λ g => g .positive ≠ g .lowNegation ∧ g .positive ≠ g .highNegation)).trans
     (by rw [card_form (· ≠ ·)]; decide)
 
 /-- Section 2.3.1, distributive Quantitative Markedness (11a): in each dimension the positive
 question has at least as many options as each negative question. -/
 abbrev MarkednessDistributive (p : Profile) : Prop :=
-  ∀ d, (byDim p d .loNQ).toFinset.card ≤ (byDim p d .posQ).toFinset.card ∧
-    (byDim p d .hiNQ).toFinset.card ≤ (byDim p d .posQ).toFinset.card
+  ∀ d, (byDim p d .lowNegation).toFinset.card ≤ (byDim p d .positive).toFinset.card ∧
+    (byDim p d .highNegation).toFinset.card ≤ (byDim p d .positive).toFinset.card
 
 theorem card_markednessDistributive :
     Fintype.card {p : Profile // MarkednessDistributive p} = 33856 :=
-  (card_perDim (λ g => (g .loNQ).toFinset.card ≤ (g .posQ).toFinset.card ∧
-    (g .hiNQ).toFinset.card ≤ (g .posQ).toFinset.card)).trans
+  (card_perDim (λ g => (g .lowNegation).toFinset.card ≤ (g .positive).toFinset.card ∧
+    (g .highNegation).toFinset.card ≤ (g .positive).toFinset.card)).trans
     (by rw [card_form (λ x y : Choice => y.toFinset.card ≤ x.toFinset.card)]; decide)
 
 /-- The number of bias options a form has across both dimensions. -/
@@ -235,7 +240,8 @@ def size (h : Choice × Choice) : ℕ := h.1.toFinset.card + h.2.toFinset.card
 /-- Section 2.3.1, collective Quantitative Markedness (11b): across both dimensions the positive
 question has at least as many options as each negative question. -/
 abbrev MarkednessCollective (p : Profile) : Prop :=
-  size (pair p .loNQ) ≤ size (pair p .posQ) ∧ size (pair p .hiNQ) ≤ size (pair p .posQ)
+  size (pair p .lowNegation) ≤ size (pair p .positive) ∧
+    size (pair p .highNegation) ≤ size (pair p .positive)
 
 theorem card_markednessCollective :
     Fintype.card {p : Profile // MarkednessCollective p} = 56536 :=
@@ -244,7 +250,7 @@ theorem card_markednessCollective :
 /-- Section 2.3.2, generalized Qualitative Markedness: the neutral value belongs to the positive
 question's cells and to no negative question's cell. -/
 abbrev QualitativeMarkedness : Profile → Prop :=
-  Cellwise λ c x => (c.form = .posQ → 0 ∈ x.toFinset) ∧ (c.form ≠ .posQ → 0 ∉ x.toFinset)
+  Cellwise λ c x => (c.form = .positive → 0 ∈ x.toFinset) ∧ (c.form ≠ .positive → 0 ∉ x.toFinset)
 
 theorem card_qualitativeMarkedness :
     Fintype.card {p : Profile // QualitativeMarkedness p} = 1296 :=
@@ -253,8 +259,8 @@ theorem card_qualitativeMarkedness :
 /-- Section 2.4, Avoid Disagreement: no negative value for a positive question, no positive value
 for a negative one. -/
 abbrev AvoidDisagreement : Profile → Prop :=
-  Cellwise λ c x => (c.form = .posQ → -1 ∉ x.toFinset) ∧
-    (c.form ≠ .posQ → 1 ∉ x.toFinset)
+  Cellwise λ c x => (c.form = .positive → -1 ∉ x.toFinset) ∧
+    (c.form ≠ .positive → 1 ∉ x.toFinset)
 
 theorem card_avoidDisagreement : Fintype.card {p : Profile // AvoidDisagreement p} = 729 :=
   (card_cellwise _).trans (by decide)
@@ -262,8 +268,8 @@ theorem card_avoidDisagreement : Fintype.card {p : Profile // AvoidDisagreement 
 /-- Section 2.4, Don't Rule Out Agreement: every positive-question cell admits the positive value
 and every negative-question cell the negative one. -/
 abbrev DontRuleOutAgreement : Profile → Prop :=
-  Cellwise λ c x => (c.form = .posQ → 1 ∈ x.toFinset) ∧
-    (c.form ≠ .posQ → -1 ∈ x.toFinset)
+  Cellwise λ c x => (c.form = .positive → 1 ∈ x.toFinset) ∧
+    (c.form ≠ .positive → -1 ∈ x.toFinset)
 
 theorem card_dontRuleOutAgreement :
     Fintype.card {p : Profile // DontRuleOutAgreement p} = 4096 :=
@@ -310,7 +316,7 @@ theorem Convexity_of_avoidDisagreement {p : Profile} (h : AvoidDisagreement p) :
   intro c hc
   obtain ⟨h₁, h₂⟩ := h c
   rw [hc] at h₁ h₂
-  by_cases hq : c.form = .posQ
+  by_cases hq : c.form = .positive
   · exact h₁ hq (by decide)
   · exact h₂ hq (by decide)
 
@@ -422,7 +428,7 @@ def Construction.cell : Construction → Cell → Option Choice
 in one dimension, with the judgment. -/
 structure Row where
   construction : Construction
-  form : PQForm
+  form : PolarQuestionForm
   dimension : Dimension
   value : SignType
   judgment : Judgment
@@ -431,7 +437,8 @@ structure Row where
 def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let construction ← ex.parse? "construction"
     [("English V1", .englishV1), ("Hungarian e", .hungarianE)]
-  let form ← ex.parse? "form" [("PPQ", .posQ), ("IN-NPQ", .loNQ), ("ON-NPQ", .hiNQ)]
+  let form ← ex.parse? "form"
+    [("PPQ", .positive), ("IN-NPQ", .lowNegation), ("ON-NPQ", .highNegation)]
   let dimension ← ex.parse? "dimension" [("evidential", .evidential), ("epistemic", .epistemic)]
   let value ← ex.parse? "value" [("+", (1 : SignType)), ("-", -1), ("%", 0)]
   pure ⟨construction, form, dimension, value, ex.judgment⟩

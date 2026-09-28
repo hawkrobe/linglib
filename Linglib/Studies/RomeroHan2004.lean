@@ -36,7 +36,7 @@ and conjunction where the paper speaks of a set of propositions. VERUM is not a 
 its own: other analyses built on it, [repp-2013]'s FALSUM among them, are necessities along the same
 relation of the common ground's acceptance of a proposition or its failure to. Speaker belief is the
 epistemic proposition of the states settling a proposition, `Set.Iic`. Question forms are the
-substrate's `Question.PQForm`, preposed negation being the high-negation form, and a bias is the
+substrate's `PolarQuestionForm`, preposed negation being the high-negation form, and a bias is the
 sign of the proposition the speaker's belief supports. The Principle of Economy that makes VERUM
 questions biased is stated in the paper in prose and is not formalized.
 
@@ -55,7 +55,7 @@ questions biased is stated in the paper in prose and is not formalized.
 namespace RomeroHan2004
 
 open scoped ModalLogic
-open Question (polar polar_compl PQForm)
+open Question (polar polar_compl)
 open Set (Iic)
 open Data.Examples
 
@@ -159,7 +159,7 @@ instance (e : PolarityItem) (f : Form) : Decidable (Licensed e f) := by
 /-- An example: its question form by the position of negation, its reported bias, its VERUM
 form and its polarity item, each when the paper gives one, and its judgment. -/
 structure Datum where
-  pqForm : Option PQForm
+  polarQuestionForm : Option PolarQuestionForm
   bias : Option SignType
   form : Option Form
   item : Option PolarityItem
@@ -167,8 +167,9 @@ structure Datum where
 
 /-- An example read into its datum. -/
 def datum (e : LinguisticExample) : Datum where
-  pqForm := e.parse? "negation"
-    [("preposed", PQForm.hiNQ), ("nonPreposed", .loNQ), ("none", .posQ)]
+  polarQuestionForm := e.parse? "negation"
+    [("preposed", PolarQuestionForm.highNegation), ("nonPreposed", .lowNegation),
+      ("none", .positive)]
   bias := e.parse? "bias" [("positive", (1 : SignType)), ("negative", -1), ("none", 0)]
   form := e.parse? "form" [("pi", Form.pi), ("ni", .ni), ("really", .really),
     ("notFocus", .notFocus)]
@@ -188,8 +189,8 @@ theorem licensed_iff_acceptable :
 /-- Preposed negation carries a positive bias in every language of the survey, (1), (5) and
 (14) to (18), and non-preposed negation none. -/
 theorem bias_of_pqForm :
-    ∀ d ∈ data, ∀ pq ∈ d.pqForm.toList, ∀ b ∈ d.bias.toList,
-      (pq = .hiNQ → b = 1) ∧ (pq = .loNQ → b = 0) := by
+    ∀ d ∈ data, ∀ pq ∈ d.polarQuestionForm.toList, ∀ b ∈ d.bias.toList,
+      (pq = .highNegation → b = 1) ∧ (pq = .lowNegation → b = 0) := by
   decide
 
 /-- The bias reported for a VERUM form is the belief the model implicates. -/

@@ -55,7 +55,7 @@ The answers a feature gives to the questions whose negations a language allows f
   high negation the outer one, positively biased ([holmberg-2016]). The classification is of
   readings, not of forms: the preposed *-n't* of *Isn't this the road to Lund?*, the high
   negation form of [romero-han-2004], has both readings for some speakers, so `ClauseNegation`
-  is no refinement of `Question.PQForm`.
+  is no refinement of `PolarQuestionForm`.
 
 ## References
 

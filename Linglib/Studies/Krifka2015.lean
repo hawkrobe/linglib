@@ -221,10 +221,10 @@ def HighNegationLicensed (E φ : Set Weather) : Prop := ¬ E ⊆ φ
 
 /-- The question without negation is licensed on either of its readings; the question with low
 negation only on the monopolar reading of `¬φ`; the question with high negation as such. -/
-def Licensed (E φ : Set Weather) : PQForm → Prop
-  | .posQ => MonopolarLicensed E φ ∨ BipolarLicensed E φ
-  | .loNQ => MonopolarLicensed E φᶜ
-  | .hiNQ => HighNegationLicensed E φ
+def Licensed (E φ : Set Weather) : PolarQuestionForm → Prop
+  | .positive => MonopolarLicensed E φ ∨ BipolarLicensed E φ
+  | .lowNegation => MonopolarLicensed E φᶜ
+  | .highNegation => HighNegationLicensed E φ
 
 theorem raining_ne_empty : raining ≠ ∅ := (Set.singleton_nonempty _).ne_empty
 
@@ -236,18 +236,18 @@ monopolar; with neutral evidence the question without negation, read bipolar, an
 high-negation question; with evidence against `φ` both negated questions and not the question
 without negation. -/
 theorem table1 (e : SignType) :
-    (Licensed (evidence raining e) raining .posQ ↔ e ≠ -1) ∧
-      (Licensed (evidence raining e) raining .loNQ ↔ e = -1) ∧
-      (Licensed (evidence raining e) raining .hiNQ ↔ e ≠ 1) := by
+    (Licensed (evidence raining e) raining .positive ↔ e ≠ -1) ∧
+      (Licensed (evidence raining e) raining .lowNegation ↔ e = -1) ∧
+      (Licensed (evidence raining e) raining .highNegation ↔ e ≠ 1) := by
   cases e <;> simp [Licensed, MonopolarLicensed, BipolarLicensed,
     HighNegationLicensed, evidence, raining_ne_empty, raining_ne_univ]
 
 /-- The licensing conditions are the evidence conditions of [buring-gunlogson-2000]. -/
-theorem licensed_iff_felicitous (f : PQForm) (e : SignType) :
+theorem licensed_iff_felicitous (f : PolarQuestionForm) (e : SignType) :
     Licensed (evidence raining e) raining f ↔ BuringGunlogson2000.Felicitous f e := by
-  have h : ∀ e : SignType, (e ≠ -1 ↔ BuringGunlogson2000.Felicitous .posQ e) ∧
-      (e = -1 ↔ BuringGunlogson2000.Felicitous .loNQ e) ∧
-      (e ≠ 1 ↔ BuringGunlogson2000.Felicitous .hiNQ e) := by decide
+  have h : ∀ e : SignType, (e ≠ -1 ↔ BuringGunlogson2000.Felicitous .positive e) ∧
+      (e = -1 ↔ BuringGunlogson2000.Felicitous .lowNegation e) ∧
+      (e ≠ 1 ↔ BuringGunlogson2000.Felicitous .highNegation e) := by decide
   cases f
   exacts [(table1 e).1.trans (h e).1, (table1 e).2.1.trans (h e).2.1,
     (table1 e).2.2.trans (h e).2.2]

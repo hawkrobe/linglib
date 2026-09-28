@@ -36,7 +36,7 @@ like inner negation but non-propositional like FALSUM.
   (`licenses_nciLicensed_iff_licensedAt`).
 * `nahodou_identifies_outer`, `jeste_identifies_inner`,
   `fakt_plus_no_jeste_identifies_medial` — per-particle pinning.
-* `czech_refines_loNQ` — Czech splits [romero-2024]'s LoNQ into inner
+* `czech_refines_lowNegation` — Czech splits [romero-2024]'s LoNQ into inner
   and medial.
 * `examples_match_table1` — the paper's examples
   (`Data.Examples.Stankova2026`) check against Table 1.
@@ -229,9 +229,9 @@ which maps onto [romero-2024]'s PosQ/LoNQ/HiNQ typology. -/
 
 /-- [romero-2024] PQ form of a negation position: outer is high
 negation (HiNQ), inner and medial are both low (LoNQ). -/
-def Position.toPQForm : Position → PQForm
-  | .inner | .medial => .loNQ
-  | .outer => .hiNQ
+def Position.toPolarQuestionForm : Position → PolarQuestionForm
+  | .inner | .medial => .lowNegation
+  | .outer => .highNegation
 
 /-- Only outer negation (FALSUM) is obligatorily focused
 ([stankova-2026] §3.2). -/
@@ -256,15 +256,15 @@ def Position.toCzechPQForm : Position → CzechPQForm
 
 /-- The two form typologies agree: [simik-2024]'s grid refines
 [romero-2024]'s. -/
-theorem czechPQForm_consistent_with_pqForm :
-    ∀ pos : Position, pos.toCzechPQForm.toPQForm = pos.toPQForm := by
+theorem czechPQForm_consistent_with_polarQuestionForm :
+    ∀ pos : Position, pos.toCzechPQForm.toPolarQuestionForm = pos.toPolarQuestionForm := by
   intro pos; cases pos <;> rfl
 
 /-- Czech refines [romero-2024]'s LoNQ: inner and medial share the LoNQ
 form but differ in evidential bias strength and in Table 1
 signatures. -/
-theorem czech_refines_loNQ :
-    Position.inner.toPQForm = Position.medial.toPQForm ∧
+theorem czech_refines_lowNegation :
+    Position.inner.toPolarQuestionForm = Position.medial.toPolarQuestionForm ∧
     Position.inner.biasStrength ≠ Position.medial.biasStrength ∧
     licensed .inner ≠ licensed .medial :=
   ⟨rfl, by decide, by decide⟩

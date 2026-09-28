@@ -27,7 +27,7 @@ profile of the Serbian strategies reported from [todorovic-2023] (`serbianBiasPr
 The Czech cleaning-service scenarios (11)–(18) are typed rows, and the table predicts each
 judgment (`cleaning_examples_match_table2`); declaratives need evidence
 (`declarative_requires_evidence`) and Czech InterNPQ, unlike English high negation, is
-felicitous under positive evidence (`interNPQ_broader_than_english_hiNQ`), while Serbian
+felicitous under positive evidence (`interNPQ_broader_than_english_highNegation`), while Serbian
 high negation is narrower than English (`serbian_hnpq_narrower_than_english`). The quiz
 scenario (24) diagnoses each of ten languages' default strategy: its positive form is the
 quiz-felicitous one (`default_quiz_felicitous`), declaratives never are
@@ -79,9 +79,9 @@ double-checks: against the prejacent as asked. -/
 def prior (s : Polarity) : SignType := -(s : SignType)
 
 /-- The polarity of a [romero-2024] question form. -/
-def polarityOf : PQForm → Polarity
-  | .posQ => .positive
-  | .loNQ | .hiNQ => .negative
+def polarityOf : PolarQuestionForm → Polarity
+  | .positive => .positive
+  | .lowNegation | .highNegation => .negative
 
 /-! ### The Czech forms and their bias profile (§3.2, Table 2) -/
 
@@ -95,10 +95,10 @@ inductive CzechPQForm
   deriving DecidableEq, Repr, Fintype
 
 /-- The [romero-2024] form of each grid cell: InterNPQ is high negation, DeclNPQ low. -/
-def CzechPQForm.toPQForm : CzechPQForm → PQForm
-  | .interPPQ | .declPPQ => .posQ
-  | .interNPQ => .hiNQ
-  | .declNPQ => .loNQ
+def CzechPQForm.toPolarQuestionForm : CzechPQForm → PolarQuestionForm
+  | .interPPQ | .declPPQ => .positive
+  | .interNPQ => .highNegation
+  | .declNPQ => .lowNegation
 
 /-- Declarative word order. -/
 def CzechPQForm.Declarative : CzechPQForm → Prop
@@ -160,9 +160,9 @@ theorem declarative_requires_evidence (f : CzechPQForm) (hf : f.Declarative)
 
 /-- Czech high negation is broader than English: felicitous under positive evidence, which the
 evidence condition of [buring-gunlogson-2000] on outer negation excludes. -/
-theorem interNPQ_broader_than_english_hiNQ :
+theorem interNPQ_broader_than_english_highNegation :
     .interNPQ ∈ czechBiasProfile 1 0 ∧
-      ¬ BuringGunlogson2000.Felicitous .hiNQ 1 := by
+      ¬ BuringGunlogson2000.Felicitous .highNegation 1 := by
   decide
 
 /-! ### The cleaning scenarios (11)–(18) -/
@@ -332,10 +332,10 @@ def SerbianPQForm.particle : SerbianPQForm → Particle
   | .hnpq => Serbian.QuestionParticles.li
 
 /-- The [romero-2024] form of each strategy. -/
-def SerbianPQForm.toPQForm : SerbianPQForm → PQForm
-  | .daLiPPQ | .jeLiPPQ => .posQ
-  | .hnpq => .hiNQ
-  | .lnpq => .loNQ
+def SerbianPQForm.toPolarQuestionForm : SerbianPQForm → PolarQuestionForm
+  | .daLiPPQ | .jeLiPPQ => .positive
+  | .hnpq => .highNegation
+  | .lnpq => .lowNegation
 
 /-- Table 1: the Serbian strategies natural in each cell, after [todorovic-2023]. -/
 def serbianBiasProfile : SignType → SignType → Finset SerbianPQForm
@@ -360,7 +360,7 @@ theorem jeLiPPQ_of_daLiPPQ (h : .daLiPPQ ∈ serbianBiasProfile ev ob) :
   revert h; decide +revert
 
 /-- Positive questions are incompatible with negative biases. -/
-theorem ppq_no_negative_bias (f : SerbianPQForm) (hf : f.toPQForm = .posQ)
+theorem ppq_no_negative_bias (f : SerbianPQForm) (hf : f.toPolarQuestionForm = .positive)
     (h : f ∈ serbianBiasProfile ev ob) : ev ≠ -1 ∧ ob ≠ -1 := by
   revert hf h; decide +revert
 
@@ -378,7 +378,7 @@ theorem lnpq_of_hnpq (h : .hnpq ∈ serbianBiasProfile ev ob) :
 /-- Serbian high negation is narrower than English: neutral evidence, which the evidence
 condition of [buring-gunlogson-2000] on outer negation admits, admits no Serbian HNPQ. -/
 theorem serbian_hnpq_narrower_than_english :
-    BuringGunlogson2000.Felicitous .hiNQ 0 ∧ ∀ ob, .hnpq ∉ serbianBiasProfile 0 ob := by
+    BuringGunlogson2000.Felicitous .highNegation 0 ∧ ∀ ob, .hnpq ∉ serbianBiasProfile 0 ob := by
   decide
 
 /-- The quiz rows of (31) carry the markers of the Table 1 strategies. -/
@@ -434,22 +434,22 @@ end Wonder
 
 /-- The bias profile of a *razve* question by form: evidence for the prejacent as asked
 against a prior for its negation (the conflict-resolving profile of §3.1). -/
-def razveProfile (f : PQForm) : SignType × SignType :=
+def razveProfile (f : PolarQuestionForm) : SignType × SignType :=
   (evidence (polarityOf f), prior (polarityOf f))
 
 /-- The profile of *razve* negative questions is the same under inner negation (VERUM)
 and outer negation (FALSUM): negative evidence, positive prior. -/
 theorem razveProfile_negation_invariant :
-    razveProfile .loNQ = razveProfile .hiNQ ∧
-      razveProfile .hiNQ = (-1, 1) :=
+    razveProfile .lowNegation = razveProfile .highNegation ∧
+      razveProfile .highNegation = (-1, 1) :=
   ⟨rfl, rfl⟩
 
 /-- *Razve* is compatible with both negations ([repp-geist-2022]'s LFs (40), diagnosed
 by the polarity items in (41)), *neuželi* with inner negation only. -/
-def razveNegations : Finset PQForm := {.loNQ, .hiNQ}
+def razveNegations : Finset PolarQuestionForm := {.lowNegation, .highNegation}
 
 /-- *Neuželi* lexicalizes VERUM and so tolerates inner negation only. -/
-def neuzeliNegations : Finset PQForm := {.loNQ}
+def neuzeliNegations : Finset PolarQuestionForm := {.lowNegation}
 
 theorem neuzeliNegations_ssubset : neuzeliNegations ⊂ razveNegations := by decide
 

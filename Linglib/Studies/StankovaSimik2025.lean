@@ -24,7 +24,7 @@ none (`v1_ppi_any_context`, `v1_nci_never`, `v1_context_invariant`), and declara
 contextual evidence, the concord item negative evidence and the polarity item any evidence
 (`nonV1_nci_iff`, `nonV1_ppi_iff`, `nonV1_neutral_infelicitous`). Czech FALSUM is thereby broader
 than English high negation, felicitous even with positive evidence
-(`falsum_broader_than_english_hiNQ`). The particle *náhodou* is licensed by FALSUM alone
+(`falsum_broader_than_english_highNegation`). The particle *náhodou* is licensed by FALSUM alone
 (`Simik2024.NahodouLicensed`), so it excludes concord items whatever the word order
 (`nahodou_excludes_nci`), and *copak* needs contextual evidence matching the question's polarity,
 against the speaker's prior belief (`copak_requires_bias`, `copak_prior_ne_evidence`); the two
@@ -185,8 +185,8 @@ theorem nonV1_neutral_infelicitous (ind : Indefinite) : ¬ Felicitous .nonV1 ind
 /-- Czech FALSUM is broader than English high negation: an interrogative question with the
 polarity item is felicitous under positive evidence (the paper's (14)), which the evidence
 condition of [buring-gunlogson-2000] on English outer negation excludes. -/
-theorem falsum_broader_than_english_hiNQ :
-    ¬ BuringGunlogson2000.Felicitous .hiNQ 1 ∧
+theorem falsum_broader_than_english_highNegation :
+    ¬ BuringGunlogson2000.Felicitous .highNegation 1 ∧
       Felicitous .v1 .ppi 1 :=
   ⟨by decide, v1_ppi_any_context _⟩
 
