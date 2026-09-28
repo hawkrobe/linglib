@@ -9,38 +9,51 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Scale boundedness
 
-This file defines `Degree.Boundedness`, the four-way classification of scales by the endpoints
-they have, of [kennedy-mcnally-2005] (23) and [kennedy-2007] (59), found independently by
-[rotstein-winter-2004]. A boundedness is the endpoint profile of an order: `Boundedness.ofOrder D`
-reads it off the order `D` from the existence of a least and a greatest element, so that a scale's
-tag is a fact about its degrees. The tag itself is what a lexical entry stores, since a record
-field cannot hold an `OrderTop` instance, and `Boundedness.degreeShape` is a canonical linear order
-of each shape, a section of `ofOrder`.
+This file defines `Degree.Boundedness`, the classification of scales by the endpoints they have
+that Kennedy and McNally introduced and Rotstein and Winter found independently. A boundedness is
+the endpoint profile of an order, and `Boundedness.ofOrder D` reads it off `D` from the existence of
+a least and a greatest element, so that a scale's tag is a fact about its degrees. The tag is what a
+lexical entry stores, since a record field cannot hold an `OrderTop` instance.
 
-The negative member of an antonym pair measures on the same degrees under the inverse ordering
-([kennedy-2007] (60), [kennedy-mcnally-2005]). `Boundedness.dual` is that
-operation on tags, and `ofOrder_orderDual` identifies it with mathlib's order dual. `withMin` and
-`withMax` adjoin an endpoint, the shapes of the rays `Set.Ici a` and `Set.Iic a`.
+The negative member of an antonym pair measures on the same degrees in the reverse order, and
+`Boundedness.dual` is that operation on tags. The file also defines the standards of the positive
+form and Kennedy's Interpretive Economy, which selects among them by the tag. A scale with an
+endpoint rules out the contextual standard, and a totally closed scale prefers its maximum.
 
 ## Main definitions
 
-* `Boundedness`, with the endpoint predicates `HasMin` and `HasMax`.
+* `Boundedness`: the four endpoint profiles, with the predicates `HasMin` and `HasMax`.
 * `Boundedness.ofOrder`: the boundedness of an order.
-* `Boundedness.dual`, `Boundedness.withMin`, `Boundedness.withMax`: the ends exchanged, a least
-  degree adjoined, a greatest degree adjoined.
+* `Boundedness.dual`: the boundedness with its ends exchanged.
+* `Boundedness.withMin`: the boundedness with a least degree adjoined.
+* `Boundedness.withMax`: the boundedness with a greatest degree adjoined.
 * `Boundedness.degreeShape`: a linear order of each boundedness.
+* `PositiveStandard`: the standards of the positive form.
+* `Boundedness.Admits`: the standards Interpretive Economy admits on a scale.
+* `Boundedness.defaultStandard`: the standard Interpretive Economy prefers on a scale.
 
 ## Main results
 
-* `Boundedness.ofOrder_orderDual`, `Boundedness.ofOrder_Ici`, `Boundedness.ofOrder_Iic`: the
-  order dual and the two rays have the dual, `withMin` and `withMax` boundedness.
+* `Boundedness.ofOrder_orderDual`: the order dual has the dual boundedness.
+* `Boundedness.ofOrder_Ici`: a ray upward has a least degree adjoined.
+* `Boundedness.ofOrder_Iic`: a ray downward has a greatest degree adjoined.
 * `Boundedness.ofOrder_degreeShape`: every boundedness is that of a linear order.
+* `Boundedness.admits_withMin_iff`: a scale with a least degree adjoined admits the minimum
+  standard, and the maximum exactly when the original scale has one.
 
 ## References
 
-* [kennedy-2007]
-* [kennedy-mcnally-2005]
-* [rotstein-winter-2004]
+* [C. Kennedy and L. McNally, *Scale Structure, Degree Modification, and the Semantics of Gradable
+  Predicates* (2005)][kennedy-mcnally-2005]
+* [C. Kennedy, *Vagueness and Grammar: The Semantics of Relative and Absolute Gradable Adjectives*
+  (2007)][kennedy-2007]
+* [C. Rotstein and Y. Winter, *Total Adjectives vs. Partial Adjectives: Scale Structure and
+  Higher-Order Modifiers* (2004)][rotstein-winter-2004]
+* [C. Kennedy and B. Levin, *Measure of Change: The Adjectival Core of Degree Achievements*
+  (2008)][kennedy-levin-2008]
+* [E. Klein, *A Semantics for Positive and Comparative Adjectives* (1980)][klein-1980]
+* [A. Beltrama, *Evaluation, Thresholds, and Practical Commitments: The Grammar of Adjectival
+  Mildness* (2025)][beltrama-2025]
 -/
 
 @[expose] public section
@@ -90,7 +103,7 @@ section OfOrder
 variable {D : Type*}
 
 open Classical in
-/-- The boundedness of an order: which of a least and a greatest element it has. -/
+/-- The boundedness of an order records which of a least and a greatest element it has. -/
 noncomputable def ofOrder (D : Type*) [LE D] : Boundedness :=
   if ∃ m : D, IsBot m then if ∃ m : D, IsTop m then closed else lowerClosed
   else if ∃ m : D, IsTop m then upperClosed else open_
@@ -116,17 +129,18 @@ section Preorder
 variable [Preorder D]
 
 @[simp] theorem not_hasMin_ofOrder [NoMinOrder D] : ¬ (ofOrder D).HasMin :=
-  λ h => let ⟨m, hm⟩ := hasMin_ofOrder.1 h; not_isMin m hm.isMin
+  fun h ↦ let ⟨m, hm⟩ := hasMin_ofOrder.1 h; not_isMin m hm.isMin
 
 @[simp] theorem not_hasMax_ofOrder [NoMaxOrder D] : ¬ (ofOrder D).HasMax :=
-  λ h => let ⟨m, hm⟩ := hasMax_ofOrder.1 h; not_isMax m hm.isMax
+  fun h ↦ let ⟨m, hm⟩ := hasMax_ofOrder.1 h; not_isMax m hm.isMax
 
 end Preorder
 end OfOrder
 
 /-! ### The ends exchanged -/
 
-/-- The antonym's scale: the same degrees with the ends exchanged ([kennedy-2007] (60)). -/
+/-- The dual of a boundedness exchanges its ends, giving the scale of the antonym
+([kennedy-2007] (60)). -/
 def dual : Boundedness → Boundedness
   | .open_ => .open_
   | .lowerClosed => .upperClosed
@@ -139,24 +153,25 @@ def dual : Boundedness → Boundedness
 @[simp] theorem hasMax_dual {b : Boundedness} : b.dual.HasMax ↔ b.HasMin := by
   cases b <;> exact Iff.rfl
 
-theorem dual_involutive : Function.Involutive dual := λ b => by cases b <;> rfl
+theorem dual_involutive : Function.Involutive dual := fun b ↦ by cases b <;> rfl
 
 @[simp] theorem dual_dual (b : Boundedness) : b.dual.dual = b := dual_involutive b
 
-/-- Inverting the ordering of the degrees exchanges the ends of the scale: the negative antonym
-of [kennedy-2007] (60) and [kennedy-mcnally-2005] measures on the order dual. -/
+/-- Reversing the order of the degrees exchanges the ends of the scale, so the negative antonym,
+which measures on the order dual ([kennedy-2007] (60), [kennedy-mcnally-2005]), has the dual
+boundedness. -/
 @[simp] theorem ofOrder_orderDual {D : Type*} [LE D] : ofOrder Dᵒᵈ = (ofOrder D).dual :=
   ext (by simp [hasMin_ofOrder, hasMax_ofOrder, OrderDual.exists])
     (by simp [hasMin_ofOrder, hasMax_ofOrder, OrderDual.exists])
 
 /-! ### An endpoint adjoined -/
 
-/-- A least degree adjoined: the shape of the ray `Set.Ici a` (`ofOrder_Ici`). -/
+/-- `b.withMin` is `b` with a least degree adjoined, the shape of a ray `Set.Ici a`. -/
 def withMin : Boundedness → Boundedness
   | .open_ | .lowerClosed => .lowerClosed
   | .upperClosed | .closed => .closed
 
-/-- A greatest degree adjoined: the shape of the ray `Set.Iic a` (`ofOrder_Iic`). -/
+/-- `b.withMax` is `b` with a greatest degree adjoined, the shape of a ray `Set.Iic a`. -/
 def withMax : Boundedness → Boundedness
   | .open_ | .upperClosed => .upperClosed
   | .lowerClosed | .closed => .closed
@@ -182,17 +197,17 @@ variable {D : Type*} [Preorder D] {a : D}
 
 /-- The ray from `a` up has a least degree, `a`, and a greatest one exactly when `D` has. -/
 theorem ofOrder_Ici [IsDirectedOrder D] : ofOrder (Set.Ici a) = (ofOrder D).withMin := by
-  refine ext (iff_of_true (hasMin_ofOrder.2 ⟨⟨a, le_rfl⟩, λ x => x.2⟩) (hasMin_withMin _)) ?_
+  refine ext (iff_of_true (hasMin_ofOrder.2 ⟨⟨a, le_rfl⟩, fun x ↦ x.2⟩) (hasMin_withMin _)) ?_
   rw [hasMax_ofOrder, hasMax_withMin, hasMax_ofOrder]
-  refine ⟨λ ⟨⟨m, _⟩, hm⟩ => ⟨m, λ x => ?_⟩, λ ⟨m, hm⟩ => ⟨⟨m, hm a⟩, λ x => hm x⟩⟩
+  refine ⟨fun ⟨⟨m, _⟩, hm⟩ ↦ ⟨m, fun x ↦ ?_⟩, fun ⟨m, hm⟩ ↦ ⟨⟨m, hm a⟩, fun x ↦ hm x⟩⟩
   obtain ⟨c, hxc, hac⟩ := exists_ge_ge x a
   exact le_trans hxc (hm ⟨c, hac⟩)
 
 /-- The ray from `a` down has a greatest degree, `a`, and a least one exactly when `D` has. -/
 theorem ofOrder_Iic [IsCodirectedOrder D] : ofOrder (Set.Iic a) = (ofOrder D).withMax := by
-  refine ext ?_ (iff_of_true (hasMax_ofOrder.2 ⟨⟨a, le_rfl⟩, λ x => x.2⟩) (hasMax_withMax _))
+  refine ext ?_ (iff_of_true (hasMax_ofOrder.2 ⟨⟨a, le_rfl⟩, fun x ↦ x.2⟩) (hasMax_withMax _))
   rw [hasMin_ofOrder, hasMin_withMax, hasMin_ofOrder]
-  refine ⟨λ ⟨⟨m, _⟩, hm⟩ => ⟨m, λ x => ?_⟩, λ ⟨m, hm⟩ => ⟨⟨m, hm a⟩, λ x => hm x⟩⟩
+  refine ⟨fun ⟨⟨m, _⟩, hm⟩ ↦ ⟨m, fun x ↦ ?_⟩, fun ⟨m, hm⟩ ↦ ⟨⟨m, hm a⟩, fun x ↦ hm x⟩⟩
   obtain ⟨c, hcx, hca⟩ := exists_le_le x a
   exact le_trans (hm ⟨c, hca⟩) hcx
 
@@ -200,7 +215,8 @@ end Ray
 
 /-! ### A linear order of each shape -/
 
-/-- A linear order of each boundedness: the integers with the tagged endpoints adjoined. -/
+/-- `b.degreeShape` is the integers with the endpoints of `b` adjoined, a linear order of each
+boundedness. -/
 abbrev degreeShape : Boundedness → Type
   | .open_ => ℤ
   | .lowerClosed => WithBot ℤ
@@ -210,7 +226,7 @@ abbrev degreeShape : Boundedness → Type
 instance instLinearOrderDegreeShape (b : Boundedness) : LinearOrder b.degreeShape := by
   cases b <;> exact inferInstance
 
-/-- `degreeShape` is a section of `ofOrder`: every boundedness is that of a linear order. -/
+/-- Every boundedness is that of a linear order, since `degreeShape` is a section of `ofOrder`. -/
 @[simp] theorem ofOrder_degreeShape : ∀ b : Boundedness, ofOrder b.degreeShape = b
   | .open_ => ext (iff_of_false not_hasMin_ofOrder id) (iff_of_false not_hasMax_ofOrder id)
   | .lowerClosed =>
@@ -226,6 +242,101 @@ theorem exists_isBot_degreeShape (b : Boundedness) : (∃ m : b.degreeShape, IsB
 
 theorem exists_isTop_degreeShape (b : Boundedness) : (∃ m : b.degreeShape, IsTop m) ↔ b.HasMax := by
   rw [← hasMax_ofOrder, ofOrder_degreeShape]
+
+end Boundedness
+
+/-! ### Standards and Interpretive Economy
+
+The positive form of a gradable predicate is true of what meets a standard on its scale.
+Interpretive Economy maximizes the contribution of conventional meaning, so a scale with an endpoint
+rules out the contextual standard, and a totally closed scale admits both endpoint standards and
+prefers the maximum. -/
+
+/-- A positive standard is the kind of threshold the positive form compares a degree with, a
+contextual norm on an open scale and an endpoint on a closed one ([kennedy-2007]). -/
+inductive PositiveStandard where
+  /-- The norm of a comparison class, as for *tall*. -/
+  | contextual
+  /-- The minimum of the scale, as for *bent* and *wet*. -/
+  | minEndpoint
+  /-- The maximum of the scale, as for *full* and *dry*. -/
+  | maxEndpoint
+  /-- The minimum degree for pursuit ([beltrama-2025]). -/
+  | necessity
+  deriving DecidableEq, Repr
+
+/-- A standard requires a comparison class when fixing it needs contextual information about a
+domain. [kennedy-2007] replaces the comparison-class argument of *pos* in [klein-1980] with a
+standard-fixing function, `⟦pos⟧ = λg.λx. g(x) ≥ s(g)`, which still needs that information for
+the contextual and necessity standards. -/
+def PositiveStandard.RequiresComparisonClass : PositiveStandard → Prop
+  | .contextual  => True
+  | .minEndpoint => False
+  | .maxEndpoint => False
+  | .necessity  => True
+
+instance : DecidablePred PositiveStandard.RequiresComparisonClass
+  | .contextual  => inferInstanceAs (Decidable True)
+  | .minEndpoint => inferInstanceAs (Decidable False)
+  | .maxEndpoint => inferInstanceAs (Decidable False)
+  | .necessity  => inferInstanceAs (Decidable True)
+
+namespace Boundedness
+
+/-- Interpretive Economy admits an endpoint standard exactly where the scale has that endpoint, the
+contextual standard, which context must supply, only on a totally open scale, and the necessity
+standard never ([kennedy-2007] (66)). A totally closed scale therefore admits both endpoints
+((67)–(68)). -/
+def Admits (b : Boundedness) : PositiveStandard → Prop
+  | .contextual  => b = .open_
+  | .minEndpoint => b.HasMin
+  | .maxEndpoint => b.HasMax
+  | .necessity  => False
+
+instance (b : Boundedness) (s : PositiveStandard) : Decidable (b.Admits s) := by
+  cases s <;> simp only [Admits] <;> infer_instance
+
+/-- The default standard of a scale is the one Interpretive Economy forces where it admits only
+one, and the maximum on a totally closed scale, since a maximum standard entails a minimum one. -/
+def defaultStandard : Boundedness → PositiveStandard
+  | .open_        => .contextual
+  | .lowerClosed => .minEndpoint
+  | .upperClosed => .maxEndpoint
+  | .closed       => .maxEndpoint
+
+/-- The default standard is always admitted. -/
+theorem admits_defaultStandard (b : Boundedness) : b.Admits b.defaultStandard := by
+  cases b <;> decide
+
+/-- A totally closed scale admits the minimum standard as well as the default maximum
+([kennedy-2007] (67)–(68)). -/
+theorem closed_admits_minEndpoint : closed.Admits .minEndpoint := trivial
+
+theorem closed_admits_maxEndpoint : closed.Admits .maxEndpoint := trivial
+
+/-- Interpretive Economy rules out the contextual standard whenever the scale has an endpoint. -/
+theorem not_admits_contextual_of_ne_open {b : Boundedness} (h : b ≠ .open_) :
+    ¬ b.Admits .contextual := h
+
+/-- A scale is relative when its default standard needs a comparison class, which is to say when
+it is open, as for *tall*, *expensive* and *big*. -/
+def IsRelative (b : Boundedness) : Prop := b.defaultStandard.RequiresComparisonClass
+
+instance : DecidablePred IsRelative :=
+  fun b ↦ inferInstanceAs (Decidable b.defaultStandard.RequiresComparisonClass)
+
+/-- A scale with a least degree adjoined, the scale of a difference function or a measure of
+change ([kennedy-levin-2008] (23), (25)), admits the minimum standard, and the maximum exactly
+when the original scale has one. -/
+theorem admits_withMin_iff {b : Boundedness} {s : PositiveStandard} :
+    b.withMin.Admits s ↔ s = .minEndpoint ∨ s = .maxEndpoint ∧ b.HasMax := by
+  cases b <;> cases s <;> simp [Admits, withMin, HasMin, HasMax]
+
+/-- The default standard of a scale with a least degree adjoined is the maximum when the original
+scale has one, and the minimum otherwise. -/
+theorem defaultStandard_withMin (b : Boundedness) :
+    b.withMin.defaultStandard = if b.HasMax then .maxEndpoint else .minEndpoint := by
+  cases b <;> rfl
 
 end Boundedness
 

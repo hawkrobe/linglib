@@ -9,23 +9,40 @@ public import Linglib.Semantics.Degree.Measure.Dimension
 /-!
 # Scalar dimensions
 
-The axis a gradable predicate — an adjective, or a degree-achievement
-verb's base adjective — measures along. One key with several views:
-perceptual channel (`domain`, drives RSA noise), canonical scale shape
-(`boundedness`), and the physical-quantity bridge (`dimension?`).
+This file defines `Degree.ScalarDimension`, the dimensions along which gradable adjectives and
+degree achievements measure, such as height, temperature and fullness. A dimension has a
+perceptual domain, the shape of its scale in its increasing direction, and, when it is a dimension
+of physical measurement, the physical dimension its degrees are measured in. Evaluative and
+psychological scales have none, which is why they reject measure phrases (*six feet tall* but not
+*six feet happy*), and speed is a primitive lexical scale although physically a quotient, since on
+Bale and Schwarz's No Division Hypothesis the grammar does not compose the ratio. The degrees of a
+dimension are the canonical linear order of its scale's shape, and the default Vendler class of a
+degree achievement is read off that shape.
 
-Physical measurement dimensions (mass, volume-as-litres, …) are a
-different fibration — an extensive ℚ-measure, not a gradable scale —
-and live in `Degree.Dimension`. The bridge is partial: evaluative
-and psychological scales (`happiness`, `intelligence`) have no physical
-dimension, which is why they reject ratio measure phrases ("six feet
-tall" vs "*six feet happy"). `speed` is simplex here as a lexical scale
-(*fast*) but a quotient physically ([bale-schwarz-2026]'s No Division
-Hypothesis: the grammar does not compose the ratio).
+## Main definitions
 
-The degree-theoretic apparatus over these dimensions (degree carriers,
-telicity defaults, endpoint licensing) is in
-`Semantics/Degree/Gradability/Dimension.lean`.
+* `ScalarDimension`: the dimensions of gradable predicates.
+* `ScalarDimension.domain`: the perceptual or cognitive domain of a dimension.
+* `ScalarDimension.boundedness`: the shape of a dimension's scale.
+* `ScalarDimension.dimension?`: the physical dimension of a dimension, if it has one.
+* `ScalarDimension.degree`: the degrees of a dimension.
+* `Boundedness.defaultVendlerClass`: the default Vendler class of a degree achievement on a scale.
+
+## Main results
+
+* `ScalarDimension.defaultTelicity_telic_iff_hasGreatest`: a degree achievement is telic by default
+  exactly when the degrees of its scale have a greatest element.
+
+## References
+
+* [C. Kennedy and L. McNally, *Scale Structure, Degree Modification, and the Semantics of Gradable
+  Predicates* (2005)][kennedy-mcnally-2005]
+* [C. Kennedy, *Vagueness and Grammar: The Semantics of Relative and Absolute Gradable Adjectives*
+  (2007)][kennedy-2007]
+* [C. Kennedy and B. Levin, *Measure of Change: The Adjectival Core of Degree Achievements*
+  (2008)][kennedy-levin-2008]
+* [A. Bale and B. Schwarz, *Natural language and external conventions: re-examining per*
+  (2026)][bale-schwarz-2026]
 -/
 
 @[expose] public section
@@ -36,9 +53,7 @@ open Aspect
 
 open Degree (Boundedness)
 
-/-- The scalar dimension a gradable predicate measures along — the union
-    of the perceptual adjective dimensions and the scalar-change verb
-    dimensions. -/
+/-- A scalar dimension is what a gradable adjective or a degree achievement measures along. -/
 inductive ScalarDimension
   -- Size
   | height | width | length | weight | thickness | depth | speed | strength
@@ -57,7 +72,7 @@ inductive ScalarDimension
   | color | curvature | boiling | corrosion | quantity | unspecified
   deriving DecidableEq, Repr, Fintype, Inhabited, BEq
 
-/-- The perceptual/cognitive channel — drives RSA noise. -/
+/-- The perceptual or cognitive domain of a dimension. -/
 def ScalarDimension.domain : ScalarDimension → PropertyDomain
   | .height | .width | .length | .weight | .thickness | .depth | .speed
   | .strength | .age | .generalSize | .quantity => .size
@@ -71,12 +86,12 @@ def ScalarDimension.domain : ScalarDimension → PropertyDomain
   | .curvature | .boiling | .corrosion | .unspecified => .state
   | .color => .color
 
-/-- The dimension's scale shape in its increasing direction ([kennedy-mcnally-2005]
-    (24)–(27), [kennedy-2007] (33), (60)): *??completely wet* but *completely dry* makes
-    wetness lower closed, *fully straight* but *??fully bent* makes straightness upper
-    closed, *100% full/empty* makes fullness closed. The negative member of an antonym
-    pair measures on the dual (`Polarity.negative • b` in `Semantics/Degree/Antonymy`).
-    Reducible so the degree fiber's `OrderTop`/`NoMaxOrder` instances synthesise through it. -/
+/-- The shape of a dimension's scale in its increasing direction ([kennedy-mcnally-2005]
+    (24)–(27), [kennedy-2007] (33), (60)). Wetness is lower closed, by *completely dry* against
+    *??completely wet*, straightness upper closed, by *fully straight* against *??fully bent*, and
+    fullness closed, by *100% full* and *100% empty*. The negative member of an antonym pair
+    measures on the dual scale. The definition is reducible, so that order instances on the
+    degrees of a dimension see through it. -/
 abbrev ScalarDimension.boundedness : ScalarDimension → Boundedness
   | .openness | .curvature | .cracking | .denting | .scratching | .boiling
   | .alive | .freedom | .fullness | .shattering | .tightness | .pregnancy => .closed
@@ -92,10 +107,10 @@ abbrev ScalarDimension.boundedness : ScalarDimension → Boundedness
 
 /-! ### Bridges to the physical quantity algebra -/
 
-/-- The physical dimension a scalar dimension is measured in, when one exists: spatial
-    scales are `distance`, `weight` is `mass`, `quantity` is `cardinality`, and *fast*
-    lexicalizes the quotient `distance / time` as a primitive scale. `none` for
-    evaluative/psychological/state scales — the scales that reject ratio measure phrases. -/
+/-- The physical dimension a scalar dimension is measured in, if any. Spatial scales are
+    measured in distance, weight in mass, age in time, temperature in temperature and quantity in
+    cardinality, and *fast* lexicalizes the quotient of distance by time as a primitive scale.
+    Evaluative, psychological and state scales, which reject ratio measure phrases, have none. -/
 def ScalarDimension.dimension? : ScalarDimension → Option Degree.QuantityDimension
   | .height | .width | .length | .depth | .thickness => some (.of .distance)
   | .weight => some (.of .mass)
@@ -105,63 +120,49 @@ def ScalarDimension.dimension? : ScalarDimension → Option Degree.QuantityDimen
   | .speed => some (.of .distance / .of .time)
   | _ => none
 
-/-! ### Degree fiber and aspectual views ([kennedy-levin-2008])
+/-! ### Degrees -/
 
-Absorbed from the retired `Degree/Gradability/Dimension.lean`: the degree
-carrier transports from `Boundedness.degreeShape`, and the Kennedy–Levin
-telicity defaults are theorems about it. -/
-
-open Degree (Boundedness)
-
-/-- Each dimension's degree type — inherited from its boundedness, so the grounding
-    transports rather than re-casing per dimension. -/
+/-- The degrees of a dimension are the canonical linear order of its scale's shape. -/
 abbrev ScalarDimension.degree (d : ScalarDimension) : Type := d.boundedness.degreeShape
 instance instLinearOrderDimensionDegree (d : ScalarDimension) : LinearOrder d.degree :=
   inferInstance
 
-/-- The scale's order structure has a greatest element exactly when the dimension's
-    canonical scale `HasMax` — grounded for all dimensions in one application. -/
+/-- The degrees of a dimension have a greatest element exactly when its scale has a maximum. -/
 theorem ScalarDimension.hasGreatest_degree_iff (d : ScalarDimension) :
     (∃ m : d.degree, IsTop m) ↔ d.boundedness.HasMax :=
   Boundedness.exists_isTop_degreeShape d.boundedness
 
-/-! ### Derived aspectual views (verb side) -/
+/-! ### Degree achievements -/
 
-/-- The default Vendler class of a degree achievement that measures change on a scale of this
-    shape. Degree achievements are dynamic and durative, so a scale with a maximum gives an
-    accomplishment and one without an activity ([kennedy-levin-2008]). -/
-def Boundedness.defaultVendlerClass : Boundedness → VendlerClass
-  | .closed | .upperClosed => .accomplishment
-  | .open_ | .lowerClosed => .activity
+/-- A degree achievement on a scale of shape `b` is by default an accomplishment when Interpretive
+    Economy prefers the maximum standard on `b` with a least degree adjoined, the scale of its
+    measure of change, and an activity otherwise ([kennedy-levin-2008]). -/
+def Boundedness.defaultVendlerClass (b : Boundedness) : VendlerClass :=
+  if b.withMin.defaultStandard = .maxEndpoint then .accomplishment else .activity
 
 theorem Boundedness.defaultVendlerClass_eq_accomplishment_iff {b : Boundedness} :
     b.defaultVendlerClass = .accomplishment ↔ b.HasMax := by
-  cases b <;> simp [defaultVendlerClass, HasMax]
+  cases b <;> decide
 
-/-- Default telicity of a degree achievement on this dimension: a scale with a
-    greatest degree gives a telic reading ([kennedy-levin-2008]). -/
-def ScalarDimension.defaultTelicity (d : ScalarDimension) : Telicity :=
-  match d.boundedness with
-  | .closed | .upperClosed => .telic
-  | .open_ | .lowerClosed => .atelic
-
-/-- Default Vendler class of a degree achievement towards the positive pole of this
-    dimension. -/
+/-- The default Vendler class of a degree achievement towards the positive pole of a dimension is
+    that of the dimension's scale. -/
 def ScalarDimension.defaultVendlerClass (d : ScalarDimension) : VendlerClass :=
   d.boundedness.defaultVendlerClass
 
-/-- **The Kennedy–Levin thesis as a theorem.** `defaultTelicity` is exactly the
-    order-theoretic fact: a degree achievement is telic iff its scale's degree type
-    has a greatest element — grounded in the scale's order structure, not stipulated. -/
+/-- The default telicity of a degree achievement on a dimension is that of its default Vendler
+    class. -/
+def ScalarDimension.defaultTelicity (d : ScalarDimension) : Telicity :=
+  d.defaultVendlerClass.telicity
+
+/-- A degree achievement is telic by default exactly when the degrees of its scale have a
+    greatest element ([kennedy-levin-2008]). -/
 theorem ScalarDimension.defaultTelicity_telic_iff_hasGreatest (d : ScalarDimension) :
     d.defaultTelicity = .telic ↔ ∃ m : d.degree, IsTop m := by
   rw [ScalarDimension.hasGreatest_degree_iff]; cases d <;> decide
 
 /-- The default Vendler class has the default telicity. -/
 @[simp] theorem ScalarDimension.telicity_defaultVendlerClass (d : ScalarDimension) :
-    d.defaultVendlerClass.telicity = d.defaultTelicity := by
-  unfold defaultVendlerClass defaultTelicity Boundedness.defaultVendlerClass
-  cases d.boundedness <;> rfl
+    d.defaultVendlerClass.telicity = d.defaultTelicity := rfl
 
 /-- A degree achievement is durative. -/
 @[simp] theorem ScalarDimension.duration_defaultVendlerClass (d : ScalarDimension) :
