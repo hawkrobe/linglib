@@ -2,6 +2,8 @@ module
 
 public import Mathlib.Probability.ConditionalProbability
 public import Linglib.Processing.Psychophysics.SignalDetection
+public import Linglib.Core.MeasureTheory.MeasurableSpace.Sum
+public import Linglib.Core.MeasureTheory.Constructions.List
 public import Mathlib.Order.BooleanAlgebra.Basic
 public import Mathlib.Probability.Kernel.WithDensity
 public import Mathlib.Probability.Kernel.Composition.MeasureComp
@@ -56,13 +58,17 @@ of the mean choice probability to the limits of the moments of the ratio and of 
 
 ## Implementation notes
 
-Luce's `P` and `Q` are families of probability measures on subsets of size at most three;
-here both are total `ChoiceFn`s, for which `binary x x = 1`, so the second axiom needs its
-`a ≠ b` guard (`axiom2_unguarded_false`) and the third its two guards
-(`complementation_unguarded_false`). Ratio scales enter as `ChoiceFn.BinaryRatioScaleOn`,
-local to the gamble set under discussion, because the third chapter mixes imperfect
-discrimination among gambles with perfect discrimination among pure alternatives, which a
-globally positive scale cannot represent. The first axiom lives in the structure; the further
+A system of choice probabilities is a `ChoiceFn`: for every finite menu `T` a mathlib probability
+measure `P_T` concentrated on `T`, so that part i of the choice axiom is conditioning
+(`ProbabilityTheory.cond`) and a ratio scale is a measure from which every `P_T` is obtained by
+conditioning. The distribution of rankings is a finite sum of Dirac measures on lists. Luce's `P`
+and `Q` of the third chapter are defined on subsets of size at most three; here both are
+`ChoiceFn`s on all finite menus, for which `binary x x = 1`, so the second axiom needs its `a ≠ b`
+guard (`axiom2_unguarded_false`) and the third its two guards (`complementation_unguarded_false`).
+Ratio scales enter as `ChoiceFn.BinaryRatioScaleOn`, local to the gamble set under discussion,
+because the third chapter mixes imperfect discrimination among gambles with perfect
+discrimination among pure alternatives, which a globally positive scale cannot represent. The
+first axiom lives in `DecomposablePreference`; the further
 axioms of the third chapter and the nondegeneracy of the three-class theorem are hypotheses
 of the theorems that use them, as in the book. The three-class theorems are stated on
 representatives, without a quotient. Luce offers the factoring `v(aρb) = w(a,b)·φ(ρ)` as a
@@ -127,8 +133,6 @@ variable {A : Type*} {v : A → ℝ} {x y z : A}
 forced choice. -/
 noncomputable def pairwiseProb (v : A → ℝ) (x y : A) : ℝ :=
   v x / (v x + v y)
-
-
 
 /-- Complementarity: `P(x, y) + P(y, x) = 1` for positive scales. -/
 theorem pairwiseProb_complement (hx : 0 < v x) (hy : 0 < v y) :
@@ -232,7 +236,6 @@ theorem ratioProb_eq_div (v : A → ℝ) (T : Finset A) (a : A) (ha : a ∈ T) :
     ratioProb v T a = v a / ∑ b ∈ T, v b := by
   simp only [ratioProb, ha, ↓reduceIte]
 
-
 /-- The ratio rule sums to one over a menu of nonzero total scale. -/
 theorem ratioProb_sum_eq_one (v : A → ℝ) (T : Finset A) (hT : ∑ b ∈ T, v b ≠ 0) :
     ∑ a ∈ T, ratioProb v T a = 1 := by
@@ -244,8 +247,6 @@ theorem ratioProb_ratio (v : A → ℝ) (T : Finset A) (a₁ a₂ : A) (h₁ : a
     ratioProb v T a₁ * v a₂ = ratioProb v T a₂ * v a₁ := by
   rw [ratioProb_eq_div v T a₁ h₁, ratioProb_eq_div v T a₂ h₂, div_mul_eq_mul_div,
     div_mul_eq_mul_div, mul_comm]
-
-
 
 /-- On a finite set of alternatives, the ratio rule on the whole set is the normalized scale. -/
 theorem ratioProb_univ [Fintype A] (v : A → ℝ) : ratioProb v Finset.univ = (∑ j, v j)⁻¹ • v := by
@@ -279,6 +280,17 @@ theorem ratioProb_eq_one_div_sum {v : A → ℝ} {T : Finset A} {x : A} (hv : �
     field_simp
   rw [sum_congr rfl hodds, ← sum_div, ratioProb_eq_div v T x hx, one_div_div]
 
+omit [DecidableEq A] in
+open MeasureTheory in
+/-- The measure with point masses `v` gives a finite set the sum of its masses. -/
+theorem withDensity_ofReal_finset [MeasurableSpace A] [MeasurableSingletonClass A] {v : A → ℝ}
+    (hv : ∀ a, 0 ≤ v a) (E : Finset A) :
+    (Measure.count.withDensity fun b ↦ ENNReal.ofReal (v b)) ↑E =
+      ENNReal.ofReal (∑ b ∈ E, v b) := by
+  rw [withDensity_apply _ E.measurableSet, lintegral_finset,
+    ENNReal.ofReal_sum_of_nonneg fun b _ ↦ hv b]
+  simp
+
 open MeasureTheory ProbabilityTheory in
 /-- The ratio rule is conditional probability (Luce's gloss on Theorem 3, p. 24): for a
 nonnegative scale `v`, the probability of choosing `a` from `T` is the conditional probability of
@@ -287,15 +299,10 @@ theorem ratioProb_eq_cond [MeasurableSpace A] [MeasurableSingletonClass A] {v : 
     (hv : ∀ a, 0 ≤ v a) (T : Finset A) (a : A) :
     ratioProb v T a =
       ((Measure.count.withDensity fun b ↦ ENNReal.ofReal (v b))[{a} | ↑T]).toReal := by
-  have hμ (E : Finset A) : (Measure.count.withDensity fun b ↦ ENNReal.ofReal (v b)) ↑E =
-      ENNReal.ofReal (∑ b ∈ E, v b) := by
-    rw [withDensity_apply _ E.measurableSet, lintegral_finset,
-      ENNReal.ofReal_sum_of_nonneg fun b _ ↦ hv b]
-    simp
   have hsum (E : Finset A) : 0 ≤ ∑ b ∈ E, v b := Finset.sum_nonneg fun b _ ↦ hv b
-  rw [cond_apply T.measurableSet, ← Finset.coe_singleton, ← Finset.coe_inter, hμ, hμ,
-    ENNReal.toReal_mul, ENNReal.toReal_inv, ENNReal.toReal_ofReal (hsum _),
-    ENNReal.toReal_ofReal (hsum _)]
+  rw [cond_apply T.measurableSet, ← Finset.coe_singleton, ← Finset.coe_inter,
+    withDensity_ofReal_finset hv, withDensity_ofReal_finset hv, ENNReal.toReal_mul,
+    ENNReal.toReal_inv, ENNReal.toReal_ofReal (hsum _), ENNReal.toReal_ofReal (hsum _)]
   by_cases ha : a ∈ T
   · rw [ratioProb_eq_div v T a ha, Finset.inter_singleton_of_mem ha, Finset.sum_singleton,
       inv_mul_eq_div]
@@ -306,374 +313,348 @@ end RatioRule
 
 /-! ### Systems of choice probabilities and the forms of the choice axiom
 
-`ChoiceFn` is [luce-1959]'s primitive: for each finite menu `T`, a probability
-distribution `prob T` supported on `T`. Three single-clause forms of the
-choice axiom for such a system, equivalent under imperfect discrimination:
+For each finite set `T` of alternatives, "all of the probabilities having the same subscript `T`
+form an ordinary probability measure on the subsets of `T`" (p. 5): a system of choice
+probabilities is a family of probability measures `P_T`, each concentrated on its `T`
+(`ChoiceFn`). Part i of Axiom 1 (p. 6), `P_T(R) = P_S(R) P_T(S)` for `R ⊆ S ⊆ T`, makes choice
+from `S ⊆ T` the conditional probability given `S` (`ChoiceFn.HasChoiceAxiom.prob_eq_cond`), which
+is Luce's gloss that `P_S` "acts like a conditional probability relative to `P_T`" (p. 24). A ratio
+scale is then a measure with positive finite point masses from which every `P_T` is obtained by
+conditioning (`ChoiceFn.HasRatioScale`). On a set with imperfect discrimination throughout, `P_T`
+is itself such a scale for the subsets of `T` (Theorem 3, p. 23), unique up to a positive multiple
+(`ChoiceFn.restrict_eq_smul_of_cond_eq`). Part ii of the axiom deletes an alternative that is
+never chosen over another, which is then never chosen at all (Lemma 1, p. 6).
 
-* `HasRatioScale` — a positive `v` with `P(a | T) = v a / ∑ b ∈ T, v b`, the
-  representation delivered by Theorem 3 (p. 23);
-* `HasProductRule` — `P(a | T) = P(a | S) · P(S | T)` for `a ∈ S ⊆ T`, the
-  shape of part i of Axiom 1 (p. 6);
-* `HasPairwiseIIA` — odds ratios preserved in any superset, the
-  constant-ratio rule of Lemma 3 (p. 9).
-
-([luce-1959]'s own Appendix 1, "Alternative forms of axiom 1", p. 135, states
-a different trio — conditions A–C on the rejection probabilities
-`Q_T(S) = 1 − P_T(S)`, equivalent to part i by its Theorem 20 — which is not
-formalized here.)
-
-Luce's Axiom 1 itself is two-clause and weaker than the globally positive
-ratio form: `ChoiceFn.HasChoiceAxiom` states it in full, and
-`ChoiceFn.HasChoiceAxiom.ratioScaleOn` is the existence half of his Theorem 3
-(local ratio scales on imperfectly discriminated menus). -/
+The ratio form is equivalent under strict positivity to the constant-ratio rule of Lemma 3
+(p. 9), the odds of two alternatives preserved in any superset (`ChoiceFn.HasPairwiseIIA`).
+[luce-1959]'s own Appendix 1, "Alternative forms of axiom 1" (p. 135), states a different trio,
+conditions on the rejection probabilities `Q_T(S) = 1 - P_T(S)`, which is not formalized. -/
 
 section ChoiceAxiomForms
 
-/-- A system of choice probabilities over finite menus — the primitive of
-[luce-1959]. For each nonempty menu `T`, `prob T : A → ℝ` is a
-probability distribution supported on `T`. -/
-structure ChoiceFn (A : Type*) where
-  /-- `prob T a`: the probability of choosing `a` from the menu `T`. -/
-  prob : Finset A → A → ℝ
-  /-- Probabilities are non-negative. -/
-  prob_nonneg : ∀ (T : Finset A) (a : A), 0 ≤ prob T a
-  /-- No probability outside the menu. -/
-  prob_zero_outside : ∀ (T : Finset A) (a : A), a ∉ T → prob T a = 0
-  /-- Probabilities sum to 1 on a nonempty menu. -/
-  prob_sum_eq_one : ∀ T : Finset A, T.Nonempty → ∑ a ∈ T, prob T a = 1
+open MeasureTheory ProbabilityTheory Finset
+open scoped ENNReal
+
+/-- A system of choice probabilities (§1.B, pp. 4–5): for every finite set `T`, the measure `P_T`
+of the alternative chosen from `T`, a probability measure concentrated on `T` when `T` is
+nonempty. -/
+structure ChoiceFn (A : Type*) [MeasurableSpace A] [MeasurableSingletonClass A] where
+  /-- The measure `P_T` of the alternative chosen from `T`. -/
+  prob : Finset A → Measure A
+  /-- `P_T` is a probability measure when `T` is nonempty (probability axioms (i) and (ii)). -/
+  isProbabilityMeasure_prob : ∀ T : Finset A, T.Nonempty → IsProbabilityMeasure (prob T)
+  /-- The alternative chosen from `T` lies in `T`. -/
+  prob_compl : ∀ T : Finset A, prob T (↑T)ᶜ = 0
 
 namespace ChoiceFn
 
-variable {A : Type*} [DecidableEq A]
+variable {A : Type*} [MeasurableSpace A] [MeasurableSingletonClass A] (cf : ChoiceFn A)
 
-/-- Binary forced choice: the probability of choosing `x` from `{x, y}`. -/
-def binary (cf : ChoiceFn A) (x y : A) : ℝ := cf.prob {x, y} x
+instance isFiniteMeasure_prob (T : Finset A) : IsFiniteMeasure (cf.prob T) := by
+  rcases T.eq_empty_or_nonempty with rfl | hT
+  · have h : cf.prob ∅ = 0 := by simpa using cf.prob_compl ∅
+    rw [h]
+    infer_instance
+  · have := cf.isProbabilityMeasure_prob T hT
+    infer_instance
 
-theorem binary_nonneg (cf : ChoiceFn A) (x y : A) : 0 ≤ cf.binary x y :=
-  cf.prob_nonneg _ _
+/-- The alternative chosen from a nonempty `T` lies in `T` with probability one. -/
+theorem prob_coe {T : Finset A} (hT : T.Nonempty) : cf.prob T ↑T = 1 := by
+  have := cf.isProbabilityMeasure_prob T hT
+  exact (prob_compl_eq_zero_iff T.measurableSet).1 (cf.prob_compl T)
 
-theorem binary_le_one (cf : ChoiceFn A) (x y : A) : cf.binary x y ≤ 1 :=
-  le_of_le_of_eq
-    (Finset.single_le_sum (fun a _ ↦ cf.prob_nonneg {x, y} a)
-      (Finset.mem_insert_self x _))
-    (cf.prob_sum_eq_one _ ⟨x, Finset.mem_insert_self x _⟩)
+/-- The probabilities of choosing each alternative from a nonempty `T` sum to one. -/
+theorem sum_prob_real {T : Finset A} (hT : T.Nonempty) : ∑ a ∈ T, (cf.prob T).real {a} = 1 := by
+  rw [sum_measureReal_singleton, measureReal_def, cf.prob_coe hT, ENNReal.toReal_one]
 
-/-- Binary complementarity: `P(x, y) + P(y, x) = 1` for `x ≠ y`. -/
-theorem binary_complement (cf : ChoiceFn A) {x y : A} (hxy : x ≠ y) :
-    cf.binary x y + cf.binary y x = 1 := by
-  simp only [binary, Finset.pair_comm y x]
-  rw [← Finset.sum_pair hxy]
-  exact cf.prob_sum_eq_one _ ⟨x, Finset.mem_insert_self x _⟩
+/-- Two measures concentrated on a finite set agree when they agree on its points. -/
+private theorem measure_eq_of_singleton {μ ν : Measure A} {T : Finset A} (hμ : μ (↑T)ᶜ = 0)
+    (hν : ν (↑T)ᶜ = 0) (h : ∀ a ∈ T, μ {a} = ν {a}) : μ = ν := by
+  classical
+  rw [← Measure.restrict_eq_self_of_ae_mem (ae_iff.2 hμ),
+    ← Measure.restrict_eq_self_of_ae_mem (ae_iff.2 hν)]
+  ext B hB
+  have hBT : B ∩ ↑T = ↑(T.filter (· ∈ B)) := by ext; simp [and_comm]
+  rw [Measure.restrict_apply hB, Measure.restrict_apply hB, hBT, ← sum_measure_singleton,
+    ← sum_measure_singleton]
+  exact sum_congr rfl fun a ha ↦ h a (mem_filter.1 ha).1
 
-/-- Self-choice is certain: `{x, x} = {x}`, so `binary x x = 1` — where
-[luce-1959] (p. 5) instead sets `P(x, x) = ½` by notational
-convention. -/
-theorem binary_self (cf : ChoiceFn A) (x : A) : cf.binary x x = 1 := by
-  simpa [binary] using cf.prob_sum_eq_one {x} ⟨x, Finset.mem_singleton_self x⟩
+/-- Conditioning on a finite set gives each of its points its share of the set's mass. -/
+private theorem measureReal_cond_singleton {μ : Measure A} {S : Finset A} {a : A} (ha : a ∈ S) :
+    (μ[|↑S]).real {a} = μ.real {a} / μ.real ↑S := by
+  rw [measureReal_def, cond_apply S.measurableSet, Set.inter_singleton_of_mem (mem_coe.2 ha),
+    ENNReal.toReal_mul, ENNReal.toReal_inv, measureReal_def, measureReal_def, inv_mul_eq_div]
 
-/-- **Ratio form** of the choice axiom: a positive scale `v` with
-`P(a | T) = v a / ∑ b ∈ T, v b` — the representation delivered by
-Theorem 3 of [luce-1959] (p. 23) in the globally imperfect regime. -/
-def HasRatioScale (cf : ChoiceFn A) : Prop :=
-  ∃ v : A → ℝ, (∀ a, 0 < v a) ∧
-    ∀ (T : Finset A) (a : A), a ∈ T → cf.prob T a = v a / ∑ b ∈ T, v b
+variable [DecidableEq A]
 
-/-- **Product rule** form of the choice axiom:
-`P(a | T) = P(a | S) · P(S | T)` for `a ∈ S ⊆ T`, where
-`P(S | T) = ∑ b ∈ S, P(b | T)` — the shape of part i of Axiom 1
-([luce-1959], p. 6). -/
-def HasProductRule (cf : ChoiceFn A) : Prop :=
-  ∀ S T : Finset A, S ⊆ T → S.Nonempty →
-    ∀ a ∈ S, cf.prob T a = cf.prob S a * ∑ b ∈ S, cf.prob T b
+private theorem measure_pair {μ : Measure A} {x y : A} (hxy : x ≠ y) :
+    μ ↑({x, y} : Finset A) = μ {x} + μ {y} := by
+  rw [← sum_measure_singleton, sum_pair hxy]
 
-/-- **Pairwise IIA** form of the choice axiom (the constant-ratio rule,
-Lemma 3 of [luce-1959], p. 9): odds ratios are preserved in any
-superset — `P(a | T) · P(b | {a,b}) = P(b | T) · P(a | {a,b})`. -/
-def HasPairwiseIIA (cf : ChoiceFn A) : Prop :=
+/-- Binary choice `P(x, y) = P_{x,y}(x)` (p. 5). -/
+noncomputable def binary (x y : A) : ℝ := (cf.prob {x, y}).real {x}
+
+theorem binary_nonneg (x y : A) : 0 ≤ cf.binary x y := measureReal_nonneg
+
+theorem binary_le_one (x y : A) : cf.binary x y ≤ 1 := by
+  have := cf.isProbabilityMeasure_prob {x, y} (insert_nonempty _ _)
+  exact measureReal_le_one
+
+/-- `P(x, y) + P(y, x) = 1` for `x ≠ y` (p. 5). -/
+theorem binary_complement {x y : A} (hxy : x ≠ y) : cf.binary x y + cf.binary y x = 1 := by
+  rw [binary, binary, pair_comm y x, ← sum_pair hxy (f := fun a ↦ (cf.prob {x, y}).real {a}),
+    cf.sum_prob_real (insert_nonempty _ _)]
+
+/-- `P(x, x) = 1`, the choice from a singleton, where [luce-1959] (p. 5) sets `P(x, x) = ½` by
+notational convention. -/
+theorem binary_self (x : A) : cf.binary x x = 1 := by
+  rw [binary, insert_eq_of_mem (mem_singleton_self x), measureReal_def, ← coe_singleton,
+    cf.prob_coe (singleton_nonempty x), ENNReal.toReal_one]
+
+/-- The ratio form of the choice axiom (Theorem 3, p. 23): a measure `μ` with positive finite
+point masses, the ratio scale, from which every `P_T` is obtained by conditioning on `T`. -/
+def HasRatioScale : Prop :=
+  ∃ μ : Measure A, (∀ a, μ {a} ≠ 0) ∧ (∀ a, μ {a} ≠ ∞) ∧
+    ∀ T : Finset A, T.Nonempty → cf.prob T = μ[|↑T]
+
+/-- The product rule, part i of Axiom 1 (p. 6) without its hypothesis of imperfect
+discrimination: `P_T(R) = P_S(R) P_T(S)` for `R ⊆ S ⊆ T`. -/
+def HasProductRule : Prop :=
+  ∀ R S T : Finset A, R ⊆ S → S ⊆ T → cf.prob T R = cf.prob S R * cf.prob T S
+
+/-- The constant-ratio rule (Lemma 3, p. 9): the odds of `a` against `b` are those of the pair in
+every set containing both, `P_T(a) P(b, a) = P_T(b) P(a, b)`. -/
+def HasPairwiseIIA : Prop :=
   ∀ (T : Finset A) (a b : A), a ∈ T → b ∈ T →
-    cf.prob T a * cf.prob {a, b} b = cf.prob T b * cf.prob {a, b} a
+    (cf.prob T).real {a} * cf.binary b a = (cf.prob T).real {b} * cf.binary a b
+
+/-- A positive binary ratio scale on a set `S`: choice between distinct elements of `S` follows
+the pairwise rule `P(x, y) = v x / (v x + v y)`. Keeping `S` local matters for [luce-1959]'s
+Chapter 3, which mixes imperfect discrimination among gambles with perfect discrimination
+elsewhere, where a global positive scale would force every binary probability into `(0, 1)`. -/
+def BinaryRatioScaleOn (S : Set A) (v : A → ℝ) : Prop :=
+  (∀ x ∈ S, 0 < v x) ∧ ∀ x ∈ S, ∀ y ∈ S, x ≠ y → cf.binary x y = pairwiseProb v x y
+
+/-- Imperfect discrimination throughout `T` (p. 6): `0 < P(x, y) < 1` for distinct `x, y ∈ T`. -/
+def ImperfectOn (T : Finset A) : Prop :=
+  ∀ x ∈ T, ∀ y ∈ T, x ≠ y → 0 < cf.binary x y ∧ cf.binary x y < 1
+
+/-- **Axiom 1** (p. 6). Part i: under imperfect discrimination throughout `T`,
+`P_T(R) = P_S(R) P_T(S)` for `R ⊆ S ⊆ T`. Part ii: if `P(x, y) = 0` for some `x, y ∈ T`, then
+`P_T(S) = P_{T - {x}}(S - {x})` for every `S ⊆ T`. -/
+structure HasChoiceAxiom : Prop where
+  product_rule : ∀ T : Finset A, cf.ImperfectOn T → ∀ R S : Finset A, R ⊆ S → S ⊆ T →
+    cf.prob T R = cf.prob S R * cf.prob T S
+  deletion : ∀ T : Finset A, ∀ x ∈ T, ∀ y ∈ T, cf.binary x y = 0 →
+    ∀ S ⊆ T, cf.prob T S = cf.prob (T.erase x) (S.erase x)
+
+variable {cf}
 
 omit [DecidableEq A] in
-/-- The ratio form implies the product rule. -/
-theorem HasRatioScale.hasProductRule {cf : ChoiceFn A}
-    (h : cf.HasRatioScale) : cf.HasProductRule := by
-  intro S T hST hS a ha
-  obtain ⟨v, hv_pos, hv_rule⟩ := h
-  rw [hv_rule T a (hST ha), hv_rule S a ha,
-    Finset.sum_congr rfl fun b hb ↦ hv_rule T b (hST hb), ← Finset.sum_div]
-  have hS_ne : (∑ b ∈ S, v b) ≠ 0 :=
-    ne_of_gt (Finset.sum_pos (fun b _ ↦ hv_pos b) hS)
-  have hT_ne : (∑ b ∈ T, v b) ≠ 0 :=
-    ne_of_gt (Finset.sum_pos (fun b _ ↦ hv_pos b) (hS.mono hST))
-  field_simp
+/-- A ratio scale satisfies the product rule: conditioning on `T` and then on `S ⊆ T` is
+conditioning on `S`. -/
+theorem HasRatioScale.hasProductRule (h : cf.HasRatioScale) : cf.HasProductRule := by
+  obtain ⟨μ, -, hfin, hμ⟩ := h
+  intro R S T hRS hST
+  rcases S.eq_empty_or_nonempty with rfl | hS
+  · simp [subset_empty.1 hRS]
+  have hT : μ ↑T ≠ ∞ := by
+    rw [← sum_measure_singleton]
+    exact ENNReal.sum_ne_top.2 fun a _ ↦ hfin a
+  have hS' : μ[|↑S] = (cf.prob T)[|↑S] := by
+    rw [hμ T (hS.mono hST), cond_cond_eq_cond_inter' T.measurableSet S.measurableSet hT,
+      Set.inter_eq_right.2 (coe_subset.2 hST)]
+  rw [hμ S hS, hS', cond_mul_eq_inter S.measurableSet, Set.inter_eq_right.2 (coe_subset.2 hRS)]
 
-/-- The ratio form implies pairwise IIA. -/
-theorem HasRatioScale.hasPairwiseIIA {cf : ChoiceFn A}
-    (h : cf.HasRatioScale) : cf.HasPairwiseIIA := by
+/-- A ratio scale satisfies the constant-ratio rule. -/
+theorem HasRatioScale.hasPairwiseIIA (h : cf.HasRatioScale) : cf.HasPairwiseIIA := by
+  obtain ⟨μ, -, -, hμ⟩ := h
   intro T a b ha hb
-  obtain ⟨v, hv_pos, hv_rule⟩ := h
-  rw [hv_rule T a ha, hv_rule T b hb, hv_rule {a, b} b (by simp),
-    hv_rule {a, b} a (Finset.mem_insert_self a _)]
+  rw [binary, binary, pair_comm b a, hμ T ⟨a, ha⟩, hμ {a, b} (insert_nonempty _ _),
+    measureReal_cond_singleton ha, measureReal_cond_singleton hb,
+    measureReal_cond_singleton (by simp : a ∈ ({a, b} : Finset A)),
+    measureReal_cond_singleton (by simp : b ∈ ({a, b} : Finset A))]
   ring
 
-/-- Pairwise IIA implies the ratio form, given strict positivity on every
-menu. The scale is built from a reference element `x₀` as
-`v x = P(x | {x, x₀}) / P(x₀ | {x, x₀})` — the chain construction of
-Theorem 4 of [luce-1959] (p. 25) in the one-link case. -/
-theorem HasPairwiseIIA.hasRatioScale [Inhabited A] {cf : ChoiceFn A}
-    (hIIA : cf.HasPairwiseIIA)
-    (hpos : ∀ (T : Finset A) (a : A), a ∈ T → 0 < cf.prob T a) :
+/-- A ratio scale is a binary ratio scale on every set, with `v a = μ {a}`. -/
+theorem HasRatioScale.binaryRatioScaleOn (h : cf.HasRatioScale) :
+    ∃ v : A → ℝ, ∀ S : Set A, cf.BinaryRatioScaleOn S v := by
+  obtain ⟨μ, h0, hfin, hμ⟩ := h
+  refine ⟨fun a ↦ (μ {a}).toReal, fun S ↦ ⟨fun x _ ↦ ENNReal.toReal_pos (h0 x) (hfin x),
+    fun x _ y _ hxy ↦ ?_⟩⟩
+  rw [binary, hμ _ (insert_nonempty _ _), measureReal_cond_singleton (by simp), measureReal_def,
+    measureReal_def, measure_pair hxy, ENNReal.toReal_add (hfin x) (hfin y), pairwiseProb]
+
+/-- A ratio scale satisfies Axiom 1: part i by the product rule, and part ii vacuously, since no
+discrimination is perfect. -/
+theorem HasRatioScale.hasChoiceAxiom (h : cf.HasRatioScale) : cf.HasChoiceAxiom := by
+  obtain ⟨v, hv⟩ := h.binaryRatioScaleOn
+  refine ⟨fun T _ R S hRS hST ↦ h.hasProductRule R S T hRS hST, fun T x _ y _ h0 ↦ ?_⟩
+  rcases eq_or_ne x y with rfl | hxy
+  · simp [binary_self] at h0
+  rw [(hv Set.univ).2 x trivial y trivial hxy, pairwiseProb] at h0
+  have hx := (hv Set.univ).1 x trivial
+  have hy := (hv Set.univ).1 y trivial
+  exact absurd h0 (div_pos hx (add_pos hx hy)).ne'
+
+/-- The constant-ratio rule gives a ratio scale when every probability of choice is positive. The
+scale is built from a reference alternative `x₀` as `v x = P(x, x₀) / P(x₀, x)`, the chain
+construction of Theorem 4 (p. 25) in its one-link case. -/
+theorem HasPairwiseIIA.hasRatioScale [Inhabited A] (hIIA : cf.HasPairwiseIIA)
+    (hpos : ∀ (T : Finset A) (a : A), a ∈ T → 0 < (cf.prob T).real {a}) :
     cf.HasRatioScale := by
-  have hsum := cf.prob_sum_eq_one
+  set p : Finset A → A → ℝ := fun T a ↦ (cf.prob T).real {a} with hp
+  have hIIA' : ∀ (T : Finset A) (a b : A), a ∈ T → b ∈ T →
+      p T a * p {a, b} b = p T b * p {a, b} a := fun T a b ha hb ↦ by
+    have := hIIA T a b ha hb
+    simp only [binary, pair_comm b a] at this
+    exact this
   set x₀ := (default : A)
-  set v := fun a ↦ cf.prob {a, x₀} a / cf.prob {a, x₀} x₀ with hv_def
+  set v := fun a ↦ p {a, x₀} a / p {a, x₀} x₀ with hv_def
   have hv_pos : ∀ a, 0 < v a := fun a ↦
     div_pos (hpos _ a (mem_insert.mpr (Or.inl rfl))) (hpos _ x₀ (by simp))
   have ratio_mul : ∀ (T : Finset A) (a b : A), a ∈ T → b ∈ T →
-      cf.prob T a * cf.prob {b, x₀} b * cf.prob {a, x₀} x₀ =
-      cf.prob T b * cf.prob {a, x₀} a * cf.prob {b, x₀} x₀ := by
+      p T a * p {b, x₀} b * p {a, x₀} x₀ = p T b * p {a, x₀} a * p {b, x₀} x₀ := by
     intro T a b ha hb
     set T' := insert x₀ T
     have ha' : a ∈ T' := mem_insert_of_mem ha
     have hb' : b ∈ T' := mem_insert_of_mem hb
     have hx₀' : x₀ ∈ T' := mem_insert_self x₀ T
-    have hT := hIIA T a b ha hb
-    have hT'ab := hIIA T' a b ha' hb'
-    have hT'ax₀ := hIIA T' a x₀ ha' hx₀'
-    have hT'bx₀ := hIIA T' b x₀ hb' hx₀'
-    have hB : cf.prob T' a * cf.prob {a, x₀} x₀ * cf.prob {b, x₀} b =
-              cf.prob T' b * cf.prob {b, x₀} x₀ * cf.prob {a, x₀} a := by
-      linear_combination cf.prob {b, x₀} b * hT'ax₀ - cf.prob {a, x₀} a * hT'bx₀
-    have hA_mul : (cf.prob T a * cf.prob T' b - cf.prob T b * cf.prob T' a) *
-                  cf.prob {a, b} b = 0 := by
-      linear_combination cf.prob T' b * hT - cf.prob T b * hT'ab
-    have hA : cf.prob T a * cf.prob T' b = cf.prob T b * cf.prob T' a := by
+    have hT := hIIA' T a b ha hb
+    have hT'ab := hIIA' T' a b ha' hb'
+    have hT'ax₀ := hIIA' T' a x₀ ha' hx₀'
+    have hT'bx₀ := hIIA' T' b x₀ hb' hx₀'
+    have hB : p T' a * p {a, x₀} x₀ * p {b, x₀} b = p T' b * p {b, x₀} x₀ * p {a, x₀} a := by
+      linear_combination p {b, x₀} b * hT'ax₀ - p {a, x₀} a * hT'bx₀
+    have hA_mul : (p T a * p T' b - p T b * p T' a) * p {a, b} b = 0 := by
+      linear_combination p T' b * hT - p T b * hT'ab
+    have hA : p T a * p T' b = p T b * p T' a := by
       rcases mul_eq_zero.mp hA_mul with h | h
       · linarith
-      · exact absurd h (ne_of_gt (hpos _ b (by simp)))
-    have hT'b_ne : cf.prob T' b ≠ 0 := ne_of_gt (hpos T' b hb')
-    have h1 : cf.prob T' b *
-          (cf.prob T a * cf.prob {b, x₀} b * cf.prob {a, x₀} x₀) =
-        cf.prob T' b *
-          (cf.prob T b * cf.prob {a, x₀} a * cf.prob {b, x₀} x₀) := by
-      linear_combination
-        cf.prob {b, x₀} b * cf.prob {a, x₀} x₀ * hA + cf.prob T b * hB
-    exact mul_left_cancel₀ hT'b_ne h1
-  refine ⟨v, hv_pos, fun T a ha ↦ ?_⟩
-  have hT_ne : T.Nonempty := ⟨a, ha⟩
-  have hsum_v_pos : 0 < ∑ b ∈ T, v b :=
-    Finset.sum_pos (fun b _ ↦ hv_pos b) hT_ne
-  rw [eq_div_iff (ne_of_gt hsum_v_pos)]
-  have swap : ∀ b ∈ T, cf.prob T a * v b = v a * cf.prob T b := by
-    intro b hb
-    simp only [hv_def]
-    have hrm := ratio_mul T a b ha hb
-    have hne_a : cf.prob {a, x₀} x₀ ≠ 0 := ne_of_gt (hpos _ x₀ (by simp))
-    have hne_b : cf.prob {b, x₀} x₀ ≠ 0 := ne_of_gt (hpos _ x₀ (by simp))
-    field_simp
-    linarith
-  calc cf.prob T a * ∑ b ∈ T, v b
-      = ∑ b ∈ T, cf.prob T a * v b := mul_sum T v (cf.prob T a)
-    _ = ∑ b ∈ T, v a * cf.prob T b := sum_congr rfl swap
-    _ = v a * ∑ b ∈ T, cf.prob T b := (mul_sum T (cf.prob T) (v a)).symm
-    _ = v a * 1 := by rw [hsum T hT_ne]
-    _ = v a := mul_one _
+      · exact absurd h (hpos _ b (by simp)).ne'
+    exact mul_left_cancel₀ (hpos T' b hb').ne' (by
+      linear_combination p {b, x₀} b * p {a, x₀} x₀ * hA + p T b * hB)
+  have hrule : ∀ (T : Finset A) (a : A), a ∈ T → p T a = v a / ∑ b ∈ T, v b := by
+    intro T a ha
+    have hsum : 0 < ∑ b ∈ T, v b := sum_pos (fun b _ ↦ hv_pos b) ⟨a, ha⟩
+    rw [eq_div_iff hsum.ne']
+    have swap : ∀ b ∈ T, p T a * v b = v a * p T b := fun b hb ↦ by
+      have hrm := ratio_mul T a b ha hb
+      have hne_a : p {a, x₀} x₀ ≠ 0 := (hpos _ x₀ (by simp)).ne'
+      have hne_b : p {b, x₀} x₀ ≠ 0 := (hpos _ x₀ (by simp)).ne'
+      simp only [hv_def]
+      field_simp
+      linarith
+    rw [mul_sum, sum_congr rfl swap, ← mul_sum, cf.sum_prob_real ⟨a, ha⟩, mul_one]
+  have hμa (b : A) :
+      (Measure.count.withDensity fun b ↦ ENNReal.ofReal (v b)) {b} = ENNReal.ofReal (v b) := by
+    simp
+  refine ⟨Measure.count.withDensity fun b ↦ ENNReal.ofReal (v b), fun a ↦ ?_, fun a ↦ ?_,
+    fun T hT ↦ ?_⟩
+  · rw [hμa]
+    exact (ENNReal.ofReal_pos.2 (hv_pos a)).ne'
+  · rw [hμa]
+    exact ENNReal.ofReal_ne_top
+  · refine measure_eq_of_singleton (T := T) (cf.prob_compl T)
+      (by simp [cond_apply T.measurableSet]) fun a ha ↦ ?_
+    have hsum : 0 < ∑ b ∈ T, v b := sum_pos (fun b _ ↦ hv_pos b) hT
+    rw [cond_apply T.measurableSet, Set.inter_singleton_of_mem (mem_coe.2 ha), hμa,
+      withDensity_ofReal_finset (fun b ↦ (hv_pos b).le),
+      ← ofReal_measureReal (measure_ne_top _ _)]
+    change ENNReal.ofReal (p T a) = _
+    rw [hrule T a ha, ENNReal.ofReal_div_of_pos hsum, ENNReal.div_eq_inv_mul]
 
-/-- Equivalence of the ratio form and pairwise IIA, under strict positivity
-on each menu. -/
-theorem hasRatioScale_iff_hasPairwiseIIA [Inhabited A] (cf : ChoiceFn A)
-    (hpos : ∀ (T : Finset A) (a : A), a ∈ T → 0 < cf.prob T a) :
+/-- The ratio form and the constant-ratio rule are equivalent when every probability of choice
+is positive. -/
+theorem hasRatioScale_iff_hasPairwiseIIA [Inhabited A]
+    (hpos : ∀ (T : Finset A) (a : A), a ∈ T → 0 < (cf.prob T).real {a}) :
     cf.HasRatioScale ↔ cf.HasPairwiseIIA :=
   ⟨HasRatioScale.hasPairwiseIIA, fun h ↦ h.hasRatioScale hpos⟩
 
-/-- A positive binary ratio scale on a set `S`: binary choice between
-distinct elements of `S` follows the Luce rule
-`P(x, y) = v x / (v x + v y)`.
+/-- **Lemma 1** (p. 6): an alternative never chosen over another is never chosen at all. -/
+theorem HasChoiceAxiom.prob_singleton_eq_zero (h : cf.HasChoiceAxiom) {T : Finset A} {x y : A}
+    (hx : x ∈ T) (hy : y ∈ T) (h0 : cf.binary x y = 0) : cf.prob T {x} = 0 := by
+  simpa using h.deletion T x hx y hy h0 {x} (singleton_subset_iff.2 hx)
 
-This is the binary trace of `HasRatioScale` restricted to `S`
-(`ChoiceFn.HasRatioScale.binaryRatioScaleOn`). Keeping `S` local matters
-for [luce-1959]'s Chapter 3, which mixes imperfect discrimination (a
-ratio scale on a small set of gambles, via Theorem 4) with perfect
-discrimination (`P ∈ {0, 1}`) elsewhere — a global positive scale forces
-every binary probability into `(0, 1)`. Restricting to distinct pairs
-matters because `binary x x = 1 ≠ 1/2` (`ChoiceFn.binary_self`). -/
-def BinaryRatioScaleOn (cf : ChoiceFn A) (S : Set A) (v : A → ℝ) : Prop :=
-  (∀ x ∈ S, 0 < v x) ∧
-    ∀ x ∈ S, ∀ y ∈ S, x ≠ y → cf.binary x y = pairwiseProb v x y
+/-- Under imperfect discrimination throughout `T` every alternative in `T` is chosen from `T`
+with positive probability: a null alternative would, by part i, make every alternative null. -/
+theorem HasChoiceAxiom.prob_singleton_ne_zero (h : cf.HasChoiceAxiom) {T : Finset A}
+    (himp : cf.ImperfectOn T) {x : A} (hx : x ∈ T) : cf.prob T {x} ≠ 0 := by
+  intro h0
+  have hall : ∀ y ∈ T, cf.prob T {y} = 0 := fun y hy ↦ by
+    rcases eq_or_ne y x with rfl | hyx
+    · exact h0
+    have hprod := h.product_rule T himp {x} {x, y} (by simp)
+      (insert_subset hx (singleton_subset_iff.2 hy))
+    rw [coe_singleton, h0, eq_comm, mul_eq_zero] at hprod
+    have hxy : cf.prob {x, y} {x} ≠ 0 := fun h' ↦
+      (himp x hx y hy hyx.symm).1.ne' (by simp [binary, measureReal_def, h'])
+    exact measure_mono_null (by simp) (hprod.resolve_left hxy)
+  have := cf.prob_coe ⟨x, hx⟩
+  rw [← sum_measure_singleton, sum_eq_zero hall] at this
+  exact zero_ne_one this
 
-/-- A global ratio scale restricts to a binary ratio scale on every set. -/
-theorem HasRatioScale.binaryRatioScaleOn {cf : ChoiceFn A}
-    (h : cf.HasRatioScale) :
-    ∃ v : A → ℝ, ∀ S : Set A, cf.BinaryRatioScaleOn S v := by
-  obtain ⟨v, hv_pos, hv_rule⟩ := h
-  refine ⟨v, fun S ↦ ⟨fun x _ ↦ hv_pos x, fun x _ y _ hxy ↦ ?_⟩⟩
-  rw [ChoiceFn.binary, hv_rule {x, y} x (Finset.mem_insert_self x _),
-    Finset.sum_pair hxy, pairwiseProb]
+/-- Under imperfect discrimination throughout `T`, choice from a nonempty `S ⊆ T` is choice from
+`T` conditioned on `S`, Luce's gloss that `P_S` "acts like a conditional probability relative to
+`P_T`" (p. 24). -/
+theorem HasChoiceAxiom.prob_eq_cond (h : cf.HasChoiceAxiom) {T S : Finset A}
+    (himp : cf.ImperfectOn T) (hST : S ⊆ T) (hS : S.Nonempty) : cf.prob S = (cf.prob T)[|↑S] := by
+  obtain ⟨b, hb⟩ := hS
+  have hne : cf.prob T ↑S ≠ 0 := fun h0 ↦
+    h.prob_singleton_ne_zero himp (hST hb) (measure_mono_null (by simpa using hb) h0)
+  refine measure_eq_of_singleton (T := S) (cf.prob_compl S) (by simp [cond_apply S.measurableSet])
+    fun a ha ↦ ?_
+  have hprod := h.product_rule T himp {a} S (singleton_subset_iff.2 ha) hST
+  rw [coe_singleton] at hprod
+  rw [cond_apply S.measurableSet, Set.inter_singleton_of_mem (mem_coe.2 ha), hprod,
+    mul_comm (cf.prob S {a}), ← mul_assoc, ENNReal.inv_mul_cancel hne (measure_ne_top _ _),
+    one_mul]
 
-/-! ### The choice axiom in full -/
-
-/-- Discrimination is imperfect throughout `T`: `0 < P(x, y) < 1` for
-distinct `x, y ∈ T` ([luce-1959]'s "`P(x, y) ≠ 0, 1` for all
-`x, y ∈ T`"). The diagonal is excluded because [luce-1959] (p. 5) sets
-`P(x, x) = ½` by pure notational convention, whereas a total `ChoiceFn`
-has `binary x x = 1` (`ChoiceFn.binary_self`). -/
-def ImperfectOn (cf : ChoiceFn A) (T : Finset A) : Prop :=
-  ∀ x ∈ T, ∀ y ∈ T, x ≠ y → 0 < cf.binary x y ∧ cf.binary x y < 1
-
-/-- **Luce's choice axiom**, both clauses (Axiom 1, p. 6 of [luce-1959],
-with `P_T(S) = ∑ a ∈ S, P_T(a)`):
-
-(i) `product_rule`: under imperfect discrimination throughout `T`,
-nested-menu probabilities compose multiplicatively —
-`P_T(R) = P_S(R) · P_T(S)` for `R ⊆ S ⊆ T`;
-
-(ii) `deletion`: an alternative `x` never chosen over some `y` may be
-deleted — `P_T(S) = P_{T∖{x}}(S∖{x})` for every `S ⊆ T`.
-
-Unlike the globally positive `HasRatioScale`, clause (ii) lets the axiom
-govern menus mixing perfect and imperfect discrimination — the regime of
-[luce-1959] Chapter 3, where the three-class theorems force `Q ∈ {0, 1}`
-between extreme event classes. -/
-structure HasChoiceAxiom (cf : ChoiceFn A) : Prop where
-  product_rule : ∀ T : Finset A, cf.ImperfectOn T → ∀ R S : Finset A,
-    R ⊆ S → S ⊆ T →
-    ∑ a ∈ R, cf.prob T a = (∑ a ∈ R, cf.prob S a) * ∑ a ∈ S, cf.prob T a
-  deletion : ∀ T : Finset A, ∀ x ∈ T, ∀ y ∈ T, x ≠ y → cf.binary x y = 0 →
-    ∀ S ⊆ T, ∑ a ∈ S, cf.prob T a = ∑ a ∈ S.erase x, cf.prob (T.erase x) a
-
-/-- A global ratio scale satisfies the full choice axiom: clause (i) by
-ratio arithmetic, clause (ii) vacuously (no discrimination is
-perfect). -/
-theorem HasRatioScale.hasChoiceAxiom {cf : ChoiceFn A}
-    (h : cf.HasRatioScale) : cf.HasChoiceAxiom := by
-  obtain ⟨v, hv_pos, hv_rule⟩ := h
-  constructor
-  · intro T _ R S hRS hST
-    rcases R.eq_empty_or_nonempty with rfl | hR
-    · simp
-    have hS : S.Nonempty := hR.mono hRS
-    have hSne : (∑ b ∈ S, v b) ≠ 0 :=
-      ne_of_gt (Finset.sum_pos (fun b _ ↦ hv_pos b) hS)
-    have hTne : (∑ b ∈ T, v b) ≠ 0 :=
-      ne_of_gt (Finset.sum_pos (fun b _ ↦ hv_pos b) (hS.mono hST))
-    have eT : ∀ W : Finset A, W ⊆ T →
-        ∑ a ∈ W, cf.prob T a = (∑ a ∈ W, v a) / ∑ b ∈ T, v b := by
-      intro W hW
-      rw [Finset.sum_div]
-      exact Finset.sum_congr rfl fun a ha ↦ hv_rule T a (hW ha)
-    have eS : ∑ a ∈ R, cf.prob S a = (∑ a ∈ R, v a) / ∑ b ∈ S, v b := by
-      rw [Finset.sum_div]
-      exact Finset.sum_congr rfl fun a ha ↦ hv_rule S a (hRS ha)
-    rw [eT R (hRS.trans hST), eT S hST, eS]
-    field_simp
-  · intro T x hx y hy hxy h0 S hS
-    have hb : cf.binary x y = v x / (v x + v y) := by
-      rw [ChoiceFn.binary, hv_rule {x, y} x (Finset.mem_insert_self x _),
-        Finset.sum_pair hxy]
-    rw [hb] at h0
-    exact absurd h0
-      (ne_of_gt (div_pos (hv_pos x) (add_pos (hv_pos x) (hv_pos y))))
-
-/-- Existence half of **Theorem 3** of [luce-1959] (p. 23): under the choice
-axiom, on any finite `T` with imperfect discrimination throughout, the
-restricted choice probabilities are a ratio scale — with `v = P_T`
-itself as the scale, Luce's own construction. The uniqueness half is
-`ChoiceFn.ratioScaleOn_unique`. -/
-theorem HasChoiceAxiom.ratioScaleOn {cf : ChoiceFn A}
-    (h : cf.HasChoiceAxiom) {T : Finset A} (hT : T.Nonempty)
+/-- **Theorem 3** (p. 23), existence: under imperfect discrimination throughout `T`, `P_T` is a
+ratio scale for the subsets of `T`, Luce's own construction `v = P_T`. -/
+theorem HasChoiceAxiom.ratioScaleOn (h : cf.HasChoiceAxiom) {T : Finset A}
     (himp : cf.ImperfectOn T) :
-    ∃ v : A → ℝ, (∀ x ∈ T, 0 < v x) ∧
-      ∀ S ⊆ T, ∀ a ∈ S, cf.prob S a = v a / ∑ b ∈ S, v b := by
-  have hpos : ∀ x ∈ T, 0 < cf.prob T x := by
-    intro x hx
-    rcases lt_or_eq_of_le (cf.prob_nonneg T x) with hlt | heq
-    · exact hlt
-    -- a zero propagates to every element of T, contradicting the unit sum
-    have hall : ∀ y ∈ T, cf.prob T y = 0 := by
-      intro y hy
-      rcases eq_or_ne y x with rfl | hyx
-      · exact heq.symm
-      have hsub : ({x, y} : Finset A) ⊆ T :=
-        Finset.insert_subset hx (Finset.singleton_subset_iff.mpr hy)
-      have hprod := h.product_rule T himp {x} {x, y} (by simp) hsub
-      rw [Finset.sum_singleton, Finset.sum_singleton,
-        Finset.sum_pair (Ne.symm hyx)] at hprod
-      have hbin : 0 < cf.prob {x, y} x := (himp x hx y hy (Ne.symm hyx)).1
-      have h0 : cf.prob {x, y} x * cf.prob T y = 0 := by
-        rw [← heq] at hprod
-        linarith [hprod]
-      rcases mul_eq_zero.mp h0 with h' | h'
-      · exact absurd h' (ne_of_gt hbin)
-      · exact h'
-    have hsum := cf.prob_sum_eq_one T hT
-    rw [Finset.sum_eq_zero hall] at hsum
-    exact absurd hsum (by norm_num)
-  refine ⟨cf.prob T, hpos, fun S hS a ha ↦ ?_⟩
-  have hSpos : (0 : ℝ) < ∑ b ∈ S, cf.prob T b :=
-    Finset.sum_pos (fun b hb ↦ hpos b (hS hb)) ⟨a, ha⟩
-  have hprod := h.product_rule T himp {a} S (Finset.singleton_subset_iff.mpr ha) hS
-  rw [Finset.sum_singleton, Finset.sum_singleton] at hprod
-  rw [eq_div_iff (ne_of_gt hSpos)]
-  linarith [hprod]
+    (∀ x ∈ T, cf.prob T {x} ≠ 0) ∧ ∀ S ⊆ T, S.Nonempty → cf.prob S = (cf.prob T)[|↑S] :=
+  ⟨fun _ hx ↦ h.prob_singleton_ne_zero himp hx, fun _ hST hS ↦ h.prob_eq_cond himp hST hS⟩
 
-omit [DecidableEq A] in
-/-- Uniqueness half of **Theorem 3** of [luce-1959] (p. 23): two positive
-scales representing the same choice probabilities on the menu `T` agree
-on `T` up to a positive multiple. -/
-theorem ratioScaleOn_unique {cf : ChoiceFn A} {T : Finset A} (hT : T.Nonempty)
-    {v v' : A → ℝ} (hv : ∀ x ∈ T, 0 < v x) (hv' : ∀ x ∈ T, 0 < v' x)
-    (hrule : ∀ a ∈ T, cf.prob T a = v a / ∑ b ∈ T, v b)
-    (hrule' : ∀ a ∈ T, cf.prob T a = v' a / ∑ b ∈ T, v' b) :
-    ∃ k : ℝ, 0 < k ∧ ∀ a ∈ T, v' a = k * v a := by
-  have hsv : (0 : ℝ) < ∑ b ∈ T, v b := Finset.sum_pos hv hT
-  have hsv' : (0 : ℝ) < ∑ b ∈ T, v' b := Finset.sum_pos hv' hT
-  refine ⟨(∑ b ∈ T, v' b) / ∑ b ∈ T, v b, div_pos hsv' hsv, fun a ha ↦ ?_⟩
-  have h := (hrule a ha).symm.trans (hrule' a ha)
-  rw [div_eq_div_iff (ne_of_gt hsv) (ne_of_gt hsv')] at h
-  rw [div_mul_eq_mul_div, eq_div_iff (ne_of_gt hsv)]
-  linarith
+omit [MeasurableSingletonClass A] [DecidableEq A] in
+/-- **Theorem 3** (p. 23), uniqueness: two measures that induce the same choice from `T` by
+conditioning agree on `T` up to a positive multiple. -/
+theorem restrict_eq_smul_of_cond_eq {μ ν : Measure A} {T : Set A} (hμ₀ : μ T ≠ 0)
+    (hμ : μ T ≠ ∞) (h : μ[|T] = ν[|T]) : μ.restrict T = (μ T / ν T) • ν.restrict T := by
+  have hrestrict (ρ : Measure A) (h₀ : ρ T ≠ 0) (h₁ : ρ T ≠ ∞) : ρ.restrict T = ρ T • ρ[|T] := by
+    rw [ProbabilityTheory.cond, smul_smul, ENNReal.mul_inv_cancel h₀ h₁, one_smul]
+  rw [hrestrict μ hμ₀ hμ, h, ProbabilityTheory.cond, smul_smul, div_eq_mul_inv]
 
-/-- Binary form of Theorem 3: the choice axiom plus imperfect discrimination
-on `T` yield a binary ratio scale on `T`. -/
-theorem HasChoiceAxiom.binaryRatioScaleOn {cf : ChoiceFn A}
-    (h : cf.HasChoiceAxiom) {T : Finset A} (hT : T.Nonempty)
-    (himp : cf.ImperfectOn T) :
-    ∃ v : A → ℝ, cf.BinaryRatioScaleOn ↑T v := by
-  obtain ⟨v, hvpos, hrule⟩ := h.ratioScaleOn hT himp
-  refine ⟨v, fun x hx ↦ hvpos x (Finset.mem_coe.mp hx),
+/-- Binary form of Theorem 3: under Axiom 1 and imperfect discrimination on `T`, `v a = P_T(a)`
+is a binary ratio scale on `T`. -/
+theorem HasChoiceAxiom.binaryRatioScaleOn (h : cf.HasChoiceAxiom) {T : Finset A}
+    (himp : cf.ImperfectOn T) : ∃ v : A → ℝ, cf.BinaryRatioScaleOn ↑T v := by
+  refine ⟨fun a ↦ (cf.prob T).real {a}, fun x hx ↦
+    ENNReal.toReal_pos (h.prob_singleton_ne_zero himp hx) (measure_ne_top _ _),
     fun x hx y hy hxy ↦ ?_⟩
-  have hsub : ({x, y} : Finset A) ⊆ T :=
-    Finset.insert_subset (Finset.mem_coe.mp hx)
-      (Finset.singleton_subset_iff.mpr (Finset.mem_coe.mp hy))
-  rw [ChoiceFn.binary, hrule {x, y} hsub x (Finset.mem_insert_self x _),
-    Finset.sum_pair hxy, pairwiseProb]
+  rw [binary, h.prob_eq_cond himp (insert_subset hx (singleton_subset_iff.2 hy))
+      (insert_nonempty _ _), measureReal_cond_singleton (by simp), pairwiseProb,
+    measureReal_def (cf.prob T) ↑({x, y} : Finset A), measure_pair hxy,
+    ENNReal.toReal_add (measure_ne_top _ _) (measure_ne_top _ _)]
+  rfl
 
-/-- **Theorem 2** of [luce-1959] (p. 16): under the choice axiom, imperfect
-pairwise discrimination on a triple forces the cyclic product identity
-`P(x,y)P(y,z)P(z,x) = P(x,z)P(z,y)P(y,x)` — a stochastic intransitivity
-is exactly as probable as its reverse. -/
-theorem HasChoiceAxiom.binary_mul_cycle {cf : ChoiceFn A}
-    (h : cf.HasChoiceAxiom) {x y z : A} (hxy : x ≠ y) (hyz : y ≠ z)
-    (hxz : x ≠ z) (himp : cf.ImperfectOn {x, y, z}) :
+/-- **Theorem 2** (p. 16): under Axiom 1 and imperfect discrimination on a triple, a stochastic
+intransitivity is exactly as probable as its reverse,
+`P(x, y) P(y, z) P(z, x) = P(x, z) P(z, y) P(y, x)`. -/
+theorem HasChoiceAxiom.binary_mul_cycle (h : cf.HasChoiceAxiom) {x y z : A} (hxy : x ≠ y)
+    (hyz : y ≠ z) (hxz : x ≠ z) (himp : cf.ImperfectOn {x, y, z}) :
     cf.binary x y * cf.binary y z * cf.binary z x =
       cf.binary x z * cf.binary z y * cf.binary y x := by
-  obtain ⟨v, hpos, hrule⟩ :=
-    h.binaryRatioScaleOn ⟨x, Finset.mem_insert_self x _⟩ himp
+  obtain ⟨v, hpos, hrule⟩ := h.binaryRatioScaleOn himp
   have mx : x ∈ (↑({x, y, z} : Finset A) : Set A) := by simp
   have my : y ∈ (↑({x, y, z} : Finset A) : Set A) := by simp
   have mz : z ∈ (↑({x, y, z} : Finset A) : Set A) := by simp
   have px := hpos x mx
   have py := hpos y my
   have pz := hpos z mz
-  have n1 : v x + v y ≠ 0 := ne_of_gt (add_pos px py)
-  have n2 : v y + v z ≠ 0 := ne_of_gt (add_pos py pz)
-  have n3 : v z + v x ≠ 0 := ne_of_gt (add_pos pz px)
-  have n4 : v x + v z ≠ 0 := ne_of_gt (add_pos px pz)
-  have n5 : v z + v y ≠ 0 := ne_of_gt (add_pos pz py)
-  have n6 : v y + v x ≠ 0 := ne_of_gt (add_pos py px)
   rw [hrule x mx y my hxy, hrule y my z mz hyz, hrule z mz x mx (Ne.symm hxz),
-    hrule x mx z mz hxz, hrule z mz y my (Ne.symm hyz),
-    hrule y my x mx (Ne.symm hxy)]
+    hrule x mx z mz hxz, hrule z mz y my (Ne.symm hyz), hrule y my x mx (Ne.symm hxy)]
   simp only [pairwiseProb]
   field_simp
   ring
@@ -1009,7 +990,6 @@ theorem pairwiseProb_interaction {K b b' c ξ : ℝ} (hK : 0 < K) (hξ : 0 < ξ)
 
 end PowerLaw
 
-
 section Thurstone
 
 /-! ### §2.D: Discriminal processes (pp. 54–58)
@@ -1167,8 +1147,8 @@ variable {A : Type*} [DecidableEq A]
 The ranking postulate (p. 72) builds the probability of a ranking of `T` from choices: `x` is
 ranked first with probability `P_T(x)` and the rest of `T` is then ranked by the same rule, so
 under a ratio scale the probability of a ranking is the product of the successive ratio-rule
-choices from the shrinking set (`rankProb`). The probabilities of the rankings of `T` sum to one
-(`sum_rankProb`), and summing over the rankings that place `x` above `y` recovers the pairwise
+choices from the shrinking set (`rankProb`). These are the point masses of a probability measure
+on the rankings of `T` (`rankMeasure`), under which the rankings that place `x` above `y` have
 probability `P(x, y)`, the estimate that the postulate justifies (Theorem 9, p. 72). Ranking from
 the bottom with the choices `P*` of the worst alternative gives a different probability unless the
 middle alternative is halfway in probability between the ends (Theorem 8, p. 69). -/
@@ -1236,7 +1216,7 @@ private theorem rankProb_cons_of_mem {v : A → ℝ} {T : Finset A} {a : A} {r :
   rw [rankProb, (mem_allRankings_iff.1 hr).1]
 
 /-- The rankings of `T` form a probability distribution under a positive scale. -/
-theorem sum_rankProb {v : A → ℝ} (T : Finset A) (hv : ∀ a ∈ T, 0 < v a) :
+private theorem sum_rankProb {v : A → ℝ} (T : Finset A) (hv : ∀ a ∈ T, 0 < v a) :
     ∑ r ∈ allRankings T, rankProb v r = 1 := by
   induction T using Finset.strongInduction with
   | H T ih =>
@@ -1253,9 +1233,8 @@ private theorem sublist_cons_of_ne {a b : A} {l r : List A} (h : b ≠ a) :
   rw [List.sublist_cons_iff]
   simp [h]
 
-/-- **Theorem 9** (p. 72): under the ranking postulate and a positive ratio scale, the probability
-that `x` is ranked above `y` in a ranking of `T` is the pairwise probability `P(x, y)`. -/
-theorem theorem9 {v : A → ℝ} {x y : A} (hxy : x ≠ y) (T : Finset A) (hx : x ∈ T) (hy : y ∈ T)
+private theorem sum_rankProb_sublist {v : A → ℝ} {x y : A} (hxy : x ≠ y) (T : Finset A)
+    (hx : x ∈ T) (hy : y ∈ T)
     (hv : ∀ a ∈ T, 0 < v a) :
     ∑ r ∈ (allRankings T).filter ([x, y].Sublist ·), rankProb v r = pairwiseProb v x y := by
   induction T using Finset.strongInduction with
@@ -1309,6 +1288,51 @@ theorem theorem9 {v : A → ℝ} {x y : A} (hxy : x ≠ y) (T : Finset A) (hx : 
       field_simp
     linear_combination hsplit + pairwiseProb v x y * hsum
 
+private theorem rankProb_nonneg {v : A → ℝ} {r : List A} (hv : ∀ a ∈ r, 0 ≤ v a) :
+    0 ≤ rankProb v r := by
+  induction r with
+  | nil => exact zero_le_one
+  | cons a rest ih =>
+    refine mul_nonneg ?_ (ih fun b hb ↦ hv b (List.mem_cons_of_mem a hb))
+    unfold ratioProb
+    split_ifs
+    · exact div_nonneg (hv a (List.mem_cons_self ..)) (sum_nonneg fun b hb ↦
+        hv b (List.mem_toFinset.1 hb))
+    · exact le_rfl
+
+open MeasureTheory
+
+/-- The distribution of the rankings of `T` under the ranking postulate: the measure on lists with
+mass `rankProb v r` at each ranking `r` of `T`. -/
+noncomputable def rankMeasure (v : A → ℝ) (T : Finset A) : Measure (List A) :=
+  ∑ r ∈ allRankings T, ENNReal.ofReal (rankProb v r) • Measure.dirac r
+
+theorem rankMeasure_apply (v : A → ℝ) (T : Finset A) (s : Set (List A)) [DecidablePred (· ∈ s)] :
+    rankMeasure v T s = ∑ r ∈ (allRankings T).filter (· ∈ s), ENNReal.ofReal (rankProb v r) := by
+  rw [sum_filter]
+  simp [rankMeasure, Set.indicator_apply]
+
+private theorem rankMeasure_apply_of_pos {v : A → ℝ} {T : Finset A} (hv : ∀ a ∈ T, 0 < v a)
+    (s : Set (List A)) [DecidablePred (· ∈ s)] :
+    rankMeasure v T s = ENNReal.ofReal (∑ r ∈ (allRankings T).filter (· ∈ s), rankProb v r) := by
+  rw [rankMeasure_apply, ENNReal.ofReal_sum_of_nonneg fun r hr ↦ rankProb_nonneg fun a ha ↦ ?_]
+  have hrT := (mem_allRankings_iff.1 (mem_filter.1 hr).1).1
+  exact (hv a (by rw [← hrT]; exact List.mem_toFinset.2 ha)).le
+
+/-- Under a positive scale the rankings of `T` form a probability distribution. -/
+theorem isProbabilityMeasure_rankMeasure {v : A → ℝ} {T : Finset A} (hv : ∀ a ∈ T, 0 < v a) :
+    IsProbabilityMeasure (rankMeasure v T) :=
+  ⟨by classical rw [rankMeasure_apply_of_pos hv, filter_true_of_mem fun _ _ ↦ Set.mem_univ _,
+    sum_rankProb T hv, ENNReal.ofReal_one]⟩
+
+/-- **Theorem 9** (p. 72): under the ranking postulate and a positive ratio scale, the probability
+that `x` is ranked above `y` in a ranking of `T` is the pairwise probability `P(x, y)`. -/
+theorem theorem9 {v : A → ℝ} {x y : A} (hxy : x ≠ y) {T : Finset A} (hx : x ∈ T) (hy : y ∈ T)
+    (hv : ∀ a ∈ T, 0 < v a) :
+    rankMeasure v T {r | [x, y].Sublist r} = ENNReal.ofReal (pairwiseProb v x y) := by
+  rw [rankMeasure_apply_of_pos hv]
+  exact congrArg ENNReal.ofReal (sum_rankProb_sublist hxy T hx hy hv)
+
 /-- **Theorem 8** (p. 69): with `P*` the choice of the worst alternative, satisfying Axiom 1 with
 `P*(x, y) = P(y, x)` and hence the reciprocal scale, ranking `{x, y, z}` from the top,
 `P_T(x) P(y, z)`, and from the bottom, `P*_T(z) P(x, y)`, give `x > y > z` the same probability
@@ -1336,7 +1360,8 @@ end Ranking
 
 section Utility
 
-variable {A E : Type*} [DecidableEq A] [DecidableEq E]
+variable {A E : Type*} [DecidableEq A] [DecidableEq E] [MeasurableSpace A]
+  [MeasurableSingletonClass A] [MeasurableSpace E] [MeasurableSingletonClass E]
 
 /-- A gamble `aρb` (p. 78): outcome `win` if the chance event `event` occurs,
 else `lose`. -/
@@ -1348,6 +1373,10 @@ structure Gamble (A E : Type*) where
   /-- Outcome if the event does not occur. -/
   lose : A
   deriving DecidableEq
+
+instance : MeasurableSpace (Gamble A E) := ⊤
+
+instance : DiscreteMeasurableSpace (Gamble A E) := ⟨fun _ ↦ trivial⟩
 
 /-- Luce's total alternative set `S(A,E) = (A × E × A) ∪ A` (p. 78): gambles
 together with the pure alternatives. -/
@@ -1364,7 +1393,8 @@ fields, in `ChoiceFn.HasChoiceAxiom`'s two-clause form), and
 Axiom 2 carries an `a ≠ b` guard — at `a = b` it is unsatisfiable for a
 total `P` (`axiom2_unguarded_false`), and Luce's own uses all have
 `P(a,b) ∉ {0, 1}` or `P(a,b) = 1` with `a`, `b` a genuine pair. -/
-structure DecomposablePreference (A E : Type*) [DecidableEq A] [DecidableEq E] where
+structure DecomposablePreference (A E : Type*) [DecidableEq A] [DecidableEq E] [MeasurableSpace A]
+    [MeasurableSingletonClass A] [MeasurableSpace E] [MeasurableSingletonClass E] where
   /-- Choice over `S(A,E)`. -/
   P : ChoiceFn (Alternative A E)
   /-- Choice over events by subjective likelihood. -/
@@ -1406,10 +1436,10 @@ namespace DecomposablePreference
 variable (dp : DecomposablePreference A E)
 
 /-- Luce's `P(a, b)` for pure alternatives. -/
-def alt (a b : A) : ℝ := dp.P.binary (.inr a) (.inr b)
+noncomputable def alt (a b : A) : ℝ := dp.P.binary (.inr a) (.inr b)
 
 /-- Luce's `P(g, h)` for gambles. -/
-def gam (g h : Gamble A E) : ℝ := dp.P.binary (.inl g) (.inl h)
+noncomputable def gam (g h : Gamble A E) : ℝ := dp.P.binary (.inl g) (.inl h)
 
 variable {dp}
 
@@ -1663,7 +1693,7 @@ theorem lemma7 (hnd : Nondegenerate dp) {ρ σ τ : E} (hρσ : ρ ≠ σ) (hσ�
     · exact absurd h' (ne_of_gt (mul_pos hpa hpb))
     · linarith
   obtain ⟨v, hpos, hrule⟩ :=
-    dp.axiom1Q.binaryRatioScaleOn ⟨ρ, Finset.mem_insert_self ρ _⟩ himp
+    dp.axiom1Q.binaryRatioScaleOn himp
   have mρ : ρ ∈ (↑({ρ, σ, τ} : Finset E) : Set E) := by simp
   have mσ : σ ∈ (↑({ρ, σ, τ} : Finset E) : Set E) := by simp
   have mτ : τ ∈ (↑({ρ, σ, τ} : Finset E) : Set E) := by simp
@@ -1917,8 +1947,7 @@ theorem theorem13 {a b c d : A} {ρ σ : E}
     simpa using hacbd
   have h24 : (Sum.inl ⟨a, σ, b⟩ : Alternative A E) ≠ Sum.inl ⟨c, σ, d⟩ := by
     simpa using hacbd
-  obtain ⟨v, hpos, hrule⟩ := dp.axiom1P.binaryRatioScaleOn
-    ⟨_, Finset.mem_insert_self _ _⟩ himp
+  obtain ⟨v, hpos, hrule⟩ := dp.axiom1P.binaryRatioScaleOn himp
   have p1 := hpos (Sum.inl ⟨a, ρ, b⟩) (by simp)
   have p2 := hpos (Sum.inl ⟨a, σ, b⟩) (by simp)
   have p3 := hpos (Sum.inl ⟨c, ρ, d⟩) (by simp)
@@ -2474,6 +2503,7 @@ reduces to the beta model, and the beta model needs only `β₁·β₂ = 1`.
 -/
 
 variable {A E : Type*} [DecidableEq A] [DecidableEq E] [BooleanAlgebra E] [Nontrivial E]
+  [MeasurableSpace A] [MeasurableSingletonClass A] [MeasurableSpace E] [MeasurableSingletonClass E]
 
 private theorem encard_le_of_isRoot {S : Set ℝ} {p : ℝ[X]} (hp : p ≠ 0) {n : ℕ}
     (hn : p.natDegree ≤ n) (h : ∀ x ∈ S, p.IsRoot x) : S.encard ≤ n :=
@@ -2675,7 +2705,6 @@ theorem kernel_apply (u : ℝ) : m.kernel u =
     Kernel.withDensity_apply _ (by fun_prop), Kernel.withDensity_apply _ (by fun_prop)]
   simp [Kernel.deterministic_apply]
 
-
 private theorem w₁_nonneg (u : ℝ) : 0 ≤ Real.sigmoid u * m.π₁ :=
   mul_nonneg (Real.sigmoid_nonneg u) m.π₁_nonneg
 private theorem w₂_nonneg (u : ℝ) : 0 ≤ Real.sigmoid u * (1 - m.π₁) :=
@@ -2723,7 +2752,6 @@ instance isProbabilityMeasure_law (μ₀ : Measure ℝ) [IsProbabilityMeasure μ
   induction n with
   | zero => exact ‹_›
   | succ n ih => exact inferInstanceAs (IsProbabilityMeasure (m.kernel ∘ₘ m.law μ₀ n))
-
 
 variable {m}
 
@@ -2781,7 +2809,6 @@ theorem integrable_exp_law {μ₀ : Measure ℝ} (hμ₀ : ∀ t, Integrable (fu
   | succ n ih =>
     refine (m.integral_law_succ μ₀ n (by fun_prop) fun c ↦ ?_).1
     simpa [mul_add, Real.exp_add, mul_comm] using (ih t).mul_const (Real.exp (t * c))
-
 
 /-- The constant `A(k) = π₁β₁₁ᵏ + (1 − π₁)β₁₂ᵏ` of (9). -/
 noncomputable def A (k : ℝ) : ℝ := m.π₁ * m.β₁₁ ^ k + (1 - m.π₁) * m.β₁₂ ^ k
