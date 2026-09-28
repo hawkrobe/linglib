@@ -64,35 +64,42 @@ open Implicative (manageSem failSem ImplicativeClass Prerequisite)
 inductive V | INT | NRV | LST | BRK | SEC | MSG | COM | SPY
   deriving DecidableEq, Fintype, Repr
 
-/-- In the causal graph SEC←{INT}, MSG←{INT,NRV}, COM←{MSG,LST,BRK} and SPY←{SEC,COM}, with INT,
+/-- The causal graph: SEC←{INT}, MSG←{INT,NRV}, COM←{MSG,LST,BRK} and SPY←{SEC,COM}, with INT,
 NRV, LST and BRK exogenous. -/
-def adj (w v : V) : Prop :=
-  w = .INT ∧ v = .SEC ∨ (w = .INT ∨ w = .NRV) ∧ v = .MSG ∨
-    (w = .MSG ∨ w = .LST ∨ w = .BRK) ∧ v = .COM ∨ (w = .SEC ∨ w = .COM) ∧ v = .SPY
+def edges : Finset (V × V) :=
+  {(.INT, .SEC), (.INT, .MSG), (.NRV, .MSG), (.MSG, .COM), (.LST, .COM), (.BRK, .COM),
+    (.SEC, .SPY), (.COM, .SPY)}
 
-instance : DecidableRel adj := fun w v ↦ by unfold adj; infer_instance
+/-- The context settles the intention, the nerve, the listener, and the garbling. -/
+structure Context where
+  INT : Bool
+  NRV : Bool
+  LST : Bool
+  BRK : Bool
+  deriving DecidableEq, Fintype, Inhabited, Repr
 
-/-- The Dreyfus model, with the negative `¬BRK` precondition encoded directly in the COM equation;
-the context settles INT, NRV, LST and BRK. -/
-def dreyfusModel : CausalModel (Bool × Bool × Bool × Bool) V fun _ ↦ Bool where
-  graph := ⟨adj⟩
+/-- The Dreyfus model, with the negative `¬BRK` precondition encoded directly in the COM
+equation. -/
+def dreyfusModel : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
   eqn
-    | .INT => fun u _ ↦ u.1
-    | .NRV => fun u _ ↦ u.2.1
-    | .LST => fun u _ ↦ u.2.2.1
-    | .BRK => fun u _ ↦ u.2.2.2
+    | .INT => fun u _ ↦ u.INT
+    | .NRV => fun u _ ↦ u.NRV
+    | .LST => fun u _ ↦ u.LST
+    | .BRK => fun u _ ↦ u.BRK
     | .SEC => fun _ x ↦ x .INT
     | .MSG => fun _ x ↦ x .INT && x .NRV
     | .COM => fun _ x ↦ x .MSG && x .LST && !x .BRK
     | .SPY => fun _ x ↦ x .SEC && x .COM
 
-instance : DecidableRel dreyfusModel.graph.Adj := inferInstanceAs (DecidableRel adj)
+instance : DecidableRel dreyfusModel.graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable ((w, v) ∈ edges))
 
 instance : dreyfusModel.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- Background: Dreyfus intends to spy and has already collected secrets
     (INT = SEC = 1); NRV, LST, BRK are unresolved. -/
-def dreyfusBg : V → Flat Bool := Function.update (Function.update ⊥ .INT ↑true) .SEC ↑true
+def dreyfusBg : V → Flat Bool := [.INT ← true, .SEC ← true]
 
 /-- *dare* dispatches to the sufficiency semantics the theorems below are
     stated through, and its lexical prerequisite is courage — instantiated
@@ -117,18 +124,11 @@ section Equations
 
 variable {s : V → Flat Bool}
 
-private theorem parent_settled {v : V} {x : Bool} (h : dreyfusModel.CausallyEntails s v x)
-    (hv : s v = ⊥) {w : V} (hw : dreyfusModel.graph.Adj w v) :
-    ∃ z, dreyfusModel.CausallyEntails s w z := by
-  rcases causallyEntails_iff.1 h with h | ⟨-, hpar, -⟩
-  · rw [hv] at h; exact absurd h Flat.bot_ne_coe
-  · exact hpar w hw
-
 /-- Settling MSG true, unobserved, settles NRV true: MSG = INT ∧ NRV. -/
 theorem nrv_of_msg (hs : s .MSG = ⊥) (h : dreyfusModel.CausallyEntails s .MSG true) :
     dreyfusModel.CausallyEntails s .NRV true := by
-  obtain ⟨a, ha⟩ := parent_settled h hs (w := .INT) (by decide)
-  obtain ⟨b, hb⟩ := parent_settled h hs (w := .NRV) (by decide)
+  obtain ⟨a, ha⟩ := h.parent_settled hs (w := .INT) (by decide)
+  obtain ⟨b, hb⟩ := h.parent_settled hs (w := .NRV) (by decide)
   have hab : (a && b) = true := h.eqn_eq hs (y := fun w ↦ if w = .NRV then b else a) (fun w hw ↦ by
     rcases (by decide : ∀ w, dreyfusModel.graph.Adj w .MSG → w = .INT ∨ w = .NRV) w hw with
       rfl | rfl <;> simpa) default
@@ -137,9 +137,9 @@ theorem nrv_of_msg (hs : s .MSG = ⊥) (h : dreyfusModel.CausallyEntails s .MSG 
 /-- Settling COM true, unobserved, settles MSG true: COM = MSG ∧ LST ∧ ¬BRK. -/
 theorem msg_of_com (hs : s .COM = ⊥) (h : dreyfusModel.CausallyEntails s .COM true) :
     dreyfusModel.CausallyEntails s .MSG true := by
-  obtain ⟨m, hm⟩ := parent_settled h hs (w := .MSG) (by decide)
-  obtain ⟨l, hl⟩ := parent_settled h hs (w := .LST) (by decide)
-  obtain ⟨k, hk⟩ := parent_settled h hs (w := .BRK) (by decide)
+  obtain ⟨m, hm⟩ := h.parent_settled hs (w := .MSG) (by decide)
+  obtain ⟨l, hl⟩ := h.parent_settled hs (w := .LST) (by decide)
+  obtain ⟨k, hk⟩ := h.parent_settled hs (w := .BRK) (by decide)
   have hmlk : (m && l && !k) = true := h.eqn_eq hs
     (y := fun w ↦ if w = .MSG then m else if w = .LST then l else k) (fun w hw ↦ by
       rcases (by decide : ∀ w, dreyfusModel.graph.Adj w .COM →
@@ -149,8 +149,8 @@ theorem msg_of_com (hs : s .COM = ⊥) (h : dreyfusModel.CausallyEntails s .COM 
 /-- Settling SPY true, unobserved, settles COM true: SPY = SEC ∧ COM. -/
 theorem com_of_spy (hs : s .SPY = ⊥) (h : dreyfusModel.CausallyEntails s .SPY true) :
     dreyfusModel.CausallyEntails s .COM true := by
-  obtain ⟨a, ha⟩ := parent_settled h hs (w := .SEC) (by decide)
-  obtain ⟨c, hc⟩ := parent_settled h hs (w := .COM) (by decide)
+  obtain ⟨a, ha⟩ := h.parent_settled hs (w := .SEC) (by decide)
+  obtain ⟨c, hc⟩ := h.parent_settled hs (w := .COM) (by decide)
   have hac : (a && c) = true := h.eqn_eq hs (y := fun w ↦ if w = .COM then c else a) (fun w hw ↦ by
     rcases (by decide : ∀ w, dreyfusModel.graph.Adj w .SPY → w = .SEC ∨ w = .COM) w hw with
       rfl | rfl <;> simpa) default

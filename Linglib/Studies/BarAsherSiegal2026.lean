@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Causation.CausalModel.Dependence
 public import Linglib.Core.Relation.ReflTransGen
@@ -124,50 +125,51 @@ inductive V | handle | lock | circuit | electricity | button | doorOpens
   deriving DecidableEq, Fintype, Repr
 
 /-- The button closes the circuit; handle, lock, circuit and power bear on the door. -/
-def adj (w v : V) : Prop :=
-  w = .button ∧ v = .circuit ∨
-    (w = .handle ∨ w = .lock ∨ w = .circuit ∨ w = .electricity) ∧ v = .doorOpens
+def edges : Finset (V × V) :=
+  {(.button, .circuit), (.handle, .doorOpens), (.lock, .doorOpens), (.circuit, .doorOpens),
+    (.electricity, .doorOpens)}
 
-instance : DecidableRel adj := fun w v ↦ by unfold adj; infer_instance
+/-- The context settles the handle, the lock, the power, and the button. -/
+structure Context where
+  handle : Bool
+  lock : Bool
+  electricity : Bool
+  button : Bool
+  deriving DecidableEq, Fintype, Inhabited, Repr
 
 /-- The structural entailments G, H and I: the circuit closes when the button is pressed, and
 the door opens manually (handle on, lock off) or automatically (circuit and power on, lock
-off). The context settles handle, lock, power and button. -/
-def model : CausalModel (Bool × Bool × Bool × Bool) V fun _ ↦ Bool where
-  graph := ⟨adj⟩
+off). -/
+def model : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
   eqn
-    | .handle => fun u _ ↦ u.1
-    | .lock => fun u _ ↦ u.2.1
-    | .electricity => fun u _ ↦ u.2.2.1
-    | .button => fun u _ ↦ u.2.2.2
+    | .handle => fun u _ ↦ u.handle
+    | .lock => fun u _ ↦ u.lock
+    | .electricity => fun u _ ↦ u.electricity
+    | .button => fun u _ ↦ u.button
     | .circuit => fun _ x ↦ x .button
     | .doorOpens => fun _ x ↦
         (x .handle && !x .lock) || (x .circuit && x .electricity && !x .lock)
-  dependsOn_eqn := by intro v u x y h; cases v <;> simp (disch := simp [adj]) [h]
 
-instance : DecidableRel model.graph.Adj := inferInstanceAs (DecidableRel adj)
+instance : DecidableRel model.graph.Adj := fun w v ↦ inferInstanceAs (Decidable ((w, v) ∈ edges))
 
 instance : model.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
-/-- A situation from a list of settings. -/
-def valuation (l : List (V × Bool)) : V → Flat Bool :=
-  l.foldl (fun s p ↦ Function.update s p.1 ↑p.2) ⊥
-
 /-- Sufficient set I: handle on, lock off. -/
-def manual := valuation [(.handle, true), (.lock, false)]
+def manual : V → Flat Bool := [.handle ← true, .lock ← false]
 
 /-- Sufficient set H: circuit and power on, lock off. -/
-def automatic := valuation [(.circuit, true), (.electricity, true), (.lock, false)]
+def automatic : V → Flat Bool := [.circuit ← true, .electricity ← true, .lock ← false]
 
 /-- The world in which the handle is turned on an unlocked, unpowered door. -/
-def handleWorld := valuation
-  [(.handle, true), (.lock, false), (.button, false), (.electricity, false), (.circuit, false),
-    (.doorOpens, true)]
+def handleWorld : V → Flat Bool :=
+  [.handle ← true, .lock ← false, .button ← false, .electricity ← false, .circuit ← false,
+    .doorOpens ← true]
 
 /-- The overdetermined world: handle turned and button pressed on a powered, unlocked door. -/
-def bothWorld := valuation
-  [(.handle, true), (.lock, false), (.button, true), (.electricity, true), (.circuit, true),
-    (.doorOpens, true)]
+def bothWorld : V → Flat Bool :=
+  [.handle ← true, .lock ← false, .button ← true, .electricity ← true, .circuit ← true,
+    .doorOpens ← true]
 
 /-- The lock was disengaged first, the handle turned last. -/
 def time : V → ℕ | .lock => 0 | .handle => 2 | _ => 1

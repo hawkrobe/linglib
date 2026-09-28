@@ -123,13 +123,12 @@ section ManipulationGame
 
 variable {U V : Type*} [DecidableEq V] [Fintype U]
 
-open Classical in
+open Classical CausalModel in
 /-- The reward of intervening on `X` in a model (Definition 2) is the probability, over contexts
 drawn with weights `P`, that intervening on `X` changes FACT. -/
 noncomputable def manipulationReward (P : U → ℝ) (M : CausalModel U V fun _ ↦ Bool)
     [M.IsAcyclic] (X fact : V) : ℝ :=
-  ∑ u, P u * if M.solve (Function.update ⊥ X ↑true) u fact ≠
-    M.solve (Function.update ⊥ X ↑false) u fact then 1 else 0
+  ∑ u, P u * if M.solve [X ← true] u fact ≠ M.solve [X ← false] u fact then 1 else 0
 
 end ManipulationGame
 
@@ -154,30 +153,38 @@ crossness. -/
 inductive V | T | B | C
   deriving DecidableEq, Fintype, Repr
 
-/-- The graph in which tardiness alone bears on crossness. -/
-abbrev graphT : Digraph V := ⟨fun w v ↦ (w, v) ∈ ({(.T, .C)} : Finset (V × V))⟩
+/-- Tardiness alone bears on crossness. -/
+def edgesT : Finset (V × V) := {(.T, .C)}
 
-/-- The graph in which tardiness and the forgotten birthday both bear on crossness. -/
-abbrev graphConj : Digraph V := ⟨fun w v ↦ (w, v) ∈ ({(.T, .C), (.B, .C)} : Finset (V × V))⟩
+/-- Tardiness and the forgotten birthday both bear on crossness. -/
+def edgesConj : Finset (V × V) := {(.T, .C), (.B, .C)}
 
-/-- The model in which tardiness alone causes crossness; the context settles whether Bob was late
-and whether he forgot the birthday. -/
-def semT : CausalModel (Bool × Bool) V fun _ ↦ Bool where
-  graph := graphT
-  eqn | .T => fun u _ ↦ u.1 | .B => fun u _ ↦ u.2 | .C => fun _ x ↦ x .T
+/-- The context settles whether Bob was late and whether he forgot the birthday. -/
+structure Context where
+  T : Bool
+  B : Bool
+
+/-- The model in which tardiness alone causes crossness. -/
+def semT : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edgesT⟩
+  eqn | .T => fun u _ ↦ u.T | .B => fun u _ ↦ u.B | .C => fun _ x ↦ x .T
 
 /-- The conjunctive model, in which both are needed. -/
-def semConj : CausalModel (Bool × Bool) V fun _ ↦ Bool where
-  graph := graphConj
-  eqn | .T => fun u _ ↦ u.1 | .B => fun u _ ↦ u.2 | .C => fun _ x ↦ x .T && x .B
+def semConj : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edgesConj⟩
+  eqn | .T => fun u _ ↦ u.T | .B => fun u _ ↦ u.B | .C => fun _ x ↦ x .T && x .B
 
-instance : semT.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (r := graphT.Adj) (by decide)
+instance : DecidableRel semT.graph.Adj := fun w v ↦ inferInstanceAs (Decidable ((w, v) ∈ edgesT))
 
-instance : semConj.IsAcyclic :=
-  Finite.wellFounded_of_irrefl_transGen (r := graphConj.Adj) (by decide)
+instance : DecidableRel semConj.graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable ((w, v) ∈ edgesConj))
+
+instance : semT.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
+
+instance : semConj.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- The context Bob knows: he was late and forgot the birthday. -/
-def context : Bool × Bool := (true, true)
+def context : Context := ⟨true, true⟩
 
 /-- "Because T" is true in both worlds and "because B" in the conjunctive world: the
 interpretation sets of Example 3, derived from actual causation with the empty contingency. -/
@@ -194,7 +201,7 @@ theorem actualCause_B_semConj : actualCause semConj context .B .C :=
 path runs from the birthday to crossness, so under no contingency is it but-for crossness. -/
 theorem not_actualCause_B_semT : ¬ actualCause semT context .B .C := by
   rintro ⟨-, -, I, h1, h2⟩
-  have hB : ¬ Relation.ReflTransGen graphT.Adj .B .C := by decide
+  have hB : ¬ Relation.ReflTransGen semT.graph.Adj .B .C := by decide
   rw [CausalModel.solve_update_of_not_reflTransGen hB] at h1 h2
   exact h2 h1
 

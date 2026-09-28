@@ -19,8 +19,8 @@ what has been decided about its parents alone.
 Both are fixed points of maps that compute each variable from its parents
 (`WellFounded.fixedPoint`). The strict development settles less than the Kleene one
 (`CausalModel.Forced.of_causallyEntails`), and the Kleene one is sound: what it forces holds in
-the actual world of every context in which the observation holds
-(`CausalModel.Forced.solve_eq`).
+every context when the observation is imposed as an intervention
+(`CausalModel.Forced.solve_eq_of_intervene`).
 
 ## Main definitions
 
@@ -31,8 +31,8 @@ the actual world of every context in which the observation holds
 
 * `CausalModel.forced_iff`, `CausalModel.causallyEntails_iff`: the defining equations
 * `CausalModel.Forced.of_causallyEntails`: the strict development settles less
-* `CausalModel.Forced.solve_eq`, `CausalModel.CausallyEntails.solve_eq`: soundness, and
-  `CausalModel.Forced.solve_eq_of_intervene` for the observation imposed as an intervention
+* `CausalModel.Forced.solve_eq_of_intervene`: soundness for the observation imposed as an
+  intervention
 * `CausalModel.causallyEntails_iff_develop`: the strict development computed one value per
   variable (`CausalModel.develop`), so that `decide` evaluates it in a finite model
 
@@ -138,6 +138,13 @@ theorem Forced.of_causallyEntails (h : M.CausallyEntails s v x) : M.Forced s v x
   WellFounded.fixedPoint_le_fixedPoint (dependsOn_entailsStep s) (dependsOn_forcedStep s)
     (fun _ _ ↦ entailsStep_le_forcedStep s) v x h
 
+/-- A variable the strict development settles, unobserved, has every parent settled. -/
+theorem CausallyEntails.parent_settled (h : M.CausallyEntails s v x) (hv : s v = ⊥) {w : V}
+    (hw : M.graph.Adj w v) : ∃ z, M.CausallyEntails s w z := by
+  rcases causallyEntails_iff.1 h with h | ⟨-, hpar, -⟩
+  · rw [hv] at h; exact absurd h Flat.bot_ne_coe
+  · exact hpar w hw
+
 /-- In a finite model, the Kleene development is reached by iterating its rounds once per
 variable. -/
 theorem forced_iff_iterate_card [Fintype V] :
@@ -154,24 +161,8 @@ theorem causallyEntails_iff_iterate_card [Fintype V] :
 
 variable [∀ v, Nonempty (α v)]
 
-/-- The Kleene development is sound. What it forces holds in the actual world of every context
-in which the observation holds. -/
-theorem Forced.solve_eq (h : M.Forced s v x) {u : U} (hu : u ∈ M.contexts s) :
-    M.solve ⊥ u v = x := by
-  induction v using hM.induction with
-  | _ v ih =>
-    rcases forced_iff.1 h with hs | ⟨-, h⟩
-    · exact mem_contexts.1 hu v x hs
-    · rw [solve_of_eq_bot rfl u]
-      exact h u _ fun w hw _ hz ↦ ih w hw hz
-
-/-- Soundness of the strict development. -/
-theorem CausallyEntails.solve_eq (h : M.CausallyEntails s v x) {u : U}
-    (hu : u ∈ M.contexts s) : M.solve ⊥ u v = x :=
-  (Forced.of_causallyEntails h).solve_eq hu
-
-/-- The Kleene development is sound for the interventional reading too. What it forces from `s`
-holds in every context when `s` is imposed as an intervention. -/
+/-- The Kleene development is sound. What it forces from `s` holds in every context when `s` is
+imposed as an intervention. -/
 theorem Forced.solve_eq_of_intervene (h : M.Forced s v x) (u : U) : M.solve s u v = x := by
   induction v using hM.induction with
   | _ v ih =>

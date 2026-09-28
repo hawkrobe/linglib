@@ -100,7 +100,7 @@ variable [DecidableEq V]
 /-- Global sufficiency entails local sufficiency (22a). -/
 theorem LocallySufficient.of_globally [Inhabited U] (hCE : C ≠ E)
     (h : GloballySufficient M C c E e) : LocallySufficient M C c E e :=
-  ⟨default, Function.update ⊥ C ↑c, by rw [Function.update_of_ne hCE.symm]; rfl,
+  ⟨default, [C ← c], by rw [Function.update_of_ne hCE.symm]; rfl,
     Function.update_self .., h _ _ (by rw [Function.update_of_ne hCE.symm]; rfl)
       (Function.update_self ..)⟩
 
@@ -112,7 +112,7 @@ theorem LocallyNecessary.of_globally [Inhabited U] (hCE : C ≠ E)
 /-- Knowing the cause alone, *C causes E* is assertable exactly when the cause is globally
 sufficient: the asymmetry of the paper's Table 2. -/
 theorem cause_update_bot_iff :
-    Cause M (Function.update ⊥ C ↑c) C c E e ↔ GloballySufficient M C c E e := by
+    Cause M [C ← c] C c E e ↔ GloballySufficient M C c E e := by
   refine ⟨fun h u I hE hC ↦ h.2 u I (fun v ↦ ?_) hE,
     fun h ↦ Cause.of_globallySufficient h (Function.update_self ..)⟩
   by_cases hvC : v = C
@@ -135,18 +135,27 @@ inductive V
   | L
   deriving DecidableEq, Fintype, Repr
 
-/-- The light is on exactly when both switches are; the context settles the switches. -/
-def light : CausalModel (Bool × Bool) V fun _ ↦ Bool where
-  graph := ⟨fun w v ↦ (w = .S1 ∨ w = .S2) ∧ v = .L⟩
-  eqn | .S1 => fun u _ ↦ u.1 | .S2 => fun u _ ↦ u.2 | .L => fun _ x ↦ x .S1 && x .S2
+/-- The light reads the two switches. -/
+def edges : Finset (V × V) := {(.S1, .L), (.S2, .L)}
+
+/-- The context settles the two switches. -/
+structure Context where
+  S1 : Bool
+  S2 : Bool
+  deriving DecidableEq, Fintype, Inhabited, Repr
+
+/-- The light is on exactly when both switches are. -/
+def light : CausalModel Context V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
+  eqn | .S1 => fun u _ ↦ u.S1 | .S2 => fun u _ ↦ u.S2 | .L => fun _ x ↦ x .S1 && x .S2
 
 instance : DecidableRel light.graph.Adj := fun w v ↦
-  inferInstanceAs (Decidable ((w = .S1 ∨ w = .S2) ∧ v = .L))
+  inferInstanceAs (Decidable ((w, v) ∈ edges))
 
 instance : light.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- The light's equation, under a background that leaves it open. -/
-theorem solve_L {I : V → Flat Bool} (h : I .L = ⊥) (u : Bool × Bool) :
+theorem solve_L {I : V → Flat Bool} (h : I .L = ⊥) (u : Context) :
     light.solve I u .L = (light.solve I u .S1 && light.solve I u .S2) :=
   solve_of_eq_bot h u
 
@@ -161,22 +170,22 @@ theorem s1_on_globallyNecessary : GloballyNecessary light .S1 true .L true :=
 /-- Switch 1 being on is not globally sufficient for the light to be on, since with switch 2 off
 the light stays off. -/
 theorem s1_on_not_globallySufficient : ¬ GloballySufficient light .S1 true .L true :=
-  fun h ↦ absurd (h (true, false) (Function.update ⊥ .S1 ↑true) (by decide) (by decide))
+  fun h ↦ absurd (h ⟨true, false⟩ [.S1 ← true] (by decide) (by decide))
     (by decide)
 
 /-- Bottom right of Table 2: knowing only that switch 1 is off, it caused the light to be off. -/
 theorem s1_off_causes_off_uncertain :
-    Cause light (Function.update ⊥ .S1 ↑false) .S1 false .L false :=
+    Cause light [.S1 ← false] .S1 false .L false :=
   cause_update_bot_iff.2 s1_off_globallySufficient
 
 /-- Bottom left of Table 2: knowing only that switch 1 is on, one cannot say it caused the light
 to be on. -/
 theorem not_s1_on_causes_on_uncertain :
-    ¬ Cause light (Function.update ⊥ .S1 ↑true) .S1 true .L true :=
+    ¬ Cause light [.S1 ← true] .S1 true .L true :=
   fun h ↦ s1_on_not_globallySufficient (cause_update_bot_iff.1 h)
 
 /-- The background with both switches on. -/
-def bothOn : V → Flat Bool := Function.update (Function.update ⊥ .S1 ↑true) .S2 ↑true
+def bothOn : V → Flat Bool := [.S1 ← true, .S2 ← true]
 
 /-- Top left of Table 2: with both switches known to be on, switch 1 caused the light to be on. -/
 theorem s1_on_causes_on_certain : Cause light bothOn .S1 true .L true := by

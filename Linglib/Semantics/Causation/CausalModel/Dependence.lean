@@ -133,13 +133,6 @@ theorem IsExogenousSettlement.trans {s s' s'' : ∀ v, Flat (α v)}
   · exact ⟨(h₂.2 v hv' hne).1, fun x hx ↦ (h₂.2 v hv' hne).2 x (hx.of_isExogenousSettlement h₁)⟩
   · exact h₁.2 v hv hv'
 
-/-- A causally sufficient cause settles the effect in every context where the background and the
-cause are observed. -/
-theorem CausallySufficient.solve_eq [∀ v, Nonempty (α v)] {s : ∀ v, Flat (α v)} {c e : V}
-    {x : α c} {y : α e} (h : M.CausallySufficient s c x e y) {u : U}
-    (hu : u ∈ M.contexts (Function.update s c ↑x)) : M.solve ⊥ u e = y :=
-  h.2.solve_eq hu
-
 section Decidable
 
 variable [Fintype U] [Inhabited U] [∀ v, Inhabited (α v)] [∀ v, DecidableEq (α v)] [Fintype V]

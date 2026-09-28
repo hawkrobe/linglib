@@ -195,14 +195,14 @@ noncomputable def modelIntention (ν : MeasureTheory.Measure U) (I : ∀ v, Flat
     in which the observation `obs` holds, the probability that setting `c := x` makes `e = y`. -/
 noncomputable def suf (ν : MeasureTheory.Measure U) (obs : ∀ v, Flat (α v)) (c : V) (x : α c)
     (e : V) (y : α e) : ℝ≥0∞ :=
-  ProbabilityTheory.cond ν (M.contexts obs) {u | M.solve (Function.update ⊥ c ↑x) u e = y}
+  ProbabilityTheory.cond ν (M.contexts obs) {u | M.solve [c ← x] u e = y}
 
 variable {M}
 
 /-- With nothing observed, SUF is the probability that the intervention yields the effect. -/
 theorem suf_bot (ν : MeasureTheory.Measure U) [MeasureTheory.IsProbabilityMeasure ν] (c : V)
     (x : α c) (e : V) (y : α e) :
-    suf M ν ⊥ c x e y = ν {u | M.solve (Function.update ⊥ c ↑x) u e = y} := by
+    suf M ν ⊥ c x e y = ν {u | M.solve [c ← x] u e = y} := by
   rw [suf, contexts_bot, ProbabilityTheory.cond_univ]
 
 /-! ### Deterministic limit
@@ -217,7 +217,7 @@ open Classical in
 /-- With a certain context, SUF is the indicator of the counterfactual outcome there. -/
 theorem suf_dirac [MeasurableSingletonClass U] (u₀ : U) (c : V) (x : α c) (e : V) (y : α e) :
     suf M (MeasureTheory.Measure.dirac u₀) ⊥ c x e y =
-      if M.solve (Function.update ⊥ c ↑x) u₀ e = y then 1 else 0 := by
+      if M.solve [c ← x] u₀ e = y then 1 else 0 := by
   rw [suf_bot, MeasureTheory.Measure.dirac_apply, Set.indicator_apply]
   simp only [Set.mem_ofPred_eq, Pi.one_apply]
 
@@ -226,7 +226,7 @@ the empty background, SUF is 1 under every distribution over contexts. -/
 theorem suf_eq_one_of_make (ν : MeasureTheory.Measure U) [MeasureTheory.IsProbabilityMeasure ν]
     {c e : V} {x : α c} {y : α e} (h : NadathurLauer2020.denotation M .make ⊥ c x e y) :
     suf M ν ⊥ c x e y = 1 := by
-  have hall : {u | M.solve (Function.update ⊥ c ↑x) u e = y} = Set.univ :=
+  have hall : {u | M.solve [c ← x] u e = y} = Set.univ :=
     Set.eq_univ_of_forall fun u ↦ NadathurLauer2020.solve_update_eq_of_denotation (.inl rfl) h u
   rw [suf_bot, hall, MeasureTheory.measure_univ]
 
@@ -285,22 +285,25 @@ namespace ProbabilisticExample
 inductive V | cause | noise | effect
   deriving DecidableEq, Fintype, Repr
 
+/-- The effect reads the cause and the noise. -/
+def edges : Finset (V × V) := {(.cause, .effect), (.noise, .effect)}
+
 /-- The effect holds when the cause and the noise both do; the context settles the noise, and the
 cause is off unless set. -/
 def model : CausalModel Bool V fun _ ↦ Bool where
-  graph := ⟨fun w v ↦ (w = .cause ∨ w = .noise) ∧ v = .effect⟩
+  graph := ⟨fun w v ↦ (w, v) ∈ edges⟩
   eqn
     | .cause => fun _ _ ↦ false
     | .noise => fun u _ ↦ u
     | .effect => fun _ x ↦ x .cause && x .noise
 
+instance : DecidableRel model.graph.Adj := fun w v ↦ inferInstanceAs (Decidable ((w, v) ∈ edges))
+
 /-- The model is time-indexed in the sense of the paper's definition 1, with `cause` and `noise`
 at step 0 and `effect` at step 1. -/
 def timeIndex : TimeIndex model where
   time := fun | .effect => 1 | _ => 0
-  parent_succ := by
-    intro w v h
-    obtain ⟨hw | hw, rfl⟩ := h <;> subst hw <;> rfl
+  parent_succ := by decide
 
 instance : model.IsAcyclic := timeIndex.isAcyclic
 
@@ -310,7 +313,7 @@ noncomputable def background (p : ℝ≥0∞) : MeasureTheory.Measure Bool :=
 
 /-- Setting the cause, the effect holds exactly when the noise is true. -/
 theorem effect_iff (b : Bool) :
-    model.solve (Function.update ⊥ .cause ↑true) b .effect = true ↔ b = true := by
+    model.solve [.cause ← true] b .effect = true ↔ b = true := by
   cases b <;> decide
 
 /-- SUF is the probability of the noise: graded, as the paper's measure requires. -/
@@ -318,7 +321,7 @@ theorem suf_eq {p : ℝ≥0∞} (hp : p ≤ 1) :
     suf model (background p) ⊥ .cause true .effect true = p := by
   have : MeasureTheory.IsProbabilityMeasure (background p) :=
     ⟨by simp [background, add_tsub_cancel_of_le hp]⟩
-  have h : {b : Bool | model.solve (Function.update ⊥ .cause ↑true) b .effect = true} = {true} :=
+  have h : {b : Bool | model.solve [.cause ← true] b .effect = true} = {true} :=
     Set.ext fun b ↦ effect_iff b
   rw [suf_bot, h]
   simp [background]

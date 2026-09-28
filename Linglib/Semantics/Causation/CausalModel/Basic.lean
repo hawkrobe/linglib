@@ -7,16 +7,12 @@ public import Linglib.Semantics.Causation.CausalModel.Defs
 
 A partial assignment `s : ∀ v, Flat (α v)` can be read two ways in a causal model. As an
 intervention it holds the variables it settles at their values (`CausalModel.solve`). As an
-observation it picks out the contexts whose actual world agrees with it, `CausalModel.contexts`.
-This file relates the two readings.
+observation it picks out the contexts whose actual world agrees with it,
+`CausalModel.contexts`, the conditioning step of Pearl's evaluation of a counterfactual.
 
 The solution at a variable depends only on the intervention at that variable and its ancestors
 (`CausalModel.solve_congr`), so an intervention leaves every variable it cannot reach as it was
-(`CausalModel.solve_update_of_not_reflTransGen`). A counterfactual is then evaluated in the
-three steps of Pearl: condition on the contexts where the observation holds, intervene, and
-solve. Lassiter's rewind–revise–regenerate procedure keeps the observed value of every variable
-causally independent of the antecedent and regenerates the rest; with exogenous contexts that
-is a theorem rather than a construction (`CausalModel.solve_update_eq_of_mem_contexts`).
+(`CausalModel.solve_update_of_not_reflTransGen`).
 
 ## Main definitions
 
@@ -28,13 +24,10 @@ is a theorem rather than a construction (`CausalModel.solve_update_eq_of_mem_con
 * `CausalModel.solve_congr`: interventions agreeing on a variable's ancestors agree there
 * `CausalModel.solve_update_of_not_reflTransGen`: intervening on `c` leaves what `c` does not
   reach unchanged
-* `CausalModel.solve_update_eq_of_mem_contexts`: a counterfactual keeps every observed value
-  the antecedent does not reach
 
 ## References
 
 * [pearl-2000]
-* [lassiter-2017-probabilistic-language]
 -/
 
 @[expose] public section
@@ -87,28 +80,8 @@ def contexts (s : ∀ v, Flat (α v)) : Set U := {u | s ≤ M.world u}
 
 variable {M}
 
-theorem mem_contexts {s : ∀ v, Flat (α v)} {u : U} :
-    u ∈ M.contexts s ↔ ∀ v (x : α v), s v = ↑x → M.solve ⊥ u v = x := by
-  refine forall_congr' fun v ↦ ?_
-  cases s v with
-  | bot => simp
-  | coe x => simp [world, Flat.coe_le_coe, eq_comm]
-
 @[simp] theorem contexts_bot : M.contexts ⊥ = Set.univ :=
   Set.eq_univ_of_forall fun _ _ ↦ bot_le
-
-/-- Observing more leaves fewer contexts. -/
-theorem contexts_anti : Antitone M.contexts :=
-  fun _ _ hst _ hu ↦ hst.trans hu
-
-/-- In a context where `s` is observed, setting `c := x` leaves every observed variable that `c`
-does not reach at its observed value, the step of rewind–revise–regenerate that keeps what is
-causally independent of the antecedent. -/
-theorem solve_update_eq_of_mem_contexts [DecidableEq V] {s : ∀ v, Flat (α v)} {u : U}
-    (hu : u ∈ M.contexts s) {c w : V} (hcw : ¬ ReflTransGen M.graph.Adj c w) {y : α w}
-    (hs : s w = ↑y) (x : α c) : M.solve (Function.update ⊥ c ↑x) u w = y := by
-  rw [solve_update_of_not_reflTransGen hcw]
-  exact mem_contexts.1 hu w y hs
 
 end Observation
 
