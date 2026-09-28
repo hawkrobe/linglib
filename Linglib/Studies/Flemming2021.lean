@@ -403,11 +403,12 @@ theorem table45_maxent :
   ring
 
 /-- §9: in NHG the noise differences relative to `b` have variances 5 and 2 (14) and covariance 2,
-so the joint distribution is not determined by the harmony differences and `b` and `c` receive
-different probabilities despite equal harmony. -/
-theorem table45_nhg :
-    violationDiffSqSumQ tableCon 0 1 = 5 ∧ violationDiffSqSumQ tableCon 2 1 = 2 ∧
-      nhgCovarianceQ tableCon 1 0 2 = 2 := by
-  simp [violationDiffSqSumQ, nhgCovarianceQ, Fin.sum_univ_three, tableCon]; norm_num
+in units of the noise variance `σ²`, so the joint distribution is not determined by the harmony
+differences and `b` and `c` receive different probabilities despite equal harmony. -/
+theorem table45_nhg (σ : ℝ) :
+    violationDiffSqSum tableCon 0 1 = 5 ∧ violationDiffSqSum tableCon 2 1 = 2 ∧
+      nhgCovariance tableCon σ 1 0 2 = 2 * σ ^ 2 := by
+  refine ⟨?_, ?_, ?_⟩ <;>
+    simp [violationDiffSqSum, nhgCovariance, Fin.sum_univ_three, tableCon] <;> ring
 
 end Flemming2021

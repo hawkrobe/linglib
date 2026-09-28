@@ -123,7 +123,7 @@ def starInitAll : Constraint NSCand :=
   Constraint.binary λ c => c.2 = SubSt.yes
 
 /-- The six constraints are listed in the order of the paper's footnote on free ranking. -/
-def constraint : Fin 6 → Constraint NSCand
+def con : ConstraintSet NSCand (Fin 6)
   | 0 => nasSub
   | 1 => starNC
   | 2 => starAssoc
@@ -145,9 +145,6 @@ theorem assoc_eq_initAll (c : StemC) (s : SubSt) : starAssoc (c, s) = starInitAl
 
 /-! ### The free-ranking rates -/
 
-/-- The violation profile takes the shape that POC's ranking sampler consumes. -/
-def vp (c : StemC) (s : SubSt) (i : Fin 6) : ℕ := (constraint i) (c, s)
-
 /-- Both decisions are available for every stem. -/
 def nsCands : StemC → Finset SubSt := λ _ => Finset.univ
 
@@ -157,42 +154,42 @@ private theorem nsCands_two (c : StemC) : nsCands c = {SubSt.yes, SubSt.no} := b
   cases o <;> simp
 
 /-- `subProb c` is the share of the 720 total orders on which stem `c` substitutes. -/
-def subProb (c : StemC) : ℚ := winProb nsCands vp (· = ·) c .yes
+def subProb (c : StemC) : ℚ := winProb nsCands con (· = ·) c .yes
 
 /-- The share is the fraction of distinguishing constraints that favour substitution. -/
 private theorem subProb_eq_rate (c : StemC) :
-    subProb c = ((favoring vp c .yes .no ∩ active vp c .yes .no).card : ℚ) /
-      (active vp c .yes .no).card :=
+    subProb c = ((favoring con c .yes .no ∩ active con c .yes .no).card : ℚ) /
+      (active con c .yes .no).card :=
   winProb_discrete_binary_rate (nsCands_two c) (λ heq => SubSt.noConfusion heq)
 
 theorem subProb_p : subProb .p = 1/2 := by
-  rw [subProb_eq_rate, show (favoring vp .p .yes .no ∩ active vp .p .yes .no).card = 2 by
-    decide, show (active vp .p .yes .no).card = 4 by decide]
+  rw [subProb_eq_rate, show (favoring con .p .yes .no ∩ active con .p .yes .no).card = 2 by
+    decide, show (active con .p .yes .no).card = 4 by decide]
   norm_num
 
 theorem subProb_t : subProb .t = 2/5 := by
-  rw [subProb_eq_rate, show (favoring vp .t .yes .no ∩ active vp .t .yes .no).card = 2 by
-    decide, show (active vp .t .yes .no).card = 5 by decide]
+  rw [subProb_eq_rate, show (favoring con .t .yes .no ∩ active con .t .yes .no).card = 2 by
+    decide, show (active con .t .yes .no).card = 5 by decide]
   norm_num
 
 theorem subProb_k : subProb .k = 1/3 := by
-  rw [subProb_eq_rate, show (favoring vp .k .yes .no ∩ active vp .k .yes .no).card = 2 by
-    decide, show (active vp .k .yes .no).card = 6 by decide]
+  rw [subProb_eq_rate, show (favoring con .k .yes .no ∩ active con .k .yes .no).card = 2 by
+    decide, show (active con .k .yes .no).card = 6 by decide]
   norm_num
 
 theorem subProb_b : subProb .b = 1/3 := by
-  rw [subProb_eq_rate, show (favoring vp .b .yes .no ∩ active vp .b .yes .no).card = 1 by
-    decide, show (active vp .b .yes .no).card = 3 by decide]
+  rw [subProb_eq_rate, show (favoring con .b .yes .no ∩ active con .b .yes .no).card = 1 by
+    decide, show (active con .b .yes .no).card = 3 by decide]
   norm_num
 
 theorem subProb_d : subProb .d = 1/4 := by
-  rw [subProb_eq_rate, show (favoring vp .d .yes .no ∩ active vp .d .yes .no).card = 1 by
-    decide, show (active vp .d .yes .no).card = 4 by decide]
+  rw [subProb_eq_rate, show (favoring con .d .yes .no ∩ active con .d .yes .no).card = 1 by
+    decide, show (active con .d .yes .no).card = 4 by decide]
   norm_num
 
 theorem subProb_g : subProb .g = 1/5 := by
-  rw [subProb_eq_rate, show (favoring vp .g .yes .no ∩ active vp .g .yes .no).card = 1 by
-    decide, show (active vp .g .yes .no).card = 5 by decide]
+  rw [subProb_eq_rate, show (favoring con .g .yes .no ∩ active con .g .yes .no).card = 1 by
+    decide, show (active con .g .yes .no).card = 5 by decide]
   norm_num
 
 /-- The six free-ranking shares of the paper's footnote are a half, two fifths and a third for
@@ -220,16 +217,17 @@ theorem voicing_monotonicity :
 /-- If `c'` has a smaller distinguishing set than `c` and every extra constraint of `c` favours
 substitution, then substitution on `c'` entails substitution on `c`. -/
 theorem PicksAt_extends_smaller_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
-    (h_D : active vp c' .yes .no ⊆ active vp c .yes .no)
-    (h_Y : favoring vp c' .yes .no ⊆ favoring vp c .yes .no)
-    (h_extra : ∀ x ∈ active vp c .yes .no, x ∉ active vp c' .yes .no → x ∈ favoring vp c .yes .no)
-    (h_c' : PicksAt nsCands vp σ c' .yes) : PicksAt nsCands vp σ c .yes := by
+    (h_D : active con c' .yes .no ⊆ active con c .yes .no)
+    (h_Y : favoring con c' .yes .no ⊆ favoring con c .yes .no)
+    (h_extra :
+      ∀ x ∈ active con c .yes .no, x ∉ active con c' .yes .no → x ∈ favoring con c .yes .no)
+    (h_c' : PicksAt nsCands con σ c' .yes) : PicksAt nsCands con σ c .yes := by
   rw [picksAt_binary_iff_exists_favoring_isMinOn (nsCands_two c') SubSt.noConfusion] at h_c'
   rw [picksAt_binary_iff_exists_favoring_isMinOn (nsCands_two c) SubSt.noConfusion]
   obtain ⟨x, hx, hmin⟩ := h_c'
   obtain ⟨z, hz, hzmin⟩ := Equiv.Perm.exists_isMinOn_symm ⟨x, h_D (mem_inter.1 hx).2⟩ σ
   refine ⟨z, mem_inter.2 ⟨?_, hz⟩, hzmin⟩
-  by_cases hz' : z ∈ active vp c' .yes .no
+  by_cases hz' : z ∈ active con c' .yes .no
   · rw [Equiv.Perm.eq_of_isMinOn_symm hz' (mem_inter.1 hx).2 (hzmin.on_subset (coe_subset.2 h_D))
       hmin]
     exact h_Y (mem_inter.1 hx).1
@@ -239,10 +237,10 @@ theorem PicksAt_extends_smaller_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
 all distinguish the candidates for `c`, then substitution on `c'` entails substitution on
 `c`. -/
 theorem PicksAt_extends_larger_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
-    (h_D : active vp c .yes .no ⊆ active vp c' .yes .no)
-    (h_Y : favoring vp c' .yes .no ⊆ favoring vp c .yes .no)
-    (h_subset : favoring vp c' .yes .no ⊆ active vp c .yes .no)
-    (h_c' : PicksAt nsCands vp σ c' .yes) : PicksAt nsCands vp σ c .yes := by
+    (h_D : active con c .yes .no ⊆ active con c' .yes .no)
+    (h_Y : favoring con c' .yes .no ⊆ favoring con c .yes .no)
+    (h_subset : favoring con c' .yes .no ⊆ active con c .yes .no)
+    (h_c' : PicksAt nsCands con σ c' .yes) : PicksAt nsCands con σ c .yes := by
   rw [picksAt_binary_iff_exists_favoring_isMinOn (nsCands_two c') SubSt.noConfusion] at h_c'
   rw [picksAt_binary_iff_exists_favoring_isMinOn (nsCands_two c) SubSt.noConfusion]
   obtain ⟨x, hx, hmin⟩ := h_c'
@@ -251,45 +249,45 @@ theorem PicksAt_extends_larger_D {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
 
 /-- Substitution on voiced *b* entails substitution on voiceless *p*. -/
 theorem voicing_b_implies_p (σ : Equiv.Perm (Fin 6)) :
-    PicksAt nsCands vp σ .b .yes → PicksAt nsCands vp σ .p .yes :=
+    PicksAt nsCands con σ .b .yes → PicksAt nsCands con σ .p .yes :=
   PicksAt_extends_smaller_D (by decide) (by decide) (by decide)
 
 /-- Substitution on voiced *d* entails substitution on voiceless *t*. -/
 theorem voicing_d_implies_t (σ : Equiv.Perm (Fin 6)) :
-    PicksAt nsCands vp σ .d .yes → PicksAt nsCands vp σ .t .yes :=
+    PicksAt nsCands con σ .d .yes → PicksAt nsCands con σ .t .yes :=
   PicksAt_extends_smaller_D (by decide) (by decide) (by decide)
 
 /-- Substitution on voiced *g* entails substitution on voiceless *k*. -/
 theorem voicing_g_implies_k (σ : Equiv.Perm (Fin 6)) :
-    PicksAt nsCands vp σ .g .yes → PicksAt nsCands vp σ .k .yes :=
+    PicksAt nsCands con σ .g .yes → PicksAt nsCands con σ .k .yes :=
   PicksAt_extends_smaller_D (by decide) (by decide) (by decide)
 
 /-- Substitution on velar *k* entails substitution on coronal *t*. -/
 theorem place_k_implies_t (σ : Equiv.Perm (Fin 6)) :
-    PicksAt nsCands vp σ .k .yes → PicksAt nsCands vp σ .t .yes :=
+    PicksAt nsCands con σ .k .yes → PicksAt nsCands con σ .t .yes :=
   PicksAt_extends_larger_D (by decide) (by decide) (by decide)
 
 /-- Substitution on coronal *t* entails substitution on labial *p*. -/
 theorem place_t_implies_p (σ : Equiv.Perm (Fin 6)) :
-    PicksAt nsCands vp σ .t .yes → PicksAt nsCands vp σ .p .yes :=
+    PicksAt nsCands con σ .t .yes → PicksAt nsCands con σ .p .yes :=
   PicksAt_extends_larger_D (by decide) (by decide) (by decide)
 
 /-- Substitution on velar *g* entails substitution on coronal *d*. -/
 theorem place_g_implies_d (σ : Equiv.Perm (Fin 6)) :
-    PicksAt nsCands vp σ .g .yes → PicksAt nsCands vp σ .d .yes :=
+    PicksAt nsCands con σ .g .yes → PicksAt nsCands con σ .d .yes :=
   PicksAt_extends_larger_D (by decide) (by decide) (by decide)
 
 /-- Substitution on coronal *d* entails substitution on labial *b*. -/
 theorem place_d_implies_b (σ : Equiv.Perm (Fin 6)) :
-    PicksAt nsCands vp σ .d .yes → PicksAt nsCands vp σ .b .yes :=
+    PicksAt nsCands con σ .d .yes → PicksAt nsCands con σ .b .yes :=
   PicksAt_extends_larger_D (by decide) (by decide) (by decide)
 
 /-- Substitution on voiced velar *g* entails substitution on every stop, the top of the
 implicational hierarchy of Table 5. -/
-theorem g_implies_all (σ : Equiv.Perm (Fin 6)) (h : PicksAt nsCands vp σ .g .yes) :
-    PicksAt nsCands vp σ .p .yes ∧ PicksAt nsCands vp σ .t .yes ∧
-    PicksAt nsCands vp σ .k .yes ∧ PicksAt nsCands vp σ .b .yes ∧
-    PicksAt nsCands vp σ .d .yes ∧ PicksAt nsCands vp σ .g .yes := by
+theorem g_implies_all (σ : Equiv.Perm (Fin 6)) (h : PicksAt nsCands con σ .g .yes) :
+    PicksAt nsCands con σ .p .yes ∧ PicksAt nsCands con σ .t .yes ∧
+    PicksAt nsCands con σ .k .yes ∧ PicksAt nsCands con σ .b .yes ∧
+    PicksAt nsCands con σ .d .yes ∧ PicksAt nsCands con σ .g .yes := by
   have h_d := place_g_implies_d σ h
   have h_b := place_d_implies_b σ h_d
   have h_k := voicing_g_implies_k σ h
@@ -301,9 +299,9 @@ theorem g_implies_all (σ : Equiv.Perm (Fin 6)) (h : PicksAt nsCands vp σ .g .y
 Sarangani Manobo. The identity ranking, with `DEP-C` on top, is one. -/
 theorem pattern_j_witness :
     ∃ σ : Equiv.Perm (Fin 6),
-      PicksAt nsCands vp σ .p .yes ∧ PicksAt nsCands vp σ .t .yes ∧
-      PicksAt nsCands vp σ .k .yes ∧ PicksAt nsCands vp σ .b .yes ∧
-      PicksAt nsCands vp σ .d .yes ∧ PicksAt nsCands vp σ .g .yes :=
+      PicksAt nsCands con σ .p .yes ∧ PicksAt nsCands con σ .t .yes ∧
+      PicksAt nsCands con σ .k .yes ∧ PicksAt nsCands con σ .b .yes ∧
+      PicksAt nsCands con σ .d .yes ∧ PicksAt nsCands con σ .g .yes :=
   ⟨1, by decide, by decide, by decide, by decide, by decide, by decide⟩
 
 end Zuraw2010

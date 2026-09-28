@@ -255,16 +255,16 @@ def Shape.cands : Shape → Finset (List Syllable)
   | .koordinaatisto => {[X', X, H', H, L, H], [X', X, H', H, H', H]}
   | .italiaano => {[X', X, L, H', L, H], [X', X, L, H', H, H], [X', X, L, H, H', H]}
 
-/-- Violations of the roster's constraints on a tableau candidate. -/
-def tableauVp (_ : Shape) (cand : List Syllable) (c : Fin 20) : ℕ :=
-  (constraint c).violations cand
+/-- The roster's constraints on the candidates of a shape's tableau. -/
+def tableauCon : ConstraintSet (Shape × List Syllable) (Fin 20) :=
+  fun c x ↦ (constraint c).violations x.2
 
 /-- The total rankings consistent with the Finnish grammar. -/
 def rankings : Finset (Ranking (Fin 20) 20) := consistentTotalOrders finnishGrammar
 
 /-- A tableau candidate that every consistent ranking picks. -/
 def Shape.Categorical (s : Shape) (cand : List Syllable) : Prop :=
-  ∀ σ ∈ rankings, PicksAt Shape.cands tableauVp σ s cand
+  ∀ σ ∈ rankings, PicksAt Shape.cands tableauCon σ s cand
 
 /-- Monosyllabic stems take the strong variant (32): *mai.den*, not *ma.jen* (33). -/
 theorem maa_strong : Shape.Categorical .maa [H', H] := fun _ hσ =>
@@ -294,7 +294,8 @@ constraints tie (36), (38), (41): secondary stress is optional, and both variant
 Sets 1 and 2. -/
 theorem stress_tie :
     ∀ s ∈ [Shape.maailma, .ministeri, .aleksanteri, .koordinaatisto],
-      ∀ o ∈ s.cands, ∀ o' ∈ s.cands, ∀ c, stratumOf c ≤ 1 → tableauVp s o c = tableauVp s o' c := by
+      ∀ o ∈ s.cands, ∀ o' ∈ s.cands, ∀ c, stratumOf c ≤ 1 →
+        tableauCon c (s, o) = tableauCon c (s, o') := by
   decide +kernel
 
 /-! ### Quantitative predictions (§5.3) -/
@@ -328,31 +329,32 @@ weight, the variant's penult, and an unstressed heavy final. -/
 def word : Motif → Variant → List Syllable
   | (w, s), v => [X', ⟨false, some w, none⟩, penult v s, H]
 
-/-- Violation profile of a motif's variant. -/
-def vp (m : Motif) (v : Variant) (c : Fin 20) : ℕ := (constraint c).violations (word m v)
+/-- The roster's constraints on the variants of a motif. -/
+def con : ConstraintSet (Motif × Variant) (Fin 20) :=
+  fun c x ↦ (constraint c).violations (word x.1 x.2)
 
 /-- The rankings under which variant `v` wins motif `m`. -/
 def wins (m : Motif) (v : Variant) : Finset (Ranking (Fin 20) 20) :=
-  rankings.filter fun σ => PicksAt (fun _ => Finset.univ) vp σ m v
+  rankings.filter fun σ => PicksAt (fun _ => Finset.univ) con σ m v
 
 /-- The deciding-stratum count: once the strata above `k` tie, the rankings won by `v`
 stand to all rankings as stratum `k`'s constraints favoring `v` stand to its active ones. -/
 theorem card_wins_mul (m : Motif) (v : Variant) (k : Fin 5)
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → universalOn a b → a = b)
-    (h_tie : ∀ c, stratumOf c < k → vp m v c = vp m v.other c)
-    (h_dec : ((active vp m v v.other).filter (stratumOf · = k)).Nonempty) :
-    (wins m v).card * ((active vp m v v.other).filter (stratumOf · = k)).card =
+    (h_tie : ∀ c, stratumOf c < k → con c (m, v) = con c (m, v.other))
+    (h_dec : ((active con m v v.other).filter (stratumOf · = k)).Nonempty) :
+    (wins m v).card * ((active con m v v.other).filter (stratumOf · = k)).card =
       rankings.card *
-        (favoring vp m v v.other ∩ (active vp m v v.other).filter (stratumOf · = k)).card :=
+        (favoring con m v v.other ∩ (active con m v v.other).filter (stratumOf · = k)).card :=
   card_filter_picksAt_stratified_binary (Variant.univ_eq_pair v) v.ne_other h_triv h_tie h_dec
 
 /-- `card_wins_mul` with the two counts evaluated. -/
 theorem card_wins_of_counts (m : Motif) (v : Variant) (k : Fin 5) (n t : ℕ)
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → universalOn a b → a = b)
-    (h_tie : ∀ c, stratumOf c < k → vp m v c = vp m v.other c)
-    (h_dec : ((active vp m v v.other).filter (stratumOf · = k)).Nonempty)
-    (hn : (favoring vp m v v.other ∩ (active vp m v v.other).filter (stratumOf · = k)).card = n)
-    (ht : ((active vp m v v.other).filter (stratumOf · = k)).card = t) :
+    (h_tie : ∀ c, stratumOf c < k → con c (m, v) = con c (m, v.other))
+    (h_dec : ((active con m v v.other).filter (stratumOf · = k)).Nonempty)
+    (hn : (favoring con m v v.other ∩ (active con m v v.other).filter (stratumOf · = k)).card = n)
+    (ht : ((active con m v v.other).filter (stratumOf · = k)).card = t) :
     (wins m v).card * t = rankings.card * n := by
   rw [← hn, ← ht]; exact card_wins_mul m v k h_triv h_tie h_dec
 

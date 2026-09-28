@@ -311,20 +311,20 @@ theorem maxent_ot_limit {C : Type*} [Fintype C] [Nonempty C] [DecidableEq C]
 A framework realizes a target mapping when one of its grammars selects the target output on
 every input. -/
 
-variable {Input Output : Type*} {n : ℕ}
+variable {Input Output ι : Type*} {n : ℕ}
 
 /-! ### Realization problems -/
 
-/-- A realization problem is a target mapping that a single grammar must realize on every input
-    at once. For OT it is the data of [tesar-smolensky-1995]'s ranking problem. -/
-structure RealizationProblem (Input : Type*) (Output : Type*) (n : ℕ) where
+/-- A realization problem is a target mapping that a single grammar over the constraint set `con`
+    must realize on every input at once. For OT it is the data of [tesar-smolensky-1995]'s ranking
+    problem. -/
+structure RealizationProblem (Input : Type*) (Output : Type*) (ι : Type*) where
   /-- The grammar handles a finite set of inputs. -/
   inputs : Finset Input
   /-- Each input has a finite candidate set. -/
   cands : Input → Finset Output
-  /-- `vp i o k` counts the violations of constraint `k` by output `o` from
-      input `i`. -/
-  vp : Input → Output → Fin n → ℕ
+  /-- The constraints, evaluated on input–output mappings. -/
+  con : ConstraintSet (Input × Output) ι
   /-- The grammar must select the target output on each input. -/
   target : Input → Output
   /-- Each target output is in its input's candidate set. -/
@@ -332,75 +332,73 @@ structure RealizationProblem (Input : Type*) (Output : Type*) (n : ℕ) where
 
 namespace RealizationProblem
 
-/-- The weighting `w` *HG-realizes* the target when on every input the target strictly
-    minimizes the weighted violation sum among the candidates. -/
-def realizedByWeighting (P : RealizationProblem Input Output n) (w : Fin n → ℝ) : Prop :=
+/-- The weighting `w` *HG-realizes* the target when on every input the target harmonically
+    dominates every other candidate. -/
+def realizedByWeighting [Fintype ι] (P : RealizationProblem Input Output ι) (w : ι → ℝ) : Prop :=
   ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, o ≠ P.target i →
-    w ⬝ᵥ (Nat.cast ∘ P.vp i (P.target i)) < w ⬝ᵥ (Nat.cast ∘ P.vp i o)
+    harmonyDominates P.con w (i, P.target i) (i, o)
 
 /-- A problem is HG-realizable when some non-negative weighting realizes its target.
     Non-negativity is [pater-2009]'s standard HG; [coetzee-pater-2011] also discuss negative
     weights. -/
-def IsHGRealizable (P : RealizationProblem Input Output n) : Prop :=
-  ∃ w : Fin n → ℝ, (∀ k, 0 ≤ w k) ∧ P.realizedByWeighting w
+def IsHGRealizable [Fintype ι] (P : RealizationProblem Input Output ι) : Prop :=
+  ∃ w : ι → ℝ, 0 ≤ w ∧ P.realizedByWeighting w
 
-/-- The ranking `σ` *OT-realizes* the target when on every input the target strictly
-    lex-dominates every alternative under `σ`. -/
-def realizedByRanking (P : RealizationProblem Input Output n) (σ : Ranking (Fin n) n) : Prop :=
-  ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, o ≠ P.target i →
-    toLex (fun k : Fin n => P.vp i (P.target i) (σ k)) <
-    toLex (fun k : Fin n => P.vp i o (σ k))
+/-- The ranking `σ` *OT-realizes* the target when on every input it picks the target, which
+    strictly lex-dominates every alternative under `σ`. -/
+def realizedByRanking (P : RealizationProblem Input Output ι) (σ : Ranking ι n) : Prop :=
+  ∀ i ∈ P.inputs, PicksAt P.cands P.con σ i (P.target i)
 
 /-- A problem is OT-realizable when some constraint ranking realizes its target. -/
-def IsOTRealizable (P : RealizationProblem Input Output n) : Prop :=
+def IsOTRealizable (P : RealizationProblem Input Output (Fin n)) : Prop :=
   ∃ σ : Ranking (Fin n) n, P.realizedByRanking σ
 
-instance [DecidableEq Output] (P : RealizationProblem Input Output n) (σ : Ranking (Fin n) n) :
+instance [DecidableEq Output] (P : RealizationProblem Input Output ι) (σ : Ranking ι n) :
     Decidable (P.realizedByRanking σ) := by
   unfold realizedByRanking; infer_instance
 
-instance [DecidableEq Output] (P : RealizationProblem Input Output n) :
+instance [DecidableEq Output] (P : RealizationProblem Input Output (Fin n)) :
     Decidable P.IsOTRealizable := by
   unfold IsOTRealizable; infer_instance
 
 /-- `σ` OT-realizes `P` iff for every input the target is the unique
     `Tableau.optimal` of the σ-permuted tableau. -/
 theorem realizedByRanking_iff_optimal [DecidableEq Output]
-    (P : RealizationProblem Input Output n) (σ : Ranking (Fin n) n) :
+    (P : RealizationProblem Input Output ι) (σ : Ranking ι n) :
     P.realizedByRanking σ ↔ ∀ i (hi : i ∈ P.inputs),
-      Tableau.optimal ⟨P.cands i, fun o => toLex (fun k => P.vp i o (σ k)),
+      Tableau.optimal ⟨P.cands i, fun o ↦ toLex fun p ↦ P.con (σ p) (i, o),
         ⟨P.target i, P.target_mem i hi⟩⟩ = {P.target i} := by
-  refine ⟨fun h i hi => ?_, fun h i hi o ho hne => ?_⟩
-  · exact (Tableau.optimal_eq_singleton_iff (P.target_mem i hi)).mpr
-      fun o ho hne => h i hi o ho hne
-  · exact (Tableau.optimal_eq_singleton_iff (P.target_mem i hi)).mp (h i hi) o ho hne
+  refine ⟨fun h i hi ↦ ?_, fun h i hi ↦ ⟨P.target_mem i hi, ?_⟩⟩
+  · exact (Tableau.optimal_eq_singleton_iff (P.target_mem i hi)).mpr (h i hi).2
+  · exact (Tableau.optimal_eq_singleton_iff (P.target_mem i hi)).mp (h i hi)
 
 /-! ### OT-realization is ERC satisfaction -/
 
 /-- The winner–loser ERCs of a problem have one comparative row for each input and non-target
     candidate ([prince-2002]). -/
-def ercs [DecidableEq Output] (P : RealizationProblem Input Output n) : Finset (ERC n) :=
+def ercs [DecidableEq Output] (P : RealizationProblem Input Output (Fin n)) : Finset (ERC n) :=
   P.inputs.biUnion fun i => ((P.cands i).erase (P.target i)).image fun o =>
-    ercOfProfiles (P.vp i (P.target i)) (P.vp i o)
+    ercOfProfiles (P.con · (i, P.target i)) (P.con · (i, o))
 
-theorem mem_ercs [DecidableEq Output] {P : RealizationProblem Input Output n} {α : ERC n} :
+theorem mem_ercs [DecidableEq Output] {P : RealizationProblem Input Output (Fin n)} {α : ERC n} :
     α ∈ P.ercs ↔ ∃ i ∈ P.inputs, ∃ o ∈ P.cands i, o ≠ P.target i ∧
-      ercOfProfiles (P.vp i (P.target i)) (P.vp i o) = α := by
+      ercOfProfiles (P.con · (i, P.target i)) (P.con · (i, o)) = α := by
   simp only [ercs, Finset.mem_biUnion, Finset.mem_image, Finset.mem_erase]
   tauto
 
 /-- Provided no competitor ties the target's violation profile, `σ` realizes the target iff `σ`
     satisfies every winner–loser ERC ([prince-2002]). -/
 theorem realizedByRanking_iff_satisfiedBy [DecidableEq Output]
-    {P : RealizationProblem Input Output n} {σ : Ranking (Fin n) n}
+    {P : RealizationProblem Input Output (Fin n)} {σ : Ranking (Fin n) n}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, o ≠ P.target i →
-      P.vp i (P.target i) ≠ P.vp i o) :
+      (P.con · (i, P.target i)) ≠ (P.con · (i, o))) :
     P.realizedByRanking σ ↔ ∀ α ∈ P.ercs, α.SatisfiedBy σ := by
   constructor
   · intro h α hα
     obtain ⟨i, hi, o, ho, hone, rfl⟩ := mem_ercs.mp hα
-    exact (satisfiedBy_ercOfProfiles_iff_le σ _ _).mpr (h i hi o ho hone).le
-  · intro h i hi o ho hone
+    exact (satisfiedBy_ercOfProfiles_iff_le σ _ _).mpr ((h i hi).2 o ho hone).le
+  · intro h i hi
+    refine ⟨P.target_mem i hi, fun o ho hone ↦ ?_⟩
     refine lt_of_le_of_ne ((satisfiedBy_ercOfProfiles_iff_le σ _ _).mp
       (h _ (mem_ercs.mpr ⟨i, hi, o, ho, hone, rfl⟩))) fun heq => hvp i hi o ho hone ?_
     exact funext fun c => by simpa using congrFun (toLex_inj.mp heq) (σ.symm c)
@@ -408,9 +406,9 @@ theorem realizedByRanking_iff_satisfiedBy [DecidableEq Output]
 /-- OT-realizability is consistency of the problem's ERC set
     ([prince-2002]). -/
 theorem isOTRealizable_iff_linearExtensions_nonempty [DecidableEq Output]
-    {P : RealizationProblem Input Output n}
+    {P : RealizationProblem Input Output (Fin n)}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, o ≠ P.target i →
-      P.vp i (P.target i) ≠ P.vp i o) :
+      (P.con · (i, P.target i)) ≠ (P.con · (i, o))) :
     P.IsOTRealizable ↔ (ERC.linearExtensions P.ercs).Nonempty :=
   exists_congr fun _ => (realizedByRanking_iff_satisfiedBy hvp).trans
     ERC.mem_linearExtensions.symm
@@ -422,22 +420,23 @@ end RealizationProblem
 /-- An OT-realizable problem is HG-realizable by exponentially separated weights permuted by the
     ranking, with the largest violation count as the separation bound. -/
 theorem RealizationProblem.IsOTRealizable.isHGRealizable
-    {P : RealizationProblem Input Output n} (h : P.IsOTRealizable) : P.IsHGRealizable := by
+    {P : RealizationProblem Input Output (Fin n)} (h : P.IsOTRealizable) : P.IsHGRealizable := by
   obtain ⟨σ, hσ⟩ := h
-  set M := (P.inputs.sup fun i => (P.cands i).sup fun o => Finset.univ.sup (P.vp i o)) + 1
-  have hbound : ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, ∀ k, P.vp i o k ≤ M := fun i hi o ho k =>
-    ((Finset.le_sup (Finset.mem_univ k)).trans
-      ((Finset.le_sup (f := fun o => Finset.univ.sup (P.vp i o)) ho).trans
-        (Finset.le_sup (f := fun i => (P.cands i).sup fun o => Finset.univ.sup (P.vp i o))
+  set M := (P.inputs.sup fun i ↦ (P.cands i).sup fun o ↦ Finset.univ.sup (P.con · (i, o))) + 1
+  have hbound : ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, ∀ k, P.con k (i, o) ≤ M := fun i hi o ho k =>
+    ((Finset.le_sup (f := (P.con · (i, o))) (Finset.mem_univ k)).trans
+      ((Finset.le_sup (f := fun o ↦ Finset.univ.sup (P.con · (i, o))) ho).trans
+        (Finset.le_sup (f := fun i ↦ (P.cands i).sup fun o ↦ Finset.univ.sup (P.con · (i, o)))
           hi))).trans (Nat.le_succ _)
   refine ⟨expWeights n M ∘ σ.symm, fun k => (expWeights_pos n M (σ.symm k)).le, ?_⟩
   intro i hi o ho hne
-  rw [comp_equiv_symm_dotProduct, comp_equiv_symm_dotProduct]
+  rw [harmonyDominates_iff, harmonyScore, harmonyScore, neg_lt_neg_iff,
+    comp_equiv_symm_dotProduct, comp_equiv_symm_dotProduct]
   apply lex_imp_lower_violations _ M
   · intro k
     exact ⟨hbound i hi (P.target i) (P.target_mem i hi) (σ k), hbound i hi o ho (σ k)⟩
   · exact expWeights_separated n M (Nat.succ_pos _)
-  · exact hσ i hi o ho hne
+  · exact (hσ i hi).2 o ho hne
 
 /-! ### Strict containment — the cumulativity gap -/
 
@@ -448,17 +447,17 @@ theorem RealizationProblem.IsOTRealizable.isHGRealizable
     third input only, while the winner–loser ERCs `F ≫ M1`, `F ≫ M2`, and "some markedness
     constraint above `F`" are inconsistent. -/
 theorem hg_strictly_contains_ot :
-    ∃ (Input Output : Type) (n : ℕ) (P : RealizationProblem Input Output n),
+    ∃ (Input Output : Type) (n : ℕ) (P : RealizationProblem Input Output (Fin n)),
       P.IsHGRealizable ∧ ¬ P.IsOTRealizable := by
   refine ⟨Fin 3, Bool, 3,
     { inputs := Finset.univ
       cands := fun _ => Finset.univ
-      vp := fun i b => if b then ![![0, 1, 0], ![0, 0, 1], ![0, 1, 1]] i else ![1, 0, 0]
+      con := fun k x ↦ if x.2 then ![![0, 1, 0], ![0, 0, 1], ![0, 1, 1]] x.1 k else ![1, 0, 0] k
       target := ![true, true, false]
       target_mem := fun _ _ => Finset.mem_univ _ },
     ⟨![3, 2, 2], fun k => by fin_cases k <;> norm_num, ?_⟩, ?_⟩
   · intro i _ o _ hne
-    simp only [dotProduct, Function.comp_apply, Fin.sum_univ_three]
+    simp only [harmonyDominates_iff, harmonyScore, dotProduct, Fin.sum_univ_three]
     fin_cases i <;> cases o <;>
       first
       | (exfalso; exact hne rfl)
@@ -486,13 +485,13 @@ namespace RealizationProblem
 /-- A grammar `r` **POC-realizes** the target if every consistent extension
     realizes it. Since consistent extensions always exist
     (`exists_isConsistent`), this is never vacuous. -/
-def realizedByPartialOrder (P : RealizationProblem Input Output n)
+def realizedByPartialOrder (P : RealizationProblem Input Output (Fin n))
     (r : Fin n → Fin n → Prop) : Prop :=
   ∀ σ, IsConsistent r σ → P.realizedByRanking σ
 
 /-- A `RealizationProblem` is **POC-realizable** if some partial order
     categorically realizes the target. -/
-def IsPartialOrderRealizable (P : RealizationProblem Input Output n) : Prop :=
+def IsPartialOrderRealizable (P : RealizationProblem Input Output (Fin n)) : Prop :=
   ∃ r : Fin n → Fin n → Prop, IsPartialOrder (Fin n) r ∧ P.realizedByPartialOrder r
 
 end RealizationProblem
@@ -502,7 +501,7 @@ end RealizationProblem
 /-- Every partial-order-realized target is OT-realized, since any single
     consistent extension realizes it. -/
 theorem RealizationProblem.IsPartialOrderRealizable.isOTRealizable
-    {P : RealizationProblem Input Output n}
+    {P : RealizationProblem Input Output (Fin n)}
     (h : P.IsPartialOrderRealizable) : P.IsOTRealizable := by
   obtain ⟨r, hpo, hreal⟩ := h
   have := hpo
@@ -512,7 +511,7 @@ theorem RealizationProblem.IsPartialOrderRealizable.isOTRealizable
 /-- Every OT-realized target is partial-order-realized — the witness is the
     σ-induced total ranking, whose unique consistent extension is σ itself. -/
 theorem RealizationProblem.IsOTRealizable.isPartialOrderRealizable
-    {P : RealizationProblem Input Output n}
+    {P : RealizationProblem Input Output (Fin n)}
     (h : P.IsOTRealizable) : P.IsPartialOrderRealizable := by
   obtain ⟨σ, hσ⟩ := h
   exact ⟨σ.toRel, inferInstance,
@@ -521,7 +520,7 @@ theorem RealizationProblem.IsOTRealizable.isPartialOrderRealizable
 /-- Under categorical realizability, OT and partial orders coincide; the
     partial order's advantage is probabilistic, captured by `winProb`. -/
 theorem RealizationProblem.isOTRealizable_iff_isPartialOrderRealizable
-    (P : RealizationProblem Input Output n) :
+    (P : RealizationProblem Input Output (Fin n)) :
     P.IsOTRealizable ↔ P.IsPartialOrderRealizable :=
   ⟨IsOTRealizable.isPartialOrderRealizable, IsPartialOrderRealizable.isOTRealizable⟩
 
