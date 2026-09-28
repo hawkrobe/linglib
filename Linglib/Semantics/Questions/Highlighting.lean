@@ -6,49 +6,26 @@ public import Mathlib.Algebra.Group.Action.Prod
 /-!
 # Highlighting
 
-A sentence does more than express an inquisitive proposition: it makes some possibilities
-salient, as antecedents for anaphora, and marks each of them as positive or negative
-([roelofsen-vangool-2010], [roelofsen-farkas-2015]). *Is the number of planets even?* and *Is it
-odd?* express the same issue, but *yes* conveys different answers after them, and *Is it not
-even?* differs from *Is it odd?* in what *no* conveys.
-
-This file formalizes the two-dimensional semantics of [roelofsen-farkas-2015]. Its language
-`Highlighting.Formula` is built from atoms by negation, inquisitive disjunction and the two
-projection operators `!` and `?`, the non-inquisitive and the non-informative projection. A
-formula has two values, each computed from the values of its parts: the proposition it expresses
-in InqB (`Highlighting.Formula.proposition`, (26)), a `Question`, and the possibilities it
-highlights, each with its polarity (`Highlighting.Formula.highlights`, (60)), an element of
-`Polarity × Set W`. An atom
-highlights its truth set positively; a negation highlights the complement of everything its
-argument highlights, negatively (`Highlighting.neg`); a disjunction highlights what either
-disjunct does; and a projection leaves a single negative possibility in place and otherwise
-merges the highlighted possibilities into one positive possibility (`Highlighting.project`).
-
-The highlights of a formula are not a function of its proposition
-(`Highlighting.Formula.not_exists_highlights_eq_comp_proposition`): `?p` and `?¬p` express the
-same issue but highlight `p` positively and its complement negatively. The projection operators
-are therefore primitive: `!p` and `¬¬p` express the same proposition, but `!p` highlights `p`
-positively and `¬¬p` negatively (`Highlighting.Formula.highlights_bang_ne_highlights_neg_neg`).
-
-The polarity group acts on a possibility and its polarity together: the negative polarity
-complements the possibility and reverses its polarity. The basic formulas on an atom, `p` and
-`¬p` (`Highlighting.Formula.ofPolarity`), highlight the images of `(positive, p)` under the two
-polarities, so *Is it odd?* and *Is it not even?* highlight the same worlds with opposite
-polarities.
+Besides the proposition it expresses, a sentence highlights some possibilities, making them
+salient as antecedents for anaphora such as polarity particles, and each highlighted possibility
+is negative when the sentence introducing it is negative. Roelofsen and Farkas compute the
+highlights of a formula compositionally beside its inquisitive proposition, so that `?p` and
+`?¬p` express the same issue but highlight `p` positively and its complement negatively. This
+file develops basic results about highlighting, including that the highlights of a formula are
+not a function of its proposition and that `!p` and `¬¬p` differ in what they highlight.
 
 ## Main definitions
 
-* `Highlighting.neg`, `Highlighting.project`: the clauses of (60) for negation and projection.
-* `Highlighting.Formula`: the language, with `proposition` and `highlights`, its two semantic
-  values.
+* `Highlighting.Formula`: formulas built from atoms by negation, inquisitive disjunction, `!` and
+  `?`.
+* `Highlighting.Formula.proposition`: the proposition a formula expresses.
+* `Highlighting.Formula.highlights`: the possibilities a formula highlights, with their polarity.
 
 ## Implementation notes
 
-The language is that of InqB without conjunction and implication, which [roelofsen-farkas-2015]
-leave aside, and with the projections primitive, as the highlighting dimension requires. In the
-presentation of [ciardelli-groenendijk-roelofsen-2018], formalized as the modal-free fragment of
-`ModalLogic.Inquisitive.Formula`, negation and the projections are defined from `⊥`, `∧` and `→`,
-so `!p` is `¬¬p` there.
+The projections `!` and `?` are primitive, since `!p` and `¬¬p` highlight differently; in the
+presentation of Ciardelli, Groenendijk and Roelofsen they are defined from `⊥`, `∧` and `→`,
+which are omitted here as in Roelofsen and Farkas.
 
 ## References
 
@@ -63,14 +40,14 @@ variable {W : Type*}
 
 namespace Highlighting
 
-/-- The negation of a formula highlights the complement of the union of the possibilities the
-formula highlights, with negative polarity. -/
+/-- The negation of a formula highlights, negatively, the complement of everything the formula
+highlights. -/
 def neg (H : Set (Polarity × Set W)) : Set (Polarity × Set W) :=
   {(.negative, (⋃₀ (Prod.snd '' H))ᶜ)}
 
 open Classical in
-/-- The projections `!` and `?` of a formula leave a single negative possibility in place and
-merge any other highlights into one positive possibility, their union. -/
+/-- A projection of a formula keeps a single negative possibility and otherwise highlights,
+positively, the union of what the formula highlights. -/
 noncomputable def project (H : Set (Polarity × Set W)) : Set (Polarity × Set W) :=
   if ∃ α, H = {(.negative, α)} then H else {(.positive, ⋃₀ (Prod.snd '' H))}
 
@@ -99,8 +76,8 @@ noncomputable def project (H : Set (Polarity × Set W)) : Set (Polarity × Set W
   · exact project_singleton_positive α
   · exact project_singleton_negative α
 
-/-- The language of [roelofsen-farkas-2015]: atoms, negation, inquisitive disjunction, and the
-non-inquisitive and non-informative projections `!` and `?`. -/
+/-- A formula is built from atoms by negation, inquisitive disjunction, and the non-inquisitive
+and non-informative projections `!` and `?` ([roelofsen-farkas-2015]). -/
 inductive Formula (A : Type*) where
   | atom (a : A)
   | neg (φ : Formula A)
@@ -113,7 +90,7 @@ namespace Formula
 
 variable {A : Type*} (v : A → Set W)
 
-/-- (26): the proposition a formula expresses under the valuation `v` of its atoms. -/
+/-- The proposition a formula expresses under the valuation `v` of its atoms (26). -/
 def proposition : Formula A → Question W
   | atom a => Question.ofSet (v a)
   | neg φ => (proposition φ)ᶜ
@@ -121,7 +98,7 @@ def proposition : Formula A → Question W
   | bang φ => (proposition φ).bang
   | query φ => (proposition φ).query
 
-/-- (60): the possibilities a formula highlights, each with its polarity. -/
+/-- The possibilities a formula highlights, each with its polarity (60). -/
 noncomputable def highlights : Formula A → Set (Polarity × Set W)
   | atom a => {(.positive, v a)}
   | neg φ => Highlighting.neg (highlights φ)
@@ -131,7 +108,7 @@ noncomputable def highlights : Formula A → Set (Polarity × Set W)
 
 attribute [simp] proposition highlights
 
-/-- The basic formula of polarity `s` on the atom `a`: `a` or `¬a`. -/
+/-- The basic formula of polarity `s` on the atom `a` is `a` or `¬a`. -/
 def ofPolarity : Polarity → A → Formula A
   | .positive, a => atom a
   | .negative, a => neg (atom a)
@@ -143,8 +120,8 @@ def ofPolarity : Polarity → A → Formula A
   · rfl
   · simp [ofPolarity, Question.compl_eq, Question.info_ofSet]
 
-/-- A basic formula of polarity `s` on `a` highlights the image of `(positive, v a)` under `s`:
-the negative polarity complements the possibility and marks it negative. -/
+/-- A basic formula of polarity `s` on `a` highlights the image of `(positive, v a)` under `s`,
+the negative polarity complementing the possibility and reversing its polarity. -/
 @[simp] theorem highlights_ofPolarity (s : Polarity) (a : A) :
     (ofPolarity s a).highlights v = {s • (.positive, v a)} := by
   cases s <;> simp [ofPolarity, Prod.smul_mk]
@@ -154,9 +131,8 @@ theorem proposition_query_ofPolarity (s : Polarity) (a : A) :
     (query (ofPolarity s a)).proposition v = Question.polar (v a) := by
   rw [proposition, proposition_ofPolarity, Question.query_ofSet, Question.polar_smul]
 
-/-- There is more to the meaning of a formula than its proposition: `?a` and `?¬a` express the
-same issue but highlight different possibilities, so no function of the proposition gives the
-highlights. -/
+/-- The highlights of a formula are not a function of its proposition, since `?a` and `?¬a`
+express the same issue but highlight different possibilities. -/
 theorem not_exists_highlights_eq_comp_proposition [Nonempty A] :
     ¬ ∃ f : Question W → Set (Polarity × Set W),
       ∀ φ : Formula A, φ.highlights v = f (φ.proposition v) := by
@@ -168,8 +144,8 @@ theorem not_exists_highlights_eq_comp_proposition [Nonempty A] :
         (hf (query (ofPolarity .negative a))).symm)
   simp [ofPolarity, Set.singleton_eq_singleton_iff] at h
 
-/-- The projection `!` is primitive: `!a` and `¬¬a` express the same proposition, but `!a`
-highlights `a` positively and `¬¬a` negatively. -/
+/-- The formulas `!a` and `¬¬a` express the same proposition, but `!a` highlights `a`
+positively and `¬¬a` negatively. -/
 theorem highlights_bang_ne_highlights_neg_neg (a : A) :
     (bang (atom a)).proposition v = (neg (neg (atom a))).proposition v ∧
       (bang (atom a)).highlights v ≠ (neg (neg (atom a))).highlights v := by

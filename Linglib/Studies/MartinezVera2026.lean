@@ -89,7 +89,7 @@ variable {W : Type*}
 
 /-! ### Highlighting (38) -/
 
-/-- A context for highlighting: the propositions made salient by recent utterances, and the
+/-- A highlighting context records the propositions made salient by recent utterances and the
 question under discussion. -/
 structure HighlightingContext (W : Type*) where
   /-- Propositions made salient by recent utterances. -/
@@ -102,8 +102,8 @@ entailing it or entailed by it. -/
 def AddressesQUD (q : Question W) (p : Set W) : Prop :=
   ∃ a ∈ q.alt, p ⊆ a ∨ a ⊆ p
 
-/-- (38): a proposition is highlighted when an utterance has made it salient and it addresses
-the question under discussion. -/
+/-- A proposition is highlighted when an utterance has made it salient and it addresses the
+question under discussion (38). -/
 def Highlighted (c : HighlightingContext W) (p : Set W) : Prop :=
   p ∈ c.salient ∧ AddressesQUD c.qud p
 

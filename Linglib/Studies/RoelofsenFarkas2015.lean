@@ -6,62 +6,35 @@ public import Linglib.Studies.FarkasBruce2010
 public import Linglib.Data.Examples.RoelofsenFarkas2015
 
 /-!
-# Roelofsen and Farkas (2015): Polarity particle responses
+# Roelofsen and Farkas (2015): Polarity particle responses as a window onto the interpretation of questions and assertions
 
-This file formalizes [roelofsen-farkas-2015]'s account of polarity particle responses. A sentence
-expresses an inquisitive proposition and highlights possibilities, each positive or negative
-(`Highlighting.Formula.proposition`, `Highlighting.Formula.highlights`): *Is the number of
-planets even?* and *Is it odd?* raise the same issue (`proposition_query_even_eq_odd`) but
-highlight different possibilities, and *Is it odd?* and *Is it not even?* highlight the same
-worlds with opposite polarities. A polarity response hosts a relative feature, [agree] or
-[reverse], and an absolute feature, [+] or [−], each presupposing something of the prejacent
-(`AbsolutePresup`, `RelativePresup`, (68)–(71)): together they fix what the response expresses
-from the unique possibility its antecedent highlights (`absolutePresup_and_relativePresup_iff`,
-(72)–(75)). So an [agree, +] response such as *yes, it is* conveys the even answer after *Is it
-even?* and the odd one after *Is it odd?* (`agreePositive_iff`, (49), (50)); *no, it isn't*
-conveys that the number is not odd after *Is it odd?* and that it is not even after *Is it not
-even?* (`negative_response_query_odd`, `negative_response_query_not_even`, (52), (53)); and an
-alternative question highlights two possibilities and licenses no particle response
-(`not_relativePresup_disj`, (51)). On a response sharing its antecedent's radical, the two
-highlighting the images of one possibility under their polarities
-(`Highlighting.Formula.highlights_ofPolarity`), the relative feature is the relative polarity of
-[farkas-bruce-2010], [agree] when the two polarities agree (`relativePresup_smul_iff`).
+This file formalizes [roelofsen-farkas-2015]'s account of polarity particle responses. A response
+carries a relative feature, [agree] or [reverse], and an absolute feature, [+] or [−], each
+presupposing something of the possibilities its prejacent and its antecedent highlight; together
+they fix what the response expresses (`absolutePresup_and_relativePresup_iff`). So *yes, it is*
+conveys the even answer after *Is it even?* and the odd one after *Is it odd?*, and on a response
+sharing its antecedent's radical the relative feature is Farkas and Bruce's relative polarity
+(`relativePresup_smul_iff`).
 
-Particles realize features, and which do so is language-specific (§4.2, §5.2): English *yes*
-realizes [agree] and [+], *no* [reverse] and [−] (76); French *oui* [+], *non* [−] and *si* the
-combination [reverse, +] (118); German *ja* and *nein* like *yes* and *no*, and *doch* [reverse,
-+] (123). A particle is usable in a response when it realizes one of its features or its
-combination, unless a particle dedicated to the combination blocks it (`Usable`). This yields
-the English pattern (77), where both particles occur in [agree, −] and [reverse, +] responses,
-and the French and German patterns (119)–(127) (`english_usable`, `french_usable`,
-`german_usable`), and it predicts the judgment of every example (`judgment_iff_usable`). The
-particles that do double duty, *yes* and *no*, each realize a natural class of features, the
-unmarked [agree] and [+] or the marked [reverse] and [−] (`Feature.value`, `mem_english_iff`,
-(78), (80)). The account agrees with what [farkas-bruce-2010] say English *yes* and *no* and
-French *si* mark (`usable_english_iff_mem`, `usable_si_iff_mem_reversePositive`).
+Languages differ in which particles realize which features, and a particle dedicated to a
+combination blocks the others. English *yes* and *no* each realize a natural class of features,
+so both occur in responses to a negative antecedent (`english_usable`), while French *si* and
+German *doch* realize [reverse, +] alone. The account agrees with what Farkas and Bruce say the
+English particles mark (`usable_english_iff_mem`).
 
 ## Implementation notes
 
-* The features' presuppositions are stated of a proposition and a set of highlighted
-  possibilities, the two values of the prejacent formula; they meet only in the absolute
-  features.
-* The unique most salient antecedent possibility is the unique possibility highlighted by the
-  antecedent utterance, the top of the stack of discourse referents of (61); the context itself,
-  its table, referents and commitments, is not modelled.
-* Features are polarities: a relative feature `r` is [agree] when positive and [reverse] when
-  negative, so that the prejacent highlights `r • β` for the antecedent possibility `β`, the
-  polarity group acting on a possibility and its polarity together.
-* Blocking by a dedicated particle, stated for *si* and *doch* in §5.2, is the general clause of
-  `Usable`.
-* The rows are the examples (6), (7), (119)–(122) and (124)–(127), one row per particle; the
-  French paradigm (8), (9) of §2 repeats (119)–(122), and its (9) prints the French sentences of
-  its two lines in the opposite order to their glosses.
+* The most salient antecedent possibility is the one the antecedent formula highlights; the
+  discourse context of the paper is not modelled.
+* Features are polarities, [agree] and [+] being positive, so the prejacent of a relative feature
+  `r` highlights `r • β` for the antecedent possibility `β`.
+* French (9) prints its French sentences in the opposite order to their glosses; the French rows
+  are (119)–(122).
 
 ## TODO
 
-* The Romanian and Hungarian systems of §5.1, with a dedicated [reverse] particle, rest on
-  realization needs, the reversal scale (81) and contrastive markedness (82), none of which is
-  formalized, nor are the preferences among realizable particles.
+* The Romanian and Hungarian systems of §5.1, and the preferences among realizable particles,
+  which rest on markedness, are not formalized.
 
 ## References
 
@@ -80,21 +53,21 @@ variable {W : Type*}
 
 /-! ### Polarity features (§4.1) -/
 
-/-- (68), (69): the absolute feature `s` presupposes that the prejacent expresses a proposition
-`q` with a single possibility, which it highlights with polarity `s`. -/
+/-- The absolute feature `s` presupposes that the prejacent expresses a proposition `q` with a
+single possibility, which it highlights with polarity `s` (68), (69). -/
 def AbsolutePresup (s : Polarity) (q : Question W) (H : Set (Polarity × Set W)) : Prop :=
   ∃ α, q = Question.ofSet α ∧ H = {(s, α)}
 
-/-- (70), (71): the relative feature `r`, [agree] when positive and [reverse] when negative,
-presupposes that the antecedent highlights a unique possibility and that the prejacent
-highlights its image under `r`: the same possibility with the same polarity, or its complement
-with the opposite polarity. -/
+/-- The relative feature `r`, [agree] when positive and [reverse] when negative, presupposes
+that the antecedent highlights a unique possibility and that the prejacent highlights its image
+under `r`, the same possibility with the same polarity or its complement with the opposite
+polarity (70), (71). -/
 def RelativePresup (r : Polarity) (H ant : Set (Polarity × Set W)) : Prop :=
   ∃ β, ant = {β} ∧ H = {r • β}
 
-/-- (72)–(75): an absolute feature `s` and a relative feature `r` together presuppose that the
-antecedent highlights a single possibility, of polarity `r * s`, and that the prejacent
-expresses its image under `r`, highlighted with polarity `s`. -/
+/-- An absolute feature `s` and a relative feature `r` together presuppose that the antecedent
+highlights a single possibility, of polarity `r * s`, and that the prejacent expresses its image
+under `r`, highlighted with polarity `s` (72)–(75). -/
 theorem absolutePresup_and_relativePresup_iff {r s : Polarity} {q : Question W}
     {H ant : Set (Polarity × Set W)} :
     AbsolutePresup s q H ∧ RelativePresup r H ant ↔
@@ -135,8 +108,8 @@ theorem proposition_query_even_eq_odd (hodd : v o = (v e)ᶜ) :
     (query (atom e)).proposition v = (query (atom o)).proposition v := by
   simp only [proposition, Question.query_ofSet, hodd, Question.polar_compl]
 
-/-- (49), (50): an [agree, +] response to *Is it `a`?*, such as *yes, it is*, expresses `a`:
-the even answer after *Is it even?* and the odd one after *Is it odd?*. -/
+/-- An [agree, +] response to *Is it `a`?*, such as *yes, it is*, expresses `a`, the even
+answer after *Is it even?* and the odd one after *Is it odd?* (49), (50). -/
 theorem agreePositive_iff (a : A) (q : Question W) (H : Set (Polarity × Set W)) :
     AbsolutePresup .positive q H ∧ RelativePresup .positive H ((query (atom a)).highlights v) ↔
       q = Question.ofSet (v a) ∧ H = {(.positive, v a)} := by
@@ -144,8 +117,8 @@ theorem agreePositive_iff (a : A) (q : Question W) (H : Set (Polarity × Set W))
     Highlighting.project_singleton, Set.singleton_eq_singleton_iff, Prod.mk.injEq,
     Polarity.positive_mul, Polarity.positive_smul, true_and, exists_eq_left']
 
-/-- (52): a negative response to *Is it odd?*, *no, it isn't*, expresses that the number is
-not odd. -/
+/-- A negative response to *Is it odd?*, *no, it isn't*, expresses that the number is not odd
+(52). -/
 theorem negative_response_query_odd (hodd : v o = (v e)ᶜ) (q : Question W)
     (H : Set (Polarity × Set W)) (r : Polarity)
     (h : AbsolutePresup .negative q H ∧ RelativePresup r H ((query (atom o)).highlights v)) :
@@ -158,8 +131,8 @@ theorem negative_response_query_odd (hodd : v o = (v e)ᶜ) (q : Question W)
   · exact absurd hr (by decide)
   · rw [hq, Polarity.negative_smul_set, hodd, compl_compl]
 
-/-- (53): a negative response to *Is it not even?*, *no, it isn't*, expresses that the number
-is not even, although the question highlights the same worlds as *Is it odd?*. -/
+/-- A negative response to *Is it not even?*, *no, it isn't*, expresses that the number is not
+even, although the question highlights the same worlds as *Is it odd?* (53). -/
 theorem negative_response_query_not_even (q : Question W) (H : Set (Polarity × Set W))
     (r : Polarity)
     (h : AbsolutePresup .negative q H ∧
@@ -173,8 +146,8 @@ theorem negative_response_query_not_even (q : Question W) (H : Set (Polarity × 
   · rw [hq, Polarity.positive_smul]
   · exact absurd hr (by decide)
 
-/-- (51): the alternative question *Is it even↑, or odd↓?* highlights two possibilities, so no
-relative feature, and no particle response, is licensed after it. -/
+/-- The alternative question *Is it even↑, or odd↓?* highlights two possibilities, so no
+relative feature, and no particle response, is licensed after it (51). -/
 theorem not_relativePresup_disj [Nonempty W] (hodd : v o = (v e)ᶜ) (r : Polarity)
     (H : Set (Polarity × Set W)) :
     ¬ RelativePresup r H ((inqDisj (atom e) (atom o)).highlights v) := by
@@ -193,7 +166,7 @@ end Questions
 
 /-! ### Realization (§4.2, §5.2) -/
 
-/-- A polarity feature: relative, [agree] when positive and [reverse] when negative, or
+/-- A polarity feature is relative, [agree] when positive and [reverse] when negative, or
 absolute, [+] or [−]. -/
 inductive Feature where
   | relative (r : Polarity)
@@ -206,25 +179,25 @@ def Feature.value : Feature → Polarity
   | .relative r => r
   | .absolute s => s
 
-/-- What a particle can realize: a feature, or a feature combination [r, s] as a whole. -/
+/-- A particle realizes features, or a feature combination [r, s] as a whole. -/
 inductive Target where
   | feature (f : Feature)
   | combination (r s : Polarity)
   deriving DecidableEq, Repr
 
-/-- (76): English *yes* realizes [agree] and [+], *no* [reverse] and [−]. -/
+/-- English *yes* realizes [agree] and [+], and *no* [reverse] and [−] (76). -/
 def english : English.PolarityParticle → List Target
   | .yes => [.feature (.relative .positive), .feature (.absolute .positive)]
   | .no => [.feature (.relative .negative), .feature (.absolute .negative)]
 
-/-- (118): French *oui* realizes [+], *non* [−], and *si* the combination [reverse, +]. -/
+/-- French *oui* realizes [+], *non* [−], and *si* the combination [reverse, +] (118). -/
 def french : French.PolarityParticle → List Target
   | .oui => [.feature (.absolute .positive)]
   | .non => [.feature (.absolute .negative)]
   | .si => [.combination .negative .positive]
 
-/-- (123): German *ja* realizes [agree] and [+], *nein* [reverse] and [−], and *doch* the
-combination [reverse, +]. -/
+/-- German *ja* realizes [agree] and [+], *nein* [reverse] and [−], and *doch* the combination
+[reverse, +] (123). -/
 def german : German.PolarityParticle → List Target
   | .ja => [.feature (.relative .positive), .feature (.absolute .positive)]
   | .nein => [.feature (.relative .negative), .feature (.absolute .negative)]
@@ -234,7 +207,8 @@ section Usable
 
 variable {P : Type*} [Fintype P] (R : P → List Target)
 
-/-- A particle can realize the combination [r, s]: one of its features, or the combination. -/
+/-- A particle can realize the combination [r, s] when it realizes one of its features or the
+combination itself. -/
 def Realizes (p : P) (r s : Polarity) : Prop :=
   .feature (.relative r) ∈ R p ∨ .feature (.absolute s) ∈ R p ∨ .combination r s ∈ R p
 
@@ -251,16 +225,16 @@ instance [DecidableEq P] (p : P) (r s : Polarity) : Decidable (Usable R p r s) :
 
 end Usable
 
-/-- (77): in English, [agree, +] responses take *yes*, [reverse, −] responses *no*, and
-[agree, −] and [reverse, +] responses either particle. -/
+/-- In English, [agree, +] responses take *yes*, [reverse, −] responses *no*, and [agree, −]
+and [reverse, +] responses either particle (77). -/
 theorem english_usable (p : English.PolarityParticle) :
     (Usable english p .positive .positive ↔ p = .yes) ∧
       (Usable english p .negative .negative ↔ p = .no) ∧
       Usable english p .positive .negative ∧ Usable english p .negative .positive := by
   cases p <;> decide
 
-/-- (119)–(122): French [agree, +] responses take *oui*, [reverse, +] responses *si*, and
-[agree, −] and [reverse, −] responses *non*. -/
+/-- French [agree, +] responses take *oui*, [reverse, +] responses *si*, and [agree, −] and
+[reverse, −] responses *non* (119)–(122). -/
 theorem french_usable (p : French.PolarityParticle) :
     (Usable french p .positive .positive ↔ p = .oui) ∧
       (Usable french p .negative .positive ↔ p = .si) ∧
@@ -268,8 +242,8 @@ theorem french_usable (p : French.PolarityParticle) :
       (Usable french p .negative .negative ↔ p = .non) := by
   cases p <;> decide
 
-/-- (124)–(127): German [agree, +] responses take *ja*, [reverse, +] responses *doch*,
-[reverse, −] responses *nein*, and [agree, −] responses *ja* or *nein*. -/
+/-- German [agree, +] responses take *ja*, [reverse, +] responses *doch*, [reverse, −]
+responses *nein*, and [agree, −] responses *ja* or *nein* (124)–(127). -/
 theorem german_usable (p : German.PolarityParticle) :
     (Usable german p .positive .positive ↔ p = .ja) ∧
       (Usable german p .negative .positive ↔ p = .doch) ∧
@@ -277,8 +251,8 @@ theorem german_usable (p : German.PolarityParticle) :
       (Usable german p .positive .negative ↔ p ≠ .doch) := by
   cases p <;> decide
 
-/-- (80): the English particles each realize a natural class of features, *yes* the unmarked
-and *no* the marked ones. -/
+/-- The English particles each realize a natural class of features, *yes* the unmarked and
+*no* the marked ones (80). -/
 theorem mem_english_iff (f : Feature) :
     (Target.feature f ∈ english .yes ↔ f.value = .positive) ∧
       (Target.feature f ∈ english .no ↔ f.value = .negative) := by
@@ -325,8 +299,8 @@ def particleTable : List (String × List (String × Particle)) :=
 
 def polarityTable : List (String × Polarity) := [("positive", .positive), ("negative", .negative)]
 
-/-- A particle response to an assertion: the polarities of the antecedent and of the response,
-the particle, and the judgment. -/
+/-- A row records a particle response to an assertion, with the polarities of the antecedent
+and of the response, the particle, and the judgment. -/
 structure Row where
   response : Response
   particle : Particle
