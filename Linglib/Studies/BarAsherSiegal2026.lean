@@ -1,6 +1,9 @@
 module
 
-public import Linglib.Semantics.Causation.CCSelection
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Causation.CausalModel.Dependence
+public import Linglib.Core.Relation.ReflTransGen
 
 /-!
 # Bar-Asher Siegal 2026: causation and causal relations
@@ -17,6 +20,13 @@ only from the one sufficient set completed in the world of evaluation. Fodor's e
 *Sam opened the door* to *Sam caused the door to open* follows, its converse fails, and when
 two sufficient sets are completed at once neither construction applies.
 
+## Implementation notes
+
+The door is a causal model whose exogenous variables (handle, lock, power, button) read the
+context, and situations are observations. Sufficient sets and the two selection constraints are
+stated over the Kleene development of an observation (`CausalModel.Forced`), after
+[baglini-bar-asher-siegal-2025].
+
 ## References
 
 * [bar-asher-siegal-2026]
@@ -28,40 +38,120 @@ two sufficient sets are completed at once neither construction applies.
 
 namespace BarAsherSiegal2026
 
-open Causation Causation.Mechanism Causation.SEM Causation.CCSelection
+open CausalModel
+
+/-! ### Sufficient sets and selection -/
+
+section Selection
+
+variable {U W : Type*} {α : W → Type*} [DecidableEq W] (M : CausalModel U W α) [M.IsAcyclic]
+
+/-- A sufficient set for `effect = xE` is a situation not settling the effect that forces it. -/
+def IsSufficientSet (S : ∀ v, Flat (α v)) (effect : W) (xE : α effect) : Prop :=
+  S effect = ⊥ ∧ M.Forced S effect xE
+
+/-- A sufficient set each of whose conditions is necessary within it. -/
+def IsMinimalSufficientSet (S : ∀ v, Flat (α v)) (effect : W) (xE : α effect) : Prop :=
+  IsSufficientSet M S effect xE ∧ ∀ v, S v ≠ ⊥ → ¬ M.Forced (Function.update S v ⊥) effect xE
+
+/-- `S` is the only minimal sufficient set completed in the world `w`. -/
+def IsTheCompletedSet (w S : ∀ v, Flat (α v)) (effect : W) (xE : α effect) : Prop :=
+  S ≤ w ∧ IsMinimalSufficientSet M S effect xE ∧
+    ∀ S', S' ≤ w → IsMinimalSufficientSet M S' effect xE → S' = S
+
+/-- The verb *cause* selects any condition of the completed sufficient set. -/
+def SelectsMember (w : ∀ v, Flat (α v)) (c effect : W) (xE : α effect) : Prop :=
+  ∃ S, IsTheCompletedSet M w S effect xE ∧ S c ≠ ⊥
+
+/-- A change-of-state verb selects the temporally final condition of the completed sufficient
+set, `time` ordering the world's realizations. -/
+def SelectsFinal (w : ∀ v, Flat (α v)) (time : W → ℕ) (c effect : W) (xE : α effect) : Prop :=
+  ∃ S, IsTheCompletedSet M w S effect xE ∧ S c ≠ ⊥ ∧ ∀ v, S v ≠ ⊥ → time v ≤ time c
+
+variable {M} {effect : W} {xE : α effect}
+
+/-- The change-of-state verb entails *cause*. -/
+theorem SelectsFinal.selectsMember {w : ∀ v, Flat (α v)} {time : W → ℕ} {c : W}
+    (h : SelectsFinal M w time c effect xE) : SelectsMember M w c effect xE :=
+  let ⟨S, hS, hc, _⟩ := h; ⟨S, hS, hc⟩
+
+/-- Under overdetermination, two completed minimal sufficient sets leave nothing selectable. -/
+theorem not_selectsMember_of_two {w S₁ S₂ : ∀ v, Flat (α v)} {c : W}
+    (h₁ : IsMinimalSufficientSet M S₁ effect xE) (h₂ : IsMinimalSufficientSet M S₂ effect xE)
+    (hne : S₁ ≠ S₂) (hw₁ : S₁ ≤ w) (hw₂ : S₂ ≤ w) : ¬ SelectsMember M w c effect xE :=
+  fun ⟨_, ⟨_, _, huniq⟩, _⟩ ↦ hne ((huniq S₁ hw₁ h₁).trans (huniq S₂ hw₂ h₂).symm)
+
+section Decidable
+
+variable [Fintype U] [Inhabited U] [∀ v, Inhabited (α v)] [∀ v, DecidableEq (α v)]
+  [∀ v, Fintype (α v)] [Fintype W] [DecidableRel M.graph.Adj]
+
+instance (S : ∀ v, Flat (α v)) : Decidable (IsSufficientSet M S effect xE) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+instance (S : ∀ v, Flat (α v)) : Decidable (IsMinimalSufficientSet M S effect xE) :=
+  haveI : ∀ v, Decidable (S v ≠ ⊥ → ¬ M.Forced (Function.update S v ⊥) effect xE) :=
+    fun _ ↦ inferInstance
+  inferInstanceAs (Decidable (_ ∧ _))
+
+instance (w S : ∀ v, Flat (α v)) : Decidable (IsTheCompletedSet M w S effect xE) :=
+  letI := fintypePartialAssignment (α := α)
+  haveI : DecidablePred fun S' ↦ S' ≤ w → IsMinimalSufficientSet M S' effect xE → S' = S :=
+    fun _ ↦ inferInstance
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+instance (w : ∀ v, Flat (α v)) (c : W) : Decidable (SelectsMember M w c effect xE) :=
+  letI := fintypePartialAssignment (α := α)
+  haveI : DecidablePred fun S ↦ IsTheCompletedSet M w S effect xE ∧ S c ≠ ⊥ :=
+    fun _ ↦ inferInstance
+  inferInstanceAs (Decidable (∃ _, _))
+
+instance (w : ∀ v, Flat (α v)) (time : W → ℕ) (c : W) :
+    Decidable (SelectsFinal M w time c effect xE) :=
+  letI := fintypePartialAssignment (α := α)
+  haveI : DecidablePred fun S ↦ IsTheCompletedSet M w S effect xE ∧ S c ≠ ⊥ ∧
+      ∀ v, S v ≠ ⊥ → time v ≤ time c := fun _ ↦ inferInstance
+  inferInstanceAs (Decidable (∃ _, _))
+
+end Decidable
+
+end Selection
+
+/-! ### The door of Figure 1 -/
 
 /-- The variables of Figure 1. -/
 inductive V | handle | lock | circuit | electricity | button | doorOpens
   deriving DecidableEq, Fintype, Repr
 
 /-- The button closes the circuit; handle, lock, circuit and power bear on the door. -/
-def graph : CausalGraph V := ⟨λ
-  | .circuit => {.button}
-  | .doorOpens => {.handle, .lock, .circuit, .electricity}
-  | _ => ∅⟩
+def adj (w v : V) : Prop :=
+  w = .button ∧ v = .circuit ∨
+    (w = .handle ∨ w = .lock ∨ w = .circuit ∨ w = .electricity) ∧ v = .doorOpens
 
-instance : CausalGraph.IsDAG graph := .of_irrefl (by decide)
+instance : DecidableRel adj := fun w v ↦ by unfold adj; infer_instance
 
 /-- The structural entailments G, H and I: the circuit closes when the button is pressed, and
 the door opens manually (handle on, lock off) or automatically (circuit and power on, lock
-off). -/
-def model : BoolSEM V where
-  graph := graph
-  mech
-    | .circuit => fun ρ ↦ ρ ⟨.button, by simp [graph]⟩
-    | .doorOpens => fun ρ ↦
-        let h := ρ ⟨.handle, by simp [graph]⟩
-        let l := ρ ⟨.lock, by simp [graph]⟩
-        let c := ρ ⟨.circuit, by simp [graph]⟩
-        let e := ρ ⟨.electricity, by simp [graph]⟩
-        (h && !l) || (c && e && !l)
-    | _ => const (G := graph) false
+off). The context settles handle, lock, power and button. -/
+def model : CausalModel (Bool × Bool × Bool × Bool) V fun _ ↦ Bool where
+  graph := ⟨adj⟩
+  eqn
+    | .handle => fun u _ ↦ u.1
+    | .lock => fun u _ ↦ u.2.1
+    | .electricity => fun u _ ↦ u.2.2.1
+    | .button => fun u _ ↦ u.2.2.2
+    | .circuit => fun _ x ↦ x .button
+    | .doorOpens => fun _ x ↦
+        (x .handle && !x .lock) || (x .circuit && x .electricity && !x .lock)
+  dependsOn_eqn := by intro v u x y h; cases v <;> simp (disch := simp [adj]) [h]
 
-instance : CausalGraph.IsDAG model.graph := inferInstanceAs (CausalGraph.IsDAG graph)
+instance : DecidableRel model.graph.Adj := inferInstanceAs (DecidableRel adj)
 
-/-- A valuation from a list of settings. -/
-def valuation (l : List (V × Bool)) : Valuation (λ _ : V => Bool) :=
-  l.foldl (λ s p => s.extend p.1 p.2) Valuation.empty
+instance : model.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
+
+/-- A situation from a list of settings. -/
+def valuation (l : List (V × Bool)) : V → Flat Bool :=
+  l.foldl (fun s p ↦ Function.update s p.1 ↑p.2) ⊥
 
 /-- Sufficient set I: handle on, lock off. -/
 def manual := valuation [(.handle, true), (.lock, false)]
