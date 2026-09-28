@@ -42,8 +42,9 @@ singular suffix, and the Stem, Word, and Phrase tableaux with the marks of the p
 
 ## Implementation notes
 
-The cases of the paradigms are those of `Telugu.Case`, the paper's P cell being the locative
-postposition *-lō*, and the containment order on them is the scoped Caha order on `Case`.
+The cells of the paradigms are the cases of `Telugu.Case` and the postpositions of
+`Telugu.Postposition`, the paper's P cell being *lō*, ordered by the scoped Caha containment
+order on their comparative values.
 
 ## References
 
@@ -63,8 +64,7 @@ open Core OptimalityTheory
 
 /-! ### Case -/
 
-/-- The case of a paradigm cell by the paper's label, its P the postposition *-lō* of
-`Telugu.Case`. -/
+/-- The case of a paradigm cell by the paper's label, its P the postposition *lō*. -/
 def caseOfLabel : String → Option Case
   | "nom" => some .nom | "acc" => some .acc | "gen" => some .gen | "dat" => some .dat
   | "p" => some .loc | _ => none
@@ -114,10 +114,29 @@ def strongItems : List (VocabularyItem Feature String) :=
 /-- The exponent of n for root `r` in case `c`. -/
 def strongN (r : Root) (c : Case) : Option String := subsetPrinciple strongItems (site r c)
 
-/-- Every nonnominative case takes the accusative's exponent, the nominative–nonnominative cut
+/-- A cell of the paradigms (1) and (8), a case or a postposition. -/
+inductive ParadigmCell where
+  /-- A case of `Telugu.Case`. -/
+  | case (c : Telugu.Case)
+  /-- A postposition of `Telugu.Postposition`. -/
+  | postposition (p : Telugu.Postposition)
+  deriving DecidableEq, Fintype
+
+/-- The comparative value of a cell. -/
+def ParadigmCell.label : ParadigmCell → Case
+  | .case c => c.label
+  | .postposition p => p.label
+
+/-- The cells are ordered by the containment order on their comparative values. -/
+instance : Preorder ParadigmCell := Preorder.lift ParadigmCell.label
+
+instance : DecidableLE ParadigmCell := fun a b ↦ inferInstanceAs (Decidable (a.label ≤ b.label))
+
+/-- Every nonnominative cell takes the accusative's exponent, the nominative–nonnominative cut
 of the paradigm, by the Elsewhere Condition over [ACC]. -/
 theorem strongN_nonnom :
-    ∀ r : Root, ∀ c ∈ Telugu.Case.inventory, c.IsNonnominative → strongN r c = strongN r .acc := by
+    ∀ r : Root, ∀ c : ParadigmCell, c.label.IsNonnominative →
+      strongN r c.label = strongN r .acc := by
   decide
 
 /-! ### The weak alternation (§3) -/
@@ -227,23 +246,22 @@ theorem oblique_across_quantifier :
 
 /-! ### Paradigm shapes against containment (§3.1) -/
 
-/-- What follows n in each case of the paradigms (1) and (8) is nothing in the unmarked
+/-- What follows n in each cell of the paradigms (1) and (8) is nothing in the unmarked
 nominative and genitive, a light suffix inside the prosodic word, or a heavy postposition
 outside it. -/
-def caseSuffix (c : Case) : Option Following :=
-  if c ∈ Case.Marker.inventory Telugu.Case.suffixes then some ⟨true, .light⟩
-  else if c ∈ Case.Marker.inventory Telugu.Case.postpositions then some ⟨false, .heavy⟩
-  else none
+def caseSuffix : ParadigmCell → Option Following
+  | .case c => c.suffix.map fun _ ↦ ⟨true, .light⟩
+  | .postposition _ => some ⟨false, .heavy⟩
 
 /-- The weak paradigm (8) violates *ABA on the containment hierarchy, since the nominative
 form resurfaces in the genitive, which contains [ACC] ([caha-2009]). -/
 theorem weak_violates_aba :
-    ¬ Morphology.IsContiguous fun c : Telugu.Case.inventory ↦ weakN (caseSuffix c) := by
+    ¬ Morphology.IsContiguous fun c : ParadigmCell ↦ weakN (caseSuffix c) := by
   decide
 
 /-- The strong paradigm of *illu* (1) is contiguous on the containment hierarchy. -/
 theorem strong_contiguous :
-    Morphology.IsContiguous fun c : Telugu.Case.inventory ↦ strongN .house c := by
+    Morphology.IsContiguous fun c : ParadigmCell ↦ strongN .house c.label := by
   decide
 
 /-! ### The singular suffix (§4.2) -/
@@ -400,8 +418,8 @@ def WordCandDat.nExponent : WordCandDat → String
 underlying *-am-ni* surfacing short before nothing and long before a word-internal light
 syllable. -/
 theorem word_level_derives_weakN :
-    WordCandNom.deleteNi.nExponent = weakN (caseSuffix .nom) ∧
-      WordCandDat.deleteMLengthen.nExponent = weakN (caseSuffix .dat) := by
+    WordCandNom.deleteNi.nExponent = weakN (caseSuffix (.case .nom)) ∧
+      WordCandDat.deleteMLengthen.nExponent = weakN (caseSuffix (.case .dat)) := by
   decide
 
 /-! ### Phrase-level phonology (§5.3) -/

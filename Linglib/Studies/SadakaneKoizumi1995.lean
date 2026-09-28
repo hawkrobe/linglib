@@ -85,7 +85,7 @@ acquired only after 3;0.
   happens *when Agree fails*, not Agree itself.
 - `MartinCategory.InFragmentNi` is **derived** as a `Finset` intersection
   of the per-category `fragmentCases` footprint with the Fragment's
-  `Japanese.Case.ni.cases = {.dat, .loc, .all, .Tem}`. The
+  `Japanese.Case.dat.functions = {.dat, .loc, .all, .tem}`. The
   conflation theorem `fragment_ni_predicts_inconsistent_signatures`
   derives the Tsujimura/Fragment vs. S&K granularity disagreement as a
   real claim about set intersection plus diagnostic-signature mismatch.
@@ -176,8 +176,8 @@ def classify : MartinCategory → Option Classification
 /-- Per-category footprint on the `Case` lattice — what UD case
     feature(s) the *ni*-use of this Martin category corresponds to most
     directly. Categories whose *ni*-use does NOT fit any UD case feature
-    Tsujimura's Fragment recognises (`Japanese.Case.ni.cases =
-    {.dat, .loc, .all, .Tem}`) map to `∅`. This is study-internal
+    Tsujimura's Fragment recognises (`Japanese.Case.dat.functions =
+    {.dat, .loc, .all, .tem}`) map to `∅`. This is study-internal
     stipulation (the lin agent verified F's mapping is empty per the
     *GB riron-ni motozuiteiru* example). -/
 def fragmentCases : MartinCategory → Finset Case
@@ -186,16 +186,16 @@ def fragmentCases : MartinCategory → Finset Case
   | .L1                 => {.loc}            -- locative-of-existence
   | .N1 | .N2           => {.dat, .all}      -- dative of direction (S&K-ambiguous)
   | .M                  => {.tem}            -- specific time
-  | _                   => ∅                 -- not in Fragment.ni.cases coverage
+  | _                   => ∅                 -- not among the Fragment's ni functions
 
-/-- Whether the Fragment's single `ni : CaseMarker` (with
-    `cases = {.dat, .loc, .all, .Tem}`) covers the *ni* uses of a given
+/-- Whether the Fragment's single *ni*, the dative case particle (with
+    `functions = {.dat, .loc, .all, .tem}`), covers the *ni* uses of a given
     Martin category. Derived as the non-emptiness of the intersection
     between the category's `fragmentCases` footprint and the Fragment's
-    `ni.cases` — a real `Finset` operation rather than a stipulated
+    `Japanese.Case.dat.functions` — a real `Finset` operation rather than a stipulated
     lookup table. -/
 def InFragmentNi (c : MartinCategory) : Prop :=
-  (c.fragmentCases ∩ Japanese.Case.ni.cases).Nonempty
+  (c.fragmentCases ∩ Japanese.Case.dat.functions).Nonempty
 
 instance (c : MartinCategory) : Decidable c.InFragmentNi := by
   unfold InFragmentNi; infer_instance
@@ -293,8 +293,8 @@ theorem card_decomposition :
 
 /-! ## §5 Conflation: Fragment's `ni` collapses S&K types
 
-`Fragments/Japanese/Case.lean` exposes a single `ni : CaseMarker` entry
-(consistent with [tsujimura-2014]'s textbook presentation). S&K's
+`Fragments/Japanese/Case.lean` exposes a single *ni*, the dative case particle
+`Japanese.Case.dat` (consistent with [tsujimura-2014]'s textbook presentation). S&K's
 4-way analysis would split this entry into multiple lexemes. The
 following theorems make the granularity disagreement Lean-visible: the
 Fragment's `ni` covers Martin categories with INCONSISTENT diagnostic

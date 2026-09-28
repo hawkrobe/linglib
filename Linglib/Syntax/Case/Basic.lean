@@ -26,8 +26,6 @@ The Universal Dependencies case tags are the corpus vocabulary, reached through
 ## Main declarations
 
 * `Case`: the comparative case values.
-* `Case.Marker`: a case marker, its form and the cases it realizes, with `Case.Marker.inventory`
-  the cases a set of markers realizes.
 
 ## References
 
@@ -101,20 +99,3 @@ inductive Case where
   /-- Abessive/privative: without X. -/
   | abess
   deriving DecidableEq, Repr, Inhabited, Fintype
-
-namespace Case
-
-/-! ### Markers -/
-
-/-- A case marker, with its form and the cases it realizes, several for a polysemous marker. -/
-structure Marker where
-  /-- The form. -/
-  form : String
-  /-- The cases the marker realizes. -/
-  cases : Finset Case
-  deriving DecidableEq
-
-/-- The cases a set of markers realizes. -/
-def Marker.inventory (ms : Finset Marker) : Finset Case := ms.biUnion (·.cases)
-
-end Case

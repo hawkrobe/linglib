@@ -16,9 +16,8 @@ Krishnamurti and Gwynn's grammar; the oblique stem is the matter of `Studies/Ait
 
 ## Main definitions
 
-* `Telugu.Case.ni`, `Telugu.Case.ki`: the accusative and dative suffixes.
-* `Telugu.Case.lō`, `Telugu.Case.nunci`: the locative and ablative postpositions.
-* `Telugu.Case.inventory`: the cases, the unmarked two with those the markers realize.
+* `Telugu.Case`, `Telugu.Case.suffix`: the four cases, and the suffixes of the two that have one.
+* `Telugu.Postposition`: the locative *lō* and the ablative *nunci*.
 
 ## References
 
@@ -28,36 +27,55 @@ Krishnamurti and Gwynn's grammar; the oblique stem is the matter of `Studies/Ait
 
 @[expose] public section
 
-namespace Telugu.Case
+namespace Telugu
 
-/-! ### Suffixes -/
+/-! ### Cases -/
 
-/-- The accusative *-ni*, also *-nu* except after an *i*. -/
-def ni : Case.Marker := { form := "-ni/-nu", cases := {.acc} }
+/-- The four cases. -/
+inductive Case where
+  /-- The nominative, the bare stem. -/
+  | nom
+  /-- The accusative. -/
+  | acc
+  /-- The genitive, the oblique stem. -/
+  | gen
+  /-- The dative. -/
+  | dat
+  deriving DecidableEq, Fintype, Repr
 
-/-- The dative *-ki*, also *-ku* except after an *i*. -/
-def ki : Case.Marker := { form := "-ki/-ku", cases := {.dat} }
+namespace Case
 
-/-- The case suffixes, inside the noun's prosodic word. -/
-def suffixes : Finset Case.Marker := {ni, ki}
+/-- The comparative value a case is named for. -/
+def label : Case → _root_.Case
+  | nom => .nom
+  | acc => .acc
+  | gen => .gen
+  | dat => .dat
+
+/-- The suffix of a case, inside the noun's prosodic word: the accusative *-ni*, also *-nu*
+except after an *i*, and the dative *-ki*, also *-ku* except after an *i*. The nominative and the
+genitive have none. -/
+def suffix : Case → Option String
+  | nom | gen => none
+  | acc => some "-ni/-nu"
+  | dat => some "-ki/-ku"
+
+end Case
 
 /-! ### Postpositions -/
 
-/-- *lō* 'in', the locative. -/
-def lō : Case.Marker := { form := "lō", cases := {.loc} }
-
-/-- *nunci* 'from', the ablative. -/
-def nunci : Case.Marker := { form := "nunci", cases := {.abl} }
-
 /-- The postpositions, separate words after the oblique stem. -/
-def postpositions : Finset Case.Marker := {lō, nunci}
+inductive Postposition where
+  /-- *lō* 'in'. -/
+  | lō
+  /-- *nunci* 'from'. -/
+  | nunci
+  deriving DecidableEq, Fintype, Repr
 
-/-! ### The inventory -/
+/-- The comparative value a postposition is named for, the locative *lō* and the ablative
+*nunci*. -/
+def Postposition.label : Postposition → _root_.Case
+  | lō => .loc
+  | nunci => .abl
 
-/-- The unmarked cases, the nominative on the bare stem and the genitive on the oblique stem. -/
-def unmarked : Finset Case := {.nom, .gen}
-
-/-- The cases, the unmarked two with those the suffixes and the postpositions realize. -/
-def inventory : Finset Case := unmarked ∪ Case.Marker.inventory (suffixes ∪ postpositions)
-
-end Telugu.Case
+end Telugu
