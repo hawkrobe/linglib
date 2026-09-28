@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Attitudes.Anchor
-public import Linglib.Semantics.Truthmaker.Inexact
+public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Fragments.Buryat.Complementizers
 public import Linglib.Fragments.Korean.Complementizers
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
@@ -45,7 +45,7 @@ open Data.Examples Buryat
 
 /-! ### Nominal sorts -/
 
-/-- The two sorts of clause-taking noun (§2.2): content nouns (*idea*,
+/-- The two sorts of clause-taking noun (§2.2), content nouns (*idea*,
 *claim*, *rumor*) and situation nouns (*situation*, *event*, *case*). -/
 inductive NominalSort where
   | content
@@ -120,8 +120,8 @@ theorem sort_predicts_cooccurrence :
 
 variable {W : Type*}
 
-/-- Existential content: `CONT(x) ∩ p ≠ ∅`, the overlap semantics the thesis
-rejects for equality (`comp`); subset is `ContentIndividual.entails`. -/
+/-- Existential content `CONT(x) ∩ p ≠ ∅` is the overlap semantics that the thesis
+rejects in favour of equality (`comp`). Subset semantics is `ContentIndividual.entails`. -/
 def ExistentialContent (xc : ContentIndividual W) (p : W → Prop) : Prop :=
   ∃ w, xc.cont w ∧ p w
 
@@ -135,7 +135,8 @@ theorem eq_of_comp_of_comp {xc : ContentIndividual W} {p q : W → Prop}
     (hp : comp p xc) (hq : comp q xc) : p = q :=
   hp.symm.trans hq
 
-/-- Subset does not: a content entails every superset of itself. -/
+/-- Subset semantics does not make CONT a function, since a content entails every superset
+of itself. -/
 theorem entails_not_functional :
     ¬ ∀ (xc : ContentIndividual Bool) (p q : Bool → Prop),
       xc.entails p → xc.entails q → p = q :=
@@ -156,7 +157,7 @@ def ReferentiallyTransparentAt (clause : (S → Prop) → S → Prop) (s : S) : 
 theorem sit_transparentAt (s : S) : ReferentiallyTransparentAt (fun p s' => p s') s :=
   fun _ _ h => h
 
-/-- A Cont-CP is opaque: content identity is not settled at one world. -/
+/-- A Cont-CP is opaque, since content identity is not settled at one world. -/
 theorem comp_not_transparentAt :
     ¬ ∀ (xc : ContentIndividual Bool) (w : Bool),
       ReferentiallyTransparentAt (fun p _ => comp p xc) w :=
@@ -197,7 +198,7 @@ inductive SemType where
   | predicate
   deriving DecidableEq, Repr
 
-/-- Bare CPs are predicates of situations; nominalized CPs are individuals. -/
+/-- Bare CPs are predicates of situations and nominalized CPs are individuals. -/
 inductive ClauseType where
   | predicateOfIndividuals
   | predicateOfSituations
@@ -231,8 +232,8 @@ theorem nominalizedCP_satisfies_every_theta (θ : ThetaHead) :
     saturatesTheta .predicateOfIndividuals θ :=
   rfl
 
-/-- Composes with the verb's situation argument by Predicate Modification
-(§4.5): bare CPs do, nominalized CPs do not. -/
+/-- Bare CPs compose with the verb's situation argument by Predicate Modification
+(§4.5), and nominalized CPs do not. -/
 def composesViaPM : ClauseType → Prop
   | .predicateOfIndividuals => False
   | .predicateOfSituations => True
@@ -255,8 +256,8 @@ inductive ClauseStructurePath where
   | nominalizedArgument
   deriving DecidableEq, Repr
 
-/-- The transparent syntax–semantics mapping (§1.1.2, ch. 4), read off the
-types: a cell is available when its clause type composes on its path. -/
+/-- The transparent syntax–semantics mapping (§1.1.2, ch. 4) is read off the
+types, making a cell available when its clause type composes on its path. -/
 def transparentSSMapping : ClauseStructurePath → Prop
   | .bareModifier => composesViaPM .predicateOfSituations
   | .bareArgument => ∃ θ, saturatesTheta .predicateOfSituations θ
@@ -279,21 +280,21 @@ theorem transparentSSMapping_diagonal :
 
 /-! ### The Comp head -/
 
-open Truthmaker in
-/-- The Comp head (§2.3 ex. 151): `x` is part of the evaluation situation
-and exactly verifies `p`, `compHead p x s ↔ x ≤ s ∧ p x`. -/
-def compHead [Preorder S] (p : S → Prop) (x s : S) : Prop :=
-  x ≤ s ∧ p x
+/-- The Comp head (§2.3 ex. 151) holds of `x` at `s` when `x` is part of the evaluation
+situation and exactly verifies `p`. -/
+def compHead [Preorder S] (p : Set S) (x s : S) : Prop :=
+  x ≤ s ∧ x ∈ p
 
-/-- Exact exemplification by a part is inexact verification. -/
-theorem inexactVer_of_compHead [Preorder S] {p : S → Prop} {x s : S}
-    (h : compHead p x s) : Truthmaker.inexactVer p s :=
-  ⟨x, h.1, h.2⟩
+/-- Exact exemplification by a part is inexact verification, membership in the upper closure of
+the exact verifiers. -/
+theorem mem_upperClosure_of_compHead [Preorder S] {p : Set S} {x s : S}
+    (h : compHead p x s) : s ∈ upperClosure p :=
+  mem_upperClosure.2 ⟨x, h.2, h.1⟩
 
 /-! ### Cont exponence -/
 
-/-- A Cont-exponence analysis of a clause-typing inventory (ch. 4): the
-morpheme, if any, overtly exponing Cont. -/
+/-- A Cont-exponence analysis of a clause-typing inventory (ch. 4) names the
+morpheme, if any, that overtly expones Cont. -/
 structure ContAnalysis where
   inventory : List Complementizer
   contExponent : Option Complementizer
@@ -306,8 +307,8 @@ structure ContCompAnalysis extends ContAnalysis where
   licenser_compAllomorph : ∀ l, (compAllomorph l).licenser = some l
   cover : ∀ c ∈ inventory, c ∈ contExponent ∨ ∃ l, compAllomorph l = c
 
-/-- Buryat (§4.3.1 ex. 33): *gɘ* expones Cont; participial *-Aːša* is the
-Comp allomorph next to nouns, converbial *-žA* next to verbs. -/
+/-- In Buryat (§4.3.1 ex. 33) *gɘ* expones Cont, participial *-Aːša* is the
+Comp allomorph next to nouns, and converbial *-žA* is the one next to verbs. -/
 def buryatAnalysis : ContCompAnalysis where
   inventory := complementizers
   contExponent := some ge
@@ -319,7 +320,7 @@ def buryatAnalysis : ContCompAnalysis where
   licenser_compAllomorph := by decide
   cover := by decide
 
-/-- Korean (§4.3.2 ex. 46): *-ta* expones Cont; adnominal *-nun* and
+/-- In Korean (§4.3.2 ex. 46) *-ta* expones Cont, and adnominal *-nun* and
 adverbal *-ko* are the Comp allomorphs. -/
 def koreanAnalysis : ContCompAnalysis where
   inventory := Korean.Complementizers.complementizers
@@ -332,8 +333,8 @@ def koreanAnalysis : ContCompAnalysis where
   licenser_compAllomorph := by decide
   cover := by decide
 
-/-- In Buryat the Cont exponent is exactly the bare say-root; Korean's
-*-ta* is itself a suffix, so this is no law of `ContAnalysis`. -/
+/-- In Buryat the Cont exponent is exactly the bare say-root. This is no law of
+`ContAnalysis`, since Korean's *-ta* is itself a suffix. -/
 theorem mem_buryatContExponent_iff :
     ∀ c ∈ complementizers,
       (c ∈ buryatAnalysis.contExponent ↔ ∀ m ∈ c.morphs, m.kind = .root) := by
@@ -351,7 +352,7 @@ def parseClauseSort : String → Option NominalSort
   | "Sit-CP" => some .situation
   | _ => none
 
-/-- A Buryat embedded clause: its typers and the sort it denotes. -/
+/-- A Buryat embedded clause, with its typers and the sort it denotes. -/
 structure ShapeDatum where
   typers : List Complementizer
   sort : NominalSort
@@ -380,8 +381,8 @@ theorem hanaxa_typers :
       hanaxa.typers complementizers = [aasha, zha] := by
   decide
 
-/-- *hanaxa* think ~ remember: nonveridical on the bare frame, veridical on
-the nominalized one. -/
+/-- *hanaxa* is nonveridical on the bare frame, where it means 'think', and veridical on
+the nominalized one, where it means 'remember'. -/
 theorem hanaxa_frame_conditioned_attitude :
     hanaxa.attitudeOn ArgumentFrame.finiteClause = some (.doxastic .nonVeridical) ∧
       hanaxa.attitudeOn nominalizedFrame = some (.doxastic .veridical) := by

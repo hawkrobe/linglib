@@ -1154,10 +1154,6 @@ import Linglib.Semantics.Tense.Pronoun
 import Linglib.Semantics.Tense.Reichenbach
 import Linglib.Semantics.Tense.RunTimes
 import Linglib.Semantics.Tense.TenseAspectComposition
-import Linglib.Semantics.Truthmaker.Basic
-import Linglib.Semantics.Truthmaker.Closure
-import Linglib.Semantics.Truthmaker.Entailment
-import Linglib.Semantics.Truthmaker.Inexact
 import Linglib.Studies.AbneyKeshet2025
 import Linglib.Studies.AbramskySadrzadeh2014
 import Linglib.Studies.Abusch1997
