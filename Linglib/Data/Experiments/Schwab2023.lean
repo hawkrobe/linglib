@@ -3,9 +3,9 @@ module
 public import Linglib.Data.Experiments.Schema
 
 /-!
-# Schwab2022: experimental results (generated)
+# Schwab2023: experimental results (generated)
 
-Auto-generated from `Linglib/Data/Experiments/Schwab2022.json` by `scripts/gen_experiments.py`.
+Auto-generated from `Linglib/Data/Experiments/Schwab2023.json` by `scripts/gen_experiments.py`.
 Do not edit by hand: edit the JSON and re-run the generator.
 
 Two speeded acceptability experiments on the German NPIs jemals 'ever' and so recht 'really', each
@@ -23,12 +23,12 @@ jemals illusion, although its posterior in Figure 2 is centred near zero.
 
 ## References
 
-* [schwab-2022]
+* [schwab-2023]
 -/
 
 @[expose] public section
 
-namespace Schwab2022
+namespace Schwab2023
 
 open Data.Experiments
 
@@ -84,4 +84,4 @@ def bayesFactors : Experiment → Effect → BayesFactor
   | .exp2, .illusionSoRecht => ⟨⟨33, 2⟩, .moderateForNull⟩
   | .exp2, .interaction => ⟨⟨654, 2⟩, .moderateForEffect⟩
 
-end Schwab2022
+end Schwab2023
