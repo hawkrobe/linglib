@@ -13,7 +13,7 @@ public import Linglib.Phonology.Subregular.ForbidPairs
 
 This file characterizes AGREE-style markedness as a tier-based strictly 2-local (TSL₂) language.
 AGREE requires tier-adjacent symbols to be equal, so it is the dual of the OCP, which requires
-them to differ. Both specialize the forbidden-pair constructor `mkForbidPairsOnTier` of
+them to differ. Both specialize the forbidden-pair constraint `Constraint.forbidPairs` of
 `ForbidPairs.lean`, AGREE with `R := (· ≠ ·)` and the OCP with `R := (· = ·)`. Consonant harmony,
 vowel harmony, and tone spreading factor through `TierStrictlyLocalGrammar.agree`, while
 dissimilation, anti-gemination, and Meeussen's rule factor through `TierStrictlyLocalGrammar.ocp`,
@@ -31,8 +31,8 @@ observes, whereas the OCP has no such reading.
 
 ## Main results
 
-* `mkAgreeOnTier_zero_iff_in_agree_language`: the AGREE constraint scores zero exactly on the
-  language of `TierStrictlyLocalGrammar.agree`.
+* `Constraint.zeroSet_comap_filter_agree`: on a tier, the zero set of the AGREE constraint is
+  the language of `TierStrictlyLocalGrammar.agree`.
 * `TierStrictlyLocalGrammar.agree_language_eq_sp`: the tier-based and subsequence-based
   grammars of AGREE generate the same language.
 
@@ -80,35 +80,6 @@ lemma agreeCleanPair_some_some [DecidableEq α] (a b : α) :
 lemma AgreeCleanPair.isBoundaryVacuous [DecidableEq α] :
     IsBoundaryVacuous (AgreeCleanPair (α := α)) :=
   CleanPair.isBoundaryVacuous
-
-/-- A candidate's AGREE score is zero iff its raw string projects onto the tier `p` as a list
-whose adjacent elements are equal, so that all on-tier elements are equal. This is the
-inequality instance of `mkForbidPairsOnTier_zero_iff_isChain`. -/
-theorem mkAgreeOnTier_zero_iff_isChain [DecidableEq α] {C : Type}
-    (p : α → Prop) [DecidablePred p]
-    (extract : C → List α) (c : C) :
-    mkAgreeOnTier p extract c = 0 ↔ ((extract c).filter (p ·)).IsChain (· = ·) :=
-  (mkForbidPairsOnTier_zero_iff_isChain (· ≠ ·) p extract c).trans (by simp only [ne_eq, not_not])
-
-/-- A candidate's AGREE score is zero iff its raw string lies in the language of the TSL₂
-grammar `TierStrictlyLocalGrammar.agree p`, so the optimality-theoretic constraint and the
-subregular class are co-extensive. This is the inequality instance of
-`mkForbidPairsOnTier_zero_iff_in_language`. -/
-theorem mkAgreeOnTier_zero_iff_in_agree_language [DecidableEq α] {C : Type}
-    (p : α → Prop) [DecidablePred p]
-    (extract : C → List α) (c : C) :
-    mkAgreeOnTier p extract c = 0 ↔ extract c ∈ (TierStrictlyLocalGrammar.agree p).language :=
-  mkForbidPairsOnTier_zero_iff_in_language (· ≠ ·) p extract c
-
-/-- The zero set of the AGREE markedness constraint is the corresponding TSL₂ language. This
-restates `mkAgreeOnTier_zero_iff_in_agree_language` in `Language α` form, with `extract := id`,
-as `mkOCPOnTier_zeroSet_eq` does for the OCP. -/
-theorem mkAgreeOnTier_zeroSet_eq [DecidableEq α]
-    (p : α → Prop) [DecidablePred p] :
-    (mkAgreeOnTier p (id : List α → List α)).zeroSet =
-      (TierStrictlyLocalGrammar.agree p).language := by
-  ext w
-  exact mkAgreeOnTier_zero_iff_in_agree_language p id w
 
 /-! ### AGREE is also strictly piecewise
 
@@ -158,3 +129,23 @@ theorem TierStrictlyLocalGrammar.agree_language_isStrictlyPiecewise [DecidableEq
 end Piecewise
 
 end Subregular
+
+namespace Constraints.Constraint
+
+variable {α : Type} [DecidableEq α]
+
+/-- A string satisfies AGREE iff its adjacent elements are equal, so that all its elements are
+equal. -/
+theorem agree_eq_zero_iff (w : List α) : agree w = 0 ↔ w.IsChain (· = ·) :=
+  (forbidPairs_eq_zero_iff (· ≠ ·) w).trans (by simp only [ne_eq, not_not])
+
+/-- On the tier `p`, the zero set of AGREE is the language of the TSL₂ grammar
+`TierStrictlyLocalGrammar.agree p`, so the optimality-theoretic constraint and the subregular
+class are co-extensive. -/
+theorem zeroSet_comap_filter_agree (p : α → Prop) [DecidablePred p] :
+    (agree.comap fun w ↦ w.filter (p ·)).zeroSet =
+      (Subregular.TierStrictlyLocalGrammar.agree p).language :=
+  zeroSet_comap_filter_forbidPairs (· ≠ ·) p
+
+end Constraints.Constraint
+

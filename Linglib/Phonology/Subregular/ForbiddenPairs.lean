@@ -107,7 +107,7 @@ lemma mem_ofForbiddenPairs_language_iff_filter_isChain (p : α → Prop) [Decida
 /-! ### Adjacent-pair counting
 
 `countAdjacent` is the violation-count companion of the membership view; the
-OT-side `mkForbidPairsOnTier` consumes it via `countAdjacent_eq_zero_iff_isChain`. -/
+optimality-theoretic `Constraint.forbidPairs R` is `countAdjacent R` itself. -/
 
 /-- Count of adjacent pairs `(a, b)` in `xs` with `R a b`. -/
 def countAdjacent [DecidableRel R] : List α → Nat
