@@ -34,7 +34,7 @@ variable {C : Type*} [DecidableEq C] {n : ℕ}
 /-- The ERC set of a tableau row `w`: `w`'s winner-loser ERCs against every *other*
 candidate. These are the ranking conditions a leg must satisfy for `w` to be the
 optimum ([prince-2002]). -/
-def rowERCs (t : Tableau C n) (w : C) : Finset (ERC n) :=
+def rowERCs (t : Tableau C n) (w : C) : Finset (ERC (Fin n)) :=
   (t.candidates.erase w).image (tableauERC t w)
 
 /-- The **grammar of a tableau row** — the bridge from the Concrete-OT tableau

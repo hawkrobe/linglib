@@ -376,11 +376,13 @@ theorem realizedByRanking_iff_optimal [DecidableEq Output]
 
 /-- The winner–loser ERCs of a problem have one comparative row for each input and non-target
     candidate ([prince-2002]). -/
-def ercs [DecidableEq Output] (P : RealizationProblem Input Output (Fin n)) : Finset (ERC n) :=
+def ercs [Fintype ι] [DecidableEq Output] (P : RealizationProblem Input Output ι) :
+    Finset (ERC ι) :=
   P.inputs.biUnion fun i => ((P.cands i).erase (P.target i)).image fun o =>
     ercOfProfiles (P.con · (i, P.target i)) (P.con · (i, o))
 
-theorem mem_ercs [DecidableEq Output] {P : RealizationProblem Input Output (Fin n)} {α : ERC n} :
+theorem mem_ercs [Fintype ι] [DecidableEq Output] {P : RealizationProblem Input Output ι}
+    {α : ERC ι} :
     α ∈ P.ercs ↔ ∃ i ∈ P.inputs, ∃ o ∈ P.cands i, o ≠ P.target i ∧
       ercOfProfiles (P.con · (i, P.target i)) (P.con · (i, o)) = α := by
   simp only [ercs, Finset.mem_biUnion, Finset.mem_image, Finset.mem_erase]
@@ -388,8 +390,8 @@ theorem mem_ercs [DecidableEq Output] {P : RealizationProblem Input Output (Fin 
 
 /-- Provided no competitor ties the target's violation profile, `σ` realizes the target iff `σ`
     satisfies every winner–loser ERC ([prince-2002]). -/
-theorem realizedByRanking_iff_satisfiedBy [DecidableEq Output]
-    {P : RealizationProblem Input Output (Fin n)} {σ : Ranking (Fin n) n}
+theorem realizedByRanking_iff_satisfiedBy [Fintype ι] [DecidableEq Output]
+    {P : RealizationProblem Input Output ι} {σ : Ranking ι n}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.cands i, o ≠ P.target i →
       (P.con · (i, P.target i)) ≠ (P.con · (i, o))) :
     P.realizedByRanking σ ↔ ∀ α ∈ P.ercs, α.SatisfiedBy σ := by

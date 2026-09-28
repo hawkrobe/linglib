@@ -109,18 +109,18 @@ abbrev maxLinkMIdx   : Fin numConstraints := 3
 /-! ### Derived ERCs -/
 
 /-- ERC of a winner/loser pair via `ercOfProfiles` ([prince-2002]). -/
-def ercFor (winner loser : Cand) : ERC numConstraints :=
+def ercFor (winner loser : Cand) : ERC (Fin numConstraints) :=
   ercOfProfiles (toLex (ranking.get · winner))
     (toLex (ranking.get · loser))
 
 /-- ERC for the `/nān + rī^H + nā/` winner-loser pair. -/
-def ercA : ERC numConstraints := ercFor .nanWinner .nanLoser
+def ercA : ERC (Fin numConstraints) := ercFor .nanWinner .nanLoser
 
 /-- ERC for the `/kāk^H + rī^H/` winner-loser pair. -/
-def ercB : ERC numConstraints := ercFor .kakWinner .kakLoser
+def ercB : ERC (Fin numConstraints) := ercFor .kakWinner .kakLoser
 
 /-- The ranking-paradox support. -/
-def pokoSupport : Finset (ERC numConstraints) := {ercA, ercB}
+def pokoSupport : Finset (ERC (Fin numConstraints)) := {ercA, ercB}
 
 /-- The derived `ercA` matches eq. 59 row a: `[W, L, L, L]`. -/
 example : ercA maxHIdx = .W ∧ ercA depLinkHIdx = .L ∧
