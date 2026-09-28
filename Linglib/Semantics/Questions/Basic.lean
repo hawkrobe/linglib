@@ -490,6 +490,10 @@ theorem bot_eq : (⊥ : Question W) = bot := rfl
 
 @[simp] theorem mem_top {q : Set W} : q ∈ (⊤ : Question W) := trivial
 
+/-- Two contents are disjoint iff the inconsistent state is the only state they share. -/
+theorem disjoint_iff {P Q : Question W} : Disjoint P Q ↔ ∀ q, q ∈ P → q ∈ Q → q = ∅ :=
+  disjoint_iff_inf_le.trans ⟨fun h _ hP hQ ↦ h ⟨hP, hQ⟩, fun h q hq ↦ h q hq.1 hq.2⟩
+
 /-- A content is the tautology iff it contains the universal state
     ([ciardelli-groenendijk-roelofsen-2018]). -/
 theorem eq_top_iff_univ_mem {P : Question W} :

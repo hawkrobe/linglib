@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Order.Bilattice.Product
 public import Linglib.Semantics.Questions.Basic
 
 /-!
@@ -20,8 +21,9 @@ conditional (Defs 15–16, Fact 11), are not formalized.
 
 * `IsCover`, `IsMinCover` — the §2.1 covers, minimality as mathlib's
   `Minimal`.
-* `BilatInqProp` — Def 10 over paired `Question`s; `atom`, `negate`, `disj`,
-  `conj`, `necessity`, `possibility` — the Def 14 clauses.
+* `BilatInqProp` — Def 10, the pairs of the product `Question W ⊙ Question W`
+  with disjoint coordinates; `atom`, `negate`, `disj`, `conj`, `necessity`,
+  `possibility` — the Def 14 clauses.
 * `isTrue`, `isFalse` — Def 17.
 
 ## Main results
@@ -36,6 +38,8 @@ of atoms — over arbitrary models:
   the distributions retained from the Kratzerian semantics.
 * `pos_eq_iSup_alt_atom` and kin — the Fact 5 compactness equations, per
   constructor.
+* `conj_eq_negate_disj` — Booth's derivation of the ∧-clause from ¬ and ∨, a
+  De Morgan law of the product.
 * `BoothExample.boothExample_independence` — a three-world model jointly
   verifying `□(p ∨ q)` and `◇(p ∧ ¬q)`: the Independence conclusion is
   satisfiable, not vacuous.
@@ -44,8 +48,11 @@ of atoms — over arbitrary models:
 
 `Question W` supplies Def 10's subset-closed, `∅`-containing families:
 `Question.ofSet` is `↓{·}` (Def 11), `Question.info` is `info` (Def 12), and
-`Question.alt` is `alt` (Def 13). Bilateral negation swaps the two
-components of the record. The meta-language Fact 6 for
+`Question.alt` is `alt` (Def 13). Def 10's pairs are the elements of the
+diagonal product bilattice `Question W ⊙ Question W` with disjoint coordinates,
+so the ¬-, ∨- and ∧-clauses are the product's negation `ᶜ`, truth join and
+truth meet, and their no-overlap proofs are the product's `Disjoint` closure
+lemmas. The meta-language Fact 6 for
 arbitrary non-Hurford `φ ∨ ψ` needs the compactness equations composed over
 a formula syntax, which is deferred.
 
@@ -60,6 +67,8 @@ a formula syntax, which is deferred.
 @[expose] public section
 
 namespace Booth2022
+
+open Bilattice
 
 variable {W : Type*}
 
@@ -101,29 +110,33 @@ theorem isMinCover_singleton {X S : Set W} (hS : S.Nonempty) (hsub : S ⊆ X) :
 
 /-! ### §2 Bilateral inquisitive propositions (Booth Def 10) -/
 
-/-- **Booth Def 10**: a bilateral inquisitive proposition is a paired
-    `pos`/`neg : Question W` with no substantive overlap — only the
-    inconsistent (empty) state may both verify and falsify φ. The
-    subset-closure and `∅`-membership requirements (Booth Def 10
-    bullets 2 and the implicit `∅ ∈ P°`) are baked into `Question`. -/
-structure BilatInqProp (W : Type*) where
-  /-- Positive interpretation: states verifying the formula. -/
-  pos : Question W
-  /-- Negative interpretation: states falsifying the formula. -/
-  neg : Question W
-  /-- No substantive overlap: `pos.props ∩ neg.props ⊆ {∅}`. The reverse
-      `{∅} ⊆ pos.props ∩ neg.props` holds for free since both `Question`s
-      contain `∅` (`Question.contains_empty`). -/
-  no_overlap : ∀ s : Set W, s ∈ pos → s ∈ neg → s = ∅
+/-- **Booth Def 10**: a bilateral inquisitive proposition is a pair of `Question`s, the states
+verifying and the states falsifying it, with no substantive overlap: only the inconsistent state
+`∅` may both verify and falsify it (`Question.disjoint_iff`). The subset-closure and
+`∅`-membership requirements (Booth Def 10 bullets 2 and the implicit `∅ ∈ P°`) are baked into
+`Question`. The pairs live in the diagonal product `Question W ⊙ Question W`. -/
+abbrev BilatInqProp (W : Type*) := {x : Question W ⊙ Question W // Disjoint x.pro x.con}
 
 namespace BilatInqProp
 
-/-- **Booth Def 14, ¬-clause**: bilateral negation is the bundled-record
-    swap. Self-inverse syntactically (`negate (negate φ) = φ` by `rfl`). -/
-def negate (φ : BilatInqProp W) : BilatInqProp W where
-  pos := φ.neg
-  neg := φ.pos
-  no_overlap s hpos hneg := φ.no_overlap s hneg hpos
+/-- The positive interpretation `⟦φ⟧⁺`: the states verifying `φ`. -/
+abbrev pos (φ : BilatInqProp W) : Question W := φ.1.pro
+
+/-- The negative interpretation `⟦φ⟧⁻`: the states falsifying `φ`. -/
+abbrev neg (φ : BilatInqProp W) : Question W := φ.1.con
+
+/-- A bilateral inquisitive proposition from its two interpretations. -/
+def mk (pos neg : Question W) (h : ∀ s, s ∈ pos → s ∈ neg → s = ∅) : BilatInqProp W :=
+  ⟨Product.mk pos neg, Question.disjoint_iff.2 h⟩
+
+/-- No substantive overlap: only `∅` both verifies and falsifies. -/
+theorem no_overlap (φ : BilatInqProp W) (s : Set W) (hpos : s ∈ φ.pos) (hneg : s ∈ φ.neg) :
+    s = ∅ :=
+  Question.disjoint_iff.1 φ.2 s hpos hneg
+
+/-- **Booth Def 14, ¬-clause**: negation swaps the two interpretations, the product's negation
+`ᶜ`. -/
+def negate (φ : BilatInqProp W) : BilatInqProp W := ⟨φ.1ᶜ, φ.2.symm⟩
 
 @[simp] theorem negate_pos (φ : BilatInqProp W) : φ.negate.pos = φ.neg := rfl
 @[simp] theorem negate_neg (φ : BilatInqProp W) : φ.negate.neg = φ.pos := rfl
@@ -132,38 +145,31 @@ def negate (φ : BilatInqProp W) : BilatInqProp W where
 /-- **Booth Def 14, atomic clause**: `⟦p⟧⁺ = ↓{V(p)}`,
     `⟦p⟧⁻ = ↓{W \ V(p)}`. Encoded with `Question.ofSet` since
     `↓{X} = declarative X`. -/
-def atom (V : Set W) : BilatInqProp W where
-  pos := Question.ofSet V
-  neg := Question.ofSet Vᶜ
-  no_overlap s hpos hneg := by
-    have hV : s ⊆ V := hpos
-    have hVc : s ⊆ Vᶜ := hneg
-    have hsub : s ⊆ V ∩ Vᶜ := fun w hw => ⟨hV hw, hVc hw⟩
-    rw [Set.inter_compl_self] at hsub
-    exact Set.subset_empty_iff.mp hsub
+def atom (V : Set W) : BilatInqProp W :=
+  mk (Question.ofSet V) (Question.ofSet Vᶜ) fun _ hpos hneg ↦
+    Set.subset_empty_iff.mp (Set.inter_compl_self V ▸ Set.subset_inter hpos hneg)
 
-/-- **Booth Def 14, ∨-clause**: `⟦φ ∨ ψ⟧⁺ = ⟦φ⟧⁺ ∪ ⟦ψ⟧⁺` (inquisitive
-    disjunction at the `props` level, = `Question.⊔`); `⟦φ ∨ ψ⟧⁻ =
-    ⟦φ⟧⁻ ∩ ⟦ψ⟧⁻` (= `Question.⊓`). -/
-def disj (φ ψ : BilatInqProp W) : BilatInqProp W where
-  pos := φ.pos ⊔ ψ.pos
-  neg := φ.neg ⊓ ψ.neg
-  no_overlap s hpos hneg := by
-    rcases hpos with h | h
-    · exact φ.no_overlap s h hneg.1
-    · exact ψ.no_overlap s h hneg.2
+/-- **Booth Def 14, ∨-clause**: `⟦φ ∨ ψ⟧⁺ = ⟦φ⟧⁺ ∪ ⟦ψ⟧⁺` (inquisitive disjunction, `⊔` of
+    `Question`s) and `⟦φ ∨ ψ⟧⁻ = ⟦φ⟧⁻ ∩ ⟦ψ⟧⁻` (`⊓`): the truth join of the product. -/
+def disj (φ ψ : BilatInqProp W) : BilatInqProp W :=
+  ⟨φ.1 ⊔ ψ.1, Product.disjoint_pro_con_sup φ.2 ψ.2⟩
 
-/-- **Booth Def 14, ∧-clause** via the derivation `⟦φ ∧ ψ⟧ = ⟦¬(¬φ ∨ ¬ψ)⟧`
-    — direct unfolding gives `pos = φ.pos ⊓ ψ.pos`, `neg = φ.neg ⊔ ψ.neg`.
-    The Booth-equivalence `conj φ ψ = negate (disj (negate φ) (negate ψ))`
-    holds by `rfl`. -/
-def conj (φ ψ : BilatInqProp W) : BilatInqProp W where
-  pos := φ.pos ⊓ ψ.pos
-  neg := φ.neg ⊔ ψ.neg
-  no_overlap s hpos hneg := by
-    rcases hneg with h | h
-    · exact φ.no_overlap s hpos.1 h
-    · exact ψ.no_overlap s hpos.2 h
+/-- **Booth Def 14, ∧-clause**: `⟦φ ∧ ψ⟧⁺ = ⟦φ⟧⁺ ∩ ⟦ψ⟧⁺` and `⟦φ ∧ ψ⟧⁻ = ⟦φ⟧⁻ ∪ ⟦ψ⟧⁻`: the
+    truth meet of the product. -/
+def conj (φ ψ : BilatInqProp W) : BilatInqProp W :=
+  ⟨φ.1 ⊓ ψ.1, Product.disjoint_pro_con_inf φ.2 ψ.2⟩
+
+@[simp] theorem disj_pos (φ ψ : BilatInqProp W) : (disj φ ψ).pos = φ.pos ⊔ ψ.pos := rfl
+@[simp] theorem disj_neg (φ ψ : BilatInqProp W) : (disj φ ψ).neg = φ.neg ⊓ ψ.neg := rfl
+@[simp] theorem conj_pos (φ ψ : BilatInqProp W) : (conj φ ψ).pos = φ.pos ⊓ ψ.pos := rfl
+@[simp] theorem conj_neg (φ ψ : BilatInqProp W) : (conj φ ψ).neg = φ.neg ⊔ ψ.neg := rfl
+
+/-- Booth derives the ∧-clause as `⟦φ ∧ ψ⟧ = ⟦¬(¬φ ∨ ¬ψ)⟧`: a De Morgan law of the product. -/
+theorem conj_eq_negate_disj (φ ψ : BilatInqProp W) :
+    conj φ ψ = negate (disj (negate φ) (negate ψ)) :=
+  Subtype.ext (by
+    simp only [negate, disj, conj, LatticeWithInvolution.compl_sup,
+      LatticeWithInvolution.compl_compl])
 
 /-! ### §3 Necessity and possibility (Booth Def 14)
 
@@ -182,13 +188,11 @@ his Def 14, which we mirror). -/
     alt⁻(φ.neg) — giving alternatives `α ∈ φ.pos.props` and
     `β ∈ φ.neg.props` containing `v`. Downward closure gives
     `{v} ∈ φ.pos ∩ φ.neg`, contradicting `φ.no_overlap`. -/
-def necessity (R : W → Set W) (φ : BilatInqProp W) : BilatInqProp W where
-  pos := Question.ofSet
-    {w : W | (R w).Nonempty ∧ IsMinCover (Question.alt φ.pos) (R w)}
-  neg := Question.ofSet
-    {w : W | ∃ R' : Set W, R' ⊆ R w ∧ R'.Nonempty ∧
-              IsMinCover (Question.alt φ.neg) R'}
-  no_overlap s hpos hneg := by
+def necessity (R : W → Set W) (φ : BilatInqProp W) : BilatInqProp W :=
+  mk (Question.ofSet {w : W | (R w).Nonempty ∧ IsMinCover (Question.alt φ.pos) (R w)})
+    (Question.ofSet
+      {w : W | ∃ R' : Set W, R' ⊆ R w ∧ R'.Nonempty ∧ IsMinCover (Question.alt φ.neg) R'})
+    fun s hpos hneg ↦ by
     by_contra hne
     obtain ⟨w, hws⟩ : s.Nonempty := Set.nonempty_iff_ne_empty.mpr hne
     have hwPos : (R w).Nonempty ∧ IsMinCover (Question.alt φ.pos) (R w) :=
