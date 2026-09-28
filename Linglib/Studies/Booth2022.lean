@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Logic.Bilateral.Defs
 public import Linglib.Semantics.Questions.Basic
 
 /-!
@@ -45,8 +44,8 @@ of atoms — over arbitrary models:
 
 `Question W` supplies Def 10's subset-closed, `∅`-containing families:
 `Question.ofSet` is `↓{·}` (Def 11), `Question.info` is `info` (Def 12), and
-`Question.alt` is `alt` (Def 13). Bilateral negation is bundled-record swap,
-so the `IsBilateral` instance is definitional. The meta-language Fact 6 for
+`Question.alt` is `alt` (Def 13). Bilateral negation swaps the two
+components of the record. The meta-language Fact 6 for
 arbitrary non-Hurford `φ ∨ ψ` needs the compactness equations composed over
 a formula syntax, which is deferred.
 
@@ -61,8 +60,6 @@ a formula syntax, which is deferred.
 @[expose] public section
 
 namespace Booth2022
-
-open Bilateral
 
 variable {W : Type*}
 
@@ -131,19 +128,6 @@ def negate (φ : BilatInqProp W) : BilatInqProp W where
 @[simp] theorem negate_pos (φ : BilatInqProp W) : φ.negate.pos = φ.neg := rfl
 @[simp] theorem negate_neg (φ : BilatInqProp W) : φ.negate.neg = φ.pos := rfl
 @[simp] theorem negate_negate (φ : BilatInqProp W) : φ.negate.negate = φ := rfl
-
-/-- **`BilatInqProp` is a bilateral structure** in the sense of
-    `Bilateral.IsBilateral`. The instance is `rfl`-trivial
-    because `negate` is bundled-record swap. Sixth consumer of the
-    `IsBilateral` substrate (alongside BSML, QBSML, BUS, ICDRT,
-    Truthmaker `BilProp`). -/
-theorem isBilateral :
-    IsBilateral
-      (positive := fun φ : BilatInqProp W => φ.pos)
-      (negative := fun φ : BilatInqProp W => φ.neg)
-      (negate := negate) where
-  positive_negate _ := rfl
-  negative_negate _ := rfl
 
 /-- **Booth Def 14, atomic clause**: `⟦p⟧⁺ = ↓{V(p)}`,
     `⟦p⟧⁻ = ↓{W \ V(p)}`. Encoded with `Question.ofSet` since

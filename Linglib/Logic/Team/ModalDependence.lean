@@ -3,7 +3,6 @@ module
 public import Linglib.Logic.Team.Kripke
 public import Linglib.Logic.Modal.Defs
 public import Linglib.Logic.Team.Bisimulation
-public import Linglib.Logic.Bilateral.Defs
 public import Linglib.Logic.Team.Operations
 public import Linglib.Logic.Team.Atoms
 public import Linglib.Logic.Team.Closure
@@ -35,7 +34,7 @@ earlier expressive-power work; bisimulation invariance), with
 applications in database theory, knowledge representation, and AI
 rather than primarily in linguistic semantics — hence the placement in
 `Logic/` rather than `Semantics/`, alongside the other
-team-semantic primitives (`Logic/Team/`, `Logic/Bilateral/`).
+team-semantic primitives (`Logic/Team/`).
 
 ## What changes from BSML
 
@@ -76,7 +75,6 @@ worlds with matching `x⃗`).
 * `eval` — bilateral semantics (Definition 4.1), parametric in polarity.
 * `support` / `antiSupport` — convenience abbreviations.
 * `Formula.modalDepth` — depth of nested ◇.
-* `isBilateral` — `Bilateral.IsBilateral` instance.
 * `isLowerSet_support` — Lemma 4.2's downward-closure property.
 * `support_empty` — every formula is supported on the empty team.
 * `Formula.DepFree`, `Realize`, `support_iff_forall_realize` — without
@@ -248,13 +246,6 @@ abbrev antiSupport (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
 
 @[simp] lemma antiSupport_poss (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     antiSupport M (.poss φ) t ↔ antiSupport M φ (t.biUnion M.access) := Iff.rfl
-
-/-- MDL's `support`/`antiSupport` form a paraconsistent bilateral logic
-    under `Formula.neg`. -/
-theorem isBilateral (M : KripkeModel W Atom) :
-    Bilateral.IsBilateral
-      (support M) (antiSupport M) Formula.neg :=
-  Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
 
 /-! ### Modal depth -/
 

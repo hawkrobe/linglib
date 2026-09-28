@@ -2,7 +2,6 @@ module
 
 public import Linglib.Logic.Team.BSML.Properties
 public import Linglib.Logic.Team.BSML.Bisimulation
-public import Linglib.Logic.Bilateral.Defs
 public import Linglib.Logic.Team.Closure
 public import Linglib.Studies.Aloni2022
 
@@ -160,10 +159,6 @@ variable (M : KripkeModel W Atom) (φ ψ χ : Formula Atom) (t : Finset W)
     antiSupport M (.gdisj φ ψ) t ↔ antiSupport M φ t ∧ antiSupport M ψ t := Iff.rfl
 @[simp] theorem support_empt : support M (.empt φ) t ↔ support M φ t ∨ t = ∅ := Iff.rfl
 @[simp] theorem antiSupport_empt : antiSupport M (.empt φ) t ↔ antiSupport M φ t := Iff.rfl
-
-/-- Support and anti-support form a bilateral logic under `Formula.neg`. -/
-theorem isBilateral : Bilateral.IsBilateral (support M) (antiSupport M) Formula.neg :=
-  Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
 
 /-! ### The §2 equivalences -/
 

@@ -4,7 +4,6 @@ public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Logic.Team.Operations
-public import Linglib.Logic.Bilateral.Defs
 public import Linglib.Logic.Team.Kripke
 
 /-!
@@ -182,13 +181,6 @@ theorem dne_antiSupport (M : KripkeModel W Atom)
 @[simp] lemma antiSupport_neg (M : KripkeModel W Atom)
     (φ : Formula Atom) (t : Finset W) :
     antiSupport M (.neg φ) t ↔ support M φ t := Iff.rfl
-
-/-- BSML's `support` and `antiSupport` form a paraconsistent bilateral
-    logic (`Bilateral.IsBilateral`) under `Formula.neg`. -/
-theorem isBilateral (M : KripkeModel W Atom) :
-    Bilateral.IsBilateral
-      (support M) (antiSupport M) Formula.neg :=
-  Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
 
 @[simp] lemma support_conj (M : KripkeModel W Atom)
     (φ ψ : Formula Atom) (t : Finset W) :

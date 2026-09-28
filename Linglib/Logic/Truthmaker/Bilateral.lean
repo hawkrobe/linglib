@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Core.Data.Set.Sups
-public import Linglib.Logic.Bilateral.Defs
 public import Linglib.Logic.Truthmaker.Basic
 public import Mathlib.Algebra.Group.DivInvMonoid
 
@@ -91,10 +90,6 @@ instance : InvolutiveNeg (BilProp S) where
 @[simp] theorem ver_neg (A : BilProp S) : (-A).ver = A.fal := rfl
 
 @[simp] theorem fal_neg (A : BilProp S) : (-A).fal = A.ver := rfl
-
-/-- Verification and falsification form a bilateral logic whose negation is `-`. -/
-theorem isBilateral : Bilateral.IsBilateral (ver (S := S)) fal Neg.neg :=
-  ⟨fun _ ↦ rfl, fun _ ↦ rfl⟩
 
 section SemilatticeSup
 

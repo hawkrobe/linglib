@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Logic.Bilateral.Defs
 public import Linglib.Studies.GroenendijkStokhof1991
 
 /-!
@@ -315,13 +314,6 @@ instance : LawfulLift δ (TwoDimensional δ) where
   down_up _ := rfl
   neg_neg _ := rfl
   down_neg_up _ := rfl
-
-omit [Substrate δ] in
-/-- The lift is bilateral: its negation exchanges the positive and negative components. -/
-theorem isBilateral :
-    Bilateral.IsBilateral (Form := TwoDimensional δ) positive negative
-      λ M => ⟨M.negative, M.positive⟩ :=
-  ⟨λ _ => rfl, λ _ => rfl⟩
 
 end TwoDimensional
 

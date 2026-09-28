@@ -44,9 +44,6 @@ identification.
 
 * Engage with [aloni-anttila-yang-2024], which axiomatizes BSML and
   proves the soundness/completeness results these validities sit underneath.
-* Extract the bilateral validities to a `Bilateral.Validities`
-  module — they depend only on the `IsBilateral` polarity-flip structure
-  (already wired via `BSML.isBilateral` in `Defs.lean`).
 -/
 
 @[expose] public section
