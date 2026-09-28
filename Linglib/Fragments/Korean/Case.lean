@@ -17,8 +17,9 @@ particles. Forms are in the Revised Romanization; Sohn writes *ka*, *(l)ul*, *uy
 
 ## Main definitions
 
-* `Korean.Case.markers` — the markers, with allomorphs in the form
-* `Korean.Case.inventory` — the cases they realize
+* `Korean.Case`, `Korean.Case.form`: the case particles, with their allomorphs.
+* `Korean.Case.label`, `Korean.Case.functions`: the comparative value each is named for, and the
+  values it expresses.
 
 ## References
 
@@ -27,43 +28,70 @@ particles. Forms are in the Revised Romanization; Sohn writes *ka*, *(l)ul*, *uy
 
 @[expose] public section
 
-namespace Korean.Case
+namespace Korean
 
-/-- The nominative *-i* after a consonant and *-ga* after a vowel. -/
-def ga : Case.Marker := { form := "-i/-ga", cases := {.nom} }
+/-- The case particles. -/
+inductive Case where
+  /-- The nominative *-i* after a consonant and *-ga* after a vowel. -/
+  | ga
+  /-- The accusative *-eul* after a consonant and *-reul* after a vowel. -/
+  | reul
+  /-- The genitive *-ui*. -/
+  | ui
+  /-- The dative *-ege*, colloquially *-hante*. -/
+  | ege
+  /-- The honorific dative *-kke*. -/
+  | kke
+  /-- *-e*, the locative of a state and the goal of motion. -/
+  | e
+  /-- *-eseo*, the locative of an action and the source of motion. -/
+  | eseo
+  /-- The ablative *-buteo* 'from', also after *-eseo* and *-(eu)ro*. -/
+  | buteo
+  /-- *-(eu)ro*, the instrumental and the directional 'toward'. -/
+  | ro
+  /-- The comitative *-gwa* after a consonant and *-wa* after a vowel, *-hago*, and the casual
+  *-(i)rang*. -/
+  | wa
+  deriving DecidableEq, Fintype, Repr
 
-/-- The accusative *-eul* after a consonant and *-reul* after a vowel. -/
-def reul : Case.Marker := { form := "-eul/-reul", cases := {.acc} }
+namespace Case
 
-/-- The genitive *-ui*. -/
-def ui : Case.Marker := { form := "-ui", cases := {.gen} }
+/-- The forms of a particle, its allomorphs separated by a slash. -/
+def form : Case → String
+  | ga => "-i/-ga"
+  | reul => "-eul/-reul"
+  | ui => "-ui"
+  | ege => "-ege/-hante"
+  | kke => "-kke"
+  | e => "-e"
+  | eseo => "-eseo"
+  | buteo => "-buteo"
+  | ro => "-(eu)ro"
+  | wa => "-gwa/-wa, -hago, -(i)rang"
 
-/-- The dative *-ege*, colloquially *-hante*. -/
-def ege : Case.Marker := { form := "-ege/-hante", cases := {.dat} }
+/-- The comparative value a particle is named for. -/
+def label : Case → _root_.Case
+  | ga => .nom
+  | reul => .acc
+  | ui => .gen
+  | ege | kke => .dat
+  | e | eseo => .loc
+  | buteo => .abl
+  | ro => .inst
+  | wa => .com
 
-/-- The honorific dative *-kke*. -/
-def kke : Case.Marker := { form := "-kke", cases := {.dat} }
+/-- The comparative values a particle expresses: *-e* also the goal, *-eseo* also the source, and
+*-(eu)ro* also the direction of motion. -/
+def functions : Case → Finset _root_.Case
+  | e => {.loc, .all}
+  | eseo => {.loc, .abl}
+  | ro => {.inst, .all}
+  | c => {c.label}
 
-/-- *-e*, the locative of a state and the goal of motion. -/
-def e : Case.Marker := { form := "-e", cases := {.loc, .all} }
+theorem label_mem_functions (c : Case) : c.label ∈ c.functions := by
+  cases c <;> decide
 
-/-- *-eseo*, the locative of an action and the source of motion. -/
-def eseo : Case.Marker := { form := "-eseo", cases := {.loc, .abl} }
+end Case
 
-/-- The ablative *-buteo* 'from', also after *-eseo* and *-(eu)ro*. -/
-def buteo : Case.Marker := { form := "-buteo", cases := {.abl} }
-
-/-- *-(eu)ro*, the instrumental and the directional 'toward'. -/
-def ro : Case.Marker := { form := "-(eu)ro", cases := {.inst, .all} }
-
-/-- The comitative *-gwa* after a consonant and *-wa* after a vowel, *-hago*, and the casual
-*-(i)rang*. -/
-def wa : Case.Marker := { form := "-gwa/-wa, -hago, -(i)rang", cases := {.com} }
-
-/-- The case markers. -/
-def markers : Finset Case.Marker := {ga, reul, ui, ege, kke, e, eseo, buteo, ro, wa}
-
-/-- The cases the markers realize. -/
-def inventory : Finset Case := Case.Marker.inventory markers
-
-end Korean.Case
+end Korean

@@ -13,8 +13,6 @@ public import Linglib.Fragments.Greek.StandardModern.Case
 public import Linglib.Fragments.Hindi.Case
 public import Linglib.Fragments.Hungarian.Case
 public import Linglib.Fragments.Icelandic.Case
-public import Linglib.Fragments.Japanese.Case
-public import Linglib.Fragments.Korean.Case
 public import Linglib.Fragments.Latin.Case
 public import Linglib.Fragments.Mongolian.Case
 public import Linglib.Fragments.Slavic.Belarusian.Case
@@ -277,15 +275,15 @@ theorem latin_dat_functions_ssubset_ancient_greek :
 
 /-! ### The other case inventories of the fragments -/
 
-/-- Modern Greek, Modern Standard Arabic, Hindi, Japanese, Korean, Telugu and the Slavic
-languages not among Blake's systems conform. Blake gives Modern Greek and Classical Arabic as
-three-case systems of nominative, accusative and genitive ([blake-2001] p. 156). -/
+/-- Modern Greek, Modern Standard Arabic, Hindi, Telugu and the Slavic languages not among
+Blake's systems conform. Blake gives Modern Greek and Classical Arabic as three-case systems of
+nominative, accusative and genitive ([blake-2001] p. 156). -/
 theorem fragments_conform :
     ∀ inv ∈ [Finset.univ.image Greek.StandardModern.Case.label,
       Finset.univ.image Arabic.ModernStandard.Case.label, Hindi.Case.inventory,
-      Japanese.Case.inventory, Korean.Case.inventory, Telugu.Case.inventory,
-      Finset.univ.image Belarusian.Case.label, Finset.univ.image Cassubian.Case.label,
-      Finset.univ.image Russian.Case.label, Finset.univ.image Slovenian.Case.label,
+      Finset.univ.image Telugu.Case.label, Finset.univ.image Belarusian.Case.label,
+      Finset.univ.image Cassubian.Case.label, Finset.univ.image Russian.Case.label,
+      Finset.univ.image Slovenian.Case.label,
       Finset.univ.image Sorbian.Upper.Case.label, Finset.univ.image Sorbian.Lower.Case.label,
       Finset.univ.image Ukrainian.Case.label],
       Conforms inv := by

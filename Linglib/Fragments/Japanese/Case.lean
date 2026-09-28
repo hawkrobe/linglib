@@ -20,9 +20,11 @@ single *ni* entry, the matter of `Studies/SadakaneKoizumi1995.lean`.
 
 ## Main definitions
 
-* `Japanese.Case.caseParticles`, `Japanese.Case.postpositions` — Tsujimura's two classes
-* `Japanese.Case.droppable` — the markers casual speech drops
-* `Japanese.Case.inventory` — the cases the markers realize
+* `Japanese.Case`, `Japanese.Case.form`: the four cases of the case particles, and the particles.
+* `Japanese.Case.label`, `Japanese.Case.functions`: the comparative value each case is named for,
+  and the values it expresses.
+* `Japanese.Case.droppable`: the cases whose particles casual speech drops.
+* `Japanese.Postposition`: the postpositions, with their forms and the case values they express.
 
 ## References
 
@@ -34,59 +36,93 @@ single *ni* entry, the matter of `Studies/SadakaneKoizumi1995.lean`.
 
 @[expose] public section
 
-namespace Japanese.Case
+namespace Japanese
 
 /-! ### Case particles -/
 
-/-- *ga* が, the nominative. -/
-def ga : Case.Marker := { form := "ga", cases := {.nom} }
+/-- The four cases the case particles mark. -/
+inductive Case where
+  /-- The nominative, *ga*. -/
+  | nom
+  /-- The accusative, *o*. -/
+  | acc
+  /-- The genitive, *no*. -/
+  | gen
+  /-- The dative, *ni*. -/
+  | dat
+  deriving DecidableEq, Fintype, Repr
 
-/-- *o* を, the accusative. -/
-def o : Case.Marker := { form := "o", cases := {.acc} }
+namespace Case
 
-/-- *no* の, the genitive. -/
-def no_ : Case.Marker := { form := "no", cases := {.gen} }
+/-- The case particle of each case: *ga* が, *o* を, *no* の, *ni* に. -/
+def form : Case → String
+  | nom => "ga"
+  | acc => "o"
+  | gen => "no"
+  | dat => "ni"
 
-/-- *ni* に: the dative of recipients, the allative of goals, the temporal of times and the
-locative of existence. -/
-def ni : Case.Marker := { form := "ni", cases := {.dat, .loc, .all, .tem} }
+/-- The comparative value a case is named for. -/
+def label : Case → _root_.Case
+  | nom => .nom
+  | acc => .acc
+  | gen => .gen
+  | dat => .dat
+
+/-- The comparative values a case expresses: *ni* marks the recipient, the goal, the time and
+the location of existence. -/
+def functions : Case → Finset _root_.Case
+  | dat => {.dat, .loc, .all, .tem}
+  | c => {c.label}
+
+theorem label_mem_functions (c : Case) : c.label ∈ c.functions := by
+  cases c <;> decide
+
+/-- The cases whose particles casual speech drops, the nominative and the accusative. -/
+def droppable : Finset Case := {nom, acc}
+
+end Case
 
 /-! ### Postpositions -/
 
-/-- *de* で: the locative of an action's place and the instrumental. -/
-def de : Case.Marker := { form := "de", cases := {.loc, .inst} }
-
-/-- *e* へ, the allative of motion toward. -/
-def e : Case.Marker := { form := "e", cases := {.all} }
-
-/-- *to* と, the comitative. -/
-def to_ : Case.Marker := { form := "to", cases := {.com} }
-
-/-- *kara* から, the ablative of spatial and temporal sources. -/
-def kara : Case.Marker := { form := "kara", cases := {.abl} }
-
-/-- *made* まで, the terminative of spatial and temporal endpoints. -/
-def made : Case.Marker := { form := "made", cases := {.ter} }
-
-/-- *yori* より 'than', the standard marker of the comparative, recorded as an ablative with the
-separative comparative (`Japanese.Comparison.yori`). -/
-def yori : Case.Marker := { form := "yori", cases := {.abl} }
-
-/-! ### Tsujimura's classes and the inventory -/
-
-/-- The case particles. -/
-def caseParticles : Finset Case.Marker := {ga, o, no_, ni}
-
 /-- The postpositions. -/
-def postpositions : Finset Case.Marker := {de, e, to_, kara, made, yori}
+inductive Postposition where
+  /-- *de* で 'at'. -/
+  | de
+  /-- *e* へ 'to'. -/
+  | e
+  /-- *to* と 'with'. -/
+  | «to»
+  /-- *kara* から 'from'. -/
+  | kara
+  /-- *made* まで 'until'. -/
+  | made
+  /-- *yori* より 'than', the standard marker of the comparative (`Japanese.Comparison.yori`). -/
+  | yori
+  deriving DecidableEq, Fintype, Repr
 
-/-- The markers casual speech drops, the nominative and the accusative. -/
-def droppable : Finset Case.Marker := {ga, o}
+namespace Postposition
 
-/-- All the case markers. -/
-def caseMarkers : Finset Case.Marker := caseParticles ∪ postpositions
+/-- The form of a postposition. -/
+def form : Postposition → String
+  | de => "de"
+  | e => "e"
+  | «to» => "to"
+  | kara => "kara"
+  | made => "made"
+  | yori => "yori"
 
-/-- The cases the markers realize. -/
-def inventory : Finset Case := Case.Marker.inventory caseMarkers
+/-- The comparative values a postposition expresses: *de* the locative of an action's place and
+the instrumental, *e* the allative, *to* the comitative, *kara* the ablative of spatial and
+temporal sources, *made* the terminative of spatial and temporal endpoints, and *yori* the
+ablative, as the separative standard of the comparative. -/
+def functions : Postposition → Finset _root_.Case
+  | de => {.loc, .inst}
+  | e => {.all}
+  | «to» => {.com}
+  | kara => {.abl}
+  | made => {.ter}
+  | yori => {.abl}
 
-end Japanese.Case
+end Postposition
+
+end Japanese
