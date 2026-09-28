@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Probability.Gumbel
 public import Linglib.Core.Probability.Choice.RandomUtility
-public import Linglib.Core.Probability.Choice.Luce
+public import Linglib.Core.Analysis.SpecialFunctions.Softmax
 
 /-!
 # Gumbel–Luce equivalence [mcfadden-1974]
@@ -22,11 +22,6 @@ size ≥ 3: for binary choice the logistic form does not pin down Gumbel noise
 The distribution layer (density, measure, CDF, max-stability, and the
 max-probability integral) lives in `Core/Probability/Gumbel.lean`; this file
 gives it the random-utility reading.
-
-## Main definitions
-
-* `LuceModel.fromGumbelRUM`: the Luce agent of a Gumbel RUM, defined as
-  `fromSoftmax` at inverse temperature `β⁻¹`.
 
 ## Main results
 
@@ -100,26 +95,6 @@ theorem rumChoiceProb_gumbelMeasure_fin_two (u : Fin 2 → ℝ) {β : ℝ} (hβ 
   rw [rumChoiceProb_gumbelMeasure u hβ 0, softmax_fin_two]
   simp only [Pi.smul_apply, smul_eq_mul]
   congr 2; ring
-
-/-! ### The Gumbel RUM as a `LuceModel` -/
-
-section RationalAgent
-
-variable {ι : Type*} [Fintype ι]
-
-/-- The Luce agent of a Gumbel RUM: score `exp(uᵢ/β)`. This is `fromSoftmax`
-    at inverse temperature `β⁻¹` — exact under i.i.d. Gumbel(0, β) noise by
-    Lemma 1 of [mcfadden-1974], not an approximation. -/
-noncomputable def LuceModel.fromGumbelRUM (u : ι → ℝ) (β : ℝ) :
-    LuceModel Unit ι :=
-  LuceModel.fromSoftmax (fun _ => u) β⁻¹
-
-/-- The Gumbel RUM choice probabilities are softmax at inverse temperature `β⁻¹`. -/
-theorem LuceModel.fromGumbelRUM_prob [Nonempty ι] (u : ι → ℝ) {β : ℝ} (i : ι) :
-    (LuceModel.fromGumbelRUM u β).prob () i = softmax (β⁻¹ • u) i := by
-  rw [LuceModel.fromGumbelRUM, LuceModel.fromSoftmax_prob_eq]
-
-end RationalAgent
 
 /-! ### Uniqueness: the terminal step of McFadden's Lemma 2
 

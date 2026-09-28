@@ -3,7 +3,8 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Core.Probability.Choice.Luce
+public import Linglib.Core.Analysis.SpecialFunctions.Softmax
+public import Linglib.Core.Probability.UniformOn
 public import Linglib.Core.Probability.Decision.ExperimentDesign
 
 /-!
@@ -33,12 +34,14 @@ exhaustive list is dispreferred after a question about a card the questioner hol
 
 ## Implementation notes
 
-* Softmaxes are `Core.LuceModel.fromSoftmax`; beliefs are functions `W → ℝ`, as in
-  `ProbabilityTheory.ObservationModel`, and the Kullback–Leibler term of (2.5) is the finite
-  sum `kl` in the direction the paper writes it.
-* Both the safe base respondent of (2.1) and its truth-only relaxation `R0'` of §2c are
-  `LuceModel`s; the observation model needs every world to admit a true and safe
-  response, which `polar_admissible` supplies for polar questions.
+* The questioner and the pragmatic respondent are `Real.softmax` over their scores; beliefs are
+  functions `W → ℝ`, as in `ProbabilityTheory.ObservationModel`, and the Kullback–Leibler term
+  of (2.5) is the finite sum `kl` in the direction the paper writes it.
+* The safe base respondent of (2.1) and its truth-only relaxation `R0'` of §2c are
+  `ProbabilityTheory.uniformOn` over the true and safe (respectively true) responses, and the
+  observation models take their point masses as likelihoods. The observation model needs every
+  world to admit a true and safe response, which `polar_admissible` supplies for polar
+  questions.
 * The case study fixes the parameters the paper leaves free only where a theorem needs a
   sign; the fitted values of the electronic supplementary material are not reproduced.
 
@@ -56,7 +59,7 @@ exhaustive list is dispreferred after a question about a card the questioner hol
 
 namespace HawkinsEtAl2025
 
-open Core ProbabilityTheory Finset
+open MeasureTheory ProbabilityTheory Finset
 
 variable {W Q R A D : Type*}
 
@@ -115,30 +118,39 @@ def Model.Admissible (w : W) (q : Q) (r : R) : Prop :=
 instance (w : W) (q : Q) (r : R) : Decidable (m.Admissible w q r) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
+section BaseRespondent
+
+variable [MeasurableSpace R] [MeasurableSingletonClass R]
+
 /-- (2.1): the base-level respondent, uniform over the true and safe responses. -/
-noncomputable def Model.R0 : LuceModel (W × Q) R where
-  score wq r := if m.Admissible wq.1 wq.2 r then 1 else 0
-  score_nonneg _ _ := by split_ifs <;> norm_num
+noncomputable def Model.R0 (w : W) (q : Q) : Measure R := uniformOn {r | m.Admissible w q r}
 
 /-- §2c: the truth-only relaxation of the base respondent, uniform over the true responses. -/
-noncomputable def Model.R0' : LuceModel (W × Q) R where
-  score wq r := if m.response r wq.1 then 1 else 0
-  score_nonneg _ _ := by split_ifs <;> norm_num
+noncomputable def Model.R0' (w : W) : Measure R := uniformOn {r | m.response r w}
 
 /-- The number of true and safe responses at a world and question. -/
 def Model.admissibleCard (w : W) (q : Q) : ℕ := (univ.filter (m.Admissible w q)).card
 
-theorem Model.R0_totalScore (w : W) (q : Q) :
-    m.R0.totalScore (w, q) = m.admissibleCard w q := by
-  simp [LuceModel.totalScore, Model.R0, Model.admissibleCard, sum_boole]
+/-- The base respondent gives each true and safe response the reciprocal of their number, and
+every other response nothing. -/
+theorem Model.R0_real_singleton (w : W) (q : Q) (r : R) :
+    (m.R0 w q).real {r} = if m.Admissible w q r then ((m.admissibleCard w q : ℕ) : ℝ)⁻¹ else 0 := by
+  have hcard : ({r | m.Admissible w q r} : Set R).ncard = m.admissibleCard w q := by
+    rw [Set.ncard_eq_toFinset_card', Model.admissibleCard, Set.toFinset_ofPred]
+  rw [Model.R0, uniformOn_real_apply, hcard]
+  by_cases h : m.Admissible w q r
+  · rw [Set.inter_eq_right.2 (Set.singleton_subset_iff.2
+      (show r ∈ {r | m.Admissible w q r} from h)), Set.ncard_singleton]
+    simp [h]
+  · rw [Set.inter_singleton_eq_empty.2 (show r ∉ {r | m.Admissible w q r} from h),
+      Set.ncard_empty]
+    simp [h]
 
 /-- The base respondent gives a response positive probability iff it is true and safe. -/
-theorem Model.R0_prob_pos_iff {w : W} {q : Q} {r : R} (h : 0 < m.admissibleCard w q) :
-    0 < m.R0.prob (w, q) r ↔ m.Admissible w q r := by
+theorem Model.R0_real_pos_iff {w : W} {q : Q} {r : R} (h : 0 < m.admissibleCard w q) :
+    0 < (m.R0 w q).real {r} ↔ m.Admissible w q r := by
   have hcard : (0 : ℝ) < m.admissibleCard w q := by exact_mod_cast h
-  simp only [LuceModel.prob]
-  rw [Model.R0_totalScore]
-  change 0 < (if m.Admissible w q r then (1 : ℝ) else 0) / _ ↔ _
+  rw [m.R0_real_singleton]
   split_ifs with hadm
   · simp [hadm, hcard]
   · simp [hadm]
@@ -147,21 +159,24 @@ theorem Model.R0_prob_pos_iff {w : W} {q : Q} {r : R} (h : 0 < m.admissibleCard 
 responses as observations, given that every world admits a true and safe response. -/
 noncomputable def Model.R0Model (h : ∀ w q, 0 < m.admissibleCard w q) :
     ObservationModel W Q R where
-  likelihood w q r := m.R0.prob (w, q) r
-  likelihood_nonneg w q r := m.R0.prob_nonneg (w, q) r
-  likelihood_sum w q := m.R0.prob_sum_eq_one (w, q)
-    (by rw [Model.R0_totalScore]; exact_mod_cast (h w q).ne')
+  likelihood w q r := (m.R0 w q).real {r}
+  likelihood_nonneg _ _ _ := measureReal_nonneg
+  likelihood_sum w q := by
+    obtain ⟨r, hr⟩ := Finset.card_pos.1 (h w q)
+    have : IsProbabilityMeasure (m.R0 w q) :=
+      isProbabilityMeasure_uniformOn (Set.toFinite _) ⟨r, (Finset.mem_filter.1 hr).2⟩
+    rw [sum_measureReal_singleton, Finset.coe_univ]
+    exact probReal_univ
 
 /-- The truth-only base respondent as an observation model, given that every world makes
 some response true. -/
 noncomputable def Model.R0Model' (h : ∀ w, ∃ r, m.response r w) : ObservationModel W Q R where
-  likelihood w q r := m.R0'.prob (w, q) r
-  likelihood_nonneg w q r := m.R0'.prob_nonneg (w, q) r
-  likelihood_sum w q := m.R0'.prob_sum_eq_one (w, q) (by
-    obtain ⟨r, hr⟩ := h w
-    refine ne_of_gt (lt_of_lt_of_le ?_ (single_le_sum (λ r' _ => m.R0'.score_nonneg _ r')
-      (mem_univ r)))
-    simp [Model.R0', hr])
+  likelihood w _ r := (m.R0' w).real {r}
+  likelihood_nonneg _ _ _ := measureReal_nonneg
+  likelihood_sum w _ := by
+    have : IsProbabilityMeasure (m.R0' w) := isProbabilityMeasure_uniformOn (Set.toFinite _) (h w)
+    rw [sum_measureReal_singleton, Finset.coe_univ]
+    exact probReal_univ
 
 section Positivity
 
@@ -169,7 +184,7 @@ variable (h : ∀ w q, 0 < m.admissibleCard w q) (d : D)
 
 theorem Model.R0Model_likelihood_pos_iff {w : W} {q : Q} {r : R} :
     0 < (m.R0Model h).likelihood w q r ↔ m.Admissible w q r :=
-  m.R0_prob_pos_iff (h w q)
+  m.R0_real_pos_iff (h w q)
 
 /-- The marginal of a response is positive when some world of positive prior admits it. -/
 theorem Model.R0Model_marginal_pos (hπ : ∀ w, 0 < m.prior d w) {q : Q} {r : R} {w : W}
@@ -209,11 +224,8 @@ theorem Model.posterior_lt_iff_card (h : ∀ w q, 0 < m.admissibleCard w q) (d :
   have hlik : ∀ w, m.Admissible w q r →
       (m.R0Model h).likelihood w q r = 1 / (m.admissibleCard w q : ℝ) := by
     intro w hw
-    show m.R0.prob (w, q) r = _
-    simp only [LuceModel.prob]
-    rw [Model.R0_totalScore]
-    change (if m.Admissible w q r then (1 : ℝ) else 0) / _ = _
-    rw [ite_eq_left hw]
+    show (m.R0 w q).real {r} = _
+    simp only [m.R0_real_singleton, hw, ↓reduceIte, one_div]
   simp only [ObservationModel.posterior, hm, ↓reduceIte, hlik w₁ h₁, hlik w₂ h₂, ← hp]
   rw [div_lt_div_iff_of_pos_right hmpos]
   constructor
@@ -221,6 +233,8 @@ theorem Model.posterior_lt_iff_card (h : ∀ w q, 0 < m.admissibleCard w q) (d :
     exact_mod_cast lt_of_one_div_lt_one_div (hc w₁) (lt_of_mul_lt_mul_left hlt hpos.le)
   · intro hlt
     exact mul_lt_mul_of_pos_left (one_div_lt_one_div_of_lt (hc w₂) (by exact_mod_cast hlt)) hpos
+
+end BaseRespondent
 
 /-! ### The questioner (§2b) -/
 
@@ -281,9 +295,9 @@ theorem Model.questionScore_eq_eig (om : ObservationModel W Q R) (αℵ wc : ℝ
 variable [Fintype Q]
 
 /-- (2.3): the questioner, a softmax over question scores with rationality `αQ`. -/
-noncomputable def Model.questioner (om : ObservationModel W Q R) (αℵ wc αQ : ℝ) :
-    LuceModel D Q :=
-  LuceModel.fromSoftmax (m.questionScore om αℵ wc) αQ
+noncomputable def Model.questioner (om : ObservationModel W Q R) (αℵ wc αQ : ℝ) (d : D) :
+    Q → ℝ :=
+  Real.softmax (αQ • m.questionScore om αℵ wc d)
 
 /-! ### The pragmatic respondent (§2c) -/
 
@@ -293,8 +307,8 @@ variable [Fintype D]
 mind through the questioner, `π(D ∣ q) ∝ Q(q ∣ D) π(D)`. -/
 noncomputable def Model.respondentPosterior (om : ObservationModel W Q R) (αℵ wc αQ : ℝ)
     (πD : D → ℝ) (q : Q) (d : D) : ℝ :=
-  let z := ∑ d', (m.questioner om αℵ wc αQ).prob d' q * πD d'
-  if z = 0 then 0 else (m.questioner om αℵ wc αQ).prob d q * πD d / z
+  let z := ∑ d', m.questioner om αℵ wc αQ d' q * πD d'
+  if z = 0 then 0 else m.questioner om αℵ wc αQ d q * πD d / z
 
 omit [∀ q, DecidablePred (m.question q)] [∀ r, DecidablePred (m.response r)] in
 /-- A question is a signal about the goal: with equal priors, the decision problem under
@@ -302,14 +316,15 @@ which the question was the more probable is the more probable after it. -/
 theorem Model.respondentPosterior_lt_iff (om : ObservationModel W Q R) (αℵ wc αQ : ℝ)
     (πD : D → ℝ) (hπ : ∀ d, 0 ≤ πD d) (q : Q) {d₁ d₂ : D} (hp : πD d₁ = πD d₂)
     (hpos : 0 < πD d₁)
-    (hz : ∑ d', (m.questioner om αℵ wc αQ).prob d' q * πD d' ≠ 0) :
+    (hz : ∑ d', m.questioner om αℵ wc αQ d' q * πD d' ≠ 0) :
     m.respondentPosterior om αℵ wc αQ πD q d₁ <
         m.respondentPosterior om αℵ wc αQ πD q d₂ ↔
-      (m.questioner om αℵ wc αQ).prob d₁ q <
-        (m.questioner om αℵ wc αQ).prob d₂ q := by
-  have hzpos : 0 < ∑ d', (m.questioner om αℵ wc αQ).prob d' q * πD d' :=
+      m.questioner om αℵ wc αQ d₁ q <
+        m.questioner om αℵ wc αQ d₂ q := by
+  have : Nonempty Q := ⟨q⟩
+  have hzpos : 0 < ∑ d', m.questioner om αℵ wc αQ d' q * πD d' :=
     lt_of_le_of_ne (sum_nonneg λ d' _ =>
-      mul_nonneg ((m.questioner om αℵ wc αQ).prob_nonneg d' q) (hπ d')) (Ne.symm hz)
+      mul_nonneg (Real.softmax_nonneg _ q) (hπ d')) (Ne.symm hz)
   simp only [Model.respondentPosterior, hz, ↓reduceIte, ← hp]
   rw [div_lt_div_iff_of_pos_right hzpos]
   exact ⟨λ hlt => lt_of_mul_lt_mul_right hlt hpos.le,
@@ -333,8 +348,8 @@ noncomputable def Model.respondentScore (om om' : ObservationModel W Q R) (αℵ
 
 /-- (2.5): the pragmatic respondent, a softmax over response scores with rationality `αR`. -/
 noncomputable def Model.respondent (om om' : ObservationModel W Q R) (αℵ wc αQ β αR : ℝ)
-    (πD : D → ℝ) (πW : W → ℝ) : LuceModel Q R :=
-  LuceModel.fromSoftmax (respondentScore m om om' αℵ wc αQ β πD πW) αR
+    (πD : D → ℝ) (πW : W → ℝ) (q : Q) : R → ℝ :=
+  Real.softmax (αR • respondentScore m om om' αℵ wc αQ β πD πW q)
 
 omit [∀ q, DecidablePred (m.question q)] [∀ r, DecidablePred (m.response r)] in
 /-- At `β = 1` the respondent weighs only action relevance and cost. -/
@@ -376,6 +391,8 @@ inductive Resp where
   | mention (T : Finset Card)
   | exhaustive (T : Finset Card)
   deriving DecidableEq, Fintype
+
+instance : MeasurableSpace Resp := ⊤
 
 /-- The decision problems: `U1`, whether any of the questioner's cards `C` is accepted, and
 `U2`, whether any card is accepted. -/

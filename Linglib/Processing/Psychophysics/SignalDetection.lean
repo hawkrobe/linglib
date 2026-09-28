@@ -27,13 +27,13 @@ recovered from the rates as `z(H) - z(F)` and the criterion as `-(z(H) + z(F)) /
 observer.
 
 The likelihood ratio of signal to noise at an observation `x` is defined by its closed form
-`L(x) = exp (d' * x)`, and the choice between reporting signal and noise follows a Luce model
-whose odds are `L(x)`. `SDTModel.toLuceAt` builds that model as a binary Gumbel random-utility
-model with utilities `(d' * x, 0)` and unit scale, so its signal probability
-`L(x) / (L(x) + 1)` is the Bayesian posterior under a uniform prior
-(`SDTModel.posteriorAt_uniform`). That posterior exceeds one half exactly when the observation
-is positive (`SDTModel.posterior_gt_half_iff_pos_obs`), which is the sense in which the
-criterion `c = 0` is optimal under a uniform prior.
+`L(x) = exp (d' * x)`, and the report of signal or noise is a binary Gumbel random-utility model
+with utilities `(d' * x, 0)` at unit scale (`SDTModel.reportUtility`), a Luce rule whose odds are
+`L(x)`. Its signal probability `L(x) / (L(x) + 1)` (`SDTModel.rumChoiceProb_report`) is the
+Bayesian posterior under a uniform prior (`SDTModel.posteriorAt_uniform`). That posterior
+exceeds one half exactly when the observation is positive
+(`SDTModel.posterior_gt_half_iff_pos_obs`), which is the sense in which the criterion `c = 0` is
+optimal under a uniform prior.
 
 ## Main definitions
 
@@ -42,7 +42,7 @@ criterion `c = 0` is optimal under a uniform prior.
 * `dPrimeFromRates`, `biasFromRates`: the sensitivity and criterion recovered from the rates.
 * `SDTModel.beta`: the likelihood ratio at the criterion.
 * `rocCurve`: the hit rate as a function of the false-alarm rate at fixed sensitivity.
-* `SDTModel.toLuceAt`: the Luce model of the report at an observation.
+* `SDTModel.reportUtility`: the utilities of the report at an observation.
 * `SDTModel.posteriorAt`: the posterior probability of signal at an observation.
 * `logisticApproxConst`: the variance-matching constant `π/√3` of the logistic approximation.
 
@@ -297,13 +297,13 @@ end ROC
 
 section LuceEmbedding
 
-/-! ## SDT as a Luce model — exact via McFadden's theorem
+/-! ## The report as a Gumbel random utility model
 
-The SDT signal/noise choice is a binary Gumbel-Luce RUM: with utilities
-`(d' · x, 0)` and unit Gumbel scale `β = 1`, the Gumbel max-probability reduces
-to the SDT Luce choice probability exactly. The signal-probability and odds-ratio
-properties below are immediate corollaries of `softmax_fin_two` and
-`LuceModel.fromGumbelRUM_prob`. -/
+Reporting signal or noise at an observation `x` is a binary random utility model with utilities
+`d' * x` for signal and `0` for noise under unit-scale Gumbel noise. By
+`rumChoiceProb_gumbelMeasure_fin_two` its signal probability is the logistic function of `d' * x`,
+which is `L(x) / (L(x) + 1)` for the likelihood ratio `L(x) = exp (d' * x)`: a Luce rule whose
+odds are the likelihood ratio. -/
 
 /-- The likelihood ratio at an observation `x` is `exp (d' * x)`, the closed form of the ratio of
 the density of `N(d'/2, 1)` to that of `N(-d'/2, 1)` at `x`. -/
@@ -323,45 +323,22 @@ noncomputable def SDTModel.likelihoodRatioAt (m : SDTModel) (x : ℝ) : ℝ :=
 theorem SDTModel.likelihoodRatioAt_pos (m : SDTModel) (x : ℝ) :
     0 < m.likelihoodRatioAt x := likelihoodRatio_pos _ _
 
-/-- The report at an observation `x` is a binary Gumbel random-utility model with utilities `d' * x`
-for signal and `0` for noise at unit scale, whose Luce scores are `exp (d' * x)` and `1`. The model
-depends on the sensitivity and the observation and not on the criterion, which enters only in the
-observer's response rule. -/
-noncomputable def SDTModel.toLuceAt (m : SDTModel) (x : ℝ) :
-    LuceModel Unit (Fin 2) :=
-  LuceModel.fromGumbelRUM (fun i : Fin 2 => if i = 0 then m.dPrime * x else 0) 1
+/-- The utilities of the report at an observation `x`: `d' * x` for signal and `0` for noise.
+They depend on the sensitivity and the observation and not on the criterion, which enters only
+in the observer's response rule. -/
+noncomputable def SDTModel.reportUtility (m : SDTModel) (x : ℝ) : Fin 2 → ℝ :=
+  ![m.dPrime * x, 0]
 
-/-- The Luce score of reporting signal is the likelihood ratio. -/
-@[simp]
-theorem SDTModel.toLuceAt_score_signal (m : SDTModel) (x : ℝ) :
-    (m.toLuceAt x).score () (0 : Fin 2) = m.likelihoodRatioAt x := by
-  simp [SDTModel.toLuceAt, LuceModel.fromGumbelRUM, LuceModel.fromSoftmax,
-        SDTModel.likelihoodRatioAt, likelihoodRatio]
-
-/-- The Luce score of reporting noise is one. -/
-@[simp]
-theorem SDTModel.toLuceAt_score_noise (m : SDTModel) (x : ℝ) :
-    (m.toLuceAt x).score () (1 : Fin 2) = 1 := by
-  simp [SDTModel.toLuceAt, LuceModel.fromGumbelRUM, LuceModel.fromSoftmax]
-
-/-- The Luce odds of signal to noise at an observation equal the likelihood ratio there. -/
-theorem SDTModel.toLuceAt_odds_ratio (m : SDTModel) (x : ℝ) :
-    (m.toLuceAt x).score () (0 : Fin 2) /
-    (m.toLuceAt x).score () (1 : Fin 2) =
-    m.likelihoodRatioAt x := by
-  rw [m.toLuceAt_score_signal, m.toLuceAt_score_noise, div_one]
-
-/-- The Luce probability of reporting signal at an observation is `L(x) / (L(x) + 1)` for the
-likelihood ratio `L(x)`. -/
-theorem SDTModel.toLuceAt_signal_prob (m : SDTModel) (x : ℝ) :
-    (m.toLuceAt x).prob () (0 : Fin 2) =
-    m.likelihoodRatioAt x / (m.likelihoodRatioAt x + 1) := by
-  have h01 : ¬(1 : Fin 2) = (0 : Fin 2) := by decide
-  rw [SDTModel.toLuceAt, LuceModel.fromGumbelRUM_prob, softmax_fin_two]
-  simp only [Pi.smul_apply, smul_eq_mul, Fin.isValue, ↓reduceIte, h01, inv_one, one_mul,
-             mul_zero, sub_zero, Real.sigmoid_def, SDTModel.likelihoodRatioAt,
-             likelihoodRatio]
-  rw [Real.exp_neg]
+/-- Under unit-scale Gumbel noise on the report utilities, the probability of reporting signal is
+`L(x) / (L(x) + 1)` for the likelihood ratio `L(x)`. -/
+theorem SDTModel.rumChoiceProb_report (m : SDTModel) (x : ℝ) :
+    rumChoiceProb (fun j ↦ gumbelMeasure (m.reportUtility x j) 1) 0 =
+      ENNReal.ofReal (m.likelihoodRatioAt x / (m.likelihoodRatioAt x + 1)) := by
+  rw [rumChoiceProb_gumbelMeasure_fin_two _ one_pos]
+  congr 1
+  simp only [SDTModel.reportUtility, Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.cons_val_fin_one, sub_zero, div_one, Real.sigmoid_def, SDTModel.likelihoodRatioAt,
+    likelihoodRatio, Real.exp_neg]
   have h := (Real.exp_pos (m.dPrime * x)).ne'
   field_simp
 
@@ -374,8 +351,8 @@ section BayesianInterpretation
 The SDT Luce choice probability is exactly the Bayesian posterior on "signal present"
 under uniform prior odds. Under non-uniform prior `π_S` for signal, the
 posterior is `π_S · L(x) / (π_S · L(x) + (1 - π_S))` — the same formula but
-with prior-weighted likelihoods. With `π_S = 1/2`, this reduces to
-`L(x) / (L(x) + 1) = (m.toLuceAt x).prob () 0`.
+with prior-weighted likelihoods. With `π_S = 1/2`, this reduces to `L(x) / (L(x) + 1)`, the
+signal probability of the report.
 
 ### Why `posteriorAt` is a closed form
 
@@ -410,12 +387,13 @@ private lemma half_lt_div_add_one_iff {L : ℝ} (hL : 0 < L) :
   have hLp1 : (0 : ℝ) < L + 1 := by linarith
   rw [lt_div_iff₀ hLp1]; constructor <;> intro h <;> linarith
 
-/-- Under a uniform prior the posterior probability of signal at an observation is the Luce
-probability of reporting signal there. -/
+/-- Under a uniform prior the posterior probability of signal at an observation is the
+probability that the Gumbel random-utility report is signal. -/
 theorem SDTModel.posteriorAt_uniform (x : ℝ) :
-    m.posteriorAt x (1/2) = (m.toLuceAt x).prob () (0 : Fin 2) := by
-  rw [m.toLuceAt_signal_prob, SDTModel.posteriorAt]
-  exact posterior_uniform_eq_div (m.likelihoodRatioAt_pos x)
+    ENNReal.ofReal (m.posteriorAt x (1/2)) =
+      rumChoiceProb (fun j ↦ gumbelMeasure (m.reportUtility x j) 1) 0 := by
+  rw [m.rumChoiceProb_report, SDTModel.posteriorAt,
+    posterior_uniform_eq_div (m.likelihoodRatioAt_pos x)]
 
 /-- With positive sensitivity and a uniform prior the posterior probability of signal exceeds one
 half exactly when the observation is positive. -/

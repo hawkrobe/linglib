@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Core.Probability.Choice.Luce
+public import Linglib.Core.Analysis.SpecialFunctions.Softmax
+public import Mathlib.Probability.ConditionalProbability
 public import Linglib.Core.Probability.Distributions.Gaussian
 public import Linglib.Core.Probability.Choice.RandomUtility
 public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
@@ -15,7 +16,9 @@ public import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
 # Luce (1959): Individual Choice Behavior
 
 This file formalizes five parts of Luce's *Individual Choice Behavior*. From the first chapter it
-takes the just noticeable difference: a threshold splits pairwise choice into discriminable
+takes the choice axiom in both its clauses, the ratio scale it yields where discrimination is
+imperfect (Theorems 2 and 3), whose ratio rule is conditional probability (`ratioProb_eq_cond`),
+and the just noticeable difference: a threshold splits pairwise choice into discriminable
 preference and indistinguishability, which form a semiorder, and the induced trace is the weak order
 of the ratio scale. From the second chapter it takes the psychophysical scales. Pairwise choice
 that depends only on differences of a real-valued scale is logistic in them (`logistic_unique`).
@@ -58,12 +61,12 @@ of the theorems that use them, as in the book. The three-class theorems are stat
 representatives, without a quotient. Luce offers the factoring `v(aρb) = w(a,b)·φ(ρ)` as a
 hypothesis, not a theorem, and so does `gam_of_factored`. The alpha model is stated for its
 matrix, the form Luce derives from the unboundedness, superposition, and independence-of-unit
-conditions, and `responseProb` is the ratio rule on a strength vector, the stateless form of
-`LuceModel.prob`. The beta model of §4.G is a Markov kernel on the log ratio `u = log v`,
-where its four events are translations and `P` is the sigmoid of `u`; its moments are integrals
-under the law of each trial from an initial law with finite exponential moments, and the second
-parts of Theorems 15, 16 and 18 are the first parts for the model with the alternatives exchanged
-(`BetaLearner.swap`).
+conditions, and `responseProb` is the ratio rule on a strength vector, `ratioProb` on the
+whole set of alternatives. The beta model of §4.G is a Markov kernel on the log ratio
+`u = log v`, where its four events are translations and `P` is the sigmoid of `u`; its moments
+are integrals under the law of each trial from an initial law with finite exponential moments,
+and the second parts of Theorems 15, 16 and 18 are the first parts for the model with the
+alternatives exchanged (`BetaLearner.swap`).
 
 ## TODO
 
@@ -86,7 +89,579 @@ as given.
 
 namespace Luce1959
 
-open Core
+/-!
+### §1.C–§1.E: The choice axiom and its ratio scale (pp. 5–24)
+
+Luce's primitive is a system of choice probabilities `P_T` on finite menus `T`. Axiom 1 (p. 6)
+has two clauses: under imperfect discrimination nested menus compose multiplicatively, and an
+alternative never chosen over another may be deleted. On a menu with imperfect discrimination
+throughout, the axiom yields a ratio scale unique up to its unit (Theorem 3, p. 23), and among
+three alternatives it forces the cyclic product identity (Theorem 2, p. 16).
+-/
+
+section ChoiceAxiom
+
+open Finset Real
+
+/-! ### The pairwise choice kernel
+
+`pairwiseProb v x y = v x / (v x + v y)` is the binary Luce rule — the
+Bradley–Terry kernel. Hypotheses are pointwise (`0 < v x`) so the suite
+applies to locally positive scales such as `cf.prob T` produced by
+`ChoiceFn.HasChoiceAxiom.ratioScaleOn` below. On an exponential scale the
+kernel is the logistic of the utility difference (`pairwiseProb_exp`) —
+[luce-1959]'s Fechnerian coordinates `u = log v` (Ch. 2, §2.A.2). -/
+
+section PairwiseProb
+
+variable {A : Type*} {v : A → ℝ} {x y z : A}
+
+/-- The pairwise choice probability `P(x, {x,y})` under a ratio scale `v`:
+    `P(x, y) = v x / (v x + v y)` — the Luce model prediction for binary
+    forced choice. -/
+noncomputable def pairwiseProb (v : A → ℝ) (x y : A) : ℝ :=
+  v x / (v x + v y)
+
+/-- Pairwise probabilities are non-negative for non-negative scales. -/
+theorem pairwiseProb_nonneg (hx : 0 ≤ v x) (hy : 0 ≤ v y) :
+    0 ≤ pairwiseProb v x y :=
+  div_nonneg hx (add_nonneg hx hy)
+
+/-- Pairwise probabilities are at most 1 for positive scales. -/
+theorem pairwiseProb_le_one (hx : 0 < v x) (hy : 0 < v y) :
+    pairwiseProb v x y ≤ 1 := by
+  rw [pairwiseProb, div_le_one (add_pos hx hy)]
+  linarith
+
+/-- Complementarity: `P(x, y) + P(y, x) = 1` for positive scales. -/
+theorem pairwiseProb_complement (hx : 0 < v x) (hy : 0 < v y) :
+    pairwiseProb v x y + pairwiseProb v y x = 1 := by
+  rw [pairwiseProb, pairwiseProb, add_comm (v y), ← add_div,
+    div_self (ne_of_gt (add_pos hx hy))]
+
+/-- `P(x, x) = 1/2` for positive scales (indifference with self). -/
+theorem pairwiseProb_self (hx : 0 < v x) : pairwiseProb v x x = 1 / 2 := by
+  rw [pairwiseProb, div_eq_iff (by linarith : v x + v x ≠ 0)]
+  ring
+
+/-- `P(x, y) > 1/2` iff `v x > v y`: the higher-scale alternative is chosen
+    more than half the time. -/
+theorem pairwiseProb_gt_half_iff (hx : 0 < v x) (hy : 0 < v y) :
+    1 / 2 < pairwiseProb v x y ↔ v y < v x := by
+  rw [pairwiseProb, lt_div_iff₀ (add_pos hx hy)]
+  constructor <;> intro h <;> nlinarith
+
+/-- `P(x, y) ≥ 1/2` iff `v x ≥ v y`. -/
+theorem pairwiseProb_ge_half_iff (hx : 0 < v x) (hy : 0 < v y) :
+    1 / 2 ≤ pairwiseProb v x y ↔ v y ≤ v x := by
+  rw [pairwiseProb, le_div_iff₀ (add_pos hx hy)]
+  constructor <;> intro h <;> nlinarith
+
+/-- `P(x, y) < 1/2` iff `v x < v y`. -/
+theorem pairwiseProb_lt_half_iff (hx : 0 < v x) (hy : 0 < v y) :
+    pairwiseProb v x y < 1 / 2 ↔ v x < v y := by
+  rw [pairwiseProb, div_lt_iff₀ (add_pos hx hy)]
+  constructor <;> intro h <;> nlinarith
+
+/-- `P(x, y) = 1/2` iff `v x = v y`. -/
+theorem pairwiseProb_eq_half_iff (hx : 0 < v x) (hy : 0 < v y) :
+    pairwiseProb v x y = 1 / 2 ↔ v x = v y := by
+  rw [pairwiseProb, div_eq_iff (ne_of_gt (add_pos hx hy))]
+  constructor <;> intro h <;> linarith
+
+/-- Monotonicity: `P(x, z) ≥ P(y, z)` iff `v x ≥ v y`. The function
+    `t ↦ t / (t + c)` is monotone for `c > 0`, so pairwise probabilities
+    against any fixed `z` mirror the ordering of scale values. -/
+theorem pairwiseProb_mono_iff (hx : 0 < v x) (hy : 0 < v y) (hz : 0 < v z) :
+    pairwiseProb v y z ≤ pairwiseProb v x z ↔ v y ≤ v x := by
+  rw [pairwiseProb, pairwiseProb,
+    div_le_div_iff₀ (add_pos hy hz) (add_pos hx hz)]
+  constructor <;> intro h <;> nlinarith
+
+/-- Constant-ratio law: two pairwise probabilities on the same scale agree
+    iff the cross products of their scale values do. -/
+theorem pairwiseProb_eq_pairwiseProb_iff {x' y' : A} (hx : 0 < v x)
+    (hy : 0 < v y) (hx' : 0 < v x') (hy' : 0 < v y') :
+    pairwiseProb v x y = pairwiseProb v x' y' ↔ v x * v y' = v x' * v y := by
+  rw [pairwiseProb, pairwiseProb,
+    div_eq_div_iff (by linarith) (by linarith)]
+  constructor <;> intro h <;> nlinarith
+
+/-- Fechnerian coordinates ([luce-1959] Ch. 2, §2.A.2, `u = log v`): on an
+    exponential scale the pairwise rule is the logistic of the utility
+    difference — the bridge from the Luce choice rule to logit choice. -/
+theorem pairwiseProb_exp (u : A → ℝ) (x y : A) :
+    pairwiseProb (fun a ↦ Real.exp (u a)) x y = Real.sigmoid (u x - u y) := by
+  have hx := Real.exp_pos (u x)
+  have hy := Real.exp_pos (u y)
+  simp only [pairwiseProb, Real.sigmoid, neg_sub, Real.exp_sub]
+  rw [inv_eq_one_div, div_eq_div_iff (by positivity) (by positivity)]
+  field_simp
+
+end PairwiseProb
+
+/-! ### The ratio rule and conditional probability
+
+A positive scale `v` determines the choice probabilities `P_T(a) = v a / ∑ b ∈ T, v b` on every
+finite menu `T` (the representation of Theorem 3, p. 23). Luce's gloss on that theorem (p. 24) is
+that under the choice axiom `P_S` "acts like a conditional probability relative to `P_T`" for
+`S ⊆ T`; for the ratio rule this is literal, since choosing from `T` is conditioning on `T` the
+measure with point masses `v` (`ratioProb_eq_cond`). The product rule is then mathlib's
+`ProbabilityTheory.cond_mul_eq_inter`. -/
+
+section RatioRule
+
+variable {A : Type*} [DecidableEq A]
+
+/-- The ratio rule: the probability `v a / ∑ b ∈ T, v b` of choosing `a` from the menu `T` under
+the scale `v`, and `0` for `a ∉ T`. -/
+noncomputable def ratioProb (v : A → ℝ) (T : Finset A) (a : A) : ℝ :=
+  if a ∈ T then v a / ∑ b ∈ T, v b else 0
+
+theorem ratioProb_eq_div (v : A → ℝ) (T : Finset A) (a : A) (ha : a ∈ T) :
+    ratioProb v T a = v a / ∑ b ∈ T, v b := by
+  simp only [ratioProb, ha, ↓reduceIte]
+
+theorem ratioProb_nonneg {v : A → ℝ} {T : Finset A} (hv : ∀ b ∈ T, 0 ≤ v b) (a : A) :
+    0 ≤ ratioProb v T a := by
+  unfold ratioProb
+  split
+  · exact div_nonneg (hv a ‹_›) (Finset.sum_nonneg hv)
+  · exact le_rfl
+
+/-- The ratio rule sums to one over a menu of nonzero total scale. -/
+theorem ratioProb_sum_eq_one (v : A → ℝ) (T : Finset A) (hT : ∑ b ∈ T, v b ≠ 0) :
+    ∑ a ∈ T, ratioProb v T a = 1 := by
+  rw [Finset.sum_congr rfl fun a ha ↦ ratioProb_eq_div v T a ha, ← Finset.sum_div, div_self hT]
+
+/-- The constant-ratio rule (Lemma 3, p. 9): within a menu the odds of two alternatives are the
+ratio of their scale values. -/
+theorem ratioProb_ratio (v : A → ℝ) (T : Finset A) (a₁ a₂ : A) (h₁ : a₁ ∈ T) (h₂ : a₂ ∈ T) :
+    ratioProb v T a₁ * v a₂ = ratioProb v T a₂ * v a₁ := by
+  rw [ratioProb_eq_div v T a₁ h₁, ratioProb_eq_div v T a₂ h₂, div_mul_eq_mul_div,
+    div_mul_eq_mul_div, mul_comm]
+
+theorem ratioProb_pos {v : A → ℝ} {T : Finset A} {a : A} (ha : a ∈ T)
+    (hpos : ∀ b ∈ T, 0 < v b) : 0 < ratioProb v T a := by
+  rw [ratioProb_eq_div v T a ha]
+  exact div_pos (hpos a ha) (Finset.sum_pos hpos ⟨a, ha⟩)
+
+/-- Within a menu of positive scale values the higher-valued alternative is chosen more often. -/
+theorem ratioProb_lt_of_lt {v : A → ℝ} {T : Finset A} {a₁ a₂ : A} (ha₁ : a₁ ∈ T) (ha₂ : a₂ ∈ T)
+    (hpos : ∀ b ∈ T, 0 < v b) (hlt : v a₂ < v a₁) : ratioProb v T a₂ < ratioProb v T a₁ := by
+  rw [ratioProb_eq_div v T a₁ ha₁, ratioProb_eq_div v T a₂ ha₂]
+  exact div_lt_div_of_pos_right hlt (Finset.sum_pos hpos ⟨a₁, ha₁⟩)
+
+/-- Binary choice under the ratio rule is the pairwise kernel. -/
+theorem ratioProb_pair (v : A → ℝ) {x y : A} (hne : x ≠ y) :
+    ratioProb v {x, y} x = pairwiseProb v x y := by
+  rw [ratioProb_eq_div v _ x (Finset.mem_insert_self x {y}), Finset.sum_pair hne]
+  rfl
+
+open MeasureTheory ProbabilityTheory in
+/-- The ratio rule is conditional probability (Luce's gloss on Theorem 3, p. 24): for a
+nonnegative scale `v`, the probability of choosing `a` from `T` is the conditional probability of
+`{a}` given `T` under the measure with point masses `v`. -/
+theorem ratioProb_eq_cond [MeasurableSpace A] [MeasurableSingletonClass A] {v : A → ℝ}
+    (hv : ∀ a, 0 ≤ v a) (T : Finset A) (a : A) :
+    ratioProb v T a =
+      ((Measure.count.withDensity fun b ↦ ENNReal.ofReal (v b))[{a} | ↑T]).toReal := by
+  have hμ (E : Finset A) : (Measure.count.withDensity fun b ↦ ENNReal.ofReal (v b)) ↑E =
+      ENNReal.ofReal (∑ b ∈ E, v b) := by
+    rw [withDensity_apply _ E.measurableSet, lintegral_finset,
+      ENNReal.ofReal_sum_of_nonneg fun b _ ↦ hv b]
+    simp
+  have hsum (E : Finset A) : 0 ≤ ∑ b ∈ E, v b := Finset.sum_nonneg fun b _ ↦ hv b
+  rw [cond_apply T.measurableSet, ← Finset.coe_singleton, ← Finset.coe_inter, hμ, hμ,
+    ENNReal.toReal_mul, ENNReal.toReal_inv, ENNReal.toReal_ofReal (hsum _),
+    ENNReal.toReal_ofReal (hsum _)]
+  by_cases ha : a ∈ T
+  · rw [ratioProb_eq_div v T a ha, Finset.inter_singleton_of_mem ha, Finset.sum_singleton,
+      inv_mul_eq_div]
+  · simp only [ratioProb, ha, ↓reduceIte, Finset.inter_singleton_of_notMem ha, Finset.sum_empty,
+      mul_zero]
+
+end RatioRule
+
+/-! ### Systems of choice probabilities and the forms of the choice axiom
+
+`ChoiceFn` is [luce-1959]'s primitive: for each finite menu `T`, a probability
+distribution `prob T` supported on `T`. Three single-clause forms of the
+choice axiom for such a system, equivalent under imperfect discrimination:
+
+* `HasRatioScale` — a positive `v` with `P(a | T) = v a / ∑ b ∈ T, v b`, the
+  representation delivered by Theorem 3 (p. 23);
+* `HasProductRule` — `P(a | T) = P(a | S) · P(S | T)` for `a ∈ S ⊆ T`, the
+  shape of part i of Axiom 1 (p. 6);
+* `HasPairwiseIIA` — odds ratios preserved in any superset, the
+  constant-ratio rule of Lemma 3 (p. 9).
+
+([luce-1959]'s own Appendix 1, "Alternative forms of axiom 1", p. 135, states
+a different trio — conditions A–C on the rejection probabilities
+`Q_T(S) = 1 − P_T(S)`, equivalent to part i by its Theorem 20 — which is not
+formalized here.)
+
+Luce's Axiom 1 itself is two-clause and weaker than the globally positive
+ratio form: `ChoiceFn.HasChoiceAxiom` states it in full, and
+`ChoiceFn.HasChoiceAxiom.ratioScaleOn` is the existence half of his Theorem 3
+(local ratio scales on imperfectly discriminated menus). -/
+
+section ChoiceAxiomForms
+
+/-- A system of choice probabilities over finite menus — the primitive of
+    [luce-1959]. For each nonempty menu `T`, `prob T : A → ℝ` is a
+    probability distribution supported on `T`. -/
+structure ChoiceFn (A : Type*) where
+  /-- `prob T a`: the probability of choosing `a` from the menu `T`. -/
+  prob : Finset A → A → ℝ
+  /-- Probabilities are non-negative. -/
+  prob_nonneg : ∀ (T : Finset A) (a : A), 0 ≤ prob T a
+  /-- No probability outside the menu. -/
+  prob_zero_outside : ∀ (T : Finset A) (a : A), a ∉ T → prob T a = 0
+  /-- Probabilities sum to 1 on a nonempty menu. -/
+  prob_sum_eq_one : ∀ T : Finset A, T.Nonempty → ∑ a ∈ T, prob T a = 1
+
+namespace ChoiceFn
+
+variable {A : Type*} [DecidableEq A]
+
+/-- Binary forced choice: the probability of choosing `x` from `{x, y}`. -/
+def binary (cf : ChoiceFn A) (x y : A) : ℝ := cf.prob {x, y} x
+
+theorem binary_nonneg (cf : ChoiceFn A) (x y : A) : 0 ≤ cf.binary x y :=
+  cf.prob_nonneg _ _
+
+theorem binary_le_one (cf : ChoiceFn A) (x y : A) : cf.binary x y ≤ 1 :=
+  le_of_le_of_eq
+    (Finset.single_le_sum (fun a _ ↦ cf.prob_nonneg {x, y} a)
+      (Finset.mem_insert_self x _))
+    (cf.prob_sum_eq_one _ ⟨x, Finset.mem_insert_self x _⟩)
+
+/-- Binary complementarity: `P(x, y) + P(y, x) = 1` for `x ≠ y`. -/
+theorem binary_complement (cf : ChoiceFn A) {x y : A} (hxy : x ≠ y) :
+    cf.binary x y + cf.binary y x = 1 := by
+  simp only [binary, Finset.pair_comm y x]
+  rw [← Finset.sum_pair hxy]
+  exact cf.prob_sum_eq_one _ ⟨x, Finset.mem_insert_self x _⟩
+
+/-- Self-choice is certain: `{x, x} = {x}`, so `binary x x = 1` — where
+    [luce-1959] (p. 5) instead sets `P(x, x) = ½` by notational
+    convention. -/
+theorem binary_self (cf : ChoiceFn A) (x : A) : cf.binary x x = 1 := by
+  simpa [binary] using cf.prob_sum_eq_one {x} ⟨x, Finset.mem_singleton_self x⟩
+
+/-- **Ratio form** of the choice axiom: a positive scale `v` with
+    `P(a | T) = v a / ∑ b ∈ T, v b` — the representation delivered by
+    Theorem 3 of [luce-1959] (p. 23) in the globally imperfect regime. -/
+def HasRatioScale (cf : ChoiceFn A) : Prop :=
+  ∃ v : A → ℝ, (∀ a, 0 < v a) ∧
+    ∀ (T : Finset A) (a : A), a ∈ T → cf.prob T a = v a / ∑ b ∈ T, v b
+
+/-- **Product rule** form of the choice axiom:
+    `P(a | T) = P(a | S) · P(S | T)` for `a ∈ S ⊆ T`, where
+    `P(S | T) = ∑ b ∈ S, P(b | T)` — the shape of part i of Axiom 1
+    ([luce-1959], p. 6). -/
+def HasProductRule (cf : ChoiceFn A) : Prop :=
+  ∀ S T : Finset A, S ⊆ T → S.Nonempty →
+    ∀ a ∈ S, cf.prob T a = cf.prob S a * ∑ b ∈ S, cf.prob T b
+
+/-- **Pairwise IIA** form of the choice axiom (the constant-ratio rule,
+    Lemma 3 of [luce-1959], p. 9): odds ratios are preserved in any
+    superset — `P(a | T) · P(b | {a,b}) = P(b | T) · P(a | {a,b})`. -/
+def HasPairwiseIIA (cf : ChoiceFn A) : Prop :=
+  ∀ (T : Finset A) (a b : A), a ∈ T → b ∈ T →
+    cf.prob T a * cf.prob {a, b} b = cf.prob T b * cf.prob {a, b} a
+
+omit [DecidableEq A] in
+/-- The ratio form implies the product rule. -/
+theorem HasRatioScale.hasProductRule {cf : ChoiceFn A}
+    (h : cf.HasRatioScale) : cf.HasProductRule := by
+  intro S T hST hS a ha
+  obtain ⟨v, hv_pos, hv_rule⟩ := h
+  rw [hv_rule T a (hST ha), hv_rule S a ha,
+    Finset.sum_congr rfl fun b hb ↦ hv_rule T b (hST hb), ← Finset.sum_div]
+  have hS_ne : (∑ b ∈ S, v b) ≠ 0 :=
+    ne_of_gt (Finset.sum_pos (fun b _ ↦ hv_pos b) hS)
+  have hT_ne : (∑ b ∈ T, v b) ≠ 0 :=
+    ne_of_gt (Finset.sum_pos (fun b _ ↦ hv_pos b) (hS.mono hST))
+  field_simp
+
+/-- The ratio form implies pairwise IIA. -/
+theorem HasRatioScale.hasPairwiseIIA {cf : ChoiceFn A}
+    (h : cf.HasRatioScale) : cf.HasPairwiseIIA := by
+  intro T a b ha hb
+  obtain ⟨v, hv_pos, hv_rule⟩ := h
+  rw [hv_rule T a ha, hv_rule T b hb, hv_rule {a, b} b (by simp),
+    hv_rule {a, b} a (Finset.mem_insert_self a _)]
+  ring
+
+/-- Pairwise IIA implies the ratio form, given strict positivity on every
+    menu. The scale is built from a reference element `x₀` as
+    `v x = P(x | {x, x₀}) / P(x₀ | {x, x₀})` — the chain construction of
+    Theorem 4 of [luce-1959] (p. 25) in the one-link case. -/
+theorem HasPairwiseIIA.hasRatioScale [Inhabited A] {cf : ChoiceFn A}
+    (hIIA : cf.HasPairwiseIIA)
+    (hpos : ∀ (T : Finset A) (a : A), a ∈ T → 0 < cf.prob T a) :
+    cf.HasRatioScale := by
+  have hsum := cf.prob_sum_eq_one
+  set x₀ := (default : A)
+  set v := fun a ↦ cf.prob {a, x₀} a / cf.prob {a, x₀} x₀ with hv_def
+  have hv_pos : ∀ a, 0 < v a := fun a ↦
+    div_pos (hpos _ a (mem_insert.mpr (Or.inl rfl))) (hpos _ x₀ (by simp))
+  have ratio_mul : ∀ (T : Finset A) (a b : A), a ∈ T → b ∈ T →
+      cf.prob T a * cf.prob {b, x₀} b * cf.prob {a, x₀} x₀ =
+      cf.prob T b * cf.prob {a, x₀} a * cf.prob {b, x₀} x₀ := by
+    intro T a b ha hb
+    set T' := insert x₀ T
+    have ha' : a ∈ T' := mem_insert_of_mem ha
+    have hb' : b ∈ T' := mem_insert_of_mem hb
+    have hx₀' : x₀ ∈ T' := mem_insert_self x₀ T
+    have hT := hIIA T a b ha hb
+    have hT'ab := hIIA T' a b ha' hb'
+    have hT'ax₀ := hIIA T' a x₀ ha' hx₀'
+    have hT'bx₀ := hIIA T' b x₀ hb' hx₀'
+    have hB : cf.prob T' a * cf.prob {a, x₀} x₀ * cf.prob {b, x₀} b =
+              cf.prob T' b * cf.prob {b, x₀} x₀ * cf.prob {a, x₀} a := by
+      linear_combination cf.prob {b, x₀} b * hT'ax₀ - cf.prob {a, x₀} a * hT'bx₀
+    have hA_mul : (cf.prob T a * cf.prob T' b - cf.prob T b * cf.prob T' a) *
+                  cf.prob {a, b} b = 0 := by
+      linear_combination cf.prob T' b * hT - cf.prob T b * hT'ab
+    have hA : cf.prob T a * cf.prob T' b = cf.prob T b * cf.prob T' a := by
+      rcases mul_eq_zero.mp hA_mul with h | h
+      · linarith
+      · exact absurd h (ne_of_gt (hpos _ b (by simp)))
+    have hT'b_ne : cf.prob T' b ≠ 0 := ne_of_gt (hpos T' b hb')
+    have h1 : cf.prob T' b *
+          (cf.prob T a * cf.prob {b, x₀} b * cf.prob {a, x₀} x₀) =
+        cf.prob T' b *
+          (cf.prob T b * cf.prob {a, x₀} a * cf.prob {b, x₀} x₀) := by
+      linear_combination
+        cf.prob {b, x₀} b * cf.prob {a, x₀} x₀ * hA + cf.prob T b * hB
+    exact mul_left_cancel₀ hT'b_ne h1
+  refine ⟨v, hv_pos, fun T a ha ↦ ?_⟩
+  have hT_ne : T.Nonempty := ⟨a, ha⟩
+  have hsum_v_pos : 0 < ∑ b ∈ T, v b :=
+    Finset.sum_pos (fun b _ ↦ hv_pos b) hT_ne
+  rw [eq_div_iff (ne_of_gt hsum_v_pos)]
+  have swap : ∀ b ∈ T, cf.prob T a * v b = v a * cf.prob T b := by
+    intro b hb
+    simp only [hv_def]
+    have hrm := ratio_mul T a b ha hb
+    have hne_a : cf.prob {a, x₀} x₀ ≠ 0 := ne_of_gt (hpos _ x₀ (by simp))
+    have hne_b : cf.prob {b, x₀} x₀ ≠ 0 := ne_of_gt (hpos _ x₀ (by simp))
+    field_simp
+    linarith
+  calc cf.prob T a * ∑ b ∈ T, v b
+      = ∑ b ∈ T, cf.prob T a * v b := mul_sum T v (cf.prob T a)
+    _ = ∑ b ∈ T, v a * cf.prob T b := sum_congr rfl swap
+    _ = v a * ∑ b ∈ T, cf.prob T b := (mul_sum T (cf.prob T) (v a)).symm
+    _ = v a * 1 := by rw [hsum T hT_ne]
+    _ = v a := mul_one _
+
+/-- Equivalence of the ratio form and pairwise IIA, under strict positivity
+    on each menu. -/
+theorem hasRatioScale_iff_hasPairwiseIIA [Inhabited A] (cf : ChoiceFn A)
+    (hpos : ∀ (T : Finset A) (a : A), a ∈ T → 0 < cf.prob T a) :
+    cf.HasRatioScale ↔ cf.HasPairwiseIIA :=
+  ⟨HasRatioScale.hasPairwiseIIA, fun h ↦ h.hasRatioScale hpos⟩
+
+/-- A positive binary ratio scale on a set `S`: binary choice between
+    distinct elements of `S` follows the Luce rule
+    `P(x, y) = v x / (v x + v y)`.
+
+    This is the binary trace of `HasRatioScale` restricted to `S`
+    (`ChoiceFn.HasRatioScale.binaryRatioScaleOn`). Keeping `S` local matters
+    for [luce-1959]'s Chapter 3, which mixes imperfect discrimination (a
+    ratio scale on a small set of gambles, via Theorem 4) with perfect
+    discrimination (`P ∈ {0, 1}`) elsewhere — a global positive scale forces
+    every binary probability into `(0, 1)`. Restricting to distinct pairs
+    matters because `binary x x = 1 ≠ 1/2` (`ChoiceFn.binary_self`). -/
+def BinaryRatioScaleOn (cf : ChoiceFn A) (S : Set A) (v : A → ℝ) : Prop :=
+  (∀ x ∈ S, 0 < v x) ∧
+    ∀ x ∈ S, ∀ y ∈ S, x ≠ y → cf.binary x y = pairwiseProb v x y
+
+/-- A global ratio scale restricts to a binary ratio scale on every set. -/
+theorem HasRatioScale.binaryRatioScaleOn {cf : ChoiceFn A}
+    (h : cf.HasRatioScale) :
+    ∃ v : A → ℝ, ∀ S : Set A, cf.BinaryRatioScaleOn S v := by
+  obtain ⟨v, hv_pos, hv_rule⟩ := h
+  refine ⟨v, fun S ↦ ⟨fun x _ ↦ hv_pos x, fun x _ y _ hxy ↦ ?_⟩⟩
+  rw [ChoiceFn.binary, hv_rule {x, y} x (Finset.mem_insert_self x _),
+    Finset.sum_pair hxy, pairwiseProb]
+
+/-! ### The choice axiom in full -/
+
+/-- Discrimination is imperfect throughout `T`: `0 < P(x, y) < 1` for
+    distinct `x, y ∈ T` ([luce-1959]'s "`P(x, y) ≠ 0, 1` for all
+    `x, y ∈ T`"). The diagonal is excluded because [luce-1959] (p. 5) sets
+    `P(x, x) = ½` by pure notational convention, whereas a total `ChoiceFn`
+    has `binary x x = 1` (`ChoiceFn.binary_self`). -/
+def ImperfectOn (cf : ChoiceFn A) (T : Finset A) : Prop :=
+  ∀ x ∈ T, ∀ y ∈ T, x ≠ y → 0 < cf.binary x y ∧ cf.binary x y < 1
+
+/-- **Luce's choice axiom**, both clauses (Axiom 1, p. 6 of [luce-1959],
+    with `P_T(S) = ∑ a ∈ S, P_T(a)`):
+
+    (i) `product_rule`: under imperfect discrimination throughout `T`,
+    nested-menu probabilities compose multiplicatively —
+    `P_T(R) = P_S(R) · P_T(S)` for `R ⊆ S ⊆ T`;
+
+    (ii) `deletion`: an alternative `x` never chosen over some `y` may be
+    deleted — `P_T(S) = P_{T∖{x}}(S∖{x})` for every `S ⊆ T`.
+
+    Unlike the globally positive `HasRatioScale`, clause (ii) lets the axiom
+    govern menus mixing perfect and imperfect discrimination — the regime of
+    [luce-1959] Chapter 3, where the three-class theorems force `Q ∈ {0, 1}`
+    between extreme event classes. -/
+structure HasChoiceAxiom (cf : ChoiceFn A) : Prop where
+  product_rule : ∀ T : Finset A, cf.ImperfectOn T → ∀ R S : Finset A,
+    R ⊆ S → S ⊆ T →
+    ∑ a ∈ R, cf.prob T a = (∑ a ∈ R, cf.prob S a) * ∑ a ∈ S, cf.prob T a
+  deletion : ∀ T : Finset A, ∀ x ∈ T, ∀ y ∈ T, x ≠ y → cf.binary x y = 0 →
+    ∀ S ⊆ T, ∑ a ∈ S, cf.prob T a = ∑ a ∈ S.erase x, cf.prob (T.erase x) a
+
+/-- A global ratio scale satisfies the full choice axiom: clause (i) by
+    ratio arithmetic, clause (ii) vacuously (no discrimination is
+    perfect). -/
+theorem HasRatioScale.hasChoiceAxiom {cf : ChoiceFn A}
+    (h : cf.HasRatioScale) : cf.HasChoiceAxiom := by
+  obtain ⟨v, hv_pos, hv_rule⟩ := h
+  constructor
+  · intro T _ R S hRS hST
+    rcases R.eq_empty_or_nonempty with rfl | hR
+    · simp
+    have hS : S.Nonempty := hR.mono hRS
+    have hSne : (∑ b ∈ S, v b) ≠ 0 :=
+      ne_of_gt (Finset.sum_pos (fun b _ ↦ hv_pos b) hS)
+    have hTne : (∑ b ∈ T, v b) ≠ 0 :=
+      ne_of_gt (Finset.sum_pos (fun b _ ↦ hv_pos b) (hS.mono hST))
+    have eT : ∀ W : Finset A, W ⊆ T →
+        ∑ a ∈ W, cf.prob T a = (∑ a ∈ W, v a) / ∑ b ∈ T, v b := by
+      intro W hW
+      rw [Finset.sum_div]
+      exact Finset.sum_congr rfl fun a ha ↦ hv_rule T a (hW ha)
+    have eS : ∑ a ∈ R, cf.prob S a = (∑ a ∈ R, v a) / ∑ b ∈ S, v b := by
+      rw [Finset.sum_div]
+      exact Finset.sum_congr rfl fun a ha ↦ hv_rule S a (hRS ha)
+    rw [eT R (hRS.trans hST), eT S hST, eS]
+    field_simp
+  · intro T x hx y hy hxy h0 S hS
+    have hb : cf.binary x y = v x / (v x + v y) := by
+      rw [ChoiceFn.binary, hv_rule {x, y} x (Finset.mem_insert_self x _),
+        Finset.sum_pair hxy]
+    rw [hb] at h0
+    exact absurd h0
+      (ne_of_gt (div_pos (hv_pos x) (add_pos (hv_pos x) (hv_pos y))))
+
+/-- Existence half of **Theorem 3** of [luce-1959] (p. 23): under the choice
+    axiom, on any finite `T` with imperfect discrimination throughout, the
+    restricted choice probabilities are a ratio scale — with `v = P_T`
+    itself as the scale, Luce's own construction. The uniqueness half is
+    `ChoiceFn.ratioScaleOn_unique`. -/
+theorem HasChoiceAxiom.ratioScaleOn {cf : ChoiceFn A}
+    (h : cf.HasChoiceAxiom) {T : Finset A} (hT : T.Nonempty)
+    (himp : cf.ImperfectOn T) :
+    ∃ v : A → ℝ, (∀ x ∈ T, 0 < v x) ∧
+      ∀ S ⊆ T, ∀ a ∈ S, cf.prob S a = v a / ∑ b ∈ S, v b := by
+  have hpos : ∀ x ∈ T, 0 < cf.prob T x := by
+    intro x hx
+    rcases lt_or_eq_of_le (cf.prob_nonneg T x) with hlt | heq
+    · exact hlt
+    -- a zero propagates to every element of T, contradicting the unit sum
+    have hall : ∀ y ∈ T, cf.prob T y = 0 := by
+      intro y hy
+      rcases eq_or_ne y x with rfl | hyx
+      · exact heq.symm
+      have hsub : ({x, y} : Finset A) ⊆ T :=
+        Finset.insert_subset hx (Finset.singleton_subset_iff.mpr hy)
+      have hprod := h.product_rule T himp {x} {x, y} (by simp) hsub
+      rw [Finset.sum_singleton, Finset.sum_singleton,
+        Finset.sum_pair (Ne.symm hyx)] at hprod
+      have hbin : 0 < cf.prob {x, y} x := (himp x hx y hy (Ne.symm hyx)).1
+      have h0 : cf.prob {x, y} x * cf.prob T y = 0 := by
+        rw [← heq] at hprod
+        linarith [hprod]
+      rcases mul_eq_zero.mp h0 with h' | h'
+      · exact absurd h' (ne_of_gt hbin)
+      · exact h'
+    have hsum := cf.prob_sum_eq_one T hT
+    rw [Finset.sum_eq_zero hall] at hsum
+    exact absurd hsum (by norm_num)
+  refine ⟨cf.prob T, hpos, fun S hS a ha ↦ ?_⟩
+  have hSpos : (0 : ℝ) < ∑ b ∈ S, cf.prob T b :=
+    Finset.sum_pos (fun b hb ↦ hpos b (hS hb)) ⟨a, ha⟩
+  have hprod := h.product_rule T himp {a} S (Finset.singleton_subset_iff.mpr ha) hS
+  rw [Finset.sum_singleton, Finset.sum_singleton] at hprod
+  rw [eq_div_iff (ne_of_gt hSpos)]
+  linarith [hprod]
+
+omit [DecidableEq A] in
+/-- Uniqueness half of **Theorem 3** of [luce-1959] (p. 23): two positive
+    scales representing the same choice probabilities on the menu `T` agree
+    on `T` up to a positive multiple. -/
+theorem ratioScaleOn_unique {cf : ChoiceFn A} {T : Finset A} (hT : T.Nonempty)
+    {v v' : A → ℝ} (hv : ∀ x ∈ T, 0 < v x) (hv' : ∀ x ∈ T, 0 < v' x)
+    (hrule : ∀ a ∈ T, cf.prob T a = v a / ∑ b ∈ T, v b)
+    (hrule' : ∀ a ∈ T, cf.prob T a = v' a / ∑ b ∈ T, v' b) :
+    ∃ k : ℝ, 0 < k ∧ ∀ a ∈ T, v' a = k * v a := by
+  have hsv : (0 : ℝ) < ∑ b ∈ T, v b := Finset.sum_pos hv hT
+  have hsv' : (0 : ℝ) < ∑ b ∈ T, v' b := Finset.sum_pos hv' hT
+  refine ⟨(∑ b ∈ T, v' b) / ∑ b ∈ T, v b, div_pos hsv' hsv, fun a ha ↦ ?_⟩
+  have h := (hrule a ha).symm.trans (hrule' a ha)
+  rw [div_eq_div_iff (ne_of_gt hsv) (ne_of_gt hsv')] at h
+  rw [div_mul_eq_mul_div, eq_div_iff (ne_of_gt hsv)]
+  linarith
+
+/-- Binary form of Theorem 3: the choice axiom plus imperfect discrimination
+    on `T` yield a binary ratio scale on `T`. -/
+theorem HasChoiceAxiom.binaryRatioScaleOn {cf : ChoiceFn A}
+    (h : cf.HasChoiceAxiom) {T : Finset A} (hT : T.Nonempty)
+    (himp : cf.ImperfectOn T) :
+    ∃ v : A → ℝ, cf.BinaryRatioScaleOn ↑T v := by
+  obtain ⟨v, hvpos, hrule⟩ := h.ratioScaleOn hT himp
+  refine ⟨v, fun x hx ↦ hvpos x (Finset.mem_coe.mp hx),
+    fun x hx y hy hxy ↦ ?_⟩
+  have hsub : ({x, y} : Finset A) ⊆ T :=
+    Finset.insert_subset (Finset.mem_coe.mp hx)
+      (Finset.singleton_subset_iff.mpr (Finset.mem_coe.mp hy))
+  rw [ChoiceFn.binary, hrule {x, y} hsub x (Finset.mem_insert_self x _),
+    Finset.sum_pair hxy, pairwiseProb]
+
+/-- **Theorem 2** of [luce-1959] (p. 16): under the choice axiom, imperfect
+    pairwise discrimination on a triple forces the cyclic product identity
+    `P(x,y)P(y,z)P(z,x) = P(x,z)P(z,y)P(y,x)` — a stochastic intransitivity
+    is exactly as probable as its reverse. -/
+theorem HasChoiceAxiom.binary_mul_cycle {cf : ChoiceFn A}
+    (h : cf.HasChoiceAxiom) {x y z : A} (hxy : x ≠ y) (hyz : y ≠ z)
+    (hxz : x ≠ z) (himp : cf.ImperfectOn {x, y, z}) :
+    cf.binary x y * cf.binary y z * cf.binary z x =
+      cf.binary x z * cf.binary z y * cf.binary y x := by
+  obtain ⟨v, hpos, hrule⟩ :=
+    h.binaryRatioScaleOn ⟨x, Finset.mem_insert_self x _⟩ himp
+  have mx : x ∈ (↑({x, y, z} : Finset A) : Set A) := by simp
+  have my : y ∈ (↑({x, y, z} : Finset A) : Set A) := by simp
+  have mz : z ∈ (↑({x, y, z} : Finset A) : Set A) := by simp
+  have px := hpos x mx
+  have py := hpos y my
+  have pz := hpos z mz
+  have n1 : v x + v y ≠ 0 := ne_of_gt (add_pos px py)
+  have n2 : v y + v z ≠ 0 := ne_of_gt (add_pos py pz)
+  have n3 : v z + v x ≠ 0 := ne_of_gt (add_pos pz px)
+  have n4 : v x + v z ≠ 0 := ne_of_gt (add_pos px pz)
+  have n5 : v z + v y ≠ 0 := ne_of_gt (add_pos pz py)
+  have n6 : v y + v x ≠ 0 := ne_of_gt (add_pos py px)
+  rw [hrule x mx y my hxy, hrule y my z mz hyz, hrule z mz x mx (Ne.symm hxz),
+    hrule x mx z mz hxz, hrule z mz y my (Ne.symm hyz),
+    hrule y my x mx (Ne.symm hxy)]
+  simp only [pairwiseProb]
+  field_simp
+  ring
+
+end ChoiceFn
+
+end ChoiceAxiomForms
+
+end ChoiceAxiom
 
 /-!
 ### §1.G: Just noticeable differences and the trace (pp. 34–37)
@@ -399,31 +974,11 @@ theorem StevensScale.choiceProb_mono (σ : StevensScale) {s₁ s₂ s₃ : ℝ}
     rpow_le_rpow (le_of_lt h₁) hle (le_of_lt σ.hn_pos)
   nlinarith [mul_le_mul_of_nonneg_right hrpow (le_of_lt hp₃)]
 
-/-- Stevens' power law choice probabilities satisfy the Luce model.
-
-Given a finite set of stimuli with positive intensities, the choice rule
-`score(s) = sⁿ` defines a valid `LuceModel`. The coefficient `k`
-drops out of the normalized choice probabilities. -/
-noncomputable def stevens_is_luce {Stimulus : Type*} [Fintype Stimulus]
-    (σ : StevensScale) (intensity : Stimulus → ℝ) (h_pos : ∀ s, 0 < intensity s) :
-    LuceModel Unit Stimulus where
-  score _ s := (intensity s) ^ σ.n
-  score_nonneg _ s := le_of_lt (rpow_pos_of_pos (h_pos s) σ.n)
-
-/-- The Luce model from Stevens' power law recovers the pairwise choice
-    probability as a special case (for a two-element choice set). -/
-theorem stevens_luce_pairwise {σ : StevensScale} {s₁ s₂ : ℝ}
-    (h₁ : 0 < s₁) (h₂ : 0 < s₂) :
-    let ra := stevens_is_luce σ (![s₁, s₂]) (fun i => by
-      fin_cases i <;> simp_all [Matrix.cons_val_zero, Matrix.cons_val_one])
-    ra.prob () (0 : Fin 2) = σ.choiceProb s₁ s₂ := by
-  intro ra
-  have hts : ra.totalScore () = s₁ ^ σ.n + s₂ ^ σ.n := by
-    simp [LuceModel.totalScore, ra, stevens_is_luce, Fin.sum_univ_two,
-      Matrix.cons_val_zero, Matrix.cons_val_one]
-  simp only [LuceModel.prob]
-  rw [hts]
-  simp [ra, stevens_is_luce, StevensScale.choiceProb, Matrix.cons_val_zero]
+/-- Stevens' power law is a Luce ratio scale: choice between two stimuli under the scale `sⁿ`
+follows the ratio rule, with the coefficient `k` dropping out. -/
+theorem stevens_luce_pairwise (σ : StevensScale) (s₁ s₂ : ℝ) :
+    ratioProb (fun i : Fin 2 ↦ ![s₁, s₂] i ^ σ.n) Finset.univ 0 = σ.choiceProb s₁ s₂ := by
+  simp [ratioProb, Fin.sum_univ_two, StevensScale.choiceProb]
 
 /-- Stevens' power-law choice probability is the pairwise Luce kernel
     `pairwiseProb` on the power scale `s ↦ sⁿ`. -/
@@ -604,21 +1159,6 @@ theorem multidim_two_decomposition
     _ = v₁ a₁ * (v (a₀, a₂) * v₂ b₀) := by ring
     _ = v₁ a₁ * (v₂ a₂ * v (a₀, b₀)) := by rw [eq₂]
     _ = v (a₀, b₀) * v₁ a₁ * v₂ a₂ := by ring
-
-/-- The Luce choice rule for multi-dimensional stimuli with independent
-    dimensions decomposes into a product of per-dimension contributions.
-
-    For a choice between multi-dimensional alternatives, the choice
-    probability factors:
-    `P(a, T) ∝ ∏ d, scale d (a d)` -/
-noncomputable def multidim_luce {D : Type*} [Fintype D] [DecidableEq D]
-    {S : D → Type*} {Alt : Type*} [Fintype Alt]
-    (ms : MultidimStimulus D S)
-    (stimulus : Alt → (d : D) → S d) :
-    LuceModel Unit Alt where
-  score _ a := ∏ d : D, ms.scale d (stimulus a d)
-  score_nonneg _ a := Finset.prod_nonneg
-    (fun d _ => le_of_lt (ms.scale_pos d (stimulus a d)))
 
 /-- Independence implies that the multi-dimensional Luce model
     recovers the single-dimension choice probability when all other
@@ -809,7 +1349,7 @@ section Ranking
 
 open BigOperators Finset Real
 
-variable {S A : Type*} [Fintype A] [DecidableEq A]
+variable {A : Type*} [DecidableEq A]
 
 /-! ### Ranking probability ([luce-1959], §2.F, pp. 68–74) -/
 
@@ -820,11 +1360,11 @@ def tailSuffix (ranking : List A) (i : Nat) : Finset A :=
 
 /-- Probability of a single step in the ranking: choosing `ranking[i]` from
     the remaining alternatives `{ranking[i], ranking[i+1],...}`. -/
-noncomputable def rankStepProb (ra : LuceModel S A) (s : S)
+noncomputable def rankStepProb (v : A → ℝ)
     (ranking : List A) (i : Nat) : ℝ :=
   match ranking[i]? with
   | none => 1
-  | some a => ra.probOn s (tailSuffix ranking i) a
+  | some a => ratioProb v (tailSuffix ranking i) a
 
 /-- **Ranking probability** ([luce-1959]'s ranking postulate, p. 72):
     The probability of observing the complete rank ordering `a₁ > a₂ >... > aₙ`
@@ -835,14 +1375,14 @@ noncomputable def rankStepProb (ra : LuceModel S A) (s : S)
 
     Under the Luce model with ratio scale `v`, this becomes:
     `P(a₁ >... > aₙ) = ∏ᵢ v(aᵢ) / ∑ⱼ≥ᵢ v(aⱼ)` -/
-noncomputable def rankProb (ra : LuceModel S A) (s : S) (ranking : List A) : ℝ :=
-  (List.range ranking.length).foldl (fun acc i => acc * rankStepProb ra s ranking i) 1
+noncomputable def rankProb (v : A → ℝ) (ranking : List A) : ℝ :=
+  (List.range ranking.length).foldl (fun acc i => acc * rankStepProb v ranking i) 1
 
 /-- Recursive characterization of ranking probability: the first-choice probability
     times the ranking probability of the remaining alternatives. -/
-noncomputable def rankProbRec (ra : LuceModel S A) (s : S) : List A → ℝ
+noncomputable def rankProbRec (v : A → ℝ) : List A → ℝ
   | [] => 1
-  | a :: rest => ra.probOn s (a :: rest).toFinset a * rankProbRec ra s rest
+  | a :: rest => ratioProb v (a :: rest).toFinset a * rankProbRec v rest
 
 /-- Foldl with multiplication factors out the initial value:
     `foldl (· * f ·) c xs = c * foldl (· * f ·) 1 xs`. -/
@@ -871,32 +1411,33 @@ private theorem foldl_range_succ (f : Nat → ℝ) (n : Nat) :
     - `List.range_succ_eq_map` to decompose `range(n+1) = 0 :: map succ (range n)`
     - `List.foldl_map` to shift indices through the map
     - `foldl_mul_comm_init` to factor out the first-choice probability
-    - Definitional equalities: `rankStepProb (a::rest) 0 = probOn` and
+    - Definitional equalities: `rankStepProb (a::rest) 0 = ratioProb` and
       `rankStepProb (a::rest) (i+1) = rankStepProb rest i` -/
-theorem rankProbRec_eq_rankProb (ra : LuceModel S A) (s : S) (ranking : List A) :
-    rankProbRec ra s ranking = rankProb ra s ranking := by
+theorem rankProbRec_eq_rankProb (v : A → ℝ) (ranking : List A) :
+    rankProbRec v ranking = rankProb v ranking := by
   induction ranking with
   | nil => rfl
   | cons a rest ih =>
-    show ra.probOn s (a :: rest).toFinset a * rankProbRec ra s rest =
+    show ratioProb v (a :: rest).toFinset a * rankProbRec v rest =
       (List.range (rest.length + 1)).foldl
-        (fun acc i => acc * rankStepProb ra s (a :: rest) i) 1
+        (fun acc i => acc * rankStepProb v (a :: rest) i) 1
     rw [ih, rankProb, foldl_range_succ]
     -- Both sides now match by definitional equalities:
-    -- rankStepProb (a::rest) 0 = probOn (since (a::rest)[0]? = some a
+    -- rankStepProb (a::rest) 0 = ratioProb (since (a::rest)[0]? = some a
     --   and tailSuffix (a::rest) 0 = (a::rest).toFinset)
     -- rankStepProb (a::rest) (i+1) = rankStepProb rest i (since
     --   (a::rest)[i+1]? = rest[i]? and tailSuffix (a::rest) (i+1) = tailSuffix rest i)
     congr 1
 
-/-- Each `rankStepProb` is non-negative: either 1 (out of range) or `probOn`. -/
-private theorem rankStepProb_nonneg (ra : LuceModel S A) (s : S)
-    (ranking : List A) (i : Nat) :
-    0 ≤ rankStepProb ra s ranking i := by
+/-- Each `rankStepProb` is non-negative: either 1 (out of range) or `ratioProb`. -/
+private theorem rankStepProb_nonneg (v : A → ℝ)
+    (ranking : List A) (hv : ∀ a ∈ ranking, 0 ≤ v a) (i : Nat) :
+    0 ≤ rankStepProb v ranking i := by
   simp only [rankStepProb]
   cases ranking[i]? with
   | none => linarith
-  | some a => exact ra.probOn_nonneg s _ a
+  | some a => exact ratioProb_nonneg (fun b hb ↦
+      hv b (List.mem_of_mem_drop (List.mem_toFinset.mp hb))) a
 
 private theorem foldl_mul_nonneg {f : Nat → ℝ} {init : ℝ}
     (hinit : 0 ≤ init) (hf : ∀ i, 0 ≤ f i) :
@@ -904,44 +1445,43 @@ private theorem foldl_mul_nonneg {f : Nat → ℝ} {init : ℝ}
   | [] => by simpa using hinit
   | x :: xs => foldl_mul_nonneg (mul_nonneg hinit (hf x)) hf xs
 
-/-- Ranking probability is non-negative: each factor is a `probOn` value,
+/-- Ranking probability is non-negative: each factor is a `ratioProb` value,
     hence non-negative. -/
-theorem rankProb_nonneg (ra : LuceModel S A) (s : S) (ranking : List A) :
-    0 ≤ rankProb ra s ranking :=
-  foldl_mul_nonneg one_pos.le (rankStepProb_nonneg ra s ranking) _
+theorem rankProb_nonneg (v : A → ℝ) (ranking : List A) (hv : ∀ a ∈ ranking, 0 ≤ v a) :
+    0 ≤ rankProb v ranking :=
+  foldl_mul_nonneg one_pos.le (rankStepProb_nonneg v ranking hv) _
 
 /-- `rankProbRec` is positive when all scores are positive. -/
-theorem rankProbRec_pos (ra : LuceModel S A) (s : S) (ranking : List A)
-    (hpos : ∀ b, 0 < ra.score s b) : 0 < rankProbRec ra s ranking := by
+theorem rankProbRec_pos (v : A → ℝ) (ranking : List A)
+    (hpos : ∀ b, 0 < v b) : 0 < rankProbRec v ranking := by
   induction ranking with
   | nil => simp [rankProbRec]
   | cons a rest ih =>
-    show 0 < ra.probOn s (a :: rest).toFinset a * rankProbRec ra s rest
+    show 0 < ratioProb v (a :: rest).toFinset a * rankProbRec v rest
     exact mul_pos
-      (LuceModel.probOn_pos (by simp [List.toFinset_cons]) fun b _ => hpos b) ih
+      (ratioProb_pos (by simp [List.toFinset_cons]) fun b _ => hpos b) ih
 
 /-- Ranking probability is positive when all scores are positive. -/
-theorem rankProb_pos (ra : LuceModel S A) (s : S) (ranking : List A)
-    (hpos : ∀ b, 0 < ra.score s b) : 0 < rankProb ra s ranking :=
-  rankProbRec_eq_rankProb ra s ranking ▸ rankProbRec_pos ra s ranking hpos
+theorem rankProb_pos (v : A → ℝ) (ranking : List A)
+    (hpos : ∀ b, 0 < v b) : 0 < rankProb v ranking :=
+  rankProbRec_eq_rankProb v ranking ▸ rankProbRec_pos v ranking hpos
 
 /-! ### Score-ratio form -/
 
 /-- The score-ratio factor at position `i`: `v(aᵢ) / ∑ⱼ≥ᵢ v(aⱼ)`.
     This is the `i`-th factor in the score-product form of ranking probability. -/
-noncomputable def scoreRatio (ra : LuceModel S A) (s : S)
+noncomputable def scoreRatio (v : A → ℝ)
     (ranking : List A) (i : Nat) : ℝ :=
   match ranking[i]? with
   | none => 1
-  | some a => ra.score s a / ∑ b ∈ tailSuffix ranking i, ra.score s b
+  | some a => v a / ∑ b ∈ tailSuffix ranking i, v b
 
 /-- The score-product form of ranking probability:
     `∏ᵢ v(aᵢ) / ∑ⱼ≥ᵢ v(aⱼ)`. -/
-noncomputable def rankProbScoreProd (ra : LuceModel S A) (s : S)
+noncomputable def rankProbScoreProd (v : A → ℝ)
     (ranking : List A) : ℝ :=
-  (List.range ranking.length).foldl (fun acc i => acc * scoreRatio ra s ranking i) 1
+  (List.range ranking.length).foldl (fun acc i => acc * scoreRatio v ranking i) 1
 
-omit [Fintype A] in
 /-- If `ranking[i]? = some a`, then `a` is in the tail suffix at position `i`.
     This is because `a = ranking[i]` is the head of `ranking.drop i`. -/
 private theorem mem_tailSuffix_of_getElem?
@@ -958,27 +1498,27 @@ private theorem mem_tailSuffix_of_getElem?
     rw [h] at this; exact Option.some.inj this.symm
   rw [hval]; exact List.Mem.head _
 
-/-- `rankStepProb` equals `scoreRatio` at every position: the `probOn`
+/-- `rankStepProb` equals `scoreRatio` at every position: the `ratioProb`
     formulation and the explicit score/sum formulation agree because
     `ranking[i]` is always in the tail suffix at position `i`. -/
-private theorem rankStepProb_eq_scoreRatio (ra : LuceModel S A) (s : S)
+private theorem rankStepProb_eq_scoreRatio (v : A → ℝ)
     (ranking : List A) (i : Nat) :
-    rankStepProb ra s ranking i = scoreRatio ra s ranking i := by
+    rankStepProb v ranking i = scoreRatio v ranking i := by
   simp only [rankStepProb, scoreRatio]
   cases h : ranking[i]? with
   | none => rfl
   | some a =>
     have hmem : a ∈ tailSuffix ranking i := mem_tailSuffix_of_getElem? h
-    simp only [LuceModel.probOn, hmem, ↓reduceIte]
+    simp only [ratioProb, hmem, ↓reduceIte]
 
 /-- **Score form**: ranking probability equals the product of score ratios. -/
-theorem rankProb_eq_score_prod (ra : LuceModel S A) (s : S) (ranking : List A)
+theorem rankProb_eq_score_prod (v : A → ℝ) (ranking : List A)
     (_hnd : ranking.Nodup) :
-    rankProb ra s ranking = rankProbScoreProd ra s ranking := by
+    rankProb v ranking = rankProbScoreProd v ranking := by
   simp only [rankProb, rankProbScoreProd]
   congr 1
   ext acc i
-  exact congrArg (acc * ·) (rankStepProb_eq_scoreRatio ra s ranking i)
+  exact congrArg (acc * ·) (rankStepProb_eq_scoreRatio v ranking i)
 
 /-! ### Summation over permutations -/
 
@@ -986,7 +1526,6 @@ theorem rankProb_eq_score_prod (ra : LuceModel S A) (s : S) (ranking : List A)
 noncomputable def allRankings (T : Finset A) : Finset (List A) :=
   T.val.toList.permutations.toFinset
 
-omit [Fintype A] in
 /-- Every ranking in `allRankings T` is a permutation of `T`.
 
     Uses `List.mem_permutations`, `List.perm_ext_iff_of_nodup`, and
@@ -1012,7 +1551,6 @@ theorem mem_allRankings_iff (T : Finset A) (ranking : List A) :
 
 /-! ### Decomposition of `allRankings` by first element -/
 
-omit [Fintype A] in
 /-- Cons into allRankings: if `rest ∈ allRankings (T.erase a)` and `a ∈ T`,
     then `a :: rest ∈ allRankings T`. -/
 private theorem cons_mem_allRankings {T : Finset A} {a : A} {rest : List A}
@@ -1026,7 +1564,6 @@ private theorem cons_mem_allRankings {T : Finset A} {a : A} {rest : List A}
     refine ⟨fun h => ?_, hnd⟩
     exact (Finset.mem_erase.mp (hfs ▸ List.mem_toFinset.mpr h)).1 rfl
 
-omit [Fintype A] in
 /-- Extract first element: if `a :: rest ∈ allRankings T`,
     then `a ∈ T` and `rest ∈ allRankings (T.erase a)`. -/
 private theorem of_cons_mem_allRankings {T : Finset A} {a : A} {rest : List A}
@@ -1045,7 +1582,6 @@ private theorem of_cons_mem_allRankings {T : Finset A} {a : A} {rest : List A}
       rw [← hfs, Finset.erase_insert ha_nin]
     · exact hnd.2
 
-omit [Fintype A] in
 /-- Rankings of a nonempty set are nonempty lists. -/
 private theorem allRankings_ne_nil {T : Finset A} (hT : T.Nonempty)
     {r : List A} (hr : r ∈ allRankings T) : r ≠ [] := by
@@ -1054,7 +1590,6 @@ private theorem allRankings_ne_nil {T : Finset A} (hT : T.Nonempty)
   simp at hr
   exact Finset.Nonempty.ne_empty hT hr.symm
 
-omit [Fintype A] in
 /-- `allRankings T = ⋃_{a ∈ T} image (cons a) (allRankings (T.erase a))`. -/
 private theorem allRankings_eq_biUnion (T : Finset A) (hT : T.Nonempty) :
     allRankings T = T.biUnion (fun a => (allRankings (T.erase a)).image (List.cons a)) := by
@@ -1069,7 +1604,6 @@ private theorem allRankings_eq_biUnion (T : Finset A) (hT : T.Nonempty) :
   · rintro ⟨a, ha, rest, hrest, rfl⟩
     exact cons_mem_allRankings ha hrest
 
-omit [Fintype A] in
 /-- Cons-images for distinct first elements are disjoint. -/
 private theorem cons_image_pairwise_disjoint (T : Finset A) :
     (T : Set A).PairwiseDisjoint
@@ -1079,7 +1613,6 @@ private theorem cons_image_pairwise_disjoint (T : Finset A) :
   rintro r ⟨_, _, rfl⟩ ⟨_, _, h⟩
   exact hab (List.cons.inj h).1.symm
 
-omit [Fintype A] in
 /-- Decompose a sum over `allRankings T` by first element. -/
 private theorem sum_allRankings_by_first (T : Finset A) (hT : T.Nonempty)
     (f : List A → ℝ) :
@@ -1091,38 +1624,38 @@ private theorem sum_allRankings_by_first (T : Finset A) (hT : T.Nonempty)
   intro r₁ _ r₂ _ h
   exact List.cons.inj h |>.2
 
-/-- `rankProb (a :: rest)` factors as `probOn s T a * rankProb rest`
+/-- `rankProb (a :: rest)` factors as `ratioProb s T a * rankProb rest`
     when `(a :: rest).toFinset = T`. -/
-private theorem rankProb_cons_eq (ra : LuceModel S A) (s : S)
+private theorem rankProb_cons_eq (v : A → ℝ)
     (T : Finset A) (a : A) (rest : List A)
     (hfs : (a :: rest).toFinset = T) :
-    rankProb ra s (a :: rest) = ra.probOn s T a * rankProb ra s rest := by
+    rankProb v (a :: rest) = ratioProb v T a * rankProb v rest := by
   rw [← rankProbRec_eq_rankProb, ← rankProbRec_eq_rankProb]
-  show ra.probOn s (a :: rest).toFinset a * rankProbRec ra s rest =
-    ra.probOn s T a * rankProbRec ra s rest
+  show ratioProb v (a :: rest).toFinset a * rankProbRec v rest =
+    ratioProb v T a * rankProbRec v rest
   rw [hfs]
 
 /-! ### Ranking probabilities sum to 1 -/
 
 /-- Score positivity propagates to erased subsets. -/
-private theorem score_pos_erase {ra : LuceModel S A} {s : S}
-    {T : Finset A} (hpos : ∀ a ∈ T, 0 < ra.score s a)
-    (a : A) : ∀ b ∈ T.erase a, 0 < ra.score s b :=
+private theorem score_pos_erase {v : A → ℝ}
+    {T : Finset A} (hpos : ∀ a ∈ T, 0 < v a)
+    (a : A) : ∀ b ∈ T.erase a, 0 < v b :=
   fun b hb => hpos b (Finset.mem_of_mem_erase hb)
 
 omit [DecidableEq A] in
 /-- Score positivity implies nonzero sum over nonempty sets. -/
-private theorem score_sum_ne_zero {ra : LuceModel S A} {s : S}
-    {T : Finset A} (hT : T.Nonempty) (hpos : ∀ a ∈ T, 0 < ra.score s a) :
-    ∑ b ∈ T, ra.score s b ≠ 0 := by
+private theorem score_sum_ne_zero {v : A → ℝ}
+    {T : Finset A} (hT : T.Nonempty) (hpos : ∀ a ∈ T, 0 < v a) :
+    ∑ b ∈ T, v b ≠ 0 := by
   obtain ⟨a, ha⟩ := hT
   exact ne_of_gt (Finset.sum_pos (fun b hb => hpos b hb) ⟨a, ha⟩)
 
 /-- Core induction: ranking probabilities sum to 1 for any finset
     with strictly positive scores. -/
-private theorem rankProb_sum_eq_one_aux (ra : LuceModel S A) (s : S) :
-    ∀ (n : ℕ) (T : Finset A), T.card = n → (∀ a ∈ T, 0 < ra.score s a) →
-    ∑ r ∈ allRankings T, rankProb ra s r = 1 := by
+private theorem rankProb_sum_eq_one_aux (v : A → ℝ) :
+    ∀ (n : ℕ) (T : Finset A), T.card = n → (∀ a ∈ T, 0 < v a) →
+    ∑ r ∈ allRankings T, rankProb v r = 1 := by
   intro n
   induction n with
   | zero =>
@@ -1137,14 +1670,14 @@ private theorem rankProb_sum_eq_one_aux (ra : LuceModel S A) (s : S) :
     have hT : T.Nonempty := Finset.card_pos.mp (by omega)
     rw [sum_allRankings_by_first T hT]
     have step : ∀ a ∈ T,
-        ∑ rest ∈ allRankings (T.erase a), rankProb ra s (a :: rest) =
-        ra.probOn s T a := by
+        ∑ rest ∈ allRankings (T.erase a), rankProb v (a :: rest) =
+        ratioProb v T a := by
       intro a ha
       have hcard_erase : (T.erase a).card = n := by
         rw [Finset.card_erase_of_mem ha, hcard]; omega
       have hpos_erase := score_pos_erase hpos a
       have : ∀ rest ∈ allRankings (T.erase a),
-          rankProb ra s (a :: rest) = ra.probOn s T a * rankProb ra s rest := by
+          rankProb v (a :: rest) = ratioProb v T a * rankProb v rest := by
         intro rest hrest
         apply rankProb_cons_eq
         rw [mem_allRankings_iff] at hrest
@@ -1152,23 +1685,22 @@ private theorem rankProb_sum_eq_one_aux (ra : LuceModel S A) (s : S) :
       rw [Finset.sum_congr rfl this, ← Finset.mul_sum]
       rw [ih (T.erase a) hcard_erase hpos_erase, mul_one]
     rw [Finset.sum_congr rfl step]
-    exact ra.probOn_sum_eq_one s T (score_sum_ne_zero hT hpos)
+    exact ratioProb_sum_eq_one v T (score_sum_ne_zero hT hpos)
 
 /-- **Ranking probabilities sum to 1**: over all `n!` permutations of the
     alternative set, ranking probabilities form a proper distribution.
     Requires strictly positive scores (Luce's ratio scale assumption). -/
-theorem rankProb_sum_eq_one (ra : LuceModel S A) (s : S)
-    (T : Finset A) (hpos : ∀ a ∈ T, 0 < ra.score s a) :
-    ∑ r ∈ allRankings T, rankProb ra s r = 1 :=
-  rankProb_sum_eq_one_aux ra s T.card T rfl hpos
+theorem rankProb_sum_eq_one (v : A → ℝ)
+    (T : Finset A) (hpos : ∀ a ∈ T, 0 < v a) :
+    ∑ r ∈ allRankings T, rankProb v r = 1 :=
+  rankProb_sum_eq_one_aux v T.card T rfl hpos
 
-/-! ### Marginalization: recovering `probOn` -/
+/-! ### Marginalization: recovering `ratioProb` -/
 
 /-- Rankings starting with a given element `a`. -/
 noncomputable def rankingsStartingWith (T : Finset A) (a : A) : Finset (List A) :=
   (allRankings T).filter (fun r => r.head? = some a)
 
-omit [Fintype A] in
 /-- Rankings starting with `a` biject with `allRankings (T.erase a)` via cons. -/
 private theorem rankingsStartingWith_eq (T : Finset A) (a : A) (ha : a ∈ T) :
     rankingsStartingWith T a = (allRankings (T.erase a)).image (List.cons a) := by
@@ -1188,17 +1720,17 @@ private theorem rankingsStartingWith_eq (T : Finset A) (a : A) (ha : a ∈ T) :
 
 /-- **Marginal first-choice**: summing the ranking probability over all
     rankings that start with `a` recovers the choice probability
-    `probOn(a, T)`. ([luce-1959]'s own Theorem 9, p. 72, is the pairwise
+    `ratioProb(a, T)`. ([luce-1959]'s own Theorem 9, p. 72, is the pairwise
     analogue: `P(x,y)` is recovered by summing over rankings placing `x`
     above `y`.) -/
-theorem rankProb_marginal_first (ra : LuceModel S A) (s : S)
+theorem rankProb_marginal_first (v : A → ℝ)
     (T : Finset A) (a : A) (ha : a ∈ T)
-    (hpos : ∀ b ∈ T, 0 < ra.score s b) :
-    ∑ r ∈ rankingsStartingWith T a, rankProb ra s r = ra.probOn s T a := by
+    (hpos : ∀ b ∈ T, 0 < v b) :
+    ∑ r ∈ rankingsStartingWith T a, rankProb v r = ratioProb v T a := by
   rw [rankingsStartingWith_eq T a ha]
   rw [Finset.sum_image (fun r₁ _ r₂ _ h => (List.cons.inj h).2)]
   have hrw : ∀ rest ∈ allRankings (T.erase a),
-      rankProb ra s (a :: rest) = ra.probOn s T a * rankProb ra s rest := by
+      rankProb v (a :: rest) = ratioProb v T a * rankProb v rest := by
     intro rest hrest
     apply rankProb_cons_eq
     rw [mem_allRankings_iff] at hrest
@@ -1206,7 +1738,7 @@ theorem rankProb_marginal_first (ra : LuceModel S A) (s : S)
   rw [Finset.sum_congr rfl hrw, ← Finset.mul_sum]
   have hcard_pos : 0 < (T.erase a).card ∨ (T.erase a).card = 0 := by omega
   rcases hcard_pos with hcp | hcp
-  · rw [rankProb_sum_eq_one_aux ra s (T.erase a).card (T.erase a) rfl
+  · rw [rankProb_sum_eq_one_aux v (T.erase a).card (T.erase a) rfl
           (score_pos_erase hpos a), mul_one]
   · have : T.erase a = ∅ := Finset.card_eq_zero.mp hcp
     simp only [this, allRankings, Finset.empty_val, Multiset.toList_zero,
@@ -1218,58 +1750,58 @@ theorem rankProb_marginal_first (ra : LuceModel S A) (s : S)
 
 /-- One step of `rankProbRec` in score form, for a head not repeated in the
     tail. -/
-theorem rankProbRec_cons (ra : LuceModel S A) (s : S) {a : A} {l : List A}
+theorem rankProbRec_cons (v : A → ℝ) {a : A} {l : List A}
     (ha : a ∉ l) :
-    rankProbRec ra s (a :: l) =
-      ra.score s a / (ra.score s a + ∑ b ∈ l.toFinset, ra.score s b) *
-        rankProbRec ra s l := by
+    rankProbRec v (a :: l) =
+      v a / (v a + ∑ b ∈ l.toFinset, v b) *
+        rankProbRec v l := by
   have hnot : a ∉ l.toFinset := by rwa [List.mem_toFinset]
-  show ra.probOn s (a :: l).toFinset a * rankProbRec ra s l = _
+  show ratioProb v (a :: l).toFinset a * rankProbRec v l = _
   rw [List.toFinset_cons,
-    ra.probOn_eq_div s _ a (Finset.mem_insert_self a l.toFinset),
+    ratioProb_eq_div v _ a (Finset.mem_insert_self a l.toFinset),
     Finset.sum_insert hnot]
 
 /-- Swapping two adjacent elements scales the ranking probability by
     `(v x + S) / (v y + S)`, where `S` sums the scores of the remaining
     alternatives — not by the naive `v x / v y`: the second step of each
     ranking draws from a different set. -/
-theorem rankProb_swap_div (ra : LuceModel S A) (s : S) (x y : A)
+theorem rankProb_swap_div (v : A → ℝ) (x y : A)
     (rest : List A) (hx : x ∉ rest) (hy : y ∉ rest)
-    (hpos : ∀ b, 0 < ra.score s b) :
-    rankProb ra s (x :: y :: rest) / rankProb ra s (y :: x :: rest) =
-      (ra.score s x + ∑ b ∈ rest.toFinset, ra.score s b) /
-        (ra.score s y + ∑ b ∈ rest.toFinset, ra.score s b) := by
+    (hpos : ∀ b, 0 < v b) :
+    rankProb v (x :: y :: rest) / rankProb v (y :: x :: rest) =
+      (v x + ∑ b ∈ rest.toFinset, v b) /
+        (v y + ∑ b ∈ rest.toFinset, v b) := by
   rw [← rankProbRec_eq_rankProb, ← rankProbRec_eq_rankProb]
-  have hS : 0 ≤ ∑ b ∈ rest.toFinset, ra.score s b :=
+  have hS : 0 ≤ ∑ b ∈ rest.toFinset, v b :=
     Finset.sum_nonneg fun b _ => (hpos b).le
   have hvx := (hpos x).ne'
   have hvy := (hpos y).ne'
-  have htail := (rankProbRec_pos ra s rest hpos).ne'
+  have htail := (rankProbRec_pos v rest hpos).ne'
   have hxS := (add_pos_of_pos_of_nonneg (hpos x) hS).ne'
   have hyS := (add_pos_of_pos_of_nonneg (hpos y) hS).ne'
-  have hT : (∑ b ∈ (x :: y :: rest).toFinset, ra.score s b) ≠ 0 :=
+  have hT : (∑ b ∈ (x :: y :: rest).toFinset, v b) ≠ 0 :=
     (Finset.sum_pos (fun b _ => hpos b) ⟨x, by simp⟩).ne'
   have hT_eq : (y :: x :: rest).toFinset = (x :: y :: rest).toFinset := by
     simp only [List.toFinset_cons]
     exact Finset.insert_comm y x rest.toFinset
-  show ra.probOn s (x :: y :: rest).toFinset x * rankProbRec ra s (y :: rest) /
-      (ra.probOn s (y :: x :: rest).toFinset y * rankProbRec ra s (x :: rest)) = _
-  rw [hT_eq, rankProbRec_cons ra s hy, rankProbRec_cons ra s hx,
-    ra.probOn_eq_div s _ x (by simp), ra.probOn_eq_div s _ y (by simp)]
+  show ratioProb v (x :: y :: rest).toFinset x * rankProbRec v (y :: rest) /
+      (ratioProb v (y :: x :: rest).toFinset y * rankProbRec v (x :: rest)) = _
+  rw [hT_eq, rankProbRec_cons v hy, rankProbRec_cons v hx,
+    ratioProb_eq_div v _ x (by simp), ratioProb_eq_div v _ y (by simp)]
   field_simp
 
 /-- Swapping adjacent elements into score order strictly increases ranking
     probability: if `v y < v x`, then `x` before `y` is the more probable
     order. -/
-theorem rankProb_swap_lt_of_score_lt (ra : LuceModel S A) (s : S) {x y : A}
+theorem rankProb_swap_lt_of_score_lt (v : A → ℝ) {x y : A}
     (rest : List A) (hx : x ∉ rest) (hy : y ∉ rest)
-    (hpos : ∀ b, 0 < ra.score s b) (hlt : ra.score s y < ra.score s x) :
-    rankProb ra s (y :: x :: rest) < rankProb ra s (x :: y :: rest) := by
-  have hden := rankProb_pos ra s (y :: x :: rest) hpos
-  have hS : 0 ≤ ∑ b ∈ rest.toFinset, ra.score s b :=
+    (hpos : ∀ b, 0 < v b) (hlt : v y < v x) :
+    rankProb v (y :: x :: rest) < rankProb v (x :: y :: rest) := by
+  have hden := rankProb_pos v (y :: x :: rest) hpos
+  have hS : 0 ≤ ∑ b ∈ rest.toFinset, v b :=
     Finset.sum_nonneg fun b _ => (hpos b).le
-  have h1 : 1 < rankProb ra s (x :: y :: rest) / rankProb ra s (y :: x :: rest) := by
-    rw [rankProb_swap_div ra s x y rest hx hy hpos,
+  have h1 : 1 < rankProb v (x :: y :: rest) / rankProb v (y :: x :: rest) := by
+    rw [rankProb_swap_div v x y rest hx hy hpos,
       one_lt_div (add_pos_of_pos_of_nonneg (hpos y) hS)]
     linarith
   exact (one_lt_div hden).mp h1
@@ -1287,19 +1819,17 @@ def rankOf (ranking : List A) (a : A) : Nat :=
 
     The monotonicity theorem `expectedRank_lt_of_score_gt` shows that
     alternatives with higher `v(a)` have lower (better) expected rank. -/
-noncomputable def expectedRank (ra : LuceModel S A) (s : S)
+noncomputable def expectedRank (v : A → ℝ)
     (T : Finset A) (a : A) : ℝ :=
-  ∑ r ∈ allRankings T, rankProb ra s r * (rankOf r a : ℝ)
+  ∑ r ∈ allRankings T, rankProb v r * (rankOf r a : ℝ)
 
 /-! ### Expected rank monotonicity: infrastructure -/
 
-omit [Fintype A] in
 /-- `rankOf (a :: rest) a = 1`: the first element has rank 1. -/
 private theorem rankOf_cons_self (a : A) (rest : List A) :
     rankOf (a :: rest) a = 1 := by
   simp [rankOf, List.findIdx_cons]
 
-omit [Fintype A] in
 /-- `rankOf (b :: rest) a = rankOf rest a + 1` when `b ≠ a` and `a ∈ rest`. -/
 private theorem rankOf_cons_ne {b a : A} {rest : List A}
     (hne : b ≠ a) (ha : a ∈ rest) :
@@ -1309,18 +1839,18 @@ private theorem rankOf_cons_ne {b a : A} {rest : List A}
   simp [show (b == a) = false from by simp [hne]]
 
 /-! ### Expected rank decomposition:
-`E[rank(a,T)] = 1 + ∑_{b≠a} probOn(b) · E[rank(a,T\{b})]` -/
+`E[rank(a,T)] = 1 + ∑_{b≠a} ratioProb(b) · E[rank(a,T\{b})]` -/
 
-/-- Inner sum when the first element equals `a`: contributes `probOn(a, T)`. -/
-private theorem expectedRank_first_self (ra : LuceModel S A) (s : S)
+/-- Inner sum when the first element equals `a`: contributes `ratioProb(a, T)`. -/
+private theorem expectedRank_first_self (v : A → ℝ)
     (T : Finset A) (a : A) (ha : a ∈ T)
-    (hpos : ∀ b ∈ T, 0 < ra.score s b) :
+    (hpos : ∀ b ∈ T, 0 < v b) :
     ∑ rest ∈ allRankings (T.erase a),
-      rankProb ra s (a :: rest) * (rankOf (a :: rest) a : ℝ) =
-    ra.probOn s T a := by
+      rankProb v (a :: rest) * (rankOf (a :: rest) a : ℝ) =
+    ratioProb v T a := by
   have hsub : ∀ rest ∈ allRankings (T.erase a),
-      rankProb ra s (a :: rest) * (rankOf (a :: rest) a : ℝ) =
-      ra.probOn s T a * rankProb ra s rest := by
+      rankProb v (a :: rest) * (rankOf (a :: rest) a : ℝ) =
+      ratioProb v T a * rankProb v rest := by
     intro rest hrest
     rw [show (rankOf (a :: rest) a : ℝ) = 1 from by simp [rankOf_cons_self]]
     rw [mul_one]
@@ -1328,27 +1858,27 @@ private theorem expectedRank_first_self (ra : LuceModel S A) (s : S)
     rw [mem_allRankings_iff] at hrest
     simp [List.toFinset_cons, hrest.1, Finset.insert_erase ha]
   rw [Finset.sum_congr rfl hsub, ← Finset.mul_sum,
-      rankProb_sum_eq_one_aux ra s _ _ rfl (score_pos_erase hpos a), mul_one]
+      rankProb_sum_eq_one_aux v _ _ rfl (score_pos_erase hpos a), mul_one]
 
 /-- Inner sum when first element is `b ≠ a`:
-    contributes `probOn(b, T) · (1 + E[rank(a, T\{b})])`. -/
-private theorem expectedRank_first_ne (ra : LuceModel S A) (s : S)
+    contributes `ratioProb(b, T) · (1 + E[rank(a, T\{b})])`. -/
+private theorem expectedRank_first_ne (v : A → ℝ)
     (T : Finset A) (a b : A) (ha : a ∈ T) (hb : b ∈ T) (hne : b ≠ a)
-    (hpos : ∀ c ∈ T, 0 < ra.score s c) :
+    (hpos : ∀ c ∈ T, 0 < v c) :
     ∑ rest ∈ allRankings (T.erase b),
-      rankProb ra s (b :: rest) * (rankOf (b :: rest) a : ℝ) =
-    ra.probOn s T b * (1 + expectedRank ra s (T.erase b) a) := by
+      rankProb v (b :: rest) * (rankOf (b :: rest) a : ℝ) =
+    ratioProb v T b * (1 + expectedRank v (T.erase b) a) := by
   have ha_erase : a ∈ T.erase b := Finset.mem_erase.mpr ⟨hne.symm, ha⟩
   have ha_rest : ∀ rest ∈ allRankings (T.erase b), a ∈ rest := by
     intro rest hrest
     rw [mem_allRankings_iff] at hrest
     exact List.mem_toFinset.mp (hrest.1 ▸ ha_erase)
   have hsub : ∀ rest ∈ allRankings (T.erase b),
-      rankProb ra s (b :: rest) * (rankOf (b :: rest) a : ℝ) =
-      ra.probOn s T b * (rankProb ra s rest * (rankOf rest a : ℝ) +
-        rankProb ra s rest) := by
+      rankProb v (b :: rest) * (rankOf (b :: rest) a : ℝ) =
+      ratioProb v T b * (rankProb v rest * (rankOf rest a : ℝ) +
+        rankProb v rest) := by
     intro rest hrest
-    have hfact : rankProb ra s (b :: rest) = ra.probOn s T b * rankProb ra s rest := by
+    have hfact : rankProb v (b :: rest) = ratioProb v T b * rankProb v rest := by
       apply rankProb_cons_eq
       rw [mem_allRankings_iff] at hrest
       simp [List.toFinset_cons, hrest.1, Finset.insert_erase hb]
@@ -1356,44 +1886,43 @@ private theorem expectedRank_first_ne (ra : LuceModel S A) (s : S)
       rw [rankOf_cons_ne hne (ha_rest rest hrest)]; push_cast; ring
     rw [hfact, hrk]; ring
   rw [Finset.sum_congr rfl hsub, ← Finset.mul_sum, Finset.sum_add_distrib]
-  rw [rankProb_sum_eq_one_aux ra s _ _ rfl (score_pos_erase hpos b)]
+  rw [rankProb_sum_eq_one_aux v _ _ rfl (score_pos_erase hpos b)]
   unfold expectedRank; congr 1; ring
 
 /-- **Expected rank decomposition**: conditioning on the first element.
-    `E[rank(a, T)] = 1 + ∑_{b ∈ T\{a}} probOn(b, T) · E[rank(a, T\{b})]` -/
-private theorem expectedRank_decomp (ra : LuceModel S A) (s : S)
+    `E[rank(a, T)] = 1 + ∑_{b ∈ T\{a}} ratioProb(b, T) · E[rank(a, T\{b})]` -/
+private theorem expectedRank_decomp (v : A → ℝ)
     (T : Finset A) (a : A) (ha : a ∈ T)
-    (hpos : ∀ b ∈ T, 0 < ra.score s b) :
-    expectedRank ra s T a =
-    1 + ∑ b ∈ T.erase a, ra.probOn s T b * expectedRank ra s (T.erase b) a := by
+    (hpos : ∀ b ∈ T, 0 < v b) :
+    expectedRank v T a =
+    1 + ∑ b ∈ T.erase a, ratioProb v T b * expectedRank v (T.erase b) a := by
   have hT : T.Nonempty := ⟨a, ha⟩
-  show ∑ r ∈ allRankings T, rankProb ra s r * (rankOf r a : ℝ) =
-    1 + ∑ b ∈ T.erase a, ra.probOn s T b * expectedRank ra s (T.erase b) a
+  show ∑ r ∈ allRankings T, rankProb v r * (rankOf r a : ℝ) =
+    1 + ∑ b ∈ T.erase a, ratioProb v T b * expectedRank v (T.erase b) a
   rw [sum_allRankings_by_first T hT]
   -- Split: ∑_{b ∈ T} = f(a) + ∑_{b ∈ T.erase a}
   rw [← Finset.add_sum_erase T _ ha]
-  rw [expectedRank_first_self ra s T a ha hpos]
+  rw [expectedRank_first_self v T a ha hpos]
   -- Rewrite each b ≠ a term
   have h_ne : ∀ b ∈ T.erase a,
       (∑ rest ∈ allRankings (T.erase b),
-        rankProb ra s (b :: rest) * (rankOf (b :: rest) a : ℝ)) =
-      ra.probOn s T b * (1 + expectedRank ra s (T.erase b) a) := by
+        rankProb v (b :: rest) * (rankOf (b :: rest) a : ℝ)) =
+      ratioProb v T b * (1 + expectedRank v (T.erase b) a) := by
     intro b hb
-    exact expectedRank_first_ne ra s T a b ha (Finset.mem_of_mem_erase hb)
+    exact expectedRank_first_ne v T a b ha (Finset.mem_of_mem_erase hb)
       (ne_of_mem_erase hb) hpos
   rw [Finset.sum_congr rfl h_ne]
-  -- probOn(a) + ∑ probOn(b) * (1 + E[...]) = 1 + ∑ probOn(b) * E[...]
+  -- ratioProb(a) + ∑ ratioProb(b) * (1 + E[...]) = 1 + ∑ ratioProb(b) * E[...]
   have hexpand : ∀ b ∈ T.erase a,
-      ra.probOn s T b * (1 + expectedRank ra s (T.erase b) a) =
-      ra.probOn s T b + ra.probOn s T b * expectedRank ra s (T.erase b) a :=
+      ratioProb v T b * (1 + expectedRank v (T.erase b) a) =
+      ratioProb v T b + ratioProb v T b * expectedRank v (T.erase b) a :=
     fun _ _ => by ring
   rw [Finset.sum_congr rfl hexpand, Finset.sum_add_distrib]
-  have h1 : ra.probOn s T a + ∑ b ∈ T.erase a, ra.probOn s T b = 1 := by
+  have h1 : ratioProb v T a + ∑ b ∈ T.erase a, ratioProb v T b = 1 := by
     rw [Finset.add_sum_erase T _ ha]
-    exact ra.probOn_sum_eq_one s T (score_sum_ne_zero hT hpos)
+    exact ratioProb_sum_eq_one v T (score_sum_ne_zero hT hpos)
   linarith
 
-omit [Fintype A] in
 /-- For `a ∈ T`, `rankOf r a ≥ 1` for any ranking `r ∈ allRankings T`. -/
 private theorem rankOf_ge_one_of_mem {T : Finset A} {a : A} (ha : a ∈ T)
     {r : List A} (hr : r ∈ allRankings T) : 1 ≤ rankOf r a := by
@@ -1402,41 +1931,42 @@ private theorem rankOf_ge_one_of_mem {T : Finset A} {a : A} (ha : a ∈ T)
   simp [rankOf, this]
 
 /-- Expected rank is at least 1 for any element in the set. -/
-private theorem expectedRank_ge_one (ra : LuceModel S A) (s : S)
+private theorem expectedRank_ge_one (v : A → ℝ)
     (T : Finset A) (a : A) (ha : a ∈ T)
-    (hpos : ∀ b ∈ T, 0 < ra.score s b) :
-    1 ≤ expectedRank ra s T a := by
+    (hpos : ∀ b ∈ T, 0 < v b) :
+    1 ≤ expectedRank v T a := by
   have hT : T.Nonempty := ⟨a, ha⟩
   -- E[rank(a)] = ∑ P(r) * rank(r,a) ≥ ∑ P(r) * 1 = 1
-  calc expectedRank ra s T a
-      = ∑ r ∈ allRankings T, rankProb ra s r * (rankOf r a : ℝ) := rfl
-    _ ≥ ∑ r ∈ allRankings T, rankProb ra s r * 1 := by
+  calc expectedRank v T a
+      = ∑ r ∈ allRankings T, rankProb v r * (rankOf r a : ℝ) := rfl
+    _ ≥ ∑ r ∈ allRankings T, rankProb v r * 1 := by
         apply Finset.sum_le_sum; intro r hr
         exact mul_le_mul_of_nonneg_left (by exact_mod_cast rankOf_ge_one_of_mem ha hr)
-          (rankProb_nonneg ra s r)
-    _ = 1 := by simp [rankProb_sum_eq_one ra s T hpos]
+          (rankProb_nonneg v r fun b hb ↦ (hpos b (((mem_allRankings_iff T r).1 hr).1 ▸
+            List.mem_toFinset.2 hb)).le)
+    _ = 1 := by simp [rankProb_sum_eq_one v T hpos]
 
 /-! ### Cross-set monotonicity -/
 
 /-- Singleton expected rank: `E[rank(a, {a})] = 1`. -/
-private theorem expectedRank_singleton (ra : LuceModel S A) (s : S) (a : A)
-    (hpos : 0 < ra.score s a) :
-    expectedRank ra s {a} a = 1 := by
-  have hpos' : ∀ b ∈ ({a} : Finset A), 0 < ra.score s b := by simp; exact hpos
-  rw [expectedRank_decomp ra s {a} a (Finset.mem_singleton_self a) hpos']
+private theorem expectedRank_singleton (v : A → ℝ) (a : A)
+    (hpos : 0 < v a) :
+    expectedRank v {a} a = 1 := by
+  have hpos' : ∀ b ∈ ({a} : Finset A), 0 < v b := by simp; exact hpos
+  rw [expectedRank_decomp v {a} a (Finset.mem_singleton_self a) hpos']
   simp [Finset.erase_singleton]
 
-/-- `probOn(c, S₁) ≤ probOn(c, S₂)` when `S₁` has a higher-scored element than `S₂`.
+/-- `ratioProb(c, S₁) ≤ ratioProb(c, S₂)` when `S₁` has a higher-scored element than `S₂`.
     `S₁ = insert a₁ C`, `S₂ = insert a₂ C`, `v(a₁) ≥ v(a₂)`, `c ∈ C`. -/
-private theorem probOn_cross_le {ra : LuceModel S A} {s : S}
+private theorem ratioProb_cross_le {v : A → ℝ}
     {S₁ S₂ : Finset A} {c : A} (hc₁ : c ∈ S₁) (hc₂ : c ∈ S₂)
-    (hpos₁ : ∀ b ∈ S₁, 0 < ra.score s b)
-    (hpos₂ : ∀ b ∈ S₂, 0 < ra.score s b)
-    (hsum_le : ∑ b ∈ S₂, ra.score s b ≤ ∑ b ∈ S₁, ra.score s b) :
-    ra.probOn s S₁ c ≤ ra.probOn s S₂ c := by
-  have hsum₂_pos : 0 < ∑ b ∈ S₂, ra.score s b :=
+    (hpos₁ : ∀ b ∈ S₁, 0 < v b)
+    (hpos₂ : ∀ b ∈ S₂, 0 < v b)
+    (hsum_le : ∑ b ∈ S₂, v b ≤ ∑ b ∈ S₁, v b) :
+    ratioProb v S₁ c ≤ ratioProb v S₂ c := by
+  have hsum₂_pos : 0 < ∑ b ∈ S₂, v b :=
     Finset.sum_pos (fun b hb => hpos₂ b hb) ⟨c, hc₂⟩
-  simp only [LuceModel.probOn, hc₁, hc₂, ↓reduceIte]
+  simp only [ratioProb, hc₁, hc₂, ↓reduceIte]
   exact div_le_div_of_nonneg_left (le_of_lt (hpos₁ c hc₁)) hsum₂_pos hsum_le
 
 /-- **Cross-set monotonicity**: a higher-scored element gets a better expected rank
@@ -1446,17 +1976,17 @@ private theorem probOn_cross_le {ra : LuceModel S A} {s : S}
     `E[rank(a₁, S₁)] ≤ E[rank(a₂, S₂)]`.
 
     Proof by induction on `|C|`. The decomposition
-    `E[rank(aᵢ, Sᵢ)] = 1 + ∑_{c∈C} probOn(c, Sᵢ) · E[rank(aᵢ, Sᵢ\{c})]`
-    gives a term-by-term comparison: `probOn(c, S₂) ≥ probOn(c, S₁)` (larger
+    `E[rank(aᵢ, Sᵢ)] = 1 + ∑_{c∈C} ratioProb(c, Sᵢ) · E[rank(aᵢ, Sᵢ\{c})]`
+    gives a term-by-term comparison: `ratioProb(c, S₂) ≥ ratioProb(c, S₁)` (larger
     denominator for S₁) and `E[rank(a₂, S₂\{c})] ≥ E[rank(a₁, S₁\{c})]` (by IH). -/
-private theorem expectedRank_cross_le_aux (ra : LuceModel S A) (s : S) :
+private theorem expectedRank_cross_le_aux (v : A → ℝ) :
     ∀ (n : ℕ) (C : Finset A) (a₁ a₂ : A),
     C.card = n → (ha₁ : a₁ ∉ C) → (ha₂ : a₂ ∉ C) →
-    (∀ b ∈ insert a₁ C, 0 < ra.score s b) →
-    (∀ b ∈ insert a₂ C, 0 < ra.score s b) →
-    ra.score s a₁ ≥ ra.score s a₂ →
-    expectedRank ra s (insert a₁ C) a₁ ≤
-    expectedRank ra s (insert a₂ C) a₂ := by
+    (∀ b ∈ insert a₁ C, 0 < v b) →
+    (∀ b ∈ insert a₂ C, 0 < v b) →
+    v a₁ ≥ v a₂ →
+    expectedRank v (insert a₁ C) a₁ ≤
+    expectedRank v (insert a₂ C) a₂ := by
   intro n
   induction n with
   | zero =>
@@ -1464,37 +1994,37 @@ private theorem expectedRank_cross_le_aux (ra : LuceModel S A) (s : S) :
     have hC : C = ∅ := Finset.card_eq_zero.mp hcard
     subst hC
     simp only [Finset.insert_empty]
-    have h₁ := expectedRank_singleton ra s a₁ (hpos₁ a₁ (Finset.mem_singleton_self a₁))
-    have h₂ := expectedRank_singleton ra s a₂ (hpos₂ a₂ (Finset.mem_singleton_self a₂))
+    have h₁ := expectedRank_singleton v a₁ (hpos₁ a₁ (Finset.mem_singleton_self a₁))
+    have h₂ := expectedRank_singleton v a₂ (hpos₂ a₂ (Finset.mem_singleton_self a₂))
     linarith
   | succ n ih =>
     intro C a₁ a₂ hcard ha₁ ha₂ hpos₁ hpos₂ hge
-    -- Decompose: E[rank(aᵢ, Sᵢ)] = 1 + ∑_{c ∈ C} probOn(c, Sᵢ) * E[rank(aᵢ, Sᵢ\{c})]
+    -- Decompose: E[rank(aᵢ, Sᵢ)] = 1 + ∑_{c ∈ C} ratioProb(c, Sᵢ) * E[rank(aᵢ, Sᵢ\{c})]
     -- where Sᵢ = insert aᵢ C, Sᵢ.erase aᵢ = C
-    rw [expectedRank_decomp ra s _ a₁ (Finset.mem_insert_self a₁ C) hpos₁,
-        expectedRank_decomp ra s _ a₂ (Finset.mem_insert_self a₂ C) hpos₂,
+    rw [expectedRank_decomp v _ a₁ (Finset.mem_insert_self a₁ C) hpos₁,
+        expectedRank_decomp v _ a₂ (Finset.mem_insert_self a₂ C) hpos₂,
         Finset.erase_insert ha₁, Finset.erase_insert ha₂]
     -- Goal: 1 + ∑_{c∈C} p(c,S₁)·E₁(c) ≤ 1 + ∑_{c∈C} p(c,S₂)·E₂(c)
-    suffices h : ∑ c ∈ C, ra.probOn s (insert a₁ C) c *
-          expectedRank ra s ((insert a₁ C).erase c) a₁ ≤
-        ∑ c ∈ C, ra.probOn s (insert a₂ C) c *
-          expectedRank ra s ((insert a₂ C).erase c) a₂ by linarith
+    suffices h : ∑ c ∈ C, ratioProb v (insert a₁ C) c *
+          expectedRank v ((insert a₁ C).erase c) a₁ ≤
+        ∑ c ∈ C, ratioProb v (insert a₂ C) c *
+          expectedRank v ((insert a₂ C).erase c) a₂ by linarith
     -- Two-step inequality: ∑ p₁·E₁ ≤ ∑ p₁·E₂ ≤ ∑ p₂·E₂
     -- where E_i(c) = expectedRank(aᵢ, Sᵢ\{c}) and Sᵢ\{c} = insert aᵢ (C\{c})
     have hS₁_erase : ∀ c ∈ C, (insert a₁ C).erase c = insert a₁ (C.erase c) :=
       fun c hc => Finset.erase_insert_of_ne (fun h => ha₁ (h ▸ hc))
     have hS₂_erase : ∀ c ∈ C, (insert a₂ C).erase c = insert a₂ (C.erase c) :=
       fun c hc => Finset.erase_insert_of_ne (fun h => ha₂ (h ▸ hc))
-    -- Sum over S₂ ≤ sum over S₁ (for probOn_cross_le)
+    -- Sum over S₂ ≤ sum over S₁ (for ratioProb_cross_le)
     have hsum_le :
-        ∑ b ∈ insert a₂ C, ra.score s b ≤ ∑ b ∈ insert a₁ C, ra.score s b := by
+        ∑ b ∈ insert a₂ C, v b ≤ ∑ b ∈ insert a₁ C, v b := by
       rw [Finset.sum_insert ha₁, Finset.sum_insert ha₂]; linarith
-    calc ∑ c ∈ C, ra.probOn s (insert a₁ C) c *
-              expectedRank ra s ((insert a₁ C).erase c) a₁
-        ≤ ∑ c ∈ C, ra.probOn s (insert a₁ C) c *
-              expectedRank ra s ((insert a₂ C).erase c) a₂ := by
+    calc ∑ c ∈ C, ratioProb v (insert a₁ C) c *
+              expectedRank v ((insert a₁ C).erase c) a₁
+        ≤ ∑ c ∈ C, ratioProb v (insert a₁ C) c *
+              expectedRank v ((insert a₂ C).erase c) a₂ := by
           apply Finset.sum_le_sum; intro c hc
-          apply mul_le_mul_of_nonneg_left _ (ra.probOn_nonneg s _ c)
+          apply mul_le_mul_of_nonneg_left _ (ratioProb_nonneg (fun b hb ↦ (hpos₁ b hb).le) c)
           rw [hS₁_erase c hc, hS₂_erase c hc]
           have hcard_c : (C.erase c).card = n := by
             rw [Finset.card_erase_of_mem hc, hcard]; omega
@@ -1508,16 +2038,16 @@ private theorem expectedRank_cross_le_aux (ra : LuceModel S A) (s : S) :
             (fun b hb => hpos₁ b (hsub₁ hb))
             (fun b hb => hpos₂ b (hsub₂ hb))
             hge
-      _ ≤ ∑ c ∈ C, ra.probOn s (insert a₂ C) c *
-              expectedRank ra s ((insert a₂ C).erase c) a₂ := by
+      _ ≤ ∑ c ∈ C, ratioProb v (insert a₂ C) c *
+              expectedRank v ((insert a₂ C).erase c) a₂ := by
           apply Finset.sum_le_sum; intro c hc
           apply mul_le_mul_of_nonneg_right
-          · exact probOn_cross_le (Finset.mem_insert_of_mem hc) (Finset.mem_insert_of_mem hc)
+          · exact ratioProb_cross_le (Finset.mem_insert_of_mem hc) (Finset.mem_insert_of_mem hc)
               hpos₁ hpos₂ hsum_le
           · have hc_ne₂ : c ≠ a₂ := fun h => ha₂ (h ▸ hc)
             have ha₂_mem_erase : a₂ ∈ (insert a₂ C).erase c :=
               Finset.mem_erase.mpr ⟨hc_ne₂.symm, Finset.mem_insert_self a₂ C⟩
-            linarith [expectedRank_ge_one ra s ((insert a₂ C).erase c) a₂ ha₂_mem_erase
+            linarith [expectedRank_ge_one v ((insert a₂ C).erase c) a₂ ha₂_mem_erase
               (fun b hb => hpos₂ b (Finset.mem_of_mem_erase hb))]
 
 /-- **Expected rank monotonicity**: higher score implies lower expected rank.
@@ -1530,24 +2060,24 @@ private theorem expectedRank_cross_le_aux (ra : LuceModel S A) (s : S) :
     source. [luce-1959] adopts the product decomposition as his ranking
     postulate and [marden-1995] covers estimation, but neither states the
     expected rank monotonicity result explicitly. -/
-theorem expectedRank_lt_of_score_gt (ra : LuceModel S A) (s : S)
+theorem expectedRank_lt_of_score_gt (v : A → ℝ)
     (T : Finset A) (a₁ a₂ : A) (ha₁ : a₁ ∈ T) (ha₂ : a₂ ∈ T)
     (hne : a₁ ≠ a₂)
-    (hpos : ∀ a ∈ T, 0 < ra.score s a)
-    (hgt : ra.score s a₁ > ra.score s a₂) :
-    expectedRank ra s T a₁ < expectedRank ra s T a₂ := by
+    (hpos : ∀ a ∈ T, 0 < v a)
+    (hgt : v a₁ > v a₂) :
+    expectedRank v T a₁ < expectedRank v T a₂ := by
   -- Induction on |T|
   suffices h : ∀ (n : ℕ) (T : Finset A), T.card = n → a₁ ∈ T → a₂ ∈ T →
-      (∀ a ∈ T, 0 < ra.score s a) →
-      expectedRank ra s T a₁ < expectedRank ra s T a₂ from
+      (∀ a ∈ T, 0 < v a) →
+      expectedRank v T a₁ < expectedRank v T a₂ from
     h T.card T rfl ha₁ ha₂ hpos
   intro n; induction n with
   | zero => intro T hcard h₁; simp [Finset.card_eq_zero.mp hcard] at h₁
   | succ m ih =>
     intro T hcard ha₁' ha₂' hpos'
     -- Decompose both expected ranks
-    rw [expectedRank_decomp ra s T a₁ ha₁' hpos',
-        expectedRank_decomp ra s T a₂ ha₂' hpos']
+    rw [expectedRank_decomp v T a₁ ha₁' hpos',
+        expectedRank_decomp v T a₂ ha₂' hpos']
     -- Split off the special terms: a₂ from T\{a₁}, a₁ from T\{a₂}
     have ha₂_e₁ : a₂ ∈ T.erase a₁ := Finset.mem_erase.mpr ⟨hne.symm, ha₂'⟩
     have ha₁_e₂ : a₁ ∈ T.erase a₂ := Finset.mem_erase.mpr ⟨hne, ha₁'⟩
@@ -1557,10 +2087,10 @@ theorem expectedRank_lt_of_score_gt (ra : LuceModel S A) (s : S)
     -- Goal: 1 + (p₂*E₁' + Σ₁) < 1 + (p₁*E₂' + Σ₂) where both sums are over R
     -- Fact 1: common terms satisfy Σ₁ ≤ Σ₂ (by IH giving < hence ≤)
     have h_sums : ∀ c ∈ (T.erase a₁).erase a₂,
-        ra.probOn s T c * expectedRank ra s (T.erase c) a₁ ≤
-        ra.probOn s T c * expectedRank ra s (T.erase c) a₂ := by
+        ratioProb v T c * expectedRank v (T.erase c) a₁ ≤
+        ratioProb v T c * expectedRank v (T.erase c) a₂ := by
       intro c hc
-      apply mul_le_mul_of_nonneg_left _ (ra.probOn_nonneg s T c)
+      apply mul_le_mul_of_nonneg_left _ (ratioProb_nonneg (fun b hb ↦ (hpos' b hb).le) c)
       have hc_mem : c ∈ T := Finset.mem_of_mem_erase (Finset.mem_of_mem_erase hc)
       have ha₁_ec : a₁ ∈ T.erase c :=
         Finset.mem_erase.mpr
@@ -1571,19 +2101,19 @@ theorem expectedRank_lt_of_score_gt (ra : LuceModel S A) (s : S)
         rw [Finset.card_erase_of_mem hc_mem, hcard]; omega
       exact le_of_lt (ih (T.erase c) hcard_ec ha₁_ec ha₂_ec (score_pos_erase hpos' c))
     -- Fact 2: cross term satisfies p₂*E₁' < p₁*E₂'
-    have h_cross : ra.probOn s T a₂ * expectedRank ra s (T.erase a₂) a₁ <
-        ra.probOn s T a₁ * expectedRank ra s (T.erase a₁) a₂ := by
-      have hp_gt := LuceModel.probOn_lt_of_score_lt ha₁' ha₂' hpos' hgt
+    have h_cross : ratioProb v T a₂ * expectedRank v (T.erase a₂) a₁ <
+        ratioProb v T a₁ * expectedRank v (T.erase a₁) a₂ := by
+      have hp_gt := ratioProb_lt_of_lt ha₁' ha₂' hpos' hgt
       have hE₁'_ge :=
-        expectedRank_ge_one ra s (T.erase a₂) a₁ ha₁_e₂ (score_pos_erase hpos' a₂)
+        expectedRank_ge_one v (T.erase a₂) a₁ ha₁_e₂ (score_pos_erase hpos' a₂)
       -- Cross-set comparison: E₁' ≤ E₂'
-      have hE_cross : expectedRank ra s (T.erase a₂) a₁ ≤
-          expectedRank ra s (T.erase a₁) a₂ := by
+      have hE_cross : expectedRank v (T.erase a₂) a₁ ≤
+          expectedRank v (T.erase a₁) a₂ := by
         conv_lhs => rw [show T.erase a₂ = insert a₁ ((T.erase a₁).erase a₂) from by
           rw [← Finset.erase_right_comm]; exact (Finset.insert_erase ha₁_e₂).symm]
         conv_rhs => rw [show T.erase a₁ = insert a₂ ((T.erase a₁).erase a₂) from
           (Finset.insert_erase ha₂_e₁).symm]
-        exact expectedRank_cross_le_aux ra s _ _ a₁ a₂ rfl
+        exact expectedRank_cross_le_aux v _ _ a₁ a₂ rfl
           (mt Finset.mem_of_mem_erase (Finset.notMem_erase a₁ T))
           (Finset.notMem_erase a₂ _)
           (fun b hb => hpos' b (by
@@ -1596,12 +2126,12 @@ theorem expectedRank_lt_of_score_gt (ra : LuceModel S A) (s : S)
             · exact Finset.mem_of_mem_erase (Finset.mem_of_mem_erase hb')))
           (le_of_lt hgt)
       -- p₁*E₂' ≥ p₁*E₁' > p₂*E₁'
-      calc ra.probOn s T a₂ * expectedRank ra s (T.erase a₂) a₁
-          < ra.probOn s T a₁ * expectedRank ra s (T.erase a₂) a₁ :=
+      calc ratioProb v T a₂ * expectedRank v (T.erase a₂) a₁
+          < ratioProb v T a₁ * expectedRank v (T.erase a₂) a₁ :=
             mul_lt_mul_of_pos_right hp_gt (by linarith)
-        _ ≤ ra.probOn s T a₁ * expectedRank ra s (T.erase a₁) a₂ :=
+        _ ≤ ratioProb v T a₁ * expectedRank v (T.erase a₁) a₂ :=
             mul_le_mul_of_nonneg_left hE_cross
-              (le_of_lt (LuceModel.probOn_pos ha₁' hpos'))
+              (le_of_lt (ratioProb_pos ha₁' hpos'))
     -- Combine: 1 + p₂*E₁' + Σ₁ < 1 + p₁*E₂' + Σ₂
     linarith [Finset.sum_le_sum h_sums]
 
@@ -1613,23 +2143,23 @@ theorem expectedRank_lt_of_score_gt (ra : LuceModel S A) (s : S)
     equal by induction, and show the cross terms are equal by applying
     `expectedRank_cross_le_aux` in both directions (since `v(a₁) ≥ v(a₂)` and
     `v(a₂) ≥ v(a₁)` both hold). -/
-theorem expectedRank_eq_of_score_eq (ra : LuceModel S A) (s : S)
+theorem expectedRank_eq_of_score_eq (v : A → ℝ)
     (T : Finset A) (a₁ a₂ : A) (ha₁ : a₁ ∈ T) (ha₂ : a₂ ∈ T)
     (hne : a₁ ≠ a₂)
-    (hpos : ∀ a ∈ T, 0 < ra.score s a)
-    (heq : ra.score s a₁ = ra.score s a₂) :
-    expectedRank ra s T a₁ = expectedRank ra s T a₂ := by
+    (hpos : ∀ a ∈ T, 0 < v a)
+    (heq : v a₁ = v a₂) :
+    expectedRank v T a₁ = expectedRank v T a₂ := by
   suffices h : ∀ (n : ℕ) (T : Finset A), T.card = n → a₁ ∈ T → a₂ ∈ T →
-      (∀ a ∈ T, 0 < ra.score s a) →
-      expectedRank ra s T a₁ = expectedRank ra s T a₂ from
+      (∀ a ∈ T, 0 < v a) →
+      expectedRank v T a₁ = expectedRank v T a₂ from
     h T.card T rfl ha₁ ha₂ hpos
   intro n; induction n with
   | zero => intro T hcard h₁; simp [Finset.card_eq_zero.mp hcard] at h₁
   | succ m ih =>
     intro T hcard ha₁' ha₂' hpos'
     -- Decompose both expected ranks
-    rw [expectedRank_decomp ra s T a₁ ha₁' hpos',
-        expectedRank_decomp ra s T a₂ ha₂' hpos']
+    rw [expectedRank_decomp v T a₁ ha₁' hpos',
+        expectedRank_decomp v T a₂ ha₂' hpos']
     -- Split sums to isolate cross terms
     have ha₂_e₁ : a₂ ∈ T.erase a₁ := Finset.mem_erase.mpr ⟨hne.symm, ha₂'⟩
     have ha₁_e₂ : a₁ ∈ T.erase a₂ := Finset.mem_erase.mpr ⟨hne, ha₁'⟩
@@ -1637,8 +2167,8 @@ theorem expectedRank_eq_of_score_eq (ra : LuceModel S A) (s : S)
     rw [show (T.erase a₂).erase a₁ = (T.erase a₁).erase a₂ from Finset.erase_right_comm]
     -- Common terms equal by IH
     have h_common : ∀ b ∈ (T.erase a₁).erase a₂,
-        ra.probOn s T b * expectedRank ra s (T.erase b) a₁ =
-        ra.probOn s T b * expectedRank ra s (T.erase b) a₂ := by
+        ratioProb v T b * expectedRank v (T.erase b) a₁ =
+        ratioProb v T b * expectedRank v (T.erase b) a₂ := by
       intro b hb
       congr 1
       have hb_mem : b ∈ T := Finset.mem_of_mem_erase (Finset.mem_of_mem_erase hb)
@@ -1649,20 +2179,20 @@ theorem expectedRank_eq_of_score_eq (ra : LuceModel S A) (s : S)
         (Finset.mem_erase.mpr ⟨hb_ne₁.symm, ha₁'⟩)
         (Finset.mem_erase.mpr ⟨hb_ne₂.symm, ha₂'⟩)
         (score_pos_erase hpos' b)
-    -- probOn equality: probOn(a₁,T) = probOn(a₂,T) since scores are equal
-    have hp_eq : ra.probOn s T a₁ = ra.probOn s T a₂ := by
-      have hratio := ra.probOn_ratio s T a₁ a₂ ha₁' ha₂'
+    -- ratioProb equality: ratioProb(a₁,T) = ratioProb(a₂,T) since scores are equal
+    have hp_eq : ratioProb v T a₁ = ratioProb v T a₂ := by
+      have hratio := ratioProb_ratio v T a₁ a₂ ha₁' ha₂'
       rw [heq] at hratio
       exact mul_right_cancel₀ (ne_of_gt (hpos' a₂ ha₂')) hratio
     -- Cross-set equality by antisymmetry
-    have h_cross : expectedRank ra s (T.erase a₂) a₁ =
-        expectedRank ra s (T.erase a₁) a₂ := by
+    have h_cross : expectedRank v (T.erase a₂) a₁ =
+        expectedRank v (T.erase a₁) a₂ := by
       apply le_antisymm
       · conv_lhs => rw [show T.erase a₂ = insert a₁ ((T.erase a₁).erase a₂) from by
           rw [← Finset.erase_right_comm]; exact (Finset.insert_erase ha₁_e₂).symm]
         conv_rhs => rw [show T.erase a₁ = insert a₂ ((T.erase a₁).erase a₂) from
           (Finset.insert_erase ha₂_e₁).symm]
-        exact expectedRank_cross_le_aux ra s _ _ a₁ a₂ rfl
+        exact expectedRank_cross_le_aux v _ _ a₁ a₂ rfl
           (mt Finset.mem_of_mem_erase (Finset.notMem_erase a₁ T))
           (Finset.notMem_erase a₂ _)
           (fun b hb => hpos' b (by
@@ -1678,7 +2208,7 @@ theorem expectedRank_eq_of_score_eq (ra : LuceModel S A) (s : S)
           (Finset.insert_erase ha₂_e₁).symm]
         conv_rhs => rw [show T.erase a₂ = insert a₁ ((T.erase a₁).erase a₂) from by
           rw [← Finset.erase_right_comm]; exact (Finset.insert_erase ha₁_e₂).symm]
-        exact expectedRank_cross_le_aux ra s _ _ a₂ a₁ rfl
+        exact expectedRank_cross_le_aux v _ _ a₂ a₁ rfl
           (Finset.notMem_erase a₂ _)
           (mt Finset.mem_of_mem_erase (Finset.notMem_erase a₁ T))
           (fun b hb => hpos' b (by
@@ -1690,7 +2220,7 @@ theorem expectedRank_eq_of_score_eq (ra : LuceModel S A) (s : S)
             · assumption
             · exact Finset.mem_of_mem_erase (Finset.mem_of_mem_erase hb')))
           (le_of_eq heq)
-    -- Combine: rewrite common sums, cross terms, and probOn
+    -- Combine: rewrite common sums, cross terms, and ratioProb
     have h_sum_eq := Finset.sum_congr rfl h_common
     rw [h_sum_eq, hp_eq, h_cross]
 
