@@ -201,6 +201,13 @@ variable (excl) in
 def exclusionaryNeg (P : Set S) : Set S :=
   regularClosure (exclusiveNeg excl P)
 
+/-- The fusion of a choice of an excluder for each verifier of `P` verifies the exclusive negation
+of `P`. -/
+theorem sSup_image_mem_exclusiveNeg {f : S → S} (hf : ∀ p ∈ P, excl (f p) p) :
+    sSup (f '' P) ∈ exclusiveNeg excl P :=
+  ⟨f '' P, ⟨Set.forall_mem_image.2 fun p hp ↦ ⟨p, hp, hf p hp⟩,
+    fun p hp ↦ ⟨f p, Set.mem_image_of_mem f hp, hf p hp⟩⟩, rfl⟩
+
 /-- A proposition has an exclusive negation with a verifier exactly when every verifier of it has an
 excluder. -/
 theorem exclusiveNeg_nonempty_iff :
@@ -209,10 +216,7 @@ theorem exclusiveNeg_nonempty_iff :
   · obtain ⟨q, -, hqp⟩ := hPQ hp
     exact ⟨q, hqp⟩
   · choose! f hf using h
-    refine ⟨sSup (f '' P), f '' P, ⟨?_, fun p hp ↦
-      ⟨f p, Set.mem_image_of_mem f hp, hf p hp⟩⟩, rfl⟩
-    rintro _ ⟨p, hp, rfl⟩
-    exact ⟨p, hp, hf p hp⟩
+    exact ⟨_, sSup_image_mem_exclusiveNeg hf⟩
 
 /-- Under Null Exclusion, a proposition that the null state does not verify has an exclusive
 negation with a verifier. -/
@@ -236,36 +240,39 @@ theorem mem_upperClosure_exclusiveNeg {x : S} :
     obtain ⟨q, hq, hqp⟩ := hPQ hp
     exact ⟨q, (le_sSup hq).trans hle, hqp⟩
   · choose! f hfx hf using h
-    refine mem_upperClosure.2 ⟨sSup (f '' P), ⟨f '' P, ⟨?_, fun p hp ↦
-      ⟨f p, Set.mem_image_of_mem f hp, hf p hp⟩⟩, rfl⟩, sSup_le ?_⟩
-    · rintro _ ⟨p, hp, rfl⟩
-      exact ⟨p, hp, hf p hp⟩
-    · rintro _ ⟨p, hp, rfl⟩
-      exact hfx p hp
+    exact mem_upperClosure.2
+      ⟨_, sSup_image_mem_exclusiveNeg hf, sSup_le (Set.forall_mem_image.2 hfx)⟩
+
+/-- Under Upward Exclusion, the states containing a verifier of the exclusive negation of `P` are
+those that conflict with every verifier of `P`, the polar of `P` under conflict. -/
+theorem coe_upperClosure_exclusiveNeg (hU : UpwardExclusion excl) (P : Set S) :
+    (upperClosure (exclusiveNeg excl P) : Set S) = upperPolar (flip (Conflict excl)) P := by
+  ext x
+  rw [SetLike.mem_coe, mem_upperClosure_exclusiveNeg]
+  exact forall₂_congr fun _ _ ↦ hU.conflict_iff.symm
 
 /-- Under Upward Exclusion, the states containing a verifier of the exclusionary negation of `P` are
-those that conflict with every verifier of `P`, the polar of `P` under conflict. -/
+those that conflict with every verifier of `P`. -/
 theorem coe_upperClosure_exclusionaryNeg (hU : UpwardExclusion excl) (P : Set S) :
     (upperClosure (exclusionaryNeg excl P) : Set S) = upperPolar (flip (Conflict excl)) P := by
-  ext x
-  rw [exclusionaryNeg, upperClosure_regularClosure, SetLike.mem_coe,
-    mem_upperClosure_exclusiveNeg]
-  exact forall₂_congr fun _ _ ↦ hU.conflict_iff.symm
+  rw [exclusionaryNeg, upperClosure_regularClosure, coe_upperClosure_exclusiveNeg hU]
 
 /-- If every verifier of `P` has an excluder, the subject-matter of the exclusive negation of `P` is
 the fusion of all excluders of verifiers of `P`. -/
 theorem sSup_exclusiveNeg (h : ∀ p ∈ P, ∃ r, excl r p) :
     sSup (exclusiveNeg excl P) = sSup {r | ∃ p ∈ P, excl r p} := by
+  classical
   choose! f hf using h
-  refine le_antisymm (sSup_le ?_) (sSup_le ?_)
-  · rintro _ ⟨Q, ⟨hQ, -⟩, rfl⟩
-    exact sSup_le_sSup hQ
-  · rintro r ⟨p, hp, hrp⟩
-    refine (le_sSup (Set.mem_insert r (f '' P))).trans (le_sSup ⟨_, ⟨?_, fun p' hp' ↦
-      ⟨f p', Set.mem_insert_of_mem _ (Set.mem_image_of_mem f hp'), hf p' hp'⟩⟩, rfl⟩)
-    rintro _ (rfl | ⟨p', hp', rfl⟩)
-    · exact ⟨p, hp, hrp⟩
-    · exact ⟨p', hp', hf p' hp'⟩
+  refine le_antisymm (sSup_le fun _ ⟨_, ⟨hQ, _⟩, hQx⟩ ↦ hQx ▸ sSup_le_sSup hQ)
+    (sSup_le fun r ⟨p, hp, hrp⟩ ↦ ?_)
+  have hg : ∀ p' ∈ P, excl (Function.update f p r p') p' := fun p' hp' ↦ by
+    by_cases h : p' = p
+    · subst h
+      simpa using hrp
+    · simpa [h] using hf p' hp'
+  calc r = Function.update f p r p := by simp
+    _ ≤ sSup (Function.update f p r '' P) := le_sSup (Set.mem_image_of_mem _ hp)
+    _ ≤ sSup (exclusiveNeg excl P) := le_sSup (sSup_image_mem_exclusiveNeg hg)
 
 /-- The exclusive negation of a disjunction is the conjunction of the exclusive negations of the
 disjuncts. -/
@@ -383,69 +390,51 @@ theorem exclusionaryNeg_regularClosure (hU : UpwardExclusion excl) (hD : Downwar
       let ⟨p, hp, hpy⟩ := mem_upperClosure.1 hy.1
       let ⟨r, hr⟩ := h p hp
       ⟨r, hU hr hpy⟩⟩
-  refine regularClosure_eq_iff.2 ⟨SetLike.ext fun x ↦ ?_, ?_⟩
+  refine regularClosure_eq_iff.2 ⟨SetLike.ext fun x ↦ ?_, fun hne ↦ ?_⟩
   · rw [mem_upperClosure_exclusiveNeg, mem_upperClosure_exclusiveNeg]
     exact ⟨fun h p hp ↦ h p (regularClosure.le_closure P hp), fun h _ hy ↦
       let ⟨p, hp, hpy⟩ := mem_upperClosure.1 hy.1
       let ⟨r, hrx, hr⟩ := h p hp
       ⟨r, hrx, hU hr hpy⟩⟩
-  · by_cases h : ∀ p ∈ P, ∃ r, excl r p
-    · rw [sSup_exclusiveNeg (hex.2 h), sSup_exclusiveNeg h]
-      refine le_antisymm (sSup_le fun r ⟨_, hy, hry⟩ ↦ (hD (hU hry hy.2)).2)
-        (sSup_le_sSup fun r ⟨p, hp, hr⟩ ↦ ⟨p, regularClosure.le_closure P hp, hr⟩)
-    · rw [Set.not_nonempty_iff_eq_empty.1 (mt exclusiveNeg_nonempty_iff.1 (mt hex.1 h)),
-        Set.not_nonempty_iff_eq_empty.1 (mt exclusiveNeg_nonempty_iff.1 h)]
+  · have h := exclusiveNeg_nonempty_iff.1 hne
+    rw [sSup_exclusiveNeg h, sSup_exclusiveNeg (hex.1 h)]
+    exact le_antisymm (sSup_le fun r ⟨_, hy, hry⟩ ↦ (hD (hU hry hy.2)).2)
+      (sSup_le_sSup fun r ⟨p, hp, hr⟩ ↦ ⟨p, regularClosure.le_closure P hp, hr⟩)
 
 /-- Under Upward, Downward and Null Exclusion, the exclusionary negation of the conjunction of a
-nonempty family of propositions with verifiers, none verified by the null state, is the
-disjunction of their exclusionary negations. -/
-theorem exclusionaryNeg_iSups {ι : Type*} [Nonempty ι] (hU : UpwardExclusion excl)
+family of propositions with verifiers, none verified by the null state, is the disjunction of their
+exclusionary negations. -/
+theorem exclusionaryNeg_iSups {ι : Type*} (hU : UpwardExclusion excl)
     (hD : DownwardExclusion excl) (hN : NullExclusion excl) {P : ι → Set S}
     (hne : ∀ i, (P i).Nonempty) (hP : ∀ i, ⊥ ∉ P i) :
     exclusionaryNeg excl (Set.iSups P) = regularClosure (⋃ i, exclusionaryNeg excl (P i)) := by
-  classical
-  have hcl : regularClosure (⋃ i, exclusionaryNeg excl (P i)) =
-      regularClosure (⋃ i, exclusiveNeg excl (P i)) := by
-    have := regularClosure.closure_iSup_closure fun i ↦ exclusiveNeg excl (P i)
-    simp only [Set.iSup_eq_iUnion] at this
-    exact this
-  have hexP : ∀ i, ∀ p ∈ P i, ∃ r, excl r p := fun i p hp ↦
-    (hN.2 p (ne_of_mem_of_not_mem hp (hP i))).2
-  have hex : ∀ y ∈ Set.iSups P, ∃ r, excl r y := fun y hy ↦ by
-    obtain ⟨f, hf, rfl⟩ := Set.mem_iSups.1 hy
-    obtain ⟨i⟩ := ‹Nonempty ι›
-    refine (hN.2 _ fun h ↦ hP i ?_).2
-    have hfi : f i = ⊥ := le_bot_iff.1 ((le_iSup f i).trans h.le)
-    exact hfi ▸ hf i
-  rw [hcl, exclusionaryNeg, regularClosure_eq_iff]
-  refine ⟨SetLike.ext fun x ↦ ?_, ?_⟩
+  have hcl := regularClosure.closure_iSup_closure fun i ↦ exclusiveNeg excl (P i)
+  simp only [Set.iSup_eq_iUnion] at hcl
+  rw [exclusionaryNeg, show regularClosure (⋃ i, exclusionaryNeg excl (P i)) = _ from hcl,
+    regularClosure_eq_iff]
+  refine ⟨SetLike.ext fun x ↦ ?_, fun hex ↦ ?_⟩
   · rw [mem_upperClosure_exclusiveNeg, upperClosure_iUnion, UpperSet.mem_iInf_iff]
     simp only [mem_upperClosure_exclusiveNeg, ← hU.conflict_iff]
     refine ⟨fun h ↦ by_contra fun hcon ↦ ?_, fun ⟨i, hi⟩ y hy ↦ ?_⟩
-    · have : ∀ i, ∃ p ∈ P i, ¬ Conflict excl x p := fun i ↦
-        by_contra fun hc ↦ hcon ⟨i, fun p hp ↦ by_contra fun h' ↦ hc ⟨p, hp, h'⟩⟩
-      choose p hp hpx using this
-      have hc := h _ (Set.iSup_mem_iSups hp)
+    · obtain ⟨f, hf⟩ := Set.univ_pi_nonempty_iff.2 fun i ↦
+        (show ∃ p ∈ P i, ¬ Conflict excl x p by simpa using not_exists.1 hcon i)
+      have hc := h _ (Set.iSup_mem_iSups fun i ↦ (Set.mem_univ_pi.1 hf i).1)
       rw [← sSup_range] at hc
       obtain ⟨_, ⟨i, rfl⟩, hci⟩ := exists_conflict_of_conflict_sSup hU hD hc
-      exact hpx i hci
+      exact (Set.mem_univ_pi.1 hf i).2 hci
     · obtain ⟨f, hf, rfl⟩ := Set.mem_iSups.1 hy
       exact (hi _ (hf i)).mono le_rfl (le_iSup f i)
-  · rw [sSup_exclusiveNeg hex, sSup_iUnion, iSup_congr fun i ↦ sSup_exclusiveNeg (hexP i)]
-    refine le_antisymm (sSup_le fun r ⟨_, hy, hry⟩ ↦ ?_) (iSup_le fun i ↦ sSup_le ?_)
+  · rw [sSup_exclusiveNeg (exclusiveNeg_nonempty_iff.1 hex), sSup_iUnion,
+      iSup_congr fun i ↦ sSup_exclusiveNeg (exclusiveNeg_nonempty_iff.1
+        (exclusiveNeg_nonempty hN (hP i)))]
+    refine le_antisymm (sSup_le fun r ⟨_, hy, hry⟩ ↦ ?_)
+      (iSup_le fun i ↦ sSup_le fun r ⟨p, hp, hrp⟩ ↦ ?_)
     · obtain ⟨f, hf, rfl⟩ := Set.mem_iSups.1 hy
       rw [← sSup_range] at hry
       exact (hD hry).2.trans (sSup_le fun r' ⟨_, ⟨i, rfl⟩, hr'⟩ ↦
         le_iSup_of_le i (le_sSup ⟨f i, hf i, hr'⟩))
-    · rintro r ⟨p, hp, hrp⟩
-      let f : ι → S := Function.update (fun j ↦ (hne j).some) i p
-      have hf : ∀ j, f j ∈ P j := fun j ↦ by
-        by_cases h : j = i
-        · subst h
-          simpa [f] using hp
-        · simpa [f, h] using (hne j).some_mem
-      exact le_sSup ⟨_, Set.iSup_mem_iSups hf,
-        hU hrp (by simpa [f] using le_iSup f i)⟩
+    · obtain ⟨y, hy, hpy⟩ := Set.exists_mem_iSups_ge hne hp
+      exact le_sSup ⟨y, hy, hU hrp hpy⟩
 
 /-! ### Classical exclusion -/
 
@@ -524,7 +513,6 @@ theorem exclusionaryNeg_exclusionaryNeg (hU : UpwardExclusion excl) (hD : Downwa
       regularClosure_empty]
   have hsingle : ∀ p : P, ⊥ ∉ ({(p : S)} : Set S) := fun p hp ↦
     hP' (Set.mem_singleton_iff.1 hp ▸ p.2)
-  have : Nonempty P := hne.to_subtype
   have h₁ : exclusionaryNeg excl P = Set.iSups fun p : P ↦ exclusionaryNeg excl {(p : S)} := by
     conv_lhs => rw [← hP.closure_eq, ← Set.iUnion_of_singleton_coe P]
     exact exclusionaryNeg_regularClosure_iUnion hU hD hN hsingle

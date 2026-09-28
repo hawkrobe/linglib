@@ -49,22 +49,27 @@ theorem mem_iSups : a ∈ iSups s ↔ ∃ f : ι → α, (∀ i, f i ∈ s i) �
 theorem iSup_mem_iSups {f : ι → α} (hf : ∀ i, f i ∈ s i) : ⨆ i, f i ∈ iSups s :=
   mem_iSups.2 ⟨f, hf, rfl⟩
 
+/-- An element of one member of a family of nonempty sets lies below an element of their pointwise
+supremum. [UPSTREAM] -/
+theorem exists_mem_iSups_ge (hs : ∀ j, (s j).Nonempty) {i : ι} (ha : a ∈ s i) :
+    ∃ b ∈ iSups s, a ≤ b := by
+  classical
+  let f : ι → α := Function.update (fun j ↦ (hs j).some) i a
+  have hf : ∀ j, f j ∈ s j := fun j ↦ by
+    by_cases h : j = i
+    · subst h
+      simpa [f] using ha
+    · simpa [f, h] using (hs j).some_mem
+  exact ⟨_, iSup_mem_iSups hf, by simpa [f] using le_iSup f i⟩
+
 /-- The supremum of `Set.iSups s` is the supremum of the suprema of the `s i` when each is
 nonempty. [UPSTREAM] -/
 theorem sSup_iSups (hs : ∀ i, (s i).Nonempty) : sSup (iSups s) = ⨆ i, sSup (s i) := by
-  classical
   refine le_antisymm (sSup_le fun _ ha ↦ ?_) (iSup_le fun i ↦ sSup_le fun b hb ↦ ?_)
   · obtain ⟨f, hf, rfl⟩ := mem_iSups.1 ha
     exact iSup_mono fun i ↦ le_sSup (hf i)
-  · let f : ι → α := Function.update (fun j ↦ (hs j).some) i b
-    have hf : ∀ j, f j ∈ s j := fun j ↦ by
-      by_cases h : j = i
-      · subst h
-        simpa [f] using hb
-      · simpa [f, h] using (hs j).some_mem
-    calc b = f i := by simp [f]
-      _ ≤ ⨆ j, f j := le_iSup f i
-      _ ≤ sSup (iSups s) := le_sSup (iSup_mem_iSups hf)
+  · obtain ⟨c, hc, hbc⟩ := exists_mem_iSups_ge hs hb
+    exact hbc.trans (le_sSup hc)
 
 /-- The upper closure of `Set.iSups s` is the meet of the upper closures of the `s i`, as upper
 sets. [UPSTREAM] -/
