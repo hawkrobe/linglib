@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Core.Order.Bilattice.Basic
+public import Linglib.Core.Order.Bilattice.Four
+public import Linglib.Logic.Bilattice.Guard
 public import Mathlib.Order.Fin.Basic
 public import Mathlib.Data.Bool.Basic
 
@@ -11,8 +12,8 @@ This file formalizes the value space of the paper's Evidential Bilattice Logic. 
 reasoning is partial, paraconsistent, relevant and defeasible, and the paper captures the four
 properties by climbing a progression of lattices (Fig. 1): the classical two values, Kleene's
 three, Belnap's `FOUR`, and the evidential bilattice `PRESUP` over the chain `0 < ½ < 1`, whose
-values are pairs of degrees of evidence for and against a proposition (`PRESUP`, the
-substrate's `Bilattice.Evidential (Fin 3)`), so that presumptions, confusion and defeated
+values are pairs of degrees of evidence for and against a proposition (`PRESUP`, the diagonal
+product `Fin 3 ⊙ Fin 3`), so that presumptions, confusion and defeated
 defaults join the gap and the glut. `FOUR` embeds in it preserving both orders (`embed_le`,
 `embed_kLE`). The evidential space is partitioned into Fitting's classical and consistent
 values and the paper's designated and semi-designated ones, with the paper's order-theoretic
@@ -27,6 +28,8 @@ evidential weighting that keeps only the dominant evidence are value-level conne
 * The paper writes a value as `⟨against, for⟩`, reversing Fitting's coordinate order to fit its
   diagrams; this file keeps the substrate's `(for, against)` order, so the paper's `⟨a, b⟩` is
   `.mk b a` here.
+* Fitting's conflation on `PRESUP` complements each coordinate on the chain by `Fin.rev`; it is
+  the study's `Conflation` instance, built by `Bilattice.Product.conflation`.
 * The paper's epistemic states, evidential links, its assertion, evaluation and closure
   semantics, and the §4 analyses of entailment, implicature and presupposition that run on
   them are not formalized; only the value level is.
@@ -47,7 +50,10 @@ namespace Schoter1996b
 
 /-- The paper's `PRESUP` (§2.1): the evidential bilattice over the 3-chain `Fin 3 ~ {0, ½, 1}`,
 `FOUR` with defeasible and presumed values added. -/
-abbrev PRESUP := Evidential (Fin 3)
+abbrev PRESUP := Fin 3 ⊙ Fin 3
+
+/-- Fitting's conflation on `PRESUP`, complementing each coordinate on the chain by `Fin.rev`. -/
+instance : Conflation PRESUP := Product.conflation Fin.rev Fin.rev_involutive Fin.rev_anti
 
 namespace PRESUP
 
@@ -72,15 +78,10 @@ def Dplus : PRESUP := .mk 2 1
 falsity (§2.1). -/
 def Dminus : PRESUP := .mk 1 2
 
-/-- Conflation on `PRESUP`, complementing on the chain by `Fin.rev`. -/
-@[reducible] def conf (x : PRESUP) : PRESUP := Evidential.conf Fin.rev x
-/-- The consistent (non-glut) fragment of `PRESUP`. -/
-@[reducible] def Consistent (x : PRESUP) : Prop := Evidential.Consistent Fin.rev x
-
 end PRESUP
 
 /-- `Bool ↪ Fin 3`: `false ↦ 0` (no evidence), `true ↦ 2` (full evidence). -/
-def boolToFin3 : Bool → Fin 3 := λ b => if b then 2 else 0
+def boolToFin3 : Bool → Fin 3 := fun b ↦ if b then 2 else 0
 
 /-- The embedding of `FOUR` into `PRESUP`, onto the definite values. -/
 def embed (x : FOUR) : PRESUP := .mk (boolToFin3 x.pro) (boolToFin3 x.con)
@@ -100,14 +101,12 @@ theorem embed_kLE (x y : FOUR) : x ≤ₖ y ↔ embed x ≤ₖ embed y := by
 /-- A presupposition gap and a defeasible presumption are both consistent; only the overdefined
 glut is excluded, so `PRESUP` keeps the gap-based logic and layers defeasible values on it. -/
 theorem gap_and_presumption_consistent :
-    PRESUP.Consistent PRESUP.U ∧ PRESUP.Consistent PRESUP.Pplus
-      ∧ ¬ PRESUP.Consistent PRESUP.I := by
+    IsConsistent PRESUP.U ∧ IsConsistent PRESUP.Pplus ∧ ¬ IsConsistent PRESUP.I := by
   decide
 
 /-! ### Partitions of the evidential space (§2.2)
 
-The classical and consistent subspaces are Fitting's (`Evidential.IsClassical`,
-`Evidential.Consistent`); the designated and semi-designated subspaces are the paper's, with
+The classical and consistent subspaces are Fitting's (`IsExact`, `IsConsistent`); the designated and semi-designated subspaces are the paper's, with
 its footnote characterizations `DES = {x | t ≤ₖ x}` and `SEMI = {x | ¬x ≤ x, U <ₖ x}` proved as
 order-theoretic facts. -/
 
@@ -116,28 +115,28 @@ section Partitions
 variable {S : Type*} [LinearOrder S] [BoundedOrder S]
 
 /-- A designated value (§2.2) has maximal positive evidence: `DES = {⟨a, b⟩ | b = 1}`. -/
-@[reducible] def Designated (x : Evidential S) : Prop := x.pro = ⊤
+@[reducible] def Designated (x : S ⊙ S) : Prop := x.pro = ⊤
 
 /-- A semi-designated value (§2.2) has some positive evidence, at least as strong as its
 negative evidence: `SEMI = {⟨a, b⟩ | a ≤ b, 0 < b}`. -/
-@[reducible] def SemiDesignated (x : Evidential S) : Prop :=
+@[reducible] def SemiDesignated (x : S ⊙ S) : Prop :=
   x.con ≤ x.pro ∧ ⊥ < x.pro
 
 /-- The footnote characterization of designation: a value is designated iff it is
 knowledge-above the truth top, `DES = {x | t ≤ₖ x}` (§2.2). -/
-theorem designated_iff_top_kLE {x : Evidential S} :
-    Designated x ↔ (⊤ : Evidential S) ≤ₖ x :=
-  ⟨λ h => ⟨h.ge, bot_le⟩, λ h => le_antisymm le_top h.1⟩
+theorem designated_iff_top_kLE {x : S ⊙ S} :
+    Designated x ↔ (⊤ : S ⊙ S) ≤ₖ x :=
+  ⟨fun h ↦ ⟨h.ge, bot_le⟩, fun h ↦ le_antisymm le_top h.1⟩
 
 /-- The footnote characterization of semi-designation: a value is semi-designated iff it is
 truer than its negation and contains some information, `SEMI = {x | ¬x ≤ x, U <ₖ x}` (§2.2). -/
-theorem semiDesignated_iff {x : Evidential S} :
-    SemiDesignated x ↔ Product.neg x ≤ x ∧ (⊥ : Know (Evidential S)) < toKnow x := by
+theorem semiDesignated_iff {x : S ⊙ S} :
+    SemiDesignated x ↔ xᶜ ≤ x ∧ (⊥ : Know (S ⊙ S)) < toKnow x := by
   constructor
   · rintro ⟨hle, hlt⟩
-    exact ⟨⟨hle, hle⟩, bot_lt_iff_ne_bot.mpr λ h => hlt.ne' (congrArg Prod.fst h)⟩
+    exact ⟨⟨hle, hle⟩, bot_lt_iff_ne_bot.mpr fun h ↦ hlt.ne' (congrArg Prod.fst h)⟩
   · rintro ⟨hneg, hlt⟩
-    refine ⟨hneg.1, bot_lt_iff_ne_bot.mpr λ hp => hlt.ne' ?_⟩
+    refine ⟨hneg.1, bot_lt_iff_ne_bot.mpr fun hp ↦ hlt.ne' ?_⟩
     exact Prod.ext hp (le_bot_iff.mp (hneg.1.trans hp.le))
 
 /-- The designated subspace of `PRESUP` is `{T, D⁺, I}` (§2.2). -/
@@ -160,52 +159,48 @@ theorem four_semiDesignated_iff_designated :
 /-- The consistent fragment of `FOUR` is closed under negation, the truth operations and
 consensus `⊓ₖ` (§2.2). -/
 theorem four_consistent_closed :
-    ∀ x y : FOUR, FOUR.Consistent x → FOUR.Consistent y →
-      FOUR.Consistent (Product.neg x) ∧ FOUR.Consistent (x ⊓ y)
-        ∧ FOUR.Consistent (x ⊔ y) ∧ FOUR.Consistent (x ⊓ₖ y) := by
-  decide
+    ∀ x y : FOUR, IsConsistent x → IsConsistent y →
+      IsConsistent xᶜ ∧ IsConsistent (x ⊓ y) ∧ IsConsistent (x ⊔ y) ∧ IsConsistent (x ⊓ₖ y) :=
+  fun _ y hx hy ↦ ⟨hx.compl, hx.inf hy, hx.sup hy, hx.kInf y⟩
 
 /-- The consistent fragment is not closed under gullibility `⊔ₖ`: credulously combining
 consistent evidence can produce the glut, so paraconsistency is localized rather than absent. -/
 theorem four_consistent_not_closed_kSup :
-    ¬ ∀ x y : FOUR, FOUR.Consistent x → FOUR.Consistent y →
-      FOUR.Consistent (x ⊔ₖ y) := by
-  decide
+    ¬ ∀ x y : FOUR, IsConsistent x → IsConsistent y → IsConsistent (x ⊔ₖ y) :=
+  fun h ↦ absurd (h FOUR.T FOUR.F (by decide) (by decide)) (by decide)
 
 /-- The classical fragment of `FOUR` is closed under negation and the truth operations
 (§2.2), and so supports classical logic. -/
 theorem four_isClassical_closed :
-    ∀ x y : FOUR, FOUR.IsClassical x → FOUR.IsClassical y →
-      FOUR.IsClassical (Product.neg x) ∧ FOUR.IsClassical (x ⊓ y)
-        ∧ FOUR.IsClassical (x ⊔ y) := by
-  decide
+    ∀ x y : FOUR, IsExact x → IsExact y → IsExact xᶜ ∧ IsExact (x ⊓ y) ∧ IsExact (x ⊔ y) :=
+  fun _ _ hx hy ↦ ⟨hx.compl, hx.inf hy, hx.sup hy⟩
 
 end Partitions
 
 /-! ### Value-level connectives (Definitions 4, 5, 14 and 16)
 
 The recursive evaluation clauses of Definition 14 are value-functional except for the
-inference-link connective: clause 1 is `Product.neg`, clauses 3 and 4 are `⊓` and `⊔`, clause 5
+inference-link connective: clause 1 is Ginsberg negation `ᶜ`, clauses 3 and 4 are `⊓` and `⊔`, clause 5
 is Fitting's guard, and clause 2, the `presumably` operator, is built from the guard and the
 semi-designation function. -/
 
 section Connectives
 
-open Evidential
+open Bilattice.Product (guard)
 
 variable {S : Type*} [LinearOrder S] [BoundedOrder S]
 
 /-- The semi-designation function `σ` (Definition 5): `T` on the semi-designated values, `F`
 elsewhere. -/
-def semiDesignation (x : Evidential S) : Evidential S :=
+def semiDesignation (x : S ⊙ S) : S ⊙ S :=
   if SemiDesignated x then .mk ⊤ ⊥ else .mk ⊥ ⊤
 
 /-- The value-level `presumably` operator `π` (Definition 14, clause 2): `σ(v) : T ⊕ σ(¬v) : F`,
 presumably true if the value is semi-designated, presumably false if its negation is, the two
 unified informationally. -/
-def presumably (v : Evidential S) : Evidential S :=
+def presumably (v : S ⊙ S) : S ⊙ S :=
   (guard (semiDesignation v) (.mk ⊤ ⊥) ⊔ₖ
-    guard (semiDesignation (Product.neg v)) (.mk ⊥ ⊤))
+    guard (semiDesignation vᶜ) (.mk ⊥ ⊤))
 
 /-- `presumably` fixes the definite values and the gap, and raises a presumption to
 definite truth. -/
@@ -217,7 +212,7 @@ theorem presumably_table :
 
 /-- The evidential-weighting function `f⋆` (Definition 16) suppresses the dominated evidence, so
 that only the dominant evidence figures in evaluation. -/
-def weight (x : Evidential S) : Evidential S :=
+def weight (x : S ⊙ S) : S ⊙ S :=
   if x.con < x.pro then .mk x.pro ⊥ else if x.pro < x.con then .mk ⊥ x.con else x
 
 /-- Weighting evaluates a defeated default as the definite value that defeated it:

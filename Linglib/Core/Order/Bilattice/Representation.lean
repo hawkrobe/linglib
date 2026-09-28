@@ -19,7 +19,7 @@ converse, that a product of two lattices is interlaced, is `Bilattice.Product`.
 * `Bilattice.le_iff_kInf_top_kInf_bot`: the truth order read off the decomposition (Thm 4.3).
 * `Bilattice.isCompl_truthBounds`: the truth bounds are knowledge-complementary (Cor 3.5).
 * `Bilattice.inf_kT_sup_inf_kF`: every element is `(x ⊓ₖ ⊤) ⊔ₖ (x ⊓ₖ ⊥)` (Cor 3.8).
-* `Bilattice.negIicIso`, `Bilattice.neg_kInf_top`: the two steps of Prop 4.7.
+* `Bilattice.complIicIso`, `Bilattice.compl_kInf_top`: the two steps of Prop 4.7.
 
 ## TODO
 
@@ -306,35 +306,37 @@ theorem le_iff_kInf_top_kInf_bot {x y : B} :
       _ = (y ⊓ₖ ⊤) ⊔ₖ (y ⊓ₖ ⊥) := kSup_comm _ _
       _ = y := decomp_kSup y
 
-/-! #### Negation and the decomposition (Avron Prop 4.7)
-
-With a negation, the two decomposition factors are isomorphic and the
-decomposition is a *diagonal* product: [avron-1996] Prop 4.7 exhibits
-`⟨B, ∼⟩ ≅ L_B ⊙ L_B` with Ginsberg's swap negation, via `x ↦ (x ⊓ₖ t, x ⊓ₖ f)`
-followed by `(x, y) ↦ (x, ∼y)`. Formalized here: the ideal isomorphism
-`λ x, ∼x : L_B ≃o R_B` (`negIicIso`) and the transport equation
-`∼x ⊓ₖ t = ∼(x ⊓ₖ f)` (`neg_kInf_top`) — the two steps of Avron's proof. -/
-
-omit [IsInterlaced B] [BoundedOrder (Know B)] in
-/-- [avron-1996] Prop 4.7, key step: negation is an isomorphism between the
-knowledge ideals `L_B = Iic t` and `R_B = Iic f`. -/
-def negIicIso [Negation B] : Set.Iic kT ≃o Set.Iic kF where
-  toFun x := ⟨toKnow (neg (ofKnow x.1)), by
-    simpa only [Set.mem_Iic, kLE_def, toKnow_ofKnow, neg_top] using
-      neg_kLE_neg (show ofKnow x.1 ≤ₖ (⊤ : B) from x.2)⟩
-  invFun y := ⟨toKnow (neg (ofKnow y.1)), by
-    simpa only [Set.mem_Iic, kLE_def, toKnow_ofKnow, neg_bot] using
-      neg_kLE_neg (show ofKnow y.1 ≤ₖ (⊥ : B) from y.2)⟩
-  left_inv x := Subtype.ext (congrArg toKnow (neg_neg _))
-  right_inv y := Subtype.ext (congrArg toKnow (neg_neg _))
-  map_rel_iff' := neg_kLE_neg_iff
-
-omit [IsInterlaced B] [BoundedOrder (Know B)] in
-/-- [avron-1996] Prop 4.7, transport step (the map `(x, y) ↦ (x, ∼y)`):
-negation exchanges the two decomposition components, `∼x ⊓ₖ t = ∼(x ⊓ₖ f)`. -/
-theorem neg_kInf_top [Negation B] (x : B) : neg x ⊓ₖ ⊤ = neg (x ⊓ₖ ⊥) := by
-  rw [neg_kInf, neg_bot]
-
 end Representation
+
+/-! ### Negation and the decomposition
+
+With a negation the two decomposition factors are isomorphic, and the decomposition is a diagonal
+product: [avron-1996] Prop 4.7 exhibits `⟨B, ∼⟩ ≅ L_B ⊙ L_B` with Ginsberg's swap negation, via
+`x ↦ (x ⊓ₖ t, x ⊓ₖ f)` followed by `(x, y) ↦ (x, yᶜ)`. The two steps of that proof are the ideal
+isomorphism `complIicIso` and the transport equation `compl_kInf_top`. -/
+
+section Negation
+
+variable [LatticeWithInvolution B] [Lattice (Know B)] [Negation B]
+
+/-- [avron-1996] Prop 4.7, key step: negation is an isomorphism between the knowledge ideals
+`L_B = Iic t` and `R_B = Iic f`. -/
+def complIicIso : Set.Iic (toKnow (⊤ : B)) ≃o Set.Iic (toKnow (⊥ : B)) where
+  toFun x := ⟨toKnow (ofKnow x.1)ᶜ, by
+    simpa only [Set.mem_Iic, kLE_def, toKnow_ofKnow, LatticeWithInvolution.compl_top] using
+      compl_kLE_compl (show ofKnow x.1 ≤ₖ (⊤ : B) from x.2)⟩
+  invFun y := ⟨toKnow (ofKnow y.1)ᶜ, by
+    simpa only [Set.mem_Iic, kLE_def, toKnow_ofKnow, LatticeWithInvolution.compl_bot] using
+      compl_kLE_compl (show ofKnow y.1 ≤ₖ (⊥ : B) from y.2)⟩
+  left_inv _ := Subtype.ext (congrArg toKnow (LatticeWithInvolution.compl_compl _))
+  right_inv _ := Subtype.ext (congrArg toKnow (LatticeWithInvolution.compl_compl _))
+  map_rel_iff' := compl_kLE_compl_iff
+
+/-- [avron-1996] Prop 4.7, transport step (the map `(x, y) ↦ (x, yᶜ)`): negation exchanges the
+two decomposition components, `xᶜ ⊓ₖ t = (x ⊓ₖ f)ᶜ`. -/
+theorem compl_kInf_top (x : B) : xᶜ ⊓ₖ ⊤ = (x ⊓ₖ ⊥)ᶜ := by
+  rw [compl_kInf, LatticeWithInvolution.compl_bot]
+
+end Negation
 
 end Bilattice

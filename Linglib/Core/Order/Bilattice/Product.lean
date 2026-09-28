@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.Bilattice.Representation
+public import Linglib.Core.Order.DeMorganAlgebra.Defs
 public import Linglib.Core.Order.Hom.Basic
 public import Mathlib.Data.Fintype.Prod
 
@@ -30,16 +31,22 @@ essentially introduced by Ginsberg [ginsberg-1988], and further generalized by F
   knowledge-order instances on `Know (L ⊙ R)` from `L × R`.
 * `Bilattice.Product.mk`, `Bilattice.Product.pro`, `Bilattice.Product.con`: the plain-coordinate
   constructor and projections.
-* `Bilattice.Product.neg`: Ginsberg negation on the diagonal `L ⊙ L`.
+* the `Compl (L ⊙ L)` instance: Ginsberg negation on the diagonal, with the
+  `LatticeWithInvolution`, `Negation` and `DeMorganAlgebra` instances it underlies.
+* `Bilattice.Product.conflation`: the conflation induced by an involution of the factor.
 
 ## Main results
 
+* `Bilattice.Product.isExact_iff`, `Bilattice.Product.isConsistent_iff`,
+  `Bilattice.Product.isAnticonsistent_iff`: the three classes in coordinates.
 * `Bilattice.Product.decomposeProdIso`: the representation theorem applied to a product recovers
   its factors.
 
 ## References
 
 * [avron-1996]
+* [fitting-1994]
+* [fitting-2021]
 * [ginsberg-1988]
 -/
 
@@ -215,39 +222,86 @@ instance [Lattice L] [Lattice R] : IsInterlaced (L ⊙ R) where
 
 /-! ### Negation
 
-On the diagonal `L ⊙ L`, Ginsberg's negation swaps the coordinates: an
-involution reversing the truth order and preserving the knowledge order
-([ginsberg-1988]; [avron-1996] Thm 2.5(2)). -/
+On the diagonal `L ⊙ L`, Ginsberg's negation swaps the coordinates ([ginsberg-1988];
+[avron-1996] Thm 2.5(2)). It needs no order on `L`, so it is a bare `Compl` instance. Over a
+bounded lattice it is the involution of a `LatticeWithInvolution` on the truth lattice and a
+bilattice `Negation`, and over a distributive lattice the truth lattice is a De Morgan algebra. -/
 
 section Negation
 
-/-- Ginsberg negation on `L ⊙ L`: swap evidence for/against. Protected: the public spelling is
-the `Negation` class's `neg`, through the instance below. -/
-protected def neg (x : L ⊙ L) : L ⊙ L := mk x.con x.pro
+/-- Ginsberg negation on `L ⊙ L` swaps the evidence for and the evidence against. -/
+instance : Compl (L ⊙ L) := ⟨fun x ↦ mk x.con x.pro⟩
 
-@[simp] theorem neg_mk (a b : L) : Product.neg (mk a b) = mk b a := rfl
-@[simp] theorem neg_neg (x : L ⊙ L) : Product.neg (Product.neg x) = x := rfl
-
-variable [Preorder L]
+@[simp] theorem pro_compl (x : L ⊙ L) : (xᶜ).pro = x.con := rfl
+@[simp] theorem con_compl (x : L ⊙ L) : (xᶜ).con = x.pro := rfl
+@[simp] theorem mk_compl (a b : L) : (mk a b)ᶜ = mk b a := rfl
+@[simp] protected theorem compl_compl (x : L ⊙ L) : xᶜᶜ = x := rfl
 
 /-- Negation reverses the truth order ([avron-1996] Def 2.3(ii)). -/
-theorem neg_le_neg {x y : L ⊙ L} (h : x ≤ y) : Product.neg y ≤ Product.neg x := ⟨h.2, h.1⟩
+protected theorem compl_le_compl [Preorder L] {x y : L ⊙ L} (h : x ≤ y) : yᶜ ≤ xᶜ := ⟨h.2, h.1⟩
 
 /-- Negation preserves the knowledge order ([avron-1996] Def 2.3(iii)). -/
-theorem neg_kLE_neg {x y : L ⊙ L} (h : x ≤ₖ y) : Product.neg x ≤ₖ Product.neg y := ⟨h.2, h.1⟩
+protected theorem compl_kLE_compl [Preorder L] {x y : L ⊙ L} (h : x ≤ₖ y) : xᶜ ≤ₖ yᶜ :=
+  ⟨h.2, h.1⟩
 
-/-- **Ginsberg's swap is a negation on the diagonal** ([avron-1996] Thm 2.5(2)). -/
-instance : Negation (L ⊙ L) where
-  neg := Product.neg
-  neg_neg := neg_neg
-  neg_le_neg := neg_le_neg
-  neg_kLE_neg := neg_kLE_neg
+instance [Lattice L] [BoundedOrder L] : LatticeWithInvolution (L ⊙ L) where
+  toCompl := inferInstance
+  compl_compl := Product.compl_compl
+  compl_le_compl := Product.compl_le_compl
 
-@[simp] theorem pro_neg (x : L ⊙ L) : (Bilattice.neg x).pro = x.con := rfl
-@[simp] theorem con_neg (x : L ⊙ L) : (Bilattice.neg x).con = x.pro := rfl
-@[simp] theorem neg_mk' (a b : L) : Bilattice.neg (mk a b) = mk b a := rfl
+/-- Ginsberg's swap is a negation on the diagonal ([avron-1996] Thm 2.5(2)). -/
+instance [Lattice L] [BoundedOrder L] : Negation (L ⊙ L) := ⟨Product.compl_kLE_compl⟩
+
+/-- Over a distributive lattice the truth lattice of `L ⊙ L` is a De Morgan algebra
+([fitting-2021] §8.3). -/
+instance [DistribLattice L] [BoundedOrder L] : DeMorganAlgebra (L ⊙ L) where
 
 end Negation
+
+/-! ### Conflation
+
+Swapping the coordinates and applying an order-reversing involution of the factor to each is a
+conflation of `L ⊙ L` ([fitting-1994] §7, [fitting-2021] §8.8). The involution of a
+`LatticeWithInvolution` factor gives the conflation instance, which commutes with Ginsberg
+negation, and the exact, consistent and anticonsistent values read off the coordinates. -/
+
+section Conflation
+
+/-- The conflation `⟨a, b⟩ ↦ ⟨f b, f a⟩` of `L ⊙ L` induced by an order-reversing involution `f`
+of the factor. -/
+abbrev conflation [Preorder L] (f : L → L) (hf : Function.Involutive f) (ha : Antitone f) :
+    Conflation (L ⊙ L) where
+  conf x := mk (f x.con) (f x.pro)
+  conf_conf x := ext (hf x.pro) (hf x.con)
+  conf_le_conf h := ⟨ha h.2, ha h.1⟩
+  conf_kLE_conf h := ⟨ha h.2, ha h.1⟩
+
+variable [LatticeWithInvolution L]
+
+instance : Conflation (L ⊙ L) :=
+  conflation (·ᶜ) LatticeWithInvolution.compl_compl LatticeWithInvolution.compl_anti
+
+instance : NegConfComm (L ⊙ L) := ⟨fun _ ↦ rfl⟩
+
+@[simp] theorem pro_conf (x : L ⊙ L) : (conf x).pro = x.conᶜ := rfl
+@[simp] theorem con_conf (x : L ⊙ L) : (conf x).con = x.proᶜ := rfl
+
+/-- The exact values are the pairs `⟨a, aᶜ⟩`. -/
+theorem isExact_iff (x : L ⊙ L) : IsExact x ↔ x.con = x.proᶜ :=
+  ⟨fun h ↦ (congrArg con h.eq).symm,
+    fun h ↦ ext (by simp [h, LatticeWithInvolution.compl_compl]) h.symm⟩
+
+/-- The consistent values: the evidence against is below the complement of the evidence for. -/
+theorem isConsistent_iff (x : L ⊙ L) : IsConsistent x ↔ x.con ≤ x.proᶜ :=
+  ⟨And.right, fun h ↦ ⟨LatticeWithInvolution.le_compl_comm.1 h, h⟩⟩
+
+/-- The anticonsistent values: the complement of the evidence for is below the evidence
+against. -/
+theorem isAnticonsistent_iff (x : L ⊙ L) : IsAnticonsistent x ↔ x.proᶜ ≤ x.con :=
+  ⟨And.right, fun h ↦ ⟨(LatticeWithInvolution.compl_le_compl h).trans
+    (LatticeWithInvolution.compl_compl x.pro).le, h⟩⟩
+
+end Conflation
 
 /-! ### Recovering the factors
 
