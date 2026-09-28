@@ -21,9 +21,11 @@ nouns.
 
 ## Main declarations
 
-* `Latin.Declension.Cell`, `forms`: the cells of a number, the cases of `Latin.Case.inventory`, and
-  the forms of the six in the order of the school paradigms.
-* `Latin.Declension.Noun`: a noun with its declension, genders and the form of each cell.
+* `Latin.Declension.forms`: the forms of the six cases, in the order of the school paradigms.
+* `Latin.Declension.Noun`: a noun with its declension, genders and the form of each case in each
+  number.
+* `separatesPoints_paradigms`, `not_injective`: the paradigms of the table separate the six
+  cases, though no one of them does.
 * `nom_acc_syncretic_of_neuter`, `plural_dat_abl_syncretic`, `singular_dat_abl_syncretic_iff`,
   `singular_nom_voc_syncretic_iff`: the syncretisms, read off the forms.
 
@@ -36,6 +38,7 @@ The genders of the four nouns whose columns the table leaves unlabelled are the 
 ## References
 
 * [blake-1994]
+* [blake-2001]
 -/
 
 @[expose] public section
@@ -54,26 +57,16 @@ inductive Class where
   | fifth
   deriving DecidableEq, Repr
 
-/-- The cells of a number, the six cases. -/
-abbrev Cell : Type := Latin.Case.inventory
+/-- The forms of the six cases, in the order of the school paradigms. -/
+def forms (nom voc acc gen dat abl : String) : Case → String
+  | .nom => nom
+  | .voc => voc
+  | .acc => acc
+  | .gen => gen
+  | .dat => dat
+  | .abl => abl
 
-/-- The cell of a case. -/
-abbrev cell (c : Case) (h : c ∈ Latin.Case.inventory := by decide) : Cell := ⟨c, h⟩
-
-/-- The forms of the six cells, in the order of the school paradigms. -/
-def forms (nom voc acc gen dat abl : String) : Cell → String
-  | ⟨.nom, _⟩ => nom
-  | ⟨.voc, _⟩ => voc
-  | ⟨.acc, _⟩ => acc
-  | ⟨.gen, _⟩ => gen
-  | ⟨.dat, _⟩ => dat
-  | ⟨.abl, _⟩ => abl
-  | ⟨.inst, h⟩ | ⟨.loc, h⟩ | ⟨.erg, h⟩ | ⟨.abs, h⟩ | ⟨.part, h⟩ | ⟨.ess, h⟩ | ⟨.transl, h⟩
-  | ⟨.com, h⟩ | ⟨.ade, h⟩ | ⟨.ine, h⟩ | ⟨.ill, h⟩ | ⟨.ela, h⟩ | ⟨.all, h⟩ | ⟨.sub, h⟩ | ⟨.sup, h⟩
-  | ⟨.del, h⟩ | ⟨.ter, h⟩ | ⟨.tem, h⟩ | ⟨.caus, h⟩ | ⟨.ben, h⟩ | ⟨.perl, h⟩ | ⟨.abess, h⟩ =>
-    absurd h (by decide)
-
-/-- A noun by the form of each of its twelve cells. -/
+/-- A noun by the form of each case in each number. -/
 structure Noun where
   /-- The gloss. -/
   gloss : String
@@ -82,9 +75,9 @@ structure Noun where
   /-- The genders the noun takes, two for a noun of common gender. -/
   genders : Finset Gender.Value
   /-- The singular form in each case. -/
-  singular : Cell → String
+  singular : Case → String
   /-- The plural form in each case. -/
-  plural : Cell → String
+  plural : Case → String
 
 /-- The noun is neuter. -/
 def Noun.IsNeuter (n : Noun) : Prop := n.genders = {.neut}
@@ -135,8 +128,8 @@ def civis : Noun where
 the accusative plural. -/
 def civis.variant : Noun :=
   { civis with
-    singular := Function.update civis.singular (cell .abl) "cīve"
-    plural := Function.update civis.plural (cell .acc) "cīvēs" }
+    singular := Function.update civis.singular .abl "cīve"
+    plural := Function.update civis.plural .acc "cīvēs" }
 
 /-- *manus* 'hand', fourth declension. -/
 def manus : Noun where
@@ -157,43 +150,60 @@ def dies : Noun where
 /-- The nouns of Blake's table. -/
 def nouns : List Noun := [domina, dominus, bellum, consul, civis, manus, dies]
 
+/-! ### The cases the paradigms distinguish -/
+
+/-- The paradigms of the table, singular and plural, separate the six cases: any two cases differ
+in some form of some noun, which is how the traditional description establishes them
+([blake-2001] §2.2.1). -/
+theorem separatesPoints_paradigms :
+    {p | ∃ n ∈ nouns, p = n.singular ∨ p = n.plural}.SeparatesPoints := by
+  intro c d h
+  have : ∀ c d : Case, c ≠ d →
+      ∃ n ∈ nouns, n.singular c ≠ n.singular d ∨ n.plural c ≠ n.plural d := by
+    decide
+  obtain ⟨n, hn, h | h⟩ := this c d h
+  exacts [⟨_, ⟨n, hn, .inl rfl⟩, h⟩, ⟨_, ⟨n, hn, .inr rfl⟩, h⟩]
+
+/-- No one paradigm of the table distinguishes all six cases. -/
+theorem not_injective :
+    ∀ n ∈ nouns, ¬ Function.Injective n.singular ∧ ¬ Function.Injective n.plural := by
+  decide
+
 /-! ### Syncretism -/
 
 /-- A neuter does not distinguish nominative and accusative in either number. -/
 theorem nom_acc_syncretic_of_neuter :
-    ∀ n ∈ nouns, n.IsNeuter →
-      syncretism n.singular (cell .nom) (cell .acc) ∧
-        syncretism n.plural (cell .nom) (cell .acc) := by
+    ∀ n ∈ nouns, n.IsNeuter → syncretism n.singular .nom .acc ∧ syncretism n.plural .nom .acc := by
   decide
 
 /-- No plural distinguishes dative and ablative. -/
-theorem plural_dat_abl_syncretic : ∀ n ∈ nouns, syncretism n.plural (cell .dat) (cell .abl) := by
+theorem plural_dat_abl_syncretic : ∀ n ∈ nouns, syncretism n.plural .dat .abl := by
   decide
 
 /-- The singular fails to distinguish dative and ablative in the second declension and the
 i-stems, and nowhere else. -/
 theorem singular_dat_abl_syncretic_iff :
     ∀ n ∈ nouns,
-      syncretism n.singular (cell .dat) (cell .abl) ↔ n.cls = .second ∨ n.cls = .thirdI := by
+      syncretism n.singular .dat .abl ↔ n.cls = .second ∨ n.cls = .thirdI := by
   decide
 
 /-- The vocative singular differs from the nominative in the non-neuters of the second
 declension, and nowhere else. -/
 theorem singular_nom_voc_syncretic_iff :
     ∀ n ∈ nouns,
-      syncretism n.singular (cell .nom) (cell .voc) ↔ ¬ (n.cls = .second ∧ ¬ n.IsNeuter) := by
+      syncretism n.singular .nom .voc ↔ ¬ (n.cls = .second ∧ ¬ n.IsNeuter) := by
   decide
 
 /-- No plural distinguishes nominative and vocative. -/
-theorem plural_nom_voc_syncretic : ∀ n ∈ nouns, syncretism n.plural (cell .nom) (cell .voc) := by
+theorem plural_nom_voc_syncretic : ∀ n ∈ nouns, syncretism n.plural .nom .voc := by
   decide
 
 /-- The plurals of the consonant stems, the u-stems and the ē-stems do not distinguish
 nominative and accusative, and with its consonant-stem accusative neither does *cīvis*. -/
 theorem plural_nom_acc_syncretic :
     (∀ n ∈ nouns, n.cls = .thirdConsonant ∨ n.cls = .fourth ∨ n.cls = .fifth →
-      syncretism n.plural (cell .nom) (cell .acc)) ∧
-    syncretism civis.variant.plural (cell .nom) (cell .acc) := by
+      syncretism n.plural .nom .acc) ∧
+    syncretism civis.variant.plural .nom .acc := by
   decide
 
 end Latin.Declension

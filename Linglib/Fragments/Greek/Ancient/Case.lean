@@ -11,6 +11,12 @@ the Latin ablative the genitive expresses source, while the dative expresses loc
 instrument beside the indirect object, so that the Greek dative is the more comprehensive case.
 Blake gives the system, vocative aside, as the four-case stage of his hierarchy.
 
+## Main declarations
+
+* `Greek.Ancient.Case`: the five cases.
+* `Greek.Ancient.Case.label`, `Greek.Ancient.Case.functions`: the comparative value each case is
+  named for, and the values it expresses.
+
 ## References
 
 * [blake-1994]
@@ -18,33 +24,42 @@ Blake gives the system, vocative aside, as the four-case stage of his hierarchy.
 
 @[expose] public section
 
-namespace Greek.Ancient.Case
-
-/-- The nominative. -/
-def nom : Case.Labelled := .single .nom
-
-/-- The vocative. -/
-def voc : Case.Labelled := .single .voc
-
-/-- The accusative. -/
-def acc : Case.Labelled := .single .acc
-
-/-- The genitive, which expresses source as well as the possessor. -/
-def gen : Case.Labelled := ⟨.gen, {.gen, .abl}, by decide⟩
-
-/-- The dative, which expresses location and instrument as well as the indirect object. -/
-def dat : Case.Labelled := ⟨.dat, {.dat, .loc, .inst}, by decide⟩
+namespace Greek.Ancient
 
 /-- The five cases. -/
-def cases : Finset Case.Labelled := {nom, voc, acc, gen, dat}
+inductive Case where
+  /-- The nominative. -/
+  | nom
+  /-- The vocative. -/
+  | voc
+  /-- The accusative. -/
+  | acc
+  /-- The genitive. -/
+  | gen
+  /-- The dative. -/
+  | dat
+  deriving DecidableEq, Fintype, Repr
 
-/-- The cases under their labels. -/
-def inventory : Finset Case := cases.image (·.label)
+namespace Case
 
-/-- Every function some case expresses. -/
-def functions : Finset Case := cases.biUnion (·.functions)
+/-- The comparative value a case is named for. -/
+def label : Case → _root_.Case
+  | nom => .nom
+  | voc => .voc
+  | acc => .acc
+  | gen => .gen
+  | dat => .dat
 
-theorem inventory_subset_functions : inventory ⊆ functions :=
-  Case.Labelled.image_label_subset_biUnion_functions cases
+/-- The comparative values a case expresses: the genitive also expresses source, and the dative
+location and instrument as well as the indirect object. -/
+def functions : Case → Finset _root_.Case
+  | gen => {.gen, .abl}
+  | dat => {.dat, .loc, .inst}
+  | c => {c.label}
 
-end Greek.Ancient.Case
+theorem label_mem_functions (c : Case) : c.label ∈ c.functions := by
+  cases c <;> decide
+
+end Case
+
+end Greek.Ancient

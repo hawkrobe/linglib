@@ -1,25 +1,31 @@
 module
 
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Fragments.German.Determiners
 
 /-!
 # Basel German case
 
-This file defines the Basel German definite articles and stressed first person singular pronouns
-as case markers, following Suter's grammar, and derives the inventory they realize. The pronouns
-keep the nominative, the accusative and the dative apart (§124), while an article never tells the
-accusative from the nominative (§§82–83). The genitive has long vanished as a case (§91), and the
-dative has taken over its functions (§§193–194).
+This file defines the three cases of Basel German, nominative, accusative and dative, with the
+forms of the definite article and of the stressed first person singular pronoun, following
+Suter's grammar. The personal pronouns keep all three cases apart (§124). The article marks the
+dative, but it never tells the accusative from the nominative, so that the accusative differs
+from the nominative on nouns only by position in the clause (§82). The genitive has long vanished
+as a case (§91), and the possessor is a dative, with a possessive pronoun or after *vo* (§193).
 
-## Main definitions
+## Main declarations
 
-* `articles`, `pronouns`: the definite articles and the stressed first person singular pronouns
-* `inventory`: the cases they realize
+* `German.Basel.Case`: the three cases.
+* `German.Basel.article`, `German.Basel.pronoun`: the forms of the definite article in each gender
+  and number (§83), and of the stressed first person singular pronoun (§125).
+* `article_nom_eq_acc`, `article_dat_ne_nom`, `pronoun_injective`: the article marks the dative
+  but not the accusative, and the pronoun marks both.
 
 ## Implementation notes
 
-The genitive surviving in names for a whole family, *s Waagners* 'the Wagner family', and in
-frozen expressions (§§83, 92) is left out of the inventory.
+A cell holds all the forms Suter gives for it: the article *d* beside its full form *die*, and
+the stressed *yy* beside *yych*. The genitive article *s* of names for a whole family,
+*s Waagners* 'the Wagner family' (§83), and the forms *am* and *im* heard beside the dative *em*
+(§85) are left out.
 
 ## References
 
@@ -28,60 +34,54 @@ frozen expressions (§§83, 92) is left out of the inventory.
 
 @[expose] public section
 
-namespace German.Basel.Case
+namespace German.Basel
 
-/-! ### The definite article -/
+open German.Determiners (GenderNumber)
 
-/-- *der* is the masculine singular nominative and accusative and the feminine singular dative
-(§83). -/
-def der : Case.Marker := ⟨"der", {.nom, .acc, .dat}⟩
+/-- The three cases. -/
+inductive Case where
+  /-- The nominative. -/
+  | nom
+  /-- The accusative. -/
+  | acc
+  /-- The dative. -/
+  | dat
+  deriving DecidableEq, Fintype, Repr
 
-/-- *die* is the feminine singular and the plural nominative and accusative (§83). -/
-def die : Case.Marker := ⟨"die", {.nom, .acc}⟩
+/-- The comparative value a case is named for. -/
+def Case.label : Case → _root_.Case
+  | nom => .nom
+  | acc => .acc
+  | dat => .dat
 
-/-- *d* is the reduced form of *die* (§83). -/
-def d : Case.Marker := ⟨"d", {.nom, .acc}⟩
+/-- The forms of the definite article (§83): *der* in the masculine and *s* in the neuter
+nominative and accusative singular, *d* or *die* in the feminine singular and the plural, *em*
+in the masculine and neuter dative singular, *der* in the feminine and *de* in the plural. -/
+def article : GenderNumber → Case → Finset String
+  | .sg .masc, .nom | .sg .masc, .acc => {"der"}
+  | .sg .fem, .nom | .sg .fem, .acc | .pl, .nom | .pl, .acc => {"d", "die"}
+  | .sg .neut, .nom | .sg .neut, .acc => {"s"}
+  | .sg .masc, .dat | .sg .neut, .dat => {"em"}
+  | .sg .fem, .dat => {"der"}
+  | .pl, .dat => {"de"}
 
-/-- *s* is the neuter singular nominative and accusative (§83). -/
-def s : Case.Marker := ⟨"s", {.nom, .acc}⟩
+/-- The stressed first person singular pronoun (§125): *yych* or *yy*, *mii*, *miir*. -/
+def pronoun : Case → Finset String
+  | .nom => {"yych", "yy"}
+  | .acc => {"mii"}
+  | .dat => {"miir"}
 
-/-- *em* is the masculine and neuter singular dative (§83). -/
-def em : Case.Marker := ⟨"em", {.dat}⟩
+/-- No form of the article tells the accusative from the nominative (§§82–83). -/
+theorem article_nom_eq_acc (x : GenderNumber) : article x .nom = article x .acc := by
+  revert x; decide
 
-/-- *de* is the plural dative (§83). -/
-def de : Case.Marker := ⟨"de", {.dat}⟩
+/-- The article tells the dative from the nominative in every gender and number (§83). -/
+theorem article_dat_ne_nom (x : GenderNumber) : article x .dat ≠ article x .nom := by
+  revert x; decide
 
-/-- `articles` is the set of definite articles. -/
-def articles : Finset Case.Marker := {der, die, d, s, em, de}
+/-- The pronoun keeps the three cases apart (§124), and so it is the pronoun that establishes
+the accusative. -/
+theorem pronoun_injective : Function.Injective pronoun := by
+  decide
 
-/-! ### The pronoun -/
-
-/-- *yych* is the stressed nominative 'I' (§125). -/
-def yych : Case.Marker := ⟨"yych", {.nom}⟩
-
-/-- *mii* is the stressed accusative 'me' (§125). -/
-def mii : Case.Marker := ⟨"mii", {.acc}⟩
-
-/-- *miir* is the stressed dative 'me' (§125). -/
-def miir : Case.Marker := ⟨"miir", {.dat}⟩
-
-/-- `pronouns` is the set of stressed first person singular pronouns. -/
-def pronouns : Finset Case.Marker := {yych, mii, miir}
-
-/-! ### The inventory -/
-
-/-- `inventory` is the set of cases the articles and the pronouns realize. -/
-def inventory : Finset Case := Case.Marker.inventory (articles ∪ pronouns)
-
-theorem inventory_eq : inventory = {.nom, .acc, .dat} := by decide
-
-/-- No article tells the accusative from the nominative (§82). -/
-theorem nom_mem_iff_acc_mem_of_mem_articles :
-    ∀ m ∈ articles, .nom ∈ m.cases ↔ .acc ∈ m.cases := by decide
-
-/-- The pronoun does (§124). -/
-theorem exists_pronoun_acc_not_nom :
-    ∃ m ∈ pronouns, .acc ∈ m.cases ∧ .nom ∉ m.cases :=
-  ⟨mii, by decide, by decide⟩
-
-end German.Basel.Case
+end German.Basel
