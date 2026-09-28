@@ -510,7 +510,7 @@ def naturalness (L : List ModalItem) : ℚ :=
   (L.countP (ForceFlavorIndependent ·.meaning) : ℚ) / L.length
 
 /-- Washo *-eʔ* varies on both axes, against the Single Axis of Variability universal of
-[nauze-2008], and satisfies IFF, its meaning being the full grid of two forces and two flavors. -/
+[nauze-2008], and satisfies IFF, its meaning being every force-flavor pair. -/
 theorem washo_not_singleAxis_forceFlavorIndependent :
     ¬ SingleAxis Washo.modalEq.meaning ∧
       ForceFlavorIndependent Washo.modalEq.meaning := by
@@ -529,9 +529,8 @@ theorem not_forceFlavorIndependent_diagonal :
   decide
 
 /-- Naturalness is graded: Modern Greek, one of the sampled languages, has one IFF modal in
-three, where the Washo inventory is fully natural. -/
-theorem naturalness_greek_washo :
-    naturalness Greek.StandardModern.modals = 1 / 3 ∧ naturalness Washo.modals = 1 := by
+three. -/
+theorem naturalness_greek : naturalness Greek.StandardModern.modals = 1 / 3 := by
   decide +kernel
 
 end ImelGuoSteinertThrelkeld2026

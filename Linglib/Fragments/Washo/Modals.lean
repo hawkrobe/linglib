@@ -3,36 +3,37 @@ module
 public import Linglib.Semantics.Modality.Basic
 
 /-!
-# Washo Modal Inventory
+# Washo modals
 
-Modal expressions from Washo (isolate), based on
-[bochnak-2015a] and [bochnak-2015b].
+Washo (Hokan/isolate, ISO 639-3 `was`) expresses modality with the verb *-eʔ*, the copula of
+individual-level predication used without an overt subject and with a clause as its complement
+([bochnak-2015a] §2). It keeps the individual-level agreement (third person *k'-*, first person
+*L-*), most often third person whatever the subject of the prejacent, and the prejacent is a
+non-finite clause or a finite clause closed by the relativizer *-gi*: *súku baŋáya ʔéʔišgi k'éʔi*
+'The dog has to stay outside.'
 
-Washo is a key counterexample to the SAV universal ([nauze-2008]):
-the modal verb *-eʔ* expresses both possibility and necessity with both
-epistemic and deontic flavors, varying on **both** axes simultaneously.
-Despite this, *-eʔ* satisfies the IFF universal
-([steinert-threlkeld-imel-guo-2023]): its meaning is the full
-Cartesian product {necessity, possibility} × {epistemic, deontic}.
+*-eʔ* leaves both force and flavor to context. [bochnak-2015a] §3 elicits it in necessity, weak
+necessity and possibility contexts, with deontic, metaphysical, epistemic, bouletic, generic and
+circumstantial flavors, though speakers tend to use an evidential in epistemic contexts. Negation
+is marked inside the prejacent and never on *-eʔ* itself ([bochnak-2015a] §5), and the subjunctive
+*-hel* on the prejacent rules out the necessity reading ([bochnak-2015b] §4).
+
+## References
+
+* [bochnak-2015a]
+* [bochnak-2015b]
 -/
 
 @[expose] public section
 
 namespace Washo
 
-open Modality (ForceFlavor ModalItem)
+open Modality
 
-abbrev ne : ForceFlavor := (.necessity, .epistemic)
-abbrev nd : ForceFlavor := (.necessity, .deontic)
-abbrev pe : ForceFlavor := (.possibility, .epistemic)
-abbrev pd : ForceFlavor := (.possibility, .deontic)
-
-/-- *-eʔ* — variable-force, variable-flavor modal verb.
-    Expresses epistemic and deontic modality with both weak and strong force.
-    Counterexample to SAV: varies on both axes. Satisfies IFF: the meaning
-    is {necessity, possibility} × {epistemic, deontic}. -/
-def modalEq : ModalItem := { form := "-eʔ", meaning := {ne, nd, pe, pd} }
-
-def modals : List ModalItem := [modalEq]
+/-- The modal verb *-eʔ*, which [bochnak-2015a] finds lexically specified for neither force nor
+flavor, so that it expresses every force-flavor pair. -/
+def modalEq : ModalItem where
+  form := "-eʔ"
+  meaning := Finset.univ
 
 end Washo

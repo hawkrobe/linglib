@@ -3,6 +3,7 @@ module
 public import Linglib.Core.Combinatorics.SimpleGraph.Prod
 public import Linglib.Semantics.Modality.Universals
 public import Linglib.Fragments.Washo.Modals
+public import Linglib.Data.Examples.Bochnak2015a
 public import Linglib.Studies.MocnikAbramovitz2019
 public import Linglib.Fragments.Javanese.Modals
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
@@ -13,11 +14,17 @@ public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 This file formalizes the Independence of Force and Flavor universal of
 [steinert-threlkeld-imel-guo-2023], the substrate's `Modality.ForceFlavorIndependent`,
 against the Single Axis of Variability universal of [nauze-2008] it replaces. The Washo verb
-*-eʔ* of [bochnak-2015a] varies on both axes yet is a product, the hypothetical *mighst* is
-neither, and the singleton meanings of Paciran Javanese ([vander-klok-2013a]) satisfy the
-universal trivially. The paper's equivalence of independence with convexity for the grid
-betweenness of [chemla-buccola-dautriche-2019] is the substrate's
-`forceFlavorIndependent_iff_pair_product_subset`.
+*-eʔ*, which [bochnak-2015a] finds specified for neither force nor flavor, varies on both axes
+yet is a product, the hypothetical *mighst* is neither, and the singleton meanings of Paciran
+Javanese ([vander-klok-2013a]) satisfy the universal trivially. The paper's equivalence of
+independence with convexity for the grid betweenness of [chemla-buccola-dautriche-2019] is the
+substrate's `forceFlavorIndependent_iff_pair_product_subset`.
+
+Section 4.1 notes gaps in the uses of *-eʔ* that Bochnak elicits: bouletic necessity and weak
+necessity but no bouletic possibility, and weak necessity with no other flavor
+(`washoAttested_gaps`), so the attested uses are not a product. The paper still takes the
+universal to hold of *-eʔ*, since nothing rules the missing pairs out and the analyses of
+[bochnak-2015a] and [bochnak-2015b] leave force and flavor free (`washo_attested`).
 
 The paper offers path-connectedness as a weaker fallback universal, defined by replacing the
 "and" of independence with an "or" and glossed in a footnote as any two points being joined by a
@@ -40,7 +47,8 @@ they satisfy only path-connectedness (`ivek_attested`).
 The paper's space has two forces, weak and strong, and the flavors epistemic, deontic and
 teleological; the library folds teleological into circumstantial. The doxastic and assertive
 flavors of *ivək* lie outside that space, and the universal is stated for any types of forces
-and flavors.
+and flavors. So do the metaphysical and generic uses of *-eʔ*, which `washoAttested` leaves
+out; the weak necessity of [bochnak-2015a] is the library's `ModalForce.weakNecessity`.
 
 ## References
 
@@ -48,6 +56,7 @@ and flavors.
 * [nauze-2008]
 * [chemla-buccola-dautriche-2019]
 * [bochnak-2015a]
+* [bochnak-2015b]
 * [mocnik-abramovitz-2019]
 * [vander-klok-2013a]
 -/
@@ -58,11 +67,43 @@ namespace SteinertThrelkeldImelGuo2023
 
 open Modality SimpleGraph
 
-/-- Washo *-eʔ* varies on both axes, against Nauze's universal, and is the product of two forces
-and two flavors. -/
+/-- Washo *-eʔ*, which leaves force and flavor to context, varies on both axes, against Nauze's
+universal, and is a product. -/
 theorem washo_modalEq :
     ¬ SingleAxis Washo.modalEq.meaning ∧
       ForceFlavorIndependent Washo.modalEq.meaning := by
+  decide
+
+/-- The force a row of [bochnak-2015a] records. -/
+def forceTable : List (String × ModalForce) :=
+  [("possibility", .possibility), ("weak necessity", .weakNecessity), ("necessity", .necessity)]
+
+/-- The flavor a row of [bochnak-2015a] records, when it lies in the space. -/
+def flavorTable : List (String × ModalFlavor) :=
+  [("epistemic", .epistemic), ("deontic", .deontic), ("bouletic", .bouletic),
+    ("circumstantial", .circumstantial)]
+
+/-- The pairs of the uses of *-eʔ* that [bochnak-2015a] elicits, in §3 and, with the prejacent
+negated, in §5. -/
+def washoAttested : Finset ForceFlavor :=
+  (Bochnak2015a.Examples.all.filterMap fun e ↦ (e.parse? "force" forceTable).bind
+    fun fo ↦ (e.parse? "flavor" flavorTable).map (fo, ·)).toFinset
+
+/-- Section 4.1 on the uses [bochnak-2015a] reports: both forces with the epistemic and the
+deontic flavor, bouletic necessity and weak necessity but no bouletic possibility, and weak
+necessity with no other flavor. -/
+theorem washoAttested_gaps :
+    ({.necessity, .possibility} : Finset ModalForce) ×ˢ ({.epistemic, .deontic} : Finset _) ⊆
+        washoAttested ∧
+      (.possibility, .bouletic) ∉ washoAttested ∧
+      {p ∈ washoAttested | p.force = .weakNecessity} = {(.weakNecessity, .bouletic)} := by
+  decide
+
+/-- The attested uses of *-eʔ* vary on both axes but fail the universal, which holds of the
+entry predicting the unreported pairs. -/
+theorem washo_attested :
+    ¬ SingleAxis washoAttested ∧ ¬ ForceFlavorIndependent washoAttested ∧
+      washoAttested ⊂ Washo.modalEq.meaning := by
   decide
 
 /-- Koryak *ivək*, on the lexical entry of [mocnik-abramovitz-2019], expresses all four pairs of

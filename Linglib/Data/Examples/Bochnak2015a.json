@@ -1,0 +1,485 @@
+[
+  {
+    "id": "bochnak2015a_ex10",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(10b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "bévali wí:diʔ lé:šɨl k’éʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["bevali", "Beverly"], ["wi:diʔ", "this"], ["le-išɨl", "1-give"], ["k’-eʔ-i", "3-MOD-IPFV"]
+    ],
+    "translation": "I need to give this to Beverly.",
+    "context": "You borrowed a pot from Beverly, and now you need to give it back to her.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3"],
+      ["force", "necessity"],
+      ["flavor", "deontic"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex11",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(11b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "súku baŋáya ʔéʔišgi k’éʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["suku", "dog"], ["baŋaya", "outside"], ["ʔ-eʔ-i-š-gi", "3-COP-IPFV-SR-REL"],
+      ["k’-eʔ-i", "3-MOD-IPFV"]
+    ],
+    "translation": "The dog has to stay outside.",
+    "context": "A friend comes to visit, and brings her dog along. You don’t want the dog to come in the house.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3"],
+      ["force", "necessity"],
+      ["flavor", "deontic"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex12",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(12b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "wát wútpɨda léʔgabigi Léʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["wat", "tomorrow"], ["wutpɨd-a", "Woodfords-LOC"], ["le-eʔ-gab-i-gi", "1-COP-FUT-IPFV-REL"],
+      ["L-eʔ-i", "1-MOD-IPFV"]
+    ],
+    "translation": "I will be in Woodfords tomorrow.",
+    "context": "I ask you where you will spend the day tomorrow. You say:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3"],
+      ["force", "necessity"],
+      ["flavor", "metaphysical"]
+    ],
+    "comment": "The sentence of (8). Headed 'Metaphysical/future necessity'. The embedded -eʔ is the copula with the stage-level agreement le-, the matrix one the modal with the individual-level agreement L-.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex13",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(13b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "mé:hu šáwlamhuhak’a wagayáyʔigi k’éʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["me:hu", "boy"], ["šawlamhu-hak’a", "girl-with"], ["wagayayʔ-i-gi", "talk-IPFV-REL"],
+      ["k’-eʔ-i", "3-MOD-IPFV"]
+    ],
+    "translation": "The boy will talk to the girl.",
+    "context": "At a school dance, you wonder whether a shy boy will talk to a girl he likes. Your friend says “Yes, …”",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3"],
+      ["force", "necessity"],
+      ["flavor", "metaphysical"]
+    ],
+    "comment": "Headed 'Metaphysical/future necessity'. The same sentence is deontic possibility in (19).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex14",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(14b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "déʔešáŋawiš yéweš gumbeyéc’igigi k’éʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["deʔeš-aŋaw-i-š", "snow-good-IPFV-SR"], ["yeweš", "road"],
+      ["gum-beyec’ig-i-gi", "REFL-close-IPFV-REL"], ["k’-eʔ-i", "3-MOD-IPFV"]
+    ],
+    "translation": "It’s snowing a lot, so the road must be closed.",
+    "context": "You are planning to drive over the mountains. It’s started to snow, and you know that whenever it snows, the road over the mountains is closed.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3"],
+      ["force", "necessity"],
+      ["flavor", "epistemic"]
+    ],
+    "comment": "Footnote 4: -eʔ is dispreferred in epistemic contexts, where speakers tend to use an evidential or a paraphrase without a modal.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex15",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(15b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "ʔát’abi léʔwigi Léʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ʔat’abi", "fish"], ["le-iʔiw-i-gi", "1-eat-IPFV-REL"], ["L-eʔ-i", "1-MOD-IPFV"]
+    ],
+    "translation": "I have to eat the fish!",
+    "context": "You are at a restaurant, and the waiter says that today’s special is fish, your favorite food. You say:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3"],
+      ["force", "necessity"],
+      ["flavor", "bouletic"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex16",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(16b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "mé:hu šáwlamhu wagayáŋaʔ k’éʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["me:hu", "boy"], ["šawlamhu", "girl"], ["wagayaŋaʔ", "talk"], ["k’-eʔ-i", "3-MOD-IPFV"]
+    ],
+    "translation": "The boy should talk to the girl.",
+    "context": "At a school dance, you tell your friend that a boy who is being shy should talk to a girl he likes.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3"],
+      ["force", "weak necessity"],
+      ["flavor", "bouletic"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex17",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(17)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "lí:nuya pú:luŋa deyéwamé:sha k’éʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["li:nu-a", "Reno-LOC"], ["pu:lul-ŋa", "car-NC"], ["de-yewam-e:s-ha", "NMLZ-drive-NEG-CAUS"],
+      ["k’-eʔ-i", "3-COP-IPFV"]
+    ],
+    "translation": "He never drives to Reno.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3"],
+      ["flavor", "generic"]
+    ],
+    "comment": "The sentence of (7), where -eʔ embeds a non-finite clause. Headed 'Generic', with no force. The source glosses -eʔ COP here.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex18",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(18b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "wádiŋ hé:š ʔump’áyt’igišuweʔ k’éʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["wadiŋ", "now"], ["he:š", "Q"], ["ʔum-p’ayt’i-giš-uweʔ", "2-play-along-hence"],
+      ["k’-eʔ-i", "3-MOD-IPFV"]
+    ],
+    "translation": "Now are you allowed to come play?",
+    "context": "Mary’s friends come over to see if she is allowed to come out to play.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3"],
+      ["force", "possibility"],
+      ["flavor", "deontic"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex19",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(19b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "mé:hu šáwlamhuhak’a wagayáyʔigi k’éʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["me:hu", "boy"], ["šawlamhu-hak’a", "girl-with"], ["wagayayʔ-i-gi", "talk-IPFV-REL"],
+      ["k’-eʔ-i", "3-MOD-IPFV"]
+    ],
+    "translation": "The boy is allowed to talk to the girl.",
+    "context": "At a school dance, you see a shy boy who wants to talk to a girl but isn’t. You ask your friend if that boy is allowed to talk to that girl. Your friend responds: “Yes …”",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3"],
+      ["force", "possibility"],
+      ["flavor", "deontic"]
+    ],
+    "comment": "The sentence of (13), metaphysical necessity there.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex20",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(20b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "wát didó:damamaʔišgi k’éʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["wat", "tomorrow"], ["di-do:da-mamaʔ-i-š-gi", "1-build-finish-IPFV-SR-REL"],
+      ["k’-eʔ-i", "3-MOD-IPFV"]
+    ],
+    "translation": "I might finish building it tomorrow.",
+    "context": "You have been working on building a house for quite a while now. I ask when you will be finished. You say it’s possible you’ll finish tomorrow.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3"],
+      ["force", "possibility"],
+      ["flavor", "metaphysical"]
+    ],
+    "comment": "Headed 'Future possibility'; (12) and (13) are headed 'Metaphysical/future necessity'.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex21",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(21b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "bévali k’éheligi k’éʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["bevali", "Beverly"], ["k’-eʔ-hel-i-gi", "3-COP-SUBJ-IPFV-REL"], ["k’-eʔ-i", "3-MOD-IPFV"]
+    ],
+    "translation": "It might be Beverly.",
+    "context": "You hear a knock at the door. You can’t see who it is, but can see that the person looks about the same height as Beverly.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3"],
+      ["force", "possibility"],
+      ["flavor", "epistemic"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex22",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(22b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "déʔek hádigi t’í:yeliʔ dibípɨsišgi k’éʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["deʔeg", "rock"], ["hadigi", "that"], ["t’-i:yel-iʔ", "NMLZ-big-ATTR"],
+      ["di-bips-i-š-gi", "1-pick.up-IPFV-SR-REL"], ["k’-eʔ-i", "3-MOD-IPFV"]
+    ],
+    "translation": "I can lift that big rock.",
+    "context": "You see someone trying to pick up a very heavy rock. You are very strong, so you tell them that you can lift that rock.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3"],
+      ["force", "possibility"],
+      ["flavor", "circumstantial"]
+    ],
+    "comment": "The sentence of (9). The segmentation line prints k-eʔ-i, without the ejective the surface line has.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex23",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(23b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "dawpáp’ɨl ʔíʔmiʔaŋawigi k’éʔi wáʔ ŋáwaya",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dawp’ap’ɨl", "flower"], ["ʔiʔimiʔ-aŋaw-i-gi", "grow-good-IPFV-REL"], ["k’-eʔ-i", "3-MOD-IPFV"],
+      ["waʔ", "here"], ["ŋawa-a", "dirt-LOC"]
+    ],
+    "translation": "Flowers could grow well here in this dirt.",
+    "context": "You are discussing what could grow in the garden, given the type of soil.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3"],
+      ["force", "possibility"],
+      ["flavor", "circumstantial"]
+    ],
+    "comment": "",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex30",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(30b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "déʔek t’í:yeliŋa dibípɨsé:sišgi k’éʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["deʔek", "rock"], ["t’-i:yel-iʔ-ŋa", "NMLZ-big-ATTR-NC"],
+      ["di-bips-e:s-i-š-gi", "1-pick.up-NEG-IPFV-SR-REL"], ["k’-eʔ-i", "3-MOD-IPFV"]
+    ],
+    "translation": "I can’t pick up that big rock.",
+    "context": "You see someone trying to pick up a very heavy rock, but they can’t lift it. You are not very strong, so you say that you can’t pick up the rock either.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "deʔek t’-i:yel-iʔ-ŋa di-bips-i-š-gi k’-eʔ-e:s-i", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5"],
+      ["force", "necessity"],
+      ["flavor", "circumstantial"],
+      ["prejacent", "negated"]
+    ],
+    "comment": "The alternative, (30c), marks the negation on the modal. The source sets the section 5 examples in IPA length marks and g; they are given in the orthography of section 3.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex31",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(31b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "wát didó:damamaʔe:sgabišgi k’éʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["wat", "tomorrow"], ["di-do:da-mamaʔ-e:s-gab-i-š-gi", "1-build-finish-NEG-FUT-IPFV-SR-REL"],
+      ["k’-eʔ-i", "3-MOD-IPFV"]
+    ],
+    "translation": "I won’t finish building it tomorrow.",
+    "context": "You have been working on building a house for quite a while now, and you still won’t finish it by tomorrow.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "wat di-do:da-mamaʔ-gab-i-š-gi k’-eʔ-e:s-i", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5"],
+      ["force", "necessity"],
+      ["flavor", "metaphysical"],
+      ["prejacent", "negated"]
+    ],
+    "comment": "The alternative, (31c), marks the negation on the modal.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex32",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(32b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "demuc’úc’uŋa léʔwé:sigi Léʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["demuc’uc’u-ŋa", "sweet-NC"], ["le-iʔiw-e:s-i-gi", "1-eat-NEG-IPFV-REL"], ["L-eʔ-i", "1-MOD-IPFV"]
+    ],
+    "translation": "I shouldn’t eat candy.",
+    "context": "Someone offers you some candy, but your doctor says you shouldn’t eat candy.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "demuc’uc’u-ŋa le-iʔiw-i-gi L-eʔ-e:s-i", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5"],
+      ["force", "necessity"],
+      ["flavor", "deontic"],
+      ["prejacent", "negated"]
+    ],
+    "comment": "The alternative, (32c), marks the negation on the modal. The source glosses le-iʔiw as 1.eat.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex33",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(33b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "wát didó:damamaʔé:sheligi Léʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["wat", "tomorrow"], ["di-do:da-mamaʔ-e:s-hel-i-gi", "1-build-finish-NEG-SUBJ-IPFV-REL"],
+      ["L-eʔ-i", "1-MOD-IPFV"]
+    ],
+    "translation": "I might not finish building it tomorrow.",
+    "context": "You have been working on building a house for quite a while now, and you’re not sure if you’ll finish it by tomorrow.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "wat di-do:da-mamaʔ-hel-i-gi L-eʔ-e:s-i", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5"],
+      ["force", "possibility"],
+      ["flavor", "metaphysical"],
+      ["prejacent", "negated"]
+    ],
+    "comment": "The alternative, (33c), marks the negation on the modal.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  },
+  {
+    "id": "bochnak2015a_ex34",
+    "source": {"bibkey": "bochnak-2015a", "paperLabel": "(34b)"},
+    "reportedIn": null,
+    "language": "wash1253",
+    "primaryText": "wát háʔašé:sgabigi k’éʔi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["wat", "tomorrow"], ["haʔaš-e:s-gab-i-gi", "rain-NEG-FUT-IPFV-REL"], ["k’-eʔ-i", "3-MOD-IPFV"]
+    ],
+    "translation": "It might not rain tomorrow.",
+    "context": "We are discussing the weather for tomorrow. It might rain, but it might not.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "wát háʔaš-gab-i-gi k’-éʔ-e:s-i", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "5"],
+      ["force", "possibility"],
+      ["flavor", "metaphysical"],
+      ["prejacent", "negated"]
+    ],
+    "comment": "The alternative, (34c), marks the negation on the modal.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": ""
+  }
+]
