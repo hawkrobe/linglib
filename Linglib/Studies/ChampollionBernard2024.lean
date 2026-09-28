@@ -89,10 +89,10 @@ theorem mem_possible {e : E} : e ∈ possible excl ↔ ¬ Conflict excl e e :=
 /-! ### Worlds and the axioms on exclusion -/
 
 variable (excl) in
-/-- Cosmopolitanism (axiom 19) holds when every possible event is part of a world, a maximal
-possible event. -/
+/-- Cosmopolitanism (axiom 19), Fine's W-space condition, holds when every possible event is part
+of a world, a maximal possible event. -/
 def Cosmopolitan : Prop :=
-  ∀ e ∈ possible excl, ∃ w, Maximal (· ∈ possible excl) w ∧ e ≤ w
+  ∀ e ∈ possible excl, ∃ w, e ≤ w ∧ Maximal (· ∈ possible excl) w
 
 variable (excl) in
 /-- Harmony (axiom 20) holds when every event that coheres with a world is possible. -/
@@ -110,7 +110,7 @@ theorem mem_possible_iff_exists_world (hS : Std.Symm excl) (hC : Cosmopolitan ex
     (hH : Harmony excl) {e : E} :
     e ∈ possible excl ↔ ∃ w, ¬ Conflict excl e w ∧ Maximal (· ∈ possible excl) w := by
   refine ⟨fun he ↦ ?_, fun ⟨w, hc, hw⟩ ↦ hH hw fun h ↦ hc (h.symm hS)⟩
-  obtain ⟨w, hw, hew⟩ := hC e he
+  obtain ⟨w, hew, hw⟩ := hC e he
   exact ⟨w, fun hc ↦ hw.prop (hc.mono hew le_rfl), hw⟩
 
 /-- A world conflicts with every event it does not contain (Theorem 8.4). -/
@@ -177,13 +177,8 @@ theorem exclusive_mk_neg (φ : Set E) : (BilProp.mk φ (neg excl φ)).Exclusive 
 
 /-- A proposition paired with its negation is exhaustive over the possible events. -/
 theorem exhaustive_mk_neg (hC : Cosmopolitan excl) (hH : Harmony excl) (hR : Rashomon excl)
-    (φ : Set E) : (BilProp.mk φ (neg excl φ)).Exhaustive (possible excl) := by
-  intro s hs
-  obtain ⟨w, hw, hsw⟩ := hC s hs
-  rcases mem_upperClosure_or_neg hH hR hw φ with h | h <;>
-    obtain ⟨e, he, hew⟩ := mem_upperClosure.1 h
-  · exact .inl ⟨e, he, (possible excl).lower (sup_le hsw hew) hw.prop⟩
-  · exact .inr ⟨e, he, (possible excl).lower (sup_le hsw hew) hw.prop⟩
+    (φ : Set E) : (BilProp.mk φ (neg excl φ)).Exhaustive (possible excl) :=
+  (BilProp.exhaustive_iff hC).2 fun _ hw ↦ mem_upperClosure_or_neg hH hR hw φ
 
 /-! ### Emergent exclusion and de Morgan's law -/
 
@@ -278,10 +273,10 @@ variable {α : Type*}
 /-- In the canonical frame over atoms `α`, whose events are sets of literals, a literal excludes
 its mirror image and nothing else holds (def. 23). -/
 def canonicalExcl (s t : Set (α × Bool)) : Prop :=
-  ∃ x : α × Bool, s = {x} ∧ t = {(x.1, !x.2)}
+  ∃ x, s = {x} ∧ t = {mirror x}
 
 theorem conflict_canonicalExcl_iff {e₁ e₂ : Set (α × Bool)} :
-    Conflict canonicalExcl e₁ e₂ ↔ ∃ x ∈ e₁, (x.1, !x.2) ∈ e₂ := by
+    Conflict canonicalExcl e₁ e₂ ↔ ∃ x ∈ e₁, mirror x ∈ e₂ := by
   constructor
   · rintro ⟨_, h₁, _, h₂, x, rfl, rfl⟩
     exact ⟨x, h₁ rfl, h₂ rfl⟩
@@ -289,27 +284,19 @@ theorem conflict_canonicalExcl_iff {e₁ e₂ : Set (α × Bool)} :
     exact ⟨{x}, Set.singleton_subset_iff.2 hx₁, _, Set.singleton_subset_iff.2 hx₂, x, rfl, rfl⟩
 
 /-- Possibility derived from canonical exclusion is Fine's consistency of sets of literals. -/
-theorem possible_canonicalExcl : possible (canonicalExcl (α := α)) = Canonical.possible := by
-  refine SetLike.ext fun e ↦ ?_
-  rw [mem_possible, conflict_canonicalExcl_iff, Canonical.mem_possible]
-  refine ⟨fun h a ht hf ↦ h ⟨(a, true), ht, hf⟩, ?_⟩
-  rintro h ⟨⟨a, b⟩, hx, hx'⟩
-  cases b
-  · exact h a hx' hx
-  · exact h a hx hx'
+theorem possible_canonicalExcl : possible (canonicalExcl (α := α)) = Canonical.possible :=
+  SetLike.ext fun _ ↦ by simp [mem_possible, conflict_canonicalExcl_iff, Canonical.mem_possible]
 
 /-- In the canonical frame the negation of an atom is verified by its denial alone, the
 atom's falsifier in Fine's bilateral semantics. -/
 theorem neg_ver_atom (a : α) : neg canonicalExcl (atom a).ver = (atom a).fal := by
-  change neg canonicalExcl {{(a, true)}} = {{(a, false)}}
-  rw [neg_singleton]
+  rw [ver_atom, fal_atom, neg_singleton]
   ext e
   constructor
-  · rintro ⟨_, hg, ⟨c, b⟩, rfl, rfl⟩
-    obtain ⟨rfl, hb⟩ := Prod.mk.inj (Set.singleton_subset_singleton.1 hg)
-    cases b
-    · rfl
-    · exact absurd hb Bool.false_ne_true
+  · rintro ⟨_, hg, x, rfl, rfl⟩
+    obtain rfl : x = (a, false) := by
+      simpa using congrArg mirror (Set.singleton_subset_singleton.1 hg)
+    rfl
   · rintro rfl
     exact ⟨{(a, true)}, le_rfl, (a, false), rfl, rfl⟩
 
@@ -318,71 +305,44 @@ denial of either atom, its falsifiers in Fine's bilateral semantics, so de Morga
 exactly there (§9). -/
 theorem neg_ver_conj_atom (a b : α) :
     neg canonicalExcl ((atom a).conj (atom b)).ver = ((atom a).conj (atom b)).fal := by
-  change neg canonicalExcl ({{(a, true)}} ⊻ {{(b, true)}}) = {{(a, false)}} ∪ {{(b, false)}}
-  rw [Set.singleton_sups_singleton, neg_singleton]
+  rw [BilProp.ver_conj, BilProp.fal_conj, ver_atom, ver_atom, fal_atom, fal_atom,
+    Set.singleton_sups_singleton, neg_singleton]
   ext e
   constructor
-  · rintro ⟨_, hg, ⟨c, d⟩, rfl, rfl⟩
-    have hmem := Set.singleton_subset_iff.1 hg
-    rcases hmem with h | h <;> obtain ⟨rfl, hd⟩ := Prod.mk.inj h <;> cases d <;>
-      first | exact absurd hd Bool.false_ne_true | simp
+  · rintro ⟨_, hg, x, rfl, rfl⟩
+    rcases Set.singleton_subset_iff.1 hg with h | h
+    · obtain rfl : x = (a, false) := by
+        simpa using congrArg mirror (Set.mem_singleton_iff.1 h)
+      exact .inl rfl
+    · obtain rfl : x = (b, false) := by
+        simpa using congrArg mirror (Set.mem_singleton_iff.1 h)
+      exact .inr rfl
   · rintro (rfl | rfl)
     · exact ⟨{(a, true)}, Set.singleton_subset_iff.2 (.inl rfl), (a, false), rfl, rfl⟩
     · exact ⟨{(b, true)}, Set.singleton_subset_iff.2 (.inr rfl), (b, false), rfl, rfl⟩
 
-private theorem mirror_mem_of_not_mem {w : Set (α × Bool)}
-    (hw : Maximal (· ∈ possible canonicalExcl) w) {x : α × Bool} (hx : x ∉ w) :
-    (x.1, !x.2) ∈ w := by
-  by_contra hx'
-  refine hx (hw.le_of_ge ?_ Set.subset_union_left (Set.mem_union_right _ rfl))
-  rw [mem_possible, conflict_canonicalExcl_iff]
-  rintro ⟨y, hy, hy'⟩
-  rcases hy with hy | rfl <;> rcases hy' with hy' | hy'
-  · exact hw.prop (conflict_canonicalExcl_iff.2 ⟨y, hy, hy'⟩)
-  · subst hy'
-    exact hx' (by simpa using hy)
-  · exact hx' hy'
-  · exact Bool.not_ne_self _ (congrArg Prod.snd hy').symm
-
 theorem harmony_canonicalExcl : Harmony (canonicalExcl (α := α)) := by
   intro w e hw hc
-  rw [mem_possible, conflict_canonicalExcl_iff]
-  rintro ⟨x, hx, hx'⟩
-  by_cases hxw : x ∈ w
+  rw [possible_canonicalExcl] at hw ⊢
+  intro x hx hx'
+  rcases mem_or_mirror_mem_of_maximal hw x with hxw | hxw
   · exact hc (conflict_canonicalExcl_iff.2 ⟨x, hxw, hx'⟩)
-  · exact hc (conflict_canonicalExcl_iff.2
-      ⟨_, mirror_mem_of_not_mem hw hxw, by simpa using hx⟩)
+  · exact hc (conflict_canonicalExcl_iff.2 ⟨mirror x, hxw, by rwa [mirror_mirror]⟩)
 
 theorem rashomon_canonicalExcl : Rashomon (canonicalExcl (α := α)) := by
   intro e₁ h₁ e₂ h₂ hc
-  rw [mem_possible, conflict_canonicalExcl_iff] at h₁ h₂ ⊢
+  rw [possible_canonicalExcl] at h₁ h₂ ⊢
   rw [conflict_canonicalExcl_iff] at hc
-  rintro ⟨x, hx | hx, hx' | hx'⟩
-  · exact h₁ ⟨x, hx, hx'⟩
+  rintro x (hx | hx) (hx' | hx')
+  · exact h₁ x hx hx'
   · exact hc ⟨x, hx, hx'⟩
-  · exact hc ⟨_, hx', by simpa using hx⟩
-  · exact h₂ ⟨x, hx, hx'⟩
+  · exact hc ⟨mirror x, hx', by rwa [mirror_mirror]⟩
+  · exact h₂ x hx hx'
 
 theorem cosmopolitan_canonicalExcl : Cosmopolitan (canonicalExcl (α := α)) := by
-  intro e he
-  rw [mem_possible, conflict_canonicalExcl_iff] at he
-  refine ⟨e ∪ {x | x.2 = true ∧ (x.1, false) ∉ e}, ⟨?_, fun s hs hle ↦ ?_⟩,
-    Set.subset_union_left⟩
-  · change ¬ Conflict canonicalExcl _ _
-    rw [conflict_canonicalExcl_iff]
-    rintro ⟨⟨a, b⟩, hx, hx'⟩
-    cases b <;> rcases hx with hx | ⟨hb, hx⟩ <;> rcases hx' with hx' | ⟨hb', hx'⟩ <;>
-      simp_all
-  · replace hs : ¬ Conflict canonicalExcl s s := hs
-    rw [conflict_canonicalExcl_iff] at hs
-    rintro ⟨a, b⟩ hab
-    by_cases he' : (a, false) ∈ e
-    · cases b
-      · exact .inl he'
-      · exact absurd ⟨(a, true), hab, hle (.inl he')⟩ hs
-    · cases b
-      · exact absurd ⟨(a, false), hab, hle (.inr ⟨rfl, he'⟩)⟩ hs
-      · exact .inr ⟨rfl, he'⟩
+  unfold Cosmopolitan
+  rw [possible_canonicalExcl]
+  exact fun _ ↦ exists_le_maximal_possible
 
 /-- Fine's bilateral atom is the unilateral atom paired with its negation. -/
 theorem mk_neg_ver_atom (a : α) :
