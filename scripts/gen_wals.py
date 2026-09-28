@@ -1,16 +1,26 @@
 #!/usr/bin/env python3
-"""Generate Lean 4 modules from WALS CLDF data.
+"""Generate Lean 4 modules from WALS CLDF data, on demand.
 
 Usage:
-    python3 scripts/gen_wals.py [FEATURE_IDS...]
+    python3 scripts/gen_wals.py [FEATURE_IDS...] [--prune] [--check]
 
 Examples:
-    python3 scripts/gen_wals.py 106A 107A 108A    # specific features
-    python3 scripts/gen_wals.py                     # all configured features
+    python3 scripts/gen_wals.py            # every feature some module imports
+    python3 scripts/gen_wals.py 81A        # a feature a study is about to import
+    python3 scripts/gen_wals.py --prune    # also delete features nothing imports
+    python3 scripts/gen_wals.py --check    # verify sync; writes nothing
+
+A feature is generated only when a module imports it: the import graph is the
+manifest. Adding a chapter means adding the import and running this script.
 
 Reads from:  Linglib/Data/WALS/raw/*.csv
 Writes to:   Linglib/Data/WALS/Features/F{ID}.lean
-             Linglib/Data/WALS/Languages.lean
+             Linglib/Data/WALS/Languages.lean (only when some module imports it)
+
+Each feature module holds the value enum and `allData : List (String × V)`,
+rows keyed by WALS code and sorted by it, each row commented with the lect's
+name; lookup is core `List.lookup`. Features in WITH_SOURCES also get
+`sources : List (String × String)`, the WALS source of each row.
 
 Features can be configured in FEATURES (manually curated constructor names)
 or auto-generated from codes.csv (AUTO_FEATURES). AUTO_FEATURES need only
@@ -18,12 +28,14 @@ an enum name; constructor names are derived from the WALS value labels.
 """
 
 import csv
-import json
 import re
 import sys
+import textwrap
+from functools import cache
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from check_module_frontier import as_module_if_possible, import_stmt  # noqa: E402
+from check_module_frontier import as_module_if_possible  # noqa: E402
+from check_orphan_imports import IMPORT_RE  # noqa: E402
 from collections import defaultdict
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -492,9 +504,6 @@ def resolve_feature(feature_id, codes, params):
     raw_ctors = [c for c, _ in raw_values.values()]
     rename = strip_common_camel_prefix(raw_ctors)
     values = {num: (rename[c], label) for num, (c, label) in raw_values.items()}
-    # Stash the rename map so callers can rewrite consumer files. Only entries
-    # where the name actually changed are kept.
-    nontrivial_rename = {old: new for old, new in rename.items() if old != new}
 
     # Determine enum name: from AUTO_FEATURES if present, else derived from feature name
     chapter = param.get("chapter", 0)
@@ -511,10 +520,10 @@ def resolve_feature(feature_id, codes, params):
         "enum": enum_name,
         "author": author,
         "values": values,
-        "_rename": nontrivial_rename,
     }
 
 
+@cache
 def load_languages():
     """Load WALS language metadata."""
     langs = {}
@@ -529,17 +538,27 @@ def load_languages():
     return langs
 
 
-def load_values(feature_id):
-    """Load all datapoints for a given WALS feature."""
-    entries = []
+@cache
+def load_all_values():
+    """All datapoints by feature, each list sorted by WALS code."""
+    by_feature = defaultdict(list)
     with open(DATA / "values.csv", encoding="utf-8") as f:
         for row in csv.DictReader(f):
-            if row["Parameter_ID"] == feature_id:
-                entries.append({
-                    "language_id": row["Language_ID"],
-                    "value": int(row["Value"]),
-                })
-    return entries
+            by_feature[row["Parameter_ID"]].append({
+                "language_id": row["Language_ID"],
+                "value": int(row["Value"]),
+                "source": row["Source"],
+            })
+    for entries in by_feature.values():
+        entries.sort(key=lambda e: e["language_id"])
+        codes = [e["language_id"] for e in entries]
+        assert len(codes) == len(set(codes)), "a feature codes some lect twice"
+    return by_feature
+
+
+def load_values(feature_id):
+    """The datapoints of a WALS feature, sorted by WALS code."""
+    return load_all_values().get(feature_id, [])
 
 
 def lean_safe_string(s):
@@ -547,22 +566,72 @@ def lean_safe_string(s):
     return s.replace("\\", "\\\\").replace('"', '\\"')
 
 
+# Features whose per-row WALS source a study reads (`F{ID}.sources`).
+WITH_SOURCES = {"101A"}
+
+# Rows per list literal: larger literals hit Lean's maxRecDepth.
+CHUNK = 500
+
+# Line width of the generated Lean.
+WIDTH = 100
+
+
+def doc_lines(text, indent=""):
+    """A `/-- … -/` docstring, wrapped to WIDTH."""
+    return textwrap.wrap(f'/-- {text} -/', WIDTH, initial_indent=indent,
+                         subsequent_indent=indent + "  ", break_on_hyphens=False)
+
+
+def row_lines(prefix, lit, comment):
+    """A list-literal row: `prefix lit -- comment` on one line when it fits; else the
+    comment on a line of its own, and the literal broken between string elements."""
+    one = f'{prefix} {lit}' + (f' -- {comment}' if comment else '')
+    if len(one) <= WIDTH:
+        return [one]
+    out = [f'  -- {comment}'] if comment else []
+    line = f'{prefix} '
+    for i, piece in enumerate(re.split(r'(?<=[^\\]", )(?=")', lit)):
+        if i and len(line) + len(piece) > WIDTH:
+            out.append(line.rstrip())
+            line = '      '
+        line += piece
+    return out + [line]
+
+
+def emit_table(name, elem_type, rows, doc):
+    """Lines defining `name : List elem_type` from `(literal, comment)` rows, split
+    into `name_0 ++ name_1 ++ …` chunks when the table is long."""
+    def literal(chunk_name, chunk):
+        out = [f'def {chunk_name} : List ({elem_type}) :=']
+        for i, (lit, comment) in enumerate(chunk):
+            out += row_lines("  [" if i == 0 else "  ,", lit, comment)
+        out.append('  ]')
+        return out
+
+    if len(rows) <= CHUNK:
+        return doc_lines(doc) + literal(name, rows) + ['']
+    lines = []
+    chunks = [rows[i:i + CHUNK] for i in range(0, len(rows), CHUNK)]
+    for ci, chunk in enumerate(chunks):
+        lines += doc_lines(f'Rows {ci * CHUNK + 1} to {ci * CHUNK + len(chunk)} of `{name}`.')
+        lines += literal(f'{name}_{ci}', chunk) + ['']
+    refs = ' ++ '.join(f'{name}_{i}' for i in range(len(chunks)))
+    return lines + doc_lines(doc) + [f'def {name} : List ({elem_type}) := {refs}', '']
+
+
 def generate_feature(feature_id, cfg, langs):
     """Generate a Lean module for a single WALS feature."""
     entries = load_values(feature_id)
-    entries.sort(key=lambda e: langs.get(e["language_id"], {}).get("name", ""))
 
     # Count per value
     counts = defaultdict(int)
     for e in entries:
         counts[e["value"]] += 1
 
-    lines = []
-    fid_clean = feature_id
+    def name(e):
+        return langs.get(e["language_id"], {}).get("name", "")
 
-    # Import generic Datapoint (must come before docstring)
-    lines.append(f'import Linglib.Data.WALS.Datapoint')
-    lines.append(f'')
+    lines = []
 
     # Module docstring
     lines.append(f'/-!')
@@ -575,7 +644,7 @@ def generate_feature(feature_id, cfg, langs):
     lines.append(f'Chapter {cfg["chapter"]}, {len(entries)} languages.')
     lines.append(f'-/')
     lines.append(f'')
-    lines.append(f'namespace Data.WALS.F{fid_clean}')
+    lines.append(f'namespace Data.WALS.F{feature_id}')
     lines.append(f'')
 
     # Value enum
@@ -583,73 +652,44 @@ def generate_feature(feature_id, cfg, langs):
     lines.append(f'inductive {cfg["enum"]} where')
     for num in sorted(cfg["values"]):
         ctor, desc = cfg["values"][num]
-        lines.append(f'  /-- {desc} ({counts.get(num, 0)} languages). -/')
+        lines += doc_lines(f'{desc} ({counts.get(num, 0)} languages).', "  ")
         lines.append(f'  | {ctor}')
     lines.append(f'  deriving DecidableEq, Repr')
     lines.append(f'')
 
-    # Data — split into chunks of 500 for large features to avoid maxRecDepth
-    dp_type = f'Datapoint {cfg["enum"]}'
-    CHUNK = 500
-    if len(entries) <= CHUNK:
-        lines.append(f'/-- Complete WALS {feature_id} dataset ({len(entries)} languages). -/')
-        lines.append(f'def allData : List ({dp_type}) :=')
-        for i, entry in enumerate(entries):
-            lang = langs.get(entry["language_id"], {})
-            iso = lang.get("iso", "")
-            wals_code = entry["language_id"]
-            ctor, _ = cfg["values"][entry["value"]]
-            prefix = "  [" if i == 0 else "  ,"
-            lines.append(f'{prefix} {{ walsCode := "{wals_code}", iso := "{iso}", value := .{ctor} }}')
-        lines.append(f'  ]')
-    else:
-        n_chunks = (len(entries) + CHUNK - 1) // CHUNK
-        for ci in range(n_chunks):
-            chunk = entries[ci * CHUNK : (ci + 1) * CHUNK]
-            lines.append(f'/-- Rows {ci * CHUNK + 1} to {ci * CHUNK + len(chunk)} of `allData`. -/')
-            lines.append(f'def allData_{ci} : List ({dp_type}) :=')
-            for i, entry in enumerate(chunk):
-                lang = langs.get(entry["language_id"], {})
-                iso = lang.get("iso", "")
-                wals_code = entry["language_id"]
-                ctor, _ = cfg["values"][entry["value"]]
-                prefix = "  [" if i == 0 else "  ,"
-                lines.append(f'{prefix} {{ walsCode := "{wals_code}", iso := "{iso}", value := .{ctor} }}')
-            lines.append(f'  ]')
-            lines.append(f'')
-        chunk_refs = ' ++ '.join(f'allData_{i}' for i in range(n_chunks))
-        lines.append(f'/-- Complete WALS {feature_id} dataset ({len(entries)} languages). -/')
-        lines.append(f'def allData : List ({dp_type}) := {chunk_refs}')
-    lines.append(f'')
+    # Count claims live in the per-constructor `/-- ... (N languages). -/` comments.
+    # We don't emit `count_*` theorems: the count and the list come from the same CSV
+    # pass in this generator, so they cannot disagree. The integrity property worth
+    # checking ("Lean file matches WALS CSV") is `--check`, outside Lean.
+    rows = [(f'("{e["language_id"]}", .{cfg["values"][e["value"]][0]})', name(e))
+            for e in entries]
+    lines += emit_table(
+        'allData', f'String × {cfg["enum"]}', rows,
+        f'The WALS {feature_id} coding: each language\'s value, keyed by its WALS code '
+        f'({len(entries)} languages).')
 
-    # Count claims live in the docstring and per-constructor `/-- ... (N languages). -/`
-    # comments. We don't emit `total_count`/`count_*` theorems because proving
-    # `List.length [a, b, …, z] = N` for a hand-listed N-element list is a
-    # tautological internal-consistency check — the count and the list come from
-    # the same CSV pass in this generator, so they cannot disagree. The integrity
-    # property worth checking ("Lean file matches WALS CSV") lives outside Lean.
+    if feature_id in WITH_SOURCES:
+        def refs(e):
+            return ", ".join(f'"{lean_safe_string(r)}"' for r in e["source"].split(";"))
+        rows = [(f'("{e["language_id"]}", [{refs(e)}])', name(e)) for e in entries if e["source"]]
+        lines += emit_table(
+            'sources', 'String × List String', rows,
+            f'The sources WALS cites for each language\'s {feature_id} value, keyed by its WALS '
+            f'code: WALS reference keys, with pages in brackets ({len(rows)} languages).')
 
-    # Lookup wrappers (delegate to generic Datapoint.lookup / Datapoint.lookupISO)
-    lines.append(f'/-- Look up a language by WALS code. -/')
-    lines.append(f'def lookup (code : String) : Option ({dp_type}) := Datapoint.lookup allData code')
-    lines.append(f'')
-    lines.append(f'/-- Look up a language by ISO 639-3 code. -/')
-    lines.append(f'def lookupISO (iso : String) : Option ({dp_type}) := Datapoint.lookupISO allData iso')
-    lines.append(f'')
-
-    lines.append(f'end Data.WALS.F{fid_clean}')
+    lines.append(f'end Data.WALS.F{feature_id}')
     lines.append(f'')
 
     return "\n".join(lines)
 
 
 def generate_languages(langs, used_ids):
-    """Generate the shared Languages module.
+    """Generate the shared Languages module: every lect some feature codes.
 
     Splits the language list into chunks of 500 to avoid Lean's
-    maxRecDepth limit on large list literals.
+    maxRecDepth limit on large list literals. ISO and Glottocode are
+    attributes of a lect here, never keys: several lects share one.
     """
-    # Only include languages that appear in at least one generated feature
     sorted_langs = sorted(
         ((lid, langs[lid]) for lid in sorted(used_ids) if lid in langs),
         key=lambda x: x[1]["name"]
@@ -705,19 +745,6 @@ def generate_languages(langs, used_ids):
     chunk_refs = ' ++ '.join(f'languages_{i}' for i in range(len(chunks)))
     lines.append(f'def languages : List Language := {chunk_refs}')
     lines.append('')
-    lines.append('/-- Look up a language by WALS code. -/')
-    lines.append('def findLanguage (code : String) : Option Language :=')
-    lines.append('  languages.find? (·.walsCode == code)')
-    lines.append('')
-    lines.append('/-- Look up a language by ISO 639-3 code.')
-    lines.append('')
-    lines.append('Returns `none` for empty queries: WALS marks a handful of languages with an')
-    lines.append('empty `iso` field, and a naive `find?` on `""` would return one of those')
-    lines.append('entries arbitrarily. -/')
-    lines.append('def findByIso (iso : String) : Option Language :=')
-    lines.append('  if iso.isEmpty then none')
-    lines.append('  else languages.find? (·.iso == iso)')
-    lines.append('')
     lines.append('end Data.WALS')
     lines.append('')
 
@@ -737,24 +764,43 @@ def load_bib_keys():
     return keys
 
 
+WALS_MODULE = "Linglib.Data.WALS."
+
+
+def imported_wals_modules():
+    """The `Linglib.Data.WALS.*` modules some module outside `Data/WALS/` imports.
+    `Linglib.lean`, which imports everything, sits outside `Linglib/` and is not read."""
+    mods = set()
+    for path in (ROOT / "Linglib").rglob("*.lean"):
+        if OUT in path.parents:
+            continue
+        for line in path.read_text(encoding="utf-8").splitlines():
+            m = IMPORT_RE.match(line)
+            if m and m.group(1).startswith(WALS_MODULE):
+                mods.add(m.group(1).removeprefix(WALS_MODULE))
+    return mods
+
+
+def feature_order(fid):
+    return (int(re.match(r'\d+', fid).group()), fid)
+
+
 def main():
-    # Strip flags out of argv before treating remaining args as feature IDs.
     args = sys.argv[1:]
     check_only = "--check" in args
-    args = [a for a in args if not a.startswith("--")]
+    prune = "--prune" in args
+    explicit = [a for a in args if not a.startswith("--")]
 
-    # Load codes.csv and parameters.csv for auto-generation
     codes = load_codes()
     params = load_parameters()
+    imported = imported_wals_modules()
+    demanded = {m.removeprefix("Features.F") for m in imported if m.startswith("Features.F")}
+    unknown = sorted(demanded - params.keys())
+    if unknown:
+        print(f"ERROR: imported features absent from parameters.csv: {', '.join(unknown)}")
+        sys.exit(1)
+    feature_ids = sorted(demanded | set(explicit), key=feature_order)
 
-    if args:
-        feature_ids = args
-    else:
-        # Generate ALL features found in parameters.csv
-        feature_ids = sorted(params.keys(),
-            key=lambda x: (int(re.match(r'\d+', x).group()), x))
-
-    # Validate and resolve
     resolved = {}
     for fid in feature_ids:
         cfg = resolve_feature(fid, codes, params)
@@ -762,80 +808,53 @@ def main():
             print(f"Warning: skipping {fid} (no codes found).")
             continue
         resolved[fid] = cfg
-    feature_ids = list(resolved.keys())
 
-    # Validate every emitted @cite{} key against references.bib BEFORE writing
-    # any files. A broken cite key in the bib breaks the bibliography generator
-    # and propagates silently across however many features share that author,
-    # so abort up front rather than emit known-broken Lean files.
+    # Validate every emitted citation key against references.bib BEFORE writing
+    # any files: a broken key propagates to every feature sharing that author.
     bib_keys = load_bib_keys()
     bad_cites = {fid: cfg["author"] for fid, cfg in resolved.items()
                  if cfg["author"] not in bib_keys}
     if bad_cites:
         print(f"\nERROR: {len(bad_cites)} feature(s) reference unknown bibkeys:")
-        # Group by bibkey for readable output.
-        by_key = defaultdict(list)
-        for fid, key in bad_cites.items():
-            by_key[key].append(fid)
-        for key, fids in sorted(by_key.items()):
-            shown = ", ".join(fids[:8])
-            more = "" if len(fids) <= 8 else f" (+{len(fids) - 8} more)"
-            print(f"  {key} → {shown}{more}")
-        print("\nAdd the entries to blog/data/references.bib or fix the chapter→author map.")
+        for fid, key in sorted(bad_cites.items()):
+            print(f"  {key} → {fid}")
         sys.exit(1)
 
+    langs = load_languages()
+    wanted = {OUT / "Features" / f"F{fid}.lean":
+              as_module_if_possible(generate_feature(fid, cfg, langs))
+              for fid, cfg in resolved.items()}
+    if "Languages" in imported:
+        used = {e["language_id"] for es in load_all_values().values() for e in es}
+        wanted[OUT / "Languages.lean"] = as_module_if_possible(generate_languages(langs, used))
+    present = set((OUT / "Features").glob("F*.lean"))
+    if (OUT / "Languages.lean").exists():
+        present.add(OUT / "Languages.lean")
+    orphans = sorted(present - wanted.keys())
+
     if check_only:
-        print(f"--check OK: {len(resolved)} features, all @cite keys resolve.")
+        stale = sorted(p for p, text in wanted.items()
+                       if not p.exists() or p.read_text(encoding="utf-8") != text)
+        for p in stale:
+            print(f"STALE or MISSING: {p.relative_to(ROOT)}")
+        for p in orphans:
+            print(f"ORPHAN (nothing imports it): {p.relative_to(ROOT)}")
+        if stale or orphans:
+            print("Run `python3 scripts/gen_wals.py --prune` and commit the result.")
+            sys.exit(1)
+        print(f"--check OK: {len(wanted)} WALS modules, all imported and in sync.")
         return
 
-    print(f"Loading WALS data from {DATA}")
-    langs = load_languages()
-    print(f"  {len(langs)} languages loaded")
-    print(f"  {len(resolved)} features to generate")
-
-    used_language_ids = set()
-
-    for fid in feature_ids:
-        cfg = resolved[fid]
-        print(f"Generating {fid}: {cfg['name']}...")
-        content = as_module_if_possible(generate_feature(fid, cfg, langs))
-
-        # Collect used language IDs
-        entries = load_values(fid)
-        for e in entries:
-            used_language_ids.add(e["language_id"])
-
-        out_path = OUT / "Features" / f"F{fid}.lean"
-        out_path.parent.mkdir(parents=True, exist_ok=True)
-        out_path.write_text(content, encoding="utf-8")
-        print(f"  → {out_path.relative_to(ROOT)} ({len(entries)} entries)")
-
-    # Generate Languages module — only on a full-set run. Single-feature regens
-    # would otherwise shrink Languages.lean to that feature's language subset
-    # and silently drop ~3500 entries that downstream files depend on.
-    if not args:
-        print("Generating Languages.lean...")
-        content = as_module_if_possible(generate_languages(langs, used_language_ids))
-        out_path = OUT / "Languages.lean"
-        out_path.write_text(content, encoding="utf-8")
-        print(f"  → {out_path.relative_to(ROOT)} ({len(used_language_ids)} languages)")
-    else:
-        print("Skipping Languages.lean (single-feature run).")
-
-    # Emit per-feature constructor rename map for downstream consumer rewriting.
-    # Curated FEATURES never get a rename entry (their _rename is absent).
-    rename_map = {
-        fid: cfg["_rename"]
-        for fid, cfg in resolved.items()
-        if cfg.get("_rename")
-    }
-    rename_path = OUT / ".ctor_renames.json"
-    rename_path.write_text(json.dumps(rename_map, indent=2, sort_keys=True), encoding="utf-8")
-    n_features = len(rename_map)
-    n_ctors = sum(len(m) for m in rename_map.values())
-    print(f"  → {rename_path.relative_to(ROOT)} ({n_features} features, {n_ctors} renamed constructors)")
-
-    print("Done.")
+    for path, text in wanted.items():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+        print(f"  → {path.relative_to(ROOT)}")
+    for path in orphans:
+        if prune:
+            path.unlink()
+            print(f"  ✗ {path.relative_to(ROOT)} (nothing imports it)")
+        else:
+            print(f"  orphan: {path.relative_to(ROOT)} (nothing imports it; --prune deletes)")
 
 
 if __name__ == "__main__":

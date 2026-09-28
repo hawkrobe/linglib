@@ -1,9 +1,6 @@
 module
 
 public import Linglib.Semantics.Possession.Defs
-public import Linglib.Data.WALS.Features.F58A
-public import Linglib.Data.WALS.Features.F59A
-public import Linglib.Data.WALS.Features.F117A
 
 /-!
 # Hawaiian possession
@@ -31,10 +28,6 @@ marking.
 * [elbert-pukui-1979] — reference grammar; possessives and verbless ownership
   sentences §8.4, the a-form vs o-form possessives §9.6
 * [bardwell-etal-2024] — the possessive sentence (*pepeke nonoʻa*)
-* [stassen-2013b] — WALS 117A, the Genitive predicative type
-
-Hawaiian is absent from the WALS possession chapters; the four codings below fill its cells from
-the grammars above.
 -/
 
 @[expose] public section
@@ -42,18 +35,6 @@ the grammars above.
 namespace Hawaiian.Possession
 
 open _root_.Possession
-
-/-- No Hawaiian noun requires a possessor (the WALS 58A cell). -/
-def obligatoryPossession : Data.WALS.F58A.ObligatoryPossessiveInflection := .absent
-
-/-- The a-class vs o-class contrast (the WALS 59A cell). WALS 59A codes the parallel Māori
-system as unclassified and Rapanui as two-class. -/
-def possessiveClassification : Data.WALS.F59A.PossessiveClassification := .twoClasses
-
-/-- The *pepeke nonoʻa* possessive sentence *He puke kaʻu* "I have a book", an existential
-possessee with a genitive possessor and no locative marking (the WALS 117A cell). WALS 117A
-assigns this type to Māori and Tahitian. -/
-def predicativeStrategy : Data.WALS.F117A.PredicativePossession := .genitive
 
 /-- The possessor carries the genitive particle *a* or *o* while the possessum stays unmarked
 (*ka hale o Pua* "Pua's house"). -/

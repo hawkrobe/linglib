@@ -8,7 +8,7 @@ Three sibling directories at this level:
 | `Experiments/` | Per-paper experimental results (stimulus coding, printed statistics) | JSON, one file per paper | `Experiments/{AuthorYear}.lean` |
 | `Forms/` | Per-paper CLDF word forms (`FormTable`, `ParameterTable`, custom `FormRelationTable`) | JSON, one file per paper | `Forms/{AuthorYear}.lean` |
 | `PHOIBLE/` | Cross-linguistic phonological inventories | CSV (raw under `PHOIBLE/raw/`) | `Inventories/{Lang}.lean` |
-| `WALS/` | World Atlas of Language Structures | CSV (raw under `WALS/raw/`) | `Features/F*.lean`, `Languages.lean` |
+| `WALS/` | World Atlas of Language Structures | CSV (raw under `WALS/raw/`) | `Features/F*.lean`, the features some module imports |
 
 Generated `.lean` files are checked in alongside the raw data so `lake build`
 works without running any generation scripts. Generators document the
@@ -155,18 +155,26 @@ python3 scripts/gen_phoible.py --chart    # the glyph chart (`--chart --check` v
 - **Source**: [World Atlas of Language Structures](https://wals.info/) (Dryer & Haspelmath, eds.)
 - **Format**: CLDF (Cross-Linguistic Data Formats) CSV
 - **License**: CC BY 4.0
-- **Citation**: Dryer, Matthew S. & Haspelmath, Martin (eds.) 2013. *WALS Online (v2020.3)*. Jena: Max Planck Institute for the Science of Human History. <https://doi.org/10.5281/zenodo.7385533>
-- **Download**: <https://doi.org/10.5281/zenodo.7385533> (wals-v2020.4.zip → `WALS/raw/`)
+- **Citation**: Dryer, Matthew S. & Haspelmath, Martin (eds.) 2013. *WALS Online*, CLDF release v2020.4. <https://doi.org/10.5281/zenodo.13950591>
+- **Download**: <https://doi.org/10.5281/zenodo.13950591> (wals-v2020.4.zip → `WALS/raw/`)
 - **Generator**: `scripts/gen_wals.py`
-- **Output**: `Linglib/Data/WALS/Features/F*.lean`, `Linglib/Data/WALS/Languages.lean`
-- **Coverage**: Chapters 106A–111A (reciprocals, passives, antipassives, applicatives, causatives) and others; see Features directory.
+- **Output**: `Linglib/Data/WALS/Features/F{ID}.lean`, generated only for the features some
+  module imports (the import graph is the manifest); `Languages.lean` likewise only when
+  imported.
+
+A WALS chapter is one author's classification with its coded sample, so a feature enters the
+library when a study formalizes the chapter's classification or a later paper engages its
+coding. Each module holds the chapter's value enum and `allData : List (String × V)`, keyed by
+WALS code and sorted by it, each row commented with the lect's name; lookup is core
+`List.lookup`. The WALS code is the only key: several lects share an ISO 639-3 code or a
+Glottocode, often with different values. A feature listed in the generator's `WITH_SOURCES` also
+carries `sources`, the WALS references each row was coded from.
 
 #### Regenerating
 
 ```bash
-python3 scripts/gen_wals.py            # all configured features
-python3 scripts/gen_wals.py 106A 107A  # specific features only
+python3 scripts/gen_wals.py            # every imported feature
+python3 scripts/gen_wals.py 81A        # a feature a study is about to import
+python3 scripts/gen_wals.py --prune    # also delete features nothing imports
+python3 scripts/gen_wals.py --check    # verify sync (CI)
 ```
-
-After regenerating, run `lake build` to verify count theorems and
-grounding theorems still pass.

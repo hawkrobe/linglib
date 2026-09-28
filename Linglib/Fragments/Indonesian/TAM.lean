@@ -20,8 +20,8 @@ V-ed', *sedang* 'was V-ing', *akan* 'would' (§2.152).
 
 Excluded: *sempat* 'have the opportunity', which [sneddon-1996] classifies as
 a modal (§2.153), and *belum* 'not yet', listed with the negatives and
-analysed as negation plus *sudah* (§2.156). WALS codings for Indonesian live
-in `Data.WALS.Features` (iso `ind`), not here.
+analysed as negation plus *sudah* (§2.156). WALS codings of Indonesian belong
+to the studies of the WALS chapters, not here.
 -/
 
 @[expose] public section

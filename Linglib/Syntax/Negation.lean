@@ -1,7 +1,5 @@
 module
 
-public import Linglib.Data.WALS.Features.F112A
-public import Linglib.Data.WALS.Features.F114A
 public import Linglib.Syntax.Category.Auxiliary.Constructions
 public import Linglib.Morphology.Morph
 
@@ -18,7 +16,7 @@ same morphemes, semantically vacuous under triggers like 'fear' and
 'before'.
 
 This file records a language's negation marker(s) and the strategy
-classifying them, with per-ISO access to the WALS negation chapters. The
+classifying them. The
 declarations share the root `Negation` namespace with the classification of
 expletive negation in `Semantics/Polarity/ExpletiveNegation.lean`.
 
@@ -28,15 +26,12 @@ expletive negation in `Semantics/Polarity/ExpletiveNegation.lean`.
 * `Pair`: an affirmative and its negative counterpart, as morphs.
 * `Strategy`: negative verb, affix, or particle — the grain at which
   negation meets auxiliary-verb constructions.
-* `asymmetrySubtypeOfISO`: a language's WALS Ch 114A value.
 
 ## Implementation notes
 
-The WALS chapters are the source of truth for the typological values, so
-the accessor returns the `Data.WALS` enum rather than a re-labelled
-copy. An analysis reaching beyond WALS keeps its own
-vocabulary in its study: [miestamo-2005]'s asymmetry subtypes, which
-separate an emphasis subtype the atlas does not encode, live in
+A typology of these markers is one author's classification and lives in
+that author's study, with its agreement with the fragments: the WALS
+negation chapters, and [miestamo-2005]'s asymmetry subtypes in
 `Studies/Miestamo2005.lean`.
 
 Polarity-sensitive items (n-words, NPIs, free-choice items) are not
@@ -44,8 +39,6 @@ marker-side data; they live in `Fragments/{Lang}/PolarityItems.lean`.
 
 ## References
 
-* [dryer-2013-wals], Ch 112A
-* [miestamo-2013], Ch 114A
 * [miestamo-2005]
 * [anderson-2006a], §1.7.2
 * [jin-koenig-2021]
@@ -87,14 +80,6 @@ structure Pair where
   negative : List Morph
   deriving DecidableEq, Repr
 
-/-! ### Per-language WALS values -/
-
-/-- WALS Ch 114A: which domain the language's asymmetric negation
-affects. -/
-def asymmetrySubtypeOfISO (iso : String) :
-    Option Data.WALS.F114A.AsymmetricNegationSubtype :=
-  (Data.WALS.F114A.lookupISO iso).map (·.value)
-
 /-! ### Negation strategy
 
 A **negative auxiliary verb** hosts the inflection its lexical verb
@@ -129,18 +114,5 @@ def Strategy.IsVerbal : Strategy → Prop
 instance : DecidablePred Strategy.IsVerbal
   | .negVerb => isTrue trivial
   | .negAffix | .negParticle => isFalse id
-
-/-- The strategy's negative morpheme in the WALS Ch 112A
-classification. -/
-def Strategy.morphemeType : Strategy → Data.WALS.F112A.NegativeMorphemeType
-  | .negVerb => .negativeAuxiliaryVerb
-  | .negAffix => .negativeAffix
-  | .negParticle => .negativeParticle
-
-/-- The verbal strategy is the one whose morpheme [miestamo-2005] types as a negative
-auxiliary verb. -/
-theorem isVerbal_iff_morphemeType_auxVerb (s : Strategy) :
-    s.IsVerbal ↔ s.morphemeType = .negativeAuxiliaryVerb := by
-  cases s <;> decide
 
 end Negation

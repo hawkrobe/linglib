@@ -14,7 +14,7 @@ the event, beside non-sentential suffixes for what one can hear and for what som
 or sounds like, together with the reported enclitic *-guuq* and an adverbial particle. As
 with Japanese, at most the reported enclitic could be taken as an A3 system on its own, so the
 inventory is empty. WALS codes the language as indirect-only
-(`Data/WALS/Features/F77A.lean`).
+(Feature 77A).
 
 ## References
 

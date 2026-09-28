@@ -18,8 +18,8 @@ fronting by the phase edges at which several wh-specifiers incur a PF asterisk
 The mechanisms commit to a division between movement and binding that is contested:
 choice-function and intervention-based accounts derive the same surface positions otherwise.
 The surface typology of questions, the position of wh-phrases and of polar question particles
-and the marking of polar questions, is read from `Data.WALS` chapters 92A, 93A and 116A
-directly and is not re-labelled here.
+and the marking of polar questions, is the classification of WALS chapters 92A, 93A and 116A,
+which belongs to those chapters' studies and is not re-labelled here.
 
 ## References
 

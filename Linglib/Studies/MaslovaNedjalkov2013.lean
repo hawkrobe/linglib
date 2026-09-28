@@ -118,10 +118,10 @@ inductive Language where
   | english | french | german | greek | russian | spanish | swahili | wambaya
   deriving DecidableEq
 
-/-- The ISO 639-3 code under which the chapter's data lists the language. -/
-def Language.iso : Language → String
-  | .english => "eng" | .french => "fra" | .german => "deu" | .greek => "ell"
-  | .russian => "rus" | .spanish => "spa" | .swahili => "swh" | .wambaya => "wmb"
+/-- The WALS code under which the chapter's data lists the language. -/
+def Language.walsCode : Language → String
+  | .english => "eng" | .french => "fre" | .german => "ger" | .greek => "grk"
+  | .russian => "rus" | .spanish => "spa" | .swahili => "swa" | .wambaya => "wam"
 
 /-- The language's reciprocal markers, from its fragment. -/
 def Language.markers : Language → Finset Marker
@@ -136,7 +136,7 @@ def Language.markers : Language → Finset Marker
 
 /-- Each language's inventory has the value the chapter codes for it. -/
 theorem ofInventory_eq_wals (l : Language) :
-    (lookupISO l.iso).map (·.value) = some (ofInventory l.markers) := by
+    allData.lookup l.walsCode = some (ofInventory l.markers) := by
   cases l <;> decide +kernel
 
 end MaslovaNedjalkov2013

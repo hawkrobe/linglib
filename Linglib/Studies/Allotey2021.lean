@@ -22,8 +22,8 @@ marker only as a high tone on its subject (Table 4). The pronoun is overt
 because that tone needs a segmental host. The subject markers are pronouns,
 not agreement: the verb is invariant across subjects (§4.4) and a marker
 cannot double a lexical subject (§6.1), against the affixal analysis of
-[campbell-2017] that [wals-2013]'s 101A coding of Gã follows; Gã is therefore a
-non-pro-drop language (§2.1).
+[campbell-2017]; Gã is therefore a non-pro-drop language (§2.1). [wals-2013]'s
+101A coding of Gã, made from [ablorh-odjidja-1968], is affixal too.
 
 Everything is read off the paper's example rows and the Fragment. The control
 profile of a clause type is [landau-2013]'s signature as the rows attest it
@@ -50,6 +50,7 @@ comparison with [landau-2004]'s scale is stated for those two.
 ## References
 
 * [allotey-2021]
+* [ablorh-odjidja-1968]
 * [campbell-2017]
 * [landau-2013]
 * [landau-2004]
@@ -114,11 +115,17 @@ def pronominalSubjects : Data.WALS.F101A.ExpressionOfPronominalSubjects :=
   .obligatoryPronounsInSubjectPosition
 
 /-- [wals-2013] codes the same markers as subject affixes on the verb, not
-    `pronominalSubjects`: the analysis of [campbell-2017], against which an
+    `pronominalSubjects`: the analysis of [campbell-2017] too, against which an
     affix would co-occur with a lexical subject (ex 123) and could not be
-    separated from its verb by negation (ex 125). -/
+    separated from its verb by negation (ex 125). Gã's WALS code is `ga`; `gaa`
+    is Gaagudju. -/
 theorem wals_codes_affixes :
-    (Data.WALS.F101A.lookupISO "gaa").map (·.value) = some .subjectAffixesOnVerb := by
+    Data.WALS.F101A.allData.lookup "ga" = some .subjectAffixesOnVerb := by
+  decide +kernel
+
+/-- The coding rests on [ablorh-odjidja-1968]; the affixal analysis of
+    [campbell-2017] came later. -/
+example : Data.WALS.F101A.sources.lookup "ga" = some ["Ablorh-Odjidja-1968[passim]"] := by
   decide +kernel
 
 /-! ### Complementizer selection (§5.5.1) -/

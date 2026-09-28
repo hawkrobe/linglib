@@ -33,7 +33,7 @@ literature ([greenberg-1963], [dryer-2013-wals]), `Arrangement.sov` and its sibl
 ## Implementation notes
 
 The WALS classification of a language's dominant orders, with its "no dominant order" value, is
-data (`Data/WALS/Features/F81A` and its siblings). A fragment records the arrangements a
+data (WALS Feature 81A and its siblings). A fragment records the arrangements a
 language admits as a `Finset (Arrangement Constituent 3)`; the pairwise orders the language
 fixes are the ones every member agrees on, so no separate consistency invariant is needed. The
 rank count is a parameter rather than `Fintype.card α`, so that numerals and `decide` reduce.

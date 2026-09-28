@@ -384,7 +384,7 @@ theorem ga_universal54 : Universal54 Allotey2021.gaInventory Allotey2021.pronomi
 (`Allotey2021.wals_codes_affixes`) Gã violates it, so its instance rests on [allotey-2021]'s
 analysis of the markers as pronouns. -/
 theorem ga_violates_universal54_of_wals :
-    ∀ s ∈ (Data.WALS.F101A.lookupISO "gaa").map (·.value),
+    ∀ s ∈ Data.WALS.F101A.allData.lookup "ga",
       ¬ Universal54 Allotey2021.gaInventory s := by
   intro s hs h
   rw [Allotey2021.wals_codes_affixes, Option.mem_some_iff] at hs
