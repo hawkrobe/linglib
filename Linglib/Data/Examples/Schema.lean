@@ -60,8 +60,7 @@ namespace Data.Examples
 
 /-- Glottolog 5.0 language identifier (e.g. "stan1293" for Standard English).
     Type alias only; values are not validated against Glottolog at the type
-    level. Matches the convention in `Data.PHOIBLE.Inventory.glottocode`
-    and `Data.WALS.Datapoint.iso`. -/
+    level. Matches the convention in `Data.PHOIBLE.Inventory.glottocode`. -/
 abbrev Glottocode := String
 
 /-- Reference to a published source for an example. Two fields kept separate

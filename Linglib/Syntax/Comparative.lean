@@ -23,8 +23,6 @@ typology, superlative strategies, and the WALS Ch 121A lookup and aggregates.
   [stassen-1985]'s standard-NP parameters (derived vs fixed case; object vs
   adverbial encoding).
 - `DegreeWordType` ([beck-2009] 3-way), `SuperlativeStrategy` (6-way).
-- `ComparativeType.ofWALS` : WALS Ch 121A comparative type by ISO 639-3
-  lookup; `none` for languages the chapter leaves uncoded.
 - WALS Ch 121A aggregate generalisations (`locational_most_common`,
   `particle_rarest`, `locational_and_particle_dominant`).
 
@@ -143,50 +141,36 @@ def type (c : Comparative) : ComparativeType :=
   | .fixed, some .directObject => .exceed
   | .fixed, _ => .locational
 
-/-! ### WALS lookups -/
-
-/-- WALS Ch 121A → `ComparativeType`. -/
-def ofWALS121A : Data.WALS.F121A.ComparativeType → ComparativeType
-  | .locational => .locational
-  | .exceed     => .exceed
-  | .conjoined  => .conjoined
-  | .particle   => .particle
-
-/-- WALS Ch 121A comparative type for an ISO 639-3 code; `none` when the
-    language is uncoded in the chapter. -/
-def ComparativeType.ofWALS (iso : String) : Option ComparativeType :=
-  (Data.WALS.Datapoint.lookupISO ch121 iso).map (ofWALS121A ·.value)
-
 /-! ### WALS Ch 121A aggregate generalisations -/
 
 /-- Per-type counts sum to sample total. -/
 theorem ch121_counts_sum :
-    (ch121.filter (·.value == .locational)).length +
-    (ch121.filter (·.value == .exceed)).length +
-    (ch121.filter (·.value == .conjoined)).length +
-    (ch121.filter (·.value == .particle)).length =
+    (ch121.filter (·.2 == .locational)).length +
+    (ch121.filter (·.2 == .exceed)).length +
+    (ch121.filter (·.2 == .conjoined)).length +
+    (ch121.filter (·.2 == .particle)).length =
     ch121.length := by decide +kernel
 
 /-- Locational comparatives are the most common single type in WALS Ch 121. -/
 theorem locational_most_common :
-    let loc := (ch121.filter (·.value == .locational)).length
-    let exc := (ch121.filter (·.value == .exceed)).length
-    let con := (ch121.filter (·.value == .conjoined)).length
-    let par := (ch121.filter (·.value == .particle)).length
+    let loc := (ch121.filter (·.2 == .locational)).length
+    let exc := (ch121.filter (·.2 == .exceed)).length
+    let con := (ch121.filter (·.2 == .conjoined)).length
+    let par := (ch121.filter (·.2 == .particle)).length
     loc > exc ∧ loc > con ∧ loc > par := by decide +kernel
 
 /-- Particle comparatives are the rarest single type in the WALS data. -/
 theorem particle_rarest :
-    let loc := (ch121.filter (·.value == .locational)).length
-    let exc := (ch121.filter (·.value == .exceed)).length
-    let con := (ch121.filter (·.value == .conjoined)).length
-    let par := (ch121.filter (·.value == .particle)).length
+    let loc := (ch121.filter (·.2 == .locational)).length
+    let exc := (ch121.filter (·.2 == .exceed)).length
+    let con := (ch121.filter (·.2 == .conjoined)).length
+    let par := (ch121.filter (·.2 == .particle)).length
     par < loc ∧ par < exc ∧ par < con := by decide +kernel
 
 /-- Locational + particle together account for more than half the sample. -/
 theorem locational_and_particle_dominant :
-    let loc := (ch121.filter (·.value == .locational)).length
-    let par := (ch121.filter (·.value == .particle)).length
+    let loc := (ch121.filter (·.2 == .locational)).length
+    let par := (ch121.filter (·.2 == .particle)).length
     loc + par > ch121.length / 2 := by decide +kernel
 
 end Comparative

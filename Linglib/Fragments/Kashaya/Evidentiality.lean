@@ -26,7 +26,7 @@ personal experience *-yowă* against the quotative, and the archaic remote past 
 personal experience in an irretrievable past. Inferential II *-bi-* is never verb-final: it
 precedes a subordinating suffix, the absolutive or another evidential, so it stands outside the
 mutually exclusive paradigm. WALS codes the language as having direct and indirect evidentials
-(`Data/WALS/Features/F77A.lean`).
+(Feature 77A).
 
 ## Implementation notes
 

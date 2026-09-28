@@ -6,7 +6,7 @@ public import Linglib.Semantics.Evidential.Defs
 # Mandarin evidentiality
 
 This file records that Mandarin has no grammatical evidentials, as de Haan's survey codes it
-(`Data/WALS/Features/F77A.lean`).
+(WALS Feature 77A).
 
 ## References
 
