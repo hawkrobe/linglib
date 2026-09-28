@@ -129,9 +129,9 @@ theorem controller_quirky (c : Case) (t : CaseCategory) (ht : t ≠ .lexical) :
 /-- In the Hindi perfective the verb agrees with the unmarked object past the ergative subject,
 and in the imperfective with the subject. -/
 theorem hindi_controller :
-    controller .unmarked (assignCases (Hindi.Case.alignment .perfective) (fun _ ↦ none)
+    controller .unmarked (assignCases (Hindi.alignment .perfective) (fun _ ↦ none)
       [ArgumentRole.A, .P]) = some 1 ∧
-    controller .unmarked (assignCases (Hindi.Case.alignment .imperfective) (fun _ ↦ none)
+    controller .unmarked (assignCases (Hindi.alignment .imperfective) (fun _ ↦ none)
       [ArgumentRole.A, .P]) = some 0 := by
   decide
 

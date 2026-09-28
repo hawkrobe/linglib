@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.Tagalog.Case
 public import Linglib.Syntax.Category.Pronoun.Personal
 public import Linglib.Syntax.Person.Category
 
@@ -82,13 +83,13 @@ def sa : Category → String
   | .addresseeOthers => "inyo"
   | .others => "kanila"
 
-/-- The pronoun of a category in a case series. -/
+/-- The pronoun of a category in a case series, with the series' comparative value. -/
 def entry (c : Category) (k : Case) (form : String) : PersonalPronoun :=
-  { form, person := some c.person, number := some (number c), case_ := some k }
+  { form, person := some c.person, number := some (number c), case_ := some k.label }
 
 /-- The pronoun inventory: the three series over the eight categories. -/
 def pronouns : Finset PersonalPronoun :=
-  Finset.univ.biUnion fun c ↦ {entry c .nom (ang c), entry c .gen (ng c), entry c .dat (sa c)}
+  Finset.univ.biUnion fun c ↦ {entry c .ang (ang c), entry c .ng (ng c), entry c .sa (sa c)}
 
 /-- An entry denotes exactly its category. -/
 theorem entry_categories (c : Category) (k : Case) (f : String) :

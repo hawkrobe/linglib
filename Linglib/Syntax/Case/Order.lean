@@ -134,7 +134,8 @@ instance (c : Case) : Decidable (IsNonnominative c) :=
     through the containment encoding ([caha-2009] supplies the encoding,
     not the terminology). Ergative-aligned ABS/ERG are off-hierarchy in
     `containmentRank` and so satisfy `¬ IsOblique` (consistent with
-    their parallel-to-NOM/ACC structural status). -/
+    their parallel-to-NOM/ACC structural status). So does `obl`, the oblique of a system of
+    direct and oblique cases, which is off the hierarchy. -/
 def IsOblique (c : Case) : Prop := (.gen : Case) ≤ c
 
 instance (c : Case) : Decidable (IsOblique c) :=

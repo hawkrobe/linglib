@@ -235,7 +235,7 @@ def georgian (s : Georgian.Series) : Setting where
 
 /-- Hindi sees an unfilled position optionally, and its unmarked case is the nominative. -/
 def hindi (a : Aspect.Perfectivity) : Setting where
-  rules := .ofAlignment (Hindi.Case.alignment a)
+  rules := .ofAlignment (Hindi.alignment a)
   unfilled := .optionally
   spellOut
     | .abs => .nom

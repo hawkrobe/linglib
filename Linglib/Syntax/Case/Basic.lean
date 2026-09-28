@@ -20,8 +20,9 @@ comparative values are each stated where they are used: the containment orders i
 `Syntax/Case/Order.lean` and Blake's hierarchy of case systems in `Studies/Blake1994.lean`.
 
 The Universal Dependencies case tags are the corpus vocabulary, reached through
-`Morphology/Word/UD.lean`. The two inventories coincide cell for cell
-([de-marneffe-zeman-2021]).
+`Morphology/Word/UD.lean` ([de-marneffe-zeman-2021]). Every value realizes as a tag and every tag
+ingests as a value. The oblique realizes as `Acc`, the tag UD's guidelines give the oblique of a
+language with only a direct and an oblique case, and so ingests back as the accusative.
 
 ## Main declarations
 
@@ -61,6 +62,10 @@ inductive Case where
   /-- Absolutive: intransitive subject / transitive object in ergative
       alignment. -/
   | abs
+  /-- Oblique: the non-nominative case of a system of direct and oblique cases, the form the
+      adpositions govern, Blake's label for a second case of many functions ([blake-2001]
+      p. 156). -/
+  | obl
   /-- Partitive: partial affectedness, indeterminate quantity
       (Finnic). -/
   | part

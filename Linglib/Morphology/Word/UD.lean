@@ -23,7 +23,9 @@ features, and an annotation ingests as an agreement bundle.
   `Number.roundtrip_fromUD_toUD` on the seven values that have a tag.
 * `Gender.toUD`, `Gender.fromUD`: realization where a tag exists and total ingestion,
   `Gender.isPartialInv_fromUD_toUD` making realization a partial inverse.
-* `Case.toUD`, `Case.fromUD`: the bijection between the two case inventories.
+* `Case.toUD`, `Case.fromUD`: realization of a case as a tag, the oblique as `Acc`, and ingestion
+  of a tag, with `Case.fromUD_toUD` showing ingestion after realization is the identity but on the
+  oblique.
 * `Morphology.Features.toUD`, `Morphology.Features.ofUD`: the annotation record a token's
   features realize as, and the features an annotation ingests as.
 * `Agreement.Bundle.ofUD`: the agreement bundle an annotation ingests as.
@@ -154,6 +156,7 @@ def toUD : Case → UD.Case
   | .abl => .Abl
   | .erg => .Erg
   | .abs => .Abs
+  | .obl => .Acc
   | .part => .Par
   | .ess => .Ess
   | .transl => .Tra
@@ -204,8 +207,11 @@ def fromUD : UD.Case → Case
   | .Per => .perl
   | .Abe => .abess
 
-/-- The inventories are in bijection. -/
-theorem fromUD_toUD (c : Case) : fromUD c.toUD = c := by cases c <;> rfl
+/-- Ingestion after realization is the identity but on the oblique, which realizes as `Acc`, the
+tag UD's guidelines give the oblique of a language with a direct and an oblique case only, and
+ingests as the accusative. -/
+theorem fromUD_toUD (c : Case) : fromUD c.toUD = if c = .obl then .acc else c := by
+  cases c <;> rfl
 
 theorem toUD_fromUD (u : UD.Case) : (fromUD u).toUD = u := by cases u <;> rfl
 
