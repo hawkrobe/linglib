@@ -452,11 +452,10 @@ theorem truthConditional_iff_proposition_eq :
     rw [← coe_mem_proposition, h, Question.mem_ofSet]
     exact Iff.rfl
 
-/-- Proposition 3.4.9 on propositions: `¬¬φ` expresses the non-inquisitive projection of
-`[φ]_M`. -/
-theorem proposition_neg_neg : proposition M φ.neg.neg = (proposition M φ).proj := by
-  rw [Question.proj, info_proposition, ← truthSet_neg_neg,
-    ← (truthConditional_iff_proposition_eq M _).1 (truthConditional_neg M φ.neg)]
+/-- `¬¬φ` expresses the non-inquisitive projection of `[φ]_M`, its double complement
+(Proposition 3.4.9). -/
+theorem proposition_neg_neg : proposition M φ.neg.neg = (proposition M φ)ᶜᶜ := by
+  simp only [Formula.neg, proposition_impl, proposition_bot, himp_bot]
 
 end Proposition
 

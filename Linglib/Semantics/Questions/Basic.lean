@@ -6,6 +6,7 @@ public import Mathlib.Order.Antichain
 public import Mathlib.Data.SetLike.Basic
 public import Mathlib.Order.BoundedOrder.Basic
 public import Mathlib.Order.CompleteBooleanAlgebra
+public import Mathlib.Order.Heyting.Regular
 public import Mathlib.Order.CompleteLattice.Basic
 public import Mathlib.Order.Hom.BoundedLattice
 public import Mathlib.Order.Lattice
@@ -31,8 +32,8 @@ inquisitive theorizing.
 
 This `Basic` file carries the structural core: the type definition with
 its `SetLike` instance, the `info`/`alt`/`isInformative`/`isInquisitive`
-predicates, the `ofSet` constructor, the projection operators
-(`bang`, `query`), the algebraic
+predicates, the `ofSet` constructor, the non-informative projection
+`query`, the algebraic
 operations (`conj`, `inqDisj`, `top`, `bot`) packaged into the
 `CompleteDistribLattice` instance of [puncochar-2019], the basic
 `info`-on-lattice-operations API, the `alt`-as-maximal characterization,
@@ -41,7 +42,8 @@ among them every question with finitely many resolving states — the question
 a family of states generates, `⨆ a ∈ S, ofSet a`, whose alternatives are the
 family when it is an antichain, the **Resolutions Theorem** (DNF), the
 **principal-ideal characterization** of declaratives, the Heyting
-derivatives (`compl_eq`, `proj`, `nonInfo`, the division law), and the
+derivatives (`compl_eq`, the non-inquisitive projection as the double
+complement, the division law), and the
 LEM-fails witness.
 
 For Hamblin constructions (`polar`, `which`), see
@@ -275,32 +277,14 @@ def inqDisj (P Q : Question W) : Question W where
     · exact Or.inl (P.downward_closed p hp q hq)
     · exact Or.inr (Q.downward_closed p hp q hq)
 
-/-! ### Projection operators
+/-! ### The non-informative projection
 
-The non-inquisitive projection `!P` keeps the informative content of `P` and trivializes its
-issue; the non-informative projection `?P` keeps the issue and trivializes the informative content
-by admitting the states within its complement ([ciardelli-groenendijk-roelofsen-2018]). -/
-
-/-- `!P`: the states within the informative content of `P`. -/
-def bang (P : Question W) : Question W := ofSet P.info
+The non-informative projection `?P` keeps the issue of `P` and trivializes its informative
+content by admitting the states within its complement ([ciardelli-groenendijk-roelofsen-2018]).
+The non-inquisitive projection `!P` is the double complement `Pᶜᶜ` (`compl_compl_eq`). -/
 
 /-- `?P`: `P` together with the states within the complement of its informative content. -/
 def query (P : Question W) : Question W := inqDisj P (ofSet P.infoᶜ)
-
-@[simp] theorem mem_bang {P : Question W} {q : Set W} : q ∈ P.bang ↔ q ⊆ P.info := Iff.rfl
-
-@[simp] theorem info_bang (P : Question W) : P.bang.info = P.info := info_ofSet _
-
-theorem not_isInquisitive_bang (P : Question W) : ¬ P.bang.isInquisitive :=
-  not_isInquisitive_ofSet _
-
-/-- A non-inquisitive content is its own non-inquisitive projection. -/
-theorem bang_eq_self_of_not_isInquisitive {P : Question W} (h : ¬ P.isInquisitive) :
-    P.bang = P :=
-  ext fun q => ⟨fun hq => P.downward_closed _ (not_not.1 h) q hq, subset_info_of_mem⟩
-
-@[simp] theorem bang_ofSet (p : Set W) : (ofSet p).bang = ofSet p :=
-  bang_eq_self_of_not_isInquisitive (not_isInquisitive_ofSet p)
 
 @[simp] theorem mem_query {P : Question W} {q : Set W} :
     q ∈ P.query ↔ q ∈ P ∨ q ⊆ P.infoᶜ := Iff.rfl
@@ -647,11 +631,6 @@ theorem info_iSup {ι : Sort*} (f : ι → Question W) :
 theorem ofSet_iInf {ι : Sort*} (p : ι → Set W) :
     ofSet (⋂ i, p i) = ⨅ i, ofSet (p i) :=
   gc_info_ofSet.u_iInf
-
-/-- The non-inquisitive projection `proj = ofSet ∘ info` as a closure
-operator. -/
-def projClosure : ClosureOperator (Question W) :=
-  gc_info_ofSet.closureOperator
 
 /-! ### `alt` API and inquisitivity from alternatives
 
@@ -1050,10 +1029,11 @@ content and taking the principal ideal. This single identity
 ([ciardelli-groenendijk-roelofsen-2018]; [puncochar-2019]):
 
 - the **non-inquisitive projection** `!P = Pᶜᶜ = ofSet (info P)`
-  (`proj_eq_compl_compl`),
-- the **non-informative projection** `?P = P ⊔ Pᶜ`,
+  (`compl_compl_eq`), whose fixed points, the non-inquisitive contents, are the regular elements
+  (`isRegular_iff_not_isInquisitive`),
+- the **non-informative projection** `?P = P ⊔ Pᶜ` (`query_eq_sup_compl`),
 - and the **division law** `!P ⊓ ?P = P` decomposing every content into
-  its informative and inquisitive components (`proj_inf_nonInfo`).
+  its informative and inquisitive components (`compl_compl_inf_query`).
 
 The lattice is **Heyting but not Boolean**: LEM `P ⊔ Pᶜ = ⊤` fails in
 general — see `not_lem_inquisitive_content` below. -/
@@ -1103,67 +1083,44 @@ theorem compl_eq (P : Question W) :
     info Pᶜ = (info P)ᶜ := by
   rw [compl_eq, info_ofSet]
 
-/-- **Non-inquisitive projection** `!P`: the declarative content with
-    the same informative content as `P` ([ciardelli-groenendijk-roelofsen-2018]).
-    Removes any inquisitivity by collapsing all alternatives into a
-    single principal ideal. Always declarative; equal to `P` iff `P`
-    is declarative.
-
-    Used to define classical (non-inquisitive) operators in inquisitive
-    semantics: classical disjunction is `!(P ⩒ Q) = !P ⊔ !Q`, etc. -/
-def proj (P : Question W) : Question W :=
-  ofSet P.info
-
-/-- `!P = Pᶜᶜ`: the non-inquisitive projection coincides with the
-    Heyting double-complement ([ciardelli-groenendijk-roelofsen-2018]).
-    Together with `compl_eq`, this means every inquisitive operator
-    derivable from the Heyting structure is, at the level of `info`, a
-    Boolean operator on `Set W`. -/
-theorem proj_eq_compl_compl (P : Question W) : proj P = Pᶜᶜ := by
+/-- The non-inquisitive projection `!P = Pᶜᶜ` consists of the states within the informative
+content of `P` ([ciardelli-groenendijk-roelofsen-2018]). -/
+theorem compl_compl_eq (P : Question W) : Pᶜᶜ = ofSet P.info := by
   rw [compl_eq Pᶜ, info_compl, compl_compl]
-  rfl
 
-@[simp] theorem info_proj (P : Question W) : P.proj.info = P.info :=
-  info_ofSet P.info
+@[simp] theorem mem_compl_compl {P : Question W} {q : Set W} : q ∈ Pᶜᶜ ↔ q ⊆ P.info := by
+  rw [compl_compl_eq, mem_ofSet]
 
-theorem info_mem_proj (P : Question W) : P.proj.info ∈ P.proj :=
-  info_mem_ofSet P.info
+@[simp] theorem info_compl_compl (P : Question W) : Pᶜᶜ.info = P.info := by
+  rw [info_compl, info_compl, compl_compl]
 
-/-- `proj` is idempotent: projecting twice = projecting once. -/
-@[simp] theorem proj_proj (P : Question W) : P.proj.proj = P.proj := by
-  unfold proj
-  rw [info_ofSet]
+/-- A complement is never inquisitive. -/
+theorem not_isInquisitive_compl (P : Question W) : ¬ Pᶜ.isInquisitive := by
+  rw [compl_eq]
+  exact not_isInquisitive_ofSet _
 
-/-- Projection fixes declarative contents (`!P = P` iff `P` is declarative). -/
-theorem proj_eq_self_iff (P : Question W) :
-    P.proj = P ↔ P.info ∈ P := by
-  refine ⟨?_, ?_⟩
-  · intro h
-    have := info_mem_proj P
-    rw [h] at this
-    exact this
-  · intro h
-    exact ((info_mem_iff_eq_ofSet_info P).mp h).symm
+/-- The non-inquisitive contents are the regular elements of the Heyting algebra of contents,
+the fixed points of the non-inquisitive projection. -/
+theorem isRegular_iff_not_isInquisitive {P : Question W} :
+    Heyting.IsRegular P ↔ ¬ P.isInquisitive := by
+  rw [Heyting.IsRegular, compl_compl_eq, ← info_mem_iff_not_isInquisitive,
+    info_mem_iff_eq_ofSet_info, eq_comm]
 
-/-- **Non-informative projection** `?P := P ⊔ Pᶜ`
-    ([ciardelli-groenendijk-roelofsen-2018]). The "inquisitive
-    question" operator: takes any content and returns its non-informative
-    counterpart with the same inquisitive structure. -/
-def nonInfo (P : Question W) : Question W := P ⊔ Pᶜ
+theorem isRegular_ofSet (p : Set W) : Heyting.IsRegular (ofSet p) :=
+  isRegular_iff_not_isInquisitive.2 (not_isInquisitive_ofSet p)
 
-theorem nonInfo_eq_sup_compl (P : Question W) :
-    nonInfo P = P ⊔ Pᶜ := rfl
+@[simp] theorem compl_compl_ofSet (p : Set W) : (ofSet p)ᶜᶜ = ofSet p :=
+  (isRegular_ofSet p).eq
 
-/-- **Division law** ([ciardelli-groenendijk-roelofsen-2018]):
-    every inquisitive content decomposes uniquely as the meet of its
-    non-inquisitive projection and its non-informative projection. This
-    is the fundamental decomposition theorem of inquisitive semantics —
-    it says the lattice "factors through" `(info, alternatives)`. -/
-theorem proj_inf_nonInfo (P : Question W) :
-    proj P ⊓ nonInfo P = P := by
-  unfold nonInfo
-  rw [inf_sup_left]
-  have h1 : proj P ⊓ Pᶜ = ⊥ := by
+/-- The non-informative projection `?P` is `P ⊔ Pᶜ` ([ciardelli-groenendijk-roelofsen-2018]). -/
+theorem query_eq_sup_compl (P : Question W) : P.query = P ⊔ Pᶜ := by
+  rw [query, compl_eq, sup_eq_inqDisj]
+
+/-- **Division law** ([ciardelli-groenendijk-roelofsen-2018]): every content is the meet of its
+non-inquisitive and its non-informative projection. -/
+theorem compl_compl_inf_query (P : Question W) : Pᶜᶜ ⊓ P.query = P := by
+  rw [compl_compl_eq, query_eq_sup_compl, inf_sup_left]
+  have h1 : ofSet P.info ⊓ Pᶜ = ⊥ := by
     rw [compl_eq P]
     apply le_antisymm _ bot_le
     intro q ⟨hq1, hq2⟩

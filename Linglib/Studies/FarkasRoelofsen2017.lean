@@ -14,8 +14,8 @@ polar interrogatives and tag interrogatives: their inquisitive semantics, the si
 convention of use that replaces the Fregean force operators, and the special discourse effects
 of the marked forms. A sentence form is a clause-type marker with an intonation, or a declarative
 anchor with a tag (`Form`, §4.1); the markers are interpreted by the projection operators
-of inquisitive semantics (31), (34), (36): `dec` is the non-inquisitive projection
-`Question.bang`, `int` the non-informative projection `Question.query` applied only to a
+of inquisitive semantics (31), (34), (36): `dec` is the non-inquisitive projection, the double
+complement `Pᶜᶜ`, `int` the non-informative projection `Question.query` applied only to a
 non-inquisitive argument, falling intonation is vacuous and rising intonation is `Question.query`
 again. `Form.interpret` composes them as in (37)–(40): a falling declarative expresses
 `!P` and every other form `?!P`, so that with a non-inquisitive radical the rising declarative,
@@ -104,9 +104,9 @@ open scoped Classical in
 /-- (37)–(40): `dec` is `!`, `int` is `⟨?⟩`, which applies `?` only to a non-inquisitive
 argument, and a tag applies `int` to the falling declarative anchor. -/
 noncomputable def interpret : Form → Question W → Question W
-  | .declarative i, P => i.interpret P.bang
+  | .declarative i, P => i.interpret Pᶜᶜ
   | .interrogative i, P => i.interpret (if P.isInquisitive then P else P.query)
-  | .tag i, P => i.interpret (if P.bang.isInquisitive then P.bang else P.bang.query)
+  | .tag i, P => i.interpret (if Pᶜᶜ.isInquisitive then Pᶜᶜ else Pᶜᶜ.query)
 
 /-- (47): polar interrogatives are the optimal forms for an inquisitive content; rising
 declaratives and tag interrogatives are marked. -/
@@ -125,14 +125,14 @@ end Form
 
 /-- (41a): a falling declarative expresses the non-inquisitive projection of its radical. -/
 theorem interpret_declarative_falling (P : Question W) :
-    (Form.declarative .falling).interpret P = P.bang := rfl
+    (Form.declarative .falling).interpret P = Pᶜᶜ := rfl
 
 /-- (39), (40): a rising declarative and a tag interrogative express `?!P`. -/
 theorem interpret_marked (P : Question W) (i : Intonation) :
-    (Form.declarative .rising).interpret P = P.bang.query ∧
-      (Form.tag i).interpret P = P.bang.query := by
+    (Form.declarative .rising).interpret P = Pᶜᶜ.query ∧
+      (Form.tag i).interpret P = Pᶜᶜ.query := by
   refine ⟨rfl, ?_⟩
-  cases i <;> simp [Form.interpret, Intonation.interpret, not_isInquisitive_bang]
+  cases i <;> simp [Form.interpret, Intonation.interpret, not_isInquisitive_compl]
 
 /-- (38): a polar interrogative with a non-inquisitive radical expresses `?P`, whatever its
 intonation. -/
@@ -149,7 +149,7 @@ theorem interpret_eq_query_ofSet (α : Set W) (f : Form) (h : f ≠ .declarative
     · exact absurd rfl h
     · simp [Form.interpret, Intonation.interpret]
   · exact interpret_interrogative_ofSet α i
-  · rw [(interpret_marked (ofSet α) i).2, bang_ofSet]
+  · rw [(interpret_marked (ofSet α) i).2, compl_compl_ofSet]
 
 /-- (41b): those forms raise a genuine issue unless the radical is a tautology or a
 contradiction. -/
@@ -255,7 +255,7 @@ omit [DecidableEq A] in
 /-- (49): a falling declarative commits the speaker to the radical. -/
 theorem cs_basic_declarative_falling (α : Set W) :
     (K.basic x ((Form.declarative .falling).interpret (ofSet α))).cs x = K.cs x ∩ α := by
-  simp only [cs, basic, interpret_declarative_falling, bang_ofSet, info_ofSet]
+  simp only [cs, basic, interpret_declarative_falling, compl_compl_ofSet, info_ofSet]
   rw [ofCommitter_insert_of_eq K.commitments x (commit x α) rfl, contextSet_insert_of_commit rfl,
     commit_content, Set.inter_comm]
 
