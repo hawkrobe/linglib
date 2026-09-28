@@ -3,8 +3,7 @@ module
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Pragmatics.RSA.Uniform
-public import Linglib.Semantics.Causation.SEM.Bool
-public import Linglib.Semantics.Causation.SEM.Counterfactual
+public import Linglib.Semantics.Causation.CausalModel.Defs
 
 /-!
 # Beller and Gerstenberg 2025: causal expressions from counterfactual simulation
@@ -29,8 +28,8 @@ structural causal model.
   adds the softened negation of how-causation in "made no difference".
 * `Scenario`, `Scenario.aspects`, `sem`: the four sample scenarios and each expression's
   extension over them.
-* `CausalWorld.ofModel`: the aspect profile of a cause–effect pair in a deterministic
-  structural model, read off `Causation.SEM.WhetherCause` and `hasDirectLaw`.
+* `CausalWorld.ofModel`: the aspect profile of a cause–effect pair in a context of a
+  deterministic causal model, read off its solutions under interventions and its graph.
 
 ## Main results
 
@@ -62,7 +61,7 @@ fitted noise, softening, and optimality parameters (θ, σ, ν, λ).
 
 namespace BellerGerstenberg2025
 
-open Causation Causation.SEM RSA
+open RSA
 open scoped ENNReal
 
 /-! ### Expressions and aspects -/
@@ -289,47 +288,46 @@ theorem causalScale_strictAnti :
 
 section Structural
 
-open Causation.Mechanism
-
 /-- The variables of a two-event structural model: the candidate cause and the outcome. -/
 inductive Var
   | cause
   | effect
   deriving DecidableEq, Fintype, Repr
 
-/-- Michottean launching: the outcome depends on the candidate cause alone. -/
-def launchGraph : CausalGraph Var :=
-  ⟨fun | .cause => ∅ | .effect => {.cause}⟩
+/-- In Michottean launching the context settles whether the candidate cause occurs, and the
+outcome takes its value. -/
+def launch : CausalModel Bool Var fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ w = .cause ∧ v = .effect⟩
+  eqn
+    | .cause => fun u _ ↦ u
+    | .effect => fun _ x ↦ x .cause
+  dependsOn_eqn
+    | .cause => fun _ _ _ _ ↦ rfl
+    | .effect => fun _ _ _ h ↦ h .cause ⟨rfl, rfl⟩
 
-/-- The launching model: the outcome takes the candidate cause's value. -/
-def launch : BoolSEM Var :=
-  { graph := launchGraph
-    mech := fun v => match v with
-      | .cause => const (G := launchGraph) false
-      | .effect => fun ρ ↦ ρ ⟨.cause, by simp [launchGraph]⟩ }
+instance : DecidableRel launch.graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable (w = .cause ∧ v = .effect))
 
-instance : CausalGraph.IsDAG launchGraph := .of_irrefl (by decide)
+instance : launch.IsAcyclic := .of_depth _ (fun | .cause => 0 | .effect => 1) (by decide)
 
-noncomputable instance : CausalGraph.IsDAG launch.graph :=
-  inferInstanceAs (CausalGraph.IsDAG launchGraph)
+variable {U V : Type*} [DecidableEq V]
 
-variable {V : Type*} [Fintype V] [DecidableEq V]
+/-- The aspect profile of `cause → effect` in the context `u` of a deterministic model. `W` is
+whether-causation (1): had the cause been absent, the effect would not have been present. `H` is
+a direct law, and `S` is sufficient-causation (3), whether-causation under the intervention
+`removed` that takes the alternative causes away. -/
+noncomputable def CausalWorld.ofModel (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
+    [DecidableRel M.graph.Adj] (removed : V → Flat Bool) (u : U) (cause effect : V) :
+    CausalWorld where
+  whether := decide (M.solve (Function.update ⊥ cause ↑false) u effect ≠ true)
+  how := decide (M.graph.Adj cause effect)
+  sufficient := decide (M.solve (Function.update removed cause ↑false) u effect ≠ true)
 
-/-- The aspect profile of `cause → effect` in a deterministic model: `W` is whether-causation
-(1) at the observed valuation, `H` is a direct law, and `S` is sufficient-causation (3),
-whether-causation at the valuation with the alternative causes removed. -/
-def CausalWorld.ofModel (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    (observed alternativesRemoved : Valuation fun _ : V => Bool)
-    (cause effect : V) : CausalWorld :=
-  { whether := decide (WhetherCause M observed cause false effect true)
-    how := decide (BoolSEM.hasDirectLaw M cause effect)
-    sufficient := decide (WhetherCause M alternativesRemoved cause false effect true) }
-
-/-- Michottean launching computes the profile of the first scenario: with no alternative
-causes, sufficient-causation reduces to whether-causation. -/
+/-- Michottean launching, in the context where the cause occurs, computes the profile of the
+first scenario: with no alternative causes to remove, sufficient-causation is whether-causation. -/
 theorem launch_ofModel :
-    CausalWorld.ofModel launch Valuation.empty Valuation.empty .cause .effect =
-      Scenario.s1.aspects := by
+    CausalWorld.ofModel launch ⊥ true .cause .effect = Scenario.s1.aspects := by
+  simp only [CausalWorld.ofModel, launch.solve_eq_iterate_card (x := fun _ ↦ false)]
   decide
 
 end Structural
