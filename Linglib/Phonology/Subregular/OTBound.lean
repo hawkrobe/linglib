@@ -14,14 +14,12 @@ public import Linglib.Core.Computability.NonRegular.AnBn
 A `Constraint`'s zero set `{ w | c w = 0 }` sometimes lands in a subregular class (TSL₂, SP₂,
 …) and sometimes does not. This file makes the bound visible.
 
-1. Every `mkForbidPairsOnTier` constraint has a TSL₂ zero set ([heinz-rawal-tanner-2011];
-   `mkForbidPairsOnTier_zeroSet_eq`), the `Language α` form of
-   `mkForbidPairsOnTier_zero_iff_in_language`, which composes with mathlib's
-   `Language.IsRegular`.
+1. The forbidden-pair constraint on any tier has a TSL₂ zero set ([heinz-rawal-tanner-2011];
+   `Constraint.zeroSet_comap_filter_forbidPairs`, with its OCP and AGREE instances).
 2. Some `Constraint (List AB)` has the classical non-regular zero set `{ aⁿ bⁿ | n ≥ 0 }`
    (`exists_namedConstraint_zeroSet_not_isRegular`), so the bridge cannot be stated as "every
-   constraint has a subregular zero set". Only the schema-specific constructors
-   (`mkForbidPairsOnTier`, `mkOCPOnTier`, `mkAgreeOnTier`) inherit it.
+   constraint has a subregular zero set". Only the forbidden-pair constraints
+   (`Constraint.forbidPairs`, `Constraint.ocp`, `Constraint.agree`) inherit it.
 
 Non-regularity is the Myhill–Nerode argument of `Core/Computability/NonRegular/AnBn.lean`:
 distinct prefixes `aⁿ` give distinct left quotients of `{ aⁿ bⁿ }`, so the range of
@@ -44,24 +42,11 @@ namespace Subregular.OTBound
 
 open Constraints OptimalityTheory
 
-variable {α : Type}
-
-/-- The zero set of a forbidden-pair markedness constraint is the language of the corresponding
-TSL₂ grammar, `mkForbidPairsOnTier_zero_iff_in_language` with `extract := id` in `Language α`
-form. -/
-theorem mkForbidPairsOnTier_zeroSet_eq
-    (R : α → α → Prop) [DecidableRel R]
-    (p : α → Prop) [DecidablePred p] :
-    (mkForbidPairsOnTier R p (id : List α → List α)).zeroSet =
-      (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language := by
-  ext w
-  exact mkForbidPairsOnTier_zero_iff_in_language R p id w
-
 /-! ### A supraregular constraint -/
 
 /-- The constraint violated once by every unbalanced candidate. It is an arbitrary violation
 count, not an instance of the forbidden-pair schema, whose zero set is always a TSL₂ language
-(`mkForbidPairsOnTier_zeroSet_eq`). -/
+(`Constraint.zeroSet_comap_filter_forbidPairs`). -/
 def supraregularConstraint : Constraint (List AB) :=
   (fun w => if IsBalanced w then 0 else 1)
 

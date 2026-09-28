@@ -155,17 +155,17 @@ its copy adds nothing. -/
 variable [DecidableEq α]
 
 /-- The OCP counts the adjacent identical constituents within each morpheme. -/
-def ocp : Constraint (Parse α) := fun p ↦ (p.morphemes.map adjacentIdentical).sum
+def ocp : Constraint (Parse α) := fun p ↦ (p.morphemes.map Constraint.ocp).sum
 
 @[simp] theorem ocp_simplex_double (x : α) : ocp (.simplex [x, x]) = 1 := by
-  simp [ocp, Parse.morphemes, adjacentIdentical, Subregular.countAdjacent]
+  simp [ocp, Parse.morphemes, Constraint.ocp, Constraint.forbidPairs, Subregular.countAdjacent]
 
 @[simp] theorem ocp_simplex_pair (h : x ≠ y) : ocp (.simplex [x, y]) = 0 := by
-  simp [ocp, Parse.morphemes, adjacentIdentical, Subregular.countAdjacent, h]
+  simp [ocp, Parse.morphemes, Constraint.ocp, Constraint.forbidPairs, Subregular.countAdjacent, h]
 
 /-- The OCP is inapplicable to a base and its copy, which are separate morphemes. -/
 @[simp] theorem ocp_reduplicated_singleton (x : α) : ocp (.reduplicated [x]) = 0 := by
-  simp [ocp, Parse.morphemes, adjacentIdentical, Subregular.countAdjacent]
+  simp [ocp, Parse.morphemes, Constraint.ocp, Constraint.forbidPairs, Subregular.countAdjacent]
 
 /-! ### The competition between a doubled name and its control -/
 

@@ -13,9 +13,9 @@ public import Linglib.Phonology.Subregular.ISL
 # The OCP as a tier-based strictly 2-local language
 
 This file characterizes the Obligatory Contour Principle (OCP) of Goldsmith and McCarthy as a
-tier-based strictly 2-local (TSL₂) language. The OCP is the identity instance of the
-forbidden-pair constructor `mkForbidPairsOnTier` of `ForbidPairs.lean`. Its forbidden 2-factor
-is `[some x, some x]`, and its TSL₂ grammar is
+tier-based strictly 2-local (TSL₂) language. The OCP constraint `Constraint.ocp` is the identity
+instance of the forbidden-pair constraint `Constraint.forbidPairs` of `ForbidPairs.lean`. Its
+forbidden 2-factor is `[some x, some x]`, and its TSL₂ grammar is
 `TierStrictlyLocalGrammar.ofForbiddenPairs (· = ·) p`. Without a tier, the OCP is the linguistic
 instance of Thue's square-free words. Thue showed that infinite square-free words exist over
 three letters, while every binary string of length at least 4 contains a square, so a binary
@@ -33,10 +33,10 @@ retraction onto it, both subregular.
 
 ## Main results
 
-* `mkOCPOnTier_zero_iff_isClean`, `mkOCP_zero_iff_isClean`: the OCP constraint scores zero
-  exactly on `OCP.IsClean` strings.
-* `mkOCPOnTier_zero_iff_in_ocp_language`: the OCP constraint scores zero exactly on the language
-  of `TierStrictlyLocalGrammar.ocp`.
+* `Constraint.ocp_eq_zero_iff_isClean`: the OCP constraint scores zero exactly on `OCP.IsClean`
+  strings.
+* `Constraint.zeroSet_comap_filter_ocp`: on a tier, its zero set is the language of
+  `TierStrictlyLocalGrammar.ocp`.
 * `collapse_isISL`: the fusion repair `OCP.collapse` is 2-input strictly local.
 
 ## References
@@ -84,52 +84,6 @@ lemma OCPCleanPair.isBoundaryVacuous [DecidableEq α] :
     IsBoundaryVacuous (OCPCleanPair (α := α)) :=
   CleanPair.isBoundaryVacuous
 
-/-- A candidate's OCP score is zero iff its raw string projects onto the tier `p` as a list with
-no two adjacent identical elements. This is the identity instance of
-`mkForbidPairsOnTier_zero_iff_isChain`. -/
-theorem mkOCPOnTier_zero_iff_isChain [DecidableEq α] {C : Type}
-    (p : α → Prop) [DecidablePred p]
-    (extract : C → List α) (c : C) :
-    mkOCPOnTier p extract c = 0 ↔ ((extract c).filter (p ·)).IsChain (· ≠ ·) :=
-  mkForbidPairsOnTier_zero_iff_isChain (· = ·) p extract c
-
-/-- A candidate's OCP score is zero iff its tier projection is `OCP.IsClean`. Since the fusion
-repair `OCP.collapse` also characterizes `OCP.IsClean`, the prohibition reading and the repair are
-two faces of one principle rather than parallel formalizations. -/
-theorem mkOCPOnTier_zero_iff_isClean [DecidableEq α] {C : Type}
-    (p : α → Prop) [DecidablePred p]
-    (extract : C → List α) (c : C) :
-    mkOCPOnTier p extract c = 0 ↔ OCP.IsClean ((extract c).filter (p ·)) :=
-  mkOCPOnTier_zero_iff_isChain p extract c
-
-/-- The optimality-theoretic OCP markedness constraint `mkOCP` scores zero iff its projection is
-`OCP.IsClean`. This routes `OptimalityTheory.adjacentIdentical`, the `countAdjacent` form behind
-`mkOCP`, through the shared predicate, as `mkOCPOnTier_zero_iff_isClean` does on a tier. -/
-theorem mkOCP_zero_iff_isClean {C : Type} [DecidableEq α]
-    (project : C → List α) (c : C) :
-    (mkOCP project) c = 0 ↔ OCP.IsClean (project c) := by
-  show countAdjacent (· = ·) (project c) = 0 ↔ _
-  rw [countAdjacent_eq_zero_iff_isChain (· = ·)]
-
-/-- A candidate's OCP score is zero iff its raw string lies in the language of the TSL₂ grammar
-`TierStrictlyLocalGrammar.ocp p`, so the optimality-theoretic constraint and the subregular class
-are co-extensive. This is the identity instance of `mkForbidPairsOnTier_zero_iff_in_language`. -/
-theorem mkOCPOnTier_zero_iff_in_ocp_language [DecidableEq α] {C : Type}
-    (p : α → Prop) [DecidablePred p]
-    (extract : C → List α) (c : C) :
-    mkOCPOnTier p extract c = 0 ↔ extract c ∈ (TierStrictlyLocalGrammar.ocp p).language :=
-  mkForbidPairsOnTier_zero_iff_in_language (· = ·) p extract c
-
-/-- The zero set of the OCP markedness constraint is the corresponding TSL₂ language. This
-restates `mkOCPOnTier_zero_iff_in_ocp_language` in `Language α` form, with `extract := id`, as
-`mkForbidPairsOnTier_zeroSet_eq` in `OTBound.lean` does in general. -/
-theorem mkOCPOnTier_zeroSet_eq [DecidableEq α]
-    (p : α → Prop) [DecidablePred p] :
-    (mkOCPOnTier p (id : List α → List α)).zeroSet =
-      (TierStrictlyLocalGrammar.ocp p).language := by
-  ext w
-  exact mkOCPOnTier_zero_iff_in_ocp_language p id w
-
 /-! ### The repair is subregular -/
 
 /-- The OCP fusion repair `OCP.collapse` is a **2-input strictly local** string function
@@ -176,3 +130,23 @@ theorem collapse_isISL [DecidableEq α] :
     exact key x rest
 
 end Subregular
+
+namespace Constraints.Constraint
+
+variable {α : Type} [DecidableEq α]
+
+/-- A string satisfies the OCP iff it is `OCP.IsClean`. Since the fusion repair `OCP.collapse`
+also characterizes `OCP.IsClean`, the prohibition and the repair are two faces of one principle
+rather than parallel formalizations. -/
+theorem ocp_eq_zero_iff_isClean (w : List α) : ocp w = 0 ↔ OCP.IsClean w :=
+  forbidPairs_eq_zero_iff (· = ·) w
+
+/-- On the tier `p`, the zero set of the OCP is the language of the TSL₂ grammar
+`TierStrictlyLocalGrammar.ocp p`, so the optimality-theoretic constraint and the subregular class
+are co-extensive. -/
+theorem zeroSet_comap_filter_ocp (p : α → Prop) [DecidablePred p] :
+    (ocp.comap fun w ↦ w.filter (p ·)).zeroSet =
+      (Subregular.TierStrictlyLocalGrammar.ocp p).language :=
+  zeroSet_comap_filter_forbidPairs (· = ·) p
+
+end Constraints.Constraint
