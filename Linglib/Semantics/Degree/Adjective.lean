@@ -8,165 +8,78 @@ public import Linglib.Syntax.Category.Adjective.Basic
 /-!
 # Gradable adjectives
 
-Adjective-specific degree semantics, layered on the syntactic `Adjective`
-(`Syntax/Category/Adjective`): the `GradableAdjective` lexeme with its derived Kennedy
-classification, and multidimensional binding ([sassoon-2013]).
+This file defines `Degree.GradableAdjective`, a syntactic adjective together with its degree
+semantics. The scale an adjective measures on, its positive standard and its Kennedy class are
+derived from its dimension, its polarity and any lexically fixed standard, so that *wet* and *dry*
+share one scale and differ only in pole. The file also defines antonym pairs, informational
+strength, evaluative valence, and the ways a multidimensional adjective binds its dimensions.
 
 ## Main definitions
 
-* `GradableAdjective` — a syntactic `Adjective` refined with the degree-semantic
-  layer; `scaleType`, `standard`, and `adjectiveClass` are derived views.
-* `AntonymPair` — the two polar adjectives of one scale, entered once.
-* `InformationalStrength` — the weak/strong distinction ([alexandropoulou-gotzner-2024b]).
-* `DimensionBindingType` — how a multidimensional adjective binds its dimensions.
+* `AdjectiveClass`: Kennedy's classes of gradable adjectives.
+* `InformationalStrength`: the distinction between weak and strong adjectives on one scale.
+* `EvaluativeValence`: whether a predicate denotes a good, a bad or a neutral property.
+* `GradableAdjective`: a syntactic adjective with its degree semantics.
+* `GradableAdjective.scaleType`: the scale an adjective measures on.
+* `GradableAdjective.standard`: the positive standard of an adjective.
+* `AntonymPair`: the two polar adjectives of one scale.
+* `DimensionBindingType`: how a multidimensional adjective binds its dimensions.
 
-The antonym pair's polarity, relation and two-threshold model live in
-`Semantics/Degree/Antonymy`, and threshold predications in `Semantics/Degree/Comparison`.
-The intersective/subsective/privative classification lives in
-`Semantics/Modification/Classification.lean`.
+## References
+
+* [C. Kennedy, *Vagueness and Grammar: The Semantics of Relative and Absolute Gradable Adjectives*
+  (2007)][kennedy-2007]
+* [C. Kennedy and L. McNally, *Scale Structure, Degree Modification, and the Semantics of Gradable
+  Predicates* (2005)][kennedy-mcnally-2005]
+* [G. W. Sassoon, *A Typology of Multidimensional Adjectives* (2013)][sassoon-2013]
+* [S. Alexandropoulou and N. Gotzner, *Gradable adjective interpretation under negation: The role
+  of competition* (2024)][alexandropoulou-gotzner-2024b]
+* [L. R. Horn, *On the Semantic Properties of Logical Operators in English* (1972)][horn-1972]
+* [A. Beltrama, *Evaluation, Thresholds, and Practical Commitments: The Grammar of Adjectival
+  Mildness* (2025)][beltrama-2025]
+* [R. Nouwen, *The Semantics and Probabilistic Pragmatics of Deadjectival Intensifiers*
+  (2024)][nouwen-2024]
+* [B. Levin, *The door pushed open: an English intransitive resultative construction with
+  transitive-only verbs* (2026)][levin-2026]
 -/
 
 @[expose] public section
 
 namespace Degree
 
+/-! ### Kennedy's adjective classes -/
 
-/-! ## Standards and Interpretive Economy ([kennedy-2007])
-
-Absorbed from the retired `Standard.lean`: the classification of
-gradable adjectives by scale structure and the derivation of standard
-type from boundedness. Interpretive Economy ([kennedy-2007] eq. (66))
-maximises the contribution of conventional meaning: a scale with an
-endpoint rules out the contextual standard; a totally closed scale
-admits *both* endpoint standards (`Boundedness.Admits`) with the maximum as the
-pragmatically preferred default (`Boundedness.defaultStandard`). -/
-
-/-! ### Classification carriers -/
-
-/-- Positive form standard: how the contextual threshold is determined.
-For open scales, the standard is the contextual norm
-([kennedy-2007]); for closed scales, it is the relevant endpoint
-fixed by Interpretive Economy. -/
-inductive PositiveStandard where
-  /-- Open-scale: θ = norm relative to comparison class. -/
-  | contextual
-  /-- Lower-bounded: θ = minimum (e.g., "bent", "wet"). -/
-  | minEndpoint
-  /-- Upper-bounded / closed: θ = maximum (e.g., "full", "dry"). -/
-  | maxEndpoint
-  /-- Necessity standard: θ = minimum value for pursuit ([beltrama-2025]). -/
-  | necessity
-  deriving DecidableEq, Repr
-
-/-- Whether the positive standard depends on contextual domain information.
-
-[kennedy-2007] argues the comparison class is not a semantic argument
-of *pos* (contra [klein-1980]), replacing it with the standard-fixing
-function **s**: `⟦pos⟧ = λg.λx. g(x) ≥ s(g)`. For relative (open-scale)
-adjectives, **s** still requires contextual domain information; for
-absolute (closed-scale) adjectives the standard comes from scale
-endpoints via Interpretive Economy. -/
-def PositiveStandard.RequiresComparisonClass : PositiveStandard → Prop
-  | .contextual  => True
-  | .minEndpoint => False
-  | .maxEndpoint => False
-  | .necessity  => True
-
-instance : DecidablePred PositiveStandard.RequiresComparisonClass
-  | .contextual  => inferInstanceAs (Decidable True)
-  | .minEndpoint => inferInstanceAs (Decidable False)
-  | .maxEndpoint => inferInstanceAs (Decidable False)
-  | .necessity  => inferInstanceAs (Decidable True)
-
-/-- Kennedy's adjective classification by scale structure and standard
-type [kennedy-2007] [kennedy-mcnally-2005], plus a
-`nonGradable` case for adjectives outside the degree-based fragment. -/
+/-- An adjective class is Kennedy's classification of an adjective by its scale structure and
+standard ([kennedy-2007], [kennedy-mcnally-2005]), with a further class for non-gradable
+adjectives. -/
 inductive AdjectiveClass where
-  /-- Standard varies with comparison class — *tall*, *expensive*, *big*. -/
+  /-- The standard varies with a comparison class, as for *tall*, *expensive* and *big*. -/
   | relative
-  /-- Threshold fixed at scale maximum — *full*, *straight*, *closed*, *dry*. -/
+  /-- The standard is the maximum of the scale, as for *full*, *straight*, *closed* and *dry*. -/
   | absoluteMaximum
-  /-- Threshold fixed at scale minimum — *wet*, *bent*, *open*, *dirty*. -/
+  /-- The standard is the minimum of the scale, as for *wet*, *bent*, *open* and *dirty*. -/
   | absoluteMinimum
-  /-- Necessity-relative threshold — *decent*, *acceptable* ([beltrama-2025]). -/
+  /-- The standard is a necessity threshold, as for *decent* and *acceptable* ([beltrama-2025]). -/
   | mildlyPositive
-  /-- Non-gradable: no degree argument, no scale — *atomic*, *prime*,
-  *deceased*, *pregnant*. Outside the degree-based system;
-  consumers that classify a general adjective should map non-gradables
-  here rather than coercing them into a gradable class. -/
+  /-- The adjective has no degree argument and no scale, as for *atomic*, *prime*, *deceased* and
+  *pregnant*; an adjective that is not gradable belongs here rather than in a gradable class. -/
   | nonGradable
   deriving Repr, DecidableEq
 
-/-- Coarse two-way classification: relative vs absolute. Collapses
-`absoluteMaximum` and `absoluteMinimum`. -/
+/-- An adjective class is relative when it is the class `relative`, as against the absolute
+and the other classes. -/
 def AdjectiveClass.IsRelative (c : AdjectiveClass) : Prop :=
   c = .relative
 
 instance : DecidablePred AdjectiveClass.IsRelative :=
   fun c => decEq c .relative
 
-
-/-- The positive-form standards Interpretive Economy admits for a scale ([kennedy-2007]
-§4.2–§4.3): a maximal degree stands out on a scale with a maximum and a non-minimal degree on
-one with a minimum, so an endpoint standard is available exactly where the scale has that
-endpoint; the contextual standard, which context must supply, survives IE (66) only on a
-totally open scale. A totally closed scale therefore admits both endpoints ((67)–(68)). -/
-def Boundedness.Admits (b : Boundedness) : PositiveStandard → Prop
-  | .contextual  => b = .open_
-  | .minEndpoint => b.HasMin
-  | .maxEndpoint => b.HasMax
-  | .necessity  => False
-
-instance (b : Boundedness) (s : PositiveStandard) : Decidable (b.Admits s) := by
-  cases s <;> simp only [Boundedness.Admits] <;> infer_instance
-
-/-- The out-of-context default standard, Interpretive Economy plus a strengthening
-preference: where one standard is admitted it is forced, and a totally closed scale takes the
-maximum (a maximum standard entails a minimum one). -/
-def Boundedness.defaultStandard : Boundedness → PositiveStandard
-  | .open_        => .contextual
-  | .lowerClosed => .minEndpoint
-  | .upperClosed => .maxEndpoint
-  | .closed       => .maxEndpoint
-
-/-- The default standard is always admitted. -/
-theorem Boundedness.admits_defaultStandard (b : Boundedness) : b.Admits b.defaultStandard := by
-  cases b <;> decide
-
-/-- A totally closed scale admits the minimum standard as well as the default maximum
-([kennedy-2007] (67)–(68)). -/
-theorem Boundedness.closed_admits_minEndpoint : Boundedness.closed.Admits .minEndpoint := trivial
-
-theorem Boundedness.closed_admits_maxEndpoint : Boundedness.closed.Admits .maxEndpoint := trivial
-
-/-- Interpretive Economy rules out the contextual standard whenever the scale has an endpoint. -/
-theorem Boundedness.not_admits_contextual_of_ne_open {b : Boundedness} (h : b ≠ .open_) :
-    ¬ b.Admits .contextual := h
-
-/-- A scale is relative iff its default standard needs a comparison class, i.e. iff it is open
-(*tall*, *expensive*, *big*). -/
-def Boundedness.IsRelative (b : Boundedness) : Prop := b.defaultStandard.RequiresComparisonClass
-
-instance : DecidablePred Boundedness.IsRelative :=
-  fun b => inferInstanceAs (Decidable b.defaultStandard.RequiresComparisonClass)
-
 /-! ### Informational strength -/
 
-/--
-Informational strength of a gradable adjective within its scale.
-
-Weak adjectives (e.g., "large", "clean") occupy a broader region of the scale.
-Strong adjectives (e.g., "gigantic", "pristine") occupy a narrower, more
-extreme region.
-
-A strong adjective entails its weak counterpart on the same pole:
-"x is gigantic" ⟹ "x is large", but not vice versa.
-
-This distinction is orthogonal to scale structure (relative vs absolute)
-and polarity (positive vs negative).
-
-Source: [alexandropoulou-gotzner-2024b], [horn-1972]
--/
+/-- Informational strength distinguishes weak gradable adjectives such as *large* and *clean*,
+which cover a broad region of their scale, from strong ones such as *gigantic* and *pristine*,
+which cover a narrower, more extreme region and entail the weak adjective on the same pole
+([alexandropoulou-gotzner-2024b], [horn-1972]). -/
 inductive InformationalStrength where
   | weak    -- large, small, clean, dirty
   | strong  -- gigantic, tiny, pristine, filthy
@@ -174,9 +87,9 @@ inductive InformationalStrength where
 
 /-! ### Evaluative valence -/
 
-/-- The evaluative valence of a gradable predicate: whether it denotes a good, a bad, or an
-evaluatively neutral property ([nouwen-2024]), distinct from scalar polarity. Negative
-valence yields high-degree intensifiers and positive valence medium-degree ones, the
+/-- The evaluative valence of a gradable predicate records whether it denotes a good, a bad or
+an evaluatively neutral property, which is distinct from scalar polarity ([nouwen-2024]).
+Negative valence yields high-degree intensifiers and positive valence medium-degree ones, the
 Goldilocks effect. -/
 inductive EvaluativeValence where
   | positive
@@ -184,8 +97,8 @@ inductive EvaluativeValence where
   | neutral
   deriving Repr, DecidableEq
 
-/-- The valence of the opposite pole of an antonym pair: positive and negative swap, neutral
-stays. -/
+/-- The valence of the opposite pole of an antonym pair swaps positive and negative and keeps
+neutral. -/
 def EvaluativeValence.flip : EvaluativeValence → EvaluativeValence
   | .positive => .negative
   | .negative => .positive
@@ -193,47 +106,42 @@ def EvaluativeValence.flip : EvaluativeValence → EvaluativeValence
 
 /-! ### The gradable adjective -/
 
-/-- Spatial configuration type for adjectives in resultative constructions
-    ([levin-2026]). Only adjectives describing spatially instantiated
-    states license intr-*push open* resultatives. -/
+/-- A spatial configuration type classifies the spatial state an adjective describes in a
+    resultative construction ([levin-2026]). Only adjectives describing spatially instantiated
+    states license intransitive *push open* resultatives. -/
 inductive SpatialConfigType where
   | barrierConfig   -- open, closed, shut: config relative to frame
   | unattachment    -- free, loose: freedom from spatial contiguity
   | surfaceOrient   -- flat: orientation relative to reference surface
   deriving DecidableEq, Repr
 
-/-- A **gradable adjective**: the syntactic `Adjective` (`Syntax/Category/Adjective`) refined
-    with the degree-**semantic** layer that becomes relevant in this module — the
-    Kennedy `lexicalStandard`, and the lexical-semantic fields `antonymRelation`,
-    resultative `spatialConfigType` ([levin-2026]), and `evaluativeValence`
-    ([nouwen-2024]). The scale shape (`scaleType`), positive `standard`, and Kennedy
-    `adjectiveClass` are *derived views* below — the fix for the old stored `scaleType`
-    that conflated scale shape with pole (`wet`/`dry` share one closed `.wetness`
-    scale, differing only in pole). -/
+/-- A **gradable adjective** is a syntactic adjective together with its degree semantics,
+    namely any lexically fixed standard, the logical relation to its antonym, its resultative
+    spatial configuration ([levin-2026]) and its evaluative valence ([nouwen-2024]). Its scale,
+    positive standard and adjective class are derived from its dimension and polarity. -/
 structure GradableAdjective extends Adjective where
-  /-- The lexically fixed positive standard, when the scale's default does not apply: a
-      partial adjective on a closed scale, or the *good*/MPA residual, an open scale with a
-      necessity or contextual standard ([beltrama-2025]). `none` takes the scale's default. -/
+  /-- The lexically fixed positive standard, for a partial adjective on a closed scale or for an
+      adjective like *good* with a necessity or contextual standard on an open scale
+      ([beltrama-2025]); `none` takes the scale's default. -/
   lexicalStandard : Option PositiveStandard := none
-  /-- Lexical antonym's logical relation (contrary vs contradictory). -/
+  /-- The logical relation to the lexical antonym, contrary or contradictory. -/
   antonymRelation : Option AntonymRelation := none
   /-- Resultative spatial-configuration class ([levin-2026]). -/
   spatialConfigType : Option SpatialConfigType := none
-  /-- Evaluative valence of the adjective, when applicable.
-      Determines intensifier degree class ([nouwen-2024]):
-      negative-evaluative bases yield H-degree intensifiers,
-      positive-evaluative bases yield M-degree intensifiers. -/
+  /-- The evaluative valence, which determines the degree of an intensifier formed on the
+      adjective ([nouwen-2024]). -/
   evaluativeValence : Option EvaluativeValence := none
   deriving Repr
 
 namespace GradableAdjective
 
-/-- The scale the adjective measures on: its dimension's, dualized for the negative member of
-an antonym pair (`.open_` for a non-gradable, which has no scale). -/
+/-- The scale an adjective measures on is its dimension's, dualized for the negative member of
+an antonym pair, and open for a non-gradable adjective, which has none. -/
 def scaleType (g : GradableAdjective) : Boundedness :=
-  (g.dimension.map λ d => g.polarity • d.boundedness).getD .open_
+  (g.dimension.map fun d ↦ g.polarity • d.boundedness).getD .open_
 
-/-- The positive standard: the lexically fixed one if any, else the scale's default. -/
+/-- The positive standard of an adjective is its lexically fixed one if any, and otherwise its
+scale's default. -/
 def standard (g : GradableAdjective) : PositiveStandard :=
   g.lexicalStandard.getD g.scaleType.defaultStandard
 
@@ -242,8 +150,8 @@ theorem admits_standard (g : GradableAdjective) (h : g.lexicalStandard = none) :
     g.scaleType.Admits g.standard := by
   simp [standard, h, Boundedness.admits_defaultStandard]
 
-/-- Kennedy's adjective class — derived from `standard`, not stored; `.nonGradable`
-    exactly when there is no `dimension` ([kennedy-2007], [kennedy-mcnally-2005]). -/
+/-- Kennedy's class of an adjective is read off its standard, and is non-gradable exactly when
+    the adjective has no dimension ([kennedy-2007], [kennedy-mcnally-2005]). -/
 def adjectiveClass (g : GradableAdjective) : AdjectiveClass :=
   match g.dimension with
   | none => .nonGradable
@@ -254,7 +162,7 @@ def adjectiveClass (g : GradableAdjective) : AdjectiveClass :=
     | .maxEndpoint => .absoluteMaximum
     | .necessity  => .mildlyPositive
 
-/-- Comparison-class dependence — the relative/absolute distinction, derived. -/
+/-- An adjective is relative when its class is. -/
 def IsRelative (g : GradableAdjective) : Prop := g.adjectiveClass.IsRelative
 
 instance (g : GradableAdjective) : Decidable g.IsRelative := by
@@ -264,9 +172,9 @@ end GradableAdjective
 
 /-! ### Antonym pairs -/
 
-/-- An **antonym pair**: the positive and the negative polar adjective of one scale, each the
-other's lexical antonym under one relation. The shared data is stored once; the two gradable
-adjectives are `AntonymPair.pos` and `AntonymPair.neg`. -/
+/-- An **antonym pair** is the positive and the negative polar adjective of one scale, each the
+other's lexical antonym under one relation. The shared data is stored once, and the two adjectives
+are `AntonymPair.pos` and `AntonymPair.neg`. -/
 structure AntonymPair where
   /-- The scale both poles measure on. -/
   dimension : ScalarDimension
@@ -292,7 +200,7 @@ structure AntonymPair where
 
 namespace AntonymPair
 
-/-- The positive pole. -/
+/-- `p.pos` is the positive pole of the pair. -/
 def pos (p : AntonymPair) : GradableAdjective where
   form := p.posForm
   dimension := some p.dimension
@@ -303,7 +211,7 @@ def pos (p : AntonymPair) : GradableAdjective where
   evaluativeValence := p.evaluativeValence
   spatialConfigType := p.spatialConfigType
 
-/-- The negative pole, measuring on the dual scale. -/
+/-- `p.neg` is the negative pole of the pair, which measures on the dual scale. -/
 def neg (p : AntonymPair) : GradableAdjective where
   form := p.negForm
   polarity := .negative
@@ -328,33 +236,31 @@ end AntonymPair
 
 /-! ### Multidimensional adjectives ([sassoon-2013]) -/
 
-/--
-How a multidimensional adjective binds its dimensions ([sassoon-2013]).
-
-- **conjunctive**: entity must meet standard in ALL dimensions (e.g., *healthy*)
-- **disjunctive**: entity must meet standard in SOME dimension (e.g., *sick*)
-- **mixed**: context determines ∀ vs ∃ (e.g., *intelligent*)
--/
+/-- A multidimensional adjective binds its dimensions conjunctively, disjunctively, or either way
+depending on context ([sassoon-2013]). -/
 inductive DimensionBindingType where
+  /-- The entity meets the standard in every dimension, as for *healthy*. -/
   | conjunctive
+  /-- The entity meets the standard in some dimension, as for *sick*. -/
   | disjunctive
+  /-- Context decides between the two, as for *intelligent*. -/
   | mixed
   deriving Repr, DecidableEq
 
 section Binding
 variable {α : Type*}
 
-/-- Conjunctive binding: ∀Q ∈ DIM(P,c). Q(x). -/
+/-- Conjunctive binding holds of `x` when every dimension does. -/
 def conjunctiveBinding (dims : List (α → Bool)) (x : α) : Bool :=
   dims.all (· x)
 
-/-- Disjunctive binding: ∃Q ∈ DIM(P,c). Q(x). -/
+/-- Disjunctive binding holds of `x` when some dimension does. -/
 def disjunctiveBinding (dims : List (α → Bool)) (x : α) : Bool :=
   dims.any (· x)
 
 private theorem not_all_eq_any_not_map :
     ∀ (dims : List (α → Bool)) (x : α),
-      (!dims.all (· x)) = (dims.map λ d a => !d a).any (· x)
+      (!dims.all (· x)) = (dims.map fun d a ↦ !d a).any (· x)
   | [], _ => rfl
   | d :: ds, x => by
     simp only [List.all_cons, List.map_cons, List.any_cons]
@@ -362,34 +268,31 @@ private theorem not_all_eq_any_not_map :
 
 private theorem not_any_eq_all_not_map :
     ∀ (dims : List (α → Bool)) (x : α),
-      (!dims.any (· x)) = (dims.map λ d a => !d a).all (· x)
+      (!dims.any (· x)) = (dims.map fun d a ↦ !d a).all (· x)
   | [], _ => rfl
   | d :: ds, x => by
     simp only [List.any_cons, List.map_cons, List.all_cons]
     cases d x <;> simp [not_any_eq_all_not_map ds x]
 
-/-- De Morgan: negating conjunctive binding yields disjunctive binding
-    over negated dimension predicates.
-    This is the formal core of [sassoon-2013]'s Hypothesis 2 —
-    under a negation theory of antonymy, if the positive form is conjunctive,
-    the negative antonym (its negation) is disjunctive. -/
+/-- Negated conjunctive binding is disjunctive binding over the negated dimensions, so under a
+    negation theory of antonymy a conjunctive positive form has a disjunctive antonym
+    ([sassoon-2013], Hypothesis 2). -/
 theorem deMorgan_conjunctive_disjunctive
     (dims : List (α → Bool)) (x : α) :
     (!conjunctiveBinding dims x) =
-      disjunctiveBinding (dims.map λ d a => !d a) x :=
+      disjunctiveBinding (dims.map fun d a ↦ !d a) x :=
   not_all_eq_any_not_map dims x
 
 theorem deMorgan_disjunctive_conjunctive
     (dims : List (α → Bool)) (x : α) :
     (!disjunctiveBinding dims x) =
-      conjunctiveBinding (dims.map λ d a => !d a) x :=
+      conjunctiveBinding (dims.map fun d a ↦ !d a) x :=
   not_any_eq_all_not_map dims x
 
 end Binding
 
-/-- The predicted binding type for a negative antonym,
-    given its positive counterpart's binding type.
-    Follows from De Morgan under the negation theory of antonymy. -/
+/-- `b.negate` is the binding type predicted for a negative antonym whose positive counterpart
+    binds by `b`, by De Morgan's laws under the negation theory of antonymy. -/
 def DimensionBindingType.negate : DimensionBindingType → DimensionBindingType
   | .conjunctive => .disjunctive
   | .disjunctive => .conjunctive
@@ -398,9 +301,9 @@ def DimensionBindingType.negate : DimensionBindingType → DimensionBindingType
 theorem negate_involutive (b : DimensionBindingType) :
     b.negate.negate = b := by cases b <;> rfl
 
-/-- [sassoon-2013] Hypothesis 3: standard type predicts binding type.
-    Total (max standard) → conjunctive, partial (min standard) → disjunctive,
-    relative (contextual) → mixed. -/
+/-- The binding type a standard predicts is conjunctive for the maximum standard of a total
+    adjective, disjunctive for the minimum standard of a partial one, and mixed for a contextual
+    standard ([sassoon-2013], Hypothesis 3). -/
 def predictedBinding : Degree.PositiveStandard → DimensionBindingType
   | .maxEndpoint  => .conjunctive
   | .minEndpoint  => .disjunctive
