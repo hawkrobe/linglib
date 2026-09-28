@@ -16,6 +16,12 @@ survives for names of towns and a few nouns such as *domī* 'at home'. The goal 
 expressed by the accusative, there being no allative. Blake takes Latin as his running example
 of an inflectional case system.
 
+## Main declarations
+
+* `Latin.Case`: the six cases, in the order of the school paradigms.
+* `Latin.Case.label`, `Latin.Case.functions`: the comparative value each case is named for, and
+  the values it expresses.
+
 ## References
 
 * [blake-1994]
@@ -23,36 +29,45 @@ of an inflectional case system.
 
 @[expose] public section
 
-namespace Latin.Case
-
-/-- The nominative. -/
-def nom : Case.Labelled := .single .nom
-
-/-- The vocative. -/
-def voc : Case.Labelled := .single .voc
-
-/-- The accusative, which expresses the goal of motion as well as the direct object. -/
-def acc : Case.Labelled := ⟨.acc, {.acc, .all}, by decide⟩
-
-/-- The genitive. -/
-def gen : Case.Labelled := .single .gen
-
-/-- The dative. -/
-def dat : Case.Labelled := .single .dat
-
-/-- The ablative, which expresses location and instrument as well as source. -/
-def abl : Case.Labelled := ⟨.abl, {.abl, .loc, .inst}, by decide⟩
+namespace Latin
 
 /-- The six cases, in the order of the school paradigms. -/
-def cases : Finset Case.Labelled := {nom, voc, acc, gen, dat, abl}
+inductive Case where
+  /-- The nominative. -/
+  | nom
+  /-- The vocative. -/
+  | voc
+  /-- The accusative. -/
+  | acc
+  /-- The genitive. -/
+  | gen
+  /-- The dative. -/
+  | dat
+  /-- The ablative. -/
+  | abl
+  deriving DecidableEq, Fintype, Repr
 
-/-- The cases under their labels. -/
-def inventory : Finset Case := cases.image (·.label)
+namespace Case
 
-/-- Every function some case expresses. -/
-def functions : Finset Case := cases.biUnion (·.functions)
+/-- The comparative value a case is named for. -/
+def label : Case → _root_.Case
+  | nom => .nom
+  | voc => .voc
+  | acc => .acc
+  | gen => .gen
+  | dat => .dat
+  | abl => .abl
 
-theorem inventory_subset_functions : inventory ⊆ functions :=
-  Case.Labelled.image_label_subset_biUnion_functions cases
+/-- The comparative values a case expresses: the accusative also expresses the goal of motion,
+and the ablative location and instrument as well as source. -/
+def functions : Case → Finset _root_.Case
+  | acc => {.acc, .all}
+  | abl => {.abl, .loc, .inst}
+  | c => {c.label}
 
-end Latin.Case
+theorem label_mem_functions (c : Case) : c.label ∈ c.functions := by
+  cases c <;> decide
+
+end Case
+
+end Latin

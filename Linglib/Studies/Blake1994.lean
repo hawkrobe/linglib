@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Finset.Option
 public import Mathlib.Order.UpperLower.Basic
 public import Linglib.Syntax.Case.Order
+public import Linglib.Fragments.Arabic.ModernStandard.Case
 public import Linglib.Fragments.Dargwa.Case
 public import Linglib.Fragments.Finnish.Case
 public import Linglib.Fragments.German.Basel.Case
@@ -64,7 +65,7 @@ functions the Latin cases express fill it.
   case labels is a position filled by a function some case is not labelled for.
 * `systems_conform`, `gaps_nanai`, `gaps_tarascan`: the systems Blake cites at each stage conform,
   and his two gapped systems each miss one position.
-* `gaps_latin_inventory`, `conforms_latin_functions`: the Latin labels skip the locative and the
+* `gaps_latin_labels`, `conforms_latin_functions`: the Latin labels skip the locative and the
   Latin functions do not.
 * `latin_abl_functions_ancient_greek`, `latin_dat_functions_ssubset_ancient_greek`: Greek has no
   ablative, its genitive and dative expressing the functions of the Latin one, and its dative is
@@ -213,11 +214,14 @@ Ancient Greek (beside its vocative), German and Icelandic, the six of the Slavon
 the vocative of Polish, Czech and Serbo-Croat) and of Turkish, the seven of Classical Armenian and
 the eight of Tamil. -/
 def systems : List (Finset Case) :=
-  [Greek.Ancient.Case.inventory, German.Case.inventory, Icelandic.Case.inventory,
+  [Finset.univ.image Greek.Ancient.Case.label, German.Case.inventory, Icelandic.Case.inventory,
     Polish.Case.inventory, Czech.Case.inventory, Slovak.Case.inventory, Serbian.Case.inventory,
     Turkish.Case.inventory, classicalArmenian, Tamil.Case.inventory]
 
-theorem systems_conform : ∀ inv ∈ systems, Conforms inv := by decide
+theorem systems_conform : ∀ inv ∈ systems, Conforms inv := by
+  simp only [systems, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,
+    implies_true, and_true]
+  decide
 
 /-- Nanai has every position down to the last but the genitive. -/
 theorem gaps_nanai : gaps nanai = {.gen} := by decide
@@ -231,17 +235,25 @@ Blake gives Latin as the five-case stage, nominative, accusative, genitive, dati
 of many functions whose label is somewhat arbitrary. -/
 
 /-- The Latin case labels skip the locative. -/
-theorem gaps_latin_inventory : gaps Latin.Case.inventory = {.loc} := by decide
+theorem gaps_latin_labels : gaps (Finset.univ.image Latin.Case.label) = {.loc} := by decide
 
 /-- The functions the Latin cases express fill every position. -/
-theorem positions_latin_functions : positions Latin.Case.functions = Finset.univ := by decide
+theorem positions_latin_functions :
+    positions (Finset.univ.biUnion Latin.Case.functions) = Finset.univ := by
+  decide
 
-theorem conforms_latin_functions : Conforms Latin.Case.functions := by decide
+theorem conforms_latin_functions : Conforms (Finset.univ.biUnion Latin.Case.functions) := by
+  decide
 
 /-- The Latin gap is apparent, the locative being a function of a case labelled for another. -/
-theorem gaps_latin_inventory_subset :
-    gaps Latin.Case.inventory ⊆ positions Latin.Case.functions \ positions Latin.Case.inventory :=
-  gaps_subset_of_conforms Latin.Case.inventory_subset_functions conforms_latin_functions
+theorem gaps_latin_labels_subset :
+    gaps (Finset.univ.image Latin.Case.label) ⊆
+      positions (Finset.univ.biUnion Latin.Case.functions) \
+        positions (Finset.univ.image Latin.Case.label) :=
+  gaps_subset_of_conforms
+    (Finset.image_subset_iff.2 fun c _ ↦
+      Finset.mem_biUnion.2 ⟨c, Finset.mem_univ c, c.label_mem_functions⟩)
+    conforms_latin_functions
 
 /-! ### Ancient Greek
 
@@ -253,7 +265,7 @@ expresses location and instrument, so that the Greek dative is the more comprehe
 /-- Greek has no ablative, and the functions of the Latin ablative fall to its genitive and
 dative. -/
 theorem latin_abl_functions_ancient_greek :
-    .abl ∉ Greek.Ancient.Case.inventory ∧
+    .abl ∉ Finset.univ.image Greek.Ancient.Case.label ∧
       Latin.Case.abl.functions ⊆
         Greek.Ancient.Case.gen.functions ∪ Greek.Ancient.Case.dat.functions := by
   decide
@@ -264,14 +276,18 @@ theorem latin_dat_functions_ssubset_ancient_greek :
 
 /-! ### The other case inventories of the fragments -/
 
-/-- Modern Greek, Hindi, Japanese, Korean, Telugu and the Slavic languages not among Blake's
-systems conform. -/
+/-- Modern Greek, Modern Standard Arabic, Hindi, Japanese, Korean, Telugu and the Slavic
+languages not among Blake's systems conform. Blake gives Modern Greek and Classical Arabic as
+three-case systems of nominative, accusative and genitive ([blake-2001] p. 156). -/
 theorem fragments_conform :
-    ∀ inv ∈ [Greek.StandardModern.Case.inventory, Hindi.Case.inventory, Japanese.Case.inventory,
-      Korean.Case.inventory, Telugu.Case.inventory, Belarusian.Case.inventory,
+    ∀ inv ∈ [Finset.univ.image Greek.StandardModern.Case.label,
+      Finset.univ.image Arabic.ModernStandard.Case.label, Hindi.Case.inventory,
+      Japanese.Case.inventory, Korean.Case.inventory, Telugu.Case.inventory,
+      Belarusian.Case.inventory,
       Cassubian.Case.inventory, Russian.Case.inventory, Slovenian.Case.inventory,
       Sorbian.Upper.Case.inventory, Sorbian.Lower.Case.inventory, Ukrainian.Case.inventory],
       Conforms inv := by
+  simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
   decide
 
 /-- Finnish has no dative, the allative marking the recipient. -/
@@ -292,6 +308,6 @@ theorem gaps_mongolian : gaps Mongolian.Case.inventory = {.loc} := by decide
 theorem gaps_yakut : gaps Yakut.Case.inventory = {.loc} := by decide
 
 /-- Basel German has no genitive, its possessor a dative construction. -/
-theorem gaps_basel : gaps German.Basel.Case.inventory = {.gen} := by decide
+theorem gaps_basel : gaps (Finset.univ.image German.Basel.Case.label) = {.gen} := by decide
 
 end Blake1994
