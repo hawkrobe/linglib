@@ -32,6 +32,8 @@ the actual world of every context in which the observation holds
 * `CausalModel.forced_iff`, `CausalModel.causallyEntails_iff`: the defining equations
 * `CausalModel.Forced.of_causallyEntails`: the strict development settles less
 * `CausalModel.Forced.solve_eq`, `CausalModel.CausallyEntails.solve_eq`: soundness
+* `CausalModel.causallyEntails_iff_develop`: the strict development computed one value per
+  variable (`CausalModel.develop`), so that `decide` evaluates it in a finite model
 
 ## Implementation notes
 
@@ -156,5 +158,120 @@ theorem Forced.solve_eq (h : M.Forced s v x) {u : U} (hu : u ∈ M.contexts s) :
 theorem CausallyEntails.solve_eq (h : M.CausallyEntails s v x) {u : U}
     (hu : u ∈ M.contexts s) : M.solve ⊥ u v = x :=
   (Forced.of_causallyEntails h).solve_eq hu
+
+section Develop
+
+/-! ### Computing the strict development
+
+A variable the strict development settles has settled parents, so its value is its equation at
+their values, the same in every context. `develop` computes the development this way, one value
+per variable, and in a finite model `decide` evaluates it by iteration. -/
+
+variable (M) [Fintype U] [Inhabited U] [∀ v, Inhabited (α v)] [∀ v, DecidableEq (α v)]
+  [Fintype V] [DecidableRel M.graph.Adj]
+
+/-- `M.developStep s p` is one round of the strict development as values. A variable `s` settles
+keeps its value; one `s` leaves open is settled once `p` settles all its parents and its equation,
+at their values, gives the same value in every context. -/
+def developStep (s p : ∀ v, Flat (α v)) : ∀ v, Flat (α v) := fun v ↦
+  if s v = ⊥ then
+    if ∀ w, M.graph.Adj w v → p w ≠ ⊥ then
+      if ∀ u, M.eqn v u (fun w ↦ (p w).unbotD default) =
+          M.eqn v default (fun w ↦ (p w).unbotD default) then
+        ↑(M.eqn v default fun w ↦ (p w).unbotD default)
+      else ⊥
+    else ⊥
+  else s v
+
+variable {M}
+
+omit hM [∀ v, Nonempty (α v)] in
+theorem dependsOn_developStep (s : ∀ v, Flat (α v)) (v : V) :
+    DependsOn (M.developStep s · v) {w | M.graph.Adj w v} := fun p q h ↦ by
+  have heqn : ∀ u, M.eqn v u (fun w ↦ (p w).unbotD default) =
+      M.eqn v u (fun w ↦ (q w).unbotD default) := fun u ↦
+    M.dependsOn_eqn v u fun w hw ↦ by simp only [h w hw]
+  have hpar : (∀ w, M.graph.Adj w v → p w ≠ ⊥) ↔ ∀ w, M.graph.Adj w v → q w ≠ ⊥ :=
+    forall₂_congr fun w hw ↦ by rw [h w hw]
+  simp only [developStep, heqn, hpar]
+
+variable (M) in
+/-- The strict development of the observation `s`, as values. -/
+noncomputable def develop (s : ∀ v, Flat (α v)) : ∀ v, Flat (α v) :=
+  hM.fixedPoint (M.developStep s)
+
+omit [∀ v, Nonempty (α v)] in
+theorem develop_apply (s : ∀ v, Flat (α v)) (v : V) :
+    M.develop s v = M.developStep s (M.develop s) v :=
+  WellFounded.fixedPoint_apply (dependsOn_developStep s) v
+
+omit [∀ v, Nonempty (α v)] in
+/-- The strict development settles `v` to `x` exactly when its computation does. -/
+theorem causallyEntails_iff_develop {s : ∀ v, Flat (α v)} {v : V} {x : α v} :
+    M.CausallyEntails s v x ↔ M.develop s v = ↑x := by
+  induction v using hM.induction with
+  | _ v ih =>
+    have hpar : (∀ w, M.graph.Adj w v → ∃ z, M.CausallyEntails s w z) ↔
+        ∀ w, M.graph.Adj w v → M.develop s w ≠ ⊥ :=
+      forall₂_congr fun w hw ↦ by
+        simp only [ih w hw, Flat.ne_bot_iff_exists]
+    have hcons : ∀ y : ∀ w, α w,
+        (∀ w, M.graph.Adj w v → ∀ z, M.CausallyEntails s w z → y w = z) ↔
+          ∀ w, M.graph.Adj w v → ∀ z : α w, M.develop s w = ↑z → y w = z :=
+      fun y ↦ forall₂_congr fun w hw ↦ forall_congr' fun z ↦ by rw [ih w hw]
+    rw [causallyEntails_iff, develop_apply, developStep]
+    simp only [hcons]
+    cases hs : s v with
+    | coe a => simp [Flat.coe_inj]
+    | bot =>
+      simp only [Flat.bot_ne_coe, false_or, true_and, ↓reduceIte]
+      set y₀ : ∀ w, α w := fun w ↦ (M.develop s w).unbotD default
+      have hy₀ : ∀ w, M.graph.Adj w v → ∀ z : α w, M.develop s w = ↑z → y₀ w = z :=
+        fun w _ z hz ↦ by simp [y₀, hz]
+      rw [hpar]
+      by_cases hp : ∀ w, M.graph.Adj w v → M.develop s w ≠ ⊥
+      · have hagree : ∀ u (y : ∀ w, α w),
+            (∀ w, M.graph.Adj w v → ∀ z : α w, M.develop s w = ↑z → y w = z) →
+              M.eqn v u y = M.eqn v u y₀ := fun u y hy ↦
+          M.dependsOn_eqn v u fun w (hw : M.graph.Adj w v) ↦ by
+            obtain ⟨z, hz⟩ := Flat.ne_bot_iff_exists.1 (hp w hw)
+            rw [hy w hw z hz, hy₀ w hw z hz]
+        rw [ite_eq_left_of_eq_true (h := eq_true hp), and_iff_right hp]
+        constructor
+        · intro h
+          have hx : ∀ u, M.eqn v u y₀ = x := fun u ↦ h u y₀ hy₀
+          have hc : ∀ u, M.eqn v u y₀ = M.eqn v default y₀ := fun u ↦ (hx u).trans (hx default).symm
+          rw [ite_eq_left_of_eq_true (h := eq_true hc), hx default]
+        · intro h u y hy
+          split_ifs at h with hc
+          · rw [hagree u y hy, hc u]
+            exact Flat.coe_inj.1 h
+          · exact absurd h Flat.bot_ne_coe
+      · simp [hp]
+
+omit [∀ v, Nonempty (α v)] in
+/-- The strict development settles a variable to at most one value. -/
+theorem CausallyEntails.unique {s : ∀ v, Flat (α v)} {v : V} {x y : α v}
+    (hx : M.CausallyEntails s v x) (hy : M.CausallyEntails s v y) : x = y :=
+  Flat.coe_injective ((causallyEntails_iff_develop.1 hx).symm.trans
+    (causallyEntails_iff_develop.1 hy))
+
+section Decidable
+
+variable {s : ∀ v, Flat (α v)} {v : V} {x : α v}
+
+omit [∀ v, Nonempty (α v)] in
+theorem causallyEntails_iff_iterate :
+    M.CausallyEntails s v x ↔ (M.developStep s)^[Fintype.card V] ⊥ v = ↑x := by
+  rw [causallyEntails_iff_develop, develop,
+    WellFounded.fixedPoint_eq_iterate_card (dependsOn_developStep s) ⊥]
+
+/-- In a finite model, causal entailment is decided by computing the strict development. -/
+instance : Decidable (M.CausallyEntails s v x) :=
+  decidable_of_iff _ causallyEntails_iff_iterate.symm
+
+end Decidable
+
+end Develop
 
 end CausalModel

@@ -1,6 +1,9 @@
 module
 
-public import Linglib.Semantics.Causation.SEM.Entailment
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Causation.CausalModel.Development
+public import Linglib.Core.Relation.ReflTransGen
 
 /-!
 # Sloman, Barbey and Hotaling (2009): A Causal Model Theory of Cause, Enable, and Prevent
@@ -10,8 +13,8 @@ to the causal model of a discourse, and in the deterministic binary case their m
 structural equations (2) to (4). *A causes B* asserts a link from A to B, `B := A`; *A enables B*
 asserts a link, an accessory variable also linked to B, and A necessary for B, `B := A ∧ X`; and
 *A prevents B* asserts a link along which A reduces B, `B := ¬A` with no accessory and `B := ¬A ∧ X`
-or `B := ¬(A ∧ X)` with one. Over the substrate's structural equation models the verbs are
-predicates on a model (`Causes`, `Enables`, `Prevents`), and the equations are models
+or `B := ¬(A ∧ X)` with one. The verbs are
+predicates on a causal model (`Causes`, `Enables`, `Prevents`), and the equations are models
 (`causes`, `enables`, `prevents`, `preventsAnd`, `preventsNand`) that satisfy them
 (`causes_Causes`, `enables_Enables`, `prevents_Prevents`, `preventsAnd_Prevents`,
 `preventsNand_Prevents`). The paper's experiments follow from the equations: an effect follows
@@ -28,12 +31,12 @@ works out come out as the equations it names: *causes* then *causes* is `C := A`
 
 ## Implementation notes
 
-* A structural equation is a deterministic Boolean mechanism at the effect over its parents;
-  the accessory variable is an exogenous vertex of the model. Entailment is the substrate's
-  strict causal entailment, on which an effect with an undetermined parent entails nothing:
-  this is the paper's uncertainty when the accessory is unknown. Necessity is read eagerly, in
-  every background leaving the effect open in which the cause is off, the model develops the
-  effect off.
+* A structural equation is a deterministic Boolean equation at the effect over its parents; the
+  cause and the accessory variable are exogenous, read off the context. Entailment is strict
+  causal entailment from an observation (`CausalModel.CausallyEntails`), on which an effect with
+  an unsettled parent entails nothing: this is the paper's uncertainty when the accessory is
+  unknown. Necessity is read in every context and under every intervention that leaves the
+  effect open and turns the cause off: the effect is then off.
 * The paper's experimental results stay in prose. In Experiments 1 to 3 confidence that the
   effect occurs was high only for a cause without an accessory and near the midpoint of the
   scale otherwise; in Experiment 4 one-link vignettes drew *cause* and two-link vignettes drew
@@ -52,57 +55,59 @@ works out come out as the equations it names: *causes* then *causes* is `C := A`
 
 namespace SlomanBarbeyHotaling2009
 
-open Causation Causation.SEM Causation.Mechanism
+open CausalModel
 
 section General
 
-variable {V : Type*} [Fintype V] [DecidableEq V] (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
+variable {U V : Type*} [DecidableEq V] (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
 
-/-- *A causes B*: the discourse model has a link from A to B (section 3, Figure 3b). -/
-def Causes (a b : V) : Prop := BoolSEM.hasDirectLaw M a b
+/-- *A causes B* asserts a link from A to B. -/
+def Causes (a b : V) : Prop := M.graph.Adj a b
 
-instance (a b : V) : Decidable (Causes M a b) :=
-  inferInstanceAs (Decidable (BoolSEM.hasDirectLaw M a b))
+instance [DecidableRel M.graph.Adj] (a b : V) : Decidable (Causes M a b) :=
+  inferInstanceAs (Decidable (M.graph.Adj a b))
 
-/-- A is necessary for B: in every background leaving B open in which A is off, B develops
-off. -/
+/-- A is necessary for B when, in every context and under every intervention that leaves B open
+and turns A off, B is off. -/
 def Necessary (a b : V) : Prop :=
-  ∀ bg : Valuation (λ _ : V => Bool),
-    bg.get b = none → bg.hasValue a false → (M.developDet bg).hasValue b false
+  ∀ u (I : V → Flat Bool), I b = ⊥ → I a = ↑false → M.solve I u b = false
 
-/-- *A enables B*: a link from A to B, an accessory variable also linked to B, and A necessary
-for B (section 3, Figure 4). -/
+/-- *A enables B* asserts a link from A to B, an accessory variable also linked to B, and A
+necessary for B. -/
 def Enables (a b : V) : Prop :=
-  BoolSEM.hasDirectLaw M a b ∧ (∃ x, x ≠ a ∧ BoolSEM.hasDirectLaw M x b) ∧ Necessary M a b
+  M.graph.Adj a b ∧ (∃ x, x ≠ a ∧ M.graph.Adj x b) ∧ Necessary M a b
 
-/-- *A prevents B* on a background in which the accessory, if any, is present: a link from A to
-B along which turning A on entails B off. -/
-def Prevents (bg : Valuation (λ _ : V => Bool)) (a b : V) : Prop :=
-  BoolSEM.hasDirectLaw M a b ∧ causallyEntails M (bg.extend a true) b false
+/-- *A prevents B* on the observation `s` asserts a link from A to B along which A being on
+entails B off. -/
+def Prevents (s : V → Flat Bool) (a b : V) : Prop :=
+  M.graph.Adj a b ∧ M.CausallyEntails (Function.update s a ↑true) b false
 
-/-- The model realizes the equation `c := a` on `bg`: turning `a` on or off entails `c`
-accordingly. -/
-def EqCauses (bg : Valuation (λ _ : V => Bool)) (a c : V) : Prop :=
-  ∀ v, causallyEntails M (bg.extend a v) c v
+instance [Fintype U] [Inhabited U] [Fintype V] [DecidableRel M.graph.Adj] (s : V → Flat Bool)
+    (a b : V) : Decidable (Prevents M s a b) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The model realizes the equation `c := ¬a` on `bg`. -/
-def EqPrevents (bg : Valuation (λ _ : V => Bool)) (a c : V) : Prop :=
-  ∀ v, causallyEntails M (bg.extend a v) c (!v)
+/-- The model realizes `c := a` on the observation `s`. -/
+def EqCauses (s : V → Flat Bool) (a c : V) : Prop :=
+  ∀ v : Bool, M.CausallyEntails (Function.update s a ↑v) c v
+
+/-- The model realizes `c := ¬a` on the observation `s`. -/
+def EqPrevents (s : V → Flat Bool) (a c : V) : Prop :=
+  ∀ v : Bool, M.CausallyEntails (Function.update s a ↑v) c (!v)
 
 variable {M}
 
-omit [Fintype V] [DecidableEq V] in
+omit [DecidableEq V] in
 /-- Experiment 4: with A alone the source of B, the relation is not an enabling one. -/
-theorem not_enables_of_parents_eq_singleton {a b : V} (h : M.graph.parents b = {a}) :
+theorem not_enables_of_forall_adj {a b : V} (h : ∀ x, M.graph.Adj x b → x = a) :
     ¬ Enables M a b := by
   rintro ⟨-, ⟨x, hx, hxb⟩, -⟩
-  exact hx (by simpa [BoolSEM.hasDirectLaw, h] using hxb)
+  exact hx (h x hxb)
 
-omit [Fintype V] in
-/-- The equations `c := a` and `c := ¬a` exclude each other on a background. -/
-theorem EqCauses.not_eqPrevents {bg : Valuation (λ _ : V => Bool)} {a c : V}
-    (h : EqCauses M bg a c) : ¬ EqPrevents M bg a c :=
-  λ h' => Bool.noConfusion (causallyEntails_unique (h true) (h' true))
+/-- The equations `c := a` and `c := ¬a` exclude each other on an observation. -/
+theorem EqCauses.not_eqPrevents [Fintype U] [Inhabited U] [Fintype V]
+    [DecidableRel M.graph.Adj] {s : V → Flat Bool} {a c : V} (h : EqCauses M s a c) :
+    ¬ EqPrevents M s a c :=
+  fun h' ↦ Bool.noConfusion ((h true).unique (h' true))
 
 end General
 
@@ -113,107 +118,93 @@ inductive V
   | A | X | B
   deriving DecidableEq, Fintype
 
-/-- The one-link model: B's only parent is A. -/
-def oneLink : CausalGraph V := ⟨λ | .A => ∅ | .X => ∅ | .B => {.A}⟩
+/-- A one-link model with the given equation at B, B's only parent being A; the context settles
+A and the accessory X. -/
+def oneLinkModel (f : Bool → Bool) : CausalModel (Bool × Bool) V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ w = .A ∧ v = .B⟩
+  eqn | .A => fun u _ ↦ u.1 | .X => fun u _ ↦ u.2 | .B => fun _ x ↦ f (x .A)
 
-/-- The two-link model: B's parents are A and the accessory X. -/
-def twoLink : CausalGraph V := ⟨λ | .A => ∅ | .X => ∅ | .B => {.A, .X}⟩
+/-- A two-link model with the given equation at B over A and the accessory X. -/
+def twoLinkModel (f : Bool → Bool → Bool) : CausalModel (Bool × Bool) V fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w = .A ∨ w = .X) ∧ v = .B⟩
+  eqn | .A => fun u _ ↦ u.1 | .X => fun u _ ↦ u.2 | .B => fun _ x ↦ f (x .A) (x .X)
 
-instance : CausalGraph.IsDAG oneLink := .of_irrefl (by decide)
+instance (f : Bool → Bool) : DecidableRel (oneLinkModel f).graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable (w = .A ∧ v = .B))
 
-instance : CausalGraph.IsDAG twoLink := .of_irrefl (by decide)
+instance (f : Bool → Bool → Bool) : DecidableRel (twoLinkModel f).graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable ((w = .A ∨ w = .X) ∧ v = .B))
 
-/-- A one-link model with the given equation at B. -/
-def oneLinkModel (f : Bool → Bool) : BoolSEM V :=
-  { graph := oneLink
-    mech := fun
-      | .A => const (G := oneLink) false
-      | .X => const (G := oneLink) false
-      | .B => fun ρ ↦ f (ρ ⟨.A, by decide⟩) }
+instance (f : Bool → Bool) : (oneLinkModel f).IsAcyclic :=
+  Finite.wellFounded_of_irrefl_transGen (r := fun w v ↦ w = V.A ∧ v = V.B) (by decide)
 
-/-- A two-link model with the given equation at B over A and X. -/
-def twoLinkModel (f : Bool → Bool → Bool) : BoolSEM V :=
-  { graph := twoLink
-    mech := fun
-      | .A => const (G := twoLink) false
-      | .X => const (G := twoLink) false
-      | .B => fun ρ ↦ f (ρ ⟨.A, by decide⟩) (ρ ⟨.X, by decide⟩) }
-
-instance (f : Bool → Bool) : CausalGraph.IsDAG (oneLinkModel f).graph :=
-  inferInstanceAs (CausalGraph.IsDAG oneLink)
-
-instance (f : Bool → Bool → Bool) : CausalGraph.IsDAG (twoLinkModel f).graph :=
-  inferInstanceAs (CausalGraph.IsDAG twoLink)
+instance (f : Bool → Bool → Bool) : (twoLinkModel f).IsAcyclic :=
+  Finite.wellFounded_of_irrefl_transGen (r := fun w v ↦ (w = V.A ∨ w = V.X) ∧ v = V.B)
+    (by decide)
 
 /-- (2) *A causes B*: `B := A`. -/
-abbrev causes : BoolSEM V := oneLinkModel id
+abbrev causes : CausalModel (Bool × Bool) V fun _ ↦ Bool := oneLinkModel id
 
 /-- (3) *A enables B*: `B := A ∧ X`. -/
-abbrev enables : BoolSEM V := twoLinkModel (· && ·)
+abbrev enables : CausalModel (Bool × Bool) V fun _ ↦ Bool := twoLinkModel (· && ·)
 
 /-- (4a) *A prevents B* with no accessory: `B := ¬A`. -/
-abbrev prevents : BoolSEM V := oneLinkModel (!·)
+abbrev prevents : CausalModel (Bool × Bool) V fun _ ↦ Bool := oneLinkModel (!·)
 
 /-- (4b) *A prevents B* with an accessory: `B := ¬A ∧ X`. -/
-abbrev preventsAnd : BoolSEM V := twoLinkModel (λ a x => !a && x)
+abbrev preventsAnd : CausalModel (Bool × Bool) V fun _ ↦ Bool := twoLinkModel (fun a x ↦ !a && x)
 
 /-- (4c) *A prevents B* with an accessory: `B := ¬(A ∧ X)`. -/
-abbrev preventsNand : BoolSEM V := twoLinkModel (λ a x => !(a && x))
+abbrev preventsNand : CausalModel (Bool × Bool) V fun _ ↦ Bool :=
+  twoLinkModel (fun a x ↦ !(a && x))
 
 /-- The accessory present. -/
-def accessory : Valuation (λ _ : V => Bool) := Valuation.empty.extend .X true
+def accessory : V → Flat Bool := Function.update ⊥ .X ↑true
 
 /-- *A causes B* holds of (2), and the model realizes `B := A`. -/
-theorem causes_Causes : Causes causes .A .B ∧ EqCauses causes Valuation.empty .A .B :=
+theorem causes_Causes : Causes causes .A .B ∧ EqCauses causes ⊥ .A .B :=
   ⟨by decide, fun v ↦ by cases v <;> decide⟩
 
 /-- Experiments 2 and 3: from *A causes B* and A, B follows with no accessory settled. -/
-theorem causes_entails : causallyEntails causes (Valuation.empty.extend .A true) .B true :=
+theorem causes_entails : causes.CausallyEntails (Function.update ⊥ .A ↑true) .B true :=
   causes_Causes.2 true
 
 /-- Experiment 4: the one-link model is not an enabling relation. -/
 theorem causes_not_Enables : ¬ Enables causes .A .B :=
-  not_enables_of_parents_eq_singleton rfl
+  not_enables_of_forall_adj fun _ h ↦ h.1
 
-/-- The effect of (3) develops as the conjunction of its developed cause and accessory. -/
-theorem developDetVtx_enables_B {bg : Valuation (λ _ : V => Bool)} (h : bg.get .B = none) :
-    developDetVtx enables bg .B = (developDetVtx enables bg .A && developDetVtx enables bg .X) := by
-  rw [developDetVtx_undet _ _ _ h]
-  rfl
-
-/-- *A enables B* holds of (3): the link, the accessory, and the necessity of A. -/
+/-- *A enables B* holds of (3), which has the link, the accessory, and the necessity of A, B
+being the conjunction of A and X. -/
 theorem enables_Enables : Enables enables .A .B := by
-  refine ⟨by decide, ⟨.X, by decide, by decide⟩, λ bg hb ha => ?_⟩
-  rw [developDet_hasValue_iff, developDetVtx_enables_B hb, developDetVtx_extended _ _ _ _ ha]
-  rfl
+  refine ⟨by decide, ⟨.X, by decide, by decide⟩, fun u I hb ha ↦ ?_⟩
+  rw [solve_of_eq_bot hb]
+  show (enables.solve I u .A && enables.solve I u .X) = false
+  rw [solve_of_eq_coe ha, Bool.false_and]
 
 /-- Experiments 1 and 3: from *A enables B* and A alone, B does not follow, the accessory being
 unknown. -/
-theorem enables_not_entails : ¬ causallyEntails enables (Valuation.empty.extend .A true) .B true :=
-  by decide
+theorem enables_not_entails :
+    ¬ enables.CausallyEntails (Function.update ⊥ .A ↑true) .B true := by
+  decide
 
 /-- With the accessory present, B follows from A. -/
 theorem enables_entails_of_accessory :
-    causallyEntails enables (accessory.extend .A true) .B true :=
-  by decide
+    enables.CausallyEntails (Function.update accessory .A ↑true) .B true := by
+  decide
 
 /-- (4a) prevents: turning A on entails B off. -/
-theorem prevents_Prevents :
-    Prevents prevents Valuation.empty .A .B ∧ EqPrevents prevents Valuation.empty .A .B :=
-  ⟨⟨by decide, by decide⟩,
-    fun v ↦ by cases v <;> decide⟩
+theorem prevents_Prevents : Prevents prevents ⊥ .A .B ∧ EqPrevents prevents ⊥ .A .B :=
+  ⟨by decide, fun v ↦ by cases v <;> decide⟩
 
 /-- (4b) and (4c) prevent when the accessory is present, and (4b) does so as the equation
-`B := ¬A` on that background. -/
+`B := ¬A` on that observation. -/
 theorem preventsAnd_Prevents :
     Prevents preventsAnd accessory .A .B ∧ EqPrevents preventsAnd accessory .A .B :=
-  ⟨⟨by decide, by decide⟩,
-    fun v ↦ by cases v <;> decide⟩
+  ⟨by decide, fun v ↦ by cases v <;> decide⟩
 
 theorem preventsNand_Prevents :
     Prevents preventsNand accessory .A .B ∧ EqPrevents preventsNand accessory .A .B :=
-  ⟨⟨by decide, by decide⟩,
-    fun v ↦ by cases v <;> decide⟩
+  ⟨by decide, fun v ↦ by cases v <;> decide⟩
 
 /-! ### Two-premise arguments, section 4.1
 
@@ -226,45 +217,45 @@ inductive W
   | A | X | B | C
   deriving DecidableEq, Fintype
 
-/-- The graph of a two-premise argument whose first premise has no accessory. -/
-def chainOne : CausalGraph W := ⟨λ | .A => ∅ | .X => ∅ | .B => {.A} | .C => {.B}⟩
-
-/-- The graph of a two-premise argument whose first premise has an accessory. -/
-def chainTwo : CausalGraph W := ⟨λ | .A => ∅ | .X => ∅ | .B => {.A, .X} | .C => {.B}⟩
-
-instance : CausalGraph.IsDAG chainOne := .of_irrefl (by decide)
-
-instance : CausalGraph.IsDAG chainTwo := .of_irrefl (by decide)
-
 /-- The composition of a first premise `B := f A` with a second premise `C := g B`. -/
-def composeOne (f g : Bool → Bool) : BoolSEM W :=
-  { graph := chainOne
-    mech := fun
-      | .A => const (G := chainOne) false
-      | .X => const (G := chainOne) false
-      | .B => fun ρ ↦ f (ρ ⟨.A, by decide⟩)
-      | .C => fun ρ ↦ g (ρ ⟨.B, by decide⟩) }
+def composeOne (f g : Bool → Bool) : CausalModel (Bool × Bool) W fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ w = .A ∧ v = .B ∨ w = .B ∧ v = .C⟩
+  eqn
+    | .A => fun u _ ↦ u.1
+    | .X => fun u _ ↦ u.2
+    | .B => fun _ x ↦ f (x .A)
+    | .C => fun _ x ↦ g (x .B)
 
 /-- The composition of a first premise `B := f A X` with a second premise `C := g B`. -/
-def composeTwo (f : Bool → Bool → Bool) (g : Bool → Bool) : BoolSEM W :=
-  { graph := chainTwo
-    mech := fun
-      | .A => const (G := chainTwo) false
-      | .X => const (G := chainTwo) false
-      | .B => fun ρ ↦ f (ρ ⟨.A, by decide⟩) (ρ ⟨.X, by decide⟩)
-      | .C => fun ρ ↦ g (ρ ⟨.B, by decide⟩) }
+def composeTwo (f : Bool → Bool → Bool) (g : Bool → Bool) :
+    CausalModel (Bool × Bool) W fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ (w = .A ∨ w = .X) ∧ v = .B ∨ w = .B ∧ v = .C⟩
+  eqn
+    | .A => fun u _ ↦ u.1
+    | .X => fun u _ ↦ u.2
+    | .B => fun _ x ↦ f (x .A) (x .X)
+    | .C => fun _ x ↦ g (x .B)
 
-instance (f g : Bool → Bool) : CausalGraph.IsDAG (composeOne f g).graph :=
-  inferInstanceAs (CausalGraph.IsDAG chainOne)
+instance (f g : Bool → Bool) : DecidableRel (composeOne f g).graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable (w = .A ∧ v = .B ∨ w = .B ∧ v = .C))
 
-instance (f : Bool → Bool → Bool) (g : Bool → Bool) : CausalGraph.IsDAG (composeTwo f g).graph :=
-  inferInstanceAs (CausalGraph.IsDAG chainTwo)
+instance (f : Bool → Bool → Bool) (g : Bool → Bool) :
+    DecidableRel (composeTwo f g).graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable ((w = .A ∨ w = .X) ∧ v = .B ∨ w = .B ∧ v = .C))
+
+instance (f g : Bool → Bool) : (composeOne f g).IsAcyclic :=
+  Finite.wellFounded_of_irrefl_transGen
+    (r := fun w v ↦ w = W.A ∧ v = W.B ∨ w = W.B ∧ v = W.C) (by decide)
+
+instance (f : Bool → Bool → Bool) (g : Bool → Bool) : (composeTwo f g).IsAcyclic :=
+  Finite.wellFounded_of_irrefl_transGen
+    (r := fun w v ↦ (w = W.A ∨ w = W.X) ∧ v = W.B ∨ w = W.B ∧ v = W.C) (by decide)
 
 /-- The first premise's accessory present. -/
-def chainAccessory : Valuation (λ _ : W => Bool) := Valuation.empty.extend .X true
+def chainAccessory : W → Flat Bool := Function.update ⊥ .X ↑true
 
 /-- (5) and (6): *A causes B*, *B causes C* compose to `C := A`, the conclusion *A causes C*. -/
-theorem causesCauses_causes : EqCauses (composeOne id id) Valuation.empty .A .C :=
+theorem causesCauses_causes : EqCauses (composeOne id id) ⊥ .A .C :=
   fun v ↦ by cases v <;> decide
 
 /-- *A allows B*, *B prevents C*, or equally *not B causes C*, compose to `C := ¬(A ∧ X)`, the
@@ -273,33 +264,33 @@ theorem allowsPrevents_prevents : EqPrevents (composeTwo (· && ·) (!·)) chain
   fun v ↦ by cases v <;> decide
 
 /-- *A prevents B*, *B prevents C* compose to `C := A`, the conclusion *A causes C*. -/
-theorem preventsPrevents_causes : EqCauses (composeOne (!·) (!·)) Valuation.empty .A .C :=
+theorem preventsPrevents_causes : EqCauses (composeOne (!·) (!·)) ⊥ .A .C :=
   fun v ↦ by cases v <;> decide
 
 /-! ### A three-premise argument, section 4.2 -/
 
 /-- The terms of the three-premise argument. -/
-inductive U
+inductive T
   | A | B | C | D
   deriving DecidableEq, Fintype
 
-def line : CausalGraph U := ⟨λ | .A => ∅ | .B => {.A} | .C => {.B} | .D => {.C}⟩
+/-- The premises *A causes B*, *B causes not C* and *C causes not D* are `B := A`, `C := ¬B` and
+`D := ¬C`, the context settling A. -/
+def threePremise : CausalModel Bool T fun _ ↦ Bool where
+  graph := ⟨fun w v ↦ w = .A ∧ v = .B ∨ w = .B ∧ v = .C ∨ w = .C ∧ v = .D⟩
+  eqn
+    | .A => fun u _ ↦ u
+    | .B => fun _ x ↦ x .A
+    | .C => fun _ x ↦ !x .B
+    | .D => fun _ x ↦ !x .C
 
-instance : CausalGraph.IsDAG line := .of_irrefl (by decide)
+instance : DecidableRel threePremise.graph.Adj := fun w v ↦
+  inferInstanceAs (Decidable (w = .A ∧ v = .B ∨ w = .B ∧ v = .C ∨ w = .C ∧ v = .D))
 
-/-- *A causes B*, *B causes not C*, *C causes not D*: `B := A`, `C := ¬B`, `D := ¬C`. -/
-def threePremise : BoolSEM U :=
-  { graph := line
-    mech := fun
-      | .A => const (G := line) false
-      | .B => fun ρ ↦ ρ ⟨.A, by decide⟩
-      | .C => fun ρ ↦ !ρ ⟨.B, by decide⟩
-      | .D => fun ρ ↦ !ρ ⟨.C, by decide⟩ }
-
-instance : CausalGraph.IsDAG threePremise.graph := inferInstanceAs (CausalGraph.IsDAG line)
+instance : threePremise.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 /-- The three premises compose to `D := A`, the conclusion *A causes D*. -/
-theorem threePremise_causes : EqCauses threePremise Valuation.empty .A .D :=
+theorem threePremise_causes : EqCauses threePremise ⊥ .A .D :=
   fun v ↦ by cases v <;> decide
 
 end SlomanBarbeyHotaling2009
