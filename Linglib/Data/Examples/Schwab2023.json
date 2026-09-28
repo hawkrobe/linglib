@@ -1,7 +1,7 @@
 [
   {
-    "id": "schwab2022_ex7a_jemals",
-    "source": {"bibkey": "schwab-2022", "paperLabel": "(7a)"},
+    "id": "schwab2023_ex7a_jemals",
+    "source": {"bibkey": "schwab-2023", "paperLabel": "(7a)"},
     "language": "stan1295",
     "primaryText": "Der Bauer, der kein Pestizid verwendete, war jemals von dem Ernteertrag begeistert.",
     "discourseSegments": [],
@@ -27,8 +27,8 @@
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "schwab2022_ex7b_jemals",
-    "source": {"bibkey": "schwab-2022", "paperLabel": "(7b)"},
+    "id": "schwab2023_ex7b_jemals",
+    "source": {"bibkey": "schwab-2023", "paperLabel": "(7b)"},
     "language": "stan1295",
     "primaryText": "Kein Bauer, der das Pestizid verwendete, war jemals von dem Ernteertrag begeistert.",
     "discourseSegments": [],
@@ -54,8 +54,8 @@
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "schwab2022_ex7c_jemals",
-    "source": {"bibkey": "schwab-2022", "paperLabel": "(7c)"},
+    "id": "schwab2023_ex7c_jemals",
+    "source": {"bibkey": "schwab-2023", "paperLabel": "(7c)"},
     "language": "stan1295",
     "primaryText": "Der Bauer, der das Pestizid verwendete, war jemals von dem Ernteertrag begeistert.",
     "discourseSegments": [],
@@ -81,8 +81,8 @@
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "schwab2022_ex7a_sorecht",
-    "source": {"bibkey": "schwab-2022", "paperLabel": "(7a)"},
+    "id": "schwab2023_ex7a_sorecht",
+    "source": {"bibkey": "schwab-2023", "paperLabel": "(7a)"},
     "language": "stan1295",
     "primaryText": "Der Bauer, der kein Pestizid verwendete, war so recht von dem Ernteertrag begeistert.",
     "discourseSegments": [],
@@ -108,8 +108,8 @@
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "schwab2022_ex7b_sorecht",
-    "source": {"bibkey": "schwab-2022", "paperLabel": "(7b)"},
+    "id": "schwab2023_ex7b_sorecht",
+    "source": {"bibkey": "schwab-2023", "paperLabel": "(7b)"},
     "language": "stan1295",
     "primaryText": "Kein Bauer, der das Pestizid verwendete, war so recht von dem Ernteertrag begeistert.",
     "discourseSegments": [],
@@ -135,8 +135,8 @@
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "schwab2022_ex7c_sorecht",
-    "source": {"bibkey": "schwab-2022", "paperLabel": "(7c)"},
+    "id": "schwab2023_ex7c_sorecht",
+    "source": {"bibkey": "schwab-2023", "paperLabel": "(7c)"},
     "language": "stan1295",
     "primaryText": "Der Bauer, der das Pestizid verwendete, war so recht von dem Ernteertrag begeistert.",
     "discourseSegments": [],
@@ -162,8 +162,8 @@
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "schwab2022_ex8a_jemals",
-    "source": {"bibkey": "schwab-2022", "paperLabel": "(8a)"},
+    "id": "schwab2023_ex8a_jemals",
+    "source": {"bibkey": "schwab-2023", "paperLabel": "(8a)"},
     "language": "stan1295",
     "primaryText": "Der Sänger, den kein Label unterstützte, war jemals in der Musikbranche erfolgreich.",
     "discourseSegments": [],
@@ -189,8 +189,8 @@
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "schwab2022_ex8b_jemals",
-    "source": {"bibkey": "schwab-2022", "paperLabel": "(8b)"},
+    "id": "schwab2023_ex8b_jemals",
+    "source": {"bibkey": "schwab-2023", "paperLabel": "(8b)"},
     "language": "stan1295",
     "primaryText": "Kein Sänger, den das Label unterstützte, war jemals in der Musikbranche erfolgreich.",
     "discourseSegments": [],
@@ -216,8 +216,8 @@
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "schwab2022_ex8c_jemals",
-    "source": {"bibkey": "schwab-2022", "paperLabel": "(8c)"},
+    "id": "schwab2023_ex8c_jemals",
+    "source": {"bibkey": "schwab-2023", "paperLabel": "(8c)"},
     "language": "stan1295",
     "primaryText": "Der Sänger, den das Label unterstützte, war jemals in der Musikbranche erfolgreich.",
     "discourseSegments": [],
@@ -243,8 +243,8 @@
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "schwab2022_ex8a_sorecht",
-    "source": {"bibkey": "schwab-2022", "paperLabel": "(8a)"},
+    "id": "schwab2023_ex8a_sorecht",
+    "source": {"bibkey": "schwab-2023", "paperLabel": "(8a)"},
     "language": "stan1295",
     "primaryText": "Der Sänger, den kein Label unterstützte, war so recht in der Musikbranche erfolgreich.",
     "discourseSegments": [],
@@ -270,8 +270,8 @@
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "schwab2022_ex8b_sorecht",
-    "source": {"bibkey": "schwab-2022", "paperLabel": "(8b)"},
+    "id": "schwab2023_ex8b_sorecht",
+    "source": {"bibkey": "schwab-2023", "paperLabel": "(8b)"},
     "language": "stan1295",
     "primaryText": "Kein Sänger, den das Label unterstützte, war so recht in der Musikbranche erfolgreich.",
     "discourseSegments": [],
@@ -297,8 +297,8 @@
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "schwab2022_ex8c_sorecht",
-    "source": {"bibkey": "schwab-2022", "paperLabel": "(8c)"},
+    "id": "schwab2023_ex8c_sorecht",
+    "source": {"bibkey": "schwab-2023", "paperLabel": "(8c)"},
     "language": "stan1295",
     "primaryText": "Der Sänger, den das Label unterstützte, war so recht in der Musikbranche erfolgreich.",
     "discourseSegments": [],

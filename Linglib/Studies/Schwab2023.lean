@@ -1,22 +1,22 @@
 module
 
-public import Linglib.Data.Examples.Schwab2022
-public import Linglib.Data.Experiments.Schwab2022
+public import Linglib.Data.Examples.Schwab2023
+public import Linglib.Data.Experiments.Schwab2023
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Order.SetNotation
 public import Mathlib.Data.Set.Lattice.Bounded
 
 /-!
-# Schwab (2022): Lexical variation in NPI illusions
+# Schwab (2023): Lexical variation in NPI illusions
 
 This file formalizes the paper's scalar account of the negative polarity illusion. Two speeded
 acceptability experiments on German contrast the strengthening NPI *jemals* 'ever' with the
 attenuating NPI *so recht* 'really' in a 2 × 3 design crossing the item with the position of a
 negative quantifier: in the matrix clause, where it licenses the item, inside a relative clause,
-where it cannot, or absent (`Data/Examples/Schwab2022`). Only *jemals* is illusorily licensed by
+where it cannot, or absent (`Data/Examples/Schwab2023`). Only *jemals* is illusorily licensed by
 the relative-clause quantifier, an asymmetry that the cue-based retrieval, quantifier-scope and
 pragmatic-rescuing accounts of the illusion do not foresee: the paper reads its Bayes factors
-(`Data/Experiments/Schwab2022`) as evidence for the *jemals* illusion in both experiments and for
+(`Data/Experiments/Schwab2023`) as evidence for the *jemals* illusion in both experiments and for
 the *so recht* illusion in neither (`illusion_attested`), and for the difference between the two
 in the second experiment only (`interaction_attested_iff`). Its readings rank the Bayes factors
 consistently (`verdictRank_monotone`).
@@ -46,7 +46,7 @@ scale, so the strengthening mechanism accepts it and the attenuating one rejects
   it (`Informative`), the paper's `c + p + p' ≠ c + p`. Alternatives are an arbitrary set of
   propositions, so the lexical scales are hypotheses on it: the specific times of an
   existential and the lower degrees of a degree modifier.
-* The Bayes factors and the paper's readings of them are `Data/Experiments/Schwab2022`; an
+* The Bayes factors and the paper's readings of them are `Data/Experiments/Schwab2023`; an
   effect counts as attested when the paper reads its Bayes factor as at least moderate evidence
   for it, since the paper states no threshold. The posterior estimates are not recorded. The
   parser's activation story that selects the relative-clause proposition is not modeled, only
@@ -54,7 +54,7 @@ scale, so the strengthening mechanism accepts it and the attenuating one rejects
 
 ## References
 
-* [schwab-2022]
+* [schwab-2023]
 * [krifka-1995a]
 * [condoravdi-2010]
 * [israel-1996]
@@ -63,7 +63,7 @@ scale, so the strengthening mechanism accepts it and the attenuating one rejects
 
 @[expose] public section
 
-namespace Schwab2022
+namespace Schwab2023
 
 variable {W : Type*}
 
@@ -230,4 +230,4 @@ was inconclusive. -/
 theorem interaction_attested_iff (e : Experiment) : Attested e .interaction ↔ e = .exp2 := by
   cases e <;> decide
 
-end Schwab2022
+end Schwab2023

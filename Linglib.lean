@@ -1847,7 +1847,6 @@ import Linglib.Studies.Schlenker2003
 import Linglib.Studies.Schlenker2009
 import Linglib.Studies.SchlenkerEtAl2026
 import Linglib.Studies.SchlotterbeckWang2023
-import Linglib.Studies.Schwab2022
 import Linglib.Studies.Schwarz2009
 import Linglib.Studies.Schwarz2013
 import Linglib.Studies.Schwarzer2026

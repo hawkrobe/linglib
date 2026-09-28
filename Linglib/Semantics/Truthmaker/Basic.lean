@@ -487,13 +487,13 @@ section SubjectMatter
 variable {S : Type*} [SupSet S]
 
 /-- Subject-matter of a unilateral proposition: the fusion of all its
-    verifiers ([jago-2026] p. 5; cf. [fine-2017]'s *Truthmaker
+    verifiers ([jago-2026]; cf. [fine-2017]'s *Truthmaker
     Content* series in JPL 46(6) for the original presentation). -/
 noncomputable def TMProp.subjectMatter (p : TMProp S) : S :=
   sSup {s | p s}
 
 /-- Subject-matter of a bilateral proposition: the fusion of *both*
-    verifiers and falsifiers ([jago-2026] p. 5).
+    verifiers and falsifiers ([jago-2026]).
 
     This is the formulation that makes `subjectMatter` invariant under
     negation — the headline structural property that distinguishes
@@ -502,7 +502,7 @@ noncomputable def TMProp.subjectMatter (p : TMProp S) : S :=
 noncomputable def BilProp.subjectMatter (A : BilProp S) : S :=
   sSup ({s | A.ver s} ∪ {s | A.fal s})
 
-/-- **Negation invariance** of subject-matter ([jago-2026] p. 5):
+/-- **Negation invariance** of subject-matter ([jago-2026]):
     `σ(¬A) = σ(A)`. The headline structural property of bilateral
     subject-matter, falling out structurally because `BilProp.neg`
     swaps `ver` and `fal` and `Set.union_comm` does the rest. -/
