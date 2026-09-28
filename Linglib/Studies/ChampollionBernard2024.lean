@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Logic.Truthmaker.Bilateral
+public import Linglib.Core.Order.Orthoframe
+public import Linglib.Logic.Truthmaker.Exclusion
 public import Mathlib.Tactic.FinCases
 
 /-!
@@ -8,35 +9,41 @@ public import Mathlib.Tactic.FinCases
 
 Champollion and Bernard give a unilateral truthmaker semantics in which negation comes from a
 primitive exclusion relation between events rather than from a second set of falsifiers. Two
-events conflict when a part of one excludes a part of the other, and an event is possible when it
-does not conflict with itself. Possibility, which Fine takes as a primitive lower set of states,
-is thereby derived (`possible`, Lemma 4.1). The worlds are the maximal possible events. Under the
-axioms of Harmony and Rashōmon a world conflicts with every event it does not contain
-(`conflict_of_not_le`, Theorem 8.4). An event verifies the negation of `φ` when it fuses, for each
-verifier of `φ`, an event excluding a part of that verifier (`neg`). Every world then contains a
-verifier of exactly one of `φ` and its negation (`mem_upperClosure_neg_iff`, Theorems 9.2–9.4). So
-`φ` paired with its negation is a bilateral proposition that is exclusive and exhaustive in Fine's
-sense (`exclusive_mk_neg`, `exhaustive_mk_neg`).
+events conflict when a part of one excludes a part of the other (`Truthmaker.Conflict`), and an
+event is possible when it does not conflict with itself (`Truthmaker.possible`, Lemma 4.1), so
+possibility, which Fine takes as primitive, is derived. The worlds are the maximal possible
+events. Under the axioms of Harmony and Rashōmon, the latter Plebani, Rosella and Saitta's
+Possible Fusion, a world conflicts with every event it does not contain (`conflict_of_not_le`,
+Theorem 8.4). An event verifies the negation of `φ` when it fuses, for each verifier of `φ`, an
+event excluding a part of that verifier (`neg`). Every world then contains a verifier of exactly
+one of `φ` and its negation (`mem_upperClosure_neg_iff`, Theorems 9.2–9.4), so `φ` paired with its
+negation is exclusive and exhaustive in Fine's sense (`exclusive_mk_neg`, `exhaustive_mk_neg`).
+With symmetric exclusion, conflict is an orthogonality relation on the possible events
+(`conflictOrthoframe`).
 
 The paper departs from Fine in admitting emergent exclusion, where an event excludes the fusion
 of two events without conflicting with either. Such an event verifies `¬(P ∧ Q)` but not
-`¬P ∨ ¬Q` (`mem_neg_sups_diff`). Egg 3's being in a basket with room for two eggs is an example
+`¬P ∨ ¬Q` (`mem_neg_sups_diff`), as the third egg's being in a basket with room for two does
 (`eggs_mem_neg_sups_diff`). The two sides of de Morgan's law still hold at the same worlds
-(`mem_upperClosure_neg_sups_iff`). Fine's Downward Exclusion condition rules such excluders out
-(`DownwardExclusion.exists_conflict`). Cumulativity of exclusion adds the further verifiers of
-`¬(P ∧ Q)` that Ciardelli, Zhang and Champollion's counterfactual data call for
-(`neg_sups_neg_subset`). In the canonical frame a literal excludes its mirror image. There the
-derived possibility is Fine's consistency (`possible_canonicalExcl`), negation recovers Fine's
-falsifiers (`neg_ver_atom`, `neg_ver_conj_atom`), and the axioms hold (`harmony_canonicalExcl`,
-`rashomon_canonicalExcl`, `cosmopolitan_canonicalExcl`).
+(`mem_upperClosure_neg_sups_iff`). Fine's Downward Exclusion rules such excluders out
+(`DownwardExclusion.exists_conflict`), and under it his negation obeys the law exactly
+(`Truthmaker.exclusionaryNeg_sups_singleton`). Under Fine's Upward Exclusion the paper's negation
+is contained in Fine's exclusive negation (`neg_subset_exclusiveNeg`), Rashōmon is Fine's second
+condition on classical exclusion (`possibleFusion_iff_exists_le_excl`), and the paper's axioms
+make exclusion classical (`classicalExclusion_possible`). Cumulativity of exclusion adds the
+further verifiers of `¬(P ∧ Q)` that Ciardelli, Zhang and Champollion's counterfactual data call
+for (`neg_sups_neg_subset`). In the canonical frame a literal excludes its mirror image. There the
+derived possibility is Fine's consistency (`Truthmaker.Canonical.possible_excl`), negation
+recovers Fine's falsifiers (`neg_ver_atom`, `neg_ver_conj_atom`), and the axioms hold.
 
 ## Implementation notes
 
 The paper takes events to form a complete distributive lattice. No proof here uses
 distributivity. Symmetry of exclusion is needed only for Plenitude, which the paper states with
-the event before the world while Harmony puts the world first. Occurrence (Theorems 8.1–8.2), the
-definitions of necessity, and the results about a formula language (Theorems 9.8–9.9) are not
-formalized.
+the event before the world while Harmony puts the world first. The paper's paraphrase of Fine's
+third condition on classical exclusion speaks of a possible state where Fine has an impossible
+one. Occurrence (Theorems 8.1–8.2), the definitions of necessity, and the results about a formula
+language (Theorems 9.8–9.9) are not formalized.
 
 ## References
 
@@ -44,6 +51,8 @@ formalized.
   (2024)][champollion-bernard-2024]
 * [K. Fine, *A Theory of Truthmaker Content I: Conjunction, Disjunction and Negation*
   (2017)][fine-2017a]
+* [M. Plebani, G. Rosella and V. Saitta, *Truthmakers, Incompatibility, and Modality*
+  (2022)][plebani-rosella-saitta-2022]
 * [I. Ciardelli, L. Zhang and L. Champollion, *Two switches in the theory of counterfactuals: A
   study of truth conditionality and minimal change* (2018)][ciardelli-zhang-champollion-2018]
 -/
@@ -56,35 +65,13 @@ namespace ChampollionBernard2024
 
 variable {E : Type*} [CompleteLattice E] {excl : E → E → Prop}
 
-/-! ### Conflict and possibility -/
-
 variable (excl) in
-/-- Two events conflict when some part of the first excludes some part of the second
-(def. 2). -/
-def Conflict (e₁ e₂ : E) : Prop :=
-  ∃ f₁ ≤ e₁, ∃ f₂ ≤ e₂, excl f₁ f₂
-
-theorem Conflict.mono {e₁ e₂ e₁' e₂' : E} (h : Conflict excl e₁ e₂) (h₁ : e₁ ≤ e₁')
-    (h₂ : e₂ ≤ e₂') : Conflict excl e₁' e₂' :=
-  let ⟨f₁, hf₁, f₂, hf₂, hx⟩ := h
-  ⟨f₁, hf₁.trans h₁, f₂, hf₂.trans h₂, hx⟩
-
-theorem Conflict.symm (hS : Std.Symm excl) {e₁ e₂ : E} (h : Conflict excl e₁ e₂) :
-    Conflict excl e₂ e₁ :=
-  let ⟨f₁, hf₁, f₂, hf₂, hx⟩ := h
-  ⟨f₂, hf₂, f₁, hf₁, hS.symm _ _ hx⟩
-
-variable (excl) in
-/-- The possible events are those that do not conflict with themselves (def. 4), and every part
-of a possible event is possible (Lemma 4.1). -/
-def possible : LowerSet E where
-  carrier := {e | ¬ Conflict excl e e}
-  lower' := by
-    intro e e' hle he hc
-    exact he (hc.mono hle hle)
-
-theorem mem_possible {e : E} : e ∈ possible excl ↔ ¬ Conflict excl e e :=
-  Iff.rfl
+/-- With symmetric exclusion, conflict is an orthogonality relation on the possible events, the
+counterpart the paper draws with orthologic (§3). -/
+def conflictOrthoframe [Std.Symm excl] : Orthoframe (possible excl) where
+  ortho e₁ e₂ := Conflict excl e₁ e₂
+  ortho_symm := ⟨fun _ _ h ↦ h.symm⟩
+  ortho_irrefl := ⟨fun e h ↦ e.2 h⟩
 
 /-! ### Worlds and the axioms on exclusion -/
 
@@ -99,22 +86,16 @@ variable (excl) in
 def Harmony : Prop :=
   ∀ ⦃w e : E⦄, Maximal (· ∈ possible excl) w → ¬ Conflict excl w e → e ∈ possible excl
 
-variable (excl) in
-/-- Rashōmon (axiom 21) holds when the fusion of two coherent possible events is possible. -/
-def Rashomon : Prop :=
-  ∀ ⦃e₁ : E⦄, e₁ ∈ possible excl → ∀ ⦃e₂ : E⦄, e₂ ∈ possible excl → ¬ Conflict excl e₁ e₂ →
-    e₁ ⊔ e₂ ∈ possible excl
-
 /-- An event is possible exactly when it coheres with some world (Theorem 8.3). -/
-theorem mem_possible_iff_exists_world (hS : Std.Symm excl) (hC : Cosmopolitan excl)
+theorem mem_possible_iff_exists_world [Std.Symm excl] (hC : Cosmopolitan excl)
     (hH : Harmony excl) {e : E} :
     e ∈ possible excl ↔ ∃ w, ¬ Conflict excl e w ∧ Maximal (· ∈ possible excl) w := by
-  refine ⟨fun he ↦ ?_, fun ⟨w, hc, hw⟩ ↦ hH hw fun h ↦ hc (h.symm hS)⟩
+  refine ⟨fun he ↦ ?_, fun ⟨w, hc, hw⟩ ↦ hH hw fun h ↦ hc h.symm⟩
   obtain ⟨w, hew, hw⟩ := hC e he
   exact ⟨w, fun hc ↦ hw.prop (hc.mono hew le_rfl), hw⟩
 
 /-- A world conflicts with every event it does not contain (Theorem 8.4). -/
-theorem conflict_of_not_le (hH : Harmony excl) (hR : Rashomon excl) {w e : E}
+theorem conflict_of_not_le (hH : Harmony excl) (hR : PossibleFusion excl) {w e : E}
     (hw : Maximal (· ∈ possible excl) w) (he : ¬ e ≤ w) : Conflict excl w e := by
   by_contra hc
   exact he (le_sup_right.trans (hw.le_of_ge (hR hw.prop (hH hw hc) hc) le_sup_left))
@@ -149,7 +130,7 @@ theorem not_mem_upperClosure_neg {φ : Set E} {s : E} (hs : s ∈ possible excl)
   exact hs ⟨h f, (le_sSup (Set.mem_image_of_mem h hf)).trans hle, g, hgf.trans hfs, hx⟩
 
 /-- Every world contains a verifier of `φ` or a verifier of its negation (Theorem 9.3). -/
-theorem mem_upperClosure_or_neg (hH : Harmony excl) (hR : Rashomon excl) {w : E}
+theorem mem_upperClosure_or_neg (hH : Harmony excl) (hR : PossibleFusion excl) {w : E}
     (hw : Maximal (· ∈ possible excl) w) (φ : Set E) :
     w ∈ upperClosure φ ∨ w ∈ upperClosure (neg excl φ) := by
   refine or_iff_not_imp_left.2 fun hφ ↦ ?_
@@ -165,7 +146,7 @@ theorem mem_upperClosure_or_neg (hH : Harmony excl) (hR : Rashomon excl) {w : E}
 
 /-- A world contains a verifier of the negation of `φ` exactly when it contains no verifier of
 `φ` (Theorem 9.2). -/
-theorem mem_upperClosure_neg_iff (hH : Harmony excl) (hR : Rashomon excl) {w : E}
+theorem mem_upperClosure_neg_iff (hH : Harmony excl) (hR : PossibleFusion excl) {w : E}
     (hw : Maximal (· ∈ possible excl) w) {φ : Set E} :
     w ∈ upperClosure (neg excl φ) ↔ w ∉ upperClosure φ :=
   ⟨fun hn hφ ↦ not_mem_upperClosure_neg hw.prop hφ hn,
@@ -176,37 +157,27 @@ theorem exclusive_mk_neg (φ : Set E) : (BilProp.mk φ (neg excl φ)).Exclusive 
   BilProp.exclusive_iff.2 fun _ hs hφ ↦ not_mem_upperClosure_neg hs hφ
 
 /-- A proposition paired with its negation is exhaustive over the possible events. -/
-theorem exhaustive_mk_neg (hC : Cosmopolitan excl) (hH : Harmony excl) (hR : Rashomon excl)
+theorem exhaustive_mk_neg (hC : Cosmopolitan excl) (hH : Harmony excl) (hR : PossibleFusion excl)
     (φ : Set E) : (BilProp.mk φ (neg excl φ)).Exhaustive (possible excl) :=
   (BilProp.exhaustive_iff hC).2 fun _ hw ↦ mem_upperClosure_or_neg hH hR hw φ
 
 /-! ### Emergent exclusion and de Morgan's law -/
 
-variable (excl) in
-/-- The individual excluders of `P` are the events that contain an excluder of a member of `P`
-and are part of the fusion of all such excluders (defs. 11–12). -/
-def individualExcluders (P : Set E) : Set E :=
-  ↑(upperClosure {s | ∃ p ∈ P, excl s p}) ∩ Set.Iic (sSup {s | ∃ p ∈ P, excl s p})
-
-variable (excl) in
-/-- Fine's Downward Exclusion condition (14) holds when every event that excludes the fusion of
-`P` is an individual excluder of `P`. -/
-def DownwardExclusion : Prop :=
-  ∀ ⦃P : Set E⦄ ⦃s : E⦄, excl s (sSup P) → s ∈ individualExcluders excl P
-
-/-- An event that coheres with every member of `P` is not an individual excluder of `P`, so if
-it excludes the fusion of `P` it is an emergent excluder (def. 13). -/
-theorem not_mem_individualExcluders {P : Set E} {s : E} (hc : ∀ p ∈ P, ¬ Conflict excl s p) :
-    s ∉ individualExcluders excl P := fun ⟨hs, _⟩ ↦
-  let ⟨r, ⟨p, hp, hx⟩, hrs⟩ := mem_upperClosure.1 hs
-  hc p hp ⟨r, hrs, p, le_rfl, hx⟩
+/-- An event that coheres with every member of `P` is not an individual excluder of `P`, one in the
+regular closure of the excluders of its members, so if it excludes the fusion of `P` it is an
+emergent excluder (defs. 11–13). -/
+theorem not_mem_regularClosure_excluders {P : Set E} {s : E}
+    (hc : ∀ p ∈ P, ¬ Conflict excl s p) : s ∉ regularClosure {r | ∃ p ∈ P, excl r p} :=
+  fun ⟨hs, _⟩ ↦
+    let ⟨r, ⟨p, hp, hx⟩, hrs⟩ := mem_upperClosure.1 hs
+    hc p hp ⟨r, hrs, p, le_rfl, hx⟩
 
 /-- Under Downward Exclusion an event that excludes the fusion of `P` conflicts with a member of
 `P`, so there are no emergent excluders. -/
 theorem DownwardExclusion.exists_conflict (hD : DownwardExclusion excl) {P : Set E} {s : E}
     (hs : excl s (sSup P)) : ∃ p ∈ P, Conflict excl s p := by
   by_contra h
-  exact not_mem_individualExcluders (fun p hp hc ↦ h ⟨p, hp, hc⟩) (hD hs)
+  exact not_mem_regularClosure_excluders (fun p hp hc ↦ h ⟨p, hp, hc⟩) (hD hs)
 
 /-- An event that excludes `p ⊔ q` while cohering with `p` and with `q` verifies `¬(P ∧ Q)` but not
 `¬P ∨ ¬Q`, where `P` is verified by `p` alone and `Q` by `q` alone (§7). -/
@@ -219,7 +190,7 @@ theorem mem_neg_sups_diff {p q s : E} (hs : excl s (p ⊔ q)) (hp : ¬ Conflict 
   · exact hq ⟨s, le_rfl, g, hg, hx⟩
 
 /-- The two sides of de Morgan's law `¬(φ ∧ ψ) ⇔ ¬φ ∨ ¬ψ` hold at the same worlds (§9). -/
-theorem mem_upperClosure_neg_sups_iff (hH : Harmony excl) (hR : Rashomon excl) {w : E}
+theorem mem_upperClosure_neg_sups_iff (hH : Harmony excl) (hR : PossibleFusion excl) {w : E}
     (hw : Maximal (· ∈ possible excl) w) (φ ψ : Set E) :
     w ∈ upperClosure (neg excl (φ ⊻ ψ)) ↔ w ∈ upperClosure (neg excl φ ∪ neg excl ψ) := by
   rw [upperClosure_union, UpperSet.mem_inf_iff, mem_upperClosure_neg_iff hH hR hw,
@@ -234,6 +205,64 @@ theorem neg_sups_neg_subset
   rw [Set.singleton_sups_singleton, neg_singleton, neg_singleton, neg_singleton]
   rintro _ ⟨e, ⟨g, hgp, he⟩, f, ⟨g', hgq, hf⟩, rfl⟩
   exact ⟨g ⊔ g', sup_le_sup hgp hgq, hCum he hf⟩
+
+/-! ### Comparison with Fine's unilateral semantics -/
+
+/-- Under Upward Exclusion, every verifier of the paper's negation of `φ` verifies Fine's exclusive
+negation of `φ`. -/
+theorem neg_subset_exclusiveNeg (hU : UpwardExclusion excl) (φ : Set E) :
+    neg excl φ ⊆ exclusiveNeg excl φ := by
+  rintro _ ⟨h, hh, rfl⟩
+  refine ⟨h '' φ, ⟨?_, fun f hf ↦ ?_⟩, rfl⟩
+  · rintro _ ⟨f, hf, rfl⟩
+    obtain ⟨g, hgf, hx⟩ := hh f hf
+    exact ⟨f, hf, hU hx hgf⟩
+  · obtain ⟨g, hgf, hx⟩ := hh f hf
+    exact ⟨h f, Set.mem_image_of_mem h hf, hU hx hgf⟩
+
+/- Fine's exclusive negation also admits the fusion of two excluders of one verifier. -/
+example : ∃ excl : Set (Fin 3) → Set (Fin 3) → Prop, UpwardExclusion excl ∧
+    ({0, 1} : Set (Fin 3)) ∈ exclusiveNeg excl {{2}} \ neg excl {{2}} := by
+  refine ⟨fun a b ↦ (a = {0} ∨ a = {1}) ∧ 2 ∈ b, fun _ _ _ ⟨ha, hb⟩ hle ↦ ⟨ha, hle hb⟩,
+    ⟨{{0}, {1}}, ⟨?_, ?_⟩, ?_⟩, ?_⟩
+  · rintro _ (rfl | rfl)
+    · exact ⟨{2}, rfl, .inl rfl, rfl⟩
+    · exact ⟨{2}, rfl, .inr rfl, rfl⟩
+  · rintro _ rfl
+    exact ⟨{0}, .inl rfl, .inl rfl, rfl⟩
+  · rw [sSup_pair]
+    ext x
+    simp [or_comm]
+  · rw [neg_singleton]
+    rintro ⟨g, _, h | h, _⟩
+    · have := Set.ext_iff.1 h 1
+      simp at this
+    · have := Set.ext_iff.1 h 0
+      simp at this
+
+/-- Under Upward Exclusion, Rashōmon is Fine's second condition on classical exclusion over the
+derived possibility, that two possible events with an impossible fusion have a part of the first
+that excludes the second (fn. 21). -/
+theorem possibleFusion_iff_exists_le_excl (hU : UpwardExclusion excl) :
+    PossibleFusion excl ↔ ∀ ⦃s t : E⦄, s ∈ possible excl → t ∈ possible excl →
+      s ⊔ t ∉ possible excl → ∃ s' ≤ s, excl s' t := by
+  refine ⟨fun hR s t hs ht hst ↦ hU.conflict_iff.1 ?_, fun h s hs t ht hc ↦ ?_⟩
+  · by_contra hc
+    exact hst (hR hs ht hc)
+  · by_contra hst
+    obtain ⟨s', hs', hx⟩ := h hs ht hst
+    exact hc ⟨s', hs', t, le_rfl, hx⟩
+
+/-- Under Upward Exclusion, the paper's axioms make exclusion classical in Fine's sense over the
+derived possibility. -/
+theorem classicalExclusion_possible (hU : UpwardExclusion excl) (hC : Cosmopolitan excl)
+    (hH : Harmony excl) (hR : PossibleFusion excl) : ClassicalExclusion excl (possible excl) where
+  sup_not_mem _ _ := sup_not_mem_possible
+  exists_le_excl := (possibleFusion_iff_exists_le_excl hU).1 hR
+  exists_excl t ht s hs := by
+    obtain ⟨w, hsw, hw⟩ := hC s hs
+    obtain ⟨w', hw', hx⟩ := hU.conflict_iff.1 (by_contra fun hc ↦ ht (hH hw hc))
+    exact ⟨w', hx, (possible excl).lower (sup_le hsw hw') hw.prop⟩
 
 /-! ### The basket with room for two eggs -/
 
@@ -270,26 +299,9 @@ open Truthmaker.Canonical
 
 variable {α : Type*}
 
-/-- In the canonical frame over atoms `α`, whose events are sets of literals, a literal excludes
-its mirror image and nothing else holds (def. 23). -/
-def canonicalExcl (s t : Set (α × Bool)) : Prop :=
-  ∃ x, s = {x} ∧ t = {mirror x}
-
-theorem conflict_canonicalExcl_iff {e₁ e₂ : Set (α × Bool)} :
-    Conflict canonicalExcl e₁ e₂ ↔ ∃ x ∈ e₁, mirror x ∈ e₂ := by
-  constructor
-  · rintro ⟨_, h₁, _, h₂, x, rfl, rfl⟩
-    exact ⟨x, h₁ rfl, h₂ rfl⟩
-  · rintro ⟨x, hx₁, hx₂⟩
-    exact ⟨{x}, Set.singleton_subset_iff.2 hx₁, _, Set.singleton_subset_iff.2 hx₂, x, rfl, rfl⟩
-
-/-- Possibility derived from canonical exclusion is Fine's consistency of sets of literals. -/
-theorem possible_canonicalExcl : possible (canonicalExcl (α := α)) = Canonical.possible :=
-  SetLike.ext fun _ ↦ by simp [mem_possible, conflict_canonicalExcl_iff, Canonical.mem_possible]
-
 /-- In the canonical frame the negation of an atom is verified by its denial alone, the
 atom's falsifier in Fine's bilateral semantics. -/
-theorem neg_ver_atom (a : α) : neg canonicalExcl (atom a).ver = (atom a).fal := by
+theorem neg_ver_atom (a : α) : neg Canonical.excl (atom a).ver = (atom a).fal := by
   rw [ver_atom, fal_atom, neg_singleton]
   ext e
   constructor
@@ -304,7 +316,7 @@ theorem neg_ver_atom (a : α) : neg canonicalExcl (atom a).ver = (atom a).fal :=
 denial of either atom, its falsifiers in Fine's bilateral semantics, so de Morgan's law holds
 exactly there (§9). -/
 theorem neg_ver_conj_atom (a b : α) :
-    neg canonicalExcl ((atom a).conj (atom b)).ver = ((atom a).conj (atom b)).fal := by
+    neg Canonical.excl ((atom a).conj (atom b)).ver = ((atom a).conj (atom b)).fal := by
   rw [BilProp.ver_conj, BilProp.fal_conj, ver_atom, ver_atom, fal_atom, fal_atom,
     Set.singleton_sups_singleton, neg_singleton]
   ext e
@@ -321,41 +333,32 @@ theorem neg_ver_conj_atom (a b : α) :
     · exact ⟨{(a, true)}, Set.singleton_subset_iff.2 (.inl rfl), (a, false), rfl, rfl⟩
     · exact ⟨{(b, true)}, Set.singleton_subset_iff.2 (.inr rfl), (b, false), rfl, rfl⟩
 
-theorem harmony_canonicalExcl : Harmony (canonicalExcl (α := α)) := by
+theorem harmony_canonicalExcl : Harmony (Canonical.excl (α := α)) := by
   intro w e hw hc
-  rw [possible_canonicalExcl] at hw ⊢
+  rw [possible_excl] at hw ⊢
   intro x hx hx'
   rcases mem_or_mirror_mem_of_maximal hw x with hxw | hxw
-  · exact hc (conflict_canonicalExcl_iff.2 ⟨x, hxw, hx'⟩)
-  · exact hc (conflict_canonicalExcl_iff.2 ⟨mirror x, hxw, by rwa [mirror_mirror]⟩)
+  · exact hc (conflict_excl_iff.2 ⟨x, hxw, hx'⟩)
+  · exact hc (conflict_excl_iff.2 ⟨mirror x, hxw, by rwa [mirror_mirror]⟩)
 
-theorem rashomon_canonicalExcl : Rashomon (canonicalExcl (α := α)) := by
-  intro e₁ h₁ e₂ h₂ hc
-  rw [possible_canonicalExcl] at h₁ h₂ ⊢
-  rw [conflict_canonicalExcl_iff] at hc
-  rintro x (hx | hx) (hx' | hx')
-  · exact h₁ x hx hx'
-  · exact hc ⟨x, hx, hx'⟩
-  · exact hc ⟨mirror x, hx', by rwa [mirror_mirror]⟩
-  · exact h₂ x hx hx'
-
-theorem cosmopolitan_canonicalExcl : Cosmopolitan (canonicalExcl (α := α)) := by
+theorem cosmopolitan_canonicalExcl : Cosmopolitan (Canonical.excl (α := α)) := by
   unfold Cosmopolitan
-  rw [possible_canonicalExcl]
+  rw [possible_excl]
   exact fun _ ↦ exists_le_maximal_possible
 
 /-- Fine's bilateral atom is the unilateral atom paired with its negation. -/
 theorem mk_neg_ver_atom (a : α) :
-    BilProp.mk (atom a).ver (neg canonicalExcl (atom a).ver) = atom a := by
+    BilProp.mk (atom a).ver (neg Canonical.excl (atom a).ver) = atom a := by
   rw [neg_ver_atom]
 
 /- Fine's classicality of the canonical atoms follows from the exclusion axioms. -/
 example (a : α) : (atom a).Exclusive Canonical.possible :=
-  possible_canonicalExcl ▸ mk_neg_ver_atom a ▸ exclusive_mk_neg _
+  possible_excl ▸ mk_neg_ver_atom a ▸ exclusive_mk_neg _
 
 example (a : α) : (atom a).Exhaustive Canonical.possible :=
-  possible_canonicalExcl ▸ mk_neg_ver_atom a ▸
-    exhaustive_mk_neg cosmopolitan_canonicalExcl harmony_canonicalExcl rashomon_canonicalExcl _
+  possible_excl ▸ mk_neg_ver_atom a ▸
+    exhaustive_mk_neg cosmopolitan_canonicalExcl harmony_canonicalExcl
+      possibleFusion_excl _
 
 end Canonical
 
