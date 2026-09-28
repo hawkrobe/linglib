@@ -301,9 +301,9 @@ section LuceEmbedding
 
 The SDT signal/noise choice is a binary Gumbel-Luce RUM: with utilities
 `(d' · x, 0)` and unit Gumbel scale `β = 1`, the Gumbel max-probability reduces
-to the SDT Luce policy exactly. The signal-probability and odds-ratio
+to the SDT Luce choice probability exactly. The signal-probability and odds-ratio
 properties below are immediate corollaries of `softmax_fin_two` and
-`RationalAction.fromGumbelRUM_policy`. -/
+`LuceModel.fromGumbelRUM_prob`. -/
 
 /-- The likelihood ratio at an observation `x` is `exp (d' * x)`, the closed form of the ratio of
 the density of `N(d'/2, 1)` to that of `N(-d'/2, 1)` at `x`. -/
@@ -328,21 +328,21 @@ for signal and `0` for noise at unit scale, whose Luce scores are `exp (d' * x)`
 depends on the sensitivity and the observation and not on the criterion, which enters only in the
 observer's response rule. -/
 noncomputable def SDTModel.toLuceAt (m : SDTModel) (x : ℝ) :
-    RationalAction Unit (Fin 2) :=
-  RationalAction.fromGumbelRUM (fun i : Fin 2 => if i = 0 then m.dPrime * x else 0) 1
+    LuceModel Unit (Fin 2) :=
+  LuceModel.fromGumbelRUM (fun i : Fin 2 => if i = 0 then m.dPrime * x else 0) 1
 
 /-- The Luce score of reporting signal is the likelihood ratio. -/
 @[simp]
 theorem SDTModel.toLuceAt_score_signal (m : SDTModel) (x : ℝ) :
     (m.toLuceAt x).score () (0 : Fin 2) = m.likelihoodRatioAt x := by
-  simp [SDTModel.toLuceAt, RationalAction.fromGumbelRUM, RationalAction.fromSoftmax,
+  simp [SDTModel.toLuceAt, LuceModel.fromGumbelRUM, LuceModel.fromSoftmax,
         SDTModel.likelihoodRatioAt, likelihoodRatio]
 
 /-- The Luce score of reporting noise is one. -/
 @[simp]
 theorem SDTModel.toLuceAt_score_noise (m : SDTModel) (x : ℝ) :
     (m.toLuceAt x).score () (1 : Fin 2) = 1 := by
-  simp [SDTModel.toLuceAt, RationalAction.fromGumbelRUM, RationalAction.fromSoftmax]
+  simp [SDTModel.toLuceAt, LuceModel.fromGumbelRUM, LuceModel.fromSoftmax]
 
 /-- The Luce odds of signal to noise at an observation equal the likelihood ratio there. -/
 theorem SDTModel.toLuceAt_odds_ratio (m : SDTModel) (x : ℝ) :
@@ -354,10 +354,10 @@ theorem SDTModel.toLuceAt_odds_ratio (m : SDTModel) (x : ℝ) :
 /-- The Luce probability of reporting signal at an observation is `L(x) / (L(x) + 1)` for the
 likelihood ratio `L(x)`. -/
 theorem SDTModel.toLuceAt_signal_prob (m : SDTModel) (x : ℝ) :
-    (m.toLuceAt x).policy () (0 : Fin 2) =
+    (m.toLuceAt x).prob () (0 : Fin 2) =
     m.likelihoodRatioAt x / (m.likelihoodRatioAt x + 1) := by
   have h01 : ¬(1 : Fin 2) = (0 : Fin 2) := by decide
-  rw [SDTModel.toLuceAt, RationalAction.fromGumbelRUM_policy, softmax_fin_two]
+  rw [SDTModel.toLuceAt, LuceModel.fromGumbelRUM_prob, softmax_fin_two]
   simp only [Pi.smul_apply, smul_eq_mul, Fin.isValue, ↓reduceIte, h01, inv_one, one_mul,
              mul_zero, sub_zero, Real.sigmoid_def, SDTModel.likelihoodRatioAt,
              likelihoodRatio]
@@ -371,11 +371,11 @@ section BayesianInterpretation
 
 /-! ## Bayesian posterior interpretation
 
-The SDT Luce policy is exactly the Bayesian posterior on "signal present"
+The SDT Luce choice probability is exactly the Bayesian posterior on "signal present"
 under uniform prior odds. Under non-uniform prior `π_S` for signal, the
 posterior is `π_S · L(x) / (π_S · L(x) + (1 - π_S))` — the same formula but
 with prior-weighted likelihoods. With `π_S = 1/2`, this reduces to
-`L(x) / (L(x) + 1) = (m.toLuceAt x).policy () 0`.
+`L(x) / (L(x) + 1) = (m.toLuceAt x).prob () 0`.
 
 ### Why `posteriorAt` is a closed form
 
@@ -413,7 +413,7 @@ private lemma half_lt_div_add_one_iff {L : ℝ} (hL : 0 < L) :
 /-- Under a uniform prior the posterior probability of signal at an observation is the Luce
 probability of reporting signal there. -/
 theorem SDTModel.posteriorAt_uniform (x : ℝ) :
-    m.posteriorAt x (1/2) = (m.toLuceAt x).policy () (0 : Fin 2) := by
+    m.posteriorAt x (1/2) = (m.toLuceAt x).prob () (0 : Fin 2) := by
   rw [m.toLuceAt_signal_prob, SDTModel.posteriorAt]
   exact posterior_uniform_eq_div (m.likelihoodRatioAt_pos x)
 
