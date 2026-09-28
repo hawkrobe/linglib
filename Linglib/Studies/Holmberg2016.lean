@@ -30,8 +30,9 @@ an adverb preceding *not* forces the low reading, and in Swedish, which has no l
 adverb screens the middle negation from the polarity head to the same effect
 (`swedish_adverb`).
 
-Section 4.4 defines the polarity-based system as the one lacking low negation (`PolarityBased`,
-equivalently every negation height polarity-based, `polarityBased_iff`). Such a language has no
+Section 4.4 defines the polarity-based system as the one lacking low negation (`PolarityBased`),
+which is the typology's: its affirmative particle never confirms the negative alternative of a
+negative question (`polarityBased_iff_not_confirmsNegativeQuestion`). Such a language has no
 negative neutralization (`PolarityBased.answer_ne_negative`); Swedish, whose negation is never low,
 is one (`swedish_polarityBased`), so confirming the positive alternative of a negative question
 takes the polarity-reversing *jo* (`swedish_negative_question`), which a truth-based configuration
@@ -89,7 +90,7 @@ variable {W : Type*}
 theorem smul_mem_alt {q : PolarInterrogative W} (hne : q.radical ≠ ∅)
     (hnu : q.radical ≠ Set.univ) (s : Polarity) : s • q.radical ∈ alt ⟦q⟧ := by
   rw [PolarInterrogative.alt_denote hne hnu]
-  cases s <;> simp
+  exact MulAction.mem_orbit _ s
 
 /-! ### The particles -/
 
@@ -141,20 +142,27 @@ def PolarityBased (N : Finset NegationHeight) : Prop := .low ∉ N
 instance (N : Finset NegationHeight) : Decidable (PolarityBased N) :=
   inferInstanceAs (Decidable (_ ∉ _))
 
-/-- A language is polarity-based iff each of its negation heights is. -/
-theorem polarityBased_iff {N : Finset NegationHeight} :
-    PolarityBased N ↔ ∀ h ∈ N, h.predictedSystem = .polarityBased := by
-  refine ⟨fun hN h hh ↦ ?_, fun H hl ↦ absurd (H _ hl) (by decide)⟩
-  cases h
-  exacts [absurd hh hN, rfl, rfl]
+/-- The definition is the typology's: a language lacks low negation iff its affirmative
+particle confirms the negative alternative of none of its negative questions. -/
+theorem polarityBased_iff_not_confirmsNegativeQuestion {N : Finset NegationHeight} :
+    PolarityBased N ↔ ¬ Response.ConfirmsNegativeQuestion
+      ((AnswerFeature.value .positive).responses (ClauseNegation.height '' N)) := by
+  rw [AnswerFeature.confirmsNegativeQuestion_responses_iff, PolarityBased]
+  constructor
+  · rintro hN ⟨_, ⟨h, hh, rfl⟩, -, ha⟩
+    cases h
+    · exact hN hh
+    all_goals exact absurd ha (by decide)
+  · exact fun H hl ↦ H ⟨_, ⟨.low, hl, rfl⟩, by decide, by decide⟩
 
 /-- A polarity-based language has no negative neutralization: no affirmative feature confirms
 the negative alternative of a negative question, unless an adverb screens the negation. -/
 theorem PolarityBased.answer_ne_negative {N : Finset NegationHeight} (hN : PolarityBased N)
     {h : NegationHeight} (hh : h ∈ N) :
     (AnswerFeature.value .positive).answer (.height h) ≠ some .negative := by
-  rw [ne_eq, ← NegationHeight.predictedSystem_eq_truthBased_iff h, polarityBased_iff.1 hN h hh]
-  decide
+  cases h
+  · exact absurd hh hN
+  all_goals decide
 
 /-! ### Swedish (Section 4.5) and the reversing particles -/
 

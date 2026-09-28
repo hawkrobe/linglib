@@ -27,7 +27,9 @@ or on whether affirmation is overt, `denotation_verumFocus` and `denotation_affi
 functional equivalence; an overt polarity value fixes the polarity of its sentence, so *wel*
 cannot occur in a negated sentence, while Verum focus can, `pol_of_polarityOp_eq_some` and
 `exists_verumFocus_negative`, which is why the assertion operator takes effect above polarity,
-as in [bluhdorn-2012].
+as in [bluhdorn-2012]. The paper sets this against [sudhoff-2012], for whom focus on *wel* is
+itself an instance of Verum focus: that the two devices do the same work does not put them on
+the same level.
 
 ## Implementation notes
 

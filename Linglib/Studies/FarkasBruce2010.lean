@@ -46,7 +46,9 @@ is a denial after an assertion and a reverse answer after a question
 §5.2 says what the polarity particles mark, as sets of responses: the English *yes* [same] or
 [+] and *no* [reverse] or [−], their double duty (`english`); the Romanian *da* [+], *nu* [−]
 and *ba* [reverse] except in a [reverse, −] answer to a question (`romanian`); and French *si*
-and German *doch* the marked combination [reverse, +] (`reversePositive`). `rows` are the
+and German *doch* the marked combination [reverse, +] (`reversePositive`). Both English particles
+can confirm a negative question, while in Romanian only *nu* does
+(`english_confirmsNegativeQuestion`, `romanian_confirmsNegativeQuestion_iff`). `rows` are the
 responding assertions of (4), (5) and (35)–(50), whose particles are the fragments' polarity
 particles; every acceptable response is one its English and Romanian particles mark
 (`english_mem`, `romanian_mem`), *si* and *doch* occur in [reverse, +] responses only
@@ -277,6 +279,18 @@ instance (p : Romanian.PolarityParticle) : DecidablePred (· ∈ romanian p) := 
   · exact inferInstanceAs (Decidable (_ ∧ _))
 
 instance : DecidablePred (· ∈ reversePositive) := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+/-- Both English particles confirm a negative: *no* as [−], *Is Sam not home?* — *No, he
+isn't* (35), and *yes* as [same], *Sam is not home.* — *Yes. He is not.* (38). -/
+theorem english_confirmsNegativeQuestion (p : English.PolarityParticle) :
+    Response.ConfirmsNegativeQuestion (english p) := by
+  cases p <;> decide
+
+/-- Of the Romanian particles only the absolute *nu* confirms a negative; *da* marks [+] and
+*ba* [reverse]. -/
+theorem romanian_confirmsNegativeQuestion_iff (p : Romanian.PolarityParticle) :
+    Response.ConfirmsNegativeQuestion (romanian p) ↔ p = .nu := by
+  cases p <;> decide
 
 /-! ### The examples -/
 
