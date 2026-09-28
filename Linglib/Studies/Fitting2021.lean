@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Order.Bilattice.Basic
+public import Linglib.Core.Order.Bilattice.Four
 public import Linglib.Core.Data.Trivalent
 public import Linglib.Logic.Consequence
 
@@ -67,24 +67,25 @@ inductive Fml (α : Type*) where
 
 section Eval
 
-variable [Lattice B] [Lattice (Know B)] [Negation B]
+variable [LatticeWithInvolution B] [Lattice (Know B)] [Negation B]
 
 /-- The extension of a valuation to formulas ([fitting-2021] Def 8.6.2). -/
 def Fml.eval (v : α → B) : Fml α → B
   | atom p => v p
   | and φ ψ => φ.eval v ⊓ ψ.eval v
   | or φ ψ => φ.eval v ⊔ ψ.eval v
-  | not φ => neg (φ.eval v)
+  | not φ => (φ.eval v)ᶜ
 
 variable [Conflation B] [NegConfComm B]
 
+omit [Negation B] in
 /-- Exact valuations evaluate to exact values ([fitting-2021] Prop 8.6.3). -/
 theorem eval_isExact {v : α → B} (hv : ∀ p, IsExact (v p)) :
     ∀ φ : Fml α, IsExact (φ.eval v)
   | .atom p => hv p
   | .and φ ψ => (eval_isExact hv φ).inf (eval_isExact hv ψ)
   | .or φ ψ => (eval_isExact hv φ).sup (eval_isExact hv ψ)
-  | .not φ => (eval_isExact hv φ).neg
+  | .not φ => (eval_isExact hv φ).compl
 
 variable [IsInterlaced B]
 
@@ -94,7 +95,7 @@ theorem eval_isAnticonsistent {v : α → B} (hv : ∀ p, IsAnticonsistent (v p)
   | .atom p => hv p
   | .and φ ψ => (eval_isAnticonsistent hv φ).inf (eval_isAnticonsistent hv ψ)
   | .or φ ψ => (eval_isAnticonsistent hv φ).sup (eval_isAnticonsistent hv ψ)
-  | .not φ => (eval_isAnticonsistent hv φ).neg
+  | .not φ => (eval_isAnticonsistent hv φ).compl
 
 omit [Conflation B] [NegConfComm B] in
 /-- Evaluation is knowledge-monotone in the valuation ([fitting-2021] Prop 8.6.4). -/
@@ -113,7 +114,7 @@ theorem eval_kLE_eval {v w : α → B} (h : ∀ p, v p ≤ₖ w p) :
       _ = ψ.eval v ⊔ φ.eval w := sup_comm ..
       _ ≤ₖ ψ.eval w ⊔ φ.eval w := IsInterlaced.sup_kmono (eval_kLE_eval h ψ) _
       _ = φ.eval w ⊔ ψ.eval w := sup_comm ..
-  | .not φ => neg_kLE_neg (eval_kLE_eval h φ)
+  | .not φ => compl_kLE_compl (eval_kLE_eval h φ)
 
 end Eval
 
@@ -156,7 +157,7 @@ end Bifilter
 
 section Logics
 
-variable [Lattice B] [Lattice (Know B)] [Negation B] [Conflation B]
+variable [LatticeWithInvolution B] [Lattice (Know B)] [Negation B] [Conflation B]
 
 /-- Strictly designated: designated and exact ([fitting-2021] Def 8.7.1). -/
 def StrictlyDesignated (F : PrimeBifilter B) (a : B) : Prop := a ∈ F ∧ IsExact a
@@ -215,7 +216,7 @@ theorem stValid_iff_cValid (F : PrimeBifilter B) (Γ Δ : List (Fml α)) :
     ⟨F.mem_of_kLE hψ.1 (eval_kLE_eval (hle v) ψ), eval_isAnticonsistent v.2 ψ⟩
   rwa [(eval_isExact (he v) φ).eq_of_kLE hφ.2 (eval_kLE_eval (hle v) φ)]
 
-omit [IsInterlaced B] [NegConfComm B] in
+omit [Negation B] [IsInterlaced B] [NegConfComm B] in
 /-- Cut is locally valid in `C⟨B, F⟩` ([fitting-2021] Prop 8.7.3): a valuation satisfying both
 premises of a cut instance satisfies its conclusion. -/
 theorem cut_cSatisfies (F : PrimeBifilter B) {Γ Δ : List (Fml α)} {A : Fml α} {v : α → B}
@@ -224,7 +225,7 @@ theorem cut_cSatisfies (F : PrimeBifilter B) {Γ Δ : List (Fml α)} {A : Fml α
 
 variable [BoundedOrder (Know B)]
 
-omit [IsInterlaced B] [NegConfComm B] in
+omit [Negation B] [IsInterlaced B] [NegConfComm B] in
 /-- [fitting-2021] Prop 8.7.3, the `ST` half: the cut scheme fails locally in `ST⟨B, F⟩` when the
 knowledge order is nontrivial. The countermodel sends a letter to the knowledge top — designated
 and anticonsistent but not exact — so both cut premises hold while the empty conclusion fails. -/
@@ -264,13 +265,13 @@ variable {L : Type*} [LatticeWithInvolution L]
 the truth order they are `L`. -/
 def exactIso : {x : L ⊙ L // IsExact x} ≃o L where
   toFun x := x.1.pro
-  invFun a := ⟨mk a aᶜ, (Evidential.isExact_iff _).2 rfl⟩
-  left_inv x := Subtype.ext (Product.ext rfl ((Evidential.isExact_iff _).1 x.2).symm)
+  invFun a := ⟨mk a aᶜ, (Product.isExact_iff _).2 rfl⟩
+  left_inv x := Subtype.ext (Product.ext rfl ((Product.isExact_iff _).1 x.2).symm)
   right_inv _ := rfl
   map_rel_iff' {x y} := by
     show x.1.pro ≤ y.1.pro ↔ x ≤ y
-    rw [← Subtype.coe_le_coe, le_def, (Evidential.isExact_iff _).1 x.2,
-      (Evidential.isExact_iff _).1 y.2, LatticeWithInvolution.compl_le_compl_iff_le, and_self]
+    rw [← Subtype.coe_le_coe, le_def, (Product.isExact_iff _).1 x.2,
+      (Product.isExact_iff _).1 y.2, LatticeWithInvolution.compl_le_compl_iff_le, and_self]
 
 /-- A prime filter of `L` ([fitting-2021] Def 8.9.1): the designated values of a logical De Morgan
 algebra `⟨L, D⟩`, nonempty and proper as §8.2 requires. -/
@@ -304,12 +305,12 @@ instance (D : PrimeFilter L) [DecidablePred (· ∈ D)] : DecidablePred (· ∈ 
 /-- In `D × L` the strictly designated values are the exact pairs `⟨a, aᶜ⟩` with `a ∈ D`. -/
 theorem strictlyDesignated_prod_iff (D : PrimeFilter L) (x : L ⊙ L) :
     StrictlyDesignated D.prod x ↔ x.pro ∈ D ∧ x.con = x.proᶜ :=
-  and_congr Iff.rfl (Evidential.isExact_iff x)
+  and_congr Iff.rfl (Product.isExact_iff x)
 
 /-- In `D × L` the tolerantly designated values are the anticonsistent pairs with `a ∈ D`. -/
 theorem tolerantlyDesignated_prod_iff (D : PrimeFilter L) (x : L ⊙ L) :
     TolerantlyDesignated D.prod x ↔ x.pro ∈ D ∧ x.proᶜ ≤ x.con :=
-  and_congr Iff.rfl (Evidential.isAnticonsistent_iff x)
+  and_congr Iff.rfl (Product.isAnticonsistent_iff x)
 
 /-- The logic `⟨L, D⟩`: formulas evaluated in `L` by meet, join and the De Morgan complement. -/
 def Fml.evalL (v : α → L) : Fml α → L
@@ -326,12 +327,12 @@ def LValid (D : PrimeFilter L) (Γ Δ : List (Fml α)) : Prop :=
 def exactVal (v : α → L) (p : α) : L ⊙ L := mk (v p) (v p)ᶜ
 
 theorem exactVal_isExact (v : α → L) (p : α) : IsExact (exactVal v p) :=
-  (Evidential.isExact_iff _).2 rfl
+  (Product.isExact_iff _).2 rfl
 
 /-- Exact valuations are exactly the `exactVal`s. -/
 theorem eq_exactVal_of_isExact {v : α → L ⊙ L} (hv : ∀ p, IsExact (v p)) :
     v = exactVal fun p ↦ (v p).pro :=
-  funext fun p ↦ Product.ext rfl ((Evidential.isExact_iff _).1 (hv p))
+  funext fun p ↦ Product.ext rfl ((Product.isExact_iff _).1 (hv p))
 
 /-- Evaluation in `L ⊙ L` along an exact valuation is evaluation in `L`. -/
 theorem eval_exactVal (v : α → L) : ∀ φ : Fml α, φ.eval (exactVal v) = mk (φ.evalL v) (φ.evalL v)ᶜ
@@ -343,7 +344,7 @@ theorem eval_exactVal (v : α → L) : ∀ φ : Fml α, φ.eval (exactVal v) = m
     rw [Fml.eval, Fml.evalL, eval_exactVal v φ, eval_exactVal v ψ, mk_sup_mk,
       LatticeWithInvolution.compl_sup]
   | .not φ => by
-    rw [Fml.eval, Fml.evalL, eval_exactVal v φ, neg_mk', LatticeWithInvolution.compl_compl]
+    rw [Fml.eval, Fml.evalL, eval_exactVal v φ, mk_compl, LatticeWithInvolution.compl_compl]
 
 /-- [fitting-2021] Prop 8.9.3: `C⟨L ⊙ L, D × L⟩` is the logic `⟨L, D⟩` — the two validate the same
 sequents, the exact values of the product corresponding to `L` and `(D × L) ∩ E` to `D`. -/
@@ -520,7 +521,7 @@ theorem sixteen_neither :
       ¬ IsAnticonsistent (mk FOUR.U FOUR.I : SIXTEEN) ∧
       ¬ IsConsistent (mk FOUR.I FOUR.U : SIXTEEN) ∧
       ¬ IsAnticonsistent (mk FOUR.I FOUR.U : SIXTEEN) := by
-  simp only [Evidential.isConsistent_iff, Evidential.isAnticonsistent_iff]
+  simp only [Product.isConsistent_iff, Product.isAnticonsistent_iff]
   decide
 
 end Examples
