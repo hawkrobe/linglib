@@ -141,11 +141,12 @@ instance (op : EmbeddingOperator) (d : Display) : Decidable (globalExh op d) := 
 
 /-! ### The three approaches -/
 
-/-- Trivalent verdict from two meaning components: clearly true when both
-hold, clearly false when neither does, a truth-value gap when they conflict.
-Each §6 construal instantiates this with a different pair of components. -/
+/-- Trivalent verdict from two meaning components, the supervaluation over the
+pair: clearly true when both hold, clearly false when neither does, a
+truth-value gap when they conflict. Each §6 construal instantiates this with a
+different pair of components. -/
 def gapValue (p q : Prop) [Decidable p] [Decidable q] : Trivalent :=
-  if p ∧ q then .true else if ¬p ∧ ¬q then .false else .indet
+  Trivalent.supervaluation Finset.univ fun b : Bool ↦ if b then p else q
 
 /-- Two-candidate supervaluation ([spector-2013]; §6.2): supervaluate over
 the existential and universal resolutions of the definite. Extensionally this
@@ -239,7 +240,7 @@ exhaustification or the supervaluation/presupposition alternatives. -/
 theorem globalConstrual_no_never_gap (d : Display) :
     globalConstrual .no d ≠ .indet := by
   by_cases h : someReading .no d <;>
-    simp [globalConstrual, globalExh, gapValue, h]
+    simp [globalConstrual, globalExh, gapValue, Trivalent.supervaluation_eq_indet_iff, h]
 
 /-! ### The unembedded grid
 

@@ -242,7 +242,7 @@ theorem star_antitone (Q : Atom → W → Prop) {z z' : Finset Atom} (h : z' ⊆
 value: true when every atom satisfies the predicate, false when none does. -/
 theorem value_reading_star {x : Finset Atom} (hx : x.Nonempty) (Q : Atom → W → Prop)
     [∀ a w, Decidable (Q a w)] (w : W) :
-    value x (reading · (star Q)) w = Trivalent.dist x (Q · w) := by
+    value x (reading · (star Q)) w = Trivalent.supervaluation x (Q · w) := by
   have ht : TrueOnAll x (reading · (star Q)) w ↔ distMaximal Q x w := trueOnAll_reading _ _ _
   have hf : FalseOnAll x (reading · (star Q)) w ↔ noneSatisfy Q x w := by
     rw [falseOnAll_reading hx]
@@ -256,13 +256,13 @@ theorem value_reading_star {x : Finset Atom} (hx : x.Nonempty) (Q : Atom → W �
       obtain ⟨a, ha⟩ := (mem_parts.1 hz).1
       exact h a ((mem_parts.1 hz).2 ha) (hQ a ha)
   unfold value
-  rcases h : Trivalent.dist x (Q · w) with _ | _ | _
-  · rw [Trivalent.dist_eq_true_iff] at h
+  rcases h : Trivalent.supervaluation x (Q · w) with _ | _ | _
+  · rw [Trivalent.supervaluation_eq_true_iff] at h
     exact ite_eq_left (ht.2 h)
-  · rw [Trivalent.dist_eq_false_iff] at h
+  · rw [Trivalent.supervaluation_eq_false_iff] at h
     obtain ⟨a, ha⟩ := hx
     rw [ite_eq_right λ h' => h.2 a ha (ht.1 h' a ha), ite_eq_left (hf.2 h.2)]
-  · rw [Trivalent.dist_eq_indet_iff] at h
+  · rw [Trivalent.supervaluation_eq_indet_iff] at h
     obtain ⟨⟨a, ha, hQ⟩, b, hb, hQ'⟩ := h
     rw [ite_eq_right λ h' => hQ' (ht.1 h' b hb), ite_eq_right λ h' => hf.1 h' a ha hQ]
 
@@ -530,11 +530,12 @@ def solvedMath : Prop3 (ExamWorld Math) := barePlural (λ m w => m ∈ w.1) Fins
 
 theorem solvedMath_eq_true_iff (w : ExamWorld Math) :
     solvedMath w = .true ↔ w.1 = Finset.univ := by
-  simp [solvedMath, barePlural, Trivalent.dist_eq_true_iff, Finset.eq_univ_iff_forall]
+  simp [solvedMath, barePlural, Trivalent.supervaluation_eq_true_iff, Finset.eq_univ_iff_forall]
 
 theorem solvedMath_eq_false_iff [Nonempty Math] (w : ExamWorld Math) :
     solvedMath w = .false ↔ w.1 = ∅ := by
-  simp [solvedMath, barePlural, Trivalent.dist_eq_false_iff, Finset.eq_empty_iff_forall_notMem]
+  simp [solvedMath, barePlural, Trivalent.supervaluation_eq_false_iff,
+    Finset.eq_empty_iff_forall_notMem]
 
 /-- Križ's sentence addresses the pass/fail issue: its true worlds pass and its false worlds
 fail. -/

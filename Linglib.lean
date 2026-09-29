@@ -142,7 +142,6 @@ import Linglib.Core.Order.Bilattice.Representation
 import Linglib.Logic.ComparativeProbability.Defs
 import Linglib.Logic.Consequence
 import Linglib.Logic.CylindricAlgebra
-import Linglib.Logic.Duality
 import Linglib.Core.Relation.FactorsThroughOn
 import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 import Linglib.Core.MeasureTheory.Measure.Decomposition.RadonNikodym

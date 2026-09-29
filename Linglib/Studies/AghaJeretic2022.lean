@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Logic.Duality
 public import Linglib.Semantics.Homogeneity.Usable
 public import Linglib.Data.Generalizations.HomogeneityGap
 public import Linglib.Data.Examples.AghaJeretic2022
@@ -10,20 +9,20 @@ public import Mathlib.Order.Minimal
 # Weak necessity modals as homogeneous pluralities of worlds
 
 Weak necessity modals take obligatory apparent wide scope over negation, whether the negation is
-clausemate or in a higher clause: *you shouldn't go* cannot be continued by *but you are allowed
-to go*, where *you don't have to go* can. The pattern is that of plural definites, and Agha and
-Jeretič propose that *should* is to *must* what *the* is to *all*: strong necessity quantifies
-universally over the best worlds while weak necessity predicates the prejacent of their
-plurality. This file instantiates Križ's plural predication with worlds as the atoms: `should D p`
-is `Trivalent.dist` over the best worlds `D w` and `must D p` the universal quantifier, so the
-gap arises exactly in mixed domains (`should_eq_indet_iff`), negation is symmetric and hence
-scopeless (`should_not`), a true negated *should* contradicts the existential continuation where
-a negated *must* does not (`not_exists_of_should_not`, `must_false_of_indet`), and *necessarily*
-is the same gap remover as *all*, `Prop3.metaAssert`, which turns *should* into *must*
-(`must_eq_metaAssert_should`, `necessarily_removes_gap`). Križ's sufficient truth and
-addressing give the exception tolerance of the perfect-grade scenario under one question but
-not the other, and the unusability of *have to* under either (`exception_tolerance`), and the
-two-doors scenario where *should* is indeterminate and *must* false (`two_doors`).
+clausemate or in a higher clause: *you shouldn't go* cannot be continued by *but you are allowed to
+go*, where *you don't have to go* can. The pattern is that of plural definites, and Agha and Jeretič
+propose that *should* is to *must* what *the* is to *all*: strong necessity quantifies universally
+over the best worlds while weak necessity predicates the prejacent of their plurality. This file
+instantiates Križ's plural predication with worlds as the atoms: `should D p` is the supervaluation
+`Trivalent.supervaluation` over the best worlds `D w` and `must D p` the universal quantifier, so
+the gap arises exactly in mixed domains (`should_eq_indet_iff`), negation is symmetric and hence
+scopeless (`should_not`), a true negated *should* contradicts the existential continuation where a
+negated *must* does not (`not_exists_of_should_not`, `must_false_of_indet`), and *necessarily* is
+the same gap remover as *all*, `Prop3.metaAssert`, which turns *should* into *must*
+(`must_eq_metaAssert_should`, `necessarily_removes_gap`). Križ's sufficient truth and addressing
+give the exception tolerance of the perfect-grade scenario under one question but not the other, and
+the unusability of *have to* under either (`exception_tolerance`), and the two-doors scenario where
+*should* is indeterminate and *must* false (`two_doors`).
 
 Weak necessity is derived from strong necessity by an operator picking the unique minimal set
 in the quantifier, taken as the family of sets it holds of ([barwise-cooper-1981]): for *must*
@@ -57,8 +56,8 @@ without a formal counterpart here.
 
 namespace AghaJeretic2022
 
-open Trivalent (Prop3 dist dist_eq_true_iff dist_eq_false_iff dist_eq_indet_iff
-  dist_not_of_nonempty)
+open Trivalent (Prop3 supervaluation supervaluation_eq_true_iff supervaluation_eq_false_iff
+  supervaluation_eq_indet_iff supervaluation_not metaAssert_supervaluation)
 open Homogeneity Data.Examples
 open Generalizations.HomogeneityGap (GapDatum GapScenario fromExample)
 
@@ -67,28 +66,28 @@ variable {W : Type*} (D : W → Finset W) (p : W → Prop) [DecidablePred p]
 /-! ### Weak necessity as plural predication over worlds -/
 
 /-- `should D p`: the prejacent predicated of the plurality of best worlds `D w`. -/
-def should : Prop3 W := fun w => dist (D w) p
+def should : Prop3 W := fun w ↦ supervaluation (D w) p
 
 /-- `must D p`: the prejacent holds in every best world. -/
 def must : Prop3 W := fun w => Trivalent.ofBool (decide (∀ w' ∈ D w, p w'))
 
 theorem should_eq_true_iff (w : W) : should D p w = .true ↔ ∀ w' ∈ D w, p w' :=
-  dist_eq_true_iff _ _
+  supervaluation_eq_true_iff ..
 
 theorem should_eq_false_iff (w : W) :
     should D p w = .false ↔ (D w).Nonempty ∧ ∀ w' ∈ D w, ¬ p w' :=
-  dist_eq_false_iff _ _
+  supervaluation_eq_false_iff ..
 
 /-- The gap: some best worlds satisfy the prejacent and some do not. -/
 theorem should_eq_indet_iff (w : W) :
     should D p w = .indet ↔ (∃ w' ∈ D w, p w') ∧ ∃ w' ∈ D w, ¬ p w' :=
-  dist_eq_indet_iff _ _
+  supervaluation_eq_indet_iff ..
 
 /-- Homogeneity: over a nonempty domain, negating the prejacent negates the modal sentence, so
 the gap is symmetric and negation is scopeless. -/
 theorem should_not (w : W) (hne : (D w).Nonempty) :
     should D (fun w' => ¬ p w') w = (should D p w).neg :=
-  dist_not_of_nonempty _ _ hne
+  supervaluation_not _ hne
 
 /-- A true negated weak necessity leaves no best world for the existential continuation. -/
 theorem not_exists_of_should_not (w : W) (h : should D (fun w' => ¬ p w') w = .true) :
@@ -107,15 +106,8 @@ theorem must_false_of_indet (w : W) (h : should D p w = .indet) :
 
 /-- *Must* is *should* with its gap removed: the universal quantifier is the meta-assertion of
 the plural predication, as *all* is of *the*. -/
-theorem must_eq_metaAssert_should : must D p = (should D p).metaAssert := by
-  funext w
-  simp only [must, should, Prop3.metaAssert]
-  by_cases h : ∀ w' ∈ D w, p w'
-  · rw [decide_eq_true h, (dist_eq_true_iff _ _).2 h]; rfl
-  · rw [decide_eq_false h]
-    rcases hd : dist (D w) p with _ | _ | _
-    · exact absurd ((dist_eq_true_iff _ _).1 hd) h
-    all_goals rfl
+theorem must_eq_metaAssert_should : must D p = (should D p).metaAssert :=
+  funext fun w ↦ (metaAssert_supervaluation (D w) p).symm
 
 theorem isBivalent_must : (must D p).isBivalent :=
   must_eq_metaAssert_should D p ▸ Prop3.isBivalent_metaAssert _
