@@ -11,15 +11,19 @@ This file types the person members of the Hungarian negative and free-choice ser
 it requires clausemate negation, and under negation in a higher clause it gives way to *valaki
 is*, as Kenesei, Vago and Fenyvesi show (§1.4.3, §1.4.5), who call *senki* and *semmi*
 universal negative polarity items. *akárki* and *bárki* 'anyone' are free-choice items, as in
-*Akárki jöhet a konferenciára* 'Anyone may come to the conference'.
+*Akárki jöhet a konferenciára* 'Anyone may come to the conference'. Haspelmath (A.26.3) finds
+the two series mainly in the free-choice function, but also in comparatives, under indirect
+negation and, with an emphatic value, in conditionals, and stars both under direct negation and
+in questions.
 
-## TODO
+## Implementation notes
 
-Haspelmath (A.26) admits the *akár*- and *bár*-series in comparatives, under indirect negation
-and, with an emphatic value, in conditionals, and stars both series under direct negation and in
-questions. The licensing relation cannot record this: an item with any `licensor` is licensed by
-clausal negation, and an item licensed in a conditional antecedent is also licensed in
-questions. The free-choice entries therefore carry no `licensor`.
+The comparative *mint akárhol Európában* 'than anywhere in Europe' is listed under the clausal
+comparative, the licensing theory's routing of a surface *than NP*; the indirect negation of
+Haspelmath's (A202), negation in a higher clause, has no licensing context. A weak negative
+polarity item is licensed under clausal negation and in questions, so the licensing theory admits
+both series where Haspelmath stars them (`freeChoice_excluded_admitted`); his implicational map
+describes the series by a region of functions instead.
 
 ## References
 
@@ -34,41 +38,48 @@ namespace Hungarian.PolarityItems
 
 open PolarityItem
 
-/-- *senki* 'nobody' is licensed by clausemate negation alone. -/
+/-- *senki* 'nobody', which needs clausemate negation. -/
 def senki : PolarityItem :=
   { form := Indefinites.senki.form
   , licensor := some .antiMorphic
-  , baseForce := .existential
   , licensingContexts := [.negation] }
 
-/-- *akárki* 'anyone' is a free-choice item, attested under a possibility modal and, in its
-series, in the free relative *Akármit mondasz, elindulok holnap* 'No matter what you say, I'm
-leaving tomorrow'. -/
+/-- *akárki* 'anyone', a free choice item attested under a possibility modal, *Akárki
+tanulhatott* 'Anybody could learn', and, in its series, in the free relative *Akármit mondasz,
+elindulok holnap* 'No matter what you say, I'm leaving tomorrow', in comparatives and in
+conditionals, and starred under direct negation and in questions ([haspelmath-1997] A199a,
+A200–A204). -/
 def akárki : PolarityItem :=
   { form := Indefinites.akárki.form
+  , licensor := some .weak
   , freeChoice := true
-  , baseForce := .existential
-  , licensingContexts := [.modalPossibility, .freeRelative] }
+  , licensingContexts :=
+      [.modalPossibility, .freeRelative, .clausalComparative, .conditionalAntecedent]
+  , excludedContexts := [.negation, .question] }
 
-/-- *bárki* 'anyone' is a free-choice item, attested under a possibility modal. -/
+/-- *bárki* 'anyone', a free choice item attested under a possibility modal and, in its series, in
+comparatives and in conditionals, and starred under direct negation and in questions
+([haspelmath-1997] A199a, A201, A203, A204). -/
 def bárki : PolarityItem :=
   { form := Indefinites.bárki.form
+  , licensor := some .weak
   , freeChoice := true
-  , baseForce := .existential
-  , licensingContexts := [.modalPossibility] }
+  , licensingContexts := [.modalPossibility, .clausalComparative, .conditionalAntecedent]
+  , excludedContexts := [.negation, .question] }
 
-/-- *senki* is licensed exactly under clausemate negation. -/
-theorem senki_licensing_characterized :
-    ∀ c, c.licenses senki ↔ c ∈ senki.licensingContexts := by decide
+/-- *Senki* needs clausemate negation, the only anti-morphic context, so clausal negation alone
+licenses it. -/
+theorem senki_licensing_characterized (c : LicensingContext) :
+    c.Licenses senki ↔ c = .negation :=
+  LicensingContext.licenses_iff_eq_negation rfl (by decide) c
 
-/-- The free-choice items are licensed in every context they are attested in. -/
+/-- The free-choice items are admitted in every context they are attested in. -/
 theorem freeChoice_licensing_sound :
-    ∀ e ∈ [akárki, bárki], ∀ c ∈ e.licensingContexts, c.licenses e := by decide
+    ∀ e ∈ [akárki, bárki], ∀ c ∈ e.licensingContexts, c.Admits e := by decide
 
-/-- Neither free-choice item is licensed by clausal negation or in a question, where Haspelmath
-stars both series. -/
-theorem freeChoice_not_negation_question :
-    ∀ e ∈ [akárki, bárki], ¬ LicensingContext.negation.licenses e ∧
-      ¬ LicensingContext.question.licenses e := by decide
+/-- The licensing theory admits both free-choice series under clausal negation and in questions,
+where [haspelmath-1997] stars them: a weak negative polarity item is licensed in both. -/
+theorem freeChoice_excluded_admitted :
+    ∀ e ∈ [akárki, bárki], ∀ c ∈ e.excludedContexts, c.Admits e := by decide
 
 end Hungarian.PolarityItems

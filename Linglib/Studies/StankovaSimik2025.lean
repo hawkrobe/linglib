@@ -109,7 +109,7 @@ def Indefinite.entry : Indefinite → PolarityItem
 falls under FALSUM and a negative one under the canonical operator (the paper's (11) and
 (12)). -/
 def LicensedAt (e : PolarityItem) (n : Polarity) : Prop :=
-  (e.isPPI → n = .positive) ∧ (e.isNPI → n = .negative)
+  (e.IsPPI → n = .positive) ∧ (e.IsNPI → n = .negative)
 
 instance (e : PolarityItem) (n : Polarity) : Decidable (LicensedAt e n) := by
   unfold LicensedAt; infer_instance

@@ -20,12 +20,12 @@ interpretation. Widening weakens an existential (`existsInDomain_mono`), so stre
 exactly under an antitone context (`Strengthening`, `de_satisfies_strengthening`), which is why
 [ladusaw-1979]'s downward-entailing contexts license and why a positive context does not
 (`ue_widening_weakens`); a context's mechanism and signature are read from the substrate's
-`LicensingContext.properties` (`klExplanation`, `ladusaw_de_is_kl_strengthening`). Section 3
-handles the recalcitrant cases: adversatives are downward entailing with the perspective held
-constant, so *sorry* licenses and *glad* does not (`sorry_licenses_any`, `glad_does_not_license`)
-except on a settle-for-less reading; a negated *because*-clause licenses only by a
-metalinguistic denial of its presupposition; and conditional antecedents strengthen once the
-implicit restriction is fixed (`widening_satisfies_conditional_strengthening`). The paper's
+`LicensingContext.mechanism` and `LicensingContext.signature` (`ladusaw_de_is_kl_strengthening`).
+Section 3 handles the recalcitrant cases: adversatives are downward entailing with the perspective
+held constant, so *sorry* licenses and *glad* does not (`sorry_licenses_any`,
+`glad_does_not_license`) except on a settle-for-less reading; a negated *because*-clause licenses
+only by a metalinguistic denial of its presupposition; and conditional antecedents strengthen once
+the implicit restriction is fixed (`widening_satisfies_conditional_strengthening`). The paper's
 judgments follow this classification row by row (`rows_agree`). Section 4 models the generic
 restriction as a vague property set (`VagueRestriction`): widening along a dimension makes the
 quantifier universal with respect to it (`any_cn_dimensionally_universal`), domain vagueness is
@@ -99,53 +99,18 @@ theorem ue_widening_weakens {World Entity : Type*} {C : Set World → Set World}
     (hD : D ⊆ D') : C (existsInDomain D P) ⊆ C (existsInDomain D' P) :=
   hUE (existsInDomain_mono P hD)
 
-/-! ### Licensing contexts and entailment signatures
-
-Each context's entailment signature and licensing mechanism are projected
-from the canonical `PolarityItem.LicensingContext.properties` table, so
-this file's classification cannot drift from the substrate's. -/
-
-/-- A licensing context's entailment signature in [icard-2012]'s lattice —
-the Strawson-operative row, matching K&L's own convention of checking the
-DE pattern modulo factive presuppositions. -/
-abbrev contextSignature (c : LicensingContext) : Signature :=
-  c.properties.strawsonSignature
-
-/-- A context guarantees K&L strengthening iff its entailment signature is on
-the DE side. Contexts with `.mono` or higher signatures are licensed by other
-routes: K&L defer questions to [kadmon-landman-1990] and never discuss
-superlatives — the Strawson-DE route for the latter is later literature
-([von-fintel-1999]). -/
-abbrev GuaranteesStrengthening (c : LicensingContext) : Prop :=
-  (contextSignature c).toDEStrength.isSome = true
-
-/-- A licensing context's K&L mechanism, projected from `LicensingContext.properties`:
-*why* the context licenses, not merely *that* it does. -/
-abbrev klExplanation (c : LicensingContext) : LicensingMechanism :=
-  c.properties.mechanism
-
-/-- Drift sentry: every context classified `byStrengthening` has a DE
-entailment signature. -/
-theorem strengthening_implies_de (ctx : LicensingContext)
-    (h : klExplanation ctx = .byStrengthening) :
-    GuaranteesStrengthening ctx := by
-  revert h; cases ctx <;> decide
-
 /-! ### Compatibility with Ladusaw 1979
 
-K&L's classification refines [ladusaw-1979]'s: every Ladusaw-DE context is a
-strengthening context, but K&L additionally explain adversative predicates
-(DE on a constant perspective) and conditionals with implicit restrictions. -/
+Each context's licensing mechanism is the substrate's `PolarityItem.LicensingContext.mechanism`,
+so this file's classification cannot drift from the substrate's. K&L's classification refines
+[ladusaw-1979]'s: every Ladusaw-DE context is a strengthening context, but K&L additionally
+explain adversative predicates (DE on a constant perspective) and conditionals with implicit
+restrictions. -/
 
-/-- Ladusaw-DE contexts are K&L strengthening contexts — or, where the DE
-status is itself only Strawson (superlatives, per the later
-[von-fintel-1999]), the Strawson refinement of strengthening. Ladusaw
-describes *where* NPIs occur; K&L and the Strawson tradition explain
-*why*. -/
+/-- Ladusaw-DE contexts are K&L strengthening contexts: Ladusaw describes *where* NPIs occur,
+K&L explain *why*. -/
 theorem ladusaw_de_is_kl_strengthening (ctx : LicensingContext)
-    (hDE : IsDownwardEntailing ctx) :
-    klExplanation ctx = .byStrengthening ∨
-    klExplanation ctx = .byStrawsonDE := by
+    (hDE : IsDownwardEntailing ctx) : ctx.mechanism = .strengthening := by
   revert hDE; cases ctx <;> decide
 
 /-! ### Adversative predicates: *sorry* vs *glad*
@@ -255,13 +220,13 @@ inductive AnyInterpretation where
 licensing mechanism: generic exactly when the substrate classifies the
 context as licensed by the generic indefinite. -/
 def interpretationOf (c : LicensingContext) : AnyInterpretation :=
-  match klExplanation c with
-  | .byGenericIndefinite => .generic
+  match c.mechanism with
+  | .genericIndefinite => .generic
   | _ => .episodic
 
 theorem interpretationOf_eq_generic_iff (c : LicensingContext) :
-    interpretationOf c = .generic ↔ klExplanation c = .byGenericIndefinite := by
-  cases h : klExplanation c <;> simp only [interpretationOf, h] <;> decide
+    interpretationOf c = .generic ↔ c.mechanism = .genericIndefinite := by
+  cases h : c.mechanism <;> simp only [interpretationOf, h] <;> decide
 
 /-! ### Vague restrictions and precisifications
 
@@ -572,7 +537,7 @@ structure Row where
 exists, else the local one. -/
 def Row.signature (r : Row) : Signature :=
   match r.context with
-  | some c => contextSignature c
+  | some c => c.signature
   | none => r.localSignature
 
 def contextOf : String → Option LicensingContext
@@ -607,7 +572,7 @@ context is downward entailing, so widening strengthens, or generic, or read as s
 less under *glad*, or read as a metalinguistic denial under a negated *because*. -/
 theorem rows_agree :
     ∀ r ∈ rows, r.grammatical = true ↔
-      r.signature.toDEStrength.isSome = true ∨ r.context = some .generic ∨
+      r.signature.toDEStrength ≠ ⊥ ∨ r.context = some .generic ∨
         r.settleForLess = true ∨ r.metalinguistic = true := by
   decide
 

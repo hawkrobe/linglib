@@ -43,11 +43,7 @@ open PolarityItem
 def kukaan : PolarityItem :=
   { form := "kukaan"
   , licensor := some .weak
-  , baseForce := .existential
-  , licensingContexts := [.question, .negation]
-  , scalarDirection := some .strengthening
-  , morphology := .indefPlusEven
-  , alternativeType := .domain }
+  , licensingContexts := [.question, .negation] }
 
 /-! ### FCI -/
 
@@ -57,9 +53,7 @@ alternant with *hyvänsä*. -/
 def kukaTahansa : PolarityItem :=
   { form := "kuka tahansa"
   , freeChoice := true
-  , baseForce := .existential
-  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
-  , scalarDirection := some .strengthening }
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic] }
 
 /-! ### PPI -/
 
@@ -68,15 +62,13 @@ the positive counterpart of the negated *ennen kuin* ([karttunen-1974]). Its con
 `Finnish.TemporalConnectives.vasta`. -/
 def vasta : PolarityItem :=
   { form := TemporalConnectives.vasta.form
-  , ppi := true
-  , baseForce := .temporal
-  , licensingContexts := [] }
+  , antiLicensor := some .antiMorphic }
 
 /-- The entries. -/
 def items : List PolarityItem := [kukaan, kukaTahansa, vasta]
 
 /-- Every context of every entry licenses it. -/
 theorem finnish_licensing_sound :
-    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.licenses e := by decide
+    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.Admits e := by decide
 
 end Finnish.PolarityItems

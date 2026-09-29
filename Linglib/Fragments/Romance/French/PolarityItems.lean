@@ -3,32 +3,24 @@ module
 public import Linglib.Semantics.Polarity.Licensing
 
 /-!
-# French Polarity-Sensitive Items
-[haspelmath-1997] [zanuttini-1997]
+# French polarity items
 
-Lexical entries for French polarity-sensitive items (n-word series and
-related), typed by the theory-neutral categories from
-`Polarity`. Standard sentential negation lives in the
-sibling `Fragments/French/Negation.lean`; this file holds only the
-lexical reactives (operator/lexical-reactive split documented in
-`Core/Lexical/NegMarker.lean`).
+The French negative words *personne* 'nobody', *rien* 'nothing', *jamais* 'never' and *plus* 'no
+more', typed by `PolarityItem`. They go back to the noun *personne* 'person', the Latin noun *rem*
+'thing', Latin *iam* 'already' + *magis* 'more', and the comparative *plus* 'more'
+([haspelmath-1997] A.9.2). The *personne*-series is used most often in direct negation with the
+preverbal particle *ne*, as in *Je ne vois rien* 'I cannot see anything', and also under indirect
+negation, *Je doute que personne y réussisse* 'I doubt that anybody will succeed in it', in
+comparatives, and in rhetorical questions and conditionals, *si rien s'ébruite dans la presse*
+'if anything transpires in the media' ([haspelmath-1997] A.9.3). French is a non-strict negative
+concord language whose negator *ne* is optional before and after the negative word
+([van-der-auwera-van-alsenoy-2016] (32)), so the negative words carry the weak licensor that
+Spanish and Italian negative words carry. Clausal negation is in the sibling `Negation.lean`.
 
-## The French n-word series
+## References
 
-French *personne*, *rien*, *jamais*, *plus* originate as ordinary nouns
-or adverbs ('person', 'thing', 'ever', 'more') that grammaticalized into
-negative polarity items via the Jespersen cycle. In modern French they
-co-occur with *ne* (where *ne* is preserved): *Je n'ai vu personne*
-'I haven't seen anyone', *Il n'y a plus de pain* 'There's no more bread'.
-In *ne*-drop registers, the n-word alone carries the negation:
-*J'ai vu personne*.
-
-French negative concord is non-strict (n-words license each other and
-*ne* is droppable), so *personne*/*rien* carry
-`licensor := some .antiAdditive` — concord under a negative quantifier is
-anti-additive licensing at this grain — while *jamais* keeps the weak-NPI
-distribution of its ever face (questions). A typed model of the
-bipartite *ne* dependency would live in the substrate, not per-Fragment.
+* [haspelmath-1997]
+* [van-der-auwera-van-alsenoy-2016]
 -/
 
 @[expose] public section
@@ -37,59 +29,40 @@ namespace French.PolarityItems
 
 open PolarityItem
 
-/-- *personne* — N-word for human ('nobody').
-    Grammaticalized from the noun 'person'. Co-occurs with *ne* in
-    formal French; stands alone in colloquial *ne*-drop registers. -/
+/-- *personne* 'nobody, anybody': *Personne n'a jamais dit rien* 'Nobody ever said anything', *Je
+doute que personne y réussisse* ([haspelmath-1997] A68b, A69a). -/
 def personne : PolarityItem :=
   { form := "personne"
-  , licensor := some .antiAdditive
-  , baseForce := .existential
-  , licensingContexts := [.negation, .nobody, .withoutClause]
-  , scalarDirection := some .strengthening }
+  , licensor := some .weak
+  , licensingContexts := [.negation, .doubtVerb] }
 
-/-- *rien* — N-word for non-human ('nothing').
-    Grammaticalized from a Latin noun 'thing'. Same distribution as
-    *personne*. -/
+/-- *rien* 'nothing, anything': *Je ne vois rien*, under *personne* in *Personne n'a jamais dit
+rien*, in a rhetorical question, *valait-il de lui rien sacrifier?* 'would it be worth
+sacrificing anything for it?', and in a conditional ([haspelmath-1997] A68, A66b, A67a). -/
 def rien : PolarityItem :=
   { form := "rien"
-  , licensor := some .antiAdditive
-  , baseForce := .existential
-  , licensingContexts := [.negation, .nobody, .withoutClause]
-  , scalarDirection := some .strengthening }
+  , licensor := some .weak
+  , licensingContexts := [.negation, .nobody, .question, .conditionalAntecedent] }
 
-/-- *jamais* — Temporal n-word ('never').
-    Grammaticalized from 'ever'. Pre-Jespersen *jamais* was a positive
-    indefinite; modern *jamais* is the negative, requiring *ne*-licensing
-    in formal register. -/
+/-- *jamais* 'never, ever', under *personne* in *Personne n'a jamais dit rien*
+([haspelmath-1997] A68b). -/
 def jamais : PolarityItem :=
   { form := "jamais"
   , licensor := some .weak
-  , baseForce := .temporal
-  , licensingContexts := [.negation, .nobody, .withoutClause, .question]
-  , scalarDirection := some .strengthening }
+  , licensingContexts := [.negation, .nobody] }
 
-/-- *plus* — Temporal/quantitative n-word ('no more', 'no longer').
-    Same lexeme as positive *plus* 'more'; the negative reading requires
-    co-occurrence with *ne* (or *ne*-drop register) and contextual
-    triggering. -/
+/-- *plus* 'no more, no longer', the comparative *plus* 'more' with *ne*. -/
 def plus : PolarityItem :=
   { form := "plus"
   , licensor := some .weak
-  , baseForce := .temporal
-  , licensingContexts := [.negation]
-  , scalarDirection := some .strengthening }
+  , licensingContexts := [.negation] }
 
-/-! ### Joint -/
-
-/-- The French polarity-item inventory: the Fragment-side joint listing
-    every polarity item this fragment defines. -/
+/-- The French polarity items. -/
 def items : List PolarityItem :=
   [personne, rien, jamais, plus]
 
-/-! ### Verification -/
-
-/-- Every attested context of every entry is predicted licensed. -/
+/-- Every attested context of every entry licenses it. -/
 theorem french_licensing_sound :
-    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.licenses e := by decide
+    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.Admits e := by decide
 
 end French.PolarityItems

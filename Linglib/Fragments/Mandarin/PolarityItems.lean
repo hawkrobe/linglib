@@ -44,11 +44,9 @@ def shei : PolarityItem :=
   { form := "shéi"
   , licensor := some .weak
   , freeChoice := true
-  , baseForce := .existential
   , licensingContexts :=
       [ .question, .conditionalAntecedent, .clausalComparative
-      , .modalPossibility, .modalNecessity, .imperative, .generic ]
-  , scalarDirection := some .strengthening }
+      , .modalPossibility, .modalNecessity, .imperative, .generic ] }
 
 /-- *shénme* (什么 'what', non-interrogative) — NPI/FCI, the same
     seven-function span plus perfect direct negation: *Tā bù xǐhuan
@@ -59,11 +57,9 @@ def shenme : PolarityItem :=
   { form := "shénme"
   , licensor := some .weak
   , freeChoice := true
-  , baseForce := .existential
   , licensingContexts :=
       [ .negation, .question, .conditionalAntecedent, .clausalComparative
-      , .modalPossibility, .modalNecessity, .imperative, .generic ]
-  , scalarDirection := some .strengthening }
+      , .modalPossibility, .modalNecessity, .imperative, .generic ] }
 
 /-! ### The emphatic dōu~yě series -/
 
@@ -72,17 +68,13 @@ def shenme : PolarityItem :=
     doesn't trust anyone' ([li-thompson-1981] p. 528). The two particles
     are interchangeable in the direct-negation function, the series' only
     region on the map, and occur preverbally only ([haspelmath-1997]
-    A269, Fig. A.36). `baseForce` is universal: the same formation
-    without negation is 'everyone', and [haspelmath-1997] (p. 309) leaves
-    open whether the negated uses are indefinites or wide-scope
-    universals. -/
+    A269, Fig. A.36). The same formation without negation is 'everyone',
+    and [haspelmath-1997] (p. 309) leaves open whether the negated uses are
+    indefinites or wide-scope universals. -/
 def sheiDou : PolarityItem :=
   { form := "shéi dōu"
   , licensor := some .antiMorphic
-  , baseForce := .universal
-  , licensingContexts := [.negation]
-  , scalarDirection := some .strengthening
-  , morphology := .indefPlusEven }
+  , licensingContexts := [.negation] }
 
 /-! ### The free-choice determiner -/
 
@@ -98,22 +90,19 @@ def renhe : PolarityItem :=
   { form := "rènhé"
   , licensor := some .weak
   , freeChoice := true
-  , baseForce := .existential
-  , licensingContexts := [.negation, .modalPossibility, .clausalComparative]
-  , scalarDirection := some .strengthening }
+  , licensingContexts := [.negation, .modalPossibility, .clausalComparative] }
 
 /-! ### Verification -/
 
-/-- Every attested context of every entry is predicted licensed. -/
+/-- Every attested context of every entry admits it. -/
 theorem mandarin_licensing_sound :
-    ∀ e ∈ [shei, shenme, sheiDou, renhe], ∀ c ∈ e.licensingContexts,
-      c.licenses e := by decide
+    ∀ e ∈ [shei, shenme, sheiDou, renhe], ∀ c ∈ e.licensingContexts, c.Admits e := by decide
 
-/-- The licensing keystone characterizes the emphatic series exactly: its
-    anti-morphic licensor makes clausal negation the only licensing row,
-    matching its direct-negation-only distribution. -/
-theorem sheiDou_licensing_characterized :
-    ∀ c, c.licenses sheiDou ↔ c ∈ sheiDou.licensingContexts := by decide
+/-- The emphatic series needs clausemate negation, the only anti-morphic context, so clausal
+negation alone licenses it, matching its direct-negation-only distribution. -/
+theorem sheiDou_licensing_characterized (c : LicensingContext) :
+    c.Licenses sheiDou ↔ c = .negation :=
+  LicensingContext.licenses_iff_eq_negation rfl (by decide) c
 
 /-- Direct negation is attested with *shénme* but not with bare *shéi*,
     whose direct-negation slot the emphatic series fills instead. -/

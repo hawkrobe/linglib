@@ -26,17 +26,14 @@ def piPis : PolarityItem :=
   { form := "pi-pis"
   , licensor := some .weak
   , freeChoice := true
-  , baseForce := .existential
   , licensingContexts :=
       [.negation, .question, .conditionalAntecedent, .clausalComparative,
-       .modalPossibility, .imperative, .generic]
-  , scalarDirection := some .strengthening
-  , morphology := .indefPlusEven }
+       .modalPossibility, .imperative, .generic] }
 
 /-! ### Verification -/
 
-/-- Every attested context is predicted licensed. -/
+/-- Every attested context admits the item. -/
 theorem piPis_licensing_sound :
-    ∀ c ∈ piPis.licensingContexts, c.licenses piPis := by decide
+    ∀ c ∈ piPis.licensingContexts, c.Admits piPis := by decide
 
 end Quechua.PolarityItems
