@@ -6,6 +6,7 @@ public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Semantics.Presupposition.TriggerTypology
 public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Events.PathDir
 public import Linglib.Semantics.Attitudes.Basic
 public import Linglib.Semantics.Causation.VerbClass
 public import Linglib.Semantics.ArgumentStructure.LevinClass
@@ -41,7 +42,9 @@ these fields in `Syntax/Category/Verb/Basic.lean`.
 * [heim-1992]
 * [icard-2012]
 * [kennedy-2007]
+* [levin-hovav-1995]
 * [maier-2015]
+* [pantcheva-2011]
 * [qing-uegaki-2025]
 * [rappaport-hovav-levin-2024]
 * [rappaport-hovav-levin-1998]
@@ -121,8 +124,8 @@ structure ArgStructure where
   passivizable : Bool := true
   deriving Repr, BEq
 
-/-- The aspectual class of a verb is its Vendler class, degree-achievement scale,
-    incrementality and phasal class. -/
+/-- The aspectual class of a verb is its Vendler class, degree-achievement scale, direction of
+    motion, incrementality and phasal class. -/
 structure Aspect where
   /-- [vendler-1957] aspectual class of the verb's base VP.
       For verbs whose class depends on the object NP (eat apples = activity,
@@ -135,6 +138,12 @@ structure Aspect where
   /-- The pole of the dimension towards which a degree achievement measures change, negative
       for *dry*, a decrease in wetness. -/
   scalePolarity : Polarity := .positive
+  /-- The direction of the path along which a verb of motion displaces its theme, relative to
+      the ground ([pantcheva-2011]): `.goal` for *arrive* and *come*, `.source` for *leave*, and
+      `.place` for a verb of manner of motion, which displaces its theme without a direction
+      ([levin-hovav-1995] p. 147, *roll*, *walk*, *swim* against *arrive*, *come*, *fall*).
+      `none` for a verb that says nothing of its theme's path. -/
+  direction : Option Spatial.PathDir := none
   /-- The [krifka-1998] incrementality class of the theme relation, `none` for intransitives
       and clause-embedding verbs. -/
   incrementality : Option Incrementality := none

@@ -29,6 +29,7 @@ its citation form, less the classes that list the form in a sense the entry is n
 * [levin-1993]
 * [bruening-2021]
 * [fillmore-1986]
+* [levin-hovav-1995]
 -/
 
 @[expose] public section
@@ -129,6 +130,7 @@ def run : Verb where
   subjectEntailments := some activitySubjectProfile
   passivizable := false
   vendlerClass := some .activity
+  direction := some .place
   root := { content := {
     force := {.moderate}
     agentControl := {.compatible}
@@ -149,6 +151,7 @@ def arrive : Verb := .mkRegular {
   subjectEntailments := some achievementSubjectProfile
   passivizable := false
   vendlerClass := some .achievement
+  direction := some .goal
   levinClasses := {LevinClass.inherentlyDirectedMotion} }
 
 /-- "come" — Levin 51.1 inherently directed motion, like `arrive`. -/
@@ -161,6 +164,7 @@ def come : Verb where
   frames := [ArgumentFrame.unaccusative]
   passivizable := false
   vendlerClass := some .achievement
+  direction := some .goal
   levinClasses := {LevinClass.appear, .inherentlyDirectedMotion}
 
 /-- "go" — Levin 51.1 inherently directed motion, suppletive in the past. -/
@@ -174,6 +178,18 @@ def go : Verb where
   passivizable := false
   vendlerClass := some .achievement
   levinClasses := {LevinClass.inherentlyDirectedMotion}
+
+/-- *Run into the room*: a bounded goal phrase makes a verb of manner of motion directed and
+telic, while *run behind the house* leaves it as it is. -/
+example : (run.withPath Adposition.into).direction = some .goal ∧
+    (run.withPath Adposition.into).vendlerClass = some .accomplishment ∧
+    run.withPath Adposition.behind = run.toVerb :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- *Dance* says nothing of a path, *run* displaces its subject without a direction, and *arrive*
+lexicalizes a goal ([levin-hovav-1995] p. 147). -/
+example : dance.direction = none ∧ run.direction = some .place ∧ arrive.direction = some .goal :=
+  ⟨rfl, rfl, rfl⟩
 
 /-- "eat" — transitive, implicit object is indefinite ("Have you eaten?") -/
 def eat : Verb where

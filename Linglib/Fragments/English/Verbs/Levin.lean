@@ -632,6 +632,7 @@ def walk : Verb := .mkRegular {
   frames := [ArgumentFrame.intransitive, ArgumentFrame.np, ArgumentFrame.unaccusative]
   passivizable := false
   vendlerClass := some .activity
+  direction := some .place
   levinClasses := {LevinClass.run} }
 
 /-- "swim" — Levin 51.3 Manner of Motion verbs. -/
@@ -644,6 +645,7 @@ def swim : Verb where
   frames := [ArgumentFrame.intransitive, ArgumentFrame.np, ArgumentFrame.unaccusative]
   passivizable := false
   vendlerClass := some .activity
+  direction := some .place
   levinClasses := {LevinClass.run, .swarm, .tingle}
 
 /-- "fly" — Levin 51.4 Vehicle Motion verbs. -/
@@ -664,6 +666,7 @@ def roll : Verb := .mkRegular {
   frames := [ArgumentFrame.intransitive, ArgumentFrame.np, ArgumentFrame.unaccusative]
   passivizable := false
   vendlerClass := some .activity
+  direction := some .place
   levinClasses := {LevinClass.build, .coil, .crane, .prepare, .roll, .run, .shake, .slide,
     .soundEmission, .split} }
 
