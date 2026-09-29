@@ -264,7 +264,7 @@ def rollen : Verb :=
 
 /-! ### The perfect auxiliary -/
 
-/-- The entry with a path phrase of reading `p`, its forms kept (`_root_.Verb.withPath`). -/
+/-- The predicate the entry `v` forms with a path phrase of reading `p`. -/
 def Verb.withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
   { v with toVerb := v.toVerb.withPath p }
 
@@ -298,20 +298,6 @@ example : perfect wandelen .intransitive = .have ∧
     perfect (wandelen.withPath Adposition.behind) .intransitive = .have := by
   decide
 
-/-- The auxiliaries of [sorace-2000]'s Dutch examples: *zijn* for *komen* (1c), *sterven* (9b),
-*groeien* (10a), *stijgen* (11), *overblijven* (18a) and *blijven* (19b); *hebben* for *duren*
-(18b), *staan* (24a), *bestaan* (24b), *blazen* (33c), *lopen* (37b) and *rollen* (39a); and *zijn*
-for *rollen* with a directional phrase (39b). -/
-example :
-    [perfect komen .unaccusative, perfect sterven .unaccusative, perfect groeien .unaccusative,
-      perfect stijgen .unaccusative, perfect overblijven .unaccusative,
-      perfect blijven .unaccusative] = [.be, .be, .be, .be, .be, .be] ∧
-    [perfect duren .intransitive, perfect staan .unaccusative, perfect bestaan .unaccusative,
-      perfect blazen .intransitive, perfect lopen .intransitive, perfect rollen .unaccusative] =
-      [.have, .have, .have, .have, .have, .have] ∧
-    perfect (rollen.withPath Adposition.into) .unaccusative = .be := by
-  decide
-
 /-! ### The inventory -/
 
 /-- `inventory` lists the entries. -/
@@ -325,8 +311,7 @@ def inventory : List Verb :=
 theorem form_eq_infinitive : ∀ v ∈ inventory, v.form = v.infinitive := by decide
 
 /-- Every verb of manner of motion selects a directional phrase, so that all of them take *zijn*
-under one that bounds the path ([sorace-2000] §4.3, Dutch "the most systematic language in this
-respect"). -/
+under one that bounds the path. -/
 theorem takesSpatial_of_direction_eq_place :
     ∀ v ∈ inventory, v.direction = some .place → v.TakesSpatial := by
   decide

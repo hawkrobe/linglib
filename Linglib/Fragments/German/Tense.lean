@@ -166,14 +166,15 @@ def register (f : Tense.Form) : SocialMeaning.Register :=
 open Verbs in
 /-- The groups of §12.3.2: *sein* for the verbs of motion *rennen*, *laufen* and *ankommen*, for
 *frieren* as a change of state and for *bleiben*; *haben* for the transitive *bauen*, for
-*arbeiten* and *tanzen*, which denote an activity as such, and for impersonal *frieren*; and
-*sein* for *tanzen* with a directional phrase, which it selects, but not for *arbeiten*, which
-selects none. -/
+*arbeiten* and *tanzen*, which denote an activity as such, for the state *liegen* and for
+impersonal *frieren*; and *sein* for *tanzen* with a directional phrase, which it selects, but not
+for *arbeiten*, which selects none. -/
 example :
     [perfect rennen .intransitive, perfect laufen .intransitive, perfect ankommen .unaccusative,
       perfect frieren .unaccusative, perfect bleiben .intransitive] = [.be, .be, .be, .be, .be] ∧
     [perfect bauen .np, perfect arbeiten .intransitive, perfect tanzen .intransitive,
-      perfect frieren .impersonal] = [.have, .have, .have, .have] ∧
+      perfect liegen .intransitive, perfect frieren .impersonal] =
+      [.have, .have, .have, .have, .have] ∧
     perfect (tanzen.withPath Adposition.into) .intransitive = .be ∧
     perfect (arbeiten.withPath Adposition.into) .intransitive = .have := by
   decide

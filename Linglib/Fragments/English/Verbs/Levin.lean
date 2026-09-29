@@ -1,16 +1,13 @@
 module
 
 public import Linglib.Fragments.English.Verbs.Basic
-public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 
 /-!
 # English verbs by Levin class
 
 This file defines the English verbs entered under the smaller of Levin's classes, from putting
 and removing through creation, perception, judgment, the body, emission, existence and
-appearance, motion and weather, each with the frames Levin's alternations require. The entries
-of existence and motion are placed on [sorace-2000]'s Auxiliary Selection Hierarchy by
-`AuxiliarySelectionHierarchy.ofVerb`.
+appearance, motion and weather, each with the frames Levin's alternations require.
 
 ## References
 
@@ -18,7 +15,6 @@ of existence and motion are placed on [sorace-2000]'s Auxiliary Selection Hierar
 * [degen-tonhauser-2022]
 * [majid-boster-bowerman-2008]
 * [smith-1997]
-* [sorace-2000]
 -/
 
 @[expose] public section
@@ -719,23 +715,5 @@ def rain : Verb := .mkRegular {
   passivizable := false
   vendlerClass := some .activity
   levinClasses := {LevinClass.weather} }
-
-/-! ### The Auxiliary Selection Hierarchy -/
-
-/-- *Arrive* and *come* are changes of location, *exist* the existence of a state, and the verbs
-of manner of motion motional processes ([sorace-2000] §§3.1, 3.4, 4.3). -/
-example : [arrive.toVerb, come.toVerb, exist.toVerb, walk.toVerb, swim.toVerb, roll.toVerb].map
-    AuxiliarySelectionHierarchy.ofVerb =
-    [some .changeOfLocation, some .changeOfLocation, some .existenceOfState,
-      some .motionalProcess, some .motionalProcess, some .motionalProcess] := by
-  decide
-
-/-- *Run into the room* is a change of location where *run* and *run behind the house* are
-motional processes ([sorace-2000] §4.3). -/
-example : AuxiliarySelectionHierarchy.ofVerb run.toVerb = some .motionalProcess ∧
-    AuxiliarySelectionHierarchy.ofVerb (run.withPath Adposition.into) = some .changeOfLocation ∧
-    AuxiliarySelectionHierarchy.ofVerb (run.withPath Adposition.behind) =
-      some .motionalProcess := by
-  decide
 
 end English.Verbs

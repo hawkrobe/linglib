@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
+public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # French verbs
@@ -21,10 +21,8 @@ intransitive verbs, "for the most part" of motion or change of state, forms its 
 results (`actionOrStateVerbs`); every other verb takes *avoir*. The list is the norm and meaning
 does not decide it: every verb of the first list is telic or continues a state, but telic verbs
 of the second, as *aboutir* 'succeed' and *disparaître* 'disappear', take *avoir* for the action.
-On [sorace-2000]'s Auxiliary Selection Hierarchy the verbs with *être* lie at or before the
-continuation of a state and the monadic verbs with *avoir* at or after it. A verb of manner of
-motion selects no directional phrase, so *Marie a couru jusqu'à la maison* 'Marie ran home' keeps
-*avoir*.
+A verb of manner of motion selects no directional phrase, so *Marie a couru jusqu'à la maison*
+'Marie ran home' keeps *avoir*.
 
 ## Main definitions
 
@@ -408,15 +406,8 @@ theorem exists_telic_actionOrState :
     ∃ v ∈ actionOrStateVerbs, v.vendlerClass.map (·.telicity) = some .telic := by
   decide
 
-/-- On [sorace-2000]'s hierarchy the verbs with *être* lie at or before the continuation of a
-state and the monadic verbs with *avoir* at or after it: French cuts there. -/
-theorem cutoff_continuationOfState :
-    (∀ v ∈ etreVerbs, ∀ t ∈ AuxiliarySelectionHierarchy.ofVerb v, t ≤ .continuationOfState) ∧
-      ∀ v ∈ avoirVerbs, ∀ t ∈ AuxiliarySelectionHierarchy.ofVerb v, .continuationOfState ≤ t := by
-  decide
-
-/-- *Marie a couru jusqu'à la maison*: a directional phrase is an adjunct to *courir*, which keeps
-its type ([sorace-2000] (42b)). -/
+/-- *Marie a couru jusqu'à la maison* ([sorace-2000] (42b)): a directional phrase is an adjunct to
+*courir*, which it leaves as it is. -/
 example : courir.withPath Adposition.into = courir := rfl
 
 /-- `allVerbs` lists the entries. -/

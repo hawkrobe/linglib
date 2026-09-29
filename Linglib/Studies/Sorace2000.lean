@@ -1,7 +1,10 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 public import Linglib.Data.Examples.Sorace2000
+public import Linglib.Fragments.Dutch.Verbs
+public import Linglib.Fragments.German.Tense
+public import Linglib.Fragments.Romance.French.Verbs
+public import Linglib.Fragments.Romance.Italian.Verbs
 
 /-!
 # Sorace (2000): Gradients in auxiliary selection with intransitive verbs
@@ -33,6 +36,16 @@ Table 1 (`german_no_cutoff`). The paper reports the German motion verbs (§4.3) 
 language to merge types or to divide them more finely (fn. 17, §6); a German cutoff needs the
 types from continuation of a state to motional process merged into one.
 
+The examples are linked by their verb to the entries of the four fragments. `ofVerb` places each
+linked verb on the type the paper gives it, except where the entries draw a finer line than
+Table 1 (`ofVerb_entry`). The rule each fragment takes from a reference grammar,
+[maiden-robustelli-2007] §14.20 for Italian, [broekhuis-corver-2026e] §§2.1–2.2 for Dutch and
+[durrell-2011] §12.3.2 for German, and the lists of [grevisse-goosse-2008] §§811–812 for French,
+gives each linked verb the auxiliary the paper's judgments prefer (`entry_aux_of_prefers`). With
+the entries placed by `ofVerb`, each grammar cuts the hierarchy exactly where the judgments do
+(`entries_cut_iff_cutoff`), and the Italian rule is that cut for every verb
+(`italian_perfect_eq_be_iff`).
+
 ## Implementation notes
 
 * A row's verb type is the type of the section its example illustrates; (36), from §4.2's
@@ -58,10 +71,29 @@ types from continuation of a state to motional process merged into one.
   which the paper places on no type.
 * §5's discussion of the projectionist and constructional models of the lexicon-syntax interface
   is argument, not formalized here.
+* A row names its verb by the infinitive, the form of its entry among the monadic entries of its
+  language's fragment, those whose citation frame, the first, has no complement or is
+  unaccusative. A monadic entry comes with the auxiliary its grammar gives it on that frame.
+  French has lists instead of a rule, and its entries are the verbs of the list of *être* and of
+  the list of *avoir* alone; a verb that takes either by meaning ([grevisse-goosse-2008] §813a),
+  as *paraître* (14a), is left out.
+* The grammars are tested on the paper's preferences. (21a) and (21b), *bastare* 'be enough' and
+  *appartenere* 'belong' printed with *avere* alone, express none, and the Italian rule gives
+  both verbs *essere*, as (20b) does *bastare*.
+
+## TODO
+
+* The entries of *tossire* 'cough' and *squillare* 'ring' record no subject entailments, and
+  `LevinClass.subjectProfile` gives none for Levin's classes of these verbs, so `ofVerb` places
+  neither. A profile without volition would put (46) and (47) among the uncontrolled processes.
 
 ## References
 
 * [sorace-2000]
+* [maiden-robustelli-2007]
+* [broekhuis-corver-2026e]
+* [durrell-2011]
+* [grevisse-goosse-2008]
 -/
 
 @[expose] public section
@@ -69,11 +101,12 @@ types from continuation of a state to motional process merged into one.
 namespace Sorace2000
 
 open ArgumentStructure Data.Examples
+open AuxiliarySelectionHierarchy (ofVerb)
 
 /-- The four languages of the paper. -/
 inductive Language
   | italian | french | dutch | german
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- A phrase that changes the telicity of the predicate: a directional or bounding phrase makes it
 telic, a durative adverbial atelic. -/
@@ -86,20 +119,23 @@ inductive SubjectShift
   | agentive | nonagentive
   deriving DecidableEq, Repr
 
-/-- An example sentence: its language, the type of its verb, the departures from the default of
-the type, and the judgment of the sentence with each auxiliary the paper prints. -/
+/-- An example sentence: its language, its verb and the verb's type, the departures from the
+default of the type, and the judgment of the sentence with each auxiliary the paper prints. -/
 structure Row where
   language : Language
+  /-- The infinitive of the verb. -/
+  verb : String
   position : AuxiliarySelectionHierarchy
   predicate : Option PredicateShift
   subject : Option SubjectShift
   judgment : PerfectAux → Option Judgment
 
-/-- The row of an example, from its language, its `position`, `aux`, `predicate` and `subject`
-features, and its alternative with the other auxiliary. -/
+/-- The row of an example, from its language, its `verb`, `position`, `aux`, `predicate` and
+`subject` features, and its alternative with the other auxiliary. -/
 def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let language ← [("ital1282", Language.italian), ("stan1290", .french), ("dutc1256", .dutch),
     ("stan1295", .german)].lookup ex.language
+  let verb ← ex.feature? "verb"
   let position ← ex.parse? "position"
     [("changeOfLocation", AuxiliarySelectionHierarchy.changeOfLocation),
     ("changeOfState", .changeOfState), ("continuationOfState", .continuationOfState),
@@ -107,7 +143,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
     ("motionalProcess", .motionalProcess), ("nonmotionalProcess", .nonmotionalProcess)]
   let aux ← ex.parse? "aux" [("be", PerfectAux.be), ("have", .have)]
   pure
-    { language, position
+    { language, verb, position
       predicate := ex.parse? "predicate"
         [("telicized", PredicateShift.telicized), ("detelicized", .detelicized)]
       subject := ex.parse? "subject" [("agentive", SubjectShift.agentive),
@@ -226,5 +262,68 @@ theorem italian_directional_split :
     ∃ r ∈ rows, r.language = .italian ∧ r.position = .motionalProcess ∧
       r.predicate = some .telicized ∧ r.Prefers .have .be := by
   decide
+
+/-! ### The fragments -/
+
+/-- The monadic entries of a language's fragment, those whose citation frame, the first, has no
+complement or is unaccusative, each with the auxiliary its grammar gives it on that frame. -/
+def Language.entries (l : Language) : List (Verb × PerfectAux) :=
+  let all : List (Verb × PerfectAux) := match l with
+    | .italian => Italian.Verbs.allVerbs.map fun v ↦
+        (v.toVerb, Italian.Verbs.perfect v (v.frames.headD .intransitive))
+    | .french =>
+        French.Verbs.etreVerbs.map (·, .be) ++ French.Verbs.avoirVerbs.map (·, .have)
+    | .dutch => Dutch.Verbs.inventory.map fun v ↦
+        (v.toVerb, Dutch.Verbs.perfect v (v.frames.headD .intransitive))
+    | .german => German.Verbs.allVerbs.map fun v ↦
+        (v.toVerb, German.perfect v (v.frames.headD .intransitive))
+  all.filter fun e ↦
+    let fr := e.1.frames.headD .intransitive
+    fr.IsIntransitive ∨ fr.IsUnaccusative
+
+/-- The entry of a row's verb among the monadic entries of its language, with its auxiliary. -/
+def Row.entry? (r : Row) : Option (Verb × PerfectAux) :=
+  r.language.entries.find? (·.1.form == r.verb)
+
+/-- `ofVerb` places the verb of an example on the paper's type, except where the entries draw a
+finer line than Table 1: the verbs of continuation whose entries mark no pre-existing state,
+*durare* (15b), (15c), *survivre* (16) and *duren* (18b), 'last, survive', are states of
+existence, and *tanzen* 'dance' (40), which displaces its subject only with a directional
+phrase ([durrell-2011] §12.3.2c), is a nonmotional process. -/
+theorem ofVerb_entry : ∀ r ∈ rows, ∀ e ∈ r.entry?, ∀ t ∈ ofVerb e.1, t = r.position ∨
+    r.position = .continuationOfState ∧ t = .existenceOfState ∨
+      r.position = .motionalProcess ∧ t = .nonmotionalProcess := by
+  decide
+
+/-- Of the paper's examples, 59 name a verb with a monadic entry, and `ofVerb` places 56 of
+them, all but those of *tossire* and *squillare*. -/
+example : (rows.filter (·.entry?.isSome)).length = 59 ∧
+    (rows.filter fun r ↦ (r.entry?.bind (ofVerb ·.1)).isSome).length = 56 := by
+  decide
+
+/-- Each language's grammar gives the verb of an example the auxiliary its judgments prefer,
+where the example departs from the default of its type in neither predicate nor subject. -/
+theorem entry_aux_of_prefers (l : Language) :
+    ∀ r ∈ baseRows l, ∀ e ∈ r.entry?, ∀ a b, r.Prefers a b → e.2 = a := by
+  revert l; decide
+
+/-- §6: with its monadic entries placed by `ofVerb`, each language's grammar cuts the hierarchy
+exactly where the paper's judgments do: Italian at the seam, French and Dutch at the continuation
+of a state, and German nowhere, since *liegen* 'lie', a state, takes *haben* and *rennen* 'run',
+a motional process, *sein*. -/
+theorem entries_cut_iff_cutoff (l : Language) (k : AuxiliarySelectionHierarchy) :
+    (∀ e ∈ l.entries, ∀ t ∈ ofVerb e.1, e.2 = .be ↔ t ≤ k) ↔ Cutoff l k := by
+  revert l k; decide
+
+/-- The Italian rule is the cut at the seam for every verb: on a frame without a direct object, a
+verb takes *essere* exactly when `ofVerb` places it among the transitions and states. -/
+theorem italian_perfect_eq_be_iff {v : Italian.Verbs.Verb} {fr : ArgumentFrame}
+    (hfr : ¬ (fr.HasNominal ∧ ¬ fr.IsUnaccusative)) {t : AuxiliarySelectionHierarchy}
+    (ht : ofVerb v.toVerb = some t) :
+    Italian.Verbs.perfect v fr = .be ↔ t ≤ .existenceOfState := by
+  simp only [Italian.Verbs.perfect, hfr, ite_false]
+  rcases hc : v.vendlerClass with _ | c <;> simp_all [ofVerb]
+  split_ifs at ht <;> simp_all [Option.isSome_iff_ne_none]
+  all_goals first | decide | (subst ht; decide) | (obtain ⟨a, -, rfl⟩ := ht; split_ifs <;> decide)
 
 end Sorace2000
