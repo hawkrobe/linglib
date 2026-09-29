@@ -28,6 +28,8 @@ proof that the corners are the only quantifiers satisfying them, from *all* to t
 * `Quantifier.NumberTree.all`, `Quantifier.NumberTree.some`, `Quantifier.NumberTree.no`,
   `Quantifier.NumberTree.notAll`: the corners of the square of opposition.
 * `Quantifier.NumberTree.cardinal`: the quantifiers that depend on `|A ∩ B|` alone.
+* `Quantifier.NumberTree.ScopeMonotone`, `Quantifier.NumberTree.ScopeAntitone`: monotonicity in
+  the scope, a step along a row of the tree.
 * `Quantifier.NumberTree.Asymmetric`, `Quantifier.NumberTree.StronglyConnected`,
   `Quantifier.NumberTree.Euclidean`: relational conditions on a quantifier, read off the tree.
 * `Quantifier.NumberTree.Variety`, `Quantifier.NumberTree.Cont`, `Quantifier.NumberTree.Plus`,
@@ -47,6 +49,8 @@ proof that the corners are the only quantifiers satisfying them, from *all* to t
   holds of `A` and `B` exactly when its tree holds of `|A \ B|` and `|A ∩ B|`.
 * `Quantifier.NumberTree.conservative_toGQ`, `Quantifier.NumberTree.quantityInvariant_toGQ`: the
   quantifier of a tree is conservative and permutation invariant.
+* `Quantifier.NumberTree.ScopeMonotone.toGQ`, `Quantifier.NumberTree.ScopeAntitone.toGQ`: the
+  quantifier of a scope-monotone tree is scope monotone, and likewise antitone.
 * `Quantifier.NumberTree.card_powerset_points`: there are `2 ^ ((n + 1) * (n + 2) / 2)` sets of
   points in rows `0` to `n`, the number of conservative, permutation-invariant quantifiers on a
   universe of `n` individuals.
@@ -131,6 +135,47 @@ instance {s : Set ℕ} [DecidablePred (· ∈ s)] : DecidableRel (cardinal s) :=
   fun _ b ↦ inferInstanceAs (Decidable (b ∈ s))
 
 theorem cardinal_singleton_zero : cardinal {0} = NumberTree.no := rfl
+
+/-! ### Scope monotonicity
+
+Enlarging the scope `B` by an element of `A` moves one individual from `A \ B` to `A ∩ B`, a step
+to the right along a row of the tree. -/
+
+/-- A quantifier is scope monotone when a step right along a row preserves truth. -/
+def ScopeMonotone (q : NumberTree) : Prop := ∀ a b, q (a + 1) b → q a (b + 1)
+
+/-- A quantifier is scope antitone when a step left along a row preserves truth. -/
+def ScopeAntitone (q : NumberTree) : Prop := ∀ a b, q a (b + 1) → q (a + 1) b
+
+theorem ScopeMonotone.compl (h : q.ScopeMonotone) : qᶜ.ScopeAntitone :=
+  fun a b h₁ h₂ ↦ h₁ (h a b h₂)
+
+theorem ScopeAntitone.compl (h : q.ScopeAntitone) : qᶜ.ScopeMonotone :=
+  fun a b h₁ h₂ ↦ h₁ (h a b h₂)
+
+theorem ScopeMonotone.innerNeg (h : q.ScopeMonotone) : q.innerNeg.ScopeAntitone :=
+  fun a b ↦ h b a
+
+theorem ScopeAntitone.innerNeg (h : q.ScopeAntitone) : q.innerNeg.ScopeMonotone :=
+  fun a b ↦ h b a
+
+/-- Iterated, a scope-monotone quantifier survives moving `k` individuals into the scope. -/
+theorem ScopeMonotone.shift (h : q.ScopeMonotone) (k : ℕ) {a b : ℕ} (hq : q (a + k) b) :
+    q a (b + k) := by
+  induction k generalizing b with
+  | zero => exact hq
+  | succ k ih =>
+    have := ih (h _ _ (by rwa [← Nat.add_assoc] at hq))
+    rwa [Nat.add_assoc, Nat.add_comm 1 k] at this
+
+theorem scopeMonotone_all : NumberTree.all.ScopeMonotone :=
+  fun _ _ h ↦ absurd h (Nat.succ_ne_zero _)
+
+theorem scopeAntitone_no : NumberTree.no.ScopeAntitone := scopeMonotone_all.innerNeg
+
+theorem scopeMonotone_some : NumberTree.some.ScopeMonotone := scopeAntitone_no.compl
+
+theorem scopeAntitone_notAll : NumberTree.notAll.ScopeAntitone := scopeMonotone_all.compl
 
 /-! ### Relational conditions
 
@@ -420,6 +465,29 @@ theorem quantityInvariant_toGQ (q : NumberTree) : QuantityInvariant (q.toGQ : GQ
   rw [← count_comp (P := fun x ↦ A x ∧ ¬ B x) hf, ← count_comp (P := fun x ↦ A x ∧ B x) hf]
   exact Iff.of_eq (congrArg₂ q (count_congr fun x ↦ by rw [hA, hB])
     (count_congr fun x ↦ by rw [hA, hB]))
+
+/-- The quantifier of a scope-monotone tree is scope monotone: enlarging `B` within `A` moves
+`|A ∩ B' \ B|` individuals from `A \ B` to `A ∩ B`. -/
+theorem ScopeMonotone.toGQ {q : NumberTree} (h : q.ScopeMonotone) :
+    GQ.ScopeMonotone (q.toGQ : GQ α) := by
+  intro A B B' hB hq
+  rw [toGQ_apply] at hq ⊢
+  have h₁ := count_decompose (fun x ↦ A x ∧ B' x) B
+  have h₂ := count_decompose (fun x ↦ A x ∧ ¬ B x) B'
+  have e₁ : count (fun x ↦ (A x ∧ B' x) ∧ B x) = count fun x ↦ A x ∧ B x :=
+    count_congr fun x ↦ ⟨fun h ↦ ⟨h.1.1, h.2⟩, fun h ↦ ⟨⟨h.1, hB x h.2⟩, h.2⟩⟩
+  have e₂ : count (fun x ↦ (A x ∧ ¬ B x) ∧ ¬ B' x) = count fun x ↦ A x ∧ ¬ B' x :=
+    count_congr fun x ↦ ⟨fun h ↦ ⟨h.1.1, h.2⟩, fun h ↦ ⟨⟨h.1, fun hb ↦ h.2 (hB x hb)⟩, h.2⟩⟩
+  have e₃ : count (fun x ↦ (A x ∧ ¬ B x) ∧ B' x) = count fun x ↦ (A x ∧ B' x) ∧ ¬ B x :=
+    count_congr fun x ↦ by tauto
+  rw [h₁, e₁, ← e₃]
+  rw [h₂, e₂, Nat.add_comm] at hq
+  exact h.shift _ hq
+
+/-- The quantifier of a scope-antitone tree is scope antitone. -/
+theorem ScopeAntitone.toGQ {q : NumberTree} (h : q.ScopeAntitone) :
+    GQ.ScopeAntitone (q.toGQ : GQ α) :=
+  fun A _ _ hB hq ↦ Classical.byContradiction fun hn ↦ h.compl.toGQ A hB hn hq
 
 end OfGQ
 

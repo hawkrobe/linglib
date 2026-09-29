@@ -375,7 +375,6 @@ import Linglib.Data.Examples.Wellwood2015
 import Linglib.Data.Examples.Westergaard2009
 import Linglib.Data.Examples.Wurmbrand2014
 import Linglib.Data.Generalizations.HomogeneityGap
-import Linglib.Data.Generalizations.HomogeneityProjection
 import Linglib.Data.Generalizations.Projectivity
 import Linglib.Data.PHOIBLE.Inventories.Arabic
 import Linglib.Data.PHOIBLE.Inventories.English

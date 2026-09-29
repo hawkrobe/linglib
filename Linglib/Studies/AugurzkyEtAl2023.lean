@@ -25,12 +25,19 @@ is therefore challenged by one negative quantifier.
 
 ## Main definitions
 
-* `Context`, `Context.resolve`: the existential and universal questions and how each resolves a
-  partially opened set of presents.
+* `Operator`: the quantifiers as van Benthem number trees.
+* `Context`, `Context.designation`, `Context.resolve`: the existential and universal questions
+  and the designation standard at which each resolves a partially opened set of presents.
 * `implicature`, `nonImplicature`: the two verdicts on a display, built on the some- and
-  all-substituted readings and the supervaluation of Križ and Chemla.
+  all-substituted readings and the supervaluation of Križ and Chemla; `Strengthens`, the
+  quantifiers that are not scope antitone.
 * `mixed`, `table2`: the mixed pictures and the derived predictions of both approaches.
 * `rows_*`: which rows each approach fits and which it misses.
+
+## Main results
+
+* `nonImplicature_eq`: the non-implicature verdict is classical truth at the resolution the
+  context picks.
 
 ## References
 
@@ -44,9 +51,34 @@ is therefore challenged by one negative quantifier.
 
 namespace AugurzkyEtAl2023
 
-open Data.Examples
-open Generalizations.HomogeneityProjection (EmbeddingOperator parseOperator)
-open KrizChemla2015 (Cell Display someReading allReading gapValue supervaluation)
+open Data.Examples Quantifier
+open Trivalent (Designation designated)
+open KrizChemla2015 (Display resolve reading someReading allReading supervaluation gapValue_of_iff
+  gapValue_eq_indet_iff)
+
+/-! ### Quantifiers -/
+
+/-- The quantifiers of the experiments, *every*, *no* and *not every*, and *exactly two*, the test
+the paper proposes for the non-implicature approach. -/
+inductive Operator where
+  | every
+  | no
+  | notEvery
+  | exactlyTwo
+  deriving DecidableEq, Fintype
+
+/-- The number tree each quantifier denotes. -/
+def Operator.tree : Operator → NumberTree
+  | .every => NumberTree.all
+  | .no => NumberTree.no
+  | .notEvery => NumberTree.notAll
+  | .exactlyTwo => NumberTree.cardinal {2}
+
+instance : (op : Operator) → DecidableRel op.tree
+  | .every => inferInstanceAs (DecidableRel NumberTree.all)
+  | .no => inferInstanceAs (DecidableRel NumberTree.no)
+  | .notEvery => inferInstanceAs (DecidableRel NumberTree.notAll)
+  | .exactlyTwo => inferInstanceAs (DecidableRel (NumberTree.cardinal {2}))
 
 /-! ### Contexts -/
 
@@ -57,71 +89,80 @@ inductive Context
   | universal
   deriving DecidableEq, Fintype
 
+/-- The resolution of a partially opened set that each question induces: the existential question
+    designates what is not false, the universal one only what is true. -/
+def Context.designation : Context → Designation
+  | .existential => .lp
+  | .universal => .k3
+
 /-- Under the existential question a partially opened set of presents counts as opened, under
     the universal one as not opened. -/
-def Context.resolve : Context → Cell → Cell
-  | .existential, .mixed => .full
-  | .universal, .mixed => .empty
-  | _, c => c
+def Context.resolve (ctx : Context) (v : Trivalent) : Trivalent :=
+  .ofProp (designated ctx.designation v)
 
-theorem resolve_homogeneous (ctx : Context) (c : Cell) : (ctx.resolve c).homogeneous := by
-  cases ctx <;> cases c <;> decide
+theorem resolve_isDefined (ctx : Context) (v : Trivalent) : (ctx.resolve v).isDefined := by
+  cases ctx <;> cases v <;> decide
+
+/-- A resolved display looks the same at every standard: the context's. -/
+theorem resolve_map_resolve (δ : Designation) (ctx : Context) (d : Display) :
+    resolve δ (d.map ctx.resolve) = resolve ctx.designation d := by
+  simp only [resolve, List.map_map]
+  exact List.map_congr_left fun v _ ↦ by
+    simp [Function.comp, Context.resolve, Trivalent.ofProp, Trivalent.designated_ofBool]
 
 /-! ### The two approaches -/
 
-/-- Two readings that agree yield a bivalent verdict. -/
-theorem gapValue_ne_indet {p q : Prop} [Decidable p] [Decidable q] (h : p ↔ q) :
-    gapValue p q ≠ .indet := by
-  simp [gapValue, Trivalent.supervaluation_eq_indet_iff, h]
-
-/-- On a display without partially opened presents the some- and all-substituted readings
-    coincide, so the supervaluation is bivalent. -/
-theorem supervaluation_ne_indet (op : EmbeddingOperator) (d : Display)
-    (h : ∀ c ∈ d, c.homogeneous) : supervaluation op d ≠ .indet := by
-  refine gapValue_ne_indet ?_
-  have hc : ∀ c ∈ d, (c ≠ .empty ↔ c = .full) := λ c hc => by
-    have := h c hc; cases c <;> simp_all [Cell.homogeneous]
-  cases op
-  · exact forall₂_congr hc
-  · exact forall₂_congr λ c hc' => by have := h c hc'; cases c <;> simp_all [Cell.homogeneous]
-  · show KrizChemla2015.occupied d = 2 ↔ KrizChemla2015.filled d = 2
-    unfold KrizChemla2015.occupied KrizChemla2015.filled
-    have hcount : d.countP (· != Cell.empty) = d.countP (· == Cell.full) :=
-      List.countP_congr λ c hc' => by have := h c hc'; cases c <;> simp_all [Cell.homogeneous]
-    rw [List.count_eq_countP, hcount]
-  · exact not_congr (forall₂_congr hc)
-
 /-- The non-implicature verdict: the sentence's trivalent value, a gap being resolved by the
     question the context makes relevant. -/
-def nonImplicature (ctx : Context) (op : EmbeddingOperator) (d : Display) : Trivalent :=
-  if supervaluation op d = .indet then supervaluation op (d.map ctx.resolve)
-  else supervaluation op d
+def nonImplicature (ctx : Context) (op : Operator) (d : Display) : Trivalent :=
+  if supervaluation op.tree d = .indet then supervaluation op.tree (d.map ctx.resolve)
+  else supervaluation op.tree d
 
 /-- The context always settles the verdict. -/
-theorem nonImplicature_ne_indet (ctx : Context) (op : EmbeddingOperator) (d : Display) :
+theorem nonImplicature_ne_indet (ctx : Context) (op : Operator) (d : Display) :
     nonImplicature ctx op d ≠ .indet := by
   unfold nonImplicature
   split_ifs with h
-  · exact supervaluation_ne_indet _ _ λ c hc => by
-      obtain ⟨c', -, rfl⟩ := List.mem_map.1 hc
-      exact resolve_homogeneous ctx c'
+  · exact KrizChemla2015.supervaluation_ne_indet fun v hv ↦ by
+      obtain ⟨v', -, rfl⟩ := List.mem_map.1 hv
+      exact resolve_isDefined ctx v'
   · exact h
+
+/-- The non-implicature verdict is classical truth at the resolution the context picks: where the
+    sentence has a gap the question resolves it, and elsewhere the two resolutions agree. -/
+theorem nonImplicature_eq (ctx : Context) (op : Operator) (d : Display) :
+    nonImplicature ctx op d = .ofProp (reading op.tree d ctx.designation) := by
+  have hres (δ) : reading op.tree (d.map ctx.resolve) δ ↔ reading op.tree d ctx.designation := by
+    rw [reading, reading, resolve_map_resolve]
+  unfold nonImplicature supervaluation
+  split_ifs with h
+  · rw [gapValue_of_iff ((hres _).trans (hres _).symm)]
+    exact congrArg Trivalent.ofBool (decide_eq_decide.2 (hres _))
+  · have hsa : someReading op.tree d ↔ allReading op.tree d := not_not.1 fun h' ↦
+      h (gapValue_eq_indet_iff.2 h')
+    rw [gapValue_of_iff hsa]
+    cases ctx
+    · rfl
+    · exact congrArg Trivalent.ofBool (decide_eq_decide.2 hsa)
 
 /-- Implicatures arise in the scope of an operator unless it is downward entailing, as *no* and
     *not every* are. -/
-def Strengthens : EmbeddingOperator → Prop
-  | .no | .notEvery => False
-  | _ => True
+def Strengthens (op : Operator) : Prop := ¬ op.tree.ScopeAntitone
 
-instance : DecidablePred Strengthens := λ op => by
-  cases op <;> simp only [Strengthens] <;> infer_instance
+instance : DecidablePred Strengthens := fun op ↦
+  decidable_of_iff (op = .every ∨ op = .exactlyTwo) <| by
+    cases op
+    · exact iff_of_true (.inl rfl) fun h ↦ absurd (h 0 0 rfl) (Nat.succ_ne_zero 0)
+    · exact iff_of_false (by decide) (not_not.2 NumberTree.scopeAntitone_no)
+    · exact iff_of_false (by decide) (not_not.2 NumberTree.scopeAntitone_notAll)
+    · exact iff_of_true (.inr rfl) fun h ↦ absurd (h 1 1 rfl) (by decide)
 
 /-- The implicature verdict: the existential literal meaning, strengthened to the universal
     reading where implicatures arise, unless the context prunes the alternatives. -/
-def implicature (ctx : Context) (op : EmbeddingOperator) (d : Display) : Prop :=
-  someReading op d ∧ (ctx = .universal → Strengthens op → allReading op d)
+def implicature (ctx : Context) (op : Operator) (d : Display) : Prop :=
+  someReading op.tree d ∧ (ctx = .universal → Strengthens op → allReading op.tree d)
 
-instance (ctx : Context) (op : EmbeddingOperator) (d : Display) :
+instance (ctx : Context) (op : Operator) (d : Display) :
     Decidable (implicature ctx op d) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -133,10 +174,10 @@ instance (ctx : Context) (op : EmbeddingOperator) (d : Display) :
 /-- The mixed pictures: two of four boys with all their presents open and two with some but not
     all, for *every* and *not every*; two with none and two with some for *no*; and the paper's
     proposed test for *exactly two*, two boys with some and the others with none. -/
-def mixed : EmbeddingOperator → Display
-  | .every | .notEvery => [.full, .full, .mixed, .mixed]
-  | .no => [.empty, .empty, .mixed, .mixed]
-  | .exactlyTwo => [.mixed, .mixed, .empty, .empty]
+def mixed : Operator → Display
+  | .every | .notEvery => [.true, .true, .indet, .indet]
+  | .no => [.false, .false, .indet, .indet]
+  | .exactlyTwo => [.indet, .indet, .false, .false]
 
 /-- The derived predictions for the mixed pictures: both approaches accept *every* exactly in
     the existential context; the implicature approach rejects *no* and *not every* in both
@@ -150,8 +191,8 @@ theorem table2 : ∀ ctx : Context,
   decide
 
 /-- The operator of a row's sentence. -/
-def operator? (r : LinguisticExample) : Option EmbeddingOperator :=
-  (r.feature? "operator").bind parseOperator
+def operator? (r : LinguisticExample) : Option Operator :=
+  r.parse? "operator" [("every", .every), ("no", .no), ("notEvery", .notEvery)]
 
 /-- The question a row's context makes relevant. -/
 def context? (r : LinguisticExample) : Option Context :=
