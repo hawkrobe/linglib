@@ -16,7 +16,7 @@ Gradability is **not** a type split — it is the derived predicate `IsGradable`
 (`dimension.isSome`); a non-gradable adjective (*wooden*, *former*, *medical*) is the
 same type with `dimension = none`.
 
-The **degree-semantic** layer lives one layer up, in `Semantics/Gradability`, where the
+The **degree-semantic** layer lives one layer up, in `Semantics/Degree/Adjective.lean`, where the
 scale's boundedness, positive standard, and Kennedy class *become relevant*: the
 `GradableAdjective` refinement there `extends Adjective` with the `lexicalStandard`
 and derives `scaleType`/`standard`/`adjectiveClass` from the (shape, pole, override).
@@ -89,7 +89,7 @@ end Adjective.Comparison
     the scalar `dimension` key + lexicalized pole, comparison morphology, and lexical
     antonymy. Carries no denotation of its own (cf. `Pronoun`); the degree-semantic
     interpretation of `dimension`/pole is derived one layer up, on `GradableAdjective`
-    in `Semantics/Gradability`.
+    in `Semantics/Degree/Adjective.lean`.
 
     Gradability is **not** a type split: it is the derived predicate `IsGradable`
     (`dimension.isSome`); a non-gradable adjective is the same type with
