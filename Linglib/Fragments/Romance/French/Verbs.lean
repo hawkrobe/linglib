@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 
 /-!
 # French verbs
@@ -15,6 +15,17 @@ classifications are the papers' and live in their studies, while the entries her
 frames and entailments the classifications are read from. A polysemous verb has one entry per
 sense, told apart by its `SenseTag`.
 
+The monadic entries carry the perfect auxiliary Grevisse and Goosse give them. A closed list of
+intransitive verbs, "for the most part" of motion or change of state, forms its perfect with
+*être* (`etreVerbs`); a longer list takes *avoir* for the action and *être* for the state that
+results (`actionOrStateVerbs`); every other verb takes *avoir*. The list is the norm and meaning
+does not decide it: every verb of the first list is telic or continues a state, but telic verbs
+of the second, as *aboutir* 'succeed' and *disparaître* 'disappear', take *avoir* for the action.
+On [sorace-2000]'s Auxiliary Selection Hierarchy the verbs with *être* lie at or before the
+continuation of a state and the monadic verbs with *avoir* at or after it. A verb of manner of
+motion selects no directional phrase, so *Marie a couru jusqu'à la maison* 'Marie ran home' keeps
+*avoir*.
+
 ## Main definitions
 
 * `undergoer`, `movingUndergoer`: the entailments of an anticausative's sole argument, without
@@ -22,6 +33,8 @@ sense, told apart by its `SenseTag`.
 * `independentParticipant`, `companionSubject`, `neglectSubject`: the entailments of the
   arguments the transitive entries do not share with a template.
 * `allVerbs`: the entries.
+* `etreVerbs`, `actionOrStateVerbs`: the monadic entries whose perfect takes *être*, and those
+  whose perfect takes either auxiliary.
 
 ## Implementation notes
 
@@ -35,6 +48,8 @@ frame of the alternation is the second frame. The entries record no inflectional
 * [martin-schaefer-kastner-2025]
 * [staps-rooryck-2024]
 * [authier-revuz-1972]
+* [grevisse-goosse-2008]
+* [sorace-2000]
 -/
 
 @[expose] public section
@@ -209,11 +224,209 @@ def delaisser : Verb :=
 def delaisserStat : Verb :=
   transitive "délaisser" neglectSubject independentParticipant .state .stative
 
+/-! ### Monadic verbs
+
+The intransitive verbs of [grevisse-goosse-2008] §§812–813 and of [sorace-2000]'s French
+examples. -/
+
+/-- *aller* 'go', a verb of motion to a goal. -/
+def aller : Verb where
+  form := "aller"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .achievement
+  direction := some .goal
+
+/-- *arriver* 'arrive', a verb of motion to a goal. -/
+def arriver : Verb where
+  form := "arriver"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .achievement
+  direction := some .goal
+
+/-- *entrer* 'enter', a verb of motion to a goal. -/
+def entrer : Verb where
+  form := "entrer"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .achievement
+  direction := some .goal
+
+/-- *retourner* 'go back', a verb of motion to a goal. -/
+def retourner : Verb where
+  form := "retourner"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .achievement
+  direction := some .goal
+
+/-- *tomber* 'fall', a verb of motion in a direction. -/
+def tomber : Verb where
+  form := "tomber"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .achievement
+  direction := some .goal
+
+/-- *venir* 'come', a verb of motion to a goal. -/
+def venir : Verb where
+  form := "venir"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .achievement
+  direction := some .goal
+
+/-- *partir* 'leave', a verb of motion from a source. -/
+def partir : Verb where
+  form := "partir"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .achievement
+  direction := some .source
+
+/-- *sortir* 'go out', a verb of motion from a source. -/
+def sortir : Verb where
+  form := "sortir"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .achievement
+  direction := some .source
+
+/-- *décéder* 'die', a change of state. -/
+def deceder : Verb where
+  form := "décéder"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .achievement
+
+/-- *devenir* 'become', a change of state. -/
+def devenir : Verb where
+  form := "devenir"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .achievement
+
+/-- *mourir* 'die', a change of state. -/
+def mourir : Verb where
+  form := "mourir"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .achievement
+
+/-- *naître* 'be born', a change of state. -/
+def naitre : Verb where
+  form := "naître"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .achievement
+
+/-- *rester* 'stay', the continuation of a state. -/
+def rester : Verb where
+  form := "rester"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .state
+  phasal := some .continuation
+
+/-- *aboutir* 'succeed, end up', telic. -/
+def aboutir : Verb where
+  form := "aboutir"
+  frames := [ArgumentFrame.intransitive]
+  vendlerClass := some .achievement
+
+/-- *atterrir* 'land', telic. -/
+def atterrir : Verb where
+  form := "atterrir"
+  frames := [ArgumentFrame.intransitive]
+  vendlerClass := some .achievement
+
+/-- *disparaître* 'disappear', with *avoir* for the event, *Elle a disparu prématurément*, and, now
+rarely, *être* for the state, *Il est aujourd'hui disparu*. -/
+def disparaitre : Verb where
+  form := "disparaître"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .achievement
+
+/-- *paraître* 'appear, come out'. -/
+def paraitre : Verb where
+  form := "paraître"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .achievement
+
+/-- *grandir* 'grow', a change along a scale of size. -/
+def grandir : Verb where
+  form := "grandir"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .accomplishment
+  scaleDimension := some .generalSize
+
+/-- *survivre* 'survive', stative. -/
+def survivre : Verb where
+  form := "survivre"
+  frames := [ArgumentFrame.intransitive]
+  vendlerClass := some .state
+
+/-- *exister* 'exist', stative. -/
+def exister : Verb where
+  form := "exister"
+  frames := [ArgumentFrame.unaccusative]
+  vendlerClass := some .state
+
+/-- *travailler* 'work', an activity whose subject controls it. -/
+def travailler : Verb where
+  form := "travailler"
+  frames := [ArgumentFrame.intransitive]
+  vendlerClass := some .activity
+  subjectEntailments := some activitySubjectProfile
+
+/-- *courir* 'run', a verb of manner of motion, which selects no directional phrase. -/
+def courir : Verb where
+  form := "courir"
+  frames := [ArgumentFrame.intransitive]
+  vendlerClass := some .activity
+  direction := some .place
+
+/-- *nager* 'swim', a verb of manner of motion, which selects no directional phrase. -/
+def nager : Verb where
+  form := "nager"
+  frames := [ArgumentFrame.intransitive]
+  vendlerClass := some .activity
+  direction := some .place
+
+/-! ### The perfect auxiliary -/
+
+/-- The intransitive entries whose perfect takes *être* ([grevisse-goosse-2008] §812b), verbs
+"exprimant, pour la plupart, un mouvement ou un changement d'état". -/
+def etreVerbs : List Verb :=
+  [aller, arriver, deceder, devenir, entrer, mourir, naitre, partir, rester, retourner, sortir,
+   tomber, venir]
+
+/-- The entries whose perfect takes *avoir* when they express the action and *être* when they
+express the state that results (§813a). -/
+def actionOrStateVerbs : List Verb := [aboutir, atterrir, disparaitre, paraitre, grandir, rajeunir]
+
+/-- The monadic entries whose perfect takes *avoir* alone (§811). -/
+def avoirVerbs : List Verb := [survivre, exister, travailler, courir, nager]
+
+/-- Grevisse's gloss holds of the list: every verb whose perfect takes *être* is telic or
+continues a state. -/
+theorem etreVerbs_telic_or_continuation :
+    ∀ v ∈ etreVerbs, v.vendlerClass.map (·.telicity) = some .telic ∨
+      v.phasal = some .continuation := by
+  decide
+
+/-- Telicity does not bring *être* with it: a telic verb of §813a takes *avoir* for the action. -/
+theorem exists_telic_actionOrState :
+    ∃ v ∈ actionOrStateVerbs, v.vendlerClass.map (·.telicity) = some .telic := by
+  decide
+
+/-- On [sorace-2000]'s hierarchy the verbs with *être* lie at or before the continuation of a
+state and the monadic verbs with *avoir* at or after it: French cuts there. -/
+theorem cutoff_continuationOfState :
+    (∀ v ∈ etreVerbs, ∀ t ∈ AuxiliarySelectionHierarchy.ofVerb v, t ≤ .continuationOfState) ∧
+      ∀ v ∈ avoirVerbs, ∀ t ∈ AuxiliarySelectionHierarchy.ofVerb v, .continuationOfState ≤ t := by
+  decide
+
+/-- *Marie a couru jusqu'à la maison*: a directional phrase is an adjunct to *courir*, which keeps
+its type ([sorace-2000] (42b)). -/
+example : courir.withPath Adposition.into = courir := rfl
+
 /-- `allVerbs` lists the entries. -/
 def allVerbs : List Verb :=
   [faire, laisser,
    brunir, noircir, palir, rajeunir, rougir, approcher, durcir, plier, radoucir, refroidir,
    laver, briser, ecrire, construire, tuer, aimer, adorer, respecter, accompagner,
-   suivreDyn, suivreStat, preceder, abandonner, abandonnerStat, delaisser, delaisserStat]
+   suivreDyn, suivreStat, preceder, abandonner, abandonnerStat, delaisser, delaisserStat,
+   aller, arriver, entrer, retourner, tomber, venir, partir, sortir, deceder, devenir, mourir,
+   naitre, rester, aboutir, atterrir, disparaitre, paraitre, grandir, survivre, exister,
+   travailler, courir, nager]
 
 end French.Verbs
