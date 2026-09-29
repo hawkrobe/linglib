@@ -7,6 +7,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Data.Matrix.Mul
+public import Mathlib.LinearAlgebra.Matrix.DotProduct
 public import Mathlib.Order.Antisymmetrization
 public import Mathlib.Order.Defs.Unbundled
 
@@ -28,7 +29,9 @@ they meet or fail: majority, after May, meets every Arrow condition but weak-ord
 which Condorcet's cycle refutes; the Pareto rule, after Weymark, is a quasi-ordering that leaves
 every trade-off incomparable; the utilitarian rule meets every Arrow condition but ordinal
 invariance, failing even ratio-scale invariance; the Cobb–Douglas rule, after Tsui and Weymark, is
-ratio-scale invariant on non-negative profiles.
+ratio-scale invariant on non-negative profiles. The Pareto rule is the unanimous verdict of the
+utilitarian rules with positive weights (`paretoRule_iff_forall_utilitarian`), so a trade-off is
+exactly a pair that two positive weightings rank oppositely.
 
 *Scores* serve the positive form: the weighted sum of dimensional measures of Waldon and
 colleagues, its normalization by the spatial extent of the host after Tham and Solt, and the
@@ -55,6 +58,8 @@ multiplicative composition that Sassoon and Fadlon argue for natural kind nouns.
 * [G. W. Sassoon and J. Fadlon, *The Role of Dimensions in Classification under Predicates
   Predicts their Status in Degree Constructions* (2017)][sassoon-fadlon-2017]
 * [A. K. Sen, *Collective Choice and Social Welfare* (1970)][sen-1970]
+* [S. Solt, *Multidimensionality, Subjectivity and Scales: Experimental Evidence*
+  (2018)][solt-2018a]
 * [S. Solt, *Proportional Comparatives and Relative Scales* (2018)][solt-2018b]
 * [S. W. Tham, *Multidimensionality and the Scalar Components of Physical Disturbance Predicates*
   (2025)][tham-2025]
@@ -404,6 +409,43 @@ theorem not_ratioInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠ j
 theorem not_ordinalInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠ j) (hi : 0 < c i)
     (hj : 0 < c j) : ¬ Invariant ordinal (utilitarian c : Rule ι α K) :=
   fun h ↦ not_ratioInvariant_utilitarian c hij hi hj (h.mono ratio_subset_ordinal)
+
+variable {v : Profile ι α K} {x y : α}
+
+/-- The Pareto rule ranks `x` weakly above `y` iff every utilitarian rule with positive weights
+does. -/
+theorem paretoRule_iff_forall_utilitarian :
+    paretoRule v x y ↔ ∀ c : ι → K, (∀ i, 0 < c i) → utilitarian c v x y := by
+  refine ⟨fun h c hc ↦ dotProduct_le_dotProduct_of_nonneg_left h fun i ↦ (hc i).le, fun h ↦ ?_⟩
+  by_contra hxy
+  obtain ⟨i, hi⟩ : ∃ i, v x i < v y i := by simpa [paretoRule, Pi.le_def] using hxy
+  classical
+  set d := v y - v x
+  have hd : 0 < d i := sub_pos.2 hi
+  -- weight dimension `i` heavily enough to outweigh all the others
+  set M := |1 ⬝ᵥ d| / d i + 1
+  have hc : ∀ j, 0 < (1 + Pi.single i M : ι → K) j := fun j ↦ by
+    rcases eq_or_ne j i with rfl | hj
+    · simpa using add_pos one_pos (by positivity : 0 < M)
+    · simp [hj]
+  have h' := h _ hc
+  rw [utilitarian, ← sub_nonpos, ← dotProduct_sub, add_dotProduct, single_dotProduct] at h'
+  have : M * d i = |1 ⬝ᵥ d| + d i := by simp only [M, add_mul, one_mul, div_mul_cancel₀ _ hd.ne']
+  linarith [neg_abs_le (1 ⬝ᵥ d)]
+
+/-- The Pareto rule ranks `x` strictly above `y` iff every utilitarian rule with positive weights
+does. -/
+theorem asymmRel_paretoRule_iff_forall_utilitarian :
+    AsymmRel (paretoRule v) x y ↔
+      ∀ c : ι → K, (∀ i, 0 < c i) → AsymmRel (utilitarian c v) x y := by
+  refine ⟨fun ⟨h, h'⟩ c hc ↦ ?_, fun h ↦ ⟨?_, fun h' ↦ ?_⟩⟩
+  · obtain ⟨i, hi⟩ : ∃ i, v y i < v x i := by simpa [paretoRule, Pi.le_def] using h'
+    have : c ⬝ᵥ v y < c ⬝ᵥ v x :=
+      sum_lt_sum (fun j _ ↦ mul_le_mul_of_nonneg_left (h j) (hc j).le)
+        ⟨i, mem_univ _, mul_lt_mul_of_pos_left hi (hc i)⟩
+    exact ⟨this.le, this.not_ge⟩
+  · exact paretoRule_iff_forall_utilitarian.2 fun c hc ↦ (h c hc).1
+  · exact (h 1 fun _ ↦ one_pos).2 (paretoRule_iff_forall_utilitarian.1 h' 1 fun _ ↦ one_pos)
 
 end Utilitarian
 
