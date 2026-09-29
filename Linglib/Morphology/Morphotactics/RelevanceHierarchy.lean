@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Syntax.Agreement.Controller
 public import Mathlib.Order.Defs.PartialOrder
 public import Mathlib.Data.List.Sort
 
@@ -25,7 +24,6 @@ and a sequence respects the hierarchy when it is `List.SortedLE`.
 ## References
 
 * [J. Bybee, *Morphology: A Study of the Relation between Meaning and Form* (1985)][bybee-1985]
-* [G. D. S. Anderson, *Auxiliary Verb Constructions* (2006)][anderson-2006a]
 * [J. H. Greenberg, *Some Universals of Grammar with Particular Reference to the Order of
   Meaningful Elements* (1963)][greenberg-1963]
 * [M. Miestamo, *Standard Negation: The Negation of Declarative Verbal Main Clauses in a
@@ -53,13 +51,10 @@ inductive MorphCategory where
   | tense         -- past, future, present
   | mood          -- desiderative, subjunctive, imperative
   | negation      -- negation markers
-  /-- Agreement morphology, parameterized by the grammatical role of
-      the controlling NP (`Agreement.Controller`). The role
-      distinction (subj vs obj vs poss vs ...) is what allows
-      [anderson-2006a]'s split/doubled AVC typology to be Lean-checkable;
-      [bybee-1985]'s `personAgr / personAgrObj / genderAgr` source
-      distinctions also round-trip cleanly. -/
-  | agreement (controller : Agreement.Controller)
+  /-- Person, number and gender agreement with the verb's arguments. [bybee-1985] codes
+      subject, object and indirect-object agreement apart but ranks agreement once, whichever
+      argument it indexes. -/
+  | agreement
   | nonfinite     -- nonfinite markers, interrogative/relative
   | number        -- number marking on nouns (not verb agreement)
   | degree        -- comparative/superlative on adjectives
@@ -107,7 +102,7 @@ def MorphCategory.peripherality : MorphCategory → Nat
   | .tense       => 5
   | .mood        => 6
   | .negation    => 7
-  | .agreement _ => 8  -- any controller role lands at Bybee rank 8
+  | .agreement   => 8
   | .nonfinite   => 9
 
 /-! ### The relevance order

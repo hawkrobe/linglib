@@ -1973,7 +1973,6 @@ import Linglib.Studies.Zuraw2010
 import Linglib.Studies.ZurawHayes2017
 import Linglib.Studies.Zwarts2005
 import Linglib.Studies.ZwickyPullum1983
-import Linglib.Syntax.Agreement.Controller
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Syntax.Agreement.PersonCaseConstraint
 import Linglib.Syntax.Anaphora.Basic
