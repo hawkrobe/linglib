@@ -6,9 +6,11 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Bybee 1985: relevance and lexical strength
 
-A morpheme category whose meaning is more relevant to the verb stem should be expressed
-inflectionally in more languages, sit closer to the stem where it is, and fuse with it more
-tightly. This file formalizes the evidence for the first two, from a fifty-language stratified
+A morpheme category whose meaning is more relevant to the verb stem should have morphological
+expression, inflectional or derivational, in more languages, sit closer to the stem where it is,
+and fuse with it more tightly; whether the expression is inflectional depends on generality as
+well, which works against the most relevant categories. This file formalizes the evidence for the
+first two predictions, from a fifty-language stratified
 sample: the frequency surveys of chapter 2 and the morpheme-order counts of the same chapter, in
 which every tested pair confirms the predicted direction and aspect against tense and against mood
 does so without a single counterexample.
@@ -124,8 +126,9 @@ def derivOrInflCount50 : BybeeCategory → Nat
   | .personAgrObj  => 14  -- 28%
   | .genderAgr     => 8   -- 16%
 
-/-- Prediction (a), deriv+infl: valence is the most frequent category,
-reflecting near-universal valence-changing morphology. -/
+/-- The relevance prediction, tested on Figure 2, which counts derivational as well as
+inflectional expression: valence is the most frequent category, reflecting near-universal
+valence-changing morphology. -/
 theorem valence_highest_when_derivOrInfl :
     ∀ c : BybeeCategory, derivOrInflCount50 c ≤ derivOrInflCount50 .valence := by
   decide
@@ -138,16 +141,15 @@ theorem valence_lowest_when_inflectional :
     ∀ c : BybeeCategory, inflectionalCount50 .valence ≤ inflectionalCount50 c := by
   decide
 
-/-- In the deriv+infl survey (Fig 2), gender agreement is the least frequent
-category — Bybee's least-relevant verbal category. (Inflection-only, valence
-drops *below* gender, so Fig 2 is the relevance-faithful ranking.) -/
+/-- In the deriv+infl survey (Fig 2), gender agreement, the last category of Bybee's
+diagram of relevance, is the least frequent. -/
 theorem gender_lowest_when_derivOrInfl :
     ∀ c : BybeeCategory, derivOrInflCount50 .genderAgr ≤ derivOrInflCount50 c := by
   decide
 
 /-! ### Morpheme order (Ch 2 §6)
 
-Prediction (b): the most relevant categories sit closest to the stem, the least
+The order prediction: the most relevant categories sit closest to the stem, the least
 relevant furthest. Bybee tests the four most frequent — aspect, tense, mood,
 person — counting, per pair, how many languages place one closer than the other.
 A language with both categories is untestable when the morphemes are
@@ -191,9 +193,10 @@ def orderPairs : List OrderPair := [
   -- Ojibwa, the mood marker occurs closer to the stem than the tense marker."
   ⟨.tense, .mood, 8, 1, 20⟩,
   -- p. 35: "Tense markers occur closer to the stem than person markers in
-  -- 8 languages out of the 17 that have both [tense and person]. In one
+  -- 8 languages out of the 17 that have both tense and mood. In one
   -- language, Navaho, the person markers occur closer to the stem than
-  -- the tense markers."
+  -- the tense markers." The book's "tense and mood" is a misprint for
+  -- tense and person, the pair under test.
   ⟨.tense, .personAgr, 8, 1, 17⟩,
   -- p. 35: "Mood markers occur closer to the stem than person markers in
   -- 13 languages out of 26. In 5 languages the opposite order occurs."
