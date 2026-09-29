@@ -95,7 +95,6 @@ def force : Verb := .mkRegular {
   frames := [ArgumentFrame.infinitival]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  projectionBehavior := some .hole
   causative := some .force }
 
 /-- "prevent" — blocking causative (barrier addition).
@@ -106,7 +105,6 @@ def prevent : Verb := .mkRegular {
   frames := [ArgumentFrame.gerund]
   readings := [{ frame := ArgumentFrame.gerund, control := some .objectControl }]
   vendlerClass := some .accomplishment
-  projectionBehavior := some .hole
   causative := some .prevent }
 
 /-! ### Lexical Causatives -/

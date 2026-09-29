@@ -35,7 +35,6 @@ def manage : Verb := .mkRegular {
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  projectionBehavior := some .hole
   implicative := some .positive }
 
 /-- "fail" — a negative implicative; "failed to VP" entails "not VP". -/
@@ -80,7 +79,6 @@ def promise : Verb := .mkRegular {
     ArgumentFrame.np_np, ArgumentFrame.np_pp (some Adpositions.to_)]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
-  projectionBehavior := some .plug
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
   levinClasses := {LevinClass.futureHaving} }
