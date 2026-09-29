@@ -5,43 +5,38 @@ public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Order.Closure
 
 /-!
-# Compatibility Frames (Possibility Semantics for Orthologic)
-[holliday-mandelkern-2024]
+# Compatibility frames
 
-Possibility semantics generalizes possible-worlds semantics by replacing
-maximal worlds with partial *possibilities* ordered by refinement: a
-possibility can verify a disjunction without verifying either disjunct.
-Propositions are the *regular* sets, negation is orthocomplement, and the
-resulting algebra of regular propositions is an ortholattice — not a Boolean
-algebra (distributivity, pseudocomplementation, and orthomodularity all fail).
+This file defines compatibility frames, the possibility semantics for orthologic on which
+Holliday and Mandelkern build their account of epistemic modals. A compatibility frame is a set
+of partial *possibilities* with a reflexive, symmetric compatibility relation, and a possibility
+can settle a disjunction without settling either disjunct. The propositions are the *regular*
+sets, negation is the orthocomplement `orthoNeg`, and the regular sets form an ortholattice that
+need not be Boolean.
 
 ## Main definitions
 
-* `CompatFrame` — a set of possibilities with a reflexive, symmetric
-  compatibility relation.
-* `orthoNeg`, `conj`, `disj` — orthocomplement negation and the De Morgan
-  connectives.
-* `IsRegular`, `refines`, `IsWorld` — regularity, the refinement order, and
-  worlds (maximally informative possibilities).
-* `regularClosure` — the `c_◇` closure operator whose fixed points are the
-  regular sets.
-* `orthoNeg_classical`, `identityFrame` — the classical collapse under
-  identity compatibility.
+* `CompatFrame`: a set of possibilities with a reflexive, symmetric compatibility relation.
+* `orthoNeg`, `disj`: orthocomplement negation and De Morgan disjunction.
+* `IsRegular`, `refines`, `IsWorld`: regularity, refinement, and worlds.
+* `regularClosure`: the closure operator whose fixed points are the regular sets.
+* `identityFrame`: the frame whose compatibility is identity.
+
+## Main results
+
+* `IsRegular.mem_of_refines`: regular sets are closed under refinement.
+* `refines_iff_mem_orthoNeg_orthoNeg`: the refinements of `x` form the regular set `¬¬{x}`.
+* `orthoNeg_classical`: negation is Boolean when compatibility is identity.
 
 ## Implementation notes
 
-This file is substrate. The modal extension (□, ◇, T-axiom) lives in
-`Modal.lean`; the bundled ortholattice of regular propositions in
-`RegularProp.lean`; the abstract `OrthocomplementedLattice` class in
-`Core.Order.Ortholattice`; and the paper's concrete instantiations (the
-`Poss5` path frame, the Epistemic Scale, the ortholattice failures) in
-`Studies.HollidayMandelkern2024`.
+Propositions are `Set S`. Decidability of `compat` is not bundled: use sites take
+`[DecidableRel F.compat]`, as for `SimpleGraph.Adj`. The ortholattice of regular propositions is
+built in `RegularProp.lean` and the modal extension in `Modal.lean`.
 
-Propositions are `Set S`, with set-membership notation preferred.
-Decidability of `compat` is not bundled — use sites take
-`[DecidableRel F.compat]` (mathlib's `SimpleGraph` + `[DecidableRel G.Adj]`
-idiom), and `[Fintype S]` appears only where decidability of universally
-quantified propositions needs it.
+## References
+
+* [holliday-mandelkern-2024]
 -/
 
 @[expose] public section
@@ -52,13 +47,9 @@ variable {S : Type*}
 
 /-! ### Compatibility frames -/
 
-/-- A compatibility frame: a set of possibilities with a reflexive,
-    symmetric compatibility relation. Two possibilities are compatible
-    if neither settles as true anything the other settles as false.
-    [holliday-mandelkern-2024] Definition 4.1.
-
-    Decidability of `compat` is *not* bundled — provide a `DecidableRel`
-    instance separately for each concrete frame. -/
+/-- A compatibility frame is a set of possibilities with a reflexive, symmetric compatibility
+    relation; two possibilities are compatible when neither settles as true anything the other
+    settles as false ([holliday-mandelkern-2024] Definition 4.1). -/
 structure CompatFrame (S : Type*) where
   compat : S → S → Prop
   compat_refl : Std.Refl compat
@@ -66,11 +57,10 @@ structure CompatFrame (S : Type*) where
 
 namespace CompatFrame
 
-/-- Compatibility is reflexive (accessor for the bundled `Std.Refl`). -/
+/-- Compatibility is reflexive. -/
 theorem refl (F : CompatFrame S) (x : S) : F.compat x x := F.compat_refl.refl x
 
-/-- Compatibility is symmetric: `h.symm : F.compat y x` for `h : F.compat x y`
-    (mirrors `SimpleGraph.Adj.symm`). -/
+/-- Compatibility is symmetric, as `SimpleGraph.Adj.symm` is for adjacency. -/
 theorem compat.symm {F : CompatFrame S} {x y : S} (h : F.compat x y) : F.compat y x :=
   F.compat_symm.symm x y h
 
@@ -78,10 +68,9 @@ end CompatFrame
 
 /-! ### Orthocomplement negation and connectives -/
 
-/-- Orthocomplement negation. `¬A = {x | ∀y compatible with x, y ∉ A}`.
-    A possibility x makes ¬A true iff no compatible possibility makes A
-    true — i.e., x's information *settles* ¬A.
-    [holliday-mandelkern-2024] Proposition 4.8, eq. (1). -/
+/-- The orthocomplement `¬A` holds at the possibilities compatible with no `A`-possibility,
+    those whose information settles `¬A` ([holliday-mandelkern-2024] Proposition 4.8,
+    eq. (1)). -/
 def orthoNeg (F : CompatFrame S) (A : Set S) : Set S :=
   { x | ∀ y : S, F.compat x y → y ∉ A }
 
@@ -92,10 +81,8 @@ instance [Fintype S] (F : CompatFrame S) [DecidableRel F.compat]
     (A : Set S) [DecidablePred (· ∈ A)] (x : S) : Decidable (x ∈ orthoNeg F A) := by
   show Decidable (∀ y : S, F.compat x y → y ∉ A); infer_instance
 
-/-- Application-form alias of the membership-form `Decidable` instance,
-    for goals that reduce `orthoNeg F A x` instead of `x ∈ orthoNeg F A`.
-    Uses `DecidablePred A` (not `DecidablePred (· ∈ A)`) so it synthesises
-    from the standard `instance : DecidablePred A` users define. -/
+/-- This instance decides `orthoNeg F A x` in application form from `[DecidablePred A]`, for
+    goals that reduce membership. -/
 instance orthoNeg_apply_decidable [Fintype S] (F : CompatFrame S)
     [DecidableRel F.compat] (A : Set S) [DecidablePred A] (x : S) :
     Decidable (orthoNeg F A x) := by
@@ -103,16 +90,12 @@ instance orthoNeg_apply_decidable [Fintype S] (F : CompatFrame S)
   have : DecidablePred (· ∈ A) := inferInstanceAs (DecidablePred A)
   infer_instance
 
-/-- Conjunction is intersection (transparent alias for `Set.inter`).
-    Kept as a named operation for symmetry with `disj` in study-file
-    theorems; `conj A B = A ∩ B` definitionally. -/
+/-- Conjunction is intersection, named beside `disj`. -/
 abbrev conj (A B : Set S) : Set S := A ∩ B
 
-/-- Disjunction via De Morgan: `A ∨ B = ¬(¬A ∩ ¬B)`.
-    Strictly weaker than set-theoretic union: a possibility x makes A ∨ B
-    true iff every y compatible with x is itself compatible with some z
-    that makes A or B true (the unpacked form, paper eq. (2)).
-    [holliday-mandelkern-2024] Proposition 4.8, eq. (2). -/
+/-- The De Morgan disjunction `A ∨ B = ¬(¬A ∩ ¬B)` holds at `x` iff every possibility
+    compatible with `x` is compatible with one making `A` or `B` true, so it is weaker than union
+    ([holliday-mandelkern-2024] Proposition 4.8, eq. (2)). -/
 def disj (F : CompatFrame S) (A B : Set S) : Set S :=
   orthoNeg F (orthoNeg F A ∩ orthoNeg F B)
 
@@ -136,11 +119,9 @@ instance conj_apply_decidable (A B : Set S)
 
 /-! ### Regularity -/
 
-/-- A set A is ◇-regular iff: whenever x ∉ A, there exists y compatible
-    with x such that all z compatible with y are also not in A.
-    Regularity = "indeterminacy implies compatibility with falsity."
-    Only regular sets count as propositions.
-    [holliday-mandelkern-2024] Definition 4.3. -/
+/-- A set `A` is regular when every possibility outside `A` is compatible with one all of whose
+    compatible possibilities lie outside `A`; only regular sets count as propositions
+    ([holliday-mandelkern-2024] Definition 4.3). -/
 def IsRegular (F : CompatFrame S) (A : Set S) : Prop :=
   ∀ x : S, x ∈ A ∨ ∃ y : S, F.compat x y ∧ ∀ z : S, F.compat y z → z ∉ A
 
@@ -148,8 +129,7 @@ instance [Fintype S] (F : CompatFrame S) [DecidableRel F.compat]
     (A : Set S) [DecidablePred (· ∈ A)] : Decidable (IsRegular F A) := by
   unfold IsRegular; infer_instance
 
-/-- Application-form alias for `IsRegular` so `decide` finds it from
-    `[DecidablePred A]` instances directly. -/
+/-- This instance decides `IsRegular F A` from `[DecidablePred A]`. -/
 instance isRegular_apply_decidable [Fintype S] (F : CompatFrame S)
     [DecidableRel F.compat] (A : Set S) [DecidablePred A] : Decidable (IsRegular F A) := by
   unfold IsRegular
@@ -158,9 +138,9 @@ instance isRegular_apply_decidable [Fintype S] (F : CompatFrame S)
 
 /-! ### Refinement and worlds -/
 
-/-- Refinement: y ⊑ x iff every possibility compatible with y is also
-    compatible with x. A refinement carries at least as much information.
-    [holliday-mandelkern-2024] Lemma 4.4, condition 2. -/
+/-- A possibility `y` refines `x`, written `y ⊑ x`, when every possibility compatible with `y`
+    is compatible with `x`, so that `y` carries at least as much information
+    ([holliday-mandelkern-2024] Lemma 4.4, condition 2). -/
 def refines (F : CompatFrame S) (y x : S) : Prop :=
   ∀ z : S, F.compat y z → F.compat x z
 
@@ -168,9 +148,23 @@ instance [Fintype S] (F : CompatFrame S) [DecidableRel F.compat]
     (y x : S) : Decidable (refines F y x) := by
   unfold refines; infer_instance
 
-/-- A world is a possibility that refines everything it is compatible
-    with — the most informative kind of possibility.
-    [holliday-mandelkern-2024] Definition 4.6. -/
+/-- Regular sets are closed under refinement, since a refinement settles every proposition
+    its coarsening settles. This is the direction of [holliday-mandelkern-2024] Lemma 4.4 from
+    compatibility to regular sets. -/
+theorem IsRegular.mem_of_refines {F : CompatFrame S} {A : Set S} (hA : IsRegular F A)
+    {z x : S} (h : refines F z x) (hx : x ∈ A) : z ∈ A :=
+  (hA z).resolve_right fun ⟨_, hzw, hw⟩ ↦ hw x (h _ hzw).symm hx
+
+/-- The refinements of `x` are the possibilities settling `¬¬{x}`, so they form a regular set
+    ([holliday-mandelkern-2024] Lemma 4.5). -/
+theorem refines_iff_mem_orthoNeg_orthoNeg (F : CompatFrame S) {z x : S} :
+    refines F z x ↔ z ∈ orthoNeg F (orthoNeg F {x}) := by
+  simp only [refines, mem_orthoNeg, Set.mem_singleton_iff, not_forall, not_not, exists_prop,
+    exists_eq_right]
+  exact forall₂_congr fun _ _ ↦ ⟨CompatFrame.compat.symm, CompatFrame.compat.symm⟩
+
+/-- A world is a possibility that refines everything it is compatible with, the most
+    informative kind of possibility ([holliday-mandelkern-2024] Definition 4.6). -/
 def IsWorld (F : CompatFrame S) (w : S) : Prop :=
   ∀ x : S, F.compat w x → refines F w x
 
@@ -200,29 +194,27 @@ theorem orthoNeg_classical
     have heq := hClassical x y hcompat
     subst heq; exact hNotA hAy
 
-/-- The identity compatibility frame: compat x y ↔ x = y. -/
+/-- In the identity frame each possibility is compatible only with itself. -/
 def identityFrame [DecidableEq S] : CompatFrame S where
-  compat := λ x y => x = y
-  compat_refl := ⟨λ _ => rfl⟩
-  compat_symm := ⟨λ _ _ h => h.symm⟩
+  compat := fun x y ↦ x = y
+  compat_refl := ⟨fun _ ↦ rfl⟩
+  compat_symm := ⟨fun _ _ h ↦ h.symm⟩
 
 instance [DecidableEq S] :
-    DecidableRel (identityFrame (S := S)).compat := λ a b => by
+    DecidableRel (identityFrame (S := S)).compat := fun a b ↦ by
   show Decidable (a = b); infer_instance
 
-/-- In the identity frame, orthoNeg is pointwise negation. -/
+/-- In the identity frame, `orthoNeg` is pointwise negation. -/
 theorem identityFrame_classical [DecidableEq S]
     (A : Set S) (x : S) :
     x ∈ orthoNeg (identityFrame (S := S)) A ↔ x ∉ A :=
-  orthoNeg_classical identityFrame (λ _ _ h => h) A x
+  orthoNeg_classical identityFrame (fun _ _ h ↦ h) A x
 
 /-! ### The c_◇ closure operator -/
 
-/-- The c_◇ closure operator on `Set S` for a compatibility frame `F`,
-    mapping `A ↦ {x | ∀ y ◇ x, ∃ z ◇ y, z ∈ A}`. Its fixed points are precisely the
-    `◇`-regular sets (`IsRegular F`), i.e. the underlying sets of `CompatFrame.Regular`.
-    [holliday-mandelkern-2024] footnote 19 (page 858 of the
-    published JPL version). -/
+/-- The closure operator `c_◇` sends `A` to the possibilities all of whose compatible
+    possibilities are compatible with an `A`-possibility; its fixed points are the regular sets
+    ([holliday-mandelkern-2024] footnote 19). -/
 def regularClosure (F : CompatFrame S) : ClosureOperator (Set S) where
   toFun A := { x | ∀ y, F.compat x y → ∃ z, F.compat y z ∧ z ∈ A }
   monotone' _ _ hAB _ hx y hy := by
@@ -237,7 +229,7 @@ def regularClosure (F : CompatFrame S) : ClosureOperator (Set S) where
       exact ⟨w, hyw, hwA⟩
     · intro x hx y hy
       obtain ⟨z, hyz, hz⟩ := hx y hy
-      exact ⟨z, hyz, λ y' hy' => ⟨z, hy'.symm, hz⟩⟩
+      exact ⟨z, hyz, fun y' hy' ↦ ⟨z, hy'.symm, hz⟩⟩
   IsClosed A := IsRegular F A
   isClosed_iff {A} := by
     constructor

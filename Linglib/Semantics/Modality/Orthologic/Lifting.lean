@@ -1,24 +1,35 @@
 module
 
 public import Linglib.Semantics.Modality.Orthologic.Modal
-public import Linglib.Semantics.Modality.Orthologic.RegularProp
 public import Mathlib.Order.BooleanAlgebra.Basic
 
 /-!
 # The epistemic frame of a Boolean algebra
 
-The construction of [holliday-mandelkern-2024] that lifts a possible-worlds model to a
-possibility model for epistemic modals: the possibilities of the *epistemic frame* of a Boolean
-algebra `B` are the pairs `(a, i)` with `⊥ ≠ a ≤ i`, `a` recording how things are and might be
-and `i` what must be the case; `(a, i)` is compatible with `(a', i')` when `a ⊓ a' ≠ ⊥`, `a ≤ i'`
-and `a' ≤ i`, and accesses `(a', i')` when `a ≤ a'` and `i' ≤ i`. The result is an epistemic
-compatibility frame (`epistemicFrame`), refinement is componentwise (`refines_iff`), and the
-map `embed b = {(a, i) | a ≤ b}` sends `b` to a regular proposition whose box and diamond are
-read off the two components (`mem_box_embed`, `mem_diamond_embed`): `b` must be the case at
-`(a, i)` iff `i ≤ b`, and might be iff `a ⊓ b ≠ ⊥`. As a map `eB` into the regular
-propositions the embedding is an injective order embedding preserving `⊤`, `⊥`, meets and
-complements, and the diamond of a nontrivial embedded proposition does not collapse to it
-(`not_diamond_embed_subset`).
+This file defines Holliday and Mandelkern's lifting of a possible-worlds model to a possibility
+model for epistemic modals. The possibilities of the *epistemic frame* of a Boolean algebra `B`
+are the pairs `(a, i)` with `⊥ ≠ a ≤ i`, where `a` records how things are and might be and `i`
+what must be the case. Two possibilities are compatible when their first components overlap and
+each lies within the other's second component, and `(a, i)` accesses `(a', i')` when `a ≤ a'`
+and `i' ≤ i`. Access is reflexive, R-regular and knowable, so the regular propositions form an
+epistemic ortholattice, and `B` embeds into it.
+
+## Main definitions
+
+* `Orthologic.Possibility`: the possibilities `(a, i)` of the epistemic frame.
+* `Orthologic.epistemicFrame`: the compatibility frame on possibilities.
+* `Orthologic.embed`, `Orthologic.eB`: the embedding of `B` into the regular propositions.
+
+## Main results
+
+* `Orthologic.refines_iff`: refinement is componentwise.
+* `Orthologic.mem_nec_embed`, `Orthologic.mem_diamond_embed`: `b` must be the case at `(a, i)`
+  iff `i ≤ b`, and might be iff `a ⊓ b ≠ ⊥`.
+* `Orthologic.eB_le_iff`, `Orthologic.eB_compl`: the embedding is an order embedding preserving
+  `⊤`, `⊥`, meets and complements.
+* `Orthologic.diamondHom_necHom_le`: the regular propositions form an S5 epistemic ortholattice.
+* `Orthologic.not_diamond_embed_subset`: `◇` does not collapse on non-trivial embedded
+  propositions.
 
 ## References
 
@@ -31,8 +42,8 @@ namespace Orthologic
 
 variable {B : Type*} [BooleanAlgebra B]
 
-/-- A possibility of the epistemic frame of `B`: a pair `(a, i)` with `⊥ ≠ a ≤ i`.
-[holliday-mandelkern-2024] Definition 5.1. -/
+/-- A possibility of the epistemic frame of `B` is a pair `(a, i)` with `⊥ ≠ a ≤ i`
+([holliday-mandelkern-2024] Definition 5.1). -/
 abbrev Possibility (B : Type*) [BooleanAlgebra B] : Type _ :=
   {p : B × B // p.1 ≠ ⊥ ∧ p.1 ≤ p.2}
 
@@ -40,10 +51,10 @@ namespace Possibility
 
 variable (x y : Possibility B)
 
-/-- How things are and might be according to the possibility. -/
+/-- The first component of `(a, i)` records how things are and might be. -/
 abbrev truth : B := x.1.1
 
-/-- What must be the case according to the possibility. -/
+/-- The second component of `(a, i)` records what must be the case. -/
 abbrev info : B := x.1.2
 
 theorem truth_ne_bot : x.truth ≠ ⊥ := x.2.1
@@ -52,12 +63,12 @@ theorem truth_le_info : x.truth ≤ x.info := x.2.2
 
 theorem info_ne_bot : x.info ≠ ⊥ := ne_bot_of_le_ne_bot x.truth_ne_bot x.truth_le_info
 
-/-- Compatibility: the two truths overlap and each lies within the other's information.
-[holliday-mandelkern-2024] Definition 5.1.2. -/
+/-- Two possibilities are compatible when their truths overlap and each lies within the other's
+information ([holliday-mandelkern-2024] Definition 5.1.2). -/
 def compat : Prop := x.truth ⊓ y.truth ≠ ⊥ ∧ x.truth ≤ y.info ∧ y.truth ≤ x.info
 
-/-- Epistemic access: both components of the target lie in the interval between the components
-of the source. [holliday-mandelkern-2024] Definition 5.1.3. -/
+/-- A possibility accesses another when both components of the target lie between the
+components of the source ([holliday-mandelkern-2024] Definition 5.1.3). -/
 def access : Prop := x.truth ≤ y.truth ∧ y.info ≤ x.info
 
 instance [DecidableEq B] [DecidableLE B] : Decidable (compat x y) :=
@@ -66,7 +77,7 @@ instance [DecidableEq B] [DecidableLE B] : Decidable (compat x y) :=
 instance [DecidableEq B] [DecidableLE B] : Decidable (access x y) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The possibility `(a, a)` that knows everything it settles. -/
+/-- `diag a` is the possibility `(a, a)`, which knows everything it settles. -/
 def diag (a : B) (ha : a ≠ ⊥) : Possibility B := ⟨(a, a), ha, le_rfl⟩
 
 @[simp] theorem diag_truth (a : B) (ha : a ≠ ⊥) : (diag a ha).truth = a := rfl
@@ -86,26 +97,33 @@ end Possibility
 
 open Possibility
 
-/-- The epistemic frame of `B`: an epistemic compatibility frame on `Possibility B`. R-regularity
-is witnessed by `(a ⊔ d, a ⊔ d)` and Knowability by `(a, a)`.
-[holliday-mandelkern-2024] Definition 5.1 and Theorem 5.7.1. -/
-def epistemicFrame (B : Type*) [BooleanAlgebra B] : EpistemicCompatFrame (Possibility B) where
+/-- The epistemic frame of `B` is the compatibility frame on `Possibility B`
+([holliday-mandelkern-2024] Definition 5.1). -/
+def epistemicFrame (B : Type*) [BooleanAlgebra B] : CompatFrame (Possibility B) where
   compat := compat
-  compat_refl := ⟨λ x => ⟨by rw [inf_idem]; exact x.truth_ne_bot, x.truth_le_info,
+  compat_refl := ⟨fun x ↦ ⟨by rw [inf_idem]; exact x.truth_ne_bot, x.truth_le_info,
     x.truth_le_info⟩⟩
-  compat_symm := ⟨λ _ _ h => ⟨by rw [inf_comm]; exact h.1, h.2.2, h.2.1⟩⟩
-  access := access
-  access_refl := ⟨λ _ => ⟨le_rfl, le_rfl⟩⟩
+  compat_symm := ⟨fun _ _ h ↦ ⟨by rw [inf_comm]; exact h.1, h.2.2, h.2.1⟩⟩
+
+instance : Std.Refl (access (B := B)) := ⟨fun _ ↦ ⟨le_rfl, le_rfl⟩⟩
+
+/-- Epistemic access is R-regular, witnessed by `(a ⊔ d, a ⊔ d)` ([holliday-mandelkern-2024]
+Theorem 5.7.1). -/
+instance : IsRRegular (epistemicFrame B) access where
   rRegular := by
     rintro x y' y ⟨hab, hki⟩ ⟨_, hbl, hdk⟩
     have hne : x.truth ⊔ y.truth ≠ ⊥ := ne_bot_of_le_ne_bot x.truth_ne_bot le_sup_left
     refine ⟨diag _ hne, ⟨?_, le_sup_left, sup_le x.truth_le_info (hdk.trans hki)⟩,
-      λ x'' ⟨_, hx', hx''⟩ => ⟨diag _ hne, ⟨hx'', hx'⟩, ?_, sup_le (hab.trans hbl)
+      fun x'' ⟨_, hx', hx''⟩ ↦ ⟨diag _ hne, ⟨hx'', hx'⟩, ?_, sup_le (hab.trans hbl)
         y.truth_le_info, le_sup_right⟩⟩
     · simp only [diag_truth, inf_sup_self]; exact x.truth_ne_bot
     · simp only [diag_truth, inf_of_le_right (le_sup_right : y.truth ≤ x.truth ⊔ y.truth)]
       exact y.truth_ne_bot
-  knowable := λ x => ⟨diag x.truth x.truth_ne_bot, λ z ⟨haz, hza⟩ w ⟨hzw, hzw', hwz⟩ => by
+
+/-- Epistemic access satisfies Knowability, witnessed by `(a, a)` ([holliday-mandelkern-2024]
+Theorem 5.7.1). -/
+instance : IsKnowable (epistemicFrame B) access where
+  knowable x := ⟨diag x.truth x.truth_ne_bot, fun z ⟨haz, hza⟩ w ⟨hzw, hzw', hwz⟩ ↦ by
     have hz : z.truth = x.truth := le_antisymm (z.truth_le_info.trans hza) haz
     exact ⟨by rwa [← hz], hz ▸ hzw', hwz.trans (hza.trans x.truth_le_info)⟩⟩
 
@@ -113,29 +131,20 @@ section Decidable
 
 variable [DecidableEq B] [DecidableLE B]
 
-instance : DecidableRel (epistemicFrame B).toCompatFrame.compat :=
-  inferInstanceAs (DecidableRel (compat (B := B)))
-
 instance : DecidableRel (epistemicFrame B).compat :=
   inferInstanceAs (DecidableRel (compat (B := B)))
 
-instance : DecidableRel (epistemicFrame B).access :=
-  inferInstanceAs (DecidableRel (access (B := B)))
-
-instance : DecidableRel (epistemicFrame B).toModalCompatFrame.access :=
-  inferInstanceAs (DecidableRel (access (B := B)))
-
 end Decidable
 
-/-- Refinement in the epistemic frame is componentwise: `(a, i) ⊑ (a', i')` iff `a = a'` and
-`i ≤ i'`. [holliday-mandelkern-2024] Lemma 5.2. -/
+/-- Refinement in the epistemic frame is componentwise, `(a, i) ⊑ (a', i')` iff `a = a'` and
+`i ≤ i'` ([holliday-mandelkern-2024] Lemma 5.2). -/
 theorem refines_iff (y x : Possibility B) :
-    refines (epistemicFrame B).toCompatFrame y x ↔ y.truth = x.truth ∧ y.info ≤ x.info := by
+    refines (epistemicFrame B) y x ↔ y.truth = x.truth ∧ y.info ≤ x.info := by
   constructor
   · intro h
     by_contra hne
     rcases not_and_or.mp hne with hne | hii
-    · rcases not_and_or.mp (mt (λ h : y.truth ≤ x.truth ∧ x.truth ≤ y.truth =>
+    · rcases not_and_or.mp (mt (fun h : y.truth ≤ x.truth ∧ x.truth ≤ y.truth ↦
           le_antisymm h.1 h.2) hne) with hyx | hxy
       · have hne' : y.truth ⊓ x.truthᶜ ≠ ⊥ := by rwa [← sdiff_eq, Ne, sdiff_eq_bot_iff]
         refine (h ⟨(y.truth ⊓ x.truthᶜ, y.truth), hne', inf_le_left⟩
@@ -149,30 +158,30 @@ theorem refines_iff (y x : Possibility B) :
   · rintro ⟨ha, hi⟩ z ⟨hz, hz', hz''⟩
     exact ⟨by rwa [← ha], ha ▸ hz', hz''.trans hi⟩
 
-/-- The underlying set of the embedding `e_B`: the possibilities whose truth entails `b`.
-[holliday-mandelkern-2024] Theorem 5.7.2. -/
+/-- `embed b` is the set of possibilities whose truth entails `b`, the underlying set of the
+embedding `e_B` ([holliday-mandelkern-2024] Theorem 5.7.2). -/
 def embed (b : B) : Set (Possibility B) := {x | x.truth ≤ b}
 
 @[simp] theorem mem_embed {b : B} {x : Possibility B} : x ∈ embed b ↔ x.truth ≤ b := Iff.rfl
 
 instance [DecidableLE B] (b : B) : DecidablePred (· ∈ embed b) :=
-  λ x => inferInstanceAs (Decidable (x.truth ≤ b))
+  fun x ↦ inferInstanceAs (Decidable (x.truth ≤ b))
 
 instance [DecidableLE B] (b : B) : DecidablePred (embed b) :=
-  λ x => inferInstanceAs (Decidable (x.truth ≤ b))
+  fun x ↦ inferInstanceAs (Decidable (x.truth ≤ b))
 
 /-- `b` must be the case at `(a, i)` iff `i ≤ b`. [holliday-mandelkern-2024] Lemma 5.8.2. -/
-theorem mem_box_embed {b : B} {x : Possibility B} :
-    x ∈ box (epistemicFrame B).toModalCompatFrame (embed b) ↔ x.info ≤ b :=
-  ⟨λ h => h _ x.access_diag_info, λ h y hy => (y.truth_le_info.trans hy.2).trans h⟩
+theorem mem_nec_embed {b : B} {x : Possibility B} :
+    x ∈ ModalLogic.nec access (embed b) ↔ x.info ≤ b :=
+  ⟨fun h ↦ h _ x.access_diag_info, fun h y hy ↦ (y.truth_le_info.trans hy.2).trans h⟩
 
 /-- `b` might be the case at `(a, i)` iff `a ⊓ b ≠ ⊥`. [holliday-mandelkern-2024] Lemma 5.8.3. -/
 theorem mem_diamond_embed {b : B} {x : Possibility B} :
-    x ∈ diamond (epistemicFrame B).toModalCompatFrame (embed b) ↔ x.truth ⊓ b ≠ ⊥ := by
+    x ∈ diamond (epistemicFrame B) access (embed b) ↔ x.truth ⊓ b ≠ ⊥ := by
   constructor
   · intro h
     have := h _ x.compat_diag_truth
-    simp only [mem_box, not_forall] at this
+    simp only [ModalLogic.mem_nec, not_forall] at this
     obtain ⟨y', ⟨-, hy'a⟩, hy'⟩ := this
     simp only [mem_orthoNeg, not_forall, not_not] at hy'
     obtain ⟨y'', ⟨hne, -, -⟩, hy''⟩ := hy'
@@ -185,16 +194,16 @@ theorem mem_diamond_embed {b : B} {x : Possibility B} :
     show (x'.truth ⊔ x.truth ⊓ b) ⊓ (x.truth ⊓ b) ≠ ⊥
     rwa [inf_of_le_right le_sup_right]
 
-/-- Embedded propositions are regular: the witness for `(a, i) ∉ e(b)` is `(a ⊓ bᶜ, i)`.
-[holliday-mandelkern-2024] Theorem 5.7.2. -/
-theorem embed_isRegular (b : B) : IsRegular (epistemicFrame B).toCompatFrame (embed b) := by
+/-- Embedded propositions are regular, witnessed at `(a, i) ∉ e(b)` by `(a ⊓ bᶜ, i)`
+([holliday-mandelkern-2024] Theorem 5.7.2). -/
+theorem embed_isRegular (b : B) : IsRegular (epistemicFrame B) (embed b) := by
   intro x
   by_cases hx : x.truth ≤ b
   · exact Or.inl hx
   · right
     have hne : x.truth ⊓ bᶜ ≠ ⊥ := by rwa [← sdiff_eq, Ne, sdiff_eq_bot_iff]
     refine ⟨⟨(x.truth ⊓ bᶜ, x.info), hne, inf_le_left.trans x.truth_le_info⟩,
-      ⟨?_, x.truth_le_info, inf_le_left.trans x.truth_le_info⟩, λ z ⟨hz, _, _⟩ hzb => hz ?_⟩
+      ⟨?_, x.truth_le_info, inf_le_left.trans x.truth_le_info⟩, fun z ⟨hz, _, _⟩ hzb ↦ hz ?_⟩
     · show x.truth ⊓ (x.truth ⊓ bᶜ) ≠ ⊥
       rwa [inf_of_le_right inf_le_left]
     · show x.truth ⊓ bᶜ ⊓ z.truth = ⊥
@@ -205,7 +214,7 @@ theorem embed_isRegular (b : B) : IsRegular (epistemicFrame B).toCompatFrame (em
 /-- The embedding sends complements to orthocomplements.
 [holliday-mandelkern-2024] Theorem 5.7.2. -/
 theorem embed_compl (b : B) :
-    embed bᶜ = orthoNeg (epistemicFrame B).toCompatFrame (embed b) := by
+    embed bᶜ = orthoNeg (epistemicFrame B) (embed b) := by
   ext x
   simp only [mem_embed, mem_orthoNeg]
   constructor
@@ -224,35 +233,36 @@ theorem embed_compl (b : B) :
 theorem embed_inf (b c : B) : embed (b ⊓ c) = embed b ∩ embed c := by
   ext x; exact le_inf_iff
 
-/-- Inheritance for embedded propositions: what is the case and compatible with `c` is
-compatible with both. [holliday-mandelkern-2024] Proposition 5.12.3. -/
+/-- For embedded propositions, what is the case and compatible with `c` is compatible with
+both, the inheritance principle of [holliday-mandelkern-2024] Proposition 5.12.3. -/
 theorem embed_inter_diamond_embed_subset (b c : B) :
-    embed b ∩ diamond (epistemicFrame B).toModalCompatFrame (embed c) ⊆
-      diamond (epistemicFrame B).toModalCompatFrame (embed (b ⊓ c)) := by
+    embed b ∩ diamond (epistemicFrame B) access (embed c) ⊆
+      diamond (epistemicFrame B) access (embed (b ⊓ c)) := by
   rintro x ⟨hb, hc⟩
   rw [mem_diamond_embed] at hc ⊢
   rwa [← inf_assoc, inf_of_le_left hb]
 
 /-! ### The embedding into the regular propositions -/
 
-/-- The embedding `e_B : B → O(Bᵉ)` as a regular proposition.
-[holliday-mandelkern-2024] Theorem 5.7.2. -/
-def eB (b : B) : (epistemicFrame B).toCompatFrame.Regular :=
-  (epistemicFrame B).toCompatFrame.regOf (embed b) (embed_isRegular b)
+/-- `eB b` is the regular proposition `e_B(b)` of the embedding of `B` into the regular
+propositions of its epistemic frame ([holliday-mandelkern-2024] Theorem 5.7.2). -/
+def eB (b : B) : (epistemicFrame B).Regular :=
+  (epistemicFrame B).regOf (embed b) (embed_isRegular b)
 
 @[simp] theorem coe_eB (b : B) : (eB b : Set (Possibility B)) = embed b := rfl
 
-theorem eB_mono {b c : B} (h : b ≤ c) : eB b ≤ eB c := λ _ hx => le_trans hx h
+theorem eB_mono {b c : B} (h : b ≤ c) : eB b ≤ eB c := fun _ hx ↦ le_trans hx h
 
-/-- `e_B` reflects order: the possibility `(b, ⊤)` witnesses `b ≤ c` from `e_B b ≤ e_B c`. -/
+/-- `e_B` reflects order, as the possibility `(b, ⊤)` witnesses `b ≤ c` from
+`e_B b ≤ e_B c`. -/
 theorem eB_le_iff {b c : B} : eB b ≤ eB c ↔ b ≤ c := by
-  refine ⟨λ h => ?_, eB_mono⟩
+  refine ⟨fun h ↦ ?_, eB_mono⟩
   rcases eq_or_ne b ⊥ with rfl | hb
   · exact bot_le
   · exact @h ⟨(b, ⊤), hb, le_top⟩ le_rfl
 
-theorem eB_injective : Function.Injective (eB : B → (epistemicFrame B).toCompatFrame.Regular) :=
-  λ _ _ h => le_antisymm (eB_le_iff.mp h.le) (eB_le_iff.mp h.ge)
+theorem eB_injective : Function.Injective (eB : B → (epistemicFrame B).Regular) :=
+  fun _ _ h ↦ le_antisymm (eB_le_iff.mp h.le) (eB_le_iff.mp h.ge)
 
 theorem eB_top : eB (⊤ : B) = ⊤ := by
   apply SetLike.coe_injective
@@ -273,13 +283,38 @@ theorem eB_compl (b : B) : eB bᶜ = (eB b)ᶜ := by
   rw [coe_eB, CompatFrame.Regular.coe_compl, coe_eB, embed_compl]
 
 /-- The diamond of an embedded proposition strictly extends it unless the proposition is
-trivial: `(⊤, ⊤)` lies in `◇e(b)` but not in `e(b)`.
-[holliday-mandelkern-2024] Theorem 5.7.4. -/
+trivial, since `(⊤, ⊤)` lies in `◇e(b)` but not in `e(b)` ([holliday-mandelkern-2024]
+Theorem 5.7.4). -/
 theorem not_diamond_embed_subset {b : B} (hb : b ≠ ⊥) (hb' : b ≠ ⊤) :
-    ¬ diamond (epistemicFrame B).toModalCompatFrame (embed b) ⊆ embed b := by
+    ¬ diamond (epistemicFrame B) access (embed b) ⊆ embed b := by
   intro h
   have htop : (⊤ : B) ≠ ⊥ := ne_bot_of_le_ne_bot hb le_top
   have := h (a := ⟨(⊤, ⊤), htop, le_rfl⟩) (mem_diamond_embed.mpr (by rwa [top_inf_eq]))
   exact hb' (top_le_iff.mp this)
+
+/-! ### The epistemic extension is S5 -/
+
+instance : IsTrans (Possibility B) access := ⟨fun _ _ _ h h' ↦ ⟨h.1.trans h'.1, h'.2.trans h.2⟩⟩
+
+/-- Whatever is the case must be possible, `U ⊆ □◇U` for every set `U`, witnessed by
+`(a ⊔ a'', a ⊔ a'')` for `(a, i) ∈ U` (the proof of [holliday-mandelkern-2024]
+Theorem 5.7.3). -/
+theorem subset_nec_diamond (U : Set (Possibility B)) :
+    U ⊆ ModalLogic.nec access (diamond (epistemicFrame B) access U) := by
+  intro x hx x' hxx' x'' hc hbox
+  have hne : x.truth ⊔ x''.truth ≠ ⊥ := ne_bot_of_le_ne_bot x.truth_ne_bot le_sup_left
+  refine hbox (diag _ hne) ⟨le_sup_right, sup_le (hxx'.1.trans hc.2.1) x''.truth_le_info⟩ x
+    ⟨?_, sup_le x.truth_le_info (hc.2.2.trans hxx'.2), le_sup_left⟩ hx
+  simp only [diag_truth, inf_of_le_right (le_sup_left : x.truth ≤ x.truth ⊔ x''.truth)]
+  exact x.truth_ne_bot
+
+/-- The 5 principle `◇U ≤ □◇U` in the epistemic extension of `B`, which is therefore an S5
+epistemic ortholattice ([holliday-mandelkern-2024] Theorem 5.7.3). -/
+theorem diamondHom_necHom_le (U : (epistemicFrame B).Regular) :
+    diamondHom ((epistemicFrame B).necHom access) U ≤
+      (epistemicFrame B).necHom access (diamondHom ((epistemicFrame B).necHom access) U) := by
+  refine diamondHom_le_box_diamondHom (CompatFrame.necHom_le_necHom_necHom access) (fun V ↦ ?_) U
+  rw [← SetLike.coe_subset_coe, CompatFrame.coe_necHom, CompatFrame.coe_diamondHom_necHom]
+  exact subset_nec_diamond (V : Set (Possibility B))
 
 end Orthologic

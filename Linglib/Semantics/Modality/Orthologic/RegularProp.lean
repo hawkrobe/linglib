@@ -6,24 +6,33 @@ public import Linglib.Core.Order.Orthoframe
 public import Mathlib.Data.SetLike.Basic
 
 /-!
-# Regular Propositions of a Compatibility Frame
-[holliday-mandelkern-2024]
+# Regular propositions of a compatibility frame
 
-The `◇`-regular subsets of a compatibility frame `F` form an orthocomplemented
-lattice. Rather than re-derive it, this file identifies that lattice with the
-abstract concept lattice of the orthogonality relation `¬ compat`:
-`CompatFrame.Regular F := Orthoframe.Regular F.toOrthoframe` (mathlib `Order.Concept`,
-via `Core.Order.Orthoframe`), so the ortholattice structure and
-Holliday–Mandelkern's Proposition 4.8 (`compl_compl`) come for free.
-
-What this file contributes is the **decidable construction interface**: the
-`IsRegular` predicate (a bounded-quantifier `Prop`, hence `decide`-able on finite
-frames), its closure lemmas, the bridge `isRegular_iff_isExtent`, and the smart
-constructor `CompatFrame.regOf` building a `Regular` element from a regularity proof.
+This file defines the ortholattice `CompatFrame.Regular F` of regular propositions of a
+compatibility frame `F`. Rather than build the lattice by hand, it identifies the regular sets
+with the extents of the concept lattice of the orthogonality relation `¬ compat`, so the
+ortholattice structure, and Holliday and Mandelkern's involution `¬¬A = A` for regular `A`, come
+from mathlib's `Order.Concept` through `Core/Order/Orthoframe.lean`.
 
 ## Main definitions
-* `CompatFrame.toOrthoframe`, `CompatFrame.Regular`, `CompatFrame.regOf`.
-* `isRegular_iff_isExtent` — `IsRegular F` is `IsExtent` of the orthogonality relation.
+
+* `CompatFrame.toOrthoframe`: the orthogonality relation `¬ compat` of a frame.
+* `CompatFrame.Regular`: the ortholattice of regular propositions.
+* `CompatFrame.regOf`: the regular proposition of a set with a regularity proof.
+
+## Main results
+
+* `orthoNeg_isRegular`, `inter_isRegular`: regular sets are closed under `¬` and `∩`.
+* `isRegular_iff_isExtent`: the regular sets are the concept extents of `¬ compat`.
+
+## Implementation notes
+
+The decidable predicate `IsRegular` is the construction interface: on a finite frame, `regOf`
+builds a regular proposition from a proof by `decide`.
+
+## References
+
+* [holliday-mandelkern-2024]
 -/
 
 @[expose] public section
@@ -32,9 +41,9 @@ namespace Orthologic
 
 variable {S : Type*} {F : CompatFrame S}
 
-/-! ### Closure-under-regularity helpers -/
+/-! ### Closure properties of regular sets -/
 
-/-- The orthocomplement of any set is regular (whether or not the original set is). -/
+/-- The orthocomplement of any set is regular, whether or not the set is. -/
 theorem orthoNeg_isRegular (F : CompatFrame S) (A : Set S) :
     IsRegular F (orthoNeg F A) := by
   intro x
@@ -44,7 +53,7 @@ theorem orthoNeg_isRegular (F : CompatFrame S) (A : Set S) :
     rw [mem_orthoNeg] at h
     push Not at h
     obtain ⟨y, hxy, hyA⟩ := h
-    refine ⟨y, hxy, fun z hyz hzN => ?_⟩
+    refine ⟨y, hxy, fun z hyz hzN ↦ ?_⟩
     rw [mem_orthoNeg] at hzN
     exact hzN y (hyz.symm) hyA
 
@@ -59,28 +68,27 @@ theorem inter_isRegular {F : CompatFrame S} {A B : Set S}
     rcases h with hxA | hxB
     · rcases hA x with hAx | ⟨y, hxy, hy⟩
       · exact absurd hAx hxA
-      · exact ⟨y, hxy, fun z hyz hz => hy z hyz hz.1⟩
+      · exact ⟨y, hxy, fun z hyz hz ↦ hy z hyz hz.1⟩
     · rcases hB x with hBx | ⟨y, hxy, hy⟩
       · exact absurd hBx hxB
-      · exact ⟨y, hxy, fun z hyz hz => hy z hyz hz.2⟩
+      · exact ⟨y, hxy, fun z hyz hz ↦ hy z hyz hz.2⟩
 
-/-- The disjunction `disj F A B = orthoNeg F (orthoNeg F A ∩ orthoNeg F B)`
-    is regular (immediate from `orthoNeg_isRegular`). -/
+/-- A disjunction is regular, being an orthocomplement. -/
 theorem disj_isRegular (F : CompatFrame S) (A B : Set S) :
     IsRegular F (disj F A B) :=
   orthoNeg_isRegular F _
 
-/-- The empty set is regular (vacuously: take `y = x` by reflexivity). -/
+/-- The empty set is regular. -/
 theorem empty_isRegular (F : CompatFrame S) : IsRegular F (∅ : Set S) := by
   intro x
-  exact Or.inr ⟨x, F.refl x, fun _ _ h => h.elim⟩
+  exact Or.inr ⟨x, F.refl x, fun _ _ h ↦ h.elim⟩
 
-/-- The full set is regular (trivially). -/
+/-- The full set is regular. -/
 theorem univ_isRegular (F : CompatFrame S) : IsRegular F (Set.univ : Set S) :=
-  fun _ => Or.inl trivial
+  fun _ ↦ Or.inl trivial
 
-/-- The load-bearing involutivity: `orthoNeg² A = A` for regular `A`.
-    [holliday-mandelkern-2024] Proposition 4.8. -/
+/-- Orthocomplementation is involutive on regular sets, `¬¬A = A`
+    ([holliday-mandelkern-2024] Proposition 4.8). -/
 theorem orthoNeg_orthoNeg_of_isRegular (F : CompatFrame S) {A : Set S}
     (hA : IsRegular F A) : orthoNeg F (orthoNeg F A) = A := by
   apply Set.eq_of_subset_of_subset
@@ -106,13 +114,12 @@ theorem orthoNeg_orthoNeg_of_isRegular (F : CompatFrame S) {A : Set S}
 
 open Order
 
-/-- The orthogonality (incompatibility) orthoframe of a compatibility frame:
-    `x ⊥ y ↔ ¬ compat x y`. Symmetry and irreflexivity come from symmetry and
-    reflexivity of `compat`. -/
+/-- The orthoframe of a compatibility frame makes two possibilities orthogonal when they are
+    incompatible. -/
 def CompatFrame.toOrthoframe (F : CompatFrame S) : Orthoframe S where
   ortho x y := ¬ F.compat x y
-  ortho_symm := ⟨fun _ _ h hc => h hc.symm⟩
-  ortho_irrefl := ⟨fun a h => h (F.refl a)⟩
+  ortho_symm := ⟨fun _ _ h hc ↦ h hc.symm⟩
+  ortho_irrefl := ⟨fun a h ↦ h (F.refl a)⟩
 
 /-- `orthoNeg` is the `upperPolar` of the orthogonality relation. -/
 theorem orthoNeg_eq_upperPolar (F : CompatFrame S) (A : Set S) :
@@ -127,11 +134,11 @@ theorem orthoNeg_eq_upperPolar (F : CompatFrame S) (A : Set S) :
 /-- `IsRegular` is the double-orthonegation fixed-point condition. -/
 theorem isRegular_iff_orthoNeg_orthoNeg (F : CompatFrame S) (A : Set S) :
     IsRegular F A ↔ orthoNeg F (orthoNeg F A) = A :=
-  ⟨orthoNeg_orthoNeg_of_isRegular F, fun h => h ▸ orthoNeg_isRegular F _⟩
+  ⟨orthoNeg_orthoNeg_of_isRegular F, fun h ↦ h ▸ orthoNeg_isRegular F _⟩
 
-/-- The `◇`-regular sets of `F` are exactly the concept extents of its
-    orthogonality relation; Holliday–Mandelkern's Proposition 4.8 is mathlib's
-    `upperPolar_lowerPolar_upperPolar` (see `Core.Order.Orthoframe`). -/
+/-- The regular sets of `F` are exactly the concept extents of its orthogonality relation.
+    [holliday-mandelkern-2024]'s Proposition 4.8 is then mathlib's
+    `upperPolar_lowerPolar_upperPolar`. -/
 theorem isRegular_iff_isExtent (F : CompatFrame S) (A : Set S) :
     IsRegular F A ↔ IsExtent F.toOrthoframe.ortho A := by
   rw [isRegular_iff_orthoNeg_orthoNeg, isExtent_iff,
@@ -140,16 +147,17 @@ theorem isRegular_iff_isExtent (F : CompatFrame S) (A : Set S) :
 
 /-! ### The ortholattice of regular propositions -/
 
-/-- The regular propositions of `F`: the ortholattice `Orthoframe.Regular` of its
-    orthogonality orthoframe (the concept extents of `¬ compat`); Holliday–Mandelkern's
-    Proposition 4.8 is mathlib's `upperPolar_lowerPolar_upperPolar`. The decidable
-    `IsRegular` predicate is the construction interface — use `regOf` to build an
-    element from a regularity proof (e.g. `by decide` on a finite frame). -/
+/-- The regular propositions of `F` form the ortholattice `Orthoframe.Regular` of its
+    orthoframe, whose elements are the concept extents of `¬ compat`. -/
 abbrev CompatFrame.Regular (F : CompatFrame S) : Type _ := Orthoframe.Regular F.toOrthoframe
 
-/-- Build a regular proposition from a set and an `IsRegular` proof. -/
+/-- `F.regOf A h` is the regular proposition with underlying set `A`. -/
 def CompatFrame.regOf (F : CompatFrame S) (A : Set S) (h : IsRegular F A) : F.Regular :=
   Concept.ofIsExtent F.toOrthoframe.ortho A ((isRegular_iff_isExtent F A).mp h)
+
+/-- The underlying set of a regular proposition is regular. -/
+theorem CompatFrame.Regular.isRegular (A : F.Regular) : IsRegular F A :=
+  (isRegular_iff_isExtent F A).mpr A.isExtent_extent
 
 @[simp] theorem CompatFrame.coe_regOf (A : Set S) (h : IsRegular F A) :
     (F.regOf A h : Set S) = A := rfl
@@ -165,6 +173,9 @@ def CompatFrame.regOf (F : CompatFrame S) (A : Set S) (h : IsRegular F A) : F.Re
 
 @[simp] theorem CompatFrame.Regular.coe_bot :
     ((⊥ : F.Regular) : Set S) = ∅ := Concept.extent_bot_eq_empty F.toOrthoframe.ortho
+
+@[simp] theorem CompatFrame.Regular.coe_eq_empty {A : F.Regular} : (A : Set S) = ∅ ↔ A = ⊥ := by
+  rw [← coe_bot, SetLike.coe_set_eq]
 
 @[simp] theorem CompatFrame.Regular.coe_compl (A : F.Regular) :
     ((Aᶜ : F.Regular) : Set S) = orthoNeg F (A : Set S) := by
