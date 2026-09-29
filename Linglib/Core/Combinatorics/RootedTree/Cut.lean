@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Data.UnorderedTree.Basic
 public import Linglib.Core.Data.UnorderedTree.Count
 public import Linglib.Core.Data.UnorderedTree.DecEq
-public import Mathlib.Data.Multiset.Bind
+public import Linglib.Core.Data.Multiset.Bind
 public import Linglib.Core.Data.RoseTree.Basic
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 
@@ -1486,37 +1486,6 @@ per-child cases. This is the substrate for the Δ^c per-tree counit law:
 under `(counit ⊗ id)`, only this summand survives, contributing
 `1 ⊗ ofTree T`. -/
 
-/-- Helper: filter of `(s ×ˢ t)` by a conjunction predicate distributes
-    into a product of filters. Used to factor the cardinality-zero
-    condition on `(p.1.1 + p.2.1)` into independent conditions on each
-    factor of the cartesian product. -/
-private lemma filter_product_split {α₁ β₁ : Type*}
-    (s : Multiset α₁) (t : Multiset β₁)
-    (p : α₁ → Prop) [DecidablePred p] (q : β₁ → Prop) [DecidablePred q] :
-    (s ×ˢ t).filter (fun pr => p pr.1 ∧ q pr.2) = (s.filter p) ×ˢ (t.filter q) := by
-  show ((s.bind fun a => t.map (Prod.mk a)).filter (fun pr => p pr.1 ∧ q pr.2)) =
-       (s.filter p).bind (fun a => (t.filter q).map (Prod.mk a))
-  rw [Multiset.filter_bind, Multiset.bind_filter]
-  apply Multiset.bind_congr
-  intro a _
-  rw [Multiset.filter_map]
-  by_cases h : p a
-  · rw [ite_eq_left h]
-    apply congrArg
-    apply Multiset.filter_congr
-    intro b _
-    show (p a ∧ q b) ↔ q b
-    simp [h]
-  · rw [ite_eq_right h]
-    apply Multiset.eq_zero_of_forall_notMem
-    intro pr hpr
-    rw [Multiset.mem_map] at hpr
-    obtain ⟨b, hb_mem, _hb_eq⟩ := hpr
-    rw [Multiset.mem_filter] at hb_mem
-    -- hb_mem.2 : ((fun pr => p pr.1 ∧ q pr.2) ∘ Prod.mk a) b = (p a ∧ q b) after β
-    have hpa : p a := hb_mem.2.1
-    exact h hpa
-
 mutual
 
 /-- The unique cut summand of `cutSummandsG extract T` with empty cut
@@ -1573,7 +1542,7 @@ theorem cutListSummandsG_filter_empty
       show (p.1.1 + p.2.1).card = 0 ↔ p.1.1.card = 0 ∧ p.2.1.card = 0
       rw [Multiset.card_add, Nat.add_eq_zero_iff]
     rw [hcongr,
-        filter_product_split (augActionG extract t) (cutListSummandsG extract ts)
+        Multiset.filter_product
           (fun q : Multiset (RoseTree α) × List (RoseTree α) => q.1.card = 0)
           (fun q : Multiset (RoseTree α) × List (RoseTree α) => q.1.card = 0),
         augActionG_filter_empty extract t,
@@ -1658,6 +1627,54 @@ theorem cutSummandsCN_filter_empty
   show ((((0 : Multiset (RoseTree (α ⊕ β))).map UnorderedTree.mk : Multiset (UnorderedTree (α ⊕ β))),
          UnorderedTree.mk T₀) : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)) ::ₘ 0 = _
   rw [Multiset.map_zero]
+  rfl
+
+mutual
+
+/-- The unique deletion cut of `T` with empty crown is the empty cut `(0, T)`. -/
+theorem cutSummandsP_filter_empty :
+    ∀ T : RoseTree α,
+      (cutSummandsP T).filter (fun p ↦ p.1.card = 0) = {((0 : Multiset (RoseTree α)), T)}
+  | .node a cs => by
+    rw [cutSummandsP_node, Multiset.filter_map]
+    simp only [Function.comp_def]
+    rw [cutListSummandsP_filter_empty cs, Multiset.map_singleton]
+
+/-- The unique list-cut of `cs` with empty crown is `(0, cs)`. -/
+theorem cutListSummandsP_filter_empty :
+    ∀ cs : List (RoseTree α),
+      (cutListSummandsP cs).filter (fun p ↦ p.1.card = 0) = {((0 : Multiset (RoseTree α)), cs)}
+  | [] => by simp
+  | t :: ts => by
+    rw [cutListSummandsP_cons', Multiset.filter_map,
+      Multiset.filter_congr (q := fun x ↦ x.1.1.card = 0 ∧ x.2.1.card = 0) fun x _ ↦ by
+        rcases x with ⟨⟨F, _ | r⟩, G, rs⟩ <;>
+          simp only [Function.comp_apply, combineP_fn, Multiset.card_add, Nat.add_eq_zero_iff],
+      Multiset.filter_product (fun x : Multiset (RoseTree α) × Option (RoseTree α) ↦ x.1.card = 0)
+        (fun x : Multiset (RoseTree α) × List (RoseTree α) ↦ x.1.card = 0),
+      augActionP_filter_empty, cutListSummandsP_filter_empty ts]
+    rfl
+
+/-- The unique per-child action of `t` with empty crown keeps `t` whole. -/
+theorem augActionP_filter_empty :
+    ∀ t : RoseTree α,
+      (augActionP t).filter (fun p ↦ p.1.card = 0) = {((0 : Multiset (RoseTree α)), some t)}
+  | t => by
+    rw [augActionP_eq, Multiset.filter_cons_of_neg _ (by simp), Multiset.filter_map]
+    simp only [Function.comp_def]
+    rw [cutSummandsP_filter_empty t, Multiset.map_singleton]
+
+end
+
+/-- `UnorderedTree`-level descent: the unique deletion cut of `T` with empty crown is the empty
+    cut `(0, T)`. -/
+theorem cutSummandsN_filter_empty (T : UnorderedTree α) :
+    (cutSummandsN T).filter (fun p ↦ p.1.card = 0) = {((0 : Multiset (UnorderedTree α)), T)} := by
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree α, T = UnorderedTree.mk T₀ :=
+    ⟨T.out, (Quotient.out_eq T).symm⟩
+  rw [cutSummandsN_mk, Multiset.filter_map]
+  simp only [Function.comp_def, projSummand, Multiset.card_map]
+  rw [cutSummandsP_filter_empty T₀, Multiset.map_singleton]
   rfl
 
 end ConnesKreimer

@@ -99,26 +99,14 @@ end Gradings
 noncomputable def gradingMonomialTree (T : UnorderedTree α) : LaurentSeries R :=
   HahnSeries.single (T.numEdges : ℤ) 1
 
-/-- `ϕt` on forests, multiplicative over disjoint union. -/
-noncomputable def gradingMonoidHom :
-    Multiplicative (Forest (UnorderedTree α)) →* LaurentSeries R where
-  toFun F := (F.toAdd.map (gradingMonomialTree (R := R))).prod
-  map_one' := by
-    show ((0 : Forest (UnorderedTree α)).map _).prod = 1
-    rw [Multiset.map_zero, Multiset.prod_zero]
-  map_mul' F G := by
-    show ((F.toAdd + G.toAdd).map (gradingMonomialTree (R := R))).prod =
-         (F.toAdd.map _).prod * (G.toAdd.map _).prod
-    rw [Multiset.map_add, Multiset.prod_add]
-
-/-- The character `ϕt : H →ₐ[R] LaurentSeries R`, `ϕt(F) = t^{α(F)}`. -/
+/-- The character `ϕt : H →ₐ[R] LaurentSeries R`, `ϕt(F) = t^{α(F)}`, multiplicative over
+disjoint union. -/
 noncomputable def gradingChar : ConnesKreimer R (UnorderedTree α) →ₐ[R] LaurentSeries R :=
-  ConnesKreimer.lift gradingMonoidHom
+  aeval gradingMonomialTree
 
 @[simp] theorem gradingChar_apply_of' (F : Forest (UnorderedTree α)) :
-    gradingChar (R := R) (of' F) = (F.map (gradingMonomialTree (R := R))).prod := by
-  rw [gradingChar, ConnesKreimer.lift_of']
-  rfl
+    gradingChar (R := R) (of' F) = (F.map (gradingMonomialTree (R := R))).prod :=
+  aeval_of' _ F
 
 /-- `ϕt(F) = t^{α(F)}`, since `α` is additive over forests. -/
 theorem prod_gradingMonomialTree (F : Forest (UnorderedTree α)) :

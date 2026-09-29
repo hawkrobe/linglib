@@ -94,7 +94,7 @@ theorem lcoeff_singleton_isDualPrimitive :
 /-- [marcolli-chomsky-berwick-2025] Lemma 1.7.3, membership form: single-tree
 deltas lie in the Lie subalgebra of dual primitives (so their brackets do too,
 by `LieSubalgebra.lie_mem`). -/
-theorem toConv_lcoeff_singleton_mem_dualPrimitives [CharZero R] [NoZeroDivisors R] :
+theorem toConv_lcoeff_singleton_mem_dualPrimitives :
     toConv (lcoeff R ({T} : Forest (UnorderedTree α))) ∈
       dualPrimitives R (ConnesKreimer R (UnorderedTree α)) :=
   lcoeff_singleton_isDualPrimitive T
@@ -128,7 +128,7 @@ theorem convMul_lcoeff_singleton_apply_ofTree :
 [marcolli-chomsky-berwick-2025] in Δ^ρ form; the book's
 `c^T_{T₁,T₂} − c^T_{T₂,T₁}` is stated for the trace-leaf coproduct `Δ^c`,
 which agrees under the trace-erasure projection (`eraseTracesAlgHom`). -/
-theorem lie_lcoeff_singleton_apply_ofTree [CharZero R] [NoZeroDivisors R] :
+theorem lie_lcoeff_singleton_apply_ofTree :
     ⁅toConv (lcoeff R {T₁}), toConv (lcoeff R ({T₂} : Forest (UnorderedTree α)))⁆
         (ofTree T) =
       (countSingleCutsRho T T₁ T₂ : R) - countSingleCutsRho T T₂ T₁ := by

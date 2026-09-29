@@ -199,7 +199,7 @@ coassociative and counital, uniformly in the coefficient ring. Gates the
 `Bialgebra` instance on `WithCuts` (the `Fact`-style mixin of the `WithLp`
 pattern). -/
 class IsAdmissibleCuts : Prop where
-  coassoc : ∀ (R : Type*) [CommRing R] [CharZero R] [NoZeroDivisors R],
+  coassoc : ∀ (R : Type*) [CommRing R],
     (Algebra.TensorProduct.assoc R R R
         (ConnesKreimer R (UnorderedTree α)) (ConnesKreimer R (UnorderedTree α))
         (ConnesKreimer R (UnorderedTree α))).toAlgHom.comp
@@ -220,7 +220,7 @@ class IsAdmissibleCuts : Prop where
 policy yields `Bialgebra R (WithCuts R cuts)`. Δ^c is recovered at
 `cuts := cutSummandsCN τ`. -/
 noncomputable instance WithCuts.instBialgebra
-    {R : Type*} [CommRing R] [CharZero R] [NoZeroDivisors R] [IsAdmissibleCuts cuts] :
+    {R : Type*} [CommRing R] [IsAdmissibleCuts cuts] :
     Bialgebra R (WithCuts R cuts) :=
   Bialgebra.ofAlgHom (A := WithCuts R cuts) (comulAlgHomNG cuts) counit
     (IsAdmissibleCuts.coassoc (cuts := cuts) R)

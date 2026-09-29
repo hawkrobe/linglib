@@ -467,8 +467,8 @@ noncomputable def coassocRHS :
     (comulAlgHomN (R := R) (α := α))).comp comulAlgHomN
 
 /-- The **Foissy coassociativity subalgebra**: elements where the two
-    sides of coassociativity agree. By Foissy's clean argument
-    (`coassocSubalg_eq_top`), this is all of `H`. -/
+    sides of coassociativity agree. By Foissy's argument it contains every
+    tree (`ofTree_mem_coassocSubalg`), hence is all of `H`. -/
 noncomputable def coassocSubalg : Subalgebra R (ConnesKreimer R (UnorderedTree α)) :=
   AlgHom.equalizer (coassocLHS (R := R) (α := α)) coassocRHS
 
@@ -751,28 +751,6 @@ theorem ofTree_mem_coassocSubalg (T : UnorderedTree α) :
     rw [hT] at hT'_depth
     exact IH T'.height hT'_depth T' rfl
 
-/-! ### `coassocSubalg = ⊤`
-
-Since `H` is generated as an algebra by `{ofTree T | T : UnorderedTree α}` and
-each generator is in `coassocSubalg`, the subalgebra is the whole thing. -/
-
-theorem coassocSubalg_eq_top :
-    coassocSubalg (R := R) (α := α) = ⊤ := by
-  rw [eq_top_iff]
-  intro x _
-  -- Induct on x; each piece is in coassocSubalg.
-  refine ConnesKreimer.induction_linear x ?_ ?_ ?_
-  · exact zero_mem _
-  · intro f g hf hg
-    exact add_mem hf hg
-  · intro F r
-    -- ConnesKreimer.single F r = r • of' F ∈ coassocSubalg via algebraMap.
-    show (ConnesKreimer.single F r : ConnesKreimer R (UnorderedTree α)) ∈ _
-    rw [show (ConnesKreimer.single F r : ConnesKreimer R (UnorderedTree α)) = r • of' F from
-        ConnesKreimer.smul_single_one F r]
-    exact Subalgebra.smul_mem _ (of'_mem_coassocSubalg_of_trees F
-      (fun T _ => ofTree_mem_coassocSubalg T)) r
-
 /-! ### Coassociativity at the algebra-hom level
 
 Direct corollary: `coassocLHS = coassocRHS` as algebra homs. The
@@ -782,10 +760,8 @@ so we expose both. -/
 
 theorem coassocLHS_eq_coassocRHS :
     coassocLHS (R := R) (α := α) = coassocRHS := by
-  ext x
-  have h : x ∈ coassocSubalg (R := R) (α := α) := by
-    rw [coassocSubalg_eq_top]; trivial
-  exact (mem_coassocSubalg x).mp h
+  ext T
+  exact (mem_coassocSubalg _).mp (ofTree_mem_coassocSubalg T)
 
 theorem comulAlgHomN_coassoc_algHom :
     (Algebra.TensorProduct.assoc R R R (ConnesKreimer R (UnorderedTree α))

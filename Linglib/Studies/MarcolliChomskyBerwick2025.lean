@@ -161,35 +161,22 @@ tree's selection head, and `inconsistent` when the tree has no well-defined head
 def headProbeTree (Υ : LIToken → Consistency) (T : UnorderedTree Vertex) : Consistency :=
   (selCheckN T).head.elim Consistency.inconsistent Υ
 
-/-- `Υ_{s,h}` extended multiplicatively to forests, the semiring character of Lemma 3.2.5, so
-that a workspace is consistent iff each of its trees is. -/
-def headProbeMonoidHom (Υ : LIToken → Consistency) :
-    Multiplicative (Forest (UnorderedTree Vertex)) →* Consistency where
-  toFun F := (F.toAdd.map (headProbeTree Υ)).prod
-  map_one' := by
-    show ((0 : Forest (UnorderedTree Vertex)).map _).prod = 1
-    rw [Multiset.map_zero, Multiset.prod_zero]
-  map_mul' F G := by
-    show ((F.toAdd + G.toAdd).map (headProbeTree Υ)).prod =
-         (F.toAdd.map _).prod * (G.toAdd.map _).prod
-    rw [Multiset.map_add, Multiset.prod_add]
-
-/-- The head-following feature character `ϕ_{Υ,s,h}` of Lemma 3.2.5 as an algebra homomorphism,
-the unrenormalized feature assignment whose Birkhoff renormalization is the consistency map. -/
+/-- The head-following feature character `ϕ_{Υ,s,h}` of Lemma 3.2.5 as an algebra homomorphism:
+`Υ_{s,h}` extended multiplicatively to forests, so that a workspace is consistent iff each of its
+trees is. The unrenormalized feature assignment whose Birkhoff renormalization is the consistency
+map. -/
 noncomputable def headProbeChar (Υ : LIToken → Consistency) :
     ConnesKreimer ℕ (UnorderedTree Vertex) →ₐ[ℕ] Consistency :=
-  ConnesKreimer.lift (headProbeMonoidHom Υ)
+  aeval (headProbeTree Υ)
 
 @[simp] theorem headProbeChar_apply_of' (Υ : LIToken → Consistency)
     (F : Forest (UnorderedTree Vertex)) :
-    headProbeChar Υ (of' F) = (F.map (headProbeTree Υ)).prod := by
-  rw [headProbeChar, ConnesKreimer.lift_of']
-  rfl
+    headProbeChar Υ (of' F) = (F.map (headProbeTree Υ)).prod :=
+  aeval_of' _ F
 
 @[simp] theorem headProbeChar_apply_ofTree (Υ : LIToken → Consistency) (T : UnorderedTree Vertex) :
-    headProbeChar Υ (ofTree T) = headProbeTree Υ T := by
-  unfold ofTree
-  rw [headProbeChar_apply_of', Multiset.map_singleton, Multiset.prod_singleton]
+    headProbeChar Υ (ofTree T) = headProbeTree Υ T :=
+  aeval_ofTree _ T
 
 theorem headProbeChar_one (Υ : LIToken → Consistency) : headProbeChar Υ 1 = 1 := map_one _
 
