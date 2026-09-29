@@ -127,8 +127,6 @@ import Linglib.Core.Learning.WidrowHoff
 import Linglib.Core.LinearAlgebra.AffineSpace.Centroid
 import Linglib.Core.LinearAlgebra.Matrix.Symmetric
 import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
-import Linglib.Core.LinearAlgebra.SymmetricPower.Lift
-import Linglib.Core.LinearAlgebra.SymmetricPower.ToSymmetricAlgebra
 import Linglib.Core.Order.Aristotelian
 import Linglib.Logic.Aristotelian.Bitstring
 import Linglib.Logic.Aristotelian.Diagram
