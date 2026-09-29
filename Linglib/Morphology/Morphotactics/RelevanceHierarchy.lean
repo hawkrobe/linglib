@@ -1,132 +1,69 @@
 module
 
-public import Mathlib.Order.Defs.PartialOrder
+public import Mathlib.Order.Basic
 public import Mathlib.Data.List.Sort
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Bybee's relevance hierarchy
 
-[bybee-1985]'s comparative inventory of verbal inflectional categories,
-ordered by semantic relevance to the stem, and the stem-outward
-sortedness this order induces on affix sequences.
+[bybee-1985] ranks the verbal inflectional categories by their relevance to the verb, the extent
+to which the category's meaning directly affects the meaning of the stem: valence, voice,
+aspect, tense, mood and agreement "are ranked for relevance to verbs in that order". A more
+relevant category is predicted to be expressed inflectionally in more languages, to sit closer
+to the stem, and to fuse with it more tightly.
 
-`MorphCategory` is a comparative concept, not a universal slot inventory: languages own their
-slot types (`AffixTemplate Slot`, `Mayan.VerbSlot`, `Japanese.Verb.Slot`), and a
-cross-linguistic relevance claim pulls the order back along a `Slot → MorphCategory` hom
-supplied by the study that draws the comparison. The order is `Preorder.lift peripherality`
-and a sequence respects the hierarchy when it is `List.SortedLE`.
+`RelevanceHierarchy` is a comparative concept, not a universal slot inventory: languages own their
+slot types (`AffixTemplate Slot`, `Mayan.VerbSlot`, `Japanese.Verb.Slot`), and a relevance claim
+pulls the order back along a partial map from slots to categories supplied by the study that
+draws the comparison. A slot sequence read stem-outward respects the hierarchy when it is
+`List.SortedLE`.
 
 ## Main definitions
 
-* `MorphCategory`: Bybee's comparative inventory, with the relevance `Preorder`.
-* `MorphCategory.peripherality`: the rank realizing the order, `MorphCategory.le_iff`.
+* `Morphology.RelevanceHierarchy`: Bybee's six categories, linearly ordered from the most
+  relevant.
+
+## Implementation notes
+
+Bybee calls the order approximate, and her diagram of it lists number, person and gender
+agreement as three rows at the bottom; the hierarchy takes her single category of agreement,
+which is what her morpheme-order survey and later comparisons test. Categories outside her list,
+such as derivation, negation or nonfiniteness, have no rank: a slot of that kind maps to nothing.
 
 ## References
 
 * [J. Bybee, *Morphology: A Study of the Relation between Meaning and Form* (1985)][bybee-1985]
-* [J. H. Greenberg, *Some Universals of Grammar with Particular Reference to the Order of
-  Meaningful Elements* (1963)][greenberg-1963]
-* [M. Miestamo, *Standard Negation: The Negation of Declarative Verbal Main Clauses in a
-  Typological Perspective* (2005)][miestamo-2005]
-* [L. Stassen, *Comparative Constructions* (2013)][stassen-2013]
 -/
 
 @[expose] public section
 
 namespace Morphology
 
-/-- Morpheme functional category: [bybee-1985]'s comparative inventory
-(plus documented linglib extensions — see `peripherality`).
-
-Categories are ordered by semantic relevance to the verb stem:
-more relevant categories appear closer to the stem in suffixal
-morphology. A comparative concept: language-particular slot systems
-relate to it by fragment-supplied homs, not by instantiation. -/
-inductive MorphCategory where
-  | stem
-  | derivation    -- derives verbs from other categories (e.g., *suru*)
-  | valence       -- causative, applicative, reciprocal
-  | voice         -- passive, potential
-  | aspect        -- perfective, imperfective
-  | tense         -- past, future, present
-  | mood          -- desiderative, subjunctive, imperative
-  | negation      -- negation markers
-  /-- Person, number and gender agreement with the verb's arguments. [bybee-1985] codes
-      subject, object and indirect-object agreement apart but ranks agreement once, whichever
-      argument it indexes. -/
+/-- [bybee-1985]'s verbal inflectional categories in order of relevance to the verb, the most
+relevant first. -/
+inductive RelevanceHierarchy where
+  /-- The number or role of the verb's arguments. -/
+  | valence
+  /-- The perspective from which the situation described by the verb is viewed. -/
+  | voice
+  /-- The internal temporal constituency of the situation. -/
+  | aspect
+  /-- The placement of the situation in time. -/
+  | tense
+  /-- How the speaker presents the truth of the proposition, evidentials included. -/
+  | mood
+  /-- Person, number and gender agreement with the verb's arguments. -/
   | agreement
-  | nonfinite     -- nonfinite markers, interrogative/relative
-  | number        -- number marking on nouns (not verb agreement)
-  | degree        -- comparative/superlative on adjectives
-  deriving Repr, DecidableEq
+  deriving DecidableEq, Repr, Fintype
 
-/-- Peripherality: numerical embedding of Bybee's relevance hierarchy
-where **higher = farther from stem = less semantically relevant**.
+namespace RelevanceHierarchy
 
-In Bybee's text, "high relevance" means *more* semantically
-integrated with the stem ([bybee-1985] Ch 2 §2.1 p. 13). The
-substrate uses the *opposite* numerical direction: stem = 0 (most
-relevant), agreement = 8 (least relevant), so that Nat ordering
-mirrors stem-outward linear position in suffixing morphology
-(Ch 2 §6 iconicity, p. 33). The field name `peripherality` makes
-this directionality explicit and avoids the wrong-on-its-face
-gloss "high relevance rank means low relevance."
+/-- The categories are ordered as they are listed: `a < b` when `a` is the more relevant, and so
+predicted to sit closer to the stem. -/
+instance : LinearOrder RelevanceHierarchy :=
+  LinearOrder.lift' RelevanceHierarchy.ctorIdx (by decide)
 
-Bybee's own categories (Ch 2 §3) are valence, voice, aspect, tense, mood and agreement. The
-others are extensions, with the ranks chosen here:
-- `derivation` (rank 1): Bybee Ch 4 argues lex/deriv/infl is a
-  *continuum*, not a discrete level on the relevance scale.
-- `number` (rank 3): Bybee discusses verbal-number agreement at
-  the low end (with person agreement). Noun number is treated
-  separately (Ch 2 §6 cites [greenberg-1963] only, "stem < number
-  < case" for nouns). Cross-comparison of noun-number rank with
-  verb-aspect rank is an artifact of unifying both onto one scale.
-- `degree` (rank 5): Bybee never discusses adjectival degree
-  morphology. Comparative morphology is often *derivational*
-  cross-linguistically ([stassen-2013]).
-- `negation` (rank 7): Bybee discusses negation as a kind of mood
-  (Part II Ch 8 §5), not a separate level. Rank 7 is plausible
-  per [miestamo-2005] cross-linguistic ordering data, but is a
-  linglib extension.
-- `nonfinite` (rank 9): not on Bybee's hierarchy at all (nonfinite
-  morphology often changes syntactic category, outside the scope
-  of inflectional categories proper). -/
-def MorphCategory.peripherality : MorphCategory → Nat
-  | .stem        => 0
-  | .derivation  => 1
-  | .valence     => 2
-  | .number      => 3
-  | .voice       => 3
-  | .aspect      => 4
-  | .degree      => 5
-  | .tense       => 5
-  | .mood        => 6
-  | .negation    => 7
-  | .agreement   => 8
-  | .nonfinite   => 9
-
-/-! ### The relevance order
-
-`peripherality` is a rank function; the object the hierarchy is about is the preorder it induces,
-`Preorder.lift peripherality`: `a ≤ b` when `a` is at least as stem-relevant as `b`. Only a
-preorder, since the rank is not injective (voice and number share one). A slot sequence respects
-the hierarchy when it is sorted stem-outward by this order, mathlib's `List.SortedLE`; a
-language's slots are compared by pulling the order back along a `Slot → MorphCategory` hom,
-sortedness of the image, with the hom carrying the analytical commitments
-(`Studies/HahnDegenFutrell2021.lean` for the worked example). -/
-
-instance : Preorder MorphCategory := Preorder.lift MorphCategory.peripherality
-
-instance : DecidableLE MorphCategory :=
-  fun a b ↦ inferInstanceAs (Decidable (a.peripherality ≤ b.peripherality))
-
-instance : DecidableLT MorphCategory :=
-  fun a b ↦ inferInstanceAs (Decidable (a.peripherality < b.peripherality))
-
-theorem MorphCategory.le_iff {a b : MorphCategory} :
-    a ≤ b ↔ a.peripherality ≤ b.peripherality := Iff.rfl
-
-theorem MorphCategory.lt_iff {a b : MorphCategory} :
-    a < b ↔ a.peripherality < b.peripherality := Iff.rfl
+end RelevanceHierarchy
 
 end Morphology

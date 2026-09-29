@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 public import Linglib.Syntax.Negation
 
 /-!
@@ -12,16 +11,16 @@ an adjective: *tabe-ru* 'eats' has the negative *tabe-na-i* and *tabe-ta* 'ate' 
 In the polite style the negative *-en* stands in place of the nonpast ending, *tabe-mas-u* and
 *tabe-mas-en*, and the past negative adds the past of the polite copula, *tabe-mas-en deshita*
 beside *tabe-mashi-ta*, where *-mashi-* is the form of *-mas-* before *-ta*.
-Tense thus leaves the verb under negation, while each affirmative form keeps its own negative.
-The examples are those of [miestamo-2005], from Hinds's grammar.
+A plain verb thus becomes an adjective under negation, the adjectival tense endings replacing
+the verbal ones, while each affirmative form keeps its own negative. The examples are those of
+[miestamo-2005], from Hinds's grammar.
 
 ## Main definitions
 
 * `Japanese.Negation.na`, `Japanese.Negation.en`: the plain and the polite negative suffix
 * `Japanese.Negation.plain`, `Japanese.Negation.polite`: the nonpast and past of *tabe-* 'eat'
   with their negatives
-* `Japanese.Negation.japaneseNegDistribution`: the categories marked on the stem and on the
-  suffix in the affirmative and the negative
+* `Japanese.Negation.adjectivalEndings`: the adjectival tense endings
 
 ## References
 
@@ -34,7 +33,8 @@ open Negation
 
 namespace Japanese.Negation
 
-open Morphology (MorphCategory)
+open Morphology (Morph)
+
 /-- The plain negative suffix *-na-*, inflected as an adjective. -/
 def na : Marker := { pieces := [[.suff "na"]] }
 
@@ -52,21 +52,7 @@ def polite : List Pair :=
    ⟨[.root "tabe", .suff "mas", .suff "ta"],
     [.root "tabe", .suff "mas", .suff "en", .free "deshita"]⟩]
 
-/-- Where the inflectional categories are marked: on the stem in the affirmative, and in the
-negative on the negative suffix. -/
-structure NegInflDistribution where
-  /-- The categories on the verb stem in the affirmative. -/
-  affirmativeOnStem : Finset MorphCategory
-  /-- The categories on the verb stem in the negative. -/
-  negativeOnStem : Finset MorphCategory
-  /-- The categories on the negative suffix. -/
-  negativeOnSuffix : Finset MorphCategory
-  deriving DecidableEq
-
-/-- Tense and mood leave the stem for the suffix under negation. -/
-def japaneseNegDistribution : NegInflDistribution :=
-  { affirmativeOnStem := {.tense, .aspect, .mood},
-    negativeOnStem := {.aspect},
-    negativeOnSuffix := {.negation, .tense, .mood} }
+/-- The adjectival tense endings, the non-past *-i* and the past *-katta*. -/
+def adjectivalEndings : List Morph := [.suff "i", .suff "katta"]
 
 end Japanese.Negation

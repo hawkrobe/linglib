@@ -36,6 +36,8 @@ paper's morpheme templates against Bybee's relevance hierarchy.
   length.
 * `japanese_forms_licensed`, `sesotho_forms_licensed`: the affixes of the paper's Japanese and
   Sesotho forms are licensed by the Fragments' templates.
+* `japanese_valence_voice_inside`: the paper's claim that the Japanese valence and voice suffixes
+  lie inside the tense, aspect and mood suffixes.
 * `japanese_violates_surveyed_relevance`: Bybee's survey ranks tense closer to the stem than
   mood, and the Japanese suffix order is not sorted by the relevance hierarchy.
 * `paper_sesotho_suffixes_respect_relevance`, `sesotho_suffixes_violate_relevance`: the paper's
@@ -52,9 +54,12 @@ paper's morpheme templates against Bybee's relevance hierarchy.
   supplement and its code, with the polite suffix before the desiderative; the paper's Table 2
   lists the two the other way round. The supplement's forms attest neither order, the two
   suffixes never sharing a form there.
-* The classifications of the Japanese and Sesotho slots in Bybee's inventory, `bybeeCategory?`
-  and `sesothoCategory?`, are the paper's; Japanese politeness, which Bybee does not rank, is
-  left out rather than compared as agreement.
+* `japaneseCategory?` and `sesothoCategory?` map the slots the paper labels with a category of
+  [bybee-1985]'s hierarchy to it. The paper's Japanese "Voice and Mood" slot of the passive and
+  the potential is read as voice, and its final "Tense, Aspect, Mood, and Finiteness" slot and
+  the Sesotho "Tense/aspect" prefix as tense. The slots it labels otherwise, *suru*, politeness,
+  negation, the reversive and the interrogative and relative markers, have no rank and are left
+  out of the comparison.
 * The paper orders the Sesotho passive before the perfect, in its text, its Table 4 and its
   supplement; [demuth-1992]'s schema (14) and examples (28) and (44) order the perfect before
   the passive, and the Fragment follows Demuth. The paper's order is `paperSesothoSuffixes`.
@@ -401,52 +406,50 @@ theorem demuth_perfect_passive :
 
 /-! ### Morpheme order and the relevance hierarchy
 
-The paper classifies its slots as it lists them. In Japanese *suru* is derivation, the
-causative valence, the passive and the potential voice, the desiderative mood, and the final
-inflection tense, aspect, mood and finiteness, compared here as tense; politeness has no place
-in [bybee-1985]'s inventory and is left out of the comparison. In Sesotho the reversive is
-derivation, the extensions valence, the passive voice, the perfect tense, the mood ending mood,
-the subject and object markers agreement, the tense prefixes tense, and the interrogative and
-relative markers the substrate's nonfinite class, which houses them. -/
+The paper compares its slots with [bybee-1985]'s hierarchy of valence, voice, aspect, tense,
+mood and subject agreement, and claims that the valence and voice suffixes lie closer to the stem
+than the tense, aspect and mood markers, and that Sesotho subject agreement lies farther out
+than the tense and aspect prefixes. The slots are compared through the categories the paper
+labels them with. -/
 
-/-- The paper's classification of the Sesotho affix positions in [bybee-1985]'s inventory. -/
-def sesothoCategory? : Sesotho.Verb.Slot → Option MorphCategory
+/-- The hierarchy category of a Sesotho affix position, when the paper's label is one. -/
+def sesothoCategory? : Sesotho.Verb.Slot → Option RelevanceHierarchy
   | .subject => some .agreement
-  | .negation => some .negation
+  | .negation => none
   | .tam => some .tense
   | .object => some .agreement
-  | .reversive => some .derivation
+  | .reversive => none
   | .extension => some .valence
   | .voice => some .voice
   | .tense => some .tense
   | .mood => some .mood
-  | .interrogativeRelative => some .nonfinite
+  | .interrogativeRelative => none
 
 /-- The Sesotho suffix order in Bybee's vocabulary, stem-outward. -/
-def sesothoSuffixCategories : List MorphCategory :=
+def sesothoSuffixCategories : List RelevanceHierarchy :=
   Sesotho.Verb.suffixes.filterMap sesothoCategory?
 
 /-- The Sesotho prefix order in Bybee's vocabulary, stem-outward. -/
-def sesothoPrefixCategories : List MorphCategory :=
+def sesothoPrefixCategories : List RelevanceHierarchy :=
   Sesotho.Verb.prefixes.reverse.filterMap sesothoCategory?
 
-/-- The paper's classification of the Japanese suffix positions in [bybee-1985]'s inventory. -/
-def bybeeCategory? : Japanese.Verb.Slot → Option MorphCategory
-  | .derivation => some .derivation
+/-- The hierarchy category of a Japanese suffix position, when the paper's label is one. -/
+def japaneseCategory? : Japanese.Verb.Slot → Option RelevanceHierarchy
+  | .derivation => none
   | .valence => some .valence
   | .voice => some .voice
   | .politeness => none
   | .desiderative => some .mood
-  | .negation => some .negation
+  | .negation => none
   | .inflection => some .tense
 
 /-- The Japanese suffix order in Bybee's vocabulary. -/
-def japaneseCategories : List MorphCategory := Japanese.Verb.slots.filterMap bybeeCategory?
+def japaneseCategories : List RelevanceHierarchy :=
+  Japanese.Verb.slots.filterMap japaneseCategory?
 
-/-- The paper's Sesotho suffix order, the reversive, the extensions, the passive, the perfect,
-the mood vowel and the interrogative or relative marker, is sorted by the relevance hierarchy,
-which on the surveyed categories is [bybee-1985]'s order,
-`Bybee1985.survey_order_iso_relevance`. -/
+/-- The paper's Sesotho suffix order, the extensions, the passive, the perfect and the mood
+vowel, is sorted by the relevance hierarchy, which on the surveyed categories is
+[bybee-1985]'s order, `Bybee1985.survey_order_iso_relevance`. -/
 theorem paper_sesotho_suffixes_respect_relevance :
     (paperSesothoSuffixes.filterMap sesothoCategory?).SortedLE := by decide
 
@@ -455,21 +458,23 @@ before voice, and is not sorted by the hierarchy: the paper's agreement rests on
 theorem sesotho_suffixes_violate_relevance : ¬ sesothoSuffixCategories.SortedLE := by decide
 
 /-- The paper's claim for the prefixes is that subject agreement lies farther from the stem
-than the tense prefixes, which holds; but the object marker lies inside them, so the prefix
-order read stem-outward is not sorted by the hierarchy. -/
+than the tense and aspect prefix, which holds; but the object marker lies inside it, so the
+prefix order read stem-outward is not sorted by the hierarchy. -/
 theorem sesotho_prefixes_violate_relevance :
     (∀ a ∈ sesothoCategory? .tam, ∀ b ∈ sesothoCategory? .subject, a < b) ∧
       ¬ sesothoPrefixCategories.SortedLE := by
   decide
 
-/-- Japanese is sorted by the hierarchy up to its final inflection: derivation, valence, voice,
-mood and negation. -/
-theorem japanese_partial_relevance : japaneseCategories.dropLast.SortedLE := by decide
+/-- The paper's claim for Japanese: no tense, aspect or mood suffix lies closer to the stem
+than a valence or voice suffix. -/
+theorem japanese_valence_voice_inside :
+    japaneseCategories.Pairwise fun a b ↦ b ≤ .voice → a ≤ .voice := by
+  decide
 
-/-- [bybee-1985]'s survey ranks tense closer to the stem than mood,
-`Bybee1985.SurveyedCloser`, yet the Japanese desiderative, a mood suffix, precedes tense, so
-the suffix order is not sorted by the relevance hierarchy. The paper's "broadly in agreement"
-is not agreement. -/
+/-- The Japanese suffix order is nonetheless not sorted by the hierarchy: [bybee-1985]'s survey
+ranks tense closer to the stem than mood, `Bybee1985.SurveyedCloser`, and the desiderative, a
+mood suffix, precedes the final inflection, read as tense. The paper claims no order of mood
+and tense. -/
 theorem japanese_violates_surveyed_relevance :
     Bybee1985.SurveyedCloser .tense .mood ∧ ¬ japaneseCategories.SortedLE := by
   decide
