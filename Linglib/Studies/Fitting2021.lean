@@ -67,7 +67,7 @@ inductive Fml (α : Type*) where
 
 section Eval
 
-variable [LatticeWithInvolution B] [Lattice (Know B)] [Negation B]
+variable [Lattice B] [BoundedOrder B] [InvolutiveCompl B] [Lattice (Know B)] [Negation B]
 
 /-- The extension of a valuation to formulas ([fitting-2021] Def 8.6.2). -/
 def Fml.eval (v : α → B) : Fml α → B
@@ -157,7 +157,8 @@ end Bifilter
 
 section Logics
 
-variable [LatticeWithInvolution B] [Lattice (Know B)] [Negation B] [Conflation B]
+variable [Lattice B] [BoundedOrder B] [InvolutiveCompl B] [Lattice (Know B)] [Negation B]
+  [Conflation B]
 
 /-- Strictly designated: designated and exact ([fitting-2021] Def 8.7.1). -/
 def StrictlyDesignated (F : PrimeBifilter B) (a : B) : Prop := a ∈ F ∧ IsExact a
@@ -259,7 +260,7 @@ end Logics
 
 section DeMorgan
 
-variable {L : Type*} [LatticeWithInvolution L]
+variable {L : Type*} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
 
 /-- [fitting-2021] Prop 8.8.3: the exact members of `L ⊙ L` are the pairs `⟨a, aᶜ⟩`, and under
 the truth order they are `L`. -/
@@ -271,7 +272,7 @@ def exactIso : {x : L ⊙ L // IsExact x} ≃o L where
   map_rel_iff' {x y} := by
     show x.1.pro ≤ y.1.pro ↔ x ≤ y
     rw [← Subtype.coe_le_coe, le_def, (Product.isExact_iff _).1 x.2,
-      (Product.isExact_iff _).1 y.2, LatticeWithInvolution.compl_le_compl_iff_le, and_self]
+      (Product.isExact_iff _).1 y.2, InvolutiveCompl.compl_le_compl_iff_le, and_self]
 
 /-- A prime filter of `L` ([fitting-2021] Def 8.9.1): the designated values of a logical De Morgan
 algebra `⟨L, D⟩`, nonempty and proper as §8.2 requires. -/
@@ -339,12 +340,12 @@ theorem eval_exactVal (v : α → L) : ∀ φ : Fml α, φ.eval (exactVal v) = m
   | .atom _ => rfl
   | .and φ ψ => by
     rw [Fml.eval, Fml.evalL, eval_exactVal v φ, eval_exactVal v ψ, mk_inf_mk,
-      LatticeWithInvolution.compl_inf]
+      InvolutiveCompl.compl_inf]
   | .or φ ψ => by
     rw [Fml.eval, Fml.evalL, eval_exactVal v φ, eval_exactVal v ψ, mk_sup_mk,
-      LatticeWithInvolution.compl_sup]
+      InvolutiveCompl.compl_sup]
   | .not φ => by
-    rw [Fml.eval, Fml.evalL, eval_exactVal v φ, mk_compl, LatticeWithInvolution.compl_compl]
+    rw [Fml.eval, Fml.evalL, eval_exactVal v φ, mk_compl, InvolutiveCompl.compl_compl]
 
 /-- [fitting-2021] Prop 8.9.3: `C⟨L ⊙ L, D × L⟩` is the logic `⟨L, D⟩` — the two validate the same
 sequents, the exact values of the product corresponding to `L` and `(D × L) ∩ E` to `D`. -/

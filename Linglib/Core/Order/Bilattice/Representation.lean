@@ -317,25 +317,26 @@ isomorphism `complIicIso` and the transport equation `compl_kInf_top`. -/
 
 section Negation
 
-variable [LatticeWithInvolution B] [Lattice (Know B)] [Negation B]
+variable [PartialOrder B] [BoundedOrder B] [InvolutiveCompl B] [Lattice (Know B)]
+  [Negation B]
 
 /-- [avron-1996] Prop 4.7, key step: negation is an isomorphism between the knowledge ideals
 `L_B = Iic t` and `R_B = Iic f`. -/
 def complIicIso : Set.Iic (toKnow (⊤ : B)) ≃o Set.Iic (toKnow (⊥ : B)) where
   toFun x := ⟨toKnow (ofKnow x.1)ᶜ, by
-    simpa only [Set.mem_Iic, kLE_def, toKnow_ofKnow, LatticeWithInvolution.compl_top] using
+    simpa only [Set.mem_Iic, kLE_def, toKnow_ofKnow, InvolutiveCompl.compl_top] using
       compl_kLE_compl (show ofKnow x.1 ≤ₖ (⊤ : B) from x.2)⟩
   invFun y := ⟨toKnow (ofKnow y.1)ᶜ, by
-    simpa only [Set.mem_Iic, kLE_def, toKnow_ofKnow, LatticeWithInvolution.compl_bot] using
+    simpa only [Set.mem_Iic, kLE_def, toKnow_ofKnow, InvolutiveCompl.compl_bot] using
       compl_kLE_compl (show ofKnow y.1 ≤ₖ (⊥ : B) from y.2)⟩
-  left_inv _ := Subtype.ext (congrArg toKnow (LatticeWithInvolution.compl_compl _))
-  right_inv _ := Subtype.ext (congrArg toKnow (LatticeWithInvolution.compl_compl _))
+  left_inv _ := Subtype.ext (congrArg toKnow (InvolutiveCompl.compl_compl _))
+  right_inv _ := Subtype.ext (congrArg toKnow (InvolutiveCompl.compl_compl _))
   map_rel_iff' := compl_kLE_compl_iff
 
 /-- [avron-1996] Prop 4.7, transport step (the map `(x, y) ↦ (x, yᶜ)`): negation exchanges the
 two decomposition components, `xᶜ ⊓ₖ t = (x ⊓ₖ f)ᶜ`. -/
 theorem compl_kInf_top (x : B) : xᶜ ⊓ₖ ⊤ = (x ⊓ₖ ⊥)ᶜ := by
-  rw [compl_kInf, LatticeWithInvolution.compl_bot]
+  rw [compl_kInf, InvolutiveCompl.compl_bot]
 
 end Negation
 

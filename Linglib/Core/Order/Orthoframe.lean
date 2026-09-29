@@ -10,7 +10,7 @@ public import Linglib.Core.Order.Ortholattice
 
 For a symmetric, irreflexive relation `r : S → S → Prop` — an *orthogonality*
 relation, written `x ⊥ y` — the formal `Concept`s of `r` form an
-`OrthocomplementedLattice`. The lattice structure is mathlib's concept lattice
+ortholattice (`OrthocomplementedLattice`). The lattice structure is mathlib's concept lattice
 (`Mathlib.Order.Concept`); the new content is the orthocomplement
 `Aᶜ = upperPolar r A = {x | ∀ y ∈ A, x ⊥ y}`, which for symmetric `r`
 restricts to an order-reversing involution on extents.
@@ -85,16 +85,20 @@ theorem extent_bot_eq_empty [Std.Irrefl r] : (⊥ : Concept S S r).extent = ∅ 
   simp only [Set.mem_empty_iff_false, iff_false]
   exact fun hx => Std.Irrefl.irrefl x (hx (Set.mem_univ x))
 
+/-- For a symmetric relation the orthocomplement is an involution of the concept lattice
+    ([holliday-mandelkern-2024] Proposition 4.8). -/
+instance instInvolutiveCompl [Std.Symm r] : InvolutiveCompl (Concept S S r) where
+  compl_compl c := Concept.ext <| by simp [Order.upperPolar_eq_lowerPolar]
+  compl_le_compl {c d} h := by
+    show d.intent ⊆ c.intent
+    rw [← c.upperPolar_extent, ← d.upperPolar_extent]; exact upperPolar_anti r h
+
 /-- The concepts of a symmetric, irreflexive relation form an orthocomplemented
     lattice ([holliday-mandelkern-2024] Proposition 4.8). The lattice structure
     is mathlib's concept lattice; only the orthocomplement and its four axioms
     are new. -/
 instance instOrthocomplementedLattice [Std.Symm r] [Std.Irrefl r] :
     OrthocomplementedLattice (Concept S S r) where
-  compl_compl c := Concept.ext <| by simp [Order.upperPolar_eq_lowerPolar]
-  compl_le_compl {c d} h := by
-    show d.intent ⊆ c.intent
-    rw [← c.upperPolar_extent, ← d.upperPolar_extent]; exact upperPolar_anti r h
   inf_compl_le_bot c := fun x hx => absurd (rel_extent_intent hx.1 hx.2) (Std.Irrefl.irrefl x)
   top_le_sup_compl c := fun _ _ a ha => absurd (ha.2 ha.1) (Std.Irrefl.irrefl a)
 

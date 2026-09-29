@@ -97,8 +97,8 @@ theorem frame_sound {φ ψ : Formula Var} (h : φ ⊢ ψ) : φ ⊨ᶠ ψ :=
   frameConsequence_iff_eval.mpr fun _ V => sound h V
 
 /-- `Formula.eval` commutes with the representation embedding `represent V₀`. -/
-theorem eval_map {L : Type u} [OrthocomplementedLattice L] {V₀ : Set L}
-    (hV : JoinDense V₀) (v : Var → L) (φ : Formula Var) :
+theorem eval_map {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
+    [OrthocomplementedLattice L] {V₀ : Set L} (hV : JoinDense V₀) (v : Var → L) (φ : Formula Var) :
     Formula.eval (fun p => represent V₀ (v p)) φ = represent V₀ (Formula.eval v φ) := by
   induction φ with
   | top => simp only [Formula.eval, represent_top hV]
@@ -112,7 +112,7 @@ theorem eval_map {L : Type u} [OrthocomplementedLattice L] {V₀ : Set L}
     over the join-dense `Set.univ` (Thm 4.13). -/
 theorem frame_complete {φ ψ : Formula Var} (h : φ ⊨ᶠ ψ) : φ ⊢ ψ := by
   apply Orthologic.complete
-  intro L _ v
+  intro L _ _ _ _ v
   have hjd : JoinDense (Set.univ : Set L) := fun a => by
     have hset : {b : L | b ∈ Set.univ ∧ b ≤ a} = Set.Iic a := by ext b; simp
     rw [hset]; exact isLUB_Iic

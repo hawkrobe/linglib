@@ -8,9 +8,9 @@ public import Mathlib.Order.Hom.Basic
 # Negation and conflation
 
 A negation on a bilattice ([avron-1996] Def 2.3) is an involution that reverses the truth order
-and preserves the knowledge order. Its first two conditions make it the involution `ᶜ` of a
-`LatticeWithInvolution` on the truth lattice, which already supplies the De Morgan laws and the
-exchange of the truth bounds; `Negation` adds the third. A conflation ([fitting-2021] §8.4) is an
+and preserves the knowledge order. Its first two conditions are an `InvolutiveCompl` on the
+truth order, which already supplies the De Morgan laws and the exchange of the truth bounds;
+`Negation` adds the third. A conflation ([fitting-2021] §8.4) is an
 involution that preserves the truth order and reverses the knowledge order. It splits the
 carrier into consistent values `a ≤ₖ −a`, anticonsistent values `−a ≤ₖ a` and exact values
 `−a = a`, the abstract forms of the value spaces of Kleene's, Priest's and classical logic
@@ -53,30 +53,30 @@ namespace Bilattice
 
 section Negation
 
-/-- A negation ([avron-1996] Def 2.3): the involution `ᶜ` of the truth lattice, which is
-involutive (i) and reverses the truth order (ii), also preserves the knowledge order (iii). -/
-class Negation (B : Type u) [LatticeWithInvolution B] [Preorder (Know B)] : Prop where
+/-- A negation ([avron-1996] Def 2.3): the complement `ᶜ`, involutive (i) and reversing the truth
+order (ii) by `InvolutiveCompl`, also preserves the knowledge order (iii). -/
+class Negation (B : Type u) [Compl B] [Preorder (Know B)] : Prop where
   /-- Negation preserves the knowledge order ([avron-1996] Def 2.3(iii)). -/
   compl_kLE_compl : ∀ {a b : B}, a ≤ₖ b → aᶜ ≤ₖ bᶜ
 
 export Negation (compl_kLE_compl)
 
-variable [LatticeWithInvolution B]
+variable [LE B] [InvolutiveCompl B]
 
 section Preorder
 
 variable [Preorder (Know B)] [Negation B]
 
 theorem compl_kLE_compl_iff {a b : B} : aᶜ ≤ₖ bᶜ ↔ a ≤ₖ b :=
-  ⟨fun h ↦ by simpa only [LatticeWithInvolution.compl_compl] using compl_kLE_compl h,
+  ⟨fun h ↦ by simpa only [InvolutiveCompl.compl_compl] using compl_kLE_compl h,
     compl_kLE_compl⟩
 
 /-- Negation as an automorphism of the knowledge order. -/
 def Negation.knowIso : Know B ≃o Know B where
   toFun X := toKnow (ofKnow X)ᶜ
   invFun X := toKnow (ofKnow X)ᶜ
-  left_inv _ := congrArg toKnow (LatticeWithInvolution.compl_compl _)
-  right_inv _ := congrArg toKnow (LatticeWithInvolution.compl_compl _)
+  left_inv _ := congrArg toKnow (InvolutiveCompl.compl_compl _)
+  right_inv _ := congrArg toKnow (InvolutiveCompl.compl_compl _)
   map_rel_iff' := compl_kLE_compl_iff
 
 end Preorder
@@ -123,7 +123,7 @@ export Conflation (conf conf_conf conf_le_conf conf_kLE_conf)
 attribute [simp] Conflation.conf_conf
 
 /-- Negation and conflation commute (Con-4). -/
-class NegConfComm (B : Type u) [LatticeWithInvolution B] [Preorder (Know B)] [Conflation B] :
+class NegConfComm (B : Type u) [Preorder B] [Compl B] [Preorder (Know B)] [Conflation B] :
     Prop where
   compl_conf : ∀ a : B, (conf a)ᶜ = conf aᶜ
 
@@ -282,7 +282,7 @@ end ClassesClosure
 
 section ClassesCompl
 
-variable [LatticeWithInvolution B] [Preorder (Know B)] [Negation B] [Conflation B]
+variable [Preorder B] [Compl B] [Preorder (Know B)] [Negation B] [Conflation B]
   [NegConfComm B]
 
 /-- The consistent values are closed under negation ([fitting-2021] Prop 8.5.2; needs Con-4). -/

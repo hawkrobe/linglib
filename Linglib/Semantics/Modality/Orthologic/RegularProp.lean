@@ -13,7 +13,7 @@ The `◇`-regular subsets of a compatibility frame `F` form an orthocomplemented
 lattice. Rather than re-derive it, this file identifies that lattice with the
 abstract concept lattice of the orthogonality relation `¬ compat`:
 `CompatFrame.Regular F := Orthoframe.Regular F.toOrthoframe` (mathlib `Order.Concept`,
-via `Core.Order.Orthoframe`), so the `OrthocomplementedLattice` structure and
+via `Core.Order.Orthoframe`), so the ortholattice structure and
 Holliday–Mandelkern's Proposition 4.8 (`compl_compl`) come for free.
 
 What this file contributes is the **decidable construction interface**: the

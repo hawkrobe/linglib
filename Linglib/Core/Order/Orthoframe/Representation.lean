@@ -20,7 +20,7 @@ the nonzero elements of a join-dense `V`, and the representation map is
 
 **Theorem 4.13 is complete and sorry-free.** The construction (`ofOrtholattice`), the
 extent characterization, the full ortholattice **embedding** (`⊓ ⊔ ¬ ⊤ ⊥` preserved,
-order-reflecting), and — for a `CompleteOrthocomplementedLattice` — the
+order-reflecting), and — for a complete ortholattice — the
 **isomorphism** `representation : L ≃o (ofOrtholattice V).Regular` over any join-dense
 `V`. The orthocomplement preservation (`represent_compl`, the heart) falls out of the
 `upperPolar` computation `upperPolar_Iic`; no De Morgan over the join is needed.
@@ -39,7 +39,7 @@ def JoinDense {L : Type*} [Preorder L] (V : Set L) : Prop :=
 
 namespace Orthoframe
 
-variable {L : Type*} [OrthocomplementedLattice L]
+variable {L : Type*} [Lattice L] [BoundedOrder L] [InvolutiveCompl L] [OrthocomplementedLattice L]
 
 /-- Points of the canonical orthoframe of `(L, V)`: the nonzero elements of `V`. -/
 abbrev Point (V : Set L) : Type _ := {a : L // a ∈ V ∧ a ≠ ⊥}
@@ -49,8 +49,8 @@ abbrev Point (V : Set L) : Type _ := {a : L // a ∈ V ∧ a ≠ ⊥}
 def ofOrtholattice (V : Set L) : Orthoframe (Point V) where
   ortho a b := a.1 ≤ b.1ᶜ
   ortho_symm := ⟨fun a b h => by
-    have := LatticeWithInvolution.compl_le_compl h
-    rwa [LatticeWithInvolution.compl_compl] at this⟩
+    have := InvolutiveCompl.compl_le_compl h
+    rwa [InvolutiveCompl.compl_compl] at this⟩
   ortho_irrefl := ⟨fun a h => a.2.2 <| le_bot_iff.mp <|
     (le_inf le_rfl h).trans (OrthocomplementedLattice.inf_compl_le_bot a.1)⟩
 
@@ -82,12 +82,12 @@ theorem upperPolar_Iic (hV : JoinDense V) (x : L) :
 theorem isExtent_Iic (hV : JoinDense V) (a : L) :
     IsExtent (ofOrtholattice V).ortho {b : Point V | b.1 ≤ a} := by
   have key : {d : Point V | a ≤ d.1ᶜ} = {d : Point V | d.1 ≤ aᶜ} := by
-    ext d; exact LatticeWithInvolution.le_compl_comm
+    ext d; exact InvolutiveCompl.le_compl_comm
   rw [isExtent_iff, upperPolar_Iic hV a, key,
       ← upperPolar_eq_lowerPolar (ofOrtholattice V).ortho, upperPolar_Iic hV aᶜ]
   ext e
-  rw [Set.mem_ofPred_eq, Set.mem_ofPred_eq, LatticeWithInvolution.le_compl_comm,
-      LatticeWithInvolution.compl_compl]
+  rw [Set.mem_ofPred_eq, Set.mem_ofPred_eq, InvolutiveCompl.le_compl_comm,
+      InvolutiveCompl.compl_compl]
 
 /-- The representation map's extent is exactly `{b ∈ V\{0} | b ≤ a}` (Thm 4.13). -/
 theorem represent_extent (hV : JoinDense V) (a : L) :
@@ -142,23 +142,24 @@ theorem represent_compl (hV : JoinDense V) (a : L) :
   simp only [represent_extent hV]
   rw [upperPolar_Iic hV]
   ext b
-  exact LatticeWithInvolution.le_compl_comm
+  exact InvolutiveCompl.le_compl_comm
 
 /-- `represent` preserves joins (from `⊓`- and `ᶜ`-preservation via De Morgan). -/
 theorem represent_sup (hV : JoinDense V) (a a' : L) :
     represent V (a ⊔ a') = represent V a ⊔ represent V a' := by
   rw [show a ⊔ a' = (aᶜ ⊓ a'ᶜ)ᶜ by
-        rw [LatticeWithInvolution.compl_inf, LatticeWithInvolution.compl_compl,
-            LatticeWithInvolution.compl_compl],
+        rw [InvolutiveCompl.compl_inf, InvolutiveCompl.compl_compl,
+            InvolutiveCompl.compl_compl],
       represent_compl hV, represent_inf hV, represent_compl hV, represent_compl hV,
-      LatticeWithInvolution.compl_inf, LatticeWithInvolution.compl_compl,
-      LatticeWithInvolution.compl_compl]
+      InvolutiveCompl.compl_inf, InvolutiveCompl.compl_compl,
+      InvolutiveCompl.compl_compl]
 
 /-! ### The representation isomorphism (complete case, Theorem 4.13) -/
 
 section Iso
 
-variable {L : Type*} [CompleteOrthocomplementedLattice L] {V : Set L}
+variable {L : Type*} [CompleteLattice L] [InvolutiveCompl L] [OrthocomplementedLattice L]
+  {V : Set L}
 
 /-- Surjectivity (the `←` of Theorem 4.13): every concept is `represent V a`, taking
     `a` to be the join of the underlying elements of its extent. -/

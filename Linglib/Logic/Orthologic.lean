@@ -10,7 +10,7 @@ public import Linglib.Core.Order.Ortholattice
 
 Orthologic ([holliday-mandelkern-2024] §3.1, after Goldblatt) is the logic of
 ortholattices: `φ ⊢ ψ` is the consequence relation holding in every
-`OrthocomplementedLattice`. This file gives the syntax, Goldblatt's proof system
+ortholattice (`OrthocomplementedLattice`). This file gives the syntax, Goldblatt's proof system
 (Definition 3.12), and — via mathlib's `Antisymmetrization` (documented as *the*
 free `Preorder → PartialOrder` functor) — the Lindenbaum–Tarski algebra
 witnessing **algebraic completeness** (Theorem 3.13): the least orthologic is
@@ -20,7 +20,7 @@ sound and complete with respect to the class of all ortholattices.
 
 * `Formula` — orthologic formulas (`⊤`, variables, `¬`, `∧`; `∨` De Morgan-defined).
 * `Derivable` (`⊢`) — the least orthologic (Goldblatt's ten rules).
-* `LindenbaumTarski` — formulas modulo interderivability (an `OrthocomplementedLattice`).
+* `LindenbaumTarski` — formulas modulo interderivability (an ortholattice).
 * `eval`, soundness, completeness.
 
 ## Implementation notes
@@ -28,7 +28,7 @@ sound and complete with respect to the class of all ortholattices.
 The Lindenbaum–Tarski algebra is `Antisymmetrization (Formula Var) (· ≤ ·)` for
 the provability preorder; mathlib documents `Antisymmetrization` as the free
 functor `Preord → PartOrd`, so the quotient and its `PartialOrder` come for free.
-This file adds the `OrthocomplementedLattice` structure and completeness.
+This file adds the orthocomplementation and completeness.
 -/
 
 @[expose] public section
@@ -88,13 +88,14 @@ instance instPreorder {Var : Type*} : Preorder (Formula Var) where
 
 /-- The **Lindenbaum–Tarski algebra**: formulas modulo interderivability. As the
     `Antisymmetrization` of the provability preorder it is automatically a
-    `PartialOrder`; the `OrthocomplementedLattice` structure is added below. -/
+    `PartialOrder`; the ortholattice structure is added below. -/
 abbrev LindenbaumTarski (Var : Type*) : Type _ :=
   Antisymmetrization (Formula Var) (· ≤ ·)
 
 /-! ### Evaluation and soundness -/
 
-variable {Var : Type*} {L : Type*} [OrthocomplementedLattice L]
+variable {Var : Type*} {L : Type*} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
+  [OrthocomplementedLattice L]
 
 /-- Evaluate a formula in an ortholattice under a valuation `v : Var → L`. -/
 def Formula.eval (v : Var → L) : Formula Var → L
@@ -112,12 +113,12 @@ theorem sound {φ ψ : Formula Var} (h : φ ⊢ ψ) (v : Var → L) :
   | refl φ => exact le_refl _
   | and_le_left φ ψ => exact inf_le_left
   | and_le_right φ ψ => exact inf_le_right
-  | le_negNeg φ => exact (LatticeWithInvolution.compl_compl _).ge
-  | negNeg_le φ => exact (LatticeWithInvolution.compl_compl _).le
+  | le_negNeg φ => exact (InvolutiveCompl.compl_compl _).ge
+  | negNeg_le φ => exact (InvolutiveCompl.compl_compl _).le
   | contradiction φ ψ => exact (OrthocomplementedLattice.inf_compl_eq_bot _).le.trans bot_le
   | trans _ _ ih₁ ih₂ => exact ih₁.trans ih₂
   | le_and _ _ ih₁ ih₂ => exact le_inf ih₁ ih₂
-  | neg_le_neg _ ih => exact LatticeWithInvolution.compl_le_compl ih
+  | neg_le_neg _ ih => exact InvolutiveCompl.compl_le_compl ih
 
 /-! ### Provability lemmas for the lattice structure
 
@@ -210,12 +211,14 @@ instance : BoundedOrder (LindenbaumTarski Var) where
   le_top a := Quotient.inductionOn a fun x => mk_le_mk.mpr (Derivable.top_intro x)
   bot_le a := Quotient.inductionOn a fun x => mk_le_mk.mpr (Formula.bot_le x)
 
-/-- The Lindenbaum–Tarski algebra of orthologic is an orthocomplemented lattice. -/
-instance : OrthocomplementedLattice (LindenbaumTarski Var) where
+instance : InvolutiveCompl (LindenbaumTarski Var) where
   compl_compl a := Quotient.inductionOn a fun x =>
     Quotient.sound ⟨Derivable.negNeg_le x, Derivable.le_negNeg x⟩
   compl_le_compl {a b} := Quotient.inductionOn₂ a b
     (fun _ _ h => mk_le_mk.mpr (Derivable.neg_le_neg (mk_le_mk.mp h)))
+
+/-- The Lindenbaum–Tarski algebra of orthologic is an orthocomplemented lattice. -/
+instance : OrthocomplementedLattice (LindenbaumTarski Var) where
   inf_compl_le_bot a := Quotient.inductionOn a fun x => mk_le_mk.mpr (Formula.and_compl_le_bot x)
   top_le_sup_compl a := Quotient.inductionOn a fun x => mk_le_mk.mpr (Formula.top_le_or_compl x)
 
@@ -249,8 +252,9 @@ universe u
     the Lindenbaum–Tarski algebra under the canonical valuation. (Testing
     ortholattices at `Var`'s universe suffices — the L–T algebra is the worst case.) -/
 theorem complete {Var : Type u} {φ ψ : Formula Var}
-    (h : ∀ {L : Type u} [OrthocomplementedLattice L] (v : Var → L),
-      Formula.eval v φ ≤ Formula.eval v ψ) : φ ⊢ ψ := by
+    (h : ∀ {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
+      [OrthocomplementedLattice L] (v : Var → L), Formula.eval v φ ≤ Formula.eval v ψ) :
+    φ ⊢ ψ := by
   have key := h (L := LindenbaumTarski Var) Formula.canonicalVal
   rw [Formula.eval_canonicalVal, Formula.eval_canonicalVal] at key
   exact LindenbaumTarski.mk_le_mk.mp key
@@ -258,10 +262,8 @@ theorem complete {Var : Type u} {φ ψ : Formula Var}
 /-- **Algebraic completeness of orthologic** ([holliday-mandelkern-2024]
     Theorem 3.13): `φ ⊢ ψ` iff the inequality holds in every ortholattice. -/
 theorem derivable_iff {Var : Type u} {φ ψ : Formula Var} :
-    φ ⊢ ψ ↔ ∀ {L : Type u} [OrthocomplementedLattice L] (v : Var → L),
-      Formula.eval v φ ≤ Formula.eval v ψ := by
-  refine ⟨fun h => ?_, complete⟩
-  intro _ _ v
-  exact sound h v
+    φ ⊢ ψ ↔ ∀ {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
+      [OrthocomplementedLattice L] (v : Var → L), Formula.eval v φ ≤ Formula.eval v ψ :=
+  ⟨fun h _ _ _ _ _ v ↦ sound h v, complete⟩
 
 end Orthologic

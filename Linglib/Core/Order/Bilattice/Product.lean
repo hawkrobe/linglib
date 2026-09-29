@@ -31,8 +31,8 @@ essentially introduced by Ginsberg [ginsberg-1988], and further generalized by F
   knowledge-order instances on `Know (L ⊙ R)` from `L × R`.
 * `Bilattice.Product.mk`, `Bilattice.Product.pro`, `Bilattice.Product.con`: the plain-coordinate
   constructor and projections.
-* the `Compl (L ⊙ L)` instance: Ginsberg negation on the diagonal, with the
-  `LatticeWithInvolution`, `Negation` and `DeMorganAlgebra` instances it underlies.
+* the `Compl (L ⊙ L)` instance: Ginsberg negation on the diagonal, with the `InvolutiveCompl` and
+  `Negation` instances it underlies.
 * `Bilattice.Product.conflation`: the conflation induced by an involution of the factor.
 
 ## Main results
@@ -228,8 +228,9 @@ instance [Lattice L] [Lattice R] : IsInterlaced (L ⊙ R) where
 
 On the diagonal `L ⊙ L`, Ginsberg's negation swaps the coordinates ([ginsberg-1988];
 [avron-1996] Thm 2.5(2)). It needs no order on `L`, so it is a bare `Compl` instance. Over a
-bounded lattice it is the involution of a `LatticeWithInvolution` on the truth lattice and a
-bilattice `Negation`, and over a distributive lattice the truth lattice is a De Morgan algebra. -/
+preorder it is an involution of the truth order (`InvolutiveCompl`) and a bilattice `Negation`, so
+over a bounded distributive lattice the truth lattice is a De Morgan algebra ([fitting-2021]
+§8.3). -/
 
 section Negation
 
@@ -248,17 +249,12 @@ protected theorem compl_le_compl [Preorder L] {x y : L ⊙ L} (h : x ≤ y) : y�
 protected theorem compl_kLE_compl [Preorder L] {x y : L ⊙ L} (h : x ≤ₖ y) : xᶜ ≤ₖ yᶜ :=
   ⟨h.2, h.1⟩
 
-instance [Lattice L] [BoundedOrder L] : LatticeWithInvolution (L ⊙ L) where
-  toCompl := inferInstance
+instance [Preorder L] : InvolutiveCompl (L ⊙ L) where
   compl_compl := Product.compl_compl
   compl_le_compl := Product.compl_le_compl
 
 /-- Ginsberg's swap is a negation on the diagonal ([avron-1996] Thm 2.5(2)). -/
-instance [Lattice L] [BoundedOrder L] : Negation (L ⊙ L) := ⟨Product.compl_kLE_compl⟩
-
-/-- Over a distributive lattice the truth lattice of `L ⊙ L` is a De Morgan algebra
-([fitting-2021] §8.3). -/
-instance [DistribLattice L] [BoundedOrder L] : DeMorganAlgebra (L ⊙ L) where
+instance [Preorder L] : Negation (L ⊙ L) := ⟨Product.compl_kLE_compl⟩
 
 end Negation
 
@@ -266,8 +262,8 @@ end Negation
 
 Swapping the coordinates and applying an order-reversing involution of the factor to each is a
 conflation of `L ⊙ L` ([fitting-1994] §7, [fitting-2021] §8.8). The involution of a
-`LatticeWithInvolution` factor gives the conflation instance, which commutes with Ginsberg
-negation, and the exact, consistent and anticonsistent values read off the coordinates. -/
+involution of the factor (`InvolutiveCompl`) gives the conflation instance, which commutes with
+Ginsberg negation, and the exact, consistent and anticonsistent values read off the coordinates. -/
 
 section Conflation
 
@@ -280,10 +276,10 @@ abbrev conflation [Preorder L] (f : L → L) (hf : Function.Involutive f) (ha : 
   conf_le_conf h := ⟨ha h.2, ha h.1⟩
   conf_kLE_conf h := ⟨ha h.2, ha h.1⟩
 
-variable [LatticeWithInvolution L]
+variable [Preorder L] [InvolutiveCompl L]
 
 instance : Conflation (L ⊙ L) :=
-  conflation (·ᶜ) LatticeWithInvolution.compl_compl LatticeWithInvolution.compl_anti
+  conflation (·ᶜ) InvolutiveCompl.compl_compl InvolutiveCompl.compl_anti
 
 instance : NegConfComm (L ⊙ L) := ⟨fun _ ↦ rfl⟩
 
@@ -293,27 +289,29 @@ instance : NegConfComm (L ⊙ L) := ⟨fun _ ↦ rfl⟩
 /-- The exact values are the pairs `⟨a, aᶜ⟩`. -/
 theorem isExact_iff (x : L ⊙ L) : IsExact x ↔ x.con = x.proᶜ :=
   ⟨fun h ↦ (congrArg con h.eq).symm,
-    fun h ↦ ext (by simp [h, LatticeWithInvolution.compl_compl]) h.symm⟩
+    fun h ↦ ext (by simp [h, InvolutiveCompl.compl_compl]) h.symm⟩
 
 /-- The consistent values: the evidence against is below the complement of the evidence for. -/
 theorem isConsistent_iff (x : L ⊙ L) : IsConsistent x ↔ x.con ≤ x.proᶜ :=
-  ⟨And.right, fun h ↦ ⟨LatticeWithInvolution.le_compl_comm.1 h, h⟩⟩
+  ⟨And.right, fun h ↦ ⟨InvolutiveCompl.le_compl_comm.1 h, h⟩⟩
 
 /-- The anticonsistent values: the complement of the evidence for is below the evidence
 against. -/
 theorem isAnticonsistent_iff (x : L ⊙ L) : IsAnticonsistent x ↔ x.proᶜ ≤ x.con :=
-  ⟨And.right, fun h ↦ ⟨(LatticeWithInvolution.compl_le_compl h).trans
-    (LatticeWithInvolution.compl_compl x.pro).le, h⟩⟩
+  ⟨And.right, fun h ↦ ⟨(InvolutiveCompl.compl_le_compl h).trans
+    (InvolutiveCompl.compl_compl x.pro).le, h⟩⟩
 
 end Conflation
 
 /-! ### Disjoint coordinates
 
 The pairs whose evidence for and against are disjoint are closed under the truth operations over
-a distributive factor, and under negation by the symmetry of `Disjoint`. Over a Boolean factor disjointness is Fitting's consistency;
-over a De Morgan factor it is stronger (`⟨indet, indet⟩` in `Trivalent ⊙ Trivalent` is consistent),
-and over a Heyting factor, whose pseudocomplement is no involution, it is the only notion
-available. -/
+a distributive factor, and under negation by the symmetry of `Disjoint`: they are Kalman's
+construction, whose carrier `Kalman L` (`Core/Order/DeMorganAlgebra/Kalman.lean`) is
+definitionally `{x : L ⊙ L // Disjoint x.pro x.con}`, a Kleene lattice under the truth operations
+and Ginsberg negation. Over a Boolean factor disjointness is Fitting's consistency; over a De Morgan
+factor it is stronger (`⟨indet, indet⟩` in `Trivalent ⊙ Trivalent` is consistent), and over a
+Heyting factor, whose pseudocomplement is no involution, it is the only notion available. -/
 
 section Disjoint
 

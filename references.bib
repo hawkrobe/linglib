@@ -9428,7 +9428,7 @@
   subfield  = {semantics/modality},
   validated = {true},
   role      = {formalized},
-  sources   = {Core/Order/Orthoframe.lean;Core/Order/Orthoframe/Representation.lean;Data/Examples/HollidayMandelkern2024.json;Logic/Orthologic.lean;Logic/Orthologic/FrameSemantics.lean;Semantics/Modality/Orthologic/Frames.lean;Semantics/Modality/Orthologic/Lifting.lean;Semantics/Modality/Orthologic/Modal.lean;Semantics/Modality/Orthologic/RegularProp.lean;Studies/HollidayMandelkern2024.lean;Studies/Mandelkern2019.lean}
+  sources   = {Core/Order/Ortholattice.lean;Core/Order/Orthoframe.lean;Core/Order/Orthoframe/Representation.lean;Data/Examples/HollidayMandelkern2024.json;Logic/Orthologic.lean;Logic/Orthologic/FrameSemantics.lean;Semantics/Modality/Orthologic/Frames.lean;Semantics/Modality/Orthologic/Lifting.lean;Semantics/Modality/Orthologic/Modal.lean;Semantics/Modality/Orthologic/RegularProp.lean;Studies/HollidayMandelkern2024.lean;Studies/Mandelkern2019.lean}
 }
 @book{dowty-1979,
   author    = {Dowty, David R.},
@@ -44630,6 +44630,58 @@
   subfield  = {morphology},
   role      = {formalized},
   sources   = {Data/Examples/Embick2015.json;Morphology/DistributedMorphology/ComplexHead.lean;Studies/Embick2015.lean}
+}
+@article{birkhoff-von-neumann-1936,
+  author    = {Birkhoff, Garrett and von Neumann, John},
+  year      = {1936},
+  title     = {The Logic of Quantum Mechanics},
+  journal   = {Annals of Mathematics},
+  volume    = {37},
+  number    = {4},
+  doi       = {10.2307/1968621},
+  subfield  = {mathematical foundations/order theory},
+  role      = {cited},
+  sources   = {Core/Order/Ortholattice.lean}
+}
+@article{kalman-1958,
+  author    = {Kalman, J. A.},
+  year      = {1958},
+  title     = {Lattices with Involution},
+  journal   = {Transactions of the American Mathematical Society},
+  volume    = {87},
+  number    = {2},
+  pages     = {485--491},
+  doi       = {10.1090/S0002-9947-1958-0095135-X},
+  subfield  = {mathematical foundations/order theory},
+  validated = {true},
+  role      = {formalized},
+  sources   = {Core/Data/Trivalent.lean;Core/Order/DeMorganAlgebra/Defs.lean;Core/Order/DeMorganAlgebra/Kalman.lean}
+}
+@article{cignoli-1986,
+  author    = {Cignoli, Roberto},
+  year      = {1986},
+  title     = {The Class of {K}leene Algebras Satisfying an Interpolation Property and {N}elson Algebras},
+  journal   = {Algebra Universalis},
+  volume    = {23},
+  number    = {3},
+  pages     = {262--292},
+  doi       = {10.1007/BF01230621},
+  subfield  = {mathematical foundations/order theory},
+  role      = {cited},
+  sources   = {Core/Order/DeMorganAlgebra/Kalman.lean}
+}
+@misc{jansana-san-martin-2017,
+  author    = {Jansana, Ramon and San Mart{\'i}n, Hern{\'a}n Javier},
+  year      = {2017},
+  title     = {On {K}alman's Functor for Bounded Hemi-Implicative Semilattices and Hemi-Implicative Lattices},
+  eprint    = {1708.09490},
+  archivePrefix = {arXiv},
+  primaryClass = {math.LO},
+  url       = {https://arxiv.org/abs/1708.09490},
+  subfield  = {mathematical foundations/order theory},
+  validated = {true},
+  role      = {cited},
+  sources   = {Core/Order/DeMorganAlgebra/Kalman.lean}
 }
 @book{birkhoff-1967,
   author    = {Birkhoff, Garrett},
