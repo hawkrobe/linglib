@@ -5,32 +5,39 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.RootedTree.PreLie.Insert
+public import Linglib.Core.Algebra.RootedTree.PreLie.Path
 
 /-!
-# Multi-path grafting on `RoseTree α`
+# Simultaneous grafting on rose trees
 
-`multiGraft T pairs` grafts trees onto `T` at several paths **simultaneously**, every path read
-in the original `T` (Foissy's convention). Several pairs may share a path; their trees are
-prepended in pair-list order, so `multiGraft` is order-sensitive, and commutativity is recovered
-at the multiset level in `Insertion.lean`.
+This file defines `multiGraft T pairs`, which grafts several trees onto `T` at once. Each pair
+`(p, S)` names a vertex of `T` by its address `p` and a tree `S` to become a new child of that
+vertex; every address is read in the original `T`, as in Foissy's multiple grafting. Trees
+grafted at the same vertex are prepended in the order of the pair list, so `multiGraft` depends on
+that order, and `Insertion.lean` recovers independence of it once children are unordered.
 
-## Main definitions and results
+## Main definitions
 
-* `multiGraft`, `multiGraftChildren`: the mutual recursion. `multiGraftChildren` descends by
-  shifting path indices: pairs starting `0 :: rest` go to the head child as `(rest, t)`, pairs
-  starting `(k + 1) :: rest` go to the tail as `(k :: rest, t)`.
-* `rootPrependFilter`, `headChildFilter`, `tailChildFilter`: the three pair projections, with
-  their `List.filter` characterizations.
-* `multiGraft_nil`: no pairs, no change.
-* `multiGraft_singleton`: one pair is `insertAt`.
+* `multiGraft`, `multiGraftChildren`: simultaneous grafting into a tree and into a forest.
+* `rootPrependFilter`, `headChildFilter`, `tailChildFilter`: the pairs aimed at the root, at the
+  first child, and at the later children, with the addresses shortened accordingly.
+
+## Main results
+
+* `filterMap_rootPrependFilter`, `filterMap_headChildFilter`, `filterMap_tailChildFilter`: each
+  filter is a `List.filter` on the address followed by a projection.
+* `multiGraft_nil`: grafting nothing leaves the tree unchanged.
+
+## Implementation notes
+
+The three filters are top-level definitions rather than inline `match` expressions so that every
+caller elaborates the same matcher, which lets their `filterMap` equations rewrite across files.
 
 ## References
 
-* [foissy-typed-decorated-rooted-trees-2018]
+* [foissy-2021]
 * [foissy-introduction-hopf-algebras-trees]
 -/
-
 @[expose] public section
 
 namespace RoseTree
@@ -39,20 +46,9 @@ namespace Pathed
 
 variable {α : Type*}
 
-/-! ## §1: Filter helpers (top-level for matcher stability)
+/-! ### Routing the pairs -/
 
-The `multiGraft` recursion uses three pair-filtering functions: extracting
-root-prepends (empty path), extracting head-child pairs (first index `0`),
-and shifting tail-child pairs (first index `k+1`). Each is defined as a
-top-level function so that all `filterMap` callers reference the *same*
-elaborated matcher — `rw` with filter equalities then works cleanly across
-files. Without this, Lean's inline-`match` elaboration generates fresh
-`match_N` aux constants per scope, blocking unification.
-
-Each helper carries unfolding `@[simp]` lemmas on every pattern so that
-`simp` can reduce them where `rfl` would otherwise fail. -/
-
-/-- Extract pair as root prepend iff its path is empty. -/
+/-- A pair aimed at the root yields its tree. -/
 def rootPrependFilter (pair : Path × RoseTree α) : Option (RoseTree α) :=
   match pair.fst with
   | []     => some pair.snd
@@ -64,8 +60,7 @@ def rootPrependFilter (pair : Path × RoseTree α) : Option (RoseTree α) :=
 @[simp] theorem rootPrependFilter_of_cons (i : ℕ) (rest : Path) (T : RoseTree α) :
     rootPrependFilter ((i :: rest, T) : Path × RoseTree α) = none := rfl
 
-/-- Extract pair as head-child pair iff its path starts with `0`,
-    stripping the leading index. -/
+/-- A pair aimed inside the first child yields the pair with the leading index removed. -/
 def headChildFilter (pair : Path × RoseTree α) : Option (Path × RoseTree α) :=
   match pair.fst with
   | 0 :: rest => some (rest, pair.snd)
@@ -80,8 +75,7 @@ def headChildFilter (pair : Path × RoseTree α) : Option (Path × RoseTree α) 
 @[simp] theorem headChildFilter_of_succ_cons (k : ℕ) (rest : Path) (T : RoseTree α) :
     headChildFilter (((k + 1) :: rest, T) : Path × RoseTree α) = none := rfl
 
-/-- Extract pair as tail-child pair iff its path starts with `k+1`,
-    decrementing the leading index by one. -/
+/-- A pair aimed inside a later child yields the pair with the leading index decremented. -/
 def tailChildFilter (pair : Path × RoseTree α) : Option (Path × RoseTree α) :=
   match pair.fst with
   | (k + 1) :: rest => some (k :: rest, pair.snd)
@@ -96,20 +90,17 @@ def tailChildFilter (pair : Path × RoseTree α) : Option (Path × RoseTree α) 
 @[simp] theorem tailChildFilter_of_succ_cons (k : ℕ) (rest : Path) (T : RoseTree α) :
     tailChildFilter (((k + 1) :: rest, T) : Path × RoseTree α) = some (k :: rest, T) := rfl
 
-/-! ## §2: `multiGraft` mutual definition -/
+/-! ### Simultaneous grafting -/
 
 mutual
-/-- `multiGraft T pairs`: walk `T`, prepend the trees assigned to each
-    path. Pairs whose path is `[]` graft at the root (prepended to the
-    children list in pair-list order). Pairs whose path is `i :: rest`
-    descend into the i-th child with the projected pair `(rest, _)`. -/
+/-- `multiGraft T pairs` grafts the tree of each pair at the vertex its address names. The trees
+aimed at the root are prepended to its children in pair-list order; the other pairs descend into
+the child their first index names. -/
 def multiGraft : RoseTree α → List (Path × RoseTree α) → RoseTree α
   | .node a cs, pairs =>
       RoseTree.node a (pairs.filterMap rootPrependFilter ++ multiGraftChildren cs pairs)
-/-- Auxiliary: descend pair list into children. Pairs with first index
-    `0` apply to the head child (with the rest of the path); pairs with
-    first index `k+1` are forwarded to the tail (with the rest of the
-    list and index decremented). -/
+/-- `multiGraftChildren cs pairs` grafts into the forest `cs`, where the first index of each
+address names a tree of `cs`. -/
 def multiGraftChildren :
     List (RoseTree α) → List (Path × RoseTree α) → List (RoseTree α)
   | [],      _     => []
@@ -170,6 +161,11 @@ theorem filterMap_tailChildFilter (pairs : List (Path × RoseTree α))
     · simp [ih]
     · simp [ih]
 
+/-- Grafting keeps the root value. -/
+@[simp] theorem value_multiGraft (T : RoseTree α) (pairs : List (Path × RoseTree α)) :
+    (multiGraft T pairs).value = T.value := by
+  cases T; rfl
+
 /-- `multiGraftChildren` depends on its pair list only through the two child filters. -/
 theorem multiGraftChildren_congr {cs : List (RoseTree α)}
     {pairs₁ pairs₂ : List (Path × RoseTree α)}
@@ -200,83 +196,19 @@ theorem multiGraftChildren_length :
     rw [multiGraftChildren_cons_cs, List.length_cons, List.length_cons,
       multiGraftChildren_length cs (pairs.filterMap tailChildFilter)]
 
-/-! ## §3: Nil identity -/
-
 mutual
-/-- Empty pair list: `multiGraft` is the identity. -/
+/-- Grafting nothing leaves a tree unchanged. -/
 theorem multiGraft_nil : ∀ (T : RoseTree α), multiGraft T [] = T
   | .node a cs => by
     show RoseTree.node a ([] ++ multiGraftChildren cs []) = RoseTree.node a cs
     rw [List.nil_append, multiGraftChildren_nil_pairs cs]
-/-- Empty pair list: `multiGraftChildren` is the identity on the
-    children list. -/
+/-- Grafting nothing leaves a forest unchanged. -/
 theorem multiGraftChildren_nil_pairs : ∀ (cs : List (RoseTree α)),
     multiGraftChildren cs [] = cs
   | [] => rfl
   | c :: cs => by
     show multiGraft c [] :: multiGraftChildren cs [] = c :: cs
     rw [multiGraft_nil c, multiGraftChildren_nil_pairs cs]
-end
-
-/-! ## §4: Singleton bridge to `insertAt`
-
-A single-pair `multiGraft` is exactly `insertAt`. The proof splits into:
-
-- §4.1 `multiGraftChildren cs [([], T₂)] = cs` — the empty path
-  contributes only to root prepends, not to the children.
-- §4.2 `multiGraftChildren cs [(j :: rest, T₂)]` agrees with `cs.set j`
-  when `j < cs.length`, else is the identity.
-- §4.3 Top-level `multiGraft_singleton` combines these. -/
-
-private theorem multiGraftChildren_singleton_nilPath :
-    ∀ (cs : List (RoseTree α)) (T₂ : RoseTree α),
-    multiGraftChildren cs [([], T₂)] = cs
-  | [], _ => rfl
-  | c :: cs, _ => by
-    show multiGraft c [] :: multiGraftChildren cs [] = c :: cs
-    rw [multiGraft_nil c, multiGraftChildren_nil_pairs cs]
-
-mutual
-/-- Single-pair `multiGraft` is `insertAt`. Bridges the multi-graft
-    primitive to the single-vertex insertion in `Insert.lean`. -/
-theorem multiGraft_singleton : ∀ (T : RoseTree α) (p : Path) (T₂ : RoseTree α),
-    multiGraft T [(p, T₂)] = insertAt p T₂ T
-  | .node a cs, [], T₂ => by
-    show RoseTree.node a ([T₂] ++ multiGraftChildren cs [([], T₂)]) =
-         RoseTree.node a (T₂ :: cs)
-    rw [multiGraftChildren_singleton_nilPath cs T₂]
-    rfl
-  | .node a cs, j :: rest, T₂ => by
-    show RoseTree.node a ([] ++ multiGraftChildren cs [(j :: rest, T₂)]) =
-         insertAt (j :: rest) T₂ (RoseTree.node a cs)
-    rw [List.nil_append, multiGraftChildren_singleton_cons cs j rest T₂]
-    by_cases hj : j < cs.length
-    · rw [insertAt_cons_of_lt _ _ _ _ _ hj]
-      simp [hj]
-    · rw [insertAt_cons_of_not_lt _ _ _ _ _ hj]
-      simp [hj]
-private theorem multiGraftChildren_singleton_cons :
-    ∀ (cs : List (RoseTree α)) (j : ℕ) (rest : Path) (T₂ : RoseTree α),
-    multiGraftChildren cs [(j :: rest, T₂)] =
-      if hj : j < cs.length then
-        cs.set j (insertAt rest T₂ (cs[j]'hj))
-      else cs
-  | [], j, rest, T₂ => by
-    show ([] : List (RoseTree α)) = _
-    simp
-  | c :: cs, 0, rest, T₂ => by
-    show multiGraft c [(rest, T₂)] :: multiGraftChildren cs [] = _
-    rw [multiGraft_singleton c rest T₂, multiGraftChildren_nil_pairs cs]
-    simp [List.set_cons_zero]
-  | c :: cs, k + 1, rest, T₂ => by
-    show multiGraft c [] :: multiGraftChildren cs [(k :: rest, T₂)] = _
-    rw [multiGraft_nil c, multiGraftChildren_singleton_cons cs k rest T₂]
-    by_cases hk : k < cs.length
-    · have hk' : k + 1 < (c :: cs).length := by simp [List.length_cons]; omega
-      simp only [hk, hk', ↓reduceDIte]
-      rw [List.set_cons_succ, List.getElem_cons_succ]
-    · have hk' : ¬ k + 1 < (c :: cs).length := by simp [List.length_cons]; omega
-      simp only [hk, hk', ↓reduceDIte]
 end
 
 end Pathed

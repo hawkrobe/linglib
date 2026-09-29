@@ -36,7 +36,6 @@ import Linglib.Core.Algebra.RootedTree.GrossmanLarson.Pairing
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson.PairingMul
 import Linglib.Core.Algebra.RootedTree.HopfAlgebra
 import Linglib.Core.Algebra.RootedTree.PreLie.Graft
-import Linglib.Core.Algebra.RootedTree.PreLie.Insert
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertionUnordered

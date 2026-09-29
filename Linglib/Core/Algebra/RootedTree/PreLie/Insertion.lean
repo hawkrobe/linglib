@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Algebra.RootedTree.PreLie.Graft
-public import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
 public import Linglib.Core.Data.List.Perm
 public import Linglib.Core.Data.List.Sublists
 public import Linglib.Core.Data.Multiset.Powerset
@@ -14,33 +13,37 @@ public import Linglib.Core.Data.UnorderedTree.Basic
 public import Mathlib.Data.Multiset.Bind
 
 /-!
-# Multi-tree insertion on `RoseTree α`
+# Multi-tree insertion on rose trees
 
-Foissy's multi-tree, multi-vertex insertion: `insertion T gs` sums, over all assignments of the
-guests `gs` to vertices of the host `T`, the simultaneous graft `multiGraft`; `insertionForest`
-is the same sum over the vertices of a host forest. Both are multisets so that the sum over
-assignments is commutative.
+This file defines the insertion of several guest trees into a host. For a host `T` and guests
+`gs`, `insertion T gs` is the multiset, over all assignments of the guests to vertices of `T`, of
+the trees obtained by grafting every guest at its vertex at once (`multiGraft`); `insertionForest`
+does the same for a host forest. This is the Guin–Oudom extension of the grafting pre-Lie product
+to several guests, in the form Foissy gives for decorated trees.
+
+## Main definitions
+
+* `listChoices xs n`: the words of length `n` over `xs`, the assignments of `n` guests to `xs`.
+* `insertion`, `insertionForest`: multi-tree insertion into a tree and into a forest.
 
 ## Main results
 
-* `bind_listChoices_filter`: the keystone. A sum over vertex assignments, viewed through a
-  predicate on vertices, is a sum over `gs.sublists'.revzip` of independent assignments for the
-  two buckets. `insertionForest_cons`, `insertionForest_append`, and `insertion_node` are its
-  instances.
-* `bind_listChoices_zip_perm`: permuting the guests permutes the assignments, so `insertion` and
-  `insertionForest` are invariant under guest permutation once outputs are read through
-  `UnorderedTree.mk`.
-* `insertion_perm_host`, `insertionForest_permList_host_msform`,
-  `insertionForest_perm_host_msform`, `insertionForest_msform_invariance_guests`: the
-  invariances that make `UnorderedTree.insertionMultiset` well defined.
-* `insertion_singleton`: with a single guest, insertion is the pre-Lie product `insertSum`.
+* `bind_listChoices_filter`: a sum over assignments, split by a predicate on vertices, is a sum
+  over the splittings `gs.sublists'.revzip` of the guests of independent assignments to the two
+  classes. `insertion_node`, `insertionForest_cons` and `insertionForest_append` are instances.
+* `insertionForest_bind_revzip_sublists'`: splitting an output forest splits the hosts and the
+  guests, each guest following its host.
+* `insertion_perm_guests`, `insertion_forall₂_perm_guests`, `insertion_perm_host`: once outputs
+  are read through `UnorderedTree.mk`, insertion depends on neither the order of the guests nor
+  the order of any children.
+* `insertionForest_perm_host_msform`, `insertionForest_msform_invariance_guests`: the forest
+  versions, which make `UnorderedTree.insertionMultiset` well defined.
 
 ## References
 
-* [foissy-typed-decorated-rooted-trees-2018]
+* [foissy-2021]
 * [foissy-introduction-hopf-algebras-trees]
 -/
-
 @[expose] public section
 
 namespace RoseTree
@@ -53,8 +56,8 @@ variable {α : Type*}
 
 /-! ## `listChoices`: assignments of guests to vertices -/
 
-/-- All length-`n` lists with entries from `xs`, with repetition: the assignments of `n`
-    guests to the vertices `xs`. -/
+/-- `listChoices xs n` lists the words of length `n` over `xs`, the ways to assign `n` guests to
+the vertices `xs`. -/
 def listChoices {β : Type*} : List β → Nat → List (List β)
   | _,  0     => [[]]
   | xs, n + 1 => xs.flatMap fun v => (listChoices xs n).map (v :: ·)
@@ -78,6 +81,10 @@ theorem coe_listChoices_succ {β : Type*} (xs : List β) (n : ℕ) :
   | zero => rfl
   | succ n ih => rw [listChoices_succ, ih]; rfl
 
+/-- Choices of length one are the letters. -/
+theorem listChoices_one {β : Type*} (xs : List β) : listChoices xs 1 = xs.map fun x => [x] :=
+  List.map_eq_flatMap.symm
+
 /-- A choice is a word of the prescribed length over the alphabet. -/
 theorem mem_listChoices {β : Type*} {xs : List β} {n : ℕ} {ch : List β} :
     ch ∈ listChoices xs n ↔ ch.length = n ∧ ∀ x ∈ ch, x ∈ xs := by
@@ -88,28 +95,18 @@ theorem mem_listChoices {β : Type*} {xs : List β} {n : ℕ} {ch : List β} :
     | nil => simp
     | cons x ch => simp [ih, and_left_comm]
 
-/-- `listChoices` is compatible with `List.map`: applying `f` element-wise
-    to choices in `xs.map f` gives the same as mapping `List.map f` over
-    `listChoices xs n`. -/
+/-- `listChoices` commutes with `List.map`. -/
 theorem listChoices_map {β γ : Type*} (f : β → γ) (xs : List β) (n : Nat) :
     listChoices (xs.map f) n = (listChoices xs n).map (List.map f) := by
   induction n with
   | zero => rfl
   | succ n ih =>
-    rw [listChoices_succ, listChoices_succ]
-    -- (xs.map f).flatMap (fun v => listChoices (xs.map f) n .map (v :: ·)) =
-    -- (xs.flatMap (fun v => listChoices xs n .map (v :: ·))).map (List.map f)
-    rw [List.flatMap_map]
-    rw [List.map_flatMap]
-    apply List.flatMap_congr
-    intro b _
-    rw [ih]
-    rw [List.map_map, List.map_map]
-    rfl
+    rw [listChoices_succ, listChoices_succ, List.flatMap_map, List.map_flatMap]
+    exact List.flatMap_congr fun b _ => by rw [ih, List.map_map, List.map_map]; rfl
 
 /-! ### Guest splits as `sublists'.revzip` -/
 
-/-- **Keystone.** A sum over length-`gs.length` choices from `xs`, viewed through the two
+/-- A sum over length-`gs.length` choices from `xs`, viewed through the two
 buckets of a predicate `P` on `xs`, is a sum over `gs.sublists'.revzip` of independent choices
 from `xs.filter P` for the first bucket and from its complement for the second. -/
 theorem bind_listChoices_filter {β γ δ : Type*} (P : β → Prop) [DecidablePred P]
@@ -148,8 +145,8 @@ theorem bind_listChoices_filter {β γ δ : Type*} (P : β → Prop) [DecidableP
       simp only [List.filter_cons, decide_eq_true_eq, hv, not_true_eq_false, ite_true, ite_false]
       exact ih fun a b => G ((v, g) :: a) b
 
-/-- Permuting the guests permutes the zipped pair lists: a sum over choices of a
-`Perm`-invariant function of `ch.zip gs` does not depend on the order of `gs`. -/
+/-- A sum over choices of a `Perm`-invariant function of `ch.zip gs` does not depend on the order
+of `gs`, since permuting the guests permutes the zipped pair lists. -/
 theorem bind_listChoices_zip_perm {β γ δ : Type*} (xs : List β) {gs gs' : List γ}
     (h : gs.Perm gs') (G : List (β × γ) → Multiset δ)
     (hG : ∀ {ps ps' : List (β × γ)}, ps.Perm ps' → G ps = G ps') :
@@ -171,8 +168,8 @@ theorem bind_listChoices_zip_perm {β γ δ : Type*} (xs : List β) {gs gs' : Li
 
 /-! ## `insertion`: single-tree host -/
 
-/-- Multi-graft on a single-tree host: the sum over `(v₁, …, vₙ) ∈ V(T)ⁿ` of
-    `multiGraft T [(v₁, T₁), …, (vₙ, Tₙ)]`. -/
+/-- `insertion T [T₁, …, Tₙ]` is the multiset, over `(v₁, …, vₙ) ∈ V(T)ⁿ`, of
+`multiGraft T [(v₁, T₁), …, (vₙ, Tₙ)]`. -/
 def insertion (T : RoseTree α) (Ts : List (RoseTree α)) : Multiset (RoseTree α) :=
   Multiset.ofList <| (listChoices (vertices T) Ts.length).map
     fun choice => multiGraft T (choice.zip Ts)
@@ -184,8 +181,8 @@ theorem insertion_def (T : RoseTree α) (Ts : List (RoseTree α)) :
 
 /-! ## `insertionForest`: forest host -/
 
-/-- Multi-graft into a host forest: the sum over assignments of guests to forest vertices of
-    the simultaneous `multiGraftChildren`. -/
+/-- `insertionForest cs gs` is the multiset, over assignments of the guests `gs` to vertices of
+the forest `cs`, of the simultaneous grafts `multiGraftChildren`. -/
 def insertionForest (cs gs : List (RoseTree α)) : Multiset (List (RoseTree α)) :=
   Multiset.ofList <| (listChoices (verticesAux 0 cs) gs.length).map
     fun ch => multiGraftChildren cs (ch.zip gs)
@@ -223,7 +220,19 @@ private theorem map_zip_map_left {β β' γ : Type*} {f : β → β'} {f' : β' 
   rw [List.zip_map_left, List.map_map]
   exact (List.map_congr_left fun ⟨x, y⟩ _ => by simp [h]).trans (List.map_id _)
 
-/-- The host-forest recursion: the head host takes a sublist of the guests, the tail forest the
+/-- Every output of `insertion T gs` has the root value of `T`. -/
+theorem value_of_mem_insertion {T T' : RoseTree α} {gs : List (RoseTree α)}
+    (h : T' ∈ insertion T gs) : T'.value = T.value := by
+  obtain ⟨ch, -, rfl⟩ := List.mem_map.mp (Multiset.mem_coe.mp h)
+  exact value_multiGraft T _
+
+/-- Every output of `insertionForest cs gs` has as many trees as `cs`. -/
+theorem length_of_mem_insertionForest {cs gs L : List (RoseTree α)}
+    (h : L ∈ insertionForest cs gs) : L.length = cs.length := by
+  obtain ⟨ch, -, rfl⟩ := List.mem_map.mp (Multiset.mem_coe.mp h)
+  exact multiGraftChildren_length cs _
+
+/-- In a forest host, the first tree takes a sublist of the guests and the other trees take the
 complement. -/
 theorem insertionForest_cons (T : RoseTree α) (F gs : List (RoseTree α)) :
     insertionForest (T :: F) gs =
@@ -289,8 +298,8 @@ private theorem bind_revzip_insertionForest_nil {δ : Type*} (gs : List (RoseTre
       add_zero]
     exact ih fun A s => H A (g :: s)
 
-/-- Grafting into a concatenated host: the guests split into a sublist for the left forest and
-its complement for the right one. -/
+/-- In a concatenated host, the guests split into a sublist for the left forest and its
+complement for the right one. -/
 theorem insertionForest_append (xs ys gs : List (RoseTree α)) :
     insertionForest (xs ++ ys) gs =
       (gs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun p =>
@@ -309,8 +318,8 @@ theorem insertionForest_append (xs ys gs : List (RoseTree α)) :
         (insertionForest ys s).map ((T' :: A) ++ ·)]
     exact Multiset.bind_congr fun p _ => Multiset.bind_bind _ _
 
-/-- **Split law**: splits of an output list are splits of the hosts and of the guests, each
-guest following its host. Stated in continuation form over a function `K` of the two parts. -/
+/-- Splits of an output list are splits of the hosts and of the guests, each guest following its
+host. Stated in continuation form over a function `K` of the two parts. -/
 theorem insertionForest_bind_revzip_sublists' {δ : Type*} (hs gs : List (RoseTree α))
     (K : List (RoseTree α) → List (RoseTree α) → Multiset δ) :
     (insertionForest hs gs).bind (fun L =>
@@ -368,8 +377,8 @@ theorem insertionForest_bind_revzip_sublists' {δ : Type*} (hs gs : List (RoseTr
           K (T' :: L₁) L₂]
       exact Multiset.bind_congr fun q _ => Multiset.bind_bind_bind_comm _ _ _ _
 
-/-- **Node-host decomposition**: guests split into a sublist prepended at the root, in guest
-order, and its complement grafted into the child forest. -/
+/-- In a node host, the guests split into a sublist prepended at the root, in guest order, and its
+complement grafted into the child forest. -/
 theorem insertion_node (a : α) (cs gs : List (RoseTree α)) :
     insertion (RoseTree.node a cs) gs =
       (gs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun p =>
@@ -402,19 +411,13 @@ theorem insertion_node (a : α) (cs gs : List (RoseTree α)) :
     Multiset.map_map, ← Multiset.bind_singleton]
   rfl
 
-/-! ## Pair-list `Perm` invariance for `multiGraft`
+/-! ## Reordering the pairs of `multiGraft`
 
-`multiGraft T pairs` is `Perm`-invariant under permutation of the
-pair list: grafts at distinct paths commute, and grafts at the same
-path are root-list permutations (lift via `Perm.node_of_perm`).
-
-Path-based reformulation of the legacy `multiGraft_perm_pair` /
-`multiGraftList_perm_pair`. -/
+Permuting the pair list of `multiGraft` only permutes children: grafts at distinct vertices
+commute, and grafts at one vertex are reordered among its children. -/
 
 mutual
-/-- `Perm` of `multiGraft T pairs` and `multiGraft T pairs'`
-    follows from a `List.Perm` between `pairs` and `pairs'`. Mutual
-    recursion on `T` with the children-list aux. -/
+/-- Permuting the pair list of `multiGraft` gives a `Perm`-related tree. -/
 private theorem multiGraft_perm_pair : ∀ (T : RoseTree α)
     {pairs pairs' : List (Path × RoseTree α)},
     pairs.Perm pairs' →
@@ -427,9 +430,8 @@ private theorem multiGraft_perm_pair : ∀ (T : RoseTree α)
             (List.rel_append
               (List.forall₂_same.mpr fun _ _ => Perm.refl _)
               (multiGraftChildren_perm_pair cs h)))
-/-- List-level companion to `multiGraft_perm_pair`: pair-list `Perm`
-    lifts to `Forall₂ Perm` on the children list output of
-    `multiGraftChildren`. -/
+/-- Permuting the pair list of `multiGraftChildren` gives `Perm`-related forests, tree by
+tree. -/
 private theorem multiGraftChildren_perm_pair : ∀ (cs : List (RoseTree α))
     {pairs pairs' : List (Path × RoseTree α)},
     pairs.Perm pairs' →
@@ -443,14 +445,10 @@ private theorem multiGraftChildren_perm_pair : ∀ (cs : List (RoseTree α))
     · exact multiGraftChildren_perm_pair cs (h.filterMap _)
 end
 
-/-! ### Forall₂-version of `multiGraft_perm_pair`
+/-! ### Replacing the grafted trees
 
-For `insertion_perm_guests` we need: when `Ts ~ᶠ Ts'` (Forall₂
-Perm) and we zip with the same choice, the resulting pair lists
-satisfy a Forall₂ relation (same fst, Perm snd). Then this lifts
-to `multiGraft T pairs ~ multiGraft T pairs'` (`Perm`).
-
-Path-based version of the legacy `multiGraft_perm_pair_Forall₂`. -/
+Replacing each grafted tree by a `Perm`-related one, at the same address, only permutes
+children. -/
 
 private theorem zip_pair_Forall₂ {β γ : Type*} {R : γ → γ → Prop}
     (choice : List β) :
@@ -468,8 +466,8 @@ private theorem zip_pair_Forall₂ {β γ : Type*} {R : γ → γ → Prop}
       exact List.Forall₂.cons ⟨rfl, hTT'⟩ (ih hrest)
 
 mutual
-/-- `Perm` of `multiGraft T pairs` and `multiGraft T pairs'`
-    follows from pair-`Forall₂` (same fst, `Perm` snds). -/
+/-- Replacing the grafted trees by `Perm`-related ones at the same addresses gives a
+`Perm`-related tree. -/
 private theorem multiGraft_perm_pair_Forall₂ : ∀ (T : RoseTree α)
     {pairs pairs' : List (Path × RoseTree α)},
     List.Forall₂ (fun p p' : Path × RoseTree α =>
@@ -490,7 +488,7 @@ private theorem multiGraft_perm_pair_Forall₂ : ∀ (T : RoseTree α)
     · -- children: Forall₂ Perm on multiGraftChildren output
       exact multiGraftChildren_perm_pair_Forall₂ cs h
 
-/-- List-level companion. -/
+/-- Replacing the grafted trees by `Perm`-related ones gives `Perm`-related forests. -/
 private theorem multiGraftChildren_perm_pair_Forall₂ :
     ∀ (cs : List (RoseTree α))
     {pairs pairs' : List (Path × RoseTree α)},
@@ -542,9 +540,17 @@ theorem insertion_perm_guests (t : RoseTree α)
     (fun ps => {UnorderedTree.mk (multiGraft t ps)})
     fun hp => by rw [UnorderedTree.mk_eq_mk_iff.mpr (multiGraft_perm_pair t hp)]
 
-/-- `List.Forall₂ Perm` lifts to `List` equality after mapping by
-    `UnorderedTree.mk` — used for the `Ts = []` base case of forest host
-    invariance. -/
+/-- Single-tree `insertion` is `mk`-invariant under replacing each guest by a `Perm`-related
+    tree. -/
+theorem insertion_forall₂_perm_guests (t : RoseTree α) {Ts Ts' : List (RoseTree α)}
+    (h : List.Forall₂ Perm Ts Ts') :
+    (insertion t Ts).map UnorderedTree.mk = (insertion t Ts').map UnorderedTree.mk := by
+  rw [insertion_def, insertion_def, Multiset.map_coe, Multiset.map_coe, List.map_map,
+    List.map_map, h.length_eq]
+  exact congrArg _ <| List.map_congr_left fun choice _ => UnorderedTree.mk_eq_mk_iff.mpr
+    (multiGraft_perm_pair_Forall₂ t (zip_pair_Forall₂ choice h))
+
+/-- Forests related tree by tree by `Perm` have the same image under `UnorderedTree.mk`. -/
 private theorem map_mk_eq_of_forall2_perm {F F' : List (RoseTree α)}
     (h : List.Forall₂ Perm F F') :
     F.map UnorderedTree.mk = F'.map UnorderedTree.mk := by
@@ -552,8 +558,7 @@ private theorem map_mk_eq_of_forall2_perm {F F' : List (RoseTree α)}
   | nil => rfl
   | cons hd_pe _ ih => simp [UnorderedTree.mk_eq_mk_iff.mpr hd_pe, ih]
 
-/-- Forest guest invariance: `List.Perm` of guests lifts to `mk`-equality of
-    `insertionForest`. -/
+/-- Forest insertion is `mk`-invariant under `List.Perm` of the guests. -/
 theorem insertionForest_perm_guests
     (F : List (RoseTree α)) {Ts Ts' : List (RoseTree α)} (h : Ts.Perm Ts') :
     (insertionForest F Ts).map (List.map UnorderedTree.mk) =
@@ -564,7 +569,7 @@ theorem insertionForest_perm_guests
     (fun ps => {(multiGraftChildren F ps).map UnorderedTree.mk})
     fun hp => by rw [map_mk_eq_of_forall2_perm (multiGraftChildren_perm_pair F hp)]
 
-/-- Guest-list `Forall₂ Perm` lifts to `mk`-equality of `insertionForest`. -/
+/-- Forest insertion is `mk`-invariant under replacing each guest by a `Perm`-related tree. -/
 theorem insertionForest_forall₂_perm_guests
     (F : List (RoseTree α)) {Ts Ts' : List (RoseTree α)} (h : List.Forall₂ Perm Ts Ts') :
     (insertionForest F Ts).map (List.map UnorderedTree.mk) =
@@ -708,9 +713,9 @@ theorem insertionForest_permList_host_msform :
       (insertionForest_permList_host_msform h₂ gs)
 end
 
-/-- Guest invariance once output order is forgotten: guest lists with the same `mk`-image
-    multiset give the same outputs. -/
-theorem insertionForest_msform_invariance_guests [DecidableEq α]
+/-- Once output order is forgotten, guest lists with the same `mk`-image multiset give the same
+outputs. -/
+theorem insertionForest_msform_invariance_guests
     (host : List (RoseTree α)) {gs1 gs2 : List (RoseTree α)}
     (h : (gs1.map UnorderedTree.mk).Perm (gs2.map UnorderedTree.mk)) :
     (insertionForest host gs1).map
@@ -730,24 +735,9 @@ theorem insertionForest_msform_invariance_guests [DecidableEq α]
   rw [hwrap, hwrap, insertionForest_perm_guests host hperm,
     insertionForest_forall₂_perm_guests host h_forall]
 
-/-! ## Singleton hosts and single guests
+/-! ## Singleton hosts and empty guest lists -/
 
-A one-tree host reduces `insertionForest` to `insertion`, and a single guest reduces
-`insertion` to the pre-Lie product `RoseTree.insertSum`. -/
-
-/-- Choices of length one are the letters. -/
-theorem listChoices_one {β : Type*} (xs : List β) : listChoices xs 1 = xs.map fun x => [x] :=
-  List.map_eq_flatMap.symm
-
-/-- With a single guest, the multi-insertion is the Chapoton–Livernet pre-Lie product. -/
-theorem insertion_singleton (T g : RoseTree α) : insertion T [g] = RoseTree.insertSum T g := by
-  rw [insertion_def, insertSum_eq_coe_map_insertAt, List.length_singleton, listChoices_one,
-    List.map_map]
-  congr 1
-  exact List.map_congr_left fun v _ => multiGraft_singleton T v g
-
-/-- `insertion T []` is the singleton `{T}` — multi-graft of no guests is
-    the identity. -/
+/-- Inserting no guests leaves the host unchanged. -/
 theorem insertion_nil_guests (T : RoseTree α) :
     insertion T ([] : List (RoseTree α)) = ({T} : Multiset (RoseTree α)) := by
   rw [insertion_def]
@@ -755,8 +745,7 @@ theorem insertion_nil_guests (T : RoseTree α) :
              multiGraft_nil, List.map_cons, List.map_nil,
              Multiset.coe_singleton]
 
-/-- **Singleton-host insertion**: when the host has exactly one tree, `insertionForest` is
-    single-tree `insertion` with each output wrapped in a singleton list. -/
+/-- Inserting into a one-tree forest is inserting into that tree. -/
 theorem insertionForest_singleton (T : RoseTree α) (gs : List (RoseTree α)) :
     insertionForest [T] gs = (insertion T gs).map (fun T' => [T']) := by
   rw [insertionForest_def, insertion_def, verticesAux_cons, verticesAux_nil, List.append_nil,
