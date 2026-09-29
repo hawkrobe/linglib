@@ -18,7 +18,7 @@ predicate of the plurality of propositions a disjunction denotes (§4) is not fo
 
 ## Main definitions
 
-* `IsMinCover`: the minimal covers of §2.1.
+* `IsMinCover`, `IsSuperCover`: the minimal and super covers of §2.1.
 * `BilatInqProp`: Def 10, the pairs of the product `Question W ⊙ Question W` with disjoint
   coordinates; `atom`, `negate`, `disj`, `conj`, `necessity`, `possibility`: the clauses of
   Def 14.
@@ -33,6 +33,13 @@ predicate of the plurality of propositions a disjunction denotes (§4) is not fo
 
 Entailment over a model (Def 18) is inclusion of truth sets, and strong invalidity (Def 21) is
 disjointness of the premises' truth set from the conclusion's.
+
+* `isSuperCover_pair_iff`, `isMinCover_pair_iff_inter_sdiff`: the Diversity (Def 2) and
+  Independence (Def 6) inferences are super and minimal covering; `IsMinCover.isSuperCover`:
+  Independence entails Diversity. `BoothExample.diversity_without_independence`: Figure 1, where
+  it does not go the other way.
+* `kratzer_monotone`: Fact 1; `BoothExample.not_monotone_necessity`: Booth's necessity is not
+  upward monotonic.
 
 * `Formula.eval_neg_neg`: Fact 3, double negation.
 * `Formula.fg_eval`: Fact 5, both interpretations of every sentence finitely generated
@@ -69,6 +76,7 @@ disjointness of the premises' truth set from the conclusion's.
 ## References
 
 * [booth-2022]
+* [simons-2005], the super covers of the Diversity analysis.
 * [aloni-2022], Aloni's bilateral state-based modal logic; Booth cites her 2018 manuscript
   "FC disjunction in state-based semantics" (fn. 9).
 * [ciardelli-groenendijk-roelofsen-2018], standard inquisitive semantics, in which `¬¬φ` and `φ`
@@ -83,11 +91,15 @@ open Bilattice
 
 variable {W : Type*}
 
-/-! ### Minimal covers (§2.1)
+/-! ### Super covers and minimal covers (§§1.1, 2.1)
 
 Booth's `□φ` requires the alternatives of `⟦φ⟧⁺` not only to cover the relevant worlds, as the
 Kratzerian semantics does, but to form a minimal cover, with no proper subfamily still covering
-them. -/
+them. For a disjunction `p ∨ q` the covering relations match the two families of inferences §1
+compares: `{⟦p⟧, ⟦q⟧}` super covers the relevant worlds exactly when the Diversity inferences hold
+(Def 2), and minimally covers them exactly when the Independence inferences hold (Def 6). A
+minimal cover is a super cover, so Independence entails Diversity; the converse fails
+(`BoothExample.diversity_without_independence`). -/
 
 /-- `C` is a minimal cover (m-cover) of `S` (§2.1): it covers `S`, `S ⊆ ⋃₀ C`, and no proper
 subfamily does. -/
@@ -129,6 +141,42 @@ theorem isMinCover_pair_iff {A B S : Set W} (hAB : A ≠ B) :
     rcases hYAB hZY with rfl | rfl
     · exact absurd hvZ hvA
     · exact Set.singleton_subset_iff.2 hZY
+
+/-- `{A, B}` minimally covers `S` exactly when it covers `S` and `S` meets both relative
+complements: the Independence inferences of Def 6, `R ∩ (⟦φ⟧ ∖ ⟦ψ⟧) ≠ ∅` and
+`R ∩ (⟦ψ⟧ ∖ ⟦φ⟧) ≠ ∅`. -/
+theorem isMinCover_pair_iff_inter_sdiff {A B S : Set W} (hAB : A ≠ B) :
+    IsMinCover {A, B} S ↔ S ⊆ A ∪ B ∧ (S ∩ (A \ B)).Nonempty ∧ (S ∩ (B \ A)).Nonempty := by
+  rw [isMinCover_pair_iff hAB]
+  refine and_congr_right fun hcov ↦ ?_
+  have key : ∀ {X Y : Set W}, S ⊆ X ∪ Y → (¬ S ⊆ Y ↔ (S ∩ (X \ Y)).Nonempty) := fun hXY ↦
+    ⟨fun h ↦ (Set.not_subset.1 h).imp fun _ ⟨hv, hvY⟩ ↦ ⟨hv, (hXY hv).resolve_right hvY, hvY⟩,
+      fun ⟨_, hv, _, hvY⟩ h ↦ hvY (h hv)⟩
+  rw [key hcov, key (hcov.trans (Set.union_comm A B).subset)]
+  exact and_comm
+
+/-- `C` is a super cover of `S` ([simons-2005], as Booth gives it in §2.1): it covers `S` and each
+of its members meets `S`. -/
+def IsSuperCover (C : Set (Set W)) (S : Set W) : Prop :=
+  S ⊆ ⋃₀ C ∧ ∀ c ∈ C, (c ∩ S).Nonempty
+
+/-- `{A, B}` super covers `S` exactly when it covers `S` and `S` meets both `A` and `B`: the
+Diversity inferences of Def 2, `R ∩ ⟦φ⟧ ≠ ∅` and `R ∩ ⟦ψ⟧ ≠ ∅`. -/
+theorem isSuperCover_pair_iff {A B S : Set W} :
+    IsSuperCover {A, B} S ↔ S ⊆ A ∪ B ∧ (A ∩ S).Nonempty ∧ (B ∩ S).Nonempty := by
+  simp [IsSuperCover]
+
+/-- A minimal cover is a super cover, since a member missing `S` could be dropped: Independence
+entails Diversity. -/
+theorem IsMinCover.isSuperCover {C : Set (Set W)} {S : Set W} (h : IsMinCover C S) :
+    IsSuperCover C S := by
+  refine ⟨h.subset_sUnion, fun c hc ↦ Set.nonempty_iff_ne_empty.2 fun hcS ↦ ?_⟩
+  have hsub : S ⊆ ⋃₀ (C \ {c}) := fun v hv ↦ by
+    obtain ⟨d, hd, hvd⟩ := h.subset_sUnion hv
+    refine ⟨d, ⟨hd, fun hdc ↦ ?_⟩, hvd⟩
+    rw [Set.mem_singleton_iff.1 hdc] at hvd
+    exact Set.eq_empty_iff_forall_notMem.1 hcS v ⟨hvd, hv⟩
+  exact (h.le_of_le hsub Set.sdiff_subset hc).2 rfl
 
 /-! ### Bilateral inquisitive propositions (Defs 10, 14 and 17) -/
 
@@ -268,6 +316,12 @@ theorem truth_necessity_subset (R : W → Set W) (φ : BilatInqProp W) :
   exact fun _ h ↦ h.2.subset_sUnion.trans φ.pos.sUnion_alt_subset_info
 
 end BilatInqProp
+
+/-- **Booth Fact 1**: Kratzer's necessity, true at `w` when `R w ⊆ ⟦φ⟧` (Def 1), is upward
+monotonic, so it validates the Ross inference. Booth's is not
+(`BoothExample.not_monotone_necessity`). -/
+theorem kratzer_monotone (R : W → Set W) : Monotone fun A : Set W ↦ {w | R w ⊆ A} :=
+  fun _ _ hAB _ hw ↦ hw.trans hAB
 
 open BilatInqProp
 
@@ -624,12 +678,14 @@ theorem independence_conditional_right (h : NonHurford (.atom (V p)) (.atom (V q
 
 end Formula
 
-/-! ### A model separating Booth's necessity from Kratzer's
+/-! ### Booth's Figures 1 and 2
 
-Four worlds, the valuations of `p` and `q` over `Bool × Bool`. Where the relevant worlds are
-the three `p ∨ q`-worlds, `{V(p), V(q)}` minimally covers them, so `□(p ∨ q)` and, by Fact 9,
-`◇(p ∧ ¬q)` are true. Where they are the two `p`-worlds, the Kratzerian `□(p ∨ q)` is true but
-Booth's is not: `{V(p)}` alone covers them. -/
+Four worlds, the valuations of `p` and `q` over `Bool × Bool`. Where the relevant worlds are the
+three `p ∨ q`-worlds, `{V(p), V(q)}` minimally covers them, as in Figure 2 (Independence), so
+`□(p ∨ q)` and, by Fact 9, `◇(p ∧ ¬q)` are true. Where they are the two `p`-worlds, the pair is a
+super cover but not a minimal one, as in Figure 1 (Diversity without Independence): the
+Kratzerian `□(p ∨ q)` and the Diversity inferences hold, but Booth's `□(p ∨ q)` does not, while
+the premises `□p` and `◇q` of the Extended Ross argument are true. -/
 
 namespace BoothExample
 
@@ -652,28 +708,55 @@ theorem nonHurford : NonHurford (atom vp) (atom vq) :=
   nonHurford_atom_iff.2 ⟨fun h ↦ absurd (h (show (true, false) ∈ vp from rfl)) (by simp [vq]),
     fun h ↦ absurd (h (show (false, true) ∈ vq from rfl)) (by simp [vp])⟩
 
-theorem box_pOrQ : (true, true) ∈ (necessity r₃ (disj (atom vp) (atom vq))).truth := by
-  rw [truth_necessity, Set.mem_ofPred_eq, alt_disj_atom nonHurford,
-    isMinCover_pair_iff nonHurford.ne]
-  refine ⟨⟨(true, true), .inl rfl⟩, subset_rfl, fun h ↦ ?_, fun h ↦ ?_⟩
+/-- Figure 2: `{V(p), V(q)}` minimally covers the three `p ∨ q`-worlds. -/
+theorem isMinCover_r₃ : IsMinCover {vp, vq} (r₃ (true, true)) := by
+  rw [isMinCover_pair_iff nonHurford.ne]
+  refine ⟨subset_rfl, fun h ↦ ?_, fun h ↦ ?_⟩
   · exact absurd (h (show (false, true) ∈ r₃ (true, true) from .inr rfl)) (by simp [vp])
   · exact absurd (h (show (true, false) ∈ r₃ (true, true) from .inl rfl)) (by simp [vq])
+
+theorem box_pOrQ : (true, true) ∈ (necessity r₃ (disj (atom vp) (atom vq))).truth := by
+  rw [truth_necessity, Set.mem_ofPred_eq, alt_disj_atom nonHurford]
+  exact ⟨⟨(true, true), .inl rfl⟩, isMinCover_r₃⟩
 
 theorem diamond_pAndNotQ :
     (true, true) ∈ (possibility r₃ (conj (atom vp) (negate (atom vq)))).truth :=
   independence_left r₃ nonHurford box_pOrQ
 
-/-- On the two `p`-worlds Booth's `□(p ∨ q)` is false, by Fact 7, since `□p` is true there. -/
-theorem not_box_pOrQ : (true, true) ∉ (necessity rP (disj (atom vp) (atom vq))).truth := by
-  refine Set.disjoint_left.1 (ross_strongly_invalid rP nonHurford) ?_
+/-- Figure 1: on the two `p`-worlds `{V(p), V(q)}` is a super cover but not a minimal one, so
+the Diversity inferences hold and the Independence inferences fail. -/
+theorem diversity_without_independence :
+    IsSuperCover {vp, vq} (rP (true, true)) ∧ ¬ IsMinCover {vp, vq} (rP (true, true)) :=
+  ⟨isSuperCover_pair_iff.2 ⟨Set.subset_union_left, ⟨(true, true), rfl, rfl⟩,
+    ⟨(true, true), rfl, rfl⟩⟩, fun h ↦ ((isMinCover_pair_iff nonHurford.ne).1 h).2.1 subset_rfl⟩
+
+/-- On the two `p`-worlds `□p` is true. -/
+theorem box_p : (true, true) ∈ (necessity rP (atom vp)).truth := by
   rw [truth_necessity, Set.mem_ofPred_eq, alt_atom_pos,
     isMinCover_singleton_iff ⟨(true, true), show (true, true) ∈ rP (true, true) from rfl⟩]
   exact ⟨⟨(true, true), rfl⟩, subset_rfl⟩
+
+/-- On the two `p`-worlds `◇q` is true. -/
+theorem diamond_q : (true, true) ∈ (possibility rP (atom vq)).truth := by
+  rw [truth_possibility, Set.mem_ofPred_eq, alt_atom_pos]
+  exact ⟨{(true, true)}, Set.singleton_subset_iff.2 rfl, Set.singleton_nonempty _,
+    (isMinCover_singleton_iff (Set.singleton_nonempty _)).2 (Set.singleton_subset_iff.2 rfl)⟩
+
+/-- On the two `p`-worlds Booth's `□(p ∨ q)` is false, by Fact 7, since `□p` is true there. -/
+theorem not_box_pOrQ : (true, true) ∉ (necessity rP (disj (atom vp) (atom vq))).truth :=
+  Set.disjoint_left.1 (ross_strongly_invalid rP nonHurford) box_p
 
 /-- On the two `p`-worlds the Kratzerian `□(p ∨ q)` of Def 1 is true: they lie in the truth set
 of `p ∨ q`. -/
 theorem kratzer_box_pOrQ : rP (true, true) ⊆ (disj (atom vp) (atom vq)).truth := by
   simp [rP]
+
+/-- Booth's necessity is not upward monotonic, unlike Kratzer's (Fact 1, `kratzer_monotone`):
+`⟦p⟧ ⊆ ⟦p ∨ q⟧`, yet on the two `p`-worlds `□p` is true and `□(p ∨ q)` false. -/
+theorem not_monotone_necessity :
+    ¬ ∀ φ ψ : BilatInqProp W4, φ.truth ⊆ ψ.truth →
+      (necessity rP φ).truth ⊆ (necessity rP ψ).truth :=
+  fun h ↦ not_box_pOrQ (h _ _ (by simp) box_p)
 
 end BoothExample
 
