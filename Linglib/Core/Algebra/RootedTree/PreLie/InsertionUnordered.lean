@@ -24,6 +24,8 @@ Guin–Oudom extension of the grafting product.
 ## Main results
 
 * `insertionMultiset_singleton_singleton`: one host and one guest give the grafting product.
+* `map_singleton_bind_insertSum`: two successive graftings, the degree-two case of Oudom and
+  Guin's recursion for the extended product.
 * `insertionMultiset_singleton_node`: grafting into a single node splits the guests between the
   root and the child forest.
 * `insertionMultiset_add_host`: grafting into a disjoint union splits the guests between the two
@@ -106,6 +108,26 @@ theorem insertionMultiset_singleton_singleton (T S : UnorderedTree α) :
   rw [quot_mk_eq_mk, quot_mk_eq_mk, ← Multiset.coe_singleton, ← Multiset.coe_singleton,
     ← List.map_singleton, ← List.map_singleton, insertionMultiset_mk, insertionForest_singleton,
     mk_insertSum, Multiset.map_map, Multiset.map_map]
+  rfl
+
+/-- Grafting `S₁` into `T` and then `S₂` into the result is grafting `S₁ ◁ S₂` into `T`, plus
+grafting `S₁` and `S₂` into `T` at once: the degree-two case `T ∘ BX = (T ∘ B) ∘ X - T ∘ (B ∘ X)`
+of Oudom and Guin's Proposition 3.7. -/
+theorem map_singleton_bind_insertSum (T S₁ S₂ : UnorderedTree α) :
+    ((T ◁ S₁).bind (· ◁ S₂)).map ({·}) =
+      ((S₁ ◁ S₂).bind (T ◁ ·)).map ({·}) + insertionMultiset {T} {S₁, S₂} := by
+  induction T using Quotient.inductionOn with | h t =>
+  induction S₁ using Quotient.inductionOn with | h s₁ =>
+  induction S₂ using Quotient.inductionOn with | h s₂ =>
+  rw [quot_mk_eq_mk, quot_mk_eq_mk, quot_mk_eq_mk, ← Multiset.coe_singleton, ← List.map_singleton,
+    show ({mk s₁, mk s₂} : Multiset (UnorderedTree α)) = ↑([s₁, s₂].map mk) from rfl,
+    insertionMultiset_mk, insertionForest_singleton, Multiset.map_map]
+  have h := congrArg (Multiset.map fun x : UnorderedTree α => ({x} : Multiset _))
+    (map_mk_bind_insertSum t s₁ s₂)
+  simp only [Multiset.map_add, Multiset.map_map, Function.comp_def] at h
+  simp only [mk_insertSum, Multiset.bind_map, ← Multiset.map_bind, Multiset.map_map,
+    Function.comp_def]
+  rw [h]
   rfl
 
 /-- Every output forest of `insertionMultiset A B` has as many trees as `A`. -/

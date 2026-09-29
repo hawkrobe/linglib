@@ -31,8 +31,15 @@ children that descends the product to `UnorderedTree`.
   of `T`.
 * `RoseTree.insertSum_node`: grafting at the root, or recursively inside one child.
 * `RoseTree.card_insertSum`, `UnorderedTree.card_insertSum`: one summand per vertex of `T`.
+* `RoseTree.map_mk_bind_insertSum`: grafting `S₁` into `T` and then `S₂` into the result is
+  grafting `S₁ ◁ S₂` into `T` plus grafting `S₁` and `S₂` into `T` at once.
+* `UnorderedTree.insertSum_assoc_symm`: the associator of the grafting product is symmetric in
+  its last two arguments, the right pre-Lie identity.
 
 ## Implementation notes
+
+The pre-Lie identity holds only once children are unordered: grafting `S₁` and then `S₂` at one
+vertex makes the new children `[S₂, S₁]`, where grafting both at once makes them `[S₁, S₂]`.
 
 The product of Marcolli, Chomsky and Berwick's insertion Lie algebra is a different operation:
 it inserts a binary tree by subdividing an edge of another binary tree, not by grafting at a
@@ -85,6 +92,100 @@ theorem card_insertSum (T S : RoseTree α) : Multiset.card (T ◁ S) = T.numNode
 example : node 0 [leaf 1] ◁ leaf 2 = {node 0 [leaf 2, leaf 1], node 0 [node 1 [leaf 2]]} := by
   decide
 
+/-! ### The pre-Lie identity -/
+
+private theorem insertionForest_cons_singleton (T : RoseTree α) (F : List (RoseTree α))
+    (S : RoseTree α) :
+    insertionForest (T :: F) [S] =
+      (T ◁ S).map (· :: F) + (insertionForest F [S]).map (T :: ·) := by
+  rw [insertionForest_cons, show [S].sublists'.revzip = [([], [S]), ([S], [])] from rfl]
+  simp only [← Multiset.cons_coe, Multiset.cons_bind, Multiset.coe_nil, Multiset.zero_bind,
+    add_zero, insertion_nil_guests, insertionForest_nil_guests, Multiset.singleton_bind,
+    Multiset.map_singleton, Multiset.bind_singleton, insertSum]
+  exact add_comm _ _
+
+private theorem insertionForest_cons_pair (T : RoseTree α) (F : List (RoseTree α))
+    (S₁ S₂ : RoseTree α) :
+    insertionForest (T :: F) [S₁, S₂] =
+      (insertion T [S₁, S₂]).map (· :: F) +
+        (T ◁ S₁).bind (fun X => (insertionForest F [S₂]).map (X :: ·)) +
+        (T ◁ S₂).bind (fun X => (insertionForest F [S₁]).map (X :: ·)) +
+        (insertionForest F [S₁, S₂]).map (T :: ·) := by
+  rw [insertionForest_cons,
+    show [S₁, S₂].sublists'.revzip = [([], [S₁, S₂]), ([S₂], [S₁]), ([S₁], [S₂]), ([S₁, S₂], [])]
+      from rfl]
+  simp only [← Multiset.cons_coe, Multiset.cons_bind, Multiset.coe_nil, Multiset.zero_bind,
+    add_zero, insertion_nil_guests, insertionForest_nil_guests, Multiset.singleton_bind,
+    Multiset.map_singleton, Multiset.bind_singleton, insertSum]
+  abel
+
+private theorem insertion_node_pair (a : α) (cs : List (RoseTree α)) (S₁ S₂ : RoseTree α) :
+    insertion (node a cs) [S₁, S₂] =
+      {node a (S₁ :: S₂ :: cs)} +
+        (insertionForest cs [S₂]).map (fun Y => node a (S₁ :: Y)) +
+        (insertionForest cs [S₁]).map (fun Y => node a (S₂ :: Y)) +
+        (insertionForest cs [S₁, S₂]).map (node a) := by
+  rw [insertion_node,
+    show [S₁, S₂].sublists'.revzip = [([], [S₁, S₂]), ([S₂], [S₁]), ([S₁], [S₂]), ([S₁, S₂], [])]
+      from rfl]
+  simp only [← Multiset.cons_coe, Multiset.cons_bind, Multiset.coe_nil, Multiset.zero_bind,
+    add_zero, insertionForest_nil_guests, Multiset.map_singleton, List.nil_append,
+    List.cons_append]
+  abel
+
+open UnorderedTree in
+mutual
+/-- Grafting `S₁` into `T` and then `S₂` into the result is grafting `S₁ ◁ S₂` into `T`, plus
+grafting `S₁` and `S₂` into `T` at once, once children are unordered. -/
+theorem map_mk_bind_insertSum : ∀ (T S₁ S₂ : RoseTree α),
+    ((T ◁ S₁).bind (· ◁ S₂)).map mk =
+      ((S₁ ◁ S₂).bind (T ◁ ·)).map mk + (insertion T [S₁, S₂]).map mk
+  | node a cs, S₁, S₂ => by
+    have e1 : mk (node a (S₂ :: S₁ :: cs)) = mk (node a (S₁ :: S₂ :: cs)) :=
+      mk_eq_mk_iff.mpr (Perm.node_of_perm (List.Perm.swap _ _ _))
+    have e5 := congrArg (Multiset.map fun L : List (UnorderedTree α) =>
+      UnorderedTree.node a (L : Multiset (UnorderedTree α))) (map_mk_bind_insertionForest cs S₁ S₂)
+    simp only [Multiset.map_add, Multiset.map_map, Multiset.map_bind, Function.comp_def,
+      node_mk_tree_list] at e5
+    simp only [insertSum_node, insertion_node_pair, insertionForest_cons_singleton,
+      Multiset.cons_bind, Multiset.bind_map, Multiset.map_add, Multiset.map_cons,
+      Multiset.map_map, Multiset.map_bind, Multiset.map_singleton, Function.comp_def]
+    simp only [Multiset.bind_cons]
+    rw [e5, e1]
+    simp only [← Multiset.singleton_add]
+    abel
+/-- The forest case of `map_mk_bind_insertSum`. The trees of each forest keep their order, since
+only the children inside them are reordered. -/
+theorem map_mk_bind_insertionForest : ∀ (F : List (RoseTree α)) (S₁ S₂ : RoseTree α),
+    ((insertionForest F [S₁]).bind (insertionForest · [S₂])).map (List.map mk) =
+      ((S₁ ◁ S₂).bind (insertionForest F [·])).map (List.map mk) +
+        (insertionForest F [S₁, S₂]).map (List.map mk)
+  | [], S₁, S₂ => by simp
+  | T :: F, S₁, S₂ => by
+    have hT := congrArg (Multiset.map (· :: F.map mk)) (map_mk_bind_insertSum T S₁ S₂)
+    have hF := congrArg (Multiset.map (mk T :: ·)) (map_mk_bind_insertionForest F S₁ S₂)
+    simp only [Multiset.map_add, Multiset.map_map, Multiset.map_bind, Function.comp_def] at hT hF
+    simp only [insertionForest_cons_singleton, insertionForest_cons_pair, Multiset.add_bind,
+      Multiset.bind_map, Multiset.bind_add, Multiset.map_add, Multiset.map_map,
+      Multiset.map_bind, Function.comp_def, List.map_cons]
+    rw [hT, hF, Multiset.bind_map_comm (insertionForest F [S₁]) (T ◁ S₂)]
+    abel
+end
+
+open UnorderedTree in
+/-- The associator of the grafting product is symmetric in its last two arguments, once children
+are unordered. -/
+theorem map_mk_insertSum_assoc_symm (T S₁ S₂ : RoseTree α) :
+    ((T ◁ S₁).bind (· ◁ S₂)).map mk + ((S₂ ◁ S₁).bind (T ◁ ·)).map mk =
+      ((T ◁ S₂).bind (· ◁ S₁)).map mk + ((S₁ ◁ S₂).bind (T ◁ ·)).map mk := by
+  rw [map_mk_bind_insertSum, map_mk_bind_insertSum T S₂ S₁,
+    insertion_perm_guests T (List.Perm.swap S₁ S₂ [])]
+  abel
+
+/-- Grafting is not associative, since `(0 ◁ 1) ◁ 2` has two summands and `0 ◁ (1 ◁ 2)` one. -/
+example : (leaf 0 ◁ leaf 1).bind (· ◁ leaf 2) ≠ (leaf 1 ◁ leaf 2).bind (leaf 0 ◁ ·) := by
+  decide
+
 end RoseTree
 
 namespace UnorderedTree
@@ -106,5 +207,17 @@ theorem card_insertSum (T S : UnorderedTree α) : Multiset.card (T ◁ S) = T.nu
   Quotient.inductionOn₂ T S fun t s => by
     change Multiset.card (mk t ◁ mk s) = (mk t).numNodes
     rw [mk_insertSum, Multiset.card_map, RoseTree.card_insertSum, numNodes_mk]
+
+/-- The associator of the grafting product is symmetric in its last two arguments, so that
+`(T ◁ S₁) ◁ S₂ - T ◁ (S₁ ◁ S₂) = (T ◁ S₂) ◁ S₁ - T ◁ (S₂ ◁ S₁)`, here stated without
+subtraction. -/
+theorem insertSum_assoc_symm (T S₁ S₂ : UnorderedTree α) :
+    (T ◁ S₁).bind (· ◁ S₂) + (S₂ ◁ S₁).bind (T ◁ ·) =
+      (T ◁ S₂).bind (· ◁ S₁) + (S₁ ◁ S₂).bind (T ◁ ·) := by
+  induction T using Quotient.inductionOn with | h t =>
+  induction S₁ using Quotient.inductionOn with | h s₁ =>
+  induction S₂ using Quotient.inductionOn with | h s₂ =>
+  simp only [quot_mk_eq_mk, mk_insertSum, Multiset.bind_map, ← Multiset.map_bind]
+  exact RoseTree.map_mk_insertSum_assoc_symm t s₁ s₂
 
 end UnorderedTree
