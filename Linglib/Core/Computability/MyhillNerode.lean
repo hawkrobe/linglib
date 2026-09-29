@@ -8,6 +8,7 @@ module
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Data.Set.Finite.Range
 public import Mathlib.Data.Fintype.Option
+public import Mathlib.Order.Lattice.Nat
 public import Linglib.Core.Computability.Mealy
 public import Linglib.Core.Computability.Bimachine
 public import Linglib.Core.Computability.Subsequential
@@ -52,8 +53,8 @@ of the canonical bimachine of Reutenauer and Schützenberger surveyed by Filiot 
 
 ## Implementation notes
 
-The prefix function is `Nat.findGreatest` over the prefixes of `f u`, so it and the residual
-are noncomputable. For a prefix-preserving `f` the prefix function is `f` itself
+The prefix function takes the supremum in `ℕ` of the lengths of the common prefixes, so it and
+the residual are noncomputable. For a prefix-preserving `f` the prefix function is `f` itself
 (`prefixFunction_eq_self`) and the residual drops `f u` (`residual_eq_drop`), which on
 length-preserving functions is the synchronous residual (`residual_eq_syncResidual`).
 
@@ -80,11 +81,10 @@ namespace Function
 
 /-! ### The prefix function and residuals -/
 
-open Classical in
 /-- The **prefix function** of `f` sends `u` to the longest common prefix of the outputs of `f`
 on the extensions of `u`, the output already determined after reading `u`. -/
 noncomputable def prefixFunction (u : List α) : List β :=
-  (f u).take (Nat.findGreatest (fun n ↦ ∀ w, (f u).take n <+: f (u ++ w)) (f u).length)
+  (f u).take (sSup {n | n ≤ (f u).length ∧ ∀ w, (f u).take n <+: f (u ++ w)})
 
 /-- The **residual** of `f` by `u` sends `v` to what `f` outputs on `u ++ v` beyond the prefix
 function at `u`, the analogue for string functions of `Language.leftQuotient`. -/
@@ -93,23 +93,26 @@ noncomputable def residual (u : List α) : List α → List β :=
 
 variable {f} {g : List α → List β} {u v : List α} {p : List β}
 
-theorem prefixFunction_prefix (u w : List α) : f.prefixFunction u <+: f (u ++ w) := by
-  classical
-  have h : ∀ w, (f u).take 0 <+: f (u ++ w) := fun w ↦ by simp
-  exact Nat.findGreatest_spec (P := fun n ↦ ∀ w, (f u).take n <+: f (u ++ w))
-    (Nat.zero_le _) h w
+private lemma bddAbove_commonPrefixLengths :
+    BddAbove {n | n ≤ (f u).length ∧ ∀ w, (f u).take n <+: f (u ++ w)} :=
+  ⟨_, fun _ h ↦ h.1⟩
+
+private lemma sSup_mem_commonPrefixLengths :
+    sSup {n | n ≤ (f u).length ∧ ∀ w, (f u).take n <+: f (u ++ w)} ∈
+      {n | n ≤ (f u).length ∧ ∀ w, (f u).take n <+: f (u ++ w)} :=
+  Nat.sSup_mem ⟨0, Nat.zero_le _, fun w ↦ by simp⟩ bddAbove_commonPrefixLengths
+
+theorem prefixFunction_prefix (u w : List α) : f.prefixFunction u <+: f (u ++ w) :=
+  sSup_mem_commonPrefixLengths.2 w
 
 /-- The prefix function at `u` is the greatest common prefix of `f` on the extensions of
 `u`. -/
 theorem prefix_prefixFunction_iff : p <+: f.prefixFunction u ↔ ∀ w, p <+: f (u ++ w) := by
-  classical
   refine ⟨fun h w ↦ h.trans (prefixFunction_prefix u w), fun h ↦ ?_⟩
   have hu : p <+: f u := by simpa using h []
   have hp : p = (f u).take p.length := List.prefix_iff_eq_take.mp hu
-  have hle : p.length ≤ Nat.findGreatest (fun n ↦ ∀ w, (f u).take n <+: f (u ++ w))
-      (f u).length :=
-    Nat.le_findGreatest hu.length_le fun w ↦ hp ▸ h w
-  exact List.prefix_take_iff.mpr ⟨hu, hle⟩
+  exact List.prefix_take_iff.mpr ⟨hu, le_csSup bddAbove_commonPrefixLengths
+    ⟨hu.length_le, fun w ↦ hp ▸ h w⟩⟩
 
 theorem prefixFunction_eq_self (h : ∀ w, f u <+: f (u ++ w)) : f.prefixFunction u = f u :=
   ((prefix_prefixFunction_iff.mpr h).eq_of_length_le
