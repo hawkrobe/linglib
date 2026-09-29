@@ -6,292 +6,230 @@ public import Linglib.Semantics.ArgumentStructure.Projection
 /-!
 # Argument-structure templates
 
-[levin-1993] [dowty-1991] [beavers-2010] [beavers-koontz-garboden-2020]
-[rappaport-hovav-levin-1998]
+This file defines role lists, the argument-structure generalizations that whole verb classes
+share. A role list gives the entailment profile of a subject and of an optional object, in
+realization order, and the named templates are the consensus role lists of verb classes such as
+manner contact, change of state, creation, consumption and the psych verbs. The map from Levin's
+verb classes onto the templates lives with the classes, and individual verbs can override a
+template with their own entailments.
 
-A `RoleList` pairs a subject with an optional object `EntailmentProfile` —
-the argument-structure generalization a whole verb class shares. The named
-templates are the class-level consensus rows (manner vs result vs creation
-vs psych ...); the map from [levin-1993]'s class inventory onto them lives
-with the classes (`Semantics/ArgumentStructure/LevinClass.lean`), and individual verbs can
-override via explicit `subjectEntailments`/`objectEntailments` on `Verb`.
+## Main definitions
+
+* `RoleList`: the entailment profiles of a subject and an optional object.
+* `RoleList.args`: the profiles of a role list, subject first.
+
+## References
+
+* [D. Dowty, *Thematic Proto-Roles and Argument Selection* (1991)][dowty-1991]
+* [B. Levin, *English Verb Classes and Alternations: A Preliminary Investigation*
+  (1993)][levin-1993]
+* [B. Levin and M. Rappaport Hovav, *Argument Realization* (2005)][levin-rappaport-hovav-2005]
+* [M. Rappaport Hovav and B. Levin, *Building Verb Meanings* (1998)][rappaport-hovav-levin-1998]
+* [J. Beavers and A. Koontz-Garboden, *The Roots of Verbal Meaning*
+  (2020)][beavers-koontz-garboden-2020]
+* [J. Beavers, *On Affectedness* (2011)][beavers-2011]
+* [A. Belletti and L. Rizzi, *Psych-Verbs and θ-Theory* (1988)][belletti-rizzi-1988]
 -/
 
 @[expose] public section
 
 namespace ArgumentStructure
 
-/-- A verb class's semantic role list, in realization order: the subject's
-    entailment set, then the object's (`none` for intransitives). The
-    stored order records the class's attested linking; the ASP derives it
-    wherever dominance is strict, and it is a genuine lexical choice
-    exactly at the alternation ties (the psych doublets) — see
-    `roleList_linking_asp_sanctioned` in `Semantics/ArgumentStructure/LevinClass.lean`. -/
+/-- A verb class's role list gives the entailment profile of its subject and then of its object,
+`none` for an intransitive. The stored order records the class's attested linking. Dowty's argument
+selection principle derives it wherever one profile dominates the other, and it is a lexical choice
+exactly at the ties behind the psych doublets (`roleList_not_asp_reversed`). -/
 structure RoleList where
   subjectProfile : EntailmentProfile
   objectProfile : Option EntailmentProfile := none
   deriving DecidableEq, Repr
 
-/-- The role list as a list, subject first ([levin-rappaport-hovav-2005]
-    ch. 2's presentation shape). -/
+/-- `r.args` lists the profiles of the role list, subject first, as
+[levin-rappaport-hovav-2005] (ch. 2) present role lists. -/
 def RoleList.args (r : RoleList) : List EntailmentProfile :=
   r.subjectProfile :: r.objectProfile.toList
 
--- ════════════════════════════════════════════════════
--- § 2. Named Templates
--- ════════════════════════════════════════════════════
+/-! ### Named templates
 
-/-! Named per-class argument profiles. These are the class-level consensus
-rows formerly hand-stored per verb in `EntailmentProfile.lean`; consumers
-(studies, fragments) reference these or the template accessors below. -/
+The consensus profiles of verb classes, which studies and fragments reference. -/
 
-/-- Experiencer argument: sentient with respect to the event, without
-    volition or causation ([dowty-1991] (38): "the Experiencer is entailed
-    to be sentient/perceiving"); independent existence per the p. 573
-    generalization that every verb entailing any of (27a–d) also entails
-    subject existence. -/
+/-- An experiencer is sentient with respect to the event but neither volitional nor causal
+([dowty-1991] (38)), and exists independently, by Dowty's generalization that every verb entailing
+any of (27a–d) also entails the existence of its subject (p. 573). -/
 def experiencerProfile : EntailmentProfile :=
   { sentience := true, independentExistence := true }
 
-/-- Stimulus argument: causes the experience without being sentient with
-    respect to it ([dowty-1991] (38): "the Stimulus causes some emotional
-    reaction or cognitive judgment in the Experiencer ... though the
-    Stimulus is not [entailed to be sentient/perceiving]"). -/
+/-- A stimulus causes the experience without being sentient with respect to it
+([dowty-1991] (38)). -/
 def stimulusProfile : EntailmentProfile :=
   { causation := true, independentExistence := true }
 
-/-- Contacted-but-unaffected object of the surface-contact classes: CA+St,
-    no CoS. [dowty-1991] never attributes a change of state to hit-class
-    objects ((64 III): no Incremental Theme, no CoS for either non-subject
-    argument); [beavers-2011] eq. (60c): impact verbs impose only *potential*
-    for change. -/
+/-- The object of the surface-contact classes is contacted but not changed, causally affected and
+stationary without a change of state. [dowty-1991] attributes no change of state to the objects of
+the hit class ((64 III)), and [beavers-2011] (60c) gives impact verbs only potential for change. -/
 def contactObject : EntailmentProfile :=
   { causallyAffected := true, stationary := true }
 
-/-- Created object: CoS+IT+CA+DE — incremental theme with dependent
-    existence ([dowty-1991] (30e)(i): the effected argument "does not exist
-    before ... the event"). -/
+/-- A created object changes state, is an incremental theme, is causally affected and does not
+exist before the event ([dowty-1991] (30e)(i)). -/
 def creationObject : EntailmentProfile :=
   { changeOfState := true, incrementalTheme := true, causallyAffected := true,
     dependentExistence := true }
 
-/-- Consumed object: CoS+IT+CA — incremental theme without DE (the object
-    pre-exists the event). The missing DE is load-bearing for the Grimm
-    bridge: `PersistenceLevel.fromPatientProfile` separates creation (DE+IT →
-    `exPersEnd`) from consumption (IT alone → `exPersBeginning`); see
-    `Studies/Dowty1991.lean` for the (30e) destruction-criterion tension. -/
+/-- A consumed object is like a created one but exists before the event. That difference is what
+lets `PersistenceLevel.fromPatientProfile` separate creation (`exPersEnd`) from consumption
+(`exPersBeginning`). -/
 def consumptionObject : EntailmentProfile :=
   { changeOfState := true, incrementalTheme := true, causallyAffected := true }
 
-/-- Full agent acting on a contacted but unaffected object.
-    Subject: V+S+C+M+IE. Object: CA+St (no CoS).
-    [beavers-2010]: "unspecified" affectedness — the verb's
-    truth conditions don't entail a change of state in the object.
-    [beavers-koontz-garboden-2020]: manner verbs lack result
-    entailments. -/
+/-- In manner contact a full agent acts on an object it contacts without changing it. Manner verbs
+lack result entailments ([beavers-koontz-garboden-2020]). -/
 def mannerContact : RoleList where
   subjectProfile := accomplishmentSubjectProfile
   objectProfile  := some contactObject
 
-/-- Full agent causing change of state in the object.
-    Subject: V+S+C+M+IE. Object: CoS+CA (causally affected, changed).
-    [beavers-2010]: "quantized" affectedness — the verb entails
-    a definite change of state (the object reaches an end state).
-    [beavers-koontz-garboden-2020]: result verbs entail CoS. -/
+/-- In result change a full agent causes the object to change state, as result verbs entail
+([beavers-koontz-garboden-2020]). -/
 def resultChange : RoleList where
   subjectProfile := accomplishmentSubjectProfile
   objectProfile  := some accomplishmentObjectProfile
 
-/-- Full agent creating an entity (object comes into existence).
-    Subject: V+S+C+M+IE. Object: CoS+IT+CA+DE.
-    [beavers-2010]: quantized affectedness + dependent existence.
-    The object is an incremental theme whose extent measures the event. -/
+/-- In creation a full agent brings the object into existence, an incremental theme whose extent
+measures the event. -/
 def creation : RoleList where
   subjectProfile := accomplishmentSubjectProfile
   objectProfile  := some creationObject
 
-/-- Agent consuming/destroying an incremental theme (Levin 39.1 eat verbs:
-    *eat, drink*; 39.4 devour verbs: *devour, consume, ingest*).
-    Subject: V+S+C+M+IE. Object: CoS+IT+CA.
-    Like creation but without dependent existence (the object
-    pre-exists the event). -/
+/-- In consumption an agent consumes or destroys an incremental theme, as with the eat verbs
+(Levin 39.1, *eat, drink*) and the devour verbs (39.4, *devour, consume, ingest*). It is creation
+without dependent existence. -/
 def consumption : RoleList where
   subjectProfile := accomplishmentSubjectProfile
   objectProfile  := some consumptionObject
 
-/-- Self-propelled motion (no caused result, no object).
-    Subject: V+S+M+IE (no causation — the mover doesn't cause
-    a change in another participant). -/
+/-- In self-propelled motion the subject moves but causes no change in another participant, and
+there is no object. -/
 def selfMotion : RoleList where
   subjectProfile := activitySubjectProfile
 
-/-- Perception / experiencer-subject.
-    Subject: S+IE (sentient, independently existing, but not
-    volitional or causal). -/
+/-- In perception the subject is a sentient, independently existing experiencer, neither volitional
+nor causal. -/
 def perception : RoleList where
   subjectProfile := experiencerProfile
   objectProfile  := some ⟨false, false, false, false, true, false, false, false, false, false⟩
 
-/-- Stimulus-experiencer (Class II psych, Levin 31.1 amuse verbs;
-    [belletti-rizzi-1988]). Subject: C+IE (causal stimulus). Object: S+IE
-    (experiencer). Mirror image of `psychState`. -/
+/-- Stimulus-experiencer psych verbs (Levin 31.1, the amuse verbs; [belletti-rizzi-1988]) have a
+causal stimulus as subject and an experiencer as object, the mirror image of `psychState`. -/
 def psychCausal : RoleList where
   subjectProfile := stimulusProfile
   objectProfile  := some experiencerProfile
 
-/-- Experiencer-subject psych state (Levin 31.2 admire verbs: *admire, like,
-    love, fear, envy*). Subject: sentient experiencer; object: causing
-    stimulus — [dowty-1991] (38): the predicate "entails that the Experiencer
-    has some perception of the Stimulus", and the Stimulus "causes some
-    emotional reaction or cognitive judgment in the Experiencer". Mirror
-    image of `psychCausal` — the argument-selection tie behind the
-    *like*/*please* doublets (§8.3). Distinct from `desire`: admire-class
-    subjects are sentience-entailed, want-class subjects are not. -/
+/-- Experiencer-subject psych verbs (Levin 31.2, the admire verbs *admire, like, love, fear, envy*)
+have a sentient experiencer as subject and a causing stimulus as object ([dowty-1991] (38)). They
+are the mirror image of `psychCausal`, the tie in argument selection behind the *like*/*please*
+doublets (§8.3). Unlike the want verbs of `desire`, their subjects are entailed to be sentient. -/
 def psychState : RoleList where
   subjectProfile := experiencerProfile
   objectProfile  := some stimulusProfile
 
-/-- Desire states (Levin 32.1 want verbs: *covet, crave, desire, need,
-    want*). Subject: independent existence ALONE — [dowty-1991] (29e) "John
-    needs a new car", glossed p. 573 as "verbs that entail subject existence
-    but have none of (a)–(d)": NO sentience entailment, unlike the admire
-    class (*this situation needs a solution*). Object: de dicto/nonspecific,
-    so dependent existence — (30e) "John needs a car/seeks a unicorn ...
-    (de dicto objects: no existence)". -/
+/-- Desire verbs (Levin 32.1, *covet, crave, desire, need, want*) entail only the independent
+existence of their subject. [dowty-1991] (29e) *John needs a new car* is among the "verbs that
+entail subject existence but have none of (a)–(d)" (p. 573), so there is no entailment of
+sentience, unlike the admire class (*this situation needs a solution*). The object is de dicto or
+nonspecific, and so exists dependently ((30e)). -/
 def desire : RoleList where
   subjectProfile := { independentExistence := true }
   objectProfile  := some { dependentExistence := true }
 
-/-- Change of possession (Levin 13.1 give verbs: *give, lend, pass, sell*;
-    13.5 verbs of obtaining: *buy, get, obtain*). Subject: volitional agent
-    without entailed movement (V+S+C+IE) — [dowty-1991] §3.2: "both buyer
-    and seller must act agentively (voluntarily)". Buyer and seller profiles
-    are identical; that is the §8.3 argument-selection tie behind the
-    *buy*/*sell* doublet. No object profile: Dowty flags the goods/currency
-    "two Themes" worry (§3.2) and attributes no object entailments. -/
+/-- Change of possession (Levin 13.1, the give verbs *give, lend, pass, sell*; 13.5, the verbs of
+obtaining *buy, get, obtain*) has a volitional agent as subject without entailed movement, since
+"both buyer and seller must act agentively (voluntarily)" ([dowty-1991] §3.2). Buyer and seller
+have identical profiles, the tie behind the *buy*/*sell* doublet (§8.3). There is no object
+profile, Dowty raising a "two Themes" worry about the goods and the currency (§3.2) and
+attributing no entailments to the object. -/
 def possessionTransfer : RoleList where
   subjectProfile := { volition := true, sentience := true, causation := true,
                       independentExistence := true }
 
-/-- Surface-contact manner (Levin 10.4.1 wipe verbs, manner subclass:
-    *wipe, scrub, sweep, rub, wash*). Subject: M+IE only — underspecified
-    for volition, so agentivity is pragmatically resolved
-    ([rappaport-hovav-levin-1998] on *sweep*; [dowty-1991] never discusses
-    *sweep*). Object: contacted, no entailed change ([beavers-2010]
-    potential affectedness). -/
+/-- The manner subclass of the wipe verbs (Levin 10.4.1, *wipe, scrub, sweep, rub, wash*) has a
+subject that only moves and exists independently, underspecified for volition, so that agentivity
+is resolved pragmatically ([rappaport-hovav-levin-1998] on *sweep*, which [dowty-1991] does not
+discuss). The object is contacted without an entailed change. -/
 def wipeManner : RoleList where
   subjectProfile := { movement := true, independentExistence := true }
   objectProfile  := some contactObject
 
-/-- Instrument subclass of the wipe verbs (Levin 10.4.2: *brush, comb, mop,
-    vacuum*; [rappaport-hovav-levin-1998]'s instrument constants — their
-    canonical realization rule pairs *brush, hammer, saw, shovel* with the
-    activity template): instrument
-    lexicalization forces an obligatory volitional agent (V+S+C+M+IE).
-    Not in the class map — `LevinClass.roleList .wipe` gives the manner
-    subclass default; instrument-sense entries override per verb. -/
+/-- The instrument subclass of the wipe verbs (Levin 10.4.2, *brush, comb, mop, vacuum*)
+lexicalizes an instrument, which forces an obligatory volitional agent as subject;
+[rappaport-hovav-levin-1998]'s canonical realization rule pairs instrument constants such as
+*brush, hammer, saw, shovel* with the activity template. The subclass is not in the class map, so
+`LevinClass.roleList .wipe` gives the manner subclass and verbs with the instrument sense override
+it. -/
 def wipeInstrument : RoleList where
   subjectProfile := accomplishmentSubjectProfile
   objectProfile  := some contactObject
 
-/-- Unaccusative change of state (inchoative).
-    Subject: CoS+CA (undergoes change, no agentive features).
-    No external argument. -/
+/-- An unaccusative change of state, the inchoative, has no external argument, and its subject
+changes state and is causally affected without any agentive entailment. -/
 def unaccusativeCoS : RoleList where
   subjectProfile := accomplishmentObjectProfile
 
-/-- Directed motion (unaccusative).
-    Subject: M+IE+CoS (moves, changes location). -/
+/-- In unaccusative directed motion the subject moves and changes location. -/
 def directedMotion : RoleList where
   subjectProfile := achievementSubjectProfile
 
-/-- Disappearance (Levin 48.2: *die, disappear, expire, perish, vanish* —
-    "describe the disappearance or going out of existence of some entity").
-    Sole argument: CoS+CA+DE — like `unaccusativeCoS` plus dependent
-    existence, since the argument goes out of existence ([dowty-1991]
-    (30e)(i): the effected argument "will not exist after the event"). -/
+/-- Disappearance verbs (Levin 48.2, *die, disappear, expire, perish, vanish*) have a sole argument
+that changes state, is causally affected and exists dependently, since the effected argument
+"will not exist after the event" ([dowty-1991] (30e)(i)). -/
 def disappearance : RoleList where
   subjectProfile := { changeOfState := true, causallyAffected := true,
                       dependentExistence := true }
 
--- ════════════════════════════════════════════════════
--- § 2. Manner roots lack result entailments
--- ════════════════════════════════════════════════════
+/-! ### Manner roots lack result entailments -/
 
-/-- Hit-class object lacks CoS (manner verbs don't entail change of state) —
-    the Beavers & Koontz-Garboden generalization that manner roots lack result
-    entailments, read off the class-level template. -/
+/-- The object of the hit class does not change state, the generalization of
+[beavers-koontz-garboden-2020] that manner roots lack result entailments. -/
 theorem mannerContact_object_no_cos :
     (mannerContact.objectProfile.map (·.changeOfState)) = some false := rfl
 
--- ════════════════════════════════════════════════════
--- § 3. Derived role labels match expectations
--- ════════════════════════════════════════════════════
+/-! ### Derived role labels -/
 
-/-- Hit-class subject → agent label. -/
+/-- The subject of the hit class is an agent. -/
 theorem hit_subject_role :
     mannerContact.subjectProfile.toRole = some .agent := by decide
 
-/-- Hit-class object → patient label (CA+St maps to patient). -/
+/-- The object of the hit class, causally affected and stationary, is a patient. -/
 theorem hit_object_role :
     contactObject.toRole = some .patient := by decide
 
-/-- Self-motion subject → agent label. -/
+/-- The subject of self-motion is an agent. -/
 theorem selfMotion_subject_role :
     selfMotion.subjectProfile.toRole = some .agent := by decide
 
-/-- Perception subject → experiencer label. -/
+/-- The subject of perception is an experiencer. -/
 theorem perception_subject_role :
     perception.subjectProfile.toRole = some .experiencer := by decide
 
-/-- Psych-causal subject → stimulus label. -/
+/-- The subject of a stimulus-experiencer psych verb is a stimulus. -/
 theorem psychCausal_subject_role :
     psychCausal.subjectProfile.toRole = some .stimulus := by decide
 
-/-- The directed-motion subject is a theme: the unaccusative subject of *arrive* moves and
-changes location but is not causally affected, which is what distinguishes a patient from
-the broader theme in [dowty-1991]. -/
+/-- The directed-motion subject is a theme, since the unaccusative subject of *arrive* moves and
+changes location but is not causally affected, which is what distinguishes a patient from the
+broader theme in [dowty-1991]. -/
 theorem directedMotion_subject_role :
     directedMotion.subjectProfile.toRole = some .theme := by decide
 
-/-- Admire-class subject → experiencer, and its stimulus object matches the
-    amuse-class subject exactly — the doublet mirror ([dowty-1991] (38)). -/
+/-- The subject of the admire class is an experiencer, and its stimulus object is exactly the
+subject of the amuse class, the mirror behind the doublets ([dowty-1991] (38)). -/
 theorem psychState_mirrors_psychCausal :
     psychState.subjectProfile.toRole = some .experiencer ∧
     psychState.objectProfile = some psychCausal.subjectProfile ∧
     psychCausal.objectProfile = some psychState.subjectProfile := by decide
 
-/-- Disappearance-class subject → patient (pure Proto-Patient: *die*). -/
+/-- The sole argument of the disappearance class, as of *die*, is a patient, a pure
+proto-patient. -/
 theorem disappearance_subject_role :
     disappearance.subjectProfile.toRole = some .patient := by decide
-
-section GrimmPlacements
-
-
-
-/-! [grimm-2011]'s persistence bridge (`PersistenceLevel.fromPatientProfile`)
-evaluated on the class-level object profiles — the canonical placements
-consumed by `Studies/Grimm2011.lean` and `Studies/Beavers2010.lean`. -/
-
-/-- Contact objects (kick, hit): no entailed change → total persistence.
-    Follows [beavers-2011] eq. (60c) on surface contact; [grimm-2011]'s own
-    Fig. 5 instead places contact objects at `quPersBeginning`. -/
-theorem contactObject_persistence :
-    PersistenceLevel.fromPatientProfile contactObject = .totalPersistence := rfl
-
-/-- Created objects (build, invent): come into existence → `exPersEnd`. -/
-theorem creationObject_persistence :
-    PersistenceLevel.fromPatientProfile creationObject = .exPersEnd := rfl
-
-/-- Consumed objects (eat, devour): cease to exist → `exPersBeginning`. -/
-theorem consumptionObject_persistence :
-    PersistenceLevel.fromPatientProfile consumptionObject = .exPersBeginning := rfl
-
-/-- Disappearance-class subjects (die, vanish), read as patients: cease to
-    exist → `exPersBeginning`. -/
-theorem disappearance_subject_persistence :
-    PersistenceLevel.fromPatientProfile disappearance.subjectProfile
-      = .exPersBeginning := rfl
-end GrimmPlacements
 
 end ArgumentStructure

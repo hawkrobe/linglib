@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 public import Mathlib.Order.Basic
 public import Mathlib.Order.Monotone.Defs
 public import Mathlib.Tactic.DeriveFintype
@@ -23,8 +22,6 @@ the degrees form a chain of weakening truth conditions.
 * `NonQuantizedChange`: the predicate entails that the theme reaches some goal.
 * `PotentialChange`: the predicate relates the theme to a scale.
 * `AffectednessDegree.Holds`: the condition each degree names.
-* `profileToDegree`: an approximate projection of Dowty's proto-patient entailments onto the
-  degrees.
 
 ## Main results
 
@@ -44,17 +41,10 @@ the degrees form a chain of weakening truth conditions.
   one goal for each event, `∃ g, ∀ x e` against `∀ x e, ∃ g`.
 * The paper binds the event existentially and states the degrees of a sentence; here they are
   stated of a relation between themes and events.
-* `profileToDegree` is not Beavers's projection. His correspondence with Dowty's proto-patient
-  entailments (Beavers 2010, Table 5) sends the incremental theme to total traversal, a different
-  hierarchy, and the holistic theme to quantized change. It marks the stationary and causally
-  affected entailments as uncertain, and assigns no Dowty entailment to potential for change.
 
 ## References
 
 * [J. Beavers, *On Affectedness* (2011)][beavers-2011]
-* [J. Beavers, *The structure of lexical meaning: Why semantics really matters*
-  (2010)][beavers-2010]
-* [D. Dowty, *Thematic Proto-Roles and Argument Selection* (1991)][dowty-1991]
 -/
 
 @[expose] public section
@@ -143,56 +133,5 @@ theorem AffectednessDegree.holds_antitone : Antitone (AffectednessDegree.Holds �
     | exact fun ⟨_, hq⟩ ↦ hq.nonQuantizedChange.potentialChange
 
 end Conditions
-
-/-! ### Dowty's proto-patient entailments -/
-
-/-- An approximate projection of Dowty's proto-patient entailments onto the degrees. A change of
-state with an incremental theme goes to `quantized`, a change of state alone to `nonquantized`,
-causal affectedness or stationariness to `potential`, and none of these to `unspecified`. The
-projection is linglib's, not Beavers's; see the implementation notes. -/
-def profileToDegree (p : EntailmentProfile) : AffectednessDegree :=
-  if p.incrementalTheme && p.changeOfState then .quantized
-  else if p.changeOfState then .nonquantized
-  else if p.causallyAffected || p.stationary then .potential
-  else .unspecified
-
-variable (p q : EntailmentProfile)
-
-/-- Profiles that agree on change of state, incremental theme, causal affectedness and
-stationariness project to the same degree. -/
-theorem profileToDegree_depends_only_on_patient
-    (hcos : p.changeOfState = q.changeOfState)
-    (hit : p.incrementalTheme = q.incrementalTheme)
-    (hca : p.causallyAffected = q.causallyAffected)
-    (hst : p.stationary = q.stationary) :
-    profileToDegree p = profileToDegree q := by
-  simp only [profileToDegree, hcos, hit, hca, hst]
-
-@[simp]
-theorem profileToDegree_eq_quantized_iff :
-    profileToDegree p = .quantized ↔
-      p.incrementalTheme = true ∧ p.changeOfState = true := by
-  unfold profileToDegree; split_ifs <;> simp_all
-
-@[simp]
-theorem profileToDegree_eq_nonquantized_iff :
-    profileToDegree p = .nonquantized ↔
-      p.changeOfState = true ∧ p.incrementalTheme = false := by
-  unfold profileToDegree; split_ifs <;> simp_all
-
-@[simp]
-theorem profileToDegree_eq_potential_iff :
-    profileToDegree p = .potential ↔
-      p.changeOfState = false ∧
-        (p.causallyAffected = true ∨ p.stationary = true) := by
-  unfold profileToDegree; split_ifs <;> simp_all
-
-@[simp]
-theorem profileToDegree_eq_unspecified_iff :
-    profileToDegree p = .unspecified ↔
-      p.changeOfState = false ∧ p.causallyAffected = false ∧
-        p.stationary = false := by
-  unfold profileToDegree
-  split_ifs <;> simp_all [or_iff_not_imp_left]
 
 end ArgumentStructure
