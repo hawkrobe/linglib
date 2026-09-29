@@ -28,6 +28,7 @@ realization with *be*.
 * [degen-tonhauser-2022]
 * [karttunen-1971]
 * [karttunen-1973]
+* [nadathur-2023]
 * [nadathur-2023-implicatives]
 -/
 
@@ -53,10 +54,12 @@ def right : ClauseEmbeddingAdjective where
 that are implicative by default but admit the weaker presupposition of a necessary condition
 only: *John wasn't able to come* entails that he did not come, while *John was able to come*
 need not entail that he came. It is a hole, as Karttunen's other one- and two-way implicatives
-are ([karttunen-1973]), and the counterpart of the one-way Finnish *pystyä*; the entailment of
-the affirmative under perfective aspect is the actuality entailment of ability modals, which
-[nadathur-2023-implicatives] proposes to derive in the composition of a stative ability claim
-with perfective aspect rather than from the lexicon. -/
+are ([karttunen-1973]), and the counterpart of the one-way Finnish *pystyä*
+([nadathur-2023-implicatives]). The entailment of the affirmative on its actualized reading is the
+actuality entailment of ability, which [nadathur-2023] derives from aspect rather than from the
+lexicon: *able* presupposes an action causally necessary and sufficient for the complement and
+asserts only the subject's capacity for it, a stative that perfective aspect coerces into an
+instance of the action (Proposal (7.10), §7.2). -/
 def able : ClauseEmbeddingAdjective where
   form := "able"
   frames := [ArgumentFrame.infinitival]
