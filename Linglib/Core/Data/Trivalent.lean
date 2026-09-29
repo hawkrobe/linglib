@@ -24,8 +24,8 @@ connective families — Weak Kleene ([bochvar-1937]), Middle Kleene ([peters-197
 conditional assertion ([belnap-1970]) — and the partiality operators ∂ and 𝒜 of
 [beaver-krahmer-2001].
 
-The upstreamable algebra is the `Order.KleeneAlgebra` class (`Core/Order/DeMorganAlgebra/Defs.lean`),
-of which `Trivalent` is the canonical non-Boolean instance. The dedicated carrier with
+The upstreamable algebra is the `IsKleene` mixin (`Core/Order/DeMorganAlgebra/Defs.lean`), of
+which `Trivalent` is the canonical non-Boolean instance. The dedicated carrier with
 truth-named constructors is this library's ergonomic choice; the name follows the
 `Boolean` precedent — an adjective nominalized as its truth-value type — with the
 `Trivalent` namespace hosting the whole trivalent development (this file's algebra,
@@ -38,7 +38,7 @@ truth-named constructors is this library's ergonomic choice; the name follows th
   `Logic/Trivalent/Prop3.lean`.
 - `Trivalent.neg` — Strong Kleene negation: involutive (`neg_neg`), antitone
   (`neg_antitone`), De Morgan (`neg_inf`/`neg_sup`), satisfying the Kleene law
-  (`inf_neg_le_sup_neg`) — so `Trivalent` is an `Order.KleeneAlgebra`, the canonical
+  (`inf_neg_le_sup_neg`) — so `Trivalent` is a Kleene algebra (`IsKleene`), the canonical
   non-Boolean instance (`inf_compl_indet_ne_bot`).
 - `Trivalent.meetWeak`/`joinWeak`, `meetMiddle`/`joinMiddle`, `meetBelnap`/`joinBelnap`,
   `xor` — the rival connective families.
@@ -57,7 +57,7 @@ truth-named constructors is this library's ergonomic choice; the name follows th
 ## References
 
 [kleene-1952] [bochvar-1937] [belnap-1970] [peters-1979] [beaver-krahmer-2001]
-[cobreros-etal-2012] [wang-davidson-2026]
+[cobreros-etal-2012] [wang-davidson-2026] [kalman-1958]
 -/
 
 @[expose] public section
@@ -148,22 +148,20 @@ theorem neg_antitone : Antitone neg := λ a b h => by
 theorem inf_neg_le_sup_neg (a b : Trivalent) : a ⊓ neg a ≤ b ⊔ neg b := by
   cases a <;> cases b <;> decide
 
-instance : Compl Trivalent := ⟨neg⟩
-
-/-- `Trivalent` is the canonical non-Boolean Kleene algebra (`Order.KleeneAlgebra`): a
-distributive chain with `neg` as the involutive antitone complement, failing
-complementation (`inf_compl_indet_ne_bot`). The `ᶜ` instance gives access to the class
-API (`Core/Order/DeMorganAlgebra/Defs.lean`); `neg` remains the simp-normal form. -/
-instance : Order.KleeneAlgebra Trivalent where
-  __ := (inferInstance : DistribLattice Trivalent)
-  __ := (inferInstance : BoundedOrder Trivalent)
+/-- `neg` is the involutive antitone complement of the chain. The `ᶜ` notation gives access to
+the `InvolutiveCompl` API (`Core/Order/DeMorganAlgebra/Defs.lean`); `neg` remains the simp-normal
+form. -/
+instance : InvolutiveCompl Trivalent where
   compl := neg
   compl_compl := neg_neg
-  compl_le_compl := λ h => neg_antitone h
-  inf_compl_le_sup_compl := inf_neg_le_sup_neg
+  compl_le_compl h := neg_antitone h
+
+/-- `Trivalent` is the canonical non-Boolean Kleene algebra (`IsKleene`), failing
+complementation (`inf_compl_indet_ne_bot`); it is [kalman-1958]'s three-element chain. -/
+instance : IsKleene Trivalent := ⟨inf_neg_le_sup_neg⟩
 
 /-- `Trivalent` is not complemented — `indet` witnesses the gap between Kleene and Boolean
-(so `Trivalent` is no `OrthocomplementedLattice` either). -/
+(so `Trivalent` is no ortholattice either). -/
 theorem inf_compl_indet_ne_bot : Trivalent.indet ⊓ Trivalent.indetᶜ ≠ ⊥ := by decide
 
 /-! ### Constructor-literal simp lemmas

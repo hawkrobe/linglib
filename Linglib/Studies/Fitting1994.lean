@@ -24,7 +24,8 @@ holds in `L ⊙ L` for a linear `L` iff it holds in `FOUR` (Theorem 10.5, `equiv
 ## Implementation notes
 
 * The product, its negation and the conflation of §§6–7 are `Bilattice.Product` with its `Compl`
-  and `Conflation` instances; a De Morgan lattice is a `DeMorganAlgebra`. §3's identification of
+  and `Conflation` instances; a De Morgan lattice is a bounded distributive lattice with an
+  `InvolutiveCompl`. §3's identification of
   Kleene's values with the consistent part of `FOUR` is `Trivalent.orderIsoConsistent`, and the
   closure clauses of Theorems 9.2 and 9.3 are `IsExact.inf`, `IsConsistent.compl` and their kin;
   the study keeps what the substrate lacks.
@@ -301,7 +302,7 @@ Definition 9.4 is `guard`, with its characterization in the bilattice operations
 
 section Generalized
 
-variable {L : Type*} [DeMorganAlgebra L]
+variable {L : Type*} [DistribLattice L] [BoundedOrder L] [InvolutiveCompl L]
 
 variable {x y z : L ⊙ L}
 
@@ -330,9 +331,9 @@ upper bound. -/
 theorem isConsistent_kSup (hx : IsConsistent x) (hy : IsConsistent y)
     (hz : IsConsistent z) (hxz : x ≤ₖ z) (hyz : y ≤ₖ z) : IsConsistent (x ⊔ₖ y) := by
   rw [isConsistent_iff] at *
-  simp only [pro_kSup, con_kSup, LatticeWithInvolution.compl_sup]
-  exact sup_le (le_inf hx (hxz.2.trans (hz.trans (LatticeWithInvolution.compl_le_compl hyz.1))))
-    (le_inf (hyz.2.trans (hz.trans (LatticeWithInvolution.compl_le_compl hxz.1))) hy)
+  simp only [pro_kSup, con_kSup, InvolutiveCompl.compl_sup]
+  exact sup_le (le_inf hx (hxz.2.trans (hz.trans (InvolutiveCompl.compl_le_compl hyz.1))))
+    (le_inf (hyz.2.trans (hz.trans (InvolutiveCompl.compl_le_compl hxz.1))) hy)
 
 /-- §9: the guard of a consistent value is consistent. -/
 theorem isConsistent_guard (hy : IsConsistent y) (x : L ⊙ L) :
