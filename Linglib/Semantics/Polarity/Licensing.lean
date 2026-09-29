@@ -6,331 +6,250 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Logic.Natural.Basic
-public import Linglib.Semantics.Polarity.Strength
-public import Linglib.Semantics.Polarity.LicensingContext
-public import Linglib.Semantics.Quantification.Indefinite
 public import Linglib.Semantics.Polarity.Item
+public import Linglib.Semantics.Quantification.Indefinite
 
 /-!
 # Polarity licensing
-[ladusaw-1979] [kadmon-landman-1993] [zwarts-1998] [von-fintel-1999]
-[van-rooy-2003-npi] [hoeksema-1983] [bhatt-pancheva-2004] [heim-2006]
-[iatridou-2000] [dayal-1996] [horn-1996] [vanderwouden-1997]
 
-The monotonicity-based licensing theory for `PolarityItem`:
-`LicensingContext.properties` assigns every `LicensingContext` its Strawson and
-classical entailment signatures, its [kadmon-landman-1993] licensing
-mechanism, and its citation lineage; `StrengthScale` is the polymorphic
-item↔context strength pattern with `zwartsScale` as its canonical
-instance; and the keystone `LicensingContext.licenses` dispatches on the
-row's mechanism — Zwarts strength on signature rows, free choice on
-generic-indefinite rows ([dayal-1996]), entropy on questions
-([van-rooy-2003-npi]). Per-paper classifiers (`Ladusaw1979`,
-`KadmonLandman1993`) project from `LicensingContext.properties` rather than
-parallel-stipulating; the grounded grade — deriving the signatures from
-the model witnesses of `Witnesses.lean` via the Kadmon–Landman
-strengthening chain — is the planned next step.
+The licensing theory of `PolarityItem`. Each `LicensingContext` imposes an entailment signature
+on the position of a polarity item, read modulo presuppositions (`LicensingContext.signature`),
+and so carries a strength of negation (`LicensingContext.strength`, `⊥` where the context is not
+downward entailing). Five contexts carry their strength only modulo their presupposition, focus
+*only*, temporal *since*, adversatives, conditional antecedents and superlatives
+([von-fintel-1999]); they are `LicensingContext.IsStrawsonOnly`.
+
+A context licenses a weak negative polarity item when it is downward entailing modulo
+presuppositions ([ladusaw-1979], [von-fintel-1999]); a stronger item needs its strength of
+negation outright, which the Strawson-only contexts lack, although *only*, adversatives,
+conditional antecedents and superlatives are Strawson anti-additive ([zwarts-1998],
+[gajewski-2011]). A context blocks a positive polarity item when its strength outright reaches the
+item's anti-licensor ([vanderwouden-1997], [szabolcsi-2004]). The generic contexts license free
+choice items ([kadmon-landman-1993], [dayal-1996]) and questions the weak negative polarity items
+([van-rooy-2003-npi]). `LicensingContext.Admits` puts the routes together into the distribution
+the theory predicts, which each fragment checks against the contexts its entries are attested
+and excluded in.
 
 ## Main declarations
 
-* `LicensingMechanism`, `ContextProperties`, `LicensingContext.properties` — the
-  per-context theory table.
-* `StrengthScale`, `zwartsScale` — polymorphic strength licensing.
-* `LicensingContext.licenses` — the item↔context licensing keystone.
-* `LicensingContext.IsStrawsonOnly` and the Haspelmath-map grounding
-  theorems.
+* `PolarityItem.LicensingContext.signature`, `LicensingContext.strength`,
+  `LicensingContext.IsStrawsonOnly`, `LicensingContext.mechanism`: the theory of each context.
+* `LicensingContext.Licenses`, `LicensingContext.AntiLicenses`, `LicensingContext.Admits`.
+
+## Main results
+
+* `LicensingContext.strength_eq_antiMorphic_iff`: clausal negation is the only anti-morphic
+  context, so an item needing anti-morphic strength is licensed by it alone
+  (`LicensingContext.licenses_iff_eq_negation`).
+* `LicensingContext.not_licenses_of_isStrawsonOnly`: a Strawson-only context licenses no item
+  stronger than weak ([gajewski-2011]).
+* `LicensingContext.antiLicenses_negation`: clausal negation blocks every positive polarity item,
+  [vanderwouden-1997]'s (169).
+* `LicensingContext.antiLicenses_iff_licenses`: a context blocks the positive polarity items of a
+  class exactly where it licenses the negative polarity items of that class, the mirror image of
+  [vanderwouden-1997]'s (181).
+* `LicensingContext.Licenses.of_licensor_le`: a context licensing an item licenses every item with
+  a weaker licensor.
 
 ## Implementation notes
 
-The table's signatures are Ladusaw/Zwarts/von-Fintel canonical — one row
-per context regardless of item; [israel-2001]'s scalar model rejects
-exactly this framing (predictions in `Studies/Israel2001.lean`).
-The NP-comparative row licenses nothing ([hoeksema-1983]); surface NPIs
-in "than NP" route through the clausal row ([bhatt-pancheva-2004],
-[heim-2006]). The every-restrictor-as-LAA signature is standard but of
-contested attribution (Zwarts 1981 / van Benthem 1986 / Sánchez Valencia
-1991; none in `references.bib`).
+The signature of each context is the canonical one of the Ladusaw–Zwarts tradition, one row per
+context whatever the item; [israel-2001]'s scalar model rejects this framing (see
+`Studies/Israel2001.lean`). `Semantics/Polarity/Witnesses.lean` realizes the rows by model
+operators. The phrasal comparative is monotone and licenses nothing ([hoeksema-1983]); a surface
+*than NP* hosting a polarity item reduces to a clausal source and is listed under the clausal
+comparative ([bhatt-pancheva-2004], [heim-2006]). The anti-additive signature of the restrictor of
+a universal is standard, but its attribution is unsettled. Gajewski's condition on strong items
+concerns the meaning enriched with presupposition and implicature; the licensing relation reads
+the presupposition half, as the Strawson-only contexts, and the *few* and *at most* rows fall short
+of anti-additivity outright.
+
+## References
+
+* [ladusaw-1979]
+* [kadmon-landman-1993]
+* [zwarts-1998]
+* [vanderwouden-1997]
+* [von-fintel-1999]
+* [gajewski-2011]
+* [szabolcsi-2004]
+* [van-rooy-2003-npi]
+* [dayal-1996]
+* [hoeksema-1983]
+* [bhatt-pancheva-2004]
+* [heim-2006]
+* [israel-2001]
+* [haspelmath-1997]
 -/
 
 @[expose] public section
 
 namespace PolarityItem
 
-/-! ### Licensing Mechanism (refined 5-way) -/
+open NaturalLogic
 
-/-- The mechanism by which a context licenses NPIs.
-
-    [kadmon-landman-1993] unify NPI licensing under domain widening +
-    strengthening. The substrate refines K&L's original 3-way classification
-    into 5 substantively distinct cases.
-
-    - `byStrengthening` — DE contexts where widening strengthens the assertion.
-      Covers [ladusaw-1979]'s monotonicity-based licensing.
-    - `byGenericIndefinite` — Non-DE contexts (modals, generics, free relatives)
-      where *any* surfaces as the generic indefinite (FC any).
-    - `byStrawsonDE` — Strawson-DE licensing (superlatives per
-      Herdan & Sharvit's superlative-NPI work [UNVERIFIED — bib entry
-      missing] and [von-fintel-1999]).
-    - `byEntropy` — Entropy-based licensing (questions per [van-rooy-2003-npi]).
-    - `strengtheningFails` — contexts that *don't* license despite surface
-      appearance (e.g., NP-comparatives that lack covert clausal structure).
-      Used by study files (e.g., `KadmonLandman1993.lean`) for ungrammatical
-      examples, replacing the earlier `byOtherMechanism` constructor. -/
+/-- A context licenses polarity items by strengthening, the downward-entailing route of
+[kadmon-landman-1993], as a generic context, which licenses free choice items
+([kadmon-landman-1993], [dayal-1996]), or by the entropy of a question ([van-rooy-2003-npi]). -/
 inductive LicensingMechanism where
-  | byStrengthening
-  | byGenericIndefinite
-  | byStrawsonDE
-  | byEntropy
-  | strengtheningFails
+  | strengthening
+  | genericIndefinite
+  | entropy
   deriving DecidableEq, Repr
 
-/-! ### Context Properties (single source of truth) -/
+namespace LicensingContext
 
-/-- The bundle of theory-relevant facts about a licensing context.
+/-- The entailment signature a context imposes on the position of a polarity item, read modulo
+presuppositions ([von-fintel-1999]). Clausal negation is anti-morphic; the negative quantifiers,
+*without*, *deny*, the restrictor of a universal and the clausal comparative are anti-additive
+([ladusaw-1979], [zwarts-1998]), and so, modulo presuppositions, are focus *only*, adversatives,
+conditional antecedents and superlatives ([gajewski-2011]); *few*, *at most*, *before*,
+*too … to*, *doubt* and temporal *since* are antitone; the phrasal comparative, questions and the
+generic contexts are monotone. -/
+def signature : LicensingContext → Signature
+  | .negation => .antiAddMult
+  | .nobody | .withoutClause | .denyVerb | .universalRestrictor | .clausalComparative
+  | .onlyFocus | .adversative | .conditionalAntecedent | .superlative => .antiAdd
+  | .few | .atMost | .beforeClause | .tooTo | .doubtVerb | .sinceTemporal => .anti
+  | .phrasalComparative | .question | .modalPossibility | .modalNecessity | .imperative
+  | .generic | .freeRelative => .mono
 
-    Every classification of `LicensingContext` (DE strength, K&L mechanism,
-    canonical example, citation lineage) projects out of this single record.
-    Per-paper classifiers (`Ladusaw1979.IsDownwardEntailing`,
-    `KadmonLandman1993.klExplanation`) are derivations from `LicensingContext.properties`,
-    not parallel stipulations. -/
-structure ContextProperties where
-  /-- Icard signature modulo presuppositions ([von-fintel-1999]'s
-      Strawson reading): the row a Strawson-relativized soundness
-      statement (`Signature.StrawsonSoundFor`) realizes. Coincides
-      with the classical row for presupposition-free contexts. -/
-  strawsonSignature : NaturalLogic.Signature
-  /-- K&L mechanism: how this context licenses NPIs. -/
-  mechanism : LicensingMechanism
-  /-- A canonical English example. -/
-  prototype : String
-  /-- BibTeX keys for the works that established this classification. -/
-  citations : List String
-  /-- Classical (presupposition-free) signature row, when one holds.
-      `none` for the contexts [von-fintel-1999] showed to be only
-      Strawson-DE — only-focus, adversatives, temporal *since*,
-      superlatives: no `Signature` row is classically sound for
-      them. Defaults to the Strawson row (the presupposition-free
-      case). -/
-  classicalSignature : Option NaturalLogic.Signature :=
-    some strawsonSignature
-  deriving Repr
+/-- The strength of negation of a context modulo presuppositions, `⊥` when it is not downward
+entailing. -/
+def strength (c : LicensingContext) : WithBot DEStrength := c.signature.toDEStrength
 
-/-- Canonical map from licensing contexts to their theoretical properties.
+/-- A context is **Strawson-only** when its strength holds only modulo its presupposition: focus
+*only*, temporal *since*, adversatives, conditional antecedents and superlatives
+([von-fintel-1999]). -/
+def IsStrawsonOnly : LicensingContext → Prop
+  | .onlyFocus | .sinceTemporal | .adversative | .conditionalAntecedent | .superlative => True
+  | .negation | .nobody | .few | .atMost | .beforeClause | .withoutClause | .question
+  | .phrasalComparative | .clausalComparative | .tooTo | .modalPossibility | .modalNecessity
+  | .imperative | .generic | .freeRelative | .universalRestrictor | .doubtVerb | .denyVerb => False
 
-    UNVERIFIED: The "every-restrictor is LAA" result is variously
-    attributed to Zwarts 1981 / van Benthem 1986 / Sánchez Valencia 1991;
-    none currently in `references.bib`. The substrate uses the standard
-    `.antiAdd` signature for `.universalRestrictor` without committing
-    to a specific source. -/
-def LicensingContext.properties : LicensingContext → ContextProperties
-  | .negation =>
-      { strawsonSignature := .antiAddMult, mechanism := .byStrengthening
-      , prototype := "Mary didn't see anyone."
-      , citations := ["ladusaw-1979", "kadmon-landman-1993", "zwarts-1998"] }
-  | .nobody =>
-      { strawsonSignature := .antiAdd, mechanism := .byStrengthening
-      , prototype := "Nobody saw anyone."
-      , citations := ["ladusaw-1979", "zwarts-1998"] }
-  | .withoutClause =>
-      { strawsonSignature := .antiAdd, mechanism := .byStrengthening
-      , prototype := "She left without saying anything."
-      , citations := ["ladusaw-1979", "zwarts-1998"] }
-  | .denyVerb =>
-      { strawsonSignature := .antiAdd, mechanism := .byStrengthening
-      , prototype := "She denied seeing anyone."
-      , citations := ["zwarts-1998"] }
-  | .universalRestrictor =>
-      { strawsonSignature := .antiAdd, mechanism := .byStrengthening
-      , prototype := "Everyone who saw anyone was questioned."
-      , citations := ["ladusaw-1979", "UNVERIFIED-bib-missing:partee-westerstaahl"] }
-  | .few =>
-      { strawsonSignature := .anti, mechanism := .byStrengthening
-      , prototype := "Few students saw anyone."
-      , citations := ["ladusaw-1979"] }
-  | .atMost =>
-      { strawsonSignature := .anti, mechanism := .byStrengthening
-      , prototype := "At most three students saw anyone."
-      , citations := ["ladusaw-1979"] }
-  | .conditionalAntecedent =>
-      { strawsonSignature := .anti, mechanism := .byStrengthening
-      , prototype := "If anyone calls, take a message."
-      , citations := ["ladusaw-1979", "kadmon-landman-1993"] }
-  | .beforeClause =>
-      { strawsonSignature := .anti, mechanism := .byStrengthening
-      , prototype := "She left before anyone arrived."
-      , citations := ["ladusaw-1979"] }
-  | .onlyFocus =>
-      { strawsonSignature := .anti, mechanism := .byStrengthening
-      , prototype := "Only Mary saw anyone."
-      , citations := ["horn-1996", "von-fintel-1999"]
-      , classicalSignature := none }
-  | .tooTo =>
-      { strawsonSignature := .anti, mechanism := .byStrengthening
-      , prototype := "He was too tired to say anything."
-      , citations := ["ladusaw-1979"] }
-  | .phrasalComparative =>
-      -- [hoeksema-1983]: the NP-comparative is a Boolean
-      -- homomorphism `Set (Set U) → Set U`, hence monotone increasing — it
-      -- does *not* license NPIs. Modern interval-semantic accounts
-      -- ([bhatt-pancheva-2004], [heim-2006]) reduce surface
-      -- "than NP" with NPI to a covert clausal source — those NPIs are
-      -- licensed by `.clausalComparative`, not by this slot.
-      { strawsonSignature := .mono, mechanism := .strengtheningFails
-      , prototype := "Surface NP-comparative; no NPI licensing under genuine NP reading."
-      , citations := ["hoeksema-1983", "bhatt-pancheva-2004", "heim-2006"] }
-  | .clausalComparative =>
-      { strawsonSignature := .antiAdd, mechanism := .byStrengthening
-      , prototype := "Mary is taller than anyone is."
-      , citations := ["ladusaw-1979", "hoeksema-1983", "bhatt-pancheva-2004"] }
-  | .adversative =>
-      { strawsonSignature := .anti, mechanism := .byStrengthening
-      , prototype := "I'm sorry I said anything."
-      , citations := ["kadmon-landman-1993", "von-fintel-1999"]
-      , classicalSignature := none }
-  | .sinceTemporal =>
-      { strawsonSignature := .anti, mechanism := .byStrengthening
-      , prototype := "It's been five years since anyone visited."
-      , citations := ["iatridou-2000", "von-fintel-1999"]
-      , classicalSignature := none }
-  | .doubtVerb =>
-      { strawsonSignature := .anti, mechanism := .byStrengthening
-      , prototype := "I doubt anyone came."
-      , citations := ["zwarts-1998"] }
-  | .modalPossibility =>
-      { strawsonSignature := .mono, mechanism := .byGenericIndefinite
-      , prototype := "You may take any cookie."
-      , citations := ["kadmon-landman-1993", "dayal-1996"] }
-  | .modalNecessity =>
-      { strawsonSignature := .mono, mechanism := .byGenericIndefinite
-      , prototype := "Anyone can solve this."
-      , citations := ["dayal-1996"] }
-  | .imperative =>
-      { strawsonSignature := .mono, mechanism := .byGenericIndefinite
-      , prototype := "Pick any card."
-      , citations := ["kadmon-landman-1993"] }
-  | .generic =>
-      { strawsonSignature := .mono, mechanism := .byGenericIndefinite
-      , prototype := "Any owl hunts mice."
-      , citations := ["kadmon-landman-1993", "dayal-1996"] }
-  | .freeRelative =>
-      { strawsonSignature := .mono, mechanism := .byGenericIndefinite
-      , prototype := "Pick whichever you like."
-      , citations := ["dayal-1996"] }
-  | .question =>
-      { strawsonSignature := .mono, mechanism := .byEntropy
-      , prototype := "Did anyone call?"
-      , citations := ["van-rooy-2003-npi"] }
-  | .superlative =>
-      -- Strawson row `.anti` per [von-fintel-1999]
-      -- (`superlative_isStrawsonDE`); previously a `.mono` placeholder.
-      { strawsonSignature := .anti, mechanism := .byStrawsonDE
-      , prototype := "The tallest student who saw anyone..."
-      , citations := ["UNVERIFIED-bib-missing:herdan-sharvit", "von-fintel-1999"]
-      , classicalSignature := none }
+instance : DecidablePred IsStrawsonOnly
+  | .onlyFocus | .sinceTemporal | .adversative | .conditionalAntecedent | .superlative =>
+      isTrue trivial
+  | .negation | .nobody | .few | .atMost | .beforeClause | .withoutClause | .question
+  | .phrasalComparative | .clausalComparative | .tooTo | .modalPossibility | .modalNecessity
+  | .imperative | .generic | .freeRelative | .universalRestrictor | .doubtVerb | .denyVerb =>
+      isFalse id
 
-/-! ### Strength scales
+/-- The route by which a context licenses polarity items. -/
+def mechanism : LicensingContext → LicensingMechanism
+  | .modalPossibility | .modalNecessity | .imperative | .generic | .freeRelative =>
+      .genericIndefinite
+  | .question => .entropy
+  | _ => .strengthening
 
-A theory of NPI strength is an *ordered carrier* `S` plus how items and
-contexts project onto it, with licensing = `≤` on `S`. Different theories of
-strength (Gajewski plain-vs-exhaustified, Giannakidou veridicality, gradient)
-instantiate different carriers. -/
+/-- A context **licenses** an item by strengthening when its strength reaches the item's licensor
+and, for an item stronger than weak, holds outright; as a generic context when the item is a free
+choice item; or as a question when the item is a weak negative polarity item. -/
+def Licenses (c : LicensingContext) (e : PolarityItem) : Prop :=
+  (c.mechanism = .strengthening ∧
+      ∃ r ∈ e.licensor, (r : WithBot DEStrength) ≤ c.strength ∧ (r = .weak ∨ ¬ c.IsStrawsonOnly)) ∨
+    (c.mechanism = .genericIndefinite ∧ e.IsFCI) ∨
+    (c.mechanism = .entropy ∧ e.licensor = some .weak)
 
-/-- A **strength scale** for NPI licensing: how items and contexts project onto
-an ordered strength carrier `S`. `none` on either side = "no strength here" (the
-item licenses via another mechanism, or the context supplies none). -/
-structure StrengthScale (α β S : Type*) [Preorder S] where
-  /-- The strength an item requires (`none` = not strength-licensed). -/
-  required : α → Option S
-  /-- The strength a context supplies (`none` = supplies no strength). -/
-  supplied : β → Option S
+instance (c : LicensingContext) (e : PolarityItem) : Decidable (c.Licenses e) :=
+  inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
-/-- Licensing on a scale: the context supplies at least the strength the item
-requires (both sides present). -/
-def StrengthScale.licenses {α β S : Type*} [Preorder S]
-    (L : StrengthScale α β S) (i : α) (c : β) : Prop :=
-  ∃ r ∈ L.required i, ∃ s ∈ L.supplied c, r ≤ s
+/-- A context **anti-licenses** an item when its strength holds outright and reaches the item's
+anti-licensor. -/
+def AntiLicenses (c : LicensingContext) (e : PolarityItem) : Prop :=
+  ∃ r ∈ e.antiLicensor, (r : WithBot DEStrength) ≤ c.strength ∧ ¬ c.IsStrawsonOnly
 
-instance {α β S : Type*} [Preorder S]
-    [DecidableRel (α := S) (· ≤ ·)] (L : StrengthScale α β S)
-    (i : α) (c : β) : Decidable (L.licenses i c) := by
-  unfold StrengthScale.licenses; infer_instance
+instance (c : LicensingContext) (e : PolarityItem) : Decidable (c.AntiLicenses e) :=
+  inferInstanceAs (Decidable (∃ r ∈ e.antiLicensor, _))
 
-/-- The canonical Zwarts scale ([ladusaw-1979], [zwarts-1998],
-[gajewski-2011]): carrier `DEStrength`, item strength from `PolarityItem.licensor`,
-context strength from the row's Strawson signature. -/
-def zwartsScale :
-    StrengthScale PolarityItem LicensingContext DEStrength where
-  required e := e.licensor
-  supplied c := c.properties.strawsonSignature.toDEStrength
+/-- A context **admits** an item when it licenses the item, if the item needs licensing, and
+does not anti-license it. -/
+def Admits (c : LicensingContext) (e : PolarityItem) : Prop :=
+  (e.IsNPI ∨ e.IsFCI → c.Licenses e) ∧ ¬ c.AntiLicenses e
 
-/-! ### The licensing keystone -/
+instance (c : LicensingContext) (e : PolarityItem) : Decidable (c.Admits e) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The item↔context licensing relation (stipulated grade), read
-context-side: `c.licenses e` says environment `c` licenses item `e`.
-Dispatched on the row's `LicensingMechanism`:
+variable {c : LicensingContext} {e e' : PolarityItem}
 
-- signature rows (`byStrengthening`, `byStrawsonDE`): Zwarts-strength
-  licensing — the row's Strawson signature supplies at least `e.licensor`
-  (n-words require anti-morphic strength, so clausal negation is the only
-  qualifying row);
-- `byGenericIndefinite` rows license free choice items;
-- `byEntropy` rows (questions, [van-rooy-2003-npi]) license weak NPIs;
-- `strengtheningFails` rows license nothing.
+theorem admits_iff_licenses (h : e.antiLicensor = none) (he : e.IsNPI ∨ e.IsFCI) :
+    c.Admits e ↔ c.Licenses e := by
+  simp [Admits, AntiLicenses, h, he]
 
-The grounded grade — deriving the signature side from the context
-witnesses of `Witnesses.lean` via the Kadmon–Landman strengthening
-chain — is planned (N1 of the NPI-API sweep). -/
-def LicensingContext.licenses (c : LicensingContext) (e : PolarityItem) : Prop :=
-  match c.properties.mechanism with
-  | .byStrengthening | .byStrawsonDE => zwartsScale.licenses e c
-  | .byGenericIndefinite => e.isFCI
-  | .byEntropy => e.licensor = some .weak
-  | .strengtheningFails => False
+theorem admits_iff_not_antiLicenses (hn : ¬ e.IsNPI) (hf : ¬ e.IsFCI) :
+    c.Admits e ↔ ¬ c.AntiLicenses e := by
+  simp [Admits, hn, hf]
 
-instance (c : LicensingContext) (e : PolarityItem) :
-    Decidable (c.licenses e) := by
-  unfold LicensingContext.licenses; split <;> infer_instance
-
-/-! ### The Haspelmath map meets the licensing table
-
-`PolarityItem.LicensingContext.haspelmathFunction` (in `Semantics/Quantification/Indefinite.lean`)
-classifies each licensing environment by the [haspelmath-1997] map function it
-realizes. The theorems here ground the map's polarity regions (`Indefinite.npiRegion` and the
-free-choice function) in `LicensingContext.properties`. -/
-
-/-- [haspelmath-1997]'s free-choice region coincides exactly with the
-[kadmon-landman-1993] generic-indefinite mechanism class: a context realizes
-the `freeChoice` function iff its licensing mechanism is
-`byGenericIndefinite`. -/
-theorem haspelmathFunction_freeChoice_iff_genericIndefinite
-    (c : LicensingContext) :
-    c.haspelmathFunction = some .freeChoice ↔
-      c.properties.mechanism = .byGenericIndefinite := by
+/-- Clausal negation is the only anti-morphic context. -/
+theorem strength_eq_antiMorphic_iff (c : LicensingContext) :
+    c.strength = DEStrength.antiMorphic ↔ c = .negation := by
   cases c <;> decide
 
-/-- Every context realizing a function of `Indefinite.npiRegion` (question through direct
-negation) either supplies Zwarts strength or is the entropy row — the map's classical NPI
-region is weak-NPI-licensable, though not uniformly DE (questions license by entropy,
-[van-rooy-2003-npi]). -/
-theorem haspelmathFunction_npi_region_licensable (c : LicensingContext)
-    (f : Indefinite.HaspelmathFunction) (hf : c.haspelmathFunction = some f)
-    (hr : f ∈ Indefinite.npiRegion) :
-    c.properties.strawsonSignature.toDEStrength.isSome ∨
-      c.properties.mechanism = .byEntropy := by
+/-- An item that needs anti-morphic strength and is not a free choice item is licensed by clausal
+negation alone. -/
+theorem licenses_iff_eq_negation (h : e.licensor = some .antiMorphic) (hf : ¬ e.IsFCI)
+    (c : LicensingContext) : c.Licenses e ↔ c = .negation := by
+  cases c <;> simp [Licenses, mechanism, h, hf] <;> decide
+
+/-- A Strawson-only context licenses no item stronger than weak that is not a free choice item:
+*only*, adversatives and conditional antecedents are Strawson anti-additive, yet license no strong
+negative polarity item ([gajewski-2011]). -/
+theorem not_licenses_of_isStrawsonOnly (hc : c.IsStrawsonOnly) (h : ∀ r ∈ e.licensor, r ≠ .weak) :
+    ¬ c.Licenses e := by
+  rintro (⟨-, r, hr, -, hw | hs⟩ | ⟨hm, -⟩ | ⟨hm, -⟩)
+  · exact h r hr hw
+  · exact hs hc
+  all_goals cases c <;> first | exact absurd hc id | exact absurd hm (by decide)
+
+/-- Clausal negation blocks every positive polarity item ([vanderwouden-1997]'s (169)): its
+strength is the top of the chain. -/
+theorem antiLicenses_negation (h : e.IsPPI) : LicensingContext.negation.AntiLicenses e := by
+  obtain ⟨r, hr⟩ := Option.isSome_iff_exists.mp h
+  exact ⟨r, hr, WithBot.coe_le_coe.mpr (by cases r <;> decide), id⟩
+
+/-- A context that licenses by strengthening outright blocks the positive polarity items of a
+class exactly where it licenses the negative polarity items of that class ([vanderwouden-1997]'s
+(181)). -/
+theorem antiLicenses_iff_licenses (h : e.antiLicensor = e'.licensor)
+    (hc : c.mechanism = .strengthening) (hs : ¬ c.IsStrawsonOnly) :
+    c.AntiLicenses e ↔ c.Licenses e' := by
+  simp [AntiLicenses, Licenses, hc, hs, h]
+
+/-- A context licensing an item licenses every item with a weaker licensor that is a free choice
+item if the first is. -/
+theorem Licenses.of_licensor_le {r r' : DEStrength} (he : e.licensor = some r)
+    (he' : e'.licensor = some r') (hr : r' ≤ r) (hf : e.IsFCI → e'.IsFCI) (hl : c.Licenses e) :
+    c.Licenses e' := by
+  have hweak : ∀ s : DEStrength, s ≤ .weak → s = .weak := by decide
+  rcases hl with ⟨hc, s, hs, hle, hsw⟩ | ⟨hc, hfc⟩ | ⟨hc, hw⟩
+  · rw [he, Option.mem_some_iff] at hs
+    subst hs
+    refine .inl ⟨hc, r', he', (WithBot.coe_le_coe.mpr hr).trans hle, hsw.imp (fun h ↦ ?_) id⟩
+    subst h
+    exact hweak r' hr
+  · exact .inr (.inl ⟨hc, hf hfc⟩)
+  · rw [he, Option.some_inj] at hw
+    subst hw
+    exact .inr (.inr ⟨hc, by rw [he', hweak r' hr]⟩)
+
+end LicensingContext
+
+/-! ### The implicational map meets the licensing table
+
+`LicensingContext.haspelmathFunction` (`Semantics/Quantification/Indefinite.lean`) classifies
+each context by the function of [haspelmath-1997]'s map it realizes. -/
+
+/-- The free-choice function of the map is exactly the generic mechanism. -/
+theorem haspelmathFunction_eq_freeChoice_iff (c : LicensingContext) :
+    c.haspelmathFunction = some .freeChoice ↔ c.mechanism = .genericIndefinite := by
+  cases c <;> decide
+
+/-- Every context realizing a function of the map's negative-polarity region, question through
+direct negation, is downward entailing or a question: the region is licensable by weak negative
+polarity items, though not uniformly downward entailing ([van-rooy-2003-npi]). -/
+theorem haspelmathFunction_npi_region (c : LicensingContext) {f : Indefinite.HaspelmathFunction}
+    (hf : c.haspelmathFunction = some f) (hr : f ∈ Indefinite.npiRegion) :
+    c.strength ≠ ⊥ ∨ c.mechanism = .entropy := by
   revert hf hr; cases c <;> cases f <;> decide
-
-/-- A context is **Strawson-only** when no classical signature row holds
-([von-fintel-1999]): only-focus, adversatives, temporal *since*,
-superlatives. -/
-def LicensingContext.IsStrawsonOnly (c : LicensingContext) : Prop :=
-  c.properties.classicalSignature = none
-
-/-- When a classical row exists it coincides with the Strawson row:
-presupposition-free contexts carry a single signature. -/
-theorem classicalSignature_eq_strawson (c : LicensingContext) :
-    c.properties.classicalSignature = none ∨
-    c.properties.classicalSignature =
-      some c.properties.strawsonSignature := by
-  cases c <;> decide
 
 end PolarityItem

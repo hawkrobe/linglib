@@ -37,9 +37,7 @@ conditionals, comparatives and under indirect negation. -/
 def ktoLibo : PolarityItem :=
   { form := Indefinites.ktoLibo.form
   , licensor := some .weak
-  , baseForce := .existential
-  , licensingContexts := [.question, .conditionalAntecedent, .negation, .clausalComparative]
-  , scalarDirection := some .strengthening }
+  , licensingContexts := [.question, .conditionalAntecedent, .negation, .clausalComparative] }
 
 /-! ### The *ni-* series -/
 
@@ -48,30 +46,21 @@ ne prišël* 'nobody came'. -/
 def nikto : PolarityItem :=
   { form := Indefinites.nikto.form
   , licensor := some .antiMorphic
-  , baseForce := .existential
-  , licensingContexts := [.negation]
-  , scalarDirection := some .strengthening
-  , morphology := .indefPlusNeg }
+  , licensingContexts := [.negation] }
 
 /-- *ničego* (ничего) 'nothing', the non-human negative concord item, *ničego ne videl* '(he) saw
 nothing'. -/
 def nichego : PolarityItem :=
   { form := "ničego"
   , licensor := some .antiMorphic
-  , baseForce := .existential
-  , licensingContexts := [.negation]
-  , scalarDirection := some .strengthening
-  , morphology := .indefPlusNeg }
+  , licensingContexts := [.negation] }
 
 /-- *nikogda* (никогда) 'never', the temporal negative concord item, *nikogda ne prixodil* '(he)
 never came'. -/
 def nikogda : PolarityItem :=
   { form := "nikogda"
   , licensor := some .antiMorphic
-  , baseForce := .temporal
-  , licensingContexts := [.negation]
-  , scalarDirection := some .strengthening
-  , morphology := .indefPlusNeg }
+  , licensingContexts := [.negation] }
 
 /-! ### Free choice -/
 
@@ -79,7 +68,6 @@ def nikogda : PolarityItem :=
 def ktoUgodno : PolarityItem :=
   { form := Indefinites.ktoUgodno.form
   , freeChoice := true
-  , baseForce := .existential
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic] }
 
 /-! ### The entries -/
@@ -90,19 +78,13 @@ def items : List PolarityItem :=
 
 /-! ### Verification -/
 
-/-- The negative concord items are licensed exactly in their attested contexts, clausemate
-negation. -/
+/-- The negative concord items are licensed by clausemate negation alone. -/
 theorem niSeries_licensing_characterized :
-    ∀ e ∈ [nikto, nichego, nikogda], ∀ c,
-      c.licenses e ↔ c ∈ e.licensingContexts := by decide
-
-/-- Every attested context of every entry is predicted licensed. -/
-theorem russian_licensing_sound :
-    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.licenses e := by decide
-
-/-- Every negative polarity item is scalar-strengthening. -/
-theorem npis_strengthening :
-    ∀ e ∈ items, e.isNPI → e.scalarDirection = some .strengthening := by
+    ∀ e ∈ [nikto, nichego, nikogda], ∀ c : LicensingContext, c.Licenses e ↔ c = .negation := by
   decide
+
+/-- Every attested context of every entry admits it. -/
+theorem russian_licensing_sound :
+    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.Admits e := by decide
 
 end Russian.PolarityItems

@@ -39,11 +39,12 @@ model, `interpretation_rows` the reading the paper attributes to it.
 
 ## Implementation notes
 
-Polarity items are sorted by [israel-2001]'s scalar context types rather than by the Zwarts
-strength of `PolarityItem.LicensingContext.licenses`. The strength table rates a conditional
-antecedent weakly downward entailing and *lift a finger* as needing an anti-additive licensor,
-so it would exclude the minimizer from hypothetical antecedents, against [iatridou-1991]'s (27a)
-and the paper's (32); on the scalar account a minimizer needs only a scale-reversing context.
+Polarity items are sorted by [israel-2001]'s scalar context types rather than by the Zwarts strength
+of `PolarityItem.LicensingContext.Licenses`. That relation reads a conditional antecedent as
+anti-additive only modulo its presupposition and *lift a finger* as needing an anti-additive
+licensor outright, so it would exclude the minimizer from hypothetical antecedents, against
+[iatridou-1991]'s (27a) and the paper's (32); on the scalar account a minimizer needs only a
+scale-reversing context.
 The paper's rows carry their features as strings, so `shape`, `markerOf`, `itemOf`, and
 `positionOf` are adapters from `paperFeatures` into the typed model and the fragments' entries;
 `adapters_total` checks that every marker and item named in a row resolves, so the row

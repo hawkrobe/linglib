@@ -18,7 +18,8 @@ rule over contexts, and Theorem 3.1 is `Derives.sound`. The worked example of Se
 that *Every job that involves a giant squid is dangerous* entails *Not every job that involves
 a giant squid is safe*, is derived from the paper's assumption set by three substitutions and
 two compositions (`derives_squid`), and Section 4's correspondence between the signatures and
-Zwarts's three classes of negative polarity items is `Signature.zwarts`.
+Zwarts's three classes of negative polarity items is `Licenses`, read off the substrate's
+strength map `Signature.toDEStrength`.
 
 ## Implementation notes
 
@@ -371,20 +372,13 @@ The three classes of [zwarts-1998] are the signatures' downward half: weak items
 antitone context, strong ones an anti-additive context and superstrong ones an
 anti-morphic one. -/
 
-/-- The Zwarts class a downward signature licenses, `none` for an upward or unrestricted
-one. -/
-def _root_.NaturalLogic.Signature.zwarts : Signature → Option PolarityItem.DEStrength
-  | .anti | .antiMult => some .weak
-  | .antiAdd => some .antiAdditive
-  | .antiAddMult => some .antiMorphic
-  | _ => none
-
-/-- A signature licenses an item of a Zwarts class when its class is at least as strong. -/
+/-- A signature licenses an item of a Zwarts class when the strength of negation it realizes,
+`Signature.toDEStrength`, is at least as strong. -/
 def Licenses (level : PolarityItem.DEStrength) (σ : Signature) : Prop :=
-  ∃ l, σ.zwarts = some l ∧ level ≤ l
+  (level : WithBot PolarityItem.DEStrength) ≤ σ.toDEStrength
 
-instance (level : PolarityItem.DEStrength) (σ : Signature) : Decidable (Licenses level σ) := by
-  unfold Licenses; infer_instance
+instance (level : PolarityItem.DEStrength) (σ : Signature) : Decidable (Licenses level σ) :=
+  inferInstanceAs (Decidable (_ ≤ _))
 
 /-- A downward signature licenses the weak items. -/
 theorem licenses_weak {σ : Signature} (h : σ.sign = -1) :

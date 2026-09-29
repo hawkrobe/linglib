@@ -4,92 +4,77 @@ public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Licensing contexts
-[ladusaw-1979] [kadmon-landman-1993]
 
-The 22-case enum of licensing contexts for polarity-sensitive items.
-Theory-neutral data substrate: every framework that talks about polarity
-licensing (Ladusaw monotonicity, K&L domain widening, Israel scalar
-model, Chierchia exhaustification, Giannakidou nonveridicality) needs
-to talk about these context labels.
+The environments whose strength of negation decides where a polarity item may occur: clausal
+negation, the downward-entailing quantifiers, the antecedent of a conditional, the connectives
+*before*, *without* and *too … to*, the Strawson-downward-entailing operators, the comparatives,
+and the questions and generic contexts that license free choice. The type is observational: its
+23 cases name surface constructions, and the strength, mechanism and signature each is assigned
+are the theory of `Semantics/Polarity/Licensing.lean`, so the typology of indefinite series in
+`Semantics/Quantification/Indefinite.lean` can import the environments without the licensing
+theory. The cases follow the English tradition from [ladusaw-1979] on; a language whose licensing
+environments cut differently, as by [giannakidou-1998]'s veridicality, is not represented.
 
-## Provenance
+## References
 
-Extracted from `Semantics/Polarity/Licensing.lean` after
-audit consensus that `LicensingContext` is data, not theory: the
-22 cases are observational labels for syntactic environments, while
-only the *signatures* assigned to them in `LicensingContext.properties`
-(in the Theories file) carry theoretical commitment. Co-locating the
-enum here makes it Fragment-importable substrate without dragging in
-the Ladusaw/K&L theoretical apparatus.
-
-The earlier 2-way split (Theories/Polarity/Licensing.lean for the
-enum + theory together; Typology/PolarityItem.lean for entry +
-Israel) forced `Typology/PolarityItem.lean` to import from
-`Theories/`, the only such cross-layer import in linglib. This file
-breaks that inversion: `Typology/` and `Semantics/Polarity/`
-both import from `Features/`, no peer-layer crossings.
-
-## Framework commitment
-
-The 22-case enum is theory-laden in its *naming* (constructor names
-like `adversative`, `doubtVerb`, `denyVerb`, `clausalComparative` reflect
-specific traditions' classification of contexts), but the cases
-themselves enumerate empirically-attested licensing environments any
-framework needs to talk about. The DE/anti-additive/anti-morphic
-*labelling* of these contexts is theory-laden and lives in
-`LicensingContext.properties` (in `Semantics/Polarity/Licensing.lean`)
-(Ladusaw/Zwarts canonical) — not here.
-
-UNVERIFIED: The 22-case carve-up is English-anchored and may need
-cross-linguistic restructuring (e.g., factor by veridicality + monotonicity
-per Giannakidou 1998, rather than by surface construction); see the
-`Semantics/Polarity/Licensing.lean` "Out of scope" section
-for the documented gap.
+* [ladusaw-1979]
+* [kadmon-landman-1993]
+* [giannakidou-1998]
 -/
 
 @[expose] public section
 
 namespace PolarityItem
 
-/-- Contexts that can license polarity-sensitive items.
-
-    Characterized by their logical properties:
-    - DE (Downward Entailing): reverses entailment direction
-    - Anti-additive: DE + distributes over disjunction
-    - Anti-morphic: anti-additive + distributes over conjunction (= negation)
-
-    Per-context theoretical classifications (DE strength, K&L mechanism,
-    Strawson-DE flagging) live in
-    `LicensingContext.properties` (in `Semantics/Polarity/Licensing.lean`). -/
+/-- The environments that can license a polarity-sensitive item. -/
 inductive LicensingContext where
-  | negation          -- "not", "never", "without"
-  | nobody            -- "nobody", "nothing" (negative quantifiers)
-  | few               -- "few NPs" (weak DE, controversial)
-  | atMost            -- "at most n"
-  | conditionalAntecedent   -- Antecedent of conditional
-  | beforeClause     -- "before" clauses
-  | withoutClause    -- "without" PPs
-  | onlyFocus        -- Focus of "only"
-  | question          -- Questions (for some NPIs)
-  | phrasalComparative     -- surface "taller than NP" — Boolean homomorphism, monotone increasing,
-                      -- and per [hoeksema-1983] *not* an NPI environment.
-                      -- Surface NPIs in "than NP" arise from a covert clausal source
-                      -- (modern: [bhatt-pancheva-2004] interval reduction) — list
-                      -- such NPIs under `.clausalComparative`, not here.
-  | clausalComparative      -- "taller than S is" — anti-additive ([hoeksema-1983], refined
-                      -- in interval semantics by [bhatt-pancheva-2004], [heim-2006])
-  | superlative       -- "the most", "the least"
-  | tooTo            -- "too ADJ to VP"
-  | modalPossibility -- Possibility modals (for FCIs)
-  | modalNecessity   -- Necessity modals
-  | imperative        -- Imperatives (for FCIs)
-  | generic           -- Generic contexts (for FCIs)
-  | adversative       -- "sorry", "surprised", "regret" (factive + DE)
-  | sinceTemporal    -- "it's been five years since" (Iatridou)
-  | freeRelative     -- Free relatives: "whatever", "whoever"
-  | universalRestrictor -- Restrictor of universal: "everyone who saw anyone"
-  | doubtVerb         -- DE attitude verbs: "I doubt anyone came"
-  | denyVerb          -- Anti-additive attitude verbs: "She denied seeing anyone"
+  /-- Clausal negation, as in *not*. -/
+  | negation
+  /-- A negative quantifier, as in *nobody*, *nothing*. -/
+  | nobody
+  /-- *Few* NP. -/
+  | few
+  /-- *At most n* NP. -/
+  | atMost
+  /-- The antecedent of a conditional. -/
+  | conditionalAntecedent
+  /-- A *before*-clause. -/
+  | beforeClause
+  /-- A *without*-phrase. -/
+  | withoutClause
+  /-- The scope of focus *only*. -/
+  | onlyFocus
+  /-- A question. -/
+  | question
+  /-- A phrasal comparative, *taller than NP*, on its genuine NP reading. -/
+  | phrasalComparative
+  /-- A clausal comparative, *taller than S*, including the surface *than NP* that reduces to
+  one. -/
+  | clausalComparative
+  /-- A superlative. -/
+  | superlative
+  /-- *Too* ADJ *to* VP. -/
+  | tooTo
+  /-- A possibility modal. -/
+  | modalPossibility
+  /-- A necessity modal. -/
+  | modalNecessity
+  /-- An imperative. -/
+  | imperative
+  /-- A generic sentence. -/
+  | generic
+  /-- An adversative predicate, as in *sorry*, *surprised*, *regret*. -/
+  | adversative
+  /-- Temporal *since*, as in *it's been five years since*. -/
+  | sinceTemporal
+  /-- A free relative, as in *whatever*, *whoever*. -/
+  | freeRelative
+  /-- The restrictor of a universal, as in *everyone who*. -/
+  | universalRestrictor
+  /-- A verb of doubting, as in *I doubt that*. -/
+  | doubtVerb
+  /-- A verb of denying, as in *she denied that*. -/
+  | denyVerb
   deriving DecidableEq, Fintype, Repr
 
 end PolarityItem

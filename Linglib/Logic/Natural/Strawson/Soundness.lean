@@ -29,9 +29,9 @@ the arguments' presuppositions are satisfied.
 
 ## Implementation notes
 
-The operator instances are the semantic content of the
-`classicalSignature = none` rows of
-`PolarityItem.LicensingContext.properties`. Composing definedness along a
+The operator instances realize at signature level the Strawson-only licensing
+contexts of `Semantics/Polarity/Licensing.lean`
+(`PolarityItem.LicensingContext.IsStrawsonOnly`). Composing definedness along a
 path is presupposition projection and is deliberately not attempted
 here; its home is a bridge to `Semantics/Presupposition/`.
 

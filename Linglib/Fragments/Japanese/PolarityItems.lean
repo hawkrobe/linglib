@@ -33,21 +33,17 @@ open PolarityItem
     take *dare-ka* or bare indeterminates instead ([shimoyama-2011]);
     [watanabe-2004] analyzes it as a negative-concord item.
 
-    `baseForce` follows the Hamblin-universal analysis of *-mo*
-    ([shimoyama-2006], [kratzer-shimoyama-2002]; so also
-    `Japanese.Determiners.dare_mo`), on which *dare-mo…nai* is ∀ scoping over
-    negation; the rival negative-indefinite tradition posits ¬∃
+    On the Hamblin-universal analysis of *-mo* ([shimoyama-2006],
+    [kratzer-shimoyama-2002]; so also `Japanese.Determiners.dare_mo`)
+    *dare-mo…nai* is ∀ scoping over negation; the rival negative-indefinite
+    tradition posits ¬∃
     (truth-conditionally equivalent under plain clausemate negation, teased
     apart by the scope diagnostics of [shimoyama-2011]). The affirmative
     *dare-mo* 'everyone' is the same wh + mo formation without negation. -/
 def dareMo : PolarityItem :=
   { form := Indefinites.dareMo.form
   , licensor := some .antiMorphic
-  , baseForce := .universal
-  , licensingContexts := [.negation]
-  , scalarDirection := some .strengthening
-  , morphology := .indefPlusEven
-  , alternativeType := .domain }
+  , licensingContexts := [.negation] }
 
 /-! ### FCI -/
 
@@ -57,26 +53,22 @@ def dareMo : PolarityItem :=
 def dareDemo : PolarityItem :=
   { form := Indefinites.dareDemo.form
   , freeChoice := true
-  , baseForce := .existential
-  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
-  , morphology := .indefPlusEven
-  , alternativeType := .domain }
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic] }
 
 /-! ### Licensing -/
 
-/-- The licensing keystone characterizes *dare-mo* exactly: as an n-word it
-    requires an anti-morphic licensor, and clausal negation is the only such
-    row — predicted distribution and attested list coincide. -/
-theorem dareMo_licensing_characterized :
-    ∀ c, c.licenses dareMo ↔ c ∈ dareMo.licensingContexts := by decide
+/-- *Dare-mo* needs clausemate negation, the only anti-morphic context, so clausal negation alone
+licenses it. -/
+theorem dareMo_licensing_characterized (c : LicensingContext) :
+    c.Licenses dareMo ↔ c = .negation :=
+  LicensingContext.licenses_iff_eq_negation rfl (by decide) c
 
-/-- Every attested *dare-demo* context is predicted licensed: all four rows
-    license free choice items. -/
+/-- Every attested *dare-demo* context admits it: all four are generic contexts. -/
 theorem dareDemo_licensing_sound :
-    ∀ c ∈ dareDemo.licensingContexts, c.licenses dareDemo := by decide
+    ∀ c ∈ dareDemo.licensingContexts, c.Admits dareDemo := by decide
 
-/-- Complementary distribution: the n-word and the FCI are licensed in
-    disjoint context sets (clausemate negation vs modal/imperative/generic). -/
+/-- The n-word and the free choice item are attested in disjoint contexts, clausemate negation
+against the modal, imperative and generic ones. -/
 theorem dareMo_dareDemo_licensing_disjoint :
     ∀ c ∈ dareMo.licensingContexts, c ∉ dareDemo.licensingContexts := by decide
 

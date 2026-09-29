@@ -248,7 +248,7 @@ abbrev WideScopeForm (a : AspectForm) : Prop := a = .imperfective ∨ a = .perfe
 /-- The licensing a connective's polarity item demands: an antiveridical licenser for a negative
 item, none for a positive one. -/
 abbrev Licensed (c : Connective) (l : Licenser) : Prop :=
-  ∀ i ∈ c.polarityItem, (i.isNPI → l.Antiveridical) ∧ (i.isPPI → l = .none)
+  ∀ i ∈ c.polarityItem, (i.IsNPI → l.Antiveridical) ∧ (i.IsPPI → l = .none)
 
 /-- The judgment the two-*until* analysis predicts. -/
 def Predicted (r : Row) : Prop :=

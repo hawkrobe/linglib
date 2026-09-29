@@ -33,36 +33,29 @@ open PolarityItem
 def nwukwu : PolarityItem :=
   { form := "nwukwu (누구)"
   , licensor := some .weak
-  , baseForce := .existential
-  , licensingContexts := [.question, .conditionalAntecedent]
-  , scalarDirection := some .strengthening }
+  , licensingContexts := [.question, .conditionalAntecedent] }
 
 /-- *nwukwu-to* 'nobody' under clausemate negation, the interrogative with the additive
 particle. -/
 def nwukwuTo : PolarityItem :=
   { form := "nwukwu-to (누구도, neg)"
   , licensor := some .antiMorphic
-  , baseForce := .existential
-  , licensingContexts := [.negation]
-  , scalarDirection := some .strengthening
-  , morphology := .indefPlusEven }
+  , licensingContexts := [.negation] }
 
-/-- *nwukwu-na* 'anyone', the free-choice item; *-na* is not an additive particle, so the
-morphology is plain. -/
+/-- *nwukwu-na* 'anyone', the free-choice item; *-na* is not an additive particle. -/
 def nwukwuNa : PolarityItem :=
   { form := "nwukwu-na (누구나)"
   , freeChoice := true
-  , baseForce := .existential
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic] }
 
-/-- *Nwukwu-to* needs an anti-morphic licensor, and clausal negation is the only such
-environment: predicted and attested distributions coincide. -/
-theorem nwukwuTo_licensing_characterized :
-    ∀ c, c.licenses nwukwuTo ↔ c ∈ nwukwuTo.licensingContexts := by decide
+/-- *Nwukwu-to* needs clausemate negation, the only anti-morphic context, so clausal negation
+alone licenses it. -/
+theorem nwukwuTo_licensing_characterized (c : LicensingContext) :
+    c.Licenses nwukwuTo ↔ c = .negation :=
+  LicensingContext.licenses_iff_eq_negation rfl (by decide) c
 
-/-- Every attested environment of every item is predicted licensed. -/
+/-- Every attested environment of every item admits it. -/
 theorem korean_licensing_sound :
-    ∀ e ∈ [nwukwu, nwukwuTo, nwukwuNa], ∀ c ∈ e.licensingContexts,
-      c.licenses e := by decide
+    ∀ e ∈ [nwukwu, nwukwuTo, nwukwuNa], ∀ c ∈ e.licensingContexts, c.Admits e := by decide
 
 end Korean.PolarityItems

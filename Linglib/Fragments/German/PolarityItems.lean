@@ -19,13 +19,21 @@ embedded question, and they find it ungrammatical under the inflectional negatio
 *irgend* is stressed. It is also fine in an episodic sentence, where it signals the speaker's
 ignorance or indifference, which is not a licensing environment. Its analysis as a modal
 indefinite is `German.ModalIndefinites.irgendein`. *Brauchen* with a *zu*-infinitive occurs only
-with a negative or with *nur* or *bloß* 'only'; Büring and Gunlogson, and Schaebbicke, Seeliger
-and Repp in a rating study, find it licensed by *niemand* and *kein* and out in a positive polar
-question. *Erst* is the positive polarity *until* of Karttunen's chart, the connective
-`German.TemporalConnectives.erst`.
+with a negative or with *nur* or *bloß* 'only'. It is a weak negative polarity item, licensed by
+*höchstens eine* 'at most one' as by *keiner* 'no one' ([zwarts-1998] (3)); Büring and Gunlogson,
+and Schaebbicke, Seeliger and Repp in a rating study, find it licensed by *niemand* and *kein* and
+out in a positive polar question. *Erst* is the positive polarity *until* of Karttunen's chart, the
+connective `German.TemporalConnectives.erst`.
+
+## TODO
+
+The licensing theory licenses every weak negative polarity item in a question, after van Rooy, so
+it admits *brauchen* in the positive polar question that Büring and Gunlogson star; the rating
+study reserves questions for superweak items.
 
 ## References
 
+* [zwarts-1998]
 * [kratzer-shimoyama-2002]
 * [durrell-2011]
 * [buring-gunlogson-2000]
@@ -46,46 +54,33 @@ def irgendein : PolarityItem :=
   { form := ModalIndefinites.irgendein.form
   , licensor := some .weak
   , freeChoice := true
-  , baseForce := .existential
   , licensingContexts :=
       [.question, .doubtVerb, .modalPossibility, .modalNecessity, .nobody] }
 
 /-! ### NPI -/
 
-/-- *Brauchen* 'need' with a *zu*-infinitive is out in a plain declarative and in a positive polar
-question and is licensed by *niemand* and by *kein*. The rating study of Schaebbicke, Seeliger and
-Repp finds it intermediate under the merely downward-entailing *kaum*, with a median of 4 of 7
-between 5.5 under *kein* and 1.5 in a positive question. The licensing table has questions license
-every weak NPI, after van Rooy, so the entry is anti-additive; the classification the rating study
-tests reserves questions for superweak NPIs, and there the *kaum* rating leaves weak open. -/
+/-- *Brauchen* 'need' with a *zu*-infinitive, a weak negative polarity item: *Höchstens eine Frau
+wird sich zu verantworten brauchen* 'At most one woman need justify herself', *Keiner wird solch
+eine Prüfung durchzustehen brauchen* 'No one need go through such an ordeal' ([zwarts-1998] (3a),
+(3b)). The rating study of Schaebbicke, Seeliger and Repp finds it intermediate under the merely
+downward-entailing *kaum*, with a median of 4 of 7 between 5.5 under *kein* and 1.5 in a positive
+question. -/
 def brauchen : PolarityItem :=
   { form := "brauchen"
-  , licensor := some .antiAdditive
-  , baseForce := .modal
-  , licensingContexts := [.nobody] }
+  , licensor := some .weak
+  , licensingContexts := [.atMost, .nobody] }
 
 /-! ### PPI -/
 
 /-- *Erst* 'only then' is the punctual *until* of a positive clause. -/
 def erst : PolarityItem :=
   { form := TemporalConnectives.erst.form
-  , ppi := true
-  , baseForce := .temporal
-  , licensingContexts := [] }
+  , antiLicensor := some .antiMorphic }
 
 /-! ### Licensing -/
 
-/-- Every environment in which *irgendein* is attested licenses it. -/
-theorem irgendein_licensing_sound :
-    ∀ c ∈ irgendein.licensingContexts, c.licenses irgendein := by decide
-
-/-- Every environment in which *brauchen* is attested licenses it. -/
-theorem brauchen_licensing_sound :
-    ∀ c ∈ brauchen.licensingContexts, c.licenses brauchen := by decide
-
-/-- A positive polar question does not license *brauchen*, as in *\*Braucht sie eine
-Entschuldigung mitzubringen?* -/
-theorem not_question_licenses_brauchen : ¬ LicensingContext.question.licenses brauchen := by
-  decide
+/-- Every environment in which an entry is attested admits it. -/
+theorem german_licensing_sound :
+    ∀ e ∈ [irgendein, brauchen], ∀ c ∈ e.licensingContexts, c.Admits e := by decide
 
 end German.PolarityItems

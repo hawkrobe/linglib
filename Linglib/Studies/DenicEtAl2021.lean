@@ -34,7 +34,7 @@ the item is stronger and the widened predicate no less probable given any eviden
 ## Implementation notes
 
 The signatures of the downward-entailing and doubly negative environments are the Strawson
-signatures of the licensing contexts of `LicensingContext.properties`; the upward-entailing
+signatures of the licensing contexts of `LicensingContext.signature`; the upward-entailing
 ones carry the monotone signature and the non-monotone ones the signature of arbitrary
 functions, the coarsest consistent with the paper's classification. The results are the
 directional means and the posterior probabilities of the effects as the paper reports them, with
@@ -96,16 +96,16 @@ negative ones, and the monotone and the arbitrary signature for the upward-entai
 non-monotone ones. -/
 def Environment.signature : Environment → Signature
   | .positive | .every | .many => .mono
-  | .negative => LicensingContext.negation.properties.strawsonSignature
-  | .no => LicensingContext.nobody.properties.strawsonSignature
-  | .few => LicensingContext.few.properties.strawsonSignature
+  | .negative => LicensingContext.negation.signature
+  | .no => LicensingContext.nobody.signature
+  | .few => LicensingContext.few.signature
   | .exactly12 | .only12 => .all
   | .everyNot => Signature.contextProjectivity
-      [LicensingContext.universalRestrictor.properties.strawsonSignature,
-        LicensingContext.negation.properties.strawsonSignature]
+      [LicensingContext.universalRestrictor.signature,
+        LicensingContext.negation.signature]
   | .noWithout => Signature.contextProjectivity
-      [LicensingContext.nobody.properties.strawsonSignature,
-        LicensingContext.withoutClause.properties.strawsonSignature]
+      [LicensingContext.nobody.signature,
+        LicensingContext.withoutClause.signature]
 
 /-- The polarity of a class: the doubly negative environments are upward entailing, §5. -/
 def Kind.polarity : Kind → SignType
@@ -122,11 +122,11 @@ downward-entailing operators, while the position of the item inside the inner op
 downward entailing. -/
 theorem dn_global_upward_local_downward :
     Environment.everyNot.signature.sign = 1 ∧
-      LicensingContext.universalRestrictor.properties.strawsonSignature.sign =
+      LicensingContext.universalRestrictor.signature.sign =
         -1 ∧
-      LicensingContext.negation.properties.strawsonSignature.sign = -1 ∧
+      LicensingContext.negation.signature.sign = -1 ∧
       Environment.noWithout.signature.sign = 1 ∧
-      LicensingContext.withoutClause.properties.strawsonSignature.sign =
+      LicensingContext.withoutClause.signature.sign =
         -1 := by
   decide
 
@@ -158,7 +158,7 @@ substrate in the three downward-entailing environments and in the inner operator
 doubly negative ones, where the local monotonicity is downward, §5. -/
 theorem npis_licensed :
     ∀ c ∈ [LicensingContext.negation, .nobody, .few, .universalRestrictor, .withoutClause],
-      c.licenses any ∧ c.licenses ever ∧ c.licenses atAll := by
+      c.Licenses any ∧ c.Licenses ever ∧ c.Licenses atAll := by
   decide
 
 /-! ### Directional ratings, §3.2 -/

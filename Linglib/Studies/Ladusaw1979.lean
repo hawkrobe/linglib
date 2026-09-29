@@ -13,7 +13,7 @@ acceptable only in the scope of a downward-entailing expression, one that revers
 entailment among its arguments, so that the affective environments of the earlier
 literature are characterized rather than listed. Over the library's inventory of licensing
 environments, `IsDownwardEntailing` reads off the entailment signature recorded for each,
-every environment the dissertation established as a licenser is downward entailing
+every environment credited to the dissertation as a licenser is downward entailing
 (`cited_environments_de`), questions are not (`question_not_de`), and every
 downward-entailing environment licenses the weak polarity items
 (`ladusaw_generalization`). The determiners behind three of these environments are
@@ -25,13 +25,13 @@ under each.
 
 ## Implementation notes
 
-The dissertation was not available for this pass; the statements follow the generalization
-as the substrate records it, with the environments' signatures taken from
-`LicensingContext.properties`, whose citation lists mark the rows the dissertation
-established. The distinction of anti-additive from merely downward-entailing licensers, and
-with it the strong polarity items, postdates the dissertation and is left to the studies of
-the later papers. Questions license weak items in the substrate by another mechanism, so the
-converse of the generalization is not stated.
+The dissertation's scan in the library has no text layer and was not checked for this pass; the
+statements follow the generalization as the substrate records it, with the environments' strengths
+taken from `LicensingContext.strength`, and `environments` is the list of licensers the substrate
+has credited to the dissertation. The distinction of anti-additive from merely downward-entailing
+licensers, and with it the strong polarity items, postdates the dissertation and is left to the
+studies of the later papers. Questions license weak items in the substrate by another mechanism, so
+the converse of the generalization is not stated.
 
 ## References
 
@@ -48,28 +48,31 @@ open Semantics.Montague (ToyEntity)
 /-- An environment is downward entailing when its recorded entailment signature reverses
 entailment, that is, carries a strength on the scale of downward-entailing licensers. -/
 def IsDownwardEntailing (c : LicensingContext) : Prop :=
-  c.properties.strawsonSignature.toDEStrength ≠ none
+  c.strength ≠ ⊥
 
-instance (c : LicensingContext) : Decidable (IsDownwardEntailing c) := by
-  unfold IsDownwardEntailing; infer_instance
+instance (c : LicensingContext) : Decidable (IsDownwardEntailing c) :=
+  inferInstanceAs (Decidable (c.strength ≠ ⊥))
 
-/-- Every environment whose classification the substrate credits to the dissertation is
-downward entailing: negation, negative quantifiers, *without*, the restrictor of a universal,
-*few*, *at most*, the antecedent of a conditional, *before*, *too … to*, and the clausal
-comparative. -/
-theorem cited_environments_de (c : LicensingContext)
-    (h : "ladusaw-1979" ∈ c.properties.citations) : IsDownwardEntailing c := by
-  revert h; cases c <;> decide
+-- UNVERIFIED: the list is the substrate's record, not checked against the dissertation.
+/-- The licensing environments credited to the dissertation: negation, negative quantifiers,
+*without*, the restrictor of a universal, *few*, *at most*, the antecedent of a conditional,
+*before*, *too … to*, and the clausal comparative. -/
+def environments : List LicensingContext :=
+  [.negation, .nobody, .withoutClause, .universalRestrictor, .few, .atMost,
+    .conditionalAntecedent, .beforeClause, .tooTo, .clausalComparative]
+
+/-- Every environment credited to the dissertation is downward entailing. -/
+theorem cited_environments_de : ∀ c ∈ environments, IsDownwardEntailing c := by decide
 
 /-- Questions are not downward entailing. -/
 theorem question_not_de : ¬ IsDownwardEntailing .question := by decide
 
 /-- The generalization: a downward-entailing environment licenses the weak polarity items. -/
-theorem ladusaw_generalization (c : LicensingContext) (hc : IsDownwardEntailing c) (e : PolarityItem)
-    (he : e.licensor = some .weak) : c.licenses e := by
+theorem ladusaw_generalization (c : LicensingContext) (hc : IsDownwardEntailing c)
+    (e : PolarityItem) (he : e.licensor = some .weak) : c.Licenses e := by
   cases c <;> first
     | exact absurd hc (by decide)
-    | exact ⟨.weak, he, _, rfl, by decide⟩
+    | exact .inl ⟨rfl, .weak, he, by decide, .inl rfl⟩
 
 /-- *every* is not downward entailing in its scope: with a witness in the domain, a scope
 true of everything shrinks to one true of nothing. -/

@@ -319,7 +319,7 @@ theorem rows_irgendein_selective :
 entailing, and (21) is ungrammatical: strength does not exclude the item there, and selectivity
 does. -/
 theorem negation_licenses_irgendein :
-    LicensingContext.negation.licenses German.PolarityItems.irgendein ∧
+    LicensingContext.negation.Licenses German.PolarityItems.irgendein ∧
       Examples.ex21.judgment = .ungrammatical := by
   decide
 

@@ -26,7 +26,6 @@ open PolarityItem
 def fyrrEn : PolarityItem :=
   { form := TemporalConnectives.fyrrEn.form
   , licensor := some .antiAdditive
-  , baseForce := .temporal
   , licensingContexts := [.negation] }
 
 end Icelandic.PolarityItems

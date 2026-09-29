@@ -1,412 +1,201 @@
 module
 
 public import Linglib.Semantics.Polarity.Licensing
-public import Linglib.Semantics.Polarity.Strength
-public import Linglib.Logic.Natural.Soundness
-public import Linglib.Logic.Natural.Strawson.Soundness
 public import Linglib.Logic.Natural.Additivity
+public import Linglib.Logic.Natural.Strawson.Basic
 public import Linglib.Semantics.Quantification.Signatures
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Quantification.Counting
 
 /-!
-# Model witnesses for the licensing-context table
+# Model witnesses for the licensing contexts
 
-Each witnessed row of `LicensingContext.properties` carries a model operator
-realizing its signatures: the classical row via `Signature.SoundFor`,
-the Strawson row via `Signature.StrawsonSoundFor`. This converts the
-table's `strawsonSignature`/`classicalSignature` annotations into derived
-facts about denotations — the licensing analogue of the
-derive-don't-stipulate rule.
+A licensing context carries a strength of negation (`LicensingContext.strength`), which the
+licensing relation reads in two ways: modulo presuppositions for weak items and outright for strong
+items and positive polarity items. Each witnessed context has a model operator certifying the
+reading it supports. A presupposition-free context has a `ContextWitness`, a function holding
+every strength the context carries (`DEStrength.HoldsFor`); a Strawson-only context has a
+`StrawsonWitness`, an operator into partial propositions that is Strawson downward entailing
+([von-fintel-1999]) and, where the context is anti-additive, Strawson anti-additive
+([gajewski-2011]).
 
-Coverage is incremental (`contextWitness?` is `Option`-valued): the
-witnessed rows are those whose operators exist in the zoo — negation
-(complementation), the quantifier rows (`every`/`no`/`few` sections,
-`atMost2_student`), conditional antecedents (`Conditional.strictImp`), and the
-four Strawson-only rows (`only`, `regret`, `superlative`, `since`). The `none`
-rows await operators (*without*, *deny*, *doubt*, *before*, *too…to*, the
-comparatives) or concern rows whose
-content is the licensing mechanism rather than the signature (the
-FC/`mono` rows, questions).
+The classical witnesses are complementation for negation, the sections of *every*, *no* and *few*,
+and *at most two*, which is antitone but not anti-additive (`atMost_not_antiAdditive`), the
+strictness that makes its context weak. The Strawson witnesses are the operators of
+`Logic/Natural/Strawson/Basic.lean`: *only*, *regret*, *since*, superlatives and *would*. The
+contexts of *before*, *without*, *deny*, *doubt*, *too … to* and the comparatives have no operator
+yet, and questions and the generic contexts license by other routes than strength.
 
-Each witness carries a `strength` certificate for its classical row
-(`DEStrength.HoldsFor`, from `Semantics/Polarity/Strength.lean`), and
-`ContextWitness.holdsFor_of_licenses` grounds the keystone: at a
-witnessed presupposition-free row, strength-matched licensing means the
-operator really holds the strength the item requires.
+## Main declarations
+
+* `PolarityItem.ContextWitness`, `PolarityItem.StrawsonWitness`: the two kinds of witness.
+* `PolarityItem.ContextWitness.holdsFor_of_licenses`: at a classically witnessed context, licensing
+  by strengthening means the operator holds the strength the item requires.
+
+## References
+
+* [von-fintel-1999]
+* [gajewski-2011]
+* [zwarts-1998]
+* [icard-2012]
 -/
 
 @[expose] public section
 
 namespace PolarityItem
 
-open NaturalLogic
+open NaturalLogic Presupposition
 open Quantifier Quantifier.GQ Quantifier.NP
 
-/-- A model-theoretic witness for a licensing-context row: an operator
-(with its definedness/presupposition function) realizing the row's
-Strawson signature, and its classical signature when one exists. -/
+/-- A **classical witness** of a licensing context is a function holding every strength of
+negation the context carries. -/
 structure ContextWitness (c : LicensingContext) where
-  {W : Type*}
+  {α : Type*}
   {β : Type*}
-  /-- The context function. -/
-  f : Set W → β
-  /-- Definedness: where the argument's presupposition is satisfied. -/
-  defined : Set W → β
+  [latticeα : Lattice α]
   [latticeβ : Lattice β]
-  [boundedβ : BoundedOrder β]
-  /-- The Strawson row is Strawson-sound for `f`. -/
-  strawson :
-    Signature.StrawsonSoundFor c.properties.strawsonSignature
-      f defined
-  /-- The classical row, when present, is classically sound for `f`. -/
-  classical :
-    ∀ σ ∈ c.properties.classicalSignature, Signature.SoundFor σ f
-  /-- The classical row's Zwarts strength holds semantically of `f`
-      (vacuous at Strawson-only rows). -/
-  strength :
-    ∀ σ ∈ c.properties.classicalSignature, ∀ s ∈ σ.toDEStrength,
-      s.HoldsFor f
+  /-- The context function. -/
+  f : α → β
+  /-- The function holds every strength the context carries. -/
+  holdsFor : ∀ s : DEStrength, (s : WithBot DEStrength) ≤ c.strength → s.HoldsFor f
 
-theorem soundFor_of_mem_some {W : Type*} {β : Type*} [Lattice β]
-    [BoundedOrder β] {f : Set W → β} {σ₀ : Signature}
-    (hf : Signature.SoundFor σ₀ f) :
-    ∀ σ ∈ (some σ₀ : Option Signature), Signature.SoundFor σ f := by
-  intro σ hσ
-  rw [Option.mem_def] at hσ
-  injection hσ with h
-  exact h ▸ hf
+/-- A **Strawson witness** of a licensing context is an operator into partial propositions that is
+Strawson downward entailing, and Strawson anti-additive where the context is anti-additive. -/
+structure StrawsonWitness (c : LicensingContext) where
+  {α : Type*}
+  {W : Type*}
+  [latticeα : Lattice α]
+  /-- The context operator. -/
+  op : α → PartialProp W
+  isStrawsonDE : IsStrawsonDE op
+  isStrawsonAA : (DEStrength.antiAdditive : WithBot DEStrength) ≤ c.strength →
+    IsStrawsonAntiAdditive op
 
-theorem soundFor_of_mem_none {W : Type*} {β : Type*} [Lattice β]
-    [BoundedOrder β] {f : Set W → β} :
-    ∀ σ ∈ (none : Option Signature), Signature.SoundFor σ f := by
-  intro σ hσ
-  rw [Option.mem_def] at hσ
-  exact absurd hσ (by simp)
+/-- The classical witness of a context of strength `s₀` given by a function holding `s₀`. -/
+def ContextWitness.ofHoldsFor {c : LicensingContext} {s₀ : DEStrength}
+    (hc : c.strength = s₀) {α β : Type*} [Lattice α] [Lattice β] {f : α → β}
+    (hf : s₀.HoldsFor f) : ContextWitness c where
+  f := f
+  holdsFor _ hs := hf.of_le (WithBot.coe_le_coe.mp (hc ▸ hs))
 
-theorem strength_of_mem_some {W : Type*} {β : Type*} [Lattice β]
-    {f : Set W → β} {σ₀ : Signature} {s₀ : DEStrength}
-    (hσ : σ₀.toDEStrength = some s₀) (hf : s₀.HoldsFor f) :
-    ∀ σ ∈ (some σ₀ : Option Signature), ∀ s ∈ σ.toDEStrength,
-      s.HoldsFor f := by
-  intro σ hσ' s hs
-  rw [Option.mem_def] at hσ'
-  injection hσ' with h
-  subst h
-  rw [Option.mem_def, hσ] at hs
-  injection hs with h'
-  exact h' ▸ hf
+/-! ### The at-most operator -/
 
-theorem strength_of_mem_none {W : Type*} {β : Type*} [Lattice β]
-    {f : Set W → β} :
-    ∀ σ ∈ (none : Option Signature), ∀ s ∈ σ.toDEStrength,
-      s.HoldsFor f := by
-  intro σ hσ
-  rw [Option.mem_def] at hσ
-  exact absurd hσ (by simp)
+/-- *At most n* of the restrictor are in the scope, over four individuals. -/
+def atMost (n : ℕ) (restr scope : Set (Fin 4)) : Prop :=
+  ∀ ws : List (Fin 4), ws.Nodup → (∀ w ∈ ws, restr w ∧ scope w) → ws.length ≤ n
 
-/-! ### The at-most operator
+theorem atMost_mono (n : ℕ) (restr p q : Set (Fin 4)) (hpq : ∀ w, p w → q w)
+    (h : atMost n restr q) : atMost n restr p :=
+  fun ws hnd hall ↦ h ws hnd fun w hw ↦ ⟨(hall w hw).1, hpq w (hall w hw).2⟩
 
-The model operator for the `.atMost` row: antitone in scope but not
-anti-additive — the strictness witness separating weak DE from
+/-- *At most two students*, with a fixed restrictor. -/
+def atMost2_student : Set (Fin 4) → Set (Fin 4) := fun scope _ ↦ atMost 2 {0, 1} scope
+
+theorem atMost_antitone_scope : Antitone atMost2_student :=
+  fun p q hpq _ h ↦ atMost_mono 2 {0, 1} p q (fun _ hp ↦ hpq hp) h
+
+/-- *At most one student*, with a fixed restrictor. -/
+def atMost1_student : Set (Fin 4) → Set (Fin 4) := fun scope _ ↦ atMost 1 {0, 1} scope
+
+/-- *At most one student* is not anti-additive, the strictness separating weak strength from
 anti-additivity. -/
-
-/-- "At most n A's are B" - true if at most n worlds satisfy both.
-    Uses an existential over a sublist witness so the def is decidable
-    only when the predicates are decidable, but stays in `Prop`. -/
-def atMost (n : Nat) (restr scope : Set (Fin 4)) : Prop :=
-  ∀ ws : List (Fin 4), ws.Nodup →
-    (∀ w ∈ ws, restr w ∧ scope w) →
-    ws.length ≤ n
-
-/-- Monotonicity: if `p ⊆ q` (entailment) and `q` has at most `n` witnesses,
-    so does `p`. -/
-theorem atMost_mono (n : Nat) (restr p q : Set (Fin 4))
-    (hpq : ∀ w, p w → q w) (h : atMost n restr q) :
-    atMost n restr p := by
-  intro ws hnd hall
-  apply h ws hnd
-  intro w hw
-  exact ⟨(hall w hw).1, hpq w (hall w hw).2⟩
-
-/-- "At most 2 students ___" with fixed restrictor. -/
-def atMost2_student : Set (Fin 4) → Set (Fin 4) :=
-  λ scope => λ _ => atMost 2 {0, 1} scope
-
-/-- "At most n" is antitone in scope. -/
-theorem atMost_antitone_scope : Antitone atMost2_student := by
-  intro p q hpq _w h
-  exact atMost_mono 2 {0, 1} p q (fun _ hp => hpq hp) h
-
-/-- "At most 1 student ___" with fixed restrictor. -/
-def atMost1_student : Set (Fin 4) → Set (Fin 4) :=
-  λ scope => λ _ => atMost 1 {0, 1} scope
-
-/-- "At most 1" is still antitone. -/
-theorem atMost1_antitone_scope : Antitone atMost1_student := by
-  intro p q hpq _w h
-  exact atMost_mono 1 {0, 1} p q (fun _ hp => hpq hp) h
-
-/-- "At most n" is not anti-additive (counterexample): the strictness
-witness for DE ⊊ anti-additive. -/
-theorem atMost_not_antiAdditive :
-    ¬IsAntiAdditive atMost1_student := by
+theorem atMost_not_antiAdditive : ¬ IsAntiAdditive atMost1_student := by
   intro hAA
   have h := isAntiAdditive_iff_mem.mp hAA
-  let qProp : Set (Fin 4) := λ w => w = 1
-  let p0 : Set (Fin 4) := {0}
-  have key : atMost1_student (p0 ∪ qProp) 0 ↔
-             atMost1_student p0 0 ∧ atMost1_student qProp 0 :=
-    h p0 qProp 0
-  -- p0 has just w0 as a witness; ≤ 1 ✓
-  have hp : atMost1_student p0 0 := by
-    intro ws hnd hall
-    -- Every element of ws satisfies p01 ∧ p0, hence equals w0
-    have hall_w0 : ∀ w ∈ ws, w = 0 := by
-      intro w hw
-      have := (hall w hw).2
-      exact this
-    -- A nodup list whose every element is w0 has length ≤ 1
-    rcases ws with _ | ⟨a, t⟩
+  let q : Set (Fin 4) := fun w ↦ w = 1
+  let p : Set (Fin 4) := {0}
+  have key : atMost1_student (p ∪ q) 0 ↔ atMost1_student p 0 ∧ atMost1_student q 0 := h p q 0
+  have single : ∀ (r : Set (Fin 4)) (v : Fin 4), (∀ w, r w → w = v) → atMost1_student r 0 := by
+    intro r v hr ws hnd hall
+    rcases ws with _ | ⟨a, _ | ⟨b, t⟩⟩
     · simp
-    · rcases t with _ | ⟨b, t'⟩
-      · simp
-      · exfalso
-        have ha : a = 0 := hall_w0 a (List.mem_cons_self ..)
-        have hb : b = 0 := hall_w0 b (List.mem_cons_of_mem _ (List.mem_cons_self ..))
-        have : a ≠ b := List.ne_of_not_mem_cons (List.Nodup.notMem hnd)
-        exact this (ha.trans hb.symm)
-  -- qProp has just w1 as a witness; ≤ 1 ✓
-  have hq : atMost1_student qProp 0 := by
-    intro ws hnd hall
-    have hall_w1 : ∀ w ∈ ws, w = 1 := by
-      intro w hw
-      have := (hall w hw).2
-      simpa [qProp] using this
-    rcases ws with _ | ⟨a, t⟩
     · simp
-    · rcases t with _ | ⟨b, t'⟩
-      · simp
-      · exfalso
-        have ha : a = 1 := hall_w1 a (List.mem_cons_self ..)
-        have hb : b = 1 := hall_w1 b (List.mem_cons_of_mem _ (List.mem_cons_self ..))
-        have : a ≠ b := List.ne_of_not_mem_cons (List.Nodup.notMem hnd)
-        exact this (ha.trans hb.symm)
-  -- p0 ∪ qProp has both w0 and w1 as witnesses; not ≤ 1
-  have hcontr : ¬ atMost1_student (p0 ∪ qProp) 0 := by
-    intro hle
-    have : ([(0 : Fin 4), 1]).length ≤ 1 := by
-      apply hle [0, 1]
-      · decide
-      · intro w hw
-        rcases List.mem_cons.mp hw with rfl | hw'
-        · exact ⟨Or.inl rfl, by left; rfl⟩
-        · rcases List.mem_singleton.mp hw' with rfl
-          exact ⟨Or.inr rfl, by right; rfl⟩
+    · have ha := hr a (hall a (List.mem_cons_self ..)).2
+      have hb := hr b (hall b (List.mem_cons_of_mem _ (List.mem_cons_self ..))).2
+      exact absurd (ha.trans hb.symm) (List.ne_of_not_mem_cons (List.Nodup.notMem hnd))
+  have hp : atMost1_student p 0 := single p 0 fun _ hw ↦ hw
+  have hq : atMost1_student q 0 := single q 1 fun _ hw ↦ hw
+  have hpq : ¬ atMost1_student (p ∪ q) 0 := fun hle ↦ by
+    have : ([(0 : Fin 4), 1]).length ≤ 1 := hle [0, 1] (by decide) fun w hw ↦ by
+      rcases List.mem_cons.mp hw with rfl | hw'
+      · exact ⟨Or.inl rfl, Or.inl rfl⟩
+      · rcases List.mem_singleton.mp hw' with rfl
+        exact ⟨Or.inr rfl, Or.inr rfl⟩
     simp at this
-  exact hcontr (key.mpr ⟨hp, hq⟩)
+  exact hpq (key.mpr ⟨hp, hq⟩)
 
-/-! ### Classical rows -/
+/-! ### Classical witnesses -/
 
-/-- Negation: complementation realizes the anti-morphism row. -/
-def negationWitness : ContextWitness .negation where
-  f := (compl : Set (Fin 4) → Set (Fin 4))
-  defined := fun _ => ⊤
-  strawson := compl_soundFor_antiAddMult.strawsonSoundFor _
-  classical := soundFor_of_mem_some compl_soundFor_antiAddMult
-  strength := strength_of_mem_some (s₀ := .antiMorphic) (by decide)
-    isAntiMorphic_compl
+/-- Complementation, the witness of clausal negation, is anti-morphic. -/
+def negationWitness : ContextWitness .negation :=
+  .ofHoldsFor (s₀ := .antiMorphic) (by decide) (isAntiMorphic_compl (α := Set (Fin 4)))
 
-theorem everyRestrictor_soundFor :
-    Signature.SoundFor .antiAdd
-      (fun R => every (α := Bool) R (fun _ => False)) :=
-  soundFor_antiAdd
-    ⟨(leftAntiAdditive_iff_isAntiAdditive _).mp leftAntiAdditive_every _,
-     propext ⟨fun h => h true trivial, False.elim⟩⟩
-
-/-- Universal restrictor: the restrictor section of `every` is
-completely anti-additive (toy scope falsifying the unit condition's
-vacuity). -/
-noncomputable def universalRestrictorWitness :
-    ContextWitness .universalRestrictor where
-  f := fun R => every (α := Bool) R (fun _ => False)
-  defined := fun _ => ⊤
-  strawson := everyRestrictor_soundFor.strawsonSoundFor _
-  classical := soundFor_of_mem_some everyRestrictor_soundFor
-  strength := strength_of_mem_some (s₀ := .antiAdditive) (by decide)
+/-- The restrictor section of *every*, the witness of the restrictor of a universal, is
+anti-additive. -/
+noncomputable def universalRestrictorWitness : ContextWitness .universalRestrictor :=
+  .ofHoldsFor (s₀ := .antiAdditive) (f := fun R ↦ every (α := Bool) R fun _ ↦ False) (by decide)
     ((leftAntiAdditive_iff_isAntiAdditive _).mp leftAntiAdditive_every _)
 
-theorem noScope_soundFor :
-    Signature.SoundFor .antiAdd
-      (fun S => no (α := Bool) (fun _ => True) S) :=
-  soundFor_antiAdd
-    ⟨(rightAntiAdditive_iff_isAntiAdditive _).mp rightAntiAdditive_no _,
-     propext ⟨fun h => h true trivial trivial, False.elim⟩⟩
-
-/-- *Nobody*: the scope section of `no` is completely anti-additive. -/
-noncomputable def nobodyWitness : ContextWitness .nobody where
-  f := fun S => no (α := Bool) (fun _ => True) S
-  defined := fun _ => ⊤
-  strawson := noScope_soundFor.strawsonSoundFor _
-  classical := soundFor_of_mem_some noScope_soundFor
-  strength := strength_of_mem_some (s₀ := .antiAdditive) (by decide)
+/-- The scope section of *no*, the witness of *nobody*, is anti-additive. -/
+noncomputable def nobodyWitness : ContextWitness .nobody :=
+  .ofHoldsFor (s₀ := .antiAdditive) (f := no (α := Bool) fun _ ↦ True) (by decide)
     ((rightAntiAdditive_iff_isAntiAdditive _).mp rightAntiAdditive_no _)
 
-noncomputable def fewScope : Set Bool → Prop :=
-  few (α := Bool) (fun _ => True)
+/-- The scope section of *few* is antitone. -/
+noncomputable def fewWitness : ContextWitness .few :=
+  .ofHoldsFor (s₀ := .weak) (f := few (α := Bool) fun _ ↦ True) (by decide)
+    (scopeAntitone_few _)
 
-theorem fewScope_soundFor : Signature.SoundFor .anti fewScope :=
-  soundFor_anti_iff.mpr (scopeAntitone_few _)
+/-- *At most two* is antitone, and not anti-additive (`atMost_not_antiAdditive`). -/
+def atMostWitness : ContextWitness .atMost :=
+  .ofHoldsFor (s₀ := .weak) (by decide) atMost_antitone_scope
 
-/-- *Few*: the scope section of `few` is antitone (weak DE — and not
-anti-additive, matching its `.anti` row). -/
-noncomputable def fewWitness : ContextWitness .few where
-  f := fewScope
-  defined := fun _ => ⊤
-  strawson := fewScope_soundFor.strawsonSoundFor _
-  classical := soundFor_of_mem_some fewScope_soundFor
-  strength := strength_of_mem_some (s₀ := .weak) (by decide)
-    (soundFor_anti_iff.mp fewScope_soundFor)
+/-- At a classically witnessed context, licensing by strengthening means that the operator holds
+the strength the item requires. -/
+theorem ContextWitness.holdsFor_of_licenses {c : LicensingContext} (w : ContextWitness c)
+    {e : PolarityItem} (hc : c.mechanism = .strengthening) (h : c.Licenses e) :
+    ∀ r ∈ e.licensor, @DEStrength.HoldsFor _ _ w.latticeα w.latticeβ r w.f := by
+  rcases h with ⟨-, r, hr, hle, -⟩ | ⟨hm, -⟩ | ⟨hm, -⟩
+  · intro r' hr'
+    rw [Option.mem_def] at hr hr'
+    obtain rfl : r' = r := Option.some_injective _ (hr'.symm.trans hr)
+    exact w.holdsFor r' hle
+  all_goals exact absurd (hc.symm.trans hm) (by decide)
 
-theorem atMost_soundFor :
-    Signature.SoundFor .anti atMost2_student :=
-  soundFor_anti_iff.mpr atMost_antitone_scope
+/-! ### Strawson witnesses -/
 
-/-- *At most n*: `atMost2_student` is antitone; the strictness witness
-`atMost_not_antiAdditive` is why this row is `.anti`, not `.antiAdd`. -/
-def atMostWitness : ContextWitness .atMost where
-  f := atMost2_student
-  defined := fun _ => ⊤
-  strawson := atMost_soundFor.strawsonSoundFor _
-  classical := soundFor_of_mem_some atMost_soundFor
-  strength := strength_of_mem_some (s₀ := .weak) (by decide)
-    atMost_antitone_scope
+/-- Focus *only* is Strawson anti-additive and not classically antitone (`only_not_antitone`). -/
+def onlyFocusWitness : StrawsonWitness .onlyFocus where
+  op := only (W := Fin 4) (0 : Fin 4)
+  isStrawsonDE := only_isStrawsonDE 0
+  isStrawsonAA _ := only_isStrawsonAA 0
 
-theorem condAntecedent_soundFor :
-    Signature.SoundFor .anti
-      (fun α : Set (Fin 4) => Conditional.strictImp (fun _ : Fin 4 => Set.univ) α ∅) :=
-  soundFor_anti_iff.mpr fun _ _ h => Conditional.strictImp_anti_left h
+/-- Adversatives are Strawson anti-additive, with doxastic factivity, and not classically antitone
+(`regret_not_antitone`). -/
+def adversativeWitness : StrawsonWitness .adversative where
+  op := regret (W := Fin 4) (fun w ↦ {w}) (fun _ ↦ {1})
+  isStrawsonDE := regret_isStrawsonDE _ _
+  isStrawsonAA _ := regret_isStrawsonAA _ _
 
-/-- Conditional antecedents: the antecedent position of the strict conditional is classically
-antitone with the modal base held constant. -/
-def conditionalAntecedentWitness : ContextWitness .conditionalAntecedent where
-  f := fun α : Set (Fin 4) => Conditional.strictImp (fun _ : Fin 4 => Set.univ) α ∅
-  defined := fun _ => ⊤
-  strawson := condAntecedent_soundFor.strawsonSoundFor _
-  classical := soundFor_of_mem_some condAntecedent_soundFor
-  strength := strength_of_mem_some (s₀ := .weak) (by decide)
-    (soundFor_anti_iff.mp condAntecedent_soundFor)
+/-- Temporal *since* is Strawson antitone, with its past-event presupposition, and not classically
+antitone (`since_not_antitone`). -/
+def sinceTemporalWitness : StrawsonWitness .sinceTemporal where
+  op := since (W := Fin 4) (fun _ ↦ {0}) (fun _ ↦ ∅)
+  isStrawsonDE := since_isStrawsonDE _ _
+  isStrawsonAA h := absurd h (by decide)
 
-/-! ### Strawson-only rows (`classicalSignature = none`) -/
-
-/-- *Only*: Strawson-`.anti` with its presupposition that the focused individual satisfies the
-scope, read as a world-constant property; classically nothing (`only_not_antitone`). -/
-def onlyFocusWitness : ContextWitness .onlyFocus where
-  f := fun S : Set (Fin 4) => (only (0 : Fin 4) fun y => {_w : Fin 4 | y ∈ S}).truthSet
-  defined := fun S => {w | (only (0 : Fin 4) fun y => {_w : Fin 4 | y ∈ S}).presup w}
-  strawson := strawsonSoundFor_anti_of_isStrawsonDE
-    ((only_isStrawsonDE (W := Fin 4) 0).comp_monotone
-      (g := fun S : Set (Fin 4) => fun y => {_w : Fin 4 | y ∈ S})
-      fun _ _ h _ _ hy => h hy)
-  classical := soundFor_of_mem_none
-  strength := strength_of_mem_none
-
-/-- Adversatives: Strawson-`.anti` with doxastic factivity; classically
-nothing (`regret_not_antitone`). -/
-def adversativeWitness : ContextWitness .adversative where
-  f := fun p => (regret (W := Fin 4) (fun w => {w}) (fun _ => {1}) p).truthSet
-  defined := fun p => {w | (regret (W := Fin 4) (fun w => {w}) (fun _ => {1}) p).presup w}
-  strawson := regret_strawsonSoundFor_anti _ _
-  classical := soundFor_of_mem_none
-  strength := strength_of_mem_none
-
-/-- Temporal *since*: Strawson-`.anti` with the past-event
+/-- Superlatives are Strawson anti-additive in their restriction, with the designated-subject
 presupposition. -/
-def sinceTemporalWitness : ContextWitness .sinceTemporal where
-  f := fun p => (since (W := Fin 4) (fun _ => {0}) (fun _ => ∅) p).truthSet
-  defined := fun p => {w | (since (W := Fin 4) (fun _ => {0}) (fun _ => ∅) p).presup w}
-  strawson := since_strawsonSoundFor_anti _ _
-  classical := soundFor_of_mem_none
-  strength := strength_of_mem_none
+def superlativeWitness : StrawsonWitness .superlative where
+  op := (superlative (W := Fin 4) (id : Fin 4 → Fin 4) · 0)
+  isStrawsonDE := superlative_isStrawsonDE _ _
+  isStrawsonAA _ := superlative_isStrawsonAA _ _
 
-/-- Superlatives: Strawson-`.anti` in the restriction with the
-designated-subject presupposition. -/
-def superlativeWitness : ContextWitness .superlative where
-  f := fun S : Set (Fin 4) =>
-    (superlative (W := Fin 4) (id : Fin 4 → Fin 4) (fun y => {_w | y ∈ S}) 0).truthSet
-  defined := fun S =>
-    {w | (superlative (W := Fin 4) (id : Fin 4 → Fin 4) (fun y => {_w | y ∈ S}) 0).presup w}
-  strawson := strawsonSoundFor_anti_of_isStrawsonDE
-    ((superlative_isStrawsonDE (W := Fin 4) id 0).comp_monotone
-      (g := fun S : Set (Fin 4) => fun y => {_w : Fin 4 | y ∈ S})
-      fun _ _ h _ _ hy => h hy)
-  classical := soundFor_of_mem_none
-  strength := strength_of_mem_none
-
-/-! ### The table -/
-
-/-- The witness table, populated incrementally; `none` rows are recorded
-in the module docstring. -/
-noncomputable def contextWitness? :
-    (c : LicensingContext) → Option (ContextWitness c)
-  | .negation => some negationWitness
-  | .nobody => some nobodyWitness
-  | .universalRestrictor => some universalRestrictorWitness
-  | .few => some fewWitness
-  | .atMost => some atMostWitness
-  | .conditionalAntecedent => some conditionalAntecedentWitness
-  | .onlyFocus => some onlyFocusWitness
-  | .adversative => some adversativeWitness
-  | .sinceTemporal => some sinceTemporalWitness
-  | .superlative => some superlativeWitness
-  -- Not yet grounded (no witness operator built). Explicit `none` arms — no `_`
-  -- catch-all — so a newly-added `LicensingContext` fails to compile here rather
-  -- than silently being treated as unwitnessed.
-  | .beforeClause => none
-  | .withoutClause => none
-  | .question => none
-  | .phrasalComparative => none
-  | .clausalComparative => none
-  | .tooTo => none
-  | .modalPossibility => none
-  | .modalNecessity => none
-  | .imperative => none
-  | .generic => none
-  | .freeRelative => none
-  | .doubtVerb => none
-  | .denyVerb => none
-
--- Coverage sentries (drift detection, not aggregate counts).
-example : (contextWitness? .negation).isSome = true := rfl
-example : (contextWitness? .superlative).isSome = true := rfl
-example : (contextWitness? .atMost).isSome = true := rfl
-example : (contextWitness? .withoutClause).isSome = false := rfl
-
-/-! ### Grounded strength licensing -/
-
-instance {c : LicensingContext} (w : ContextWitness c) : Lattice w.β :=
-  w.latticeβ
-
-instance {c : LicensingContext} (w : ContextWitness c) : BoundedOrder w.β :=
-  w.boundedβ
-
-/-- At a witnessed presupposition-free row, keystone strength licensing
-is semantically real: the witness operator holds the strength the item
-requires. Strawson-only rows are exempt — their antitonicity holds only
-on the definedness region. -/
-theorem ContextWitness.holdsFor_of_licenses {c : LicensingContext}
-    (w : ContextWitness c)
-    (hcl : c.properties.classicalSignature =
-      some c.properties.strawsonSignature)
-    {e : PolarityItem} (hlic : zwartsScale.licenses e c) :
-    ∀ r ∈ e.licensor, r.HoldsFor w.f := by
-  obtain ⟨r, hr, s, hs, hrs⟩ := hlic
-  intro r' hr'
-  have hr₂ : r ∈ e.licensor := hr
-  rw [Option.mem_def] at hr₂ hr'
-  rw [hr₂] at hr'
-  injection hr' with h
-  subst h
-  exact (w.strength _ (Option.mem_def.mpr hcl) s hs).of_le hrs
+/-- Conditional antecedents are Strawson anti-additive, with the presupposition that the modal base
+admits the antecedent, and not classically antitone (`would_not_antitone`). -/
+def conditionalAntecedentWitness : StrawsonWitness .conditionalAntecedent where
+  op := (would (W := Fin 4) (fun _ ↦ Set.univ) · ∅)
+  isStrawsonDE := would_isStrawsonDE _ _
+  isStrawsonAA _ := would_isStrawsonAA _ _
 
 end PolarityItem

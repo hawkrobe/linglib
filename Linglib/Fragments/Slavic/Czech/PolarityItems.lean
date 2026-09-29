@@ -36,46 +36,32 @@ open PolarityItem
 def nikdo : PolarityItem :=
   { form := "nikdo"
   , licensor := some .antiMorphic
-  , baseForce := .existential
-  , licensingContexts := [.negation]
-  , scalarDirection := some .strengthening
-  , morphology := .indefPlusNeg }
+  , licensingContexts := [.negation] }
 
 /-- *nic* 'nothing', the non-human concord item. -/
 def nic : PolarityItem :=
   { form := "nic"
   , licensor := some .antiMorphic
-  , baseForce := .existential
-  , licensingContexts := [.negation]
-  , scalarDirection := some .strengthening
-  , morphology := .indefPlusNeg }
+  , licensingContexts := [.negation] }
 
 /-- *nikdy* 'never', the temporal concord item. -/
 def nikdy : PolarityItem :=
   { form := "nikdy"
   , licensor := some .antiMorphic
-  , baseForce := .temporal
-  , licensingContexts := [.negation]
-  , scalarDirection := some .strengthening
-  , morphology := .indefPlusNeg }
+  , licensingContexts := [.negation] }
 
 /-- *nikam* 'nowhere (to)', the directional concord item. -/
 def nikam : PolarityItem :=
   { form := "nikam"
   , licensor := some .antiMorphic
-  , baseForce := .existential
-  , licensingContexts := [.negation]
-  , scalarDirection := some .strengthening
-  , morphology := .indefPlusNeg }
+  , licensingContexts := [.negation] }
 
 /-- *žádný* 'no', the determiner concord item, licensed by inner negation alone in polar
     questions ([stankova-2026]). -/
 def zadny : PolarityItem :=
   { form := "žádný"
   , licensor := some .antiMorphic
-  , baseForce := .existential
-  , licensingContexts := [.negation]
-  , scalarDirection := some .strengthening }
+  , licensingContexts := [.negation] }
 
 /-- The strict concord items. -/
 def niSeries : List PolarityItem := [nikdo, nic, nikdy, nikam, zadny]
@@ -86,33 +72,26 @@ def niSeries : List PolarityItem := [nikdo, nic, nikdy, nikam, zadny]
     negation in polar questions ([stankova-2025], [stankova-2026]). -/
 def nejaky : PolarityItem :=
   { form := "nějaký"
-  , ppi := true
-  , baseForce := .existential
-  , licensingContexts := [] }
+  , antiLicensor := some .antiMorphic }
 
 /-- *někdo* 'someone', the human positive polarity item, which replaces *nikdo* under the
     non-propositional negation of a fear-predicate complement ([stankova-2025]). -/
 def nekdo : PolarityItem :=
   { form := "někdo"
-  , ppi := true
-  , baseForce := .existential
-  , licensingContexts := [] }
+  , antiLicensor := some .antiMorphic }
 
 /-- The positive polarity items. -/
 def neSeries : List PolarityItem := [nejaky, nekdo]
 
 /-! ### Verification -/
 
-/-- Strict concord: clausemate negation is the only context licensing a *ni-* item. -/
+/-- Clausemate negation, the only anti-morphic context, is the only context licensing a *ni-*
+item, the strict concord of the series. -/
 theorem niSeries_strict_concord :
-    ∀ e ∈ niSeries, ∀ c : LicensingContext, c.licenses e ↔ c = .negation := by decide
+    ∀ e ∈ niSeries, ∀ c : LicensingContext, c.Licenses e ↔ c = .negation := by decide
 
-/-- The *ni-* pronouns are morphologically indefinite plus negation. -/
-theorem niSeries_morphology : ∀ e ∈ [nikdo, nic, nikdy, nikam], e.morphology = .indefPlusNeg := by
-  decide
-
-/-- The *ně-* items are positive polarity items, licensed by no context. -/
-theorem neSeries_ppi : ∀ e ∈ neSeries, e.isPPI ∧ ∀ c : LicensingContext, ¬ c.licenses e := by
+/-- Clausemate negation blocks the *ně-* items. -/
+theorem neSeries_antiLicensed : ∀ e ∈ neSeries, LicensingContext.negation.AntiLicenses e := by
   decide
 
 end Czech.PolarityItems

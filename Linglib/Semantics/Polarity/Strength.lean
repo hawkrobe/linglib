@@ -9,26 +9,31 @@ public import Linglib.Logic.Natural.Additivity
 public import Linglib.Logic.Natural.Basic
 
 /-!
-# The Zwarts strength hierarchies
-[zwarts-1998] [icard-2012] [ladusaw-1980]
+# The Zwarts hierarchy of negative strength
 
-The polarity-facing quotient of the natural-logic signature system: the
-DE hierarchy `weak < antiAdditive < antiMorphic` and its UE dual as
-linear orders, the bridge maps reading strength off an
-`Signature`'s projection behavior, and `DEStrength.HoldsFor`, the
-semantic content of each level (weak = `Antitone`, antiAdditive =
-`IsAntiAdditive`, antiMorphic = `IsAntiMorphic`), downward closed along
-the chain (`HoldsFor.of_le`).
+The strengths of negation a context can carry, ordered as the chain `weak < antiAdditive <
+antiMorphic` ([zwarts-1998]; [vanderwouden-1997]'s minimal, regular and classical negation):
+a context is weakly negative when it is downward entailing, anti-additive when it also turns
+disjunctions into conjunctions, and anti-morphic when it also turns conjunctions into
+disjunctions, as clausal negation does. The strength a natural-logic signature realizes is read
+off its projection behavior (`Signature.toDEStrength`), and the semantic content of each level is
+`DEStrength.HoldsFor`, downward closed along the chain (`HoldsFor.of_le`).
 
 ## Main declarations
 
-* `DEStrength`, `UEStrength` — the Zwarts hierarchies.
-* `DEStrength.HoldsFor` — the semantic content of a strength level.
-* `Signature.toDEStrength`, `Signature.toUEStrength` — the
-  signature → strength bridge maps.
-* `NaturalLogic.de_signature_licenses_weak_npi`,
-  `NaturalLogic.strong_npi_requires_antiadditive` — the Ladusaw/Zwarts
-  licensing connections.
+* `PolarityItem.DEStrength`: the three strengths, a linear order.
+* `PolarityItem.DEStrength.HoldsFor`: the semantic content of a strength.
+* `NaturalLogic.Signature.toDEStrength`: the strength a signature realizes, `⊥` for a
+  signature that is not downward entailing.
+* `NaturalLogic.Signature.toDEStrength_ne_bot_iff`: a signature realizes a strength exactly
+  when it is downward entailing.
+
+## References
+
+* [zwarts-1998]
+* [vanderwouden-1997]
+* [icard-2012]
+* [ladusaw-1979]
 -/
 
 @[expose] public section
@@ -37,64 +42,45 @@ namespace PolarityItem
 
 open NaturalLogic
 
+/-! ### The hierarchy -/
 
-
-/-! ### The hierarchies -/
-
-/-- The three levels of the DE hierarchy ([zwarts-1998]): `weak` is
-    plain DE (licenses weak NPIs: *ever*, *any*), `antiAdditive` adds
-    ∨→∧ distributivity (licenses strong NPIs: *lift a finger*), and
-    `antiMorphic` adds ∧→∨ distributivity (= negation). -/
+/-- The three strengths of negation ([zwarts-1998]): `weak` is plain downward entailment,
+`antiAdditive` adds the ∨→∧ distributivity of *nobody*, and `antiMorphic` the ∧→∨
+distributivity of clausal negation. -/
 inductive DEStrength where
   | weak
   | antiAdditive
   | antiMorphic
   deriving DecidableEq, Repr, Fintype
 
-/-- Rank in the Zwarts chain `weak < antiAdditive < antiMorphic`. -/
-def DEStrength.toNat : DEStrength → Nat
+/-- Rank in the chain `weak < antiAdditive < antiMorphic`. -/
+def DEStrength.toNat : DEStrength → ℕ
   | .weak => 0
   | .antiAdditive => 1
   | .antiMorphic => 2
 
-theorem DEStrength.toNat_injective : Function.Injective DEStrength.toNat := by
-  intro a b h; cases a <;> cases b <;> simp_all [DEStrength.toNat]
+theorem DEStrength.toNat_injective : Function.Injective DEStrength.toNat := by decide
 
-/-- The Zwarts DE hierarchy as the linear order
-    `weak < antiAdditive < antiMorphic` — the carrier of the canonical
-    `zwartsScale` (`Semantics/Polarity/Licensing.lean`); other theories
-    of NPI strength supply other ordered carriers. -/
+/-- The Zwarts hierarchy as the linear order `weak < antiAdditive < antiMorphic`. -/
 instance : LinearOrder DEStrength :=
   LinearOrder.lift' DEStrength.toNat DEStrength.toNat_injective
 
-/-- The three levels of the UE hierarchy (dual of `DEStrength`): `weak`
-    is plain UE (monotone), `multiplicative` adds ∧-distributivity,
-    `additive` ∨-distributivity (strongest). -/
-inductive UEStrength where
-  | weak
-  | multiplicative
-  | additive
-  deriving DecidableEq, Repr
+/-! ### The hierarchy semantically -/
 
-/-! ### The Zwarts hierarchy semantically -/
-
-/-- The semantic content of a `DEStrength` level for a context function
-([icard-2012] §4, after Zwarts): `weak` is antitonicity, `antiAdditive`
-the anti-additivity equation, `antiMorphic` the full anti-morphism —
-*few* is weak-only, *no* anti-additive, *not* anti-morphic. -/
-def DEStrength.HoldsFor {α β : Type*} [Lattice α] [Lattice β]
-    (s : DEStrength) (f : α → β) : Prop :=
+/-- The semantic content of a strength for a context function ([icard-2012] §4, after
+[zwarts-1998]): `weak` is antitonicity, `antiAdditive` the anti-additivity equation,
+`antiMorphic` the full anti-morphism. *Few* is weak only, *no* anti-additive, *not*
+anti-morphic. -/
+def DEStrength.HoldsFor {α β : Type*} [Lattice α] [Lattice β] (s : DEStrength) (f : α → β) :
+    Prop :=
   match s with
   | .weak => Antitone f
   | .antiAdditive => IsAntiAdditive f
   | .antiMorphic => IsAntiMorphic f
 
-/-- Strength facts are downward closed along the Zwarts chain
-`weak < antiAdditive < antiMorphic`: a function holding a level holds
-every weaker one. -/
-theorem DEStrength.HoldsFor.of_le {α β : Type*}
-    [Lattice α] [Lattice β] {f : α → β} {s₁ s₂ : DEStrength}
-    (h : s₁ ≤ s₂) (hf : s₂.HoldsFor f) : s₁.HoldsFor f := by
+/-- A function holding a strength of negation holds every weaker one. -/
+theorem DEStrength.HoldsFor.of_le {α β : Type*} [Lattice α] [Lattice β] {f : α → β}
+    {s₁ s₂ : DEStrength} (h : s₁ ≤ s₂) (hf : s₂.HoldsFor f) : s₁.HoldsFor f := by
   cases s₁ <;> cases s₂ <;>
     first
       | exact hf
@@ -104,75 +90,35 @@ theorem DEStrength.HoldsFor.of_le {α β : Type*}
 
 example : DEStrength.antiMorphic.HoldsFor (compl : Set Bool → Set Bool) :=
   isAntiMorphic_compl
-example : DEStrength.weak.HoldsFor (compl : Set Bool → Set Bool) :=
-  DEStrength.HoldsFor.of_le (s₂ := .antiMorphic) (by decide)
-    isAntiMorphic_compl
 
 end PolarityItem
 
-/-! ### Signature → strength bridge maps -/
+/-! ### Signatures and strength -/
 
 namespace NaturalLogic.Signature
 
 open PolarityItem
 
-/-- The DE strength a signature realizes, derived from `project`: a
-    signature is DE iff it reverses forward entailment; within the DE
-    side, anti-additivity is detected by the ∨→∧ swap on `cover` and
-    anti-morphism additionally by the ∧→∨ swap on `alternation`.
-    `none` for UE-side signatures. -/
-def toDEStrength (φ : Signature) : Option DEStrength :=
-  if project .forward φ != .reverse then none
+/-- `toDEStrength φ` is the strength of negation the signature `φ` realizes, `⊥` when `φ` is not
+downward entailing. It is read off `project`: a signature is downward entailing when it reverses
+forward entailment, anti-additive when it also turns `cover` into `alternation`, and anti-morphic
+when it also turns `alternation` into `cover`. -/
+def toDEStrength (φ : Signature) : WithBot DEStrength :=
+  if project .forward φ != .reverse then ⊥
   else if project .cover φ == .alternation then
-    if project .alternation φ == .cover then some .antiMorphic
-    else some .antiAdditive
-  else some .weak
+    if project .alternation φ == .cover then DEStrength.antiMorphic
+    else DEStrength.antiAdditive
+  else DEStrength.weak
 
-/-- The UE strength a signature realizes, derived from `project`: a
-    signature is UE iff it preserves forward entailment; additivity is
-    ∨-preservation on `cover`, multiplicativity ∧-preservation on
-    `alternation`. `none` for DE-side signatures. -/
-def toUEStrength (φ : Signature) : Option UEStrength :=
-  if project .forward φ != .forward then none
-  else if project .cover φ == .cover then some .additive
-  else if project .alternation φ == .alternation then some .multiplicative
-  else some .weak
+example : toDEStrength .anti = DEStrength.weak := rfl
+example : toDEStrength .antiAdd = DEStrength.antiAdditive := rfl
+example : toDEStrength .antiMult = DEStrength.weak := rfl
+example : toDEStrength .antiAddMult = DEStrength.antiMorphic := rfl
+example : toDEStrength .mono = ⊥ := rfl
 
--- Exhaustive verification against the strength-relevant signatures.
-example : toDEStrength .anti = some .weak := rfl
-example : toDEStrength .antiAdd = some .antiAdditive := rfl
-example : toDEStrength .antiMult = some .weak := rfl
-example : toDEStrength .antiAddMult = some .antiMorphic := rfl
-example : toDEStrength .mono = none := rfl
-example : toUEStrength .mono = some .weak := rfl
-example : toUEStrength .addMult = some .additive := rfl
-example : toUEStrength .anti = none := rfl
+/-- A signature realizes a strength of negation exactly when it is downward entailing
+([ladusaw-1979]). -/
+theorem toDEStrength_ne_bot_iff (σ : Signature) : σ.toDEStrength ≠ ⊥ ↔ σ.sign = -1 := by
+  cases σ <;> decide
 
 end NaturalLogic.Signature
-
-namespace NaturalLogic
-
-open PolarityItem
-
-/-- Any DE-side signature licenses weak NPIs ([ladusaw-1980]): a
-    signature whose context polarity is downward carries a DE
-    strength. -/
-theorem de_signature_licenses_weak_npi (σ : Signature) :
-    Signature.sign σ = -1 →
-    (Signature.toDEStrength σ).isSome = true := by
-  cases σ <;> decide
-
-/-- Anti-additive or stronger signatures sit on the DE side: the strong
-    NPI licensors (antiAdd, antiAddMult) are downward contexts — but
-    plain anti and antiMult only reach `weak`. -/
-theorem strong_npi_requires_antiadditive (σ : Signature) :
-    Signature.toDEStrength σ = some DEStrength.antiAdditive ∨
-    Signature.toDEStrength σ = some DEStrength.antiMorphic →
-    Signature.sign σ = -1 := by
-  cases σ <;> decide
-
-example : Signature.toDEStrength .antiMult = some .weak := rfl
-example : Signature.toDEStrength negationSignature =
-    some DEStrength.antiMorphic := rfl
-
-end NaturalLogic

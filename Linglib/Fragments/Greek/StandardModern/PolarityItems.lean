@@ -23,12 +23,11 @@ namespace Greek.StandardModern.PolarityItems
 
 open PolarityItem
 
-/-- *para monon*, the punctual *until*: licensed by negation and *xoris* 'without'. Its connective
-entry is `Greek.StandardModern.TemporalConnectives.paraMonon`. -/
+/-- *para monon* is the punctual *until*, licensed by negation and *xoris* 'without'. Its
+connective entry is `Greek.StandardModern.TemporalConnectives.paraMonon`. -/
 def paraMonon : PolarityItem :=
   { form := TemporalConnectives.paraMonon.form
   , licensor := some .antiAdditive
-  , baseForce := .temporal
   , licensingContexts := [.negation, .withoutClause] }
 
 end Greek.StandardModern.PolarityItems

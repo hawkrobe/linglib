@@ -173,18 +173,30 @@ instance : DecidablePred Environment.Licensed
   | .positive | .apodosis | .existentialRestrictor | .factive | .prohibitionObject | .after
   | .episodicModal | .episodicFuture | .necessityModal => isFalse id
 
-/-- A judged example: its environment, the fragment entry of its item, and the judgment. -/
+/-- The alternatives an indefinite plus *bhii* introduces (§8): other cardinality or measure
+predicates for *ek* 'one' and *zaraa* 'a little', a contextually specified set of properties for
+*koii* and *kuch*. -/
+inductive Alternatives where
+  | cardinality
+  | property
+  deriving DecidableEq, Repr
+
+/-- A judged example: its environment, the fragment entry of its item with the alternatives it
+introduces, and the judgment. -/
 structure Datum where
   env : Environment
   item : PolarityItem
+  alternatives : Alternatives
   judgment : Judgment
 
-/-- The fragment entry of a row's item. -/
-def item? (r : LinguisticExample) : Option PolarityItem :=
-  r.parse? "npi" [("koii bhii", koiiBhii), ("koi bhii", koiiBhii), ("kisii-ko bhii", koiiBhii),
-    ("kisii-se bhii", koiiBhii), ("kisiike bhii", koiiBhii), ("ek bhii", ekBhii),
-    ("kuch bhii", kuchBhii), ("kuchh bhii", kuchBhii), ("zaraa bhii", zaraaBhii),
-    ("kabhii bhii", kabhiiBhii)]
+/-- The fragment entry of a row's item, with its alternatives; the paper does not classify
+*kabhii bhii* 'ever', read here with the property alternatives of *koii* and *kuch*. -/
+def item? (r : LinguisticExample) : Option (PolarityItem × Alternatives) :=
+  r.parse? "npi" [("koii bhii", (koiiBhii, .property)), ("koi bhii", (koiiBhii, .property)),
+    ("kisii-ko bhii", (koiiBhii, .property)), ("kisii-se bhii", (koiiBhii, .property)),
+    ("kisiike bhii", (koiiBhii, .property)), ("ek bhii", (ekBhii, .cardinality)),
+    ("kuch bhii", (kuchBhii, .property)), ("kuchh bhii", (kuchBhii, .property)),
+    ("zaraa bhii", (zaraaBhii, .cardinality)), ("kabhii bhii", (kabhiiBhii, .property))]
 
 /-- A row of the survey. -/
 def datum (r : LinguisticExample) : Option Datum := do
@@ -201,8 +213,8 @@ def datum (r : LinguisticExample) : Option Datum := do
     ("generic future", .genericFuture), ("episodic future", .episodicFuture),
     ("necessity modal", .necessityModal), ("imperative", .imperative),
     ("generic, with numeral", .numeralGeneric)]
-  let item ← item? r
-  pure ⟨env, item, r.judgment⟩
+  let (item, alternatives) ← item? r
+  pure ⟨env, item, alternatives, r.judgment⟩
 
 /-- The survey. -/
 def data : List Datum := Examples.all.filterMap datum
@@ -212,7 +224,7 @@ with numerals aside: an indefinite plus *bhii* is acceptable exactly in the envi
 licenses. -/
 theorem analysis_matches_judgments :
     ∀ d ∈ data,
-      d.item.alternativeType = .contextualProperty ∨
+      d.alternatives = .property ∨
         (d.env ≠ .imperative ∧ d.env ≠ .numeralGeneric) →
       (d.judgment = .acceptable ↔ d.env.Licensed) := by
   decide +kernel
@@ -221,7 +233,7 @@ theorem analysis_matches_judgments :
 numeral and odd in imperatives, where the analysis predicts them licensed; the paper leaves
 the imperative case open. -/
 theorem cardinality_exceptions :
-    ∀ d ∈ data, d.item.alternativeType = .cardinality →
+    ∀ d ∈ data, d.alternatives = .cardinality →
       d.env = .imperative ∨ d.env = .numeralGeneric → d.judgment ≠ .acceptable := by
   decide +kernel
 

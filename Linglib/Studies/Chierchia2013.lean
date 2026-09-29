@@ -25,7 +25,7 @@ possibility modal or an imperative, the divide between it and *ever* and between
 *qualsiasi* and *alcuno*. The positions are the paper's easy and hard columns, the hard column
 being the licensing contexts whose signatures fix their polarity, and the readings and
 judgments are rows: the theorems derive each reading from Maximize Strength and each judgment
-from the licensing keystone applied to the Fragment entries.
+from the licensing relation applied to the Fragment entries.
 
 ## References
 
@@ -151,16 +151,16 @@ inductive Position where
 /-- The polarity of a position: the easy column is upward entailing, and a licensing context has
 the polarity of its signature. -/
 def Position.polarity : Position → SignType
-  | .licensing c => c.properties.strawsonSignature.sign
+  | .licensing c => c.signature.sign
   | _ => 1
 
 /-- A position licenses an item when it is a licensing context that licenses it. -/
 def Position.Licenses : Position → PolarityItem → Prop
-  | .licensing c, e => c.licenses e
+  | .licensing c, e => c.Licenses e
   | _, _ => False
 
 instance : (pos : Position) → (e : PolarityItem) → Decidable (pos.Licenses e)
-  | .licensing c, e => inferInstanceAs (Decidable (c.licenses e))
+  | .licensing c, e => inferInstanceAs (Decidable (c.Licenses e))
   | .matrix, _ | .conditionalConsequent, _ | .everyScope, _ | .positiveQuantifierScope, _ =>
     inferInstanceAs (Decidable False)
 
@@ -171,11 +171,11 @@ theorem licenses_ever_of_downward :
   intro pos
   (cases pos <;> try (rename_i c; cases c)) <;> decide
 
-/-- *Any* parts ways with *ever* in exactly the free-choice contexts, those licensing by the
-generic-indefinite mechanism: a possibility modal, an imperative, a generic. -/
+/-- *Any* parts ways with *ever* in exactly the free-choice contexts, those licensing as generic
+contexts: a possibility modal, an imperative, a generic. -/
 theorem licenses_any_not_ever_iff (c : LicensingContext) :
-    c.licenses English.PolarityItems.any ∧ ¬ c.licenses English.PolarityItems.ever ↔
-      c.properties.mechanism = .byGenericIndefinite := by
+    c.Licenses English.PolarityItems.any ∧ ¬ c.Licenses English.PolarityItems.ever ↔
+      c.mechanism = .genericIndefinite := by
   cases c <;> decide
 
 /-! ### The rows -/
@@ -215,7 +215,7 @@ theorem exclusive_under_nobody_forced :
       e.feature? "position" = some "nobody" ∧ e.feature? "reading" = some "exclusive" := by
   decide
 
-/-- Every judgment on *any*, *ever*, *alcuno* and *qualsiasi* is the keystone's: acceptable
+/-- Every judgment on *any*, *ever*, *alcuno* and *qualsiasi* is the licensing theory's: acceptable
 exactly in a licensing context that licenses the Fragment entry. -/
 theorem polarity_rows :
     ∀ e ∈ Examples.all, ∀ i ∈ (e.feature? "item").bind item,

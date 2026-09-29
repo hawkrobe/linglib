@@ -32,9 +32,8 @@ perceptual-ability scale.
   sets of worlds; the paper's point that the relevant inferences may be pragmatic rather than
   logical is not represented.
 * The paper's classifications of the English items of `Fragments/English/PolarityItems.lean`
-  by quantity and role live here (`classified`); the force comes from the fragment's scalar
-  direction, and the derived licensing context is checked against the fragment's record of
-  each item as an NPI or PPI.
+  by force, quantity and role live here (`classified`), and the derived licensing context is
+  checked against the fragment's record of each item as an NPI or PPI.
 
 ## References
 
@@ -64,12 +63,6 @@ inductive Force
 def Force.sign : Force → Polarity
   | .emphatic => .negative
   | .attenuating => .positive
-
-/-- The force of a fragment entry, from its scalar direction. -/
-def Force.ofDirection : ScalarDirection → Option Force
-  | .strengthening => some .emphatic
-  | .attenuating => some .attenuating
-  | .nonScalar => none
 
 /-- Quantity relative to the norm: the size, amount or degree the item denotes. -/
 inductive Quantity
@@ -216,9 +209,10 @@ theorem superlative_ambiguity {exist ability : α → Set W} {f : Set W → Set 
 
 /-! ### The classified lexicon -/
 
-/-- A fragment entry with the paper's classification by quantity and role. -/
+/-- A fragment entry with the paper's classification by force, quantity and role. -/
 structure Classified where
   item : PolarityItem
+  force : Force
   quantity : Quantity
   role : Role
 
@@ -226,23 +220,27 @@ structure Classified where
 and the degree items of Figure 1 in impeding roles, the maximizing NPIs and minimizing PPIs of
 Section 3 in facilitating roles. -/
 def classified : List Classified :=
-  [⟨atAll, .small, .impeding⟩, ⟨liftAFinger, .small, .impeding⟩,
-   ⟨budgeAnInch, .small, .impeding⟩, ⟨somewhat, .small, .impeding⟩,
-   ⟨rather, .small, .impeding⟩, ⟨tonsOf, .large, .impeding⟩, ⟨utterly, .large, .impeding⟩,
-   ⟨wildHorses, .large, .facilitating⟩, ⟨allTheTeaInChina, .large, .facilitating⟩,
-   ⟨aTenFootPole, .large, .facilitating⟩, ⟨inAMillionYears, .large, .facilitating⟩,
-   ⟨atTheDropOfAHat, .small, .facilitating⟩, ⟨inAJiffy, .small, .facilitating⟩,
-   ⟨forAPittance, .small, .facilitating⟩, ⟨forASong, .small, .facilitating⟩]
+  [⟨atAll, .emphatic, .small, .impeding⟩, ⟨liftAFinger, .emphatic, .small, .impeding⟩,
+   ⟨budgeAnInch, .emphatic, .small, .impeding⟩, ⟨somewhat, .attenuating, .small, .impeding⟩,
+   ⟨rather, .attenuating, .small, .impeding⟩, ⟨tonsOf, .emphatic, .large, .impeding⟩,
+   ⟨utterly, .emphatic, .large, .impeding⟩, ⟨wildHorses, .emphatic, .large, .facilitating⟩,
+   ⟨allTheTeaInChina, .emphatic, .large, .facilitating⟩,
+   ⟨aTenFootPole, .emphatic, .large, .facilitating⟩,
+   ⟨inAMillionYears, .emphatic, .large, .facilitating⟩,
+   ⟨atTheDropOfAHat, .emphatic, .small, .facilitating⟩,
+   ⟨inAJiffy, .emphatic, .small, .facilitating⟩, ⟨forAPittance, .emphatic, .small, .facilitating⟩,
+   ⟨forASong, .emphatic, .small, .facilitating⟩]
 
 /-- The direction of the context the fragment records an item as sensitive to: preserving for a
 PPI, reversing for an NPI. -/
 def PolarityItem.contextType (e : PolarityItem) : Option Polarity :=
-  if e.ppi then some .positive else if e.licensor.isSome then some .negative else none
+  if e.antiLicensor.isSome then some .positive else if e.licensor.isSome then some .negative
+  else none
 
 /-- Every classified item's derived licensing context is the one the fragment records. -/
 theorem classified_licensingContext :
-    ∀ c ∈ classified, ∀ d, c.item.scalarDirection.bind Force.ofDirection = some d →
-      PolarityItem.contextType c.item = some (licensingContext d c.quantity c.role) := by
+    ∀ c ∈ classified,
+      PolarityItem.contextType c.item = some (licensingContext c.force c.quantity c.role) := by
   decide
 
 end Israel2001
