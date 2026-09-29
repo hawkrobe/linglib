@@ -40,7 +40,7 @@ namespace Amato2025
 
 open Minimalist
 open Minimalist.FeatureBundle (ofGramFeatures)
-open ArgumentStructure.AuxiliarySelection
+open ArgumentStructure (PerfectAux TransitivityClass)
 
 variable {H : Type*} [DecidableEq H]
 
@@ -278,7 +278,7 @@ def standardItalianAux (s : State Head) : PerfectAux :=
 transitive and unergative verbs, BE with unaccusative and reflexive ones — for every
 subject person. -/
 theorem standardItalian_aux (c : TransitivityClass) (p : Person) :
-    standardItalianAux (derive standardItalian ⟨c, none⟩ p) = canonicalSelection c := by
+    standardItalianAux (derive standardItalian ⟨c, none⟩ p) = c.canonicalSelection := by
   revert c p; decide
 
 /-- (5d), fn. 18: under Voice_imp or Voice_pass the auxiliary is BE whatever the verb —
@@ -306,7 +306,7 @@ def tufilleseAux (s : State Head) : PerfectAux :=
 /-- The mixed system: BBH where Standard Italian has HAVE, BE where it has BE (§3.5). -/
 theorem tufillese_aux (c : TransitivityClass) (p : Person) :
     tufilleseAux (derive standardItalian ⟨c, none⟩ p) =
-      if canonicalSelection c = .have ∧ p = .third then .have else .be := by
+      if c.canonicalSelection = .have ∧ p = .third then .have else .be := by
   revert c p; decide
 
 /-! ### Case and agreement in ditransitive clauses (§4.1.1) -/

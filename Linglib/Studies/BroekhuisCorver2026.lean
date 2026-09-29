@@ -116,7 +116,7 @@ although *van* denotes a source path.
 namespace BroekhuisCorver2026
 
 open Dutch.Adpositions
-open ArgumentStructure.AuxiliarySelection
+open ArgumentStructure (PerfectAux TransitivityClass)
 
 /-! ### The internal structure of an adpositional phrase -/
 
@@ -345,25 +345,25 @@ event a change of location and the verb unaccusative, a location leaves it unerg
 def verbClass (d : Spatial.PathDir) : TransitivityClass :=
   if d = .place then .unergative else .unaccusative
 
-/-- Under any selection rule the verb takes *zijn* 'be' exactly when its complementive denotes a
-path. -/
-theorem selection_verbClass_eq_be_iff (r : Bool) (d : Spatial.PathDir) :
-    selection r (verbClass d) = .be ↔ d ≠ .place := by
-  unfold verbClass; split <;> simp [*, selection]
+/-- Whatever auxiliary reflexives take, the verb takes *zijn* 'be' exactly when its complementive
+denotes a path. -/
+theorem selection_verbClass_eq_be_iff (r : PerfectAux) (d : Spatial.PathDir) :
+    (verbClass d).selection r = .be ↔ d ≠ .place := by
+  unfold verbClass; split <;> simp [*, TransitivityClass.selection]
 
 /-- *De fietser heeft op de heuvel gereden* 'the cyclist rode on the hill' against *de fietser is
 de heuvel op gereden* 'the cyclist rode up the hill': the prepositional phrase of *op* is
 locational and its verb takes *hebben* 'have', the postpositional phrase denotes a goal path and
 its verb takes *zijn* 'be'. -/
-theorem perfect_op (r : Bool) :
-    selection r (verbClass (op.direction .pre)) = .have ∧
-      selection r (verbClass (op.direction .post)) = .be :=
+theorem perfect_op (r : PerfectAux) :
+    (verbClass (op.direction .pre)).selection r = .have ∧
+      (verbClass (op.direction .post)).selection r = .be :=
   ⟨rfl, rfl⟩
 
 /-- A postpositional phrase denotes a path and is the complementive of a verb of traversing, which
 is unaccusative and takes *zijn* 'be'. -/
-theorem postP_selects_zijn (r : Bool) :
-    ∀ a ∈ inventory, .post ∈ a.linearization → selection r (verbClass (a.direction .post)) = .be :=
+theorem postP_selects_zijn (r : PerfectAux) :
+    ∀ a ∈ inventory, .post ∈ a.linearization → (verbClass (a.direction .post)).selection r = .be :=
   fun a ha h ↦ (selection_verbClass_eq_be_iff r _).2 (direction_post_ne_place a ha h)
 
 end BroekhuisCorver2026

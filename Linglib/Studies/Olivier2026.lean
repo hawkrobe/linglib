@@ -36,7 +36,7 @@ and the restructuring one `Restructuring.matrixAux`.
 namespace Olivier2026
 
 open Minimalist (TransferStyle)
-open ArgumentStructure.AuxiliarySelection
+open ArgumentStructure (PerfectAux TransitivityClass)
 
 /-! ### Person values with identity -/
 
@@ -108,7 +108,7 @@ def compound (ea ia : Person) (cl : Clause) : PerfectAux :=
 /-- (59)–(61): identity matching yields the canonical distribution — BE with unaccusatives
 and reflexives, HAVE with transitives and unergatives — for every pair of persons. -/
 theorem compound_eq_canonical (ea ia : Person) (c : TransitivityClass) :
-    compound ea ia ⟨c, none⟩ = canonicalSelection c := by
+    compound ea ia ⟨c, none⟩ = c.canonicalSelection := by
   revert ea ia c; decide
 
 /-- (52): *Jean s'est regardé* against *Jean l'a regardé* — the same third-person value,
@@ -172,7 +172,7 @@ identity vAux inherits is T's iff Voice probed the subject's bearer. -/
 theorem share_switch_iff_selectsBe (ea ia : Person) (c : TransitivityClass)
     (cl : Option Clitic) (hcl : cl ≠ some .detachedReflexive)
     (hp : (cl.map Clitic.prepositional).getD false = false) (rich : Bool) :
-    Restructuring.Switch ea ia ⟨⟨c, cl⟩, .share, rich⟩ ↔ SelectsBe c := by
+    Restructuring.Switch ea ia ⟨⟨c, cl⟩, .share, rich⟩ ↔ c.SelectsBe := by
   rcases cl with _ | cl
   · revert ea ia c rich; decide
   · cases cl <;> first | exact absurd rfl hcl | (revert ea ia c rich; decide) | cases hp

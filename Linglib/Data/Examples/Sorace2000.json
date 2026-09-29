@@ -1,0 +1,2150 @@
+[
+  {
+    "id": "sorace2000_ex1a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(1a)"},
+    "language": "ital1282",
+    "primaryText": "Maria è venuta alla festa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Maria", "Maria"], ["è", "is"], ["venuta", "come"], ["alla", "to.the"], ["festa", "party"]
+    ],
+    "translation": "Maria came to the party.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfLocation"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex1b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(1b)"},
+    "language": "stan1290",
+    "primaryText": "Marie est arrivée en retard",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Marie", "Marie"], ["est", "is"], ["arrivée", "arrived"], ["en", "in"], ["retard", "delay"]
+    ],
+    "translation": "Marie arrived late.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfLocation"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex1c",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(1c)"},
+    "language": "dutc1256",
+    "primaryText": "De brief is met de tweede post gekomen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["De", "the"], ["brief", "letter"], ["is", "is"], ["met", "with"], ["de", "the"],
+      ["tweede", "second"], ["post", "post"], ["gekomen", "arrived"]
+    ],
+    "translation": "The letter arrived with the second post.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfLocation"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex1d",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(1d)"},
+    "language": "stan1295",
+    "primaryText": "Der Zug ist spät angekommen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Der", "the"], ["Zug", "train"], ["ist", "is"], ["spät", "late"], ["angekommen", "arrived"]
+    ],
+    "translation": "The train arrived late.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfLocation"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex4",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(4)"},
+    "language": "ital1282",
+    "primaryText": "Sono arrivati ospiti per ore e ore",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sono", "are"], ["arrivati", "arrived"], ["ospiti", "guests"], ["per", "for"],
+      ["ore", "hours"], ["e", "and"], ["ore", "hours"]
+    ],
+    "translation": "Guests arrived for hours.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfLocation"],
+      ["aux", "be"],
+      ["predicate", "detelicized"]
+    ],
+    "comment": "The auxiliary stays essere although the predicate is atelic.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex5a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(5a)"},
+    "language": "ital1282",
+    "primaryText": "Maria è caduta apposta per farci spaventare",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Maria", "Maria"], ["è", "is"], ["caduta", "fallen"], ["apposta", "on.purpose"],
+      ["per", "to"], ["farci", "make-us"], ["spaventare", "scare"]
+    ],
+    "translation": "Maria fell on purpose to scare us.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfLocation"],
+      ["aux", "be"],
+      ["subject", "agentive"]
+    ],
+    "comment": "The paper labels the example agentive; agentivity does not affect auxiliary choice with these verbs (§3.1).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex5b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(5b)"},
+    "language": "ital1282",
+    "primaryText": "Il bicchiere è caduto dal tavolo",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Il", "the"], ["bicchiere", "glass"], ["è", "is"], ["caduto", "fallen"],
+      ["dal", "from.the"], ["tavolo", "table"]
+    ],
+    "translation": "The glass fell from the table.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfLocation"],
+      ["aux", "be"]
+    ],
+    "comment": "The paper labels the example nonagentive.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex30a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(30a)"},
+    "language": "ital1282",
+    "primaryText": "I bambini hanno arrivato.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["I", "the"], ["bambini", "children"], ["hanno", "have"], ["arrivato", "arrived"]
+    ],
+    "translation": "The children arrived.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfLocation"],
+      ["aux", "have"]
+    ],
+    "comment": "From §3.5, where it is contrasted with the anticausative (30b); the paper prints no translation.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex7a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(7a)"},
+    "language": "ital1282",
+    "primaryText": "La temperatura è salita improvvisamente",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["La", "the"], ["temperatura", "temperature"], ["è", "is"], ["salita", "risen"],
+      ["improvvisamente", "suddenly"]
+    ],
+    "translation": "The temperature suddenly rose.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "La temperatura ha salito improvvisamente", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "Printed ?*ha.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex7b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(7b)"},
+    "language": "ital1282",
+    "primaryText": "Le mele sono marcite al sole",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Le", "the"], ["mele", "apples"], ["sono", "are"], ["marcite", "rotted"], ["al", "in.the"],
+      ["sole", "sun"]
+    ],
+    "translation": "The apples rotted in the sun.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Le mele hanno marcito al sole", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex8a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(8a)"},
+    "language": "ital1282",
+    "primaryText": "La pianta è fiorita due volte quest'anno",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["La", "the"], ["pianta", "plant"], ["è", "is"], ["fiorita", "blossomed"], ["due", "two"],
+      ["volte", "times"], ["quest'anno", "this.year"]
+    ],
+    "translation": "The plant blossomed twice this year.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "La pianta ha fiorito due volte quest'anno", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "Printed with one participle for both auxiliaries, La pianta è / ha fiorito; the participle with essere agrees with the subject.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex9a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(9a)"},
+    "language": "stan1290",
+    "primaryText": "Ma fille est née à cinq heures du matin",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ma", "my"], ["fille", "daughter"], ["est", "is"], ["née", "born"], ["à", "at"],
+      ["cinq", "five"], ["heures", "hours"], ["du", "of.the"], ["matin", "morning"]
+    ],
+    "translation": "My daughter was born at five o'clock in the morning.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "The paper prints the preposition as a without the grave accent.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex9b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(9b)"},
+    "language": "dutc1256",
+    "primaryText": "De leraar is plotseling gestorven",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["De", "the"], ["leraar", "teacher"], ["is", "is"], ["plotseling", "suddenly"],
+      ["gestorven", "died"]
+    ],
+    "translation": "The teacher suddenly died.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex9c",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(9c)"},
+    "language": "stan1295",
+    "primaryText": "Die Zwillinge sind im April geboren",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Die", "the"], ["Zwillinge", "twins"], ["sind", "are"], ["im", "in"], ["April", "April"],
+      ["geboren", "born"]
+    ],
+    "translation": "The twins were born in April.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex10a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(10a)"},
+    "language": "dutc1256",
+    "primaryText": "Haar baby is deze maand enorm gegroeid",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Haar", "her"], ["baby", "baby"], ["is", "is"], ["deze", "this"], ["maand", "month"],
+      ["enorm", "enormous"], ["gegroeid", "grown"]
+    ],
+    "translation": "Her baby has grown enormously this month.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Haar baby heeft deze maand enorm gegroeid", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex10b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(10b)"},
+    "language": "stan1295",
+    "primaryText": "Der Rauch ist in die Höhe gestiegen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Der", "the"], ["Rauch", "smoke"], ["ist", "is"], ["in", "in"], ["die", "the"],
+      ["Höhe", "height"], ["gestiegen", "risen"]
+    ],
+    "translation": "The smoke rose.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex11",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(11)"},
+    "language": "dutc1256",
+    "primaryText": "De temperatuur is 3 uurlang gestegen, maar is toen weer gezakt.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["De", "the"], ["temperatuur", "temperature"], ["is", "is"], ["3", "3"],
+      ["uurlang", "hours"], ["gestegen", "risen"], ["maar", "but"], ["is", "is"], ["toen", "then"],
+      ["weer", "again"], ["gezakt", "dropped"]
+    ],
+    "translation": "The temperature rose for three hours but then dropped again.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "De temperatuur heeft 3 uurlang gestegen, maar is toen weer gezakt.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfState"],
+      ["aux", "be"],
+      ["predicate", "detelicized"]
+    ],
+    "comment": "A durative adverbial makes the predicate atelic (§3.2). Sorace takes the example from van Hout (1993: 7).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex12",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(12)"},
+    "language": "stan1290",
+    "primaryText": "L'enfant est devenu triste",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["L'enfant", "the.child"], ["est", "is"], ["devenu", "become"], ["triste", "sad"]
+    ],
+    "translation": "The child became sad.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "L'enfant a devenu triste", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex13",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(13)"},
+    "language": "stan1290",
+    "primaryText": "Marie a rougi de honte",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Marie", "Marie"], ["a", "has"], ["rougi", "blushed"], ["de", "of"], ["honte", "shame"]
+    ],
+    "translation": "Marie blushed because she was ashamed.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfState"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex14a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(14a)"},
+    "language": "stan1290",
+    "primaryText": "Le livre est paru récemment",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Le", "the"], ["livre", "book"], ["est", "is"], ["paru", "appeared"],
+      ["récemment", "recently"]
+    ],
+    "translation": "The book recently appeared.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Le livre a paru récemment", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex14c",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(14c)"},
+    "language": "stan1290",
+    "primaryText": "Son secret lui est échappé",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Son", "his"], ["secret", "secret"], ["lui", "to-him"], ["est", "is"],
+      ["échappé", "escaped"]
+    ],
+    "translation": "His secret escaped him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "changeOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "Échapper takes être in its change-of-state sense, something said or done inadvertently. The paper's text refers to this example as (14b) and to the avoir example as (14c), the reverse of the printed examples.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex15a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(15a)"},
+    "language": "ital1282",
+    "primaryText": "Ancora una volta sono rimasto solo",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ancora", "again"], ["una", "one"], ["volta", "time"], ["sono", "am"],
+      ["rimasto", "remained"], ["solo", "alone"]
+    ],
+    "translation": "Once again I remained alone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Ancora una volta ho rimasto solo", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "continuationOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex15b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(15b)"},
+    "language": "ital1282",
+    "primaryText": "La guerra è durata a lungo",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["La", "the"], ["guerra", "war"], ["è", "is"], ["durata", "lasted"], ["a", "for"],
+      ["lungo", "long"]
+    ],
+    "translation": "The war lasted a long time.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "La guerra ha durato a lungo", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "continuationOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "Printed with one participle for both auxiliaries, La guerra è / ?ha durato; the participle with essere agrees with the subject.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex15c",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(15c)"},
+    "language": "ital1282",
+    "primaryText": "Il presidente è durato in carica due anni",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Il", "the"], ["presidente", "president"], ["è", "is"], ["durato", "lasted"], ["in", "in"],
+      ["carica", "post"], ["due", "two"], ["anni", "years"]
+    ],
+    "translation": "The president lasted in post for two years.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Il presidente ha durato in carica due anni", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "continuationOfState"],
+      ["aux", "be"],
+      ["subject", "agentive"]
+    ],
+    "comment": "An agentive subject makes avere more acceptable.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex16",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(16)"},
+    "language": "stan1290",
+    "primaryText": "Mes parents ont survécu au tremblement de terre",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mes", "my"], ["parents", "parents"], ["ont", "have"], ["survécu", "survived"],
+      ["au", "to.the"], ["tremblement", "trembling"], ["de", "of"], ["terre", "earth"]
+    ],
+    "translation": "My parents survived the earthquake.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Mes parents sont survécus au tremblement de terre", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "continuationOfState"],
+      ["aux", "have"]
+    ],
+    "comment": "The paper prints the participle with être without its accent, survecus.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex17a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(17a)"},
+    "language": "stan1295",
+    "primaryText": "Die Äpfel haben den ganzen Winter gehalten",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Die", "the"], ["Äpfel", "apples"], ["haben", "have"], ["den", "the"], ["ganzen", "whole"],
+      ["Winter", "winter"], ["gehalten", "lasted"]
+    ],
+    "translation": "The apples lasted the whole winter.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Die Äpfel sind den ganzen Winter gehalten", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "continuationOfState"],
+      ["aux", "have"]
+    ],
+    "comment": "Printed haben / *?sein, with the citation form of the auxiliary.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex17b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(17b)"},
+    "language": "stan1295",
+    "primaryText": "Der Wanderer hat kurz verweilt",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Der", "the"], ["Wanderer", "hiker"], ["hat", "has"], ["kurz", "briefly"],
+      ["verweilt", "stayed"]
+    ],
+    "translation": "The hiker stayed briefly.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Der Wanderer ist kurz verweilt", "judgment": "questionable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "continuationOfState"],
+      ["aux", "have"]
+    ],
+    "comment": "The paper prints no translation.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex18a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(18a)"},
+    "language": "dutc1256",
+    "primaryText": "Slechts één kandidaat is uiteindelijk overgebleven",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Slechts", "only"], ["één", "one"], ["kandidaat", "candidate"], ["is", "is"],
+      ["uiteindelijk", "finally"], ["overgebleven", "remained"]
+    ],
+    "translation": "Only one candidate remained in the end.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "continuationOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex18b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(18b)"},
+    "language": "dutc1256",
+    "primaryText": "Het concert heeft een hele tijd geduurd",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Het", "the"], ["concert", "concert"], ["heeft", "has"], ["een", "a"], ["hele", "whole"],
+      ["tijd", "time"], ["geduurd", "lasted"]
+    ],
+    "translation": "The concert lasted a long time.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Het concert is een hele tijd geduurd", "judgment": "questionable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "continuationOfState"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex19a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(19a)"},
+    "language": "stan1290",
+    "primaryText": "Marie est restée à la maison avec les enfants",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Marie", "Marie"], ["est", "is"], ["restée", "remained"], ["à", "at"], ["la", "the"],
+      ["maison", "house"], ["avec", "with"], ["les", "the"], ["enfants", "children"]
+    ],
+    "translation": "Marie stayed at home with the children.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Marie a resté à la maison avec les enfants", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "continuationOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex19b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(19b)"},
+    "language": "dutc1256",
+    "primaryText": "De onverwachte gast is voor het eten gebleven",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["De", "the"], ["onverwachte", "unexpected"], ["gast", "guest"], ["is", "is"],
+      ["voor", "for"], ["het", "the"], ["eten", "meal"], ["gebleven", "remained"]
+    ],
+    "translation": "The unexpected guest stayed for a meal.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "De onverwachte gast heeft voor het eten gebleven", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "continuationOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex19c",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(19c)"},
+    "language": "stan1295",
+    "primaryText": "Die Gäste sind am Tisch sitzen geblieben",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Die", "the"], ["Gäste", "guests"], ["sind", "are"], ["am", "at.the"], ["Tisch", "table"],
+      ["sitzen", "seated"], ["geblieben", "remained"]
+    ],
+    "translation": "The guests remained seated at the table.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Die Gäste haben am Tisch sitzen geblieben", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "continuationOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex20a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(20a)"},
+    "language": "ital1282",
+    "primaryText": "I dinosauri sono esistiti 65 milioni di anni fa.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["I", "the"], ["dinosauri", "dinosaurs"], ["sono", "are"], ["esistiti", "existed"],
+      ["65", "65"], ["milioni", "millions"], ["di", "of"], ["anni", "years"], ["fa", "ago"]
+    ],
+    "translation": "The dinosaurs existed 65 million years ago.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I dinosauri hanno esistito 65 milioni di anni fa.", "judgment": "questionable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "existenceOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex20b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(20b)"},
+    "language": "ital1282",
+    "primaryText": "La farina non è bastata per fare la torta.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["La", "the"], ["farina", "flour"], ["non", "not"], ["è", "is"], ["bastata", "lasted"],
+      ["per", "to"], ["fare", "make"], ["la", "the"], ["torta", "cake"]
+    ],
+    "translation": "There wasn't enough flour to make the cake.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "La farina non ha bastato per fare la torta.", "judgment": "questionable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "existenceOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex20c",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(20c)"},
+    "language": "ital1282",
+    "primaryText": "La commedia è sembrata interessante a tutti",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["La", "the"], ["commedia", "play"], ["è", "is"], ["sembrata", "seemed"],
+      ["interessante", "interesting"], ["a", "to"], ["tutti", "all"]
+    ],
+    "translation": "The play seemed interesting to everyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "La commedia ha sembrato interessante a tutti", "judgment": "questionable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "existenceOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex21a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(21a)"},
+    "language": "ital1282",
+    "primaryText": "Una lunghissima vita avrebbe appena bastato ad appagare il mio cuore.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Una", "a"], ["lunghissima", "very.long"], ["vita", "life"], ["avrebbe", "would.have"],
+      ["appena", "just"], ["bastato", "sufficed"], ["ad", "to"], ["appagare", "satisfy"],
+      ["il", "the"], ["mio", "my"], ["cuore", "heart"]
+    ],
+    "translation": "A very long life would have just sufficed to satisfy my heart.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "existenceOfState"],
+      ["aux", "have"]
+    ],
+    "comment": "An attested alternation: avere with a verb that otherwise prefers essere, cf. (20b).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex21b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(21b)"},
+    "language": "ital1282",
+    "primaryText": "La vita ha appartenuto solo a me.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["La", "the"], ["vita", "life"], ["ha", "has"], ["appartenuto", "belonged"],
+      ["solo", "only"], ["a", "to"], ["me", "me"]
+    ],
+    "translation": "My life belonged only to me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "existenceOfState"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex21c",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(21c)"},
+    "language": "ital1282",
+    "primaryText": "Il cibo è scarseggiato tra i terremotati.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Il", "the"], ["cibo", "food"], ["è", "is"], ["scarseggiato", "run.short"],
+      ["tra", "among"], ["i", "the"], ["terremotati", "earthquake.victims"]
+    ],
+    "translation": "The food ran short supply among the earthquake victims.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Il cibo ha scarseggiato tra i terremotati.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "existenceOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex22",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(22)"},
+    "language": "stan1290",
+    "primaryText": "Les dinosaures ont existé il y a 65 millions d'ans.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Les", "the"], ["dinosaures", "dinosaurs"], ["ont", "have"], ["existé", "existed"],
+      ["il", "it"], ["y", "there"], ["a", "has"], ["65", "65"], ["millions", "million"],
+      ["d'ans", "of.years"]
+    ],
+    "translation": "The dinosaurs existed 65 million years ago.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Les dinosaures sont existé il y a 65 millions d'ans.", "judgment": "unacceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "existenceOfState"],
+      ["aux", "have"]
+    ],
+    "comment": "The paper prints the determiner as Le, and the variant as /*?sont existé.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex23a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(23a)"},
+    "language": "stan1295",
+    "primaryText": "Das Buch hat mir gefallen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Das", "the"], ["Buch", "book"], ["hat", "has"], ["mir", "to-me"], ["gefallen", "pleased"]
+    ],
+    "translation": "I liked the book.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "existenceOfState"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex23b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(23b)"},
+    "language": "stan1295",
+    "primaryText": "Das hat mir genügt.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Das", "this"], ["hat", "has"], ["mir", "to-me"], ["genügt", "sufficed"]
+    ],
+    "translation": "This was enough for me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "existenceOfState"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex23c",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(23c)"},
+    "language": "stan1295",
+    "primaryText": "Das Buch ist auf dem Boden gelegen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Das", "the"], ["Buch", "book"], ["ist", "is"], ["auf", "on"], ["dem", "the"],
+      ["Boden", "floor"], ["gelegen", "lain"]
+    ],
+    "translation": "The book was lying on the floor.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Das Buch hat auf dem Boden gelegen.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "existenceOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex23d",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(23d)"},
+    "language": "stan1295",
+    "primaryText": "Ich bin von ihr abgehangen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ich", "I"], ["bin", "am"], ["von", "from"], ["ihr", "her"], ["abgehangen", "depended"]
+    ],
+    "translation": "I depended on her.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Ich habe von ihr abgehangen.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "existenceOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex24a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(24a)"},
+    "language": "dutc1256",
+    "primaryText": "Het beeldje heeft op de tafel gestaan.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Het", "the"], ["beeldje", "picture"], ["heeft", "has"], ["op", "on"], ["de", "the"],
+      ["tafel", "table"], ["gestaan", "stood"]
+    ],
+    "translation": "The picture stood on the table.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "existenceOfState"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex24b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(24b)"},
+    "language": "dutc1256",
+    "primaryText": "Het magische zwaard heeft echt bestaan.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Het", "the"], ["magische", "magic"], ["zwaard", "sword"], ["heeft", "has"],
+      ["echt", "really"], ["bestaan", "existed"]
+    ],
+    "translation": "The magic sword really existed.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "existenceOfState"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex24c",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(24c)"},
+    "language": "dutc1256",
+    "primaryText": "Sofie is een goede docente gebleken.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Sofie", "Sofie"], ["is", "is"], ["een", "a"], ["goede", "good"], ["docente", "teacher"],
+      ["gebleken", "seemed"]
+    ],
+    "translation": "Sofie seemed a good teacher.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "existenceOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex25a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(25a)"},
+    "language": "stan1295",
+    "primaryText": "Peter ist lange Zeit im Ausland gewesen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Peter", "Peter"], ["ist", "is"], ["lange", "long"], ["Zeit", "time"], ["im", "in.the"],
+      ["Ausland", "abroad"], ["gewesen", "been"]
+    ],
+    "translation": "Peter was abroad for a long time.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "existenceOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "The paper prints in Ausland, glossed in abroad. BE itself is the exception the paper notes for Dutch and German.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex25b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(25b)"},
+    "language": "dutc1256",
+    "primaryText": "Anne is deze winter in Australië geweest.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Anne", "Anne"], ["is", "is"], ["deze", "this"], ["winter", "winter"], ["in", "in"],
+      ["Australië", "Australia"], ["geweest", "been"]
+    ],
+    "translation": "Anne was in Australia last winter.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "existenceOfState"],
+      ["aux", "be"]
+    ],
+    "comment": "BE itself is the exception the paper notes for Dutch and German.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex33a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(33a)"},
+    "language": "ital1282",
+    "primaryText": "I colleghi hanno chiacchierato tutto il pomeriggio.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["I", "the"], ["colleghi", "colleagues"], ["hanno", "have"], ["chiacchierato", "chatted"],
+      ["tutto", "whole"], ["il", "the"], ["pomeriggio", "afternoon"]
+    ],
+    "translation": "My colleagues chatted the whole afternoon.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "nonmotionalProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "The paper prints chiaccherato.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex33b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(33b)"},
+    "language": "stan1290",
+    "primaryText": "Les policiers ont travaillé toute la nuit.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Les", "the"], ["policiers", "policemen"], ["ont", "have"], ["travaillé", "worked"],
+      ["toute", "whole"], ["la", "the"], ["nuit", "night"]
+    ],
+    "translation": "The policemen worked all night.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "nonmotionalProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex33c",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(33c)"},
+    "language": "dutc1256",
+    "primaryText": "De trompettist heeft met bolle wangen geblazen.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["De", "the"], ["trompettist", "trumpeter"], ["heeft", "has"], ["met", "with"],
+      ["bolle", "puffed-out"], ["wangen", "cheeks"], ["geblazen", "blown"]
+    ],
+    "translation": "The trumpeter blew with puffed-out cheeks.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "nonmotionalProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex33d",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(33d)"},
+    "language": "stan1295",
+    "primaryText": "Kurt hat den ganzen Sonntag gearbeitet.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Kurt", "Kurt"], ["hat", "has"], ["den", "the"], ["ganzen", "whole"], ["Sonntag", "Sunday"],
+      ["gearbeitet", "worked"]
+    ],
+    "translation": "Kurt worked all day Sunday.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "nonmotionalProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex34",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(34)"},
+    "language": "ital1282",
+    "primaryText": "Il cibo inviato dall'ONU ha funzionato solo come palliativo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Il", "the"], ["cibo", "food"], ["inviato", "sent"], ["dall'ONU", "by.the.UN"],
+      ["ha", "has"], ["funzionato", "functioned"], ["solo", "only"], ["come", "as"],
+      ["palliativo", "palliative"]
+    ],
+    "translation": "The food sent by the UN worked only as a palliative.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Il cibo inviato dall'ONU è funzionato solo come palliativo.", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "nonmotionalProcess"],
+      ["aux", "have"],
+      ["subject", "nonagentive"]
+    ],
+    "comment": "Some speakers find essere not completely unacceptable with a nonagentive subject.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex35",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(35)"},
+    "language": "ital1282",
+    "primaryText": "I poliziotti hanno lavorato fino all'alba.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["I", "the"], ["poliziotti", "policemen"], ["hanno", "have"], ["lavorato", "worked"],
+      ["fino", "until"], ["all'alba", "the.dawn"]
+    ],
+    "translation": "The policemen worked until dawn.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "nonmotionalProcess"],
+      ["aux", "have"],
+      ["predicate", "telicized"]
+    ],
+    "comment": "A temporally bounding adverbial leaves the auxiliary avere.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex36a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(36a)"},
+    "language": "ital1282",
+    "primaryText": "Maria ha ceduto alle tue insistenze",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Maria", "Maria"], ["ha", "has"], ["ceduto", "yielded"], ["alle", "to.the"],
+      ["tue", "your"], ["insistenze", "pressure"]
+    ],
+    "translation": "Maria yielded to your pressure.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Maria è ceduta alle tue insistenze", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "nonmotionalProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "From §4.2, the controlled affecting processes, a subclass of the controlled processes that selects HAVE less categorically than the unaffecting ones. Printed ha / *è ceduta; the participle with avere takes the default form.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex36b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(36b)"},
+    "language": "ital1282",
+    "primaryText": "Il pavimento ha ceduto all'improvviso",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Il", "the"], ["pavimento", "floor"], ["ha", "has"], ["ceduto", "yielded"],
+      ["all'improvviso", "suddenly"]
+    ],
+    "translation": "The floor suddenly yielded.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Il pavimento è ceduto all'improvviso", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "nonmotionalProcess"],
+      ["aux", "have"],
+      ["subject", "nonagentive"]
+    ],
+    "comment": "From §4.2; with a nonhuman subject these verbs tend to accept BE as well.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex37a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(37a)"},
+    "language": "ital1282",
+    "primaryText": "Gli atleti svedesi hanno corso alle Olimpiadi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Gli", "the"], ["atleti", "athletes"], ["svedesi", "swedish"], ["hanno", "have"],
+      ["corso", "run"], ["alle", "at.the"], ["Olimpiadi", "Olympics"]
+    ],
+    "translation": "The Swedish athletes ran at the Olympic Games.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Gli atleti svedesi sono corsi alle Olimpiadi", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex37b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(37b)"},
+    "language": "dutc1256",
+    "primaryText": "De zwerver heeft overal gelopen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["De", "the"], ["zwerver", "vagabond"], ["heeft", "has"], ["overal", "overall"],
+      ["gelopen", "run"]
+    ],
+    "translation": "The vagabond ran all over the place.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "De zwerver is overal gelopen", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex37c",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(37c)"},
+    "language": "stan1290",
+    "primaryText": "Marie a nagé tout l'après-midi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Marie", "Marie"], ["a", "has"], ["nagé", "swum"], ["tout", "all"],
+      ["l'après-midi", "the.afternoon"]
+    ],
+    "translation": "Marie swam the whole afternoon.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Marie est nagée tout l'après-midi", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex38_rennen",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(38)"},
+    "language": "stan1295",
+    "primaryText": "Uschi ist den ganzen Tag gerannt",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Uschi", "Uschi"], ["ist", "is"], ["den", "the"], ["ganzen", "whole"], ["Tag", "day"],
+      ["gerannt", "run"]
+    ],
+    "translation": "Uschi ran the whole day.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Uschi hat den ganzen Tag gerannt", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "be"]
+    ],
+    "comment": "Printed with three participles, gerannt / gelaufen / geschwommen; the paper's translation says the whole afternoon.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex38_laufen",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(38)"},
+    "language": "stan1295",
+    "primaryText": "Uschi ist den ganzen Tag gelaufen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Uschi", "Uschi"], ["ist", "is"], ["den", "the"], ["ganzen", "whole"], ["Tag", "day"],
+      ["gelaufen", "walked"]
+    ],
+    "translation": "Uschi walked the whole day.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Uschi hat den ganzen Tag gelaufen", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "be"]
+    ],
+    "comment": "Printed with three participles, gerannt / gelaufen / geschwommen; the paper's translation says the whole afternoon.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex38_schwimmen",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(38)"},
+    "language": "stan1295",
+    "primaryText": "Uschi ist den ganzen Tag geschwommen",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Uschi", "Uschi"], ["ist", "is"], ["den", "the"], ["ganzen", "whole"], ["Tag", "day"],
+      ["geschwommen", "swum"]
+    ],
+    "translation": "Uschi swam the whole day.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Uschi hat den ganzen Tag geschwommen", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "be"]
+    ],
+    "comment": "Printed with three participles, gerannt / gelaufen / geschwommen; the paper's translation says the whole afternoon.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex39a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(39a)"},
+    "language": "dutc1256",
+    "primaryText": "De bal heeft gerold",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["De", "the"], ["bal", "ball"], ["heeft", "has"], ["gerold", "rolled"]
+    ],
+    "translation": "The ball rolled.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "De bal is gerold", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex39b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(39b)"},
+    "language": "dutc1256",
+    "primaryText": "De bal is naar beneden gerold",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["De", "the"], ["bal", "ball"], ["is", "is"], ["naar", "to"], ["beneden", "down"],
+      ["gerold", "rolled"]
+    ],
+    "translation": "The ball rolled downstairs.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "De bal heeft naar beneden gerold", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "be"],
+      ["predicate", "telicized"]
+    ],
+    "comment": "A directional phrase (§4.3).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex40a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(40a)"},
+    "language": "stan1295",
+    "primaryText": "Hans und Rita haben im Saal getanzt",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hans", "Hans"], ["und", "and"], ["Rita", "Rita"], ["haben", "have"], ["im", "in.the"],
+      ["Saal", "hall"], ["getanzt", "danced"]
+    ],
+    "translation": "Hans and Rita danced in the hall.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Hans und Rita sind im Saal getanzt", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex40b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(40b)"},
+    "language": "stan1295",
+    "primaryText": "Hans und Rita sind in den Saal getanzt",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Hans", "Hans"], ["und", "and"], ["Rita", "Rita"], ["sind", "are"], ["in", "into"],
+      ["den", "the"], ["Saal", "hall"], ["getanzt", "danced"]
+    ],
+    "translation": "Hans and Rita danced into the hall.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Hans und Rita haben in den Saal getanzt", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "be"],
+      ["predicate", "telicized"]
+    ],
+    "comment": "A directional phrase (§4.3).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex41a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(41a)"},
+    "language": "ital1282",
+    "primaryText": "Maria ha corso velocemente.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Maria", "Maria"], ["ha", "has"], ["corso", "run"], ["velocemente", "fast"]
+    ],
+    "translation": "Maria ran fast.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Maria è corsa velocemente.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex41b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(41b)"},
+    "language": "ital1282",
+    "primaryText": "Maria è corsa in farmacia",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Maria", "Maria"], ["è", "is"], ["corsa", "run"], ["in", "to"],
+      ["farmacia", "the.pharmacy"]
+    ],
+    "translation": "Maria ran to the pharmacy.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Maria ha corso in farmacia", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "be"],
+      ["predicate", "telicized"]
+    ],
+    "comment": "A directional phrase (§4.3).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex41c",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(41c)"},
+    "language": "ital1282",
+    "primaryText": "Paola ha nuotato con perfetto stile",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Paola", "Paola"], ["ha", "has"], ["nuotato", "swum"], ["con", "with"],
+      ["perfetto", "perfect"], ["stile", "style"]
+    ],
+    "translation": "Paola swam with perfect style.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Paola è nuotata con perfetto stile", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex41d",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(41d)"},
+    "language": "ital1282",
+    "primaryText": "Paola ha nuotato a riva",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Paola", "Paola"], ["ha", "has"], ["nuotato", "swum"], ["a", "to"], ["riva", "the.shore"]
+    ],
+    "translation": "Paola swam to the shore.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Paola è nuotata a riva", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "have"],
+      ["predicate", "telicized"]
+    ],
+    "comment": "A directional phrase; nuotare, unlike correre (41b), keeps avere (§4.3).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex42a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(42a)"},
+    "language": "stan1290",
+    "primaryText": "Marie a couru très vite",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Marie", "Marie"], ["a", "has"], ["couru", "run"], ["très", "very"], ["vite", "fast"]
+    ],
+    "translation": "Marie ran very fast.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Marie est courue très vite", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "The paper prints tres without its accent.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex42b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(42b)"},
+    "language": "stan1290",
+    "primaryText": "Marie a couru jusqu'à la maison",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Marie", "Marie"], ["a", "has"], ["couru", "run"], ["jusqu'à", "as.far.as"], ["la", "the"],
+      ["maison", "house"]
+    ],
+    "translation": "Marie ran home.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Marie est courue jusqu'à la maison", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "have"],
+      ["predicate", "telicized"]
+    ],
+    "comment": "A directional phrase; in French the event-type shift leaves avoir (§4.3).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex43a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(43a)"},
+    "language": "ital1282",
+    "primaryText": "È corsa voce che Maria si sposa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["È", "is"], ["corsa", "run"], ["voce", "rumor"], ["che", "that"], ["Maria", "Maria"],
+      ["si", "self"], ["sposa", "marries"]
+    ],
+    "translation": "The rumor spread that Maria is getting married.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Ha corso voce che Maria si sposa", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "be"],
+      ["subject", "nonagentive"]
+    ],
+    "comment": "An idiomatic, nonagentive use.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex43b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(43b)"},
+    "language": "ital1282",
+    "primaryText": "È saltato fuori che i magistrati erano corrotti",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["È", "is"], ["saltato", "jumped"], ["fuori", "out"], ["che", "that"], ["i", "the"],
+      ["magistrati", "magistrates"], ["erano", "were"], ["corrotti", "corrupted"]
+    ],
+    "translation": "It turned out that the magistrates were corrupted.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Ha saltato fuori che i magistrati erano corrotti", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "be"],
+      ["subject", "nonagentive"]
+    ],
+    "comment": "A sentential subject.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex44a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(44a)"},
+    "language": "ital1282",
+    "primaryText": "Il pilota ha atterrato sulla pista di emergenza",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Il", "the"], ["pilota", "pilot"], ["ha", "has"], ["atterrato", "landed"],
+      ["sulla", "on.the"], ["pista", "runway"], ["di", "of"], ["emergenza", "emergency"]
+    ],
+    "translation": "The pilot landed on the emergency runway.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Il pilota è atterrato sulla pista di emergenza", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "A volitional subject.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex44b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(44b)"},
+    "language": "ital1282",
+    "primaryText": "L'aereo è atterrato sulla pista di emergenza",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["L'aereo", "the.plane"], ["è", "is"], ["atterrato", "landed"], ["sulla", "on.the"],
+      ["pista", "runway"], ["di", "of"], ["emergenza", "emergency"]
+    ],
+    "translation": "The plane landed on the emergency runway.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "L'aereo ha atterrato sulla pista di emergenza", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "motionalProcess"],
+      ["aux", "be"],
+      ["subject", "nonagentive"]
+    ],
+    "comment": "A nonvolitional subject, against the pilot of (44a).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex45a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(45a)"},
+    "language": "ital1282",
+    "primaryText": "La fede religiosa ha tentennato anche nei più forti",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["La", "the"], ["fede", "faith"], ["religiosa", "religious"], ["ha", "has"],
+      ["tentennato", "wavered"], ["anche", "even"], ["nei", "in.the"], ["più", "most"],
+      ["forti", "strong"]
+    ],
+    "translation": "The religious faith wavered even in the strongest people.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "La fede religiosa è tentennata anche nei più forti", "judgment": "questionable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "uncontrolledProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex45b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(45b)"},
+    "language": "ital1282",
+    "primaryText": "Paolo ha tentennato a lungo prima di decidersi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Paolo", "Paolo"], ["ha", "has"], ["tentennato", "wavered"], ["a", "for"],
+      ["lungo", "long"], ["prima", "before"], ["di", "of"], ["decidersi", "decide-self"]
+    ],
+    "translation": "Paolo wavered for a long time before he made up his mind.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Paolo è tentennato a lungo prima di decidersi", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "uncontrolledProcess"],
+      ["aux", "have"],
+      ["subject", "agentive"]
+    ],
+    "comment": "An agentive subject; these verbs prefer HAVE with agentive subjects (§4.4).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex46a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(46a)"},
+    "language": "ital1282",
+    "primaryText": "Mario ha tossito",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mario", "Mario"], ["ha", "has"], ["tossito", "coughed"]
+    ],
+    "translation": "Mario coughed.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Mario è tossito", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "uncontrolledProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex46b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(46b)"},
+    "language": "ital1282",
+    "primaryText": "Mario ha tossito apposta per attirare l'attenzione.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mario", "Mario"], ["ha", "has"], ["tossito", "coughed"], ["apposta", "on.purpose"],
+      ["per", "to"], ["attirare", "attract"], ["l'attenzione", "the.attention"]
+    ],
+    "translation": "Mario coughed on purpose to attract attention.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "uncontrolledProcess"],
+      ["aux", "have"],
+      ["subject", "agentive"]
+    ],
+    "comment": "The phrase on purpose construes the bodily function as volitional (§4.4).",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex47a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(47a)"},
+    "language": "ital1282",
+    "primaryText": "Il telefono ha squillato.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Il", "the"], ["telefono", "telephone"], ["ha", "has"], ["squillato", "rung"]
+    ],
+    "translation": "The telephone rang.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Il telefono è squillato.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "uncontrolledProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex47b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(47b)"},
+    "language": "ital1282",
+    "primaryText": "L'eco ha risuonato nella caverna",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["L'eco", "the.echo"], ["ha", "has"], ["risuonato", "resounded"], ["nella", "in.the"],
+      ["caverna", "cave"]
+    ],
+    "translation": "The echo resounded in the cave.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "L'eco è risuonato nella caverna", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "uncontrolledProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex47c",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(47c)"},
+    "language": "ital1282",
+    "primaryText": "Il tuono ha rimbombato",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Il", "the"], ["tuono", "thunder"], ["ha", "has"], ["rimbombato", "rumbled"]
+    ],
+    "translation": "The thunder rumbled.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Il tuono è rimbombato", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "uncontrolledProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex47d",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(47d)"},
+    "language": "ital1282",
+    "primaryText": "La campana ha rintoccato",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["La", "the"], ["campana", "bell"], ["ha", "has"], ["rintoccato", "tolled"]
+    ],
+    "translation": "The bell tolled.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "La campana è rintoccata", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "uncontrolledProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "Printed with one participle for both auxiliaries, ha/?è rintoccata; the participle with avere takes the default form.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex48_piovere",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(48)"},
+    "language": "ital1282",
+    "primaryText": "Ieri ha piovuto tutto il giorno",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ieri", "yesterday"], ["ha", "has"], ["piovuto", "rained"], ["tutto", "all"], ["il", "the"],
+      ["giorno", "day"]
+    ],
+    "translation": "Yesterday it rained all day.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Ieri è piovuto tutto il giorno", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "uncontrolledProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "Printed with three participles, piovuto / nevicato / gradinato.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex48_nevicare",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(48)"},
+    "language": "ital1282",
+    "primaryText": "Ieri ha nevicato tutto il giorno",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ieri", "yesterday"], ["ha", "has"], ["nevicato", "snowed"], ["tutto", "all"],
+      ["il", "the"], ["giorno", "day"]
+    ],
+    "translation": "Yesterday it snowed all day.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Ieri è nevicato tutto il giorno", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "uncontrolledProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "Printed with three participles, piovuto / nevicato / gradinato.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex48_grandinare",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(48)"},
+    "language": "ital1282",
+    "primaryText": "Ieri ha grandinato tutto il giorno",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ieri", "yesterday"], ["ha", "has"], ["grandinato", "hailed"], ["tutto", "all"],
+      ["il", "the"], ["giorno", "day"]
+    ],
+    "translation": "Yesterday it hailed all day.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Ieri è grandinato tutto il giorno", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "uncontrolledProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "Printed with three participles, piovuto / nevicato / gradinato; the last is a misprint for grandinato.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex49",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(49)"},
+    "language": "ital1282",
+    "primaryText": "Mi è piovuto sulla testa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mi", "to-me"], ["è", "is"], ["piovuto", "rained"], ["sulla", "on.the"], ["testa", "head"]
+    ],
+    "translation": "It rained over my head.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Mi ha piovuto sulla testa", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "uncontrolledProcess"],
+      ["aux", "be"],
+      ["predicate", "telicized"]
+    ],
+    "comment": "A directional phrase expresses the endpoint.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex50a",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(50a)"},
+    "language": "ital1282",
+    "primaryText": "Ha tuonato molto durante il temporale",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ha", "has.3SG"], ["tuonato", "thundered"], ["molto", "a.lot"], ["durante", "during"],
+      ["il", "the"], ["temporale", "storm"]
+    ],
+    "translation": "It thundered a lot during the storm.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "È tuonato molto durante il temporale", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "uncontrolledProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex50b",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(50b)"},
+    "language": "ital1282",
+    "primaryText": "Ha lampeggiato all'improvviso",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ha", "has.3SG"], ["lampeggiato", "flashed.lightning"], ["all'improvviso", "suddenly"]
+    ],
+    "translation": "It flashed lightning suddenly.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "È lampeggiato all'improvviso", "judgment": "marginal"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "uncontrolledProcess"],
+      ["aux", "have"]
+    ],
+    "comment": "",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex51_tuonare",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(51)"},
+    "language": "ital1282",
+    "primaryText": "Ci è tuonato sopra",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ci", "to-us"], ["è", "is"], ["tuonato", "thundered"], ["sopra", "over"]
+    ],
+    "translation": "It thundered over us.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "uncontrolledProcess"],
+      ["aux", "be"],
+      ["predicate", "telicized"]
+    ],
+    "comment": "Printed with two participles, tuonato / lampeggiato, under a directional reading.",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "sorace2000_ex51_lampeggiare",
+    "source": {"bibkey": "sorace-2000", "paperLabel": "(51)"},
+    "language": "ital1282",
+    "primaryText": "Ci è lampeggiato sopra",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Ci", "to-us"], ["è", "is"], ["lampeggiato", "flashed.lightning"], ["sopra", "over"]
+    ],
+    "translation": "It flashed lightning over us.",
+    "context": "",
+    "judgment": "marginal",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["position", "uncontrolledProcess"],
+      ["aux", "be"],
+      ["predicate", "telicized"]
+    ],
+    "comment": "Printed with two participles, tuonato / lampeggiato, under a directional reading.",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]

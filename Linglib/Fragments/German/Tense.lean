@@ -52,7 +52,7 @@ state; *bleiben* and *sein* themselves, which also take *sein*, are outside it.
 
 namespace German
 
-open ArgumentStructure.AuxiliarySelection
+open ArgumentStructure (PerfectAux TransitivityClass)
 
 /-- The principal parts of a verb are its stem, the infinitive, the third person singular present
 and past and the past participle, with the auxiliary of its perfect. -/
@@ -83,7 +83,7 @@ def perfectAuxiliary (v : _root_.Verb) : PerfectAux := if v.IsUnaccusative then 
 /-- The choice agrees with the selection rule for German, under which only the unaccusatives
 among the transitivity classes select *sein*. -/
 theorem germanSelection_eq_be_iff (c : TransitivityClass) :
-    germanSelection c = .be ↔ c = .unaccusative := by
+    c.germanSelection = .be ↔ c = .unaccusative := by
   cases c <;> decide
 
 /-- The principal parts of a verb entry are its stem with the auxiliary its unaccusativity
