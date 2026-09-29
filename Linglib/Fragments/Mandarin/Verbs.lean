@@ -102,7 +102,6 @@ def zhidao : Verb := {
   frames := [ArgumentFrame.finiteClause, ArgumentFrame.question]
   passivizable := false
   opaqueContext := true
-  projectionBehavior := some .hole
   attitude := some (.doxastic .veridical)
   factivity := some .semi }
 
@@ -113,7 +112,6 @@ def houhui : Verb := {
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
-  projectionBehavior := some .hole
   attitude := some (.preferential (.degreeComparison .negative))
   factivity := some .full }
 

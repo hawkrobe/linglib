@@ -151,16 +151,12 @@ structure Aspect where
   phasal : Option Phasal := none
   deriving Repr, BEq
 
-/-- The presupposition profile of a verb is its factivity class and complement-projection
-    behavior. Whether the verb triggers a presupposition, and of which kind, is derived
-    (`Verb.triggerType`). -/
+/-- The presupposition profile of a verb is its factivity class. Whether the verb triggers a
+    presupposition, and of which kind, is derived (`Verb.triggerType?`). -/
 structure Presupposition where
   /-- The [karttunen-1971b] factivity class of a factive predicate; `none` for a
       non-factive. -/
   factivity : Option _root_.Presupposition.Factivity := none
-  /-- How does the verb treat presuppositions of its complement?
-      Orthogonal to `Verb.triggerType`. [karttunen-1973] -/
-  projectionBehavior : Option _root_.Presupposition.ProjectionBehavior := none
   deriving Repr, BEq
 
 /-- The causal and implicative semantics of a verb are its implicative polarity and causative

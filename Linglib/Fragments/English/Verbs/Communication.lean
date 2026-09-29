@@ -33,7 +33,6 @@ def say : Verb where
   speechActVerb := true
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .achievement
-  projectionBehavior := some .plug
   levinClasses := {LevinClass.say}
 
 /-- "tell" — communication verb with recipient.
@@ -51,7 +50,6 @@ def tell : Verb where
     ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩,
     ArgumentFrame.np_pp (some Adpositions.to_)]
   vendlerClass := some .achievement
-  projectionBehavior := some .plug
   levinClasses := {LevinClass.tell, .transferOfMessage}
 
 /-- "claim" — communication verb, speaker doesn't endorse -/
@@ -60,7 +58,6 @@ def claim : Verb := .mkRegular {
   speechActVerb := true
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .achievement
-  projectionBehavior := some .plug
   levinClasses := {LevinClass.say} }
 
 /-! ### Manner of Speaking (Levin 37.3) -/

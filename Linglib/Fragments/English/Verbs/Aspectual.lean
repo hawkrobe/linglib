@@ -34,7 +34,6 @@ def stop : Verb where
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
-  projectionBehavior := some .hole
   phasal := some .cessation
   levinClasses := {LevinClass.begin, .lodge}
 

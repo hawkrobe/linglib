@@ -9,10 +9,16 @@ hosts it (`Trigger`), the consensus inventory of the projection literature after
 after Tonhauser, Beaver, Roberts and Simons. Abusch divides triggers into hard ones, whose
 presupposition always projects, and soft ones, whose presupposition can be suspended
 (`TriggerType`). Karttunen divides the factive predicates into true factives and semi-factives
-(`Factivity`), and classifies a predicate as a plug, a hole or a filter by what it does with the
-presuppositions of its complement (`ProjectionBehavior`). A verb's entry records its factivity
-and projection behavior, and its trigger type is derived (`Verb.triggerType?`); an adverb,
-particle or affix that triggers a presupposition is a `TriggerItem`.
+(`Factivity`). A verb's entry records its factivity, and its trigger type is derived
+(`Verb.triggerType?`); an adverb, particle or affix that triggers a presupposition is a
+`TriggerItem`.
+
+## Implementation notes
+
+What a predicate does with the presuppositions of its complement is not recorded on its entry.
+It follows from the predicate's semantics: a factive, an aspectual or an implicative passes them
+on unchanged, and an attitude verb makes its report presuppose that the holder believes them
+([karttunen-1974-presupposition], [heim-1992]).
 
 ## References
 
@@ -20,7 +26,8 @@ particle or affix that triggers a presupposition is a `TriggerItem`.
 * [tonhauser-beaver-roberts-simons-2013]
 * [abusch-2010]
 * [karttunen-1971b]
-* [karttunen-1973]
+* [karttunen-1974-presupposition]
+* [heim-1992]
 * [nadathur-2023-implicatives]
 * [von-stechow-1996]
 * [ippolito-2007]
@@ -51,19 +58,6 @@ inductive Factivity where
   /-- A semi-factive such as *know* or *discover*, whose complement follows from the sentence
   and its negation only. -/
   | semi
-  deriving DecidableEq, Repr
-
-/-- What a predicate does with the presuppositions of its complement ([karttunen-1973]). The
-classification is orthogonal to `TriggerType`, which says whether the predicate itself triggers
-a presupposition. -/
-inductive ProjectionBehavior where
-  /-- A plug blocks every presupposition of its complement (*say*, *tell*, *promise*). -/
-  | plug
-  /-- A hole lets every presupposition of its complement project (*know*, *regret*, *stop*). -/
-  | hole
-  /-- A filter cancels some presuppositions of its complement under a condition (*if ... then*,
-  *and*, *or*). -/
-  | filter
   deriving DecidableEq, Repr
 
 /-- The class of a presupposition trigger, by the kind of expression that hosts it. -/
