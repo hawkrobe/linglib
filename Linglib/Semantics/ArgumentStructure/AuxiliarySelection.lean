@@ -5,41 +5,40 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Order.BoundedOrder.Basic
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Perfect-auxiliary selection (be/have)
 
-[burzio-1986] [sorace-2000]
-
-The be/have perfect-auxiliary selection typology: many European languages select
-between *be* and *have* as the perfect auxiliary by the transitivity/
-unaccusativity class of the lexical verb (the Auxiliary Selection Hierarchy):
-unaccusatives → *be* (Italian *è arrivato*, French *est arrivé*),
-unergatives/transitives → *have* (Italian *ha mangiato*). English has collapsed
-the split (all verbs take *have*). Graduated from the dissolved `Typology/`
-drawer; the orthogonal inflectional typology of auxiliary verb
-constructions lives in `Syntax/Category/Auxiliary/Constructions.lean`.
+Many Romance and Germanic languages form the perfect with either *be* or *have*, and the choice
+tracks split intransitivity. The binary account, [burzio-1986]'s for Italian, has unaccusatives
+and reflexives take *be* (Italian *è arrivato*, French *est arrivé*) and unergatives and
+transitives *have* (Italian *ha mangiato*); German and Dutch reflexives take *have*
+([sorace-2000], §1). [sorace-2000] refines the intransitives into the Auxiliary Selection
+Hierarchy, a chain of seven aspectual and thematic verb types along which the preference for
+*be* falls: the verbs at the two ends choose their auxiliary categorically and in every language,
+the verbs between them vary, and each language draws its cutoff between *be* and *have* at its
+own point. The inflectional typology of auxiliary verb constructions lives in
+`Syntax/Category/Auxiliary/Constructions.lean`.
 
 ## Main definitions
 
-* `PerfectAux` — be vs have.
-* `TransitivityClass` — the argument-structure class selection keys on.
-* `SelectionRule` — a language's selection regime (split/haveOnly/beOnly/mixed).
-* `selection` / `canonicalSelection` / `germanSelection` / `SelectsBe`.
+* `PerfectAux`: *be* or *have*.
+* `TransitivityClass` and its `selection`, `canonicalSelection`, `germanSelection` and
+  `SelectsBe`: the binary account.
+* `AuxiliarySelectionHierarchy`: the verb types of the Auxiliary Selection Hierarchy, a bounded
+  linear order with the type most consistent in taking *be* at the bottom.
 
-## Implementation note
+## References
 
-`selection` flattens [sorace-2000]'s Auxiliary Selection *Hierarchy* (a 7-class
-semantic gradient with per-language cutoffs) to a 4-class enum keyed on a single
-reflexive parameter. A faithful graded scale, derived from
-`Semantics/ArgumentStructure/EntailmentProfile.lean`'s proto-role predicates, is
-the documented successor (it would discharge `Studies/Sorace2000`'s standing TODO).
+* [burzio-1986]
+* [sorace-2000]
 -/
 
 @[expose] public section
 
-namespace ArgumentStructure.AuxiliarySelection
+namespace ArgumentStructure
 
 /-- Perfect auxiliary choice. -/
 inductive PerfectAux where
@@ -62,57 +61,68 @@ inductive TransitivityClass where
   | reflexive
   deriving DecidableEq, Repr, Fintype
 
-/-- Language-level auxiliary selection rule. -/
-inductive SelectionRule where
-  /-- Unaccusatives take *be* and the rest *have*: Italian, French, German,
-      Dutch. -/
-  | split
-  /-- Every verb takes *have*: English, Spanish. -/
-  | haveOnly
-  /-- Every verb takes *be*; rare, reported for some Sardinian dialects. -/
-  | beOnly
-  /-- Gradient or variable selection, as in some German dialects. -/
-  | mixed
-  deriving DecidableEq, Repr
+namespace TransitivityClass
 
-/-- Auxiliary selection driven by a single binary parameter: does the
-    language treat reflexives as BE-selecting (Romance pattern) or
-    HAVE-selecting (German pattern)? In this coarse 4-class model
-    unaccusatives select BE and unergatives/transitives select HAVE, with the
-    reflexive row the locus of cross-linguistic variation ([burzio-1986] for
-    the Italian generalization; [sorace-2000] for the cross-linguistic split). -/
-def selection (reflexIsBe : Bool) : TransitivityClass → PerfectAux
-  | .unaccusative => .be
-  | .reflexive    => if reflexIsBe then .be else .have
-  | .unergative   => .have
-  | .transitive   => .have
+/-- The binary account of auxiliary selection, given the auxiliary of reflexives: unaccusatives
+select *be*, unergatives and transitives *have*, and reflexives are the locus of variation, *be*
+in Romance and *have* in German ([burzio-1986] for the Italian generalization). -/
+def selection (refl : PerfectAux) : TransitivityClass → PerfectAux
+  | unaccusative => .be
+  | reflexive    => refl
+  | unergative   => .have
+  | transitive   => .have
 
 /-- Canonical (Romance) auxiliary selection: reflexives → *be*. -/
-def canonicalSelection : TransitivityClass → PerfectAux := selection true
+def canonicalSelection : TransitivityClass → PerfectAux := selection .be
 
-/-- German auxiliary selection: reflexives → *haben*, not *sein* — the
-    Romance-vs-German reflexive contrast of [sorace-2000]. -/
-def germanSelection : TransitivityClass → PerfectAux := selection false
+/-- German auxiliary selection: reflexives → *haben*, not *sein*. -/
+def germanSelection : TransitivityClass → PerfectAux := selection .have
 
-/-- The auxiliary a selection rule assigns to each transitivity class:
-    `split` follows `selection`, `haveOnly`/`beOnly` are constant
-    (English *has arrived*), and `mixed` systems make no categorical
-    assignment. -/
-def SelectionRule.selects (reflexIsBe : Bool) :
-    SelectionRule → TransitivityClass → Option PerfectAux
-  | .split, c    => some (selection reflexIsBe c)
-  | .haveOnly, _ => some .have
-  | .beOnly, _   => some .be
-  | .mixed, _    => none
-
-/-- Does this transitivity class canonically select *be*?
-    Defined off `canonicalSelection` so the equivalence is true by
-    construction. -/
+/-- Does this transitivity class canonically select *be*? -/
 def SelectsBe (c : TransitivityClass) : Prop :=
-  canonicalSelection c = .be
+  c.canonicalSelection = .be
 
-instance : DecidablePred SelectsBe := fun c => by
-  unfold SelectsBe
-  infer_instance
+instance : DecidablePred SelectsBe := fun c =>
+  inferInstanceAs (Decidable (c.canonicalSelection = .be))
 
-end ArgumentStructure.AuxiliarySelection
+end TransitivityClass
+
+/-- The Auxiliary Selection Hierarchy ([sorace-2000], Table 1): the aspectual and thematic types
+of monadic intransitive verbs, ordered from the type most consistent in taking *be* to the type
+most consistent in taking *have*. The transitions and states come first, by decreasing telicity,
+then the processes, by increasing control. The two ends are the core types, whose verbs choose
+their auxiliary categorically. -/
+inductive AuxiliarySelectionHierarchy where
+  /-- A telic change of location: *arrive*, *come*, *fall*. -/
+  | changeOfLocation
+  /-- A change of state, mostly without a specified endpoint: *rise*, *rot*, *become*, *die*. -/
+  | changeOfState
+  /-- The continuation of a pre-existing state: *stay*, *remain*, *last*, *survive*. -/
+  | continuationOfState
+  /-- The existence of a state: *be*, *exist*, *belong*, *seem*. -/
+  | existenceOfState
+  /-- A process without volition: *tremble*, *cough*, verbs of emission and weather verbs. -/
+  | uncontrolledProcess
+  /-- A controlled process of motion, whose agent undergoes an undirected displacement: *run*,
+      *swim*, *walk*. -/
+  | motionalProcess
+  /-- A controlled process without motion, which leaves its agent unaffected: *work*, *play*,
+      *talk*. -/
+  | nonmotionalProcess
+  deriving DecidableEq, Repr, Fintype
+
+namespace AuxiliarySelectionHierarchy
+
+/-- The types are ordered as they are listed. -/
+instance : LinearOrder AuxiliarySelectionHierarchy :=
+  LinearOrder.lift' AuxiliarySelectionHierarchy.ctorIdx (by decide)
+
+instance : BoundedOrder AuxiliarySelectionHierarchy where
+  bot := changeOfLocation
+  bot_le := by decide
+  top := nonmotionalProcess
+  le_top := by decide
+
+end AuxiliarySelectionHierarchy
+
+end ArgumentStructure
