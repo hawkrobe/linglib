@@ -5,6 +5,7 @@ public import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 public import Linglib.Data.Examples.Levin1993
 public import Linglib.Data.Examples.Beavers2010
 public import Mathlib.Order.Cover
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Beavers (2010): The Structure of Lexical Meaning
@@ -17,13 +18,27 @@ of the eight sets of the three affectedness entailments only four are contentful
 chain. The Morphosyntactic Alignment Principle requires the oblique to bear the minimally weaker
 role, which on the chain is weak covering. Every attested contrast satisfies it, the three
 conatives together realize each covering pair, and reversed and level-skipping alternations violate
-it. The same principle runs on the traversal hierarchy of *climb (up) the stairs* and on the chain
-of arrival and possession behind the dative alternation.
+it. Total traversal of a path is the same entailment as quantized change, read of the scale rather
+than the theme, and adding it to the entailments of patienthood gives five contentful roles, among
+which *climb the stairs* and *climb up the stairs* are a minimal contrast. The same principle runs
+on the chain of arrival and possession behind the dative alternation.
 
 ## Implementation notes
 
 * A role is the set of affectedness entailments it contains, a Boolean triple, and a contrast
   records the degrees of the alternating participant in its two realizations.
+* The entailments are stated over a result relation relative to a world. Potential for change is
+  modal ((38)), and it is an existential generalization of nonquantized change only when the actual
+  world is among the worlds the modality ranges over, which the paper assumes and the file takes as
+  a hypothesis. Beavers leaves the modal base open.
+* The paper defines the degrees of traversal (85) by the formulas of the degrees of affectedness,
+  abstracting over the scale instead of the theme, so the file states each formula once. Only total
+  traversal enters the roles of (86), and a participant is either a theme or a scale, which is how
+  the file reads the exclusion of affected paths in (87).
+* The paper states its conditions of a sentence with the theme, scale and event given; the file
+  states them of a relation, over all themes, scales and events. A predicate-supplied goal is fixed
+  across the predicate's events, so the end of the path in (84a) is read as the endpoint of the
+  goal type.
 * Beavers's rough correspondence between Dowty's proto-patient entailments and his own (Table 5)
   is not formalized, since it marks two of its cells as uncertain.
 
@@ -139,6 +154,58 @@ theorem subset_iff_toDegree_le :
       (Subset q r ↔ q.toDegree ≤ r.toDegree) := by decide
 
 end PatientLRole
+
+/-! ### The entailments ((31), (38))
+
+The result relation `R w x s g e` says that in the world `w` the theme `x` ends the event `e` at
+the goal `g` on the scale `s`, and `w₀` is the actual world. -/
+
+section Entailments
+
+variable {W α S G β : Type*} (acc : W → W → Prop) (w₀ : W) (R : W → α → S → G → β → Prop)
+  (φ : α → S → β → Prop)
+
+/-- A predicate entails a **quantized change** to the goal `g` when its theme ends every event of
+it at `g` on its scale ((31a)). Of the scale, the same condition says it is **totally traversed**
+((85a)). -/
+def Quantized (g : G) : Prop := ∀ x s e, φ x s e → R w₀ x s g e
+
+/-- A predicate entails a **nonquantized change** when its theme ends every event of it at some
+goal on its scale ((31b)). Of the scale, the same condition says it is **traversed** ((85b)). -/
+def Nonquantized : Prop := ∀ x s e, φ x s e → ∃ g, R w₀ x s g e
+
+/-- A predicate gives its theme **potential for change** when in every event of it the theme ends
+at some goal on its scale in some world accessible from the actual one ((38a)). Of the scale, the
+same condition says it is **potentially traversed** ((85c)). -/
+def Potential : Prop := ∀ x s e, φ x s e → ∃ w, acc w₀ w ∧ ∃ g, R w x s g e
+
+variable {acc w₀ R φ}
+
+theorem Quantized.nonquantized {g : G} (h : Quantized w₀ R φ g) : Nonquantized w₀ R φ :=
+  fun x s e hx ↦ ⟨g, h x s e hx⟩
+
+/-- A nonquantized change entails potential for change when the actual world is among the worlds
+the modality ranges over, (38a) being the existential generalization of (31b) over worlds. -/
+theorem Nonquantized.potential (hacc : acc w₀ w₀) (h : Nonquantized w₀ R φ) :
+    Potential acc w₀ R φ :=
+  fun x s e hx ↦ ⟨w₀, hacc, h x s e hx⟩
+
+open Classical in
+/-- The patient role of a predicate is the set of affectedness entailments it has about its
+theme ((65)). -/
+noncomputable def role (acc : W → W → Prop) (w₀ : W) (R : W → α → S → G → β → Prop)
+    (φ : α → S → β → Prop) : PatientLRole :=
+  ⟨decide (∃ g, Quantized w₀ R φ g), decide (Nonquantized w₀ R φ),
+    decide (Potential acc w₀ R φ)⟩
+
+/-- Every predicate's role is contentful, since each affectedness entailment entails the weaker
+ones ((67)), given that the actual world is among the worlds the modality ranges over. -/
+theorem role_valid (hacc : acc w₀ w₀) : (role acc w₀ R φ).Valid := by
+  classical
+  simp only [PatientLRole.Valid, role, decide_eq_true_eq]
+  exact ⟨fun ⟨_, h⟩ ↦ h.nonquantized, Nonquantized.potential hacc⟩
+
+end Entailments
 
 /-! ### The MAP ((68)–(69)) as weak covering -/
 
@@ -269,39 +336,111 @@ theorem skipping_violates_MAP :
       skippingLocative.obliqueDegree ≤ skippingLocative.directDegree :=
   ⟨by decide, by decide⟩
 
-/-! ### Other hierarchies: traversal (85) and the dative (90) -/
 
-/-- The degrees of the traversal hierarchy (85), each an existential weakening of the next,
-parallel to affectedness but predicated of the scale. -/
-inductive TraversalDegree where
-  /-- No traversal entailment. -/
-  | unspecified
-  /-- Potentially traversed. -/
-  | potentiallyTraversed
-  /-- Some of the scale traversed. -/
-  | traversed
-  /-- All of the scale traversed. -/
-  | totallyTraversed
-  deriving DecidableEq, Fintype, Repr
+/-! ### Total traversal ((84)–(87)) -/
 
-/-- Strength on the traversal hierarchy. -/
-def TraversalDegree.strength : TraversalDegree → Nat
-  | .unspecified => 0
-  | .potentiallyTraversed => 1
-  | .traversed => 2
-  | .totallyTraversed => 3
+instance : PartialOrder PatientLRole :=
+  .lift (fun r ↦ (r.quantized, r.nonquantized, r.potential))
+    (fun a b h ↦ by rcases a with ⟨_, _, _⟩; rcases b with ⟨_, _, _⟩; simpa using h)
 
-instance : LinearOrder TraversalDegree :=
-  .lift' TraversalDegree.strength fun a b ↦ by
-    cases a <;> cases b <;> simp [TraversalDegree.strength]
+/-- On patient roles, the order is entailment-set inclusion. -/
+theorem PatientLRole.le_iff_subset (q r : PatientLRole) : q ≤ r ↔ q.Subset r := by
+  rcases q with ⟨_, _, _⟩; rcases r with ⟨_, _, _⟩
+  simp [PatientLRole.Subset, LE.le]
 
-instance : DecidableRel (· ⩿ · : TraversalDegree → TraversalDegree → Prop) :=
+/-- An L-thematic role of (86) adds total traversal of a path to the affectedness entailments of
+a patient. -/
+structure LRole extends PatientLRole where
+  /-- Is totally traversed. -/
+  totallyTraversed : Bool
+  deriving DecidableEq, Repr
+
+namespace LRole
+
+instance : Fintype LRole :=
+  Fintype.ofEquiv (PatientLRole × Bool)
+    { toFun := fun p ↦ ⟨p.1, p.2⟩
+      invFun := fun r ↦ (r.toPatientLRole, r.totallyTraversed)
+      left_inv := fun _ ↦ rfl
+      right_inv := fun _ ↦ rfl }
+
+instance : PartialOrder LRole :=
+  .lift (fun r ↦ (r.toPatientLRole, r.totallyTraversed))
+    (fun a b h ↦ by rcases a with ⟨_, _⟩; rcases b with ⟨_, _⟩; simpa using h)
+
+instance : DecidableRel (· ≤ · : PatientLRole → PatientLRole → Prop) := fun a b ↦
+  inferInstanceAs (Decidable ((a.quantized, a.nonquantized, a.potential) ≤
+    (b.quantized, b.nonquantized, b.potential)))
+
+instance : DecidableRel (· ≤ · : LRole → LRole → Prop) := fun a b ↦
+  inferInstanceAs (Decidable ((a.toPatientLRole, a.totallyTraversed) ≤
+    (b.toPatientLRole, b.totallyTraversed)))
+
+instance : DecidableRel (· < · : LRole → LRole → Prop) := fun a b ↦
+  inferInstanceAs (Decidable (a ≤ b ∧ ¬ b ≤ a))
+
+/-- A role of (86) is contentful when its affectedness entailments form a contentful patient role
+and a totally traversed path is not also affected, which (87) rules out. -/
+def Valid (r : LRole) : Prop :=
+  r.toPatientLRole.Valid ∧ (r.totallyTraversed → r.toPatientLRole = PatientLRole.unspecifiedRole)
+
+instance : DecidablePred Valid := fun r ↦ by unfold Valid; infer_instance
+
+/-- `{}`. -/
+def unspecified : LRole := ⟨PatientLRole.unspecifiedRole, false⟩
+
+/-- `{totally traversed}`. -/
+def totallyTraversedRole : LRole := ⟨PatientLRole.unspecifiedRole, true⟩
+
+/-- Exactly five roles of (86) are contentful, the four patient roles and total traversal
+((87)). -/
+theorem exactly_five_valid_roles :
+    ∀ r : LRole, Valid r ↔ r = ⟨PatientLRole.quantizedRole, false⟩ ∨
+      r = ⟨PatientLRole.nonquantizedRole, false⟩ ∨ r = ⟨PatientLRole.potentialRole, false⟩ ∨
+        r = unspecified ∨ r = totallyTraversedRole := by
+  decide
+
+section Participants
+
+variable {W α S G β : Type*} {acc : W → W → Prop} {w₀ : W} {R : W → α → S → G → β → Prop}
+  {φ : α → S → β → Prop}
+
+/-- The role of (86) that a predicate assigns its theme is its patient role, without traversal. -/
+noncomputable def ofTheme (acc : W → W → Prop) (w₀ : W) (R : W → α → S → G → β → Prop)
+    (φ : α → S → β → Prop) : LRole :=
+  ⟨role acc w₀ R φ, false⟩
+
+open Classical in
+/-- The role of (86) that a predicate assigns its scale is total traversal when the predicate
+entails a quantized change on it, (85a) being (31a) read of the scale, and nothing otherwise. -/
+noncomputable def ofScale (w₀ : W) (R : W → α → S → G → β → Prop) (φ : α → S → β → Prop) :
+    LRole :=
+  ⟨PatientLRole.unspecifiedRole, decide (∃ g, Quantized w₀ R φ g)⟩
+
+theorem ofTheme_valid (hacc : acc w₀ w₀) : (ofTheme acc w₀ R φ).Valid :=
+  ⟨role_valid hacc, fun h ↦ by simp [ofTheme] at h⟩
+
+theorem ofScale_valid : (ofScale w₀ R φ).Valid :=
+  ⟨⟨fun h ↦ h, fun h ↦ h⟩, fun _ ↦ rfl⟩
+
+end Participants
+
+end LRole
+
+/-- The contentful roles of (86), ordered by inclusion. -/
+abbrev ValidLRole := {r : LRole // r.Valid}
+
+instance : DecidableRel (· ⩿ · : ValidLRole → ValidLRole → Prop) :=
   fun a b ↦ decidable_of_iff (a ≤ b ∧ ∀ c, a < c → ¬c < b) Iff.rfl
 
-/-- *Climbed the stairs* against *climbed up the stairs* ((81)–(84)) contrasts total with partial
-traversal of the path, a covering pair, so the MAP holds on the traversal hierarchy. -/
-theorem climb_traversal_map :
-    (TraversalDegree.traversed) ⩿ TraversalDegree.totallyTraversed := by decide
+/-- *Climbed the stairs* against *climbed up the stairs* ((81)–(84)) contrasts a totally
+traversed path with one of which nothing is entailed on (86). The oblique role is minimally weaker
+than the direct one among the contentful roles, as the MAP (69) requires. -/
+theorem climb_wcovby :
+    (⟨LRole.unspecified, by decide⟩ : ValidLRole) ⩿ ⟨LRole.totallyTraversedRole, by decide⟩ := by
+  decide
+
+/-! ### The dative chain (90) -/
 
 /-- The roles of the dative chain (90) are being arrived at and being arrived into the possession
 of. -/
