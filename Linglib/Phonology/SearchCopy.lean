@@ -30,12 +30,12 @@ defective interveners and invisible segments.
 Run over a word, the rule is a Mealy machine on the visible segments whose state is the
 closest visible segment read so far (`SearchCopy.toMealy`), the memory window of
 [burness-mcmullin-nevins-2024]'s tier-based strictly local reading of the procedure, and
-the output tier-based strictly 2-local rule of [burness-mcmullin-2019] computes the same
-function (`SearchCopy.toOSLRule_applyOnTier`). So a rule for one feature in one direction
-is a tier-based strictly local function, the result of Andersson, Dolatian and Hao that
-[burness-mcmullin-nevins-2024] report, and subsequential in its direction over a finite
-alphabet (`SearchCopy.apply_isSubsequential`), as Gainor, Lai and Heinz found of
-[nevins-2010]'s analyses.
+when the write keeps a segment visible the output tier-based strictly 2-local rule of
+[burness-mcmullin-2019] computes the same function (`SearchCopy.toOSLRule_applyOnTier`). So
+such a rule for one feature in one direction is a tier-based strictly local function, the
+result of Andersson, Dolatian and Hao that [burness-mcmullin-nevins-2024] report. Every rule is
+subsequential in its direction over a finite alphabet (`SearchCopy.apply_isSubsequential`), as
+Gainor, Lai and Heinz found of [nevins-2010]'s analyses.
 
 ## Main definitions
 
@@ -50,8 +50,8 @@ alphabet (`SearchCopy.apply_isSubsequential`), as Gainor, Lai and Heinz found of
 
 ## Main results
 
-* `SearchCopy.toOSLRule_applyOnTier`: the OSL rule run over the visible segments is the
-  Mealy run.
+* `SearchCopy.toOSLRule_applyOnTier`: the OSL rule run with its window over the visible
+  output is the Mealy run, when the write keeps a segment visible.
 * `SearchCopy.filter_scan`: restricted to the visible segments, the run is the 2-OSL rule.
 * `SearchCopy.apply_isSubsequential`, `SearchCopy.scan_isMealyComputable`: the run is
   finite-state in the rule's direction over a finite alphabet.
@@ -128,7 +128,7 @@ structure SearchCopy (α : Type*) where
   write_value : ∀ v s, IsTarget s → value s = some v → write v s = s
   /-- The last-resort value a target takes when its search fails. -/
   default : Option Bool := none
-  /-- The direction of search; a rightward search scans right to left. -/
+  /-- The direction of search, a rightward search scanning right to left. -/
   direction : ScanDirection := .left
 
 attribute [instance] SearchCopy.decTier SearchCopy.decTarget SearchCopy.decSource
@@ -262,34 +262,6 @@ theorem apply_isSubsequential [Fintype α] : IsSubsequential r.direction r.apply
 
 /-! ### The run as a tier-based OSL rule -/
 
-/-- The rule as a 2-OSL rule ([chandlee-eyraud-heinz-2015]) in which each target copies from
-the previous output segment. -/
-def toOSLRule : Subregular.OSLRule 2 α α where
-  windowOutput window s := [r.emit window.getLast? s]
-
-@[simp] theorem toOSLRule_windowOutput (window : List α) (s : α) :
-    r.toOSLRule.windowOutput window s = [r.emit window.getLast? s] :=
-  rfl
-
-/-- The OSL rule run over the visible segments ([burness-mcmullin-2019]) is the Mealy run,
-the rule's output window being the machine's state. -/
-theorem toOSLRule_applyOnTier : r.toOSLRule.applyOnTier r.tier = r.scan := by
-  funext w
-  suffices ∀ (window : List α) (v : Option α), window.getLast? = v →
-      r.toOSLRule.applyOnTierAux r.tier window w = r.toMealy.runFrom v w from
-    this [] none rfl
-  induction w with
-  | nil => intros; rfl
-  | cons x xs ih =>
-    intro window v hv
-    rw [Subregular.OSLRule.applyOnTierAux_cons]
-    split_ifs with hx
-    · rw [r.toMealy_runFrom_cons_of_tier hx, toOSLRule_windowOutput, hv, List.singleton_append]
-      refine congrArg _ (ih _ _ ?_)
-      rw [List.rtake_concat_succ, List.rtake_zero, List.nil_append, List.getLast?_singleton]
-    · rw [r.toMealy_runFrom_cons_of_not_tier hx]
-      exact congrArg _ (ih window v hv)
-
 theorem tier_emit (hw : r.TierClosed) {s : α} (hs : r.tier s) (w : Option α) :
     r.tier (r.emit w s) := by
   unfold emit; split_ifs
@@ -298,14 +270,49 @@ theorem tier_emit (hw : r.TierClosed) {s : α} (hs : r.tier s) (w : Option α) :
     · exact hw b s hs
   · exact hs
 
+/-- The rule as a 2-OSL rule ([chandlee-eyraud-heinz-2015]) in which each visible target copies
+from the previous output segment and invisible segments pass through. -/
+def toOSLRule : Subregular.OSLRule 2 α α where
+  windowOutput window s := if r.tier s then [r.emit window.getLast? s] else [s]
+
+@[simp] theorem toOSLRule_windowOutput (window : List α) (s : α) :
+    r.toOSLRule.windowOutput window s = if r.tier s then [r.emit window.getLast? s] else [s] :=
+  rfl
+
+/-- Run with its window over the visible output ([burness-mcmullin-2019]), the OSL rule is the
+Mealy run, the last visible output segment being the machine's state, provided the write keeps
+a segment visible. -/
+theorem toOSLRule_applyOnTier (hw : r.TierClosed) : r.toOSLRule.applyOnTier r.tier = r.scan := by
+  funext w
+  induction w using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton w x ih =>
+    have hv : ((r.scan w).filter (r.tier ·)).getLast? = r.toMealy.stateAfter none w := by
+      clear ih
+      induction w using List.reverseRecOn with
+      | nil => rfl
+      | append_singleton w y ihw =>
+        rw [scan_eq_runFrom, Mealy.runFrom_append, Mealy.stateAfter_append, List.filter_append,
+          ← scan_eq_runFrom]
+        by_cases hy : r.tier y
+        · simp [hy, r.tier_emit hw hy, ihw]
+        · simp [hy, ihw]
+    rw [Subregular.OSLRule.applyOnTier_append_singleton, ih, toOSLRule_windowOutput,
+      List.getLast?_rtake]
+    simp only [Nat.reduceSub, one_ne_zero, ↓reduceIte, hv]
+    rw [scan_eq_runFrom, scan_eq_runFrom, Mealy.runFrom_append]
+    by_cases hx : r.tier x <;> simp [hx]
+
 /-- Restricted to the visible segments, the run is the 2-OSL rule, provided the write keeps
 a segment visible. -/
 theorem filter_scan (hw : r.TierClosed) (w : List α) :
     (r.scan w).filter (decide <| r.tier ·) = r.toOSLRule.apply (w.filter (decide <| r.tier ·)) := by
-  rw [← toOSLRule_applyOnTier]
-  exact r.toOSLRule.filter_applyOnTier (fun _ s hs y hy => by
-    rw [toOSLRule_windowOutput, List.mem_singleton] at hy
-    exact hy ▸ r.tier_emit hw hs _) w
+  rw [← toOSLRule_applyOnTier r hw]
+  refine r.toOSLRule.filter_applyOnTier (fun _ s y hy => ?_) w
+  rw [toOSLRule_windowOutput] at hy
+  split_ifs at hy with hs <;> rw [List.mem_singleton] at hy <;> subst hy
+  · exact iff_of_true (r.tier_emit hw hs _) hs
+  · exact Iff.rfl
 
 end SearchCopy
 

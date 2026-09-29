@@ -37,8 +37,8 @@ Tier projection is `List.filter` itself rather than a named wrapper. With the ti
 predicate carrying `[DecidablePred]` (the `Finset.filter` convention), `w.filter (T ·)` elaborates
 to the filter by `fun x ↦ decide (T x)`, which is literally a `Bool` tier in the sense of
 `Language.IsTierBased`, so the two presentations meet without a conversion lemma. A relabelling
-projection `α → Option β` is `List.filterMap`, and its `1`-ISL status is
-`filterMap_isLeftInputStrictlyLocal_one`.
+projection `g : α → Option β` is `List.filterMap g`, the letterwise homomorphism
+`List.flatMap fun x ↦ (g x).toList`, hence `1`-ISL (`isLeftInputStrictlyLocal_one_iff`).
 
 ## References
 
@@ -53,17 +53,17 @@ variable {α : Type*}
 
 namespace Subregular
 
-/-- A **tier-based strictly `k`-local grammar**: a decidable tier (subset
-of `α`) plus an SL grammar interpreted on the projected string. The tier
-predicate is carried as an instance field via `[DecidablePred tier]` so
-projection at use sites picks up the decidability automatically. -/
+/-- A **tier-based strictly `k`-local grammar** is a decidable tier, a subset of `α`, together
+with an SL grammar interpreted on the projected string. The tier predicate is carried as an
+instance field via `[DecidablePred tier]` so projection at use sites picks up the
+decidability automatically. -/
 structure TierStrictlyLocalGrammar (k : ℕ) (α : Type*) where
   /-- The membership predicate selecting which symbols stay on the tier.
   Symbols failing `tier` are erased before the SL test. -/
   tier : α → Prop
   /-- Decidability of `tier`, needed to define projection. -/
   [decTier : DecidablePred tier]
-  /-- The `SL` grammar read on the *projected* string: its permitted factors. -/
+  /-- The permitted factors of the `SL` grammar read on the *projected* string. -/
   permitted : StrictlyLocalGrammar α
 
 namespace TierStrictlyLocalGrammar
@@ -100,9 +100,8 @@ theorem _root_.Subregular.TierStrictlyLocalGrammar.isTierStrictlyLocal_language 
 
 /-! ## Inclusions -/
 
-/-- **SL_k ⊆ TSL_k**: take the universal tier (every symbol on tier), so
-projection is the identity and the TSL grammar's `language` reduces to the
-underlying SL grammar's `language`. -/
+/-- **SL_k ⊆ TSL_k.** Over the universal tier projection is the identity, so the TSL grammar's
+`language` reduces to the underlying SL grammar's `language`. -/
 theorem IsStrictlyLocal.toIsTierStrictlyLocal {k : ℕ} {L : Language α}
     (h : L.IsStrictlyLocal k) : IsTierStrictlyLocal k L := by
   obtain ⟨G, rfl⟩ := h

@@ -18,16 +18,19 @@ functions by their residuals, in the style of `Mathlib.Computability.MyhillNerod
 (which treats the language case).
 
 Given `f : List α → List β` and a word `u`, the *residual* of `f` by `u` is the
-function `v ↦ (f (u ++ v)).drop u.length` — what `f` appends after reading `u` — and
-the *coresidual* of `f` by a suffix `y` is `u ↦ (f (u ++ y)).take u.length` — what `f`
-emits before reaching `y`. A function is Mealy-computable if and only if it is
-length-preserving, prefix-preserving, and has finitely many residuals — the Nerode
-criterion for sequential functions ([eilenberg-1974] [holcombe-1982]). A
-function is bimachine-computable if and only if it is length-preserving with finitely
-many residuals and finitely many coresiduals: residual classes are the left states,
-coresidual classes the right states, and the two-step exchange through representatives
-makes the cell output well-defined — the length-preserving stratum of the canonical
-bimachine of [reutenauer-schutzenberger-1991], surveyed in [filiot-reynier-2016].
+function `v ↦ (f (u ++ v)).drop (f u).length` — what `f` appends after reading `u`, the
+`f(u)⁻¹f(uv)` of sequential functions — and the *coresidual* of `f` by a suffix `y` is
+`u ↦ (f (u ++ y)).take u.length` — what `f` emits before reaching `y`. A function is
+Mealy-computable if and only if it is length-preserving, prefix-preserving, and has finitely
+many residuals — the Nerode criterion for sequential functions ([eilenberg-1974]
+[holcombe-1982]). A function is bimachine-computable if and only if it is length-preserving
+with finitely many residuals and finitely many coresiduals: residual classes are the left
+states, coresidual classes the right states, and the two-step exchange through
+representatives makes the cell output well-defined — the length-preserving stratum of the
+canonical bimachine of [reutenauer-schutzenberger-1991], surveyed in [filiot-reynier-2016].
+A function built block by block from a summary of its input has residuals that factor through
+the summary, and conversely; the strictly local function classes are the instances with a
+bounded window as the summary.
 
 ## Main definitions
 
@@ -36,12 +39,15 @@ bimachine of [reutenauer-schutzenberger-1991], surveyed in [filiot-reynier-2016]
 
 ## Main theorems
 
+* `factorsThrough_residual_of_append_singleton`,
+  `exists_append_singleton_of_factorsThrough_residual`: residuals factor through a summary `W`
+  exactly when `f` extends by blocks read off `W`
 * `isMealyComputable_of_stateSummary`: a finite left-congruent state summary
   determining the output yields a machine
 * `isMealyComputable_iff_residual`: `f` is Mealy-computable if and only if it is
   length-preserving, prefix-preserving, and `Set.range (residual f)` is finite
-* `isLengthPreservingBimachineComputable_iff_residual`: `f` is bimachine-computable if and only if it
-  is length-preserving and both `Set.range (residual f)` and
+* `isLengthPreservingBimachineComputable_iff_residual`: `f` is bimachine-computable if and
+  only if it is length-preserving and both `Set.range (residual f)` and
   `Set.range (coresidual f)` are finite
 
 [UPSTREAM] candidate: `Mathlib.Computability.MyhillNerode` (as transducer sections of
@@ -55,26 +61,78 @@ variable {α β : Type*} (f : List α → List β)
 /-- The *residual* of `f` by `u` is what `f` appends after reading `u` — the analogue
 for string functions of `Language.leftQuotient`. -/
 def residual (u : List α) : List α → List β :=
-  fun v => (f (u ++ v)).drop u.length
+  fun v => (f (u ++ v)).drop (f u).length
 
-@[simp] theorem residual_nil : residual f [] = f := by
-  funext v; simp [residual]
+variable {f}
 
-theorem residual_append (u v : List α) :
-    residual f (u ++ v) = residual (residual f u) v := by
-  funext w; simp [residual]
+theorem residual_nil (h : f [] = []) : residual f [] = f := by
+  funext v; simp [residual, h]
 
-theorem residual_append_singleton (u : List α) (x : α) :
-    residual f (u ++ [x]) = fun v => (residual f u (x :: v)).drop 1 := by
-  funext v; simp [residual]
+/-- A prefix-preserving `f` extends its output on `u` by the residual. -/
+theorem append_residual {u v : List α} (h : f u <+: f (u ++ v)) :
+    f u ++ residual f u v = f (u ++ v) := by
+  obtain ⟨t, ht⟩ := h
+  simp [residual, ← ht]
+
+theorem residual_append_singleton (hlen : ∀ xs, (f xs).length = xs.length) (u : List α)
+    (x : α) : residual f (u ++ [x]) = fun v => (residual f u (x :: v)).drop 1 := by
+  funext v; simp [residual, hlen]
+
+/-! ### Residuals through a state summary
+
+A function that extends its output by one block per letter, the block read off a summary `W`
+of the input whose update is determined, has residuals that factor through `W`; conversely a
+prefix-preserving function whose residuals factor through `W` extends by blocks read off `W`.
+The strictly local function classes are the instances with `W` a bounded window. -/
+
+section StateSummary
+
+variable {γ : Type*} {W : List α → γ}
+
+/-- A function extending its output at every letter is prefix-preserving. -/
+theorem isPrefix_append_of_append_singleton (hf : ∀ u x, f u <+: f (u ++ [x])) (u v : List α) :
+    f u <+: f (u ++ v) := by
+  induction v using List.reverseRecOn with
+  | nil => simp
+  | append_singleton v x ih => exact ih.trans (List.append_assoc u v [x] ▸ hf (u ++ v) x)
+
+/-- Residuals of a function built block by block from a state summary factor through it. -/
+theorem factorsThrough_residual_of_append_singleton (δ : γ → α → γ) (g : γ → α → List β)
+    (hW : ∀ u x, W (u ++ [x]) = δ (W u) x) (hf : ∀ u x, f (u ++ [x]) = f u ++ g (W u) x) :
+    (residual f).FactorsThrough W := by
+  have hpre := isPrefix_append_of_append_singleton fun u x => ⟨_, (hf u x).symm⟩
+  intro u₁ u₂ h
+  funext v
+  induction v using List.reverseRecOn with
+  | nil => simp [residual]
+  | append_singleton v x ih =>
+    have hWv : W (u₁ ++ v) = W (u₂ ++ v) := by
+      clear ih
+      induction v using List.reverseRecOn with
+      | nil => simpa using h
+      | append_singleton v y ihv => rw [← List.append_assoc, hW, ihv, ← hW, List.append_assoc]
+    simp only [residual] at ih ⊢
+    rw [← List.append_assoc, hf, List.drop_append_of_le_length (hpre u₁ v).length_le, ih,
+      ← List.append_assoc, hf, List.drop_append_of_le_length (hpre u₂ v).length_le, hWv]
+
+/-- A prefix-preserving function whose residuals factor through `W` extends by blocks read
+off `W`. -/
+theorem exists_append_singleton_of_factorsThrough_residual
+    (hpre : ∀ u v, f u <+: f (u ++ v)) (hW : (residual f).FactorsThrough W) :
+    ∃ g : γ → α → List β, ∀ u x, f (u ++ [x]) = f u ++ g (W u) x :=
+  ⟨fun c x => Function.extend W (residual f) (fun _ _ => []) c [x], fun u x => by
+    dsimp only
+    rw [hW.extend_apply, append_residual (hpre u [x])]⟩
+
+end StateSummary
+
+variable (f)
 
 /-- Residuals of a machine's run factor through its states. -/
 theorem Mealy.residual_run {σ : Type*} (T : Mealy σ α β) (u : List α) :
     residual T.run u = T.runFrom (T.stateAfter T.start u) := by
   funext v
-  simp only [residual, Mealy.run, Mealy.runFrom_append]
-  rw [show u.length = (T.runFrom T.start u).length from (T.length_runFrom _ _).symm,
-    List.drop_left]
+  simp only [residual, Mealy.run, Mealy.runFrom_append, List.drop_left]
 
 /-! ### Necessity -/
 
@@ -125,7 +183,7 @@ theorem isMealyComputable_of_stateSummary
       Option.map_none]
 
 /-- A length-preserving, prefix-preserving function with finitely many residuals is
-Mealy-computable: the residuals themselves are the states. -/
+Mealy-computable, with the residuals themselves as the states. -/
 theorem isMealyComputable_of_residual {f : List α → List β}
     (hlen : ∀ xs, (f xs).length = xs.length)
     (hpre : ∀ u v, f u <+: f (u ++ v))
@@ -139,17 +197,17 @@ theorem isMealyComputable_of_residual {f : List α → List β}
     (fun u => ⟨residual f u, Set.mem_range_self u⟩)
     (fun r x => ⟨fun v => (r.val (x :: v)).drop 1, by
       obtain ⟨u, hu⟩ := r.prop
-      exact ⟨u ++ [x], by rw [residual_append_singleton, hu]⟩⟩)
+      exact ⟨u ++ [x], by rw [residual_append_singleton hlen, hu]⟩⟩)
     (fun r x => (r.val [x]).head (hne r x))
-    (fun u x => Subtype.ext (residual_append_singleton f u x))
+    (fun u x => Subtype.ext (residual_append_singleton hlen u x))
     (fun u x w => ?_) hlen
   obtain ⟨t, ht⟩ := hpre (u ++ [x]) w
   rw [List.append_assoc, List.singleton_append] at ht
-  rw [← ht, List.getElem?_append_left (by rw [hlen]; simp), ← List.head?_drop,
-    show (f (u ++ [x])).drop u.length = residual f u [x] from rfl,
+  rw [← ht, List.getElem?_append_left (by rw [hlen]; simp), ← List.head?_drop, ← hlen u,
+    show (f (u ++ [x])).drop (f u).length = residual f u [x] from rfl,
     List.head?_eq_some_head]
 
-/-- **Myhill–Nerode for Mealy machines**: a function is Mealy-computable if and only
+/-- **Myhill–Nerode for Mealy machines.** A function is Mealy-computable if and only
 if it is length-preserving, prefix-preserving, and has finitely many residuals. -/
 theorem isMealyComputable_iff_residual {f : List α → List β} :
     IsMealyComputable f
@@ -175,7 +233,7 @@ theorem coresidual_cons (x : α) (y : List α) :
 
 /-- The cell at the seam, read through the residual. -/
 theorem getElem?_residual_cons (u : List α) (x : α) (w : List α) :
-    (residual f u (x :: w))[0]? = (f (u ++ x :: w))[u.length]? := by
+    (residual f u (x :: w))[0]? = (f (u ++ x :: w))[(f u).length]? := by
   simp [residual, List.getElem?_drop]
 
 /-- The cell at the seam, read through the coresidual. -/
@@ -223,7 +281,9 @@ theorem Bimachine.take_runFrom_append (w : B.LetterToLetter) (l : L) (u y : List
 /-- Residuals of a bimachine's run reseed the left automaton. -/
 theorem Bimachine.residual_run (w : B.LetterToLetter) (x : List α) :
     residual B.run x = B.runFrom (B.lState x) :=
-  funext fun v => B.drop_runFrom_append w B.lInit x v
+  funext fun v => by
+    simp only [residual, w.length_run]
+    exact B.drop_runFrom_append w B.lInit x v
 
 /-- Coresiduals of a bimachine's run reseed the right automaton. -/
 theorem Bimachine.coresidual_run (w : B.LetterToLetter) (y : List α) :
@@ -287,8 +347,8 @@ theorem isLengthPreservingBimachineComputable_of_stateSummaries
       Option.map_none]
 
 /-- A length-preserving function with finitely many residuals and coresiduals is
-bimachine-computable: residual classes are the left states, coresidual classes the
-right states, and the cell output is read off representatives — well-defined by
+bimachine-computable, with residual classes as the left states and coresidual classes as the
+right states, and with the cell output read off representatives, which is well-defined by
 exchanging one context at a time. -/
 theorem isLengthPreservingBimachineComputable_of_residual {f : List α → List β}
     (hlen : ∀ xs, (f xs).length = xs.length)
@@ -303,7 +363,7 @@ theorem isLengthPreservingBimachineComputable_of_residual {f : List α → List 
     (fun u => ⟨residual f u, Set.mem_range_self u⟩)
     (fun r x => ⟨fun v => (r.val (x :: v)).drop 1, by
       obtain ⟨u, hu⟩ := r.prop
-      exact ⟨u ++ [x], by rw [residual_append_singleton, hu]⟩⟩)
+      exact ⟨u ++ [x], by rw [residual_append_singleton hlen, hu]⟩⟩)
     (fun w => ⟨coresidual f w, Set.mem_range_self w⟩)
     (fun s x => ⟨fun u => (s.val (u ++ [x])).take u.length, by
       obtain ⟨w, hw⟩ := s.prop
@@ -311,7 +371,7 @@ theorem isLengthPreservingBimachineComputable_of_residual {f : List α → List 
     (fun r x s => (f (repL r ++ x :: repR s))[(repL r).length]'(by
       rw [hlen]
       simp))
-    (fun u x => Subtype.ext (residual_append_singleton f u x))
+    (fun u x => Subtype.ext (residual_append_singleton hlen u x))
     (fun x w => Subtype.ext (coresidual_cons f x w))
     (fun u x w => ?_) hlen
   set r : Set.range (residual f) := ⟨residual f u, Set.mem_range_self u⟩
@@ -319,9 +379,9 @@ theorem isLengthPreservingBimachineComputable_of_residual {f : List α → List 
   have hres : residual f (repL r) = residual f u := hrepL r
   have hcores : coresidual f (repR s) = coresidual f w := hrepR s
   calc (f (u ++ x :: w))[u.length]?
-      = (residual f u (x :: w))[0]? := (getElem?_residual_cons f u x w).symm
+      = (residual f u (x :: w))[0]? := by rw [getElem?_residual_cons, hlen]
     _ = (residual f (repL r) (x :: w))[0]? := by rw [hres]
-    _ = (f (repL r ++ x :: w))[(repL r).length]? := getElem?_residual_cons f _ x w
+    _ = (f (repL r ++ x :: w))[(repL r).length]? := by rw [getElem?_residual_cons, hlen]
     _ = (coresidual f w (repL r ++ [x]))[(repL r).length]? :=
         (getElem?_coresidual_append f _ x w).symm
     _ = (coresidual f (repR s) (repL r ++ [x]))[(repL r).length]? := by rw [hcores]
@@ -331,7 +391,7 @@ theorem isLengthPreservingBimachineComputable_of_residual {f : List α → List 
 
 end Bimachine
 
-/-- **Myhill–Nerode for bimachines**: a function is bimachine-computable if and only
+/-- **Myhill–Nerode for bimachines.** A function is bimachine-computable if and only
 if it is length-preserving with finitely many residuals and finitely many
 coresiduals. -/
 theorem isLengthPreservingBimachineComputable_iff_residual {f : List α → List β} :
