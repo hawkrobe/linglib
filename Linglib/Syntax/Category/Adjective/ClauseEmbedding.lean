@@ -1,54 +1,44 @@
 module
 
 public import Linglib.Syntax.Category.Adjective.Basic
-public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Syntax.Category.Verb.Defs
 
 /-!
 # Clause-embedding adjectives
 
-Adjectives that take propositional complements — *annoyed (that p)*,
-*sorry (that p)*, *aware (that p)*, *certain (that p)*. On the pattern
-of `GradableAdjective` in `Semantics/Gradability`,
-`ClauseEmbeddingAdjective` extends the `Adjective` core with the
-clausal-selection spine it shares with clause-embedding verbs:
-complement type, presupposition trigger class, attitude, opacity, and
-entailment signature.
+Adjectives that take clausal complements: *annoyed (that p)*, *sorry (that p)*, *aware (that p)*,
+*able (to VP)*. As `GradableAdjective` in `Semantics/Degree/Adjective.lean` extends the
+`Adjective` core with its degree semantics, `ClauseEmbeddingAdjective` extends it with the
+clausal-selection facets of a verb entry: the frames of its complement, its presupposition,
+implicative and attitude profiles, and its control readings.
 
-Whether predication requires a copula is a language-level property
-([stassen-2013]), not a property of the adjective: English realizes
-these predicates as *be* + adjective, `ClauseEmbeddingAdjective.toVerb`
-with the copula *be*, Mandarin and Japanese without a copula.
+Whether an adjectival predicate takes a copula is a property of the language, not of the
+adjective ([stassen-2013b]): English realizes these predicates as *be* and the adjective,
+`ClauseEmbeddingAdjective.toVerb` with the copula *be*, while Mandarin encodes predicative
+adjectives as verbs.
+
+## References
+
+* [stassen-2013b]
 -/
 
 @[expose] public section
 
-open NaturalLogic (Signature)
-
-/-- A clause-embedding adjective is the `Adjective` core with the clausal-selection spine it
+/-- A clause-embedding adjective is the `Adjective` core with the clausal-selection facets it
 shares with clause-embedding verbs, and no verbal morphology. -/
-structure ClauseEmbeddingAdjective extends Adjective where
-  /-- The frame of the clause the adjective embeds. -/
-  frame : ArgumentFrame := .finiteClause
-  /-- The [karttunen-1971b] factivity class, if the adjective is factive. -/
-  factivity : Option Presupposition.Factivity := none
-  /-- Attitude semantics, if applicable. -/
-  attitude : Option Attitude := none
-  /-- Does the adjective create an opaque context? -/
-  opaqueContext : Bool := false
-  /-- Entailment signature of the complement position. -/
-  complementSig : Option Signature := none
+structure ClauseEmbeddingAdjective extends Adjective, Verb.Presupposition, Verb.Causation,
+    Verb.Attitude where
+  /-- The frames of the adjective's complement, citation frame first. -/
+  frames : List ArgumentFrame := [.finiteClause]
   deriving Repr, BEq
 
 namespace ClauseEmbeddingAdjective
 
 /-- The verb an adjective forms with a copula, the copula's form before the adjective's and the
-adjective's clausal selection carried over. -/
-def toVerb (a : ClauseEmbeddingAdjective) (copula : String) : Verb where
-  form := copula ++ " " ++ a.form
-  frames := [a.frame]
-  factivity := a.factivity
-  attitude := a.attitude
-  opaqueContext := a.opaqueContext
-  complementSig := a.complementSig
+adjective's clausal-selection facets carried over. -/
+def toVerb (a : ClauseEmbeddingAdjective) (copula : String) : Verb :=
+  { a.toPresupposition, a.toCausation, a.toAttitude with
+    form := copula ++ " " ++ a.form
+    frames := a.frames }
 
 end ClauseEmbeddingAdjective
