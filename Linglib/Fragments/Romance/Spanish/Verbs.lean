@@ -148,7 +148,7 @@ def rasgar : SpanishVerbEntry :=
     anticausativeMarking := some .marked,
     root := { content := {
       force := {.low, .moderate}
-      direction := {.unidirectional}
+      forceDirection := {.unidirectional}
       patientRobustness := {.insubstantial, .flimsy}
       resultGeometry := {.separation, .surfaceBreach}
       agentControl := {.incompatible, .neutral}
