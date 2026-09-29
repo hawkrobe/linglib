@@ -11,54 +11,43 @@ public import Linglib.Core.Combinatorics.RootedTree.Cut
 public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 public import Mathlib.RingTheory.Bialgebra.Basic
 
+/-!
+# The coproduct with trace markers
+
+This file defines the coproduct `Δ^c` of Marcolli, Chomsky and Berwick on forests of trees whose
+vertices are labelled `α ⊕ β`. It sums over the admissible cuts of a tree, pairing the cut-off
+subtrees with the remaining trunk, in which each cut subtree `S` leaves a trace leaf `inr (τ S)`
+computed by a trace encoder `τ`. With the edge grading of `Coproduct/TraceGrading.lean` this gives
+their Lemma 1.2.10: disjoint union and `Δ^c` make a graded bialgebra.
+
+## Main definitions
+
+* `ConnesKreimer.comulCAlgHomN`: `Δ^c` as an algebra homomorphism, for a trace encoder `τ`.
+* `ConnesKreimer.TraceCoherent`: `τ` gives a cut trunk the same marker as the tree it was cut
+  from.
+
+## Main results
+
+* `ConnesKreimer.comulCN_coassoc`: `Δ^c` is coassociative for a coherent encoder.
+* `ConnesKreimer.instIsAdmissibleCutsCN`: the counit laws and coassociativity, which give
+  `WithCuts R (cutSummandsCN τ)` its `Bialgebra` instance.
+
+## Implementation notes
+
+Coassociativity is proved directly: both composites enumerate pairs of nested admissible cuts,
+and the two enumerations agree under trace coherence (`DoubleCut.coassT`). The pairing duality
+that gives coassociativity of the pruning coproduct in `Coproduct/PruningDuality.lean` fails
+here, because grafting never removes trace markers.
+
+## References
+
+* [marcolli-chomsky-berwick-2025]
+* [foissy-2021]
+-/
+
 @[expose] public section
 
 open RoseTree UnorderedTree
-
-/-!
-# Δ^c on `ConnesKreimer R (UnorderedTree (α ⊕ β))` via descent
-[marcolli-chomsky-berwick-2025]
-[foissy-typed-decorated-rooted-trees-2018]
-
-The decorated coproduct Δ^c (contraction-extraction with trace
-placeholders), built on the descended cut enumeration `cutSummandsCN`
-(`Core/Combinatorics/RootedTree/Cut.lean`), with its coassociativity,
-counit laws, and `Bialgebra` packaging. Together with the edge grading
-in `Coproduct/TraceGrading.lean` this closes
-[marcolli-chomsky-berwick-2025] Lemma 1.2.10, the graded bialgebra
-structure of `(V(F_{SO_0}), ⊔, Δ^c)`.
-
-## Construction
-
-1. **`comulCTreeN`, `comulCForestN`, `comulCAlgHomN`** — UnorderedTree
-   tree/forest-level Δ^c, packaged as algebra hom. The descent layer
-   mirrors `Coproduct/Pruning.lean`'s descent of Δ^ρ.
-2. **Coassociativity** (`comulCN_coassoc`, under `TraceCoherent`) by
-   the direct double-cut bijection: both composites expand to sums
-   over double-cut enumerators (`lhsExpand`/`rhsExpand`), which agree
-   under trace coherence (`doubleCut_eq`), descended from the planar
-   `DoubleCut.coassT` (`Core/Combinatorics/RootedTree/DoubleCut.lean`)
-   through `UnorderedTree.mk`.
-3. **Counit laws** from the empty-cut uniqueness of the enumeration
-   (`cutSummandsCN_filter_empty`, `Core/Combinatorics/RootedTree/Cut.lean`).
-4. **`instIsAdmissibleCutsCN`** — the laws packaged as `IsAdmissibleCuts
-   (cutSummandsCN τ)`, gated on `Fact (TraceCoherent τ)`, so
-   `WithCuts R (cutSummandsCN τ)` carries the Δ^c `Bialgebra` instance
-   (`Coproduct/WithCuts.lean`).
-
-## No GL/Δ^c duality
-
-The GL/CK pairing duality that proves Δ^ρ coassociativity in
-`Coproduct/PruningDuality.lean` is **false** for Δ^c: GL grafting never
-removes trace markers, so no orientation of
-`⟨x ⋆ y, z⟩ = pairing₂ (…) (Δ^c z)` can hold, and B+ is not a Hochschild
-1-cocycle for Δ^c either (see the Trace-coherence section below). The
-pairings themselves live in `GrossmanLarson/Pairing.lean`.
-
-## Status
-
-`[UPSTREAM]` candidate.
--/
 
 namespace ConnesKreimer
 
@@ -66,19 +55,18 @@ open scoped TensorProduct
 
 variable {R : Type*} [CommSemiring R] {α β : Type*}
 
-/-! ### UnorderedTree tree- and forest-level Δ^c
+/-! ### `Δ^c` on trees and forests
 
-Definitional instantiations of the generic admissible-cut coproduct
-(`Coproduct/WithCuts.lean`) at the Δ^c enumeration `cutSummandsCN τ`. -/
+These instantiate the admissible-cut coproduct of `Coproduct/WithCuts.lean` at the enumeration
+`cutSummandsCN τ`. -/
 
-/-- The UnorderedTree tree-level Δ^c coproduct: `comulTreeNG` at
-    `cuts := cutSummandsCN τ`. -/
+/-- `comulCTreeN τ` is `Δ^c` on a single tree, `comulTreeNG` at the cuts `cutSummandsCN τ`. -/
 noncomputable def comulCTreeN (τ : UnorderedTree (α ⊕ β) → β) :
     UnorderedTree (α ⊕ β) →
       ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R] ConnesKreimer R (UnorderedTree (α ⊕ β)) :=
   comulTreeNG (cutSummandsCN τ)
 
-/-- The UnorderedTree forest-level Δ^c (multiplicative extension). -/
+/-- `comulCForestN τ` is `Δ^c` on a forest, the product over its trees. -/
 noncomputable def comulCForestN (τ : UnorderedTree (α ⊕ β) → β) :
     Forest (UnorderedTree (α ⊕ β)) →
       ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R] ConnesKreimer R (UnorderedTree (α ⊕ β)) :=
@@ -94,16 +82,15 @@ noncomputable def comulCForestN (τ : UnorderedTree (α ⊕ β) → β) :
       comulCForestN (R := R) τ F * comulCForestN (R := R) τ G :=
   comulForestNG_add _ F G
 
-/-- Forest-level Δ^c as a `MonoidHom` from `Multiplicative (Forest ...)`. -/
+/-- `comulCMonoidHomN τ` is `comulCForestN τ` as a monoid homomorphism. -/
 noncomputable def comulCMonoidHomN (τ : UnorderedTree (α ⊕ β) → β) :
     Multiplicative (Forest (UnorderedTree (α ⊕ β))) →*
       (ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
         ConnesKreimer R (UnorderedTree (α ⊕ β))) :=
   comulMonoidHomNG (cutSummandsCN τ)
 
-/-- The **Δ^c coproduct on `ConnesKreimer R (UnorderedTree (α ⊕ β))`** as
-    an algebra hom: `comulAlgHomNG` at `cuts := cutSummandsCN τ`,
-    parameterized by the trace encoder `τ`. -/
+/-- `comulCAlgHomN τ` is the coproduct `Δ^c` on `ConnesKreimer R (UnorderedTree (α ⊕ β))`, an
+algebra homomorphism, for the trace encoder `τ`. -/
 noncomputable def comulCAlgHomN (τ : UnorderedTree (α ⊕ β) → β) :
     ConnesKreimer R (UnorderedTree (α ⊕ β)) →ₐ[R]
       ConnesKreimer R (UnorderedTree (α ⊕ β)) ⊗[R]
@@ -122,34 +109,15 @@ noncomputable def comulCAlgHomN (τ : UnorderedTree (α ⊕ β) → β) :
 
 /-! ### Trace coherence
 
-There is **no** GL/Δ^c pairing duality: for any marker-free `z` with a
-proper admissible cut, the trunk side of `Δ^c z` carries trace-marker
-leaves, while every forest in the support of a GL product `x ⋆ y` has at
-least as many markers as `x` and `y` combined (grafting never removes
-vertices) — so `⟨x ⋆ y, z⟩ = 0` against any cut summand that would make
-the right side nonzero, in either slot orientation. The duality (with
-crossed slots) is true for the deletion variant Δ^ρ and is proved in
-`Coproduct/PruningDuality.lean`.
+Coassociativity of `Δ^c` depends on the trace encoder. Iterating `Δ^c` encodes a subtree that
+already carries markers, while the other cut order encodes the original subtree; for `τ` the
+number of `inl` vertices the two disagree on a three-vertex chain of `inl` vertices. Marcolli,
+Chomsky and Berwick's proof of Lemma 1.2.10 (pp. 37–38) uses that "the accessible terms of
+accessible terms … are themselves accessible terms", and `TraceCoherent` states the hypothesis
+this needs. -/
 
-Δ^c coassociativity itself is **not τ-generic** either: iterating Δ^c
-re-encodes already-cut subtrees, so the marker written by a second-stage
-cut is `τ` of a tree *containing markers*, while the opposite cut order
-writes `τ` of the original subtree. For `τ` sensitive to that difference
-coassociativity fails (counterexample: `τ` = count of `Sum.inl`
-vertices, `z` an inl-labeled 3-chain).
-[marcolli-chomsky-berwick-2025]'s proof of Lemma 1.2.10 (book
-p. 37–38) silently uses that their trace labels compose under
-contraction ("the accessible terms of accessible terms … are themselves
-accessible terms"); `TraceCoherent` is that hypothesis made explicit. -/
-
-/-- **Trace coherence**: `τ` does not distinguish a cut trunk (with its
-    trace markers) from the tree it was cut from. This is the condition
-    under which iterated Δ^c cuts commute (coassociativity): second-stage
-    markers computed on marked trunks agree with markers computed on the
-    original tree. Constant encoders satisfy it (`traceCoherent_const`);
-    [marcolli-chomsky-berwick-2025]'s identity trace satisfies it in
-    spirit via label expansion (their marker labels denote subtrees of
-    the *original* tree). -/
+/-- A trace encoder `τ` is coherent when it gives a cut trunk, with its trace markers, the same
+marker as the tree it was cut from. Constant encoders are coherent (`traceCoherent_const`). -/
 def TraceCoherent (τ : UnorderedTree (α ⊕ β) → β) : Prop :=
   ∀ T : UnorderedTree (α ⊕ β), ∀ p ∈ cutSummandsCN τ T, τ p.2 = τ T
 
@@ -158,22 +126,11 @@ theorem traceCoherent_const (b : β) :
     TraceCoherent (fun _ : UnorderedTree (α ⊕ β) => b) :=
   fun _ _ _ => rfl
 
-/-! ### Double-cut enumeration — substrate for the direct coassoc proof
+/-! ### Enumerating pairs of nested cuts
 
-The combinatorial core of Δ^c coassociativity (`comulCN_coassoc_tree`),
-following the [marcolli-chomsky-berwick-2025] Lemma 1.2.10 argument
-("the accessible terms of accessible terms … are themselves accessible
-terms"). Both `(Δ^c ⊗ id) ∘ Δ^c` and `(id ⊗ Δ^c) ∘ Δ^c` enumerate
-ordered pairs of nested admissible cuts of a tree; the two enumerations
-biject under `TraceCoherent`.
-
-The proof structure:
-1. `comulCTreeN`/`comulCForestN` as multiset sums over cut enumerators
-   `treeCutsN`/`forestCutsN` (this section).
-2. Each composite expands to a sum over a double-cut enumerator
-   `dcLHS`/`dcRHS` (`lhsExpand`/`rhsExpand`).
-3. `dcLHS = dcRHS` as UnorderedTree multisets under coherence
-   (`doubleCut_eq`, the bijection). -/
+Both `(Δ^c ⊗ id) ∘ Δ^c` and `(id ⊗ Δ^c) ∘ Δ^c` sum over pairs of nested admissible cuts of a tree.
+This section writes `Δ^c` as a sum over cut enumerators (`treeCutsN`, `forestCutsN`) and each
+composite as a sum over a double-cut enumerator (`dcLHS`, `dcRHS`). -/
 
 section DoubleCut
 variable {R : Type*} [CommSemiring R] {α β : Type*}
@@ -187,22 +144,20 @@ private noncomputable def tripleTensor
   ConnesKreimer.of' (R := R) q.1 ⊗ₜ[R]
     (ConnesKreimer.of' q.2.1 ⊗ₜ[R] ConnesKreimer.of' q.2.2)
 
-/-- All cut summands of a tree as (crown forest, trunk forest) pairs:
-    `treeCutsG` at the Δ^c enumeration `cutSummandsCN τ` (full cut
-    `({T}, ∅)`, plus each proper/empty cut with a single-tree trunk). -/
+/-- `treeCutsN τ T` lists the cut summands of `T` as pairs of a crown forest and a trunk forest,
+namely the full cut `({T}, ∅)` and each proper or empty cut with its one-tree trunk. -/
 private noncomputable def treeCutsN (τ : UnorderedTree (α ⊕ β) → β)
     (T : UnorderedTree (α ⊕ β)) :
     Multiset (Forest (UnorderedTree (α ⊕ β)) × Forest (UnorderedTree (α ⊕ β))) :=
   treeCutsG (cutSummandsCN τ) T
 
-/-- `comulCTreeN` as a single multiset sum over `treeCutsN`:
-    `comulTreeNG_eq_sum` at the Δ^c enumeration. -/
+/-- `comulCTreeN` is a sum over `treeCutsN`. -/
 private theorem comulCTreeN_eq_sum (τ : UnorderedTree (α ⊕ β) → β)
     (T : UnorderedTree (α ⊕ β)) :
     comulCTreeN (R := R) τ T = ((treeCutsN τ T).map (cutTensor (R := R))).sum :=
   comulTreeNG_eq_sum _ T
 
-/-- Forest-level cut enumeration: `forestCutsG` at the Δ^c enumeration. -/
+/-- `forestCutsN τ F` lists the cut summands of the forest `F`. -/
 private noncomputable def forestCutsN (τ : UnorderedTree (α ⊕ β) → β)
     (F : Forest (UnorderedTree (α ⊕ β))) :
     Multiset (Forest (UnorderedTree (α ⊕ β)) × Forest (UnorderedTree (α ⊕ β))) :=
@@ -218,29 +173,27 @@ private theorem forestCutsN_cons (τ : UnorderedTree (α ⊕ β) → β)
       (treeCutsN τ T ×ˢ forestCutsN τ F).map ConnesKreimer.combinerProjG :=
   forestCutsG_cons _ T F
 
-/-- `comulCForestN` as a single multiset sum over `forestCutsN`:
-    `comulForestNG_eq_sum` at the Δ^c enumeration. -/
+/-- `comulCForestN` is a sum over `forestCutsN`. -/
 private theorem comulCForestN_eq_sum (τ : UnorderedTree (α ⊕ β) → β)
     (F : Forest (UnorderedTree (α ⊕ β))) :
     comulCForestN (R := R) τ F = ((forestCutsN τ F).map (cutTensor (R := R))).sum :=
   comulForestNG_eq_sum _ F
 
-/-- LHS double-cut enumerator: outer cut of `T`, then re-cut its crown. -/
+/-- `dcLHS τ T` cuts `T` and then cuts the crown again. -/
 private noncomputable def dcLHS (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree (α ⊕ β)) :
     Multiset (Forest (UnorderedTree (α ⊕ β)) × Forest (UnorderedTree (α ⊕ β)) ×
               Forest (UnorderedTree (α ⊕ β))) :=
   (treeCutsN τ T).bind (fun AB =>
     (forestCutsN τ AB.1).map (fun A12 => (A12.1, A12.2, AB.2)))
 
-/-- RHS double-cut enumerator: outer cut of `T`, then re-cut its trunk. -/
+/-- `dcRHS τ T` cuts `T` and then cuts the trunk again. -/
 private noncomputable def dcRHS (τ : UnorderedTree (α ⊕ β) → β) (T : UnorderedTree (α ⊕ β)) :
     Multiset (Forest (UnorderedTree (α ⊕ β)) × Forest (UnorderedTree (α ⊕ β)) ×
               Forest (UnorderedTree (α ⊕ β))) :=
   (treeCutsN τ T).bind (fun AB =>
     (forestCutsN τ AB.2).map (fun B12 => (AB.1, B12.1, B12.2)))
 
-/-- Per-cut-pair LHS: reassociating `comulCForestN`-of-crown ⊗ trunk
-    enumerates the crown's forest cuts. -/
+/-- Cutting the crown of one cut pair again enumerates the crown's forest cuts. -/
 private theorem lhs_per_pair (τ : UnorderedTree (α ⊕ β) → β)
     (A B : Forest (UnorderedTree (α ⊕ β))) :
     (TensorProduct.assoc R (ConnesKreimer R (UnorderedTree (α ⊕ β)))
@@ -266,8 +219,7 @@ private theorem lhs_per_pair (τ : UnorderedTree (α ⊕ β) → β)
   rw [TensorProduct.assoc_tmul]
   rfl
 
-/-- Per-cut-pair RHS: crown ⊗ `comulCForestN`-of-trunk enumerates the
-    trunk's forest cuts. -/
+/-- Cutting the trunk of one cut pair again enumerates the trunk's forest cuts. -/
 private theorem rhs_per_pair (τ : UnorderedTree (α ⊕ β) → β)
     (A B : Forest (UnorderedTree (α ⊕ β))) :
     ConnesKreimer.of' (R := R) A ⊗ₜ[R] comulCForestN (R := R) τ B =
@@ -340,10 +292,10 @@ private theorem rhsExpand (τ : UnorderedTree (α ⊕ β) → β) (T : Unordered
       rhs_per_pair]
   rfl
 
-/-! ### Descent of the double-cut enumerators through `UnorderedTree.mk`
+/-! ### Descent of the double-cut enumerators
 
-The UnorderedTree `dcLHS`/`dcRHS` are the projections (via `UnorderedTree.mk`) of the
-tree-level `DoubleCut.dcLHSP`/`dcRHSP`; `DoubleCut.coassT` then gives the bijection. -/
+The enumerators `dcLHS` and `dcRHS` are the images under `UnorderedTree.mk` of the planar
+`DoubleCut.dcLHSP` and `DoubleCut.dcRHSP`, which `DoubleCut.coassT` identifies. -/
 
 /-- Project a tree-level (crown, trunk) pair to UnorderedTree. -/
 private def projPair (p : Forest (RoseTree (α ⊕ β)) × Forest (RoseTree (α ⊕ β))) :
@@ -419,10 +371,8 @@ private theorem traceCoherentP_of_coherent (τ : UnorderedTree (α ⊕ β) → �
     rw [cutSummandsCN_mk]; exact Multiset.mem_map.mpr ⟨p, hp, rfl⟩
   exact hτ (UnorderedTree.mk t) (ConnesKreimer.projSummand p) hmem
 
-/-- The LHS and RHS double-cut enumerators of a tree agree as UnorderedTree
-    multisets under trace coherence — [marcolli-chomsky-berwick-2025]
-    Lemma 1.2.10's combinatorial core, descended from the planar
-    `DoubleCut.coassT`. -/
+/-- Under trace coherence the two double-cut enumerators of a tree agree, the combinatorial core
+of Marcolli, Chomsky and Berwick's Lemma 1.2.10. -/
 private theorem doubleCut_eq (τ : UnorderedTree (α ⊕ β) → β)
     (hτ : TraceCoherent τ) (T : UnorderedTree (α ⊕ β)) :
     dcLHS τ T = dcRHS τ T := by
@@ -434,18 +384,16 @@ private theorem doubleCut_eq (τ : UnorderedTree (α ⊕ β) → β)
 
 end DoubleCut
 
-/-! ### Coassociativity of Δ^c on UnorderedTree (direct double-cut bijection)
+/-! ### Coassociativity
 
-Specialized to `[CommRing R]` (rather than `[CommSemiring R]`) only for
-uniformity with the `Bialgebra` consumers; the double-cut proof itself is
-`CommSemiring`-generic. -/
+The statements are over a commutative ring for the `Bialgebra` consumers; the proof itself works
+over a commutative semiring. -/
 
 section CoassocCommRing
 variable {R' : Type*} [CommRing R'] {α' β' : Type*}
 
-/-- Per-tree Δ^c coassociativity: both composites enumerate ordered pairs
-    of nested admissible cuts of `T`, and `TraceCoherent τ` makes the
-    trunk-marker labels written by the two cut orders agree. -/
+/-- On a tree, both composites enumerate the pairs of nested admissible cuts of `T`, and
+`TraceCoherent τ` makes the markers written by the two cut orders agree. -/
 theorem comulCN_coassoc_tree
     (τ : UnorderedTree (α' ⊕ β') → β') (hτ : TraceCoherent τ)
     (T : UnorderedTree (α' ⊕ β')) :
@@ -457,7 +405,7 @@ theorem comulCN_coassoc_tree
       (comulCAlgHomN (R := R') τ).toLinearMap.lTensor _ (comulCTreeN τ T) := by
   rw [lhsExpand, rhsExpand, doubleCut_eq τ hτ T]
 
-/-- The LHS AlgHom of Δ^c coassoc: `assoc ∘ (Δ^c ⊗ id) ∘ Δ^c`. -/
+/-- `coassocLHSAlgC τ` is `assoc ∘ (Δ^c ⊗ id) ∘ Δ^c`. -/
 private noncomputable def coassocLHSAlgC (τ : UnorderedTree (α' ⊕ β') → β') :
     ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R']
       ConnesKreimer R' (UnorderedTree (α' ⊕ β')) ⊗[R']
@@ -467,7 +415,7 @@ private noncomputable def coassocLHSAlgC (τ : UnorderedTree (α' ⊕ β') → �
     ((Algebra.TensorProduct.map (comulCAlgHomN (R := R') τ)
       (AlgHom.id R' _)).comp (comulCAlgHomN τ))
 
-/-- The RHS AlgHom of Δ^c coassoc: `(id ⊗ Δ^c) ∘ Δ^c`. -/
+/-- `coassocRHSAlgC τ` is `(id ⊗ Δ^c) ∘ Δ^c`. -/
 private noncomputable def coassocRHSAlgC (τ : UnorderedTree (α' ⊕ β') → β') :
     ConnesKreimer R' (UnorderedTree (α' ⊕ β')) →ₐ[R']
       ConnesKreimer R' (UnorderedTree (α' ⊕ β')) ⊗[R']
@@ -476,25 +424,8 @@ private noncomputable def coassocRHSAlgC (τ : UnorderedTree (α' ⊕ β') → �
   (Algebra.TensorProduct.map (AlgHom.id R' _) (comulCAlgHomN (R := R') τ)).comp
     (comulCAlgHomN τ)
 
-/-- Coassociativity of Δ^c under trace coherence.
-
-    NOT τ-generic: without `TraceCoherent τ`, iterating Δ^c writes
-    second-stage markers computed on marked trunks, and the two cut
-    orders disagree (counterexample: `τ` = inl-vertex count on an
-    inl-labeled 3-chain). Under coherence the double-cut enumerations
-    agree — this is
-    [marcolli-chomsky-berwick-2025] Lemma 1.2.10's coassociativity
-    (book p. 37–38, the quotient-composition argument "the accessible
-    terms of accessible terms … are themselves accessible terms").
-
-    Proved by the double-cut bijection on each tree
-    (`comulCN_coassoc_tree`), lifted to forests by multiplicativity
-    (both composites are algebra homs, so they agree on a product
-    `of' F = ∏ ofTree Tᵢ` once they agree on each `ofTree Tᵢ`). The
-    earlier plan to transport `mul_assoc` through a
-    GL/Δ^c pairing duality is dead — that duality is false (see the
-    Trace coherence section above); the duality route works only for
-    Δ^ρ (`Coproduct/PruningDuality.lean`). -/
+/-- `Δ^c` is coassociative for a coherent trace encoder. On each tree both composites enumerate
+the pairs of nested cuts; the forest case follows since both are algebra homomorphisms. -/
 theorem comulCN_coassoc
     (τ : UnorderedTree (α' ⊕ β') → β') (hτ : TraceCoherent τ) :
     TensorProduct.assoc R'
@@ -529,8 +460,6 @@ theorem comulCN_coassoc
 
 end CoassocCommRing
 
-/-- Sum-of-conditional helper: sum of a multiset map where each entry is
-    conditionally zero equals the sum over the filtered subset. -/
 private lemma sum_map_ite_zero {ι M : Type*} [AddCommMonoid M]
     (s : Multiset ι) (p : ι → Prop) [DecidablePred p] (g : ι → M) :
     (s.map (fun a => if p a then g a else (0 : M))).sum =
@@ -544,16 +473,9 @@ private lemma sum_map_ite_zero {ι M : Type*} [AddCommMonoid M]
           Multiset.map_cons, Multiset.sum_cons]
     · rw [ite_eq_right hpa, Multiset.filter_cons_of_neg _ hpa, zero_add]
 
-/-! ### Counit laws + Bialgebra instance
+/-! ### Counit laws and the bialgebra
 
-The three inputs to `Bialgebra.ofAlgHom`:
-1. The AlgHom-form coassoc (`comulCAlgHomN_coassoc_algHom`).
-2. The right counit law (`counit_rTensor_comulCAlgHomN`).
-3. The left counit law (`counit_lTensor_comulCAlgHomN`).
-
-The per-tree counit laws are derived from the empty-cut uniqueness of
-the enumeration (`cutSummandsCN_filter_empty`,
-`Core/Combinatorics/RootedTree/Cut.lean`). -/
+The counit laws follow from the uniqueness of the empty cut (`cutSummandsCN_filter_empty`). -/
 
 section BialgebraInst
 variable {R' : Type*} [CommRing R'] {α' β' : Type*}
@@ -576,20 +498,14 @@ theorem comulCAlgHomN_coassoc_algHom
 
 end BialgebraInst
 
-/-! ### Counit laws — factored via per-tree + forest helpers
+/-! ### Counit laws on trees and forests
 
-Mirrors the Δ^ρ proof structure in `Coproduct/Pruning.lean`:
-per-tree laws from empty-cut uniqueness, lifted to forests by
-multiplicativity. Stated over `CommSemiring` (unlike the coassoc, which
-needs a ring) so they can feed the ring-uniform `IsAdmissibleCuts`
-counit fields directly. -/
+As for the pruning coproduct, the laws are proved on trees and extended to forests
+multiplicatively, over a commutative semiring. -/
 
 section CounitLaws
 variable {R' : Type*} [CommSemiring R'] {α' β' : Type*}
 
-/-- Per-tree right counit law: under `(counit ⊗ id)` only the empty-cut
-    summand of `cutSummandsCN τ T` survives, contributing `1 ⊗ ofTree T` —
-    the empty-cut uniqueness `cutSummandsCN_filter_empty` in tensor form. -/
 private theorem counit_rTensor_comulCTreeN (τ : UnorderedTree (α' ⊕ β') → β')
     (T : UnorderedTree (α' ⊕ β')) :
     (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
@@ -648,8 +564,6 @@ private theorem counit_rTensor_comulCTreeN (τ : UnorderedTree (α' ⊕ β') →
   rw [ConnesKreimer.cutSummandsCN_filter_empty τ T,
       Multiset.map_singleton, Multiset.sum_singleton]
 
-/-- Per-tree left counit law: mirror of `counit_rTensor_comulCTreeN` with
-    `counit` on the right factor. -/
 private theorem counit_lTensor_comulCTreeN (τ : UnorderedTree (α' ⊕ β') → β')
     (T : UnorderedTree (α' ⊕ β')) :
     (Algebra.TensorProduct.map (AlgHom.id R' (ConnesKreimer R' (UnorderedTree (α' ⊕ β'))))
@@ -690,15 +604,14 @@ private theorem counit_lTensor_comulCTreeN (τ : UnorderedTree (α' ⊕ β') →
     rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, ConnesKreimer.counit_ofTree,
         TensorProduct.tmul_zero]]
   -- The sum of all zeros over a multiset is 0.
-  rw [show ((cutSummandsCN τ T).map (fun _ : Forest (UnorderedTree (α' ⊕ β')) × UnorderedTree (α' ⊕ β') =>
-              (0 : ConnesKreimer R' (UnorderedTree (α' ⊕ β')) ⊗[R'] R'))).sum = 0 from by
+  rw [show ((cutSummandsCN τ T).map
+      (fun _ : Forest (UnorderedTree (α' ⊕ β')) × UnorderedTree (α' ⊕ β') =>
+        (0 : ConnesKreimer R' (UnorderedTree (α' ⊕ β')) ⊗[R'] R'))).sum = 0 from by
     induction (cutSummandsCN τ T) using Multiset.induction with
     | empty => simp
     | cons _ _ ih => rw [Multiset.map_cons, Multiset.sum_cons, ih, add_zero]]
   rw [add_zero]
 
-/-- Forest right counit law, lifted from the per-tree law by
-    multiplicativity. -/
 private theorem counit_rTensor_comulCForestN (τ : UnorderedTree (α' ⊕ β') → β')
     (F : Forest (UnorderedTree (α' ⊕ β')))
     (hF : ∀ T ∈ F, (Algebra.TensorProduct.map ((ConnesKreimer.counit (R := R')) :
@@ -728,7 +641,6 @@ private theorem counit_rTensor_comulCForestN (τ : UnorderedTree (α' ⊕ β') �
     rw [hCons, map_mul, hT, ih',
         Algebra.TensorProduct.tmul_mul_tmul, _root_.mul_one, hForest]
 
-/-- Forest left counit law: mirror of `counit_rTensor_comulCForestN`. -/
 private theorem counit_lTensor_comulCForestN (τ : UnorderedTree (α' ⊕ β') → β')
     (F : Forest (UnorderedTree (α' ⊕ β')))
     (hF : ∀ T ∈ F, (Algebra.TensorProduct.map
@@ -794,17 +706,13 @@ theorem counit_lTensor_comulCAlgHomN (τ : UnorderedTree (α' ⊕ β') → β') 
   rw [comulCAlgHomN_apply_of', Algebra.TensorProduct.rid_symm_apply]
   exact counit_lTensor_comulCForestN τ F (fun T _ => counit_lTensor_comulCTreeN τ T)
 
-/-- Δ^c is the generic coproduct at `cuts := cutSummandsCN τ` — definitional. -/
+/-- `Δ^c` is the admissible-cut coproduct at the cuts `cutSummandsCN τ`. -/
 theorem comulCAlgHomN_eq_G {R : Type*} [CommSemiring R] (τ : UnorderedTree (α' ⊕ β') → β') :
     comulCAlgHomN (R := R) τ = comulAlgHomNG (R := R) (cutSummandsCN τ) := rfl
 
-/-- Δ^c is an admissible cut policy for a trace-coherent encoder:
-    `comulCAlgHomN_coassoc_algHom` and the counit laws packaged as the
-    `IsAdmissibleCuts` mixin, so `WithCuts R (cutSummandsCN τ)` receives its
-    `Bialgebra` instance — the bialgebra structure of MCB Lemma 1.2.10.
-    Gated on `Fact (TraceCoherent τ)`: coassociativity is false for
-    arbitrary `τ` (see `comulCN_coassoc`), and instance resolution cannot
-    synthesize the coherence hypothesis without the `Fact` wrapper. -/
+/-- For a coherent trace encoder, `cutSummandsCN τ` is an admissible cut policy, so
+`WithCuts R (cutSummandsCN τ)` is a bialgebra, as in Marcolli, Chomsky and Berwick's Lemma 1.2.10.
+Coherence enters through `Fact`, since instance search cannot find the hypothesis otherwise. -/
 instance instIsAdmissibleCutsCN (τ : UnorderedTree (α' ⊕ β') → β')
     [Fact (TraceCoherent τ)] :
     IsAdmissibleCuts (cutSummandsCN τ) where
@@ -819,8 +727,7 @@ instance instIsAdmissibleCutsCN (τ : UnorderedTree (α' ⊕ β') → β')
     intro R _
     exact counit_lTensor_comulCAlgHomN τ
 
-/-- Resolution check: a trace-coherent encoder yields the Δ^c `Bialgebra`
-    on the marked carrier through the gated instance chain. -/
+/-- A coherent trace encoder gives the bialgebra of `Δ^c` by instance search. -/
 noncomputable example {R : Type*} [CommRing R]
     (τ : UnorderedTree (α' ⊕ β') → β') (hτ : TraceCoherent τ) :
     Bialgebra R (WithCuts R (cutSummandsCN τ)) :=

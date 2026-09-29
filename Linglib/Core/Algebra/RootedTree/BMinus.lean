@@ -11,42 +11,42 @@ public import Linglib.Core.Data.Multiset.Antidiagonal
 public import Mathlib.LinearAlgebra.SesquilinearForm.Basic
 public import Mathlib.Tactic.Ring
 
-@[expose] public section
-
-open RoseTree UnorderedTree
-
 /-!
-# The B- operator and the B+/B- pairing adjoint
+# The operator B⁻
 
-The `B-_a` operator on `ConnesKreimer R (UnorderedTree α)`
-([foissy-typed-decorated-rooted-trees-2018]'s B⁻ on decorated trees) is the
-transpose of the grafting operator `B+_a` (`Coproduct/Pruning.lean`) under
-the symmetry-weighted pairing (`GrossmanLarson/Pairing.lean`). On basis
-elements:
+This file defines the linear map `B⁻_a` on `ConnesKreimer R (UnorderedTree α)`. It sends a
+one-tree forest whose root is labelled `a` to the forest of that root's children, and every other
+basis forest to `0`, so it undoes the grafting operator `B⁺_a` of `Coproduct/Pruning.lean`. Oudom
+and Guin use the pair `B⁺`, `B⁻` to identify the Grossman–Larson algebra with their product on a
+symmetric algebra (their Proposition 4.1).
 
-```
-B-_a (of' F) = if F = {UnorderedTree.node a F'} for some F' then of' F' else 0
-```
-
-i.e., `B-_a` projects a singleton forest with an `a`-labeled root tree to
-that tree's children forest, and vanishes otherwise.
+Under the symmetry-weighted pairing, `B⁻_a` is the transpose of `B⁺_a`, and it satisfies
+`B⁻_a (x ⋆ y) = ε(x) • B⁻_a y + B⁻_a x ⋆ y` for the Grossman–Larson product. With the
+multiplicativity of the counit, these drive the induction that proves the duality of
+`Coproduct/PruningDuality.lean`.
 
 ## Main definitions
 
-* `GrossmanLarson.bMinusTree`, `GrossmanLarson.bMinusBasis`,
-  `GrossmanLarson.bMinusLin` — B-_a per tree, per basis forest, and as a
-  linear endomorphism.
+* `GrossmanLarson.bMinusLin`: the linear map `B⁻_a`; `bMinusTree` and `bMinusBasis` are its values
+  on trees and on basis forests.
 
 ## Main results
 
-* `GrossmanLarson.isAdjointPair_bMinusLin_bPlusLin`,
-  `GrossmanLarson.bMinusLin_pairing_adjoint` — the transpose property
-  `⟨B-_a x, y⟩ = ⟨x, B+_a y⟩` ([oudom-guin-2008] Prop 3.2 substrate).
-* `GrossmanLarson.bMinusLin_gl_mul` — the derivation identity
-  `B-(A ∗ B) = ε(A) B-(B) + B-(A) ∗ B` ([oudom-guin-2008] §3.2), whose
-  duality argument the transpose property anchors.
+* `GrossmanLarson.bMinusLin_pairing_adjoint`, `GrossmanLarson.isAdjointPair_bMinusLin_bPlusLin`:
+  `⟨B⁻_a x, y⟩ = ⟨x, B⁺_a y⟩`.
+* `GrossmanLarson.bMinusLin_gl_mul`: `B⁻_a (x ⋆ y) = ε(x) • B⁻_a y + B⁻_a x ⋆ y`.
+* `GrossmanLarson.counit_gl_mul`: the counit is multiplicative for the Grossman–Larson product.
+* `GrossmanLarson.pairing_apply_bPlus_gl_mul`: `⟨x ⋆ y, B⁺_a z⟩` in terms of `B⁻_a`.
+
+## References
+
+* [oudom-guin-2008]
+* [foissy-2021]
 -/
 
+@[expose] public section
+
+open RoseTree UnorderedTree
 
 namespace GrossmanLarson
 
@@ -54,11 +54,9 @@ open ConnesKreimer
 
 variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
-/-! ### `bMinusTree` and `bMinusBasis` -/
+/-! ### `B⁻_a` on trees and basis forests -/
 
-/-- Per-tree B-_a: the children forest when the root is labeled `a`,
-    else `0` — Foissy's B⁻ on trees
-    ([foissy-typed-decorated-rooted-trees-2018]). -/
+/-- `bMinusTree a T` is the forest of children of `T` when its root is labelled `a`, else `0`. -/
 noncomputable def bMinusTree (a : α) (T : UnorderedTree α) :
     ConnesKreimer R (UnorderedTree α) :=
   if T.value = a then of' (R := R) T.children else 0
@@ -68,9 +66,8 @@ noncomputable def bMinusTree (a : α) (T : UnorderedTree α) :
   rw [bMinusTree, UnorderedTree.value_node, ite_eq_left rfl,
       UnorderedTree.children_node]
 
-/-- The B-_a operator on basis forests: `bMinusTree` on singletons, `0`
-    otherwise. Stated via `card`/`map`/`sum`, which carry the descent to
-    the `Multiset` quotient. -/
+/-- `bMinusBasis a F` is `bMinusTree a T` when `F = {T}`, and `0` otherwise. It is stated through
+`card`, `map` and `sum` so that it is a function on multisets. -/
 noncomputable def bMinusBasis (a : α) (F : Forest (UnorderedTree α)) :
     ConnesKreimer R (UnorderedTree α) :=
   if F.card = 1 then (F.map (bMinusTree (R := R) a)).sum else 0
@@ -84,8 +81,7 @@ noncomputable def bMinusBasis (a : α) (F : Forest (UnorderedTree α)) :
       of' F := by
   simp [bMinusBasis]
 
-/-- `bMinusBasis a` vanishes on basis forests that are not
-    singleton-`a`-rooted. -/
+/-- `bMinusBasis a` vanishes on basis forests other than a single tree with root `a`. -/
 theorem bMinusBasis_eq_zero_of_not_singleton_a (a : α)
     (F : Forest (UnorderedTree α))
     (h : ¬ ∃ G' : Forest (UnorderedTree α), F = ({UnorderedTree.node a G'} : Forest _)) :
@@ -98,9 +94,9 @@ theorem bMinusBasis_eq_zero_of_not_singleton_a (a : α)
     exact h ⟨T.children, by rw [← hlab, UnorderedTree.node_eta]⟩
   · rfl
 
-/-! ### `bMinusLin a` — linear extension -/
+/-! ### The linear map -/
 
-/-- The B-_a linear map: linear extension of `bMinusBasis` via `Finsupp.lift`. -/
+/-- `bMinusLin a` is the linear extension of `bMinusBasis a`. -/
 noncomputable def bMinusLin (a : α) :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   ConnesKreimer.linearLift (bMinusBasis (R := R) a)
@@ -110,10 +106,10 @@ noncomputable def bMinusLin (a : α) :
   show ConnesKreimer.linearLift (bMinusBasis (R := R) a) (ConnesKreimer.of' F) = _
   rw [ConnesKreimer.linearLift_of']
 
-/-! ### B+/B- pairing adjoint -/
+/-! ### Transpose of `B⁺_a` -/
 
-/-- **Adjoint** of `bPlusLin a` w.r.t. the symmetry-weighted pairing, on
-    basis elements: both sides are `[F = {node a G}] · forestAutCard F`. -/
+/-- On basis forests, `⟨B⁻_a (of' F), of' G⟩ = ⟨of' F, B⁺_a (of' G)⟩`; both sides count the
+symmetries of `F` when `F = {node a G}`. -/
 theorem bMinusLin_pairing_adjoint_basis (a : α)
     (F G : Forest (UnorderedTree α)) :
     pairing (R := R) (bMinusLin (R := R) a (of' F)) (of' G) =
@@ -141,8 +137,7 @@ theorem bMinusLin_pairing_adjoint_basis (a : α)
   · rw [bMinusBasis_eq_zero_of_not_singleton_a a F hF,
         ite_eq_right fun h => hF ⟨G, h⟩, pairing_zero_left]
 
-/-- **B+/B- adjointness** under the symmetry-weighted pairing, in mathlib's
-    `LinearMap.IsAdjointPair` packaging. -/
+/-- `B⁻_a` and `B⁺_a` are an adjoint pair for the symmetry-weighted pairing. -/
 theorem isAdjointPair_bMinusLin_bPlusLin (a : α) :
     LinearMap.IsAdjointPair (pairing (R := R)) (pairing (R := R))
       (bMinusLin (R := R) a) (ConnesKreimer.bPlusLin (R := R) a) := by
@@ -151,54 +146,23 @@ theorem isAdjointPair_bMinusLin_bPlusLin (a : α) :
   refine ConnesKreimer.lhom_ext' fun G => ?_
   exact bMinusLin_pairing_adjoint_basis a F G
 
-/-- **B+/B- adjoint** under the symmetry-weighted pairing, pointwise:
-    `⟨B-_a x, y⟩ = ⟨x, B+_a y⟩` for all `a, x, y`. -/
+/-- `⟨B⁻_a x, y⟩ = ⟨x, B⁺_a y⟩`. -/
 theorem bMinusLin_pairing_adjoint (a : α)
     (x y : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) (bMinusLin (R := R) a x) y =
     pairing (R := R) x (bPlusLin (R := R) a y) :=
   isAdjointPair_bMinusLin_bPlusLin a x y
 
-/-! ## The OG derivation identity `B-_a(x *_GL y) = ε(x) • B-_a y + B-_a x *_GL y`
+/-! ### `B⁻_a` and the Grossman–Larson product
 
-OG paper [oudom-guin-2008] §3.2 proves this identity on the S(L)
-side; on the CK carrier it is the direct identity
-`bMinusLin a (x *_GL y) = counit(x) • bMinusLin a y +
-bMinusLin a x *_GL y`.
+The identity `B⁻_a (x ⋆ y) = ε(x) • B⁻_a y + B⁻_a x ⋆ y` reduces to basis forests `x = of' A`.
+If `A` is not a single tree with root `a`, both sides vanish or agree by counting trees. If
+`A = {node a A'}`, grafting `B` into `node a A'` is `B⁺_a` of the product `of' A' ⋆ of' B`
+(`singleton_node_a_insertion_eq_bPlus_gl_mul`). -/
 
-This identity says `bMinusLin a` is a "1-cocycle" with respect to `*_GL`
-in the sense `B-(xy) = ε(x) B-(y) + B-(x) y`.
-
-The proof reduces to the basis case `x = of' A, y = of' B` and
-case-analyzes on `A`:
-* `A = 0`: counit = 1, B-_a (of' 0) = 0; identity reduces to `B-_a (of' B) = B-_a (of' B)`.
-* `|A| ≥ 2`: both sides 0 by length grading (B-_a vanishes on non-singletons).
-* `|A| = 1` with root label ≠ a: both sides 0 (B-_a kills non-a-rooted singletons).
-* `|A| = 1` with root label = a (A = {node a A'}): the combinatorial heart.
-
-The hard case reduces to the substrate lemma:
-  `insertion (of' {node a A'}) (of' B) = bPlusLin a (of' A' *_GL of' B)`
-
-(grafting B into the only tree of {node a A'} = a-rooting the GL
-product). This is `singleton_node_a_insertion_eq_bPlus_gl_mul` below.
--/
-
-/-- **Key combinatorial substrate**: grafting `of' B` into the
-    singleton-a-rooted host `{node a A'}` equals the a-rooting (via
-    `bPlusLin a`) of the **GL product** `of' A' *_GL of' B`.
-
-    Intuition: a result tree `T' = node a (children of node a A' with B grafted)`
-    has root label `a` (preserved by NIM) and children formed by either
-    (i) a B-tree prepended at root, or (ii) a B-tree grafted into an A'
-    subtree. The partition of B's grafting positions exactly matches
-    the powerset decomposition of `of' A' *_GL of' B = Σ_{B₁ ⊆ B}
-    (insertion (of' A') (of' B₁)) *_CK of'(B - B₁)`. Each summand of
-    the GL sum, a-rooted via `bPlusLin a`, yields a corresponding tree
-    in the NIM enumeration.
-
-    Proved from the NIM-level decomposition
-    `UnorderedTree.insertionMultiset_singleton_node`
-    (`PreLie/InsertionUnordered.lean`). -/
+/-- Grafting `of' B` into the single tree `node a A'` is `B⁺_a` of the Grossman–Larson product
+`of' A' ⋆ of' B`: each guest is either a new child of the root or grafted into a tree of `A'`,
+as in `UnorderedTree.insertionMultiset_singleton_node`. -/
 theorem singleton_node_a_insertion_eq_bPlus_gl_mul
     (a : α) (A' B : Forest (UnorderedTree α)) :
     insertion (R := R)
@@ -357,9 +321,8 @@ theorem singleton_node_a_insertion_eq_bPlus_gl_mul
     exact h_summand B₁
   rw [hLHS, hRHS]
 
-/-! ### The derivation identity -/
+/-! ### The identity for `B⁻_a` -/
 
-/-- Counit of `of' F`: `1` if `F = 0`, else `0`. Re-expressed via `Decidable`. -/
 private theorem counit_of'_eq (F : Forest (UnorderedTree α)) :
     (ConnesKreimer.counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
       (ConnesKreimer.of' F) =
@@ -370,13 +333,6 @@ private theorem counit_of'_eq (F : Forest (UnorderedTree α)) :
   · have hne : F.card ≠ 0 := fun hc => h (Multiset.card_eq_zero.mp hc)
     rw [ite_eq_right hne, ite_eq_right h]
 
-/-! ### Helpers for `bMinusLin_gl_mul_basis` -/
-
-/-- `bMinusBasis a ({node a F} + G) = if G = 0 then of' F else 0`.
-    When `G = 0`, the forest is the singleton `{node a F}` so
-    `bMinusBasis = of' F`. When `G ≠ 0`, the forest has cardinality
-    `1 + |G| ≥ 2`, so it's not a singleton and `bMinusBasis = 0` via
-    `bMinusBasis_eq_zero_of_not_singleton_a`. -/
 private theorem bMinusBasis_singleton_node_add (a : α)
     (F G : Forest (UnorderedTree α)) :
     bMinusBasis (R := R) a ({UnorderedTree.node a F} + G) =
@@ -395,13 +351,6 @@ private theorem bMinusBasis_singleton_node_add (a : α)
     have hGcard : G.card = 0 := by omega
     exact hG (Multiset.card_eq_zero.mp hGcard)
 
-/-- **Helper**: `bMinusLin a (bPlusLin a Y * of' G)` equals `Y`
-    if `G = 0` (the `bMinusLin ∘ bPlusLin = id` identity on basis elements
-    extends linearly to all `Y`), and `0` otherwise (the product has each
-    basis summand of cardinality `≥ 2`, so `bMinusLin` kills it).
-
-    Reduces by `ConnesKreimer.induction_linear` on `Y` to the basis case via
-    `bMinusBasis_singleton_node_add`. -/
 private theorem bMinusLin_bPlusLin_mul_of' (a : α)
     (Y : ConnesKreimer R (UnorderedTree α)) (G : Forest (UnorderedTree α)) :
     bMinusLin (R := R) a
@@ -454,16 +403,6 @@ private theorem bMinusLin_bPlusLin_mul_of' (a : α)
       exact (ConnesKreimer.smul_single_one F r).symm
     · rw [smul_zero]
 
-/-- Combinatorial helper: summing a `B - B₁ = 0` indicator over `B.powerset`
-    picks out exactly the `B₁ = B` summand. Used in
-    `bMinusLin_gl_mul_basis`'s singleton-a sub-case to collapse the GL
-    product expansion (only the `B₁ = B` term survives `bMinusLin_bPlusLin_mul_of'`).
-
-    Proof: induction on `B`. Base `B = 0` is `Multiset.zero_sub`.
-    Inductive `B = T ::ₘ B'`: the first half `B'.powerset` summands all
-    vanish (`T ::ₘ B' - B₁ = T ::ₘ (B' - B₁) ≠ 0` for `B₁ ≤ B'`), and
-    the second half reduces to the IH via `T ::ₘ B' - (T ::ₘ B₁') = B' - B₁'`
-    (`Multiset.sub_cons` + `Multiset.erase_cons_head`). -/
 private lemma sum_powerset_diff_zero_indicator
     {β : Type*} [AddCommMonoid β]
     (B : Forest (UnorderedTree α)) (f : Forest (UnorderedTree α) → β) :
@@ -504,19 +443,6 @@ private lemma sum_powerset_diff_zero_indicator
     rw [h_cond_eq]
     exact ih (fun B₁' => f (T ::ₘ B₁'))
 
-/-- **Helper for the non-singleton-a sub-case**: when `A` is not of the
-    form `{node a A'}` and `A ≠ 0`, every forest of the form
-    `F' + (B - B₁)` (for `F' ∈ NIM A B₁`, `B₁ ⊆ B`) is also not of the
-    form `{node a G}`, so `bMinusBasis a (F' + (B - B₁)) = 0`.
-
-    Cardinality of `F' + (B - B₁)` is `|A| + |B - B₁|` (since
-    `F'.card = A.card` via `insertionMultiset_card_eq`).
-    * If `|A| ≥ 2`: total ≥ 2, not a singleton.
-    * If `|A| + |B - B₁| ≥ 2`: not a singleton.
-    * If `|A| = 1, |B - B₁| = 0`: `F'` is a singleton, but its root label
-      equals `A`'s root label (which is ≠ a since `A` is not singleton-a-rooted),
-      so still not of form `{node a G}`. Uses
-      `UnorderedTree.insertionMultiset_singleton_value`. -/
 private theorem bMinusBasis_nim_add_eq_zero (a : α)
     (A B₁ B' F' : Forest (UnorderedTree α))
     (hA_ne : A ≠ 0)
@@ -571,12 +497,6 @@ private theorem bMinusBasis_nim_add_eq_zero (a : α)
   rw [hT'_lab_a] at hT'_lab
   exact hT_A_lab hT'_lab.symm
 
-/-- **Basis case of the derivation identity**: for basis `x = of' A, y = of' B`, the OG
-    identity holds. Case-analyzes on `A`:
-    * `A = 0`: counit = 1, both sides equal `bMinusLin a (of' B)`.
-    * `|A| ≥ 2`: both sides 0 (B-_a vanishes on non-singletons).
-    * `|A| = 1` with non-a root: both sides 0.
-    * `|A| = 1` with `a`-root: reduces to `singleton_node_a_insertion_eq_bPlus_gl_mul`. -/
 private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (UnorderedTree α)) :
     bMinusLin (R := R) a
       ((GrossmanLarson.of' (R := R) A : GrossmanLarson R α) *
@@ -786,7 +706,8 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (UnorderedTree α)
       rw [Multiset.mem_map] at hx
       obtain ⟨B₁, _hB₁_mem, hx_eq⟩ := hx
       subst hx_eq
-      -- Per-B₁ closure: bMinusLin a (op (unop (insertion (of' A) (of' B₁)) * unop (of' (B-B₁)))) = 0
+      -- Per-B₁ closure:
+      -- bMinusLin a (op (unop (insertion (of' A) (of' B₁)) * unop (of' (B-B₁)))) = 0
       -- op/unop are identity; reduce to CK level. The `op` outer is a
       -- no-op on the underlying carrier; the goal already has CK as the
       -- ambient bMinusLin argument.
@@ -820,7 +741,8 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (UnorderedTree α)
         rw [Multiset.mem_map] at hy
         obtain ⟨F', hF'_mem, hy_eq⟩ := hy
         subst hy_eq
-        -- of' F' * of' (B - B₁) = of' (F' + (B - B₁)), then bMinusLin a (of' ...) = bMinusBasis a ...
+        -- of' F' * of' (B - B₁) = of' (F' + (B - B₁)),
+        -- then bMinusLin a (of' ...) = bMinusBasis a ...
         show bMinusLin (R := R) a
             ((ConnesKreimer.of' (R := R) F' : ConnesKreimer R (UnorderedTree α)) *
               ConnesKreimer.of' (R := R) (B - B₁)) = 0
@@ -833,12 +755,7 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (UnorderedTree α)
         exact bMinusBasis_nim_add_eq_zero a A B₁ (B - B₁) F' hA0 hA hF'_mem
       exact h_step
 
-/-- **The OG derivation identity**: `bMinusLin a` is a 1-cocycle
-    with respect to the GL product:
-    `B-_a (x *_GL y) = ε(x) • B-_a y + B-_a x *_GL y`.
-
-    Both sides are bilinear in `(x, y)` (`product` is bundled bilinear), so
-    basis extensionality reduces to `bMinusLin_gl_mul_basis`. -/
+/-- `B⁻_a (x ⋆ y) = ε(x) • B⁻_a y + B⁻_a x ⋆ y`. -/
 theorem bMinusLin_gl_mul (a : α)
     (x y : ConnesKreimer R (UnorderedTree α)) :
     bMinusLin (R := R) a (product (R := R) x y) =
@@ -858,24 +775,11 @@ theorem bMinusLin_gl_mul (a : α)
       bMinusLin_gl_mul_basis a A B
   exact LinearMap.congr_fun (LinearMap.congr_fun h x) y
 
+/-! ### The steps of the duality induction
 
-/-! ### Duality recurrences
+The counit is multiplicative for the Grossman–Larson product, and pairing against `B⁺_a z`
+unfolds through the transpose of `B⁺_a` and the identity for `B⁻_a`. -/
 
-The base and step cases of the GL/CK duality induction
-(`Coproduct/PruningDuality.lean`): ε is multiplicative for the GL
-product, and pairing against `B⁺ₐ z` unfolds through the B⁺/B⁻ adjoint
-and the derivation identity `bMinusLin_gl_mul`. -/
-
-/-! ### ε is multiplicative for the GL product
-
-The cardinality preservation lemma `UnorderedTree.insertionMultiset_card_eq`
-(every `F' ∈ NIM(A, B)` has `|F'| = |A|`) and its planar substrate
-`RoseTree.Pathed.insertionForest_length` now live in
-`Linglib.Core.Algebra.RootedTree.PreLie.InsertionUnordered`. -/
-
-/-- `counit` of `insertionBasis A B` equals `if A = 0 ∧ B = 0 then 1 else 0`.
-    For non-zero host A: every NIM output has cardinality |A| ≥ 1, so ε = 0.
-    For host A = 0: NIM(0, B) = {0} iff B = 0, else empty. -/
 private theorem counit_insertionBasis (A B : Forest (UnorderedTree α)) :
     (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
         (unop
@@ -944,15 +848,6 @@ private theorem counit_insertionBasis (A B : Forest (UnorderedTree α)) :
       UnorderedTree.insertionMultiset_card_eq A B hF'
     rw [hF'card, ite_eq_right hAcard]
 
-/-- The counit `ε` on CK is multiplicative for the GL product on basis.
-    `ε(of' A *_GL of' B) = ε(of' A) · ε(of' B)`.
-
-    Proof by case on `B`:
-    * `B = 0`: GL product reduces to `of' A` (right unit); `ε(of' A) = ε(of' A) · 1`.
-    * `B ≠ 0`: `ε(of' B) = 0`, RHS = 0. Expand LHS via `mul_of'_sum_form`;
-      each summand has `ε(of'(B - B₁))` factor, non-zero only when `B - B₁ = 0`
-      i.e. `B₁ = B`; then `ε(unop(insertion(of' A)(of' B))) = ε(of' A) · ε(of' B) = 0`
-      via `counit_insertionBasis`. -/
 private theorem counit_gl_mul_basis (A B : Forest (UnorderedTree α)) :
     (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
         (unop
@@ -1062,9 +957,7 @@ private theorem counit_gl_mul_basis (A B : Forest (UnorderedTree α)) :
     rw [← hy_eq]
     exact h_each_zero x hx
 
-/-- The counit `ε` on CK is multiplicative for the GL product: both sides
-    of `ε (x ⋆ y) = ε x · ε y` are bilinear (`product` is bundled), so basis
-    extensionality reduces to `counit_gl_mul_basis`. -/
+/-- The counit is multiplicative for the Grossman–Larson product. -/
 theorem counit_gl_mul (x y : ConnesKreimer R (UnorderedTree α)) :
     (counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R)
         (product (R := R) x y) =
@@ -1081,12 +974,7 @@ theorem counit_gl_mul (x y : ConnesKreimer R (UnorderedTree α)) :
       counit_gl_mul_basis A B
   exact LinearMap.congr_fun (LinearMap.congr_fun h x) y
 
-
-/-! ### Phase D's pairing-side recurrence -/
-
-/-- The pairing-side recurrence: `⟨X ⋆ Y, B+_a z⟩` unfolds via the B+/B-
-    adjoint + the derivation identity:
-    `⟨X ⋆ Y, B+_a z⟩ = ε(X) · ⟨B-_a Y, z⟩ + ⟨B-_a X ⋆ Y, z⟩`. -/
+/-- `⟨X ⋆ Y, B⁺_a z⟩ = ε(X) · ⟨B⁻_a Y, z⟩ + ⟨B⁻_a X ⋆ Y, z⟩`. -/
 theorem pairing_apply_bPlus_gl_mul (a : α)
     (X Y z : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) (product (R := R) X Y)
