@@ -29,8 +29,7 @@ gesehen gehabt*, which is colloquial and not accepted as standard.
 * `German.PrincipalParts`: the infinitive, third person singular present and past, and past
   participle of a verb, with its perfect auxiliary.
 * `German.haben`, `German.sein`, `German.werden`: the tense auxiliaries.
-* `German.perfect_eq_be_of_isUnaccusative`, `German.perfect_eq_have_of_accusative`: the entries'
-  auxiliaries against the rule of §12.3.2.
+* `German.perfect`: the auxiliary of the perfect of a verb on a frame, by the rule of §12.3.2.
 * `German.periphrasis`, `German.PrincipalParts.tenseForm`: the means by which German builds its
   tense forms, and the words of a tense form of a verb, finite verb first.
 * `German.tenseForms`, `German.southernTenseForms`: the forms of the standard language and of
@@ -41,11 +40,13 @@ gesehen gehabt*, which is colloquial and not accepted as standard.
 
 `PrincipalParts.tenseForm` gives the third person singular, the finite verb first and the
 nonfinite verbs in their clause-final order, the lexical verb before the auxiliaries it stands
-under. The perfect auxiliary is recorded with each entry, since it follows the meaning of the
-entry rather than its frame: *rennen* 'run' takes *sein* as a verb of motion although it is not
-unaccusative, and Durrell lists *hat/ist gerannt* for its transitive and intransitive uses. The
-rule of §12.3.2 is checked where the entries encode the meaning it refers to: the unaccusative
-entries take *sein* and the entries with an accusative object *haben*.
+under. The perfect auxiliary follows from the meaning of the verb on a frame, as Durrell's rule
+has it, not from the verb alone: an accusative object, an unaccusative frame, a path of motion
+and the continuation of a state are what the rule reads. So *rennen* 'run' takes *sein* as a
+verb of motion although it is not unaccusative, and *tanzen* 'dance' takes *sein* only with a
+directional phrase (`German.perfect_withPath_intransitive`). The verbs of happening of §12.3.2a
+take *sein* on an unaccusative frame; the compounds of *gehen* and *werden* that take *sein* with
+an accusative object (*die Strecke abgegangen*) are exceptions the rule does not cover.
 
 ## References
 
@@ -81,20 +82,29 @@ def PrincipalParts.perfectVerb (v : PrincipalParts) : PrincipalParts :=
   | .be => sein
   | .have => haben
 
-/-- The principal parts of a verb entry are its stem with its perfect auxiliary. -/
-def Verb.principalParts (v : Verb) : PrincipalParts :=
-  ⟨v.stem, v.perfect⟩
+/-- The auxiliary of the perfect of `v` on the frame `fr` ([durrell-2011] §12.3.2): *sein* on an
+unaccusative frame, for a change of state or a verb of happening (a.ii, a.iii); *haben* on a frame
+with an accusative object (b.i); *sein* for a verb of motion and for the continuation of a state,
+*bleiben* (a.i, a.iv); and *haben* otherwise (b.iii–v). -/
+def perfect (v : Verb) (fr : ArgumentFrame) : PerfectAux :=
+  if fr.IsUnaccusative then .be
+  else if fr.HasNominal ∧ .acc ∈ v.objects then .have
+  else if v.direction.isSome ∨ v.phasal = some .continuation then .be
+  else .have
 
-/-- The unaccusative entries express a change of state and form their perfect with *sein*
-([durrell-2011] §12.3.2a). -/
-theorem perfect_eq_be_of_isUnaccusative :
-    ∀ v ∈ Verbs.allVerbs, v.IsUnaccusative → v.perfect = .be := by
-  decide
+/-- A directional phrase gives an intransitive verb *sein*: the verbs of motion that name the
+activity as such, *tanzen* 'dance' and *segeln* 'sail', take *sein* when they express movement
+from one place to another (§12.3.2c). -/
+theorem perfect_withPath_intransitive (v : Verb) {p : Adposition.SpatialReading}
+    (hp : p.direction ≠ .place) : perfect (v.withPath p) .intransitive = .be := by
+  simp [perfect, _root_.Verb.direction_withPath hp, ArgumentFrame.intransitive,
+    ArgumentFrame.IsUnaccusative, ArgumentFrame.HasNominal]
 
-/-- The entries with an accusative object form their perfect with *haben* (§12.3.2b). -/
-theorem perfect_eq_have_of_accusative :
-    ∀ v ∈ Verbs.allVerbs, .acc ∈ v.objects → v.perfect = .have := by
-  decide
+/-- The principal parts of a verb entry on a frame, its citation frame by default, are its stem
+with the auxiliary of its perfect there. -/
+def Verb.principalParts (v : Verb) (fr : ArgumentFrame := v.frames.headD .intransitive) :
+    PrincipalParts :=
+  ⟨v.stem, perfect v fr⟩
 
 /-- German builds its tense forms with the past participle under the verb's perfect auxiliary and
 the infinitive under *werden*. It has no future inflection and no form with a present
@@ -145,6 +155,19 @@ theorem PrincipalParts.tenseForm_isSome (v : PrincipalParts) {f : Tense.Form}
 speech, and the other forms are unmarked. -/
 def register (f : Tense.Form) : SocialMeaning.Register :=
   if f = .simplePast then .formal else if f = .doublePerfect then .informal else .neutral
+
+open Verbs in
+/-- The groups of §12.3.2: *sein* for the verbs of motion *rennen*, *laufen* and *ankommen*, for
+*frieren* as a change of state and for *bleiben*; *haben* for the transitive *bauen*, for
+*arbeiten* and *tanzen*, which denote an activity as such, and for impersonal *frieren*; and
+*sein* for *tanzen* with a directional phrase. -/
+example :
+    [perfect rennen .intransitive, perfect laufen .intransitive, perfect ankommen .unaccusative,
+      perfect frieren .unaccusative, perfect bleiben .intransitive] = [.be, .be, .be, .be, .be] ∧
+    [perfect bauen .np, perfect arbeiten .intransitive, perfect tanzen .intransitive,
+      perfect frieren .impersonal] = [.have, .have, .have, .have] ∧
+    perfect (tanzen.withPath Adposition.into) .intransitive = .be := by
+  decide
 
 open Verbs in
 /-- *zerbrechen* 'break', a transitive verb, forms its perfect with *haben*, and the unaccusative
