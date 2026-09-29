@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Verb.Basic
+public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 
 /-!
 # Dutch verbs
@@ -15,10 +15,19 @@ and not *geopbeld*, which shows that the particle does not form a morphological 
 verb; under verb second the particle is stranded, *Jan belde Marie gisteren op* 'Jan called
 Marie yesterday'.
 
+The perfect auxiliary follows from the verb on a frame (`Dutch.Verbs.perfect`). Transitive and
+intransitive verbs take *hebben*, and unaccusative verbs take *zijn* when they are telic and
+*hebben* when they are atelic; a directional phrase makes a verb of motion unaccusative and, if it
+bounds the path, telic, so *De jongen heeft gewandeld* 'the boy walked' but *De jongen is naar
+Groningen gewandeld* 'the boy walked to Groningen'. *Blijven* 'stay', whose state continues,
+takes *zijn*.
+
 ## Main definitions
 
 * `Dutch.Verbs.Verb`: the entry.
 * `Dutch.Verbs.Verb.pastParticiple`: the past participle, from the formation.
+* `Dutch.Verbs.Verb.withPath`: the entry with a path phrase.
+* `Dutch.Verbs.perfect`: the auxiliary of the perfect of a verb on a frame.
 * `Dutch.Verbs.inventory`: the entries.
 
 ## Main results
@@ -26,6 +35,8 @@ Marie yesterday'.
 * `Dutch.Verbs.pastParticiple_particle`, `Dutch.Verbs.pastParticiple_prefix`: a particle
   precedes the *ge-* of the participle and a prefix replaces it.
 * `Dutch.Verbs.opgebeld`, `Dutch.Verbs.ontdekt`: the grammar's examples.
+* `Dutch.Verbs.perfect_withPath_intransitive`: a bounded directional phrase gives a dynamic
+  intransitive verb *zijn*.
 
 ## Implementation notes
 
@@ -37,6 +48,8 @@ Marie yesterday'.
 
 * [H. Broekhuis and N. Corver, *Syntax of Dutch, Volume I: Verbs and Verb Phrases 1:
   Characterization, Classification and Lexical Projection* (2026)][broekhuis-corver-2026e]
+* [levin-hovav-1995]
+* [sorace-2000]
 -/
 
 @[expose] public section
@@ -171,12 +184,142 @@ def verdienen : Verb := prefixVerb "ver" dienen
 /-- *herhalen* 'repeat', formed on *halen* with *her-*, *herhaald*. -/
 def herhalen : Verb := prefixVerb "her" halen
 
+/-! ### Monadic verbs
+
+The monadic verbs of [sorace-2000]'s Dutch examples and of the grammar's discussion of motion
+verbs, with the frame the grammar's unaccusativity tests assign them (§2.1). -/
+
+/-- *komen* 'come', *kom - kwam - gekomen*, an unaccusative verb of motion to a goal. -/
+def komen : Verb :=
+  { simplex "komen" "gekomen" with
+    frames := [ArgumentFrame.unaccusative], vendlerClass := some .achievement,
+    direction := some .goal }
+
+/-- *sterven* 'die', an unaccusative verb denoting a transition: *De oude man is gestorven*. -/
+def sterven : Verb :=
+  { simplex "sterven" "gestorven" with
+    frames := [ArgumentFrame.unaccusative], vendlerClass := some .achievement }
+
+/-- *groeien* 'grow', an unaccusative verb of change along a scale of size. -/
+def groeien : Verb :=
+  { simplex "groeien" "gegroeid" with
+    frames := [ArgumentFrame.unaccusative], vendlerClass := some .accomplishment,
+    scaleDimension := some .generalSize }
+
+/-- *stijgen* 'rise', an unaccusative verb of change along a scale of height. -/
+def stijgen : Verb :=
+  { simplex "stijgen" "gestegen" with
+    frames := [ArgumentFrame.unaccusative], vendlerClass := some .accomplishment,
+    scaleDimension := some .height }
+
+/-- *blijven* 'stay', an unaccusative verb expressing that a state continues to exist (§1.2), with
+the auxiliary *zijn*: *Was dan ook wat langer gebleven!* 'You should have stayed a bit longer!'. -/
+def blijven : Verb :=
+  { simplex "blijven" "gebleven" with
+    frames := [ArgumentFrame.unaccusative], vendlerClass := some .state,
+    phasal := some .continuation }
+
+/-- *overblijven* 'remain, be left', formed on *blijven* with the particle *over*. -/
+def overblijven : Verb := particleVerb "over" blijven
+
+/-- *duren* 'last', stative. -/
+def duren : Verb :=
+  { simplex "duren" "geduurd" with
+    frames := [ArgumentFrame.intransitive], vendlerClass := some .state }
+
+/-- *staan* 'stand', a stative verb of location, an atelic unaccusative verb with *hebben*: *Jan
+heeft lang op het perron gestaan*. -/
+def staan : Verb :=
+  { simplex "staan" "gestaan" with
+    frames := [ArgumentFrame.unaccusative], vendlerClass := some .state }
+
+/-- *bestaan* 'exist', formed on *staan* with the prefix *be-*. -/
+def bestaan : Verb := prefixVerb "be" staan
+
+/-- *blazen* 'blow', an intransitive activity with an agentive subject. -/
+def blazen : Verb :=
+  { simplex "blazen" "geblazen" with
+    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity,
+    subjectEntailments := some activitySubjectProfile }
+
+/-- *lopen* 'walk, run', *loop - liep - gelopen*, an agentive verb of manner of motion, intransitive
+([levin-hovav-1995] p. 148). -/
+def lopen : Verb :=
+  { simplex "lopen" "gelopen" with
+    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity,
+    direction := some .place }
+
+/-- *wandelen* 'walk', an intransitive verb of manner of motion: *De jongen heeft gewandeld*. -/
+def wandelen : Verb :=
+  { simplex "wandelen" "gewandeld" with
+    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity,
+    direction := some .place }
+
+/-- *rollen* 'roll', a nonagentive verb of manner of motion, unaccusative ([levin-hovav-1995]
+pp. 147–148) and atelic. -/
+def rollen : Verb :=
+  { simplex "rollen" "gerold" with
+    frames := [ArgumentFrame.unaccusative], vendlerClass := some .activity,
+    direction := some .place }
+
+/-! ### The perfect auxiliary -/
+
+/-- The entry with a path phrase of reading `p`, its forms kept (`_root_.Verb.withPath`). -/
+def Verb.withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
+  { v with toVerb := v.toVerb.withPath p }
+
+@[simp] theorem Verb.toVerb_withPath (v : Verb) (p : Adposition.SpatialReading) :
+    (v.withPath p).toVerb = v.toVerb.withPath p := rfl
+
+/-- The auxiliary of the perfect of `v` on the frame `fr` ([broekhuis-corver-2026e] §§2.1–2.2):
+*zijn* on an unaccusative frame when the verb is telic, and on an intransitive frame when a
+directional phrase gives the verb of motion a path and makes it telic, since the phrase makes it
+unaccusative; *hebben* otherwise, for transitive and intransitive verbs and for atelic
+unaccusative ones; and *zijn* for *blijven*, whose state continues. -/
+def perfect (v : Verb) (fr : ArgumentFrame) : ArgumentStructure.PerfectAux :=
+  if v.phasal = some .continuation then .be
+  else if (fr.IsUnaccusative ∨ fr.IsIntransitive ∧ v.direction.any (· != .place)) ∧
+      v.vendlerClass.any (·.telicity == .telic) then .be
+  else .have
+
+/-- A bounded directional phrase gives a dynamic intransitive verb *zijn*: *De jongen is naar
+Groningen gewandeld* (§2.2, (274b)). -/
+theorem perfect_withPath_intransitive {v : Verb} {p : Adposition.SpatialReading}
+    (hd : p.direction ≠ .place) (hb : p.bounded) {c : Aspect.VendlerClass}
+    (hc : v.vendlerClass = some c) (hdyn : c.dynamicity = .dynamic) :
+    perfect (v.withPath p) .intransitive = .be := by
+  simp [perfect, Verb.withPath, hd, hb, hc, ArgumentFrame.intransitive,
+    ArgumentFrame.IsIntransitive, Aspect.VendlerClass.telicity_telicize hdyn]
+
+/-- *Wandelen* takes *hebben*, with *zijn* under a directional phrase and *hebben* under a
+locational one (§2.2, (273)–(275)). -/
+example : perfect wandelen .intransitive = .have ∧
+    perfect (wandelen.withPath Adposition.into) .intransitive = .be ∧
+    perfect (wandelen.withPath Adposition.behind) .intransitive = .have := by
+  decide
+
+/-- The auxiliaries of [sorace-2000]'s Dutch examples: *zijn* for *komen* (1c), *sterven* (9b),
+*groeien* (10a), *stijgen* (11), *overblijven* (18a) and *blijven* (19b); *hebben* for *duren*
+(18b), *staan* (24a), *bestaan* (24b), *blazen* (33c), *lopen* (37b) and *rollen* (39a); and *zijn*
+for *rollen* with a directional phrase (39b). -/
+example :
+    [perfect komen .unaccusative, perfect sterven .unaccusative, perfect groeien .unaccusative,
+      perfect stijgen .unaccusative, perfect overblijven .unaccusative,
+      perfect blijven .unaccusative] = [.be, .be, .be, .be, .be, .be] ∧
+    [perfect duren .intransitive, perfect staan .unaccusative, perfect bestaan .unaccusative,
+      perfect blazen .intransitive, perfect lopen .intransitive, perfect rollen .unaccusative] =
+      [.have, .have, .have, .have, .have, .have] ∧
+    perfect (rollen.withPath Adposition.into) .unaccusative = .be := by
+  decide
+
 /-! ### The inventory -/
 
 /-- `inventory` lists the entries. -/
 def inventory : List Verb :=
   [straffen, kussen, bellen, voeren, halen, dekken, dienen,
-   opbellen, uitvoeren, afhalen, ontdekken, bedekken, verdienen, herhalen]
+   opbellen, uitvoeren, afhalen, ontdekken, bedekken, verdienen, herhalen,
+   komen, sterven, groeien, stijgen, blijven, overblijven, duren, staan, bestaan, blazen, lopen,
+   wandelen, rollen]
 
 /-- Every entry is cited by its infinitive. -/
 theorem form_eq_infinitive : ∀ v ∈ inventory, v.form = v.infinitive := by decide
