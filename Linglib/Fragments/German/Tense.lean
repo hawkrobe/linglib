@@ -29,7 +29,8 @@ gesehen gehabt*, which is colloquial and not accepted as standard.
 * `German.PrincipalParts`: the infinitive, third person singular present and past, and past
   participle of a verb, with its perfect auxiliary.
 * `German.haben`, `German.sein`, `German.werden`: the tense auxiliaries.
-* `German.perfectAuxiliary`: the perfect auxiliary of a verb entry, *sein* for an unaccusative.
+* `German.perfect_eq_be_of_isUnaccusative`, `German.perfect_eq_have_of_accusative`: the entries'
+  auxiliaries against the rule of §12.3.2.
 * `German.periphrasis`, `German.PrincipalParts.tenseForm`: the means by which German builds its
   tense forms, and the words of a tense form of a verb, finite verb first.
 * `German.tenseForms`, `German.southernTenseForms`: the forms of the standard language and of
@@ -40,8 +41,11 @@ gesehen gehabt*, which is colloquial and not accepted as standard.
 
 `PrincipalParts.tenseForm` gives the third person singular, the finite verb first and the
 nonfinite verbs in their clause-final order, the lexical verb before the auxiliaries it stands
-under. The choice of *sein* keys on unaccusativity, which covers the verbs of motion and change of
-state; *bleiben* and *sein* themselves, which also take *sein*, are outside it.
+under. The perfect auxiliary is recorded with each entry, since it follows the meaning of the
+entry rather than its frame: *rennen* 'run' takes *sein* as a verb of motion although it is not
+unaccusative, and Durrell lists *hat/ist gerannt* for its transitive and intransitive uses. The
+rule of §12.3.2 is checked where the entries encode the meaning it refers to: the unaccusative
+entries take *sein* and the entries with an accusative object *haben*.
 
 ## References
 
@@ -52,7 +56,7 @@ state; *bleiben* and *sein* themselves, which also take *sein*, are outside it.
 
 namespace German
 
-open ArgumentStructure (PerfectAux TransitivityClass)
+open ArgumentStructure (PerfectAux)
 
 /-- The principal parts of a verb are its stem, the infinitive, the third person singular present
 and past and the past participle, with the auxiliary of its perfect. -/
@@ -77,19 +81,20 @@ def PrincipalParts.perfectVerb (v : PrincipalParts) : PrincipalParts :=
   | .be => sein
   | .have => haben
 
-/-- A verb forms its perfect with *sein* when it is unaccusative, and with *haben* otherwise. -/
-def perfectAuxiliary (v : _root_.Verb) : PerfectAux := if v.IsUnaccusative then .be else .have
-
-/-- The choice agrees with the selection rule for German, under which only the unaccusatives
-among the transitivity classes select *sein*. -/
-theorem germanSelection_eq_be_iff (c : TransitivityClass) :
-    c.germanSelection = .be ↔ c = .unaccusative := by
-  cases c <;> decide
-
-/-- The principal parts of a verb entry are its stem with the auxiliary its unaccusativity
-selects. -/
+/-- The principal parts of a verb entry are its stem with its perfect auxiliary. -/
 def Verb.principalParts (v : Verb) : PrincipalParts :=
-  ⟨v.stem, perfectAuxiliary v.toVerb⟩
+  ⟨v.stem, v.perfect⟩
+
+/-- The unaccusative entries express a change of state and form their perfect with *sein*
+([durrell-2011] §12.3.2a). -/
+theorem perfect_eq_be_of_isUnaccusative :
+    ∀ v ∈ Verbs.allVerbs, v.IsUnaccusative → v.perfect = .be := by
+  decide
+
+/-- The entries with an accusative object form their perfect with *haben* (§12.3.2b). -/
+theorem perfect_eq_have_of_accusative :
+    ∀ v ∈ Verbs.allVerbs, .acc ∈ v.objects → v.perfect = .have := by
+  decide
 
 /-- German builds its tense forms with the past participle under the verb's perfect auxiliary and
 the infinitive under *werden*. It has no future inflection and no form with a present
@@ -143,14 +148,15 @@ def register (f : Tense.Form) : SocialMeaning.Register :=
 
 open Verbs in
 /-- *zerbrechen* 'break', a transitive verb, forms its perfect with *haben*, and the unaccusative
-*frieren* 'freeze' with *sein*. -/
+*frieren* 'freeze' and *rennen* 'run', a verb of motion, with *sein*. -/
 example :
     zerbrechen.principalParts.tenseForm .presentPerfect = some ["hat", "zerbrochen"] ∧
       zerbrechen.principalParts.tenseForm .doublePerfect = some ["hat", "zerbrochen", "gehabt"] ∧
       zerbrechen.principalParts.tenseForm .futurePerfect = some ["wird", "zerbrochen", "haben"] ∧
       frieren.principalParts.tenseForm .pastPerfect = some ["war", "gefroren"] ∧
       frieren.principalParts.tenseForm .futurePerfect = some ["wird", "gefroren", "sein"] ∧
-      frieren.principalParts.tenseForm .pastProgressive = none := by
+      frieren.principalParts.tenseForm .pastProgressive = none ∧
+      rennen.principalParts.tenseForm .presentPerfect = some ["ist", "gerannt"] := by
   decide
 
 end German

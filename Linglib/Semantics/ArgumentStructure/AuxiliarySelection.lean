@@ -25,8 +25,8 @@ own point. The inflectional typology of auxiliary verb constructions lives in
 ## Main definitions
 
 * `PerfectAux`: *be* or *have*.
-* `TransitivityClass` and its `selection`, `canonicalSelection`, `germanSelection` and
-  `SelectsBe`: the binary account.
+* `TransitivityClass` and its `selection`, `canonicalSelection` and `SelectsBe`: the binary
+  account.
 * `AuxiliarySelectionHierarchy`: the verb types of the Auxiliary Selection Hierarchy, a bounded
   linear order with the type most consistent in taking *be* at the bottom.
 
@@ -74,9 +74,6 @@ def selection (refl : PerfectAux) : TransitivityClass → PerfectAux
 
 /-- Canonical (Romance) auxiliary selection: reflexives → *be*. -/
 def canonicalSelection : TransitivityClass → PerfectAux := selection .be
-
-/-- German auxiliary selection: reflexives → *haben*, not *sein*. -/
-def germanSelection : TransitivityClass → PerfectAux := selection .have
 
 /-- Does this transitivity class canonically select *be*? -/
 def SelectsBe (c : TransitivityClass) : Prop :=
