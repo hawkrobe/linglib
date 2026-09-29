@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.RootedTree.HopfAlgebra
+public import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
+public import Linglib.Core.Combinatorics.RootedTree.Conservation
 public import Linglib.Core.Algebra.RotaBaxter
 
 @[expose] public section
@@ -55,77 +56,44 @@ open scoped TensorProduct
 variable {R ℛ : Type*} [CommSemiring R] [CommSemiring ℛ] [Algebra R ℛ] {α : Type*}
   (φ : ConnesKreimer R (UnorderedTree α) →ₗ[R] ℛ) (RB : RotaBaxterSemiring ℛ)
 
-set_option linter.unusedVariables false in
 /-- **The Bogolyubov negative part `φ₋` on a single tree** (semiring, weight `+1`;
     [marcolli-chomsky-berwick-2025] Prop. 3.1.9):
     `φ₋(T) = R(Σ_{(cf,rem) ∈ cutSummandsN T} (Π_{Tᵢ ∈ cf} φ₋(Tᵢ)) · φ(ofTree rem))`. The semiring
     analogue of the ring `birkhoffMinusTree`, with the *positive* projection `R` in place of `−R`;
-    well-founded on `T.height`. -/
+    well-founded on `T.numNodes`. -/
 noncomputable def birkhoffMinusTree (T : UnorderedTree α) : ℛ :=
-  RB.op ((cutSummandsN T).attach.map (fun ⟨pf, h_mem⟩ =>
-      (pf.1.attach.map (fun ⟨T_i, h_T_i⟩ => birkhoffMinusTree T_i)).prod * φ (ofTree pf.2))).sum
-termination_by T.height
-decreasing_by exact cutSummandsN_subtree_height_lt T pf.1 pf.2 h_mem T_i h_T_i
+  RB.op ((cutSummandsN T).attach.map fun p ↦
+    (p.1.1.attach.map fun t ↦ birkhoffMinusTree t.1).prod * φ (ofTree p.1.2)).sum
+termination_by T.numNodes
+decreasing_by exact cutSummandsN_crown_numNodes_lt p.2 t.2
 
-/-- **`φ₋` extended multiplicatively to forests**, as a `MonoidHom`. Mirrors the ring
-    `birkhoffMinusMonoidHom`. -/
-noncomputable def birkhoffMinusMonoidHom :
-    Multiplicative (Forest (UnorderedTree α)) →* ℛ where
-  toFun F := (F.toAdd.map (birkhoffMinusTree φ RB)).prod
-  map_one' := by
-    show ((0 : Forest (UnorderedTree α)).map _).prod = 1
-    rw [Multiset.map_zero, Multiset.prod_zero]
-  map_mul' F G := by
-    show ((F.toAdd + G.toAdd).map (birkhoffMinusTree φ RB)).prod =
-         (F.toAdd.map _).prod * (G.toAdd.map _).prod
-    rw [Multiset.map_add, Multiset.prod_add]
-
-/-- **`φ₋` as an algebra hom** `H →ₐ[R] ℛ`, lifting `birkhoffMinusMonoidHom`. Mirrors the ring
-    `birkhoffMinus`. -/
+/-- **`φ₋` as an algebra hom** `H →ₐ[R] ℛ`: `birkhoffMinusTree` extended multiplicatively to
+    forests. -/
 noncomputable def birkhoffMinus : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ :=
-  ConnesKreimer.lift (birkhoffMinusMonoidHom φ RB)
+  aeval (birkhoffMinusTree φ RB)
 
 @[simp] theorem birkhoffMinus_apply_of' (F : Forest (UnorderedTree α)) :
-    birkhoffMinus φ RB (of' F) = (F.map (birkhoffMinusTree φ RB)).prod := by
-  rw [birkhoffMinus, ConnesKreimer.lift_of']
-  rfl
+    birkhoffMinus φ RB (of' F) = (F.map (birkhoffMinusTree φ RB)).prod :=
+  aeval_of' _ F
 
 @[simp] theorem birkhoffMinus_apply_ofTree (T : UnorderedTree α) :
-    birkhoffMinus φ RB (ofTree T) = birkhoffMinusTree φ RB T := by
-  unfold ofTree
-  rw [birkhoffMinus_apply_of', Multiset.map_singleton, Multiset.prod_singleton]
+    birkhoffMinus φ RB (ofTree T) = birkhoffMinusTree φ RB T :=
+  aeval_ofTree _ T
 
 /-- **The Bogolyubov preparation `φ̃`** ([marcolli-chomsky-berwick-2025] Prop. 3.1.9):
     `φ̃(T) = Σ_{(cf,rem) ∈ cutSummandsN T} (Π_{Tᵢ ∈ cf} φ₋(Tᵢ)) · φ(ofTree rem)`, of which the
     negative part is `φ₋(T) = R(φ̃(T))` and the renormalized part is `φ₊(T) = φ̃(T) + φ₋(T)`. -/
 noncomputable def birkhoffPrepTree (T : UnorderedTree α) : ℛ :=
-  ((cutSummandsN T).attach.map (fun ⟨pf, _⟩ =>
-      (pf.1.attach.map (fun ⟨T_i, _⟩ => birkhoffMinusTree φ RB T_i)).prod * φ (ofTree pf.2))).sum
-
-/-- The Bogolyubov preparation in non-`attach`-decorated form. Mirrors the ring
-    `birkhoffPrepTree_unfold`. -/
-theorem birkhoffPrepTree_unfold (T : UnorderedTree α) :
-    birkhoffPrepTree φ RB T = ((cutSummandsN T).map
-      (fun p => (p.1.map (birkhoffMinusTree φ RB)).prod * φ (ofTree p.2))).sum := by
-  rw [birkhoffPrepTree]
-  rw [show (cutSummandsN T).attach.map (fun (pf : { x // x ∈ cutSummandsN T }) =>
-            (pf.val.1.attach.map (fun (T_i : { x // x ∈ pf.val.1 }) =>
-              birkhoffMinusTree φ RB T_i.val)).prod * φ (ofTree pf.val.2)) =
-          (cutSummandsN T).attach.map (fun (pf : { x // x ∈ cutSummandsN T }) =>
-            (pf.val.1.map (birkhoffMinusTree φ RB)).prod * φ (ofTree pf.val.2)) from by
-    refine Multiset.map_congr rfl (fun ⟨pf, _⟩ _ => ?_)
-    show (pf.1.attach.map (fun T_i => birkhoffMinusTree φ RB T_i.val)).prod * _ =
-         (pf.1.map (birkhoffMinusTree φ RB)).prod * _
-    congr 1
-    exact congrArg Multiset.prod (Multiset.attach_map_val' _ _)]
-  exact congrArg Multiset.sum (@Multiset.attach_map_val'
-    (Forest (UnorderedTree α) × UnorderedTree α) _ (cutSummandsN T)
-    (fun p => (p.1.map (birkhoffMinusTree φ RB)).prod * φ (ofTree p.2)))
+  ((cutSummandsN T).map fun p ↦ (p.1.map (birkhoffMinusTree φ RB)).prod * φ (ofTree p.2)).sum
 
 /-- `φ₋(T) = R(φ̃(T))`: the negative part is the positive projection `R` of the preparation. -/
 theorem birkhoffMinusTree_eq_op_prep (T : UnorderedTree α) :
     birkhoffMinusTree φ RB T = RB.op (birkhoffPrepTree φ RB T) := by
-  rw [birkhoffMinusTree, birkhoffPrepTree]
+  rw [birkhoffMinusTree]
+  simp only [Multiset.attach_map_val' _ (birkhoffMinusTree φ RB)]
+  exact congrArg (fun s ↦ RB.op s.sum) (Multiset.attach_map_val' _
+    fun p : Forest (UnorderedTree α) × UnorderedTree α ↦
+      (p.1.map (birkhoffMinusTree φ RB)).prod * φ (ofTree p.2))
 
 /-- **The renormalized part `φ₊` on a single tree** ([marcolli-chomsky-berwick-2025] Prop. 3.1.9):
     `φ₊(T) = φ̃(T) + φ₋(T)` (the semiring `φ₋ ⊡ φ̃`) — the consistency-checked value. -/
@@ -144,7 +112,7 @@ theorem birkhoffFactorization_ofTree (hφ : φ 1 = 1) (T : UnorderedTree α) :
   simp only [map_add, map_multiset_sum, Multiset.map_map, Function.comp_def,
     TensorProduct.map_tmul, LinearMap.mul'_apply, AlgHom.toLinearMap_apply,
     birkhoffMinus_apply_ofTree, birkhoffMinus_apply_of', hφ, mul_one]
-  rw [← birkhoffPrepTree_unfold, birkhoffPlusTree]
+  rw [← birkhoffPrepTree, birkhoffPlusTree]
   exact add_comm _ _
 
 end ConnesKreimer.SemiringRenorm

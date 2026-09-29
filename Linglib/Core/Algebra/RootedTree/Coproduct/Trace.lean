@@ -809,7 +809,7 @@ instance instIsAdmissibleCutsCN (τ : UnorderedTree (α' ⊕ β') → β')
     [Fact (TraceCoherent τ)] :
     IsAdmissibleCuts (cutSummandsCN τ) where
   coassoc := by
-    intro R _ _ _
+    intro R _
     rw [← comulCAlgHomN_eq_G]
     exact comulCAlgHomN_coassoc_algHom τ Fact.out
   counit_rTensor := by
@@ -821,7 +821,7 @@ instance instIsAdmissibleCutsCN (τ : UnorderedTree (α' ⊕ β') → β')
 
 /-- Resolution check: a trace-coherent encoder yields the Δ^c `Bialgebra`
     on the marked carrier through the gated instance chain. -/
-noncomputable example {R : Type*} [CommRing R] [CharZero R] [NoZeroDivisors R]
+noncomputable example {R : Type*} [CommRing R]
     (τ : UnorderedTree (α' ⊕ β') → β') (hτ : TraceCoherent τ) :
     Bialgebra R (WithCuts R (cutSummandsCN τ)) :=
   haveI : Fact (TraceCoherent τ) := ⟨hτ⟩

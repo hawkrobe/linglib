@@ -349,9 +349,9 @@ theorem comulAlgHomN_eq_G {R : Type*} [CommSemiring R] {α : Type*} :
 /-- Δ^ρ is admissible: Foissy coassociativity and the counit laws
 (`Coproduct/Pruning.lean`), transported through the `rfl` bridge
 `comulAlgHomN_eq_G`. -/
-instance {α : Type*} [DecidableEq α] : IsAdmissibleCuts (cutSummandsN (α := α)) where
+instance {α : Type*} : IsAdmissibleCuts (cutSummandsN (α := α)) where
   coassoc := by
-    intro R _ _ _
+    intro R _
     rw [← comulAlgHomN_eq_G]
     exact comulAlgHomN_coassoc_algHom
   counit_rTensor := by

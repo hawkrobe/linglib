@@ -726,16 +726,30 @@ theorem cutSummandsN_crown_ne_singleton (T : UnorderedTree α)
   have := p.2.numNodes_pos
   omega
 
+/-- Every crown component of a deletion cut has fewer vertices than the tree. -/
+theorem cutSummandsN_crown_numNodes_lt {T : UnorderedTree α}
+    {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ cutSummandsN T)
+    {t : UnorderedTree α} (ht : t ∈ p.1) : t.numNodes < T.numNodes := by
+  have hw := cutSummandsN_numNodes T p hp
+  have := Multiset.le_sum_of_mem (Multiset.mem_map_of_mem UnorderedTree.numNodes ht)
+  have := p.2.numNodes_pos
+  omega
+
+/-- The trunk of a deletion cut with a nonempty crown has fewer vertices than the tree. -/
+theorem cutSummandsN_trunk_numNodes_lt {T : UnorderedTree α}
+    {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ cutSummandsN T)
+    (h : p.1 ≠ 0) : p.2.numNodes < T.numNodes := by
+  obtain ⟨t, ht⟩ := Multiset.exists_mem_of_ne_zero h
+  have hw := cutSummandsN_numNodes T p hp
+  have := Multiset.le_sum_of_mem (Multiset.mem_map_of_mem UnorderedTree.numNodes ht)
+  have := t.numNodes_pos
+  omega
+
 /-- No deletion cut of `T` has `T` itself among its crown components. -/
 theorem cutSummandsN_self_not_mem_crown (T : UnorderedTree α)
     (p : Multiset (UnorderedTree α) × UnorderedTree α) (hp : p ∈ cutSummandsN T) :
-    T ∉ p.1 := by
-  intro hT_mem
-  have hw := cutSummandsN_numNodes T p hp
-  have hp2 := p.2.numNodes_pos
-  have h_le : T.numNodes ≤ (p.1.map UnorderedTree.numNodes).sum :=
-    Multiset.le_sum_of_mem (Multiset.mem_map_of_mem _ hT_mem)
-  omega
+    T ∉ p.1 :=
+  fun h ↦ (cutSummandsN_crown_numNodes_lt hp h).false
 
 /-- Deleting one subtree `mover` and rebinarizing the remainder removes two edges: the subtree's
     own edge and the contracted parent. `numUnary p.2 = 1` says the cut was a single edge at a

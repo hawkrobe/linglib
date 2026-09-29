@@ -22,7 +22,7 @@ primitive term survives, the others vanishing because no proper cut extracts a w
 crown (`cutSummandsN_crown_ne_singleton`) and vertex conservation (`cutSummandsN_numNodes`)
 forbids two crowns from reassembling `{S, S'}`. The residual case is an induction on `F̂` under
 `CutAvoidingForest`, isolating the surviving empty-cut summand of `comulTreeN T` via
-`cutSummandsN_filter_card_zero`.
+`cutSummandsN_filter_empty`.
 
 ## Main results
 
@@ -173,7 +173,7 @@ theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*}
 
     Proof: `comulAlgHomN (of' {T} * w) = comulTreeN T * comulAlgHomN w`. The
     `ofTree T ⊗ 1` term vanishes (`{T} ⊄ {S, S'}`); the cut-sum splits via
-    `cutSummandsN_filter_card_zero` into the surviving empty cut `(0, T)` — which
+    `cutSummandsN_filter_empty` into the surviving empty cut `(0, T)` — which
     by `UnorderedTree`-tensor commutativity and `mergePost_right_one_tmul` yields
     `of' {T} * mergeOp lbl S S' w` — and the nonempty cuts, each annihilated since
     a crown `≤ {S, S'}` containing neither `S` nor `S'` must be empty. -/
@@ -214,7 +214,7 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R] {α : Type*}
   rw [← Multiset.sum_map_mul_right,
       ← Multiset.filter_add_not (fun pf => pf.1.card = 0) (cutSummandsN T),
       Multiset.map_add, Multiset.sum_add, map_add,
-      cutSummandsN_filter_card_zero, Multiset.map_singleton, Multiset.sum_singleton]
+      cutSummandsN_filter_empty, Multiset.map_singleton, Multiset.sum_singleton]
   -- nonempty cuts vanish: crown `≤ {S, S'}` with `S, S' ∉ crown` is empty.
   rw [show mergePost (R := R) (α := α) lbl S S'
         (((cutSummandsN T).filter (fun pf => ¬ pf.1.card = 0)).map

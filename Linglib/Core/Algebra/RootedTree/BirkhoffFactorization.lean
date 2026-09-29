@@ -25,7 +25,7 @@ carrying a weight-`-1` Rota–Baxter operator `R`, the **Bogolyubov recursion** 
 core of the "single map that recursively modifies an assignment of semantic values so as to
 incorporate the consistency checking over all substructures."
 
-The negative part `φ₋` is built by the *same* `cutSummandsN`/height recursion as the Hopf antipode
+The negative part `φ₋` is built by the *same* `cutSummandsN`/weight recursion as the Hopf antipode
 `antipodeTreeN`, with two substitutions: the canonical embedding `ofTree rem` becomes the character
 value `φ (ofTree rem) ∈ ℛ`, and the bare negation becomes `−R`. Indeed `antipodeTreeN` is the
 `R = id`, canonical-character specialization of this recursion (`S(x) = −x − Σ S(x′)·x″`),
@@ -68,44 +68,27 @@ variable {R ℛ : Type*} [CommRing R] [CommRing ℛ] [Algebra R ℛ] {α : Type*
 /-- **The Bogolyubov negative part `φ₋` on a single tree** ([marcolli-chomsky-berwick-2025]
     Prop. 3.1.7): `φ₋(T) = −R(Σ_{(cf,rem) ∈ cutSummandsN T} (Π_{Tᵢ ∈ cf} φ₋(Tᵢ)) · φ(ofTree rem))`.
     Models `antipodeTreeN` with the character value `φ(ofTree rem)` in place of `ofTree rem` and
-    the Rota–Baxter `−R` in place of bare negation; well-founded on `T.height`. -/
+    the Rota–Baxter `−R` in place of bare negation; well-founded on `T.numNodes`. -/
 noncomputable def birkhoffMinusTree (T : UnorderedTree α) : ℛ :=
-  - RB.op ((cutSummandsN T).attach.map (fun ⟨pf, h_mem⟩ =>
-      (pf.1.attach.map (fun ⟨T_i, h_T_i⟩ => birkhoffMinusTree T_i)).prod * φ (ofTree pf.2))).sum
-termination_by T.height
-decreasing_by exact cutSummandsN_subtree_height_lt T pf.1 pf.2 h_mem T_i h_T_i
+  -RB.op ((cutSummandsN T).attach.map fun p ↦
+    (p.1.1.attach.map fun t ↦ birkhoffMinusTree t.1).prod * φ (ofTree p.1.2)).sum
+termination_by T.numNodes
+decreasing_by exact cutSummandsN_crown_numNodes_lt p.2 t.2
 
-/-- **`φ₋` extended multiplicatively to forests**, as a `MonoidHom` on `Multiplicative (Forest …)`.
-    Mirrors `antipodeMonoidHomN`. -/
-noncomputable def birkhoffMinusMonoidHom :
-    Multiplicative (Forest (UnorderedTree α)) →* ℛ where
-  toFun F := (F.toAdd.map (birkhoffMinusTree φ RB)).prod
-  map_one' := by
-    show ((0 : Forest (UnorderedTree α)).map _).prod = 1
-    rw [Multiset.map_zero, Multiset.prod_zero]
-  map_mul' F G := by
-    show ((F.toAdd + G.toAdd).map (birkhoffMinusTree φ RB)).prod =
-         (F.toAdd.map _).prod * (G.toAdd.map _).prod
-    rw [Multiset.map_add, Multiset.prod_add]
-
-/-- **`φ₋` as an algebra hom** `H →ₐ[R] ℛ`, lifting `birkhoffMinusMonoidHom` via
-    `ConnesKreimer.lift`. Mirrors `antipodeAlgHomN`. -/
+/-- **`φ₋` as an algebra hom** `H →ₐ[R] ℛ`: `birkhoffMinusTree` extended multiplicatively to
+    forests. -/
 noncomputable def birkhoffMinus : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ :=
-  ConnesKreimer.lift (birkhoffMinusMonoidHom φ RB)
+  aeval (birkhoffMinusTree φ RB)
 
-/-- `φ₋` on a forest basis element is the product of `φ₋` over its trees. Mirrors
-    `antipodeAlgHomN_apply_of'`. -/
+/-- `φ₋` on a forest basis element is the product of `φ₋` over its trees. -/
 @[simp] theorem birkhoffMinus_apply_of' (F : Forest (UnorderedTree α)) :
-    birkhoffMinus φ RB (of' F) = (F.map (birkhoffMinusTree φ RB)).prod := by
-  rw [birkhoffMinus, ConnesKreimer.lift_of']
-  rfl
+    birkhoffMinus φ RB (of' F) = (F.map (birkhoffMinusTree φ RB)).prod :=
+  aeval_of' _ F
 
-/-- `φ₋` on a single tree generator agrees with `birkhoffMinusTree`. Mirrors
-    `antipodeAlgHomN_apply_ofTree`. -/
+/-- `φ₋` on a single tree generator agrees with `birkhoffMinusTree`. -/
 @[simp] theorem birkhoffMinus_apply_ofTree (T : UnorderedTree α) :
-    birkhoffMinus φ RB (ofTree T) = birkhoffMinusTree φ RB T := by
-  unfold ofTree
-  rw [birkhoffMinus_apply_of', Multiset.map_singleton, Multiset.prod_singleton]
+    birkhoffMinus φ RB (ofTree T) = birkhoffMinusTree φ RB T :=
+  aeval_ofTree _ T
 
 /-! ### The Bogolyubov preparation and the renormalized part -/
 
@@ -113,34 +96,16 @@ noncomputable def birkhoffMinus : ConnesKreimer R (UnorderedTree α) →ₐ[R] �
     `φ̃(T) = Σ_{(cf,rem) ∈ cutSummandsN T} (Π_{Tᵢ ∈ cf} φ₋(Tᵢ)) · φ(ofTree rem)`, of which the
     negative part is `φ₋(T) = −R(φ̃(T))` and the renormalized part is `φ₊(T) = (1−R)(φ̃(T))`. -/
 noncomputable def birkhoffPrepTree (T : UnorderedTree α) : ℛ :=
-  ((cutSummandsN T).attach.map (fun ⟨pf, _⟩ =>
-      (pf.1.attach.map (fun ⟨T_i, _⟩ => birkhoffMinusTree φ RB T_i)).prod * φ (ofTree pf.2))).sum
-
-/-- The Bogolyubov preparation in non-`attach`-decorated form: the `attach` def keeps the
-    membership info for well-foundedness, this strips it for downstream proofs. Mirrors
-    `antipodeTreeN_unfold`. -/
-theorem birkhoffPrepTree_unfold (T : UnorderedTree α) :
-    birkhoffPrepTree φ RB T = ((cutSummandsN T).map
-      (fun p => (p.1.map (birkhoffMinusTree φ RB)).prod * φ (ofTree p.2))).sum := by
-  rw [birkhoffPrepTree]
-  rw [show (cutSummandsN T).attach.map (fun (pf : { x // x ∈ cutSummandsN T }) =>
-            (pf.val.1.attach.map (fun (T_i : { x // x ∈ pf.val.1 }) =>
-              birkhoffMinusTree φ RB T_i.val)).prod * φ (ofTree pf.val.2)) =
-          (cutSummandsN T).attach.map (fun (pf : { x // x ∈ cutSummandsN T }) =>
-            (pf.val.1.map (birkhoffMinusTree φ RB)).prod * φ (ofTree pf.val.2)) from by
-    refine Multiset.map_congr rfl (fun ⟨pf, _⟩ _ => ?_)
-    show (pf.1.attach.map (fun T_i => birkhoffMinusTree φ RB T_i.val)).prod * _ =
-         (pf.1.map (birkhoffMinusTree φ RB)).prod * _
-    congr 1
-    exact congrArg Multiset.prod (Multiset.attach_map_val' _ _)]
-  exact congrArg Multiset.sum (@Multiset.attach_map_val'
-    (Forest (UnorderedTree α) × UnorderedTree α) _ (cutSummandsN T)
-    (fun p => (p.1.map (birkhoffMinusTree φ RB)).prod * φ (ofTree p.2)))
+  ((cutSummandsN T).map fun p ↦ (p.1.map (birkhoffMinusTree φ RB)).prod * φ (ofTree p.2)).sum
 
 /-- `φ₋(T) = −R(φ̃(T))`: the negative part is `−R` applied to the Bogolyubov preparation. -/
 theorem birkhoffMinusTree_eq_neg_op_prep (T : UnorderedTree α) :
-    birkhoffMinusTree φ RB T = - RB.op (birkhoffPrepTree φ RB T) := by
-  rw [birkhoffMinusTree, birkhoffPrepTree]
+    birkhoffMinusTree φ RB T = -RB.op (birkhoffPrepTree φ RB T) := by
+  rw [birkhoffMinusTree]
+  simp only [Multiset.attach_map_val' _ (birkhoffMinusTree φ RB)]
+  exact congrArg (fun s ↦ -RB.op s.sum) (Multiset.attach_map_val' _
+    fun p : Forest (UnorderedTree α) × UnorderedTree α ↦
+      (p.1.map (birkhoffMinusTree φ RB)).prod * φ (ofTree p.2))
 
 /-- **The renormalized part `φ₊` on a single tree** ([marcolli-chomsky-berwick-2025] Prop. 3.1.7):
     `φ₊(T) = (1−R)(φ̃(T)) = φ̃(T) − R(φ̃(T))` — the consistency-checked value. -/
@@ -154,39 +119,21 @@ theorem birkhoffPlusTree_eq_prep_add_minus (T : UnorderedTree α) :
 
 /-! ### `φ₊` as an algebra hom (the renormalized character) -/
 
-/-- **`φ₊` extended multiplicatively to forests**, as a `MonoidHom`. Mirrors
-    `birkhoffMinusMonoidHom`; the renormalized character `φ₊ : H → R₊` of
-    [marcolli-chomsky-berwick-2025] Prop. 3.1.7 is an algebra hom into `range (1 − R)`. -/
-noncomputable def birkhoffPlusMonoidHom :
-    Multiplicative (Forest (UnorderedTree α)) →* ℛ where
-  toFun F := (F.toAdd.map (birkhoffPlusTree φ RB)).prod
-  map_one' := by
-    show ((0 : Forest (UnorderedTree α)).map _).prod = 1
-    rw [Multiset.map_zero, Multiset.prod_zero]
-  map_mul' F G := by
-    show ((F.toAdd + G.toAdd).map (birkhoffPlusTree φ RB)).prod =
-         (F.toAdd.map _).prod * (G.toAdd.map _).prod
-    rw [Multiset.map_add, Multiset.prod_add]
-
-/-- **`φ₊` as an algebra hom** `H →ₐ[R] ℛ`, lifting `birkhoffPlusMonoidHom`. Mirrors
-    `birkhoffMinus`; the multiplicative extension of `birkhoffPlusTree` is automatically an
-    algebra hom, so this is the renormalized character `φ₊`. -/
+/-- **`φ₊` as an algebra hom** `H →ₐ[R] ℛ`: `birkhoffPlusTree` extended multiplicatively to
+    forests, the renormalized character `φ₊ : H → R₊` of [marcolli-chomsky-berwick-2025]
+    Prop. 3.1.7 (an algebra hom into `range (1 − R)`). -/
 noncomputable def birkhoffPlus : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ :=
-  ConnesKreimer.lift (birkhoffPlusMonoidHom φ RB)
+  aeval (birkhoffPlusTree φ RB)
 
-/-- `φ₊` on a forest basis element is the product of `φ₊` over its trees. Mirrors
-    `birkhoffMinus_apply_of'`. -/
+/-- `φ₊` on a forest basis element is the product of `φ₊` over its trees. -/
 @[simp] theorem birkhoffPlus_apply_of' (F : Forest (UnorderedTree α)) :
-    birkhoffPlus φ RB (of' F) = (F.map (birkhoffPlusTree φ RB)).prod := by
-  rw [birkhoffPlus, ConnesKreimer.lift_of']
-  rfl
+    birkhoffPlus φ RB (of' F) = (F.map (birkhoffPlusTree φ RB)).prod :=
+  aeval_of' _ F
 
-/-- `φ₊` on a single tree generator agrees with `birkhoffPlusTree`. Mirrors
-    `birkhoffMinus_apply_ofTree`. -/
+/-- `φ₊` on a single tree generator agrees with `birkhoffPlusTree`. -/
 @[simp] theorem birkhoffPlus_apply_ofTree (T : UnorderedTree α) :
-    birkhoffPlus φ RB (ofTree T) = birkhoffPlusTree φ RB T := by
-  unfold ofTree
-  rw [birkhoffPlus_apply_of', Multiset.map_singleton, Multiset.prod_singleton]
+    birkhoffPlus φ RB (ofTree T) = birkhoffPlusTree φ RB T :=
+  aeval_ofTree _ T
 
 /-! ### The Birkhoff factorization `φ₊ = φ₋ ⋆ φ` -/
 
@@ -209,12 +156,12 @@ theorem birkhoffFactorization_ofTree (hφ : φ 1 = 1) (T : UnorderedTree α) :
   simp only [map_add, map_multiset_sum, Multiset.map_map, Function.comp_def,
     TensorProduct.map_tmul, LinearMap.mul'_apply, AlgHom.toLinearMap_apply,
     birkhoffMinus_apply_ofTree, birkhoffMinus_apply_of', hφ, mul_one]
-  rw [← birkhoffPrepTree_unfold, birkhoffPlusTree_eq_prep_add_minus]
+  rw [← birkhoffPrepTree, birkhoffPlusTree_eq_prep_add_minus]
   exact add_comm _ _
 
 /-! ### The `R = id` specialization recovers the Hopf antipode
 
-[marcolli-chomsky-berwick-2025] Prop. 3.1.7 builds `φ₋` by the *same* `cutSummandsN`/height
+[marcolli-chomsky-berwick-2025] Prop. 3.1.7 builds `φ₋` by the *same* `cutSummandsN`/weight
 recursion as the Hopf antipode `antipodeTreeN` (the inductive antipode of §1.2), with two
 substitutions: the character value `φ (ofTree rem)` in place of the canonical embedding
 `ofTree rem`, and the Rota–Baxter `−R` in place of bare negation. Taking the trivial
@@ -230,7 +177,7 @@ in the convolution group, recovered here as the `R = id` Birkhoff counterterm. -
 theorem birkhoffMinusTree_id_eq_antipodeTreeN (T : UnorderedTree α) :
     birkhoffMinusTree (LinearMap.id : ConnesKreimer R (UnorderedTree α) →ₗ[R] _)
       RotaBaxter.id T = antipodeTreeN T := by
-  rw [birkhoffMinusTree_eq_neg_op_prep, birkhoffPrepTree_unfold, antipodeTreeN_unfold, neg_inj,
+  rw [birkhoffMinusTree_eq_neg_op_prep, birkhoffPrepTree, antipodeTreeN_unfold, neg_inj,
     show (RotaBaxter.id (k := R) (A := ConnesKreimer R (UnorderedTree α))).op
       = LinearMap.id from rfl,
     LinearMap.id_coe, id_eq]
@@ -240,8 +187,8 @@ theorem birkhoffMinusTree_id_eq_antipodeTreeN (T : UnorderedTree α) :
   rw [id_eq]
   exact congrArg (· * ofTree p.2) (congrArg Multiset.prod (Multiset.map_congr rfl
     (fun T_i hT_i => birkhoffMinusTree_id_eq_antipodeTreeN T_i)))
-termination_by T.height
-decreasing_by exact cutSummandsN_subtree_height_lt T p.1 p.2 hp T_i hT_i
+termination_by T.numNodes
+decreasing_by exact cutSummandsN_crown_numNodes_lt hp hT_i
 
 /-- **`R = id`, `φ = id` recovers the antipode as an algebra hom.** The forest-level Bogolyubov
     negative part `φ₋` of the identity character under `RotaBaxter.id` is the Hopf antipode
@@ -264,12 +211,9 @@ of a character `φ : H → R` (`S` the antipode, `⋆` the convolution). The key
 because the antipode-composite `φ₋ ∘ S` is the convolution inverse of the character `φ₋`. We work in
 the convolution monoid `WithConv (H →ₐ[R] R)` of characters. Per Rem. 3.1.4 the target `R` carries
 no coproduct, so this is *not* mathlib's `AlgHom.convGroup` (which requires the target to be a
-bialgebra) — the inverse of a single character is read off directly from the antipode law. The
-factorization needs `H` to be a Hopf algebra, hence `CharZero R` and `NoZeroDivisors R`. -/
+bialgebra) — the inverse of a single character is read off directly from the antipode law. -/
 
 section Factorization
-
-variable [CharZero R] [NoZeroDivisors R] [DecidableEq α]
 
 /-- **The convolution inverse of a character is `character ∘ S`.** For a character
     `ψ : H →ₐ[R] R`, the antipode-composite `ψ ∘ S` is its left convolution inverse in the
@@ -290,20 +234,6 @@ theorem antipodeComp_convMul_self (ψ : ConnesKreimer R (UnorderedTree α) →�
     Subsingleton.elim (ψ.comp (Algebra.ofId R (ConnesKreimer R (UnorderedTree α))))
       (Algebra.ofId R ℛ)]
 
-omit [CharZero R] [NoZeroDivisors R] [DecidableEq α] in
-/-- `Algebra.TensorProduct.lift` of two characters agrees with `mul' ∘ map` on every tensor: the
-    bridge between the character convolution (`AlgHom.convMul_apply`, `lift` form) and the keystone
-    (`mul' ∘ map` form). -/
-private theorem lift_eq_mulPrime_map (f g : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ)
-    (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
-    Algebra.TensorProduct.lift f g (fun _ _ => Commute.all _ _) z =
-      LinearMap.mul' R ℛ (TensorProduct.map f.toLinearMap g.toLinearMap z) := by
-  induction z using TensorProduct.inductionOn with
-  | tmul a b =>
-    rw [Algebra.TensorProduct.lift_tmul, TensorProduct.map_tmul, LinearMap.mul'_apply]; rfl
-  | add x y hx hy => rw [map_add, map_add, map_add, hx, hy]
-
-omit [CharZero R] [NoZeroDivisors R] [DecidableEq α] in
 /-- **The convolution `φ₋ ⋆ φ` on a tree generator is the renormalized value `φ₊(T)`.** Restates
     the keystone `birkhoffFactorization_ofTree` as a value in the character monoid, for a character
     `φ : H →ₐ[R] R` (unital via `map_one`). -/
@@ -311,10 +241,8 @@ theorem convMul_birkhoffMinus_apply_ofTree (φ : ConnesKreimer R (UnorderedTree 
     (T : UnorderedTree α) :
     (WithConv.toConv (birkhoffMinus φ.toLinearMap RB) * WithConv.toConv φ) (ofTree T)
       = birkhoffPlusTree φ.toLinearMap RB T := by
-  rw [AlgHom.convMul_apply, lift_eq_mulPrime_map]
   exact birkhoffFactorization_ofTree φ.toLinearMap RB (map_one φ) T
 
-omit [CharZero R] [NoZeroDivisors R] [DecidableEq α] in
 /-- **The full Birkhoff factorization `φ₊ = φ₋ ⋆ φ`** ([marcolli-chomsky-berwick-2025] Def. 3.1.6)
     on *all* of `H` for a character `φ : H →ₐ[R] R`: the renormalized character `φ₊` (the
     multiplicative `(1 − R)(φ̃)`) is the convolution `φ₋ ⋆ φ`. Lifts the keystone (which holds on

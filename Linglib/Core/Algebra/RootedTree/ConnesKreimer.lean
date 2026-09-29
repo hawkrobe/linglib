@@ -27,9 +27,9 @@ sibling `Coproduct/` files and `HopfAlgebra.lean`.
   `AddMonoidAlgebra R (Forest T)`.
 * `ConnesKreimer.single`, `ConnesKreimer.of'`, `ConnesKreimer.ofTree`,
   `ConnesKreimer.coeff`: basis embeddings and coefficient extraction.
-* `ConnesKreimer.lift`, `ConnesKreimer.algHom_ext`,
-  `ConnesKreimer.addHom_ext`, `ConnesKreimer.linearLift`: the
-  wrapper-native hom API.
+* `ConnesKreimer.lift`, `ConnesKreimer.aeval`, `ConnesKreimer.algHom_ext`,
+  `ConnesKreimer.algHom_ext_ofTree`, `ConnesKreimer.addHom_ext`,
+  `ConnesKreimer.linearLift`: the wrapper-native hom API.
 * `ConnesKreimer.counit`: the counit ε (coefficient of the empty forest)
   as an algebra hom.
 
@@ -368,6 +368,31 @@ theorem algHom_ext {φ ψ : ConnesKreimer R T →ₐ[R] A}
     toFinsuppAlgEquiv.symm.surjective).mp
     (AddMonoidAlgebra.algHom_ext (fun F => h F) (Subsingleton.elim _ _))
 
+/-- `ConnesKreimer R T` is the free commutative algebra on `T`: a function on trees extends
+    multiplicatively to forests (`MvPolynomial.aeval` with `ofTree` as the variables). The carrier
+    is not literally `MvPolynomial T R`, whose monomials `T →₀ ℕ` match `Multiset T` only under
+    `DecidableEq T`. -/
+def aeval (f : T → A) : ConnesKreimer R T →ₐ[R] A :=
+  lift
+    { toFun F := (F.toAdd.map f).prod
+      map_one' := by simp
+      map_mul' F G := by simp [Multiset.prod_add] }
+
+@[simp] theorem aeval_of' (f : T → A) (F : Forest T) :
+    aeval (R := R) f (of' F) = (F.map f).prod :=
+  lift_of' _ F
+
+@[simp] theorem aeval_ofTree (f : T → A) (t : T) : aeval (R := R) f (ofTree t) = f t := by
+  simp [← of'_singleton]
+
+/-- Algebra homs off `ConnesKreimer` agree if they agree on trees. -/
+@[ext] theorem algHom_ext_ofTree {φ ψ : ConnesKreimer R T →ₐ[R] A}
+    (h : ∀ t : T, φ (ofTree t) = ψ (ofTree t)) : φ = ψ :=
+  algHom_ext fun F ↦ by
+    induction F using Multiset.induction with
+    | empty => simp
+    | cons t F ih => rw [← Multiset.singleton_add, of'_add, map_mul, map_mul, of'_singleton, h, ih]
+
 end Lift
 
 /-- `ofFinsupp` as an `AddMonoidHom` (transport vehicle for `addHom_ext`). -/
@@ -518,32 +543,25 @@ def basisSingleOne :
 The counit ε : ConnesKreimer R T → R extracts the coefficient of the
 empty forest, packaged as an algebra hom. -/
 
-/-- The counit as a monoid hom: the indicator of the empty forest, expressed
-    as `0 ^ card` (so `0 ^ 0 = 1`, `0 ^ n = 0`) — multiplicativity is
-    `pow_add`, and no `DecidableEq T` is needed. -/
-def counitMonoidHom : Multiplicative (Forest T) →* R where
-  toFun F := 0 ^ F.toAdd.card
-  map_one' := pow_zero 0
-  map_mul' F G := by rw [toAdd_mul, Multiset.card_add, pow_add]
-
-/-- The **counit** on `ConnesKreimer R T` as an algebra hom. -/
+/-- The **counit** on `ConnesKreimer R T`: the coefficient of the empty forest, as the
+    algebra hom sending every tree to `0`. -/
 def counit : ConnesKreimer R T →ₐ[R] R :=
-  lift counitMonoidHom
+  aeval fun _ ↦ 0
 
 /-- `counit (of' F) = if F.card = 0 then 1 else 0`. The `card`
     formulation avoids needing `DecidableEq T`. -/
 @[simp] theorem counit_of' (F : Forest T) :
     (counit : ConnesKreimer R T →ₐ[R] R) (of' F)
       = (if F.card = 0 then 1 else 0 : R) := by
-  rw [counit, lift_of']
+  rw [counit, aeval_of', Multiset.map_const', Multiset.prod_replicate]
   exact zero_pow_eq F.card
 
 @[simp] theorem counit_one :
     (counit : ConnesKreimer R T →ₐ[R] R) 1 = 1 := map_one _
 
 @[simp] theorem counit_ofTree (t : T) :
-    (counit : ConnesKreimer R T →ₐ[R] R) (ofTree t) = 0 := by
-  rw [← of'_singleton, counit_of', Multiset.card_singleton, ite_eq_right one_ne_zero]
+    (counit : ConnesKreimer R T →ₐ[R] R) (ofTree t) = 0 :=
+  aeval_ofTree _ t
 
 end ConnesKreimer
 
