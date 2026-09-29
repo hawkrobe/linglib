@@ -16,7 +16,8 @@ public import Mathlib.Data.Fin.Tuple.Basic
 maps; it lacks the action of `+` on arbitrary index *maps*. `Fin.appendMap f g`
 routes a `Fin (m + n)` index through `f` on the left block and `g` on the right,
 and is functorial (`appendMap_id`/`appendMap_comp`) with `Fin.append` natural in it
-(`append_comp_appendMap`).
+(`append_comp_appendMap`). On permutations it is `Fin.permAdd σ τ`, a permutation of
+`Fin (m + n)`.
 -/
 
 @[expose] public section
@@ -76,5 +77,18 @@ theorem append_comp_appendMap {α : Type*} {a : Fin m → α} {a' : Fin m' → �
   funext k
   simp only [Function.comp_apply]
   refine Fin.addCases (fun i => ?_) (fun j => ?_) k <;> simp
+
+/-- `appendMap` of two permutations, as a permutation. -/
+def permAdd (σ : Equiv.Perm (Fin m)) (τ : Equiv.Perm (Fin n)) : Equiv.Perm (Fin (m + n)) :=
+  finSumFinEquiv.permCongr (σ.sumCongr τ)
+
+@[simp] theorem coe_permAdd (σ : Equiv.Perm (Fin m)) (τ : Equiv.Perm (Fin n)) :
+    ⇑(permAdd σ τ) = appendMap σ τ :=
+  rfl
+
+theorem append_comp_permAdd {α : Type*} (a : Fin m → α) (b : Fin n → α)
+    (σ : Equiv.Perm (Fin m)) (τ : Equiv.Perm (Fin n)) :
+    Fin.append a b ∘ permAdd σ τ = Fin.append (a ∘ σ) (b ∘ τ) :=
+  append_comp_appendMap rfl rfl
 
 end Fin
