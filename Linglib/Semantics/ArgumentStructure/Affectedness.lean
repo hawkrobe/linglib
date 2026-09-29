@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Order.Basic
+public import Mathlib.Order.Birkhoff
 public import Mathlib.Order.Monotone.Defs
 public import Mathlib.Tactic.DeriveFintype
 
@@ -13,11 +14,14 @@ the theme reaches a goal the predicate fixes (a quantized change), that the them
 (a non-quantized change), that the theme is related to a scale without necessarily changing
 (potential for change), or nothing about change at all. Each degree is an existential
 generalization of the one above it, over the goal, over the result and over the scalar relation, so
-the degrees form a chain of weakening truth conditions.
+the degrees form a chain of weakening truth conditions. The three degrees above the bottom are the
+entailments, and each degree is the set of entailments at most as strong as it.
 
 ## Main definitions
 
 * `AffectednessDegree`: the four degrees, ordered by strength.
+* `AffectednessEntailment`: the three degrees above the bottom, the affectedness entailments.
+* `AffectednessDegree.entailments`: a degree as the set of entailments it comprises.
 * `QuantizedChange`: the predicate entails that the theme reaches a goal it fixes.
 * `NonQuantizedChange`: the predicate entails that the theme reaches some goal.
 * `PotentialChange`: the predicate relates the theme to a scale.
@@ -80,7 +84,32 @@ instance : LinearOrder AffectednessDegree :=
 theorem le_iff_strength_le {a b : AffectednessDegree} : a ≤ b ↔ a.strength ≤ b.strength :=
   Iff.rfl
 
+instance : OrderBot AffectednessDegree where
+  bot := .unspecified
+  bot_le a := by cases a <;> decide
+
+theorem supIrred_iff_ne_bot {d : AffectednessDegree} : SupIrred d ↔ d ≠ ⊥ := by
+  rw [supIrred_iff_not_isMin, isMin_iff_eq_bot]
+
+instance : DecidablePred (SupIrred : AffectednessDegree → Prop) :=
+  fun _ ↦ decidable_of_iff _ supIrred_iff_ne_bot.symm
+
 end AffectednessDegree
+
+/-- An affectedness entailment is a degree that is not the join of weaker ones, one of the three
+degrees above `unspecified`, entailing a quantized change, a non-quantized change or potential for
+change. -/
+abbrev AffectednessEntailment := {d : AffectednessDegree // SupIrred d}
+
+/-- A degree is the set of entailments at most as strong as it, and every set of entailments closed
+under entailment is a degree, by Birkhoff's representation of the chain of degrees. -/
+noncomputable def AffectednessDegree.entailments :
+    AffectednessDegree ≃o LowerSet AffectednessEntailment :=
+  OrderIso.lowerSetSupIrred
+
+theorem AffectednessDegree.coe_entailments (d : AffectednessDegree) :
+    (d.entailments : Set AffectednessEntailment) = {e | e.1 ≤ d} :=
+  rfl
 
 /-! ### The affectedness conditions -/
 

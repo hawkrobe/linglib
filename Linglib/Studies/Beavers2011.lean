@@ -3,7 +3,6 @@ module
 public import Linglib.Semantics.ArgumentStructure.Affectedness
 public import Linglib.Semantics.Events.Basic
 public import Linglib.Studies.KennedyLevin2008
-public import Linglib.Studies.Beavers2010
 
 /-!
 # Beavers (2011): On Affectedness
@@ -168,65 +167,47 @@ end KennedyLevin
 
 section Roles
 
-open Beavers2010 (PatientLRole)
-
 variable {α S G β : Type*}
 
-open Classical in
-/-- The patient role of a predicate is the set of affectedness entailments it has about its theme,
-among quantized change, non-quantized change and potential for change ([beavers-2010] (65)). -/
-noncomputable def role (θ : α → S → β → Prop) (R : α → S → G → β → Prop) (φ : α → β → Prop) :
-    PatientLRole :=
-  ⟨decide (AffectednessDegree.Holds θ R φ .quantized),
-    decide (AffectednessDegree.Holds θ R φ .nonquantized),
-    decide (AffectednessDegree.Holds θ R φ .potential)⟩
+/-- The patient role of a predicate is the set of affectedness entailments it has about its theme
+([beavers-2010] (65)). -/
+def role (θ : α → S → β → Prop) (R : α → S → G → β → Prop) (φ : α → β → Prop) :
+    Set AffectednessEntailment :=
+  {e | AffectednessDegree.Holds θ R φ e.1}
 
 variable {θ : α → S → β → Prop} {R : α → S → G → β → Prop} {φ : α → β → Prop}
 
-/-- Every predicate's role is contentful, since each affectedness entailment entails the weaker
-ones ([beavers-2010] (67)). -/
-theorem role_valid : (role θ R φ).Valid := by
-  classical
-  simp only [PatientLRole.Valid, role, decide_eq_true_eq]
-  exact ⟨AffectednessDegree.holds_antitone θ R φ (by decide),
-    AffectednessDegree.holds_antitone θ R φ (by decide)⟩
+/-- Every predicate's role is contentful, closed under entailment, since each degree entails the
+weaker ones ([beavers-2010] (67)). -/
+theorem isLowerSet_role : IsLowerSet (role θ R φ) :=
+  fun _ _ h ↦ AffectednessDegree.holds_antitone θ R φ h
 
-private theorem forall_degree {P : AffectednessDegree → Prop} :
-    (∀ d, P d) ↔ P .unspecified ∧ P .potential ∧ P .nonquantized ∧ P .quantized :=
-  ⟨fun h ↦ ⟨h _, h _, h _, h _⟩, fun ⟨h₁, h₂, h₃, h₄⟩ d ↦ by cases d <;> assumption⟩
+/-- A predicate has the role that [beavers-2010] names by the degree `d` exactly when its
+entailments are those at most as strong as `d`. -/
+theorem role_eq_entailments_iff {d : AffectednessDegree} :
+    role θ R φ = d.entailments ↔
+      ∀ e : AffectednessEntailment, AffectednessDegree.Holds θ R φ e.1 ↔ e.1 ≤ d := by
+  simp [role, Set.ext_iff, AffectednessDegree.coe_entailments]
 
-/-- A predicate has the role that [beavers-2010] names by the degree `d` exactly when `d` is the
-strongest degree the predicate entails. -/
-theorem role_eq_ofDegree_iff {d : AffectednessDegree} :
-    role θ R φ = PatientLRole.ofDegree d ↔
-      {d' | AffectednessDegree.Holds θ R φ d'} = Iic d := by
-  classical
-  rw [Set.ext_iff, forall_degree]
-  cases d <;>
-    simp [role, PatientLRole.ofDegree, PatientLRole.quantizedRole,
-      PatientLRole.nonquantizedRole, PatientLRole.potentialRole,
-      PatientLRole.unspecifiedRole, AffectednessDegree.Holds,
-      AffectednessDegree.le_iff_strength_le, AffectednessDegree.strength] <;> tauto
-
-/-- Every predicate's role is contentful, and each contentful role is the role of some predicate,
-so the contentful roles are exactly the roles of predicates, as the objects of *see*, *hit*, *cut*
-and *eat* illustrate ([beavers-2010] (66)–(67)). -/
-theorem valid_iff_exists_role (r : PatientLRole) :
-    r.Valid ↔ ∃ (θ : Unit → Unit → Bool → Prop) (R : Unit → Unit → Bool → Bool → Prop)
-      (φ : Unit → Bool → Prop), role θ R φ = r := by
-  refine ⟨fun h ↦ ?_, fun ⟨_, _, _, h⟩ ↦ h ▸ role_valid⟩
-  rcases (PatientLRole.exactly_four_valid_roles r).1 h with rfl | rfl | rfl | rfl
-  on_goal 1 => refine ⟨fun _ _ _ ↦ True, fun _ _ _ _ ↦ True, fun _ _ ↦ True,
-    role_eq_ofDegree_iff (d := .quantized) |>.2 ?_⟩
-  on_goal 2 => refine ⟨fun _ _ _ ↦ True, fun _ _ g e ↦ g = e, fun _ _ ↦ True,
-    role_eq_ofDegree_iff (d := .nonquantized) |>.2 ?_⟩
-  on_goal 3 => refine ⟨fun _ _ _ ↦ True, fun _ _ _ _ ↦ False, fun _ _ ↦ True,
-    role_eq_ofDegree_iff (d := .potential) |>.2 ?_⟩
-  on_goal 4 => refine ⟨fun _ _ _ ↦ False, fun _ _ _ _ ↦ False, fun _ _ ↦ True,
-    role_eq_ofDegree_iff (d := .unspecified) |>.2 ?_⟩
-  all_goals ext d; cases d <;> simp [AffectednessDegree.Holds, QuantizedChange,
-    NonQuantizedChange, PotentialChange, AffectednessDegree.le_iff_strength_le,
-    AffectednessDegree.strength]
+/-- A set of affectedness entailments is the role of some predicate exactly when it is
+contentful, as the objects of *see*, *hit*, *cut* and *eat* illustrate ([beavers-2010]
+(66)–(67)). -/
+theorem exists_role_eq_iff (s : Set AffectednessEntailment) :
+    (∃ (θ : Unit → Unit → Bool → Prop) (R : Unit → Unit → Bool → Bool → Prop)
+      (φ : Unit → Bool → Prop), role θ R φ = s) ↔ IsLowerSet s := by
+  refine ⟨fun ⟨_, _, _, h⟩ ↦ h ▸ isLowerSet_role, fun hs ↦ ?_⟩
+  obtain ⟨d, hd⟩ := AffectednessDegree.entailments.surjective ⟨s, hs⟩
+  obtain rfl : (d.entailments : Set AffectednessEntailment) = s := by rw [hd]; rfl
+  cases d
+  on_goal 1 => refine ⟨fun _ _ _ ↦ False, fun _ _ _ _ ↦ False, fun _ _ ↦ True, ?_⟩
+  on_goal 2 => refine ⟨fun _ _ _ ↦ True, fun _ _ _ _ ↦ False, fun _ _ ↦ True, ?_⟩
+  on_goal 3 => refine ⟨fun _ _ _ ↦ True, fun _ _ g e ↦ g = e, fun _ _ ↦ True, ?_⟩
+  on_goal 4 => refine ⟨fun _ _ _ ↦ True, fun _ _ _ _ ↦ True, fun _ _ ↦ True, ?_⟩
+  all_goals
+    refine role_eq_entailments_iff.2 fun ⟨e, he⟩ ↦ ?_
+    cases e <;> simp_all [AffectednessDegree.Holds,
+      QuantizedChange, NonQuantizedChange, PotentialChange,
+      AffectednessDegree.le_iff_strength_le, AffectednessDegree.strength]
 
 end Roles
 
