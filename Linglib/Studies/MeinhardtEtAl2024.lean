@@ -173,7 +173,7 @@ theorem rightwardATR_osl_not_isLeftInputStrictlyLocal (k : ℕ) :
     simpa using List.rtake_append_length (l₁ := [s]) (l₂ := List.replicate (k - 1) Seg.recL)
   have e := congrFun (h.factorsThrough_residual (a := .dom :: List.replicate (k - 1) .recL)
     (b := .recL :: List.replicate (k - 1) .recL) (by simp only [hw])) [.recL]
-  simp only [residual, List.cons_append, ← List.replicate_succ',
+  simp only [Function.residual, List.cons_append, ← List.replicate_succ',
     rightwardATR_osl_apply_dom_replicate, ← List.replicate_succ,
     rightwardATR_osl_apply_replicate, List.length_replicate, List.drop_replicate,
     Nat.add_sub_cancel_left] at e

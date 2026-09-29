@@ -55,7 +55,7 @@ there through a final output, is right-ISL here. `0`-ISL and `1`-ISL coincide, a
 
 namespace Subregular
 
-open SubsequentialTransducer
+open SubsequentialTransducer Function
 
 variable {α β : Type*} {k k' : ℕ} {f : List α → List β}
 
@@ -133,14 +133,14 @@ theorem IsLeftInputStrictlyLocal.isPrefix (hf : IsLeftInputStrictlyLocal k f) (u
 /-- The residuals of a `k`-ISL function factor through the last `k - 1` input symbols, so inputs
 ending alike have the same continuations. -/
 theorem IsLeftInputStrictlyLocal.factorsThrough_residual (hf : IsLeftInputStrictlyLocal k f) :
-    (residual f).FactorsThrough fun u ↦ u.rtake (k - 1) := by
+    f.residual.FactorsThrough fun u ↦ u.rtake (k - 1) := by
   obtain ⟨r, rfl⟩ := hf
   exact factorsThrough_residual_of_append_singleton (fun w x ↦ (w ++ [x]).rtake (k - 1))
     r.windowOutput (fun u x ↦ (List.rtake_append_rtake _ _ _).symm) r.apply_append_singleton
 
 theorem IsLeftInputStrictlyLocal.of_factorsThrough_residual (h₀ : f [] = [])
     (hpre : ∀ u v, f u <+: f (u ++ v))
-    (hf : (residual f).FactorsThrough fun u ↦ u.rtake (k - 1)) :
+    (hf : f.residual.FactorsThrough fun u ↦ u.rtake (k - 1)) :
     IsLeftInputStrictlyLocal k f := by
   obtain ⟨g, hg⟩ := exists_append_singleton_of_factorsThrough_residual hpre hf
   refine ⟨⟨g⟩, funext fun u ↦ ?_⟩
@@ -152,7 +152,7 @@ theorem IsLeftInputStrictlyLocal.of_factorsThrough_residual (h₀ : f [] = [])
 factoring through the last `k - 1` input symbols. -/
 theorem isLeftInputStrictlyLocal_iff_factorsThrough_residual :
     IsLeftInputStrictlyLocal k f ↔ f [] = [] ∧ (∀ u v, f u <+: f (u ++ v)) ∧
-      (residual f).FactorsThrough fun u ↦ u.rtake (k - 1) :=
+      f.residual.FactorsThrough fun u ↦ u.rtake (k - 1) :=
   ⟨fun hf ↦ ⟨hf.map_nil, hf.isPrefix, hf.factorsThrough_residual⟩,
     fun h ↦ .of_factorsThrough_residual h.1 h.2.1 h.2.2⟩
 

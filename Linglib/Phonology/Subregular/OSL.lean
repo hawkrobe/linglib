@@ -68,7 +68,7 @@ alone.
 
 namespace Subregular
 
-open SubsequentialTransducer
+open SubsequentialTransducer Function
 
 variable {α β : Type*} {k k' : ℕ} {f : List α → List β}
 
@@ -141,7 +141,7 @@ theorem IsLeftOutputStrictlyLocal.isPrefix (hf : IsLeftOutputStrictlyLocal k f) 
 /-- The residuals of a `k`-OSL function factor through the last `k - 1` output symbols, so inputs
 whose outputs end alike have the same continuations. -/
 theorem IsLeftOutputStrictlyLocal.factorsThrough_residual (hf : IsLeftOutputStrictlyLocal k f) :
-    (residual f).FactorsThrough fun u ↦ (f u).rtake (k - 1) := by
+    f.residual.FactorsThrough fun u ↦ (f u).rtake (k - 1) := by
   obtain ⟨r, rfl⟩ := hf
   refine factorsThrough_residual_of_append_singleton
     (fun w x ↦ (w ++ r.windowOutput w x).rtake (k - 1)) r.windowOutput (fun u x ↦ ?_)
@@ -150,7 +150,7 @@ theorem IsLeftOutputStrictlyLocal.factorsThrough_residual (hf : IsLeftOutputStri
 
 theorem IsLeftOutputStrictlyLocal.of_factorsThrough_residual (h₀ : f [] = [])
     (hpre : ∀ u v, f u <+: f (u ++ v))
-    (hf : (residual f).FactorsThrough fun u ↦ (f u).rtake (k - 1)) :
+    (hf : f.residual.FactorsThrough fun u ↦ (f u).rtake (k - 1)) :
     IsLeftOutputStrictlyLocal k f := by
   obtain ⟨g, hg⟩ := exists_append_singleton_of_factorsThrough_residual hpre hf
   refine ⟨⟨g⟩, funext fun u ↦ ?_⟩
@@ -162,7 +162,7 @@ theorem IsLeftOutputStrictlyLocal.of_factorsThrough_residual (h₀ : f [] = [])
 factoring through the last `k - 1` output symbols. -/
 theorem isLeftOutputStrictlyLocal_iff_factorsThrough_residual :
     IsLeftOutputStrictlyLocal k f ↔ f [] = [] ∧ (∀ u v, f u <+: f (u ++ v)) ∧
-      (residual f).FactorsThrough fun u ↦ (f u).rtake (k - 1) :=
+      f.residual.FactorsThrough fun u ↦ (f u).rtake (k - 1) :=
   ⟨fun hf ↦ ⟨hf.map_nil, hf.isPrefix, hf.factorsThrough_residual⟩,
     fun h ↦ .of_factorsThrough_residual h.1 h.2.1 h.2.2⟩
 

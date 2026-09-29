@@ -34,13 +34,13 @@ bounded window as the summary.
 
 ## Main definitions
 
-* `residual f u`: the residual of `f` by the word `u`
-* `coresidual f y`: the coresidual of `f` by the suffix `y`
+* `Function.residual f u`: the residual of `f` by the word `u`
+* `Function.coresidual f y`: the coresidual of `f` by the suffix `y`
 
 ## Main theorems
 
-* `factorsThrough_residual_of_append_singleton`,
-  `exists_append_singleton_of_factorsThrough_residual`: residuals factor through a summary `W`
+* `Function.factorsThrough_residual_of_append_singleton`,
+  `Function.exists_append_singleton_of_factorsThrough_residual`: residuals factor through a summary `W`
   exactly when `f` extends by blocks read off `W`
 * `isMealyComputable_of_stateSummary`: a finite left-congruent state summary
   determining the output yields a machine
@@ -57,6 +57,8 @@ the existing file, with `residual` beside `Language.leftQuotient`).
 @[expose] public section
 
 variable {α β : Type*} (f : List α → List β)
+
+namespace Function
 
 /-- The *residual* of `f` by `u` is what `f` appends after reading `u` — the analogue
 for string functions of `Language.leftQuotient`. -/
@@ -126,7 +128,9 @@ theorem exists_append_singleton_of_factorsThrough_residual
 
 end StateSummary
 
-variable (f)
+end Function
+
+open Function
 
 /-- Residuals of a machine's run factor through its states. -/
 theorem Mealy.residual_run {σ : Type*} (T : Mealy σ α β) (u : List α) :
@@ -218,6 +222,8 @@ theorem isMealyComputable_iff_residual {f : List α → List β} :
 
 /-! ### Coresiduals -/
 
+namespace Function
+
 /-- The *coresidual* of `f` by the suffix `y` is what `f` emits before reaching `y` —
 the right-context dual of `residual`. -/
 def coresidual (y : List α) : List α → List β :=
@@ -242,6 +248,8 @@ theorem getElem?_coresidual_append (u : List α) (x : α) (w : List α) :
   simp only [coresidual, List.length_append, List.length_cons, List.length_nil,
     List.append_assoc, List.singleton_append]
   exact List.getElem?_take_of_lt (Nat.lt_succ_self _)
+
+end Function
 
 /-! ### Myhill–Nerode for bimachines -/
 
