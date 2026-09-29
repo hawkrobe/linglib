@@ -50,6 +50,6 @@ since the lexical strategy marks predicates rather than forms. -/
 def lexicalReciprocals : List Verb :=
   [Verbs.abbracciare, Verbs.baciare, Verbs.coccolare, Verbs.conoscere,
     Verbs.consultare, Verbs.frequentare, Verbs.incontrare, Verbs.incrociare,
-    Verbs.lasciare, Verbs.sposare, Verbs.trovare, Verbs.vedere].map (·.toVerb)
+    Verbs.lasciare, Verbs.sposare, Verbs.trovare, Verbs.vedere]
 
 end Italian.Reciprocals

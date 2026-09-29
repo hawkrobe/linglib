@@ -317,7 +317,7 @@ theorem entries_cut_iff_cutoff (l : Language) (k : AuxiliarySelectionHierarchy) 
 
 /-- The Italian rule is the cut at the seam for every verb: on a frame without a direct object, a
 verb takes *essere* exactly when `ofVerb` places it among the transitions and states. -/
-theorem italian_perfect_eq_be_iff {v : Italian.Verbs.Verb} {fr : ArgumentFrame}
+theorem italian_perfect_eq_be_iff {v : Italian.Verb} {fr : ArgumentFrame}
     (hfr : ¬ (fr.HasNominal ∧ ¬ fr.IsUnaccusative)) {t : AuxiliarySelectionHierarchy}
     (ht : ofVerb v.toVerb = some t) :
     Italian.Verbs.perfect v fr = .be ↔ t ≤ .existenceOfState := by
