@@ -1268,7 +1268,6 @@ import Linglib.Studies.Bondarenko2022
 import Linglib.Studies.BondarenkoElliott2026
 import Linglib.Studies.BonehDoron2013
 import Linglib.Studies.Booij2010
-import Linglib.Studies.Booth2022
 import Linglib.Studies.Borer2005
 import Linglib.Studies.Borer2013
 import Linglib.Studies.Boylan2023

@@ -9,6 +9,7 @@ public import Mathlib.Order.CompleteBooleanAlgebra
 public import Mathlib.Order.Heyting.Regular
 public import Mathlib.Order.CompleteLattice.Basic
 public import Mathlib.Order.Hom.BoundedLattice
+public import Mathlib.Order.Hom.CompleteLattice
 public import Mathlib.Order.Lattice
 public import Mathlib.Order.Preorder.Finite
 public import Mathlib.Order.Closure
@@ -581,10 +582,10 @@ instance : Inhabited (Question W) := ⟨⊤⟩
 
 /-! ### Basic API for `info` on the lattice operations
 
-`info` is a monotone map from `(Question W, ≤)` to
-`(Set W, ⊆)` and commutes with `⊔` (and `⊥`/`⊤`). The story for `⊓`
-is one-sided: `info` distributes over union but only sub-distributes
-over intersection (the same asymmetry as `⋃₀` over `Set` operations). -/
+`info` is a monotone map from `(Question W, ≤)` to `(Set W, ⊆)` commuting with
+`⊔`, `⊓`, `⊥` and `⊤`, and indeed with arbitrary joins and meets: it is a complete
+lattice homomorphism (`infoHom`). Meets need no inquisitiveness assumption, since
+singleton states witness the informative content. -/
 
 /-- `info` is monotone in the entailment order: a stronger inquiry has
     no more informative content than a weaker one. -/
@@ -636,6 +637,25 @@ theorem info_iSup {ι : Sort*} (f : ι → Question W) :
 theorem ofSet_iInf {ι : Sort*} (p : ι → Set W) :
     ofSet (⋂ i, p i) = ⨅ i, ofSet (p i) :=
   gc_info_ofSet.u_iInf
+
+/-- `info` turns arbitrary meets into intersections: a world is in the informative
+content of every member exactly when its singleton supports each of them. -/
+theorem info_sInf (S : Set (Question W)) : info (sInf S) = ⋂ P ∈ S, info P := by
+  ext w
+  simp only [mem_info_iff_singleton_mem, mem_sInf, Set.mem_iInter]
+
+/-- `info` turns meets into intersections. -/
+theorem info_iInf {ι : Sort*} (f : ι → Question W) :
+    info (⨅ i, f i) = ⋂ i, info (f i) := by
+  rw [iInf, info_sInf, Set.biInter_range]
+
+/-- `info` as a complete lattice homomorphism into the classical propositions. -/
+def infoHom : CompleteLatticeHom (Question W) (Set W) where
+  toFun := info
+  map_sInf' S := by rw [info_sInf, sInf_image]; rfl
+  map_sSup' S := by rw [gc_info_ofSet.l_sSup, sSup_image]
+
+@[simp] theorem infoHom_apply (P : Question W) : infoHom P = P.info := rfl
 
 /-! ### `alt` API and inquisitivity from alternatives
 
@@ -1304,6 +1324,11 @@ theorem ofSet_le_ofSet_iff {A B : Set W} :
 theorem ofSet_injective :
     Function.Injective (ofSet : Set W → Question W) := fun A B h => by
   rw [← info_ofSet A, ← info_ofSet B, h]
+
+/-- Declaratives are disjoint exactly when their informative contents are. -/
+theorem disjoint_ofSet_iff {A B : Set W} : Disjoint (ofSet A) (ofSet B) ↔ Disjoint A B := by
+  rw [_root_.disjoint_iff, _root_.disjoint_iff, ofSet_inf, ← ofSet_empty, ofSet_injective.eq_iff]
+  rfl
 
 /-- `ofSet` as an order embedding: the classical algebra of
     propositions sits order-faithfully inside the inquisitive algebra. -/
