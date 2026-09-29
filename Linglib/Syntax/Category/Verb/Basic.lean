@@ -51,12 +51,14 @@ section withPath
 
 variable {v : Verb} {p : Adposition.SpatialReading}
 
-/-- The predicate a verb forms with a path phrase of reading `p`. A directional phrase gives the
-theme's path its direction, the directed motion use of a verb of manner of motion
-([levin-hovav-1995] p. 185), and a bounded one an endpoint, which makes the predicate telic
-([zwarts-2005]); a locative phrase leaves the verb as it is. -/
+/-- The predicate a verb forms with a path phrase of reading `p`. A directional phrase that the
+verb selects as a complement gives the theme's path its direction, the directed motion use of a
+verb of manner of motion ([levin-hovav-1995] p. 185), and a bounded one an endpoint, which makes
+the predicate telic ([zwarts-2005]). A locative phrase, and a phrase the verb does not select, an
+adjunct, leave the verb as it is: *correre* 'run' has a directed motion use in Italian but
+*nuotare* 'swim' has none. -/
 def withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
-  if p.direction = .place then v else
+  if p.direction = .place ∨ ¬ v.TakesSpatial then v else
     { v with
       direction := some p.direction
       vendlerClass := if p.bounded then v.vendlerClass.map (·.telicize) else v.vendlerClass }
@@ -64,14 +66,17 @@ def withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
 @[simp] theorem withPath_of_direction_eq_place (h : p.direction = .place) : v.withPath p = v := by
   simp [withPath, h]
 
-@[simp] theorem direction_withPath (h : p.direction ≠ .place) :
-    (v.withPath p).direction = some p.direction := by
+@[simp] theorem withPath_of_not_takesSpatial (h : ¬ v.TakesSpatial) : v.withPath p = v := by
   simp [withPath, h]
 
-@[simp] theorem vendlerClass_withPath (h : p.direction ≠ .place) :
+@[simp] theorem direction_withPath (hv : v.TakesSpatial) (h : p.direction ≠ .place) :
+    (v.withPath p).direction = some p.direction := by
+  simp [withPath, hv, h]
+
+@[simp] theorem vendlerClass_withPath (hv : v.TakesSpatial) (h : p.direction ≠ .place) :
     (v.withPath p).vendlerClass =
       if p.bounded then v.vendlerClass.map (·.telicize) else v.vendlerClass := by
-  simp [withPath, h]
+  simp [withPath, hv, h]
 
 end withPath
 

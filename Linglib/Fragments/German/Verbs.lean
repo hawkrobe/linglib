@@ -145,7 +145,7 @@ def verkaufen : Verb :=
 subject with no direction. -/
 def rennen : Verb :=
   { Verb.ofStem (strong "rennen" "rennt" "rannte" "gerannt") with
-    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity,
+    frames := [ArgumentFrame.intransitive, ArgumentFrame.spatialPP], vendlerClass := some .activity,
     direction := some .place }
 
 /-- *brechen* 'break' is an achievement. -/
@@ -368,7 +368,7 @@ perfect, with the principal parts of Table 12.12. -/
 direction. -/
 def laufen : Verb :=
   { Verb.ofStem (strong "laufen" "läuft" "lief" "gelaufen") with
-    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity,
+    frames := [ArgumentFrame.intransitive, ArgumentFrame.spatialPP], vendlerClass := some .activity,
     direction := some .place }
 
 /-- *ankommen* 'arrive' is formed on *kommen* with the separable *an-*, a verb of motion to a goal:
@@ -383,7 +383,8 @@ expresses movement from one place to another only with a directional phrase, *Er
 Zimmer getanzt* (§12.3.2c). -/
 def tanzen : Verb :=
   { Verb.ofStem (weak "tanzen") with
-    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity }
+    frames := [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
+    vendlerClass := some .activity }
 
 /-- *arbeiten* 'work' denotes a continuous action, *Ich habe gestern lange gearbeitet*. -/
 def arbeiten : Verb :=

@@ -246,20 +246,20 @@ def blazen : Verb :=
 ([levin-hovav-1995] p. 148). -/
 def lopen : Verb :=
   { simplex "lopen" "gelopen" with
-    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity,
+    frames := [ArgumentFrame.intransitive, ArgumentFrame.spatialPP], vendlerClass := some .activity,
     direction := some .place }
 
 /-- *wandelen* 'walk', an intransitive verb of manner of motion: *De jongen heeft gewandeld*. -/
 def wandelen : Verb :=
   { simplex "wandelen" "gewandeld" with
-    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity,
+    frames := [ArgumentFrame.intransitive, ArgumentFrame.spatialPP], vendlerClass := some .activity,
     direction := some .place }
 
 /-- *rollen* 'roll', a nonagentive verb of manner of motion, unaccusative ([levin-hovav-1995]
 pp. 147–148) and atelic. -/
 def rollen : Verb :=
   { simplex "rollen" "gerold" with
-    frames := [ArgumentFrame.unaccusative], vendlerClass := some .activity,
+    frames := [ArgumentFrame.unaccusative, ArgumentFrame.spatialPP], vendlerClass := some .activity,
     direction := some .place }
 
 /-! ### The perfect auxiliary -/
@@ -285,10 +285,10 @@ def perfect (v : Verb) (fr : ArgumentFrame) : ArgumentStructure.PerfectAux :=
 /-- A bounded directional phrase gives a dynamic intransitive verb *zijn*: *De jongen is naar
 Groningen gewandeld* (§2.2, (274b)). -/
 theorem perfect_withPath_intransitive {v : Verb} {p : Adposition.SpatialReading}
-    (hd : p.direction ≠ .place) (hb : p.bounded) {c : Aspect.VendlerClass}
+    (hv : v.TakesSpatial) (hd : p.direction ≠ .place) (hb : p.bounded) {c : Aspect.VendlerClass}
     (hc : v.vendlerClass = some c) (hdyn : c.dynamicity = .dynamic) :
     perfect (v.withPath p) .intransitive = .be := by
-  simp [perfect, Verb.withPath, hd, hb, hc, ArgumentFrame.intransitive,
+  simp [perfect, Verb.withPath, hv, hd, hb, hc, ArgumentFrame.intransitive,
     ArgumentFrame.IsIntransitive, Aspect.VendlerClass.telicity_telicize hdyn]
 
 /-- *Wandelen* takes *hebben*, with *zijn* under a directional phrase and *hebben* under a
@@ -323,6 +323,13 @@ def inventory : List Verb :=
 
 /-- Every entry is cited by its infinitive. -/
 theorem form_eq_infinitive : ∀ v ∈ inventory, v.form = v.infinitive := by decide
+
+/-- Every verb of manner of motion selects a directional phrase, so that all of them take *zijn*
+under one that bounds the path ([sorace-2000] §4.3, Dutch "the most systematic language in this
+respect"). -/
+theorem takesSpatial_of_direction_eq_place :
+    ∀ v ∈ inventory, v.direction = some .place → v.TakesSpatial := by
+  decide
 
 /-- *opgebeld* and *uitgevoerd*, with the particle before *ge-*. -/
 theorem opgebeld :

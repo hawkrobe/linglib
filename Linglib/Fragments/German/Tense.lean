@@ -96,9 +96,16 @@ def perfect (v : Verb) (fr : ArgumentFrame) : PerfectAux :=
 activity as such, *tanzen* 'dance' and *segeln* 'sail', take *sein* when they express movement
 from one place to another (§12.3.2c). -/
 theorem perfect_withPath_intransitive (v : Verb) {p : Adposition.SpatialReading}
-    (hp : p.direction ≠ .place) : perfect (v.withPath p) .intransitive = .be := by
-  simp [perfect, _root_.Verb.direction_withPath hp, ArgumentFrame.intransitive,
+    (hv : v.TakesSpatial) (hp : p.direction ≠ .place) :
+    perfect (v.withPath p) .intransitive = .be := by
+  simp [perfect, _root_.Verb.direction_withPath hv hp, ArgumentFrame.intransitive,
     ArgumentFrame.IsUnaccusative, ArgumentFrame.HasNominal]
+
+/-- The verbs of manner of motion select a directional phrase: every entry that displaces its
+subject with no direction takes a spatial complement (§12.3.2c). -/
+theorem takesSpatial_of_direction_eq_place :
+    ∀ v ∈ Verbs.allVerbs, v.direction = some .place → v.TakesSpatial := by
+  decide
 
 /-- The principal parts of a verb entry on a frame, its citation frame by default, are its stem
 with the auxiliary of its perfect there. -/
@@ -160,13 +167,15 @@ open Verbs in
 /-- The groups of §12.3.2: *sein* for the verbs of motion *rennen*, *laufen* and *ankommen*, for
 *frieren* as a change of state and for *bleiben*; *haben* for the transitive *bauen*, for
 *arbeiten* and *tanzen*, which denote an activity as such, and for impersonal *frieren*; and
-*sein* for *tanzen* with a directional phrase. -/
+*sein* for *tanzen* with a directional phrase, which it selects, but not for *arbeiten*, which
+selects none. -/
 example :
     [perfect rennen .intransitive, perfect laufen .intransitive, perfect ankommen .unaccusative,
       perfect frieren .unaccusative, perfect bleiben .intransitive] = [.be, .be, .be, .be, .be] ∧
     [perfect bauen .np, perfect arbeiten .intransitive, perfect tanzen .intransitive,
       perfect frieren .impersonal] = [.have, .have, .have, .have] ∧
-    perfect (tanzen.withPath Adposition.into) .intransitive = .be := by
+    perfect (tanzen.withPath Adposition.into) .intransitive = .be ∧
+    perfect (arbeiten.withPath Adposition.into) .intransitive = .have := by
   decide
 
 open Verbs in

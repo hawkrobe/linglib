@@ -428,6 +428,10 @@ def np_np : ArgumentFrame := ⟨some .nominal, [.nominal, .nominal]⟩
 def pp (p : Option Adposition := none) : ArgumentFrame :=
   ⟨some .nominal, [.adpositional (p.map (·.relation)) p]⟩
 
+/-- The spatial PP frame has one spatial adpositional complement, whatever its adposition: the
+    locative or directional phrase a verb of motion selects. -/
+def spatialPP : ArgumentFrame := ⟨some .nominal, [.adpositional (some .spatial)]⟩
+
 /-- The NP + PP frame has a nominal plus an adpositional complement, selecting `p`
     when given. -/
 def np_pp (p : Option Adposition := none) : ArgumentFrame :=
