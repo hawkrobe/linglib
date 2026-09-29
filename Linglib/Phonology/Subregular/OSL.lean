@@ -51,7 +51,8 @@ alone.
 
 ## TODO
 
-* Final outputs, recovering Chandlee, Eyraud and Heinz's classes through the prefix function.
+* Final outputs, recovering Chandlee, Eyraud and Heinz's classes through
+  `Function.prefixFunction`.
 * The output tier-based class as a predicate, characterized by residuals.
 
 ## References
@@ -301,8 +302,8 @@ theorem ISLRule.dissimilate_not_isLeftOutputStrictlyLocal (hab : a ≠ b) (k : �
   have e := congrFun (h.factorsThrough_residual (a := [a, a]) (b := [a, b])
     (by simp [ISLRule.apply, ISLRule.applyAux, windowRun, dissimilate, List.rtake, hab.symm]))
     [a]
-  simp [residual, ISLRule.apply, ISLRule.applyAux, windowRun, dissimilate, List.rtake,
-    hab.symm] at e
+  rw [residual_eq_drop (h.isPrefix _), residual_eq_drop (h.isPrefix _)] at e
+  simp [ISLRule.apply, ISLRule.applyAux, windowRun, dissimilate, List.rtake, hab.symm] at e
 
 /-- Unbounded progressive spreading of `a`, under which every symbol after an `a` surfaces as
 `a`. -/
@@ -334,7 +335,8 @@ theorem OSLRule.spread_not_isLeftInputStrictlyLocal (hab : a ≠ b) (k : ℕ) :
     ¬ IsLeftInputStrictlyLocal k (spread a).apply := fun h ↦ by
   have e := congrFun (h.factorsThrough_residual (a := a :: List.replicate (k - 1) b)
     (b := b :: List.replicate (k - 1) b) (by simp only [rtake_cons_replicate])) [b]
-  simp only [residual, List.cons_append, ← List.replicate_succ', spread_apply_cons_replicate,
+  rw [residual_eq_drop (h.isPrefix _), residual_eq_drop (h.isPrefix _)] at e
+  simp only [List.cons_append, ← List.replicate_succ', spread_apply_cons_replicate,
     ← List.replicate_succ, spread_apply_replicate hab, List.length_replicate,
     List.drop_replicate, Nat.add_sub_cancel_left] at e
   exact hab (List.singleton_inj.mp e)
