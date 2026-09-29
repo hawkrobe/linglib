@@ -33,6 +33,8 @@ quotients, since `bⁿ` completes `aᵐ` exactly when `m = n`. It is generated b
 * `Language.not_isRegular_anbn`: for `a ≠ b`, the language is not regular.
 * `ContextFreeGrammar.language_anbn`: the grammar generates the language, so
   `Language.isContextFree_anbn`.
+* `Language.setOf_isRegular_ssubset_setOf_isContextFree`: over a finite alphabet with two letters,
+  the regular languages are a proper subclass of the context-free languages.
 
 ## References
 
@@ -51,7 +53,7 @@ namespace Language
 
 /-- The language `{aⁿbⁿ | n ∈ ℕ}` of the words consisting of `n` copies of the letter `a` followed
 by `n` copies of the letter `b`. -/
-def anbn (a b : α) : Language α := Set.range fun n ↦ replicate n a ++ replicate n b
+def anbn (a b : α) : Language α := {w | ∃ n, replicate n a ++ replicate n b = w}
 
 theorem mem_anbn {w : List α} : w ∈ anbn a b ↔ ∃ n, replicate n a ++ replicate n b = w :=
   Iff.rfl
@@ -136,3 +138,11 @@ end ContextFreeGrammar
 
 theorem Language.isContextFree_anbn (a b : α) : (anbn a b).IsContextFree :=
   ⟨_, ContextFreeGrammar.language_anbn⟩
+
+/-- Over a finite alphabet with two distinct letters `a` and `b`, the regular languages are a
+proper subclass of the context-free languages, as `{aⁿbⁿ}` witnesses. -/
+theorem Language.setOf_isRegular_ssubset_setOf_isContextFree [Finite α] [Nontrivial α] :
+    {L : Language α | L.IsRegular} ⊂ {L | L.IsContextFree} := by
+  obtain ⟨a, b, hab⟩ := exists_pair_ne α
+  exact (Set.ssubset_iff_of_subset fun _ ↦ Language.IsRegular.isContextFree).2
+    ⟨Language.anbn a b, Language.isContextFree_anbn a b, Language.not_isRegular_anbn hab⟩
