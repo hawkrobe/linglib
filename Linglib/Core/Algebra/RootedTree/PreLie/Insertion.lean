@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.Algebra.RootedTree.PreLie.Graft
 public import Linglib.Core.Data.List.Perm
+public import Linglib.Core.Data.List.Sections
 public import Linglib.Core.Data.List.Sublists
 public import Linglib.Core.Data.Multiset.Powerset
 public import Linglib.Core.Data.UnorderedTree.Basic
@@ -23,12 +24,11 @@ to several guests, in the form Foissy gives for decorated trees.
 
 ## Main definitions
 
-* `listChoices xs n`: the words of length `n` over `xs`, the assignments of `n` guests to `xs`.
 * `insertion`, `insertionForest`: multi-tree insertion into a tree and into a forest.
 
 ## Main results
 
-* `bind_listChoices_filter`: a sum over assignments, split by a predicate on vertices, is a sum
+* `bind_sections_filter`: a sum over assignments, split by a predicate on vertices, is a sum
   over the splittings `gs.sublists'.revzip` of the guests of independent assignments to the two
   classes. `insertion_node`, `insertionForest_cons` and `insertionForest_append` are instances.
 * `insertionForest_bind_revzip_sublists'`: splitting an output forest splits the hosts and the
@@ -48,87 +48,39 @@ to several guests, in the form Foissy gives for decorated trees.
 
 namespace RoseTree
 
-namespace Pathed
-
-open RoseTree UnorderedTree
+open UnorderedTree
 
 variable {α : Type*}
 
-/-! ## `listChoices`: assignments of guests to vertices -/
+/-! ## Assignments of guests to vertices
 
-/-- `listChoices xs n` lists the words of length `n` over `xs`, the ways to assign `n` guests to
-the vertices `xs`. -/
-def listChoices {β : Type*} : List β → Nat → List (List β)
-  | _,  0     => [[]]
-  | xs, n + 1 => xs.flatMap fun v => (listChoices xs n).map (v :: ·)
+An assignment of `n` guests to the vertices `xs` is a section of `replicate n xs`, a word of
+length `n` over `xs`. -/
 
-@[simp] theorem listChoices_zero {β : Type*} (xs : List β) :
-    listChoices xs 0 = [[]] := rfl
-
-@[simp] theorem listChoices_succ {β : Type*} (xs : List β) (n : Nat) :
-    listChoices xs (n + 1) =
-      xs.flatMap fun v => (listChoices xs n).map (v :: ·) := rfl
-
-theorem coe_listChoices_succ {β : Type*} (xs : List β) (n : ℕ) :
-    (listChoices xs (n + 1) : Multiset (List β)) =
-      (xs : Multiset β).bind fun v => (listChoices xs n : Multiset (List β)).map (v :: ·) := by
-  rw [listChoices_succ, ← Multiset.coe_bind]
-  rfl
-
-@[simp] theorem listChoices_singleton {β : Type*} (x : β) (n : ℕ) :
-    listChoices [x] n = [List.replicate n x] := by
-  induction n with
-  | zero => rfl
-  | succ n ih => rw [listChoices_succ, ih]; rfl
-
-/-- Choices of length one are the letters. -/
-theorem listChoices_one {β : Type*} (xs : List β) : listChoices xs 1 = xs.map fun x => [x] :=
-  List.map_eq_flatMap.symm
-
-/-- A choice is a word of the prescribed length over the alphabet. -/
-theorem mem_listChoices {β : Type*} {xs : List β} {n : ℕ} {ch : List β} :
-    ch ∈ listChoices xs n ↔ ch.length = n ∧ ∀ x ∈ ch, x ∈ xs := by
-  induction n generalizing ch with
-  | zero => cases ch <;> simp
-  | succ n ih =>
-    cases ch with
-    | nil => simp
-    | cons x ch => simp [ih, and_left_comm]
-
-/-- `listChoices` commutes with `List.map`. -/
-theorem listChoices_map {β γ : Type*} (f : β → γ) (xs : List β) (n : Nat) :
-    listChoices (xs.map f) n = (listChoices xs n).map (List.map f) := by
-  induction n with
-  | zero => rfl
-  | succ n ih =>
-    rw [listChoices_succ, listChoices_succ, List.flatMap_map, List.map_flatMap]
-    exact List.flatMap_congr fun b _ => by rw [ih, List.map_map, List.map_map]; rfl
-
-/-! ### Guest splits as `sublists'.revzip` -/
-
-/-- A sum over length-`gs.length` choices from `xs`, viewed through the two
-buckets of a predicate `P` on `xs`, is a sum over `gs.sublists'.revzip` of independent choices
-from `xs.filter P` for the first bucket and from its complement for the second. -/
-theorem bind_listChoices_filter {β γ δ : Type*} (P : β → Prop) [DecidablePred P]
+/-- A sum over assignments of the guests `gs` to `xs`, viewed through the two classes of a
+predicate `P` on `xs`, is a sum over the splittings `gs.sublists'.revzip` of independent
+assignments to `xs.filter P` and to its complement. -/
+private theorem bind_sections_filter {β γ δ : Type*} (P : β → Prop) [DecidablePred P]
     (xs : List β) (gs : List γ) (G : List (β × γ) → List (β × γ) → Multiset δ) :
-    (listChoices xs gs.length : Multiset (List β)).bind (fun ch =>
+    ((List.replicate gs.length xs).sections : Multiset (List β)).bind (fun ch =>
         G ((ch.zip gs).filter fun p => decide (P p.1))
           ((ch.zip gs).filter fun p => decide (¬ P p.1))) =
       (gs.sublists'.revzip : Multiset (List γ × List γ)).bind fun p =>
-        (listChoices (xs.filter fun x => decide (P x)) p.1.length :
+        ((List.replicate p.1.length (xs.filter fun x => decide (P x))).sections :
             Multiset (List β)).bind fun u =>
-          (listChoices (xs.filter fun x => decide (¬ P x)) p.2.length :
+          ((List.replicate p.2.length (xs.filter fun x => decide (¬ P x))).sections :
               Multiset (List β)).bind fun w =>
             G (u.zip p.1) (w.zip p.2) := by
   induction gs generalizing G with
   | nil => simp
   | cons g gs ih =>
-    rw [List.length_cons, coe_listChoices_succ, Multiset.bind_assoc,
+    rw [List.length_cons, List.coe_sections_replicate_succ, Multiset.bind_assoc,
       ← Multiset.filter_add_not (fun x => P x) (xs : Multiset β), Multiset.add_bind,
       List.revzip_sublists'_cons, ← Multiset.coe_add, Multiset.add_bind, ← Multiset.map_coe,
       ← Multiset.map_coe, Multiset.bind_map, Multiset.bind_map]
-    simp only [Prod.map_fst, Prod.map_snd, id_eq, List.length_cons, coe_listChoices_succ,
-      Multiset.bind_assoc, Multiset.bind_map, Multiset.filter_coe, List.zip_cons_cons]
+    simp only [Prod.map_fst, Prod.map_snd, id_eq, List.length_cons,
+      List.coe_sections_replicate_succ, Multiset.bind_assoc, Multiset.bind_map,
+      Multiset.filter_coe, List.zip_cons_cons]
     rw [add_comm]
     congr 1
     · conv_rhs => enter [2, p]; rw [Multiset.bind_bind]
@@ -145,22 +97,23 @@ theorem bind_listChoices_filter {β γ δ : Type*} (P : β → Prop) [DecidableP
       simp only [List.filter_cons, decide_eq_true_eq, hv, not_true_eq_false, ite_true, ite_false]
       exact ih fun a b => G ((v, g) :: a) b
 
-/-- A sum over choices of a `Perm`-invariant function of `ch.zip gs` does not depend on the order
-of `gs`, since permuting the guests permutes the zipped pair lists. -/
-theorem bind_listChoices_zip_perm {β γ δ : Type*} (xs : List β) {gs gs' : List γ}
+/-- A sum over assignments of a `Perm`-invariant function of `ch.zip gs` does not depend on the
+order of `gs`, since permuting the guests permutes the zipped pair lists. -/
+private theorem bind_sections_zip_perm {β γ δ : Type*} (xs : List β) {gs gs' : List γ}
     (h : gs.Perm gs') (G : List (β × γ) → Multiset δ)
     (hG : ∀ {ps ps' : List (β × γ)}, ps.Perm ps' → G ps = G ps') :
-    (listChoices xs gs.length : Multiset (List β)).bind (fun ch => G (ch.zip gs)) =
-      (listChoices xs gs'.length : Multiset (List β)).bind fun ch => G (ch.zip gs') := by
+    ((List.replicate gs.length xs).sections : Multiset (List β)).bind (fun ch => G (ch.zip gs)) =
+      ((List.replicate gs'.length xs).sections : Multiset (List β)).bind fun ch =>
+        G (ch.zip gs') := by
   induction h generalizing G with
   | nil => rfl
   | cons g _ ih =>
-    simp only [List.length_cons, coe_listChoices_succ, Multiset.bind_assoc, Multiset.bind_map,
-      List.zip_cons_cons]
+    simp only [List.length_cons, List.coe_sections_replicate_succ, Multiset.bind_assoc,
+      Multiset.bind_map, List.zip_cons_cons]
     exact Multiset.bind_congr fun v _ => ih (fun ps => G ((v, g) :: ps)) fun hp => hG (hp.cons _)
   | swap a b l =>
-    simp only [List.length_cons, coe_listChoices_succ, Multiset.bind_assoc, Multiset.bind_map,
-      List.zip_cons_cons]
+    simp only [List.length_cons, List.coe_sections_replicate_succ, Multiset.bind_assoc,
+      Multiset.bind_map, List.zip_cons_cons]
     rw [Multiset.bind_bind]
     exact Multiset.bind_congr fun v _ => Multiset.bind_congr fun w _ =>
       Multiset.bind_congr fun ch _ => hG (List.Perm.swap _ _ _)
@@ -171,12 +124,12 @@ theorem bind_listChoices_zip_perm {β γ δ : Type*} (xs : List β) {gs gs' : Li
 /-- `insertion T [T₁, …, Tₙ]` is the multiset, over `(v₁, …, vₙ) ∈ V(T)ⁿ`, of
 `multiGraft T [(v₁, T₁), …, (vₙ, Tₙ)]`. -/
 def insertion (T : RoseTree α) (Ts : List (RoseTree α)) : Multiset (RoseTree α) :=
-  Multiset.ofList <| (listChoices (vertices T) Ts.length).map
+  Multiset.ofList <| (List.replicate Ts.length (vertices T)).sections.map
     fun choice => multiGraft T (choice.zip Ts)
 
 theorem insertion_def (T : RoseTree α) (Ts : List (RoseTree α)) :
     insertion T Ts =
-      Multiset.ofList ((listChoices (vertices T) Ts.length).map
+      Multiset.ofList ((List.replicate Ts.length (vertices T)).sections.map
         fun choice => multiGraft T (choice.zip Ts)) := rfl
 
 /-! ## `insertionForest`: forest host -/
@@ -184,12 +137,12 @@ theorem insertion_def (T : RoseTree α) (Ts : List (RoseTree α)) :
 /-- `insertionForest cs gs` is the multiset, over assignments of the guests `gs` to vertices of
 the forest `cs`, of the simultaneous grafts `multiGraftChildren`. -/
 def insertionForest (cs gs : List (RoseTree α)) : Multiset (List (RoseTree α)) :=
-  Multiset.ofList <| (listChoices (verticesAux 0 cs) gs.length).map
+  Multiset.ofList <| (List.replicate gs.length (verticesList cs)).sections.map
     fun ch => multiGraftChildren cs (ch.zip gs)
 
 theorem insertionForest_def (cs gs : List (RoseTree α)) :
     insertionForest cs gs =
-      Multiset.ofList ((listChoices (verticesAux 0 cs) gs.length).map
+      Multiset.ofList ((List.replicate gs.length (verticesList cs)).sections.map
         fun ch => multiGraftChildren cs (ch.zip gs)) := rfl
 
 @[simp] theorem insertionForest_nil_nil :
@@ -197,7 +150,8 @@ theorem insertionForest_def (cs gs : List (RoseTree α)) :
 
 @[simp] theorem insertionForest_empty_host_nonempty_guests
     (T_g : RoseTree α) (Ts : List (RoseTree α)) :
-    insertionForest ([] : List (RoseTree α)) (T_g :: Ts) = 0 := rfl
+    insertionForest ([] : List (RoseTree α)) (T_g :: Ts) = 0 := by
+  simp [insertionForest, List.replicate_succ]
 
 @[simp] theorem insertionForest_cons_host_nil_guests
     (T : RoseTree α) (F : List (RoseTree α)) :
@@ -238,10 +192,11 @@ theorem insertionForest_cons (T : RoseTree α) (F gs : List (RoseTree α)) :
     insertionForest (T :: F) gs =
       (gs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun p =>
         (insertion T p.1).bind fun T' => (insertionForest F p.2).map (T' :: ·) := by
-  have hne : ∀ p ∈ verticesAux 0 (T :: F), p ≠ [] := fun p hp => by
-    obtain ⟨k, q, -, rfl⟩ := exists_cons_of_mem_verticesAux hp
+  have hne : ∀ p ∈ verticesList (T :: F), p ≠ [] := fun p hp => by
+    obtain ⟨k, q, rfl⟩ := exists_cons_of_mem_verticesList hp
     exact List.cons_ne_nil k q
-  have hG : ∀ ch ∈ (listChoices (verticesAux 0 (T :: F)) gs.length : Multiset (List Path)),
+  have hG : ∀ ch ∈ ((List.replicate gs.length (verticesList (T :: F))).sections :
+      Multiset (List (List ℕ))),
       ({multiGraftChildren (T :: F) (ch.zip gs)} : Multiset (List (RoseTree α))) =
         {multiGraft T (((ch.zip gs).filter fun p => decide (p.1.head? = some 0)).map
             (Prod.map List.tail id)) ::
@@ -250,34 +205,34 @@ theorem insertionForest_cons (T : RoseTree α) (F gs : List (RoseTree α)) :
     intro ch hch
     rw [multiGraftChildren_cons_cs, filterMap_headChildFilter, filterMap_tailChildFilter]
     exact fun p hp =>
-      hne _ ((mem_listChoices.mp (Multiset.mem_coe.mp hch)).2 _ (List.of_mem_zip hp).1)
+      hne _ ((List.mem_sections_replicate.mp (Multiset.mem_coe.mp hch)).2 _ (List.of_mem_zip hp).1)
   have hfilter :
-      (verticesAux 0 (T :: F)).filter (fun q : Path => decide (q.head? = some 0)) =
+      (verticesList (T :: F)).filter (fun q : List ℕ => decide (q.head? = some 0)) =
           (vertices T).map (0 :: ·) ∧
-        (verticesAux 0 (T :: F)).filter (fun q : Path => decide (¬ q.head? = some 0)) =
-          (verticesAux 0 F).map (List.modifyHead (· + 1)) := by
-    rw [verticesAux_cons, Nat.zero_add, verticesAux_eq_map_modifyHead 1 F, List.filter_append,
+        (verticesList (T :: F)).filter (fun q : List ℕ => decide (¬ q.head? = some 0)) =
+          (verticesList F).map (List.modifyHead (· + 1)) := by
+    rw [verticesList_cons, List.filter_append,
       List.filter_append, List.filter_map, List.filter_map, List.filter_map, List.filter_map]
     constructor
     · rw [List.filter_eq_self.2 fun q _ => by simp, List.filter_eq_nil_iff.2 fun q hq => ?_,
         List.map_nil, List.append_nil]
-      obtain ⟨k, q, -, rfl⟩ := exists_cons_of_mem_verticesAux hq
+      obtain ⟨k, q, rfl⟩ := exists_cons_of_mem_verticesList hq
       simp
     · rw [List.filter_eq_nil_iff.2 fun q _ => by simp, List.map_nil, List.nil_append,
         List.filter_eq_self.2 fun q hq => ?_]
-      obtain ⟨k, q, -, rfl⟩ := exists_cons_of_mem_verticesAux hq
+      obtain ⟨k, q, rfl⟩ := exists_cons_of_mem_verticesList hq
       simp
   rw [insertionForest_def, ← Multiset.map_coe, ← Multiset.bind_singleton,
     Multiset.bind_congr hG,
-    bind_listChoices_filter (fun q : Path => q.head? = some 0) _ gs fun a b =>
+    bind_sections_filter (fun q : List ℕ => q.head? = some 0) _ gs fun a b =>
       {multiGraft T (a.map (Prod.map List.tail id)) ::
         multiGraftChildren F (b.map (Prod.map (List.modifyHead (· - 1)) id))},
     hfilter.1, hfilter.2]
   symm
   refine Multiset.bind_congr fun p _ => ?_
   rw [insertion_def, insertionForest_def, ← Multiset.map_coe, ← Multiset.map_coe,
-    Multiset.bind_map, listChoices_map, listChoices_map, ← Multiset.map_coe, ← Multiset.map_coe,
-    Multiset.bind_map]
+    Multiset.bind_map, List.sections_replicate_map, List.sections_replicate_map,
+    ← Multiset.map_coe, ← Multiset.map_coe, Multiset.bind_map]
   refine Multiset.bind_congr fun u _ => ?_
   rw [Multiset.bind_map, Multiset.map_map, ← Multiset.bind_singleton]
   refine Multiset.bind_congr fun w _ => ?_
@@ -384,29 +339,30 @@ theorem insertion_node (a : α) (cs gs : List (RoseTree α)) :
       (gs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun p =>
         (insertionForest cs p.2).map fun cs' => RoseTree.node a (p.1 ++ cs') := by
   have hG :
-      ∀ ch ∈ (listChoices (vertices (RoseTree.node a cs)) gs.length : Multiset (List Path)),
+      ∀ ch ∈ ((List.replicate gs.length (vertices (RoseTree.node a cs))).sections :
+        Multiset (List (List ℕ))),
       ({multiGraft (RoseTree.node a cs) (ch.zip gs)} : Multiset (RoseTree α)) =
         {RoseTree.node a (((ch.zip gs).filter fun p => decide (p.1 = [])).map Prod.snd ++
           multiGraftChildren cs ((ch.zip gs).filter fun p => decide (¬ p.1 = [])))} := by
     intro ch _
     rw [multiGraft_node, filterMap_rootPrependFilter, ← multiGraftChildren_filter_ne_nil]
   have hfilter :
-      (vertices (RoseTree.node a cs)).filter (fun q : Path => decide (q = [])) = [[]] ∧
-        (vertices (RoseTree.node a cs)).filter (fun q : Path => decide (¬ q = [])) =
-          verticesAux 0 cs := by
-    have h : ∀ q ∈ verticesAux 0 cs, q ≠ [] := fun q hq => by
-      obtain ⟨k, q, -, rfl⟩ := exists_cons_of_mem_verticesAux hq
+      (vertices (RoseTree.node a cs)).filter (fun q : List ℕ => decide (q = [])) = [[]] ∧
+        (vertices (RoseTree.node a cs)).filter (fun q : List ℕ => decide (¬ q = [])) =
+          verticesList cs := by
+    have h : ∀ q ∈ verticesList cs, q ≠ [] := fun q hq => by
+      obtain ⟨k, q, rfl⟩ := exists_cons_of_mem_verticesList hq
       exact List.cons_ne_nil k q
     rw [vertices_node]
     constructor
     · rw [List.filter_cons_of_pos (by simp), List.filter_eq_nil_iff.2 fun q hq => by simp [h q hq]]
     · rw [List.filter_cons_of_neg (by simp), List.filter_eq_self.2 fun q hq => by simp [h q hq]]
   rw [insertion_def, ← Multiset.map_coe, ← Multiset.bind_singleton, Multiset.bind_congr hG,
-    bind_listChoices_filter (fun q : Path => q = []) _ gs fun r s =>
+    bind_sections_filter (fun q : List ℕ => q = []) _ gs fun r s =>
       {RoseTree.node a (r.map Prod.snd ++ multiGraftChildren cs s)},
     hfilter.1, hfilter.2]
   refine Multiset.bind_congr fun p _ => ?_
-  rw [listChoices_singleton, Multiset.coe_singleton, Multiset.singleton_bind,
+  rw [List.sections_replicate_singleton, Multiset.coe_singleton, Multiset.singleton_bind,
     List.map_snd_zip (by simp), insertionForest_def, ← Multiset.map_coe,
     Multiset.map_map, ← Multiset.bind_singleton]
   rfl
@@ -419,7 +375,7 @@ commute, and grafts at one vertex are reordered among its children. -/
 mutual
 /-- Permuting the pair list of `multiGraft` gives a `Perm`-related tree. -/
 private theorem multiGraft_perm_pair : ∀ (T : RoseTree α)
-    {pairs pairs' : List (Path × RoseTree α)},
+    {pairs pairs' : List (List ℕ × RoseTree α)},
     pairs.Perm pairs' →
     Perm (multiGraft T pairs) (multiGraft T pairs')
   | .node a cs, pairs, pairs', h => by
@@ -433,7 +389,7 @@ private theorem multiGraft_perm_pair : ∀ (T : RoseTree α)
 /-- Permuting the pair list of `multiGraftChildren` gives `Perm`-related forests, tree by
 tree. -/
 private theorem multiGraftChildren_perm_pair : ∀ (cs : List (RoseTree α))
-    {pairs pairs' : List (Path × RoseTree α)},
+    {pairs pairs' : List (List ℕ × RoseTree α)},
     pairs.Perm pairs' →
     List.Forall₂ Perm
       (multiGraftChildren cs pairs) (multiGraftChildren cs pairs')
@@ -469,8 +425,8 @@ mutual
 /-- Replacing the grafted trees by `Perm`-related ones at the same addresses gives a
 `Perm`-related tree. -/
 private theorem multiGraft_perm_pair_Forall₂ : ∀ (T : RoseTree α)
-    {pairs pairs' : List (Path × RoseTree α)},
-    List.Forall₂ (fun p p' : Path × RoseTree α =>
+    {pairs pairs' : List (List ℕ × RoseTree α)},
+    List.Forall₂ (fun p p' : List ℕ × RoseTree α =>
         p.fst = p'.fst ∧ Perm p.snd p'.snd) pairs pairs' →
     Perm (multiGraft T pairs) (multiGraft T pairs')
   | .node a cs, pairs, pairs', h => by
@@ -491,8 +447,8 @@ private theorem multiGraft_perm_pair_Forall₂ : ∀ (T : RoseTree α)
 /-- Replacing the grafted trees by `Perm`-related ones gives `Perm`-related forests. -/
 private theorem multiGraftChildren_perm_pair_Forall₂ :
     ∀ (cs : List (RoseTree α))
-    {pairs pairs' : List (Path × RoseTree α)},
-    List.Forall₂ (fun p p' : Path × RoseTree α =>
+    {pairs pairs' : List (List ℕ × RoseTree α)},
+    List.Forall₂ (fun p p' : List ℕ × RoseTree α =>
         p.fst = p'.fst ∧ Perm p.snd p'.snd) pairs pairs' →
     List.Forall₂ Perm
       (multiGraftChildren cs pairs) (multiGraftChildren cs pairs')
@@ -526,7 +482,7 @@ end
 
 /-! ## Guest invariance
 
-`bind_listChoices_zip_perm` permutes the zipped pair lists along a guest permutation, and
+`bind_sections_zip_perm` permutes the zipped pair lists along a guest permutation, and
 `multiGraft` is `Perm`-invariant in its pair list. -/
 
 /-- Single-tree `insertion` is `mk`-invariant under `List.Perm` of guests. -/
@@ -536,7 +492,7 @@ theorem insertion_perm_guests (t : RoseTree α)
       (insertion t Ts').map UnorderedTree.mk := by
   rw [insertion_def, insertion_def, ← Multiset.map_coe, ← Multiset.map_coe, Multiset.map_map,
     Multiset.map_map, ← Multiset.bind_singleton, ← Multiset.bind_singleton]
-  exact bind_listChoices_zip_perm (vertices t) h
+  exact bind_sections_zip_perm (vertices t) h
     (fun ps => {UnorderedTree.mk (multiGraft t ps)})
     fun hp => by rw [UnorderedTree.mk_eq_mk_iff.mpr (multiGraft_perm_pair t hp)]
 
@@ -565,7 +521,7 @@ theorem insertionForest_perm_guests
       (insertionForest F Ts').map (List.map UnorderedTree.mk) := by
   rw [insertionForest_def, insertionForest_def, ← Multiset.map_coe, ← Multiset.map_coe,
     Multiset.map_map, Multiset.map_map, ← Multiset.bind_singleton, ← Multiset.bind_singleton]
-  exact bind_listChoices_zip_perm (verticesAux 0 F) h
+  exact bind_sections_zip_perm (verticesList F) h
     (fun ps => {(multiGraftChildren F ps).map UnorderedTree.mk})
     fun hp => by rw [map_mk_eq_of_forall2_perm (multiGraftChildren_perm_pair F hp)]
 
@@ -741,16 +697,16 @@ theorem insertionForest_msform_invariance_guests
 theorem insertion_nil_guests (T : RoseTree α) :
     insertion T ([] : List (RoseTree α)) = ({T} : Multiset (RoseTree α)) := by
   rw [insertion_def]
-  simp only [List.length_nil, listChoices_zero, List.zip_nil_right,
+  simp only [List.length_nil, List.replicate_zero, List.sections, List.zip_nil_right,
              multiGraft_nil, List.map_cons, List.map_nil,
              Multiset.coe_singleton]
 
 /-- Inserting into a one-tree forest is inserting into that tree. -/
 theorem insertionForest_singleton (T : RoseTree α) (gs : List (RoseTree α)) :
     insertionForest [T] gs = (insertion T gs).map (fun T' => [T']) := by
-  rw [insertionForest_def, insertion_def, verticesAux_cons, verticesAux_nil, List.append_nil,
-    listChoices_map, ← Multiset.map_coe, ← Multiset.map_coe, ← Multiset.map_coe,
-    Multiset.map_map, Multiset.map_map]
+  rw [insertionForest_def, insertion_def, verticesList_cons, verticesList_nil, List.map_nil,
+    List.append_nil, List.sections_replicate_map, ← Multiset.map_coe, ← Multiset.map_coe,
+    ← Multiset.map_coe, Multiset.map_map, Multiset.map_map]
   refine Multiset.map_congr rfl fun u _ => ?_
   show multiGraftChildren [T] ((u.map (0 :: ·)).zip gs) = [multiGraft T (u.zip gs)]
   rw [multiGraftChildren_cons_cs, multiGraftChildren_nil_cs, filterMap_headChildFilter,
@@ -758,7 +714,5 @@ theorem insertionForest_singleton (T : RoseTree α) (gs : List (RoseTree α)) :
   obtain ⟨q, T'⟩ := p
   obtain ⟨q', -, rfl⟩ := List.mem_map.mp (List.of_mem_zip hp).1
   simp
-
-end Pathed
 
 end RoseTree

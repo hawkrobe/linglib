@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Algebra.RootedTree.PreLie.Path
+public import Linglib.Core.Data.RoseTree.Get
 
 /-!
 # Simultaneous grafting on rose trees
@@ -42,53 +42,51 @@ caller elaborates the same matcher, which lets their `filterMap` equations rewri
 
 namespace RoseTree
 
-namespace Pathed
-
 variable {α : Type*}
 
 /-! ### Routing the pairs -/
 
 /-- A pair aimed at the root yields its tree. -/
-def rootPrependFilter (pair : Path × RoseTree α) : Option (RoseTree α) :=
+def rootPrependFilter (pair : List ℕ × RoseTree α) : Option (RoseTree α) :=
   match pair.fst with
   | []     => some pair.snd
   | _ :: _ => none
 
 @[simp] theorem rootPrependFilter_of_nil (T : RoseTree α) :
-    rootPrependFilter ((([], T) : Path × RoseTree α)) = some T := rfl
+    rootPrependFilter ((([], T) : List ℕ × RoseTree α)) = some T := rfl
 
-@[simp] theorem rootPrependFilter_of_cons (i : ℕ) (rest : Path) (T : RoseTree α) :
-    rootPrependFilter ((i :: rest, T) : Path × RoseTree α) = none := rfl
+@[simp] theorem rootPrependFilter_of_cons (i : ℕ) (rest : List ℕ) (T : RoseTree α) :
+    rootPrependFilter ((i :: rest, T) : List ℕ × RoseTree α) = none := rfl
 
 /-- A pair aimed inside the first child yields the pair with the leading index removed. -/
-def headChildFilter (pair : Path × RoseTree α) : Option (Path × RoseTree α) :=
+def headChildFilter (pair : List ℕ × RoseTree α) : Option (List ℕ × RoseTree α) :=
   match pair.fst with
   | 0 :: rest => some (rest, pair.snd)
   | _         => none
 
 @[simp] theorem headChildFilter_of_nil (T : RoseTree α) :
-    headChildFilter ((([], T) : Path × RoseTree α)) = none := rfl
+    headChildFilter ((([], T) : List ℕ × RoseTree α)) = none := rfl
 
-@[simp] theorem headChildFilter_of_zero_cons (rest : Path) (T : RoseTree α) :
-    headChildFilter ((0 :: rest, T) : Path × RoseTree α) = some (rest, T) := rfl
+@[simp] theorem headChildFilter_of_zero_cons (rest : List ℕ) (T : RoseTree α) :
+    headChildFilter ((0 :: rest, T) : List ℕ × RoseTree α) = some (rest, T) := rfl
 
-@[simp] theorem headChildFilter_of_succ_cons (k : ℕ) (rest : Path) (T : RoseTree α) :
-    headChildFilter (((k + 1) :: rest, T) : Path × RoseTree α) = none := rfl
+@[simp] theorem headChildFilter_of_succ_cons (k : ℕ) (rest : List ℕ) (T : RoseTree α) :
+    headChildFilter (((k + 1) :: rest, T) : List ℕ × RoseTree α) = none := rfl
 
 /-- A pair aimed inside a later child yields the pair with the leading index decremented. -/
-def tailChildFilter (pair : Path × RoseTree α) : Option (Path × RoseTree α) :=
+def tailChildFilter (pair : List ℕ × RoseTree α) : Option (List ℕ × RoseTree α) :=
   match pair.fst with
   | (k + 1) :: rest => some (k :: rest, pair.snd)
   | _               => none
 
 @[simp] theorem tailChildFilter_of_nil (T : RoseTree α) :
-    tailChildFilter ((([], T) : Path × RoseTree α)) = none := rfl
+    tailChildFilter ((([], T) : List ℕ × RoseTree α)) = none := rfl
 
-@[simp] theorem tailChildFilter_of_zero_cons (rest : Path) (T : RoseTree α) :
-    tailChildFilter ((0 :: rest, T) : Path × RoseTree α) = none := rfl
+@[simp] theorem tailChildFilter_of_zero_cons (rest : List ℕ) (T : RoseTree α) :
+    tailChildFilter ((0 :: rest, T) : List ℕ × RoseTree α) = none := rfl
 
-@[simp] theorem tailChildFilter_of_succ_cons (k : ℕ) (rest : Path) (T : RoseTree α) :
-    tailChildFilter (((k + 1) :: rest, T) : Path × RoseTree α) = some (k :: rest, T) := rfl
+@[simp] theorem tailChildFilter_of_succ_cons (k : ℕ) (rest : List ℕ) (T : RoseTree α) :
+    tailChildFilter (((k + 1) :: rest, T) : List ℕ × RoseTree α) = some (k :: rest, T) := rfl
 
 /-! ### Simultaneous grafting -/
 
@@ -96,13 +94,13 @@ mutual
 /-- `multiGraft T pairs` grafts the tree of each pair at the vertex its address names. The trees
 aimed at the root are prepended to its children in pair-list order; the other pairs descend into
 the child their first index names. -/
-def multiGraft : RoseTree α → List (Path × RoseTree α) → RoseTree α
+def multiGraft : RoseTree α → List (List ℕ × RoseTree α) → RoseTree α
   | .node a cs, pairs =>
       RoseTree.node a (pairs.filterMap rootPrependFilter ++ multiGraftChildren cs pairs)
 /-- `multiGraftChildren cs pairs` grafts into the forest `cs`, where the first index of each
 address names a tree of `cs`. -/
 def multiGraftChildren :
-    List (RoseTree α) → List (Path × RoseTree α) → List (RoseTree α)
+    List (RoseTree α) → List (List ℕ × RoseTree α) → List (RoseTree α)
   | [],      _     => []
   | c :: cs, pairs =>
       multiGraft c (pairs.filterMap headChildFilter) ::
@@ -110,25 +108,25 @@ def multiGraftChildren :
 end
 
 @[simp] theorem multiGraft_node (a : α) (cs : List (RoseTree α))
-    (pairs : List (Path × RoseTree α)) :
+    (pairs : List (List ℕ × RoseTree α)) :
     multiGraft (RoseTree.node a cs) pairs =
       RoseTree.node a (pairs.filterMap rootPrependFilter ++ multiGraftChildren cs pairs) := rfl
 
-@[simp] theorem multiGraftChildren_nil_cs (pairs : List (Path × RoseTree α)) :
+@[simp] theorem multiGraftChildren_nil_cs (pairs : List (List ℕ × RoseTree α)) :
     multiGraftChildren ([] : List (RoseTree α)) pairs = [] := rfl
 
 @[simp] theorem multiGraftChildren_cons_cs (c : RoseTree α) (cs : List (RoseTree α))
-    (pairs : List (Path × RoseTree α)) :
+    (pairs : List (List ℕ × RoseTree α)) :
     multiGraftChildren (c :: cs) pairs =
       multiGraft c (pairs.filterMap headChildFilter) ::
         multiGraftChildren cs (pairs.filterMap tailChildFilter) := rfl
 
 /-! ### Filter characterizations
 
-Each pair filter is a `List.filter` on the path followed by a projection, so pair lists can be
-bucketed by a predicate on paths (`bind_listChoices_filter` in `Insertion.lean`). -/
+Each pair filter is a `List.filter` on the address followed by a projection, so `Insertion.lean`
+can split the pair lists by a predicate on addresses. -/
 
-theorem filterMap_rootPrependFilter (pairs : List (Path × RoseTree α)) :
+theorem filterMap_rootPrependFilter (pairs : List (List ℕ × RoseTree α)) :
     pairs.filterMap rootPrependFilter =
       (pairs.filter fun p => decide (p.1 = [])).map Prod.snd := by
   induction pairs with
@@ -137,7 +135,7 @@ theorem filterMap_rootPrependFilter (pairs : List (Path × RoseTree α)) :
     obtain ⟨q, T⟩ := p
     cases q <;> simp [ih]
 
-theorem filterMap_headChildFilter (pairs : List (Path × RoseTree α)) :
+theorem filterMap_headChildFilter (pairs : List (List ℕ × RoseTree α)) :
     pairs.filterMap headChildFilter =
       (pairs.filter fun p => decide (p.1.head? = some 0)).map (Prod.map List.tail id) := by
   induction pairs with
@@ -146,7 +144,7 @@ theorem filterMap_headChildFilter (pairs : List (Path × RoseTree α)) :
     obtain ⟨q, T⟩ := p
     rcases q with _ | ⟨_ | k, rest⟩ <;> simp [ih]
 
-theorem filterMap_tailChildFilter (pairs : List (Path × RoseTree α))
+theorem filterMap_tailChildFilter (pairs : List (List ℕ × RoseTree α))
     (h : ∀ p ∈ pairs, p.1 ≠ []) :
     pairs.filterMap tailChildFilter =
       (pairs.filter fun p => decide (¬ p.1.head? = some 0)).map
@@ -162,13 +160,13 @@ theorem filterMap_tailChildFilter (pairs : List (Path × RoseTree α))
     · simp [ih]
 
 /-- Grafting keeps the root value. -/
-@[simp] theorem value_multiGraft (T : RoseTree α) (pairs : List (Path × RoseTree α)) :
+@[simp] theorem value_multiGraft (T : RoseTree α) (pairs : List (List ℕ × RoseTree α)) :
     (multiGraft T pairs).value = T.value := by
   cases T; rfl
 
 /-- `multiGraftChildren` depends on its pair list only through the two child filters. -/
 theorem multiGraftChildren_congr {cs : List (RoseTree α)}
-    {pairs₁ pairs₂ : List (Path × RoseTree α)}
+    {pairs₁ pairs₂ : List (List ℕ × RoseTree α)}
     (h₁ : pairs₁.filterMap headChildFilter = pairs₂.filterMap headChildFilter)
     (h₂ : pairs₁.filterMap tailChildFilter = pairs₂.filterMap tailChildFilter) :
     multiGraftChildren cs pairs₁ = multiGraftChildren cs pairs₂ := by
@@ -178,7 +176,7 @@ theorem multiGraftChildren_congr {cs : List (RoseTree α)}
 
 /-- Root pairs never reach the children. -/
 theorem multiGraftChildren_filter_ne_nil (cs : List (RoseTree α))
-    (pairs : List (Path × RoseTree α)) :
+    (pairs : List (List ℕ × RoseTree α)) :
     multiGraftChildren cs (pairs.filter fun p => decide (¬ p.1 = [])) =
       multiGraftChildren cs pairs := by
   refine multiGraftChildren_congr ?_ ?_ <;>
@@ -189,7 +187,7 @@ theorem multiGraftChildren_filter_ne_nil (cs : List (RoseTree α))
 
 /-- `multiGraftChildren cs pairs` has the same length as `cs`. -/
 theorem multiGraftChildren_length :
-    ∀ (cs : List (RoseTree α)) (pairs : List (Path × RoseTree α)),
+    ∀ (cs : List (RoseTree α)) (pairs : List (List ℕ × RoseTree α)),
     (multiGraftChildren cs pairs).length = cs.length
   | [], _ => rfl
   | c :: cs, pairs => by
@@ -210,7 +208,5 @@ theorem multiGraftChildren_nil_pairs : ∀ (cs : List (RoseTree α)),
     show multiGraft c [] :: multiGraftChildren cs [] = c :: cs
     rw [multiGraft_nil c, multiGraftChildren_nil_pairs cs]
 end
-
-end Pathed
 
 end RoseTree

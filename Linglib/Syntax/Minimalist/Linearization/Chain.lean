@@ -1,9 +1,13 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Syntax.Minimalist.Linearization.Replay
 public import Linglib.Syntax.Minimalist.Economy.Basic
 public import Linglib.Syntax.Question
-public import Linglib.Core.Algebra.RootedTree.PreLie.Path
 public import Linglib.Core.Data.RoseTree.Get
 
 /-!
@@ -52,125 +56,126 @@ once.
 
 namespace Minimalist
 
-open RoseTree RoseTree.Pathed SyntacticObject Core.Order.Branching
+open RoseTree SyntacticObject Core.Order.Branching
 
 /-! ### Occurrences and chains -/
 
 mutual
 /-- The positions whose label `f` accepts, with their paths, left to right. -/
-def positions (f : Vertex → Option LIToken) : RoseTree Vertex → List (Path × LIToken)
+def positions (f : Vertex → Option LIToken) : RoseTree Vertex → List (List ℕ × LIToken)
   | .node a cs => match f a with
     | some tok => [([], tok)]
     | none => positionsAux f 0 cs
-/-- Auxiliary: the positions in a children list from index `i`. -/
+/-- `positionsAux f i cs` lists the positions in the forest `cs`, numbering its trees from `i`. -/
 def positionsAux (f : Vertex → Option LIToken) :
-    ℕ → List (RoseTree Vertex) → List (Path × LIToken)
+    ℕ → List (RoseTree Vertex) → List (List ℕ × LIToken)
   | _, [] => []
-  | i, c :: cs => (positions f c).map (λ x => (i :: x.1, x.2)) ++ positionsAux f (i + 1) cs
+  | i, c :: cs => (positions f c).map (fun x ↦ (i :: x.1, x.2)) ++ positionsAux f (i + 1) cs
 end
 
 /-- The tokens with their paths, left to right. -/
-def tokenList : RoseTree Vertex → List (Path × LIToken) := positions (Sum.elim some λ _ => none)
+def tokenList : RoseTree Vertex → List (List ℕ × LIToken) := positions (Sum.elim some fun _ ↦ none)
 
 /-- The traces with their paths, left to right. -/
-def traceList : RoseTree Vertex → List (Path × LIToken) := positions (Sum.elim (λ _ => none) id)
+def traceList : RoseTree Vertex → List (List ℕ × LIToken) := positions (Sum.elim (fun _ ↦ none) id)
 
 variable (t : PlanarSyntacticObject)
 
 /-- The occurrences of `tok`. -/
-def occurrences (tok : LIToken) : List Path :=
-  (tokenList t.val).filterMap λ x => if x.2 = tok then some x.1 else none
+def occurrences (tok : LIToken) : List (List ℕ) :=
+  (tokenList t.val).filterMap fun x ↦ if x.2 = tok then some x.1 else none
 
 /-- The tokens of `t`, each once. -/
 def tokens : Finset LIToken := ((tokenList t.val).map (·.2)).toFinset
 
-/-- The terms of `t`: its subtrees, a shared constituent's once. -/
+/-- The terms of `t` are its subtrees, a shared constituent counted once. -/
 def terms : Finset (RoseTree Vertex) := ((vertices t.val).filterMap (subtreeAt t.val)).toFinset
 
-/-- `tok` is shared, dominated by two mothers: it occurs twice. -/
+/-- `tok` is shared, dominated by two mothers, when it occurs twice. -/
 def IsShared (tok : LIToken) : Prop := 2 ≤ (occurrences t tok).length
 
 instance (tok : LIToken) : Decidable (IsShared t tok) := inferInstanceAs (Decidable (_ ≤ _))
 
-/-- `p` c-commands `q`: the mother of `p` dominates `q` while `p` does not. -/
-def CCommands (p q : Path) : Prop := p.dropLast <+: q ∧ ¬ p <+: q
+/-- `p` c-commands `q` when the mother of `p` dominates `q` and `p` does not. -/
+def CCommands (p q : List ℕ) : Prop := p.dropLast <+: q ∧ ¬ p <+: q
 
-instance (p q : Path) : Decidable (CCommands p q) := inferInstanceAs (Decidable (_ ∧ _))
+instance (p q : List ℕ) : Decidable (CCommands p q) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The trace `x` is bound: an occurrence of its token c-commands it. -/
-def IsBound (x : Path × LIToken) : Prop := ∃ q ∈ occurrences t x.2, CCommands q x.1
+/-- The trace `x` is bound when an occurrence of its token c-commands it. -/
+def IsBound (x : List ℕ × LIToken) : Prop := ∃ q ∈ occurrences t x.2, CCommands q x.1
 
-instance (x : Path × LIToken) : Decidable (IsBound t x) :=
+instance (x : List ℕ × LIToken) : Decidable (IsBound t x) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- The unbound traces: seen from their positions, copies without their antecedents. -/
-def unboundTraces : List (Path × LIToken) := (traceList t.val).filter (¬ IsBound t ·)
+/-- The unbound traces are, seen from their positions, copies without their antecedents. -/
+def unboundTraces : List (List ℕ × LIToken) := (traceList t.val).filter (¬ IsBound t ·)
 
-/-- The occurrence at which `tok` is pronounced: its last. -/
-def pronouncedAt (tok : LIToken) : Option Path := (occurrences t tok).getLast?
+/-- `tok` is pronounced at its last occurrence. -/
+def pronouncedAt (tok : LIToken) : Option (List ℕ) := (occurrences t tok).getLast?
 
 /-! ### Ellipsis -/
 
-/-- The complement of the head at `p`: its sister. -/
-def complementPath (p : Path) : Path := p.dropLast ++ [1 - p.getLastD 0]
+/-- The complement of the head at `p` is its sister. -/
+def complementPath (p : List ℕ) : List ℕ := p.dropLast ++ [1 - p.getLastD 0]
 
 /-- The [E] heads. -/
-def eHeads : List Path :=
-  (tokenList t.val).filterMap λ x => if x.2.item.outerEllipsis then some x.1 else none
+def eHeads : List (List ℕ) :=
+  (tokenList t.val).filterMap fun x ↦ if x.2.item.outerEllipsis then some x.1 else none
 
-/-- The elided domains, one per distinct complement of an [E] head, in the order of the heads:
-a shared head over one shared complement applies once, over two complements twice. -/
-def elidedDomains : List Path :=
+/-- The elided domains are the distinct complements of the [E] heads, in the order of the heads,
+so a shared head over one shared complement applies once and over two complements twice. -/
+def elidedDomains : List (List ℕ) :=
   ((eHeads t).map complementPath).foldl
-    (λ acc p => if acc.any (λ q => subtreeAt t.val q = subtreeAt t.val p) then acc else acc ++ [p])
-      []
+    (fun acc p ↦
+      if acc.any (fun q ↦ subtreeAt t.val q = subtreeAt t.val p) then acc else acc ++ [p]) []
 
-/-- `tok` is silenced: one of its occurrences lies in an elided domain. -/
+/-- `tok` is silenced when one of its occurrences lies in an elided domain. -/
 def IsSilenced (tok : LIToken) : Prop :=
   ∃ K ∈ elidedDomains t, ∃ p ∈ occurrences t tok, K <+: p
 
 instance (tok : LIToken) : Decidable (IsSilenced t tok) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- The pronounced tokens, left to right: each at its last occurrence, unless silenced. -/
+/-- The pronounced tokens, left to right, each at its last occurrence unless silenced. -/
 def pfYield : List LIToken :=
-  (tokenList t.val).filterMap λ x =>
+  (tokenList t.val).filterMap fun x ↦
     if pronouncedAt t x.2 = some x.1 ∧ ¬ IsSilenced t x.2 then some x.2 else none
 
 /-- The pronounced forms, left to right. -/
 def pfPhon : List String := (pfYield t).filterMap LIToken.phonForm?
 
 /-- The pronounceable tokens the application at the domain `K` silences. -/
-def silencedBy (K : Path) : Finset LIToken :=
-  (tokens t).filter λ s => s.phonForm?.isSome ∧ (occurrences t s).any (decide <| K <+: ·)
+def silencedBy (K : List ℕ) : Finset LIToken :=
+  (tokens t).filter fun s ↦ s.phonForm?.isSome ∧ (occurrences t s).any (decide <| K <+: ·)
 
-/-- The application at `K` has no effect on pronunciation: the earlier applications silenced
-every token it silences. -/
-def IsVacuous (K : Path) : Prop :=
+/-- The application at `K` is vacuous when the earlier applications already silenced every token
+it silences. -/
+def IsVacuous (K : List ℕ) : Prop :=
   silencedBy t K ⊆ ((elidedDomains t).takeWhile (· ≠ K)).toFinset.biUnion (silencedBy t)
 
-instance (K : Path) : Decidable (IsVacuous t K) := by unfold IsVacuous; infer_instance
+instance (K : List ℕ) : Decidable (IsVacuous t K) := by unfold IsVacuous; infer_instance
 
-/-- **Pronunciation Economy** ([citko-gracanin-yuksek-2025] (39)): no application of ellipsis is
-vacuous. -/
+/-- **Pronunciation Economy** ([citko-gracanin-yuksek-2025] (39)) says that no application of
+ellipsis is vacuous. -/
 def PronunciationEconomy : Prop := ∀ K ∈ elidedDomains t, ¬ IsVacuous t K
 
 instance : Decidable (PronunciationEconomy t) := inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 /-! ### Phase edges and the multiple-wh-fronting asterisk -/
 
-/-- The specifiers and head of the projection of a head of category `c`: down the right spine,
-the left daughters above the head, which is the first selecting item met; `none` when that item
-has another category or the spine ends first. -/
+/-- `projection c t` finds the specifiers and head of the projection of a head of category `c`.
+Going down the right spine, the specifiers are the left daughters above the head, which is the first
+selecting item met; the result is `none` when that item has another category or the spine ends
+first. -/
 def projection (c : Cat) : RoseTree Vertex → Option (List (RoseTree Vertex) × LIToken)
   | .node (.inr none) [.node (.inl tok) [], r] =>
       if tok.item.outerSel = [] then
-        (projection c r).map λ x => (.node (.inl tok) [] :: x.1, x.2)
+        (projection c r).map fun x ↦ (.node (.inl tok) [] :: x.1, x.2)
       else if tok.item.outerCat = c then some ([], tok) else none
-  | .node (.inr none) [l, r] => (projection c r).map λ x => (l :: x.1, x.2)
+  | .node (.inr none) [l, r] => (projection c r).map fun x ↦ (l :: x.1, x.2)
   | _ => none
 
-/-- The head of a constituent: the token or trace at a leaf, else the first selecting item down
+/-- The head of a constituent is the token or trace at a leaf, else the first selecting item down
 the right spine. -/
 def headToken? : RoseTree Vertex → Option LIToken
   | .node (.inl tok) _ | .node (.inr (some tok)) _ => some tok
@@ -179,28 +184,29 @@ def headToken? : RoseTree Vertex → Option LIToken
   | .node (.inr none) [_, r] => headToken? r
   | .node (.inr none) _ => none
 
-/-- The constituent is a wh-specifier: its head is a wh-token or its trace. -/
+/-- A constituent is a wh-specifier when its head is a wh-token or its trace. -/
 def IsWhSpecifier (s : RoseTree Vertex) : Prop :=
   ∃ tok ∈ (headToken? s).toList, tok.item.outerWh = true
 
 instance (s : RoseTree Vertex) : Decidable (IsWhSpecifier s) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- The phase at `p`, a `v` or `C` projection: its edge, specifiers and head. -/
-def phaseAt (p : Path) : Option (PhaseEdge × List (RoseTree Vertex) × LIToken) :=
-  (subtreeAt t.val p).bind λ s =>
-    ((projection .v s).map λ x => (PhaseEdge.vP, x)).or
-      ((projection .C s).map λ x => (PhaseEdge.CP, x))
+/-- `phaseAt t p` is the phase at `p`, a `v` or `C` projection, with its edge, specifiers and
+head. -/
+def phaseAt (p : List ℕ) : Option (PhaseEdge × List (RoseTree Vertex) × LIToken) :=
+  (subtreeAt t.val p).bind fun s ↦
+    ((projection .v s).map fun x ↦ (PhaseEdge.vP, x)).or
+      ((projection .C s).map fun x ↦ (PhaseEdge.CP, x))
 
-/-- The phase at `p` receives the asterisk of the parameter ([citko-gracanin-yuksek-2025] (27)):
-its edge hosts more wh-specifiers than the parameter allows there. -/
-def IsAsterisked (param : MWFParameter) (p : Path) : Prop :=
+/-- The phase at `p` receives the asterisk of the parameter ([citko-gracanin-yuksek-2025] (27))
+when its edge hosts more wh-specifiers than the parameter allows there. -/
+def IsAsterisked (param : MWFParameter) (p : List ℕ) : Prop :=
   ∃ x ∈ (phaseAt t p).toList, param.EdgeAsterisk x.1 (x.2.1.countP (decide <| IsWhSpecifier ·))
 
-instance (param : MWFParameter) (p : Path) : Decidable (IsAsterisked t param p) :=
+instance (param : MWFParameter) (p : List ℕ) : Decidable (IsAsterisked t param p) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- The object converges at PF: the head of every asterisked phase is silenced. -/
+/-- The object converges at PF when the head of every asterisked phase is silenced. -/
 def Converges (param : MWFParameter) : Prop :=
   ∀ p ∈ vertices t.val, IsAsterisked t param p → ∀ x ∈ (phaseAt t p).toList, IsSilenced t x.2.2
 
@@ -209,8 +215,8 @@ instance (param : MWFParameter) : Decidable (Converges t param) :=
 
 /-! ### Cost -/
 
-/-- The cost of the object: its tokens are the lexical items drawn, its internal terms the Merges,
-and its elided domains the applications of ellipsis. -/
+/-- The cost of the object counts its tokens as the lexical items drawn, its internal terms as the
+Merges, and its elided domains as the applications of ellipsis. -/
 def planarCost : DerivationCost
   | .lexicalItems => (tokens t).card
   | .mergeOps => ((terms t).filter fun s ↦ s.arity ≠ 0).card
