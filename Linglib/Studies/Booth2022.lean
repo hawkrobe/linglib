@@ -2,66 +2,77 @@ module
 
 public import Linglib.Core.Order.Bilattice.Product
 public import Linglib.Semantics.Questions.Basic
+public import Mathlib.Order.Comparable
+public import Mathlib.Tactic.FinCases
 
 /-!
-# Booth 2022: bilateral inquisitive minimal-cover semantics for necessity
+# Booth (2022): Necessity modals, disjunctions, and collectivity
 
-[booth-2022] (Proceedings of Sinn und Bedeutung 26) resolves Ross's Puzzle by
-requiring the alternatives of a necessity claim's complement to form a
-minimal cover of the relevant worlds: each disjunct must be needed, so
-`□(p ∨ q)` licenses the Independence inferences `◇(p ∧ ¬q)`, `◇(q ∧ ¬p)`,
-and the Ross inference is strongly invalid. The semantics is bilateral —
-falsity conditions are not a function of truth conditions — which keeps
-necessity and possibility dual and distributes negated modals over
-disjunction. The paper's closing reading of `□` as a collective predicate of
-the plurality of propositions a disjunction denotes, and its restrictor
-conditional (Defs 15–16, Fact 11), are not formalized.
+[booth-2022] resolves Ross's Puzzle by requiring the alternatives of a necessity modal's
+prejacent to form a minimal cover of the relevant worlds, not merely a cover: each alternative
+must be needed, so `□(p ∨ q)` licenses the Independence inferences `◇(p ∧ ¬q)` and `◇(q ∧ ¬p)`,
+and the Ross inference from `□p` to `□(p ∨ q)` is strongly invalid. The semantics is bilateral,
+its falsity conditions not a function of its truth conditions, so necessity and possibility stay
+dual and negated modals distribute over disjunction. The closing reading of `□` as a collective
+predicate of the plurality of propositions a disjunction denotes (§4) is not formalized.
 
 ## Main definitions
 
-* `IsCover`, `IsMinCover` — the §2.1 covers, minimality as mathlib's
-  `Minimal`.
-* `BilatInqProp` — Def 10, the pairs of the product `Question W ⊙ Question W`
-  with disjoint coordinates; `atom`, `negate`, `disj`, `conj`, `necessity`,
-  `possibility` — the Def 14 clauses.
-* `isTrue`, `isFalse` — Def 17.
+* `IsMinCover`: the minimal covers of §2.1.
+* `BilatInqProp`: Def 10, the pairs of the product `Question W ⊙ Question W` with disjoint
+  coordinates; `atom`, `negate`, `disj`, `conj`, `necessity`, `possibility`: the clauses of
+  Def 14.
+* `BilatInqProp.truth`, `BilatInqProp.falsity`: the worlds at which a proposition is true and
+  false (Def 17).
+* `updateAccess`: the accessibility update of Def 15.
+* `Formula`, `Formula.eval`: the language of Def 8 and its interpretation, the restrictor
+  conditional evaluating its consequent in the updated model (Def 16).
+* `NonHurford`: Def 22.
 
 ## Main results
 
-Stated at the paper's own object-language scope — non-Hurford disjunctions
-of atoms — over arbitrary models:
+Entailment over a model (Def 18) is inclusion of truth sets, and strong invalidity (Def 21) is
+disjointness of the premises' truth set from the conclusion's.
 
-* `independence_p_not_q` — Fact 9, the Independence inference.
-* `ross_strongly_invalid`, `extended_ross_strongly_invalid` — Facts 7–8.
-* `free_choice` — Fact 10.
-* `unnecessity_distribution`, `impossibility_distribution` — Facts 12–13,
-  the distributions retained from the Kratzerian semantics.
-* `pos_eq_iSup_alt_atom` and kin — the Fact 5 compactness equations, per
-  constructor.
-* `conj_eq_negate_disj` — Booth's derivation of the ∧-clause from ¬ and ∨, a
-  De Morgan law of the product.
-* `BoothExample.boothExample_independence` — a three-world model jointly
-  verifying `□(p ∨ q)` and `◇(p ∧ ¬q)`: the Independence conclusion is
-  satisfiable, not vacuous.
+* `Formula.eval_neg_neg`: Fact 3, double negation.
+* `Formula.fg_eval`: Fact 5, both interpretations of every sentence finitely generated
+  (`Question.FG`), by induction over the language.
+* `ross_strongly_invalid_of_alt`, `inter_diff_truth_nonempty_of_alt` and their sentence forms
+  `Formula.ross_strongly_invalid`, `Formula.independence`: the meta-language Facts 7 and 6.
+* `not_forall_disjoint_of_nonHurford`, `not_forall_independence_of_nonHurford`: Facts 7 and 6
+  as printed, for every non-Hurford disjunction of Def 22, are false.
+* `ross_strongly_invalid`, `extended_ross_strongly_invalid`: Facts 7 and 8 for atoms.
+* `independence_left`, `independence_right`: Fact 9. `free_choice_left`, `free_choice_right`:
+  Fact 10. `Formula.independence_conditional_left`, `Formula.independence_conditional_right`:
+  Fact 11. `unnecessity_distribution_left`, `impossibility_distribution_left` and their mirror
+  images: Facts 12 and 13.
+* `truth_necessity_subset`: every Booth necessity is a Kratzerian one (Def 1); the model
+  `BoothExample` separates them.
 
 ## Implementation notes
 
-`Question W` supplies Def 10's subset-closed, `∅`-containing families:
-`Question.ofSet` is `↓{·}` (Def 11), `Question.info` is `info` (Def 12), and
-`Question.alt` is `alt` (Def 13). Def 10's pairs are the elements of the
-diagonal product bilattice `Question W ⊙ Question W` with disjoint coordinates,
-so the ¬-, ∨- and ∧-clauses are the product's negation `ᶜ`, truth join and
-truth meet, and their no-overlap proofs are the product's `Disjoint` closure
-lemmas. The meta-language Fact 6 for
-arbitrary non-Hurford `φ ∨ ψ` needs the compactness equations composed over
-a formula syntax, which is deferred.
+* `Question W` supplies Def 10's subset-closed families: `Question.ofSet` is `↓{·}` (Def 11),
+  `Question.info` is `info` (Def 12) and `Question.alt` is `alt` (Def 13). Def 10's third bullet,
+  `P⁺ ∩ P⁻ = {∅}`, is disjointness in `Question W`, whose bottom is `{∅}`, so Booth's
+  propositions are the pairs of the product bilattice with disjoint coordinates and the ¬-, ∨-
+  and ∧-clauses are the product's negation `ᶜ`, truth join and truth meet.
+* Def 17 writes `w ∈ ⟦φ⟧⁺` for a world `w` and a set of states; it is read as
+  `w ∈ info ⟦φ⟧⁺`, equivalently `{w} ∈ ⟦φ⟧⁺` (`BilatInqProp.mem_truth_iff`).
+* Def 22 is mathlib's `IncompRel` for the positive interpretations. The meta-language Facts 6
+  and 7 are stated for every such disjunction, but their proofs assume that no alternative of
+  either disjunct is a state of the other, `Disjoint (alt ⟦φ⟧⁺) ⟦ψ⟧⁺`, which is strictly
+  stronger. Under Def 22 both facts fail; under the alternative-wise condition the proofs go
+  through, and for atoms the two conditions coincide, so the object-language Facts 7–13 stand.
+  The correction is this file's, not the paper's.
+* Facts 12 and 13 need no non-Hurford hypothesis.
 
 ## References
 
-* [booth-2022] — the paper.
-* [aloni-2022] — the pure-bilateral rival, without minimal cover.
-* [ciardelli-groenendijk-roelofsen-2018] — the pure-inquisitive rival,
-  without bilateral negation.
+* [booth-2022]
+* [aloni-2022], Aloni's bilateral state-based modal logic; Booth cites her 2018 manuscript
+  "FC disjunction in state-based semantics" (fn. 9).
+* [ciardelli-groenendijk-roelofsen-2018], standard inquisitive semantics, in which `¬¬φ` and `φ`
+  differ (§3.1).
 -/
 
 @[expose] public section
@@ -72,49 +83,59 @@ open Bilattice
 
 variable {W : Type*}
 
-/-! ### §1 Cover and minimal cover (Booth Section 2.1)
+/-! ### Minimal covers (§2.1)
 
-Booth's `□φ` differs from Kratzerian necessity by requiring not just
-that the alternatives of `⟦φ⟧⁺` cover `R(w)`, but that they form a
-**minimal cover** — no proper subset of the alternatives still covers
-`R(w)`. This is what derives Independence inferences (Fact 9): each
-alternative must be "needed", so no single alternative dominates.
+Booth's `□φ` requires the alternatives of `⟦φ⟧⁺` not only to cover the relevant worlds, as the
+Kratzerian semantics does, but to form a minimal cover, with no proper subfamily still covering
+them. -/
 
-Expressed via mathlib's `Minimal` predicate (mirrors `Question.alt`'s
-use of `Maximal` — Booth's `alt` and `m-cover` are dual instances of
-the order-theoretic extremality pattern). -/
-
-/-- **Booth §2.1**: `C` covers `S` iff `S ⊆ ⋃C`. -/
-def IsCover (C : Set (Set W)) (S : Set W) : Prop := S ⊆ ⋃₀ C
-
-/-- **Booth §2.1**: `C` is a **minimal cover** (m-cover) of `S` iff `C`
-    covers `S` and no proper subfamily `C' ⊂ C` covers `S`. Expressed
-    via mathlib's `Minimal`. -/
+/-- `C` is a minimal cover (m-cover) of `S` (§2.1): it covers `S`, `S ⊆ ⋃₀ C`, and no proper
+subfamily does. -/
 def IsMinCover (C : Set (Set W)) (S : Set W) : Prop :=
-  Minimal (fun X => IsCover X S) C
+  Minimal (fun X ↦ S ⊆ ⋃₀ X) C
 
-theorem IsMinCover.isCover {C : Set (Set W)} {S : Set W}
-    (h : IsMinCover C S) : IsCover C S := h.prop
+theorem IsMinCover.subset_sUnion {C : Set (Set W)} {S : Set W} (h : IsMinCover C S) :
+    S ⊆ ⋃₀ C :=
+  h.prop
 
-/-- A singleton family whose member contains a nonempty `S` minimally covers
-    `S`: the only proper subfamily is empty and covers nothing nonempty. -/
-theorem isMinCover_singleton {X S : Set W} (hS : S.Nonempty) (hsub : S ⊆ X) :
-    IsMinCover ({X} : Set (Set W)) S := by
-  refine ⟨fun v hv => ⟨X, rfl, hsub hv⟩, ?_⟩
-  intro Y hYcov hYsub Z hZ
-  rcases Set.mem_singleton_iff.mp hZ with rfl
+/-- A single set minimally covers a nonempty `S` exactly when it contains it. -/
+theorem isMinCover_singleton_iff {X S : Set W} (hS : S.Nonempty) :
+    IsMinCover {X} S ↔ S ⊆ X := by
+  refine ⟨fun h ↦ by simpa using h.subset_sUnion, fun h ↦ ⟨by simpa using h, fun Y hY hYX ↦ ?_⟩⟩
   obtain ⟨v, hv⟩ := hS
-  obtain ⟨Z', hZ'Y, _⟩ := hYcov hv
-  rcases Set.mem_singleton_iff.mp (hYsub hZ'Y) with rfl
-  exact hZ'Y
+  obtain ⟨Z, hZY, -⟩ := hY hv
+  exact Set.singleton_subset_iff.2 (Set.mem_singleton_iff.1 (hYX hZY) ▸ hZY)
 
-/-! ### §2 Bilateral inquisitive propositions (Booth Def 10) -/
+/-- A pair minimally covers `S` exactly when it covers `S` and neither member covers it alone,
+so that each member contains a world of `S` outside the other (§2.1). -/
+theorem isMinCover_pair_iff {A B S : Set W} (hAB : A ≠ B) :
+    IsMinCover {A, B} S ↔ S ⊆ A ∪ B ∧ ¬ S ⊆ A ∧ ¬ S ⊆ B := by
+  refine ⟨fun h ↦ ⟨by simpa using h.subset_sUnion, fun hA ↦ ?_, fun hB ↦ ?_⟩, ?_⟩
+  · have h' := h.le_of_le (y := {A}) (by simpa using hA)
+      (Set.singleton_subset_iff.2 (Set.mem_insert A _))
+    exact hAB (h' (Set.mem_insert_of_mem A (Set.mem_singleton B))).symm
+  · have h' := h.le_of_le (y := {B}) (by simpa using hB)
+      (Set.singleton_subset_iff.2 (Set.mem_insert_of_mem A (Set.mem_singleton B)))
+    exact hAB (h' (Set.mem_insert A _))
+  rintro ⟨hcov, hA, hB⟩
+  refine ⟨by simpa using hcov, fun Y hY hYAB ↦ Set.insert_subset_iff.2 ⟨?_, ?_⟩⟩
+  · obtain ⟨u, huS, huB⟩ := Set.not_subset.1 hB
+    obtain ⟨Z, hZY, huZ⟩ := hY huS
+    rcases hYAB hZY with rfl | rfl
+    · exact hZY
+    · exact absurd huZ huB
+  · obtain ⟨v, hvS, hvA⟩ := Set.not_subset.1 hA
+    obtain ⟨Z, hZY, hvZ⟩ := hY hvS
+    rcases hYAB hZY with rfl | rfl
+    · exact absurd hvZ hvA
+    · exact Set.singleton_subset_iff.2 hZY
+
+/-! ### Bilateral inquisitive propositions (Defs 10, 14 and 17) -/
 
 /-- **Booth Def 10**: a bilateral inquisitive proposition is a pair of `Question`s, the states
 verifying and the states falsifying it, with no substantive overlap: only the inconsistent state
-`∅` may both verify and falsify it (`Question.disjoint_iff`). The subset-closure and
-`∅`-membership requirements (Booth Def 10 bullets 2 and the implicit `∅ ∈ P°`) are baked into
-`Question`. The pairs live in the diagonal product `Question W ⊙ Question W`. -/
+`∅` both verifies and falsifies it (`Question.disjoint_iff`). The pairs live in the diagonal
+product `Question W ⊙ Question W`. -/
 abbrev BilatInqProp (W : Type*) := {x : Question W ⊙ Question W // Disjoint x.pro x.con}
 
 namespace BilatInqProp
@@ -134,28 +155,52 @@ theorem no_overlap (φ : BilatInqProp W) (s : Set W) (hpos : s ∈ φ.pos) (hneg
     s = ∅ :=
   Question.disjoint_iff.1 φ.2 s hpos hneg
 
+/-- **Booth Def 17**: the worlds at which `φ` is true, the informative content of `⟦φ⟧⁺`. -/
+def truth (φ : BilatInqProp W) : Set W := φ.pos.info
+
+/-- **Booth Def 17**: the worlds at which `φ` is false, the informative content of `⟦φ⟧⁻`. -/
+def falsity (φ : BilatInqProp W) : Set W := φ.neg.info
+
+theorem mem_truth_iff {φ : BilatInqProp W} {w : W} : w ∈ φ.truth ↔ {w} ∈ φ.pos :=
+  Question.mem_info_iff_singleton_mem _ _
+
+theorem mem_falsity_iff {φ : BilatInqProp W} {w : W} : w ∈ φ.falsity ↔ {w} ∈ φ.neg :=
+  Question.mem_info_iff_singleton_mem _ _
+
+/-- No world makes a proposition both true and false. -/
+theorem disjoint_truth_falsity (φ : BilatInqProp W) : Disjoint φ.truth φ.falsity :=
+  Set.disjoint_left.2 fun w ht hf ↦
+    Set.singleton_ne_empty w (φ.no_overlap {w} (mem_truth_iff.1 ht) (mem_falsity_iff.1 hf))
+
 /-- **Booth Def 14, ¬-clause**: negation swaps the two interpretations, the product's negation
 `ᶜ`. -/
 def negate (φ : BilatInqProp W) : BilatInqProp W := ⟨φ.1ᶜ, φ.2.symm⟩
 
 @[simp] theorem negate_pos (φ : BilatInqProp W) : φ.negate.pos = φ.neg := rfl
 @[simp] theorem negate_neg (φ : BilatInqProp W) : φ.negate.neg = φ.pos := rfl
+@[simp] theorem truth_negate (φ : BilatInqProp W) : φ.negate.truth = φ.falsity := rfl
+@[simp] theorem falsity_negate (φ : BilatInqProp W) : φ.negate.falsity = φ.truth := rfl
+
+/-- Fact 3, double negation. -/
 @[simp] theorem negate_negate (φ : BilatInqProp W) : φ.negate.negate = φ := rfl
 
-/-- **Booth Def 14, atomic clause**: `⟦p⟧⁺ = ↓{V(p)}`,
-    `⟦p⟧⁻ = ↓{W \ V(p)}`. Encoded with `Question.ofSet` since
-    `↓{X} = declarative X`. -/
+/-- **Booth Def 14, atomic clause**: `⟦p⟧⁺ = ↓{V(p)}` and `⟦p⟧⁻ = ↓{W ∖ V(p)}`. -/
 def atom (V : Set W) : BilatInqProp W :=
   mk (Question.ofSet V) (Question.ofSet Vᶜ) fun _ hpos hneg ↦
     Set.subset_empty_iff.mp (Set.inter_compl_self V ▸ Set.subset_inter hpos hneg)
 
+@[simp] theorem atom_pos (V : Set W) : (atom V).pos = Question.ofSet V := rfl
+@[simp] theorem atom_neg (V : Set W) : (atom V).neg = Question.ofSet Vᶜ := rfl
+@[simp] theorem truth_atom (V : Set W) : (atom V).truth = V := Question.info_ofSet V
+@[simp] theorem falsity_atom (V : Set W) : (atom V).falsity = Vᶜ := Question.info_ofSet Vᶜ
+
 /-- **Booth Def 14, ∨-clause**: `⟦φ ∨ ψ⟧⁺ = ⟦φ⟧⁺ ∪ ⟦ψ⟧⁺` (inquisitive disjunction, `⊔` of
-    `Question`s) and `⟦φ ∨ ψ⟧⁻ = ⟦φ⟧⁻ ∩ ⟦ψ⟧⁻` (`⊓`): the truth join of the product. -/
+`Question`s) and `⟦φ ∨ ψ⟧⁻ = ⟦φ⟧⁻ ∩ ⟦ψ⟧⁻` (`⊓`): the truth join of the product. -/
 def disj (φ ψ : BilatInqProp W) : BilatInqProp W :=
   ⟨φ.1 ⊔ ψ.1, Product.disjoint_pro_con_sup φ.2 ψ.2⟩
 
 /-- **Booth Def 14, ∧-clause**: `⟦φ ∧ ψ⟧⁺ = ⟦φ⟧⁺ ∩ ⟦ψ⟧⁺` and `⟦φ ∧ ψ⟧⁻ = ⟦φ⟧⁻ ∪ ⟦ψ⟧⁻`: the
-    truth meet of the product. -/
+truth meet of the product. -/
 def conj (φ ψ : BilatInqProp W) : BilatInqProp W :=
   ⟨φ.1 ⊓ ψ.1, Product.disjoint_pro_con_inf φ.2 ψ.2⟩
 
@@ -164,580 +209,472 @@ def conj (φ ψ : BilatInqProp W) : BilatInqProp W :=
 @[simp] theorem conj_pos (φ ψ : BilatInqProp W) : (conj φ ψ).pos = φ.pos ⊓ ψ.pos := rfl
 @[simp] theorem conj_neg (φ ψ : BilatInqProp W) : (conj φ ψ).neg = φ.neg ⊔ ψ.neg := rfl
 
-/-- Booth derives the ∧-clause as `⟦φ ∧ ψ⟧ = ⟦¬(¬φ ∨ ¬ψ)⟧`: a De Morgan law of the product. -/
+@[simp] theorem truth_disj (φ ψ : BilatInqProp W) : (disj φ ψ).truth = φ.truth ∪ ψ.truth :=
+  Question.info_sup _ _
+
+@[simp] theorem falsity_disj (φ ψ : BilatInqProp W) :
+    (disj φ ψ).falsity = φ.falsity ∩ ψ.falsity :=
+  Question.info_inf _ _
+
+theorem disj_comm (φ ψ : BilatInqProp W) : disj φ ψ = disj ψ φ :=
+  Subtype.ext (sup_comm _ _)
+
+/-- Booth lets `⟦φ ∧ ψ⟧ = ⟦¬(¬φ ∨ ¬ψ)⟧` (Def 14): a De Morgan law of the product. -/
 theorem conj_eq_negate_disj (φ ψ : BilatInqProp W) :
     conj φ ψ = negate (disj (negate φ) (negate ψ)) :=
-  Subtype.ext (by
-    simp only [negate, disj, conj, LatticeWithInvolution.compl_sup,
-      LatticeWithInvolution.compl_compl])
+  rfl
 
-/-! ### §3 Necessity and possibility (Booth Def 14)
-
-`R : W → Set W` is the relevant-worlds accessibility relation
-(equivalent in expressive power to `W → W → Prop
-= W → W → Prop`; Booth uses the curried `W → Set W` form throughout
-his Def 14, which we mirror). -/
-
-/-- **Booth Def 14, □-clause**:
-    `⟦□φ⟧⁺ = ↓{ {w | R(w) ≠ ∅ ∧ alt⁺(⟦φ⟧) m-covers R(w)} }`,
-    `⟦□φ⟧⁻ = ↓{ {w | ∃ R' ⊆ R(w), R' ≠ ∅ ∧ alt⁻(⟦φ⟧) m-covers R'} }`.
-
-    The no-overlap proof structurally inducts via `φ.no_overlap`: any
-    non-empty state `s` in both polarities yields a world `w ∈ s`,
-    hence a witness `v ∈ R(w)` covered by both alt⁺(φ.pos) and
-    alt⁻(φ.neg) — giving alternatives `α ∈ φ.pos.props` and
-    `β ∈ φ.neg.props` containing `v`. Downward closure gives
-    `{v} ∈ φ.pos ∩ φ.neg`, contradicting `φ.no_overlap`. -/
+/-- **Booth Def 14, □-clause**, over the relevant worlds `R : W → Set W` of Def 9:
+`⟦□φ⟧⁺ = ↓{{w | R(w) ≠ ∅ and alt⁺(⟦φ⟧) m-covers R(w)}}` and
+`⟦□φ⟧⁻ = ↓{{w | ∃ R' ⊆ R(w), R' ≠ ∅ and alt⁻(⟦φ⟧) m-covers R'}}`. -/
 def necessity (R : W → Set W) (φ : BilatInqProp W) : BilatInqProp W :=
-  mk (Question.ofSet {w : W | (R w).Nonempty ∧ IsMinCover (Question.alt φ.pos) (R w)})
-    (Question.ofSet
-      {w : W | ∃ R' : Set W, R' ⊆ R w ∧ R'.Nonempty ∧ IsMinCover (Question.alt φ.neg) R'})
-    fun s hpos hneg ↦ by
-    by_contra hne
-    obtain ⟨w, hws⟩ : s.Nonempty := Set.nonempty_iff_ne_empty.mpr hne
-    have hwPos : (R w).Nonempty ∧ IsMinCover (Question.alt φ.pos) (R w) :=
-      hpos hws
-    obtain ⟨R', hR'sub, hR'ne, hR'mc⟩ : ∃ R' : Set W, R' ⊆ R w ∧
-        R'.Nonempty ∧ IsMinCover (Question.alt φ.neg) R' := hneg hws
-    obtain ⟨v, hvR'⟩ := hR'ne
-    have hvRw : v ∈ R w := hR'sub hvR'
-    obtain ⟨α, hαAlt, hvα⟩ : ∃ α ∈ Question.alt φ.pos, v ∈ α :=
-      hwPos.2.isCover hvRw
-    obtain ⟨β, hβAlt, hvβ⟩ : ∃ β ∈ Question.alt φ.neg, v ∈ β :=
-      hR'mc.isCover hvR'
-    have hαPos : α ∈ φ.pos.props := Question.alt_subset_props _ hαAlt
-    have hβNeg : β ∈ φ.neg.props := Question.alt_subset_props _ hβAlt
-    have hvSPos : ({v} : Set W) ∈ φ.pos.props :=
-      φ.pos.downward_closed α hαPos {v} (Set.singleton_subset_iff.mpr hvα)
-    have hvSNeg : ({v} : Set W) ∈ φ.neg.props :=
-      φ.neg.downward_closed β hβNeg {v} (Set.singleton_subset_iff.mpr hvβ)
-    exact (Set.singleton_ne_empty v) (φ.no_overlap {v} hvSPos hvSNeg)
+  mk (Question.ofSet {w | (R w).Nonempty ∧ IsMinCover (Question.alt φ.pos) (R w)})
+    (Question.ofSet {w | ∃ R' ⊆ R w, R'.Nonempty ∧ IsMinCover (Question.alt φ.neg) R'})
+    fun _ hpos hneg ↦ Set.eq_empty_of_forall_notMem fun w hw ↦ by
+      obtain ⟨R', hR', ⟨v, hv⟩, hmc⟩ := hneg hw
+      refine Set.singleton_ne_empty v (φ.no_overlap {v} ?_ ?_)
+      · exact (Question.mem_info_iff_singleton_mem _ _).1
+          (φ.pos.sUnion_alt_subset_info ((hpos hw).2.subset_sUnion (hR' hv)))
+      · exact (Question.mem_info_iff_singleton_mem _ _).1
+          (φ.neg.sUnion_alt_subset_info (hmc.subset_sUnion hv))
 
-/-- **Booth Def 14, ◇-clause** via duality: `⟦◇φ⟧ = ⟦¬□¬φ⟧`. -/
+/-- **Booth Def 14, ◇-clause**: `⟦◇φ⟧ = ⟦¬□¬φ⟧`. -/
 def possibility (R : W → Set W) (φ : BilatInqProp W) : BilatInqProp W :=
   negate (necessity R (negate φ))
 
+theorem truth_necessity (R : W → Set W) (φ : BilatInqProp W) :
+    (necessity R φ).truth = {w | (R w).Nonempty ∧ IsMinCover (Question.alt φ.pos) (R w)} :=
+  Question.info_ofSet _
+
+theorem falsity_necessity (R : W → Set W) (φ : BilatInqProp W) :
+    (necessity R φ).falsity =
+      {w | ∃ R' ⊆ R w, R'.Nonempty ∧ IsMinCover (Question.alt φ.neg) R'} :=
+  Question.info_ofSet _
+
+theorem truth_possibility (R : W → Set W) (φ : BilatInqProp W) :
+    (possibility R φ).truth =
+      {w | ∃ R' ⊆ R w, R'.Nonempty ∧ IsMinCover (Question.alt φ.pos) R'} :=
+  Question.info_ofSet _
+
+theorem falsity_possibility (R : W → Set W) (φ : BilatInqProp W) :
+    (possibility R φ).falsity = {w | (R w).Nonempty ∧ IsMinCover (Question.alt φ.neg) (R w)} :=
+  Question.info_ofSet _
+
+/-- A Booth necessity is a Kratzerian one (Def 1): the relevant worlds lie in the truth set of
+the prejacent. -/
+theorem truth_necessity_subset (R : W → Set W) (φ : BilatInqProp W) :
+    (necessity R φ).truth ⊆ {w | R w ⊆ φ.truth} := by
+  rw [truth_necessity]
+  exact fun _ h ↦ h.2.subset_sUnion.trans φ.pos.sUnion_alt_subset_info
+
 end BilatInqProp
 
-/-! ### §4 Truth and falsity (Booth Def 17)
+open BilatInqProp
 
-A world `w` makes `φ` **true** in model `(W, R, V)` iff `{w} ∈ ⟦φ⟧⁺`,
-and **false** iff `{w} ∈ ⟦φ⟧⁻`. Since `Question`s are subset-closed,
-this is equivalent to `∃ s ∈ ⟦φ⟧°, w ∈ s` for a non-empty witness. -/
+/-- **Booth Def 15**, the accessibility update: `R^φ(w) = R(w) ∩ info ⟦φ⟧⁺`. -/
+def updateAccess (R : W → Set W) (φ : BilatInqProp W) (w : W) : Set W :=
+  R w ∩ φ.truth
 
-/-- **Booth Def 17**: world `w` is true at `φ` iff the singleton `{w}`
-    verifies `φ`. -/
-def isTrue (φ : BilatInqProp W) (w : W) : Prop := ({w} : Set W) ∈ φ.pos
+/-! ### Alternatives and non-Hurford disjunctions (Defs 13 and 22) -/
 
-/-- **Booth Def 17**: world `w` is false at `φ` iff the singleton `{w}`
-    falsifies `φ`. -/
-def isFalse (φ : BilatInqProp W) (w : W) : Prop := ({w} : Set W) ∈ φ.neg
+theorem alt_atom_pos (V : Set W) : Question.alt (atom V).pos = {V} :=
+  Question.alt_ofSet V
 
-/-- Truth and falsity are mutually exclusive (no world is both true and
-    false), since by `no_overlap` any state in both polarities is `∅`. -/
-theorem not_isTrue_and_isFalse (φ : BilatInqProp W) (w : W) :
-    ¬ (isTrue φ w ∧ isFalse φ w) := fun ⟨ht, hf⟩ =>
-  Set.singleton_ne_empty w (φ.no_overlap {w} ht hf)
+theorem alt_atom_neg (V : Set W) : Question.alt (atom V).neg = {Vᶜ} :=
+  Question.alt_ofSet Vᶜ
 
-/-- **Characterization of `isTrue` for `possibility`**: world `w` makes
-    `◇φ` true iff there exists a non-empty `R' ⊆ R w` minimally covered
-    by `alt φ.pos`. The `possibility := negate ∘ necessity ∘ negate`
-    derivation cancels the two negations, exposing `φ.pos` directly.
-    Used to bypass the verbose `show` block in proofs about possibility. -/
-theorem isTrue_possibility_iff (R : W → Set W) (φ : BilatInqProp W) (w : W) :
-    isTrue (BilatInqProp.possibility R φ) w ↔
-    ∃ R' : Set W, R' ⊆ R w ∧ R'.Nonempty ∧
-                  IsMinCover (Question.alt φ.pos) R' := by
-  constructor
-  · intro h
-    exact h (Set.mem_singleton_iff.mpr rfl)
-  · intro h _ hx
-    rcases Set.mem_singleton_iff.mp hx with rfl
-    exact h
+/-- When no alternative of either disjunct is a state of the other, the alternatives of the
+disjunction are those of the disjuncts. -/
+theorem alt_disj_pos_eq_union {φ ψ : BilatInqProp W}
+    (hφψ : Disjoint (Question.alt φ.pos) ψ.pos) (hψφ : Disjoint (Question.alt ψ.pos) φ.pos) :
+    Question.alt (disj φ ψ).pos = Question.alt φ.pos ∪ Question.alt ψ.pos := by
+  refine (Question.alt_sup_subset_union φ.pos ψ.pos).antisymm ?_
+  rintro q (hq | hq)
+  · exact Question.mem_alt_sup_of_alt_left hq fun r hr hqr ↦
+      (Set.disjoint_left.1 hφψ hq (ψ.pos.downward_closed r hr q hqr)).elim
+  · exact Question.mem_alt_sup_of_alt_right hq fun r hr hqr ↦
+      (Set.disjoint_left.1 hψφ hq (φ.pos.downward_closed r hr q hqr)).elim
 
-/-- Characterization of `isTrue` for `necessity`. -/
-theorem isTrue_necessity_iff (R : W → Set W) (φ : BilatInqProp W) (w : W) :
-    isTrue (BilatInqProp.necessity R φ) w ↔
-      (R w).Nonempty ∧ IsMinCover (Question.alt φ.pos) (R w) := by
-  constructor
-  · intro h
-    exact h (Set.mem_singleton_iff.mpr rfl)
-  · intro h _ hx
-    rcases Set.mem_singleton_iff.mp hx with rfl
-    exact h
+/-- **Booth Def 22**: `φ ∨ ψ` is non-Hurford when the positive interpretations of the disjuncts
+are incomparable. -/
+def NonHurford (φ ψ : BilatInqProp W) : Prop :=
+  IncompRel (· ≤ ·) φ.pos ψ.pos
 
-/-- Characterization of `isFalse` for `necessity`. -/
-theorem isFalse_necessity_iff (R : W → Set W) (φ : BilatInqProp W) (w : W) :
-    isFalse (BilatInqProp.necessity R φ) w ↔
-      ∃ R' : Set W, R' ⊆ R w ∧ R'.Nonempty ∧
-        IsMinCover (Question.alt φ.neg) R' := by
-  constructor
-  · intro h
-    exact h (Set.mem_singleton_iff.mpr rfl)
-  · intro h _ hx
-    rcases Set.mem_singleton_iff.mp hx with rfl
-    exact h
+theorem NonHurford.symm {φ ψ : BilatInqProp W} (h : NonHurford φ ψ) : NonHurford ψ φ :=
+  IncompRel.symm h
 
-/-- Characterization of `isFalse` for `possibility`: `¬◇φ` is `□¬φ`. -/
-theorem isFalse_possibility_iff (R : W → Set W) (φ : BilatInqProp W) (w : W) :
-    isFalse (BilatInqProp.possibility R φ) w ↔
-      (R w).Nonempty ∧ IsMinCover (Question.alt φ.neg) (R w) := by
-  constructor
-  · intro h
-    exact h (Set.mem_singleton_iff.mpr rfl)
-  · intro h _ hx
-    rcases Set.mem_singleton_iff.mp hx with rfl
-    exact h
+theorem nonHurford_atom_iff {Vp Vq : Set W} :
+    NonHurford (atom Vp) (atom Vq) ↔ IncompRel (· ≤ ·) Vp Vq :=
+  and_congr (not_congr Question.ofSet_le_ofSet_iff) (not_congr Question.ofSet_le_ofSet_iff)
 
-/-! ### §5 Per-constructor algebra of `alt` (Booth Compactness substrate)
+theorem NonHurford.ne {Vp Vq : Set W} (h : NonHurford (atom Vp) (atom Vq)) : Vp ≠ Vq :=
+  fun e ↦ (nonHurford_atom_iff.1 h).1 e.le
 
-Per-constructor equations for `Question.alt` on `BilatInqProp`'s
-positive interpretation. Used by the worked example (§6), the general
-Independence theorem (§7), and downstream Booth Compactness
-(`Question.IsNormal.eq_iSup_ofSet_alt`) consumers. The atomic-case
-private corollaries (`alt_disj_atom_eq_pair`,
-`alt_conj_atom_negate_eq_singleton`) are derived from the public
-generalizations. -/
+/-- For non-Hurford atoms, `alt⁺(⟦p ∨ q⟧) = {V(p), V(q)}` (§3.2). -/
+theorem alt_disj_atom {Vp Vq : Set W} (h : NonHurford (atom Vp) (atom Vq)) :
+    Question.alt (disj (atom Vp) (atom Vq)).pos = {Vp, Vq} :=
+  Question.alt_ofSet_sup_ofSet (nonHurford_atom_iff.1 h).1 (nonHurford_atom_iff.1 h).2
 
-/-- `alt` of `atom V` is the singleton `{V}`. Direct corollary of
-    `Question.alt_ofSet`. -/
-theorem alt_atom_pos (V : Set W) :
-    Question.alt (BilatInqProp.atom V).pos = ({V} : Set (Set W)) := by
-  show Question.alt (Question.ofSet V) = _
-  exact Question.alt_ofSet V
+/-- `alt⁻(⟦p ∨ q⟧) = {W ∖ (V(p) ∪ V(q))}` (§3.2). -/
+theorem alt_disj_atom_neg (Vp Vq : Set W) :
+    Question.alt (disj (atom Vp) (atom Vq)).neg = {Vpᶜ ∩ Vqᶜ} := by
+  rw [disj_neg, atom_neg, atom_neg, Question.ofSet_inf, Question.alt_ofSet]
 
-/-- `alt` of `negate φ`'s positive interpretation is `alt` of φ's
-    negative interpretation. By definition of `negate`, structural rfl. -/
-theorem alt_negate_pos (φ : BilatInqProp W) :
-    Question.alt (BilatInqProp.negate φ).pos = Question.alt φ.neg := rfl
+/-- `alt⁺(⟦p ∧ ¬q⟧) = {V(p) ∖ V(q)}`. -/
+theorem alt_conj_atom_negate (Vp Vq : Set W) :
+    Question.alt (conj (atom Vp) (negate (atom Vq))).pos = {Vp ∩ Vqᶜ} := by
+  rw [conj_pos, negate_pos, atom_pos, atom_neg, Question.ofSet_inf, Question.alt_ofSet]
 
-/-- `alt` of `necessity R φ`'s positive interpretation is the singleton
-    of the witness w-set, since `necessity` uses `Question.ofSet`. -/
-theorem alt_necessity_pos (R : W → Set W) (φ : BilatInqProp W) :
-    Question.alt (BilatInqProp.necessity R φ).pos =
-      ({{w : W | (R w).Nonempty ∧ IsMinCover (Question.alt φ.pos) (R w)}} :
-        Set (Set W)) := by
-  show Question.alt (Question.ofSet _) = _
-  exact Question.alt_ofSet _
+/-! ### The language (Def 8) and compactness (Fact 5) -/
 
-/-- **General non-Hurford alt of disjunction**: when no φ-alt entails ψ
-    and no ψ-alt entails φ (the "non-Hurford" condition lifted from
-    atoms to arbitrary subformulas), `alt (disj φ ψ).pos = alt φ.pos ∪
-    alt ψ.pos`. The atomic case (`alt_disj_atom_eq_pair`) is a
-    specialization. -/
-theorem alt_disj_pos_eq_union (φ ψ : BilatInqProp W)
-    (hφψ : ∀ a ∈ Question.alt φ.pos, a ∉ ψ.pos.props)
-    (hψφ : ∀ b ∈ Question.alt ψ.pos, b ∉ φ.pos.props) :
-    Question.alt (BilatInqProp.disj φ ψ).pos
-      = Question.alt φ.pos ∪ Question.alt ψ.pos := by
-  show Question.alt (φ.pos ⊔ ψ.pos) = _
-  apply Set.eq_of_subset_of_subset
-  · exact Question.alt_sup_subset_union φ.pos ψ.pos
-  · intro q hq
-    rcases hq with hq | hq
-    · apply Question.mem_alt_sup_of_alt_left hq
-      intro r hr hqr
-      exact absurd (ψ.pos.downward_closed r hr q hqr) (hφψ q hq)
-    · apply Question.mem_alt_sup_of_alt_right hq
-      intro r hr hqr
-      exact absurd (φ.pos.downward_closed r hr q hqr) (hψφ q hq)
+/-- The language of Def 8 over atomic sentences `At`. -/
+inductive Formula (At : Type*) where
+  | atom (p : At)
+  | neg (φ : Formula At)
+  | conj (φ ψ : Formula At)
+  | disj (φ ψ : Formula At)
+  | cond (φ ψ : Formula At)
+  | box (φ : Formula At)
+  | diamond (φ : Formula At)
 
-/-- Atomic specialization: alt of `atom Vp ∨ atom Vq` is `{Vp, Vq}` when
-    neither is contained in the other. Discharges the non-Hurford
-    hypotheses of `alt_disj_pos_eq_union` from membership in
-    `(ofSet Vq).props = {q | q ⊆ Vq}`. -/
-private lemma alt_disj_atom_eq_pair (Vp Vq : Set W)
-    (hpq : ¬ Vp ⊆ Vq) (hqp : ¬ Vq ⊆ Vp) :
-    Question.alt
-        (BilatInqProp.disj (BilatInqProp.atom Vp) (BilatInqProp.atom Vq)).pos
-      = ({Vp, Vq} : Set (Set W)) := by
-  have hφψ : ∀ a ∈ Question.alt (BilatInqProp.atom Vp).pos,
-             a ∉ (BilatInqProp.atom Vq).pos.props := by
-    intro a haAlt
-    rw [alt_atom_pos] at haAlt
-    rcases Set.mem_singleton_iff.mp haAlt with rfl
-    exact hpq
-  have hψφ : ∀ b ∈ Question.alt (BilatInqProp.atom Vq).pos,
-             b ∉ (BilatInqProp.atom Vp).pos.props := by
-    intro b hbAlt
-    rw [alt_atom_pos] at hbAlt
-    rcases Set.mem_singleton_iff.mp hbAlt with rfl
-    exact hqp
-  rw [alt_disj_pos_eq_union _ _ hφψ hψφ, alt_atom_pos, alt_atom_pos,
-      Set.singleton_union]
+namespace Formula
 
-/-- Atomic specialization: alt of `atom Vp ∧ ¬ atom Vq` is `{Vp ∩ Vqᶜ}`
-    via `Question.ofSet_inf` collapsing the meet. -/
-private lemma alt_conj_atom_negate_eq_singleton (Vp Vq : Set W) :
-    Question.alt
-        (BilatInqProp.conj (BilatInqProp.atom Vp)
-          (BilatInqProp.negate (BilatInqProp.atom Vq))).pos
-      = ({Vp ∩ Vqᶜ} : Set (Set W)) := by
-  show Question.alt (Question.ofSet Vp ⊓ Question.ofSet Vqᶜ) = _
-  rw [Question.ofSet_inf]
-  exact Question.alt_ofSet _
+variable {At : Type*}
 
-/-- `alt` of `atom V`'s negative interpretation is the singleton `{Vᶜ}`. -/
-theorem alt_atom_neg (V : Set W) :
-    Question.alt (BilatInqProp.atom V).neg = ({Vᶜ} : Set (Set W)) := by
-  show Question.alt (Question.ofSet Vᶜ) = _
-  exact Question.alt_ofSet _
+/-- **Booth Def 14** in the model `⟨W, R, V⟩` of Def 9. The restrictor conditional evaluates its
+consequent under the updated accessibility, `⟦φ → ψ⟧_M = ⟦ψ⟧_{M^φ}` (Def 16). Every sentence
+denotes a bilateral inquisitive proposition by construction, which is Fact 4. -/
+def eval (V : At → Set W) : (W → Set W) → Formula At → BilatInqProp W
+  | _, atom p => BilatInqProp.atom (V p)
+  | R, neg φ => (eval V R φ).negate
+  | R, conj φ ψ => (eval V R φ).conj (eval V R ψ)
+  | R, disj φ ψ => (eval V R φ).disj (eval V R ψ)
+  | R, cond φ ψ => eval V (updateAccess R (eval V R φ)) ψ
+  | R, box φ => necessity R (eval V R φ)
+  | R, diamond φ => possibility R (eval V R φ)
 
-/-- `alt` of an atomic disjunction's negative interpretation is the joint
-    complement, via `Question.ofSet_inf`. -/
-private lemma alt_disj_atom_neg (Vp Vq : Set W) :
-    Question.alt (BilatInqProp.disj (BilatInqProp.atom Vp)
-        (BilatInqProp.atom Vq)).neg = ({Vpᶜ ∩ Vqᶜ} : Set (Set W)) := by
-  show Question.alt (Question.ofSet Vpᶜ ⊓ Question.ofSet Vqᶜ) = _
-  rw [Question.ofSet_inf]
-  exact Question.alt_ofSet _
+/-- **Booth Fact 3**, double negation. -/
+theorem eval_neg_neg (V : At → Set W) (R : W → Set W) (φ : Formula At) :
+    eval V R (neg (neg φ)) = eval V R φ :=
+  rfl
 
-/-! ### §6 Worked example: Independence inference on a 3-world model
+/-- **Booth Fact 5**, compactness of alternatives: both interpretations of a sentence are
+finitely generated, so each has finitely many alternatives and is generated by them,
+`⟦φ⟧° = ↓alt°(⟦φ⟧)` (`Question.fg_iff_finite_alt_and_isNormal`). -/
+theorem fg_eval (V : At → Set W) (R : W → Set W) (φ : Formula At) :
+    (eval V R φ).pos.FG ∧ (eval V R φ).neg.FG := by
+  induction φ generalizing R with
+  | atom p => exact ⟨Question.fg_ofSet _, Question.fg_ofSet _⟩
+  | neg φ ih => exact (ih R).symm
+  | conj φ ψ ihφ ihψ => exact ⟨(ihφ R).1.inf (ihψ R).1, (ihφ R).2.sup (ihψ R).2⟩
+  | disj φ ψ ihφ ihψ => exact ⟨(ihφ R).1.sup (ihψ R).1, (ihφ R).2.inf (ihψ R).2⟩
+  | cond φ ψ _ ihψ => exact ihψ _
+  | box φ _ => exact ⟨Question.fg_ofSet _, Question.fg_ofSet _⟩
+  | diamond φ _ => exact ⟨Question.fg_ofSet _, Question.fg_ofSet _⟩
 
-A concrete witness that the m-cover semantics derives Booth Fact 9
-(Independence Inferences). We work on `W₄ = Bool × Bool` (subsets of
-`{p, q}`), with `V p = {(true, _)}` and `V q = {(_, true)}`, and
-constant accessibility `R₃ w := V(p) ∪ V(q)` (the 3 worlds where
-`p ∨ q` is true).
+end Formula
 
-In this model `{V(p), V(q)}` minimally covers `R₃ w` because removing
-either alternative leaves a gap (`V(p)` alone misses `(false, true)`;
-`V(q)` alone misses `(true, false)`). Thus `□(p ∨ q)` is true, and
-the Vp-only world `(true, false)` lies in `R₃ w`, witnessing the
-existential in `◇(p ∧ ¬q)`'s positive-side definition. -/
+/-! ### The meta-language Facts 6 and 7
+
+Booth states both facts for every non-Hurford disjunction (Def 22). Their proofs use that no
+alternative of either disjunct is a state of the other, which is strictly stronger; the facts hold
+under that condition and fail under Def 22. -/
+
+/-- **Booth Fact 7** (the Ross inference is strongly invalid) under the alternative-wise
+non-Hurford condition, once `ψ` has an alternative: `alt⁺(⟦φ⟧)` is then a proper subfamily of
+`alt⁺(⟦φ ∨ ψ⟧)` that still covers the relevant worlds. -/
+theorem ross_strongly_invalid_of_alt {φ ψ : BilatInqProp W}
+    (hφψ : Disjoint (Question.alt φ.pos) ψ.pos) (hψφ : Disjoint (Question.alt ψ.pos) φ.pos)
+    (hψ : (Question.alt ψ.pos).Nonempty) (R : W → Set W) :
+    Disjoint (necessity R φ).truth (necessity R (disj φ ψ)).truth := by
+  refine Set.disjoint_left.2 fun w h₁ h₂ ↦ ?_
+  rw [truth_necessity, Set.mem_ofPred_eq] at h₁ h₂
+  rw [alt_disj_pos_eq_union hφψ hψφ] at h₂
+  obtain ⟨b, hb⟩ := hψ
+  exact Set.disjoint_left.1 hψφ hb (Question.mem_of_mem_alt
+    (h₂.2.le_of_le h₁.2.subset_sUnion Set.subset_union_left (Set.mem_union_right _ hb)))
+
+/-- **Booth Fact 6** (Independence, meta-language) under the alternative-wise non-Hurford
+condition: if `□(φ ∨ ψ)` is true, some relevant world is in the truth set of `φ` but not of `ψ`.
+The alternatives other than a chosen alternative of `φ` fail to cover the relevant worlds, and the
+world they miss lies in no state of `ψ`. -/
+theorem inter_diff_truth_nonempty_of_alt {φ ψ : BilatInqProp W}
+    (hφψ : Disjoint (Question.alt φ.pos) ψ.pos) (hψφ : Disjoint (Question.alt ψ.pos) φ.pos)
+    (hφ : (Question.alt φ.pos).Nonempty) (hψ : ψ.pos.IsNormal) {R : W → Set W} {w : W}
+    (h : w ∈ (necessity R (disj φ ψ)).truth) : (R w ∩ (φ.truth \ ψ.truth)).Nonempty := by
+  rw [truth_necessity, Set.mem_ofPred_eq, alt_disj_pos_eq_union hφψ hψφ] at h
+  obtain ⟨a, ha⟩ := hφ
+  obtain ⟨v, hvR, hv⟩ := Set.not_subset.1 fun hcov ↦
+    (h.2.le_of_le hcov Set.sdiff_subset (Set.mem_union_left _ ha)).2 rfl
+  obtain ⟨c, hc, hvc⟩ := h.2.subset_sUnion hvR
+  have hva : v ∈ a := by
+    by_contra hva
+    exact hv ⟨c, ⟨hc, fun hca ↦ hva (hca ▸ hvc)⟩, hvc⟩
+  refine ⟨v, hvR, Question.subset_info_of_mem (Question.mem_of_mem_alt ha) hva, ?_⟩
+  rintro ⟨s, hs, hvs⟩
+  obtain ⟨b, hb, hsb⟩ := hψ s hs
+  exact hv ⟨b, ⟨.inr hb, fun hba ↦
+    Set.disjoint_left.1 hφψ ha (hba ▸ Question.mem_of_mem_alt hb)⟩, hsb hvs⟩
+
+namespace Formula
+
+variable {At : Type*} {V : At → Set W} {R : W → Set W} {φ ψ : Formula At}
+
+/-- **Booth Fact 7** for sentences under the alternative-wise non-Hurford condition; Fact 5
+supplies the alternative of `ψ`. -/
+theorem ross_strongly_invalid (hφψ : Disjoint (Question.alt (eval V R φ).pos) (eval V R ψ).pos)
+    (hψφ : Disjoint (Question.alt (eval V R ψ).pos) (eval V R φ).pos) :
+    Disjoint (eval V R (box φ)).truth (eval V R (box (disj φ ψ))).truth :=
+  ross_strongly_invalid_of_alt hφψ hψφ (fg_eval V R ψ).1.isNormal.alt_nonempty R
+
+/-- **Booth Fact 6** for sentences under the alternative-wise non-Hurford condition; Fact 5
+supplies the alternatives and the normality of the disjuncts. -/
+theorem independence (hφψ : Disjoint (Question.alt (eval V R φ).pos) (eval V R ψ).pos)
+    (hψφ : Disjoint (Question.alt (eval V R ψ).pos) (eval V R φ).pos) {w : W}
+    (h : w ∈ (eval V R (box (disj φ ψ))).truth) :
+    (R w ∩ ((eval V R φ).truth \ (eval V R ψ).truth)).Nonempty ∧
+      (R w ∩ ((eval V R ψ).truth \ (eval V R φ).truth)).Nonempty := by
+  have hφ := (fg_eval V R φ).1.isNormal
+  have hψ := (fg_eval V R ψ).1.isNormal
+  refine ⟨inter_diff_truth_nonempty_of_alt hφψ hψφ hφ.alt_nonempty hψ h,
+    inter_diff_truth_nonempty_of_alt hψφ hφψ hψ.alt_nonempty hφ ?_⟩
+  rw [BilatInqProp.disj_comm]
+  exact h
+
+end Formula
+
+/-- **Booth Fact 7** as printed, for every non-Hurford disjunction of Def 22, is false: with
+worlds `0, 1, 2`, `φ = r₁ ∨ r₂` for `V(r₁) = {0}`, `V(r₂) = {1}`, `ψ = q` for `V(q) = {0, 2}` and
+`R(0) = {0, 1}`, both `□φ` and `□(φ ∨ ψ)` are true at `0`. The alternative `{0}` of `φ` is a state
+of `ψ`, which the paper's proof overlooks. -/
+theorem not_forall_disjoint_of_nonHurford :
+    ¬ ∀ (W : Type) (R : W → Set W) (φ ψ : BilatInqProp W), NonHurford φ ψ →
+      Disjoint (necessity R φ).truth (necessity R (disj φ ψ)).truth := by
+  intro hall
+  have h01 : NonHurford (atom ({0} : Set (Fin 3))) (atom {1}) := nonHurford_atom_iff.2
+    ⟨fun h ↦ by simpa using h (Set.mem_singleton 0), fun h ↦ by simpa using h (Set.mem_singleton 1)⟩
+  have hNH : NonHurford (disj (atom ({0} : Set (Fin 3))) (atom {1})) (atom {0, 2}) := by
+    refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+    · have : ({1} : Set (Fin 3)) ∈ (atom ({0, 2} : Set (Fin 3))).pos := h (by simp)
+      simp at this
+    · have : ({0, 2} : Set (Fin 3)) ∈ (disj (atom {0}) (atom ({1} : Set (Fin 3)))).pos :=
+        h (by simp)
+      simp at this
+  have hpos : (disj (disj (atom {0}) (atom {1})) (atom ({0, 2} : Set (Fin 3)))).pos =
+      Question.ofSet {0, 2} ⊔ Question.ofSet {1} := by
+    simp only [disj_pos, atom_pos]
+    rw [sup_right_comm, sup_eq_right.2 (Question.ofSet_le_ofSet_iff.2 (by simp))]
+  have hne : ({0, 2} : Set (Fin 3)) ≠ {1} := fun h ↦
+    absurd (h ▸ (show (0 : Fin 3) ∈ ({0, 2} : Set (Fin 3)) by simp)) (by simp)
+  refine Set.disjoint_left.1 (hall (Fin 3) (fun _ ↦ {0, 1}) _ _ hNH)
+    (show (0 : Fin 3) ∈ _ from ?_) ?_
+  · rw [truth_necessity, Set.mem_ofPred_eq, alt_disj_atom h01, isMinCover_pair_iff h01.ne]
+    refine ⟨⟨0, by simp⟩, ?_, ?_, ?_⟩ <;> simp [Set.insert_subset_iff]
+  · rw [truth_necessity, Set.mem_ofPred_eq, hpos, Question.alt_ofSet_sup_ofSet (by simp) (by simp),
+      isMinCover_pair_iff hne]
+    refine ⟨⟨0, by simp⟩, ?_, ?_, ?_⟩ <;> simp [Set.insert_subset_iff]
+
+/-- **Booth Fact 6** as printed, for every non-Hurford disjunction of Def 22, is false: with
+worlds `0, 1, 2`, `φ = r` for `V(r) = {0, 1}`, `ψ = p ∨ q` for `V(p) = {0}`, `V(q) = {1, 2}` and
+`R(0) = W`, `□(φ ∨ ψ)` is true at `0` but every world in the truth set of `φ` is in that of `ψ`. -/
+theorem not_forall_independence_of_nonHurford :
+    ¬ ∀ (W : Type) (R : W → Set W) (φ ψ : BilatInqProp W), NonHurford φ ψ →
+      ∀ w ∈ (necessity R (disj φ ψ)).truth,
+        (R w ∩ (φ.truth \ ψ.truth)).Nonempty ∧ (R w ∩ (ψ.truth \ φ.truth)).Nonempty := by
+  intro hall
+  have hNH : NonHurford (atom ({0, 1} : Set (Fin 3))) (disj (atom {0}) (atom {1, 2})) := by
+    refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+    · have : ({0, 1} : Set (Fin 3)) ∈ (disj (atom {0}) (atom ({1, 2} : Set (Fin 3)))).pos :=
+        h (by simp)
+      simp [Set.insert_subset_iff] at this
+    · have : ({1, 2} : Set (Fin 3)) ∈ (atom ({0, 1} : Set (Fin 3))).pos := h (by simp)
+      simp [Set.insert_subset_iff] at this
+  have hpos : (disj (atom ({0, 1} : Set (Fin 3))) (disj (atom {0}) (atom {1, 2}))).pos =
+      Question.ofSet {0, 1} ⊔ Question.ofSet {1, 2} := by
+    simp only [disj_pos, atom_pos]
+    rw [← sup_assoc, sup_eq_left.2 (Question.ofSet_le_ofSet_iff.2 (by simp))]
+  have hne : ({0, 1} : Set (Fin 3)) ≠ {1, 2} := fun h ↦
+    absurd (h ▸ (show (0 : Fin 3) ∈ ({0, 1} : Set (Fin 3)) by simp)) (by simp)
+  have hbox : (0 : Fin 3) ∈ (necessity (fun _ ↦ Set.univ)
+      (disj (atom ({0, 1} : Set (Fin 3))) (disj (atom {0}) (atom {1, 2})))).truth := by
+    rw [truth_necessity, Set.mem_ofPred_eq, hpos, Question.alt_ofSet_sup_ofSet
+      (by simp [Set.insert_subset_iff]) (by simp [Set.insert_subset_iff]), isMinCover_pair_iff hne]
+    refine ⟨⟨0, trivial⟩, fun x _ ↦ ?_, fun h ↦ ?_, fun h ↦ ?_⟩
+    · fin_cases x <;> simp
+    · simpa using h (Set.mem_univ 2)
+    · simpa using h (Set.mem_univ 0)
+  obtain ⟨x, hx⟩ := (hall (Fin 3) (fun _ ↦ Set.univ) _ _ hNH 0 hbox).1
+  fin_cases x <;> simp at hx
+
+/-! ### The object-language Facts 7–13 -/
+
+section Atomic
+
+variable (R : W → Set W) {Vp Vq : Set W}
+
+/-- **Booth Fact 7** for atoms: the Ross inference `□p ∴ □(p ∨ q)` is strongly invalid. -/
+theorem ross_strongly_invalid (h : NonHurford (atom Vp) (atom Vq)) :
+    Disjoint (necessity R (atom Vp)).truth (necessity R (disj (atom Vp) (atom Vq))).truth := by
+  obtain ⟨hpq, hqp⟩ := nonHurford_atom_iff.1 h
+  refine ross_strongly_invalid_of_alt ?_ ?_ ?_ R
+  · simpa [alt_atom_pos] using hpq
+  · simpa [alt_atom_pos] using hqp
+  · simp
+
+/-- **Booth Fact 8**: the Extended Ross inference `□p, ◇q ∴ □(p ∨ q)` is strongly invalid. -/
+theorem extended_ross_strongly_invalid (h : NonHurford (atom Vp) (atom Vq)) :
+    Disjoint ((necessity R (atom Vp)).truth ∩ (possibility R (atom Vq)).truth)
+      (necessity R (disj (atom Vp) (atom Vq))).truth :=
+  (ross_strongly_invalid R h).mono_left Set.inter_subset_left
+
+/-- **Booth Fact 9**, first Independence inference: `□(p ∨ q)` entails `◇(p ∧ ¬q)`. -/
+theorem independence_left (h : NonHurford (atom Vp) (atom Vq)) :
+    (necessity R (disj (atom Vp) (atom Vq))).truth ⊆
+      (possibility R (conj (atom Vp) (negate (atom Vq)))).truth := by
+  intro w hw
+  rw [truth_necessity, Set.mem_ofPred_eq, alt_disj_atom h, isMinCover_pair_iff h.ne] at hw
+  obtain ⟨v, hvR, hvq⟩ := Set.not_subset.1 hw.2.2.2
+  rw [truth_possibility, Set.mem_ofPred_eq, alt_conj_atom_negate]
+  exact ⟨{v}, Set.singleton_subset_iff.2 hvR, Set.singleton_nonempty v,
+    (isMinCover_singleton_iff (Set.singleton_nonempty v)).2
+      (Set.singleton_subset_iff.2 ⟨(hw.2.1 hvR).resolve_right hvq, hvq⟩)⟩
+
+/-- **Booth Fact 9**, second Independence inference: `□(p ∨ q)` entails `◇(q ∧ ¬p)`. -/
+theorem independence_right (h : NonHurford (atom Vp) (atom Vq)) :
+    (necessity R (disj (atom Vp) (atom Vq))).truth ⊆
+      (possibility R (conj (atom Vq) (negate (atom Vp)))).truth := by
+  rw [disj_comm]
+  exact independence_left R h.symm
+
+/-- **Booth Fact 10**, Free Choice: `◇(p ∨ q)` entails `◇p`. -/
+theorem free_choice_left (h : NonHurford (atom Vp) (atom Vq)) :
+    (possibility R (disj (atom Vp) (atom Vq))).truth ⊆ (possibility R (atom Vp)).truth := by
+  simp only [truth_possibility, Set.ofPred_subset_ofPred]
+  rintro w ⟨R', hR', -, hmc⟩
+  rw [alt_disj_atom h, isMinCover_pair_iff h.ne] at hmc
+  obtain ⟨v, hv, hvq⟩ := Set.not_subset.1 hmc.2.2
+  rw [alt_atom_pos]
+  exact ⟨{v}, Set.singleton_subset_iff.2 (hR' hv), Set.singleton_nonempty v,
+    (isMinCover_singleton_iff (Set.singleton_nonempty v)).2
+      (Set.singleton_subset_iff.2 ((hmc.1 hv).resolve_right hvq))⟩
+
+/-- **Booth Fact 10**, Free Choice: `◇(p ∨ q)` entails `◇q`. -/
+theorem free_choice_right (h : NonHurford (atom Vp) (atom Vq)) :
+    (possibility R (disj (atom Vp) (atom Vq))).truth ⊆ (possibility R (atom Vq)).truth := by
+  rw [disj_comm]
+  exact free_choice_left R h.symm
+
+/-- **Booth Fact 12**, Unnecessity Distribution: `¬□(p ∨ q)` entails `¬□p`. -/
+theorem unnecessity_distribution_left (Vp Vq : Set W) :
+    (necessity R (disj (atom Vp) (atom Vq))).falsity ⊆ (necessity R (atom Vp)).falsity := by
+  simp only [falsity_necessity, Set.ofPred_subset_ofPred]
+  rintro w ⟨R', hR', hne, hmc⟩
+  rw [alt_disj_atom_neg, isMinCover_singleton_iff hne] at hmc
+  rw [alt_atom_neg]
+  exact ⟨R', hR', hne, (isMinCover_singleton_iff hne).2 (hmc.trans Set.inter_subset_left)⟩
+
+/-- **Booth Fact 12**, Unnecessity Distribution: `¬□(p ∨ q)` entails `¬□q`. -/
+theorem unnecessity_distribution_right (Vp Vq : Set W) :
+    (necessity R (disj (atom Vp) (atom Vq))).falsity ⊆ (necessity R (atom Vq)).falsity := by
+  rw [disj_comm]
+  exact unnecessity_distribution_left R Vq Vp
+
+/-- **Booth Fact 13**, Impossibility Distribution: `¬◇(p ∨ q)` entails `¬◇p`. -/
+theorem impossibility_distribution_left (Vp Vq : Set W) :
+    (possibility R (disj (atom Vp) (atom Vq))).falsity ⊆ (possibility R (atom Vp)).falsity := by
+  simp only [falsity_possibility, Set.ofPred_subset_ofPred]
+  rintro w ⟨hne, hmc⟩
+  rw [alt_disj_atom_neg, isMinCover_singleton_iff hne] at hmc
+  rw [alt_atom_neg]
+  exact ⟨hne, (isMinCover_singleton_iff hne).2 (hmc.trans Set.inter_subset_left)⟩
+
+/-- **Booth Fact 13**, Impossibility Distribution: `¬◇(p ∨ q)` entails `¬◇q`. -/
+theorem impossibility_distribution_right (Vp Vq : Set W) :
+    (possibility R (disj (atom Vp) (atom Vq))).falsity ⊆ (possibility R (atom Vq)).falsity := by
+  rw [disj_comm]
+  exact impossibility_distribution_left R Vq Vp
+
+end Atomic
+
+namespace Formula
+
+variable {At : Type*} (V : At → Set W) (R : W → Set W) {p q : At}
+
+/-- **Booth Fact 11**, Independence Conditionals: `□(p ∨ q)` entails `¬p → □q`, whose truth is
+that of `□q` under the accessibility updated with `¬p`. -/
+theorem independence_conditional_left (h : NonHurford (.atom (V p)) (.atom (V q))) :
+    (eval V R (box (disj (atom p) (atom q)))).truth ⊆
+      (eval V R (cond (neg (atom p)) (box (atom q)))).truth := by
+  intro w hw
+  simp only [eval, truth_necessity, Set.mem_ofPred_eq] at hw ⊢
+  rw [alt_disj_atom h, isMinCover_pair_iff h.ne] at hw
+  have hR : updateAccess R (BilatInqProp.atom (V p)).negate w = R w \ V p := by
+    simp [updateAccess, Set.sdiff_eq]
+  have hne : (R w \ V p).Nonempty := Set.sdiff_nonempty.2 hw.2.2.1
+  rw [hR, alt_atom_pos, isMinCover_singleton_iff hne]
+  exact ⟨hne, fun v hv ↦ (hw.2.1 hv.1).resolve_left hv.2⟩
+
+/-- **Booth Fact 11**, Independence Conditionals: `□(p ∨ q)` entails `¬q → □p`. -/
+theorem independence_conditional_right (h : NonHurford (.atom (V p)) (.atom (V q))) :
+    (eval V R (box (disj (atom p) (atom q)))).truth ⊆
+      (eval V R (cond (neg (atom q)) (box (atom p)))).truth := by
+  change (necessity R (.disj (.atom (V p)) (.atom (V q)))).truth ⊆ _
+  rw [BilatInqProp.disj_comm]
+  exact independence_conditional_left V R h.symm
+
+end Formula
+
+/-! ### A model separating Booth's necessity from Kratzer's
+
+Four worlds, the valuations of `p` and `q` over `Bool × Bool`. Where the relevant worlds are
+the three `p ∨ q`-worlds, `{V(p), V(q)}` minimally covers them, so `□(p ∨ q)` and, by Fact 9,
+`◇(p ∧ ¬q)` are true. Where they are the two `p`-worlds, the Kratzerian `□(p ∨ q)` is true but
+Booth's is not: `{V(p)}` alone covers them. -/
 
 namespace BoothExample
 
-/-- 4-world model: subsets of `{p, q}` indexed by `Bool × Bool`. -/
+/-- Worlds: the truth values of `p` and `q`. -/
 abbrev W4 := Bool × Bool
 
-/-- Valuation: `p` true at worlds with first coordinate `true`. -/
-def Vp : Set W4 := {w | w.1 = true}
+/-- `p` is true at the worlds whose first coordinate is `true`. -/
+def vp : Set W4 := {w | w.1 = true}
 
-/-- Valuation: `q` true at worlds with second coordinate `true`. -/
-def Vq : Set W4 := {w | w.2 = true}
+/-- `q` is true at the worlds whose second coordinate is `true`. -/
+def vq : Set W4 := {w | w.2 = true}
 
-/-- The atomic bilateral inquisitive propositions for `p` and `q`. -/
-def p_atom : BilatInqProp W4 := BilatInqProp.atom Vp
-def q_atom : BilatInqProp W4 := BilatInqProp.atom Vq
+/-- The relevant worlds are the three where `p ∨ q` is true. -/
+def r₃ : W4 → Set W4 := fun _ ↦ vp ∪ vq
 
-/-- The disjunction `p ∨ q`. -/
-def p_or_q : BilatInqProp W4 := BilatInqProp.disj p_atom q_atom
+/-- The relevant worlds are the two where `p` is true. -/
+def rP : W4 → Set W4 := fun _ ↦ vp
 
-/-- The conjunction `p ∧ ¬q`. -/
-def p_and_not_q : BilatInqProp W4 :=
-  BilatInqProp.conj p_atom (BilatInqProp.negate q_atom)
+theorem nonHurford : NonHurford (atom vp) (atom vq) :=
+  nonHurford_atom_iff.2 ⟨fun h ↦ absurd (h (show (true, false) ∈ vp from rfl)) (by simp [vq]),
+    fun h ↦ absurd (h (show (false, true) ∈ vq from rfl)) (by simp [vp])⟩
 
-/-- Constant 3-world accessibility: `R₃ w = Vp ∪ Vq`, the worlds where
-    `p ∨ q` is true (excluding `(false, false)`). -/
-def R₃ : W4 → Set W4 := fun _ => Vp ∪ Vq
+theorem box_pOrQ : (true, true) ∈ (necessity r₃ (disj (atom vp) (atom vq))).truth := by
+  rw [truth_necessity, Set.mem_ofPred_eq, alt_disj_atom nonHurford,
+    isMinCover_pair_iff nonHurford.ne]
+  refine ⟨⟨(true, true), .inl rfl⟩, subset_rfl, fun h ↦ ?_, fun h ↦ ?_⟩
+  · exact absurd (h (show (false, true) ∈ r₃ (true, true) from .inr rfl)) (by simp [vp])
+  · exact absurd (h (show (true, false) ∈ r₃ (true, true) from .inl rfl)) (by simp [vq])
 
-/-! #### Pivotal world facts -/
+theorem diamond_pAndNotQ :
+    (true, true) ∈ (possibility r₃ (conj (atom vp) (negate (atom vq)))).truth :=
+  independence_left r₃ nonHurford box_pOrQ
 
-private lemma true_true_in_Vp : ((true, true) : W4) ∈ Vp := by
-  simp only [Vp, Set.mem_ofPred_eq]
-private lemma true_false_in_Vp : ((true, false) : W4) ∈ Vp := by
-  simp only [Vp, Set.mem_ofPred_eq]
-private lemma false_true_in_Vq : ((false, true) : W4) ∈ Vq := by
-  simp only [Vq, Set.mem_ofPred_eq]
-private lemma true_false_not_in_Vq : ((true, false) : W4) ∉ Vq := by
-  simp only [Vq, Set.mem_ofPred_eq]; decide
-private lemma false_true_not_in_Vp : ((false, true) : W4) ∉ Vp := by
-  simp only [Vp, Set.mem_ofPred_eq]; decide
+/-- On the two `p`-worlds Booth's `□(p ∨ q)` is false, by Fact 7, since `□p` is true there. -/
+theorem not_box_pOrQ : (true, true) ∉ (necessity rP (disj (atom vp) (atom vq))).truth := by
+  refine Set.disjoint_left.1 (ross_strongly_invalid rP nonHurford) ?_
+  rw [truth_necessity, Set.mem_ofPred_eq, alt_atom_pos,
+    isMinCover_singleton_iff ⟨(true, true), show (true, true) ∈ rP (true, true) from rfl⟩]
+  exact ⟨⟨(true, true), rfl⟩, subset_rfl⟩
 
-private lemma Vp_nsub_Vq : ¬ Vp ⊆ Vq :=
-  fun h => true_false_not_in_Vq (h true_false_in_Vp)
-private lemma Vq_nsub_Vp : ¬ Vq ⊆ Vp :=
-  fun h => false_true_not_in_Vp (h false_true_in_Vq)
-
-private lemma R₃_nonempty (w : W4) : (R₃ w).Nonempty :=
-  ⟨(true, true), Or.inl true_true_in_Vp⟩
-
-/-! #### Question-algebraic helpers (specializations of §5 helpers) -/
-
-private lemma alt_p_or_q_pos :
-    Question.alt p_or_q.pos = ({Vp, Vq} : Set (Set W4)) :=
-  alt_disj_atom_eq_pair Vp Vq Vp_nsub_Vq Vq_nsub_Vp
-
-private lemma alt_p_and_not_q_pos :
-    Question.alt p_and_not_q.pos = ({Vp ∩ Vqᶜ} : Set (Set W4)) :=
-  alt_conj_atom_negate_eq_singleton Vp Vq
-
-/-! #### The Independence-witness theorems -/
-
-/-- **`□(p ∨ q)` holds at `(true, true)` in the 3-world model.** Both
-    `(R₃ w).Nonempty` and `IsMinCover {Vp, Vq} (Vp ∪ Vq)` are
-    discharged: the latter requires that any cover-subset must contain
-    both `Vp` (witnessed by `(true, false)` ∈ Vp \ Vq) and `Vq`
-    (witnessed by `(false, true)` ∈ Vq \ Vp). -/
-theorem boothExample_necessity_holds :
-    isTrue (BilatInqProp.necessity R₃ p_or_q) ((true, true) : W4) := by
-  show ({((true, true) : W4)} : Set W4) ⊆ _
-  intro w hw
-  rcases Set.mem_singleton_iff.mp hw with rfl
-  refine ⟨R₃_nonempty _, ?_⟩
-  rw [alt_p_or_q_pos]
-  refine ⟨?_, ?_⟩
-  · -- IsCover {Vp, Vq} (Vp ∪ Vq)
-    intro v hv
-    rcases hv with hv | hv
-    · exact ⟨Vp, Set.mem_insert _ _, hv⟩
-    · exact ⟨Vq, Set.mem_insert_of_mem _ rfl, hv⟩
-  · -- Minimality
-    intro Y hYcov hYsub X hXmem
-    rcases Set.mem_insert_iff.mp hXmem with rfl | hX
-    · -- Need Vp ∈ Y. (true, false) ∈ Vp ⊆ Vp ∪ Vq, must be in some Z ∈ Y ⊆ {Vp, Vq}.
-      have h1 : ((true, false) : W4) ∈ Vp ∪ Vq := Or.inl true_false_in_Vp
-      obtain ⟨Z, hZY, hZmem⟩ := hYcov h1
-      have hZ_in : Z ∈ ({Vp, Vq} : Set (Set W4)) := hYsub hZY
-      rcases Set.mem_insert_iff.mp hZ_in with rfl | hZ_or
-      · exact hZY
-      · rcases Set.mem_singleton_iff.mp hZ_or with rfl
-        exact absurd hZmem true_false_not_in_Vq
-    · rcases Set.mem_singleton_iff.mp hX with rfl
-      have h1 : ((false, true) : W4) ∈ Vp ∪ Vq := Or.inr false_true_in_Vq
-      obtain ⟨Z, hZY, hZmem⟩ := hYcov h1
-      have hZ_in : Z ∈ ({Vp, Vq} : Set (Set W4)) := hYsub hZY
-      rcases Set.mem_insert_iff.mp hZ_in with rfl | hZ_or
-      · exact absurd hZmem false_true_not_in_Vp
-      · rcases Set.mem_singleton_iff.mp hZ_or with rfl
-        exact hZY
-
-/-- **`◇(p ∧ ¬q)` holds at `(true, true)` in the 3-world model.** The
-    Vp-only world `(true, false)` witnesses the existential in the
-    possibility's positive-side def: it lies in `R₃ (true, true)` and
-    `{(true, false)}` is m-covered by `{Vp ∩ Vqᶜ}`. -/
-theorem boothExample_possibility_holds :
-    isTrue (BilatInqProp.possibility R₃ p_and_not_q) ((true, true) : W4) := by
-  show ({((true, true) : W4)} : Set W4) ⊆
-    {w : W4 | ∃ R' : Set W4, R' ⊆ R₃ w ∧ R'.Nonempty ∧
-              IsMinCover (Question.alt p_and_not_q.pos) R'}
-  intro w hw
-  rcases Set.mem_singleton_iff.mp hw with rfl
-  refine ⟨{((true, false) : W4)}, ?_, ⟨(true, false), rfl⟩, ?_⟩
-  · -- {(true, false)} ⊆ R₃ (true, true) = Vp ∪ Vq
-    intro v hv
-    rcases Set.mem_singleton_iff.mp hv with rfl
-    exact Or.inl true_false_in_Vp
-  · -- IsMinCover {Vp ∩ Vqᶜ} {(true, false)}
-    rw [alt_p_and_not_q_pos]
-    exact isMinCover_singleton ⟨(true, false), rfl⟩
-      (Set.singleton_subset_iff.mpr ⟨true_false_in_Vp, true_false_not_in_Vq⟩)
-
-/-- **Independence inference on the 3-world model**: `□(p ∨ q)` and
-    `◇(p ∧ ¬q)` are jointly true at `(true, true)`. This is a concrete
-    witness that the m-cover semantics derives Booth Fact 9 — Kratzerian
-    cover semantics on the same model would validate `□(p ∨ q)` but
-    leave `◇(p ∧ ¬q)` underivable. -/
-theorem boothExample_independence :
-    isTrue (BilatInqProp.necessity R₃ p_or_q) ((true, true) : W4) ∧
-    isTrue (BilatInqProp.possibility R₃ p_and_not_q) ((true, true) : W4) :=
-  ⟨boothExample_necessity_holds, boothExample_possibility_holds⟩
+/-- On the two `p`-worlds the Kratzerian `□(p ∨ q)` of Def 1 is true: they lie in the truth set
+of `p ∨ q`. -/
+theorem kratzer_box_pOrQ : rP (true, true) ⊆ (disj (atom vp) (atom vq)).truth := by
+  simp [rP]
 
 end BoothExample
-
-/-! ### §7 Compactness equations (Booth Fact 5) per constructor
-
-For each `BilatInqProp` constructor, the compactness equation
-`(... constructor ...).pos = ⨆ p ∈ alt _.pos, ofSet p` (and the
-dual `.neg` form where it differs). Each is an instance of
-`Question.IsNormal.eq_iSup_ofSet_alt`: the modal and atomic clauses are
-declaratives, which are normal, and normality is closed under
-disjunction, so the disjunctive equation needs no non-Hurford condition.
-
-These are the building blocks for proving compactness of any specific
-`BilatInqProp` formula. (The fully general statement for arbitrary
-formulas requires an inductive `BSML.Formula` type with an interpretation
-function; that's deferred.) -/
-
-/-- Compactness equation for `atom V`'s positive interpretation, the
-    declarative of `V`. -/
-theorem pos_eq_iSup_alt_atom (V : Set W) :
-    (BilatInqProp.atom V).pos =
-      ⨆ p ∈ Question.alt (BilatInqProp.atom V).pos, Question.ofSet p :=
-  (Question.isNormal_ofSet V).eq_iSup_ofSet_alt
-
-/-- Dual of `pos_eq_iSup_alt_atom` for `.neg`. -/
-theorem neg_eq_iSup_alt_atom (V : Set W) :
-    (BilatInqProp.atom V).neg =
-      ⨆ p ∈ Question.alt (BilatInqProp.atom V).neg, Question.ofSet p :=
-  (Question.isNormal_ofSet Vᶜ).eq_iSup_ofSet_alt
-
-/-- Compactness for `negate φ`'s positive interpretation reduces to
-    compactness of `φ.neg` (since `(negate φ).pos = φ.neg` by `rfl`). -/
-theorem pos_eq_iSup_alt_negate (φ : BilatInqProp W)
-    (hφ : φ.neg = ⨆ p ∈ Question.alt φ.neg, Question.ofSet p) :
-    (BilatInqProp.negate φ).pos =
-      ⨆ p ∈ Question.alt (BilatInqProp.negate φ).pos, Question.ofSet p := hφ
-
-/-- Dual of `pos_eq_iSup_alt_negate`. -/
-theorem neg_eq_iSup_alt_negate (φ : BilatInqProp W)
-    (hφ : φ.pos = ⨆ p ∈ Question.alt φ.pos, Question.ofSet p) :
-    (BilatInqProp.negate φ).neg =
-      ⨆ p ∈ Question.alt (BilatInqProp.negate φ).neg, Question.ofSet p := hφ
-
-/-- Compactness equation for `necessity R φ`'s positive interpretation:
-    a single declarative whose alt is the singleton witness w-set. -/
-theorem pos_eq_iSup_alt_necessity (R : W → Set W) (φ : BilatInqProp W) :
-    (BilatInqProp.necessity R φ).pos =
-      ⨆ p ∈ Question.alt (BilatInqProp.necessity R φ).pos, Question.ofSet p :=
-  (Question.isNormal_ofSet _).eq_iSup_ofSet_alt
-
-/-- The `alt` of `necessity`'s `.neg` is the singleton of the existential
-    witness w-set (same shape as `alt_necessity_pos` with the existential
-    substituted for the `m-cover R(w)` form). -/
-theorem alt_necessity_neg (R : W → Set W) (φ : BilatInqProp W) :
-    Question.alt (BilatInqProp.necessity R φ).neg =
-      ({{w : W | ∃ R' : Set W, R' ⊆ R w ∧ R'.Nonempty ∧
-          IsMinCover (Question.alt φ.neg) R'}} : Set (Set W)) := by
-  show Question.alt (Question.ofSet _) = _
-  exact Question.alt_ofSet _
-
-/-- Dual of `pos_eq_iSup_alt_necessity` for `.neg`. -/
-theorem neg_eq_iSup_alt_necessity (R : W → Set W) (φ : BilatInqProp W) :
-    (BilatInqProp.necessity R φ).neg =
-      ⨆ p ∈ Question.alt (BilatInqProp.necessity R φ).neg, Question.ofSet p :=
-  (Question.isNormal_ofSet _).eq_iSup_ofSet_alt
-
-/-- Compactness for `disj φ ψ`'s positive interpretation from normality
-    of the summands' positive interpretations, whose join is normal
-    (`Question.IsNormal.sup`) whether or not the disjunction is
-    non-Hurford. -/
-theorem pos_eq_iSup_alt_disj (φ ψ : BilatInqProp W)
-    (hφ : φ.pos.IsNormal) (hψ : ψ.pos.IsNormal) :
-    (BilatInqProp.disj φ ψ).pos =
-      ⨆ p ∈ Question.alt (BilatInqProp.disj φ ψ).pos, Question.ofSet p :=
-  (hφ.sup hψ).eq_iSup_ofSet_alt
-
-/-- Compactness for `possibility R φ`'s positive interpretation. Direct
-    via duality: `(possibility R φ).pos = (necessity R (negate φ)).neg`,
-    and the latter is compact via `neg_eq_iSup_alt_necessity`. -/
-theorem pos_eq_iSup_alt_possibility (R : W → Set W) (φ : BilatInqProp W) :
-    (BilatInqProp.possibility R φ).pos =
-      ⨆ p ∈ Question.alt (BilatInqProp.possibility R φ).pos, Question.ofSet p :=
-  neg_eq_iSup_alt_necessity R (BilatInqProp.negate φ)
-
-/-! ### §8 The paper's predictions, atomic case (Booth Facts 7–13)
-
-The paper states its object-language results over models where `p ∨ q` is a
-non-Hurford disjunction of atoms; the theorems below mirror that scope over
-an arbitrary accessibility `R` and world type. The meta-language Fact 6 for
-arbitrary non-Hurford `φ ∨ ψ` needs the compactness equations of §7 composed
-over a formula syntax. -/
-
-/-- From a minimal `{Vp, Vq}` cover of `S`: a point of `S` inside `Vp` and
-    outside `Vq`. Minimality is exactly what rules out `{Vq}` covering
-    alone. -/
-private lemma exists_left_witness {Vp Vq S : Set W} (hne : Vp ≠ Vq)
-    (hmc : IsMinCover ({Vp, Vq} : Set (Set W)) S) :
-    ∃ v ∈ S, v ∈ Vp ∧ v ∉ Vq := by
-  have hno : ¬ IsCover ({Vq} : Set (Set W)) S := by
-    intro hcover
-    have hsup : ({Vp, Vq} : Set (Set W)) ⊆ {Vq} :=
-      hmc.le_of_le hcover
-        (Set.singleton_subset_iff.mpr (Set.mem_insert_of_mem _ rfl))
-    exact hne (Set.mem_singleton_iff.mp (hsup (Set.mem_insert _ _)))
-  simp only [IsCover, Set.sUnion_singleton, Set.not_subset] at hno
-  obtain ⟨v, hvS, hvq⟩ := hno
-  have hcov : S ⊆ Vp ∪ Vq := by
-    simpa [IsCover, Set.sUnion_insert, Set.sUnion_singleton] using hmc.isCover
-  exact ⟨v, hvS, (hcov hvS).resolve_right hvq, hvq⟩
-
-/-- **Booth Fact 9** (object-language Independence, the paper's atomic
-    scope): when `p ∨ q` is non-Hurford, `□(p ∨ q)` entails `◇(p ∧ ¬q)` —
-    the minimal cover forces a `p`-without-`q` world among the relevant
-    ones. -/
-theorem independence_p_not_q (R : W → Set W) (Vp Vq : Set W)
-    (h : ¬ Vp ⊆ Vq ∧ ¬ Vq ⊆ Vp) (w : W)
-    (hT : isTrue (BilatInqProp.necessity R
-      (BilatInqProp.disj (BilatInqProp.atom Vp) (BilatInqProp.atom Vq))) w) :
-    isTrue (BilatInqProp.possibility R
-      (BilatInqProp.conj (BilatInqProp.atom Vp)
-        (BilatInqProp.negate (BilatInqProp.atom Vq)))) w := by
-  rw [isTrue_necessity_iff, alt_disj_atom_eq_pair Vp Vq h.1 h.2] at hT
-  obtain ⟨v, hvR, hvVp, hvq⟩ := exists_left_witness (fun h' => h.1 h'.le) hT.2
-  rw [isTrue_possibility_iff, alt_conj_atom_negate_eq_singleton]
-  exact ⟨{v}, Set.singleton_subset_iff.mpr hvR, ⟨v, rfl⟩,
-    isMinCover_singleton ⟨v, rfl⟩ (Set.singleton_subset_iff.mpr ⟨hvVp, hvq⟩)⟩
-
-/-- **Booth Fact 7** (atomic): the Ross inference is strongly invalid — no
-    world verifies `□p` and `□(p ∨ q)` together when `p ∨ q` is non-Hurford,
-    since with the relevant worlds inside `Vp` the pair is no longer a
-    minimal cover. -/
-theorem ross_strongly_invalid (R : W → Set W) (Vp Vq : Set W)
-    (h : ¬ Vp ⊆ Vq ∧ ¬ Vq ⊆ Vp) (w : W) :
-    ¬ (isTrue (BilatInqProp.necessity R (BilatInqProp.atom Vp)) w ∧
-        isTrue (BilatInqProp.necessity R
-          (BilatInqProp.disj (BilatInqProp.atom Vp)
-            (BilatInqProp.atom Vq))) w) := by
-  rintro ⟨h1, h2⟩
-  rw [isTrue_necessity_iff, alt_atom_pos] at h1
-  rw [isTrue_necessity_iff, alt_disj_atom_eq_pair Vp Vq h.1 h.2] at h2
-  have hRVp : R w ⊆ Vp := by
-    simpa [IsCover, Set.sUnion_singleton] using h1.2.isCover
-  have hsup : ({Vp, Vq} : Set (Set W)) ⊆ {Vp} :=
-    h2.2.le_of_le (fun v hv => ⟨Vp, rfl, hRVp hv⟩)
-      (Set.singleton_subset_iff.mpr (Set.mem_insert _ _))
-  exact h.2
-    (Set.mem_singleton_iff.mp (hsup (Set.mem_insert_of_mem _ rfl))).le
-
-/-- **Booth Fact 8** (atomic): the Extended Ross inference is just as
-    strongly invalid — adding the Diversity premise `◇q` does not help. -/
-theorem extended_ross_strongly_invalid (R : W → Set W) (Vp Vq : Set W)
-    (h : ¬ Vp ⊆ Vq ∧ ¬ Vq ⊆ Vp) (w : W) :
-    ¬ (isTrue (BilatInqProp.necessity R (BilatInqProp.atom Vp)) w ∧
-        isTrue (BilatInqProp.possibility R (BilatInqProp.atom Vq)) w ∧
-        isTrue (BilatInqProp.necessity R
-          (BilatInqProp.disj (BilatInqProp.atom Vp)
-            (BilatInqProp.atom Vq))) w) :=
-  fun ⟨h1, _, h3⟩ => ross_strongly_invalid R Vp Vq h w ⟨h1, h3⟩
-
-/-- **Booth Fact 10** (Free Choice): `◇(p ∨ q)` entails `◇p` — some subset
-    of the relevant worlds is minimally pair-covered, so a `p`-without-`q`
-    world is relevant. -/
-theorem free_choice (R : W → Set W) (Vp Vq : Set W)
-    (h : ¬ Vp ⊆ Vq ∧ ¬ Vq ⊆ Vp) (w : W)
-    (hT : isTrue (BilatInqProp.possibility R
-      (BilatInqProp.disj (BilatInqProp.atom Vp) (BilatInqProp.atom Vq))) w) :
-    isTrue (BilatInqProp.possibility R (BilatInqProp.atom Vp)) w := by
-  rw [isTrue_possibility_iff] at hT ⊢
-  obtain ⟨R', hR'sub, hR'ne, hmc⟩ := hT
-  rw [alt_disj_atom_eq_pair Vp Vq h.1 h.2] at hmc
-  obtain ⟨v, hvR', hvVp, -⟩ := exists_left_witness (fun h' => h.1 h'.le) hmc
-  rw [alt_atom_pos]
-  exact ⟨{v}, Set.singleton_subset_iff.mpr (hR'sub hvR'), ⟨v, rfl⟩,
-    isMinCover_singleton ⟨v, rfl⟩ (Set.singleton_subset_iff.mpr hvVp)⟩
-
-/-- **Booth Fact 12** (Unnecessity Distribution): the falsity of `□(p ∨ q)`
-    yields the falsity of `□p` — a subset minimally covered by the joint
-    complement is covered by `p`'s complement alone. -/
-theorem unnecessity_distribution (R : W → Set W) (Vp Vq : Set W) (w : W)
-    (hT : isFalse (BilatInqProp.necessity R
-      (BilatInqProp.disj (BilatInqProp.atom Vp) (BilatInqProp.atom Vq))) w) :
-    isFalse (BilatInqProp.necessity R (BilatInqProp.atom Vp)) w := by
-  rw [isFalse_necessity_iff] at hT ⊢
-  obtain ⟨R', hsub, hne, hmc⟩ := hT
-  rw [alt_disj_atom_neg] at hmc
-  rw [alt_atom_neg]
-  have hR' : R' ⊆ Vpᶜ ∩ Vqᶜ := by
-    have := hmc.isCover
-    simpa [IsCover, Set.sUnion_singleton, Set.subset_inter_iff] using this
-  exact ⟨R', hsub, hne, isMinCover_singleton hne fun v hv => (hR' hv).1⟩
-
-/-- **Booth Fact 13** (Impossibility Distribution): the falsity of
-    `◇(p ∨ q)` yields the falsity of `◇p` — `¬◇φ` is `□¬φ`, and relevant
-    worlds inside the joint complement sit inside `p`'s complement. -/
-theorem impossibility_distribution (R : W → Set W) (Vp Vq : Set W) (w : W)
-    (hT : isFalse (BilatInqProp.possibility R
-      (BilatInqProp.disj (BilatInqProp.atom Vp) (BilatInqProp.atom Vq))) w) :
-    isFalse (BilatInqProp.possibility R (BilatInqProp.atom Vp)) w := by
-  rw [isFalse_possibility_iff] at hT ⊢
-  obtain ⟨hne, hmc⟩ := hT
-  rw [alt_disj_atom_neg] at hmc
-  rw [alt_atom_neg]
-  have hR : R w ⊆ Vpᶜ ∩ Vqᶜ := by
-    have := hmc.isCover
-    simpa [IsCover, Set.sUnion_singleton, Set.subset_inter_iff] using this
-  exact ⟨hne, isMinCover_singleton hne fun v hv => (hR hv).1⟩
 
 end Booth2022
