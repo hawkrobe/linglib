@@ -633,7 +633,8 @@ def stand : Verb where
 /-- "walk" — Levin 51.3 Manner of Motion verbs. -/
 def walk : Verb := .mkRegular {
   form := "walk"
-  frames := [ArgumentFrame.intransitive, ArgumentFrame.np, ArgumentFrame.unaccusative]
+  frames := [ArgumentFrame.intransitive, ArgumentFrame.np, ArgumentFrame.unaccusative,
+    ArgumentFrame.spatialPP]
   passivizable := false
   vendlerClass := some .activity
   direction := some .place
@@ -646,7 +647,8 @@ def swim : Verb where
   formPast := "swam"
   formPastPart := "swum"
   formPresPart := "swimming"
-  frames := [ArgumentFrame.intransitive, ArgumentFrame.np, ArgumentFrame.unaccusative]
+  frames := [ArgumentFrame.intransitive, ArgumentFrame.np, ArgumentFrame.unaccusative,
+    ArgumentFrame.spatialPP]
   passivizable := false
   vendlerClass := some .activity
   direction := some .place
@@ -667,7 +669,8 @@ def fly : Verb where
 /-- "roll" — Levin 51.3.1 Roll verbs (manner of motion). -/
 def roll : Verb := .mkRegular {
   form := "roll"
-  frames := [ArgumentFrame.intransitive, ArgumentFrame.np, ArgumentFrame.unaccusative]
+  frames := [ArgumentFrame.intransitive, ArgumentFrame.np, ArgumentFrame.unaccusative,
+    ArgumentFrame.spatialPP]
   passivizable := false
   vendlerClass := some .activity
   direction := some .place

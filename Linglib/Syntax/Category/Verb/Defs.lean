@@ -308,6 +308,14 @@ def Verb.TakesClausal (v : Verb) : Prop := ∃ fr ∈ v.frames, fr.HasClausal
 instance (v : Verb) : Decidable v.TakesClausal :=
   inferInstanceAs (Decidable (∃ fr ∈ v.frames, _))
 
+/-- Some frame of the verb has a spatial adpositional position, so the verb selects a locative or
+    directional phrase as a complement. -/
+def Verb.TakesSpatial (v : Verb) : Prop :=
+  ∃ fr ∈ v.frames, ∃ p ∈ fr.complements, p.relation? = some .spatial
+
+instance (v : Verb) : Decidable v.TakesSpatial :=
+  inferInstanceAs (Decidable (∃ fr ∈ v.frames, _))
+
 /-- Some frame of the verb has a nominal position, so the verb selects a DP. -/
 def Verb.TakesNominal (v : Verb) : Prop := ∃ fr ∈ v.frames, fr.HasNominal
 
