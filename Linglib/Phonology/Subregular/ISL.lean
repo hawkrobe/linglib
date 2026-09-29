@@ -5,252 +5,205 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Data.List.Basic
 public import Linglib.Core.Data.Fintype.List
 public import Linglib.Core.Data.List.DropRight
 public import Linglib.Core.Computability.Subsequential
+public import Linglib.Core.Computability.MyhillNerode
 
 /-!
-# Input Strictly Local (ISL) Functions
+# Input strictly local functions
 
-A function `f : List α → List β` is **k-Input Strictly Local** when each
-output block depends only on the last `k - 1` input symbols plus the
-current input symbol. ISL is the most restrictive class of the
-function-level subregular hierarchy.
+This file defines the input strictly local functions. A function `f : List α → List β` is
+*`k`-input strictly local* (`k`-ISL) when the block it emits for each input symbol depends only
+on that symbol and the `k - 1` input symbols before it. Chandlee introduced the class for the
+local phonological processes that apply simultaneously, such as substitution, epenthesis,
+deletion and metathesis, and Chandlee, Eyraud and Heinz characterize it by tails. We compute ISL
+functions by rules, show that a function is `k`-ISL exactly when its residuals factor through
+the last `k - 1` input symbols, and prove that the classes nest in `k`, begin at `k = 1` with the
+letterwise homomorphisms, and are subsequential over a finite alphabet.
 
 ## Main definitions
 
-* `ISLRule k α β`: a `k`-ISL rule: a window-based output function
-  `List α → α → List β` consuming the `k - 1`-symbol left context plus
-  the current input symbol and emitting an output block.
-* `ISLRule.apply`: the induced string function `List α → List β`.
-* `IsLeftInputStrictlyLocal k f`, `IsRightInputStrictlyLocal k f`:
-  witness predicates: there exists an `ISLRule k α β` whose `apply`
-  computes `f` (resp. via right-to-left scan).
-* `IsInputStrictlyLocal d k f`: direction-parameterised umbrella.
+* `ISLRule k α β`: a rule emitting a block from a window of `k - 1` input symbols
+* `ISLRule.apply`: the function a rule computes
+* `IsLeftInputStrictlyLocal k f`, `IsRightInputStrictlyLocal k f`: some rule computes `f`,
+  scanning left to right or right to left
 
 ## Main results
 
-* `isRightInputStrictlyLocal_iff_left_reverse`: the right class is the
-  reverse-conjugate of the left class.
-* `isLeftInputStrictlyLocal_left_subsequential`: every Left-ISL
-  function is Left-Subsequential, as a window recursion over the input.
-* `flatMap_isLeftInputStrictlyLocal_one`,
-  `filterMap_isLeftInputStrictlyLocal_one` — letterwise homomorphisms and
-  erasing (tier) projections are the `k = 1` specialisation.
+* `isLeftInputStrictlyLocal_iff_factorsThrough_residual`: characterization by residuals
+* `IsLeftInputStrictlyLocal.weaken`: `k`-ISL functions are `k'`-ISL for `k ≤ k'`
+* `isLeftInputStrictlyLocal_one_iff`: the `1`-ISL functions are the letterwise homomorphisms
+* `IsLeftInputStrictlyLocal.isLeftSubsequential`: ISL functions are subsequential
 
 ## Implementation notes
 
-The witness style `IsX k f := ∃ r : XRule k α β, r.apply = f` mirrors
-`Language.IsStrictlyLocal L k := ∃ G, G.language k = L` from
-`StrictlyLocal.lean`. The `k` parameter is a type-level annotation only:
-`windowOutput` is unconstrained at the type level; `applyAux` truncates the
-threaded window to length `k - 1`.
+Rules carry neither the initial nor the final output of Chandlee, Eyraud and Heinz's
+transducers, so the classes are the sequential ones with `f [] = []`; final devoicing, left-ISL
+there through a final output, is right-ISL here. `0`-ISL and `1`-ISL coincide, and `k` indexes
+`apply` alone.
+
+## References
+
+* [J. Chandlee, *Strictly Local Phonological Processes* (2014)][chandlee-2014]
+* [J. Chandlee, R. Eyraud and J. Heinz, *Learning Strictly Local Subsequential Functions*
+  (2014)][chandlee-eyraud-heinz-2014]
+* [J. Chandlee and J. Heinz, *Strict Locality and Phonological Maps* (2018)][chandlee-heinz-2018]
 -/
 
 @[expose] public section
 
 namespace Subregular
 
-variable {α β : Type*}
+open SubsequentialTransducer Function
 
-/-- A **k-Input-Strictly-Local rule** over input alphabet `α` and output
-alphabet `β`. The single field `windowOutput` consumes the
-(k − 1)-symbol left context window plus the current input symbol and
-emits an output block (a list of output symbols, which can be empty for
-deletion or contain multiple symbols for insertion-on-trigger).
+variable {α β : Type*} {k k' : ℕ} {f : List α → List β}
 
-The `k` parameter is purely a type-level annotation — it constrains the
-*intended semantics* of `windowOutput`'s first argument (the caller in
-`apply` always supplies a window of length at most `k - 1`) but is not
-enforced by the type. This mirrors `StrictlyLocalGrammar k α` from
-`StrictlyLocal.lean`, where the `permitted` factor set is similarly
-unconstrained at the type level. -/
+/-- A **`k`-input strictly local rule** emits, for each input symbol, a block of output symbols
+computed from the last `k - 1` input symbols and the symbol itself. -/
 structure ISLRule (k : ℕ) (α β : Type*) where
-  /-- Map from (left-context window, current input symbol) to output
-  block. The window argument has length at most `k - 1` when called by
-  `ISLRule.apply`. -/
+  /-- The block emitted for the current symbol after the given window of preceding input. -/
   windowOutput : List α → α → List β
 
 namespace ISLRule
 
-variable {k : ℕ}
+variable (r : ISLRule k α β)
 
-/-- Apply the rule, threading a window of accumulated input symbols: the window
-recursion `SubsequentialTransducer.windowRun` accumulating the input, so the window grows
-from `[]` and is truncated to at most `k − 1` symbols at each step. -/
-def applyAux (r : ISLRule k α β) : (window : List α) → (rest : List α) → List β :=
-  SubsequentialTransducer.windowRun (k - 1) r.windowOutput fun _ x => [x]
+/-- The rule applied from a given window, the window recursion `windowRun` that accumulates the
+input truncated to `k - 1` symbols. -/
+def applyAux : (window : List α) → (rest : List α) → List β :=
+  windowRun (k - 1) r.windowOutput fun _ x ↦ [x]
 
-/-- Apply a k-ISL rule to an input string. Scans left-to-right; at each
-position emits `r.windowOutput window x` where `window` is the (last
-`k − 1`) preceding input symbols and `x` is the current symbol. -/
-def apply (r : ISLRule k α β) (input : List α) : List β :=
-  applyAux r [] input
+/-- The string function computed by the rule, scanning left to right from the empty window. -/
+def apply (input : List α) : List β :=
+  r.applyAux [] input
 
-@[simp] lemma applyAux_nil (r : ISLRule k α β) (window : List α) :
-    r.applyAux window [] = [] := rfl
+@[simp] lemma applyAux_nil (window : List α) : r.applyAux window [] = [] := rfl
 
-@[simp] lemma applyAux_cons (r : ISLRule k α β) (window : List α)
-    (x : α) (xs : List α) :
+@[simp] lemma applyAux_cons (window : List α) (x : α) (xs : List α) :
     r.applyAux window (x :: xs)
       = r.windowOutput window x ++ r.applyAux ((window ++ [x]).rtake (k - 1)) xs :=
   rfl
 
-@[simp] lemma apply_nil (r : ISLRule k α β) : r.apply [] = [] := rfl
+@[simp] lemma apply_nil : r.apply [] = [] := rfl
 
-@[simp] lemma apply_singleton (r : ISLRule k α β) (x : α) :
-    r.apply [x] = r.windowOutput [] x := by
-  show r.windowOutput [] x ++ r.applyAux _ [] = r.windowOutput [] x
-  exact List.append_nil _
+@[simp] lemma apply_singleton (x : α) : r.apply [x] = r.windowOutput [] x :=
+  List.append_nil _
+
+private lemma windowRun_input (n : ℕ) (w u : List α) :
+    windowRun n (fun _ x ↦ [x]) (fun _ x ↦ [x]) w u = u := by
+  induction u generalizing w with
+  | nil => rfl
+  | cons y ys ih => simp [windowRun, ih]
+
+/-- The window before each symbol is the last `k - 1` symbols of the input read so far. -/
+theorem apply_append_singleton (u : List α) (x : α) :
+    r.apply (u ++ [x]) = r.apply u ++ r.windowOutput (u.rtake (k - 1)) x := by
+  have h := windowRun_append_singleton (out := r.windowOutput) (upd := fun _ x ↦ [x])
+    (w := []) (Nat.zero_le (k - 1)) u x
+  rwa [windowRun_input, List.nil_append] at h
 
 end ISLRule
 
-/-- `f : List α → List β` is **k-Left-Input-Strictly-Local** iff some
-`k`-ISL rule computes it via left-to-right scan. -/
+/-- `f` is **`k`-left-input strictly local** if some `k`-ISL rule computes it. -/
 def IsLeftInputStrictlyLocal (k : ℕ) (f : List α → List β) : Prop :=
   ∃ r : ISLRule k α β, r.apply = f
 
-/-- `f : List α → List β` is **k-Right-Input-Strictly-Local** iff its reverse-conjugate
-is k-Left-ISL — some `k`-ISL rule computes it via right-to-left scan. -/
+/-- `f` is **`k`-right-input strictly local** if its reverse-conjugate is `k`-left-ISL, that is,
+if some `k`-ISL rule computes it scanning right to left. -/
 def IsRightInputStrictlyLocal (k : ℕ) (f : List α → List β) : Prop :=
   IsLeftInputStrictlyLocal k (List.revConj f)
 
-/-- ScanDirection-parameterised ISL predicate. Mirrors the OSL/Subseq
-umbrella style; concrete claims should typically use one of
-`IsLeftInputStrictlyLocal` / `IsRightInputStrictlyLocal` directly for
-clarity. -/
-def IsInputStrictlyLocal (d : ScanDirection) (k : ℕ)
-    (f : List α → List β) : Prop :=
-  match d with
-  | .left => IsLeftInputStrictlyLocal k f
-  | .right => IsRightInputStrictlyLocal k f
-
-@[simp] lemma isInputStrictlyLocal_left (k : ℕ) (f : List α → List β) :
-    IsInputStrictlyLocal .left k f ↔ IsLeftInputStrictlyLocal k f := Iff.rfl
-
-@[simp] lemma isInputStrictlyLocal_right (k : ℕ) (f : List α → List β) :
-    IsInputStrictlyLocal .right k f ↔ IsRightInputStrictlyLocal k f := Iff.rfl
-
-/-- Every ISL rule witnesses `IsLeftInputStrictlyLocal` for the function
-it computes. -/
-lemma ISLRule.isLeftInputStrictlyLocal_apply {k : ℕ} (r : ISLRule k α β) :
+lemma ISLRule.isLeftInputStrictlyLocal_apply (r : ISLRule k α β) :
     IsLeftInputStrictlyLocal k r.apply :=
   ⟨r, rfl⟩
 
-/-- **Reverse-conjugation lemma**: a function is k-Right-ISL iff its reverse-conjugate
-is k-Left-ISL — definitionally, with the conjugated class as primary. -/
-theorem isRightInputStrictlyLocal_iff_left_reverse {k : ℕ}
-    (f : List α → List β) :
-    IsRightInputStrictlyLocal k f
-      ↔ IsLeftInputStrictlyLocal k (fun xs => (f xs.reverse).reverse) :=
-  Iff.rfl
+/-! ### Residuals -/
 
-/-- The empty-output function is ISL for any `k`. Witness: the rule that
-emits `[]` regardless of window or current symbol. -/
-lemma isLeftInputStrictlyLocal_const_nil (k : ℕ) :
-    IsLeftInputStrictlyLocal (α := α) (β := β) k (fun _ => []) := by
-  refine ⟨⟨fun _ _ => []⟩, funext fun input => ?_⟩
-  suffices h : ∀ window : List α,
-      (⟨fun _ _ => []⟩ : ISLRule k α β).applyAux window input = [] from h []
-  intro window
-  induction input generalizing window <;> simp [*]
+lemma IsLeftInputStrictlyLocal.map_nil (hf : IsLeftInputStrictlyLocal k f) : f [] = [] := by
+  obtain ⟨r, rfl⟩ := hf
+  rfl
 
-/-! ### Letterwise homomorphisms / Tier as the `k = 1` specialisation
+theorem IsLeftInputStrictlyLocal.isPrefix (hf : IsLeftInputStrictlyLocal k f) (u v : List α) :
+    f u <+: f (u ++ v) := by
+  obtain ⟨r, rfl⟩ := hf
+  exact isPrefix_append_of_append_singleton (fun u x ↦ ⟨_, (r.apply_append_singleton u x).symm⟩)
+    u v
 
-A letterwise string homomorphism `h : α → List β` (string action `List.flatMap h`,
-the free-monoid lift) is the `k = 1` specialisation: the window argument is always
-empty and only the current input symbol matters. An erasing letterwise map
-`g : α → Option β` (string action `List.filterMap g`) is the further erasing
-specialisation. -/
+/-- The residuals of a `k`-ISL function factor through the last `k - 1` input symbols, so inputs
+ending alike have the same continuations. -/
+theorem IsLeftInputStrictlyLocal.factorsThrough_residual (hf : IsLeftInputStrictlyLocal k f) :
+    f.residual.FactorsThrough fun u ↦ u.rtake (k - 1) := by
+  obtain ⟨r, rfl⟩ := hf
+  exact factorsThrough_residual_of_append_singleton (fun w x ↦ (w ++ [x]).rtake (k - 1))
+    r.windowOutput (fun u x ↦ (List.rtake_append_rtake _ _ _).symm) r.apply_append_singleton
 
-/-- Embed a letterwise string homomorphism `h : α → List β` as a 1-ISL rule (no left
-context). The windowOutput ignores its window argument and behaves letterwise. -/
-def ISLRule.ofStringHom (h : α → List β) : ISLRule 1 α β where
-  windowOutput := fun _ x => h x
+theorem IsLeftInputStrictlyLocal.of_factorsThrough_residual (h₀ : f [] = [])
+    (hpre : ∀ u v, f u <+: f (u ++ v))
+    (hf : f.residual.FactorsThrough fun u ↦ u.rtake (k - 1)) :
+    IsLeftInputStrictlyLocal k f := by
+  obtain ⟨g, hg⟩ := exists_append_singleton_of_factorsThrough_residual hpre hf
+  refine ⟨⟨g⟩, funext fun u ↦ ?_⟩
+  induction u using List.reverseRecOn with
+  | nil => exact h₀.symm
+  | append_singleton u x ih => rw [ISLRule.apply_append_singleton, hg, ih]
 
-private lemma ISLRule.applyAux_ofStringHom (h : α → List β)
-    (window : List α) (xs : List α) :
-    (ISLRule.ofStringHom h).applyAux window xs = List.flatMap h xs := by
-  induction xs generalizing window with
-  | nil => rfl
-  | cons x ys ih =>
-    show h x ++ _ = h x ++ _
-    congr 1
-    exact ih _
+/-- A function is `k`-ISL if and only if it fixes `[]`, is prefix-preserving, and has residuals
+factoring through the last `k - 1` input symbols. -/
+theorem isLeftInputStrictlyLocal_iff_factorsThrough_residual :
+    IsLeftInputStrictlyLocal k f ↔ f [] = [] ∧ (∀ u v, f u <+: f (u ++ v)) ∧
+      f.residual.FactorsThrough fun u ↦ u.rtake (k - 1) :=
+  ⟨fun hf ↦ ⟨hf.map_nil, hf.isPrefix, hf.factorsThrough_residual⟩,
+    fun h ↦ .of_factorsThrough_residual h.1 h.2.1 h.2.2⟩
 
-/-- The 1-ISL rule constructed from `h` computes `List.flatMap h` on lists.
-Definitional up to `applyAux` unfolding; the inductive proof handles the window-threading. -/
-@[simp] theorem ISLRule.ofStringHom_apply (h : α → List β) :
-    (ISLRule.ofStringHom h).apply = List.flatMap h := by
-  funext xs
-  show (ISLRule.ofStringHom h).applyAux [] xs = _
-  exact ISLRule.applyAux_ofStringHom h [] xs
+/-! ### The hierarchy in `k` -/
 
-/-- **Every letterwise string homomorphism is 1-Left-ISL.** The substrate-level
-claim that the letterwise-homomorphism function class (`List.flatMap h` for
-`h : α → List β`) and `ISLRule 1 α β` denote the same function class. -/
-theorem flatMap_isLeftInputStrictlyLocal_one (h : α → List β) :
-    IsLeftInputStrictlyLocal 1 (List.flatMap h) :=
-  ⟨ISLRule.ofStringHom h, ISLRule.ofStringHom_apply h⟩
+/-- A `k`-ISL function is `k'`-ISL for every `k' ≥ k`. -/
+protected theorem IsLeftInputStrictlyLocal.weaken (hf : IsLeftInputStrictlyLocal k f)
+    (hk : k ≤ k') : IsLeftInputStrictlyLocal k' f :=
+  .of_factorsThrough_residual hf.map_nil hf.isPrefix fun u₁ u₂ h ↦
+    hf.factorsThrough_residual <| by
+      simpa [List.rtake_rtake, Nat.min_eq_left (Nat.sub_le_sub_right hk 1)] using
+        congrArg (List.rtake · (k - 1)) h
 
-/-- **Every erasing letterwise projection is 1-Left-ISL.** `List.filterMap g`
-(for `g : α → Option β`) is letterwise erasing, hence a special case of
-`ISLRule.ofStringHom` via `fun x => (g x).toList`. -/
-theorem filterMap_isLeftInputStrictlyLocal_one (g : α → Option β) :
-    IsLeftInputStrictlyLocal 1 (List.filterMap g) := by
-  -- filterMap g = List.flatMap (fun x => (g x).toList)
-  refine ⟨ISLRule.ofStringHom (fun x => (g x).toList), ?_⟩
-  rw [ISLRule.ofStringHom_apply]
-  funext xs
-  show List.flatMap (fun x => (g x).toList) xs = List.filterMap g xs
-  induction xs with
-  | nil => rfl
-  | cons x ys ih =>
-    cases h : g x with
-    | none =>
-      simp only [List.flatMap_cons, List.filterMap_cons, h, Option.toList_none,
-        List.nil_append, ih]
-    | some v =>
-      simp only [List.flatMap_cons, List.filterMap_cons, h, Option.toList_some,
-        List.cons_append, List.nil_append, ih]
+protected theorem IsRightInputStrictlyLocal.weaken (hf : IsRightInputStrictlyLocal k f)
+    (hk : k ≤ k') : IsRightInputStrictlyLocal k' f :=
+  IsLeftInputStrictlyLocal.weaken hf hk
+
+/-- The `1`-ISL functions are the letterwise homomorphisms `List.flatMap h`, among them the
+erasing projections `List.filterMap g`. -/
+theorem isLeftInputStrictlyLocal_one_iff :
+    IsLeftInputStrictlyLocal 1 f ↔ ∃ h : α → List β, List.flatMap h = f := by
+  refine ⟨fun ⟨r, hr⟩ ↦ ⟨fun x ↦ r.windowOutput [] x, funext fun u ↦ ?_⟩,
+    fun ⟨h, hh⟩ ↦ ⟨⟨fun _ x ↦ h x⟩, hh ▸ funext fun u ↦ ?_⟩⟩
+  · subst hr
+    induction u using List.reverseRecOn with
+    | nil => rfl
+    | append_singleton u x ih => simp [ISLRule.apply_append_singleton, ← ih]
+  · induction u using List.reverseRecOn with
+    | nil => rfl
+    | append_singleton u x ih => simp [ISLRule.apply_append_singleton, ih]
 
 /-! ### ISL ⊆ Subsequential
 
-An ISL rule is a window recursion accumulating the input, so over a finite input alphabet
-the bounded *input* window `{l : List α // l.length ≤ k - 1}` is a finite state space
-(`isLeftSubsequential_windowRun`). -/
+An ISL rule is a window recursion accumulating the input, so over a finite input alphabet the
+bounded input window is a finite state space (`isLeftSubsequential_windowRun`). -/
 
-/-- **Left-ISL ⊆ Left-Subsequential** (over a finite input alphabet).
-The `[Fintype α]` matches [mohri-1997]'s finite-alphabet assumption
-and lets the bounded input window serve as a finite state space. -/
-theorem isLeftInputStrictlyLocal_left_subsequential {k : ℕ} [Fintype α]
-    {f : List α → List β} (h : IsLeftInputStrictlyLocal k f) :
-    IsLeftSubsequential f := by
-  obtain ⟨r, rfl⟩ := h
+/-- Over a finite input alphabet, left-ISL functions are left-subsequential. -/
+theorem IsLeftInputStrictlyLocal.isLeftSubsequential [Fintype α]
+    (hf : IsLeftInputStrictlyLocal k f) : IsLeftSubsequential f := by
+  obtain ⟨r, rfl⟩ := hf
   exact isLeftSubsequential_windowRun _ _ _
 
-/-- A single-symbol left-ISL rule is Mealy-computable: the bounded input window is
-already the synchronous state. -/
-theorem isMealyComputable_of_ISLRule {k : ℕ} [Fintype α] (r : ISLRule k α β)
+/-- A rule emitting one symbol per input symbol is Mealy-computable, the bounded input window
+being the state. -/
+theorem ISLRule.isMealyComputable_apply [Fintype α] (r : ISLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
   isMealyComputable_windowRun _ _ _ hs
 
-/-- **Right-ISL ⊆ Right-Subsequential**: the left inclusion at the reverse-conjugate,
-since both right classes are the `List.revConj`-images of their left classes. -/
-theorem isRightInputStrictlyLocal_right_subsequential {k : ℕ} [Fintype α]
-    {f : List α → List β} (h : IsRightInputStrictlyLocal k f) :
-    IsRightSubsequential f :=
-  isLeftInputStrictlyLocal_left_subsequential h
-
-/-- ScanDirection-parameterised: ISL_d ⊆ Subseq_d for both directions (over
-a finite input alphabet). Delegates to the Left- / Right- specialised
-theorems. -/
-theorem isInputStrictlyLocal_isSubsequential {d : ScanDirection} {k : ℕ}
-    [Fintype α] {f : List α → List β} (h : IsInputStrictlyLocal d k f) :
-    IsSubsequential d f := by
-  cases d with
-  | left => exact isLeftInputStrictlyLocal_left_subsequential h
-  | right => exact isRightInputStrictlyLocal_right_subsequential h
+/-- Over a finite input alphabet, right-ISL functions are right-subsequential. -/
+theorem IsRightInputStrictlyLocal.isRightSubsequential [Fintype α]
+    (hf : IsRightInputStrictlyLocal k f) : IsRightSubsequential f :=
+  IsLeftInputStrictlyLocal.isLeftSubsequential hf
 
 end Subregular

@@ -52,13 +52,13 @@ open Subregular
 
 /-- Minimal alphabet capturing the dominance-vs-recessive distinction
 that drives Maasai ATR harmony per [meinhardt-mai-bakovic-mccollum-2024]
-p. 1203. Four symbols stand in for the relevant phonological contrasts:
+p. 1203. Four symbols stand in for the relevant phonological contrasts.
 
-* `recL` — a recessive [-ATR] vowel (e.g., /ɪ/, /ʊ/). Surfaces as
-  [-ATR] absent harmony; raises to [+ATR] under spread.
-* `recH` — a recessive vowel surfacing [+ATR] (e.g., /i/, /u/): the
+* `recL` — a recessive [-ATR] vowel (e.g., /ɪ/, /ʊ/), surfacing as
+  [-ATR] absent harmony and raising to [+ATR] under spread.
+* `recH` — a recessive vowel surfacing [+ATR] (e.g., /i/, /u/), the
   raised form of `recL`, and transparent to further spread.
-* `dom` — a dominant vowel: underlyingly specified [+ATR], the trigger
+* `dom` — a dominant vowel, underlyingly specified [+ATR] and the trigger
   of spreading (the paper's load-bearing distinction).
 * `a` — the opaque /a/. Blocks spread.
 
@@ -72,20 +72,18 @@ inductive Seg
 
 instance : Fintype Seg where
   elems := {.recL, .recH, .dom, .a}
-  complete := λ x => by cases x <;> simp
+  complete := fun x ↦ by cases x <;> simp
 
 namespace Seg
 
-/-- Whether the segment is a [+ATR] vowel (after surface realisation).
-A `dom` segment surfaces as [+ATR] by definition; `recH` is underlyingly
-[+ATR]; `recL` is [-ATR] (until raised by spread); `a` is neither. -/
+/-- Whether the segment is a [+ATR] vowel after surface realisation, which holds of `dom` and
+`recH` and fails of `recL` (until raised by spread) and of `a`. -/
 def isPlusATR : Seg → Bool
   | .recH | .dom => true
   | _ => false
 
-/-- Surface form of a segment under spreading [+ATR]: recessive [-ATR]
-vowels raise; everything else passes through unchanged (including the
-opaque /a/, which blocks the spread that would have reached it). -/
+/-- The surface form of a segment under spreading [+ATR], which raises recessive [-ATR] vowels
+and passes everything else through unchanged, including the opaque /a/. -/
 def raise : Seg → Seg
   | .recL => .recH
   | s => s
@@ -94,10 +92,9 @@ end Seg
 
 /-- **OSL rule encoding rightward [+ATR] spreading from a dominant root.**
 
-The rule's k = 2: the output decision at each position depends on the
-**single immediately preceding output symbol** (per
-[chandlee-eyraud-heinz-2015] the canonical OSL fragment of
-phonological maps). Rule logic:
+With k = 2 the output decision at each position depends on the
+**single immediately preceding output symbol**, as in the canonical OSL fragment of
+phonological maps of [chandlee-eyraud-heinz-2015]. The rule emits as follows.
 
 * Current input is `dom` → emit `recH` (dominant always surfaces as
   [+ATR]).
@@ -109,9 +106,9 @@ phonological maps). Rule logic:
 * Current input is `recL` otherwise → emit `recL` (no spread to here).
 
 Single-direction iterative spreading patterns are OSL but not ISL
-([chandlee-eyraud-heinz-2015]), because the output decision genuinely
-depends on the *output* history (how spread has propagated) rather than
-the *input* history alone. -/
+([chandlee-eyraud-heinz-2015]), because the output decision depends on the
+*output* history (how far spread has propagated) rather than the *input*
+history alone (`rightwardATR_osl_not_isLeftInputStrictlyLocal`). -/
 def rightwardATR_osl : OSLRule 2 Seg Seg where
   windowOutput outputWindow currentInput :=
     match currentInput, outputWindow with
@@ -121,47 +118,72 @@ def rightwardATR_osl : OSLRule 2 Seg Seg where
     | .recL, .recH :: _ => [.recH]
     | .recL, _ => [.recL]
 
-/-- **Ex 1a-i (rightward half)**: the dominant root triggers spread to
-the following recessive vowel.
-
-Toy encoding of the rightward portion of /kɪ-√noŋ-ʊ/ → [ki-√noŋ-u]:
-input `[dom, recL]` (a dominant root vowel followed by a recessive
-suffix vowel) → output `[recH, recH]`. -/
+/-- The dominant root triggers spread to the following recessive vowel (Ex 1a-i, rightward
+half), in a toy encoding of the rightward portion of /kɪ-√noŋ-ʊ/ → [ki-√noŋ-u] as input
+`[dom, recL]` and output `[recH, recH]`. -/
 example : rightwardATR_osl.apply [.dom, .recL] = [.recH, .recH] := by decide
 
-/-- **Ex 1a-ii (rightward half)**: spread continues across multiple
-recessive vowels. -/
+/-- Spread continues across multiple recessive vowels (Ex 1a-ii, rightward half). -/
 example : rightwardATR_osl.apply [.dom, .recL, .recL] = [.recH, .recH, .recH] := by
   decide
 
-/-- **Blocking**: /a/ blocks rightward spread; recessive vowels after
-/a/ remain [-ATR]. -/
+/-- The opaque /a/ blocks rightward spread, so recessive vowels after it remain [-ATR]. -/
 example : rightwardATR_osl.apply [.dom, .a, .recL] = [.recH, .a, .recL] := by
   decide
 
-/-- **No spread without dominant trigger**: a string of recessive vowels
-with no dominant root passes through unchanged. -/
+/-- Without a dominant trigger, a string of recessive vowels passes through unchanged. -/
 example : rightwardATR_osl.apply [.recL, .recL] = [.recL, .recL] := by decide
 
-/-- **Rightward [+ATR] spreading is Left-Output-Strictly-Local**
-([chandlee-eyraud-heinz-2015], the result
-[meinhardt-mai-bakovic-mccollum-2024] builds on). Witness: the OSL rule
-`rightwardATR_osl` defined above.
-
-This is the **tighter** classification per the paper — single-direction
-iterative spreading patterns are properly contained in OSL, strictly
-above the ISL class but strictly below the (Left-)Subsequential class. -/
+/-- **Rightward [+ATR] spreading is Left-Output-Strictly-Local**, witnessed by
+`rightwardATR_osl` ([chandlee-eyraud-heinz-2015], the result
+[meinhardt-mai-bakovic-mccollum-2024] builds on). -/
 theorem rightwardATR_osl_isLeftOutputStrictlyLocal :
     IsLeftOutputStrictlyLocal 2 rightwardATR_osl.apply :=
   rightwardATR_osl.isLeftOutputStrictlyLocal_apply
 
-/-- **Rightward [+ATR] spreading is also Left-Subsequential** — the umbrella class,
-lifted from the OSL classification via OSL ⊆ Left-Subsequential
-(`isLeftOutputStrictlyLocal_left_subsequential`). -/
+private theorem rightwardATR_osl_apply_dom_replicate (n : ℕ) :
+    rightwardATR_osl.apply (.dom :: List.replicate n .recL) = List.replicate (n + 1) .recH := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    rw [List.replicate_succ', ← List.cons_append, OSLRule.apply_append_singleton, ih,
+      List.replicate_succ' (n := n + 1), List.replicate_succ', List.rtake_concat_succ,
+      List.rtake_zero, List.nil_append]
+    rfl
+
+private theorem rightwardATR_osl_apply_replicate (n : ℕ) :
+    rightwardATR_osl.apply (List.replicate n .recL) = List.replicate n .recL := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    rw [List.replicate_succ', OSLRule.apply_append_singleton, ih]
+    cases n with
+    | zero => rfl
+    | succ m =>
+      rw [List.replicate_succ', List.rtake_concat_succ, List.rtake_zero, List.nil_append]
+      rfl
+
+/-- **Rightward [+ATR] spreading is not Input-Strictly-Local** for any window, since a
+dominant vowel followed by `k - 1` recessive ones and `k` recessive vowels end in the same
+`k - 1` input segments while a further recessive vowel raises only after the first. -/
+theorem rightwardATR_osl_not_isLeftInputStrictlyLocal (k : ℕ) :
+    ¬ IsLeftInputStrictlyLocal k rightwardATR_osl.apply := fun h ↦ by
+  have hw : ∀ s : Seg, (s :: List.replicate (k - 1) .recL).rtake (k - 1) =
+      List.replicate (k - 1) .recL := fun s ↦ by
+    simpa using List.rtake_append_length (l₁ := [s]) (l₂ := List.replicate (k - 1) Seg.recL)
+  have e := congrFun (h.factorsThrough_residual (a := .dom :: List.replicate (k - 1) .recL)
+    (b := .recL :: List.replicate (k - 1) .recL) (by simp only [hw])) [.recL]
+  simp only [Function.residual, List.cons_append, ← List.replicate_succ',
+    rightwardATR_osl_apply_dom_replicate, ← List.replicate_succ,
+    rightwardATR_osl_apply_replicate, List.length_replicate, List.drop_replicate,
+    Nat.add_sub_cancel_left] at e
+  exact absurd e (by decide)
+
+/-- **Rightward [+ATR] spreading is also Left-Subsequential**, through OSL ⊆
+Left-Subsequential (`IsLeftOutputStrictlyLocal.isLeftSubsequential`). -/
 theorem rightwardATR_osl_isLeftSubsequential :
     IsLeftSubsequential rightwardATR_osl.apply :=
-  isLeftOutputStrictlyLocal_left_subsequential
-    rightwardATR_osl_isLeftOutputStrictlyLocal
+  rightwardATR_osl_isLeftOutputStrictlyLocal.isLeftSubsequential
 
 /-! ### Bidirectional Maasai harmony — weakly deterministic (faithful)
 
@@ -181,20 +203,20 @@ open Subregular
 /-- The word contains a dominant trigger. -/
 def hasDom (xs : List Seg) : Bool := xs.any (· == .dom)
 
-/-- Bidirectional dominant-recessive harmony (non-opaque core): a recessive raises iff the
-word has a dominant trigger anywhere. -/
+/-- Bidirectional dominant-recessive harmony in its non-opaque core, under which a recessive
+raises iff the word has a dominant trigger anywhere. -/
 def maasai (xs : List Seg) : List Seg :=
-  xs.map (λ s => if hasDom xs && s == .recL then .recH else s)
+  xs.map (fun s ↦ if hasDom xs && s == .recL then .recH else s)
 
-/-- The non-interacting bimachine: each side's state tracks a dominant seen on that side;
-a recessive raises if *either* side has one — a union of one-sided rules. -/
+/-- The non-interacting bimachine, whose state on each side tracks a dominant seen on that
+side, raising a recessive if *either* side has one as a union of one-sided rules. -/
 def maasaiBM : Bimachine Bool Bool Seg Seg :=
-  .ofFlags (· == .dom) (· == .dom) λ l s r => if (l || r) && s == .recL then .recH else s
+  .ofFlags (· == .dom) (· == .dom) fun l s r ↦ if (l || r) && s == .recL then .recH else s
 
 /-- `maasaiBM`'s cell output is a `unite` of one-sided raise-rules. -/
 theorem maasaiBM_isNonInteracting : maasaiBM.IsNonInteracting :=
-  ⟨⟨λ l s => if l && s == .recL then .recH else s,
-    λ r s => if r && s == .recL then .recH else s,
+  ⟨⟨fun l s ↦ if l && s == .recL then .recH else s,
+    fun r s ↦ if r && s == .recL then .recH else s,
     by decide, by intro l s r; cases s <;> cases l <;> cases r <;> rfl⟩⟩
 
 private theorem hasDom_split (xs : List Seg) (i : ℕ) (hi : i < xs.length) :
@@ -228,60 +250,60 @@ theorem maasaiBM_run : maasaiBM.run = maasai := by
     simp only [maasai, List.getElem?_map, List.getElem?_eq_none (by simpa using hi),
       Option.map_none]
 
-/-- **Maasai ATR harmony is weakly deterministic** ([meinhardt-mai-bakovic-mccollum-2024]):
-the bidirectional dominant-recessive spread is a non-interacting bimachine. -/
+/-- **Maasai ATR harmony is weakly deterministic**, the bidirectional dominant-recessive
+spread being a non-interacting bimachine ([meinhardt-mai-bakovic-mccollum-2024]). -/
 theorem maasai_weaklyDeterministic : IsNonInteractingBimachineComputable maasai :=
   maasaiBM_run ▸ maasaiBM.isNonInteractingBimachineComputable maasaiBM_isNonInteracting
 
 /-- **Maasai has two-sided unbounded dependence** — at every distance, a medial
 recessive's ATR flips under a dominant placed far to the left *or* far to the right,
 each side alone sufficing. Tutrugbu satisfies this too
-(`tutrugbu_twoSidedUnboundedDependence`); the difference is that Maasai does *not*
+(`tutrugbu_twoSidedUnboundedDependence`), but Maasai does *not*
 `RequiresBothSides`, so it stays weakly deterministic. The paper's positive
-classification of Maasai as unbounded *semiambient* — every target fixed by information
-from at most one side — is the stronger claim, `maasai_semiambient`. -/
+classification of Maasai as unbounded *semiambient*, with every target fixed by information
+from at most one side, is the stronger claim `maasai_semiambient`. -/
 theorem maasai_twoSidedUnboundedDependence : TwoSidedUnboundedDependence maasai := by
   refine .of_flanks (fill := Seg.recL) (xOn := Seg.recL) (yOn := Seg.recL)
     (xOff := Seg.dom) (yOff := Seg.dom)
-    (n := λ d => 2 * d + 1) (t := λ d => d + 1)
-    (λ d => by omega) (λ d => by omega) (λ d => ?_) (λ d => ?_) <;>
+    (n := fun d ↦ 2 * d + 1) (t := fun d ↦ d + 1)
+    (fun d ↦ by omega) (fun d ↦ by omega) (fun d ↦ ?_) (fun d ↦ ?_) <;>
   · have hb : hasDom (flankWord Seg.recL Seg.recL Seg.recL (2 * d + 1)) = false := by
       simp [hasDom, flankWord]
-    have hp : ∀ y, hasDom (flankWord Seg.dom Seg.recL y (2 * d + 1)) = true := λ y => by
+    have hp : ∀ y, hasDom (flankWord Seg.dom Seg.recL y (2 * d + 1)) = true := fun y ↦ by
       simp [hasDom, flankWord]
-    have hp' : ∀ x, hasDom (flankWord x Seg.recL Seg.dom (2 * d + 1)) = true := λ x => by
+    have hp' : ∀ x, hasDom (flankWord x Seg.recL Seg.dom (2 * d + 1)) = true := fun x ↦ by
       simp [hasDom, flankWord]
     simp only [maasai, List.getElem?_map,
       getElem?_flankWord_mid (show 0 < d + 1 by omega) (show d + 1 ≤ 2 * d + 1 by omega),
       hb, hp, hp']
     decide
 
-/-- **Maasai is semiambient** — the paper's positive classification: every harmonised
-cell is licensed by one side alone, the far dominant that triggers it. -/
+/-- **Maasai is semiambient**, the paper's positive classification, with every harmonised
+cell licensed by one side alone, the far dominant that triggers it. -/
 theorem maasai_semiambient : OneSidedChanges maasai :=
   maasai_weaklyDeterministic.oneSidedChanges
 
 /-- Hence Maasai does **not** require both sides — it escapes the teeth, unlike Tutrugbu.
 Covariation (both languages) and interaction (Tutrugbu only) come apart. -/
-theorem maasai_not_requiresBothSides : ¬ RequiresBothSides maasai := λ h =>
+theorem maasai_not_requiresBothSides : ¬ RequiresBothSides maasai := fun h ↦
   h.not_isNonInteractingBimachineComputable maasai_weaklyDeterministic
 
-/-- Strictness witness `synchronous ⊊ WD`: Maasai is weakly deterministic yet not
-Mealy-computable — the length-preserving-stratum reading of [heinz-lai-2013]'s
+/-- Maasai is weakly deterministic yet not Mealy-computable, witnessing
+`synchronous ⊊ WD` in the length-preserving-stratum reading of [heinz-lai-2013]'s
 `LSF, RSF ⊆ WD` corollary being strict, with `maasai` as their own dominant-recessive
 witness (their Thms. 6 and 7). A Mealy-computable map is right-myopic
 (`IsMealyComputable.boundedDependence_right`), but Maasai's bidirectional spread is not
-(`maasai_twoSidedUnboundedDependence`); the block-class exclusion is
+(`maasai_twoSidedUnboundedDependence`), and the block class is excluded by
 `maasai_not_leftSubsequential`. -/
-theorem maasai_not_mealyComputable : ¬ IsMealyComputable maasai := λ h =>
+theorem maasai_not_mealyComputable : ¬ IsMealyComputable maasai := fun h ↦
   maasai_twoSidedUnboundedDependence.unboundedDependence .right h.boundedDependence_right
 
-/-- **Maasai is not left-subsequential** — the *block* class is excluded too: `maasai`
+/-- **Maasai is not left-subsequential**, excluding the *block* class too, since `maasai`
 is length-preserving, so a left-subsequential computer's delay bound would cap its
 right dependence (`IsLeftSubsequential.boundedDependence_right`), but the spread's
 right dependence is unbounded. -/
-theorem maasai_not_leftSubsequential : ¬ IsLeftSubsequential maasai := λ h =>
+theorem maasai_not_leftSubsequential : ¬ IsLeftSubsequential maasai := fun h ↦
   maasai_twoSidedUnboundedDependence.unboundedDependence .right
-    (h.boundedDependence_right λ xs => by simp [maasai])
+    (h.boundedDependence_right fun xs ↦ by simp [maasai])
 
 end MeinhardtEtAl2024

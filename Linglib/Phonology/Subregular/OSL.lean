@@ -6,240 +6,385 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Phonology.Subregular.ISL
-public import Linglib.Core.Computability.Subsequential
 
 /-!
-# Output Strictly Local (OSL) Functions
+# Output strictly local functions
 
-A function `f : List α → List β` is **k-Output Strictly Local** when each
-output block depends only on the last `k - 1` *output* symbols plus the
-current input symbol. OSL captures iterative processes where the output
-already emitted at position *i* feeds forward to the decision at position
-*i + 1*. The function-level subregular hierarchy at this layer is
-ISL ⊊ OSL ⊊ Subsequential.
+This file defines the output strictly local functions. A function `f : List α → List β` is
+*`k`-output strictly local* (`k`-OSL) when the block it emits for each input symbol depends only
+on that symbol and the last `k - 1` symbols already emitted. Progressive spreading is the
+motivating case, since its trigger is adjacent in the output however far back it lies in the
+input. Chandlee, Eyraud and Heinz characterize the class by tails and show it incomparable with
+the input strictly local functions, and Burness and McMullin relativize the window to a tier of
+the output alphabet.
+
+We compute OSL functions by rules, characterize them by residuals, and prove that the classes
+nest in `k` and are subsequential over a finite alphabet. Dissimilation after an input symbol is
+ISL and not OSL, progressive spreading is OSL and neither ISL nor right-OSL, and long-distance
+assimilation across transparent symbols is Mealy-computable and neither ISL nor OSL.
 
 ## Main definitions
 
-* `OSLRule k α β`: a `k`-OSL rule: a window-based output function
-  `List β → α → List β` consuming the (k - 1)-symbol output context
-  plus the current input symbol and emitting an output block.
-* `OSLRule.apply`: the induced string function, threading the output
-  window left-to-right.
-* `IsLeftOutputStrictlyLocal k f`, `IsRightOutputStrictlyLocal k f`:
-  witness predicates for each scan direction.
-* `IsOutputStrictlyLocal d k f`: direction-parameterised umbrella.
+* `OSLRule k α β`: a rule emitting a block from a window of `k - 1` output symbols
+* `OSLRule.apply`: the function a rule computes
+* `OSLRule.applyOnTier`: a rule run with its window over the tier projection of its output
+* `IsLeftOutputStrictlyLocal k f`, `IsRightOutputStrictlyLocal k f`: some rule computes `f`,
+  scanning left to right or right to left
 
 ## Main results
 
-* `isRightOutputStrictlyLocal_iff_left_reverse`: Right-OSL is the
-  reverse-conjugate of Left-OSL.
-* `isLeftOutputStrictlyLocal_left_subsequential`: Left-OSL ⊆
-  Left-Subsequential, as a window recursion over the output.
+* `isLeftOutputStrictlyLocal_iff_factorsThrough_residual`: characterization by residuals
+* `IsLeftOutputStrictlyLocal.weaken`: `k`-OSL functions are `k'`-OSL for `k ≤ k'`
+* `isLeftOutputStrictlyLocal_one_iff`: the `1`-OSL functions are the letterwise homomorphisms
+* `IsLeftOutputStrictlyLocal.isLeftSubsequential`: OSL functions are subsequential
+* `ISLRule.dissimilate_not_isLeftOutputStrictlyLocal`,
+  `OSLRule.spread_not_isLeftInputStrictlyLocal`: ISL and OSL are incomparable
+* `longDistanceAgree_not_isLeftInputStrictlyLocal`,
+  `longDistanceAgree_not_isLeftOutputStrictlyLocal`: a Mealy-computable function in neither
 
 ## Implementation notes
 
-The witness style `IsX k f := ∃ r : OSLRule k α β, r.apply = f` mirrors
-`Subregular.IsLeftInputStrictlyLocal`. Unlike ISL, whose window is
-over input symbols and threads independently of what was emitted, the
-OSL window is over **already-emitted output** — each step truncates
-`outputWindow ++ windowOutput outputWindow x` to the last `k - 1`
-symbols before recursing. The `k` parameter is a type-level annotation;
-window-length truncation in `applyAux` is what enforces it semantically.
+Rules carry neither the initial nor the final output of Chandlee, Eyraud and Heinz's
+transducers, so the classes are the sequential ones with `f [] = []`; progressive spreading fails
+right-OSL here for want of a final output. `0`-OSL and `1`-OSL coincide, and `k` indexes `apply`
+alone.
+
+## TODO
+
+* Final outputs, recovering Chandlee, Eyraud and Heinz's classes through the prefix function.
+* The output tier-based class as a predicate, characterized by residuals.
+
+## References
+
+* [J. Chandlee, R. Eyraud and J. Heinz, *Learning Strictly Local Subsequential Functions*
+  (2014)][chandlee-eyraud-heinz-2014]
+* [J. Chandlee, R. Eyraud and J. Heinz, *Output Strictly Local Functions*
+  (2015)][chandlee-eyraud-heinz-2015]
+* [P. Burness and K. McMullin, *Multi-Tiered Strictly Local Functions*
+  (2020)][burness-mcmullin-2020]
 -/
 
 @[expose] public section
 
 namespace Subregular
 
-variable {α β : Type*}
+open SubsequentialTransducer Function
 
-/-- A **k-Output-Strictly-Local rule** over input alphabet `α` and
-output alphabet `β`. The single field `windowOutput` consumes the
-(k − 1)-symbol output context window plus the current input symbol and
-emits an output block.
+variable {α β : Type*} {k k' : ℕ} {f : List α → List β}
 
-In contrast to `ISLRule` (whose window is over input symbols), the
-window here is over **already-emitted output symbols**. This lets the
-rule see what it has just produced and react accordingly — the
-mechanism behind iterative output dependence.
-
-The `k` parameter is a type-level annotation; semantic enforcement
-happens in `apply`'s window threading. -/
+/-- A **`k`-output strictly local rule** emits, for each input symbol, a block computed from
+the last `k - 1` symbols it has emitted and the input symbol itself. -/
 structure OSLRule (k : ℕ) (α β : Type*) where
-  /-- Map from (output context window, current input symbol) to output
-  block. The window argument has length at most `k - 1` when called by
-  `OSLRule.apply`. -/
+  /-- The block emitted for the current input symbol after the given window of output. -/
   windowOutput : List β → α → List β
 
 namespace OSLRule
 
-variable {k : ℕ}
+variable (r : OSLRule k α β)
 
-/-- Apply the rule, threading a window of accumulated output symbols: the window
-recursion `SubsequentialTransducer.windowRun` accumulating what the rule emits, so each
-step extends the output window with the just-emitted block, truncated to at most
-`k − 1` symbols. -/
-def applyAux (r : OSLRule k α β) : (outputWindow : List β) → (rest : List α) → List β :=
-  SubsequentialTransducer.windowRun (k - 1) r.windowOutput r.windowOutput
+/-- The rule applied from a given window, the window recursion `windowRun` that accumulates what
+the rule emits truncated to `k - 1` symbols. -/
+def applyAux : (outputWindow : List β) → (rest : List α) → List β :=
+  windowRun (k - 1) r.windowOutput r.windowOutput
 
-/-- Apply a k-OSL rule to an input string, scanning left-to-right. -/
-def apply (r : OSLRule k α β) (input : List α) : List β :=
-  applyAux r [] input
+/-- The string function computed by the rule, scanning left to right from the empty window. -/
+def apply (input : List α) : List β :=
+  r.applyAux [] input
 
-@[simp] lemma applyAux_nil (r : OSLRule k α β) (outputWindow : List β) :
-    r.applyAux outputWindow [] = [] := rfl
+@[simp] lemma applyAux_nil (outputWindow : List β) : r.applyAux outputWindow [] = [] := rfl
 
-@[simp] lemma applyAux_cons (r : OSLRule k α β) (outputWindow : List β)
-    (x : α) (xs : List α) :
+@[simp] lemma applyAux_cons (outputWindow : List β) (x : α) (xs : List α) :
     r.applyAux outputWindow (x :: xs)
       = r.windowOutput outputWindow x
           ++ r.applyAux ((outputWindow ++ r.windowOutput outputWindow x).rtake (k - 1)) xs :=
   rfl
 
-@[simp] lemma apply_nil (r : OSLRule k α β) : r.apply [] = [] := rfl
+@[simp] lemma apply_nil : r.apply [] = [] := rfl
 
-@[simp] lemma apply_singleton (r : OSLRule k α β) (x : α) :
-    r.apply [x] = r.windowOutput [] x := by
-  show r.windowOutput [] x ++ r.applyAux _ [] = r.windowOutput [] x
-  exact List.append_nil _
+@[simp] lemma apply_singleton (x : α) : r.apply [x] = r.windowOutput [] x :=
+  List.append_nil _
 
-/-! ### Application over a tier -/
-
-/-- Auxiliary for `applyOnTier`: thread the output window through the tier only. -/
-def applyOnTierAux (r : OSLRule k α α) (p : α → Prop) [DecidablePred p] :
-    (outputWindow : List α) → (rest : List α) → List α
-  | _, [] => []
-  | outputWindow, x :: xs =>
-    if p x then
-      r.windowOutput outputWindow x
-        ++ applyOnTierAux r p ((outputWindow ++ r.windowOutput outputWindow x).rtake (k - 1)) xs
-    else x :: applyOnTierAux r p outputWindow xs
-
-/-- Apply the rule over the tier `p`: symbols off the tier are copied through and never
-enter the output window, so each on-tier output block depends on the last `k - 1`
-on-tier output symbols — the single-tier case of the tier-based strictly local functions
-of [burness-mcmullin-2020]. Over the total tier this is `apply` (`applyOnTier_true`). -/
-def applyOnTier (r : OSLRule k α α) (p : α → Prop) [DecidablePred p] (input : List α) :
-    List α :=
-  r.applyOnTierAux p [] input
-
-section Tier
-
-variable {p : α → Prop} [DecidablePred p] (r : OSLRule k α α)
-
-@[simp] lemma applyOnTierAux_nil (outputWindow : List α) :
-    r.applyOnTierAux p outputWindow [] = [] := rfl
-
-lemma applyOnTierAux_cons (outputWindow : List α) (x : α) (xs : List α) :
-    r.applyOnTierAux p outputWindow (x :: xs) =
-      if p x then
-        r.windowOutput outputWindow x
-          ++ r.applyOnTierAux p ((outputWindow ++ r.windowOutput outputWindow x).rtake (k - 1)) xs
-      else x :: r.applyOnTierAux p outputWindow xs := rfl
-
-@[simp] lemma applyOnTier_nil : r.applyOnTier p [] = [] := rfl
-
-/-- Over the total tier, `applyOnTier` is `apply`. -/
-theorem applyOnTier_true : r.applyOnTier (fun _ => True) = r.apply := by
-  funext l
-  suffices ∀ w, r.applyOnTierAux (fun _ => True) w l = r.applyAux w l from this []
-  induction l with
-  | nil => exact fun _ => rfl
-  | cons x xs ih => exact fun w => by simp [applyOnTierAux_cons, ih]
-
-/-- Restricted to the tier, `applyOnTier` is `apply` on the tier's projection, provided the
-rule keeps on-tier input on the tier. -/
-theorem filter_applyOnTier (hr : ∀ w x, p x → ∀ y ∈ r.windowOutput w x, p y) (l : List α) :
-    (r.applyOnTier p l).filter (decide <| p ·) = r.apply (l.filter (decide <| p ·)) := by
-  suffices ∀ w, (r.applyOnTierAux p w l).filter (decide <| p ·) =
-      r.applyAux w (l.filter (decide <| p ·)) from this []
-  induction l with
-  | nil => exact fun _ => rfl
-  | cons x xs ih =>
-    intro w
-    by_cases hx : p x
-    · have h : (r.windowOutput w x).filter (decide <| p ·) = r.windowOutput w x :=
-        List.filter_eq_self.2 fun y hy => decide_eq_true (hr w x hx y hy)
-      simp [applyOnTierAux_cons, hx, List.filter_append, h, ih]
-    · simp [applyOnTierAux_cons, hx, ih]
-
-end Tier
+/-- The window before each symbol is the last `k - 1` symbols of the output so far. -/
+theorem apply_append_singleton (u : List α) (x : α) :
+    r.apply (u ++ [x]) = r.apply u ++ r.windowOutput ((r.apply u).rtake (k - 1)) x := by
+  have h := windowRun_append_singleton (out := r.windowOutput) (upd := r.windowOutput)
+    (w := []) (Nat.zero_le (k - 1)) u x
+  rwa [List.nil_append] at h
 
 end OSLRule
 
-/-- A function `f : List α → List β` is **k-Left-Output-Strictly-Local**
-iff some `k`-OSL rule computes it via left-to-right scan. -/
+/-- `f` is **`k`-left-output strictly local** if some `k`-OSL rule computes it. -/
 def IsLeftOutputStrictlyLocal (k : ℕ) (f : List α → List β) : Prop :=
   ∃ r : OSLRule k α β, r.apply = f
 
-/-- A function `f : List α → List β` is **k-Right-Output-Strictly-Local** iff its
-reverse-conjugate is k-Left-OSL — some `k`-OSL rule computes it via right-to-left
-scan. -/
+/-- `f` is **`k`-right-output strictly local** if its reverse-conjugate is `k`-left-OSL, that is,
+if some `k`-OSL rule computes it scanning right to left. -/
 def IsRightOutputStrictlyLocal (k : ℕ) (f : List α → List β) : Prop :=
   IsLeftOutputStrictlyLocal k (List.revConj f)
 
-/-- ScanDirection-parameterised OSL predicate. -/
-def IsOutputStrictlyLocal (d : ScanDirection) (k : ℕ) (f : List α → List β) : Prop :=
-  match d with
-  | .left => IsLeftOutputStrictlyLocal k f
-  | .right => IsRightOutputStrictlyLocal k f
-
-@[simp] lemma isOutputStrictlyLocal_left (k : ℕ) (f : List α → List β) :
-    IsOutputStrictlyLocal .left k f ↔ IsLeftOutputStrictlyLocal k f := Iff.rfl
-
-@[simp] lemma isOutputStrictlyLocal_right (k : ℕ) (f : List α → List β) :
-    IsOutputStrictlyLocal .right k f ↔ IsRightOutputStrictlyLocal k f := Iff.rfl
-
-/-- Every OSL rule witnesses `IsLeftOutputStrictlyLocal` for the function
-it computes. -/
-lemma OSLRule.isLeftOutputStrictlyLocal_apply {k : ℕ} (r : OSLRule k α β) :
+lemma OSLRule.isLeftOutputStrictlyLocal_apply (r : OSLRule k α β) :
     IsLeftOutputStrictlyLocal k r.apply :=
   ⟨r, rfl⟩
 
-/-- **Reverse-conjugation lemma**: a function is k-Right-OSL iff its reverse-conjugate
-is k-Left-OSL — definitionally, with the conjugated class as primary. -/
-theorem isRightOutputStrictlyLocal_iff_left_reverse {k : ℕ}
-    (f : List α → List β) :
-    IsRightOutputStrictlyLocal k f
-      ↔ IsLeftOutputStrictlyLocal k (fun xs => (f xs.reverse).reverse) :=
-  Iff.rfl
+/-! ### Residuals -/
+
+lemma IsLeftOutputStrictlyLocal.map_nil (hf : IsLeftOutputStrictlyLocal k f) : f [] = [] := by
+  obtain ⟨r, rfl⟩ := hf
+  rfl
+
+theorem IsLeftOutputStrictlyLocal.isPrefix (hf : IsLeftOutputStrictlyLocal k f) (u v : List α) :
+    f u <+: f (u ++ v) := by
+  obtain ⟨r, rfl⟩ := hf
+  exact isPrefix_append_of_append_singleton (fun u x ↦ ⟨_, (r.apply_append_singleton u x).symm⟩)
+    u v
+
+/-- The residuals of a `k`-OSL function factor through the last `k - 1` output symbols, so inputs
+whose outputs end alike have the same continuations. -/
+theorem IsLeftOutputStrictlyLocal.factorsThrough_residual (hf : IsLeftOutputStrictlyLocal k f) :
+    f.residual.FactorsThrough fun u ↦ (f u).rtake (k - 1) := by
+  obtain ⟨r, rfl⟩ := hf
+  refine factorsThrough_residual_of_append_singleton
+    (fun w x ↦ (w ++ r.windowOutput w x).rtake (k - 1)) r.windowOutput (fun u x ↦ ?_)
+    r.apply_append_singleton
+  rw [r.apply_append_singleton, List.rtake_append_rtake]
+
+theorem IsLeftOutputStrictlyLocal.of_factorsThrough_residual (h₀ : f [] = [])
+    (hpre : ∀ u v, f u <+: f (u ++ v))
+    (hf : f.residual.FactorsThrough fun u ↦ (f u).rtake (k - 1)) :
+    IsLeftOutputStrictlyLocal k f := by
+  obtain ⟨g, hg⟩ := exists_append_singleton_of_factorsThrough_residual hpre hf
+  refine ⟨⟨g⟩, funext fun u ↦ ?_⟩
+  induction u using List.reverseRecOn with
+  | nil => exact h₀.symm
+  | append_singleton u x ih => rw [OSLRule.apply_append_singleton, hg, ih]
+
+/-- A function is `k`-OSL if and only if it fixes `[]`, is prefix-preserving, and has residuals
+factoring through the last `k - 1` output symbols. -/
+theorem isLeftOutputStrictlyLocal_iff_factorsThrough_residual :
+    IsLeftOutputStrictlyLocal k f ↔ f [] = [] ∧ (∀ u v, f u <+: f (u ++ v)) ∧
+      f.residual.FactorsThrough fun u ↦ (f u).rtake (k - 1) :=
+  ⟨fun hf ↦ ⟨hf.map_nil, hf.isPrefix, hf.factorsThrough_residual⟩,
+    fun h ↦ .of_factorsThrough_residual h.1 h.2.1 h.2.2⟩
+
+/-! ### The hierarchy in `k` -/
+
+/-- A `k`-OSL function is `k'`-OSL for every `k' ≥ k`. -/
+protected theorem IsLeftOutputStrictlyLocal.weaken (hf : IsLeftOutputStrictlyLocal k f)
+    (hk : k ≤ k') : IsLeftOutputStrictlyLocal k' f :=
+  .of_factorsThrough_residual hf.map_nil hf.isPrefix fun u₁ u₂ h ↦
+    hf.factorsThrough_residual <| by
+      simpa [List.rtake_rtake, Nat.min_eq_left (Nat.sub_le_sub_right hk 1)] using
+        congrArg (List.rtake · (k - 1)) h
+
+protected theorem IsRightOutputStrictlyLocal.weaken (hf : IsRightOutputStrictlyLocal k f)
+    (hk : k ≤ k') : IsRightOutputStrictlyLocal k' f :=
+  IsLeftOutputStrictlyLocal.weaken hf hk
+
+/-- The `1`-OSL functions are the letterwise homomorphisms `List.flatMap h`, which are also the
+`1`-ISL functions. -/
+theorem isLeftOutputStrictlyLocal_one_iff :
+    IsLeftOutputStrictlyLocal 1 f ↔ ∃ h : α → List β, List.flatMap h = f := by
+  refine ⟨fun ⟨r, hr⟩ ↦ ⟨fun x ↦ r.windowOutput [] x, funext fun u ↦ ?_⟩,
+    fun ⟨h, hh⟩ ↦ ⟨⟨fun _ x ↦ h x⟩, hh ▸ funext fun u ↦ ?_⟩⟩
+  · subst hr
+    induction u using List.reverseRecOn with
+    | nil => rfl
+    | append_singleton u x ih => simp [OSLRule.apply_append_singleton, ← ih]
+  · induction u using List.reverseRecOn with
+    | nil => rfl
+    | append_singleton u x ih => simp [OSLRule.apply_append_singleton, ih]
 
 /-! ### OSL ⊆ Subsequential
 
-An OSL rule is a window recursion accumulating its own output, so over a finite output
-alphabet the bounded *output* window (length ≤ k − 1) is a finite state space
-(`isLeftSubsequential_windowRun`). -/
+An OSL rule is a window recursion accumulating its own output, so over a finite output alphabet
+the bounded output window is a finite state space (`isLeftSubsequential_windowRun`). -/
 
-/-- **Left-OSL ⊆ Left-Subsequential** (over a finite output alphabet).
-The `[Fintype β]` matches [mohri-1997]'s finite-alphabet assumption
-and lets the bounded output window serve as a finite state space. -/
-theorem isLeftOutputStrictlyLocal_left_subsequential {k : ℕ} [Fintype β]
-    {f : List α → List β} (h : IsLeftOutputStrictlyLocal k f) :
-    IsLeftSubsequential f := by
-  obtain ⟨r, rfl⟩ := h
+/-- Over a finite output alphabet, left-OSL functions are left-subsequential. -/
+theorem IsLeftOutputStrictlyLocal.isLeftSubsequential [Fintype β]
+    (hf : IsLeftOutputStrictlyLocal k f) : IsLeftSubsequential f := by
+  obtain ⟨r, rfl⟩ := hf
   exact isLeftSubsequential_windowRun _ _ _
 
-/-- A single-symbol left-OSL rule is Mealy-computable, with the bounded output window as
-the synchronous state. -/
-theorem isMealyComputable_of_OSLRule {k : ℕ} [Fintype β] (r : OSLRule k α β)
+/-- A rule emitting one symbol per input symbol is Mealy-computable, the bounded output window
+being the state. -/
+theorem OSLRule.isMealyComputable_apply [Fintype β] (r : OSLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
   isMealyComputable_windowRun _ _ _ hs
 
-/-- **Right-OSL ⊆ Right-Subsequential**: the left inclusion at the reverse-conjugate,
-since both right classes are the `List.revConj`-images of their left classes. -/
-theorem isRightOutputStrictlyLocal_right_subsequential {k : ℕ} [Fintype β]
-    {f : List α → List β} (h : IsRightOutputStrictlyLocal k f) :
-    IsRightSubsequential f :=
-  isLeftOutputStrictlyLocal_left_subsequential h
+/-- Over a finite output alphabet, right-OSL functions are right-subsequential. -/
+theorem IsRightOutputStrictlyLocal.isRightSubsequential [Fintype β]
+    (hf : IsRightOutputStrictlyLocal k f) : IsRightSubsequential f :=
+  IsLeftOutputStrictlyLocal.isLeftSubsequential hf
 
-/-- **ScanDirection-parameterised OSL ⊆ Subsequential umbrella**: in both
-scan directions, OSL functions are subsequential. Delegates to the
-Left- / Right- specialised theorems. -/
-theorem isOutputStrictlyLocal_isSubsequential {d : ScanDirection} {k : ℕ}
-    [Fintype β] {f : List α → List β} (h : IsOutputStrictlyLocal d k f) :
-    IsSubsequential d f := by
-  cases d with
-  | left => exact isLeftOutputStrictlyLocal_left_subsequential h
-  | right => exact isRightOutputStrictlyLocal_right_subsequential h
+/-! ### Output tiers -/
+
+namespace OSLRule
+
+variable (r : OSLRule k α β) (p : β → Prop) [DecidablePred p]
+
+/-- The rule run with its window over the tier `p` of the output alphabet, so that each block
+depends on the last `k - 1` on-tier symbols emitted ([burness-mcmullin-2020], Definition 8). -/
+def applyOnTier : List α → List β :=
+  windowRun (k - 1) r.windowOutput (fun w x ↦ (r.windowOutput w x).filter (p ·)) []
+
+private lemma windowRun_filter {n : ℕ} {out : List β → α → List β} (w : List β) (u : List α) :
+    windowRun n (fun w x ↦ (out w x).filter (p ·)) (fun w x ↦ (out w x).filter (p ·)) w u =
+      (windowRun n out (fun w x ↦ (out w x).filter (p ·)) w u).filter (p ·) := by
+  induction u generalizing w with
+  | nil => rfl
+  | cons y ys ih => simp [windowRun, ih, List.filter_append]
+
+@[simp] lemma applyOnTier_nil : r.applyOnTier p [] = [] := rfl
+
+/-- The window before each symbol is the last `k - 1` on-tier symbols of the output so far. -/
+theorem applyOnTier_append_singleton (u : List α) (x : α) :
+    r.applyOnTier p (u ++ [x]) = r.applyOnTier p u
+      ++ r.windowOutput (((r.applyOnTier p u).filter (p ·)).rtake (k - 1)) x := by
+  have h := windowRun_append_singleton (out := r.windowOutput)
+    (upd := fun w x ↦ (r.windowOutput w x).filter (p ·)) (w := []) (Nat.zero_le (k - 1)) u x
+  rwa [windowRun_filter, List.nil_append] at h
+
+/-- Over the total tier, `applyOnTier` is `apply`. -/
+theorem applyOnTier_true : r.applyOnTier (fun _ ↦ True) = r.apply := by
+  simp [applyOnTier]
+  rfl
+
+/-- Restricted to the tier, `applyOnTier` is `apply` on the tier projection of the input,
+provided each block stays on the tier exactly when its input symbol is on it. -/
+theorem filter_applyOnTier (r : OSLRule k α α) {p : α → Prop} [DecidablePred p]
+    (hr : ∀ w x, ∀ y ∈ r.windowOutput w x, p y ↔ p x) (l : List α) :
+    (r.applyOnTier p l).filter (p ·) = r.apply (l.filter (p ·)) := by
+  induction l using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton u x ih =>
+    rw [applyOnTier_append_singleton, List.filter_append, ih, List.filter_append]
+    set W := (r.apply (u.filter (p ·))).rtake (k - 1)
+    by_cases hx : p x
+    · rw [(List.filter_eq_self (l := r.windowOutput W x)).2 fun y hy ↦
+        decide_eq_true ((hr W x y hy).2 hx), List.filter_singleton, decide_eq_true hx,
+        Bool.cond_true, apply_append_singleton]
+    · rw [(List.filter_eq_nil_iff (l := r.windowOutput W x)).2 fun y hy ↦
+        by simpa using mt (hr W x y hy).1 hx, List.filter_singleton, decide_eq_false hx,
+        Bool.cond_false, List.append_nil, List.append_nil]
+
+/-- Over a finite output alphabet the rule run over a tier is left-subsequential, the bounded
+tier window being the state. -/
+theorem isLeftSubsequential_applyOnTier [Fintype β] :
+    IsLeftSubsequential (r.applyOnTier p) :=
+  isLeftSubsequential_windowRun _ _ _
+
+end OSLRule
+
+/-! ### ISL and OSL are incomparable
+
+Chandlee, Eyraud and Heinz separate the two classes and place a subsequential function outside
+both. Over the residual characterizations each separation is one pair of inputs with the same
+window and different continuations. -/
+
+private theorem rtake_cons_replicate (n : ℕ) (x y : α) :
+    (x :: List.replicate n y).rtake n = List.replicate n y := by
+  simpa using List.rtake_append_length (l₁ := [x]) (l₂ := List.replicate n y)
+
+section Incomparable
+
+variable [DecidableEq α] {a b c : α}
+
+/-- Dissimilation of `a` to `b` after an input `a` (the function `f₂` of
+[chandlee-eyraud-heinz-2014], Theorem 5). -/
+def ISLRule.dissimilate (a b : α) : ISLRule 2 α α where
+  windowOutput w x := if w = [a] ∧ x = a then [b] else [x]
+
+/-- Dissimilation is not OSL, since `aa` and `ab` have the same output `ab` but continue
+differently on `a`. -/
+theorem ISLRule.dissimilate_not_isLeftOutputStrictlyLocal (hab : a ≠ b) (k : ℕ) :
+    ¬ IsLeftOutputStrictlyLocal k (dissimilate a b).apply := fun h ↦ by
+  have e := congrFun (h.factorsThrough_residual (a := [a, a]) (b := [a, b])
+    (by simp [ISLRule.apply, ISLRule.applyAux, windowRun, dissimilate, List.rtake, hab.symm]))
+    [a]
+  simp [residual, ISLRule.apply, ISLRule.applyAux, windowRun, dissimilate, List.rtake,
+    hab.symm] at e
+
+/-- Unbounded progressive spreading of `a`, under which every symbol after an `a` surfaces as
+`a`. -/
+def OSLRule.spread (a : α) : OSLRule 2 α α where
+  windowOutput w x := if w = [a] then [a] else [x]
+
+private theorem spread_apply_cons_replicate (n : ℕ) :
+    (OSLRule.spread a).apply (a :: List.replicate n b) = List.replicate (n + 1) a := by
+  induction n with
+  | zero => simp [OSLRule.spread]
+  | succ n ih =>
+    rw [List.replicate_succ', ← List.cons_append, OSLRule.apply_append_singleton, ih,
+      List.replicate_succ' (n := n + 1)]
+    simp [OSLRule.spread, List.replicate_succ', List.rtake_concat_succ]
+
+private theorem spread_apply_replicate (hab : a ≠ b) (n : ℕ) :
+    (OSLRule.spread a).apply (List.replicate n b) = List.replicate n b := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    rw [List.replicate_succ', OSLRule.apply_append_singleton, ih]
+    have : (List.replicate n b).rtake (2 - 1) ≠ [a] := fun h ↦ hab <|
+      List.eq_of_mem_replicate ((List.rtake_suffix _ _).subset (h ▸ List.mem_singleton_self a))
+    simp [OSLRule.spread, this]
+
+/-- Spreading is not ISL, since `a bᵏ⁻¹` and `bᵏ` end in the same `k - 1` input symbols while a
+further `b` surfaces as `a` after the first and as `b` after the second. -/
+theorem OSLRule.spread_not_isLeftInputStrictlyLocal (hab : a ≠ b) (k : ℕ) :
+    ¬ IsLeftInputStrictlyLocal k (spread a).apply := fun h ↦ by
+  have e := congrFun (h.factorsThrough_residual (a := a :: List.replicate (k - 1) b)
+    (b := b :: List.replicate (k - 1) b) (by simp only [rtake_cons_replicate])) [b]
+  simp only [residual, List.cons_append, ← List.replicate_succ', spread_apply_cons_replicate,
+    ← List.replicate_succ, spread_apply_replicate hab, List.length_replicate,
+    List.drop_replicate, Nat.add_sub_cancel_left] at e
+  exact hab (List.singleton_inj.mp e)
+
+/-- Spreading is not right-OSL, since scanned right to left its output on `b` is not a prefix of
+its output on `ba`. -/
+theorem OSLRule.spread_not_isRightOutputStrictlyLocal (hab : a ≠ b) (k : ℕ) :
+    ¬ IsRightOutputStrictlyLocal k (spread a).apply := fun h ↦ by
+  have e := IsLeftOutputStrictlyLocal.isPrefix h [b] [a]
+  simp [List.revConj, OSLRule.apply, OSLRule.applyAux, windowRun, spread, List.rtake,
+    hab.symm] at e
+
+/-- The flag machine for long-distance assimilation of `b` to `a`, under which `b` surfaces as `a`
+after an `a` however far back (the function `f₁` of [chandlee-eyraud-heinz-2014], Theorem 4). -/
+def longDistanceAgree (a b : α) : Mealy Bool α α :=
+  Mealy.ofFlag (· = a) fun s x ↦ if s ∧ x = b then a else x
+
+private theorem longDistanceAgree_runFrom_replicate (hcb : c ≠ b) (s : Bool) (n : ℕ) :
+    (longDistanceAgree a b).runFrom s (List.replicate n c) = List.replicate n c := by
+  induction n generalizing s with
+  | zero => rfl
+  | succ n ih =>
+    rw [List.replicate_succ, Mealy.runFrom_cons, ih]
+    simp [longDistanceAgree, hcb]
+
+private theorem longDistanceAgree_run_cons_replicate (hcb : c ≠ b) (x : α) (n : ℕ) :
+    (longDistanceAgree a b).run (x :: List.replicate n c) = x :: List.replicate n c := by
+  rw [Mealy.run, Mealy.runFrom_cons, longDistanceAgree_runFrom_replicate hcb]
+  simp [longDistanceAgree]
+
+/-- Long-distance assimilation is not ISL, since `acᵏ⁻¹` and `bcᵏ⁻¹` end alike while a further
+`b` surfaces as `a` only after the first. -/
+theorem longDistanceAgree_not_isLeftInputStrictlyLocal (hab : a ≠ b) (hca : c ≠ a) (k : ℕ) :
+    ¬ IsLeftInputStrictlyLocal k (longDistanceAgree a b).run := fun h ↦ by
+  have e := congrFun (h.factorsThrough_residual (a := a :: List.replicate (k - 1) c)
+    (b := b :: List.replicate (k - 1) c) (by simp only [rtake_cons_replicate])) [b]
+  simp [Mealy.residual_run, longDistanceAgree, List.any_replicate, hca, hab.symm] at e
+  exact hab e
+
+/-- Long-distance assimilation is not OSL, since `acᵏ⁻¹` and `bcᵏ⁻¹` are output unchanged and
+end alike while a further `b` surfaces as `a` only after the first. -/
+theorem longDistanceAgree_not_isLeftOutputStrictlyLocal (hab : a ≠ b) (hca : c ≠ a)
+    (hcb : c ≠ b) (k : ℕ) : ¬ IsLeftOutputStrictlyLocal k (longDistanceAgree a b).run := by
+  intro h
+  have e := congrFun (h.factorsThrough_residual (a := a :: List.replicate (k - 1) c)
+    (b := b :: List.replicate (k - 1) c) (by
+      simp only [longDistanceAgree_run_cons_replicate hcb, rtake_cons_replicate])) [b]
+  simp [Mealy.residual_run, longDistanceAgree, List.any_replicate, hca, hab.symm] at e
+  exact hab e
+
+end Incomparable
 
 end Subregular

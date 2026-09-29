@@ -67,8 +67,8 @@ Chandlee and Heinz). `Effect` covers feature change, deletion, replacement, and 
 feature class from the adjacent input segment — Chomsky and Halle's
 alpha-variables, which is `Finset.piecewise` on the class — so insertion,
 metathesis and coalescence are not expressible, and application is neither
-iterative/directional nor cyclic. Iterative spreading lies in the strictly
-larger Output Strictly Local class (`Subregular.OSLRule`).
+iterative/directional nor cyclic. Iterative spreading lies outside ISL, in the
+Output Strictly Local class (`Subregular.OSLRule.spread_not_isLeftInputStrictlyLocal`).
 
 ## Todo
 
@@ -100,17 +100,17 @@ inductive ContextElem where
 
 /-- The structural change effected by a rule. -/
 inductive Effect where
-  /-- Merge a feature bundle into the target segment.
-      SPE notation: `A → B` where B is a partial specification. -/
+  /-- Merging a feature bundle into the target segment, `A → B` in SPE notation with `B` a
+      partial specification. -/
   | changeFeatures : Segment → Effect
-  /-- Delete the target segment. SPE notation: `A → ∅`. -/
+  /-- Deleting the target segment, `A → ∅` in SPE notation. -/
   | delete : Effect
   /-- Replace the target segment by a given one, which may leave unspecified a feature the
       target specifies, as a change to an archiphoneme does. -/
   | replace : Segment → Effect
-  /-- Assimilate the features of the class `C` to the following segment: the alpha-variable
-      change `A → [αF, βG, …] / __ [αF, βG, …]` for `C = {F, G, …}`, and the spreading of a
-      class node when `C` is a natural class (`Phonology/FeatureGeometry.lean`). -/
+  /-- Assimilating the features of the class `C` to the following segment, which is the
+      alpha-variable change `A → [αF, βG, …] / __ [αF, βG, …]` for `C = {F, G, …}` and the
+      spreading of a class node when `C` is a natural class (`Phonology/FeatureGeometry.lean`). -/
   | copyRight : Finset Feature → Effect
   /-- Assimilate the features of the class `C` to the preceding segment. -/
   | copyLeft : Finset Feature → Effect
@@ -125,8 +125,8 @@ def Effect.rightReach : Effect → ℕ
   | .copyRight _ => 1
   | _ => 0
 
-/-- Apply an effect to a target `s` standing between the prefix `w` and the suffix `d`:
-`none` deletes the segment, and a class copy takes the neighbour's values on the class,
+/-- The result of an effect on a target `s` standing between the prefix `w` and the suffix `d`,
+where `none` deletes the segment and a class copy takes the neighbour's values on the class,
 leaving the target unchanged at a word edge. -/
 def Effect.apply (e : Effect) (w : List Segment) (s : Segment) (d : List Segment) :
     Option Segment :=
@@ -189,9 +189,9 @@ def Rule.rightReach (r : Rule) : ℕ := max r.rightContext.length r.effect.right
 
 /-! ### Context matching -/
 
-/-- Match a right-context list against the suffix `right` to the right
-of the current position. Both lists are scanned head-to-head:
-`right`'s head is the segment immediately following the target. -/
+/-- Whether a right-context list matches the suffix `right` to the right of the current
+position, scanning both lists head-to-head from the segment immediately following the
+target. -/
 def matchRightContext : List ContextElem → List Segment → Bool
   | [], _ => true
   | .wordBoundary :: rest, [] => matchRightContext rest []
@@ -199,22 +199,19 @@ def matchRightContext : List ContextElem → List Segment → Bool
   | .seg p :: rest, s :: rs => decide (p ≤ s) && matchRightContext rest rs
   | .seg _ :: _, [] => false  -- expected segment, none follows
 
-/-- Match a left-context list against the prefix `left` to the left of
-the current position. Context elements are ordered left-to-right (so
-the rightmost element is closest to the target); we reverse both lists
-once and then scan head-to-head. -/
+/-- Whether a left-context list matches the prefix `left` to the left of the current position.
+Context elements are ordered left-to-right, so the rightmost element is closest to the
+target, and both lists are reversed once and then scanned head-to-head. -/
 def matchLeftContext (ctx : List ContextElem) (left : List Segment) : Bool :=
   matchRightContext ctx.reverse left.reverse
 
 /-! ### Rule application -/
 
-/-- Apply a single rule to a segment string. Scans left-to-right; at
-every position where the target and contexts match, applies the effect.
-Application is **simultaneous** in the SPE sense (convention (39),
-Chomsky and Halle p. 344): contexts are matched against the *input*,
-not the partially-rewritten output — the prefix `left` accumulates the
-original segments, so a rule's own output never feeds its later matches.
-Cf. Chandlee and Heinz.
+/-- A single rule applied to a segment string, scanning left to right and applying the effect
+at every position where the target and contexts match. Application is **simultaneous** in the
+SPE sense (convention (39), Chomsky and Halle p. 344), matching contexts against the *input*
+rather than the partially-rewritten output. The prefix `left` accumulates the original
+segments, so a rule's own output never feeds its later matches (cf. Chandlee and Heinz).
 
 The recursion is structural on `right` (the unprocessed suffix), so
 `Rule.apply` reduces cleanly under `decide` for finite inputs. -/
@@ -376,8 +373,8 @@ has a verdict depending only on the last `leftReach` input symbols and the curre
 exactly the `(leftReach + 1)`-ISL window of Chandlee and of Chandlee and Heinz. -/
 
 /-- The ISL rule computing a rewrite with no right reach. The hypothesis is the
-applicability condition: with a positive right reach the lookahead `[]` supplied here is
-the end-of-word one, not the one `Rule.apply` uses. -/
+applicability condition, since with a positive right reach the lookahead `[]` supplied here
+is the end-of-word one, not the one `Rule.apply` uses. -/
 def Rule.toISLRule (r : Rule) (_h : r.rightReach = 0) :
     ISLRule (r.leftReach + 1) Segment Segment where
   windowOutput w s := r.verdict w s []
@@ -413,15 +410,14 @@ right context in hand, and judges what remains buffered against the word end in
 `finalOutput`. That final flush is what the right context costs — `ofWindow`,
 and with it every ISL rule, emits nothing at the end. -/
 
-/-- The delayed-emission state: the left window of the oldest undecided segment,
-paired with the lookahead buffer of segments whose right context is still
-incomplete. -/
+/-- The delayed-emission state, pairing the left window of the oldest undecided segment with
+the lookahead buffer of segments whose right context is still incomplete. -/
 abbrev Rule.State (r : Rule) : Type :=
   {l : List Segment // l.length ≤ r.leftReach} ×
     {l : List Segment // l.length ≤ r.rightReach}
 
 /-- The delayed transducer for an arbitrary rewrite rule. Reading `x` appends it
-to the buffer; whatever that pushes out of the buffer has acquired its full right
+to the buffer, and whatever that pushes out of the buffer has acquired its full right
 context, so it is judged and enters the left window. `finalOutput` judges the
 remaining buffer against the end of the word, where a short lookahead is exactly
 what `matchRightContext` expects. -/
@@ -437,8 +433,8 @@ def Rule.toSubsequentialTransducer (r : Rule) :
       r.verdict s.1.val b ((s.2.val ++ [x]).rtake r.rightReach)
   finalOutput s := r.scan s.1.val s.2.val
 
-/-- From any state the delayed transducer judges the buffer and the remaining
-input together: the delay is invisible in the total output. -/
+/-- From any state the delayed transducer judges the buffer and the remaining input together,
+so the delay is invisible in the total output. -/
 theorem Rule.runFrom_toSubsequentialTransducer (r : Rule) (s : r.State)
     (input : List Segment) :
     r.toSubsequentialTransducer.runFrom s input = r.scan s.1.val (s.2.val ++ input) := by
@@ -471,7 +467,7 @@ theorem Rule.run_toSubsequentialTransducer (r : Rule) :
 
 /-- **Every local rewrite rule is Left-Subsequential.** `Segment` is a partial
 valuation of the 26 features of Hayes, so it is finite but carries no
-`Fintype` instance (its `Flat` slots are deliberately opaque); the hypothesis
+`Fintype` instance (its `Flat` slots are deliberately opaque), and the hypothesis
 supplies the finite alphabet Mohri assumes without forcing a
 `3 ^ 26`-element enumeration on every consumer of this file. -/
 theorem Rule.isLeftSubsequential [Fintype Segment] (r : Rule) :
