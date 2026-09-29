@@ -20,95 +20,55 @@ public import Mathlib.Data.Multiset.ZeroCons
 public import Mathlib.LinearAlgebra.BilinearMap
 public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 
+/-!
+# The Grossman–Larson product
+
+This file defines the Grossman–Larson product on the free module of forests of nonplanar rooted
+trees. The product `F ⋆ G` sums, over the sub-multisets `G₁` of `G`, the forests obtained by
+grafting the trees of `G₁` onto vertices of `F` in all ways, with the remaining trees `G - G₁`
+placed alongside. Grossman and Larson introduce the product; the closed form used here is
+Foissy's, through the Guin–Oudom extension of the grafting pre-Lie product. The product is
+associative (`GrossmanLarson/Monoid.lean`) and dual to the pruning coproduct under the
+symmetry-weighted pairing (`GrossmanLarson/Pairing.lean`).
+
+## Main definitions
+
+* `GrossmanLarson R α`: forests of `UnorderedTree α` with coefficients in `R`, a synonym of
+  `ConnesKreimer R (UnorderedTree α)` whose multiplication is the Grossman–Larson product.
+* `GrossmanLarson.insertTree`: grafting one tree onto one vertex of a forest, in all ways.
+* `GrossmanLarson.insertion`: the bilinear insertion `F • G`, grafting every tree of `G` at once.
+* `GrossmanLarson.product`: `F ⋆ G = Σ_{G₁ ≤ G} (F • G₁) · (G - G₁)`, the `Mul` instance.
+
+## Main results
+
+* `GrossmanLarson.mul_one`, `GrossmanLarson.one_mul`: the empty forest is a two-sided unit.
+* `GrossmanLarson.map_product`: the product commutes with change of coefficients.
+
+## Implementation notes
+
+The insertion `F • G` grafts every tree of `G` onto the original `F`. It is not iterated
+one-tree insertion, which would also graft later trees onto earlier ones. As for `MulOpposite`,
+`op` and `unop` pass between the synonym and `ConnesKreimer R (UnorderedTree α)`, so that the
+disjoint-union product stays available inside definitions.
+
+The insertion Lie algebra of Marcolli, Chomsky and Berwick comes from a different pre-Lie
+product, which inserts a binary tree by subdividing an edge rather than by grafting at a vertex.
+
+## References
+
+* [grossman-larson-1989]
+* [foissy-2021]
+* [marcolli-chomsky-berwick-2025]
+-/
+
 @[expose] public section
 
 open RoseTree UnorderedTree
 
-/-!
-# Grossman-Larson Hopf algebra on forests of nonplanar rooted trees
-[grossman-larson-1989]
-[foissy-typed-decorated-rooted-trees-2018]
-[marcolli-chomsky-berwick-2025]
+/-! ### The carrier -/
 
-The **Grossman-Larson product** `⋆` is the associative non-commutative
-product on `ConnesKreimer R (UnorderedTree α)`, dual to the disjoint-union
-product. Together with the appropriate coproduct, it yields a Hopf
-algebra dual to the Connes-Kreimer Hopf algebra.
-
-## MCB targets
-
-The GL framework is **the unification** that lets MCB's three coproducts
-(Δ^c, Δ^d, Δ^ρ) share one substrate (see
-`memory/project_mcb_unification_rationale.md`). Specifically:
-
-* **Lemma 1.2.10** (Δ^c bialgebra on `V(F_{SO_0})`): closed via the
-  GL-CK duality once R.5/R.6/R.7 sorries land. See
-  `Coproduct/Trace.lean`.
-* **Lemma 1.2.11** (Δ^ρ Hopf algebra on `V(\tilde F_{SO_0})`):
-  currently has a parallel proof in `Coproduct/Pruning.lean`
-  (Foissy clean coassoc); R.8 will redo via GL duality and delete the
-  parallel.
-* **Lemma 1.7.3** (Insertion Lie Algebra of §1.7 = Lie algebra of
-  primitives in `H^∨` after `1 − α` quotient): direct consequence of
-  the GL-dual Lie bracket, with MCB Def 1.7.1's binary `◁_e` being the
-  binary specialization (NOT a parallel algebra; see
-  `feedback_mcb_section_1_7_not_foissy.md`).
-* **Δ^d** (MCB Def 1.2.5): falls out as a different extraction policy
-  + projection from the same framework (NOT a parallel substrate; see
-  `project_mcb_unification_rationale.md`).
-
-## Construction
-
-For trees `T₁, T₂ : UnorderedTree α`:
-* The **insertion operator** `T₁ • T₂` sums over each vertex `v` of `T₁`
-  the tree obtained by grafting `T₂` at `v` as a new child. Reduces to
-  `UnorderedTree.insertSum T₁ T₂` from `PreLie/UnorderedTree.lean` (whose
-  convention is `insertSum T_host T_graft`).
-* For a single tree `T` and a forest `F`, `F • T` is the forest obtained
-  by replacing one occurrence of a tree `S ∈ F` with `S` augmented by
-  `T` grafted at one of its vertices: `F • T = Σ_{S ∈ F, v ∈ V(S)}
-  (F.erase S + {S[v ↦ T]})`. Implemented as `insertTreeForest`.
-* For a multi-tree operand `G_forest`, the multi-tree insertion `F • G`
-  is defined as the **all-at-once** sum over assignments of each tree
-  in `G` to a vertex of the *original* `F`. **Importantly, this is NOT
-  the iterated single-tree insertion**: those don't commute (see
-  `feedback_inserttree_does_not_commute.md`). The correct definition
-  is `F • G_forest = Σ_{f : G_forest → V(F)} of' (F with each T ∈ G
-  grafted at f(T))`, implemented as `RoseTree.Pathed.insertionForest` in
-  `PreLie/Insertion.lean` and lifted to `H` as `insertion` below.
-
-The Grossman-Larson product is given by Foissy 2021 Theorem 5.1:
-```
-F ⋆ G = Σ_{G₁ ⊆ G_forest} (F • of' G₁) · of' (G_forest - G₁)
-```
-where the sum is over sub-multisets of `G_forest` and `·` is the
-disjoint-union product on `ConnesKreimer R (UnorderedTree α)`.
-
-## Type alias
-
-`GrossmanLarson R α` is a type alias for `ConnesKreimer R (UnorderedTree α)`
-that overrides the default disjoint-union `Mul` with the Grossman-Larson
-product. Mirrors mathlib's `MultiplicativeOpposite` pattern: same
-underlying carrier, different multiplication.
-
-## Status
-
-`[UPSTREAM]` candidate. Skeleton API (basis embeddings, single-tree
-insertion, multi-tree `insertion`, GL product, `Mul` instance), with
-`mul_one` and `one_mul` proved in-file.
-
-`mul_assoc_basis` and `mul_assoc` (R-generic, `α : Type*`) live in
-`GrossmanLarson/Monoid.lean`: Foissy coassociativity of Δ^ρ transports
-back through the GL/CK duality, with base change (`map_product` below)
-descending the basis case to any `CommSemiring R`. The `Semigroup`
-and `Monoid` typeclass instances are registered there.
--/
-
-
-/-! ### The Grossman-Larson Hopf algebra carrier -/
-
-/-- The Hopf algebra of forests of nonplanar rooted trees, equipped
-    (via the `Mul` instance below) with the Grossman-Larson product. -/
+/-- `GrossmanLarson R α` is the free `R`-module on forests of `UnorderedTree α`, which the `Mul`
+instance below equips with the Grossman–Larson product. -/
 def GrossmanLarson (R : Type*) [CommSemiring R] (α : Type*) : Type _ :=
   ConnesKreimer R (UnorderedTree α)
 
@@ -116,11 +76,10 @@ namespace GrossmanLarson
 
 variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
-/-! ### Forwarded module instances
+/-! ### Module structure
 
-These propagate from the underlying `ConnesKreimer` carrier without
-exposing the disjoint-union `Mul` (which would clash with the
-Grossman-Larson `Mul` defined later). -/
+The additive structure is that of `ConnesKreimer R (UnorderedTree α)`. Its disjoint-union
+product is not forwarded, since the synonym carries the Grossman–Larson product. -/
 
 noncomputable instance instAddCommMonoid : AddCommMonoid (GrossmanLarson R α) :=
   inferInstanceAs (AddCommMonoid (ConnesKreimer R (UnorderedTree α)))
@@ -134,22 +93,16 @@ noncomputable instance instOne : One (GrossmanLarson R α) :=
 instance instFunLike : FunLike (GrossmanLarson R α) (Forest (UnorderedTree α)) R :=
   inferInstanceAs (FunLike (ConnesKreimer R (UnorderedTree α)) (Forest (UnorderedTree α)) R)
 
-/-! ### Underlying-carrier coercions
+/-! ### Passing to the underlying module
 
-The type alias `GrossmanLarson R α := ConnesKreimer R (UnorderedTree α)`
-makes the carriers definitionally equal, but Lean does not always
-unfold `def` for type ascription or instance resolution. Explicit
-identity-coercion helpers `op`/`unop` (mirroring `MulOpposite.op` /
-`unop` from mathlib) let us reach the underlying disjoint-union `Mul`
-when defining the GL product, without exposing the disjoint-union
-`Mul` on `GrossmanLarson R α` itself. -/
+`op` and `unop` are the identity maps between the synonym and `ConnesKreimer R (UnorderedTree α)`,
+as for `MulOpposite`. They make the disjoint-union product available inside definitions without
+putting it on `GrossmanLarson R α`. -/
 
-/-- Reinterpret a `ConnesKreimer R (UnorderedTree α)` element as a
-    `GrossmanLarson R α` element (identity at the carrier level). -/
+/-- `op x` is `x` read in the synonym. -/
 def op (x : ConnesKreimer R (UnorderedTree α)) : GrossmanLarson R α := x
 
-/-- Reinterpret a `GrossmanLarson R α` element as a
-    `ConnesKreimer R (UnorderedTree α)` element (identity at the carrier level). -/
+/-- `unop x` is `x` read in `ConnesKreimer R (UnorderedTree α)`. -/
 def unop (x : GrossmanLarson R α) : ConnesKreimer R (UnorderedTree α) := x
 
 omit [DecidableEq α] in
@@ -160,16 +113,13 @@ omit [DecidableEq α] in
 @[simp] theorem unop_op (x : ConnesKreimer R (UnorderedTree α)) :
     unop (op (R := R) (α := α) x) = x := rfl
 
-/-! ### Smart constructors
+/-! ### Basis vectors -/
 
-The basis-embedding constructors are inherited from the underlying
-`ConnesKreimer` via definitional equality. -/
-
-/-- Embed a forest as a basis vector. -/
+/-- `of' F` is the basis vector of the forest `F`. -/
 noncomputable def of' (F : Forest (UnorderedTree α)) : GrossmanLarson R α :=
   ConnesKreimer.of' (R := R) F
 
-/-- Embed a single tree as a singleton-forest basis vector. -/
+/-- `ofTree t` is the basis vector of the one-tree forest `{t}`. -/
 noncomputable def ofTree (t : UnorderedTree α) : GrossmanLarson R α :=
   ConnesKreimer.ofTree (R := R) t
 
@@ -178,15 +128,9 @@ omit [DecidableEq α] in
     (of' (R := R) (0 : Forest (UnorderedTree α)) : GrossmanLarson R α) = 1 :=
   ConnesKreimer.of'_zero
 
-/-! ### Basis extension over the Connes-Kreimer carrier
+/-! ### Linear extension from the basis -/
 
-`basisLift f` is the `R`-linear extension of a basis function
-`f : Forest → M` to all of `GrossmanLarson R α`, routed through the
-structure's `toFinsuppAlgEquiv` (the sanctioned escape hatch to the bare
-`AddMonoidAlgebra`). It replaces the former direct use of
-`Finsupp.linearCombination` on the `def`-synonym carrier. -/
-
-/-- `R`-linear extension of a basis function to `GrossmanLarson R α`. -/
+/-- `basisLift f` is the `R`-linear map that agrees with `f` on basis forests. -/
 noncomputable def basisLift {M : Type*} [AddCommMonoid M] [Module R M]
     (f : Forest (UnorderedTree α) → M) : GrossmanLarson R α →ₗ[R] M :=
   (Finsupp.linearCombination R f).comp
@@ -215,8 +159,7 @@ private theorem basisLift_one {M : Type*} [AddCommMonoid M] [Module R M]
   rw [← of'_zero (R := R) (α := α)]; exact basisLift_of' f 0
 
 omit [DecidableEq α] in
-/-- The basis extension of the embedding `of'` is the identity: the
-    transported form of `Finsupp.sum_single`. -/
+/-- Extending `of'` linearly gives the identity. -/
 private theorem basisLift_of'_apply (x : GrossmanLarson R α) :
     basisLift (of' (R := R) (α := α)) x = x := by
   have key : (basisLift (of' (R := R) (α := α))).toAddMonoidHom
@@ -229,18 +172,12 @@ private theorem basisLift_of'_apply (x : GrossmanLarson R α) :
     exact (ConnesKreimer.smul_single_one F r).symm
   simpa using DFunLike.congr_fun key x
 
-/-! ### Single-tree insertion
+/-! ### One-tree insertion
 
-`insertTreeForest T F : GrossmanLarson R α` is the basis-level
-forest-insertion operator: for each occurrence of a tree `S ∈ F` (with
-multiplicity), sum over each grafting summand `S' ∈ UnorderedTree.insertSum
-S T` (`S` host, `T` graft, summed over vertices of `S`) the basis
-vector for the resulting forest `S ::ₘ F.erase S` with `S` replaced by
-`S'`. The convention `UnorderedTree.insertSum T_host T_graft` is fixed by
-`PreLie/InsertSum.lean` (verified against test + `card_insertSum_eq_numNodes`). -/
+`insertTreeForest T F` grafts `T` onto one vertex of one tree `S` of `F`: for each occurrence of
+`S` in `F` it sums, over the summands `S'` of `S ◁ T`, the forest with `S` replaced by `S'`. -/
 
-/-- Forest-level single-tree insertion: graft `T` at one vertex of one
-    tree of `F`, summed over (tree, vertex). -/
+/-- `insertTreeForest T F` grafts `T` onto one vertex of one tree of `F`, in all ways. -/
 noncomputable def insertTreeForest (T : UnorderedTree α) (F : Forest (UnorderedTree α)) :
     GrossmanLarson R α :=
   (F.bind fun S =>
@@ -250,7 +187,7 @@ noncomputable def insertTreeForest (T : UnorderedTree α) (F : Forest (Unordered
     insertTreeForest (R := R) T (0 : Forest (UnorderedTree α)) = 0 := by
   simp only [insertTreeForest, Multiset.zero_bind, Multiset.sum_zero]
 
-/-- ℤ-linear extension of `insertTreeForest T` to `GrossmanLarson R α`. -/
+/-- `insertTree T` is the linear extension of `insertTreeForest T`. -/
 noncomputable def insertTree (T : UnorderedTree α) :
     GrossmanLarson R α →ₗ[R] GrossmanLarson R α :=
   basisLift (insertTreeForest T)
@@ -259,20 +196,8 @@ noncomputable def insertTree (T : UnorderedTree α) :
     insertTree (R := R) T (of' F) = insertTreeForest T F :=
   basisLift_of' (insertTreeForest T) F
 
-/-- **Leibniz cons decomposition for `insertTreeForest`** (CK-level form).
-
-    Stated at the underlying `ConnesKreimer` level (via `unop`) where the
-    disjoint-union `*` is unambiguous. The GL-level corollary
-    `insertTreeForest_cons` follows.
-
-    Strategy: `Multiset.cons_bind` + `Multiset.sum_add` split LHS into
-    "S as cons-front" + "S₀ ∈ F" parts. The front simplifies via
-    `Multiset.erase_cons_head`. For the tail, the auxiliary
-    `(S ::ₘ F).erase S₀ = S ::ₘ F.erase S₀` (case-split on `S₀ = S`,
-    using `cons_erase` on the equal case) lets us apply
-    `ConnesKreimer.of'_add` to factor `of' {S}` out of each summand. Then
-    `Multiset.sum_bind` + `Multiset.sum_map_mul_left` (twice) pull
-    `of' {S}` out of the bind. -/
+/-- One-tree insertion into `S ::ₘ F` grafts into `S` or into `F`, read in the underlying
+module. -/
 private theorem unop_insertTreeForest_cons
     (T S : UnorderedTree α) (F : Forest (UnorderedTree α)) :
     unop (insertTreeForest (R := R) T (S ::ₘ F)) =
@@ -321,9 +246,7 @@ private theorem unop_insertTreeForest_cons
         Multiset.map_congr (rfl : F = F) (fun _ _ => Multiset.sum_map_mul_left),
         Multiset.sum_map_mul_left, ← Multiset.sum_bind]
 
-/-- **Leibniz cons decomposition** for `insertTreeForest` (GL-level form).
-    GL-level corollary of `unop_insertTreeForest_cons` via the
-    definitional identity of `op` and `unop`. -/
+/-- One-tree insertion into `S ::ₘ F` grafts into `S` or into `F`. -/
 theorem insertTreeForest_cons (T S : UnorderedTree α) (F : Forest (UnorderedTree α)) :
     insertTreeForest (R := R) T (S ::ₘ F) =
       ((UnorderedTree.insertSum S T).map
@@ -332,49 +255,19 @@ theorem insertTreeForest_cons (T S : UnorderedTree α) (F : Forest (UnorderedTre
           unop (insertTreeForest T F)) :=
   unop_insertTreeForest_cons T S F
 
-/-! ### Multi-tree insertion (the insertion operator `F • G`)
+/-! ### Multi-tree insertion
 
-The bilinear operator `F • G : GrossmanLarson R α` for `F G : H`
-inserts each tree of `G` (counted with multiplicity) at a vertex of
-the *original* `F`. Specifically, for `F = of' F_forest` and `G = of'
-G_forest`:
-```
-F • G = Σ_{f : G_forest → V(F_forest)} of' (F_forest with each T ∈ G grafted at f(T))
-```
-where the sum is over functions from `G_forest`'s elements to vertices
-of `F_forest` (counted with multiplicity).
+The bilinear insertion `F • G` grafts every tree of `G` onto a vertex of the original `F`; on
+basis forests it is `UnorderedTree.insertionMultiset`. It is not iterated one-tree insertion,
+which would also graft later trees onto the vertices of earlier ones. -/
 
-**This is well-defined on `G_forest` as a multiset** because the result
-is invariant under permutation of `G_forest`'s elements (the
-function-sum doesn't care about the order of `G_forest`'s indexing).
-
-**This is NOT iterated single-tree insertion**: `insertTree` applications
-do *not* commute (single-tree insertions add new vertices that subsequent
-insertions could graft into, breaking permutation-invariance). See
-`feedback_inserttree_does_not_commute.md` for the counterexample
-(F = {leaf a}, T₁ = leaf b, T₂ = node(c, [d]) gives 3 vs 2 summands
-for the two orders) and the correct semantics. The earlier scaffold
-that defined `insertForest` via `Multiset.foldr` of `insertTree` was
-based on this misreading and has been removed.
-
-**Implementation status**: defined via Foissy 2021 Theorem 5.1's
-combinatorial formula at the `RoseTree` level (`PreLie/Insertion.lean`'s
-`RoseTree.Pathed.insertionForest`), descended through `UnorderedTree.mk`
-(`UnorderedTree.insertionMultiset`), then bilinear-extended via
-`Finsupp.linearCombination`. The substrate invariance theorems
-(Perm on host/guest, Perm on multiset arguments) are proved
-sorry-free in `PreLie/Insertion.lean` and
-`Algebra/UnorderedTree/PreLie/InsertionUnordered.lean`. -/
-
-/-- Basis-level multi-graft on Multiset forests: each pair `(F_basis,
-    G_basis)` produces a multiset of grafted forests, summed as basis
-    vectors in `H = ConnesKreimer R (UnorderedTree α)`. -/
+/-- `insertionBasis F G` sums the basis vectors of the forests in `insertionMultiset F G`. -/
 noncomputable def insertionBasis (F_basis G_basis : Forest (UnorderedTree α)) :
     GrossmanLarson R α :=
   ((UnorderedTree.insertionMultiset F_basis G_basis).map
     fun F' => of' (R := R) F').sum
 
-/-- Internal: `insertionBasis`-bundled-as-LinearMap-in-F. -/
+/-- `insertionBasisLin G` is the linear extension of `insertionBasis · G`. -/
 noncomputable def insertionBasisLin (G_basis : Forest (UnorderedTree α)) :
     GrossmanLarson R α →ₗ[R] GrossmanLarson R α :=
   basisLift (fun F_basis => insertionBasis (R := R) F_basis G_basis)
@@ -384,39 +277,29 @@ private theorem insertionBasisLin_of' (G_basis F_basis : Forest (UnorderedTree �
     insertionBasisLin (R := R) G_basis (of' F_basis) = insertionBasis F_basis G_basis :=
   basisLift_of' _ F_basis
 
-/-- The bilinear insertion operator `F • G : GrossmanLarson R α`.
-    Defined as the bilinear extension of `insertionBasis` via
-    `Finsupp.linearCombination` twice (once over G's basis, once over
-    F's via `insertionBasisLin`). -/
+/-- `insertion F G` is the bilinear extension of `insertionBasis`. -/
 noncomputable def insertion :
     GrossmanLarson R α →ₗ[R] GrossmanLarson R α →ₗ[R] GrossmanLarson R α :=
   (basisLift (insertionBasisLin (R := R) (α := α))).flip
 
 omit [DecidableEq α] in
-/-- Bridge: on basis vectors, `insertion (of' F) (of' G) = insertionBasis F G`.
-    Unfolds the bilinear extension on both basis arguments. -/
+/-- On basis vectors, `insertion` is `insertionBasis`. -/
 theorem insertion_of'_of' (F G : Forest (UnorderedTree α)) :
     insertion (R := R) (of' F) (of' G) = insertionBasis F G := by
   show (basisLift (insertionBasisLin (R := R) (α := α))).flip (of' F) (of' G) = _
   rw [LinearMap.flip_apply, basisLift_of', insertionBasisLin_of']
 
-/-! ### Grossman-Larson product
+/-! ### The Grossman–Larson product
 
-The associative product `F ⋆ G` is defined via the Foissy 2021 closed
-form (sum over sub-multisets of `G`'s underlying forest). The
-disjoint-union `*` used inside the definition is the underlying
-`ConnesKreimer` multiplication, exposed via type ascription (the def
-`GrossmanLarson R α := ConnesKreimer R (UnorderedTree α)` makes the
-ascription a no-op). -/
+`F ⋆ G` sums, over the sub-multisets `G₁` of `G`, the insertion of `G₁` into `F` multiplied by
+the disjoint union with `G - G₁`, the closed form of Foissy's Theorem 5.1. -/
 
-/-- Forest-level Grossman-Larson product. -/
+/-- `productForest F G` is the Grossman–Larson product of `F` with the basis forest `G`. -/
 noncomputable def productForest (F : GrossmanLarson R α)
     (G : Forest (UnorderedTree α)) : GrossmanLarson R α :=
   (G.powerset.map fun G₁ =>
     op (unop (insertion F (of' (R := R) G₁)) * unop (of' (R := R) (G - G₁)))).sum
 
-/-- F-zero. Each powerset summand is `op (unop (insertion 0 (of' G₁)) *
-    ...) = op (0 * ...) = 0` by bilinearity of `insertion`. -/
 private theorem productForest_zero_left (G : Forest (UnorderedTree α)) :
     productForest (0 : GrossmanLarson R α) G = 0 := by
   unfold productForest
@@ -433,9 +316,7 @@ private theorem productForest_zero_left (G : Forest (UnorderedTree α)) :
     rw [zero_mul]
     rfl
 
-/-- F-additivity. Each powerset summand is additive in F via bilinearity
-    of `insertion`, then `unop`/`op` (identity coercions) and right
-    distributivity in `ConnesKreimer`. -/
+/-- The product with a basis forest is additive in the first factor. -/
 theorem productForest_add_left
     (F₁ F₂ : GrossmanLarson R α) (G : Forest (UnorderedTree α)) :
     productForest (F₁ + F₂) G = productForest F₁ G + productForest F₂ G := by
@@ -463,9 +344,7 @@ theorem productForest_add_left
   rw [add_mul]
   rfl
 
-/-- F-scalar-compatibility. Each powerset summand is scalar-compatible
-    in F via bilinearity of `insertion`, then `unop`/`op` (identity
-    coercions) and `smul_mul_assoc` in `ConnesKreimer`. -/
+/-- The product with a basis forest is `R`-linear in the first factor. -/
 theorem productForest_smul_left
     (c : R) (F : GrossmanLarson R α) (G : Forest (UnorderedTree α)) :
     productForest (c • F) G = c • productForest F G := by
@@ -491,41 +370,32 @@ theorem productForest_smul_left
   rw [smul_mul_assoc]
   rfl
 
-/-- Internal: `productForest`-bundled-as-LinearMap-in-F. -/
+/-- `productForestLin G` is `productForest · G` as a linear map. -/
 noncomputable def productForestLin (G : Forest (UnorderedTree α)) :
     GrossmanLarson R α →ₗ[R] GrossmanLarson R α where
   toFun F := productForest F G
   map_add' F₁ F₂ := productForest_add_left F₁ F₂ G
   map_smul' c F := productForest_smul_left c F G
 
-/-- The **Grossman-Larson product** `F ⋆ G : GrossmanLarson R α`,
-    bilinear in both arguments. -/
+/-- The Grossman–Larson product, bilinear in both factors. -/
 noncomputable def product :
     GrossmanLarson R α →ₗ[R] GrossmanLarson R α →ₗ[R] GrossmanLarson R α :=
   (basisLift (productForestLin (R := R) (α := α))).flip
 
 /-! ### Multiplicative structure
 
-The `Mul` instance is registered here; `Semigroup`/`Monoid` are
-registered in `GrossmanLarson/Monoid.lean` once associativity is in
-hand. -/
+The `Semigroup` and `Monoid` instances are in `GrossmanLarson/Monoid.lean`. -/
 
 noncomputable instance instMul : Mul (GrossmanLarson R α) where
   mul x y := product x y
 
 theorem mul_def (x y : GrossmanLarson R α) : x * y = product x y := rfl
 
-/-- **Left distributivity**: `a * (b + c) = a * b + a * c`. Follows from
-    `product`'s bilinearity. Registered as `LeftDistribClass` (a Prop-only
-    class that doesn't extend `Mul`/`Add`, avoiding parent-class disagreement
-    with the existing `instMul` and `instAddCommMonoid`). Sorry-free. -/
 instance instLeftDistribClass : LeftDistribClass (GrossmanLarson R α) where
   left_distrib a b c := by
     show product a (b + c) = product a b + product a c
     exact map_add (product a) b c
 
-/-- **Right distributivity**: `(a + b) * c = a * c + b * c`. Same approach as
-    `instLeftDistribClass`. Sorry-free. -/
 instance instRightDistribClass : RightDistribClass (GrossmanLarson R α) where
   right_distrib a b c := by
     show product (a + b) c = product a c + product b c
@@ -533,10 +403,8 @@ instance instRightDistribClass : RightDistribClass (GrossmanLarson R α) where
         map_add product a b]
     rfl
 
-/-- Direct lemmas for `0 * a = 0` and `a * 0 = 0`. Registering `MulZeroClass`
-    runs into the parent-class disagreement issue (it extends `Mul`/`Zero`),
-    so we expose these as plain theorems. Invoke as
-    `GrossmanLarson.zero_mul_gl`/`mul_zero_gl`. -/
+/-- These are theorems rather than a `MulZeroClass` instance, whose `Mul` and `Zero` parents
+would not agree with the instances already on the synonym. -/
 theorem zero_mul_gl (x : GrossmanLarson R α) : (0 : GrossmanLarson R α) * x = 0 := by
   show product 0 x = 0
   rw [map_zero]
@@ -546,23 +414,17 @@ theorem mul_zero_gl (x : GrossmanLarson R α) : x * (0 : GrossmanLarson R α) = 
   show product x 0 = 0
   exact map_zero _
 
-/-- Direct lemma for `(r • a) * b = r • (a * b)`. Standalone since
-    `IsScalarTower R GL GL` isn't registered (parent-class disagreement). -/
 theorem smul_mul_gl (r : R) (a b : GrossmanLarson R α) :
     (r • a) * b = r • (a * b) := by
   show product (r • a) b = r • product a b
   rw [LinearMap.map_smul]
   rfl
 
-/-- Direct lemma for `a * (s • b) = s • (a * b)`. Standalone since
-    `SMulCommClass R GL GL` isn't registered (parent-class disagreement). -/
 theorem mul_smul_gl (s : R) (a b : GrossmanLarson R α) :
     a * (s • b) = s • (a * b) :=
   LinearMap.map_smul (product a) s b
 
-/-- The GL product against a basis second factor is `productForest`:
-    the `linearCombination`-extended product reduces to the explicit
-    powerset-sum formula. -/
+/-- The product with a basis forest is `productForest`. -/
 theorem product_of' (x : GrossmanLarson R α) (G : Forest (UnorderedTree α)) :
     product x (of' (R := R) G) = productForest x G := by
   show (basisLift (productForestLin (R := R) (α := α))).flip x (of' G)
@@ -570,21 +432,15 @@ theorem product_of' (x : GrossmanLarson R α) (G : Forest (UnorderedTree α)) :
   rw [LinearMap.flip_apply, basisLift_of']
   rfl
 
-/-- **Basis form** of the GL product: `(of' F) * (of' G) = productForest (of' F) G`. -/
+/-- The product of two basis forests is `productForest`. -/
 theorem of'_mul_of' (F G : Forest (UnorderedTree α)) :
     (of' F : GrossmanLarson R α) * of' G = productForest (of' F) G :=
   product_of' (of' F) G
 
-/-! ### Unit lemmas
-
-Helper lemmas: `insertionBasis F_basis 0 = of' F_basis` (Foissy's empty-
-guest case) and `insertionBasis 0 G_basis = if G_basis = 0 then 1 else 0`
-(empty-host case). These let `mul_one` and `one_mul` reduce via the
-powerset formula. -/
+/-! ### The unit -/
 
 omit [DecidableEq α] in
-/-- `insertionBasis F 0 = of' F`: with no guests, the multi-graft leaves
-    F unchanged. -/
+/-- Inserting no guests leaves the host unchanged. -/
 private theorem insertionBasis_zero_right (F_basis : Forest (UnorderedTree α)) :
     insertionBasis (R := R) F_basis (0 : Forest (UnorderedTree α)) = of' F_basis := by
   unfold insertionBasis
@@ -592,15 +448,11 @@ private theorem insertionBasis_zero_right (F_basis : Forest (UnorderedTree α)) 
       Multiset.sum_singleton]
 
 omit [DecidableEq α] in
-/-- `insertionBasis 0 0 = 1`: inserting nothing into the empty forest
-    gives the empty forest. -/
 private theorem insertionBasis_zero_zero :
     insertionBasis (R := R) (0 : Forest (UnorderedTree α)) 0 = 1 := by
   rw [insertionBasis_zero_right, of'_zero]
 
 omit [DecidableEq α] in
-/-- `insertionBasis 0 G = 0` for non-empty G: no host vertices to graft
-    guests into. -/
 private theorem insertionBasis_zero_left_of_ne_zero
     (G_basis : Forest (UnorderedTree α)) (h : G_basis ≠ 0) :
     insertionBasis (R := R) (0 : Forest (UnorderedTree α)) G_basis = 0 := by
@@ -609,9 +461,6 @@ private theorem insertionBasis_zero_left_of_ne_zero
       Multiset.map_zero, Multiset.sum_zero]
 
 omit [DecidableEq α] in
-/-- `insertion F 1 = F`. The bilinear extension at the unit of H reduces
-    to summing `insertionBasis F_basis 0 = of' F_basis` over F's basis
-    decomposition, which equals F by `basisLift_of'_apply`. -/
 theorem insertion_one_right (F : GrossmanLarson R α) :
     insertion F (1 : GrossmanLarson R α) = F := by
   show (basisLift (insertionBasisLin (R := R) (α := α))).flip F 1 = F
@@ -624,9 +473,6 @@ theorem insertion_one_right (F : GrossmanLarson R α) :
       = of' (R := R) (α := α) from funext insertionBasis_zero_right]
   exact basisLift_of'_apply F
 
-/-- **Right unit**. `mul_one` for the GL product. The powerset
-    `(0:Multiset).powerset = {0}` collapses to a single summand, which
-    reduces via `insertion_one_right` to F. -/
 theorem mul_one (F : GrossmanLarson R α) : F * 1 = F := by
   show product F 1 = F
   show (basisLift (productForestLin (R := R) (α := α))).flip F 1 = F
@@ -649,7 +495,6 @@ theorem mul_one (F : GrossmanLarson R α) : F * 1 = F := by
   exact insertion_one_right F
 
 omit [DecidableEq α] in
-/-- Auxiliary: `insertion 1 (of' 0) = 1`. -/
 private theorem insertion_one_of'_zero :
     insertion (1 : GrossmanLarson R α)
         (of' (R := R) (0 : Forest (UnorderedTree α))) =
@@ -658,7 +503,7 @@ private theorem insertion_one_of'_zero :
   rw [insertion_of'_of', insertionBasis_zero_zero]
 
 omit [DecidableEq α] in
-/-- `insertion 1 (of' G₁) = 0` for non-empty G₁. -/
+/-- The empty forest has no vertices, so it takes no guests. -/
 theorem insertion_one_of'_ne_zero (G₁ : Forest (UnorderedTree α))
     (h : G₁ ≠ 0) :
     insertion (1 : GrossmanLarson R α) (of' (R := R) G₁) =
@@ -666,11 +511,7 @@ theorem insertion_one_of'_ne_zero (G₁ : Forest (UnorderedTree α))
   conv_lhs => rw [← of'_zero (R := R) (α := α)]
   rw [insertion_of'_of', insertionBasis_zero_left_of_ne_zero G₁ h]
 
-/-- `Multiset.count 0 s.powerset = 1`: the empty submultiset appears
-    exactly once in the powerset of any multiset. By induction on `s`:
-    base case via `powerset_zero = {0}`; cons case via `powerset_cons`
-    splits the count additively, and the `map (cons a)` half contains
-    no `0` (by `cons_ne_zero`). -/
+/-- The empty multiset occurs once among the sub-multisets of `s`. -/
 private theorem count_zero_powerset (s : Multiset (UnorderedTree α)) :
     Multiset.count (0 : Forest (UnorderedTree α)) s.powerset = 1 := by
   induction s using Multiset.induction with
@@ -685,9 +526,6 @@ private theorem count_zero_powerset (s : Multiset (UnorderedTree α)) :
       exact Multiset.cons_ne_zero hx
     rw [hmap]
 
-/-- `productForest 1 G_basis = of' G_basis`: the only non-vanishing
-    powerset summand is `G₁ = 0`, contributing `of' G_basis` exactly
-    once. The `G₁ ≠ 0` summands vanish via `insertion_one_of'_ne_zero`. -/
 private theorem productForest_one_left (G_basis : Forest (UnorderedTree α)) :
     productForest (1 : GrossmanLarson R α) G_basis = of' G_basis := by
   unfold productForest
@@ -724,10 +562,6 @@ private theorem productForest_one_left (G_basis : Forest (UnorderedTree α)) :
     rw [zero_mul]; rfl
   rw [hf0, hrest, add_zero]
 
-/-- **Left unit**. `one_mul` for the GL product. On each basis vector
-    `single G r`, `productForest 1 G = of' G` (via `productForest_one_left`)
-    forces `product 1` to agree with the identity, established through
-    `ConnesKreimer.addHom_ext`. -/
 theorem one_mul (F : GrossmanLarson R α) : (1 : GrossmanLarson R α) * F = F := by
   suffices h : (product (R := R) (α := α)) 1 = LinearMap.id by
     show product 1 F = F
@@ -744,8 +578,7 @@ theorem one_mul (F : GrossmanLarson R α) : (1 : GrossmanLarson R α) * F = F :=
 
 /-! ### Closed powerset-sum forms -/
 
-/-- The GL product against a basis second factor, in explicit
-    powerset-sum form (`productForest` unfolded). -/
+/-- The product with a basis forest, with `productForest` unfolded. -/
 theorem mul_of'_sum_form (X : GrossmanLarson R α) (G : Forest (UnorderedTree α)) :
     X * of' G =
       (G.powerset.map fun G₁ =>
@@ -760,9 +593,8 @@ theorem insertion_sum_left (s : Multiset (GrossmanLarson R α))
     insertion (R := R) s.sum G = (s.map (fun X => insertion X G)).sum :=
   map_multiset_sum ((insertion (R := R) (α := α)).flip G) s
 
-/-- **Basis form over `insertionMultiset`**: the GL product of basis
-    forests as a powerset-of-guests bind over the nonplanar insertion
-    multiset. -/
+/-- The product of two basis forests, as a sum over sub-multisets of guests of the insertion
+multiset. -/
 theorem of'_mul_of'_nim_form (F₁ F₂ : Forest (UnorderedTree α)) :
     (of' F₁ : GrossmanLarson R α) * of' F₂ =
       (F₂.powerset.bind fun B₁ =>
@@ -792,19 +624,10 @@ theorem of'_mul_of'_nim_form (F₁ F₂ : Forest (UnorderedTree α)) :
       ConnesKreimer.of' (R := R) (X + (F₂ - B₁))
   rw [ConnesKreimer.of'_add]
 
-/-! ### Associativity
+/-! ### Change of coefficients
 
-`mul_assoc_basis` and `mul_assoc` (both R-generic, `α : Type*`) are
-proved in `GrossmanLarson/Monoid.lean` from Foissy coassociativity of
-Δ^ρ through the GL/CK duality, descended to arbitrary `CommSemiring R`
-by base change. The `Semigroup`/`Monoid` instances are registered
-there. -/
-
-/-! ### Base change
-
-`ConnesKreimer.map` respects the Grossman-Larson product: the product's
-structure constants (iterated-grafting multiplicities) are ℕ-valued,
-independent of the coefficient ring. -/
+The product commutes with `ConnesKreimer.map`, since its structure constants are natural
+numbers. -/
 
 section Map
 variable {S : Type*} [CommSemiring S] (f : R →+* S)
@@ -851,7 +674,7 @@ theorem map_productForest (x : GrossmanLarson R α) (G : Forest (UnorderedTree �
   rw [ConnesKreimer.map_mul]
   exact congrArg₂ (· * ·) (map_insertion f x G₁) (map_of' f (G - G₁))
 
-/-- `ConnesKreimer.map` respects the Grossman-Larson product. -/
+/-- `ConnesKreimer.map` respects the Grossman–Larson product. -/
 theorem map_product (x y : GrossmanLarson R α) :
     ConnesKreimer.map f (product x y) =
       product (ConnesKreimer.map f x) (ConnesKreimer.map f y) := by
