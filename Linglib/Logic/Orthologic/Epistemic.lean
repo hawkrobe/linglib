@@ -36,7 +36,8 @@ The law is what forces ortholattices on the account. In a Boolean algebra it mak
 The paper's modal ortholattice is not a new structure: `□` is a bundled `InfTopHom L L`, since
 one lattice carries many modalities, and T is the hypothesis `∀ a, box a ≤ a`. An epistemic
 ortholattice is the conjunction of T and `WittgensteinLaw`. The frame semantics producing
-epistemic ortholattices is `Semantics/Modality/Orthologic/Modal.lean`.
+epistemic ortholattices is `Logic/Orthologic/ModalFrame.lean`, and the logic they characterize
+is `Logic/Orthologic/EpistemicOrthologic.lean`.
 
 ## References
 

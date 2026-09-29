@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Semantics.Modality.Orthologic.Lifting
-public import Linglib.Semantics.Modality.Orthologic.RegularProp
+public import Linglib.Logic.Orthologic.EpistemicFrame
+public import Linglib.Logic.Orthologic.EpistemicOrthologic
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype
@@ -23,6 +23,8 @@ full uncertainty.
 * `compat_iff`, `access_iff`: the compatibility and accessibility relations of the Scale.
 * `wittgenstein`, `diamond_neg_not_entail_neg`, `not_entail_box`: Wittgenstein sentences are
   contradictions, yet `◇¬p` does not entail `¬p` and `p` does not entail `□p`.
+* `not_derivable_dia_neg_neg`, `not_derivable_box`: so neither entailment is derivable in the
+  epistemic orthologic EO.
 * `distributivity_fails`, `disjunctive_syllogism_fails`, `orthomodularity_fails`,
   `pseudocomplementation_fails`: the classical laws that fail for epistemic modals.
 * `deMorgan`, `not_known_either`: the contrasts with state-based semantics.
@@ -39,8 +41,8 @@ order asymmetry of dynamic semantics, whose side is `Veltman1996.consistent_migh
 
 ## TODO
 
-The Epistemic Grid (Example 4.34), the logics EO and EO+ with their completeness theorems, and
-the remaining principles of Proposition 5.12 are not formalized.
+The Epistemic Grid (Example 4.34), the logic EO+ with its completeness theorem, and the
+remaining principles of Proposition 5.12 are not formalized.
 
 ## References
 
@@ -162,6 +164,33 @@ entail `□p` (§2). In a Boolean algebra `wittgenstein` would force both entail
 theorem diamond_neg_not_entail_neg : x3 ∈ dnP ∧ x3 ∉ nP := by decide
 
 theorem not_entail_box : x2 ∈ P ∧ x2 ∉ bP := by decide
+
+/-- EO does not derive `◇¬p ⊢ ¬p`: the Scale's regular propositions form an epistemic
+ortholattice (Proposition 4.27), so by soundness (Theorem 3.26) the derivation would make `x3`,
+which settles `◇¬p`, settle `¬p` (§1). -/
+theorem not_derivable_dia_neg_neg :
+    ¬ EDerivable (ModalFormula.dia (.neg (.var ()))) (.neg (.var ()) : ModalFormula Unit) := by
+  intro h
+  have hle := Concept.extent_subset_extent_iff.mpr <| ModalFormula.sound
+    (CompatFrame.necHom_le access) (CompatFrame.wittgensteinLaw_necHom frame access) h
+    fun _ ↦ eB ({0} : Coin)
+  change ((ModalFormula.eval _ _ _ : frame.Regular) : Set Poss) ⊆
+    ((ModalFormula.eval _ _ _ : frame.Regular) : Set Poss) at hle
+  simp only [ModalFormula.eval_dia, CompatFrame.coe_diamondHom_necHom, ModalFormula.eval,
+    CompatFrame.Regular.coe_compl, coe_eB] at hle
+  exact diamond_neg_not_entail_neg.2 (hle diamond_neg_not_entail_neg.1)
+
+/-- EO does not derive `p ⊢ □p`: at `x2`, which settles `p` without knowing it (§2). -/
+theorem not_derivable_box :
+    ¬ EDerivable (.var ()) (ModalFormula.box (.var ()) : ModalFormula Unit) := by
+  intro h
+  have hle := Concept.extent_subset_extent_iff.mpr <| ModalFormula.sound
+    (CompatFrame.necHom_le access) (CompatFrame.wittgensteinLaw_necHom frame access) h
+    fun _ ↦ eB ({0} : Coin)
+  change ((ModalFormula.eval _ _ _ : frame.Regular) : Set Poss) ⊆
+    ((ModalFormula.eval _ _ _ : frame.Regular) : Set Poss) at hle
+  simp only [ModalFormula.eval, CompatFrame.coe_necHom, coe_eB] at hle
+  exact not_entail_box.2 (hle not_entail_box.1)
 
 /-- At `x3` the conjunction `(p ∨ ¬p) ∧ (◇p ∧ ◇¬p)` holds but its distribution
 `(p ∧ ◇¬p) ∨ (¬p ∧ ◇p)` does not ((10) and Example 4.33). -/

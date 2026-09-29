@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.Orthologic.RegularProp
+public import Linglib.Logic.Orthologic.CompatFrame
 public import Linglib.Logic.Orthologic.Epistemic
 public import Linglib.Logic.Modal.Basic
 

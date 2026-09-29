@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Core.Order.Orthoframe
 public import Linglib.Logic.Truthmaker.Exclusion
 public import Mathlib.Tactic.FinCases
 
@@ -18,8 +17,6 @@ Theorem 8.4). An event verifies the negation of `φ` when it fuses, for each ver
 event excluding a part of that verifier (`neg`). Every world then contains a verifier of exactly
 one of `φ` and its negation (`mem_upperClosure_neg_iff`, Theorems 9.2–9.4), so `φ` paired with its
 negation is exclusive and exhaustive in Fine's sense (`exclusive_mk_neg`, `exhaustive_mk_neg`).
-With symmetric exclusion, conflict is an orthogonality relation on the possible events
-(`conflictOrthoframe`).
 
 The paper departs from Fine in admitting emergent exclusion, where an event excludes the fusion of
 two events without conflicting with either. Such an event verifies `¬(P ∧ Q)` but not `¬P ∨ ¬Q`
@@ -66,15 +63,6 @@ open SetFamily Truthmaker
 namespace ChampollionBernard2024
 
 variable {E : Type*} [CompleteLattice E] {excl : E → E → Prop}
-
-variable (excl) in
-/-- With symmetric exclusion, conflict is an orthogonality relation on the possible events, the
-counterpart the paper draws with orthologic (§3). Its polar of a proposition is, inexactly, Fine's
-exclusionary negation (`Truthmaker.coe_upperClosure_exclusionaryNeg`). -/
-def conflictOrthoframe [Std.Symm excl] : Orthoframe (possible excl) where
-  ortho e₁ e₂ := Conflict excl e₁ e₂
-  ortho_symm := ⟨fun _ _ h ↦ h.symm⟩
-  ortho_irrefl := ⟨fun e h ↦ e.2 h⟩
 
 /-! ### Worlds and the axioms on exclusion -/
 
