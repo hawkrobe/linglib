@@ -19,10 +19,9 @@ account ([lobner-2000], [kriz-2015], [kriz-chemla-2015],
 ([magri-2014]), exhaustification ([bar-lev-2021]), and trivalent
 supervaluation ([kriz-2016]).
 
-Sibling of `Generalizations.HomogeneityProjection`, which covers the
-*embedded* cells (operator × scenario); this file covers the unembedded
-polarity × scenario grid. The datum types differ (`Polarity` vs
-`EmbeddingOperator` first component), so the two pools stay separate.
+This file covers the unembedded polarity × scenario grid. The embedded
+cells, homogeneity projecting from the scope of a quantifier, come from a
+single paper and are read in its study, `Studies/KrizChemla2015`.
 
 ## Main declarations
 
@@ -121,8 +120,8 @@ def gapTruth (features : List (String × String)) : Option Trivalent :=
 /--
 Lift a `LinguisticExample` to a `GapDatum` via the `polarity`,
 `condition`, `gap_detected`, and `classical_value` keys. Rows tagged
-with an `embedding` key other than `"unembedded"` return `none` —
-embedded cells belong to `Generalizations.HomogeneityProjection`.
+with an `embedding` key other than `"unembedded"` return `none`: the
+embedded cells are read in `Studies/KrizChemla2015`.
 -/
 def fromExample (e : LinguisticExample) : Option GapDatum := do
   match e.paperFeatures.lookup "embedding" with
