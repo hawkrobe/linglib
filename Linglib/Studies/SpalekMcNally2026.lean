@@ -59,7 +59,7 @@ open Semantics.Root Semantics.Root.Content English Spanish.Verbs English.Verbs
 /-- A described situation: a value on every dimension of root content. -/
 structure Situation where
   force : ForceLevel
-  direction : ForceDirection
+  forceDirection : ForceDirection
   instrument : InstrumentType
   agentControl : AgentControl
   resultGeometry : ResultGeometry
@@ -70,7 +70,7 @@ structure Situation where
 /-- A root's content admits a situation when its region on every dimension contains the
 situation's value. -/
 def Admits (c : Content) (s : Situation) : Prop :=
-  s.force ∈ c.force ∧ s.direction ∈ c.direction ∧ s.instrument ∈ c.instrument ∧
+  s.force ∈ c.force ∧ s.forceDirection ∈ c.forceDirection ∧ s.instrument ∈ c.instrument ∧
     s.agentControl ∈ c.agentControl ∧ s.resultGeometry ∈ c.resultGeometry ∧
     s.patientRobustness ∈ c.patientRobustness ∧
     s.patientDimensionality ∈ c.patientDimensionality

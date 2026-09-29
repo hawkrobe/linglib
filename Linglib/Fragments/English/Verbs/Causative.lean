@@ -167,7 +167,7 @@ def tear_ : Verb where
   causative := some .make
   root := { content := {
     force := {.moderate, .high}
-    direction := {.bidirectional, .unidirectional}
+    forceDirection := {.bidirectional, .unidirectional}
     patientRobustness := {.flimsy, .moderate, .robust}
     resultGeometry := {.separation}
     agentControl := {.neutral, .compatible}

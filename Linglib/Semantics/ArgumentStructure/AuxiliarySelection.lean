@@ -5,8 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Order.BoundedOrder.Basic
-public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Category.Verb.Basic
 
 /-!
 # Perfect-auxiliary selection (be/have)
@@ -29,11 +28,14 @@ own point. The inflectional typology of auxiliary verb constructions lives in
   account.
 * `AuxiliarySelectionHierarchy`: the verb types of the Auxiliary Selection Hierarchy, a bounded
   linear order with the type most consistent in taking *be* at the bottom.
+* `AuxiliarySelectionHierarchy.ofVerb`: the type of a verb entry, read off its aspect, its
+  direction of motion and its subject's volition.
 
 ## References
 
 * [burzio-1986]
 * [sorace-2000]
+* [levin-hovav-1995]
 -/
 
 @[expose] public section
@@ -119,6 +121,36 @@ instance : BoundedOrder AuxiliarySelectionHierarchy where
   bot_le := by decide
   top := nonmotionalProcess
   le_top := by decide
+
+/-! ### The type of a verb entry -/
+
+/-- The type of a monadic verb, read off its entry ([sorace-2000] §§3–4). A state is the
+continuation of a state when the entry is phasal continuation, as *remain* is, and the existence of
+one otherwise. A telic verb is a change of location when it lexicalizes a direction of motion and a
+change of state otherwise. An atelic dynamic verb is a change of state when it measures change
+along a scale, as *rise* does; a motional process when it displaces its theme; and otherwise a
+nonmotional or an uncontrolled process, as its subject is volitional or not. `none` when the entry
+lacks the Vendler class, or a process lacks the subject profile. -/
+def ofVerb (v : Verb) : Option AuxiliarySelectionHierarchy := do
+  let c ← v.vendlerClass
+  if c.dynamicity = .stative then
+    pure (if v.phasal = some .continuation then continuationOfState else existenceOfState)
+  else if c.telicity = .telic then
+    pure (if v.direction.any (· != .place) then changeOfLocation else changeOfState)
+  else if v.scaleDimension.isSome then pure changeOfState
+  else if v.direction.isSome then pure motionalProcess
+  else v.subjectProfile?.map fun θ ↦
+    if θ.volition then nonmotionalProcess else uncontrolledProcess
+
+/-- A bounded directional phrase makes a dynamic verb a change of location, the bottom of the
+hierarchy: the directed motion use in which verbs of manner of motion take *be*
+([sorace-2000] §4.3, [levin-hovav-1995] p. 185). -/
+theorem ofVerb_withPath_eq_bot {v : Verb} {p : Adposition.SpatialReading}
+    (hd : p.direction ≠ .place) (hb : p.bounded) {c : Aspect.VendlerClass}
+    (hc : v.vendlerClass = some c) (hdyn : c.dynamicity = .dynamic) :
+    ofVerb (v.withPath p) = some ⊥ := by
+  simp [ofVerb, hd, hb, hc, hdyn, Aspect.VendlerClass.telicity_telicize hdyn]
+  rfl
 
 end AuxiliarySelectionHierarchy
 

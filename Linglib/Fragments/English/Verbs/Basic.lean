@@ -220,7 +220,7 @@ def kick : Verb := .mkRegular {
   vendlerClass := some .activity
   root := { content := {
     force := {.moderate, .high}
-    direction := {.unidirectional}
+    forceDirection := {.unidirectional}
     agentControl := {.neutral, .compatible}
   } }
   levinClasses := {LevinClass.bodyInternalMotion, .carry, .crane, .hit, .split, .throw} }
@@ -447,7 +447,7 @@ def sweep : Verb where
   passivizable := true
   root := { content := {
     force := {.low, .moderate}
-    direction := {.unidirectional}
+    forceDirection := {.unidirectional}
     agentControl := {.compatible}
   } }
   levinClasses := {LevinClass.entitySpecificModeOfBeing, .funnel, .meander, .run, .wipeManner}
@@ -469,7 +469,7 @@ def sweep_instr : Verb where
   senseTag := .instrumental
   root := { content := {
     force := {.low, .moderate}
-    direction := {.unidirectional}
+    forceDirection := {.unidirectional}
     agentControl := {.compatible}
   } }
   levinClasses := {LevinClass.entitySpecificModeOfBeing, .funnel, .meander, .run, .wipeManner}

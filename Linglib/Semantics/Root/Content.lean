@@ -122,7 +122,7 @@ structure Content where
   /-- Magnitude of the force applied. -/
   force : Finset ForceLevel := univ
   /-- Direction of the force applied. -/
-  direction : Finset ForceDirection := univ
+  forceDirection : Finset ForceDirection := univ
   /-- The instrument selected for. -/
   instrument : Finset InstrumentType := univ
   /-- Compatibility with careful action. -/
@@ -139,7 +139,7 @@ namespace Content
 
 /-- Two contents overlap when their regions meet on every dimension. -/
 def Overlaps (p q : Content) : Prop :=
-  ¬ Disjoint p.force q.force ∧ ¬ Disjoint p.direction q.direction ∧
+  ¬ Disjoint p.force q.force ∧ ¬ Disjoint p.forceDirection q.forceDirection ∧
     ¬ Disjoint p.instrument q.instrument ∧ ¬ Disjoint p.agentControl q.agentControl ∧
     ¬ Disjoint p.resultGeometry q.resultGeometry ∧
     ¬ Disjoint p.patientRobustness q.patientRobustness ∧
