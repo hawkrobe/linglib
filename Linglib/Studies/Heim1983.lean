@@ -45,7 +45,7 @@ card (`novelIn_iff_determinedBy`).
 * [heim-1983]
 * [heim-1982]
 * [karttunen-1973]
-* [karttunen-1974]
+* [karttunen-1974-presupposition]
 * [karttunen-peters-1979]
 * [gazdar-1979]
 * [lewis-1979]
@@ -504,18 +504,29 @@ end Files
 
 /-! ### The conjunction filter of Karttunen (1973) -/
 
-/-- [karttunen-1973]'s filter for conjunction, relativized to the context itself as the set
-    of background assumptions, is admittance of the sequenced update. -/
+/-- Admittance of the sequenced update is [karttunen-1974-presupposition]'s satisfaction
+    condition for conjunction: the context satisfies the presuppositions of the first conjunct,
+    and the context incremented with the first conjunct those of the second. [karttunen-1973]'s
+    filter for conjunction, relativized to the context as its assumed facts, requires the same of
+    the context, the equivalence [karttunen-1974-presupposition] proves for the conditional,
+    (8)–(14). The relativized filter leaves out Murphy's restriction that the facts be consistent
+    with the first conjunct, under which a context contradicting the first conjunct would still
+    have to satisfy the presuppositions of the second, though it admits the update. -/
 theorem admits_seq_iff_conj {W : Type*} (c : Set W) (p q : PartialProp W) :
     (seq (ofPartialProp p) (ofPartialProp q)).Admits c ↔
-      ∀ w ∈ c, (Karttunen1973.conj c p q).presup w := by
+      ∀ C ∈ (Karttunen1973.conj (fun P C ↦ c ∩ P ⊆ C) (.ofPartialProp p)
+        (.ofPartialProp q)).presupposes, c ⊆ C := by
   rw [admits_seq_ofPartialProp]
   constructor
+  · rintro h C (hC | ⟨hC, hf⟩)
+    · rw [Set.mem_singleton_iff.1 hC]
+      exact fun w hw ↦ (h w hw).1
+    · exact absurd (Set.mem_singleton_iff.1 hC ▸ fun w ⟨hw, ha, _⟩ ↦ (h w hw).2 ha) hf
   · intro h w hw
-    exact ⟨(h w hw).1, fun hne => absurd (fun v hv ha => (h v hv).2 ha) hne⟩
-  · intro h w hw
-    refine ⟨(h w hw).1, fun ha => ?_⟩
-    by_contra hq
-    exact hq ((h w hw).2 fun he => hq (he w hw ha))
+    have hp : w ∈ {w | p.presup w} := h _ (.inl rfl) hw
+    refine ⟨hp, fun ha ↦ ?_⟩
+    by_cases hf : c ∩ (Karttunen1973.Sentence.ofPartialProp p).truth ⊆ {w | q.presup w}
+    · exact hf ⟨hw, ha, fun t ht ↦ Set.mem_singleton_iff.1 ht ▸ hp⟩
+    · exact h _ (.inr ⟨rfl, hf⟩) hw
 
 end Heim1983
