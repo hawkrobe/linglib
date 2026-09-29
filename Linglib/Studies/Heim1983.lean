@@ -515,18 +515,19 @@ end Files
 theorem admits_seq_iff_conj {W : Type*} (c : Set W) (p q : PartialProp W) :
     (seq (ofPartialProp p) (ofPartialProp q)).Admits c ↔
       ∀ C ∈ (Karttunen1973.conj (fun P C ↦ c ∩ P ⊆ C) (.ofPartialProp p)
-        (.ofPartialProp q)).presupposes, c ⊆ C := by
+        (.ofPartialProp q)).log, c ⊆ C := by
   rw [admits_seq_ofPartialProp]
+  simp only [Karttunen1973.mem_log_conj, Karttunen1973.Presupposing.ofPartialProp, Writer.log_mk,
+    List.mem_singleton]
   constructor
-  · rintro h C (hC | ⟨hC, hf⟩)
-    · rw [Set.mem_singleton_iff.1 hC]
-      exact fun w hw ↦ (h w hw).1
-    · exact absurd (Set.mem_singleton_iff.1 hC ▸ fun w ⟨hw, ha, _⟩ ↦ (h w hw).2 ha) hf
+  · rintro h C (rfl | ⟨rfl, hf⟩)
+    · exact fun w hw ↦ (h w hw).1
+    · exact absurd (fun w ⟨hw, ha, _⟩ ↦ (h w hw).2 ha) hf
   · intro h w hw
     have hp : w ∈ {w | p.presup w} := h _ (.inl rfl) hw
     refine ⟨hp, fun ha ↦ ?_⟩
-    by_cases hf : c ∩ (Karttunen1973.Sentence.ofPartialProp p).truth ⊆ {w | q.presup w}
-    · exact hf ⟨hw, ha, fun t ht ↦ Set.mem_singleton_iff.1 ht ▸ hp⟩
+    by_cases hf : c ∩ (Karttunen1973.Presupposing.ofPartialProp p).truth ⊆ {w | q.presup w}
+    · exact hf ⟨hw, ha, fun t ht ↦ List.mem_singleton.1 ht ▸ hp⟩
     · exact h _ (.inr ⟨rfl, hf⟩) hw
 
 end Heim1983
