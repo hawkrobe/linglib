@@ -2,7 +2,6 @@ module
 
 public import Linglib.Fragments.German.Case
 public import Linglib.Fragments.German.Conjugation
-public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 public import Linglib.Semantics.Presupposition.Verb
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Syntax.Category.Verb.CaseArray
@@ -10,27 +9,29 @@ public import Linglib.Syntax.Category.Verb.CaseArray
 /-!
 # German verbs
 
-This file defines the German verb as a lexical entry: the root `Verb` with its case array, its
-stem (the infinitive, third person singular present and past and past participle its conjugation
-is built from) and the auxiliary of its perfect. The stem of a weak verb is built from its
+This file defines the German verb as a lexical entry: the root `Verb` with its case array and its
+stem, the infinitive, third person singular present and past and past participle its conjugation
+is built from. The stem of a weak verb is built from its
 infinitive and that of a verb with a prefix from the verb it is formed on, by the rules of
 `German.Conjugation`, so that *bestraft* comes from *strafen* and *zeigt an* from *zeigen*; a
 strong verb gives its own principal parts. A verb whose only object is in the dative, as *danken*
-'thank' and *gratulieren* 'congratulate' are, records the dative in its case array. The perfect
-takes *haben* unless the entry records *sein*, as the verbs of motion and change of state do.
+'thank' and *gratulieren* 'congratulate' are, records the dative in its case array. A verb of
+motion records the direction of its theme's path, from which, with its frame, the auxiliary of its
+perfect follows (`German.perfect`).
 
 The entries are the verbs the studies use: a few causative and attitude verbs, *bauen* 'build',
 the simple, change-of-state and prefixed verbs of Benz's resultatives and nominalizations, the
 sixteen occasion verbs whose presuppositions Solstad and Bott test for projection, and the
-predicates of Schwarzer's experiments, four that take a *dass*-clause and four that do not. The
+predicates of Schwarzer's experiments, four that take a *dass*-clause and four that do not, and the
+intransitive verbs of Durrell's rule for the perfect auxiliary (§12.3.2). The
 present tense of *kaufen* 'buy' is the paradigm Dalrymple and Kaplan use for indeterminate
 agreement.
 
 ## Main definitions
 
-* `German.Verb`: the entry, the root `Verb` with its case array, its stem and its perfect
-  auxiliary.
+* `German.Verb`: the entry, the root `Verb` with its case array and its stem.
 * `German.Verb.ofStem`: the entry with the forms of a stem.
+* `German.Verb.withPath`: the entry with a path phrase.
 * `German.Verbs.allVerbs`: the entries.
 * `German.Verbs.kaufen`: the present tense of *kaufen*.
 
@@ -47,20 +48,24 @@ agreement.
 
 namespace German
 
-/-- A German verb is the root entry with its case array, its stem and its perfect auxiliary. -/
+/-- A German verb is the root entry with its case array and its stem. -/
 structure Verb extends _root_.Verb, _root_.Verb.CaseArray Case where
   subject := .nom
   /-- The stem, from which the verb conjugates. -/
   stem : Conjugation.Stem
-  /-- The auxiliary of the perfect in the entry's sense, which Table 12.12 of [durrell-2011]
-  records beside the past participle: *sein* for an intransitive verb of motion or change of
-  state, and *haben* for the majority of verbs (§12.3.2). -/
-  perfect : ArgumentStructure.PerfectAux := .have
   deriving BEq
 
 /-- `Verb.ofStem s` is the entry cited by the infinitive of `s`, with its forms and no further
 lexical information. -/
 def Verb.ofStem (s : Conjugation.Stem) : Verb := { form := s.infinitive, frames := [], stem := s }
+
+/-- The entry with a path phrase of reading `p`, its case array and stem kept
+(`_root_.Verb.withPath`). -/
+def Verb.withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
+  { v with toVerb := v.toVerb.withPath p }
+
+@[simp] theorem Verb.toVerb_withPath (v : Verb) (p : Adposition.SpatialReading) :
+    (v.withPath p).toVerb = v.toVerb.withPath p := rfl
 
 namespace Verbs
 
@@ -136,12 +141,12 @@ def verkaufen : Verb :=
   { Verb.ofStem ((weak "kaufen").inseparable "ver") with
     frames := [ArgumentFrame.np], objects := [.acc] }
 
-/-- *rennen* 'run' is an irregular weak verb. Used intransitively it is a verb of motion and forms
-its perfect with *sein*, *ist gerannt*; Table 12.12 lists *hat/ist gerannt*, the choice following
-the use (§12.3.2c). -/
+/-- *rennen* 'run' is an irregular weak verb and a verb of manner of motion, which displaces its
+subject with no direction. -/
 def rennen : Verb :=
   { Verb.ofStem (strong "rennen" "rennt" "rannte" "gerannt") with
-    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity, perfect := .be }
+    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity,
+    direction := some .place }
 
 /-- *brechen* 'break' is an achievement. -/
 def brechen : Verb :=
@@ -153,11 +158,13 @@ def zerbrechen : Verb :=
   { Verb.ofStem (brechen.stem.inseparable "zer") with
     frames := [ArgumentFrame.np], causative := some .make, objects := [.acc] }
 
-/-- *frieren* 'freeze' is an unaccusative achievement, a change of state whose perfect is formed
-with *sein*, as in *der See ist gefroren* 'the lake has frozen' (§12.3.2c). -/
+/-- *frieren* 'freeze' is an unaccusative achievement, *der See ist gefroren* 'the lake has frozen',
+and an impersonal verb, *es hat in der Nacht gefroren* 'there was a frost in the night'
+([durrell-2011] §12.3.2c). -/
 def frieren : Verb :=
   { Verb.ofStem (strong "frieren" "friert" "fror" "gefroren") with
-    frames := [ArgumentFrame.unaccusative], vendlerClass := some .achievement, perfect := .be }
+    frames := [ArgumentFrame.unaccusative, ArgumentFrame.impersonal],
+    vendlerClass := some .achievement }
 
 /-- *schießen* 'shoot' is a transitive verb. -/
 def schiessen : Verb :=
@@ -352,6 +359,43 @@ def beschliessen : Verb :=
 
 /-! ### The entries -/
 
+/-! ### Intransitive verbs of motion and state
+
+The verbs by which [durrell-2011] §12.3.2 illustrates the choice between *haben* and *sein* in the
+perfect, with the principal parts of Table 12.12. -/
+
+/-- *laufen* 'run' is a strong verb of manner of motion, which displaces its subject with no
+direction. -/
+def laufen : Verb :=
+  { Verb.ofStem (strong "laufen" "läuft" "lief" "gelaufen") with
+    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity,
+    direction := some .place }
+
+/-- *ankommen* 'arrive' is formed on *kommen* with the separable *an-*, a verb of motion to a goal:
+*Um die Zeit werden wir schon angekommen sein*. -/
+def ankommen : Verb :=
+  { Verb.ofStem ((strong "kommen" "kommt" "kam" "gekommen").separable "an") with
+    frames := [ArgumentFrame.unaccusative], vendlerClass := some .achievement,
+    direction := some .goal }
+
+/-- *tanzen* 'dance' names the activity as such, *Ich habe als junger Mann viel getanzt*, and
+expresses movement from one place to another only with a directional phrase, *Er ist aus dem
+Zimmer getanzt* (§12.3.2c). -/
+def tanzen : Verb :=
+  { Verb.ofStem (weak "tanzen") with
+    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity }
+
+/-- *arbeiten* 'work' denotes a continuous action, *Ich habe gestern lange gearbeitet*. -/
+def arbeiten : Verb :=
+  { Verb.ofStem (weak "arbeiten") with
+    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity }
+
+/-- *bleiben* 'stay, remain' denotes the continuation of a state, *Wir sind in Dessau geblieben*. -/
+def bleiben : Verb :=
+  { Verb.ofStem (strong "bleiben" "bleibt" "blieb" "geblieben") with
+    frames := [ArgumentFrame.intransitive], vendlerClass := some .state,
+    phasal := some .continuation }
+
 /-- `allVerbs` lists the entries. -/
 def allVerbs : List Verb :=
   [lassen, machen, toeten, bauen,
@@ -361,7 +405,8 @@ def allVerbs : List Verb :=
    bestrafen, belohnen, loben, kritisieren, danken, verklagen, gratulieren, zurechtweisen,
    anzeigen, auszeichnen, belangen, ehren, entlassen, raechen, revanchieren,
    zurVerantwortungZiehen,
-   beenden, streichen, uebereilen, entwickeln, veranlassen, vergessen, erwarten, beschliessen]
+   beenden, streichen, uebereilen, entwickeln, veranlassen, vergessen, erwarten, beschliessen,
+   laufen, ankommen, tanzen, arbeiten, bleiben]
 
 /-- Every entry is cited by the infinitive of its stem. -/
 theorem form_eq_infinitive : ∀ v ∈ allVerbs, v.form = v.stem.infinitive := by decide
