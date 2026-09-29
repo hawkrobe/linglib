@@ -26,6 +26,10 @@ trees, the closure properties and the weighted grammars share. `[UPSTREAM]` cand
 
 * `ContextFreeGrammar.Derives.append_split`: a derivation from a concatenation splits into
   derivations from the two halves.
+* `ContextFreeGrammar.produces_map_terminal_append_singleton_append_iff`: the one-step
+  productions of a word with a single nonterminal, the step of linear grammars.
+* `ContextFreeGrammar.Derives.terminal_mem`: a derivation introduces only terminals that occur in
+  the output of a rule.
 -/
 
 @[expose] public section
@@ -110,6 +114,27 @@ theorem Rewrites.append_split {r : ContextFreeRule T N} :
       · exact .inl ⟨x :: v₁, by simp, .cons x hrw₁⟩
       · exact .inr ⟨v₂, by simp, hrw₂⟩
 
+/-- No rule rewrites a word of terminals. -/
+theorem Rewrites.not_map_terminal {r : ContextFreeRule T N} {w : List T}
+    {v : List (Symbol T N)} : ¬ r.Rewrites (w.map .terminal) v := fun h ↦ by
+  simpa using h.nonterminal_input_mem
+
+/-- A rewrite of a word with a single nonterminal replaces that nonterminal by the output of a
+rule with that input. -/
+theorem rewrites_map_terminal_append_singleton_append_iff {r : ContextFreeRule T N} {A : N}
+    {w u : List T} {v : List (Symbol T N)} :
+    r.Rewrites (w.map .terminal ++ [.nonterminal A] ++ u.map .terminal) v ↔
+      r.input = A ∧ v = w.map .terminal ++ r.output ++ u.map .terminal := by
+  refine ⟨fun h ↦ ?_, fun ⟨hA, hv⟩ ↦ hA ▸ hv ▸ (Rewrites.input_output.append_left _).append_right _⟩
+  rcases h.append_split with ⟨v₁, rfl, h₁⟩ | ⟨_, -, h₂⟩
+  · rcases h₁.append_split with ⟨_, -, h₀⟩ | ⟨v₂, rfl, h₃⟩
+    · exact h₀.not_map_terminal.elim
+    · clear h h₁
+      cases h₃ with
+      | head => simp
+      | cons _ h => cases h
+  · exact h₂.not_map_terminal.elim
+
 end ContextFreeRule
 
 namespace ContextFreeGrammar
@@ -140,5 +165,39 @@ theorem Derives.append_split {u₁ u₂ v : List (Symbol T g.NT)} (h : g.Derives
     rcases step.append_split with ⟨v₁, hv, hp₁⟩ | ⟨v₂, hv, hp₂⟩
     · exact ⟨v₁, w₂, hv, hd₁.trans_produces hp₁, hd₂⟩
     · exact ⟨w₁, v₂, hv, hd₁, hd₂.trans_produces hp₂⟩
+
+/-- A word of terminals produces nothing. -/
+theorem not_produces_map_terminal {w : List T} {v : List (Symbol T g.NT)} :
+    ¬ g.Produces (w.map .terminal) v := fun ⟨_, _, h⟩ ↦ h.not_map_terminal
+
+/-- A word with a single nonterminal produces exactly the words obtained by replacing that
+nonterminal with the output of one of its rules. -/
+theorem produces_map_terminal_append_singleton_append_iff {A : g.NT} {w u : List T}
+    {v : List (Symbol T g.NT)} :
+    g.Produces (w.map .terminal ++ [.nonterminal A] ++ u.map .terminal) v ↔
+      ∃ r ∈ g.rules, r.input = A ∧ v = w.map .terminal ++ r.output ++ u.map .terminal := by
+  simp only [Produces, ContextFreeRule.rewrites_map_terminal_append_singleton_append_iff]
+
+/-- A word ending in its only nonterminal produces exactly the words obtained by replacing that
+nonterminal with the output of one of its rules, the step of right-linear grammars. -/
+theorem produces_map_terminal_append_singleton_iff {A : g.NT} {w : List T}
+    {v : List (Symbol T g.NT)} :
+    g.Produces (w.map .terminal ++ [.nonterminal A]) v ↔
+      ∃ r ∈ g.rules, r.input = A ∧ v = w.map .terminal ++ r.output := by
+  simpa using produces_map_terminal_append_singleton_append_iff (A := A) (w := w) (u := []) (v := v)
+
+/-- A terminal of a derived word is a terminal of the source word or of the output of a rule. -/
+theorem Derives.terminal_mem {u v : List (Symbol T g.NT)} (h : g.Derives u v) {a : T}
+    (ha : .terminal a ∈ v) : .terminal a ∈ u ∨ ∃ r ∈ g.rules, .terminal a ∈ r.output := by
+  induction h with
+  | refl => exact .inl ha
+  | tail _ hstep ih =>
+    obtain ⟨r, hr, hrw⟩ := hstep
+    obtain ⟨p, q, rfl, rfl⟩ := hrw.exists_parts
+    simp only [List.mem_append] at ha
+    rcases ha with (hp | ho) | hq
+    · exact ih (by simp [hp])
+    · exact .inr ⟨r, hr, ho⟩
+    · exact ih (by simp [hq])
 
 end ContextFreeGrammar

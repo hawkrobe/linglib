@@ -5,6 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Basic.Finite.Set
+public import Mathlib.Computability.MyhillNerode
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Data.Set.Finite.Range
 public import Mathlib.Data.Fintype.Option
@@ -14,13 +16,17 @@ public import Linglib.Core.Computability.Bimachine
 public import Linglib.Core.Computability.Subsequential
 
 /-!
-# Myhill–Nerode theorems for transducers
+# Myhill–Nerode theorems for languages and transducers
 
-This file characterizes the subsequential, Mealy-computable and bimachine-computable functions
-by their residuals, in the style of `Mathlib.Computability.MyhillNerode`, which treats
-languages. The *prefix function* of `f : List α → List β` sends a word `u` to the longest common
-prefix of the outputs of `f` on the extensions of `u`, and the *residual* of `f` by `u` sends `v`
-to what `f` outputs on `u ++ v` beyond that prefix. Residuals compose as a right action of words,
+For languages, this file adds to `Mathlib.Computability.MyhillNerode` the lower bound that is used
+to show a language is not regular: a family of words whose left quotients are pairwise distinct
+is finite if the language is regular.
+
+For transducers, it characterizes the subsequential, Mealy-computable and bimachine-computable
+functions by their residuals, in the style of the language case. The *prefix function* of
+`f : List α → List β` sends a word `u` to the longest common prefix of the outputs of `f` on the
+extensions of `u`, and the *residual* of `f` by `u` sends `v` to what `f` outputs on `u ++ v`
+beyond that prefix. Residuals compose as a right action of words,
 and a function is subsequential if and only if it has finitely many residuals, the
 characterization of Oncina and García recalled by Chandlee, Eyraud and Heinz. A subsequential
 function is Mealy-computable exactly when it is also length- and prefix-preserving, the Nerode
@@ -42,6 +48,8 @@ of the canonical bimachine of Reutenauer and Schützenberger surveyed by Filiot 
 
 ## Main results
 
+* `Language.IsRegular.finite_of_injective_leftQuotient`: a regular language has only finitely
+  many pairwise distinguishable words
 * `Function.prefix_prefixFunction_iff`: the prefix function is the greatest common prefix
 * `Function.residual_append`: residuals compose as a right action of words
 * `isLeftSubsequential_iff_finite_range_residual`: `f` is left-subsequential if and only if it
@@ -58,8 +66,9 @@ the residual are noncomputable. For a prefix-preserving `f` the prefix function 
 (`prefixFunction_eq_self`) and the residual drops `f u` (`residual_eq_drop`), which on
 length-preserving functions is the synchronous residual (`residual_eq_syncResidual`).
 
-[UPSTREAM] candidate: `Mathlib.Computability.MyhillNerode` (as transducer sections of
-the existing file, with `Function.residual` beside `Language.leftQuotient`).
+[UPSTREAM] candidate: `Mathlib.Computability.MyhillNerode` (the language lemma beside
+`Language.IsRegular.finite_range_leftQuotient`, and transducer sections with `Function.residual`
+beside `Language.leftQuotient`).
 
 ## References
 
@@ -74,6 +83,20 @@ the existing file, with `Function.residual` beside `Language.leftQuotient`).
 -/
 
 @[expose] public section
+
+/-! ### Languages -/
+
+namespace Language
+
+variable {α : Type*} {L : Language α}
+
+/-- A family of words with pairwise distinct left quotients by a regular language is finite. -/
+theorem IsRegular.finite_of_injective_leftQuotient (h : L.IsRegular) {ι : Type*}
+    {f : ι → List α} (hf : (L.leftQuotient ∘ f).Injective) : Finite ι :=
+  have := (h.finite_range_leftQuotient.subset (Set.range_comp_subset_range f _)).to_subtype
+  Finite.of_injective_finite_range hf
+
+end Language
 
 variable {α β : Type*} (f : List α → List β)
 
