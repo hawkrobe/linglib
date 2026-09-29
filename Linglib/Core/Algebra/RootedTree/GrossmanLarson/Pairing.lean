@@ -11,41 +11,38 @@ public import Mathlib.RingTheory.TensorProduct.Basic
 public import Linglib.Core.Combinatorics.RootedTree.Aut
 public import Mathlib.Tactic.Ring
 
-@[expose] public section
-
-open RoseTree UnorderedTree
-
 /-!
-# The symmetry-weighted GL/CK pairing
-[foissy-typed-decorated-rooted-trees-2018]
-[grossman-larson-1989]
+# The symmetry-weighted pairing on forests
 
-The pairing `⟨·, ·⟩ : H →ₗ H →ₗ R` on `H = ConnesKreimer R (UnorderedTree α)`
-(Foissy 2018 §4.2), *symmetry-weighted* on the forest basis:
+This file defines the pairing on `H = ConnesKreimer R (UnorderedTree α)` that makes the forests an
+orthogonal basis, each forest paired with itself to its number of symmetries:
+`⟨of' F, of' G⟩ = if F = G then |Aut F| else 0`. Foissy uses this pairing in his dual
+construction of the Connes–Kreimer coproduct; here it makes the Grossman–Larson product dual to
+the pruning coproduct (`Coproduct/PruningDuality.lean`).
 
-```
-⟨of' F, of' G⟩ = if F = G then |Aut(F)| else 0
-```
+## Main definitions
 
-with the automorphism count `UnorderedTree.forestAutCard`
-(`Core/Combinatorics/RootedTree/Aut.lean`) as the weight. This is the
-pairing under which the GL product and the pruning coproduct Δ^ρ are
-adjoint (`Coproduct/PruningDuality.lean`).
+* `GrossmanLarson.pairing`: the symmetry-weighted pairing.
+* `GrossmanLarson.pairing₂`, `GrossmanLarson.pairing₃`: its extensions to `H ⊗ H` and
+  `H ⊗ (H ⊗ H)`.
 
 ## Main results
 
-* `pairing_symm` — symmetry.
-* `pairing_nondegenerate`, `ext_pairing_right` — nondegeneracy and its
-  separation form, over `[CharZero R] [NoZeroDivisors R]`.
-* `pairing_of'_mul_of'`, `pairing_of'_mul` — the product rule: pairing
-  against a CK product decomposes over `antidiagonal` splits.
-* `pairing₂`, `pairing₃` — the tensor-square and -cube extensions, with
-  nondegeneracy lifted along the forest basis; the instruments through
-  which the Δ^ρ duality is stated and transported.
+* `GrossmanLarson.pairing_symm`: the pairing is symmetric.
+* `GrossmanLarson.pairing_nondegenerate`: it is nondegenerate over a ring of characteristic zero
+  without zero divisors, and so are `pairing₂` and `pairing₃`.
+* `GrossmanLarson.pairing_of'_mul`: pairing against a Connes–Kreimer product splits the basis
+  forest over its antidiagonal.
 
-`[UPSTREAM]` candidate. Sorry-free.
+## References
+
+* [foissy-2021]
+* [grossman-larson-1989]
 -/
 
+@[expose] public section
+
+open RoseTree UnorderedTree
 
 namespace GrossmanLarson
 
@@ -54,9 +51,7 @@ variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 /-! ### The bilinear pairing -/
 
 omit [DecidableEq α] in
-/-- Finsupp-level symmetry-weighted pairing on the bare forest basis. The
-    public `pairing` is this transported through the Connes-Kreimer
-    structure's `toFinsuppAlgEquiv`. -/
+/-- `pairingAux` is the symmetry-weighted pairing on finitely supported functions on forests. -/
 noncomputable def pairingAux :
     (Forest (UnorderedTree α) →₀ R) →ₗ[R] (Forest (UnorderedTree α) →₀ R) →ₗ[R] R :=
   Finsupp.lift _ R (Forest (UnorderedTree α)) (fun F =>
@@ -81,10 +76,8 @@ private theorem pairingAux_single_single (F G : Forest (UnorderedTree α)) :
   · simp
 
 omit [DecidableEq α] in
-/-- The **symmetry-weighted pairing** `⟨·, ·⟩ : H × H → R`. On basis
-    elements, `⟨of' F, of' G⟩ = if F = G then forestAutCard F else 0`
-    (in `R`, via `Nat.cast`). Bilinearly extended, transported from the
-    forest-basis `pairingAux` through `ConnesKreimer.toFinsuppAlgEquiv`. -/
+/-- `pairing (of' F) (of' G)` is the number of symmetries of `F` when `F = G`, and `0`
+otherwise. -/
 noncomputable def pairing :
     ConnesKreimer R (UnorderedTree α) →ₗ[R]
       ConnesKreimer R (UnorderedTree α) →ₗ[R] R :=
@@ -104,9 +97,7 @@ private theorem pairing_apply (x y : ConnesKreimer R (UnorderedTree α)) :
   rw [pairing_apply, ConnesKreimer.toFinsupp_of', ConnesKreimer.toFinsupp_of']
   exact pairingAux_single_single F G
 
-/-- The pairing is symmetric. Reduces by bilinearity to the basis case,
-    where `pairing_of'_of'` shows both sides are `if F = G then
-    forestAutCard F else 0` — same value (the `F = G` case forces it). -/
+/-- The pairing is symmetric. -/
 theorem pairing_symm (x y : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) x y = pairing y x := by
   refine ConnesKreimer.induction_linear x ?_ ?_ ?_
@@ -129,18 +120,15 @@ theorem pairing_symm (x y : ConnesKreimer R (UnorderedTree α)) :
       · have h' : G ≠ F := fun heq => h heq.symm
         simp [h, h']
 
-/-- The pairing vanishes on `0`. Free from linearity. -/
 @[simp] theorem pairing_zero_left (y : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) 0 y = 0 := by
   simp only [LinearMap.map_zero, LinearMap.zero_apply]
 
-/-- The pairing vanishes on `0` (right). -/
 @[simp] theorem pairing_zero_right (x : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) x 0 = 0 :=
   LinearMap.map_zero _
 
-/-- Pairing against the unit extracts the counit (the coefficient of the
-    empty forest): `⟨w, 1⟩ = ε w`. -/
+/-- Pairing against the unit gives the counit, the coefficient of the empty forest. -/
 theorem pairing_one_right (w : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) w (1 : ConnesKreimer R (UnorderedTree α)) =
       (ConnesKreimer.counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R) w := by
@@ -160,9 +148,7 @@ theorem pairing_one_right (w : ConnesKreimer R (UnorderedTree α)) :
       · rw [ite_eq_right h, ite_eq_right (by simpa [Multiset.card_eq_zero] using h)]
   exact LinearMap.congr_fun h w
 
-/-- Each pairing against a basis element `of' G` extracts the coefficient
-    of `G` in `x`, weighted by `forestAutCard G`. Proof: reduce to basis
-    via `Finsupp.induction_linear` on `x`, then `pairing_of'_of'`. -/
+/-- Pairing against `of' G` gives the coefficient of `G`, weighted by the symmetries of `G`. -/
 theorem pairing_apply_of' (x : ConnesKreimer R (UnorderedTree α))
     (G : Forest (UnorderedTree α)) :
     pairing (R := R) x (ConnesKreimer.of' G) =
@@ -182,14 +168,7 @@ theorem pairing_apply_of' (x : ConnesKreimer R (UnorderedTree α))
       simp [smul_eq_mul]
     · simp [ite_eq_right h]
 
-/-- **Non-degeneracy** of the pairing over `CharZero R` with no zero
-    divisors. If `pairing x y = 0` for all `y`, then `x = 0`. Uses
-    `pairing_apply_of'` (coefficient extraction) + `forestAutCard_pos`
-    (positivity) + `Nat.cast_ne_zero` (CharZero R has no Nat-cast torsion)
-    + `mul_eq_zero` (NoZeroDivisors R).
-
-    Holds for any commutative ring with characteristic 0 and no zero
-    divisors (e.g. `ℤ`, `ℚ`, `ℝ`, `ℂ`, any field of char 0). -/
+/-- Over a ring of characteristic zero without zero divisors, the pairing is nondegenerate. -/
 theorem pairing_nondegenerate
     [CharZero R] [NoZeroDivisors R] (x : ConnesKreimer R (UnorderedTree α))
     (h : ∀ y, pairing (R := R) x y = 0) : x = 0 := by
@@ -206,8 +185,7 @@ theorem pairing_nondegenerate
 section Ring
 variable {R : Type*} [CommRing R] [CharZero R] [NoZeroDivisors R]
 
-/-- Separation form of `pairing_nondegenerate`: elements pairing equally
-    against everything are equal. -/
+/-- Elements that pair equally against everything are equal. -/
 theorem ext_pairing_right {x y : ConnesKreimer R (UnorderedTree α)}
     (h : ∀ z, pairing (R := R) x z = pairing y z) : x = y :=
   sub_eq_zero.mp <| pairing_nondegenerate _ fun z => by
@@ -217,19 +195,10 @@ end Ring
 
 /-! ### Product rule
 
-Pairing against a CK product decomposes over the two-sided sub-multiset
-splits of the first argument (`Multiset.antidiagonal`) — the
-symmetry-weighted pairing turns CK multiplication into the split
-coproduct. The combinatorial heart is the multinomial identity
-`UnorderedTree.forestAutCard_add` (`Aut.lean`). Computationally validated
-(`scratch/validate_duality.lean`, V2 battery). -/
+Pairing against a Connes–Kreimer product splits the basis forest over its antidiagonal; the
+weights recombine by `UnorderedTree.forestAutCard_add`. -/
 
-/-- **Pairing product rule** (basis form):
-    `⟨W, C₁ · C₂⟩ = Σ_{W = W₁ + W₂} ⟨W₁, C₁⟩ · ⟨W₂, C₂⟩`.
-
-    Only the split `(C₁, C₂)` survives the diagonal pairing, with
-    multiplicity `count (C₁,C₂) (antidiagonal W)`; the autCard weights
-    recombine via `UnorderedTree.forestAutCard_add`. -/
+/-- `⟨W, C₁ · C₂⟩` is the sum, over the splittings `W = W₁ + W₂`, of `⟨W₁, C₁⟩ · ⟨W₂, C₂⟩`. -/
 theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (UnorderedTree α)) :
     pairing (R := R) (ConnesKreimer.of' W)
         (ConnesKreimer.of' C₁ * ConnesKreimer.of' C₂) =
@@ -343,9 +312,7 @@ theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (UnorderedTree α)) :
     -- Sum of all-zeros = 0.
     simp [Multiset.map_const']
 
-/-- **Pairing product rule** (bilinear form): pairing a basis vector
-    against a product decomposes over the antidiagonal splits of the
-    basis forest. Bilinear extension of `pairing_of'_mul_of'`. -/
+/-- Pairing a basis forest against a product splits the forest over its antidiagonal. -/
 theorem pairing_of'_mul (W : Forest (UnorderedTree α))
     (z₁ z₂ : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) (ConnesKreimer.of' W) (z₁ * z₂) =
@@ -452,28 +419,13 @@ theorem pairing_of'_mul (W : Forest (UnorderedTree α))
 
 open scoped TensorProduct
 
-/-! ### Tensor-extended pairings
+/-! ### Pairings on tensor powers
 
-The pairing `⟨·, ·⟩` above extends to the
-tensor square (`pairing₂`) and cube (`pairing₃`). These power the GL/CK
-duality for the deletion coproduct Δ^ρ (`Coproduct/PruningDuality.lean`:
-`⟨x ⋆ y, z⟩ = pairing₂ (y ⊗ x) (Δ^ρ z)`). For the trace variant Δ^c no
-such duality holds — the trunk of a proper cut contains trace-marker
-leaves that GL grafting can never produce — so Δ^c coassociativity
-(`comulCN_coassoc`, `Coproduct/Trace.lean`) is a separate
-combinatorial statement. -/
+The pairing extends to `H ⊗ H` and `H ⊗ (H ⊗ H)`, where the duality with the pruning coproduct is
+stated. No such duality holds for the coproduct with trace markers of `Coproduct/Trace.lean`,
+whose trunks contain markers that grafting never produces. -/
 
-/-- The **tensor-extended pairing** `H ⊗ H →ₗ H ⊗ H →ₗ R`, defined by
-    `pairing₂ (x ⊗ y) (w ⊗ z) = pairing x w * pairing y z` and extended
-    bilinearly.
-
-    Implementation: reshuffle `(x⊗y)⊗(w⊗z)` to `(x⊗w)⊗(y⊗z)` via
-    `tensorTensorTensorComm`; apply `TP.map pair pair` where
-    `pair = TP.lift pairing : H ⊗ H →ₗ R`; contract via `mul' R R`;
-    curry the result.
-
-    Decoration-free: works on `ConnesKreimer R (UnorderedTree α)` for any
-    `α`. Consumed by the Δ^ρ duality (`Coproduct/PruningDuality.lean`). -/
+/-- `pairing₂` is the pairing on `H ⊗ H` with `pairing₂ (x ⊗ y) (w ⊗ z) = ⟨x, w⟩ * ⟨y, z⟩`. -/
 noncomputable def pairing₂ :
     (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) →ₗ[R]
     (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) →ₗ[R] R :=
@@ -489,24 +441,14 @@ noncomputable def pairing₂ :
         (ConnesKreimer R (UnorderedTree α))
         (ConnesKreimer R (UnorderedTree α))).toLinearMap
 
-/-- Evaluation of `pairing₂` on pure tensors: `pairing₂ (x ⊗ y) (w ⊗ z) =
-    pairing x w * pairing y z`. -/
 @[simp] theorem pairing₂_tmul_tmul
     (x y w z : ConnesKreimer R (UnorderedTree α)) :
     pairing₂ (R := R) (x ⊗ₜ y) (w ⊗ₜ z) =
       pairing x w * pairing y z := by
   rfl
 
-/-- The **triple-tensor pairing** `H ⊗ (H ⊗ H) →ₗ H ⊗ (H ⊗ H) →ₗ R`,
-    defined on pure tensors by
-    `pairing₃ (a ⊗ (b ⊗ c)) (x ⊗ (y ⊗ z)) = pairing a x · pairing b y · pairing c z`.
-
-    Consumed by the Δ^ρ duality chain (`Coproduct/PruningDuality.lean`):
-    coassociativity is transported through `pairing₃_unique` by pairing
-    against arbitrary `x ⊗ (y ⊗ z)` triple tensors.
-
-    Implementation: pairing on the first factor times `pairing₂` on the
-    second factor; both extended bilinearly. -/
+/-- `pairing₃` is the pairing on `H ⊗ (H ⊗ H)` with
+`pairing₃ (a ⊗ (b ⊗ c)) (x ⊗ (y ⊗ z)) = ⟨a, x⟩ * ⟨b, y⟩ * ⟨c, z⟩`. -/
 noncomputable def pairing₃ :
     (ConnesKreimer R (UnorderedTree α) ⊗[R]
       (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))) →ₗ[R]
@@ -537,18 +479,9 @@ noncomputable def pairing₃ :
         (pairing b y * pairing c z) := by
   rfl
 
-/-! ### Reduction helpers: `pairing₃` on shifted-tensor forms
+/-! ### `pairing₃` on reassociated tensors -/
 
-Two reduction lemmas that express `pairing₃ (x ⊗ (y ⊗ z'))` evaluated on
-shifted tensor forms in terms of `pairing₂` and binary `pairing`,
-consumed by the Δ^ρ duality chain in `Coproduct/PruningDuality.lean`.
-Both are proved by `TensorProduct.inductionOn`, reducing to the
-pure-tensor case where `pairing₃_tmul_tmul_tmul` and
-`pairing₂_tmul_tmul` agree. -/
-
-/-- `pairing₃ (x ⊗ (y ⊗ z')) ∘ assoc` on a `(U ⊗ c)`-shape tensor:
-    factors as `pairing₂ (x ⊗ y) U * pairing z' c`. Generic in `α`
-    (the trace decoration is irrelevant). -/
+/-- On a reassociated tensor `U ⊗ c`, `pairing₃` factors through `pairing₂` and the pairing. -/
 lemma pairing₃_assoc_tmul
     (x y z' : ConnesKreimer R (UnorderedTree α))
     (U : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))
@@ -563,8 +496,7 @@ lemma pairing₃_assoc_tmul
   | add U₁ U₂ ih₁ ih₂ =>
     rw [TensorProduct.add_tmul, map_add, map_add, ih₁, ih₂, map_add, add_mul]
 
-/-- `pairing₃ (x ⊗ (y ⊗ z'))` on a `(a ⊗ S)`-shape tensor: factors as
-    `pairing x a * pairing₂ (y ⊗ z') S`. Generic in `α`. -/
+/-- On a tensor `a ⊗ S`, `pairing₃` factors through the pairing and `pairing₂`. -/
 lemma pairing₃_tmul_apply
     (x y z' a : ConnesKreimer R (UnorderedTree α))
     (S : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
@@ -576,16 +508,11 @@ lemma pairing₃_tmul_apply
   | add S₁ S₂ ih₁ ih₂ =>
     rw [TensorProduct.tmul_add, map_add, ih₁, ih₂, map_add, mul_add]
 
-/-! ### Nondegeneracy of `pairing₂` and `pairing₃` (lifted from binary)
+/-! ### Nondegeneracy on tensor powers
 
-`pairing₂` and `pairing₃` are nondegenerate over `[CharZero R]
-[NoZeroDivisors R]`, lifted from binary `pairing_nondegenerate` via the
-natural basis of `CK = (Forest T) →₀ R`. -/
+Nondegeneracy of `pairing₂` and `pairing₃` follows from that of the pairing along the basis of
+forests. -/
 
-/-- Bilinear extension: `pairing₃ (of' F ⊗ s) (of' G ⊗ t) = pairing (of' F)
-    (of' G) * pairing₂ s t` for arbitrary `s, t ∈ CK ⊗ CK`. Proven via
-    `TensorProduct.inductionOn` on `s` and `t`, reducing to the pure-tensor
-    case where `pairing₃_tmul_tmul_tmul` and `pairing₂_tmul_tmul` agree. -/
 private theorem pairing₃_of'_tmul_of'_tmul (F G : Forest (UnorderedTree α))
     (s t : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     pairing₃ (R := R)
@@ -607,9 +534,6 @@ private theorem pairing₃_of'_tmul_of'_tmul (F G : Forest (UnorderedTree α))
     rw [TensorProduct.tmul_add, map_add, LinearMap.add_apply, ih₁, ih₂,
         map_add, LinearMap.add_apply, mul_add]
 
-/-- Nondegeneracy of `pairing₂`, lifted from the binary
-    `pairing_nondegenerate` along the natural basis of
-    `CK = (Forest T) →₀ R`. -/
 private theorem pairing₂_nondegenerate
     [CharZero R] [NoZeroDivisors R]
     (U : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α))
@@ -645,8 +569,7 @@ private theorem pairing₂_nondegenerate
   have hc_zero' : c = 0 := Finsupp.ext hc_zero
   rw [← hc, hc_zero', Finsupp.sum_zero_index]
 
-/-- Nondegeneracy of `pairing₃`, lifted from `pairing₂_nondegenerate`
-    along the basis of the outer tensor factor. -/
+/-- Over a ring of characteristic zero without zero divisors, `pairing₃` is nondegenerate. -/
 theorem pairing₃_nondegenerate
     [CharZero R] [NoZeroDivisors R]
     (U : ConnesKreimer R (UnorderedTree α) ⊗[R]
