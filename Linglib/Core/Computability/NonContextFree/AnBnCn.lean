@@ -1,114 +1,108 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Core.Computability.ContextFreeGrammar.Pumping
-public import Linglib.Core.Computability.NonContextFree.BlockWitness
+public import Linglib.Core.Data.List.Infix
+public import Mathlib.Order.Filter.AtTopBot.Basic
 
 /-!
-# `{aⁿbⁿcⁿ}`: a three-symbol non-context-free witness
+# The language `{aⁿbⁿcⁿ | n ∈ ℕ}`
 
-The classical three-symbol witness `anbnc = {aⁿbⁿcⁿ | n ≥ 0}`, shown non-context-free by the
-CFL pumping lemma together with the adjacency lemma of `BlockWitness`: a pumped window short
-enough to fit inside the witness cannot meet both the `a`-block and the `c`-block, so pumping
-down leaves some symbol's count untouched while shortening the word.
+For letters `a`, `b` and `c`, `Language.anbncn a b c` is the language of the words consisting of
+`n` copies of `a`, then `n` copies of `b`, then `n` copies of `c`. For distinct letters it is not
+context-free, the standard application of the pumping lemma: a window of the pumped word
+`aᵖbᵖcᵖ` no longer than `p` cannot meet both the `a` block and the `c` block, so pumping it out
+leaves the count of `a` or of `c` at `p` while removing letters.
 
-Independent of `AnBnCnDn` and `AmBnCmDn`: it uses its own `ThreeSymbol` alphabet.
+The argument shows more: a language that contains `aⁿbⁿcⁿ` for infinitely many `n`, and whose
+words all have as many `a` as `b` as `c`, is not context-free.
 
 ## Main definitions
 
-* `makeString_anbnc n`: the witness word `aⁿbⁿcⁿ`.
-* `anbnc`: the language `{aⁿbⁿcⁿ | n ≥ 0}`, as the range of `makeString_anbnc`.
+* `Language.anbncn a b c`: the language `{aⁿbⁿcⁿ | n ∈ ℕ}`.
 
 ## Main results
 
-* `anbnc_not_pumpable`: `anbnc` lacks the CFL pumping property.
-* `anbnc_not_contextFree`: `anbnc` is not context-free.
+* `Language.not_isContextFree_of_replicate_mem_of_count_eq`: a language containing infinitely
+  many of the words `aⁿbⁿcⁿ`, whose words have as many `a` as `b` as `c`, is not context-free.
+* `Language.not_isContextFree_anbncn`: for distinct letters, `{aⁿbⁿcⁿ}` is not context-free.
+
+## References
+
+* [J. E. Hopcroft, R. Motwani and J. D. Ullman, *Introduction to Automata Theory, Languages, and
+  Computation* (2000)][hopcroft-motwani-ullman-2000]
 -/
 
 @[expose] public section
 
-/-- Alphabet for `{aⁿbⁿcⁿ}`. -/
-inductive ThreeSymbol where
-  | a | b | c
-  deriving DecidableEq, Repr
+open List
 
-/-- The witness word `aⁿbⁿcⁿ`. -/
-def makeString_anbnc (n : ℕ) : List ThreeSymbol :=
-  List.replicate n .a ++ List.replicate n .b ++ List.replicate n .c
+variable {α : Type*} {a b c : α}
 
-/-- The language `{aⁿbⁿcⁿ | n ≥ 0}`, as the range of `makeString_anbnc`. -/
-def anbnc : Language ThreeSymbol := {w | ∃ n, w = makeString_anbnc n}
+namespace Language
 
-/-- Membership characterization: every string in `anbnc` is `makeString_anbnc n` for some `n`.
-Consumed by the homomorphic reduction `aⁿbⁿcⁿdⁿ → aⁿbⁿcⁿ` in `AnBnCnDn`. -/
-theorem mem_anbnc_iff (w : List ThreeSymbol) : w ∈ anbnc ↔ ∃ n, w = makeString_anbnc n := Iff.rfl
+/-- The language `{aⁿbⁿcⁿ | n ∈ ℕ}` of the words consisting of `n` copies of the letter `a`, then
+`n` copies of `b`, then `n` copies of `c`. -/
+def anbncn (a b c : α) : Language α :=
+  {w | ∃ n, replicate n a ++ replicate n b ++ replicate n c = w}
 
-theorem makeString_anbnc_mem (n : ℕ) : makeString_anbnc n ∈ anbnc := ⟨n, rfl⟩
+theorem mem_anbncn {w : List α} :
+    w ∈ anbncn a b c ↔ ∃ n, replicate n a ++ replicate n b ++ replicate n c = w :=
+  Iff.rfl
 
-/-- Each of the three symbols occurs exactly `n` times in the witness. -/
-@[simp] theorem count_makeString_anbnc (n : ℕ) (s : ThreeSymbol) :
-    (makeString_anbnc n).count s = n := by
-  cases s <;> simp [makeString_anbnc, List.count_replicate]
+theorem replicate_append_replicate_append_replicate_mem_anbncn (n : ℕ) :
+    replicate n a ++ replicate n b ++ replicate n c ∈ anbncn a b c :=
+  ⟨n, rfl⟩
 
-@[simp] theorem length_makeString_anbnc (n : ℕ) : (makeString_anbnc n).length = 3 * n := by
-  simp [makeString_anbnc]; omega
+variable [DecidableEq α] {X : Language α}
 
-/-- The three-symbol witness is structurally `BlockWitness [a, b, c] n`. -/
-private theorem makeString_anbnc_eq_blockwitness (n : ℕ) :
-    makeString_anbnc n = BlockWitness ([ThreeSymbol.a, .b, .c] : List ThreeSymbol) n := by
-  simp [makeString_anbnc, BlockWitness, List.flatMap_cons, List.flatMap_nil,
-        List.append_nil, List.append_assoc]
-
-/-- A window short enough to fit inside the witness cannot meet both the `a`- and `c`-blocks. -/
-private theorem not_a_and_c_in_vxy3 (p : ℕ) (u vxy z : List ThreeSymbol)
-    (hw : makeString_anbnc p = u ++ vxy ++ z) (hvxy : vxy.length ≤ p) :
-    ¬(ThreeSymbol.a ∈ vxy ∧ ThreeSymbol.c ∈ vxy) :=
-  BlockWitness.not_both_in_vxy
-    (by decide : ([ThreeSymbol.a, .b, .c] : List ThreeSymbol).Nodup)
-    (i := 0) (j := 2) rfl rfl (by decide)
-    (makeString_anbnc_eq_blockwitness p ▸ hw) hvxy
-
-/-- `{aⁿbⁿcⁿ}` does not have the CFL pumping property.
-
-Pumping down to `i = 0` gives `u ++ x ++ z = makeString_anbnc m`, so *every* symbol occurs `m`
-times there. The pumped-out window is too short to meet both the `a`- and the `c`-block, so one
-of those two symbols is absent from `v` and `y` — forcing `m = p`, while the removed window
-makes the word strictly shorter. -/
-theorem anbnc_not_pumpable : ¬ anbnc.HasCFLPumpingProperty := by
+/-- A language containing `aⁿbⁿcⁿ` for infinitely many `n`, whose words have as many `a` as `b`
+as `c`, is not context-free. Pumping out a window of `aⁿbⁿcⁿ` no longer than the pumping length
+leaves `a` or `c` untouched, so by the counts no letter is removed at all. -/
+theorem not_isContextFree_of_replicate_mem_of_count_eq (h : [a, b, c].Nodup)
+    (hmem : ∃ᶠ n in Filter.atTop, replicate n a ++ replicate n b ++ replicate n c ∈ X)
+    (hcount : ∀ w ∈ X, w.count a = w.count b ∧ w.count b = w.count c) : ¬ X.IsContextFree := by
+  obtain ⟨⟨hab, hac⟩, hbc⟩ : (a ≠ b ∧ a ≠ c) ∧ b ≠ c := by simpa using h
+  refine mt IsContextFree.hasCFLPumpingProperty ?_
   rintro ⟨p, hp, hpump⟩
-  obtain ⟨u, v, x, y, z, hw, hvxy, hvy, hall⟩ :=
-    hpump _ (makeString_anbnc_mem p) (by rw [length_makeString_anbnc]; omega)
-  obtain ⟨m, hm⟩ := hall 0
-  simp only [List.replicate_zero, List.flatten_nil, List.append_nil] at hm
-  have hw' : makeString_anbnc p = u ++ (v ++ x ++ y) ++ z := by
-    simp only [List.append_assoc] at hw ⊢; exact hw
-  have hcontig := not_a_and_c_in_vxy3 p u (v ++ x ++ y) z hw' hvxy
-  have hcount : ∀ s : ThreeSymbol, p = m + v.count s + y.count s := fun s => by
-    have h1 : (makeString_anbnc p).count s = p := count_makeString_anbnc p s
-    have h2 : (u ++ x ++ z).count s = m := by rw [hm]; exact count_makeString_anbnc m s
-    rw [hw] at h1
-    simp only [List.count_append] at h1 h2
-    omega
-  have hlen : 3 * p = 3 * m + v.length + y.length := by
-    have h1 : (makeString_anbnc p).length = 3 * p := length_makeString_anbnc p
-    have h2 : (u ++ x ++ z).length = 3 * m := by rw [hm]; exact length_makeString_anbnc m
-    rw [hw] at h1
-    simp only [List.length_append] at h1 h2
-    omega
-  have hpm : p = m := by
-    by_cases ha : ThreeSymbol.a ∈ v ++ x ++ y
-    · have hc : ThreeSymbol.c ∉ v ++ x ++ y := fun hc => hcontig ⟨ha, hc⟩
-      have hcv : v.count .c = 0 := List.count_eq_zero.mpr fun h =>
-        hc (List.mem_append_left _ (List.mem_append_left _ h))
-      have hcy : y.count .c = 0 := List.count_eq_zero.mpr fun h => hc (List.mem_append_right _ h)
-      have := hcount .c
-      omega
-    · have hav : v.count .a = 0 := List.count_eq_zero.mpr fun h =>
-        ha (List.mem_append_left _ (List.mem_append_left _ h))
-      have hay : y.count .a = 0 := List.count_eq_zero.mpr fun h => ha (List.mem_append_right _ h)
-      have := hcount .a
-      omega
-  omega
+  obtain ⟨n, hpn, hn⟩ := Filter.frequently_atTop.1 hmem p
+  obtain ⟨u, v, x, y, z, hw, hvxy, hvy, hall⟩ := hpump _ hn (by simp; omega)
+  have hwin : v ++ x ++ y <:+: replicate n a ++ replicate n b ++ replicate n c :=
+    ⟨u, z, by simp [hw]⟩
+  have hout : a ∉ v ++ x ++ y ∨ c ∉ v ++ x ++ y :=
+    hwin.notMem_or_notMem_of_length_le (by rw [length_replicate]; omega)
+      (by simp [mem_replicate, hab, hac]) (by simp [mem_replicate, hac.symm, hbc.symm])
+  have h0 := hcount _ (hall 0)
+  have hca := congr(count a $hw)
+  have hcb := congr(count b $hw)
+  have hcc := congr(count c $hw)
+  simp [count_replicate, hab, hac, hbc, hab.symm, hac.symm, hbc.symm] at h0 hca hcb hcc
+  have hz : ∀ s, s ∉ v ++ x ++ y → v.count s = 0 ∧ x.count s = 0 ∧ y.count s = 0 := fun s hs ↦
+    ⟨count_eq_zero.mpr fun h ↦ hs (by simp [h]), count_eq_zero.mpr fun h ↦ hs (by simp [h]),
+      count_eq_zero.mpr fun h ↦ hs (by simp [h])⟩
+  have key : v.count a + y.count a = 0 ∧ v.count b + y.count b = 0 ∧
+      v.count c + y.count c = 0 := by
+    rcases hout.imp (hz _) (hz _) with ⟨_, _, _⟩ | ⟨_, _, _⟩ <;> omega
+  have hsub : ∀ e ∈ v ++ y, e = a ∨ e = b ∨ e = c := fun e he ↦ by
+    have := hwin.subset (by simp at he ⊢; tauto)
+    simp only [mem_append, mem_replicate] at this
+    tauto
+  have hnil : v ++ y = [] := eq_nil_iff_forall_not_mem.2 fun e he ↦
+    count_eq_zero.1
+      (by rcases hsub e he with rfl | rfl | rfl <;> simp only [count_append] <;> omega) he
+  obtain ⟨rfl, rfl⟩ := append_eq_nil_iff.1 hnil
+  simp at hvy
 
-/-- `{aⁿbⁿcⁿ}` is not context-free. -/
-theorem anbnc_not_contextFree : ¬ Language.IsContextFree anbnc :=
-  mt Language.IsContextFree.hasCFLPumpingProperty anbnc_not_pumpable
+/-- For distinct letters, `{aⁿbⁿcⁿ}` is not context-free. -/
+theorem not_isContextFree_anbncn (h : [a, b, c].Nodup) : ¬ (anbncn a b c).IsContextFree := by
+  obtain ⟨⟨hab, hac⟩, hbc⟩ : (a ≠ b ∧ a ≠ c) ∧ b ≠ c := by simpa using h
+  refine not_isContextFree_of_replicate_mem_of_count_eq h
+    (.of_forall replicate_append_replicate_append_replicate_mem_anbncn) ?_
+  rintro _ ⟨n, rfl⟩
+  simp [count_replicate, hab, hac, hbc, hab.symm, hac.symm, hbc.symm]
+
+end Language

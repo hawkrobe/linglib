@@ -143,26 +143,28 @@ theorem isRegular_caseSorted : caseSorted.IsRegular := by
 
 /-! ### The image of note 5 -/
 
-/-- `eraseFrame` is the homomorphism of note 5, which erases `w`, `x`, `y` and `z`. -/
-def eraseFrame : Letter → List FourSymbol
-  | a => [.a] | b => [.b] | c => [.c] | d => [.d] | _ => []
+/-- `eraseFrame` is the homomorphism of note 5, which erases `w`, `x` and `y`; it also erases `z`,
+which does not occur in `r`. -/
+def eraseFrame : Letter → List Letter
+  | a => [a] | b => [b] | c => [c] | d => [d] | _ => []
 
 theorem flatMap_eraseFrame_clause (p q r u : ℕ) : (clause p q r u).flatMap eraseFrame =
-    replicate p .a ++ replicate q .b ++ replicate r .c ++ replicate u .d := by
+    replicate p a ++ replicate q b ++ replicate r c ++ replicate u d := by
   simp [clause, eraseFrame, flatMap_replicate]
 
-theorem stringMap_eraseFrame_crossSerial : stringMap eraseFrame crossSerial = ambncmdn := by
+theorem stringMap_eraseFrame_crossSerial :
+    stringMap eraseFrame crossSerial = ambncmdn a b c d := by
   ext l
   constructor
   · rintro ⟨_, ⟨m, n, rfl⟩, rfl⟩
-    exact ⟨m, n, flatMap_eraseFrame_clause m n m n⟩
+    exact ⟨m, n, (flatMap_eraseFrame_clause m n m n).symm⟩
   · rintro ⟨m, n, rfl⟩
     exact ⟨_, ⟨m, n, rfl⟩, flatMap_eraseFrame_clause m n m n⟩
 
 /-- `w aᵐ bⁿ x cᵐ dⁿ y` is not context-free, since erasing the frame leaves `aᵐ bⁿ cᵐ dⁿ`. -/
 theorem not_isContextFree_crossSerial : ¬ crossSerial.IsContextFree :=
   not_isContextFree_of_stringMap_not eraseFrame
-    (stringMap_eraseFrame_crossSerial ▸ ambncmdn_not_contextFree)
+    (stringMap_eraseFrame_crossSerial ▸ not_isContextFree_ambncmdn (by decide))
 
 /-! ### The claims and the argument -/
 
@@ -207,9 +209,9 @@ theorem not_isContextFree_of_count_le (hmem : ∀ n, ∃ s ∈ L, s.map f = clau
   not_isContextFree_via_witness (fun t ↦ [f t]) caseSorted isRegular_caseSorted <| by
     rw [stringMap_singleton]
     refine not_isContextFree_of_stringMap_not eraseFrame
-      (not_isContextFree_of_anbncndn_le ?_ ?_)
-    · rintro _ ⟨n, rfl⟩
-      obtain ⟨s, hs, he⟩ := hmem n
+      (not_isContextFree_of_replicate_mem_of_count_le (by decide : [a, b, c, d].Nodup)
+        (.of_forall fun n ↦ ?_) ?_)
+    · obtain ⟨s, hs, he⟩ := hmem n
       exact ⟨clause n n n n, ⟨⟨s, hs, he⟩, n, n, n, n, rfl⟩, flatMap_eraseFrame_clause n n n n⟩
     · rintro _ ⟨_, ⟨⟨s, hs, rfl⟩, p, q, r, u, he⟩, rfl⟩
       have := hle s hs (he ▸ clause_mem_schema p q r u)
