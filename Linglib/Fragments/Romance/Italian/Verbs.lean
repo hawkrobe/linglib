@@ -16,8 +16,8 @@ Gianni a avere un figlio* 'Marco has convinced Gianni to have a child' an intent
 subjunctive, *Gianni vuole che Maria sia contenta* 'Gianni wants Maria to be happy', with the
 indicative marginal for some speakers, and so does *sperare* 'hope'; *intendere* takes no finite
 complement, and *fare* embeds a finite clause only as *fare sì che* with the subjunctive. A
-verb's `typers` are the complementizers of the complements it takes, and its frames record the
-coding of each complement. Fusco and Sgrizzi's analysis of the *di* and *a* alternation is
+verb's `clauseTypers` are the complementizers of the complements it takes, and its frames record
+the coding of each complement. Fusco and Sgrizzi's analysis of the *di* and *a* alternation is
 `Studies/FuscoSgrizzi2026.lean`; the twelve transitive verbs of Palmieri's Appendix A that also
 read reciprocally without *si* are ordinary entries here, and `Italian.Reciprocals` lists them
 as the lexical reciprocals.
@@ -48,6 +48,23 @@ and *intendere* are carried over from the earlier entries and are not in those s
 
 @[expose] public section
 
+namespace Italian
+
+/-- An Italian verb is a verb entry with the clause-typers of the complements it takes, which its
+frames cannot record, since *di* and *a* both introduce an infinitive. -/
+structure Verb extends _root_.Verb where
+  /-- The complementizers of the verb's complements; a bare infinitive contributes none. -/
+  clauseTypers : List Complementizer := []
+
+/-- The predicate the entry `v` forms with a path phrase of reading `p`. -/
+def Verb.withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
+  { v with toVerb := v.toVerb.withPath p }
+
+@[simp] theorem Verb.toVerb_withPath (v : Verb) (p : Adposition.SpatialReading) :
+    (v.withPath p).toVerb = v.toVerb.withPath p := rfl
+
+end Italian
+
 namespace Italian.Verbs
 
 open ArgumentStructure
@@ -69,18 +86,6 @@ def a : Complementizer where
   morphs := [.free "a"]
   coding := some .infinitive
 
-/-- An Italian verb is a verb entry with the clause-typers of the complements it takes. -/
-structure Verb extends _root_.Verb where
-  /-- The complementizers of the verb's complements; a bare infinitive contributes none. -/
-  typers : List Complementizer := []
-
-/-- The predicate the entry `v` forms with a path phrase of reading `p`. -/
-def Verb.withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
-  { v with toVerb := v.toVerb.withPath p }
-
-@[simp] theorem Verb.toVerb_withPath (v : Verb) (p : Adposition.SpatialReading) :
-    (v.withPath p).toVerb = v.toVerb.withPath p := rfl
-
 /-! ### Attitude and causative verbs -/
 
 /-- *convincere* 'convince' takes an infinitive with *di*, which reports a belief and allows
@@ -91,7 +96,7 @@ def convincere : Verb where
   frames := [ArgumentFrame.infinitival]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   opaqueContext := true
-  typers := [di, a]
+  clauseTypers := [di, a]
 
 /-- *pensare* 'think' takes an infinitive with *di* or with *a*, with the same difference in
 meaning as *convincere*. -/
@@ -100,7 +105,7 @@ def pensare : Verb where
   frames := [ArgumentFrame.infinitival]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   opaqueContext := true
-  typers := [di, a]
+  clauseTypers := [di, a]
 
 /-- *volere* 'want' takes a *che* clause in the subjunctive, the indicative being marginal for
 some speakers, and a bare infinitive under subject control. -/
@@ -111,7 +116,7 @@ def volere : Verb where
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
-  typers := [che]
+  clauseTypers := [che]
 
 /-- *sperare* 'hope' takes a *che* clause in the subjunctive, the indicative being marginal for
 some speakers. -/
@@ -121,7 +126,7 @@ def sperare : Verb where
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .positive))
-  typers := [che]
+  clauseTypers := [che]
 
 /-- *intendere* 'intend' takes a bare infinitive under subject control and no finite complement,
 in either mood; the periphrasis *avere intenzione di* takes the infinitive with *di*. -/
@@ -140,7 +145,7 @@ def fare : Verb where
   frames := [ArgumentFrame.infinitival, ArgumentFrame.subjunctiveClause]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   causative := some .make
-  typers := [che]
+  clauseTypers := [che]
 
 /-! ### Transitive verbs with a lexical reciprocal use -/
 

@@ -111,7 +111,7 @@ theorem romance_not_monolithic :
 /-- The witness grounded in the Italian Fragment: *abbracciare* carries a lexical reciprocal
 entry alongside its homophonous transitive alternate. -/
 theorem abbracciare_grounds_divergence :
-    "abbracciare" ∈ Italian.Reciprocals.lexicalReciprocals.map Verb.form := by
+    "abbracciare" ∈ Italian.Reciprocals.lexicalReciprocals.map (·.form) := by
   decide
 
 /-! ### The *se*-less environments (Table 2.2) -/
@@ -154,7 +154,7 @@ theorem every_language_diagnosable (l : Language) : SeOmissible l .analyticCausa
 /-- Per-language inventories of lexical reciprocals, from the Fragments. -/
 def inventory : Language → List Verb
   | .brazilianPortuguese => Portuguese.Reciprocals.lexicalReciprocals
-  | .italian => Italian.Reciprocals.lexicalReciprocals
+  | .italian => Italian.Reciprocals.lexicalReciprocals.map (·.toVerb)
   | .spanish => Spanish.Reciprocals.lexicalReciprocals
   | .catalan => Catalan.Reciprocals.lexicalReciprocals
 

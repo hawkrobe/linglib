@@ -162,8 +162,8 @@ def sizeOf (z : Complementizer) : Option ComplementSize :=
   if z = di then some diSize else if z = a then some aSize else none
 
 /-- The readings a verb's complementizers yield, in the order the fragment lists them. -/
-def readings (v : Italian.Verbs.Verb) : List Reading :=
-  v.typers.filterMap fun z ↦ (sizeOf z).map readingFromSize
+def readings (v : Italian.Verb) : List Reading :=
+  v.clauseTypers.filterMap fun z ↦ (sizeOf z).map readingFromSize
 
 /-- *convincere* has both readings, one per complementizer (4), and *pensare* alternates the same
 way. -/
