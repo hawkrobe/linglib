@@ -31,8 +31,8 @@ otherwise (`languageType`), so the definitional cells of the book's fourth table
 (`languageType_eq_symmetric_iff`, `languageType_eq_asymmetric_iff`). The types are
 instantiated on the book's own examples, entered in the fragments. Spanish, German, Italian,
 French and Russian are of type Sym. The Finnish negative auxiliary takes the ending of the
-finite verb and leaves the lexical verb without it; the Japanese negative inflects as an
-adjective, so tense leaves the verb; Maori negates with an initial negative verb, and
+finite verb and leaves the lexical verb without it; the plain Japanese negative inflects as an
+adjective, a less finite form than the verb; Maori negates with an initial negative verb, and
 Hixkaryana deverbalizes the lexical verb under an added copula: finiteness asymmetries, and
 type Asy. Mandarin and Turkish mix symmetric and asymmetric constructions. Burmese replaces its
 three postverbal tense–aspect markers with one negative suffix, asymmetric in construction and
@@ -206,11 +206,14 @@ theorem finnish_negVerb :
       .asymmetric := by
   decide
 
-/-- Under negation the Japanese lexical verb loses its tense marking to the adjectival negative
-suffix, the lexical-verb variety of the finiteness asymmetry. -/
-theorem japanese_tense_leaves_stem :
-    .tense ∈ Japanese.Negation.japaneseNegDistribution.affirmativeOnStem ∧
-      .tense ∉ Japanese.Negation.japaneseNegDistribution.negativeOnStem := by
+/-- The plain Japanese negative is the verb root, the negator *-na-* and an adjectival tense
+ending, where the affirmative has a verbal one: the verb becomes an adjective, less finite than
+the verb, which the book files, as an atypical member, under the finiteness asymmetry with a
+nonfinite lexical verb. -/
+theorem japanese_negative_adjectival :
+    ∀ p ∈ Japanese.Negation.plain, ∃ e ∈ Japanese.Negation.adjectivalEndings,
+      p.negative = p.affirmative.take 1 ++ Japanese.Negation.na.morphs ++ [e] ∧
+        ∀ m ∈ p.affirmative.drop 1, m ∉ Japanese.Negation.adjectivalEndings := by
   decide
 
 /-- The plain and the polite negatives are asymmetric, the polite past adding the copula, while

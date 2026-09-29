@@ -13,9 +13,9 @@ sample: the frequency surveys of chapter 2 and the morpheme-order counts of the 
 which every tested pair confirms the predicted direction and aspect against tense and against mood
 does so without a single counterexample.
 
-The order those counts determine is then shown to be the substrate's relevance order rather than a
+The order those counts determine is then shown to be the relevance hierarchy's order rather than a
 table chosen to match it: on the four categories the survey covers, the relation derived from the
-counts and the substrate's relevance order are the same. Fusion, the third claim, is
+counts and the hierarchy's order are the same. Fusion, the third claim, is
 qualitative in the source.
 
 Chapter 5's notion of lexical strength closes the file: an irregular verb keeps its irregularity
@@ -26,7 +26,7 @@ where its token frequency is high, and the Strong Verbs that regularized are the
 * `BybeeCategory` — the verbal-inflectional categories of Ch 2, in relevance order.
 * `inflectionalCount50`, `derivOrInflCount50` — the Ch 2 §5 frequency surveys (Figs 1+2).
 * `orderPairs` — the Ch 2 §6 morpheme-order counts, one `OrderPair` per tested category pair.
-* `toMorphCategory` — the embedding of `BybeeCategory` into the substrate `MorphCategory`.
+* `toRelevanceHierarchy` — the hierarchy category of each surveyed category.
 * `SurveyedCloser` — the stem-proximity order *derived from* `orderPairs`.
 * `strongStillStrong`, `strongRegularized` — the Ch 5 §6 strong-verb frequency table.
 
@@ -36,8 +36,8 @@ where its token frequency is high, and the Strong Verbs that regularized are the
   relevance and generality frequency predictions.
 * `predicted_outnumbers_counter`, `aspect_categorical_against_tense_and_mood` — the order
   predictions.
-* `survey_order_iso_relevance` — on the surveyed categories `SurveyedCloser` and the substrate's
-  `<` coincide via `toMorphCategory`: the hierarchy is the order the §6 survey forces, not a
+* `survey_order_iso_relevance` — on the surveyed categories `SurveyedCloser` and the hierarchy's
+  `<` coincide via `toRelevanceHierarchy`: the hierarchy is the order the §6 survey forces, not a
   stipulated table.
 * `bybeeSurveyedOrder_respects_hierarchy` — the surveyed order is sorted by the hierarchy.
 * `strong_verbs_higher_frequency_than_regularized` — the Ch 5 §6 diachronic
@@ -223,18 +223,13 @@ theorem predicted_outnumbers_counter :
     ∀ p ∈ orderPairs, p.furtherCount < p.closerCount := by
   decide
 
-/-! ### Connection to substrate `MorphCategory.peripherality`
+/-! ### The relevance hierarchy
 
-`MorphCategory.peripherality` (in `Morphology/RelevanceHierarchy.lean`) numerically
-encodes the hierarchy — lower = closer to stem = more relevant — faithfully to
-Ch 2 §3 for the six core categories. Its extensions (`derivation`, `degree`,
-`negation`, `nonfinite`) are linglib additions, not Bybee's. -/
+The survey codes agreement finer than the hierarchy ranks it: number, person, object person and
+gender agreement are all the hierarchy's agreement. -/
 
-/-- Embed `BybeeCategory` into the substrate `MorphCategory`. All four agreement
-subtypes collapse to `.agreement`: Bybee's verbal-number agreement sits at the
-low-relevance (rank-8) end with person and gender, *not* with nominal `.number`
-(rank 3). -/
-def toMorphCategory : BybeeCategory → MorphCategory
+/-- The hierarchy category a surveyed category belongs to. -/
+def toRelevanceHierarchy : BybeeCategory → RelevanceHierarchy
   | .valence       => .valence
   | .voice         => .voice
   | .aspect        => .aspect
@@ -245,18 +240,11 @@ def toMorphCategory : BybeeCategory → MorphCategory
   | .personAgrObj  => .agreement
   | .genderAgr     => .agreement
 
-/-- The substrate relevance order is strictly increasing along the six Ch 2 §3
-categories: it reproduces valence < voice < aspect < tense < mood < agreement. -/
-theorem substrate_matches_bybee_hierarchy :
-    ([BybeeCategory.valence, .voice, .aspect, .tense, .mood, .personAgr].map
-      toMorphCategory).SortedLT := by
-  decide
-
 /-! ### Grounding the hierarchy in the survey
 
 On the four categories Bybee surveyed (aspect, tense, mood, person), the
-substrate order is not a free choice: `SurveyedCloser`, derived from
-`orderPairs`, coincides with the substrate's `<` via `toMorphCategory`
+hierarchy's order is not a free choice: `SurveyedCloser`, derived from
+`orderPairs`, coincides with the hierarchy's `<` via `toRelevanceHierarchy`
 (`survey_order_iso_relevance`). So a sortedness check over these categories
 rests on an order isomorphism, not a stipulated table. -/
 
@@ -296,12 +284,12 @@ theorem surveyedCloser_total : ∀ a b : BybeeCategory,
   decide
 
 /-- Order isomorphism: on the surveyed categories, `SurveyedCloser` and the
-substrate's `<` coincide via `toMorphCategory`. The hierarchy there is
+hierarchy's `<` coincide via `toRelevanceHierarchy`. The hierarchy there is
 not merely consistent with Bybee's evidence — it *is* the order the §6 survey
 determines. -/
 theorem survey_order_iso_relevance : ∀ a b : BybeeCategory,
     Surveyed a → Surveyed b →
-      (SurveyedCloser a b ↔ toMorphCategory a < toMorphCategory b) := by
+      (SurveyedCloser a b ↔ toRelevanceHierarchy a < toRelevanceHierarchy b) := by
   decide
 
 /-- The stem-outward ordering of the surveyed categories — a literal, but
@@ -316,10 +304,10 @@ theorem bybeeSurveyedOrder_sorted : bybeeSurveyedOrder.Pairwise SurveyedCloser :
 theorem bybeeSurveyedOrder_complete : ∀ c : BybeeCategory,
     Surveyed c → c ∈ bybeeSurveyedOrder := by decide
 
-/-- The data-derived surveyed order is sorted by the substrate's relevance order, closing
+/-- The data-derived surveyed order is sorted by the relevance hierarchy, closing
 the loop between Bybee's §6 evidence and the hierarchy. -/
 theorem bybeeSurveyedOrder_respects_hierarchy :
-    (bybeeSurveyedOrder.map toMorphCategory).SortedLE := by decide
+    (bybeeSurveyedOrder.map toRelevanceHierarchy).SortedLE := by decide
 
 /-! ### Lexical strength
 
