@@ -48,7 +48,7 @@ inductive PerfectAux where
   | be
   /-- Italian *avere*, French *avoir*, German *haben*. -/
   | have
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- Transitivity class relevant to auxiliary selection. -/
 inductive TransitivityClass where

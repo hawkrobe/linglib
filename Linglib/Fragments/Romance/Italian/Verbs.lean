@@ -25,11 +25,10 @@ as the lexical reciprocals.
 An intransitive verb forms its perfect with *essere* when it expresses a change of location, state
 or condition, the continuation of a state or existence in a state, and with *avere* when an
 activity is in the foreground, whether or not its subject controls it (`Italian.Verbs.perfect`):
-*Maria è arrivata* 'Maria has arrived' but *Mario ha tossito* 'Mario has coughed'. This is
-[sorace-2000]'s Auxiliary Selection Hierarchy cut where the states end and the processes begin
-(`Italian.Verbs.perfect_eq_be_iff`). *Correre* 'run' takes *essere* with a phrase that brings it
-to an endpoint, *È corso al campo sportivo in un'ora* 'he ran to the sports ground in an hour',
-and *nuotare* 'swim', which selects no such phrase, keeps *avere*.
+*Maria è arrivata* 'Maria has arrived' but *Mario ha tossito* 'Mario has coughed'. *Correre*
+'run' takes *essere* with a phrase that brings it to an endpoint, *È corso al campo sportivo in
+un'ora* 'he ran to the sports ground in an hour', and *nuotare* 'swim', which selects no such
+phrase, keeps *avere*.
 
 ## Implementation notes
 
@@ -74,6 +73,13 @@ def a : Complementizer where
 structure Verb extends _root_.Verb where
   /-- The complementizers of the verb's complements; a bare infinitive contributes none. -/
   typers : List Complementizer := []
+
+/-- The predicate the entry `v` forms with a path phrase of reading `p`. -/
+def Verb.withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
+  { v with toVerb := v.toVerb.withPath p }
+
+@[simp] theorem Verb.toVerb_withPath (v : Verb) (p : Adposition.SpatialReading) :
+    (v.withPath p).toVerb = v.toVerb.withPath p := rfl
 
 /-! ### Attitude and causative verbs -/
 
@@ -139,62 +145,62 @@ def fare : Verb where
 /-! ### Transitive verbs with a lexical reciprocal use -/
 
 /-- *abbracciare* 'hug' is transitive and has a lexical reciprocal use. -/
-def abbracciare : _root_.Verb where
+def abbracciare : Verb where
   form := "abbracciare"
   frames := [ArgumentFrame.np]
 
 /-- *baciare* 'kiss' is transitive and has a lexical reciprocal use. -/
-def baciare : _root_.Verb where
+def baciare : Verb where
   form := "baciare"
   frames := [ArgumentFrame.np]
 
 /-- *coccolare* 'cuddle' is transitive and has a lexical reciprocal use. -/
-def coccolare : _root_.Verb where
+def coccolare : Verb where
   form := "coccolare"
   frames := [ArgumentFrame.np]
 
 /-- *conoscere* 'know (of)' is transitive and has a lexical reciprocal use. -/
-def conoscere : _root_.Verb where
+def conoscere : Verb where
   form := "conoscere"
   frames := [ArgumentFrame.np]
 
 /-- *consultare* 'consult, confer' is transitive and has a lexical reciprocal use. -/
-def consultare : _root_.Verb where
+def consultare : Verb where
   form := "consultare"
   frames := [ArgumentFrame.np]
 
 /-- *frequentare* 'date' is transitive and has a lexical reciprocal use. -/
-def frequentare : _root_.Verb where
+def frequentare : Verb where
   form := "frequentare"
   frames := [ArgumentFrame.np]
 
 /-- *incontrare* 'meet' is transitive and has a lexical reciprocal use. -/
-def incontrare : _root_.Verb where
+def incontrare : Verb where
   form := "incontrare"
   frames := [ArgumentFrame.np]
 
 /-- *incrociare* 'cross, run into' is transitive and has a lexical reciprocal use. -/
-def incrociare : _root_.Verb where
+def incrociare : Verb where
   form := "incrociare"
   frames := [ArgumentFrame.np]
 
 /-- *lasciare* 'leave, break up with' is transitive and has a lexical reciprocal use. -/
-def lasciare : _root_.Verb where
+def lasciare : Verb where
   form := "lasciare"
   frames := [ArgumentFrame.np]
 
 /-- *sposare* 'marry' is transitive and has a lexical reciprocal use. -/
-def sposare : _root_.Verb where
+def sposare : Verb where
   form := "sposare"
   frames := [ArgumentFrame.np]
 
 /-- *trovare* 'find, meet' is transitive and has a lexical reciprocal use. -/
-def trovare : _root_.Verb where
+def trovare : Verb where
   form := "trovare"
   frames := [ArgumentFrame.np]
 
 /-- *vedere* 'see, meet' is transitive and has a lexical reciprocal use. -/
-def vedere : _root_.Verb where
+def vedere : Verb where
   form := "vedere"
   frames := [ArgumentFrame.np]
 
@@ -204,47 +210,47 @@ The monadic verbs of [sorace-2000]'s Italian examples whose auxiliary [maiden-ro
 §14.20 states. -/
 
 /-- *venire* 'come', a verb of change of location. -/
-def venire : _root_.Verb where
+def venire : Verb where
   form := "venire"
   frames := [ArgumentFrame.unaccusative]
   vendlerClass := some .achievement
   direction := some .goal
 
 /-- *arrivare* 'arrive', a verb of change of location. -/
-def arrivare : _root_.Verb where
+def arrivare : Verb where
   form := "arrivare"
   frames := [ArgumentFrame.unaccusative]
   vendlerClass := some .achievement
   direction := some .goal
 
 /-- *cadere* 'fall', a verb of change with a direction ([levin-hovav-1995] p. 147). -/
-def cadere : _root_.Verb where
+def cadere : Verb where
   form := "cadere"
   frames := [ArgumentFrame.unaccusative]
   vendlerClass := some .achievement
   direction := some .goal
 
 /-- *salire* 'go up', a change along a scale of height. -/
-def salire : _root_.Verb where
+def salire : Verb where
   form := "salire"
   frames := [ArgumentFrame.unaccusative]
   vendlerClass := some .accomplishment
   scaleDimension := some .height
 
 /-- *marcire* 'go off, rot', a verb of change of state. -/
-def marcire : _root_.Verb where
+def marcire : Verb where
   form := "marcire"
   frames := [ArgumentFrame.unaccusative]
   vendlerClass := some .accomplishment
 
 /-- *fiorire* 'bloom', a verb of change of state. -/
-def fiorire : _root_.Verb where
+def fiorire : Verb where
   form := "fiorire"
   frames := [ArgumentFrame.unaccusative]
   vendlerClass := some .achievement
 
 /-- *rimanere* 'remain', the persistence of a state. -/
-def rimanere : _root_.Verb where
+def rimanere : Verb where
   form := "rimanere"
   frames := [ArgumentFrame.unaccusative]
   vendlerClass := some .state
@@ -252,79 +258,79 @@ def rimanere : _root_.Verb where
 
 /-- *durare* 'last', which takes *essere* for the permanence of a state and *avere* where the
 duration is in the foreground. -/
-def durare : _root_.Verb where
+def durare : Verb where
   form := "durare"
   frames := [ArgumentFrame.unaccusative]
   vendlerClass := some .state
 
 /-- *esistere* 'exist', existence in a state. -/
-def esistere : _root_.Verb where
+def esistere : Verb where
   form := "esistere"
   frames := [ArgumentFrame.unaccusative]
   vendlerClass := some .state
 
 /-- *bastare* 'be enough', existence in a state. -/
-def bastare : _root_.Verb where
+def bastare : Verb where
   form := "bastare"
   frames := [ArgumentFrame.unaccusative]
   vendlerClass := some .state
 
 /-- *sembrare* 'seem', a state predicated of the subject. -/
-def sembrare : _root_.Verb where
+def sembrare : Verb where
   form := "sembrare"
   frames := [ArgumentFrame.unaccusative]
   vendlerClass := some .state
 
 /-- *appartenere* 'belong', which takes *essere* for a state, *L'anello era appartenuto alla regina
 Vittoria*, and *avere* where the subject controls it, *Non ho mai appartenuto al PCI*. -/
-def appartenere : _root_.Verb where
+def appartenere : Verb where
   form := "appartenere"
   frames := [ArgumentFrame.unaccusative]
   vendlerClass := some .state
 
 /-- *lavorare* 'work', an activity whose subject controls it. -/
-def lavorare : _root_.Verb where
+def lavorare : Verb where
   form := "lavorare"
   frames := [ArgumentFrame.intransitive]
   vendlerClass := some .activity
   subjectEntailments := some activitySubjectProfile
 
 /-- *chiacchierare* 'chat', an activity whose subject controls it. -/
-def chiacchierare : _root_.Verb where
+def chiacchierare : Verb where
   form := "chiacchierare"
   frames := [ArgumentFrame.intransitive]
   vendlerClass := some .activity
   subjectEntailments := some activitySubjectProfile
 
 /-- *correre* 'run', a verb of manner of motion that selects a directional phrase. -/
-def correre : _root_.Verb where
+def correre : Verb where
   form := "correre"
   frames := [ArgumentFrame.intransitive, ArgumentFrame.spatialPP]
   vendlerClass := some .activity
   direction := some .place
 
 /-- *saltare* 'jump', a verb of manner of motion that selects a directional phrase. -/
-def saltare : _root_.Verb where
+def saltare : Verb where
   form := "saltare"
   frames := [ArgumentFrame.intransitive, ArgumentFrame.spatialPP]
   vendlerClass := some .activity
   direction := some .place
 
 /-- *nuotare* 'swim', a verb of manner of motion that selects no directional phrase. -/
-def nuotare : _root_.Verb where
+def nuotare : Verb where
   form := "nuotare"
   frames := [ArgumentFrame.intransitive]
   vendlerClass := some .activity
   direction := some .place
 
 /-- *tossire* 'cough', an activity whose subject does not control it. -/
-def tossire : _root_.Verb where
+def tossire : Verb where
   form := "tossire"
   frames := [ArgumentFrame.intransitive]
   vendlerClass := some .semelfactive
 
 /-- *squillare* 'ring', an activity whose subject does not control it. -/
-def squillare : _root_.Verb where
+def squillare : Verb where
   form := "squillare"
   frames := [ArgumentFrame.intransitive]
   vendlerClass := some .activity
@@ -334,7 +340,7 @@ def squillare : _root_.Verb where
 /-- The auxiliary of the perfect of `v` on the frame `fr` ([maiden-robustelli-2007] §14.20):
 *avere* for a transitive verb; for an intransitive one *essere* when it is a state or expresses a
 change, to an endpoint or along a scale, and *avere* when an activity is in the foreground. -/
-def perfect (v : _root_.Verb) (fr : ArgumentFrame) : PerfectAux :=
+def perfect (v : Verb) (fr : ArgumentFrame) : PerfectAux :=
   if fr.HasNominal ∧ ¬ fr.IsUnaccusative then .have
   else if v.vendlerClass.any (fun c ↦ c.dynamicity = .stative ∨ c.telicity = .telic) ∨
       v.scaleDimension.isSome then .be
@@ -356,16 +362,12 @@ example :
     perfect (nuotare.withPath Adposition.into) .intransitive = .have := by
   decide
 
-/-- The Italian rule is the Auxiliary Selection Hierarchy cut where the states end and the
-processes begin: an intransitive verb takes *essere* exactly when it is a transition or a state
-([sorace-2000] §6). -/
-theorem perfect_eq_be_iff {v : _root_.Verb} {fr : ArgumentFrame}
-    (hfr : ¬ (fr.HasNominal ∧ ¬ fr.IsUnaccusative)) {t : AuxiliarySelectionHierarchy}
-    (ht : AuxiliarySelectionHierarchy.ofVerb v = some t) :
-    perfect v fr = .be ↔ t ≤ .existenceOfState := by
-  simp only [perfect, hfr, ite_false]
-  rcases hc : v.vendlerClass with _ | c <;> simp_all [AuxiliarySelectionHierarchy.ofVerb]
-  split_ifs at ht <;> simp_all [Option.isSome_iff_ne_none]
-  all_goals first | decide | (subst ht; decide) | (obtain ⟨a, -, rfl⟩ := ht; split_ifs <;> decide)
+/-- `allVerbs` lists the entries. -/
+def allVerbs : List Verb :=
+  [convincere, pensare, volere, sperare, intendere, fare,
+   abbracciare, baciare, coccolare, conoscere, consultare, frequentare, incontrare, incrociare,
+   lasciare, sposare, trovare, vedere,
+   venire, arrivare, cadere, salire, marcire, fiorire, rimanere, durare, esistere, bastare,
+   sembrare, appartenere, lavorare, chiacchierare, correre, saltare, nuotare, tossire, squillare]
 
 end Italian.Verbs

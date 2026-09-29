@@ -59,8 +59,7 @@ structure Verb extends _root_.Verb, _root_.Verb.CaseArray Case where
 lexical information. -/
 def Verb.ofStem (s : Conjugation.Stem) : Verb := { form := s.infinitive, frames := [], stem := s }
 
-/-- The entry with a path phrase of reading `p`, its case array and stem kept
-(`_root_.Verb.withPath`). -/
+/-- The predicate the entry `v` forms with a path phrase of reading `p`. -/
 def Verb.withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
   { v with toVerb := v.toVerb.withPath p }
 
@@ -384,18 +383,25 @@ Zimmer getanzt* (§12.3.2c). -/
 def tanzen : Verb :=
   { Verb.ofStem (weak "tanzen") with
     frames := [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
-    vendlerClass := some .activity }
+    vendlerClass := some .activity, subjectEntailments := some activitySubjectProfile }
 
 /-- *arbeiten* 'work' denotes a continuous action, *Ich habe gestern lange gearbeitet*. -/
 def arbeiten : Verb :=
   { Verb.ofStem (weak "arbeiten") with
-    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity }
+    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity,
+    subjectEntailments := some activitySubjectProfile }
 
 /-- *bleiben* 'stay, remain' denotes the continuation of a state, *Wir sind in Dessau geblieben*. -/
 def bleiben : Verb :=
   { Verb.ofStem (strong "bleiben" "bleibt" "blieb" "geblieben") with
     frames := [ArgumentFrame.intransitive], vendlerClass := some .state,
     phasal := some .continuation }
+
+/-- *liegen* 'lie' denotes a state, *ich habe gelegen* in standard German in Germany, where South
+German commonly has *ich bin gelegen*. -/
+def liegen : Verb :=
+  { Verb.ofStem (strong "liegen" "liegt" "lag" "gelegen") with
+    frames := [ArgumentFrame.intransitive], vendlerClass := some .state }
 
 /-- `allVerbs` lists the entries. -/
 def allVerbs : List Verb :=
@@ -407,7 +413,7 @@ def allVerbs : List Verb :=
    anzeigen, auszeichnen, belangen, ehren, entlassen, raechen, revanchieren,
    zurVerantwortungZiehen,
    beenden, streichen, uebereilen, entwickeln, veranlassen, vergessen, erwarten, beschliessen,
-   laufen, ankommen, tanzen, arbeiten, bleiben]
+   laufen, ankommen, tanzen, arbeiten, bleiben, liegen]
 
 /-- Every entry is cited by the infinitive of its stem. -/
 theorem form_eq_infinitive : ∀ v ∈ allVerbs, v.form = v.stem.infinitive := by decide

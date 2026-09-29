@@ -14,6 +14,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "venire"],
       ["position", "changeOfLocation"],
       ["aux", "be"]
     ],
@@ -35,6 +36,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "arriver"],
       ["position", "changeOfLocation"],
       ["aux", "be"]
     ],
@@ -57,6 +59,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "komen"],
       ["position", "changeOfLocation"],
       ["aux", "be"]
     ],
@@ -78,6 +81,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "ankommen"],
       ["position", "changeOfLocation"],
       ["aux", "be"]
     ],
@@ -100,6 +104,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "arrivare"],
       ["position", "changeOfLocation"],
       ["aux", "be"],
       ["predicate", "detelicized"]
@@ -123,6 +128,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "cadere"],
       ["position", "changeOfLocation"],
       ["aux", "be"],
       ["subject", "agentive"]
@@ -146,6 +152,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "cadere"],
       ["position", "changeOfLocation"],
       ["aux", "be"]
     ],
@@ -167,6 +174,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "arrivare"],
       ["position", "changeOfLocation"],
       ["aux", "have"]
     ],
@@ -191,6 +199,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "salire"],
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
@@ -215,6 +224,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "marcire"],
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
@@ -239,6 +249,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "fiorire"],
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
@@ -261,6 +272,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "naître"],
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
@@ -283,6 +295,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "sterven"],
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
@@ -305,6 +318,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "gebären"],
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
@@ -329,6 +343,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "groeien"],
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
@@ -351,6 +366,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "steigen"],
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
@@ -376,6 +392,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "stijgen"],
       ["position", "changeOfState"],
       ["aux", "be"],
       ["predicate", "detelicized"]
@@ -400,6 +417,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "devenir"],
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
@@ -421,6 +439,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "rougir"],
       ["position", "changeOfState"],
       ["aux", "have"]
     ],
@@ -445,6 +464,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "paraître"],
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
@@ -467,6 +487,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "échapper"],
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
@@ -491,6 +512,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "rimanere"],
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
@@ -515,6 +537,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "durare"],
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
@@ -539,6 +562,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "durare"],
       ["position", "continuationOfState"],
       ["aux", "be"],
       ["subject", "agentive"]
@@ -564,6 +588,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "survivre"],
       ["position", "continuationOfState"],
       ["aux", "have"]
     ],
@@ -588,6 +613,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "halten"],
       ["position", "continuationOfState"],
       ["aux", "have"]
     ],
@@ -612,6 +638,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "verweilen"],
       ["position", "continuationOfState"],
       ["aux", "have"]
     ],
@@ -634,6 +661,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "overblijven"],
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
@@ -658,6 +686,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "duren"],
       ["position", "continuationOfState"],
       ["aux", "have"]
     ],
@@ -682,6 +711,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "rester"],
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
@@ -706,6 +736,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "blijven"],
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
@@ -730,6 +761,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "bleiben"],
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
@@ -754,6 +786,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "esistere"],
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
@@ -778,6 +811,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "bastare"],
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
@@ -802,6 +836,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "sembrare"],
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
@@ -825,6 +860,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "bastare"],
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
@@ -847,6 +883,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "appartenere"],
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
@@ -871,6 +908,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "scarseggiare"],
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
@@ -896,6 +934,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "exister"],
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
@@ -917,6 +956,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "gefallen"],
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
@@ -938,6 +978,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "genügen"],
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
@@ -962,6 +1003,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "liegen"],
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
@@ -985,6 +1027,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "abhängen"],
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
@@ -1007,6 +1050,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "staan"],
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
@@ -1029,6 +1073,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "bestaan"],
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
@@ -1051,6 +1096,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "blijken"],
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
@@ -1073,6 +1119,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "sein"],
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
@@ -1095,6 +1142,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "zijn"],
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
@@ -1117,6 +1165,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "chiacchierare"],
       ["position", "nonmotionalProcess"],
       ["aux", "have"]
     ],
@@ -1139,6 +1188,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "travailler"],
       ["position", "nonmotionalProcess"],
       ["aux", "have"]
     ],
@@ -1161,6 +1211,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "blazen"],
       ["position", "nonmotionalProcess"],
       ["aux", "have"]
     ],
@@ -1183,6 +1234,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "arbeiten"],
       ["position", "nonmotionalProcess"],
       ["aux", "have"]
     ],
@@ -1208,6 +1260,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "funzionare"],
       ["position", "nonmotionalProcess"],
       ["aux", "have"],
       ["subject", "nonagentive"]
@@ -1231,6 +1284,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "lavorare"],
       ["position", "nonmotionalProcess"],
       ["aux", "have"],
       ["predicate", "telicized"]
@@ -1256,6 +1310,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "cedere"],
       ["position", "nonmotionalProcess"],
       ["aux", "have"]
     ],
@@ -1280,6 +1335,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "cedere"],
       ["position", "nonmotionalProcess"],
       ["aux", "have"],
       ["subject", "nonagentive"]
@@ -1305,6 +1361,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "correre"],
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
@@ -1329,6 +1386,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "lopen"],
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
@@ -1353,6 +1411,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "nager"],
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
@@ -1377,6 +1436,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "rennen"],
       ["position", "motionalProcess"],
       ["aux", "be"]
     ],
@@ -1401,6 +1461,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "laufen"],
       ["position", "motionalProcess"],
       ["aux", "be"]
     ],
@@ -1425,6 +1486,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "schwimmen"],
       ["position", "motionalProcess"],
       ["aux", "be"]
     ],
@@ -1448,6 +1510,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "rollen"],
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
@@ -1472,6 +1535,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "rollen"],
       ["position", "motionalProcess"],
       ["aux", "be"],
       ["predicate", "telicized"]
@@ -1497,6 +1561,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "tanzen"],
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
@@ -1521,6 +1586,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "tanzen"],
       ["position", "motionalProcess"],
       ["aux", "be"],
       ["predicate", "telicized"]
@@ -1545,6 +1611,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "correre"],
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
@@ -1569,6 +1636,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "correre"],
       ["position", "motionalProcess"],
       ["aux", "be"],
       ["predicate", "telicized"]
@@ -1594,6 +1662,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "nuotare"],
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
@@ -1617,6 +1686,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "nuotare"],
       ["position", "motionalProcess"],
       ["aux", "have"],
       ["predicate", "telicized"]
@@ -1641,6 +1711,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "courir"],
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
@@ -1665,6 +1736,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "courir"],
       ["position", "motionalProcess"],
       ["aux", "have"],
       ["predicate", "telicized"]
@@ -1690,6 +1762,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "correre"],
       ["position", "motionalProcess"],
       ["aux", "be"],
       ["subject", "nonagentive"]
@@ -1715,6 +1788,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "saltare"],
       ["position", "motionalProcess"],
       ["aux", "be"],
       ["subject", "nonagentive"]
@@ -1740,6 +1814,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "atterrare"],
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
@@ -1764,6 +1839,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "atterrare"],
       ["position", "motionalProcess"],
       ["aux", "be"],
       ["subject", "nonagentive"]
@@ -1790,6 +1866,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "tentennare"],
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
@@ -1814,6 +1891,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "tentennare"],
       ["position", "uncontrolledProcess"],
       ["aux", "have"],
       ["subject", "agentive"]
@@ -1838,6 +1916,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "tossire"],
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
@@ -1860,6 +1939,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "tossire"],
       ["position", "uncontrolledProcess"],
       ["aux", "have"],
       ["subject", "agentive"]
@@ -1884,6 +1964,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "squillare"],
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
@@ -1908,6 +1989,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "risuonare"],
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
@@ -1931,6 +2013,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "rimbombare"],
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
@@ -1954,6 +2037,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "rintoccare"],
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
@@ -1978,6 +2062,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "piovere"],
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
@@ -2002,6 +2087,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "nevicare"],
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
@@ -2026,6 +2112,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "grandinare"],
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
@@ -2049,6 +2136,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "piovere"],
       ["position", "uncontrolledProcess"],
       ["aux", "be"],
       ["predicate", "telicized"]
@@ -2074,6 +2162,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "tuonare"],
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
@@ -2097,6 +2186,7 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["verb", "lampeggiare"],
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
@@ -2118,6 +2208,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "tuonare"],
       ["position", "uncontrolledProcess"],
       ["aux", "be"],
       ["predicate", "telicized"]
@@ -2140,6 +2231,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
+      ["verb", "lampeggiare"],
       ["position", "uncontrolledProcess"],
       ["aux", "be"],
       ["predicate", "telicized"]
