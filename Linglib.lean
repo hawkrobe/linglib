@@ -176,7 +176,6 @@ import Linglib.Logic.Team.QBSML.Defs
 import Linglib.Logic.Team.QBSML.Enrichment
 import Linglib.Logic.Team.QBSML.FreeChoice
 import Linglib.Logic.Team.QBSML.Properties
-import Linglib.Logic.Orthologic
 import Linglib.Logic.Orthologic.FrameSemantics
 import Linglib.Logic.RankingFunction
 import Linglib.Logic.Team.Atoms
@@ -205,8 +204,6 @@ import Linglib.Core.Order.IterateFixedPoint
 import Linglib.Core.Order.LeftLinear
 import Linglib.Core.Order.Monotone.Monovary
 import Linglib.Core.Order.OfCriteria
-import Linglib.Core.Order.Orthoframe
-import Linglib.Core.Order.Orthoframe.Representation
 import Linglib.Core.Order.Ortholattice
 import Linglib.Core.Order.PartialRank
 import Linglib.Core.Order.PartialUnify
@@ -1062,10 +1059,6 @@ import Linglib.Semantics.Modality.Kernel
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Modality.Kratzer.Ordering
 import Linglib.Semantics.Modality.Kratzer.Premise
-import Linglib.Semantics.Modality.Orthologic.Frames
-import Linglib.Semantics.Modality.Orthologic.Lifting
-import Linglib.Semantics.Modality.Orthologic.Modal
-import Linglib.Semantics.Modality.Orthologic.RegularProp
 import Linglib.Semantics.Modification.Basic
 import Linglib.Semantics.Modification.Classification
 import Linglib.Semantics.Modification.Coercion

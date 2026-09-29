@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.Orthologic.Modal
+public import Linglib.Logic.Orthologic.ModalFrame
 public import Mathlib.Order.BooleanAlgebra.Basic
 
 /-!
