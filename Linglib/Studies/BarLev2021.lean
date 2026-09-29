@@ -290,7 +290,7 @@ theorem gappy_iff (h : Separating D x P) (hcount : ∀ k ≤ (x ∩ D).card, ∃
 theorem gappy_iff_barePlural_eq_indet (h : Separating D x P)
     (hcount : ∀ k ≤ (x ∩ D).card, ∃ w, count D x P w = k) (w : W) :
     Gappy D x P w ↔ Homogeneity.barePlural P (x ∩ D) w = .indet := by
-  rw [gappy_iff h hcount, Homogeneity.barePlural, Trivalent.dist_eq_indet_iff, count,
+  rw [gappy_iff h hcount, Homogeneity.barePlural, Trivalent.supervaluation_eq_indet_iff, count,
     ← Finset.filter_ssubset, ← Finset.filter_nonempty_iff, Finset.card_pos]
   exact and_congr_right fun _ ↦ ⟨fun hlt ↦ Finset.ssubset_iff_subset_ne.2
     ⟨Finset.filter_subset _ _, ne_of_apply_ne _ hlt.ne⟩, Finset.card_lt_card⟩

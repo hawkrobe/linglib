@@ -2,7 +2,6 @@ module
 
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Linglib.Semantics.Conditionals.Counterfactual
-public import Linglib.Logic.Duality
 
 /-!
 # Counterfactuals over sets of antecedent propositions
@@ -78,7 +77,7 @@ section Homogeneity
 variable (ord S C) [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ C)] (w : W)
 
 /-- The all-or-nothing verdict over `S`, super-truth over its propositions' counterfactuals. -/
-def homogeneousImp : Trivalent := Trivalent.dist S fun A ↦ w ∈ closestImp ord ↑A C
+def homogeneousImp : Trivalent := Trivalent.supervaluation S fun A ↦ w ∈ closestImp ord ↑A C
 
 instance : Decidable (w ∈ disjunctiveImp ord S C) :=
   inferInstanceAs (Decidable (w ∈ closestImp ord ↑(S.sup id) C))
@@ -90,16 +89,16 @@ variable {ord S C w}
 
 theorem homogeneousImp_eq_true_iff :
     homogeneousImp ord S C w = .true ↔ w ∈ distributiveImp ord S C := by
-  rw [homogeneousImp, Trivalent.dist_eq_true_iff, mem_distributiveImp]
+  rw [homogeneousImp, Trivalent.supervaluation_eq_true_iff, mem_distributiveImp]
 
 theorem homogeneousImp_eq_false_iff :
     homogeneousImp ord S C w = .false ↔ S.Nonempty ∧ ∀ A ∈ S, w ∉ closestImp ord ↑A C :=
-  Trivalent.dist_eq_false_iff _ _
+  Trivalent.supervaluation_eq_false_iff ..
 
 theorem homogeneousImp_eq_indet_iff :
     homogeneousImp ord S C w = .indet ↔
       (∃ A ∈ S, w ∈ closestImp ord ↑A C) ∧ ∃ A ∈ S, w ∉ closestImp ord ↑A C :=
-  Trivalent.dist_eq_indet_iff _ _
+  Trivalent.supervaluation_eq_indet_iff ..
 
 end Homogeneity
 

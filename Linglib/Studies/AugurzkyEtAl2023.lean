@@ -72,10 +72,7 @@ theorem resolve_homogeneous (ctx : Context) (c : Cell) : (ctx.resolve c).homogen
 /-- Two readings that agree yield a bivalent verdict. -/
 theorem gapValue_ne_indet {p q : Prop} [Decidable p] [Decidable q] (h : p ↔ q) :
     gapValue p q ≠ .indet := by
-  unfold gapValue
-  by_cases hp : p
-  · simp [hp, h.1 hp]
-  · simp [hp, mt h.2 hp]
+  simp [gapValue, Trivalent.supervaluation_eq_indet_iff, h]
 
 /-- On a display without partially opened presents the some- and all-substituted readings
     coincide, so the supervaluation is bivalent. -/

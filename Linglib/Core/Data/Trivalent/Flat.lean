@@ -7,6 +7,7 @@ module
 
 public import Linglib.Core.Data.Trivalent
 public import Linglib.Core.Order.Flat
+public import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # The knowledge order on three-valued truth
@@ -33,6 +34,9 @@ part.
   Strong Kleene connectives are knowledge-monotone.
 * `Trivalent.meetWeak_not_truthMono`, `Trivalent.joinWeak_not_truthMono`: Weak Kleene ones are
   not truth-monotone.
+* `Trivalent.toFlat_supervaluation`: over a nonempty family, the supervaluation is the knowledge
+  meet of the classical values, so shrinking the family can only add information
+  (`Trivalent.toFlat_supervaluation_mono`).
 
 ## References
 
@@ -99,6 +103,33 @@ theorem meetWeak_not_truthMono :
 theorem joinWeak_not_truthMono :
     ¬ ∀ a a' b : Trivalent, a ≤ a' → joinWeak a b ≤ joinWeak a' b :=
   fun h ↦ absurd (h .false .indet .true (by decide)) (by decide)
+
+/-- Over a nonempty family, the supervaluation is the knowledge meet of the classical values. -/
+theorem toFlat_supervaluation {α : Type*} {s : Finset α} (P : α → Prop) [DecidablePred P]
+    (hs : s.Nonempty) :
+    toFlat (supervaluation s P) = s.inf' hs fun a ↦ (decide (P a) : Flat Bool) := by
+  cases h : supervaluation s P
+  · have := (supervaluation_eq_true_iff ..).1 h
+    rw [Finset.inf'_congr hs rfl fun a ha ↦ by rw [decide_eq_true (this a ha)],
+      Finset.inf'_const]; rfl
+  · have := ((supervaluation_eq_false_iff ..).1 h).2
+    rw [Finset.inf'_congr hs rfl fun a ha ↦ by rw [decide_eq_false (this a ha)],
+      Finset.inf'_const]; rfl
+  · obtain ⟨⟨a, ha, hp⟩, b, hb, hn⟩ := (supervaluation_eq_indet_iff ..).1 h
+    refine (le_bot_iff.1 ?_).symm
+    calc s.inf' hs (fun a ↦ (decide (P a) : Flat Bool))
+        ≤ (decide (P a) : Flat Bool) ⊓ (decide (P b) : Flat Bool) :=
+          le_inf (Finset.inf'_le _ ha) (Finset.inf'_le _ hb)
+      _ = ⊥ := by simp [hp, hn]
+
+/-- Shrinking a family to a nonempty subfamily can only add information. The nonemptiness is
+needed: the empty family's `.true` is a convention rather than a meet, and a family whose members
+all fail `P` has the incomparable value `.false`. -/
+theorem toFlat_supervaluation_mono {α : Type*} {s t : Finset α} (P : α → Prop)
+    [DecidablePred P] (h : s ⊆ t) (hs : s.Nonempty) :
+    toFlat (supervaluation t P) ≤ toFlat (supervaluation s P) := by
+  rw [toFlat_supervaluation P hs, toFlat_supervaluation P (hs.mono h)]
+  exact Finset.inf'_mono _ h hs
 
 end KnowledgeOrder
 

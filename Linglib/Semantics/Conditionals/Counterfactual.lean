@@ -2,7 +2,6 @@ module
 
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Linglib.Core.Data.Trivalent
-public import Linglib.Logic.Duality
 public import Linglib.Semantics.Presupposition.Defs
 
 /-!
@@ -95,32 +94,32 @@ variable [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ p)]
 /-- The selectional counterfactual, true when every closest `p`-world is a `q`-world, false when
 every one is a `qᶜ`-world, and indeterminate otherwise. -/
 def selectionalCounterfactual : Trivalent :=
-  Trivalent.dist ((ord w).minimals p).toFinset (· ∈ q)
+  Trivalent.supervaluation ((ord w).minimals p).toFinset (· ∈ q)
 
 variable {ord p q w}
 
 theorem selectionalCounterfactual_eq_true_iff :
     selectionalCounterfactual ord p q w = .true ↔ w ∈ closestImp ord p q := by
-  simp [selectionalCounterfactual, Trivalent.dist_eq_true_iff, Set.subset_def]
+  simp [selectionalCounterfactual, Trivalent.supervaluation_eq_true_iff, Set.subset_def]
 
 theorem selectionalCounterfactual_eq_false_iff :
     selectionalCounterfactual ord p q w = .false ↔
       w ∉ closestImp ord p q ∧ w ∈ closestImp ord p qᶜ := by
-  simp only [selectionalCounterfactual, Trivalent.dist_eq_false_iff, Set.toFinset_nonempty,
-    Set.mem_toFinset, mem_closestImp, Set.subset_def, Set.mem_compl_iff]
+  simp only [selectionalCounterfactual, Trivalent.supervaluation_eq_false_iff,
+    Set.toFinset_nonempty, Set.mem_toFinset, mem_closestImp, Set.subset_def, Set.mem_compl_iff]
   exact ⟨fun ⟨⟨v, hv⟩, h⟩ ↦ ⟨fun h' ↦ h v hv (h' v hv), h⟩, fun ⟨hn, h⟩ ↦
     ⟨Set.nonempty_iff_ne_empty.2 fun he ↦ hn fun v hv ↦ absurd hv (he ▸ Set.notMem_empty v), h⟩⟩
 
 theorem selectionalCounterfactual_eq_indet_iff :
     selectionalCounterfactual ord p q w = .indet ↔
       w ∉ closestImp ord p q ∧ w ∉ closestImp ord p qᶜ := by
-  simp [selectionalCounterfactual, Trivalent.dist_eq_indet_iff, Set.not_subset, and_comm]
+  simp [selectionalCounterfactual, Trivalent.supervaluation_eq_indet_iff, Set.not_subset, and_comm]
 
 /-- With closest antecedent-worlds, negating the consequent negates the verdict. -/
 theorem selectionalCounterfactual_compl (h : ((ord w).minimals p).Nonempty) :
     selectionalCounterfactual ord p qᶜ w = (selectionalCounterfactual ord p q w).neg := by
   simpa [selectionalCounterfactual] using
-    Trivalent.dist_not_of_nonempty _ (· ∈ q) (by simpa using h)
+    Trivalent.supervaluation_not (· ∈ q) (by simpa using h)
 
 variable (ord p q w)
 

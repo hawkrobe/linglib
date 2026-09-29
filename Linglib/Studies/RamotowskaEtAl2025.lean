@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Conditionals.Counterfactual
-public import Linglib.Logic.Duality
+public import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # Ramotowska, Marty, Romoli, and Santorio (2025): Counterfactuals and Quantificational Force
@@ -103,12 +103,12 @@ instance {ι : Type*} (q : Quant) (D : Finset ι) (P : ι → Prop) [DecidablePr
 /-- The quantifier projects through the players' trivalent values by the Kleene meet for the
 universal quantifiers and the Kleene join for the existential ones, over the values or their
 negations. -/
-def Quant.aggregate (q : Quant) (vs : List Trivalent) : Trivalent :=
+def Quant.aggregate {ι : Type*} (q : Quant) (D : Finset ι) (v : ι → Trivalent) : Trivalent :=
   match q with
-  | .all => Trivalent.aggregate .conjunctive vs
-  | .none => Trivalent.aggregate .conjunctive (vs.map Trivalent.neg)
-  | .some => Trivalent.aggregate .disjunctive vs
-  | .notAll => Trivalent.aggregate .disjunctive (vs.map Trivalent.neg)
+  | .all => D.inf v
+  | .none => D.inf fun d ↦ (v d).neg
+  | .some => D.sup v
+  | .notAll => D.sup fun d ↦ (v d).neg
 
 variable {W ι : Type*} [Fintype W] (ord : W → Preorder W)
   [∀ w, DecidableRel (ord w).le] (A : Set W) [DecidablePred (· ∈ A)] (w : W) (D : Finset ι)
@@ -149,7 +149,7 @@ def selectional (q : Quant) : Trivalent :=
 /-- On the homogeneity theory (6) each player's counterfactual carries its third status into
 composition, and the quantifier projects it. -/
 noncomputable def homogeneity (q : Quant) : Trivalent :=
-  q.aggregate (D.toList.map fun d ↦ (homogeneityCounterfactual ord A (B d)).eval w)
+  q.aggregate D fun d ↦ (homogeneityCounterfactual ord A (B d)).eval w
 
 /-- The implicature theory (§8) pairs the basic existential meaning (23) with its exhaustified
 universal strengthening (24), the latter computed in the upward-entailing scope of *some* and
@@ -222,16 +222,15 @@ either projection algorithm, for every quantifier: the homogeneity theory leaves
 to pragmatics. -/
 theorem homogeneity_undefined (h : Mixed ord A w D B) (q : Quant) :
     homogeneity ord A w D B q = .indet := by
-  have hl : D.toList.map (fun d ↦ (homogeneityCounterfactual ord A (B d)).eval w)
-      = List.replicate D.card .indet := by
-    rw [List.eq_replicate_iff]
-    refine ⟨by simp, fun v hv ↦ ?_⟩
-    obtain ⟨d, hd, rfl⟩ := List.mem_map.1 hv
-    exact (Presupposition.PartialProp.eval_eq_indet_iff _ _).2
-      (unembedded h (Finset.mem_toList.1 hd)).2.2
-  have hpos : 0 < D.card := Finset.card_pos.2 h.nonempty
-  cases q <;> simp only [homogeneity, Quant.aggregate, hl, List.map_replicate, Trivalent.neg] <;>
-    exact Trivalent.aggregate_replicate_indet _ _ hpos
+  have hv : ∀ d ∈ D, (homogeneityCounterfactual ord A (B d)).eval w = .indet := fun d hd ↦
+    (Presupposition.PartialProp.eval_eq_indet_iff _ _).2 (unembedded h hd).2.2
+  have hn : ∀ d ∈ D, ((homogeneityCounterfactual ord A (B d)).eval w).neg = .indet :=
+    fun d hd ↦ by rw [hv d hd, Trivalent.neg_indet]
+  cases q
+  · exact (Finset.inf_congr rfl hv).trans (Finset.inf_const h.nonempty _)
+  · exact (Finset.inf_congr rfl hn).trans (Finset.inf_const h.nonempty _)
+  · exact (Finset.sup_congr rfl hv).trans (Finset.sup_const h.nonempty _)
+  · exact (Finset.sup_congr rfl hn).trans (Finset.sup_const h.nonempty _)
 
 /-- With the implicature computed in its scope, *some* says that some player was guaranteed to
 win (25), which is false in the scenario. -/
@@ -251,8 +250,8 @@ players won, the plural definite *the players won* has a gap, while the quantifi
 counterfactuals of the same scenario have none. -/
 theorem dissociation (h : Mixed ord A w D B) {v : W}
     (hv : (∃ d ∈ D, v ∈ B d) ∧ ∃ d ∈ D, v ∉ B d) (q : Quant) :
-    Trivalent.dist D (v ∈ B ·) = .indet ∧ selectional ord A w D B q ≠ .indet :=
-  ⟨(Trivalent.dist_eq_indet_iff D (v ∈ B ·)).2 hv, selectional_determinate h q⟩
+    Trivalent.supervaluation D (v ∈ B ·) = .indet ∧ selectional ord A w D B q ≠ .indet :=
+  ⟨(Trivalent.supervaluation_eq_indet_iff D (v ∈ B ·)).2 hv, selectional_determinate h q⟩
 
 
 end RamotowskaEtAl2025

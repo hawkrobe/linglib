@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Logic.Duality
 public import Linglib.Core.Data.Trivalent.Flat
 
 /-!
@@ -15,12 +14,11 @@ partial specification points reduce to these sets, each point standing for the s
 complete extensions, and extension of points becomes inclusion of the sets; the partial-order
 form with the reduction map is `Studies/Fine1975`.
 
-Super-truth (`superTrue`) is the trivalent classifier `Trivalent.dist` on the admissible set,
-the construction of [van-fraassen-1966]. The specification space contributes the nonemptiness
-that keeps truth and falsity apart, so that the three truth values are exactly the cases of
-`superTrue_true_iff`, `superTrue_false_iff` and `superTrue_indet_iff`, and negation is
-classical (`superTrue_not`). `definitely` is the `Prop` face of super-truth, Fine's `D`
-operator, and `indefinite` his `I`.
+Super-truth (`superTrue`) is [van-fraassen-1966]'s supervaluation `Trivalent.supervaluation`
+over the admissible set. The specification space contributes the nonemptiness that keeps truth
+and falsity apart, so that the three truth values are exactly the cases of `superTrue_true_iff`,
+`superTrue_false_iff` and `superTrue_indet_iff`, and negation is classical (`superTrue_not`).
+`definitely` is the `Prop` face of super-truth, Fine's `D` operator, and `indefinite` his `I`.
 
 ## Main results
 
@@ -86,7 +84,7 @@ variable (eval : Spec → Prop) [DecidablePred eval] (S : SpecSpace Spec)
 
 /-- Super-truth: `.true` when `eval` holds at every admissible specification, `.false` when it
 fails at every one, `.indet` otherwise. -/
-def superTrue : Trivalent := dist S.admissible eval
+def superTrue : Trivalent := supervaluation S.admissible eval
 
 /-- Fine's `D`: `eval` holds at every admissible specification. -/
 def definitely : Prop := ∀ s ∈ S.admissible, eval s
@@ -99,15 +97,15 @@ def indefinite : Prop := ¬ definitely eval S ∧ ¬ definitely (fun s ↦ ¬ ev
 instance : Decidable (indefinite eval S) := inferInstanceAs (Decidable (¬ _ ∧ ¬ _))
 
 theorem superTrue_true_iff : superTrue eval S = .true ↔ ∀ s ∈ S.admissible, eval s :=
-  dist_eq_true_iff _ _
+  supervaluation_eq_true_iff ..
 
 theorem superTrue_false_iff : superTrue eval S = .false ↔ ∀ s ∈ S.admissible, ¬ eval s :=
-  (dist_eq_false_iff _ _).trans (and_iff_right S.nonempty)
+  (supervaluation_eq_false_iff ..).trans (and_iff_right S.nonempty)
 
 theorem superTrue_indet_iff :
     superTrue eval S = .indet ↔
       (∃ s ∈ S.admissible, eval s) ∧ ∃ s ∈ S.admissible, ¬ eval s :=
-  dist_eq_indet_iff _ _
+  supervaluation_eq_indet_iff ..
 
 theorem definitely_iff : definitely eval S ↔ superTrue eval S = .true :=
   (superTrue_true_iff eval S).symm
@@ -118,12 +116,12 @@ theorem indefinite_iff : indefinite eval S ↔ superTrue eval S = .indet := by
 
 /-- Negation is classical: super-falsity of `eval` is super-truth of its negation. -/
 theorem superTrue_not : superTrue (fun s ↦ ¬ eval s) S = (superTrue eval S).neg :=
-  dist_not_of_nonempty _ _ S.nonempty
+  supervaluation_not _ S.nonempty
 
 /-- Fidelity: over a single specification super-truth is classical truth. -/
 @[simp] theorem superTrue_singleton (s : Spec) :
-    superTrue eval (.singleton s) = if eval s then .true else .false :=
-  dist_singleton s eval
+    superTrue eval (.singleton s) = ofProp (eval s) :=
+  supervaluation_singleton eval s
 
 omit [DecidablePred eval] in
 /-- Stability: definite truth is preserved by extension. -/
@@ -132,13 +130,8 @@ theorem definitely_mono : Monotone (definitely eval) :=
 
 /-- Stability: super-truth is monotone from the extension order into the knowledge order, so
 extension preserves definite values and can only resolve the indefinite. -/
-theorem toFlat_superTrue_mono : Monotone fun S ↦ toFlat (superTrue eval S) := by
-  intro S T hST
-  show toFlat (superTrue eval S) ≤ toFlat (superTrue eval T)
-  rcases h : superTrue eval S with _ | _ | _
-  · rw [(superTrue_true_iff ..).2 (definitely_mono eval hST ((superTrue_true_iff ..).1 h))]
-  · rw [(superTrue_false_iff ..).2 (definitely_mono _ hST ((superTrue_false_iff ..).1 h))]
-  · exact bot_le
+theorem toFlat_superTrue_mono : Monotone fun S ↦ toFlat (superTrue eval S) :=
+  fun _ T hST ↦ toFlat_supervaluation_mono eval hST T.nonempty
 
 end SuperTrue
 

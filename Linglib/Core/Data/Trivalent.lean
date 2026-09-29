@@ -45,6 +45,9 @@ truth-named constructors is this library's ergonomic choice; the name follows th
 - `Trivalent.presuppose`, `Trivalent.metaAssert` — the ∂ and 𝒜 operators of
   [beaver-krahmer-2001].
 - `Trivalent.ofBool`, `Trivalent.ofBoolHom` — `Bool` embeds as a bounded lattice homomorphism.
+- `Trivalent.supervaluation` — the value of a predicate over a finite family of classical
+  valuations ([van-fraassen-1966]), characterized as a knowledge meet in
+  `Core/Data/Trivalent/Flat.lean`.
 
 ## Main results
 
@@ -57,7 +60,7 @@ truth-named constructors is this library's ergonomic choice; the name follows th
 ## References
 
 [kleene-1952] [bochvar-1937] [belnap-1970] [peters-1979] [beaver-krahmer-2001]
-[cobreros-etal-2012] [wang-davidson-2026] [kalman-1958]
+[cobreros-etal-2012] [wang-davidson-2026] [kalman-1958] [van-fraassen-1966]
 -/
 
 @[expose] public section
@@ -634,13 +637,69 @@ theorem joinBelnap_ofBool (a b : Bool) :
     joinBelnap (ofBool a) (ofBool b) = ofBool (a || b) := by
   cases a <;> cases b <;> rfl
 
-/-! ### Projection behaviour -/
+/-! ### Supervaluation
 
-/-- How truth values aggregate through an operator: conjunctive (universal-like, all
-must succeed) or disjunctive (existential-like, one must succeed). -/
-inductive ProjectionType where
-  | conjunctive
-  | disjunctive
-  deriving Repr, DecidableEq
+The value of a predicate over a finite family of classical valuations. The empty family is
+vacuously both all-true and all-false, and `supervaluation` resolves it to `.true`. -/
+
+section Supervaluation
+
+variable {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P]
+
+/-- The supervaluation of `P` over the family `s` ([van-fraassen-1966]): `.true` when `P` holds
+at every member, `.false` when it fails at every member of a nonempty `s`, and `.indet`
+otherwise. -/
+def supervaluation : Trivalent :=
+  if ∀ a ∈ s, P a then .true else if ∃ a ∈ s, P a then .indet else .false
+
+theorem supervaluation_eq_true_iff : supervaluation s P = .true ↔ ∀ a ∈ s, P a := by
+  unfold supervaluation
+  split_ifs with h
+  · exact iff_of_true rfl h
+  all_goals exact iff_of_false (by decide) h
+
+theorem supervaluation_eq_false_iff :
+    supervaluation s P = .false ↔ s.Nonempty ∧ ∀ a ∈ s, ¬ P a := by
+  unfold supervaluation
+  split_ifs with h₁ h₂
+  · simp only [false_iff, not_and, not_forall, not_not]
+    exact fun ⟨a, ha⟩ ↦ ⟨a, ha, h₁ a ha⟩
+  · simp only [false_iff, not_and, not_forall, not_not]
+    exact fun _ ↦ let ⟨a, ha, hp⟩ := h₂; ⟨a, ha, hp⟩
+  · push Not at h₁ h₂
+    obtain ⟨a, ha, -⟩ := h₁
+    exact iff_of_true rfl ⟨⟨a, ha⟩, h₂⟩
+
+theorem supervaluation_eq_indet_iff :
+    supervaluation s P = .indet ↔ (∃ a ∈ s, P a) ∧ ∃ a ∈ s, ¬ P a := by
+  unfold supervaluation; split_ifs <;> simp_all
+
+@[simp] theorem supervaluation_empty : supervaluation ∅ P = .true := by simp [supervaluation]
+
+/-- Over a single valuation the supervaluation is classical truth. -/
+@[simp] theorem supervaluation_singleton (a : α) : supervaluation {a} P = ofProp (P a) := by
+  by_cases h : P a <;> simp [supervaluation, ofProp, ofBool, h]
+
+/-- Removing the gap leaves classical universal truth. -/
+@[simp] theorem metaAssert_supervaluation :
+    (supervaluation s P).metaAssert = ofProp (∀ a ∈ s, P a) := by
+  unfold supervaluation ofProp
+  split_ifs with h
+  · rw [decide_eq_true h]; rfl
+  all_goals rw [decide_eq_false h]; rfl
+
+variable {s} in
+/-- Over a nonempty family, negating the predicate negates the supervaluation: truth and falsity
+swap and the gap is fixed. -/
+theorem supervaluation_not (hs : s.Nonempty) :
+    supervaluation s (¬ P ·) = (supervaluation s P).neg := by
+  cases h : supervaluation s P
+  · exact (supervaluation_eq_false_iff ..).2
+      ⟨hs, fun a ha hn ↦ hn ((supervaluation_eq_true_iff ..).1 h a ha)⟩
+  · exact (supervaluation_eq_true_iff ..).2 ((supervaluation_eq_false_iff ..).1 h).2
+  · obtain ⟨⟨a, ha, hp⟩, b, hb, hn⟩ := (supervaluation_eq_indet_iff ..).1 h
+    exact (supervaluation_eq_indet_iff ..).2 ⟨⟨b, hb, hn⟩, a, ha, not_not.2 hp⟩
+
+end Supervaluation
 
 end Trivalent

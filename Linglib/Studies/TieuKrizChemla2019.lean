@@ -33,8 +33,8 @@ A world is the set of objects with the property and the definite's plurality a f
 of atoms, so the homogeneous reading is the substrate's `Homogeneity.barePlural`, the
 universal readings `Homogeneity.allPlural` at either scope relative to negation, and the
 scope-ambiguous universal of Experiment 2 supervaluates over the two scopes with the
-`Trivalent.dist` that supervaluates the bare plural over its atoms. A ternary reward is the
-trivalent value itself, Table 8's coding, and a binary judgment accepts exactly the true
+`Trivalent.supervaluation` that supervaluates the bare plural over its atoms. A ternary reward is
+the trivalent value itself, Table 8's coding, and a binary judgment accepts exactly the true
 sentences. The implicature account is computed with the substrate's innocent exclusion on
 these worlds, and a participant computes the implicature exactly when *all* is among their
 alternatives to *some*, the paper's assumption that the same alternatives drive both
@@ -127,7 +127,8 @@ def Reading.value : Reading → Polarity → Trivalent.Prop3 (Finset Atom)
       allPlural (λ a w => a ∈ w) x
   | .universal, .negative => universalNeg x .low
   | .wideScopeUniversal, .negative => universalNeg x .wide
-  | .scopeAmbiguous, .negative => λ w => Trivalent.dist Finset.univ (universalNeg x · w = .true)
+  | .scopeAmbiguous, .negative => fun w ↦
+      Trivalent.supervaluation Finset.univ (universalNeg x · w = .true)
 
 /-- The values of the positive and the negative sentence in a GAP context under each reading,
 Figure 2 and Table 8. -/
@@ -152,9 +153,9 @@ theorem value_of_isGap {w : Finset Atom} (hw : IsGap x w) (r : Reading) :
   have hnone : allPlural (λ a w => a ∉ w) x w = .false :=
     (allPlural_eq_false_iff _ _ _).2 λ h => hw.1.elim λ a ha => h a ha.1 ha.2
   have hbare : barePlural (λ a w => a ∈ w) x w = .indet :=
-    (Trivalent.dist_eq_indet_iff _ _).2 ⟨hw.1, hw.2⟩
-  have hamb : Trivalent.dist Finset.univ (universalNeg x · w = .true) = .indet :=
-    (Trivalent.dist_eq_indet_iff _ _).2
+    (Trivalent.supervaluation_eq_indet_iff _ _).2 ⟨hw.1, hw.2⟩
+  have hamb : Trivalent.supervaluation Finset.univ (universalNeg x · w = .true) = .indet :=
+    (Trivalent.supervaluation_eq_indet_iff _ _).2
       ⟨⟨.low, Finset.mem_univ _, by simp [universalNeg, hall]⟩,
         ⟨.wide, Finset.mem_univ _, by simp [universalNeg, hnone]⟩⟩
   cases r

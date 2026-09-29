@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Homogeneity.Usable
-public import Linglib.Logic.Duality
 public import Linglib.Semantics.Supervaluation
 
 /-!
@@ -43,7 +42,7 @@ variable {Atom W : Type*} (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
 
 /-- The bare plural sentence "the Xs are P" as a trivalent sentence. -/
 def barePlural : Prop3 W :=
-  λ w => Trivalent.dist x (P · w)
+  fun w ↦ Trivalent.supervaluation x (P · w)
 
 /-- The *all*-sentence "all the Xs are P". Per [kriz-2016] §3.1, *all*'s
     semantic contribution is gap removal, so the semantics is derived from
@@ -75,10 +74,7 @@ theorem isBivalent_allPlural : (allPlural P x).isBivalent :=
 /-- An *all*-sentence is true iff all atoms satisfy `P`. -/
 theorem allPlural_eq_true_iff (w : W) :
     allPlural P x w = .true ↔ ∀ a ∈ x, P a w := by
-  rw [← Trivalent.dist_eq_true_iff x (P · w)]
-  simp only [allPlural, barePlural, Trivalent.Prop3.metaAssert_apply]
-  generalize Trivalent.dist x (P · w) = t
-  cases t <;> simp
+  simp [allPlural, barePlural]
 
 /-- An *all*-sentence is false iff some atom fails `P`. -/
 theorem allPlural_eq_false_iff (w : W) :
@@ -127,7 +123,7 @@ theorem allPlural_exceptions_unmentionable (q : Setoid W) (w : W) (a : Atom)
     supervaluation over atoms ([fine-1975]). -/
 theorem barePlural_eq_superTrue (hne : x.Nonempty) (w : W) :
     barePlural P x w =
-    Semantics.Supervaluation.superTrue (fun a => P a w) ⟨x, hne⟩ :=
+    Semantics.Supervaluation.superTrue (fun a ↦ P a w) ⟨x, hne⟩ :=
   rfl
 
 /-- An *all*-sentence is never indefinite. -/
