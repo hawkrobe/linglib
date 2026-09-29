@@ -14,8 +14,9 @@ eaten*), the lexical verb (Pipil *weli ni-nehnemi*), both with the same categori
 two dividing the categories (Jakaltek, absolutive on the auxiliary and ergative on the lexical
 verb), or dividing them with some doubled (Hemba, Doyayo, Pipil). The five macro-patterns are
 distinguished by the inflectional head alone, and across the split/doubled languages the doubled
-category is overwhelmingly the subject. Negative auxiliaries head constructions of every pattern:
-aux-headed in Udihe, split in Kokota, lex-headed in Kwerba, doubled in 'Iipay. Doyayo, filed as
+category is overwhelmingly the subject. Negative auxiliaries head constructions of four of the
+five patterns: aux-headed in Udihe, split in Kokota, lex-headed in Kwerba, doubled in 'Iipay.
+Doyayo, filed as
 lex-headed although its auxiliary partially encodes subject person through tone, comes out split
 by the inflectional-head criterion.
 

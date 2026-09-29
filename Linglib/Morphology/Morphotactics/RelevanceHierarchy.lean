@@ -10,8 +10,10 @@ public import Mathlib.Tactic.DeriveFintype
 [bybee-1985] ranks the verbal inflectional categories by their relevance to the verb, the extent
 to which the category's meaning directly affects the meaning of the stem: valence, voice,
 aspect, tense, mood and agreement "are ranked for relevance to verbs in that order". A more
-relevant category is predicted to be expressed inflectionally in more languages, to sit closer
-to the stem, and to fuse with it more tightly.
+relevant category is predicted to have morphological expression, inflectional or derivational,
+in more languages, to sit closer to the stem, and to fuse with it more tightly. The scale alone
+does not predict which categories are most often inflectional: generality works against the most
+relevant, so inflection is likeliest in the middle of the scale.
 
 `RelevanceHierarchy` is a comparative concept, not a universal slot inventory: languages own their
 slot types (`AffixTemplate Slot`, `Mayan.VerbSlot`, `Japanese.Verb.Slot`), and a relevance claim
