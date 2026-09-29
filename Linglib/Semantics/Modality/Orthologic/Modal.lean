@@ -1,223 +1,184 @@
 module
 
-public import Linglib.Semantics.Modality.Orthologic.Frames
+public import Linglib.Semantics.Modality.Orthologic.RegularProp
+public import Linglib.Logic.Orthologic.Epistemic
 public import Linglib.Logic.Modal.Basic
-public import Mathlib.Data.Fintype.Pi
 
 /-!
-# Modal Compatibility Frames
-[holliday-mandelkern-2024]
+# Modal compatibility frames
 
-Modal extension of compatibility frames. Adds an accessibility relation R
-and the box/diamond operators whose ortholattice instance validates
-Wittgenstein's Law (`¬A ∩ ◇A = ∅`) for epistemic compatibility frames.
+This file defines Holliday and Mandelkern's modal compatibility frames, the possibility semantics
+for `must` and `might`. A compatibility frame `F` carries an epistemic accessibility relation
+`R`; necessity is the Kripke operator `□A = {x | R(x) ⊆ A}`, which is `ModalLogic.nec R`, and
+`◇A = ¬□¬A` negates with the orthocomplement of `F` rather than the Boolean complement.
 
-This file is the substrate — only general substrate-level definitions
-and theorems live here. The epistemic frame of a Boolean algebra is
-`Orthologic/Lifting.lean`; the paper's Epistemic Scale and the failures of
-distributivity, disjunctive syllogism, orthomodularity and
-pseudocomplementation on it live in `Studies/HollidayMandelkern2024.lean`.
+Three conditions on `R` make the regular propositions of `F` an epistemic ortholattice
+(`Logic/Orthologic/Epistemic.lean`). R-regularity is exactly the condition for `□` to preserve
+regularity, which makes the regular propositions with `□` a modal ortholattice; reflexivity makes
+it T; and over these, Knowability is exactly the condition for Wittgenstein's Law.
 
-## What's here
+## Main definitions
 
-- `ModalCompatFrame S`: a compatibility frame plus a reflexive accessibility
-  relation R. The paper's full Definition 4.20 also requires R-regularity;
-  Definition 4.26 adds Knowability (epistemic compatibility frame). The
-  current `ModalCompatFrame` records only the reflexivity condition.
-- `box`, `diamond`: modal operators on `Set S`.
-- `T_axiom_general`: factivity of `box` from accessibility reflexivity.
-- `IsRRegular`, `IsKnowable`: per-instance conditions completing
-  Definitions 4.20 / 4.26.
-- `EpistemicCompatFrame`: bundles `ModalCompatFrame` with `IsRRegular` and
-  `IsKnowable` (Definition 4.26).
-- `wittgensteinLaw`: Proposition 4.27 — the headline structural theorem.
-  In any modal compatibility frame satisfying Knowability,
-  `¬A ∩ ◇A = ∅` for every set `A`. The algebraic content of "p and
-  might-not-p is contradictory."
+* `Orthologic.diamond F R`: `◇A = ¬□¬A` on sets.
+* `Orthologic.IsRRegular F R`, `Orthologic.IsKnowable F R`: R-regularity and Knowability.
+* `Orthologic.CompatFrame.necHom`: `□` as a map on `F.Regular` preserving meets and `⊤`.
 
-Decidability of `access` is *not* bundled — provide a `DecidableRel`
-instance separately (mirrors the `CompatFrame` convention).
+## Main results
+
+* `Orthologic.isRRegular_iff_isRegular_nec`: R-regularity iff `□` preserves regularity.
+* `Orthologic.isKnowable_iff`: Knowability iff `□` reflects contradiction on regular sets.
+* `Orthologic.disjoint_orthoNeg_diamond`: `¬A` and `◇A` are disjoint.
+* `Orthologic.CompatFrame.isKnowable_iff_wittgensteinLaw`: over a reflexive R-regular relation,
+  Knowability iff the regular propositions satisfy Wittgenstein's Law.
+
+## Implementation notes
+
+The paper's frame classes are conjunctions of conditions on a bare relation, stated as Prop
+classes like `ModalLogic.IsSerial`: a *modal* compatibility frame is R-regular, a *T* frame is
+also reflexive (`Std.Refl R`), and an *epistemic* frame also satisfies Knowability. Each theorem
+assumes only the conditions it uses.
+
+## References
+
+* [holliday-mandelkern-2024]
 -/
 
 @[expose] public section
 
 namespace Orthologic
 
--- ════════════════════════════════════════════════════
--- § 1. Epistemic Compatibility Frames
--- ════════════════════════════════════════════════════
+open ModalLogic
 
-/-- A modal compatibility frame: a compatibility frame equipped with an
-    accessibility relation R satisfying reflexivity (Definition 4.24).
-    The paper's full Definition 4.20 also requires R-regularity; the
-    epistemic compatibility frame (Definition 4.26) adds Knowability.
-    Per-instance frames may witness all three conditions. -/
-structure ModalCompatFrame (S : Type*) extends CompatFrame S where
-  access : S → S → Prop
-  access_refl : Std.Refl access
+variable {S : Type*} (F : CompatFrame S) (R : S → S → Prop)
 
-/-- Accessibility is reflexive (accessor for the bundled `Std.Refl`). -/
-theorem ModalCompatFrame.accessRefl {S : Type*} (F : ModalCompatFrame S) (x : S) :
-    F.access x x := F.access_refl.refl x
+/-- The possibility `◇A = ¬□¬A` negates with the orthocomplement, so `x` makes `◇A` true iff
+every possibility compatible with `x` accesses one compatible with an `A`-possibility
+([holliday-mandelkern-2024] eq. (4)). -/
+def diamond (A : Set S) : Set S :=
+  orthoNeg F (nec R (orthoNeg F A))
 
-/-- Box operator: `□A = {x | R(x) ⊆ A}`.
-    [holliday-mandelkern-2024] eq. (3). -/
-def box {S : Type*} (F : ModalCompatFrame S) (A : Set S) : Set S :=
-  { x | ∀ y : S, F.access x y → y ∈ A }
+instance [Fintype S] [DecidableRel F.compat] [DecidableRel R] (A : Set S)
+    [DecidablePred (· ∈ A)] : DecidablePred (· ∈ diamond F R A) := fun x ↦
+  inferInstanceAs (Decidable (x ∈ orthoNeg F (nec R (orthoNeg F A))))
 
-@[simp] theorem mem_box {S : Type*} (F : ModalCompatFrame S) (A : Set S) (x : S) :
-    x ∈ box F A ↔ ∀ y : S, F.access x y → y ∈ A := Iff.rfl
+/-- A relation is R-regular when a possibility accessing one compatible with `y` is compatible
+with a possibility according to which `y` might obtain ([holliday-mandelkern-2024]
+Definition 4.20). -/
+class IsRRegular : Prop where
+  /-- The condition is stated in the `◇`-free form of [holliday-mandelkern-2024] Lemma 4.21. -/
+  rRegular : ∀ x y' y, R x y' → F.compat y' y →
+    ∃ x', F.compat x x' ∧ ∀ x'', F.compat x' x'' → ∃ y'', R x'' y'' ∧ F.compat y'' y
 
-instance {S : Type*} [Fintype S] (F : ModalCompatFrame S) [DecidableRel F.access]
-    (A : Set S) [DecidablePred (· ∈ A)] (x : S) : Decidable (x ∈ box F A) := by
-  show Decidable (∀ y : S, F.access x y → y ∈ A); infer_instance
+/-- A relation satisfies Knowability when every possibility `x` has one at which everything
+settled true by `x` is known, since all it accesses refine `x` ([holliday-mandelkern-2024]
+Definition 4.26). -/
+class IsKnowable : Prop where
+  knowable : ∀ x, ∃ y, ∀ z, R y z → refines F z x
 
-instance box_apply_decidable {S : Type*} [Fintype S] (F : ModalCompatFrame S)
-    [DecidableRel F.access] (A : Set S) [DecidablePred A] (x : S) :
-    Decidable (box F A x) := by
-  show Decidable (∀ y : S, F.access x y → y ∈ A)
-  have : DecidablePred (· ∈ A) := inferInstanceAs (DecidablePred A)
-  infer_instance
+variable {F}
 
-/-- Diamond operator: `◇A = ¬□¬A` (via orthocomplement, NOT Boolean dual).
-    [holliday-mandelkern-2024] eq. (4). -/
-def diamond {S : Type*} (F : ModalCompatFrame S) (A : Set S) : Set S :=
-  orthoNeg F.toCompatFrame (box F (orthoNeg F.toCompatFrame A))
-
-instance {S : Type*} [Fintype S] (F : ModalCompatFrame S)
-    [DecidableRel F.toCompatFrame.compat] [DecidableRel F.access]
-    (A : Set S) [DecidablePred (· ∈ A)] (x : S) :
-    Decidable (x ∈ diamond F A) := by
-  unfold diamond; infer_instance
-
-instance diamond_apply_decidable {S : Type*} [Fintype S] (F : ModalCompatFrame S)
-    [DecidableRel F.toCompatFrame.compat] [DecidableRel F.access]
-    (A : Set S) [DecidablePred A] (x : S) :
-    Decidable (diamond F A x) := by
-  unfold diamond
-  have : DecidablePred (· ∈ A) := inferInstanceAs (DecidablePred A)
-  exact orthoNeg_apply_decidable _ _ _
-
--- ════════════════════════════════════════════════════
--- § 2. T Axiom for Reflexive Frames
--- ════════════════════════════════════════════════════
-
-/-- The T axiom for modal compatibility frames: reflexive accessibility
-    means every world accesses itself, so `□A` at x forces A at x.
-    [holliday-mandelkern-2024] Proposition 4.25. -/
-theorem T_axiom_general {S : Type*}
-    (F : ModalCompatFrame S) (A : Set S) (x : S)
-    (h : x ∈ box F A) : x ∈ A :=
-  h x (F.accessRefl x)
-
--- ════════════════════════════════════════════════════
--- § 3. R-Regularity, Knowability, Epistemic Frames
--- ════════════════════════════════════════════════════
-
-/-- R-regularity: if `x R y'` and `y' ◇ y`, then `x` is compatible with some `x'` according
-    to which `y` might obtain, i.e. every `x''` compatible with `x'` accesses some `y''`
-    compatible with `y`. Loose reading: "if `x` can epistemically access a possibility
-    compatible with `y`, then `x` is compatible with a possibility according to which `y`
-    might obtain." [holliday-mandelkern-2024] Definition 4.20 in the diamond-free form of
-    Lemma 4.21. -/
-def IsRRegular {S : Type*} (F : ModalCompatFrame S) : Prop :=
-  ∀ x y' y : S, F.access x y' → F.toCompatFrame.compat y' y →
-    ∃ x' : S, F.toCompatFrame.compat x x' ∧
-      ∀ x'' : S, F.toCompatFrame.compat x' x'' →
-        ∃ y'' : S, F.access x'' y'' ∧ F.toCompatFrame.compat y'' y
-
-instance {S : Type*} [Fintype S] (F : ModalCompatFrame S)
-    [DecidableRel F.toCompatFrame.compat] [DecidableRel F.access] :
-    Decidable (IsRRegular F) := by
-  unfold IsRRegular; infer_instance
-
-/-- On an R-regular frame, `□A` is a proposition whenever `A` is: if `x ∉ □A` then some
-accessible `y ∉ A`, regularity of `A` gives `z ≬ y` settling `¬A`, and R-regularity gives the
-`x' ≬ x` every neighbour of which accesses something compatible with `z`, hence outside `A`.
-[holliday-mandelkern-2024] Proposition 4.22. -/
-theorem box_isRegular {S : Type*} {F : ModalCompatFrame S} (hR : IsRRegular F) {A : Set S}
-    (hA : IsRegular F.toCompatFrame A) : IsRegular F.toCompatFrame (box F A) := by
+/-- Over an R-regular frame, `□` of a regular set is regular ([holliday-mandelkern-2024]
+Proposition 4.22). -/
+theorem isRegular_nec [IsRRegular F R] {A : Set S} (hA : IsRegular F A) :
+    IsRegular F (nec R A) := by
   intro x
-  by_cases hx : x ∈ box F A
+  by_cases hx : x ∈ nec R A
   · exact Or.inl hx
-  · right
-    simp only [mem_box, not_forall] at hx
-    obtain ⟨y, hxy, hyA⟩ := hx
-    rcases hA y with hyA' | ⟨z, hyz, hz⟩
-    · exact absurd hyA' hyA
-    · obtain ⟨x', hxx', hx'⟩ := hR x y z hxy hyz
-      refine ⟨x', hxx', λ x'' hx'x'' hbox => ?_⟩
-      obtain ⟨y'', hy'', hy''z⟩ := hx' x'' hx'x''
-      exact hz y'' hy''z.symm (hbox y'' hy'')
+  simp only [mem_nec, not_forall] at hx
+  obtain ⟨y, hxy, hyA⟩ := hx
+  obtain hyA' | ⟨z, hyz, hz⟩ := hA y
+  · exact absurd hyA' hyA
+  obtain ⟨x', hxx', hx'⟩ := IsRRegular.rRegular x y z hxy hyz
+  refine Or.inr ⟨x', hxx', fun x'' hx'x'' hnec ↦ ?_⟩
+  obtain ⟨y'', hy'', hy''z⟩ := hx' x'' hx'x''
+  exact hz y'' hy''z.symm (hnec y'' hy'')
 
-/-- Knowability: for every possibility `x` there is some `y` such that
-    every R-successor of `y` refines `x`. Loose reading: "there is a
-    possibility where everything settled true by `x` is known."
-    [holliday-mandelkern-2024] Definition 4.26 (Knowability clause),
-    page 866. -/
-def IsKnowable {S : Type*} (F : ModalCompatFrame S) : Prop :=
-  ∀ x : S, ∃ y : S, ∀ z : S, F.access y z → refines F.toCompatFrame z x
+variable (F)
 
-instance {S : Type*} [Fintype S] (F : ModalCompatFrame S)
-    [DecidableRel F.toCompatFrame.compat] [DecidableRel F.access] :
-    Decidable (IsKnowable F) := by
-  unfold IsKnowable; infer_instance
+/-- R-regularity is exactly the condition for `□` to preserve regularity. The converse of
+Proposition 4.22, not stated in [holliday-mandelkern-2024], follows by testing R-regularity on
+the regular set `¬{y}`. -/
+theorem isRRegular_iff_isRegular_nec :
+    IsRRegular F R ↔ ∀ A, IsRegular F A → IsRegular F (nec R A) := by
+  refine ⟨fun _ _ ↦ isRegular_nec R, fun h ↦ ⟨fun x y' y hxy' hy'y ↦ ?_⟩⟩
+  obtain hx | ⟨x', hxx', hx'⟩ := h _ (orthoNeg_isRegular F {y}) x
+  · exact (hx y' hxy' y hy'y rfl).elim
+  refine ⟨x', hxx', fun x'' hx'x'' ↦ ?_⟩
+  simpa [mem_orthoNeg] using hx' x'' hx'x''
 
-/-- An **epistemic compatibility frame**: a modal compatibility frame
-    satisfying R-regularity, T (= reflexivity, already in
-    `ModalCompatFrame`), and Knowability. This is the substrate over which
-    Wittgenstein's Law (`wittgensteinLaw`, Proposition 4.27) holds.
-    [holliday-mandelkern-2024] Definition 4.26, page 866. -/
-structure EpistemicCompatFrame (S : Type*) extends ModalCompatFrame S where
-  /-- R-regularity per Definition 4.20 / 4.26. -/
-  rRegular : IsRRegular toModalCompatFrame
-  /-- Knowability per Definition 4.26. -/
-  knowable : IsKnowable toModalCompatFrame
+/-- Knowability is exactly the condition for `□` to reflect contradiction on regular sets: the
+frame counterpart of the principle of [holliday-mandelkern-2024] Lemma 3.25, to which the paper
+takes Knowability to correspond. The converse, not stated there, follows by testing Knowability
+on the regular set of refinements of `x`. -/
+theorem isKnowable_iff :
+    IsKnowable F R ↔ ∀ A, IsRegular F A → nec R A = ∅ → A = ∅ := by
+  refine ⟨fun ⟨hK⟩ A hA h ↦ Set.eq_empty_of_forall_notMem fun x hx ↦ ?_, fun h ↦ ⟨fun x ↦ ?_⟩⟩
+  · obtain ⟨y, hy⟩ := hK x
+    exact Set.eq_empty_iff_forall_notMem.mp h y fun z hyz ↦ hA.mem_of_refines (hy z hyz) hx
+  · have hx : x ∈ orthoNeg F (orthoNeg F {x}) :=
+      (refines_iff_mem_orthoNeg_orthoNeg F).mp fun _ ↦ id
+    obtain ⟨y, hy⟩ := Set.nonempty_iff_ne_empty.mpr
+      (mt (h _ (orthoNeg_isRegular F _)) (Set.nonempty_iff_ne_empty.mp ⟨x, hx⟩))
+    exact ⟨y, fun z hyz ↦ (refines_iff_mem_orthoNeg_orthoNeg F).mpr (hy z hyz)⟩
 
--- ════════════════════════════════════════════════════
--- § 4. Wittgenstein's Law (Proposition 4.27)
--- ════════════════════════════════════════════════════
+/-- Over a reflexive relation with Knowability, `¬A` and `◇A` are disjoint for every set `A`,
+regular or not, and without R-regularity ([holliday-mandelkern-2024] Proposition 4.27). -/
+theorem disjoint_orthoNeg_diamond [Std.Refl R] [IsKnowable F R] (A : Set S) :
+    Disjoint (orthoNeg F A) (diamond F R A) := by
+  refine Set.disjoint_left.mpr fun x hxA hx ↦ ?_
+  obtain ⟨y, hy⟩ := IsKnowable.knowable (F := F) (R := R) x
+  exact hx y (hy y (Std.Refl.refl y) y (F.refl y)) fun z hyz w hzw ↦ hxA w (hy z hyz w hzw)
 
-/-- **Wittgenstein's Law (Proposition 4.27)**: in any modal compatibility
-    frame satisfying Knowability, the orthonegation `¬A` and the modal `◇A`
-    are jointly null at every possibility — for *every* set `A`, regular
-    or not. The proof needs only Knowability and reflexivity of accessibility
-    (which is bundled in `ModalCompatFrame`); R-regularity from the full
-    epistemic-frame definition is not used here.
+/-! ### The modal ortholattice of regular propositions -/
 
-    Linguistic punchline: "A is settled false" and "A might be true" cannot
-    both hold at any possibility — the algebraic content of the claim that
-    "p and might-not-p" is contradictory.
-    [holliday-mandelkern-2024] Proposition 4.27, page 867. -/
-theorem wittgensteinLaw {S : Type*} (F : ModalCompatFrame S) (hK : IsKnowable F)
-    (A : Set S) :
-    orthoNeg F.toCompatFrame A ∩ diamond F A = ∅ := by
-  ext x
-  simp only [Set.mem_inter_iff, Set.mem_empty_iff_false, iff_false, not_and]
-  intro hxNegA hxDiam
-  obtain ⟨y, hy⟩ := hK x
-  -- `y ∈ □¬A`: every z ∈ R(y) refines x, so refines-preservation pushes
-  -- `x ∈ ¬A` down to `z ∈ ¬A` and we collect `y ∈ box (orthoNeg A)`.
-  have hyBox : y ∈ box F (orthoNeg F.toCompatFrame A) := by
-    intro z hyRz w hzCompatW
-    exact hxNegA w (hy z hyRz w hzCompatW)
-  -- By T, `y ∈ R(y)`, so `refines y x`; reflexivity of compat then gives
-  -- `compat x y`. But `◇A = orthoNeg (box (orthoNeg A))`, so `x ∈ ◇A`
-  -- forbids any compat-witness in `box (orthoNeg A)`. Contradiction.
-  have hxCompatY : F.toCompatFrame.compat x y :=
-    hy y (F.accessRefl y) y (F.toCompatFrame.refl y)
-  exact hxDiam y hxCompatY hyBox
+/-- `F.necHom R` is `□` on the regular propositions of an R-regular frame, which preserves meets
+and `⊤` and so makes them the modal ortholattice `O(F)` of [holliday-mandelkern-2024]
+Proposition 4.23. -/
+def CompatFrame.necHom [IsRRegular F R] : InfTopHom F.Regular F.Regular where
+  toFun A := F.regOf (nec R A) (isRegular_nec R A.isRegular)
+  map_inf' _ _ := SetLike.coe_injective nec_inter
+  map_top' := SetLike.coe_injective nec_univ
 
-namespace EpistemicCompatFrame
+namespace CompatFrame
 
-/-- Wittgenstein's Law on epistemic compatibility frames — the
-    canonical paper-defined surface. Direct corollary of the substrate
-    `wittgensteinLaw`. -/
-theorem wittgensteinLaw {S : Type*} (F : EpistemicCompatFrame S) (A : Set S) :
-    orthoNeg F.toCompatFrame A ∩ diamond F.toModalCompatFrame A = ∅ :=
-  _root_.Orthologic.wittgensteinLaw
-    F.toModalCompatFrame F.knowable A
+variable {F} [IsRRegular F R]
 
-end EpistemicCompatFrame
+@[simp] theorem coe_necHom (A : F.Regular) : (F.necHom R A : Set S) = nec R A := rfl
+
+/-- `◇` of the modal ortholattice is `diamond`. -/
+theorem coe_diamondHom_necHom (A : F.Regular) :
+    (diamondHom (F.necHom R) A : Set S) = diamond F R A := by
+  simp only [diamondHom_apply, Regular.coe_compl, coe_necHom, diamond]
+
+/-- Over a reflexive relation `□A ≤ A`, so the modal ortholattice is T
+([holliday-mandelkern-2024] Proposition 4.25; its footnote 22 weakens reflexivity to every
+possibility accessing a refinement of itself). -/
+theorem necHom_le [Std.Refl R] (A : F.Regular) : F.necHom R A ≤ A :=
+  Concept.extent_subset_extent_iff.mp fun x hx ↦ hx x (Std.Refl.refl x)
+
+/-- Over a transitive relation `□A ≤ □□A`, which is the 4 principle. -/
+theorem necHom_le_necHom_necHom [IsTrans S R] (A : F.Regular) :
+    F.necHom R A ≤ F.necHom R (F.necHom R A) :=
+  Concept.extent_subset_extent_iff.mp fun _ hx _ hxy _ hyz ↦ hx _ (_root_.trans hxy hyz)
+
+variable (F)
+
+/-- Over a reflexive R-regular relation, Knowability is exactly Wittgenstein's Law for the modal
+ortholattice. The forward direction is [holliday-mandelkern-2024] Proposition 4.27. -/
+theorem isKnowable_iff_wittgensteinLaw [Std.Refl R] :
+    IsKnowable F R ↔ WittgensteinLaw (F.necHom R) := by
+  rw [wittgensteinLaw_iff_eq_bot (necHom_le R), isKnowable_iff]
+  refine ⟨fun h A hA ↦ ?_, fun h A hA hnec ↦ ?_⟩
+  · rw [← Regular.coe_eq_empty] at hA ⊢
+    exact h A A.isRegular hA
+  · exact Regular.coe_eq_empty.mpr (h (F.regOf A hA) (Regular.coe_eq_empty.mp hnec))
+
+/-- Over a reflexive relation with Knowability the modal ortholattice satisfies Wittgenstein's
+Law, so it is an epistemic ortholattice ([holliday-mandelkern-2024] Proposition 4.27). -/
+theorem wittgensteinLaw_necHom [Std.Refl R] [IsKnowable F R] :
+    WittgensteinLaw (F.necHom R) :=
+  (isKnowable_iff_wittgensteinLaw F R).mp inferInstance
+
+end CompatFrame
 
 end Orthologic
