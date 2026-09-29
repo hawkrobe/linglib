@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Syntax.Category.Auxiliary.Constructions
-public import Linglib.Morphology.Morphotactics.RelevanceHierarchy
 public import Linglib.Syntax.Negation
 public import Linglib.Data.Examples.Anderson2006a
 public import Mathlib.Data.Finset.Basic
@@ -22,27 +21,41 @@ by the inflectional-head criterion.
 
 ## Main definitions
 
+* `Category`: the inflectional categories the book's examples record.
 * `InflectionalMarking`: which categories each element carries;
   `InflectionalMarking.pattern` reads the macro-pattern (13) off it.
 
 ## References
 
 * [anderson-2006a]
-* [bybee-1985] — the category inventory
 -/
 
 @[expose] public section
 
 namespace Anderson2006a
 
-open AuxiliaryVerbs Data.Examples Morphology Negation
+open AuxiliaryVerbs Data.Examples Negation
 
 /-! ### Where the inflection is marked -/
 
+/-- The inflectional categories the book's examples record on the auxiliary and the lexical
+verb. Agreement is subject or object agreement, as the book files it: Jakaltek's ergative
+marker is subject and its absolutive marker object agreement. -/
+inductive Category where
+  | subj
+  | obj
+  | tense
+  | aspect
+  | mood
+  | negation
+  /-- The Gorum category of affectedness (version). -/
+  | affectedness
+  deriving DecidableEq
+
 /-- Which inflectional categories each element of an auxiliary verb construction carries. -/
 structure InflectionalMarking where
-  onAux : Finset MorphCategory
-  onLex : Finset MorphCategory
+  onAux : Finset Category
+  onLex : Finset Category
   deriving DecidableEq
 
 /-- The inflectional head fixes the macro-pattern (13): only the auxiliary marked, only the
@@ -55,26 +68,26 @@ def InflectionalMarking.pattern (m : InflectionalMarking) : InflectionPattern :=
   else .splitDoubled
 
 /-- The categories doubled on both elements. -/
-def InflectionalMarking.doubled (m : InflectionalMarking) : Finset MorphCategory :=
+def InflectionalMarking.doubled (m : InflectionalMarking) : Finset Category :=
   m.onAux ∩ m.onLex
 
 /-! ### The book's examples -/
 
-/-- The category names used in the example rows; Gorum's affectedness is outside the
-inventory. -/
-def MorphCategory.ofString? : String → Option MorphCategory
-  | "subj" => some (.agreement .subj)
-  | "obj" => some (.agreement .obj)
+/-- The category names used in the example rows. -/
+def Category.ofString? : String → Option Category
+  | "subj" => some .subj
+  | "obj" => some .obj
   | "tense" => some .tense
   | "aspect" => some .aspect
   | "mood" => some .mood
   | "negation" => some .negation
+  | "affectedness" => some .affectedness
   | _ => none
 
 /-- The categories a row lists under a feature key. -/
-def categories (r : LinguisticExample) (key : String) : Finset MorphCategory :=
+def categories (r : LinguisticExample) (key : String) : Finset Category :=
   (r.paperFeatures.filterMap fun kv =>
-    if kv.1 = key then MorphCategory.ofString? kv.2 else none).toFinset
+    if kv.1 = key then Category.ofString? kv.2 else none).toFinset
 
 /-- The inflectional marking a row records, when it records one. -/
 def InflectionalMarking.ofRow? (r : LinguisticExample) : Option InflectionalMarking :=
@@ -115,7 +128,7 @@ theorem all_patterns_attested (p : InflectionPattern) :
 every split/doubled example doubles subject agreement and nothing else. -/
 theorem splitDoubled_doubles_subject :
     ∀ r ∈ Examples.all, ∀ m ∈ (InflectionalMarking.ofRow? r).toList,
-      m.pattern = .splitDoubled → m.doubled = {.agreement .subj} := by
+      m.pattern = .splitDoubled → m.doubled = {.subj} := by
   decide +kernel
 
 /-! ### Negative auxiliaries -/

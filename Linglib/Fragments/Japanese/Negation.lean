@@ -63,9 +63,9 @@ structure NegInflDistribution where
   negativeOnSuffix : Finset MorphCategory
   deriving DecidableEq
 
-/-- Tense, mood and agreement leave the stem for the suffix under negation. -/
+/-- Tense and mood leave the stem for the suffix under negation. -/
 def japaneseNegDistribution : NegInflDistribution :=
-  { affirmativeOnStem := {.tense, .aspect, .mood, .agreement .subj},
+  { affirmativeOnStem := {.tense, .aspect, .mood},
     negativeOnStem := {.aspect},
     negativeOnSuffix := {.negation, .tense, .mood} }
 

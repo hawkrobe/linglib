@@ -64,7 +64,9 @@ Bybee's six core categories in relevance order: valence, voice, aspect, tense,
 mood, agreement (number/person/gender are agreement sub-types). -/
 
 /-- Bybee's Ch 2 verbal-inflectional categories, in her relevance order (stem
-first). Constructor docstrings quote the coding definitions of Ch 2 §4. -/
+first). Constructor docstrings paraphrase the coding definitions of Ch 2 §4, which
+distinguish subject, object and indirect-object agreement; Figures 1 and 2 split only person
+agreement, into "person" (the text's subject agreement) and "person (object)". -/
 inductive BybeeCategory where
   /-- Differences in the number or role of the arguments the verb stem takes. -/
   | valence
@@ -231,17 +233,17 @@ Ch 2 §3 for the six core categories. Its extensions (`derivation`, `degree`,
 /-- Embed `BybeeCategory` into the substrate `MorphCategory`. All four agreement
 subtypes collapse to `.agreement`: Bybee's verbal-number agreement sits at the
 low-relevance (rank-8) end with person and gender, *not* with nominal `.number`
-(rank 3). Subject vs object is preserved via the controller role. -/
+(rank 3). -/
 def toMorphCategory : BybeeCategory → MorphCategory
   | .valence       => .valence
   | .voice         => .voice
   | .aspect        => .aspect
   | .tense         => .tense
   | .mood          => .mood
-  | .numberAgr     => .agreement .subj
-  | .personAgr     => .agreement .subj
-  | .personAgrObj  => .agreement .obj
-  | .genderAgr     => .agreement .subj
+  | .numberAgr     => .agreement
+  | .personAgr     => .agreement
+  | .personAgrObj  => .agreement
+  | .genderAgr     => .agreement
 
 /-- The substrate relevance order is strictly increasing along the six Ch 2 §3
 categories: it reproduces valence < voice < aspect < tense < mood < agreement. -/

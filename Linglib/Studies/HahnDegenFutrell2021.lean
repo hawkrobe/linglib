@@ -411,10 +411,10 @@ relative markers the substrate's nonfinite class, which houses them. -/
 
 /-- The paper's classification of the Sesotho affix positions in [bybee-1985]'s inventory. -/
 def sesothoCategory? : Sesotho.Verb.Slot → Option MorphCategory
-  | .subject => some (.agreement .subj)
+  | .subject => some .agreement
   | .negation => some .negation
   | .tam => some .tense
-  | .object => some (.agreement .obj)
+  | .object => some .agreement
   | .reversive => some .derivation
   | .extension => some .valence
   | .voice => some .voice
