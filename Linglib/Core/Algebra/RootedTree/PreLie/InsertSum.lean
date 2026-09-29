@@ -51,8 +51,6 @@ namespace RoseTree
 
 variable {α : Type*}
 
-open Pathed
-
 /-- The grafting product `T ◁ S` is the multiset of trees obtained by grafting `S` as a new
 first child of one vertex of `T`. -/
 def insertSum (T S : RoseTree α) : Multiset (RoseTree α) :=
@@ -63,7 +61,8 @@ def insertSum (T S : RoseTree α) : Multiset (RoseTree α) :=
 /-- `T ◁ S` sums, over the vertices `p` of `T`, the grafting of `S` at `p`. -/
 theorem insertSum_eq_map_multiGraft (T S : RoseTree α) :
     T ◁ S = ((vertices T).map fun p => multiGraft T [(p, S)] : Multiset (RoseTree α)) := by
-  rw [insertSum, insertion_def, List.length_singleton, listChoices_one, List.map_map]
+  rw [insertSum, insertion_def, List.length_singleton, List.replicate_one, List.sections_singleton,
+    List.map_map]
   rfl
 
 /-- Grafting into a node either adds a child at the root or grafts inside the children. -/
@@ -80,7 +79,7 @@ theorem insertSum_node (a : α) (cs : List (RoseTree α)) (S : RoseTree α) :
 
 theorem card_insertSum (T S : RoseTree α) : Multiset.card (T ◁ S) = T.numNodes := by
   rw [insertSum_eq_map_multiGraft, Multiset.coe_card, List.length_map,
-    length_vertices_eq_numNodes]
+    length_vertices]
 
 /-- Grafting a leaf onto a two-vertex path adds it at the root or at the old leaf. -/
 example : node 0 [leaf 1] ◁ leaf 2 = {node 0 [leaf 2, leaf 1], node 0 [node 1 [leaf 2]]} := by
@@ -92,12 +91,11 @@ namespace UnorderedTree
 
 variable {α : Type*}
 
-open RoseTree.Pathed
-
 /-- The grafting product on nonplanar trees, descended from `RoseTree.insertSum`. -/
 def insertSum : UnorderedTree α → UnorderedTree α → Multiset (UnorderedTree α) :=
   Quotient.lift₂ (fun T S => (RoseTree.insertSum T S).map mk) fun _ _ _ _ h₁ h₂ =>
-    (insertion_perm_host h₁ _).trans (insertion_forall₂_perm_guests _ (.cons h₂ .nil))
+    (RoseTree.insertion_perm_host h₁ _).trans
+      (RoseTree.insertion_forall₂_perm_guests _ (.cons h₂ .nil))
 
 @[inherit_doc] scoped infixl:65 " ◁ " => UnorderedTree.insertSum
 

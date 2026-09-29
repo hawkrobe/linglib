@@ -9,6 +9,7 @@ public import Linglib.Core.Data.RoseTree.Basic
 public import Linglib.Core.Order.Branching
 public import Mathlib.Algebra.Order.BigOperators.Group.List
 public import Mathlib.Algebra.Order.Group.Nat
+public import Mathlib.Data.List.Nodup
 
 /-!
 # Rose trees under Gorn addresses
@@ -16,7 +17,8 @@ public import Mathlib.Algebra.Order.Group.Nat
 A `RoseTree` is a `Branching` carrier, so `Branching.subtreeAt` navigates it by a **Gorn
 address**, a `List ℕ` path of child indices. This file states what the concrete tree adds:
 relabelling commutes with navigation, a subtree is no larger than its tree, a tree of height
-above `k` descends `k` steps, and `replaceAt` replaces the subtree at an address.
+above `k` descends `k` steps, `vertices` enumerates the addresses, and `replaceAt` replaces the
+subtree at an address.
 
 Unlike `BinaryTree.get` (indexed by a `PosNum` left/right path) there is no `indexOf`: that is
 a binary-search-tree lookup, which has no analogue for a general rose tree.
@@ -26,6 +28,8 @@ a binary-search-tree lookup, which has no analogue for a general rose tree.
 * `RoseTree.subtreeAt_map`: relabelling commutes with navigation.
 * `RoseTree.exists_subtreeAt_height_sub`: a maximal descent from a tree of height above `k`.
 * `RoseTree.numNodes_le_of_subtreeAt`: a subtree is no larger than its tree.
+* `RoseTree.vertices`: the addresses in preorder, one per vertex (`length_vertices`,
+  `nodup_vertices`) and exactly those inside the tree (`mem_vertices`).
 * `RoseTree.replaceAt`: replacement at an address, splitting the frontier
   (`leafList_replaceAt`) and shrinking the tree when the new subtree is smaller
   (`numNodes_replaceAt_lt`).
@@ -61,8 +65,8 @@ theorem exists_mem_children_height_add_one {t : RoseTree α} (h : 1 < t.height) 
       (List.foldr_max_of_ne_nil (l := cs.map height) (by simpa using hcs)).symm)
     exact ⟨c, hc, by rw [hce]; rfl⟩
 
-/-- A maximal descent of length `k` from a tree of height above `k`: the subtree at the
-prefix of length `i` has height `t.height - i`. -/
+/-- A tree of height above `k` has a maximal descent of length `k`, along which the subtree at
+the prefix of length `i` has height `t.height - i`. -/
 theorem exists_subtreeAt_height_sub (t : RoseTree α) (k : ℕ) (hk : k < t.height) :
     ∃ p : List ℕ, p.length = k ∧
       ∀ i ≤ k, ∃ s, subtreeAt t (p.take i) = some s ∧ s.height = t.height - i := by
@@ -103,6 +107,100 @@ theorem numNodes_lt_of_subtreeAt_cons {t s : RoseTree α} {i : ℕ} {p : List �
   obtain ⟨c, hc, hcs⟩ := subtreeAt_cons_eq_some_iff.mp h
   exact Nat.lt_of_le_of_lt (numNodes_le_of_subtreeAt hcs)
     (numNodes_lt_of_mem (List.mem_of_getElem? hc))
+
+/-! ### Enumerating the addresses -/
+
+mutual
+/-- `vertices t` lists the addresses of the vertices of `t` in preorder, the root `[]` first. -/
+def vertices : RoseTree α → List (List ℕ)
+  | node _ cs => [] :: verticesList cs
+/-- `verticesList cs` lists the addresses of the vertices of the forest `cs`, each starting with
+the index of its tree. -/
+def verticesList : List (RoseTree α) → List (List ℕ)
+  | [] => []
+  | c :: cs => (vertices c).map (0 :: ·) ++ (verticesList cs).map (List.modifyHead (· + 1))
+end
+
+@[simp] theorem vertices_node (a : α) (cs : List (RoseTree α)) :
+    vertices (node a cs) = [] :: verticesList cs := rfl
+
+@[simp] theorem verticesList_nil : verticesList ([] : List (RoseTree α)) = [] := rfl
+
+@[simp] theorem verticesList_cons (c : RoseTree α) (cs : List (RoseTree α)) :
+    verticesList (c :: cs) =
+      (vertices c).map (0 :: ·) ++ (verticesList cs).map (List.modifyHead (· + 1)) := rfl
+
+theorem mem_verticesList {cs : List (RoseTree α)} {p : List ℕ} :
+    p ∈ verticesList cs ↔ ∃ j q c, p = j :: q ∧ cs[j]? = some c ∧ q ∈ vertices c := by
+  induction cs generalizing p with
+  | nil => simp
+  | cons c cs ih =>
+    rw [verticesList_cons, List.mem_append, List.mem_map, List.mem_map]
+    constructor
+    · rintro (⟨q, hq, rfl⟩ | ⟨p', hp', rfl⟩)
+      · exact ⟨0, q, c, rfl, rfl, hq⟩
+      · obtain ⟨j, q, d, rfl, hd, hq⟩ := ih.mp hp'
+        exact ⟨j + 1, q, d, rfl, hd, hq⟩
+    · rintro ⟨_ | j, q, d, rfl, hd, hq⟩
+      · exact .inl ⟨q, Option.some.inj hd ▸ hq, rfl⟩
+      · exact .inr ⟨j :: q, ih.mpr ⟨j, q, d, rfl, hd, hq⟩, rfl⟩
+
+theorem exists_cons_of_mem_verticesList {cs : List (RoseTree α)} {p : List ℕ}
+    (hp : p ∈ verticesList cs) : ∃ j q, p = j :: q := by
+  obtain ⟨j, q, -, rfl, -⟩ := mem_verticesList.mp hp
+  exact ⟨j, q, rfl⟩
+
+/-- The addresses listed by `vertices t` are exactly the addresses inside `t`. -/
+theorem mem_vertices {t : RoseTree α} {p : List ℕ} :
+    p ∈ t.vertices ↔ (subtreeAt t p).isSome := by
+  induction t generalizing p with
+  | node a cs ih =>
+    rcases p with _ | ⟨j, q⟩
+    · simp
+    · simp only [vertices_node, List.mem_cons, reduceCtorEq, false_or, mem_verticesList,
+        List.cons.injEq, subtreeAt_cons, branching_children, children_node]
+      constructor
+      · rintro ⟨_, _, c, ⟨rfl, rfl⟩, hc, hq⟩
+        rw [hc, Option.bind_some]
+        exact (ih c (List.mem_of_getElem? hc)).mp hq
+      · intro h
+        obtain ⟨c, hc⟩ := Option.isSome_iff_exists.mp (Option.isSome_of_isSome_bind h)
+        rw [hc, Option.bind_some] at h
+        exact ⟨j, q, c, ⟨rfl, rfl⟩, hc, (ih c (List.mem_of_getElem? hc)).mpr h⟩
+
+mutual
+theorem length_vertices : ∀ t : RoseTree α, t.vertices.length = t.numNodes
+  | node _ cs => by rw [vertices_node, List.length_cons, length_verticesList cs, numNodes_node]
+theorem length_verticesList : ∀ cs : List (RoseTree α),
+    (verticesList cs).length = (cs.map numNodes).sum
+  | [] => rfl
+  | c :: cs => by
+    rw [verticesList_cons, List.length_append, List.length_map, List.length_map,
+      length_vertices c, length_verticesList cs, List.map_cons, List.sum_cons]
+end
+
+private theorem modifyHead_succ_injective : Function.Injective (List.modifyHead (· + 1)) := by
+  rintro (_ | ⟨a, l⟩) (_ | ⟨b, m⟩) h <;> simp_all
+
+mutual
+theorem nodup_vertices : ∀ t : RoseTree α, t.vertices.Nodup
+  | node _ cs => by
+    rw [vertices_node, List.nodup_cons]
+    refine ⟨fun h => ?_, nodup_verticesList cs⟩
+    obtain ⟨_, _, h⟩ := exists_cons_of_mem_verticesList h
+    exact List.cons_ne_nil _ _ h.symm
+theorem nodup_verticesList : ∀ cs : List (RoseTree α), (verticesList cs).Nodup
+  | [] => List.nodup_nil
+  | c :: cs => by
+    rw [verticesList_cons, List.nodup_append]
+    refine ⟨List.Nodup.map List.cons_injective (nodup_vertices c),
+      List.Nodup.map modifyHead_succ_injective (nodup_verticesList cs), ?_⟩
+    rintro _ hp _ hq rfl
+    obtain ⟨q, -, rfl⟩ := List.mem_map.mp hp
+    obtain ⟨p', hp', h⟩ := List.mem_map.mp hq
+    obtain ⟨j, q', rfl⟩ := exists_cons_of_mem_verticesList hp'
+    simp at h
+end
 
 /-! ### Replacement at an address -/
 

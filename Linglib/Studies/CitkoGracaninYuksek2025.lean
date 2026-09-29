@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 module
 
 public import Linglib.Syntax.Minimalist.Linearization.Chain
@@ -43,11 +48,11 @@ the costs the winners beat.
 
 namespace CitkoGracaninYuksek2025
 
-open Minimalist Minimalist.PlanarSyntacticObject RoseTree.Pathed
+open Minimalist Minimalist.PlanarSyntacticObject RoseTree
 
 /-! ### The lexicon -/
 
-/-- A token: a category, its selection, its form, and the wh and [E] features. -/
+/-- `tok` builds a token from a category, its selection, its form, and the wh and [E] features. -/
 def tok (id : ℕ) (cat : Cat) (sel : SelStack := []) (phon : String := "") (wh : Bool := false)
     (ellipsis : Bool := false) : LIToken :=
   ⟨LexicalItem.simple cat sel phon wh ellipsis, id⟩
@@ -79,44 +84,44 @@ def saw := tok 20 .V [.D] "saw"
 
 /-! ### The candidate objects -/
 
-/-- `[CP wh [C′ c [TP subj [T′ T [vP wh [v′ v VP]]]]]]`: the wh-phrase moved through the edge of
-vP. -/
+/-- `clause` builds `[CP wh [C′ c [TP subj [T′ T [vP wh [v′ v VP]]]]]]`, the wh-phrase moved through
+the edge of vP. -/
 def clause (wh c subj T v : LIToken) (VP : PlanarSyntacticObject) : PlanarSyntacticObject :=
   wh * (c * (subj * (T * (traceOf wh * (v * VP)))))
 
-/-- Non-bulk sharing under the complementizers `c₁` and `c₂`: each wh-phrase in its own
-conjunct, the subject, T, v and verb shared ((10b), (14), (16b), (38d), (45b), (46b)). -/
+/-- In non-bulk sharing under the complementizers `c₁` and `c₂`, each wh-phrase stays in its own
+conjunct and the subject, T, v and verb are shared ((10b), (14), (16b), (38d), (45b), (46b)). -/
 def nonBulk (c₁ c₂ : LIToken) : PlanarSyntacticObject :=
   (clause what c₁ you T v (teach * traceOf what)) * (clause when c₂ you T v (teach * traceOf when))
 
-/-- Bulk sharing: one C′ under both wh-phrases, both of which moved through its vP edge ((12b),
-(20b)). -/
+/-- In bulk sharing one C′ sits under both wh-phrases, both of which moved through its vP edge
+((12b), (20b)). -/
 def bulk (c : LIToken) : PlanarSyntacticObject :=
   let c' := c * (you * (T * (traceOf what * (traceOf when * (v * ((teach * traceOf what) *
     traceOf when))))))
   (what * c') * (when * c')
 
-/-- Footnote 21's alternative to `bulk`: a shared TP under two complementizers. -/
+/-- Footnote 21's alternative to `bulk` shares a TP under two complementizers. -/
 def bulkTP (c₁ c₂ : LIToken) : PlanarSyntacticObject :=
   let tp := you * (T * (traceOf what * (traceOf when * (v * ((teach * traceOf what) *
     traceOf when)))))
   (what * (c₁ * tp)) * (when * (c₂ * tp))
 
-/-- Two clauses from separate tokens, the first elided under its [E] complementizer with its
-auxiliary in T, as the Sluicing-COMP generalization requires of a sluice: the ellipsis analysis
-of the coordinated wh-question (11b). -/
+/-- The ellipsis analysis of the coordinated wh-question (11b) builds two clauses from separate
+tokens and elides the first under its [E] complementizer, with its auxiliary in T as the
+Sluicing-COMP generalization requires of a sluice. -/
 def cwhEllipsis : PlanarSyntacticObject :=
   (what * (cE * (you * (shouldT * (traceOf what * (v * (teach * traceOf what))))))) *
     (clause when should you' T' v' (teach' * traceOf when))
 
-/-- Two clauses from separate tokens, both elided, the second's object the pronoun of vehicle
-change: the double-ellipsis analysis of the coordinated sluice (19b). -/
+/-- The double-ellipsis analysis of the coordinated sluice (19b) builds two clauses from separate
+tokens and elides both, the second's object being the pronoun of vehicle change. -/
 def csEllipsis : PlanarSyntacticObject :=
   (clause what cE you T v (teach * traceOf what)) * (clause when cE' you' T' v' ((teach' * it) *
     traceOf when))
 
-/-- A multiple question, both wh-phrases fronted through the vP edge: (28b), and the multiple
-sluice (29b) under an [E] complementizer. -/
+/-- In a multiple question both wh-phrases are fronted through the vP edge, as in (28b) and, under
+an [E] complementizer, the multiple sluice (29b). -/
 def multipleQuestion (c : LIToken) : PlanarSyntacticObject :=
   who * (what * (c * (traceOf who * (T * (traceOf who * (traceOf what * (v * (saw *
     traceOf what))))))))
@@ -127,7 +132,7 @@ abbrev cwh := nonBulk should should
 abbrev cwhBulk := bulk should
 /-- Its rival with a null complementizer in the first conjunct (14). -/
 abbrev cwhNullC := nonBulk c should
-/-- Footnote 15: the null complementizer in the second conjunct instead. -/
+/-- Footnote 15 puts the null complementizer in the second conjunct instead. -/
 abbrev cwhNullCSecond := nonBulk should c
 /-- The embedded coordinated wh-question (15a) with its null complementizer shared, and with two
 (15b). -/
@@ -144,11 +149,11 @@ complementizer over two TPs ((38d), (45c)). -/
 abbrev csSharedC := nonBulk cE cE
 /-- Two [E] complementizers (45b). -/
 abbrev csnrTwoE := nonBulk cE cE'
-/-- The nonpaired coordinated sluice (46b): two complementizers, one bearing [E]. -/
+/-- The nonpaired coordinated sluice (46b) has two complementizers, one bearing [E]. -/
 abbrev csnr := nonBulk cE c
 
-/-- The paired reading: the second conjunct holds an unbound trace of the first conjunct's
-wh-phrase, the copy that vehicle change reads as an E-type pronoun (footnote 20). -/
+/-- The paired reading holds when the second conjunct holds an unbound trace of the first
+conjunct's wh-phrase, the copy that vehicle change reads as an E-type pronoun (footnote 20). -/
 def Paired (t : PlanarSyntacticObject) : Prop :=
   ∃ x ∈ unboundTraces t, x.2 = what ∧ x.1.head? = some 1
 
@@ -157,11 +162,11 @@ instance : DecidablePred Paired := λ _ => inferInstanceAs (Decidable (∃ _ ∈
 
 /-! ### The multiple-wh-fronting parameter (27) by language -/
 
-/-- English variety A: the asterisk lands on both phase edges, so multiple sluicing crashes. -/
+/-- In English variety A the asterisk lands on both phase edges, so multiple sluicing crashes. -/
 def englishA : MWFParameter := .nonFrontsBothEdges
-/-- English variety B: the asterisk lands on the vP edge only, so multiple sluicing converges. -/
+/-- In English variety B the asterisk lands on the vP edge only, so multiple sluicing converges. -/
 def englishB : MWFParameter := .nonFrontsVPOnly
-/-- German and Greek: no multiple wh-fronting (30), multiple sluicing (31). -/
+/-- German and Greek lack multiple wh-fronting (30) but have multiple sluicing (31). -/
 def german : MWFParameter := .nonFrontsVPOnly
 def greek : MWFParameter := .nonFrontsVPOnly
 def bulgarian : MWFParameter := .fronts
@@ -173,8 +178,8 @@ theorem cwh_pf : pfPhon cwh = ["what", "when", "should", "you", "teach"] := by d
 theorem cwhEllipsis_pf : pfPhon cwhEllipsis = pfPhon cwh := by decide
 theorem cwhBulk_pf : pfPhon cwhBulk = pfPhon cwh := by decide
 theorem cwhNullC_pf : pfPhon cwhNullC = pfPhon cwh := by decide
-/-- Footnote 15: a pronounced complementizer in the first conjunct only precedes the second
-wh-phrase. -/
+/-- A pronounced complementizer in the first conjunct only precedes the second wh-phrase
+(footnote 15). -/
 theorem cwhNullCSecond_pf : pfPhon cwhNullCSecond = ["what", "should", "when", "you", "teach"] := by
   decide
 theorem cwhTwoAux_pf : pfPhon cwhTwoAux = ["what", "should", "when", "will", "you", "teach"] := by
@@ -195,7 +200,7 @@ theorem cwhEmbedded_beats_twoC :
 /-- The shared C′ sends both wh-phrases through one vP edge, asterisked in English and
 pronounced. -/
 theorem cwhBulk_crashes : ¬ Converges cwhBulk englishA ∧ ¬ Converges cwhBulk englishB := by decide
-/-- Footnote 14: in a multiple-wh-fronting language the same object converges. -/
+/-- In a multiple-wh-fronting language the same object converges (footnote 14). -/
 theorem cwhBulk_converges_romanian : Converges cwhBulk romanian := by decide
 theorem cwh_converges : Converges cwh englishA ∧ Converges cwh englishB := by decide
 
@@ -207,7 +212,7 @@ theorem cs_paired : Paired cs := by decide
 theorem cs_beats_ellipsis : planarCost cs < planarCost csEllipsis := by decide
 theorem cs_beats_twoC : planarCost cs < planarCost csTwoC := by decide
 
-/-- The shared vP edge hosts two wh-specifiers: the asterisk of (26b). -/
+/-- The shared vP edge hosts two wh-specifiers, the asterisk of (26b). -/
 theorem cs_asterisked :
     ∃ p ∈ vertices cs.val, IsAsterisked cs englishA p ∧ IsAsterisked cs englishB p := by decide
 /-- Elided, the asterisked edge never reaches PF. -/
@@ -218,8 +223,8 @@ theorem multipleQuestion_crashes :
     ¬ Converges (multipleQuestion c) englishA ∧ ¬ Converges (multipleQuestion c) englishB := by
   decide
 theorem multipleQuestion_converges_bulgarian : Converges (multipleQuestion c) bulgarian := by decide
-/-- Multiple sluicing elides the vP edge but not the CP edge: variety B, German and Greek
-converge, variety A does not. -/
+/-- Multiple sluicing elides the vP edge but not the CP edge, so variety B, German and Greek
+converge and variety A does not. -/
 theorem multipleSluicing :
     Converges (multipleQuestion cE) englishB ∧ Converges (multipleQuestion cE) german ∧
       Converges (multipleQuestion cE) greek ∧ ¬ Converges (multipleQuestion cE) englishA := by
@@ -227,7 +232,7 @@ theorem multipleSluicing :
 
 /-! ### Pronunciation Economy (§5, §6.1) -/
 
-/-- One shared [E] complementizer over two TPs: the second deletion silences nothing new. -/
+/-- With one shared [E] complementizer over two TPs, the second deletion silences nothing new. -/
 theorem csSharedC_vacuous : ¬ PronunciationEconomy csSharedC := by decide
 theorem csSharedC_pf : pfPhon csSharedC = pfPhon cs := by decide
 theorem csSharedC_nonpaired : ¬ Paired csSharedC := by decide
@@ -238,12 +243,12 @@ theorem csnr_economy : PronunciationEconomy csnr ∧ ¬ Paired csnr := by decide
 /-- Two [E] complementizers over shared material elide it twice. -/
 theorem csnrTwoE_vacuous : ¬ PronunciationEconomy csnrTwoE := by decide
 theorem csnr_beats_twoE : planarCost csnr < planarCost csnrTwoE := by decide
-/-- The nonpaired sluice is the cheapest nonpaired object respecting Pronunciation Economy: the
-shared [E] complementizer of (45c) draws one token fewer but elides vacuously. -/
+/-- The nonpaired sluice is the cheapest nonpaired object respecting Pronunciation Economy, since
+the shared [E] complementizer of (45c) draws one token fewer but elides vacuously. -/
 theorem csnr_optimal : ∀ t ∈ [csSharedC, csnrTwoE],
     planarCost csnr < planarCost t ∨ ¬ PronunciationEconomy t := by decide
-/-- Footnote 30: the verb, shared, occurs in the second conjunct outside the elided TP and is
-silenced all the same, so the object cannot surface as a coordinated wh-question. -/
+/-- The shared verb occurs in the second conjunct outside the elided TP and is silenced all the
+same, so the object cannot surface as a coordinated wh-question (footnote 30). -/
 theorem csnr_silences_shared :
     (∃ p ∈ occurrences csnr teach, ∀ K ∈ elidedDomains csnr, ¬ K <+: p) ∧
       IsSilenced csnr teach := by decide
@@ -273,17 +278,17 @@ def pivot : PlanarSyntacticObject := on * (different * topics)
 def tp (subj T : LIToken) (VP : PlanarSyntacticObject) : PlanarSyntacticObject :=
   subj * (T * VP)
 
-/-- (53b), after the pruning of [belk-neeleman-philip-2023] that removes the shared pivot from
-the first conjunct: the first verb phrase, the bare verb, elided under [E] on `must`. -/
+/-- Example (53b), after the pruning of [belk-neeleman-philip-2023] that removes the shared pivot
+from the first conjunct, elides the first verb phrase, the bare verb, under [E] on `must`. -/
 def rnrMixed : PlanarSyntacticObject :=
   (tp alice mustE (leaf work)) * (tp iris oughtToBe (working * pivot))
-/-- (54): the first verb phrase built with its own pivot and elided. -/
+/-- Example (54) builds the first verb phrase with its own pivot and elides it. -/
 def rnrElided : PlanarSyntacticObject :=
   merge
     (tp alice mustE
       (work * (on' * (different' * topics'))))
     (tp iris oughtToBe (working * pivot))
-/-- (55b): with matching verbs, the verb phrase shared. -/
+/-- Example (55b) shares the verb phrase, the verbs matching. -/
 def rnrShared : PlanarSyntacticObject :=
   let VP := work * pivot
   (tp alice must VP) * (tp iris shouldRNR VP)

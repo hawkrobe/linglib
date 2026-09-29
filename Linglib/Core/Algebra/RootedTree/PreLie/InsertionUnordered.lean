@@ -18,7 +18,7 @@ public import Mathlib.Data.Multiset.Basic
 This file defines `UnorderedTree.insertionMultiset F G`, the insertion of a guest forest `G` into
 a host forest `F` of nonplanar trees: the multiset, over all assignments of the trees of `G` to
 vertices of `F`, of the forests obtained by grafting each guest at its vertex. It is
-`RoseTree.Pathed.insertionForest` read through `UnorderedTree.mk`, and Foissy's formula for the
+`RoseTree.insertionForest` read through `UnorderedTree.mk`, and Foissy's formula for the
 Guin–Oudom extension of the grafting product.
 
 ## Main results
@@ -45,7 +45,7 @@ show that the choice does not matter.
 
 @[expose] public section
 
-open RoseTree RoseTree.Pathed
+open RoseTree
 
 namespace UnorderedTree
 
