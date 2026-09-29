@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Algebra.RootedTree.ConnesKreimer
+public import Linglib.Core.Algebra.RootedTree.PreLie.ChapotonLivernet
 public import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
 public import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 public import Linglib.Core.Algebra.RootedTree.PreLie.InsertionUnordered
@@ -43,6 +44,8 @@ symmetry-weighted pairing (`GrossmanLarson/Pairing.lean`).
 
 * `GrossmanLarson.mul_one`, `GrossmanLarson.one_mul`: the empty forest is a two-sided unit.
 * `GrossmanLarson.map_product`: the product commutes with change of coefficients.
+* `GrossmanLarson.toGrossmanLarson_mul`: on one-tree forests the insertion is the grafting
+  product of `ChapotonLivernet`.
 
 ## Implementation notes
 
@@ -692,6 +695,45 @@ theorem map_product (x y : GrossmanLarson R α) :
         rw [product_of', product_of', map_productForest])
 
 end Map
+
+/-! ### Trees as one-tree forests
+
+Sending a tree to the one-tree forest maps the pre-Lie algebra of trees into the Grossman–Larson
+algebra, and turns the grafting product into the insertion. -/
+
+/-- `toGrossmanLarson` sends each tree to its one-tree forest. -/
+noncomputable def toGrossmanLarson : ChapotonLivernet R α →ₗ[R] GrossmanLarson R α :=
+  (Finsupp.linearCombination R ofTree).comp ChapotonLivernet.coeffLinearEquiv.toLinearMap
+
+omit [DecidableEq α] in
+@[simp] theorem toGrossmanLarson_single (T : UnorderedTree α) (r : R) :
+    toGrossmanLarson (ChapotonLivernet.single T r) = r • ofTree (R := R) T :=
+  Finsupp.linearCombination_single R r T
+
+omit [DecidableEq α] in
+theorem insertion_ofTree_ofTree (T S : UnorderedTree α) :
+    insertion (ofTree (R := R) T) (ofTree S) = ((T ◁ S).map ofTree).sum := by
+  change insertion (of' {T}) (of' {S}) = _
+  rw [insertion_of'_of', insertionBasis, insertionMultiset_singleton_singleton, Multiset.map_map]
+  rfl
+
+omit [DecidableEq α] in
+/-- The grafting product of trees is the insertion of their one-tree forests. -/
+theorem toGrossmanLarson_mul (x y : ChapotonLivernet R α) :
+    toGrossmanLarson (x * y) = insertion (toGrossmanLarson x) (toGrossmanLarson y) := by
+  induction x using ChapotonLivernet.induction_linear with
+  | zero => rw [zero_mul, map_zero, map_zero, LinearMap.zero_apply]
+  | add x₁ x₂ h₁ h₂ => rw [add_mul, map_add, h₁, h₂, map_add, map_add, LinearMap.add_apply]
+  | single T a =>
+    induction y using ChapotonLivernet.induction_linear with
+    | zero => rw [mul_zero, map_zero, map_zero]
+    | add y₁ y₂ h₁ h₂ => rw [mul_add, map_add, h₁, h₂, map_add, map_add]
+    | single S b =>
+      rw [ChapotonLivernet.single_mul_single, map_smul, toGrossmanLarson_single,
+        toGrossmanLarson_single, map_smul, map_smul, LinearMap.smul_apply,
+        insertion_ofTree_ofTree, ChapotonLivernet.graft, map_multiset_sum, Multiset.map_map,
+        smul_smul, mul_comm b a]
+      simp
 
 end GrossmanLarson
 
