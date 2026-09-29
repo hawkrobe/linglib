@@ -2,6 +2,7 @@ module
 
 public import Linglib.Fragments.German.Case
 public import Linglib.Fragments.German.Conjugation
+public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 public import Linglib.Semantics.Presupposition.Verb
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Syntax.Category.Verb.CaseArray
@@ -9,13 +10,14 @@ public import Linglib.Syntax.Category.Verb.CaseArray
 /-!
 # German verbs
 
-This file defines the German verb as a lexical entry: the root `Verb` with its case array and its
-stem, the infinitive, third person singular present and past and past participle its conjugation
-is built from. The stem of a weak verb is built from its infinitive and that of a verb with a prefix
-from the verb it is formed on, by the rules of `German.Conjugation`, so that *bestraft* comes from
-*strafen* and *zeigt an* from *zeigen*; a strong verb gives its own principal parts. A verb whose
-only object is in the dative, as *danken* 'thank' and *gratulieren* 'congratulate' are, records the
-dative in its case array.
+This file defines the German verb as a lexical entry: the root `Verb` with its case array, its
+stem (the infinitive, third person singular present and past and past participle its conjugation
+is built from) and the auxiliary of its perfect. The stem of a weak verb is built from its
+infinitive and that of a verb with a prefix from the verb it is formed on, by the rules of
+`German.Conjugation`, so that *bestraft* comes from *strafen* and *zeigt an* from *zeigen*; a
+strong verb gives its own principal parts. A verb whose only object is in the dative, as *danken*
+'thank' and *gratulieren* 'congratulate' are, records the dative in its case array. The perfect
+takes *haben* unless the entry records *sein*, as the verbs of motion and change of state do.
 
 The entries are the verbs the studies use: a few causative and attitude verbs, *bauen* 'build',
 the simple, change-of-state and prefixed verbs of Benz's resultatives and nominalizations, the
@@ -26,7 +28,8 @@ agreement.
 
 ## Main definitions
 
-* `German.Verb`: the entry, the root `Verb` with its case array and its stem.
+* `German.Verb`: the entry, the root `Verb` with its case array, its stem and its perfect
+  auxiliary.
 * `German.Verb.ofStem`: the entry with the forms of a stem.
 * `German.Verbs.allVerbs`: the entries.
 * `German.Verbs.kaufen`: the present tense of *kaufen*.
@@ -44,11 +47,15 @@ agreement.
 
 namespace German
 
-/-- A German verb is the root entry with its case array and its stem. -/
+/-- A German verb is the root entry with its case array, its stem and its perfect auxiliary. -/
 structure Verb extends _root_.Verb, _root_.Verb.CaseArray Case where
   subject := .nom
   /-- The stem, from which the verb conjugates. -/
   stem : Conjugation.Stem
+  /-- The auxiliary of the perfect in the entry's sense, which Table 12.12 of [durrell-2011]
+  records beside the past participle: *sein* for an intransitive verb of motion or change of
+  state, and *haben* for the majority of verbs (§12.3.2). -/
+  perfect : ArgumentStructure.PerfectAux := .have
   deriving BEq
 
 /-- `Verb.ofStem s` is the entry cited by the infinitive of `s`, with its forms and no further
@@ -129,10 +136,12 @@ def verkaufen : Verb :=
   { Verb.ofStem ((weak "kaufen").inseparable "ver") with
     frames := [ArgumentFrame.np], objects := [.acc] }
 
-/-- *rennen* 'run' is an irregular weak verb. -/
+/-- *rennen* 'run' is an irregular weak verb. Used intransitively it is a verb of motion and forms
+its perfect with *sein*, *ist gerannt*; Table 12.12 lists *hat/ist gerannt*, the choice following
+the use (§12.3.2c). -/
 def rennen : Verb :=
   { Verb.ofStem (strong "rennen" "rennt" "rannte" "gerannt") with
-    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity }
+    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity, perfect := .be }
 
 /-- *brechen* 'break' is an achievement. -/
 def brechen : Verb :=
@@ -144,10 +153,11 @@ def zerbrechen : Verb :=
   { Verb.ofStem (brechen.stem.inseparable "zer") with
     frames := [ArgumentFrame.np], causative := some .make, objects := [.acc] }
 
-/-- *frieren* 'freeze' is an unaccusative achievement. -/
+/-- *frieren* 'freeze' is an unaccusative achievement, a change of state whose perfect is formed
+with *sein*, as in *der See ist gefroren* 'the lake has frozen' (§12.3.2c). -/
 def frieren : Verb :=
   { Verb.ofStem (strong "frieren" "friert" "fror" "gefroren") with
-    frames := [ArgumentFrame.unaccusative], vendlerClass := some .achievement }
+    frames := [ArgumentFrame.unaccusative], vendlerClass := some .achievement, perfect := .be }
 
 /-- *schießen* 'shoot' is a transitive verb. -/
 def schiessen : Verb :=
