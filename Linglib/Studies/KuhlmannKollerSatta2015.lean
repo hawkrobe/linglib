@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.CCG.Grammar
+public import Linglib.Core.Computability.NonContextFree.AnBnCn
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Data.List.Basic
 
@@ -15,7 +16,8 @@ follows the paper's derivation: the `b`s are composed into a cluster `S/C/…/C`
 (`cluster_derives`), and each `C` argument is peeled off by crossed-composing a `c` and
 backward-applying an `a` (`peel_derives`). The soundness half is an induction on
 derivability showing that every derivable pair has one of the shapes that construction
-produces (`reachable_of_derives`).
+produces (`reachable_of_derives`). The language is therefore not context-free
+(`not_isContextFree_language`), the fact the proof of Theorem 3 invokes.
 
 The paper's results turn on two properties of rule restrictions, which are stated here for
 the substrate's grammars as permission gates: prefix-closedness (Definition 2) and the
@@ -29,16 +31,14 @@ without them they cannot generate `aⁿbⁿcⁿ`.
 
 The atoms `A`, `B`, `C`, `S` are the study's own type, since `CCG.Cat` is parameterized over
 its atoms. The lexical entry for `c` is `C\A`, the direction the paper's derivation of
-`aⁿbⁿcⁿ` requires. Strings are token lists over `"a"`, `"b"`, `"c"`; the language
-`aⁿbⁿcⁿ` is stated over them rather than over `ThreeSymbol`, on which
-`anbnc_not_contextFree` is proved.
+`aⁿbⁿcⁿ` requires. Strings are token lists over `"a"`, `"b"`, `"c"`, and the non-context-freeness
+of the language is the general result for any three distinct letters
+(`Language.not_isContextFree_of_replicate_mem_of_count_eq`), instantiated at these tokens.
 
 ## TODO
 
 * Theorems 1–4 and the main lemma (a Parikh-equivalent context-free sublanguage for every
-  prefix-closed grammar without target restrictions) are not formalized; nor is the
-  relabelling that would turn `language_eq_anbnc` into the non-context-freeness of
-  `G₁`'s language.
+  prefix-closed grammar without target restrictions) are not formalized.
 
 ## References
 
@@ -90,15 +90,15 @@ theorem target_clusterCat (n : Nat) : (clusterCat n).target = Atom.S := by
   | succ n ih => simpa [clusterCat] using ih
 
 /-- No non-`S` atom is a cluster category: targets differ. -/
-@[simp] theorem acat_ne_clusterCat (k : Nat) : Acat ≠ clusterCat k := λ h => by
+@[simp] theorem acat_ne_clusterCat (k : Nat) : Acat ≠ clusterCat k := fun h ↦ by
   have := congrArg Cat.target h
   simp [target_clusterCat] at this
 
-@[simp] theorem bcat_ne_clusterCat (k : Nat) : Bcat ≠ clusterCat k := λ h => by
+@[simp] theorem bcat_ne_clusterCat (k : Nat) : Bcat ≠ clusterCat k := fun h ↦ by
   have := congrArg Cat.target h
   simp [target_clusterCat] at this
 
-@[simp] theorem ccat_ne_clusterCat (k : Nat) : Ccat ≠ clusterCat k := λ h => by
+@[simp] theorem ccat_ne_clusterCat (k : Nat) : Ccat ≠ clusterCat k := fun h ↦ by
   have := congrArg Cat.target h
   simp [target_clusterCat] at this
 
@@ -159,7 +159,7 @@ completeness construction, so the language contains nothing beyond `aⁿbⁿcⁿ
 
 /-- The derivable category/string pairs of `G₁`: the six lexical shapes, the degree-2
 chain categories, the clusters (wrapped by `i` peels), and the peel intermediates. -/
-def Reachable : Cat Atom → List String → Prop := λ c w =>
+def Reachable : Cat Atom → List String → Prop := fun c w ↦
   (c = Acat ∧ w = ["a"]) ∨
   (c = (Ccat \ Acat) ∧ w = ["c"]) ∨
   (c = ((Bcat / Ccat) / Bcat) ∧ w = ["b"]) ∨
@@ -381,8 +381,8 @@ def WithoutTargetRestrictions {α : Type*} (G : Grammar α) : Prop :=
 primary input's target. -/
 theorem targetRestricted_prefixClosed {α : Type*} (L : List (String × Cat α)) (s : α)
     (d : ℕ) : PrefixClosed (Grammar.targetRestricted L s d) :=
-  ⟨λ _ _ _ h k _ => ⟨(Nat.sub_le _ k).trans h.1, h.2⟩,
-   λ _ _ _ h k _ => ⟨(Nat.sub_le _ k).trans h.1, h.2⟩⟩
+  ⟨fun _ _ _ h k _ ↦ ⟨(Nat.sub_le _ k).trans h.1, h.2⟩,
+   fun _ _ _ h k _ ↦ ⟨(Nat.sub_le _ k).trans h.1, h.2⟩⟩
 
 /-- Example 6: `G₁` is prefix-closed. -/
 theorem exampleGrammar_prefixClosed : PrefixClosed exampleGrammar :=
@@ -392,7 +392,7 @@ theorem exampleGrammar_prefixClosed : PrefixClosed exampleGrammar :=
 is permitted but application of `B/C` to `C` is not. -/
 theorem exampleGrammar_not_withoutTargetRestrictions :
     ¬ WithoutTargetRestrictions exampleGrammar :=
-  λ h => absurd (h.1 0 Scat Bcat .dot Ccat Ccat ⟨Nat.zero_le _, rfl⟩).2 (by decide)
+  fun h ↦ absurd (h.1 0 Scat Bcat .dot Ccat Ccat ⟨Nat.zero_le _, rfl⟩).2 (by decide)
 
 /-! ### Generative-capacity result -/
 
@@ -402,8 +402,8 @@ def anbncStrings : Set (List String) :=
 
 /-- **`G₁` generates `aⁿbⁿcⁿ`** ([kuhlmann-koller-satta-2015], Ex. 2): every string
 in the non-context-free language is in the grammar's language. This is the
-completeness half of CCG ⊋ CFG; the language `anbnc` it covers is not context-free
-(`AnBnCn.anbnc_not_contextFree`). -/
+completeness half of CCG ⊋ CFG; the language it covers is not context-free
+(`not_isContextFree_language`). -/
 theorem ccg_generates_anbnc : anbncStrings ⊆ exampleGrammar.language := by
   rintro w ⟨n, hn, rfl⟩
   exact peel_derives n (cluster_derives hn)
@@ -427,5 +427,16 @@ theorem language_subset_anbnc : exampleGrammar.language ⊆ anbncStrings := by
 Ex. 2): completeness and soundness together. -/
 theorem language_eq_anbnc : exampleGrammar.language = anbncStrings :=
   Set.Subset.antisymm language_subset_anbnc ccg_generates_anbnc
+
+/-- **The language of `G₁` is not context-free**: it contains `aⁿbⁿcⁿ` for every `n ≥ 1`, and each
+of its words has as many `a` as `b` as `c`. The proof of Theorem 3 of
+[kuhlmann-koller-satta-2015] invokes this standard fact (p. 202) without proving it. -/
+theorem not_isContextFree_language :
+    ¬ Language.IsContextFree (exampleGrammar.language : Language String) := by
+  rw [language_eq_anbnc]
+  refine Language.not_isContextFree_of_replicate_mem_of_count_eq (by decide : ["a", "b", "c"].Nodup)
+    (Filter.frequently_atTop.2 fun m ↦ ⟨m + 1, by omega, m + 1, by omega, rfl⟩) ?_
+  rintro _ ⟨n, -, rfl⟩
+  simp [List.count_replicate]
 
 end KuhlmannKollerSatta2015

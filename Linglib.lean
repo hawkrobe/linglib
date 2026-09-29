@@ -71,8 +71,6 @@ import Linglib.Core.Computability.Mealy
 import Linglib.Core.Computability.MyhillNerode
 import Linglib.Core.Computability.NonContextFree.AmBnCmDn
 import Linglib.Core.Computability.NonContextFree.AnBnCn
-import Linglib.Core.Computability.NonContextFree.AnBnCnDn
-import Linglib.Core.Computability.NonContextFree.BlockWitness
 import Linglib.Core.Computability.NonRegular.AnBn
 import Linglib.Core.Computability.PiecewiseTestable
 import Linglib.Core.Computability.ScanDirection
