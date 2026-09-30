@@ -15,7 +15,7 @@ ambiguity Williams found in any plural anaphor between group identity with the m
 (the we-reading) and binding by it (the I-reading).
 
 The relations are conditions on plural information states in
-`Semantics/Dynamic/PPCDRT/Anaphora.lean`. This file holds their labels and the two-parameter
+`Semantics/Dynamic/PPCDRT.lean`. This file holds their labels and the two-parameter
 classification of readings of Haug and Dalrymple §3.3: the locus of the reciprocal, high or
 low, crossed with the antecedent relation. Three of the four cells are attested; a bound local
 antecedent denotes an individual and so does not make available the plurality a low reciprocal

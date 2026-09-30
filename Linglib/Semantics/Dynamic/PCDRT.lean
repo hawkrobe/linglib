@@ -18,7 +18,7 @@ the output rows and each output row a predecessor among the input rows. This is 
 introduction `[u]` lifts to plural states, and the lift is a functor. Atomic conditions hold
 distributively of the rows where their drefs have values. Structured inclusion selects a subset
 of a dref's values by discarding rows, so the subset keeps exactly the superset's dependencies.
-A dref's values and its cells are the operators `sumDref` and `restrict` of `PluralAssign`.
+On plural partial assignments a dref's cells are the operator `restrict` of `PluralAssign`.
 
 ## Main definitions
 
@@ -35,6 +35,8 @@ A dref's values and its cells are the operators `sumDref` and `restrict` of `Plu
 * `Update.mem_cumul_iff_biTotal`: the lift relates two states exactly when the update is
   bitotal between their rows.
 * `Update.cumul_test`: a lifted test checks every row.
+* `PCDRT.dom_dep`, `PCDRT.cod_dep`: where every row valuing one dref values the other, the
+  dependency's domain and codomain are the two drefs' values.
 * `PCDRT.value_eq_of_fixes`: a dref an update fixes keeps its values under the lifted update.
 * `PCDRT.dep_subset_of_structSub`, `PCDRT.dep_eq_of_structSubAll`: a structured subset keeps
   only, and with the full condition all, of the superset's dependencies.
@@ -141,7 +143,7 @@ def value (u : R) (I : Set S) : Set E := {x | ∃ i ∈ I, RegisterStructure.val
 def cell (u : R) (x : E) (I : Set S) : Set S := {i ∈ I | RegisterStructure.val u i = some x}
 
 /-- The dependency between `u` and `v` that `I` stores: the pairs of their values in a row. -/
-def dep (u v : R) (I : Set S) : Set (E × E) :=
+def dep (u v : R) (I : Set S) : SetRel E E :=
   {p | ∃ i ∈ I, RegisterStructure.val u i = some p.1 ∧ RegisterStructure.val v i = some p.2}
 
 theorem value_singleton_of_eq {i : S} {x : E} (h : RegisterStructure.val u i = some x) :
@@ -167,10 +169,24 @@ theorem snd_mem_value_of_mem_dep {p : E × E} (h : p ∈ dep u v I) : p.2 ∈ va
 theorem value_mono (h : I ⊆ J) : value u I ⊆ value u J :=
   fun _ ⟨i, hi, hx⟩ ↦ ⟨i, h hi, hx⟩
 
-/-- On plural partial assignments, the values of a dref are [haug-dalrymple-2020]'s `∪u`. -/
-theorem value_eq_sumDref {Var D : Type*} [DecidableEq Var] (G : PluralAssign Var D) (x : Var) :
-    value x G = G.sumDref x :=
-  rfl
+theorem dep_mono (h : I ⊆ J) : dep u v I ⊆ dep u v J :=
+  fun _ ⟨i, hi, hu, hv⟩ ↦ ⟨i, h hi, hu, hv⟩
+
+/-- Where every row valuing `u` also values `v`, the values of `u` are the domain of the
+dependency between them. -/
+theorem dom_dep (h : ∀ i ∈ I, (RegisterStructure.val u i).isSome →
+    (RegisterStructure.val v i).isSome) : (dep u v I).dom = value u I := by
+  refine Set.ext fun x ↦ ⟨fun ⟨y, hp⟩ ↦ fst_mem_value_of_mem_dep hp, fun ⟨i, hi, hx⟩ ↦ ?_⟩
+  obtain ⟨y, hy⟩ := Option.isSome_iff_exists.1 (h i hi (hx ▸ rfl))
+  exact ⟨y, i, hi, hx, hy⟩
+
+/-- Where every row valuing `v` also values `u`, the values of `v` are the codomain of the
+dependency between them. -/
+theorem cod_dep (h : ∀ i ∈ I, (RegisterStructure.val v i).isSome →
+    (RegisterStructure.val u i).isSome) : (dep u v I).cod = value v I := by
+  refine Set.ext fun y ↦ ⟨fun ⟨x, hp⟩ ↦ snd_mem_value_of_mem_dep hp, fun ⟨i, hi, hy⟩ ↦ ?_⟩
+  obtain ⟨x, hx⟩ := Option.isSome_iff_exists.1 (h i hi (hy ▸ rfl))
+  exact ⟨x, i, hi, hx, hy⟩
 
 /-- On plural partial assignments, a cell is [spector-2025]'s restriction `G_{x=a}`. -/
 theorem cell_eq_restrict {Var D : Type*} [DecidableEq Var] (G : PluralAssign Var D) (x : Var)

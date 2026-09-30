@@ -26,6 +26,8 @@ nonempty finite sets of individuals.
 
 * `Plurality.Cumulativity.cumulative_iff_subset_preimage_image`: coverage is inclusion of `x`
   in the `SetRel.preimage` of `y` and of `y` in the `SetRel.image` of `x`.
+* `Plurality.Cumulativity.cumulative_iff_exists_dom_cod`: coverage is a subrelation of `R` with
+  domain `x` and codomain `y`.
 * `Plurality.Cumulativity.Cumulative.union`, `Plurality.Cumulativity.singleton_right_cumulative`:
   coverage is closed under componentwise union and collapses to distribution over a singleton.
 * `Plurality.Cumulativity.cumulation_iff_of_cum`: a cumulative relation is its own cumulation.
@@ -63,6 +65,26 @@ theorem cumulative_iff_subset_preimage_image :
       (x : Set A) ⊆ SetRel.preimage {p | R p.1 p.2} y ∧
         (y : Set B) ⊆ SetRel.image {p | R p.1 p.2} x :=
   Iff.rfl
+
+/-- Coverage is having a subrelation of `R` whose domain is exactly `x` and whose codomain is
+exactly `y`. -/
+theorem cumulative_iff_exists_dom_cod :
+    Cumulative R x y ↔ ∃ D : SetRel A B, D ⊆ {p | R p.1 p.2} ∧ D.dom = x ∧ D.cod = y := by
+  refine ⟨fun ⟨hl, hr⟩ ↦ ⟨{p | p.1 ∈ x ∧ p.2 ∈ y ∧ R p.1 p.2}, fun _ h ↦ h.2.2,
+    Set.ext fun a ↦ ⟨fun ⟨_, ha, _⟩ ↦ ha, fun ha ↦ ?_⟩,
+    Set.ext fun b ↦ ⟨fun ⟨_, _, hb, _⟩ ↦ hb, fun hb ↦ ?_⟩⟩, ?_⟩
+  · obtain ⟨b, hb, hab⟩ := hl a ha
+    exact ⟨b, ha, hb, hab⟩
+  · obtain ⟨a, ha, hab⟩ := hr b hb
+    exact ⟨a, ha, hb, hab⟩
+  · rintro ⟨D, hD, hdom, hcod⟩
+    refine ⟨fun a ha ↦ ?_, fun b hb ↦ ?_⟩
+    · rw [← Finset.mem_coe, ← hdom] at ha
+      obtain ⟨b, hab⟩ := ha
+      exact ⟨b, by rw [← Finset.mem_coe, ← hcod]; exact ⟨a, hab⟩, hD hab⟩
+    · rw [← Finset.mem_coe, ← hcod] at hb
+      obtain ⟨a, hab⟩ := hb
+      exact ⟨a, by rw [← Finset.mem_coe, ← hdom]; exact ⟨b, hab⟩, hD hab⟩
 
 @[simp]
 theorem cumulative_singleton (R : A → B → Prop) (a : A) (b : B) :
