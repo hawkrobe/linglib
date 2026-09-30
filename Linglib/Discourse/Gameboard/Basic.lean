@@ -2,33 +2,51 @@ module
 
 public import Linglib.Discourse.Gameboard.Defs
 public import Linglib.Discourse.QUD.Issue
+public import Mathlib.Order.Filter.Finite
 
 /-!
 # Dialogue gameboard operations
 
-The updates of the dialogue gameboard `DGB` of [ginzburg-2012]: pushing a question with its
-focus-establishing constituents onto QUD, adding a fact, recording a move or a pending utterance,
-changing the turn, and QUD-downdate (`DGB.downdateQud`), which removes from QUD every question
-that some fact resolves, the function NonResolve of Fact Update/QUD-Downdate ((44) p. 86). A
-gameboard satisfies `non-resolve-cond` (`DGB.NonResolveCond`, ex. 100 p. 111) when no fact
-resolves a question under discussion. Downdate establishes the condition and is idle exactly on
-the gameboards that satisfy it (`DGB.downdateQud_eq_self_iff`); pushing a question keeps it
-exactly when no fact resolves that question, the Question Introduction Appropriateness Condition
-((52) p. 89, `DGB.nonResolveCond_pushQud_iff`). A gameboard whose facts are sets of worlds
-determines a common ground, and one whose questions are `Question W` has the question at the
-head of QUD as its issue.
+This file defines the updates of the dialogue gameboard of Ginzburg's theory of dialogue, KoS:
+pushing a question with its focus-establishing constituents onto QUD, adding a fact, recording a
+move or a pending utterance, changing the turn, and QUD-downdate, which removes from QUD every
+question that some fact resolves. A gameboard satisfies `non-resolve-cond` when no fact resolves a
+question under discussion; downdate establishes the condition and is idle exactly on the gameboards
+that satisfy it, and pushing a question keeps it exactly when no fact resolves that question, which
+is Ginzburg's Question Introduction Appropriateness Condition. Contextual instantiation witnesses
+some of an utterance's contextual parameters, and the utterances it produces are exactly Ginzburg's
+contextual extensions.
+
+A gameboard whose facts have common grounds has the meet of them as its common ground, and adding
+a fact is Stalnakerian assertion of it; a gameboard whose questions have issues has the issue of
+MaxQUD.
+
+## Main definitions
+
+* `Discourse.LocutionaryProposition.instantiate`: contextual instantiation of an utterance.
+* `Discourse.Gameboard.pushQud`, `Discourse.Gameboard.addFact`, `Discourse.Gameboard.recordMove`,
+  `Discourse.Gameboard.swapTurn`: updates of a gameboard.
+* `Discourse.Gameboard.NonResolveCond`, `Discourse.Gameboard.downdateQud`: `non-resolve-cond` and
+  QUD-downdate.
+
+## Main results
+
+* `Discourse.LocutionaryProposition.exists_eq_instantiate_iff`: contextual instantiation yields
+  exactly the contextual extensions.
+* `Discourse.Gameboard.downdateQud_eq_self_iff`, `Discourse.Gameboard.nonResolveCond_pushQud_iff`.
+* `Discourse.Gameboard.commonGround_addFact`: adding a fact meets the common ground with it.
 
 ## Implementation notes
 
-* Resolution is an explicit relation `R : Fact → QContent → Prop`, not an instance on the content
-  types: resolvedness is "not purely semantic" but agent-relative (p. 86), so the types of facts
-  and questions do not determine it.
-* The downdate is that of (44). Appendix B's version ((16) p. 370) lets NonResolve return any
+* Resolution is an explicit relation `R : D.Fact → D.Question → Prop`, not an instance on the
+  domain: resolvedness is "not purely semantic" but agent-relative, so the types of facts and
+  questions do not determine it.
+* The downdate is that of Ginzburg's (44). His Appendix B version lets NonResolve return any
   sub-poset of QUD free of resolved questions, and also removes a question once a fact resolves
   whether the participant wishes to discuss it.
-* (53) and ex. 100 state `non-resolve-cond` as `¬Resolve(FACTS, q)`, resolution by FACTS as a
-  whole, while (44) and (52) quantify over its members. `DGB.NonResolveCond` follows the members,
-  so that downdate establishes it.
+* Ginzburg states `non-resolve-cond` as resolution by FACTS as a whole, where (44) and (52)
+  quantify over its members; `NonResolveCond` follows the members, so that downdate establishes
+  it.
 
 ## References
 
@@ -37,129 +55,208 @@ head of QUD as its issue.
 
 @[expose] public section
 
-namespace Discourse.Gameboard
+universe u
 
-namespace DGB
+namespace Discourse
 
-variable {P Fact QContent Cont : Type*} (dgb : DGB P Fact QContent Cont) (s a : P)
+namespace LocutionaryProposition
 
-@[simp] theorem moves_initial : (initial s a : DGB P Fact QContent Cont).moves = [] := rfl
+variable {G : GrammaticalDomain.{u}} {C : Type u} (w u : LocutionaryProposition G C)
+  (s t : Finset G.Label)
 
-@[simp] theorem qud_initial : (initial s a : DGB P Fact QContent Cont).qud = [] := rfl
+/-- Contextual instantiation ([ginzburg-2012] (48) p. 178): the parameters labelled in `s` have
+been witnessed and leave the utterance's contextual parameters. -/
+def instantiate : LocutionaryProposition G C :=
+  { u with parameters := u.parameters \ s }
 
-@[simp] theorem latestMove_initial :
-    (initial s a : DGB P Fact QContent Cont).latestMove = none := rfl
+@[simp] theorem parameters_instantiate : (u.instantiate s).parameters = u.parameters \ s := rfl
 
-/-- Push a question, with its focus-establishing constituents, onto QUD as MaxQUD. -/
-def pushQud (i : InfoStruc QContent) : DGB P Fact QContent Cont :=
-  { dgb with qud := i :: dgb.qud }
+@[simp] theorem form_instantiate : (u.instantiate s).form = u.form := rfl
 
-/-- Add a fact to FACTS. -/
-def addFact (p : Fact) : DGB P Fact QContent Cont :=
-  { dgb with facts := p :: dgb.facts }
+@[simp] theorem category_instantiate : (u.instantiate s).category = u.category := rfl
 
-/-- Record a move as the latest in MOVES. -/
-def recordMove (m : LocProp Cont) : DGB P Fact QContent Cont :=
-  { dgb with moves := dgb.moves ++ [m] }
+@[simp] theorem content_instantiate : (u.instantiate s).content = u.content := rfl
 
-/-- Push an ungrounded utterance onto PENDING. -/
-def pushPending (lp : LocProp Cont) : DGB P Fact QContent Cont :=
-  { dgb with pending := lp :: dgb.pending }
+@[simp] theorem constituents_instantiate :
+    (u.instantiate s).constituents = u.constituents := rfl
 
-/-- The addressee takes the turn. -/
-def swapTurn : DGB P Fact QContent Cont :=
-  { dgb with spkr := dgb.addr, addr := dgb.spkr }
+@[simp] theorem instantiate_empty : u.instantiate ∅ = u := by
+  simp [instantiate]
+
+theorem instantiate_instantiate : (u.instantiate s).instantiate t = u.instantiate (s ∪ t) := by
+  simp [instantiate, sdiff_sdiff_left]
+
+/-- Contextual instantiation yields exactly the contextual extensions of [ginzburg-2012] (47)
+p. 178: the utterances agreeing on every field but the contextual parameters, of which they
+leave fewer unwitnessed. -/
+theorem exists_eq_instantiate_iff :
+    (∃ s, w = u.instantiate s) ↔ w.form = u.form ∧ w.category = u.category ∧
+      w.content = u.content ∧ w.constituents = u.constituents ∧ w.parameters ⊆ u.parameters := by
+  refine ⟨?_, fun ⟨hf, hc, hn, hs, hp⟩ ↦ ⟨u.parameters \ w.parameters, ?_⟩⟩
+  · rintro ⟨s, rfl⟩
+    exact ⟨rfl, rfl, rfl, rfl, Finset.sdiff_subset⟩
+  · cases w
+    simp_all [instantiate, Finset.sdiff_sdiff_eq_self hp]
+
+end LocutionaryProposition
+
+namespace Gameboard
+
+variable {D : Gameboard.Domain.{u}} (d : Gameboard D)
+
+/-- The gameboard of a conversation with no moves yet, `speaker` addressing `addressee`. -/
+def initial (speaker addressee : D.Participant) : Gameboard D where
+  speaker := speaker
+  addressee := addressee
+
+/-- The latest move. -/
+def latestMove : Option (LocutionaryProposition D.toGrammaticalDomain D.Content) :=
+  d.moves.getLast?
 
 /-- The question of MaxQUD. -/
-def maxQud : Option QContent :=
-  dgb.qud.head?.map (·.q)
+def maxQud : Option D.Question :=
+  d.qud.head?.map (·.question)
 
 /-- The content of the latest move. -/
-def latestContent : Option Cont :=
-  dgb.latestMove.map (·.cont)
+def latestContent : Option D.Content :=
+  d.latestMove.map (·.content)
 
-@[simp] theorem swapTurn_pushQud (i : InfoStruc QContent) :
-    dgb.swapTurn.pushQud i = (dgb.pushQud i).swapTurn := rfl
+/-- Push a question with its focus-establishing constituents onto QUD, as MaxQUD. -/
+def pushQud (i : InformationStructure D.toGrammaticalDomain D.Question) : Gameboard D :=
+  { d with qud := i :: d.qud }
 
-@[simp] theorem swapTurn_recordMove (m : LocProp Cont) :
-    dgb.swapTurn.recordMove m = (dgb.recordMove m).swapTurn := rfl
+/-- Add a fact to FACTS. -/
+def addFact (p : D.Fact) : Gameboard D :=
+  { d with facts := insert p d.facts }
 
-@[simp] theorem latestMove_recordMove (m : LocProp Cont) :
-    (dgb.recordMove m).latestMove = some m := by
+/-- Record a move as the latest in MOVES. -/
+def recordMove (m : LocutionaryProposition D.toGrammaticalDomain D.Content) : Gameboard D :=
+  { d with moves := d.moves ++ [m] }
+
+/-- Push an ungrounded utterance onto PENDING, as MaxPending. -/
+def pushPending (m : LocutionaryProposition D.toGrammaticalDomain D.Content) : Gameboard D :=
+  { d with pending := m :: d.pending }
+
+/-- The addressee takes the turn. -/
+def swapTurn : Gameboard D :=
+  { d with speaker := d.addressee, addressee := d.speaker }
+
+section Initial
+
+variable (s a : D.Participant)
+
+@[simp] theorem facts_initial : (initial s a : Gameboard D).facts = ∅ := rfl
+
+@[simp] theorem moves_initial : (initial s a : Gameboard D).moves = [] := rfl
+
+@[simp] theorem qud_initial : (initial s a : Gameboard D).qud = [] := rfl
+
+@[simp] theorem latestMove_initial : (initial s a : Gameboard D).latestMove = none := rfl
+
+end Initial
+
+@[simp] theorem facts_addFact (p : D.Fact) : (d.addFact p).facts = insert p d.facts := rfl
+
+@[simp] theorem swapTurn_pushQud (i : InformationStructure D.toGrammaticalDomain D.Question) :
+    d.swapTurn.pushQud i = (d.pushQud i).swapTurn := rfl
+
+@[simp] theorem swapTurn_recordMove (m : LocutionaryProposition D.toGrammaticalDomain D.Content) :
+    d.swapTurn.recordMove m = (d.recordMove m).swapTurn := rfl
+
+@[simp] theorem latestMove_recordMove
+    (m : LocutionaryProposition D.toGrammaticalDomain D.Content) :
+    (d.recordMove m).latestMove = some m := by
   simp [latestMove, recordMove]
 
 section Downdate
 
-variable (R : Fact → QContent → Prop)
+variable (R : D.Fact → D.Question → Prop)
 
-/-- `non-resolve-cond`: no fact resolves a question under discussion ([ginzburg-2012] ex. 100
-p. 111), `R` being the resolution relation. -/
+/-- `non-resolve-cond` ([ginzburg-2012] (100) p. 111) holds when no fact resolves a question
+under discussion, `R` being the resolution relation. -/
 def NonResolveCond : Prop :=
-  ∀ i ∈ dgb.qud, ¬∃ f ∈ dgb.facts, R f i.q
+  ∀ i ∈ d.qud, ¬∃ f ∈ d.facts, R f i.question
 
-instance [DecidableRel R] : Decidable (dgb.NonResolveCond R) :=
-  inferInstanceAs (Decidable (∀ i ∈ dgb.qud, _))
+instance [DecidableRel R] : Decidable (d.NonResolveCond R) :=
+  inferInstanceAs (Decidable (∀ i ∈ d.qud, _))
 
-theorem nonResolveCond_initial : (initial s a : DGB P Fact QContent Cont).NonResolveCond R :=
+theorem nonResolveCond_initial (s a : D.Participant) :
+    (initial s a : Gameboard D).NonResolveCond R :=
   fun _ h ↦ absurd h List.not_mem_nil
 
 /-- The Question Introduction Appropriateness Condition ([ginzburg-2012] (52) p. 89): pushing a
 question keeps `non-resolve-cond` exactly when no fact resolves it. -/
-theorem nonResolveCond_pushQud_iff {i : InfoStruc QContent} :
-    (dgb.pushQud i).NonResolveCond R ↔ (¬∃ f ∈ dgb.facts, R f i.q) ∧ dgb.NonResolveCond R :=
+theorem nonResolveCond_pushQud_iff {i : InformationStructure D.toGrammaticalDomain D.Question} :
+    (d.pushQud i).NonResolveCond R ↔
+      (¬∃ f ∈ d.facts, R f i.question) ∧ d.NonResolveCond R :=
   List.forall_mem_cons
 
 variable [DecidableRel R]
 
-/-- QUD-downdate: remove from QUD every question that some fact resolves (NonResolve,
+/-- QUD-downdate removes from QUD every question that some fact resolves (NonResolve,
 [ginzburg-2012] (44) p. 86). -/
-def downdateQud : DGB P Fact QContent Cont :=
-  { dgb with qud := dgb.qud.filter fun i ↦ ¬∃ f ∈ dgb.facts, R f i.q }
+def downdateQud : Gameboard D :=
+  { d with qud := d.qud.filter fun i ↦ ¬∃ f ∈ d.facts, R f i.question }
 
-@[simp] theorem facts_downdateQud : (dgb.downdateQud R).facts = dgb.facts := rfl
+@[simp] theorem facts_downdateQud : (d.downdateQud R).facts = d.facts := rfl
 
-@[simp] theorem mem_qud_downdateQud {i : InfoStruc QContent} :
-    i ∈ (dgb.downdateQud R).qud ↔ i ∈ dgb.qud ∧ ¬∃ f ∈ dgb.facts, R f i.q := by
+@[simp] theorem mem_qud_downdateQud {i : InformationStructure D.toGrammaticalDomain D.Question} :
+    i ∈ (d.downdateQud R).qud ↔ i ∈ d.qud ∧ ¬∃ f ∈ d.facts, R f i.question := by
   simp [downdateQud]
 
-theorem length_qud_downdateQud_le : (dgb.downdateQud R).qud.length ≤ dgb.qud.length :=
+theorem length_qud_downdateQud_le : (d.downdateQud R).qud.length ≤ d.qud.length :=
   List.length_filter_le _ _
 
-theorem nonResolveCond_downdateQud : (dgb.downdateQud R).NonResolveCond R :=
-  fun _ h ↦ ((dgb.mem_qud_downdateQud R).1 h).2
+theorem nonResolveCond_downdateQud : (d.downdateQud R).NonResolveCond R :=
+  fun _ h ↦ ((d.mem_qud_downdateQud R).1 h).2
 
 /-- Downdate is idle exactly on gameboards satisfying `non-resolve-cond`. -/
-theorem downdateQud_eq_self_iff : dgb.downdateQud R = dgb ↔ dgb.NonResolveCond R := by
-  cases dgb
+theorem downdateQud_eq_self_iff : d.downdateQud R = d ↔ d.NonResolveCond R := by
+  cases d
   simp [downdateQud, NonResolveCond, List.filter_eq_self]
 
 end Downdate
 
-end DGB
+section CommonGround
 
-/-- A gameboard whose facts are sets of worlds determines the common ground they jointly
-entail. -/
-instance {W P QContent Cont : Type*} : HasCommonGround (DGB P (Set W) QContent Cont) W where
-  commonGround dgb := Filter.principal fun w ↦ ∀ p ∈ dgb.facts, p w
+variable {W : Type*} [HasCommonGround D.Fact W]
 
-/-- The current issue of a gameboard with question contents is the head of its QUD, the
-trivial issue when the QUD is empty (MaxQUD, [ginzburg-2012] §4.3.3 p. 68). -/
-instance {W P Fact Cont : Type*} : Discourse.HasIssue (DGB P Fact (Question W) Cont) W where
-  toIssue dgb := (dgb.qud.head?.map InfoStruc.q).getD ⊤
+/-- A gameboard whose facts have common grounds has their meet as its common ground. -/
+instance : HasCommonGround (Gameboard D) W where
+  commonGround d := ⨅ p ∈ d.facts, commonGround p
+
+/-- Adding a fact to FACTS meets the common ground with the fact's, Stalnakerian assertion when
+facts are sets of worlds. -/
+theorem commonGround_addFact (p : D.Fact) :
+    commonGround (d.addFact p) = commonGround p ⊓ commonGround d :=
+  Finset.iInf_insert p d.facts _
+
+@[simp] theorem commonGround_initial (s a : D.Participant) :
+    commonGround (initial s a : Gameboard D) = ⊤ := by
+  simp [HasCommonGround.commonGround, initial]
+
+end CommonGround
 
 section Issue
 
-variable {W P Fact Cont : Type*} (dgb : DGB P Fact (Question W) Cont)
+variable {W : Type*} [HasIssue D.Question W]
 
-@[simp] theorem toIssue_pushQud (i : InfoStruc (Question W)) :
-    Discourse.HasIssue.toIssue (dgb.pushQud i) = i.q := rfl
+/-- The issue of a gameboard is that of MaxQUD, the trivial issue when QUD is empty
+([ginzburg-2012] §4.3.3 p. 68). -/
+instance : HasIssue (Gameboard D) W where
+  toIssue d := (d.qud.head?.map fun i ↦ HasIssue.toIssue i.question).getD ⊤
 
-@[simp] theorem toIssue_addFact (p : Fact) :
-    Discourse.HasIssue.toIssue (dgb.addFact p) = Discourse.HasIssue.toIssue dgb := rfl
+@[simp] theorem toIssue_pushQud (i : InformationStructure D.toGrammaticalDomain D.Question) :
+    HasIssue.toIssue (d.pushQud i) = HasIssue.toIssue i.question := rfl
 
-@[simp] theorem toIssue_initial (s a : P) :
-    Discourse.HasIssue.toIssue (DGB.initial s a : DGB P Fact (Question W) Cont) = ⊤ := rfl
+@[simp] theorem toIssue_addFact (p : D.Fact) :
+    HasIssue.toIssue (d.addFact p) = HasIssue.toIssue d := rfl
+
+@[simp] theorem toIssue_initial (s a : D.Participant) :
+    HasIssue.toIssue (initial s a : Gameboard D) = ⊤ := rfl
 
 end Issue
 
-end Discourse.Gameboard
+end Gameboard
+
+end Discourse
