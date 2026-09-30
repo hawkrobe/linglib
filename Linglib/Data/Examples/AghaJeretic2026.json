@@ -29,7 +29,8 @@
         "strong"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_6b",
@@ -61,7 +62,8 @@
         "strong"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_6c",
@@ -93,7 +95,8 @@
         "strong"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_6d",
@@ -125,7 +128,8 @@
         "strong"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_8a",
@@ -157,7 +161,8 @@
         "strong"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_8b",
@@ -189,7 +194,8 @@
         "strong"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_8c",
@@ -221,7 +227,8 @@
         "strong"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_11a",
@@ -253,7 +260,8 @@
         "strong"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_11b",
@@ -285,7 +293,8 @@
         "strong"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_12a",
@@ -317,7 +326,8 @@
         "strong"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_12b",
@@ -349,7 +359,8 @@
         "strong"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_15a",
@@ -361,7 +372,56 @@
     "language": "mode1248",
     "primaryText": "prepi na plinis ta piata ala dhen ise ipexreomenos na to kanis",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "prepi",
+        "must"
+      ],
+      [
+        "na",
+        "NA"
+      ],
+      [
+        "plinis",
+        "wash"
+      ],
+      [
+        "ta",
+        "the"
+      ],
+      [
+        "piata",
+        "dishes"
+      ],
+      [
+        "ala",
+        "but"
+      ],
+      [
+        "dhen",
+        "NEG"
+      ],
+      [
+        "ise",
+        "are"
+      ],
+      [
+        "ipexreomenos",
+        "obliged"
+      ],
+      [
+        "na",
+        "NA"
+      ],
+      [
+        "to",
+        "it"
+      ],
+      [
+        "kanis",
+        "do"
+      ]
+    ],
     "translation": "You must wash the dishes but you are not obliged to do it.",
     "context": "",
     "judgment": "unacceptable",
@@ -381,7 +441,8 @@
         "contradiction"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_15b",
@@ -393,7 +454,60 @@
     "language": "mode1248",
     "primaryText": "tha eprepe na plinis ta piata ala dhen ise ipexreomenos na to kanis",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "tha",
+        "FUT"
+      ],
+      [
+        "eprepe",
+        "must.PST"
+      ],
+      [
+        "na",
+        "NA"
+      ],
+      [
+        "plinis",
+        "wash"
+      ],
+      [
+        "ta",
+        "the"
+      ],
+      [
+        "piata",
+        "dishes"
+      ],
+      [
+        "ala",
+        "but"
+      ],
+      [
+        "dhen",
+        "NEG"
+      ],
+      [
+        "ise",
+        "are"
+      ],
+      [
+        "ipexreomenos",
+        "obliged"
+      ],
+      [
+        "na",
+        "NA"
+      ],
+      [
+        "to",
+        "it"
+      ],
+      [
+        "kanis",
+        "do"
+      ]
+    ],
     "translation": "You ought to wash the dishes but you are not obliged to do it.",
     "context": "",
     "judgment": "acceptable",
@@ -417,7 +531,8 @@
         "contradiction"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_16a",
@@ -427,9 +542,50 @@
     },
     "reportedIn": null,
     "language": "stan1290",
-    "primaryText": "Tu dois faire la vaisselle, mais tu n'es pas obligé.",
+    "primaryText": "tu dois faire la vaisselle, mais tu n'es pas obligé",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "tu",
+        "you"
+      ],
+      [
+        "dois",
+        "must"
+      ],
+      [
+        "faire",
+        "do"
+      ],
+      [
+        "la",
+        "the"
+      ],
+      [
+        "vaisselle",
+        "dishes"
+      ],
+      [
+        "mais",
+        "but"
+      ],
+      [
+        "tu",
+        "you"
+      ],
+      [
+        "n'es",
+        "NEG.are"
+      ],
+      [
+        "pas",
+        "NEG"
+      ],
+      [
+        "obligé",
+        "obliged"
+      ]
+    ],
     "translation": "You must do the dishes but you are not obliged to do them.",
     "context": "",
     "judgment": "unacceptable",
@@ -449,7 +605,8 @@
         "contradiction"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_16b",
@@ -459,9 +616,50 @@
     },
     "reportedIn": null,
     "language": "stan1290",
-    "primaryText": "Tu devrais faire la vaisselle, mais tu n'es pas obligé.",
+    "primaryText": "tu devrais faire la vaisselle, mais tu n'es pas obligé",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "tu",
+        "you"
+      ],
+      [
+        "devrais",
+        "must.COND"
+      ],
+      [
+        "faire",
+        "do"
+      ],
+      [
+        "la",
+        "the"
+      ],
+      [
+        "vaisselle",
+        "dishes"
+      ],
+      [
+        "mais",
+        "but"
+      ],
+      [
+        "tu",
+        "you"
+      ],
+      [
+        "n'es",
+        "NEG.are"
+      ],
+      [
+        "pas",
+        "NEG"
+      ],
+      [
+        "obligé",
+        "obliged"
+      ]
+    ],
     "translation": "You ought to do the dishes but you are not obliged to do them.",
     "context": "",
     "judgment": "acceptable",
@@ -485,7 +683,8 @@
         "contradiction"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_17",
@@ -500,7 +699,44 @@
     "language": "hebr1245",
     "primaryText": "yoter/haxi tov še-hu yitpater, aval hu lo xayav lehitpater",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "yoter/haxi",
+        "more/most"
+      ],
+      [
+        "tov",
+        "good"
+      ],
+      [
+        "še-hu",
+        "that-he"
+      ],
+      [
+        "yitpater",
+        "will.resign"
+      ],
+      [
+        "aval",
+        "but"
+      ],
+      [
+        "hu",
+        "he"
+      ],
+      [
+        "lo",
+        "NEG"
+      ],
+      [
+        "xayav",
+        "must"
+      ],
+      [
+        "lehitpater",
+        "resign"
+      ]
+    ],
     "translation": "It is better/best that he will resign, but he doesn't have to resign.",
     "context": "",
     "judgment": "acceptable",
@@ -524,22 +760,73 @@
         "contradiction"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_23",
     "source": {
-      "bibkey": "vander-klok-hohaus-2020",
-      "paperLabel": "(23)"
-    },
-    "reportedIn": {
       "bibkey": "agha-jeretic-2026",
       "paperLabel": "(23)"
     },
+    "reportedIn": null,
     "language": "java1254",
     "primaryText": "wong wong jawa kudu-ne iso ngomong kromo, terus anak-e rojo yo kudu iso",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "wong",
+        "person"
+      ],
+      [
+        "wong",
+        "person"
+      ],
+      [
+        "jawa",
+        "java"
+      ],
+      [
+        "kudu-ne",
+        "ROOT.NEC-NE"
+      ],
+      [
+        "iso",
+        "CIRC.POS"
+      ],
+      [
+        "ngomong",
+        "AV.talk"
+      ],
+      [
+        "kromo",
+        "high.speech"
+      ],
+      [
+        "terus",
+        "then"
+      ],
+      [
+        "anak-e",
+        "child-DEF"
+      ],
+      [
+        "rojo",
+        "king"
+      ],
+      [
+        "yo",
+        "PRT.YES"
+      ],
+      [
+        "kudu",
+        "ROOT.NEC"
+      ],
+      [
+        "iso",
+        "CIRC.POS"
+      ]
+    ],
     "translation": "Javanese people ought to be able to speak Krama, and the Sultan's son has to be able to.",
     "context": "",
     "judgment": "acceptable",
@@ -571,7 +858,8 @@
         "strong"
       ]
     ],
-    "comment": ""
+    "comment": "The chapter presents the example in discussing Vander Klok & Hohaus 2020 and gives no locator in it.",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_18a",
@@ -612,7 +900,8 @@
         "clausemate"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_18b",
@@ -653,7 +942,8 @@
         "clausemate"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_18c",
@@ -694,7 +984,8 @@
         "clausemate"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_19a",
@@ -735,7 +1026,8 @@
         "higher"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_19b",
@@ -776,7 +1068,8 @@
         "higher"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_19c",
@@ -817,7 +1110,8 @@
         "higher"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_20a",
@@ -858,7 +1152,8 @@
         "higher"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_20b",
@@ -899,7 +1194,8 @@
         "higher"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_20c",
@@ -940,24 +1236,55 @@
         "higher"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_26a",
     "source": {
-      "bibkey": "weingartz-hohaus-2024",
-      "paperLabel": ""
-    },
-    "reportedIn": {
       "bibkey": "agha-jeretic-2026",
       "paperLabel": "(26a)"
     },
+    "reportedIn": null,
     "language": "afri1274",
     "primaryText": "Ek moet nog na die partyjie toe gaan!",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ek",
+        "I"
+      ],
+      [
+        "moet",
+        "NEC"
+      ],
+      [
+        "nog",
+        "still"
+      ],
+      [
+        "na",
+        "to"
+      ],
+      [
+        "die",
+        "the"
+      ],
+      [
+        "partyjie",
+        "party"
+      ],
+      [
+        "toe",
+        "to"
+      ],
+      [
+        "gaan",
+        "go"
+      ]
+    ],
     "translation": "I still should/have to go to the party!",
-    "context": "Last day at work before leave; the summer party is this afternoon.",
+    "context": "It's your last day at work before your leave, and there's a lot left to do. You catch sight of your calendar and realise the summer party is this afternoon. Talking to your colleague:",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -975,24 +1302,55 @@
         "contradiction"
       ]
     ],
-    "comment": "From Weingartz and Hohaus 2024. Consistently followed by (26b) 'But actually, I don't have to.'"
+    "comment": "The chapter presents the example with Weingartz & Hohaus 2024 and gives no locator in it. Consistently followed by (26b) 'But actually, I don't have to.'",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_28a",
     "source": {
-      "bibkey": "weingartz-hohaus-2024",
-      "paperLabel": ""
-    },
-    "reportedIn": {
       "bibkey": "agha-jeretic-2026",
       "paperLabel": "(28a)"
     },
+    "reportedIn": null,
     "language": "samo1305",
     "primaryText": "E tatau ona ou alu i le pātī.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "E",
+        "TAM"
+      ],
+      [
+        "tatau",
+        "NEC"
+      ],
+      [
+        "ona",
+        "that"
+      ],
+      [
+        "ou",
+        "I"
+      ],
+      [
+        "alu",
+        "go"
+      ],
+      [
+        "i",
+        "to"
+      ],
+      [
+        "le",
+        "the"
+      ],
+      [
+        "pātī",
+        "party"
+      ]
+    ],
     "translation": "I should go to the party.",
-    "context": "",
+    "context": "It's your last day at work before your leave, and there's a lot left to do. You catch sight of your calendar and realise the summer party is this afternoon. Talking to your colleague:",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1010,7 +1368,8 @@
         "contradiction"
       ]
     ],
-    "comment": "From Weingartz and Hohaus 2024. Consistently followed by (28b) 'But I don't have to.'"
+    "comment": "The chapter presents the example with Weingartz & Hohaus 2024 and gives no locator in it; its context is (26)'s. Consistently followed by (28b) 'But I don't have to.' The chapter glosses pātī 'part'.",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_43",
@@ -1025,8 +1384,29 @@
     "language": "nezp1238",
     "primaryText": "'inéhne-no'qa 'ee kii lepít cíickan",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "You can / should take these two blankets.",
+    "glossedTokens": [
+      [
+        "'inéhne-no'qa",
+        "take-MODAL"
+      ],
+      [
+        "'ee",
+        "you"
+      ],
+      [
+        "kii",
+        "DEM"
+      ],
+      [
+        "lepít",
+        "two"
+      ],
+      [
+        "cíickan",
+        "blanket"
+      ]
+    ],
+    "translation": "You can take these two blankets. / You should take these two blankets.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1050,7 +1430,8 @@
         "unembedded"
       ]
     ],
-    "comment": ""
+    "comment": "The chapter prints the two translations as (43a) and (43b).",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_44",
@@ -1065,7 +1446,20 @@
     "language": "nezp1238",
     "primaryText": "wéet'u 'ee kiy-ó'qa",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "wéet'u",
+        "not"
+      ],
+      [
+        "'ee",
+        "you"
+      ],
+      [
+        "kiy-ó'qa",
+        "go-MODAL"
+      ]
+    ],
     "translation": "You can't go.",
     "context": "You are explaining to someone who thinks they have to leave that they are not in fact required to do so. It's not necessary for them to leave.",
     "judgment": "unacceptable",
@@ -1090,7 +1484,8 @@
         "clausemate negation"
       ]
     ],
-    "comment": "Marked # in the context: the intended 'You don't have to go' is unavailable, and the actual 'You can't go' is weird there."
+    "comment": "Marked # in the context: the intended 'You don't have to go' is unavailable, and the actual 'You can't go' is weird there.",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_45",
@@ -1105,7 +1500,28 @@
     "language": "nezp1238",
     "primaryText": "c'alawi 'a-múu-no'qa saykiptaw'atóo-na, kaa 'e-múu-nu'",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "c'alawi",
+        "if"
+      ],
+      [
+        "'a-múu-no'qa",
+        "3OBJ-call-MODAL"
+      ],
+      [
+        "saykiptaw'atóo-na",
+        "doctor-OBJ"
+      ],
+      [
+        "kaa",
+        "then"
+      ],
+      [
+        "'e-múu-nu'",
+        "3OBJ-call-PR"
+      ]
+    ],
     "translation": "If I can call the doctor, I will.",
     "context": "Prompt: If I have to call the doctor, I will.",
     "judgment": "unacceptable",
@@ -1130,7 +1546,8 @@
         "other DE"
       ]
     ],
-    "comment": "Intended 'If I have to call the doctor' is unavailable."
+    "comment": "Intended 'If I have to call the doctor' is unavailable.",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_46",
@@ -1142,9 +1559,22 @@
     "language": "sion1247",
     "primaryText": "Tsiaya-jã'ã je'e-ñe ba-'i-ji.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Tsiaya-jã'ã",
+        "river-PATH"
+      ],
+      [
+        "je'e-ñe",
+        "cross-INF"
+      ],
+      [
+        "ba-'i-ji",
+        "be-ASRT"
+      ]
+    ],
     "translation": "One has to cross the river.",
-    "context": "",
+    "context": "San Pablo is on the other side of the river. A asks a stranger, B, how to get there. B answers:",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
@@ -1167,7 +1597,8 @@
         "unembedded"
       ]
     ],
-    "comment": "The possibility reading attempted in (47) is unavailable out of the blue."
+    "comment": "The possibility reading attempted in (47) is unavailable out of the blue.",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_48",
@@ -1179,7 +1610,16 @@
     "language": "sion1247",
     "primaryText": "Sai-ye beo-ji.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Sai-ye",
+        "go-INF"
+      ],
+      [
+        "beo-ji",
+        "NEG.be-3S"
+      ]
+    ],
     "translation": "We mustn't go.",
     "context": "",
     "judgment": "acceptable",
@@ -1204,7 +1644,8 @@
         "clausemate negation"
       ]
     ],
-    "comment": "'We don't have to go' is impossible."
+    "comment": "'We don't have to go' is impossible.",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_49",
@@ -1216,9 +1657,22 @@
     "language": "sion1247",
     "primaryText": "Sai-ye ba-'i-to, sa-si-'i.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Sai-ye",
+        "go-INF"
+      ],
+      [
+        "ba-'i-to",
+        "be-IPF-COND"
+      ],
+      [
+        "sa-si-'i",
+        "go-FUT-OTH"
+      ]
+    ],
     "translation": "If I can / must go, I will go.",
-    "context": "",
+    "context": "I am waiting to see if there is going to be a spot for me in the boat. My friend asks me if I want to go.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
@@ -1241,7 +1695,8 @@
         "other DE"
       ]
     ],
-    "comment": ""
+    "comment": "The chapter prints two answers with this conditional: (49a) 'Yë-yë. …' 'Yes. If I can (#must) go, I will go.' and (49b) 'Coe-yë. …' 'No. But if I must (#can) go, I will go.'",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_51",
@@ -1253,7 +1708,44 @@
     "language": "swed1254",
     "primaryText": "Alice får gå ut, men hon får också stanna.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Alice",
+        "Alice"
+      ],
+      [
+        "får",
+        "fa"
+      ],
+      [
+        "gå",
+        "go"
+      ],
+      [
+        "ut",
+        "out"
+      ],
+      [
+        "men",
+        "but"
+      ],
+      [
+        "hon",
+        "she"
+      ],
+      [
+        "får",
+        "fa"
+      ],
+      [
+        "också",
+        "also"
+      ],
+      [
+        "stanna",
+        "stay"
+      ]
+    ],
     "translation": "Alice is allowed to go out, but she is also allowed to stay.",
     "context": "",
     "judgment": "acceptable",
@@ -1274,7 +1766,8 @@
         "unembedded"
       ]
     ],
-    "comment": "The necessity reading of får is shown by (52)."
+    "comment": "The necessity reading of får is shown by (52). The chapter glosses får 'fa' here and 'MOD' in (52)-(56).",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_52",
@@ -1286,7 +1779,28 @@
     "language": "swed1254",
     "primaryText": "Isac får betala en bot.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Isac",
+        "Isac"
+      ],
+      [
+        "får",
+        "MOD"
+      ],
+      [
+        "betala",
+        "pay"
+      ],
+      [
+        "en",
+        "a"
+      ],
+      [
+        "bot",
+        "fine"
+      ]
+    ],
     "translation": "Isac has to pay a fine.",
     "context": "I'm telling a story in which Isac illegally parked the car, and the police caught him.",
     "judgment": "acceptable",
@@ -1307,7 +1821,8 @@
         "unembedded"
       ]
     ],
-    "comment": "The necessity reading of får unembedded."
+    "comment": "The necessity reading of får unembedded.",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_53",
@@ -1319,9 +1834,30 @@
     "language": "swed1254",
     "primaryText": "Peter får inte lämna fängelset.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Peter",
+        "Peter"
+      ],
+      [
+        "får",
+        "MOD"
+      ],
+      [
+        "inte",
+        "not"
+      ],
+      [
+        "lämna",
+        "leave"
+      ],
+      [
+        "fängelset",
+        "prison"
+      ]
+    ],
     "translation": "Peter is not allowed to leave the prison.",
-    "context": "",
+    "context": "Peter is a prisoner.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
@@ -1344,7 +1880,8 @@
         "clausemate negation"
       ]
     ],
-    "comment": "The negated-necessity reading attempted in (54) is unavailable."
+    "comment": "The negated-necessity reading attempted in (54) is unavailable.",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_55",
@@ -1356,9 +1893,42 @@
     "language": "swed1254",
     "primaryText": "Om Lucas får äta glass blir han glad.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Om",
+        "if"
+      ],
+      [
+        "Lucas",
+        "Lucas"
+      ],
+      [
+        "får",
+        "MOD"
+      ],
+      [
+        "äta",
+        "eat"
+      ],
+      [
+        "glass",
+        "ice.cream"
+      ],
+      [
+        "blir",
+        "be.fut"
+      ],
+      [
+        "han",
+        "he"
+      ],
+      [
+        "glad",
+        "happy"
+      ]
+    ],
     "translation": "If Lucas is allowed to have ice cream, he will be happy.",
-    "context": "",
+    "context": "Lucas loves ice cream, but only eats it when his mom gives him permission.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
@@ -1377,7 +1947,8 @@
         "other DE"
       ]
     ],
-    "comment": "The necessity reading of får in a conditional antecedent is shown by (56)."
+    "comment": "The necessity reading of får in a conditional antecedent is shown by (56).",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_56",
@@ -1389,7 +1960,44 @@
     "language": "swed1254",
     "primaryText": "Om Maria får betala en böter blir hon olycklig.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Om",
+        "if"
+      ],
+      [
+        "Maria",
+        "Maria"
+      ],
+      [
+        "får",
+        "MOD"
+      ],
+      [
+        "betala",
+        "pay"
+      ],
+      [
+        "en",
+        "a"
+      ],
+      [
+        "böter",
+        "fine"
+      ],
+      [
+        "blir",
+        "be.fut"
+      ],
+      [
+        "hon",
+        "she"
+      ],
+      [
+        "olycklig",
+        "unhappy"
+      ]
+    ],
     "translation": "If Maria has to pay a fine, she will be unhappy.",
     "context": "Maria took the train without paying and is worried about getting caught.",
     "judgment": "acceptable",
@@ -1410,7 +2018,8 @@
         "other DE"
       ]
     ],
-    "comment": "The necessity reading of får in a conditional antecedent."
+    "comment": "The necessity reading of får in a conditional antecedent.",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_57",
@@ -1454,7 +2063,8 @@
         "unembedded"
       ]
     ],
-    "comment": "From Newkirk 2022. Strong necessity is unavailable, as (60) shows."
+    "comment": "From Newkirk 2022. Strong necessity is unavailable, as (60) shows. The chapter prints two contexts, one for epistemic possibility (the professor never knows whether Kábunga will come) and one for epistemic weak necessity (it is Monday, when Kábunga is usually there). Its gloss line, 'Kabunga SM.c1-MOD-TM-come-FV c17 today', does not align with the words after the verb, so no glossed tokens are given.",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_58",
@@ -1469,9 +2079,26 @@
     "language": "nand1264",
     "primaryText": "nga-oko reglema yi-ka-bug-a, si-u-anga-sat-a",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "nga-oko",
+        "COMP-COMP"
+      ],
+      [
+        "reglema",
+        "c9.rules"
+      ],
+      [
+        "yi-ka-bug-a",
+        "SM.c9-TM-say-FV"
+      ],
+      [
+        "si-u-anga-sat-a",
+        "NEG-SM.2sg-MOD-dance-FV"
+      ]
+    ],
     "translation": "According to the rules, you can't play.",
-    "context": "",
+    "context": "A player has been hurt in a football match, and the ref is speaking to them, and saying:",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
@@ -1498,7 +2125,8 @@
         "clausemate negation"
       ]
     ],
-    "comment": "From Newkirk 2022. The negated-necessity reading attempted in (59) is unavailable."
+    "comment": "From Newkirk 2022. The negated-necessity reading attempted in (59) is unavailable.",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_table_oqa_unembedded",
@@ -1543,7 +2171,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_table_oqa_clausemate",
@@ -1588,7 +2217,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_table_oqa_other",
@@ -1633,7 +2263,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_table_baiji_unembedded",
@@ -1678,7 +2309,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_table_baiji_clausemate",
@@ -1723,7 +2355,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_table_baiji_other",
@@ -1768,7 +2401,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_table_far_unembedded",
@@ -1813,7 +2447,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_table_far_clausemate",
@@ -1858,7 +2493,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_table_far_other",
@@ -1903,7 +2539,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_table_anga_unembedded",
@@ -1948,7 +2585,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_table_anga_clausemate",
@@ -1993,7 +2631,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_table_anga_other",
@@ -2038,7 +2677,8 @@
         "true"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_79a",
@@ -2075,7 +2715,8 @@
         "clausemate"
       ]
     ],
-    "comment": "The chapter calls the strong reading, that hard work never results in success, the most salient and preferred one."
+    "comment": "The chapter calls the strong reading, that hard work never results in success, the most salient and preferred one.",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_85a",
@@ -2099,7 +2740,7 @@
       },
       {
         "name": "narrow",
-        "judgment": "marginal"
+        "judgment": "unacceptable"
       }
     ],
     "paperFeatures": [
@@ -2112,7 +2753,8 @@
         "clausemate"
       ]
     ],
-    "comment": "The chapter reports the reading that babies never eat arugula as the salient one."
+    "comment": "The chapter reports the reading that babies never eat arugula as the salient one. The chapter says the weaker reading, (86) 'Babies don't always eat arugula', does not seem available.",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_91a",
@@ -2149,7 +2791,8 @@
         "weak"
       ]
     ],
-    "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's."
+    "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's.",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_91b",
@@ -2186,7 +2829,8 @@
         "weak"
       ]
     ],
-    "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's."
+    "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's.",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_92a",
@@ -2223,7 +2867,8 @@
         "strong"
       ]
     ],
-    "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's."
+    "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's.",
+    "verified": "page-image"
   },
   {
     "id": "aghajeretic2026_92b",
@@ -2260,6 +2905,7 @@
         "strong"
       ]
     ],
-    "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's."
+    "comment": "The generalization (90) is Hackl and Nissenbaum's; the sentence is the chapter's.",
+    "verified": "page-image"
   }
 ]
