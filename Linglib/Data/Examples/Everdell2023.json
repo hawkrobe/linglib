@@ -3,14 +3,14 @@
     "id": "everdell2023_baig1kia",
     "source": {"bibkey": "everdell-2023", "paperLabel": "Table 5.1"},
     "language": "sout2976",
-    "primaryText": "baig1kia’",
+    "primaryText": "baigɨkia’",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "swell",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "baig1k-chuda’", "judgment": "acceptable"}
+      {"form": "baigɨk-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -19,7 +19,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form baig1k-chuda’ ‘make swell’."
+    "comment": "Applied form baigɨk-chuda’ ‘make swell’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_bamgia",
@@ -28,7 +29,7 @@
     "primaryText": "bamgia’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "wake up.intr",
+    "translation": "wake up.INTR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -41,7 +42,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form bamii’ñ-dha’ ‘wake someone up’."
+    "comment": "Applied form bamii’ñ-dha’ ‘wake someone up’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_batbia",
@@ -63,7 +65,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form batbi-chdha’ ‘bathe someone’."
+    "comment": "Applied form batbi-chdha’ ‘bathe someone’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_bannia",
@@ -85,7 +88,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form ba’nni-dha’ ‘make wet’."
+    "comment": "Applied form ba’nni-dha’ ‘make wet’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_bhaimu_bhaiku",
@@ -94,7 +98,7 @@
     "primaryText": "bhai’mu’∼bhai’ku’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "drown.sg/pl",
+    "translation": "drown.SG/PL",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -107,7 +111,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form bhai’m-tuda’ ∼ bhai’k-tuda’ ‘drown.sg/pl someone’."
+    "comment": "Applied form bhai’m-tuda’ ∼ bhai’k-tuda’ ‘drown.SG/PL someone’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_bhaya",
@@ -116,7 +121,7 @@
     "primaryText": "bhaya’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "cook.intr",
+    "translation": "cook.INTR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -129,7 +134,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form bhai-dha’ ‘cook.tr’."
+    "comment": "Applied form bhai-dha’ ‘cook.TR’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_bhiikchia",
@@ -151,7 +157,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form bhiik-chuda’ ‘hang someone’."
+    "comment": "Applied form bhiik-chuda’ ‘hang someone’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_daya",
@@ -173,7 +180,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form dai-chdha’ ‘make fly’."
+    "comment": "Applied form dai-chdha’ ‘make fly’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_dodhia",
@@ -195,7 +203,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form dua’ñ-dha’ ‘cure, heal someone’."
+    "comment": "Applied form dua’ñ-dha’ ‘cure, heal someone’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_gakia",
@@ -204,7 +213,7 @@
     "primaryText": "gakia’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "dry.intr",
+    "translation": "dry.INTR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -217,7 +226,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form gakii’ñ-dha’ ‘dry.tr’."
+    "comment": "Applied form gakii’ñ-dha’ ‘dry.TR’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_gisaru",
@@ -226,7 +236,7 @@
     "primaryText": "gisaru’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "cook stew.intr",
+    "translation": "cook stew.INTR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -239,20 +249,21 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form gisalh-dha’ ‘cook stew.tr’."
+    "comment": "Applied form gisalh-dha’ ‘cook stew.TR’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_g1lhia",
     "source": {"bibkey": "everdell-2023", "paperLabel": "Table 5.1"},
     "language": "sout2976",
-    "primaryText": "g1’lhia’",
+    "primaryText": "gɨ’lhia’",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "grow, develop",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "g1’lh-dha’", "judgment": "acceptable"}
+      {"form": "gɨ’lh-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -261,20 +272,21 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form g1’lh-dha’ ‘raise, make grow (animate object)’."
+    "comment": "Applied form gɨ’lh-dha’ ‘raise, make grow (animate object)’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_g1mda",
     "source": {"bibkey": "everdell-2023", "paperLabel": "Table 5.1"},
     "language": "sout2976",
-    "primaryText": "g1’mda’",
+    "primaryText": "gɨ’mda’",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "calm down",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "g1’m-chuda’", "judgment": "acceptable"}
+      {"form": "gɨ’m-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -283,7 +295,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form g1’m-chuda’ ‘calm someone down’."
+    "comment": "Applied form gɨ’m-chuda’ ‘calm someone down’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_imu",
@@ -305,7 +318,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form i’mu-tda’ ‘let something get too much sun’."
+    "comment": "Applied form i’mu-tda’ ‘let something get too much sun’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_jibua",
@@ -327,7 +341,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form jibai-dha’ ‘knock over’."
+    "comment": "Applied form jibai-dha’ ‘knock over’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_jidhoora",
@@ -336,7 +351,7 @@
     "primaryText": "jidhoora’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "cook in water.intr",
+    "translation": "cook in water.INTR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -349,20 +364,21 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form jidhoolh-dha’ ‘cook in water.tr’."
+    "comment": "Applied form jidhoolh-dha’ ‘cook in water.TR’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_j1kgia",
     "source": {"bibkey": "everdell-2023", "paperLabel": "Table 5.1"},
     "language": "sout2976",
-    "primaryText": "j1kgia’",
+    "primaryText": "jɨkgia’",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "become content, become happy",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "j1kg1-tda’", "judgment": "acceptable"}
+      {"form": "jɨkgɨ-tda’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -371,20 +387,21 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form j1kg1-tda’ ‘encourage, cheer up’."
+    "comment": "Applied form jɨkgɨ-tda’ ‘encourage, cheer up’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_j1lhbia",
     "source": {"bibkey": "everdell-2023", "paperLabel": "Table 5.1"},
     "language": "sout2976",
-    "primaryText": "j1lhbia’",
+    "primaryText": "jɨlhbia’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "make air.intr",
+    "translation": "make air.INTR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "j1lhbi-dha’", "judgment": "acceptable"}
+      {"form": "jɨlhbi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -393,7 +410,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form j1lhbi-dha’ ‘shake, blow (air)’."
+    "comment": "Applied form jɨlhbi-dha’ ‘shake, blow (air)’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_j11mia",
@@ -406,7 +424,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "j1m-chuda’", "judgment": "acceptable"}
+      {"form": "jɨm-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -415,20 +433,21 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form j1m-chuda’ ‘make laugh’."
+    "comment": "Applied form jɨm-chuda’ ‘make laugh’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_j1plhia",
     "source": {"bibkey": "everdell-2023", "paperLabel": "Table 5.1"},
     "language": "sout2976",
-    "primaryText": "j1plhia’",
+    "primaryText": "jɨplhia’",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "become cool",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "j1p-dha’", "judgment": "acceptable"}
+      {"form": "jɨp-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -437,7 +456,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form j1p-dha’ ‘cool something down’."
+    "comment": "Applied form jɨp-dha’ ‘cool something down’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_jonia",
@@ -446,7 +466,7 @@
     "primaryText": "joñia’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "move.intr",
+    "translation": "move.INTR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -459,7 +479,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form joiñ-dha’ ‘move.tr (inanimate patient)’."
+    "comment": "Applied form joiñ-dha’ ‘move.TR (inanimate patient)’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_juukgia",
@@ -468,7 +489,7 @@
     "primaryText": "juukgia’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "heat up.intr",
+    "translation": "heat up.INTR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -481,20 +502,21 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form jukañ-dha’ ‘heat up.tr’."
+    "comment": "Applied form jukañ-dha’ ‘heat up.TR’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_k1kbo",
     "source": {"bibkey": "everdell-2023", "paperLabel": "Table 5.1"},
     "language": "sout2976",
-    "primaryText": "k1kbo’",
+    "primaryText": "kɨkbo’",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "stand up",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "k1kbui-chdha’", "judgment": "acceptable"}
+      {"form": "kɨkbui-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -503,7 +525,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form k1kbui-chdha’ ‘help someone stand up’. The intransitive base; Table 5.6 lists a transitive ‘put on feet’ with the same applied form."
+    "comment": "Applied form kɨkbui-chdha’ ‘help someone stand up’. The intransitive base; Table 5.6 lists a transitive ‘put on feet’ with the same applied form.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_kokda",
@@ -512,7 +535,7 @@
     "primaryText": "kokda’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "fight.intr",
+    "translation": "fight.INTR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -525,7 +548,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form kokdhi-chdha’ ‘make fight (plural object)’."
+    "comment": "Applied form kokdhi-chdha’ ‘make fight (plural object)’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_koxia",
@@ -547,7 +571,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form kox-chuda’ ‘put to sleep’. Named in the text as unergative (the table spans both classes)."
+    "comment": "Applied form kox-chuda’ ‘put to sleep’. Named in the text as unergative (the table spans both classes).",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_kubhabnia",
@@ -556,7 +581,7 @@
     "primaryText": "kubha’bñia’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "tarnish.intr",
+    "translation": "tarnish.INTR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -569,7 +594,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form kubha’bi-dha’ ‘tarnish.tr’."
+    "comment": "Applied form kubha’bi-dha’ ‘tarnish.TR’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_maimu",
@@ -591,7 +617,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form maim-tuda ‘make drunk, poison’."
+    "comment": "Applied form maim-tuda ‘make drunk, poison’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_m11ya_burn",
@@ -600,11 +627,11 @@
     "primaryText": "m11ya’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "burn.intr",
+    "translation": "burn.INTR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "m1i-dha’", "judgment": "acceptable"}
+      {"form": "mɨi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -613,7 +640,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form m1i-dha’ ‘burn.tr’."
+    "comment": "Applied form mɨi-dha’ ‘burn.TR’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_m11ya_ignite",
@@ -622,11 +650,11 @@
     "primaryText": "m11ya’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "ignite.intr",
+    "translation": "ignite.INTR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "m1i-chdha’", "judgment": "acceptable"}
+      {"form": "mɨi-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -635,20 +663,21 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form m1i-chdha’ ‘ignite.tr’."
+    "comment": "Applied form mɨi-chdha’ ‘ignite.TR’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_m1lhia",
     "source": {"bibkey": "everdell-2023", "paperLabel": "Table 5.1"},
     "language": "sout2976",
-    "primaryText": "m1lhia’",
+    "primaryText": "mɨlhia’",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "run",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "m1lh-chuda’", "judgment": "acceptable"}
+      {"form": "mɨlh-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -657,7 +686,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form m1lh-chuda’ ‘make run’."
+    "comment": "Applied form mɨlh-chuda’ ‘make run’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_sasbak",
@@ -679,7 +709,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form sasbak-chuda’ ‘make gurgle’."
+    "comment": "Applied form sasbak-chuda’ ‘make gurgle’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_ninia",
@@ -688,7 +719,7 @@
     "primaryText": "ñiñia’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "wake up.intr",
+    "translation": "wake up.INTR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -701,7 +732,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form ñiñii-chdha’ ‘wake up.tr’."
+    "comment": "Applied form ñiñii-chdha’ ‘wake up.TR’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_oilhia",
@@ -723,7 +755,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form oilhi-chdha’ ‘make walk’."
+    "comment": "Applied form oilhi-chdha’ ‘make walk’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_suuduya",
@@ -732,7 +765,7 @@
     "primaryText": "suuduya’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "fill.intr",
+    "translation": "fill.INTR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -745,20 +778,21 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form suudui-dha’ ‘fill.tr’."
+    "comment": "Applied form suudui-dha’ ‘fill.TR’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_t1biapu",
     "source": {"bibkey": "everdell-2023", "paperLabel": "Table 5.1"},
     "language": "sout2976",
-    "primaryText": "t1biapu’",
+    "primaryText": "tɨbiapu’",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "stay (the night)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "t1baip-tuda’", "judgment": "acceptable"}
+      {"form": "tɨbaip-tuda’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -767,20 +801,21 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form t1baip-tuda’ ‘give hospitality (for short time)’."
+    "comment": "Applied form tɨbaip-tuda’ ‘give hospitality (for short time)’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_t1sdia",
     "source": {"bibkey": "everdell-2023", "paperLabel": "Table 5.1"},
     "language": "sout2976",
-    "primaryText": "t1sdia’",
+    "primaryText": "tɨsdia’",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "climb",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "t1saa’ñ-dha’", "judgment": "acceptable"}
+      {"form": "tɨsaa’ñ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -789,7 +824,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form t1saa’ñ-dha’ ‘raise, make climb’."
+    "comment": "Applied form tɨsaa’ñ-dha’ ‘raise, make climb’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_toindhia",
@@ -811,7 +847,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form tonii’ñ-chuda’ ‘give fever’."
+    "comment": "Applied form tonii’ñ-chuda’ ‘give fever’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_toksolhia",
@@ -833,7 +870,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form toksolh-dha’ ‘make foam’."
+    "comment": "Applied form toksolh-dha’ ‘make foam’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_torkia",
@@ -855,7 +893,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form torki-dha’ ‘make bark’. As a verb of sound emission; the speaking-verb use of the same base is the one ambiguous case, see the study's TODO."
+    "comment": "Applied form torki-dha’ ‘make bark’. As a verb of sound emission; the speaking-verb use of the same base is the one ambiguous case, see the study's TODO.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_totpokia",
@@ -864,7 +903,7 @@
     "primaryText": "totpokia’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "boil.intr",
+    "translation": "boil.INTR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -877,7 +916,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form totpox-dha ‘boil.tr’."
+    "comment": "Applied form totpox-dha ‘boil.TR’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_tuklhia",
@@ -886,7 +926,7 @@
     "primaryText": "tuklhia’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "blacken, darken.intr",
+    "translation": "blacken, darken.INTR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -899,7 +939,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form tuk-chuda’ ‘blacken, darken.tr’. Named in the text as unaccusative (the table spans both classes)."
+    "comment": "Applied form tuk-chuda’ ‘blacken, darken.TR’. Named in the text as unaccusative (the table spans both classes).",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_yaaa",
@@ -921,13 +962,14 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form ya’-tda’ ‘make urinate’."
+    "comment": "Applied form ya’-tda’ ‘make urinate’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_se",
     "source": {"bibkey": "everdell-2023", "paperLabel": "(276)"},
     "language": "sout2976",
-    "primaryText": "se/’",
+    "primaryText": "se̸’",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "be hanging",
@@ -943,7 +985,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form sai’-chdha’ ‘hang.tr’."
+    "comment": "Applied form sai’-chdha’ ‘hang.TR’. The book writes the vowel with a stroke through it, rendered e̸.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_iimchu",
@@ -952,7 +995,7 @@
     "primaryText": "ii’mchu’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "suffocate.intr",
+    "translation": "suffocate.INTR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -965,7 +1008,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form ii’m-chuda’ ‘suffocate.tr’."
+    "comment": "Applied form ii’m-chuda’ ‘suffocate.TR’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_aaya",
@@ -988,7 +1032,8 @@
       ["function", "agent"],
       ["role", "goal"]
     ],
-    "comment": "Applied form ai-chdha’ ‘bring’. An intransitive motion verb: the entailed goal is obligatorily expressed as a locative (dir ya’), may be a person's location, and does not count towards transitivity."
+    "comment": "Applied form ai-chdha’ ‘bring’. An intransitive motion verb: the entailed goal is obligatorily expressed as a locative (dir ya’), may be a person's location, and does not count towards transitivity.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_bh11ya",
@@ -1001,7 +1046,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "bh1i-chdha’", "judgment": "acceptable"}
+      {"form": "bhɨi-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1011,7 +1056,8 @@
       ["function", "agent"],
       ["role", "location"]
     ],
-    "comment": "Applied form bh1i-chdha’ ‘make pass through’. An intransitive motion verb; the entailed location does not count towards transitivity."
+    "comment": "Applied form bhɨi-chdha’ ‘make pass through’. An intransitive motion verb; the entailed location does not count towards transitivity.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_bhaya_swallow",
@@ -1033,7 +1079,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form bhai’-chdha’ ‘forcefeed’. A verb of ingestion: the subject is not maximally distinct from the object."
+    "comment": "Applied form bhai’-chdha’ ‘forcefeed’. A verb of ingestion: the subject is not maximally distinct from the object.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_iya",
@@ -1055,7 +1102,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form ii-chdha’ ‘make drink’. A verb of ingestion: the subject is not maximally distinct from the object."
+    "comment": "Applied form ii-chdha’ ‘make drink’. A verb of ingestion: the subject is not maximally distinct from the object.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_kaaya",
@@ -1077,7 +1125,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form kai-dha’ ‘make hear’. A verb of perception: the subject is not maximally distinct from the object."
+    "comment": "Applied form kai-dha’ ‘make hear’. A verb of perception: the subject is not maximally distinct from the object.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_namkia",
@@ -1099,7 +1148,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form namki-chdha’ ‘join’. A lexical middle: the subject is not maximally distinct from the object."
+    "comment": "Applied form namki-chdha’ ‘join’. A lexical middle: the subject is not maximally distinct from the object.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_oncho",
@@ -1121,7 +1171,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form o’ñxi-dha’ ‘hide (animate object)’. A lexical middle: the subject is not maximally distinct from the object. Requires the middle prefix jum-, (338)."
+    "comment": "Applied form o’ñxi-dha’ ‘hide (animate object)’. A lexical middle: the subject is not maximally distinct from the object. Requires the middle prefix jum-, (338).",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_saabu",
@@ -1143,20 +1194,21 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form saab-tuda’ ‘make fast (as punishment)’. A lexical middle: the subject is not maximally distinct from the object."
+    "comment": "Applied form saab-tuda’ ‘make fast (as punishment)’. A lexical middle: the subject is not maximally distinct from the object.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_t1gia",
     "source": {"bibkey": "everdell-2023", "paperLabel": "Table 5.2"},
     "language": "sout2976",
-    "primaryText": "t1gia’",
+    "primaryText": "tɨgia’",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "see",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "t1iñxi-dha’", "judgment": "acceptable"}
+      {"form": "tɨiñxi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1165,7 +1217,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form t1iñxi-dha’ ‘show’. A verb of perception: the subject is not maximally distinct from the object."
+    "comment": "Applied form tɨiñxi-dha’ ‘show’. A verb of perception: the subject is not maximally distinct from the object.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_tulhiina",
@@ -1187,7 +1240,8 @@
       ["entailed", "none"],
       ["function", "agent"]
     ],
-    "comment": "Applied form tulhiiñ-chuda’ ‘make suffer’. A lexical middle: the subject is not maximally distinct from the object."
+    "comment": "Applied form tulhiiñ-chuda’ ‘make suffer’. A lexical middle: the subject is not maximally distinct from the object.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_gara",
@@ -1210,7 +1264,8 @@
       ["function", "promotion"],
       ["role", "recipient"]
     ],
-    "comment": "Applied form ga’lhi-dha’ ‘sell to someone’. The buyer is entailed ((326), (327)) but cannot be expressed in the base clause (324b); the applied form promotes it to primary object."
+    "comment": "Applied form ga’lhi-dha’ ‘sell to someone’. The buyer is entailed ((326), (327)) but cannot be expressed in the base clause (324b); the applied form promotes it to primary object.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_abiaru",
@@ -1233,7 +1288,8 @@
       ["function", "promotion"],
       ["role", "recipient"]
     ],
-    "comment": "Applied form abialh-dha’ ‘sell to someone on credit’. Borrowed from Spanish fiar; patterns with ga’ra’."
+    "comment": "Applied form abialh-dha’ ‘sell to someone on credit’. Borrowed from Spanish fiar; patterns with ga’ra’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_sopkia",
@@ -1256,7 +1312,8 @@
       ["function", "promotion"],
       ["role", "hearer"]
     ],
-    "comment": "Applied form sopki-dha’ ‘tell someone a story’. The hearer cannot be an object of the base (331b) and is promoted by the applicative (332b)."
+    "comment": "Applied form sopki-dha’ ‘tell someone a story’. The hearer cannot be an object of the base (331b) and is promoted by the applicative (332b). The book glosses the verb 'tell.story'.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_iata",
@@ -1279,20 +1336,21 @@
       ["function", "promotion"],
       ["role", "hearer"]
     ],
-    "comment": "Applied form iatgi-dha’ ‘lie to someone’. The frustrative t1i requires a potential hearer (336a), so the hearer is entailed; the perfective applied form is truncated (337)."
+    "comment": "Applied form iatgi-dha’ ‘lie to someone’. The frustrative tɨi requires a potential hearer (336a), so the hearer is entailed; the perfective applied form is truncated (337).",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_1xcho",
     "source": {"bibkey": "everdell-2023", "paperLabel": "(339)–(341)"},
     "language": "sout2976",
-    "primaryText": "1xcho’",
+    "primaryText": "ɨxcho’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "hide (inanimate patient)",
+    "translation": "hide (inanimate object)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "1xchoi-dha’", "judgment": "acceptable"}
+      {"form": "ɨxchoi-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1302,7 +1360,8 @@
       ["function", "promotion"],
       ["role", "possessor"]
     ],
-    "comment": "Applied form 1xchoi-dha’ ‘hide something from someone’. A prototypical transitive (animate agent, inanimate patient): the person the patient is hidden from is promoted, (341)."
+    "comment": "Applied form ɨxchoi-dha’ ‘hide something from someone’. A prototypical transitive (animate agent, inanimate patient): the person the patient is hidden from is promoted, (341). The book also glosses the verb 'hide.inan'.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_jotsa",
@@ -1311,7 +1370,7 @@
     "primaryText": "jotsa’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "send (to a location)",
+    "translation": "send (to location)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -1325,7 +1384,8 @@
       ["function", "promotion"],
       ["role", "goal"]
     ],
-    "comment": "Applied form jotxi-dha’ ‘send (to a person)’. The base entails a goal expressed as a locative phrase; the applied form entails an animate goal, (357b) versus (356b), and rejects a place-name DP (362)."
+    "comment": "Applied form jotxi-dha’ ‘send (to a person)’. The base entails a goal expressed as a locative phrase; the applied form entails an animate goal, (357b) versus (356b), and rejects a place-name DP (362).",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_bua_iabu",
@@ -1334,7 +1394,7 @@
     "primaryText": "bua’∼iabu’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "throw.sg/pl",
+    "translation": "throw.SG/PL",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -1348,7 +1408,8 @@
       ["function", "promotion"],
       ["role", "goal"]
     ],
-    "comment": "Applied form bui-dha’∼iabui-dha’ ‘throw to someone.sg/pl’. The base has a goal and no recipient (363a), (364); the applied form's goal is an animate intended recipient (365)."
+    "comment": "Applied form bui-dha’∼iabui-dha’ ‘throw to someone.SG/PL’. The base has a goal and no recipient (363a), (364); the applied form's goal is an animate intended recipient (365).",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_baabu",
@@ -1371,7 +1432,8 @@
       ["function", "promotion"],
       ["role", "source"]
     ],
-    "comment": "Applied form baabui-dha’ ‘take away from someone (under something)’. The promoted source must be animate (369); the possession implicature runs from the promoted object to the subject."
+    "comment": "Applied form baabui-dha’ ‘take away from someone (under something)’. The promoted source must be animate (369); the possession implicature runs from the promoted object to the subject.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_nuina_nuyasa",
@@ -1380,7 +1442,7 @@
     "primaryText": "nui’ña’∼nu’yasa’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "push.sg/pl",
+    "translation": "push.SG/PL",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -1394,7 +1456,8 @@
       ["function", "promotion"],
       ["role", "target"]
     ],
-    "comment": "Applied form nui’ñ-dha’ ‘shove at someone’. The promoted target is animate but there is no possession entailment: t1i cancels the contact, (373)."
+    "comment": "Applied form nui’ñ-dha’ ‘shove at someone’. The promoted target is animate but there is no possession entailment: tɨi cancels the contact, (373).",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_makia",
@@ -1417,21 +1480,22 @@
       ["entailed", "none"],
       ["function", "blocked"]
     ],
-    "comment": "Lexically ditransitive (recipient and theme are both objects, (325)); no applied form exists."
+    "comment": "Lexically ditransitive (recipient and theme are both objects, (325)); no applied form exists.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_t1kka",
     "source": {"bibkey": "everdell-2023", "paperLabel": "(375)"},
     "language": "sout2976",
-    "primaryText": "t1kka’",
+    "primaryText": "tɨkka’",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "ask",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "t1kki-dha’", "judgment": "unacceptable"},
-      {"form": "t1k-tuda’", "judgment": "unacceptable"}
+      {"form": "tɨkki-dha’", "judgment": "unacceptable"},
+      {"form": "tɨk-tuda’", "judgment": "unacceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1440,7 +1504,8 @@
       ["entailed", "none"],
       ["function", "blocked"]
     ],
-    "comment": "Lexically ditransitive (the askee is an object alongside the CP question); no applied form exists."
+    "comment": "Lexically ditransitive (the askee is an object alongside the CP question); no applied form exists.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_bakcha",
@@ -1463,7 +1528,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "recipient"]
     ],
-    "comment": "Applied form ba’k-chuda’ ‘build houses for someone’. No object prefix on the base ((296b), (307)), but the incorporated noun ba’ak ‘house’ is a syntactic argument (308)."
+    "comment": "Applied form ba’k-chuda’ ‘build houses for someone’. No object prefix on the base ((296b), (307)), but the incorporated noun ba’ak ‘house’ is a syntactic argument (308). The applied citation form is the stem of ja-ba’k-chuda-’-am (296c).",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_boikta",
@@ -1486,7 +1552,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "recipient"]
     ],
-    "comment": "Applied form boik-dha’ ‘make chuales for someone’."
+    "comment": "Applied form boik-dha’ ‘make chuales for someone’. The citation forms are the uninflected stems of tu-boik-ta-’ (297b) and jiñ-boik-dha-’ (297c).",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_asakta",
@@ -1509,20 +1576,21 @@
       ["function", "beneficiary"],
       ["beneficiary", "recipient"]
     ],
-    "comment": "Applied form aski-chdha’ ‘make asaks for someone’."
+    "comment": "Applied form aski-chdha’ ‘make asaks for someone’. The citation forms are the uninflected stems of tu-asak-ta-’-am (298b) and tu-ja-aski-chdha-’-iñ (298c).",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_t1maichcha",
     "source": {"bibkey": "everdell-2023", "paperLabel": "(299)"},
     "language": "sout2976",
-    "primaryText": "t1maichcha’",
+    "primaryText": "tɨmaichcha’",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "make tamales",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "t1maich-chuda’", "judgment": "acceptable"}
+      {"form": "tɨmaich-chuda’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1532,20 +1600,21 @@
       ["function", "beneficiary"],
       ["beneficiary", "recipient"]
     ],
-    "comment": "Applied form t1maich-chuda’ ‘make tamales for someone’."
+    "comment": "Applied form tɨmaich-chuda’ ‘make tamales for someone’. The citation forms are the uninflected stems of tɨmaich-cha-’ (299b) and tɨmaich-chuda-’ (299c).",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_baiss1na",
     "source": {"bibkey": "everdell-2023", "paperLabel": "Table 5.6"},
     "language": "sout2976",
-    "primaryText": "baiss1na’",
+    "primaryText": "baissɨna’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "stretch.tr",
+    "translation": "stretch.TR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "baiss1ñ-dha’", "judgment": "acceptable"}
+      {"form": "baissɨñ-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1555,7 +1624,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "deputative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_bakchia",
@@ -1578,7 +1648,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "recipient"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_bakuana",
@@ -1601,7 +1672,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "deputative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_bakta",
@@ -1625,7 +1697,8 @@
       ["beneficiary", "basic"],
       ["role", "location"]
     ],
-    "comment": "Table 5.7: the entailed location resists an animate referent and is not promoted."
+    "comment": "Table 5.7: the entailed location resists an animate referent and is not promoted.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_biaa",
@@ -1648,7 +1721,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "basic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_bulhia",
@@ -1672,7 +1746,8 @@
       ["beneficiary", "deputative"],
       ["role", "instrument"]
     ],
-    "comment": "Table 5.7: the entailed instrument, obligatorily marked with -k1’n ‘with’, is not promoted."
+    "comment": "Table 5.7: the entailed instrument, obligatorily marked with -kɨ’n ‘with’, is not promoted.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_bulhkada",
@@ -1681,7 +1756,7 @@
     "primaryText": "bulhkada’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "shrink.tr (clothes)",
+    "translation": "shrink.TR (clothes)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -1695,7 +1770,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "deputative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_bhippioka",
@@ -1704,7 +1780,7 @@
     "primaryText": "bhippio’ka’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "untie, untangle.tr",
+    "translation": "untie, untangle.TR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -1718,20 +1794,21 @@
       ["function", "beneficiary"],
       ["beneficiary", "deputative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_bh1ika_uika",
     "source": {"bibkey": "everdell-2023", "paperLabel": "Table 5.6"},
     "language": "sout2976",
-    "primaryText": "bh1ika’∼ui’ka’",
+    "primaryText": "bhɨika’∼ui’ka’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "bring, take.sg/pl",
+    "translation": "bring, take.SG/PL",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "bh1ix-dha’∼ui’x-dha’", "judgment": "acceptable"}
+      {"form": "bhɨix-dha’∼ui’x-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1741,7 +1818,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "basic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_bh11ya_uya",
@@ -1750,11 +1828,11 @@
     "primaryText": "bh11ya’∼u’ya’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "bring.sg/pl",
+    "translation": "bring.SG/PL",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "bh1i-dha’∼ui’-dha’", "judgment": "acceptable"}
+      {"form": "bhɨi-dha’∼ui’-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -1764,7 +1842,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "recipient"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_dagia",
@@ -1787,7 +1866,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "deputative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_dabina",
@@ -1811,7 +1891,8 @@
       ["beneficiary", "deputative"],
       ["role", "instrument"]
     ],
-    "comment": "Table 5.7: the entailed instrument, obligatorily marked with -k1’n ‘with’, is not promoted."
+    "comment": "Table 5.7: the entailed instrument, obligatorily marked with -kɨ’n ‘with’, is not promoted.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_damuna",
@@ -1834,7 +1915,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "recipient"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_d11nnia",
@@ -1855,9 +1937,10 @@
       ["objects", "1"],
       ["entailed", "none"],
       ["function", "beneficiary"],
-      ["beneficiary", "deputative"]
+      ["beneficiary", "basic"]
     ],
-    "comment": ""
+    "comment": "Table 5.6 marks the beneficiary as basic, '(cure)'.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_dunia",
@@ -1880,7 +1963,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "basic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_echkada",
@@ -1903,7 +1987,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "deputative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_gaaga",
@@ -1926,7 +2011,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "recipient"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_gaamu",
@@ -1950,7 +2036,8 @@
       ["beneficiary", "basic"],
       ["role", "location"]
     ],
-    "comment": "Table 5.7: the entailed location resists an animate referent and is not promoted."
+    "comment": "Table 5.7: the entailed location resists an animate referent and is not promoted.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_ikora",
@@ -1959,7 +2046,7 @@
     "primaryText": "ikora’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "dirty.tr",
+    "translation": "dirty.TR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -1973,7 +2060,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "basic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_jaina_jaisa",
@@ -1982,7 +2070,7 @@
     "primaryText": "jaiña’∼jaisa’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "break, rip, split.sg/pl",
+    "translation": "break, rip, split.SG/PL",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -1996,7 +2084,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "recipient"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_jikpata",
@@ -2019,7 +2108,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "basic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_jugia",
@@ -2042,7 +2132,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "basic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_junmada",
@@ -2051,7 +2142,7 @@
     "primaryText": "junmada’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "make mole out of something.tr",
+    "translation": "make mole out of something.TR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -2065,7 +2156,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "recipient"]
     ],
-    "comment": "Transitive by the resultative -xim test (280a); the applicative adds a recipient, not an agent (280b)."
+    "comment": "Transitive by the resultative -xim test (280a); the applicative adds a recipient, not an agent (280b).",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_jupna",
@@ -2090,7 +2182,8 @@
       ["role", "source"],
       ["paradigm", "1"]
     ],
-    "comment": "Table 5.7: the entailed source resists an animate referent and is not promoted. The transitive member of the suppletive paradigm (377): jupana’∼jupasa’."
+    "comment": "Table 5.7: the entailed source resists an animate referent and is not promoted. The transitive member of the suppletive paradigm (377): jupana’∼jupasa’.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_juulhia",
@@ -2114,7 +2207,8 @@
       ["beneficiary", "recipient"],
       ["role", "location"]
     ],
-    "comment": "Table 5.7: the entailed location resists an animate referent and is not promoted."
+    "comment": "Table 5.7: the entailed location resists an animate referent and is not promoted.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_kispa",
@@ -2137,7 +2231,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "recipient"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_k11sa",
@@ -2162,7 +2257,8 @@
       ["role", "goal"],
       ["paradigm", "4"]
     ],
-    "comment": "Table 5.7: the entailed goal resists an animate referent and is not promoted. The causative member of the suppletive paradigm (383)."
+    "comment": "Table 5.7: the entailed goal resists an animate referent and is not promoted. The causative member of the suppletive paradigm (383).",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_k11mpiga",
@@ -2185,20 +2281,21 @@
       ["function", "beneficiary"],
       ["beneficiary", "deputative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_k1kbo_tr",
     "source": {"bibkey": "everdell-2023", "paperLabel": "Table 5.6"},
     "language": "sout2976",
-    "primaryText": "k1kbo’",
+    "primaryText": "kɨkbo’",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "stand up, put on feet",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "k1kbui-chdha’", "judgment": "acceptable"}
+      {"form": "kɨkbui-chdha’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -2208,7 +2305,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "deputative"]
     ],
-    "comment": "The transitive ‘put on feet’; Table 5.1 lists the intransitive ‘stand up’ with the same applied form."
+    "comment": "The transitive ‘put on feet’; Table 5.1 lists the intransitive ‘stand up’ with the same applied form.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_kuana",
@@ -2231,7 +2329,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "deputative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_kuagia",
@@ -2255,7 +2354,8 @@
       ["beneficiary", "recipient"],
       ["role", "instrument"]
     ],
-    "comment": "Table 5.7: the entailed instrument, obligatorily marked with -k1’n ‘with’, is not promoted."
+    "comment": "Table 5.7: the entailed instrument, obligatorily marked with -kɨ’n ‘with’, is not promoted.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_kupioka",
@@ -2264,7 +2364,7 @@
     "primaryText": "kupio’ka’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "open.tr",
+    "translation": "open.TR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -2278,7 +2378,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "deputative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_kuupa",
@@ -2287,7 +2388,7 @@
     "primaryText": "kuupa’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "close.tr, enclose.tr",
+    "translation": "close.TR, enclose.TR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -2301,7 +2402,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "deputative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_mukda",
@@ -2310,7 +2412,7 @@
     "primaryText": "mu’kda’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "sharpen.tr",
+    "translation": "sharpen.TR",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -2324,7 +2426,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "deputative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_muaa_kooda",
@@ -2333,7 +2436,7 @@
     "primaryText": "mu’aa’∼kooda’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "kill.sg/pl",
+    "translation": "kill.SG/PL",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -2347,7 +2450,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "deputative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_saasbia",
@@ -2371,7 +2475,8 @@
       ["beneficiary", "recipient"],
       ["role", "instrument"]
     ],
-    "comment": "Table 5.7: the entailed instrument, obligatorily marked with -k1’n ‘with’, is not promoted."
+    "comment": "Table 5.7: the entailed instrument, obligatorily marked with -kɨ’n ‘with’, is not promoted.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_saibhioka",
@@ -2395,7 +2500,8 @@
       ["beneficiary", "deputative"],
       ["role", "source"]
     ],
-    "comment": "Table 5.7: the entailed source resists an animate referent and is not promoted."
+    "comment": "Table 5.7: the entailed source resists an animate referent and is not promoted.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_sarna",
@@ -2418,7 +2524,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "deputative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_s11ssa",
@@ -2441,7 +2548,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "basic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_sooma",
@@ -2465,7 +2573,8 @@
       ["beneficiary", "deputative"],
       ["role", "instrument"]
     ],
-    "comment": "Table 5.7: the entailed instrument, obligatorily marked with -k1’n ‘with’, is not promoted."
+    "comment": "Table 5.7: the entailed instrument, obligatorily marked with -kɨ’n ‘with’, is not promoted.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_suulhga",
@@ -2489,20 +2598,21 @@
       ["beneficiary", "deputative"],
       ["role", "instrument"]
     ],
-    "comment": "Table 5.7: the entailed instrument, obligatorily marked with -k1’n ‘with’, is not promoted."
+    "comment": "Table 5.7: the entailed instrument, obligatorily marked with -kɨ’n ‘with’, is not promoted.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_t1bgata",
     "source": {"bibkey": "everdell-2023", "paperLabel": "Table 5.6"},
     "language": "sout2976",
-    "primaryText": "t1bgata’",
+    "primaryText": "tɨbgata’",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "start, begin",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "t1bgax-dha’", "judgment": "acceptable"}
+      {"form": "tɨbgax-dha’", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -2512,7 +2622,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "deputative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_uana",
@@ -2535,7 +2646,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "deputative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_uana_write",
@@ -2558,7 +2670,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "deputative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_umga",
@@ -2581,7 +2694,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "recipient"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_xiopna",
@@ -2604,7 +2718,8 @@
       ["function", "beneficiary"],
       ["beneficiary", "basic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_jupania_jupakia",
@@ -2613,7 +2728,7 @@
     "primaryText": "jupañia’∼jupakia’",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "get released.sg/pl",
+    "translation": "get released.SG/PL",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -2625,7 +2740,8 @@
       ["function", "blocked"],
       ["paradigm", "1"]
     ],
-    "comment": "The inchoative member of a suppletive paradigm; the applicative attaches only to the transitive jupana’∼jupasa’ (378)."
+    "comment": "The inchoative member of a suppletive paradigm; the applicative attaches only to the transitive jupana’∼jupasa’ (378).",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_baax",
@@ -2646,7 +2762,8 @@
       ["function", "blocked"],
       ["paradigm", "2"]
     ],
-    "comment": "Stative member of a suppletive paradigm."
+    "comment": "Stative member of a suppletive paradigm.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_baasa",
@@ -2669,7 +2786,8 @@
       ["function", "beneficiary"],
       ["paradigm", "2"]
     ],
-    "comment": "Applied form baax-dha’ ‘put inside for someone else’. The transitive member hosts the applicative."
+    "comment": "Applied form baax-dha’ ‘put inside for someone else’. The transitive member hosts the applicative.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_daa",
@@ -2690,7 +2808,8 @@
       ["function", "blocked"],
       ["paradigm", "3"]
     ],
-    "comment": "Stative member of a suppletive paradigm."
+    "comment": "Stative member of a suppletive paradigm.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_daibu",
@@ -2711,7 +2830,8 @@
       ["function", "blocked"],
       ["paradigm", "3"]
     ],
-    "comment": "Neither -dha nor -tuda combines with the intransitive form."
+    "comment": "Neither -dha nor -tuda combines with the intransitive form.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_daasa",
@@ -2734,7 +2854,8 @@
       ["function", "beneficiary"],
       ["paradigm", "3"]
     ],
-    "comment": "Applied form daax-dha’ ‘leave something for someone else’. The palatalized /s/ of the applied form shows it is built on the causative member."
+    "comment": "Applied form daax-dha’ ‘leave something for someone else’. The palatalized /s/ of the applied form shows it is built on the causative member.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_k11k",
@@ -2755,7 +2876,8 @@
       ["function", "blocked"],
       ["paradigm", "4"]
     ],
-    "comment": "Stative member of a suppletive paradigm."
+    "comment": "Stative member of a suppletive paradigm.",
+    "verified": "page-image"
   },
   {
     "id": "everdell2023_k11ka",
@@ -2776,6 +2898,7 @@
       ["function", "blocked"],
       ["paradigm", "4"]
     ],
-    "comment": "The applicative combines only with the causative k11sa’."
+    "comment": "The applicative combines only with the causative k11sa’.",
+    "verified": "page-image"
   }
 ]
