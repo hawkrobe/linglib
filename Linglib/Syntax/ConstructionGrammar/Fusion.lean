@@ -6,51 +6,36 @@ public import Linglib.Syntax.ConstructionGrammar.Basic
 /-!
 # Fusion of verbs with argument structure constructions
 
-An argument structure construction pairs a predicate with an array of argument roles, each
-linked to a grammatical function, and a verb brings an array of participant roles; a clause
-arises when the verb's participant roles fuse with the construction's argument roles
-([goldberg-1995] §2.4). An argument role is profiled when it is linked to a direct grammatical
-relation (`ArgStructure.IsProfiled`, p. 49), so profiling is read off the linking and not
-stored, while a participant role is profiled when the verb obligatorily expresses it, a lexical
-fact. `ArgStructure.IsFusion` states the two principles that decide which roles fuse (p. 50):
-the Semantic Coherence Principle, that only compatible roles fuse, and the Correspondence
-Principle, that every profiled participant role fuses with a profiled argument role, except that
-a verb profiling three roles may fuse one of them with a nonprofiled argument role. It adds the
-solid lines of the book's diagrams, the argument roles the verb must supply; the others the
-construction can contribute (`ArgStructure.contributed`, p. 54). A construction also constrains
-the relation a verb's event bears to its own (`VerbRelation`, p. 65), which a construction may
-restrict to a class of verbs (`ArgStructure.Admits`, p. 64).
+This file defines the fusion of a verb with an argument structure construction, in Goldberg's
+account of argument structure. A construction's meaning is a predicate over argument roles, each
+linked to a grammatical function, and a verb brings participant roles; a clause arises when the
+two are fused. An argument role is profiled when it is linked to a direct grammatical relation,
+and a participant role when the verb must express it. Fusion obeys the Semantic Coherence
+Principle, that only compatible roles fuse, and the Correspondence Principle, that a profiled
+participant role fuses with a profiled argument role.
 
 ## Main definitions
 
-* `VerbRelation`: the relations a verb's event may bear to a construction's
-* `LinkedRole`, `ArgStructure`: an argument role with its grammatical function, and the
-  construction's predicate, roles and admissible relations
-* `Participants`: a verb's profiled participant roles and the argument roles each can be
-  construed as
-* `ArgStructure.IsProfiled`, `ArgStructure.IsFusion`, `ArgStructure.contributed`,
-  `ArgStructure.Admits`
-* `Construction.Linked`: the form bears the grammatical functions the meaning links to
+* `LinkedRole`, `ArgStructure`: argument roles with their grammatical functions, and the meaning
+  of a construction
+* `Participants`: the participant roles of a verb
+* `ArgStructure.IsFusion`: a fusion obeying both principles
+* `ArgStructure.contributed`: the argument roles a construction adds to a verb
+* `VerbRelation`, `ArgStructure.Admits`: how a verb's event may relate to the construction's
+* `Construction.Linked`: the form carries the grammatical functions the meaning links to
 
 ## Main results
 
-* `ArgStructure.IsFusion.exists_fused`: a construction with a role the verb must supply shares
-  a participant with every verb that fuses with it, the Shared Participant Condition the book
-  adopts from Matsumoto (p. 65)
-* `ArgStructure.IsFusion.isProfiled`: without the three-role exception, a fused profiled
-  participant role sits in a profiled argument role
+* `ArgStructure.IsFusion.exists_fused`: the Shared Participant Condition
+* `ArgStructure.IsFusion.isProfiled`: without the three-role exception, a profiled participant
+  role fuses with a profiled argument role
 
 ## Implementation notes
 
-Role labels have "no theoretical significance" (p. 49), so argument and participant roles are
-type parameters, and whether a participant role "can be construed as an instance of" an argument
-role, which the book leaves to "general categorization principles" (p. 50), is data the verb
-supplies (`Participants.construals`). Fusion is a partial map from participant roles to argument
-roles, not required to be injective, since reflexives merge two participant roles into one
-argument role (p. 58). The Correspondence Principle's condition that a profiled role be
-"expressed" is not modelled: the constructions that shade, cut or merge a profiled role (§2.4.4)
-are outside the fragment. The verb classes an admissible relation is restricted to are sets of
-the verb's features, of a type the construction leaves open.
+Role labels are type parameters, and the argument roles a participant role can be construed as
+are data the verb supplies. A fusion is a partial map that need not be injective, since
+reflexives merge two participant roles into one argument role. Constructions that shade, cut or
+merge a profiled role are not modelled.
 
 ## References
 
@@ -61,10 +46,10 @@ the verb's features, of a type the construction leaves open.
 
 namespace ConstructionGrammar
 
-/-- The relation the event type a verb designates bears to the one its construction designates
-([goldberg-1995], p. 65): a subtype of it (the diagrams' "instance"), its means, its result, a
-precondition of it, and, "to a very limited extent", its manner, the means of identifying it, or
-its intended result. -/
+/-- A `VerbRelation` is a relation the event type a verb designates may bear to the one its
+construction designates, which is a subtype of it (the diagrams' "instance"), its means, its
+result, a precondition of it, or, "to a very limited extent", its manner, the means of
+identifying it or its intended result ([goldberg-1995], p. 65). -/
 inductive VerbRelation where
   | subtype
   | means
@@ -75,9 +60,9 @@ inductive VerbRelation where
   | intendedResult
   deriving DecidableEq, Repr
 
-/-- An argument role of a construction with the grammatical function it is linked to, and
-whether the verb must supply it, a solid line in the book's diagrams, or the construction may
-contribute it, a dashed line ([goldberg-1995], p. 51). -/
+/-- A `LinkedRole` is an argument role of a construction with the grammatical function it is
+linked to and whether the verb must supply it, drawn as a solid line, or the construction may
+contribute it, drawn as a dashed line ([goldberg-1995], p. 51). -/
 structure LinkedRole (ρ : Type*) where
   /-- The argument role. -/
   role : ρ
@@ -87,10 +72,10 @@ structure LinkedRole (ρ : Type*) where
   obligatory : Bool := true
   deriving DecidableEq, Repr
 
-/-- The meaning pole of an argument structure construction ([goldberg-1995] §2.4.2): a
-predicate over argument roles linked to grammatical functions, and the relations a verb's event
-may bear to the construction's, each with the features a verb must have to bear it, `∅` for none
-(p. 64). -/
+/-- An `ArgStructure` is the meaning of an argument structure construction, a predicate over
+argument roles linked to grammatical functions together with the relations a verb's event may
+bear to the construction's, each restricted to the verbs with some features, `∅` for none
+([goldberg-1995] §2.4.2, p. 64). -/
 structure ArgStructure (Pred ρ K : Type*) where
   /-- The construction's predicate, such as CAUSE-RECEIVE. -/
   pred : Pred
@@ -100,8 +85,9 @@ structure ArgStructure (Pred ρ K : Type*) where
   relations : List (VerbRelation × Finset K)
   deriving DecidableEq
 
-/-- A verb's participant roles ([goldberg-1995] §2.4.1): those it lexically profiles, which it
-obligatorily expresses, and the argument roles each can be construed as an instance of. -/
+/-- `Participants π ρ` records the participant roles a verb lexically profiles, which it must
+express, and the argument roles each participant role can be construed as an instance of
+([goldberg-1995] §2.4.1). -/
 structure Participants (π ρ : Type*) where
   /-- The lexically profiled participant roles. -/
   profiled : Finset π
@@ -133,14 +119,14 @@ variable [DecidableEq ρ]
 /-- `f` fuses the participant roles of `V` with the argument roles of the construction
 ([goldberg-1995], pp. 50–51). -/
 structure IsFusion (V : Participants π ρ) (f : π → Option ρ) : Prop where
-  /-- The Semantic Coherence Principle: a participant role fuses only with an argument role it
+  /-- By the Semantic Coherence Principle, a participant role fuses only with an argument role it
   can be construed as. -/
   coherent : ∀ p, ∀ r ∈ f p, r ∈ V.construals p
   /-- A participant role fuses only with an argument role of the construction. -/
   mem_roles : ∀ p, ∀ r ∈ f p, r ∈ C.roles.map LinkedRole.role
-  /-- The Correspondence Principle: every profiled participant role is fused. -/
+  /-- By the Correspondence Principle, every profiled participant role is fused. -/
   profiled_fused : ∀ p ∈ V.profiled, (f p).isSome
-  /-- The Correspondence Principle: a profiled participant role fuses with a profiled argument
+  /-- By the Correspondence Principle, a profiled participant role fuses with a profiled argument
   role, except that a verb profiling three roles may fuse one with a nonprofiled one. -/
   correspondence :
     (V.profiled.filter fun p ↦ ∃ r ∈ f p, ¬ C.IsProfiled r).card ≤
@@ -160,15 +146,16 @@ theorem isFusion_iff (V : Participants π ρ) (f : π → Option ρ) :
 instance [Fintype π] (V : Participants π ρ) (f : π → Option ρ) : Decidable (C.IsFusion V f) :=
   decidable_of_iff _ (C.isFusion_iff V f).symm
 
-/-- The argument roles the construction contributes under `f`: those no participant role fuses
-with ([goldberg-1995], p. 54, "the construction can add roles not contributed by the verb"). -/
+/-- `contributed f` lists the argument roles no participant role fuses with under `f`, which the
+construction contributes: "the construction can add roles not contributed by the verb"
+([goldberg-1995], p. 54). -/
 def contributed [Fintype π] (f : π → Option ρ) : List ρ :=
   (C.roles.map LinkedRole.role).filter fun r ↦ ∀ p, r ∉ f p
 
 variable {C} {V : Participants π ρ} {f : π → Option ρ}
 
-/-- The Shared Participant Condition ([goldberg-1995], p. 65, after Matsumoto): a construction
-with a role the verb must supply shares a participant with every verb that fuses with it. -/
+/-- A construction with a role the verb must supply shares a participant with every verb that
+fuses with it, the Shared Participant Condition [goldberg-1995] adopts from Matsumoto (p. 65). -/
 theorem IsFusion.exists_fused (h : C.IsFusion V f) (ha : ∃ a ∈ C.roles, a.obligatory) :
     ∃ p, ∃ r, r ∈ f p :=
   let ⟨a, ha, hob⟩ := ha
@@ -186,8 +173,8 @@ theorem IsFusion.isProfiled (h : C.IsFusion V f) (h3 : V.profiled.card ≠ 3) {p
 
 end ArgStructure
 
-/-- The form of an argument structure construction bears the grammatical functions its meaning
-links its roles to, each on its own slot. -/
+/-- An argument structure construction is linked when each grammatical function its meaning
+links a role to is borne by a slot of its form, and no two roles share a function. -/
 def Construction.Linked {Pred ρ K : Type*} (c : Construction (ArgStructure Pred ρ K)) : Prop :=
   (c.meaning.roles.map LinkedRole.gf).Nodup ∧
     ∀ a ∈ c.meaning.roles, ∃ s ∈ c.form, s.gf = some a.gf
