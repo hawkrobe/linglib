@@ -64,7 +64,6 @@ logic, so their use conditions are derived and the restriction is left to the ro
 
 namespace Gutzmann2015
 
-open Data.Examples
 open Clause (SentenceType EmbeddingContext)
 
 /-- The German clause types of chapter 5, Truckenbrodt's, told apart by the position of the
@@ -108,7 +107,7 @@ theorem verbInC_iff_required :
   decide
 
 /-- The cell a row records, a sentence type in a matrix or insubordinated context. -/
-def cellOf (row : LinguisticExample) : Option (SentenceType × EmbeddingContext) :=
+def cellOf (row : Datum) : Option (SentenceType × EmbeddingContext) :=
   (row.parse? "sentenceType" [("declarative", .declarative), ("polar", .polar),
     ("constituent", .constituent), ("imperative", .imperative)]).bind fun t ↦
     (row.parse? "embedding" [("matrix", .matrix), ("insubordinated", .insubordinated)]).map

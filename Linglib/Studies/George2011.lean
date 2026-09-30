@@ -57,7 +57,7 @@ defeats it (`knowsQ_not_reducible`), whereas the existential rule makes any pred
 
 namespace George2011
 
-open Question Data.Examples
+open Question
 
 variable {W τ E : Type*}
 
@@ -376,7 +376,7 @@ structure Row where
   holds : Bool
   deriving DecidableEq, Repr
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let sentence ← ex.parse? "sentence" [("admittedKnown", Sentence.admittedKnown),
     ("notAdmittedKnown", .notAdmittedKnown), ("admittedButNot", .admittedButNot),
     ("fourStudents", .fourStudents), ("jannaNewspaper", .jannaNewspaper),
@@ -384,7 +384,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let holds ← ex.parse? "holds" [("yes", true), ("no", false)]
   pure ⟨sentence, holds⟩
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 theorem rows_eq : rows = [⟨.admittedKnown, true⟩, ⟨.notAdmittedKnown, false⟩,
     ⟨.admittedButNot, true⟩, ⟨.fourStudents, true⟩, ⟨.jannaNewspaper, true⟩,

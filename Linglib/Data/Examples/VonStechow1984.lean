@@ -15,9 +15,7 @@ this module; declarations live in `namespace VonStechow1984.Examples`.
 
 namespace VonStechow1984.Examples
 
-open Data.Examples
-
-def yacht : LinguisticExample :=
+def yacht : Datum :=
   { id := "vonstechow1984_yacht"
     source := ⟨"russell-1905", "the yacht anecdote"⟩
     reportedIn := some ⟨"von-stechow-1984", "(1)"⟩
@@ -30,7 +28,7 @@ def yacht : LinguisticExample :=
     readings := [("de re: ACTUALLY in the than-clause, consistent thought", .acceptable), ("de dicto: no ACTUALLY, contradictory thought", .unacceptable)]
     paperFeatures := [("phenomenon", "RA")] }
 
-def ex26 : LinguisticExample :=
+def ex26 : Datum :=
   { id := "vonstechow1984_ex26"
     source := ⟨"von-stechow-1984", "(26)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex26 : LinguisticExample :=
     readings := [("informative: than-clauses anchored to the actual world by ACTUALLY", .acceptable), ("trivial: than-clauses evaluated in the counterfactual world, antecedent and consequent contradictory", .unacceptable)]
     paperFeatures := [("phenomenon", "AC")] }
 
-def exIII : LinguisticExample :=
+def exIII : Datum :=
   { id := "vonstechow1984_exIII"
     source := ⟨"von-stechow-1984", "(iii)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def exIII : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "NPI"), ("polarityItem", "anyone"), ("polarity", "negative")] }
 
-def exIV : LinguisticExample :=
+def exIV : Datum :=
   { id := "vonstechow1984_exIV"
     source := ⟨"von-stechow-1984", "(iv)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def exIV : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "NPI"), ("polarityItem", "ever"), ("polarity", "negative")] }
 
-def ex70 : LinguisticExample :=
+def ex70 : Datum :=
   { id := "vonstechow1984_ex70"
     source := ⟨"von-stechow-1984", "(70)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex70 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "NPI"), ("polarityItem", "any, ever"), ("polarity", "negative")] }
 
-def ex71 : LinguisticExample :=
+def ex71 : Datum :=
   { id := "vonstechow1984_ex71"
     source := ⟨"von-stechow-1984", "(71)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex71 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "NPI"), ("polarityItem", "any, ever"), ("polarity", "negative")] }
 
-def ex72a : LinguisticExample :=
+def ex72a : Datum :=
   { id := "vonstechow1984_ex72a"
     source := ⟨"von-stechow-1984", "(72a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex72a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "NPI"), ("polarityItem", "already"), ("polarity", "positive")] }
 
-def ex72b : LinguisticExample :=
+def ex72b : Datum :=
   { id := "vonstechow1984_ex72b"
     source := ⟨"von-stechow-1984", "(72b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex72b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "NPI"), ("polarityItem", "already"), ("polarity", "positive")] }
 
-def exV : LinguisticExample :=
+def exV : Datum :=
   { id := "vonstechow1984_exV"
     source := ⟨"von-stechow-1984", "(v)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def exV : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "Q&C"), ("entails", "Konstanz is nicer than Düsseldorf and Stuttgart")] }
 
-def exVI : LinguisticExample :=
+def exVI : Datum :=
   { id := "vonstechow1984_exVI"
     source := ⟨"von-stechow-1984", "(vi)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def exVI : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "Q&C"), ("entails", "Ede is fatter than everyone of us")] }
 
-def exVII : LinguisticExample :=
+def exVII : Datum :=
   { id := "vonstechow1984_exVII"
     source := ⟨"von-stechow-1984", "(vii)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def exVII : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "UI"), ("doesNotEntail", "Ede is fatter than everyone")] }
 
-def ex99a : LinguisticExample :=
+def ex99a : Datum :=
   { id := "vonstechow1984_ex99a"
     source := ⟨"von-stechow-1984", "(99a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex99a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "NQ")] }
 
-def ex99b : LinguisticExample :=
+def ex99b : Datum :=
   { id := "vonstechow1984_ex99b"
     source := ⟨"von-stechow-1984", "(99b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex99b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "NQ")] }
 
-def exX : LinguisticExample :=
+def exX : Datum :=
   { id := "vonstechow1984_exX"
     source := ⟨"von-stechow-1984", "(x)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def exX : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "modal")] }
 
-def exXI : LinguisticExample :=
+def exXI : Datum :=
   { id := "vonstechow1984_exXI"
     source := ⟨"von-stechow-1984", "(xi)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def exXI : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "multihead")] }
 
-def ex171a : LinguisticExample :=
+def ex171a : Datum :=
   { id := "vonstechow1984_ex171a"
     source := ⟨"von-stechow-1984", "(171a)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex171a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "DR")] }
 
-def ex171b : LinguisticExample :=
+def ex171b : Datum :=
   { id := "vonstechow1984_ex171b"
     source := ⟨"von-stechow-1984", "(171b)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex171b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "DR")] }
 
-def ex171c : LinguisticExample :=
+def ex171c : Datum :=
   { id := "vonstechow1984_ex171c"
     source := ⟨"von-stechow-1984", "(171c)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex171c : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "DR")] }
 
-def ex217 : LinguisticExample :=
+def ex217 : Datum :=
   { id := "vonstechow1984_ex217"
     source := ⟨"von-stechow-1984", "(217)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex217 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "crossCategory"), ("category", "plural noun"), ("measure", "cardinality")] }
 
-def ex218 : LinguisticExample :=
+def ex218 : Datum :=
   { id := "vonstechow1984_ex218"
     source := ⟨"von-stechow-1984", "(218)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex218 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "crossCategory"), ("category", "mass noun"), ("measure", "amount of the totality")] }
 
-def ex224c : LinguisticExample :=
+def ex224c : Datum :=
   { id := "vonstechow1984_ex224c"
     source := ⟨"von-stechow-1984", "(224c)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex224c : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "crossCategory"), ("category", "adverb"), ("measure", "loudness")] }
 
-def ex227 : LinguisticExample :=
+def ex227 : Datum :=
   { id := "vonstechow1984_ex227"
     source := ⟨"von-stechow-1984", "(227)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex227 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "too"), ("paraphrase", "If one could lift this pack, then it would be at least 50 kg less heavy than it actually is")] }
 
-def ex230 : LinguisticExample :=
+def ex230 : Datum :=
   { id := "vonstechow1984_ex230"
     source := ⟨"von-stechow-1984", "(230)"⟩
     reportedIn := none
@@ -316,6 +314,6 @@ def ex230 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "too")] }
 
-def all : List LinguisticExample := [yacht, ex26, exIII, exIV, ex70, ex71, ex72a, ex72b, exV, exVI, exVII, ex99a, ex99b, exX, exXI, ex171a, ex171b, ex171c, ex217, ex218, ex224c, ex227, ex230]
+def all : List Datum := [yacht, ex26, exIII, exIV, ex70, ex71, ex72a, ex72b, exV, exVI, exVII, ex99a, ex99b, exX, exXI, ex171a, ex171b, ex171c, ex217, ex218, ex224c, ex227, ex230]
 
 end VonStechow1984.Examples

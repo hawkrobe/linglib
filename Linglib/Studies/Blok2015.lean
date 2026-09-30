@@ -50,7 +50,7 @@ not modelled. The bottom of the scale is `1` in the rows, the whole numbers.
 
 namespace Blok2015
 
-open Set Data.Examples
+open Set
 
 variable {s n m : ℕ}
 

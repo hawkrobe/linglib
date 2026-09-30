@@ -61,7 +61,7 @@ left unexplained. The pipeline reproduces the paradigms (3), (5), (12) and the t
 
 namespace Faust2026
 
-open Morphology Data.Examples Autosegmental
+open Morphology Autosegmental
 
 variable {α : Type*}
 
@@ -511,23 +511,23 @@ def cellTable : List (String × Cell) :=
 
 def genderTable : List (String × Gender) := [("masculine", .masculine), ("feminine", .feminine)]
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let lang ← List.lookup ex.language langTable
   let root ← ex.parse? "root" rootTable
   let cell ← ex.parse? "cell" cellTable
   pure ⟨lang, root, cell, ex.primaryText⟩
 
-def NounRow.ofExample (ex : LinguisticExample) : Option NounRow := do
+def NounRow.ofDatum (ex : Datum) : Option NounRow := do
   let gender ← ex.parse? "gender" genderTable
   pure ⟨ex.primaryText, gender, ex.parse? "root" rootTable⟩
 
-theorem row_ofExample_isSome :
-    ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome ∨ (NounRow.ofExample ex).isSome := by
+theorem row_ofDatum_isSome :
+    ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome ∨ (NounRow.ofDatum ex).isSome := by
   decide
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-def nounRows : List NounRow := Examples.all.filterMap NounRow.ofExample
+def nounRows : List NounRow := Examples.all.filterMap NounRow.ofDatum
 
 /-- The surface form the pipeline derives for a row, where its cell has a pattern. -/
 def Row.surface? (r : Row) : Option (List Char) := r.cell.pattern?.map (surfaceChars · r.root)

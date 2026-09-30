@@ -50,7 +50,7 @@ quantificational, bound by a covert adverb of quantification, and a past-tense o
 
 namespace ArreguiKusumoto1998
 
-open Data.Examples English.TemporalConnectives Japanese.TemporalConnectives
+open English.TemporalConnectives Japanese.TemporalConnectives
 open Tense (SOTParameter EmbeddedTenseReading availableReadings)
 
 variable {T : Type*}
@@ -345,7 +345,7 @@ theorem relativeTense_eq_composes :
 /-! ### The paper's examples -/
 
 /-- The language of a row. -/
-def language? (r : LinguisticExample) : Option Language :=
+def language? (r : Datum) : Option Language :=
   match r.language with
   | "stan1293" => some .english
   | "poli1260" => some .polish
@@ -353,7 +353,7 @@ def language? (r : LinguisticExample) : Option Language :=
   | _ => none
 
 /-- The connective of a row's adjunct clause. -/
-def connective? (r : LinguisticExample) : Option Connective :=
+def connective? (r : Datum) : Option Connective :=
   match r.feature? "clause" with
   | some "before" => some .before
   | some "after" => some .after
@@ -361,20 +361,20 @@ def connective? (r : LinguisticExample) : Option Connective :=
   | _ => none
 
 /-- The tense of a row's embedded clause. -/
-def tense? (r : LinguisticExample) : Option Tense :=
+def tense? (r : Datum) : Option Tense :=
   match r.feature? "embeddedTense" with
   | some "past" => some .past
   | some "present" => some .present
   | _ => none
 
 /-- How many clauses a row's adjunct contains, where the paper builds one on top of another. -/
-def clauses? (r : LinguisticExample) : Option ℕ :=
+def clauses? (r : Datum) : Option ℕ :=
   match r.feature? "embeddedClauses" with
   | some "2" => some 2
   | _ => none
 
 /-- A row's readings as complement readings. -/
-def complementReadings (r : LinguisticExample) : List EmbeddedTenseReading :=
+def complementReadings (r : Datum) : List EmbeddedTenseReading :=
   r.readings.filterMap λ x =>
     match x.1 with
     | "shifted" => some .shifted
@@ -382,7 +382,7 @@ def complementReadings (r : LinguisticExample) : List EmbeddedTenseReading :=
     | _ => none
 
 /-- A row's readings as when-clause readings. -/
-def whenReadings (r : LinguisticExample) : List WhenReading :=
+def whenReadings (r : Datum) : List WhenReading :=
   r.readings.filterMap λ x =>
     match x.1 with
     | "episodic" => some .episodic

@@ -36,7 +36,7 @@ how the unmarked case is realized.
 
 namespace Baker2015
 
-open Data.Examples Case DependentCase
+open Case DependentCase
 
 /-- The book's languages of focus by alignment type: accusative Sakha, Tamil, Amharic, Cuzco
     Quechua, Korean and Finnish; ergative Shipibo, Burushaski, Chukchi, Lezgian, Ingush,
@@ -88,11 +88,11 @@ def Arg.feature : Arg → String
   | .object => "objectCase"
 
 /-- The arguments of a row's clause, subject first: it c-commands the object. -/
-def domain (r : LinguisticExample) : List Arg :=
+def domain (r : Datum) : List Arg :=
   .subject :: if r.feature? "transitive" = some "yes" then [.object] else []
 
 /-- The observed case of a row's argument. -/
-def observed? (r : LinguisticExample) (np : Arg) : Option Observed :=
+def observed? (r : Datum) (np : Arg) : Option Observed :=
   (r.feature? np.feature).bind Observed.parse?
 
 /-- Every clause the book introduces its languages with is derived by the algorithm from the

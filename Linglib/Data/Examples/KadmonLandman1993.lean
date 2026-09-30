@@ -15,9 +15,7 @@ this module; declarations live in `namespace KadmonLandman1993.Examples`.
 
 namespace KadmonLandman1993.Examples
 
-open Data.Examples
-
-def kl1993_1 : LinguisticExample :=
+def kl1993_1 : Datum :=
   { id := "kl1993_1"
     source := ⟨"kadmon-landman-1993", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def kl1993_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("context", "negation"), ("widening", "cooking potatoes to any potatoes")] }
 
-def kl1993_2 : LinguisticExample :=
+def kl1993_2 : Datum :=
   { id := "kl1993_2"
     source := ⟨"kadmon-landman-1993", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def kl1993_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("local_signature", "mono")] }
 
-def kl1993_10 : LinguisticExample :=
+def kl1993_10 : Datum :=
   { id := "kl1993_10"
     source := ⟨"kadmon-landman-1993", "(10)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def kl1993_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("context", "generic"), ("widening", "healthy owls to any owl")] }
 
-def kl1993_27b : LinguisticExample :=
+def kl1993_27b : Datum :=
   { id := "kl1993_27b"
     source := ⟨"kadmon-landman-1993", "(27b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def kl1993_27b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("context", "universalRestrictor"), ("widening", "dry matches to any matches")] }
 
-def kl1993_55 : LinguisticExample :=
+def kl1993_55 : Datum :=
   { id := "kl1993_55"
     source := ⟨"kadmon-landman-1993", "(55)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def kl1993_55 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("local_signature", "mult")] }
 
-def kl1993_56 : LinguisticExample :=
+def kl1993_56 : Datum :=
   { id := "kl1993_56"
     source := ⟨"kadmon-landman-1993", "(56)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def kl1993_56 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.6"), ("local_signature", "mult")] }
 
-def kl1993_72 : LinguisticExample :=
+def kl1993_72 : Datum :=
   { id := "kl1993_72"
     source := ⟨"kadmon-landman-1993", "(72)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def kl1993_72 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("context", "adversative")] }
 
-def kl1993_73 : LinguisticExample :=
+def kl1993_73 : Datum :=
   { id := "kl1993_73"
     source := ⟨"kadmon-landman-1993", "(73)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def kl1993_73 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("local_signature", "mono")] }
 
-def kl1993_76B : LinguisticExample :=
+def kl1993_76B : Datum :=
   { id := "kl1993_76B"
     source := ⟨"kadmon-landman-1993", "(76B)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def kl1993_76B : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("local_signature", "mono"), ("settle_for_less", "yes")] }
 
-def kl1993_82 : LinguisticExample :=
+def kl1993_82 : Datum :=
   { id := "kl1993_82"
     source := ⟨"kadmon-landman-1993", "(82)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def kl1993_82 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("context", "adversative"), ("widening", "phonologists who hate me to linguists who hate me")] }
 
-def kl1993_88 : LinguisticExample :=
+def kl1993_88 : Datum :=
   { id := "kl1993_88"
     source := ⟨"kadmon-landman-1993", "(88)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def kl1993_88 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("local_signature", "mono"), ("settle_for_less", "yes")] }
 
-def kl1993_95 : LinguisticExample :=
+def kl1993_95 : Datum :=
   { id := "kl1993_95"
     source := ⟨"kadmon-landman-1993", "(95)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def kl1993_95 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("local_signature", "mono")] }
 
-def kl1993_105 : LinguisticExample :=
+def kl1993_105 : Datum :=
   { id := "kl1993_105"
     source := ⟨"kadmon-landman-1993", "(105)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def kl1993_105 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("local_signature", "all"), ("metalinguistic_denial", "yes")] }
 
-def kl1993_106 : LinguisticExample :=
+def kl1993_106 : Datum :=
   { id := "kl1993_106"
     source := ⟨"kadmon-landman-1993", "(106)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def kl1993_106 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("local_signature", "all")] }
 
-def kl1993_109 : LinguisticExample :=
+def kl1993_109 : Datum :=
   { id := "kl1993_109"
     source := ⟨"kadmon-landman-1993", "(109)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def kl1993_109 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("local_signature", "all")] }
 
-def kl1993_122 : LinguisticExample :=
+def kl1993_122 : Datum :=
   { id := "kl1993_122"
     source := ⟨"kadmon-landman-1993", "(122)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def kl1993_122 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("local_signature", "anti")] }
 
-def kl1993_123 : LinguisticExample :=
+def kl1993_123 : Datum :=
   { id := "kl1993_123"
     source := ⟨"kadmon-landman-1993", "(123)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def kl1993_123 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("local_signature", "anti")] }
 
-def kl1993_125 : LinguisticExample :=
+def kl1993_125 : Datum :=
   { id := "kl1993_125"
     source := ⟨"kadmon-landman-1993", "(125)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def kl1993_125 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("local_signature", "all"), ("metalinguistic_denial", "yes")] }
 
-def kl1993_132 : LinguisticExample :=
+def kl1993_132 : Datum :=
   { id := "kl1993_132"
     source := ⟨"kadmon-landman-1993", "(132)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def kl1993_132 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("local_signature", "all")] }
 
-def kl1993_143 : LinguisticExample :=
+def kl1993_143 : Datum :=
   { id := "kl1993_143"
     source := ⟨"kadmon-landman-1993", "(143)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def kl1993_143 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.5"), ("context", "conditionalAntecedent"), ("widening", "important newspapers to any newspaper")] }
 
-def kl1993_almost_every : LinguisticExample :=
+def kl1993_almost_every : Datum :=
   { id := "kl1993_almost_every"
     source := ⟨"kadmon-landman-1993", "4.3"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def kl1993_almost_every : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("np", "every owl"), ("precision", "precise"), ("universal", "yes"), ("dimensionally_universal", "no")] }
 
-def kl1993_almost_no : LinguisticExample :=
+def kl1993_almost_no : Datum :=
   { id := "kl1993_almost_no"
     source := ⟨"kadmon-landman-1993", "4.3"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def kl1993_almost_no : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("np", "no owl"), ("precision", "precise"), ("universal", "yes"), ("dimensionally_universal", "no")] }
 
-def kl1993_almost_some : LinguisticExample :=
+def kl1993_almost_some : Datum :=
   { id := "kl1993_almost_some"
     source := ⟨"kadmon-landman-1993", "4.3"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def kl1993_almost_some : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("np", "some owl"), ("precision", "precise"), ("universal", "no"), ("dimensionally_universal", "no")] }
 
-def kl1993_almost_an : LinguisticExample :=
+def kl1993_almost_an : Datum :=
   { id := "kl1993_almost_an"
     source := ⟨"kadmon-landman-1993", "4.3"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def kl1993_almost_an : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("np", "an owl"), ("precision", "vague"), ("universal", "yes"), ("dimensionally_universal", "no")] }
 
-def kl1993_almost_any : LinguisticExample :=
+def kl1993_almost_any : Datum :=
   { id := "kl1993_almost_any"
     source := ⟨"kadmon-landman-1993", "4.3"⟩
     reportedIn := none
@@ -342,6 +340,6 @@ def kl1993_almost_any : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("np", "any owl"), ("precision", "vague"), ("universal", "yes"), ("dimensionally_universal", "yes")] }
 
-def all : List LinguisticExample := [kl1993_1, kl1993_2, kl1993_10, kl1993_27b, kl1993_55, kl1993_56, kl1993_72, kl1993_73, kl1993_76B, kl1993_82, kl1993_88, kl1993_95, kl1993_105, kl1993_106, kl1993_109, kl1993_122, kl1993_123, kl1993_125, kl1993_132, kl1993_143, kl1993_almost_every, kl1993_almost_no, kl1993_almost_some, kl1993_almost_an, kl1993_almost_any]
+def all : List Datum := [kl1993_1, kl1993_2, kl1993_10, kl1993_27b, kl1993_55, kl1993_56, kl1993_72, kl1993_73, kl1993_76B, kl1993_82, kl1993_88, kl1993_95, kl1993_105, kl1993_106, kl1993_109, kl1993_122, kl1993_123, kl1993_125, kl1993_132, kl1993_143, kl1993_almost_every, kl1993_almost_no, kl1993_almost_some, kl1993_almost_an, kl1993_almost_any]
 
 end KadmonLandman1993.Examples

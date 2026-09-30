@@ -35,7 +35,7 @@ by the inflectional-head criterion.
 
 namespace Anderson2006a
 
-open AuxiliaryVerbs Data.Examples Negation
+open AuxiliaryVerbs Negation
 
 /-! ### Where the inflection is marked -/
 
@@ -86,11 +86,11 @@ def Category.ofString? : String → Option Category
   | _ => none
 
 /-- The categories a row lists under a feature key. -/
-def categories (r : LinguisticExample) (key : String) : Finset Category :=
+def categories (r : Datum) (key : String) : Finset Category :=
   ((r.features key).filterMap Category.ofString?).toFinset
 
 /-- The inflectional marking a row records, when it records one. -/
-def InflectionalMarking.ofRow? (r : LinguisticExample) : Option InflectionalMarking :=
+def InflectionalMarking.ofRow? (r : Datum) : Option InflectionalMarking :=
   if r.paperFeatures.any (fun kv => kv.1 = "on_aux" || kv.1 = "on_lex") then
     some ⟨categories r "on_aux", categories r "on_lex"⟩
   else none

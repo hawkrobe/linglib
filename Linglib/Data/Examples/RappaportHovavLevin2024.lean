@@ -15,9 +15,7 @@ this module; declarations live in `namespace RappaportHovavLevin2024.Examples`.
 
 namespace RappaportHovavLevin2024.Examples
 
-open Data.Examples
-
-def rhl2024_11d : LinguisticExample :=
+def rhl2024_11d : Datum :=
   { id := "rhl2024_11d"
     source := ⟨"rappaport-hovav-levin-2024", "(11d)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def rhl2024_11d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "routine"), ("mover", "instrument"), ("causer", "animate"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
-def rhl2024_12a : LinguisticExample :=
+def rhl2024_12a : Datum :=
   { id := "rhl2024_12a"
     source := ⟨"rappaport-hovav-levin-2024", "(12a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def rhl2024_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "routine"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "with"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
-def rhl2024_13 : LinguisticExample :=
+def rhl2024_13 : Datum :=
   { id := "rhl2024_13"
     source := ⟨"rappaport-hovav-levin-2024", "(13)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def rhl2024_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "routine"), ("mover", "instrument"), ("causer", "natural phenomenon"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
-def rhl2024_82 : LinguisticExample :=
+def rhl2024_82 : Datum :=
   { id := "rhl2024_82"
     source := ⟨"rappaport-hovav-levin-2024", "(82)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def rhl2024_82 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "routine"), ("mover", "instrument"), ("causer", "animate"), ("causerSlot", "subject")] }
 
-def rhl2024_31a : LinguisticExample :=
+def rhl2024_31a : Datum :=
   { id := "rhl2024_31a"
     source := ⟨"rappaport-hovav-levin-2024", "(31)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def rhl2024_31a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "routine"), ("mover", "instrument"), ("causer", "animate"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
-def rhl2024_31b : LinguisticExample :=
+def rhl2024_31b : Datum :=
   { id := "rhl2024_31b"
     source := ⟨"rappaport-hovav-levin-2024", "(31)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def rhl2024_31b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "routine"), ("mover", "instrument"), ("surfaceSlot", "subject")] }
 
-def rhl2024_88 : LinguisticExample :=
+def rhl2024_88 : Datum :=
   { id := "rhl2024_88"
     source := ⟨"rappaport-hovav-levin-2024", "(88)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def rhl2024_88 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "routine"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "with"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
-def rhl2024_83a : LinguisticExample :=
+def rhl2024_83a : Datum :=
   { id := "rhl2024_83a"
     source := ⟨"rappaport-hovav-levin-2024", "(83a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def rhl2024_83a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "funnel"), ("sense", "instrument"), ("mover", "instrument"), ("causer", "animate"), ("causerSlot", "subject")] }
 
-def rhl2024_83b : LinguisticExample :=
+def rhl2024_83b : Datum :=
   { id := "rhl2024_83b"
     source := ⟨"rappaport-hovav-levin-2024", "(83b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def rhl2024_83b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "mop"), ("sense", "routine"), ("mover", "instrument"), ("causer", "animate"), ("causerSlot", "subject")] }
 
-def rhl2024_24a : LinguisticExample :=
+def rhl2024_24a : Datum :=
   { id := "rhl2024_24a"
     source := ⟨"rappaport-hovav-levin-2024", "(24a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def rhl2024_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject"), ("surfaceSlot", "object")] }
 
-def rhl2024_25a : LinguisticExample :=
+def rhl2024_25a : Datum :=
   { id := "rhl2024_25a"
     source := ⟨"rappaport-hovav-levin-2024", "(25a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def rhl2024_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject"), ("surfaceSlot", "object")] }
 
-def rhl2024_25b : LinguisticExample :=
+def rhl2024_25b : Datum :=
   { id := "rhl2024_25b"
     source := ⟨"rappaport-hovav-levin-2024", "(25b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def rhl2024_25b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject"), ("surfaceSlot", "object")] }
 
-def rhl2024_25d : LinguisticExample :=
+def rhl2024_25d : Datum :=
   { id := "rhl2024_25d"
     source := ⟨"rappaport-hovav-levin-2024", "(25d)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def rhl2024_25d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("moverSlot", "subject"), ("surfaceSlot", "object")] }
 
-def rhl2024_25f : LinguisticExample :=
+def rhl2024_25f : Datum :=
   { id := "rhl2024_25f"
     source := ⟨"rappaport-hovav-levin-2024", "(25f)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def rhl2024_25f : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "body part"), ("causer", "animate"), ("moverSlot", "with"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
-def rhl2024_75b_bare : LinguisticExample :=
+def rhl2024_75b_bare : Datum :=
   { id := "rhl2024_75b_bare"
     source := ⟨"rappaport-hovav-levin-2024", "(75b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def rhl2024_75b_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "body part"), ("causer", "animate"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
-def rhl2024_75a : LinguisticExample :=
+def rhl2024_75a : Datum :=
   { id := "rhl2024_75a"
     source := ⟨"rappaport-hovav-levin-2024", "(75a)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def rhl2024_75a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "with"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
-def rhl2024_75a_bare : LinguisticExample :=
+def rhl2024_75a_bare : Datum :=
   { id := "rhl2024_75a_bare"
     source := ⟨"rappaport-hovav-levin-2024", "(75a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def rhl2024_75a_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
-def rhl2024_74b : LinguisticExample :=
+def rhl2024_74b : Datum :=
   { id := "rhl2024_74b"
     source := ⟨"rappaport-hovav-levin-2024", "(74b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def rhl2024_74b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("moverSlot", "subject"), ("surfaceSlot", "object")] }
 
-def rhl2024_92 : LinguisticExample :=
+def rhl2024_92 : Datum :=
   { id := "rhl2024_92"
     source := ⟨"rappaport-hovav-levin-2024", "(92)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def rhl2024_92 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("moverSlot", "subject"), ("surfaceSlot", "object")] }
 
-def rhl2024_26 : LinguisticExample :=
+def rhl2024_26 : Datum :=
   { id := "rhl2024_26"
     source := ⟨"rappaport-hovav-levin-2024", "(26)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def rhl2024_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject")] }
 
-def rhl2024_27 : LinguisticExample :=
+def rhl2024_27 : Datum :=
   { id := "rhl2024_27"
     source := ⟨"rappaport-hovav-levin-2024", "(27)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def rhl2024_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "body part"), ("causer", "animate"), ("causerSlot", "subject")] }
 
-def rhl2024_32a : LinguisticExample :=
+def rhl2024_32a : Datum :=
   { id := "rhl2024_32a"
     source := ⟨"rappaport-hovav-levin-2024", "(32a)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def rhl2024_32a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("surfaceSlot", "subject")] }
 
-def rhl2024_32b : LinguisticExample :=
+def rhl2024_32b : Datum :=
   { id := "rhl2024_32b"
     source := ⟨"rappaport-hovav-levin-2024", "(32b)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def rhl2024_32b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("surfaceSlot", "subject")] }
 
-def rhl2024_23 : LinguisticExample :=
+def rhl2024_23 : Datum :=
   { id := "rhl2024_23"
     source := ⟨"rappaport-hovav-levin-2024", "(23)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def rhl2024_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "displaced"), ("causer", "animate"), ("causerSlot", "subject")] }
 
-def rhl2024_22 : LinguisticExample :=
+def rhl2024_22 : Datum :=
   { id := "rhl2024_22"
     source := ⟨"rappaport-hovav-levin-2024", "(22)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def rhl2024_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "displaced"), ("causer", "animate"), ("moverSlot", "object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_24c : LinguisticExample :=
+def rhl2024_24c : Datum :=
   { id := "rhl2024_24c"
     source := ⟨"rappaport-hovav-levin-2024", "(24c)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def rhl2024_24c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "body part"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_28a : LinguisticExample :=
+def rhl2024_28a : Datum :=
   { id := "rhl2024_28a"
     source := ⟨"rappaport-hovav-levin-2024", "(28a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def rhl2024_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "body part"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_28b : LinguisticExample :=
+def rhl2024_28b : Datum :=
   { id := "rhl2024_28b"
     source := ⟨"rappaport-hovav-levin-2024", "(28b)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def rhl2024_28b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_28c : LinguisticExample :=
+def rhl2024_28c : Datum :=
   { id := "rhl2024_28c"
     source := ⟨"rappaport-hovav-levin-2024", "(28c)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def rhl2024_28c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "displaced"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_29a : LinguisticExample :=
+def rhl2024_29a : Datum :=
   { id := "rhl2024_29a"
     source := ⟨"rappaport-hovav-levin-2024", "(29a)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def rhl2024_29a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("causer", "natural phenomenon"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_29b : LinguisticExample :=
+def rhl2024_29b : Datum :=
   { id := "rhl2024_29b"
     source := ⟨"rappaport-hovav-levin-2024", "(29b)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def rhl2024_29b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("causer", "natural phenomenon"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_29c : LinguisticExample :=
+def rhl2024_29c : Datum :=
   { id := "rhl2024_29c"
     source := ⟨"rappaport-hovav-levin-2024", "(29c)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def rhl2024_29c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("causer", "natural phenomenon"), ("moverSlot", "object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_30a : LinguisticExample :=
+def rhl2024_30a : Datum :=
   { id := "rhl2024_30a"
     source := ⟨"rappaport-hovav-levin-2024", "(30a)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def rhl2024_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_30a_no_dp : LinguisticExample :=
+def rhl2024_30a_no_dp : Datum :=
   { id := "rhl2024_30a_no_dp"
     source := ⟨"rappaport-hovav-levin-2024", "(30a)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def rhl2024_30a_no_dp : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_30a_no_pp : LinguisticExample :=
+def rhl2024_30a_no_pp : Datum :=
   { id := "rhl2024_30a_no_pp"
     source := ⟨"rappaport-hovav-levin-2024", "(30a)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def rhl2024_30a_no_pp : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "object"), ("causerSlot", "subject")] }
 
-def rhl2024_30d : LinguisticExample :=
+def rhl2024_30d : Datum :=
   { id := "rhl2024_30d"
     source := ⟨"rappaport-hovav-levin-2024", "(30d)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def rhl2024_30d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "displaced"), ("causer", "animate"), ("moverSlot", "object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_60b : LinguisticExample :=
+def rhl2024_60b : Datum :=
   { id := "rhl2024_60b"
     source := ⟨"rappaport-hovav-levin-2024", "(60b)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def rhl2024_60b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("causer", "natural phenomenon"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_62a : LinguisticExample :=
+def rhl2024_62a : Datum :=
   { id := "rhl2024_62a"
     source := ⟨"rappaport-hovav-levin-2024", "(62a)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def rhl2024_62a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "displaced"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_68b : LinguisticExample :=
+def rhl2024_68b : Datum :=
   { id := "rhl2024_68b"
     source := ⟨"rappaport-hovav-levin-2024", "(68b)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def rhl2024_68b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("causer", "natural phenomenon"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_87 : LinguisticExample :=
+def rhl2024_87 : Datum :=
   { id := "rhl2024_87"
     source := ⟨"rappaport-hovav-levin-2024", "(87)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def rhl2024_87 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_33a : LinguisticExample :=
+def rhl2024_33a : Datum :=
   { id := "rhl2024_33a"
     source := ⟨"rappaport-hovav-levin-2024", "(33a)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def rhl2024_33a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
-def rhl2024_33a_bare : LinguisticExample :=
+def rhl2024_33a_bare : Datum :=
   { id := "rhl2024_33a_bare"
     source := ⟨"rappaport-hovav-levin-2024", "(33a)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def rhl2024_33a_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject")] }
 
-def rhl2024_33c : LinguisticExample :=
+def rhl2024_33c : Datum :=
   { id := "rhl2024_33c"
     source := ⟨"rappaport-hovav-levin-2024", "(33c)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def rhl2024_33c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "machine"), ("moverSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_34 : LinguisticExample :=
+def rhl2024_34 : Datum :=
   { id := "rhl2024_34"
     source := ⟨"rappaport-hovav-levin-2024", "(34)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def rhl2024_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "animate"), ("moverSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_34_bare : LinguisticExample :=
+def rhl2024_34_bare : Datum :=
   { id := "rhl2024_34_bare"
     source := ⟨"rappaport-hovav-levin-2024", "(34)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def rhl2024_34_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "animate"), ("moverSlot", "subject")] }
 
-def rhl2024_62b : LinguisticExample :=
+def rhl2024_62b : Datum :=
   { id := "rhl2024_62b"
     source := ⟨"rappaport-hovav-levin-2024", "(62b)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def rhl2024_62b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "displaced"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
-def rhl2024_63a : LinguisticExample :=
+def rhl2024_63a : Datum :=
   { id := "rhl2024_63a"
     source := ⟨"rappaport-hovav-levin-2024", "(63a)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def rhl2024_63a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
-def rhl2024_66c : LinguisticExample :=
+def rhl2024_66c : Datum :=
   { id := "rhl2024_66c"
     source := ⟨"rappaport-hovav-levin-2024", "(66c)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def rhl2024_66c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
-def rhl2024_66d : LinguisticExample :=
+def rhl2024_66d : Datum :=
   { id := "rhl2024_66d"
     source := ⟨"rappaport-hovav-levin-2024", "(66d)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def rhl2024_66d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "projectile"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
-def rhl2024_67a : LinguisticExample :=
+def rhl2024_67a : Datum :=
   { id := "rhl2024_67a"
     source := ⟨"rappaport-hovav-levin-2024", "(67a)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def rhl2024_67a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "instrument"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
-def rhl2024_67b : LinguisticExample :=
+def rhl2024_67b : Datum :=
   { id := "rhl2024_67b"
     source := ⟨"rappaport-hovav-levin-2024", "(67b)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def rhl2024_67b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "displaced"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
-def rhl2024_68a : LinguisticExample :=
+def rhl2024_68a : Datum :=
   { id := "rhl2024_68a"
     source := ⟨"rappaport-hovav-levin-2024", "(68a)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def rhl2024_68a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sweep"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
-def rhl2024_36b : LinguisticExample :=
+def rhl2024_36b : Datum :=
   { id := "rhl2024_36b"
     source := ⟨"rappaport-hovav-levin-2024", "(36b)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def rhl2024_36b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "scrape"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "with"), ("surfaceSlot", "object"), ("causerSlot", "subject")] }
 
-def rhl2024_37a : LinguisticExample :=
+def rhl2024_37a : Datum :=
   { id := "rhl2024_37a"
     source := ⟨"rappaport-hovav-levin-2024", "(37a)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def rhl2024_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "rub"), ("sense", "basic"), ("mover", "projectile"), ("moverSlot", "subject"), ("surfaceSlot", "object")] }
 
-def rhl2024_37b : LinguisticExample :=
+def rhl2024_37b : Datum :=
   { id := "rhl2024_37b"
     source := ⟨"rappaport-hovav-levin-2024", "(37b)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def rhl2024_37b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "scrape"), ("sense", "basic"), ("mover", "projectile"), ("moverSlot", "subject"), ("surfaceSlot", "object")] }
 
-def rhl2024_38a : LinguisticExample :=
+def rhl2024_38a : Datum :=
   { id := "rhl2024_38a"
     source := ⟨"rappaport-hovav-levin-2024", "(38a)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def rhl2024_38a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "rub"), ("sense", "basic"), ("mover", "projectile"), ("causer", "natural phenomenon"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_38b : LinguisticExample :=
+def rhl2024_38b : Datum :=
   { id := "rhl2024_38b"
     source := ⟨"rappaport-hovav-levin-2024", "(38b)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def rhl2024_38b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "rub"), ("sense", "basic"), ("mover", "displaced"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_38c : LinguisticExample :=
+def rhl2024_38c : Datum :=
   { id := "rhl2024_38c"
     source := ⟨"rappaport-hovav-levin-2024", "(38c)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def rhl2024_38c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "rub"), ("sense", "basic"), ("mover", "body part"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_38d : LinguisticExample :=
+def rhl2024_38d : Datum :=
   { id := "rhl2024_38d"
     source := ⟨"rappaport-hovav-levin-2024", "(38d)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def rhl2024_38d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "rub"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_39a : LinguisticExample :=
+def rhl2024_39a : Datum :=
   { id := "rhl2024_39a"
     source := ⟨"rappaport-hovav-levin-2024", "(39a)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def rhl2024_39a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "scrape"), ("sense", "basic"), ("mover", "projectile"), ("causer", "natural phenomenon"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_39b : LinguisticExample :=
+def rhl2024_39b : Datum :=
   { id := "rhl2024_39b"
     source := ⟨"rappaport-hovav-levin-2024", "(39b)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def rhl2024_39b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "scrape"), ("sense", "basic"), ("mover", "displaced"), ("causer", "animate"), ("moverSlot", "object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_39c : LinguisticExample :=
+def rhl2024_39c : Datum :=
   { id := "rhl2024_39c"
     source := ⟨"rappaport-hovav-levin-2024", "(39c)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def rhl2024_39c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "scrape"), ("sense", "basic"), ("mover", "body part"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_39d : LinguisticExample :=
+def rhl2024_39d : Datum :=
   { id := "rhl2024_39d"
     source := ⟨"rappaport-hovav-levin-2024", "(39d)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def rhl2024_39d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "scrape"), ("sense", "basic"), ("mover", "instrument"), ("causer", "animate"), ("moverSlot", "object"), ("surfaceSlot", "path object"), ("causerSlot", "subject"), ("path", "pp")] }
 
-def rhl2024_40c : LinguisticExample :=
+def rhl2024_40c : Datum :=
   { id := "rhl2024_40c"
     source := ⟨"rappaport-hovav-levin-2024", "(40c)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def rhl2024_40c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "scrape"), ("sense", "basic"), ("mover", "natural phenomenon"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
-def rhl2024_41b : LinguisticExample :=
+def rhl2024_41b : Datum :=
   { id := "rhl2024_41b"
     source := ⟨"rappaport-hovav-levin-2024", "(41b)"⟩
     reportedIn := none
@@ -862,6 +860,6 @@ def rhl2024_41b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "rub"), ("sense", "basic"), ("mover", "projectile"), ("moverSlot", "subject"), ("surfaceSlot", "path object"), ("path", "pp")] }
 
-def all : List LinguisticExample := [rhl2024_11d, rhl2024_12a, rhl2024_13, rhl2024_82, rhl2024_31a, rhl2024_31b, rhl2024_88, rhl2024_83a, rhl2024_83b, rhl2024_24a, rhl2024_25a, rhl2024_25b, rhl2024_25d, rhl2024_25f, rhl2024_75b_bare, rhl2024_75a, rhl2024_75a_bare, rhl2024_74b, rhl2024_92, rhl2024_26, rhl2024_27, rhl2024_32a, rhl2024_32b, rhl2024_23, rhl2024_22, rhl2024_24c, rhl2024_28a, rhl2024_28b, rhl2024_28c, rhl2024_29a, rhl2024_29b, rhl2024_29c, rhl2024_30a, rhl2024_30a_no_dp, rhl2024_30a_no_pp, rhl2024_30d, rhl2024_60b, rhl2024_62a, rhl2024_68b, rhl2024_87, rhl2024_33a, rhl2024_33a_bare, rhl2024_33c, rhl2024_34, rhl2024_34_bare, rhl2024_62b, rhl2024_63a, rhl2024_66c, rhl2024_66d, rhl2024_67a, rhl2024_67b, rhl2024_68a, rhl2024_36b, rhl2024_37a, rhl2024_37b, rhl2024_38a, rhl2024_38b, rhl2024_38c, rhl2024_38d, rhl2024_39a, rhl2024_39b, rhl2024_39c, rhl2024_39d, rhl2024_40c, rhl2024_41b]
+def all : List Datum := [rhl2024_11d, rhl2024_12a, rhl2024_13, rhl2024_82, rhl2024_31a, rhl2024_31b, rhl2024_88, rhl2024_83a, rhl2024_83b, rhl2024_24a, rhl2024_25a, rhl2024_25b, rhl2024_25d, rhl2024_25f, rhl2024_75b_bare, rhl2024_75a, rhl2024_75a_bare, rhl2024_74b, rhl2024_92, rhl2024_26, rhl2024_27, rhl2024_32a, rhl2024_32b, rhl2024_23, rhl2024_22, rhl2024_24c, rhl2024_28a, rhl2024_28b, rhl2024_28c, rhl2024_29a, rhl2024_29b, rhl2024_29c, rhl2024_30a, rhl2024_30a_no_dp, rhl2024_30a_no_pp, rhl2024_30d, rhl2024_60b, rhl2024_62a, rhl2024_68b, rhl2024_87, rhl2024_33a, rhl2024_33a_bare, rhl2024_33c, rhl2024_34, rhl2024_34_bare, rhl2024_62b, rhl2024_63a, rhl2024_66c, rhl2024_66d, rhl2024_67a, rhl2024_67b, rhl2024_68a, rhl2024_36b, rhl2024_37a, rhl2024_37b, rhl2024_38a, rhl2024_38b, rhl2024_38c, rhl2024_38d, rhl2024_39a, rhl2024_39b, rhl2024_39c, rhl2024_39d, rhl2024_40c, rhl2024_41b]
 
 end RappaportHovavLevin2024.Examples

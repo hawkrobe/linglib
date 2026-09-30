@@ -70,7 +70,7 @@ lacks. Question particles sit at the layer their embedding distribution shows.
 
 namespace Dayal2025
 
-open Minimalist Question Data.Examples Clause
+open Minimalist Question Clause
 open English English.Particles HindiUrdu.Particles Japanese.Particles English.Verbs
 
 /-! ### The three layers (7), (20) -/

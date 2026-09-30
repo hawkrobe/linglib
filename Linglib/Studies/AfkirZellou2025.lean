@@ -48,7 +48,7 @@ here.
 
 namespace AfkirZellou2025
 
-open Tarifit Morphology Phonology Data.Examples
+open Tarifit Morphology Phonology
 
 /-! ### The simple imperative -/
 
@@ -108,11 +108,11 @@ inductive Vowelless
   deriving DecidableEq, Repr
 
 /-- The root a row reports, by the transcription of its imperative. -/
-def root? (e : LinguisticExample) : Option (ConsonantalRoot Segment) :=
+def root? (e : Datum) : Option (ConsonantalRoot Segment) :=
   roots.find? (surface · == e.primaryText)
 
 /-- The row's intrusion category. -/
-def intrusion? (e : LinguisticExample) : Option Intrusion :=
+def intrusion? (e : Datum) : Option Intrusion :=
   match e.feature? "intrusion" with
   | some "never" => some .never
   | some "rarely" => some .rarely
@@ -121,7 +121,7 @@ def intrusion? (e : LinguisticExample) : Option Intrusion :=
   | _ => none
 
 /-- The row's vowelless category. -/
-def vowelless? (e : LinguisticExample) : Option Vowelless :=
+def vowelless? (e : Datum) : Option Vowelless :=
   match e.feature? "vowelless" with
   | some "never" => some .never
   | some "rarely" => some .rarely

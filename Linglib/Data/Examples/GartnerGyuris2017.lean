@@ -15,9 +15,7 @@ this module; declarations live in `namespace GartnerGyuris2017.Examples`.
 
 namespace GartnerGyuris2017.Examples
 
-open Data.Examples
-
-def gg2017_1 : LinguisticExample :=
+def gg2017_1 : Datum :=
   { id := "gg2017_1"
     source := ⟨"gartner-gyuris-2017", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def gg2017_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "English V1"), ("form", "PPQ"), ("dimension", "evidential"), ("value", "-")] }
 
-def gg2017_2a : LinguisticExample :=
+def gg2017_2a : Datum :=
   { id := "gg2017_2a"
     source := ⟨"gartner-gyuris-2017", "(2a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def gg2017_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "English V1"), ("form", "IN-NPQ"), ("dimension", "epistemic"), ("value", "%")] }
 
-def gg2017_2b : LinguisticExample :=
+def gg2017_2b : Datum :=
   { id := "gg2017_2b"
     source := ⟨"gartner-gyuris-2017", "(2b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def gg2017_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "English V1"), ("form", "IN-NPQ"), ("dimension", "epistemic"), ("value", "%")] }
 
-def gg2017_8_neg : LinguisticExample :=
+def gg2017_8_neg : Datum :=
   { id := "gg2017_8_neg"
     source := ⟨"gartner-gyuris-2017", "(8)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def gg2017_8_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Hungarian e"), ("form", "PPQ"), ("dimension", "evidential"), ("value", "-")] }
 
-def gg2017_8_pos : LinguisticExample :=
+def gg2017_8_pos : Datum :=
   { id := "gg2017_8_pos"
     source := ⟨"gartner-gyuris-2017", "(8)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def gg2017_8_pos : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Hungarian e"), ("form", "PPQ"), ("dimension", "evidential"), ("value", "+")] }
 
-def gg2017_9a : LinguisticExample :=
+def gg2017_9a : Datum :=
   { id := "gg2017_9a"
     source := ⟨"gartner-gyuris-2017", "(9a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def gg2017_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Hungarian e"), ("form", "ON-NPQ"), ("dimension", "evidential"), ("value", "-")] }
 
-def gg2017_9b : LinguisticExample :=
+def gg2017_9b : Datum :=
   { id := "gg2017_9b"
     source := ⟨"gartner-gyuris-2017", "(9b)"⟩
     reportedIn := none
@@ -108,6 +106,6 @@ def gg2017_9b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "Hungarian e"), ("form", "ON-NPQ"), ("dimension", "evidential"), ("value", "+")] }
 
-def all : List LinguisticExample := [gg2017_1, gg2017_2a, gg2017_2b, gg2017_8_neg, gg2017_8_pos, gg2017_9a, gg2017_9b]
+def all : List Datum := [gg2017_1, gg2017_2a, gg2017_2b, gg2017_8_neg, gg2017_8_pos, gg2017_9a, gg2017_9b]
 
 end GartnerGyuris2017.Examples

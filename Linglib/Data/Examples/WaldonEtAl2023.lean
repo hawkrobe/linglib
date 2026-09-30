@@ -15,9 +15,7 @@ this module; declarations live in `namespace WaldonEtAl2023.Examples`.
 
 namespace WaldonEtAl2023.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "waldonetal2023_1"
     source := ⟨"hart-1958", ""⟩
     reportedIn := some ⟨"waldon-etal-2023", "(1)"⟩
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "Hart's vehicle rule")] }
 
-def rule : LinguisticExample :=
+def rule : Datum :=
   { id := "waldonetal2023_rule"
     source := ⟨"waldon-etal-2023", "§3.1"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def rule : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "prohibition"), ("artifactNoun", "electronic device")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "waldonetal2023_4a"
     source := ⟨"sassoon-fadlon-2017", ""⟩
     reportedIn := some ⟨"waldon-etal-2023", "(4a)"⟩
@@ -56,7 +54,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "dimensional"), ("nounType", "natural kind")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "waldonetal2023_4b"
     source := ⟨"sassoon-fadlon-2017", ""⟩
     reportedIn := some ⟨"waldon-etal-2023", "(4b)"⟩
@@ -69,7 +67,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "dimensional"), ("nounType", "artifact")] }
 
-def ex_4c : LinguisticExample :=
+def ex_4c : Datum :=
   { id := "waldonetal2023_4c"
     source := ⟨"sassoon-fadlon-2017", ""⟩
     reportedIn := some ⟨"waldon-etal-2023", "(4c)"⟩
@@ -82,7 +80,7 @@ def ex_4c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "dimensional"), ("nounType", "multidimensional adjective")] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "waldonetal2023_5a"
     source := ⟨"sassoon-fadlon-2017", ""⟩
     reportedIn := some ⟨"waldon-etal-2023", "(5a)"⟩
@@ -95,7 +93,7 @@ def ex_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "degree"), ("nounType", "natural kind")] }
 
-def ex_5b : LinguisticExample :=
+def ex_5b : Datum :=
   { id := "waldonetal2023_5b"
     source := ⟨"sassoon-fadlon-2017", ""⟩
     reportedIn := some ⟨"waldon-etal-2023", "(5b)"⟩
@@ -108,7 +106,7 @@ def ex_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "degree"), ("nounType", "artifact")] }
 
-def ex_5c : LinguisticExample :=
+def ex_5c : Datum :=
   { id := "waldonetal2023_5c"
     source := ⟨"sassoon-fadlon-2017", ""⟩
     reportedIn := some ⟨"waldon-etal-2023", "(5c)"⟩
@@ -121,7 +119,7 @@ def ex_5c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "degree"), ("nounType", "multidimensional adjective")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "waldonetal2023_7"
     source := ⟨"waldon-etal-2023", "(7)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "degree"), ("nounType", "single-dimensional adjective")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "waldonetal2023_10a"
     source := ⟨"waldon-etal-2023", "(10a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "quantificational"), ("parameters", "F, W, s")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "waldonetal2023_11a"
     source := ⟨"waldon-etal-2023", "(11a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "degree"), ("parameters", "F, W project")] }
 
-def ex_16a : LinguisticExample :=
+def ex_16a : Datum :=
   { id := "waldonetal2023_16a"
     source := ⟨"waldon-etal-2023", "(16a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_16a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "meta-linguistic negotiation")] }
 
-def ex_16b : LinguisticExample :=
+def ex_16b : Datum :=
   { id := "waldonetal2023_16b"
     source := ⟨"waldon-etal-2023", "(16b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_16b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "meta-linguistic negotiation")] }
 
-def ex_16c : LinguisticExample :=
+def ex_16c : Datum :=
   { id := "waldonetal2023_16c"
     source := ⟨"waldon-etal-2023", "(16c)"⟩
     reportedIn := none
@@ -199,6 +197,6 @@ def ex_16c : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "meta-linguistic negotiation"), ("analysis", "domain restriction")] }
 
-def all : List LinguisticExample := [ex_1, rule, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_5c, ex_7, ex_10a, ex_11a, ex_16a, ex_16b, ex_16c]
+def all : List Datum := [ex_1, rule, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_5c, ex_7, ex_10a, ex_11a, ex_16a, ex_16b, ex_16c]
 
 end WaldonEtAl2023.Examples

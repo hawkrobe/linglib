@@ -88,7 +88,7 @@ to be absent from a [reverse, −] answer (`ba_not_reverse_answer_neg`).
 namespace FarkasBruce2010
 
 open Commitment
-open Filter Data.Examples
+open Filter
 
 variable {W : Type*} (K : Table Discourse.Role W) (p : Set W)
 
@@ -307,7 +307,7 @@ judgment. -/
 structure Row where
   response : Response
   particles : List Particle
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
   deriving DecidableEq, Repr
 
 def moveTable : List (String × InitiatingMove) :=
@@ -322,7 +322,7 @@ def particleTable : List (String × List (String × Particle)) :=
     ("stan1290", [French.PolarityParticle.oui, .non, .si].map fun p ↦ (p.form, .fr p)),
     ("stan1295", [German.PolarityParticle.ja, .nein, .doch].map fun p ↦ (p.form, .de p))]
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let table ← List.lookup ex.language particleTable
   let reactsTo ← ex.parse? "reaction" moveTable
   let antecedent ← ex.parse? "input" polarityTable
@@ -331,9 +331,9 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let particles := particle :: (ex.parse? "particle2" table).toList
   pure ⟨⟨reactsTo, antecedent, polarity⟩, particles, ex.judgment⟩
 
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Every acceptable response is one its English particles mark. -/
 theorem english_mem : ∀ r ∈ rows, r.judgment = .acceptable →

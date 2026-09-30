@@ -15,9 +15,7 @@ this module; declarations live in `namespace Anderson2006a.Examples`.
 
 namespace Anderson2006a.Examples
 
-open Data.Examples
-
-def komi_neg_pres : LinguisticExample :=
+def komi_neg_pres : Datum :=
   { id := "anderson2006a_komi_neg_pres"
     source := ⟨"anderson-2006a", "(47a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def komi_neg_pres : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "negVerb"), ("tense", "present"), ("on_aux", "negation"), ("on_aux", "tense"), ("on_aux", "subj")] }
 
-def komi_neg_past : LinguisticExample :=
+def komi_neg_past : Datum :=
   { id := "anderson2006a_komi_neg_past"
     source := ⟨"anderson-2006a", "(47b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def komi_neg_past : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "negVerb"), ("tense", "past"), ("on_aux", "negation"), ("on_aux", "tense"), ("on_aux", "subj")] }
 
-def udihe_neg : LinguisticExample :=
+def udihe_neg : Datum :=
   { id := "anderson2006a_udihe_neg"
     source := ⟨"anderson-2006a", "(49)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def udihe_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "negVerb"), ("infl_pattern", "auxHeaded"), ("on_aux", "negation"), ("on_aux", "subj")] }
 
-def kwerba_neg_fut : LinguisticExample :=
+def kwerba_neg_fut : Datum :=
   { id := "anderson2006a_kwerba_neg_fut"
     source := ⟨"anderson-2006a", "(52a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def kwerba_neg_fut : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "negVerb"), ("infl_pattern", "lexHeaded")] }
 
-def kwerba_neg_past : LinguisticExample :=
+def kwerba_neg_past : Datum :=
   { id := "anderson2006a_kwerba_neg_past"
     source := ⟨"anderson-2006a", "(52b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def kwerba_neg_past : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "negVerb"), ("infl_pattern", "lexHeaded")] }
 
-def doyayo_lexheaded : LinguisticExample :=
+def doyayo_lexheaded : Datum :=
   { id := "anderson2006a_doyayo_lexheaded"
     source := ⟨"anderson-2006a", "(15a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def doyayo_lexheaded : LinguisticExample :=
     readings := []
     paperFeatures := [("infl_pattern", "lexHeaded"), ("on_aux", "subj"), ("on_lex", "tense"), ("aux_marking", "partial (tone)")] }
 
-def doyayo_splitdoubled : LinguisticExample :=
+def doyayo_splitdoubled : Datum :=
   { id := "anderson2006a_doyayo_splitdoubled"
     source := ⟨"anderson-2006a", "(129)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def doyayo_splitdoubled : LinguisticExample :=
     readings := []
     paperFeatures := [("infl_pattern", "splitDoubled"), ("on_aux", "subj"), ("on_lex", "subj"), ("on_lex", "obj")] }
 
-def gorum_tiger : LinguisticExample :=
+def gorum_tiger : Datum :=
   { id := "anderson2006a_gorum_tiger"
     source := ⟨"anderson-2006a", "(63a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def gorum_tiger : LinguisticExample :=
     readings := []
     paperFeatures := [("infl_pattern", "doubled"), ("on_aux", "subj"), ("on_aux", "tense"), ("on_aux", "affectedness"), ("on_lex", "subj"), ("on_lex", "tense"), ("on_lex", "affectedness")] }
 
-def gorum_vigorously : LinguisticExample :=
+def gorum_vigorously : Datum :=
   { id := "anderson2006a_gorum_vigorously"
     source := ⟨"anderson-2006a", "(63b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def gorum_vigorously : LinguisticExample :=
     readings := []
     paperFeatures := [("infl_pattern", "doubled"), ("on_aux", "subj"), ("on_aux", "tense"), ("on_lex", "subj"), ("on_lex", "tense")] }
 
-def hemba_progressive : LinguisticExample :=
+def hemba_progressive : Datum :=
   { id := "anderson2006a_hemba_progressive"
     source := ⟨"anderson-2006a", "(105)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def hemba_progressive : LinguisticExample :=
     readings := []
     paperFeatures := [("infl_pattern", "splitDoubled"), ("on_aux", "subj"), ("on_aux", "tense"), ("on_lex", "subj"), ("on_lex", "mood")] }
 
-def pipil_capability : LinguisticExample :=
+def pipil_capability : Datum :=
   { id := "anderson2006a_pipil_capability"
     source := ⟨"anderson-2006a", "(49)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def pipil_capability : LinguisticExample :=
     readings := []
     paperFeatures := [("infl_pattern", "lexHeaded"), ("on_lex", "subj")] }
 
-def pipil_progressive : LinguisticExample :=
+def pipil_progressive : Datum :=
   { id := "anderson2006a_pipil_progressive"
     source := ⟨"anderson-2006a", "(133b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def pipil_progressive : LinguisticExample :=
     readings := []
     paperFeatures := [("infl_pattern", "splitDoubled"), ("on_aux", "subj"), ("on_lex", "subj"), ("on_lex", "obj")] }
 
-def jakaltek_completive : LinguisticExample :=
+def jakaltek_completive : Datum :=
   { id := "anderson2006a_jakaltek_completive"
     source := ⟨"anderson-2006a", "(87a)"⟩
     reportedIn := none
@@ -186,6 +184,6 @@ def jakaltek_completive : LinguisticExample :=
     readings := []
     paperFeatures := [("infl_pattern", "split"), ("on_aux", "aspect"), ("on_aux", "obj"), ("on_lex", "subj")] }
 
-def all : List LinguisticExample := [komi_neg_pres, komi_neg_past, udihe_neg, kwerba_neg_fut, kwerba_neg_past, doyayo_lexheaded, doyayo_splitdoubled, gorum_tiger, gorum_vigorously, hemba_progressive, pipil_capability, pipil_progressive, jakaltek_completive]
+def all : List Datum := [komi_neg_pres, komi_neg_past, udihe_neg, kwerba_neg_fut, kwerba_neg_past, doyayo_lexheaded, doyayo_splitdoubled, gorum_tiger, gorum_vigorously, hemba_progressive, pipil_capability, pipil_progressive, jakaltek_completive]
 
 end Anderson2006a.Examples

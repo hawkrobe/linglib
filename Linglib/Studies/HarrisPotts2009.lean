@@ -47,7 +47,7 @@ reports only in aggregate.
 namespace HarrisPotts2009
 
 open ConventionalImplicature (TwoDim)
-open Commitment Data.Examples
+open Commitment
 
 /-- Whose commitment a conventional implicature expresses: the speaker, or another discourse
 participant. -/
@@ -124,13 +124,13 @@ def responseOfLabel : String → Option Response
   | _ => none
 
 /-- Read a reading off a row that records an attribution. -/
-def Reading.ofExample (ex : LinguisticExample) : Option Reading := do
+def Reading.ofDatum (ex : Datum) : Option Reading := do
   let e ← ex.feature? "embedded"
   let r ← ex.feature? "orientation" >>= responseOfLabel
   pure ⟨e == "yes", r⟩
 
 /-- The attested readings of §2 and §5. -/
-def readings : List Reading := Examples.all.filterMap Reading.ofExample
+def readings : List Reading := Examples.all.filterMap Reading.ofDatum
 
 /-- (10a): non-speaker orientation arises only by semantic binding under an attitude
 predicate, so an unembedded item is read as the speaker's. -/

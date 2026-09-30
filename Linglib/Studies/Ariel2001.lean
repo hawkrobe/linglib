@@ -41,7 +41,7 @@ does not predict the repeated-name penalty.
 
 namespace Ariel2001
 
-open Discourse Data.Examples
+open Discourse
 
 /-! ### Form-function criteria (§1.1) -/
 
@@ -164,11 +164,11 @@ def ofLabel : String → Option AccessibilityLevel
   | _ => none
 
 /-- The marker a row records under a feature. -/
-def marker (r : LinguisticExample) (key : String) : Option AccessibilityLevel :=
+def marker (r : Datum) (key : String) : Option AccessibilityLevel :=
   r.feature? key >>= ofLabel
 
 /-- All the markers a row lists, in order. -/
-def markers (r : LinguisticExample) : List AccessibilityLevel :=
+def markers (r : Datum) : List AccessibilityLevel :=
   (r.features "marker").filterMap ofLabel
 
 /-- Topicality outranks distance: the topical, more distant Maya takes the higher marker. -/

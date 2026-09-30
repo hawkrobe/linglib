@@ -49,7 +49,7 @@ accessibility relation, covering the modal and the quantificational cases alike.
 
 namespace FoxKatzir2011
 
-open Alternatives Exhaustification ModalLogic Set Data.Examples
+open Alternatives Exhaustification ModalLogic Set
 
 variable {W : Type*}
 
@@ -278,14 +278,14 @@ structure Row where
 
 def yesNoTable : List (String × Bool) := [("yes", true), ("no", false)]
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let s ← ex.parse? "symmetric" yesNoTable
   let u ← ex.parse? "universal" yesNoTable
   let c ← ex.parse? "compatible" yesNoTable
   let i ← ex.parse? "inference" yesNoTable
   pure ⟨s, u, c, i⟩
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The inference arises exactly when a universal operator removes the symmetry, or when the
 formal alternatives contain neither a symmetric pair nor compatible disjuncts. -/

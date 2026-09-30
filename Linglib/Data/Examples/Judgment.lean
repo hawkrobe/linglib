@@ -16,9 +16,8 @@ This file defines `Judgment`, the mark a paper puts before an example, the CLDF 
 
 ## Main definitions
 
-* `Data.Examples.Judgment`: the five marks.
-* `Data.Examples.Judgment.rank`: the position of a mark on the scale, and the `LinearOrder` lifted
-  along it.
+* `Judgment`: the five marks.
+* `Judgment.rank`: the position of a mark on the scale, and the `LinearOrder` lifted along it.
 
 ## Implementation notes
 
@@ -36,8 +35,6 @@ This file defines `Judgment`, the mark a paper puts before an example, the CLDF 
 -/
 
 @[expose] public section
-
-namespace Data.Examples
 
 /-- The mark a paper puts before an example. -/
 inductive Judgment where
@@ -62,5 +59,3 @@ def Judgment.rank : Judgment → Fin 5
   | .acceptable => 4
 
 instance : LinearOrder Judgment := LinearOrder.lift' Judgment.rank (by decide)
-
-end Data.Examples

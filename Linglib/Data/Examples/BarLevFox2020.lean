@@ -15,9 +15,7 @@ this module; declarations live in `namespace BarLevFox2020.Examples`.
 
 namespace BarLevFox2020.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "barlevfox2020_1"
     source := ⟨"bar-lev-fox-2020", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := [("Mary is allowed to eat ice cream", .acceptable), ("Mary is allowed to eat cake", .acceptable)]
     paperFeatures := [("form", "◇(a ∨ b)"), ("inference", "free choice")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "barlevfox2020_6"
     source := ⟨"bar-lev-fox-2020", "(6)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_6 : LinguisticExample :=
     readings := [("John is allowed to eat neither", .acceptable)]
     paperFeatures := [("form", "¬◇(a ∨ b)")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "barlevfox2020_7"
     source := ⟨"bar-lev-fox-2020", "(7)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_7 : LinguisticExample :=
     readings := [("Mary is allowed to eat ice cream and allowed to eat cake", .acceptable), ("John isn't allowed to eat ice cream and he isn't allowed to eat cake", .acceptable)]
     paperFeatures := [("construction", "VP-ellipsis")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "barlevfox2020_8"
     source := ⟨"bar-lev-fox-2020", "(8)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_8 : LinguisticExample :=
     readings := [("Mary solved some but not all of the problems", .acceptable), ("John didn't solve any of the problems", .acceptable)]
     paperFeatures := [("construction", "VP-ellipsis")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "barlevfox2020_9"
     source := ⟨"bar-lev-fox-2020", "(9)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_9 : LinguisticExample :=
     readings := [("a", .unacceptable), ("b", .unacceptable)]
     paperFeatures := [("form", "a ∨ b"), ("alternatives", "{a ∨ b, a, b, a ∧ b}")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "barlevfox2020_10"
     source := ⟨"bar-lev-fox-2020", "(10)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_10 : LinguisticExample :=
     readings := [("◇a", .acceptable), ("◇b", .acceptable)]
     paperFeatures := [("form", "◇(a ∨ b)"), ("alternatives", "{◇(a ∨ b), ◇a, ◇b, ◇(a ∧ b)}")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "barlevfox2020_33"
     source := ⟨"bar-lev-fox-2020", "(33)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_33 : LinguisticExample :=
     readings := [("We are allowed to eat ice cream", .acceptable), ("We are allowed to eat cake", .acceptable)]
     paperFeatures := [("construction", "only"), ("inference", "presupposition")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "barlevfox2020_34"
     source := ⟨"bar-lev-fox-2020", "(34)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_34 : LinguisticExample :=
     readings := [("We are allowed to eat ice cream", .acceptable), ("We are allowed to eat cake", .acceptable)]
     paperFeatures := [("construction", "only"), ("construction", "polar question")] }
 
-def ex_35 : LinguisticExample :=
+def ex_35 : Datum :=
   { id := "barlevfox2020_35"
     source := ⟨"bar-lev-fox-2020", "(35)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_35 : LinguisticExample :=
     readings := [("We are allowed to eat ice cream", .unacceptable), ("We are allowed to eat cake", .unacceptable)]
     paperFeatures := [("construction", "polar question")] }
 
-def ex_36 : LinguisticExample :=
+def ex_36 : Datum :=
   { id := "barlevfox2020_36"
     source := ⟨"bar-lev-fox-2020", "(36)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_36 : LinguisticExample :=
     readings := [("Every boy is allowed to eat ice cream", .acceptable), ("Every boy is allowed to eat cake", .acceptable)]
     paperFeatures := [("form", "∀x ◇(Px ∨ Qx)"), ("inference", "universal free choice")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "barlevfox2020_37"
     source := ⟨"bar-lev-fox-2020", "(37)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_37 : LinguisticExample :=
     readings := [("No student is required to solve problem A", .acceptable), ("No student is required to solve problem B", .acceptable)]
     paperFeatures := [("form", "¬∃x □(Px ∧ Qx)"), ("inference", "universal free choice")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "barlevfox2020_38"
     source := ⟨"bar-lev-fox-2020", "(38)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_38 : LinguisticExample :=
     readings := [("Every girl is allowed to eat ice cream and allowed to eat cake on her birthday", .acceptable), ("No boy is allowed to eat ice cream and no boy is allowed to eat cake on his birthday", .acceptable), ("No boy is both allowed to eat ice cream and allowed to eat cake on his birthday", .unacceptable)]
     paperFeatures := [("construction", "VP-ellipsis")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "barlevfox2020_48"
     source := ⟨"bar-lev-fox-2020", "(48)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_48 : LinguisticExample :=
     readings := [("At least one of these people is singing", .acceptable), ("At least one of these people is dancing", .acceptable)]
     paperFeatures := [("form", "∀x(Px ∨ Qx)"), ("inference", "distributive")] }
 
-def ex_49 : LinguisticExample :=
+def ex_49 : Datum :=
   { id := "barlevfox2020_49"
     source := ⟨"bar-lev-fox-2020", "(49)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_49 : LinguisticExample :=
     readings := [("You are not required to solve problem A", .acceptable), ("You are not required to solve problem B", .acceptable)]
     paperFeatures := [("form", "□(p ∨ q)")] }
 
-def ex_53 : LinguisticExample :=
+def ex_53 : Datum :=
   { id := "barlevfox2020_53"
     source := ⟨"bar-lev-fox-2020", "(53)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_53 : LinguisticExample :=
     readings := [("The teacher is OK with every student talking to Mary", .acceptable), ("The teacher is OK with every student talking to Sue", .acceptable)]
     paperFeatures := [("form", "◇∀x(Px ∨ Qx)")] }
 
-def ex_54 : LinguisticExample :=
+def ex_54 : Datum :=
   { id := "barlevfox2020_54"
     source := ⟨"bar-lev-fox-2020", "(54)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_54 : LinguisticExample :=
     readings := [("Every kid ate ice cream", .unacceptable), ("Every kid ate cake", .unacceptable)]
     paperFeatures := [("form", "∀x(Px ∨ Qx)")] }
 
-def ex_59 : LinguisticExample :=
+def ex_59 : Datum :=
   { id := "barlevfox2020_59"
     source := ⟨"bar-lev-fox-2020", "(59)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_59 : LinguisticExample :=
     readings := [("Betty can balance a fishing rod on her nose", .acceptable), ("Betty can balance a fishing rod on her chin", .acceptable)]
     paperFeatures := [("form", "∃p ∀w∈p (Pw ∨ Qw)"), ("modal", "ability")] }
 
-def ex_61 : LinguisticExample :=
+def ex_61 : Datum :=
   { id := "barlevfox2020_61"
     source := ⟨"bar-lev-fox-2020", "(61)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_61 : LinguisticExample :=
     readings := [("If you eat ice cream, you will feel guilty", .acceptable), ("If you eat cake, you will feel guilty", .acceptable)]
     paperFeatures := [("form", "(p ∨ q) → r"), ("inference", "simplification of disjunctive antecedents")] }
 
-def ex_68 : LinguisticExample :=
+def ex_68 : Datum :=
   { id := "barlevfox2020_68"
     source := ⟨"bar-lev-fox-2020", "(68)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_68 : LinguisticExample :=
     readings := [("If you eat an apple you will be healthy", .acceptable), ("If you eat an orange you will be healthy", .acceptable), ("If you eat a pear you will be healthy", .acceptable)]
     paperFeatures := [("form", "(p ∨ q ∨ r) → s")] }
 
-def ex_69 : LinguisticExample :=
+def ex_69 : Datum :=
   { id := "barlevfox2020_69"
     source := ⟨"bar-lev-fox-2020", "(69)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_69 : LinguisticExample :=
     readings := [("Everyone will feel guilty if they eat ice cream", .acceptable), ("Everyone will feel guilty if they eat cake", .acceptable)]
     paperFeatures := [("form", "∀x((Px ∨ Qx) → Rx)")] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "barlevfox2020_70"
     source := ⟨"bar-lev-fox-2020", "(70)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_70 : LinguisticExample :=
     readings := [("It's not true that you will feel guilty if you eat ice cream", .acceptable), ("It's not true that you will feel guilty if you eat cake", .acceptable)]
     paperFeatures := [("form", "¬((p ∨ q) → r)")] }
 
-def ex_71 : LinguisticExample :=
+def ex_71 : Datum :=
   { id := "barlevfox2020_71"
     source := ⟨"bar-lev-fox-2020", "(71)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_71 : LinguisticExample :=
     readings := [("If Spain had fought with the Axis it would have been with the Axis", .acceptable), ("If Spain had fought with the Allies it would have been with the Axis", .unacceptable)]
     paperFeatures := [("form", "(p ∨ q) → p")] }
 
-def ex_72 : LinguisticExample :=
+def ex_72 : Datum :=
   { id := "barlevfox2020_72"
     source := ⟨"bar-lev-fox-2020", "(72)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_72 : LinguisticExample :=
     readings := [("If Spain had fought with the Axis, Hitler would have been pleased", .acceptable), ("If Spain had fought with the Allies, Hitler would have been pleased", .unacceptable)]
     paperFeatures := [("form", "(p ∨ q) → r")] }
 
-def ex_76 : LinguisticExample :=
+def ex_76 : Datum :=
   { id := "barlevfox2020_76"
     source := ⟨"bar-lev-fox-2020", "(76)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_76 : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "(p̄ ∨ q̄) → r")] }
 
-def ex_77 : LinguisticExample :=
+def ex_77 : Datum :=
   { id := "barlevfox2020_77"
     source := ⟨"bar-lev-fox-2020", "(77)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_77 : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "(¬(p ∧ q)) → r")] }
 
-def ex_78 : LinguisticExample :=
+def ex_78 : Datum :=
   { id := "barlevfox2020_78"
     source := ⟨"bar-lev-fox-2020", "(78)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_78 : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "(Exh(p̄ ∨ q̄) ∨ (p̄ ∧ q̄)) → r")] }
 
-def ex_85 : LinguisticExample :=
+def ex_85 : Datum :=
   { id := "barlevfox2020_85"
     source := ⟨"bar-lev-fox-2020", "(85)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_85 : LinguisticExample :=
     readings := [("Most students in linguistics took Advanced Syntax", .acceptable), ("Most students in philosophy took Advanced Syntax", .acceptable)]
     paperFeatures := [("form", "Most(P ∪ Q)(R)")] }
 
-def ex_91 : LinguisticExample :=
+def ex_91 : Datum :=
   { id := "barlevfox2020_91"
     source := ⟨"bar-lev-fox-2020", "(91)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_91 : LinguisticExample :=
     readings := [("Some boys are both allowed to eat ice cream and allowed to eat cake", .acceptable)]
     paperFeatures := [("form", "∃x ◇(Px ∨ Qx)")] }
 
-def ex_92 : LinguisticExample :=
+def ex_92 : Datum :=
   { id := "barlevfox2020_92"
     source := ⟨"bar-lev-fox-2020", "(92)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_92 : LinguisticExample :=
     readings := [("Not every student is required to solve problem A", .acceptable), ("Not every student is required to solve problem B", .acceptable), ("Some student is allowed to avoid solving problem A and allowed to avoid solving problem B", .unacceptable)]
     paperFeatures := [("form", "¬∀x □(Px ∧ Qx)")] }
 
-def ex_93 : LinguisticExample :=
+def ex_93 : Datum :=
   { id := "barlevfox2020_93"
     source := ⟨"bar-lev-fox-2020", "(93)"⟩
     reportedIn := none
@@ -407,6 +405,6 @@ def ex_93 : LinguisticExample :=
     readings := [("Some girls are both allowed to eat ice cream and allowed to eat cake on their birthday", .acceptable), ("No boys are allowed to eat ice cream and no boys are allowed to eat cake on their birthday", .acceptable)]
     paperFeatures := [("construction", "VP-ellipsis")] }
 
-def all : List LinguisticExample := [ex_1, ex_6, ex_7, ex_8, ex_9, ex_10, ex_33, ex_34, ex_35, ex_36, ex_37, ex_38, ex_48, ex_49, ex_53, ex_54, ex_59, ex_61, ex_68, ex_69, ex_70, ex_71, ex_72, ex_76, ex_77, ex_78, ex_85, ex_91, ex_92, ex_93]
+def all : List Datum := [ex_1, ex_6, ex_7, ex_8, ex_9, ex_10, ex_33, ex_34, ex_35, ex_36, ex_37, ex_38, ex_48, ex_49, ex_53, ex_54, ex_59, ex_61, ex_68, ex_69, ex_70, ex_71, ex_72, ex_76, ex_77, ex_78, ex_85, ex_91, ex_92, ex_93]
 
 end BarLevFox2020.Examples

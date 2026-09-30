@@ -15,9 +15,7 @@ this module; declarations live in `namespace RosaArnold2017.Examples`.
 
 namespace RosaArnold2017.Examples
 
-open Data.Examples
-
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "rosaarnold2017_1a"
     source := ⟨"rosa-arnold-2017", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1a : LinguisticExample :=
     readings := [("murdered someone", .acceptable)]
     paperFeatures := [("verbType", "implicitCausality"), ("expected", "stimulus")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "rosaarnold2017_1b"
     source := ⟨"rosa-arnold-2017", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_1b : LinguisticExample :=
     readings := [("figured out the case", .acceptable)]
     paperFeatures := [("verbType", "implicitCausality"), ("expected", "stimulus")] }
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "rosaarnold2017_2a"
     source := ⟨"rosa-arnold-2017", "(2a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_2a : LinguisticExample :=
     readings := [("turned it in to the police", .acceptable)]
     paperFeatures := [("verbType", "transfer"), ("expected", "goal")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "rosaarnold2017_2b"
     source := ⟨"rosa-arnold-2017", "(2b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_2b : LinguisticExample :=
     readings := [("chucked it into the river", .acceptable)]
     paperFeatures := [("verbType", "transfer"), ("expected", "goal")] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "rosaarnold2017_3a"
     source := ⟨"rosa-arnold-2017", "(3a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "goal"), ("gram", "subject")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "rosaarnold2017_3b"
     source := ⟨"rosa-arnold-2017", "(3b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "goal"), ("gram", "nonsubject")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "rosaarnold2017_4a"
     source := ⟨"rosa-arnold-2017", "(4a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "source"), ("gram", "subject")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "rosaarnold2017_4b"
     source := ⟨"rosa-arnold-2017", "(4b)"⟩
     reportedIn := none
@@ -121,6 +119,6 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "source"), ("gram", "nonsubject")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_2a, ex_2b, ex_3a, ex_3b, ex_4a, ex_4b]
+def all : List Datum := [ex_1a, ex_1b, ex_2a, ex_2b, ex_3a, ex_3b, ex_4a, ex_4b]
 
 end RosaArnold2017.Examples

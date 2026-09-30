@@ -97,7 +97,6 @@ theorem not_much_mathSpeak (hu : u.dimension = D) : ¬ much (w.quantity D) (math
 
 /-! ### The paper's examples -/
 
-open Data.Examples (LinguisticExample)
 
 /-- The dimension a predicate measures in. -/
 def predicateDimension? : String → Option QuantityDimension
@@ -113,7 +112,7 @@ def symbol? (s : String) : Option MeasureTerm := allMeasureTerms.find? (·.symbo
 
 /-- The head unit and *per*-unit of a row's *per*-phrase, from its unit nouns or from the
 symbols of the term it verbalizes (`13 g/mL`). -/
-def units? (e : LinguisticExample) : Option (MeasureTerm × MeasureTerm) :=
+def units? (e : Datum) : Option (MeasureTerm × MeasureTerm) :=
   match e.feature? "verbalizes" with
   | some v =>
     match (v.toList.dropWhile (· ≠ ' ')).drop 1 |>.span (· ≠ '/') with
@@ -123,7 +122,7 @@ def units? (e : LinguisticExample) : Option (MeasureTerm × MeasureTerm) :=
 
 /-- Whether a row's *per*-phrase is composed: a fronted *per*-PP has been, a verbalization of
 notation has not, and otherwise the paper's classification decides. -/
-def composed? (e : LinguisticExample) : Option Bool :=
+def composed? (e : Datum) : Option Bool :=
   if e.feature? "diagnostic" = some "sub-extraction" then some true
   else if (e.feature? "verbalizes").isSome then some false
   else match e.feature? "interpretation" with
@@ -132,7 +131,7 @@ def composed? (e : LinguisticExample) : Option Bool :=
     | _ => none
 
 /-- A row's predicate dimension and the dimension of its *per*-phrase's denotation. -/
-def dimensions? (e : LinguisticExample) : Option (QuantityDimension × QuantityDimension) := do
+def dimensions? (e : Datum) : Option (QuantityDimension × QuantityDimension) := do
   let p ← predicateDimension? (← e.feature? "predicate_dimension")
   let (u, r) ← units? e
   let c ← composed? e

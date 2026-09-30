@@ -15,9 +15,7 @@ this module; declarations live in `namespace UegakiSudo2019.Examples`.
 
 namespace UegakiSudo2019.Examples
 
-open Data.Examples
-
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "uegakisudo2019_6a"
     source := ⟨"uegaki-sudo-2019", "(6a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "non-veridical preferential"), ("complement", "declarative")] }
 
-def ex_6c : LinguisticExample :=
+def ex_6c : Datum :=
   { id := "uegakisudo2019_6c"
     source := ⟨"uegaki-sudo-2019", "(6c)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_6c : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "veridical preferential"), ("complement", "declarative")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "uegakisudo2019_7b"
     source := ⟨"uegaki-sudo-2019", "(7b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "veridical preferential"), ("complement", "wh-interrogative")] }
 
-def ex_7c : LinguisticExample :=
+def ex_7c : Datum :=
   { id := "uegakisudo2019_7c"
     source := ⟨"uegaki-sudo-2019", "(7c)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_7c : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "veridical preferential"), ("complement", "wh-interrogative")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "uegakisudo2019_8a"
     source := ⟨"uegaki-sudo-2019", "(8a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "non-veridical preferential"), ("complement", "wh-interrogative")] }
 
-def ex_8b : LinguisticExample :=
+def ex_8b : Datum :=
   { id := "uegakisudo2019_8b"
     source := ⟨"uegaki-sudo-2019", "(8b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "non-veridical preferential"), ("complement", "wh-interrogative")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "uegakisudo2019_10b"
     source := ⟨"uegaki-sudo-2019", "(10b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "veridical preferential"), ("complement", "whether-interrogative")] }
 
-def ex_40a : LinguisticExample :=
+def ex_40a : Datum :=
   { id := "uegakisudo2019_40a"
     source := ⟨"uegaki-sudo-2019", "(40a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_40a : LinguisticExample :=
     readings := [("John's preference for Alice's jumping is compared to alternatives false at the evaluation world", .acceptable)]
     paperFeatures := [("predicate", "veridical preferential"), ("focus", "subject")] }
 
-def ex_40b : LinguisticExample :=
+def ex_40b : Datum :=
   { id := "uegakisudo2019_40b"
     source := ⟨"uegaki-sudo-2019", "(40b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_40b : LinguisticExample :=
     readings := [("John's preference for Alice's jumping is compared only to alternatives he considers possible", .acceptable)]
     paperFeatures := [("predicate", "non-veridical preferential"), ("focus", "subject")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "uegakisudo2019_41"
     source := ⟨"uegaki-sudo-2019", "(41)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "veridical preferential"), ("complement", "wh-interrogative"), ("evidence", "Threshold Significance")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "uegakisudo2019_42"
     source := ⟨"uegaki-sudo-2019", "(42)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "be indifferent"), ("complement", "wh-interrogative")] }
 
-def ex_43a : LinguisticExample :=
+def ex_43a : Datum :=
   { id := "uegakisudo2019_43a"
     source := ⟨"uegaki-sudo-2019", "(43a)"⟩
     reportedIn := none
@@ -173,6 +171,6 @@ def ex_43a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "be indifferent"), ("complement", "declarative")] }
 
-def all : List LinguisticExample := [ex_6a, ex_6c, ex_7b, ex_7c, ex_8a, ex_8b, ex_10b, ex_40a, ex_40b, ex_41, ex_42, ex_43a]
+def all : List Datum := [ex_6a, ex_6c, ex_7b, ex_7c, ex_8a, ex_8b, ex_10b, ex_40a, ex_40b, ex_41, ex_42, ex_43a]
 
 end UegakiSudo2019.Examples

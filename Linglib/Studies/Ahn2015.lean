@@ -43,7 +43,6 @@ negative host whose antecedent is not positive, and *too* fails only for want of
 
 namespace Ahn2015
 
-open Data.Examples
 
 variable {World : Type*} (q p : Set World)
 

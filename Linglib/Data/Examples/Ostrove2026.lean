@@ -15,9 +15,7 @@ this module; declarations live in `namespace Ostrove2026.Examples`.
 
 namespace Ostrove2026.Examples
 
-open Data.Examples
-
-def ex_9a_completive : LinguisticExample :=
+def ex_9a_completive : Datum :=
   { id := "ostrove2026_9a_completive"
     source := ⟨"ostrove-2026", "(9a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_9a_completive : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "completive")] }
 
-def ex_9a_continuous : LinguisticExample :=
+def ex_9a_continuous : Datum :=
   { id := "ostrove2026_9a_continuous"
     source := ⟨"ostrove-2026", "(9a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_9a_continuous : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "continuous")] }
 
-def ex_9a_irrealis : LinguisticExample :=
+def ex_9a_irrealis : Datum :=
   { id := "ostrove2026_9a_irrealis"
     source := ⟨"ostrove-2026", "(9a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_9a_irrealis : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "irrealis")] }
 
-def ex_9b_completive : LinguisticExample :=
+def ex_9b_completive : Datum :=
   { id := "ostrove2026_9b_completive"
     source := ⟨"ostrove-2026", "(9b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_9b_completive : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kà'àn"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "completive")] }
 
-def ex_9b_continuous : LinguisticExample :=
+def ex_9b_continuous : Datum :=
   { id := "ostrove2026_9b_continuous"
     source := ⟨"ostrove-2026", "(9b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_9b_continuous : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kà'àn"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "continuous")] }
 
-def ex_9b_irrealis : LinguisticExample :=
+def ex_9b_irrealis : Datum :=
   { id := "ostrove2026_9b_irrealis"
     source := ⟨"ostrove-2026", "(9b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_9b_irrealis : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kà'àn"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "irrealis")] }
 
-def ex_9c_completive : LinguisticExample :=
+def ex_9c_completive : Datum :=
   { id := "ostrove2026_9c_completive"
     source := ⟨"ostrove-2026", "(9c)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_9c_completive : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kusijǐ ini"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "completive")] }
 
-def ex_9c_continuous : LinguisticExample :=
+def ex_9c_continuous : Datum :=
   { id := "ostrove2026_9c_continuous"
     source := ⟨"ostrove-2026", "(9c)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_9c_continuous : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kusijǐ ini"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "continuous")] }
 
-def ex_9c_irrealis : LinguisticExample :=
+def ex_9c_irrealis : Datum :=
   { id := "ostrove2026_9c_irrealis"
     source := ⟨"ostrove-2026", "(9c)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_9c_irrealis : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kusijǐ ini"), ("clauseType", "finite"), ("diagnostic", "aspect"), ("aspect", "irrealis")] }
 
-def ex_13a_completive : LinguisticExample :=
+def ex_13a_completive : Datum :=
   { id := "ostrove2026_13a_completive"
     source := ⟨"ostrove-2026", "(13a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_13a_completive : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "completive")] }
 
-def ex_13a_continuous : LinguisticExample :=
+def ex_13a_continuous : Datum :=
   { id := "ostrove2026_13a_continuous"
     source := ⟨"ostrove-2026", "(13a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_13a_continuous : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "continuous")] }
 
-def ex_13a_irrealis : LinguisticExample :=
+def ex_13a_irrealis : Datum :=
   { id := "ostrove2026_13a_irrealis"
     source := ⟨"ostrove-2026", "(13a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_13a_irrealis : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "irrealis")] }
 
-def ex_13b_completive : LinguisticExample :=
+def ex_13b_completive : Datum :=
   { id := "ostrove2026_13b_completive"
     source := ⟨"ostrove-2026", "(13b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_13b_completive : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "completive")] }
 
-def ex_13b_continuous : LinguisticExample :=
+def ex_13b_continuous : Datum :=
   { id := "ostrove2026_13b_continuous"
     source := ⟨"ostrove-2026", "(13b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_13b_continuous : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "continuous")] }
 
-def ex_13b_irrealis : LinguisticExample :=
+def ex_13b_irrealis : Datum :=
   { id := "ostrove2026_13b_irrealis"
     source := ⟨"ostrove-2026", "(13b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_13b_irrealis : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "irrealis")] }
 
-def ex_13c_completive : LinguisticExample :=
+def ex_13c_completive : Datum :=
   { id := "ostrove2026_13c_completive"
     source := ⟨"ostrove-2026", "(13c)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_13c_completive : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "completive")] }
 
-def ex_13c_continuous : LinguisticExample :=
+def ex_13c_continuous : Datum :=
   { id := "ostrove2026_13c_continuous"
     source := ⟨"ostrove-2026", "(13c)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_13c_continuous : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "continuous")] }
 
-def ex_13c_irrealis : LinguisticExample :=
+def ex_13c_irrealis : Datum :=
   { id := "ostrove2026_13c_irrealis"
     source := ⟨"ostrove-2026", "(13c)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_13c_irrealis : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "irrealis")] }
 
-def ex_13d_completive : LinguisticExample :=
+def ex_13d_completive : Datum :=
   { id := "ostrove2026_13d_completive"
     source := ⟨"ostrove-2026", "(13d)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_13d_completive : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "completive")] }
 
-def ex_13d_continuous : LinguisticExample :=
+def ex_13d_continuous : Datum :=
   { id := "ostrove2026_13d_continuous"
     source := ⟨"ostrove-2026", "(13d)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_13d_continuous : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "continuous")] }
 
-def ex_13d_irrealis : LinguisticExample :=
+def ex_13d_irrealis : Datum :=
   { id := "ostrove2026_13d_irrealis"
     source := ⟨"ostrove-2026", "(13d)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_13d_irrealis : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "aspect"), ("aspect", "irrealis")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "ostrove2026_10a"
     source := ⟨"ostrove-2026", "(10a)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kà'àn"), ("clauseType", "finite"), ("diagnostic", "tense")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "ostrove2026_10b"
     source := ⟨"ostrove-2026", "(10b)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "tense")] }
 
-def ex_16a : LinguisticExample :=
+def ex_16a : Datum :=
   { id := "ostrove2026_16a"
     source := ⟨"ostrove-2026", "(16a)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_16a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "tense")] }
 
-def ex_16b : LinguisticExample :=
+def ex_16b : Datum :=
   { id := "ostrove2026_16b"
     source := ⟨"ostrove-2026", "(16b)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_16b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "tense")] }
 
-def ex_17a : LinguisticExample :=
+def ex_17a : Datum :=
   { id := "ostrove2026_17a"
     source := ⟨"ostrove-2026", "(17a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_17a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "nakú'ún ini"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "tense")] }
 
-def ex_17b : LinguisticExample :=
+def ex_17b : Datum :=
   { id := "ostrove2026_17b"
     source := ⟨"ostrove-2026", "(17b)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_17b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "tense")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "ostrove2026_12a"
     source := ⟨"ostrove-2026", "(12a)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_12a : LinguisticExample :=
     readings := [("controlled", .acceptable), ("free", .acceptable)]
     paperFeatures := [("verb", "káchi"), ("clauseType", "finite"), ("diagnostic", "subject")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "ostrove2026_12b"
     source := ⟨"ostrove-2026", "(12b)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_12b : LinguisticExample :=
     readings := [("controlled", .acceptable), ("free", .acceptable)]
     paperFeatures := [("verb", "kusijǐ ini"), ("clauseType", "finite"), ("diagnostic", "subject")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "ostrove2026_18a"
     source := ⟨"ostrove-2026", "(18a)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_18a : LinguisticExample :=
     readings := [("controlled", .acceptable), ("free", .unacceptable)]
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "subject")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "ostrove2026_18b"
     source := ⟨"ostrove-2026", "(18b)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_18b : LinguisticExample :=
     readings := [("controlled", .unacceptable), ("free", .acceptable)]
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "subject")] }
 
-def ex_18c : LinguisticExample :=
+def ex_18c : Datum :=
   { id := "ostrove2026_18c"
     source := ⟨"ostrove-2026", "(18c)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_18c : LinguisticExample :=
     readings := [("free", .acceptable)]
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "subject")] }
 
-def ex_18d : LinguisticExample :=
+def ex_18d : Datum :=
   { id := "ostrove2026_18d"
     source := ⟨"ostrove-2026", "(18d)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_18d : LinguisticExample :=
     readings := [("free", .acceptable)]
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "subject"), ("embeddedSubject", "lexical")] }
 
-def ex_19a : LinguisticExample :=
+def ex_19a : Datum :=
   { id := "ostrove2026_19a"
     source := ⟨"ostrove-2026", "(19a)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_19a : LinguisticExample :=
     readings := [("free", .ungrammatical)]
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "subject")] }
 
-def ex_19b : LinguisticExample :=
+def ex_19b : Datum :=
   { id := "ostrove2026_19b"
     source := ⟨"ostrove-2026", "(19b)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_19b : LinguisticExample :=
     readings := [("free", .ungrammatical)]
     paperFeatures := [("verb", "nakú'ún ini"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "subject")] }
 
-def ex_40a : LinguisticExample :=
+def ex_40a : Datum :=
   { id := "ostrove2026_40a"
     source := ⟨"ostrove-2026", "(40a)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_40a : LinguisticExample :=
     readings := [("free", .ungrammatical)]
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "subject")] }
 
-def ex_40b : LinguisticExample :=
+def ex_40b : Datum :=
   { id := "ostrove2026_40b"
     source := ⟨"ostrove-2026", "(40b)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_40b : LinguisticExample :=
     readings := [("free", .ungrammatical)]
     paperFeatures := [("verb", "kixǎ"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "subject")] }
 
-def ex_41a : LinguisticExample :=
+def ex_41a : Datum :=
   { id := "ostrove2026_41a"
     source := ⟨"ostrove-2026", "(41a)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_41a : LinguisticExample :=
     readings := [("free", .acceptable)]
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "subject"), ("embeddedSubject", "lexical")] }
 
-def ex_41b : LinguisticExample :=
+def ex_41b : Datum :=
   { id := "ostrove2026_41b"
     source := ⟨"ostrove-2026", "(41b)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_41b : LinguisticExample :=
     readings := [("free", .ungrammatical)]
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "subject"), ("embeddedSubject", "lexical")] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "ostrove2026_20a"
     source := ⟨"ostrove-2026", "(20a)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_20a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ntatǔ'un"), ("clauseType", "finite"), ("diagnostic", "fronting"), ("fronting", "out")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "ostrove2026_20b"
     source := ⟨"ostrove-2026", "(20b)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex_20b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "fronting"), ("fronting", "out")] }
 
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "ostrove2026_21a"
     source := ⟨"ostrove-2026", "(21a)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "káchi"), ("clauseType", "finite"), ("diagnostic", "fronting"), ("fronting", "within")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "ostrove2026_21b"
     source := ⟨"ostrove-2026", "(21b)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex_21b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kuntàà ini"), ("clauseType", "finite"), ("diagnostic", "fronting"), ("fronting", "within")] }
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "ostrove2026_22a"
     source := ⟨"ostrove-2026", "(22a)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex_22a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "out")] }
 
-def ex_22b : LinguisticExample :=
+def ex_22b : Datum :=
   { id := "ostrove2026_22b"
     source := ⟨"ostrove-2026", "(22b)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex_22b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "chikàà ini"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "out")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "ostrove2026_23a"
     source := ⟨"ostrove-2026", "(23a)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "within")] }
 
-def ex_23b : LinguisticExample :=
+def ex_23b : Datum :=
   { id := "ostrove2026_23b"
     source := ⟨"ostrove-2026", "(23b)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "chikàà ini"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "within")] }
 
-def ex_24a : LinguisticExample :=
+def ex_24a : Datum :=
   { id := "ostrove2026_24a"
     source := ⟨"ostrove-2026", "(24a)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "nantǒso"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "out")] }
 
-def ex_24b : LinguisticExample :=
+def ex_24b : Datum :=
   { id := "ostrove2026_24b"
     source := ⟨"ostrove-2026", "(24b)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex_24b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "out")] }
 
-def ex_25a : LinguisticExample :=
+def ex_25a : Datum :=
   { id := "ostrove2026_25a"
     source := ⟨"ostrove-2026", "(25a)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "nantǒso"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "within")] }
 
-def ex_25b : LinguisticExample :=
+def ex_25b : Datum :=
   { id := "ostrove2026_25b"
     source := ⟨"ostrove-2026", "(25b)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex_25b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "within")] }
 
-def ex_109 : LinguisticExample :=
+def ex_109 : Datum :=
   { id := "ostrove2026_109"
     source := ⟨"ostrove-2026", "(109)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex_109 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "fronting"), ("fronting", "out")] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "ostrove2026_30a"
     source := ⟨"ostrove-2026", "(30a)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex_30a : LinguisticExample :=
     readings := [("sloppy", .acceptable), ("strict", .acceptable)]
     paperFeatures := [("verb", "káchi"), ("clauseType", "finite"), ("diagnostic", "ellipsis")] }
 
-def ex_30b : LinguisticExample :=
+def ex_30b : Datum :=
   { id := "ostrove2026_30b"
     source := ⟨"ostrove-2026", "(30b)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex_30b : LinguisticExample :=
     readings := [("sloppy", .acceptable), ("strict", .acceptable)]
     paperFeatures := [("verb", "ka'án"), ("clauseType", "finite"), ("diagnostic", "ellipsis")] }
 
-def ex_32a : LinguisticExample :=
+def ex_32a : Datum :=
   { id := "ostrove2026_32a"
     source := ⟨"ostrove-2026", "(32a)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex_32a : LinguisticExample :=
     readings := [("sloppy", .acceptable), ("strict", .acceptable)]
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "ellipsis")] }
 
-def ex_32b : LinguisticExample :=
+def ex_32b : Datum :=
   { id := "ostrove2026_32b"
     source := ⟨"ostrove-2026", "(32b)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex_32b : LinguisticExample :=
     readings := [("sloppy", .acceptable), ("strict", .acceptable)]
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "ellipsis")] }
 
-def ex_33a : LinguisticExample :=
+def ex_33a : Datum :=
   { id := "ostrove2026_33a"
     source := ⟨"ostrove-2026", "(33a)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex_33a : LinguisticExample :=
     readings := [("sloppy", .acceptable), ("strict", .unacceptable)]
     paperFeatures := [("verb", "kònì"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "ellipsis")] }
 
-def ex_33b : LinguisticExample :=
+def ex_33b : Datum :=
   { id := "ostrove2026_33b"
     source := ⟨"ostrove-2026", "(33b)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex_33b : LinguisticExample :=
     readings := [("sloppy", .acceptable), ("strict", .unacceptable)]
     paperFeatures := [("verb", "nakú'ún ini"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "ellipsis")] }
 
-def ex_37a : LinguisticExample :=
+def ex_37a : Datum :=
   { id := "ostrove2026_37a"
     source := ⟨"ostrove-2026", "(37a)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ex_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "nantǒso"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "partialControl")] }
 
-def ex_37b : LinguisticExample :=
+def ex_37b : Datum :=
   { id := "ostrove2026_37b"
     source := ⟨"ostrove-2026", "(37b)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def ex_37b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "partialControl")] }
 
-def ex_43a : LinguisticExample :=
+def ex_43a : Datum :=
   { id := "ostrove2026_43a"
     source := ⟨"ostrove-2026", "(43a)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def ex_43a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")] }
 
-def ex_43b : LinguisticExample :=
+def ex_43b : Datum :=
   { id := "ostrove2026_43b"
     source := ⟨"ostrove-2026", "(43b)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def ex_43b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")] }
 
-def ex_44a : LinguisticExample :=
+def ex_44a : Datum :=
   { id := "ostrove2026_44a"
     source := ⟨"ostrove-2026", "(44a)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def ex_44a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "nantǒso"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")] }
 
-def ex_44b : LinguisticExample :=
+def ex_44b : Datum :=
   { id := "ostrove2026_44b"
     source := ⟨"ostrove-2026", "(44b)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def ex_44b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")] }
 
-def ex_45a : LinguisticExample :=
+def ex_45a : Datum :=
   { id := "ostrove2026_45a"
     source := ⟨"ostrove-2026", "(45a)"⟩
     reportedIn := none
@@ -862,7 +860,7 @@ def ex_45a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")] }
 
-def ex_45b : LinguisticExample :=
+def ex_45b : Datum :=
   { id := "ostrove2026_45b"
     source := ⟨"ostrove-2026", "(45b)"⟩
     reportedIn := none
@@ -875,7 +873,7 @@ def ex_45b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")] }
 
-def ex_46a : LinguisticExample :=
+def ex_46a : Datum :=
   { id := "ostrove2026_46a"
     source := ⟨"ostrove-2026", "(46a)"⟩
     reportedIn := none
@@ -888,7 +886,7 @@ def ex_46a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")] }
 
-def ex_46b : LinguisticExample :=
+def ex_46b : Datum :=
   { id := "ostrove2026_46b"
     source := ⟨"ostrove-2026", "(46b)"⟩
     reportedIn := none
@@ -901,7 +899,7 @@ def ex_46b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ntukú"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "cCommand"), ("antecedent", "nonCCommanding")] }
 
-def ex_67a : LinguisticExample :=
+def ex_67a : Datum :=
   { id := "ostrove2026_67a"
     source := ⟨"ostrove-2026", "(67a)"⟩
     reportedIn := none
@@ -914,7 +912,7 @@ def ex_67a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "nantǒso"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "clitic"), ("embeddedSubject", "nonclitic")] }
 
-def ex_67b : LinguisticExample :=
+def ex_67b : Datum :=
   { id := "ostrove2026_67b"
     source := ⟨"ostrove-2026", "(67b)"⟩
     reportedIn := none
@@ -927,7 +925,7 @@ def ex_67b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kònì"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "clitic"), ("embeddedSubject", "nonclitic")] }
 
-def ex_67c : LinguisticExample :=
+def ex_67c : Datum :=
   { id := "ostrove2026_67c"
     source := ⟨"ostrove-2026", "(67c)"⟩
     reportedIn := none
@@ -940,7 +938,7 @@ def ex_67c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kixǎ"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "clitic"), ("embeddedSubject", "nonclitic")] }
 
-def ex_68a : LinguisticExample :=
+def ex_68a : Datum :=
   { id := "ostrove2026_68a"
     source := ⟨"ostrove-2026", "(68a)"⟩
     reportedIn := none
@@ -953,7 +951,7 @@ def ex_68a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kòni"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "clitic"), ("embeddedSubject", "nonclitic")] }
 
-def ex_68b : LinguisticExample :=
+def ex_68b : Datum :=
   { id := "ostrove2026_68b"
     source := ⟨"ostrove-2026", "(68b)"⟩
     reportedIn := none
@@ -966,7 +964,7 @@ def ex_68b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ntatu"), ("clauseType", "tensedSubjunctive"), ("diagnostic", "clitic"), ("embeddedSubject", "nonclitic")] }
 
-def ex_75a : LinguisticExample :=
+def ex_75a : Datum :=
   { id := "ostrove2026_75a"
     source := ⟨"ostrove-2026", "(75a)"⟩
     reportedIn := none
@@ -979,7 +977,7 @@ def ex_75a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")] }
 
-def ex_75b : LinguisticExample :=
+def ex_75b : Datum :=
   { id := "ostrove2026_75b"
     source := ⟨"ostrove-2026", "(75b)"⟩
     reportedIn := none
@@ -992,7 +990,7 @@ def ex_75b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")] }
 
-def ex_86a : LinguisticExample :=
+def ex_86a : Datum :=
   { id := "ostrove2026_86a"
     source := ⟨"ostrove-2026", "(86a)"⟩
     reportedIn := none
@@ -1005,7 +1003,7 @@ def ex_86a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kixǎ"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")] }
 
-def ex_86b : LinguisticExample :=
+def ex_86b : Datum :=
   { id := "ostrove2026_86b"
     source := ⟨"ostrove-2026", "(86b)"⟩
     reportedIn := none
@@ -1018,7 +1016,7 @@ def ex_86b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")] }
 
-def ex_87a : LinguisticExample :=
+def ex_87a : Datum :=
   { id := "ostrove2026_87a"
     source := ⟨"ostrove-2026", "(87a)"⟩
     reportedIn := none
@@ -1031,7 +1029,7 @@ def ex_87a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "kixǎ"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")] }
 
-def ex_87b : LinguisticExample :=
+def ex_87b : Datum :=
   { id := "ostrove2026_87b"
     source := ⟨"ostrove-2026", "(87b)"⟩
     reportedIn := none
@@ -1044,6 +1042,6 @@ def ex_87b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "xiniñu'u"), ("clauseType", "untensedSubjunctive"), ("diagnostic", "exemptAnaphor"), ("antecedent", "quantified")] }
 
-def all : List LinguisticExample := [ex_9a_completive, ex_9a_continuous, ex_9a_irrealis, ex_9b_completive, ex_9b_continuous, ex_9b_irrealis, ex_9c_completive, ex_9c_continuous, ex_9c_irrealis, ex_13a_completive, ex_13a_continuous, ex_13a_irrealis, ex_13b_completive, ex_13b_continuous, ex_13b_irrealis, ex_13c_completive, ex_13c_continuous, ex_13c_irrealis, ex_13d_completive, ex_13d_continuous, ex_13d_irrealis, ex_10a, ex_10b, ex_16a, ex_16b, ex_17a, ex_17b, ex_12a, ex_12b, ex_18a, ex_18b, ex_18c, ex_18d, ex_19a, ex_19b, ex_40a, ex_40b, ex_41a, ex_41b, ex_20a, ex_20b, ex_21a, ex_21b, ex_22a, ex_22b, ex_23a, ex_23b, ex_24a, ex_24b, ex_25a, ex_25b, ex_109, ex_30a, ex_30b, ex_32a, ex_32b, ex_33a, ex_33b, ex_37a, ex_37b, ex_43a, ex_43b, ex_44a, ex_44b, ex_45a, ex_45b, ex_46a, ex_46b, ex_67a, ex_67b, ex_67c, ex_68a, ex_68b, ex_75a, ex_75b, ex_86a, ex_86b, ex_87a, ex_87b]
+def all : List Datum := [ex_9a_completive, ex_9a_continuous, ex_9a_irrealis, ex_9b_completive, ex_9b_continuous, ex_9b_irrealis, ex_9c_completive, ex_9c_continuous, ex_9c_irrealis, ex_13a_completive, ex_13a_continuous, ex_13a_irrealis, ex_13b_completive, ex_13b_continuous, ex_13b_irrealis, ex_13c_completive, ex_13c_continuous, ex_13c_irrealis, ex_13d_completive, ex_13d_continuous, ex_13d_irrealis, ex_10a, ex_10b, ex_16a, ex_16b, ex_17a, ex_17b, ex_12a, ex_12b, ex_18a, ex_18b, ex_18c, ex_18d, ex_19a, ex_19b, ex_40a, ex_40b, ex_41a, ex_41b, ex_20a, ex_20b, ex_21a, ex_21b, ex_22a, ex_22b, ex_23a, ex_23b, ex_24a, ex_24b, ex_25a, ex_25b, ex_109, ex_30a, ex_30b, ex_32a, ex_32b, ex_33a, ex_33b, ex_37a, ex_37b, ex_43a, ex_43b, ex_44a, ex_44b, ex_45a, ex_45b, ex_46a, ex_46b, ex_67a, ex_67b, ex_67c, ex_68a, ex_68b, ex_75a, ex_75b, ex_86a, ex_86b, ex_87a, ex_87b]
 
 end Ostrove2026.Examples

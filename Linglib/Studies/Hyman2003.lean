@@ -88,7 +88,7 @@ affix order, so the Mirror Principle holds, if at all, as a violable constraint 
 
 namespace Hyman2003
 
-open Morphology Data.Examples OptimalityTheory
+open Morphology OptimalityTheory
 
 /-! ### The template -/
 
@@ -546,24 +546,24 @@ def Ext.of? : Char → Option Ext
   | _ => none
 
 /-- A row's feature as a sequence of extensions. -/
-def exts? (r : LinguisticExample) (key : String) : Option (List Ext) :=
+def exts? (r : Datum) (key : String) : Option (List Ext) :=
   (r.feature? key).bind fun s ↦ s.toList.mapM Ext.of?
 
 /-- A row's scope order, innermost first. -/
-def scope? (r : LinguisticExample) : Option Input := exts? r "scope"
+def scope? (r : Datum) : Option Input := exts? r "scope"
 
 /-- A row's suffix order, innermost first. -/
-def suffixes? (r : LinguisticExample) : Option Candidate := exts? r "suffixes"
+def suffixes? (r : Datum) : Option Candidate := exts? r "suffixes"
 
 /-- A row's grammar. -/
-def grammar? (r : LinguisticExample) : Option Grammar :=
+def grammar? (r : Datum) : Option Grammar :=
   match r.language with
   | "nyan1308" => some chichewa
   | "chim1312" => some chimwiini
   | _ => none
 
 /-- The passive subject a row reports. -/
-def subject? (r : LinguisticExample) : Option Baker1985.Arg :=
+def subject? (r : Datum) : Option Baker1985.Arg :=
   r.parse? "subject" [("instrument", .applied), ("causee", .agent)]
 
 /-- Every form the paper judges is acceptable exactly when it is an output of its scope. -/

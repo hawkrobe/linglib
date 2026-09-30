@@ -53,7 +53,7 @@ not formalized.
 
 namespace Saab2026
 
-open Spanish.Binominals Data.Examples
+open Spanish.Binominals
 
 /-! ### Structures -/
 
@@ -152,7 +152,7 @@ theorem elidable_first_iff_singular (b : BinominalType) (r : Reading) (hb : b �
 /-! ### The paper's examples -/
 
 /-- A row's binominal type, from the fragment entry of its first noun. -/
-def binominalType? (x : LinguisticExample) : Option BinominalType :=
+def binominalType? (x : Datum) : Option BinominalType :=
   (x.feature? "noun").bind fun f ↦ (lookup f).map (·.binominalType)
 
 def readings : List (String × Reading) :=
@@ -160,7 +160,7 @@ def readings : List (String × Reading) :=
 
 /-- The structure the paper assigns to a row follows from its first noun's type and, for a
 quantity noun, its reading, which is quantificational unless recorded otherwise. -/
-def structure? (x : LinguisticExample) : Option Structure :=
+def structure? (x : Datum) : Option Structure :=
   (binominalType? x).map fun b ↦
     structureOf b ((x.parse? "reading" readings).getD .quantificational)
 
@@ -170,10 +170,10 @@ def numbers : List (String × Number) := [("singular", .singular), ("plural", .p
 
 /-- The ellipsis reading of a row is acceptable when the reading's judgment, or the row's if
 none is recorded for the reading, is acceptable. -/
-def EllipsisAcceptable (x : LinguisticExample) : Prop :=
+def EllipsisAcceptable (x : Datum) : Prop :=
   (x.readings.lookup "ellipsis").getD x.judgment = .acceptable
 
-instance (x : LinguisticExample) : Decidable (EllipsisAcceptable x) := by
+instance (x : Datum) : Decidable (EllipsisAcceptable x) := by
   unfold EllipsisAcceptable; infer_instance
 
 /-- Every row names a first noun of the fragment, so each of the theorems below speaks about all

@@ -15,9 +15,7 @@ this module; declarations live in `namespace ThomasDeo2020.Examples`.
 
 namespace ThomasDeo2020.Examples
 
-open Data.Examples
-
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "thomasdeo2020_4"
     source := ⟨"thomas-deo-2020", "(4), (15a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "equative")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "thomasdeo2020_5"
     source := ⟨"thomas-deo-2020", "(5), (21)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "thomasdeo2020_14a"
     source := ⟨"thomas-deo-2020", "(14a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "equative")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "thomasdeo2020_14b"
     source := ⟨"thomas-deo-2020", "(14b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "equative")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "thomasdeo2020_15b"
     source := ⟨"thomas-deo-2020", "(15b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "equative")] }
 
-def ex_16b : LinguisticExample :=
+def ex_16b : Datum :=
   { id := "thomasdeo2020_16b"
     source := ⟨"thomas-deo-2020", "(16b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_16b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "equative")] }
 
-def ex_17b : LinguisticExample :=
+def ex_17b : Datum :=
   { id := "thomasdeo2020_17b"
     source := ⟨"thomas-deo-2020", "(17b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_17b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "equative")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "thomasdeo2020_19"
     source := ⟨"thomas-deo-2020", "(19)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "equative")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "thomasdeo2020_20"
     source := ⟨"thomas-deo-2020", "(20)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "equative")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "thomasdeo2020_22"
     source := ⟨"thomas-deo-2020", "(22)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "thomasdeo2020_23"
     source := ⟨"thomas-deo-2020", "(23)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
-def ex_24a : LinguisticExample :=
+def ex_24a : Datum :=
   { id := "thomasdeo2020_24a"
     source := ⟨"thomas-deo-2020", "(24a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "thomasdeo2020_25"
     source := ⟨"thomas-deo-2020", "(25)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "thomasdeo2020_28"
     source := ⟨"thomas-deo-2020", "(28)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
-def ex_29b : LinguisticExample :=
+def ex_29b : Datum :=
   { id := "thomasdeo2020_29b"
     source := ⟨"thomas-deo-2020", "(29b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_29b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
-def ex_30 : LinguisticExample :=
+def ex_30 : Datum :=
   { id := "thomasdeo2020_30"
     source := ⟨"thomas-deo-2020", "(30)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
-def ex_31a : LinguisticExample :=
+def ex_31a : Datum :=
   { id := "thomasdeo2020_31a"
     source := ⟨"thomas-deo-2020", "(31a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_31a : LinguisticExample :=
     readings := [("not older than Siri at the finest grain", .acceptable), ("older than Siri at a coarser grain", .acceptable)]
     paperFeatures := [("construction", "comparative")] }
 
-def ex_33b : LinguisticExample :=
+def ex_33b : Datum :=
   { id := "thomasdeo2020_33b"
     source := ⟨"thomas-deo-2020", "(33b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_33b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
-def ex_35 : LinguisticExample :=
+def ex_35 : Datum :=
   { id := "thomasdeo2020_35"
     source := ⟨"thomas-deo-2020", "(35)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "thomasdeo2020_37"
     source := ⟨"thomas-deo-2020", "(37)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "comparative")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "thomasdeo2020_38"
     source := ⟨"thomas-deo-2020", "(38)"⟩
     reportedIn := none
@@ -290,6 +288,6 @@ def ex_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "equative")] }
 
-def all : List LinguisticExample := [ex_4, ex_5, ex_14a, ex_14b, ex_15b, ex_16b, ex_17b, ex_19, ex_20, ex_22, ex_23, ex_24a, ex_25, ex_28, ex_29b, ex_30, ex_31a, ex_33b, ex_35, ex_37, ex_38]
+def all : List Datum := [ex_4, ex_5, ex_14a, ex_14b, ex_15b, ex_16b, ex_17b, ex_19, ex_20, ex_22, ex_23, ex_24a, ex_25, ex_28, ex_29b, ex_30, ex_31a, ex_33b, ex_35, ex_37, ex_38]
 
 end ThomasDeo2020.Examples

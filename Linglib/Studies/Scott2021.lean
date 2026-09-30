@@ -47,7 +47,7 @@ speaker of Table 4 a personless parasitic pronoun needs a personless true gap (`
 
 namespace Scott2021
 
-open Swahili Syntax DistributedMorphology Data.Examples
+open Swahili Syntax DistributedMorphology
 open Minimalist (FeatureVal PhiFeature GramFeature)
 
 /-! ### The structure of pronouns (§5.1) -/
@@ -220,7 +220,7 @@ structure Row where
   accepted : Bool
   deriving DecidableEq, Repr
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let fs := ex.paperFeatures
   let construction ← match fs.lookup "construction" with
     | some "cleft" => some Construction.cleft
@@ -234,9 +234,9 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let form ← fs.lookup "form" <|> fs.lookup "trueGap"
   pure ⟨construction, person, number, form, fs.lookup "parasitic", ex.judgment = .acceptable⟩
 
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The antecedent's structure. -/
 def Row.tree (r : Row) : Tree DPCat String := pronoun (some r.person) r.number

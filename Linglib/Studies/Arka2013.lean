@@ -50,7 +50,7 @@ namespace Arka2013
 
 open Semantics
 
-open Tense Indonesian Data.Examples
+open Tense Indonesian
 
 /-! ### Tense theory and the status of Indonesian TAM (§2) -/
 

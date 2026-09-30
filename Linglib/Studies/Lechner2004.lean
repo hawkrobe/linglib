@@ -62,7 +62,7 @@ surface Principle B account of (24) are not formalized.
 
 namespace Lechner2004
 
-open Core.Order Core.Order.Branching Data.Examples Syntax Syntax.Tree Binding
+open Core.Order Core.Order.Branching Syntax Syntax.Tree Binding
 
 /-! ### Trees and coreference -/
 
@@ -90,9 +90,9 @@ instance (t : Tree Cat Unit) (p q : TreePath) (k : BindingClass) :
   inferInstanceAs (Decidable (_ → _))
 
 /-- A judgment attests the coreferential reading when it is acceptable or marginal. -/
-def Attested (e : LinguisticExample) : Prop := .marginal ≤ e.judgment
+def Attested (e : Datum) : Prop := .marginal ≤ e.judgment
 
-instance (e : LinguisticExample) : Decidable (Attested e) := inferInstanceAs (Decidable (_ ≤ _))
+instance (e : Datum) : Decidable (Attested e) := inferInstanceAs (Decidable (_ ≤ _))
 
 /-! ### Comparative Deletion (chapter 2, §2.1) -/
 
@@ -177,7 +177,7 @@ def cd25 : CDComparative where
   name := [1, 1]
 
 /-- `cdData` pairs each clausal comparative with its row. -/
-def cdData : List (CDComparative × LinguisticExample) :=
+def cdData : List (CDComparative × Datum) :=
   [(cd24, Examples.ch2_24), (cd25, Examples.ch2_25)]
 
 /-- The pronoun is a nominal of each *than*-clause, and the copy of the name is a nominal of the
@@ -395,7 +395,7 @@ def ex91 : PhrasalComparative where
   context := .b
 
 /-- `phrasalData` pairs each phrasal comparative with its row. -/
-def phrasalData : List (PhrasalComparative × LinguisticExample) :=
+def phrasalData : List (PhrasalComparative × Datum) :=
   [(ex83, Examples.ch4_83a), (ex85, Examples.ch4_85a), (ex87a, Examples.ch4_87a),
     (ex87b, Examples.ch4_87b), (ex90, Examples.ch4_90a), (ex91, Examples.ch4_91a)]
 

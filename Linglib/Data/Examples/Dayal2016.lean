@@ -15,9 +15,7 @@ this module; declarations live in `namespace Dayal2016.Examples`.
 
 namespace Dayal2016.Examples
 
-open Data.Examples
-
-def ex33a : LinguisticExample :=
+def ex33a : Datum :=
   { id := "dayal2016_ex33a"
     source := ⟨"dayal-2016", "(33a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex33a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.2"), ("construction", "sequence")] }
 
-def ex33b : LinguisticExample :=
+def ex33b : Datum :=
   { id := "dayal2016_ex33b"
     source := ⟨"dayal-2016", "(33b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex33b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.2"), ("construction", "scopeMarking")] }
 
-def ex33c : LinguisticExample :=
+def ex33c : Datum :=
   { id := "dayal2016_ex33c"
     source := ⟨"dayal-2016", "(33c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex33c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.2"), ("construction", "extraction")] }
 
-def ex34a : LinguisticExample :=
+def ex34a : Datum :=
   { id := "dayal2016_ex34a"
     source := ⟨"dayal-2016", "(34a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex34a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.2"), ("construction", "scopeMarking")] }
 
-def ex39a : LinguisticExample :=
+def ex39a : Datum :=
   { id := "dayal2016_ex39a"
     source := ⟨"dayal-2016", "(39a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex39a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.3"), ("veridical", "false")] }
 
-def ex39b : LinguisticExample :=
+def ex39b : Datum :=
   { id := "dayal2016_ex39b"
     source := ⟨"dayal-2016", "(39b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex39b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.3"), ("veridical", "false")] }
 
-def ex41a_42a : LinguisticExample :=
+def ex41a_42a : Datum :=
   { id := "dayal2016_ex41a_42a"
     source := ⟨"dayal-2016", "(41a)/(42a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex41a_42a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.1"), ("whNumber", "singular"), ("situation", "one")] }
 
-def ex41a_42b : LinguisticExample :=
+def ex41a_42b : Datum :=
   { id := "dayal2016_ex41a_42b"
     source := ⟨"dayal-2016", "(41a)/(42b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex41a_42b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.1"), ("whNumber", "singular"), ("situation", "two")] }
 
-def ex41b_42a : LinguisticExample :=
+def ex41b_42a : Datum :=
   { id := "dayal2016_ex41b_42a"
     source := ⟨"dayal-2016", "(41b)/(42a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex41b_42a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.1"), ("whNumber", "plural"), ("situation", "one")] }
 
-def ex41b_42b : LinguisticExample :=
+def ex41b_42b : Datum :=
   { id := "dayal2016_ex41b_42b"
     source := ⟨"dayal-2016", "(41b)/(42b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex41b_42b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.1"), ("whNumber", "plural"), ("situation", "two")] }
 
-def ex41c_42a : LinguisticExample :=
+def ex41c_42a : Datum :=
   { id := "dayal2016_ex41c_42a"
     source := ⟨"dayal-2016", "(41c)/(42a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex41c_42a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.1"), ("whNumber", "neutral"), ("situation", "one")] }
 
-def ex41c_42b : LinguisticExample :=
+def ex41c_42b : Datum :=
   { id := "dayal2016_ex41c_42b"
     source := ⟨"dayal-2016", "(41c)/(42b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex41c_42b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.1"), ("whNumber", "neutral"), ("situation", "two")] }
 
-def ex47a : LinguisticExample :=
+def ex47a : Datum :=
   { id := "dayal2016_ex47a"
     source := ⟨"dayal-2016", "(47a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex47a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "negativeIsland")] }
 
-def ex47b : LinguisticExample :=
+def ex47b : Datum :=
   { id := "dayal2016_ex47b"
     source := ⟨"dayal-2016", "(47b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex47b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "negativeIsland")] }
 
-def ex51a_singular : LinguisticExample :=
+def ex51a_singular : Datum :=
   { id := "dayal2016_ex51a_singular"
     source := ⟨"karttunen-1977", "(51a)"⟩
     reportedIn := some ⟨"dayal-2016", "(51a)"⟩
@@ -212,7 +210,7 @@ def ex51a_singular : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.3"), ("whNumber", "singular"), ("construction", "polarWh")] }
 
-def ex51a_plural : LinguisticExample :=
+def ex51a_plural : Datum :=
   { id := "dayal2016_ex51a_plural"
     source := ⟨"karttunen-1977", "(51a)"⟩
     reportedIn := some ⟨"dayal-2016", "(51a)"⟩
@@ -225,7 +223,7 @@ def ex51a_plural : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.3"), ("whNumber", "plural"), ("construction", "polarWh")] }
 
-def ex53a : LinguisticExample :=
+def ex53a : Datum :=
   { id := "dayal2016_ex53a"
     source := ⟨"beck-rullmann-1999", "(53a)"⟩
     reportedIn := some ⟨"dayal-2016", "(53a)"⟩
@@ -238,7 +236,7 @@ def ex53a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.3"), ("scale", "upward")] }
 
-def ex53c : LinguisticExample :=
+def ex53c : Datum :=
   { id := "dayal2016_ex53c"
     source := ⟨"beck-rullmann-1999", "(53c)"⟩
     reportedIn := some ⟨"dayal-2016", "(53c)"⟩
@@ -251,7 +249,7 @@ def ex53c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.3"), ("scale", "downward")] }
 
-def ex54a : LinguisticExample :=
+def ex54a : Datum :=
   { id := "dayal2016_ex54a"
     source := ⟨"beck-rullmann-1999", "(54a)"⟩
     reportedIn := some ⟨"dayal-2016", "(54a)"⟩
@@ -264,7 +262,7 @@ def ex54a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.3"), ("whNumber", "plural"), ("construction", "answerNoun")] }
 
-def ex54b : LinguisticExample :=
+def ex54b : Datum :=
   { id := "dayal2016_ex54b"
     source := ⟨"dayal-2016", "(54b)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex54b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.3"), ("whNumber", "singular"), ("construction", "answerNoun")] }
 
-def ex55a : LinguisticExample :=
+def ex55a : Datum :=
   { id := "dayal2016_ex55a"
     source := ⟨"dayal-1996", "(55a)"⟩
     reportedIn := some ⟨"dayal-2016", "(55a)"⟩
@@ -290,7 +288,7 @@ def ex55a : LinguisticExample :=
     readings := [("pair-list", .acceptable)]
     paperFeatures := [("section", "2.3.3"), ("phenomenon", "pairList"), ("quantifier", "universal")] }
 
-def ex55b : LinguisticExample :=
+def ex55b : Datum :=
   { id := "dayal2016_ex55b"
     source := ⟨"dayal-1996", "(55b)"⟩
     reportedIn := some ⟨"dayal-2016", "(55b)"⟩
@@ -303,7 +301,7 @@ def ex55b : LinguisticExample :=
     readings := [("pair-list", .acceptable)]
     paperFeatures := [("section", "2.3.3"), ("phenomenon", "pairList"), ("quantifier", "definitePlural")] }
 
-def ex56a : LinguisticExample :=
+def ex56a : Datum :=
   { id := "dayal2016_ex56a"
     source := ⟨"dayal-2016", "(56a)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex56a : LinguisticExample :=
     readings := [("pair-list", .acceptable)]
     paperFeatures := [("section", "2.3.3"), ("phenomenon", "pairList"), ("embedded", "whInSitu")] }
 
-def ex56b : LinguisticExample :=
+def ex56b : Datum :=
   { id := "dayal2016_ex56b"
     source := ⟨"dayal-2016", "(56b)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex56b : LinguisticExample :=
     readings := [("pair-list", .acceptable)]
     paperFeatures := [("section", "2.3.3"), ("phenomenon", "pairList"), ("embedded", "definitePlural")] }
 
-def ex57a : LinguisticExample :=
+def ex57a : Datum :=
   { id := "dayal2016_ex57a"
     source := ⟨"dayal-2016", "(57a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex57a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.4"), ("existence", "denied"), ("speaker", "other"), ("cleft", "false")] }
 
-def ex57b : LinguisticExample :=
+def ex57b : Datum :=
   { id := "dayal2016_ex57b"
     source := ⟨"karttunen-peters-1976", "(57b)"⟩
     reportedIn := some ⟨"dayal-2016", "(57b)"⟩
@@ -355,7 +353,7 @@ def ex57b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.4"), ("existence", "denied"), ("speaker", "same"), ("cleft", "false")] }
 
-def ex58a : LinguisticExample :=
+def ex58a : Datum :=
   { id := "dayal2016_ex58a"
     source := ⟨"dayal-2016", "(58a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex58a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.4"), ("existence", "suspended"), ("speaker", "same"), ("cleft", "false")] }
 
-def ex58b : LinguisticExample :=
+def ex58b : Datum :=
   { id := "dayal2016_ex58b"
     source := ⟨"dayal-2016", "(58b)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex58b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.4"), ("existence", "suspended"), ("speaker", "same"), ("cleft", "false")] }
 
-def ex59a : LinguisticExample :=
+def ex59a : Datum :=
   { id := "dayal2016_ex59a"
     source := ⟨"dayal-2016", "(59a)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex59a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.4"), ("existence", "denied"), ("speaker", "other"), ("cleft", "true")] }
 
-def ex59b : LinguisticExample :=
+def ex59b : Datum :=
   { id := "dayal2016_ex59b"
     source := ⟨"dayal-2016", "(59b)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex59b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.4"), ("existence", "suspended"), ("speaker", "same"), ("cleft", "true")] }
 
-def ex61a : LinguisticExample :=
+def ex61a : Datum :=
   { id := "dayal2016_ex61a"
     source := ⟨"groenendijk-stokhof-1984", "(61a)"⟩
     reportedIn := some ⟨"dayal-2016", "(61a)"⟩
@@ -420,7 +418,7 @@ def ex61a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.4"), ("phenomenon", "strongExhaustiveness")] }
 
-def ex61b : LinguisticExample :=
+def ex61b : Datum :=
   { id := "dayal2016_ex61b"
     source := ⟨"dayal-2016", "(61b)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex61b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.4"), ("existence", "denied"), ("speaker", "same"), ("cleft", "false")] }
 
-def ex65a_one : LinguisticExample :=
+def ex65a_one : Datum :=
   { id := "dayal2016_ex65a_one"
     source := ⟨"dayal-2016", "(65a)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex65a_one : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("whNumber", "singular"), ("situation", "one")] }
 
-def ex65a_two : LinguisticExample :=
+def ex65a_two : Datum :=
   { id := "dayal2016_ex65a_two"
     source := ⟨"dayal-2016", "(65a)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex65a_two : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("whNumber", "singular"), ("situation", "two")] }
 
-def ex65a_none : LinguisticExample :=
+def ex65a_none : Datum :=
   { id := "dayal2016_ex65a_none"
     source := ⟨"dayal-2016", "(65a)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex65a_none : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("whNumber", "singular"), ("situation", "none")] }
 
-def ex66a_two : LinguisticExample :=
+def ex66a_two : Datum :=
   { id := "dayal2016_ex66a_two"
     source := ⟨"dayal-2016", "(66a)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex66a_two : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("whNumber", "plural"), ("situation", "two")] }
 
-def ex66a_one : LinguisticExample :=
+def ex66a_one : Datum :=
   { id := "dayal2016_ex66a_one"
     source := ⟨"dayal-2016", "(66a)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex66a_one : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("whNumber", "plural"), ("situation", "one")] }
 
-def ex66a_none : LinguisticExample :=
+def ex66a_none : Datum :=
   { id := "dayal2016_ex66a_none"
     source := ⟨"dayal-2016", "(66a)"⟩
     reportedIn := none
@@ -511,6 +509,6 @@ def ex66a_none : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("whNumber", "plural"), ("situation", "none")] }
 
-def all : List LinguisticExample := [ex33a, ex33b, ex33c, ex34a, ex39a, ex39b, ex41a_42a, ex41a_42b, ex41b_42a, ex41b_42b, ex41c_42a, ex41c_42b, ex47a, ex47b, ex51a_singular, ex51a_plural, ex53a, ex53c, ex54a, ex54b, ex55a, ex55b, ex56a, ex56b, ex57a, ex57b, ex58a, ex58b, ex59a, ex59b, ex61a, ex61b, ex65a_one, ex65a_two, ex65a_none, ex66a_two, ex66a_one, ex66a_none]
+def all : List Datum := [ex33a, ex33b, ex33c, ex34a, ex39a, ex39b, ex41a_42a, ex41a_42b, ex41b_42a, ex41b_42b, ex41c_42a, ex41c_42b, ex47a, ex47b, ex51a_singular, ex51a_plural, ex53a, ex53c, ex54a, ex54b, ex55a, ex55b, ex56a, ex56b, ex57a, ex57b, ex58a, ex58b, ex59a, ex59b, ex61a, ex61b, ex65a_one, ex65a_two, ex65a_none, ex66a_two, ex66a_one, ex66a_none]
 
 end Dayal2016.Examples

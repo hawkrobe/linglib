@@ -50,7 +50,7 @@ case; the paper's ditransitives never present one.
 
 namespace ZaenenMalingThrainsson1985
 
-open Icelandic.Verbs Data.Examples ZaenenMalingThrainsson1985.Examples
+open Icelandic.Verbs ZaenenMalingThrainsson1985.Examples
 
 /-! ### Thematic structure and grammatical functions -/
 
@@ -258,7 +258,7 @@ def casesTable : List (String × List Icelandic.Case) :=
     ("nom dat dat", [.nom, .dat, .dat]), ("nom dat gen", [.nom, .dat, .gen])]
 
 /-- A row attesting a case array, as the thematic structure, the voice and the array. -/
-def ofCasesRow (ex : LinguisticExample) : Option (List Arg × Voice × List Icelandic.Case) := do
+def ofCasesRow (ex : Datum) : Option (List Arg × Voice × List Icelandic.Case) := do
   let t ← ex.parse? "verb" verbTable
   let v ← ex.parse? "voice" voiceTable
   let cs ← ex.parse? "cases" casesTable
@@ -266,7 +266,7 @@ def ofCasesRow (ex : LinguisticExample) : Option (List Arg × Voice × List Icel
 
 /-- A row applying a subjecthood test to an argument, as the thematic structure, the voice
 and the role tested. -/
-def ofTestRow (ex : LinguisticExample) : Option (List Arg × Voice × Role) := do
+def ofTestRow (ex : Datum) : Option (List Arg × Voice × Role) := do
   let t ← ex.parse? "verb" verbTable
   let v ← ex.parse? "voice" voiceTable
   let ρ ← ex.parse? "tested" roleTable

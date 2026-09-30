@@ -74,7 +74,7 @@ double-modal readings of (81) to (83) is not modelled.
 
 namespace CondoravdiLauer2016
 
-open Desire.Preferential Modality Conditional.Restrictor Data.Examples
+open Desire.Preferential Modality Conditional.Restrictor
 
 section General
 
@@ -422,7 +422,7 @@ structure Construal where
   implication : Implication
 
 /-- The configuration a construal row records. -/
-def Construal.ofRow (row : LinguisticExample) : Option Construal := do
+def Construal.ofRow (row : Datum) : Option Construal := do
   guard (row.feature? "construction" = some "construal")
   return ⟨← row.parse? "want"
       [("effective", WantReading.effective), ("mere", .mere), ("weak", .weak)],
@@ -449,7 +449,7 @@ theorem implication_rows : ∀ row ∈ Examples.all, row.feature? "construction"
   decide
 
 /-- The reading of *want* an incompatible-wants row records. -/
-def WantReading.ofRow (row : LinguisticExample) : Option WantReading := do
+def WantReading.ofRow (row : Datum) : Option WantReading := do
   guard (row.feature? "construction" = some "incompatibleWants")
   row.parse? "construal" [("mere", WantReading.mere), ("effective", .effective)]
 
@@ -468,7 +468,7 @@ inductive Mood
   deriving DecidableEq
 
 /-- The mood a row records. -/
-def Mood.ofRow (row : LinguisticExample) : Option Mood := do
+def Mood.ofRow (row : Datum) : Option Mood := do
   guard (row.feature? "construction" = some "mood")
   row.parse? "mood" [("indicative", Mood.indicative), ("subjunctive", .subjunctive)]
 
@@ -480,7 +480,7 @@ theorem mood_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some
   decide
 
 /-- The implication a purpose row records. -/
-def Implication.ofRow (row : LinguisticExample) : Option Implication := do
+def Implication.ofRow (row : Datum) : Option Implication := do
   guard (row.feature? "construction" = some "purpose")
   row.parse? "implication" implications
 

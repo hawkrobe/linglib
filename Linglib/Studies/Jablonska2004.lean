@@ -427,7 +427,7 @@ theorem not_asp1Reading_distributive (v : Verbalizer) : ¬ Asp1Reading v false .
 innermost first, the plurality of the internal argument, and the paper's readings of the
 superlexical *po-*, if any. -/
 structure Analysis where
-  ex : Data.Examples.LinguisticExample
+  ex : Datum
   stem : Verb.Stem
   verbalizer : Verbalizer
   layers : List Layer

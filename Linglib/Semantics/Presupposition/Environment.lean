@@ -50,20 +50,20 @@ end Environment
 
 end Presupposition
 
-namespace Data.Examples.LinguisticExample
+namespace Datum
 
 open Presupposition
 
 /-- The environment a row's sentence is embedded in. -/
-def environment? (e : LinguisticExample) : Option Environment :=
+def environment? (e : Datum) : Option Environment :=
   e.parse? "environment" Environment.table
 
 /-- Whether the row's content projected, as the row records it. -/
-def projective? (e : LinguisticExample) : Option Bool :=
+def projective? (e : Datum) : Option Bool :=
   e.parse? "projective" [("yes", true), ("no", false)]
 
 /-- The person of the row's matrix subject. -/
-def person? (e : LinguisticExample) : Option UD.Person :=
+def person? (e : Datum) : Option UD.Person :=
   e.parse? "person" [("1", .first), ("2", .second), ("3", .third)]
 
-end Data.Examples.LinguisticExample
+end Datum

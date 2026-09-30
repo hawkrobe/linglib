@@ -15,9 +15,7 @@ this module; declarations live in `namespace Nadathur2023.Examples`.
 
 namespace Nadathur2023.Examples
 
-open Data.Examples
-
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "nadathur2023_2a"
     source := ⟨"nadathur-2023-implicatives", "(2a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "onnistua"), ("matrix", "positive"), ("entails", "complement")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "nadathur2023_2b"
     source := ⟨"nadathur-2023-implicatives", "(2b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "onnistua"), ("matrix", "negated"), ("entails", "negation")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "nadathur2023_4a"
     source := ⟨"nadathur-2023-implicatives", "(4a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "uskaltaa"), ("matrix", "positive"), ("entails", "complement")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "nadathur2023_4b"
     source := ⟨"nadathur-2023-implicatives", "(4b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "uskaltaa"), ("matrix", "negated"), ("entails", "negation")] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "nadathur2023_5a"
     source := ⟨"nadathur-2023-implicatives", "(5a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "jaksaa"), ("matrix", "positive"), ("entails", "nothing")] }
 
-def ex_5b : LinguisticExample :=
+def ex_5b : Datum :=
   { id := "nadathur2023_5b"
     source := ⟨"nadathur-2023-implicatives", "(5b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "jaksaa"), ("matrix", "negated"), ("entails", "negation")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "nadathur2023_10a"
     source := ⟨"nadathur-2023-implicatives", "(10a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "viitsiä"), ("matrix", "positive"), ("entails", "complement")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "nadathur2023_10b"
     source := ⟨"nadathur-2023-implicatives", "(10b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "viitsiä"), ("matrix", "negated"), ("entails", "negation")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "nadathur2023_11a"
     source := ⟨"nadathur-2023-implicatives", "(11a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "malttaa"), ("matrix", "positive"), ("entails", "complement")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "nadathur2023_11b"
     source := ⟨"nadathur-2023-implicatives", "(11b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "malttaa"), ("matrix", "negated"), ("entails", "negation")] }
 
-def ex_27a : LinguisticExample :=
+def ex_27a : Datum :=
   { id := "nadathur2023_27a"
     source := ⟨"nadathur-2023-implicatives", "(27a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_27a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hennoa"), ("matrix", "positive"), ("entails", "complement")] }
 
-def ex_27b : LinguisticExample :=
+def ex_27b : Datum :=
   { id := "nadathur2023_27b"
     source := ⟨"nadathur-2023-implicatives", "(27b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_27b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hennoa"), ("matrix", "negated"), ("entails", "negation")] }
 
-def ex_29a : LinguisticExample :=
+def ex_29a : Datum :=
   { id := "nadathur2023_29a"
     source := ⟨"nadathur-2023-implicatives", "(29a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_29a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pystyä"), ("matrix", "positive"), ("entails", "nothing")] }
 
-def ex_29b : LinguisticExample :=
+def ex_29b : Datum :=
   { id := "nadathur2023_29b"
     source := ⟨"nadathur-2023-implicatives", "(29b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_29b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pystyä"), ("matrix", "negated"), ("entails", "negation")] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "nadathur2023_30a"
     source := ⟨"nadathur-2023-implicatives", "(30a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "mahtua"), ("matrix", "positive"), ("entails", "nothing")] }
 
-def ex_30b : LinguisticExample :=
+def ex_30b : Datum :=
   { id := "nadathur2023_30b"
     source := ⟨"nadathur-2023-implicatives", "(30b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_30b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "mahtua"), ("matrix", "negated"), ("entails", "negation")] }
 
-def ex_44a : LinguisticExample :=
+def ex_44a : Datum :=
   { id := "nadathur2023_44a"
     source := ⟨"nadathur-2023-implicatives", "(44a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_44a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "laiminlyödä"), ("matrix", "positive"), ("entails", "negation")] }
 
-def ex_44b : LinguisticExample :=
+def ex_44b : Datum :=
   { id := "nadathur2023_44b"
     source := ⟨"nadathur-2023-implicatives", "(44b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_44b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "laiminlyödä"), ("matrix", "negated"), ("entails", "complement")] }
 
-def ex_46a : LinguisticExample :=
+def ex_46a : Datum :=
   { id := "nadathur2023_46a"
     source := ⟨"nadathur-2023-implicatives", "(46a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_46a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "epäröidä"), ("matrix", "positive"), ("entails", "nothing")] }
 
-def ex_46b : LinguisticExample :=
+def ex_46b : Datum :=
   { id := "nadathur2023_46b"
     source := ⟨"nadathur-2023-implicatives", "(46b)"⟩
     reportedIn := none
@@ -277,6 +275,6 @@ def ex_46b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "epäröidä"), ("matrix", "negated"), ("entails", "complement")] }
 
-def all : List LinguisticExample := [ex_2a, ex_2b, ex_4a, ex_4b, ex_5a, ex_5b, ex_10a, ex_10b, ex_11a, ex_11b, ex_27a, ex_27b, ex_29a, ex_29b, ex_30a, ex_30b, ex_44a, ex_44b, ex_46a, ex_46b]
+def all : List Datum := [ex_2a, ex_2b, ex_4a, ex_4b, ex_5a, ex_5b, ex_10a, ex_10b, ex_11a, ex_11b, ex_27a, ex_27b, ex_29a, ex_29b, ex_30a, ex_30b, ex_44a, ex_44b, ex_46a, ex_46b]
 
 end Nadathur2023.Examples

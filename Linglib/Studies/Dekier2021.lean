@@ -50,7 +50,6 @@ prefixes and suffixes in §4.2 are not modelled.
 namespace Dekier2021
 
 open Morphology Morphology.Containment Indefinite
-open Data.Examples (LinguisticExample)
 open Haspelmath1997 (Series english yakut latin kannada)
 
 /-! ### The hierarchy -/
@@ -147,7 +146,7 @@ theorem interrogative_subset :
 /-! ### The sample -/
 
 /-- A row's markers over the three layers, a gap read as `none`. -/
-def rowPattern (e : LinguisticExample) : Paradigm 3 (Option String) :=
+def rowPattern (e : Datum) : Paradigm 3 (Option String) :=
   ![e.feature? "nonSpecific", e.feature? "specificUnknown", e.feature? "specificKnown"]
 
 /-- Table 7: every paradigm of the sample is contiguous, so none is ABA. -/

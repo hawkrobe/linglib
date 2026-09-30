@@ -235,7 +235,7 @@ theorem not_claims_top : ¬ Claims id (⊤ : Language Letter) := fun h ↦ by
 
 /-! ### The paper's clauses (1)–(22) -/
 
-open Data.Examples German.Zurich.Verbs
+open German.Zurich.Verbs
 
 /-- `glossCase? g` is the case the gloss `g` marks on its noun phrase, if any. -/
 def glossCase? (g : String) : Option German.Zurich.Case :=
@@ -243,11 +243,11 @@ def glossCase? (g : String) : Option German.Zurich.Case :=
   else if ".DAT".toList <:+ g.toList then some .dat else none
 
 /-- `objectCases e` lists the cases the glosses of the clause `e` mark on its noun phrases. -/
-def objectCases (e : LinguisticExample) : List German.Zurich.Case :=
+def objectCases (e : Datum) : List German.Zurich.Case :=
   e.glossedTokens.filterMap (glossCase? ·.2)
 
 /-- `requiredCases e` lists the cases the verbs of the clause `e` require of their objects. -/
-def requiredCases (e : LinguisticExample) : List German.Zurich.Case :=
+def requiredCases (e : Datum) : List German.Zurich.Case :=
   e.glossedTokens.flatMap fun t ↦ (verbs.find? (t.1 ∈ ·.forms)).elim [] (·.objects)
 
 /-- As note 4 observes, every clause of the paper has as many objects as its verbs require. -/

@@ -54,7 +54,7 @@ the paper does not print, so the learned rules (40) and (44) are not run here.
 
 namespace Belth2026
 
-open Phonology Data.Examples
+open Phonology
 
 /-! ### D2L -/
 
@@ -432,14 +432,14 @@ def latinSegments (s : String) : List LatSeg := s.toList.filterMap LatSeg.ofChar
 def stem (s : String) : List Char := s.toList.takeWhile (· ≠ '-')
 
 /-- The underlying form of a row, its stem with the affix -aLis. -/
-def latinUR (e : LinguisticExample) : List LatSeg :=
+def latinUR (e : Datum) : List LatSeg :=
   (stem e.primaryText).filterMap LatSeg.ofChar ++ [.a, .L, .i, .s]
 
 /-- The surface form of a row. -/
-def latinSR (e : LinguisticExample) : List LatSeg := latinSegments e.primaryText
+def latinSR (e : Datum) : List LatSeg := latinSegments e.primaryText
 
 /-- The Latin rows, (53). -/
-def latinRows : List LinguisticExample := Examples.all.filter (·.language = "lati1261")
+def latinRows : List Datum := Examples.all.filter (·.language = "lati1261")
 
 /-- Rule (54) derives every form of (53) but *lunaris*, with dissimilation from a
 tier-adjacent stem `l` (53b) and its blocking by an intervening `r` (53c) or non-coronal
@@ -458,7 +458,7 @@ theorem lunaris_mispredicted :
 /-! ### Finnish backness harmony (52) -/
 
 /-- The forms of a row listing several, its glossed tokens. -/
-def forms (e : LinguisticExample) : List String := e.glossedTokens.map (·.1)
+def forms (e : Datum) : List String := e.glossedTokens.map (·.1)
 
 /-- The morphemes of a transcription, split at the boundaries. -/
 def morphemes : List Char → List (List Char)

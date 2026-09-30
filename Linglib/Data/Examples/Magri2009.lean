@@ -15,9 +15,7 @@ this module; declarations live in `namespace Magri2009.Examples`.
 
 namespace Magri2009.Examples
 
-open Data.Examples
-
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "magri2009_8a"
     source := ⟨"diesing-1992", "UNVERIFIED"⟩
     reportedIn := some ⟨"magri-2009", "(8a)"⟩
@@ -30,7 +28,7 @@ def ex_8a : LinguisticExample :=
     readings := [("existential", .acceptable), ("generic", .unacceptable)]
     paperFeatures := [("predicate_level", "stage"), ("position", "right")] }
 
-def ex_8b : LinguisticExample :=
+def ex_8b : Datum :=
   { id := "magri2009_8b"
     source := ⟨"diesing-1992", "UNVERIFIED"⟩
     reportedIn := some ⟨"magri-2009", "(8b)"⟩
@@ -43,7 +41,7 @@ def ex_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate_level", "stage"), ("position", "left")] }
 
-def ex_8c : LinguisticExample :=
+def ex_8c : Datum :=
   { id := "magri2009_8c"
     source := ⟨"diesing-1992", "UNVERIFIED"⟩
     reportedIn := some ⟨"magri-2009", "(8c)"⟩
@@ -56,7 +54,7 @@ def ex_8c : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate_level", "individual"), ("position", "right")] }
 
-def ex_8d : LinguisticExample :=
+def ex_8d : Datum :=
   { id := "magri2009_8d"
     source := ⟨"diesing-1992", "UNVERIFIED"⟩
     reportedIn := some ⟨"magri-2009", "(8d)"⟩
@@ -69,6 +67,6 @@ def ex_8d : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate_level", "individual"), ("position", "left")] }
 
-def all : List LinguisticExample := [ex_8a, ex_8b, ex_8c, ex_8d]
+def all : List Datum := [ex_8a, ex_8b, ex_8c, ex_8d]
 
 end Magri2009.Examples

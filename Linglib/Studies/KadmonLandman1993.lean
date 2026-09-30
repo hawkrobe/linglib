@@ -55,7 +55,7 @@ precisification space the two truth notions are [fine-1975]'s super-truth and bo
 
 namespace KadmonLandman1993
 
-open NaturalLogic PolarityItem Ladusaw1979 Semantics.Supervaluation Data.Examples
+open NaturalLogic PolarityItem Ladusaw1979 Semantics.Supervaluation
 
 /-! ### The strengthening condition
 
@@ -502,7 +502,7 @@ structure AlmostRow where
   deriving DecidableEq
 
 /-- An *almost* row from the paper's features. -/
-def AlmostRow.ofExample (e : LinguisticExample) : Option AlmostRow := do
+def AlmostRow.ofDatum (e : Datum) : Option AlmostRow := do
   let p ← match e.feature? "precision" with
     | some "precise" => some DomainPrecision.precise
     | some "vague" => some DomainPrecision.vague
@@ -512,7 +512,7 @@ def AlmostRow.ofExample (e : LinguisticExample) : Option AlmostRow := do
   some ⟨p, u == "yes", d == "yes", e.judgment = .acceptable⟩
 
 /-- The *almost* data of Section 4.3. -/
-def almostRows : List AlmostRow := Examples.all.filterMap AlmostRow.ofExample
+def almostRows : List AlmostRow := Examples.all.filterMap AlmostRow.ofDatum
 
 /-- *Almost* modifies a domain-precise true universal or a dimensionally universal noun phrase:
 *every owl*, *no owl* and *any owl*, but not *some owl* nor generic *an owl*. -/
@@ -556,7 +556,7 @@ def signatureOf : String → Option Signature
   | _ => none
 
 /-- A row from the paper's features. -/
-def Row.ofExample (e : LinguisticExample) : Option Row :=
+def Row.ofDatum (e : Datum) : Option Row :=
   match (e.feature? "context").bind contextOf, (e.feature? "local_signature").bind signatureOf with
   | some c, _ => some ⟨some c, .all, e.feature? "settle_for_less" = some "yes",
       e.feature? "metalinguistic_denial" = some "yes", e.judgment = .acceptable⟩
@@ -565,7 +565,7 @@ def Row.ofExample (e : LinguisticExample) : Option Row :=
   | none, none => none
 
 /-- The licensing data of Sections 1 to 3. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The paper's licensing picture on its own data: *any* is grammatical exactly when the local
 context is downward entailing, so widening strengthens, or generic, or read as settling for

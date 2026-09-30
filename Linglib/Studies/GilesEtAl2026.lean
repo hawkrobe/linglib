@@ -56,7 +56,6 @@ in the second, where attentional guidance, production effort and term frequency 
 
 namespace GilesEtAl2026
 
-open Data.Examples
 
 variable {D : Type*}
 
@@ -213,7 +212,7 @@ structure Row where
 
 def discriminability : List (String × Discriminability) := [("low", .low), ("high", .high)]
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let experiment ← ex.nat? "experiment"
   let predictor ← ex.parse? "predictor"
     [("displayType", .displayType), ("attribute", .attribute), ("frequency", .frequency)]
@@ -234,7 +233,7 @@ def Row.observed (r : Row) : Direction :=
 def Row.predicted (r : Row) : Direction := predictedBy Display.Pressure r.level r.reference
 
 /-- The five coefficients of Tables 1 and 2. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Both display-type contrasts of the first experiment go the way the view predicts. -/
 theorem rows_displayType_predicted :

@@ -48,7 +48,7 @@ antecedent for ~ under exactly one focus placement (`ellipsis_filter`).
 
 namespace Rooth1992
 
-open Data.Examples Exhaustification Focus WithAlternatives
+open Exhaustification Focus WithAlternatives
 
 /-! ### Focus semantic values (2) -/
 
@@ -381,7 +381,7 @@ def OnlyFocus.domain : OnlyFocus → Set (Set (Set (Person × Person × Person))
   | .sue => Set.range λ z => intro Person.mary .bill z
 
 /-- The focus position and the truth value an *only* row reports. -/
-def onlyRow (r : LinguisticExample) : Option (OnlyFocus × Bool) := do
+def onlyRow (r : Datum) : Option (OnlyFocus × Bool) := do
   let f ← r.parse? "focus" [("Bill", OnlyFocus.bill), ("Sue", .sue)]
   let v ← r.parse? "truth" [("true", true), ("false", false)]
   pure (f, v)
@@ -423,7 +423,7 @@ def AnswerFocus.value : AnswerFocus → Set (Set (Set (Person × Person)))
   | .bill => Set.range λ y => cut Person.mary y
 
 /-- The question, the answer's focus position, and the judgment of a question-answer row. -/
-def qaRow (r : LinguisticExample) : Option (Q × AnswerFocus × Bool) := do
+def qaRow (r : Datum) : Option (Q × AnswerFocus × Bool) := do
   let q ← r.parse? "question" [("whoCutBill", Q.whoCutBill), ("whoDidMaryCut", .whoDidMaryCut)]
   let f ← r.parse? "focus" [("Mary", AnswerFocus.mary), ("Bill", .bill)]
   pure (q, f, decide (r.judgment = .acceptable))

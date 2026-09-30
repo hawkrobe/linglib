@@ -15,9 +15,7 @@ this module; declarations live in `namespace Dendikken1995.Examples`.
 
 namespace Dendikken1995.Examples
 
-open Data.Examples
-
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "dendikken1995_1a"
     source := ⟨"dendikken-1995", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "nominal")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "dendikken1995_1b"
     source := ⟨"dendikken-1995", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "adjectival")] }
 
-def ex_1c : LinguisticExample :=
+def ex_1c : Datum :=
   { id := "dendikken1995_1c"
     source := ⟨"dendikken-1995", "(1c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_1c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "adjectival")] }
 
-def ex_1d : LinguisticExample :=
+def ex_1d : Datum :=
   { id := "dendikken1995_1d"
     source := ⟨"dendikken-1995", "(1d)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_1d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional")] }
 
-def ex_1e : LinguisticExample :=
+def ex_1e : Datum :=
   { id := "dendikken1995_1e"
     source := ⟨"dendikken-1995", "(1e)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_1e : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "dendikken1995_13a"
     source := ⟨"dendikken-1995", "(13a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("diagnostic", "subextraction")] }
 
-def ex_13b : LinguisticExample :=
+def ex_13b : Datum :=
   { id := "dendikken1995_13b"
     source := ⟨"dendikken-1995", "(13b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_13b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "smallClause"), ("diagnostic", "subextraction")] }
 
-def ex_13c : LinguisticExample :=
+def ex_13c : Datum :=
   { id := "dendikken1995_13c"
     source := ⟨"dendikken-1995", "(13c)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_13c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "smallClause"), ("diagnostic", "subextraction")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "dendikken1995_14a"
     source := ⟨"dendikken-1995", "(14a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("diagnostic", "nominalization")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "dendikken1995_14b"
     source := ⟨"dendikken-1995", "(14b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "smallClause"), ("diagnostic", "nominalization")] }
 
-def ex_14c : LinguisticExample :=
+def ex_14c : Datum :=
   { id := "dendikken1995_14c"
     source := ⟨"dendikken-1995", "(14c)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_14c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "smallClause"), ("diagnostic", "nominalization")] }
 
-def ex_44 : LinguisticExample :=
+def ex_44 : Datum :=
   { id := "dendikken1995_44"
     source := ⟨"dendikken-1995", "(44)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("diagnostic", "ergativity")] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "dendikken1995_45"
     source := ⟨"dendikken-1995", "(45)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "smallClause"), ("diagnostic", "ergativity")] }
 
-def ex_49a : LinguisticExample :=
+def ex_49a : Datum :=
   { id := "dendikken1995_49a"
     source := ⟨"dendikken-1995", "(49a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_49a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "nominal"), ("placement", "outer")] }
 
-def ex_49b : LinguisticExample :=
+def ex_49b : Datum :=
   { id := "dendikken1995_49b"
     source := ⟨"dendikken-1995", "(49b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_49b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "nominal"), ("placement", "inner")] }
 
-def ex_49c : LinguisticExample :=
+def ex_49c : Datum :=
   { id := "dendikken1995_49c"
     source := ⟨"dendikken-1995", "(49c)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_49c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "nominal"), ("placement", "final")] }
 
-def ex_50a : LinguisticExample :=
+def ex_50a : Datum :=
   { id := "dendikken1995_50a"
     source := ⟨"dendikken-1995", "(50a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_50a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "adjectival"), ("placement", "outer")] }
 
-def ex_50b : LinguisticExample :=
+def ex_50b : Datum :=
   { id := "dendikken1995_50b"
     source := ⟨"dendikken-1995", "(50b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_50b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "adjectival"), ("placement", "inner")] }
 
-def ex_50c : LinguisticExample :=
+def ex_50c : Datum :=
   { id := "dendikken1995_50c"
     source := ⟨"dendikken-1995", "(50c)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_50c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "adjectival"), ("placement", "final")] }
 
-def ex_51a : LinguisticExample :=
+def ex_51a : Datum :=
   { id := "dendikken1995_51a"
     source := ⟨"dendikken-1995", "(51a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_51a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "infinitival"), ("placement", "outer")] }
 
-def ex_51b : LinguisticExample :=
+def ex_51b : Datum :=
   { id := "dendikken1995_51b"
     source := ⟨"dendikken-1995", "(51b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_51b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "infinitival"), ("placement", "inner")] }
 
-def ex_51c : LinguisticExample :=
+def ex_51c : Datum :=
   { id := "dendikken1995_51c"
     source := ⟨"dendikken-1995", "(51c)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_51c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "infinitival"), ("placement", "final")] }
 
-def ex_52a : LinguisticExample :=
+def ex_52a : Datum :=
   { id := "dendikken1995_52a"
     source := ⟨"dendikken-1995", "(52a)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_52a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer")] }
 
-def ex_52b : LinguisticExample :=
+def ex_52b : Datum :=
   { id := "dendikken1995_52b"
     source := ⟨"dendikken-1995", "(52b)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_52b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner")] }
 
-def ex_52c : LinguisticExample :=
+def ex_52c : Datum :=
   { id := "dendikken1995_52c"
     source := ⟨"dendikken-1995", "(52c)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_52c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "final")] }
 
-def ex_53a : LinguisticExample :=
+def ex_53a : Datum :=
   { id := "dendikken1995_53a"
     source := ⟨"dendikken-1995", "(53a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_53a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer")] }
 
-def ex_53b : LinguisticExample :=
+def ex_53b : Datum :=
   { id := "dendikken1995_53b"
     source := ⟨"dendikken-1995", "(53b)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_53b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner")] }
 
-def ex_53c : LinguisticExample :=
+def ex_53c : Datum :=
   { id := "dendikken1995_53c"
     source := ⟨"dendikken-1995", "(53c)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_53c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "final")] }
 
-def ex_60a : LinguisticExample :=
+def ex_60a : Datum :=
   { id := "dendikken1995_60a"
     source := ⟨"dendikken-1995", "(60a)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_60a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "nominal"), ("placement", "inner"), ("diagnostic", "predicateExtraction")] }
 
-def ex_60b : LinguisticExample :=
+def ex_60b : Datum :=
   { id := "dendikken1995_60b"
     source := ⟨"dendikken-1995", "(60b)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_60b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "nominal"), ("placement", "outer"), ("diagnostic", "predicateExtraction")] }
 
-def ex_61a : LinguisticExample :=
+def ex_61a : Datum :=
   { id := "dendikken1995_61a"
     source := ⟨"dendikken-1995", "(61a)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_61a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "infinitival"), ("placement", "inner"), ("diagnostic", "subextraction")] }
 
-def ex_61b : LinguisticExample :=
+def ex_61b : Datum :=
   { id := "dendikken1995_61b"
     source := ⟨"dendikken-1995", "(61b)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_61b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "infinitival"), ("placement", "outer"), ("diagnostic", "subextraction")] }
 
-def ex_62a : LinguisticExample :=
+def ex_62a : Datum :=
   { id := "dendikken1995_62a"
     source := ⟨"dendikken-1995", "(62a)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_62a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "predicateExtraction")] }
 
-def ex_62b : LinguisticExample :=
+def ex_62b : Datum :=
   { id := "dendikken1995_62b"
     source := ⟨"dendikken-1995", "(62b)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_62b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "predicateExtraction")] }
 
-def ex_63a : LinguisticExample :=
+def ex_63a : Datum :=
   { id := "dendikken1995_63a"
     source := ⟨"dendikken-1995", "(63a)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_63a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "subextraction")] }
 
-def ex_63b : LinguisticExample :=
+def ex_63b : Datum :=
   { id := "dendikken1995_63b"
     source := ⟨"dendikken-1995", "(63b)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_63b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "subextraction")] }
 
-def ex_64a : LinguisticExample :=
+def ex_64a : Datum :=
   { id := "dendikken1995_64a"
     source := ⟨"dendikken-1995", "(64a)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_64a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "predicateExtraction")] }
 
-def ex_64b : LinguisticExample :=
+def ex_64b : Datum :=
   { id := "dendikken1995_64b"
     source := ⟨"dendikken-1995", "(64b)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_64b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "predicateExtraction")] }
 
-def ex_65a : LinguisticExample :=
+def ex_65a : Datum :=
   { id := "dendikken1995_65a"
     source := ⟨"dendikken-1995", "(65a)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_65a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "subextraction")] }
 
-def ex_65b : LinguisticExample :=
+def ex_65b : Datum :=
   { id := "dendikken1995_65b"
     source := ⟨"dendikken-1995", "(65b)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_65b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "subextraction")] }
 
-def ex_68a : LinguisticExample :=
+def ex_68a : Datum :=
   { id := "dendikken1995_68a"
     source := ⟨"dendikken-1995", "(68a)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex_68a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "extraposition")] }
 
-def ex_68b : LinguisticExample :=
+def ex_68b : Datum :=
   { id := "dendikken1995_68b"
     source := ⟨"dendikken-1995", "(68b)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex_68b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "extraposition")] }
 
-def ex_69a : LinguisticExample :=
+def ex_69a : Datum :=
   { id := "dendikken1995_69a"
     source := ⟨"dendikken-1995", "(69a)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex_69a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "extraposition")] }
 
-def ex_69b : LinguisticExample :=
+def ex_69b : Datum :=
   { id := "dendikken1995_69b"
     source := ⟨"dendikken-1995", "(69b)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex_69b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "extraposition")] }
 
-def ex_143a : LinguisticExample :=
+def ex_143a : Datum :=
   { id := "dendikken1995_143a"
     source := ⟨"dendikken-1995", "(143a)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex_143a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("diagnostic", "idiom")] }
 
-def ex_143b : LinguisticExample :=
+def ex_143b : Datum :=
   { id := "dendikken1995_143b"
     source := ⟨"dendikken-1995", "(143b)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex_143b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("diagnostic", "idiom")] }
 
-def ex_143c : LinguisticExample :=
+def ex_143c : Datum :=
   { id := "dendikken1995_143c"
     source := ⟨"dendikken-1995", "(143c)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex_143c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("diagnostic", "idiom")] }
 
-def ex_144a : LinguisticExample :=
+def ex_144a : Datum :=
   { id := "dendikken1995_144a"
     source := ⟨"dendikken-1995", "(144a)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex_144a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("diagnostic", "idiom")] }
 
-def ex_144b : LinguisticExample :=
+def ex_144b : Datum :=
   { id := "dendikken1995_144b"
     source := ⟨"dendikken-1995", "(144b)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex_144b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("diagnostic", "idiom")] }
 
-def ex_155a : LinguisticExample :=
+def ex_155a : Datum :=
   { id := "dendikken1995_155a"
     source := ⟨"dendikken-1995", "(155a)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex_155a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("object", "pronoun")] }
 
-def ex_155b : LinguisticExample :=
+def ex_155b : Datum :=
   { id := "dendikken1995_155b"
     source := ⟨"dendikken-1995", "(155b)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex_155b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("object", "pronoun")] }
 
-def ex_156a : LinguisticExample :=
+def ex_156a : Datum :=
   { id := "dendikken1995_156a"
     source := ⟨"dendikken-1995", "(156a)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex_156a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("object", "stressedPronoun")] }
 
-def ex_156b : LinguisticExample :=
+def ex_156b : Datum :=
   { id := "dendikken1995_156b"
     source := ⟨"dendikken-1995", "(156b)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex_156b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("object", "conjoinedPronouns")] }
 
-def ex_156c : LinguisticExample :=
+def ex_156c : Datum :=
   { id := "dendikken1995_156c"
     source := ⟨"dendikken-1995", "(156c)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex_156c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("object", "deicticPronoun")] }
 
-def ex_161a : LinguisticExample :=
+def ex_161a : Datum :=
   { id := "dendikken1995_161a"
     source := ⟨"dendikken-1995", "(161a)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex_161a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("object", "pronoun")] }
 
-def ex_161b : LinguisticExample :=
+def ex_161b : Datum :=
   { id := "dendikken1995_161b"
     source := ⟨"dendikken-1995", "(161b)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex_161b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("object", "pronoun")] }
 
-def ex_162a : LinguisticExample :=
+def ex_162a : Datum :=
   { id := "dendikken1995_162a"
     source := ⟨"dendikken-1995", "(162a)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex_162a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "infinitival"), ("placement", "outer"), ("object", "pronoun")] }
 
-def ex_162b : LinguisticExample :=
+def ex_162b : Datum :=
   { id := "dendikken1995_162b"
     source := ⟨"dendikken-1995", "(162b)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex_162b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "infinitival"), ("placement", "inner"), ("object", "pronoun")] }
 
-def ex_167a : LinguisticExample :=
+def ex_167a : Datum :=
   { id := "dendikken1995_167a"
     source := ⟨"dendikken-1995", "(167a)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ex_167a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("modifier", "right")] }
 
-def ex_167b : LinguisticExample :=
+def ex_167b : Datum :=
   { id := "dendikken1995_167b"
     source := ⟨"dendikken-1995", "(167b)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def ex_167b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("modifier", "right")] }
 
-def ex_70a : LinguisticExample :=
+def ex_70a : Datum :=
   { id := "dendikken1995_70a"
     source := ⟨"dendikken-1995", "(70a)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def ex_70a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer")] }
 
-def ex_70b : LinguisticExample :=
+def ex_70b : Datum :=
   { id := "dendikken1995_70b"
     source := ⟨"dendikken-1995", "(70b)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def ex_70b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner")] }
 
-def ex_70c : LinguisticExample :=
+def ex_70c : Datum :=
   { id := "dendikken1995_70c"
     source := ⟨"dendikken-1995", "(70c)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def ex_70c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "final")] }
 
-def ex_71a : LinguisticExample :=
+def ex_71a : Datum :=
   { id := "dendikken1995_71a"
     source := ⟨"dendikken-1995", "(71a)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def ex_71a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "predicateExtraction")] }
 
-def ex_71b : LinguisticExample :=
+def ex_71b : Datum :=
   { id := "dendikken1995_71b"
     source := ⟨"dendikken-1995", "(71b)"⟩
     reportedIn := none
@@ -862,7 +860,7 @@ def ex_71b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "predicateExtraction")] }
 
-def ex_72a : LinguisticExample :=
+def ex_72a : Datum :=
   { id := "dendikken1995_72a"
     source := ⟨"dendikken-1995", "(72a)"⟩
     reportedIn := none
@@ -875,7 +873,7 @@ def ex_72a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "subextraction")] }
 
-def ex_72b : LinguisticExample :=
+def ex_72b : Datum :=
   { id := "dendikken1995_72b"
     source := ⟨"dendikken-1995", "(72b)"⟩
     reportedIn := none
@@ -888,7 +886,7 @@ def ex_72b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "subextraction")] }
 
-def ex_73a : LinguisticExample :=
+def ex_73a : Datum :=
   { id := "dendikken1995_73a"
     source := ⟨"dendikken-1995", "(73a)"⟩
     reportedIn := none
@@ -901,7 +899,7 @@ def ex_73a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer")] }
 
-def ex_73b : LinguisticExample :=
+def ex_73b : Datum :=
   { id := "dendikken1995_73b"
     source := ⟨"dendikken-1995", "(73b)"⟩
     reportedIn := none
@@ -914,7 +912,7 @@ def ex_73b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner")] }
 
-def ex_73c : LinguisticExample :=
+def ex_73c : Datum :=
   { id := "dendikken1995_73c"
     source := ⟨"dendikken-1995", "(73c)"⟩
     reportedIn := none
@@ -927,7 +925,7 @@ def ex_73c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "final")] }
 
-def ex_74a : LinguisticExample :=
+def ex_74a : Datum :=
   { id := "dendikken1995_74a"
     source := ⟨"dendikken-1995", "(74a)"⟩
     reportedIn := none
@@ -940,7 +938,7 @@ def ex_74a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "predicateExtraction")] }
 
-def ex_74b : LinguisticExample :=
+def ex_74b : Datum :=
   { id := "dendikken1995_74b"
     source := ⟨"dendikken-1995", "(74b)"⟩
     reportedIn := none
@@ -953,7 +951,7 @@ def ex_74b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "predicateExtraction")] }
 
-def ex_75a : LinguisticExample :=
+def ex_75a : Datum :=
   { id := "dendikken1995_75a"
     source := ⟨"dendikken-1995", "(75a)"⟩
     reportedIn := none
@@ -966,7 +964,7 @@ def ex_75a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "inner"), ("diagnostic", "subextraction")] }
 
-def ex_75b : LinguisticExample :=
+def ex_75b : Datum :=
   { id := "dendikken1995_75b"
     source := ⟨"dendikken-1995", "(75b)"⟩
     reportedIn := none
@@ -979,7 +977,7 @@ def ex_75b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("placement", "outer"), ("diagnostic", "subextraction")] }
 
-def ex_76a : LinguisticExample :=
+def ex_76a : Datum :=
   { id := "dendikken1995_76a"
     source := ⟨"dendikken-1995", "(76a)"⟩
     reportedIn := none
@@ -992,7 +990,7 @@ def ex_76a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("diagnostic", "constituency")] }
 
-def ex_76b : LinguisticExample :=
+def ex_76b : Datum :=
   { id := "dendikken1995_76b"
     source := ⟨"dendikken-1995", "(76b)"⟩
     reportedIn := none
@@ -1005,7 +1003,7 @@ def ex_76b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex"), ("predicate", "prepositional"), ("diagnostic", "constituency")] }
 
-def ex_134a_prefixed : LinguisticExample :=
+def ex_134a_prefixed : Datum :=
   { id := "dendikken1995_134a_prefixed"
     source := ⟨"afarli-1985", "p. 89"⟩
     reportedIn := some ⟨"dendikken-1995", "(134a)"⟩
@@ -1018,7 +1016,7 @@ def ex_134a_prefixed : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "active")] }
 
-def ex_134a_inner : LinguisticExample :=
+def ex_134a_inner : Datum :=
   { id := "dendikken1995_134a_inner"
     source := ⟨"afarli-1985", "p. 89"⟩
     reportedIn := some ⟨"dendikken-1995", "(134a)"⟩
@@ -1031,7 +1029,7 @@ def ex_134a_inner : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("voice", "active")] }
 
-def ex_134a_outer : LinguisticExample :=
+def ex_134a_outer : Datum :=
   { id := "dendikken1995_134a_outer"
     source := ⟨"afarli-1985", "p. 89"⟩
     reportedIn := some ⟨"dendikken-1995", "(134a)"⟩
@@ -1044,7 +1042,7 @@ def ex_134a_outer : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("voice", "active")] }
 
-def ex_134b_prefixed : LinguisticExample :=
+def ex_134b_prefixed : Datum :=
   { id := "dendikken1995_134b_prefixed"
     source := ⟨"afarli-1985", "p. 89"⟩
     reportedIn := some ⟨"dendikken-1995", "(134b)"⟩
@@ -1057,7 +1055,7 @@ def ex_134b_prefixed : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "active")] }
 
-def ex_134b_inner : LinguisticExample :=
+def ex_134b_inner : Datum :=
   { id := "dendikken1995_134b_inner"
     source := ⟨"afarli-1985", "p. 89"⟩
     reportedIn := some ⟨"dendikken-1995", "(134b)"⟩
@@ -1070,7 +1068,7 @@ def ex_134b_inner : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("voice", "active")] }
 
-def ex_134b_outer : LinguisticExample :=
+def ex_134b_outer : Datum :=
   { id := "dendikken1995_134b_outer"
     source := ⟨"afarli-1985", "p. 89"⟩
     reportedIn := some ⟨"dendikken-1995", "(134b)"⟩
@@ -1083,7 +1081,7 @@ def ex_134b_outer : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("voice", "active")] }
 
-def ex_134c_prefixed : LinguisticExample :=
+def ex_134c_prefixed : Datum :=
   { id := "dendikken1995_134c_prefixed"
     source := ⟨"afarli-1985", "p. 89"⟩
     reportedIn := some ⟨"dendikken-1995", "(134c)"⟩
@@ -1096,7 +1094,7 @@ def ex_134c_prefixed : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "active")] }
 
-def ex_134c_inner : LinguisticExample :=
+def ex_134c_inner : Datum :=
   { id := "dendikken1995_134c_inner"
     source := ⟨"afarli-1985", "p. 89"⟩
     reportedIn := some ⟨"dendikken-1995", "(134c)"⟩
@@ -1109,7 +1107,7 @@ def ex_134c_inner : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("voice", "active")] }
 
-def ex_134c_outer : LinguisticExample :=
+def ex_134c_outer : Datum :=
   { id := "dendikken1995_134c_outer"
     source := ⟨"afarli-1985", "p. 89"⟩
     reportedIn := some ⟨"dendikken-1995", "(134c)"⟩
@@ -1122,7 +1120,7 @@ def ex_134c_outer : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("voice", "active")] }
 
-def ex_135a : LinguisticExample :=
+def ex_135a : Datum :=
   { id := "dendikken1995_135a"
     source := ⟨"afarli-1985", "p. 89"⟩
     reportedIn := some ⟨"dendikken-1995", "(135a)"⟩
@@ -1135,7 +1133,7 @@ def ex_135a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "passive")] }
 
-def ex_135b : LinguisticExample :=
+def ex_135b : Datum :=
   { id := "dendikken1995_135b"
     source := ⟨"afarli-1985", "p. 89"⟩
     reportedIn := some ⟨"dendikken-1995", "(135b)"⟩
@@ -1148,7 +1146,7 @@ def ex_135b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "passive")] }
 
-def ex_135c : LinguisticExample :=
+def ex_135c : Datum :=
   { id := "dendikken1995_135c"
     source := ⟨"afarli-1985", "p. 89"⟩
     reportedIn := some ⟨"dendikken-1995", "(135c)"⟩
@@ -1161,7 +1159,7 @@ def ex_135c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "passive")] }
 
-def ex_136a : LinguisticExample :=
+def ex_136a : Datum :=
   { id := "dendikken1995_136a"
     source := ⟨"dendikken-1995", "(136a)"⟩
     reportedIn := none
@@ -1174,7 +1172,7 @@ def ex_136a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "passive")] }
 
-def ex_136b : LinguisticExample :=
+def ex_136b : Datum :=
   { id := "dendikken1995_136b"
     source := ⟨"dendikken-1995", "(136b)"⟩
     reportedIn := none
@@ -1187,7 +1185,7 @@ def ex_136b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "passive")] }
 
-def ex_137a : LinguisticExample :=
+def ex_137a : Datum :=
   { id := "dendikken1995_137a"
     source := ⟨"dendikken-1995", "(137a)"⟩
     reportedIn := none
@@ -1200,7 +1198,7 @@ def ex_137a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("voice", "active")] }
 
-def ex_137b : LinguisticExample :=
+def ex_137b : Datum :=
   { id := "dendikken1995_137b"
     source := ⟨"dendikken-1995", "(137b)"⟩
     reportedIn := none
@@ -1213,7 +1211,7 @@ def ex_137b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("voice", "active")] }
 
-def ex_138a : LinguisticExample :=
+def ex_138a : Datum :=
   { id := "dendikken1995_138a"
     source := ⟨"dendikken-1995", "(138a)"⟩
     reportedIn := none
@@ -1226,7 +1224,7 @@ def ex_138a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "active")] }
 
-def ex_138b : LinguisticExample :=
+def ex_138b : Datum :=
   { id := "dendikken1995_138b"
     source := ⟨"dendikken-1995", "(138b)"⟩
     reportedIn := none
@@ -1239,7 +1237,7 @@ def ex_138b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "active")] }
 
-def ex_138c : LinguisticExample :=
+def ex_138c : Datum :=
   { id := "dendikken1995_138c"
     source := ⟨"dendikken-1995", "(138c)"⟩
     reportedIn := none
@@ -1252,7 +1250,7 @@ def ex_138c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "prefixed"), ("voice", "active")] }
 
-def ex_149_inner : LinguisticExample :=
+def ex_149_inner : Datum :=
   { id := "dendikken1995_149_inner"
     source := ⟨"afarli-1985", "p. 83"⟩
     reportedIn := some ⟨"dendikken-1995", "(149)"⟩
@@ -1265,7 +1263,7 @@ def ex_149_inner : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("diagnostic", "ergativity")] }
 
-def ex_149_outer : LinguisticExample :=
+def ex_149_outer : Datum :=
   { id := "dendikken1995_149_outer"
     source := ⟨"afarli-1985", "p. 83"⟩
     reportedIn := some ⟨"dendikken-1995", "(149)"⟩
@@ -1278,7 +1276,7 @@ def ex_149_outer : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("diagnostic", "ergativity")] }
 
-def ex_150_inner : LinguisticExample :=
+def ex_150_inner : Datum :=
   { id := "dendikken1995_150_inner"
     source := ⟨"afarli-1985", "pp. 83-84"⟩
     reportedIn := some ⟨"dendikken-1995", "(150)"⟩
@@ -1291,7 +1289,7 @@ def ex_150_inner : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "inner"), ("diagnostic", "ergativity")] }
 
-def ex_150_outer : LinguisticExample :=
+def ex_150_outer : Datum :=
   { id := "dendikken1995_150_outer"
     source := ⟨"afarli-1985", "pp. 83-84"⟩
     reportedIn := some ⟨"dendikken-1995", "(150)"⟩
@@ -1304,7 +1302,7 @@ def ex_150_outer : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("placement", "outer"), ("diagnostic", "ergativity")] }
 
-def ex_153a : LinguisticExample :=
+def ex_153a : Datum :=
   { id := "dendikken1995_153a"
     source := ⟨"dendikken-1995", "(153a)"⟩
     reportedIn := none
@@ -1317,7 +1315,7 @@ def ex_153a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("diagnostic", "ergativity")] }
 
-def ex_153b : LinguisticExample :=
+def ex_153b : Datum :=
   { id := "dendikken1995_153b"
     source := ⟨"dendikken-1995", "(153b)"⟩
     reportedIn := none
@@ -1330,6 +1328,6 @@ def ex_153b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "simplex"), ("diagnostic", "ergativity")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_1d, ex_1e, ex_13a, ex_13b, ex_13c, ex_14a, ex_14b, ex_14c, ex_44, ex_45, ex_49a, ex_49b, ex_49c, ex_50a, ex_50b, ex_50c, ex_51a, ex_51b, ex_51c, ex_52a, ex_52b, ex_52c, ex_53a, ex_53b, ex_53c, ex_60a, ex_60b, ex_61a, ex_61b, ex_62a, ex_62b, ex_63a, ex_63b, ex_64a, ex_64b, ex_65a, ex_65b, ex_68a, ex_68b, ex_69a, ex_69b, ex_143a, ex_143b, ex_143c, ex_144a, ex_144b, ex_155a, ex_155b, ex_156a, ex_156b, ex_156c, ex_161a, ex_161b, ex_162a, ex_162b, ex_167a, ex_167b, ex_70a, ex_70b, ex_70c, ex_71a, ex_71b, ex_72a, ex_72b, ex_73a, ex_73b, ex_73c, ex_74a, ex_74b, ex_75a, ex_75b, ex_76a, ex_76b, ex_134a_prefixed, ex_134a_inner, ex_134a_outer, ex_134b_prefixed, ex_134b_inner, ex_134b_outer, ex_134c_prefixed, ex_134c_inner, ex_134c_outer, ex_135a, ex_135b, ex_135c, ex_136a, ex_136b, ex_137a, ex_137b, ex_138a, ex_138b, ex_138c, ex_149_inner, ex_149_outer, ex_150_inner, ex_150_outer, ex_153a, ex_153b]
+def all : List Datum := [ex_1a, ex_1b, ex_1c, ex_1d, ex_1e, ex_13a, ex_13b, ex_13c, ex_14a, ex_14b, ex_14c, ex_44, ex_45, ex_49a, ex_49b, ex_49c, ex_50a, ex_50b, ex_50c, ex_51a, ex_51b, ex_51c, ex_52a, ex_52b, ex_52c, ex_53a, ex_53b, ex_53c, ex_60a, ex_60b, ex_61a, ex_61b, ex_62a, ex_62b, ex_63a, ex_63b, ex_64a, ex_64b, ex_65a, ex_65b, ex_68a, ex_68b, ex_69a, ex_69b, ex_143a, ex_143b, ex_143c, ex_144a, ex_144b, ex_155a, ex_155b, ex_156a, ex_156b, ex_156c, ex_161a, ex_161b, ex_162a, ex_162b, ex_167a, ex_167b, ex_70a, ex_70b, ex_70c, ex_71a, ex_71b, ex_72a, ex_72b, ex_73a, ex_73b, ex_73c, ex_74a, ex_74b, ex_75a, ex_75b, ex_76a, ex_76b, ex_134a_prefixed, ex_134a_inner, ex_134a_outer, ex_134b_prefixed, ex_134b_inner, ex_134b_outer, ex_134c_prefixed, ex_134c_inner, ex_134c_outer, ex_135a, ex_135b, ex_135c, ex_136a, ex_136b, ex_137a, ex_137b, ex_138a, ex_138b, ex_138c, ex_149_inner, ex_149_outer, ex_150_inner, ex_150_outer, ex_153a, ex_153b]
 
 end Dendikken1995.Examples

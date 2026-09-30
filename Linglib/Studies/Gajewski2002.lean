@@ -57,7 +57,7 @@ principle predicts each (`rows_predicted`).
 
 namespace Gajewski2002
 
-open Quantifier Quantifier.GQ Quantifier.Exceptive Data.Examples
+open Quantifier Quantifier.GQ Quantifier.Exceptive
 
 /-- A logical skeleton (24): typed slots, one per maximal constituent without logical items, and
 the denotation the skeleton receives under an assignment (27). -/
@@ -205,7 +205,7 @@ def Row.LAnalytic (r : Row) : Prop :=
   | .everyIs => (everyIsSkeleton (α := Bool)).IsLAnalytic
   | .andNot => andNotSkeleton.IsLAnalytic
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let g ← ex.parse? "grammatical" [("yes", true), ("no", false)]
   let d := ex.parse? "determiner" [("every", Determiner.every), ("some", .some), ("no", .no)]
   let c ← match ex.feature? "construction", d with
@@ -216,7 +216,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
     | _, _ => none
   pure ⟨c, g⟩
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 private theorem rows_eq : rows =
     [⟨.there .every, false⟩, ⟨.there .every, false⟩, ⟨.there .some, true⟩, ⟨.there .some, true⟩,

@@ -15,9 +15,7 @@ this module; declarations live in `namespace SeeligerRepp2018.Examples`.
 
 namespace SeeligerRepp2018.Examples
 
-open Data.Examples
-
-def en_pdq : LinguisticExample :=
+def en_pdq : Datum :=
   { id := "seeligerrepp2018_en_pdq"
     source := ⟨"seeliger-repp-2018", "(5a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def en_pdq : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("type", "PDQ"), ("declarative", "p"), ("evidential", "+positive"), ("epistemic", "-positive")] }
 
-def de_pdq : LinguisticExample :=
+def de_pdq : Datum :=
   { id := "seeligerrepp2018_de_pdq"
     source := ⟨"seeliger-repp-2018", "(5b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def de_pdq : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("type", "PDQ"), ("declarative", "p"), ("evidential", "+positive"), ("epistemic", "-positive")] }
 
-def sv_pdq : LinguisticExample :=
+def sv_pdq : Datum :=
   { id := "seeligerrepp2018_sv_pdq"
     source := ⟨"seeliger-repp-2018", "(5c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def sv_pdq : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("type", "PDQ"), ("declarative", "p"), ("evidential", "+positive"), ("epistemic", "-positive")] }
 
-def en_ndq : LinguisticExample :=
+def en_ndq : Datum :=
   { id := "seeligerrepp2018_en_ndq"
     source := ⟨"seeliger-repp-2018", "(6a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def en_ndq : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("type", "NDQ"), ("declarative", "not p"), ("evidential", "+negative"), ("epistemic", "-negative")] }
 
-def de_ndq : LinguisticExample :=
+def de_ndq : Datum :=
   { id := "seeligerrepp2018_de_ndq"
     source := ⟨"seeliger-repp-2018", "(6b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def de_ndq : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("type", "NDQ"), ("declarative", "not p"), ("evidential", "+negative"), ("epistemic", "-negative")] }
 
-def sv_ndq : LinguisticExample :=
+def sv_ndq : Datum :=
   { id := "seeligerrepp2018_sv_ndq"
     source := ⟨"seeliger-repp-2018", "(6c)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def sv_ndq : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("type", "NDQ"), ("declarative", "not p"), ("evidential", "+negative"), ("epistemic", "-negative")] }
 
-def en_nrq : LinguisticExample :=
+def en_nrq : Datum :=
   { id := "seeligerrepp2018_en_nrq"
     source := ⟨"seeliger-repp-2018", "(7a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def en_nrq : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("type", "NRQ"), ("declarative", "not p"), ("evidential", "+positive"), ("epistemic", "+negative")] }
 
-def de_nrq_doch_wohl : LinguisticExample :=
+def de_nrq_doch_wohl : Datum :=
   { id := "seeligerrepp2018_de_nrq_doch_wohl"
     source := ⟨"seeliger-repp-2018", "(7b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def de_nrq_doch_wohl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("type", "NRQ"), ("declarative", "not p"), ("evidential", "+positive"), ("epistemic", "+negative")] }
 
-def sv_nrq_fronted_negation : LinguisticExample :=
+def sv_nrq_fronted_negation : Datum :=
   { id := "seeligerrepp2018_sv_nrq_fronted_negation"
     source := ⟨"seeliger-repp-2018", "(7c)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def sv_nrq_fronted_negation : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("type", "NRQ"), ("declarative", "not p"), ("evidential", "+positive"), ("epistemic", "+negative"), ("negation", "fronted"), ("väl", "no"), ("men", "no"), ("visst/nog", "no"), ("evidence", "direct")] }
 
-def en_prq : LinguisticExample :=
+def en_prq : Datum :=
   { id := "seeligerrepp2018_en_prq"
     source := ⟨"seeliger-repp-2018", "(8a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def en_prq : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("type", "PRQ"), ("declarative", "p"), ("evidential", "+negative"), ("epistemic", "+positive")] }
 
-def de_prq_doch_wohl : LinguisticExample :=
+def de_prq_doch_wohl : Datum :=
   { id := "seeligerrepp2018_de_prq_doch_wohl"
     source := ⟨"seeliger-repp-2018", "(8b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def de_prq_doch_wohl : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("type", "PRQ"), ("declarative", "p"), ("evidential", "+negative"), ("epistemic", "+positive")] }
 
-def sv_prq_men_val : LinguisticExample :=
+def sv_prq_men_val : Datum :=
   { id := "seeligerrepp2018_sv_prq_men_val"
     source := ⟨"seeliger-repp-2018", "(8c)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def sv_prq_men_val : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("type", "PRQ"), ("declarative", "p"), ("evidential", "+negative"), ("epistemic", "+positive"), ("negation", "none"), ("väl", "yes"), ("men", "yes"), ("visst/nog", "no"), ("evidence", "direct")] }
 
-def sv_prq_visst : LinguisticExample :=
+def sv_prq_visst : Datum :=
   { id := "seeligerrepp2018_sv_prq_visst"
     source := ⟨"seeliger-repp-2018", "(8c′)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def sv_prq_visst : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("type", "PRQ"), ("declarative", "p"), ("evidential", "+negative"), ("epistemic", "+positive"), ("negation", "none"), ("väl", "no"), ("men", "no"), ("visst/nog", "yes"), ("evidence", "direct")] }
 
-def sv_23a : LinguisticExample :=
+def sv_23a : Datum :=
   { id := "seeligerrepp2018_sv_23a"
     source := ⟨"seeliger-repp-2018", "(23a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def sv_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("type", "PRQ"), ("negation", "none"), ("väl", "no"), ("men", "no"), ("visst/nog", "no"), ("evidence", "indirect")] }
 
-def sv_23b : LinguisticExample :=
+def sv_23b : Datum :=
   { id := "seeligerrepp2018_sv_23b"
     source := ⟨"seeliger-repp-2018", "(23b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def sv_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("type", "PRQ"), ("negation", "none"), ("väl", "yes"), ("men", "yes"), ("visst/nog", "no"), ("evidence", "indirect")] }
 
-def sv_23c : LinguisticExample :=
+def sv_23c : Datum :=
   { id := "seeligerrepp2018_sv_23c"
     source := ⟨"seeliger-repp-2018", "(23c)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def sv_23c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("type", "PRQ"), ("negation", "none"), ("väl", "no"), ("men", "no"), ("visst/nog", "yes"), ("evidence", "indirect")] }
 
-def sv_23d : LinguisticExample :=
+def sv_23d : Datum :=
   { id := "seeligerrepp2018_sv_23d"
     source := ⟨"seeliger-repp-2018", "(23d)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def sv_23d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("type", "PRQ"), ("negation", "none"), ("väl", "yes"), ("men", "no"), ("visst/nog", "yes"), ("evidence", "indirect")] }
 
-def sv_24a : LinguisticExample :=
+def sv_24a : Datum :=
   { id := "seeligerrepp2018_sv_24a"
     source := ⟨"seeliger-repp-2018", "(24a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def sv_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("type", "NRQ"), ("negation", "low"), ("väl", "no"), ("men", "no"), ("visst/nog", "no"), ("evidence", "indirect")] }
 
-def sv_24b : LinguisticExample :=
+def sv_24b : Datum :=
   { id := "seeligerrepp2018_sv_24b"
     source := ⟨"seeliger-repp-2018", "(24b)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def sv_24b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("type", "NRQ"), ("negation", "low"), ("väl", "yes"), ("men", "no"), ("visst/nog", "no"), ("evidence", "indirect")] }
 
-def sv_24c : LinguisticExample :=
+def sv_24c : Datum :=
   { id := "seeligerrepp2018_sv_24c"
     source := ⟨"seeliger-repp-2018", "(24c)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def sv_24c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("type", "NRQ"), ("negation", "fronted"), ("väl", "no"), ("men", "no"), ("visst/nog", "no"), ("evidence", "indirect")] }
 
-def sv_24d : LinguisticExample :=
+def sv_24d : Datum :=
   { id := "seeligerrepp2018_sv_24d"
     source := ⟨"seeliger-repp-2018", "(24d)"⟩
     reportedIn := none
@@ -290,6 +288,6 @@ def sv_24d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("type", "NRQ"), ("negation", "fronted"), ("väl", "yes"), ("men", "no"), ("visst/nog", "no"), ("evidence", "indirect")] }
 
-def all : List LinguisticExample := [en_pdq, de_pdq, sv_pdq, en_ndq, de_ndq, sv_ndq, en_nrq, de_nrq_doch_wohl, sv_nrq_fronted_negation, en_prq, de_prq_doch_wohl, sv_prq_men_val, sv_prq_visst, sv_23a, sv_23b, sv_23c, sv_23d, sv_24a, sv_24b, sv_24c, sv_24d]
+def all : List Datum := [en_pdq, de_pdq, sv_pdq, en_ndq, de_ndq, sv_ndq, en_nrq, de_nrq_doch_wohl, sv_nrq_fronted_negation, en_prq, de_prq_doch_wohl, sv_prq_men_val, sv_prq_visst, sv_23a, sv_23b, sv_23c, sv_23d, sv_24a, sv_24b, sv_24c, sv_24d]
 
 end SeeligerRepp2018.Examples

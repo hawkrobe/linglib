@@ -41,7 +41,6 @@ and Pouscoulous, and the paradigm priming of §5.5.4 from them.
 
 namespace ChemlaSpector2011
 
-open Data.Examples
 
 /-! ### Readings and theories (§1) -/
 

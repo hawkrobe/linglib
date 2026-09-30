@@ -15,9 +15,7 @@ this module; declarations live in `namespace Simik2024.Examples`.
 
 namespace Simik2024.Examples
 
-open Data.Examples
-
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "simik2024_ex11a"
     source := ⟨"simik-2024", "ex. 11a"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "interPPQ"), ("evidence", "neutral"), ("epistemic", "neutral")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "simik2024_ex11b"
     source := ⟨"simik-2024", "ex. 11b"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "interNPQ"), ("evidence", "neutral"), ("epistemic", "neutral")] }
 
-def ex11c : LinguisticExample :=
+def ex11c : Datum :=
   { id := "simik2024_ex11c"
     source := ⟨"simik-2024", "ex. 11c"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex11c : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "declPPQ"), ("evidence", "neutral"), ("epistemic", "neutral")] }
 
-def ex11c_neg : LinguisticExample :=
+def ex11c_neg : Datum :=
   { id := "simik2024_ex11c_neg"
     source := ⟨"simik-2024", "ex. 11c_neg"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex11c_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "declNPQ"), ("evidence", "neutral"), ("epistemic", "neutral")] }
 
-def ex12a : LinguisticExample :=
+def ex12a : Datum :=
   { id := "simik2024_ex12a"
     source := ⟨"simik-2024", "ex. 12a"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex12a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "interPPQ"), ("evidence", "neutral"), ("epistemic", "forP")] }
 
-def ex12b : LinguisticExample :=
+def ex12b : Datum :=
   { id := "simik2024_ex12b"
     source := ⟨"simik-2024", "ex. 12b"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex12b : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "interNPQ"), ("evidence", "neutral"), ("epistemic", "forP")] }
 
-def ex12c : LinguisticExample :=
+def ex12c : Datum :=
   { id := "simik2024_ex12c"
     source := ⟨"simik-2024", "ex. 12c"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex12c : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "declPPQ"), ("evidence", "neutral"), ("epistemic", "forP")] }
 
-def ex12c_neg : LinguisticExample :=
+def ex12c_neg : Datum :=
   { id := "simik2024_ex12c_neg"
     source := ⟨"simik-2024", "ex. 12c_neg"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex12c_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "declNPQ"), ("evidence", "neutral"), ("epistemic", "forP")] }
 
-def ex16a : LinguisticExample :=
+def ex16a : Datum :=
   { id := "simik2024_ex16a"
     source := ⟨"simik-2024", "ex. 16a"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex16a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "interPPQ"), ("evidence", "againstP"), ("epistemic", "forP")] }
 
-def ex16b : LinguisticExample :=
+def ex16b : Datum :=
   { id := "simik2024_ex16b"
     source := ⟨"simik-2024", "ex. 16b"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex16b : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "interNPQ"), ("evidence", "againstP"), ("epistemic", "forP")] }
 
-def ex16c : LinguisticExample :=
+def ex16c : Datum :=
   { id := "simik2024_ex16c"
     source := ⟨"simik-2024", "ex. 16c"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex16c : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "declPPQ"), ("evidence", "againstP"), ("epistemic", "forP")] }
 
-def ex16d : LinguisticExample :=
+def ex16d : Datum :=
   { id := "simik2024_ex16d"
     source := ⟨"simik-2024", "ex. 16d"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex16d : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "declNPQ"), ("evidence", "againstP"), ("epistemic", "forP")] }
 
-def ex17a : LinguisticExample :=
+def ex17a : Datum :=
   { id := "simik2024_ex17a"
     source := ⟨"simik-2024", "ex. 17a"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex17a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "interPPQ"), ("evidence", "forP"), ("epistemic", "neutral")] }
 
-def ex17b : LinguisticExample :=
+def ex17b : Datum :=
   { id := "simik2024_ex17b"
     source := ⟨"simik-2024", "ex. 17b"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex17b : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "interNPQ"), ("evidence", "forP"), ("epistemic", "neutral")] }
 
-def ex17c : LinguisticExample :=
+def ex17c : Datum :=
   { id := "simik2024_ex17c"
     source := ⟨"simik-2024", "ex. 17c"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex17c : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "declPPQ"), ("evidence", "forP"), ("epistemic", "neutral")] }
 
-def ex17d : LinguisticExample :=
+def ex17d : Datum :=
   { id := "simik2024_ex17d"
     source := ⟨"simik-2024", "ex. 17d"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex17d : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "declNPQ"), ("evidence", "forP"), ("epistemic", "neutral")] }
 
-def ex18a : LinguisticExample :=
+def ex18a : Datum :=
   { id := "simik2024_ex18a"
     source := ⟨"simik-2024", "ex. 18a"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex18a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "interPPQ"), ("evidence", "neutral"), ("epistemic", "neutral"), ("contrastiveTopic", "true")] }
 
-def ex18b : LinguisticExample :=
+def ex18b : Datum :=
   { id := "simik2024_ex18b"
     source := ⟨"simik-2024", "ex. 18b"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex18b : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "interNPQ"), ("evidence", "neutral"), ("epistemic", "neutral"), ("contrastiveTopic", "true")] }
 
-def ex18c : LinguisticExample :=
+def ex18c : Datum :=
   { id := "simik2024_ex18c"
     source := ⟨"simik-2024", "ex. 18c"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex18c : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "declPPQ"), ("evidence", "neutral"), ("epistemic", "neutral"), ("contrastiveTopic", "true")] }
 
-def ex18d : LinguisticExample :=
+def ex18d : Datum :=
   { id := "simik2024_ex18d"
     source := ⟨"simik-2024", "ex. 18d"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex18d : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "declNPQ"), ("evidence", "neutral"), ("epistemic", "neutral"), ("contrastiveTopic", "true")] }
 
-def ex25a : LinguisticExample :=
+def ex25a : Datum :=
   { id := "simik2024_ex25a"
     source := ⟨"simik-2024", "ex. 25a"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex25a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "positive"), ("label", "InterPPQ")] }
 
-def ex25b : LinguisticExample :=
+def ex25b : Datum :=
   { id := "simik2024_ex25b"
     source := ⟨"simik-2024", "ex. 25b"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex25b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "negative"), ("label", "InterNPQ")] }
 
-def ex25c : LinguisticExample :=
+def ex25c : Datum :=
   { id := "simik2024_ex25c"
     source := ⟨"simik-2024", "ex. 25c"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex25c : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "positive"), ("label", "DeclPQ")] }
 
-def ex25c_neg : LinguisticExample :=
+def ex25c_neg : Datum :=
   { id := "simik2024_ex25c_neg"
     source := ⟨"simik-2024", "ex. 25c_neg"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex25c_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "negative"), ("label", "DeclPQ")] }
 
-def ex26a : LinguisticExample :=
+def ex26a : Datum :=
   { id := "simik2024_ex26a"
     source := ⟨"simik-2024", "ex. 26a"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex26a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "positive"), ("label", "InterPPQ")] }
 
-def ex26b : LinguisticExample :=
+def ex26b : Datum :=
   { id := "simik2024_ex26b"
     source := ⟨"simik-2024", "ex. 26b"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex26b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "negative"), ("label", "InterNPQ")] }
 
-def ex26c : LinguisticExample :=
+def ex26c : Datum :=
   { id := "simik2024_ex26c"
     source := ⟨"simik-2024", "ex. 26c"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex26c : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "positive"), ("label", "DeclPQ")] }
 
-def ex26c_neg : LinguisticExample :=
+def ex26c_neg : Datum :=
   { id := "simik2024_ex26c_neg"
     source := ⟨"simik-2024", "ex. 26c_neg"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex26c_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "negative"), ("label", "DeclPQ")] }
 
-def ex27a : LinguisticExample :=
+def ex27a : Datum :=
   { id := "simik2024_ex27a"
     source := ⟨"simik-2024", "ex. 27a"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex27a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "positive"), ("label", "InterPPQ")] }
 
-def ex27b : LinguisticExample :=
+def ex27b : Datum :=
   { id := "simik2024_ex27b"
     source := ⟨"simik-2024", "ex. 27b"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex27b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "negative"), ("label", "InterNPQ")] }
 
-def ex27c : LinguisticExample :=
+def ex27c : Datum :=
   { id := "simik2024_ex27c"
     source := ⟨"simik-2024", "ex. 27c"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex27c : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "positive"), ("label", "DeclPQ")] }
 
-def ex27c_neg : LinguisticExample :=
+def ex27c_neg : Datum :=
   { id := "simik2024_ex27c_neg"
     source := ⟨"simik-2024", "ex. 27c_neg"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex27c_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "negative"), ("label", "DeclPQ")] }
 
-def ex28a : LinguisticExample :=
+def ex28a : Datum :=
   { id := "simik2024_ex28a"
     source := ⟨"simik-2024", "ex. 28a"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex28a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "positive"), ("label", "InterPPQ"), ("particle", "ali")] }
 
-def ex28b : LinguisticExample :=
+def ex28b : Datum :=
   { id := "simik2024_ex28b"
     source := ⟨"simik-2024", "ex. 28b"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex28b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "negative"), ("label", "InterNPQ"), ("particle", "ali")] }
 
-def ex28c : LinguisticExample :=
+def ex28c : Datum :=
   { id := "simik2024_ex28c"
     source := ⟨"simik-2024", "ex. 28c"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex28c : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "positive"), ("label", "DeclPQ")] }
 
-def ex28c_neg : LinguisticExample :=
+def ex28c_neg : Datum :=
   { id := "simik2024_ex28c_neg"
     source := ⟨"simik-2024", "ex. 28c_neg"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex28c_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "negative"), ("label", "DeclPQ")] }
 
-def ex29a : LinguisticExample :=
+def ex29a : Datum :=
   { id := "simik2024_ex29a"
     source := ⟨"simik-2024", "ex. 29a"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex29a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "positive"), ("label", "cyPPQ"), ("particle", "čy")] }
 
-def ex29b : LinguisticExample :=
+def ex29b : Datum :=
   { id := "simik2024_ex29b"
     source := ⟨"simik-2024", "ex. 29b"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex29b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "positive"), ("label", "cyPPQ"), ("particle", "čy")] }
 
-def ex29c : LinguisticExample :=
+def ex29c : Datum :=
   { id := "simik2024_ex29c"
     source := ⟨"simik-2024", "ex. 29c"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex29c : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "negative"), ("label", "cyNPQ"), ("particle", "čy")] }
 
-def ex29d : LinguisticExample :=
+def ex29d : Datum :=
   { id := "simik2024_ex29d"
     source := ⟨"simik-2024", "ex. 29d"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex29d : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "negative"), ("label", "cyNPQ"), ("particle", "čy")] }
 
-def ex29e : LinguisticExample :=
+def ex29e : Datum :=
   { id := "simik2024_ex29e"
     source := ⟨"simik-2024", "ex. 29e"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex29e : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "positive"), ("label", "DeclPQ")] }
 
-def ex29e_neg : LinguisticExample :=
+def ex29e_neg : Datum :=
   { id := "simik2024_ex29e_neg"
     source := ⟨"simik-2024", "ex. 29e_neg"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex29e_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "negative"), ("label", "DeclPQ")] }
 
-def ex30a : LinguisticExample :=
+def ex30a : Datum :=
   { id := "simik2024_ex30a"
     source := ⟨"simik-2024", "ex. 30a"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex30a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "positive"), ("label", "czyPPQ"), ("particle", "czy")] }
 
-def ex30b : LinguisticExample :=
+def ex30b : Datum :=
   { id := "simik2024_ex30b"
     source := ⟨"simik-2024", "ex. 30b"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex30b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "negative"), ("label", "czyNPQ"), ("particle", "czy")] }
 
-def ex30c : LinguisticExample :=
+def ex30c : Datum :=
   { id := "simik2024_ex30c"
     source := ⟨"simik-2024", "ex. 30c"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex30c : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "positive"), ("label", "DeclPQ")] }
 
-def ex30c_neg : LinguisticExample :=
+def ex30c_neg : Datum :=
   { id := "simik2024_ex30c_neg"
     source := ⟨"simik-2024", "ex. 30c_neg"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex30c_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "negative"), ("label", "DeclPQ")] }
 
-def ex30d : LinguisticExample :=
+def ex30d : Datum :=
   { id := "simik2024_ex30d"
     source := ⟨"simik-2024", "ex. 30d"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex30d : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "positive"), ("label", "V1PQ")] }
 
-def ex30d_neg : LinguisticExample :=
+def ex30d_neg : Datum :=
   { id := "simik2024_ex30d_neg"
     source := ⟨"simik-2024", "ex. 30d_neg"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex30d_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "negative"), ("label", "V1PQ")] }
 
-def ex31a : LinguisticExample :=
+def ex31a : Datum :=
   { id := "simik2024_ex31a"
     source := ⟨"simik-2024", "ex. 31a"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex31a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "positive"), ("label", "da+liPPQ"), ("particle", "da li")] }
 
-def ex31b : LinguisticExample :=
+def ex31b : Datum :=
   { id := "simik2024_ex31b"
     source := ⟨"simik-2024", "ex. 31b"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex31b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "positive"), ("label", "je+liPPQ"), ("particle", "je li")] }
 
-def ex31c : LinguisticExample :=
+def ex31c : Datum :=
   { id := "simik2024_ex31c"
     source := ⟨"simik-2024", "ex. 31c"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex31c : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbAttachedParticle"), ("polarity", "negative"), ("label", "HighNPQ"), ("particle", "li")] }
 
-def ex31d : LinguisticExample :=
+def ex31d : Datum :=
   { id := "simik2024_ex31d"
     source := ⟨"simik-2024", "ex. 31d"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex31d : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "negative"), ("label", "LowNPQ"), ("particle", "je li")] }
 
-def ex31e : LinguisticExample :=
+def ex31e : Datum :=
   { id := "simik2024_ex31e"
     source := ⟨"simik-2024", "ex. 31e"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex31e : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "positive"), ("label", "DeclPQ")] }
 
-def ex31e_neg : LinguisticExample :=
+def ex31e_neg : Datum :=
   { id := "simik2024_ex31e_neg"
     source := ⟨"simik-2024", "ex. 31e_neg"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex31e_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "negative"), ("label", "DeclPQ")] }
 
-def ex32a : LinguisticExample :=
+def ex32a : Datum :=
   { id := "simik2024_ex32a"
     source := ⟨"simik-2024", "ex. 32a"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex32a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "positive"), ("label", "daliPQ"), ("particle", "dali")] }
 
-def ex32a_neg : LinguisticExample :=
+def ex32a_neg : Datum :=
   { id := "simik2024_ex32a_neg"
     source := ⟨"simik-2024", "ex. 32a_neg"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex32a_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "clauseInitialParticle"), ("polarity", "negative"), ("label", "daliPQ"), ("particle", "dali")] }
 
-def ex32b : LinguisticExample :=
+def ex32b : Datum :=
   { id := "simik2024_ex32b"
     source := ⟨"simik-2024", "ex. 32b"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex32b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbAttachedParticle"), ("polarity", "positive"), ("label", "liPQ"), ("particle", "li")] }
 
-def ex32b_neg : LinguisticExample :=
+def ex32b_neg : Datum :=
   { id := "simik2024_ex32b_neg"
     source := ⟨"simik-2024", "ex. 32b_neg"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex32b_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbAttachedParticle"), ("polarity", "negative"), ("label", "liPQ"), ("particle", "li")] }
 
-def ex32c : LinguisticExample :=
+def ex32c : Datum :=
   { id := "simik2024_ex32c"
     source := ⟨"simik-2024", "ex. 32c"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ex32c : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "positive"), ("label", "v1PQ")] }
 
-def ex32c_neg : LinguisticExample :=
+def ex32c_neg : Datum :=
   { id := "simik2024_ex32c_neg"
     source := ⟨"simik-2024", "ex. 32c_neg"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def ex32c_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbMovement"), ("polarity", "negative"), ("label", "v1PQ")] }
 
-def ex33a : LinguisticExample :=
+def ex33a : Datum :=
   { id := "simik2024_ex33a"
     source := ⟨"simik-2024", "ex. 33a"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def ex33a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbAttachedParticle"), ("polarity", "positive"), ("label", "liPPQ"), ("particle", "li")] }
 
-def ex33b : LinguisticExample :=
+def ex33b : Datum :=
   { id := "simik2024_ex33b"
     source := ⟨"simik-2024", "ex. 33b"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def ex33b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbAttachedParticle"), ("polarity", "negative"), ("label", "liNPQ"), ("particle", "li")] }
 
-def ex33c : LinguisticExample :=
+def ex33c : Datum :=
   { id := "simik2024_ex33c"
     source := ⟨"simik-2024", "ex. 33c"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def ex33c : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "positive"), ("label", "DeclPQ")] }
 
-def ex33c_neg : LinguisticExample :=
+def ex33c_neg : Datum :=
   { id := "simik2024_ex33c_neg"
     source := ⟨"simik-2024", "ex. 33c_neg"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def ex33c_neg : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "declarative"), ("polarity", "negative"), ("label", "DeclPQ")] }
 
-def ex34a : LinguisticExample :=
+def ex34a : Datum :=
   { id := "simik2024_ex34a"
     source := ⟨"simik-2024", "ex. 34a"⟩
     reportedIn := none
@@ -862,7 +860,7 @@ def ex34a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbAttachedParticle"), ("polarity", "positive"), ("label", "liPPQ"), ("particle", "li")] }
 
-def ex34b : LinguisticExample :=
+def ex34b : Datum :=
   { id := "simik2024_ex34b"
     source := ⟨"simik-2024", "ex. 34b"⟩
     reportedIn := none
@@ -875,7 +873,7 @@ def ex34b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "verbAttachedParticle"), ("polarity", "negative"), ("label", "liNPQ"), ("particle", "li")] }
 
-def ex34c : LinguisticExample :=
+def ex34c : Datum :=
   { id := "simik2024_ex34c"
     source := ⟨"simik-2024", "ex. 34c"⟩
     reportedIn := none
@@ -888,7 +886,7 @@ def ex34c : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "intonation"), ("polarity", "positive"), ("label", "IntonPQ")] }
 
-def ex43c_ppi : LinguisticExample :=
+def ex43c_ppi : Datum :=
   { id := "simik2024_ex43c_ppi"
     source := ⟨"simik-2024", "ex. 43c"⟩
     reportedIn := none
@@ -901,7 +899,7 @@ def ex43c_ppi : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("nahodou", "false"), ("indefinite", "ppi")] }
 
-def ex43c_nci : LinguisticExample :=
+def ex43c_nci : Datum :=
   { id := "simik2024_ex43c_nci"
     source := ⟨"simik-2024", "ex. 43c"⟩
     reportedIn := none
@@ -914,7 +912,7 @@ def ex43c_nci : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("nahodou", "false"), ("indefinite", "nci")] }
 
-def ex43d_ppi : LinguisticExample :=
+def ex43d_ppi : Datum :=
   { id := "simik2024_ex43d_ppi"
     source := ⟨"simik-2024", "ex. 43d"⟩
     reportedIn := none
@@ -927,7 +925,7 @@ def ex43d_ppi : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("nahodou", "true"), ("indefinite", "ppi")] }
 
-def ex43d_nci : LinguisticExample :=
+def ex43d_nci : Datum :=
   { id := "simik2024_ex43d_nci"
     source := ⟨"simik-2024", "ex. 43d"⟩
     reportedIn := none
@@ -940,7 +938,7 @@ def ex43d_nci : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("nahodou", "true"), ("indefinite", "nci")] }
 
-def ex43e : LinguisticExample :=
+def ex43e : Datum :=
   { id := "simik2024_ex43e"
     source := ⟨"simik-2024", "ex. 43e"⟩
     reportedIn := none
@@ -953,6 +951,6 @@ def ex43e : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "positive"), ("nahodou", "true"), ("indefinite", "ppi")] }
 
-def all : List LinguisticExample := [ex11a, ex11b, ex11c, ex11c_neg, ex12a, ex12b, ex12c, ex12c_neg, ex16a, ex16b, ex16c, ex16d, ex17a, ex17b, ex17c, ex17d, ex18a, ex18b, ex18c, ex18d, ex25a, ex25b, ex25c, ex25c_neg, ex26a, ex26b, ex26c, ex26c_neg, ex27a, ex27b, ex27c, ex27c_neg, ex28a, ex28b, ex28c, ex28c_neg, ex29a, ex29b, ex29c, ex29d, ex29e, ex29e_neg, ex30a, ex30b, ex30c, ex30c_neg, ex30d, ex30d_neg, ex31a, ex31b, ex31c, ex31d, ex31e, ex31e_neg, ex32a, ex32a_neg, ex32b, ex32b_neg, ex32c, ex32c_neg, ex33a, ex33b, ex33c, ex33c_neg, ex34a, ex34b, ex34c, ex43c_ppi, ex43c_nci, ex43d_ppi, ex43d_nci, ex43e]
+def all : List Datum := [ex11a, ex11b, ex11c, ex11c_neg, ex12a, ex12b, ex12c, ex12c_neg, ex16a, ex16b, ex16c, ex16d, ex17a, ex17b, ex17c, ex17d, ex18a, ex18b, ex18c, ex18d, ex25a, ex25b, ex25c, ex25c_neg, ex26a, ex26b, ex26c, ex26c_neg, ex27a, ex27b, ex27c, ex27c_neg, ex28a, ex28b, ex28c, ex28c_neg, ex29a, ex29b, ex29c, ex29d, ex29e, ex29e_neg, ex30a, ex30b, ex30c, ex30c_neg, ex30d, ex30d_neg, ex31a, ex31b, ex31c, ex31d, ex31e, ex31e_neg, ex32a, ex32a_neg, ex32b, ex32b_neg, ex32c, ex32c_neg, ex33a, ex33b, ex33c, ex33c_neg, ex34a, ex34b, ex34c, ex43c_ppi, ex43c_nci, ex43d_ppi, ex43d_nci, ex43e]
 
 end Simik2024.Examples

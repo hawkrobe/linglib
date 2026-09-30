@@ -67,7 +67,7 @@ non-control complements under 'intend' altogether are recorded as rows without a
 
 namespace Grano2024
 
-open Data.Examples Mood Event
+open Mood Event
 
 /-! ### The pool -/
 
@@ -188,7 +188,7 @@ structure Row where
   judgment : Judgment
   deriving DecidableEq, Repr
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let cls ← ex.parse? "class"
     [("want", Class.want), ("hope", .hope), ("intend", .intend), ("causative", .causative),
       ("intentionRigid", .intentionRigid), ("hybrid", .hybrid), ("commissive", .commissive),
@@ -207,7 +207,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
     ex.judgment⟩
 
 /-- The paper's judged complements, sections 2, 3, 6, and 7. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Every example of the paper is a row. -/
 theorem rows_length : rows.length = Examples.all.length := by decide +kernel

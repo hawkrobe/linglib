@@ -15,9 +15,7 @@ this module; declarations live in `namespace AdamsonAnagnostopoulou2025.Examples
 
 namespace AdamsonAnagnostopoulou2025.Examples
 
-open Data.Examples
-
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "adamsonanagnostopoulou2025_22a"
     source := ⟨"adamson-anagnostopoulou-2025", "(22a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_22a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "human M + human F"), ("resolved", "M")] }
 
-def ex_22b : LinguisticExample :=
+def ex_22b : Datum :=
   { id := "adamsonanagnostopoulou2025_22b"
     source := ⟨"adamson-anagnostopoulou-2025", "(22b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_22b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "inanimate M + inanimate F"), ("resolved", "N")] }
 
-def ex_25a : LinguisticExample :=
+def ex_25a : Datum :=
   { id := "adamsonanagnostopoulou2025_25a"
     source := ⟨"adamson-anagnostopoulou-2025", "(25a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "human F + human F"), ("resolved", "F")] }
 
-def ex_25b : LinguisticExample :=
+def ex_25b : Datum :=
   { id := "adamsonanagnostopoulou2025_25b"
     source := ⟨"adamson-anagnostopoulou-2025", "(25b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_25b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "human M + human M"), ("resolved", "M")] }
 
-def ex_35 : LinguisticExample :=
+def ex_35 : Datum :=
   { id := "adamsonanagnostopoulou2025_35"
     source := ⟨"adamson-anagnostopoulou-2025", "(35)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "human F + fixed-gender N (female)"), ("resolved", "F")] }
 
-def ex_36 : LinguisticExample :=
+def ex_36 : Datum :=
   { id := "adamsonanagnostopoulou2025_36"
     source := ⟨"adamson-anagnostopoulou-2025", "(36)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "fixed-gender F (male) + human F"), ("resolved", "M")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "adamsonanagnostopoulou2025_37"
     source := ⟨"adamson-anagnostopoulou-2025", "(37)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "fixed-gender N (female) + human F"), ("resolved", "F")] }
 
-def ex_38a : LinguisticExample :=
+def ex_38a : Datum :=
   { id := "adamsonanagnostopoulou2025_38a"
     source := ⟨"adamson-anagnostopoulou-2025", "(38a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_38a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "inanimate F + inanimate F"), ("resolved", "F")] }
 
-def ex_38b : LinguisticExample :=
+def ex_38b : Datum :=
   { id := "adamsonanagnostopoulou2025_38b"
     source := ⟨"adamson-anagnostopoulou-2025", "(38b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_38b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "inanimate M + inanimate M"), ("resolved", "M")] }
 
-def ex_38c : LinguisticExample :=
+def ex_38c : Datum :=
   { id := "adamsonanagnostopoulou2025_38c"
     source := ⟨"adamson-anagnostopoulou-2025", "(38c)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_38c : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "inanimate N + inanimate N"), ("resolved", "N")] }
 
-def ex_40b : LinguisticExample :=
+def ex_40b : Datum :=
   { id := "adamsonanagnostopoulou2025_40b"
     source := ⟨"adamson-anagnostopoulou-2025", "(40b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_40b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "inanimate N + inanimate F"), ("resolved", "N")] }
 
-def ex_40c : LinguisticExample :=
+def ex_40c : Datum :=
   { id := "adamsonanagnostopoulou2025_40c"
     source := ⟨"adamson-anagnostopoulou-2025", "(40c)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_40c : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "inanimate N + inanimate M"), ("resolved", "N")] }
 
-def ex_43 : LinguisticExample :=
+def ex_43 : Datum :=
   { id := "adamsonanagnostopoulou2025_43"
     source := ⟨"adamson-anagnostopoulou-2025", "(43)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_43 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "inanimate F + inanimate F"), ("resolved", "N")] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "adamsonanagnostopoulou2025_45"
     source := ⟨"adamson-anagnostopoulou-2025", "(45)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("agreement", "closest conjunct"), ("value", "uF")] }
 
-def ex_46 : LinguisticExample :=
+def ex_46 : Datum :=
   { id := "adamsonanagnostopoulou2025_46"
     source := ⟨"adamson-anagnostopoulou-2025", "(46)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_46 : LinguisticExample :=
     readings := []
     paperFeatures := [("agreement", "closest conjunct"), ("value", "uF")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "adamsonanagnostopoulou2025_47"
     source := ⟨"adamson-anagnostopoulou-2025", "(47)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "human M + inanimate N"), ("resolved", "ineffable")] }
 
-def ex_48b : LinguisticExample :=
+def ex_48b : Datum :=
   { id := "adamsonanagnostopoulou2025_48b"
     source := ⟨"adamson-anagnostopoulou-2025", "(48b)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_48b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "human M + inanimate N"), ("agreement", "verb, no gender")] }
 
-def ex_50 : LinguisticExample :=
+def ex_50 : Datum :=
   { id := "adamsonanagnostopoulou2025_50"
     source := ⟨"adamson-anagnostopoulou-2025", "(50)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_50 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "human M + inanimate N"), ("predicate", "uninflected")] }
 
-def ex_54a : LinguisticExample :=
+def ex_54a : Datum :=
   { id := "adamsonanagnostopoulou2025_54a"
     source := ⟨"adamson-anagnostopoulou-2025", "(54a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_54a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "human M + inanimate M"), ("resolved", "M")] }
 
-def ex_54b : LinguisticExample :=
+def ex_54b : Datum :=
   { id := "adamsonanagnostopoulou2025_54b"
     source := ⟨"adamson-anagnostopoulou-2025", "(54b)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_54b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "human F + inanimate F"), ("resolved", "F")] }
 
-def ex_56 : LinguisticExample :=
+def ex_56 : Datum :=
   { id := "adamsonanagnostopoulou2025_56"
     source := ⟨"adamson-anagnostopoulou-2025", "(56)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_56 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "fixed-gender F (male) + inanimate M"), ("resolved", "M")] }
 
-def ex_57a : LinguisticExample :=
+def ex_57a : Datum :=
   { id := "adamsonanagnostopoulou2025_57a"
     source := ⟨"adamson-anagnostopoulou-2025", "(57a)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_57a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "fixed-gender N (male) + inanimate M"), ("resolved", "M")] }
 
-def ex_57b : LinguisticExample :=
+def ex_57b : Datum :=
   { id := "adamsonanagnostopoulou2025_57b"
     source := ⟨"adamson-anagnostopoulou-2025", "(57b)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_57b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "fixed-gender N (female) + inanimate F"), ("resolved", "F")] }
 
-def ex_58 : LinguisticExample :=
+def ex_58 : Datum :=
   { id := "adamsonanagnostopoulou2025_58"
     source := ⟨"adamson-anagnostopoulou-2025", "(58)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_58 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "clause + clause"), ("resolved", "N")] }
 
-def ex_59 : LinguisticExample :=
+def ex_59 : Datum :=
   { id := "adamsonanagnostopoulou2025_59"
     source := ⟨"adamson-anagnostopoulou-2025", "(59)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_59 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "inanimate F + inanimate M"), ("resolved", "N")] }
 
-def ex_60 : LinguisticExample :=
+def ex_60 : Datum :=
   { id := "adamsonanagnostopoulou2025_60"
     source := ⟨"adamson-anagnostopoulou-2025", "(60)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_60 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "human M + human F"), ("resolved", "N")] }
 
-def ex_61 : LinguisticExample :=
+def ex_61 : Datum :=
   { id := "adamsonanagnostopoulou2025_61"
     source := ⟨"adamson-anagnostopoulou-2025", "(61)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_61 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "fixed-gender N (male) + human M"), ("resolved", "M")] }
 
-def ex_68 : LinguisticExample :=
+def ex_68 : Datum :=
   { id := "adamsonanagnostopoulou2025_68"
     source := ⟨"adamson-anagnostopoulou-2025", "(68)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_68 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "human M + human F"), ("resolved", "M")] }
 
-def ex_69 : LinguisticExample :=
+def ex_69 : Datum :=
   { id := "adamsonanagnostopoulou2025_69"
     source := ⟨"adamson-anagnostopoulou-2025", "(69)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_69 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "inanimate N + inanimate F"), ("resolved", "M")] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "adamsonanagnostopoulou2025_70"
     source := ⟨"adamson-anagnostopoulou-2025", "(70)"⟩
     reportedIn := none
@@ -407,6 +405,6 @@ def ex_70 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjuncts", "inanimate N + inanimate N"), ("resolved", "M")] }
 
-def all : List LinguisticExample := [ex_22a, ex_22b, ex_25a, ex_25b, ex_35, ex_36, ex_37, ex_38a, ex_38b, ex_38c, ex_40b, ex_40c, ex_43, ex_45, ex_46, ex_47, ex_48b, ex_50, ex_54a, ex_54b, ex_56, ex_57a, ex_57b, ex_58, ex_59, ex_60, ex_61, ex_68, ex_69, ex_70]
+def all : List Datum := [ex_22a, ex_22b, ex_25a, ex_25b, ex_35, ex_36, ex_37, ex_38a, ex_38b, ex_38c, ex_40b, ex_40c, ex_43, ex_45, ex_46, ex_47, ex_48b, ex_50, ex_54a, ex_54b, ex_56, ex_57a, ex_57b, ex_58, ex_59, ex_60, ex_61, ex_68, ex_69, ex_70]
 
 end AdamsonAnagnostopoulou2025.Examples

@@ -55,7 +55,7 @@ than he is wide yet not taller for a man than he is wide for a man.
 
 namespace Bale2008
 
-open Data.Examples Degree
+open Degree
 
 /-! ### The comparative -/
 
@@ -229,7 +229,7 @@ def Person.parse? : String → Option Person
   | "f" => some .f | "s" => some .s | _ => none
 
 /-- The universal degree a row assigns one of its participants, by model and scale. -/
-def degree? (r : LinguisticExample) (who scale : String) : Option ℚ :=
+def degree? (r : Datum) (who scale : String) : Option ℚ :=
   match r.feature? "model", r.feature? scale, r.feature? who with
   | some "committee", some "beauty", some n => (Member.parse? n).map (universalDegree beauty)
   | some "committee", some "intelligence", some n =>
@@ -243,7 +243,7 @@ def degree? (r : LinguisticExample) (who scale : String) : Option ℚ :=
   | _, _, _ => none
 
 /-- The truth value the paper reports. -/
-def truth? (r : LinguisticExample) : Option Bool :=
+def truth? (r : Datum) : Option Bool :=
   match r.feature? "truth" with
   | some "true" => some true
   | some "false" => some false

@@ -34,7 +34,7 @@ related by Background, the first of those units is the one label not available.
 
 namespace AsherLascarides2003
 
-open Data.Examples Relation
+open Relation
 
 /-! ### Rhetorical relations -/
 
@@ -112,7 +112,7 @@ theorem available17_iff (γ : ℕ) : example17.Available γ ↔ γ ∈ [0, 1, 5,
     · exact h6
 
 /-- The label of the constituent introducing a row's pronoun antecedent. -/
-def antecedentLabel? (r : LinguisticExample) : Option ℕ :=
+def antecedentLabel? (r : Datum) : Option ℕ :=
   match r.feature? "antecedentLabel" with
   | some "3" => some 3
   | _ => none

@@ -15,9 +15,7 @@ this module; declarations live in `namespace Erlewine2016.Examples`.
 
 namespace Erlewine2016.Examples
 
-open Data.Examples
-
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "erlewine2016_8"
     source := ⟨"erlewine-2016", "(8), preprint numbering"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "none"), ("layers", "CP"), ("subject", "3"), ("object", "2"), ("verb", "full")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "erlewine2016_9"
     source := ⟨"erlewine-2016", "(9), preprint numbering"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "intransitive"), ("extracted", "none"), ("layers", "CP"), ("subject", "2"), ("verb", "full")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "erlewine2016_14a"
     source := ⟨"erlewine-2016", "(14a), preprint numbering"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "3"), ("object", "3"), ("verb", "AF")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "erlewine2016_14b"
     source := ⟨"erlewine-2016", "(14b), preprint numbering"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "object"), ("layers", "CP"), ("landing", "1"), ("subject", "3"), ("object", "3"), ("verb", "full")] }
 
-def ex_18a_emb : LinguisticExample :=
+def ex_18a_emb : Datum :=
   { id := "erlewine2016_18a_emb"
     source := ⟨"erlewine-2016", "(18a), embedded clause, preprint numbering"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_18a_emb : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "3"), ("object", "1"), ("verb", "AF")] }
 
-def ex_18a_mat : LinguisticExample :=
+def ex_18a_mat : Datum :=
   { id := "erlewine2016_18a_mat"
     source := ⟨"erlewine-2016", "(18a), matrix clause, preprint numbering"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_18a_mat : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "none"), ("layers", "CP"), ("subject", "2"), ("object", "3"), ("verb", "full")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "erlewine2016_18b"
     source := ⟨"erlewine-2016", "(18b), matrix clause, preprint numbering"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "none"), ("layers", "CP"), ("subject", "2"), ("object", "3"), ("verb", "AF")] }
 
-def ex_18c : LinguisticExample :=
+def ex_18c : Datum :=
   { id := "erlewine2016_18c"
     source := ⟨"erlewine-2016", "(18c), embedded clause, preprint numbering"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_18c : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "3"), ("object", "1"), ("verb", "full")] }
 
-def ex_27b : LinguisticExample :=
+def ex_27b : Datum :=
   { id := "erlewine2016_27b"
     source := ⟨"erlewine-2016", "(27b), preprint numbering"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_27b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "AdvP,CP"), ("landing", "2"), ("subject", "3"), ("object", "3"), ("verb", "full")] }
 
-def ex_27c : LinguisticExample :=
+def ex_27c : Datum :=
   { id := "erlewine2016_27c"
     source := ⟨"erlewine-2016", "(27c), preprint numbering"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_27c : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "AdvP,CP"), ("landing", "2"), ("subject", "3"), ("object", "3"), ("verb", "AF")] }
 
-def ex_28a : LinguisticExample :=
+def ex_28a : Datum :=
   { id := "erlewine2016_28a"
     source := ⟨"erlewine-2016", "(28a), preprint numbering"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "3"), ("object", "3"), ("verb", "AF")] }
 
-def ex_28a_full : LinguisticExample :=
+def ex_28a_full : Datum :=
   { id := "erlewine2016_28a_full"
     source := ⟨"erlewine-2016", "(28a), full agreement, preprint numbering"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_28a_full : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "3"), ("object", "3"), ("verb", "full")] }
 
-def ex_28b : LinguisticExample :=
+def ex_28b : Datum :=
   { id := "erlewine2016_28b"
     source := ⟨"erlewine-2016", "(28b), preprint numbering"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_28b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "AdvP,CP"), ("landing", "2"), ("subject", "3"), ("object", "3"), ("verb", "full")] }
 
-def ex_28b_af : LinguisticExample :=
+def ex_28b_af : Datum :=
   { id := "erlewine2016_28b_af"
     source := ⟨"erlewine-2016", "(28b), AF, preprint numbering"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_28b_af : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "AdvP,CP"), ("landing", "2"), ("subject", "3"), ("object", "3"), ("verb", "AF")] }
 
-def ex_29a : LinguisticExample :=
+def ex_29a : Datum :=
   { id := "erlewine2016_29a"
     source := ⟨"erlewine-2016", "(29a), preprint numbering"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_29a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP,CP"), ("landing", "1"), ("subject", "3"), ("object", "3"), ("verb", "AF")] }
 
-def ex_29a_other : LinguisticExample :=
+def ex_29a_other : Datum :=
   { id := "erlewine2016_29a_other"
     source := ⟨"erlewine-2016", "(29a), other reading, preprint numbering"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_29a_other : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP,CP"), ("landing", "2"), ("subject", "3"), ("object", "3"), ("verb", "AF")] }
 
-def ex_29b : LinguisticExample :=
+def ex_29b : Datum :=
   { id := "erlewine2016_29b"
     source := ⟨"erlewine-2016", "(29b), preprint numbering"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_29b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP,CP"), ("landing", "2"), ("subject", "3"), ("object", "3"), ("verb", "full")] }
 
-def ex_29b_other : LinguisticExample :=
+def ex_29b_other : Datum :=
   { id := "erlewine2016_29b_other"
     source := ⟨"erlewine-2016", "(29b), other reading, preprint numbering"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_29b_other : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP,CP"), ("landing", "1"), ("subject", "3"), ("object", "3"), ("verb", "full")] }
 
-def ex_53 : LinguisticExample :=
+def ex_53 : Datum :=
   { id := "erlewine2016_53"
     source := ⟨"erlewine-2016", "(53), preprint numbering"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_53 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "3"), ("object", "2"), ("verb", "full")] }
 
-def ex_64a : LinguisticExample :=
+def ex_64a : Datum :=
   { id := "erlewine2016_64a"
     source := ⟨"erlewine-2016", "(64a), preprint numbering"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_64a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP,TopP"), ("landing", "2"), ("subject", "3"), ("object", "3"), ("verb", "full")] }
 
-def ex_64b : LinguisticExample :=
+def ex_64b : Datum :=
   { id := "erlewine2016_64b"
     source := ⟨"erlewine-2016", "(64b), preprint numbering"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_64b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "3"), ("object", "3"), ("verb", "AF")] }
 
-def ex_72a : LinguisticExample :=
+def ex_72a : Datum :=
   { id := "erlewine2016_72a"
     source := ⟨"erlewine-2016", "(72a), preprint numbering"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_72a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "2"), ("object", "3"), ("verb", "AF")] }
 
-def ex_72b : LinguisticExample :=
+def ex_72b : Datum :=
   { id := "erlewine2016_72b"
     source := ⟨"erlewine-2016", "(72b), preprint numbering"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_72b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "3"), ("object", "2"), ("verb", "AF")] }
 
-def ex_77a : LinguisticExample :=
+def ex_77a : Datum :=
   { id := "erlewine2016_77a"
     source := ⟨"erlewine-2016", "(77a), preprint numbering"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_77a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "1"), ("object", "2"), ("verb", "full")] }
 
-def ex_77b : LinguisticExample :=
+def ex_77b : Datum :=
   { id := "erlewine2016_77b"
     source := ⟨"erlewine-2016", "(77b), preprint numbering"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_77b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "1"), ("object", "2"), ("verb", "AF")] }
 
-def ex_78a : LinguisticExample :=
+def ex_78a : Datum :=
   { id := "erlewine2016_78a"
     source := ⟨"erlewine-2016", "(78a), preprint numbering"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_78a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "3"), ("object", "2"), ("verb", "AF")] }
 
-def ex_78b : LinguisticExample :=
+def ex_78b : Datum :=
   { id := "erlewine2016_78b"
     source := ⟨"erlewine-2016", "(78b), preprint numbering"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_78b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "3"), ("object", "2"), ("verb", "full")] }
 
-def ex_79a : LinguisticExample :=
+def ex_79a : Datum :=
   { id := "erlewine2016_79a"
     source := ⟨"erlewine-2016", "(79a), preprint numbering"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_79a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "1"), ("object", "3"), ("verb", "AF")] }
 
-def ex_79b : LinguisticExample :=
+def ex_79b : Datum :=
   { id := "erlewine2016_79b"
     source := ⟨"erlewine-2016", "(79b), preprint numbering"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_79b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "1"), ("object", "3"), ("verb", "full")] }
 
-def ex_87b : LinguisticExample :=
+def ex_87b : Datum :=
   { id := "erlewine2016_87b"
     source := ⟨"erlewine-2016", "(87b), preprint numbering"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_87b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "3"), ("object", "2"), ("verb", "AF")] }
 
-def ex_88b : LinguisticExample :=
+def ex_88b : Datum :=
   { id := "erlewine2016_88b"
     source := ⟨"erlewine-2016", "(88b), preprint numbering"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_88b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "2"), ("object", "3"), ("verb", "AF")] }
 
-def ex_88c : LinguisticExample :=
+def ex_88c : Datum :=
   { id := "erlewine2016_88c"
     source := ⟨"erlewine-2016", "(88c), preprint numbering"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_88c : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "2"), ("object", "3"), ("verb", "full")] }
 
-def ex_91a : LinguisticExample :=
+def ex_91a : Datum :=
   { id := "erlewine2016_91a"
     source := ⟨"erlewine-2016", "(91a), preprint numbering"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_91a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "1"), ("object", "3"), ("verb", "AF")] }
 
-def ex_91b : LinguisticExample :=
+def ex_91b : Datum :=
   { id := "erlewine2016_91b"
     source := ⟨"erlewine-2016", "(91b), preprint numbering"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_91b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "1"), ("object", "3"), ("verb", "full")] }
 
-def ex_93 : LinguisticExample :=
+def ex_93 : Datum :=
   { id := "erlewine2016_93"
     source := ⟨"erlewine-2016", "(93), preprint numbering"⟩
     reportedIn := none
@@ -472,6 +470,6 @@ def ex_93 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("extracted", "subject"), ("layers", "CP"), ("landing", "1"), ("subject", "3"), ("object", "2"), ("verb", "full")] }
 
-def all : List LinguisticExample := [ex_8, ex_9, ex_14a, ex_14b, ex_18a_emb, ex_18a_mat, ex_18b, ex_18c, ex_27b, ex_27c, ex_28a, ex_28a_full, ex_28b, ex_28b_af, ex_29a, ex_29a_other, ex_29b, ex_29b_other, ex_53, ex_64a, ex_64b, ex_72a, ex_72b, ex_77a, ex_77b, ex_78a, ex_78b, ex_79a, ex_79b, ex_87b, ex_88b, ex_88c, ex_91a, ex_91b, ex_93]
+def all : List Datum := [ex_8, ex_9, ex_14a, ex_14b, ex_18a_emb, ex_18a_mat, ex_18b, ex_18c, ex_27b, ex_27c, ex_28a, ex_28a_full, ex_28b, ex_28b_af, ex_29a, ex_29a_other, ex_29b, ex_29b_other, ex_53, ex_64a, ex_64b, ex_72a, ex_72b, ex_77a, ex_77b, ex_78a, ex_78b, ex_79a, ex_79b, ex_87b, ex_88b, ex_88c, ex_91a, ex_91b, ex_93]
 
 end Erlewine2016.Examples

@@ -44,7 +44,6 @@ namespace LiuRotter2025
 
 open Modality (ModalForce ModalItem)
 open English.Auxiliaries English.Adverbs
-open Data.Examples (LinguisticExample)
 
 /-! ### The concord effect as a force-indexed sign -/
 
@@ -158,7 +157,7 @@ def forceKey : ModalForce → String
   | .possibility   => "possibility"
 
 /-- The cell with the given force and number (`"MC"` or `"SM"`) values. -/
-def findCell (force number : String) : Option LinguisticExample :=
+def findCell (force number : String) : Option Datum :=
   Examples.all.find? λ e =>
     e.feature? "force" == some force && e.feature? "number" == some number
 

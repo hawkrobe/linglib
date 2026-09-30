@@ -58,7 +58,7 @@ Kuching Malay's *N-* on v does not (§5.2); and the polite and familiar register
 
 namespace ErlewineSommerlot2025
 
-open Minimalist.Linearization Data.Examples ErlewineSommerlot2025.Examples
+open Minimalist.Linearization ErlewineSommerlot2025.Examples
 
 /-- The two flavours of v (§3.1). -/
 inductive VFlavor
@@ -347,19 +347,19 @@ def prefixTable : List (String × Prefix) :=
 structure Row where
   grammar : Grammar
   surface : Surface
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
 
 /-- A row from an example. -/
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   pure ⟨← ex.parse? "grammar" grammarTable,
     ⟨← ex.parse? "extracted" extractedTable, ← ex.parse? "subject" subjectTable,
       ← ex.parse? "lowAgent" lowAgentTable, ← ex.parse? "prefix" prefixTable⟩,
     ex.judgment⟩
 
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
 /-- The rows of the six grammars. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Every row: the surface form is grammatical exactly when some derivation the grammar
 generates has it. -/

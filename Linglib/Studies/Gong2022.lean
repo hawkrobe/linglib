@@ -49,7 +49,7 @@ competitor.
 
 namespace Gong2022
 
-open Minimalist Data.Examples
+open Minimalist
 
 /-! ### The hybrid case rules (26) at a landing site -/
 
@@ -247,7 +247,7 @@ def Row.Reconstructs (r : Row) : Prop :=
 
 instance (r : Row) : Decidable r.Reconstructs := inferInstanceAs (Decidable (_ ∨ _))
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let construction ← ex.parse? "construction"
     [("SS", Construction.SS), ("IS", .IS), ("ACC-SUBJ", .LDS), ("LDS", .LDS), ("PP-LDS", .LDS),
       ("ACC-SUBJ intermediate", .intermediate), ("LDS intermediate", .intermediate), ("IO", .IO),
@@ -260,7 +260,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
 
 /-- The scrambled orders (18b) to (21b), (32b), (33), (40), (41), (58), (61), (79), (85b), (86),
 (93b), and (94b). -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 example : rows.length = 16 := by decide
 
@@ -309,12 +309,12 @@ structure AccRow where
   judgment : Judgment
   deriving DecidableEq, Repr
 
-def AccRow.ofExample (ex : LinguisticExample) : Option AccRow := do
+def AccRow.ofDatum (ex : Datum) : Option AccRow := do
   let competitor ← ex.parse? "competitor" [("NOM", Competitor.nom), ("DAT", .dat), ("none", .absent)]
   pure ⟨competitor, ex.judgment⟩
 
 /-- (47), (48), (63), (64), and (65). -/
-def accRows : List AccRow := Examples.all.filterMap AccRow.ofExample
+def accRows : List AccRow := Examples.all.filterMap AccRow.ofDatum
 
 example : accRows.length = 5 := by decide
 

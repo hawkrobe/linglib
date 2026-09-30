@@ -34,27 +34,26 @@ against the rows.
 
 namespace Kennedy1999
 
-open Data.Examples
 
 /-! ### Cross-polar anomaly (Sections 3.1.3–3.1.7) -/
 
 /-- The two compared adjectives have the same scale polarity. -/
-def samePolarity (e : LinguisticExample) : Prop :=
+def samePolarity (e : Datum) : Prop :=
   e.feature? "matrix_polarity" = e.feature? "standard_polarity"
 
-instance (e : LinguisticExample) : Decidable (samePolarity e) :=
+instance (e : Datum) : Decidable (samePolarity e) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- The two compared adjectives project onto a shared scale. -/
-def sharedScale (e : LinguisticExample) : Prop :=
+def sharedScale (e : Datum) : Prop :=
   e.feature? "shared_scale" = some "true"
 
-instance (e : LinguisticExample) : Decidable (sharedScale e) :=
+instance (e : Datum) : Decidable (sharedScale e) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- The subdeletion comparatives: cross-polar anomalies, same-polarity controls, the ficus
 quadruple, and the incommensurability cases. -/
-def crossPolarRows : List LinguisticExample :=
+def crossPolarRows : List Datum :=
   [ Examples.cpa_long_short, Examples.cpa_short_long
   , Examples.subdel_pos_pos, Examples.subdel_neg_neg
   , Examples.ficus_tall_high, Examples.ficus_tall_low
@@ -77,7 +76,7 @@ is 5 feet short*; the phrasal comparative (73) *My Fiat is shorter than 8 feet* 
 its standard derived by applying the adjective to the measure phrase. -/
 
 /-- The absolute measure-phrase constructions. -/
-def measurePhraseAbsoluteRows : List LinguisticExample :=
+def measurePhraseAbsoluteRows : List Datum :=
   [ Examples.mp_cadillac, Examples.mp_fiat, Examples.mp_reich, Examples.mp_slow ]
 
 /-- An absolute measure-phrase construction is acceptable exactly with a positive adjective,

@@ -15,9 +15,7 @@ this module; declarations live in `namespace Beaver2001.Examples`.
 
 namespace Beaver2001.Examples
 
-open Data.Examples
-
-def e52 : LinguisticExample :=
+def e52 : Datum :=
   { id := "beaver2001_e52"
     source := ⟨"beaver-2001", "E52"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def e52 : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "definite (my sister)"), ("embedding", "consequent of conditional")] }
 
-def e154 : LinguisticExample :=
+def e154 : Datum :=
   { id := "beaver2001_e154"
     source := ⟨"beaver-2001", "E154"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def e154 : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "the fact that + factive bothered by"), ("embedding", "consequent of conditional")] }
 
-def e155 : LinguisticExample :=
+def e155 : Datum :=
   { id := "beaver2001_e155"
     source := ⟨"beaver-2001", "E155"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def e155 : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "the fact that + factive bothered by"), ("embedding", "conditional under unlikely")] }
 
-def e156 : LinguisticExample :=
+def e156 : Datum :=
   { id := "beaver2001_e156"
     source := ⟨"beaver-2001", "E156"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def e156 : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "the fact that + factive bothered by"), ("embedding", "second conjunct of conditional antecedent")] }
 
-def e198 : LinguisticExample :=
+def e198 : Datum :=
   { id := "beaver2001_e198"
     source := ⟨"beaver-2001", "E198"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def e198 : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "presupposed content for E168'-E173")] }
 
-def e168prime : LinguisticExample :=
+def e168prime : Datum :=
   { id := "beaver2001_e168prime"
     source := ⟨"beaver-2001", "E168'"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def e168prime : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "factive realise"), ("embedding", "none")] }
 
-def e169prime : LinguisticExample :=
+def e169prime : Datum :=
   { id := "beaver2001_e169prime"
     source := ⟨"beaver-2001", "E169'"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def e169prime : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "factive realise"), ("embedding", "negation")] }
 
-def e172prime : LinguisticExample :=
+def e172prime : Datum :=
   { id := "beaver2001_e172prime"
     source := ⟨"beaver-2001", "E172'"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def e172prime : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "factive realise"), ("embedding", "antecedent of conditional")] }
 
-def e173 : LinguisticExample :=
+def e173 : Datum :=
   { id := "beaver2001_e173"
     source := ⟨"beaver-2001", "E173"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def e173 : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "factive realise"), ("embedding", "might")] }
 
-def e175 : LinguisticExample :=
+def e175 : Datum :=
   { id := "beaver2001_e175"
     source := ⟨"beaver-2001", "E175"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def e175 : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "factive realise"), ("embedding", "consequent of conditional")] }
 
-def e206 : LinguisticExample :=
+def e206 : Datum :=
   { id := "beaver2001_e206"
     source := ⟨"beaver-2001", "E206"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def e206 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "might phi and might not phi")] }
 
-def e207 : LinguisticExample :=
+def e207 : Datum :=
   { id := "beaver2001_e207"
     source := ⟨"beaver-2001", "E207"⟩
     reportedIn := none
@@ -173,6 +171,6 @@ def e207 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "plain assertion")] }
 
-def all : List LinguisticExample := [e52, e154, e155, e156, e198, e168prime, e169prime, e172prime, e173, e175, e206, e207]
+def all : List Datum := [e52, e154, e155, e156, e198, e168prime, e169prime, e172prime, e173, e175, e206, e207]
 
 end Beaver2001.Examples

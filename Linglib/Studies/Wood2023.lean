@@ -76,7 +76,7 @@ preposition and the root are read off its attachment. The event-modifier account
 namespace Wood2023
 
 open DistributedMorphology DistributedMorphology.Allosemy Icelandic.Nouns
-open Data.Examples Wood2023.Examples
+open Wood2023.Examples
 open Morphology (Morph)
 
 /-! ### Vocabulary Insertion at v and n -/
@@ -494,7 +494,7 @@ def readingTable : List (String × Derivation) :=
   [("CEN", .cen), ("SEN", .sen), ("RN", .simpleEntity), ("result RN", .result)]
 
 /-- A row of a prefixed nominal on a reading, as the prefix and the derivation. -/
-def ofRow (ex : LinguisticExample) : Option (Prefix × Derivation) := do
+def ofRow (ex : Datum) : Option (Prefix × Derivation) := do
   let p ← ex.parse? "prefix" prefixTable
   let d ← ex.parse? "reading" readingTable
   pure (p, d)

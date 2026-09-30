@@ -15,9 +15,7 @@ this module; declarations live in `namespace Deal2026.Examples`.
 
 namespace Deal2026.Examples
 
-open Data.Examples
-
-def ex_28a : LinguisticExample :=
+def ex_28a : Datum :=
   { id := "deal2026_28a"
     source := ⟨"deal-2026", "(28a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "lilooy"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
-def ex_28b : LinguisticExample :=
+def ex_28b : Datum :=
   { id := "deal2026_28b"
     source := ⟨"deal-2026", "(28b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_28b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cicwaay"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
-def ex_27b : LinguisticExample :=
+def ex_27b : Datum :=
   { id := "deal2026_27b"
     source := ⟨"deal-2026", "(27b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_27b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "’etqew"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
-def ex_27d : LinguisticExample :=
+def ex_27d : Datum :=
   { id := "deal2026_27d"
     source := ⟨"deal-2026", "(27d)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_27d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "timiipni"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
-def ex_27e_eeys : LinguisticExample :=
+def ex_27e_eeys : Datum :=
   { id := "deal2026_27e_eeys"
     source := ⟨"deal-2026", "(27e)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_27e_eeys : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "’eey’s"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
-def ex_27e_qeese : LinguisticExample :=
+def ex_27e_qeese : Datum :=
   { id := "deal2026_27e_qeese"
     source := ⟨"deal-2026", "(27e)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_27e_qeese : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "q’eese’"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
-def ex_27e_timneeneki : LinguisticExample :=
+def ex_27e_timneeneki : Datum :=
   { id := "deal2026_27e_timneeneki"
     source := ⟨"deal-2026", "(27e)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_27e_timneeneki : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tim’neeneki"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
-def ex_41a : LinguisticExample :=
+def ex_41a : Datum :=
   { id := "deal2026_41a"
     source := ⟨"deal-2026", "(41a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_41a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "’eey’s"), ("diagnostic", "nominalComplement")] }
 
-def ex_41b : LinguisticExample :=
+def ex_41b : Datum :=
   { id := "deal2026_41b"
     source := ⟨"deal-2026", "(41b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_41b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "’eey’s"), ("diagnostic", "nominalComplement")] }
 
-def ex_42a : LinguisticExample :=
+def ex_42a : Datum :=
   { id := "deal2026_42a"
     source := ⟨"deal-2026", "(42a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_42a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "qe’ciyeew’yew’"), ("edge", "yoxKe"), ("diagnostic", "edge")] }
 
-def ex_42b : LinguisticExample :=
+def ex_42b : Datum :=
   { id := "deal2026_42b"
     source := ⟨"deal-2026", "(42b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_42b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "qe’ciyeew’yew’"), ("diagnostic", "nominalComplement")] }
 
-def ex_47a : LinguisticExample :=
+def ex_47a : Datum :=
   { id := "deal2026_47a"
     source := ⟨"deal-2026", "(47a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_47a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hi"), ("edge", "bare"), ("diagnostic", "edge")] }
 
-def ex_47b : LinguisticExample :=
+def ex_47b : Datum :=
   { id := "deal2026_47b"
     source := ⟨"deal-2026", "(47b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_47b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hi"), ("diagnostic", "aboutPP")] }
 
-def ex_48a : LinguisticExample :=
+def ex_48a : Datum :=
   { id := "deal2026_48a"
     source := ⟨"deal-2026", "(48a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_48a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "neki"), ("edge", "bare"), ("diagnostic", "edge")] }
 
-def ex_48b : LinguisticExample :=
+def ex_48b : Datum :=
   { id := "deal2026_48b"
     source := ⟨"deal-2026", "(48b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_48b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "neki"), ("diagnostic", "aboutPP")] }
 
-def ex_65b : LinguisticExample :=
+def ex_65b : Datum :=
   { id := "deal2026_65b"
     source := ⟨"deal-2026", "(65b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_65b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hi"), ("edge", "bare"), ("diagnostic", "edge")] }
 
-def ex_66a : LinguisticExample :=
+def ex_66a : Datum :=
   { id := "deal2026_66a"
     source := ⟨"deal-2026", "(66a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_66a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cuukwe"), ("edge", "bare"), ("diagnostic", "edge")] }
 
-def ex_66b : LinguisticExample :=
+def ex_66b : Datum :=
   { id := "deal2026_66b"
     source := ⟨"deal-2026", "(66b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_66b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cuukwe"), ("edge", "yoxKe"), ("diagnostic", "edge"), ("diacritic", "%")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "deal2026_33"
     source := ⟨"deal-2026", "(33)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "lilooy"), ("diagnostic", "projection"), ("environment", "negation"), ("projective", "yes"), ("person", "3")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "deal2026_34"
     source := ⟨"deal-2026", "(34)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tim’neeneki"), ("diagnostic", "projection"), ("environment", "negation"), ("projective", "yes"), ("person", "3")] }
 
-def ex_35 : LinguisticExample :=
+def ex_35 : Datum :=
   { id := "deal2026_35"
     source := ⟨"deal-2026", "(35)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "neki"), ("diagnostic", "projection"), ("environment", "negation"), ("projective", "no"), ("person", "3")] }
 
-def ex_36 : LinguisticExample :=
+def ex_36 : Datum :=
   { id := "deal2026_36"
     source := ⟨"deal-2026", "(36)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "neki"), ("diagnostic", "projection"), ("environment", "question"), ("projective", "no"), ("person", "3")] }
 
-def ex_68 : LinguisticExample :=
+def ex_68 : Datum :=
   { id := "deal2026_68"
     source := ⟨"deal-2026", "(68)"⟩
     reportedIn := none
@@ -316,6 +314,6 @@ def ex_68 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cuukwe"), ("diagnostic", "projection"), ("environment", "conditional antecedent"), ("projective", "yes"), ("person", "3")] }
 
-def all : List LinguisticExample := [ex_28a, ex_28b, ex_27b, ex_27d, ex_27e_eeys, ex_27e_qeese, ex_27e_timneeneki, ex_41a, ex_41b, ex_42a, ex_42b, ex_47a, ex_47b, ex_48a, ex_48b, ex_65b, ex_66a, ex_66b, ex_33, ex_34, ex_35, ex_36, ex_68]
+def all : List Datum := [ex_28a, ex_28b, ex_27b, ex_27d, ex_27e_eeys, ex_27e_qeese, ex_27e_timneeneki, ex_41a, ex_41b, ex_42a, ex_42b, ex_47a, ex_47b, ex_48a, ex_48b, ex_65b, ex_66a, ex_66b, ex_33, ex_34, ex_35, ex_36, ex_68]
 
 end Deal2026.Examples

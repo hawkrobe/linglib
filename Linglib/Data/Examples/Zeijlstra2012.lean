@@ -15,9 +15,7 @@ this module; declarations live in `namespace Zeijlstra2012.Examples`.
 
 namespace Zeijlstra2012.Examples
 
-open Data.Examples
-
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "zeijlstra2012_20a"
     source := ⟨"zeijlstra-2012", "(20a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_20a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "sequence of tense")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "zeijlstra2012_20b"
     source := ⟨"zeijlstra-2012", "(20b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_20b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "sequence of tense")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "zeijlstra2012_21"
     source := ⟨"zeijlstra-2012", "(21)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "tense scope")] }
 
-def ex_50a : LinguisticExample :=
+def ex_50a : Datum :=
   { id := "zeijlstra2012_50a"
     source := ⟨"zeijlstra-2012", "(50a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_50a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "negative concord"), ("type", "non-strict")] }
 
-def ex_51a : LinguisticExample :=
+def ex_51a : Datum :=
   { id := "zeijlstra2012_51a"
     source := ⟨"zeijlstra-2012", "(51a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_51a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "negative concord"), ("type", "strict")] }
 
-def ex_53 : LinguisticExample :=
+def ex_53 : Datum :=
   { id := "zeijlstra2012_53"
     source := ⟨"zeijlstra-2012", "(53)"⟩
     reportedIn := none
@@ -95,6 +93,6 @@ def ex_53 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "negative concord"), ("locality", "across CP")] }
 
-def all : List LinguisticExample := [ex_20a, ex_20b, ex_21, ex_50a, ex_51a, ex_53]
+def all : List Datum := [ex_20a, ex_20b, ex_21, ex_50a, ex_51a, ex_53]
 
 end Zeijlstra2012.Examples

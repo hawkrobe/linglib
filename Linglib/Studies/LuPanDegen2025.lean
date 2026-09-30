@@ -65,7 +65,6 @@ overt complementizer of manner-of-speaking complements (22).
 namespace LuPanDegen2025
 
 open ArgumentStructure English English.Verbs
-open Data.Examples
 
 /-! ### Foregrounding (3) -/
 
@@ -221,7 +220,7 @@ theorem island_sayAdverb_iff_island_whisper (f : FocusCondition) :
 
 /-- The matrix predicate of a stimulus row: *whisper* for the manner-of-speaking items,
 *say* and *say softly* for the others. -/
-def rowPredicate (e : LinguisticExample) : Option MatrixPredicate :=
+def rowPredicate (e : Datum) : Option MatrixPredicate :=
   match e.feature? "verb_type" with
   | some "mos" => some ⟨whisper, false⟩
   | some "say" => some ⟨say, false⟩
@@ -229,7 +228,7 @@ def rowPredicate (e : LinguisticExample) : Option MatrixPredicate :=
   | _ => none
 
 /-- The focus condition of a stimulus row. -/
-def rowFocus (e : LinguisticExample) : Option FocusCondition :=
+def rowFocus (e : Datum) : Option FocusCondition :=
   match e.feature? "focus_condition" with
   | some "verbFocus" | some "adverbFocus" => some .predicate
   | some "embeddedFocus" => some .embedded

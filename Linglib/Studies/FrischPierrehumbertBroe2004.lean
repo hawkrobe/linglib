@@ -53,7 +53,7 @@ natural-classes model explains more of the variance than the categorical one (Ta
 
 namespace FrischPierrehumbertBroe2004
 
-open Arabic.ModernStandard Data.Examples
+open Arabic.ModernStandard
 
 /-- The natural-classes similarity of two segments (equation (7)): the classes containing both
 over the classes containing either. -/
@@ -150,7 +150,7 @@ structure Row where
 
 def consonants : List (String × Consonant) := [("d", .d), ("t", .t), ("s", .s), ("g", .jim)]
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let c₁ ← ex.parse? "c1" consonants
   let c₂ ← ex.parse? "c2" consonants
   let o ← ex.nat? "observed"
@@ -159,7 +159,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let s ← ex.nat? "similarityHundredths"
   pure ⟨(c₁, c₂), o, e, oe, s⟩
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Co-occurrence falls as similarity rises across the worked root types. -/
 theorem rows_antitone :

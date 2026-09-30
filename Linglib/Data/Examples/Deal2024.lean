@@ -15,9 +15,7 @@ this module; declarations live in `namespace Deal2024.Examples`.
 
 namespace Deal2024.Examples
 
-open Data.Examples
-
-def ex16a_1 : LinguisticExample :=
+def ex16a_1 : Datum :=
   { id := "deal2024_ex16a_1"
     source := ⟨"deal-2024", "(16a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex16a_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "1"), ("do", "3"), ("pattern", "strong")] }
 
-def ex16a_2 : LinguisticExample :=
+def ex16a_2 : Datum :=
   { id := "deal2024_ex16a_2"
     source := ⟨"deal-2024", "(16a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex16a_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "2"), ("do", "3"), ("pattern", "strong")] }
 
-def ex16b_1 : LinguisticExample :=
+def ex16b_1 : Datum :=
   { id := "deal2024_ex16b_1"
     source := ⟨"deal-2024", "(16b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex16b_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "3"), ("do", "3"), ("pattern", "strong")] }
 
-def ex16b_2 : LinguisticExample :=
+def ex16b_2 : Datum :=
   { id := "deal2024_ex16b_2"
     source := ⟨"deal-2024", "(16b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex16b_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "3"), ("do", "1"), ("pattern", "strong")] }
 
-def ex16b_3 : LinguisticExample :=
+def ex16b_3 : Datum :=
   { id := "deal2024_ex16b_3"
     source := ⟨"deal-2024", "(16b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex16b_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "3"), ("do", "2"), ("pattern", "strong")] }
 
-def ex16c_1 : LinguisticExample :=
+def ex16c_1 : Datum :=
   { id := "deal2024_ex16c_1"
     source := ⟨"deal-2024", "(16c)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex16c_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "1"), ("do", "2"), ("pattern", "strong")] }
 
-def ex16c_2 : LinguisticExample :=
+def ex16c_2 : Datum :=
   { id := "deal2024_ex16c_2"
     source := ⟨"deal-2024", "(16c)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex16c_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "2"), ("do", "1"), ("pattern", "strong")] }
 
-def ex32a_1 : LinguisticExample :=
+def ex32a_1 : Datum :=
   { id := "deal2024_ex32a_1"
     source := ⟨"deal-2024", "(32a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex32a_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "3"), ("do", "2"), ("pattern", "meFirst")] }
 
-def ex32a_2 : LinguisticExample :=
+def ex32a_2 : Datum :=
   { id := "deal2024_ex32a_2"
     source := ⟨"deal-2024", "(32a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex32a_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "1"), ("do", "2"), ("pattern", "meFirst")] }
 
-def ex32b_1 : LinguisticExample :=
+def ex32b_1 : Datum :=
   { id := "deal2024_ex32b_1"
     source := ⟨"deal-2024", "(32b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex32b_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "3"), ("do", "1"), ("pattern", "meFirst")] }
 
-def ex32b_2 : LinguisticExample :=
+def ex32b_2 : Datum :=
   { id := "deal2024_ex32b_2"
     source := ⟨"deal-2024", "(32b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex32b_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "2"), ("do", "1"), ("pattern", "meFirst")] }
 
-def ex39a_1 : LinguisticExample :=
+def ex39a_1 : Datum :=
   { id := "deal2024_ex39a_1"
     source := ⟨"deal-2024", "(39a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex39a_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "2"), ("do", "1"), ("pattern", "weak")] }
 
-def ex39a_2 : LinguisticExample :=
+def ex39a_2 : Datum :=
   { id := "deal2024_ex39a_2"
     source := ⟨"deal-2024", "(39a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex39a_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "1"), ("do", "2"), ("pattern", "weak")] }
 
-def ex39b : LinguisticExample :=
+def ex39b : Datum :=
   { id := "deal2024_ex39b"
     source := ⟨"deal-2024", "(39b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex39b : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "1"), ("do", "3"), ("pattern", "weak")] }
 
-def ex39c : LinguisticExample :=
+def ex39c : Datum :=
   { id := "deal2024_ex39c"
     source := ⟨"deal-2024", "(39c)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex39c : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "3"), ("do", "1"), ("pattern", "weak")] }
 
-def ex51a_1 : LinguisticExample :=
+def ex51a_1 : Datum :=
   { id := "deal2024_ex51a_1"
     source := ⟨"deal-2024", "(51a)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex51a_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "1"), ("do", "3"), ("pattern", "strictlyDescending")] }
 
-def ex51a_2 : LinguisticExample :=
+def ex51a_2 : Datum :=
   { id := "deal2024_ex51a_2"
     source := ⟨"deal-2024", "(51a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex51a_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "2"), ("do", "3"), ("pattern", "strictlyDescending")] }
 
-def ex51a_3 : LinguisticExample :=
+def ex51a_3 : Datum :=
   { id := "deal2024_ex51a_3"
     source := ⟨"deal-2024", "(51a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex51a_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "3"), ("do", "3"), ("pattern", "strictlyDescending")] }
 
-def ex51b_1 : LinguisticExample :=
+def ex51b_1 : Datum :=
   { id := "deal2024_ex51b_1"
     source := ⟨"deal-2024", "(51b)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex51b_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "1"), ("do", "2"), ("pattern", "strictlyDescending")] }
 
-def ex51b_2 : LinguisticExample :=
+def ex51b_2 : Datum :=
   { id := "deal2024_ex51b_2"
     source := ⟨"deal-2024", "(51b)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex51b_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "2"), ("do", "1"), ("pattern", "strictlyDescending")] }
 
-def ex51c_1 : LinguisticExample :=
+def ex51c_1 : Datum :=
   { id := "deal2024_ex51c_1"
     source := ⟨"deal-2024", "(51c)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex51c_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "3"), ("do", "1"), ("pattern", "strictlyDescending")] }
 
-def ex51c_2 : LinguisticExample :=
+def ex51c_2 : Datum :=
   { id := "deal2024_ex51c_2"
     source := ⟨"deal-2024", "(51c)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex51c_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "3"), ("do", "2"), ("pattern", "strictlyDescending")] }
 
-def ex60a : LinguisticExample :=
+def ex60a : Datum :=
   { id := "deal2024_ex60a"
     source := ⟨"deal-2024", "(60a)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex60a : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "3"), ("do", "2"), ("pattern", "strictlyDescending"), ("preference", "io")] }
 
-def ex60b : LinguisticExample :=
+def ex60b : Datum :=
   { id := "deal2024_ex60b"
     source := ⟨"deal-2024", "(60b)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex60b : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "3"), ("do", "1"), ("pattern", "strictlyDescending"), ("preference", "io")] }
 
-def ex60c : LinguisticExample :=
+def ex60c : Datum :=
   { id := "deal2024_ex60c"
     source := ⟨"deal-2024", "(60c)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex60c : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "2"), ("do", "1"), ("pattern", "strictlyDescending"), ("preference", "io")] }
 
-def ex61a : LinguisticExample :=
+def ex61a : Datum :=
   { id := "deal2024_ex61a"
     source := ⟨"deal-2024", "(61a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex61a : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "2"), ("do", "3"), ("pattern", "strictlyDescending"), ("preference", "io")] }
 
-def ex61b : LinguisticExample :=
+def ex61b : Datum :=
   { id := "deal2024_ex61b"
     source := ⟨"deal-2024", "(61b)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex61b : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "1"), ("do", "3"), ("pattern", "strictlyDescending"), ("preference", "io")] }
 
-def ex61c : LinguisticExample :=
+def ex61c : Datum :=
   { id := "deal2024_ex61c"
     source := ⟨"deal-2024", "(61c)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex61c : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "1"), ("do", "2"), ("pattern", "strictlyDescending"), ("preference", "io")] }
 
-def ex62a_1 : LinguisticExample :=
+def ex62a_1 : Datum :=
   { id := "deal2024_ex62a_1"
     source := ⟨"deal-2024", "(62a)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex62a_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "1"), ("do", "3"), ("pattern", "strongOrWeak")] }
 
-def ex62a_2 : LinguisticExample :=
+def ex62a_2 : Datum :=
   { id := "deal2024_ex62a_2"
     source := ⟨"deal-2024", "(62a)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex62a_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "2"), ("do", "3"), ("pattern", "strongOrWeak")] }
 
-def ex62a_3 : LinguisticExample :=
+def ex62a_3 : Datum :=
   { id := "deal2024_ex62a_3"
     source := ⟨"deal-2024", "(62a)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex62a_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "3"), ("do", "3"), ("pattern", "strongOrWeak")] }
 
-def ex62b_1 : LinguisticExample :=
+def ex62b_1 : Datum :=
   { id := "deal2024_ex62b_1"
     source := ⟨"deal-2024", "(62b)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex62b_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "3"), ("do", "1"), ("pattern", "strongOrWeak")] }
 
-def ex62b_2 : LinguisticExample :=
+def ex62b_2 : Datum :=
   { id := "deal2024_ex62b_2"
     source := ⟨"deal-2024", "(62b)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex62b_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "3"), ("do", "2"), ("pattern", "strongOrWeak")] }
 
-def ex63a_1 : LinguisticExample :=
+def ex63a_1 : Datum :=
   { id := "deal2024_ex63a_1"
     source := ⟨"deal-2024", "(63a)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex63a_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "3"), ("do", "1"), ("pattern", "strongOrWeak"), ("preference", "io")] }
 
-def ex63a_2 : LinguisticExample :=
+def ex63a_2 : Datum :=
   { id := "deal2024_ex63a_2"
     source := ⟨"deal-2024", "(63a)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex63a_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "3"), ("do", "2"), ("pattern", "strongOrWeak"), ("preference", "io")] }
 
-def ex63a_3 : LinguisticExample :=
+def ex63a_3 : Datum :=
   { id := "deal2024_ex63a_3"
     source := ⟨"deal-2024", "(63a)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex63a_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "3"), ("do", "3"), ("pattern", "strongOrWeak"), ("preference", "io")] }
 
-def ex63b_1 : LinguisticExample :=
+def ex63b_1 : Datum :=
   { id := "deal2024_ex63b_1"
     source := ⟨"deal-2024", "(63b)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex63b_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "1"), ("do", "3"), ("pattern", "strongOrWeak"), ("preference", "io")] }
 
-def ex63b_2 : LinguisticExample :=
+def ex63b_2 : Datum :=
   { id := "deal2024_ex63b_2"
     source := ⟨"deal-2024", "(63b)"⟩
     reportedIn := none
@@ -511,6 +509,6 @@ def ex63b_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("io", "2"), ("do", "3"), ("pattern", "strongOrWeak"), ("preference", "io")] }
 
-def all : List LinguisticExample := [ex16a_1, ex16a_2, ex16b_1, ex16b_2, ex16b_3, ex16c_1, ex16c_2, ex32a_1, ex32a_2, ex32b_1, ex32b_2, ex39a_1, ex39a_2, ex39b, ex39c, ex51a_1, ex51a_2, ex51a_3, ex51b_1, ex51b_2, ex51c_1, ex51c_2, ex60a, ex60b, ex60c, ex61a, ex61b, ex61c, ex62a_1, ex62a_2, ex62a_3, ex62b_1, ex62b_2, ex63a_1, ex63a_2, ex63a_3, ex63b_1, ex63b_2]
+def all : List Datum := [ex16a_1, ex16a_2, ex16b_1, ex16b_2, ex16b_3, ex16c_1, ex16c_2, ex32a_1, ex32a_2, ex32b_1, ex32b_2, ex39a_1, ex39a_2, ex39b, ex39c, ex51a_1, ex51a_2, ex51a_3, ex51b_1, ex51b_2, ex51c_1, ex51c_2, ex60a, ex60b, ex60c, ex61a, ex61b, ex61c, ex62a_1, ex62a_2, ex62a_3, ex62b_1, ex62b_2, ex63a_1, ex63a_2, ex63a_3, ex63b_1, ex63b_2]
 
 end Deal2024.Examples

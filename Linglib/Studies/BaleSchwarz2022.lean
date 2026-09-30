@@ -262,7 +262,6 @@ theorem density_eq_divisionMP_iff (hu : u.dimension = .mass) (hr : r.dimension =
 
 /-! ### The paper's examples -/
 
-open Data.Examples (LinguisticExample)
 
 /-- The natural number a digit string denotes. -/
 def nat? (cs : List Char) : Option ℕ :=
@@ -280,7 +279,7 @@ structure Scenario where
   subjectMeasure : ℚ
   subjectUnit : MeasureTerm
 
-def scenario? (e : LinguisticExample) : Option Scenario := do
+def scenario? (e : Datum) : Option Scenario := do
   let per ← measureTerm? (← e.feature? "per_unit")
   let m ← decimal? (← e.feature? "subject_measure")
   let su ← measureTerm? (← e.feature? "subject_unit")
@@ -294,7 +293,7 @@ theorem rows_perPresup : ∀ e ∈ Examples.all, ∀ s ∈ scenario? e,
 
 /-- At any world where the subject measures as stated, a *per*-sentence's presupposition
 holds iff the example is felicitous. -/
-theorem rows_presup (e : LinguisticExample) (he : e ∈ Examples.all) (s : Scenario)
+theorem rows_presup (e : Datum) (he : e ∈ Examples.all) (s : Scenario)
     (hs : s ∈ scenario? e) (hy : w s.per.dimension y = s.subjectMeasure * s.subjectUnit.magnitude)
     (p : World E → Prop) : (perSentence s.per y p).presup w ↔ e.judgment = .acceptable := by
   rw [perSentence_presup, hy]; exact rows_perPresup e he s hs

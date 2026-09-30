@@ -53,7 +53,7 @@ the paper's marginal readings as available.
 
 namespace Longobardi2001
 
-open Data.Examples Genericity
+open Genericity
 
 /-- The semantic type of a nominal argument: a constant denoting through the lexical
 reference of its head, or a variable bound by an existential or generic operator. -/
@@ -212,7 +212,7 @@ theorem species_iff (dp : DPParameter) :
 /-! ### The paradigms -/
 
 /-- The parameter of a row's language. -/
-def paramOf (e : LinguisticExample) : Option DPParameter :=
+def paramOf (e : Datum) : Option DPParameter :=
   match e.language with
   | "ital1282" => some romance
   | "stan1293" => some english
@@ -220,20 +220,20 @@ def paramOf (e : LinguisticExample) : Option DPParameter :=
   | _ => none
 
 /-- The environment a row records. -/
-def environmentOf (e : LinguisticExample) : Option Environment :=
+def environmentOf (e : Datum) : Option Environment :=
   e.parse? "environment"
     [("episodic", .episodic), ("habitual", .habitual), ("adverbial", .adverbial),
      ("iLevelA", .iLevelA), ("iLevelB", .iLevelB), ("kindLevel", .kindLevel)]
 
 /-- A reading the row records as available, the paper's marginal readings included. -/
-def Available (e : LinguisticExample) (name : String) : Prop :=
+def Available (e : Datum) (name : String) : Prop :=
   ∃ r ∈ e.readings, r.1 = name ∧ (r.2 = .acceptable ∨ r.2 = .marginal)
 
-instance (e : LinguisticExample) (name : String) : Decidable (Available e name) :=
+instance (e : Datum) (name : String) : Decidable (Available e name) :=
   List.decidableBEx _ _
 
 /-- The predicted readings of a bare-noun or overt-indefinite row. -/
-def predictedOf (e : LinguisticExample) : Option (Finset Reading) := do
+def predictedOf (e : Datum) : Option (Finset Reading) := do
   let dp ← paramOf e
   let env ← environmentOf e
   match e.feature? "nominal" with

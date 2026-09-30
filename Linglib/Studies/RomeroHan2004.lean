@@ -59,7 +59,6 @@ namespace RomeroHan2004
 open scoped ModalLogic
 open Question (polar polar_compl)
 open Set (Iic)
-open Data.Examples
 
 variable {W : Type*} (epi conv : W → W → Prop) (cg : W → Filter W) (p : Set W)
 
@@ -160,15 +159,15 @@ instance (e : PolarityItem) (f : Form) : Decidable (Licensed e f) := by
 
 /-- An example: the position of its negation, if any, its reported bias, its VERUM
 form and its polarity item, each when the paper gives one, and its judgment. -/
-structure Datum where
+structure Row where
   negation : Option (Option NegationPosition)
   bias : Option SignType
   form : Option Form
   item : Option PolarityItem
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
 
-/-- An example read into its datum. -/
-def datum (e : LinguisticExample) : Datum where
+/-- A datum read into its row. -/
+def Row.ofDatum (e : Datum) : Row where
   negation := e.parse? "negation"
     [("preposed", some NegationPosition.preposed), ("nonPreposed", some .nonPreposed),
       ("none", none)]
@@ -180,7 +179,7 @@ def datum (e : LinguisticExample) : Datum where
   judgment := e.judgment
 
 /-- The paper's examples. -/
-def data : List Datum := Examples.all.map datum
+def data : List Row := Examples.all.map Row.ofDatum
 
 /-- Licensing predicts every *too* and *either* judgment on (6), (7) and (77) to (80). -/
 theorem licensed_iff_acceptable :

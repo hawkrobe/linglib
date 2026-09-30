@@ -15,9 +15,7 @@ this module; declarations live in `namespace Haslinger2025.Examples`.
 
 namespace Haslinger2025.Examples
 
-open Data.Examples
-
-def ch1_6a : LinguisticExample :=
+def ch1_6a : Datum :=
   { id := "haslinger2025_ch1_6a"
     source := ⟨"haslinger-2025-diss", "Ch. 1, (6a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ch1_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "lower"), ("precision", "lower")] }
 
-def ch1_6b : LinguisticExample :=
+def ch1_6b : Datum :=
   { id := "haslinger2025_ch1_6b"
     source := ⟨"haslinger-2025-diss", "Ch. 1, (6b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ch1_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "higher"), ("precision", "higher")] }
 
-def ch1_7a : LinguisticExample :=
+def ch1_7a : Datum :=
   { id := "haslinger2025_ch1_7a"
     source := ⟨"haslinger-2025-diss", "Ch. 1, (7a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ch1_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "lower"), ("precision", "lower")] }
 
-def ch1_7b : LinguisticExample :=
+def ch1_7b : Datum :=
   { id := "haslinger2025_ch1_7b"
     source := ⟨"haslinger-2025-diss", "Ch. 1, (7b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ch1_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "higher"), ("precision", "higher")] }
 
-def ch1_8a : LinguisticExample :=
+def ch1_8a : Datum :=
   { id := "haslinger2025_ch1_8a"
     source := ⟨"haslinger-2025-diss", "Ch. 1, (8a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ch1_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "higher"), ("precision", "lower"), ("hypothetical", "yes")] }
 
-def ch1_8b : LinguisticExample :=
+def ch1_8b : Datum :=
   { id := "haslinger2025_ch1_8b"
     source := ⟨"haslinger-2025-diss", "Ch. 1, (8b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ch1_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "lower"), ("precision", "higher"), ("hypothetical", "yes")] }
 
-def ch1_9a : LinguisticExample :=
+def ch1_9a : Datum :=
   { id := "haslinger2025_ch1_9a"
     source := ⟨"haslinger-2025-diss", "Ch. 1, (9a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ch1_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "lower"), ("precision", "lower")] }
 
-def ch1_9b : LinguisticExample :=
+def ch1_9b : Datum :=
   { id := "haslinger2025_ch1_9b"
     source := ⟨"haslinger-2025-diss", "Ch. 1, (9b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ch1_9b : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "higher"), ("precision", "higher")] }
 
-def ch2_19 : LinguisticExample :=
+def ch2_19 : Datum :=
   { id := "haslinger2025_ch2_19"
     source := ⟨"haslinger-2025-diss", "Ch. 2, (19)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ch2_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "2"), ("phenomenon", "numeralImprecision"), ("scenario", "carsExact"), ("actualValue", "98")] }
 
-def ch2_20 : LinguisticExample :=
+def ch2_20 : Datum :=
   { id := "haslinger2025_ch2_20"
     source := ⟨"haslinger-2025-diss", "Ch. 2, (20)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ch2_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "2"), ("phenomenon", "numeralImprecision"), ("scenario", "carsInexact"), ("actualValue", "98")] }
 
-def ch2_164a : LinguisticExample :=
+def ch2_164a : Datum :=
   { id := "haslinger2025_ch2_164a"
     source := ⟨"haslinger-2025-diss", "Ch. 2, (164a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ch2_164a : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "2"), ("phenomenon", "numeralImprecision"), ("scenario", "gameShow")] }
 
-def ch2_164b : LinguisticExample :=
+def ch2_164b : Datum :=
   { id := "haslinger2025_ch2_164b"
     source := ⟨"haslinger-2025-diss", "Ch. 2, (164b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ch2_164b : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "2"), ("phenomenon", "numeralImprecision"), ("scenario", "gameShow")] }
 
-def ch6_8a : LinguisticExample :=
+def ch6_8a : Datum :=
   { id := "haslinger2025_ch6_8a"
     source := ⟨"haslinger-2025-diss", "Ch. 6, (8a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ch6_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "6"), ("phenomenon", "roundness"), ("roundnessScale", "tens")] }
 
-def ch6_8b : LinguisticExample :=
+def ch6_8b : Datum :=
   { id := "haslinger2025_ch6_8b"
     source := ⟨"haslinger-2025-diss", "Ch. 6, (8b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ch6_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "6"), ("phenomenon", "roundness"), ("roundnessScale", "units")] }
 
-def ch6_9a : LinguisticExample :=
+def ch6_9a : Datum :=
   { id := "haslinger2025_ch6_9a"
     source := ⟨"haslinger-2025-diss", "Ch. 6, (9a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ch6_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "6"), ("phenomenon", "roundness"), ("roundnessScale", "quarterHours")] }
 
-def ch6_9b : LinguisticExample :=
+def ch6_9b : Datum :=
   { id := "haslinger2025_ch6_9b"
     source := ⟨"haslinger-2025-diss", "Ch. 6, (9b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ch6_9b : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "6"), ("phenomenon", "roundness"), ("roundnessScale", "minutes")] }
 
-def ch7_19b : LinguisticExample :=
+def ch7_19b : Datum :=
   { id := "haslinger2025_ch7_19b"
     source := ⟨"haslinger-2025-diss", "Ch. 7, (19b)"⟩
     reportedIn := none
@@ -238,6 +236,6 @@ def ch7_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "7"), ("phenomenon", "conjunctionMaximality")] }
 
-def all : List LinguisticExample := [ch1_6a, ch1_6b, ch1_7a, ch1_7b, ch1_8a, ch1_8b, ch1_9a, ch1_9b, ch2_19, ch2_20, ch2_164a, ch2_164b, ch6_8a, ch6_8b, ch6_9a, ch6_9b, ch7_19b]
+def all : List Datum := [ch1_6a, ch1_6b, ch1_7a, ch1_7b, ch1_8a, ch1_8b, ch1_9a, ch1_9b, ch2_19, ch2_20, ch2_164a, ch2_164b, ch6_8a, ch6_8b, ch6_9a, ch6_9b, ch7_19b]
 
 end Haslinger2025.Examples

@@ -15,9 +15,7 @@ this module; declarations live in `namespace HeimLasnikMay1991.Examples`.
 
 namespace HeimLasnikMay1991.Examples
 
-open Data.Examples
-
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "heimlasnikmay1991_ex1"
     source := ⟨"heim-lasnik-may-1991", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1")] }
 
-def ex2 : LinguisticExample :=
+def ex2 : Datum :=
   { id := "heimlasnikmay1991_ex2"
     source := ⟨"heim-lasnik-may-1991", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("readings", "I; you; we")] }
 
-def ex4 : LinguisticExample :=
+def ex4 : Datum :=
   { id := "heimlasnikmay1991_ex4"
     source := ⟨"heim-lasnik-may-1991", "(4)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex4 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("readings", "narrow; broad")] }
 
-def ex5 : LinguisticExample :=
+def ex5 : Datum :=
   { id := "heimlasnikmay1991_ex5"
     source := ⟨"heim-lasnik-may-1991", "(5)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex5 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("reading", "broad")] }
 
-def ex6 : LinguisticExample :=
+def ex6 : Datum :=
   { id := "heimlasnikmay1991_ex6"
     source := ⟨"heim-lasnik-may-1991", "(6)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex6 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1")] }
 
-def ex7 : LinguisticExample :=
+def ex7 : Datum :=
   { id := "heimlasnikmay1991_ex7"
     source := ⟨"heim-lasnik-may-1991", "(7)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex7 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("lf", "[[the men]₁ each₂] saw [e₂ other]₃")] }
 
-def ex24 : LinguisticExample :=
+def ex24 : Datum :=
   { id := "heimlasnikmay1991_ex24"
     source := ⟨"heim-lasnik-may-1991", "(24)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex24 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3")] }
 
-def ex27 : LinguisticExample :=
+def ex27 : Datum :=
   { id := "heimlasnikmay1991_ex27"
     source := ⟨"heim-lasnik-may-1991", "(27)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex27 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("distributor", "floated each")] }
 
-def ex30 : LinguisticExample :=
+def ex30 : Datum :=
   { id := "heimlasnikmay1991_ex30"
     source := ⟨"heim-lasnik-may-1991", "(30)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex30 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("readings", "we; each")] }
 
-def ex36 : LinguisticExample :=
+def ex36 : Datum :=
   { id := "heimlasnikmay1991_ex36"
     source := ⟨"heim-lasnik-may-1991", "(36)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex36 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("reading", "distributive only")] }
 
-def ex38 : LinguisticExample :=
+def ex38 : Datum :=
   { id := "heimlasnikmay1991_ex38"
     source := ⟨"heim-lasnik-may-1991", "(38)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex38 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4")] }
 
-def ex39b : LinguisticExample :=
+def ex39b : Datum :=
   { id := "heimlasnikmay1991_ex39b"
     source := ⟨"heim-lasnik-may-1991", "(39b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex39b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4")] }
 
-def ex40a : LinguisticExample :=
+def ex40a : Datum :=
   { id := "heimlasnikmay1991_ex40a"
     source := ⟨"heim-lasnik-may-1991", "(40a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex40a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4")] }
 
-def ex42a : LinguisticExample :=
+def ex42a : Datum :=
   { id := "heimlasnikmay1991_ex42a"
     source := ⟨"heim-lasnik-may-1991", "(42a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex42a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4")] }
 
-def ex43 : LinguisticExample :=
+def ex43 : Datum :=
   { id := "heimlasnikmay1991_ex43"
     source := ⟨"heim-lasnik-may-1991", "(43)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex43 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("readings", "I; you; we together; we separately")] }
 
-def ex45 : LinguisticExample :=
+def ex45 : Datum :=
   { id := "heimlasnikmay1991_ex45"
     source := ⟨"heim-lasnik-may-1991", "(45)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex45 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("reading", "you")] }
 
-def ex46 : LinguisticExample :=
+def ex46 : Datum :=
   { id := "heimlasnikmay1991_ex46"
     source := ⟨"heim-lasnik-may-1991", "(46)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex46 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("reading", "I")] }
 
-def ex57 : LinguisticExample :=
+def ex57 : Datum :=
   { id := "heimlasnikmay1991_ex57"
     source := ⟨"heim-lasnik-may-1991", "(57)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex57 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("readings", "I; you; we")] }
 
-def ex60 : LinguisticExample :=
+def ex60 : Datum :=
   { id := "heimlasnikmay1991_ex60"
     source := ⟨"heim-lasnik-may-1991", "(60)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex60 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("readings", "we")] }
 
-def ex61a : LinguisticExample :=
+def ex61a : Datum :=
   { id := "heimlasnikmay1991_ex61a"
     source := ⟨"heim-lasnik-may-1991", "(61a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex61a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1")] }
 
-def ex64 : LinguisticExample :=
+def ex64 : Datum :=
   { id := "heimlasnikmay1991_ex64"
     source := ⟨"heim-lasnik-may-1991", "(64)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex64 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("readings", "narrow (65); broad (66)")] }
 
-def ex68 : LinguisticExample :=
+def ex68 : Datum :=
   { id := "heimlasnikmay1991_ex68"
     source := ⟨"heim-lasnik-may-1991", "(68)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex68 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("reading", "contradictory")] }
 
-def ex69 : LinguisticExample :=
+def ex69 : Datum :=
   { id := "heimlasnikmay1991_ex69"
     source := ⟨"heim-lasnik-may-1991", "(69)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex69 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("readings", "noncontradictory broad; contradictory narrow")] }
 
-def ex71 : LinguisticExample :=
+def ex71 : Datum :=
   { id := "heimlasnikmay1991_ex71"
     source := ⟨"heim-lasnik-may-1991", "(71)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex71 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("reading", "contradictory narrow only")] }
 
-def ex72 : LinguisticExample :=
+def ex72 : Datum :=
   { id := "heimlasnikmay1991_ex72"
     source := ⟨"heim-lasnik-may-1991", "(72)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex72 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4")] }
 
-def ex73 : LinguisticExample :=
+def ex73 : Datum :=
   { id := "heimlasnikmay1991_ex73"
     source := ⟨"heim-lasnik-may-1991", "(73)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex73 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4")] }
 
-def ex77 : LinguisticExample :=
+def ex77 : Datum :=
   { id := "heimlasnikmay1991_ex77"
     source := ⟨"heim-lasnik-may-1991", "(77)"⟩
     reportedIn := none
@@ -368,6 +366,6 @@ def ex77 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1")] }
 
-def all : List LinguisticExample := [ex1, ex2, ex4, ex5, ex6, ex7, ex24, ex27, ex30, ex36, ex38, ex39b, ex40a, ex42a, ex43, ex45, ex46, ex57, ex60, ex61a, ex64, ex68, ex69, ex71, ex72, ex73, ex77]
+def all : List Datum := [ex1, ex2, ex4, ex5, ex6, ex7, ex24, ex27, ex30, ex36, ex38, ex39b, ex40a, ex42a, ex43, ex45, ex46, ex57, ex60, ex61a, ex64, ex68, ex69, ex71, ex72, ex73, ex77]
 
 end HeimLasnikMay1991.Examples

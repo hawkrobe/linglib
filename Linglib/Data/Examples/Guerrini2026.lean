@@ -15,9 +15,7 @@ this module; declarations live in `namespace Guerrini2026.Examples`.
 
 namespace Guerrini2026.Examples
 
-open Data.Examples
-
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "guerrini2026_21a"
     source := ⟨"guerrini-2026", "(21a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_21a : LinguisticExample :=
     readings := [("lawLike", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "guerrini2026_21b"
     source := ⟨"guerrini-2026", "(21b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_21b : LinguisticExample :=
     readings := [("lawLike", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
-def ex_21c : LinguisticExample :=
+def ex_21c : Datum :=
   { id := "guerrini2026_21c"
     source := ⟨"guerrini-2026", "(21c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_21c : LinguisticExample :=
     readings := [("accidental", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
-def ex_21d : LinguisticExample :=
+def ex_21d : Datum :=
   { id := "guerrini2026_21d"
     source := ⟨"guerrini-2026", "(21d)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_21d : LinguisticExample :=
     readings := [("accidental", .unacceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "guerrini2026_22a"
     source := ⟨"guerrini-2026", "(22a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_22a : LinguisticExample :=
     readings := [("lawLike", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
-def ex_22b : LinguisticExample :=
+def ex_22b : Datum :=
   { id := "guerrini2026_22b"
     source := ⟨"guerrini-2026", "(22b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_22b : LinguisticExample :=
     readings := [("lawLike", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
-def ex_22c : LinguisticExample :=
+def ex_22c : Datum :=
   { id := "guerrini2026_22c"
     source := ⟨"guerrini-2026", "(22c)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_22c : LinguisticExample :=
     readings := [("accidental", .acceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
-def ex_22d : LinguisticExample :=
+def ex_22d : Datum :=
   { id := "guerrini2026_22d"
     source := ⟨"guerrini-2026", "(22d)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_22d : LinguisticExample :=
     readings := [("accidental", .unacceptable)]
     paperFeatures := [("section", "3.1"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "guerrini2026_4a"
     source := ⟨"guerrini-2026", "(4a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_4a : LinguisticExample :=
     readings := [("cumulative", .acceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "guerrini2026_4b"
     source := ⟨"guerrini-2026", "(4b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("phenomenon", "cumulativity"), ("nominal", "singularIndefinite")] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "guerrini2026_5a"
     source := ⟨"guerrini-2026", "(5a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_5a : LinguisticExample :=
     readings := [("existential", .acceptable), ("nearUniversal", .acceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "episodic"), ("nominal", "kindDenotingPlural")] }
 
-def ex_5b : LinguisticExample :=
+def ex_5b : Datum :=
   { id := "guerrini2026_5b"
     source := ⟨"guerrini-2026", "(5b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_5b : LinguisticExample :=
     readings := [("existential", .acceptable), ("nearUniversal", .unacceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "episodic"), ("nominal", "singularIndefinite")] }
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "guerrini2026_6a"
     source := ⟨"guerrini-2026", "(6a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_6a : LinguisticExample :=
     readings := [("existential", .acceptable), ("nearUniversal", .acceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "episodic"), ("nominal", "kindDenotingPlural")] }
 
-def ex_6b : LinguisticExample :=
+def ex_6b : Datum :=
   { id := "guerrini2026_6b"
     source := ⟨"guerrini-2026", "(6b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_6b : LinguisticExample :=
     readings := [("existential", .acceptable), ("nearUniversal", .unacceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "episodic"), ("nominal", "singularIndefinite")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "guerrini2026_7a"
     source := ⟨"guerrini-2026", "(7a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("phenomenon", "qve"), ("nominal", "kindDenotingPlural")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "guerrini2026_7b"
     source := ⟨"guerrini-2026", "(7b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_7b : LinguisticExample :=
     readings := [("fewBirdsFly", .acceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "qve"), ("nominal", "kindDenotingPlural")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "guerrini2026_8"
     source := ⟨"guerrini-2026", "(8)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_8 : LinguisticExample :=
     readings := [("fewBirdsMigrating", .unacceptable)]
     paperFeatures := [("section", "1.1"), ("phenomenon", "qve"), ("nominal", "kindDenotingPlural")] }
 
-def ex_25a : LinguisticExample :=
+def ex_25a : Datum :=
   { id := "guerrini2026_25a"
     source := ⟨"guerrini-2026", "(25a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "qadv"), ("nominal", "kindDenotingPlural")] }
 
-def ex_25b : LinguisticExample :=
+def ex_25b : Datum :=
   { id := "guerrini2026_25b"
     source := ⟨"guerrini-2026", "(25b)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_25b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "qadv"), ("nominal", "kindDenotingPlural")] }
 
-def ex_32a : LinguisticExample :=
+def ex_32a : Datum :=
   { id := "guerrini2026_32a"
     source := ⟨"guerrini-2026", "(32a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_32a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "definitePlural"), ("remover", "none")] }
 
-def ex_32b : LinguisticExample :=
+def ex_32b : Datum :=
   { id := "guerrini2026_32b"
     source := ⟨"guerrini-2026", "(32b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_32b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "definitePlural"), ("remover", "none")] }
 
-def ex_33a : LinguisticExample :=
+def ex_33a : Datum :=
   { id := "guerrini2026_33a"
     source := ⟨"guerrini-2026", "(33a)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_33a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "definitePlural"), ("remover", "all")] }
 
-def ex_33b : LinguisticExample :=
+def ex_33b : Datum :=
   { id := "guerrini2026_33b"
     source := ⟨"guerrini-2026", "(33b)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_33b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "definitePlural"), ("remover", "all")] }
 
-def ex_34a : LinguisticExample :=
+def ex_34a : Datum :=
   { id := "guerrini2026_34a"
     source := ⟨"guerrini-2026", "(34a)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_34a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "none")] }
 
-def ex_34b : LinguisticExample :=
+def ex_34b : Datum :=
   { id := "guerrini2026_34b"
     source := ⟨"guerrini-2026", "(34b)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_34b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "none")] }
 
-def ex_35a : LinguisticExample :=
+def ex_35a : Datum :=
   { id := "guerrini2026_35a"
     source := ⟨"guerrini-2026", "(35a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_35a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "all")] }
 
-def ex_35b : LinguisticExample :=
+def ex_35b : Datum :=
   { id := "guerrini2026_35b"
     source := ⟨"guerrini-2026", "(35b)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_35b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "all")] }
 
-def ex_36a : LinguisticExample :=
+def ex_36a : Datum :=
   { id := "guerrini2026_36a"
     source := ⟨"guerrini-2026", "(36a)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_36a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "none")] }
 
-def ex_36b : LinguisticExample :=
+def ex_36b : Datum :=
   { id := "guerrini2026_36b"
     source := ⟨"guerrini-2026", "(36b)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_36b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "none")] }
 
-def ex_37a : LinguisticExample :=
+def ex_37a : Datum :=
   { id := "guerrini2026_37a"
     source := ⟨"guerrini-2026", "(37a)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "always")] }
 
-def ex_37b : LinguisticExample :=
+def ex_37b : Datum :=
   { id := "guerrini2026_37b"
     source := ⟨"guerrini-2026", "(37b)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_37b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "always")] }
 
-def ex_38a : LinguisticExample :=
+def ex_38a : Datum :=
   { id := "guerrini2026_38a"
     source := ⟨"guerrini-2026", "(38a)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_38a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "always")] }
 
-def ex_38b : LinguisticExample :=
+def ex_38b : Datum :=
   { id := "guerrini2026_38b"
     source := ⟨"guerrini-2026", "(38b)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_38b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "always")] }
 
-def ex_38c : LinguisticExample :=
+def ex_38c : Datum :=
   { id := "guerrini2026_38c"
     source := ⟨"guerrini-2026", "(38c)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_38c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "all")] }
 
-def ex_38d : LinguisticExample :=
+def ex_38d : Datum :=
   { id := "guerrini2026_38d"
     source := ⟨"guerrini-2026", "(38d)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_38d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("phenomenon", "homogeneity"), ("nominal", "singularIndefinite"), ("remover", "all")] }
 
-def ex_44 : LinguisticExample :=
+def ex_44 : Datum :=
   { id := "guerrini2026_44"
     source := ⟨"guerrini-2026", "(44)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.5"), ("phenomenon", "subjunctive"), ("nominal", "singularIndefinite")] }
 
-def ex_45_indicative : LinguisticExample :=
+def ex_45_indicative : Datum :=
   { id := "guerrini2026_45_indicative"
     source := ⟨"guerrini-2026", "(45ind)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_45_indicative : LinguisticExample :=
     readings := [("lawLike", .acceptable), ("accidental", .acceptable)]
     paperFeatures := [("section", "3.5"), ("phenomenon", "subjunctive"), ("nominal", "kindDenotingPlural"), ("mood", "indicative")] }
 
-def ex_45_subjunctive : LinguisticExample :=
+def ex_45_subjunctive : Datum :=
   { id := "guerrini2026_45_subjunctive"
     source := ⟨"guerrini-2026", "(45subj)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_45_subjunctive : LinguisticExample :=
     readings := [("lawLike", .acceptable), ("accidental", .unacceptable)]
     paperFeatures := [("section", "3.5"), ("phenomenon", "subjunctive"), ("nominal", "kindDenotingPlural"), ("mood", "subjunctive")] }
 
-def ex_51a : LinguisticExample :=
+def ex_51a : Datum :=
   { id := "guerrini2026_51a"
     source := ⟨"greenberg-2004", "(51a)"⟩
     reportedIn := some ⟨"guerrini-2026", "(51a)"⟩
@@ -524,7 +522,7 @@ def ex_51a : LinguisticExample :=
     readings := [("accidental", .acceptable), ("lawLike", .acceptable)]
     paperFeatures := [("section", "3.7"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
-def ex_51b : LinguisticExample :=
+def ex_51b : Datum :=
   { id := "guerrini2026_51b"
     source := ⟨"greenberg-2004", "(51b)"⟩
     reportedIn := some ⟨"guerrini-2026", "(51b)"⟩
@@ -537,7 +535,7 @@ def ex_51b : LinguisticExample :=
     readings := [("accidental", .unacceptable), ("lawLike", .acceptable)]
     paperFeatures := [("section", "3.7"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
-def ex_52a : LinguisticExample :=
+def ex_52a : Datum :=
   { id := "guerrini2026_52a"
     source := ⟨"greenberg-2007", "(52a)"⟩
     reportedIn := some ⟨"guerrini-2026", "(52a)"⟩
@@ -550,7 +548,7 @@ def ex_52a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.7"), ("phenomenon", "flavor"), ("nominal", "kindDenotingPlural")] }
 
-def ex_52b : LinguisticExample :=
+def ex_52b : Datum :=
   { id := "guerrini2026_52b"
     source := ⟨"greenberg-2007", "(52b)"⟩
     reportedIn := some ⟨"guerrini-2026", "(52b)"⟩
@@ -563,7 +561,7 @@ def ex_52b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.7"), ("phenomenon", "flavor"), ("nominal", "singularIndefinite")] }
 
-def ex_58 : LinguisticExample :=
+def ex_58 : Datum :=
   { id := "guerrini2026_58"
     source := ⟨"guerrini-2026", "(58)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex_58 : LinguisticExample :=
     readings := [("cumulative", .acceptable)]
     paperFeatures := [("section", "4.1"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
-def ex_59 : LinguisticExample :=
+def ex_59 : Datum :=
   { id := "guerrini2026_59"
     source := ⟨"guerrini-2026", "(59)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex_59 : LinguisticExample :=
     readings := [("cumulative", .acceptable)]
     paperFeatures := [("section", "4.1"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
-def ex_69a : LinguisticExample :=
+def ex_69a : Datum :=
   { id := "guerrini2026_69a"
     source := ⟨"guerrini-2026", "(69a)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex_69a : LinguisticExample :=
     readings := [("cumulative", .acceptable), ("atTheSameTime", .acceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "guerrini2026_70"
     source := ⟨"guerrini-2026", "(70)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex_70 : LinguisticExample :=
     readings := [("cumulative", .unacceptable), ("atTheSameTime", .acceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
-def ex_71 : LinguisticExample :=
+def ex_71 : Datum :=
   { id := "guerrini2026_71"
     source := ⟨"guerrini-2026", "(71)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex_71 : LinguisticExample :=
     readings := [("cumulative", .acceptable), ("distributive", .acceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural"), ("mood", "indicative")] }
 
-def ex_72 : LinguisticExample :=
+def ex_72 : Datum :=
   { id := "guerrini2026_72"
     source := ⟨"guerrini-2026", "(72)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex_72 : LinguisticExample :=
     readings := [("cumulative", .unacceptable), ("distributive", .acceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural"), ("mood", "subjunctive")] }
 
-def ex_84a : LinguisticExample :=
+def ex_84a : Datum :=
   { id := "guerrini2026_84a"
     source := ⟨"guerrini-2026", "(84a)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex_84a : LinguisticExample :=
     readings := [("cumulative", .acceptable)]
     paperFeatures := [("section", "4.3.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
-def ex_84b : LinguisticExample :=
+def ex_84b : Datum :=
   { id := "guerrini2026_84b"
     source := ⟨"guerrini-2026", "(84b)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex_84b : LinguisticExample :=
     readings := [("lawLike", .unacceptable)]
     paperFeatures := [("section", "4.3.2"), ("phenomenon", "cumulativity"), ("nominal", "singularIndefinite")] }
 
-def ex_89a : LinguisticExample :=
+def ex_89a : Datum :=
   { id := "guerrini2026_89a"
     source := ⟨"guerrini-2026", "(89a)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex_89a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "all")] }
 
-def ex_89b : LinguisticExample :=
+def ex_89b : Datum :=
   { id := "guerrini2026_89b"
     source := ⟨"guerrini-2026", "(89b)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex_89b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "all")] }
 
-def ex_90a : LinguisticExample :=
+def ex_90a : Datum :=
   { id := "guerrini2026_90a"
     source := ⟨"guerrini-2026", "(90a)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex_90a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "always")] }
 
-def ex_90b : LinguisticExample :=
+def ex_90b : Datum :=
   { id := "guerrini2026_90b"
     source := ⟨"guerrini-2026", "(90b)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex_90b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "homogeneity"), ("nominal", "kindDenotingPlural"), ("remover", "always")] }
 
-def ex_99a : LinguisticExample :=
+def ex_99a : Datum :=
   { id := "guerrini2026_99a"
     source := ⟨"guerrini-2026", "(99a)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex_99a : LinguisticExample :=
     readings := [("existential", .acceptable), ("nearUniversal", .acceptable)]
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "local")] }
 
-def ex_99b : LinguisticExample :=
+def ex_99b : Datum :=
   { id := "guerrini2026_99b"
     source := ⟨"guerrini-2026", "(99b)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex_99b : LinguisticExample :=
     readings := [("existential", .acceptable), ("nearUniversal", .unacceptable)]
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "nonlocal")] }
 
-def ex_100a : LinguisticExample :=
+def ex_100a : Datum :=
   { id := "guerrini2026_100a"
     source := ⟨"guerrini-2026", "(100a)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex_100a : LinguisticExample :=
     readings := [("existential", .acceptable), ("nearUniversal", .acceptable)]
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "local")] }
 
-def ex_100b : LinguisticExample :=
+def ex_100b : Datum :=
   { id := "guerrini2026_100b"
     source := ⟨"guerrini-2026", "(100b)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex_100b : LinguisticExample :=
     readings := [("existential", .acceptable), ("nearUniversal", .unacceptable)]
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "nonlocal")] }
 
-def ex_101a : LinguisticExample :=
+def ex_101a : Datum :=
   { id := "guerrini2026_101a"
     source := ⟨"guerrini-2026", "(101a)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ex_101a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "local")] }
 
-def ex_101b : LinguisticExample :=
+def ex_101b : Datum :=
   { id := "guerrini2026_101b"
     source := ⟨"guerrini-2026", "(101b)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def ex_101b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "epistemicAdjective"), ("nominal", "kindDenotingPlural"), ("adjective", "nonlocal")] }
 
-def ex_102a : LinguisticExample :=
+def ex_102a : Datum :=
   { id := "guerrini2026_102a"
     source := ⟨"guerrini-2026", "(102a)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def ex_102a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "kindPredication"), ("nominal", "kindDenotingPlural"), ("adjective", "local")] }
 
-def ex_102b : LinguisticExample :=
+def ex_102b : Datum :=
   { id := "guerrini2026_102b"
     source := ⟨"guerrini-2026", "(102b)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def ex_102b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "kindPredication"), ("nominal", "kindDenotingPlural"), ("adjective", "nonlocal")] }
 
-def ex_103a : LinguisticExample :=
+def ex_103a : Datum :=
   { id := "guerrini2026_103a"
     source := ⟨"guerrini-2026", "(103a)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def ex_103a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "kindPredication"), ("nominal", "kindDenotingPlural"), ("adjective", "local")] }
 
-def ex_103b : LinguisticExample :=
+def ex_103b : Datum :=
   { id := "guerrini2026_103b"
     source := ⟨"guerrini-2026", "(103b)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def ex_103b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("phenomenon", "kindPredication"), ("nominal", "kindDenotingPlural"), ("adjective", "nonlocal")] }
 
-def ex_107 : LinguisticExample :=
+def ex_107 : Datum :=
   { id := "guerrini2026_107"
     source := ⟨"longobardi-2001", "(107)"⟩
     reportedIn := some ⟨"guerrini-2026", "(107)"⟩
@@ -862,7 +860,7 @@ def ex_107 : LinguisticExample :=
     readings := [("kind", .acceptable), ("existential", .acceptable)]
     paperFeatures := [("section", "5.4"), ("phenomenon", "ambiguity"), ("nominal", "kindDenotingPlural")] }
 
-def ex_109 : LinguisticExample :=
+def ex_109 : Datum :=
   { id := "guerrini2026_109"
     source := ⟨"guerrini-2026", "(109)"⟩
     reportedIn := none
@@ -875,7 +873,7 @@ def ex_109 : LinguisticExample :=
     readings := [("existential", .acceptable), ("nearUniversal", .unacceptable)]
     paperFeatures := [("section", "5.4"), ("phenomenon", "ambiguity"), ("nominal", "italianBarePlural")] }
 
-def ex_110 : LinguisticExample :=
+def ex_110 : Datum :=
   { id := "guerrini2026_110"
     source := ⟨"guerrini-2026", "(110)"⟩
     reportedIn := none
@@ -888,7 +886,7 @@ def ex_110 : LinguisticExample :=
     readings := [("existential", .unacceptable), ("nearUniversal", .acceptable)]
     paperFeatures := [("section", "5.4"), ("phenomenon", "ambiguity"), ("nominal", "italianDefinitePlural")] }
 
-def ex_113 : LinguisticExample :=
+def ex_113 : Datum :=
   { id := "guerrini2026_113"
     source := ⟨"guerrini-2026", "(113)"⟩
     reportedIn := none
@@ -901,7 +899,7 @@ def ex_113 : LinguisticExample :=
     readings := [("lawLike", .acceptable), ("accidental", .acceptable)]
     paperFeatures := [("section", "5.4"), ("phenomenon", "flavor"), ("nominal", "italianDefinitePlural")] }
 
-def ex_114 : LinguisticExample :=
+def ex_114 : Datum :=
   { id := "guerrini2026_114"
     source := ⟨"guerrini-2026", "(114)"⟩
     reportedIn := none
@@ -914,7 +912,7 @@ def ex_114 : LinguisticExample :=
     readings := [("lawLike", .acceptable), ("accidental", .unacceptable)]
     paperFeatures := [("section", "5.4"), ("phenomenon", "flavor"), ("nominal", "italianBarePlural")] }
 
-def ex_115a : LinguisticExample :=
+def ex_115a : Datum :=
   { id := "guerrini2026_115a"
     source := ⟨"guerrini-2026", "(115a)"⟩
     reportedIn := none
@@ -927,7 +925,7 @@ def ex_115a : LinguisticExample :=
     readings := [("wideScope", .acceptable), ("lowScope", .unacceptable)]
     paperFeatures := [("section", "5.5"), ("phenomenon", "durativeScope"), ("nominal", "singularIndefinite")] }
 
-def ex_115b : LinguisticExample :=
+def ex_115b : Datum :=
   { id := "guerrini2026_115b"
     source := ⟨"guerrini-2026", "(115b)"⟩
     reportedIn := none
@@ -940,7 +938,7 @@ def ex_115b : LinguisticExample :=
     readings := [("wideScope", .unacceptable), ("lowScope", .acceptable)]
     paperFeatures := [("section", "5.5"), ("phenomenon", "durativeScope"), ("nominal", "kindDenotingPlural")] }
 
-def ex_133c : LinguisticExample :=
+def ex_133c : Datum :=
   { id := "guerrini2026_133c"
     source := ⟨"guerrini-2026", "(133c)"⟩
     reportedIn := none
@@ -953,7 +951,7 @@ def ex_133c : LinguisticExample :=
     readings := [("accidental", .unacceptable)]
     paperFeatures := [("section", "6.2"), ("phenomenon", "flavor"), ("nominal", "singularDefinite")] }
 
-def ex_133d : LinguisticExample :=
+def ex_133d : Datum :=
   { id := "guerrini2026_133d"
     source := ⟨"guerrini-2026", "(133d)"⟩
     reportedIn := none
@@ -966,7 +964,7 @@ def ex_133d : LinguisticExample :=
     readings := [("lawLike", .acceptable)]
     paperFeatures := [("section", "6.2"), ("phenomenon", "flavor"), ("nominal", "singularDefinite")] }
 
-def ex_135a_i : LinguisticExample :=
+def ex_135a_i : Datum :=
   { id := "guerrini2026_135a_i"
     source := ⟨"guerrini-2026", "(135a-i)"⟩
     reportedIn := none
@@ -979,7 +977,7 @@ def ex_135a_i : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "episodic"), ("nominal", "kindDenotingPlural")] }
 
-def ex_135a_ii : LinguisticExample :=
+def ex_135a_ii : Datum :=
   { id := "guerrini2026_135a_ii"
     source := ⟨"guerrini-2026", "(135a-ii)"⟩
     reportedIn := none
@@ -992,7 +990,7 @@ def ex_135a_ii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "episodic"), ("nominal", "singularDefinite")] }
 
-def ex_135b_i : LinguisticExample :=
+def ex_135b_i : Datum :=
   { id := "guerrini2026_135b_i"
     source := ⟨"guerrini-2026", "(135b-i)"⟩
     reportedIn := none
@@ -1005,7 +1003,7 @@ def ex_135b_i : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "episodic"), ("nominal", "kindDenotingPlural")] }
 
-def ex_135b_ii : LinguisticExample :=
+def ex_135b_ii : Datum :=
   { id := "guerrini2026_135b_ii"
     source := ⟨"guerrini-2026", "(135b-ii)"⟩
     reportedIn := none
@@ -1018,7 +1016,7 @@ def ex_135b_ii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2"), ("phenomenon", "episodic"), ("nominal", "singularDefinite")] }
 
-def ex_136a : LinguisticExample :=
+def ex_136a : Datum :=
   { id := "guerrini2026_136a"
     source := ⟨"guerrini-2026", "(136a)"⟩
     reportedIn := none
@@ -1031,7 +1029,7 @@ def ex_136a : LinguisticExample :=
     readings := [("cumulative", .acceptable), ("distributive", .acceptable)]
     paperFeatures := [("section", "6.2"), ("phenomenon", "cumulativity"), ("nominal", "kindDenotingPlural")] }
 
-def ex_136b : LinguisticExample :=
+def ex_136b : Datum :=
   { id := "guerrini2026_136b"
     source := ⟨"guerrini-2026", "(136b)"⟩
     reportedIn := none
@@ -1044,6 +1042,6 @@ def ex_136b : LinguisticExample :=
     readings := [("cumulative", .unacceptable), ("distributive", .acceptable)]
     paperFeatures := [("section", "6.2"), ("phenomenon", "cumulativity"), ("nominal", "singularDefinite")] }
 
-def all : List LinguisticExample := [ex_21a, ex_21b, ex_21c, ex_21d, ex_22a, ex_22b, ex_22c, ex_22d, ex_4a, ex_4b, ex_5a, ex_5b, ex_6a, ex_6b, ex_7a, ex_7b, ex_8, ex_25a, ex_25b, ex_32a, ex_32b, ex_33a, ex_33b, ex_34a, ex_34b, ex_35a, ex_35b, ex_36a, ex_36b, ex_37a, ex_37b, ex_38a, ex_38b, ex_38c, ex_38d, ex_44, ex_45_indicative, ex_45_subjunctive, ex_51a, ex_51b, ex_52a, ex_52b, ex_58, ex_59, ex_69a, ex_70, ex_71, ex_72, ex_84a, ex_84b, ex_89a, ex_89b, ex_90a, ex_90b, ex_99a, ex_99b, ex_100a, ex_100b, ex_101a, ex_101b, ex_102a, ex_102b, ex_103a, ex_103b, ex_107, ex_109, ex_110, ex_113, ex_114, ex_115a, ex_115b, ex_133c, ex_133d, ex_135a_i, ex_135a_ii, ex_135b_i, ex_135b_ii, ex_136a, ex_136b]
+def all : List Datum := [ex_21a, ex_21b, ex_21c, ex_21d, ex_22a, ex_22b, ex_22c, ex_22d, ex_4a, ex_4b, ex_5a, ex_5b, ex_6a, ex_6b, ex_7a, ex_7b, ex_8, ex_25a, ex_25b, ex_32a, ex_32b, ex_33a, ex_33b, ex_34a, ex_34b, ex_35a, ex_35b, ex_36a, ex_36b, ex_37a, ex_37b, ex_38a, ex_38b, ex_38c, ex_38d, ex_44, ex_45_indicative, ex_45_subjunctive, ex_51a, ex_51b, ex_52a, ex_52b, ex_58, ex_59, ex_69a, ex_70, ex_71, ex_72, ex_84a, ex_84b, ex_89a, ex_89b, ex_90a, ex_90b, ex_99a, ex_99b, ex_100a, ex_100b, ex_101a, ex_101b, ex_102a, ex_102b, ex_103a, ex_103b, ex_107, ex_109, ex_110, ex_113, ex_114, ex_115a, ex_115b, ex_133c, ex_133d, ex_135a_i, ex_135a_ii, ex_135b_i, ex_135b_ii, ex_136a, ex_136b]
 
 end Guerrini2026.Examples

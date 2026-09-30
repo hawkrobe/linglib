@@ -15,9 +15,7 @@ this module; declarations live in `namespace ArnoldEtAl2000.Examples`.
 
 namespace ArnoldEtAl2000.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "arnoldetal2000_1"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "HNPS")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "arnoldetal2000_2"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "DA")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "arnoldetal2000_3"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(3)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "verb-particle")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "arnoldetal2000_5"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(5)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "HNPS"), ("first", "to Mary"), ("second", "the valuable book that was extremely difficult to find"), ("eicWords", "4")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "arnoldetal2000_6"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(6)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "HNPS"), ("first", "with the processing account"), ("second", "the claim that a subjectless sentence is not a grammatical option for the child, and that the omission is due to some aspect of performance")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "arnoldetal2000_8"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(8)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "HNPS"), ("first", "to the plate"), ("second", "Barry Bonds"), ("exception", "planning")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "arnoldetal2000_9"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(9)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "HNPS"), ("shifted", "a grammar; an optimal structure"), ("newness", "new")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "arnoldetal2000_10"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(10)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "HNPS"), ("first", "in the inner city"), ("second", "the fifth graders who could really take off"), ("function", "ambiguity avoidance")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "arnoldetal2000_11"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(11)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "HNPS"), ("first", "last July"), ("second", "his plans to quit"), ("function", "ambiguity avoidance")] }
 
-def t1_bring : LinguisticExample :=
+def t1_bring : Datum :=
   { id := "arnoldetal2000_t1_bring"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 1"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def t1_bring : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "HNPS"), ("verb", "bring to"), ("order", "nonshifted"), ("first", "tears"), ("second", "to the eyes of the Statue of Justice that stands silently in front of the Supreme Court of Canada")] }
 
-def t1_take : LinguisticExample :=
+def t1_take : Datum :=
   { id := "arnoldetal2000_t1_take"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 1"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def t1_take : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "HNPS"), ("verb", "take into account"), ("order", "shifted"), ("first", "into account"), ("second", "the need not to be overtaken by the constant evolution of the labour market")] }
 
-def t1_give : LinguisticExample :=
+def t1_give : Datum :=
   { id := "arnoldetal2000_t1_give"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 1"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def t1_give : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "DA"), ("verb", "give"), ("order", "prepositional"), ("first", "its business"), ("second", "to a friend of the Government")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "arnoldetal2000_12"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(12)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "DA")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "arnoldetal2000_13"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(13)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "DA"), ("order", "prepositional"), ("given", "theme"), ("first", "that"), ("second", "to the red dog")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "arnoldetal2000_14"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(14)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "DA"), ("order", "double object"), ("given", "both")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "arnoldetal2000_16"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(16)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "DA"), ("elliptical", "true")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "arnoldetal2000_17"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(17)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "DA"), ("first", "much consideration and attention"), ("second", "to it"), ("newness", "first new, second given"), ("exception", "other factors")] }
 
-def t4_do : LinguisticExample :=
+def t4_do : Datum :=
   { id := "arnoldetal2000_t4_do"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 4"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def t4_do : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "double object"), ("orderClass", "goal first")] }
 
-def t4_hnps : LinguisticExample :=
+def t4_hnps : Datum :=
   { id := "arnoldetal2000_t4_hnps"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 4"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def t4_hnps : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "heavy-NP-shifted"), ("orderClass", "goal first")] }
 
-def t4_passg : LinguisticExample :=
+def t4_passg : Datum :=
   { id := "arnoldetal2000_t4_passg"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 4"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def t4_passg : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passivized goal"), ("orderClass", "goal first")] }
 
-def t4_dotop : LinguisticExample :=
+def t4_dotop : Datum :=
   { id := "arnoldetal2000_t4_dotop"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 4"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def t4_dotop : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "double object, goal topicalized"), ("orderClass", "goal first")] }
 
-def t4_preptop : LinguisticExample :=
+def t4_preptop : Datum :=
   { id := "arnoldetal2000_t4_preptop"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 4"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def t4_preptop : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "prepositional, goal topicalized"), ("orderClass", "goal first")] }
 
-def t4_prep : LinguisticExample :=
+def t4_prep : Datum :=
   { id := "arnoldetal2000_t4_prep"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 4"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def t4_prep : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "prepositional"), ("orderClass", "theme first")] }
 
-def t4_passt : LinguisticExample :=
+def t4_passt : Datum :=
   { id := "arnoldetal2000_t4_passt"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 4"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def t4_passt : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "passivized theme"), ("orderClass", "theme first")] }
 
-def t4_prepttop : LinguisticExample :=
+def t4_prepttop : Datum :=
   { id := "arnoldetal2000_t4_prepttop"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "Table 4"⟩
     reportedIn := none
@@ -342,6 +340,6 @@ def t4_prepttop : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "prepositional, theme topicalized"), ("orderClass", "theme first")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_5, ex_6, ex_8, ex_9, ex_10, ex_11, t1_bring, t1_take, t1_give, ex_12, ex_13, ex_14, ex_16, ex_17, t4_do, t4_hnps, t4_passg, t4_dotop, t4_preptop, t4_prep, t4_passt, t4_prepttop]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_5, ex_6, ex_8, ex_9, ex_10, ex_11, t1_bring, t1_take, t1_give, ex_12, ex_13, ex_14, ex_16, ex_17, t4_do, t4_hnps, t4_passg, t4_dotop, t4_preptop, t4_prep, t4_passt, t4_prepttop]
 
 end ArnoldEtAl2000.Examples

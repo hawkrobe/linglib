@@ -15,9 +15,7 @@ this module; declarations live in `namespace AloniVanOrmondt2023.Examples`.
 
 namespace AloniVanOrmondt2023.Examples
 
-open Data.Examples
-
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "alonivanormondt2023_3a"
     source := ⟨"aloni-vanormondt-2023", "(3a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("inference", "ignorance")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "alonivanormondt2023_3b"
     source := ⟨"aloni-vanormondt-2023", "(3b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "comparative"), ("numeral", "2"), ("inference", "none")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "alonivanormondt2023_4a"
     source := ⟨"aloni-vanormondt-2023", "(4a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "10"), ("inference", "ignorance")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "alonivanormondt2023_4b"
     source := ⟨"aloni-vanormondt-2023", "(4b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "comparative"), ("numeral", "11"), ("inference", "none")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "alonivanormondt2023_5"
     source := ⟨"aloni-vanormondt-2023", "(5)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "bare"), ("numeral", "3"), ("inference", "exact")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "alonivanormondt2023_6"
     source := ⟨"aloni-vanormondt-2023", "(6)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("inference", "ignorance")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "alonivanormondt2023_7"
     source := ⟨"aloni-vanormondt-2023", "(7)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "comparative"), ("numeral", "2"), ("inference", "none")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "alonivanormondt2023_10"
     source := ⟨"aloni-vanormondt-2023", "(10)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_10 : LinguisticExample :=
     readings := [("The speaker does not know who", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("inference", "ignorance")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "alonivanormondt2023_11"
     source := ⟨"aloni-vanormondt-2023", "(11)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_11 : LinguisticExample :=
     readings := [("The speaker does not know how many", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("inference", "ignorance")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "alonivanormondt2023_12"
     source := ⟨"aloni-vanormondt-2023", "(12)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "disjunction"), ("inference", "ignorance")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "alonivanormondt2023_13"
     source := ⟨"aloni-vanormondt-2023", "(13)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "disjunction"), ("inference", "ignorance")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "alonivanormondt2023_18"
     source := ⟨"aloni-vanormondt-2023", "(18)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_18 : LinguisticExample :=
     readings := [("It is possible that Klaus married Paul and it is possible that Klaus married John", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("inference", "ignorance")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "alonivanormondt2023_19"
     source := ⟨"aloni-vanormondt-2023", "(19)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_19 : LinguisticExample :=
     readings := [("It is possible that the band has exactly three players and it is possible that it has more", .acceptable)]
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("inference", "ignorance")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "alonivanormondt2023_20"
     source := ⟨"aloni-vanormondt-2023", "(20)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("embedding", "universal"), ("inference", "obviation")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "alonivanormondt2023_21"
     source := ⟨"aloni-vanormondt-2023", "(21)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_21 : LinguisticExample :=
     readings := [("Authoritative: it has to be the case that Paprika reads three or more books", .acceptable), ("Epistemic: three or more is such that Paprika has to read that many", .acceptable)]
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("embedding", "necessity"), ("inference", "obviation")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "alonivanormondt2023_22"
     source := ⟨"aloni-vanormondt-2023", "(22)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "5"), ("embedding", "necessity"), ("inference", "obviation"), ("reading", "authoritative")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "alonivanormondt2023_23"
     source := ⟨"aloni-vanormondt-2023", "(23)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "200000"), ("embedding", "necessity"), ("inference", "ignorance"), ("reading", "epistemic")] }
 
-def ex_24a : LinguisticExample :=
+def ex_24a : Datum :=
   { id := "alonivanormondt2023_24a"
     source := ⟨"aloni-vanormondt-2023", "(24a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "disjunction"), ("inference", "ignorance")] }
 
-def ex_25a : LinguisticExample :=
+def ex_25a : Datum :=
   { id := "alonivanormondt2023_25a"
     source := ⟨"aloni-vanormondt-2023", "(25a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "disjunction"), ("embedding", "universal"), ("inference", "obviation")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "alonivanormondt2023_26"
     source := ⟨"aloni-vanormondt-2023", "(26)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_26 : LinguisticExample :=
     readings := [("Authoritative", .acceptable), ("Epistemic", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "necessity"), ("inference", "obviation")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "alonivanormondt2023_27"
     source := ⟨"aloni-vanormondt-2023", "(27)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_27 : LinguisticExample :=
     readings := [("Some woman has two and some woman has three children", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "universal"), ("inference", "distribution"), ("knowledge", "full")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "alonivanormondt2023_28"
     source := ⟨"aloni-vanormondt-2023", "(28)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_28 : LinguisticExample :=
     readings := [("Some woman might have two and some woman might have three children", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "universal"), ("inference", "distributionEpi"), ("knowledge", "partial")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "alonivanormondt2023_29"
     source := ⟨"aloni-vanormondt-2023", "(29)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_29 : LinguisticExample :=
     readings := [("Full knowledge: some woman has three and some woman has more than three children", .acceptable), ("Partial information: some woman might have three and some woman might have more", .acceptable)]
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("embedding", "universal"), ("inference", "distribution")] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "alonivanormondt2023_30a"
     source := ⟨"aloni-vanormondt-2023", "(30a)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_30a : LinguisticExample :=
     readings := [("You are allowed to give a presentation and you are allowed to write a short paper", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "necessity"), ("inference", "boxFreeChoice")] }
 
-def ex_31a : LinguisticExample :=
+def ex_31a : Datum :=
   { id := "alonivanormondt2023_31a"
     source := ⟨"aloni-vanormondt-2023", "(31a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_31a : LinguisticExample :=
     readings := [("You are allowed to read three books and you are allowed to read more", .acceptable)]
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("embedding", "necessity"), ("inference", "boxFreeChoice"), ("reading", "authoritative")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "alonivanormondt2023_34"
     source := ⟨"aloni-vanormondt-2023", "(34)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_34 : LinguisticExample :=
     readings := [("Some brother has been married to a woman and some brother has been married to a man", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "universal"), ("inference", "distribution")] }
 
-def ex_35a : LinguisticExample :=
+def ex_35a : Datum :=
   { id := "alonivanormondt2023_35a"
     source := ⟨"aloni-vanormondt-2023", "(35a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_35a : LinguisticExample :=
     readings := [("You may have coffee and you may have tea", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "possibility"), ("inference", "diamondFreeChoice")] }
 
-def ex_39a : LinguisticExample :=
+def ex_39a : Datum :=
   { id := "alonivanormondt2023_39a"
     source := ⟨"aloni-vanormondt-2023", "(39a)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_39a : LinguisticExample :=
     readings := [("Some woman has two and some woman has three", .unacceptable), ("Some woman in my family might have two children and might have three children", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "existential"), ("inference", "ignorance")] }
 
-def ex_40a : LinguisticExample :=
+def ex_40a : Datum :=
   { id := "alonivanormondt2023_40a"
     source := ⟨"aloni-vanormondt-2023", "(40a)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_40a : LinguisticExample :=
     readings := [("Klaus did not marry either of the two", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "negation"), ("inference", "negation")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "alonivanormondt2023_41"
     source := ⟨"aloni-vanormondt-2023", "(41)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("embedding", "negation"), ("inference", "negation")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "alonivanormondt2023_42"
     source := ⟨"aloni-vanormondt-2023", "(42)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "comparative"), ("numeral", "3"), ("inference", "none")] }
 
-def ex_45a : LinguisticExample :=
+def ex_45a : Datum :=
   { id := "alonivanormondt2023_45a"
     source := ⟨"aloni-vanormondt-2023", "(45a)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_45a : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("translation", "three ∨ more")] }
 
-def ex_46a : LinguisticExample :=
+def ex_46a : Datum :=
   { id := "alonivanormondt2023_46a"
     source := ⟨"aloni-vanormondt-2023", "(46a)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_46a : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("translation", "three ∨ less")] }
 
-def ex_47a : LinguisticExample :=
+def ex_47a : Datum :=
   { id := "alonivanormondt2023_47a"
     source := ⟨"aloni-vanormondt-2023", "(47a)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_47a : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "comparative"), ("numeral", "2"), ("translation", "more-than-two")] }
 
-def ex_48a : LinguisticExample :=
+def ex_48a : Datum :=
   { id := "alonivanormondt2023_48a"
     source := ⟨"aloni-vanormondt-2023", "(48a)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_48a : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "comparative"), ("numeral", "2"), ("translation", "less-than-two")] }
 
-def ex_63a : LinguisticExample :=
+def ex_63a : Datum :=
   { id := "alonivanormondt2023_63a"
     source := ⟨"aloni-vanormondt-2023", "(63a)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_63a : LinguisticExample :=
     readings := [("All of the boys may go to the beach and all of the boys may go to the cinema", .acceptable)]
     paperFeatures := [("construction", "disjunction"), ("embedding", "universalPossibility"), ("inference", "universalFreeChoice")] }
 
-def ex_64 : LinguisticExample :=
+def ex_64 : Datum :=
   { id := "alonivanormondt2023_64"
     source := ⟨"aloni-vanormondt-2023", "(64)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_64 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "3"), ("embedding", "negation"), ("inference", "negation")] }
 
-def ex_65 : LinguisticExample :=
+def ex_65 : Datum :=
   { id := "alonivanormondt2023_65"
     source := ⟨"aloni-vanormondt-2023", "(65)"⟩
     reportedIn := none
@@ -511,6 +509,6 @@ def ex_65 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "superlative"), ("numeral", "2"), ("embedding", "restrictor")] }
 
-def all : List LinguisticExample := [ex_3a, ex_3b, ex_4a, ex_4b, ex_5, ex_6, ex_7, ex_10, ex_11, ex_12, ex_13, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24a, ex_25a, ex_26, ex_27, ex_28, ex_29, ex_30a, ex_31a, ex_34, ex_35a, ex_39a, ex_40a, ex_41, ex_42, ex_45a, ex_46a, ex_47a, ex_48a, ex_63a, ex_64, ex_65]
+def all : List Datum := [ex_3a, ex_3b, ex_4a, ex_4b, ex_5, ex_6, ex_7, ex_10, ex_11, ex_12, ex_13, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24a, ex_25a, ex_26, ex_27, ex_28, ex_29, ex_30a, ex_31a, ex_34, ex_35a, ex_39a, ex_40a, ex_41, ex_42, ex_45a, ex_46a, ex_47a, ex_48a, ex_63a, ex_64, ex_65]
 
 end AloniVanOrmondt2023.Examples

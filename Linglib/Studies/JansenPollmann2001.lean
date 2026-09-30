@@ -57,7 +57,7 @@ frequency on magnitude and the four properties stays in prose.
 
 namespace JansenPollmann2001
 
-open Data.Examples Numerals.Roundness
+open Numerals.Roundness
 
 /-! ### The principle of favourite quantities (pp. 200–201) -/
 
@@ -162,7 +162,7 @@ theorem quarter_unit_not_seqRatio : IsFavUnit 25 ∧ ¬ SeqRatio 25 :=
 /-! ### The rows -/
 
 /-- A two-number approximative expression of the paper with its acceptability. -/
-def pairRow (r : LinguisticExample) : Option (ℕ × ℕ × Bool) := do
+def pairRow (r : Datum) : Option (ℕ × ℕ × Bool) := do
   let a ← r.nat? "first"
   let b ← r.nat? "second"
   pure (a, b, decide (r.judgment = .acceptable))
@@ -176,7 +176,7 @@ theorem pair_rows : ∀ d ∈ pairData, d.2.2 = true ↔ SeqPair d.1 d.2.1 := by
 
 /-- A single number with the three properties the paper reads off it: 10-ness, 2-ness, and
 5-ness. -/
-def numberRow (r : LinguisticExample) : Option (ℕ × Bool × Bool × Bool) := do
+def numberRow (r : Datum) : Option (ℕ × Bool × Bool × Bool) := do
   let n ← r.nat? "n"
   let ten ← r.parse? "tenness" [("true", true), ("false", false)]
   let two ← r.parse? "twoness" [("true", true), ("false", false)]

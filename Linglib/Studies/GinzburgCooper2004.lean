@@ -55,7 +55,7 @@ the participants share the sub-utterance's content, the constituent reading does
 
 namespace GinzburgCooper2004
 
-open Discourse.Gameboard Data.Examples
+open Discourse.Gameboard
 
 variable {V Cont : Type}
 
@@ -329,12 +329,12 @@ structure Row where
   antecedent : SubUtterance
   fragment : SubUtterance
   access : Access
-  clausal : Option Data.Examples.Judgment
-  constituent : Option Data.Examples.Judgment
-  judgment : Data.Examples.Judgment
+  clausal : Option Judgment
+  constituent : Option Judgment
+  judgment : Judgment
   deriving DecidableEq
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let ant ← ex.feature? "antecedent"
   let antCat ← ex.feature? "antecedentCat"
   let frag ← ex.feature? "fragment"
@@ -349,7 +349,7 @@ def Row.sign (r : Row) : LocProp Unit :=
   { phon := "", cat := "S", cont := (), cparams := [⟨"x", ""⟩], constits := [r.antecedent] }
 
 /-- The nineteen dialogues of (4), (6), (8)–(13). -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The clausal reading is judged available exactly when the fragment resolves against the
 focussing context with shared content. -/

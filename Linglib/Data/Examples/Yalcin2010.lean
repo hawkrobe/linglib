@@ -15,9 +15,7 @@ this module; declarations live in `namespace Yalcin2010.Examples`.
 
 namespace Yalcin2010.Examples
 
-open Data.Examples
-
-def die_p1 : LinguisticExample :=
+def die_p1 : Datum :=
   { id := "yalcin2010_die_p1"
     source := ⟨"yalcin-2010", "(P1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def die_p1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("pattern", "E1"), ("probability", "8/12")] }
 
-def die_p2 : LinguisticExample :=
+def die_p2 : Datum :=
   { id := "yalcin2010_die_p2"
     source := ⟨"yalcin-2010", "(P2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def die_p2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("pattern", "E1"), ("probability", "8/12")] }
 
-def die_c : LinguisticExample :=
+def die_c : Datum :=
   { id := "yalcin2010_die_c"
     source := ⟨"yalcin-2010", "(C)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def die_c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("pattern", "E1"), ("probability", "4/12")] }
 
-def ex8 : LinguisticExample :=
+def ex8 : Datum :=
   { id := "yalcin2010_ex8"
     source := ⟨"yalcin-2010", "(8)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex8 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("reading", "appreciably more likely than not")] }
 
-def ex9 : LinguisticExample :=
+def ex9 : Datum :=
   { id := "yalcin2010_ex9"
     source := ⟨"yalcin-2010", "(9)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex9 : LinguisticExample :=
     readings := [("probably > everyone", .acceptable), ("everyone > probably", .unacceptable)]
     paperFeatures := [("section", "7"), ("principle", "epistemic containment")] }
 
-def ex17 : LinguisticExample :=
+def ex17 : Datum :=
   { id := "yalcin2010_ex17"
     source := ⟨"yalcin-2010", "(17)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex17 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("embedding", "imagine")] }
 
-def ex18 : LinguisticExample :=
+def ex18 : Datum :=
   { id := "yalcin2010_ex18"
     source := ⟨"yalcin-2010", "(18)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex18 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("embedding", "imagine")] }
 
-def ex19 : LinguisticExample :=
+def ex19 : Datum :=
   { id := "yalcin2010_ex19"
     source := ⟨"yalcin-2010", "(19)"⟩
     reportedIn := none
@@ -121,6 +119,6 @@ def ex19 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("phenomenon", "modal concord")] }
 
-def all : List LinguisticExample := [die_p1, die_p2, die_c, ex8, ex9, ex17, ex18, ex19]
+def all : List Datum := [die_p1, die_p2, die_c, ex8, ex9, ex17, ex18, ex19]
 
 end Yalcin2010.Examples

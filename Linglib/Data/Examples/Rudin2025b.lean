@@ -15,9 +15,7 @@ this module; declarations live in `namespace Rudin2025b.Examples`.
 
 namespace Rudin2025b.Examples
 
-open Data.Examples
-
-def ex6b_wonder : LinguisticExample :=
+def ex6b_wonder : Datum :=
   { id := "rudin2025b_ex6b_wonder"
     source := ⟨"rudin-2025b", "(6b)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex6b_wonder : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "wonder"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "neutral")] }
 
-def ex7b_claim : LinguisticExample :=
+def ex7b_claim : Datum :=
   { id := "rudin2025b_ex7b_claim"
     source := ⟨"rudin-2025b", "(7b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex7b_claim : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "claim"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "neutral")] }
 
-def ex8_whisper : LinguisticExample :=
+def ex8_whisper : Datum :=
   { id := "rudin2025b_ex8_whisper"
     source := ⟨"rudin-2025b", "(8)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex8_whisper : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "whisper"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "whispered")] }
 
-def ex10_shout : LinguisticExample :=
+def ex10_shout : Datum :=
   { id := "rudin2025b_ex10_shout"
     source := ⟨"rudin-2025b", "(10)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex10_shout : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "shout"), ("material", "sentence"), ("mood", "interrogative"), ("tune", "rising"), ("volume", "loud")] }
 
-def ex12a : LinguisticExample :=
+def ex12a : Datum :=
   { id := "rudin2025b_ex12a"
     source := ⟨"rudin-2025b", "(12a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex12a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ask"), ("material", "sentence"), ("mood", "interrogative"), ("tune", "rising"), ("volume", "neutral")] }
 
-def ex18a : LinguisticExample :=
+def ex18a : Datum :=
   { id := "rudin2025b_ex18a"
     source := ⟨"rudin-2025b", "(18a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex18a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "say"), ("material", "sentence"), ("mood", "declarative"), ("tune", "falling"), ("volume", "neutral")] }
 
-def ex37a : LinguisticExample :=
+def ex37a : Datum :=
   { id := "rudin2025b_ex37a"
     source := ⟨"rudin-2025b", "(37a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex37a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "say"), ("material", "inarticulate"), ("volume", "neutral")] }
 
-def ex42a : LinguisticExample :=
+def ex42a : Datum :=
   { id := "rudin2025b_ex42a"
     source := ⟨"rudin-2025b", "(42a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex42a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "say"), ("material", "none"), ("volume", "neutral")] }
 
-def ex48 : LinguisticExample :=
+def ex48 : Datum :=
   { id := "rudin2025b_ex48"
     source := ⟨"rudin-2025b", "(48)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex48 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "say"), ("material", "sentence"), ("mood", "interrogative"), ("tune", "rising"), ("volume", "neutral")] }
 
-def ex49 : LinguisticExample :=
+def ex49 : Datum :=
   { id := "rudin2025b_ex49"
     source := ⟨"rudin-2025b", "(49)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex49 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "say"), ("material", "inarticulate"), ("volume", "neutral")] }
 
-def ex69a : LinguisticExample :=
+def ex69a : Datum :=
   { id := "rudin2025b_ex69a"
     source := ⟨"rudin-2025b", "(69a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex69a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "yell"), ("material", "sentence"), ("mood", "declarative"), ("tune", "falling"), ("volume", "loud")] }
 
-def ex69b : LinguisticExample :=
+def ex69b : Datum :=
   { id := "rudin2025b_ex69b"
     source := ⟨"rudin-2025b", "(69b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex69b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "yell"), ("material", "sentence"), ("mood", "declarative"), ("tune", "falling"), ("volume", "whispered")] }
 
-def ex70a : LinguisticExample :=
+def ex70a : Datum :=
   { id := "rudin2025b_ex70a"
     source := ⟨"rudin-2025b", "(70a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex70a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "whisper"), ("material", "sentence"), ("mood", "declarative"), ("tune", "falling"), ("volume", "loud")] }
 
-def ex70b : LinguisticExample :=
+def ex70b : Datum :=
   { id := "rudin2025b_ex70b"
     source := ⟨"rudin-2025b", "(70b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex70b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "whisper"), ("material", "sentence"), ("mood", "declarative"), ("tune", "falling"), ("volume", "whispered")] }
 
-def ex74a : LinguisticExample :=
+def ex74a : Datum :=
   { id := "rudin2025b_ex74a"
     source := ⟨"rudin-2025b", "(74a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex74a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "say"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "neutral")] }
 
-def ex75 : LinguisticExample :=
+def ex75 : Datum :=
   { id := "rudin2025b_ex75"
     source := ⟨"rudin-2025b", "(75)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex75 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "yell"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "loud")] }
 
-def ex78a : LinguisticExample :=
+def ex78a : Datum :=
   { id := "rudin2025b_ex78a"
     source := ⟨"rudin-2025b", "(78a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex78a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "assert"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "neutral")] }
 
-def ex82a : LinguisticExample :=
+def ex82a : Datum :=
   { id := "rudin2025b_ex82a"
     source := ⟨"rudin-2025b", "(82a)"⟩
     reportedIn := none
@@ -251,6 +249,6 @@ def ex82a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ask"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "neutral")] }
 
-def all : List LinguisticExample := [ex6b_wonder, ex7b_claim, ex8_whisper, ex10_shout, ex12a, ex18a, ex37a, ex42a, ex48, ex49, ex69a, ex69b, ex70a, ex70b, ex74a, ex75, ex78a, ex82a]
+def all : List Datum := [ex6b_wonder, ex7b_claim, ex8_whisper, ex10_shout, ex12a, ex18a, ex37a, ex42a, ex48, ex49, ex69a, ex69b, ex70a, ex70b, ex74a, ex75, ex78a, ex82a]
 
 end Rudin2025b.Examples

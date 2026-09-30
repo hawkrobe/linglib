@@ -15,9 +15,7 @@ this module; declarations live in `namespace Downing1996.Examples`.
 
 namespace Downing1996.Examples
 
-open Data.Examples
-
-def ex_1_14 : LinguisticExample :=
+def ex_1_14 : Datum :=
   { id := "downing1996_1_14"
     source := ⟨"downing-1996", "(14), Chapter 1"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "1"), ("classifier", "kenBuilding"), ("criterion", "cooccursWithNoun")] }
 
-def ex_1_15 : LinguisticExample :=
+def ex_1_15 : Datum :=
   { id := "downing1996_1_15"
     source := ⟨"downing-1996", "(15), Chapter 1"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_1_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "1"), ("criterion", "cooccursWithNoun")] }
 
-def ex_3_2a : LinguisticExample :=
+def ex_3_2a : Datum :=
   { id := "downing1996_3_2a"
     source := ⟨"downing-1996", "(2a), Chapter 3"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "3"), ("trait", "withoutNoun")] }
 
-def ex_3_2b : LinguisticExample :=
+def ex_3_2b : Datum :=
   { id := "downing1996_3_2b"
     source := ⟨"downing-1996", "(2b), Chapter 3"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_3_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "3"), ("classifier", "tsubu"), ("trait", "withoutNoun")] }
 
-def ex_3_3 : LinguisticExample :=
+def ex_3_3 : Datum :=
   { id := "downing1996_3_3"
     source := ⟨"downing-1996", "(3), Chapter 3"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_3_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "3"), ("classifier", "hiki"), ("trait", "alternation")] }
 
-def ex_3_4 : LinguisticExample :=
+def ex_3_4 : Datum :=
   { id := "downing1996_3_4"
     source := ⟨"downing-1996", "(4), Chapter 3"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_3_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "3"), ("classifier", "tsu"), ("trait", "alternation")] }
 
-def ex_3_5a : LinguisticExample :=
+def ex_3_5a : Datum :=
   { id := "downing1996_3_5a"
     source := ⟨"downing-1996", "(5a), Chapter 3"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_3_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "3"), ("classifier", "nin"), ("trait", "alternation")] }
 
-def ex_3_33 : LinguisticExample :=
+def ex_3_33 : Datum :=
   { id := "downing1996_3_33"
     source := ⟨"downing-1996", "(33), Chapter 3"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_3_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "3"), ("cohesion", "kind"), ("function", "disambiguation")] }
 
-def ex_3_35 : LinguisticExample :=
+def ex_3_35 : Datum :=
   { id := "downing1996_3_35"
     source := ⟨"downing-1996", "(35), Chapter 3"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_3_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "3"), ("cohesion", "quality"), ("function", "disambiguation")] }
 
-def ex_3_36 : LinguisticExample :=
+def ex_3_36 : Datum :=
   { id := "downing1996_3_36"
     source := ⟨"downing-1996", "(36), Chapter 3"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_3_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "3"), ("cohesion", "quality"), ("function", "disambiguation")] }
 
-def ex_3_37a : LinguisticExample :=
+def ex_3_37a : Datum :=
   { id := "downing1996_3_37a"
     source := ⟨"downing-1996", "(37a), Chapter 3"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_3_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "3"), ("classifier", "hon"), ("cohesion", "quality"), ("function", "addingInformation")] }
 
-def ex_3_38 : LinguisticExample :=
+def ex_3_38 : Datum :=
   { id := "downing1996_3_38"
     source := ⟨"downing-1996", "(38), Chapter 3"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_3_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "3"), ("classifier", "ten"), ("function", "addingInformation")] }
 
-def ex_3_39 : LinguisticExample :=
+def ex_3_39 : Datum :=
   { id := "downing1996_3_39"
     source := ⟨"downing-1996", "(39), Chapter 3"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_3_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "3"), ("classifier", "mai"), ("cohesion", "quality"), ("function", "addingInformation")] }
 
-def ex_5_7 : LinguisticExample :=
+def ex_5_7 : Datum :=
   { id := "downing1996_5_7"
     source := ⟨"downing-1996", "(7), Chapter 5"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_5_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "5"), ("classifier", "wa"), ("function", "predication")] }
 
-def ex_5_9 : LinguisticExample :=
+def ex_5_9 : Datum :=
   { id := "downing1996_5_9"
     source := ⟨"downing-1996", "(9), Chapter 5"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_5_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "5"), ("function", "disambiguation")] }
 
-def ex_6_2 : LinguisticExample :=
+def ex_6_2 : Datum :=
   { id := "downing1996_6_2"
     source := ⟨"downing-1996", "(2), Chapter 6"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_6_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "6"), ("classifier", "hiki"), ("use", "predicate")] }
 
-def ex_6_5 : LinguisticExample :=
+def ex_6_5 : Datum :=
   { id := "downing1996_6_5"
     source := ⟨"downing-1996", "(5), Chapter 6"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_6_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "6"), ("classifier", "hiki"), ("use", "additionalMembers")] }
 
-def ex_6_6 : LinguisticExample :=
+def ex_6_6 : Datum :=
   { id := "downing1996_6_6"
     source := ⟨"downing-1996", "(6), Chapter 6"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_6_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "6"), ("classifier", "nin"), ("use", "subsets")] }
 
-def ex_6_9 : LinguisticExample :=
+def ex_6_9 : Datum :=
   { id := "downing1996_6_9"
     source := ⟨"downing-1996", "(9), Chapter 6"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_6_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "6"), ("classifier", "nin"), ("use", "anaphoric")] }
 
-def ex_6_13 : LinguisticExample :=
+def ex_6_13 : Datum :=
   { id := "downing1996_6_13"
     source := ⟨"downing-1996", "(13), Chapter 6"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_6_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "6"), ("classifier", "nin"), ("construction", "preNominal"), ("use", "introduction")] }
 
-def ex_6_20 : LinguisticExample :=
+def ex_6_20 : Datum :=
   { id := "downing1996_6_20"
     source := ⟨"downing-1996", "(20), Chapter 6"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_6_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "6"), ("classifier", "nin"), ("use", "anaphoric")] }
 
-def ex_7_2b : LinguisticExample :=
+def ex_7_2b : Datum :=
   { id := "downing1996_7_2b"
     source := ⟨"downing-1996", "(2b), Chapter 7"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_7_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "7"), ("classifier", "nin"), ("number", "classifierAndPlural")] }
 
-def ex_7_3 : LinguisticExample :=
+def ex_7_3 : Datum :=
   { id := "downing1996_7_3"
     source := ⟨"downing-1996", "(3), Chapter 7"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_7_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "7"), ("number", "transnumeral")] }
 
-def ex_7_4 : LinguisticExample :=
+def ex_7_4 : Datum :=
   { id := "downing1996_7_4"
     source := ⟨"downing-1996", "(4), Chapter 7"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_7_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "7"), ("classifier", "hon"), ("construction", "qFloat"), ("number", "unitizing")] }
 
-def ex_7_6a : LinguisticExample :=
+def ex_7_6a : Datum :=
   { id := "downing1996_7_6a"
     source := ⟨"downing-1996", "(6a), Chapter 7"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_7_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "7"), ("referent", "human"), ("head", "commonNoun"), ("number", "pluralPossible")] }
 
-def ex_7_7a : LinguisticExample :=
+def ex_7_7a : Datum :=
   { id := "downing1996_7_7a"
     source := ⟨"downing-1996", "(7a), Chapter 7"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_7_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "7"), ("referent", "animate"), ("head", "commonNoun"), ("number", "pluralRare")] }
 
-def ex_7_8a : LinguisticExample :=
+def ex_7_8a : Datum :=
   { id := "downing1996_7_8a"
     source := ⟨"downing-1996", "(8a), Chapter 7"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_7_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "7"), ("referent", "inanimate"), ("head", "commonNoun"), ("number", "pluralImpossible")] }
 
-def ex_7_9 : LinguisticExample :=
+def ex_7_9 : Datum :=
   { id := "downing1996_7_9"
     source := ⟨"downing-1996", "(9), Chapter 7"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_7_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "7"), ("referent", "inanimate"), ("head", "pronoun"), ("number", "pluralRequired")] }
 
-def ex_7_10 : LinguisticExample :=
+def ex_7_10 : Datum :=
   { id := "downing1996_7_10"
     source := ⟨"downing-1996", "(10), Chapter 7"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_7_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "7"), ("referent", "human"), ("head", "pronoun"), ("number", "pluralRequired")] }
 
-def ex_7_11 : LinguisticExample :=
+def ex_7_11 : Datum :=
   { id := "downing1996_7_11"
     source := ⟨"downing-1996", "(11), Chapter 7"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_7_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "7"), ("referent", "human"), ("head", "properNoun"), ("number", "associativePlural")] }
 
-def ex_7_12 : LinguisticExample :=
+def ex_7_12 : Datum :=
   { id := "downing1996_7_12"
     source := ⟨"downing-1996", "(12), Chapter 7"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_7_12 : LinguisticExample :=
     readings := [("class plural: the mothers", .acceptable), ("associative: Mother and the others", .acceptable)]
     paperFeatures := [("chapter", "7"), ("referent", "human"), ("head", "commonNoun"), ("number", "classPlural")] }
 
-def ex_7_16 : LinguisticExample :=
+def ex_7_16 : Datum :=
   { id := "downing1996_7_16"
     source := ⟨"downing-1996", "(16), Chapter 7"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_7_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "7"), ("referent", "human"), ("number", "tracking"), ("mentions", "classifierPhrase,pluralMarked,pluralMarked")] }
 
-def ex_7_18 : LinguisticExample :=
+def ex_7_18 : Datum :=
   { id := "downing1996_7_18"
     source := ⟨"downing-1996", "(18), Chapter 7"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_7_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "7"), ("classifier", "hiki"), ("number", "unitizing")] }
 
-def ex_7_23 : LinguisticExample :=
+def ex_7_23 : Datum :=
   { id := "downing1996_7_23"
     source := ⟨"downing-1996", "(23), Chapter 7"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_7_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "7"), ("referent", "human"), ("number", "tracking"), ("mentions", "classifierPhrase,pluralMarked")] }
 
-def ex_8_1 : LinguisticExample :=
+def ex_8_1 : Datum :=
   { id := "downing1996_8_1"
     source := ⟨"downing-1996", "(1), Chapter 8"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_8_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("classifier", "dai"), ("construction", "preNominal")] }
 
-def ex_8_2 : LinguisticExample :=
+def ex_8_2 : Datum :=
   { id := "downing1996_8_2"
     source := ⟨"downing-1996", "(2), Chapter 8"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_8_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("classifier", "hon"), ("construction", "preNominal")] }
 
-def ex_8_3 : LinguisticExample :=
+def ex_8_3 : Datum :=
   { id := "downing1996_8_3"
     source := ⟨"downing-1996", "(3), Chapter 8"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_8_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("classifier", "nin"), ("construction", "preNominal")] }
 
-def ex_8_4 : LinguisticExample :=
+def ex_8_4 : Datum :=
   { id := "downing1996_8_4"
     source := ⟨"downing-1996", "(4), Chapter 8"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_8_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("classifier", "nin"), ("construction", "qFloat")] }
 
-def ex_8_5 : LinguisticExample :=
+def ex_8_5 : Datum :=
   { id := "downing1996_8_5"
     source := ⟨"downing-1996", "(5), Chapter 8"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_8_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("classifier", "nin"), ("construction", "appositive")] }
 
-def ex_8_8 : LinguisticExample :=
+def ex_8_8 : Datum :=
   { id := "downing1996_8_8"
     source := ⟨"downing-1996", "(8), Chapter 8"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_8_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("classifier", "tsu"), ("construction", "preNominal"), ("use", "definitenessBlocking")] }
 
-def ex_8_17 : LinguisticExample :=
+def ex_8_17 : Datum :=
   { id := "downing1996_8_17"
     source := ⟨"downing-1996", "(17), Chapter 8"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex_8_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("classifier", "nin"), ("construction", "appositive"), ("number", "associativePlural")] }
 
-def ex_8_19 : LinguisticExample :=
+def ex_8_19 : Datum :=
   { id := "downing1996_8_19"
     source := ⟨"downing-1996", "(19), Chapter 8"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex_8_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("classifier", "nin"), ("construction", "appositive"), ("use", "exhaustive")] }
 
-def ex_8_25 : LinguisticExample :=
+def ex_8_25 : Datum :=
   { id := "downing1996_8_25"
     source := ⟨"downing-1996", "(25), Chapter 8"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex_8_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("classifier", "nin"), ("construction", "summativeAppositive")] }
 
-def ex_8_28 : LinguisticExample :=
+def ex_8_28 : Datum :=
   { id := "downing1996_8_28"
     source := ⟨"downing-1996", "(28), Chapter 8"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex_8_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("classifier", "mai"), ("construction", "qFloat"), ("use", "distributive")] }
 
-def ex_8_30 : LinguisticExample :=
+def ex_8_30 : Datum :=
   { id := "downing1996_8_30"
     source := ⟨"downing-1996", "(30), Chapter 8"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex_8_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("classifier", "nin"), ("construction", "qFloat"), ("use", "introduction")] }
 
-def ex_8_31 : LinguisticExample :=
+def ex_8_31 : Datum :=
   { id := "downing1996_8_31"
     source := ⟨"downing-1996", "(31), Chapter 8"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex_8_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("classifier", "nin"), ("construction", "preNominal"), ("role", "oblique")] }
 
-def ex_8_33 : LinguisticExample :=
+def ex_8_33 : Datum :=
   { id := "downing1996_8_33"
     source := ⟨"downing-1996", "(33), Chapter 8"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex_8_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("classifier", "nin"), ("construction", "preNominal"), ("role", "dativeSubject")] }
 
-def ex_8_34 : LinguisticExample :=
+def ex_8_34 : Datum :=
   { id := "downing1996_8_34"
     source := ⟨"downing-1996", "(34), Chapter 8"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex_8_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("classifier", "nin"), ("construction", "qFloat"), ("role", "nominativeSubject")] }
 
-def ex_8_38 : LinguisticExample :=
+def ex_8_38 : Datum :=
   { id := "downing1996_8_38"
     source := ⟨"downing-1996", "(38a), Chapter 8"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex_8_38 : LinguisticExample :=
     readings := [("quantifies the object: three children", .acceptable), ("quantifies the transitive subject: three men", .marginal)]
     paperFeatures := [("chapter", "8"), ("classifier", "nin"), ("construction", "qFloat"), ("role", "object")] }
 
-def ex_8_39 : LinguisticExample :=
+def ex_8_39 : Datum :=
   { id := "downing1996_8_39"
     source := ⟨"downing-1996", "(39), Chapter 8"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex_8_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("classifier", "soo"), ("construction", "qFloat"), ("role", "unaccusativeSubject")] }
 
-def ex_8_42 : LinguisticExample :=
+def ex_8_42 : Datum :=
   { id := "downing1996_8_42"
     source := ⟨"downing-1996", "(42), Chapter 8"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex_8_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("classifier", "nin"), ("construction", "qFloat"), ("use", "partitive")] }
 
-def ex_8_43 : LinguisticExample :=
+def ex_8_43 : Datum :=
   { id := "downing1996_8_43"
     source := ⟨"downing-1996", "(43), Chapter 8"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex_8_43 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("construction", "qFloat"), ("use", "introduction"), ("mentions", "classifierPhrase,pluralMarked")] }
 
-def ex_8_44 : LinguisticExample :=
+def ex_8_44 : Datum :=
   { id := "downing1996_8_44"
     source := ⟨"downing-1996", "(44), Chapter 8"⟩
     reportedIn := none
@@ -706,6 +704,6 @@ def ex_8_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("classifier", "tsu"), ("construction", "preNominal")] }
 
-def all : List LinguisticExample := [ex_1_14, ex_1_15, ex_3_2a, ex_3_2b, ex_3_3, ex_3_4, ex_3_5a, ex_3_33, ex_3_35, ex_3_36, ex_3_37a, ex_3_38, ex_3_39, ex_5_7, ex_5_9, ex_6_2, ex_6_5, ex_6_6, ex_6_9, ex_6_13, ex_6_20, ex_7_2b, ex_7_3, ex_7_4, ex_7_6a, ex_7_7a, ex_7_8a, ex_7_9, ex_7_10, ex_7_11, ex_7_12, ex_7_16, ex_7_18, ex_7_23, ex_8_1, ex_8_2, ex_8_3, ex_8_4, ex_8_5, ex_8_8, ex_8_17, ex_8_19, ex_8_25, ex_8_28, ex_8_30, ex_8_31, ex_8_33, ex_8_34, ex_8_38, ex_8_39, ex_8_42, ex_8_43, ex_8_44]
+def all : List Datum := [ex_1_14, ex_1_15, ex_3_2a, ex_3_2b, ex_3_3, ex_3_4, ex_3_5a, ex_3_33, ex_3_35, ex_3_36, ex_3_37a, ex_3_38, ex_3_39, ex_5_7, ex_5_9, ex_6_2, ex_6_5, ex_6_6, ex_6_9, ex_6_13, ex_6_20, ex_7_2b, ex_7_3, ex_7_4, ex_7_6a, ex_7_7a, ex_7_8a, ex_7_9, ex_7_10, ex_7_11, ex_7_12, ex_7_16, ex_7_18, ex_7_23, ex_8_1, ex_8_2, ex_8_3, ex_8_4, ex_8_5, ex_8_8, ex_8_17, ex_8_19, ex_8_25, ex_8_28, ex_8_30, ex_8_31, ex_8_33, ex_8_34, ex_8_38, ex_8_39, ex_8_42, ex_8_43, ex_8_44]
 
 end Downing1996.Examples

@@ -15,9 +15,7 @@ this module; declarations live in `namespace Dekier2021.Examples`.
 
 namespace Dekier2021.Examples
 
-open Data.Examples
-
-def english : LinguisticExample :=
+def english : Datum :=
   { id := "dekier2021_english"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def english : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "English"), ("nonSpecific", "some-"), ("specificUnknown", "some-"), ("specificKnown", "some-")] }
 
-def polish : LinguisticExample :=
+def polish : Datum :=
   { id := "dekier2021_polish"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def polish : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Polish"), ("nonSpecific", "-ś"), ("specificUnknown", "-ś"), ("specificKnown", "-ś")] }
 
-def japanese : LinguisticExample :=
+def japanese : Datum :=
   { id := "dekier2021_japanese"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def japanese : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Japanese"), ("nonSpecific", "-ka"), ("specificUnknown", "-ka"), ("specificKnown", "-ka")] }
 
-def korean : LinguisticExample :=
+def korean : Datum :=
   { id := "dekier2021_korean"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def korean : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Korean"), ("nonSpecific", "-nka"), ("specificUnknown", "-nka"), ("specificKnown", "-nka")] }
 
-def lezgian : LinguisticExample :=
+def lezgian : Datum :=
   { id := "dekier2021_lezgian"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def lezgian : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Lezgian"), ("nonSpecific", "-jat'ani"), ("specificUnknown", "-jat'ani"), ("specificKnown", "-jat'ani")] }
 
-def romanian : LinguisticExample :=
+def romanian : Datum :=
   { id := "dekier2021_romanian"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def romanian : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Romanian"), ("nonSpecific", "-va"), ("specificUnknown", "-va"), ("specificKnown", "-va")] }
 
-def bulgarian : LinguisticExample :=
+def bulgarian : Datum :=
   { id := "dekier2021_bulgarian"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def bulgarian : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Bulgarian"), ("nonSpecific", "nja-"), ("specificUnknown", "nja-"), ("specificKnown", "nja-")] }
 
-def serbocroatian : LinguisticExample :=
+def serbocroatian : Datum :=
   { id := "dekier2021_serbocroatian"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def serbocroatian : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Serbo-Croatian"), ("nonSpecific", "ne-"), ("specificUnknown", "ne-"), ("specificKnown", "ne-")] }
 
-def czech : LinguisticExample :=
+def czech : Datum :=
   { id := "dekier2021_czech"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def czech : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Czech"), ("nonSpecific", "ně-"), ("specificUnknown", "ně-"), ("specificKnown", "ně-")] }
 
-def slovak : LinguisticExample :=
+def slovak : Datum :=
   { id := "dekier2021_slovak"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def slovak : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Slovak"), ("nonSpecific", "nie-"), ("specificUnknown", "nie-"), ("specificKnown", "nie-")] }
 
-def maltese : LinguisticExample :=
+def maltese : Datum :=
   { id := "dekier2021_maltese"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def maltese : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Maltese"), ("nonSpecific", "xi-"), ("specificUnknown", "xi-"), ("specificKnown", "xi-")] }
 
-def hungarian : LinguisticExample :=
+def hungarian : Datum :=
   { id := "dekier2021_hungarian"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def hungarian : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Hungarian"), ("nonSpecific", "vala-"), ("specificUnknown", "vala-"), ("specificKnown", "vala-")] }
 
-def hebrew : LinguisticExample :=
+def hebrew : Datum :=
   { id := "dekier2021_hebrew"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def hebrew : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Hebrew"), ("nonSpecific", "-šehu"), ("specificUnknown", "-šehu"), ("specificKnown", "-šehu")] }
 
-def turkish : LinguisticExample :=
+def turkish : Datum :=
   { id := "dekier2021_turkish"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def turkish : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Turkish"), ("nonSpecific", "bir-"), ("specificUnknown", "bir-"), ("specificKnown", "bir-")] }
 
-def latvian : LinguisticExample :=
+def latvian : Datum :=
   { id := "dekier2021_latvian"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def latvian : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Latvian"), ("nonSpecific", "kaut-"), ("specificUnknown", "kaut-"), ("specificKnown", "kaut-")] }
 
-def yakut : LinguisticExample :=
+def yakut : Datum :=
   { id := "dekier2021_yakut"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def yakut : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Yakut"), ("nonSpecific", "-eme"), ("specificUnknown", "-ere"), ("specificKnown", "-ere")] }
 
-def georgian : LinguisticExample :=
+def georgian : Datum :=
   { id := "dekier2021_georgian"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def georgian : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Georgian"), ("nonSpecific", "-me"), ("specificUnknown", "-ɣac"), ("specificKnown", "-ɣac")] }
 
-def ossetic : LinguisticExample :=
+def ossetic : Datum :=
   { id := "dekier2021_ossetic"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ossetic : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Ossetic"), ("nonSpecific", "is-"), ("specificUnknown", "-dær"), ("specificKnown", "-dær")] }
 
-def latin : LinguisticExample :=
+def latin : Datum :=
   { id := "dekier2021_latin"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def latin : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Latin"), ("nonSpecific", "ali-"), ("specificUnknown", "ali-"), ("specificKnown", "-dam")] }
 
-def russian : LinguisticExample :=
+def russian : Datum :=
   { id := "dekier2021_russian"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def russian : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Russian"), ("nonSpecific", "-nibud"), ("specificUnknown", "-to"), ("specificKnown", "koe-")] }
 
-def lithuanian : LinguisticExample :=
+def lithuanian : Datum :=
   { id := "dekier2021_lithuanian"
     source := ⟨"dekier-2021", "Table 7"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def lithuanian : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Lithuanian"), ("nonSpecific", "-nors"), ("specificUnknown", "kaž-"), ("specificKnown", "kai-")] }
 
-def kannada : LinguisticExample :=
+def kannada : Datum :=
   { id := "dekier2021_kannada"
     source := ⟨"dekier-2021", "Table 6"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def kannada : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Kannada"), ("nonSpecific", "-aadaruu"), ("specificUnknown", "-oo")] }
 
-def quechua : LinguisticExample :=
+def quechua : Datum :=
   { id := "dekier2021_quechua"
     source := ⟨"dekier-2021", "Table 6"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def quechua : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Quechua"), ("nonSpecific", "-pis/-pas"), ("specificUnknown", "-chi/-cha")] }
 
-def mandarinchinese : LinguisticExample :=
+def mandarinchinese : Datum :=
   { id := "dekier2021_mandarinchinese"
     source := ⟨"dekier-2021", "Table 6"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def mandarinchinese : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Mandarin Chinese"), ("nonSpecific", "wh-pronoun")] }
 
-def irish : LinguisticExample :=
+def irish : Datum :=
   { id := "dekier2021_irish"
     source := ⟨"dekier-2021", "Table 6"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def irish : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Irish")] }
 
-def swahili : LinguisticExample :=
+def swahili : Datum :=
   { id := "dekier2021_swahili"
     source := ⟨"dekier-2021", "Table 6"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def swahili : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Swahili")] }
 
-def filipino : LinguisticExample :=
+def filipino : Datum :=
   { id := "dekier2021_filipino"
     source := ⟨"dekier-2021", "Table 6"⟩
     reportedIn := none
@@ -368,6 +366,6 @@ def filipino : LinguisticExample :=
     readings := []
     paperFeatures := [("language", "Filipino")] }
 
-def all : List LinguisticExample := [english, polish, japanese, korean, lezgian, romanian, bulgarian, serbocroatian, czech, slovak, maltese, hungarian, hebrew, turkish, latvian, yakut, georgian, ossetic, latin, russian, lithuanian, kannada, quechua, mandarinchinese, irish, swahili, filipino]
+def all : List Datum := [english, polish, japanese, korean, lezgian, romanian, bulgarian, serbocroatian, czech, slovak, maltese, hungarian, hebrew, turkish, latvian, yakut, georgian, ossetic, latin, russian, lithuanian, kannada, quechua, mandarinchinese, irish, swahili, filipino]
 
 end Dekier2021.Examples

@@ -89,7 +89,7 @@ which Portuguese fills with *tem que*, *tinha que*, *deve*, *devia* (135).
 
 namespace Ferreira2023
 
-open Modality Modality.Directive Data.Examples
+open Modality Modality.Directive
 
 variable {W : Type*}
 
@@ -800,18 +800,18 @@ structure Row where
   deriving DecidableEq, Repr
 
 /-- The row of an example tagged with two conjuncts. -/
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let first ← ex.parse? "first" conjunctTable
   let second ← ex.parse? "second" conjunctTable
   pure ⟨⟨first, second⟩, ex.judgment⟩
 
 /-- Every example tagged with a first conjunct parses. -/
-theorem row_ofExample_isSome :
-    ∀ ex ∈ Examples.all, (ex.feature? "first").isSome → (Row.ofExample ex).isSome := by
+theorem row_ofDatum_isSome :
+    ∀ ex ∈ Examples.all, (ex.feature? "first").isSome → (Row.ofDatum ex).isSome := by
   decide
 
 /-- The conjunctions of §2. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- (16)–(25), (30), (32): a conjunction is judged `#` exactly when it is contradictory. -/
 theorem rows_unacceptable_iff :

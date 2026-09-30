@@ -15,9 +15,7 @@ this module; declarations live in `namespace Benz2025.Examples`.
 
 namespace Benz2025.Examples
 
-open Data.Examples
-
-def ex32a : LinguisticExample :=
+def ex32a : Datum :=
   { id := "benz2025_ex32a"
     source := ⟨"benz-2025", "(32a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex32a : LinguisticExample :=
     readings := []
     paperFeatures := [("reading", "Event"), ("duration_predicate", "yes"), ("plural", "no"), ("cp_complement", "no")] }
 
-def ex32b : LinguisticExample :=
+def ex32b : Datum :=
   { id := "benz2025_ex32b"
     source := ⟨"benz-2025", "(32b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex32b : LinguisticExample :=
     readings := [("concrete object", .acceptable), ("result", .acceptable), ("content", .acceptable)]
     paperFeatures := [("reading", "RN"), ("duration_predicate", "no"), ("plural", "yes"), ("cp_complement", "no")] }
 
-def ex32c : LinguisticExample :=
+def ex32c : Datum :=
   { id := "benz2025_ex32c"
     source := ⟨"benz-2025", "(32c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex32c : LinguisticExample :=
     readings := []
     paperFeatures := [("reading", "Content"), ("duration_predicate", "no"), ("plural", "no"), ("cp_complement", "yes")] }
 
-def ex89a : LinguisticExample :=
+def ex89a : Datum :=
   { id := "benz2025_ex89a"
     source := ⟨"benz-2025", "(89a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex89a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb_class", "transitive"), ("m_predicate", "hämmern"), ("r_predicate", "platt")] }
 
-def ex89b : LinguisticExample :=
+def ex89b : Datum :=
   { id := "benz2025_ex89b"
     source := ⟨"benz-2025", "(89b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex89b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb_class", "transitive"), ("m_predicate", "schießen"), ("r_predicate", "tot")] }
 
-def ex115a : LinguisticExample :=
+def ex115a : Datum :=
   { id := "benz2025_ex115a"
     source := ⟨"creemers-2020", ""⟩
     reportedIn := some ⟨"benz-2025", "(115a)"⟩
@@ -95,7 +93,7 @@ def ex115a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb_class", "obligatorily transitive"), ("m_predicate", "brechen"), ("r_predicate", "kaputt")] }
 
-def ex115e : LinguisticExample :=
+def ex115e : Datum :=
   { id := "benz2025_ex115e"
     source := ⟨"creemers-2020", ""⟩
     reportedIn := some ⟨"benz-2025", "(115e)"⟩
@@ -108,7 +106,7 @@ def ex115e : LinguisticExample :=
     readings := []
     paperFeatures := [("verb_class", "unaccusative"), ("m_predicate", "frieren"), ("r_predicate", "fest")] }
 
-def ex115f : LinguisticExample :=
+def ex115f : Datum :=
   { id := "benz2025_ex115f"
     source := ⟨"creemers-2020", ""⟩
     reportedIn := some ⟨"benz-2025", "(115f)"⟩
@@ -121,7 +119,7 @@ def ex115f : LinguisticExample :=
     readings := []
     paperFeatures := [("verb_class", "inherently reflexive"), ("m_predicate", "schämen"), ("r_predicate", "krank/tot")] }
 
-def ex87ab : LinguisticExample :=
+def ex87ab : Datum :=
   { id := "benz2025_ex87ab"
     source := ⟨"creemers-2020", ""⟩
     reportedIn := some ⟨"benz-2025", "(87a-b)"⟩
@@ -134,7 +132,7 @@ def ex87ab : LinguisticExample :=
     readings := []
     paperFeatures := [("blocker_type", "prefix"), ("blocker", "be-"), ("r_predicate", "arm"), ("outer", "rsp"), ("inner", "pfx")] }
 
-def ex87cd : LinguisticExample :=
+def ex87cd : Datum :=
   { id := "benz2025_ex87cd"
     source := ⟨"creemers-2020", ""⟩
     reportedIn := some ⟨"benz-2025", "(87c-d)"⟩
@@ -147,7 +145,7 @@ def ex87cd : LinguisticExample :=
     readings := []
     paperFeatures := [("blocker_type", "prefix"), ("blocker", "er-"), ("r_predicate", "tot"), ("outer", "rsp"), ("inner", "pfx")] }
 
-def ex87ef : LinguisticExample :=
+def ex87ef : Datum :=
   { id := "benz2025_ex87ef"
     source := ⟨"creemers-2020", ""⟩
     reportedIn := some ⟨"benz-2025", "(87e-f)"⟩
@@ -160,7 +158,7 @@ def ex87ef : LinguisticExample :=
     readings := []
     paperFeatures := [("blocker_type", "prefix"), ("blocker", "zer-"), ("r_predicate", "kaputt"), ("outer", "rsp"), ("inner", "pfx")] }
 
-def ex88ab : LinguisticExample :=
+def ex88ab : Datum :=
   { id := "benz2025_ex88ab"
     source := ⟨"benz-2025", "(88a-b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex88ab : LinguisticExample :=
     readings := []
     paperFeatures := [("blocker_type", "particle"), ("blocker", "ab-"), ("r_predicate", "trocken"), ("outer", "rsp"), ("inner", "prt")] }
 
-def ex88cd : LinguisticExample :=
+def ex88cd : Datum :=
   { id := "benz2025_ex88cd"
     source := ⟨"benz-2025", "(88c-d)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex88cd : LinguisticExample :=
     readings := []
     paperFeatures := [("blocker_type", "particle"), ("blocker", "an-"), ("r_predicate", "nass"), ("outer", "rsp"), ("inner", "prt")] }
 
-def ex81a : LinguisticExample :=
+def ex81a : Datum :=
   { id := "benz2025_ex81a"
     source := ⟨"benz-2025", "(81a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex81a : LinguisticExample :=
     readings := []
     paperFeatures := [("outer", "pfx"), ("inner", "pfx")] }
 
-def ex82a : LinguisticExample :=
+def ex82a : Datum :=
   { id := "benz2025_ex82a"
     source := ⟨"benz-2025", "(82a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex82a : LinguisticExample :=
     readings := []
     paperFeatures := [("outer", "prt"), ("inner", "prt")] }
 
-def ex83a : LinguisticExample :=
+def ex83a : Datum :=
   { id := "benz2025_ex83a"
     source := ⟨"benz-2025", "(83a)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex83a : LinguisticExample :=
     readings := []
     paperFeatures := [("outer", "pfx"), ("inner", "prt")] }
 
-def ex84a : LinguisticExample :=
+def ex84a : Datum :=
   { id := "benz2025_ex84a"
     source := ⟨"benz-2025", "(84a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex84a : LinguisticExample :=
     readings := []
     paperFeatures := [("outer", "prt"), ("inner", "pfx")] }
 
-def ex86b : LinguisticExample :=
+def ex86b : Datum :=
   { id := "benz2025_ex86b"
     source := ⟨"benz-2025", "(86b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex86b : LinguisticExample :=
     readings := []
     paperFeatures := [("outer", "rsp"), ("inner", "rsp")] }
 
-def ex193a : LinguisticExample :=
+def ex193a : Datum :=
   { id := "benz2025_ex193a"
     source := ⟨"benz-2025", "(193a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex193a : LinguisticExample :=
     readings := []
     paperFeatures := [("nominalization", "infinitive"), ("element", "pfx"), ("verb", "verkaufen")] }
 
-def ex193b : LinguisticExample :=
+def ex193b : Datum :=
   { id := "benz2025_ex193b"
     source := ⟨"benz-2025", "(193b)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex193b : LinguisticExample :=
     readings := []
     paperFeatures := [("nominalization", "infinitive"), ("element", "prt"), ("verb", "einführen")] }
 
-def ex193c : LinguisticExample :=
+def ex193c : Datum :=
   { id := "benz2025_ex193c"
     source := ⟨"benz-2025", "(193c)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex193c : LinguisticExample :=
     readings := []
     paperFeatures := [("nominalization", "infinitive"), ("element", "rsp"), ("verb", "küssen")] }
 
-def ex197a : LinguisticExample :=
+def ex197a : Datum :=
   { id := "benz2025_ex197a"
     source := ⟨"benz-2025", "(197a)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex197a : LinguisticExample :=
     readings := []
     paperFeatures := [("nominalization", "ung"), ("element", "prt"), ("verb", "einführen")] }
 
-def ex198c : LinguisticExample :=
+def ex198c : Datum :=
   { id := "benz2025_ex198c"
     source := ⟨"benz-2025", "(198c)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex198c : LinguisticExample :=
     readings := []
     paperFeatures := [("nominalization", "ung"), ("element", "pfx"), ("verb", "bemalen")] }
 
-def ex198c_base : LinguisticExample :=
+def ex198c_base : Datum :=
   { id := "benz2025_ex198c_base"
     source := ⟨"benz-2025", "(198c)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex198c_base : LinguisticExample :=
     readings := []
     paperFeatures := [("nominalization", "ung"), ("element", "none"), ("verb", "malen")] }
 
-def ex204a : LinguisticExample :=
+def ex204a : Datum :=
   { id := "benz2025_ex204a"
     source := ⟨"benz-2025", "(204a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex204a : LinguisticExample :=
     readings := []
     paperFeatures := [("nominalization", "ung"), ("element", "rsp"), ("verb", "hämmern")] }
 
-def ex204c : LinguisticExample :=
+def ex204c : Datum :=
   { id := "benz2025_ex204c"
     source := ⟨"benz-2025", "(204c)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex204c : LinguisticExample :=
     readings := []
     paperFeatures := [("nominalization", "ung"), ("element", "rsp"), ("verb", "küssen")] }
 
-def ex212a : LinguisticExample :=
+def ex212a : Datum :=
   { id := "benz2025_ex212a"
     source := ⟨"benz-2025", "(212a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex212a : LinguisticExample :=
     readings := []
     paperFeatures := [("nominalization", "geE"), ("element", "prt"), ("verb", "rennen")] }
 
-def ex216a : LinguisticExample :=
+def ex216a : Datum :=
   { id := "benz2025_ex216a"
     source := ⟨"benz-2025", "(216a)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex216a : LinguisticExample :=
     readings := []
     paperFeatures := [("nominalization", "geE"), ("element", "rsp"), ("verb", "küssen")] }
 
-def ex216b : LinguisticExample :=
+def ex216b : Datum :=
   { id := "benz2025_ex216b"
     source := ⟨"benz-2025", "(216b)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex216b : LinguisticExample :=
     readings := []
     paperFeatures := [("nominalization", "geE"), ("element", "rsp"), ("verb", "hämmern")] }
 
-def ex218c : LinguisticExample :=
+def ex218c : Datum :=
   { id := "benz2025_ex218c"
     source := ⟨"benz-2025", "(218c)"⟩
     reportedIn := none
@@ -407,6 +405,6 @@ def ex218c : LinguisticExample :=
     readings := []
     paperFeatures := [("nominalization", "geE"), ("element", "pfx"), ("verb", "bemalen")] }
 
-def all : List LinguisticExample := [ex32a, ex32b, ex32c, ex89a, ex89b, ex115a, ex115e, ex115f, ex87ab, ex87cd, ex87ef, ex88ab, ex88cd, ex81a, ex82a, ex83a, ex84a, ex86b, ex193a, ex193b, ex193c, ex197a, ex198c, ex198c_base, ex204a, ex204c, ex212a, ex216a, ex216b, ex218c]
+def all : List Datum := [ex32a, ex32b, ex32c, ex89a, ex89b, ex115a, ex115e, ex115f, ex87ab, ex87cd, ex87ef, ex88ab, ex88cd, ex81a, ex82a, ex83a, ex84a, ex86b, ex193a, ex193b, ex193c, ex197a, ex198c, ex198c_base, ex204a, ex204c, ex212a, ex216a, ex216b, ex218c]
 
 end Benz2025.Examples

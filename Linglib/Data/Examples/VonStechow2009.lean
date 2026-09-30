@@ -15,9 +15,7 @@ this module; declarations live in `namespace VonStechow2009.Examples`.
 
 namespace VonStechow2009.Examples
 
-open Data.Examples
-
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "vonstechow2009_21a"
     source := ⟨"von-stechow-2009", "(21a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_21a : LinguisticExample :=
     readings := [("there is a time before the speech time at which John calls", .acceptable)]
     paperFeatures := [("tense", "past"), ("lf", "[P N] λ1 John called t1")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "vonstechow2009_27"
     source := ⟨"von-stechow-2009", "(27)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_27 : LinguisticExample :=
     readings := [("a past time before a past time", .acceptable)]
     paperFeatures := [("tense", "pluperfect"), ("auxiliary", "had")] }
 
-def ex_30 : LinguisticExample :=
+def ex_30 : Datum :=
   { id := "vonstechow2009_30"
     source := ⟨"von-stechow-2009", "(30)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "future"), ("auxiliary", "will")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "vonstechow2009_37"
     source := ⟨"von-stechow-2009", "(37)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("adverbial", "frame"), ("composition", "predicate modification")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "vonstechow2009_42"
     source := ⟨"von-stechow-2009", "(42)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "present perfect puzzle"), ("auxiliary", "extended now")] }
 
-def ex_43 : LinguisticExample :=
+def ex_43 : Datum :=
   { id := "vonstechow2009_43"
     source := ⟨"von-stechow-2009", "(43)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_43 : LinguisticExample :=
     readings := [("reference-time modification: the leaving is before six", .acceptable), ("event-time modification: the leaving is at six", .acceptable)]
     paperFeatures := [("adverbial", "at"), ("scope", "perfect auxiliary")] }
 
-def ex_44 : LinguisticExample :=
+def ex_44 : Datum :=
   { id := "vonstechow2009_44"
     source := ⟨"von-stechow-2009", "(44)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_44 : LinguisticExample :=
     readings := [("quantifier under the Past: a past time on every Sunday", .unacceptable), ("quantifier over the Past: every Sunday contains a past time", .unacceptable), ("every past Sunday contains a working time", .acceptable)]
     paperFeatures := [("adverbial", "quantified"), ("restriction", "domain variable")] }
 
-def ex_46 : LinguisticExample :=
+def ex_46 : Datum :=
   { id := "vonstechow2009_46"
     source := ⟨"partee-1973", ""⟩
     reportedIn := some ⟨"von-stechow-2009", "(46)"⟩
@@ -121,7 +119,7 @@ def ex_46 : LinguisticExample :=
     readings := [("some past time at which I do not turn off the stove", .unacceptable), ("no past time at which I turn off the stove", .unacceptable), ("no time in the contextually given past interval at which I turn off the stove", .acceptable)]
     paperFeatures := [("tense", "referential vs indefinite"), ("scope", "negation")] }
 
-def ex_55 : LinguisticExample :=
+def ex_55 : Datum :=
   { id := "vonstechow2009_55"
     source := ⟨"von-stechow-2009", "(55)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_55 : LinguisticExample :=
     readings := [("the leaving is after the speech time", .acceptable)]
     paperFeatures := [("tense", "future perfect"), ("restriction", "superordinate tense")] }
 
-def ex_58 : LinguisticExample :=
+def ex_58 : Datum :=
   { id := "vonstechow2009_58"
     source := ⟨"von-stechow-2009", "(58)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_58 : LinguisticExample :=
     readings := [("no past time in today at which it rains", .acceptable)]
     paperFeatures := [("scope", "negation over tense")] }
 
-def ex_60 : LinguisticExample :=
+def ex_60 : Datum :=
   { id := "vonstechow2009_60"
     source := ⟨"von-stechow-2009", "(60)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_60 : LinguisticExample :=
     readings := [("for every boot a past polishing time", .acceptable)]
     paperFeatures := [("scope", "quantifier over tense")] }
 
-def ex_62 : LinguisticExample :=
+def ex_62 : Datum :=
   { id := "vonstechow2009_62"
     source := ⟨"ogihara-1989", ""⟩
     reportedIn := some ⟨"von-stechow-2009", "(62)"⟩
@@ -173,7 +171,7 @@ def ex_62 : LinguisticExample :=
     readings := [("simultaneous: alive at the buying time", .acceptable), ("deictic: alive at the speech time", .acceptable)]
     paperFeatures := [("clause", "relative"), ("tense", "present under future")] }
 
-def ex_63 : LinguisticExample :=
+def ex_63 : Datum :=
   { id := "vonstechow2009_63"
     source := ⟨"ogihara-1989", ""⟩
     reportedIn := some ⟨"von-stechow-2009", "(63)"⟩
@@ -186,7 +184,7 @@ def ex_63 : LinguisticExample :=
     readings := [("shifted: alive before the buying time", .acceptable), ("deictic perfect: alive before the speech time", .acceptable)]
     paperFeatures := [("clause", "relative"), ("tense", "perfect under future")] }
 
-def ex_64 : LinguisticExample :=
+def ex_64 : Datum :=
   { id := "vonstechow2009_64"
     source := ⟨"ogihara-1989", ""⟩
     reportedIn := some ⟨"von-stechow-2009", "(64)"⟩
@@ -199,7 +197,7 @@ def ex_64 : LinguisticExample :=
     readings := [("deictic: alive before the speech time", .acceptable), ("shifted: alive before the buying time", .questionable)]
     paperFeatures := [("clause", "relative"), ("tense", "past under future")] }
 
-def ex_68 : LinguisticExample :=
+def ex_68 : Datum :=
   { id := "vonstechow2009_68"
     source := ⟨"von-stechow-2009", "(68)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_68 : LinguisticExample :=
     readings := [("deictic", .acceptable), ("simultaneous", .unacceptable)]
     paperFeatures := [("clause", "relative"), ("feature", "uN")] }
 
-def ex_69 : LinguisticExample :=
+def ex_69 : Datum :=
   { id := "vonstechow2009_69"
     source := ⟨"von-stechow-2009", "(69)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_69 : LinguisticExample :=
     readings := [("simultaneous", .acceptable), ("backward shifted", .acceptable), ("independent, forward shifted", .acceptable)]
     paperFeatures := [("clause", "relative"), ("tense", "past under past")] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "vonstechow2009_70"
     source := ⟨"ogihara-1989", ""⟩
     reportedIn := some ⟨"von-stechow-2009", "(70)"⟩
@@ -238,7 +236,7 @@ def ex_70 : LinguisticExample :=
     readings := [("forward shifted", .acceptable)]
     paperFeatures := [("clause", "relative"), ("tense", "past under past")] }
 
-def ex_71 : LinguisticExample :=
+def ex_71 : Datum :=
   { id := "vonstechow2009_71"
     source := ⟨"ogihara-1989", ""⟩
     reportedIn := some ⟨"von-stechow-2009", "(71)"⟩
@@ -251,7 +249,7 @@ def ex_71 : LinguisticExample :=
     readings := [("the fish is alive at the future buying time", .acceptable)]
     paperFeatures := [("clause", "relative under attitude"), ("tense", "bound")] }
 
-def ex_76 : LinguisticExample :=
+def ex_76 : Datum :=
   { id := "vonstechow2009_76"
     source := ⟨"von-stechow-2009", "(76)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_76 : LinguisticExample :=
     readings := [("a belief John would word as it is raining", .acceptable)]
     paperFeatures := [("clause", "attitude complement"), ("tense", "subjective now")] }
 
-def ex_77 : LinguisticExample :=
+def ex_77 : Datum :=
   { id := "vonstechow2009_77"
     source := ⟨"von-stechow-2009", "(77)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_77 : LinguisticExample :=
     readings := [("anaphoric: Mary believes that 5 o'clock is 6 o'clock", .unacceptable), ("Mary locates her time at 6 o'clock", .acceptable)]
     paperFeatures := [("clause", "attitude complement"), ("complement", "property of times")] }
 
-def ex_80 : LinguisticExample :=
+def ex_80 : Datum :=
   { id := "vonstechow2009_80"
     source := ⟨"von-stechow-2009", "(80)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_80 : LinguisticExample :=
     readings := [("shifted: the leaving before Mary's subjective now", .acceptable)]
     paperFeatures := [("clause", "attitude complement"), ("tense", "past over PRO")] }
 
-def ex_84a : LinguisticExample :=
+def ex_84a : Datum :=
   { id := "vonstechow2009_84a"
     source := ⟨"stump-1985", ""⟩
     reportedIn := some ⟨"von-stechow-2009", "(84a)"⟩
@@ -303,7 +301,7 @@ def ex_84a : LinguisticExample :=
     readings := [("before the earliest future time at which Mary leaves", .acceptable)]
     paperFeatures := [("clause", "before/after"), ("tense", "present under future")] }
 
-def ex_84d : LinguisticExample :=
+def ex_84d : Datum :=
   { id := "vonstechow2009_84d"
     source := ⟨"stump-1985", ""⟩
     reportedIn := some ⟨"von-stechow-2009", "(84d)"⟩
@@ -316,7 +314,7 @@ def ex_84d : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "before/after"), ("tense", "future under future")] }
 
-def ex_85 : LinguisticExample :=
+def ex_85 : Datum :=
   { id := "vonstechow2009_85"
     source := ⟨"von-stechow-2009", "(85)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_85 : LinguisticExample :=
     readings := [("before the earliest past time at which John arrives", .acceptable)]
     paperFeatures := [("clause", "before/after"), ("tense", "past under past")] }
 
-def ex_86 : LinguisticExample :=
+def ex_86 : Datum :=
   { id := "vonstechow2009_86"
     source := ⟨"von-stechow-2009", "(86)"⟩
     reportedIn := none
@@ -342,6 +340,6 @@ def ex_86 : LinguisticExample :=
     readings := []
     paperFeatures := [("preposition", "temporal"), ("meaning", "precedence")] }
 
-def all : List LinguisticExample := [ex_21a, ex_27, ex_30, ex_37, ex_42, ex_43, ex_44, ex_46, ex_55, ex_58, ex_60, ex_62, ex_63, ex_64, ex_68, ex_69, ex_70, ex_71, ex_76, ex_77, ex_80, ex_84a, ex_84d, ex_85, ex_86]
+def all : List Datum := [ex_21a, ex_27, ex_30, ex_37, ex_42, ex_43, ex_44, ex_46, ex_55, ex_58, ex_60, ex_62, ex_63, ex_64, ex_68, ex_69, ex_70, ex_71, ex_76, ex_77, ex_80, ex_84a, ex_84d, ex_85, ex_86]
 
 end VonStechow2009.Examples

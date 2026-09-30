@@ -50,7 +50,7 @@ in the paper without a proposal formalized here.
 
 namespace Rett2026
 
-open Degree Tense Rett2020a Data.Examples
+open Degree Tense Rett2020a
 
 /-! ### Ambivalence -/
 
@@ -291,19 +291,19 @@ instance : DecidablePred Construction.Scalar := λ c => by
   cases c <;> unfold Construction.Scalar <;> infer_instance
 
 /-- An example: its construction and judgment. -/
-structure Datum where
+structure Row where
   construction : Construction
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
 
-/-- An example read into its datum. -/
-def datum (e : LinguisticExample) : Option Datum := do
+/-- A datum read into its row. -/
+def Row.ofDatum (e : Datum) : Option Row := do
   pure ⟨← e.parse? "construction" Construction.labels, e.judgment⟩
 
 /-- Every example is read. -/
-theorem isSome_datum : ∀ e ∈ Examples.all, (datum e).isSome := by decide
+theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide
 
 /-- The paper's examples. -/
-def data : List Datum := Examples.all.filterMap datum
+def data : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Expletive negation is attested in every scalar relation the paper analyzes, in a
 comparative with a relative adjective, and never in *after* or *while*, which have no row;

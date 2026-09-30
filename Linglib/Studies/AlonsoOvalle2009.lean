@@ -50,7 +50,6 @@ The paper's verdicts are checked in `rows_agree`.
 namespace AlonsoOvalle2009
 
 open Conditional McKayVanInwagen1977
-  Data.Examples
 
 variable {W : Type*} [DecidableEq W] [Fintype W] (ord : W → Preorder W)
   [∀ w, DecidableRel (ord w).le] (S : Finset (Finset W)) (C : Set W) [DecidablePred (· ∈ C)]
@@ -301,7 +300,7 @@ def verdict : String → Bool → Option Bool
 
 /-- A row's predicted verdict from its `scenario`, `antecedent`, `modal`, and `polarity`
 features; (80) takes the Existential Closure reading (82). -/
-def predicted (row : LinguisticExample) : Option Bool :=
+def predicted (row : Datum) : Option Bool :=
   let neg := decide (row.feature? "polarity" = some "negated")
   match row.feature? "scenario", row.feature? "antecedent", row.feature? "modal" with
   | some "bumperCrop", some a, some m =>

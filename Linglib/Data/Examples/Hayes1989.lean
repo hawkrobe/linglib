@@ -15,9 +15,7 @@ this module; declarations live in `namespace Hayes1989.Examples`.
 
 namespace Hayes1989.Examples
 
-open Data.Examples
-
-def ex12b1 : LinguisticExample :=
+def ex12b1 : Datum :=
   { id := "hayes1989_ex12b1"
     source := ⟨"hayes-1989", "(12b)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex12b1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("type", "classical")] }
 
-def ex12b2 : LinguisticExample :=
+def ex12b2 : Datum :=
   { id := "hayes1989_ex12b2"
     source := ⟨"hayes-1989", "(12b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex12b2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("type", "classical")] }
 
-def ex12b3 : LinguisticExample :=
+def ex12b3 : Datum :=
   { id := "hayes1989_ex12b3"
     source := ⟨"hayes-1989", "(12b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex12b3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("type", "classical")] }
 
-def ex14a : LinguisticExample :=
+def ex14a : Datum :=
   { id := "hayes1989_ex14a"
     source := ⟨"hayes-1989", "(14)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex14a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("type", "onset deletion")] }
 
-def ex14b : LinguisticExample :=
+def ex14b : Datum :=
   { id := "hayes1989_ex14b"
     source := ⟨"hayes-1989", "(14)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex14b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("type", "onset deletion")] }
 
-def ex14c : LinguisticExample :=
+def ex14c : Datum :=
   { id := "hayes1989_ex14c"
     source := ⟨"hayes-1989", "(14)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex14c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("type", "onset deletion")] }
 
-def ex19a : LinguisticExample :=
+def ex19a : Datum :=
   { id := "hayes1989_ex19a"
     source := ⟨"hayes-1989", "(19)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex19a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("type", "onset deletion")] }
 
-def ex19b : LinguisticExample :=
+def ex19b : Datum :=
   { id := "hayes1989_ex19b"
     source := ⟨"hayes-1989", "(19)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex19b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("type", "onset deletion")] }
 
-def ex19c : LinguisticExample :=
+def ex19c : Datum :=
   { id := "hayes1989_ex19c"
     source := ⟨"hayes-1989", "(19)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex19c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("type", "double flop")] }
 
-def tale : LinguisticExample :=
+def tale : Datum :=
   { id := "hayes1989_tale"
     source := ⟨"hayes-1989", "§4.2"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def tale : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("type", "vowel loss")] }
 
-def ex27a1 : LinguisticExample :=
+def ex27a1 : Datum :=
   { id := "hayes1989_ex27a1"
     source := ⟨"hayes-1989", "(27a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex27a1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3.1"), ("type", "glide formation"), ("consonant", "obstruent"), ("gemination", "usual")] }
 
-def ex27a4 : LinguisticExample :=
+def ex27a4 : Datum :=
   { id := "hayes1989_ex27a4"
     source := ⟨"hayes-1989", "(27a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex27a4 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3.1"), ("type", "glide formation"), ("consonant", "obstruent"), ("gemination", "usual")] }
 
-def ex27b1 : LinguisticExample :=
+def ex27b1 : Datum :=
   { id := "hayes1989_ex27b1"
     source := ⟨"hayes-1989", "(27b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex27b1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3.1"), ("type", "glide formation"), ("consonant", "nasal"), ("gemination", "sporadic")] }
 
-def ex27c2 : LinguisticExample :=
+def ex27c2 : Datum :=
   { id := "hayes1989_ex27c2"
     source := ⟨"hayes-1989", "(27c)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex27c2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3.1"), ("type", "glide formation"), ("consonant", "r"), ("gemination", "never")] }
 
-def ex27d1 : LinguisticExample :=
+def ex27d1 : Datum :=
   { id := "hayes1989_ex27d1"
     source := ⟨"hayes-1989", "(27d)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex27d1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3.1"), ("type", "glide formation"), ("consonant", "cluster"), ("gemination", "never")] }
 
-def ex28 : LinguisticExample :=
+def ex28 : Datum :=
   { id := "hayes1989_ex28"
     source := ⟨"hayes-1989", "(28)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex28 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3.1"), ("gemination", "never")] }
 
-def ex42 : LinguisticExample :=
+def ex42 : Datum :=
   { id := "hayes1989_ex42"
     source := ⟨"hayes-1989", "(42)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex42 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3.1"), ("degemination", "yes")] }
 
-def ex46 : LinguisticExample :=
+def ex46 : Datum :=
   { id := "hayes1989_ex46"
     source := ⟨"hayes-1989", "(46)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex46 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3.2"), ("type", "glide formation")] }
 
-def ex55a : LinguisticExample :=
+def ex55a : Datum :=
   { id := "hayes1989_ex55a"
     source := ⟨"hayes-1989", "(55a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex55a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1.7"), ("type", "inverse")] }
 
-def ex57 : LinguisticExample :=
+def ex57 : Datum :=
   { id := "hayes1989_ex57"
     source := ⟨"hayes-1989", "(57)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex57 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.1"), ("type", "onset deletion")] }
 
-def turkish1 : LinguisticExample :=
+def turkish1 : Datum :=
   { id := "hayes1989_turkish1"
     source := ⟨"hayes-1989", "§5.2.1"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def turkish1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.1"), ("type", "classical")] }
 
-def turkish2 : LinguisticExample :=
+def turkish2 : Datum :=
   { id := "hayes1989_turkish2"
     source := ⟨"hayes-1989", "§5.2.1"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def turkish2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.1"), ("type", "onset deletion")] }
 
-def ex61 : LinguisticExample :=
+def ex61 : Datum :=
   { id := "hayes1989_ex61"
     source := ⟨"hayes-1989", "(61)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex61 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("type", "vowel loss")] }
 
-def ex73a : LinguisticExample :=
+def ex73a : Datum :=
   { id := "hayes1989_ex73a"
     source := ⟨"hayes-1989", "§7"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex73a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("type", "vowel loss")] }
 
-def ex73b : LinguisticExample :=
+def ex73b : Datum :=
   { id := "hayes1989_ex73b"
     source := ⟨"hayes-1989", "(73)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex73b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("type", "no lengthening")] }
 
-def ex74 : LinguisticExample :=
+def ex74 : Datum :=
   { id := "hayes1989_ex74"
     source := ⟨"hayes-1989", "(74)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex74 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("type", "classical"), ("trimoraic", "yes")] }
 
-def ex76a : LinguisticExample :=
+def ex76a : Datum :=
   { id := "hayes1989_ex76a"
     source := ⟨"hayes-1989", "(76a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex76a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("length", "V")] }
 
-def ex76b : LinguisticExample :=
+def ex76b : Datum :=
   { id := "hayes1989_ex76b"
     source := ⟨"hayes-1989", "(76b)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex76b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("length", "Vː")] }
 
-def ex76c : LinguisticExample :=
+def ex76c : Datum :=
   { id := "hayes1989_ex76c"
     source := ⟨"hayes-1989", "(76c)"⟩
     reportedIn := none
@@ -394,6 +392,6 @@ def ex76c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("length", "Vːː"), ("type", "vowel loss")] }
 
-def all : List LinguisticExample := [ex12b1, ex12b2, ex12b3, ex14a, ex14b, ex14c, ex19a, ex19b, ex19c, tale, ex27a1, ex27a4, ex27b1, ex27c2, ex27d1, ex28, ex42, ex46, ex55a, ex57, turkish1, turkish2, ex61, ex73a, ex73b, ex74, ex76a, ex76b, ex76c]
+def all : List Datum := [ex12b1, ex12b2, ex12b3, ex14a, ex14b, ex14c, ex19a, ex19b, ex19c, tale, ex27a1, ex27a4, ex27b1, ex27c2, ex27d1, ex28, ex42, ex46, ex55a, ex57, turkish1, turkish2, ex61, ex73a, ex73b, ex74, ex76a, ex76b, ex76c]
 
 end Hayes1989.Examples

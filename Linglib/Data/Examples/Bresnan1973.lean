@@ -15,9 +15,7 @@ this module; declarations live in `namespace Bresnan1973.Examples`.
 
 namespace Bresnan1973.Examples
 
-open Data.Examples
-
-def ex1a : LinguisticExample :=
+def ex1a : Datum :=
   { id := "bresnan1973_ex1a"
     source := ⟨"bresnan-1973", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "er"), ("q", "much"), ("position", "noun"), ("surface", "analytic")] }
 
-def ex1b : LinguisticExample :=
+def ex1b : Datum :=
   { id := "bresnan1973_ex1b"
     source := ⟨"bresnan-1973", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex1b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "er"), ("q", "much"), ("position", "adjective"), ("surface", "synthetic")] }
 
-def ex3a : LinguisticExample :=
+def ex3a : Datum :=
   { id := "bresnan1973_ex3a"
     source := ⟨"bresnan-1973", "(3a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex3a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "too"), ("q", "much"), ("position", "noun"), ("surface", "analytic")] }
 
-def ex3b : LinguisticExample :=
+def ex3b : Datum :=
   { id := "bresnan1973_ex3b"
     source := ⟨"bresnan-1973", "(3b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex3b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "too"), ("q", "much"), ("position", "adjective"), ("surface", "analytic")] }
 
-def ex12a : LinguisticExample :=
+def ex12a : Datum :=
   { id := "bresnan1973_ex12a"
     source := ⟨"bresnan-1973", "(12a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex12a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "noun"), ("surface", "analytic")] }
 
-def ex12b : LinguisticExample :=
+def ex12b : Datum :=
   { id := "bresnan1973_ex12b"
     source := ⟨"bresnan-1973", "(12b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex12b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "noun"), ("surface", "deleted")] }
 
-def ex13a : LinguisticExample :=
+def ex13a : Datum :=
   { id := "bresnan1973_ex13a"
     source := ⟨"bresnan-1973", "(13a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex13a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "phrase"), ("surface", "analytic")] }
 
-def ex13b : LinguisticExample :=
+def ex13b : Datum :=
   { id := "bresnan1973_ex13b"
     source := ⟨"bresnan-1973", "(13b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex13b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "phrase"), ("surface", "deleted")] }
 
-def ex14a : LinguisticExample :=
+def ex14a : Datum :=
   { id := "bresnan1973_ex14a"
     source := ⟨"bresnan-1973", "(14a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex14a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "adjective"), ("surface", "analytic")] }
 
-def ex14b : LinguisticExample :=
+def ex14b : Datum :=
   { id := "bresnan1973_ex14b"
     source := ⟨"bresnan-1973", "(14b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex14b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "adjective"), ("surface", "deleted")] }
 
-def ex15a : LinguisticExample :=
+def ex15a : Datum :=
   { id := "bresnan1973_ex15a"
     source := ⟨"bresnan-1973", "(15a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex15a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "quantifier"), ("surface", "analytic")] }
 
-def ex15b : LinguisticExample :=
+def ex15b : Datum :=
   { id := "bresnan1973_ex15b"
     source := ⟨"bresnan-1973", "(15b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex15b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "quantifier"), ("surface", "deleted")] }
 
-def ex16a : LinguisticExample :=
+def ex16a : Datum :=
   { id := "bresnan1973_ex16a"
     source := ⟨"bresnan-1973", "(16a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex16a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "adjective"), ("surface", "analytic")] }
 
-def ex16b : LinguisticExample :=
+def ex16b : Datum :=
   { id := "bresnan1973_ex16b"
     source := ⟨"bresnan-1973", "(16b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex16b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "adjective"), ("surface", "deleted")] }
 
-def ex17a : LinguisticExample :=
+def ex17a : Datum :=
   { id := "bresnan1973_ex17a"
     source := ⟨"bresnan-1973", "(17a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex17a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "quantifier"), ("surface", "analytic")] }
 
-def ex17b : LinguisticExample :=
+def ex17b : Datum :=
   { id := "bresnan1973_ex17b"
     source := ⟨"bresnan-1973", "(17b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex17b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "quantifier"), ("surface", "deleted")] }
 
-def ex18a : LinguisticExample :=
+def ex18a : Datum :=
   { id := "bresnan1973_ex18a"
     source := ⟨"bresnan-1973", "(18a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex18a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "adjective"), ("surface", "analytic")] }
 
-def ex18b : LinguisticExample :=
+def ex18b : Datum :=
   { id := "bresnan1973_ex18b"
     source := ⟨"bresnan-1973", "(18b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex18b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "adjective"), ("surface", "deleted")] }
 
-def ex19a : LinguisticExample :=
+def ex19a : Datum :=
   { id := "bresnan1973_ex19a"
     source := ⟨"bresnan-1973", "(19a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex19a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "quantifier"), ("surface", "analytic")] }
 
-def ex19b : LinguisticExample :=
+def ex19b : Datum :=
   { id := "bresnan1973_ex19b"
     source := ⟨"bresnan-1973", "(19b)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex19b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "quantifier"), ("surface", "deleted")] }
 
-def ex84a : LinguisticExample :=
+def ex84a : Datum :=
   { id := "bresnan1973_ex84a"
     source := ⟨"bresnan-1973", "(84a)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex84a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "so"), ("q", "much"), ("position", "adjective"), ("surface", "analytic")] }
 
-def ex84b : LinguisticExample :=
+def ex84b : Datum :=
   { id := "bresnan1973_ex84b"
     source := ⟨"bresnan-1973", "(84b)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex84b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "so"), ("q", "much"), ("position", "adjective"), ("surface", "deleted")] }
 
-def ex85a : LinguisticExample :=
+def ex85a : Datum :=
   { id := "bresnan1973_ex85a"
     source := ⟨"bresnan-1973", "(85a)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex85a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "too"), ("q", "much"), ("position", "adjective"), ("surface", "analytic")] }
 
-def ex85b : LinguisticExample :=
+def ex85b : Datum :=
   { id := "bresnan1973_ex85b"
     source := ⟨"bresnan-1973", "(85b)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex85b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "too"), ("q", "much"), ("position", "adjective"), ("surface", "deleted")] }
 
-def ex225b : LinguisticExample :=
+def ex225b : Datum :=
   { id := "bresnan1973_ex225b"
     source := ⟨"bresnan-1973", "(225b)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex225b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "est"), ("q", "much"), ("position", "adjective"), ("surface", "analytic")] }
 
-def ex275b : LinguisticExample :=
+def ex275b : Datum :=
   { id := "bresnan1973_ex275b"
     source := ⟨"bresnan-1973", "(275b)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex275b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "er"), ("q", "much"), ("position", "phrase"), ("surface", "analytic")] }
 
-def ex277 : LinguisticExample :=
+def ex277 : Datum :=
   { id := "bresnan1973_ex277"
     source := ⟨"bresnan-1973", "(277)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex277 : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "er"), ("q", "much"), ("position", "phrase"), ("surface", "synthetic")] }
 
-def ex278c : LinguisticExample :=
+def ex278c : Datum :=
   { id := "bresnan1973_ex278c"
     source := ⟨"bresnan-1973", "(278c)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex278c : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "phrase"), ("surface", "analytic")] }
 
-def ex278d : LinguisticExample :=
+def ex278d : Datum :=
   { id := "bresnan1973_ex278d"
     source := ⟨"bresnan-1973", "(278d)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex278d : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("particle", "as"), ("q", "much"), ("position", "phrase"), ("surface", "deleted")] }
 
-def ex279a : LinguisticExample :=
+def ex279a : Datum :=
   { id := "bresnan1973_ex279a"
     source := ⟨"bresnan-1973", "(279a)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex279a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "er"), ("q", "much"), ("position", "adjective"), ("surface", "analytic")] }
 
-def ex279b : LinguisticExample :=
+def ex279b : Datum :=
   { id := "bresnan1973_ex279b"
     source := ⟨"bresnan-1973", "(279b)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex279b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "er"), ("q", "much"), ("position", "adjective"), ("surface", "synthetic")] }
 
-def ex279c : LinguisticExample :=
+def ex279c : Datum :=
   { id := "bresnan1973_ex279c"
     source := ⟨"bresnan-1973", "(279c)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex279c : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "er"), ("q", "much"), ("position", "phrase"), ("surface", "analytic")] }
 
-def ex279d : LinguisticExample :=
+def ex279d : Datum :=
   { id := "bresnan1973_ex279d"
     source := ⟨"bresnan-1973", "(279d)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex279d : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "surface"), ("clitic", "er"), ("q", "much"), ("position", "phrase"), ("surface", "synthetic")] }
 
-def ex111a : LinguisticExample :=
+def ex111a : Datum :=
   { id := "bresnan1973_ex111a"
     source := ⟨"bresnan-1973", "(111a)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex111a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "that"), ("q", "much"), ("order", "prearticle")] }
 
-def ex111b : LinguisticExample :=
+def ex111b : Datum :=
   { id := "bresnan1973_ex111b"
     source := ⟨"bresnan-1973", "(111b)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex111b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "that"), ("q", "much"), ("order", "postarticle")] }
 
-def ex112a : LinguisticExample :=
+def ex112a : Datum :=
   { id := "bresnan1973_ex112a"
     source := ⟨"bresnan-1973", "(112a)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex112a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "too"), ("q", "much"), ("order", "prearticle")] }
 
-def ex112b : LinguisticExample :=
+def ex112b : Datum :=
   { id := "bresnan1973_ex112b"
     source := ⟨"bresnan-1973", "(112b)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex112b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "too"), ("q", "much"), ("order", "postarticle")] }
 
-def ex113a : LinguisticExample :=
+def ex113a : Datum :=
   { id := "bresnan1973_ex113a"
     source := ⟨"bresnan-1973", "(113a)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex113a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "as"), ("q", "much"), ("order", "prearticle")] }
 
-def ex113b : LinguisticExample :=
+def ex113b : Datum :=
   { id := "bresnan1973_ex113b"
     source := ⟨"bresnan-1973", "(113b)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex113b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "as"), ("q", "much"), ("order", "postarticle")] }
 
-def ex114a : LinguisticExample :=
+def ex114a : Datum :=
   { id := "bresnan1973_ex114a"
     source := ⟨"bresnan-1973", "(114a)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex114a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "so"), ("q", "much"), ("order", "prearticle")] }
 
-def ex114b : LinguisticExample :=
+def ex114b : Datum :=
   { id := "bresnan1973_ex114b"
     source := ⟨"bresnan-1973", "(114b)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex114b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "so"), ("q", "much"), ("order", "postarticle")] }
 
-def ex115a : LinguisticExample :=
+def ex115a : Datum :=
   { id := "bresnan1973_ex115a"
     source := ⟨"bresnan-1973", "(115a)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex115a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("clitic", "er"), ("q", "much"), ("order", "prearticle")] }
 
-def ex115b : LinguisticExample :=
+def ex115b : Datum :=
   { id := "bresnan1973_ex115b"
     source := ⟨"bresnan-1973", "(115b)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex115b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("clitic", "er"), ("q", "much"), ("order", "postarticle")] }
 
-def ex116a : LinguisticExample :=
+def ex116a : Datum :=
   { id := "bresnan1973_ex116a"
     source := ⟨"bresnan-1973", "(116a)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex116a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("q", "enough"), ("order", "prearticle")] }
 
-def ex116b : LinguisticExample :=
+def ex116b : Datum :=
   { id := "bresnan1973_ex116b"
     source := ⟨"bresnan-1973", "(116b)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex116b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("q", "enough"), ("order", "postarticle")] }
 
-def ex125a : LinguisticExample :=
+def ex125a : Datum :=
   { id := "bresnan1973_ex125a"
     source := ⟨"bresnan-1973", "(125a)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex125a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("clitic", "er"), ("q", "much"), ("order", "prearticle")] }
 
-def ex125b : LinguisticExample :=
+def ex125b : Datum :=
   { id := "bresnan1973_ex125b"
     source := ⟨"bresnan-1973", "(125b)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex125b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("clitic", "er"), ("q", "much"), ("order", "postarticle")] }
 
-def ex126a : LinguisticExample :=
+def ex126a : Datum :=
   { id := "bresnan1973_ex126a"
     source := ⟨"bresnan-1973", "(126a)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex126a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "any"), ("clitic", "er"), ("q", "much"), ("order", "prearticle")] }
 
-def ex126b : LinguisticExample :=
+def ex126b : Datum :=
   { id := "bresnan1973_ex126b"
     source := ⟨"bresnan-1973", "(126b)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex126b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "any"), ("clitic", "er"), ("q", "much"), ("order", "postarticle")] }
 
-def ex127a : LinguisticExample :=
+def ex127a : Datum :=
   { id := "bresnan1973_ex127a"
     source := ⟨"bresnan-1973", "(127a)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex127a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "no"), ("clitic", "er"), ("q", "much"), ("order", "prearticle")] }
 
-def ex127b : LinguisticExample :=
+def ex127b : Datum :=
   { id := "bresnan1973_ex127b"
     source := ⟨"bresnan-1973", "(127b)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex127b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "no"), ("clitic", "er"), ("q", "much"), ("order", "postarticle")] }
 
-def ex217a : LinguisticExample :=
+def ex217a : Datum :=
   { id := "bresnan1973_ex217a"
     source := ⟨"bresnan-1973", "(217a)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex217a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("clitic", "er"), ("q", "much"), ("order", "postarticle")] }
 
-def ex217b : LinguisticExample :=
+def ex217b : Datum :=
   { id := "bresnan1973_ex217b"
     source := ⟨"bresnan-1973", "(217b)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex217b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "too"), ("q", "much"), ("order", "postarticle")] }
 
-def ex218a : LinguisticExample :=
+def ex218a : Datum :=
   { id := "bresnan1973_ex218a"
     source := ⟨"bresnan-1973", "(218a)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex218a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("clitic", "er"), ("q", "much"), ("order", "postarticle")] }
 
-def ex218b : LinguisticExample :=
+def ex218b : Datum :=
   { id := "bresnan1973_ex218b"
     source := ⟨"bresnan-1973", "(218b)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex218b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "shift"), ("particle", "so"), ("q", "much"), ("order", "postarticle")] }
 
-def ex4a : LinguisticExample :=
+def ex4a : Datum :=
   { id := "bresnan1973_ex4a"
     source := ⟨"bresnan-1973", "(4a)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex4a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("particle", "as"), ("q", "much")] }
 
-def ex4b : LinguisticExample :=
+def ex4b : Datum :=
   { id := "bresnan1973_ex4b"
     source := ⟨"bresnan-1973", "(4b)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex4b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("clitic", "er"), ("q", "little")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "bresnan1973_ex5a"
     source := ⟨"bresnan-1973", "(5a)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("particle", "as"), ("q", "few")] }
 
-def ex5b : LinguisticExample :=
+def ex5b : Datum :=
   { id := "bresnan1973_ex5b"
     source := ⟨"bresnan-1973", "(5b)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ex5b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("clitic", "er"), ("q", "few")] }
 
-def ex45 : LinguisticExample :=
+def ex45 : Datum :=
   { id := "bresnan1973_ex45"
     source := ⟨"bresnan-1973", "(45)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def ex45 : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("q", "enough")] }
 
-def ex83 : LinguisticExample :=
+def ex83 : Datum :=
   { id := "bresnan1973_ex83"
     source := ⟨"bresnan-1973", "(83)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def ex83 : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("q", "much")] }
 
-def ex107a : LinguisticExample :=
+def ex107a : Datum :=
   { id := "bresnan1973_ex107a"
     source := ⟨"bresnan-1973", "(107a)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def ex107a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("particle", "so"), ("q", "enough")] }
 
-def ex107b : LinguisticExample :=
+def ex107b : Datum :=
   { id := "bresnan1973_ex107b"
     source := ⟨"bresnan-1973", "(107b)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def ex107b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("particle", "as"), ("q", "enough")] }
 
-def ex107c : LinguisticExample :=
+def ex107c : Datum :=
   { id := "bresnan1973_ex107c"
     source := ⟨"bresnan-1973", "(107c)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def ex107c : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("particle", "too"), ("q", "enough")] }
 
-def ex107d : LinguisticExample :=
+def ex107d : Datum :=
   { id := "bresnan1973_ex107d"
     source := ⟨"bresnan-1973", "(107d)"⟩
     reportedIn := none
@@ -862,7 +860,7 @@ def ex107d : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("particle", "that"), ("q", "enough")] }
 
-def ex107e : LinguisticExample :=
+def ex107e : Datum :=
   { id := "bresnan1973_ex107e"
     source := ⟨"bresnan-1973", "(107e)"⟩
     reportedIn := none
@@ -875,7 +873,7 @@ def ex107e : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("clitic", "er"), ("q", "enough")] }
 
-def ex117 : LinguisticExample :=
+def ex117 : Datum :=
   { id := "bresnan1973_ex117"
     source := ⟨"bresnan-1973", "(117)"⟩
     reportedIn := none
@@ -888,7 +886,7 @@ def ex117 : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("clitic", "er"), ("q", "much")] }
 
-def ex118 : LinguisticExample :=
+def ex118 : Datum :=
   { id := "bresnan1973_ex118"
     source := ⟨"bresnan-1973", "(118)"⟩
     reportedIn := none
@@ -901,7 +899,7 @@ def ex118 : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("particle", "any"), ("clitic", "er"), ("q", "much")] }
 
-def ex119 : LinguisticExample :=
+def ex119 : Datum :=
   { id := "bresnan1973_ex119"
     source := ⟨"bresnan-1973", "(119)"⟩
     reportedIn := none
@@ -914,7 +912,7 @@ def ex119 : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("particle", "no"), ("clitic", "er"), ("q", "much")] }
 
-def ex224a : LinguisticExample :=
+def ex224a : Datum :=
   { id := "bresnan1973_ex224a"
     source := ⟨"bresnan-1973", "(224a)"⟩
     reportedIn := none
@@ -927,7 +925,7 @@ def ex224a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("particle", "as"), ("clitic", "er"), ("q", "much")] }
 
-def ex224b : LinguisticExample :=
+def ex224b : Datum :=
   { id := "bresnan1973_ex224b"
     source := ⟨"bresnan-1973", "(224b)"⟩
     reportedIn := none
@@ -940,7 +938,7 @@ def ex224b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("particle", "too"), ("clitic", "er"), ("q", "much")] }
 
-def ex224c : LinguisticExample :=
+def ex224c : Datum :=
   { id := "bresnan1973_ex224c"
     source := ⟨"bresnan-1973", "(224c)"⟩
     reportedIn := none
@@ -953,7 +951,7 @@ def ex224c : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("particle", "that"), ("clitic", "est"), ("q", "much")] }
 
-def ex224d : LinguisticExample :=
+def ex224d : Datum :=
   { id := "bresnan1973_ex224d"
     source := ⟨"bresnan-1973", "(224d)"⟩
     reportedIn := none
@@ -966,7 +964,7 @@ def ex224d : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "det"), ("particle", "so"), ("clitic", "est"), ("q", "much")] }
 
-def ex242a : LinguisticExample :=
+def ex242a : Datum :=
   { id := "bresnan1973_ex242a"
     source := ⟨"bresnan-1973", "(242a)"⟩
     reportedIn := none
@@ -979,7 +977,7 @@ def ex242a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "tall"), ("clause", "ap"), ("clause_site", "adjective"), ("standard", "father"), ("noun", "man"), ("anomalous", "no")] }
 
-def ex242b : LinguisticExample :=
+def ex242b : Datum :=
   { id := "bresnan1973_ex242b"
     source := ⟨"bresnan-1973", "(242b)"⟩
     reportedIn := none
@@ -992,7 +990,7 @@ def ex242b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "adjective"), ("adjective", "tall"), ("clause", "np"), ("clause_site", "adjective"), ("standard", "father"), ("noun", "man"), ("anomalous", "no")] }
 
-def ex242c : LinguisticExample :=
+def ex242c : Datum :=
   { id := "bresnan1973_ex242c"
     source := ⟨"bresnan-1973", "(242c)"⟩
     reportedIn := none
@@ -1005,7 +1003,7 @@ def ex242c : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "tall"), ("clause", "ap"), ("clause_site", "adjective"), ("standard", "mother"), ("noun", "man"), ("anomalous", "no")] }
 
-def ex242d : LinguisticExample :=
+def ex242d : Datum :=
   { id := "bresnan1973_ex242d"
     source := ⟨"bresnan-1973", "(242d)"⟩
     reportedIn := none
@@ -1018,7 +1016,7 @@ def ex242d : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "adjective"), ("adjective", "tall"), ("clause", "np"), ("clause_site", "adjective"), ("standard", "mother"), ("noun", "man"), ("anomalous", "yes")] }
 
-def ex252 : LinguisticExample :=
+def ex252 : Datum :=
   { id := "bresnan1973_ex252"
     source := ⟨"bresnan-1973", "(252)"⟩
     reportedIn := none
@@ -1031,7 +1029,7 @@ def ex252 : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "adjective"), ("clause", "np"), ("clause_site", "adjective")] }
 
-def ex253 : LinguisticExample :=
+def ex253 : Datum :=
   { id := "bresnan1973_ex253"
     source := ⟨"bresnan-1973", "(253)"⟩
     reportedIn := none
@@ -1044,7 +1042,7 @@ def ex253 : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("clause", "np"), ("clause_site", "adjective")] }
 
-def ex254a : LinguisticExample :=
+def ex254a : Datum :=
   { id := "bresnan1973_ex254a"
     source := ⟨"bresnan-1973", "(254a)"⟩
     reportedIn := none
@@ -1057,7 +1055,7 @@ def ex254a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "adjective"), ("clause", "np"), ("clause_site", "adjective")] }
 
-def ex254b : LinguisticExample :=
+def ex254b : Datum :=
   { id := "bresnan1973_ex254b"
     source := ⟨"bresnan-1973", "(254b)"⟩
     reportedIn := none
@@ -1070,7 +1068,7 @@ def ex254b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "adjective"), ("clause", "np"), ("clause_site", "adjective")] }
 
-def ex255a : LinguisticExample :=
+def ex255a : Datum :=
   { id := "bresnan1973_ex255a"
     source := ⟨"bresnan-1973", "(255a)"⟩
     reportedIn := none
@@ -1083,7 +1081,7 @@ def ex255a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("clause", "ap"), ("clause_site", "adjective")] }
 
-def ex255b : LinguisticExample :=
+def ex255b : Datum :=
   { id := "bresnan1973_ex255b"
     source := ⟨"bresnan-1973", "(255b)"⟩
     reportedIn := none
@@ -1096,7 +1094,7 @@ def ex255b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("clause", "np"), ("clause_site", "adjective")] }
 
-def ex256a : LinguisticExample :=
+def ex256a : Datum :=
   { id := "bresnan1973_ex256a"
     source := ⟨"bresnan-1973", "(256a)"⟩
     reportedIn := none
@@ -1109,7 +1107,7 @@ def ex256a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "phrase"), ("clause", "qp"), ("clause_site", "phrase")] }
 
-def ex256b : LinguisticExample :=
+def ex256b : Datum :=
   { id := "bresnan1973_ex256b"
     source := ⟨"bresnan-1973", "(256b)"⟩
     reportedIn := none
@@ -1122,7 +1120,7 @@ def ex256b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "noun"), ("clause", "np"), ("clause_site", "noun")] }
 
-def ex256c : LinguisticExample :=
+def ex256c : Datum :=
   { id := "bresnan1973_ex256c"
     source := ⟨"bresnan-1973", "(256c)"⟩
     reportedIn := none
@@ -1135,7 +1133,7 @@ def ex256c : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "phrase"), ("clause", "qp"), ("clause_site", "phrase")] }
 
-def ex256d : LinguisticExample :=
+def ex256d : Datum :=
   { id := "bresnan1973_ex256d"
     source := ⟨"bresnan-1973", "(256d)"⟩
     reportedIn := none
@@ -1148,7 +1146,7 @@ def ex256d : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "noun"), ("clause", "qp"), ("clause_site", "phrase")] }
 
-def ex262 : LinguisticExample :=
+def ex262 : Datum :=
   { id := "bresnan1973_ex262"
     source := ⟨"bresnan-1973", "(262)"⟩
     reportedIn := none
@@ -1161,7 +1159,7 @@ def ex262 : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "long"), ("clause", "ap"), ("clause_site", "adjective")] }
 
-def ex266 : LinguisticExample :=
+def ex266 : Datum :=
   { id := "bresnan1973_ex266"
     source := ⟨"bresnan-1973", "(266)"⟩
     reportedIn := none
@@ -1174,7 +1172,7 @@ def ex266 : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "long"), ("clause", "ap"), ("clause_site", "adjective"), ("contraction", "yes")] }
 
-def ex270 : LinguisticExample :=
+def ex270 : Datum :=
   { id := "bresnan1973_ex270"
     source := ⟨"bresnan-1973", "(270)"⟩
     reportedIn := none
@@ -1187,7 +1185,7 @@ def ex270 : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("clause", "ap"), ("clause_site", "adjective"), ("contraction", "yes")] }
 
-def ex271 : LinguisticExample :=
+def ex271 : Datum :=
   { id := "bresnan1973_ex271"
     source := ⟨"bresnan-1973", "(271)"⟩
     reportedIn := none
@@ -1200,7 +1198,7 @@ def ex271 : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "phrase"), ("clause", "qp"), ("clause_site", "phrase"), ("contraction", "yes")] }
 
-def ex273 : LinguisticExample :=
+def ex273 : Datum :=
   { id := "bresnan1973_ex273"
     source := ⟨"bresnan-1973", "(273)"⟩
     reportedIn := none
@@ -1213,7 +1211,7 @@ def ex273 : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("clause", "ap"), ("clause_site", "adjective"), ("contraction", "yes")] }
 
-def ex280a : LinguisticExample :=
+def ex280a : Datum :=
   { id := "bresnan1973_ex280a"
     source := ⟨"bresnan-1973", "(280a)"⟩
     reportedIn := none
@@ -1226,7 +1224,7 @@ def ex280a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "adjective"), ("adjective", "tall"), ("clause", "qp"), ("clause_site", "measure")] }
 
-def ex280b : LinguisticExample :=
+def ex280b : Datum :=
   { id := "bresnan1973_ex280b"
     source := ⟨"bresnan-1973", "(280b)"⟩
     reportedIn := none
@@ -1239,7 +1237,7 @@ def ex280b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "adjective"), ("adjective", "tall"), ("clause", "np"), ("clause_site", "term")] }
 
-def ex280c : LinguisticExample :=
+def ex280c : Datum :=
   { id := "bresnan1973_ex280c"
     source := ⟨"bresnan-1973", "(280c)"⟩
     reportedIn := none
@@ -1252,7 +1250,7 @@ def ex280c : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "tall"), ("clause", "ap"), ("clause_site", "measure")] }
 
-def ex280d : LinguisticExample :=
+def ex280d : Datum :=
   { id := "bresnan1973_ex280d"
     source := ⟨"bresnan-1973", "(280d)"⟩
     reportedIn := none
@@ -1265,7 +1263,7 @@ def ex280d : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "tall"), ("clause", "ap"), ("clause_site", "adjective")] }
 
-def ex281a : LinguisticExample :=
+def ex281a : Datum :=
   { id := "bresnan1973_ex281a"
     source := ⟨"bresnan-1973", "(281a)"⟩
     reportedIn := none
@@ -1278,7 +1276,7 @@ def ex281a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "noun"), ("clause", "qp"), ("clause_site", "measure")] }
 
-def ex281b : LinguisticExample :=
+def ex281b : Datum :=
   { id := "bresnan1973_ex281b"
     source := ⟨"bresnan-1973", "(281b)"⟩
     reportedIn := none
@@ -1291,7 +1289,7 @@ def ex281b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "noun"), ("clause", "np"), ("clause_site", "term")] }
 
-def ex281c : LinguisticExample :=
+def ex281c : Datum :=
   { id := "bresnan1973_ex281c"
     source := ⟨"bresnan-1973", "(281c)"⟩
     reportedIn := none
@@ -1304,7 +1302,7 @@ def ex281c : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "noun"), ("clause", "np"), ("clause_site", "term")] }
 
-def ex281d : LinguisticExample :=
+def ex281d : Datum :=
   { id := "bresnan1973_ex281d"
     source := ⟨"bresnan-1973", "(281d)"⟩
     reportedIn := none
@@ -1317,7 +1315,7 @@ def ex281d : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "noun"), ("clause", "np"), ("clause_site", "term")] }
 
-def ex282a : LinguisticExample :=
+def ex282a : Datum :=
   { id := "bresnan1973_ex282a"
     source := ⟨"bresnan-1973", "(282a)"⟩
     reportedIn := none
@@ -1330,7 +1328,7 @@ def ex282a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "adjective"), ("adjective", "high"), ("clause", "qp"), ("clause_site", "measure")] }
 
-def ex282b : LinguisticExample :=
+def ex282b : Datum :=
   { id := "bresnan1973_ex282b"
     source := ⟨"bresnan-1973", "(282b)"⟩
     reportedIn := none
@@ -1343,7 +1341,7 @@ def ex282b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "adjective"), ("adjective", "high"), ("clause", "np"), ("clause_site", "term")] }
 
-def ex282c : LinguisticExample :=
+def ex282c : Datum :=
   { id := "bresnan1973_ex282c"
     source := ⟨"bresnan-1973", "(282c)"⟩
     reportedIn := none
@@ -1356,7 +1354,7 @@ def ex282c : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "high"), ("clause", "ap"), ("clause_site", "measure")] }
 
-def ex282d : LinguisticExample :=
+def ex282d : Datum :=
   { id := "bresnan1973_ex282d"
     source := ⟨"bresnan-1973", "(282d)"⟩
     reportedIn := none
@@ -1369,7 +1367,7 @@ def ex282d : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "high"), ("clause", "ap"), ("clause_site", "adjective")] }
 
-def ex283a : LinguisticExample :=
+def ex283a : Datum :=
   { id := "bresnan1973_ex283a"
     source := ⟨"bresnan-1973", "(283a)"⟩
     reportedIn := none
@@ -1382,7 +1380,7 @@ def ex283a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "noun"), ("clause", "qp"), ("clause_site", "measure")] }
 
-def ex283b : LinguisticExample :=
+def ex283b : Datum :=
   { id := "bresnan1973_ex283b"
     source := ⟨"bresnan-1973", "(283b)"⟩
     reportedIn := none
@@ -1395,7 +1393,7 @@ def ex283b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "noun"), ("clause", "np"), ("clause_site", "term")] }
 
-def ex283c : LinguisticExample :=
+def ex283c : Datum :=
   { id := "bresnan1973_ex283c"
     source := ⟨"bresnan-1973", "(283c)"⟩
     reportedIn := none
@@ -1408,7 +1406,7 @@ def ex283c : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "noun"), ("clause", "np"), ("clause_site", "term")] }
 
-def ex283d : LinguisticExample :=
+def ex283d : Datum :=
   { id := "bresnan1973_ex283d"
     source := ⟨"bresnan-1973", "(283d)"⟩
     reportedIn := none
@@ -1421,7 +1419,7 @@ def ex283d : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "noun"), ("clause", "np"), ("clause_site", "term")] }
 
-def ex296a : LinguisticExample :=
+def ex296a : Datum :=
   { id := "bresnan1973_ex296a"
     source := ⟨"bresnan-1973", "(296a)"⟩
     reportedIn := none
@@ -1434,7 +1432,7 @@ def ex296a : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "adjective"), ("adjective", "short"), ("clause", "qp"), ("clause_site", "measure")] }
 
-def ex296b : LinguisticExample :=
+def ex296b : Datum :=
   { id := "bresnan1973_ex296b"
     source := ⟨"bresnan-1973", "(296b)"⟩
     reportedIn := none
@@ -1447,7 +1445,7 @@ def ex296b : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "ap"), ("head_site", "adjective"), ("adjective", "short"), ("clause", "ap"), ("clause_site", "measure")] }
 
-def ex298 : LinguisticExample :=
+def ex298 : Datum :=
   { id := "bresnan1973_ex298"
     source := ⟨"bresnan-1973", "(298)"⟩
     reportedIn := none
@@ -1460,7 +1458,7 @@ def ex298 : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "np"), ("head_site", "noun"), ("clause", "np"), ("clause_site", "noun")] }
 
-def ex300 : LinguisticExample :=
+def ex300 : Datum :=
   { id := "bresnan1973_ex300"
     source := ⟨"bresnan-1973", "(300)"⟩
     reportedIn := none
@@ -1473,6 +1471,6 @@ def ex300 : LinguisticExample :=
     readings := []
     paperFeatures := [("set", "formation"), ("head", "qp"), ("head_site", "noun"), ("clause", "qp"), ("clause_site", "noun")] }
 
-def all : List LinguisticExample := [ex1a, ex1b, ex3a, ex3b, ex12a, ex12b, ex13a, ex13b, ex14a, ex14b, ex15a, ex15b, ex16a, ex16b, ex17a, ex17b, ex18a, ex18b, ex19a, ex19b, ex84a, ex84b, ex85a, ex85b, ex225b, ex275b, ex277, ex278c, ex278d, ex279a, ex279b, ex279c, ex279d, ex111a, ex111b, ex112a, ex112b, ex113a, ex113b, ex114a, ex114b, ex115a, ex115b, ex116a, ex116b, ex125a, ex125b, ex126a, ex126b, ex127a, ex127b, ex217a, ex217b, ex218a, ex218b, ex4a, ex4b, ex5a, ex5b, ex45, ex83, ex107a, ex107b, ex107c, ex107d, ex107e, ex117, ex118, ex119, ex224a, ex224b, ex224c, ex224d, ex242a, ex242b, ex242c, ex242d, ex252, ex253, ex254a, ex254b, ex255a, ex255b, ex256a, ex256b, ex256c, ex256d, ex262, ex266, ex270, ex271, ex273, ex280a, ex280b, ex280c, ex280d, ex281a, ex281b, ex281c, ex281d, ex282a, ex282b, ex282c, ex282d, ex283a, ex283b, ex283c, ex283d, ex296a, ex296b, ex298, ex300]
+def all : List Datum := [ex1a, ex1b, ex3a, ex3b, ex12a, ex12b, ex13a, ex13b, ex14a, ex14b, ex15a, ex15b, ex16a, ex16b, ex17a, ex17b, ex18a, ex18b, ex19a, ex19b, ex84a, ex84b, ex85a, ex85b, ex225b, ex275b, ex277, ex278c, ex278d, ex279a, ex279b, ex279c, ex279d, ex111a, ex111b, ex112a, ex112b, ex113a, ex113b, ex114a, ex114b, ex115a, ex115b, ex116a, ex116b, ex125a, ex125b, ex126a, ex126b, ex127a, ex127b, ex217a, ex217b, ex218a, ex218b, ex4a, ex4b, ex5a, ex5b, ex45, ex83, ex107a, ex107b, ex107c, ex107d, ex107e, ex117, ex118, ex119, ex224a, ex224b, ex224c, ex224d, ex242a, ex242b, ex242c, ex242d, ex252, ex253, ex254a, ex254b, ex255a, ex255b, ex256a, ex256b, ex256c, ex256d, ex262, ex266, ex270, ex271, ex273, ex280a, ex280b, ex280c, ex280d, ex281a, ex281b, ex281c, ex281d, ex282a, ex282b, ex282c, ex282d, ex283a, ex283b, ex283c, ex283d, ex296a, ex296b, ex298, ex300]
 
 end Bresnan1973.Examples

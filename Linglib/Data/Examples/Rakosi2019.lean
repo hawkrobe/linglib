@@ -15,9 +15,7 @@ this module; declarations live in `namespace Rakosi2019.Examples`.
 
 namespace Rakosi2019.Examples
 
-open Data.Examples
-
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "rakosi2019_1a"
     source := ⟨"rakosi-2019", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("antecedent", "plural"), ("verb", "pl"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "rakosi2019_1b"
     source := ⟨"rakosi-2019", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("antecedent", "plural"), ("verb", "pl"), ("anaphor", "reflexivePl"), ("semanticPlural", "yes")] }
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "rakosi2019_2a"
     source := ⟨"rakosi-2019", "(2a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("antecedent", "atomic"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "no")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "rakosi2019_2b"
     source := ⟨"rakosi-2019", "(2b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("antecedent", "atomic"), ("verb", "sg"), ("anaphor", "reflexiveSg"), ("semanticPlural", "no")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "rakosi2019_3b"
     source := ⟨"rakosi-2019", "(3b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("antecedent", "inclusive"), ("verb", "sg"), ("anaphor", "inclusiveReflexive"), ("semanticPlural", "no")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "rakosi2019_4a"
     source := ⟨"rakosi-2019", "(4a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_4a : LinguisticExample :=
     readings := [("referential", .acceptable), ("bound variable", .ungrammatical)]
     paperFeatures := [("section", "2"), ("antecedent", "inclusive"), ("verb", "sg"), ("anaphor", "inclusiveReflexive"), ("semanticPlural", "no")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "rakosi2019_4b"
     source := ⟨"rakosi-2019", "(4b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_4b : LinguisticExample :=
     readings := [("bound variable", .acceptable)]
     paperFeatures := [("section", "2"), ("antecedent", "plural"), ("verb", "pl"), ("anaphor", "reflexivePl"), ("semanticPlural", "yes")] }
 
-def ex_4c : LinguisticExample :=
+def ex_4c : Datum :=
   { id := "rakosi2019_4c"
     source := ⟨"rakosi-2019", "(4c)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_4c : LinguisticExample :=
     readings := [("bound variable", .acceptable)]
     paperFeatures := [("section", "2"), ("antecedent", "plural"), ("verb", "pl"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "rakosi2019_5a"
     source := ⟨"rakosi-2019", "(5a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("antecedent", "plural"), ("verb", "pl"), ("anaphor", "reflexivePl"), ("semanticPlural", "yes")] }
 
-def ex_5b : LinguisticExample :=
+def ex_5b : Datum :=
   { id := "rakosi2019_5b"
     source := ⟨"rakosi-2019", "(5b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("antecedent", "atomic"), ("verb", "sg"), ("anaphor", "reflexivePl"), ("semanticPlural", "no")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "rakosi2019_6"
     source := ⟨"rakosi-2019", "(6)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("antecedent", "inclusive"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "no")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "rakosi2019_8a"
     source := ⟨"rakosi-2019", "(8a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("verb", "sg"), ("anaphor", "reflexiveSg"), ("semanticPlural", "yes")] }
 
-def ex_8a_ : LinguisticExample :=
+def ex_8a_ : Datum :=
   { id := "rakosi2019_8a_"
     source := ⟨"rakosi-2019", "(8a')"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_8a_ : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("verb", "sg"), ("anaphor", "reflexivePl"), ("semanticPlural", "yes")] }
 
-def ex_8b : LinguisticExample :=
+def ex_8b : Datum :=
   { id := "rakosi2019_8b"
     source := ⟨"rakosi-2019", "(8b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("verb", "sg"), ("anaphor", "reflexiveSg"), ("semanticPlural", "yes")] }
 
-def ex_8b_ : LinguisticExample :=
+def ex_8b_ : Datum :=
   { id := "rakosi2019_8b_"
     source := ⟨"rakosi-2019", "(8b')"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_8b_ : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("verb", "sg"), ("anaphor", "reflexivePl"), ("semanticPlural", "yes")] }
 
-def ex_9a : LinguisticExample :=
+def ex_9a : Datum :=
   { id := "rakosi2019_9a"
     source := ⟨"rakosi-2019", "(9a)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
 
-def ex_9b : LinguisticExample :=
+def ex_9b : Datum :=
   { id := "rakosi2019_9b"
     source := ⟨"rakosi-2019", "(9b)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_9b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
 
-def ex_9c : LinguisticExample :=
+def ex_9c : Datum :=
   { id := "rakosi2019_9c"
     source := ⟨"rakosi-2019", "(9c)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_9c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
 
-def ex_9d : LinguisticExample :=
+def ex_9d : Datum :=
   { id := "rakosi2019_9d"
     source := ⟨"rakosi-2019", "(9d)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_9d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("antecedent", "quantified"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "rakosi2019_11a"
     source := ⟨"rakosi-2019", "(11a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("verb", "sg"), ("anaphor", "reflexiveSg"), ("semanticPlural", "yes")] }
 
-def ex_11a_ : LinguisticExample :=
+def ex_11a_ : Datum :=
   { id := "rakosi2019_11a_"
     source := ⟨"rakosi-2019", "(11a')"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_11a_ : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("verb", "sg"), ("anaphor", "reflexivePl"), ("semanticPlural", "yes")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "rakosi2019_11b"
     source := ⟨"rakosi-2019", "(11b)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("verb", "pl"), ("anaphor", "reflexivePl"), ("semanticPlural", "yes")] }
 
-def ex_11b_ : LinguisticExample :=
+def ex_11b_ : Datum :=
   { id := "rakosi2019_11b_"
     source := ⟨"rakosi-2019", "(11b')"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_11b_ : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("verb", "pl"), ("anaphor", "reflexiveSg"), ("semanticPlural", "yes")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "rakosi2019_12"
     source := ⟨"rakosi-2019", "(12)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
 
-def ex_12_ : LinguisticExample :=
+def ex_12_ : Datum :=
   { id := "rakosi2019_12_"
     source := ⟨"rakosi-2019", "(12')"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_12_ : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("antecedent", "coordinate"), ("verb", "pl"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "rakosi2019_14"
     source := ⟨"rakosi-2019", "(14)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "collective"), ("verb", "sg"), ("anaphor", "none"), ("semanticPlural", "yes")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "rakosi2019_15a"
     source := ⟨"rakosi-2019", "(15a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "collective"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "rakosi2019_15b"
     source := ⟨"rakosi-2019", "(15b)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "collective"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
 
-def ex_15c : LinguisticExample :=
+def ex_15c : Datum :=
   { id := "rakosi2019_15c"
     source := ⟨"rakosi-2019", "(15c)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_15c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "collective"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "rakosi2019_16"
     source := ⟨"rakosi-2019", "(16)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "collective"), ("verb", "sg"), ("anaphor", "reflexiveSg"), ("semanticPlural", "yes")] }
 
-def ex_16_ : LinguisticExample :=
+def ex_16_ : Datum :=
   { id := "rakosi2019_16_"
     source := ⟨"rakosi-2019", "(16')"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_16_ : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("antecedent", "collective"), ("verb", "sg"), ("anaphor", "reflexivePl"), ("semanticPlural", "yes")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "rakosi2019_17"
     source := ⟨"rakosi-2019", "(17)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_17 : LinguisticExample :=
     readings := [("broad scope", .acceptable)]
     paperFeatures := [("section", "6"), ("antecedent", "boundPro"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "rakosi2019_18"
     source := ⟨"rakosi-2019", "(18)"⟩
     reportedIn := none
@@ -446,6 +444,6 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("antecedent", "boundPro"), ("verb", "sg"), ("anaphor", "reciprocal"), ("semanticPlural", "yes")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_2a, ex_2b, ex_3b, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_6, ex_8a, ex_8a_, ex_8b, ex_8b_, ex_9a, ex_9b, ex_9c, ex_9d, ex_11a, ex_11a_, ex_11b, ex_11b_, ex_12, ex_12_, ex_14, ex_15a, ex_15b, ex_15c, ex_16, ex_16_, ex_17, ex_18]
+def all : List Datum := [ex_1a, ex_1b, ex_2a, ex_2b, ex_3b, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_6, ex_8a, ex_8a_, ex_8b, ex_8b_, ex_9a, ex_9b, ex_9c, ex_9d, ex_11a, ex_11a_, ex_11b, ex_11b_, ex_12, ex_12_, ex_14, ex_15a, ex_15b, ex_15c, ex_16, ex_16_, ex_17, ex_18]
 
 end Rakosi2019.Examples

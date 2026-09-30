@@ -15,9 +15,7 @@ this module; declarations live in `namespace Kriz2015.Examples`.
 
 namespace Kriz2015.Examples
 
-open Data.Examples
-
-def switches_pos_gap : LinguisticExample :=
+def switches_pos_gap : Datum :=
   { id := "kriz2015_switches_pos_gap"
     source := ⟨"kriz-2015", "canonical switches homogeneity item"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def switches_pos_gap : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "GAP"), ("gap_detected", "true")] }
 
-def switches_neg_gap : LinguisticExample :=
+def switches_neg_gap : Datum :=
   { id := "kriz2015_switches_neg_gap"
     source := ⟨"kriz-2015", "canonical switches homogeneity item, negated"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def switches_neg_gap : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "GAP"), ("gap_detected", "true")] }
 
-def switches_nonmax_existential : LinguisticExample :=
+def switches_nonmax_existential : Datum :=
   { id := "kriz2015_switches_nonmax_existential"
     source := ⟨"kriz-2015", "(11) switches non-maximality"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def switches_nonmax_existential : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "GAP"), ("issue", "existential")] }
 
-def switches_nonmax_universal : LinguisticExample :=
+def switches_nonmax_universal : Datum :=
   { id := "kriz2015_switches_nonmax_universal"
     source := ⟨"kriz-2015", "(11) switches non-maximality"⟩
     reportedIn := none
@@ -69,6 +67,6 @@ def switches_nonmax_universal : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "GAP"), ("issue", "universal")] }
 
-def all : List LinguisticExample := [switches_pos_gap, switches_neg_gap, switches_nonmax_existential, switches_nonmax_universal]
+def all : List Datum := [switches_pos_gap, switches_neg_gap, switches_nonmax_existential, switches_nonmax_universal]
 
 end Kriz2015.Examples

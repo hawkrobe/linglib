@@ -61,7 +61,7 @@ those sentences need.
 
 namespace Ronai2024
 
-open ChemlaSpector2011 Data.Examples SomeAllWorld
+open ChemlaSpector2011 SomeAllWorld
 
 variable {ι : Type*}
 

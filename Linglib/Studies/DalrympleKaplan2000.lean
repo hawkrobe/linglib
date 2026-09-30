@@ -98,10 +98,10 @@ conjunction's marker. Each construction is then checked against the paper's judg
 
 namespace DalrympleKaplan2000
 
-open Data.Examples Morphology
+open Morphology
 
 /-- The paper's judgment on `e` is the prediction `P`. -/
-abbrev AcceptableIff (e : LinguisticExample) (P : Prop) : Prop := e.judgment = .acceptable ↔ P
+abbrev AcceptableIff (e : Datum) (P : Prop) : Prop := e.judgment = .acceptable ↔ P
 
 /-- A distributive requirement on a coordinate structure holds of each conjunct ((44), (73)). -/
 abbrev Distributes {α : Type*} (P : α → Prop) (s : Finset α) : Prop := ∀ f ∈ s, P f

@@ -15,9 +15,7 @@ this module; declarations live in `namespace DelPinal2015.Examples`.
 
 namespace DelPinal2015.Examples
 
-open Data.Examples
-
-def fake_gun : LinguisticExample :=
+def fake_gun : Datum :=
   { id := "delpinal2015_fake_gun"
     source := ⟨"delpinal-2015", "(17)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def fake_gun : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def counterfeit_rolex : LinguisticExample :=
+def counterfeit_rolex : Datum :=
   { id := "delpinal2015_counterfeit_rolex"
     source := ⟨"delpinal-2015", "(11)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def counterfeit_rolex : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def artificial_heart : LinguisticExample :=
+def artificial_heart : Datum :=
   { id := "delpinal2015_artificial_heart"
     source := ⟨"delpinal-2015", "(12)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def artificial_heart : LinguisticExample :=
     readings := [("strict privative (¬Q_E preserved)", .acceptable), ("non-privative (Q_E preserved)", .marginal)]
     paperFeatures := [] }
 
-def fake_chanel_handbag : LinguisticExample :=
+def fake_chanel_handbag : Datum :=
   { id := "delpinal2015_fake_chanel_handbag"
     source := ⟨"delpinal-2015", "fn. 12"⟩
     reportedIn := none
@@ -69,6 +67,6 @@ def fake_chanel_handbag : LinguisticExample :=
     readings := [("[fake [Chanel handbag]] (counterfeit)", .acceptable), ("[[fake Chanel] handbag] (falsely-branded)", .acceptable)]
     paperFeatures := [] }
 
-def all : List LinguisticExample := [fake_gun, counterfeit_rolex, artificial_heart, fake_chanel_handbag]
+def all : List Datum := [fake_gun, counterfeit_rolex, artificial_heart, fake_chanel_handbag]
 
 end DelPinal2015.Examples

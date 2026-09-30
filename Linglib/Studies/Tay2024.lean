@@ -74,7 +74,7 @@ postverbal phrase is an argument of V2, and that chapter, the V-*de* constructio
 
 namespace Tay2024
 
-open Mandarin Morphology Data.Examples
+open Mandarin Morphology
 
 /-! ### The null affix (chapter 2, section 3.3) -/
 
@@ -259,7 +259,7 @@ inductive ExternalArgument
   deriving DecidableEq
 
 /-- The reading of the external argument a row records. -/
-def externalArgument? (ex : LinguisticExample) : Option ExternalArgument :=
+def externalArgument? (ex : Datum) : Option ExternalArgument :=
   ex.parse? "externalArgument"
     [("agent", .agent), ("theme", .theme), ("subjectMatter", .subjectMatter),
      ("pureCauser", .pureCauser)]

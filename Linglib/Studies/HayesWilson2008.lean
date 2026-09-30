@@ -58,7 +58,7 @@ in prose.
 
 namespace HayesWilson2008
 
-open Data.Examples Phonology OptimalityTheory HarmonicGrammar Real
+open Phonology OptimalityTheory HarmonicGrammar Real
 
 /-! ### The segments of Table 3 -/
 
@@ -399,7 +399,7 @@ def hundredths (s : String) : Option ℕ :=
 
 /-- A row that reports a score is reproduced when its onset parses and the grammar's score is
     within one hundredth of the reported one. -/
-def Reproduced (e : LinguisticExample) : Prop :=
+def Reproduced (e : Datum) : Prop :=
   ∀ sc ∈ e.feature? "score", ∃ o ∈ Seg.parse e.primaryText.toList, ∃ k ∈ hundredths sc,
     ((h o : ℤ) - k).natAbs ≤ 1
 

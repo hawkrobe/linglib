@@ -15,9 +15,7 @@ this module; declarations live in `namespace ZwickyPullum1983.Examples`.
 
 namespace ZwickyPullum1983.Examples
 
-open Data.Examples
-
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "zwickypullum1983_1a"
     source := ⟨"zwicky-pullum-1983", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("clitic", "'s")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "zwickypullum1983_1b"
     source := ⟨"zwicky-pullum-1983", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("clitic", "'ve")] }
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "zwickypullum1983_2a"
     source := ⟨"zwicky-pullum-1983", "(2a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("criterion", "A"), ("host", "preposition")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "zwickypullum1983_2b"
     source := ⟨"zwicky-pullum-1983", "(2b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("criterion", "A"), ("host", "verb")] }
 
-def ex_2c : LinguisticExample :=
+def ex_2c : Datum :=
   { id := "zwickypullum1983_2c"
     source := ⟨"zwicky-pullum-1983", "(2c)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_2c : LinguisticExample :=
     readings := []
     paperFeatures := [("criterion", "A"), ("host", "adjective")] }
 
-def ex_2d : LinguisticExample :=
+def ex_2d : Datum :=
   { id := "zwickypullum1983_2d"
     source := ⟨"zwicky-pullum-1983", "(2d)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_2d : LinguisticExample :=
     readings := []
     paperFeatures := [("criterion", "A"), ("host", "adverb")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "zwickypullum1983_3"
     source := ⟨"zwicky-pullum-1983", "(3)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("criterion", "F")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "zwickypullum1983_4a"
     source := ⟨"zwicky-pullum-1983", "(4a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("morpheme", "-n't")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "zwickypullum1983_4b"
     source := ⟨"zwicky-pullum-1983", "(4b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("criterion", "E")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "zwickypullum1983_5"
     source := ⟨"zwicky-pullum-1983", "(5)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "zwickypullum1983_6"
     source := ⟨"zwicky-pullum-1983", "(6)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("criterion", "E")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "zwickypullum1983_7a"
     source := ⟨"zwicky-pullum-1983", "(7a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_7a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "zwickypullum1983_7b"
     source := ⟨"zwicky-pullum-1983", "(7b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "zwickypullum1983_8a"
     source := ⟨"zwicky-pullum-1983", "(8a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("clitic", "'ve")] }
 
-def ex_8b : LinguisticExample :=
+def ex_8b : Datum :=
   { id := "zwickypullum1983_8b"
     source := ⟨"zwicky-pullum-1983", "(8b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("criterion", "E")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "zwickypullum1983_9"
     source := ⟨"zwicky-pullum-1983", "(9)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("criterion", "F")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "zwickypullum1983_10a"
     source := ⟨"zwicky-pullum-1983", "(10a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "zwickypullum1983_10b"
     source := ⟨"zwicky-pullum-1983", "(10b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "zwickypullum1983_12a"
     source := ⟨"zwicky-pullum-1983", "(12a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("criterion", "A")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "zwickypullum1983_12b"
     source := ⟨"zwicky-pullum-1983", "(12b)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("criterion", "A")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "zwickypullum1983_13a"
     source := ⟨"zwicky-pullum-1983", "(13a)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_13b : LinguisticExample :=
+def ex_13b : Datum :=
   { id := "zwickypullum1983_13b"
     source := ⟨"zwicky-pullum-1983", "(13b)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_13b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "zwickypullum1983_14a"
     source := ⟨"zwicky-pullum-1983", "(14a)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "zwickypullum1983_14b"
     source := ⟨"zwicky-pullum-1983", "(14b)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("criterion", "A")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "zwickypullum1983_15a"
     source := ⟨"zwicky-pullum-1983", "(15a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("criterion", "D"), ("reading", "CAN(NOT(P))")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "zwickypullum1983_15b"
     source := ⟨"zwicky-pullum-1983", "(15b)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("criterion", "D"), ("reading", "NOT(CAN(P))")] }
 
-def ex_16a : LinguisticExample :=
+def ex_16a : Datum :=
   { id := "zwickypullum1983_16a"
     source := ⟨"zwicky-pullum-1983", "(16a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_16a : LinguisticExample :=
     readings := []
     paperFeatures := [("criterion", "D")] }
 
-def ex_16b : LinguisticExample :=
+def ex_16b : Datum :=
   { id := "zwickypullum1983_16b"
     source := ⟨"zwicky-pullum-1983", "(16b)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_16b : LinguisticExample :=
     readings := []
     paperFeatures := [("criterion", "D")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "zwickypullum1983_17"
     source := ⟨"zwicky-pullum-1983", "(17)"⟩
     reportedIn := none
@@ -394,6 +392,6 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("criterion", "D")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_2a, ex_2b, ex_2c, ex_2d, ex_3, ex_4a, ex_4b, ex_5, ex_6, ex_7a, ex_7b, ex_8a, ex_8b, ex_9, ex_10a, ex_10b, ex_12a, ex_12b, ex_13a, ex_13b, ex_14a, ex_14b, ex_15a, ex_15b, ex_16a, ex_16b, ex_17]
+def all : List Datum := [ex_1a, ex_1b, ex_2a, ex_2b, ex_2c, ex_2d, ex_3, ex_4a, ex_4b, ex_5, ex_6, ex_7a, ex_7b, ex_8a, ex_8b, ex_9, ex_10a, ex_10b, ex_12a, ex_12b, ex_13a, ex_13b, ex_14a, ex_14b, ex_15a, ex_15b, ex_16a, ex_16b, ex_17]
 
 end ZwickyPullum1983.Examples

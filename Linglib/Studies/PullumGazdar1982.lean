@@ -44,7 +44,7 @@ Langendoen's finite state language are not formalized.
 
 namespace PullumGazdar1982
 
-open Data.Examples Examples
+open Examples
 
 /-- A rule of a grammar rewrites its nonterminal to its output. -/
 private theorem produces_of_mem {T : Type*} {g : ContextFreeGrammar T} {r : ContextFreeRule T g.NT}
@@ -547,9 +547,9 @@ theorem isXY_isContextFree : Language.IsContextFree ({w | IsXY w} : Language Sym
 
 /-- Langendoen's characterization (17) of English *respectively* sentences: each verb agrees in
 number with its subject. -/
-def Langendoen (r : LinguisticExample) : Prop := r.feature? "subjects" = r.feature? "verbs"
+def Langendoen (r : Datum) : Prop := r.feature? "subjects" = r.feature? "verbs"
 
-instance (r : LinguisticExample) : Decidable (Langendoen r) := by unfold Langendoen; infer_instance
+instance (r : Datum) : Decidable (Langendoen r) := by unfold Langendoen; infer_instance
 
 /-- (19): the judgments are the exact converse of the characterization. -/
 theorem respectively_converse :
@@ -827,17 +827,17 @@ def Cat.ofChar? : Char → Option Cat
   | _ => none
 
 /-- A row's category string. -/
-def categories (r : LinguisticExample) : Option (List Cat) :=
+def categories (r : Datum) : Option (List Cat) :=
   (r.feature? "categories").bind λ s => s.toList.mapM Cat.ofChar?
 
 /-- A row is predicted: it is grammatical exactly when its category string is a verb phrase of
 grammar (29). -/
-def Predicted (r : LinguisticExample) : Prop :=
+def Predicted (r : Datum) : Prop :=
   match categories r with
   | some w => r.judgment = .acceptable ↔ isVerbPhrase w = true
   | none => False
 
-instance (r : LinguisticExample) : Decidable (Predicted r) := by
+instance (r : Datum) : Decidable (Predicted r) := by
   unfold Predicted; split <;> infer_instance
 
 /-- (25) to (31): grammar (29) accepts the grammatical clauses and rejects the ungrammatical. -/
@@ -847,10 +847,10 @@ theorem dutch_rows : ∀ r ∈ Examples.all, r.language = "dutc1256" → Predict
 
 /-- The stem-matching premise of the Mohawk argument: the stem incorporated in the verb is the
 head noun stem of its external argument. -/
-def StemMatched (r : LinguisticExample) : Prop :=
+def StemMatched (r : Datum) : Prop :=
   r.feature? "incorporated" = r.feature? "external"
 
-instance (r : LinguisticExample) : Decidable (StemMatched r) := by
+instance (r : Datum) : Decidable (StemMatched r) := by
   unfold StemMatched; infer_instance
 
 /-- Classificatory incorporation (39), (40) and possessed incorporation (43d) are grammatical

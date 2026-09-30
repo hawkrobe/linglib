@@ -15,9 +15,7 @@ this module; declarations live in `namespace Xiang2022.Examples`.
 
 namespace Xiang2022.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "xiang2022_1"
     source := ⟨"xiang-2022", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("answer", "complete")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "xiang2022_2"
     source := ⟨"xiang-2022", "(2a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("answer", "partial"), ("contour", "rise-fall-rise")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "xiang2022_3"
     source := ⟨"xiang-2022", "(2b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("answer", "partial"), ("contour", "falling")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "xiang2022_4"
     source := ⟨"xiang-2022", "(3)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4 : LinguisticExample :=
     readings := [("mention-some", .acceptable), ("conjunctive mention-all", .acceptable), ("disjunctive mention-all", .acceptable)]
     paperFeatures := [("modal", "can"), ("flavor", "teleological")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "xiang2022_5"
     source := ⟨"xiang-2022", "(5)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "could"), ("flavor", "epistemic")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "xiang2022_6"
     source := ⟨"xiang-2022", "(8)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "should"), ("force", "universal")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "xiang2022_7"
     source := ⟨"xiang-2022", "(12)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_7 : LinguisticExample :=
     readings := [("mention-all", .acceptable)]
     paperFeatures := [("modal", "can"), ("goal", "exhaustive")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "xiang2022_8"
     source := ⟨"xiang-2022", "(58)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_8 : LinguisticExample :=
     readings := [("only one of the children came", .acceptable)]
     paperFeatures := [("wh", "singular"), ("inference", "uniqueness")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "xiang2022_9"
     source := ⟨"xiang-2022", "(60a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("wh", "plural")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "xiang2022_10"
     source := ⟨"xiang-2022", "(60b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("wh", "singular")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "xiang2022_11"
     source := ⟨"xiang-2022", "(61)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_11 : LinguisticExample :=
     readings := [("narrow-scope disjunction", .acceptable)]
     paperFeatures := [("wh", "singular"), ("answer", "higher-order disjunction")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "xiang2022_12"
     source := ⟨"xiang-2022", "(62)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("wh", "singular"), ("asymmetry", "disjunction-conjunction")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "xiang2022_13"
     source := ⟨"xiang-2022", "(68a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_13 : LinguisticExample :=
     readings := [("local uniqueness", .acceptable)]
     paperFeatures := [("modal", "could"), ("inference", "local uniqueness")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "xiang2022_14"
     source := ⟨"xiang-2022", "(69)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_14 : LinguisticExample :=
     readings := [("we are not allowed to assign more than one chapter", .acceptable)]
     paperFeatures := [("modal", "have to"), ("inference", "local uniqueness")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "xiang2022_15"
     source := ⟨"xiang-2022", "(83)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "can"), ("inference", "local uniqueness")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "xiang2022_16"
     source := ⟨"xiang-2022", "(84b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "can"), ("exhaustification", "local")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "xiang2022_17"
     source := ⟨"xiang-2022", "(85)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "could"), ("inference", "local uniqueness")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "xiang2022_18"
     source := ⟨"xiang-2022", "(86)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "could")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "xiang2022_19"
     source := ⟨"xiang-2022", "(102)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_19 : LinguisticExample :=
     readings := [("global uniqueness", .acceptable)]
     paperFeatures := [("modal", "have to"), ("interpretation", "first-order")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "xiang2022_20"
     source := ⟨"xiang-2022", "(103)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_20 : LinguisticExample :=
     readings := [("local uniqueness", .acceptable)]
     paperFeatures := [("modal", "have to"), ("interpretation", "narrow-scope higher-order")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "xiang2022_21"
     source := ⟨"xiang-2022", "(105b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_21 : LinguisticExample :=
     readings := [("universal local uniqueness", .acceptable)]
     paperFeatures := [("modal", "can"), ("interpretation", "mention-some")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "xiang2022_22"
     source := ⟨"xiang-2022", "(106)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_22 : LinguisticExample :=
     readings := [("existential local uniqueness", .acceptable)]
     paperFeatures := [("modal", "can"), ("exhaustification", "local")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "xiang2022_23"
     source := ⟨"xiang-2022", "(107)"⟩
     reportedIn := none
@@ -316,6 +314,6 @@ def ex_23 : LinguisticExample :=
     readings := [("disjunctive mention-all", .acceptable)]
     paperFeatures := [("modal", "can"), ("wh", "singular")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23]
 
 end Xiang2022.Examples

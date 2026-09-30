@@ -36,7 +36,7 @@ grammatical exactly when the prefix and suffixes are what the analysis inserts
 
 namespace McGinnis2013
 
-open DistributedMorphology Phi.Geometry Data.Examples
+open DistributedMorphology Phi.Geometry
 
 /-! ### Features and arguments -/
 
@@ -191,7 +191,7 @@ def Screeve.ofLabel : String → Option Screeve
   | "optative" => some .optative
   | _ => none
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let sp ← ex.feature? "subjPerson" >>= Person.ofLabel
   let sn ← ex.feature? "subjNumber"
   let op ← ex.feature? "objPerson" >>= Person.ofLabel
@@ -201,10 +201,10 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   pure ⟨⟨sp, sn = "pl", false⟩, ⟨op, on = "pl", true⟩, screeve, prefix_,
     ["suffix1", "suffix2", "suffix3"].filterMap ex.feature?, ex.judgment = .acceptable⟩
 
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
 /-- The forms of (2)–(6), (12), (15), (21)–(23), (26). -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- **Agree and Fission**: a form is grammatical iff its prefix is the Subset
 Principle's winner and its suffixes are what scansion inserts — one Group per

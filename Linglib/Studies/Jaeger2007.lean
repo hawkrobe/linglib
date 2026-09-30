@@ -48,7 +48,7 @@ syllable-structure constraints.
 
 namespace Jaeger2007
 
-open OptimalityTheory Finset Real Data.Examples GoldwaterJohnson2003
+open OptimalityTheory Finset Real GoldwaterJohnson2003
 
 /-! ### The Gradual Learning Algorithm as Stochastic Gradient Ascent -/
 
@@ -141,14 +141,14 @@ def vcc : Syl := (0, 2)
 def ccvcc : Syl := (2, 2)
 
 /-- The row of Table 1 recorded by an example, a syllable type with its frequency in permyriad. -/
-def Row.ofExample (e : LinguisticExample) : Option (Syl × ℕ) := do
+def Row.ofDatum (e : Datum) : Option (Syl × ℕ) := do
   let on ← e.nat? "onset"
   let co ← e.nat? "coda"
   let f ← e.nat? "permyriad"
   if h : on < 3 ∧ co < 3 then some ((⟨on, h.1⟩, ⟨co, h.2⟩), f) else none
 
 /-- Table 1. -/
-def rows : List (Syl × ℕ) := Examples.all.filterMap Row.ofExample
+def rows : List (Syl × ℕ) := Examples.all.filterMap Row.ofDatum
 
 /-! ### The constraints of Section 5 -/
 

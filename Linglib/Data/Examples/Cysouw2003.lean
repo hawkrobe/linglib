@@ -15,9 +15,7 @@ this module; declarations live in `namespace Cysouw2003.Examples`.
 
 namespace Cysouw2003.Examples
 
-open Data.Examples
-
-def fig3_6 : LinguisticExample :=
+def fig3_6 : Datum :=
   { id := "cysouw2003_fig3_6"
     source := ⟨"cysouw-2003", "Fig. 3.6"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def fig3_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "co"), ("2", "mo"), ("3", "na"), ("1+2", "ta"), ("1+2+3", "tayo"), ("1+3", "mi"), ("2+3", "yo"), ("3+3", "da"), ("kind", "Maranao"), ("ubiquity", "common"), ("chapter", "3"), ("section", "3.6.5")] }
 
-def ex_3_15 : LinguisticExample :=
+def ex_3_15 : Datum :=
   { id := "cysouw2003_3_15"
     source := ⟨"cysouw-2003", "(3.15)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_3_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "ŋa-"), ("2", "mi-"), ("3", "i-"), ("1+2", "a-"), ("1+2+3", "aŋ-"), ("1+3", "aŋ-"), ("2+3", "guŋ-"), ("3+3", "iŋ-"), ("ubiquity", "rare"), ("chapter", "3"), ("section", "3.6.6"), ("fpc", "Pf")] }
 
-def ex_3_16 : LinguisticExample :=
+def ex_3_16 : Datum :=
   { id := "cysouw2003_3_16"
     source := ⟨"cysouw-2003", "(3.16)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ma"), ("2", "-ke"), ("3", "-pa(ne)"), ("1+2", "-paine"), ("1+2+3", "-ka"), ("1+3", "-ka"), ("2+3", "-pike"), ("3+3", "-pa(ne)"), ("ubiquity", "rare"), ("chapter", "3"), ("section", "3.6.6"), ("fpc", "Pf")] }
 
-def ex_3_17 : LinguisticExample :=
+def ex_3_17 : Datum :=
   { id := "cysouw2003_3_17"
     source := ⟨"cysouw-2003", "(3.17)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_3_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "ngiya"), ("2", "nginja"), ("3", "ngarra/nyirra"), ("1+2", "muwa"), ("1+2+3", "ngawa"), ("1+3", "ngawa"), ("2+3", "nuwa"), ("3+3", "wuta"), ("ubiquity", "rare"), ("chapter", "3"), ("section", "3.6.6"), ("fpc", "Pf")] }
 
-def ex_3_18 : LinguisticExample :=
+def ex_3_18 : Datum :=
   { id := "cysouw2003_3_18"
     source := ⟨"cysouw-2003", "(3.18)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_3_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "ã̄"), ("2", "ī"), ("3", "ē"), ("1+2", "kū"), ("1+2+3", "kàà"), ("1+3", "kū"), ("2+3", "kā"), ("3+3", "ō"), ("ubiquity", "rare"), ("chapter", "3"), ("section", "3.6.6"), ("fpc", "Pg")] }
 
-def ex_3_19 : LinguisticExample :=
+def ex_3_19 : Datum :=
   { id := "cysouw2003_3_19"
     source := ⟨"cysouw-2003", "(3.19)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_3_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "nganyi"), ("2", "nginyi"), ("3", "niyi"), ("1+2", "ngidi"), ("1+2+3", "yaadi"), ("1+3", "ngidi"), ("2+3", "gidi"), ("3+3", "bidi"), ("ubiquity", "rare"), ("chapter", "3"), ("section", "3.6.6"), ("fpc", "Pg")] }
 
-def ex_3_20 : LinguisticExample :=
+def ex_3_20 : Datum :=
   { id := "cysouw2003_3_20"
     source := ⟨"cysouw-2003", "(3.20)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_3_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "ŋə-"), ("2", "ṉə-"), ("3", "a-"), ("1+2", "mu-"), ("1+2+3", "ŋa-"), ("1+3", "ŋə-"), ("2+3", "ṉə-"), ("3+3", "wu-"), ("ubiquity", "rare"), ("chapter", "3"), ("section", "3.6.6"), ("fpc", "Ph")] }
 
-def ex_3_21 : LinguisticExample :=
+def ex_3_21 : Datum :=
   { id := "cysouw2003_3_21"
     source := ⟨"cysouw-2003", "(3.21)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_3_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ho"), ("2", "-ngi"), ("3", "-ha"), ("1+2", "-ho"), ("1+2+3", "-gi"), ("1+3", "-gi"), ("2+3", "-gi"), ("3+3", "-ha"), ("ubiquity", "rare"), ("chapter", "3"), ("section", "3.6.6"), ("fpc", "Pi")] }
 
-def ex_3_22 : LinguisticExample :=
+def ex_3_22 : Datum :=
   { id := "cysouw2003_3_22"
     source := ⟨"cysouw-2003", "(3.22)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_3_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ana"), ("2", "-ata"), ("3", "-evira"), ("1+2", "-ana"), ("1+2+3", "-ana"), ("1+3", "-ara"), ("2+3", "-awa"), ("3+3", "-ara"), ("ubiquity", "rare"), ("chapter", "3"), ("section", "3.6.6"), ("fpc", "Pj")] }
 
-def ex_4_1 : LinguisticExample :=
+def ex_4_1 : Datum :=
   { id := "cysouw2003_4_1"
     source := ⟨"cysouw-2003", "(4.1)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_4_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-o"), ("2", "-s"), ("3", "-t"), ("1+2", "-mus"), ("1+2+3", "-mus"), ("1+3", "-mus"), ("2+3", "-tis"), ("3+3", "-unt"), ("kind", "Latin"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.3.2")] }
 
-def ex_4_2 : LinguisticExample :=
+def ex_4_2 : Datum :=
   { id := "cysouw2003_4_2"
     source := ⟨"cysouw-2003", "(4.2)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_4_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "mamə"), ("2", "ohee"), ("3", "(demonstratives)"), ("1+2", "api"), ("1+2+3", "api"), ("1+3", "api"), ("2+3", "oheela"), ("3+3", "(demonstratives)"), ("kind", "Sinhalese"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.3.3")] }
 
-def ex_4_3 : LinguisticExample :=
+def ex_4_3 : Datum :=
   { id := "cysouw2003_4_3"
     source := ⟨"cysouw-2003", "(4.3)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_4_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "*ɑ-"), ("2", "*ɪ-"), ("3", "*kɔ/ø-"), ("1+2", "*kɪ/kɛ-"), ("1+2+3", "*kɪ/kɛ-"), ("1+3", "*kɪ/kɛ-"), ("2+3", "*ɔ-"), ("3+3", "*kɔ/ø-"), ("kind", "Sinhalese"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.3.3")] }
 
-def ex_4_4 : LinguisticExample :=
+def ex_4_4 : Datum :=
   { id := "cysouw2003_4_4"
     source := ⟨"cysouw-2003", "(4.4)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_4_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "sa-"), ("2", "chi-"), ("3", "ø-"), ("1+2", "po-"), ("1+2+3", "po-"), ("1+3", "po-"), ("2+3", "hachchi-"), ("3+3", "ø-"), ("kind", "Sinhalese"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.3.3")] }
 
-def ex_4_5 : LinguisticExample :=
+def ex_4_5 : Datum :=
   { id := "cysouw2003_4_5"
     source := ⟨"cysouw-2003", "(4.5)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_4_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-(m)ah"), ("2", "-(m)eʔic"), ("3", "-ma"), ("1+2", "-(m)in"), ("1+2+3", "-(m)in"), ("1+3", "-(m)in"), ("2+3", "-(m)eʔico"), ("3+3", "-ma"), ("kind", "Sinhalese"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.3.3")] }
 
-def ex_4_6 : LinguisticExample :=
+def ex_4_6 : Datum :=
   { id := "cysouw2003_4_6"
     source := ⟨"cysouw-2003", "(4.6)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_4_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "da"), ("2", "wa"), ("3", "na"), ("1+2", "me"), ("1+2+3", "me"), ("1+3", "me"), ("2+3", "ma"), ("3+3", "na"), ("kind", "Sinhalese"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.3.3")] }
 
-def ex_4_7 : LinguisticExample :=
+def ex_4_7 : Datum :=
   { id := "cysouw2003_4_7"
     source := ⟨"cysouw-2003", "(4.7)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_4_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "ai"), ("2", "aame"), ("3", "je"), ("1+2", "ne"), ("1+2+3", "ne"), ("1+3", "ne"), ("2+3", "aame"), ("3+3", "je"), ("kind", "Berik"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.3.4")] }
 
-def ex_4_8 : LinguisticExample :=
+def ex_4_8 : Datum :=
   { id := "cysouw2003_4_8"
     source := ⟨"cysouw-2003", "(4.8)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_4_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "na"), ("2", "ene"), ("3", "ye"), ("1+2", "no"), ("1+2+3", "no"), ("1+3", "no"), ("2+3", "ene"), ("3+3", "ye"), ("kind", "Berik"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.3.4")] }
 
-def ex_4_9 : LinguisticExample :=
+def ex_4_9 : Datum :=
   { id := "cysouw2003_4_9"
     source := ⟨"cysouw-2003", "(4.9)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_4_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "wa-"), ("2", "ra-"), ("3", "ø-"), ("1+2", "rų-"), ("1+2+3", "rų-"), ("1+3", "rų-"), ("2+3", "ra-"), ("3+3", "ø-"), ("kind", "Berik"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.3.4")] }
 
-def ex_4_12 : LinguisticExample :=
+def ex_4_12 : Datum :=
   { id := "cysouw2003_4_12"
     source := ⟨"cysouw-2003", "(4.12)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_4_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "nũ"), ("2", "mã"), ("3", "wũ"), ("1+2", "nã"), ("1+2+3", "nã"), ("1+3", "nã"), ("2+3", "mã"), ("3+3", "wũ"), ("kind", "Berik"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.3.4")] }
 
-def ex_4_13 : LinguisticExample :=
+def ex_4_13 : Datum :=
   { id := "cysouw2003_4_13"
     source := ⟨"cysouw-2003", "(4.13)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_4_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "a-"), ("2", "i-"), ("3", "è-"), ("1+2", "ki-"), ("1+2+3", "ki-"), ("1+3", "ki-"), ("2+3", "i-"), ("3+3", "è-"), ("kind", "Berik"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.3.4")] }
 
-def ex_4_15 : LinguisticExample :=
+def ex_4_15 : Datum :=
   { id := "cysouw2003_4_15"
     source := ⟨"cysouw-2003", "(4.15)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_4_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "ʔ-"), ("2", "m-"), ("3", "ø-"), ("1+2", "ʔ-"), ("1+2+3", "ʔ-"), ("1+3", "ʔ-"), ("2+3", "m-"), ("3+3", "ø-"), ("kind", "Maricopa"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.3.5")] }
 
-def ex_4_17 : LinguisticExample :=
+def ex_4_17 : Datum :=
   { id := "cysouw2003_4_17"
     source := ⟨"cysouw-2003", "(4.17)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_4_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "na"), ("2", "ni"), ("3", "(demonstratives)"), ("1+2", "na"), ("1+2+3", "na"), ("1+3", "na"), ("2+3", "ni"), ("3+3", "(demonstratives)"), ("kind", "Maricopa"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.3.5")] }
 
-def ex_4_19 : LinguisticExample :=
+def ex_4_19 : Datum :=
   { id := "cysouw2003_4_19"
     source := ⟨"cysouw-2003", "(4.19)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_4_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "I"), ("2", "you"), ("3", "he/she/it"), ("1+2", "we"), ("1+2+3", "we"), ("1+3", "we"), ("2+3", "you"), ("3+3", "they"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.3.6")] }
 
-def ex_4_20 : LinguisticExample :=
+def ex_4_20 : Datum :=
   { id := "cysouw2003_4_20"
     source := ⟨"cysouw-2003", "(4.20)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_4_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "ɛ̃ŋ"), ("2", "a"), ("3", "ti/ði"), ("1+2", "ãŋ"), ("1+2+3", "ãŋ"), ("1+3", "ãŋ"), ("2+3", "a"), ("3+3", "ɔŋ"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.3.6")] }
 
-def ex_4_21 : LinguisticExample :=
+def ex_4_21 : Datum :=
   { id := "cysouw2003_4_21"
     source := ⟨"cysouw-2003", "(4.21)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_4_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "a-"), ("2", "e-"), ("3", "ø-"), ("1+2", "a-"), ("1+2+3", "a-"), ("1+3", "a-"), ("2+3", "eci-"), ("3+3", "ø-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.3.6")] }
 
-def ex_4_22 : LinguisticExample :=
+def ex_4_22 : Datum :=
   { id := "cysouw2003_4_22"
     source := ⟨"cysouw-2003", "(4.22)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_4_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "te"), ("2", "are"), ("3", "bi"), ("1+2", "te"), ("1+2+3", "te"), ("1+3", "te"), ("2+3", "be"), ("3+3", "bi"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.3.6")] }
 
-def ex_4_23 : LinguisticExample :=
+def ex_4_23 : Datum :=
   { id := "cysouw2003_4_23"
     source := ⟨"cysouw-2003", "(4.23)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_4_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ra"), ("2", "-de"), ("3", "-ø"), ("1+2", "-ra"), ("1+2+3", "-ra"), ("1+3", "-ra"), ("2+3", "-da"), ("3+3", "-ø"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.3.6")] }
 
-def ex_4_24 : LinguisticExample :=
+def ex_4_24 : Datum :=
   { id := "cysouw2003_4_24"
     source := ⟨"cysouw-2003", "(4.24)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_4_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "n-"), ("2", "kə-"), ("3", "i-"), ("1+2", "n-"), ("1+2+3", "n-"), ("1+3", "n-"), ("2+3", "kə-"), ("3+3", "a-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.3.6")] }
 
-def ex_4_25 : LinguisticExample :=
+def ex_4_25 : Datum :=
   { id := "cysouw2003_4_25"
     source := ⟨"cysouw-2003", "(4.25)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_4_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "nok"), ("2", "oh"), ("3", "epe/upe"), ("1+2", "nok"), ("1+2+3", "nok"), ("1+3", "nok"), ("2+3", "ᵉoh"), ("3+3", "ipe"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.3.6")] }
 
-def ex_4_26 : LinguisticExample :=
+def ex_4_26 : Datum :=
   { id := "cysouw2003_4_26"
     source := ⟨"cysouw-2003", "(4.26)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_4_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "ø-"), ("2", "m-"), ("3", "h/b-"), ("1+2", "n-"), ("1+2+3", "n-"), ("1+3", "n-"), ("2+3", "ø-"), ("3+3", "d-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.3.6")] }
 
-def ex_4_27 : LinguisticExample :=
+def ex_4_27 : Datum :=
   { id := "cysouw2003_4_27"
     source := ⟨"cysouw-2003", "(4.27)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_4_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "ne"), ("2", "e"), ("3", "u"), ("1+2", "e"), ("1+2+3", "e"), ("1+3", "e"), ("2+3", "de"), ("3+3", "i"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.3.6")] }
 
-def ex_4_28 : LinguisticExample :=
+def ex_4_28 : Datum :=
   { id := "cysouw2003_4_28"
     source := ⟨"cysouw-2003", "(4.28)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_4_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "ni-"), ("2", "ti-"), ("3", "ø-"), ("1+2", "ti-"), ("1+2+3", "ti-"), ("1+3", "ti-"), ("2+3", "am-"), ("3+3", "ø-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.3.6")] }
 
-def ex_4_29 : LinguisticExample :=
+def ex_4_29 : Datum :=
   { id := "cysouw2003_4_29"
     source := ⟨"cysouw-2003", "(4.29)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_4_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ø"), ("2", "-s"), ("3", "-ø"), ("1+2", "-mos"), ("1+2+3", "-mos"), ("1+3", "-mos"), ("2+3", "-is"), ("3+3", "-n"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.3.6")] }
 
-def ex_4_30 : LinguisticExample :=
+def ex_4_30 : Datum :=
   { id := "cysouw2003_4_30"
     source := ⟨"cysouw-2003", "(4.30)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_4_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ø"), ("2", "-ur"), ("3", "-ur"), ("1+2", "-um"), ("1+2+3", "-um"), ("1+3", "-um"), ("2+3", "-ið"), ("3+3", "-a"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.3.6")] }
 
-def ex_4_31 : LinguisticExample :=
+def ex_4_31 : Datum :=
   { id := "cysouw2003_4_31"
     source := ⟨"cysouw-2003", "(4.31)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_4_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-va"), ("2", "-vi"), ("3", "-va"), ("1+2", "-mu"), ("1+2+3", "-mu"), ("1+3", "-mu"), ("2+3", "-vi"), ("3+3", "-vu"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.3.6")] }
 
-def ex_4_32 : LinguisticExample :=
+def ex_4_32 : Datum :=
   { id := "cysouw2003_4_32"
     source := ⟨"cysouw-2003", "(4.32)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_4_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-a"), ("2", "-a"), ("3", "-a"), ("1+2", "-iamo"), ("1+2+3", "-iamo"), ("1+3", "-iamo"), ("2+3", "-iate"), ("3+3", "-am"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.3.6")] }
 
-def ex_4_33 : LinguisticExample :=
+def ex_4_33 : Datum :=
   { id := "cysouw2003_4_33"
     source := ⟨"cysouw-2003", "(4.33)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_4_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "sį"), ("2", "nį"), ("3", "ʔedį"), ("1+2", "naxį"), ("1+2+3", "naxį"), ("1+3", "naxį"), ("2+3", "naxį"), ("3+3", "ʔegedį"), ("kind", "Slave"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.4.2")] }
 
-def ex_4_34 : LinguisticExample :=
+def ex_4_34 : Datum :=
   { id := "cysouw2003_4_34"
     source := ⟨"cysouw-2003", "(4.34)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_4_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "ne"), ("2", "ade"), ("3", "we"), ("1+2", "ite"), ("1+2+3", "ite"), ("1+3", "ite"), ("2+3", "ite"), ("3+3", "se"), ("kind", "Slave"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.4.2")] }
 
-def ex_4_35 : LinguisticExample :=
+def ex_4_35 : Datum :=
   { id := "cysouw2003_4_35"
     source := ⟨"cysouw-2003", "(4.35)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_4_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "k-"), ("2", "m-"), ("3", "n-"), ("1+2", "ø-"), ("1+2+3", "ø-"), ("1+3", "ø-"), ("2+3", "ø-"), ("3+3", "r/n-"), ("kind", "Slave"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.4.2")] }
 
-def ex_4_36 : LinguisticExample :=
+def ex_4_36 : Datum :=
   { id := "cysouw2003_4_36"
     source := ⟨"cysouw-2003", "(4.36)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_4_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-m"), ("2", "-w"), ("3", "-ø"), ("1+2", "-y"), ("1+2+3", "-y"), ("1+3", "-y"), ("2+3", "-y"), ("3+3", "-eŋ"), ("kind", "Slave"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.4.2")] }
 
-def ex_4_37 : LinguisticExample :=
+def ex_4_37 : Datum :=
   { id := "cysouw2003_4_37"
     source := ⟨"cysouw-2003", "(4.37)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex_4_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "mwen"), ("2", "ou"), ("3", "li"), ("1+2", "nou"), ("1+2+3", "nou"), ("1+3", "nou"), ("2+3", "nou"), ("3+3", "yo"), ("kind", "Slave"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.4.2")] }
 
-def ex_4_38 : LinguisticExample :=
+def ex_4_38 : Datum :=
   { id := "cysouw2003_4_38"
     source := ⟨"cysouw-2003", "(4.38)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex_4_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-äs"), ("2", "-äs"), ("3", "-a"), ("1+2", "-ad"), ("1+2+3", "-ad"), ("1+3", "-ad"), ("2+3", "-ad"), ("3+3", "-ax"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.2")] }
 
-def ex_4_39 : LinguisticExample :=
+def ex_4_39 : Datum :=
   { id := "cysouw2003_4_39"
     source := ⟨"cysouw-2003", "(4.39)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex_4_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-em"), ("2", "-em"), ("3", "-am"), ("1+2", "-man"), ("1+2+3", "-man"), ("1+3", "-man"), ("2+3", "-man"), ("3+3", "-un"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.2")] }
 
-def ex_4_40 : LinguisticExample :=
+def ex_4_40 : Datum :=
   { id := "cysouw2003_4_40"
     source := ⟨"cysouw-2003", "(4.40)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex_4_40 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ra"), ("2", "-ra"), ("3", "-ri"), ("1+2", "-ru"), ("1+2+3", "-ru"), ("1+3", "-ru"), ("2+3", "-ru"), ("3+3", "-ri"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.2")] }
 
-def ex_4_41 : LinguisticExample :=
+def ex_4_41 : Datum :=
   { id := "cysouw2003_4_41"
     source := ⟨"cysouw-2003", "(4.41)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex_4_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "ø-"), ("2", "ø-"), ("3", "hi-"), ("1+2", "ø-"), ("1+2+3", "ø-"), ("1+3", "ø-"), ("2+3", "ø-"), ("3+3", "hi-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.2")] }
 
-def ex_4_42 : LinguisticExample :=
+def ex_4_42 : Datum :=
   { id := "cysouw2003_4_42"
     source := ⟨"cysouw-2003", "(4.42)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex_4_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ri"), ("2", "-in"), ("3", "-in"), ("1+2", "-ru"), ("1+2+3", "-ru"), ("1+3", "-ru"), ("2+3", "-ru"), ("3+3", "-ran"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.2")] }
 
-def ex_4_43 : LinguisticExample :=
+def ex_4_43 : Datum :=
   { id := "cysouw2003_4_43"
     source := ⟨"cysouw-2003", "(4.43)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex_4_43 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "ø-"), ("2", "nʌ-"), ("3", "ø-"), ("1+2", "a-"), ("1+2+3", "a-"), ("1+3", "a-"), ("2+3", "a-"), ("3+3", "ri/win-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.2")] }
 
-def ex_4_44 : LinguisticExample :=
+def ex_4_44 : Datum :=
   { id := "cysouw2003_4_44"
     source := ⟨"cysouw-2003", "(4.44)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex_4_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "ke"), ("2", "e"), ("3", "we"), ("1+2", "ke"), ("1+2+3", "ke"), ("1+3", "ke"), ("2+3", "ke"), ("3+3", "ye"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.2")] }
 
-def ex_4_45 : LinguisticExample :=
+def ex_4_45 : Datum :=
   { id := "cysouw2003_4_45"
     source := ⟨"cysouw-2003", "(4.45)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex_4_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ra"), ("2", "-ri"), ("3", "-ø"), ("1+2", "-ra"), ("1+2+3", "-ra"), ("1+3", "-ra"), ("2+3", "-ra"), ("3+3", "-ø"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.2")] }
 
-def ex_4_46 : LinguisticExample :=
+def ex_4_46 : Datum :=
   { id := "cysouw2003_4_46"
     source := ⟨"cysouw-2003", "(4.46)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex_4_46 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "ʼíin"), ("2", "ʼíim"), ("3", "ʼipí"), ("1+2", "núun"), ("1+2+3", "núun"), ("1+3", "núun"), ("2+3", "ʼimé"), ("3+3", "ʼimé"), ("kind", "Nez Perce"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.4.3")] }
 
-def ex_4_47 : LinguisticExample :=
+def ex_4_47 : Datum :=
   { id := "cysouw2003_4_47"
     source := ⟨"cysouw-2003", "(4.47)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex_4_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "nuya"), ("2", "piya"), ("3", "(demonstr.)"), ("1+2", "waya"), ("1+2+3", "waya"), ("1+3", "waya"), ("2+3", "niya"), ("3+3", "niya"), ("kind", "Nez Perce"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.4.3")] }
 
-def ex_4_48 : LinguisticExample :=
+def ex_4_48 : Datum :=
   { id := "cysouw2003_4_48"
     source := ⟨"cysouw-2003", "(4.48)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex_4_48 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "ma"), ("2", "la"), ("3", "kɔ"), ("1+2", "nu"), ("1+2+3", "nu"), ("1+3", "nu"), ("2+3", "lɛn"), ("3+3", "lɛn"), ("kind", "Nez Perce"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.4.3")] }
 
-def ex_4_49 : LinguisticExample :=
+def ex_4_49 : Datum :=
   { id := "cysouw2003_4_49"
     source := ⟨"cysouw-2003", "(4.49)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex_4_49 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "mo"), ("2", "to"), ("3", "li"), ("1+2", "nou"), ("1+2+3", "nou"), ("1+3", "nou"), ("2+3", "zot"), ("3+3", "zot"), ("kind", "Nez Perce"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.4.3")] }
 
-def ex_4_50 : LinguisticExample :=
+def ex_4_50 : Datum :=
   { id := "cysouw2003_4_50"
     source := ⟨"cysouw-2003", "(4.50)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex_4_50 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-an"), ("2", "-ep"), ("3", "-on/un"), ("1+2", "-up"), ("1+2+3", "-up"), ("1+3", "-up"), ("2+3", "-ip"), ("3+3", "-ip"), ("kind", "Nez Perce"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.4.3")] }
 
-def ex_4_51 : LinguisticExample :=
+def ex_4_51 : Datum :=
   { id := "cysouw2003_4_51"
     source := ⟨"cysouw-2003", "(4.51)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex_4_51 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-f"), ("2", "-ø"), ("3", "-ø"), ("1+2", "-fo"), ("1+2+3", "-fo"), ("1+3", "-fo"), ("2+3", "-o"), ("3+3", "-o"), ("kind", "Kombai"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.4.3")] }
 
-def ex_4_52 : LinguisticExample :=
+def ex_4_52 : Datum :=
   { id := "cysouw2003_4_52"
     source := ⟨"cysouw-2003", "(4.52)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex_4_52 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ik"), ("2", "-i"), ("3", "-i"), ("1+2", "-nuk"), ("1+2+3", "-nuk"), ("1+3", "-nuk"), ("2+3", "-na"), ("3+3", "-na"), ("kind", "Kombai"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.4.3")] }
 
-def ex_4_53 : LinguisticExample :=
+def ex_4_53 : Datum :=
   { id := "cysouw2003_4_53"
     source := ⟨"cysouw-2003", "(4.53)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex_4_53 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "ïk-"), ("2", "ap-"), ("3", "ap-"), ("1+2", "nïn-"), ("1+2+3", "nïn-"), ("1+3", "nïn-"), ("2+3", "kyel-"), ("3+3", "kyel-"), ("kind", "Kombai"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.4.3")] }
 
-def ex_4_54 : LinguisticExample :=
+def ex_4_54 : Datum :=
   { id := "cysouw2003_4_54"
     source := ⟨"cysouw-2003", "(4.54)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex_4_54 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-gyeʔ"), ("2", "-gani"), ("3", "-gani"), ("1+2", "-kheʔ"), ("1+2+3", "-kheʔ"), ("1+3", "-kheʔ"), ("2+3", "-kha:"), ("3+3", "-kha:"), ("kind", "Kombai"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.4.3")] }
 
-def ex_4_55 : LinguisticExample :=
+def ex_4_55 : Datum :=
   { id := "cysouw2003_4_55"
     source := ⟨"cysouw-2003", "(4.55)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ex_4_55 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "t-"), ("2", "ø-"), ("3", "ø-"), ("1+2", "mət-"), ("1+2+3", "mət-"), ("1+3", "mət-"), ("2+3", "ø-"), ("3+3", "ø-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.3")] }
 
-def ex_4_56 : LinguisticExample :=
+def ex_4_56 : Datum :=
   { id := "cysouw2003_4_56"
     source := ⟨"cysouw-2003", "(4.56)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def ex_4_56 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ra"), ("2", "-ø"), ("3", "-ø"), ("1+2", "-ra"), ("1+2+3", "-ra"), ("1+3", "-ra"), ("2+3", "-ø"), ("3+3", "-ø"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.3")] }
 
-def ex_4_57 : LinguisticExample :=
+def ex_4_57 : Datum :=
   { id := "cysouw2003_4_57"
     source := ⟨"cysouw-2003", "(4.57)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def ex_4_57 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-u"), ("2", "-ona"), ("3", "-i"), ("1+2", "-u"), ("1+2+3", "-u"), ("1+3", "-u"), ("2+3", "-o"), ("3+3", "-o"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.3")] }
 
-def ex_4_58 : LinguisticExample :=
+def ex_4_58 : Datum :=
   { id := "cysouw2003_4_58"
     source := ⟨"cysouw-2003", "(4.58)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def ex_4_58 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-i"), ("2", "-i"), ("3", "-i"), ("1+2", "-um"), ("1+2+3", "-um"), ("1+3", "-um"), ("2+3", "-u"), ("3+3", "-u"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.3")] }
 
-def ex_4_59 : LinguisticExample :=
+def ex_4_59 : Datum :=
   { id := "cysouw2003_4_59"
     source := ⟨"cysouw-2003", "(4.59)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def ex_4_59 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ôde"), ("2", "-ane"), ("3", "-ade"), ("1+2", "-are"), ("1+2+3", "-are"), ("1+3", "-are"), ("2+3", "-arije"), ("3+3", "-are"), ("kind", "Omie"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.4.4")] }
 
-def ex_4_60 : LinguisticExample :=
+def ex_4_60 : Datum :=
   { id := "cysouw2003_4_60"
     source := ⟨"cysouw-2003", "(4.60)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def ex_4_60 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ana"), ("2", "-a"), ("3", "-aja"), ("1+2", "-ara"), ("1+2+3", "-ara"), ("1+3", "-ara"), ("2+3", "-awa"), ("3+3", "-ara"), ("kind", "Omie"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.4.4")] }
 
-def ex_4_61 : LinguisticExample :=
+def ex_4_61 : Datum :=
   { id := "cysouw2003_4_61"
     source := ⟨"cysouw-2003", "(4.61)"⟩
     reportedIn := none
@@ -862,7 +860,7 @@ def ex_4_61 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "ma"), ("2", "i"), ("3", "ne"), ("1+2", "d'e"), ("1+2+3", "d'e"), ("1+3", "d'e"), ("2+3", "se"), ("3+3", "d'e"), ("kind", "Omie"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.4.4")] }
 
-def ex_4_62 : LinguisticExample :=
+def ex_4_62 : Datum :=
   { id := "cysouw2003_4_62"
     source := ⟨"cysouw-2003", "(4.62)"⟩
     reportedIn := none
@@ -875,7 +873,7 @@ def ex_4_62 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ø"), ("2", "-es"), ("3", "-ø"), ("1+2", "-en"), ("1+2+3", "-en"), ("1+3", "-en"), ("2+3", "-et"), ("3+3", "-en"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.4")] }
 
-def ex_4_63 : LinguisticExample :=
+def ex_4_63 : Datum :=
   { id := "cysouw2003_4_63"
     source := ⟨"cysouw-2003", "(4.63)"⟩
     reportedIn := none
@@ -888,7 +886,7 @@ def ex_4_63 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-e"), ("2", "-st"), ("3", "-t"), ("1+2", "-en"), ("1+2+3", "-en"), ("1+3", "-en"), ("2+3", "-t"), ("3+3", "-en"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.4")] }
 
-def ex_4_64 : LinguisticExample :=
+def ex_4_64 : Datum :=
   { id := "cysouw2003_4_64"
     source := ⟨"cysouw-2003", "(4.64)"⟩
     reportedIn := none
@@ -901,7 +899,7 @@ def ex_4_64 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-nV"), ("2", "-kV"), ("3", "-ø"), ("1+2", "-sV"), ("1+2+3", "-sV"), ("1+3", "-sV"), ("2+3", "-sV"), ("3+3", "-sV"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.5")] }
 
-def ex_4_65 : LinguisticExample :=
+def ex_4_65 : Datum :=
   { id := "cysouw2003_4_65"
     source := ⟨"cysouw-2003", "(4.65)"⟩
     reportedIn := none
@@ -914,7 +912,7 @@ def ex_4_65 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ø"), ("2", "-t"), ("3", "-t"), ("1+2", "-en"), ("1+2+3", "-en"), ("1+3", "-en"), ("2+3", "-en"), ("3+3", "-en"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.5")] }
 
-def ex_4_66 : LinguisticExample :=
+def ex_4_66 : Datum :=
   { id := "cysouw2003_4_66"
     source := ⟨"cysouw-2003", "(4.66)"⟩
     reportedIn := none
@@ -927,7 +925,7 @@ def ex_4_66 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-sam"), ("2", "-sam"), ("3", "-so"), ("1+2", "-san"), ("1+2+3", "-san"), ("1+3", "-san"), ("2+3", "-san"), ("3+3", "-san"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.5")] }
 
-def ex_4_67 : LinguisticExample :=
+def ex_4_67 : Datum :=
   { id := "cysouw2003_4_67"
     source := ⟨"cysouw-2003", "(4.67)"⟩
     reportedIn := none
@@ -940,7 +938,7 @@ def ex_4_67 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-e"), ("2", "-est"), ("3", "-e"), ("1+2", "-on"), ("1+2+3", "-on"), ("1+3", "-on"), ("2+3", "-on"), ("3+3", "-on"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.5")] }
 
-def ex_4_68 : LinguisticExample :=
+def ex_4_68 : Datum :=
   { id := "cysouw2003_4_68"
     source := ⟨"cysouw-2003", "(4.68)"⟩
     reportedIn := none
@@ -953,7 +951,7 @@ def ex_4_68 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ø"), ("2", "-ø"), ("3", "-s"), ("1+2", "-ø"), ("1+2+3", "-ø"), ("1+3", "-ø"), ("2+3", "-ø"), ("3+3", "-ø"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.5")] }
 
-def ex_4_69 : LinguisticExample :=
+def ex_4_69 : Datum :=
   { id := "cysouw2003_4_69"
     source := ⟨"cysouw-2003", "(4.69)"⟩
     reportedIn := none
@@ -966,7 +964,7 @@ def ex_4_69 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ma"), ("2", "-a"), ("3", "-ma"), ("1+2", "-a"), ("1+2+3", "-a"), ("1+3", "-a"), ("2+3", "-a"), ("3+3", "-a"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.4.5")] }
 
-def ex_4_70 : LinguisticExample :=
+def ex_4_70 : Datum :=
   { id := "cysouw2003_4_70"
     source := ⟨"cysouw-2003", "(4.70)"⟩
     reportedIn := none
@@ -979,7 +977,7 @@ def ex_4_70 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "ako"), ("2", "ka"), ("3", "sekanian"), ("1+2", "ta"), ("1+2+3", "tano"), ("1+3", "kami"), ("2+3", "kano"), ("3+3", "siran"), ("kind", "Maranao"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.5.2")] }
 
-def ex_4_71 : LinguisticExample :=
+def ex_4_71 : Datum :=
   { id := "cysouw2003_4_71"
     source := ⟨"cysouw-2003", "(4.71)"⟩
     reportedIn := none
@@ -992,7 +990,7 @@ def ex_4_71 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "yá"), ("2", "ká"), ("3", "á"), ("1+2", "má"), ("1+2+3", "má"), ("1+3", "ŋá"), ("2+3", "kwá"), ("3+3", "tá"), ("kind", "Mandara"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.5.3")] }
 
-def ex_4_72 : LinguisticExample :=
+def ex_4_72 : Datum :=
   { id := "cysouw2003_4_72"
     source := ⟨"cysouw-2003", "(4.72)"⟩
     reportedIn := none
@@ -1005,7 +1003,7 @@ def ex_4_72 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "*a-"), ("2", "*ere-"), ("3", "*o-"), ("1+2", "*ya-"), ("1+2+3", "*ya-"), ("1+3", "*oro-"), ("2+3", "*pe-"), ("3+3", "*o-"), ("kind", "Tupí-Guaraní"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.5.4")] }
 
-def ex_4_73 : LinguisticExample :=
+def ex_4_73 : Datum :=
   { id := "cysouw2003_4_73"
     source := ⟨"cysouw-2003", "(4.73)"⟩
     reportedIn := none
@@ -1018,7 +1016,7 @@ def ex_4_73 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "o.n"), ("2", "ni."), ("3", "(demonstratives)"), ("1+2", "om"), ("1+2+3", "om"), ("1+3", "em"), ("2+3", "nïm"), ("3+3", "(demonstratives)"), ("kind", "Tupí-Guaraní"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.5.4")] }
 
-def ex_4_74 : LinguisticExample :=
+def ex_4_74 : Datum :=
   { id := "cysouw2003_4_74"
     source := ⟨"cysouw-2003", "(4.74)"⟩
     reportedIn := none
@@ -1031,7 +1029,7 @@ def ex_4_74 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "ji"), ("2", "bĩ"), ("3", "(demonstratives)"), ("1+2", "bãdi"), ("1+2+3", "bãdi"), ("1+3", "gia"), ("2+3", "bĩa"), ("3+3", "(demonstratives)"), ("kind", "Tupí-Guaraní"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.5.4")] }
 
-def ex_4_75 : LinguisticExample :=
+def ex_4_75 : Datum :=
   { id := "cysouw2003_4_75"
     source := ⟨"cysouw-2003", "(4.75)"⟩
     reportedIn := none
@@ -1044,7 +1042,7 @@ def ex_4_75 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "naa"), ("2", "kaa"), ("3", "aa"), ("1+2", "wàa"), ("1+2+3", "wàa"), ("1+3", "jàa"), ("2+3", "kwaa"), ("3+3", "aa"), ("kind", "Tupí-Guaraní"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.5.4")] }
 
-def ex_4_76 : LinguisticExample :=
+def ex_4_76 : Datum :=
   { id := "cysouw2003_4_76"
     source := ⟨"cysouw-2003", "(4.76)"⟩
     reportedIn := none
@@ -1057,7 +1055,7 @@ def ex_4_76 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "ku-"), ("2", "e-"), ("3", "ø-"), ("1+2", "a-"), ("1+2+3", "a-"), ("1+3", "ci-"), ("2+3", "eci-"), ("3+3", "ø-"), ("kind", "Tupí-Guaraní"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.5.4")] }
 
-def ex_4_77 : LinguisticExample :=
+def ex_4_77 : Datum :=
   { id := "cysouw2003_4_77"
     source := ⟨"cysouw-2003", "(4.77)"⟩
     reportedIn := none
@@ -1070,7 +1068,7 @@ def ex_4_77 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-ɛn(L)"), ("2", "-ɛs"), ("3", "-ø"), ("1+2", "-ɛnts"), ("1+2+3", "-ɛnts"), ("1+3", "-ɛnuˢx̥ᵘ"), ("2+3", "-ɛs"), ("3+3", "-ø"), ("kind", "Kwakiutl"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.5.5")] }
 
-def ex_4_78 : LinguisticExample :=
+def ex_4_78 : Datum :=
   { id := "cysouw2003_4_78"
     source := ⟨"cysouw-2003", "(4.78)"⟩
     reportedIn := none
@@ -1083,7 +1081,7 @@ def ex_4_78 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "ø/y-"), ("2", "o/m-"), ("3", "n(y)-"), ("1+2", "s(y)-"), ("1+2+3", "s(y)-"), ("1+3", "ynan(y)-"), ("2+3", "o/m-"), ("3+3", "n(y)-"), ("kind", "Kwakiutl"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.5.5")] }
 
-def ex_4_79 : LinguisticExample :=
+def ex_4_79 : Datum :=
   { id := "cysouw2003_4_79"
     source := ⟨"cysouw-2003", "(4.79)"⟩
     reportedIn := none
@@ -1096,7 +1094,7 @@ def ex_4_79 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "'ũg"), ("2", "'ã"), ("3", "'ũ"), ("1+2", "yũmũg"), ("1+2+3", "yũmũg"), ("1+3", "'ũgmũg"), ("2+3", "'ã"), ("3+3", "'ũ"), ("kind", "Kwakiutl"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.5.5")] }
 
-def ex_4_80 : LinguisticExample :=
+def ex_4_80 : Datum :=
   { id := "cysouw2003_4_80"
     source := ⟨"cysouw-2003", "(4.80)"⟩
     reportedIn := none
@@ -1109,7 +1107,7 @@ def ex_4_80 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "kee"), ("2", "kah"), ("3", "jih"), ("1+2", "geutanyoe"), ("1+2+3", "geutanyoe"), ("1+3", "kamoe"), ("2+3", "kah"), ("3+3", "jih"), ("kind", "Kwakiutl"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.5.5")] }
 
-def ex_4_81 : LinguisticExample :=
+def ex_4_81 : Datum :=
   { id := "cysouw2003_4_81"
     source := ⟨"cysouw-2003", "(4.81)"⟩
     reportedIn := none
@@ -1122,7 +1120,7 @@ def ex_4_81 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "m-"), ("2", "ǯ-"), ("3", "x-"), ("1+2", "gw-"), ("1+2+3", "gw-"), ("1+3", "n-"), ("2+3", "ǯ-"), ("3+3", "x-"), ("kind", "Kwakiutl"), ("ubiquity", "semi-common"), ("chapter", "4"), ("section", "4.5.5")] }
 
-def ex_4_82 : LinguisticExample :=
+def ex_4_82 : Datum :=
   { id := "cysouw2003_4_82"
     source := ⟨"cysouw-2003", "(4.82)"⟩
     reportedIn := none
@@ -1135,7 +1133,7 @@ def ex_4_82 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "ʔa-"), ("2", "mi-"), ("3", "ø-"), ("1+2", "ta-"), ("1+2+3", "ta-"), ("1+3", "ʔa-"), ("2+3", "mi-"), ("3+3", "ø-"), ("kind", "Sierra Popoluca"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.5.6")] }
 
-def ex_4_85 : LinguisticExample :=
+def ex_4_85 : Datum :=
   { id := "cysouw2003_4_85"
     source := ⟨"cysouw-2003", "(4.85)"⟩
     reportedIn := none
@@ -1148,7 +1146,7 @@ def ex_4_85 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "ha-"), ("2", "ra-"), ("3", "ø-"), ("1+2", "hĩ-"), ("1+2+3", "hĩ-"), ("1+3", "ha-"), ("2+3", "ra-"), ("3+3", "ø-"), ("kind", "Sierra Popoluca"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.5.6")] }
 
-def ex_4_86 : LinguisticExample :=
+def ex_4_86 : Datum :=
   { id := "cysouw2003_4_86"
     source := ⟨"cysouw-2003", "(4.86)"⟩
     reportedIn := none
@@ -1161,7 +1159,7 @@ def ex_4_86 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "hVy-"), ("2", "ɬ(V)-"), ("3", "t(V)-"), ("1+2", "xitV-"), ("1+2+3", "xitV-"), ("1+3", "hVy-"), ("2+3", "ɬ(V)-"), ("3+3", "t(V)-"), ("kind", "Sierra Popoluca"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.5.6")] }
 
-def ex_4_87 : LinguisticExample :=
+def ex_4_87 : Datum :=
   { id := "cysouw2003_4_87"
     source := ⟨"cysouw-2003", "(4.87)"⟩
     reportedIn := none
@@ -1174,7 +1172,7 @@ def ex_4_87 : LinguisticExample :=
     readings := []
     paperFeatures := [("1", "na-"), ("2", "ko-"), ("3", "no-"), ("1+2", "io-"), ("1+2+3", "io-"), ("1+3", "na-"), ("2+3", "ko-"), ("3+3", "no-"), ("kind", "Sierra Popoluca"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.5.6")] }
 
-def ex_4_88 : LinguisticExample :=
+def ex_4_88 : Datum :=
   { id := "cysouw2003_4_88"
     source := ⟨"cysouw-2003", "(4.88)"⟩
     reportedIn := none
@@ -1187,7 +1185,7 @@ def ex_4_88 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-m(in)"), ("2", "-n"), ("3", "-m/ng"), ("1+2", "-bil"), ("1+2+3", "-bil"), ("1+3", "-m(in)"), ("2+3", "-n"), ("3+3", "-m/ng"), ("kind", "Sierra Popoluca"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.5.6")] }
 
-def ex_4_89 : LinguisticExample :=
+def ex_4_89 : Datum :=
   { id := "cysouw2003_4_89"
     source := ⟨"cysouw-2003", "(4.89)"⟩
     reportedIn := none
@@ -1200,7 +1198,7 @@ def ex_4_89 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "xw-"), ("2", "x-"), ("3", "ø/l-"), ("1+2", "l-"), ("1+2+3", "l-"), ("1+3", "xw-"), ("2+3", "x-"), ("3+3", "ø/l-"), ("kind", "Sierra Popoluca"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.5.6")] }
 
-def ex_4_90 : LinguisticExample :=
+def ex_4_90 : Datum :=
   { id := "cysouw2003_4_90"
     source := ⟨"cysouw-2003", "(4.90)"⟩
     reportedIn := none
@@ -1213,7 +1211,7 @@ def ex_4_90 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "anh"), ("2", "mai/ay"), ("3", "neh"), ("1+2", "vo'n"), ("1+2+3", "vo'n"), ("1+3", "anh"), ("2+3", "mai/ay"), ("3+3", "neh"), ("kind", "Sierra Popoluca"), ("ubiquity", "common"), ("chapter", "4"), ("section", "4.5.6")] }
 
-def ex_4_91a : LinguisticExample :=
+def ex_4_91a : Datum :=
   { id := "cysouw2003_4_91a"
     source := ⟨"cysouw-2003", "(4.91a)"⟩
     reportedIn := none
@@ -1226,7 +1224,7 @@ def ex_4_91a : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "nga-"), ("2", "mi-"), ("3", "ø-"), ("1+2", "ya-"), ("1+2+3", "ya-"), ("1+3", "nga-"), ("2+3", "ku-"), ("3+3", "ngi-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.5.7")] }
 
-def ex_4_91b : LinguisticExample :=
+def ex_4_91b : Datum :=
   { id := "cysouw2003_4_91b"
     source := ⟨"cysouw-2003", "(4.91b)"⟩
     reportedIn := none
@@ -1239,7 +1237,7 @@ def ex_4_91b : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "ka-"), ("2", "wa-"), ("3", "ø-"), ("1+2", "ya-"), ("1+2+3", "ya-"), ("1+3", "ka-"), ("2+3", "wa-"), ("3+3", "ku-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.5.7")] }
 
-def ex_4_92 : LinguisticExample :=
+def ex_4_92 : Datum :=
   { id := "cysouw2003_4_92"
     source := ⟨"cysouw-2003", "(4.92)"⟩
     reportedIn := none
@@ -1252,7 +1250,7 @@ def ex_4_92 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "int-"), ("2", "kit-"), ("3", "ø-"), ("1+2", "kit-"), ("1+2+3", "kit-"), ("1+3", "int-"), ("2+3", "kit-"), ("3+3", "ø-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.2")] }
 
-def ex_4_93 : LinguisticExample :=
+def ex_4_93 : Datum :=
   { id := "cysouw2003_4_93"
     source := ⟨"cysouw-2003", "(4.93)"⟩
     reportedIn := none
@@ -1265,7 +1263,7 @@ def ex_4_93 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "məni-"), ("2", "məṉi-"), ("3", "ø-"), ("1+2", "mani-"), ("1+2+3", "mani-"), ("1+3", "məwəni-"), ("2+3", "mani-"), ("3+3", "wəni-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.2")] }
 
-def ex_4_94 : LinguisticExample :=
+def ex_4_94 : Datum :=
   { id := "cysouw2003_4_94"
     source := ⟨"cysouw-2003", "(4.94)"⟩
     reportedIn := none
@@ -1278,7 +1276,7 @@ def ex_4_94 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "sa"), ("2", "wa"), ("3", "(classifiers)"), ("1+2", "makö"), ("1+2+3", "makö"), ("1+3", "samakö"), ("2+3", "makö"), ("3+3", "(classifiers)"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.2")] }
 
-def ex_4_96 : LinguisticExample :=
+def ex_4_96 : Datum :=
   { id := "cysouw2003_4_96"
     source := ⟨"cysouw-2003", "(4.96)"⟩
     reportedIn := none
@@ -1291,7 +1289,7 @@ def ex_4_96 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "sa-"), ("2", "i-"), ("3", "a-"), ("1+2", "a-"), ("1+2+3", "a-"), ("1+3", "sa-"), ("2+3", "i-"), ("3+3", "a-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.3")] }
 
-def ex_4_97 : LinguisticExample :=
+def ex_4_97 : Datum :=
   { id := "cysouw2003_4_97"
     source := ⟨"cysouw-2003", "(4.97)"⟩
     reportedIn := none
@@ -1304,7 +1302,7 @@ def ex_4_97 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "i-"), ("2", "n-"), ("3", "r-"), ("1+2", "k-"), ("1+2+3", "k-"), ("1+3", "i-"), ("2+3", "n-"), ("3+3", "k-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.3")] }
 
-def ex_4_98 : LinguisticExample :=
+def ex_4_98 : Datum :=
   { id := "cysouw2003_4_98"
     source := ⟨"cysouw-2003", "(4.98)"⟩
     reportedIn := none
@@ -1317,7 +1315,7 @@ def ex_4_98 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "u-"), ("2", "m-"), ("3", "n-"), ("1+2", "k-"), ("1+2+3", "k-"), ("1+3", "m-"), ("2+3", "m-"), ("3+3", "r-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.4")] }
 
-def ex_4_99 : LinguisticExample :=
+def ex_4_99 : Datum :=
   { id := "cysouw2003_4_99"
     source := ⟨"cysouw-2003", "(4.99)"⟩
     reportedIn := none
@@ -1330,7 +1328,7 @@ def ex_4_99 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-mi"), ("2", "-i"), ("3", "-ini/ili"), ("1+2", "-fi"), ("1+2+3", "-fi"), ("1+3", "-u"), ("2+3", "-u"), ("3+3", "-iti"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.4")] }
 
-def ex_4_100 : LinguisticExample :=
+def ex_4_100 : Datum :=
   { id := "cysouw2003_4_100"
     source := ⟨"cysouw-2003", "(4.100)"⟩
     reportedIn := none
@@ -1343,7 +1341,7 @@ def ex_4_100 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "ŋə-"), ("2", "ṉə-pə-"), ("3", "a(pə)-"), ("1+2", "mu-"), ("1+2+3", "ŋa-"), ("1+3", "ŋə-pə-"), ("2+3", "ŋə-pə-"), ("3+3", "wu-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.4")] }
 
-def ex_4_101 : LinguisticExample :=
+def ex_4_101 : Datum :=
   { id := "cysouw2003_4_101"
     source := ⟨"cysouw-2003", "(4.101)"⟩
     reportedIn := none
@@ -1356,7 +1354,7 @@ def ex_4_101 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-wn"), ("2", "-əx̊"), ("3", "-əs"), ("1+2", "-ət"), ("1+2+3", "-ət"), ("1+3", "-əs"), ("2+3", "-əp"), ("3+3", "-əs"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.5")] }
 
-def ex_4_102 : LinguisticExample :=
+def ex_4_102 : Datum :=
   { id := "cysouw2003_4_102"
     source := ⟨"cysouw-2003", "(4.102)"⟩
     reportedIn := none
@@ -1369,7 +1367,7 @@ def ex_4_102 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "k(î)-"), ("2", "m(î)-"), ("3", "n(î)/ø-"), ("1+2", "t(î)-"), ("1+2+3", "t(î)-"), ("1+3", "n(î)/ø-"), ("2+3", "m(î)-"), ("3+3", "n(î)/ø-"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.5")] }
 
-def ex_4_104 : LinguisticExample :=
+def ex_4_104 : Datum :=
   { id := "cysouw2003_4_104"
     source := ⟨"cysouw-2003", "(4.104)"⟩
     reportedIn := none
@@ -1382,7 +1380,7 @@ def ex_4_104 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "inflectional"), ("1", "-na"), ("2", "-nu"), ("3", "-su"), ("1+2", "-di"), ("1+2+3", "-di"), ("1+3", "-ma"), ("2+3", "-mu"), ("3+3", "-mu"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.6")] }
 
-def ex_4_105 : LinguisticExample :=
+def ex_4_105 : Datum :=
   { id := "cysouw2003_4_105"
     source := ⟨"cysouw-2003", "(4.105)"⟩
     reportedIn := none
@@ -1395,6 +1393,6 @@ def ex_4_105 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "independent"), ("1", "i"), ("2", "ɨ"), ("3", "pɨ/u"), ("1+2", "ta"), ("1+2+3", "ti"), ("1+3", "ni"), ("2+3", "ɨmɨ"), ("3+3", "ɨmɨ"), ("ubiquity", "rare"), ("chapter", "4"), ("section", "4.6.6")] }
 
-def all : List LinguisticExample := [fig3_6, ex_3_15, ex_3_16, ex_3_17, ex_3_18, ex_3_19, ex_3_20, ex_3_21, ex_3_22, ex_4_1, ex_4_2, ex_4_3, ex_4_4, ex_4_5, ex_4_6, ex_4_7, ex_4_8, ex_4_9, ex_4_12, ex_4_13, ex_4_15, ex_4_17, ex_4_19, ex_4_20, ex_4_21, ex_4_22, ex_4_23, ex_4_24, ex_4_25, ex_4_26, ex_4_27, ex_4_28, ex_4_29, ex_4_30, ex_4_31, ex_4_32, ex_4_33, ex_4_34, ex_4_35, ex_4_36, ex_4_37, ex_4_38, ex_4_39, ex_4_40, ex_4_41, ex_4_42, ex_4_43, ex_4_44, ex_4_45, ex_4_46, ex_4_47, ex_4_48, ex_4_49, ex_4_50, ex_4_51, ex_4_52, ex_4_53, ex_4_54, ex_4_55, ex_4_56, ex_4_57, ex_4_58, ex_4_59, ex_4_60, ex_4_61, ex_4_62, ex_4_63, ex_4_64, ex_4_65, ex_4_66, ex_4_67, ex_4_68, ex_4_69, ex_4_70, ex_4_71, ex_4_72, ex_4_73, ex_4_74, ex_4_75, ex_4_76, ex_4_77, ex_4_78, ex_4_79, ex_4_80, ex_4_81, ex_4_82, ex_4_85, ex_4_86, ex_4_87, ex_4_88, ex_4_89, ex_4_90, ex_4_91a, ex_4_91b, ex_4_92, ex_4_93, ex_4_94, ex_4_96, ex_4_97, ex_4_98, ex_4_99, ex_4_100, ex_4_101, ex_4_102, ex_4_104, ex_4_105]
+def all : List Datum := [fig3_6, ex_3_15, ex_3_16, ex_3_17, ex_3_18, ex_3_19, ex_3_20, ex_3_21, ex_3_22, ex_4_1, ex_4_2, ex_4_3, ex_4_4, ex_4_5, ex_4_6, ex_4_7, ex_4_8, ex_4_9, ex_4_12, ex_4_13, ex_4_15, ex_4_17, ex_4_19, ex_4_20, ex_4_21, ex_4_22, ex_4_23, ex_4_24, ex_4_25, ex_4_26, ex_4_27, ex_4_28, ex_4_29, ex_4_30, ex_4_31, ex_4_32, ex_4_33, ex_4_34, ex_4_35, ex_4_36, ex_4_37, ex_4_38, ex_4_39, ex_4_40, ex_4_41, ex_4_42, ex_4_43, ex_4_44, ex_4_45, ex_4_46, ex_4_47, ex_4_48, ex_4_49, ex_4_50, ex_4_51, ex_4_52, ex_4_53, ex_4_54, ex_4_55, ex_4_56, ex_4_57, ex_4_58, ex_4_59, ex_4_60, ex_4_61, ex_4_62, ex_4_63, ex_4_64, ex_4_65, ex_4_66, ex_4_67, ex_4_68, ex_4_69, ex_4_70, ex_4_71, ex_4_72, ex_4_73, ex_4_74, ex_4_75, ex_4_76, ex_4_77, ex_4_78, ex_4_79, ex_4_80, ex_4_81, ex_4_82, ex_4_85, ex_4_86, ex_4_87, ex_4_88, ex_4_89, ex_4_90, ex_4_91a, ex_4_91b, ex_4_92, ex_4_93, ex_4_94, ex_4_96, ex_4_97, ex_4_98, ex_4_99, ex_4_100, ex_4_101, ex_4_102, ex_4_104, ex_4_105]
 
 end Cysouw2003.Examples

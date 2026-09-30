@@ -15,9 +15,7 @@ this module; declarations live in `namespace HeimKratzer1998.Examples`.
 
 namespace HeimKratzer1998.Examples
 
-open Data.Examples
-
-def ch7_1a : LinguisticExample :=
+def ch7_1a : Datum :=
   { id := "heimkratzer1998_ch7_1a"
     source := ⟨"heim-kratzer-1998", "Ch. 7 (1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ch7_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.1"), ("quantifier", "subject")] }
 
-def ch7_1b : LinguisticExample :=
+def ch7_1b : Datum :=
   { id := "heimkratzer1998_ch7_1b"
     source := ⟨"heim-kratzer-1998", "Ch. 7 (1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ch7_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.1"), ("quantifier", "object")] }
 
-def ch7_2 : LinguisticExample :=
+def ch7_2 : Datum :=
   { id := "heimkratzer1998_ch7_2"
     source := ⟨"heim-kratzer-1998", "Ch. 7 (2)"⟩
     reportedIn := none
@@ -56,6 +54,6 @@ def ch7_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.1"), ("readings", "some > every; every > some")] }
 
-def all : List LinguisticExample := [ch7_1a, ch7_1b, ch7_2]
+def all : List Datum := [ch7_1a, ch7_1b, ch7_2]
 
 end HeimKratzer1998.Examples

@@ -60,7 +60,7 @@ namespace Cumming2026
 
 open Semantics
 
-open Tense Tense.Evidential Presupposition Data.Examples
+open Tense Tense.Evidential Presupposition
 
 variable {T : Type*} [LinearOrder T]
 
@@ -227,7 +227,7 @@ theorem willHave_meaning_assertion {W : Type*} (f : EvidentialFrame T) (φ : W �
 /-! ### The felicity judgments -/
 
 /-- The cell a row's `form` feature names. -/
-def cell? (e : LinguisticExample) : Option Cell :=
+def cell? (e : Datum) : Option Cell :=
   e.parse? "form"
     [("simple past", simplePast), ("present progressive", presentProgressive),
       ("future (will)", will), ("will have V-ed", willHave), ("will now be V-ing", willNow),
@@ -236,7 +236,7 @@ def cell? (e : LinguisticExample) : Option Cell :=
       ("NFUT + -l", l ⟦future⟧ᶜ), ("FUT + -l", l ⟦future⟧)]
 
 /-- The frame a row's scenario fixes, with the perspective and reference times at speech. -/
-def frame? (e : LinguisticExample) : Option (EvidentialFrame ℤ) := do
+def frame? (e : Datum) : Option (EvidentialFrame ℤ) := do
   let s ← e.nat? "speechTime"
   let a ← e.nat? "acquisitionTime"
   let t ← e.nat? "eventTime"
@@ -244,7 +244,7 @@ def frame? (e : LinguisticExample) : Option (EvidentialFrame ℤ) := do
          acquisitionTime := a }
 
 /-- The row describes a planned or scheduled event (§6). -/
-def Scheduled (e : LinguisticExample) : Prop := e.feature? "scheduled" = some "true"
+def Scheduled (e : Datum) : Prop := e.feature? "scheduled" = some "true"
 
 instance : DecidablePred Scheduled := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 

@@ -15,9 +15,7 @@ this module; declarations live in `namespace FarkasRoelofsen2017.Examples`.
 
 namespace FarkasRoelofsen2017.Examples
 
-open Data.Examples
-
-def ex_61a : LinguisticExample :=
+def ex_61a : Datum :=
   { id := "farkasroelofsen2017_61a"
     source := ⟨"farkas-roelofsen-2017", "(61a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_61a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingDeclarative"), ("evidence", "yes"), ("addressee", "neutral"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_61b : LinguisticExample :=
+def ex_61b : Datum :=
   { id := "farkasroelofsen2017_61b"
     source := ⟨"farkas-roelofsen-2017", "(61b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_61b : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingInterrogative"), ("evidence", "yes"), ("addressee", "neutral"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_61c : LinguisticExample :=
+def ex_61c : Datum :=
   { id := "farkasroelofsen2017_61c"
     source := ⟨"farkas-roelofsen-2017", "(61c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_61c : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "neutral"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_61d : LinguisticExample :=
+def ex_61d : Datum :=
   { id := "farkasroelofsen2017_61d"
     source := ⟨"farkas-roelofsen-2017", "(61d)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_61d : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "neutral"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_61e : LinguisticExample :=
+def ex_61e : Datum :=
   { id := "farkasroelofsen2017_61e"
     source := ⟨"farkas-roelofsen-2017", "(61e)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_61e : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "neutral"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_62a : LinguisticExample :=
+def ex_62a : Datum :=
   { id := "farkasroelofsen2017_62a"
     source := ⟨"farkas-roelofsen-2017", "(62a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_62a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingDeclarative"), ("evidence", "no"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_62b : LinguisticExample :=
+def ex_62b : Datum :=
   { id := "farkasroelofsen2017_62b"
     source := ⟨"farkas-roelofsen-2017", "(62b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_62b : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingInterrogative"), ("evidence", "no"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_62c : LinguisticExample :=
+def ex_62c : Datum :=
   { id := "farkasroelofsen2017_62c"
     source := ⟨"farkas-roelofsen-2017", "(62c)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_62c : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "no"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_62d : LinguisticExample :=
+def ex_62d : Datum :=
   { id := "farkasroelofsen2017_62d"
     source := ⟨"farkas-roelofsen-2017", "(62d)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_62d : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "no"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_62e : LinguisticExample :=
+def ex_62e : Datum :=
   { id := "farkasroelofsen2017_62e"
     source := ⟨"farkas-roelofsen-2017", "(62e)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_62e : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "no"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_63a : LinguisticExample :=
+def ex_63a : Datum :=
   { id := "farkasroelofsen2017_63a"
     source := ⟨"farkas-roelofsen-2017", "(63a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_63a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_63b : LinguisticExample :=
+def ex_63b : Datum :=
   { id := "farkasroelofsen2017_63b"
     source := ⟨"farkas-roelofsen-2017", "(63b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_63b : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingInterrogative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_63c : LinguisticExample :=
+def ex_63c : Datum :=
   { id := "farkasroelofsen2017_63c"
     source := ⟨"farkas-roelofsen-2017", "(63c)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_63c : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_63d : LinguisticExample :=
+def ex_63d : Datum :=
   { id := "farkasroelofsen2017_63d"
     source := ⟨"farkas-roelofsen-2017", "(63d)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_63d : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_63e : LinguisticExample :=
+def ex_63e : Datum :=
   { id := "farkasroelofsen2017_63e"
     source := ⟨"farkas-roelofsen-2017", "(63e)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_63e : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_64a : LinguisticExample :=
+def ex_64a : Datum :=
   { id := "farkasroelofsen2017_64a"
     source := ⟨"farkas-roelofsen-2017", "(64a)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_64a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_64b : LinguisticExample :=
+def ex_64b : Datum :=
   { id := "farkasroelofsen2017_64b"
     source := ⟨"farkas-roelofsen-2017", "(64b)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_64b : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingInterrogative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_64c : LinguisticExample :=
+def ex_64c : Datum :=
   { id := "farkasroelofsen2017_64c"
     source := ⟨"farkas-roelofsen-2017", "(64c)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_64c : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_64d : LinguisticExample :=
+def ex_64d : Datum :=
   { id := "farkasroelofsen2017_64d"
     source := ⟨"farkas-roelofsen-2017", "(64d)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_64d : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_64e : LinguisticExample :=
+def ex_64e : Datum :=
   { id := "farkasroelofsen2017_64e"
     source := ⟨"farkas-roelofsen-2017", "(64e)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_64e : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_65a : LinguisticExample :=
+def ex_65a : Datum :=
   { id := "farkasroelofsen2017_65a"
     source := ⟨"farkas-roelofsen-2017", "(65a)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_65a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "high")] }
 
-def ex_65b : LinguisticExample :=
+def ex_65b : Datum :=
   { id := "farkasroelofsen2017_65b"
     source := ⟨"farkas-roelofsen-2017", "(65b)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_65b : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingInterrogative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "high")] }
 
-def ex_65c : LinguisticExample :=
+def ex_65c : Datum :=
   { id := "farkasroelofsen2017_65c"
     source := ⟨"farkas-roelofsen-2017", "(65c)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_65c : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "high")] }
 
-def ex_65d : LinguisticExample :=
+def ex_65d : Datum :=
   { id := "farkasroelofsen2017_65d"
     source := ⟨"farkas-roelofsen-2017", "(65d)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_65d : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "high")] }
 
-def ex_65e : LinguisticExample :=
+def ex_65e : Datum :=
   { id := "farkasroelofsen2017_65e"
     source := ⟨"farkas-roelofsen-2017", "(65e)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_65e : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "high")] }
 
-def ex_66a : LinguisticExample :=
+def ex_66a : Datum :=
   { id := "farkasroelofsen2017_66a"
     source := ⟨"farkas-roelofsen-2017", "(66a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_66a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "low")] }
 
-def ex_66b : LinguisticExample :=
+def ex_66b : Datum :=
   { id := "farkasroelofsen2017_66b"
     source := ⟨"farkas-roelofsen-2017", "(66b)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_66b : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingInterrogative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "low")] }
 
-def ex_66c : LinguisticExample :=
+def ex_66c : Datum :=
   { id := "farkasroelofsen2017_66c"
     source := ⟨"farkas-roelofsen-2017", "(66c)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_66c : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "low")] }
 
-def ex_66d : LinguisticExample :=
+def ex_66d : Datum :=
   { id := "farkasroelofsen2017_66d"
     source := ⟨"farkas-roelofsen-2017", "(66d)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_66d : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "low")] }
 
-def ex_66e : LinguisticExample :=
+def ex_66e : Datum :=
   { id := "farkasroelofsen2017_66e"
     source := ⟨"farkas-roelofsen-2017", "(66e)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_66e : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "low")] }
 
-def ex_67a : LinguisticExample :=
+def ex_67a : Datum :=
   { id := "farkasroelofsen2017_67a"
     source := ⟨"farkas-roelofsen-2017", "(67a)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_67a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_67b : LinguisticExample :=
+def ex_67b : Datum :=
   { id := "farkasroelofsen2017_67b"
     source := ⟨"farkas-roelofsen-2017", "(67b)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_67b : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingInterrogative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_67c : LinguisticExample :=
+def ex_67c : Datum :=
   { id := "farkasroelofsen2017_67c"
     source := ⟨"farkas-roelofsen-2017", "(67c)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_67c : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_67d : LinguisticExample :=
+def ex_67d : Datum :=
   { id := "farkasroelofsen2017_67d"
     source := ⟨"farkas-roelofsen-2017", "(67d)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_67d : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_67e : LinguisticExample :=
+def ex_67e : Datum :=
   { id := "farkasroelofsen2017_67e"
     source := ⟨"farkas-roelofsen-2017", "(67e)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_67e : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_53 : LinguisticExample :=
+def ex_53 : Datum :=
   { id := "farkasroelofsen2017_53"
     source := ⟨"farkas-roelofsen-2017", "(53)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_53 : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "low"), ("credenceMax", "low")] }
 
-def ex_54 : LinguisticExample :=
+def ex_54 : Datum :=
   { id := "farkasroelofsen2017_54"
     source := ⟨"farkas-roelofsen-2017", "(54)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_54 : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_68_c : LinguisticExample :=
+def ex_68_c : Datum :=
   { id := "farkasroelofsen2017_68_c"
     source := ⟨"farkas-roelofsen-2017", "(68)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_68_c : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_68_b : LinguisticExample :=
+def ex_68_b : Datum :=
   { id := "farkasroelofsen2017_68_b"
     source := ⟨"farkas-roelofsen-2017", "(68)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_68_b : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingInterrogative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_68_d : LinguisticExample :=
+def ex_68_d : Datum :=
   { id := "farkasroelofsen2017_68_d"
     source := ⟨"farkas-roelofsen-2017", "(68)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_68_d : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_68_e : LinguisticExample :=
+def ex_68_e : Datum :=
   { id := "farkasroelofsen2017_68_e"
     source := ⟨"farkas-roelofsen-2017", "(68)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex_68_e : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_69 : LinguisticExample :=
+def ex_69 : Datum :=
   { id := "farkasroelofsen2017_69"
     source := ⟨"farkas-roelofsen-2017", "(69)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex_69 : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "farkasroelofsen2017_70"
     source := ⟨"farkas-roelofsen-2017", "(70)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex_70 : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "low")] }
 
-def ex_71a : LinguisticExample :=
+def ex_71a : Datum :=
   { id := "farkasroelofsen2017_71a"
     source := ⟨"farkas-roelofsen-2017", "(71a)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex_71a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "low")] }
 
-def ex_71b_rising : LinguisticExample :=
+def ex_71b_rising : Datum :=
   { id := "farkasroelofsen2017_71b_rising"
     source := ⟨"farkas-roelofsen-2017", "(71b)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex_71b_rising : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "low")] }
 
-def ex_71b_falling : LinguisticExample :=
+def ex_71b_falling : Datum :=
   { id := "farkasroelofsen2017_71b_falling"
     source := ⟨"farkas-roelofsen-2017", "(71b)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex_71b_falling : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "low")] }
 
-def ex_72a : LinguisticExample :=
+def ex_72a : Datum :=
   { id := "farkasroelofsen2017_72a"
     source := ⟨"farkas-roelofsen-2017", "(72a)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex_72a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "low")] }
 
-def ex_72b_rising : LinguisticExample :=
+def ex_72b_rising : Datum :=
   { id := "farkasroelofsen2017_72b_rising"
     source := ⟨"farkas-roelofsen-2017", "(72b)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex_72b_rising : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "low")] }
 
-def ex_72b_falling : LinguisticExample :=
+def ex_72b_falling : Datum :=
   { id := "farkasroelofsen2017_72b_falling"
     source := ⟨"farkas-roelofsen-2017", "(72b)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex_72b_falling : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "low")] }
 
-def ex_73a : LinguisticExample :=
+def ex_73a : Datum :=
   { id := "farkasroelofsen2017_73a"
     source := ⟨"farkas-roelofsen-2017", "(73a)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex_73a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_73b_rising : LinguisticExample :=
+def ex_73b_rising : Datum :=
   { id := "farkasroelofsen2017_73b_rising"
     source := ⟨"farkas-roelofsen-2017", "(73b)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex_73b_rising : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_73b_falling : LinguisticExample :=
+def ex_73b_falling : Datum :=
   { id := "farkasroelofsen2017_73b_falling"
     source := ⟨"farkas-roelofsen-2017", "(73b)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex_73b_falling : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_74a : LinguisticExample :=
+def ex_74a : Datum :=
   { id := "farkasroelofsen2017_74a"
     source := ⟨"farkas-roelofsen-2017", "(74a)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex_74a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_74b_rising : LinguisticExample :=
+def ex_74b_rising : Datum :=
   { id := "farkasroelofsen2017_74b_rising"
     source := ⟨"farkas-roelofsen-2017", "(74b)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex_74b_rising : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_74b_falling : LinguisticExample :=
+def ex_74b_falling : Datum :=
   { id := "farkasroelofsen2017_74b_falling"
     source := ⟨"farkas-roelofsen-2017", "(74b)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex_74b_falling : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_75a : LinguisticExample :=
+def ex_75a : Datum :=
   { id := "farkasroelofsen2017_75a"
     source := ⟨"farkas-roelofsen-2017", "(75a)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex_75a : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_75b_rising : LinguisticExample :=
+def ex_75b_rising : Datum :=
   { id := "farkasroelofsen2017_75b_rising"
     source := ⟨"farkas-roelofsen-2017", "(75b)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex_75b_rising : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_75b_falling : LinguisticExample :=
+def ex_75b_falling : Datum :=
   { id := "farkasroelofsen2017_75b_falling"
     source := ⟨"farkas-roelofsen-2017", "(75b)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex_75b_falling : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_76 : LinguisticExample :=
+def ex_76 : Datum :=
   { id := "farkasroelofsen2017_76"
     source := ⟨"farkas-roelofsen-2017", "(76)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ex_76 : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "low")] }
 
-def ex_77a_rising_tag : LinguisticExample :=
+def ex_77a_rising_tag : Datum :=
   { id := "farkasroelofsen2017_77a_rising_tag"
     source := ⟨"farkas-roelofsen-2017", "(77a)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def ex_77a_rising_tag : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_77a_falling_tag : LinguisticExample :=
+def ex_77a_falling_tag : Datum :=
   { id := "farkasroelofsen2017_77a_falling_tag"
     source := ⟨"farkas-roelofsen-2017", "(77a)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def ex_77a_falling_tag : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_77a_rising : LinguisticExample :=
+def ex_77a_rising : Datum :=
   { id := "farkasroelofsen2017_77a_rising"
     source := ⟨"farkas-roelofsen-2017", "(77a)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def ex_77a_rising : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "high"), ("credenceMax", "high")] }
 
-def ex_77b_rising_tag : LinguisticExample :=
+def ex_77b_rising_tag : Datum :=
   { id := "farkasroelofsen2017_77b_rising_tag"
     source := ⟨"farkas-roelofsen-2017", "(77b)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def ex_77b_rising_tag : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_77b_falling_tag : LinguisticExample :=
+def ex_77b_falling_tag : Datum :=
   { id := "farkasroelofsen2017_77b_falling_tag"
     source := ⟨"farkas-roelofsen-2017", "(77b)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def ex_77b_falling_tag : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "fallingTag"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def ex_77b_rising : LinguisticExample :=
+def ex_77b_rising : Datum :=
   { id := "farkasroelofsen2017_77b_rising"
     source := ⟨"farkas-roelofsen-2017", "(77b)"⟩
     reportedIn := none
@@ -862,6 +860,6 @@ def ex_77b_rising : LinguisticExample :=
     readings := []
     paperFeatures := [("form", "risingDeclarative"), ("evidence", "yes"), ("addressee", "informed"), ("credenceMin", "zero"), ("credenceMax", "zero")] }
 
-def all : List LinguisticExample := [ex_61a, ex_61b, ex_61c, ex_61d, ex_61e, ex_62a, ex_62b, ex_62c, ex_62d, ex_62e, ex_63a, ex_63b, ex_63c, ex_63d, ex_63e, ex_64a, ex_64b, ex_64c, ex_64d, ex_64e, ex_65a, ex_65b, ex_65c, ex_65d, ex_65e, ex_66a, ex_66b, ex_66c, ex_66d, ex_66e, ex_67a, ex_67b, ex_67c, ex_67d, ex_67e, ex_53, ex_54, ex_68_c, ex_68_b, ex_68_d, ex_68_e, ex_69, ex_70, ex_71a, ex_71b_rising, ex_71b_falling, ex_72a, ex_72b_rising, ex_72b_falling, ex_73a, ex_73b_rising, ex_73b_falling, ex_74a, ex_74b_rising, ex_74b_falling, ex_75a, ex_75b_rising, ex_75b_falling, ex_76, ex_77a_rising_tag, ex_77a_falling_tag, ex_77a_rising, ex_77b_rising_tag, ex_77b_falling_tag, ex_77b_rising]
+def all : List Datum := [ex_61a, ex_61b, ex_61c, ex_61d, ex_61e, ex_62a, ex_62b, ex_62c, ex_62d, ex_62e, ex_63a, ex_63b, ex_63c, ex_63d, ex_63e, ex_64a, ex_64b, ex_64c, ex_64d, ex_64e, ex_65a, ex_65b, ex_65c, ex_65d, ex_65e, ex_66a, ex_66b, ex_66c, ex_66d, ex_66e, ex_67a, ex_67b, ex_67c, ex_67d, ex_67e, ex_53, ex_54, ex_68_c, ex_68_b, ex_68_d, ex_68_e, ex_69, ex_70, ex_71a, ex_71b_rising, ex_71b_falling, ex_72a, ex_72b_rising, ex_72b_falling, ex_73a, ex_73b_rising, ex_73b_falling, ex_74a, ex_74b_rising, ex_74b_falling, ex_75a, ex_75b_rising, ex_75b_falling, ex_76, ex_77a_rising_tag, ex_77a_falling_tag, ex_77a_rising, ex_77b_rising_tag, ex_77b_falling_tag, ex_77b_rising]
 
 end FarkasRoelofsen2017.Examples

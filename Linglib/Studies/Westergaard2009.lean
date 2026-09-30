@@ -69,7 +69,6 @@ formalized; the Tromsø rows have no fragment and enter only the *wh*-word model
 namespace Westergaard2009
 
 open Clause
-open Data.Examples (LinguisticExample)
 
 /-- A verb-second grammar is the set of cells, a sentence type in an embedding context, in
 which the finite verb moves to the left periphery: Westergaard's clause-type heads. -/
@@ -212,7 +211,7 @@ theorem norwegian_nonV2_cues :
 
 /-- The cell a row's `clause` or `wh` feature records; an embedded question is Belfast's
 yes/no-question. -/
-def cellOf (r : LinguisticExample) : Option (SentenceType × EmbeddingContext) :=
+def cellOf (r : Datum) : Option (SentenceType × EmbeddingContext) :=
   match r.feature? "clause", r.feature? "wh" with
   | some "declarative", _ | some "subject-initial declarative", _
   | some "non-subject-initial declarative", _ => some (root .declarative)
@@ -231,14 +230,14 @@ inductive Order
   deriving DecidableEq, Repr
 
 /-- The order a row's `order` feature records. -/
-def orderOf (r : LinguisticExample) : Option Order :=
+def orderOf (r : Datum) : Option Order :=
   r.parse? "order"
     [("V2", .moved), ("V1", .moved), ("non-V2", .unmoved), ("non-V2 or V2", .either),
       ("V2 or non-V2", .either)]
 
 /-- The fragment of a row's variety, Standard Norwegian, Nordmøre, Standard or Belfast English
 or Danish; the Tromsø rows have none. -/
-def grammarOf (r : LinguisticExample) : Option Distribution :=
+def grammarOf (r : Datum) : Option Distribution :=
   match r.feature? "variety", r.language with
   | some "Nordmøre", _ => some Norwegian.Nordmore.verbSecond
   | some "Belfast English", _ => some English.V2.Belfast.verbSecond

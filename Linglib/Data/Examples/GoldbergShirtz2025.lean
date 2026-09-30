@@ -15,9 +15,7 @@ this module; declarations live in `namespace GoldbergShirtz2025.Examples`.
 
 namespace GoldbergShirtz2025.Examples
 
-open Data.Examples
-
-def gs2025_1a : LinguisticExample :=
+def gs2025_1a : Datum :=
   { id := "gs2025_1a"
     source := ⟨"goldberg-shirtz-2025", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def gs2025_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "prenominal modifier")] }
 
-def gs2025_1b : LinguisticExample :=
+def gs2025_1b : Datum :=
   { id := "gs2025_1b"
     source := ⟨"goldberg-shirtz-2025", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def gs2025_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "prenominal modifier")] }
 
-def gs2025_1c : LinguisticExample :=
+def gs2025_1c : Datum :=
   { id := "gs2025_1c"
     source := ⟨"goldberg-shirtz-2025", "(1c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def gs2025_1c : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "prenominal modifier")] }
 
-def gs2025_t2_simple : LinguisticExample :=
+def gs2025_t2_simple : Datum :=
   { id := "gs2025_t2_simple"
     source := ⟨"goldberg-shirtz-2025", "Table 2"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def gs2025_t2_simple : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "head noun")] }
 
-def gs2025_t2_old : LinguisticExample :=
+def gs2025_t2_old : Datum :=
   { id := "gs2025_t2_old"
     source := ⟨"goldberg-shirtz-2025", "Table 2"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def gs2025_t2_old : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "head noun")] }
 
-def gs2025_t2_mustsee : LinguisticExample :=
+def gs2025_t2_mustsee : Datum :=
   { id := "gs2025_t2_mustsee"
     source := ⟨"goldberg-shirtz-2025", "Table 2"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def gs2025_t2_mustsee : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "head noun")] }
 
-def gs2025_t2_romney : LinguisticExample :=
+def gs2025_t2_romney : Datum :=
   { id := "gs2025_t2_romney"
     source := ⟨"goldberg-shirtz-2025", "Table 2"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def gs2025_t2_romney : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "predicative adjective")] }
 
-def gs2025_t2_honey : LinguisticExample :=
+def gs2025_t2_honey : Datum :=
   { id := "gs2025_t2_honey"
     source := ⟨"goldberg-shirtz-2025", "Table 2"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def gs2025_t2_honey : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "verb"), ("inflection", "gerund")] }
 
-def gs2025_t2_welcome : LinguisticExample :=
+def gs2025_t2_welcome : Datum :=
   { id := "gs2025_t2_welcome"
     source := ⟨"goldberg-shirtz-2025", "Table 2"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def gs2025_t2_welcome : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "verb")] }
 
-def gs2025_t3_jespersen : LinguisticExample :=
+def gs2025_t3_jespersen : Datum :=
   { id := "gs2025_t3_jespersen"
     source := ⟨"goldberg-shirtz-2025", "Table 3"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def gs2025_t3_jespersen : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "head noun"), ("inflection", "plural")] }
 
-def gs2025_t3_diy : LinguisticExample :=
+def gs2025_t3_diy : Datum :=
   { id := "gs2025_t3_diy"
     source := ⟨"goldberg-shirtz-2025", "Table 3"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def gs2025_t3_diy : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "head noun"), ("inflection", "agentive -er + plural")] }
 
-def gs2025_t3_nyt : LinguisticExample :=
+def gs2025_t3_nyt : Datum :=
   { id := "gs2025_t3_nyt"
     source := ⟨"goldberg-shirtz-2025", "Table 3"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def gs2025_t3_nyt : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "verb"), ("inflection", "gerund")] }
 
-def gs2025_8a : LinguisticExample :=
+def gs2025_8a : Datum :=
   { id := "gs2025_8a"
     source := ⟨"meibauer-2007", "p. 250"⟩
     reportedIn := some ⟨"goldberg-shirtz-2025", "(8a)"⟩
@@ -186,7 +184,7 @@ def gs2025_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("hostFrame", "compound")] }
 
-def gs2025_15a : LinguisticExample :=
+def gs2025_15a : Datum :=
   { id := "gs2025_15a"
     source := ⟨"meibauer-2007", "p. 235"⟩
     reportedIn := some ⟨"goldberg-shirtz-2025", "(15a)"⟩
@@ -199,7 +197,7 @@ def gs2025_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("hostFrame", "compound")] }
 
-def gs2025_15b : LinguisticExample :=
+def gs2025_15b : Datum :=
   { id := "gs2025_15b"
     source := ⟨"meibauer-2007", "p. 235"⟩
     reportedIn := some ⟨"goldberg-shirtz-2025", "(15b)"⟩
@@ -212,7 +210,7 @@ def gs2025_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("hostFrame", "compound")] }
 
-def gs2025_15c : LinguisticExample :=
+def gs2025_15c : Datum :=
   { id := "gs2025_15c"
     source := ⟨"trips-kornfilt-2015", "p. 307"⟩
     reportedIn := some ⟨"goldberg-shirtz-2025", "(15c)"⟩
@@ -225,7 +223,7 @@ def gs2025_15c : LinguisticExample :=
     readings := []
     paperFeatures := [("hostFrame", "compound")] }
 
-def gs2025_16b : LinguisticExample :=
+def gs2025_16b : Datum :=
   { id := "gs2025_16b"
     source := ⟨"goldberg-shirtz-2025", "(16b)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def gs2025_16b : LinguisticExample :=
     readings := []
     paperFeatures := [("hostFrame", "preposition complement")] }
 
-def gs2025_17b : LinguisticExample :=
+def gs2025_17b : Datum :=
   { id := "gs2025_17b"
     source := ⟨"goldberg-shirtz-2025", "(17b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def gs2025_17b : LinguisticExample :=
     readings := []
     paperFeatures := [("hostFrame", "preposition complement")] }
 
-def gs2025_18b : LinguisticExample :=
+def gs2025_18b : Datum :=
   { id := "gs2025_18b"
     source := ⟨"goldberg-shirtz-2025", "(18b)"⟩
     reportedIn := none
@@ -264,6 +262,6 @@ def gs2025_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("hostFrame", "preposition complement")] }
 
-def all : List LinguisticExample := [gs2025_1a, gs2025_1b, gs2025_1c, gs2025_t2_simple, gs2025_t2_old, gs2025_t2_mustsee, gs2025_t2_romney, gs2025_t2_honey, gs2025_t2_welcome, gs2025_t3_jespersen, gs2025_t3_diy, gs2025_t3_nyt, gs2025_8a, gs2025_15a, gs2025_15b, gs2025_15c, gs2025_16b, gs2025_17b, gs2025_18b]
+def all : List Datum := [gs2025_1a, gs2025_1b, gs2025_1c, gs2025_t2_simple, gs2025_t2_old, gs2025_t2_mustsee, gs2025_t2_romney, gs2025_t2_honey, gs2025_t2_welcome, gs2025_t3_jespersen, gs2025_t3_diy, gs2025_t3_nyt, gs2025_8a, gs2025_15a, gs2025_15b, gs2025_15c, gs2025_16b, gs2025_17b, gs2025_18b]
 
 end GoldbergShirtz2025.Examples

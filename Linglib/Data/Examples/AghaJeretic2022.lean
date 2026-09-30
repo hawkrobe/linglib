@@ -15,9 +15,7 @@ this module; declarations live in `namespace AghaJeretic2022.Examples`.
 
 namespace AghaJeretic2022.Examples
 
-open Data.Examples
-
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "aghajeretic2022_2a"
     source := ⟨"agha-jeretic-2022", "(2a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("continuation", "but you could also take a bus if you have all morning"), ("continuation_felicity", "felicitous")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "aghajeretic2022_2b"
     source := ⟨"agha-jeretic-2022", "(2b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("continuation", "but you could also take a bus if you have all morning"), ("continuation_felicity", "infelicitous")] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "aghajeretic2022_3a"
     source := ⟨"agha-jeretic-2022", "(3a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "devoir"), ("force", "strong")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "aghajeretic2022_3b"
     source := ⟨"agha-jeretic-2022", "(3b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "devoir+CF"), ("force", "weak"), ("derivation", "CF"), ("base", "necessity")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "aghajeretic2022_4a"
     source := ⟨"agha-jeretic-2022", "(4a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "mesthi"), ("force", "strong")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "aghajeretic2022_4b"
     source := ⟨"agha-jeretic-2022", "(4b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "mesthi+NE"), ("force", "weak"), ("derivation", "NE"), ("base", "necessity")] }
 
-def should_pos_all : LinguisticExample :=
+def should_pos_all : Datum :=
   { id := "aghajeretic2022_should_pos_all"
     source := ⟨"agha-jeretic-2022", "(8a), (20a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def should_pos_all : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "ALL"), ("modal", "should")] }
 
-def should_pos_none : LinguisticExample :=
+def should_pos_none : Datum :=
   { id := "aghajeretic2022_should_pos_none"
     source := ⟨"agha-jeretic-2022", "(20a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def should_pos_none : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "NONE"), ("modal", "should")] }
 
-def should_pos_gap : LinguisticExample :=
+def should_pos_gap : Datum :=
   { id := "aghajeretic2022_should_pos_gap"
     source := ⟨"agha-jeretic-2022", "(19a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def should_pos_gap : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "GAP"), ("modal", "should"), ("gap_detected", "true")] }
 
-def should_neg_all : LinguisticExample :=
+def should_neg_all : Datum :=
   { id := "aghajeretic2022_should_neg_all"
     source := ⟨"agha-jeretic-2022", "(20b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def should_neg_all : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "ALL"), ("modal", "should")] }
 
-def should_neg_none : LinguisticExample :=
+def should_neg_none : Datum :=
   { id := "aghajeretic2022_should_neg_none"
     source := ⟨"agha-jeretic-2022", "(9a), (20b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def should_neg_none : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "NONE"), ("modal", "should")] }
 
-def should_neg_gap : LinguisticExample :=
+def should_neg_gap : Datum :=
   { id := "aghajeretic2022_should_neg_gap"
     source := ⟨"agha-jeretic-2022", "(9a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def should_neg_gap : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "GAP"), ("modal", "should"), ("force", "weak"), ("negation", "clausemate"), ("gap_detected", "true"), ("continuation", "but you are allowed to go"), ("continuation_felicity", "infelicitous")] }
 
-def haveTo_pos_gap : LinguisticExample :=
+def haveTo_pos_gap : Datum :=
   { id := "aghajeretic2022_haveTo_pos_gap"
     source := ⟨"agha-jeretic-2022", "(9b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def haveTo_pos_gap : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "positive"), ("condition", "GAP"), ("modal", "have to"), ("gap_detected", "false"), ("classical_value", "false")] }
 
-def haveTo_neg_gap : LinguisticExample :=
+def haveTo_neg_gap : Datum :=
   { id := "aghajeretic2022_haveTo_neg_gap"
     source := ⟨"agha-jeretic-2022", "(9b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def haveTo_neg_gap : LinguisticExample :=
     readings := []
     paperFeatures := [("polarity", "negative"), ("condition", "GAP"), ("modal", "have to"), ("gap_detected", "false"), ("classical_value", "true"), ("continuation", "but you are allowed to go"), ("continuation_felicity", "felicitous")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "aghajeretic2022_8a"
     source := ⟨"agha-jeretic-2022", "(8a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("negation", "none"), ("continuation", "but you are allowed not to go"), ("continuation_felicity", "infelicitous")] }
 
-def ex_8b : LinguisticExample :=
+def ex_8b : Datum :=
   { id := "aghajeretic2022_8b"
     source := ⟨"agha-jeretic-2022", "(8b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("negation", "none"), ("continuation", "but you are allowed not to go"), ("continuation_felicity", "infelicitous")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "aghajeretic2022_10a"
     source := ⟨"agha-jeretic-2022", "(10a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("negation", "extra-clausal"), ("continuation", "but you are allowed to go"), ("continuation_felicity", "infelicitous")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "aghajeretic2022_10b"
     source := ⟨"agha-jeretic-2022", "(10b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("negation", "extra-clausal"), ("continuation", "but you are allowed to go"), ("continuation_felicity", "felicitous")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "aghajeretic2022_11a"
     source := ⟨"agha-jeretic-2022", "(11a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("negation", "extra-clausal"), ("continuation", "but you are allowed to go"), ("continuation_felicity", "infelicitous")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "aghajeretic2022_11b"
     source := ⟨"agha-jeretic-2022", "(11b)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("negation", "extra-clausal"), ("continuation", "but you are allowed to go"), ("continuation_felicity", "felicitous")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "aghajeretic2022_12a"
     source := ⟨"agha-jeretic-2022", "(12a)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "must"), ("force", "strong"), ("negation", "clausemate"), ("continuation", "but you are allowed to go"), ("continuation_felicity", "infelicitous")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "aghajeretic2022_12b"
     source := ⟨"agha-jeretic-2022", "(12b)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "must"), ("force", "strong"), ("negation", "extra-clausal"), ("continuation", "but you are allowed to go"), ("continuation_felicity", "felicitous")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "aghajeretic2022_14a"
     source := ⟨"agha-jeretic-2022", "(14a)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("negation", "clausemate"), ("continuation", "but that you can go"), ("continuation_felicity", "infelicitous")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "aghajeretic2022_14b"
     source := ⟨"agha-jeretic-2022", "(14b)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("remover", "necessarily"), ("continuation", "but that you can go"), ("continuation_felicity", "felicitous")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "aghajeretic2022_15a"
     source := ⟨"agha-jeretic-2022", "(15a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("negation", "clausemate"), ("continuation", "but it is allowed"), ("continuation_felicity", "infelicitous")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "aghajeretic2022_15b"
     source := ⟨"agha-jeretic-2022", "(15b)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("remover", "necessarily"), ("continuation", "but it is allowed"), ("continuation_felicity", "felicitous")] }
 
-def ex_17a_qud1 : LinguisticExample :=
+def ex_17a_qud1 : Datum :=
   { id := "aghajeretic2022_17a_qud1"
     source := ⟨"agha-jeretic-2022", "(17a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_17a_qud1 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("qud", "What is a way to get a perfect grade?")] }
 
-def ex_17a_qud2 : LinguisticExample :=
+def ex_17a_qud2 : Datum :=
   { id := "aghajeretic2022_17a_qud2"
     source := ⟨"agha-jeretic-2022", "(17a)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_17a_qud2 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("qud", "What are the minimal requirements to get a perfect grade?")] }
 
-def ex_17b_qud1 : LinguisticExample :=
+def ex_17b_qud1 : Datum :=
   { id := "aghajeretic2022_17b_qud1"
     source := ⟨"agha-jeretic-2022", "(17b)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_17b_qud1 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("qud", "What is a way to get a perfect grade?")] }
 
-def ex_17b_qud2 : LinguisticExample :=
+def ex_17b_qud2 : Datum :=
   { id := "aghajeretic2022_17b_qud2"
     source := ⟨"agha-jeretic-2022", "(17b)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_17b_qud2 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("qud", "What are the minimal requirements to get a perfect grade?")] }
 
-def ex_19a : LinguisticExample :=
+def ex_19a : Datum :=
   { id := "aghajeretic2022_19a"
     source := ⟨"agha-jeretic-2022", "(19a)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_19a : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("denial", "No, that's not true, you don't have to, but you can"), ("denial_felicity", "infelicitous"), ("well_response_felicity", "felicitous")] }
 
-def ex_19b : LinguisticExample :=
+def ex_19b : Datum :=
   { id := "aghajeretic2022_19b"
     source := ⟨"agha-jeretic-2022", "(19b)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "must"), ("force", "strong"), ("denial", "No, that's not true, you don't have to, but you can"), ("denial_felicity", "felicitous"), ("well_response_felicity", "infelicitous")] }
 
-def ex_31a : LinguisticExample :=
+def ex_31a : Datum :=
   { id := "aghajeretic2022_31a"
     source := ⟨"vander-klok-hohaus-2020", "(31a)"⟩
     reportedIn := some ⟨"agha-jeretic-2022", "(31a)"⟩
@@ -446,7 +444,7 @@ def ex_31a : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "iso"), ("force", "possibility")] }
 
-def ex_31b : LinguisticExample :=
+def ex_31b : Datum :=
   { id := "aghajeretic2022_31b"
     source := ⟨"vander-klok-hohaus-2020", "(31b)"⟩
     reportedIn := some ⟨"agha-jeretic-2022", "(31b)"⟩
@@ -459,7 +457,7 @@ def ex_31b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "iso+NE"), ("derivation", "NE"), ("base", "possibility")] }
 
-def ex_32a : LinguisticExample :=
+def ex_32a : Datum :=
   { id := "aghajeretic2022_32a"
     source := ⟨"agha-jeretic-2022", "(32a)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_32a : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "devoir+CF"), ("derivation", "CF"), ("base", "necessity")] }
 
-def ex_32b : LinguisticExample :=
+def ex_32b : Datum :=
   { id := "aghajeretic2022_32b"
     source := ⟨"agha-jeretic-2022", "(32b)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_32b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "pouvoir+CF"), ("derivation", "CF"), ("base", "possibility")] }
 
-def ex_38a : LinguisticExample :=
+def ex_38a : Datum :=
   { id := "aghajeretic2022_38a"
     source := ⟨"agha-jeretic-2022", "(38a)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_38a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "future conditional"), ("continuation", "but I might be"), ("continuation_felicity", "infelicitous")] }
 
-def ex_38b : LinguisticExample :=
+def ex_38b : Datum :=
   { id := "aghajeretic2022_38b"
     source := ⟨"agha-jeretic-2022", "(38b)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_38b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "future conditional"), ("remover", "necessarily"), ("continuation", "but I might be"), ("continuation_felicity", "felicitous")] }
 
-def ex_40a : LinguisticExample :=
+def ex_40a : Datum :=
   { id := "aghajeretic2022_40a"
     source := ⟨"agha-jeretic-2022", "(40a)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_40a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "generic"), ("continuation", "but some of them do"), ("continuation_felicity", "infelicitous")] }
 
-def ex_40b : LinguisticExample :=
+def ex_40b : Datum :=
   { id := "aghajeretic2022_40b"
     source := ⟨"agha-jeretic-2022", "(40b)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_40b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "generic"), ("remover", "necessarily"), ("continuation", "but some of them do"), ("continuation_felicity", "felicitous")] }
 
-def ex_41a : LinguisticExample :=
+def ex_41a : Datum :=
   { id := "aghajeretic2022_41a"
     source := ⟨"agha-jeretic-2022", "(41a)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex_41a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "habitual"), ("continuation", "but I do sometimes"), ("continuation_felicity", "infelicitous")] }
 
-def ex_41b : LinguisticExample :=
+def ex_41b : Datum :=
   { id := "aghajeretic2022_41b"
     source := ⟨"agha-jeretic-2022", "(41b)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex_41b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "habitual"), ("remover", "necessarily"), ("continuation", "but I do sometimes"), ("continuation_felicity", "felicitous")] }
 
-def ex_47a : LinguisticExample :=
+def ex_47a : Datum :=
   { id := "aghajeretic2022_47a"
     source := ⟨"agha-jeretic-2022", "(47a)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex_47a : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "should"), ("force", "weak"), ("qud", "Which train is best?")] }
 
-def ex_47b : LinguisticExample :=
+def ex_47b : Datum :=
   { id := "aghajeretic2022_47b"
     source := ⟨"agha-jeretic-2022", "(47b)"⟩
     reportedIn := none
@@ -589,6 +587,6 @@ def ex_47b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "have to"), ("force", "strong"), ("qud", "Which train is best?")] }
 
-def all : List LinguisticExample := [ex_2a, ex_2b, ex_3a, ex_3b, ex_4a, ex_4b, should_pos_all, should_pos_none, should_pos_gap, should_neg_all, should_neg_none, should_neg_gap, haveTo_pos_gap, haveTo_neg_gap, ex_8a, ex_8b, ex_10a, ex_10b, ex_11a, ex_11b, ex_12a, ex_12b, ex_14a, ex_14b, ex_15a, ex_15b, ex_17a_qud1, ex_17a_qud2, ex_17b_qud1, ex_17b_qud2, ex_19a, ex_19b, ex_31a, ex_31b, ex_32a, ex_32b, ex_38a, ex_38b, ex_40a, ex_40b, ex_41a, ex_41b, ex_47a, ex_47b]
+def all : List Datum := [ex_2a, ex_2b, ex_3a, ex_3b, ex_4a, ex_4b, should_pos_all, should_pos_none, should_pos_gap, should_neg_all, should_neg_none, should_neg_gap, haveTo_pos_gap, haveTo_neg_gap, ex_8a, ex_8b, ex_10a, ex_10b, ex_11a, ex_11b, ex_12a, ex_12b, ex_14a, ex_14b, ex_15a, ex_15b, ex_17a_qud1, ex_17a_qud2, ex_17b_qud1, ex_17b_qud2, ex_19a, ex_19b, ex_31a, ex_31b, ex_32a, ex_32b, ex_38a, ex_38b, ex_40a, ex_40b, ex_41a, ex_41b, ex_47a, ex_47b]
 
 end AghaJeretic2022.Examples

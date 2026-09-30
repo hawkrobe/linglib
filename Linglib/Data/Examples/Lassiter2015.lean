@@ -15,9 +15,7 @@ this module; declarations live in `namespace Lassiter2015.Examples`.
 
 namespace Lassiter2015.Examples
 
-open Data.Examples
-
-def ex4 : LinguisticExample :=
+def ex4 : Datum :=
   { id := "lassiter2015_ex4"
     source := ⟨"lassiter-2015", "(4)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex4 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("form", "φ ⪰ ψ_i for each i")] }
 
-def ex8 : LinguisticExample :=
+def ex8 : Datum :=
   { id := "lassiter2015_ex8"
     source := ⟨"lassiter-2015", "(8)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex8 : LinguisticExample :=
     readings := [("φ ⪰ (ψ ∨ χ)", .unacceptable), ("φ ⪰ ψ ∧ φ ⪰ χ", .acceptable)]
     paperFeatures := [("section", "1.1"), ("form", "φ ⪰ (ψ ∨ χ)")] }
 
-def ex9 : LinguisticExample :=
+def ex9 : Datum :=
   { id := "lassiter2015_ex9"
     source := ⟨"lassiter-2015", "(9)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex9 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("form", "φ ⪰ (ψ ∨ χ)")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "lassiter2015_ex12"
     source := ⟨"lassiter-2015", "(12)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex12 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("form", "φ ⪰ (ψ₁ ∨ … ∨ ψ₇)")] }
 
-def ex33c : LinguisticExample :=
+def ex33c : Datum :=
   { id := "lassiter2015_ex33c"
     source := ⟨"lassiter-2015", "(33c)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex33c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.4"), ("form", "(φ ∧ ¬ψ ∧ ¬χ) ⪰ ((¬φ ∧ ψ ∧ ¬χ) ∨ (¬φ ∧ ¬ψ ∧ χ))")] }
 
-def ex35 : LinguisticExample :=
+def ex35 : Datum :=
   { id := "lassiter2015_ex35"
     source := ⟨"lassiter-2015", "(35)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex35 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.5"), ("pattern", "must to more likely than not")] }
 
-def ex48 : LinguisticExample :=
+def ex48 : Datum :=
   { id := "lassiter2015_ex48"
     source := ⟨"lassiter-2015", "(48)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex48 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("measure", "symmetric fuzzy")] }
 
-def ex50 : LinguisticExample :=
+def ex50 : Datum :=
   { id := "lassiter2015_ex50"
     source := ⟨"lassiter-2015", "(50)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex50 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("modifier", "ratio")] }
 
-def ex51 : LinguisticExample :=
+def ex51 : Datum :=
   { id := "lassiter2015_ex51"
     source := ⟨"lassiter-2015", "(51)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex51 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("modifier", "ratio")] }
 
-def ex53 : LinguisticExample :=
+def ex53 : Datum :=
   { id := "lassiter2015_ex53"
     source := ⟨"lassiter-2015", "(53)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex53 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("modifier", "ratio"), ("scale", "additive")] }
 
-def ex54 : LinguisticExample :=
+def ex54 : Datum :=
   { id := "lassiter2015_ex54"
     source := ⟨"lassiter-2015", "(54)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex54 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("modifier", "ratio"), ("scale", "non-additive")] }
 
-def ex56 : LinguisticExample :=
+def ex56 : Datum :=
   { id := "lassiter2015_ex56"
     source := ⟨"lassiter-2015", "(56)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex56 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("pattern", "must to much more likely than not")] }
 
-def ex62 : LinguisticExample :=
+def ex62 : Datum :=
   { id := "lassiter2015_ex62"
     source := ⟨"lassiter-2015", "(62)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex62 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("issue", "weakness of must")] }
 
-def ex65a : LinguisticExample :=
+def ex65a : Datum :=
   { id := "lassiter2015_ex65a"
     source := ⟨"lassiter-2015", "(65a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex65a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("pattern", "more likely than to might")] }
 
-def ex65b : LinguisticExample :=
+def ex65b : Datum :=
   { id := "lassiter2015_ex65b"
     source := ⟨"lassiter-2015", "(65b)"⟩
     reportedIn := none
@@ -212,6 +210,6 @@ def ex65b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("pattern", "more likely than to might")] }
 
-def all : List LinguisticExample := [ex4, ex8, ex9, ex12, ex33c, ex35, ex48, ex50, ex51, ex53, ex54, ex56, ex62, ex65a, ex65b]
+def all : List Datum := [ex4, ex8, ex9, ex12, ex33c, ex35, ex48, ex50, ex51, ex53, ex54, ex56, ex62, ex65a, ex65b]
 
 end Lassiter2015.Examples

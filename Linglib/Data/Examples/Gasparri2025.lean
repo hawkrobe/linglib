@@ -15,9 +15,7 @@ this module; declarations live in `namespace Gasparri2025.Examples`.
 
 namespace Gasparri2025.Examples
 
-open Data.Examples
-
-def ex4a : LinguisticExample :=
+def ex4a : Datum :=
   { id := "gasparri2025_ex4a"
     source := ⟨"gasparri-2025", "(4a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex4a : LinguisticExample :=
     readings := [("generic", .questionable)]
     paperFeatures := [("subject", "bareName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
-def ex4b : LinguisticExample :=
+def ex4b : Datum :=
   { id := "gasparri2025_ex4b"
     source := ⟨"gasparri-2025", "(4b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex4b : LinguisticExample :=
     readings := [("token", .acceptable), ("generic", .questionable)]
     paperFeatures := [("subject", "bareName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex4c : LinguisticExample :=
+def ex4c : Datum :=
   { id := "gasparri2025_ex4c"
     source := ⟨"gasparri-2025", "(4c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex4c : LinguisticExample :=
     readings := [("token", .acceptable), ("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex4d : LinguisticExample :=
+def ex4d : Datum :=
   { id := "gasparri2025_ex4d"
     source := ⟨"gasparri-2025", "(4d)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex4d : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "gasparri2025_ex5a"
     source := ⟨"gasparri-2025", "(5a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex5a : LinguisticExample :=
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "pluralName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
-def ex5b : LinguisticExample :=
+def ex5b : Datum :=
   { id := "gasparri2025_ex5b"
     source := ⟨"gasparri-2025", "(5b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex5b : LinguisticExample :=
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "pluralName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex6a : LinguisticExample :=
+def ex6a : Datum :=
   { id := "gasparri2025_ex6a"
     source := ⟨"gasparri-2025", "(6a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex6a : LinguisticExample :=
     readings := [("token", .acceptable), ("generic", .questionable)]
     paperFeatures := [("subject", "bareName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex6b : LinguisticExample :=
+def ex6b : Datum :=
   { id := "gasparri2025_ex6b"
     source := ⟨"gasparri-2025", "(6b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex6b : LinguisticExample :=
     readings := [("generic", .questionable)]
     paperFeatures := [("subject", "bareName"), ("context", "outOfTheBlue"), ("qadv", "yes"), ("level", "characterizing")] }
 
-def ex7a : LinguisticExample :=
+def ex7a : Datum :=
   { id := "gasparri2025_ex7a"
     source := ⟨"gasparri-2025", "(7a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex7a : LinguisticExample :=
     readings := [("token", .acceptable), ("generic", .questionable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex7b : LinguisticExample :=
+def ex7b : Datum :=
   { id := "gasparri2025_ex7b"
     source := ⟨"gasparri-2025", "(7b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex7b : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "yes"), ("level", "characterizing")] }
 
-def ex8a : LinguisticExample :=
+def ex8a : Datum :=
   { id := "gasparri2025_ex8a"
     source := ⟨"gasparri-2025", "(8a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex8a : LinguisticExample :=
     readings := [("token", .acceptable), ("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex8b : LinguisticExample :=
+def ex8b : Datum :=
   { id := "gasparri2025_ex8b"
     source := ⟨"gasparri-2025", "(8b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex8b : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "yes"), ("level", "characterizing")] }
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "gasparri2025_ex11a"
     source := ⟨"gasparri-2025", "(11a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex11a : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "locative"), ("qadv", "yes"), ("level", "characterizing")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "gasparri2025_ex11b"
     source := ⟨"gasparri-2025", "(11b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex11b : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "locative"), ("qadv", "yes"), ("level", "characterizing")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "gasparri2025_ex12"
     source := ⟨"gasparri-2025", "(12)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex12 : LinguisticExample :=
     readings := [("token", .marginal), ("generic", .acceptable)]
     paperFeatures := [("subject", "modifiedName"), ("context", "outOfTheBlue"), ("qadv", "yes"), ("level", "characterizing")] }
 
-def ex13 : LinguisticExample :=
+def ex13 : Datum :=
   { id := "gasparri2025_ex13"
     source := ⟨"gasparri-2025", "(13)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex13 : LinguisticExample :=
     readings := [("token", .acceptable), ("generic", .acceptable)]
     paperFeatures := [("subject", "modifiedName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex14a : LinguisticExample :=
+def ex14a : Datum :=
   { id := "gasparri2025_ex14a"
     source := ⟨"gasparri-2025", "(14a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex14a : LinguisticExample :=
     readings := [("token", .acceptable), ("generic", .questionable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex14b : LinguisticExample :=
+def ex14b : Datum :=
   { id := "gasparri2025_ex14b"
     source := ⟨"gasparri-2025", "(14b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex14b : LinguisticExample :=
     readings := [("token", .acceptable), ("generic", .questionable)]
     paperFeatures := [("subject", "modifiedCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex14c : LinguisticExample :=
+def ex14c : Datum :=
   { id := "gasparri2025_ex14c"
     source := ⟨"gasparri-2025", "(14c)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex14c : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareCommonPlural"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex15a : LinguisticExample :=
+def ex15a : Datum :=
   { id := "gasparri2025_ex15a"
     source := ⟨"gasparri-2025", "(15a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex15a : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "modifiedName"), ("context", "outOfTheBlue"), ("qadv", "yes"), ("level", "characterizing")] }
 
-def ex15b : LinguisticExample :=
+def ex15b : Datum :=
   { id := "gasparri2025_ex15b"
     source := ⟨"gasparri-2025", "(15b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex15b : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "modifiedName"), ("context", "outOfTheBlue"), ("qadv", "yes"), ("level", "characterizing")] }
 
-def ex16a : LinguisticExample :=
+def ex16a : Datum :=
   { id := "gasparri2025_ex16a"
     source := ⟨"gasparri-2025", "(16a)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex16a : LinguisticExample :=
     readings := [("token", .acceptable), ("generic", .acceptable)]
     paperFeatures := [("subject", "modifiedName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex16b : LinguisticExample :=
+def ex16b : Datum :=
   { id := "gasparri2025_ex16b"
     source := ⟨"gasparri-2025", "(16b)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex16b : LinguisticExample :=
     readings := [("token", .acceptable), ("generic", .acceptable)]
     paperFeatures := [("subject", "modifiedName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex17a : LinguisticExample :=
+def ex17a : Datum :=
   { id := "gasparri2025_ex17a"
     source := ⟨"gasparri-2025", "(17a)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex17a : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareCommonPlural"), ("context", "binding"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex17b : LinguisticExample :=
+def ex17b : Datum :=
   { id := "gasparri2025_ex17b"
     source := ⟨"gasparri-2025", "(17b)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex17b : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareCommonPlural"), ("context", "binding"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex18a : LinguisticExample :=
+def ex18a : Datum :=
   { id := "gasparri2025_ex18a"
     source := ⟨"gasparri-2025", "(18a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex18a : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .questionable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "yes"), ("level", "characterizing")] }
 
-def ex18b : LinguisticExample :=
+def ex18b : Datum :=
   { id := "gasparri2025_ex18b"
     source := ⟨"gasparri-2025", "(18b)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex18b : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "binding"), ("qadv", "yes"), ("level", "characterizing")] }
 
-def ex20 : LinguisticExample :=
+def ex20 : Datum :=
   { id := "gasparri2025_ex20"
     source := ⟨"gasparri-2025", "(20)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex20 : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "binding"), ("qadv", "yes"), ("level", "characterizing")] }
 
-def ex21 : LinguisticExample :=
+def ex21 : Datum :=
   { id := "gasparri2025_ex21"
     source := ⟨"gasparri-2025", "(21)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex21 : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "naming"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex22a : LinguisticExample :=
+def ex22a : Datum :=
   { id := "gasparri2025_ex22a"
     source := ⟨"gasparri-2025", "(22a)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex22a : LinguisticExample :=
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex22b : LinguisticExample :=
+def ex22b : Datum :=
   { id := "gasparri2025_ex22b"
     source := ⟨"gasparri-2025", "(22b)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex22b : LinguisticExample :=
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "yes"), ("level", "characterizing")] }
 
-def ex23b : LinguisticExample :=
+def ex23b : Datum :=
   { id := "gasparri2025_ex23b"
     source := ⟨"gasparri-2025", "(23b)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex23b : LinguisticExample :=
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "naming"), ("qadv", "yes"), ("level", "characterizing")] }
 
-def ex26 : LinguisticExample :=
+def ex26 : Datum :=
   { id := "gasparri2025_ex26"
     source := ⟨"gasparri-2025", "(26)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex26 : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "naming"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex27a : LinguisticExample :=
+def ex27a : Datum :=
   { id := "gasparri2025_ex27a"
     source := ⟨"gasparri-2025", "(27a)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex27a : LinguisticExample :=
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "naming"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex28a : LinguisticExample :=
+def ex28a : Datum :=
   { id := "gasparri2025_ex28a"
     source := ⟨"gasparri-2025", "(28a)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex28a : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "naming"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex28b : LinguisticExample :=
+def ex28b : Datum :=
   { id := "gasparri2025_ex28b"
     source := ⟨"gasparri-2025", "(28b)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex28b : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareName"), ("context", "naming"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex31a : LinguisticExample :=
+def ex31a : Datum :=
   { id := "gasparri2025_ex31a"
     source := ⟨"gasparri-2025", "(31a)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex31a : LinguisticExample :=
     readings := [("token", .acceptable), ("generic", .questionable)]
     paperFeatures := [("subject", "modifiedCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex31b : LinguisticExample :=
+def ex31b : Datum :=
   { id := "gasparri2025_ex31b"
     source := ⟨"gasparri-2025", "(31b)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex31b : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "modifiedCommon"), ("context", "focusedKinds"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex32a : LinguisticExample :=
+def ex32a : Datum :=
   { id := "gasparri2025_ex32a"
     source := ⟨"gasparri-2025", "(32a)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex32a : LinguisticExample :=
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "modifiedCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex32b : LinguisticExample :=
+def ex32b : Datum :=
   { id := "gasparri2025_ex32b"
     source := ⟨"gasparri-2025", "(32b)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex32b : LinguisticExample :=
     readings := [("generic", .questionable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex32c : LinguisticExample :=
+def ex32c : Datum :=
   { id := "gasparri2025_ex32c"
     source := ⟨"gasparri-2025", "(32c)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex32c : LinguisticExample :=
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "contrast"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex33a : LinguisticExample :=
+def ex33a : Datum :=
   { id := "gasparri2025_ex33a"
     source := ⟨"gasparri-2025", "(33a)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex33a : LinguisticExample :=
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "definiteName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex33b : LinguisticExample :=
+def ex33b : Datum :=
   { id := "gasparri2025_ex33b"
     source := ⟨"gasparri-2025", "(33b)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex33b : LinguisticExample :=
     readings := [("generic", .questionable)]
     paperFeatures := [("subject", "bareName"), ("context", "naming"), ("qadv", "no"), ("level", "characterizing")] }
 
-def ex34a : LinguisticExample :=
+def ex34a : Datum :=
   { id := "gasparri2025_ex34a"
     source := ⟨"gasparri-2025", "(34a)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex34a : LinguisticExample :=
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
-def ex34b : LinguisticExample :=
+def ex34b : Datum :=
   { id := "gasparri2025_ex34b"
     source := ⟨"gasparri-2025", "(34b)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex34b : LinguisticExample :=
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
-def ex34d : LinguisticExample :=
+def ex34d : Datum :=
   { id := "gasparri2025_ex34d"
     source := ⟨"gasparri-2025", "(34d)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex34d : LinguisticExample :=
     readings := [("generic", .questionable)]
     paperFeatures := [("subject", "bareName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
-def ex34e : LinguisticExample :=
+def ex34e : Datum :=
   { id := "gasparri2025_ex34e"
     source := ⟨"gasparri-2025", "(34e)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex34e : LinguisticExample :=
     readings := [("generic", .questionable)]
     paperFeatures := [("subject", "bareName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
-def ex34f : LinguisticExample :=
+def ex34f : Datum :=
   { id := "gasparri2025_ex34f"
     source := ⟨"gasparri-2025", "(34f)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex34f : LinguisticExample :=
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "quotedName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
-def ex34g : LinguisticExample :=
+def ex34g : Datum :=
   { id := "gasparri2025_ex34g"
     source := ⟨"gasparri-2025", "(34g)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex34g : LinguisticExample :=
     readings := [("generic", .acceptable)]
     paperFeatures := [("subject", "quotedName"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
-def ex35a : LinguisticExample :=
+def ex35a : Datum :=
   { id := "gasparri2025_ex35a"
     source := ⟨"gasparri-2025", "(35a)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex35a : LinguisticExample :=
     readings := [("token", .questionable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareCommonPlural"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
-def ex35b : LinguisticExample :=
+def ex35b : Datum :=
   { id := "gasparri2025_ex35b"
     source := ⟨"gasparri-2025", "(35b)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex35b : LinguisticExample :=
     readings := [("generic", .questionable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
-def ex35c : LinguisticExample :=
+def ex35c : Datum :=
   { id := "gasparri2025_ex35c"
     source := ⟨"gasparri-2025", "(35c)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex35c : LinguisticExample :=
     readings := [("token", .acceptable), ("generic", .acceptable)]
     paperFeatures := [("subject", "bareCommonPlural"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
-def ex35d : LinguisticExample :=
+def ex35d : Datum :=
   { id := "gasparri2025_ex35d"
     source := ⟨"gasparri-2025", "(35d)"⟩
     reportedIn := none
@@ -706,6 +704,6 @@ def ex35d : LinguisticExample :=
     readings := [("token", .acceptable), ("generic", .questionable)]
     paperFeatures := [("subject", "definiteCommon"), ("context", "outOfTheBlue"), ("qadv", "no"), ("level", "kindLevel")] }
 
-def all : List LinguisticExample := [ex4a, ex4b, ex4c, ex4d, ex5a, ex5b, ex6a, ex6b, ex7a, ex7b, ex8a, ex8b, ex11a, ex11b, ex12, ex13, ex14a, ex14b, ex14c, ex15a, ex15b, ex16a, ex16b, ex17a, ex17b, ex18a, ex18b, ex20, ex21, ex22a, ex22b, ex23b, ex26, ex27a, ex28a, ex28b, ex31a, ex31b, ex32a, ex32b, ex32c, ex33a, ex33b, ex34a, ex34b, ex34d, ex34e, ex34f, ex34g, ex35a, ex35b, ex35c, ex35d]
+def all : List Datum := [ex4a, ex4b, ex4c, ex4d, ex5a, ex5b, ex6a, ex6b, ex7a, ex7b, ex8a, ex8b, ex11a, ex11b, ex12, ex13, ex14a, ex14b, ex14c, ex15a, ex15b, ex16a, ex16b, ex17a, ex17b, ex18a, ex18b, ex20, ex21, ex22a, ex22b, ex23b, ex26, ex27a, ex28a, ex28b, ex31a, ex31b, ex32a, ex32b, ex32c, ex33a, ex33b, ex34a, ex34b, ex34d, ex34e, ex34f, ex34g, ex35a, ex35b, ex35c, ex35d]
 
 end Gasparri2025.Examples

@@ -52,7 +52,7 @@ while the single-operator LFs (143)–(146) are too weak or too strong (`single_
 
 namespace AlonsoOvalleMoghiseh2025a
 
-open Exhaustification ModalLogic Data.Examples Finset
+open Exhaustification ModalLogic Finset
 
 /-! ### The two-book model (§3) -/
 
@@ -283,7 +283,7 @@ def verdict (A : Finset Buy₅) : String → String → Option Bool
   | _, _ => none
 
 /-- A row's predicted verdict from its `scenario`, `item`, and `modal` features. -/
-def predicted (row : LinguisticExample) : Option Bool :=
+def predicted (row : Datum) : Option Bool :=
   match row.feature? "scenario", row.feature? "item", row.feature? "modal" with
   | some s, some i, some m => scenario s >>= fun A => verdict A i m
   | _, _, _ => none

@@ -15,9 +15,7 @@ this module; declarations live in `namespace Oswalt1986.Examples`.
 
 namespace Oswalt1986.Examples
 
-open Data.Examples
-
-def s1 : LinguisticExample :=
+def s1 : Datum :=
   { id := "oswalt1986_s1"
     source := ⟨"oswalt-1986", "(S1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def s1 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "imperfective"), ("evidential", "performative")] }
 
-def s2 : LinguisticExample :=
+def s2 : Datum :=
   { id := "oswalt1986_s2"
     source := ⟨"oswalt-1986", "(S2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def s2 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "perfective"), ("evidential", "performative")] }
 
-def s4 : LinguisticExample :=
+def s4 : Datum :=
   { id := "oswalt1986_s4"
     source := ⟨"oswalt-1986", "(S4)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def s4 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "perfective"), ("evidential", "performative")] }
 
-def s6 : LinguisticExample :=
+def s6 : Datum :=
   { id := "oswalt1986_s6"
     source := ⟨"oswalt-1986", "(S6)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def s6 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "perfective"), ("evidential", "performative")] }
 
-def s7 : LinguisticExample :=
+def s7 : Datum :=
   { id := "oswalt1986_s7"
     source := ⟨"oswalt-1986", "(S7)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def s7 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "responsive"), ("aspect", "perfective"), ("evidential", "factualVisual")] }
 
-def s8 : LinguisticExample :=
+def s8 : Datum :=
   { id := "oswalt1986_s8"
     source := ⟨"oswalt-1986", "(S8)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def s8 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "imperfective"), ("evidential", "factualVisual")] }
 
-def s9 : LinguisticExample :=
+def s9 : Datum :=
   { id := "oswalt1986_s9"
     source := ⟨"oswalt-1986", "(S9)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def s9 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "perfective"), ("evidential", "factualVisual")] }
 
-def s13 : LinguisticExample :=
+def s13 : Datum :=
   { id := "oswalt1986_s13"
     source := ⟨"oswalt-1986", "(S13)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def s13 : LinguisticExample :=
     readings := [("general truth", .acceptable), ("witnessed", .acceptable)]
     paperFeatures := [("mode", "spontaneous"), ("aspect", "imperfective"), ("evidential", "factualVisual")] }
 
-def s14 : LinguisticExample :=
+def s14 : Datum :=
   { id := "oswalt1986_s14"
     source := ⟨"oswalt-1986", "(S14)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def s14 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "imperfective"), ("evidential", "auditory")] }
 
-def s15 : LinguisticExample :=
+def s15 : Datum :=
   { id := "oswalt1986_s15"
     source := ⟨"oswalt-1986", "(S15)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def s15 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "perfective"), ("evidential", "auditory")] }
 
-def s16 : LinguisticExample :=
+def s16 : Datum :=
   { id := "oswalt1986_s16"
     source := ⟨"oswalt-1986", "(S16)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def s16 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("evidential", "auditory")] }
 
-def s17 : LinguisticExample :=
+def s17 : Datum :=
   { id := "oswalt1986_s17"
     source := ⟨"oswalt-1986", "(S17)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def s17 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "responsive"), ("evidential", "auditory")] }
 
-def s19 : LinguisticExample :=
+def s19 : Datum :=
   { id := "oswalt1986_s19"
     source := ⟨"oswalt-1986", "(S19)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def s19 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("evidential", "inferential")] }
 
-def s19_visual : LinguisticExample :=
+def s19_visual : Datum :=
   { id := "oswalt1986_s19_visual"
     source := ⟨"oswalt-1986", "(S19)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def s19_visual : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "perfective"), ("evidential", "factualVisual")] }
 
-def s19_auditory : LinguisticExample :=
+def s19_auditory : Datum :=
   { id := "oswalt1986_s19_auditory"
     source := ⟨"oswalt-1986", "(S19)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def s19_auditory : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("aspect", "perfective"), ("evidential", "auditory")] }
 
-def s22 : LinguisticExample :=
+def s22 : Datum :=
   { id := "oswalt1986_s22"
     source := ⟨"oswalt-1986", "(S22)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def s22 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "spontaneous"), ("evidential", "inferential")] }
 
-def s25 : LinguisticExample :=
+def s25 : Datum :=
   { id := "oswalt1986_s25"
     source := ⟨"oswalt-1986", "(S25)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def s25 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "narrative"), ("evidential", "personalExperience")] }
 
-def s26 : LinguisticExample :=
+def s26 : Datum :=
   { id := "oswalt1986_s26"
     source := ⟨"oswalt-1986", "(S26)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def s26 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "remote"), ("evidential", "remotePast")] }
 
-def s27 : LinguisticExample :=
+def s27 : Datum :=
   { id := "oswalt1986_s27"
     source := ⟨"oswalt-1986", "(S27)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def s27 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "narrative"), ("evidential", "quotative")] }
 
-def s28 : LinguisticExample :=
+def s28 : Datum :=
   { id := "oswalt1986_s28"
     source := ⟨"oswalt-1986", "(S28)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def s28 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "responsive"), ("evidential", "quotative")] }
 
-def s29 : LinguisticExample :=
+def s29 : Datum :=
   { id := "oswalt1986_s29"
     source := ⟨"oswalt-1986", "(S29)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def s29 : LinguisticExample :=
     readings := []
     paperFeatures := [("mode", "responsive"), ("evidential", "quotative")] }
 
-def s32 : LinguisticExample :=
+def s32 : Datum :=
   { id := "oswalt1986_s32"
     source := ⟨"oswalt-1986", "(S32)"⟩
     reportedIn := none
@@ -303,6 +301,6 @@ def s32 : LinguisticExample :=
     readings := []
     paperFeatures := [("evidential", "inferentialII")] }
 
-def all : List LinguisticExample := [s1, s2, s4, s6, s7, s8, s9, s13, s14, s15, s16, s17, s19, s19_visual, s19_auditory, s22, s25, s26, s27, s28, s29, s32]
+def all : List Datum := [s1, s2, s4, s6, s7, s8, s9, s13, s14, s15, s16, s17, s19, s19_visual, s19_auditory, s22, s25, s26, s27, s28, s29, s32]
 
 end Oswalt1986.Examples

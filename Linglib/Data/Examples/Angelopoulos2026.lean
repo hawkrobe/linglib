@@ -15,9 +15,7 @@ this module; declarations live in `namespace Angelopoulos2026.Examples`.
 
 namespace Angelopoulos2026.Examples
 
-open Data.Examples
-
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "angelopoulos2026_1a"
     source := ⟨"angelopoulos-2026", "ex. (1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("complementizer", "oti"), ("verbClass", "saying"), ("verb", "leo"), ("position", "internal_argument")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "angelopoulos2026_1b"
     source := ⟨"angelopoulos-2026", "ex. (1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("complementizer", "pu"), ("verbClass", "emotive-factive"), ("verb", "metaniono"), ("position", "internal_argument")] }
 
-def ex_31a : LinguisticExample :=
+def ex_31a : Datum :=
   { id := "angelopoulos2026_31a"
     source := ⟨"angelopoulos-2026", "ex. (31a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_31a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("verb", "δjafono 'disagree'")] }
 
-def ex_31b : LinguisticExample :=
+def ex_31b : Datum :=
   { id := "angelopoulos2026_31b"
     source := ⟨"angelopoulos-2026", "ex. (31b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_31b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("verb", "δjafono 'disagree'"), ("complementizer", "oti"), ("position", "internal_argument")] }
 
-def ex_31c : LinguisticExample :=
+def ex_31c : Datum :=
   { id := "angelopoulos2026_31c"
     source := ⟨"angelopoulos-2026", "ex. (31c)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_31c : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("verb", "δjafono 'disagree'"), ("complementizer", "oti"), ("position", "p_complement")] }
 
-def ex_32a : LinguisticExample :=
+def ex_32a : Datum :=
   { id := "angelopoulos2026_32a"
     source := ⟨"angelopoulos-2026", "ex. (32a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_32a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("verb", "metaniono")] }
 
-def ex_32b : LinguisticExample :=
+def ex_32b : Datum :=
   { id := "angelopoulos2026_32b"
     source := ⟨"angelopoulos-2026", "ex. (32b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_32b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("complementizer", "pu"), ("verb", "metaniono"), ("position", "internal_argument")] }
 
-def ex_32c : LinguisticExample :=
+def ex_32c : Datum :=
   { id := "angelopoulos2026_32c"
     source := ⟨"angelopoulos-2026", "ex. (32c)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_32c : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("verb", "metaniono"), ("complementizer", "pu"), ("position", "p_complement"), ("confound", "p_ban")] }
 
-def ex_33a : LinguisticExample :=
+def ex_33a : Datum :=
   { id := "angelopoulos2026_33a"
     source := ⟨"angelopoulos-2026", "ex. (33a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_33a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "truth-predicates"), ("nounSort", "content")] }
 
-def ex_33b : LinguisticExample :=
+def ex_33b : Datum :=
   { id := "angelopoulos2026_33b"
     source := ⟨"angelopoulos-2026", "ex. (33b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_33b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "truth-predicates"), ("nounSort", "situation")] }
 
-def ex_34a : LinguisticExample :=
+def ex_34a : Datum :=
   { id := "angelopoulos2026_34a"
     source := ⟨"angelopoulos-2026", "ex. (34a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_34a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "occurrence-predicates"), ("nounSort", "content")] }
 
-def ex_34b : LinguisticExample :=
+def ex_34b : Datum :=
   { id := "angelopoulos2026_34b"
     source := ⟨"angelopoulos-2026", "ex. (34b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_34b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "occurrence-predicates"), ("nounSort", "situation")] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "angelopoulos2026_3a"
     source := ⟨"angelopoulos-2026", "ex. (3a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "pistevo"), ("complementizer", "oti"), ("position", "internal_argument"), ("diagnostic", "clitic-doubling")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "angelopoulos2026_3b"
     source := ⟨"angelopoulos-2026", "ex. (3b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "metaniono"), ("complementizer", "pu"), ("position", "internal_argument"), ("diagnostic", "clitic-doubling")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "angelopoulos2026_4a"
     source := ⟨"angelopoulos-2026", "ex. (4a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_4a : LinguisticExample :=
     readings := [("explanans", .acceptable)]
     paperFeatures := [("verb", "eksigo"), ("complementizer", "oti"), ("position", "internal_argument"), ("composition", "predicate_modification")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "angelopoulos2026_4b"
     source := ⟨"angelopoulos-2026", "ex. (4b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_4b : LinguisticExample :=
     readings := [("explanandum", .acceptable)]
     paperFeatures := [("verb", "eksigo"), ("complementizer", "oti"), ("nominalized", "yes"), ("composition", "functional_application")] }
 
-def ex_4c : LinguisticExample :=
+def ex_4c : Datum :=
   { id := "angelopoulos2026_4c"
     source := ⟨"angelopoulos-2026", "ex. (4c)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_4c : LinguisticExample :=
     readings := [("explanans", .acceptable)]
     paperFeatures := [("verb", "eksigo"), ("complementizer", "oti"), ("position", "internal_argument"), ("diagnostic", "clitic-doubling"), ("composition", "predicate_modification")] }
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "angelopoulos2026_6a"
     source := ⟨"angelopoulos-2026", "ex. (6a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_6a : LinguisticExample :=
     readings := [("explanans", .acceptable)]
     paperFeatures := [("verb", "eksigo"), ("complementizer", "oti"), ("position", "derived_subject"), ("diagnostic", "passivization")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "angelopoulos2026_11a"
     source := ⟨"angelopoulos-2026", "ex. (11a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("complementizer", "oti"), ("position", "external_argument")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "angelopoulos2026_12a"
     source := ⟨"angelopoulos-2026", "ex. (12a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("complementizer", "pu"), ("position", "external_argument")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "angelopoulos2026_14a"
     source := ⟨"angelopoulos-2026", "ex. (14a)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "areso"), ("complementizer", "pu"), ("position", "internal_argument")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "angelopoulos2026_14b"
     source := ⟨"angelopoulos-2026", "ex. (14b)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "areso"), ("complementizer", "pu"), ("position", "derived_subject")] }
 
-def ex_19c : LinguisticExample :=
+def ex_19c : Datum :=
   { id := "angelopoulos2026_19c"
     source := ⟨"angelopoulos-2026", "ex. (19c)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_19c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "thimono_stative"), ("complementizer", "pu"), ("position", "internal_argument"), ("diagnostic", "manner-adverb")] }
 
-def ex_20c : LinguisticExample :=
+def ex_20c : Datum :=
   { id := "angelopoulos2026_20c"
     source := ⟨"angelopoulos-2026", "ex. (20c)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_20c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "metaniono"), ("complementizer", "pu"), ("position", "internal_argument"), ("diagnostic", "manner-adverb")] }
 
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "angelopoulos2026_21a"
     source := ⟨"angelopoulos-2026", "ex. (21a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "oti"), ("position", "internal_argument"), ("diagnostic", "manner-adverb")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "angelopoulos2026_21b"
     source := ⟨"angelopoulos-2026", "ex. (21b)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_21b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sinidhitopio"), ("complementizer", "oti"), ("position", "internal_argument"), ("diagnostic", "manner-adverb"), ("confound", "manner_adverb")] }
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "angelopoulos2026_22a"
     source := ⟨"angelopoulos-2026", "ex. (22a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_22a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "thimame"), ("complementizer", "oti"), ("diagnostic", "manner-adverb"), ("confound", "manner_adverb")] }
 
-def ex_22b : LinguisticExample :=
+def ex_22b : Datum :=
   { id := "angelopoulos2026_22b"
     source := ⟨"angelopoulos-2026", "ex. (22b)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_22b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "thimame_perception"), ("complementizer", "pu"), ("diagnostic", "manner-adverb"), ("confound", "manner_adverb")] }
 
-def ex_23c : LinguisticExample :=
+def ex_23c : Datum :=
   { id := "angelopoulos2026_23c"
     source := ⟨"angelopoulos-2026", "ex. (23c)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_23c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "thimono_stative"), ("complementizer", "pu"), ("position", "internal_argument"), ("diagnostic", "in-adverbial")] }
 
-def ex_35a : LinguisticExample :=
+def ex_35a : Datum :=
   { id := "angelopoulos2026_35a"
     source := ⟨"angelopoulos-2026", "ex. (35a)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_35a : LinguisticExample :=
     readings := []
     paperFeatures := [("complementizer", "oti"), ("nounSort", "content"), ("diagnostic", "noun-complement")] }
 
-def ex_35b : LinguisticExample :=
+def ex_35b : Datum :=
   { id := "angelopoulos2026_35b"
     source := ⟨"angelopoulos-2026", "ex. (35b)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_35b : LinguisticExample :=
     readings := []
     paperFeatures := [("complementizer", "pu"), ("nounSort", "situation"), ("diagnostic", "noun-complement")] }
 
-def ex_36a : LinguisticExample :=
+def ex_36a : Datum :=
   { id := "angelopoulos2026_36a"
     source := ⟨"angelopoulos-2026", "ex. (36a)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_36a : LinguisticExample :=
     readings := []
     paperFeatures := [("complementizer", "oti"), ("nounSort", "content"), ("diagnostic", "truth-predicates")] }
 
-def ex_37a : LinguisticExample :=
+def ex_37a : Datum :=
   { id := "angelopoulos2026_37a"
     source := ⟨"angelopoulos-2026", "ex. (37a)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("complementizer", "pu"), ("nounSort", "situation"), ("diagnostic", "truth-predicates")] }
 
-def ex_38a : LinguisticExample :=
+def ex_38a : Datum :=
   { id := "angelopoulos2026_38a"
     source := ⟨"angelopoulos-2026", "ex. (38a)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_38a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "thimame"), ("complementizer", "oti"), ("diagnostic", "factivity"), ("confound", "factivity_continuation")] }
 
-def ex_38b : LinguisticExample :=
+def ex_38b : Datum :=
   { id := "angelopoulos2026_38b"
     source := ⟨"angelopoulos-2026", "ex. (38b)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_38b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "thimame_perception"), ("complementizer", "pu"), ("diagnostic", "factivity"), ("confound", "factivity_continuation")] }
 
-def fn14_i : LinguisticExample :=
+def fn14_i : Datum :=
   { id := "angelopoulos2026_fn14_i"
     source := ⟨"angelopoulos-2026", "fn. 14 (i)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def fn14_i : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "simveni"), ("complementizer", "oti")] }
 
-def ex_43a : LinguisticExample :=
+def ex_43a : Datum :=
   { id := "angelopoulos2026_43a"
     source := ⟨"angelopoulos-2026", "ex. (43a)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_43a : LinguisticExample :=
     readings := []
     paperFeatures := [("complementizer", "oti"), ("position", "external_argument"), ("nominalized", "yes")] }
 
-def ex_44a : LinguisticExample :=
+def ex_44a : Datum :=
   { id := "angelopoulos2026_44a"
     source := ⟨"angelopoulos-2026", "ex. (44a)"⟩
     reportedIn := none
@@ -511,6 +509,6 @@ def ex_44a : LinguisticExample :=
     readings := []
     paperFeatures := [("complementizer", "pu"), ("position", "external_argument"), ("nominalized", "yes")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_31a, ex_31b, ex_31c, ex_32a, ex_32b, ex_32c, ex_33a, ex_33b, ex_34a, ex_34b, ex_3a, ex_3b, ex_4a, ex_4b, ex_4c, ex_6a, ex_11a, ex_12a, ex_14a, ex_14b, ex_19c, ex_20c, ex_21a, ex_21b, ex_22a, ex_22b, ex_23c, ex_35a, ex_35b, ex_36a, ex_37a, ex_38a, ex_38b, fn14_i, ex_43a, ex_44a]
+def all : List Datum := [ex_1a, ex_1b, ex_31a, ex_31b, ex_31c, ex_32a, ex_32b, ex_32c, ex_33a, ex_33b, ex_34a, ex_34b, ex_3a, ex_3b, ex_4a, ex_4b, ex_4c, ex_6a, ex_11a, ex_12a, ex_14a, ex_14b, ex_19c, ex_20c, ex_21a, ex_21b, ex_22a, ex_22b, ex_23c, ex_35a, ex_35b, ex_36a, ex_37a, ex_38a, ex_38b, fn14_i, ex_43a, ex_44a]
 
 end Angelopoulos2026.Examples

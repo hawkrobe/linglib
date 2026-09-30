@@ -15,9 +15,7 @@ this module; declarations live in `namespace AbneyKeshet2025.Examples`.
 
 namespace AbneyKeshet2025.Examples
 
-open Data.Examples
-
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "abneykeshet2025_10"
     source := ⟨"abney-keshet-2025", "(10)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun", "simple"), ("phenomenon", "cross-sentential anaphora")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "abneykeshet2025_15"
     source := ⟨"geach-1962", "donkey sentence"⟩
     reportedIn := some ⟨"abney-keshet-2025", "(15)"⟩
@@ -43,7 +41,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "every"), ("pronoun", "donkey")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "abneykeshet2025_16"
     source := ⟨"abney-keshet-2025", "(16)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "most")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "abneykeshet2025_20"
     source := ⟨"abney-keshet-2025", "(20)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "most"), ("pronoun", "donkey")] }
 
-def ex_45a : LinguisticExample :=
+def ex_45a : Datum :=
   { id := "abneykeshet2025_45a"
     source := ⟨"abney-keshet-2025", "(45a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_45a : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun", "simple")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "abneykeshet2025_47"
     source := ⟨"abney-keshet-2025", "(47)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "indefinite")] }
 
-def ex_66 : LinguisticExample :=
+def ex_66 : Datum :=
   { id := "abneykeshet2025_66"
     source := ⟨"abney-keshet-2025", "(66)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_66 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "every")] }
 
-def ex_80a : LinguisticExample :=
+def ex_80a : Datum :=
   { id := "abneykeshet2025_80a"
     source := ⟨"abney-keshet-2025", "(80a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_80a : LinguisticExample :=
     readings := [("them = the girls (the restriction set)", .acceptable)]
     paperFeatures := [("operator", "most"), ("pronoun", "summation"), ("antecedent", "restriction set")] }
 
-def ex_80b : LinguisticExample :=
+def ex_80b : Datum :=
   { id := "abneykeshet2025_80b"
     source := ⟨"abney-keshet-2025", "(80b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_80b : LinguisticExample :=
     readings := [("them = the girls that wrote a paper (the reference set)", .acceptable)]
     paperFeatures := [("operator", "most"), ("pronoun", "summation"), ("antecedent", "reference set")] }
 
-def ex_80c : LinguisticExample :=
+def ex_80c : Datum :=
   { id := "abneykeshet2025_80c"
     source := ⟨"abney-keshet-2025", "(80c)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_80c : LinguisticExample :=
     readings := [("they = the individuals that wrote a paper (the scope set)", .unacceptable)]
     paperFeatures := [("operator", "most"), ("pronoun", "summation"), ("antecedent", "scope set")] }
 
-def ex_98 : LinguisticExample :=
+def ex_98 : Datum :=
   { id := "abneykeshet2025_98"
     source := ⟨"abney-keshet-2025", "(98)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_98 : LinguisticExample :=
     readings := [("they = the papers the girls wrote", .acceptable)]
     paperFeatures := [("operator", "every"), ("pronoun", "summation")] }
 
-def ex_101 : LinguisticExample :=
+def ex_101 : Datum :=
   { id := "abneykeshet2025_101"
     source := ⟨"abney-keshet-2025", "(101)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_101 : LinguisticExample :=
     readings := [("they = the dogs that bark", .acceptable)]
     paperFeatures := [("operator", "most"), ("pronoun", "summation")] }
 
-def ex_105 : LinguisticExample :=
+def ex_105 : Datum :=
   { id := "abneykeshet2025_105"
     source := ⟨"nouwen-2003", "(5.8)"⟩
     reportedIn := some ⟨"abney-keshet-2025", "(105)"⟩
@@ -186,7 +184,7 @@ def ex_105 : LinguisticExample :=
     readings := [("distributive: each student sent in their own two papers", .acceptable), ("collective over the papers: each student sent all six papers", .acceptable)]
     paperFeatures := [("operator", "each"), ("pronoun", "summation")] }
 
-def ex_106 : LinguisticExample :=
+def ex_106 : Datum :=
   { id := "abneykeshet2025_106"
     source := ⟨"brasoveanu-2008", "(8)"⟩
     reportedIn := some ⟨"abney-keshet-2025", "(106)"⟩
@@ -199,7 +197,7 @@ def ex_106 : LinguisticExample :=
     readings := [("collective: all the boys, all the balloons", .marginal)]
     paperFeatures := [("operator", "every"), ("pronoun", "summation")] }
 
-def ex_107a : LinguisticExample :=
+def ex_107a : Datum :=
   { id := "abneykeshet2025_107a"
     source := ⟨"abney-keshet-2025", "(107a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_107a : LinguisticExample :=
     readings := [("collective: all the children", .acceptable)]
     paperFeatures := [("operator", "every"), ("pronoun", "summation")] }
 
-def ex_107b : LinguisticExample :=
+def ex_107b : Datum :=
   { id := "abneykeshet2025_107b"
     source := ⟨"abney-keshet-2025", "(107b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_107b : LinguisticExample :=
     readings := [("collective: all the drinks", .acceptable)]
     paperFeatures := [("operator", "everyone"), ("pronoun", "summation")] }
 
-def ex_108 : LinguisticExample :=
+def ex_108 : Datum :=
   { id := "abneykeshet2025_108"
     source := ⟨"abney-keshet-2025", "(108)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_108 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "some"), ("pronoun", "simple")] }
 
-def ex_109 : LinguisticExample :=
+def ex_109 : Datum :=
   { id := "abneykeshet2025_109"
     source := ⟨"abney-keshet-2025", "(109)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_109 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "most"), ("pronoun", "summation")] }
 
-def ex_110 : LinguisticExample :=
+def ex_110 : Datum :=
   { id := "abneykeshet2025_110"
     source := ⟨"jacobson-2000", "paycheck sentence"⟩
     reportedIn := some ⟨"abney-keshet-2025", "(110)"⟩
@@ -264,7 +262,7 @@ def ex_110 : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun", "paycheck")] }
 
-def ex_111 : LinguisticExample :=
+def ex_111 : Datum :=
   { id := "abneykeshet2025_111"
     source := ⟨"abney-keshet-2025", "(111)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_111 : LinguisticExample :=
     readings := [("it = the diorama made by each of the few", .acceptable)]
     paperFeatures := [("operator", "almost every"), ("pronoun", "paycheck")] }
 
-def ex_113 : LinguisticExample :=
+def ex_113 : Datum :=
   { id := "abneykeshet2025_113"
     source := ⟨"abney-keshet-2025", "(113)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_113 : LinguisticExample :=
     readings := [("weak: one umbrella per owner suffices", .acceptable)]
     paperFeatures := [("operator", "everyone"), ("pronoun", "donkey")] }
 
-def ex_114 : LinguisticExample :=
+def ex_114 : Datum :=
   { id := "abneykeshet2025_114"
     source := ⟨"abney-keshet-2025", "(114)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_114 : LinguisticExample :=
     readings := [("they = all the umbrellas actually brought, not one per owner", .acceptable)]
     paperFeatures := [("operator", "everyone"), ("pronoun", "summation")] }
 
-def ex_115 : LinguisticExample :=
+def ex_115 : Datum :=
   { id := "abneykeshet2025_115"
     source := ⟨"abney-keshet-2025", "(115)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_115 : LinguisticExample :=
     readings := [("strong: each locked up all their valuables", .acceptable)]
     paperFeatures := [("operator", "everyone"), ("pronoun", "donkey")] }
 
-def ex_117a : LinguisticExample :=
+def ex_117a : Datum :=
   { id := "abneykeshet2025_117a"
     source := ⟨"abney-keshet-2025", "(117a)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_117a : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "most"), ("pronoun", "donkey"), ("phenomenon", "quantificational subordination")] }
 
-def ex_117b : LinguisticExample :=
+def ex_117b : Datum :=
   { id := "abneykeshet2025_117b"
     source := ⟨"abney-keshet-2025", "(117b)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_117b : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "every"), ("pronoun", "donkey"), ("phenomenon", "quantificational subordination")] }
 
-def ex_130a : LinguisticExample :=
+def ex_130a : Datum :=
   { id := "abneykeshet2025_130a"
     source := ⟨"abney-keshet-2025", "(130a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_130a : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "must"), ("pronoun", "donkey")] }
 
-def ex_131a : LinguisticExample :=
+def ex_131a : Datum :=
   { id := "abneykeshet2025_131a"
     source := ⟨"abney-keshet-2025", "(131a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_131a : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "might")] }
 
-def ex_132 : LinguisticExample :=
+def ex_132 : Datum :=
   { id := "abneykeshet2025_132"
     source := ⟨"roberts-1987", "modal subordination"⟩
     reportedIn := some ⟨"abney-keshet-2025", "(132)"⟩
@@ -381,7 +379,7 @@ def ex_132 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "might"), ("pronoun", "donkey"), ("phenomenon", "modal subordination")] }
 
-def ex_134 : LinguisticExample :=
+def ex_134 : Datum :=
   { id := "abneykeshet2025_134"
     source := ⟨"abney-keshet-2025", "(134)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_134 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "negation")] }
 
-def ex_135 : LinguisticExample :=
+def ex_135 : Datum :=
   { id := "abneykeshet2025_135"
     source := ⟨"sells-1985", "modal subordination from negation"⟩
     reportedIn := some ⟨"abney-keshet-2025", "(135)"⟩
@@ -407,7 +405,7 @@ def ex_135 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "negation"), ("phenomenon", "modal subordination")] }
 
-def ex_138a : LinguisticExample :=
+def ex_138a : Datum :=
   { id := "abneykeshet2025_138a"
     source := ⟨"abney-keshet-2025", "(138a)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_138a : LinguisticExample :=
     readings := [("it = the car he owns", .acceptable)]
     paperFeatures := [("operator", "negation"), ("pronoun", "summation")] }
 
-def ex_139 : LinguisticExample :=
+def ex_139 : Datum :=
   { id := "abneykeshet2025_139"
     source := ⟨"abney-keshet-2025", "(139)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_139 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "negation"), ("pronoun", "summation")] }
 
-def ex_140 : LinguisticExample :=
+def ex_140 : Datum :=
   { id := "abneykeshet2025_140"
     source := ⟨"abney-keshet-2025", "(140)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_140 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "negation"), ("pronoun", "summation")] }
 
-def ex_141a : LinguisticExample :=
+def ex_141a : Datum :=
   { id := "abneykeshet2025_141a"
     source := ⟨"abney-keshet-2025", "(141a)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_141a : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "negation"), ("pronoun", "summation")] }
 
-def ex_141b : LinguisticExample :=
+def ex_141b : Datum :=
   { id := "abneykeshet2025_141b"
     source := ⟨"abney-keshet-2025", "(141b)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_141b : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "negation"), ("pronoun", "summation")] }
 
-def ex_142 : LinguisticExample :=
+def ex_142 : Datum :=
   { id := "abneykeshet2025_142"
     source := ⟨"roberts-1987", "bathroom sentence"⟩
     reportedIn := some ⟨"abney-keshet-2025", "(142)"⟩
@@ -485,7 +483,7 @@ def ex_142 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "disjunction"), ("pronoun", "summation")] }
 
-def ex_146a : LinguisticExample :=
+def ex_146a : Datum :=
   { id := "abneykeshet2025_146a"
     source := ⟨"abney-keshet-2025", "(146a)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_146a : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "every"), ("phenomenon", "presupposition projection")] }
 
-def ex_146b : LinguisticExample :=
+def ex_146b : Datum :=
   { id := "abneykeshet2025_146b"
     source := ⟨"abney-keshet-2025", "(146b)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_146b : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "some"), ("phenomenon", "presupposition projection")] }
 
-def ex_146c : LinguisticExample :=
+def ex_146c : Datum :=
   { id := "abneykeshet2025_146c"
     source := ⟨"abney-keshet-2025", "(146c)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_146c : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "most"), ("phenomenon", "presupposition projection")] }
 
-def ex_147 : LinguisticExample :=
+def ex_147 : Datum :=
   { id := "abneykeshet2025_147"
     source := ⟨"heim-1992", "(53)"⟩
     reportedIn := some ⟨"abney-keshet-2025", "(147)"⟩
@@ -537,7 +535,7 @@ def ex_147 : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "believe"), ("phenomenon", "presupposition projection")] }
 
-def ex_150a : LinguisticExample :=
+def ex_150a : Datum :=
   { id := "abneykeshet2025_150a"
     source := ⟨"abney-keshet-2025", "(150a)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex_150a : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "most"), ("phenomenon", "presupposition projection"), ("phenomenon", "quantificational subordination")] }
 
-def ex_150b : LinguisticExample :=
+def ex_150b : Datum :=
   { id := "abneykeshet2025_150b"
     source := ⟨"abney-keshet-2025", "(150b)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex_150b : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "some"), ("phenomenon", "presupposition projection"), ("phenomenon", "quantificational subordination")] }
 
-def ex_150c : LinguisticExample :=
+def ex_150c : Datum :=
   { id := "abneykeshet2025_150c"
     source := ⟨"abney-keshet-2025", "(150c)"⟩
     reportedIn := none
@@ -576,6 +574,6 @@ def ex_150c : LinguisticExample :=
     readings := []
     paperFeatures := [("operator", "most"), ("phenomenon", "presupposition projection"), ("phenomenon", "quantificational subordination")] }
 
-def all : List LinguisticExample := [ex_10, ex_15, ex_16, ex_20, ex_45a, ex_47, ex_66, ex_80a, ex_80b, ex_80c, ex_98, ex_101, ex_105, ex_106, ex_107a, ex_107b, ex_108, ex_109, ex_110, ex_111, ex_113, ex_114, ex_115, ex_117a, ex_117b, ex_130a, ex_131a, ex_132, ex_134, ex_135, ex_138a, ex_139, ex_140, ex_141a, ex_141b, ex_142, ex_146a, ex_146b, ex_146c, ex_147, ex_150a, ex_150b, ex_150c]
+def all : List Datum := [ex_10, ex_15, ex_16, ex_20, ex_45a, ex_47, ex_66, ex_80a, ex_80b, ex_80c, ex_98, ex_101, ex_105, ex_106, ex_107a, ex_107b, ex_108, ex_109, ex_110, ex_111, ex_113, ex_114, ex_115, ex_117a, ex_117b, ex_130a, ex_131a, ex_132, ex_134, ex_135, ex_138a, ex_139, ex_140, ex_141a, ex_141b, ex_142, ex_146a, ex_146b, ex_146c, ex_147, ex_150a, ex_150b, ex_150c]
 
 end AbneyKeshet2025.Examples

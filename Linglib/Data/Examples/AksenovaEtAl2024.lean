@@ -15,9 +15,7 @@ this module; declarations live in `namespace AksenovaEtAl2024.Examples`.
 
 namespace AksenovaEtAl2024.Examples
 
-open Data.Examples
-
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "aksenovaetal2024_3a"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(3a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "aksenovaetal2024_3b"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(3b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_3c : LinguisticExample :=
+def ex_3c : Datum :=
   { id := "aksenovaetal2024_3c"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(3c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_3d : LinguisticExample :=
+def ex_3d : Datum :=
   { id := "aksenovaetal2024_3d"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(3d)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_3d : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "aksenovaetal2024_5a"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(5a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_5b : LinguisticExample :=
+def ex_5b : Datum :=
   { id := "aksenovaetal2024_5b"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(5b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_5b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_5c : LinguisticExample :=
+def ex_5c : Datum :=
   { id := "aksenovaetal2024_5c"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(5c)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_5c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_5d : LinguisticExample :=
+def ex_5d : Datum :=
   { id := "aksenovaetal2024_5d"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(5d)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_5d : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_5e : LinguisticExample :=
+def ex_5e : Datum :=
   { id := "aksenovaetal2024_5e"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(5e)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_5e : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_5f : LinguisticExample :=
+def ex_5f : Datum :=
   { id := "aksenovaetal2024_5f"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(5f)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_5f : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_9a : LinguisticExample :=
+def ex_9a : Datum :=
   { id := "aksenovaetal2024_9a"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(9a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_9a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_9b : LinguisticExample :=
+def ex_9b : Datum :=
   { id := "aksenovaetal2024_9b"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(9b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_9b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_9c : LinguisticExample :=
+def ex_9c : Datum :=
   { id := "aksenovaetal2024_9c"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(9c)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_9c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_9d : LinguisticExample :=
+def ex_9d : Datum :=
   { id := "aksenovaetal2024_9d"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(9d)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_9d : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_9e : LinguisticExample :=
+def ex_9e : Datum :=
   { id := "aksenovaetal2024_9e"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(9e)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_9e : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_9f : LinguisticExample :=
+def ex_9f : Datum :=
   { id := "aksenovaetal2024_9f"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(9f)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_9f : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "aksenovaetal2024_14a"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(14a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "aksenovaetal2024_14b"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(14b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_14c : LinguisticExample :=
+def ex_14c : Datum :=
   { id := "aksenovaetal2024_14c"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(14c)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_14c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_14d : LinguisticExample :=
+def ex_14d : Datum :=
   { id := "aksenovaetal2024_14d"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(14d)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_14d : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_14e : LinguisticExample :=
+def ex_14e : Datum :=
   { id := "aksenovaetal2024_14e"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(14e)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_14e : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_14f : LinguisticExample :=
+def ex_14f : Datum :=
   { id := "aksenovaetal2024_14f"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(14f)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_14f : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_14g : LinguisticExample :=
+def ex_14g : Datum :=
   { id := "aksenovaetal2024_14g"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(14g)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_14g : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_14h : LinguisticExample :=
+def ex_14h : Datum :=
   { id := "aksenovaetal2024_14h"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(14h)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_14h : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_16a : LinguisticExample :=
+def ex_16a : Datum :=
   { id := "aksenovaetal2024_16a"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(16a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_16a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_16b : LinguisticExample :=
+def ex_16b : Datum :=
   { id := "aksenovaetal2024_16b"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(16b)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_16b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_16c : LinguisticExample :=
+def ex_16c : Datum :=
   { id := "aksenovaetal2024_16c"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(16c)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_16c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_16d : LinguisticExample :=
+def ex_16d : Datum :=
   { id := "aksenovaetal2024_16d"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(16d)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_16d : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_16e : LinguisticExample :=
+def ex_16e : Datum :=
   { id := "aksenovaetal2024_16e"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(16e)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_16e : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_16f : LinguisticExample :=
+def ex_16f : Datum :=
   { id := "aksenovaetal2024_16f"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(16f)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_16f : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_16g : LinguisticExample :=
+def ex_16g : Datum :=
   { id := "aksenovaetal2024_16g"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(16g)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_16g : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_16h : LinguisticExample :=
+def ex_16h : Datum :=
   { id := "aksenovaetal2024_16h"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(16h)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_16h : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "aksenovaetal2024_18a"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(18a)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_18a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "aksenovaetal2024_18b"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(18b)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_18c : LinguisticExample :=
+def ex_18c : Datum :=
   { id := "aksenovaetal2024_18c"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(18c)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_18c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_18d : LinguisticExample :=
+def ex_18d : Datum :=
   { id := "aksenovaetal2024_18d"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(18d)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_18d : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_18e : LinguisticExample :=
+def ex_18e : Datum :=
   { id := "aksenovaetal2024_18e"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(18e)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_18e : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_18f : LinguisticExample :=
+def ex_18f : Datum :=
   { id := "aksenovaetal2024_18f"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(18f)"⟩
     reportedIn := none
@@ -511,6 +509,6 @@ def ex_18f : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def all : List LinguisticExample := [ex_3a, ex_3b, ex_3c, ex_3d, ex_5a, ex_5b, ex_5c, ex_5d, ex_5e, ex_5f, ex_9a, ex_9b, ex_9c, ex_9d, ex_9e, ex_9f, ex_14a, ex_14b, ex_14c, ex_14d, ex_14e, ex_14f, ex_14g, ex_14h, ex_16a, ex_16b, ex_16c, ex_16d, ex_16e, ex_16f, ex_16g, ex_16h, ex_18a, ex_18b, ex_18c, ex_18d, ex_18e, ex_18f]
+def all : List Datum := [ex_3a, ex_3b, ex_3c, ex_3d, ex_5a, ex_5b, ex_5c, ex_5d, ex_5e, ex_5f, ex_9a, ex_9b, ex_9c, ex_9d, ex_9e, ex_9f, ex_14a, ex_14b, ex_14c, ex_14d, ex_14e, ex_14f, ex_14g, ex_14h, ex_16a, ex_16b, ex_16c, ex_16d, ex_16e, ex_16f, ex_16g, ex_16h, ex_18a, ex_18b, ex_18c, ex_18d, ex_18e, ex_18f]
 
 end AksenovaEtAl2024.Examples

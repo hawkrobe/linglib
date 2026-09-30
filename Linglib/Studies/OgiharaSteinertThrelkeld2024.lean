@@ -52,15 +52,14 @@ are recorded in the example rows only.
 
 namespace OgiharaSteinertThrelkeld2024
 
-open Data.Examples
 open OgiharaSteinertThrelkeld2024.Examples
 open Tense Anscombe1964 BeaverCondoravdi2003
 
 /-- The connective a row tests. -/
-def connective (e : LinguisticExample) : Option String := e.feature? "connective"
+def connective (e : Datum) : Option String := e.feature? "connective"
 
 /-- A row records that the sentence entails its complement clause. -/
-def ComplementEntailed (e : LinguisticExample) : Prop :=
+def ComplementEntailed (e : Datum) : Prop :=
   e.feature? "complement_entailed" = some "true"
 
 instance : DecidablePred ComplementEntailed := λ _ => inferInstanceAs (Decidable (_ = _))

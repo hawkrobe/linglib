@@ -11,7 +11,7 @@ public import Mathlib.Tactic.DeriveFintype
 
 This file formalizes [hewett-2026]'s generalization that the preposition a Semitic root
 lexically selects can vary with the verbal template, and its analysis by joint selection. A
-`Datum` records the root, the category, the template where the paper names one, and the
+`Row` records the root, the category, the template where the paper names one, and the
 selected preposition of an example, and `Determines` says that the preposition is a function
 of a coordinate of the data, `Function.FactorsThrough` on the attested rows. Selection by
 the root ([harley-2014]) or by the categorizing head ([merchant-2019]), the structures (12a)
@@ -112,7 +112,7 @@ inductive Lang where
 /-- An example's selection: the root, the category of its realization, the verbal template
 when the paper names one, and the l-selected preposition, `none` for a bare object or a
 suppressed preposition. -/
-structure Datum where
+structure Row where
   /-- The root. -/
   root : Root
   /-- The category of the root's realization. -/
@@ -127,7 +127,7 @@ structure Datum where
 
 /-- The category-independent selection of (1) and (2) and the template-independent selection
 of (11). -/
-def invariantData : List Datum :=
+def invariantData : List Row :=
   [⟨.apologi, .V, none, some .for_, .english⟩, ⟨.apologi, .N, none, some .for_, .english⟩,
    ⟨.apologi, .A, none, some .for_, .english⟩,
    ⟨.fxr, .V, none, some .b, .syrianArabic⟩, ⟨.fxr, .N, none, some .b, .syrianArabic⟩,
@@ -136,13 +136,13 @@ def invariantData : List Datum :=
    ⟨.xwf, .V, some .XaYYaZ, some .min, .tunisianArabic⟩]
 
 /-- The category-dependent selection of (5) and (6). -/
-def categoryData : List Datum :=
+def categoryData : List Row :=
   [⟨.prd, .V, none, some .on, .english⟩, ⟨.prd, .N, none, some .in_, .english⟩,
    ⟨.prd, .A, none, some .of, .english⟩,
    ⟨.brk, .V, none, some .b, .syrianArabic⟩, ⟨.brk, .N, none, some .Eala, .syrianArabic⟩]
 
 /-- The template-dependent selection of (13), (14), (17) and (18). -/
-def templateData : List Datum :=
+def templateData : List Row :=
   [⟨.krh, .V, some .XaYaZ, none, .tunisianArabic⟩,
    ⟨.krh, .V, some .XaYYaZ, some .fi, .tunisianArabic⟩,
    ⟨.dwr, .V, some .XaYaZ, some .b, .tunisianArabic⟩,
@@ -153,45 +153,45 @@ def templateData : List Datum :=
    ⟨.shps, .V, some .hiXYiZ, some .al, .hebrew⟩, ⟨.shps, .V, some .huXYaZ, none, .hebrew⟩]
 
 /-- All the selection data. -/
-def data : List Datum := invariantData ++ categoryData ++ templateData
+def data : List Row := invariantData ++ categoryData ++ templateData
 
 /-- The rows of a root. -/
-def rows (r : Root) : List Datum := data.filter (·.root = r)
+def rows (r : Root) : List Row := data.filter (·.root = r)
 
 /-! ### What determines the preposition -/
 
-/-- The preposition is a function of the coordinate `π` on the rows, that is, `Datum.prep`
+/-- The preposition is a function of the coordinate `π` on the rows, that is, `Row.prep`
 factors through `π` there, `Function.FactorsThrough` restricted to the list. -/
-def Determines {K : Type*} (π : Datum → K) (rows : List Datum) : Prop :=
+def Determines {K : Type*} (π : Row → K) (rows : List Row) : Prop :=
   ∀ d ∈ rows, ∀ d' ∈ rows, π d = π d' → d.prep = d'.prep
 
-instance {K : Type*} [DecidableEq K] (π : Datum → K) (rows : List Datum) :
+instance {K : Type*} [DecidableEq K] (π : Row → K) (rows : List Row) :
     Decidable (Determines π rows) :=
   inferInstanceAs (Decidable (∀ d ∈ rows, ∀ d' ∈ rows, _ → _))
 
 /-- A coordinate that factors through a finer one determines whatever the coarser does. -/
-theorem Determines.of_factorsThrough {K K' : Type*} {π : Datum → K} {π' : Datum → K'}
-    (h : Function.FactorsThrough π π') {rows : List Datum} (hπ : Determines π rows) :
+theorem Determines.of_factorsThrough {K K' : Type*} {π : Row → K} {π' : Row → K'}
+    (h : Function.FactorsThrough π π') {rows : List Row} (hπ : Determines π rows) :
     Determines π' rows :=
   λ d hd d' hd' he => hπ d hd d' hd' (h he)
 
 /-- Selection by the root (12a), where the root determines the preposition. -/
-abbrev RootDetermined (rows : List Datum) : Prop := Determines Datum.root rows
+abbrev RootDetermined (rows : List Row) : Prop := Determines Row.root rows
 
 /-- Selection by the categorizing head (12b), where the root and its category determine the
 preposition, the prediction root-based selection makes as well. -/
-abbrev CategoryDetermined (rows : List Datum) : Prop :=
+abbrev CategoryDetermined (rows : List Row) : Prop :=
   Determines (λ d => (d.root, d.cat)) rows
 
 /-- Joint selection, where the root, its category and the template determine the preposition. -/
-abbrev TemplateDetermined (rows : List Datum) : Prop :=
+abbrev TemplateDetermined (rows : List Row) : Prop :=
   Determines (λ d => (d.root, d.cat, d.template)) rows
 
-theorem CategoryDetermined.of_rootDetermined {rows : List Datum} (h : RootDetermined rows) :
+theorem CategoryDetermined.of_rootDetermined {rows : List Row} (h : RootDetermined rows) :
     CategoryDetermined rows :=
   h.of_factorsThrough λ _ _ he => congrArg Prod.fst he
 
-theorem TemplateDetermined.of_categoryDetermined {rows : List Datum}
+theorem TemplateDetermined.of_categoryDetermined {rows : List Row}
     (h : CategoryDetermined rows) : TemplateDetermined rows :=
   h.of_factorsThrough λ _ _ he => Prod.ext (congrArg (·.1) he) (congrArg (·.2.1) he)
 

@@ -15,9 +15,7 @@ this module; declarations live in `namespace Schlenker2004a.Examples`.
 
 namespace Schlenker2004a.Examples
 
-open Data.Examples
-
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "schlenker2004a_ex1"
     source := ⟨"schlenker-2004a", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1 : LinguisticExample :=
     readings := [("FID (CT/CU split)", .acceptable), ("literal-contradiction", .ungrammatical)]
     paperFeatures := [] }
 
-def ex2 : LinguisticExample :=
+def ex2 : Datum :=
   { id := "schlenker2004a_ex2"
     source := ⟨"schlenker-2004a", "(2)"⟩
     reportedIn := none
@@ -43,6 +41,6 @@ def ex2 : LinguisticExample :=
     readings := [("HP (CT/CU split, CT shifted back 58y)", .acceptable), ("literal-contradiction", .ungrammatical)]
     paperFeatures := [] }
 
-def all : List LinguisticExample := [ex1, ex2]
+def all : List Datum := [ex1, ex2]
 
 end Schlenker2004a.Examples

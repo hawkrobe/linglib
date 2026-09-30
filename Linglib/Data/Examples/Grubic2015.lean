@@ -15,9 +15,7 @@ this module; declarations live in `namespace Grubic2015.Examples`.
 
 namespace Grubic2015.Examples
 
-open Data.Examples
-
-def ex_6_24 : LinguisticExample :=
+def ex_6_24 : Datum :=
   { id := "grubic2015_6_24"
     source := ⟨"grubic-2015", "(24)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_6_24 : LinguisticExample :=
     readings := [("complement exclusion: I am nothing else in addition", .acceptable), ("rank order: I am nothing better", .acceptable)]
     paperFeatures := [("particle", "yak"), ("configuration", "predicate")] }
 
-def ex_6_25a : LinguisticExample :=
+def ex_6_25a : Datum :=
   { id := "grubic2015_6_25a"
     source := ⟨"grubic-2015", "(25a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_6_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "markedSubjectFocus"), ("inference", "Dimza built a house"), ("inference", "nobody else built a house")] }
 
-def ex_6_25b : LinguisticExample :=
+def ex_6_25b : Datum :=
   { id := "grubic2015_6_25b"
     source := ⟨"grubic-2015", "(25b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_6_25b : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "markedSubjectFocus"), ("inference", "Dimza built a house"), ("inference", "other people also built a house")] }
 
-def ex_6_25c : LinguisticExample :=
+def ex_6_25c : Datum :=
   { id := "grubic2015_6_25c"
     source := ⟨"grubic-2015", "(25c)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_6_25c : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "markedSubjectFocus"), ("inference", "Dimza built a house")] }
 
-def ex_6_26 : LinguisticExample :=
+def ex_6_26 : Datum :=
   { id := "grubic2015_6_26"
     source := ⟨"grubic-2015", "(26)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_6_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "markedObjectFocus")] }
 
-def ex_6_28 : LinguisticExample :=
+def ex_6_28 : Datum :=
   { id := "grubic2015_6_28"
     source := ⟨"grubic-2015", "(28)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_6_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "predicate")] }
 
-def ex_6_140 : LinguisticExample :=
+def ex_6_140 : Datum :=
   { id := "grubic2015_6_140"
     source := ⟨"grubic-2015", "(140)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_6_140 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "unmarkedObjectFocus")] }
 
-def ex_6_145a : LinguisticExample :=
+def ex_6_145a : Datum :=
   { id := "grubic2015_6_145a"
     source := ⟨"grubic-2015", "(145a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_6_145a : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "dependentPronoun")] }
 
-def ex_6_145b : LinguisticExample :=
+def ex_6_145b : Datum :=
   { id := "grubic2015_6_145b"
     source := ⟨"grubic-2015", "(145b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_6_145b : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "independentPronoun")] }
 
-def ex_6_148a : LinguisticExample :=
+def ex_6_148a : Datum :=
   { id := "grubic2015_6_148a"
     source := ⟨"grubic-2015", "(148a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_6_148a : LinguisticExample :=
     readings := [("the only person that Daho calls is Hawwa", .acceptable)]
     paperFeatures := [("particle", "yak"), ("configuration", "resumptivePronoun")] }
 
-def ex_6_148b : LinguisticExample :=
+def ex_6_148b : Datum :=
   { id := "grubic2015_6_148b"
     source := ⟨"grubic-2015", "(148b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_6_148b : LinguisticExample :=
     readings := [("the only person that Daho calls is Hawwa", .unacceptable), ("Daho does nothing but call", .acceptable)]
     paperFeatures := [("particle", "yak"), ("configuration", "topicalizedGap")] }
 
-def ex_6_149 : LinguisticExample :=
+def ex_6_149 : Datum :=
   { id := "grubic2015_6_149"
     source := ⟨"grubic-2015", "(149)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_6_149 : LinguisticExample :=
     readings := [("whenever Daho calls somebody, she calls Hawwa", .acceptable)]
     paperFeatures := [("particle", "leiKiTomiya"), ("configuration", "topicalizedGap")] }
 
-def ex_6_150a : LinguisticExample :=
+def ex_6_150a : Datum :=
   { id := "grubic2015_6_150a"
     source := ⟨"grubic-2015", "(150a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_6_150a : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "focusedPronoun")] }
 
-def ex_6_150b : LinguisticExample :=
+def ex_6_150b : Datum :=
   { id := "grubic2015_6_150b"
     source := ⟨"grubic-2015", "(150b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_6_150b : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "elidedPronoun")] }
 
-def ex_6_151 : LinguisticExample :=
+def ex_6_151 : Datum :=
   { id := "grubic2015_6_151"
     source := ⟨"grubic-2015", "(151)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_6_151 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "leiKiTomiya"), ("configuration", "elidedPronoun")] }
 
-def ex_6_153 : LinguisticExample :=
+def ex_6_153 : Datum :=
   { id := "grubic2015_6_153"
     source := ⟨"grubic-2015", "(153)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_6_153 : LinguisticExample :=
     readings := [("they don't sell it or give it out", .acceptable), ("they eat nothing else", .unacceptable)]
     paperFeatures := [("particle", "yak"), ("configuration", "elidedObject")] }
 
-def ex_6_158 : LinguisticExample :=
+def ex_6_158 : Datum :=
   { id := "grubic2015_6_158"
     source := ⟨"grubic-2015", "(158)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_6_158 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "presupposition")] }
 
-def ex_6_159 : LinguisticExample :=
+def ex_6_159 : Datum :=
   { id := "grubic2015_6_159"
     source := ⟨"grubic-2015", "(159)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_6_159 : LinguisticExample :=
     readings := [("whenever she tries, she passes", .acceptable)]
     paperFeatures := [("particle", "leiKiTomiya"), ("configuration", "presupposition")] }
 
-def ex_6_160 : LinguisticExample :=
+def ex_6_160 : Datum :=
   { id := "grubic2015_6_160"
     source := ⟨"grubic-2015", "(160)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_6_160 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "dependentPronoun")] }
 
-def ex_6_162a : LinguisticExample :=
+def ex_6_162a : Datum :=
   { id := "grubic2015_6_162a"
     source := ⟨"grubic-2015", "(162a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_6_162a : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "independentPronoun")] }
 
-def ex_6_162b : LinguisticExample :=
+def ex_6_162b : Datum :=
   { id := "grubic2015_6_162b"
     source := ⟨"grubic-2015", "(162b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_6_162b : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "dependentPronoun")] }
 
-def ex_6_163 : LinguisticExample :=
+def ex_6_163 : Datum :=
   { id := "grubic2015_6_163"
     source := ⟨"grubic-2015", "(163)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_6_163 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "elidedTopicalSubject")] }
 
-def ex_6_164 : LinguisticExample :=
+def ex_6_164 : Datum :=
   { id := "grubic2015_6_164"
     source := ⟨"grubic-2015", "(164)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_6_164 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "har"), ("configuration", "dependentPronoun")] }
 
-def ex_6_165 : LinguisticExample :=
+def ex_6_165 : Datum :=
   { id := "grubic2015_6_165"
     source := ⟨"grubic-2015", "(165)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_6_165 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "preverbalSubject")] }
 
-def ex_6_166 : LinguisticExample :=
+def ex_6_166 : Datum :=
   { id := "grubic2015_6_166"
     source := ⟨"grubic-2015", "(166)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_6_166 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "unmarkedObjectFocus"), ("inference", "Dimza didn't build anything else"), ("inference", "he was expected to build more"), ("inference", "Dimza built a house")] }
 
-def ex_6_167 : LinguisticExample :=
+def ex_6_167 : Datum :=
   { id := "grubic2015_6_167"
     source := ⟨"grubic-2015", "(167)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_6_167 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "unmarkedObjectFocus"), ("inference", "Dimza built a house"), ("inference", "Dimza built something else")] }
 
-def ex_6_168 : LinguisticExample :=
+def ex_6_168 : Datum :=
   { id := "grubic2015_6_168"
     source := ⟨"grubic-2015", "(168)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_6_168 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "har"), ("configuration", "unmarkedObjectFocus"), ("inference", "Dimza built a house"), ("inference", "he was expected to build less"), ("inference", "Dimza built something else")] }
 
-def ex_6_169 : LinguisticExample :=
+def ex_6_169 : Datum :=
   { id := "grubic2015_6_169"
     source := ⟨"grubic-2015", "(169)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_6_169 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "yak"), ("configuration", "predicate"), ("inference", "the speaker is nothing better than a secretary"), ("inference", "the speaker was expected to be something better")] }
 
-def ex_6_170 : LinguisticExample :=
+def ex_6_170 : Datum :=
   { id := "grubic2015_6_170"
     source := ⟨"grubic-2015", "(170)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_6_170 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "har"), ("configuration", "predicate"), ("inference", "Bah is a teacher"), ("inference", "he was expected to be something worse")] }
 
-def ex_7_41 : LinguisticExample :=
+def ex_7_41 : Datum :=
   { id := "grubic2015_7_41"
     source := ⟨"grubic-2015", "(41)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_7_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "distinctBackgroundDistinctFocus")] }
 
-def ex_7_42 : LinguisticExample :=
+def ex_7_42 : Datum :=
   { id := "grubic2015_7_42"
     source := ⟨"grubic-2015", "(42)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_7_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "distinctBackgroundParallelFocus")] }
 
-def ex_7_43 : LinguisticExample :=
+def ex_7_43 : Datum :=
   { id := "grubic2015_7_43"
     source := ⟨"grubic-2015", "(43)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_7_43 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "parallelUnmarkedBackground")] }
 
-def ex_7_44 : LinguisticExample :=
+def ex_7_44 : Datum :=
   { id := "grubic2015_7_44"
     source := ⟨"grubic-2015", "(44)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_7_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "parallelMarkedBackground")] }
 
-def ex_7_46 : LinguisticExample :=
+def ex_7_46 : Datum :=
   { id := "grubic2015_7_46"
     source := ⟨"grubic-2015", "(46)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_7_46 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "modalizedAntecedent")] }
 
-def ex_7_48 : LinguisticExample :=
+def ex_7_48 : Datum :=
   { id := "grubic2015_7_48"
     source := ⟨"grubic-2015", "(48)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_7_48 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "nonParallel")] }
 
-def ex_7_49 : LinguisticExample :=
+def ex_7_49 : Datum :=
   { id := "grubic2015_7_49"
     source := ⟨"grubic-2015", "(49)"⟩
     reportedIn := none
@@ -485,6 +483,6 @@ def ex_7_49 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "parallelMarkedBackground")] }
 
-def all : List LinguisticExample := [ex_6_24, ex_6_25a, ex_6_25b, ex_6_25c, ex_6_26, ex_6_28, ex_6_140, ex_6_145a, ex_6_145b, ex_6_148a, ex_6_148b, ex_6_149, ex_6_150a, ex_6_150b, ex_6_151, ex_6_153, ex_6_158, ex_6_159, ex_6_160, ex_6_162a, ex_6_162b, ex_6_163, ex_6_164, ex_6_165, ex_6_166, ex_6_167, ex_6_168, ex_6_169, ex_6_170, ex_7_41, ex_7_42, ex_7_43, ex_7_44, ex_7_46, ex_7_48, ex_7_49]
+def all : List Datum := [ex_6_24, ex_6_25a, ex_6_25b, ex_6_25c, ex_6_26, ex_6_28, ex_6_140, ex_6_145a, ex_6_145b, ex_6_148a, ex_6_148b, ex_6_149, ex_6_150a, ex_6_150b, ex_6_151, ex_6_153, ex_6_158, ex_6_159, ex_6_160, ex_6_162a, ex_6_162b, ex_6_163, ex_6_164, ex_6_165, ex_6_166, ex_6_167, ex_6_168, ex_6_169, ex_6_170, ex_7_41, ex_7_42, ex_7_43, ex_7_44, ex_7_46, ex_7_48, ex_7_49]
 
 end Grubic2015.Examples

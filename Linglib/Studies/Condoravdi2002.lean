@@ -59,7 +59,7 @@ paper's examples as rows.
 
 namespace Condoravdi2002
 
-open Aspect HistoricalAlternatives Data.Examples
+open Aspect HistoricalAlternatives
 open Modality (TemporalPerspective TemporalOrientation)
 
 variable {W T : Type*} [LinearOrder T] {P : W → Event T → Prop} {Q Q' : SortedProperty W T}
@@ -427,7 +427,7 @@ structure Adverbial where
   zone : Zone
 
 /-- The configuration an adverbial row records. -/
-def Adverbial.ofRow (row : LinguisticExample) : Option Adverbial := do
+def Adverbial.ofRow (row : Datum) : Option Adverbial := do
   guard (row.feature? "construction" = some "adverb")
   return ⟨← row.parse? "scope" scopes,
     ← row.parse? "sort" [("eventive", Event.Kind.action), ("stative", .state)],
@@ -459,7 +459,7 @@ structure Reading where
 
 /-- The configuration a reading row records, and whether the paper finds the metaphysical
 reading available. -/
-def Reading.ofRow (row : LinguisticExample) : Option (Reading × Bool) := do
+def Reading.ofRow (row : Datum) : Option (Reading × Bool) := do
   guard (row.feature? "construction" = some "reading")
   return (⟨← row.parse? "scope" scopes,
     ← row.parse? "reference" [("past", Zone.past), ("present", .present), ("future", .future)],
@@ -491,7 +491,7 @@ def Complement.property : Complement → SortedProperty Unit Unit
   | .perfect => PERF (.eventive λ _ _ => True)
 
 /-- A sortal row: the complement of *already* or *yet*. -/
-def Complement.ofRow (row : LinguisticExample) : Option Complement := do
+def Complement.ofRow (row : Datum) : Option Complement := do
   guard (row.feature? "construction" = some "sortal")
   return ← row.parse? "complement" [("eventive", Complement.eventive), ("perfect", .perfect)]
 
@@ -507,7 +507,7 @@ inductive Phase
   deriving DecidableEq
 
 /-- A phase row: the adverb scoping over the possibility modal. -/
-def Phase.ofRow (row : LinguisticExample) : Option Phase := do
+def Phase.ofRow (row : Datum) : Option Phase := do
   guard (row.feature? "construction" = some "phase")
   return ← row.parse? "adverb" [("already", Phase.already), ("still", .still)]
 
@@ -534,7 +534,7 @@ def Phase.order : Phase → Order
   | .still => .hadModal
 
 /-- A German row: the order and the adverb. -/
-def Order.ofRow (row : LinguisticExample) : Option (Order × Phase) := do
+def Order.ofRow (row : Datum) : Option (Order × Phase) := do
   guard (row.feature? "construction" = some "german")
   return (← row.parse? "order" [("modalHave", Order.modalHave), ("hadModal", .hadModal)],
     ← row.parse? "adverb" [("schon", Phase.already), ("noch", .still)])

@@ -15,9 +15,7 @@ this module; declarations live in `namespace CohenErteschikShir2002.Examples`.
 
 namespace CohenErteschikShir2002.Examples
 
-open Data.Examples
-
-def boys_brave : LinguisticExample :=
+def boys_brave : Datum :=
   { id := "cohenerteschikshir2002_boys_brave"
     source := ⟨"cohen-erteschik-shir-2002", "UNVERIFIED §2.1"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def boys_brave : LinguisticExample :=
     readings := [("generic", .acceptable), ("existential", .unacceptable)]
     paperFeatures := [("predicate_level", "individual")] }
 
-def italians_good_looking : LinguisticExample :=
+def italians_good_looking : Datum :=
   { id := "cohenerteschikshir2002_italians_good_looking"
     source := ⟨"cohen-erteschik-shir-2002", "UNVERIFIED §2.1"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def italians_good_looking : LinguisticExample :=
     readings := [("generic", .acceptable), ("existential", .unacceptable)]
     paperFeatures := [("predicate_level", "individual")] }
 
-def lawyers_intelligent : LinguisticExample :=
+def lawyers_intelligent : Datum :=
   { id := "cohenerteschikshir2002_lawyers_intelligent"
     source := ⟨"cohen-erteschik-shir-2002", "UNVERIFIED §2.1"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def lawyers_intelligent : LinguisticExample :=
     readings := [("generic", .acceptable), ("existential", .unacceptable)]
     paperFeatures := [("predicate_level", "individual")] }
 
-def boys_present : LinguisticExample :=
+def boys_present : Datum :=
   { id := "cohenerteschikshir2002_boys_present"
     source := ⟨"cohen-erteschik-shir-2002", "UNVERIFIED §2.2"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def boys_present : LinguisticExample :=
     readings := [("generic", .acceptable), ("existential", .acceptable)]
     paperFeatures := [("predicate_level", "stage"), ("locative_status", "argument")] }
 
-def firemen_available : LinguisticExample :=
+def firemen_available : Datum :=
   { id := "cohenerteschikshir2002_firemen_available"
     source := ⟨"cohen-erteschik-shir-2002", "UNVERIFIED §2.2"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def firemen_available : LinguisticExample :=
     readings := [("generic", .acceptable), ("existential", .acceptable)]
     paperFeatures := [("predicate_level", "stage"), ("locative_status", "argument")] }
 
-def soldiers_arrived : LinguisticExample :=
+def soldiers_arrived : Datum :=
   { id := "cohenerteschikshir2002_soldiers_arrived"
     source := ⟨"cohen-erteschik-shir-2002", "UNVERIFIED §2.2"⟩
     reportedIn := none
@@ -95,6 +93,6 @@ def soldiers_arrived : LinguisticExample :=
     readings := [("generic", .acceptable), ("existential", .acceptable)]
     paperFeatures := [("predicate_level", "stage"), ("locative_status", "argument")] }
 
-def all : List LinguisticExample := [boys_brave, italians_good_looking, lawyers_intelligent, boys_present, firemen_available, soldiers_arrived]
+def all : List Datum := [boys_brave, italians_good_looking, lawyers_intelligent, boys_present, firemen_available, soldiers_arrived]
 
 end CohenErteschikShir2002.Examples

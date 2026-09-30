@@ -15,9 +15,7 @@ this module; declarations live in `namespace HartshorneEtAl2016.Examples`.
 
 namespace HartshorneEtAl2016.Examples
 
-open Data.Examples
-
-def fear : LinguisticExample :=
+def fear : Datum :=
   { id := "hartshorneetal2016_fear"
     source := ⟨"hartshorne-etal-2016", "§1.2"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def fear : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("phenomenon", "fearType"), ("verbType", "fear"), ("subject", "experiencer")] }
 
-def frighten : LinguisticExample :=
+def frighten : Datum :=
   { id := "hartshorneetal2016_frighten"
     source := ⟨"hartshorne-etal-2016", "§1.2"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def frighten : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("phenomenon", "frightenType"), ("verbType", "frighten"), ("subject", "stimulus")] }
 
-def episode : LinguisticExample :=
+def episode : Datum :=
   { id := "hartshorneetal2016_episode"
     source := ⟨"hartshorne-etal-2016", "§2.1"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def episode : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "frightenType"), ("verbType", "frighten")] }
 
-def stageLevel : LinguisticExample :=
+def stageLevel : Datum :=
   { id := "hartshorneetal2016_stageLevel"
     source := ⟨"hartshorne-etal-2016", "§1.2"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def stageLevel : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("phenomenon", "frightenType"), ("verbType", "frighten")] }
 
-def exp1 : LinguisticExample :=
+def exp1 : Datum :=
   { id := "hartshorneetal2016_exp1"
     source := ⟨"hartshorne-etal-2016", "§2.1.1"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def exp1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1.1"), ("phenomenon", "durationRating"), ("experiment", "1")] }
 
-def exp2 : LinguisticExample :=
+def exp2 : Datum :=
   { id := "hartshorneetal2016_exp2"
     source := ⟨"hartshorne-etal-2016", "§2.2.1"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def exp2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.1"), ("phenomenon", "causationJudgment"), ("experiment", "2")] }
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "hartshorneetal2016_2a"
     source := ⟨"hartshorne-etal-2016", "(2a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("phenomenon", "fearType"), ("verbType", "fear")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "hartshorneetal2016_2b"
     source := ⟨"hartshorne-etal-2016", "(2b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("phenomenon", "frightenType"), ("verbType", "frighten"), ("causativeAffix", "sase")] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "hartshorneetal2016_3a"
     source := ⟨"hartshorne-etal-2016", "(3a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1.1"), ("phenomenon", "novelVerb"), ("experiment", "5"), ("syntax", "fear")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "hartshorneetal2016_3b"
     source := ⟨"hartshorne-etal-2016", "(3b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1.1"), ("phenomenon", "novelVerb"), ("experiment", "5"), ("syntax", "frighten")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "hartshorneetal2016_5"
     source := ⟨"hartshorne-etal-2016", "(5)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "novelVerb"), ("experiment", "9"), ("semanticType", "attitude")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "hartshorneetal2016_6"
     source := ⟨"hartshorne-etal-2016", "(6)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "novelVerb"), ("experiment", "9"), ("semanticType", "episode")] }
 
-def exp9q : LinguisticExample :=
+def exp9q : Datum :=
   { id := "hartshorneetal2016_exp9q"
     source := ⟨"hartshorne-etal-2016", "§4.1"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def exp9q : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "novelVerb"), ("experiment", "9")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "hartshorneetal2016_7"
     source := ⟨"hartshorne-etal-2016", "(7)"⟩
     reportedIn := none
@@ -199,6 +197,6 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.4.3"), ("phenomenon", "frightenType"), ("verbType", "frighten")] }
 
-def all : List LinguisticExample := [fear, frighten, episode, stageLevel, exp1, exp2, ex_2a, ex_2b, ex_3a, ex_3b, ex_5, ex_6, exp9q, ex_7]
+def all : List Datum := [fear, frighten, episode, stageLevel, exp1, exp2, ex_2a, ex_2b, ex_3a, ex_3b, ex_5, ex_6, exp9q, ex_7]
 
 end HartshorneEtAl2016.Examples

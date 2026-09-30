@@ -92,7 +92,7 @@ are recorded as data without a configuration.
 
 namespace CoonMateoPedroPreminger2014
 
-open Minimalist Minimalist.Voice Mayan Data.Examples
+open Minimalist Minimalist.Voice Mayan
 
 /-! ### Clauses -/
 
@@ -453,7 +453,7 @@ def objects : List (String × Object) :=
   [("dp", .dp), ("caseless", .caseless), ("oblique", .oblique)]
 
 /-- The verb phrase a row describes. -/
-def Predicate.ofRow (row : LinguisticExample) : Option Predicate := do
+def Predicate.ofRow (row : Datum) : Option Predicate := do
   match ← row.feature? "predicate" with
   | "intransitive" =>
       Predicate.intransitive <$> row.parse? "marking" [("abs", MarkerSet.setB), ("erg", .setA)]
@@ -464,7 +464,7 @@ def Predicate.ofRow (row : LinguisticExample) : Option Predicate := do
 
 /-- The clause a row describes, its object's licenser read off the paper's classification of
 its language. -/
-def Clause.ofRow (row : LinguisticExample) : Option Clause := do
+def Clause.ofRow (row : Datum) : Option Clause := do
   let pos ← row.parse? "absPosition" absPositions
   let finite ← row.parse? "finite" [("yes", true), ("no", false)]
   let predicate ← Predicate.ofRow row

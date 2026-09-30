@@ -86,7 +86,7 @@ no configuration and enter no theorem.
 
 namespace CoonKeine2021
 
-open Minimalist Minimalist.CyclicAgree Morphology.Exponence Data.Examples
+open Minimalist Minimalist.CyclicAgree Morphology.Exponence
 
 /-! ### Goals and their visible geometries -/
 
@@ -607,14 +607,14 @@ def paradigms : List (String × Paradigm) :=
 
 /-- The goal a row's `higher` or `lower` features describe, absent when shielded from the
 probe. -/
-def rowGoal (row : LinguisticExample) (k : String) : Option (List Goal) := do
+def rowGoal (row : Datum) (k : String) : Option (List Goal) := do
   let p ← row.parse? k [("1", Person.first), ("2", .second), ("3", .third)]
   return if row.feature? (k ++ "Shielded") = some "yes" then []
     else [⟨p, decide (row.feature? (k ++ "Number") = some "pl"),
       decide (row.feature? (k ++ "Opaque") = some "yes")⟩]
 
 /-- The configuration of a row that the paper analyses. -/
-def Config.ofRow (row : LinguisticExample) : Option Config := do
+def Config.ofRow (row : Datum) : Option Config := do
   let aftermath ← match ← row.feature? "aftermath" with
     | "clitic" => some Aftermath.cliticize
     | "agreement" => (row.parse? "paradigm" paradigms).map .realize
@@ -624,7 +624,7 @@ def Config.ofRow (row : LinguisticExample) : Option Config := do
 
 /-- A row the paper judges grammatical or at most marginal: its `?` examples, (77) and fn. 32,
 it calls quite acceptable and much improved, while `*?` and `??` carry its star. -/
-def Grammatical (row : LinguisticExample) : Prop :=
+def Grammatical (row : Datum) : Prop :=
   row.judgment = .acceptable ∨ row.judgment = .marginal
 
 instance : DecidablePred Grammatical := λ _ => inferInstanceAs (Decidable (_ ∨ _))

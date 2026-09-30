@@ -15,9 +15,7 @@ this module; declarations live in `namespace HaugDalrymple2020.Examples`.
 
 namespace HaugDalrymple2020.Examples
 
-open Data.Examples
-
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "haugdalrymple2020_ex1"
     source := ⟨"haug-dalrymple-2020", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1")] }
 
-def ex2 : LinguisticExample :=
+def ex2 : Datum :=
   { id := "haugdalrymple2020_ex2"
     source := ⟨"haug-dalrymple-2020", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex2 : LinguisticExample :=
     readings := [("narrow: each thought 'we saw each other'", .acceptable), ("wide: each thought 'I saw her'", .acceptable)]
     paperFeatures := [("section", "1")] }
 
-def ex4 : LinguisticExample :=
+def ex4 : Datum :=
   { id := "haugdalrymple2020_ex4"
     source := ⟨"haug-dalrymple-2020", "(4)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex4 : LinguisticExample :=
     readings := [("group identity: each thought 'we will win'", .acceptable), ("bound: each thought 'I will win'", .acceptable)]
     paperFeatures := [("section", "1")] }
 
-def ex8 : LinguisticExample :=
+def ex8 : Datum :=
   { id := "haugdalrymple2020_ex8"
     source := ⟨"haug-dalrymple-2020", "(8a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex8 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1")] }
 
-def ex10 : LinguisticExample :=
+def ex10 : Datum :=
   { id := "haugdalrymple2020_ex10"
     source := ⟨"haug-dalrymple-2020", "(10a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex10 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1")] }
 
-def ex11 : LinguisticExample :=
+def ex11 : Datum :=
   { id := "haugdalrymple2020_ex11"
     source := ⟨"haug-dalrymple-2020", "(11a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "haugdalrymple2020_ex12"
     source := ⟨"haug-dalrymple-2020", "(12a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex12 : LinguisticExample :=
     readings := [("cumulative", .acceptable), ("distributive: three mice each", .acceptable)]
     paperFeatures := [("section", "2.1")] }
 
-def ex17 : LinguisticExample :=
+def ex17 : Datum :=
   { id := "haugdalrymple2020_ex17"
     source := ⟨"haug-dalrymple-2020", "(17a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex17 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2")] }
 
-def ex22 : LinguisticExample :=
+def ex22 : Datum :=
   { id := "haugdalrymple2020_ex22"
     source := ⟨"haug-dalrymple-2020", "(22a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex22 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3")] }
 
-def ex23 : LinguisticExample :=
+def ex23 : Datum :=
   { id := "haugdalrymple2020_ex23"
     source := ⟨"haug-dalrymple-2020", "(23)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex23 : LinguisticExample :=
     readings := [("each lawyer hired a secretary she liked", .acceptable), ("each lawyer hired a secretary all the lawyers liked", .acceptable)]
     paperFeatures := [("section", "2.3")] }
 
-def ex40 : LinguisticExample :=
+def ex40 : Datum :=
   { id := "haugdalrymple2020_ex40"
     source := ⟨"haug-dalrymple-2020", "(40a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex40 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4")] }
 
-def ex45 : LinguisticExample :=
+def ex45 : Datum :=
   { id := "haugdalrymple2020_ex45"
     source := ⟨"haug-dalrymple-2020", "(45)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex45 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1")] }
 
-def ex47 : LinguisticExample :=
+def ex47 : Datum :=
   { id := "haugdalrymple2020_ex47"
     source := ⟨"haug-dalrymple-2020", "(47a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex47 : LinguisticExample :=
     readings := [("each thought 'we will win'", .acceptable)]
     paperFeatures := [("section", "3.1")] }
 
-def ex50 : LinguisticExample :=
+def ex50 : Datum :=
   { id := "haugdalrymple2020_ex50"
     source := ⟨"haug-dalrymple-2020", "(50a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex50 : LinguisticExample :=
     readings := [("each thought 'I will win'", .acceptable)]
     paperFeatures := [("section", "3.1")] }
 
-def ex52 : LinguisticExample :=
+def ex52 : Datum :=
   { id := "haugdalrymple2020_ex52"
     source := ⟨"haug-dalrymple-2020", "(52a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex52 : LinguisticExample :=
     readings := [("each thought 'we saw each other'", .acceptable)]
     paperFeatures := [("section", "3.2")] }
 
-def ex54 : LinguisticExample :=
+def ex54 : Datum :=
   { id := "haugdalrymple2020_ex54"
     source := ⟨"haug-dalrymple-2020", "(54a)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex54 : LinguisticExample :=
     readings := [("each thought 'I saw her'", .acceptable)]
     paperFeatures := [("section", "3.2")] }
 
-def ex57 : LinguisticExample :=
+def ex57 : Datum :=
   { id := "haugdalrymple2020_ex57"
     source := ⟨"haug-dalrymple-2020", "(57)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex57 : LinguisticExample :=
     readings := [("crossed", .acceptable)]
     paperFeatures := [("section", "3.3")] }
 
-def ex58 : LinguisticExample :=
+def ex58 : Datum :=
   { id := "haugdalrymple2020_ex58"
     source := ⟨"haug-dalrymple-2020", "(58)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex58 : LinguisticExample :=
     readings := [("crossed", .acceptable)]
     paperFeatures := [("section", "3.3")] }
 
-def ex59 : LinguisticExample :=
+def ex59 : Datum :=
   { id := "haugdalrymple2020_ex59"
     source := ⟨"haug-dalrymple-2020", "(59)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex59 : LinguisticExample :=
     readings := [("crossed", .unacceptable)]
     paperFeatures := [("section", "3.3")] }
 
-def ex60 : LinguisticExample :=
+def ex60 : Datum :=
   { id := "haugdalrymple2020_ex60"
     source := ⟨"haug-dalrymple-2020", "(60)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex60 : LinguisticExample :=
     readings := [("crossed", .unacceptable)]
     paperFeatures := [("section", "3.3")] }
 
-def ex61 : LinguisticExample :=
+def ex61 : Datum :=
   { id := "haugdalrymple2020_ex61"
     source := ⟨"haug-dalrymple-2020", "(61)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex61 : LinguisticExample :=
     readings := [("crossed", .acceptable)]
     paperFeatures := [("section", "3.3")] }
 
-def ex62 : LinguisticExample :=
+def ex62 : Datum :=
   { id := "haugdalrymple2020_ex62"
     source := ⟨"haug-dalrymple-2020", "(62)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex62 : LinguisticExample :=
     readings := [("someone > each other", .acceptable), ("each other > someone", .unacceptable)]
     paperFeatures := [("section", "3.4")] }
 
-def ex63 : LinguisticExample :=
+def ex63 : Datum :=
   { id := "haugdalrymple2020_ex63"
     source := ⟨"haug-dalrymple-2020", "(63)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex63 : LinguisticExample :=
     readings := [("every > may", .acceptable), ("may > every", .acceptable)]
     paperFeatures := [("section", "3.4")] }
 
-def ex64 : LinguisticExample :=
+def ex64 : Datum :=
   { id := "haugdalrymple2020_ex64"
     source := ⟨"haug-dalrymple-2020", "(64)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex64 : LinguisticExample :=
     readings := [("each other > may", .unacceptable), ("may > each other", .marginal)]
     paperFeatures := [("section", "3.4")] }
 
-def ex65 : LinguisticExample :=
+def ex65 : Datum :=
   { id := "haugdalrymple2020_ex65"
     source := ⟨"haug-dalrymple-2020", "(65)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex65 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4")] }
 
-def ex71 : LinguisticExample :=
+def ex71 : Datum :=
   { id := "haugdalrymple2020_ex71"
     source := ⟨"haug-dalrymple-2020", "(71)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex71 : LinguisticExample :=
     readings := [("a particular pair", .acceptable), ("cumulative", .unacceptable)]
     paperFeatures := [("section", "3.4")] }
 
-def ex72 : LinguisticExample :=
+def ex72 : Datum :=
   { id := "haugdalrymple2020_ex72"
     source := ⟨"haug-dalrymple-2020", "(72)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex72 : LinguisticExample :=
     readings := [("cumulative", .unacceptable)]
     paperFeatures := [("section", "3.4")] }
 
-def ex73a : LinguisticExample :=
+def ex73a : Datum :=
   { id := "haugdalrymple2020_ex73a"
     source := ⟨"haug-dalrymple-2020", "(73a)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex73a : LinguisticExample :=
     readings := [("narrow", .acceptable)]
     paperFeatures := [("section", "3.4")] }
 
-def ex73b : LinguisticExample :=
+def ex73b : Datum :=
   { id := "haugdalrymple2020_ex73b"
     source := ⟨"haug-dalrymple-2020", "(73b)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex73b : LinguisticExample :=
     readings := [("narrow", .acceptable)]
     paperFeatures := [("section", "3.4")] }
 
-def ex74a : LinguisticExample :=
+def ex74a : Datum :=
   { id := "haugdalrymple2020_ex74a"
     source := ⟨"haug-dalrymple-2020", "(74a)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex74a : LinguisticExample :=
     readings := [("long distance", .acceptable)]
     paperFeatures := [("section", "3.4")] }
 
-def ex74b : LinguisticExample :=
+def ex74b : Datum :=
   { id := "haugdalrymple2020_ex74b"
     source := ⟨"haug-dalrymple-2020", "(74b)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex74b : LinguisticExample :=
     readings := [("long distance", .acceptable)]
     paperFeatures := [("section", "3.4")] }
 
-def ex78 : LinguisticExample :=
+def ex78 : Datum :=
   { id := "haugdalrymple2020_ex78"
     source := ⟨"haug-dalrymple-2020", "(78)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex78 : LinguisticExample :=
     readings := [("reflexive: some children scratched themselves", .acceptable), ("reciprocal: some children scratched each other", .acceptable), ("mixed", .acceptable)]
     paperFeatures := [("section", "4.2")] }
 
-def ex80a : LinguisticExample :=
+def ex80a : Datum :=
   { id := "haugdalrymple2020_ex80a"
     source := ⟨"haug-dalrymple-2020", "(80a)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex80a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3")] }
 
-def ex80b : LinguisticExample :=
+def ex80b : Datum :=
   { id := "haugdalrymple2020_ex80b"
     source := ⟨"haug-dalrymple-2020", "(80b)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex80b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3")] }
 
-def ex80c : LinguisticExample :=
+def ex80c : Datum :=
   { id := "haugdalrymple2020_ex80c"
     source := ⟨"haug-dalrymple-2020", "(80c)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex80c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3")] }
 
-def ex81a : LinguisticExample :=
+def ex81a : Datum :=
   { id := "haugdalrymple2020_ex81a"
     source := ⟨"haug-dalrymple-2020", "(81a)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex81a : LinguisticExample :=
     readings := [("cumulative", .acceptable)]
     paperFeatures := [("section", "4.3")] }
 
-def ex81b : LinguisticExample :=
+def ex81b : Datum :=
   { id := "haugdalrymple2020_ex81b"
     source := ⟨"haug-dalrymple-2020", "(81b)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex81b : LinguisticExample :=
     readings := [("cumulative", .acceptable)]
     paperFeatures := [("section", "4.3")] }
 
-def ex81c : LinguisticExample :=
+def ex81c : Datum :=
   { id := "haugdalrymple2020_ex81c"
     source := ⟨"haug-dalrymple-2020", "(81c)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex81c : LinguisticExample :=
     readings := [("cumulative", .unacceptable)]
     paperFeatures := [("section", "4.3")] }
 
-def ex84 : LinguisticExample :=
+def ex84 : Datum :=
   { id := "haugdalrymple2020_ex84"
     source := ⟨"haug-dalrymple-2020", "(84)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex84 : LinguisticExample :=
     readings := [("both reciprocals anteceded by the subject", .acceptable), ("the second anteceded by the first", .acceptable)]
     paperFeatures := [("section", "4.4")] }
 
-def ex88a : LinguisticExample :=
+def ex88a : Datum :=
   { id := "haugdalrymple2020_ex88a"
     source := ⟨"haug-dalrymple-2020", "(88a)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex88a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.5")] }
 
-def ex88b : LinguisticExample :=
+def ex88b : Datum :=
   { id := "haugdalrymple2020_ex88b"
     source := ⟨"haug-dalrymple-2020", "(88b)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex88b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.5")] }
 
-def ex91 : LinguisticExample :=
+def ex91 : Datum :=
   { id := "haugdalrymple2020_ex91"
     source := ⟨"haug-dalrymple-2020", "(91)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex91 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.5")] }
 
-def ex94 : LinguisticExample :=
+def ex94 : Datum :=
   { id := "haugdalrymple2020_ex94"
     source := ⟨"haug-dalrymple-2020", "(94)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex94 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.6")] }
 
-def ex95a : LinguisticExample :=
+def ex95a : Datum :=
   { id := "haugdalrymple2020_ex95a"
     source := ⟨"haug-dalrymple-2020", "(95a)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex95a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.6")] }
 
-def ex95b : LinguisticExample :=
+def ex95b : Datum :=
   { id := "haugdalrymple2020_ex95b"
     source := ⟨"haug-dalrymple-2020", "(95b)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex95b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.6")] }
 
-def ex100 : LinguisticExample :=
+def ex100 : Datum :=
   { id := "haugdalrymple2020_ex100"
     source := ⟨"haug-dalrymple-2020", "(100)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex100 : LinguisticExample :=
     readings := [("reference set", .acceptable)]
     paperFeatures := [("section", "5.1")] }
 
-def ex103 : LinguisticExample :=
+def ex103 : Datum :=
   { id := "haugdalrymple2020_ex103"
     source := ⟨"haug-dalrymple-2020", "(103)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex103 : LinguisticExample :=
     readings := [("maximal set", .acceptable)]
     paperFeatures := [("section", "5.1")] }
 
-def ex106 : LinguisticExample :=
+def ex106 : Datum :=
   { id := "haugdalrymple2020_ex106"
     source := ⟨"haug-dalrymple-2020", "(106)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex106 : LinguisticExample :=
     readings := [("reference set", .questionable), ("maximal set", .questionable)]
     paperFeatures := [("section", "5.2")] }
 
-def ex107a : LinguisticExample :=
+def ex107a : Datum :=
   { id := "haugdalrymple2020_ex107a"
     source := ⟨"haug-dalrymple-2020", "(107a)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex107a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2")] }
 
-def ex107b : LinguisticExample :=
+def ex107b : Datum :=
   { id := "haugdalrymple2020_ex107b"
     source := ⟨"haug-dalrymple-2020", "(107b)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex107b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2")] }
 
-def ex107c : LinguisticExample :=
+def ex107c : Datum :=
   { id := "haugdalrymple2020_ex107c"
     source := ⟨"haug-dalrymple-2020", "(107c)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex107c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2")] }
 
-def ex112 : LinguisticExample :=
+def ex112 : Datum :=
   { id := "haugdalrymple2020_ex112"
     source := ⟨"haug-dalrymple-2020", "(112)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex112 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2")] }
 
-def ex113 : LinguisticExample :=
+def ex113 : Datum :=
   { id := "haugdalrymple2020_ex113"
     source := ⟨"haug-dalrymple-2020", "(113)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex113 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2")] }
 
-def ex114 : LinguisticExample :=
+def ex114 : Datum :=
   { id := "haugdalrymple2020_ex114"
     source := ⟨"haug-dalrymple-2020", "(114)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex114 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2")] }
 
-def ex118 : LinguisticExample :=
+def ex118 : Datum :=
   { id := "haugdalrymple2020_ex118"
     source := ⟨"haug-dalrymple-2020", "(118)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex118 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3")] }
 
-def ex119 : LinguisticExample :=
+def ex119 : Datum :=
   { id := "haugdalrymple2020_ex119"
     source := ⟨"haug-dalrymple-2020", "(119)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex119 : LinguisticExample :=
     readings := [("weak reciprocity", .acceptable)]
     paperFeatures := [("section", "6")] }
 
-def ex120 : LinguisticExample :=
+def ex120 : Datum :=
   { id := "haugdalrymple2020_ex120"
     source := ⟨"haug-dalrymple-2020", "(120)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex120 : LinguisticExample :=
     readings := [("strong reciprocity", .acceptable)]
     paperFeatures := [("section", "6")] }
 
-def ex121 : LinguisticExample :=
+def ex121 : Datum :=
   { id := "haugdalrymple2020_ex121"
     source := ⟨"haug-dalrymple-2020", "(121)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex121 : LinguisticExample :=
     readings := [("intermediate", .acceptable)]
     paperFeatures := [("section", "6")] }
 
-def ex122 : LinguisticExample :=
+def ex122 : Datum :=
   { id := "haugdalrymple2020_ex122"
     source := ⟨"haug-dalrymple-2020", "(122)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ex122 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6")] }
 
-def ex123 : LinguisticExample :=
+def ex123 : Datum :=
   { id := "haugdalrymple2020_ex123"
     source := ⟨"haug-dalrymple-2020", "(123)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def ex123 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6")] }
 
-def ex125 : LinguisticExample :=
+def ex125 : Datum :=
   { id := "haugdalrymple2020_ex125"
     source := ⟨"haug-dalrymple-2020", "(125a)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def ex125 : LinguisticExample :=
     readings := [("strong", .acceptable)]
     paperFeatures := [("section", "6")] }
 
-def ex129 : LinguisticExample :=
+def ex129 : Datum :=
   { id := "haugdalrymple2020_ex129"
     source := ⟨"haug-dalrymple-2020", "(129a)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def ex129 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6")] }
 
-def ex130 : LinguisticExample :=
+def ex130 : Datum :=
   { id := "haugdalrymple2020_ex130"
     source := ⟨"haug-dalrymple-2020", "(130)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def ex130 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1")] }
 
-def ex131 : LinguisticExample :=
+def ex131 : Datum :=
   { id := "haugdalrymple2020_ex131"
     source := ⟨"haug-dalrymple-2020", "(131)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def ex131 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1")] }
 
-def ex132 : LinguisticExample :=
+def ex132 : Datum :=
   { id := "haugdalrymple2020_ex132"
     source := ⟨"haug-dalrymple-2020", "(132)"⟩
     reportedIn := none
@@ -862,7 +860,7 @@ def ex132 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1")] }
 
-def ex133 : LinguisticExample :=
+def ex133 : Datum :=
   { id := "haugdalrymple2020_ex133"
     source := ⟨"haug-dalrymple-2020", "(133)"⟩
     reportedIn := none
@@ -875,7 +873,7 @@ def ex133 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1")] }
 
-def ex134 : LinguisticExample :=
+def ex134 : Datum :=
   { id := "haugdalrymple2020_ex134"
     source := ⟨"haug-dalrymple-2020", "(134)"⟩
     reportedIn := none
@@ -888,7 +886,7 @@ def ex134 : LinguisticExample :=
     readings := [("pairwise maximal", .acceptable), ("all triples", .questionable)]
     paperFeatures := [("section", "6.2")] }
 
-def ex135 : LinguisticExample :=
+def ex135 : Datum :=
   { id := "haugdalrymple2020_ex135"
     source := ⟨"haug-dalrymple-2020", "(135)"⟩
     reportedIn := none
@@ -901,7 +899,7 @@ def ex135 : LinguisticExample :=
     readings := [("narrow", .acceptable), ("wide: each believes she praised the two others", .acceptable)]
     paperFeatures := [("section", "6.3")] }
 
-def ex137 : LinguisticExample :=
+def ex137 : Datum :=
   { id := "haugdalrymple2020_ex137"
     source := ⟨"haug-dalrymple-2020", "(137)"⟩
     reportedIn := none
@@ -914,6 +912,6 @@ def ex137 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.3")] }
 
-def all : List LinguisticExample := [ex1, ex2, ex4, ex8, ex10, ex11, ex12, ex17, ex22, ex23, ex40, ex45, ex47, ex50, ex52, ex54, ex57, ex58, ex59, ex60, ex61, ex62, ex63, ex64, ex65, ex71, ex72, ex73a, ex73b, ex74a, ex74b, ex78, ex80a, ex80b, ex80c, ex81a, ex81b, ex81c, ex84, ex88a, ex88b, ex91, ex94, ex95a, ex95b, ex100, ex103, ex106, ex107a, ex107b, ex107c, ex112, ex113, ex114, ex118, ex119, ex120, ex121, ex122, ex123, ex125, ex129, ex130, ex131, ex132, ex133, ex134, ex135, ex137]
+def all : List Datum := [ex1, ex2, ex4, ex8, ex10, ex11, ex12, ex17, ex22, ex23, ex40, ex45, ex47, ex50, ex52, ex54, ex57, ex58, ex59, ex60, ex61, ex62, ex63, ex64, ex65, ex71, ex72, ex73a, ex73b, ex74a, ex74b, ex78, ex80a, ex80b, ex80c, ex81a, ex81b, ex81c, ex84, ex88a, ex88b, ex91, ex94, ex95a, ex95b, ex100, ex103, ex106, ex107a, ex107b, ex107c, ex112, ex113, ex114, ex118, ex119, ex120, ex121, ex122, ex123, ex125, ex129, ex130, ex131, ex132, ex133, ex134, ex135, ex137]
 
 end HaugDalrymple2020.Examples

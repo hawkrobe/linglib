@@ -15,9 +15,7 @@ this module; declarations live in `namespace VanDerSandtMaier2003.Examples`.
 
 namespace VanDerSandtMaier2003.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "vandersandtmaier2003_1"
     source := ⟨"van-der-sandt-maier-2003", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("denial", "presupposition"), ("sequence", "assertion-denial-correction")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "vandersandtmaier2003_3"
     source := ⟨"van-der-sandt-maier-2003", "(3)"⟩
     reportedIn := some ⟨"strawson-1952", ""⟩
@@ -43,7 +41,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("denial", "proposition"), ("problem", "referent must survive")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "vandersandtmaier2003_4"
     source := ⟨"van-der-sandt-maier-2003", "(4)"⟩
     reportedIn := some ⟨"geurts-1998", ""⟩
@@ -56,7 +54,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("denial", "presupposition"), ("problem", "one of two presuppositions")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "vandersandtmaier2003_5"
     source := ⟨"van-der-sandt-maier-2003", "(5)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("denial", "implicature"), ("problem", "part acknowledged, part denied")] }
 
-def ex_9a : LinguisticExample :=
+def ex_9a : Datum :=
   { id := "vandersandtmaier2003_9a"
     source := ⟨"van-der-sandt-maier-2003", "(9a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("layers", "pr: the Pope; fr: possibly right; imp: not necessarily right")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "vandersandtmaier2003_20"
     source := ⟨"van-der-sandt-maier-2003", "(20)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("denial", "implicature"), ("off", "imp1")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "vandersandtmaier2003_21"
     source := ⟨"van-der-sandt-maier-2003", "(21)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("denial", "implicature"), ("off", "imp1"), ("sequence", "assertion-affirmation-denial-correction")] }
 
-def fn12 : LinguisticExample :=
+def fn12 : Datum :=
   { id := "vandersandtmaier2003_fn12"
     source := ⟨"van-der-sandt-maier-2003", "footnote 12 (i)"⟩
     reportedIn := some ⟨"horn-1989", ""⟩
@@ -121,6 +119,6 @@ def fn12 : LinguisticExample :=
     readings := []
     paperFeatures := [("denial", "register")] }
 
-def all : List LinguisticExample := [ex_1, ex_3, ex_4, ex_5, ex_9a, ex_20, ex_21, fn12]
+def all : List Datum := [ex_1, ex_3, ex_4, ex_5, ex_9a, ex_20, ex_21, fn12]
 
 end VanDerSandtMaier2003.Examples

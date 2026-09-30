@@ -15,9 +15,7 @@ this module; declarations live in `namespace Saab2026.Examples`.
 
 namespace Saab2026.Examples
 
-open Data.Examples
-
-def ex1a : LinguisticExample :=
+def ex1a : Datum :=
   { id := "saab2026_ex1a"
     source := ⟨"saab-2026", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "grupo")] }
 
-def ex1b : LinguisticExample :=
+def ex1b : Datum :=
   { id := "saab2026_ex1b"
     source := ⟨"saab-2026", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex1b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "montón")] }
 
-def ex1c : LinguisticExample :=
+def ex1c : Datum :=
   { id := "saab2026_ex1c"
     source := ⟨"saab-2026", "(1c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex1c : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "mierda")] }
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "saab2026_ex2a"
     source := ⟨"saab-2026", "(2a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "grupo"), ("agreement", "plural"), ("codaNumber", "plural")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "saab2026_ex2b"
     source := ⟨"saab-2026", "(2b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex2b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "montón"), ("agreement", "plural"), ("codaNumber", "plural")] }
 
-def ex2c : LinguisticExample :=
+def ex2c : Datum :=
   { id := "saab2026_ex2c"
     source := ⟨"saab-2026", "(2c)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex2c : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "mierda"), ("agreement", "plural"), ("codaNumber", "plural")] }
 
-def ex5_bocha : LinguisticExample :=
+def ex5_bocha : Datum :=
   { id := "saab2026_ex5_bocha"
     source := ⟨"saab-2026", "(5)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex5_bocha : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "bocha"), ("elided", "coda")] }
 
-def ex5_grupo : LinguisticExample :=
+def ex5_grupo : Datum :=
   { id := "saab2026_ex5_grupo"
     source := ⟨"saab-2026", "(5)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex5_grupo : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "grupo"), ("elided", "coda")] }
 
-def ex6 : LinguisticExample :=
+def ex6 : Datum :=
   { id := "saab2026_ex6"
     source := ⟨"saab-2026", "(6)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex6 : LinguisticExample :=
     readings := [("ellipsis", .unacceptable)]
     paperFeatures := [("noun", "mierda"), ("elided", "coda")] }
 
-def ex43 : LinguisticExample :=
+def ex43 : Datum :=
   { id := "saab2026_ex43"
     source := ⟨"saab-2026", "(43)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex43 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "bocha"), ("elided", "coda"), ("diagnostic", "subextraction")] }
 
-def ex45 : LinguisticExample :=
+def ex45 : Datum :=
   { id := "saab2026_ex45"
     source := ⟨"saab-2026", "(45)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex45 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "montón"), ("elided", "coda"), ("diagnostic", "subextraction")] }
 
-def ex52a : LinguisticExample :=
+def ex52a : Datum :=
   { id := "saab2026_ex52a"
     source := ⟨"saab-2026", "(52a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex52a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "mierda"), ("elided", "coda"), ("diagnostic", "argumentStructure")] }
 
-def ex52b : LinguisticExample :=
+def ex52b : Datum :=
   { id := "saab2026_ex52b"
     source := ⟨"saab-2026", "(52b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex52b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "mierda"), ("elided", "coda"), ("diagnostic", "argumentStructure")] }
 
-def ex53a : LinguisticExample :=
+def ex53a : Datum :=
   { id := "saab2026_ex53a"
     source := ⟨"saab-2026", "(53a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex53a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "montón"), ("elided", "coda"), ("diagnostic", "argumentStructure")] }
 
-def ex53b : LinguisticExample :=
+def ex53b : Datum :=
   { id := "saab2026_ex53b"
     source := ⟨"saab-2026", "(53b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex53b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "montón"), ("elided", "coda"), ("diagnostic", "argumentStructure")] }
 
-def ex54 : LinguisticExample :=
+def ex54 : Datum :=
   { id := "saab2026_ex54"
     source := ⟨"saab-2026", "(54)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex54 : LinguisticExample :=
     readings := [("ellipsis", .unacceptable)]
     paperFeatures := [("noun", "mierda"), ("elided", "coda")] }
 
-def ex48 : LinguisticExample :=
+def ex48 : Datum :=
   { id := "saab2026_ex48"
     source := ⟨"saab-2026", "(48)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex48 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "mierda"), ("diagnostic", "contextResolved")] }
 
-def ex62a : LinguisticExample :=
+def ex62a : Datum :=
   { id := "saab2026_ex62a"
     source := ⟨"saab-2026", "(62a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex62a : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "grupo"), ("reading", "descriptive"), ("elided", "first"), ("agreement", "singular"), ("codaNumber", "plural")] }
 
-def ex62b : LinguisticExample :=
+def ex62b : Datum :=
   { id := "saab2026_ex62b"
     source := ⟨"saab-2026", "(62b)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex62b : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "grupo"), ("reading", "quantificational"), ("elided", "first"), ("agreement", "plural"), ("codaNumber", "plural")] }
 
-def ex63 : LinguisticExample :=
+def ex63 : Datum :=
   { id := "saab2026_ex63"
     source := ⟨"saab-2026", "(63)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex63 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "montón"), ("reading", "descriptive"), ("elided", "first"), ("agreement", "singular"), ("codaNumber", "plural")] }
 
-def ex64 : LinguisticExample :=
+def ex64 : Datum :=
   { id := "saab2026_ex64"
     source := ⟨"saab-2026", "(64)"⟩
     reportedIn := none
@@ -290,6 +288,6 @@ def ex64 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "montón"), ("reading", "quantificational"), ("elided", "first"), ("agreement", "plural"), ("codaNumber", "plural")] }
 
-def all : List LinguisticExample := [ex1a, ex1b, ex1c, ex2a, ex2b, ex2c, ex5_bocha, ex5_grupo, ex6, ex43, ex45, ex52a, ex52b, ex53a, ex53b, ex54, ex48, ex62a, ex62b, ex63, ex64]
+def all : List Datum := [ex1a, ex1b, ex1c, ex2a, ex2b, ex2c, ex5_bocha, ex5_grupo, ex6, ex43, ex45, ex52a, ex52b, ex53a, ex53b, ex54, ex48, ex62a, ex62b, ex63, ex64]
 
 end Saab2026.Examples

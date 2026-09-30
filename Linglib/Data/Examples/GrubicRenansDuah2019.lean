@@ -15,9 +15,7 @@ this module; declarations live in `namespace GrubicRenansDuah2019.Examples`.
 
 namespace GrubicRenansDuah2019.Examples
 
-open Data.Examples
-
-def ex_36a : LinguisticExample :=
+def ex_36a : Datum :=
   { id := "grubicrenansduah2019_36a"
     source := ⟨"grubic-renans-duah-2019", "(36a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_36a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "negationAlso")] }
 
-def ex_36b : LinguisticExample :=
+def ex_36b : Datum :=
   { id := "grubicrenansduah2019_36b"
     source := ⟨"grubic-renans-duah-2019", "(36b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_36b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "only"), ("diagnostic", "negationAlso")] }
 
-def ex_37a : LinguisticExample :=
+def ex_37a : Datum :=
   { id := "grubicrenansduah2019_37a"
     source := ⟨"grubic-renans-duah-2019", "(37a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "negationAlso")] }
 
-def ex_37b : LinguisticExample :=
+def ex_37b : Datum :=
   { id := "grubicrenansduah2019_37b"
     source := ⟨"grubic-renans-duah-2019", "(37b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_37b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "only"), ("diagnostic", "negationAlso")] }
 
-def ex_38a : LinguisticExample :=
+def ex_38a : Datum :=
   { id := "grubicrenansduah2019_38a"
     source := ⟨"grubic-renans-duah-2019", "(38a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_38a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "negationAlso")] }
 
-def ex_38b : LinguisticExample :=
+def ex_38b : Datum :=
   { id := "grubicrenansduah2019_38b"
     source := ⟨"grubic-renans-duah-2019", "(38b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_38b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "only"), ("diagnostic", "negationAlso")] }
 
-def ex_39a : LinguisticExample :=
+def ex_39a : Datum :=
   { id := "grubicrenansduah2019_39a"
     source := ⟨"grubic-renans-duah-2019", "(39a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_39a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "only"), ("diagnostic", "reasonClause")] }
 
-def ex_39b : LinguisticExample :=
+def ex_39b : Datum :=
   { id := "grubicrenansduah2019_39b"
     source := ⟨"grubic-renans-duah-2019", "(39b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_39b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "reasonClause")] }
 
-def ex_40a : LinguisticExample :=
+def ex_40a : Datum :=
   { id := "grubicrenansduah2019_40a"
     source := ⟨"grubic-renans-duah-2019", "(40a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_40a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "only"), ("diagnostic", "reasonClause")] }
 
-def ex_40b : LinguisticExample :=
+def ex_40b : Datum :=
   { id := "grubicrenansduah2019_40b"
     source := ⟨"grubic-renans-duah-2019", "(40b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_40b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "reasonClause")] }
 
-def ex_41a : LinguisticExample :=
+def ex_41a : Datum :=
   { id := "grubicrenansduah2019_41a"
     source := ⟨"grubic-renans-duah-2019", "(41a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_41a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "only"), ("diagnostic", "reasonClause")] }
 
-def ex_41b : LinguisticExample :=
+def ex_41b : Datum :=
   { id := "grubicrenansduah2019_41b"
     source := ⟨"grubic-renans-duah-2019", "(41b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_41b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "reasonClause")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "grubicrenansduah2019_42"
     source := ⟨"grubic-renans-duah-2019", "(42)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "cancellation")] }
 
-def ex_43a1 : LinguisticExample :=
+def ex_43a1 : Datum :=
   { id := "grubicrenansduah2019_43a1"
     source := ⟨"grubic-renans-duah-2019", "(43A1)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_43a1 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "cancellation")] }
 
-def ex_43a2 : LinguisticExample :=
+def ex_43a2 : Datum :=
   { id := "grubicrenansduah2019_43a2"
     source := ⟨"grubic-renans-duah-2019", "(43A2)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_43a2 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "unmarked"), ("diagnostic", "cancellation")] }
 
-def ex_44a1 : LinguisticExample :=
+def ex_44a1 : Datum :=
   { id := "grubicrenansduah2019_44a1"
     source := ⟨"grubic-renans-duah-2019", "(44A1)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_44a1 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "cancellation")] }
 
-def ex_44a2 : LinguisticExample :=
+def ex_44a2 : Datum :=
   { id := "grubicrenansduah2019_44a2"
     source := ⟨"grubic-renans-duah-2019", "(44A2)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_44a2 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "unmarked"), ("diagnostic", "cancellation")] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "grubicrenansduah2019_45"
     source := ⟨"grubic-renans-duah-2019", "(45)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "cancellation")] }
 
-def ex_46 : LinguisticExample :=
+def ex_46 : Datum :=
   { id := "grubicrenansduah2019_46"
     source := ⟨"grubic-renans-duah-2019", "(46)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_46 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "cancellation")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "grubicrenansduah2019_47"
     source := ⟨"grubic-renans-duah-2019", "(47)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "cancellation")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "grubicrenansduah2019_48"
     source := ⟨"grubic-renans-duah-2019", "(48)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_48 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "mentionSome")] }
 
-def ex_49 : LinguisticExample :=
+def ex_49 : Datum :=
   { id := "grubicrenansduah2019_49"
     source := ⟨"grubic-renans-duah-2019", "(49)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_49 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "mentionSome")] }
 
-def ex_50a : LinguisticExample :=
+def ex_50a : Datum :=
   { id := "grubicrenansduah2019_50a"
     source := ⟨"grubic-renans-duah-2019", "(50A)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_50a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "unmarked"), ("diagnostic", "mentionSome")] }
 
-def ex_50a1 : LinguisticExample :=
+def ex_50a1 : Datum :=
   { id := "grubicrenansduah2019_50a1"
     source := ⟨"grubic-renans-duah-2019", "(50A1)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_50a1 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "mentionSome")] }
 
-def ex_54a : LinguisticExample :=
+def ex_54a : Datum :=
   { id := "grubicrenansduah2019_54a"
     source := ⟨"grubic-renans-duah-2019", "(54a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_54a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "projection"), ("inference", "if she invited Fred, then she didn't invite anybody else")] }
 
-def ex_54b : LinguisticExample :=
+def ex_54b : Datum :=
   { id := "grubicrenansduah2019_54b"
     source := ⟨"grubic-renans-duah-2019", "(54b)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_54b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "projection"), ("inference", "if she invited Fred, then she didn't invite anybody else")] }
 
-def ex_55a : LinguisticExample :=
+def ex_55a : Datum :=
   { id := "grubicrenansduah2019_55a"
     source := ⟨"grubic-renans-duah-2019", "(55a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_55a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "projection"), ("inference", "if he invited Amo, then he didn't invite anybody else")] }
 
-def ex_55b : LinguisticExample :=
+def ex_55b : Datum :=
   { id := "grubicrenansduah2019_55b"
     source := ⟨"grubic-renans-duah-2019", "(55b)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_55b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "projection"), ("inference", "if he invited Amo, then he didn't invite anybody else")] }
 
-def ex_59a : LinguisticExample :=
+def ex_59a : Datum :=
   { id := "grubicrenansduah2019_59a"
     source := ⟨"grubic-renans-duah-2019", "(59a)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_59a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "negativeQuantifier")] }
 
-def ex_59b : LinguisticExample :=
+def ex_59b : Datum :=
   { id := "grubicrenansduah2019_59b"
     source := ⟨"grubic-renans-duah-2019", "(59b)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_59b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "negativeQuantifier")] }
 
-def ex_59c : LinguisticExample :=
+def ex_59c : Datum :=
   { id := "grubicrenansduah2019_59c"
     source := ⟨"grubic-renans-duah-2019", "(59c)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_59c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "pseudocleft"), ("diagnostic", "negativeQuantifier")] }
 
-def ex_60a : LinguisticExample :=
+def ex_60a : Datum :=
   { id := "grubicrenansduah2019_60a"
     source := ⟨"grubic-renans-duah-2019", "(60a)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_60a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "unmarked"), ("diagnostic", "negativeQuantifier")] }
 
-def ex_60b : LinguisticExample :=
+def ex_60b : Datum :=
   { id := "grubicrenansduah2019_60b"
     source := ⟨"grubic-renans-duah-2019", "(60b)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_60b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "negativeQuantifier")] }
 
-def ex_61a : LinguisticExample :=
+def ex_61a : Datum :=
   { id := "grubicrenansduah2019_61a"
     source := ⟨"grubic-renans-duah-2019", "(61a)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_61a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "unmarked"), ("diagnostic", "negativeQuantifier")] }
 
-def ex_61b : LinguisticExample :=
+def ex_61b : Datum :=
   { id := "grubicrenansduah2019_61b"
     source := ⟨"grubic-renans-duah-2019", "(61b)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_61b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "negativeQuantifier")] }
 
-def ex_64a : LinguisticExample :=
+def ex_64a : Datum :=
   { id := "grubicrenansduah2019_64a"
     source := ⟨"grubic-renans-duah-2019", "(64a)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_64a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "unmarked"), ("diagnostic", "uncommittedContext")] }
 
-def ex_64b : LinguisticExample :=
+def ex_64b : Datum :=
   { id := "grubicrenansduah2019_64b"
     source := ⟨"grubic-renans-duah-2019", "(64b)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_64b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "uncommittedContext")] }
 
-def ex_75 : LinguisticExample :=
+def ex_75 : Datum :=
   { id := "grubicrenansduah2019_75"
     source := ⟨"grubic-renans-duah-2019", "(75)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_75 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "analysis"), ("inference", "Kofi swam"), ("inference", "if Kofi swam, then nobody else swam"), ("inference", "somebody swam")] }
 
-def ex_76 : LinguisticExample :=
+def ex_76 : Datum :=
   { id := "grubicrenansduah2019_76"
     source := ⟨"grubic-renans-duah-2019", "(76)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_76 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "analysis"), ("inference", "Ama slept"), ("inference", "if Ama slept, then nobody else slept"), ("inference", "somebody slept")] }
 
-def ex_77 : LinguisticExample :=
+def ex_77 : Datum :=
   { id := "grubicrenansduah2019_77"
     source := ⟨"grubic-renans-duah-2019", "(77)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_77 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "analysis")] }
 
-def ex_78 : LinguisticExample :=
+def ex_78 : Datum :=
   { id := "grubicrenansduah2019_78"
     source := ⟨"grubic-renans-duah-2019", "(78)"⟩
     reportedIn := none
@@ -550,6 +548,6 @@ def ex_78 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marked"), ("diagnostic", "analysis"), ("inference", "Mammadi gave a watch to Dimza"), ("inference", "that Mammadi gave or might have given something to Dimza is salient")] }
 
-def all : List LinguisticExample := [ex_36a, ex_36b, ex_37a, ex_37b, ex_38a, ex_38b, ex_39a, ex_39b, ex_40a, ex_40b, ex_41a, ex_41b, ex_42, ex_43a1, ex_43a2, ex_44a1, ex_44a2, ex_45, ex_46, ex_47, ex_48, ex_49, ex_50a, ex_50a1, ex_54a, ex_54b, ex_55a, ex_55b, ex_59a, ex_59b, ex_59c, ex_60a, ex_60b, ex_61a, ex_61b, ex_64a, ex_64b, ex_75, ex_76, ex_77, ex_78]
+def all : List Datum := [ex_36a, ex_36b, ex_37a, ex_37b, ex_38a, ex_38b, ex_39a, ex_39b, ex_40a, ex_40b, ex_41a, ex_41b, ex_42, ex_43a1, ex_43a2, ex_44a1, ex_44a2, ex_45, ex_46, ex_47, ex_48, ex_49, ex_50a, ex_50a1, ex_54a, ex_54b, ex_55a, ex_55b, ex_59a, ex_59b, ex_59c, ex_60a, ex_60b, ex_61a, ex_61b, ex_64a, ex_64b, ex_75, ex_76, ex_77, ex_78]
 
 end GrubicRenansDuah2019.Examples

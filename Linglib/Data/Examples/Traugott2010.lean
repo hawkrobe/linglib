@@ -15,9 +15,7 @@ this module; declarations live in `namespace Traugott2010.Examples`.
 
 namespace Traugott2010.Examples
 
-open Data.Examples
-
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "traugott2010_5a"
     source := ⟨"traugott-2010", "(5a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "be going to"), ("stage", "motion with intent"), ("level", "nonSubjective"), ("century", "16")] }
 
-def ex_5b : LinguisticExample :=
+def ex_5b : Datum :=
   { id := "traugott2010_5b"
     source := ⟨"traugott-2010", "(5b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "be going to"), ("stage", "intention without motion"), ("level", "nonSubjective"), ("century", "17")] }
 
-def ex_5c : LinguisticExample :=
+def ex_5c : Datum :=
   { id := "traugott2010_5c"
     source := ⟨"traugott-2010", "(5c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_5c : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "be going to"), ("stage", "raising"), ("level", "subjective"), ("century", "18")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "traugott2010_6"
     source := ⟨"traugott-2010", "(6)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_6 : LinguisticExample :=
     readings := [("Old Japanese: wait in a specific location (non-honorific)", .acceptable), ("Late Old Japanese: humble subject be in the vicinity of respected referent (referent honorific, subjectified)", .acceptable), ("Early Middle Japanese -saburau/-soorau: be-polite (addressee honorific, intersubjectified)", .acceptable)]
     paperFeatures := [("item", "saburahu"), ("stage", "non-honorific > referent honorific > addressee honorific"), ("level", "nonSubjective > subjective > intersubjective")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "traugott2010_12a"
     source := ⟨"traugott-2010", "(12a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "a piece of"), ("stage", "I Partitive"), ("level", "nonSubjective")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "traugott2010_13a"
     source := ⟨"traugott-2010", "(13a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "a piece of"), ("stage", "II Extended Partitive"), ("level", "nonSubjective")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "traugott2010_14a"
     source := ⟨"traugott-2010", "(14a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_14a : LinguisticExample :=
     readings := [("partitive: a small part or exemplar of a logician", .acceptable), ("degree modifier: somewhat of a logician", .acceptable)]
     paperFeatures := [("item", "a piece of"), ("stage", "III Degree Modifier"), ("level", "subjective")] }
 
-def ex_16a : LinguisticExample :=
+def ex_16a : Datum :=
   { id := "traugott2010_16a"
     source := ⟨"traugott-2010", "(16a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_16a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "0 Pre-Partitive"), ("level", "nonSubjective")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "traugott2010_17"
     source := ⟨"traugott-2010", "(17)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "I Partitive"), ("level", "nonSubjective")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "traugott2010_18a"
     source := ⟨"traugott-2010", "(18a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_18a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "II Extended Partitive"), ("level", "nonSubjective")] }
 
-def ex_19a : LinguisticExample :=
+def ex_19a : Datum :=
   { id := "traugott2010_19a"
     source := ⟨"traugott-2010", "(19a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_19a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "III Degree Modifier"), ("level", "subjective"), ("pragmatic", "intersubjective hedge")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "traugott2010_20"
     source := ⟨"traugott-2010", "(20)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "IV Adverb Degree Modifier"), ("level", "subjective")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "traugott2010_21b"
     source := ⟨"traugott-2010", "(21b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_21b : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "V Adjunct"), ("level", "subjective"), ("polarity", "negative")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "traugott2010_22"
     source := ⟨"traugott-2010", "(22)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "III Degree Modifier"), ("head", "positively evaluated")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "traugott2010_23"
     source := ⟨"traugott-2010", "(23)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "a shred of"), ("stage", "I Partitive"), ("level", "nonSubjective")] }
 
-def ex_24b : LinguisticExample :=
+def ex_24b : Datum :=
   { id := "traugott2010_24b"
     source := ⟨"traugott-2010", "(24b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_24b : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "a shred of"), ("stage", "II Extended Partitive"), ("level", "nonSubjective")] }
 
-def ex_25a : LinguisticExample :=
+def ex_25a : Datum :=
   { id := "traugott2010_25a"
     source := ⟨"traugott-2010", "(25a)"⟩
     reportedIn := none
@@ -238,6 +236,6 @@ def ex_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "a shred of"), ("stage", "III Degree Modifier"), ("level", "subjective"), ("polarity", "negative")] }
 
-def all : List LinguisticExample := [ex_5a, ex_5b, ex_5c, ex_6, ex_12a, ex_13a, ex_14a, ex_16a, ex_17, ex_18a, ex_19a, ex_20, ex_21b, ex_22, ex_23, ex_24b, ex_25a]
+def all : List Datum := [ex_5a, ex_5b, ex_5c, ex_6, ex_12a, ex_13a, ex_14a, ex_16a, ex_17, ex_18a, ex_19a, ex_20, ex_21b, ex_22, ex_23, ex_24b, ex_25a]
 
 end Traugott2010.Examples

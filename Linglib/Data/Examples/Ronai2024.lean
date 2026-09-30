@@ -15,9 +15,7 @@ this module; declarations live in `namespace Ronai2024.Examples`.
 
 namespace Ronai2024.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "ronai2024_1"
     source := ⟨"ronai-2024", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := [("Mary read at least some of the books.", .acceptable), ("Mary read some, but not all, of the books.", .acceptable)]
     paperFeatures := [("scale", "some/all"), ("environment", "unembedded")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "ronai2024_2"
     source := ⟨"ronai-2024", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := [("Not every student read all of the books.", .acceptable), ("No student read all of the books.", .acceptable)]
     paperFeatures := [("scale", "some/all"), ("environment", "every")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "ronai2024_5"
     source := ⟨"ronai-2024", "(5)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("scale", "some/all"), ("role", "alternative")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "ronai2024_7"
     source := ⟨"ronai-2024", "(7)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_7 : LinguisticExample :=
     readings := [("The soup is warm, but not hot.", .acceptable)]
     paperFeatures := [("scale", "warm/hot"), ("environment", "unembedded")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "ronai2024_11a"
     source := ⟨"ronai-2024", "(11a), Figure 1"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "11"), ("condition", "weak"), ("inference", "Not every soup was hot."), ("mean", "42")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "ronai2024_11b"
     source := ⟨"ronai-2024", "(11b), Figure 1"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "11"), ("condition", "strong"), ("inference", "No soup was hot."), ("mean", "30")] }
 
-def ex_11c : LinguisticExample :=
+def ex_11c : Datum :=
   { id := "ronai2024_11c"
     source := ⟨"ronai-2024", "(11c), Figure 1"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_11c : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "11"), ("condition", "true"), ("inference", "At least one soup was warm."), ("mean", "86")] }
 
-def ex_11d : LinguisticExample :=
+def ex_11d : Datum :=
   { id := "ronai2024_11d"
     source := ⟨"ronai-2024", "(11d), Figure 1"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_11d : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "11"), ("condition", "false"), ("inference", "Not every soup was warm."), ("mean", "4")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "ronai2024_12"
     source := ⟨"ronai-2024", "(12)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("example", "12"), ("condition", "strong"), ("inference", "No soup was hot.")] }
 
-def item1 : LinguisticExample :=
+def item1 : Datum :=
   { id := "ronai2024_item1"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def item1 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "1"), ("scale", "adequate/good"), ("condition", "strong"), ("inference", "No solution was good."), ("exp1", "34"), ("exp2", "7")] }
 
-def item2 : LinguisticExample :=
+def item2 : Datum :=
   { id := "ronai2024_item2"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def item2 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "2"), ("scale", "allowed/obligatory"), ("condition", "strong"), ("inference", "No move was obligatory."), ("exp1", "55"), ("exp2", "49")] }
 
-def item3 : LinguisticExample :=
+def item3 : Datum :=
   { id := "ronai2024_item3"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def item3 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "3"), ("scale", "attractive/stunning"), ("condition", "strong"), ("inference", "No model was stunning."), ("exp1", "26"), ("exp2", "0")] }
 
-def item4 : LinguisticExample :=
+def item4 : Datum :=
   { id := "ronai2024_item4"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def item4 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "4"), ("scale", "believe/know"), ("condition", "strong"), ("inference", "No mother knew it would happen."), ("exp1", "29"), ("exp2", "9")] }
 
-def item5 : LinguisticExample :=
+def item5 : Datum :=
   { id := "ronai2024_item5"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def item5 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "5"), ("scale", "big/enormous"), ("condition", "strong"), ("inference", "No elephant was enormous."), ("exp1", "21"), ("exp2", "2")] }
 
-def item6 : LinguisticExample :=
+def item6 : Datum :=
   { id := "ronai2024_item6"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def item6 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "6"), ("scale", "cheap/free"), ("condition", "strong"), ("inference", "No meal was free."), ("exp1", "74"), ("exp2", "49")] }
 
-def item7 : LinguisticExample :=
+def item7 : Datum :=
   { id := "ronai2024_item7"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def item7 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "7"), ("scale", "content/happy"), ("condition", "strong"), ("inference", "No child was happy."), ("exp1", "12"), ("exp2", "4")] }
 
-def item8 : LinguisticExample :=
+def item8 : Datum :=
   { id := "ronai2024_item8"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def item8 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "8"), ("scale", "cool/cold"), ("condition", "strong"), ("inference", "No room was cold."), ("exp1", "25"), ("exp2", "9")] }
 
-def item9 : LinguisticExample :=
+def item9 : Datum :=
   { id := "ronai2024_item9"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def item9 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "9"), ("scale", "dark/black"), ("condition", "strong"), ("inference", "No fabric was black."), ("exp1", "9"), ("exp2", "0")] }
 
-def item10 : LinguisticExample :=
+def item10 : Datum :=
   { id := "ronai2024_item10"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def item10 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "10"), ("scale", "difficult/impossible"), ("condition", "strong"), ("inference", "No problem was impossible."), ("exp1", "43"), ("exp2", "31")] }
 
-def item11 : LinguisticExample :=
+def item11 : Datum :=
   { id := "ronai2024_item11"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def item11 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "11"), ("scale", "dislike/loathe"), ("condition", "strong"), ("inference", "No teacher loathed fighting."), ("exp1", "14"), ("exp2", "13")] }
 
-def item12 : LinguisticExample :=
+def item12 : Datum :=
   { id := "ronai2024_item12"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def item12 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "12"), ("scale", "funny/hilarious"), ("condition", "strong"), ("inference", "No movie was hilarious."), ("exp1", "15"), ("exp2", "4")] }
 
-def item13 : LinguisticExample :=
+def item13 : Datum :=
   { id := "ronai2024_item13"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def item13 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "13"), ("scale", "good/perfect"), ("condition", "strong"), ("inference", "No layout was perfect."), ("exp1", "45"), ("exp2", "18")] }
 
-def item14 : LinguisticExample :=
+def item14 : Datum :=
   { id := "ronai2024_item14"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def item14 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "14"), ("scale", "good/excellent"), ("condition", "strong"), ("inference", "No movie was excellent."), ("exp1", "39"), ("exp2", "13")] }
 
-def item15 : LinguisticExample :=
+def item15 : Datum :=
   { id := "ronai2024_item15"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def item15 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "15"), ("scale", "hard/unsolvable"), ("condition", "strong"), ("inference", "No puzzle was unsolvable."), ("exp1", "49"), ("exp2", "22")] }
 
-def item16 : LinguisticExample :=
+def item16 : Datum :=
   { id := "ronai2024_item16"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def item16 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "16"), ("scale", "hungry/starving"), ("condition", "strong"), ("inference", "No dog was starving."), ("exp1", "14"), ("exp2", "4")] }
 
-def item17 : LinguisticExample :=
+def item17 : Datum :=
   { id := "ronai2024_item17"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def item17 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "17"), ("scale", "intelligent/brilliant"), ("condition", "strong"), ("inference", "No professor was brilliant."), ("exp1", "15"), ("exp2", "7")] }
 
-def item18 : LinguisticExample :=
+def item18 : Datum :=
   { id := "ronai2024_item18"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def item18 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "18"), ("scale", "like/love"), ("condition", "strong"), ("inference", "No princess loved dancing."), ("exp1", "13"), ("exp2", "9")] }
 
-def item19 : LinguisticExample :=
+def item19 : Datum :=
   { id := "ronai2024_item19"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def item19 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "19"), ("scale", "low/depleted"), ("condition", "strong"), ("inference", "No battery was depleted."), ("exp1", "46"), ("exp2", "29")] }
 
-def item20 : LinguisticExample :=
+def item20 : Datum :=
   { id := "ronai2024_item20"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def item20 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "20"), ("scale", "may/will"), ("condition", "strong"), ("inference", "No lawyer will appear in person."), ("exp1", "7"), ("exp2", "4")] }
 
-def item21 : LinguisticExample :=
+def item21 : Datum :=
   { id := "ronai2024_item21"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def item21 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "21"), ("scale", "may/have to"), ("condition", "strong"), ("inference", "No child has to eat an apple."), ("exp1", "67"), ("exp2", "53")] }
 
-def item22 : LinguisticExample :=
+def item22 : Datum :=
   { id := "ronai2024_item22"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def item22 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "22"), ("scale", "memorable/unforgettable"), ("condition", "strong"), ("inference", "No party was unforgettable."), ("exp1", "43"), ("exp2", "44")] }
 
-def item23 : LinguisticExample :=
+def item23 : Datum :=
   { id := "ronai2024_item23"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def item23 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "23"), ("scale", "old/ancient"), ("condition", "strong"), ("inference", "No house was ancient."), ("exp1", "16"), ("exp2", "7")] }
 
-def item24 : LinguisticExample :=
+def item24 : Datum :=
   { id := "ronai2024_item24"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def item24 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "24"), ("scale", "palatable/delicious"), ("condition", "strong"), ("inference", "No wine was delicious."), ("exp1", "35"), ("exp2", "18")] }
 
-def item25 : LinguisticExample :=
+def item25 : Datum :=
   { id := "ronai2024_item25"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def item25 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "25"), ("scale", "participate/win"), ("condition", "strong"), ("inference", "No freshman won."), ("exp1", "24"), ("exp2", "0")] }
 
-def item26 : LinguisticExample :=
+def item26 : Datum :=
   { id := "ronai2024_item26"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def item26 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "26"), ("scale", "possible/certain"), ("condition", "strong"), ("inference", "No outcome was certain."), ("exp1", "66"), ("exp2", "62")] }
 
-def item27 : LinguisticExample :=
+def item27 : Datum :=
   { id := "ronai2024_item27"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def item27 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "27"), ("scale", "pretty/beautiful"), ("condition", "strong"), ("inference", "No girl was beautiful."), ("exp1", "21"), ("exp2", "7")] }
 
-def item28 : LinguisticExample :=
+def item28 : Datum :=
   { id := "ronai2024_item28"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def item28 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "28"), ("scale", "rare/extinct"), ("condition", "strong"), ("inference", "No bird was extinct."), ("exp1", "50"), ("exp2", "33")] }
 
-def item29 : LinguisticExample :=
+def item29 : Datum :=
   { id := "ronai2024_item29"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def item29 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "29"), ("scale", "scarce/unavailable"), ("condition", "strong"), ("inference", "No resource was unavailable."), ("exp1", "37"), ("exp2", "20")] }
 
-def item30 : LinguisticExample :=
+def item30 : Datum :=
   { id := "ronai2024_item30"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def item30 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "30"), ("scale", "silly/ridiculous"), ("condition", "strong"), ("inference", "No song was ridiculous."), ("exp1", "18"), ("exp2", "7")] }
 
-def item31 : LinguisticExample :=
+def item31 : Datum :=
   { id := "ronai2024_item31"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def item31 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "31"), ("scale", "small/tiny"), ("condition", "strong"), ("inference", "No fish was tiny."), ("exp1", "17"), ("exp2", "7")] }
 
-def item32 : LinguisticExample :=
+def item32 : Datum :=
   { id := "ronai2024_item32"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def item32 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "32"), ("scale", "snug/tight"), ("condition", "strong"), ("inference", "No shirt was tight."), ("exp1", "13"), ("exp2", "7")] }
 
-def item33 : LinguisticExample :=
+def item33 : Datum :=
   { id := "ronai2024_item33"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def item33 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "33"), ("scale", "some/all"), ("condition", "strong"), ("inference", "No bartender saw all of the cars."), ("exp1", "46"), ("exp2", "40")] }
 
-def item34 : LinguisticExample :=
+def item34 : Datum :=
   { id := "ronai2024_item34"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def item34 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "34"), ("scale", "sometimes/always"), ("condition", "strong"), ("inference", "No doctor was always irritable."), ("exp1", "39"), ("exp2", "33")] }
 
-def item35 : LinguisticExample :=
+def item35 : Datum :=
   { id := "ronai2024_item35"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def item35 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "35"), ("scale", "special/unique"), ("condition", "strong"), ("inference", "No dress was unique."), ("exp1", "17"), ("exp2", "2")] }
 
-def item36 : LinguisticExample :=
+def item36 : Datum :=
   { id := "ronai2024_item36"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def item36 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "36"), ("scale", "start/finish"), ("condition", "strong"), ("inference", "No runner finished."), ("exp1", "22"), ("exp2", "7")] }
 
-def item37 : LinguisticExample :=
+def item37 : Datum :=
   { id := "ronai2024_item37"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def item37 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "37"), ("scale", "tired/exhausted"), ("condition", "strong"), ("inference", "No worker was exhausted."), ("exp1", "12"), ("exp2", "7")] }
 
-def item38 : LinguisticExample :=
+def item38 : Datum :=
   { id := "ronai2024_item38"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def item38 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "38"), ("scale", "try/succeed"), ("condition", "strong"), ("inference", "No athlete succeeded."), ("exp1", "33"), ("exp2", "13")] }
 
-def item39 : LinguisticExample :=
+def item39 : Datum :=
   { id := "ronai2024_item39"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def item39 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "39"), ("scale", "ugly/hideous"), ("condition", "strong"), ("inference", "No wallpaper was hideous."), ("exp1", "17"), ("exp2", "7")] }
 
-def item40 : LinguisticExample :=
+def item40 : Datum :=
   { id := "ronai2024_item40"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def item40 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "40"), ("scale", "unsettling/horrific"), ("condition", "strong"), ("inference", "No movie was horrific."), ("exp1", "28"), ("exp2", "4")] }
 
-def item41 : LinguisticExample :=
+def item41 : Datum :=
   { id := "ronai2024_item41"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def item41 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "41"), ("scale", "warm/hot"), ("condition", "strong"), ("inference", "No soup was hot."), ("exp1", "45"), ("exp2", "31")] }
 
-def item42 : LinguisticExample :=
+def item42 : Datum :=
   { id := "ronai2024_item42"
     source := ⟨"ronai-2024", "Figures 2-7"⟩
     reportedIn := none
@@ -680,6 +678,6 @@ def item42 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "42"), ("scale", "wary/scared"), ("condition", "strong"), ("inference", "No victim was scared."), ("exp1", "16"), ("exp2", "4")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_5, ex_7, ex_11a, ex_11b, ex_11c, ex_11d, ex_12, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12, item13, item14, item15, item16, item17, item18, item19, item20, item21, item22, item23, item24, item25, item26, item27, item28, item29, item30, item31, item32, item33, item34, item35, item36, item37, item38, item39, item40, item41, item42]
+def all : List Datum := [ex_1, ex_2, ex_5, ex_7, ex_11a, ex_11b, ex_11c, ex_11d, ex_12, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12, item13, item14, item15, item16, item17, item18, item19, item20, item21, item22, item23, item24, item25, item26, item27, item28, item29, item30, item31, item32, item33, item34, item35, item36, item37, item38, item39, item40, item41, item42]
 
 end Ronai2024.Examples

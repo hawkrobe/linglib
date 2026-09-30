@@ -15,9 +15,7 @@ this module; declarations live in `namespace Yagi2025.Examples`.
 
 namespace Yagi2025.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "yagi2025_1"
     source := ⟨"yagi-2025", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("presuppositions", "conflicting")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "yagi2025_2"
     source := ⟨"yagi-2025", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("presuppositions", "conflicting")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "yagi2025_3"
     source := ⟨"yagi-2025", "(1c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3 : LinguisticExample :=
     readings := [("presupposes a king or a president", .acceptable), ("false if the head of state is not opening parliament", .acceptable)]
     paperFeatures := [("presuppositions", "conflicting")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "yagi2025_4"
     source := ⟨"yagi-2025", "(3)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4 : LinguisticExample :=
     readings := [("true if the liquid is fermenting", .acceptable)]
     paperFeatures := [("negation", "of conflicting disjunction")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "yagi2025_5"
     source := ⟨"yagi-2025", "(4)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5 : LinguisticExample :=
     readings := [("true if the head of the nation is not opening parliament", .acceptable)]
     paperFeatures := [("negation", "of conflicting disjunction")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "yagi2025_6"
     source := ⟨"yagi-2025", "(8)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_6 : LinguisticExample :=
     readings := [("presupposes that Bill has children", .acceptable)]
     paperFeatures := [("presupposition", "projects")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "yagi2025_7"
     source := ⟨"yagi-2025", "(15a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("accommodation", "non-tautological")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "yagi2025_8"
     source := ⟨"yagi-2025", "(18)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_8 : LinguisticExample :=
     readings := [("the factive presupposition need not project", .acceptable)]
     paperFeatures := [("presupposition", "filtered")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "yagi2025_9"
     source := ⟨"yagi-2025", "(ia)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_9 : LinguisticExample :=
     readings := [("one of the following obtains: it must be here; it must be there", .acceptable)]
     paperFeatures := [("reading", "modal split")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "yagi2025_10"
     source := ⟨"yagi-2025", "(iiib)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("reading", "modal split")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "yagi2025_11"
     source := ⟨"yagi-2025", "(ii)"⟩
     reportedIn := none
@@ -160,6 +158,6 @@ def ex_11 : LinguisticExample :=
     readings := [("presupposes that if John is a scuba diver he has a wetsuit", .acceptable)]
     paperFeatures := [("presupposition", "conditional")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11]
 
 end Yagi2025.Examples

@@ -15,9 +15,7 @@ this module; declarations live in `namespace Condoravdi2002.Examples`.
 
 namespace Condoravdi2002.Examples
 
-open Data.Examples
-
-def ex1a_tomorrow : LinguisticExample :=
+def ex1a_tomorrow : Datum :=
   { id := "condoravdi2002_ex1a_tomorrow"
     source := ⟨"condoravdi-2002", "[1a]"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1a_tomorrow : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "eventive"), ("adverb", "future")] }
 
-def ex1a_now : LinguisticExample :=
+def ex1a_now : Datum :=
   { id := "condoravdi2002_ex1a_now"
     source := ⟨"condoravdi-2002", "[1a]"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex1a_now : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "eventive"), ("adverb", "present")] }
 
-def ex1a_yesterday : LinguisticExample :=
+def ex1a_yesterday : Datum :=
   { id := "condoravdi2002_ex1a_yesterday"
     source := ⟨"condoravdi-2002", "[1a]"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex1a_yesterday : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "eventive"), ("adverb", "past")] }
 
-def ex1b_now : LinguisticExample :=
+def ex1b_now : Datum :=
   { id := "condoravdi2002_ex1b_now"
     source := ⟨"condoravdi-2002", "[1b]"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex1b_now : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "stative"), ("adverb", "present")] }
 
-def ex1b_yesterday : LinguisticExample :=
+def ex1b_yesterday : Datum :=
   { id := "condoravdi2002_ex1b_yesterday"
     source := ⟨"condoravdi-2002", "[1b]"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex1b_yesterday : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "stative"), ("adverb", "past")] }
 
-def ex1c_now : LinguisticExample :=
+def ex1c_now : Datum :=
   { id := "condoravdi2002_ex1c_now"
     source := ⟨"condoravdi-2002", "[1c]"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex1c_now : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "stative"), ("adverb", "present")] }
 
-def ex1c_tomorrow : LinguisticExample :=
+def ex1c_tomorrow : Datum :=
   { id := "condoravdi2002_ex1c_tomorrow"
     source := ⟨"condoravdi-2002", "[1c]"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex1c_tomorrow : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "stative"), ("adverb", "future")] }
 
-def ex1c_yesterday : LinguisticExample :=
+def ex1c_yesterday : Datum :=
   { id := "condoravdi2002_ex1c_yesterday"
     source := ⟨"condoravdi-2002", "[1c]"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex1c_yesterday : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "stative"), ("adverb", "past")] }
 
-def ex2a_yesterday : LinguisticExample :=
+def ex2a_yesterday : Datum :=
   { id := "condoravdi2002_ex2a_yesterday"
     source := ⟨"condoravdi-2002", "[2a]"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex2a_yesterday : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "eventive"), ("adverb", "past")] }
 
-def ex2a_tomorrow : LinguisticExample :=
+def ex2a_tomorrow : Datum :=
   { id := "condoravdi2002_ex2a_tomorrow"
     source := ⟨"condoravdi-2002", "[2a]"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex2a_tomorrow : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "eventive"), ("adverb", "future")] }
 
-def ex2b_yesterday : LinguisticExample :=
+def ex2b_yesterday : Datum :=
   { id := "condoravdi2002_ex2b_yesterday"
     source := ⟨"condoravdi-2002", "[2b]"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex2b_yesterday : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "stative"), ("adverb", "past")] }
 
-def ex2b_tomorrow : LinguisticExample :=
+def ex2b_tomorrow : Datum :=
   { id := "condoravdi2002_ex2b_tomorrow"
     source := ⟨"condoravdi-2002", "[2b]"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex2b_tomorrow : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "stative"), ("adverb", "future")] }
 
-def ex29a : LinguisticExample :=
+def ex29a : Datum :=
   { id := "condoravdi2002_ex29a"
     source := ⟨"condoravdi-2002", "[29a]"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex29a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "eventive"), ("adverb", "past")] }
 
-def ex29b : LinguisticExample :=
+def ex29b : Datum :=
   { id := "condoravdi2002_ex29b"
     source := ⟨"condoravdi-2002", "[29b]"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex29b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modal"), ("sort", "eventive"), ("adverb", "past")] }
 
-def ex34a_yesterday : LinguisticExample :=
+def ex34a_yesterday : Datum :=
   { id := "condoravdi2002_ex34a_yesterday"
     source := ⟨"condoravdi-2002", "[34a]"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex34a_yesterday : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "perfModal"), ("sort", "stative"), ("adverb", "past")] }
 
-def ex34a_nextMonth : LinguisticExample :=
+def ex34a_nextMonth : Datum :=
   { id := "condoravdi2002_ex34a_nextMonth"
     source := ⟨"condoravdi-2002", "[34a]"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex34a_nextMonth : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "perfModal"), ("sort", "stative"), ("adverb", "future")] }
 
-def ex34b_yesterday : LinguisticExample :=
+def ex34b_yesterday : Datum :=
   { id := "condoravdi2002_ex34b_yesterday"
     source := ⟨"condoravdi-2002", "[34b]"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex34b_yesterday : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "perfModal"), ("sort", "stative"), ("adverb", "past")] }
 
-def ex34b_now : LinguisticExample :=
+def ex34b_now : Datum :=
   { id := "condoravdi2002_ex34b_now"
     source := ⟨"condoravdi-2002", "[34b]"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex34b_now : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "perfModal"), ("sort", "stative"), ("adverb", "present")] }
 
-def ex35a_yesterday : LinguisticExample :=
+def ex35a_yesterday : Datum :=
   { id := "condoravdi2002_ex35a_yesterday"
     source := ⟨"condoravdi-2002", "[35a]"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex35a_yesterday : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "stative"), ("adverb", "past")] }
 
-def ex35a_nextMonth : LinguisticExample :=
+def ex35a_nextMonth : Datum :=
   { id := "condoravdi2002_ex35a_nextMonth"
     source := ⟨"condoravdi-2002", "[35a]"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex35a_nextMonth : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "stative"), ("adverb", "future")] }
 
-def ex35b_yesterday : LinguisticExample :=
+def ex35b_yesterday : Datum :=
   { id := "condoravdi2002_ex35b_yesterday"
     source := ⟨"condoravdi-2002", "[35b]"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex35b_yesterday : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "stative"), ("adverb", "past")] }
 
-def ex35b_now : LinguisticExample :=
+def ex35b_now : Datum :=
   { id := "condoravdi2002_ex35b_now"
     source := ⟨"condoravdi-2002", "[35b]"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex35b_now : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "adverb"), ("scope", "modalPerf"), ("sort", "stative"), ("adverb", "present")] }
 
-def ex6a : LinguisticExample :=
+def ex6a : Datum :=
   { id := "condoravdi2002_ex6a"
     source := ⟨"condoravdi-2002", "[6a]"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex6a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "reading"), ("scope", "modal"), ("sort", "eventive"), ("reference", "future"), ("context", "none"), ("metaphysical", "available")] }
 
-def ex7a : LinguisticExample :=
+def ex7a : Datum :=
   { id := "condoravdi2002_ex7a"
     source := ⟨"condoravdi-2002", "[7a]"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex7a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "reading"), ("scope", "modalPerf"), ("sort", "eventive"), ("reference", "past"), ("context", "none"), ("metaphysical", "unavailable")] }
 
-def ex7b : LinguisticExample :=
+def ex7b : Datum :=
   { id := "condoravdi2002_ex7b"
     source := ⟨"condoravdi-2002", "[7b]"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex7b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "reading"), ("scope", "perfModal"), ("sort", "eventive"), ("reference", "future"), ("context", "none"), ("metaphysical", "available")] }
 
-def ex41a : LinguisticExample :=
+def ex41a : Datum :=
   { id := "condoravdi2002_ex41a"
     source := ⟨"condoravdi-2002", "[41a]"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex41a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "reading"), ("scope", "modal"), ("sort", "stative"), ("reference", "present"), ("context", "none"), ("metaphysical", "unavailable")] }
 
-def ex41b : LinguisticExample :=
+def ex41b : Datum :=
   { id := "condoravdi2002_ex41b"
     source := ⟨"condoravdi-2002", "[41b]"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex41b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "reading"), ("scope", "modal"), ("sort", "eventive"), ("reference", "future"), ("context", "none"), ("metaphysical", "available")] }
 
-def ex42b : LinguisticExample :=
+def ex42b : Datum :=
   { id := "condoravdi2002_ex42b"
     source := ⟨"condoravdi-2002", "[42b]"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex42b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "reading"), ("scope", "modal"), ("sort", "eventive"), ("reference", "future"), ("context", "open"), ("metaphysical", "available")] }
 
-def ex42c : LinguisticExample :=
+def ex42c : Datum :=
   { id := "condoravdi2002_ex42c"
     source := ⟨"condoravdi-2002", "[42c]"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex42c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "reading"), ("scope", "modal"), ("sort", "eventive"), ("reference", "future"), ("context", "settled"), ("metaphysical", "unavailable")] }
 
-def ex14a : LinguisticExample :=
+def ex14a : Datum :=
   { id := "condoravdi2002_ex14a"
     source := ⟨"condoravdi-2002", "[14a]"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex14a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sortal"), ("adverb", "already"), ("complement", "eventive")] }
 
-def ex14b : LinguisticExample :=
+def ex14b : Datum :=
   { id := "condoravdi2002_ex14b"
     source := ⟨"condoravdi-2002", "[14b]"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex14b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sortal"), ("adverb", "yet"), ("complement", "eventive")] }
 
-def ex14c : LinguisticExample :=
+def ex14c : Datum :=
   { id := "condoravdi2002_ex14c"
     source := ⟨"condoravdi-2002", "[14c]"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex14c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sortal"), ("adverb", "already"), ("complement", "perfect")] }
 
-def ex14d : LinguisticExample :=
+def ex14d : Datum :=
   { id := "condoravdi2002_ex14d"
     source := ⟨"condoravdi-2002", "[14d]"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex14d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sortal"), ("adverb", "yet"), ("complement", "perfect")] }
 
-def ex15a : LinguisticExample :=
+def ex15a : Datum :=
   { id := "condoravdi2002_ex15a"
     source := ⟨"condoravdi-2002", "[15a]"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex15a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sortal"), ("adverb", "already"), ("complement", "perfect")] }
 
-def ex15b : LinguisticExample :=
+def ex15b : Datum :=
   { id := "condoravdi2002_ex15b"
     source := ⟨"condoravdi-2002", "[15b]"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex15b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sortal"), ("adverb", "yet"), ("complement", "perfect")] }
 
-def ex15c : LinguisticExample :=
+def ex15c : Datum :=
   { id := "condoravdi2002_ex15c"
     source := ⟨"condoravdi-2002", "[15c]"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex15c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sortal"), ("adverb", "already"), ("complement", "eventive")] }
 
-def ex15d : LinguisticExample :=
+def ex15d : Datum :=
   { id := "condoravdi2002_ex15d"
     source := ⟨"condoravdi-2002", "[15d]"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex15d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "sortal"), ("adverb", "yet"), ("complement", "eventive")] }
 
-def ex36a : LinguisticExample :=
+def ex36a : Datum :=
   { id := "condoravdi2002_ex36a"
     source := ⟨"condoravdi-2002", "[36a]"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex36a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "phase"), ("adverb", "still"), ("scope", "modal")] }
 
-def ex37a : LinguisticExample :=
+def ex37a : Datum :=
   { id := "condoravdi2002_ex37a"
     source := ⟨"condoravdi-2002", "[37a]"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex37a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "phase"), ("adverb", "still"), ("scope", "perfModal")] }
 
-def ex40a : LinguisticExample :=
+def ex40a : Datum :=
   { id := "condoravdi2002_ex40a"
     source := ⟨"condoravdi-2002", "[40a]"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex40a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "phase"), ("adverb", "still"), ("scope", "modal")] }
 
-def ex40b : LinguisticExample :=
+def ex40b : Datum :=
   { id := "condoravdi2002_ex40b"
     source := ⟨"condoravdi-2002", "[40b]"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex40b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "phase"), ("adverb", "already"), ("scope", "modal")] }
 
-def ex38a : LinguisticExample :=
+def ex38a : Datum :=
   { id := "condoravdi2002_ex38a"
     source := ⟨"condoravdi-2002", "[38a]"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex38a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "german"), ("order", "modalHave"), ("adverb", "schon")] }
 
-def ex38b : LinguisticExample :=
+def ex38b : Datum :=
   { id := "condoravdi2002_ex38b"
     source := ⟨"condoravdi-2002", "[38b]"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex38b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "german"), ("order", "hadModal"), ("adverb", "schon")] }
 
-def ex38c : LinguisticExample :=
+def ex38c : Datum :=
   { id := "condoravdi2002_ex38c"
     source := ⟨"condoravdi-2002", "[38c]"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex38c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "german"), ("order", "hadModal"), ("adverb", "noch")] }
 
-def ex38d : LinguisticExample :=
+def ex38d : Datum :=
   { id := "condoravdi2002_ex38d"
     source := ⟨"condoravdi-2002", "[38d]"⟩
     reportedIn := none
@@ -602,6 +600,6 @@ def ex38d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "german"), ("order", "modalHave"), ("adverb", "noch")] }
 
-def all : List LinguisticExample := [ex1a_tomorrow, ex1a_now, ex1a_yesterday, ex1b_now, ex1b_yesterday, ex1c_now, ex1c_tomorrow, ex1c_yesterday, ex2a_yesterday, ex2a_tomorrow, ex2b_yesterday, ex2b_tomorrow, ex29a, ex29b, ex34a_yesterday, ex34a_nextMonth, ex34b_yesterday, ex34b_now, ex35a_yesterday, ex35a_nextMonth, ex35b_yesterday, ex35b_now, ex6a, ex7a, ex7b, ex41a, ex41b, ex42b, ex42c, ex14a, ex14b, ex14c, ex14d, ex15a, ex15b, ex15c, ex15d, ex36a, ex37a, ex40a, ex40b, ex38a, ex38b, ex38c, ex38d]
+def all : List Datum := [ex1a_tomorrow, ex1a_now, ex1a_yesterday, ex1b_now, ex1b_yesterday, ex1c_now, ex1c_tomorrow, ex1c_yesterday, ex2a_yesterday, ex2a_tomorrow, ex2b_yesterday, ex2b_tomorrow, ex29a, ex29b, ex34a_yesterday, ex34a_nextMonth, ex34b_yesterday, ex34b_now, ex35a_yesterday, ex35a_nextMonth, ex35b_yesterday, ex35b_now, ex6a, ex7a, ex7b, ex41a, ex41b, ex42b, ex42c, ex14a, ex14b, ex14c, ex14d, ex15a, ex15b, ex15c, ex15d, ex36a, ex37a, ex40a, ex40b, ex38a, ex38b, ex38c, ex38d]
 
 end Condoravdi2002.Examples

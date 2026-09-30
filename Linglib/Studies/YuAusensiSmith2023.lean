@@ -148,7 +148,6 @@ theorem not_stative_modify_monks : ¬ ∃ s, modify (fun _ s ↦ s = Ev.broken) 
 
 /-! ### The judgments -/
 
-open Data.Examples in
 /-- *Again* has a restitutive reading in the examples exactly with a property concept root. -/
 theorem restitutive_iff_propertyConcept :
     ∀ e ∈ Examples.all, e.feature? "diagnostic" = some "again" →
@@ -156,7 +155,6 @@ theorem restitutive_iff_propertyConcept :
         e.feature? "root class" = some "property concept") := by
   decide
 
-open Data.Examples in
 /-- A *for*-phrase has an internal reading in the examples exactly with a property concept
 root. -/
 theorem internal_iff_propertyConcept :
@@ -165,7 +163,6 @@ theorem internal_iff_propertyConcept :
         e.feature? "root class" = some "property concept") := by
   decide
 
-open Data.Examples in
 /-- A root modifies a resultative in the examples exactly when it is a change-of-state root. -/
 theorem modifier_iff_changeOfState :
     ∀ e ∈ Examples.all, e.feature? "diagnostic" = some "resultative modifier" →

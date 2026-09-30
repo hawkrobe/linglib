@@ -15,9 +15,7 @@ this module; declarations live in `namespace GroveWhite2025.Examples`.
 
 namespace GroveWhite2025.Examples
 
-open Data.Examples
-
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "grovewhite2025_1a"
     source := ⟨"grove-white-2025", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "love"), ("operator", "none"), ("inference", "(2) Mo left."), ("projects", "true")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "grovewhite2025_1b"
     source := ⟨"grove-white-2025", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "love"), ("operator", "negation"), ("inference", "(2) Mo left."), ("projects", "true")] }
 
-def ex_1c : LinguisticExample :=
+def ex_1c : Datum :=
   { id := "grovewhite2025_1c"
     source := ⟨"grove-white-2025", "(1c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_1c : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "love"), ("operator", "question"), ("inference", "(2) Mo left."), ("projects", "true")] }
 
-def ex_1d : LinguisticExample :=
+def ex_1d : Datum :=
   { id := "grovewhite2025_1d"
     source := ⟨"grove-white-2025", "(1d)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_1d : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "love"), ("operator", "modal"), ("inference", "(2) Mo left."), ("projects", "true")] }
 
-def ex_1e : LinguisticExample :=
+def ex_1e : Datum :=
   { id := "grovewhite2025_1e"
     source := ⟨"grove-white-2025", "(1e)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_1e : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "love"), ("operator", "conditional"), ("inference", "(2) Mo left."), ("projects", "true")] }
 
-def ex_17_belief : LinguisticExample :=
+def ex_17_belief : Datum :=
   { id := "grovewhite2025_17_belief"
     source := ⟨"grove-white-2025", "(17)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_17_belief : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "be annoyed"), ("operator", "question"), ("inference", "(18a) Jo believed that Mo left."), ("projects", "true")] }
 
-def ex_17_truth : LinguisticExample :=
+def ex_17_truth : Datum :=
   { id := "grovewhite2025_17_truth"
     source := ⟨"grove-white-2025", "(17)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_17_truth : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "be annoyed"), ("operator", "question"), ("inference", "(18b) Mo left."), ("projects", "true")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "grovewhite2025_19"
     source := ⟨"grove-white-2025", "(19)"⟩
     reportedIn := none
@@ -121,6 +119,6 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "find out"), ("operator", "negation"), ("inference", "Harry is having a graduation party."), ("projects", "false")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_1d, ex_1e, ex_17_belief, ex_17_truth, ex_19]
+def all : List Datum := [ex_1a, ex_1b, ex_1c, ex_1d, ex_1e, ex_17_belief, ex_17_truth, ex_19]
 
 end GroveWhite2025.Examples

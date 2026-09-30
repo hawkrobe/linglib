@@ -15,9 +15,7 @@ this module; declarations live in `namespace BaleSchwarz2026.Examples`.
 
 namespace BaleSchwarz2026.Examples
 
-open Data.Examples
-
-def bs2026_2 : LinguisticExample :=
+def bs2026_2 : Datum :=
   { id := "bs2026_2"
     source := ⟨"bale-schwarz-2026", "(2)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def bs2026_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "density"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter"), ("interpretation", "math speak")] }
 
-def bs2026_3 : LinguisticExample :=
+def bs2026_3 : Datum :=
   { id := "bs2026_3"
     source := ⟨"bale-schwarz-2026", "(3)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def bs2026_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copular"), ("numeral", "four times ten to the thirteenth"), ("unit", "kilometers"), ("interpretation", "math speak")] }
 
-def bs2026_4 : LinguisticExample :=
+def bs2026_4 : Datum :=
   { id := "bs2026_4"
     source := ⟨"bale-schwarz-2026", "(4)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def bs2026_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "weight"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter"), ("interpretation", "compositional")] }
 
-def bs2026_6a : LinguisticExample :=
+def bs2026_6a : Datum :=
   { id := "bs2026_6a"
     source := ⟨"bale-schwarz-2026", "(6a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def bs2026_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "density"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter"), ("interpretation", "math speak")] }
 
-def bs2026_6b : LinguisticExample :=
+def bs2026_6b : Datum :=
   { id := "bs2026_6b"
     source := ⟨"bale-schwarz-2026", "(6b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def bs2026_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "speed"), ("numeral", "thirty"), ("unit", "miles"), ("per_unit", "hour"), ("interpretation", "math speak")] }
 
-def bs2026_7a : LinguisticExample :=
+def bs2026_7a : Datum :=
   { id := "bs2026_7a"
     source := ⟨"bale-schwarz-2026", "(7a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def bs2026_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "weight"), ("numeral", "thirteen"), ("unit", "grams")] }
 
-def bs2026_7b : LinguisticExample :=
+def bs2026_7b : Datum :=
   { id := "bs2026_7b"
     source := ⟨"bale-schwarz-2026", "(7b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def bs2026_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "distance"), ("numeral", "thirty"), ("unit", "miles")] }
 
-def bs2026_8a : LinguisticExample :=
+def bs2026_8a : Datum :=
   { id := "bs2026_8a"
     source := ⟨"bale-schwarz-2026", "(8a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def bs2026_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "weight"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter"), ("interpretation", "compositional"), ("pro_antecedent", "this sample of liquid")] }
 
-def bs2026_8b : LinguisticExample :=
+def bs2026_8b : Datum :=
   { id := "bs2026_8b"
     source := ⟨"bale-schwarz-2026", "(8b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def bs2026_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "distance"), ("numeral", "thirty"), ("unit", "miles"), ("per_unit", "hour"), ("interpretation", "compositional"), ("pro_antecedent", "its six-hour trip")] }
 
-def bs2026_22 : LinguisticExample :=
+def bs2026_22 : Datum :=
   { id := "bs2026_22"
     source := ⟨"bale-schwarz-2026", "(22)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def bs2026_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "pressure"), ("numeral", "33"), ("unit", "pounds"), ("per_unit", "square inch"), ("interpretation", "idiom")] }
 
-def bs2026_23 : LinguisticExample :=
+def bs2026_23 : Datum :=
   { id := "bs2026_23"
     source := ⟨"bale-schwarz-2026", "(23)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def bs2026_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "pressure"), ("numeral", "33"), ("unit", "psi")] }
 
-def bs2026_24 : LinguisticExample :=
+def bs2026_24 : Datum :=
   { id := "bs2026_24"
     source := ⟨"bale-schwarz-2026", "(24)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def bs2026_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "sub-extraction"), ("base", "(3)"), ("interpretation", "math speak")] }
 
-def bs2026_25a : LinguisticExample :=
+def bs2026_25a : Datum :=
   { id := "bs2026_25a"
     source := ⟨"bale-schwarz-2026", "(25a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def bs2026_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "density"), ("diagnostic", "substitution"), ("base", "(6a)"), ("verbalizes", "13 g/mL")] }
 
-def bs2026_25b : LinguisticExample :=
+def bs2026_25b : Datum :=
   { id := "bs2026_25b"
     source := ⟨"bale-schwarz-2026", "(25b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def bs2026_25b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "speed"), ("diagnostic", "substitution"), ("base", "(6b)"), ("verbalizes", "30 mph")] }
 
-def bs2026_26a : LinguisticExample :=
+def bs2026_26a : Datum :=
   { id := "bs2026_26a"
     source := ⟨"bale-schwarz-2026", "(26a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def bs2026_26a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "weight"), ("diagnostic", "substitution"), ("base", "(8a)"), ("verbalizes", "13 g/mL")] }
 
-def bs2026_26b : LinguisticExample :=
+def bs2026_26b : Datum :=
   { id := "bs2026_26b"
     source := ⟨"bale-schwarz-2026", "(26b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def bs2026_26b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "distance"), ("diagnostic", "substitution"), ("base", "(8b)"), ("verbalizes", "30 mph")] }
 
-def bs2026_27a : LinguisticExample :=
+def bs2026_27a : Datum :=
   { id := "bs2026_27a"
     source := ⟨"bale-schwarz-2026", "(27a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def bs2026_27a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "density"), ("diagnostic", "sub-extraction"), ("base", "(2)"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter")] }
 
-def bs2026_27b : LinguisticExample :=
+def bs2026_27b : Datum :=
   { id := "bs2026_27b"
     source := ⟨"bale-schwarz-2026", "(27b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def bs2026_27b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "density"), ("diagnostic", "sub-extraction"), ("base", "(2)"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter")] }
 
-def bs2026_27c : LinguisticExample :=
+def bs2026_27c : Datum :=
   { id := "bs2026_27c"
     source := ⟨"bale-schwarz-2026", "(27c)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def bs2026_27c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "density"), ("diagnostic", "sub-extraction"), ("base", "(2)"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter")] }
 
-def bs2026_28a : LinguisticExample :=
+def bs2026_28a : Datum :=
   { id := "bs2026_28a"
     source := ⟨"bale-schwarz-2026", "(28a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def bs2026_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "speed"), ("diagnostic", "sub-extraction"), ("base", "(6b)"), ("numeral", "thirty"), ("unit", "miles"), ("per_unit", "hour")] }
 
-def bs2026_28b : LinguisticExample :=
+def bs2026_28b : Datum :=
   { id := "bs2026_28b"
     source := ⟨"bale-schwarz-2026", "(28b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def bs2026_28b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "speed"), ("diagnostic", "sub-extraction"), ("base", "(6b)"), ("numeral", "thirty"), ("unit", "miles"), ("per_unit", "hour")] }
 
-def bs2026_28c : LinguisticExample :=
+def bs2026_28c : Datum :=
   { id := "bs2026_28c"
     source := ⟨"bale-schwarz-2026", "(28c)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def bs2026_28c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copular"), ("predicate_dimension", "speed"), ("diagnostic", "sub-extraction"), ("base", "(6b)"), ("numeral", "thirty"), ("unit", "miles"), ("per_unit", "hour")] }
 
-def bs2026_29a : LinguisticExample :=
+def bs2026_29a : Datum :=
   { id := "bs2026_29a"
     source := ⟨"bale-schwarz-2026", "(29a)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def bs2026_29a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "weight"), ("diagnostic", "sub-extraction"), ("base", "(8a)"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter")] }
 
-def bs2026_29b : LinguisticExample :=
+def bs2026_29b : Datum :=
   { id := "bs2026_29b"
     source := ⟨"bale-schwarz-2026", "(29b)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def bs2026_29b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "weight"), ("diagnostic", "sub-extraction"), ("base", "(8a)"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter")] }
 
-def bs2026_29c : LinguisticExample :=
+def bs2026_29c : Datum :=
   { id := "bs2026_29c"
     source := ⟨"bale-schwarz-2026", "(29c)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def bs2026_29c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "weight"), ("diagnostic", "sub-extraction"), ("base", "(8a)"), ("numeral", "thirteen"), ("unit", "grams"), ("per_unit", "milliliter")] }
 
-def bs2026_30a : LinguisticExample :=
+def bs2026_30a : Datum :=
   { id := "bs2026_30a"
     source := ⟨"bale-schwarz-2026", "(30a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def bs2026_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "distance"), ("diagnostic", "sub-extraction"), ("base", "(8b)"), ("numeral", "thirty"), ("unit", "miles"), ("per_unit", "hour")] }
 
-def bs2026_30b : LinguisticExample :=
+def bs2026_30b : Datum :=
   { id := "bs2026_30b"
     source := ⟨"bale-schwarz-2026", "(30b)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def bs2026_30b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "distance"), ("diagnostic", "sub-extraction"), ("base", "(8b)"), ("numeral", "thirty"), ("unit", "miles"), ("per_unit", "hour")] }
 
-def bs2026_30c : LinguisticExample :=
+def bs2026_30c : Datum :=
   { id := "bs2026_30c"
     source := ⟨"bale-schwarz-2026", "(30c)"⟩
     reportedIn := none
@@ -381,6 +379,6 @@ def bs2026_30c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "measurement verb"), ("predicate_dimension", "distance"), ("diagnostic", "sub-extraction"), ("base", "(8b)"), ("numeral", "thirty"), ("unit", "miles"), ("per_unit", "hour")] }
 
-def all : List LinguisticExample := [bs2026_2, bs2026_3, bs2026_4, bs2026_6a, bs2026_6b, bs2026_7a, bs2026_7b, bs2026_8a, bs2026_8b, bs2026_22, bs2026_23, bs2026_24, bs2026_25a, bs2026_25b, bs2026_26a, bs2026_26b, bs2026_27a, bs2026_27b, bs2026_27c, bs2026_28a, bs2026_28b, bs2026_28c, bs2026_29a, bs2026_29b, bs2026_29c, bs2026_30a, bs2026_30b, bs2026_30c]
+def all : List Datum := [bs2026_2, bs2026_3, bs2026_4, bs2026_6a, bs2026_6b, bs2026_7a, bs2026_7b, bs2026_8a, bs2026_8b, bs2026_22, bs2026_23, bs2026_24, bs2026_25a, bs2026_25b, bs2026_26a, bs2026_26b, bs2026_27a, bs2026_27b, bs2026_27c, bs2026_28a, bs2026_28b, bs2026_28c, bs2026_29a, bs2026_29b, bs2026_29c, bs2026_30a, bs2026_30b, bs2026_30c]
 
 end BaleSchwarz2026.Examples

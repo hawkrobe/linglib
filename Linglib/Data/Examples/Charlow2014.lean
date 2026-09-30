@@ -15,9 +15,7 @@ this module; declarations live in `namespace Charlow2014.Examples`.
 
 namespace Charlow2014.Examples
 
-open Data.Examples
-
-def ex4_1a : LinguisticExample :=
+def ex4_1a : Datum :=
   { id := "charlow2014_ex4_1a"
     source := ⟨"charlow-2014", "(4.1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex4_1a : LinguisticExample :=
     readings := [("∃ > if", .acceptable)]
     paperFeatures := [] }
 
-def ex4_1b : LinguisticExample :=
+def ex4_1b : Datum :=
   { id := "charlow2014_ex4_1b"
     source := ⟨"charlow-2014", "(4.1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex4_1b : LinguisticExample :=
     readings := [("∀ > if", .unacceptable)]
     paperFeatures := [] }
 
-def ex4_1c : LinguisticExample :=
+def ex4_1c : Datum :=
   { id := "charlow2014_ex4_1c"
     source := ⟨"charlow-2014", "(4.1c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex4_1c : LinguisticExample :=
     readings := [("¬∃ > if", .unacceptable)]
     paperFeatures := [] }
 
-def ex4_2a : LinguisticExample :=
+def ex4_2a : Datum :=
   { id := "charlow2014_ex4_2a"
     source := ⟨"charlow-2014", "(4.2a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex4_2a : LinguisticExample :=
     readings := [("no > ∃ > every (intermediate)", .acceptable)]
     paperFeatures := [] }
 
-def ex4_4 : LinguisticExample :=
+def ex4_4 : Datum :=
   { id := "charlow2014_ex4_4"
     source := ⟨"schwarz-2001", "(25)"⟩
     reportedIn := some ⟨"charlow-2014", "(4.4)"⟩
@@ -82,7 +80,7 @@ def ex4_4 : LinguisticExample :=
     readings := [("∃ > no (pronoun bound)", .unacceptable)]
     paperFeatures := [] }
 
-def ex4_6 : LinguisticExample :=
+def ex4_6 : Datum :=
   { id := "charlow2014_ex4_6"
     source := ⟨"charlow-2014", "(4.6)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex4_6 : LinguisticExample :=
     readings := [("a book > not > a famous linguist", .unacceptable)]
     paperFeatures := [] }
 
-def ex4_18b : LinguisticExample :=
+def ex4_18b : Datum :=
   { id := "charlow2014_ex4_18b"
     source := ⟨"charlow-2014", "(4.18b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex4_18b : LinguisticExample :=
     readings := [("a relative > if > a lawyer", .acceptable)]
     paperFeatures := [] }
 
-def ex4_23a : LinguisticExample :=
+def ex4_23a : Datum :=
   { id := "charlow2014_ex4_23a"
     source := ⟨"rooth-partee-1982", "(21c)"⟩
     reportedIn := some ⟨"charlow-2014", "(4.23a)"⟩
@@ -121,7 +119,7 @@ def ex4_23a : LinguisticExample :=
     readings := [("or > hopes, indefinites de dicto", .acceptable)]
     paperFeatures := [] }
 
-def ex4_23b : LinguisticExample :=
+def ex4_23b : Datum :=
   { id := "charlow2014_ex4_23b"
     source := ⟨"rooth-partee-1982", "(21a)"⟩
     reportedIn := some ⟨"charlow-2014", "(4.23b)"⟩
@@ -134,7 +132,7 @@ def ex4_23b : LinguisticExample :=
     readings := [("and > hopes", .unacceptable)]
     paperFeatures := [] }
 
-def ex4_24b : LinguisticExample :=
+def ex4_24b : Datum :=
   { id := "charlow2014_ex4_24b"
     source := ⟨"charlow-2014", "(4.24b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex4_24b : LinguisticExample :=
     readings := [("either everyone ate a steak, or everyone ate a hamburger (or > every > a)", .acceptable)]
     paperFeatures := [] }
 
-def ex4_25b : LinguisticExample :=
+def ex4_25b : Datum :=
   { id := "charlow2014_ex4_25b"
     source := ⟨"charlow-2014", "(4.25b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex4_25b : LinguisticExample :=
     readings := [("every farmer beats every donkey or horse he owns", .acceptable)]
     paperFeatures := [] }
 
-def ex5_7a : LinguisticExample :=
+def ex5_7a : Datum :=
   { id := "charlow2014_ex5_7a"
     source := ⟨"charlow-2014", "(5.7a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex5_7a : LinguisticExample :=
     readings := [("sloppy (him = Bill)", .acceptable)]
     paperFeatures := [] }
 
-def ex5_22 : LinguisticExample :=
+def ex5_22 : Datum :=
   { id := "charlow2014_ex5_22"
     source := ⟨"charlow-2014", "(5.22)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex5_22 : LinguisticExample :=
     readings := [("they = maximal refset", .acceptable)]
     paperFeatures := [] }
 
-def ex5_23 : LinguisticExample :=
+def ex5_23 : Datum :=
   { id := "charlow2014_ex5_23"
     source := ⟨"charlow-2014", "(5.23)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex5_23 : LinguisticExample :=
     readings := [("they = maximal refset", .acceptable)]
     paperFeatures := [] }
 
-def ex5_27b : LinguisticExample :=
+def ex5_27b : Datum :=
   { id := "charlow2014_ex5_27b"
     source := ⟨"charlow-2014", "(5.27b)"⟩
     reportedIn := none
@@ -212,6 +210,6 @@ def ex5_27b : LinguisticExample :=
     readings := [("also > SUE > only > BILL", .acceptable)]
     paperFeatures := [] }
 
-def all : List LinguisticExample := [ex4_1a, ex4_1b, ex4_1c, ex4_2a, ex4_4, ex4_6, ex4_18b, ex4_23a, ex4_23b, ex4_24b, ex4_25b, ex5_7a, ex5_22, ex5_23, ex5_27b]
+def all : List Datum := [ex4_1a, ex4_1b, ex4_1c, ex4_2a, ex4_4, ex4_6, ex4_18b, ex4_23a, ex4_23b, ex4_24b, ex4_25b, ex5_7a, ex5_22, ex5_23, ex5_27b]
 
 end Charlow2014.Examples

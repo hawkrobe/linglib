@@ -15,9 +15,7 @@ this module; declarations live in `namespace Cruse1973.Examples`.
 
 namespace Cruse1973.Examples
 
-open Data.Examples
-
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "cruse1973_7"
     source := ⟨"cruse-1973", "(7)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "entails"), ("features", "agentive"), ("participant", "John"), ("inferred", "true")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "cruse1973_8"
     source := ⟨"cruse-1973", "(8)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "entails"), ("features", ""), ("participant", "the vase"), ("animate", "false")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "cruse1973_9"
     source := ⟨"cruse-1973", "(9)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "entails"), ("features", "agentive"), ("participant", "John"), ("inferred", "true")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "cruse1973_10"
     source := ⟨"cruse-1973", "(10)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "entails"), ("features", ""), ("participant", "the vase"), ("animate", "false")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "cruse1973_11"
     source := ⟨"cruse-1973", "(11)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "entails"), ("features", "agentive"), ("participant", "the prisoners"), ("inferred", "true")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "cruse1973_12"
     source := ⟨"cruse-1973", "(12)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "entails"), ("features", ""), ("participant", "the prisoners")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "cruse1973_13"
     source := ⟨"cruse-1973", "(13)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("features", "agentive"), ("participant", "the wind"), ("animate", "false"), ("inferred", "true")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "cruse1973_14"
     source := ⟨"cruse-1973", "(14)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "agentive"), ("participant", "the wind"), ("animate", "false"), ("inferred", "true")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "cruse1973_15"
     source := ⟨"cruse-1973", "(15)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("features", "agentive"), ("participant", "the computer"), ("animate", "false"), ("inferred", "true")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "cruse1973_16"
     source := ⟨"cruse-1973", "(16)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "agentive"), ("participant", "the computer"), ("animate", "false"), ("inferred", "true")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "cruse1973_17"
     source := ⟨"cruse-1973", "(17)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "effective"), ("participant", "the bullet"), ("animate", "false"), ("inferred", "true")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "cruse1973_18"
     source := ⟨"cruse-1973", "(18)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("features", "effective"), ("participant", "the bullet"), ("animate", "false"), ("inferred", "true")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "cruse1973_19"
     source := ⟨"cruse-1973", "(19)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "effective"), ("participant", "the bullet"), ("animate", "false"), ("inferred", "true")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "cruse1973_20"
     source := ⟨"cruse-1973", "(20)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("features", ""), ("participant", "the door"), ("animate", "false"), ("neutralized", "true")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "cruse1973_21"
     source := ⟨"cruse-1973", "(21)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("features", ""), ("participant", "the vase"), ("animate", "false"), ("neutralized", "true")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "cruse1973_22"
     source := ⟨"cruse-1973", "(22)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "happen"), ("features", ""), ("participant", "the door"), ("animate", "false"), ("neutralized", "true")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "cruse1973_23"
     source := ⟨"cruse-1973", "(23)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "volitive"), ("participant", "Christ"), ("verbClass", "process")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "cruse1973_24"
     source := ⟨"cruse-1973", "(24)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("features", "volitive"), ("participant", "Christ"), ("verbClass", "process")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "cruse1973_25"
     source := ⟨"cruse-1973", "(25)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "volitive"), ("participant", "Christ"), ("verbClass", "process")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "cruse1973_26"
     source := ⟨"cruse-1973", "(26)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("participant", "John"), ("verbClass", "stative")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "cruse1973_27"
     source := ⟨"cruse-1973", "(27)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("participant", "I"), ("verbClass", "stative")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "cruse1973_28"
     source := ⟨"cruse-1973", "(28)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "progressive"), ("participant", "I"), ("verbClass", "stative")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "cruse1973_29"
     source := ⟨"cruse-1973", "(29)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("participant", "you"), ("verbClass", "stative")] }
 
-def ex_30 : LinguisticExample :=
+def ex_30 : Datum :=
   { id := "cruse1973_30"
     source := ⟨"cruse-1973", "(30)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "progressive"), ("participant", "you"), ("verbClass", "stative")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "cruse1973_31"
     source := ⟨"cruse-1973", "(31)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("features", "volitive"), ("participant", "John")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "cruse1973_32"
     source := ⟨"cruse-1973", "(32)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("features", "volitive"), ("participant", "John")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "cruse1973_33"
     source := ⟨"cruse-1973", "(33)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("features", "volitive"), ("participant", "John"), ("verbClass", "stative")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "cruse1973_34"
     source := ⟨"cruse-1973", "(34)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("features", "volitive"), ("participant", "John")] }
 
-def ex_35 : LinguisticExample :=
+def ex_35 : Datum :=
   { id := "cruse1973_35"
     source := ⟨"cruse-1973", "(35)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "volitive"), ("participant", "John")] }
 
-def ex_36 : LinguisticExample :=
+def ex_36 : Datum :=
   { id := "cruse1973_36"
     source := ⟨"cruse-1973", "(36)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("features", ""), ("participant", "John")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "cruse1973_37"
     source := ⟨"cruse-1973", "(37)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "happen"), ("features", ""), ("participant", "John")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "cruse1973_38"
     source := ⟨"cruse-1973", "(38)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("features", ""), ("participant", "John"), ("verbClass", "process")] }
 
-def ex_39 : LinguisticExample :=
+def ex_39 : Datum :=
   { id := "cruse1973_39"
     source := ⟨"cruse-1973", "(39)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "happen"), ("features", ""), ("participant", "John"), ("verbClass", "process")] }
 
-def ex_40 : LinguisticExample :=
+def ex_40 : Datum :=
   { id := "cruse1973_40"
     source := ⟨"cruse-1973", "(40)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_40 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "purpose"), ("features", "agentive"), ("participant", "John")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "cruse1973_41"
     source := ⟨"cruse-1973", "(41)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("features", "agentive"), ("participant", "John"), ("inferred", "true")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "cruse1973_42"
     source := ⟨"cruse-1973", "(42)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "imperative"), ("features", "agentive"), ("participant", "the addressee"), ("inferred", "true")] }
 
-def ex_43 : LinguisticExample :=
+def ex_43 : Datum :=
   { id := "cruse1973_43"
     source := ⟨"cruse-1973", "(43)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_43 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("features", "agentive"), ("participant", "John"), ("inferred", "true")] }
 
-def ex_44 : LinguisticExample :=
+def ex_44 : Datum :=
   { id := "cruse1973_44"
     source := ⟨"cruse-1973", "(44)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "agentive"), ("participant", "John"), ("inferred", "true")] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "cruse1973_45"
     source := ⟨"cruse-1973", "(45)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("features", "agentive"), ("participant", "John"), ("inferred", "true")] }
 
-def ex_46 : LinguisticExample :=
+def ex_46 : Datum :=
   { id := "cruse1973_46"
     source := ⟨"cruse-1973", "(46)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_46 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "agentive"), ("participant", "John"), ("inferred", "true")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "cruse1973_47"
     source := ⟨"cruse-1973", "(47)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "carefully"), ("features", ""), ("participant", "John"), ("inferred", "true")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "cruse1973_48"
     source := ⟨"cruse-1973", "(48)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex_48 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "carefully"), ("features", "agentive"), ("participant", "John"), ("inferred", "true")] }
 
-def ex_49 : LinguisticExample :=
+def ex_49 : Datum :=
   { id := "cruse1973_49"
     source := ⟨"cruse-1973", "(49)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex_49 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "carefully"), ("features", "volitive+agentive"), ("participant", "John")] }
 
-def ex_50 : LinguisticExample :=
+def ex_50 : Datum :=
   { id := "cruse1973_50"
     source := ⟨"cruse-1973", "(50)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex_50 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "effective"), ("participant", "these columns"), ("animate", "false")] }
 
-def ex_51 : LinguisticExample :=
+def ex_51 : Datum :=
   { id := "cruse1973_51"
     source := ⟨"cruse-1973", "(51)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex_51 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("features", "effective"), ("participant", "these columns"), ("animate", "false")] }
 
-def ex_52 : LinguisticExample :=
+def ex_52 : Datum :=
   { id := "cruse1973_52"
     source := ⟨"cruse-1973", "(52)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex_52 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "effective"), ("participant", "these columns"), ("animate", "false")] }
 
-def ex_53 : LinguisticExample :=
+def ex_53 : Datum :=
   { id := "cruse1973_53"
     source := ⟨"cruse-1973", "(53)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex_53 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "effective"), ("participant", "the flying stone"), ("animate", "false")] }
 
-def ex_54 : LinguisticExample :=
+def ex_54 : Datum :=
   { id := "cruse1973_54"
     source := ⟨"cruse-1973", "(54)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex_54 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "do"), ("features", "effective"), ("participant", "the flying stone"), ("animate", "false")] }
 
-def ex_55 : LinguisticExample :=
+def ex_55 : Datum :=
   { id := "cruse1973_55"
     source := ⟨"cruse-1973", "(55)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex_55 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "happen"), ("features", "effective"), ("participant", "the flying stone"), ("animate", "false")] }
 
-def ex_56 : LinguisticExample :=
+def ex_56 : Datum :=
   { id := "cruse1973_56"
     source := ⟨"cruse-1973", "(56)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex_56 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "agentive"), ("participant", "the wind"), ("animate", "false")] }
 
-def ex_57 : LinguisticExample :=
+def ex_57 : Datum :=
   { id := "cruse1973_57"
     source := ⟨"cruse-1973", "(57)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex_57 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("participant", "the stone"), ("animate", "false")] }
 
-def ex_58 : LinguisticExample :=
+def ex_58 : Datum :=
   { id := "cruse1973_58"
     source := ⟨"cruse-1973", "(58)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex_58 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "instrumental"), ("participant", "a stone"), ("animate", "false")] }
 
-def ex_59 : LinguisticExample :=
+def ex_59 : Datum :=
   { id := "cruse1973_59"
     source := ⟨"cruse-1973", "(59)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex_59 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "entails"), ("features", "instrumental"), ("participant", "the stone"), ("animate", "false")] }
 
-def ex_60 : LinguisticExample :=
+def ex_60 : Datum :=
   { id := "cruse1973_60"
     source := ⟨"cruse-1973", "(60)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex_60 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "effective"), ("participant", "a stone"), ("animate", "false")] }
 
-def ex_61 : LinguisticExample :=
+def ex_61 : Datum :=
   { id := "cruse1973_61"
     source := ⟨"cruse-1973", "(61)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex_61 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "instrumental"), ("participant", "this key"), ("animate", "false")] }
 
-def ex_62 : LinguisticExample :=
+def ex_62 : Datum :=
   { id := "cruse1973_62"
     source := ⟨"cruse-1973", "(62)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex_62 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "initiative"), ("participant", "the warder")] }
 
-def ex_63 : LinguisticExample :=
+def ex_63 : Datum :=
   { id := "cruse1973_63"
     source := ⟨"cruse-1973", "(63)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex_63 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "initiative"), ("participant", "John")] }
 
-def ex_64 : LinguisticExample :=
+def ex_64 : Datum :=
   { id := "cruse1973_64"
     source := ⟨"cruse-1973", "(64)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex_64 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "initiativeDenial"), ("features", "initiative"), ("participant", "John")] }
 
-def ex_65 : LinguisticExample :=
+def ex_65 : Datum :=
   { id := "cruse1973_65"
     source := ⟨"cruse-1973", "(65)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ex_65 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "initiativeDenial"), ("features", "initiative"), ("participant", "John")] }
 
-def ex_66 : LinguisticExample :=
+def ex_66 : Datum :=
   { id := "cruse1973_66"
     source := ⟨"cruse-1973", "(66)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def ex_66 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "initiativeDenial"), ("features", "initiative"), ("participant", "the warder")] }
 
-def ex_67 : LinguisticExample :=
+def ex_67 : Datum :=
   { id := "cruse1973_67"
     source := ⟨"cruse-1973", "(67)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def ex_67 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", "agentive"), ("participant", "John")] }
 
-def ex_68 : LinguisticExample :=
+def ex_68 : Datum :=
   { id := "cruse1973_68"
     source := ⟨"cruse-1973", "(68)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def ex_68 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", "agentive"), ("participant", "the machine"), ("animate", "false")] }
 
-def ex_69 : LinguisticExample :=
+def ex_69 : Datum :=
   { id := "cruse1973_69"
     source := ⟨"cruse-1973", "(69)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def ex_69 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", "agentive"), ("participant", "the fire"), ("animate", "false")] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "cruse1973_70"
     source := ⟨"cruse-1973", "(70)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def ex_70 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", "agentive"), ("participant", "the sea"), ("animate", "false")] }
 
-def ex_71 : LinguisticExample :=
+def ex_71 : Datum :=
   { id := "cruse1973_71"
     source := ⟨"cruse-1973", "(71)"⟩
     reportedIn := none
@@ -862,7 +860,7 @@ def ex_71 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", ""), ("participant", "the stone"), ("animate", "false"), ("inferred", "true")] }
 
-def ex_72 : LinguisticExample :=
+def ex_72 : Datum :=
   { id := "cruse1973_72"
     source := ⟨"cruse-1973", "(72)"⟩
     reportedIn := none
@@ -875,7 +873,7 @@ def ex_72 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", ""), ("participant", "the stone"), ("animate", "false"), ("inferred", "true")] }
 
-def ex_73 : LinguisticExample :=
+def ex_73 : Datum :=
   { id := "cruse1973_73"
     source := ⟨"cruse-1973", "(73)"⟩
     reportedIn := none
@@ -888,7 +886,7 @@ def ex_73 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", ""), ("participant", "the ball"), ("animate", "false"), ("inferred", "true")] }
 
-def ex_74 : LinguisticExample :=
+def ex_74 : Datum :=
   { id := "cruse1973_74"
     source := ⟨"cruse-1973", "(74)"⟩
     reportedIn := none
@@ -901,7 +899,7 @@ def ex_74 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", ""), ("participant", "the ball"), ("animate", "false"), ("inferred", "true")] }
 
-def ex_75 : LinguisticExample :=
+def ex_75 : Datum :=
   { id := "cruse1973_75"
     source := ⟨"cruse-1973", "(75)"⟩
     reportedIn := none
@@ -914,7 +912,7 @@ def ex_75 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", "agentive"), ("participant", "John")] }
 
-def ex_76 : LinguisticExample :=
+def ex_76 : Datum :=
   { id := "cruse1973_76"
     source := ⟨"cruse-1973", "(76)"⟩
     reportedIn := none
@@ -927,7 +925,7 @@ def ex_76 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", "agentive"), ("participant", "John")] }
 
-def ex_77 : LinguisticExample :=
+def ex_77 : Datum :=
   { id := "cruse1973_77"
     source := ⟨"cruse-1973", "(77)"⟩
     reportedIn := none
@@ -940,7 +938,7 @@ def ex_77 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", ""), ("participant", "John")] }
 
-def ex_78 : LinguisticExample :=
+def ex_78 : Datum :=
   { id := "cruse1973_78"
     source := ⟨"cruse-1973", "(78)"⟩
     reportedIn := none
@@ -953,7 +951,7 @@ def ex_78 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "reflexive"), ("features", ""), ("participant", "John")] }
 
-def ex_79 : LinguisticExample :=
+def ex_79 : Datum :=
   { id := "cruse1973_79"
     source := ⟨"cruse-1973", "(79)"⟩
     reportedIn := none
@@ -966,7 +964,7 @@ def ex_79 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", ""), ("participant", "the stone"), ("animate", "false"), ("inferred", "true")] }
 
-def ex_80 : LinguisticExample :=
+def ex_80 : Datum :=
   { id := "cruse1973_80"
     source := ⟨"cruse-1973", "(80)"⟩
     reportedIn := none
@@ -979,7 +977,7 @@ def ex_80 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "agentive"), ("participant", "the hawk"), ("inferred", "true")] }
 
-def ex_81 : LinguisticExample :=
+def ex_81 : Datum :=
   { id := "cruse1973_81"
     source := ⟨"cruse-1973", "(81)"⟩
     reportedIn := none
@@ -992,7 +990,7 @@ def ex_81 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "agentive"), ("participant", "the model aeroplane"), ("animate", "false"), ("inferred", "true")] }
 
-def ex_82 : LinguisticExample :=
+def ex_82 : Datum :=
   { id := "cruse1973_82"
     source := ⟨"cruse-1973", "(82)"⟩
     reportedIn := none
@@ -1005,7 +1003,7 @@ def ex_82 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "causative"), ("features", ""), ("participant", "the stone"), ("animate", "false")] }
 
-def ex_83 : LinguisticExample :=
+def ex_83 : Datum :=
   { id := "cruse1973_83"
     source := ⟨"cruse-1973", "(83)"⟩
     reportedIn := none
@@ -1018,7 +1016,7 @@ def ex_83 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "causative"), ("features", "agentive"), ("participant", "the hawk"), ("inferred", "true")] }
 
-def ex_84 : LinguisticExample :=
+def ex_84 : Datum :=
   { id := "cruse1973_84"
     source := ⟨"cruse-1973", "(84)"⟩
     reportedIn := none
@@ -1031,7 +1029,7 @@ def ex_84 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "causative"), ("features", "agentive"), ("participant", "the model aeroplane"), ("animate", "false"), ("inferred", "true")] }
 
-def ex_85a : LinguisticExample :=
+def ex_85a : Datum :=
   { id := "cruse1973_85a"
     source := ⟨"cruse-1973", "(85a)"⟩
     reportedIn := none
@@ -1044,7 +1042,7 @@ def ex_85a : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "effective"), ("participant", "the machine"), ("animate", "false")] }
 
-def ex_85b : LinguisticExample :=
+def ex_85b : Datum :=
   { id := "cruse1973_85b"
     source := ⟨"cruse-1973", "(85b)"⟩
     reportedIn := none
@@ -1057,7 +1055,7 @@ def ex_85b : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "agentive"), ("participant", "the machine"), ("animate", "false")] }
 
-def ex_86a : LinguisticExample :=
+def ex_86a : Datum :=
   { id := "cruse1973_86a"
     source := ⟨"cruse-1973", "(86a)"⟩
     reportedIn := none
@@ -1070,7 +1068,7 @@ def ex_86a : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "effective"), ("participant", "John")] }
 
-def ex_86b : LinguisticExample :=
+def ex_86b : Datum :=
   { id := "cruse1973_86b"
     source := ⟨"cruse-1973", "(86b)"⟩
     reportedIn := none
@@ -1083,7 +1081,7 @@ def ex_86b : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "plain"), ("features", "agentive"), ("participant", "John")] }
 
-def ex_87 : LinguisticExample :=
+def ex_87 : Datum :=
   { id := "cruse1973_87"
     source := ⟨"cruse-1973", "(87)"⟩
     reportedIn := none
@@ -1096,7 +1094,7 @@ def ex_87 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "manner"), ("features", "agentive"), ("participant", "the machine"), ("animate", "false")] }
 
-def ex_88 : LinguisticExample :=
+def ex_88 : Datum :=
   { id := "cruse1973_88"
     source := ⟨"cruse-1973", "(88)"⟩
     reportedIn := none
@@ -1109,7 +1107,7 @@ def ex_88 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "manner"), ("features", "effective"), ("participant", "the machine"), ("animate", "false")] }
 
-def ex_89 : LinguisticExample :=
+def ex_89 : Datum :=
   { id := "cruse1973_89"
     source := ⟨"cruse-1973", "(89)"⟩
     reportedIn := none
@@ -1122,7 +1120,7 @@ def ex_89 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "manner"), ("features", "agentive"), ("participant", "John")] }
 
-def ex_90 : LinguisticExample :=
+def ex_90 : Datum :=
   { id := "cruse1973_90"
     source := ⟨"cruse-1973", "(90)"⟩
     reportedIn := none
@@ -1135,7 +1133,7 @@ def ex_90 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "manner"), ("features", "effective"), ("participant", "John")] }
 
-def ex_91 : LinguisticExample :=
+def ex_91 : Datum :=
   { id := "cruse1973_91"
     source := ⟨"cruse-1973", "(91)"⟩
     reportedIn := none
@@ -1148,6 +1146,6 @@ def ex_91 : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "manner"), ("participant", "John")] }
 
-def all : List LinguisticExample := [ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26, ex_27, ex_28, ex_29, ex_30, ex_31, ex_32, ex_33, ex_34, ex_35, ex_36, ex_37, ex_38, ex_39, ex_40, ex_41, ex_42, ex_43, ex_44, ex_45, ex_46, ex_47, ex_48, ex_49, ex_50, ex_51, ex_52, ex_53, ex_54, ex_55, ex_56, ex_57, ex_58, ex_59, ex_60, ex_61, ex_62, ex_63, ex_64, ex_65, ex_66, ex_67, ex_68, ex_69, ex_70, ex_71, ex_72, ex_73, ex_74, ex_75, ex_76, ex_77, ex_78, ex_79, ex_80, ex_81, ex_82, ex_83, ex_84, ex_85a, ex_85b, ex_86a, ex_86b, ex_87, ex_88, ex_89, ex_90, ex_91]
+def all : List Datum := [ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26, ex_27, ex_28, ex_29, ex_30, ex_31, ex_32, ex_33, ex_34, ex_35, ex_36, ex_37, ex_38, ex_39, ex_40, ex_41, ex_42, ex_43, ex_44, ex_45, ex_46, ex_47, ex_48, ex_49, ex_50, ex_51, ex_52, ex_53, ex_54, ex_55, ex_56, ex_57, ex_58, ex_59, ex_60, ex_61, ex_62, ex_63, ex_64, ex_65, ex_66, ex_67, ex_68, ex_69, ex_70, ex_71, ex_72, ex_73, ex_74, ex_75, ex_76, ex_77, ex_78, ex_79, ex_80, ex_81, ex_82, ex_83, ex_84, ex_85a, ex_85b, ex_86a, ex_86b, ex_87, ex_88, ex_89, ex_90, ex_91]
 
 end Cruse1973.Examples

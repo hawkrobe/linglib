@@ -15,9 +15,7 @@ this module; declarations live in `namespace StankovaSimik2025.Examples`.
 
 namespace StankovaSimik2025.Examples
 
-open Data.Examples
-
-def ex13_v1_nci : LinguisticExample :=
+def ex13_v1_nci : Datum :=
   { id := "stankovasimik2025_ex13_v1_nci"
     source := ⟨"stankova-2025", "(13) B"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex13_v1_nci : LinguisticExample :=
     readings := []
     paperFeatures := [("verbPosition", "v1"), ("indefinite", "nci"), ("context", "neutral")] }
 
-def ex13_v1_ppi : LinguisticExample :=
+def ex13_v1_ppi : Datum :=
   { id := "stankovasimik2025_ex13_v1_ppi"
     source := ⟨"stankova-2025", "(13) B"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex13_v1_ppi : LinguisticExample :=
     readings := []
     paperFeatures := [("verbPosition", "v1"), ("indefinite", "ppi"), ("context", "neutral")] }
 
-def ex13_nonv1_nci : LinguisticExample :=
+def ex13_nonv1_nci : Datum :=
   { id := "stankovasimik2025_ex13_nonv1_nci"
     source := ⟨"stankova-2025", "(13) B′"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex13_nonv1_nci : LinguisticExample :=
     readings := []
     paperFeatures := [("verbPosition", "nonv1"), ("indefinite", "nci"), ("context", "negative")] }
 
-def ex13_nonv1_ppi : LinguisticExample :=
+def ex13_nonv1_ppi : Datum :=
   { id := "stankovasimik2025_ex13_nonv1_ppi"
     source := ⟨"stankova-2025", "(13) B′"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex13_nonv1_ppi : LinguisticExample :=
     readings := []
     paperFeatures := [("verbPosition", "nonv1"), ("indefinite", "ppi"), ("context", "negative")] }
 
-def ex14 : LinguisticExample :=
+def ex14 : Datum :=
   { id := "stankovasimik2025_ex14"
     source := ⟨"stankova-2025", "(14) B"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex14 : LinguisticExample :=
     readings := []
     paperFeatures := [("verbPosition", "v1"), ("indefinite", "ppi"), ("context", "positive")] }
 
-def ex17_ppi : LinguisticExample :=
+def ex17_ppi : Datum :=
   { id := "stankovasimik2025_ex17_ppi"
     source := ⟨"stankova-2025", "(17) B"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex17_ppi : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "nahodou"), ("verbPosition", "v1"), ("indefinite", "ppi"), ("context", "neutral")] }
 
-def ex17_nci : LinguisticExample :=
+def ex17_nci : Datum :=
   { id := "stankovasimik2025_ex17_nci"
     source := ⟨"stankova-2025", "(17) B"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex17_nci : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "nahodou"), ("verbPosition", "v1"), ("indefinite", "nci"), ("context", "neutral")] }
 
-def ex18 : LinguisticExample :=
+def ex18 : Datum :=
   { id := "stankovasimik2025_ex18"
     source := ⟨"stankova-2025", "(18) B"⟩
     reportedIn := none
@@ -121,6 +119,6 @@ def ex18 : LinguisticExample :=
     readings := []
     paperFeatures := [("particle", "nahodou"), ("verbPosition", "nonv1"), ("indefinite", "ppi")] }
 
-def all : List LinguisticExample := [ex13_v1_nci, ex13_v1_ppi, ex13_nonv1_nci, ex13_nonv1_ppi, ex14, ex17_ppi, ex17_nci, ex18]
+def all : List Datum := [ex13_v1_nci, ex13_v1_ppi, ex13_nonv1_nci, ex13_nonv1_ppi, ex14, ex17_ppi, ex17_nci, ex18]
 
 end StankovaSimik2025.Examples

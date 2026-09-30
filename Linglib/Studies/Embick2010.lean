@@ -43,7 +43,7 @@ two cycles down (§3.2.2).
 
 namespace Embick2010
 
-open DistributedMorphology Data.Examples Embick2010.Examples
+open DistributedMorphology Embick2010.Examples
 
 /-- The heads of the case studies: the categorizers, active and passive Voice, the theme position,
 and the inflectional heads. -/
@@ -103,12 +103,12 @@ def claimTable : List (String × Claim) := [("attested", .attested), ("blocked",
 def rootNames : List String := (Examples.all.filterMap (·.feature? "root")).eraseDups
 
 /-- The heads of a row innermost first, `hᵢ` with the exponent `hᵢexp`. -/
-def heads (ex : LinguisticExample) : List Morpheme :=
+def heads (ex : Datum) : List Morpheme :=
   ["h1", "h2", "h3", "h4", "h5"].filterMap λ k =>
     (ex.parse? k headTable).map λ h => ⟨h, (ex.feature? (k ++ "exp")).getD ""⟩
 
 /-- A row from an example: positions count from one, innermost first. -/
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let root ← ex.feature? "root"
   let hs := heads ex
   let t ← ex.nat? "target"
@@ -124,10 +124,10 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
       else none
   else none
 
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
 /-- The conditioning relations of §2.2–2.3 and §3.1–3.3. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-! ### Predictions -/
 

@@ -23,7 +23,7 @@ sentences (`Sketch.phases`) predict their judgments (`rows_predicted`).
 
 namespace FoxPesetsky2005
 
-open Minimalist.Linearization Data.Examples
+open Minimalist.Linearization
 
 variable {α : Type*} {X Y Z a : α}
 

@@ -15,9 +15,7 @@ this module; declarations live in `namespace ImelGuoSteinertThrelkeld2026.Exampl
 
 namespace ImelGuoSteinertThrelkeld2026.Examples
 
-open Data.Examples
-
-def s1a : LinguisticExample :=
+def s1a : Datum :=
   { id := "imelguosteinertthrelkeld2026_s1a"
     source := ⟨"imel-guo-steinert-threlkeld-2026", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def s1a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "Modality"), ("force", "strong"), ("flavor", "epistemic")] }
 
-def s1b : LinguisticExample :=
+def s1b : Datum :=
   { id := "imelguosteinertthrelkeld2026_s1b"
     source := ⟨"imel-guo-steinert-threlkeld-2026", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def s1b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "Modality"), ("force", "strong"), ("flavor", "deontic")] }
 
-def s2a : LinguisticExample :=
+def s2a : Datum :=
   { id := "imelguosteinertthrelkeld2026_s2a"
     source := ⟨"imel-guo-steinert-threlkeld-2026", "(2a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def s2a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "Modality"), ("force", "weak"), ("flavor", "epistemic")] }
 
-def s2b : LinguisticExample :=
+def s2b : Datum :=
   { id := "imelguosteinertthrelkeld2026_s2b"
     source := ⟨"imel-guo-steinert-threlkeld-2026", "(2b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def s2b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "Modality"), ("force", "weak"), ("flavor", "deontic")] }
 
-def s3a : LinguisticExample :=
+def s3a : Datum :=
   { id := "imelguosteinertthrelkeld2026_s3a"
     source := ⟨"imel-guo-steinert-threlkeld-2026", "(3a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def s3a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "Modality"), ("source", "Rullmann et al. 2008:321, (5c)"), ("force", "strong"), ("flavor", "epistemic")] }
 
-def s3b : LinguisticExample :=
+def s3b : Datum :=
   { id := "imelguosteinertthrelkeld2026_s3b"
     source := ⟨"imel-guo-steinert-threlkeld-2026", "(3b)"⟩
     reportedIn := none
@@ -95,6 +93,6 @@ def s3b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "Modality"), ("source", "Rullmann et al. 2008:321, (5e)"), ("force", "weak"), ("flavor", "epistemic")] }
 
-def all : List LinguisticExample := [s1a, s1b, s2a, s2b, s3a, s3b]
+def all : List Datum := [s1a, s1b, s2a, s2b, s3a, s3b]
 
 end ImelGuoSteinertThrelkeld2026.Examples

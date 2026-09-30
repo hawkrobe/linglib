@@ -15,9 +15,7 @@ this module; declarations live in `namespace ArreguiKusumoto1998.Examples`.
 
 namespace ArreguiKusumoto1998.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "arreguikusumoto1998_1"
     source := ⟨"arregui-kusumoto-1998", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := [("simultaneous", .acceptable), ("shifted", .acceptable)]
     paperFeatures := [("clause", "complement"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "arreguikusumoto1998_3"
     source := ⟨"arregui-kusumoto-1998", "(3)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_3 : LinguisticExample :=
     readings := [("shifted", .acceptable)]
     paperFeatures := [("clause", "complement"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "arreguikusumoto1998_4"
     source := ⟨"arregui-kusumoto-1998", "(4)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_4 : LinguisticExample :=
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [("clause", "complement"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "arreguikusumoto1998_5a"
     source := ⟨"arregui-kusumoto-1998", "(5a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "before"), ("connective", "mae-ni"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
-def ex_5b : LinguisticExample :=
+def ex_5b : Datum :=
   { id := "arreguikusumoto1998_5b"
     source := ⟨"arregui-kusumoto-1998", "(5b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "before"), ("connective", "mae-ni"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "arreguikusumoto1998_6a"
     source := ⟨"arregui-kusumoto-1998", "(6a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "after"), ("connective", "ato-ni"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
-def ex_6b : LinguisticExample :=
+def ex_6b : Datum :=
   { id := "arreguikusumoto1998_6b"
     source := ⟨"arregui-kusumoto-1998", "(6b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "after"), ("connective", "ato-ni"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "arreguikusumoto1998_7a"
     source := ⟨"arregui-kusumoto-1998", "(7a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "before"), ("connective", "before"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "arreguikusumoto1998_7b"
     source := ⟨"arregui-kusumoto-1998", "(7b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "after"), ("connective", "after"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "arreguikusumoto1998_8"
     source := ⟨"arregui-kusumoto-1998", "(8)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_8 : LinguisticExample :=
     readings := [("episodic", .acceptable)]
     paperFeatures := [("clause", "when"), ("connective", "toki"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "arreguikusumoto1998_9"
     source := ⟨"arregui-kusumoto-1998", "(9)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_9 : LinguisticExample :=
     readings := [("habitual", .acceptable)]
     paperFeatures := [("clause", "when"), ("connective", "toki"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "arreguikusumoto1998_10a"
     source := ⟨"arregui-kusumoto-1998", "(10a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_10a : LinguisticExample :=
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [("clause", "complement"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "arreguikusumoto1998_10b"
     source := ⟨"arregui-kusumoto-1998", "(10b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_10b : LinguisticExample :=
     readings := [("shifted", .acceptable)]
     paperFeatures := [("clause", "complement"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
-def ex_10c : LinguisticExample :=
+def ex_10c : Datum :=
   { id := "arreguikusumoto1998_10c"
     source := ⟨"arregui-kusumoto-1998", "(10c)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_10c : LinguisticExample :=
     readings := [("posterior", .acceptable)]
     paperFeatures := [("clause", "complement"), ("matrixTense", "past"), ("embeddedTense", "future")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "arreguikusumoto1998_11a"
     source := ⟨"arregui-kusumoto-1998", "(11a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "before"), ("connective", "zanim"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "arreguikusumoto1998_11b"
     source := ⟨"arregui-kusumoto-1998", "(11b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "before"), ("connective", "zanim"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
-def ex_11c : LinguisticExample :=
+def ex_11c : Datum :=
   { id := "arreguikusumoto1998_11c"
     source := ⟨"arregui-kusumoto-1998", "(11c)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_11c : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "before"), ("connective", "zanim"), ("matrixTense", "past"), ("embeddedTense", "future")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "arreguikusumoto1998_12a"
     source := ⟨"arregui-kusumoto-1998", "(12a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "root"), ("tense", "present")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "arreguikusumoto1998_13a"
     source := ⟨"arregui-kusumoto-1998", "(13a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "root"), ("tense", "past")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "arreguikusumoto1998_14"
     source := ⟨"arregui-kusumoto-1998", "(14)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_14 : LinguisticExample :=
     readings := [("upstairs", .acceptable), ("downstairs", .acceptable)]
     paperFeatures := [("clause", "when"), ("connective", "when"), ("matrixTense", "past"), ("embeddedTense", "past"), ("embeddedClauses", "2")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "arreguikusumoto1998_18a"
     source := ⟨"arregui-kusumoto-1998", "(18a)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_18a : LinguisticExample :=
     readings := [("veridical", .acceptable), ("nonveridical", .acceptable)]
     paperFeatures := [("clause", "before"), ("connective", "before"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "arreguikusumoto1998_18b"
     source := ⟨"arregui-kusumoto-1998", "(18b)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_18b : LinguisticExample :=
     readings := [("veridical", .acceptable)]
     paperFeatures := [("clause", "after"), ("connective", "after"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "arreguikusumoto1998_20a"
     source := ⟨"arregui-kusumoto-1998", "(20a)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_20a : LinguisticExample :=
     readings := [("upstairs", .acceptable), ("downstairs", .acceptable)]
     paperFeatures := [("clause", "after"), ("connective", "after"), ("matrixTense", "past"), ("embeddedTense", "past"), ("embeddedClauses", "2")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "arreguikusumoto1998_20b"
     source := ⟨"arregui-kusumoto-1998", "(20b)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_20b : LinguisticExample :=
     readings := [("upstairs", .acceptable), ("downstairs", .acceptable)]
     paperFeatures := [("clause", "before"), ("connective", "before"), ("matrixTense", "past"), ("embeddedTense", "past"), ("embeddedClauses", "2")] }
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "arreguikusumoto1998_22a"
     source := ⟨"arregui-kusumoto-1998", "(22a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_22a : LinguisticExample :=
     readings := [("upstairs", .acceptable), ("downstairs", .acceptable)]
     paperFeatures := [("clause", "after"), ("connective", "po tym jak"), ("matrixTense", "past"), ("embeddedTense", "past"), ("embeddedClauses", "2")] }
 
-def ex_22b : LinguisticExample :=
+def ex_22b : Datum :=
   { id := "arreguikusumoto1998_22b"
     source := ⟨"arregui-kusumoto-1998", "(22b)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_22b : LinguisticExample :=
     readings := [("upstairs", .acceptable), ("downstairs", .acceptable)]
     paperFeatures := [("clause", "before"), ("connective", "zanim"), ("matrixTense", "past"), ("embeddedTense", "past"), ("embeddedClauses", "2")] }
 
-def ex_24a : LinguisticExample :=
+def ex_24a : Datum :=
   { id := "arreguikusumoto1998_24a"
     source := ⟨"arregui-kusumoto-1998", "(24a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "after"), ("connective", "after"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
-def ex_25a : LinguisticExample :=
+def ex_25a : Datum :=
   { id := "arreguikusumoto1998_25a"
     source := ⟨"arregui-kusumoto-1998", "(25a)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "before"), ("connective", "before"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
-def ex_26a : LinguisticExample :=
+def ex_26a : Datum :=
   { id := "arreguikusumoto1998_26a"
     source := ⟨"arregui-kusumoto-1998", "(26a)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_26a : LinguisticExample :=
     readings := [("upstairs", .acceptable), ("downstairs", .unacceptable)]
     paperFeatures := [("clause", "after"), ("connective", "ato-de"), ("matrixTense", "past"), ("embeddedTense", "past"), ("embeddedClauses", "2")] }
 
-def ex_26b : LinguisticExample :=
+def ex_26b : Datum :=
   { id := "arreguikusumoto1998_26b"
     source := ⟨"arregui-kusumoto-1998", "(26b)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_26b : LinguisticExample :=
     readings := [("upstairs", .acceptable), ("downstairs", .unacceptable)]
     paperFeatures := [("clause", "before"), ("connective", "mae-ni"), ("matrixTense", "past"), ("embeddedTense", "present"), ("embeddedClauses", "2")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "arreguikusumoto1998_32"
     source := ⟨"arregui-kusumoto-1998", "(32)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_32 : LinguisticExample :=
     readings := [("upstairs", .acceptable), ("downstairs", .acceptable)]
     paperFeatures := [("clause", "when"), ("connective", "toki-ni"), ("matrixTense", "past"), ("embeddedTense", "past"), ("embeddedClauses", "2")] }
 
-def ex_35a : LinguisticExample :=
+def ex_35a : Datum :=
   { id := "arreguikusumoto1998_35a"
     source := ⟨"arregui-kusumoto-1998", "(35a)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_35a : LinguisticExample :=
     readings := [("habitual", .acceptable)]
     paperFeatures := [("clause", "relative"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
-def ex_35b : LinguisticExample :=
+def ex_35b : Datum :=
   { id := "arreguikusumoto1998_35b"
     source := ⟨"arregui-kusumoto-1998", "(35b)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_35b : LinguisticExample :=
     readings := [("episodic", .acceptable)]
     paperFeatures := [("clause", "relative"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
-def ex_36a : LinguisticExample :=
+def ex_36a : Datum :=
   { id := "arreguikusumoto1998_36a"
     source := ⟨"arregui-kusumoto-1998", "(36a)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_36a : LinguisticExample :=
     readings := [("habitual", .acceptable)]
     paperFeatures := [("clause", "relative"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
-def ex_36b : LinguisticExample :=
+def ex_36b : Datum :=
   { id := "arreguikusumoto1998_36b"
     source := ⟨"arregui-kusumoto-1998", "(36b)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_36b : LinguisticExample :=
     readings := [("episodic", .acceptable)]
     paperFeatures := [("clause", "relative"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
-def fn1_i : LinguisticExample :=
+def fn1_i : Datum :=
   { id := "arreguikusumoto1998_fn1_i"
     source := ⟨"arregui-kusumoto-1998", "fn. 1 (i)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def fn1_i : LinguisticExample :=
     readings := [("future", .acceptable)]
     paperFeatures := [("clause", "root"), ("tense", "present")] }
 
-def fn3_ia : LinguisticExample :=
+def fn3_ia : Datum :=
   { id := "arreguikusumoto1998_fn3_ia"
     source := ⟨"arregui-kusumoto-1998", "fn. 3 (i-a)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def fn3_ia : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "after"), ("connective", "po tym jak"), ("matrixTense", "past"), ("embeddedTense", "past")] }
 
-def fn3_ib : LinguisticExample :=
+def fn3_ib : Datum :=
   { id := "arreguikusumoto1998_fn3_ib"
     source := ⟨"arregui-kusumoto-1998", "fn. 3 (i-b)"⟩
     reportedIn := none
@@ -511,6 +509,6 @@ def fn3_ib : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "after"), ("connective", "po tym jak"), ("matrixTense", "past"), ("embeddedTense", "present")] }
 
-def all : List LinguisticExample := [ex_1, ex_3, ex_4, ex_5a, ex_5b, ex_6a, ex_6b, ex_7a, ex_7b, ex_8, ex_9, ex_10a, ex_10b, ex_10c, ex_11a, ex_11b, ex_11c, ex_12a, ex_13a, ex_14, ex_18a, ex_18b, ex_20a, ex_20b, ex_22a, ex_22b, ex_24a, ex_25a, ex_26a, ex_26b, ex_32, ex_35a, ex_35b, ex_36a, ex_36b, fn1_i, fn3_ia, fn3_ib]
+def all : List Datum := [ex_1, ex_3, ex_4, ex_5a, ex_5b, ex_6a, ex_6b, ex_7a, ex_7b, ex_8, ex_9, ex_10a, ex_10b, ex_10c, ex_11a, ex_11b, ex_11c, ex_12a, ex_13a, ex_14, ex_18a, ex_18b, ex_20a, ex_20b, ex_22a, ex_22b, ex_24a, ex_25a, ex_26a, ex_26b, ex_32, ex_35a, ex_35b, ex_36a, ex_36b, fn1_i, fn3_ia, fn3_ib]
 
 end ArreguiKusumoto1998.Examples

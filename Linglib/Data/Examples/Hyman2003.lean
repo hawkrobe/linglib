@@ -15,9 +15,7 @@ this module; declarations live in `namespace Hyman2003.Examples`.
 
 namespace Hyman2003.Examples
 
-open Data.Examples
-
-def ex_2a_cr : LinguisticExample :=
+def ex_2a_cr : Datum :=
   { id := "hyman2003_2a_cr"
     source := ⟨"hyman-mchombo-1992", "(2a)"⟩
     reportedIn := some ⟨"hyman-2003", "(2a)"⟩
@@ -30,7 +28,7 @@ def ex_2a_cr : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "CR"), ("suffixes", "CR")] }
 
-def ex_2a_rc : LinguisticExample :=
+def ex_2a_rc : Datum :=
   { id := "hyman2003_2a_rc"
     source := ⟨"hyman-mchombo-1992", "(2a)"⟩
     reportedIn := some ⟨"hyman-2003", "(2a)"⟩
@@ -43,7 +41,7 @@ def ex_2a_rc : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RC"), ("suffixes", "CR")] }
 
-def ex_2b_rc : LinguisticExample :=
+def ex_2b_rc : Datum :=
   { id := "hyman2003_2b_rc"
     source := ⟨"hyman-mchombo-1992", "(2b)"⟩
     reportedIn := some ⟨"hyman-2003", "(2b)"⟩
@@ -56,7 +54,7 @@ def ex_2b_rc : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RC"), ("suffixes", "RC")] }
 
-def ex_2b_cr : LinguisticExample :=
+def ex_2b_cr : Datum :=
   { id := "hyman2003_2b_cr"
     source := ⟨"hyman-mchombo-1992", "(2b)"⟩
     reportedIn := some ⟨"hyman-2003", "(2b)"⟩
@@ -69,7 +67,7 @@ def ex_2b_cr : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "CR"), ("suffixes", "RC")] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "hyman2003_3a"
     source := ⟨"hyman-2003", "(3a)"⟩
     reportedIn := some ⟨"hyman-2003", "(3a)"⟩
@@ -82,7 +80,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "cry"), ("scope", "CA"), ("suffixes", "CA")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "hyman2003_3b"
     source := ⟨"hyman-2003", "(3b)"⟩
     reportedIn := some ⟨"hyman-2003", "(3b)"⟩
@@ -95,7 +93,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "stir"), ("scope", "AC"), ("suffixes", "CA")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "hyman2003_7b"
     source := ⟨"hyman-2003", "(7b)"⟩
     reportedIn := some ⟨"hyman-2003", "(7b)"⟩
@@ -108,7 +106,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "AC"), ("suffixes", "AC")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "hyman2003_8"
     source := ⟨"hyman-2003", "(8)"⟩
     reportedIn := some ⟨"hyman-2003", "(8)"⟩
@@ -121,7 +119,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RAC"), ("suffixes", "CAR")] }
 
-def ex_8_star : LinguisticExample :=
+def ex_8_star : Datum :=
   { id := "hyman2003_8_star"
     source := ⟨"hyman-2003", "(8)"⟩
     reportedIn := some ⟨"hyman-2003", "(8)"⟩
@@ -134,7 +132,7 @@ def ex_8_star : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RAC"), ("suffixes", "RAC")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "hyman2003_13a"
     source := ⟨"hyman-2003", "(13a)"⟩
     reportedIn := some ⟨"hyman-2003", "(13a)"⟩
@@ -147,7 +145,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "AR"), ("suffixes", "AR")] }
 
-def ex_13b : LinguisticExample :=
+def ex_13b : Datum :=
   { id := "hyman2003_13b"
     source := ⟨"hyman-2003", "(13b)"⟩
     reportedIn := some ⟨"hyman-2003", "(13b)"⟩
@@ -160,7 +158,7 @@ def ex_13b : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RA"), ("suffixes", "RA")] }
 
-def ex_13c : LinguisticExample :=
+def ex_13c : Datum :=
   { id := "hyman2003_13c"
     source := ⟨"hyman-2003", "(13c)"⟩
     reportedIn := some ⟨"hyman-2003", "(13c)"⟩
@@ -173,7 +171,7 @@ def ex_13c : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RA"), ("suffixes", "AR")] }
 
-def ex_13d : LinguisticExample :=
+def ex_13d : Datum :=
   { id := "hyman2003_13d"
     source := ⟨"hyman-2003", "(13d)"⟩
     reportedIn := some ⟨"hyman-2003", "(13d)"⟩
@@ -186,7 +184,7 @@ def ex_13d : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RA"), ("suffixes", "RAR")] }
 
-def ex_17b : LinguisticExample :=
+def ex_17b : Datum :=
   { id := "hyman2003_17b"
     source := ⟨"hyman-2003", "(17b)"⟩
     reportedIn := some ⟨"hyman-2003", "(17b)"⟩
@@ -199,7 +197,7 @@ def ex_17b : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "RA"), ("suffixes", "ARA")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "hyman2003_18a"
     source := ⟨"hyman-2003", "(18a)"⟩
     reportedIn := some ⟨"hyman-2003", "(18a)"⟩
@@ -212,7 +210,7 @@ def ex_18a : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "AA"), ("suffixes", "AA")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "hyman2003_18b"
     source := ⟨"hyman-2003", "(18b)"⟩
     reportedIn := some ⟨"hyman-2003", "(18b)"⟩
@@ -225,7 +223,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "tie"), ("scope", "CC"), ("suffixes", "CC")] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "hyman2003_20a"
     source := ⟨"hyman-2003", "(20a)"⟩
     reportedIn := some ⟨"hyman-2003", "(20a)"⟩
@@ -238,7 +236,7 @@ def ex_20a : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "write"), ("scope", "CA"), ("suffixes", "CA")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "hyman2003_20b"
     source := ⟨"hyman-2003", "(20b)"⟩
     reportedIn := some ⟨"hyman-2003", "(20b)"⟩
@@ -251,7 +249,7 @@ def ex_20b : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "cook"), ("scope", "AC"), ("suffixes", "CA")] }
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "hyman2003_22a"
     source := ⟨"hyman-2003", "(22a)"⟩
     reportedIn := some ⟨"hyman-2003", "(22a)"⟩
@@ -264,7 +262,7 @@ def ex_22a : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "cry"), ("scope", "CA"), ("suffixes", "CA")] }
 
-def ex_22b : LinguisticExample :=
+def ex_22b : Datum :=
   { id := "hyman2003_22b"
     source := ⟨"hyman-2003", "(22b)"⟩
     reportedIn := some ⟨"hyman-2003", "(22b)"⟩
@@ -277,7 +275,7 @@ def ex_22b : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "cry"), ("scope", "CAP"), ("suffixes", "CAP"), ("subject", "instrument")] }
 
-def ex_22c : LinguisticExample :=
+def ex_22c : Datum :=
   { id := "hyman2003_22c"
     source := ⟨"hyman-2003", "(22c)"⟩
     reportedIn := some ⟨"hyman-2003", "(22c)"⟩
@@ -290,7 +288,7 @@ def ex_22c : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "cry"), ("scope", "CAP"), ("suffixes", "CAP"), ("subject", "causee")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "hyman2003_23a"
     source := ⟨"hyman-2003", "(23a)"⟩
     reportedIn := some ⟨"hyman-2003", "(23a)"⟩
@@ -303,7 +301,7 @@ def ex_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "cultivate"), ("scope", "AC"), ("suffixes", "CA")] }
 
-def ex_23b : LinguisticExample :=
+def ex_23b : Datum :=
   { id := "hyman2003_23b"
     source := ⟨"hyman-2003", "(23b)"⟩
     reportedIn := some ⟨"hyman-2003", "(23b)"⟩
@@ -316,7 +314,7 @@ def ex_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "cultivate"), ("scope", "ACP"), ("suffixes", "CAP"), ("subject", "causee")] }
 
-def ex_23c : LinguisticExample :=
+def ex_23c : Datum :=
   { id := "hyman2003_23c"
     source := ⟨"hyman-2003", "(23c)"⟩
     reportedIn := some ⟨"hyman-2003", "(23c)"⟩
@@ -329,7 +327,7 @@ def ex_23c : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "cultivate"), ("scope", "ACP"), ("suffixes", "CAP"), ("subject", "instrument")] }
 
-def ex_32c : LinguisticExample :=
+def ex_32c : Datum :=
   { id := "hyman2003_32c"
     source := ⟨"hyman-mchombo-1992", "(32c)"⟩
     reportedIn := some ⟨"hyman-2003", "(32c)"⟩
@@ -342,7 +340,7 @@ def ex_32c : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "wake up"), ("scope", "AC"), ("suffixes", "AC")] }
 
-def ex_32d : LinguisticExample :=
+def ex_32d : Datum :=
   { id := "hyman2003_32d"
     source := ⟨"hyman-mchombo-1992", "(32d)"⟩
     reportedIn := some ⟨"hyman-2003", "(32d)"⟩
@@ -355,6 +353,6 @@ def ex_32d : LinguisticExample :=
     readings := []
     paperFeatures := [("root", "wake up"), ("scope", "AC"), ("suffixes", "CA")] }
 
-def all : List LinguisticExample := [ex_2a_cr, ex_2a_rc, ex_2b_rc, ex_2b_cr, ex_3a, ex_3b, ex_7b, ex_8, ex_8_star, ex_13a, ex_13b, ex_13c, ex_13d, ex_17b, ex_18a, ex_18b, ex_20a, ex_20b, ex_22a, ex_22b, ex_22c, ex_23a, ex_23b, ex_23c, ex_32c, ex_32d]
+def all : List Datum := [ex_2a_cr, ex_2a_rc, ex_2b_rc, ex_2b_cr, ex_3a, ex_3b, ex_7b, ex_8, ex_8_star, ex_13a, ex_13b, ex_13c, ex_13d, ex_17b, ex_18a, ex_18b, ex_20a, ex_20b, ex_22a, ex_22b, ex_22c, ex_23a, ex_23b, ex_23c, ex_32c, ex_32d]
 
 end Hyman2003.Examples

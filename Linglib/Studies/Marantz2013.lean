@@ -36,7 +36,7 @@ The words are the rows of `Data/Examples/Marantz2013`, the examples of (1) to (3
 
 namespace Marantz2013
 
-open DistributedMorphology Data.Examples
+open DistributedMorphology
 
 /-! ### Heads and interfaces -/
 
@@ -122,7 +122,7 @@ def Claim.ofLabel : String → Option Claim
 /-- The roots of the pool, indexed by first occurrence. -/
 def rootNames : List String := (Examples.all.filterMap (·.feature? "root")).eraseDups
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let root ← ex.feature? "root"
   let heads := [("h1", "h1exp"), ("h2", "h2exp"), ("h3", "h3exp"), ("h4", "h4exp")].filterMap
     λ (k, e) => (ex.feature? k).bind (Morpheme.ofLabel ((ex.feature? e).getD ""))
@@ -133,10 +133,10 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
       (ex.feature? "idiom").bind Claim.ofLabel⟩
   else none
 
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
 /-- The words of (1)–(3), (5)–(7), Table 6.1, and §6.2–6.3. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-! ### Predictions -/
 

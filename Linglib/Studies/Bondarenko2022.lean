@@ -41,7 +41,7 @@ inventories.
 namespace Bondarenko2022
 
 open Anchor (comp)
-open Data.Examples Buryat
+open Buryat
 
 /-! ### Nominal sorts -/
 
@@ -94,10 +94,10 @@ structure CooccurrenceDatum where
   acceptable : Bool
   deriving DecidableEq, Repr
 
-def cooccurrenceDatum (e : LinguisticExample) : Option CooccurrenceDatum := do
+def cooccurrenceDatum (e : Datum) : Option CooccurrenceDatum := do
   let s ← parseSort (← e.paperFeatures.lookup "nounSort")
   let d ← parseDiagnostic (← e.paperFeatures.lookup "diagnostic")
-  some ⟨s, d, e.judgment == Data.Examples.Judgment.acceptable⟩
+  some ⟨s, d, e.judgment == Judgment.acceptable⟩
 
 /-- The ch. 2 co-occurrence examples. -/
 def cooccurrenceData : List CooccurrenceDatum := Examples.all.filterMap cooccurrenceDatum
@@ -177,7 +177,7 @@ def parseValidity : String → Option Bool
   | "invalid" => some false
   | _ => none
 
-def substitutionDatum (e : LinguisticExample) : Option SubstitutionDatum := do
+def substitutionDatum (e : Datum) : Option SubstitutionDatum := do
   let s ← parseSort (← e.paperFeatures.lookup "nounSort")
   let v ← parseValidity (← e.paperFeatures.lookup "inference")
   some ⟨s, v⟩
@@ -358,7 +358,7 @@ structure ShapeDatum where
   sort : NominalSort
   deriving DecidableEq, Repr
 
-def shapeDatum (e : LinguisticExample) : Option ShapeDatum := do
+def shapeDatum (e : Datum) : Option ShapeDatum := do
   let ts ← parseShape (← e.paperFeatures.lookup "shape")
   let s ← parseClauseSort (← e.paperFeatures.lookup "clauseType")
   some ⟨ts, s⟩

@@ -15,9 +15,7 @@ this module; declarations live in `namespace VonFintel1993.Examples`.
 
 namespace VonFintel1993.Examples
 
-open Data.Examples
-
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "vonfintel1993_1a"
     source := ⟨"von-fintel-1993", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1a : LinguisticExample :=
     readings := [("John is the only student who did not attend", .acceptable)]
     paperFeatures := [("exceptive", "but"), ("determiner", "every")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "vonfintel1993_1b"
     source := ⟨"von-fintel-1993", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "except for"), ("determiner", "every")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "vonfintel1993_2b"
     source := ⟨"von-fintel-1993", "(2b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_2b : LinguisticExample :=
     readings := [("John is the only student who attended", .acceptable)]
     paperFeatures := [("exceptive", "but"), ("determiner", "no")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "vonfintel1993_4"
     source := ⟨"hoeksema-1990", ""⟩
     reportedIn := some ⟨"von-fintel-1993", "(4)"⟩
@@ -69,7 +67,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "except for"), ("test", "cancellability")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "vonfintel1993_5"
     source := ⟨"von-fintel-1993", "(5)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "but"), ("test", "cancellability")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "vonfintel1993_7"
     source := ⟨"von-fintel-1993", "(7)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_7 : LinguisticExample :=
     readings := [("the speaker noticed that every other student attended and that John did not", .acceptable)]
     paperFeatures := [("exceptive", "but"), ("test", "embedding")] }
 
-def ex_10_everyone : LinguisticExample :=
+def ex_10_everyone : Datum :=
   { id := "vonfintel1993_10_everyone"
     source := ⟨"horn-1989", ""⟩
     reportedIn := some ⟨"von-fintel-1993", "(10)"⟩
@@ -108,7 +106,7 @@ def ex_10_everyone : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "every")] }
 
-def ex_10_nobody : LinguisticExample :=
+def ex_10_nobody : Datum :=
   { id := "vonfintel1993_10_nobody"
     source := ⟨"horn-1989", ""⟩
     reportedIn := some ⟨"von-fintel-1993", "(10)"⟩
@@ -121,7 +119,7 @@ def ex_10_nobody : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "no")] }
 
-def ex_10_anyone : LinguisticExample :=
+def ex_10_anyone : Datum :=
   { id := "vonfintel1993_10_anyone"
     source := ⟨"horn-1989", ""⟩
     reportedIn := some ⟨"von-fintel-1993", "(10)"⟩
@@ -134,7 +132,7 @@ def ex_10_anyone : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "any")] }
 
-def ex_10_somebody : LinguisticExample :=
+def ex_10_somebody : Datum :=
   { id := "vonfintel1993_10_somebody"
     source := ⟨"horn-1989", ""⟩
     reportedIn := some ⟨"von-fintel-1993", "(10)"⟩
@@ -147,7 +145,7 @@ def ex_10_somebody : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "some")] }
 
-def ex_10_somewhere : LinguisticExample :=
+def ex_10_somewhere : Datum :=
   { id := "vonfintel1993_10_somewhere"
     source := ⟨"horn-1989", ""⟩
     reportedIn := some ⟨"von-fintel-1993", "(10)"⟩
@@ -160,7 +158,7 @@ def ex_10_somewhere : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "some")] }
 
-def ex_10_all_of : LinguisticExample :=
+def ex_10_all_of : Datum :=
   { id := "vonfintel1993_10_all_of"
     source := ⟨"horn-1989", ""⟩
     reportedIn := some ⟨"von-fintel-1993", "(10)"⟩
@@ -173,7 +171,7 @@ def ex_10_all_of : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "all")] }
 
-def ex_10_most_of : LinguisticExample :=
+def ex_10_most_of : Datum :=
   { id := "vonfintel1993_10_most_of"
     source := ⟨"horn-1989", ""⟩
     reportedIn := some ⟨"von-fintel-1993", "(10)"⟩
@@ -186,7 +184,7 @@ def ex_10_most_of : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "most")] }
 
-def ex_10_everything : LinguisticExample :=
+def ex_10_everything : Datum :=
   { id := "vonfintel1993_10_everything"
     source := ⟨"horn-1989", ""⟩
     reportedIn := some ⟨"von-fintel-1993", "(10)"⟩
@@ -199,7 +197,7 @@ def ex_10_everything : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "every")] }
 
-def ex_10_none : LinguisticExample :=
+def ex_10_none : Datum :=
   { id := "vonfintel1993_10_none"
     source := ⟨"horn-1989", ""⟩
     reportedIn := some ⟨"von-fintel-1993", "(10)"⟩
@@ -212,7 +210,7 @@ def ex_10_none : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "no")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "vonfintel1993_13"
     source := ⟨"von-fintel-1993", "(13)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "valid"), ("property", "left downward monotonicity")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "vonfintel1993_14"
     source := ⟨"von-fintel-1993", "(14)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "invalid"), ("property", "left downward monotonicity")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "vonfintel1993_16"
     source := ⟨"hoeksema-1987", ""⟩
     reportedIn := some ⟨"von-fintel-1993", "(16)"⟩
@@ -251,7 +249,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "but"), ("complement", "quantifier")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "vonfintel1993_19"
     source := ⟨"von-fintel-1993", "(19)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "valid"), ("property", "left upward monotonicity")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "vonfintel1993_22"
     source := ⟨"von-fintel-1993", "(22)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_22 : LinguisticExample :=
     readings := [("John and Mary are the students who did not attend", .acceptable)]
     paperFeatures := [("exceptive", "but"), ("determiner", "every")] }
 
-def ex_25a : LinguisticExample :=
+def ex_25a : Datum :=
   { id := "vonfintel1993_25a"
     source := ⟨"von-fintel-1993", "(25a)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "most"), ("truth", "false")] }
 
-def ex_25b : LinguisticExample :=
+def ex_25b : Datum :=
   { id := "vonfintel1993_25b"
     source := ⟨"von-fintel-1993", "(25b)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_25b : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "but"), ("determiner", "most")] }
 
-def ex_27a : LinguisticExample :=
+def ex_27a : Datum :=
   { id := "vonfintel1993_27a"
     source := ⟨"von-fintel-1993", "(27a)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_27a : LinguisticExample :=
     readings := [("rhetorical: nobody but a total idiot would have", .acceptable)]
     paperFeatures := [("exceptive", "but"), ("construction", "wh-question")] }
 
-def ex_27b : LinguisticExample :=
+def ex_27b : Datum :=
   { id := "vonfintel1993_27b"
     source := ⟨"von-fintel-1993", "(27b)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_27b : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "but"), ("construction", "wh-question")] }
 
-def ex_28a : LinguisticExample :=
+def ex_28a : Datum :=
   { id := "vonfintel1993_28a"
     source := ⟨"geis-1973", ""⟩
     reportedIn := some ⟨"von-fintel-1993", "(28a)"⟩
@@ -342,7 +340,7 @@ def ex_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "but"), ("construction", "conjunction")] }
 
-def ex_31b : LinguisticExample :=
+def ex_31b : Datum :=
   { id := "vonfintel1993_31b"
     source := ⟨"von-fintel-1993", "(31b)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_31b : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "except for"), ("position", "peripheral")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "vonfintel1993_32"
     source := ⟨"von-fintel-1993", "(32)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "except for"), ("use", "afterthought")] }
 
-def ex_33a : LinguisticExample :=
+def ex_33a : Datum :=
   { id := "vonfintel1993_33a"
     source := ⟨"von-fintel-1993", "(33a)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_33a : LinguisticExample :=
     readings := [("appositive: Joan is a notable exception", .acceptable)]
     paperFeatures := [("exceptive", "except for"), ("use", "appositive"), ("determiner", "most")] }
 
-def ex_34a : LinguisticExample :=
+def ex_34a : Datum :=
   { id := "vonfintel1993_34a"
     source := ⟨"von-fintel-1993", "(34a)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_34a : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "except for"), ("use", "restrictive"), ("determiner", "no")] }
 
-def ex_34b : LinguisticExample :=
+def ex_34b : Datum :=
   { id := "vonfintel1993_34b"
     source := ⟨"von-fintel-1993", "(34b)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_34b : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "except for"), ("use", "restrictive"), ("determiner", "definite")] }
 
-def ex_34c : LinguisticExample :=
+def ex_34c : Datum :=
   { id := "vonfintel1993_34c"
     source := ⟨"von-fintel-1993", "(34c)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_34c : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "except for"), ("use", "restrictive"), ("determiner", "most")] }
 
-def ex_35a : LinguisticExample :=
+def ex_35a : Datum :=
   { id := "vonfintel1993_35a"
     source := ⟨"hoeksema-1987", ""⟩
     reportedIn := some ⟨"von-fintel-1993", "(35a)"⟩
@@ -433,7 +431,7 @@ def ex_35a : LinguisticExample :=
     readings := [("ordinary informative question", .acceptable)]
     paperFeatures := [("exceptive", "except for"), ("construction", "wh-question")] }
 
-def ex_36a : LinguisticExample :=
+def ex_36a : Datum :=
   { id := "vonfintel1993_36a"
     source := ⟨"von-fintel-1993", "(36a)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_36a : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "except for"), ("construction", "conjunction")] }
 
-def ex_36b : LinguisticExample :=
+def ex_36b : Datum :=
   { id := "vonfintel1993_36b"
     source := ⟨"von-fintel-1993", "(36b)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_36b : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "but"), ("construction", "conjunction")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "vonfintel1993_37"
     source := ⟨"von-fintel-1993", "(37)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "except for"), ("test", "sentence-level subtraction")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "vonfintel1993_42"
     source := ⟨"von-fintel-1993", "(42)"⟩
     reportedIn := none
@@ -485,6 +483,6 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("exceptive", "besides"), ("determiner", "numeral")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_2b, ex_4, ex_5, ex_7, ex_10_everyone, ex_10_nobody, ex_10_anyone, ex_10_somebody, ex_10_somewhere, ex_10_all_of, ex_10_most_of, ex_10_everything, ex_10_none, ex_13, ex_14, ex_16, ex_19, ex_22, ex_25a, ex_25b, ex_27a, ex_27b, ex_28a, ex_31b, ex_32, ex_33a, ex_34a, ex_34b, ex_34c, ex_35a, ex_36a, ex_36b, ex_37, ex_42]
+def all : List Datum := [ex_1a, ex_1b, ex_2b, ex_4, ex_5, ex_7, ex_10_everyone, ex_10_nobody, ex_10_anyone, ex_10_somebody, ex_10_somewhere, ex_10_all_of, ex_10_most_of, ex_10_everything, ex_10_none, ex_13, ex_14, ex_16, ex_19, ex_22, ex_25a, ex_25b, ex_27a, ex_27b, ex_28a, ex_31b, ex_32, ex_33a, ex_34a, ex_34b, ex_34c, ex_35a, ex_36a, ex_36b, ex_37, ex_42]
 
 end VonFintel1993.Examples

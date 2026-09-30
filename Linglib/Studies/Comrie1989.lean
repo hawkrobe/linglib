@@ -91,7 +91,7 @@ correlation through the substrate's monotonicity, and `bias_rows`, `coordination
 
 namespace Comrie1989
 
-open Reference.Prominence Causation.Morphological Data.Examples
+open Reference.Prominence Causation.Morphological
 
 /-! ### The discriminatory function of case (§6.1) -/
 
@@ -166,7 +166,7 @@ theorem CaseSystem.discriminates_two_case_iff (c : CaseSystem) :
 /-! ### The rows -/
 
 /-- The rows the book accepts. -/
-def acceptable : List LinguisticExample := Examples.all.filter (·.judgment = .acceptable)
+def acceptable : List Datum := Examples.all.filter (·.judgment = .acceptable)
 
 /-! ### Differential marking and the natural information flow (§6.2) -/
 
@@ -199,7 +199,7 @@ structure Marking where
 /-- The markings a row records, one per argument whose marking it gives, under the key
 prefixes `A.` and `P.`; a row whose marking the book attributes to a parameter beside the
 hierarchies has none. -/
-def Marking.ofRow (row : LinguisticExample) : List Marking :=
+def Marking.ofRow (row : Datum) : List Marking :=
   if row.feature? "construction" = some "marking" ∧ row.feature? "parameter" = none then
     [(Primitive.A, "A."), (.P, "P.")].filterMap λ (role, p) => do
       return ⟨role,
@@ -273,7 +273,7 @@ structure Causative where
   params : Parameters
 
 /-- The configuration a causative or control row records. -/
-def Causative.ofRow (row : LinguisticExample) : Option Causative := do
+def Causative.ofRow (row : Datum) : Option Causative := do
   guard (row.feature? "construction" ∈ [some "causative", some "control"])
   return ⟨← row.parse? "valency" [("1", 1), ("2", 2), ("3", 3)],
     ← row.parse? "causee" [("directObject", .directObject), ("indirectObject", .indirectObject),
@@ -333,7 +333,7 @@ structure Controlled where
   causee : CauseeSlot
 
 /-- The configuration a control row records. -/
-def Controlled.ofRow (row : LinguisticExample) : Option Controlled := do
+def Controlled.ofRow (row : Datum) : Option Controlled := do
   guard (row.feature? "construction" = some "control")
   return ⟨← row.parse? "control" [("less", Control.less), ("more", .more)],
     ← row.parse? "causee" [("directObject", .directObject), ("indirectObject", .indirectObject),
@@ -353,7 +353,7 @@ theorem control_rows :
 /-! ### Compactness and directness (§8.1) -/
 
 /-- The causative construction a row records: its formal complexity and its mediation. -/
-def CausativeConstruction.ofRow (row : LinguisticExample) : Option CausativeConstruction := do
+def CausativeConstruction.ofRow (row : Datum) : Option CausativeConstruction := do
   guard (row.feature? "construction" = some "compactness")
   return ⟨← row.parse? "complexity"
       [("lexical", CausativeComplexity.lexical), ("morphological", .morphological),
@@ -402,7 +402,7 @@ structure Grouped where
   grouping : Grouping
 
 /-- The configuration a grouping row records. -/
-def Grouped.ofRow (row : LinguisticExample) : Option Grouped := do
+def Grouped.ofRow (row : Datum) : Option Grouped := do
   guard (row.feature? "construction" = some "grouping")
   return ⟨← row.parse? "test" [("coordination", Test.coordination), ("imperative", .imperative),
       ("indirectCommand", .indirectCommand), ("resultative", .resultative),

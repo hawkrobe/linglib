@@ -55,7 +55,7 @@ the paper beyond monotonicity.
 
 namespace Rett2020a
 
-open Tense Degree Anscombe1964 Data.Examples
+open Tense Degree Anscombe1964
 
 variable {T : Type*} [LinearOrder T]
 
@@ -375,12 +375,12 @@ theorem before_select (m : Marking) :
   · exact before_culmination_telos A i
 
 /-- The marking of a row's embedded clause. -/
-def marking? (r : LinguisticExample) : Option Marking :=
+def marking? (r : Datum) : Option Marking :=
   r.parse? "aspect" [("imperfective", .nonCulminating), ("perfective", .culminating),
     ("pfv.neut", .nonCulminating), ("aia", .culminating)]
 
 /-- The bounds a row's accepted readings are read against. -/
-def bounds (r : LinguisticExample) : List Bound :=
+def bounds (r : Datum) : List Bound :=
   (r.readings.filter (·.2 = .acceptable)).filterMap λ x =>
     match x.1 with
     | "before-start" => some .initial

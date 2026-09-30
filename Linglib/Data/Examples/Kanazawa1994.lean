@@ -15,9 +15,7 @@ this module; declarations live in `namespace Kanazawa1994.Examples`.
 
 namespace Kanazawa1994.Examples
 
-open Data.Examples
-
-def strong_dominant : LinguisticExample :=
+def strong_dominant : Datum :=
   { id := "kanazawa1994_strong_dominant"
     source := ⟨"geach-1962", "UNVERIFIED the donkey sentence"⟩
     reportedIn := some ⟨"kanazawa-1994", "UNVERIFIED strong reading dominant out of the blue"⟩
@@ -30,6 +28,6 @@ def strong_dominant : LinguisticExample :=
     readings := [("strong/universal", .acceptable), ("weak/existential", .acceptable)]
     paperFeatures := [("preferred_reading", "strong"), ("quantifier_monotonicity", "upward")] }
 
-def all : List LinguisticExample := [strong_dominant]
+def all : List Datum := [strong_dominant]
 
 end Kanazawa1994.Examples

@@ -15,9 +15,7 @@ this module; declarations live in `namespace Landau2026.Examples`.
 
 namespace Landau2026.Examples
 
-open Data.Examples
-
-def hebrewEN : LinguisticExample :=
+def hebrewEN : Datum :=
   { id := "landau2026_hebrewEN"
     source := ⟨"landau-2026", "(18a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def hebrewEN : LinguisticExample :=
     readings := []
     paperFeatures := [("domain", "nP"), ("depth", "deep"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, free relative")] }
 
-def hebrewENP : LinguisticExample :=
+def hebrewENP : Datum :=
   { id := "landau2026_hebrewENP"
     source := ⟨"landau-2026", "(19a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def hebrewENP : LinguisticExample :=
     readings := []
     paperFeatures := [("domain", "nP"), ("depth", "surface"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, maximizing relative")] }
 
-def hebrewNCA_DP : LinguisticExample :=
+def hebrewNCA_DP : Datum :=
   { id := "landau2026_hebrewNCA_DP"
     source := ⟨"landau-2026", "(31a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def hebrewNCA_DP : LinguisticExample :=
     readings := []
     paperFeatures := [("domain", "DP"), ("depth", "deep"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, free relative")] }
 
-def hebrewAE : LinguisticExample :=
+def hebrewAE : Datum :=
   { id := "landau2026_hebrewAE"
     source := ⟨"landau-2026", "(32a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def hebrewAE : LinguisticExample :=
     readings := []
     paperFeatures := [("domain", "DP"), ("depth", "surface"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, free relative")] }
 
-def hebrewNCA_PP : LinguisticExample :=
+def hebrewNCA_PP : Datum :=
   { id := "landau2026_hebrewNCA_PP"
     source := ⟨"landau-2026", "(37a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def hebrewNCA_PP : LinguisticExample :=
     readings := []
     paperFeatures := [("domain", "PP"), ("depth", "deep"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, free relative")] }
 
-def hebrewPPE : LinguisticExample :=
+def hebrewPPE : Datum :=
   { id := "landau2026_hebrewPPE"
     source := ⟨"landau-2026", "(38a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def hebrewPPE : LinguisticExample :=
     readings := []
     paperFeatures := [("domain", "PP"), ("depth", "surface"), ("extractionAvailable", "false"), ("abarContext", "restrictive relative, interrogative, free relative")] }
 
-def englishVPE : LinguisticExample :=
+def englishVPE : Datum :=
   { id := "landau2026_englishVPE"
     source := ⟨"landau-2026", "(44a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def englishVPE : LinguisticExample :=
     readings := []
     paperFeatures := [("domain", "VP"), ("depth", "surface"), ("extractionAvailable", "true"), ("abarContext", "left-dislocation")] }
 
-def englishDoSo : LinguisticExample :=
+def englishDoSo : Datum :=
   { id := "landau2026_englishDoSo"
     source := ⟨"landau-2026", "(44c)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def englishDoSo : LinguisticExample :=
     readings := []
     paperFeatures := [("domain", "VP"), ("depth", "deep"), ("extractionAvailable", "true"), ("abarContext", "left-dislocation")] }
 
-def dutchDatDoen : LinguisticExample :=
+def dutchDatDoen : Datum :=
   { id := "landau2026_dutchDatDoen"
     source := ⟨"landau-2026", "(45a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def dutchDatDoen : LinguisticExample :=
     readings := []
     paperFeatures := [("domain", "VP"), ("depth", "deep"), ("extractionAvailable", "true"), ("abarContext", "left-dislocation")] }
 
-def danishDet : LinguisticExample :=
+def danishDet : Datum :=
   { id := "landau2026_danishDet"
     source := ⟨"landau-2026", "(46b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def danishDet : LinguisticExample :=
     readings := []
     paperFeatures := [("domain", "VP"), ("depth", "deep"), ("extractionAvailable", "true"), ("abarContext", "left-dislocation")] }
 
-def koreanNullObj : LinguisticExample :=
+def koreanNullObj : Datum :=
   { id := "landau2026_koreanNullObj"
     source := ⟨"landau-2026", "(47b)"⟩
     reportedIn := none
@@ -160,6 +158,6 @@ def koreanNullObj : LinguisticExample :=
     readings := []
     paperFeatures := [("domain", "DP"), ("depth", "deep"), ("extractionAvailable", "true"), ("abarContext", "left-dislocation")] }
 
-def all : List LinguisticExample := [hebrewEN, hebrewENP, hebrewNCA_DP, hebrewAE, hebrewNCA_PP, hebrewPPE, englishVPE, englishDoSo, dutchDatDoen, danishDet, koreanNullObj]
+def all : List Datum := [hebrewEN, hebrewENP, hebrewNCA_DP, hebrewAE, hebrewNCA_PP, hebrewPPE, englishVPE, englishDoSo, dutchDatDoen, danishDet, koreanNullObj]
 
 end Landau2026.Examples

@@ -42,7 +42,7 @@ are both words, the word cannot be the domain; the domains are the cycles.
 
 namespace Embick2021
 
-open DistributedMorphology Data.Examples Embick2021.Examples
+open DistributedMorphology Embick2021.Examples
 
 /-- The heads of the examples: the categorizers, Voice, tense and aspect. -/
 inductive Head
@@ -88,7 +88,7 @@ structure Row where
   spine : Spine Head
   rootClass : Option RootClass
   construction : Construction
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
   deriving Repr
 
 /-- The heads as named in the rows. -/
@@ -107,16 +107,16 @@ def constructionTable : List (String × Construction) :=
 def rootNames : List String := (Examples.all.filterMap (·.feature? "root")).eraseDups
 
 /-- A row from an example, its heads innermost first. -/
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let root ← ex.feature? "root"
   let construction ← ex.parse? "construction" constructionTable
   pure ⟨⟨⟨rootNames.idxOf root⟩, ["h1", "h2", "h3"].filterMap (ex.parse? · headTable)⟩,
     ex.parse? "rootClass" rootClassTable, construction, ex.judgment⟩
 
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
 /-- The nominalizations of (6) and (7) and the inflected verbs of §5. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-! ### Nominalizations, (6)–(10) -/
 

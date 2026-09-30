@@ -15,9 +15,7 @@ this module; declarations live in `namespace Kalin2018.Examples`.
 
 namespace Kalin2018.Examples
 
-open Data.Examples
-
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "kalin2018_8a"
     source := ⟨"kalin-2018", "(8a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "none"), ("subject_suffix", "S"), ("object_suffix", "none")] }
 
-def ex_9a : LinguisticExample :=
+def ex_9a : Datum :=
   { id := "kalin2018_9a"
     source := ⟨"kalin-2018", "(9a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "perfective"), ("object", "none"), ("subject_suffix", "L"), ("object_suffix", "none")] }
 
-def ex_9b : LinguisticExample :=
+def ex_9b : Datum :=
   { id := "kalin2018_9b"
     source := ⟨"kalin-2018", "(9b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_9b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "perfective"), ("object", "none"), ("subject_suffix", "L"), ("object_suffix", "none")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "kalin2018_10a"
     source := ⟨"kalin-2018", "(10a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "specific"), ("subject_suffix", "S"), ("object_suffix", "L")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "kalin2018_10b"
     source := ⟨"kalin-2018", "(10b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "specific"), ("subject_suffix", "S"), ("object_suffix", "L")] }
 
-def ex_10c : LinguisticExample :=
+def ex_10c : Datum :=
   { id := "kalin2018_10c"
     source := ⟨"kalin-2018", "(10c)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_10c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "specific"), ("subject_suffix", "S"), ("object_suffix", "L")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "kalin2018_11a"
     source := ⟨"kalin-2018", "(11a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "nonspecific"), ("subject_suffix", "S"), ("object_suffix", "none")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "kalin2018_11b"
     source := ⟨"kalin-2018", "(11b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "nonspecific"), ("subject_suffix", "S"), ("object_suffix", "none")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "kalin2018_12a"
     source := ⟨"kalin-2018", "(12a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "perfective"), ("object", "specific"), ("subject_suffix", "L"), ("object_suffix", "none")] }
 
-def ex_12c : LinguisticExample :=
+def ex_12c : Datum :=
   { id := "kalin2018_12c"
     source := ⟨"kalin-2018", "(12c)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_12c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "perfective"), ("object", "nonspecific"), ("subject_suffix", "L"), ("object_suffix", "none")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "kalin2018_38"
     source := ⟨"kalin-2018", "(38)"⟩
     reportedIn := none
@@ -160,6 +158,6 @@ def ex_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "specific"), ("subject_suffix", "S"), ("object_suffix", "L")] }
 
-def all : List LinguisticExample := [ex_8a, ex_9a, ex_9b, ex_10a, ex_10b, ex_10c, ex_11a, ex_11b, ex_12a, ex_12c, ex_38]
+def all : List Datum := [ex_8a, ex_9a, ex_9b, ex_10a, ex_10b, ex_10c, ex_11a, ex_11b, ex_12a, ex_12c, ex_38]
 
 end Kalin2018.Examples

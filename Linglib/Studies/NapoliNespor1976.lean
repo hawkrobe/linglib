@@ -48,7 +48,7 @@ dialogues themselves are not yet rows of `Data/Examples/NapoliNespor1976.json`.
 
 namespace NapoliNespor1976
 
-open Italian.PolarityItems PolarityItem Mood Data.Examples
+open Italian.PolarityItems PolarityItem Mood
 
 /-! ### The licensing condition -/
 

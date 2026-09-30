@@ -15,9 +15,7 @@ this module; declarations live in `namespace AugurzkyEtAl2023.Examples`.
 
 namespace AugurzkyEtAl2023.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "augurzkyetal2023_1"
     source := ⟨"augurzky-etal-2023", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "augurzkyetal2023_3"
     source := ⟨"augurzky-etal-2023", "(3)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "augurzkyetal2023_14"
     source := ⟨"augurzky-etal-2023", "(14)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "augurzkyetal2023_15"
     source := ⟨"augurzky-etal-2023", "(15)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def notEvery : LinguisticExample :=
+def notEvery : Datum :=
   { id := "augurzkyetal2023_notEvery"
     source := ⟨"augurzky-etal-2023", "Experiment 2, not every"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def notEvery : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "augurzkyetal2023_20"
     source := ⟨"augurzky-etal-2023", "(20)"⟩
     reportedIn := none
@@ -95,6 +93,6 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def all : List LinguisticExample := [ex_1, ex_3, ex_14, ex_15, notEvery, ex_20]
+def all : List Datum := [ex_1, ex_3, ex_14, ex_15, notEvery, ex_20]
 
 end AugurzkyEtAl2023.Examples

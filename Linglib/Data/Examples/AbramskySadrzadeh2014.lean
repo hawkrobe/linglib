@@ -15,9 +15,7 @@ this module; declarations live in `namespace AbramskySadrzadeh2014.Examples`.
 
 namespace AbramskySadrzadeh2014.Examples
 
-open Data.Examples
-
-def donkey : LinguisticExample :=
+def donkey : Datum :=
   { id := "abramskysadrzadeh2014_donkey"
     source := ⟨"geach-1962", "donkey sentence"⟩
     reportedIn := some ⟨"abramsky-sadrzadeh-2014", "§1"⟩
@@ -30,7 +28,7 @@ def donkey : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "donkey anaphora")] }
 
-def drt_resolved : LinguisticExample :=
+def drt_resolved : Datum :=
   { id := "abramskysadrzadeh2014_drt_resolved"
     source := ⟨"abramsky-sadrzadeh-2014", "§3"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def drt_resolved : LinguisticExample :=
     readings := []
     paperFeatures := [("resolution", "full"), ("unification", "v = x, w = y")] }
 
-def drt_partial : LinguisticExample :=
+def drt_partial : Datum :=
   { id := "abramskysadrzadeh2014_drt_partial"
     source := ⟨"abramsky-sadrzadeh-2014", "§3"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def drt_partial : LinguisticExample :=
     readings := [("it = the donkey", .unacceptable)]
     paperFeatures := [("resolution", "partial"), ("unification", "v = x")] }
 
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "abramskysadrzadeh2014_ex1"
     source := ⟨"abramsky-sadrzadeh-2014", "example 1"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex1 : LinguisticExample :=
     readings := []
     paperFeatures := [("cover", "x ↦ z ↤ y"), ("gluing", "{John(z), sleeps(z), snores(z)}")] }
 
-def ex2 : LinguisticExample :=
+def ex2 : Datum :=
   { id := "abramskysadrzadeh2014_ex2"
     source := ⟨"abramsky-sadrzadeh-2014", "example 2"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex2 : LinguisticExample :=
     readings := []
     paperFeatures := [("cover", "x ↦ a, y ↦ b, u ↦ a, v ↦ b"), ("gluing", "{John(a), donkey(b), owns(a, b), beats(a, b)}")] }
 
-def ex3 : LinguisticExample :=
+def ex3 : Datum :=
   { id := "abramskysadrzadeh2014_ex3"
     source := ⟨"abramsky-sadrzadeh-2014", "example 3"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex3 : LinguisticExample :=
     readings := [("it = the donkey", .acceptable), ("it = John", .unacceptable)]
     paperFeatures := [("resolution", "agreement"), ("cover", "x ↦ a, y ↦ b, z ↦ b")] }
 
-def ex4 : LinguisticExample :=
+def ex4 : Datum :=
   { id := "abramskysadrzadeh2014_ex4"
     source := ⟨"abramsky-sadrzadeh-2014", "example 4"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex4 : LinguisticExample :=
     readings := [("it = the cup", .acceptable), ("it = the plate", .acceptable)]
     paperFeatures := [("resolution", "ambiguous"), ("covers", "v ↦ y; v ↦ z")] }
 
-def brother_happy : LinguisticExample :=
+def brother_happy : Datum :=
   { id := "abramskysadrzadeh2014_brother_happy"
     source := ⟨"abramsky-sadrzadeh-2014", "§5"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def brother_happy : LinguisticExample :=
     readings := [("he = John", .acceptable), ("he = the brother", .acceptable)]
     paperFeatures := [("resolution", "preferential"), ("preferred", "he = John")] }
 
-def brother_nice : LinguisticExample :=
+def brother_nice : Datum :=
   { id := "abramskysadrzadeh2014_brother_nice"
     source := ⟨"abramsky-sadrzadeh-2014", "§5"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def brother_nice : LinguisticExample :=
     readings := [("he = John", .acceptable), ("he = the brother", .acceptable)]
     paperFeatures := [("resolution", "preferential"), ("preferred", "he = the brother")] }
 
-def cd : LinguisticExample :=
+def cd : Datum :=
   { id := "abramskysadrzadeh2014_cd"
     source := ⟨"abramsky-sadrzadeh-2014", "§5"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def cd : LinguisticExample :=
     readings := []
     paperFeatures := [("resolution", "preferential")] }
 
-def jim : LinguisticExample :=
+def jim : Datum :=
   { id := "abramskysadrzadeh2014_jim"
     source := ⟨"abramsky-sadrzadeh-2014", "§5"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def jim : LinguisticExample :=
     readings := []
     paperFeatures := [("resolution", "preferential")] }
 
-def bananas : LinguisticExample :=
+def bananas : Datum :=
   { id := "abramskysadrzadeh2014_bananas"
     source := ⟨"abramsky-sadrzadeh-2014", "§5 example"⟩
     reportedIn := none
@@ -173,6 +171,6 @@ def bananas : LinguisticExample :=
     readings := [("ripe bananas, cheeky bananas", .acceptable), ("ripe bananas, cheeky monkeys", .acceptable), ("ripe monkeys, cheeky bananas", .acceptable), ("ripe monkeys, cheeky monkeys", .acceptable)]
     paperFeatures := [("resolution", "preferential"), ("corpus", "British News, 200 million words"), ("selected", "ripe bananas, cheeky monkeys")] }
 
-def all : List LinguisticExample := [donkey, drt_resolved, drt_partial, ex1, ex2, ex3, ex4, brother_happy, brother_nice, cd, jim, bananas]
+def all : List Datum := [donkey, drt_resolved, drt_partial, ex1, ex2, ex3, ex4, brother_happy, brother_nice, cd, jim, bananas]
 
 end AbramskySadrzadeh2014.Examples

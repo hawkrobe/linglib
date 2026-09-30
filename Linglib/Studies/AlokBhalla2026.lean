@@ -44,7 +44,7 @@ Hindi rows check the plural-agreement route to subject honorification.
 
 namespace AlokBhalla2026
 
-open Minimalist Data.Examples
+open Minimalist
 
 /-! ### Languages -/
 

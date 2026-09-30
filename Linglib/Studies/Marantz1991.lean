@@ -71,7 +71,7 @@ they are in `ecm`. The third series of Georgian is outside the paper.
 
 namespace Marantz1991
 
-open Case DependentCase Data.Examples
+open Case DependentCase
 
 /-! ### Clauses and their chains -/
 
@@ -258,18 +258,18 @@ theorem unergative_subjectCases :
 /-! ### The examples -/
 
 /-- The setting of an example, by its language and the inflection the paper notes. -/
-def setting? (e : LinguisticExample) : Option Setting :=
+def setting? (e : Datum) : Option Setting :=
   [(("nucl1302", some "I"), georgian .present), (("nucl1302", some "II"), georgian .aorist),
     (("hind1269", some "perfect"), hindi .perfective), (("basq1248", none), basque)].lookup
     (e.language, e.feature? "inflection")
 
 /-- The clause of an example. -/
-def clause? (e : LinguisticExample) : Option Clause :=
+def clause? (e : Datum) : Option Clause :=
   e.parse? "clause" [("transitive", .transitive), ("unergative", .unergative),
     ("unaccusative", .unaccusative), ("psych", .psych .dat)]
 
 /-- The case an example shows on its subject or object. -/
-def case? (e : LinguisticExample) (key : String) : Option Case :=
+def case? (e : Datum) (key : String) : Option Case :=
   e.parse? key [("NOM", .nom), ("ERG", .erg), ("DAT", .dat), ("ABS", .abs)]
 
 /-- An example is acceptable exactly when the case of its subject is one the setting of its

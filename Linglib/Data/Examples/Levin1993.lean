@@ -15,9 +15,7 @@ this module; declarations live in `namespace Levin1993.Examples`.
 
 namespace Levin1993.Examples
 
-open Data.Examples
-
-def ci_break : LinguisticExample :=
+def ci_break : Datum :=
   { id := "levin1993_ci_break"
     source := ⟨"levin-1993", "(22), p. 9"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ci_break : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "break"), ("levin_class", "45.1"), ("alternation", "causativeInchoative")] }
 
-def mid_break : LinguisticExample :=
+def mid_break : Datum :=
   { id := "levin1993_mid_break"
     source := ⟨"levin-1993", "(13b), p. 6"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def mid_break : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "break"), ("levin_class", "45.1"), ("alternation", "middle")] }
 
-def con_break : LinguisticExample :=
+def con_break : Datum :=
   { id := "levin1993_con_break"
     source := ⟨"levin-1993", "(14b), p. 6"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def con_break : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "break"), ("levin_class", "45.1"), ("alternation", "conative")] }
 
-def bppa_break : LinguisticExample :=
+def bppa_break : Datum :=
   { id := "levin1993_bppa_break"
     source := ⟨"levin-1993", "(16b), p. 7"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def bppa_break : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "break"), ("levin_class", "45.1"), ("alternation", "bodyPartPossessorAscension")] }
 
-def ci_cut : LinguisticExample :=
+def ci_cut : Datum :=
   { id := "levin1993_ci_cut"
     source := ⟨"levin-1993", "(23b), p. 9"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ci_cut : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cut"), ("levin_class", "21.1"), ("alternation", "causativeInchoative")] }
 
-def mid_cut : LinguisticExample :=
+def mid_cut : Datum :=
   { id := "levin1993_mid_cut"
     source := ⟨"levin-1993", "(13a), p. 6"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def mid_cut : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cut"), ("levin_class", "21.1"), ("alternation", "middle")] }
 
-def con_cut : LinguisticExample :=
+def con_cut : Datum :=
   { id := "levin1993_con_cut"
     source := ⟨"levin-1993", "(14a), p. 6"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def con_cut : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cut"), ("levin_class", "21.1"), ("alternation", "conative")] }
 
-def bppa_cut : LinguisticExample :=
+def bppa_cut : Datum :=
   { id := "levin1993_bppa_cut"
     source := ⟨"levin-1993", "(15b), p. 7"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def bppa_cut : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cut"), ("levin_class", "21.1"), ("alternation", "bodyPartPossessorAscension")] }
 
-def ci_hit : LinguisticExample :=
+def ci_hit : Datum :=
   { id := "levin1993_ci_hit"
     source := ⟨"levin-1993", "(25b), p. 9"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ci_hit : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hit"), ("levin_class", "18.1"), ("alternation", "causativeInchoative")] }
 
-def mid_hit : LinguisticExample :=
+def mid_hit : Datum :=
   { id := "levin1993_mid_hit"
     source := ⟨"levin-1993", "(13d), p. 6"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def mid_hit : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hit"), ("levin_class", "18.1"), ("alternation", "middle")] }
 
-def con_hit : LinguisticExample :=
+def con_hit : Datum :=
   { id := "levin1993_con_hit"
     source := ⟨"levin-1993", "(14d), p. 6"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def con_hit : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hit"), ("levin_class", "18.1"), ("alternation", "conative")] }
 
-def bppa_hit : LinguisticExample :=
+def bppa_hit : Datum :=
   { id := "levin1993_bppa_hit"
     source := ⟨"levin-1993", "(18b), p. 7"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def bppa_hit : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hit"), ("levin_class", "18.1"), ("alternation", "bodyPartPossessorAscension")] }
 
-def ci_touch : LinguisticExample :=
+def ci_touch : Datum :=
   { id := "levin1993_ci_touch"
     source := ⟨"levin-1993", "(24b), p. 9"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ci_touch : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "touch"), ("levin_class", "20"), ("alternation", "causativeInchoative")] }
 
-def mid_touch : LinguisticExample :=
+def mid_touch : Datum :=
   { id := "levin1993_mid_touch"
     source := ⟨"levin-1993", "(13c), p. 6"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def mid_touch : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "touch"), ("levin_class", "20"), ("alternation", "middle")] }
 
-def con_touch : LinguisticExample :=
+def con_touch : Datum :=
   { id := "levin1993_con_touch"
     source := ⟨"levin-1993", "(14c), p. 6"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def con_touch : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "touch"), ("levin_class", "20"), ("alternation", "conative")] }
 
-def bppa_touch : LinguisticExample :=
+def bppa_touch : Datum :=
   { id := "levin1993_bppa_touch"
     source := ⟨"levin-1993", "(17b), p. 7"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def bppa_touch : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "touch"), ("levin_class", "20"), ("alternation", "bodyPartPossessorAscension")] }
 
-def con_push : LinguisticExample :=
+def con_push : Datum :=
   { id := "levin1993_con_push"
     source := ⟨"levin-1993", "§1.3 (95)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def con_push : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "push"), ("levin_class", "12"), ("alternation", "conative")] }
 
-def loc_spray : LinguisticExample :=
+def loc_spray : Datum :=
   { id := "levin1993_loc_spray"
     source := ⟨"levin-1993", "§2.3.1 (125), p. 51"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def loc_spray : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "spray"), ("levin_class", "9.7"), ("alternation", "locative")] }
 
-def loc_load : LinguisticExample :=
+def loc_load : Datum :=
   { id := "levin1993_loc_load"
     source := ⟨"levin-1993", "§9.7 (52)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def loc_load : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "load"), ("levin_class", "9.7"), ("alternation", "locative")] }
 
-def dat_give : LinguisticExample :=
+def dat_give : Datum :=
   { id := "levin1993_dat_give"
     source := ⟨"levin-1993", "UNVERIFIED constructed; give ∈ alternating GIVE VERBS, §2.1 (115) and §13.1"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def dat_give : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "give"), ("levin_class", "13.1"), ("alternation", "dative")] }
 
-def dat_send : LinguisticExample :=
+def dat_send : Datum :=
   { id := "levin1993_dat_send"
     source := ⟨"levin-1993", "§11.1 (129)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def dat_send : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "send"), ("levin_class", "11.1"), ("alternation", "dative")] }
 
-def ben_carve : LinguisticExample :=
+def ben_carve : Datum :=
   { id := "levin1993_ben_carve"
     source := ⟨"levin-1993", "§2.2 (121), p. 49"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ben_carve : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "carve"), ("levin_class", "26.1"), ("alternation", "benefactive")] }
 
-def ss_radiate : LinguisticExample :=
+def ss_radiate : Datum :=
   { id := "levin1993_ss_radiate"
     source := ⟨"levin-1993", "§1.1.3 (36), p. 32"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ss_radiate : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "radiate"), ("levin_class", "43.4"), ("alternation", "substanceSource")] }
 
-def mp_carve : LinguisticExample :=
+def mp_carve : Datum :=
   { id := "levin1993_mp_carve"
     source := ⟨"levin-1993", "§2.4.1 (147), p. 56"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def mp_carve : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "carve"), ("levin_class", "26.1"), ("alternation", "materialProduct")] }
 
-def uo_eat : LinguisticExample :=
+def uo_eat : Datum :=
   { id := "levin1993_uo_eat"
     source := ⟨"levin-1993", "§1.2.1 (38), p. 33"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def uo_eat : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "eat"), ("levin_class", "39.1"), ("alternation", "unspecifiedObject")] }
 
-def uo_devour : LinguisticExample :=
+def uo_devour : Datum :=
   { id := "levin1993_uo_devour"
     source := ⟨"levin-1993", "§39.4 (652)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def uo_devour : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "devour"), ("levin_class", "39.4"), ("alternation", "unspecifiedObject")] }
 
-def uro_meet : LinguisticExample :=
+def uro_meet : Datum :=
   { id := "levin1993_uro_meet"
     source := ⟨"levin-1993", "§1.2.4 (59), p. 36"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def uro_meet : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "meet"), ("levin_class", "36.3"), ("alternation", "understoodReciprocalObject")] }
 
-def ti_develop : LinguisticExample :=
+def ti_develop : Datum :=
   { id := "levin1993_ti_develop"
     source := ⟨"levin-1993", "§6.1 (321), p. 89"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ti_develop : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "develop"), ("levin_class", "48.1.1"), ("alternation", "thereInsertion")] }
 
-def ti_appear : LinguisticExample :=
+def ti_appear : Datum :=
   { id := "levin1993_ti_appear"
     source := ⟨"levin-1993", "§6.1 (322), p. 89"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ti_appear : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "appear"), ("levin_class", "48.1.1"), ("alternation", "thereInsertion")] }
 
-def li_live : LinguisticExample :=
+def li_live : Datum :=
   { id := "levin1993_li_live"
     source := ⟨"levin-1993", "§6.2 (335), p. 92"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def li_live : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "live"), ("levin_class", "47.1"), ("alternation", "locativeInversion")] }
 
-def is_break : LinguisticExample :=
+def is_break : Datum :=
   { id := "levin1993_is_break"
     source := ⟨"levin-1993", "§3.3 (275), p. 80"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def is_break : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "break"), ("levin_class", "45.1"), ("alternation", "instrumentSubject")] }
 
-def is_eat : LinguisticExample :=
+def is_eat : Datum :=
   { id := "levin1993_is_eat"
     source := ⟨"levin-1993", "§3.3 (276), p. 80"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def is_eat : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "eat"), ("levin_class", "39.1"), ("alternation", "instrumentSubject")] }
 
-def ia_run : LinguisticExample :=
+def ia_run : Datum :=
   { id := "levin1993_ia_run"
     source := ⟨"levin-1993", "§1.1.2.2 (25)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ia_run : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "run"), ("levin_class", "51.3.2"), ("alternation", "inducedAction")] }
 
-def ia_walk : LinguisticExample :=
+def ia_walk : Datum :=
   { id := "levin1993_ia_walk"
     source := ⟨"levin-1993", "UNVERIFIED constructed; walk ∈ §1.1.2.2 (23) RUN VERBS (some)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ia_walk : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "walk"), ("levin_class", "51.3.2"), ("alternation", "inducedAction")] }
 
-def ia_appear : LinguisticExample :=
+def ia_appear : Datum :=
   { id := "levin1993_ia_appear"
     source := ⟨"levin-1993", "(8), p. 4"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ia_appear : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "appear"), ("levin_class", "48.1.1"), ("alternation", "inducedAction")] }
 
-def ubpo_wave : LinguisticExample :=
+def ubpo_wave : Datum :=
   { id := "levin1993_ubpo_wave"
     source := ⟨"levin-1993", "§1.2.2 (40), p. 34"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ubpo_wave : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "wave"), ("levin_class", "40.3.2"), ("alternation", "understoodBodyPartObject")] }
 
-def uro_wash : LinguisticExample :=
+def uro_wash : Datum :=
   { id := "levin1993_uro_wash"
     source := ⟨"levin-1993", "UNVERIFIED constructed; wash ∈ §1.2.3 (47a) DRESS VERBS"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def uro_wash : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "wash"), ("levin_class", "41.1.1"), ("alternation", "understoodReflexiveObject")] }
 
-def tt_turn : LinguisticExample :=
+def tt_turn : Datum :=
   { id := "levin1993_tt_turn"
     source := ⟨"levin-1993", "§2.4.3 (159)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def tt_turn : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "turn"), ("levin_class", "26.6"), ("alternation", "totalTransformation")] }
 
-def way_elbow : LinguisticExample :=
+def way_elbow : Datum :=
   { id := "levin1993_way_elbow"
     source := ⟨"levin-1993", "UNVERIFIED constructed; X's way attested for unergative and transitive verbs, §7.4 (365)–(366)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def way_elbow : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "elbow"), ("levin_class", "51.3.2"), ("alternation", "wayConstruction")] }
 
-def co_laugh : LinguisticExample :=
+def co_laugh : Datum :=
   { id := "levin1993_co_laugh"
     source := ⟨"levin-1993", "§40.2 (686)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def co_laugh : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "laugh"), ("levin_class", "40.2"), ("alternation", "cognateObject")] }
 
-def co_grunt : LinguisticExample :=
+def co_grunt : Datum :=
   { id := "levin1993_co_grunt"
     source := ⟨"levin-1993", "§7.1 (350)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def co_grunt : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "grunt"), ("levin_class", "37.3"), ("alternation", "cognateObject")] }
 
-def co_jump : LinguisticExample :=
+def co_jump : Datum :=
   { id := "levin1993_co_jump"
     source := ⟨"levin-1993", "§51.3.2 (998)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def co_jump : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "jump"), ("levin_class", "51.3.2"), ("alternation", "cognateObject")] }
 
-def dp_run : LinguisticExample :=
+def dp_run : Datum :=
   { id := "levin1993_dp_run"
     source := ⟨"levin-1993", "UNVERIFIED constructed; run ∈ §7.8 (405) RUN VERBS"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def dp_run : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "run"), ("levin_class", "51.3.2"), ("alternation", "directionalPhrase")] }
 
-def vp_break : LinguisticExample :=
+def vp_break : Datum :=
   { id := "levin1993_vp_break"
     source := ⟨"levin-1993", "UNVERIFIED constructed; cf. §5.1 (306)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def vp_break : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "break"), ("levin_class", "45.1"), ("alternation", "verbalPassive")] }
 
-def vp_give : LinguisticExample :=
+def vp_give : Datum :=
   { id := "levin1993_vp_give"
     source := ⟨"levin-1993", "UNVERIFIED constructed; cf. §5.1 (306)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def vp_give : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "give"), ("levin_class", "13.1"), ("alternation", "verbalPassive")] }
 
-def vp_eat : LinguisticExample :=
+def vp_eat : Datum :=
   { id := "levin1993_vp_eat"
     source := ⟨"levin-1993", "UNVERIFIED constructed; cf. §5.1 (306)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def vp_eat : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "eat"), ("levin_class", "39.1"), ("alternation", "verbalPassive")] }
 
-def vp_see : LinguisticExample :=
+def vp_see : Datum :=
   { id := "levin1993_vp_see"
     source := ⟨"levin-1993", "UNVERIFIED constructed; cf. §5.1 (306)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def vp_see : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "see"), ("levin_class", "30.1"), ("alternation", "verbalPassive")] }
 
-def vp_measure : LinguisticExample :=
+def vp_measure : Datum :=
   { id := "levin1993_vp_measure"
     source := ⟨"levin-1993", "§54.1 (1030)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def vp_measure : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "weigh"), ("levin_class", "54.1"), ("alternation", "verbalPassive")] }
 
-def pp_sleep : LinguisticExample :=
+def pp_sleep : Datum :=
   { id := "levin1993_pp_sleep"
     source := ⟨"levin-1993", "§5.2 (311)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def pp_sleep : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sleep"), ("levin_class", "40.4"), ("alternation", "prepositionalPassive")] }
 
-def pp_talk : LinguisticExample :=
+def pp_talk : Datum :=
   { id := "levin1993_pp_talk"
     source := ⟨"levin-1993", "UNVERIFIED constructed"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def pp_talk : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "talk"), ("levin_class", "37.5"), ("alternation", "prepositionalPassive")] }
 
-def sw_swarm : LinguisticExample :=
+def sw_swarm : Datum :=
   { id := "levin1993_sw_swarm"
     source := ⟨"levin-1993", "§2.3.4 (139)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def sw_swarm : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "swarm"), ("levin_class", "47.5.1"), ("alternation", "swarm")] }
 
-def sw_crawl : LinguisticExample :=
+def sw_crawl : Datum :=
   { id := "levin1993_sw_crawl"
     source := ⟨"levin-1993", "UNVERIFIED constructed; crawl ∈ §2.3.4 (138f) SWARM VERBS"⟩
     reportedIn := none
@@ -693,6 +691,6 @@ def sw_crawl : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "crawl"), ("levin_class", "47.5.1"), ("alternation", "swarm")] }
 
-def all : List LinguisticExample := [ci_break, mid_break, con_break, bppa_break, ci_cut, mid_cut, con_cut, bppa_cut, ci_hit, mid_hit, con_hit, bppa_hit, ci_touch, mid_touch, con_touch, bppa_touch, con_push, loc_spray, loc_load, dat_give, dat_send, ben_carve, ss_radiate, mp_carve, uo_eat, uo_devour, uro_meet, ti_develop, ti_appear, li_live, is_break, is_eat, ia_run, ia_walk, ia_appear, ubpo_wave, uro_wash, tt_turn, way_elbow, co_laugh, co_grunt, co_jump, dp_run, vp_break, vp_give, vp_eat, vp_see, vp_measure, pp_sleep, pp_talk, sw_swarm, sw_crawl]
+def all : List Datum := [ci_break, mid_break, con_break, bppa_break, ci_cut, mid_cut, con_cut, bppa_cut, ci_hit, mid_hit, con_hit, bppa_hit, ci_touch, mid_touch, con_touch, bppa_touch, con_push, loc_spray, loc_load, dat_give, dat_send, ben_carve, ss_radiate, mp_carve, uo_eat, uo_devour, uro_meet, ti_develop, ti_appear, li_live, is_break, is_eat, ia_run, ia_walk, ia_appear, ubpo_wave, uro_wash, tt_turn, way_elbow, co_laugh, co_grunt, co_jump, dp_run, vp_break, vp_give, vp_eat, vp_see, vp_measure, pp_sleep, pp_talk, sw_swarm, sw_crawl]
 
 end Levin1993.Examples

@@ -387,7 +387,6 @@ theorem mo_comparative_with_negation :
 
 /-! ### The book's examples -/
 
-open Data.Examples (LinguisticExample)
 
 /-- The paradigm of a language of the sample, by Glottocode; Latin, Yakut and Kannada have no
 example rows. -/
@@ -416,21 +415,21 @@ def functionTable : List (String × HaspelmathFunction) :=
     ("freeChoice", .freeChoice)]
 
 /-- The region the figure of an example's language draws for a series. -/
-def region? (e : LinguisticExample) (label : String) : Option (Finset HaspelmathFunction) :=
+def region? (e : Datum) (label : String) : Option (Finset HaspelmathFunction) :=
   (paradigm? e.language).bind fun p ↦ (p.find? (·.label = label)).map (·.functions)
 
 /-- The figure draws the series over the function the example illustrates. -/
-def Covers (e : LinguisticExample) (label : String) : Prop :=
+def Covers (e : Datum) (label : String) : Prop :=
   ∃ f ∈ e.parse? "function" functionTable, ∃ r ∈ region? e label, f ∈ r
 
 /-- The figure leaves the function the example illustrates outside the series. -/
-def Excludes (e : LinguisticExample) (label : String) : Prop :=
+def Excludes (e : Datum) (label : String) : Prop :=
   ∃ f ∈ e.parse? "function" functionTable, ∃ r ∈ region? e label, f ∉ r
 
-instance (e : LinguisticExample) (label : String) : Decidable (Covers e label) :=
+instance (e : Datum) (label : String) : Decidable (Covers e label) :=
   inferInstanceAs (Decidable (∃ f ∈ _, ∃ r ∈ _, _))
 
-instance (e : LinguisticExample) (label : String) : Decidable (Excludes e label) :=
+instance (e : Datum) (label : String) : Decidable (Excludes e label) :=
   inferInstanceAs (Decidable (∃ f ∈ _, ∃ r ∈ _, _))
 
 /-- Every acceptable example of the book lies in the region its figure draws for each of its

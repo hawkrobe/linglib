@@ -67,7 +67,7 @@ be differences of type.
 
 namespace Elbourne2026
 
-open Modification Data.Examples Elbourne2026.Examples
+open Modification Elbourne2026.Examples
 
 section Theory
 

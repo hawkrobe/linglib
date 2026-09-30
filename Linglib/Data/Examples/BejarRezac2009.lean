@@ -15,9 +15,7 @@ this module; declarations live in `namespace BejarRezac2009.Examples`.
 
 namespace BejarRezac2009.Examples
 
-open Data.Examples
-
-def br2009_2a : LinguisticExample :=
+def br2009_2a : Datum :=
   { id := "br2009_2a"
     source := ⟨"bejar-rezac-2009", "(2a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def br2009_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "2"), ("controller", "2"), ("context", "inverse")] }
 
-def br2009_2b : LinguisticExample :=
+def br2009_2b : Datum :=
   { id := "br2009_2b"
     source := ⟨"bejar-rezac-2009", "(2b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def br2009_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "1"), ("controller", "1"), ("context", "inverse")] }
 
-def br2009_2c : LinguisticExample :=
+def br2009_2c : Datum :=
   { id := "br2009_2c"
     source := ⟨"bejar-rezac-2009", "(2c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def br2009_2c : LinguisticExample :=
     readings := []
     paperFeatures := [("ea", "2"), ("ia", "1"), ("controller", "1"), ("context", "inverse")] }
 
-def br2009_2d : LinguisticExample :=
+def br2009_2d : Datum :=
   { id := "br2009_2d"
     source := ⟨"bejar-rezac-2009", "(2d)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def br2009_2d : LinguisticExample :=
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "3"), ("controller", "1"), ("context", "direct")] }
 
-def br2009_3 : LinguisticExample :=
+def br2009_3 : Datum :=
   { id := "br2009_3"
     source := ⟨"bejar-rezac-2009", "(3)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def br2009_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "3"), ("controller", "1"), ("diagnostic", "case and binding unaffected")] }
 
-def br2009_15 : LinguisticExample :=
+def br2009_15 : Datum :=
   { id := "br2009_15"
     source := ⟨"bejar-rezac-2009", "(15)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def br2009_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("constraint", "Person Case Constraint")] }
 
-def br2009_t9_3_1 : LinguisticExample :=
+def br2009_t9_3_1 : Datum :=
   { id := "br2009_t9_3_1"
     source := ⟨"bejar-rezac-2009", "Table 9"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def br2009_t9_3_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "1"), ("repair", "added probe (INV)")] }
 
-def br2009_10 : LinguisticExample :=
+def br2009_10 : Datum :=
   { id := "br2009_10"
     source := ⟨"bejar-rezac-2009", "(10)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def br2009_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("probe", "flat [u-3]"), ("agreement", "object and subject independent")] }
 
-def br2009_17a : LinguisticExample :=
+def br2009_17a : Datum :=
   { id := "br2009_17a"
     source := ⟨"bejar-rezac-2009", "(17a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def br2009_17a : LinguisticExample :=
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "2"), ("controller", "2"), ("context", "inverse")] }
 
-def br2009_17b : LinguisticExample :=
+def br2009_17b : Datum :=
   { id := "br2009_17b"
     source := ⟨"bejar-rezac-2009", "(17b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def br2009_17b : LinguisticExample :=
     readings := []
     paperFeatures := [("ea", "2"), ("ia", "1"), ("controller", "2"), ("context", "direct")] }
 
-def br2009_17c : LinguisticExample :=
+def br2009_17c : Datum :=
   { id := "br2009_17c"
     source := ⟨"bejar-rezac-2009", "(17c)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def br2009_17c : LinguisticExample :=
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "1"), ("controller", "1"), ("context", "inverse")] }
 
-def br2009_17d : LinguisticExample :=
+def br2009_17d : Datum :=
   { id := "br2009_17d"
     source := ⟨"bejar-rezac-2009", "(17d)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def br2009_17d : LinguisticExample :=
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "2"), ("controller", "2"), ("context", "inverse")] }
 
-def br2009_18a : LinguisticExample :=
+def br2009_18a : Datum :=
   { id := "br2009_18a"
     source := ⟨"bejar-rezac-2009", "(18a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def br2009_18a : LinguisticExample :=
     readings := []
     paperFeatures := [("ea", "3"), ("ia", "1"), ("controller", "1"), ("morphology", "first-cycle m-")] }
 
-def br2009_18b : LinguisticExample :=
+def br2009_18b : Datum :=
   { id := "br2009_18b"
     source := ⟨"bejar-rezac-2009", "(18b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def br2009_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "3"), ("controller", "1"), ("morphology", "second-cycle v-")] }
 
-def br2009_29a : LinguisticExample :=
+def br2009_29a : Datum :=
   { id := "br2009_29a"
     source := ⟨"bejar-rezac-2009", "(29a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def br2009_29a : LinguisticExample :=
     readings := []
     paperFeatures := [("ea", "1"), ("ia", "2"), ("context", "direct"), ("IA case", "unmarked")] }
 
-def br2009_29b : LinguisticExample :=
+def br2009_29b : Datum :=
   { id := "br2009_29b"
     source := ⟨"bejar-rezac-2009", "(29b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def br2009_29b : LinguisticExample :=
     readings := []
     paperFeatures := [("ea", "2"), ("ia", "1"), ("context", "inverse"), ("IA case", "R-Case (dative form)")] }
 
-def br2009_30b : LinguisticExample :=
+def br2009_30b : Datum :=
   { id := "br2009_30b"
     source := ⟨"bejar-rezac-2009", "(30b)"⟩
     reportedIn := none
@@ -238,6 +236,6 @@ def br2009_30b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "passivization"), ("result", "R-Case disappears")] }
 
-def all : List LinguisticExample := [br2009_2a, br2009_2b, br2009_2c, br2009_2d, br2009_3, br2009_15, br2009_t9_3_1, br2009_10, br2009_17a, br2009_17b, br2009_17c, br2009_17d, br2009_18a, br2009_18b, br2009_29a, br2009_29b, br2009_30b]
+def all : List Datum := [br2009_2a, br2009_2b, br2009_2c, br2009_2d, br2009_3, br2009_15, br2009_t9_3_1, br2009_10, br2009_17a, br2009_17b, br2009_17c, br2009_17d, br2009_18a, br2009_18b, br2009_29a, br2009_29b, br2009_30b]
 
 end BejarRezac2009.Examples

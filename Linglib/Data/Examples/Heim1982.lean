@@ -15,9 +15,7 @@ this module; declarations live in `namespace Heim1982.Examples`.
 
 namespace Heim1982.Examples
 
-open Data.Examples
-
-def indefinite_persists : LinguisticExample :=
+def indefinite_persists : Datum :=
   { id := "heim1982_indefinite_persists"
     source := ⟨"heim-1982", "Ch. I §1 (9)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def indefinite_persists : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "none")] }
 
-def universal_blocks : LinguisticExample :=
+def universal_blocks : Datum :=
   { id := "heim1982_universal_blocks"
     source := ⟨"heim-1982", "Ch. I §1 (16)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def universal_blocks : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent_type", "universal"), ("context", "none")] }
 
-def negative_blocks : LinguisticExample :=
+def negative_blocks : Datum :=
   { id := "heim1982_negative_blocks"
     source := ⟨"heim-1982", "Ch. I §1 (17)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def negative_blocks : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent_type", "negative_quant"), ("context", "none")] }
 
-def definite_reference : LinguisticExample :=
+def definite_reference : Datum :=
   { id := "heim1982_definite_reference"
     source := ⟨"heim-1982", "Ch. III §5.1 (2)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def definite_reference : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "none")] }
 
-def conditional_donkey : LinguisticExample :=
+def conditional_donkey : Datum :=
   { id := "heim1982_conditional_donkey"
     source := ⟨"heim-1982", "Ch. I §2 (2)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def conditional_donkey : LinguisticExample :=
     readings := []
     paperFeatures := [("donkey_configuration", "conditional")] }
 
-def relative_donkey : LinguisticExample :=
+def relative_donkey : Datum :=
   { id := "heim1982_relative_donkey"
     source := ⟨"heim-1982", "Ch. I §2 (3)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def relative_donkey : LinguisticExample :=
     readings := []
     paperFeatures := [("donkey_configuration", "relative_clause")] }
 
-def soldier_gun : LinguisticExample :=
+def soldier_gun : Datum :=
   { id := "heim1982_soldier_gun"
     source := ⟨"heim-1982", "Ch. II §5.2 (6)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def soldier_gun : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent_type", "universal"), ("context", "none")] }
 
-def cat_door : LinguisticExample :=
+def cat_door : Datum :=
   { id := "heim1982_cat_door"
     source := ⟨"heim-1982", "Ch. II §3.3 (3)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def cat_door : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "none")] }
 
-def woman_dog : LinguisticExample :=
+def woman_dog : Datum :=
   { id := "heim1982_woman_dog"
     source := ⟨"heim-1982", "Ch. III §2.4 (5)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def woman_dog : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "none")] }
 
-def woman_dog_definite : LinguisticExample :=
+def woman_dog_definite : Datum :=
   { id := "heim1982_woman_dog_definite"
     source := ⟨"heim-1982", "Ch. III §3.2 (4)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def woman_dog_definite : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent_type", "definite"), ("context", "none")] }
 
-def pretzel : LinguisticExample :=
+def pretzel : Datum :=
   { id := "heim1982_pretzel"
     source := ⟨"heim-1982", "Ch. III §4.1 (2)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def pretzel : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "nuclear_scope")] }
 
-def flea_collar : LinguisticExample :=
+def flea_collar : Datum :=
   { id := "heim1982_flea_collar"
     source := ⟨"heim-1982", "Ch. III §4.3 (7)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def flea_collar : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent_type", "indefinite"), ("context", "nuclear_scope")] }
 
-def dog_bite : LinguisticExample :=
+def dog_bite : Datum :=
   { id := "heim1982_dog_bite"
     source := ⟨"heim-1982", "Ch. III §5.2 (3)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def dog_bite : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent_type", "definite"), ("context", "accommodation")] }
 
-def king_of_france : LinguisticExample :=
+def king_of_france : Datum :=
   { id := "heim1982_king_of_france"
     source := ⟨"heim-1982", "Ch. III §5.2 (10)"⟩
     reportedIn := none
@@ -199,6 +197,6 @@ def king_of_france : LinguisticExample :=
     readings := [("narrow scope (local accommodation)", .acceptable), ("existence implied (global accommodation)", .acceptable)]
     paperFeatures := [("antecedent_type", "definite"), ("context", "negation")] }
 
-def all : List LinguisticExample := [indefinite_persists, universal_blocks, negative_blocks, definite_reference, conditional_donkey, relative_donkey, soldier_gun, cat_door, woman_dog, woman_dog_definite, pretzel, flea_collar, dog_bite, king_of_france]
+def all : List Datum := [indefinite_persists, universal_blocks, negative_blocks, definite_reference, conditional_donkey, relative_donkey, soldier_gun, cat_door, woman_dog, woman_dog_definite, pretzel, flea_collar, dog_bite, king_of_france]
 
 end Heim1982.Examples

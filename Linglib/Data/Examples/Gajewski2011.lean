@@ -15,9 +15,7 @@ this module; declarations live in `namespace Gajewski2011.Examples`.
 
 namespace Gajewski2011.Examples
 
-open Data.Examples
-
-def ex14a : LinguisticExample :=
+def ex14a : Datum :=
   { id := "gajewski2011_ex14a"
     source := ⟨"gajewski-2011", "(14a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex14a : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "no"), ("strength", "weak"), ("npi", "anyone")] }
 
-def ex15a : LinguisticExample :=
+def ex15a : Datum :=
   { id := "gajewski2011_ex15a"
     source := ⟨"gajewski-2011", "(15a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex15a : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "no"), ("strength", "strong"), ("npi", "in weeks")] }
 
-def ex14b : LinguisticExample :=
+def ex14b : Datum :=
   { id := "gajewski2011_ex14b"
     source := ⟨"gajewski-2011", "(14b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex14b : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "atMostFive"), ("strength", "weak"), ("npi", "anyone")] }
 
-def ex15b : LinguisticExample :=
+def ex15b : Datum :=
   { id := "gajewski2011_ex15b"
     source := ⟨"gajewski-2011", "(15b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex15b : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "atMostFive"), ("strength", "strong"), ("npi", "in weeks")] }
 
-def ex1f : LinguisticExample :=
+def ex1f : Datum :=
   { id := "gajewski2011_ex1f"
     source := ⟨"gajewski-2011", "(1f)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex1f : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "some"), ("strength", "weak"), ("npi", "ever")] }
 
-def ex7f : LinguisticExample :=
+def ex7f : Datum :=
   { id := "gajewski2011_ex7f"
     source := ⟨"gajewski-2011", "(7f)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex7f : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "some"), ("strength", "strong"), ("npi", "until")] }
 
-def ex39a : LinguisticExample :=
+def ex39a : Datum :=
   { id := "gajewski2011_ex39a"
     source := ⟨"gajewski-2011", "(39a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex39a : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "only"), ("strength", "weak"), ("npi", "ever, anyone")] }
 
-def ex39b : LinguisticExample :=
+def ex39b : Datum :=
   { id := "gajewski2011_ex39b"
     source := ⟨"gajewski-2011", "(39b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex39b : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "only"), ("strength", "strong"), ("npi", "in weeks")] }
 
-def ex39c : LinguisticExample :=
+def ex39c : Datum :=
   { id := "gajewski2011_ex39c"
     source := ⟨"gajewski-2011", "(39c)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex39c : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "only"), ("strength", "strong"), ("npi", "either")] }
 
-def ex39d : LinguisticExample :=
+def ex39d : Datum :=
   { id := "gajewski2011_ex39d"
     source := ⟨"gajewski-2011", "(39d)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex39d : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "only"), ("strength", "strong"), ("npi", "until")] }
 
-def ex40a : LinguisticExample :=
+def ex40a : Datum :=
   { id := "gajewski2011_ex40a"
     source := ⟨"gajewski-2011", "(40a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex40a : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "conditional"), ("strength", "weak"), ("npi", "ever, anyone")] }
 
-def ex40b : LinguisticExample :=
+def ex40b : Datum :=
   { id := "gajewski2011_ex40b"
     source := ⟨"gajewski-2011", "(40b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex40b : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "conditional"), ("strength", "strong"), ("npi", "in weeks")] }
 
-def ex40c : LinguisticExample :=
+def ex40c : Datum :=
   { id := "gajewski2011_ex40c"
     source := ⟨"gajewski-2011", "(40c)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex40c : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "conditional"), ("strength", "strong"), ("npi", "either")] }
 
-def ex40d : LinguisticExample :=
+def ex40d : Datum :=
   { id := "gajewski2011_ex40d"
     source := ⟨"gajewski-2011", "(40d)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex40d : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "conditional"), ("strength", "strong"), ("npi", "until")] }
 
-def ex41a : LinguisticExample :=
+def ex41a : Datum :=
   { id := "gajewski2011_ex41a"
     source := ⟨"gajewski-2011", "(41a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex41a : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "sorry"), ("strength", "weak"), ("npi", "ever, anyone")] }
 
-def ex41b : LinguisticExample :=
+def ex41b : Datum :=
   { id := "gajewski2011_ex41b"
     source := ⟨"gajewski-2011", "(41b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex41b : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "sorry"), ("strength", "strong"), ("npi", "in weeks")] }
 
-def ex41c : LinguisticExample :=
+def ex41c : Datum :=
   { id := "gajewski2011_ex41c"
     source := ⟨"gajewski-2011", "(41c)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex41c : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "sorry"), ("strength", "strong"), ("npi", "either")] }
 
-def ex41d : LinguisticExample :=
+def ex41d : Datum :=
   { id := "gajewski2011_ex41d"
     source := ⟨"gajewski-2011", "(41d)"⟩
     reportedIn := none
@@ -251,6 +249,6 @@ def ex41d : LinguisticExample :=
     readings := []
     paperFeatures := [("licenser", "sorry"), ("strength", "strong"), ("npi", "until")] }
 
-def all : List LinguisticExample := [ex14a, ex15a, ex14b, ex15b, ex1f, ex7f, ex39a, ex39b, ex39c, ex39d, ex40a, ex40b, ex40c, ex40d, ex41a, ex41b, ex41c, ex41d]
+def all : List Datum := [ex14a, ex15a, ex14b, ex15b, ex1f, ex7f, ex39a, ex39b, ex39c, ex39d, ex40a, ex40b, ex40c, ex40d, ex41a, ex41b, ex41c, ex41d]
 
 end Gajewski2011.Examples

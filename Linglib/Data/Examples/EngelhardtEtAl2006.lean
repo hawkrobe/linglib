@@ -15,9 +15,7 @@ this module; declarations live in `namespace EngelhardtEtAl2006.Examples`.
 
 namespace EngelhardtEtAl2006.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "engelhardtetal2006_1"
     source := ⟨"engelhardt-etal-2006", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("ambiguity", "ambiguous")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "engelhardtetal2006_2"
     source := ⟨"engelhardt-etal-2006", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("ambiguity", "unambiguous")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "engelhardtetal2006_3"
     source := ⟨"engelhardt-etal-2006", "Table 1, (3)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "bare"), ("destination", "towel")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "engelhardtetal2006_4"
     source := ⟨"engelhardt-etal-2006", "Table 1, (4)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "bare"), ("destination", "box")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "engelhardtetal2006_5"
     source := ⟨"engelhardt-etal-2006", "Table 1, (5)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "modified"), ("destination", "otherTowel")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "engelhardtetal2006_6"
     source := ⟨"engelhardt-etal-2006", "Table 1, (6)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "modified"), ("destination", "box")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "engelhardtetal2006_7"
     source := ⟨"engelhardt-etal-2006", "(7)"⟩
     reportedIn := none
@@ -108,6 +106,6 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7]
 
 end EngelhardtEtAl2006.Examples

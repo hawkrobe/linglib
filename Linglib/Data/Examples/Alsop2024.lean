@@ -15,9 +15,7 @@ this module; declarations live in `namespace Alsop2024.Examples`.
 
 namespace Alsop2024.Examples
 
-open Data.Examples
-
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "alsop2024_1a"
     source := ⟨"alsop-2024", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1a : LinguisticExample :=
     readings := [("exclusiveness", .acceptable)]
     paperFeatures := [("logicalForm", "∀x ∈ De [book(x) → ◇read(you,x)]")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "alsop2024_3"
     source := ⟨"alsop-2024", "(3)"⟩
     reportedIn := some ⟨"szabolcsi-2019", ""⟩
@@ -43,7 +41,7 @@ def ex_3 : LinguisticExample :=
     readings := [("exclusiveness", .unacceptable)]
     paperFeatures := [("predicate", "symmetric"), ("state", "only2")] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "alsop2024_5a"
     source := ⟨"alsop-2024", "(5a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("any", "npi"), ("environment", "negation")] }
 
-def ex_5b : LinguisticExample :=
+def ex_5b : Datum :=
   { id := "alsop2024_5b"
     source := ⟨"alsop-2024", "(5b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("any", "npi"), ("environment", "restrictorOfEvery")] }
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "alsop2024_6a"
     source := ⟨"alsop-2024", "(6a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("any", "fci"), ("environment", "episodic")] }
 
-def ex_6b : LinguisticExample :=
+def ex_6b : Datum :=
   { id := "alsop2024_6b"
     source := ⟨"alsop-2024", "(6b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("any", "fci"), ("environment", "possibilityModal")] }
 
-def ex_6c : LinguisticExample :=
+def ex_6c : Datum :=
   { id := "alsop2024_6c"
     source := ⟨"alsop-2024", "(6c)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_6c : LinguisticExample :=
     readings := []
     paperFeatures := [("any", "fci"), ("environment", "necessityModal")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "alsop2024_17"
     source := ⟨"alsop-2024", "(17)"⟩
     reportedIn := some ⟨"menendez-benito-2010", ""⟩
@@ -121,7 +119,7 @@ def ex_17 : LinguisticExample :=
     readings := [("literal", .acceptable), ("exclusiveness", .unacceptable)]
     paperFeatures := [("state", "only2")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "alsop2024_19"
     source := ⟨"alsop-2024", "(19)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_19 : LinguisticExample :=
     readings := [("literal", .acceptable), ("exclusiveness", .unacceptable)]
     paperFeatures := [("state", "only2")] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "alsop2024_20a"
     source := ⟨"alsop-2024", "(20a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_20a : LinguisticExample :=
     readings := [("exclusiveness", .unacceptable)]
     paperFeatures := [("predicate", "symmetric"), ("state", "only2")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "alsop2024_20b"
     source := ⟨"alsop-2024", "(20b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_20b : LinguisticExample :=
     readings := [("exclusiveness", .unacceptable)]
     paperFeatures := [("predicate", "symmetric"), ("state", "only2")] }
 
-def ex_20c : LinguisticExample :=
+def ex_20c : Datum :=
   { id := "alsop2024_20c"
     source := ⟨"alsop-2024", "(20c)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_20c : LinguisticExample :=
     readings := [("exclusiveness", .unacceptable)]
     paperFeatures := [("predicate", "symmetric"), ("state", "only2")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "alsop2024_21b"
     source := ⟨"alsop-2024", "(21b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_21b : LinguisticExample :=
     readings := [("exclusiveness", .acceptable)]
     paperFeatures := [] }
 
-def ex_22b : LinguisticExample :=
+def ex_22b : Datum :=
   { id := "alsop2024_22b"
     source := ⟨"alsop-2024", "(22b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_22b : LinguisticExample :=
     readings := [("exclusiveness", .unacceptable)]
     paperFeatures := [("state", "only2")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "alsop2024_23"
     source := ⟨"alsop-2024", "(23)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_23 : LinguisticExample :=
     readings := [("exclusiveness", .unacceptable)]
     paperFeatures := [("implicature", "cancelled"), ("state", "only2")] }
 
-def ex_24a : LinguisticExample :=
+def ex_24a : Datum :=
   { id := "alsop2024_24a"
     source := ⟨"alsop-2024", "(24a)"⟩
     reportedIn := some ⟨"dayal-2013", ""⟩
@@ -225,7 +223,7 @@ def ex_24a : LinguisticExample :=
     readings := [("not every", .questionable)]
     paperFeatures := [("prior", "uniform")] }
 
-def ex_25b : LinguisticExample :=
+def ex_25b : Datum :=
   { id := "alsop2024_25b"
     source := ⟨"alsop-2024", "(25b)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_25b : LinguisticExample :=
     readings := [("not two", .acceptable), ("not three", .acceptable), ("not every", .acceptable)]
     paperFeatures := [("state", "only1")] }
 
-def ex_26a : LinguisticExample :=
+def ex_26a : Datum :=
   { id := "alsop2024_26a"
     source := ⟨"alsop-2024", "(26a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_26a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "anyAndEvery")] }
 
-def ex_26b : LinguisticExample :=
+def ex_26b : Datum :=
   { id := "alsop2024_26b"
     source := ⟨"alsop-2024", "(26b)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_26b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "anyAndEvery")] }
 
-def ex_27a : LinguisticExample :=
+def ex_27a : Datum :=
   { id := "alsop2024_27a"
     source := ⟨"alsop-2024", "(27a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_27a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "alsop2024_28"
     source := ⟨"alsop-2024", "(28)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_28 : LinguisticExample :=
     readings := [("not every", .unacceptable)]
     paperFeatures := [("implicature", "cancelled")] }
 
-def ex_31_mayS : LinguisticExample :=
+def ex_31_mayS : Datum :=
   { id := "alsop2024_31_mayS"
     source := ⟨"alsop-2024", "(31)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_31_mayS : LinguisticExample :=
     readings := []
     paperFeatures := [("utterance", "mayS"), ("parses", "3")] }
 
-def ex_31_mayP : LinguisticExample :=
+def ex_31_mayP : Datum :=
   { id := "alsop2024_31_mayP"
     source := ⟨"alsop-2024", "(31)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_31_mayP : LinguisticExample :=
     readings := []
     paperFeatures := [("utterance", "mayP"), ("parses", "3")] }
 
-def ex_31_mayAny : LinguisticExample :=
+def ex_31_mayAny : Datum :=
   { id := "alsop2024_31_mayAny"
     source := ⟨"alsop-2024", "(31)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_31_mayAny : LinguisticExample :=
     readings := [("exclusiveness", .acceptable), ("not every", .questionable)]
     paperFeatures := [("utterance", "mayAny"), ("parses", "2"), ("prior", "uniform")] }
 
-def ex_31_mayEvery : LinguisticExample :=
+def ex_31_mayEvery : Datum :=
   { id := "alsop2024_31_mayEvery"
     source := ⟨"alsop-2024", "(31)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_31_mayEvery : LinguisticExample :=
     readings := []
     paperFeatures := [("utterance", "mayEvery"), ("parses", "4")] }
 
-def ex_44 : LinguisticExample :=
+def ex_44 : Datum :=
   { id := "alsop2024_44"
     source := ⟨"alsop-2024", "(44)"⟩
     reportedIn := none
@@ -355,6 +353,6 @@ def ex_44 : LinguisticExample :=
     readings := [("literal", .acceptable), ("exclusiveness", .unacceptable), ("may but not must", .unacceptable)]
     paperFeatures := [("revisedViabilityConstraint", "cancelled")] }
 
-def all : List LinguisticExample := [ex_1a, ex_3, ex_5a, ex_5b, ex_6a, ex_6b, ex_6c, ex_17, ex_19, ex_20a, ex_20b, ex_20c, ex_21b, ex_22b, ex_23, ex_24a, ex_25b, ex_26a, ex_26b, ex_27a, ex_28, ex_31_mayS, ex_31_mayP, ex_31_mayAny, ex_31_mayEvery, ex_44]
+def all : List Datum := [ex_1a, ex_3, ex_5a, ex_5b, ex_6a, ex_6b, ex_6c, ex_17, ex_19, ex_20a, ex_20b, ex_20c, ex_21b, ex_22b, ex_23, ex_24a, ex_25b, ex_26a, ex_26b, ex_27a, ex_28, ex_31_mayS, ex_31_mayP, ex_31_mayAny, ex_31_mayEvery, ex_44]
 
 end Alsop2024.Examples

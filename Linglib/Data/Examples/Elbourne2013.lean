@@ -15,9 +15,7 @@ this module; declarations live in `namespace Elbourne2013.Examples`.
 
 namespace Elbourne2013.Examples
 
-open Data.Examples
-
-def ch3_5 : LinguisticExample :=
+def ch3_5 : Datum :=
   { id := "elbourne2013_ch3_5"
     source := ⟨"elbourne-2013", "ch. 3, (5)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ch3_5 : LinguisticExample :=
     readings := [("referential situation pronoun", .acceptable), ("bound situation pronoun", .acceptable)]
     paperFeatures := [("chapter", "3"), ("structure", "[[[the cat] s1] grins] or [ς1 [[[the cat] s1] grins]]")] }
 
-def ch5_2 : LinguisticExample :=
+def ch5_2 : Datum :=
   { id := "elbourne2013_ch5_2"
     source := ⟨"donnellan-1966", "pp. 285–286"⟩
     reportedIn := some ⟨"elbourne-2013", "ch. 5, (2)"⟩
@@ -43,7 +41,7 @@ def ch5_2 : LinguisticExample :=
     readings := [("referential", .acceptable), ("attributive", .acceptable)]
     paperFeatures := [("chapter", "5"), ("referential", "free situation pronoun"), ("attributive", "bound situation pronoun")] }
 
-def ch5_13 : LinguisticExample :=
+def ch5_13 : Datum :=
   { id := "elbourne2013_ch5_13"
     source := ⟨"donnellan-1966", "p. 287"⟩
     reportedIn := some ⟨"elbourne-2013", "ch. 5, (13)"⟩
@@ -56,7 +54,7 @@ def ch5_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "5"), ("misdescription", "yes")] }
 
-def ch5_16 : LinguisticExample :=
+def ch5_16 : Datum :=
   { id := "elbourne2013_ch5_16"
     source := ⟨"russell-1905", "pp. 487–488"⟩
     reportedIn := some ⟨"elbourne-2013", "ch. 5, (16)"⟩
@@ -69,7 +67,7 @@ def ch5_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "5"), ("use", "predicative")] }
 
-def ch6_3 : LinguisticExample :=
+def ch6_3 : Datum :=
   { id := "elbourne2013_ch6_3"
     source := ⟨"elbourne-2013", "ch. 6, (3)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ch6_3 : LinguisticExample :=
     readings := [("strong", .acceptable)]
     paperFeatures := [("chapter", "6"), ("anaphora", "donkey-anaphoric definite description")] }
 
-def ch6_15 : LinguisticExample :=
+def ch6_15 : Datum :=
   { id := "elbourne2013_ch6_15"
     source := ⟨"elbourne-2013", "ch. 6, (15)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ch6_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "6"), ("anaphora", "donkey-anaphoric definite description under a quantificational adverb")] }
 
-def ch6_21 : LinguisticExample :=
+def ch6_21 : Datum :=
   { id := "elbourne2013_ch6_21"
     source := ⟨"elbourne-2013", "ch. 6, (21)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ch6_21 : LinguisticExample :=
     readings := [("covarying", .acceptable)]
     paperFeatures := [("chapter", "6"), ("anaphora", "c-commanded bound definite description")] }
 
-def ch7_7 : LinguisticExample :=
+def ch7_7 : Datum :=
   { id := "elbourne2013_ch7_7"
     source := ⟨"elbourne-2013", "ch. 7, (7)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ch7_7 : LinguisticExample :=
     readings := [("de dicto", .acceptable), ("de re", .acceptable)]
     paperFeatures := [("chapter", "7"), ("de dicto", "situation pronoun bound below believes"), ("de re", "situation pronoun referring to the actual world")] }
 
-def ch7_16 : LinguisticExample :=
+def ch7_16 : Datum :=
   { id := "elbourne2013_ch7_16"
     source := ⟨"kripke-1977", "p. 9"⟩
     reportedIn := some ⟨"elbourne-2013", "ch. 7, (16)"⟩
@@ -134,7 +132,7 @@ def ch7_16 : LinguisticExample :=
     readings := [("attributive de re", .acceptable)]
     paperFeatures := [("chapter", "7"), ("structure", "[ς2 [[[the [number [of [[the planets] s2]]]] s2] [is [necessarily odd]]]]")] }
 
-def ch8_3 : LinguisticExample :=
+def ch8_3 : Datum :=
   { id := "elbourne2013_ch8_3"
     source := ⟨"elbourne-2013", "ch. 8, (3)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ch8_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("presupposition", "Hans believes there is exactly one ghost in his attic")] }
 
-def ch8_5 : LinguisticExample :=
+def ch8_5 : Datum :=
   { id := "elbourne2013_ch8_5"
     source := ⟨"elbourne-2013", "ch. 8, (5)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ch8_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("presupposition", "there is exactly one ghost in Hans's attic")] }
 
-def ch8_22 : LinguisticExample :=
+def ch8_22 : Datum :=
   { id := "elbourne2013_ch8_22"
     source := ⟨"elbourne-2013", "ch. 8, (22)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ch8_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("contrast", "definite description against its Russellian paraphrase")] }
 
-def ch8_33 : LinguisticExample :=
+def ch8_33 : Datum :=
   { id := "elbourne2013_ch8_33"
     source := ⟨"elbourne-2013", "ch. 8, (31), (33)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ch8_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "8"), ("contrast", "definite description against its Russellian paraphrase under an attitude verb")] }
 
-def ch8_36 : LinguisticExample :=
+def ch8_36 : Datum :=
   { id := "elbourne2013_ch8_36"
     source := ⟨"elbourne-2013", "ch. 8, (36)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ch8_36 : LinguisticExample :=
     readings := [("no speaker commitment to a fountain of youth", .acceptable)]
     paperFeatures := [("chapter", "8"), ("presupposition", "Ponce de León believes there is exactly one fountain of youth")] }
 
-def ch9_4 : LinguisticExample :=
+def ch9_4 : Datum :=
   { id := "elbourne2013_ch9_4"
     source := ⟨"strawson-1950", "p. 332"⟩
     reportedIn := some ⟨"elbourne-2013", "ch. 9, (4)"⟩
@@ -212,7 +210,7 @@ def ch9_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "9"), ("incompleteness", "situation pronoun referring to the room")] }
 
-def ch9_17a : LinguisticExample :=
+def ch9_17a : Datum :=
   { id := "elbourne2013_ch9_17a"
     source := ⟨"elbourne-2013", "ch. 9, (17a)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ch9_17a : LinguisticExample :=
     readings := [("strict", .acceptable), ("sloppy", .unacceptable)]
     paperFeatures := [("chapter", "9"), ("description", "the donkey")] }
 
-def ch9_17b : LinguisticExample :=
+def ch9_17b : Datum :=
   { id := "elbourne2013_ch9_17b"
     source := ⟨"elbourne-2013", "ch. 9, (17b)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ch9_17b : LinguisticExample :=
     readings := [("strict", .acceptable), ("sloppy", .acceptable)]
     paperFeatures := [("chapter", "9"), ("description", "the donkey he owns")] }
 
-def ch10_10a : LinguisticExample :=
+def ch10_10a : Datum :=
   { id := "elbourne2013_ch10_10a"
     source := ⟨"elbourne-2013", "ch. 10, (10a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ch10_10a : LinguisticExample :=
     readings := [("strong", .acceptable)]
     paperFeatures := [("chapter", "10"), ("structure", "[σ3 [Q [beats [[it donkey] s3]]]]")] }
 
-def ch10_21 : LinguisticExample :=
+def ch10_21 : Datum :=
   { id := "elbourne2013_ch10_21"
     source := ⟨"elbourne-2013", "ch. 10, (21)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ch10_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "10"), ("structure", "[[he [Junior Dean]] s1]")] }
 
-def ch10_34 : LinguisticExample :=
+def ch10_34 : Datum :=
   { id := "elbourne2013_ch10_34"
     source := ⟨"elbourne-2013", "ch. 10, (34)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ch10_34 : LinguisticExample :=
     readings := [("descriptive indexical", .acceptable)]
     paperFeatures := [("chapter", "10"), ("structure", "[[he Pope] s3]")] }
 
-def ch10_47 : LinguisticExample :=
+def ch10_47 : Datum :=
   { id := "elbourne2013_ch10_47"
     source := ⟨"elbourne-2013", "ch. 10, (47)"⟩
     reportedIn := none
@@ -290,6 +288,6 @@ def ch10_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("chapter", "10"), ("structure", "[[he [person [who ...]]] si]")] }
 
-def all : List LinguisticExample := [ch3_5, ch5_2, ch5_13, ch5_16, ch6_3, ch6_15, ch6_21, ch7_7, ch7_16, ch8_3, ch8_5, ch8_22, ch8_33, ch8_36, ch9_4, ch9_17a, ch9_17b, ch10_10a, ch10_21, ch10_34, ch10_47]
+def all : List Datum := [ch3_5, ch5_2, ch5_13, ch5_16, ch6_3, ch6_15, ch6_21, ch7_7, ch7_16, ch8_3, ch8_5, ch8_22, ch8_33, ch8_36, ch9_4, ch9_17a, ch9_17b, ch10_10a, ch10_21, ch10_34, ch10_47]
 
 end Elbourne2013.Examples

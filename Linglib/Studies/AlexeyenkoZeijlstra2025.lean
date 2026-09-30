@@ -43,7 +43,6 @@ the languages and the judgments.
 
 namespace AlexeyenkoZeijlstra2025
 
-open Data.Examples
 
 /-! ### Agreement marking -/
 
@@ -269,7 +268,7 @@ instance : DecidableRel AttrStatus.MayHost := fun s h ↦ by
 /-! ### Rows -/
 
 /-- The attributivizer a row reports. -/
-def attributivizerOf (row : LinguisticExample) : Option AttrStatus :=
+def attributivizerOf (row : Datum) : Option AttrStatus :=
   match row.feature? "attributivizer" with
   | some "affix" => some .adjectivalAffix
   | some "null" => some .null
@@ -286,12 +285,12 @@ def words : List Char → List (List Char)
     | w :: ws => if cs.head? = some ' ' then [c] :: w :: ws else (c :: w) :: ws
 
 /-- A row's tokens, punctuation dropped. -/
-def tokens (row : LinguisticExample) : List (List Char) :=
+def tokens (row : Datum) : List (List Char) :=
   (if row.glossedTokens = [] then words row.primaryText.toList
     else row.surfaceTokens.map String.toList).map (·.filter (· ∉ ['.', ',']))
 
 /-- Position of the token a feature names. -/
-def anchor (row : LinguisticExample) (key : String) : Option ℕ :=
+def anchor (row : Datum) (key : String) : Option ℕ :=
   (row.feature? key).bind fun t ↦ (tokens row).findIdx? (· = t.toList)
 
 /-- Linear order of adjective, dependent and noun, read off token positions. -/
@@ -312,7 +311,7 @@ inductive Order
 /-- The order of a row from its anchors: the adjective, the modified noun (absent in
     predicative use), the first word of the adjective's dependent, and a degree
     word. -/
-def orderOf (row : LinguisticExample) : Option Order :=
+def orderOf (row : Datum) : Option Order :=
   match anchor row "head", anchor row "noun", anchor row "dependent", anchor row "degree" with
   | some _, none, none, _ => some .bare
   | some h, none, some d, _ => some (if h < d then .aXp else .xpA)

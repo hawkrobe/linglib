@@ -15,9 +15,7 @@ this module; declarations live in `namespace BhattTakahashi2011.Examples`.
 
 namespace BhattTakahashi2011.Examples
 
-open Data.Examples
-
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "bhatttakahashi2011_ex11a"
     source := ⟨"bhatt-takahashi-2011", "(11a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "yes")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "bhatttakahashi2011_ex11b"
     source := ⟨"bhatt-takahashi-2011", "(11b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "no")] }
 
-def ex12a : LinguisticExample :=
+def ex12a : Datum :=
   { id := "bhatttakahashi2011_ex12a"
     source := ⟨"bhatt-takahashi-2011", "(12a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex12a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "yes")] }
 
-def ex12b : LinguisticExample :=
+def ex12b : Datum :=
   { id := "bhatttakahashi2011_ex12b"
     source := ⟨"bhatt-takahashi-2011", "(12b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex12b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "no")] }
 
-def ex13a : LinguisticExample :=
+def ex13a : Datum :=
   { id := "bhatttakahashi2011_ex13a"
     source := ⟨"bhatt-takahashi-2011", "(13a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex13a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "yes")] }
 
-def ex13b : LinguisticExample :=
+def ex13b : Datum :=
   { id := "bhatttakahashi2011_ex13b"
     source := ⟨"bhatt-takahashi-2011", "(13b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex13b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "no")] }
 
-def ex35 : LinguisticExample :=
+def ex35 : Datum :=
   { id := "bhatttakahashi2011_ex35"
     source := ⟨"bhatt-takahashi-2011", "(35)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex35 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "binding"), ("pron_c_commands_associate", "yes")] }
 
-def ex43a : LinguisticExample :=
+def ex43a : Datum :=
   { id := "bhatttakahashi2011_ex43a"
     source := ⟨"bhatt-takahashi-2011", "(43a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex43a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "scope"), ("qp_base_c_commands_degree_trace", "yes"), ("than_internal_scope", "unavailable")] }
 
-def ex43b : LinguisticExample :=
+def ex43b : Datum :=
   { id := "bhatttakahashi2011_ex43b"
     source := ⟨"bhatt-takahashi-2011", "(43b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex43b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "scope"), ("qp_base_c_commands_degree_trace", "no"), ("than_internal_scope", "available")] }
 
-def ex40 : LinguisticExample :=
+def ex40 : Datum :=
   { id := "bhatttakahashi2011_ex40"
     source := ⟨"bhatt-takahashi-2011", "(40)"⟩
     reportedIn := none
@@ -147,6 +145,6 @@ def ex40 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "scope"), ("qp_base_c_commands_degree_trace", "no"), ("than_internal_scope", "unavailable")] }
 
-def all : List LinguisticExample := [ex11a, ex11b, ex12a, ex12b, ex13a, ex13b, ex35, ex43a, ex43b, ex40]
+def all : List Datum := [ex11a, ex11b, ex12a, ex12b, ex13a, ex13b, ex35, ex43a, ex43b, ex40]
 
 end BhattTakahashi2011.Examples

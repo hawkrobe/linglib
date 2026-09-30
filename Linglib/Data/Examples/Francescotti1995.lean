@@ -15,9 +15,7 @@ this module; declarations live in `namespace Francescotti1995.Examples`.
 
 namespace Francescotti1995.Examples
 
-open Data.Examples
-
-def ex5 : LinguisticExample :=
+def ex5 : Datum :=
   { id := "francescotti1995_ex5"
     source := ⟨"francescotti-1995", "(5)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex5 : LinguisticExample :=
     readings := []
     paperFeatures := [("surpassed", "1"), ("neighbors", "3"), ("felicitous", "no")] }
 
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "francescotti1995_ex1"
     source := ⟨"francescotti-1995", "(1)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex1 : LinguisticExample :=
     readings := []
     paperFeatures := [("surpassed", "2"), ("neighbors", "3"), ("felicitous", "yes")] }
 
-def ex7 : LinguisticExample :=
+def ex7 : Datum :=
   { id := "francescotti1995_ex7"
     source := ⟨"kay-1990", "lieutenant colonels"⟩
     reportedIn := some ⟨"francescotti-1995", "(7)"⟩
@@ -56,7 +54,7 @@ def ex7 : LinguisticExample :=
     readings := []
     paperFeatures := [("surpassed", "2"), ("neighbors", "3"), ("felicitous", "yes")] }
 
-def ex21far : LinguisticExample :=
+def ex21far : Datum :=
   { id := "francescotti1995_ex21far"
     source := ⟨"francescotti-1995", "(21)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex21far : LinguisticExample :=
     readings := []
     paperFeatures := [("surpassed", "5"), ("neighbors", "5"), ("felicitous", "yes")] }
 
-def ex21near : LinguisticExample :=
+def ex21near : Datum :=
   { id := "francescotti1995_ex21near"
     source := ⟨"francescotti-1995", "(21)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex21near : LinguisticExample :=
     readings := []
     paperFeatures := [("surpassed", "5"), ("neighbors", "5"), ("felicitous", "yes")] }
 
-def ex21half : LinguisticExample :=
+def ex21half : Datum :=
   { id := "francescotti1995_ex21half"
     source := ⟨"francescotti-1995", "(21)"⟩
     reportedIn := none
@@ -95,6 +93,6 @@ def ex21half : LinguisticExample :=
     readings := []
     paperFeatures := [("surpassed", "2"), ("neighbors", "4"), ("felicitous", "no")] }
 
-def all : List LinguisticExample := [ex5, ex1, ex7, ex21far, ex21near, ex21half]
+def all : List Datum := [ex5, ex1, ex7, ex21far, ex21near, ex21half]
 
 end Francescotti1995.Examples

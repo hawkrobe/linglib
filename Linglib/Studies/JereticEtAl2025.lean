@@ -59,7 +59,6 @@ are not formalized.
 
 namespace JereticEtAl2025
 
-open Data.Examples
 
 /-! ### The typology -/
 
@@ -161,7 +160,7 @@ theorem universal_competitors :
 
 /-- A reported judgment on a plain quantifier: its language, its slot, and whether it is
 anti-dual, degraded in a domain of two. -/
-def cellRow (r : LinguisticExample) : Option (Language × QSlot × Bool) := do
+def cellRow (r : Datum) : Option (Language × QSlot × Bool) := do
   let l ← r.parse? "language" [("english", Language.english), ("french", .french),
     ("german", .german), ("japanese", .japanese), ("icelandic", .icelandic)]
   let q ← r.parse? "slot" [("universal", QSlot.universal), ("negative", .negative),

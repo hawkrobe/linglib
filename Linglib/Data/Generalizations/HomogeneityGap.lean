@@ -26,8 +26,8 @@ single paper and are read in its study, `Studies/KrizChemla2015`.
 ## Main declarations
 
 * `GapScenario` — ALL / NONE / GAP scenario triad.
-* `GapDatum` — typed empirical datum lifted from `LinguisticExample`
-  rows by `fromExample` (paperFeatures keys `polarity`, `condition`,
+* `GapDatum` — typed empirical datum lifted from `Datum`
+  rows by `fromDatum` (paperFeatures keys `polarity`, `condition`,
   `gap_detected`; rows with an `embedding` key other than `unembedded`
   are excluded — those belong to the projection pool).
 * `allData` — pooled rows from [kriz-chemla-2015] (unembedded
@@ -45,7 +45,6 @@ live in the comparing paper's study file, not here.
 
 namespace Generalizations.HomogeneityGap
 
-open Data.Examples (LinguisticExample SourceRef)
 
 /-! ### Substrate -/
 
@@ -62,7 +61,7 @@ inductive GapScenario where
 /-! ### Datum schema -/
 
 /--
-Empirical datum lifted from a paper-anchored `LinguisticExample`:
+Empirical datum lifted from a paper-anchored `Datum`:
 `observed` is the trivalent value the paper's judgments commit to in
 this `(polarity, scenario)` cell.
 -/
@@ -73,7 +72,7 @@ structure GapDatum where
   source   : SourceRef
   deriving Repr, DecidableEq
 
-/-! ### `LinguisticExample` adapter -/
+/-! ### `Datum` adapter -/
 
 /-- Read a `Polarity` from the `paperFeatures` `"polarity"` value. -/
 def parsePolarity : String → Option Polarity
@@ -118,12 +117,12 @@ def gapTruth (features : List (String × String)) : Option Trivalent :=
     | _            => none
 
 /--
-Lift a `LinguisticExample` to a `GapDatum` via the `polarity`,
+Lift a `Datum` to a `GapDatum` via the `polarity`,
 `condition`, `gap_detected`, and `classical_value` keys. Rows tagged
 with an `embedding` key other than `"unembedded"` return `none`: the
 embedded cells are read in `Studies/KrizChemla2015`.
 -/
-def fromExample (e : LinguisticExample) : Option GapDatum := do
+def fromDatum (e : Datum) : Option GapDatum := do
   match e.paperFeatures.lookup "embedding" with
   | some emb => if emb != "unembedded" then none else pure ()
   | none     => pure ()
@@ -144,6 +143,6 @@ theorems live there too.
 -/
 def allData : List GapDatum :=
   (KrizChemla2015.Examples.all ++ AghaJeretic2022.Examples.all
-    ++ Kriz2015.Examples.all).filterMap fromExample
+    ++ Kriz2015.Examples.all).filterMap fromDatum
 
 end Generalizations.HomogeneityGap

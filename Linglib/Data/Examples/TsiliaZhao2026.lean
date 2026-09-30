@@ -15,9 +15,7 @@ this module; declarations live in `namespace TsiliaZhao2026.Examples`.
 
 namespace TsiliaZhao2026.Examples
 
-open Data.Examples
-
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "tsiliazhao2026_6"
     source := ⟨"tsilia-zhao-2026", "(6)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix", "present"), ("environment", "root"), ("then", "incompatible")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "tsiliazhao2026_8"
     source := ⟨"tsilia-zhao-2026", "(8)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_8 : LinguisticExample :=
     readings := [("shifted present: the pregnancy overlaps the knowledge in 2000", .acceptable)]
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "tsiliazhao2026_11"
     source := ⟨"tsilia-zhao-2026", "(11)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "tsiliazhao2026_9"
     source := ⟨"tsilia-zhao-2026", "(9)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "tsiliazhao2026_10"
     source := ⟨"tsilia-zhao-2026", "(10)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "tsiliazhao2026_18"
     source := ⟨"tsilia-zhao-2026", "(18)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_18 : LinguisticExample :=
     readings := [("double access: Mary loves John at the utterance time and at the finding out", .acceptable)]
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "no")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "tsiliazhao2026_21"
     source := ⟨"tsilia-zhao-2026", "(21)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "relative clause"), ("embedded", "present"), ("shifted", "no"), ("then", "incompatible")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "tsiliazhao2026_25"
     source := ⟨"tsilia-zhao-2026", "(25)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "relative clause"), ("embedded", "present"), ("shifted", "no"), ("then", "incompatible")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "tsiliazhao2026_28"
     source := ⟨"tsilia-zhao-2026", "(28)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "tsiliazhao2026_29"
     source := ⟨"tsilia-zhao-2026", "(29)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "relative clause"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "tsiliazhao2026_30a"
     source := ⟨"tsilia-zhao-2026", "(30a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix", "future"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")] }
 
-def ex_30d : LinguisticExample :=
+def ex_30d : Datum :=
   { id := "tsiliazhao2026_30d"
     source := ⟨"tsilia-zhao-2026", "(30d)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_30d : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix", "future"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "deleted"), ("then", "variation")] }
 
-def ex_31a : LinguisticExample :=
+def ex_31a : Datum :=
   { id := "tsiliazhao2026_31a"
     source := ⟨"tsilia-zhao-2026", "(31a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_31a : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix", "future"), ("environment", "relative clause"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "tsiliazhao2026_32"
     source := ⟨"tsilia-zhao-2026", "(32)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("then", "past-oriented only")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "tsiliazhao2026_38"
     source := ⟨"tsilia-zhao-2026", "(38)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_38 : LinguisticExample :=
     readings := [("simultaneous: the love overlaps the belief", .acceptable)]
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "past"), ("then", "compatible")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "tsiliazhao2026_48"
     source := ⟨"tsilia-zhao-2026", "(48)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_48 : LinguisticExample :=
     readings := [("the meeting is at the time of the future saying, three days from now", .acceptable)]
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "deleted past"), ("then", "compatible")] }
 
-def ex_99 : LinguisticExample :=
+def ex_99 : Datum :=
   { id := "tsiliazhao2026_99"
     source := ⟨"tsilia-zhao-2026", "(99)"⟩
     reportedIn := none
@@ -238,6 +236,6 @@ def ex_99 : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("indexical", "unshifted")] }
 
-def all : List LinguisticExample := [ex_6, ex_8, ex_11, ex_9, ex_10, ex_18, ex_21, ex_25, ex_28, ex_29, ex_30a, ex_30d, ex_31a, ex_32, ex_38, ex_48, ex_99]
+def all : List Datum := [ex_6, ex_8, ex_11, ex_9, ex_10, ex_18, ex_21, ex_25, ex_28, ex_29, ex_30a, ex_30d, ex_31a, ex_32, ex_38, ex_48, ex_99]
 
 end TsiliaZhao2026.Examples

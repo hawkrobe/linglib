@@ -15,9 +15,7 @@ this module; declarations live in `namespace Dolatian2020.Examples`.
 
 namespace Dolatian2020.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "dolatian2020_1"
     source := ⟨"dolatian-2020", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "western"), ("process", "stress")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "dolatian2020_2"
     source := ⟨"dolatian-2020", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "both")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "dolatian2020_3b"
     source := ⟨"dolatian-2020", "(3b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "none")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "dolatian2020_4"
     source := ⟨"dolatian-2020", "(4)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "deletion")] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "dolatian2020_5a"
     source := ⟨"dolatian-2020", "(5a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "schwa")] }
 
-def ex_5c : LinguisticExample :=
+def ex_5c : Datum :=
   { id := "dolatian2020_5c"
     source := ⟨"dolatian-2020", "(5c)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_5c : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "compound"), ("reduction", "both")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "dolatian2020_7a"
     source := ⟨"dolatian-2020", "(7a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "vInflection"), ("reduction", "none")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "dolatian2020_7b"
     source := ⟨"dolatian-2020", "(7b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "vInflection"), ("reduction", "diphthong")] }
 
-def ex_10c : LinguisticExample :=
+def ex_10c : Datum :=
   { id := "dolatian2020_10c"
     source := ⟨"dolatian-2020", "(10c)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_10c : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "vInflection"), ("reduction", "deletion")] }
 
-def ex_10e : LinguisticExample :=
+def ex_10e : Datum :=
   { id := "dolatian2020_10e"
     source := ⟨"dolatian-2020", "(10e)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_10e : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "cInflection"), ("reduction", "none")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "dolatian2020_12a"
     source := ⟨"dolatian-2020", "(12a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "vInflection"), ("reduction", "diphthong")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "dolatian2020_41"
     source := ⟨"dolatian-2020", "(41)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "none")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "dolatian2020_42"
     source := ⟨"dolatian-2020", "(42)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "both")] }
 
-def ex_47a : LinguisticExample :=
+def ex_47a : Datum :=
   { id := "dolatian2020_47a"
     source := ⟨"dolatian-2020", "(47a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_47a : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "both")] }
 
-def ex_48a : LinguisticExample :=
+def ex_48a : Datum :=
   { id := "dolatian2020_48a"
     source := ⟨"dolatian-2020", "(48a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_48a : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "western"), ("suffix", "derivational"), ("reduction", "deletion")] }
 
-def ex_65 : LinguisticExample :=
+def ex_65 : Datum :=
   { id := "dolatian2020_65"
     source := ⟨"dolatian-2020", "(65)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_65 : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "vInflection"), ("reduction", "both")] }
 
-def ex_66 : LinguisticExample :=
+def ex_66 : Datum :=
   { id := "dolatian2020_66"
     source := ⟨"dolatian-2020", "(66)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_66 : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "plural"), ("reduction", "both")] }
 
-def ex_72 : LinguisticExample :=
+def ex_72 : Datum :=
   { id := "dolatian2020_72"
     source := ⟨"dolatian-2020", "(72)"⟩
     reportedIn := none
@@ -251,6 +249,6 @@ def ex_72 : LinguisticExample :=
     readings := []
     paperFeatures := [("dialect", "eastern"), ("suffix", "vInflection"), ("reduction", "none")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3b, ex_4, ex_5a, ex_5c, ex_7a, ex_7b, ex_10c, ex_10e, ex_12a, ex_41, ex_42, ex_47a, ex_48a, ex_65, ex_66, ex_72]
+def all : List Datum := [ex_1, ex_2, ex_3b, ex_4, ex_5a, ex_5c, ex_7a, ex_7b, ex_10c, ex_10e, ex_12a, ex_41, ex_42, ex_47a, ex_48a, ex_65, ex_66, ex_72]
 
 end Dolatian2020.Examples

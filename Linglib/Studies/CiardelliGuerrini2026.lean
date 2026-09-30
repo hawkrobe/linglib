@@ -48,7 +48,7 @@ possible that A or it is possible that B* and conjoined *be allowed*, are not ro
 
 namespace CiardelliGuerrini2026
 
-open Modality ModalLogic English.Auxiliaries Data.Examples
+open Modality ModalLogic English.Auxiliaries
 
 /-! ### Scope and truth conditions (§2) -/
 

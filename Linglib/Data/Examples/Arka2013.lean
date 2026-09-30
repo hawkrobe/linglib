@@ -15,9 +15,7 @@ this module; declarations live in `namespace Arka2013.Examples`.
 
 namespace Arka2013.Examples
 
-open Data.Examples
-
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "arka2013_3"
     source := ⟨"arka-2013", "(3)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_3 : LinguisticExample :=
     readings := [("S/he came.", .acceptable), ("S/he is coming.", .acceptable), ("S/he will come.", .acceptable)]
     paperFeatures := [("tam", "contextual")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "arka2013_4a"
     source := ⟨"arka-2013", "(4a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "S<E-R"), ("adjunct", "besok")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "arka2013_4b"
     source := ⟨"arka-2013", "(4b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "E-R<S"), ("adjunct", "kemarin")] }
 
-def ex_4c : LinguisticExample :=
+def ex_4c : Datum :=
   { id := "arka2013_4c"
     source := ⟨"arka-2013", "(4c)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4c : LinguisticExample :=
     readings := []
     paperFeatures := [("frame", "E-R-S"), ("adjunct", "sekarang")] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "arka2013_5a"
     source := ⟨"arka-2013", "(5a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("aux", "sudah"), ("frame", "E<S,R")] }
 
-def ex_5b : LinguisticExample :=
+def ex_5b : Datum :=
   { id := "arka2013_5b"
     source := ⟨"arka-2013", "(5b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("aux", "sudah"), ("frame", "E<R<S"), ("adjunct", "kemarin")] }
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "arka2013_6a"
     source := ⟨"arka-2013", "(6a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("aux", "sedang"), ("aspect", "progressive"), ("marking", "applicative -i")] }
 
-def ex_6b : LinguisticExample :=
+def ex_6b : Datum :=
   { id := "arka2013_6b"
     source := ⟨"arka-2013", "(6b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("aux", "sedang"), ("aspect", "progressive"), ("marking", "reduplication")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "arka2013_7"
     source := ⟨"arka-2013", "(7)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("marking", "reduplication"), ("meaning", "unrealised expectation")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "arka2013_8"
     source := ⟨"arka-2013", "(8)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("aspect", "progressive"), ("tam", "contextual")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "arka2013_10"
     source := ⟨"arka-2013", "(10)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("aux", "akan"), ("frame", "S<E-R"), ("withAux", "acceptable"), ("clause", "root")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "arka2013_11a"
     source := ⟨"arka-2013", "(11a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("withAux", "ungrammatical"), ("matrix", "ingin")] }
 
-def ex_11c : LinguisticExample :=
+def ex_11c : Datum :=
   { id := "arka2013_11c"
     source := ⟨"arka-2013", "(11c)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_11c : LinguisticExample :=
     readings := []
     paperFeatures := [("aux", "akan"), ("withAux", "acceptable"), ("matrix", "tahu"), ("subordinator", "bahwa")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "arka2013_12a"
     source := ⟨"arka-2013", "(12a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("withAux", "acceptable"), ("clause", "root")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "arka2013_12b"
     source := ⟨"arka-2013", "(12b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("withAux", "ungrammatical"), ("matrix", "menyuruh")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "arka2013_13a"
     source := ⟨"arka-2013", "(13a)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("withAux", "ungrammatical"), ("matrix", "mendorong")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "arka2013_14a"
     source := ⟨"arka-2013", "(14a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("withAux", "questionable"), ("adjunct", "sambil")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "arka2013_15a"
     source := ⟨"arka-2013", "(15a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("withAux", "questionable"), ("matrix", "belajar")] }
 
-def ex_15c : LinguisticExample :=
+def ex_15c : Datum :=
   { id := "arka2013_15c"
     source := ⟨"arka-2013", "(15c)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_15c : LinguisticExample :=
     readings := []
     paperFeatures := [("withAux", "acceptable"), ("subordinator", "agar")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "arka2013_18a"
     source := ⟨"arka-2013", "(18a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_18a : LinguisticExample :=
     readings := []
     paperFeatures := [("aux", "sedang"), ("voice", "AV")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "arka2013_18b"
     source := ⟨"arka-2013", "(18b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("aux", "sudah"), ("voice", "passive")] }
 
-def ex_34a : LinguisticExample :=
+def ex_34a : Datum :=
   { id := "arka2013_34a"
     source := ⟨"arka-2013", "(34a)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_34a : LinguisticExample :=
     readings := [("he asked", .acceptable), ("he will ask", .unacceptable)]
     paperFeatures := [("nominalised", "true"), ("axis", "past"), ("predicate", "nominal"), ("withAux", "ungrammatical")] }
 
-def ex_34b : LinguisticExample :=
+def ex_34b : Datum :=
   { id := "arka2013_34b"
     source := ⟨"arka-2013", "(34b)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_34b : LinguisticExample :=
     readings := []
     paperFeatures := [("nominalised", "true"), ("axis", "future"), ("adjunct", "nanti")] }
 
-def ex_34d : LinguisticExample :=
+def ex_34d : Datum :=
   { id := "arka2013_34d"
     source := ⟨"arka-2013", "(34d)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_34d : LinguisticExample :=
     readings := []
     paperFeatures := [("aux", "akan"), ("withAux", "acceptable"), ("clause", "root")] }
 
-def ex_35a : LinguisticExample :=
+def ex_35a : Datum :=
   { id := "arka2013_35a"
     source := ⟨"arka-2013", "(35a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_35a : LinguisticExample :=
     readings := [("When did you buy it?", .acceptable), ("When are you going to buy it?", .unacceptable)]
     paperFeatures := [("nominalised", "true"), ("axis", "past"), ("predicate", "nominal"), ("withAux", "ungrammatical")] }
 
-def ex_35c : LinguisticExample :=
+def ex_35c : Datum :=
   { id := "arka2013_35c"
     source := ⟨"arka-2013", "(35c)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_35c : LinguisticExample :=
     readings := []
     paperFeatures := [("aux", "akan"), ("withAux", "acceptable"), ("clause", "root")] }
 
-def ex_36a : LinguisticExample :=
+def ex_36a : Datum :=
   { id := "arka2013_36a"
     source := ⟨"arka-2013", "(36a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_36a : LinguisticExample :=
     readings := [("When was s/he born?", .acceptable), ("When is s/he going to be born?", .unacceptable)]
     paperFeatures := [("nominalised", "true"), ("axis", "past"), ("predicate", "nominal"), ("withAux", "ungrammatical")] }
 
-def ex_36c : LinguisticExample :=
+def ex_36c : Datum :=
   { id := "arka2013_36c"
     source := ⟨"arka-2013", "(36c)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_36c : LinguisticExample :=
     readings := []
     paperFeatures := [("aux", "akan"), ("withAux", "acceptable"), ("clause", "root")] }
 
-def ex_37a : LinguisticExample :=
+def ex_37a : Datum :=
   { id := "arka2013_37a"
     source := ⟨"arka-2013", "(37a)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "harus"), ("nominalised", "false"), ("soa", "future"), ("evaluation", "deontic")] }
 
-def ex_37b : LinguisticExample :=
+def ex_37b : Datum :=
   { id := "arka2013_37b"
     source := ⟨"arka-2013", "(37b)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_37b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "harus"), ("nominalised", "true"), ("soa", "past"), ("evaluation", "counterfactual")] }
 
-def ex_38a : LinguisticExample :=
+def ex_38a : Datum :=
   { id := "arka2013_38a"
     source := ⟨"arka-2013", "(38a)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_38a : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "bisa"), ("nominalised", "false"), ("soa", "future"), ("evaluation", "epistemic")] }
 
-def ex_38b : LinguisticExample :=
+def ex_38b : Datum :=
   { id := "arka2013_38b"
     source := ⟨"arka-2013", "(38b)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_38b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "bisa"), ("nominalised", "true"), ("soa", "past"), ("evaluation", "past ability")] }
 
-def ex_39a : LinguisticExample :=
+def ex_39a : Datum :=
   { id := "arka2013_39a"
     source := ⟨"arka-2013", "(39a)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_39a : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "mau"), ("nominalised", "false"), ("soa", "future")] }
 
-def ex_39b : LinguisticExample :=
+def ex_39b : Datum :=
   { id := "arka2013_39b"
     source := ⟨"arka-2013", "(39b)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_39b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "mau"), ("nominalised", "true"), ("soa", "present/past"), ("evaluation", "counterfactual")] }
 
-def ex_40a : LinguisticExample :=
+def ex_40a : Datum :=
   { id := "arka2013_40a"
     source := ⟨"arka-2013", "(40a)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_40a : LinguisticExample :=
     readings := []
     paperFeatures := [("nominalised", "true"), ("withAux", "ungrammatical"), ("evidential", "visual"), ("predicate", "nominal")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "arka2013_41"
     source := ⟨"arka-2013", "(41)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("nominalised", "false")] }
 
-def ex_42a : LinguisticExample :=
+def ex_42a : Datum :=
   { id := "arka2013_42a"
     source := ⟨"arka-2013", "(42a)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_42a : LinguisticExample :=
     readings := []
     paperFeatures := [("evidential", "none")] }
 
-def ex_42b : LinguisticExample :=
+def ex_42b : Datum :=
   { id := "arka2013_42b"
     source := ⟨"arka-2013", "(42b)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_42b : LinguisticExample :=
     readings := []
     paperFeatures := [("evidential", "reportative"), ("nominalised", "true")] }
 
-def ex_43a : LinguisticExample :=
+def ex_43a : Datum :=
   { id := "arka2013_43a"
     source := ⟨"arka-2013", "(43a)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_43a : LinguisticExample :=
     readings := []
     paperFeatures := [("evidential", "reportative"), ("nominalised", "true")] }
 
-def ex_43b : LinguisticExample :=
+def ex_43b : Datum :=
   { id := "arka2013_43b"
     source := ⟨"arka-2013", "(43b)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_43b : LinguisticExample :=
     readings := []
     paperFeatures := [("evidential", "none"), ("nominalised", "true")] }
 
-def ex_44a : LinguisticExample :=
+def ex_44a : Datum :=
   { id := "arka2013_44a"
     source := ⟨"arka-2013", "(44a)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex_44a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "verbal"), ("adalah", "ungrammatical")] }
 
-def ex_45a : LinguisticExample :=
+def ex_45a : Datum :=
   { id := "arka2013_45a"
     source := ⟨"arka-2013", "(45a)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex_45a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "nominal"), ("adalah", "acceptable")] }
 
-def ex_45b : LinguisticExample :=
+def ex_45b : Datum :=
   { id := "arka2013_45b"
     source := ⟨"arka-2013", "(45b)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex_45b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "nominal"), ("adalah", "acceptable")] }
 
-def ex_46a : LinguisticExample :=
+def ex_46a : Datum :=
   { id := "arka2013_46a"
     source := ⟨"arka-2013", "(46a)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex_46a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "nominal"), ("nominalised", "true"), ("adalah", "acceptable")] }
 
-def ex_46b : LinguisticExample :=
+def ex_46b : Datum :=
   { id := "arka2013_46b"
     source := ⟨"arka-2013", "(46b)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex_46b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "nominal"), ("nominalised", "true"), ("adalah", "acceptable")] }
 
-def ex_47a : LinguisticExample :=
+def ex_47a : Datum :=
   { id := "arka2013_47a"
     source := ⟨"arka-2013", "(47a)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex_47a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "nominal"), ("bukan", "acceptable"), ("tidak", "ungrammatical")] }
 
-def ex_47b : LinguisticExample :=
+def ex_47b : Datum :=
   { id := "arka2013_47b"
     source := ⟨"arka-2013", "(47b)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex_47b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "nominal"), ("bukan", "acceptable"), ("tidak", "ungrammatical")] }
 
-def ex_48a : LinguisticExample :=
+def ex_48a : Datum :=
   { id := "arka2013_48a"
     source := ⟨"arka-2013", "(48a)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex_48a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "nominal"), ("nominalised", "true"), ("bukan", "acceptable"), ("tidak", "ungrammatical")] }
 
-def ex_48b : LinguisticExample :=
+def ex_48b : Datum :=
   { id := "arka2013_48b"
     source := ⟨"arka-2013", "(48b)"⟩
     reportedIn := none
@@ -654,6 +652,6 @@ def ex_48b : LinguisticExample :=
     readings := [("The/his/her/my wish was not to sleep.", .acceptable), ("It is the/her/his/your wish that (I/you/(s)he) would not sleep (but I did sleep).", .acceptable)]
     paperFeatures := [("predicate", "nominal"), ("nominalised", "true"), ("bukan", "acceptable"), ("tidak", "acceptable")] }
 
-def all : List LinguisticExample := [ex_3, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_6a, ex_6b, ex_7, ex_8, ex_10, ex_11a, ex_11c, ex_12a, ex_12b, ex_13a, ex_14a, ex_15a, ex_15c, ex_18a, ex_18b, ex_34a, ex_34b, ex_34d, ex_35a, ex_35c, ex_36a, ex_36c, ex_37a, ex_37b, ex_38a, ex_38b, ex_39a, ex_39b, ex_40a, ex_41, ex_42a, ex_42b, ex_43a, ex_43b, ex_44a, ex_45a, ex_45b, ex_46a, ex_46b, ex_47a, ex_47b, ex_48a, ex_48b]
+def all : List Datum := [ex_3, ex_4a, ex_4b, ex_4c, ex_5a, ex_5b, ex_6a, ex_6b, ex_7, ex_8, ex_10, ex_11a, ex_11c, ex_12a, ex_12b, ex_13a, ex_14a, ex_15a, ex_15c, ex_18a, ex_18b, ex_34a, ex_34b, ex_34d, ex_35a, ex_35c, ex_36a, ex_36c, ex_37a, ex_37b, ex_38a, ex_38b, ex_39a, ex_39b, ex_40a, ex_41, ex_42a, ex_42b, ex_43a, ex_43b, ex_44a, ex_45a, ex_45b, ex_46a, ex_46b, ex_47a, ex_47b, ex_48a, ex_48b]
 
 end Arka2013.Examples

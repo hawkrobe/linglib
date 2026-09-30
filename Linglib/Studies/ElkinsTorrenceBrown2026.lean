@@ -72,7 +72,7 @@ in K'ichean, and temporals trigger neither.
 
 namespace ElkinsTorrenceBrown2026
 
-open Minimalist DistributedMorphology Data.Examples ElkinsTorrenceBrown2026.Examples
+open Minimalist DistributedMorphology ElkinsTorrenceBrown2026.Examples
 
 /-! ### The extended verbal domain (§1.3) -/
 
@@ -407,7 +407,7 @@ def sizeTable : List (String × ClauseSpine) :=
 
 /-- The dependency of a long-distance row: the embedded clause and, when the wh-expression lands
 in the matrix clause, the full-CP matrix clause above it. -/
-def dependencyOf (e : LinguisticExample) : Option Dependency :=
+def dependencyOf (e : Datum) : Option Dependency :=
   (e.parse? "embeddedSize" sizeTable).bind fun s ↦
     e.parse? "landing" [("embedded", [spine s 0]), ("matrix", [spine s 0, spine finiteClause 0])]
 

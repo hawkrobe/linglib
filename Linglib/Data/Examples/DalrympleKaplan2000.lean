@@ -15,9 +15,7 @@ this module; declarations live in `namespace DalrympleKaplan2000.Examples`.
 
 namespace DalrympleKaplan2000.Examples
 
-open Data.Examples
-
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "dalrymplekaplan2000_17"
     source := ⟨"dalrymple-kaplan-2000", "(17)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("requirements", "ACC by gegessen, NOM by übrig war")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "dalrymplekaplan2000_32"
     source := ⟨"dalrymple-kaplan-2000", "(32)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("requirements", "DAT by vertraust, NOM by muss")] }
 
-def ex_40 : LinguisticExample :=
+def ex_40 : Datum :=
   { id := "dalrymplekaplan2000_40"
     source := ⟨"dyla-1984", "p. 701"⟩
     reportedIn := some ⟨"dalrymple-kaplan-2000", "(40)"⟩
@@ -56,7 +54,7 @@ def ex_40 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("requirements", "ACC by lubi, GEN by nienawidzi")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "dalrymplekaplan2000_41"
     source := ⟨"dalrymple-kaplan-2000", "(41)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("requirements", "ACC by lubi, GEN by nienawidzi")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "dalrymplekaplan2000_47"
     source := ⟨"pullum-zwicky-1986", "p. 761"⟩
     reportedIn := some ⟨"dalrymple-kaplan-2000", "(47)"⟩
@@ -82,7 +80,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("requirements", "BASE by will, PPART by have")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "dalrymplekaplan2000_48"
     source := ⟨"pullum-zwicky-1986", "p. 761"⟩
     reportedIn := some ⟨"dalrymple-kaplan-2000", "(48)"⟩
@@ -95,7 +93,7 @@ def ex_48 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("requirements", "BASE by will, PPART by have")] }
 
-def ex_49 : LinguisticExample :=
+def ex_49 : Datum :=
   { id := "dalrymplekaplan2000_49"
     source := ⟨"dalrymple-kaplan-2000", "(49)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_49 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("requirements", "BASE by will, PPART by have")] }
 
-def ex_53a : LinguisticExample :=
+def ex_53a : Datum :=
   { id := "dalrymplekaplan2000_53a"
     source := ⟨"voeltz-1971", "Xhosa coordination"⟩
     reportedIn := some ⟨"dalrymple-kaplan-2000", "(53a)"⟩
@@ -121,7 +119,7 @@ def ex_53a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("classes", "5/6 and 7/8"), ("requirement", "class 5/6")] }
 
-def ex_53b : LinguisticExample :=
+def ex_53b : Datum :=
   { id := "dalrymplekaplan2000_53b"
     source := ⟨"voeltz-1971", "Xhosa coordination"⟩
     reportedIn := some ⟨"dalrymple-kaplan-2000", "(53b)"⟩
@@ -134,7 +132,7 @@ def ex_53b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("classes", "5/6 and 7/8"), ("requirement", "class 7/8")] }
 
-def ex_54 : LinguisticExample :=
+def ex_54 : Datum :=
   { id := "dalrymplekaplan2000_54"
     source := ⟨"voeltz-1971", "Xhosa coordination"⟩
     reportedIn := some ⟨"dalrymple-kaplan-2000", "(54)"⟩
@@ -147,7 +145,7 @@ def ex_54 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("classes", "7/8 and 9/10"), ("requirement", "class in {7/8, 9/10}")] }
 
-def ex_57 : LinguisticExample :=
+def ex_57 : Datum :=
   { id := "dalrymplekaplan2000_57"
     source := ⟨"corbett-1991", "pp. 276ff."⟩
     reportedIn := some ⟨"dalrymple-kaplan-2000", "(57)"⟩
@@ -160,7 +158,7 @@ def ex_57 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("classes", "6 and 6"), ("requirement", "class in {2, 6}")] }
 
-def ex_58 : LinguisticExample :=
+def ex_58 : Datum :=
   { id := "dalrymplekaplan2000_58"
     source := ⟨"corbett-1991", "pp. 276ff."⟩
     reportedIn := some ⟨"dalrymple-kaplan-2000", "(58)"⟩
@@ -173,7 +171,7 @@ def ex_58 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("classes", "2 and 2"), ("requirement", "class in {2, 6}")] }
 
-def ex_59 : LinguisticExample :=
+def ex_59 : Datum :=
   { id := "dalrymplekaplan2000_59"
     source := ⟨"corbett-1991", "pp. 276ff."⟩
     reportedIn := some ⟨"dalrymple-kaplan-2000", "(59)"⟩
@@ -186,7 +184,7 @@ def ex_59 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("classes", "2 and 6"), ("requirement", "class in {2, 6}")] }
 
-def ex_61 : LinguisticExample :=
+def ex_61 : Datum :=
   { id := "dalrymplekaplan2000_61"
     source := ⟨"eisenberg-1973", "right node raising"⟩
     reportedIn := some ⟨"dalrymple-kaplan-2000", "(61)"⟩
@@ -199,7 +197,7 @@ def ex_61 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("subjects", "1PL and 3PL"), ("requirement", "person in {1, 3}")] }
 
-def ex_64 : LinguisticExample :=
+def ex_64 : Datum :=
   { id := "dalrymplekaplan2000_64"
     source := ⟨"pullum-zwicky-1986", "p. 771"⟩
     reportedIn := some ⟨"dalrymple-kaplan-2000", "(64)"⟩
@@ -212,7 +210,7 @@ def ex_64 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("subjects", "2PL and 3SG"), ("requirement", "cell in {2PL, 3SG}")] }
 
-def ex_71 : LinguisticExample :=
+def ex_71 : Datum :=
   { id := "dalrymplekaplan2000_71"
     source := ⟨"dalrymple-kaplan-2000", "(71)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_71 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("conjuncts", "3SG and 1SG"), ("agreement", "1PL")] }
 
-def ex_76 : LinguisticExample :=
+def ex_76 : Datum :=
   { id := "dalrymplekaplan2000_76"
     source := ⟨"corbett-1983", "p. 178"⟩
     reportedIn := some ⟨"dalrymple-kaplan-2000", "(76)"⟩
@@ -238,7 +236,7 @@ def ex_76 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("conjuncts", "1SG and 2SG"), ("agreement", "1PL")] }
 
-def ex_81 : LinguisticExample :=
+def ex_81 : Datum :=
   { id := "dalrymplekaplan2000_81"
     source := ⟨"dalrymple-kaplan-2000", "(81)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_81 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("conjuncts", "2 and 3"), ("agreement", "2")] }
 
-def ex_82 : LinguisticExample :=
+def ex_82 : Datum :=
   { id := "dalrymplekaplan2000_82"
     source := ⟨"dalrymple-kaplan-2000", "(82)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_82 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("conjuncts", "3 and 3"), ("agreement", "3")] }
 
-def ex_83 : LinguisticExample :=
+def ex_83 : Datum :=
   { id := "dalrymplekaplan2000_83"
     source := ⟨"dalrymple-kaplan-2000", "(83)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_83 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("conjuncts", "2 and 1"), ("agreement", "1INCL.PL")] }
 
-def ex_84 : LinguisticExample :=
+def ex_84 : Datum :=
   { id := "dalrymplekaplan2000_84"
     source := ⟨"dalrymple-kaplan-2000", "(84)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_84 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("conjuncts", "2, 3 and 1"), ("agreement", "1INCL.PL")] }
 
-def ex_85 : LinguisticExample :=
+def ex_85 : Datum :=
   { id := "dalrymplekaplan2000_85"
     source := ⟨"dalrymple-kaplan-2000", "(85)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_85 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("conjuncts", "3 and 1"), ("agreement", "1EXCL.PL")] }
 
-def ex_86 : LinguisticExample :=
+def ex_86 : Datum :=
   { id := "dalrymplekaplan2000_86"
     source := ⟨"dalrymple-kaplan-2000", "(86)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_86 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("conjuncts", "3 and 1EXCL"), ("agreement", "1EXCL.PL")] }
 
-def ex_95 : LinguisticExample :=
+def ex_95 : Datum :=
   { id := "dalrymplekaplan2000_95"
     source := ⟨"dalrymple-kaplan-2000", "(95)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_95 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.4"), ("conjuncts", "3SG and 2SG"), ("agreement", "2PL")] }
 
-def ex_107 : LinguisticExample :=
+def ex_107 : Datum :=
   { id := "dalrymplekaplan2000_107"
     source := ⟨"dalrymple-kaplan-2000", "(107)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_107 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.1"), ("conjuncts", "MASC and FEM"), ("agreement", "MASC")] }
 
-def ex_108 : LinguisticExample :=
+def ex_108 : Datum :=
   { id := "dalrymplekaplan2000_108"
     source := ⟨"dalrymple-kaplan-2000", "(108)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_108 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.1"), ("conjuncts", "FEM and FEM"), ("agreement", "FEM")] }
 
-def ex_115 : LinguisticExample :=
+def ex_115 : Datum :=
   { id := "dalrymplekaplan2000_115"
     source := ⟨"dalrymple-kaplan-2000", "(115)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_115 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("conjuncts", "MASC and FEM"), ("agreement", "NEUT")] }
 
-def ex_116 : LinguisticExample :=
+def ex_116 : Datum :=
   { id := "dalrymplekaplan2000_116"
     source := ⟨"dalrymple-kaplan-2000", "(116)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_116 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("conjuncts", "MASC and NEUT"), ("agreement", "NEUT")] }
 
-def ex_117 : LinguisticExample :=
+def ex_117 : Datum :=
   { id := "dalrymplekaplan2000_117"
     source := ⟨"dalrymple-kaplan-2000", "(117)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_117 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("conjuncts", "FEM and NEUT"), ("agreement", "NEUT")] }
 
-def ex_123 : LinguisticExample :=
+def ex_123 : Datum :=
   { id := "dalrymplekaplan2000_123"
     source := ⟨"dalrymple-kaplan-2000", "(123)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_123 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.3"), ("conjuncts", "NEUT and NEUT"), ("agreement", "MASC")] }
 
-def ex_128 : LinguisticExample :=
+def ex_128 : Datum :=
   { id := "dalrymplekaplan2000_128"
     source := ⟨"dalrymple-kaplan-2000", "(128)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_128 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("requirements", "GENDER =c MASC and GENDER =c FEM")] }
 
-def ex_141a : LinguisticExample :=
+def ex_141a : Datum :=
   { id := "dalrymplekaplan2000_141a"
     source := ⟨"dalrymple-kaplan-2000", "(141a)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_141a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("requirements", "GENDER =c MASC")] }
 
-def ex_141b : LinguisticExample :=
+def ex_141b : Datum :=
   { id := "dalrymplekaplan2000_141b"
     source := ⟨"dalrymple-kaplan-2000", "(141b)"⟩
     reportedIn := none
@@ -446,6 +444,6 @@ def ex_141b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("requirements", "GENDER =c FEM")] }
 
-def all : List LinguisticExample := [ex_17, ex_32, ex_40, ex_41, ex_47, ex_48, ex_49, ex_53a, ex_53b, ex_54, ex_57, ex_58, ex_59, ex_61, ex_64, ex_71, ex_76, ex_81, ex_82, ex_83, ex_84, ex_85, ex_86, ex_95, ex_107, ex_108, ex_115, ex_116, ex_117, ex_123, ex_128, ex_141a, ex_141b]
+def all : List Datum := [ex_17, ex_32, ex_40, ex_41, ex_47, ex_48, ex_49, ex_53a, ex_53b, ex_54, ex_57, ex_58, ex_59, ex_61, ex_64, ex_71, ex_76, ex_81, ex_82, ex_83, ex_84, ex_85, ex_86, ex_95, ex_107, ex_108, ex_115, ex_116, ex_117, ex_123, ex_128, ex_141a, ex_141b]
 
 end DalrympleKaplan2000.Examples

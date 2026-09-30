@@ -15,9 +15,7 @@ this module; declarations live in `namespace QingEtAl2025.Examples`.
 
 namespace QingEtAl2025.Examples
 
-open Data.Examples
-
-def en_13a : LinguisticExample :=
+def en_13a : Datum :=
   { id := "qingetal2025_en_13a"
     source := ⟨"white-2021", ""⟩
     reportedIn := some ⟨"qing-uegaki-2025", "(13a)"⟩
@@ -30,7 +28,7 @@ def en_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "hope"), ("clause", "polar"), ("embedding", "argument")] }
 
-def en_13b : LinguisticExample :=
+def en_13b : Datum :=
   { id := "qingetal2025_en_13b"
     source := ⟨"white-2021", ""⟩
     reportedIn := some ⟨"qing-uegaki-2025", "(13b)"⟩
@@ -43,7 +41,7 @@ def en_13b : LinguisticExample :=
     readings := [("hope that p", .acceptable), ("hope that not p", .unacceptable)]
     paperFeatures := [("predicate", "hope"), ("clause", "polar"), ("embedding", "argument")] }
 
-def en_13c : LinguisticExample :=
+def en_13c : Datum :=
   { id := "qingetal2025_en_13c"
     source := ⟨"white-2021", ""⟩
     reportedIn := some ⟨"qing-uegaki-2025", "(13c)"⟩
@@ -56,7 +54,7 @@ def en_13c : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "hope"), ("clause", "polar"), ("embedding", "argument")] }
 
-def en_14a : LinguisticExample :=
+def en_14a : Datum :=
   { id := "qingetal2025_en_14a"
     source := ⟨"white-2021", ""⟩
     reportedIn := some ⟨"qing-uegaki-2025", "(14a)"⟩
@@ -69,7 +67,7 @@ def en_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "fear"), ("clause", "polar"), ("embedding", "argument")] }
 
-def en_14b : LinguisticExample :=
+def en_14b : Datum :=
   { id := "qingetal2025_en_14b"
     source := ⟨"white-2021", ""⟩
     reportedIn := some ⟨"qing-uegaki-2025", "(14b)"⟩
@@ -82,7 +80,7 @@ def en_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "fear"), ("clause", "polar"), ("embedding", "argument")] }
 
-def en_14c : LinguisticExample :=
+def en_14c : Datum :=
   { id := "qingetal2025_en_14c"
     source := ⟨"white-2021", ""⟩
     reportedIn := some ⟨"qing-uegaki-2025", "(14c)"⟩
@@ -95,7 +93,7 @@ def en_14c : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "fear"), ("clause", "polar"), ("embedding", "argument")] }
 
-def en_14d : LinguisticExample :=
+def en_14d : Datum :=
   { id := "qingetal2025_en_14d"
     source := ⟨"white-2021", ""⟩
     reportedIn := some ⟨"qing-uegaki-2025", "(14d)"⟩
@@ -108,7 +106,7 @@ def en_14d : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "fear"), ("clause", "polar"), ("embedding", "argument")] }
 
-def en_22 : LinguisticExample :=
+def en_22 : Datum :=
   { id := "qingetal2025_en_22"
     source := ⟨"qing-uegaki-2025", "(22)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def en_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "declarative"), ("embedding", "argument")] }
 
-def en_24 : LinguisticExample :=
+def en_24 : Datum :=
   { id := "qingetal2025_en_24"
     source := ⟨"qing-uegaki-2025", "(24)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def en_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "constituent"), ("embedding", "argument"), ("truth", "true")] }
 
-def en_25 : LinguisticExample :=
+def en_25 : Datum :=
   { id := "qingetal2025_en_25"
     source := ⟨"qing-uegaki-2025", "(25)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def en_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "declarative"), ("embedding", "argument"), ("truth", "false")] }
 
-def en_26a : LinguisticExample :=
+def en_26a : Datum :=
   { id := "qingetal2025_en_26a"
     source := ⟨"qing-uegaki-2025", "(26a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def en_26a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "constituent"), ("embedding", "argument")] }
 
-def en_26b : LinguisticExample :=
+def en_26b : Datum :=
   { id := "qingetal2025_en_26b"
     source := ⟨"qing-uegaki-2025", "(26b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def en_26b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "constituent"), ("embedding", "argument")] }
 
-def en_26c : LinguisticExample :=
+def en_26c : Datum :=
   { id := "qingetal2025_en_26c"
     source := ⟨"qing-uegaki-2025", "(26c)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def en_26c : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "constituent"), ("embedding", "argument")] }
 
-def en_26d : LinguisticExample :=
+def en_26d : Datum :=
   { id := "qingetal2025_en_26d"
     source := ⟨"qing-uegaki-2025", "(26d)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def en_26d : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "constituent"), ("embedding", "argument")] }
 
-def en_32a : LinguisticExample :=
+def en_32a : Datum :=
   { id := "qingetal2025_en_32a"
     source := ⟨"qing-uegaki-2025", "(32a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def en_32a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "constituent"), ("embedding", "argument"), ("truth", "true")] }
 
-def en_32b : LinguisticExample :=
+def en_32b : Datum :=
   { id := "qingetal2025_en_32b"
     source := ⟨"qing-uegaki-2025", "(32b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def en_32b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "worry"), ("clause", "declarative"), ("embedding", "argument"), ("truth", "false")] }
 
-def en_38a : LinguisticExample :=
+def en_38a : Datum :=
   { id := "qingetal2025_en_38a"
     source := ⟨"qing-uegaki-2025", "(38a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def en_38a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "like"), ("valence", "positive"), ("polarity", "negated")] }
 
-def en_38b : LinguisticExample :=
+def en_38b : Datum :=
   { id := "qingetal2025_en_38b"
     source := ⟨"qing-uegaki-2025", "(38b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def en_38b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "happy"), ("valence", "positive"), ("polarity", "negated")] }
 
-def en_40a : LinguisticExample :=
+def en_40a : Datum :=
   { id := "qingetal2025_en_40a"
     source := ⟨"qing-uegaki-2025", "(40a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def en_40a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "hate"), ("valence", "negative"), ("polarity", "negated")] }
 
-def en_40b : LinguisticExample :=
+def en_40b : Datum :=
   { id := "qingetal2025_en_40b"
     source := ⟨"qing-uegaki-2025", "(40b)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def en_40b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "upset"), ("valence", "negative"), ("polarity", "negated")] }
 
-def en_43a : LinguisticExample :=
+def en_43a : Datum :=
   { id := "qingetal2025_en_43a"
     source := ⟨"qing-uegaki-2025", "(43a)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def en_43a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "fear"), ("clause", "constituent"), ("embedding", "argument")] }
 
-def en_43b : LinguisticExample :=
+def en_43b : Datum :=
   { id := "qingetal2025_en_43b"
     source := ⟨"qing-uegaki-2025", "(43b)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def en_43b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "fear"), ("clause", "constituent"), ("embedding", "argument")] }
 
-def en_44 : LinguisticExample :=
+def en_44 : Datum :=
   { id := "qingetal2025_en_44"
     source := ⟨"qing-uegaki-2025", "(44)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def en_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "fear"), ("clause", "constituent"), ("embedding", "argument"), ("polarity", "negated")] }
 
-def en_62a_goodfriend : LinguisticExample :=
+def en_62a_goodfriend : Datum :=
   { id := "qingetal2025_en_62a_goodfriend"
     source := ⟨"qing-uegaki-2025", "(62a)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def en_62a_goodfriend : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "hope"), ("clause", "polar"), ("embedding", "argument"), ("target", "radical"), ("truth", "true")] }
 
-def en_62a_noisehater : LinguisticExample :=
+def en_62a_noisehater : Datum :=
   { id := "qingetal2025_en_62a_noisehater"
     source := ⟨"qing-uegaki-2025", "(62a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def en_62a_noisehater : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "hope"), ("clause", "polar"), ("embedding", "argument"), ("target", "negation"), ("truth", "false")] }
 
-def en_63a : LinguisticExample :=
+def en_63a : Datum :=
   { id := "qingetal2025_en_63a"
     source := ⟨"qing-uegaki-2025", "(63a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def en_63a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "hope"), ("clause", "polar"), ("embedding", "argument"), ("target", "radical")] }
 
-def en_63b : LinguisticExample :=
+def en_63b : Datum :=
   { id := "qingetal2025_en_63b"
     source := ⟨"qing-uegaki-2025", "(63b)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def en_63b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "hope"), ("clause", "polar"), ("embedding", "argument"), ("target", "negation")] }
 
-def en_78a : LinguisticExample :=
+def en_78a : Datum :=
   { id := "qingetal2025_en_78a"
     source := ⟨"qing-uegaki-2025", "(78a)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def en_78a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "wonder"), ("adverb", "hopefully"), ("valence", "positive"), ("clause", "polar"), ("embedding", "quotation"), ("target", "negation"), ("truth", "false")] }
 
-def en_78b : LinguisticExample :=
+def en_78b : Datum :=
   { id := "qingetal2025_en_78b"
     source := ⟨"qing-uegaki-2025", "(78b)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def en_78b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "wonder"), ("adverb", "hopefully"), ("valence", "positive"), ("clause", "polar"), ("embedding", "quotation"), ("target", "radical"), ("truth", "true")] }
 
-def en_78c : LinguisticExample :=
+def en_78c : Datum :=
   { id := "qingetal2025_en_78c"
     source := ⟨"qing-uegaki-2025", "(78c)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def en_78c : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "wonder"), ("adverb", "hopefully"), ("valence", "positive"), ("clause", "polar"), ("embedding", "quotation"), ("target", "radical"), ("truth", "true")] }
 
-def en_78d : LinguisticExample :=
+def en_78d : Datum :=
   { id := "qingetal2025_en_78d"
     source := ⟨"qing-uegaki-2025", "(78d)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def en_78d : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "wonder"), ("adverb", "hopefully"), ("valence", "positive"), ("clause", "polar"), ("embedding", "quotation"), ("target", "negation"), ("truth", "false")] }
 
-def en_79a : LinguisticExample :=
+def en_79a : Datum :=
   { id := "qingetal2025_en_79a"
     source := ⟨"qing-uegaki-2025", "(79a)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def en_79a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "wonder"), ("adverb", "fearfully"), ("valence", "negative"), ("clause", "polar"), ("embedding", "quotation"), ("target", "radical"), ("truth", "true")] }
 
-def en_79b : LinguisticExample :=
+def en_79b : Datum :=
   { id := "qingetal2025_en_79b"
     source := ⟨"qing-uegaki-2025", "(79b)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def en_79b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "wonder"), ("adverb", "fearfully"), ("valence", "negative"), ("clause", "polar"), ("embedding", "quotation"), ("target", "negation"), ("truth", "true")] }
 
-def en_79c : LinguisticExample :=
+def en_79c : Datum :=
   { id := "qingetal2025_en_79c"
     source := ⟨"qing-uegaki-2025", "(79c)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def en_79c : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "wonder"), ("adverb", "fearfully"), ("valence", "negative"), ("clause", "polar"), ("embedding", "quotation"), ("target", "negation"), ("truth", "true")] }
 
-def en_79d : LinguisticExample :=
+def en_79d : Datum :=
   { id := "qingetal2025_en_79d"
     source := ⟨"qing-uegaki-2025", "(79d)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def en_79d : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "wonder"), ("adverb", "fearfully"), ("valence", "negative"), ("clause", "polar"), ("embedding", "quotation"), ("target", "radical"), ("truth", "true")] }
 
-def zh_18 : LinguisticExample :=
+def zh_18 : Datum :=
   { id := "qingetal2025_zh_18"
     source := ⟨"qing-uegaki-2025", "(18)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def zh_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "qidai"), ("clause", "constituent"), ("embedding", "argument")] }
 
-def zh_19 : LinguisticExample :=
+def zh_19 : Datum :=
   { id := "qingetal2025_zh_19"
     source := ⟨"qing-uegaki-2025", "(19)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def zh_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "qidai"), ("clause", "declarative"), ("embedding", "argument")] }
 
-def zh_27a : LinguisticExample :=
+def zh_27a : Datum :=
   { id := "qingetal2025_zh_27a"
     source := ⟨"qing-uegaki-2025", "(27a)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def zh_27a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "danxin"), ("clause", "constituent"), ("embedding", "argument"), ("truth", "true")] }
 
-def zh_27b : LinguisticExample :=
+def zh_27b : Datum :=
   { id := "qingetal2025_zh_27b"
     source := ⟨"qing-uegaki-2025", "(27b)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def zh_27b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "danxin"), ("clause", "declarative"), ("embedding", "argument"), ("truth", "false")] }
 
-def zh_33 : LinguisticExample :=
+def zh_33 : Datum :=
   { id := "qingetal2025_zh_33"
     source := ⟨"qing-uegaki-2025", "(33)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def zh_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "danxin"), ("clause", "constituent"), ("embedding", "argument"), ("truth", "true")] }
 
-def zh_55 : LinguisticExample :=
+def zh_55 : Datum :=
   { id := "qingetal2025_zh_55"
     source := ⟨"qing-uegaki-2025", "(55)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def zh_55 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "haipa"), ("clause", "polar"), ("embedding", "argument")] }
 
-def zh_56 : LinguisticExample :=
+def zh_56 : Datum :=
   { id := "qingetal2025_zh_56"
     source := ⟨"qing-uegaki-2025", "(56)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def zh_56 : LinguisticExample :=
     readings := [("constituent question", .unacceptable), ("wh-indefinite: John fears that some player will win the match", .acceptable)]
     paperFeatures := [("predicate", "haipa"), ("clause", "constituent"), ("embedding", "argument")] }
 
-def zh_fn8 : LinguisticExample :=
+def zh_fn8 : Datum :=
   { id := "qingetal2025_zh_fn8"
     source := ⟨"qing-uegaki-2025", "fn. 8 (i)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def zh_fn8 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "haipa"), ("clause", "constituent"), ("embedding", "argument")] }
 
-def zh_64a : LinguisticExample :=
+def zh_64a : Datum :=
   { id := "qingetal2025_zh_64a"
     source := ⟨"qing-uegaki-2025", "(64a)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def zh_64a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "xiwang"), ("clause", "polar"), ("embedding", "argument")] }
 
-def zh_64b : LinguisticExample :=
+def zh_64b : Datum :=
   { id := "qingetal2025_zh_64b"
     source := ⟨"qing-uegaki-2025", "(64b)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def zh_64b : LinguisticExample :=
     readings := [("hope that p", .acceptable), ("hope that not p", .unacceptable)]
     paperFeatures := [("predicate", "xiwang"), ("clause", "polar"), ("embedding", "argument")] }
 
-def ja_20a : LinguisticExample :=
+def ja_20a : Datum :=
   { id := "qingetal2025_ja_20a"
     source := ⟨"qing-uegaki-2025", "(20a)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ja_20a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "tanosimi"), ("clause", "constituent"), ("embedding", "argument")] }
 
-def ja_21a : LinguisticExample :=
+def ja_21a : Datum :=
   { id := "qingetal2025_ja_21a"
     source := ⟨"qing-uegaki-2025", "(21a)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ja_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "tanosimi"), ("clause", "constituent"), ("embedding", "argument")] }
 
-def ja_28a : LinguisticExample :=
+def ja_28a : Datum :=
   { id := "qingetal2025_ja_28a"
     source := ⟨"qing-uegaki-2025", "(28a)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ja_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "sinpai"), ("clause", "constituent"), ("embedding", "argument"), ("truth", "true")] }
 
-def ja_28b : LinguisticExample :=
+def ja_28b : Datum :=
   { id := "qingetal2025_ja_28b"
     source := ⟨"qing-uegaki-2025", "(28b)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ja_28b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "sinpai"), ("clause", "declarative"), ("embedding", "argument"), ("truth", "false")] }
 
-def ja_34 : LinguisticExample :=
+def ja_34 : Datum :=
   { id := "qingetal2025_ja_34"
     source := ⟨"qing-uegaki-2025", "(34)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ja_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "sinpai"), ("clause", "constituent"), ("embedding", "argument"), ("truth", "true")] }
 
-def ja_50_goodfriend : LinguisticExample :=
+def ja_50_goodfriend : Datum :=
   { id := "qingetal2025_ja_50_goodfriend"
     source := ⟨"qing-uegaki-2025", "(50)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ja_50_goodfriend : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "osore"), ("clause", "polar"), ("embedding", "argument"), ("target", "negation"), ("truth", "true")] }
 
-def ja_50_noisehater : LinguisticExample :=
+def ja_50_noisehater : Datum :=
   { id := "qingetal2025_ja_50_noisehater"
     source := ⟨"qing-uegaki-2025", "(50)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ja_50_noisehater : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "osore"), ("clause", "polar"), ("embedding", "argument"), ("target", "radical"), ("truth", "true")] }
 
-def ja_51 : LinguisticExample :=
+def ja_51 : Datum :=
   { id := "qingetal2025_ja_51"
     source := ⟨"qing-uegaki-2025", "(51)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ja_51 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "osore"), ("clause", "constituent"), ("embedding", "argument")] }
 
-def ja_52 : LinguisticExample :=
+def ja_52 : Datum :=
   { id := "qingetal2025_ja_52"
     source := ⟨"qing-uegaki-2025", "(52)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ja_52 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "osore"), ("clause", "constituent"), ("embedding", "argument"), ("polarity", "negated")] }
 
-def ja_67a : LinguisticExample :=
+def ja_67a : Datum :=
   { id := "qingetal2025_ja_67a"
     source := ⟨"qing-uegaki-2025", "(67a)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ja_67a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "nozomu"), ("clause", "polar"), ("embedding", "argument")] }
 
-def ja_67b : LinguisticExample :=
+def ja_67b : Datum :=
   { id := "qingetal2025_ja_67b"
     source := ⟨"qing-uegaki-2025", "(67b)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ja_67b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "nozomu"), ("clause", "polar"), ("embedding", "argument")] }
 
-def es_29a : LinguisticExample :=
+def es_29a : Datum :=
   { id := "qingetal2025_es_29a"
     source := ⟨"qing-uegaki-2025", "(29a)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def es_29a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "preocupar"), ("clause", "constituent"), ("embedding", "argument"), ("truth", "true")] }
 
-def es_29b : LinguisticExample :=
+def es_29b : Datum :=
   { id := "qingetal2025_es_29b"
     source := ⟨"qing-uegaki-2025", "(29b)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def es_29b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "preocupar"), ("clause", "declarative"), ("embedding", "argument"), ("truth", "false")] }
 
-def es_35 : LinguisticExample :=
+def es_35 : Datum :=
   { id := "qingetal2025_es_35"
     source := ⟨"qing-uegaki-2025", "(35)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def es_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "preocupar"), ("clause", "constituent"), ("embedding", "argument"), ("truth", "true")] }
 
-def es_53 : LinguisticExample :=
+def es_53 : Datum :=
   { id := "qingetal2025_es_53"
     source := ⟨"qing-uegaki-2025", "(53)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def es_53 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "temer"), ("clause", "constituent"), ("embedding", "argument")] }
 
-def es_54 : LinguisticExample :=
+def es_54 : Datum :=
   { id := "qingetal2025_es_54"
     source := ⟨"qing-uegaki-2025", "(54)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def es_54 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "temer"), ("clause", "polar"), ("embedding", "argument")] }
 
-def es_66a : LinguisticExample :=
+def es_66a : Datum :=
   { id := "qingetal2025_es_66a"
     source := ⟨"qing-uegaki-2025", "(66a)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def es_66a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "esperar"), ("clause", "polar"), ("embedding", "argument")] }
 
-def es_66b : LinguisticExample :=
+def es_66b : Datum :=
   { id := "qingetal2025_es_66b"
     source := ⟨"qing-uegaki-2025", "(66b)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def es_66b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "esperar"), ("clause", "polar"), ("embedding", "argument")] }
 
-def tr_30a : LinguisticExample :=
+def tr_30a : Datum :=
   { id := "qingetal2025_tr_30a"
     source := ⟨"qing-uegaki-2025", "(30a)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def tr_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "endiselen"), ("clause", "constituent"), ("embedding", "argument"), ("truth", "true")] }
 
-def tr_30b : LinguisticExample :=
+def tr_30b : Datum :=
   { id := "qingetal2025_tr_30b"
     source := ⟨"qing-uegaki-2025", "(30b)"⟩
     reportedIn := none
@@ -862,7 +860,7 @@ def tr_30b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "endiselen"), ("clause", "declarative"), ("embedding", "argument"), ("truth", "false")] }
 
-def tr_36 : LinguisticExample :=
+def tr_36 : Datum :=
   { id := "qingetal2025_tr_36"
     source := ⟨"qing-uegaki-2025", "(36)"⟩
     reportedIn := none
@@ -875,7 +873,7 @@ def tr_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "endiselen"), ("clause", "constituent"), ("embedding", "argument"), ("truth", "true")] }
 
-def tr_45_goodfriend : LinguisticExample :=
+def tr_45_goodfriend : Datum :=
   { id := "qingetal2025_tr_45_goodfriend"
     source := ⟨"qing-uegaki-2025", "(45)"⟩
     reportedIn := none
@@ -888,7 +886,7 @@ def tr_45_goodfriend : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "kork"), ("clause", "polar"), ("embedding", "argument"), ("target", "negation"), ("truth", "true")] }
 
-def tr_45_noisehater : LinguisticExample :=
+def tr_45_noisehater : Datum :=
   { id := "qingetal2025_tr_45_noisehater"
     source := ⟨"qing-uegaki-2025", "(45)"⟩
     reportedIn := none
@@ -901,7 +899,7 @@ def tr_45_noisehater : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "kork"), ("clause", "polar"), ("embedding", "argument"), ("target", "radical"), ("truth", "true")] }
 
-def tr_48 : LinguisticExample :=
+def tr_48 : Datum :=
   { id := "qingetal2025_tr_48"
     source := ⟨"qing-uegaki-2025", "(48)"⟩
     reportedIn := none
@@ -914,7 +912,7 @@ def tr_48 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "kork"), ("clause", "constituent"), ("embedding", "argument")] }
 
-def tr_49 : LinguisticExample :=
+def tr_49 : Datum :=
   { id := "qingetal2025_tr_49"
     source := ⟨"qing-uegaki-2025", "(49)"⟩
     reportedIn := none
@@ -927,7 +925,7 @@ def tr_49 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "kork"), ("clause", "constituent"), ("embedding", "argument"), ("polarity", "negated")] }
 
-def tr_68a : LinguisticExample :=
+def tr_68a : Datum :=
   { id := "qingetal2025_tr_68a"
     source := ⟨"qing-uegaki-2025", "(68a)"⟩
     reportedIn := none
@@ -940,7 +938,7 @@ def tr_68a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "argument")] }
 
-def tr_68b : LinguisticExample :=
+def tr_68b : Datum :=
   { id := "qingetal2025_tr_68b"
     source := ⟨"qing-uegaki-2025", "(68b)"⟩
     reportedIn := none
@@ -953,7 +951,7 @@ def tr_68b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "argument")] }
 
-def tr_71a : LinguisticExample :=
+def tr_71a : Datum :=
   { id := "qingetal2025_tr_71a"
     source := ⟨"qing-uegaki-2025", "(71a)"⟩
     reportedIn := none
@@ -966,7 +964,7 @@ def tr_71a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "diye")] }
 
-def tr_71b : LinguisticExample :=
+def tr_71b : Datum :=
   { id := "qingetal2025_tr_71b"
     source := ⟨"qing-uegaki-2025", "(71b)"⟩
     reportedIn := none
@@ -979,7 +977,7 @@ def tr_71b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "diye")] }
 
-def tr_71c : LinguisticExample :=
+def tr_71c : Datum :=
   { id := "qingetal2025_tr_71c"
     source := ⟨"qing-uegaki-2025", "(71c)"⟩
     reportedIn := none
@@ -992,7 +990,7 @@ def tr_71c : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "diye")] }
 
-def tr_72a : LinguisticExample :=
+def tr_72a : Datum :=
   { id := "qingetal2025_tr_72a"
     source := ⟨"qing-uegaki-2025", "(72a)"⟩
     reportedIn := none
@@ -1005,7 +1003,7 @@ def tr_72a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "argument")] }
 
-def tr_72b : LinguisticExample :=
+def tr_72b : Datum :=
   { id := "qingetal2025_tr_72b"
     source := ⟨"qing-uegaki-2025", "(72b)"⟩
     reportedIn := none
@@ -1018,7 +1016,7 @@ def tr_72b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "argument")] }
 
-def tr_73a : LinguisticExample :=
+def tr_73a : Datum :=
   { id := "qingetal2025_tr_73a"
     source := ⟨"qing-uegaki-2025", "(73a)"⟩
     reportedIn := none
@@ -1031,7 +1029,7 @@ def tr_73a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "dolan"), ("clause", "polar"), ("embedding", "diye")] }
 
-def tr_73b : LinguisticExample :=
+def tr_73b : Datum :=
   { id := "qingetal2025_tr_73b"
     source := ⟨"qing-uegaki-2025", "(73b)"⟩
     reportedIn := none
@@ -1044,7 +1042,7 @@ def tr_73b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "dolan"), ("clause", "polar"), ("embedding", "argument")] }
 
-def tr_75_goodfriend : LinguisticExample :=
+def tr_75_goodfriend : Datum :=
   { id := "qingetal2025_tr_75_goodfriend"
     source := ⟨"qing-uegaki-2025", "(75)"⟩
     reportedIn := none
@@ -1057,7 +1055,7 @@ def tr_75_goodfriend : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "diye"), ("target", "radical"), ("truth", "true")] }
 
-def tr_75_noisehater : LinguisticExample :=
+def tr_75_noisehater : Datum :=
   { id := "qingetal2025_tr_75_noisehater"
     source := ⟨"qing-uegaki-2025", "(75)"⟩
     reportedIn := none
@@ -1070,7 +1068,7 @@ def tr_75_noisehater : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "um"), ("clause", "polar"), ("embedding", "diye"), ("target", "negation"), ("truth", "false")] }
 
-def tr_76_goodfriend : LinguisticExample :=
+def tr_76_goodfriend : Datum :=
   { id := "qingetal2025_tr_76_goodfriend"
     source := ⟨"qing-uegaki-2025", "(76)"⟩
     reportedIn := none
@@ -1083,7 +1081,7 @@ def tr_76_goodfriend : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "kork"), ("clause", "polar"), ("embedding", "diye"), ("target", "negation"), ("truth", "true")] }
 
-def tr_76_noisehater : LinguisticExample :=
+def tr_76_noisehater : Datum :=
   { id := "qingetal2025_tr_76_noisehater"
     source := ⟨"qing-uegaki-2025", "(76)"⟩
     reportedIn := none
@@ -1096,6 +1094,6 @@ def tr_76_noisehater : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "kork"), ("clause", "polar"), ("embedding", "diye"), ("target", "radical"), ("truth", "true")] }
 
-def all : List LinguisticExample := [en_13a, en_13b, en_13c, en_14a, en_14b, en_14c, en_14d, en_22, en_24, en_25, en_26a, en_26b, en_26c, en_26d, en_32a, en_32b, en_38a, en_38b, en_40a, en_40b, en_43a, en_43b, en_44, en_62a_goodfriend, en_62a_noisehater, en_63a, en_63b, en_78a, en_78b, en_78c, en_78d, en_79a, en_79b, en_79c, en_79d, zh_18, zh_19, zh_27a, zh_27b, zh_33, zh_55, zh_56, zh_fn8, zh_64a, zh_64b, ja_20a, ja_21a, ja_28a, ja_28b, ja_34, ja_50_goodfriend, ja_50_noisehater, ja_51, ja_52, ja_67a, ja_67b, es_29a, es_29b, es_35, es_53, es_54, es_66a, es_66b, tr_30a, tr_30b, tr_36, tr_45_goodfriend, tr_45_noisehater, tr_48, tr_49, tr_68a, tr_68b, tr_71a, tr_71b, tr_71c, tr_72a, tr_72b, tr_73a, tr_73b, tr_75_goodfriend, tr_75_noisehater, tr_76_goodfriend, tr_76_noisehater]
+def all : List Datum := [en_13a, en_13b, en_13c, en_14a, en_14b, en_14c, en_14d, en_22, en_24, en_25, en_26a, en_26b, en_26c, en_26d, en_32a, en_32b, en_38a, en_38b, en_40a, en_40b, en_43a, en_43b, en_44, en_62a_goodfriend, en_62a_noisehater, en_63a, en_63b, en_78a, en_78b, en_78c, en_78d, en_79a, en_79b, en_79c, en_79d, zh_18, zh_19, zh_27a, zh_27b, zh_33, zh_55, zh_56, zh_fn8, zh_64a, zh_64b, ja_20a, ja_21a, ja_28a, ja_28b, ja_34, ja_50_goodfriend, ja_50_noisehater, ja_51, ja_52, ja_67a, ja_67b, es_29a, es_29b, es_35, es_53, es_54, es_66a, es_66b, tr_30a, tr_30b, tr_36, tr_45_goodfriend, tr_45_noisehater, tr_48, tr_49, tr_68a, tr_68b, tr_71a, tr_71b, tr_71c, tr_72a, tr_72b, tr_73a, tr_73b, tr_75_goodfriend, tr_75_noisehater, tr_76_goodfriend, tr_76_noisehater]
 
 end QingEtAl2025.Examples

@@ -48,7 +48,7 @@ scenario verdicts (24)–(30) are checked in `rows_agree`.
 
 namespace AlonsoOvalleMenendezBenito2010
 
-open Presupposition Exhaustification ModalLogic Data.Examples
+open Presupposition Exhaustification ModalLogic
 
 variable {E W : Type*}
 
@@ -167,7 +167,7 @@ theorem hideAndSeek (w : Room) :
 
 /-- A row's predicted verdict: *algún* needs Modal Variation, *cualquiera* Free Choice, *un*
 nothing. -/
-def predicted (row : LinguisticExample) : Option Bool :=
+def predicted (row : Datum) : Option Bool :=
   match row.feature? "scenario", row.feature? "determiner" with
   | some "hideAndSeek15", some d => verdictIn (epist pedro15) house inRoom d
   | some "oneRoom23", some d => verdictIn (epist pedro23) house inRoom d
@@ -184,7 +184,7 @@ where
     | _ => none
 
 /-- A row's observed verdict: deviant or judged false, else fine. -/
-def observed (row : LinguisticExample) : Bool :=
+def observed (row : Datum) : Bool :=
   row.judgment == .acceptable && row.feature? "verdict" != some "false"
 
 /-- Every row in a modelled scenario carries the predicted verdict. -/

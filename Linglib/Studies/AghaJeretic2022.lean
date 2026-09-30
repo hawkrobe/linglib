@@ -58,8 +58,8 @@ namespace AghaJeretic2022
 
 open Trivalent (Prop3 supervaluation supervaluation_eq_true_iff supervaluation_eq_false_iff
   supervaluation_eq_indet_iff supervaluation_not metaAssert_supervaluation)
-open Homogeneity Data.Examples
-open Generalizations.HomogeneityGap (GapDatum GapScenario fromExample)
+open Homogeneity
+open Generalizations.HomogeneityGap (GapDatum GapScenario fromDatum)
 
 variable {W : Type*} (D : W → Finset W) (p : W → Prop) [DecidablePred p]
 
@@ -250,11 +250,11 @@ theorem possibility_witnesses (h : 1 < #(D w)) :
 /-! ### The data -/
 
 /-- The paper's rows in the cross-paper homogeneity pool. -/
-def gapData : List GapDatum := Examples.all.filterMap fromExample
+def gapData : List GapDatum := Examples.all.filterMap fromDatum
 
 /-- The polarity-by-scenario grid for *should*. -/
 def shouldGrid : List GapDatum :=
-  (Examples.all.filter (·.feature? "modal" == some "should")).filterMap fromExample
+  (Examples.all.filter (·.feature? "modal" == some "should")).filterMap fromDatum
 
 /-- A representative domain for each scenario; a world is the prejacent's truth value at it. -/
 def scenarioDomain : GapScenario → Finset Bool

@@ -15,9 +15,7 @@ this module; declarations live in `namespace TonhauserBeaverDegen2018.Examples`.
 
 namespace TonhauserBeaverDegen2018.Examples
 
-open Data.Examples
-
-def tbd2018_1a_nrrc : LinguisticExample :=
+def tbd2018_1a_nrrc : Datum :=
   { id := "tbd2018_1a_nrrc"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a (12.1), NRRC"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def tbd2018_1a_nrrc : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "NRRC"), ("experiment", "1a"), ("triggerClass", "B"), ("projectivity", "96"), ("notAtIssueness", "97")] }
 
-def tbd2018_1a_nominalAppositive : LinguisticExample :=
+def tbd2018_1a_nominalAppositive : Datum :=
   { id := "tbd2018_1a_nominalAppositive"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a (12.2), nominal appositive"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def tbd2018_1a_nominalAppositive : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "nominalAppositive"), ("experiment", "1a"), ("triggerClass", "B"), ("projectivity", "95"), ("notAtIssueness", "96")] }
 
-def tbd2018_1a_possessiveNP : LinguisticExample :=
+def tbd2018_1a_possessiveNP : Datum :=
   { id := "tbd2018_1a_possessiveNP"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a (12.3), possessive NP"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def tbd2018_1a_possessiveNP : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "possessiveNP"), ("experiment", "1a"), ("triggerClass", "B"), ("projectivity", "94"), ("notAtIssueness", "97")] }
 
-def tbd2018_1a_annoyed : LinguisticExample :=
+def tbd2018_1a_annoyed : Datum :=
   { id := "tbd2018_1a_annoyed"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a (12.4), be annoyed"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def tbd2018_1a_annoyed : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "annoyed"), ("experiment", "1a"), ("triggerClass", "C"), ("projectivity", "96"), ("notAtIssueness", "97")] }
 
-def tbd2018_1a_discover : LinguisticExample :=
+def tbd2018_1a_discover : Datum :=
   { id := "tbd2018_1a_discover"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a (12.5), discover"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def tbd2018_1a_discover : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "discover"), ("experiment", "1a"), ("triggerClass", "C"), ("projectivity", "86"), ("notAtIssueness", "87")] }
 
-def tbd2018_1a_know : LinguisticExample :=
+def tbd2018_1a_know : Datum :=
   { id := "tbd2018_1a_know"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a (12.6), know"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def tbd2018_1a_know : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "know"), ("experiment", "1a"), ("triggerClass", "C"), ("projectivity", "92"), ("notAtIssueness", "91")] }
 
-def tbd2018_1a_only : LinguisticExample :=
+def tbd2018_1a_only : Datum :=
   { id := "tbd2018_1a_only"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a (12.7), only"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def tbd2018_1a_only : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "only"), ("experiment", "1a"), ("triggerClass", "C"), ("projectivity", "76"), ("notAtIssueness", "72")] }
 
-def tbd2018_1a_stop : LinguisticExample :=
+def tbd2018_1a_stop : Datum :=
   { id := "tbd2018_1a_stop"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a (12.8), stop"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def tbd2018_1a_stop : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "stop"), ("experiment", "1a"), ("triggerClass", "C"), ("projectivity", "87"), ("notAtIssueness", "71")] }
 
-def tbd2018_1a_stupid : LinguisticExample :=
+def tbd2018_1a_stupid : Datum :=
   { id := "tbd2018_1a_stupid"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a (12.9), be stupid to"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def tbd2018_1a_stupid : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "stupid"), ("experiment", "1a"), ("triggerClass", "C"), ("projectivity", "85"), ("notAtIssueness", "88")] }
 
-def tbd2018_1b_amused : LinguisticExample :=
+def tbd2018_1b_amused : Datum :=
   { id := "tbd2018_1b_amused"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1b, be amused"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def tbd2018_1b_amused : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "amused"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "91"), ("notAtIssueness", "94")] }
 
-def tbd2018_1b_annoyed : LinguisticExample :=
+def tbd2018_1b_annoyed : Datum :=
   { id := "tbd2018_1b_annoyed"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1b, be annoyed"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def tbd2018_1b_annoyed : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "annoyed"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "92"), ("notAtIssueness", "94")] }
 
-def tbd2018_1b_aware : LinguisticExample :=
+def tbd2018_1b_aware : Datum :=
   { id := "tbd2018_1b_aware"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1b, be aware"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def tbd2018_1b_aware : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "aware"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "92"), ("notAtIssueness", "94")] }
 
-def tbd2018_1b_confess : LinguisticExample :=
+def tbd2018_1b_confess : Datum :=
   { id := "tbd2018_1b_confess"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1b, confess"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def tbd2018_1b_confess : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "confess"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "69"), ("notAtIssueness", "81")] }
 
-def tbd2018_1b_discover : LinguisticExample :=
+def tbd2018_1b_discover : Datum :=
   { id := "tbd2018_1b_discover"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1b, discover"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def tbd2018_1b_discover : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "discover"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "85"), ("notAtIssueness", "89")] }
 
-def tbd2018_1b_establish : LinguisticExample :=
+def tbd2018_1b_establish : Datum :=
   { id := "tbd2018_1b_establish"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1b, establish"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def tbd2018_1b_establish : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "establish"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "42"), ("notAtIssueness", "61")] }
 
-def tbd2018_1b_findOut : LinguisticExample :=
+def tbd2018_1b_findOut : Datum :=
   { id := "tbd2018_1b_findOut"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1b, find out"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def tbd2018_1b_findOut : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "findOut"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "88"), ("notAtIssueness", "91")] }
 
-def tbd2018_1b_learn : LinguisticExample :=
+def tbd2018_1b_learn : Datum :=
   { id := "tbd2018_1b_learn"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1b, learn"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def tbd2018_1b_learn : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "learn"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "88"), ("notAtIssueness", "90")] }
 
-def tbd2018_1b_notice : LinguisticExample :=
+def tbd2018_1b_notice : Datum :=
   { id := "tbd2018_1b_notice"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1b, notice"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def tbd2018_1b_notice : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "notice"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "92"), ("notAtIssueness", "92")] }
 
-def tbd2018_1b_realize : LinguisticExample :=
+def tbd2018_1b_realize : Datum :=
   { id := "tbd2018_1b_realize"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1b, realize"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def tbd2018_1b_realize : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "realize"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "91"), ("notAtIssueness", "92")] }
 
-def tbd2018_1b_reveal : LinguisticExample :=
+def tbd2018_1b_reveal : Datum :=
   { id := "tbd2018_1b_reveal"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1b, reveal"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def tbd2018_1b_reveal : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "reveal"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "78"), ("notAtIssueness", "87")] }
 
-def tbd2018_1b_see : LinguisticExample :=
+def tbd2018_1b_see : Datum :=
   { id := "tbd2018_1b_see"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1b, see"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def tbd2018_1b_see : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "see"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "89"), ("notAtIssueness", "89")] }
 
-def tbd2018_1a_mc : LinguisticExample :=
+def tbd2018_1a_mc : Datum :=
   { id := "tbd2018_1a_mc"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a (15), main-clause control"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def tbd2018_1a_mc : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "mainClause"), ("experiment", "1a"), ("triggerClass", "control"), ("projectivity", "5"), ("notAtIssueness", "2"), ("control", "true")] }
 
-def tbd2018_1b_mc : LinguisticExample :=
+def tbd2018_1b_mc : Datum :=
   { id := "tbd2018_1b_mc"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1b (17), main-clause control"⟩
     reportedIn := none
@@ -316,6 +314,6 @@ def tbd2018_1b_mc : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "mainClause"), ("experiment", "1b"), ("triggerClass", "control"), ("projectivity", "6"), ("notAtIssueness", "3"), ("control", "true")] }
 
-def all : List LinguisticExample := [tbd2018_1a_nrrc, tbd2018_1a_nominalAppositive, tbd2018_1a_possessiveNP, tbd2018_1a_annoyed, tbd2018_1a_discover, tbd2018_1a_know, tbd2018_1a_only, tbd2018_1a_stop, tbd2018_1a_stupid, tbd2018_1b_amused, tbd2018_1b_annoyed, tbd2018_1b_aware, tbd2018_1b_confess, tbd2018_1b_discover, tbd2018_1b_establish, tbd2018_1b_findOut, tbd2018_1b_learn, tbd2018_1b_notice, tbd2018_1b_realize, tbd2018_1b_reveal, tbd2018_1b_see, tbd2018_1a_mc, tbd2018_1b_mc]
+def all : List Datum := [tbd2018_1a_nrrc, tbd2018_1a_nominalAppositive, tbd2018_1a_possessiveNP, tbd2018_1a_annoyed, tbd2018_1a_discover, tbd2018_1a_know, tbd2018_1a_only, tbd2018_1a_stop, tbd2018_1a_stupid, tbd2018_1b_amused, tbd2018_1b_annoyed, tbd2018_1b_aware, tbd2018_1b_confess, tbd2018_1b_discover, tbd2018_1b_establish, tbd2018_1b_findOut, tbd2018_1b_learn, tbd2018_1b_notice, tbd2018_1b_realize, tbd2018_1b_reveal, tbd2018_1b_see, tbd2018_1a_mc, tbd2018_1b_mc]
 
 end TonhauserBeaverDegen2018.Examples

@@ -260,7 +260,6 @@ theorem oromo_long :
 
 /-! ### The judgments -/
 
-open Data.Examples in
 /-- A stative survives the denial of change in the examples exactly when its root is a
 property-concept root. -/
 theorem changeDenial_acceptable_iff :
@@ -268,7 +267,6 @@ theorem changeDenial_acceptable_iff :
       (e.judgment = .acceptable ↔ e.feature? "root class" = some "property concept") := by
   decide
 
-open Data.Examples in
 /-- Outside Kakataibo no result root is accepted with restitutive *again*. -/
 theorem restitutive_unacceptable_of_result :
     ∀ e ∈ Examples.all, e.feature? "diagnostic" = some "restitutive again" →

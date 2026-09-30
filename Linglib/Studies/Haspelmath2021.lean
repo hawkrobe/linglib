@@ -733,22 +733,21 @@ alternation, when the construction shown is available in the row's scenario. -/
 
 section Examples
 
-open Data.Examples (LinguisticExample)
 
 variable {α : Type*}
 
 /-- The coding an example shows: `0` for zero coding, `1` for the special coding. -/
-def codingShown (e : LinguisticExample) : Option ℕ :=
+def codingShown (e : Datum) : Option ℕ :=
   e.parse? "coding" [("zero", 0), ("special", 1)]
 
 /-- The rows on the split of role `role` on scale `scale` in the language with glottocode
 `lang`. -/
-def rows (lang role scale : String) : List LinguisticExample :=
+def rows (lang role scale : String) : List Datum :=
   Examples.all.filter fun e ↦
     e.language = lang ∧ e.feature? "role" = some role ∧ e.feature? "scale" = some scale
 
 /-- The prominence value of a single-argument row, read through `table`. -/
-def prominence? (table : List (String × α)) (e : LinguisticExample) : Option α :=
+def prominence? (table : List (String × α)) (e : Datum) : Option α :=
   e.parse? "prominence" table
 
 /-- The two sides of `X > Y`, by a structural scan so that `decide` can evaluate it. -/
@@ -758,7 +757,7 @@ def splitGt : List Char → Option (List Char × List Char)
   | c :: rest => (splitGt rest).map fun p ↦ (c :: p.1, p.2)
 
 /-- The scenario `X > Y` of a scenario row, its sides read through `table`. -/
-def scenario? (table : List (String × α)) (e : LinguisticExample) : Option (Scenario α) :=
+def scenario? (table : List (String × α)) (e : Datum) : Option (Scenario α) :=
   (e.feature? "scenario").bind fun s ↦ (splitGt s.toList).bind fun (x, y) ↦
     (table.lookup (String.ofList x)).bind fun h ↦
       (table.lookup (String.ofList y)).map (⟨h, ·⟩)
@@ -766,25 +765,25 @@ def scenario? (table : List (String × α)) (e : LinguisticExample) : Option (Sc
 /-- The rows `rs` reproduce the split `c` on the values `x?` reads off them: each row reads
 to a value at which the coding it shows is acceptable exactly when it is the coding `c`
 requires. -/
-def Reproduces (rs : List LinguisticExample) (x? : LinguisticExample → Option α)
+def Reproduces (rs : List Datum) (x? : Datum → Option α)
     (c : α → ℕ) : Prop :=
   rs ≠ [] ∧ ∀ e ∈ rs, ∃ x ∈ x? e, ∃ k ∈ codingShown e,
     (e.judgment = .acceptable ↔ c x = k)
 
-instance (rs : List LinguisticExample) (x? : LinguisticExample → Option α) (c : α → ℕ) :
+instance (rs : List Datum) (x? : Datum → Option α) (c : α → ℕ) :
     Decidable (Reproduces rs x? c) := by
   unfold Reproduces; infer_instance
 
 /-- The rows `rs` reproduce the alternation between `short` and `long`: a row showing zero
 coding is acceptable exactly when the shorter construction is available in its scenario,
 one showing the special coding exactly when the longer one is. -/
-def ReproducesAlternation (rs : List LinguisticExample)
-    (s? : LinguisticExample → Option (Scenario α)) (short long : Scenario α → Prop)
+def ReproducesAlternation (rs : List Datum)
+    (s? : Datum → Option (Scenario α)) (short long : Scenario α → Prop)
     [DecidablePred short] [DecidablePred long] : Prop :=
   rs ≠ [] ∧ ∀ e ∈ rs, ∃ s ∈ s? e, ∃ k ∈ codingShown e,
     (e.judgment = .acceptable ↔ if k = 0 then short s else long s)
 
-instance (rs : List LinguisticExample) (s? : LinguisticExample → Option (Scenario α))
+instance (rs : List Datum) (s? : Datum → Option (Scenario α))
     (short long : Scenario α → Prop) [DecidablePred short] [DecidablePred long] :
     Decidable (ReproducesAlternation rs s? short long) := by
   unfold ReproducesAlternation; infer_instance

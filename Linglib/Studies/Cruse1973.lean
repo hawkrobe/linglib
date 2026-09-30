@@ -129,7 +129,7 @@ def Profile.labels : List (String × Profile) :=
 
 /-- An example of the paper: its frame, the profile of its noun, and the judgment, the paper's
 query mark read as questionable and a failed entailment as one. -/
-structure Datum where
+structure Row where
   frame : Frame
   /-- The profile attributed to the noun, if any; the stative and neutralized examples carry
   none. -/
@@ -142,10 +142,10 @@ structure Datum where
   verbClass : Option VerbClass
   /-- Whether *do* and *happen* are neutralized, as in *why does the door do that*. -/
   neutralized : Bool
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
 
 /-- An example read into its frame, profile and judgment. -/
-def datum (e : Data.Examples.LinguisticExample) : Option Datum := do
+def Row.ofDatum (e : Datum) : Option Row := do
   pure { frame := ← e.parse? "frame" Frame.labels
          profile := e.parse? "features" Profile.labels
          inferred := decide (e.feature? "inferred" = some "true")
@@ -155,10 +155,10 @@ def datum (e : Data.Examples.LinguisticExample) : Option Datum := do
          judgment := e.judgment }
 
 /-- Every example names its frame. -/
-theorem isSome_datum : ∀ e ∈ Examples.all, (datum e).isSome := by decide
+theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide
 
 /-- The paper's examples. -/
-def data : List Datum := Examples.all.filterMap datum
+def data : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- A sentence is normal in its frame exactly when its noun's profile predicts it,
 neutralization aside. -/

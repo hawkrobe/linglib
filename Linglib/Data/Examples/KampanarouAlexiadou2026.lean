@@ -15,9 +15,7 @@ this module; declarations live in `namespace KampanarouAlexiadou2026.Examples`.
 
 namespace KampanarouAlexiadou2026.Examples
 
-open Data.Examples
-
-def ka2026_5a : LinguisticExample :=
+def ka2026_5a : Datum :=
   { id := "ka2026_5a"
     source := ⟨"kampanarou-alexiadou-2026", "(5a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ka2026_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "common"), ("animate", "no"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
-def ka2026_5b : LinguisticExample :=
+def ka2026_5b : Datum :=
   { id := "ka2026_5b"
     source := ⟨"kampanarou-alexiadou-2026", "(5b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ka2026_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "source"), ("possessor", "common"), ("animate", "no"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
-def ka2026_5c : LinguisticExample :=
+def ka2026_5c : Datum :=
   { id := "ka2026_5c"
     source := ⟨"kampanarou-alexiadou-2026", "(5c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ka2026_5c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "common"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
-def ka2026_6a : LinguisticExample :=
+def ka2026_6a : Datum :=
   { id := "ka2026_6a"
     source := ⟨"kampanarou-alexiadou-2026", "(6a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ka2026_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "kinship"), ("possessor", "common"), ("animate", "yes"), ("number", "pl"), ("modified", "no"), ("gap", "no")] }
 
-def ka2026_6b : LinguisticExample :=
+def ka2026_6b : Datum :=
   { id := "ka2026_6b"
     source := ⟨"kampanarou-alexiadou-2026", "(6b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ka2026_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "ownership"), ("possessor", "common"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
-def ka2026_9a_book : LinguisticExample :=
+def ka2026_9a_book : Datum :=
   { id := "ka2026_9a_book"
     source := ⟨"kampanarou-alexiadou-2026", "(9a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ka2026_9a_book : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "ownership"), ("possessor", "pronoun"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
-def ka2026_9a_eyes : LinguisticExample :=
+def ka2026_9a_eyes : Datum :=
   { id := "ka2026_9a_eyes"
     source := ⟨"kampanarou-alexiadou-2026", "(9a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ka2026_9a_eyes : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "pronoun"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
-def ka2026_10a_shoulder : LinguisticExample :=
+def ka2026_10a_shoulder : Datum :=
   { id := "ka2026_10a_shoulder"
     source := ⟨"kampanarou-alexiadou-2026", "(10a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ka2026_10a_shoulder : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "properName"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
-def ka2026_10a_mom : LinguisticExample :=
+def ka2026_10a_mom : Datum :=
   { id := "ka2026_10a_mom"
     source := ⟨"kampanarou-alexiadou-2026", "(10a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ka2026_10a_mom : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "kinship"), ("possessor", "properName"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
-def ka2026_11a : LinguisticExample :=
+def ka2026_11a : Datum :=
   { id := "ka2026_11a"
     source := ⟨"kampanarou-alexiadou-2026", "(11a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ka2026_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "association"), ("possessor", "common"), ("animate", "no"), ("number", "sg"), ("modified", "no"), ("gap", "no")] }
 
-def ka2026_11b : LinguisticExample :=
+def ka2026_11b : Datum :=
   { id := "ka2026_11b"
     source := ⟨"kampanarou-alexiadou-2026", "(11b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ka2026_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "association"), ("possessor", "common"), ("animate", "no"), ("number", "pl"), ("modified", "no"), ("gap", "no")] }
 
-def ka2026_fn5 : LinguisticExample :=
+def ka2026_fn5 : Datum :=
   { id := "ka2026_fn5"
     source := ⟨"kampanarou-alexiadou-2026", "fn. 5 (i)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ka2026_fn5 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "possessive"), ("relation", "association"), ("possessor", "common"), ("animate", "no"), ("number", "sg"), ("modified", "yes"), ("gap", "no")] }
 
-def ka2026_14a : LinguisticExample :=
+def ka2026_14a : Datum :=
   { id := "ka2026_14a"
     source := ⟨"kampanarou-alexiadou-2026", "(14a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ka2026_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "common"), ("animate", "no"), ("number", "pl"), ("modified", "no"), ("gap", "yes")] }
 
-def ka2026_14b : LinguisticExample :=
+def ka2026_14b : Datum :=
   { id := "ka2026_14b"
     source := ⟨"kampanarou-alexiadou-2026", "(14b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ka2026_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("group", "possessive"), ("relation", "partWhole"), ("possessor", "common"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "yes")] }
 
-def ka2026_15a : LinguisticExample :=
+def ka2026_15a : Datum :=
   { id := "ka2026_15a"
     source := ⟨"kampanarou-alexiadou-2026", "(15a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ka2026_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("group", "possessive"), ("relation", "ownership"), ("possessor", "common"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "yes")] }
 
-def ka2026_15b : LinguisticExample :=
+def ka2026_15b : Datum :=
   { id := "ka2026_15b"
     source := ⟨"kampanarou-alexiadou-2026", "(15b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ka2026_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("group", "possessive"), ("relation", "kinship"), ("possessor", "common"), ("animate", "yes"), ("number", "sg"), ("modified", "no"), ("gap", "yes")] }
 
-def ka2026_28 : LinguisticExample :=
+def ka2026_28 : Datum :=
   { id := "ka2026_28"
     source := ⟨"kampanarou-alexiadou-2026", "(28)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ka2026_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("group", "possessive"), ("relation", "kinship"), ("possessor", "common"), ("animate", "yes"), ("number", "sg"), ("modified", "yes"), ("gap", "no")] }
 
-def ka2026_25a : LinguisticExample :=
+def ka2026_25a : Datum :=
   { id := "ka2026_25a"
     source := ⟨"kampanarou-alexiadou-2026", "(25a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ka2026_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("group", "stacking"), ("inner", "genitive"), ("outer", "genitive")] }
 
-def ka2026_25b : LinguisticExample :=
+def ka2026_25b : Datum :=
   { id := "ka2026_25b"
     source := ⟨"kampanarou-alexiadou-2026", "(25b)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ka2026_25b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("group", "stacking"), ("inner", "apo"), ("outer", "apo")] }
 
-def ka2026_27a : LinguisticExample :=
+def ka2026_27a : Datum :=
   { id := "ka2026_27a"
     source := ⟨"kampanarou-alexiadou-2026", "(27a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ka2026_27a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("group", "stacking"), ("inner", "apo"), ("outer", "genitive")] }
 
-def ka2026_27b : LinguisticExample :=
+def ka2026_27b : Datum :=
   { id := "ka2026_27b"
     source := ⟨"kampanarou-alexiadou-2026", "(27b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ka2026_27b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("group", "stacking"), ("inner", "genitive"), ("outer", "apo")] }
 
-def ka2026_7a : LinguisticExample :=
+def ka2026_7a : Datum :=
   { id := "ka2026_7a"
     source := ⟨"kampanarou-alexiadou-2026", "(7a)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ka2026_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no")] }
 
-def ka2026_8a : LinguisticExample :=
+def ka2026_8a : Datum :=
   { id := "ka2026_8a"
     source := ⟨"kampanarou-alexiadou-2026", "(8a)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ka2026_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "smg"), ("theme", "genitive"), ("agent", "apo"), ("aspectual", "no")] }
 
-def ka2026_8b : LinguisticExample :=
+def ka2026_8b : Datum :=
   { id := "ka2026_8b"
     source := ⟨"kampanarou-alexiadou-2026", "(8b)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ka2026_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no")] }
 
-def ka2026_8c : LinguisticExample :=
+def ka2026_8c : Datum :=
   { id := "ka2026_8c"
     source := ⟨"kampanarou-alexiadou-2026", "(8c)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ka2026_8c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "genitive"), ("aspectual", "no")] }
 
-def ka2026_8d : LinguisticExample :=
+def ka2026_8d : Datum :=
   { id := "ka2026_8d"
     source := ⟨"kampanarou-alexiadou-2026", "(8d)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ka2026_8d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "apo"), ("aspectual", "no")] }
 
-def ka2026_12 : LinguisticExample :=
+def ka2026_12 : Datum :=
   { id := "ka2026_12"
     source := ⟨"kampanarou-alexiadou-2026", "(12)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ka2026_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("group", "derived"), ("variety", "grevena"), ("theme", "apo"), ("agent", "apo"), ("aspectual", "no")] }
 
-def ka2026_30a : LinguisticExample :=
+def ka2026_30a : Datum :=
   { id := "ka2026_30a"
     source := ⟨"kampanarou-alexiadou-2026", "(30a)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ka2026_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "genitive"), ("agent", "apo"), ("aspectual", "no")] }
 
-def ka2026_33b : LinguisticExample :=
+def ka2026_33b : Datum :=
   { id := "ka2026_33b"
     source := ⟨"kampanarou-alexiadou-2026", "(33b)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ka2026_33b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no")] }
 
-def ka2026_34a : LinguisticExample :=
+def ka2026_34a : Datum :=
   { id := "ka2026_34a"
     source := ⟨"kampanarou-alexiadou-2026", "(34a)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ka2026_34a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "yes")] }
 
-def ka2026_35a : LinguisticExample :=
+def ka2026_35a : Datum :=
   { id := "ka2026_35a"
     source := ⟨"kampanarou-alexiadou-2026", "(35a)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ka2026_35a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "genitive"), ("agent", "none"), ("aspectual", "yes")] }
 
-def ka2026_36a : LinguisticExample :=
+def ka2026_36a : Datum :=
   { id := "ka2026_36a"
     source := ⟨"kampanarou-alexiadou-2026", "(36a)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ka2026_36a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("group", "derived"), ("variety", "smg"), ("theme", "apo"), ("agent", "none"), ("aspectual", "no")] }
 
-def ka2026_38a : LinguisticExample :=
+def ka2026_38a : Datum :=
   { id := "ka2026_38a"
     source := ⟨"kampanarou-alexiadou-2026", "(38a)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ka2026_38a : LinguisticExample :=
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("section", "7"), ("group", "scope"), ("marking", "genitive"), ("relation", "partWhole")] }
 
-def ka2026_38b : LinguisticExample :=
+def ka2026_38b : Datum :=
   { id := "ka2026_38b"
     source := ⟨"kampanarou-alexiadou-2026", "(38b)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ka2026_38b : LinguisticExample :=
     readings := [("surface", .unacceptable), ("inverse", .acceptable)]
     paperFeatures := [("section", "7"), ("group", "scope"), ("marking", "genitive"), ("relation", "ownership")] }
 
-def ka2026_39a : LinguisticExample :=
+def ka2026_39a : Datum :=
   { id := "ka2026_39a"
     source := ⟨"kampanarou-alexiadou-2026", "(39a)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ka2026_39a : LinguisticExample :=
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("section", "7"), ("group", "scope"), ("marking", "apo"), ("relation", "partWhole")] }
 
-def ka2026_39b : LinguisticExample :=
+def ka2026_39b : Datum :=
   { id := "ka2026_39b"
     source := ⟨"kampanarou-alexiadou-2026", "(39b)"⟩
     reportedIn := none
@@ -485,6 +483,6 @@ def ka2026_39b : LinguisticExample :=
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("section", "7"), ("group", "scope"), ("marking", "apo"), ("relation", "ownership")] }
 
-def all : List LinguisticExample := [ka2026_5a, ka2026_5b, ka2026_5c, ka2026_6a, ka2026_6b, ka2026_9a_book, ka2026_9a_eyes, ka2026_10a_shoulder, ka2026_10a_mom, ka2026_11a, ka2026_11b, ka2026_fn5, ka2026_14a, ka2026_14b, ka2026_15a, ka2026_15b, ka2026_28, ka2026_25a, ka2026_25b, ka2026_27a, ka2026_27b, ka2026_7a, ka2026_8a, ka2026_8b, ka2026_8c, ka2026_8d, ka2026_12, ka2026_30a, ka2026_33b, ka2026_34a, ka2026_35a, ka2026_36a, ka2026_38a, ka2026_38b, ka2026_39a, ka2026_39b]
+def all : List Datum := [ka2026_5a, ka2026_5b, ka2026_5c, ka2026_6a, ka2026_6b, ka2026_9a_book, ka2026_9a_eyes, ka2026_10a_shoulder, ka2026_10a_mom, ka2026_11a, ka2026_11b, ka2026_fn5, ka2026_14a, ka2026_14b, ka2026_15a, ka2026_15b, ka2026_28, ka2026_25a, ka2026_25b, ka2026_27a, ka2026_27b, ka2026_7a, ka2026_8a, ka2026_8b, ka2026_8c, ka2026_8d, ka2026_12, ka2026_30a, ka2026_33b, ka2026_34a, ka2026_35a, ka2026_36a, ka2026_38a, ka2026_38b, ka2026_39a, ka2026_39b]
 
 end KampanarouAlexiadou2026.Examples

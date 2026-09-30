@@ -15,9 +15,7 @@ this module; declarations live in `namespace Schwab2023.Examples`.
 
 namespace Schwab2023.Examples
 
-open Data.Examples
-
-def ex7a_jemals : LinguisticExample :=
+def ex7a_jemals : Datum :=
   { id := "schwab2023_ex7a_jemals"
     source := ⟨"schwab-2023", "(7a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex7a_jemals : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("npi", "jemals"), ("npiType", "strengthening"), ("negation", "rc"), ("extraction", "subject")] }
 
-def ex7b_jemals : LinguisticExample :=
+def ex7b_jemals : Datum :=
   { id := "schwab2023_ex7b_jemals"
     source := ⟨"schwab-2023", "(7b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex7b_jemals : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("npi", "jemals"), ("npiType", "strengthening"), ("negation", "matrix"), ("extraction", "subject")] }
 
-def ex7c_jemals : LinguisticExample :=
+def ex7c_jemals : Datum :=
   { id := "schwab2023_ex7c_jemals"
     source := ⟨"schwab-2023", "(7c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex7c_jemals : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("npi", "jemals"), ("npiType", "strengthening"), ("negation", "none"), ("extraction", "subject")] }
 
-def ex7a_sorecht : LinguisticExample :=
+def ex7a_sorecht : Datum :=
   { id := "schwab2023_ex7a_sorecht"
     source := ⟨"schwab-2023", "(7a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex7a_sorecht : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("npi", "so recht"), ("npiType", "attenuating"), ("negation", "rc"), ("extraction", "subject")] }
 
-def ex7b_sorecht : LinguisticExample :=
+def ex7b_sorecht : Datum :=
   { id := "schwab2023_ex7b_sorecht"
     source := ⟨"schwab-2023", "(7b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex7b_sorecht : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("npi", "so recht"), ("npiType", "attenuating"), ("negation", "matrix"), ("extraction", "subject")] }
 
-def ex7c_sorecht : LinguisticExample :=
+def ex7c_sorecht : Datum :=
   { id := "schwab2023_ex7c_sorecht"
     source := ⟨"schwab-2023", "(7c)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex7c_sorecht : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1"), ("npi", "so recht"), ("npiType", "attenuating"), ("negation", "none"), ("extraction", "subject")] }
 
-def ex8a_jemals : LinguisticExample :=
+def ex8a_jemals : Datum :=
   { id := "schwab2023_ex8a_jemals"
     source := ⟨"schwab-2023", "(8a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex8a_jemals : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("npi", "jemals"), ("npiType", "strengthening"), ("negation", "rc"), ("extraction", "object")] }
 
-def ex8b_jemals : LinguisticExample :=
+def ex8b_jemals : Datum :=
   { id := "schwab2023_ex8b_jemals"
     source := ⟨"schwab-2023", "(8b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex8b_jemals : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("npi", "jemals"), ("npiType", "strengthening"), ("negation", "matrix"), ("extraction", "object")] }
 
-def ex8c_jemals : LinguisticExample :=
+def ex8c_jemals : Datum :=
   { id := "schwab2023_ex8c_jemals"
     source := ⟨"schwab-2023", "(8c)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex8c_jemals : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("npi", "jemals"), ("npiType", "strengthening"), ("negation", "none"), ("extraction", "object")] }
 
-def ex8a_sorecht : LinguisticExample :=
+def ex8a_sorecht : Datum :=
   { id := "schwab2023_ex8a_sorecht"
     source := ⟨"schwab-2023", "(8a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex8a_sorecht : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("npi", "so recht"), ("npiType", "attenuating"), ("negation", "rc"), ("extraction", "object")] }
 
-def ex8b_sorecht : LinguisticExample :=
+def ex8b_sorecht : Datum :=
   { id := "schwab2023_ex8b_sorecht"
     source := ⟨"schwab-2023", "(8b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex8b_sorecht : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("npi", "so recht"), ("npiType", "attenuating"), ("negation", "matrix"), ("extraction", "object")] }
 
-def ex8c_sorecht : LinguisticExample :=
+def ex8c_sorecht : Datum :=
   { id := "schwab2023_ex8c_sorecht"
     source := ⟨"schwab-2023", "(8c)"⟩
     reportedIn := none
@@ -173,6 +171,6 @@ def ex8c_sorecht : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("npi", "so recht"), ("npiType", "attenuating"), ("negation", "none"), ("extraction", "object")] }
 
-def all : List LinguisticExample := [ex7a_jemals, ex7b_jemals, ex7c_jemals, ex7a_sorecht, ex7b_sorecht, ex7c_sorecht, ex8a_jemals, ex8b_jemals, ex8c_jemals, ex8a_sorecht, ex8b_sorecht, ex8c_sorecht]
+def all : List Datum := [ex7a_jemals, ex7b_jemals, ex7c_jemals, ex7a_sorecht, ex7b_sorecht, ex7c_sorecht, ex8a_jemals, ex8b_jemals, ex8c_jemals, ex8a_sorecht, ex8b_sorecht, ex8c_sorecht]
 
 end Schwab2023.Examples

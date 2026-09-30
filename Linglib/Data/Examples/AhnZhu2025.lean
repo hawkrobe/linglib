@@ -15,9 +15,7 @@ this module; declarations live in `namespace AhnZhu2025.Examples`.
 
 namespace AhnZhu2025.Examples
 
-open Data.Examples
-
-def ex14a_bare : LinguisticExample :=
+def ex14a_bare : Datum :=
   { id := "ahnzhu2025_ex14a_bare"
     source := ⟨"ahn-zhu-2025", "(14a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex14a_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "none")] }
 
-def ex14b_na : LinguisticExample :=
+def ex14b_na : Datum :=
   { id := "ahnzhu2025_ex14b_na"
     source := ⟨"ahn-zhu-2025", "(14b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex14b_na : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "none")] }
 
-def ex17_partwhole_bare : LinguisticExample :=
+def ex17_partwhole_bare : Datum :=
   { id := "ahnzhu2025_ex17_partwhole_bare"
     source := ⟨"jenks-2018", "p. 508"⟩
     reportedIn := some ⟨"ahn-zhu-2025", "(17)"⟩
@@ -56,7 +54,7 @@ def ex17_partwhole_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "none")] }
 
-def ex18_anaphoric_na : LinguisticExample :=
+def ex18_anaphoric_na : Datum :=
   { id := "ahnzhu2025_ex18_anaphoric_na"
     source := ⟨"jenks-2018", "p. 510"⟩
     reportedIn := some ⟨"ahn-zhu-2025", "(18)"⟩
@@ -69,7 +67,7 @@ def ex18_anaphoric_na : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "none"), ("use", "anaphoric")] }
 
-def ex21_partwhole_na : LinguisticExample :=
+def ex21_partwhole_na : Datum :=
   { id := "ahnzhu2025_ex21_partwhole_na"
     source := ⟨"ahn-zhu-2025", "(21)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex21_partwhole_na : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "none")] }
 
-def ex22_relational_na : LinguisticExample :=
+def ex22_relational_na : Datum :=
   { id := "ahnzhu2025_ex22_relational_na"
     source := ⟨"ahn-zhu-2025", "(22)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex22_relational_na : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "none")] }
 
-def ex24a_de_child : LinguisticExample :=
+def ex24a_de_child : Datum :=
   { id := "ahnzhu2025_ex24a_de_child"
     source := ⟨"ahn-zhu-2025", "(24a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex24a_de_child : LinguisticExample :=
     readings := []
     paperFeatures := [("noun_arity", "relational"), ("diagnostic", "de")] }
 
-def ex24b_de_person : LinguisticExample :=
+def ex24b_de_person : Datum :=
   { id := "ahnzhu2025_ex24b_de_person"
     source := ⟨"ahn-zhu-2025", "(24b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex24b_de_person : LinguisticExample :=
     readings := []
     paperFeatures := [("noun_arity", "sortal"), ("diagnostic", "de")] }
 
-def ex25_de_flower : LinguisticExample :=
+def ex25_de_flower : Datum :=
   { id := "ahnzhu2025_ex25_de_flower"
     source := ⟨"ahn-zhu-2025", "(25)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex25_de_flower : LinguisticExample :=
     readings := []
     paperFeatures := [("noun_arity", "sortal"), ("diagnostic", "de")] }
 
-def ex28a_study1_partwhole_na : LinguisticExample :=
+def ex28a_study1_partwhole_na : Datum :=
   { id := "ahnzhu2025_ex28a_study1_partwhole_na"
     source := ⟨"ahn-zhu-2025", "(28a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex28a_study1_partwhole_na : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "1")] }
 
-def ex28b_study1_relational_bare : LinguisticExample :=
+def ex28b_study1_relational_bare : Datum :=
   { id := "ahnzhu2025_ex28b_study1_relational_bare"
     source := ⟨"ahn-zhu-2025", "(28b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex28b_study1_relational_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "1")] }
 
-def ex32_study1_painter : LinguisticExample :=
+def ex32_study1_painter : Datum :=
   { id := "ahnzhu2025_ex32_study1_painter"
     source := ⟨"ahn-zhu-2025", "(32)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex32_study1_painter : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "1")] }
 
-def ex33a_study1_steeringwheel : LinguisticExample :=
+def ex33a_study1_steeringwheel : Datum :=
   { id := "ahnzhu2025_ex33a_study1_steeringwheel"
     source := ⟨"ahn-zhu-2025", "(33a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex33a_study1_steeringwheel : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "1")] }
 
-def ex37_study3_partwhole_bare : LinguisticExample :=
+def ex37_study3_partwhole_bare : Datum :=
   { id := "ahnzhu2025_ex37_study3_partwhole_bare"
     source := ⟨"ahn-zhu-2025", "(37), option (38a) pingmu"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex37_study3_partwhole_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "3"), ("pct_chosen", "83.2")] }
 
-def ex37_study3_partwhole_na : LinguisticExample :=
+def ex37_study3_partwhole_na : Datum :=
   { id := "ahnzhu2025_ex37_study3_partwhole_na"
     source := ⟨"ahn-zhu-2025", "(37), option (38a) na kuai pingmu"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex37_study3_partwhole_na : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "3"), ("pct_chosen", "51.3")] }
 
-def ex38_study3_relational_bare : LinguisticExample :=
+def ex38_study3_relational_bare : Datum :=
   { id := "ahnzhu2025_ex38_study3_relational_bare"
     source := ⟨"ahn-zhu-2025", "(37), option (38b) chongdianqi"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex38_study3_relational_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "3"), ("pct_chosen", "73.4")] }
 
-def ex38_study3_relational_na : LinguisticExample :=
+def ex38_study3_relational_na : Datum :=
   { id := "ahnzhu2025_ex38_study3_relational_na"
     source := ⟨"ahn-zhu-2025", "(37), option (38b) na kuai chongdianqi"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex38_study3_relational_na : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "3"), ("pct_chosen", "51.9")] }
 
-def ex39_study3_sn : LinguisticExample :=
+def ex39_study3_sn : Datum :=
   { id := "ahnzhu2025_ex39_study3_sn"
     source := ⟨"ahn-zhu-2025", "(39)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex39_study3_sn : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "3"), ("condition", "SN"), ("pct_bn", "67"), ("pct_dem", "80.2")] }
 
-def ex40_study3_pn : LinguisticExample :=
+def ex40_study3_pn : Datum :=
   { id := "ahnzhu2025_ex40_study3_pn"
     source := ⟨"ahn-zhu-2025", "(40)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex40_study3_pn : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "3"), ("condition", "PN"), ("pct_bn", "53.8"), ("pct_dem", "38.8")] }
 
-def ex41_study3_rn : LinguisticExample :=
+def ex41_study3_rn : Datum :=
   { id := "ahnzhu2025_ex41_study3_rn"
     source := ⟨"ahn-zhu-2025", "(41)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex41_study3_rn : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "3"), ("condition", "RN"), ("pct_bn", "68"), ("pct_dem", "75")] }
 
-def ex42_study3_nn : LinguisticExample :=
+def ex42_study3_nn : Datum :=
   { id := "ahnzhu2025_ex42_study3_nn"
     source := ⟨"ahn-zhu-2025", "(42)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex42_study3_nn : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "3"), ("condition", "NN"), ("pct_bn", "89.5"), ("pct_dem", "29.6")] }
 
-def ex59_study4_bare_author : LinguisticExample :=
+def ex59_study4_bare_author : Datum :=
   { id := "ahnzhu2025_ex59_study4_bare_author"
     source := ⟨"ahn-zhu-2025", "(59) zuozhe"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex59_study4_bare_author : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "4")] }
 
-def ex59_study4_na_author : LinguisticExample :=
+def ex59_study4_na_author : Datum :=
   { id := "ahnzhu2025_ex59_study4_na_author"
     source := ⟨"ahn-zhu-2025", "(59) na wei zuozhe"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex59_study4_na_author : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "4")] }
 
-def ex59_study4_bare_novelist : LinguisticExample :=
+def ex59_study4_bare_novelist : Datum :=
   { id := "ahnzhu2025_ex59_study4_bare_novelist"
     source := ⟨"ahn-zhu-2025", "(59) xiaoshuo-jia"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex59_study4_bare_novelist : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "relational"), ("noun_arity", "sortal"), ("study", "4")] }
 
-def ex59_study4_na_novelist : LinguisticExample :=
+def ex59_study4_na_novelist : Datum :=
   { id := "ahnzhu2025_ex59_study4_na_novelist"
     source := ⟨"ahn-zhu-2025", "(59) na wei xiaoshuo-jia"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex59_study4_na_novelist : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "sortal"), ("study", "4")] }
 
-def fn13_intersentential_novelist : LinguisticExample :=
+def fn13_intersentential_novelist : Datum :=
   { id := "ahnzhu2025_fn13_intersentential_novelist"
     source := ⟨"ahn-zhu-2025", "fn. 13 (i)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def fn13_intersentential_novelist : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "naCL"), ("bridging_type", "relational"), ("noun_arity", "sortal"), ("study", "none")] }
 
-def ex61a_de_owner : LinguisticExample :=
+def ex61a_de_owner : Datum :=
   { id := "ahnzhu2025_ex61a_de_owner"
     source := ⟨"ahn-zhu-2025", "(61a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex61a_de_owner : LinguisticExample :=
     readings := []
     paperFeatures := [("noun_arity", "relational"), ("diagnostic", "de")] }
 
-def ex61b_de_person : LinguisticExample :=
+def ex61b_de_person : Datum :=
   { id := "ahnzhu2025_ex61b_de_person"
     source := ⟨"ahn-zhu-2025", "(61b)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex61b_de_person : LinguisticExample :=
     readings := []
     paperFeatures := [("noun_arity", "sortal"), ("diagnostic", "de")] }
 
-def ex62a_de_author : LinguisticExample :=
+def ex62a_de_author : Datum :=
   { id := "ahnzhu2025_ex62a_de_author"
     source := ⟨"ahn-zhu-2025", "(62a)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex62a_de_author : LinguisticExample :=
     readings := []
     paperFeatures := [("noun_arity", "relational"), ("diagnostic", "de"), ("norming_rating", "4.88")] }
 
-def ex62b_de_novelist : LinguisticExample :=
+def ex62b_de_novelist : Datum :=
   { id := "ahnzhu2025_ex62b_de_novelist"
     source := ⟨"ahn-zhu-2025", "(62b)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex62b_de_novelist : LinguisticExample :=
     readings := []
     paperFeatures := [("noun_arity", "sortal"), ("diagnostic", "de"), ("norming_rating", "1.50")] }
 
-def ex63_moon : LinguisticExample :=
+def ex63_moon : Datum :=
   { id := "ahnzhu2025_ex63_moon"
     source := ⟨"ahn-zhu-2025", "(63)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex63_moon : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "bare"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "none")] }
 
-def ex20a_the_roof : LinguisticExample :=
+def ex20a_the_roof : Datum :=
   { id := "ahnzhu2025_ex20a_the_roof"
     source := ⟨"ahn-zhu-2025", "(20a)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex20a_the_roof : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "none")] }
 
-def ex20b_that_roof : LinguisticExample :=
+def ex20b_that_roof : Datum :=
   { id := "ahnzhu2025_ex20b_that_roof"
     source := ⟨"ahn-zhu-2025", "(20b)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex20b_that_roof : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "that"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "none")] }
 
-def ex34a_study2_partwhole_the : LinguisticExample :=
+def ex34a_study2_partwhole_the : Datum :=
   { id := "ahnzhu2025_ex34a_study2_partwhole_the"
     source := ⟨"ahn-zhu-2025", "(34a)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex34a_study2_partwhole_the : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "2")] }
 
-def ex34a_study2_partwhole_that : LinguisticExample :=
+def ex34a_study2_partwhole_that : Datum :=
   { id := "ahnzhu2025_ex34a_study2_partwhole_that"
     source := ⟨"ahn-zhu-2025", "(34a), demonstrative variant"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex34a_study2_partwhole_that : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "that"), ("bridging_type", "partWhole"), ("noun_arity", "sortal"), ("study", "2")] }
 
-def ex34b_study2_relational_that : LinguisticExample :=
+def ex34b_study2_relational_that : Datum :=
   { id := "ahnzhu2025_ex34b_study2_relational_that"
     source := ⟨"ahn-zhu-2025", "(34b)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex34b_study2_relational_that : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "that"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "2")] }
 
-def ex34b_study2_relational_the : LinguisticExample :=
+def ex34b_study2_relational_the : Datum :=
   { id := "ahnzhu2025_ex34b_study2_relational_the"
     source := ⟨"ahn-zhu-2025", "(34b), definite variant"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex34b_study2_relational_the : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "2")] }
 
-def ex36a_study2_author : LinguisticExample :=
+def ex36a_study2_author : Datum :=
   { id := "ahnzhu2025_ex36a_study2_author"
     source := ⟨"ahn-zhu-2025", "(36a)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex36a_study2_author : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "2")] }
 
-def ex36b_study2_director : LinguisticExample :=
+def ex36b_study2_director : Datum :=
   { id := "ahnzhu2025_ex36b_study2_director"
     source := ⟨"ahn-zhu-2025", "(36b)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex36b_study2_director : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "2")] }
 
-def ex49_author_at_issue : LinguisticExample :=
+def ex49_author_at_issue : Datum :=
   { id := "ahnzhu2025_ex49_author_at_issue"
     source := ⟨"ahn-zhu-2025", "(49)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex49_author_at_issue : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "the"), ("bridging_type", "relational"), ("noun_arity", "relational"), ("study", "none"), ("at_issue", "relation")] }
 
-def ex54_deferred : LinguisticExample :=
+def ex54_deferred : Datum :=
   { id := "ahnzhu2025_ex54_deferred"
     source := ⟨"ahn-zhu-2025", "(54)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex54_deferred : LinguisticExample :=
     readings := []
     paperFeatures := [("definite_form", "that"), ("bridging_type", "none"), ("noun_arity", "sortal"), ("study", "none"), ("use", "deferred")] }
 
-def ex60a_of_author : LinguisticExample :=
+def ex60a_of_author : Datum :=
   { id := "ahnzhu2025_ex60a_of_author"
     source := ⟨"ahn-zhu-2025", "(60a)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex60a_of_author : LinguisticExample :=
     readings := []
     paperFeatures := [("noun_arity", "relational"), ("diagnostic", "of")] }
 
-def ex60b_of_novelist : LinguisticExample :=
+def ex60b_of_novelist : Datum :=
   { id := "ahnzhu2025_ex60b_of_novelist"
     source := ⟨"ahn-zhu-2025", "(60b)"⟩
     reportedIn := none
@@ -576,6 +574,6 @@ def ex60b_of_novelist : LinguisticExample :=
     readings := []
     paperFeatures := [("noun_arity", "sortal"), ("diagnostic", "of")] }
 
-def all : List LinguisticExample := [ex14a_bare, ex14b_na, ex17_partwhole_bare, ex18_anaphoric_na, ex21_partwhole_na, ex22_relational_na, ex24a_de_child, ex24b_de_person, ex25_de_flower, ex28a_study1_partwhole_na, ex28b_study1_relational_bare, ex32_study1_painter, ex33a_study1_steeringwheel, ex37_study3_partwhole_bare, ex37_study3_partwhole_na, ex38_study3_relational_bare, ex38_study3_relational_na, ex39_study3_sn, ex40_study3_pn, ex41_study3_rn, ex42_study3_nn, ex59_study4_bare_author, ex59_study4_na_author, ex59_study4_bare_novelist, ex59_study4_na_novelist, fn13_intersentential_novelist, ex61a_de_owner, ex61b_de_person, ex62a_de_author, ex62b_de_novelist, ex63_moon, ex20a_the_roof, ex20b_that_roof, ex34a_study2_partwhole_the, ex34a_study2_partwhole_that, ex34b_study2_relational_that, ex34b_study2_relational_the, ex36a_study2_author, ex36b_study2_director, ex49_author_at_issue, ex54_deferred, ex60a_of_author, ex60b_of_novelist]
+def all : List Datum := [ex14a_bare, ex14b_na, ex17_partwhole_bare, ex18_anaphoric_na, ex21_partwhole_na, ex22_relational_na, ex24a_de_child, ex24b_de_person, ex25_de_flower, ex28a_study1_partwhole_na, ex28b_study1_relational_bare, ex32_study1_painter, ex33a_study1_steeringwheel, ex37_study3_partwhole_bare, ex37_study3_partwhole_na, ex38_study3_relational_bare, ex38_study3_relational_na, ex39_study3_sn, ex40_study3_pn, ex41_study3_rn, ex42_study3_nn, ex59_study4_bare_author, ex59_study4_na_author, ex59_study4_bare_novelist, ex59_study4_na_novelist, fn13_intersentential_novelist, ex61a_de_owner, ex61b_de_person, ex62a_de_author, ex62b_de_novelist, ex63_moon, ex20a_the_roof, ex20b_that_roof, ex34a_study2_partwhole_the, ex34a_study2_partwhole_that, ex34b_study2_relational_that, ex34b_study2_relational_the, ex36a_study2_author, ex36b_study2_director, ex49_author_at_issue, ex54_deferred, ex60a_of_author, ex60b_of_novelist]
 
 end AhnZhu2025.Examples

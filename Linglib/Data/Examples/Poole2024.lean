@@ -15,9 +15,7 @@ this module; declarations live in `namespace Poole2024.Examples`.
 
 namespace Poole2024.Examples
 
-open Data.Examples
-
-def ex15 : LinguisticExample :=
+def ex15 : Datum :=
   { id := "poole2024_ex15"
     source := ⟨"poole-2024", "(15)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex15 : LinguisticExample :=
     readings := []
     paperFeatures := [("acc", "yes"), ("accessible", "yes"), ("licensor", "yes")] }
 
-def ex15_bare : LinguisticExample :=
+def ex15_bare : Datum :=
   { id := "poole2024_ex15_bare"
     source := ⟨"poole-2024", "(15)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex15_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("acc", "no"), ("accessible", "yes"), ("licensor", "yes")] }
 
-def ex18 : LinguisticExample :=
+def ex18 : Datum :=
   { id := "poole2024_ex18"
     source := ⟨"poole-2024", "(18)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex18 : LinguisticExample :=
     readings := []
     paperFeatures := [("acc", "no"), ("accessible", "no"), ("licensor", "yes")] }
 
-def ex18_acc : LinguisticExample :=
+def ex18_acc : Datum :=
   { id := "poole2024_ex18_acc"
     source := ⟨"poole-2024", "(18)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex18_acc : LinguisticExample :=
     readings := []
     paperFeatures := [("acc", "yes"), ("accessible", "no"), ("licensor", "yes")] }
 
-def ex20a : LinguisticExample :=
+def ex20a : Datum :=
   { id := "poole2024_ex20a"
     source := ⟨"vinokurova-2005", "(20a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex20a : LinguisticExample :=
     readings := []
     paperFeatures := [("acc", "yes"), ("accessible", "yes"), ("licensor", "yes")] }
 
-def ex20b : LinguisticExample :=
+def ex20b : Datum :=
   { id := "poole2024_ex20b"
     source := ⟨"poole-2024", "(20b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex20b : LinguisticExample :=
     readings := []
     paperFeatures := [("acc", "yes"), ("accessible", "yes"), ("licensor", "no")] }
 
-def ex20b_bare : LinguisticExample :=
+def ex20b_bare : Datum :=
   { id := "poole2024_ex20b_bare"
     source := ⟨"poole-2024", "(20b)"⟩
     reportedIn := none
@@ -108,6 +106,6 @@ def ex20b_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("acc", "no"), ("accessible", "yes"), ("licensor", "no")] }
 
-def all : List LinguisticExample := [ex15, ex15_bare, ex18, ex18_acc, ex20a, ex20b, ex20b_bare]
+def all : List Datum := [ex15, ex15_bare, ex18, ex18_acc, ex20a, ex20b, ex20b_bare]
 
 end Poole2024.Examples

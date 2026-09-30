@@ -15,9 +15,7 @@ this module; declarations live in `namespace Corbett2000.Examples`.
 
 namespace Corbett2000.Examples
 
-open Data.Examples
-
-def ex_2_1 : LinguisticExample :=
+def ex_2_1 : Datum :=
   { id := "corbett2000_2_1"
     source := ⟨"corbett-2000", "ch. 2 (1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_2_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "lúban"), ("number", "general"), ("form", "lúban")] }
 
-def ex_2_2 : LinguisticExample :=
+def ex_2_2 : Datum :=
   { id := "corbett2000_2_2"
     source := ⟨"corbett-2000", "ch. 2 (2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "lúban"), ("number", "singular"), ("form", "lubántiti")] }
 
-def ex_2_3 : LinguisticExample :=
+def ex_2_3 : Datum :=
   { id := "corbett2000_2_3"
     source := ⟨"corbett-2000", "ch. 2 (3)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_2_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "lúban"), ("number", "paucal"), ("form", "lubanjaa")] }
 
-def ex_2_4 : LinguisticExample :=
+def ex_2_4 : Datum :=
   { id := "corbett2000_2_4"
     source := ⟨"corbett-2000", "ch. 2 (4)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_2_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "lúban"), ("number", "plural"), ("form", "lubanjool")] }
 
-def ex_2_8 : LinguisticExample :=
+def ex_2_8 : Datum :=
   { id := "corbett2000_2_8"
     source := ⟨"corbett-2000", "ch. 2 (8)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_2_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "general")] }
 
-def ex_2_9 : LinguisticExample :=
+def ex_2_9 : Datum :=
   { id := "corbett2000_2_9"
     source := ⟨"corbett-2000", "ch. 2 (9)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_2_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "general")] }
 
-def ex_2_10 : LinguisticExample :=
+def ex_2_10 : Datum :=
   { id := "corbett2000_2_10"
     source := ⟨"corbett-2000", "ch. 2 (10)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_2_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "singular")] }
 
-def ex_2_13 : LinguisticExample :=
+def ex_2_13 : Datum :=
   { id := "corbett2000_2_13"
     source := ⟨"corbett-2000", "ch. 2 (13)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_2_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "general")] }
 
-def ex_2_14 : LinguisticExample :=
+def ex_2_14 : Datum :=
   { id := "corbett2000_2_14"
     source := ⟨"corbett-2000", "ch. 2 (14)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_2_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "general")] }
 
-def ex_2_15 : LinguisticExample :=
+def ex_2_15 : Datum :=
   { id := "corbett2000_2_15"
     source := ⟨"corbett-2000", "ch. 2 (15)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_2_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "general")] }
 
-def ex_2_16 : LinguisticExample :=
+def ex_2_16 : Datum :=
   { id := "corbett2000_2_16"
     source := ⟨"corbett-2000", "ch. 2 (16)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_2_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "plural")] }
 
-def ex_2_32 : LinguisticExample :=
+def ex_2_32 : Datum :=
   { id := "corbett2000_2_32"
     source := ⟨"corbett-2000", "ch. 2 (32)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_2_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "plural"), ("referents", "2")] }
 
-def ex_2_33 : LinguisticExample :=
+def ex_2_33 : Datum :=
   { id := "corbett2000_2_33"
     source := ⟨"corbett-2000", "ch. 2 (33)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_2_33 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_2_34 : LinguisticExample :=
+def ex_2_34 : Datum :=
   { id := "corbett2000_2_34"
     source := ⟨"corbett-2000", "ch. 2 (34)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_2_34 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_2_35 : LinguisticExample :=
+def ex_2_35 : Datum :=
   { id := "corbett2000_2_35"
     source := ⟨"corbett-2000", "ch. 2 (35)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_2_35 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_2_23 : LinguisticExample :=
+def ex_2_23 : Datum :=
   { id := "corbett2000_2_23"
     source := ⟨"corbett-2000", "ch. 2 (23)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_2_23 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_3_2 : LinguisticExample :=
+def ex_3_2 : Datum :=
   { id := "corbett2000_3_2"
     source := ⟨"corbett-2000", "ch. 3 (2)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_3_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "kin"), ("marking", "optional")] }
 
-def ex_3_3 : LinguisticExample :=
+def ex_3_3 : Datum :=
   { id := "corbett2000_3_3"
     source := ⟨"corbett-2000", "ch. 3 (3)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_3_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "human"), ("marking", "optional")] }
 
-def ex_3_4 : LinguisticExample :=
+def ex_3_4 : Datum :=
   { id := "corbett2000_3_4"
     source := ⟨"corbett-2000", "ch. 3 (4)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_3_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "higherAnimal"), ("marking", "optional")] }
 
-def ex_3_5 : LinguisticExample :=
+def ex_3_5 : Datum :=
   { id := "corbett2000_3_5"
     source := ⟨"corbett-2000", "ch. 3 (5)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_3_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "human"), ("agreement", "obligatory")] }
 
-def ex_3_6 : LinguisticExample :=
+def ex_3_6 : Datum :=
   { id := "corbett2000_3_6"
     source := ⟨"corbett-2000", "ch. 3 (6)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_3_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "higherAnimal"), ("agreement", "excluded")] }
 
-def ex_3_7 : LinguisticExample :=
+def ex_3_7 : Datum :=
   { id := "corbett2000_3_7"
     source := ⟨"corbett-2000", "ch. 3 (7)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_3_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "I")] }
 
-def ex_3_8 : LinguisticExample :=
+def ex_3_8 : Datum :=
   { id := "corbett2000_3_8"
     source := ⟨"corbett-2000", "ch. 3 (8)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_3_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "II")] }
 
-def ex_3_9 : LinguisticExample :=
+def ex_3_9 : Datum :=
   { id := "corbett2000_3_9"
     source := ⟨"corbett-2000", "ch. 3 (9)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_3_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "I")] }
 
-def ex_3_10 : LinguisticExample :=
+def ex_3_10 : Datum :=
   { id := "corbett2000_3_10"
     source := ⟨"corbett-2000", "ch. 3 (10)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_3_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "II")] }
 
-def ex_3_11 : LinguisticExample :=
+def ex_3_11 : Datum :=
   { id := "corbett2000_3_11"
     source := ⟨"corbett-2000", "ch. 3 (11)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_3_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "III")] }
 
-def ex_3_12 : LinguisticExample :=
+def ex_3_12 : Datum :=
   { id := "corbett2000_3_12"
     source := ⟨"corbett-2000", "ch. 3 (12)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_3_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("gender", "IV")] }
 
-def ex_3_13 : LinguisticExample :=
+def ex_3_13 : Datum :=
   { id := "corbett2000_3_13"
     source := ⟨"corbett-2000", "ch. 3 (13)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_3_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "sheep"), ("morphology", "no"), ("syntax", "yes")] }
 
-def ex_3_14 : LinguisticExample :=
+def ex_3_14 : Datum :=
   { id := "corbett2000_3_14"
     source := ⟨"corbett-2000", "ch. 3 (14)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_3_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "sheep"), ("morphology", "no"), ("syntax", "yes")] }
 
-def ex_3_15 : LinguisticExample :=
+def ex_3_15 : Datum :=
   { id := "corbett2000_3_15"
     source := ⟨"corbett-2000", "ch. 3 (15)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_3_15 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_3_17 : LinguisticExample :=
+def ex_3_17 : Datum :=
   { id := "corbett2000_3_17"
     source := ⟨"corbett-2000", "ch. 3 (17)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_3_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "elephant"), ("morphology", "no")] }
 
-def ex_3_18 : LinguisticExample :=
+def ex_3_18 : Datum :=
   { id := "corbett2000_3_18"
     source := ⟨"corbett-2000", "ch. 3 (18)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_3_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "elephant"), ("syntax", "yes")] }
 
-def ex_3_19 : LinguisticExample :=
+def ex_3_19 : Datum :=
   { id := "corbett2000_3_19"
     source := ⟨"corbett-2000", "ch. 3 (19)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_3_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "you"), ("number", "singular")] }
 
-def ex_3_20 : LinguisticExample :=
+def ex_3_20 : Datum :=
   { id := "corbett2000_3_20"
     source := ⟨"corbett-2000", "ch. 3 (20)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_3_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "you"), ("number", "plural")] }
 
-def ex_3_21 : LinguisticExample :=
+def ex_3_21 : Datum :=
   { id := "corbett2000_3_21"
     source := ⟨"corbett-2000", "ch. 3 (21)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_3_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "addressee"), ("agreement", "obligatory")] }
 
-def ex_3_22 : LinguisticExample :=
+def ex_3_22 : Datum :=
   { id := "corbett2000_3_22"
     source := ⟨"corbett-2000", "ch. 3 (22)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_3_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "discreteInanimate"), ("agreement", "excluded")] }
 
-def ex_3_23 : LinguisticExample :=
+def ex_3_23 : Datum :=
   { id := "corbett2000_3_23"
     source := ⟨"corbett-2000", "ch. 3 (23)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_3_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "lowerAnimal"), ("agreement", "optional")] }
 
-def ex_3_24 : LinguisticExample :=
+def ex_3_24 : Datum :=
   { id := "corbett2000_3_24"
     source := ⟨"corbett-2000", "ch. 3 (24)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_3_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "human"), ("marking", "obligatory")] }
 
-def ex_3_25 : LinguisticExample :=
+def ex_3_25 : Datum :=
   { id := "corbett2000_3_25"
     source := ⟨"corbett-2000", "ch. 3 (25)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_3_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "discreteInanimate"), ("marking", "optional")] }
 
-def ex_3_26 : LinguisticExample :=
+def ex_3_26 : Datum :=
   { id := "corbett2000_3_26"
     source := ⟨"corbett-2000", "ch. 3 (26)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_3_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "human"), ("agreement", "obligatory")] }
 
-def ex_3_27 : LinguisticExample :=
+def ex_3_27 : Datum :=
   { id := "corbett2000_3_27"
     source := ⟨"corbett-2000", "ch. 3 (27)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex_3_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "discreteInanimate"), ("agreement", "excluded")] }
 
-def ex_3_28 : LinguisticExample :=
+def ex_3_28 : Datum :=
   { id := "corbett2000_3_28"
     source := ⟨"corbett-2000", "ch. 3 (28)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex_3_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "discreteInanimate"), ("agreement", "excluded")] }
 
-def ex_4_1 : LinguisticExample :=
+def ex_4_1 : Datum :=
   { id := "corbett2000_4_1"
     source := ⟨"corbett-2000", "ch. 4 (1)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex_4_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("controller", "singular"), ("target", "singular")] }
 
-def ex_4_2 : LinguisticExample :=
+def ex_4_2 : Datum :=
   { id := "corbett2000_4_2"
     source := ⟨"corbett-2000", "ch. 4 (2)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex_4_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("controller", "dual"), ("target", "plural")] }
 
-def ex_4_3 : LinguisticExample :=
+def ex_4_3 : Datum :=
   { id := "corbett2000_4_3"
     source := ⟨"corbett-2000", "ch. 4 (3)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex_4_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("controller", "plural"), ("target", "plural")] }
 
-def ex_4_4 : LinguisticExample :=
+def ex_4_4 : Datum :=
   { id := "corbett2000_4_4"
     source := ⟨"corbett-2000", "ch. 4 (4)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex_4_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "singular")] }
 
-def ex_4_5 : LinguisticExample :=
+def ex_4_5 : Datum :=
   { id := "corbett2000_4_5"
     source := ⟨"corbett-2000", "ch. 4 (5)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex_4_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "plural")] }
 
-def ex_4_6 : LinguisticExample :=
+def ex_4_6 : Datum :=
   { id := "corbett2000_4_6"
     source := ⟨"corbett-2000", "ch. 4 (6)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex_4_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("associative", "yes")] }
 
-def ex_4_12 : LinguisticExample :=
+def ex_4_12 : Datum :=
   { id := "corbett2000_4_12"
     source := ⟨"corbett-2000", "ch. 4 (12)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex_4_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "singular")] }
 
-def ex_4_13 : LinguisticExample :=
+def ex_4_13 : Datum :=
   { id := "corbett2000_4_13"
     source := ⟨"corbett-2000", "ch. 4 (13)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex_4_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "plural"), ("associative", "yes")] }
 
-def ex_4_14 : LinguisticExample :=
+def ex_4_14 : Datum :=
   { id := "corbett2000_4_14"
     source := ⟨"corbett-2000", "ch. 4 (14)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex_4_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "dual"), ("associative", "yes")] }
 
-def ex_4_15 : LinguisticExample :=
+def ex_4_15 : Datum :=
   { id := "corbett2000_4_15"
     source := ⟨"corbett-2000", "ch. 4 (15)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex_4_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "dual"), ("associative", "yes")] }
 
-def ex_4_27 : LinguisticExample :=
+def ex_4_27 : Datum :=
   { id := "corbett2000_4_27"
     source := ⟨"corbett-2000", "ch. 4 (27)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex_4_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "predicate"), ("agreement", "mass")] }
 
-def ex_4_28 : LinguisticExample :=
+def ex_4_28 : Datum :=
   { id := "corbett2000_4_28"
     source := ⟨"corbett-2000", "ch. 4 (28)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex_4_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "predicate"), ("agreement", "gender")] }
 
-def ex_4_29 : LinguisticExample :=
+def ex_4_29 : Datum :=
   { id := "corbett2000_4_29"
     source := ⟨"corbett-2000", "ch. 4 (29)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex_4_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "attributive"), ("agreement", "mass")] }
 
-def ex_4_30 : LinguisticExample :=
+def ex_4_30 : Datum :=
   { id := "corbett2000_4_30"
     source := ⟨"corbett-2000", "ch. 4 (30)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex_4_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "attributive"), ("agreement", "mass")] }
 
-def ex_5_21 : LinguisticExample :=
+def ex_5_21 : Datum :=
   { id := "corbett2000_5_21"
     source := ⟨"corbett-2000", "ch. 5 (21)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex_5_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "animate"), ("number", "singular"), ("inverse", "no")] }
 
-def ex_5_22 : LinguisticExample :=
+def ex_5_22 : Datum :=
   { id := "corbett2000_5_22"
     source := ⟨"corbett-2000", "ch. 5 (22)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex_5_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "animate"), ("number", "dual"), ("inverse", "no")] }
 
-def ex_5_23 : LinguisticExample :=
+def ex_5_23 : Datum :=
   { id := "corbett2000_5_23"
     source := ⟨"corbett-2000", "ch. 5 (23)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ex_5_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "animate"), ("number", "plural"), ("inverse", "yes")] }
 
-def ex_5_40 : LinguisticExample :=
+def ex_5_40 : Datum :=
   { id := "corbett2000_5_40"
     source := ⟨"corbett-2000", "ch. 5 (40)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def ex_5_40 : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun", "sg"), ("verb", "sg"), ("number", "singular")] }
 
-def ex_5_41 : LinguisticExample :=
+def ex_5_41 : Datum :=
   { id := "corbett2000_5_41"
     source := ⟨"corbett-2000", "ch. 5 (41)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def ex_5_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun", "pl"), ("verb", "pl"), ("number", "plural")] }
 
-def ex_5_42 : LinguisticExample :=
+def ex_5_42 : Datum :=
   { id := "corbett2000_5_42"
     source := ⟨"corbett-2000", "ch. 5 (42)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def ex_5_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun", "pl"), ("verb", "sg"), ("number", "dual")] }
 
-def ex_5_43 : LinguisticExample :=
+def ex_5_43 : Datum :=
   { id := "corbett2000_5_43"
     source := ⟨"corbett-2000", "ch. 5 (43)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def ex_5_43 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "dual")] }
 
-def ex_5_44 : LinguisticExample :=
+def ex_5_44 : Datum :=
   { id := "corbett2000_5_44"
     source := ⟨"corbett-2000", "ch. 5 (44)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def ex_5_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "dual")] }
 
-def ex_5_45 : LinguisticExample :=
+def ex_5_45 : Datum :=
   { id := "corbett2000_5_45"
     source := ⟨"corbett-2000", "ch. 5 (45)"⟩
     reportedIn := none
@@ -862,7 +860,7 @@ def ex_5_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "dual")] }
 
-def ex_5_46 : LinguisticExample :=
+def ex_5_46 : Datum :=
   { id := "corbett2000_5_46"
     source := ⟨"corbett-2000", "ch. 5 (46)"⟩
     reportedIn := none
@@ -875,7 +873,7 @@ def ex_5_46 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_5_47 : LinguisticExample :=
+def ex_5_47 : Datum :=
   { id := "corbett2000_5_47"
     source := ⟨"corbett-2000", "ch. 5 (47)"⟩
     reportedIn := none
@@ -888,7 +886,7 @@ def ex_5_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "plural")] }
 
-def ex_5_48 : LinguisticExample :=
+def ex_5_48 : Datum :=
   { id := "corbett2000_5_48"
     source := ⟨"corbett-2000", "ch. 5 (48)"⟩
     reportedIn := none
@@ -901,7 +899,7 @@ def ex_5_48 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "dual")] }
 
-def ex_5_49 : LinguisticExample :=
+def ex_5_49 : Datum :=
   { id := "corbett2000_5_49"
     source := ⟨"corbett-2000", "ch. 5 (49)"⟩
     reportedIn := none
@@ -914,7 +912,7 @@ def ex_5_49 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "dual")] }
 
-def ex_6_1 : LinguisticExample :=
+def ex_6_1 : Datum :=
   { id := "corbett2000_6_1"
     source := ⟨"corbett-2000", "ch. 6 (1)"⟩
     reportedIn := none
@@ -927,7 +925,7 @@ def ex_6_1 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_6_2 : LinguisticExample :=
+def ex_6_2 : Datum :=
   { id := "corbett2000_6_2"
     source := ⟨"corbett-2000", "ch. 6 (2)"⟩
     reportedIn := none
@@ -940,7 +938,7 @@ def ex_6_2 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_6_4 : LinguisticExample :=
+def ex_6_4 : Datum :=
   { id := "corbett2000_6_4"
     source := ⟨"corbett-2000", "ch. 6 (4)"⟩
     reportedIn := none
@@ -953,7 +951,7 @@ def ex_6_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "lúban"), ("number", "general"), ("concord", "masc")] }
 
-def ex_6_5 : LinguisticExample :=
+def ex_6_5 : Datum :=
   { id := "corbett2000_6_5"
     source := ⟨"corbett-2000", "ch. 6 (5)"⟩
     reportedIn := none
@@ -966,7 +964,7 @@ def ex_6_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "lúban"), ("number", "singular"), ("concord", "masc")] }
 
-def ex_6_6 : LinguisticExample :=
+def ex_6_6 : Datum :=
   { id := "corbett2000_6_6"
     source := ⟨"corbett-2000", "ch. 6 (6)"⟩
     reportedIn := none
@@ -979,7 +977,7 @@ def ex_6_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "lúban"), ("number", "paucal"), ("concord", "plural")] }
 
-def ex_6_7 : LinguisticExample :=
+def ex_6_7 : Datum :=
   { id := "corbett2000_6_7"
     source := ⟨"corbett-2000", "ch. 6 (7)"⟩
     reportedIn := none
@@ -992,7 +990,7 @@ def ex_6_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "lúban"), ("number", "plural"), ("concord", "masc")] }
 
-def ex_6_8 : LinguisticExample :=
+def ex_6_8 : Datum :=
   { id := "corbett2000_6_8"
     source := ⟨"corbett-2000", "ch. 6 (8)"⟩
     reportedIn := none
@@ -1005,7 +1003,7 @@ def ex_6_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "kimbír"), ("number", "general"), ("concord", "fem")] }
 
-def ex_6_9 : LinguisticExample :=
+def ex_6_9 : Datum :=
   { id := "corbett2000_6_9"
     source := ⟨"corbett-2000", "ch. 6 (9)"⟩
     reportedIn := none
@@ -1018,7 +1016,7 @@ def ex_6_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "kimbír"), ("number", "singular"), ("concord", "fem")] }
 
-def ex_6_10 : LinguisticExample :=
+def ex_6_10 : Datum :=
   { id := "corbett2000_6_10"
     source := ⟨"corbett-2000", "ch. 6 (10)"⟩
     reportedIn := none
@@ -1031,7 +1029,7 @@ def ex_6_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "kimbír"), ("number", "paucal"), ("concord", "plural")] }
 
-def ex_6_11 : LinguisticExample :=
+def ex_6_11 : Datum :=
   { id := "corbett2000_6_11"
     source := ⟨"corbett-2000", "ch. 6 (11)"⟩
     reportedIn := none
@@ -1044,7 +1042,7 @@ def ex_6_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("noun", "kimbír"), ("number", "plural"), ("concord", "masc")] }
 
-def ex_6_12 : LinguisticExample :=
+def ex_6_12 : Datum :=
   { id := "corbett2000_6_12"
     source := ⟨"corbett-2000", "ch. 6 (12)"⟩
     reportedIn := none
@@ -1057,7 +1055,7 @@ def ex_6_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("default", "singular"), ("language", "stan1293")] }
 
-def ex_6_14 : LinguisticExample :=
+def ex_6_14 : Datum :=
   { id := "corbett2000_6_14"
     source := ⟨"corbett-2000", "ch. 6 (14)"⟩
     reportedIn := none
@@ -1070,7 +1068,7 @@ def ex_6_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("default", "plural"), ("language", "kiow1266")] }
 
-def ex_6_15 : LinguisticExample :=
+def ex_6_15 : Datum :=
   { id := "corbett2000_6_15"
     source := ⟨"corbett-2000", "ch. 6 (15)"⟩
     reportedIn := none
@@ -1083,7 +1081,7 @@ def ex_6_15 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_6_16 : LinguisticExample :=
+def ex_6_16 : Datum :=
   { id := "corbett2000_6_16"
     source := ⟨"corbett-2000", "ch. 6 (16)"⟩
     reportedIn := none
@@ -1096,7 +1094,7 @@ def ex_6_16 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_6_17 : LinguisticExample :=
+def ex_6_17 : Datum :=
   { id := "corbett2000_6_17"
     source := ⟨"corbett-2000", "ch. 6 (17)"⟩
     reportedIn := none
@@ -1109,7 +1107,7 @@ def ex_6_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "predicate"), ("agreement", "semantic")] }
 
-def ex_6_19a : LinguisticExample :=
+def ex_6_19a : Datum :=
   { id := "corbett2000_6_19a"
     source := ⟨"corbett-2000", "ch. 6 (19)"⟩
     reportedIn := none
@@ -1122,7 +1120,7 @@ def ex_6_19a : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "attributive"), ("agreement", "syntactic")] }
 
-def ex_6_19b : LinguisticExample :=
+def ex_6_19b : Datum :=
   { id := "corbett2000_6_19b"
     source := ⟨"corbett-2000", "ch. 6 (19)"⟩
     reportedIn := none
@@ -1135,7 +1133,7 @@ def ex_6_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "attributive"), ("agreement", "semantic")] }
 
-def ex_6_20a : LinguisticExample :=
+def ex_6_20a : Datum :=
   { id := "corbett2000_6_20a"
     source := ⟨"corbett-2000", "ch. 6 (20)"⟩
     reportedIn := none
@@ -1148,7 +1146,7 @@ def ex_6_20a : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "predicate"), ("agreement", "syntactic")] }
 
-def ex_6_20b : LinguisticExample :=
+def ex_6_20b : Datum :=
   { id := "corbett2000_6_20b"
     source := ⟨"corbett-2000", "ch. 6 (20)"⟩
     reportedIn := none
@@ -1161,7 +1159,7 @@ def ex_6_20b : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "predicate"), ("agreement", "semantic")] }
 
-def ex_6_21a : LinguisticExample :=
+def ex_6_21a : Datum :=
   { id := "corbett2000_6_21a"
     source := ⟨"corbett-2000", "ch. 6 (21)"⟩
     reportedIn := none
@@ -1174,7 +1172,7 @@ def ex_6_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "relativePronoun"), ("agreement", "syntactic")] }
 
-def ex_6_21b : LinguisticExample :=
+def ex_6_21b : Datum :=
   { id := "corbett2000_6_21b"
     source := ⟨"corbett-2000", "ch. 6 (21)"⟩
     reportedIn := none
@@ -1187,7 +1185,7 @@ def ex_6_21b : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "relativePronoun"), ("agreement", "semantic")] }
 
-def ex_6_22a : LinguisticExample :=
+def ex_6_22a : Datum :=
   { id := "corbett2000_6_22a"
     source := ⟨"corbett-2000", "ch. 6 (22)"⟩
     reportedIn := none
@@ -1200,7 +1198,7 @@ def ex_6_22a : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "personalPronoun"), ("agreement", "syntactic")] }
 
-def ex_6_22b : LinguisticExample :=
+def ex_6_22b : Datum :=
   { id := "corbett2000_6_22b"
     source := ⟨"corbett-2000", "ch. 6 (22)"⟩
     reportedIn := none
@@ -1213,7 +1211,7 @@ def ex_6_22b : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "personalPronoun"), ("agreement", "semantic")] }
 
-def ex_6_23 : LinguisticExample :=
+def ex_6_23 : Datum :=
   { id := "corbett2000_6_23"
     source := ⟨"corbett-2000", "ch. 6 (23)"⟩
     reportedIn := none
@@ -1226,7 +1224,7 @@ def ex_6_23 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_6_24 : LinguisticExample :=
+def ex_6_24 : Datum :=
   { id := "corbett2000_6_24"
     source := ⟨"corbett-2000", "ch. 6 (24)"⟩
     reportedIn := none
@@ -1239,7 +1237,7 @@ def ex_6_24 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_6_25 : LinguisticExample :=
+def ex_6_25 : Datum :=
   { id := "corbett2000_6_25"
     source := ⟨"corbett-2000", "ch. 6 (25)"⟩
     reportedIn := none
@@ -1252,7 +1250,7 @@ def ex_6_25 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_6_26 : LinguisticExample :=
+def ex_6_26 : Datum :=
   { id := "corbett2000_6_26"
     source := ⟨"corbett-2000", "ch. 6 (26)"⟩
     reportedIn := none
@@ -1265,7 +1263,7 @@ def ex_6_26 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_6_28 : LinguisticExample :=
+def ex_6_28 : Datum :=
   { id := "corbett2000_6_28"
     source := ⟨"corbett-2000", "ch. 6 (28)"⟩
     reportedIn := none
@@ -1278,7 +1276,7 @@ def ex_6_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "adjective"), ("agreement", "singular")] }
 
-def ex_6_28v : LinguisticExample :=
+def ex_6_28v : Datum :=
   { id := "corbett2000_6_28v"
     source := ⟨"corbett-2000", "ch. 6 (28)"⟩
     reportedIn := none
@@ -1291,7 +1289,7 @@ def ex_6_28v : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "participle"), ("agreement", "plural")] }
 
-def ex_6_29 : LinguisticExample :=
+def ex_6_29 : Datum :=
   { id := "corbett2000_6_29"
     source := ⟨"corbett-2000", "ch. 6 (29)"⟩
     reportedIn := none
@@ -1304,7 +1302,7 @@ def ex_6_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "adjective"), ("agreement", "singular")] }
 
-def ex_6_29v : LinguisticExample :=
+def ex_6_29v : Datum :=
   { id := "corbett2000_6_29v"
     source := ⟨"corbett-2000", "ch. 6 (29)"⟩
     reportedIn := none
@@ -1317,7 +1315,7 @@ def ex_6_29v : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "adjective"), ("agreement", "plural")] }
 
-def ex_6_30 : LinguisticExample :=
+def ex_6_30 : Datum :=
   { id := "corbett2000_6_30"
     source := ⟨"corbett-2000", "ch. 6 (30)"⟩
     reportedIn := none
@@ -1330,7 +1328,7 @@ def ex_6_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "noun"), ("agreement", "singular")] }
 
-def ex_6_31 : LinguisticExample :=
+def ex_6_31 : Datum :=
   { id := "corbett2000_6_31"
     source := ⟨"corbett-2000", "ch. 6 (31)"⟩
     reportedIn := none
@@ -1343,7 +1341,7 @@ def ex_6_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunctAgreement", "nearest")] }
 
-def ex_6_32 : LinguisticExample :=
+def ex_6_32 : Datum :=
   { id := "corbett2000_6_32"
     source := ⟨"corbett-2000", "ch. 6 (32)"⟩
     reportedIn := none
@@ -1356,7 +1354,7 @@ def ex_6_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunctAgreement", "nearest")] }
 
-def ex_6_33 : LinguisticExample :=
+def ex_6_33 : Datum :=
   { id := "corbett2000_6_33"
     source := ⟨"corbett-2000", "ch. 6 (33)"⟩
     reportedIn := none
@@ -1369,7 +1367,7 @@ def ex_6_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunctAgreement", "first")] }
 
-def ex_6_34 : LinguisticExample :=
+def ex_6_34 : Datum :=
   { id := "corbett2000_6_34"
     source := ⟨"corbett-2000", "ch. 6 (34)"⟩
     reportedIn := none
@@ -1382,7 +1380,7 @@ def ex_6_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunctAgreement", "all"), ("conjuncts", "sg+sg"), ("resolved", "dual")] }
 
-def ex_6_35 : LinguisticExample :=
+def ex_6_35 : Datum :=
   { id := "corbett2000_6_35"
     source := ⟨"corbett-2000", "ch. 6 (35)"⟩
     reportedIn := none
@@ -1395,7 +1393,7 @@ def ex_6_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunctAgreement", "all"), ("conjuncts", "sg+sg"), ("resolved", "dual")] }
 
-def ex_6_36 : LinguisticExample :=
+def ex_6_36 : Datum :=
   { id := "corbett2000_6_36"
     source := ⟨"corbett-2000", "ch. 6 (36)"⟩
     reportedIn := none
@@ -1408,7 +1406,7 @@ def ex_6_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunctAgreement", "all"), ("conjuncts", "du+sg"), ("resolved", "plural")] }
 
-def ex_6_37 : LinguisticExample :=
+def ex_6_37 : Datum :=
   { id := "corbett2000_6_37"
     source := ⟨"corbett-2000", "ch. 6 (37)"⟩
     reportedIn := none
@@ -1421,7 +1419,7 @@ def ex_6_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunctAgreement", "all"), ("conjuncts", "sg+sg+sg"), ("resolved", "plural")] }
 
-def ex_6_38 : LinguisticExample :=
+def ex_6_38 : Datum :=
   { id := "corbett2000_6_38"
     source := ⟨"corbett-2000", "ch. 6 (38)"⟩
     reportedIn := none
@@ -1434,7 +1432,7 @@ def ex_6_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "attributive"), ("conjunctAgreement", "all")] }
 
-def ex_6_39 : LinguisticExample :=
+def ex_6_39 : Datum :=
   { id := "corbett2000_6_39"
     source := ⟨"corbett-2000", "ch. 6 (39)"⟩
     reportedIn := none
@@ -1447,7 +1445,7 @@ def ex_6_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("target", "attributive"), ("conjunctAgreement", "nearest")] }
 
-def ex_6_40a : LinguisticExample :=
+def ex_6_40a : Datum :=
   { id := "corbett2000_6_40a"
     source := ⟨"corbett-2000", "ch. 6 (40)"⟩
     reportedIn := none
@@ -1460,7 +1458,7 @@ def ex_6_40a : LinguisticExample :=
     readings := []
     paperFeatures := [("animate", "yes"), ("agreement", "plural")] }
 
-def ex_6_40b : LinguisticExample :=
+def ex_6_40b : Datum :=
   { id := "corbett2000_6_40b"
     source := ⟨"corbett-2000", "ch. 6 (40)"⟩
     reportedIn := none
@@ -1473,7 +1471,7 @@ def ex_6_40b : LinguisticExample :=
     readings := []
     paperFeatures := [("animate", "yes"), ("agreement", "singular")] }
 
-def ex_6_41a : LinguisticExample :=
+def ex_6_41a : Datum :=
   { id := "corbett2000_6_41a"
     source := ⟨"corbett-2000", "ch. 6 (41)"⟩
     reportedIn := none
@@ -1486,7 +1484,7 @@ def ex_6_41a : LinguisticExample :=
     readings := []
     paperFeatures := [("animate", "no"), ("agreement", "singular")] }
 
-def ex_6_41b : LinguisticExample :=
+def ex_6_41b : Datum :=
   { id := "corbett2000_6_41b"
     source := ⟨"corbett-2000", "ch. 6 (41)"⟩
     reportedIn := none
@@ -1499,7 +1497,7 @@ def ex_6_41b : LinguisticExample :=
     readings := []
     paperFeatures := [("animate", "no"), ("agreement", "plural")] }
 
-def ex_6_42a : LinguisticExample :=
+def ex_6_42a : Datum :=
   { id := "corbett2000_6_42a"
     source := ⟨"corbett-2000", "ch. 6 (42)"⟩
     reportedIn := none
@@ -1512,7 +1510,7 @@ def ex_6_42a : LinguisticExample :=
     readings := []
     paperFeatures := [("verbFirst", "yes"), ("conjunctAgreement", "nearest")] }
 
-def ex_6_42b : LinguisticExample :=
+def ex_6_42b : Datum :=
   { id := "corbett2000_6_42b"
     source := ⟨"corbett-2000", "ch. 6 (42)"⟩
     reportedIn := none
@@ -1525,7 +1523,7 @@ def ex_6_42b : LinguisticExample :=
     readings := []
     paperFeatures := [("verbFirst", "yes"), ("conjunctAgreement", "all")] }
 
-def ex_6_43a : LinguisticExample :=
+def ex_6_43a : Datum :=
   { id := "corbett2000_6_43a"
     source := ⟨"corbett-2000", "ch. 6 (43)"⟩
     reportedIn := none
@@ -1538,7 +1536,7 @@ def ex_6_43a : LinguisticExample :=
     readings := []
     paperFeatures := [("verbFirst", "no"), ("conjunctAgreement", "all")] }
 
-def ex_6_43b : LinguisticExample :=
+def ex_6_43b : Datum :=
   { id := "corbett2000_6_43b"
     source := ⟨"corbett-2000", "ch. 6 (43)"⟩
     reportedIn := none
@@ -1551,7 +1549,7 @@ def ex_6_43b : LinguisticExample :=
     readings := []
     paperFeatures := [("verbFirst", "no"), ("conjunctAgreement", "nearest")] }
 
-def ex_6_44a : LinguisticExample :=
+def ex_6_44a : Datum :=
   { id := "corbett2000_6_44a"
     source := ⟨"corbett-2000", "ch. 6 (44)"⟩
     reportedIn := none
@@ -1564,7 +1562,7 @@ def ex_6_44a : LinguisticExample :=
     readings := []
     paperFeatures := [("verbFirst", "no"), ("conjunctAgreement", "all")] }
 
-def ex_6_44b : LinguisticExample :=
+def ex_6_44b : Datum :=
   { id := "corbett2000_6_44b"
     source := ⟨"corbett-2000", "ch. 6 (44)"⟩
     reportedIn := none
@@ -1577,7 +1575,7 @@ def ex_6_44b : LinguisticExample :=
     readings := []
     paperFeatures := [("verbFirst", "no"), ("conjunctAgreement", "nearest")] }
 
-def ex_6_45 : LinguisticExample :=
+def ex_6_45 : Datum :=
   { id := "corbett2000_6_45"
     source := ⟨"corbett-2000", "ch. 6 (45)"⟩
     reportedIn := none
@@ -1590,7 +1588,7 @@ def ex_6_45 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_6_46 : LinguisticExample :=
+def ex_6_46 : Datum :=
   { id := "corbett2000_6_46"
     source := ⟨"corbett-2000", "ch. 6 (46)"⟩
     reportedIn := none
@@ -1603,7 +1601,7 @@ def ex_6_46 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_6_49 : LinguisticExample :=
+def ex_6_49 : Datum :=
   { id := "corbett2000_6_49"
     source := ⟨"corbett-2000", "ch. 6 (49)"⟩
     reportedIn := none
@@ -1616,7 +1614,7 @@ def ex_6_49 : LinguisticExample :=
     readings := []
     paperFeatures := [("animacy", "human")] }
 
-def ex_6_50 : LinguisticExample :=
+def ex_6_50 : Datum :=
   { id := "corbett2000_6_50"
     source := ⟨"corbett-2000", "ch. 6 (50)"⟩
     reportedIn := none
@@ -1629,7 +1627,7 @@ def ex_6_50 : LinguisticExample :=
     readings := []
     paperFeatures := [("animacy", "animal")] }
 
-def ex_6_51 : LinguisticExample :=
+def ex_6_51 : Datum :=
   { id := "corbett2000_6_51"
     source := ⟨"corbett-2000", "ch. 6 (51)"⟩
     reportedIn := none
@@ -1642,7 +1640,7 @@ def ex_6_51 : LinguisticExample :=
     readings := []
     paperFeatures := [("animacy", "inanimate")] }
 
-def ex_6_52 : LinguisticExample :=
+def ex_6_52 : Datum :=
   { id := "corbett2000_6_52"
     source := ⟨"corbett-2000", "ch. 6 (52)"⟩
     reportedIn := none
@@ -1655,7 +1653,7 @@ def ex_6_52 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_6_53 : LinguisticExample :=
+def ex_6_53 : Datum :=
   { id := "corbett2000_6_53"
     source := ⟨"corbett-2000", "ch. 6 (53)"⟩
     reportedIn := none
@@ -1668,6 +1666,6 @@ def ex_6_53 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def all : List LinguisticExample := [ex_2_1, ex_2_2, ex_2_3, ex_2_4, ex_2_8, ex_2_9, ex_2_10, ex_2_13, ex_2_14, ex_2_15, ex_2_16, ex_2_32, ex_2_33, ex_2_34, ex_2_35, ex_2_23, ex_3_2, ex_3_3, ex_3_4, ex_3_5, ex_3_6, ex_3_7, ex_3_8, ex_3_9, ex_3_10, ex_3_11, ex_3_12, ex_3_13, ex_3_14, ex_3_15, ex_3_17, ex_3_18, ex_3_19, ex_3_20, ex_3_21, ex_3_22, ex_3_23, ex_3_24, ex_3_25, ex_3_26, ex_3_27, ex_3_28, ex_4_1, ex_4_2, ex_4_3, ex_4_4, ex_4_5, ex_4_6, ex_4_12, ex_4_13, ex_4_14, ex_4_15, ex_4_27, ex_4_28, ex_4_29, ex_4_30, ex_5_21, ex_5_22, ex_5_23, ex_5_40, ex_5_41, ex_5_42, ex_5_43, ex_5_44, ex_5_45, ex_5_46, ex_5_47, ex_5_48, ex_5_49, ex_6_1, ex_6_2, ex_6_4, ex_6_5, ex_6_6, ex_6_7, ex_6_8, ex_6_9, ex_6_10, ex_6_11, ex_6_12, ex_6_14, ex_6_15, ex_6_16, ex_6_17, ex_6_19a, ex_6_19b, ex_6_20a, ex_6_20b, ex_6_21a, ex_6_21b, ex_6_22a, ex_6_22b, ex_6_23, ex_6_24, ex_6_25, ex_6_26, ex_6_28, ex_6_28v, ex_6_29, ex_6_29v, ex_6_30, ex_6_31, ex_6_32, ex_6_33, ex_6_34, ex_6_35, ex_6_36, ex_6_37, ex_6_38, ex_6_39, ex_6_40a, ex_6_40b, ex_6_41a, ex_6_41b, ex_6_42a, ex_6_42b, ex_6_43a, ex_6_43b, ex_6_44a, ex_6_44b, ex_6_45, ex_6_46, ex_6_49, ex_6_50, ex_6_51, ex_6_52, ex_6_53]
+def all : List Datum := [ex_2_1, ex_2_2, ex_2_3, ex_2_4, ex_2_8, ex_2_9, ex_2_10, ex_2_13, ex_2_14, ex_2_15, ex_2_16, ex_2_32, ex_2_33, ex_2_34, ex_2_35, ex_2_23, ex_3_2, ex_3_3, ex_3_4, ex_3_5, ex_3_6, ex_3_7, ex_3_8, ex_3_9, ex_3_10, ex_3_11, ex_3_12, ex_3_13, ex_3_14, ex_3_15, ex_3_17, ex_3_18, ex_3_19, ex_3_20, ex_3_21, ex_3_22, ex_3_23, ex_3_24, ex_3_25, ex_3_26, ex_3_27, ex_3_28, ex_4_1, ex_4_2, ex_4_3, ex_4_4, ex_4_5, ex_4_6, ex_4_12, ex_4_13, ex_4_14, ex_4_15, ex_4_27, ex_4_28, ex_4_29, ex_4_30, ex_5_21, ex_5_22, ex_5_23, ex_5_40, ex_5_41, ex_5_42, ex_5_43, ex_5_44, ex_5_45, ex_5_46, ex_5_47, ex_5_48, ex_5_49, ex_6_1, ex_6_2, ex_6_4, ex_6_5, ex_6_6, ex_6_7, ex_6_8, ex_6_9, ex_6_10, ex_6_11, ex_6_12, ex_6_14, ex_6_15, ex_6_16, ex_6_17, ex_6_19a, ex_6_19b, ex_6_20a, ex_6_20b, ex_6_21a, ex_6_21b, ex_6_22a, ex_6_22b, ex_6_23, ex_6_24, ex_6_25, ex_6_26, ex_6_28, ex_6_28v, ex_6_29, ex_6_29v, ex_6_30, ex_6_31, ex_6_32, ex_6_33, ex_6_34, ex_6_35, ex_6_36, ex_6_37, ex_6_38, ex_6_39, ex_6_40a, ex_6_40b, ex_6_41a, ex_6_41b, ex_6_42a, ex_6_42b, ex_6_43a, ex_6_43b, ex_6_44a, ex_6_44b, ex_6_45, ex_6_46, ex_6_49, ex_6_50, ex_6_51, ex_6_52, ex_6_53]
 
 end Corbett2000.Examples

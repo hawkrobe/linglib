@@ -15,9 +15,7 @@ this module; declarations live in `namespace Karttunen1974.Examples`.
 
 namespace Karttunen1974.Examples
 
-open Data.Examples
-
-def until_state : LinguisticExample :=
+def until_state : Datum :=
   { id := "karttunen1974_until_state"
     source := ⟨"karttunen-1974", "UNVERIFIED"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def until_state : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "until"), ("clause", "main"), ("vendler_class", "state")] }
 
-def until_activity : LinguisticExample :=
+def until_activity : Datum :=
   { id := "karttunen1974_until_activity"
     source := ⟨"karttunen-1974", "UNVERIFIED"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def until_activity : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "until"), ("clause", "main"), ("vendler_class", "activity")] }
 
-def until_achievement : LinguisticExample :=
+def until_achievement : Datum :=
   { id := "karttunen1974_until_achievement"
     source := ⟨"karttunen-1974", "UNVERIFIED"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def until_achievement : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "until"), ("clause", "main"), ("vendler_class", "achievement"), ("coercion", "iterative"), ("result_class", "activity")] }
 
-def until_accomplishment : LinguisticExample :=
+def until_accomplishment : Datum :=
   { id := "karttunen1974_until_accomplishment"
     source := ⟨"karttunen-1974", "UNVERIFIED"⟩
     reportedIn := none
@@ -69,6 +67,6 @@ def until_accomplishment : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "until"), ("clause", "main"), ("vendler_class", "accomplishment"), ("coercion", "atelicize"), ("result_class", "activity")] }
 
-def all : List LinguisticExample := [until_state, until_activity, until_achievement, until_accomplishment]
+def all : List Datum := [until_state, until_activity, until_achievement, until_accomplishment]
 
 end Karttunen1974.Examples

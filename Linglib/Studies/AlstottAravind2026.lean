@@ -49,7 +49,7 @@ to pragmatic as against semantic coercion.
 
 namespace AlstottAravind2026
 
-open Tense Rett2020a Data.Examples
+open Tense Rett2020a
 
 /-! ### The two theories (§2.1) -/
 
@@ -195,7 +195,7 @@ theorem within_accomplishment_iff (t d : ℕ) (i : NonemptyInterval ℕ) :
 /-- The operator Rett's theory inserts (§3): `inchoative` for atelic *within*-modifier
 sentences and after-start readings of atelic *after*-clauses, `completive` for accomplishment
 *at*-modifier sentences and before-finish readings of telic *before*-clauses. -/
-def rettOperator (row : LinguisticExample) : Option String :=
+def rettOperator (row : Datum) : Option String :=
   match row.feature? "construction", row.feature? "telicity", row.feature? "context" with
   | some "within", some "atelic", _ => some "inchoative"
   | some "at", some "telic", _ => some "completive"
@@ -204,11 +204,11 @@ def rettOperator (row : LinguisticExample) : Option String :=
   | _, _, _ => none
 
 /-- The paper's revision (§8.2): no operator in *within*-modifier sentences. -/
-def revisedOperator (row : LinguisticExample) : Option String :=
+def revisedOperator (row : Datum) : Option String :=
   if row.feature? "construction" = some "within" then none else rettOperator row
 
 /-- The aspectual-coercion trials and their controls. -/
-def IsAspectualTrial (row : LinguisticExample) : Prop :=
+def IsAspectualTrial (row : Datum) : Prop :=
   row.feature? "trial" = some "aspectualCoercion" ∨ row.feature? "trial" = some "aspectualControl"
 
 instance : DecidablePred IsAspectualTrial := fun _ => inferInstanceAs (Decidable (_ ∨ _))

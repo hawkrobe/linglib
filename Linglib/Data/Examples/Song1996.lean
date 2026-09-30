@@ -15,9 +15,7 @@ this module; declarations live in `namespace Song1996.Examples`.
 
 namespace Song1996.Examples
 
-open Data.Examples
-
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "song1996_1b"
     source := ⟨"song-1996", "(1.b), p. 3"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "fused")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "song1996_6"
     source := ⟨"song-1996", "(6), p. 12"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "fused"), ("effect", "negated")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "song1996_2b"
     source := ⟨"song-1996", "(2.b), p. 3"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "bound")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "song1996_3b"
     source := ⟨"song-1996", "(3.b), p. 3"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("clauses", "two"), ("link", "PURP"), ("order", "effect-cause")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "song1996_4a"
     source := ⟨"song-1996", "(4.a), p. 5"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "bound")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "song1996_5"
     source := ⟨"song-1996", "(5), p. 10"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauses", "two"), ("link", "AND"), ("order", "cause-effect")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "song1996_7"
     source := ⟨"song-1996", "(7), p. 13"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauses", "two"), ("link", "PURP"), ("order", "effect-cause"), ("effect", "negated")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "song1996_24"
     source := ⟨"song-1996", "(24), p. 33"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "free")] }
 
-def ex_104 : LinguisticExample :=
+def ex_104 : Datum :=
   { id := "song1996_104"
     source := ⟨"song-1996", "(104), p. 68"⟩
     reportedIn := none
@@ -134,6 +132,6 @@ def ex_104 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "bound"), ("effect", "negated")] }
 
-def all : List LinguisticExample := [ex_1b, ex_6, ex_2b, ex_3b, ex_4a, ex_5, ex_7, ex_24, ex_104]
+def all : List Datum := [ex_1b, ex_6, ex_2b, ex_3b, ex_4a, ex_5, ex_7, ex_24, ex_104]
 
 end Song1996.Examples

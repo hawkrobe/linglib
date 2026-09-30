@@ -50,7 +50,7 @@ diagnostic data (1), (25), (26), (31), (37) are rows of `Data/Examples/Filip2012
 
 namespace Filip2012
 
-open Mereology ArgumentStructure Aspect Data.Examples
+open Mereology ArgumentStructure Aspect
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
@@ -142,7 +142,7 @@ structure Row where
   cls : VerbClass
   obj : Object
   adverbial : Adverbial
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
   deriving DecidableEq, Repr
 
 /-- The telicity the classification assigns: telic verbs form telic predicates
@@ -165,15 +165,15 @@ def objectTable : List (String × Object) :=
 
 def adverbialTable : List (String × Adverbial) := [("in", .inNP), ("for", .forNP)]
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let cls ← ex.parse? "verbClass" classTable
   let obj ← ex.parse? "object" objectTable
   let adverbial ← ex.parse? "adverbial" adverbialTable
   pure ⟨cls, obj, adverbial, ex.judgment⟩
 
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- (1): the *in* adverbial is acceptable exactly with the telic predicates and the *for*
 adverbial exactly with the atelic ones, across (1), (25), (26), (31), (37). -/

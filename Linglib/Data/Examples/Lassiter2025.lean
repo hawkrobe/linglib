@@ -15,9 +15,7 @@ this module; declarations live in `namespace Lassiter2025.Examples`.
 
 namespace Lassiter2025.Examples
 
-open Data.Examples
-
-def lass2025_gibbard : LinguisticExample :=
+def lass2025_gibbard : Datum :=
   { id := "lass2025_gibbard"
     source := ⟨"gibbard-1981", "p. 235"⟩
     reportedIn := some ⟨"lassiter-2025", "(4)"⟩
@@ -30,7 +28,7 @@ def lass2025_gibbard : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("antecedent_given", "false"), ("interpretation", "PC"), ("diagnostic", "discourse_anchoring")] }
 
-def lass2025_ex6 : LinguisticExample :=
+def lass2025_ex6 : Datum :=
   { id := "lass2025_ex6"
     source := ⟨"iatridou-1991", "p. 93"⟩
     reportedIn := some ⟨"lassiter-2025", "(6)"⟩
@@ -43,7 +41,7 @@ def lass2025_ex6 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "false"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "PC"), ("diagnostic", "discourse_anchoring"), ("polarity_item", "ppi")] }
 
-def lass2025_ex11 : LinguisticExample :=
+def lass2025_ex11 : Datum :=
   { id := "lass2025_ex11"
     source := ⟨"lassiter-2025", "(11)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def lass2025_ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "PC"), ("diagnostic", "discourse_anchoring")] }
 
-def lass2025_ex12 : LinguisticExample :=
+def lass2025_ex12 : Datum :=
   { id := "lass2025_ex12"
     source := ⟨"lassiter-2025", "(12)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def lass2025_ex12 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "PC"), ("diagnostic", "discourse_anchoring")] }
 
-def lass2025_ex13 : LinguisticExample :=
+def lass2025_ex13 : Datum :=
   { id := "lass2025_ex13"
     source := ⟨"lassiter-2025", "(13)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def lass2025_ex13 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "PC"), ("diagnostic", "discourse_anchoring")] }
 
-def lass2025_ex14 : LinguisticExample :=
+def lass2025_ex14 : Datum :=
   { id := "lass2025_ex14"
     source := ⟨"lassiter-2025", "(14)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def lass2025_ex14 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "PC"), ("diagnostic", "given_that_paraphrase")] }
 
-def lass2025_ex18 : LinguisticExample :=
+def lass2025_ex18 : Datum :=
   { id := "lass2025_ex18"
     source := ⟨"lassiter-2025", "(18)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def lass2025_ex18 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "PC"), ("diagnostic", "marker"), ("marker", "nara")] }
 
-def lass2025_ex19 : LinguisticExample :=
+def lass2025_ex19 : Datum :=
   { id := "lass2025_ex19"
     source := ⟨"lassiter-2025", "(19)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def lass2025_ex19 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "blocked"), ("diagnostic", "marker"), ("marker", "ra")] }
 
-def lass2025_ex23 : LinguisticExample :=
+def lass2025_ex23 : Datum :=
   { id := "lass2025_ex23"
     source := ⟨"lassiter-2025", "(23)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def lass2025_ex23 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "PC"), ("diagnostic", "marker"), ("marker", "wenn")] }
 
-def lass2025_ex24 : LinguisticExample :=
+def lass2025_ex24 : Datum :=
   { id := "lass2025_ex24"
     source := ⟨"lassiter-2025", "(24)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def lass2025_ex24 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "blocked"), ("diagnostic", "marker"), ("marker", "falls")] }
 
-def lass2025_ex29 : LinguisticExample :=
+def lass2025_ex29 : Datum :=
   { id := "lass2025_ex29"
     source := ⟨"lassiter-2025", "(29)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def lass2025_ex29 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "PC"), ("diagnostic", "polarity"), ("polarity_item", "ppi"), ("item", "rather"), ("item_position", "embedded_consequent")] }
 
-def lass2025_ex30 : LinguisticExample :=
+def lass2025_ex30 : Datum :=
   { id := "lass2025_ex30"
     source := ⟨"lassiter-2025", "(30)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def lass2025_ex30 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "blocked"), ("diagnostic", "polarity"), ("polarity_item", "npi"), ("item", "lift a finger"), ("item_position", "embedded_consequent")] }
 
-def lass2025_ex31 : LinguisticExample :=
+def lass2025_ex31 : Datum :=
   { id := "lass2025_ex31"
     source := ⟨"lassiter-2025", "(31)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def lass2025_ex31 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "false"), ("content", "bare"), ("interpretation", "blocked"), ("diagnostic", "polarity"), ("polarity_item", "npi"), ("item", "lift a finger"), ("item_position", "consequent")] }
 
-def lass2025_ex32b : LinguisticExample :=
+def lass2025_ex32b : Datum :=
   { id := "lass2025_ex32b"
     source := ⟨"lassiter-2025", "(32b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def lass2025_ex32b : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "PC"), ("diagnostic", "polarity"), ("polarity_item", "npi"), ("item", "lift a finger"), ("item_position", "embedded_antecedent")] }
 
-def lass2025_ex33 : LinguisticExample :=
+def lass2025_ex33 : Datum :=
   { id := "lass2025_ex33"
     source := ⟨"lassiter-2025", "(33)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def lass2025_ex33 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "false"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "blocked"), ("diagnostic", "coordination"), ("coordinated_antecedent_given", "false")] }
 
-def lass2025_ex34 : LinguisticExample :=
+def lass2025_ex34 : Datum :=
   { id := "lass2025_ex34"
     source := ⟨"lassiter-2025", "(34)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def lass2025_ex34 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "PC"), ("diagnostic", "coordination"), ("coordinated_antecedent_given", "true")] }
 
-def lass2025_ex35 : LinguisticExample :=
+def lass2025_ex35 : Datum :=
   { id := "lass2025_ex35"
     source := ⟨"lassiter-2025", "(35)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def lass2025_ex35 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "blocked"), ("diagnostic", "coordination"), ("coordinated_antecedent_given", "false")] }
 
-def lass2025_ex36 : LinguisticExample :=
+def lass2025_ex36 : Datum :=
   { id := "lass2025_ex36"
     source := ⟨"lassiter-2025", "(36)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def lass2025_ex36 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "false"), ("content", "bare"), ("interpretation", "HC"), ("diagnostic", "only_inversion"), ("only_inversion", "true")] }
 
-def lass2025_ex37b : LinguisticExample :=
+def lass2025_ex37b : Datum :=
   { id := "lass2025_ex37b"
     source := ⟨"lassiter-2025", "(37b)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def lass2025_ex37b : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "false"), ("content", "bare"), ("antecedent_given", "true"), ("interpretation", "blocked"), ("diagnostic", "only_inversion"), ("only_inversion", "true")] }
 
-def lass2025_ex38a : LinguisticExample :=
+def lass2025_ex38a : Datum :=
   { id := "lass2025_ex38a"
     source := ⟨"lassiter-2025", "(38a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def lass2025_ex38a : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "PC"), ("diagnostic", "only_inversion"), ("only_inversion", "false")] }
 
-def lass2025_ex38b : LinguisticExample :=
+def lass2025_ex38b : Datum :=
   { id := "lass2025_ex38b"
     source := ⟨"lassiter-2025", "(38b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def lass2025_ex38b : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "blocked"), ("diagnostic", "only_inversion"), ("only_inversion", "true")] }
 
-def lass2025_ex39b : LinguisticExample :=
+def lass2025_ex39b : Datum :=
   { id := "lass2025_ex39b"
     source := ⟨"lassiter-2025", "(39b)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def lass2025_ex39b : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "bare"), ("interpretation", "blocked"), ("diagnostic", "only_inversion"), ("only_inversion", "true")] }
 
-def lass2025_ex40 : LinguisticExample :=
+def lass2025_ex40 : Datum :=
   { id := "lass2025_ex40"
     source := ⟨"lassiter-2025", "(40)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def lass2025_ex40 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "quantAdv"), ("antecedent_given", "false"), ("interpretation", "HC"), ("diagnostic", "content_exception")] }
 
-def lass2025_ex41 : LinguisticExample :=
+def lass2025_ex41 : Datum :=
   { id := "lass2025_ex41"
     source := ⟨"lassiter-2025", "(41)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def lass2025_ex41 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "modal"), ("antecedent_given", "false"), ("interpretation", "HC"), ("diagnostic", "content_exception")] }
 
-def lass2025_ex42 : LinguisticExample :=
+def lass2025_ex42 : Datum :=
   { id := "lass2025_ex42"
     source := ⟨"lassiter-2025", "(42)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def lass2025_ex42 : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "generic"), ("antecedent_given", "false"), ("interpretation", "HC"), ("diagnostic", "content_exception")] }
 
-def lass2025_ex43a : LinguisticExample :=
+def lass2025_ex43a : Datum :=
   { id := "lass2025_ex43a"
     source := ⟨"lassiter-2025", "(43a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def lass2025_ex43a : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "modal"), ("antecedent_given", "false"), ("interpretation", "HC"), ("diagnostic", "content_exception")] }
 
-def lass2025_ex43b : LinguisticExample :=
+def lass2025_ex43b : Datum :=
   { id := "lass2025_ex43b"
     source := ⟨"lassiter-2025", "(43b)"⟩
     reportedIn := none
@@ -368,6 +366,6 @@ def lass2025_ex43b : LinguisticExample :=
     readings := []
     paperFeatures := [("is_lnc", "true"), ("content", "generic"), ("antecedent_given", "false"), ("interpretation", "HC"), ("diagnostic", "content_exception")] }
 
-def all : List LinguisticExample := [lass2025_gibbard, lass2025_ex6, lass2025_ex11, lass2025_ex12, lass2025_ex13, lass2025_ex14, lass2025_ex18, lass2025_ex19, lass2025_ex23, lass2025_ex24, lass2025_ex29, lass2025_ex30, lass2025_ex31, lass2025_ex32b, lass2025_ex33, lass2025_ex34, lass2025_ex35, lass2025_ex36, lass2025_ex37b, lass2025_ex38a, lass2025_ex38b, lass2025_ex39b, lass2025_ex40, lass2025_ex41, lass2025_ex42, lass2025_ex43a, lass2025_ex43b]
+def all : List Datum := [lass2025_gibbard, lass2025_ex6, lass2025_ex11, lass2025_ex12, lass2025_ex13, lass2025_ex14, lass2025_ex18, lass2025_ex19, lass2025_ex23, lass2025_ex24, lass2025_ex29, lass2025_ex30, lass2025_ex31, lass2025_ex32b, lass2025_ex33, lass2025_ex34, lass2025_ex35, lass2025_ex36, lass2025_ex37b, lass2025_ex38a, lass2025_ex38b, lass2025_ex39b, lass2025_ex40, lass2025_ex41, lass2025_ex42, lass2025_ex43a, lass2025_ex43b]
 
 end Lassiter2025.Examples

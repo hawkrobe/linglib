@@ -15,9 +15,7 @@ this module; declarations live in `namespace Blok2015.Examples`.
 
 namespace Blok2015.Examples
 
-open Data.Examples
-
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "blok2015_3a"
     source := ⟨"blok-2015", "(3a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("directional", "-"), ("test", "ifAny"), ("numeral", "3")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "blok2015_3b"
     source := ⟨"blok-2015", "(3b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("directional", "+"), ("test", "ifAny"), ("numeral", "3")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "blok2015_4a"
     source := ⟨"blok-2015", "(4a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("directional", "-"), ("test", "butNone"), ("numeral", "10")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "blok2015_4b"
     source := ⟨"blok-2015", "(4b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("directional", "+"), ("test", "butNone"), ("numeral", "10")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "blok2015_7a"
     source := ⟨"blok-2015", "(7a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("directional", "-"), ("test", "evenMore"), ("numeral", "10")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "blok2015_7b"
     source := ⟨"blok-2015", "(7b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("directional", "+"), ("test", "evenMore"), ("numeral", "10")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "blok2015_11a"
     source := ⟨"blok-2015", "(11a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("directional", "-"), ("test", "noMore"), ("numeral", "10")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "blok2015_11b"
     source := ⟨"blok-2015", "(11b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("directional", "+"), ("test", "noMore"), ("numeral", "10")] }
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "blok2015_22a"
     source := ⟨"schwarz-buccola-hamilton-2012", "(21a)"⟩
     reportedIn := some ⟨"blok-2015", "(22a)"⟩
@@ -134,7 +132,7 @@ def ex_22a : LinguisticExample :=
     readings := []
     paperFeatures := [("directional", "-"), ("test", "range"), ("numeral", "10")] }
 
-def ex_22b : LinguisticExample :=
+def ex_22b : Datum :=
   { id := "blok2015_22b"
     source := ⟨"schwarz-buccola-hamilton-2012", "(22a)"⟩
     reportedIn := some ⟨"blok-2015", "(22b)"⟩
@@ -147,7 +145,7 @@ def ex_22b : LinguisticExample :=
     readings := []
     paperFeatures := [("directional", "-"), ("test", "range"), ("numeral", "1")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "blok2015_23a"
     source := ⟨"schwarz-buccola-hamilton-2012", "(21b)"⟩
     reportedIn := some ⟨"blok-2015", "(23a)"⟩
@@ -160,7 +158,7 @@ def ex_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("directional", "+"), ("test", "range"), ("numeral", "10")] }
 
-def ex_23b : LinguisticExample :=
+def ex_23b : Datum :=
   { id := "blok2015_23b"
     source := ⟨"schwarz-buccola-hamilton-2012", "(22b)"⟩
     reportedIn := some ⟨"blok-2015", "(23b)"⟩
@@ -173,7 +171,7 @@ def ex_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("directional", "+"), ("test", "range"), ("numeral", "1")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "blok2015_29"
     source := ⟨"blok-2015", "(29)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("directional", "-"), ("test", "range"), ("numeral", "0")] }
 
-def ex_34a : LinguisticExample :=
+def ex_34a : Datum :=
   { id := "blok2015_34a"
     source := ⟨"blok-2015", "(34a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_34a : LinguisticExample :=
     readings := []
     paperFeatures := [("directional", "-"), ("test", "npi"), ("numeral", "5")] }
 
-def ex_34b : LinguisticExample :=
+def ex_34b : Datum :=
   { id := "blok2015_34b"
     source := ⟨"blok-2015", "(34b)"⟩
     reportedIn := none
@@ -212,6 +210,6 @@ def ex_34b : LinguisticExample :=
     readings := []
     paperFeatures := [("directional", "+"), ("test", "npi"), ("numeral", "5")] }
 
-def all : List LinguisticExample := [ex_3a, ex_3b, ex_4a, ex_4b, ex_7a, ex_7b, ex_11a, ex_11b, ex_22a, ex_22b, ex_23a, ex_23b, ex_29, ex_34a, ex_34b]
+def all : List Datum := [ex_3a, ex_3b, ex_4a, ex_4b, ex_7a, ex_7b, ex_11a, ex_11b, ex_22a, ex_22b, ex_23a, ex_23b, ex_29, ex_34a, ex_34b]
 
 end Blok2015.Examples

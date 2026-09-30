@@ -44,7 +44,7 @@ reflexive environments that (10) sets aside do not arise in the rows.
 
 namespace Reinhart1976
 
-open Core.Order Core.Order.Branching Syntax Syntax.Tree Data.Examples
+open Core.Order Core.Order.Branching Syntax Syntax.Tree
 
 variable {C W : Type*}
 
@@ -241,15 +241,15 @@ def trees : List (String × Tree Cat Unit) :=
 def path (s : String) : TreePath := ⟨s.toList.map λ c => c.toNat - '0'.toNat⟩
 
 /-- An example: its tree, the two noun phrases, the pronouns among them, and the judgment. -/
-structure Datum where
+structure Row where
   tree : Tree Cat Unit
   np₁ : TreePath
   np₂ : TreePath
   pron : List TreePath
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
 
-/-- An example read into its datum. -/
-def datum (e : LinguisticExample) : Option Datum := do
+/-- A datum read into its row. -/
+def Row.ofDatum (e : Datum) : Option Row := do
   let t ← e.parse? "structure" trees
   let a ← (e.feature? "np1").map path
   let b ← (e.feature? "np2").map path
@@ -257,10 +257,10 @@ def datum (e : LinguisticExample) : Option Datum := do
   pure ⟨t, a, b, p, e.judgment⟩
 
 /-- Every example is read. -/
-theorem isSome_datum : ∀ e ∈ Examples.all, (datum e).isSome := by decide
+theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide
 
 /-- The dissertation's examples. -/
-def data : List Datum := Examples.all.filterMap datum
+def data : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Coreference is possible exactly when the restriction (10b) read with c-command permits
 it. -/

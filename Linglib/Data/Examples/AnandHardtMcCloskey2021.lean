@@ -15,9 +15,7 @@ this module; declarations live in `namespace AnandHardtMcCloskey2021.Examples`.
 
 namespace AnandHardtMcCloskey2021.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "anandhardtmccloskey2021_1"
     source := ⟨"anand-hardt-mccloskey-2021", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("remnant", "when"), ("semantic_type", "temporal"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "She will resign")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "anandhardtmccloskey2021_2"
     source := ⟨"anand-hardt-mccloskey-2021", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "100452"), ("remnant", "how much"), ("semantic_type", "degree"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "the new approach saves time"), ("correlate", "time"), ("correlate_type", "mass/range"), ("kind", "merger"), ("paraphrase", "the new approach saves"), ("main_predicate", "saves")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "anandhardtmccloskey2021_3"
     source := ⟨"anand-hardt-mccloskey-2021", "(3)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "15397"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("tag", "e_type"), ("e_type_span", "one of the kids")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "anandhardtmccloskey2021_4"
     source := ⟨"anand-hardt-mccloskey-2021", "(4)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4 : LinguisticExample :=
     readings := [("minimal antecedent (4)", .acceptable), ("larger antecedent (5): those thousands upon thousands of people clustered around that box, listening", .acceptable)]
     paperFeatures := [("corpus_id", "36225"), ("remnant", "to what"), ("position", "embedded"), ("qembedder", "matter"), ("antecedent", "thousands upon thousands of people ... listening"), ("antecedent_status", "discontinuous"), ("paraphrase", "those thousands upon thousands of people were listening"), ("mismatch", "new_words"), ("new_words", "copula")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "anandhardtmccloskey2021_6"
     source := ⟨"anand-hardt-mccloskey-2021", "(6)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "57485"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "the mortality pattern ... to be so abrupt and sudden from women"), ("antecedent_status", "discontinuous"), ("paraphrase", "the mortality pattern was so abrupt and sudden from women"), ("mismatch", "tense"), ("mismatch_detail", "finiteness")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "anandhardtmccloskey2021_7a"
     source := ⟨"anand-hardt-mccloskey-2021", "(7a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "100549"), ("remnant", "how much"), ("semantic_type", "degree"), ("position", "embedded"), ("qembedder", "know"), ("correlate", "some difference"), ("kind", "merger")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "anandhardtmccloskey2021_7b"
     source := ⟨"anand-hardt-mccloskey-2021", "(7b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "100447"), ("remnant", "which way"), ("position", "embedded"), ("qembedder", "say"), ("kind", "sprouting")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "anandhardtmccloskey2021_8"
     source := ⟨"anand-hardt-mccloskey-2021", "(8)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_8 : LinguisticExample :=
     readings := [("absolute number of employees", .acceptable), ("comparative: how many more (9)", .acceptable)]
     paperFeatures := [("corpus_id", "44148"), ("remnant", "how many"), ("semantic_type", "degree"), ("position", "embedded"), ("qembedder", "say"), ("tag", "remnant_ellipsis")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "anandhardtmccloskey2021_10"
     source := ⟨"anand-hardt-mccloskey-2021", "(10)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "144127"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "I said yes"), ("antecedent_status", "cataphoric")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "anandhardtmccloskey2021_11"
     source := ⟨"anand-hardt-mccloskey-2021", "(11)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "57184"), ("remnant", "for what reason"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "A lot of people ... are telling lies"), ("antecedent_status", "interpolated")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "anandhardtmccloskey2021_13"
     source := ⟨"anand-hardt-mccloskey-2021", "(13)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "125447"), ("remnant", "how long"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "that part of the sky ... remained dark for a few seconds"), ("antecedent_status", "discontinuous"), ("paraphrase", "that part of the sky remained dark for")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "anandhardtmccloskey2021_14a"
     source := ⟨"anand-hardt-mccloskey-2021", "(14a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "157514"), ("remnant", "in what way"), ("semantic_type", "manner"), ("position", "root"), ("antecedent_status", "coordination"), ("paraphrase", "do you hold them accountable"), ("tag", "ignore")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "anandhardtmccloskey2021_14b"
     source := ⟨"anand-hardt-mccloskey-2021", "(14b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "53758"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "say"), ("antecedent_status", "coordination"), ("paraphrase", "Messier has demanded a trade"), ("tag", "ignore")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "anandhardtmccloskey2021_15a"
     source := ⟨"anand-hardt-mccloskey-2021", "(15a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "104061"), ("remnant", "how much"), ("semantic_type", "degree"), ("position", "embedded"), ("qembedder", "ask"), ("antecedent_status", "missing"), ("conventionalized", "how much")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "anandhardtmccloskey2021_15b"
     source := ⟨"anand-hardt-mccloskey-2021", "(15b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "283235"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent_status", "missing")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "anandhardtmccloskey2021_16"
     source := ⟨"anand-hardt-mccloskey-2021", "(16)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "19606"), ("remnant", "how much"), ("semantic_type", "degree"), ("position", "root"), ("antecedent_status", "missing"), ("conventionalized", "how much")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "anandhardtmccloskey2021_17"
     source := ⟨"anand-hardt-mccloskey-2021", "(17)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "29529"), ("remnant", "what slowdown"), ("position", "root"), ("antecedent_status", "missing"), ("tag", "echoq"), ("interpretation", "negative existential")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "anandhardtmccloskey2021_18a"
     source := ⟨"anand-hardt-mccloskey-2021", "(18a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_18a : LinguisticExample :=
     readings := []
     paperFeatures := [("remnant", "why not"), ("position", "root"), ("why_not", "free_modal")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "anandhardtmccloskey2021_18b"
     source := ⟨"anand-hardt-mccloskey-2021", "(18b)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("remnant", "why not"), ("position", "root"), ("why_not", "anaphoric"), ("antecedent", "Frank doesn't believe in minimalism")] }
 
-def ex_19a : LinguisticExample :=
+def ex_19a : Datum :=
   { id := "anandhardtmccloskey2021_19a"
     source := ⟨"anand-hardt-mccloskey-2021", "(19a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_19a : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "95457"), ("remnant", "why not"), ("position", "root"), ("why_not", "free_modal"), ("antecedent_status", "missing")] }
 
-def ex_19b : LinguisticExample :=
+def ex_19b : Datum :=
   { id := "anandhardtmccloskey2021_19b"
     source := ⟨"anand-hardt-mccloskey-2021", "(19b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "241354"), ("remnant", "why not"), ("position", "root"), ("why_not", "free_modal"), ("antecedent_status", "missing")] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "anandhardtmccloskey2021_20a"
     source := ⟨"anand-hardt-mccloskey-2021", "(20a)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_20a : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "103083"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "root"), ("antecedent_status", "missing"), ("why", "situational")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "anandhardtmccloskey2021_20b"
     source := ⟨"anand-hardt-mccloskey-2021", "(20b)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_20b : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "109969"), ("remnant", "why"), ("semantic_type", "reason"), ("antecedent_status", "missing"), ("why", "situational")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "anandhardtmccloskey2021_21"
     source := ⟨"anand-hardt-mccloskey-2021", "(21)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "125278"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "Ronnie spending six months in some kind of 'school for boys'"), ("paraphrase", "Ronnie spent six months in some kind of school for boys"), ("mismatch", "tense"), ("mismatch_detail", "gerund antecedent")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "anandhardtmccloskey2021_22"
     source := ⟨"anand-hardt-mccloskey-2021", "(22)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "72508"), ("remnant", "by whom"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "it must have been written"), ("paraphrase", "it was written"), ("mismatch", "tense"), ("mismatch_detail", "modal auxiliary dropped")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "anandhardtmccloskey2021_23"
     source := ⟨"anand-hardt-mccloskey-2021", "(23)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "48694"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "care"), ("antecedent", "are people watching this"), ("paraphrase", "people were watching this"), ("mismatch", "tense"), ("mismatch_detail", "quotation perspective")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "anandhardtmccloskey2021_24"
     source := ⟨"anand-hardt-mccloskey-2021", "(24)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "15852"), ("remnant", "to what extent"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "I'd support him in his efforts and be an investor"), ("paraphrase", "I will support him in his efforts and be an investor"), ("mismatch", "tense"), ("mismatch_detail", "sequence of tense")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "anandhardtmccloskey2021_25"
     source := ⟨"anand-hardt-mccloskey-2021", "(25)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "211474"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "They enter a room"), ("paraphrase", "they entered that room"), ("mismatch", "tense"), ("mismatch_detail", "historical present")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "anandhardtmccloskey2021_26"
     source := ⟨"anand-hardt-mccloskey-2021", "(26)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "138058"), ("remnant", "for how long"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "Rob and Mike both still fish"), ("paraphrase", "they {will, might, could, ...} fish"), ("mismatch", "tense"), ("mismatch_detail", "present antecedent, modal or future paraphrase")] }
 
-def ex_27a : LinguisticExample :=
+def ex_27a : Datum :=
   { id := "anandhardtmccloskey2021_27a"
     source := ⟨"anand-hardt-mccloskey-2021", "(27a)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_27a : LinguisticExample :=
     readings := [("(i) he modal raise the minimum wage", .acceptable), ("(ii) he favored raising the minimum wage", .acceptable)]
     paperFeatures := [("corpus_id", "15642"), ("remnant", "by how much"), ("position", "embedded"), ("qembedder", "say"), ("antecedent", "he ... raising the minimum wage"), ("antecedent_status", "discontinuous"), ("paraphrase", "he modal raise the minimum wage"), ("mismatch", "modality")] }
 
-def ex_27b : LinguisticExample :=
+def ex_27b : Datum :=
   { id := "anandhardtmccloskey2021_27b"
     source := ⟨"anand-hardt-mccloskey-2021", "(27b)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_27b : LinguisticExample :=
     readings := [("(i) this year's exports modal slow", .acceptable), ("(ii) this year's exports are likely to slow", .acceptable)]
     paperFeatures := [("corpus_id", "54079"), ("remnant", "by how much"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "this year's exports ... to slow"), ("antecedent_status", "discontinuous"), ("paraphrase", "this year's exports modal slow"), ("mismatch", "modality")] }
 
-def ex_28a : LinguisticExample :=
+def ex_28a : Datum :=
   { id := "anandhardtmccloskey2021_28a"
     source := ⟨"anand-hardt-mccloskey-2021", "(28a)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "23721"), ("remnant", "how"), ("semantic_type", "manner"), ("position", "root"), ("antecedent", "to get your student on line"), ("paraphrase", "modal you get your student on line"), ("mismatch", "modality"), ("mismatch_detail", "nonfinite antecedent")] }
 
-def ex_28b : LinguisticExample :=
+def ex_28b : Datum :=
   { id := "anandhardtmccloskey2021_28b"
     source := ⟨"anand-hardt-mccloskey-2021", "(28b)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_28b : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "30594"), ("remnant", "how"), ("semantic_type", "manner"), ("position", "embedded"), ("qembedder", "say"), ("antecedent", "to push ahead"), ("paraphrase", "Oz Chairman Robert Kory modal push ahead"), ("mismatch", "modality"), ("mismatch_detail", "nonfinite antecedent")] }
 
-def ex_29a : LinguisticExample :=
+def ex_29a : Datum :=
   { id := "anandhardtmccloskey2021_29a"
     source := ⟨"anand-hardt-mccloskey-2021", "(29a)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_29a : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "142535"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "ask"), ("antecedent", "Turn at the next corner"), ("paraphrase", "I modal turn at the next corner"), ("mismatch", "modality"), ("mismatch_detail", "imperative antecedent")] }
 
-def ex_29b : LinguisticExample :=
+def ex_29b : Datum :=
   { id := "anandhardtmccloskey2021_29b"
     source := ⟨"anand-hardt-mccloskey-2021", "(29b)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_29b : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "47922"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "Never pay cash"), ("paraphrase", "you modal never pay cash"), ("mismatch", "modality"), ("mismatch_detail", "imperative antecedent")] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "anandhardtmccloskey2021_30a"
     source := ⟨"anand-hardt-mccloskey-2021", "(30a)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "F50"), ("remnant", "how"), ("semantic_type", "manner"), ("position", "embedded"), ("qembedder", "reveal"), ("antecedent", "it should have happened"), ("paraphrase", "it modal have happened"), ("mismatch", "modality"), ("mismatch_detail", "ability/possibility modal")] }
 
-def ex_30b : LinguisticExample :=
+def ex_30b : Datum :=
   { id := "anandhardtmccloskey2021_30b"
     source := ⟨"anand-hardt-mccloskey-2021", "(30b)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_30b : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "205304"), ("remnant", "which one"), ("position", "root"), ("antecedent", "Would you sign my ball"), ("paraphrase", "modal I sign"), ("mismatch", "modality"), ("mismatch_detail", "closest to should")] }
 
-def ex_30c : LinguisticExample :=
+def ex_30c : Datum :=
   { id := "anandhardtmccloskey2021_30c"
     source := ⟨"anand-hardt-mccloskey-2021", "(30c)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_30c : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "71495"), ("remnant", "how many"), ("semantic_type", "degree"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "enough users opt out"), ("paraphrase", "users modal opt out"), ("mismatch", "modality"), ("mismatch_detail", "necessity modal from the conditional")] }
 
-def ex_31a : LinguisticExample :=
+def ex_31a : Datum :=
   { id := "anandhardtmccloskey2021_31a"
     source := ⟨"anand-hardt-mccloskey-2021", "(31a)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_31a : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "143606"), ("remnant", "where"), ("semantic_type", "locative"), ("position", "embedded"), ("qembedder", "specify"), ("antecedent", "new power plants in the region"), ("antecedent_status", "small clause"), ("paraphrase", "those new power plants modal be in the region"), ("mismatch", "modality"), ("mismatch_detail", "possibility modal, subclausal antecedent")] }
 
-def ex_31b : LinguisticExample :=
+def ex_31b : Datum :=
   { id := "anandhardtmccloskey2021_31b"
     source := ⟨"anand-hardt-mccloskey-2021", "(31b)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_31b : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "124186"), ("remnant", "for how long"), ("position", "embedded"), ("qembedder", "say"), ("antecedent", "the burglar back"), ("antecedent_status", "small clause"), ("paraphrase", "the burglar modal be back"), ("mismatch", "modality"), ("mismatch_detail", "possibility modal, subclausal antecedent")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "anandhardtmccloskey2021_32"
     source := ⟨"anand-hardt-mccloskey-2021", "(32)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "99992"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "Coach O'Leary doesn't do things"), ("paraphrase", "Coach O'Leary did those things"), ("mismatch", "polarity"), ("polarity_context", "without adjunct"), ("reversal", "negative to positive")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "anandhardtmccloskey2021_33"
     source := ⟨"anand-hardt-mccloskey-2021", "(33)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "111174"), ("remnant", "how"), ("semantic_type", "manner"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "Steve Jobs will let it be a boring MacWorld"), ("paraphrase", "Steve Jobs will let it be not a boring MacWorld"), ("mismatch", "polarity"), ("polarity_context", "neg-raising"), ("reversal", "positive to negative")] }
 
-def ex_34a : LinguisticExample :=
+def ex_34a : Datum :=
   { id := "anandhardtmccloskey2021_34a"
     source := ⟨"anand-hardt-mccloskey-2021", "(34a)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex_34a : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "22987"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "explain"), ("antecedent", "Do it"), ("paraphrase", "you did not do it"), ("mismatch", "polarity"), ("polarity_context", "disjunction"), ("reversal", "positive to negative")] }
 
-def ex_34b : LinguisticExample :=
+def ex_34b : Datum :=
   { id := "anandhardtmccloskey2021_34b"
     source := ⟨"anand-hardt-mccloskey-2021", "(34b)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex_34b : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "99105"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "ask"), ("antecedent", "Iraq is ready to give full, final and complete disclosure"), ("paraphrase", "Iraq is not ready to give full, final and complete disclosure"), ("mismatch", "polarity"), ("polarity_context", "doubt"), ("reversal", "positive to negative")] }
 
-def ex_34c : LinguisticExample :=
+def ex_34c : Datum :=
   { id := "anandhardtmccloskey2021_34c"
     source := ⟨"anand-hardt-mccloskey-2021", "(34c)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex_34c : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "91594"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "being scared"), ("antecedent_status", "cataphoric"), ("paraphrase", "I was not scared"), ("mismatch", "polarity"), ("polarity_context", "remember"), ("reversal", "positive to negative")] }
 
-def ex_35a : LinguisticExample :=
+def ex_35a : Datum :=
   { id := "anandhardtmccloskey2021_35a"
     source := ⟨"anand-hardt-mccloskey-2021", "(35a)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex_35a : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "41116"), ("remnant", "what"), ("semantic_type", "entity"), ("position", "root"), ("antecedent", "money can't be said to have determined the outcome"), ("paraphrase", "can be said to have determined the outcome"), ("mismatch", "polarity"), ("polarity_context", "QUD with then"), ("reversal", "negative to positive")] }
 
-def ex_35b : LinguisticExample :=
+def ex_35b : Datum :=
   { id := "anandhardtmccloskey2021_35b"
     source := ⟨"anand-hardt-mccloskey-2021", "(35b)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex_35b : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "152316"), ("remnant", "how many times"), ("semantic_type", "degree"), ("position", "root"), ("antecedent", "that doesn't mean all the time"), ("paraphrase", "does it mean"), ("mismatch", "polarity"), ("polarity_context", "QUD with then"), ("reversal", "negative to positive")] }
 
-def ex_36a : LinguisticExample :=
+def ex_36a : Datum :=
   { id := "anandhardtmccloskey2021_36a"
     source := ⟨"anand-hardt-mccloskey-2021", "(36a)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex_36a : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "123640"), ("remnant", "how"), ("semantic_type", "manner"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "They obviously haven't tried any cases in a long time"), ("paraphrase", "they modal try cases"), ("mismatch", "polarity"), ("polarity_context", "don't know how"), ("reversal", "negative to positive")] }
 
-def ex_36b : LinguisticExample :=
+def ex_36b : Datum :=
   { id := "anandhardtmccloskey2021_36b"
     source := ⟨"anand-hardt-mccloskey-2021", "(36b)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex_36b : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "132033"), ("remnant", "how"), ("semantic_type", "manner"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "Republicans cannot compete with Clinton"), ("paraphrase", "they modal compete with Clinton"), ("mismatch", "polarity"), ("polarity_context", "don't know how"), ("reversal", "negative to positive")] }
 
-def ex_37a : LinguisticExample :=
+def ex_37a : Datum :=
   { id := "anandhardtmccloskey2021_37a"
     source := ⟨"anand-hardt-mccloskey-2021", "(37a)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "138872"), ("remnant", "what decade"), ("position", "root"), ("antecedent", "America was once a better place"), ("paraphrase", "was America a better place in"), ("mismatch", "new_words"), ("new_words", "stranded preposition")] }
 
-def ex_37b : LinguisticExample :=
+def ex_37b : Datum :=
   { id := "anandhardtmccloskey2021_37b"
     source := ⟨"anand-hardt-mccloskey-2021", "(37b)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex_37b : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "138731"), ("remnant", "what night"), ("position", "root"), ("antecedent", "they're going to place it"), ("paraphrase", "are they going to place it on"), ("mismatch", "new_words"), ("new_words", "stranded preposition")] }
 
-def ex_37c : LinguisticExample :=
+def ex_37c : Datum :=
   { id := "anandhardtmccloskey2021_37c"
     source := ⟨"anand-hardt-mccloskey-2021", "(37c)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex_37c : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "195676"), ("remnant", "what period"), ("position", "root"), ("antecedent", "he thought it was a period piece"), ("paraphrase", "DO YOU THINK it IS a piece from"), ("mismatch", "new_words"), ("new_words", "stranded preposition")] }
 
-def ex_37d : LinguisticExample :=
+def ex_37d : Datum :=
   { id := "anandhardtmccloskey2021_37d"
     source := ⟨"anand-hardt-mccloskey-2021", "(37d)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex_37d : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "89932"), ("remnant", "which firm"), ("semantic_type", "classificatory"), ("position", "embedded"), ("qembedder", "say"), ("antecedent", "his father had also been a mutual fund manager"), ("paraphrase", "his father had been a mutual fund manager at"), ("mismatch", "new_words"), ("new_words", "stranded preposition")] }
 
-def ex_38a : LinguisticExample :=
+def ex_38a : Datum :=
   { id := "anandhardtmccloskey2021_38a"
     source := ⟨"anand-hardt-mccloskey-2021", "(38a)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex_38a : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "176498"), ("remnant", "when"), ("semantic_type", "temporal"), ("position", "embedded"), ("qembedder", "say"), ("antecedent", "a presidential race"), ("antecedent_status", "nominal"), ("paraphrase", "a presidential race modal be"), ("mismatch", "new_words"), ("new_words", "copular clause")] }
 
-def ex_38b : LinguisticExample :=
+def ex_38b : Datum :=
   { id := "anandhardtmccloskey2021_38b"
     source := ⟨"anand-hardt-mccloskey-2021", "(38b)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex_38b : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "76117"), ("remnant", "when"), ("semantic_type", "temporal"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "a full recovery"), ("antecedent_status", "nominal"), ("paraphrase", "a full recovery modal be"), ("mismatch", "new_words"), ("new_words", "copular clause")] }
 
-def ex_39a : LinguisticExample :=
+def ex_39a : Datum :=
   { id := "anandhardtmccloskey2021_39a"
     source := ⟨"anand-hardt-mccloskey-2021", "(39a)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex_39a : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "15811"), ("remnant", "how soon"), ("position", "embedded"), ("antecedent", "A cut"), ("antecedent_status", "nominal"), ("paraphrase", "there modal be a cut"), ("mismatch", "new_words"), ("new_words", "existential")] }
 
-def ex_39b : LinguisticExample :=
+def ex_39b : Datum :=
   { id := "anandhardtmccloskey2021_39b"
     source := ⟨"anand-hardt-mccloskey-2021", "(39b)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex_39b : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "135056"), ("remnant", "to what end"), ("position", "root"), ("antecedent", "a long costly court battle"), ("antecedent_status", "nominal"), ("paraphrase", "modal there be a long costly court battle"), ("mismatch", "new_words"), ("new_words", "existential")] }
 
-def ex_40a : LinguisticExample :=
+def ex_40a : Datum :=
   { id := "anandhardtmccloskey2021_40a"
     source := ⟨"anand-hardt-mccloskey-2021", "(40a)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex_40a : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "72082"), ("remnant", "why"), ("semantic_type", "reason"), ("position", "embedded"), ("qembedder", "see"), ("antecedent", "lights still on"), ("antecedent_status", "small clause"), ("paraphrase", "lights were still on"), ("mismatch", "new_words"), ("new_words", "copular clause")] }
 
-def ex_40b : LinguisticExample :=
+def ex_40b : Datum :=
   { id := "anandhardtmccloskey2021_40b"
     source := ⟨"anand-hardt-mccloskey-2021", "(40b)"⟩
     reportedIn := none
@@ -784,6 +782,6 @@ def ex_40b : LinguisticExample :=
     readings := []
     paperFeatures := [("corpus_id", "72698"), ("remnant", "when"), ("semantic_type", "temporal"), ("position", "embedded"), ("qembedder", "know"), ("antecedent", "a couple of major league teams in Japan, one in Seoul and one in Hawaii"), ("antecedent_status", "cataphoric"), ("paraphrase", "there modal be a couple of major league teams in Japan, one in Seoul, and one in Hawaii"), ("mismatch", "new_words"), ("new_words", "existential")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_6, ex_7a, ex_7b, ex_8, ex_10, ex_11, ex_13, ex_14a, ex_14b, ex_15a, ex_15b, ex_16, ex_17, ex_18a, ex_18b, ex_19a, ex_19b, ex_20a, ex_20b, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26, ex_27a, ex_27b, ex_28a, ex_28b, ex_29a, ex_29b, ex_30a, ex_30b, ex_30c, ex_31a, ex_31b, ex_32, ex_33, ex_34a, ex_34b, ex_34c, ex_35a, ex_35b, ex_36a, ex_36b, ex_37a, ex_37b, ex_37c, ex_37d, ex_38a, ex_38b, ex_39a, ex_39b, ex_40a, ex_40b]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_6, ex_7a, ex_7b, ex_8, ex_10, ex_11, ex_13, ex_14a, ex_14b, ex_15a, ex_15b, ex_16, ex_17, ex_18a, ex_18b, ex_19a, ex_19b, ex_20a, ex_20b, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26, ex_27a, ex_27b, ex_28a, ex_28b, ex_29a, ex_29b, ex_30a, ex_30b, ex_30c, ex_31a, ex_31b, ex_32, ex_33, ex_34a, ex_34b, ex_34c, ex_35a, ex_35b, ex_36a, ex_36b, ex_37a, ex_37b, ex_37c, ex_37d, ex_38a, ex_38b, ex_39a, ex_39b, ex_40a, ex_40b]
 
 end AnandHardtMcCloskey2021.Examples

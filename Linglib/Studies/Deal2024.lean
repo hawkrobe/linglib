@@ -61,7 +61,7 @@ its six cells; the mechanism's verdicts on reflexive combinations are not stated
 
 namespace Deal2024
 
-open Minimalist Data.Examples
+open Minimalist
 
 /-! ### The feature geometry (7) -/
 
@@ -376,7 +376,7 @@ theorem agrees_with_gluttony :
 
 /-! ### The rows -/
 
-def personOf (e : LinguisticExample) (key : String) : Option Person :=
+def personOf (e : Datum) (key : String) : Option Person :=
   match e.feature? key with
   | some "1" => some .first
   | some "2" => some .second
@@ -384,7 +384,7 @@ def personOf (e : LinguisticExample) (key : String) : Option Person :=
   | _ => none
 
 /-- The grammars a row's language has: Slovenian speakers have a strong or a weak PCC. -/
-def grammarsOf (e : LinguisticExample) : List Grammar :=
+def grammarsOf (e : Datum) : List Grammar :=
   match e.feature? "pattern" with
   | some "strong" => [strong]
   | some "weak" => [weak]

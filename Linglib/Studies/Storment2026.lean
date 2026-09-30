@@ -38,7 +38,6 @@ in a family of inverse voice constructions (§4.3, `InverseVoiceKind`).
 
 namespace Storment2026
 
-open Data.Examples
 
 /-! ### The derivation (§4) -/
 
@@ -88,7 +87,7 @@ def predictedPosition (d : QIDerivation) : Material → Position
   | .vpAdjunct => .afterAgent
 
 /-- The material and position a row records. -/
-def orderOf (ex : LinguisticExample) : Option (Material × Position) := do
+def orderOf (ex : Datum) : Option (Material × Position) := do
   let m ← ex.parse? "material" [("vpComplement", Material.vpComplement), ("vpAdjunct", .vpAdjunct)]
   let p ← ex.parse? "position" [("beforeAgent", Position.beforeAgent), ("afterAgent", .afterAgent)]
   pure (m, p)

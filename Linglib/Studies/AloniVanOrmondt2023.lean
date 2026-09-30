@@ -36,7 +36,7 @@ The example rows record the inference profile the analysis answers to.
 
 namespace AloniVanOrmondt2023
 
-open QBSML BSML Degree Data.Examples FirstOrder Language
+open QBSML BSML Degree FirstOrder Language
 
 /-! ### Superlative modifiers as disjunctions -/
 

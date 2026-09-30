@@ -15,9 +15,7 @@ this module; declarations live in `namespace Geurts2005.Examples`.
 
 namespace Geurts2005.Examples
 
-open Data.Examples
-
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "geurts2005_1a"
     source := ⟨"geurts-2005", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("force1", "may"), ("force2", "may"), ("flavor", "deontic")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "geurts2005_1b"
     source := ⟨"geurts-2005", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("force1", "must"), ("force2", "must"), ("flavor", "deontic")] }
 
-def ex_1c : LinguisticExample :=
+def ex_1c : Datum :=
   { id := "geurts2005_1c"
     source := ⟨"geurts-2005", "(1c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_1c : LinguisticExample :=
     readings := []
     paperFeatures := [("force1", "may"), ("force2", "must"), ("flavor", "deontic")] }
 
-def ex_1d : LinguisticExample :=
+def ex_1d : Datum :=
   { id := "geurts2005_1d"
     source := ⟨"geurts-2005", "(1d)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_1d : LinguisticExample :=
     readings := []
     paperFeatures := [("force1", "must"), ("force2", "may"), ("flavor", "deontic")] }
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "geurts2005_2a"
     source := ⟨"geurts-2005", "(2a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("force1", "may"), ("force2", "may"), ("flavor", "epistemic")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "geurts2005_2b"
     source := ⟨"geurts-2005", "(2b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("force1", "must"), ("force2", "must"), ("flavor", "epistemic")] }
 
-def ex_2c : LinguisticExample :=
+def ex_2c : Datum :=
   { id := "geurts2005_2c"
     source := ⟨"geurts-2005", "(2c)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_2c : LinguisticExample :=
     readings := []
     paperFeatures := [("force1", "may"), ("force2", "must"), ("flavor", "epistemic")] }
 
-def ex_2d : LinguisticExample :=
+def ex_2d : Datum :=
   { id := "geurts2005_2d"
     source := ⟨"geurts-2005", "(2d)"⟩
     reportedIn := none
@@ -121,6 +119,6 @@ def ex_2d : LinguisticExample :=
     readings := []
     paperFeatures := [("force1", "must"), ("force2", "may"), ("flavor", "epistemic")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_1d, ex_2a, ex_2b, ex_2c, ex_2d]
+def all : List Datum := [ex_1a, ex_1b, ex_1c, ex_1d, ex_2a, ex_2b, ex_2c, ex_2d]
 
 end Geurts2005.Examples

@@ -15,9 +15,7 @@ this module; declarations live in `namespace FoxKatzir2011.Examples`.
 
 namespace FoxKatzir2011.Examples
 
-open Data.Examples
-
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "foxkatzir2011_ex1"
     source := ⟨"fox-katzir-2011", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1 : LinguisticExample :=
     readings := [("not: John did all of the homework", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "no"), ("universal", "no"), ("compatible", "no")] }
 
-def ex2 : LinguisticExample :=
+def ex2 : Datum :=
   { id := "foxkatzir2011_ex2"
     source := ⟨"fox-katzir-2011", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex2 : LinguisticExample :=
     readings := [("not: John did the reading and the homework", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "no"), ("universal", "no"), ("compatible", "no")] }
 
-def ex3 : LinguisticExample :=
+def ex3 : Datum :=
   { id := "foxkatzir2011_ex3"
     source := ⟨"fox-katzir-2011", "(3)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex3 : LinguisticExample :=
     readings := [("not: John has four children", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "no"), ("universal", "no"), ("compatible", "no")] }
 
-def ex29 : LinguisticExample :=
+def ex29 : Datum :=
   { id := "foxkatzir2011_ex29"
     source := ⟨"fox-katzir-2011", "(29)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex29 : LinguisticExample :=
     readings := [("not: John read four books", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "no"), ("universal", "no"), ("compatible", "no")] }
 
-def ex33 : LinguisticExample :=
+def ex33 : Datum :=
   { id := "foxkatzir2011_ex33"
     source := ⟨"fox-katzir-2011", "(33)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex33 : LinguisticExample :=
     readings := [("not: John read exactly three books", .unacceptable)]
     paperFeatures := [("inference", "no"), ("symmetric", "yes"), ("universal", "no"), ("compatible", "no")] }
 
-def ex38 : LinguisticExample :=
+def ex38 : Datum :=
   { id := "foxkatzir2011_ex38"
     source := ⟨"sauerland-2004", "disjunction"⟩
     reportedIn := some ⟨"fox-katzir-2011", "(38)"⟩
@@ -95,7 +93,7 @@ def ex38 : LinguisticExample :=
     readings := [("not: John did all of the homework", .unacceptable)]
     paperFeatures := [("inference", "no"), ("symmetric", "yes"), ("universal", "no"), ("compatible", "no")] }
 
-def ex40 : LinguisticExample :=
+def ex40 : Datum :=
   { id := "foxkatzir2011_ex40"
     source := ⟨"fox-katzir-2011", "(40)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex40 : LinguisticExample :=
     readings := [("not: John is determined to do all of the homework", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "yes"), ("universal", "yes"), ("compatible", "no")] }
 
-def ex41 : LinguisticExample :=
+def ex41 : Datum :=
   { id := "foxkatzir2011_ex41"
     source := ⟨"fox-katzir-2011", "(41)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex41 : LinguisticExample :=
     readings := [("not: Each of my students did all of the homework", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "yes"), ("universal", "yes"), ("compatible", "no")] }
 
-def ex42a : LinguisticExample :=
+def ex42a : Datum :=
   { id := "foxkatzir2011_ex42a"
     source := ⟨"katzir-2007", "Matsumoto examples"⟩
     reportedIn := some ⟨"fox-katzir-2011", "(42a)"⟩
@@ -134,7 +132,7 @@ def ex42a : LinguisticExample :=
     readings := [("not: John did just some of the homework yesterday", .unacceptable)]
     paperFeatures := [("inference", "no"), ("symmetric", "yes"), ("universal", "no"), ("compatible", "no")] }
 
-def ex44 : LinguisticExample :=
+def ex44 : Datum :=
   { id := "foxkatzir2011_ex44"
     source := ⟨"fox-katzir-2011", "(44)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex44 : LinguisticExample :=
     readings := [("not: John was required to do just some of the homework yesterday", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "yes"), ("universal", "yes"), ("compatible", "no")] }
 
-def ex46 : LinguisticExample :=
+def ex46 : Datum :=
   { id := "foxkatzir2011_ex46"
     source := ⟨"fox-katzir-2011", "(46)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex46 : LinguisticExample :=
     readings := [("not: Last week, every student got just some of the questions right", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "yes"), ("universal", "yes"), ("compatible", "no")] }
 
-def ex47a : LinguisticExample :=
+def ex47a : Datum :=
   { id := "foxkatzir2011_ex47a"
     source := ⟨"fox-katzir-2011", "(47a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex47a : LinguisticExample :=
     readings := [("not: In last week's robbery they stole the books but not the jewelry", .unacceptable)]
     paperFeatures := [("inference", "no"), ("symmetric", "yes"), ("universal", "no"), ("compatible", "no")] }
 
-def ex49a : LinguisticExample :=
+def ex49a : Datum :=
   { id := "foxkatzir2011_ex49a"
     source := ⟨"fox-katzir-2011", "(49a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex49a : LinguisticExample :=
     readings := [("not: Detective A concluded that the robbers stole the books but not the jewelry", .acceptable)]
     paperFeatures := [("inference", "yes"), ("symmetric", "yes"), ("universal", "yes"), ("compatible", "no")] }
 
-def ex53 : LinguisticExample :=
+def ex53 : Datum :=
   { id := "foxkatzir2011_ex53"
     source := ⟨"fox-katzir-2011", "(53)"⟩
     reportedIn := none
@@ -199,6 +197,6 @@ def ex53 : LinguisticExample :=
     readings := [("not: Yesterday, John talked to Mary", .unacceptable)]
     paperFeatures := [("inference", "no"), ("symmetric", "no"), ("universal", "no"), ("compatible", "yes")] }
 
-def all : List LinguisticExample := [ex1, ex2, ex3, ex29, ex33, ex38, ex40, ex41, ex42a, ex44, ex46, ex47a, ex49a, ex53]
+def all : List Datum := [ex1, ex2, ex3, ex29, ex33, ex38, ex40, ex41, ex42a, ex44, ex46, ex47a, ex49a, ex53]
 
 end FoxKatzir2011.Examples

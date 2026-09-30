@@ -15,9 +15,7 @@ this module; declarations live in `namespace Belth2026.Examples`.
 
 namespace Belth2026.Examples
 
-open Data.Examples
-
-def ex_53a : LinguisticExample :=
+def ex_53a : Datum :=
   { id := "belth2026_53a"
     source := ⟨"belth-2026", "(53a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_53a : LinguisticExample :=
     readings := []
     paperFeatures := [("suffix", "-alis"), ("analysis", "default l: tier-preceding consonant not lateral")] }
 
-def ex_53b1 : LinguisticExample :=
+def ex_53b1 : Datum :=
   { id := "belth2026_53b1"
     source := ⟨"belth-2026", "(53b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_53b1 : LinguisticExample :=
     readings := []
     paperFeatures := [("suffix", "-aris"), ("analysis", "dissimilation from tier-adjacent stem l")] }
 
-def ex_53b2 : LinguisticExample :=
+def ex_53b2 : Datum :=
   { id := "belth2026_53b2"
     source := ⟨"belth-2026", "(53b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_53b2 : LinguisticExample :=
     readings := []
     paperFeatures := [("suffix", "-aris"), ("analysis", "dissimilation across the coronal n")] }
 
-def ex_53c : LinguisticExample :=
+def ex_53c : Datum :=
   { id := "belth2026_53c"
     source := ⟨"belth-2026", "(53c)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_53c : LinguisticExample :=
     readings := []
     paperFeatures := [("suffix", "-alis"), ("analysis", "blocked by intervening r")] }
 
-def ex_53d1 : LinguisticExample :=
+def ex_53d1 : Datum :=
   { id := "belth2026_53d1"
     source := ⟨"belth-2026", "(53d)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_53d1 : LinguisticExample :=
     readings := []
     paperFeatures := [("suffix", "-alis"), ("analysis", "blocked by an intervening non-coronal consonant")] }
 
-def ex_53d2 : LinguisticExample :=
+def ex_53d2 : Datum :=
   { id := "belth2026_53d2"
     source := ⟨"belth-2026", "(53d)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_53d2 : LinguisticExample :=
     readings := []
     paperFeatures := [("suffix", "-alis"), ("analysis", "blocked by intervening g")] }
 
-def ex_46 : LinguisticExample :=
+def ex_46 : Datum :=
   { id := "belth2026_46"
     source := ⟨"belth-2026", "(46)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_46 : LinguisticExample :=
     readings := []
     paperFeatures := [("process", "backness harmony"), ("tier", "vowels")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "belth2026_47"
     source := ⟨"belth-2026", "(47)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("process", "secondary rounding harmony"), ("target", "high vowels only")] }
 
-def ex_51 : LinguisticExample :=
+def ex_51 : Datum :=
   { id := "belth2026_51"
     source := ⟨"belth-2026", "(51)"⟩
     reportedIn := none
@@ -134,6 +132,6 @@ def ex_51 : LinguisticExample :=
     readings := []
     paperFeatures := [("process", "backness harmony"), ("neutral vowels", "i, e off the tier"), ("default", "front when only neutral vowels precede")] }
 
-def all : List LinguisticExample := [ex_53a, ex_53b1, ex_53b2, ex_53c, ex_53d1, ex_53d2, ex_46, ex_47, ex_51]
+def all : List Datum := [ex_53a, ex_53b1, ex_53b2, ex_53c, ex_53d1, ex_53d2, ex_46, ex_47, ex_51]
 
 end Belth2026.Examples

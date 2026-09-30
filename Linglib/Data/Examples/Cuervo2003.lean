@@ -15,9 +15,7 @@ this module; declarations live in `namespace Cuervo2003.Examples`.
 
 namespace Cuervo2003.Examples
 
-open Data.Examples
-
-def ex_29a : LinguisticExample :=
+def ex_29a : Datum :=
   { id := "cuervo2003_29a"
     source := ⟨"cuervo-2003", "(29a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_29a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "mandar"), ("animate", "yes"), ("dative", "dp"), ("meaning", "recipient")] }
 
-def ex_30 : LinguisticExample :=
+def ex_30 : Datum :=
   { id := "cuervo2003_30"
     source := ⟨"cuervo-2003", "(30)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "preparar"), ("animate", "yes"), ("dative", "dp"), ("meaning", "recipient")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "cuervo2003_31"
     source := ⟨"cuervo-2003", "(31)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "sacar"), ("animate", "yes"), ("dative", "dp"), ("meaning", "source")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "cuervo2003_32"
     source := ⟨"cuervo-2003", "(32)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "lavar"), ("animate", "yes"), ("dative", "dp"), ("meaning", "possessor")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "cuervo2003_33"
     source := ⟨"cuervo-2003", "(33)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "admirar"), ("animate", "yes"), ("dative", "dp"), ("meaning", "possessor")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "cuervo2003_34"
     source := ⟨"cuervo-2003", "(34)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "llegar"), ("animate", "yes"), ("dative", "dp"), ("meaning", "recipient")] }
 
-def ex_35 : LinguisticExample :=
+def ex_35 : Datum :=
   { id := "cuervo2003_35"
     source := ⟨"cuervo-2003", "(35)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "romperCausative"), ("animate", "yes"), ("dative", "dp"), ("meaning", "affected")] }
 
-def ex_36 : LinguisticExample :=
+def ex_36 : Datum :=
   { id := "cuervo2003_36"
     source := ⟨"cuervo-2003", "(36)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "romperInchoative"), ("animate", "yes"), ("dative", "dp"), ("meaning", "affected")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "cuervo2003_37"
     source := ⟨"cuervo-2003", "(37)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "gustar"), ("animate", "yes"), ("dative", "dp"), ("meaning", "experiencer")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "cuervo2003_38"
     source := ⟨"cuervo-2003", "(38)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "sobrar"), ("animate", "yes"), ("dative", "dp"), ("meaning", "possessor")] }
 
-def ex_39a : LinguisticExample :=
+def ex_39a : Datum :=
   { id := "cuervo2003_39a"
     source := ⟨"cuervo-2003", "(39a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_39a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "caminar"), ("animate", "yes"), ("dative", "clitic"), ("meaning", "ethical")] }
 
-def ex_49 : LinguisticExample :=
+def ex_49 : Datum :=
   { id := "cuervo2003_49"
     source := ⟨"cuervo-2003", "(49)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_49 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "suceder"), ("animate", "yes"), ("dative", "dp"), ("meaning", "experiencer")] }
 
-def ex_54a : LinguisticExample :=
+def ex_54a : Datum :=
   { id := "cuervo2003_54a"
     source := ⟨"cuervo-2003", "(54a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_54a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "salir"), ("animate", "no"), ("dative", "dp"), ("meaning", "possessor")] }
 
-def ex_55 : LinguisticExample :=
+def ex_55 : Datum :=
   { id := "cuervo2003_55"
     source := ⟨"cuervo-2003", "(55)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_55 : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional responsibility", .acceptable)]
     paperFeatures := [("predicate", "quemarInchoative"), ("animate", "yes"), ("dative", "dp"), ("meaning", "affected")] }
 
-def ex_60 : LinguisticExample :=
+def ex_60 : Datum :=
   { id := "cuervo2003_60"
     source := ⟨"cuervo-2003", "(60)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_60 : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional responsibility", .unacceptable)]
     paperFeatures := [("predicate", "romperInchoative"), ("animate", "no"), ("dative", "dp"), ("meaning", "affected")] }
 
-def ex_66 : LinguisticExample :=
+def ex_66 : Datum :=
   { id := "cuervo2003_66"
     source := ⟨"cuervo-2003", "(66)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_66 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "correr"), ("animate", "yes"), ("dative", "dp")] }
 
-def ex_67a : LinguisticExample :=
+def ex_67a : Datum :=
   { id := "cuervo2003_67a"
     source := ⟨"cuervo-2003", "(67a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_67a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "correrTransitive"), ("animate", "yes"), ("dative", "dp")] }
 
-def ex_78 : LinguisticExample :=
+def ex_78 : Datum :=
   { id := "cuervo2003_78"
     source := ⟨"cuervo-2003", "(78)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_78 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "caminar"), ("animate", "yes"), ("dative", "dp")] }
 
-def ex_90a : LinguisticExample :=
+def ex_90a : Datum :=
   { id := "cuervo2003_90a"
     source := ⟨"cuervo-2003", "(90a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_90a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "abrirCausative"), ("animate", "yes"), ("dative", "dp"), ("meaning", "affected")] }
 
-def ex_90b : LinguisticExample :=
+def ex_90b : Datum :=
   { id := "cuervo2003_90b"
     source := ⟨"cuervo-2003", "(90b)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_90b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "abrirInchoative"), ("animate", "yes"), ("dative", "dp"), ("meaning", "affected")] }
 
-def ex_85ap : LinguisticExample :=
+def ex_85ap : Datum :=
   { id := "cuervo2003_85ap"
     source := ⟨"cuervo-2003", "(85a')"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_85ap : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "pass"), ("animate", "yes"), ("dative", "dp"), ("meaning", "recipient")] }
 
-def ex_88 : LinguisticExample :=
+def ex_88 : Datum :=
   { id := "cuervo2003_88"
     source := ⟨"cuervo-2003", "(88)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_88 : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "openCausative"), ("animate", "yes"), ("dative", "dp")] }
 
-def ex_89a : LinguisticExample :=
+def ex_89a : Datum :=
   { id := "cuervo2003_89a"
     source := ⟨"cuervo-2003", "(89a)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_89a : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "openInchoative"), ("animate", "yes"), ("dative", "dp")] }
 
-def ex_92b : LinguisticExample :=
+def ex_92b : Datum :=
   { id := "cuervo2003_92b"
     source := ⟨"cuervo-2003", "(92b)"⟩
     reportedIn := none
@@ -329,6 +327,6 @@ def ex_92b : LinguisticExample :=
     readings := []
     paperFeatures := [("predicate", "arrive"), ("animate", "yes"), ("dative", "dp")] }
 
-def all : List LinguisticExample := [ex_29a, ex_30, ex_31, ex_32, ex_33, ex_34, ex_35, ex_36, ex_37, ex_38, ex_39a, ex_49, ex_54a, ex_55, ex_60, ex_66, ex_67a, ex_78, ex_90a, ex_90b, ex_85ap, ex_88, ex_89a, ex_92b]
+def all : List Datum := [ex_29a, ex_30, ex_31, ex_32, ex_33, ex_34, ex_35, ex_36, ex_37, ex_38, ex_39a, ex_49, ex_54a, ex_55, ex_60, ex_66, ex_67a, ex_78, ex_90a, ex_90b, ex_85ap, ex_88, ex_89a, ex_92b]
 
 end Cuervo2003.Examples

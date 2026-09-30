@@ -15,9 +15,7 @@ this module; declarations live in `namespace Matthewson2016.Examples`.
 
 namespace Matthewson2016.Examples
 
-open Data.Examples
-
-def ex25 : LinguisticExample :=
+def ex25 : Datum :=
   { id := "matthewson2016_ex25"
     source := ⟨"matthewson-2016", "(25)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex25 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.2.4"), ("modal", "k'a"), ("test", "deniability")] }
 
-def ex26 : LinguisticExample :=
+def ex26 : Datum :=
   { id := "matthewson2016_ex26"
     source := ⟨"matthewson-2016", "(26)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex26 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.2.4"), ("modal", "lákw7a"), ("test", "deniability")] }
 
-def ex27 : LinguisticExample :=
+def ex27 : Datum :=
   { id := "matthewson2016_ex27"
     source := ⟨"matthewson-2016", "(27)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex27 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.2.4"), ("modal", "k'a"), ("test", "deniability")] }
 
-def ex28 : LinguisticExample :=
+def ex28 : Datum :=
   { id := "matthewson2016_ex28"
     source := ⟨"matthewson-2016", "(28)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex28 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.2.4"), ("modal", "lákw7a"), ("test", "deniability")] }
 
-def ex37 : LinguisticExample :=
+def ex37 : Datum :=
   { id := "matthewson2016_ex37"
     source := ⟨"matthewson-2016", "(37)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex37 : LinguisticExample :=
     readings := [("possibility", .acceptable), ("necessity", .acceptable)]
     paperFeatures := [("section", "18.3.2"), ("modal", "ima('a)"), ("reportedFrom", "Peterson 2010, p. 161")] }
 
-def ex38 : LinguisticExample :=
+def ex38 : Datum :=
   { id := "matthewson2016_ex38"
     source := ⟨"matthewson-2016", "(38)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex38 : LinguisticExample :=
     readings := [("possibility", .acceptable)]
     paperFeatures := [("section", "18.3.2"), ("modal", "ima('a)"), ("reportedFrom", "Matthewson 2013a, p. 361")] }
 
-def ex39 : LinguisticExample :=
+def ex39 : Datum :=
   { id := "matthewson2016_ex39"
     source := ⟨"matthewson-2016", "(39)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex39 : LinguisticExample :=
     readings := [("possibility", .acceptable), ("necessity", .acceptable)]
     paperFeatures := [("section", "18.3.2"), ("modal", "o'qa"), ("downwardEntailing", "false"), ("reportedFrom", "Deal 2011, p. 574")] }
 
-def ex40 : LinguisticExample :=
+def ex40 : Datum :=
   { id := "matthewson2016_ex40"
     source := ⟨"matthewson-2016", "(40)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex40 : LinguisticExample :=
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("section", "18.3.2"), ("modal", "o'qa"), ("downwardEntailing", "true"), ("reportedFrom", "Deal 2011, p. 574")] }
 
-def ex42a : LinguisticExample :=
+def ex42a : Datum :=
   { id := "matthewson2016_ex42a"
     source := ⟨"matthewson-2016", "(42a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex42a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.3.2"), ("modal", "mat"), ("force", "possibility"), ("reportedFrom", "Menzies 2013, p. 2")] }
 
-def ex42b : LinguisticExample :=
+def ex42b : Datum :=
   { id := "matthewson2016_ex42b"
     source := ⟨"matthewson-2016", "(42b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex42b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.3.2"), ("modal", "cmay"), ("force", "possibility"), ("reportedFrom", "Menzies 2013, p. 2")] }
 
-def ex43a : LinguisticExample :=
+def ex43a : Datum :=
   { id := "matthewson2016_ex43a"
     source := ⟨"matthewson-2016", "(43a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex43a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.3.2"), ("modal", "mat"), ("force", "necessity"), ("reportedFrom", "Menzies 2013, p. 2")] }
 
-def ex43b : LinguisticExample :=
+def ex43b : Datum :=
   { id := "matthewson2016_ex43b"
     source := ⟨"matthewson-2016", "(43b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex43b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.3.2"), ("modal", "cmay"), ("force", "necessity"), ("reportedFrom", "Menzies 2013, p. 2")] }
 
-def ex57 : LinguisticExample :=
+def ex57 : Datum :=
   { id := "matthewson2016_ex57"
     source := ⟨"matthewson-2016", "(57)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex57 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.4.3"), ("flavor", "epistemic"), ("perspective", "past"), ("reportedFrom", "Louie 2012")] }
 
-def ex58 : LinguisticExample :=
+def ex58 : Datum :=
   { id := "matthewson2016_ex58"
     source := ⟨"matthewson-2016", "(58)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex58 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.4.3"), ("flavor", "epistemic"), ("perspective", "past"), ("reportedFrom", "Laturnus 2012")] }
 
-def ex59 : LinguisticExample :=
+def ex59 : Datum :=
   { id := "matthewson2016_ex59"
     source := ⟨"matthewson-2016", "(59)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex59 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.4.3"), ("modal", "k'a"), ("flavor", "epistemic"), ("perspective", "past")] }
 
-def ex60 : LinguisticExample :=
+def ex60 : Datum :=
   { id := "matthewson2016_ex60"
     source := ⟨"matthewson-2016", "(60)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex60 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.4.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "past"), ("prospective", "false"), ("reportedFrom", "Matthewson 2013a, p. 366")] }
 
-def ex61 : LinguisticExample :=
+def ex61 : Datum :=
   { id := "matthewson2016_ex61"
     source := ⟨"matthewson-2016", "(61)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex61 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.4.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "present"), ("prospective", "false"), ("reportedFrom", "Matthewson 2013a, p. 363")] }
 
-def ex62 : LinguisticExample :=
+def ex62 : Datum :=
   { id := "matthewson2016_ex62"
     source := ⟨"matthewson-2016", "(62)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex62 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.4.3"), ("modal", "ima('a)"), ("perspective", "past"), ("orientation", "future"), ("prospective", "true"), ("reportedFrom", "Matthewson 2013a, p. 366")] }
 
-def ex63a : LinguisticExample :=
+def ex63a : Datum :=
   { id := "matthewson2016_ex63a"
     source := ⟨"matthewson-2016", "(63a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex63a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.4.3"), ("modal", "ima('a)"), ("orientation", "past"), ("prospective", "false"), ("reportedFrom", "Matthewson 2013a, pp. 364–365")] }
 
-def ex63b : LinguisticExample :=
+def ex63b : Datum :=
   { id := "matthewson2016_ex63b"
     source := ⟨"matthewson-2016", "(63b)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex63b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.4.3"), ("modal", "ima('a)"), ("orientation", "present"), ("prospective", "false"), ("reportedFrom", "Matthewson 2013a, pp. 364–365")] }
 
-def ex63c : LinguisticExample :=
+def ex63c : Datum :=
   { id := "matthewson2016_ex63c"
     source := ⟨"matthewson-2016", "(63c)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex63c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.4.3"), ("modal", "ima('a)"), ("orientation", "future"), ("prospective", "false"), ("reportedFrom", "Matthewson 2013a, pp. 364–365")] }
 
-def ex64 : LinguisticExample :=
+def ex64 : Datum :=
   { id := "matthewson2016_ex64"
     source := ⟨"matthewson-2016", "(64)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex64 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.5"), ("modal", "liga"), ("force", "weak"), ("flavor", "epistemic"), ("reportedFrom", "Matthewson et al. 2012, p. 224")] }
 
-def ex65 : LinguisticExample :=
+def ex65 : Datum :=
   { id := "matthewson2016_ex65"
     source := ⟨"matthewson-2016", "(65)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex65 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.5"), ("modal", "liga"), ("flavor", "epistemic"), ("reportedFrom", "Matthewson et al. 2012, p. 228")] }
 
-def ex66 : LinguisticExample :=
+def ex66 : Datum :=
   { id := "matthewson2016_ex66"
     source := ⟨"matthewson-2016", "(66)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex66 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.5"), ("modal", "liga"), ("force", "strong"), ("flavor", "epistemic"), ("reportedFrom", "Seiter 1980, p. 13")] }
 
-def ex67 : LinguisticExample :=
+def ex67 : Datum :=
   { id := "matthewson2016_ex67"
     source := ⟨"matthewson-2016", "(67)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex67 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.5"), ("modal", "maeke"), ("force", "weak"), ("flavor", "circumstantial"), ("reportedFrom", "Seiter 1980, p. 140")] }
 
-def ex68 : LinguisticExample :=
+def ex68 : Datum :=
   { id := "matthewson2016_ex68"
     source := ⟨"matthewson-2016", "(68)"⟩
     reportedIn := none
@@ -355,6 +353,6 @@ def ex68 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "18.5"), ("modal", "lata"), ("force", "strong"), ("flavor", "deontic"), ("reportedFrom", "Seiter 1980, p. 133")] }
 
-def all : List LinguisticExample := [ex25, ex26, ex27, ex28, ex37, ex38, ex39, ex40, ex42a, ex42b, ex43a, ex43b, ex57, ex58, ex59, ex60, ex61, ex62, ex63a, ex63b, ex63c, ex64, ex65, ex66, ex67, ex68]
+def all : List Datum := [ex25, ex26, ex27, ex28, ex37, ex38, ex39, ex40, ex42a, ex42b, ex43a, ex43b, ex57, ex58, ex59, ex60, ex61, ex62, ex63a, ex63b, ex63c, ex64, ex65, ex66, ex67, ex68]
 
 end Matthewson2016.Examples

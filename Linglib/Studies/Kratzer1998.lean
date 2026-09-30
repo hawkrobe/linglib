@@ -73,7 +73,7 @@ namespace Kratzer1998
 
 open Semantics
 
-open Tense Data.Examples
+open Tense
 open Aspect (IntervalPred UNBOUNDED PRFV ViewpointType)
 
 /-! ### The tenses (§4–§5) -/

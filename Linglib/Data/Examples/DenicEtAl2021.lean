@@ -15,9 +15,7 @@ this module; declarations live in `namespace DenicEtAl2021.Examples`.
 
 namespace DenicEtAl2021.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "denicetal2021_1"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "positive"), ("kind", "UE"), ("direction", "subsetToSuperset"), ("valid", "yes")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "denicetal2021_2"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "negative"), ("kind", "DE"), ("direction", "supersetToSubset"), ("valid", "yes")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "denicetal2021_3"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(3)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "negative"), ("kind", "DE"), ("pi", "npi")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "denicetal2021_4"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(4)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "positive"), ("kind", "UE"), ("pi", "npi")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "denicetal2021_5"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(5)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "positive"), ("kind", "UE"), ("pi", "ppi")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "denicetal2021_6"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(6)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_6 : LinguisticExample :=
     readings := [("some narrow scope under negation", .unacceptable), ("some wide scope over negation", .acceptable)]
     paperFeatures := [("environment", "negative"), ("kind", "DE"), ("pi", "ppi")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "denicetal2021_7"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(7)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "exactly12"), ("kind", "NM"), ("valid", "no")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "denicetal2021_8"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(8)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "exactly12"), ("kind", "NM"), ("pi", "both")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "denicetal2021_9"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(9)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_9 : LinguisticExample :=
     readings := [("some doves are such that exactly 12 aliens saw them", .acceptable)]
     paperFeatures := [("environment", "exactly12"), ("kind", "NM"), ("pi", "ppi")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "denicetal2021_11"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(11)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "training"), ("expected", "follows")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "denicetal2021_12"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(12)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "training"), ("expected", "doesNotFollow")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "denicetal2021_13"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(13)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("item", "training"), ("expected", "intermediate")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "denicetal2021_14"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(14)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "positive"), ("kind", "UE"), ("direction", "supersetToSubset"), ("pi", "ppi"), ("valid", "no")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "denicetal2021_15"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(15)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "every"), ("kind", "UE"), ("direction", "supersetToSubset"), ("pi", "ppi"), ("valid", "no")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "denicetal2021_16"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(16)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "many"), ("kind", "UE"), ("direction", "supersetToSubset"), ("pi", "ppi"), ("valid", "no")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "denicetal2021_17"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(17)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "negative"), ("kind", "DE"), ("direction", "supersetToSubset"), ("pi", "npi"), ("valid", "yes")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "denicetal2021_18"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(18)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "no"), ("kind", "DE"), ("direction", "supersetToSubset"), ("pi", "npi"), ("valid", "yes")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "denicetal2021_19"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(19)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "few"), ("kind", "DE"), ("direction", "supersetToSubset"), ("pi", "npi"), ("valid", "yes")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "denicetal2021_20"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(20)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "exactly12"), ("kind", "NM"), ("direction", "supersetToSubset"), ("pi", "both"), ("valid", "no")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "denicetal2021_21"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(21)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "only12"), ("kind", "NM"), ("direction", "supersetToSubset"), ("pi", "both"), ("valid", "no")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "denicetal2021_22"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(22)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "everyNot"), ("kind", "DN"), ("pi", "both")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "denicetal2021_23"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(23)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "everyNot"), ("kind", "DN"), ("direction", "subsetToSuperset"), ("pi", "both"), ("valid", "yes")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "denicetal2021_24"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(24)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "noWithout"), ("kind", "DN"), ("direction", "subsetToSuperset"), ("pi", "both"), ("valid", "yes")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "denicetal2021_25"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(25)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "exactly12"), ("kind", "NM"), ("direction", "subsetToSuperset"), ("pi", "ppi"), ("valid", "no")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "denicetal2021_26"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(26)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_26 : LinguisticExample :=
     readings := [("some doves are such that every alien who didn't see them is hairy", .acceptable)]
     paperFeatures := [("environment", "everyNot"), ("kind", "DN"), ("direction", "subsetToSuperset"), ("pi", "ppi"), ("valid", "yes")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "denicetal2021_28"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(28)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "no"), ("kind", "DE"), ("direction", "supersetToSubset"), ("pi", "noPI"), ("valid", "yes")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "denicetal2021_29"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(29)"⟩
     reportedIn := none
@@ -368,6 +366,6 @@ def ex_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "no"), ("kind", "DE"), ("direction", "supersetToSubset"), ("pi", "npi"), ("valid", "yes")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26, ex_28, ex_29]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26, ex_28, ex_29]
 
 end DenicEtAl2021.Examples

@@ -67,7 +67,7 @@ available antecedents (`privileged_iff_available`), so no distractor is accessed
 
 namespace BakayEtAl2026
 
-open Core.Order Syntax Syntax.Tree Binding Data.Examples
+open Core.Order Syntax Syntax.Tree Binding
 
 /-! ### The stimuli -/
 
@@ -298,7 +298,7 @@ theorem not_privileged_second {s : Structure} (hs : s ≠ .indirectObject) :
 /-! ### The paper's stimuli -/
 
 /-- The structure a row records, by its distractor or its second noun phrase. -/
-def structure? (x : LinguisticExample) : Option Structure :=
+def structure? (x : Datum) : Option Structure :=
   x.parse? "distractor" [("possessor in subject", .possessorInSubject),
       ("possessor in adjunct", .possessorInAdjunct),
       ("postpositional adjunct", .postpositionalAdjunct)] <|>

@@ -15,9 +15,7 @@ this module; declarations live in `namespace Beltrama2025.Examples`.
 
 namespace Beltrama2025.Examples
 
-open Data.Examples
-
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "beltrama2025_1a"
     source := ⟨"beltrama-2025", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1a : LinguisticExample :=
     readings := [("middling: positive but only moderately so", .acceptable)]
     paperFeatures := [("class", "MPA"), ("inference", "middling")] }
 
-def ex_3c : LinguisticExample :=
+def ex_3c : Datum :=
   { id := "beltrama2025_3c"
     source := ⟨"beltrama-2025", "(3c)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_3c : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "cancelability"), ("verdict", "middling inference is an implicature")] }
 
-def ex_4c : LinguisticExample :=
+def ex_4c : Datum :=
   { id := "beltrama2025_4c"
     source := ⟨"beltrama-2025", "(4c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_4c : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "reinforceability")] }
 
-def ex_5c : LinguisticExample :=
+def ex_5c : Datum :=
   { id := "beltrama2025_5c"
     source := ⟨"beltrama-2025", "(5c)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_5c : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "DE suspension"), ("verdict", "no upper-bounded reading in the restrictor")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "beltrama2025_8a"
     source := ⟨"beltrama-2025", "(8a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "for-phrase"), ("property", "context-sensitivity")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "beltrama2025_11a"
     source := ⟨"beltrama-2025", "(11a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "strong intensifiers"), ("property", "restricted gradability")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "beltrama2025_12a"
     source := ⟨"beltrama-2025", "(12a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "comparative"), ("property", "mildness retained in comparatives")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "beltrama2025_15a"
     source := ⟨"beltrama-2025", "(15a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "zone of indifference"), ("verdict", "near-contradiction")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "beltrama2025_21"
     source := ⟨"beltrama-2025", "(21)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "barely"), ("property", "crisp boundary")] }
 
-def ex_22a : LinguisticExample :=
+def ex_22a : Datum :=
   { id := "beltrama2025_22a"
     source := ⟨"beltrama-2025", "(22a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_22a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "crisp judgment")] }
 
-def ex_24a : LinguisticExample :=
+def ex_24a : Datum :=
   { id := "beltrama2025_24a"
     source := ⟨"beltrama-2025", "(24a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "emphasis in DE"), ("parallel", "minimizers")] }
 
-def ex_26a : LinguisticExample :=
+def ex_26a : Datum :=
   { id := "beltrama2025_26a"
     source := ⟨"beltrama-2025", "(26a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_26a : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "minimal sufficiency exclusive")] }
 
-def ex_39 : LinguisticExample :=
+def ex_39 : Datum :=
   { id := "beltrama2025_39"
     source := ⟨"beltrama-2025", "(39)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "slightly"), ("verdict", "against the MinSAA analysis")] }
 
-def ex_51b : LinguisticExample :=
+def ex_51b : Datum :=
   { id := "beltrama2025_51b"
     source := ⟨"beltrama-2025", "(51b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_51b : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "comparative entailment"), ("verdict", "positive form not entailed")] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "beltrama2025_70"
     source := ⟨"beltrama-2025", "(70)"⟩
     reportedIn := none
@@ -212,6 +210,6 @@ def ex_70 : LinguisticExample :=
     readings := []
     paperFeatures := [("diagnostic", "strong intensifier rescued"), ("condition", "significance excluded from the QUD")] }
 
-def all : List LinguisticExample := [ex_1a, ex_3c, ex_4c, ex_5c, ex_8a, ex_11a, ex_12a, ex_15a, ex_21, ex_22a, ex_24a, ex_26a, ex_39, ex_51b, ex_70]
+def all : List Datum := [ex_1a, ex_3c, ex_4c, ex_5c, ex_8a, ex_11a, ex_12a, ex_15a, ex_21, ex_22a, ex_24a, ex_26a, ex_39, ex_51b, ex_70]
 
 end Beltrama2025.Examples

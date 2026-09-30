@@ -15,9 +15,7 @@ this module; declarations live in `namespace BachBrownMarslenWilson1986.Examples
 
 namespace BachBrownMarslenWilson1986.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "bachbrownmarslenwilson1986_1"
     source := ⟨"bach-brown-marslen-wilson-1986", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("dependency", "crossed"), ("verb_cluster_size", "2")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "bachbrownmarslenwilson1986_2"
     source := ⟨"bach-brown-marslen-wilson-1986", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("dependency", "nested"), ("verb_cluster_size", "2")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "bachbrownmarslenwilson1986_3"
     source := ⟨"bach-brown-marslen-wilson-1986", "(3)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("dependency", "right-branching"), ("verb_cluster_size", "2")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "bachbrownmarslenwilson1986_4"
     source := ⟨"bach-brown-marslen-wilson-1986", "(4)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("dependency", "crossed"), ("verb_cluster_size", "3")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "bachbrownmarslenwilson1986_5"
     source := ⟨"bach-brown-marslen-wilson-1986", "(5)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("dependency", "nested"), ("verb_cluster_size", "3")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "bachbrownmarslenwilson1986_6"
     source := ⟨"bach-brown-marslen-wilson-1986", "(6)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("dependency", "right-branching"), ("verb_cluster_size", "3")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "bachbrownmarslenwilson1986_7"
     source := ⟨"bach-brown-marslen-wilson-1986", "(7)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("dependency", "crossed"), ("verb_cluster_size", "4")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "bachbrownmarslenwilson1986_8"
     source := ⟨"bach-brown-marslen-wilson-1986", "(8)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("dependency", "nested"), ("verb_cluster_size", "4")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "bachbrownmarslenwilson1986_9"
     source := ⟨"bach-brown-marslen-wilson-1986", "(9)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("dependency", "right-branching"), ("verb_cluster_size", "4")] }
 
-def level1_nl : LinguisticExample :=
+def level1_nl : Datum :=
   { id := "bachbrownmarslenwilson1986_level1_nl"
     source := ⟨"bach-brown-marslen-wilson-1986", "Level 1 (Dutch)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def level1_nl : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "1")] }
 
-def level1_de : LinguisticExample :=
+def level1_de : Datum :=
   { id := "bachbrownmarslenwilson1986_level1_de"
     source := ⟨"bach-brown-marslen-wilson-1986", "Level 1 (German)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def level1_de : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "1")] }
 
-def level2_nl : LinguisticExample :=
+def level2_nl : Datum :=
   { id := "bachbrownmarslenwilson1986_level2_nl"
     source := ⟨"bach-brown-marslen-wilson-1986", "Level 2 (Dutch)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def level2_nl : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "2"), ("dependency", "crossed")] }
 
-def level2_de : LinguisticExample :=
+def level2_de : Datum :=
   { id := "bachbrownmarslenwilson1986_level2_de"
     source := ⟨"bach-brown-marslen-wilson-1986", "Level 2 (German)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def level2_de : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "2"), ("dependency", "nested")] }
 
-def level3_nl : LinguisticExample :=
+def level3_nl : Datum :=
   { id := "bachbrownmarslenwilson1986_level3_nl"
     source := ⟨"bach-brown-marslen-wilson-1986", "Level 3 (Dutch)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def level3_nl : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "3"), ("dependency", "crossed")] }
 
-def level3_de : LinguisticExample :=
+def level3_de : Datum :=
   { id := "bachbrownmarslenwilson1986_level3_de"
     source := ⟨"bach-brown-marslen-wilson-1986", "Level 3 (German)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def level3_de : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "3"), ("dependency", "nested")] }
 
-def level4_nl : LinguisticExample :=
+def level4_nl : Datum :=
   { id := "bachbrownmarslenwilson1986_level4_nl"
     source := ⟨"bach-brown-marslen-wilson-1986", "Level 4 (Dutch)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def level4_nl : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "4"), ("dependency", "crossed")] }
 
-def level4_de : LinguisticExample :=
+def level4_de : Datum :=
   { id := "bachbrownmarslenwilson1986_level4_de"
     source := ⟨"bach-brown-marslen-wilson-1986", "Level 4 (German)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def level4_de : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence_type", "test"), ("embedding_level", "4"), ("dependency", "nested")] }
 
-def para2_nl : LinguisticExample :=
+def para2_nl : Datum :=
   { id := "bachbrownmarslenwilson1986_para2_nl"
     source := ⟨"bach-brown-marslen-wilson-1986", "Paraphrase Level 2 (Dutch)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def para2_nl : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence_type", "paraphrase"), ("embedding_level", "2"), ("dependency", "right-branching")] }
 
-def para2_de : LinguisticExample :=
+def para2_de : Datum :=
   { id := "bachbrownmarslenwilson1986_para2_de"
     source := ⟨"bach-brown-marslen-wilson-1986", "Paraphrase Level 2 (German)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def para2_de : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence_type", "paraphrase"), ("embedding_level", "2"), ("dependency", "right-branching")] }
 
-def para3_de : LinguisticExample :=
+def para3_de : Datum :=
   { id := "bachbrownmarslenwilson1986_para3_de"
     source := ⟨"bach-brown-marslen-wilson-1986", "Paraphrase Level 3 (German)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def para3_de : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence_type", "paraphrase"), ("embedding_level", "3"), ("dependency", "right-branching")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "bachbrownmarslenwilson1986_10"
     source := ⟨"bach-brown-marslen-wilson-1986", "(10)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("dependency", "crossed"), ("verb_cluster_size", "3")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "bachbrownmarslenwilson1986_11"
     source := ⟨"bach-brown-marslen-wilson-1986", "(11)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("dependency", "nested"), ("verb_cluster_size", "3")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "bachbrownmarslenwilson1986_13"
     source := ⟨"bach-brown-marslen-wilson-1986", "(13)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("dependency", "crossed"), ("construction", "long-distance filler-gap")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "bachbrownmarslenwilson1986_14"
     source := ⟨"bach-brown-marslen-wilson-1986", "(14)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("dependency", "nested"), ("construction", "long-distance filler-gap")] }
 
-def filler1_de : LinguisticExample :=
+def filler1_de : Datum :=
   { id := "bachbrownmarslenwilson1986_filler1_de"
     source := ⟨"bach-brown-marslen-wilson-1986", "Filler Level 1 (German)"⟩
     reportedIn := none
@@ -342,6 +340,6 @@ def filler1_de : LinguisticExample :=
     readings := []
     paperFeatures := [("sentence_type", "filler"), ("embedding_level", "1")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, level1_nl, level1_de, level2_nl, level2_de, level3_nl, level3_de, level4_nl, level4_de, para2_nl, para2_de, para3_de, ex_10, ex_11, ex_13, ex_14, filler1_de]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, level1_nl, level1_de, level2_nl, level2_de, level3_nl, level3_de, level4_nl, level4_de, para2_nl, para2_de, para3_de, ex_10, ex_11, ex_13, ex_14, filler1_de]
 
 end BachBrownMarslenWilson1986.Examples

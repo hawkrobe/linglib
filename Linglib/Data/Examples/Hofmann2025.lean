@@ -15,9 +15,7 @@ this module; declarations live in `namespace Hofmann2025.Examples`.
 
 namespace Hofmann2025.Examples
 
-open Data.Examples
-
-def ex1a : LinguisticExample :=
+def ex1a : Datum :=
   { id := "hofmann2025_ex1a"
     source := ⟨"hofmann-2025", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("antecedent", "veridical"), ("anaphor", "veridical")] }
 
-def ex1b : LinguisticExample :=
+def ex1b : Datum :=
   { id := "hofmann2025_ex1b"
     source := ⟨"hofmann-2025", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex1b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "veridical")] }
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "hofmann2025_ex2a"
     source := ⟨"krahmer-muskens-1995", "(5)"⟩
     reportedIn := some ⟨"hofmann-2025", "(2a)"⟩
@@ -56,7 +54,7 @@ def ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("antecedent", "veridical"), ("anaphor", "veridical"), ("case", "double negation")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "hofmann2025_ex2b"
     source := ⟨"roberts-1989", "(12)"⟩
     reportedIn := some ⟨"hofmann-2025", "(2b)"⟩
@@ -69,7 +67,7 @@ def ex2b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "bathroom disjunction")] }
 
-def ex2c : LinguisticExample :=
+def ex2c : Datum :=
   { id := "hofmann2025_ex2c"
     source := ⟨"hofmann-2025", "(2c)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex2c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "disagreement")] }
 
-def ex2d : LinguisticExample :=
+def ex2d : Datum :=
   { id := "hofmann2025_ex2d"
     source := ⟨"frank-1996", "(8a)"⟩
     reportedIn := some ⟨"hofmann-2025", "(2d)"⟩
@@ -95,7 +93,7 @@ def ex2d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "modal subordination")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "hofmann2025_ex5a"
     source := ⟨"hofmann-2025", "(5a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("antecedent", "veridical"), ("anaphor", "veridical")] }
 
-def ex5b : LinguisticExample :=
+def ex5b : Datum :=
   { id := "hofmann2025_ex5b"
     source := ⟨"hofmann-2025", "(5b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex5b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("antecedent", "veridical"), ("anaphor", "veridical")] }
 
-def ex6a : LinguisticExample :=
+def ex6a : Datum :=
   { id := "hofmann2025_ex6a"
     source := ⟨"hofmann-2025", "(6a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex6a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "veridical")] }
 
-def ex6b : LinguisticExample :=
+def ex6b : Datum :=
   { id := "hofmann2025_ex6b"
     source := ⟨"hofmann-2025", "(6b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex6b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical")] }
 
-def ex6c : LinguisticExample :=
+def ex6c : Datum :=
   { id := "hofmann2025_ex6c"
     source := ⟨"hofmann-2025", "(6c)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex6c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical")] }
 
-def ex8 : LinguisticExample :=
+def ex8 : Datum :=
   { id := "hofmann2025_ex8"
     source := ⟨"roberts-1989", "(11)"⟩
     reportedIn := some ⟨"hofmann-2025", "(8)"⟩
@@ -173,7 +171,7 @@ def ex8 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("antecedent", "hypothetical")] }
 
-def ex9 : LinguisticExample :=
+def ex9 : Datum :=
   { id := "hofmann2025_ex9"
     source := ⟨"hofmann-2025", "(9)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex9 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("antecedent", "veridical"), ("anaphor", "veridical"), ("case", "double negation")] }
 
-def ex10 : LinguisticExample :=
+def ex10 : Datum :=
   { id := "hofmann2025_ex10"
     source := ⟨"hofmann-2025", "(10)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex10 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "bathroom disjunction")] }
 
-def ex11 : LinguisticExample :=
+def ex11 : Datum :=
   { id := "hofmann2025_ex11"
     source := ⟨"hofmann-2025", "(11)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "modal subordination")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "hofmann2025_ex12"
     source := ⟨"hofmann-2025", "(12)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex12 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "disagreement")] }
 
-def ex13a : LinguisticExample :=
+def ex13a : Datum :=
   { id := "hofmann2025_ex13a"
     source := ⟨"hofmann-2025", "(13a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex13a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical")] }
 
-def ex13b : LinguisticExample :=
+def ex13b : Datum :=
   { id := "hofmann2025_ex13b"
     source := ⟨"hofmann-2025", "(13b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex13b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("antecedent", "counterfactual"), ("anaphor", "veridical")] }
 
-def ex15 : LinguisticExample :=
+def ex15 : Datum :=
   { id := "hofmann2025_ex15"
     source := ⟨"hofmann-2025", "(15)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex15 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical")] }
 
-def ex26 : LinguisticExample :=
+def ex26 : Datum :=
   { id := "hofmann2025_ex26"
     source := ⟨"hofmann-2025", "(26)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex26 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("antecedent", "counterfactual"), ("anaphor", "veridical")] }
 
-def ex45 : LinguisticExample :=
+def ex45 : Datum :=
   { id := "hofmann2025_ex45"
     source := ⟨"hofmann-2025", "(45)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex45 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("case", "bathroom disjunction")] }
 
-def ex49 : LinguisticExample :=
+def ex49 : Datum :=
   { id := "hofmann2025_ex49"
     source := ⟨"hofmann-2025", "(49)"⟩
     reportedIn := none
@@ -303,6 +301,6 @@ def ex49 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("antecedent", "counterfactual"), ("anaphor", "nonveridical"), ("case", "modal subordination")] }
 
-def all : List LinguisticExample := [ex1a, ex1b, ex2a, ex2b, ex2c, ex2d, ex5a, ex5b, ex6a, ex6b, ex6c, ex8, ex9, ex10, ex11, ex12, ex13a, ex13b, ex15, ex26, ex45, ex49]
+def all : List Datum := [ex1a, ex1b, ex2a, ex2b, ex2c, ex2d, ex5a, ex5b, ex6a, ex6b, ex6c, ex8, ex9, ex10, ex11, ex12, ex13a, ex13b, ex15, ex26, ex45, ex49]
 
 end Hofmann2025.Examples

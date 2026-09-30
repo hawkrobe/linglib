@@ -15,9 +15,7 @@ this module; declarations live in `namespace Grove2022.Examples`.
 
 namespace Grove2022.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "grove2022_1"
     source := ⟨"grove-2022", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := [("presupposes that Theo has a wetsuit", .acceptable), ("presupposes that Theo has a wetsuit if he has a brother", .questionable)]
     paperFeatures := [("section", "2.1"), ("phenomenon", "provisoProblem"), ("trigger", "his wetsuit"), ("filter", "conditional")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "grove2022_2"
     source := ⟨"grove-2022", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := [("presupposes that Theo has a wetsuit if he is a scuba diver", .acceptable)]
     paperFeatures := [("section", "2"), ("phenomenon", "provisoProblem"), ("trigger", "his wetsuit"), ("filter", "conditional")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "grove2022_6"
     source := ⟨"heim-1992", "(6)"⟩
     reportedIn := some ⟨"grove-2022", "(6)"⟩
@@ -56,7 +54,7 @@ def ex_6 : LinguisticExample :=
     readings := [("presupposes that John is in bed", .acceptable), ("presupposes that Mary's parents think John is in bed", .questionable)]
     paperFeatures := [("section", "2.1"), ("phenomenon", "trappedTrigger"), ("trigger", "also"), ("filter", "think")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "grove2022_7"
     source := ⟨"grove-2022", "(7)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "provisoProblem"), ("trigger", "stop"), ("filter", "conditional")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "grove2022_8"
     source := ⟨"grove-2022", "(8)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "conditionalReadingContext"), ("trigger", "stop"), ("filter", "conditional")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "grove2022_9"
     source := ⟨"grove-2022", "(9)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "conditionalReadingContext"), ("trigger", "his wetsuit"), ("filter", "conditional")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "grove2022_22"
     source := ⟨"grove-2022", "(22)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_22 : LinguisticExample :=
     readings := [("presupposes that Theo has a wetsuit, his wetsuit de re", .acceptable), ("presupposes that Theo believes he has a wetsuit, his wetsuit de dicto", .acceptable)]
     paperFeatures := [("section", "4.2"), ("phenomenon", "attitude"), ("trigger", "his wetsuit"), ("filter", "believe")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "grove2022_23"
     source := ⟨"grove-2022", "(23)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("phenomenon", "attitude"), ("trigger", "his wetsuit"), ("filter", "believe")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "grove2022_24"
     source := ⟨"grove-2022", "(24)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("phenomenon", "attitude"), ("trigger", "his wetsuit"), ("filter", "hope")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "grove2022_25"
     source := ⟨"grove-2022", "(25)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("phenomenon", "attitude"), ("trigger", "his wetsuit"), ("filter", "believe")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "grove2022_26"
     source := ⟨"grove-2022", "(26)"⟩
     reportedIn := none
@@ -160,6 +158,6 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2"), ("phenomenon", "attitude"), ("trigger", "his wetsuit"), ("filter", "hope")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_6, ex_7, ex_8, ex_9, ex_22, ex_23, ex_24, ex_25, ex_26]
+def all : List Datum := [ex_1, ex_2, ex_6, ex_7, ex_8, ex_9, ex_22, ex_23, ex_24, ex_25, ex_26]
 
 end Grove2022.Examples

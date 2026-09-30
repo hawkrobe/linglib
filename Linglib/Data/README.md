@@ -4,7 +4,7 @@ Three sibling directories at this level:
 
 | Subdir | Purpose | Source format | Generated Lean |
 |---|---|---|---|
-| `Examples/` | Per-paper typed examples (`LinguisticExample` schema) | JSON, one file per paper | `Examples/{AuthorYear}.lean` |
+| `Examples/` | Per-paper typed examples (`Datum` schema) | JSON, one file per paper | `Examples/{AuthorYear}.lean` |
 | `Experiments/` | Per-paper experimental results (stimulus coding, printed statistics) | JSON, one file per paper | `Experiments/{AuthorYear}.lean` |
 | `Forms/` | Per-paper CLDF word forms (`FormTable`, `ParameterTable`, custom `FormRelationTable`) | JSON, one file per paper | `Forms/{AuthorYear}.lean` |
 | `PHOIBLE/` | Cross-linguistic phonological inventories | CSV (raw under `PHOIBLE/raw/`) | `Inventories/{Lang}.lean` |
@@ -32,7 +32,7 @@ Linglib/Data/
 
 ## Datasets
 
-### Examples — typed `LinguisticExample` data
+### Examples — typed `Datum` data
 
 See [`Examples/README.md`](Examples/README.md). Per-paper JSON; the generator
 writes a module per paper that studies import. JSON (not CSV) because the

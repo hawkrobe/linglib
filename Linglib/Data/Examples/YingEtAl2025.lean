@@ -15,9 +15,7 @@ this module; declarations live in `namespace YingEtAl2025.Examples`.
 
 namespace YingEtAl2025.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "yingetal2025_1"
     source := ⟨"ying-zhi-xuan-wong-mansinghka-tenenbaum-2025", "Table 2"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("factor", "Possibility")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "yingetal2025_2"
     source := ⟨"ying-zhi-xuan-wong-mansinghka-tenenbaum-2025", "Table 2"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("factor", "Possibility")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "yingetal2025_3"
     source := ⟨"ying-zhi-xuan-wong-mansinghka-tenenbaum-2025", "Table 2"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("factor", "Probability")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "yingetal2025_4"
     source := ⟨"ying-zhi-xuan-wong-mansinghka-tenenbaum-2025", "Table 2"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("factor", "Probability")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "yingetal2025_5"
     source := ⟨"ying-zhi-xuan-wong-mansinghka-tenenbaum-2025", "Table 2"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("factor", "Compositionality")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "yingetal2025_6"
     source := ⟨"ying-zhi-xuan-wong-mansinghka-tenenbaum-2025", "Table 2"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("factor", "Compositionality")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "yingetal2025_7"
     source := ⟨"ying-zhi-xuan-wong-mansinghka-tenenbaum-2025", "Table 2"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("factor", "Knowledge")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "yingetal2025_8"
     source := ⟨"ying-zhi-xuan-wong-mansinghka-tenenbaum-2025", "Table 2"⟩
     reportedIn := none
@@ -121,6 +119,6 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("factor", "Knowledge")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8]
 
 end YingEtAl2025.Examples

@@ -15,9 +15,7 @@ this module; declarations live in `namespace PoesioEtAl2004.Examples`.
 
 namespace PoesioEtAl2004.Examples
 
-open Data.Examples
-
-def ex5 : LinguisticExample :=
+def ex5 : Datum :=
   { id := "poesioetal2004_ex5"
     source := ⟨"poesio-stevenson-eugenio-hitzeman-2004", "(5)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex5 : LinguisticExample :=
     readings := []
     paperFeatures := [("parameter", "realization"), ("section", "2.4.2")] }
 
-def ex7 : LinguisticExample :=
+def ex7 : Datum :=
   { id := "poesioetal2004_ex7"
     source := ⟨"poesio-stevenson-eugenio-hitzeman-2004", "(7)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex7 : LinguisticExample :=
     readings := []
     paperFeatures := [("parameter", "cfFilter"), ("parameter", "previousUtterance"), ("section", "2.4.2")] }
 
-def ex9 : LinguisticExample :=
+def ex9 : Datum :=
   { id := "poesioetal2004_ex9"
     source := ⟨"poesio-stevenson-eugenio-hitzeman-2004", "(9)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex9 : LinguisticExample :=
     readings := []
     paperFeatures := [("parameter", "utterance"), ("parameter", "realization"), ("section", "4.1.1")] }
 
-def ex10 : LinguisticExample :=
+def ex10 : Datum :=
   { id := "poesioetal2004_ex10"
     source := ⟨"poesio-stevenson-eugenio-hitzeman-2004", "(10)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex10 : LinguisticExample :=
     readings := []
     paperFeatures := [("parameter", "rank"), ("section", "4.1.1")] }
 
-def ex14 : LinguisticExample :=
+def ex14 : Datum :=
   { id := "poesioetal2004_ex14"
     source := ⟨"poesio-stevenson-eugenio-hitzeman-2004", "(14)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex14 : LinguisticExample :=
     readings := []
     paperFeatures := [("parameter", "previousUtterance"), ("section", "4.2.5")] }
 
-def ex16 : LinguisticExample :=
+def ex16 : Datum :=
   { id := "poesioetal2004_ex16"
     source := ⟨"poesio-stevenson-eugenio-hitzeman-2004", "(16)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex16 : LinguisticExample :=
     readings := []
     paperFeatures := [("parameter", "previousUtterance"), ("section", "4.2.5")] }
 
-def ex23 : LinguisticExample :=
+def ex23 : Datum :=
   { id := "poesioetal2004_ex23"
     source := ⟨"poesio-stevenson-eugenio-hitzeman-2004", "(23)"⟩
     reportedIn := none
@@ -108,6 +106,6 @@ def ex23 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2")] }
 
-def all : List LinguisticExample := [ex5, ex7, ex9, ex10, ex14, ex16, ex23]
+def all : List Datum := [ex5, ex7, ex9, ex10, ex14, ex16, ex23]
 
 end PoesioEtAl2004.Examples

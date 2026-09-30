@@ -15,9 +15,7 @@ this module; declarations live in `namespace SolstadBott2024.Examples`.
 
 namespace SolstadBott2024.Examples
 
-open Data.Examples
-
-def sb2024_exp1_occasion : LinguisticExample :=
+def sb2024_exp1_occasion : Datum :=
   { id := "sb2024_exp1_occasion"
     source := ⟨"solstad-bott-2024", "Exp 1, occasion verbs (16 German occasion verbs)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def sb2024_exp1_occasion : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "occasion"), ("experiment", "1"), ("verbClass", "agentEvocator"), ("triggerClass", "C"), ("projectivity", "79"), ("atIssueness", "32")] }
 
-def sb2024_exp2_occasion : LinguisticExample :=
+def sb2024_exp2_occasion : Datum :=
   { id := "sb2024_exp2_occasion"
     source := ⟨"solstad-bott-2024", "Exp 2, occasion verbs (14 of 16; loben/gratulieren excluded)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def sb2024_exp2_occasion : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "occasion"), ("experiment", "2"), ("verbClass", "agentEvocator"), ("triggerClass", "C"), ("projectivity", "69"), ("atIssueness", "35")] }
 
-def sb2024_exp2_stimulusExperiencer : LinguisticExample :=
+def sb2024_exp2_stimulusExperiencer : Datum :=
   { id := "sb2024_exp2_stimulusExperiencer"
     source := ⟨"solstad-bott-2024", "Exp 2, stimulus-experiencer psych verbs (9 verbs)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def sb2024_exp2_stimulusExperiencer : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "stimulusExperiencer"), ("experiment", "2"), ("verbClass", "stimExp"), ("triggerClass", "C"), ("projectivity", "54"), ("atIssueness", "52")] }
 
-def sb2024_exp2_experiencerStimulus : LinguisticExample :=
+def sb2024_exp2_experiencerStimulus : Datum :=
   { id := "sb2024_exp2_experiencerStimulus"
     source := ⟨"solstad-bott-2024", "Exp 2, experiencer-stimulus psych verbs (9 verbs)"⟩
     reportedIn := none
@@ -69,6 +67,6 @@ def sb2024_exp2_experiencerStimulus : LinguisticExample :=
     readings := []
     paperFeatures := [("expression", "experiencerStimulus"), ("experiment", "2"), ("verbClass", "expStim"), ("triggerClass", "C"), ("projectivity", "52"), ("atIssueness", "46")] }
 
-def all : List LinguisticExample := [sb2024_exp1_occasion, sb2024_exp2_occasion, sb2024_exp2_stimulusExperiencer, sb2024_exp2_experiencerStimulus]
+def all : List Datum := [sb2024_exp1_occasion, sb2024_exp2_occasion, sb2024_exp2_stimulusExperiencer, sb2024_exp2_experiencerStimulus]
 
 end SolstadBott2024.Examples

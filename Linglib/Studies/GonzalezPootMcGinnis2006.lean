@@ -48,7 +48,7 @@ a row's overt suffixes.
 
 namespace GonzalezPootMcGinnis2006
 
-open DistributedMorphology Data.Examples
+open DistributedMorphology
 open Minimalist (FeatureVal)
 open scoped DistributedMorphology.VocabularyItem
 
@@ -132,7 +132,7 @@ structure Row where
   judgment : Judgment
   deriving DecidableEq, Repr
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let person := [("1", Person.first), ("2", .second), ("3", .third)]
   let plural := [("sg", false), ("pl", true)]
   let subj ← ex.parse? "subjPerson" person
@@ -147,9 +147,9 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let s₂ ← ex.feature? "suffix2"
   pure ⟨(subj, subjPl), obj, aux, verbPrefix, [s₁, s₂].filter (· ≠ ""), ex.judgment⟩
 
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Local Fission, (19) to (24): a row is grammatical iff its overt verbal suffixes are what
 strict scansion of (27) inserts, *-éːʃ* before *-oʔob* in both (20) and (22) and *-oʔob* once in

@@ -15,9 +15,7 @@ this module; declarations live in `namespace Musan1995.Examples`.
 
 namespace Musan1995.Examples
 
-open Data.Examples
-
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "musan1995_ex2a"
     source := ⟨"musan-1995", "(2a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex2a : LinguisticExample :=
     readings := [("no-lifetime-implicature (stage-level)", .acceptable)]
     paperFeatures := [] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "musan1995_ex2b"
     source := ⟨"musan-1995", "(2b)"⟩
     reportedIn := none
@@ -43,6 +41,6 @@ def ex2b : LinguisticExample :=
     readings := [("lifetime-implicature (Gregory is dead)", .acceptable)]
     paperFeatures := [] }
 
-def all : List LinguisticExample := [ex2a, ex2b]
+def all : List Datum := [ex2a, ex2b]
 
 end Musan1995.Examples

@@ -15,9 +15,7 @@ this module; declarations live in `namespace Marantz1991.Examples`.
 
 namespace Marantz1991.Examples
 
-open Data.Examples
-
-def m1991_1a : LinguisticExample :=
+def m1991_1a : Datum :=
   { id := "m1991_1a"
     source := ⟨"marantz-1991", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def m1991_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unergative"), ("inflection", "I"), ("subject", "NOM")] }
 
-def m1991_1b : LinguisticExample :=
+def m1991_1b : Datum :=
   { id := "m1991_1b"
     source := ⟨"marantz-1991", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def m1991_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unergative"), ("inflection", "II"), ("subject", "ERG")] }
 
-def m1991_1c : LinguisticExample :=
+def m1991_1c : Datum :=
   { id := "m1991_1c"
     source := ⟨"marantz-1991", "(1c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def m1991_1c : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("inflection", "I"), ("subject", "NOM"), ("object", "DAT")] }
 
-def m1991_1d : LinguisticExample :=
+def m1991_1d : Datum :=
   { id := "m1991_1d"
     source := ⟨"marantz-1991", "(1d)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def m1991_1d : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("inflection", "II"), ("subject", "ERG"), ("object", "NOM")] }
 
-def m1991_2a : LinguisticExample :=
+def m1991_2a : Datum :=
   { id := "m1991_2a"
     source := ⟨"marantz-1991", "(2a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def m1991_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("inflection", "I"), ("subject", "NOM")] }
 
-def m1991_2b : LinguisticExample :=
+def m1991_2b : Datum :=
   { id := "m1991_2b"
     source := ⟨"marantz-1991", "(2b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def m1991_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("inflection", "II"), ("subject", "NOM")] }
 
-def m1991_3a : LinguisticExample :=
+def m1991_3a : Datum :=
   { id := "m1991_3a"
     source := ⟨"marantz-1991", "(3a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def m1991_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "psych"), ("inflection", "I"), ("subject", "DAT"), ("object", "NOM")] }
 
-def m1991_3b : LinguisticExample :=
+def m1991_3b : Datum :=
   { id := "m1991_3b"
     source := ⟨"marantz-1991", "(3b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def m1991_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "psych"), ("inflection", "II"), ("subject", "DAT"), ("object", "NOM")] }
 
-def m1991_4a : LinguisticExample :=
+def m1991_4a : Datum :=
   { id := "m1991_4a"
     source := ⟨"marantz-1991", "(4a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def m1991_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("inflection", "perfect"), ("subject", "NOM")] }
 
-def m1991_4a_erg : LinguisticExample :=
+def m1991_4a_erg : Datum :=
   { id := "m1991_4a_erg"
     source := ⟨"marantz-1991", "(4a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def m1991_4a_erg : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("inflection", "perfect"), ("subject", "ERG")] }
 
-def m1991_4b : LinguisticExample :=
+def m1991_4b : Datum :=
   { id := "m1991_4b"
     source := ⟨"marantz-1991", "(4b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def m1991_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unergative"), ("inflection", "perfect"), ("subject", "NOM")] }
 
-def m1991_4c : LinguisticExample :=
+def m1991_4c : Datum :=
   { id := "m1991_4c"
     source := ⟨"marantz-1991", "(4c)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def m1991_4c : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unergative"), ("inflection", "perfect"), ("subject", "ERG")] }
 
-def m1991_4d : LinguisticExample :=
+def m1991_4d : Datum :=
   { id := "m1991_4d"
     source := ⟨"marantz-1991", "(4d)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def m1991_4d : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("inflection", "perfect"), ("subject", "ERG"), ("object", "NOM")] }
 
-def m1991_5a : LinguisticExample :=
+def m1991_5a : Datum :=
   { id := "m1991_5a"
     source := ⟨"marantz-1991", "(5a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def m1991_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("subject", "ABS")] }
 
-def m1991_5b : LinguisticExample :=
+def m1991_5b : Datum :=
   { id := "m1991_5b"
     source := ⟨"marantz-1991", "(5b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def m1991_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unergative"), ("subject", "ERG")] }
 
-def m1991_5c : LinguisticExample :=
+def m1991_5c : Datum :=
   { id := "m1991_5c"
     source := ⟨"marantz-1991", "(5c)"⟩
     reportedIn := none
@@ -225,6 +223,6 @@ def m1991_5c : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("subject", "ERG"), ("object", "ABS")] }
 
-def all : List LinguisticExample := [m1991_1a, m1991_1b, m1991_1c, m1991_1d, m1991_2a, m1991_2b, m1991_3a, m1991_3b, m1991_4a, m1991_4a_erg, m1991_4b, m1991_4c, m1991_4d, m1991_5a, m1991_5b, m1991_5c]
+def all : List Datum := [m1991_1a, m1991_1b, m1991_1c, m1991_1d, m1991_2a, m1991_2b, m1991_3a, m1991_3b, m1991_4a, m1991_4a_erg, m1991_4b, m1991_4c, m1991_4d, m1991_5a, m1991_5b, m1991_5c]
 
 end Marantz1991.Examples

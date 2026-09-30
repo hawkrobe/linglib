@@ -70,7 +70,7 @@ of specificity descends the order on queries (`gradient_antitone`).
 
 namespace FrancikClark1985
 
-open Data.Examples Discourse.SpeechAct
+open Discourse.SpeechAct
 
 /-- What a request asks about: nothing, one preparatory condition, or anything that could stand
 in the way (*Can you tell me?*, *Could you tell me?*). -/
@@ -220,13 +220,13 @@ structure Row where
   gradient : Bool
   deriving DecidableEq
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let q ← ex.parse? "query" queries
   let o ← ex.parse? "obstacle" conditions
   let a ← ex.parse? "appropriate" [("yes", true), ("no", false)]
   pure ⟨q, o, a, decide (ex.feature? "gradient" = some "yes")⟩
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The requests the paper finds appropriate are those that overcome the obstacle. -/
 theorem rows_predicted :
@@ -245,13 +245,13 @@ structure TimeForm where
   low : ℕ
   deriving DecidableEq
 
-def TimeForm.ofExample (ex : LinguisticExample) : Option TimeForm := do
+def TimeForm.ofDatum (ex : Datum) : Option TimeForm := do
   let q ← ex.parse? "query" queries
   let h ← ex.nat? "producedHigh"
   let l ← ex.nat? "producedLow"
   pure ⟨q, h, l⟩
 
-def timeForms : List TimeForm := Examples.all.filterMap TimeForm.ofExample
+def timeForms : List TimeForm := Examples.all.filterMap TimeForm.ofDatum
 
 /-- Every form produced without the watch overcomes the doubt that the student can find out the
 time; the direct *What time is it?* was produced only with it. -/
@@ -268,14 +268,14 @@ structure Rating where
   low : ℕ
   deriving DecidableEq
 
-def Rating.ofExample (ex : LinguisticExample) : Option Rating := do
+def Rating.ofDatum (ex : Datum) : Option Rating := do
   let q ← ex.parse? "query" queries
   let o ← ex.parse? "obstacle" conditions
   let h ← ex.nat? "ratingHigh"
   let l ← ex.nat? "ratingLow"
   pure ⟨q, o, h, l⟩
 
-def ratings : List Rating := Examples.all.filterMap Rating.ofExample
+def ratings : List Rating := Examples.all.filterMap Rating.ofDatum
 
 /-- Each form is rated higher, at either level, in the scenario type whose obstacle it overcomes
 than in those whose obstacle it does not. -/

@@ -15,9 +15,7 @@ this module; declarations live in `namespace FillmoreKayOConnor1988.Examples`.
 
 namespace FillmoreKayOConnor1988.Examples
 
-open Data.Examples
-
-def ex15b : LinguisticExample :=
+def ex15b : Datum :=
   { id := "fillmorekayoconnor1988_ex15b"
     source := ⟨"fillmore-kay-oconnor-1988", "(15b)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex15b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex16b : LinguisticExample :=
+def ex16b : Datum :=
   { id := "fillmorekayoconnor1988_ex16b"
     source := ⟨"fillmore-kay-oconnor-1988", "(16b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex16b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex21 : LinguisticExample :=
+def ex21 : Datum :=
   { id := "fillmorekayoconnor1988_ex21"
     source := ⟨"fillmore-kay-oconnor-1988", "(21)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex21 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunction", "letAlone"), ("polarity", "negative"), ("a", "colonel"), ("b", "general")] }
 
-def ex31a : LinguisticExample :=
+def ex31a : Datum :=
   { id := "fillmorekayoconnor1988_ex31a"
     source := ⟨"fillmore-kay-oconnor-1988", "(31a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex31a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex31b : LinguisticExample :=
+def ex31b : Datum :=
   { id := "fillmorekayoconnor1988_ex31b"
     source := ⟨"fillmore-kay-oconnor-1988", "(31b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex31b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex31c : LinguisticExample :=
+def ex31c : Datum :=
   { id := "fillmorekayoconnor1988_ex31c"
     source := ⟨"fillmore-kay-oconnor-1988", "(31c)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex31c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex31d : LinguisticExample :=
+def ex31d : Datum :=
   { id := "fillmorekayoconnor1988_ex31d"
     source := ⟨"fillmore-kay-oconnor-1988", "(31d)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex31d : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex32a : LinguisticExample :=
+def ex32a : Datum :=
   { id := "fillmorekayoconnor1988_ex32a"
     source := ⟨"fillmore-kay-oconnor-1988", "(32a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex32a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex32b : LinguisticExample :=
+def ex32b : Datum :=
   { id := "fillmorekayoconnor1988_ex32b"
     source := ⟨"fillmore-kay-oconnor-1988", "(32b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex32b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex33 : LinguisticExample :=
+def ex33 : Datum :=
   { id := "fillmorekayoconnor1988_ex33"
     source := ⟨"fillmore-kay-oconnor-1988", "(33)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex33 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex34 : LinguisticExample :=
+def ex34 : Datum :=
   { id := "fillmorekayoconnor1988_ex34"
     source := ⟨"fillmore-kay-oconnor-1988", "(34)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex34 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex39 : LinguisticExample :=
+def ex39 : Datum :=
   { id := "fillmorekayoconnor1988_ex39"
     source := ⟨"fillmore-kay-oconnor-1988", "(39)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex39 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex40 : LinguisticExample :=
+def ex40 : Datum :=
   { id := "fillmorekayoconnor1988_ex40"
     source := ⟨"fillmore-kay-oconnor-1988", "(40)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex40 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex41 : LinguisticExample :=
+def ex41 : Datum :=
   { id := "fillmorekayoconnor1988_ex41"
     source := ⟨"fillmore-kay-oconnor-1988", "(41)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex41 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex62 : LinguisticExample :=
+def ex62 : Datum :=
   { id := "fillmorekayoconnor1988_ex62"
     source := ⟨"fillmore-kay-oconnor-1988", "(62)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex62 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex63 : LinguisticExample :=
+def ex63 : Datum :=
   { id := "fillmorekayoconnor1988_ex63"
     source := ⟨"fillmore-kay-oconnor-1988", "(63)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex63 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex64 : LinguisticExample :=
+def ex64 : Datum :=
   { id := "fillmorekayoconnor1988_ex64"
     source := ⟨"fillmore-kay-oconnor-1988", "(64)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex64 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex65 : LinguisticExample :=
+def ex65 : Datum :=
   { id := "fillmorekayoconnor1988_ex65"
     source := ⟨"fillmore-kay-oconnor-1988", "(65)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex65 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex66 : LinguisticExample :=
+def ex66 : Datum :=
   { id := "fillmorekayoconnor1988_ex66"
     source := ⟨"fillmore-kay-oconnor-1988", "(66)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex66 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex67 : LinguisticExample :=
+def ex67 : Datum :=
   { id := "fillmorekayoconnor1988_ex67"
     source := ⟨"fillmore-kay-oconnor-1988", "(67)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex67 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex68 : LinguisticExample :=
+def ex68 : Datum :=
   { id := "fillmorekayoconnor1988_ex68"
     source := ⟨"fillmore-kay-oconnor-1988", "(68)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex68 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex69 : LinguisticExample :=
+def ex69 : Datum :=
   { id := "fillmorekayoconnor1988_ex69"
     source := ⟨"fillmore-kay-oconnor-1988", "(69)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex69 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex70 : LinguisticExample :=
+def ex70 : Datum :=
   { id := "fillmorekayoconnor1988_ex70"
     source := ⟨"fillmore-kay-oconnor-1988", "(70)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex70 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex71 : LinguisticExample :=
+def ex71 : Datum :=
   { id := "fillmorekayoconnor1988_ex71"
     source := ⟨"fillmore-kay-oconnor-1988", "(71)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex71 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex72 : LinguisticExample :=
+def ex72 : Datum :=
   { id := "fillmorekayoconnor1988_ex72"
     source := ⟨"fillmore-kay-oconnor-1988", "(72)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex72 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex104 : LinguisticExample :=
+def ex104 : Datum :=
   { id := "fillmorekayoconnor1988_ex104"
     source := ⟨"fillmore-kay-oconnor-1988", "(104)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex104 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex106 : LinguisticExample :=
+def ex106 : Datum :=
   { id := "fillmorekayoconnor1988_ex106"
     source := ⟨"fillmore-kay-oconnor-1988", "(106)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex106 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunction", "letAlone"), ("polarity", "negative"), ("a", "secondLieutenant"), ("b", "colonel")] }
 
-def ex107 : LinguisticExample :=
+def ex107 : Datum :=
   { id := "fillmorekayoconnor1988_ex107"
     source := ⟨"fillmore-kay-oconnor-1988", "(107)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex107 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunction", "letAlone"), ("polarity", "negative"), ("a", "secondLieutenant"), ("b", "secondLieutenant")] }
 
-def ex113 : LinguisticExample :=
+def ex113 : Datum :=
   { id := "fillmorekayoconnor1988_ex113"
     source := ⟨"fillmore-kay-oconnor-1988", "(113)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex113 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex114 : LinguisticExample :=
+def ex114 : Datum :=
   { id := "fillmorekayoconnor1988_ex114"
     source := ⟨"fillmore-kay-oconnor-1988", "(114)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex114 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex115 : LinguisticExample :=
+def ex115 : Datum :=
   { id := "fillmorekayoconnor1988_ex115"
     source := ⟨"fillmore-kay-oconnor-1988", "(115)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex115 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex116 : LinguisticExample :=
+def ex116 : Datum :=
   { id := "fillmorekayoconnor1988_ex116"
     source := ⟨"fillmore-kay-oconnor-1988", "(116)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex116 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex117 : LinguisticExample :=
+def ex117 : Datum :=
   { id := "fillmorekayoconnor1988_ex117"
     source := ⟨"fillmore-kay-oconnor-1988", "(117)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex117 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex121 : LinguisticExample :=
+def ex121 : Datum :=
   { id := "fillmorekayoconnor1988_ex121"
     source := ⟨"fillmore-kay-oconnor-1988", "(121)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex121 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunction", "letAlone"), ("polarity", "negative"), ("wealth", "poor rich"), ("task", "wash wax"), ("vehicle", "car truck"), ("fee", "$2 $1")] }
 
-def ex122a : LinguisticExample :=
+def ex122a : Datum :=
   { id := "fillmorekayoconnor1988_ex122a"
     source := ⟨"fillmore-kay-oconnor-1988", "(122a)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex122a : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunction", "letAlone"), ("polarity", "negative"), ("wealth", "rich poor"), ("task", "wash wax"), ("vehicle", "car truck"), ("fee", "$2 $1")] }
 
-def ex122b : LinguisticExample :=
+def ex122b : Datum :=
   { id := "fillmorekayoconnor1988_ex122b"
     source := ⟨"fillmore-kay-oconnor-1988", "(122b)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex122b : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunction", "letAlone"), ("polarity", "negative"), ("wealth", "poor rich"), ("task", "wax wash"), ("vehicle", "car truck"), ("fee", "$2 $1")] }
 
-def ex122c : LinguisticExample :=
+def ex122c : Datum :=
   { id := "fillmorekayoconnor1988_ex122c"
     source := ⟨"fillmore-kay-oconnor-1988", "(122c)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex122c : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunction", "letAlone"), ("polarity", "negative"), ("wealth", "poor rich"), ("task", "wash wax"), ("vehicle", "car truck"), ("fee", "$1 $2")] }
 
-def ex130 : LinguisticExample :=
+def ex130 : Datum :=
   { id := "fillmorekayoconnor1988_ex130"
     source := ⟨"fillmore-kay-oconnor-1988", "(130)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex130 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunction", "inFact"), ("polarity", "negative"), ("a", "general"), ("b", "colonel")] }
 
-def ex131 : LinguisticExample :=
+def ex131 : Datum :=
   { id := "fillmorekayoconnor1988_ex131"
     source := ⟨"fillmore-kay-oconnor-1988", "(131)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex131 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunction", "inFact"), ("polarity", "positive"), ("a", "colonel"), ("b", "general")] }
 
-def ex132 : LinguisticExample :=
+def ex132 : Datum :=
   { id := "fillmorekayoconnor1988_ex132"
     source := ⟨"fillmore-kay-oconnor-1988", "(132)"⟩
     reportedIn := none
@@ -537,6 +535,6 @@ def ex132 : LinguisticExample :=
     readings := []
     paperFeatures := [("conjunction", "ifNot"), ("polarity", "positive"), ("a", "colonel"), ("b", "general")] }
 
-def all : List LinguisticExample := [ex15b, ex16b, ex21, ex31a, ex31b, ex31c, ex31d, ex32a, ex32b, ex33, ex34, ex39, ex40, ex41, ex62, ex63, ex64, ex65, ex66, ex67, ex68, ex69, ex70, ex71, ex72, ex104, ex106, ex107, ex113, ex114, ex115, ex116, ex117, ex121, ex122a, ex122b, ex122c, ex130, ex131, ex132]
+def all : List Datum := [ex15b, ex16b, ex21, ex31a, ex31b, ex31c, ex31d, ex32a, ex32b, ex33, ex34, ex39, ex40, ex41, ex62, ex63, ex64, ex65, ex66, ex67, ex68, ex69, ex70, ex71, ex72, ex104, ex106, ex107, ex113, ex114, ex115, ex116, ex117, ex121, ex122a, ex122b, ex122c, ex130, ex131, ex132]
 
 end FillmoreKayOConnor1988.Examples

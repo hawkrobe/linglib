@@ -44,7 +44,7 @@ into the binyan, where a root-derived verb associates bare consonants to the tem
 
 namespace Arad2005
 
-open Morphology DistributedMorphology Data.Examples
+open Morphology DistributedMorphology
 
 /-! ### Binyanim as the spell-out of v and Voice (§2.5) -/
 

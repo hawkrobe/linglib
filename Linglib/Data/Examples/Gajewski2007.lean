@@ -15,9 +15,7 @@ this module; declarations live in `namespace Gajewski2007.Examples`.
 
 namespace Gajewski2007.Examples
 
-open Data.Examples
-
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "gajewski2007_12a"
     source := ⟨"gajewski-2007", "(12a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "positive"), ("npi", "until")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "gajewski2007_12b"
     source := ⟨"gajewski-2007", "(12b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "negation"), ("npi", "until")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "gajewski2007_13a"
     source := ⟨"gajewski-2007", "(13a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "positive"), ("npi", "in years")] }
 
-def ex_13b : LinguisticExample :=
+def ex_13b : Datum :=
   { id := "gajewski2007_13b"
     source := ⟨"gajewski-2007", "(13b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_13b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "negation"), ("npi", "in years")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "gajewski2007_14a"
     source := ⟨"gajewski-2007", "(14a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notEvery"), ("npi", "until")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "gajewski2007_14b"
     source := ⟨"gajewski-2007", "(14b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notEvery"), ("npi", "in years")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "gajewski2007_15a"
     source := ⟨"gajewski-2007", "(15a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notThink"), ("npi", "until")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "gajewski2007_15b"
     source := ⟨"gajewski-2007", "(15b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notThink"), ("npi", "in years")] }
 
-def ex_54a : LinguisticExample :=
+def ex_54a : Datum :=
   { id := "gajewski2007_54a"
     source := ⟨"gajewski-2007", "(54a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_54a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notSome"), ("npi", "in years")] }
 
-def ex_54b : LinguisticExample :=
+def ex_54b : Datum :=
   { id := "gajewski2007_54b"
     source := ⟨"gajewski-2007", "(54b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_54b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notEvery"), ("npi", "in years")] }
 
-def ex_57 : LinguisticExample :=
+def ex_57 : Datum :=
   { id := "gajewski2007_57"
     source := ⟨"gajewski-2007", "(57)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_57 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notThink"), ("npi", "until")] }
 
-def ex_58a : LinguisticExample :=
+def ex_58a : Datum :=
   { id := "gajewski2007_58a"
     source := ⟨"gajewski-2007", "(58a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_58a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notThink"), ("npi", "in years")] }
 
-def ex_58b : LinguisticExample :=
+def ex_58b : Datum :=
   { id := "gajewski2007_58b"
     source := ⟨"gajewski-2007", "(58b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_58b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notKnow"), ("npi", "in years")] }
 
-def ex_68a : LinguisticExample :=
+def ex_68a : Datum :=
   { id := "gajewski2007_68a"
     source := ⟨"gajewski-2007", "(68a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_68a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notEvery"), ("npi", "until")] }
 
-def ex_68b : LinguisticExample :=
+def ex_68b : Datum :=
   { id := "gajewski2007_68b"
     source := ⟨"gajewski-2007", "(68b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_68b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notSome"), ("npi", "until")] }
 
-def ex_69a : LinguisticExample :=
+def ex_69a : Datum :=
   { id := "gajewski2007_69a"
     source := ⟨"gajewski-2007", "(69a)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_69a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notEvery"), ("npi", "in years")] }
 
-def ex_69b : LinguisticExample :=
+def ex_69b : Datum :=
   { id := "gajewski2007_69b"
     source := ⟨"gajewski-2007", "(69b)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_69b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notSome"), ("npi", "in years")] }
 
-def ex_71a : LinguisticExample :=
+def ex_71a : Datum :=
   { id := "gajewski2007_71a"
     source := ⟨"gajewski-2007", "(71a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_71a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notSome"), ("npi", "in years"), ("clause", "nonfinite")] }
 
-def ex_71b : LinguisticExample :=
+def ex_71b : Datum :=
   { id := "gajewski2007_71b"
     source := ⟨"gajewski-2007", "(71b)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_71b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notSome"), ("npi", "in years"), ("clause", "nonfinite")] }
 
-def ex_72a : LinguisticExample :=
+def ex_72a : Datum :=
   { id := "gajewski2007_72a"
     source := ⟨"gajewski-2007", "(72a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_72a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notEvery"), ("npi", "in years"), ("clause", "nonfinite")] }
 
-def ex_72b : LinguisticExample :=
+def ex_72b : Datum :=
   { id := "gajewski2007_72b"
     source := ⟨"gajewski-2007", "(72b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_72b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notEvery"), ("npi", "in years"), ("clause", "nonfinite")] }
 
-def ex_73 : LinguisticExample :=
+def ex_73 : Datum :=
   { id := "gajewski2007_73"
     source := ⟨"gajewski-2007", "(73)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_73 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notEvery"), ("npi", "in years"), ("clause", "finite")] }
 
-def ex_74 : LinguisticExample :=
+def ex_74 : Datum :=
   { id := "gajewski2007_74"
     source := ⟨"gajewski-2007", "(74)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_74 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notSome"), ("npi", "in years"), ("clause", "finite")] }
 
-def ex_83 : LinguisticExample :=
+def ex_83 : Datum :=
   { id := "gajewski2007_83"
     source := ⟨"gajewski-2007", "(83)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_83 : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "noOneThinks"), ("npi", "until")] }
 
-def ex_97a : LinguisticExample :=
+def ex_97a : Datum :=
   { id := "gajewski2007_97a"
     source := ⟨"gajewski-2007", "(97a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_97a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notThinkWant"), ("npi", "until")] }
 
-def ex_97b : LinguisticExample :=
+def ex_97b : Datum :=
   { id := "gajewski2007_97b"
     source := ⟨"gajewski-2007", "(97b)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_97b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notWantThink"), ("npi", "until")] }
 
-def ex_98a : LinguisticExample :=
+def ex_98a : Datum :=
   { id := "gajewski2007_98a"
     source := ⟨"gajewski-2007", "(98a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_98a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notThinkWant"), ("npi", "until")] }
 
-def ex_98b : LinguisticExample :=
+def ex_98b : Datum :=
   { id := "gajewski2007_98b"
     source := ⟨"gajewski-2007", "(98b)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_98b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notWantThink"), ("npi", "until")] }
 
-def ex_99a : LinguisticExample :=
+def ex_99a : Datum :=
   { id := "gajewski2007_99a"
     source := ⟨"gajewski-2007", "(99a)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_99a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notThinkWant"), ("npi", "until")] }
 
-def ex_99b : LinguisticExample :=
+def ex_99b : Datum :=
   { id := "gajewski2007_99b"
     source := ⟨"gajewski-2007", "(99b)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_99b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notWantThink"), ("npi", "until")] }
 
-def ex_123a : LinguisticExample :=
+def ex_123a : Datum :=
   { id := "gajewski2007_123a"
     source := ⟨"gajewski-2007", "(123a)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_123a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "only"), ("npi", "until")] }
 
-def ex_123b : LinguisticExample :=
+def ex_123b : Datum :=
   { id := "gajewski2007_123b"
     source := ⟨"gajewski-2007", "(123b)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_123b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "only"), ("npi", "in years")] }
 
-def ex_123c : LinguisticExample :=
+def ex_123c : Datum :=
   { id := "gajewski2007_123c"
     source := ⟨"gajewski-2007", "(123c)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_123c : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "only"), ("npi", "either")] }
 
-def ex_126a : LinguisticExample :=
+def ex_126a : Datum :=
   { id := "gajewski2007_126a"
     source := ⟨"gajewski-2007", "(126)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_126a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "adversative"), ("npi", "until")] }
 
-def ex_126b : LinguisticExample :=
+def ex_126b : Datum :=
   { id := "gajewski2007_126b"
     source := ⟨"gajewski-2007", "(126)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_126b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "adversative"), ("npi", "in years")] }
 
-def ex_127a : LinguisticExample :=
+def ex_127a : Datum :=
   { id := "gajewski2007_127a"
     source := ⟨"gajewski-2007", "(127)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_127a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "conditional"), ("npi", "until")] }
 
-def ex_127b : LinguisticExample :=
+def ex_127b : Datum :=
   { id := "gajewski2007_127b"
     source := ⟨"gajewski-2007", "(127)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_127b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "conditional"), ("npi", "in years")] }
 
-def ex_132a : LinguisticExample :=
+def ex_132a : Datum :=
   { id := "gajewski2007_132a"
     source := ⟨"gajewski-2007", "(132a)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_132a : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "superlative"), ("npi", "in years")] }
 
-def ex_132b : LinguisticExample :=
+def ex_132b : Datum :=
   { id := "gajewski2007_132b"
     source := ⟨"gajewski-2007", "(132b)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_132b : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "superlative"), ("npi", "until")] }
 
-def fn7ii : LinguisticExample :=
+def fn7ii : Datum :=
   { id := "gajewski2007_fn7ii"
     source := ⟨"gajewski-2007", "fn. 7 (ii)"⟩
     reportedIn := none
@@ -537,6 +535,6 @@ def fn7ii : LinguisticExample :=
     readings := []
     paperFeatures := [("environment", "notThinkStressed"), ("npi", "in years")] }
 
-def all : List LinguisticExample := [ex_12a, ex_12b, ex_13a, ex_13b, ex_14a, ex_14b, ex_15a, ex_15b, ex_54a, ex_54b, ex_57, ex_58a, ex_58b, ex_68a, ex_68b, ex_69a, ex_69b, ex_71a, ex_71b, ex_72a, ex_72b, ex_73, ex_74, ex_83, ex_97a, ex_97b, ex_98a, ex_98b, ex_99a, ex_99b, ex_123a, ex_123b, ex_123c, ex_126a, ex_126b, ex_127a, ex_127b, ex_132a, ex_132b, fn7ii]
+def all : List Datum := [ex_12a, ex_12b, ex_13a, ex_13b, ex_14a, ex_14b, ex_15a, ex_15b, ex_54a, ex_54b, ex_57, ex_58a, ex_58b, ex_68a, ex_68b, ex_69a, ex_69b, ex_71a, ex_71b, ex_72a, ex_72b, ex_73, ex_74, ex_83, ex_97a, ex_97b, ex_98a, ex_98b, ex_99a, ex_99b, ex_123a, ex_123b, ex_123c, ex_126a, ex_126b, ex_127a, ex_127b, ex_132a, ex_132b, fn7ii]
 
 end Gajewski2007.Examples

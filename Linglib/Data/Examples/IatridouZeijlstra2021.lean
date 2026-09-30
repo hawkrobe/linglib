@@ -15,9 +15,7 @@ this module; declarations live in `namespace IatridouZeijlstra2021.Examples`.
 
 namespace IatridouZeijlstra2021.Examples
 
-open Data.Examples
-
-def iz2021_s10a : LinguisticExample :=
+def iz2021_s10a : Datum :=
   { id := "iz2021_s10a"
     source := ⟨"iatridou-zeijlstra-2021", "(10a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def iz2021_s10a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("adverbial", "in the last 5 years, LB adverbial"), ("ai", "cancelable")] }
 
-def iz2021_s10b : LinguisticExample :=
+def iz2021_s10b : Datum :=
   { id := "iz2021_s10b"
     source := ⟨"iatridou-zeijlstra-2021", "(10b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def iz2021_s10b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("adverbial", "since 2015, LB adverbial"), ("ai", "cancelable")] }
 
-def iz2021_s11b : LinguisticExample :=
+def iz2021_s11b : Datum :=
   { id := "iz2021_s11b"
     source := ⟨"iatridou-zeijlstra-2021", "(11B)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def iz2021_s11b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("ai", "canceled")] }
 
-def iz2021_s12 : LinguisticExample :=
+def iz2021_s12 : Datum :=
   { id := "iz2021_s12"
     source := ⟨"iatridou-zeijlstra-2021", "(12)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def iz2021_s12 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("ai", "canceled")] }
 
-def iz2021_s22a : LinguisticExample :=
+def iz2021_s22a : Datum :=
   { id := "iz2021_s22a"
     source := ⟨"iatridou-zeijlstra-2021", "(22a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def iz2021_s22a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("adverbial", "in years"), ("ai", "not cancelable")] }
 
-def iz2021_s22b : LinguisticExample :=
+def iz2021_s22b : Datum :=
   { id := "iz2021_s22b"
     source := ⟨"iatridou-zeijlstra-2021", "(22b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def iz2021_s22b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("adverbial", "in years"), ("ai", "not cancelable")] }
 
-def iz2021_s23 : LinguisticExample :=
+def iz2021_s23 : Datum :=
   { id := "iz2021_s23"
     source := ⟨"iatridou-zeijlstra-2021", "(23)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def iz2021_s23 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("ai", "the last seizure need not be at the LB")] }
 
-def iz2021_s24a : LinguisticExample :=
+def iz2021_s24a : Datum :=
   { id := "iz2021_s24a"
     source := ⟨"iatridou-zeijlstra-2021", "(24a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def iz2021_s24a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("truth", "true")] }
 
-def iz2021_s24c : LinguisticExample :=
+def iz2021_s24c : Datum :=
   { id := "iz2021_s24c"
     source := ⟨"iatridou-zeijlstra-2021", "(24c)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def iz2021_s24c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("truth", "false"), ("ai", "at the LB: conveys that Fred drove around the ladder accident")] }
 
-def iz2021_s25 : LinguisticExample :=
+def iz2021_s25 : Datum :=
   { id := "iz2021_s25"
     source := ⟨"iatridou-zeijlstra-2021", "(25)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def iz2021_s25 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("pts", "exceeds the subject's lifetime")] }
 
-def iz2021_s26 : LinguisticExample :=
+def iz2021_s26 : Datum :=
   { id := "iz2021_s26"
     source := ⟨"iatridou-zeijlstra-2021", "(26)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def iz2021_s26 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("ai", "not cancelable")] }
 
-def iz2021_s27a : LinguisticExample :=
+def iz2021_s27a : Datum :=
   { id := "iz2021_s27a"
     source := ⟨"iatridou-zeijlstra-2021", "(27a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def iz2021_s27a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("reading", "modal subordination, (29a)")] }
 
-def iz2021_s31a : LinguisticExample :=
+def iz2021_s31a : Datum :=
   { id := "iz2021_s31a"
     source := ⟨"iatridou-zeijlstra-2021", "(31a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def iz2021_s31a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("bei", "PTS longer than expected")] }
 
-def iz2021_s31b : LinguisticExample :=
+def iz2021_s31b : Datum :=
   { id := "iz2021_s31b"
     source := ⟨"iatridou-zeijlstra-2021", "(31b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def iz2021_s31b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("bei", "PTS shorter than expected")] }
 
-def iz2021_s32b : LinguisticExample :=
+def iz2021_s32b : Datum :=
   { id := "iz2021_s32b"
     source := ⟨"iatridou-zeijlstra-2021", "(32b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def iz2021_s32b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("bei", "violated")] }
 
-def iz2021_s32c : LinguisticExample :=
+def iz2021_s32c : Datum :=
   { id := "iz2021_s32c"
     source := ⟨"iatridou-zeijlstra-2021", "(32c)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def iz2021_s32c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("bei", "satisfied")] }
 
-def iz2021_s33b : LinguisticExample :=
+def iz2021_s33b : Datum :=
   { id := "iz2021_s33b"
     source := ⟨"iatridou-zeijlstra-2021", "(33b)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def iz2021_s33b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("bei", "violated")] }
 
-def iz2021_s36b : LinguisticExample :=
+def iz2021_s36b : Datum :=
   { id := "iz2021_s36b"
     source := ⟨"iatridou-zeijlstra-2021", "(36b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def iz2021_s36b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("rb", "before the utterance time, past perfect")] }
 
-def iz2021_s37 : LinguisticExample :=
+def iz2021_s37 : Datum :=
   { id := "iz2021_s37"
     source := ⟨"iatridou-zeijlstra-2021", "(37)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def iz2021_s37 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("adverbial", "in years is only a PTS adverbial")] }
 
-def iz2021_s40b : LinguisticExample :=
+def iz2021_s40b : Datum :=
   { id := "iz2021_s40b"
     source := ⟨"iatridou-zeijlstra-2021", "(40b)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def iz2021_s40b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("npi", "unlicensed")] }
 
-def iz2021_s40c : LinguisticExample :=
+def iz2021_s40c : Datum :=
   { id := "iz2021_s40c"
     source := ⟨"iatridou-zeijlstra-2021", "(40c)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def iz2021_s40c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("npi", "antiadditive licensor")] }
 
-def iz2021_s41a : LinguisticExample :=
+def iz2021_s41a : Datum :=
   { id := "iz2021_s41a"
     source := ⟨"iatridou-zeijlstra-2021", "(41a)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def iz2021_s41a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("npi", "strong: not licensed by few")] }
 
-def iz2021_s42 : LinguisticExample :=
+def iz2021_s42 : Datum :=
   { id := "iz2021_s42"
     source := ⟨"iatridou-zeijlstra-2021", "(42)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def iz2021_s42 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("npi", "not an NPI")] }
 
-def iz2021_s52 : LinguisticExample :=
+def iz2021_s52 : Datum :=
   { id := "iz2021_s52"
     source := ⟨"iatridou-zeijlstra-2021", "(52)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def iz2021_s52 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("until", "imperfective predicate, throughout the UTS")] }
 
-def iz2021_s54 : LinguisticExample :=
+def iz2021_s54 : Datum :=
   { id := "iz2021_s54"
     source := ⟨"iatridou-zeijlstra-2021", "(54)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def iz2021_s54 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("inference", "cancelable")] }
 
-def iz2021_s56 : LinguisticExample :=
+def iz2021_s56 : Datum :=
   { id := "iz2021_s56"
     source := ⟨"iatridou-zeijlstra-2021", "(56)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def iz2021_s56 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("readings", "throughout-not; not-throughout")] }
 
-def iz2021_s58 : LinguisticExample :=
+def iz2021_s58 : Datum :=
   { id := "iz2021_s58"
     source := ⟨"iatridou-zeijlstra-2021", "(58)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def iz2021_s58 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("until", "perfective predicate without negation")] }
 
-def iz2021_s59 : LinguisticExample :=
+def iz2021_s59 : Datum :=
   { id := "iz2021_s59"
     source := ⟨"iatridou-zeijlstra-2021", "(59)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def iz2021_s59 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("ai", "not cancelable")] }
 
-def iz2021_s60b : LinguisticExample :=
+def iz2021_s60b : Datum :=
   { id := "iz2021_s60b"
     source := ⟨"iatridou-zeijlstra-2021", "(60b)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def iz2021_s60b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("ai", "not cancelable")] }
 
-def iz2021_s61b : LinguisticExample :=
+def iz2021_s61b : Datum :=
   { id := "iz2021_s61b"
     source := ⟨"iatridou-zeijlstra-2021", "(61b)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def iz2021_s61b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("ai", "none")] }
 
-def iz2021_s62 : LinguisticExample :=
+def iz2021_s62 : Datum :=
   { id := "iz2021_s62"
     source := ⟨"iatridou-zeijlstra-2021", "(62)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def iz2021_s62 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.1.1"), ("source", "Giannakidou 2002:92"), ("analysis", "exceptive para mono, not until-p")] }
 
-def iz2021_s64 : LinguisticExample :=
+def iz2021_s64 : Datum :=
   { id := "iz2021_s64"
     source := ⟨"iatridou-zeijlstra-2021", "(64)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def iz2021_s64 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.1.1"), ("analysis", "exceptive on an argument")] }
 
-def iz2021_s70 : LinguisticExample :=
+def iz2021_s70 : Datum :=
   { id := "iz2021_s70"
     source := ⟨"iatridou-zeijlstra-2021", "(70)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def iz2021_s70 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.1.1"), ("analysis", "exceptive with an imperfective predicate")] }
 
-def iz2021_s74 : LinguisticExample :=
+def iz2021_s74 : Datum :=
   { id := "iz2021_s74"
     source := ⟨"iatridou-zeijlstra-2021", "(74)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def iz2021_s74 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.1.1"), ("analysis", "exceptive with three temporal arguments; no English counterpart with until")] }
 
-def iz2021_s75a : LinguisticExample :=
+def iz2021_s75a : Datum :=
   { id := "iz2021_s75a"
     source := ⟨"iatridou-zeijlstra-2021", "(75a)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def iz2021_s75a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.1.1"), ("analysis", "mexri with a perfective predicate, unlike until-d")] }
 
-def iz2021_s77 : LinguisticExample :=
+def iz2021_s77 : Datum :=
   { id := "iz2021_s77"
     source := ⟨"iatridou-zeijlstra-2021", "(77)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def iz2021_s77 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.1.2"), ("item", "dokud, clausal complement, affirmative imperfective")] }
 
-def iz2021_s78 : LinguisticExample :=
+def iz2021_s78 : Datum :=
   { id := "iz2021_s78"
     source := ⟨"iatridou-zeijlstra-2021", "(78)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def iz2021_s78 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.1.2"), ("item", "až do, NP complement, affirmative imperfective")] }
 
-def iz2021_s79 : LinguisticExample :=
+def iz2021_s79 : Datum :=
   { id := "iz2021_s79"
     source := ⟨"iatridou-zeijlstra-2021", "(79)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def iz2021_s79 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.1.2"), ("item", "dokud with an affirmative perfective")] }
 
-def iz2021_s81 : LinguisticExample :=
+def iz2021_s81 : Datum :=
   { id := "iz2021_s81"
     source := ⟨"iatridou-zeijlstra-2021", "(81)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def iz2021_s81 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.1.2"), ("item", "dokud with a negated perfective"), ("ai", "not cancelable")] }
 
-def iz2021_s82 : LinguisticExample :=
+def iz2021_s82 : Datum :=
   { id := "iz2021_s82"
     source := ⟨"iatridou-zeijlstra-2021", "(82)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def iz2021_s82 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.1.2"), ("item", "až do with a negated perfective"), ("ai", "cancelable")] }
 
-def iz2021_s83 : LinguisticExample :=
+def iz2021_s83 : Datum :=
   { id := "iz2021_s83"
     source := ⟨"iatridou-zeijlstra-2021", "(83)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def iz2021_s83 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("ai", "not cancelable")] }
 
-def iz2021_s85 : LinguisticExample :=
+def iz2021_s85 : Datum :=
   { id := "iz2021_s85"
     source := ⟨"iatridou-zeijlstra-2021", "(85)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def iz2021_s85 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("inference", "cancelable")] }
 
-def iz2021_s89 : LinguisticExample :=
+def iz2021_s89 : Datum :=
   { id := "iz2021_s89"
     source := ⟨"iatridou-zeijlstra-2021", "(89)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def iz2021_s89 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("subinterval", "negation yields the subinterval property")] }
 
-def iz2021_s91 : LinguisticExample :=
+def iz2021_s91 : Datum :=
   { id := "iz2021_s91"
     source := ⟨"iatridou-zeijlstra-2021", "(91)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def iz2021_s91 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("ai", "not cancelable, a real-world impossibility")] }
 
-def iz2021_s92 : LinguisticExample :=
+def iz2021_s92 : Datum :=
   { id := "iz2021_s92"
     source := ⟨"iatridou-zeijlstra-2021", "(92)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def iz2021_s92 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("ai", "none")] }
 
-def iz2021_s98b : LinguisticExample :=
+def iz2021_s98b : Datum :=
   { id := "iz2021_s98b"
     source := ⟨"iatridou-zeijlstra-2021", "(98b)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def iz2021_s98b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("source", "Karttunen 1974:287"), ("test", "how long")] }
 
-def iz2021_s102 : LinguisticExample :=
+def iz2021_s102 : Datum :=
   { id := "iz2021_s102"
     source := ⟨"iatridou-zeijlstra-2021", "(102)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def iz2021_s102 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("test", "how long fails with negated statives too")] }
 
-def iz2021_s110 : LinguisticExample :=
+def iz2021_s110 : Datum :=
   { id := "iz2021_s110"
     source := ⟨"iatridou-zeijlstra-2021", "(110)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def iz2021_s110 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("test", "for how long, above negation")] }
 
-def iz2021_s114a : LinguisticExample :=
+def iz2021_s114a : Datum :=
   { id := "iz2021_s114a"
     source := ⟨"iatridou-zeijlstra-2021", "(114a)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def iz2021_s114a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("npi", "strong: not licensed by few")] }
 
-def iz2021_s119a : LinguisticExample :=
+def iz2021_s119a : Datum :=
   { id := "iz2021_s119a"
     source := ⟨"iatridou-zeijlstra-2021", "(119a)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def iz2021_s119a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("bei", "later than expected")] }
 
-def iz2021_s119b : LinguisticExample :=
+def iz2021_s119b : Datum :=
   { id := "iz2021_s119b"
     source := ⟨"iatridou-zeijlstra-2021", "(119b)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def iz2021_s119b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("bei", "earlier than expected")] }
 
-def iz2021_s121b : LinguisticExample :=
+def iz2021_s121b : Datum :=
   { id := "iz2021_s121b"
     source := ⟨"iatridou-zeijlstra-2021", "(121b)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def iz2021_s121b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("bei", "the RB must be later than the contextual alternative")] }
 
-def iz2021_s123 : LinguisticExample :=
+def iz2021_s123 : Datum :=
   { id := "iz2021_s123"
     source := ⟨"iatridou-zeijlstra-2021", "(123)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def iz2021_s123 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("ai", "at the RB")] }
 
-def iz2021_s124 : LinguisticExample :=
+def iz2021_s124 : Datum :=
   { id := "iz2021_s124"
     source := ⟨"iatridou-zeijlstra-2021", "(124)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def iz2021_s124 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("inference", "the inferred event need not set the RB")] }
 
-def iz2021_s128 : LinguisticExample :=
+def iz2021_s128 : Datum :=
   { id := "iz2021_s128"
     source := ⟨"iatridou-zeijlstra-2021", "(128)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def iz2021_s128 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.1"), ("exh", "contradiction, (129)–(132)")] }
 
-def iz2021_s133a : LinguisticExample :=
+def iz2021_s133a : Datum :=
   { id := "iz2021_s133a"
     source := ⟨"iatridou-zeijlstra-2021", "(133a)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def iz2021_s133a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("construal", "(148a) EXH > UNTIL, vacuous")] }
 
-def iz2021_s133b : LinguisticExample :=
+def iz2021_s133b : Datum :=
   { id := "iz2021_s133b"
     source := ⟨"iatridou-zeijlstra-2021", "(133b)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def iz2021_s133b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("construal", "(148c1) throughout-not; (148c2) not-throughout")] }
 
-def iz2021_s134 : LinguisticExample :=
+def iz2021_s134 : Datum :=
   { id := "iz2021_s134"
     source := ⟨"iatridou-zeijlstra-2021", "(134)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def iz2021_s134 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("exh", "contradiction with a perfective predicate")] }
 
-def iz2021_s147b : LinguisticExample :=
+def iz2021_s147b : Datum :=
   { id := "iz2021_s147b"
     source := ⟨"iatridou-zeijlstra-2021", "(147b)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def iz2021_s147b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.3"), ("construal", "(148b) EXH > NEG > UNTIL, until-p, domain widener")] }
 
-def iz2021_s149 : LinguisticExample :=
+def iz2021_s149 : Datum :=
   { id := "iz2021_s149"
     source := ⟨"iatridou-zeijlstra-2021", "(149)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def iz2021_s149 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.3"), ("construal", "(148b), noncancelable AI")] }
 
-def iz2021_s152b : LinguisticExample :=
+def iz2021_s152b : Datum :=
   { id := "iz2021_s152b"
     source := ⟨"iatridou-zeijlstra-2021", "(152b)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def iz2021_s152b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("perfect", "E-perfect contradictory under exhaustification; U-perfect unavailable, (153)")] }
 
-def iz2021_s153 : LinguisticExample :=
+def iz2021_s153 : Datum :=
   { id := "iz2021_s153"
     source := ⟨"iatridou-zeijlstra-2021", "(153)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def iz2021_s153 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("perfect", "E-perfect only")] }
 
-def iz2021_s156 : LinguisticExample :=
+def iz2021_s156 : Datum :=
   { id := "iz2021_s156"
     source := ⟨"iatridou-zeijlstra-2021", "(156)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def iz2021_s156 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9"), ("ai", "cancelable: conditional, or future branch")] }
 
-def iz2021_s160 : LinguisticExample :=
+def iz2021_s160 : Datum :=
   { id := "iz2021_s160"
     source := ⟨"iatridou-zeijlstra-2021", "(160)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def iz2021_s160 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9"), ("ai", "satisfied on a future branch")] }
 
-def iz2021_s161 : LinguisticExample :=
+def iz2021_s161 : Datum :=
   { id := "iz2021_s161"
     source := ⟨"iatridou-zeijlstra-2021", "(161)"⟩
     reportedIn := none
@@ -862,7 +860,7 @@ def iz2021_s161 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9"), ("ai", "satisfied on a future branch")] }
 
-def iz2021_s162 : LinguisticExample :=
+def iz2021_s162 : Datum :=
   { id := "iz2021_s162"
     source := ⟨"iatridou-zeijlstra-2021", "(162)"⟩
     reportedIn := none
@@ -875,7 +873,7 @@ def iz2021_s162 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9"), ("ai", "no future branch satisfies it")] }
 
-def iz2021_s165 : LinguisticExample :=
+def iz2021_s165 : Datum :=
   { id := "iz2021_s165"
     source := ⟨"iatridou-zeijlstra-2021", "(165)"⟩
     reportedIn := none
@@ -888,7 +886,7 @@ def iz2021_s165 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9"), ("tense", "the argument of until shifts with the matrix")] }
 
-def iz2021_s170 : LinguisticExample :=
+def iz2021_s170 : Datum :=
   { id := "iz2021_s170"
     source := ⟨"iatridou-zeijlstra-2021", "(170)"⟩
     reportedIn := none
@@ -901,7 +899,7 @@ def iz2021_s170 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10"), ("rb", "the completion of the reading, the maximally informative interval")] }
 
-def iz2021_s172 : LinguisticExample :=
+def iz2021_s172 : Datum :=
   { id := "iz2021_s172"
     source := ⟨"iatridou-zeijlstra-2021", "(172)"⟩
     reportedIn := none
@@ -914,7 +912,7 @@ def iz2021_s172 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10"), ("rb", "the beginning of the working")] }
 
-def iz2021_s176 : LinguisticExample :=
+def iz2021_s176 : Datum :=
   { id := "iz2021_s176"
     source := ⟨"iatridou-zeijlstra-2021", "(176)"⟩
     reportedIn := none
@@ -927,7 +925,7 @@ def iz2021_s176 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10"), ("rb", "the completion of Anna Karenina; War and Peace read upon it")] }
 
-def iz2021_s178b : LinguisticExample :=
+def iz2021_s178b : Datum :=
   { id := "iz2021_s178b"
     source := ⟨"iatridou-zeijlstra-2021", "(178b)"⟩
     reportedIn := none
@@ -940,7 +938,7 @@ def iz2021_s178b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "11"), ("few", "not many, without an existential inference")] }
 
-def iz2021_s180 : LinguisticExample :=
+def iz2021_s180 : Datum :=
   { id := "iz2021_s180"
     source := ⟨"iatridou-zeijlstra-2021", "(180)"⟩
     reportedIn := none
@@ -953,7 +951,7 @@ def iz2021_s180 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "11"), ("source", "Chierchia 2013:219–220"), ("npi", "strong: the presupposition is exhaustified")] }
 
-def iz2021_s182a : LinguisticExample :=
+def iz2021_s182a : Datum :=
   { id := "iz2021_s182a"
     source := ⟨"iatridou-zeijlstra-2021", "(182a)"⟩
     reportedIn := none
@@ -966,7 +964,7 @@ def iz2021_s182a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "11"), ("presupposition", "there is a PTS [t, UT]")] }
 
-def iz2021_s186a : LinguisticExample :=
+def iz2021_s186a : Datum :=
   { id := "iz2021_s186a"
     source := ⟨"iatridou-zeijlstra-2021", "(186a)"⟩
     reportedIn := none
@@ -979,6 +977,6 @@ def iz2021_s186a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "11"), ("presupposition", "there is a UTS [t, 2010]")] }
 
-def all : List LinguisticExample := [iz2021_s10a, iz2021_s10b, iz2021_s11b, iz2021_s12, iz2021_s22a, iz2021_s22b, iz2021_s23, iz2021_s24a, iz2021_s24c, iz2021_s25, iz2021_s26, iz2021_s27a, iz2021_s31a, iz2021_s31b, iz2021_s32b, iz2021_s32c, iz2021_s33b, iz2021_s36b, iz2021_s37, iz2021_s40b, iz2021_s40c, iz2021_s41a, iz2021_s42, iz2021_s52, iz2021_s54, iz2021_s56, iz2021_s58, iz2021_s59, iz2021_s60b, iz2021_s61b, iz2021_s62, iz2021_s64, iz2021_s70, iz2021_s74, iz2021_s75a, iz2021_s77, iz2021_s78, iz2021_s79, iz2021_s81, iz2021_s82, iz2021_s83, iz2021_s85, iz2021_s89, iz2021_s91, iz2021_s92, iz2021_s98b, iz2021_s102, iz2021_s110, iz2021_s114a, iz2021_s119a, iz2021_s119b, iz2021_s121b, iz2021_s123, iz2021_s124, iz2021_s128, iz2021_s133a, iz2021_s133b, iz2021_s134, iz2021_s147b, iz2021_s149, iz2021_s152b, iz2021_s153, iz2021_s156, iz2021_s160, iz2021_s161, iz2021_s162, iz2021_s165, iz2021_s170, iz2021_s172, iz2021_s176, iz2021_s178b, iz2021_s180, iz2021_s182a, iz2021_s186a]
+def all : List Datum := [iz2021_s10a, iz2021_s10b, iz2021_s11b, iz2021_s12, iz2021_s22a, iz2021_s22b, iz2021_s23, iz2021_s24a, iz2021_s24c, iz2021_s25, iz2021_s26, iz2021_s27a, iz2021_s31a, iz2021_s31b, iz2021_s32b, iz2021_s32c, iz2021_s33b, iz2021_s36b, iz2021_s37, iz2021_s40b, iz2021_s40c, iz2021_s41a, iz2021_s42, iz2021_s52, iz2021_s54, iz2021_s56, iz2021_s58, iz2021_s59, iz2021_s60b, iz2021_s61b, iz2021_s62, iz2021_s64, iz2021_s70, iz2021_s74, iz2021_s75a, iz2021_s77, iz2021_s78, iz2021_s79, iz2021_s81, iz2021_s82, iz2021_s83, iz2021_s85, iz2021_s89, iz2021_s91, iz2021_s92, iz2021_s98b, iz2021_s102, iz2021_s110, iz2021_s114a, iz2021_s119a, iz2021_s119b, iz2021_s121b, iz2021_s123, iz2021_s124, iz2021_s128, iz2021_s133a, iz2021_s133b, iz2021_s134, iz2021_s147b, iz2021_s149, iz2021_s152b, iz2021_s153, iz2021_s156, iz2021_s160, iz2021_s161, iz2021_s162, iz2021_s165, iz2021_s170, iz2021_s172, iz2021_s176, iz2021_s178b, iz2021_s180, iz2021_s182a, iz2021_s186a]
 
 end IatridouZeijlstra2021.Examples

@@ -15,9 +15,7 @@ this module; declarations live in `namespace AlonsoOvalle2009.Examples`.
 
 namespace AlonsoOvalle2009.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "alonsoovalle2009_1"
     source := ⟨"alonso-ovalle-2009", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("scenario", "bumperCrop"), ("antecedent", "good weather or sun cold"), ("modal", "would"), ("verdict", "false")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "alonsoovalle2009_15a"
     source := ⟨"dayal-1996", "p. 188"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "(15a)"⟩
@@ -43,7 +41,7 @@ def ex_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "correlative"), ("number", "singular")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "alonsoovalle2009_15b"
     source := ⟨"dayal-1996", "p. 192"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "(15b)"⟩
@@ -56,7 +54,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "correlative"), ("number", "plural")] }
 
-def ex_15c : LinguisticExample :=
+def ex_15c : Datum :=
   { id := "alonsoovalle2009_15c"
     source := ⟨"dayal-1996", "p. 192"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "(15c)"⟩
@@ -69,7 +67,7 @@ def ex_15c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "correlative"), ("number", "plural")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "alonsoovalle2009_29"
     source := ⟨"alonso-ovalle-2009", "(29)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("scenario", "hitler"), ("antecedent", "joined Germany or the U.S."), ("modal", "would"), ("polarity", "negated"), ("verdict", "true")] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "alonsoovalle2009_30a"
     source := ⟨"alonso-ovalle-2009", "(30a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("scenario", "hitler"), ("antecedent", "joined Germany"), ("modal", "would"), ("verdict", "true")] }
 
-def ex_30b : LinguisticExample :=
+def ex_30b : Datum :=
   { id := "alonsoovalle2009_30b"
     source := ⟨"alonso-ovalle-2009", "(30b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_30b : LinguisticExample :=
     readings := []
     paperFeatures := [("scenario", "hitler"), ("antecedent", "joined the U.S."), ("modal", "would"), ("verdict", "false")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "alonsoovalle2009_31"
     source := ⟨"alonso-ovalle-2009", "(31)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "continuation")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "alonsoovalle2009_32"
     source := ⟨"alonso-ovalle-2009", "(32)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_32 : LinguisticExample :=
     readings := [("Sandy saw none of the cats", .acceptable), ("Sandy didn't see every cat", .unacceptable)]
     paperFeatures := [("phenomenon", "homogeneity")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "alonsoovalle2009_34"
     source := ⟨"alonso-ovalle-2009", "(34)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_34 : LinguisticExample :=
     readings := [("Sandy saw none of the cats", .unacceptable)]
     paperFeatures := [("phenomenon", "homogeneity"), ("polarity", "wide-scope negation")] }
 
-def ex_36 : LinguisticExample :=
+def ex_36 : Datum :=
   { id := "alonsoovalle2009_36"
     source := ⟨"lewis-1973", "p. 1"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "(36)"⟩
@@ -160,7 +158,7 @@ def ex_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "strengthening the antecedent"), ("role", "premise")] }
 
-def ex_41b : LinguisticExample :=
+def ex_41b : Datum :=
   { id := "alonsoovalle2009_41b"
     source := ⟨"lewis-1973", "p. 9"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "(41b)"⟩
@@ -173,7 +171,7 @@ def ex_41b : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "strengthening the antecedent"), ("role", "conclusion")] }
 
-def ex_40a : LinguisticExample :=
+def ex_40a : Datum :=
   { id := "alonsoovalle2009_40a"
     source := ⟨"von-fintel-1999", "p. 33"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "(40a)"⟩
@@ -186,7 +184,7 @@ def ex_40a : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "any")] }
 
-def ex_40b : LinguisticExample :=
+def ex_40b : Datum :=
   { id := "alonsoovalle2009_40b"
     source := ⟨"alonso-ovalle-2009", "(40b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_40b : LinguisticExample :=
     readings := []
     paperFeatures := [("npi", "ever")] }
 
-def ex_42a : LinguisticExample :=
+def ex_42a : Datum :=
   { id := "alonsoovalle2009_42a"
     source := ⟨"lewis-1973", "p. 33"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "(42a)"⟩
@@ -212,7 +210,7 @@ def ex_42a : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "hypothetical syllogism"), ("role", "premise")] }
 
-def ex_42b : LinguisticExample :=
+def ex_42b : Datum :=
   { id := "alonsoovalle2009_42b"
     source := ⟨"lewis-1973", "p. 33"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "(42b)"⟩
@@ -225,7 +223,7 @@ def ex_42b : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "hypothetical syllogism"), ("role", "premise")] }
 
-def ex_42c : LinguisticExample :=
+def ex_42c : Datum :=
   { id := "alonsoovalle2009_42c"
     source := ⟨"lewis-1973", "p. 33"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "(42c)"⟩
@@ -238,7 +236,7 @@ def ex_42c : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "hypothetical syllogism"), ("role", "conclusion")] }
 
-def ex_43a : LinguisticExample :=
+def ex_43a : Datum :=
   { id := "alonsoovalle2009_43a"
     source := ⟨"kratzer-1979", "p. 128"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "(43a)"⟩
@@ -251,7 +249,7 @@ def ex_43a : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "contraposition"), ("role", "premise")] }
 
-def ex_43b : LinguisticExample :=
+def ex_43b : Datum :=
   { id := "alonsoovalle2009_43b"
     source := ⟨"alonso-ovalle-2009", "(43b)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_43b : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "contraposition"), ("role", "conclusion")] }
 
-def ex_49a : LinguisticExample :=
+def ex_49a : Datum :=
   { id := "alonsoovalle2009_49a"
     source := ⟨"alonso-ovalle-2009", "(49a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_49a : LinguisticExample :=
     readings := []
     paperFeatures := [("scenario", "bumperCrop"), ("antecedent", "good weather"), ("modal", "would"), ("verdict", "true")] }
 
-def ex_49b : LinguisticExample :=
+def ex_49b : Datum :=
   { id := "alonsoovalle2009_49b"
     source := ⟨"alonso-ovalle-2009", "(49b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_49b : LinguisticExample :=
     readings := []
     paperFeatures := [("scenario", "bumperCrop"), ("antecedent", "sun cold"), ("modal", "would"), ("verdict", "false")] }
 
-def ex_51 : LinguisticExample :=
+def ex_51 : Datum :=
   { id := "alonsoovalle2009_51"
     source := ⟨"alonso-ovalle-2009", "(51)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_51 : LinguisticExample :=
     readings := []
     paperFeatures := [("scenario", "fork"), ("antecedent", "magic book or newborn baby"), ("modal", "might"), ("verdict", "false")] }
 
-def ex_58a : LinguisticExample :=
+def ex_58a : Datum :=
   { id := "alonsoovalle2009_58a"
     source := ⟨"alonso-ovalle-2009", "(58a)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_58a : LinguisticExample :=
     readings := []
     paperFeatures := [("scenario", "fork"), ("antecedent", "magic book"), ("modal", "might"), ("verdict", "true")] }
 
-def ex_58b : LinguisticExample :=
+def ex_58b : Datum :=
   { id := "alonsoovalle2009_58b"
     source := ⟨"alonso-ovalle-2009", "(58b)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_58b : LinguisticExample :=
     readings := []
     paperFeatures := [("scenario", "fork"), ("antecedent", "newborn baby"), ("modal", "might"), ("verdict", "false")] }
 
-def ex_64 : LinguisticExample :=
+def ex_64 : Datum :=
   { id := "alonsoovalle2009_64"
     source := ⟨"alonso-ovalle-2009", "(64)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_64 : LinguisticExample :=
     readings := []
     paperFeatures := [("scenario", "fork"), ("antecedent", "magic book"), ("modal", "would")] }
 
-def ex_65 : LinguisticExample :=
+def ex_65 : Datum :=
   { id := "alonsoovalle2009_65"
     source := ⟨"alonso-ovalle-2009", "(65)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_65 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "may"), ("antecedent", "disjunctive")] }
 
-def ex_66a : LinguisticExample :=
+def ex_66a : Datum :=
   { id := "alonsoovalle2009_66a"
     source := ⟨"alonso-ovalle-2009", "(66a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_66a : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "may")] }
 
-def ex_66b : LinguisticExample :=
+def ex_66b : Datum :=
   { id := "alonsoovalle2009_66b"
     source := ⟨"alonso-ovalle-2009", "(66b)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_66b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "may")] }
 
-def ex_67 : LinguisticExample :=
+def ex_67 : Datum :=
   { id := "alonsoovalle2009_67"
     source := ⟨"alonso-ovalle-2009", "(67)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_67 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "may")] }
 
-def ex_68b : LinguisticExample :=
+def ex_68b : Datum :=
   { id := "alonsoovalle2009_68b"
     source := ⟨"alonso-ovalle-2009", "(68b)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_68b : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "must")] }
 
-def ex_77 : LinguisticExample :=
+def ex_77 : Datum :=
   { id := "alonsoovalle2009_77"
     source := ⟨"alonso-ovalle-2009", "(77)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_77 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "might")] }
 
-def ex_79 : LinguisticExample :=
+def ex_79 : Datum :=
   { id := "alonsoovalle2009_79"
     source := ⟨"alonso-ovalle-2009", "(79)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_79 : LinguisticExample :=
     readings := []
     paperFeatures := [("scenario", "bumperCrop"), ("antecedent", "good weather or sun cold"), ("modal", "might")] }
 
-def ex_80 : LinguisticExample :=
+def ex_80 : Datum :=
   { id := "alonsoovalle2009_80"
     source := ⟨"alonso-ovalle-2009", "(80)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_80 : LinguisticExample :=
     readings := []
     paperFeatures := [("scenario", "budget"), ("antecedent", "defense or education"), ("modal", "would"), ("closure", "existential"), ("verdict", "true")] }
 
-def ex_83 : LinguisticExample :=
+def ex_83 : Datum :=
   { id := "alonsoovalle2009_83"
     source := ⟨"alonso-ovalle-2009", "(83)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_83 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "would"), ("verdict", "contradictory")] }
 
-def ex_84a : LinguisticExample :=
+def ex_84a : Datum :=
   { id := "alonsoovalle2009_84a"
     source := ⟨"alonso-ovalle-2009", "(84a)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_84a : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "paraphrase of (83)")] }
 
-def ex_84b : LinguisticExample :=
+def ex_84b : Datum :=
   { id := "alonsoovalle2009_84b"
     source := ⟨"alonso-ovalle-2009", "(84b)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_84b : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "paraphrase of (83)")] }
 
-def ex_84c : LinguisticExample :=
+def ex_84c : Datum :=
   { id := "alonsoovalle2009_84c"
     source := ⟨"alonso-ovalle-2009", "(84c)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_84c : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "paraphrase of (83)")] }
 
-def ex_85a : LinguisticExample :=
+def ex_85a : Datum :=
   { id := "alonsoovalle2009_85a"
     source := ⟨"alonso-ovalle-2009", "(85a)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_85a : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "paraphrase of (80)")] }
 
-def ex_85b : LinguisticExample :=
+def ex_85b : Datum :=
   { id := "alonsoovalle2009_85b"
     source := ⟨"alonso-ovalle-2009", "(85b)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_85b : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "paraphrase of (80)")] }
 
-def ex_85c : LinguisticExample :=
+def ex_85c : Datum :=
   { id := "alonsoovalle2009_85c"
     source := ⟨"alonso-ovalle-2009", "(85c)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_85c : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "paraphrase of (80)")] }
 
-def fn12 : LinguisticExample :=
+def fn12 : Datum :=
   { id := "alonsoovalle2009_fn12"
     source := ⟨"alonso-ovalle-2009", "fn. 12 (i)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def fn12 : LinguisticExample :=
     readings := []
     paperFeatures := [("anaphor", "then"), ("role", "intersentential")] }
 
-def fn18 : LinguisticExample :=
+def fn18 : Datum :=
   { id := "alonsoovalle2009_fn18"
     source := ⟨"stalnaker-1984", "p. 144"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "fn. 18 (i)"⟩
@@ -563,7 +561,7 @@ def fn18 : LinguisticExample :=
     readings := []
     paperFeatures := [("modal", "might")] }
 
-def fn22 : LinguisticExample :=
+def fn22 : Datum :=
   { id := "alonsoovalle2009_fn22"
     source := ⟨"alonso-ovalle-2009", "fn. 22 (i)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def fn22 : LinguisticExample :=
     readings := [("If John had picked a ball that wasn't white, he would have had 30% chances of winning", .acceptable)]
     paperFeatures := [("closure", "existential")] }
 
-def bennettD : LinguisticExample :=
+def bennettD : Datum :=
   { id := "alonsoovalle2009_bennettD"
     source := ⟨"bennett-2003", "D, pp. 168–170"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "§4 D"⟩
@@ -589,7 +587,7 @@ def bennettD : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "simplification"), ("role", "premise")] }
 
-def bennettDr : LinguisticExample :=
+def bennettDr : Datum :=
   { id := "alonsoovalle2009_bennettDr"
     source := ⟨"bennett-2003", "Dr, pp. 168–170"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "§4 Dr"⟩
@@ -602,7 +600,7 @@ def bennettDr : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "simplification"), ("role", "conclusion")] }
 
-def bennettDf : LinguisticExample :=
+def bennettDf : Datum :=
   { id := "alonsoovalle2009_bennettDf"
     source := ⟨"bennett-2003", "Df, pp. 168–170"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "§4 Df"⟩
@@ -615,7 +613,7 @@ def bennettDf : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "simplification"), ("role", "conclusion")] }
 
-def lewis1 : LinguisticExample :=
+def lewis1 : Datum :=
   { id := "alonsoovalle2009_lewis1"
     source := ⟨"lewis-1977", "(1), pp. 360–361"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "§6 (1)"⟩
@@ -628,7 +626,7 @@ def lewis1 : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "disjunctive")] }
 
-def lewis4 : LinguisticExample :=
+def lewis4 : Datum :=
   { id := "alonsoovalle2009_lewis4"
     source := ⟨"lewis-1977", "(4), pp. 360–361"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "§6 (4)"⟩
@@ -641,7 +639,7 @@ def lewis4 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "disjunction under a modal")] }
 
-def lewis5 : LinguisticExample :=
+def lewis5 : Datum :=
   { id := "alonsoovalle2009_lewis5"
     source := ⟨"lewis-1977", "(5), pp. 360–361"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "§6 (5)"⟩
@@ -654,7 +652,7 @@ def lewis5 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "disjunction under a modal")] }
 
-def lewis6 : LinguisticExample :=
+def lewis6 : Datum :=
   { id := "alonsoovalle2009_lewis6"
     source := ⟨"lewis-1977", "(6), pp. 360–361"⟩
     reportedIn := some ⟨"alonso-ovalle-2009", "§6 (6)"⟩
@@ -667,6 +665,6 @@ def lewis6 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "disjunction under whether")] }
 
-def all : List LinguisticExample := [ex_1, ex_15a, ex_15b, ex_15c, ex_29, ex_30a, ex_30b, ex_31, ex_32, ex_34, ex_36, ex_41b, ex_40a, ex_40b, ex_42a, ex_42b, ex_42c, ex_43a, ex_43b, ex_49a, ex_49b, ex_51, ex_58a, ex_58b, ex_64, ex_65, ex_66a, ex_66b, ex_67, ex_68b, ex_77, ex_79, ex_80, ex_83, ex_84a, ex_84b, ex_84c, ex_85a, ex_85b, ex_85c, fn12, fn18, fn22, bennettD, bennettDr, bennettDf, lewis1, lewis4, lewis5, lewis6]
+def all : List Datum := [ex_1, ex_15a, ex_15b, ex_15c, ex_29, ex_30a, ex_30b, ex_31, ex_32, ex_34, ex_36, ex_41b, ex_40a, ex_40b, ex_42a, ex_42b, ex_42c, ex_43a, ex_43b, ex_49a, ex_49b, ex_51, ex_58a, ex_58b, ex_64, ex_65, ex_66a, ex_66b, ex_67, ex_68b, ex_77, ex_79, ex_80, ex_83, ex_84a, ex_84b, ex_84c, ex_85a, ex_85b, ex_85c, fn12, fn18, fn22, bennettD, bennettDr, bennettDf, lewis1, lewis4, lewis5, lewis6]
 
 end AlonsoOvalle2009.Examples

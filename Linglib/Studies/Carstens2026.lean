@@ -49,7 +49,7 @@ in §8 is stated in prose only.
 
 namespace Carstens2026
 
-open Bantu Data.Examples Reference.Prominence Minimalist.Coordination
+open Bantu Reference.Prominence Minimalist.Coordination
 
 /-- Whether the n of a gender carries a feature that percolates to &P, (13) and (77b). -/
 def interpretability : GenderStatus → Minimalist.Interpretability
@@ -237,7 +237,7 @@ abbrev ShonaValues (a b : Nominal Shona.Gender) (c : Shona.NounClass) : Prop :=
 /-! ### The rows -/
 
 /-- The rows of one language. -/
-def rows (glottocode : String) : List LinguisticExample :=
+def rows (glottocode : String) : List Datum :=
   Examples.all.filter (·.language = glottocode)
 
 def xhosaClassOf : String → Option Xhosa.NounClass
@@ -258,30 +258,30 @@ def shonaClassOf : String → Option Shona.NounClass
   | _ => none
 
 /-- A Xhosa row's conjuncts, from the fragment's nouns. -/
-def xhosaConjuncts (e : LinguisticExample) :
+def xhosaConjuncts (e : Datum) :
     Option (Nominal Xhosa.Gender × Nominal Xhosa.Gender) := do
   let a ← (e.feature? "conjunct1").bind λ s => Xhosa.Nouns.all.find? (·.form = s)
   let b ← (e.feature? "conjunct2").bind λ s => Xhosa.Nouns.all.find? (·.form = s)
   pure (xhosaNominal a, xhosaNominal b)
 
 /-- A Shona row's conjuncts. -/
-def shonaConjuncts (e : LinguisticExample) :
+def shonaConjuncts (e : Datum) :
     Option (Nominal Shona.Gender × Nominal Shona.Gender) := do
   let a ← (e.feature? "conjunct1").bind λ s => Shona.Nouns.all.find? (·.form = s)
   let b ← (e.feature? "conjunct2").bind λ s => Shona.Nouns.all.find? (·.form = s)
   pure (shonaNominal a, shonaNominal b)
 
 /-- The classes a Xhosa row accepts and rejects for plural agreement on &P. -/
-def xhosaAccepted (e : LinguisticExample) : List Xhosa.NounClass :=
+def xhosaAccepted (e : Datum) : List Xhosa.NounClass :=
   (e.features "agreement").filterMap xhosaClassOf
 
-def xhosaRejected (e : LinguisticExample) : List Xhosa.NounClass :=
+def xhosaRejected (e : Datum) : List Xhosa.NounClass :=
   (e.features "rejected").filterMap xhosaClassOf
 
-def shonaAccepted (e : LinguisticExample) : List Shona.NounClass :=
+def shonaAccepted (e : Datum) : List Shona.NounClass :=
   (e.features "agreement").filterMap shonaClassOf
 
-def shonaRejected (e : LinguisticExample) : List Shona.NounClass :=
+def shonaRejected (e : Datum) : List Shona.NounClass :=
   (e.features "rejected").filterMap shonaClassOf
 
 /-- Every class a row accepts values agreement under one of the two grammars, and none it

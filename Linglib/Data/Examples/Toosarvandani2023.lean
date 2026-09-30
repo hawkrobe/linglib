@@ -15,9 +15,7 @@ this module; declarations live in `namespace Toosarvandani2023.Examples`.
 
 namespace Toosarvandani2023.Examples
 
-open Data.Examples
-
-def ex_16a : LinguisticExample :=
+def ex_16a : Datum :=
   { id := "toosarvandani2023_16a"
     source := ⟨"toosarvandani-2023", "(16a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_16a : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun", "1pl"), ("group", "speaker and lion"), ("property", "context-dependence")] }
 
-def ex_16b : LinguisticExample :=
+def ex_16b : Datum :=
   { id := "toosarvandani2023_16b"
     source := ⟨"toosarvandani-2023", "(16b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_16b : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun", "3pl"), ("group", "Paul and lion"), ("property", "context-dependence")] }
 
-def ex_17a : LinguisticExample :=
+def ex_17a : Datum :=
   { id := "toosarvandani2023_17a"
     source := ⟨"toosarvandani-2023", "(17a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_17a : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun", "1pl"), ("group", "speaker and pet dog"), ("property", "context-dependence")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "toosarvandani2023_18a"
     source := ⟨"toosarvandani-2023", "(18a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_18a : LinguisticExample :=
     readings := []
     paperFeatures := [("pronoun", "1pl"), ("group", "speaker and parachute"), ("property", "context-dependence")] }
 
-def ex_77a : LinguisticExample :=
+def ex_77a : Datum :=
   { id := "toosarvandani2023_77a"
     source := ⟨"toosarvandani-2023", "(77a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_77a : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "1sg"), ("object", "3.an"), ("configuration", "1 > 3"), ("cliticization", "both")] }
 
-def ex_77b : LinguisticExample :=
+def ex_77b : Datum :=
   { id := "toosarvandani2023_77b"
     source := ⟨"toosarvandani-2023", "(77b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_77b : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "3.an"), ("object", "1sg"), ("configuration", "3 > 1"), ("cliticization", "object blocked")] }
 
-def ex_78a : LinguisticExample :=
+def ex_78a : Datum :=
   { id := "toosarvandani2023_78a"
     source := ⟨"toosarvandani-2023", "(78a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_78a : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "2sg"), ("object", "3.an"), ("configuration", "2 > 3"), ("cliticization", "both")] }
 
-def ex_78b : LinguisticExample :=
+def ex_78b : Datum :=
   { id := "toosarvandani2023_78b"
     source := ⟨"toosarvandani-2023", "(78b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_78b : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "3.an"), ("object", "2sg"), ("configuration", "3 > 2"), ("cliticization", "object blocked")] }
 
-def ex_79a : LinguisticExample :=
+def ex_79a : Datum :=
   { id := "toosarvandani2023_79a"
     source := ⟨"toosarvandani-2023", "(79a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_79a : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "3.el"), ("object", "3.hu"), ("configuration", "3.el > 3.hu"), ("cliticization", "both")] }
 
-def ex_79b : LinguisticExample :=
+def ex_79b : Datum :=
   { id := "toosarvandani2023_79b"
     source := ⟨"toosarvandani-2023", "(79b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_79b : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "3.hu"), ("object", "3.el"), ("configuration", "3.hu > 3.el"), ("cliticization", "object blocked")] }
 
-def ex_80a : LinguisticExample :=
+def ex_80a : Datum :=
   { id := "toosarvandani2023_80a"
     source := ⟨"toosarvandani-2023", "(80a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_80a : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "3.hu"), ("object", "3.an"), ("configuration", "3.hu > 3.an"), ("cliticization", "both")] }
 
-def ex_80b : LinguisticExample :=
+def ex_80b : Datum :=
   { id := "toosarvandani2023_80b"
     source := ⟨"toosarvandani-2023", "(80b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_80b : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "3.an"), ("object", "3.hu"), ("configuration", "3.an > 3.hu"), ("cliticization", "object blocked")] }
 
-def ex_81a : LinguisticExample :=
+def ex_81a : Datum :=
   { id := "toosarvandani2023_81a"
     source := ⟨"toosarvandani-2023", "(81a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_81a : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "3.an"), ("object", "3.in"), ("configuration", "3.an > 3.in"), ("cliticization", "both")] }
 
-def ex_81b : LinguisticExample :=
+def ex_81b : Datum :=
   { id := "toosarvandani2023_81b"
     source := ⟨"toosarvandani-2023", "(81b)"⟩
     reportedIn := none
@@ -199,6 +197,6 @@ def ex_81b : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "3.in"), ("object", "3.an"), ("configuration", "3.in > 3.an"), ("cliticization", "object blocked")] }
 
-def all : List LinguisticExample := [ex_16a, ex_16b, ex_17a, ex_18a, ex_77a, ex_77b, ex_78a, ex_78b, ex_79a, ex_79b, ex_80a, ex_80b, ex_81a, ex_81b]
+def all : List Datum := [ex_16a, ex_16b, ex_17a, ex_18a, ex_77a, ex_77b, ex_78a, ex_78b, ex_79a, ex_79b, ex_80a, ex_80b, ex_81a, ex_81b]
 
 end Toosarvandani2023.Examples

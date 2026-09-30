@@ -46,7 +46,6 @@ marked.
 
 namespace AssmannEtAl2023
 
-open Data.Examples
 open Focus (Usable)
 
 /-! ### The clause skeleton -/
@@ -220,7 +219,7 @@ def Node.parse? : String → Option Node
   | _ => none
 
 /-- The inventory of a row's language. -/
-def inventory? (r : LinguisticExample) : Option (List Node) :=
+def inventory? (r : Datum) : Option (List Node) :=
   match r.language with
   | "guru1271" => some guruntum
   | "buli1254" => some buli
@@ -231,7 +230,7 @@ def inventory? (r : LinguisticExample) : Option (List Node) :=
   | _ => none
 
 /-- The constituent a row's marking marks as focal. -/
-def marked? (r : LinguisticExample) : Option Node :=
+def marked? (r : Datum) : Option Node :=
   match r.language, r.feature? "marking" with
   | "guru1271", some "a before subject" => some .sbj
   | "guru1271", some "a between verb and object" => some .vp

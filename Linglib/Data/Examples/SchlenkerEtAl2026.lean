@@ -15,9 +15,7 @@ this module; declarations live in `namespace SchlenkerEtAl2026.Examples`.
 
 namespace SchlenkerEtAl2026.Examples
 
-open Data.Examples
-
-def ex7a : LinguisticExample :=
+def ex7a : Datum :=
   { id := "schlenkeretal2026_ex7a"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(7a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex7a : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "POLE-cl"), ("direction", "passing_right"), ("roleShift", "broad"), ("verb", "DRIVE")] }
 
-def ex7b : LinguisticExample :=
+def ex7b : Datum :=
   { id := "schlenkeretal2026_ex7b"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(7b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex7b : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "POLE-cl"), ("direction", "passing_left"), ("roleShift", "broad"), ("verb", "DRIVE")] }
 
-def ex10a : LinguisticExample :=
+def ex10a : Datum :=
   { id := "schlenkeretal2026_ex10a"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(10a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex10a : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "WALL-cl"), ("direction", "passing_right"), ("roleShift", "broad"), ("verb", "DRIVE")] }
 
-def ex10b : LinguisticExample :=
+def ex10b : Datum :=
   { id := "schlenkeretal2026_ex10b"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(10b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex10b : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "67"), ("classifier", "RECTANGLE-cl"), ("direction", "passing_right"), ("roleShift", "broad"), ("verb", "DRIVE")] }
 
-def ex10c : LinguisticExample :=
+def ex10c : Datum :=
   { id := "schlenkeretal2026_ex10c"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(10c)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex10c : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "CORNER-cl"), ("direction", "passing_right"), ("roleShift", "broad"), ("verb", "DRIVE")] }
 
-def ex10d : LinguisticExample :=
+def ex10d : Datum :=
   { id := "schlenkeretal2026_ex10d"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(10d)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex10d : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "60"), ("classifier", "WALL-cl"), ("direction", "passing_left"), ("roleShift", "broad"), ("verb", "DRIVE")] }
 
-def ex10e : LinguisticExample :=
+def ex10e : Datum :=
   { id := "schlenkeretal2026_ex10e"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(10e)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex10e : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "63"), ("classifier", "RECTANGLE-cl"), ("direction", "passing_left"), ("roleShift", "broad"), ("verb", "DRIVE")] }
 
-def ex10f : LinguisticExample :=
+def ex10f : Datum :=
   { id := "schlenkeretal2026_ex10f"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(10f)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex10f : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "63"), ("classifier", "CORNER-cl"), ("direction", "passing_left"), ("roleShift", "broad"), ("verb", "DRIVE")] }
 
-def ex13a : LinguisticExample :=
+def ex13a : Datum :=
   { id := "schlenkeretal2026_ex13a"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(13a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex13a : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "TREE-cl"), ("direction", "passing_left"), ("roleShift", "broad"), ("verb", "JOG"), ("pathDisplayed", "none")] }
 
-def ex13b : LinguisticExample :=
+def ex13b : Datum :=
   { id := "schlenkeretal2026_ex13b"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(13b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex13b : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "63"), ("classifier", "TREE-cl"), ("direction", "passing_left"), ("roleShift", "broad"), ("verb", "RUN-agreeing"), ("pathDisplayed", "forward")] }
 
-def ex13c : LinguisticExample :=
+def ex13c : Datum :=
   { id := "schlenkeretal2026_ex13c"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(13c)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex13c : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "50"), ("classifier", "TREE-cl"), ("direction", "passing_left"), ("roleShift", "broad"), ("verb", "PERSON-cl-agreeing"), ("pathDisplayed", "forward")] }
 
-def ex13d : LinguisticExample :=
+def ex13d : Datum :=
   { id := "schlenkeretal2026_ex13d"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(13d)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex13d : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "63"), ("classifier", "TREE-cl"), ("direction", "passing_right"), ("roleShift", "broad"), ("verb", "JOG"), ("pathDisplayed", "none")] }
 
-def ex13e : LinguisticExample :=
+def ex13e : Datum :=
   { id := "schlenkeretal2026_ex13e"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(13e)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex13e : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "53"), ("classifier", "TREE-cl"), ("direction", "passing_right"), ("roleShift", "broad"), ("verb", "RUN-agreeing"), ("pathDisplayed", "forward")] }
 
-def ex13f : LinguisticExample :=
+def ex13f : Datum :=
   { id := "schlenkeretal2026_ex13f"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(13f)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex13f : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "50"), ("classifier", "TREE-cl"), ("direction", "passing_right"), ("roleShift", "broad"), ("verb", "PERSON-cl-agreeing"), ("pathDisplayed", "forward")] }
 
-def ex16a : LinguisticExample :=
+def ex16a : Datum :=
   { id := "schlenkeretal2026_ex16a"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(16a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex16a : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "63"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "broad"), ("verb", "JOG")] }
 
-def ex16b : LinguisticExample :=
+def ex16b : Datum :=
   { id := "schlenkeretal2026_ex16b"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(16b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex16b : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "57"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "broad"), ("verb", "RUN-agreeing")] }
 
-def ex16c : LinguisticExample :=
+def ex16c : Datum :=
   { id := "schlenkeretal2026_ex16c"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(16c)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex16c : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "63"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "broad"), ("verb", "RUN-neutral"), ("signerMoves", "yes")] }
 
-def ex16d : LinguisticExample :=
+def ex16d : Datum :=
   { id := "schlenkeretal2026_ex16d"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(16d)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex16d : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "53"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "broad"), ("verb", "RUN-neutral"), ("signerMoves", "no")] }
 
-def ex16e : LinguisticExample :=
+def ex16e : Datum :=
   { id := "schlenkeretal2026_ex16e"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(16e)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex16e : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "57"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "broad"), ("verb", "PERSON-cl-agreeing")] }
 
-def ex16f : LinguisticExample :=
+def ex16f : Datum :=
   { id := "schlenkeretal2026_ex16f"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(16f)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex16f : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "60"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "broad"), ("verb", "PERSON-cl-neutral"), ("signerMoves", "yes")] }
 
-def ex16g : LinguisticExample :=
+def ex16g : Datum :=
   { id := "schlenkeretal2026_ex16g"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(16g)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex16g : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "53"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "broad"), ("verb", "PERSON-cl-neutral"), ("signerMoves", "no")] }
 
-def ex19a : LinguisticExample :=
+def ex19a : Datum :=
   { id := "schlenkeretal2026_ex19a"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(19a)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex19a : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "POLE-cl"), ("direction", "passing_right"), ("roleShift", "strict"), ("verb", "DRIVE")] }
 
-def ex19b : LinguisticExample :=
+def ex19b : Datum :=
   { id := "schlenkeretal2026_ex19b"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(19b)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex19b : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "POLE-cl"), ("direction", "passing_left"), ("roleShift", "strict"), ("verb", "DRIVE")] }
 
-def ex21a : LinguisticExample :=
+def ex21a : Datum :=
   { id := "schlenkeretal2026_ex21a"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(21a)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex21a : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "strict"), ("verb", "JOG")] }
 
-def ex21b : LinguisticExample :=
+def ex21b : Datum :=
   { id := "schlenkeretal2026_ex21b"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(21b)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex21b : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "57"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "strict"), ("verb", "RUN-agreeing")] }
 
-def ex21c : LinguisticExample :=
+def ex21c : Datum :=
   { id := "schlenkeretal2026_ex21c"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(21c)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex21c : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "strict"), ("verb", "RUN-neutral"), ("signerMoves", "yes")] }
 
-def ex21d : LinguisticExample :=
+def ex21d : Datum :=
   { id := "schlenkeretal2026_ex21d"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(21d)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex21d : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "67"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "strict"), ("verb", "RUN-neutral"), ("signerMoves", "no")] }
 
-def ex21e : LinguisticExample :=
+def ex21e : Datum :=
   { id := "schlenkeretal2026_ex21e"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(21e)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex21e : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "53"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "strict"), ("verb", "PERSON-cl-agreeing")] }
 
-def ex21f : LinguisticExample :=
+def ex21f : Datum :=
   { id := "schlenkeretal2026_ex21f"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(21f)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex21f : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "67"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "strict"), ("verb", "PERSON-cl-neutral"), ("signerMoves", "yes")] }
 
-def ex21g : LinguisticExample :=
+def ex21g : Datum :=
   { id := "schlenkeretal2026_ex21g"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(21g)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex21g : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "60"), ("classifier", "TREE-cl-1"), ("direction", "toward"), ("roleShift", "strict"), ("verb", "PERSON-cl-neutral"), ("signerMoves", "no")] }
 
-def ex23a : LinguisticExample :=
+def ex23a : Datum :=
   { id := "schlenkeretal2026_ex23a"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(23a)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex23a : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "TREE-cl"), ("direction", "passing_rep"), ("roleShift", "strict"), ("figure", "PERSON-cl")] }
 
-def ex23b : LinguisticExample :=
+def ex23b : Datum :=
   { id := "schlenkeretal2026_ex23b"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(23b)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex23b : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "67"), ("classifier", "TREE-cl"), ("direction", "passing_rep"), ("roleShift", "broad"), ("figure", "PERSON-cl")] }
 
-def ex24a : LinguisticExample :=
+def ex24a : Datum :=
   { id := "schlenkeretal2026_ex24a"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(24a)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex24a : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "70"), ("classifier", "POLE-cl"), ("direction", "passing_rep"), ("roleShift", "strict"), ("figure", "VEHICLE-cl")] }
 
-def ex24b : LinguisticExample :=
+def ex24b : Datum :=
   { id := "schlenkeretal2026_ex24b"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(24b)"⟩
     reportedIn := none
@@ -459,6 +457,6 @@ def ex24b : LinguisticExample :=
     readings := []
     paperFeatures := [("score", "67"), ("classifier", "POLE-cl"), ("direction", "passing_rep"), ("roleShift", "broad"), ("figure", "VEHICLE-cl")] }
 
-def all : List LinguisticExample := [ex7a, ex7b, ex10a, ex10b, ex10c, ex10d, ex10e, ex10f, ex13a, ex13b, ex13c, ex13d, ex13e, ex13f, ex16a, ex16b, ex16c, ex16d, ex16e, ex16f, ex16g, ex19a, ex19b, ex21a, ex21b, ex21c, ex21d, ex21e, ex21f, ex21g, ex23a, ex23b, ex24a, ex24b]
+def all : List Datum := [ex7a, ex7b, ex10a, ex10b, ex10c, ex10d, ex10e, ex10f, ex13a, ex13b, ex13c, ex13d, ex13e, ex13f, ex16a, ex16b, ex16c, ex16d, ex16e, ex16f, ex16g, ex19a, ex19b, ex21a, ex21b, ex21c, ex21d, ex21e, ex21f, ex21g, ex23a, ex23b, ex24a, ex24b]
 
 end SchlenkerEtAl2026.Examples

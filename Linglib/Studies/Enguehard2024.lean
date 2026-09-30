@@ -67,7 +67,7 @@ chance of ineffability by a best guess from the distribution of witnesses.
 
 namespace Enguehard2024
 
-open Presupposition Data.Examples Enguehard2024.Examples
+open Presupposition Enguehard2024.Examples
 
 /-- The number of an indefinite. -/
 inductive Number
@@ -122,12 +122,12 @@ structure IndefiniteRow where
   deriving DecidableEq, Repr
 
 /-- A row from an example. -/
-def IndefiniteRow.ofExample (ex : LinguisticExample) : Option IndefiniteRow := do
+def IndefiniteRow.ofDatum (ex : Datum) : Option IndefiniteRow := do
   pure ⟨← ex.parse? "number" numberTable, ← ex.parse? "polarity" polarityTable,
     ← ex.parse? "inference" inferenceTable⟩
 
 /-- The indefinites of (1)–(3). -/
-def indefiniteRows : List IndefiniteRow := Examples.all.filterMap IndefiniteRow.ofExample
+def indefiniteRows : List IndefiniteRow := Examples.all.filterMap IndefiniteRow.ofDatum
 
 /-- A positive indefinite infers the cardinality fitting its number; a negated one infers an
 empty witness set whatever its number, (1)–(3). -/
@@ -275,15 +275,15 @@ judgment. -/
 structure ContinuationRow where
   antecedent : Number
   pronoun : Pronoun
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
   deriving DecidableEq, Repr
 
 /-- A row from an example. -/
-def ContinuationRow.ofExample (ex : LinguisticExample) : Option ContinuationRow := do
+def ContinuationRow.ofDatum (ex : Datum) : Option ContinuationRow := do
   pure ⟨← ex.parse? "antecedent" numberTable, ← ex.parse? "pronoun" pronounTable, ex.judgment⟩
 
 /-- The continuations of (18)–(19). -/
-def continuationRows : List ContinuationRow := Examples.all.filterMap ContinuationRow.ofExample
+def continuationRows : List ContinuationRow := Examples.all.filterMap ContinuationRow.ofDatum
 
 /-- (18)–(19): a pronoun bound by a negated indefinite must match it in number, (a). -/
 theorem continuationRows_match :

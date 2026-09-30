@@ -84,7 +84,7 @@ constituent question rejects *do* altogether.
 
 namespace Wilder2013
 
-open Data.Examples Focus
+open Focus
 
 /-! ### The auxiliary system -/
 
@@ -332,7 +332,7 @@ structure Row where
   acceptable : Bool
   deriving DecidableEq, Repr
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let pattern ← ex.feature? "pattern"
   let kind ←
     if pattern = "VF" then some Kind.vf
@@ -351,7 +351,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
     ("whSubjectQuestion", .whSubjectQuestion), ("objectPreposing", .objectPreposing)]
   pure ⟨kind, environment, ex.judgment = .acceptable⟩
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Every example row parses. -/
 theorem rows_length : rows.length = Examples.all.length := by decide

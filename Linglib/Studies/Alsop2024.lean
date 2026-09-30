@@ -42,7 +42,7 @@ results are not re-derived here.
 
 namespace Alsop2024
 
-open MeasureTheory ProbabilityTheory RSA Data.Examples
+open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal
 
 /-! ### States, utterances, parses (Tables 1–2) -/
@@ -211,7 +211,7 @@ theorem only1_over_anyNum {α : ℝ} (hα : 0 < α) :
 /-! ### The paper's scenarios -/
 
 /-- The state a scenario fixes, where the paper says which. -/
-def rowState (row : LinguisticExample) : Option State :=
+def rowState (row : Datum) : Option State :=
   match row.feature? "state" with
   | some "only1" => some .only1
   | some "anyNum" => some .anyNum
@@ -220,7 +220,7 @@ def rowState (row : LinguisticExample) : Option State :=
 
 /-- Whether the row's literal truth is judged: an explicit `literal` reading, else the
 row's own judgment. -/
-def observedLiteral (row : LinguisticExample) : Bool :=
+def observedLiteral (row : Datum) : Bool :=
   match row.readings.lookup "literal" with
   | some j => j == .acceptable
   | none => row.judgment == .acceptable

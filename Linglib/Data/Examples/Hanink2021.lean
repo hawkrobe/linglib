@@ -15,9 +15,7 @@ this module; declarations live in `namespace Hanink2021.Examples`.
 
 namespace Hanink2021.Examples
 
-open Data.Examples
-
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "hanink2021_ex1"
     source := ⟨"hanink-2021", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("phenomenon", "pronoun"), ("idxForm", "gi"), ("case", "nominative")] }
 
-def ex2 : LinguisticExample :=
+def ex2 : Datum :=
   { id := "hanink2021_ex2"
     source := ⟨"hanink-2021", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("phenomenon", "demonstrative"), ("idxForm", "gi")] }
 
-def ex3 : LinguisticExample :=
+def ex3 : Datum :=
   { id := "hanink2021_ex3"
     source := ⟨"hanink-2021", "(3)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("phenomenon", "internallyHeadedRelative"), ("idxForm", "gi"), ("case", "nominative")] }
 
-def ex19 : LinguisticExample :=
+def ex19 : Datum :=
   { id := "hanink2021_ex19"
     source := ⟨"hanink-2021", "(19)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex19 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "bareNoun"), ("reading", "indefinite")] }
 
-def ex20 : LinguisticExample :=
+def ex20 : Datum :=
   { id := "hanink2021_ex20"
     source := ⟨"hanink-2021", "(20)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex20 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "bareNoun"), ("reading", "unique")] }
 
-def ex21 : LinguisticExample :=
+def ex21 : Datum :=
   { id := "hanink2021_ex21"
     source := ⟨"hanink-2021", "(21)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex21 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "bareNoun"), ("reading", "anaphoric"), ("idxForm", "null")] }
 
-def ex22 : LinguisticExample :=
+def ex22 : Datum :=
   { id := "hanink2021_ex22"
     source := ⟨"hanink-2021", "(22)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex22 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "bareNoun"), ("reading", "anaphoric"), ("idxForm", "null"), ("case", "accusative")] }
 
-def ex23 : LinguisticExample :=
+def ex23 : Datum :=
   { id := "hanink2021_ex23"
     source := ⟨"hanink-2021", "(23)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex23 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "demonstrative")] }
 
-def ex25a : LinguisticExample :=
+def ex25a : Datum :=
   { id := "hanink2021_ex25a"
     source := ⟨"hanink-2021", "(25a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex25a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "demonstrative"), ("deixis", "distal")] }
 
-def ex25b : LinguisticExample :=
+def ex25b : Datum :=
   { id := "hanink2021_ex25b"
     source := ⟨"hanink-2021", "(25b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex25b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "demonstrative"), ("deixis", "proximal")] }
 
-def ex27 : LinguisticExample :=
+def ex27 : Datum :=
   { id := "hanink2021_ex27"
     source := ⟨"hanink-2021", "(27)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex27 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "pronoun"), ("idxForm", "ge"), ("case", "accusative")] }
 
-def ex41 : LinguisticExample :=
+def ex41 : Datum :=
   { id := "hanink2021_ex41"
     source := ⟨"hanink-2021", "(41)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex41 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "internallyHeadedRelative"), ("idxForm", "ge"), ("case", "accusative")] }
 
-def ex45 : LinguisticExample :=
+def ex45 : Datum :=
   { id := "hanink2021_ex45"
     source := ⟨"hanink-2021", "(45)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex45 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "internallyHeadedRelative"), ("idxForm", "ge"), ("case", "accusative")] }
 
-def ex46 : LinguisticExample :=
+def ex46 : Datum :=
   { id := "hanink2021_ex46"
     source := ⟨"hanink-2021", "(46)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex46 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "postposition")] }
 
-def ex47 : LinguisticExample :=
+def ex47 : Datum :=
   { id := "hanink2021_ex47"
     source := ⟨"hanink-2021", "(47)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex47 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("phenomenon", "postposition"), ("idxForm", "ge")] }
 
-def ex50 : LinguisticExample :=
+def ex50 : Datum :=
   { id := "hanink2021_ex50"
     source := ⟨"hanink-2021", "(50)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex50 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "islandInsensitivity")] }
 
-def ex51 : LinguisticExample :=
+def ex51 : Datum :=
   { id := "hanink2021_ex51"
     source := ⟨"hanink-2021", "(51)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex51 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "islandInsensitivity")] }
 
-def ex53 : LinguisticExample :=
+def ex53 : Datum :=
   { id := "hanink2021_ex53"
     source := ⟨"hanink-2021", "(53)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex53 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "restrictiveness"), ("reading", "existential")] }
 
-def ex54 : LinguisticExample :=
+def ex54 : Datum :=
   { id := "hanink2021_ex54"
     source := ⟨"hanink-2021", "(54)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex54 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("phenomenon", "restrictiveness")] }
 
-def ex56 : LinguisticExample :=
+def ex56 : Datum :=
   { id := "hanink2021_ex56"
     source := ⟨"hanink-2021", "(56)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex56 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("phenomenon", "internallyHeadedRelative")] }
 
-def ex91 : LinguisticExample :=
+def ex91 : Datum :=
   { id := "hanink2021_ex91"
     source := ⟨"hanink-2021", "(91)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex91 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.5"), ("phenomenon", "noFeatureTransmission")] }
 
-def ex96 : LinguisticExample :=
+def ex96 : Datum :=
   { id := "hanink2021_ex96"
     source := ⟨"hanink-2021", "(96)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex96 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "indefinitenessRestriction")] }
 
-def ex98 : LinguisticExample :=
+def ex98 : Datum :=
   { id := "hanink2021_ex98"
     source := ⟨"hanink-2021", "(98)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex98 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "quantifiedHead")] }
 
-def ex102 : LinguisticExample :=
+def ex102 : Datum :=
   { id := "hanink2021_ex102"
     source := ⟨"hanink-2021", "(102)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex102 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "quantifiedHead")] }
 
-def ex103 : LinguisticExample :=
+def ex103 : Datum :=
   { id := "hanink2021_ex103"
     source := ⟨"hanink-2021", "(103)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex103 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("phenomenon", "quantifiedHead")] }
 
-def ex104 : LinguisticExample :=
+def ex104 : Datum :=
   { id := "hanink2021_ex104"
     source := ⟨"hanink-2021", "(104)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex104 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("phenomenon", "perceptionReading")] }
 
-def ex105 : LinguisticExample :=
+def ex105 : Datum :=
   { id := "hanink2021_ex105"
     source := ⟨"hanink-2021", "(105)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex105 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("phenomenon", "perceptionReading")] }
 
-def ex120a : LinguisticExample :=
+def ex120a : Datum :=
   { id := "hanink2021_ex120a"
     source := ⟨"hanink-2021", "(120a)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex120a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.3"), ("phenomenon", "pronounConcord"), ("number", "dual")] }
 
-def ex120b : LinguisticExample :=
+def ex120b : Datum :=
   { id := "hanink2021_ex120b"
     source := ⟨"hanink-2021", "(120b)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex120b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.3"), ("phenomenon", "pronounConcord"), ("number", "plural")] }
 
-def ex121a : LinguisticExample :=
+def ex121a : Datum :=
   { id := "hanink2021_ex121a"
     source := ⟨"hanink-2021", "(121a)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex121a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.3"), ("phenomenon", "modifierConcord"), ("number", "dual")] }
 
-def ex121b : LinguisticExample :=
+def ex121b : Datum :=
   { id := "hanink2021_ex121b"
     source := ⟨"hanink-2021", "(121b)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex121b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.3"), ("phenomenon", "modifierConcord"), ("number", "dual")] }
 
-def ex122a : LinguisticExample :=
+def ex122a : Datum :=
   { id := "hanink2021_ex122a"
     source := ⟨"hanink-2021", "(122a)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex122a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.3"), ("phenomenon", "modifierConcord"), ("number", "plural")] }
 
-def ex122b : LinguisticExample :=
+def ex122b : Datum :=
   { id := "hanink2021_ex122b"
     source := ⟨"hanink-2021", "(122b)"⟩
     reportedIn := none
@@ -446,6 +444,6 @@ def ex122b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.3"), ("phenomenon", "modifierConcord"), ("number", "plural")] }
 
-def all : List LinguisticExample := [ex1, ex2, ex3, ex19, ex20, ex21, ex22, ex23, ex25a, ex25b, ex27, ex41, ex45, ex46, ex47, ex50, ex51, ex53, ex54, ex56, ex91, ex96, ex98, ex102, ex103, ex104, ex105, ex120a, ex120b, ex121a, ex121b, ex122a, ex122b]
+def all : List Datum := [ex1, ex2, ex3, ex19, ex20, ex21, ex22, ex23, ex25a, ex25b, ex27, ex41, ex45, ex46, ex47, ex50, ex51, ex53, ex54, ex56, ex91, ex96, ex98, ex102, ex103, ex104, ex105, ex120a, ex120b, ex121a, ex121b, ex122a, ex122b]
 
 end Hanink2021.Examples

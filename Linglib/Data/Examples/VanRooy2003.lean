@@ -15,9 +15,7 @@ this module; declarations live in `namespace VanRooy2003.Examples`.
 
 namespace VanRooy2003.Examples
 
-open Data.Examples
-
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "vanrooy2003_3"
     source := ⟨"van-rooy-2003", "(3)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_3 : LinguisticExample :=
     readings := [("referential: that man over there", .acceptable), ("descriptive: the greatest boxer ever", .acceptable)]
     paperFeatures := [("type", "identification question")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "vanrooy2003_12"
     source := ⟨"van-rooy-2003", "(12)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_12 : LinguisticExample :=
     readings := [("mention-some: at least at the station", .acceptable)]
     paperFeatures := [("type", "mention-some"), ("regions", "{u,w},{v,w}")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "vanrooy2003_14"
     source := ⟨"van-rooy-2003", "(14)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "explicitly non-exhaustive")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "vanrooy2003_15"
     source := ⟨"van-rooy-2003", "(15)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "embedded mention-some")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "vanrooy2003_16"
     source := ⟨"van-rooy-2003", "(16)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "contextual domain")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "vanrooy2003_17"
     source := ⟨"van-rooy-2003", "(17)"⟩
     reportedIn := some ⟨"karttunen-1977", ""⟩
@@ -95,7 +93,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "contextual domain")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "vanrooy2003_18b"
     source := ⟨"van-rooy-2003", "(18b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "degree question"), ("optimal value", "maximal")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "vanrooy2003_19"
     source := ⟨"van-rooy-2003", "(19)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "degree question"), ("optimal value", "minimal")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "vanrooy2003_21"
     source := ⟨"van-rooy-2003", "(21)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_21 : LinguisticExample :=
     readings := [("complete address, to send a letter", .acceptable), ("the city, to decide on a visit", .acceptable)]
     paperFeatures := [("type", "granularity")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "vanrooy2003_22"
     source := ⟨"van-rooy-2003", "(22)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_22 : LinguisticExample :=
     readings := [("by name: {{u,v},{w,x}}", .acceptable), ("by mask: {{u,w},{v,x}}", .acceptable)]
     paperFeatures := [("type", "conceptual cover")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "vanrooy2003_23"
     source := ⟨"van-rooy-2003", "(23)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "conceptual cover")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "vanrooy2003_24"
     source := ⟨"van-rooy-2003", "(24)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("type", "degree question"), ("optimal value", "undefined")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "vanrooy2003_25"
     source := ⟨"van-rooy-2003", "(25)"⟩
     reportedIn := none
@@ -186,6 +184,6 @@ def ex_25 : LinguisticExample :=
     readings := [("mention-some", .acceptable)]
     paperFeatures := [("type", "degree question"), ("reading", "mention-some")] }
 
-def all : List LinguisticExample := [ex_3, ex_12, ex_14, ex_15, ex_16, ex_17, ex_18b, ex_19, ex_21, ex_22, ex_23, ex_24, ex_25]
+def all : List Datum := [ex_3, ex_12, ex_14, ex_15, ex_16, ex_17, ex_18b, ex_19, ex_21, ex_22, ex_23, ex_24, ex_25]
 
 end VanRooy2003.Examples

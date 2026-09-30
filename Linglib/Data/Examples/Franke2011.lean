@@ -15,9 +15,7 @@ this module; declarations live in `namespace Franke2011.Examples`.
 
 namespace Franke2011.Examples
 
-open Data.Examples
-
-def ex4 : LinguisticExample :=
+def ex4 : Datum :=
   { id := "franke2011_ex4"
     source := ⟨"franke-2011", "(4)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex4 : LinguisticExample :=
     readings := [("general epistemic: speaker does not believe all (6a)", .acceptable), ("strong epistemic: speaker believes not all (6b)", .acceptable), ("weak epistemic: speaker uncertain about all (6c)", .acceptable), ("base-level: not all (6d)", .acceptable)]
     paperFeatures := [] }
 
-def ex8 : LinguisticExample :=
+def ex8 : Datum :=
   { id := "franke2011_ex8"
     source := ⟨"franke-2011", "(8)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex8 : LinguisticExample :=
     readings := [("ignorance: speaker uncertain about each disjunct (10)", .acceptable), ("exclusivity: not both (11)", .acceptable)]
     paperFeatures := [] }
 
-def ex12a : LinguisticExample :=
+def ex12a : Datum :=
   { id := "franke2011_ex12a"
     source := ⟨"franke-2011", "(12a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex12a : LinguisticExample :=
     readings := [("free choice: may take an apple and may take a pear (12b)", .acceptable), ("exclusivity: may not take both (15d)", .acceptable)]
     paperFeatures := [] }
 
-def ex13 : LinguisticExample :=
+def ex13 : Datum :=
   { id := "franke2011_ex13"
     source := ⟨"franke-2011", "(13)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex13 : LinguisticExample :=
     readings := [("ignorance: speaker uncertain whether the hearer may take an apple (14a)", .acceptable)]
     paperFeatures := [] }
 
-def ex18 : LinguisticExample :=
+def ex18 : Datum :=
   { id := "franke2011_ex18"
     source := ⟨"franke-2011", "(18)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex18 : LinguisticExample :=
     readings := [("simplification of disjunctive antecedents (19a) and (19b)", .acceptable)]
     paperFeatures := [] }
 
-def ex30 : LinguisticExample :=
+def ex30 : Datum :=
   { id := "franke2011_ex30"
     source := ⟨"franke-2011", "(30a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex30 : LinguisticExample :=
     readings := [("simplification to (30b): if John had taken a pear, he would have taken an apple", .unacceptable)]
     paperFeatures := [] }
 
-def ex95a : LinguisticExample :=
+def ex95a : Datum :=
   { id := "franke2011_ex95a"
     source := ⟨"franke-2011", "(95a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex95a : LinguisticExample :=
     readings := [("speaker knows John came and considers it possible that Mary came (95b)", .acceptable)]
     paperFeatures := [] }
 
-def ex99 : LinguisticExample :=
+def ex99 : Datum :=
   { id := "franke2011_ex99"
     source := ⟨"franke-2011", "(99)"⟩
     reportedIn := none
@@ -121,6 +119,6 @@ def ex99 : LinguisticExample :=
     readings := [("universal free choice: everybody may take an apple and everybody may take a pear", .acceptable)]
     paperFeatures := [] }
 
-def all : List LinguisticExample := [ex4, ex8, ex12a, ex13, ex18, ex30, ex95a, ex99]
+def all : List Datum := [ex4, ex8, ex12a, ex13, ex18, ex30, ex95a, ex99]
 
 end Franke2011.Examples

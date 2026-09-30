@@ -479,18 +479,17 @@ end Universal
 
 section GermanWordOrder
 
-open Data.Examples
 
 /-- Common knowledge about the predicate of a row, by (70) from the level ([carlson-1977]) its
 `predicate_level` feature records: an individual-level predicate is permanent, a stage-level one
 unconstrained. -/
-def commonKnowledgeOf (row : LinguisticExample) : Option (Set (Fireman → Fin 3 → Prop)) :=
+def commonKnowledgeOf (row : Datum) : Option (Set (Fireman → Fin 3 → Prop)) :=
   match row.feature? "predicate_level" with
   | some "individual" => some {f | Permanent lifespan f}
   | some "stage" => some univ
   | _ => none
 
-private theorem exists_existentialOdd_iff (row : LinguisticExample) :
+private theorem exists_existentialOdd_iff (row : Datum) :
     (∃ Wck ∈ commonKnowledgeOf row, ExistentialOdd Wck) ↔
       row.feature? "predicate_level" = some "individual" := by
   unfold commonKnowledgeOf
@@ -499,7 +498,7 @@ private theorem exists_existentialOdd_iff (row : LinguisticExample) :
 /-- A row of (8) is predicted odd when its bare plural subject sits to the right of *ja doch*,
 where it has only the existential reading (§4.5.1), and that reading is odd for its predicate,
 (128), (129). -/
-def PredictedOdd (row : LinguisticExample) : Prop :=
+def PredictedOdd (row : Datum) : Prop :=
   row.feature? "position" = some "right" ∧ ∃ Wck ∈ commonKnowledgeOf row, ExistentialOdd Wck
 
 /-- (8), (125): a row is acceptable exactly when it is not predicted odd; only (8c), with the

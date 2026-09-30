@@ -49,7 +49,7 @@ formalized.
 
 namespace PurverGinzburg2004
 
-open Data.Examples Examples Quantifier Quantifier.GQ Quantifier.NP
+open Examples Quantifier Quantifier.GQ Quantifier.NP
 
 /-! ### Signs and the Definiteness Principle (§2.1, §4.5) -/
 
@@ -197,12 +197,12 @@ instance (s : Sign) (p : String × Judgment) : Decidable (ReadingPredicted s p) 
 
 /-- A row is predicted: every paraphrase reading is predicted by the sign of its noun phrase
 type. -/
-def Predicted (r : LinguisticExample) : Prop :=
+def Predicted (r : Datum) : Prop :=
   match (r.feature? "np").bind sign? with
   | some s => ∀ p ∈ r.readings, ReadingPredicted s p
   | none => False
 
-instance (r : LinguisticExample) : Decidable (Predicted r) := by
+instance (r : Datum) : Decidable (Predicted r) := by
   unfold Predicted; split <;> infer_instance
 
 /-- (25) to (90): the readings the paper finds and the ones it excludes. -/

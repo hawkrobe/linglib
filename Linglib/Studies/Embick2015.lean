@@ -52,7 +52,7 @@ may see the phonological features of a realized exponent.
 
 namespace Embick2015
 
-open DistributedMorphology Data.Examples Embick2015.Examples
+open DistributedMorphology Embick2015.Examples
 
 /-! ### The Latin fragment -/
 
@@ -134,7 +134,7 @@ def personTable : List (String × (Bool × Bool)) :=
 def numberTable : List (String × Bool) := [("sg", false), ("pl", true)]
 
 /-- A row of (40) as its complex head and its morphs. -/
-def ofRow (ex : LinguisticExample) : Option (ComplexHead Feature String × List String) := do
+def ofRow (ex : Datum) : Option (ComplexHead Feature String × List String) := do
   let t ← ex.parse? "tense" tenseTable
   let (p₁, p₂) ← ex.parse? "person" personTable
   let pl ← ex.parse? "number" numberTable
@@ -191,7 +191,7 @@ def plural (w : ComplexHead Feature String) : Option String :=
 def possTable : List (String × Bool) := [("yes", true), ("no", false)]
 
 /-- A row of (7) as its complex head and the exponent of its plural. -/
-def ofRow (ex : LinguisticExample) : Option (ComplexHead Feature String × String) := do
+def ofRow (ex : Datum) : Option (ComplexHead Feature String × String) := do
   pure (word (← ex.feature? "root") (← ex.parse? "poss" possTable), ← ex.feature? "plExponent")
 
 theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "hung1274" → (ofRow ex).isSome := by
@@ -250,7 +250,7 @@ def nominative (w : ComplexHead Feature String) : Option String :=
   (w.insertAll (· = "") vocab .concatenation shape .nondeletion).heads[0]? >>= (·.exp)
 
 /-- A row of (10) as its complex head and the exponent of its nominative. -/
-def ofRow (ex : LinguisticExample) : Option (ComplexHead Feature String × String) := do
+def ofRow (ex : Datum) : Option (ComplexHead Feature String × String) := do
   pure (word (← ex.feature? "root"), ← ex.feature? "nomExponent")
 
 theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "kore1280" → (ofRow ex).isSome := by

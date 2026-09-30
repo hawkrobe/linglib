@@ -86,7 +86,6 @@ is the θ-uniformity the analysis was built for.
 namespace Collins2005
 
 open Minimalist SyntacticObject
-open Data.Examples (LinguisticExample)
 
 /-! ### The passive and its rival derivations (§2–§5) -/
 
@@ -307,7 +306,7 @@ theorem by_selects_vP :
 def bools : List (String × Bool) := [("true", true), ("false", false)]
 
 /-- The clause a row records. -/
-def Clause.ofRow (row : LinguisticExample) : Option Clause := do
+def Clause.ofRow (row : Datum) : Option Clause := do
   let verb ← row.feature? "verb"
   let agent ← row.feature? "agent"
   let patient ← row.feature? "patient"
@@ -326,7 +325,7 @@ structure Order where
   evacuated : Bool
 
 /-- The configuration a row records. -/
-def Order.ofRow (row : LinguisticExample) : Option Order := do
+def Order.ofRow (row : Datum) : Option Order := do
   guard (row.feature? "construction" = some "passive")
   return ⟨← Clause.ofRow row,
     ← row.parse? "analysis"
@@ -388,7 +387,7 @@ the DP is Merged, (83)–(84) (§9.3); a name meets Condition C at the surface, 
 reconstruction (§9.2); a negative polarity item and *the other* need a c-commanding licensor at
 the surface. -/
 def Dependency.predict (dep : Dependency) (p : Clause) (d : Derivation) (x y : Position) :
-    Data.Examples.Judgment :=
+    Judgment :=
   match dep with
   | .reflexive =>
       if (Level.surface.configuration p d).Condition (pair x y) ∅ y .reflexive then .acceptable
@@ -421,7 +420,7 @@ structure Licensing where
   dependent : Position
 
 /-- The configuration a row records. -/
-def Licensing.ofRow (row : LinguisticExample) : Option Licensing := do
+def Licensing.ofRow (row : Datum) : Option Licensing := do
   guard (row.feature? "construction" = some "licensing")
   let positions := [("external", Position.external), ("pp", .pp)]
   return ⟨← Clause.ofRow row, ← row.parse? "evacuated" bools,
@@ -433,7 +432,7 @@ def Licensing.ofRow (row : LinguisticExample) : Option Licensing := do
 def Licensing.derivation (c : Licensing) : Derivation := c.clause.passive .partP c.evacuated
 
 /-- The judgment the configuration predicts on its derivation. -/
-def Licensing.predict (c : Licensing) : Data.Examples.Judgment :=
+def Licensing.predict (c : Licensing) : Judgment :=
   c.dependency.predict c.clause c.derivation c.antecedent c.dependent
 
 /-- The [barss-lasnik-1986] tests (10), Principle A (72), (74), the bound variable (75),
@@ -475,7 +474,7 @@ def Participle.Licensed (c : Participle) : Prop := Xor (c.auxiliary = .have) c.v
 instance (c : Participle) : Decidable c.Licensed := inferInstanceAs (Decidable (Xor _ _))
 
 /-- The configuration a row records. -/
-def Participle.ofRow (row : LinguisticExample) : Option Participle := do
+def Participle.ofRow (row : Datum) : Option Participle := do
   guard (row.feature? "construction" = some "participle")
   return ⟨← row.parse? "auxiliary" [("have", Auxiliary.have), ("be", .be), ("none", .bare)],
     ← row.parse? "voiceP" bools⟩

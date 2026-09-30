@@ -45,7 +45,7 @@ the comparison with [boersma-1997]'s Gradual Learning Algorithm.
 
 namespace GoldwaterJohnson2003
 
-open OptimalityTheory HarmonicGrammar Finset Real Data.Examples
+open OptimalityTheory HarmonicGrammar Finset Real
 
 variable {I O : Type*} [Fintype O] {n : ℕ}
 
@@ -216,7 +216,7 @@ structure Row where
   loser : Fin 11 → ℕ
   deriving DecidableEq
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let w ← ex.feature? "winnerViolations"
   let l ← ex.feature? "loserViolations"
   pure ⟨vec (digits w), vec (digits l)⟩
@@ -225,7 +225,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
 def Row.diff (r : Row) : Fin 11 → ℤ := λ j => (r.loser j : ℤ) - r.winner j
 
 /-- The four stem classes of Table 2. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 example : rows.length = Examples.all.length := by decide
 

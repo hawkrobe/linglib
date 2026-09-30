@@ -34,7 +34,7 @@ it is unconstrained, whichever kind is intended.
 
 namespace Arnold2026
 
-open Data.Examples KonnellyCowper2020
+open KonnellyCowper2020
 
 /-- The two kinds of singular *they*. -/
 inductive Kind
@@ -56,7 +56,7 @@ structure Representation where
   deriving DecidableEq, Repr
 
 /-- The representation a row records. -/
-def Representation.ofRow (r : LinguisticExample) : Representation :=
+def Representation.ofRow (r : Datum) : Representation :=
   ⟨r.feature? "representation" = some "elaborated", r.feature? "pronouns" = some "they/them"⟩
 
 /-- The pragmatic condition of each kind: underspecified *they* wants a thin representation,

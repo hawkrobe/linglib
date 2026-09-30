@@ -15,9 +15,7 @@ this module; declarations live in `namespace AissenPolian2025.Examples`.
 
 namespace AissenPolian2025.Examples
 
-open Data.Examples
-
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "aissenpolian2025_ex1"
     source := ⟨"aissen-polian-2025", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "lexicalUnaccusative")] }
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "aissenpolian2025_ex2a"
     source := ⟨"aissen-polian-2025", "(2a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "S_O"), ("possessum", "specific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "lexicalUnaccusative")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "aissenpolian2025_ex2b"
     source := ⟨"aissen-polian-2025", "(2b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex2b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "lexicalUnaccusative"), ("table4", "T-none-unaccusative")] }
 
-def ex4 : LinguisticExample :=
+def ex4 : Datum :=
   { id := "aissenpolian2025_ex4"
     source := ⟨"aissen-polian-2025", "(4)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex4 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("table4", "T-none-unaccusative")] }
 
-def ex5 : LinguisticExample :=
+def ex5 : Datum :=
   { id := "aissenpolian2025_ex5"
     source := ⟨"aissen-polian-2025", "(5)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex5 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "O"), ("possessum", "specific"), ("clause", "transitive"), ("intervener", "none")] }
 
-def ex20a : LinguisticExample :=
+def ex20a : Datum :=
   { id := "aissenpolian2025_ex20a"
     source := ⟨"little-2020b", "(11)"⟩
     reportedIn := some ⟨"aissen-polian-2025", "(20a)"⟩
@@ -95,7 +93,7 @@ def ex20a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "S_O"), ("possessum", "specific"), ("clause", "unaccusative"), ("intervener", "none")] }
 
-def ex20b : LinguisticExample :=
+def ex20b : Datum :=
   { id := "aissenpolian2025_ex20b"
     source := ⟨"little-2020b", "(11)"⟩
     reportedIn := some ⟨"aissen-polian-2025", "(20b)"⟩
@@ -108,7 +106,7 @@ def ex20b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("table4", "T-none-unaccusative")] }
 
-def ex22a : LinguisticExample :=
+def ex22a : Datum :=
   { id := "aissenpolian2025_ex22a"
     source := ⟨"little-2020b", "(13)"⟩
     reportedIn := some ⟨"aissen-polian-2025", "(22a)"⟩
@@ -121,7 +119,7 @@ def ex22a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "O"), ("possessum", "specific"), ("clause", "transitive"), ("intervener", "none")] }
 
-def ex22b : LinguisticExample :=
+def ex22b : Datum :=
   { id := "aissenpolian2025_ex22b"
     source := ⟨"little-2020b", "(13)"⟩
     reportedIn := some ⟨"aissen-polian-2025", "(22b)"⟩
@@ -134,7 +132,7 @@ def ex22b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "specific"), ("clause", "transitive"), ("intervener", "A"), ("table4", "T-A-transitive")] }
 
-def ex26b : LinguisticExample :=
+def ex26b : Datum :=
   { id := "aissenpolian2025_ex26b"
     source := ⟨"little-2020b", "fn. 10"⟩
     reportedIn := some ⟨"aissen-polian-2025", "(26b)"⟩
@@ -147,7 +145,7 @@ def ex26b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "nonSpecific"), ("clause", "ditransitiveRaising"), ("intervener", "none"), ("probe", "Appl"), ("table4", "Appl-none-ditransitive")] }
 
-def ex23a : LinguisticExample :=
+def ex23a : Datum :=
   { id := "aissenpolian2025_ex23a"
     source := ⟨"aissen-polian-2025", "(23a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex23a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "O"), ("possessum", "specific"), ("clause", "transitive"), ("intervener", "none")] }
 
-def ex23b : LinguisticExample :=
+def ex23b : Datum :=
   { id := "aissenpolian2025_ex23b"
     source := ⟨"aissen-polian-2025", "(23b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex23b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "specific"), ("clause", "transitive"), ("intervener", "A"), ("table4", "T-A-transitive")] }
 
-def ex24 : LinguisticExample :=
+def ex24 : Datum :=
   { id := "aissenpolian2025_ex24"
     source := ⟨"aissen-polian-2025", "(24)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex24 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("construction", "lexicalTransitive"), ("possessum", "nonSpecific")] }
 
-def ex25 : LinguisticExample :=
+def ex25 : Datum :=
   { id := "aissenpolian2025_ex25"
     source := ⟨"aissen-polian-2025", "(25)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex25 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "nonSpecific"), ("clause", "transitive"), ("intervener", "A"), ("table4", "T-A-transitive")] }
 
-def ex27 : LinguisticExample :=
+def ex27 : Datum :=
   { id := "aissenpolian2025_ex27"
     source := ⟨"aissen-polian-2025", "(27)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex27 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "nonSpecific"), ("clause", "ditransitiveRaising"), ("intervener", "none"), ("probe", "Appl"), ("table4", "Appl-none-ditransitive")] }
 
-def ex28b : LinguisticExample :=
+def ex28b : Datum :=
   { id := "aissenpolian2025_ex28b"
     source := ⟨"aissen-polian-2025", "(28b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex28b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "nonSpecific"), ("clause", "ditransitiveRaising"), ("intervener", "none"), ("probe", "Appl"), ("table4", "Appl-none-ditransitive")] }
 
-def ex28c : LinguisticExample :=
+def ex28c : Datum :=
   { id := "aissenpolian2025_ex28c"
     source := ⟨"aissen-polian-2025", "(28c)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex28c : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "nonSpecific"), ("clause", "transitive"), ("intervener", "A"), ("table4", "T-A-transitive")] }
 
-def ex30 : LinguisticExample :=
+def ex30 : Datum :=
   { id := "aissenpolian2025_ex30"
     source := ⟨"aissen-polian-2025", "(30)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex30 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "nonSpecific"), ("clause", "ditransitiveThematic"), ("intervener", "goal"), ("probe", "Appl"), ("table4", "Appl-goal-ditransitive")] }
 
-def ex31 : LinguisticExample :=
+def ex31 : Datum :=
   { id := "aissenpolian2025_ex31"
     source := ⟨"aissen-polian-2025", "(31)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex31 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "O"), ("possessum", "nonSpecific"), ("clause", "ditransitiveThematic"), ("intervener", "goal"), ("probe", "Appl"), ("table4", "Appl-goal-ditransitive")] }
 
-def ex32 : LinguisticExample :=
+def ex32 : Datum :=
   { id := "aissenpolian2025_ex32"
     source := ⟨"aissen-polian-2025", "(32)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex32 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "ditransitiveThematic"), ("construction", "lexicalTransitive"), ("possessum", "nonSpecific")] }
 
-def ex35 : LinguisticExample :=
+def ex35 : Datum :=
   { id := "aissenpolian2025_ex35"
     source := ⟨"aissen-polian-2025", "(35)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex35 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "predicativePossession")] }
 
-def ex36 : LinguisticExample :=
+def ex36 : Datum :=
   { id := "aissenpolian2025_ex36"
     source := ⟨"aissen-polian-2025", "(36)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex36 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "experientialCollocation")] }
 
-def ex37 : LinguisticExample :=
+def ex37 : Datum :=
   { id := "aissenpolian2025_ex37"
     source := ⟨"aissen-polian-2025", "(37)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex37 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "lexicalUnaccusative"), ("possessum", "nonSpecific")] }
 
-def ex43 : LinguisticExample :=
+def ex43 : Datum :=
   { id := "aissenpolian2025_ex43"
     source := ⟨"aissen-polian-2025", "(43)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex43 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "predicativePossession"), ("possessum", "nonSpecific")] }
 
-def ex45a : LinguisticExample :=
+def ex45a : Datum :=
   { id := "aissenpolian2025_ex45a"
     source := ⟨"aissen-polian-2025", "(45a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex45a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "predicativePossession")] }
 
-def ex45b : LinguisticExample :=
+def ex45b : Datum :=
   { id := "aissenpolian2025_ex45b"
     source := ⟨"aissen-polian-2025", "(45b)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex45b : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "predicativePossession")] }
 
-def ex46 : LinguisticExample :=
+def ex46 : Datum :=
   { id := "aissenpolian2025_ex46"
     source := ⟨"aissen-polian-2025", "(46)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex46 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "locativeCopula"), ("possessum", "specific")] }
 
-def ex47 : LinguisticExample :=
+def ex47 : Datum :=
   { id := "aissenpolian2025_ex47"
     source := ⟨"aissen-polian-2025", "(47)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex47 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "predicativePossession")] }
 
-def ex48a : LinguisticExample :=
+def ex48a : Datum :=
   { id := "aissenpolian2025_ex48a"
     source := ⟨"aissen-polian-2025", "(48a)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex48a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "predicativePossession"), ("table4", "T-none-unaccusative")] }
 
-def ex48b : LinguisticExample :=
+def ex48b : Datum :=
   { id := "aissenpolian2025_ex48b"
     source := ⟨"aissen-polian-2025", "(48b)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex48b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "predicativePossession")] }
 
-def ex49a : LinguisticExample :=
+def ex49a : Datum :=
   { id := "aissenpolian2025_ex49a"
     source := ⟨"aissen-polian-2025", "(49a)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex49a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "predicativePossession"), ("table4", "T-none-unaccusative")] }
 
-def ex49b : LinguisticExample :=
+def ex49b : Datum :=
   { id := "aissenpolian2025_ex49b"
     source := ⟨"aissen-polian-2025", "(49b)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex49b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "predicativePossession")] }
 
-def ex50a : LinguisticExample :=
+def ex50a : Datum :=
   { id := "aissenpolian2025_ex50a"
     source := ⟨"aissen-polian-2025", "(50a)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex50a : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "experientialCollocation")] }
 
-def ex51 : LinguisticExample :=
+def ex51 : Datum :=
   { id := "aissenpolian2025_ex51"
     source := ⟨"aissen-polian-2025", "(51)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex51 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "experientialCollocation")] }
 
-def ex55a : LinguisticExample :=
+def ex55a : Datum :=
   { id := "aissenpolian2025_ex55a"
     source := ⟨"aissen-polian-2025", "(55a)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex55a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "experientialCollocation"), ("table4", "T-none-unaccusative")] }
 
-def ex55b : LinguisticExample :=
+def ex55b : Datum :=
   { id := "aissenpolian2025_ex55b"
     source := ⟨"aissen-polian-2025", "(55b)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex55b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "experientialCollocation")] }
 
-def ex57b : LinguisticExample :=
+def ex57b : Datum :=
   { id := "aissenpolian2025_ex57b"
     source := ⟨"aissen-polian-2025", "(57b)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex57b : LinguisticExample :=
     readings := [("x woke up", .acceptable), ("x's soul arrived", .unacceptable)]
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "experientialCollocation"), ("table4", "T-none-unaccusative")] }
 
-def ex58b : LinguisticExample :=
+def ex58b : Datum :=
   { id := "aissenpolian2025_ex58b"
     source := ⟨"aissen-polian-2025", "(58b)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex58b : LinguisticExample :=
     readings := [("whose soul arrived", .acceptable), ("who woke up", .unacceptable)]
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "S_O"), ("possessum", "specific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "lexicalUnaccusative")] }
 
-def ex59 : LinguisticExample :=
+def ex59 : Datum :=
   { id := "aissenpolian2025_ex59"
     source := ⟨"aissen-polian-2025", "(59)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex59 : LinguisticExample :=
     readings := [("Maria's money was lost", .acceptable), ("Maria lost some money", .acceptable)]
     paperFeatures := [("clause", "unaccusative"), ("construction", "lexicalUnaccusative")] }
 
-def ex60 : LinguisticExample :=
+def ex60 : Datum :=
   { id := "aissenpolian2025_ex60"
     source := ⟨"aissen-polian-2025", "(60)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex60 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "lexicalUnaccusative"), ("possessum", "specific")] }
 
-def ex61 : LinguisticExample :=
+def ex61 : Datum :=
   { id := "aissenpolian2025_ex61"
     source := ⟨"aissen-polian-2025", "(61)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex61 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "lexicalUnaccusative"), ("possessum", "nonSpecific")] }
 
-def ex62a : LinguisticExample :=
+def ex62a : Datum :=
   { id := "aissenpolian2025_ex62a"
     source := ⟨"aissen-polian-2025", "(62a)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex62a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "S_O"), ("possessum", "specific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "lexicalUnaccusative")] }
 
-def ex62b : LinguisticExample :=
+def ex62b : Datum :=
   { id := "aissenpolian2025_ex62b"
     source := ⟨"aissen-polian-2025", "(62b)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex62b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "S_O"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "lexicalUnaccusative"), ("table4", "T-none-unaccusative")] }
 
-def ex65 : LinguisticExample :=
+def ex65 : Datum :=
   { id := "aissenpolian2025_ex65"
     source := ⟨"aissen-polian-2025", "(65)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex65 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "OP"), ("possessum", "specific"), ("clause", "transitive"), ("intervener", "none")] }
 
-def ex66 : LinguisticExample :=
+def ex66 : Datum :=
   { id := "aissenpolian2025_ex66"
     source := ⟨"aissen-polian-2025", "(66)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex66 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "OP"), ("possessum", "specific"), ("clause", "unergative"), ("intervener", "none")] }
 
-def ex67 : LinguisticExample :=
+def ex67 : Datum :=
   { id := "aissenpolian2025_ex67"
     source := ⟨"aissen-polian-2025", "(67)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex67 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "transitive"), ("intervener", "A"), ("table4", "T-A-transitive-OP")] }
 
-def ex68 : LinguisticExample :=
+def ex68 : Datum :=
   { id := "aissenpolian2025_ex68"
     source := ⟨"aissen-polian-2025", "(68)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex68 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unergative"), ("intervener", "S_A"), ("table4", "T-SA-unergative")] }
 
-def ex69 : LinguisticExample :=
+def ex69 : Datum :=
   { id := "aissenpolian2025_ex69"
     source := ⟨"aissen-polian-2025", "(69)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex69 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unergative"), ("intervener", "none"), ("table4", "T-SA-unergative")] }
 
-def ex70 : LinguisticExample :=
+def ex70 : Datum :=
   { id := "aissenpolian2025_ex70"
     source := ⟨"aissen-polian-2025", "(70)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex70 : LinguisticExample :=
     readings := [("who killed Juan", .acceptable), ("who did Juan kill", .acceptable)]
     paperFeatures := [("clause", "transitive")] }
 
-def ex74 : LinguisticExample :=
+def ex74 : Datum :=
   { id := "aissenpolian2025_ex74"
     source := ⟨"aissen-polian-2025", "(74)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex74 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("construction", "pathVerb")] }
 
-def ex75a : LinguisticExample :=
+def ex75a : Datum :=
   { id := "aissenpolian2025_ex75a"
     source := ⟨"aissen-polian-2025", "(75a)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex75a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "pathVerb"), ("table4", "T-SO-unaccusative")] }
 
-def ex75b : LinguisticExample :=
+def ex75b : Datum :=
   { id := "aissenpolian2025_ex75b"
     source := ⟨"aissen-polian-2025", "(75b)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex75b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "S_O"), ("construction", "pathVerb"), ("table4", "T-SO-unaccusative")] }
 
-def ex77b : LinguisticExample :=
+def ex77b : Datum :=
   { id := "aissenpolian2025_ex77b"
     source := ⟨"aissen-polian-2025", "(77b)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex77b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "locativeExistential"), ("table4", "T-none-locativeExistential")] }
 
-def ex78a : LinguisticExample :=
+def ex78a : Datum :=
   { id := "aissenpolian2025_ex78a"
     source := ⟨"aissen-polian-2025", "(78a)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex78a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "S_O"), ("construction", "locativeCopula"), ("table4", "T-SO-locativeCopula")] }
 
-def ex78b : LinguisticExample :=
+def ex78b : Datum :=
   { id := "aissenpolian2025_ex78b"
     source := ⟨"aissen-polian-2025", "(78b)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex78b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "S_O"), ("construction", "locativeCopula"), ("table4", "T-SO-locativeCopula")] }
 
-def ex81 : LinguisticExample :=
+def ex81 : Datum :=
   { id := "aissenpolian2025_ex81"
     source := ⟨"aissen-polian-2025", "(81)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex81 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "twoArgExperiential"), ("table4", "T-none-experiential")] }
 
-def ex82 : LinguisticExample :=
+def ex82 : Datum :=
   { id := "aissenpolian2025_ex82"
     source := ⟨"aissen-polian-2025", "(82)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex82 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "OP"), ("possessum", "nonSpecific"), ("clause", "unaccusative"), ("intervener", "none"), ("construction", "twoArgExperiential"), ("table4", "T-none-experiential")] }
 
-def ex85a : LinguisticExample :=
+def ex85a : Datum :=
   { id := "aissenpolian2025_ex85a"
     source := ⟨"aissen-polian-2025", "(85a)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex85a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "piedPiping"), ("possessorOf", "A"), ("possessum", "specific"), ("clause", "transitive"), ("intervener", "none")] }
 
-def ex85b : LinguisticExample :=
+def ex85b : Datum :=
   { id := "aissenpolian2025_ex85b"
     source := ⟨"aissen-polian-2025", "(85b)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ex85b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "A"), ("possessum", "specific"), ("clause", "transitive"), ("intervener", "none")] }
 
-def ex86 : LinguisticExample :=
+def ex86 : Datum :=
   { id := "aissenpolian2025_ex86"
     source := ⟨"aissen-polian-2025", "(86)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def ex86 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "stranding"), ("possessorOf", "A"), ("possessum", "nonSpecific"), ("clause", "transitive"), ("intervener", "none")] }
 
-def ex87 : LinguisticExample :=
+def ex87 : Datum :=
   { id := "aissenpolian2025_ex87"
     source := ⟨"aissen-polian-2025", "(87)"⟩
     reportedIn := none
@@ -810,6 +808,6 @@ def ex87 : LinguisticExample :=
     readings := []
     paperFeatures := [("clause", "transitive"), ("construction", "lexicalTransitive"), ("possessum", "nonSpecific")] }
 
-def all : List LinguisticExample := [ex1, ex2a, ex2b, ex4, ex5, ex20a, ex20b, ex22a, ex22b, ex26b, ex23a, ex23b, ex24, ex25, ex27, ex28b, ex28c, ex30, ex31, ex32, ex35, ex36, ex37, ex43, ex45a, ex45b, ex46, ex47, ex48a, ex48b, ex49a, ex49b, ex50a, ex51, ex55a, ex55b, ex57b, ex58b, ex59, ex60, ex61, ex62a, ex62b, ex65, ex66, ex67, ex68, ex69, ex70, ex74, ex75a, ex75b, ex77b, ex78a, ex78b, ex81, ex82, ex85a, ex85b, ex86, ex87]
+def all : List Datum := [ex1, ex2a, ex2b, ex4, ex5, ex20a, ex20b, ex22a, ex22b, ex26b, ex23a, ex23b, ex24, ex25, ex27, ex28b, ex28c, ex30, ex31, ex32, ex35, ex36, ex37, ex43, ex45a, ex45b, ex46, ex47, ex48a, ex48b, ex49a, ex49b, ex50a, ex51, ex55a, ex55b, ex57b, ex58b, ex59, ex60, ex61, ex62a, ex62b, ex65, ex66, ex67, ex68, ex69, ex70, ex74, ex75a, ex75b, ex77b, ex78a, ex78b, ex81, ex82, ex85a, ex85b, ex86, ex87]
 
 end AissenPolian2025.Examples

@@ -15,9 +15,7 @@ this module; declarations live in `namespace BeltramaSchwarz2024.Examples`.
 
 namespace BeltramaSchwarz2024.Examples
 
-open Data.Examples
-
-def beltrama_schwarz_2024_cst_nopersona : LinguisticExample :=
+def beltrama_schwarz_2024_cst_nopersona : Datum :=
   { id := "beltrama_schwarz_2024_cst_nopersona"
     source := ⟨"beltrama-schwarz-2024", "Exp 1 Imprecise No.Persona"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def beltrama_schwarz_2024_cst_nopersona : LinguisticExample :=
     readings := []
     paperFeatures := [("persona", "noPersona"), ("task", "coveredScreen"), ("screenFit", "imprecise"), ("statedAmount", "200"), ("displayedAmount", "207"), ("rejectionMeasure", "covered"), ("rejectionVsBaseline", "baseline"), ("contrastZ", "0"), ("contrastSig", "baseline")] }
 
-def beltrama_schwarz_2024_cst_nerdy : LinguisticExample :=
+def beltrama_schwarz_2024_cst_nerdy : Datum :=
   { id := "beltrama_schwarz_2024_cst_nerdy"
     source := ⟨"beltrama-schwarz-2024", "Exp 1 Imprecise Nerdy"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def beltrama_schwarz_2024_cst_nerdy : LinguisticExample :=
     readings := []
     paperFeatures := [("persona", "nerdy"), ("task", "coveredScreen"), ("screenFit", "imprecise"), ("statedAmount", "200"), ("displayedAmount", "207"), ("rejectionMeasure", "covered"), ("rejectionVsBaseline", "higher"), ("contrastZ", "6.62"), ("contrastSig", "significant")] }
 
-def beltrama_schwarz_2024_cst_chill : LinguisticExample :=
+def beltrama_schwarz_2024_cst_chill : Datum :=
   { id := "beltrama_schwarz_2024_cst_chill"
     source := ⟨"beltrama-schwarz-2024", "Exp 1 Imprecise Chill"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def beltrama_schwarz_2024_cst_chill : LinguisticExample :=
     readings := []
     paperFeatures := [("persona", "chill"), ("task", "coveredScreen"), ("screenFit", "imprecise"), ("statedAmount", "200"), ("displayedAmount", "207"), ("rejectionMeasure", "covered"), ("rejectionVsBaseline", "lower"), ("contrastZ", "7.61"), ("contrastSig", "significant")] }
 
-def beltrama_schwarz_2024_tvj_nopersona : LinguisticExample :=
+def beltrama_schwarz_2024_tvj_nopersona : Datum :=
   { id := "beltrama_schwarz_2024_tvj_nopersona"
     source := ⟨"beltrama-schwarz-2024", "Exp 2 Imprecise No.Persona"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def beltrama_schwarz_2024_tvj_nopersona : LinguisticExample :=
     readings := []
     paperFeatures := [("persona", "noPersona"), ("task", "truthValueJudgment"), ("screenFit", "imprecise"), ("statedAmount", "200"), ("displayedAmount", "207"), ("rejectionMeasure", "wrong"), ("rejectionVsBaseline", "baseline"), ("contrastZ", "0"), ("contrastSig", "baseline")] }
 
-def beltrama_schwarz_2024_tvj_nerdy : LinguisticExample :=
+def beltrama_schwarz_2024_tvj_nerdy : Datum :=
   { id := "beltrama_schwarz_2024_tvj_nerdy"
     source := ⟨"beltrama-schwarz-2024", "Exp 2 Imprecise Nerdy"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def beltrama_schwarz_2024_tvj_nerdy : LinguisticExample :=
     readings := []
     paperFeatures := [("persona", "nerdy"), ("task", "truthValueJudgment"), ("screenFit", "imprecise"), ("statedAmount", "200"), ("displayedAmount", "207"), ("rejectionMeasure", "wrong"), ("rejectionVsBaseline", "same"), ("contrastZ", "0.15"), ("contrastSig", "null")] }
 
-def beltrama_schwarz_2024_tvj_chill : LinguisticExample :=
+def beltrama_schwarz_2024_tvj_chill : Datum :=
   { id := "beltrama_schwarz_2024_tvj_chill"
     source := ⟨"beltrama-schwarz-2024", "Exp 2 Imprecise Chill"⟩
     reportedIn := none
@@ -95,6 +93,6 @@ def beltrama_schwarz_2024_tvj_chill : LinguisticExample :=
     readings := []
     paperFeatures := [("persona", "chill"), ("task", "truthValueJudgment"), ("screenFit", "imprecise"), ("statedAmount", "200"), ("displayedAmount", "207"), ("rejectionMeasure", "wrong"), ("rejectionVsBaseline", "lower"), ("contrastZ", "8.43"), ("contrastSig", "significant")] }
 
-def all : List LinguisticExample := [beltrama_schwarz_2024_cst_nopersona, beltrama_schwarz_2024_cst_nerdy, beltrama_schwarz_2024_cst_chill, beltrama_schwarz_2024_tvj_nopersona, beltrama_schwarz_2024_tvj_nerdy, beltrama_schwarz_2024_tvj_chill]
+def all : List Datum := [beltrama_schwarz_2024_cst_nopersona, beltrama_schwarz_2024_cst_nerdy, beltrama_schwarz_2024_cst_chill, beltrama_schwarz_2024_tvj_nopersona, beltrama_schwarz_2024_tvj_nerdy, beltrama_schwarz_2024_tvj_chill]
 
 end BeltramaSchwarz2024.Examples

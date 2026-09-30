@@ -15,7 +15,7 @@ which rival accounts of that relationship are run.
 
 The empirical generalisation (projectivity is gradient and tracks
 not-at-issueness across triggers) predates any one formal account and spans
-≥ 2 papers contributing generated `Data.Examples` rows
+≥ 2 papers contributing generated example rows
 ([tonhauser-beaver-degen-2018]: 9 + 12 English expressions;
 [solstad-bott-2024]: occasion + psychological verbs in German), with ≥ 2 rival
 accounts run against the pool in their study files (`gppProjection` and
@@ -24,7 +24,7 @@ accounts run against the pool in their study files (`gppProjection` and
 ## Main declarations
 
 * `ProjectionDatum` — a typed observed datum (`projectivity`, `atIssueness`),
-  lifted from a paper-anchored `LinguisticExample` by `fromExample`.
+  lifted from a paper-anchored `Datum` by `fromDatum`.
 * `allData` — the pooled test set: every projectivity row from the contributing
   papers' generated `Examples.all`.
 * `predictionError` / `predictsWithin` — score an account against an observation.
@@ -44,7 +44,6 @@ only): accounts and divergence theorems live in the consuming study files.
 
 namespace Generalizations.Projectivity
 
-open Data.Examples (LinguisticExample SourceRef)
 
 /-- An observed datum: mean projectivity and at-issueness for one expression,
     with its originating `SourceRef`. -/
@@ -59,7 +58,7 @@ structure ProjectionDatum where
 def ProjectionDatum.notAtIssueness (d : ProjectionDatum) : Set.Icc (0 : ℚ) 1 :=
   Set.Icc.symm d.atIssueness
 
-/-! ### `LinguisticExample` adapter -/
+/-! ### `Datum` adapter -/
 
 /-- Parse a percent-integer string (e.g. `"96"`) into `Set.Icc (0 : ℚ) 1`; `none` if
     non-numeric or out of range. -/
@@ -80,10 +79,10 @@ def readAtIssueness (pf : List (String × String)) : Option (Set.Icc (0 : ℚ) 1
   | some s => parsePercent s
   | none => ((pf.lookup "notAtIssueness").bind parsePercent).map Set.Icc.symm
 
-/-- Lift a `LinguisticExample` to a `ProjectionDatum` via its `expression`,
+/-- Lift a `Datum` to a `ProjectionDatum` via its `expression`,
     `projectivity`, and (`atIssueness` or `notAtIssueness`) keys; `none` if any
     is missing. -/
-def fromExample (e : LinguisticExample) : Option ProjectionDatum :=
+def fromDatum (e : Datum) : Option ProjectionDatum :=
   match e.paperFeatures.lookup "expression",
         (e.paperFeatures.lookup "projectivity").bind parsePercent,
         readAtIssueness e.paperFeatures with
@@ -97,7 +96,7 @@ def fromExample (e : LinguisticExample) : Option ProjectionDatum :=
     at-issueness to predicted projectivity on `Set.Icc (0 : ℚ) 1` — is run
     against this list in the study files. -/
 def allData : List ProjectionDatum :=
-  (TonhauserBeaverDegen2018.Examples.all ++ SolstadBott2024.Examples.all).filterMap fromExample
+  (TonhauserBeaverDegen2018.Examples.all ++ SolstadBott2024.Examples.all).filterMap fromDatum
 
 /-! ### Scoring -/
 

@@ -15,9 +15,7 @@ this module; declarations live in `namespace Istratkova2004.Examples`.
 
 namespace Istratkova2004.Examples
 
-open Data.Examples
-
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "istratkova2004_1a"
     source := ⟨"istratkova-2004", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "za-pis-va-m"), ("claim", "prefixes attach to both perfective and imperfective stems")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "istratkova2004_1b"
     source := ⟨"istratkova-2004", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "na-pis-va-m"), ("claim", "prefixes attach to both perfective and imperfective stems")] }
 
-def ex_1c : LinguisticExample :=
+def ex_1c : Datum :=
   { id := "istratkova2004_1c"
     source := ⟨"istratkova-2004", "(1c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_1c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "pre-pis-va-m"), ("claim", "prefixes attach to both perfective and imperfective stems")] }
 
-def ex_1d : LinguisticExample :=
+def ex_1d : Datum :=
   { id := "istratkova2004_1d"
     source := ⟨"istratkova-2004", "(1d)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_1d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "pod-pis-va-m"), ("claim", "prefixes attach to both perfective and imperfective stems")] }
 
-def ex_1e : LinguisticExample :=
+def ex_1e : Datum :=
   { id := "istratkova2004_1e"
     source := ⟨"istratkova-2004", "(1e)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_1e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "do-vežd-a-m"), ("claim", "prefixes attach to both perfective and imperfective stems")] }
 
-def ex_1f : LinguisticExample :=
+def ex_1f : Datum :=
   { id := "istratkova2004_1f"
     source := ⟨"istratkova-2004", "(1f)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_1f : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "za-vežd-a-m"), ("claim", "prefixes attach to both perfective and imperfective stems")] }
 
-def ex_1g : LinguisticExample :=
+def ex_1g : Datum :=
   { id := "istratkova2004_1g"
     source := ⟨"istratkova-2004", "(1g)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_1g : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "iz-vežd-a-m"), ("claim", "prefixes attach to both perfective and imperfective stems")] }
 
-def ex_1h : LinguisticExample :=
+def ex_1h : Datum :=
   { id := "istratkova2004_1h"
     source := ⟨"istratkova-2004", "(1h)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_1h : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "vižd-a-m"), ("claim", "prefixes attach to both perfective and imperfective stems")] }
 
-def ex_1i : LinguisticExample :=
+def ex_1i : Datum :=
   { id := "istratkova2004_1i"
     source := ⟨"istratkova-2004", "(1i)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_1i : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "za-vižd-a-m"), ("claim", "prefixes attach to both perfective and imperfective stems")] }
 
-def ex_1j : LinguisticExample :=
+def ex_1j : Datum :=
   { id := "istratkova2004_1j"
     source := ⟨"istratkova-2004", "(1j)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_1j : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "obu-va-m"), ("claim", "prefixes attach to both perfective and imperfective stems")] }
 
-def ex_1k : LinguisticExample :=
+def ex_1k : Datum :=
   { id := "istratkova2004_1k"
     source := ⟨"istratkova-2004", "(1k)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_1k : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "pre-obu-va-m"), ("claim", "prefixes attach to both perfective and imperfective stems")] }
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "istratkova2004_2a"
     source := ⟨"istratkova-2004", "(2a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("class", "simplex homogeneous verb, no perfective counterpart")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "istratkova2004_2b"
     source := ⟨"istratkova-2004", "(2b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("class", "simplex homogeneous verb, no perfective counterpart")] }
 
-def ex_2c : LinguisticExample :=
+def ex_2c : Datum :=
   { id := "istratkova2004_2c"
     source := ⟨"istratkova-2004", "(2c)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_2c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("class", "simplex homogeneous verb, no perfective counterpart")] }
 
-def ex_2d : LinguisticExample :=
+def ex_2d : Datum :=
   { id := "istratkova2004_2d"
     source := ⟨"istratkova-2004", "(2d)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_2d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("class", "simplex homogeneous verb, no perfective counterpart")] }
 
-def ex_2e : LinguisticExample :=
+def ex_2e : Datum :=
   { id := "istratkova2004_2e"
     source := ⟨"istratkova-2004", "(2e)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_2e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("class", "simplex homogeneous verb, no perfective counterpart")] }
 
-def ex_2f : LinguisticExample :=
+def ex_2f : Datum :=
   { id := "istratkova2004_2f"
     source := ⟨"istratkova-2004", "(2f)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_2f : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("class", "simplex homogeneous verb, no perfective counterpart")] }
 
-def ex_2g : LinguisticExample :=
+def ex_2g : Datum :=
   { id := "istratkova2004_2g"
     source := ⟨"istratkova-2004", "(2g)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_2g : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("class", "simplex homogeneous verb, no perfective counterpart")] }
 
-def ex_2h : LinguisticExample :=
+def ex_2h : Datum :=
   { id := "istratkova2004_2h"
     source := ⟨"istratkova-2004", "(2h)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_2h : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("class", "simplex homogeneous verb, no perfective counterpart")] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "istratkova2004_3a"
     source := ⟨"istratkova-2004", "(3a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "iz-misl'-a-m"), ("claim", "prefixation quantizes a homogeneous verb, yielding an aspectual pair")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "istratkova2004_3b"
     source := ⟨"istratkova-2004", "(3b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "za-obič-va-m"), ("claim", "prefixation quantizes a homogeneous verb, yielding an aspectual pair")] }
 
-def ex_3c : LinguisticExample :=
+def ex_3c : Datum :=
   { id := "istratkova2004_3c"
     source := ⟨"istratkova-2004", "(3c)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_3c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "po-zna-va-m"), ("claim", "prefixation quantizes a homogeneous verb, yielding an aspectual pair")] }
 
-def ex_3d : LinguisticExample :=
+def ex_3d : Datum :=
   { id := "istratkova2004_3d"
     source := ⟨"istratkova-2004", "(3d)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_3d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "za-blet'-ava-m"), ("claim", "prefixation quantizes a homogeneous verb, yielding an aspectual pair")] }
 
-def ex_3e : LinguisticExample :=
+def ex_3e : Datum :=
   { id := "istratkova2004_3e"
     source := ⟨"istratkova-2004", "(3e)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_3e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "bles-va-m"), ("claim", "prefixation quantizes a homogeneous verb, yielding an aspectual pair")] }
 
-def ex_3f : LinguisticExample :=
+def ex_3f : Datum :=
   { id := "istratkova2004_3f"
     source := ⟨"istratkova-2004", "(3f)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_3f : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "za-spi-va-m"), ("claim", "prefixation quantizes a homogeneous verb, yielding an aspectual pair")] }
 
-def ex_3g : LinguisticExample :=
+def ex_3g : Datum :=
   { id := "istratkova2004_3g"
     source := ⟨"istratkova-2004", "(3g)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_3g : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "pre-pis-va-m"), ("claim", "prefixation quantizes a homogeneous verb, yielding an aspectual pair")] }
 
-def ex_3h : LinguisticExample :=
+def ex_3h : Datum :=
   { id := "istratkova2004_3h"
     source := ⟨"istratkova-2004", "(3h)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_3h : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "do-živ'-ava-m"), ("claim", "prefixation quantizes a homogeneous verb, yielding an aspectual pair")] }
 
-def ex_3i : LinguisticExample :=
+def ex_3i : Datum :=
   { id := "istratkova2004_3i"
     source := ⟨"istratkova-2004", "(3i)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_3i : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "pro-čit-a-m"), ("claim", "prefixation quantizes a homogeneous verb, yielding an aspectual pair")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "istratkova2004_4a"
     source := ⟨"istratkova-2004", "(4a)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "kup-uva-m"), ("class", "simplex quantized verb")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "istratkova2004_4b"
     source := ⟨"istratkova-2004", "(4b)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "da-va-m"), ("class", "simplex quantized verb")] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "istratkova2004_5a"
     source := ⟨"istratkova-2004", "(5a)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "iz-kup-uva-m"), ("claim", "prefixation adds Aktionsart to a quantized verb")] }
 
-def ex_5b : LinguisticExample :=
+def ex_5b : Datum :=
   { id := "istratkova2004_5b"
     source := ⟨"istratkova-2004", "(5b)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "pro-da-va-m"), ("claim", "lexical prefix changes the meaning of a quantized verb")] }
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "istratkova2004_6a"
     source := ⟨"istratkova-2004", "(6a)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("simplex", "vis'a"), ("claim", "a non-quantizing prefix leaves the verb imperfective; no -va- form")] }
 
-def ex_6b : LinguisticExample :=
+def ex_6b : Datum :=
   { id := "istratkova2004_6b"
     source := ⟨"istratkova-2004", "(6b)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("simplex", "leža"), ("claim", "a non-quantizing prefix leaves the verb imperfective; no -va- form")] }
 
-def ex_6c : LinguisticExample :=
+def ex_6c : Datum :=
   { id := "istratkova2004_6c"
     source := ⟨"istratkova-2004", "(6c)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_6c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("simplex", "čuvstvam"), ("claim", "a non-quantizing prefix leaves the verb imperfective; no -va- form")] }
 
-def ex_6d : LinguisticExample :=
+def ex_6d : Datum :=
   { id := "istratkova2004_6d"
     source := ⟨"istratkova-2004", "(6d)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_6d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("simplex", "šestvam"), ("claim", "a non-quantizing prefix leaves the verb imperfective; no -va- form")] }
 
-def ex_6e : LinguisticExample :=
+def ex_6e : Datum :=
   { id := "istratkova2004_6e"
     source := ⟨"istratkova-2004", "(6e)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_6e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("simplex", "stoja"), ("claim", "a non-quantizing prefix leaves the verb imperfective; no -va- form")] }
 
-def ex_6f : LinguisticExample :=
+def ex_6f : Datum :=
   { id := "istratkova2004_6f"
     source := ⟨"istratkova-2004", "(6f)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_6f : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("simplex", "stoja"), ("claim", "a non-quantizing prefix leaves the verb imperfective; no -va- form")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "istratkova2004_7"
     source := ⟨"istratkova-2004", "(7)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "ot-stoja-va-m"), ("claim", "the quantized meaning of the same prefixed verb forms an aspectual pair")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "istratkova2004_10"
     source := ⟨"istratkova-2004", "(10)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("claim", "a homogeneous verb heads a non-quantized VP whatever its object")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "istratkova2004_11"
     source := ⟨"istratkova-2004", "(11)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("imperfective", "iz-po-na-raz-pro-da-va-m"), ("stack", "completive iz-, distributive po-, cumulative na-, excessive raz-, lexical pro-")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "istratkova2004_12a"
     source := ⟨"istratkova-2004", "(12a)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("prefix", "lexical iz-")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "istratkova2004_12b"
     source := ⟨"istratkova-2004", "(12b)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("prefix", "lexical raz-")] }
 
-def ex_12c : LinguisticExample :=
+def ex_12c : Datum :=
   { id := "istratkova2004_12c"
     source := ⟨"istratkova-2004", "(12c)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex_12c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("prefix", "lexical iz-")] }
 
-def ex_12d : LinguisticExample :=
+def ex_12d : Datum :=
   { id := "istratkova2004_12d"
     source := ⟨"istratkova-2004", "(12d)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex_12d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("prefix", "lexical raz-")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "istratkova2004_13a"
     source := ⟨"istratkova-2004", "(13a)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "completive iz- outside lexical raz-")] }
 
-def ex_13b : LinguisticExample :=
+def ex_13b : Datum :=
   { id := "istratkova2004_13b"
     source := ⟨"istratkova-2004", "(13b)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex_13b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "completive iz- outside lexical raz-")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "istratkova2004_14a"
     source := ⟨"istratkova-2004", "(14a)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("prefix", "cumulative na- on a simplex")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "istratkova2004_14b"
     source := ⟨"istratkova-2004", "(14b)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("prefix", "lexical or cumulative na-")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "istratkova2004_15"
     source := ⟨"istratkova-2004", "(15)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "innermost prefix read as lexical out of context")] }
 
-def ex_17a : LinguisticExample :=
+def ex_17a : Datum :=
   { id := "istratkova2004_17a"
     source := ⟨"istratkova-2004", "(17a)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex_17a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("claim", "raz- 'in excess' embeds under a phase verb")] }
 
-def ex_17b : LinguisticExample :=
+def ex_17b : Datum :=
   { id := "istratkova2004_17b"
     source := ⟨"istratkova-2004", "(17b)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex_17b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("claim", "iz- 'completely' is incompatible with beginning")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "istratkova2004_18a"
     source := ⟨"istratkova-2004", "(18a)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex_18a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "excessive raz-, repetitive pre-, lexical pro-")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "istratkova2004_18b"
     source := ⟨"istratkova-2004", "(18b)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "attenuative po-, repetitive pre-, lexical pro-")] }
 
-def ex_18c : LinguisticExample :=
+def ex_18c : Datum :=
   { id := "istratkova2004_18c"
     source := ⟨"istratkova-2004", "(18c)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex_18c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "cumulative na-, repetitive pre-, lexical pro-")] }
 
-def ex_18d : LinguisticExample :=
+def ex_18d : Datum :=
   { id := "istratkova2004_18d"
     source := ⟨"istratkova-2004", "(18d)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex_18d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "cumulative na-, repetitive pre-, lexical raz-")] }
 
-def ex_18e : LinguisticExample :=
+def ex_18e : Datum :=
   { id := "istratkova2004_18e"
     source := ⟨"istratkova-2004", "(18e)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex_18e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "completive iz-, repetitive pre-, lexical pro-")] }
 
-def ex_18f : LinguisticExample :=
+def ex_18f : Datum :=
   { id := "istratkova2004_18f"
     source := ⟨"istratkova-2004", "(18f)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex_18f : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "completive iz-, repetitive pre-, lexical raz-")] }
 
-def ex_19a : LinguisticExample :=
+def ex_19a : Datum :=
   { id := "istratkova2004_19a"
     source := ⟨"istratkova-2004", "(19a)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ex_19a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "attenuative po- over excessive raz- over repetitive pre-")] }
 
-def ex_19b : LinguisticExample :=
+def ex_19b : Datum :=
   { id := "istratkova2004_19b"
     source := ⟨"istratkova-2004", "(19b)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def ex_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "completive iz- over excessive raz- over repetitive pre-")] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "istratkova2004_20a"
     source := ⟨"istratkova-2004", "(20a)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def ex_20a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "cumulative na- on a simplex quantized verb")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "istratkova2004_20b"
     source := ⟨"istratkova-2004", "(20b)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def ex_20b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "cumulative na- over repetitive pre-")] }
 
-def ex_20c : LinguisticExample :=
+def ex_20c : Datum :=
   { id := "istratkova2004_20c"
     source := ⟨"istratkova-2004", "(20c)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def ex_20c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "cumulative na- over lexical pro-")] }
 
-def ex_20d : LinguisticExample :=
+def ex_20d : Datum :=
   { id := "istratkova2004_20d"
     source := ⟨"istratkova-2004", "(20d)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def ex_20d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "attenuative po- modifies cumulative na-")] }
 
-def ex_20e : LinguisticExample :=
+def ex_20e : Datum :=
   { id := "istratkova2004_20e"
     source := ⟨"istratkova-2004", "(20e)"⟩
     reportedIn := none
@@ -862,7 +860,7 @@ def ex_20e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "cumulative na- over excessive raz-")] }
 
-def ex_20f : LinguisticExample :=
+def ex_20f : Datum :=
   { id := "istratkova2004_20f"
     source := ⟨"istratkova-2004", "(20f)"⟩
     reportedIn := none
@@ -875,7 +873,7 @@ def ex_20f : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "completive iz- directly over cumulative na-")] }
 
-def ex_20g : LinguisticExample :=
+def ex_20g : Datum :=
   { id := "istratkova2004_20g"
     source := ⟨"istratkova-2004", "(20g)"⟩
     reportedIn := none
@@ -888,7 +886,7 @@ def ex_20g : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("claim", "na- means 'a lot', not 'all': no definite object")] }
 
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "istratkova2004_21a"
     source := ⟨"istratkova-2004", "(21a)"⟩
     reportedIn := none
@@ -901,7 +899,7 @@ def ex_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "completive iz-, distributive po-, cumulative na-, lexical pro-")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "istratkova2004_21b"
     source := ⟨"istratkova-2004", "(21b)"⟩
     reportedIn := none
@@ -914,7 +912,7 @@ def ex_21b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "completive iz-, distributive po-, excessive raz-, lexical pro-")] }
 
-def ex_21c : LinguisticExample :=
+def ex_21c : Datum :=
   { id := "istratkova2004_21c"
     source := ⟨"istratkova-2004", "(21c)"⟩
     reportedIn := none
@@ -927,7 +925,7 @@ def ex_21c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "completive iz-, distributive po-, repetitive pre-, lexical pro-")] }
 
-def ex_22c : LinguisticExample :=
+def ex_22c : Datum :=
   { id := "istratkova2004_22c"
     source := ⟨"istratkova-2004", "(22c)"⟩
     reportedIn := none
@@ -940,7 +938,7 @@ def ex_22c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("claim", "iz- prefers distributive po- inside")] }
 
-def ex_23b : LinguisticExample :=
+def ex_23b : Datum :=
   { id := "istratkova2004_23b"
     source := ⟨"istratkova-2004", "(23b)"⟩
     reportedIn := none
@@ -953,7 +951,7 @@ def ex_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "attenuative po- lowers the intensity of excessive raz-")] }
 
-def ex_23d : LinguisticExample :=
+def ex_23d : Datum :=
   { id := "istratkova2004_23d"
     source := ⟨"istratkova-2004", "(23d)"⟩
     reportedIn := none
@@ -966,7 +964,7 @@ def ex_23d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "attenuative po- over completive iz-")] }
 
-def ex_23e : LinguisticExample :=
+def ex_23e : Datum :=
   { id := "istratkova2004_23e"
     source := ⟨"istratkova-2004", "(23e)"⟩
     reportedIn := none
@@ -979,7 +977,7 @@ def ex_23e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "attenuative po- over lexical pro-")] }
 
-def ex_23f : LinguisticExample :=
+def ex_23f : Datum :=
   { id := "istratkova2004_23f"
     source := ⟨"istratkova-2004", "(23f)"⟩
     reportedIn := none
@@ -992,7 +990,7 @@ def ex_23f : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("claim", "attenuative po- reads 'for a while' on imperfectives")] }
 
-def ex_24a : LinguisticExample :=
+def ex_24a : Datum :=
   { id := "istratkova2004_24a"
     source := ⟨"istratkova-2004", "(24a)"⟩
     reportedIn := none
@@ -1005,7 +1003,7 @@ def ex_24a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "high inceptive za- outside completive iz-"), ("claim", "high za- selects an imperfective output")] }
 
-def ex_24b : LinguisticExample :=
+def ex_24b : Datum :=
   { id := "istratkova2004_24b"
     source := ⟨"istratkova-2004", "(24b)"⟩
     reportedIn := none
@@ -1018,7 +1016,7 @@ def ex_24b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("imperfective", "za-p'a-va-m"), ("stack", "low inceptive za- on a homogeneous simplex")] }
 
-def ex_25a : LinguisticExample :=
+def ex_25a : Datum :=
   { id := "istratkova2004_25a"
     source := ⟨"istratkova-2004", "(25a)"⟩
     reportedIn := none
@@ -1031,7 +1029,7 @@ def ex_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "terminative do- over lexical pro-")] }
 
-def ex_25b : LinguisticExample :=
+def ex_25b : Datum :=
   { id := "istratkova2004_25b"
     source := ⟨"istratkova-2004", "(25b)"⟩
     reportedIn := none
@@ -1044,7 +1042,7 @@ def ex_25b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "terminative do- over repetitive pre-")] }
 
-def ex_25c1 : LinguisticExample :=
+def ex_25c1 : Datum :=
   { id := "istratkova2004_25c1"
     source := ⟨"istratkova-2004", "(25c)"⟩
     reportedIn := none
@@ -1057,7 +1055,7 @@ def ex_25c1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "terminative do-, excessive raz-, repetitive pre-")] }
 
-def ex_25c2 : LinguisticExample :=
+def ex_25c2 : Datum :=
   { id := "istratkova2004_25c2"
     source := ⟨"istratkova-2004", "(25c)"⟩
     reportedIn := none
@@ -1070,7 +1068,7 @@ def ex_25c2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "terminative do-, repetitive pre-, excessive raz-")] }
 
-def ex_25d : LinguisticExample :=
+def ex_25d : Datum :=
   { id := "istratkova2004_25d"
     source := ⟨"istratkova-2004", "(25d)"⟩
     reportedIn := none
@@ -1083,7 +1081,7 @@ def ex_25d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "six prefixes in hierarchy order")] }
 
-def ex_25e : LinguisticExample :=
+def ex_25e : Datum :=
   { id := "istratkova2004_25e"
     source := ⟨"istratkova-2004", "(25e)"⟩
     reportedIn := none
@@ -1096,7 +1094,7 @@ def ex_25e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "attenuative po- outermost, over terminative do-")] }
 
-def ex_25f : LinguisticExample :=
+def ex_25f : Datum :=
   { id := "istratkova2004_25f"
     source := ⟨"istratkova-2004", "(25f)"⟩
     reportedIn := none
@@ -1109,7 +1107,7 @@ def ex_25f : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "seven prefixes")] }
 
-def ex_25g : LinguisticExample :=
+def ex_25g : Datum :=
   { id := "istratkova2004_25g"
     source := ⟨"istratkova-2004", "(25g)"⟩
     reportedIn := none
@@ -1122,7 +1120,7 @@ def ex_25g : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("imperfective", "do-p'a-va-m"), ("stack", "low terminative do- on a homogeneous simplex")] }
 
-def ex_26a : LinguisticExample :=
+def ex_26a : Datum :=
   { id := "istratkova2004_26a"
     source := ⟨"istratkova-2004", "(26a)"⟩
     reportedIn := none
@@ -1135,7 +1133,7 @@ def ex_26a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("imperfective", "po-p'a-va-m"), ("stack", "delimitative po- on a simplex atelic verb; no stacking")] }
 
-def ex_26b : LinguisticExample :=
+def ex_26b : Datum :=
   { id := "istratkova2004_26b"
     source := ⟨"istratkova-2004", "(26b)"⟩
     reportedIn := none
@@ -1148,7 +1146,7 @@ def ex_26b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("imperfective", "po-igra-va-m"), ("stack", "delimitative po-")] }
 
-def ex_27a : LinguisticExample :=
+def ex_27a : Datum :=
   { id := "istratkova2004_27a"
     source := ⟨"istratkova-2004", "(27a)"⟩
     reportedIn := none
@@ -1161,7 +1159,7 @@ def ex_27a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "completive iz- directly over cumulative na-")] }
 
-def ex_27b : LinguisticExample :=
+def ex_27b : Datum :=
   { id := "istratkova2004_27b"
     source := ⟨"istratkova-2004", "(27b)"⟩
     reportedIn := none
@@ -1174,7 +1172,7 @@ def ex_27b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "completive iz- over lexical pro-")] }
 
-def ex_27c : LinguisticExample :=
+def ex_27c : Datum :=
   { id := "istratkova2004_27c"
     source := ⟨"istratkova-2004", "(27c)"⟩
     reportedIn := none
@@ -1187,7 +1185,7 @@ def ex_27c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "completive iz-, distributive po-, lexical pro-")] }
 
-def ex_27d : LinguisticExample :=
+def ex_27d : Datum :=
   { id := "istratkova2004_27d"
     source := ⟨"istratkova-2004", "(27d)"⟩
     reportedIn := none
@@ -1200,7 +1198,7 @@ def ex_27d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "completive iz-, distributive po-, cumulative na-")] }
 
-def ex_28a : LinguisticExample :=
+def ex_28a : Datum :=
   { id := "istratkova2004_28a"
     source := ⟨"istratkova-2004", "(28a)"⟩
     reportedIn := none
@@ -1213,7 +1211,7 @@ def ex_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "completive iz- directly over cumulative na-")] }
 
-def ex_28b : LinguisticExample :=
+def ex_28b : Datum :=
   { id := "istratkova2004_28b"
     source := ⟨"istratkova-2004", "(28b)"⟩
     reportedIn := none
@@ -1226,7 +1224,7 @@ def ex_28b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "completive iz- over lexical raz-")] }
 
-def ex_28c : LinguisticExample :=
+def ex_28c : Datum :=
   { id := "istratkova2004_28c"
     source := ⟨"istratkova-2004", "(28c)"⟩
     reportedIn := none
@@ -1239,7 +1237,7 @@ def ex_28c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "completive iz-, distributive po-, lexical raz-")] }
 
-def ex_28d : LinguisticExample :=
+def ex_28d : Datum :=
   { id := "istratkova2004_28d"
     source := ⟨"istratkova-2004", "(28d)"⟩
     reportedIn := none
@@ -1252,7 +1250,7 @@ def ex_28d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "completive iz-, distributive po-, cumulative na-, lexical raz-")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "istratkova2004_29"
     source := ⟨"istratkova-2004", "(29)"⟩
     reportedIn := none
@@ -1265,7 +1263,7 @@ def ex_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "inceptive za- requires completive iz- inside")] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "istratkova2004_30a"
     source := ⟨"istratkova-2004", "(30a)"⟩
     reportedIn := none
@@ -1278,7 +1276,7 @@ def ex_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "excessive raz- over repetitive pre-")] }
 
-def ex_30b : LinguisticExample :=
+def ex_30b : Datum :=
   { id := "istratkova2004_30b"
     source := ⟨"istratkova-2004", "(30b)"⟩
     reportedIn := none
@@ -1291,7 +1289,7 @@ def ex_30b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("stack", "repetitive pre- over excessive raz-")] }
 
-def ex_33a : LinguisticExample :=
+def ex_33a : Datum :=
   { id := "istratkova2004_33a"
     source := ⟨"istratkova-2004", "(33a)"⟩
     reportedIn := none
@@ -1304,7 +1302,7 @@ def ex_33a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("stack", "superlexicals above AspP over lexical pro- in Q1")] }
 
-def ex_34a : LinguisticExample :=
+def ex_34a : Datum :=
   { id := "istratkova2004_34a"
     source := ⟨"istratkova-2004", "(34a)"⟩
     reportedIn := none
@@ -1317,7 +1315,7 @@ def ex_34a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("stack", "attenuative po- over low inceptive za- in Q2")] }
 
-def ex_35a : LinguisticExample :=
+def ex_35a : Datum :=
   { id := "istratkova2004_35a"
     source := ⟨"istratkova-2004", "(35a)"⟩
     reportedIn := none
@@ -1330,7 +1328,7 @@ def ex_35a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("stack", "completive iz-, distributive po- over low cumulative na- in Q2")] }
 
-def t3_na_po_pro_dam : LinguisticExample :=
+def t3_na_po_pro_dam : Datum :=
   { id := "istratkova2004_t3_na_po_pro_dam"
     source := ⟨"istratkova-2004", "Table 3"⟩
     reportedIn := none
@@ -1343,7 +1341,7 @@ def t3_na_po_pro_dam : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("stack", "cumulative na- over po-")] }
 
-def t3_raz_po_pro_dam : LinguisticExample :=
+def t3_raz_po_pro_dam : Datum :=
   { id := "istratkova2004_t3_raz_po_pro_dam"
     source := ⟨"istratkova-2004", "Table 3"⟩
     reportedIn := none
@@ -1356,7 +1354,7 @@ def t3_raz_po_pro_dam : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("stack", "excessive raz- over po-")] }
 
-def t2_pre_na_raz_dam : LinguisticExample :=
+def t2_pre_na_raz_dam : Datum :=
   { id := "istratkova2004_t2_pre_na_raz_dam"
     source := ⟨"istratkova-2004", "Table 2"⟩
     reportedIn := none
@@ -1369,7 +1367,7 @@ def t2_pre_na_raz_dam : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("stack", "repetitive pre- over cumulative na-")] }
 
-def t2_po_pre_na_raz_dam : LinguisticExample :=
+def t2_po_pre_na_raz_dam : Datum :=
   { id := "istratkova2004_t2_po_pre_na_raz_dam"
     source := ⟨"istratkova-2004", "Table 2"⟩
     reportedIn := none
@@ -1382,7 +1380,7 @@ def t2_po_pre_na_raz_dam : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("stack", "repetitive pre- over cumulative na-")] }
 
-def t2_na_pre_raz_dam : LinguisticExample :=
+def t2_na_pre_raz_dam : Datum :=
   { id := "istratkova2004_t2_na_pre_raz_dam"
     source := ⟨"istratkova-2004", "Table 2"⟩
     reportedIn := none
@@ -1395,7 +1393,7 @@ def t2_na_pre_raz_dam : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("stack", "cumulative na- over repetitive pre-")] }
 
-def t1_po_na_raz_kazha : LinguisticExample :=
+def t1_po_na_raz_kazha : Datum :=
   { id := "istratkova2004_t1_po_na_raz_kazha"
     source := ⟨"istratkova-2004", "Table 1"⟩
     reportedIn := none
@@ -1408,7 +1406,7 @@ def t1_po_na_raz_kazha : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("stack", "attenuative po- over cumulative na- over lexical raz-")] }
 
-def t1_iz_po_na_pre_raz_kazha : LinguisticExample :=
+def t1_iz_po_na_pre_raz_kazha : Datum :=
   { id := "istratkova2004_t1_iz_po_na_pre_raz_kazha"
     source := ⟨"istratkova-2004", "Table 1"⟩
     reportedIn := none
@@ -1421,6 +1419,6 @@ def t1_iz_po_na_pre_raz_kazha : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("stack", "completive iz-, distributive po-, cumulative na-, repetitive pre-, lexical raz-")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_1d, ex_1e, ex_1f, ex_1g, ex_1h, ex_1i, ex_1j, ex_1k, ex_2a, ex_2b, ex_2c, ex_2d, ex_2e, ex_2f, ex_2g, ex_2h, ex_3a, ex_3b, ex_3c, ex_3d, ex_3e, ex_3f, ex_3g, ex_3h, ex_3i, ex_4a, ex_4b, ex_5a, ex_5b, ex_6a, ex_6b, ex_6c, ex_6d, ex_6e, ex_6f, ex_7, ex_10, ex_11, ex_12a, ex_12b, ex_12c, ex_12d, ex_13a, ex_13b, ex_14a, ex_14b, ex_15, ex_17a, ex_17b, ex_18a, ex_18b, ex_18c, ex_18d, ex_18e, ex_18f, ex_19a, ex_19b, ex_20a, ex_20b, ex_20c, ex_20d, ex_20e, ex_20f, ex_20g, ex_21a, ex_21b, ex_21c, ex_22c, ex_23b, ex_23d, ex_23e, ex_23f, ex_24a, ex_24b, ex_25a, ex_25b, ex_25c1, ex_25c2, ex_25d, ex_25e, ex_25f, ex_25g, ex_26a, ex_26b, ex_27a, ex_27b, ex_27c, ex_27d, ex_28a, ex_28b, ex_28c, ex_28d, ex_29, ex_30a, ex_30b, ex_33a, ex_34a, ex_35a, t3_na_po_pro_dam, t3_raz_po_pro_dam, t2_pre_na_raz_dam, t2_po_pre_na_raz_dam, t2_na_pre_raz_dam, t1_po_na_raz_kazha, t1_iz_po_na_pre_raz_kazha]
+def all : List Datum := [ex_1a, ex_1b, ex_1c, ex_1d, ex_1e, ex_1f, ex_1g, ex_1h, ex_1i, ex_1j, ex_1k, ex_2a, ex_2b, ex_2c, ex_2d, ex_2e, ex_2f, ex_2g, ex_2h, ex_3a, ex_3b, ex_3c, ex_3d, ex_3e, ex_3f, ex_3g, ex_3h, ex_3i, ex_4a, ex_4b, ex_5a, ex_5b, ex_6a, ex_6b, ex_6c, ex_6d, ex_6e, ex_6f, ex_7, ex_10, ex_11, ex_12a, ex_12b, ex_12c, ex_12d, ex_13a, ex_13b, ex_14a, ex_14b, ex_15, ex_17a, ex_17b, ex_18a, ex_18b, ex_18c, ex_18d, ex_18e, ex_18f, ex_19a, ex_19b, ex_20a, ex_20b, ex_20c, ex_20d, ex_20e, ex_20f, ex_20g, ex_21a, ex_21b, ex_21c, ex_22c, ex_23b, ex_23d, ex_23e, ex_23f, ex_24a, ex_24b, ex_25a, ex_25b, ex_25c1, ex_25c2, ex_25d, ex_25e, ex_25f, ex_25g, ex_26a, ex_26b, ex_27a, ex_27b, ex_27c, ex_27d, ex_28a, ex_28b, ex_28c, ex_28d, ex_29, ex_30a, ex_30b, ex_33a, ex_34a, ex_35a, t3_na_po_pro_dam, t3_raz_po_pro_dam, t2_pre_na_raz_dam, t2_po_pre_na_raz_dam, t2_na_pre_raz_dam, t1_po_na_raz_kazha, t1_iz_po_na_pre_raz_kazha]
 
 end Istratkova2004.Examples

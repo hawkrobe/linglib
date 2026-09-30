@@ -15,9 +15,7 @@ this module; declarations live in `namespace Haspelmath2021.Examples`.
 
 namespace Haspelmath2021.Examples
 
-open Data.Examples
-
-def ex1a : LinguisticExample :=
+def ex1a : Datum :=
   { id := "haspelmath2021_ex1a"
     source := ⟨"haspelmath-2021", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("split", "single-argument"), ("role", "A"), ("scale", "person"), ("prominence", "locuphoric"), ("coding", "zero")] }
 
-def ex1b : LinguisticExample :=
+def ex1b : Datum :=
   { id := "haspelmath2021_ex1b"
     source := ⟨"haspelmath-2021", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex1b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("split", "single-argument"), ("role", "A"), ("scale", "person"), ("prominence", "aliophoric"), ("coding", "special")] }
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "haspelmath2021_ex2a"
     source := ⟨"baker-2015", "pp. 4-5"⟩
     reportedIn := some ⟨"haspelmath-2021", "(2a)"⟩
@@ -56,7 +54,7 @@ def ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("split", "single-argument"), ("role", "P"), ("scale", "definiteness"), ("prominence", "indefinite"), ("coding", "zero")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "haspelmath2021_ex2b"
     source := ⟨"baker-2015", "pp. 4-5"⟩
     reportedIn := some ⟨"haspelmath-2021", "(2b)"⟩
@@ -69,7 +67,7 @@ def ex2b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("split", "single-argument"), ("role", "P"), ("scale", "definiteness"), ("prominence", "definite"), ("coding", "special")] }
 
-def ex3a : LinguisticExample :=
+def ex3a : Datum :=
   { id := "haspelmath2021_ex3a"
     source := ⟨"haspelmath-2021", "(3a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex3a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("split", "scenario"), ("role", "P"), ("scale", "person"), ("scenario", "1 > 3"), ("kind", "downstream"), ("coding", "zero")] }
 
-def ex3b : LinguisticExample :=
+def ex3b : Datum :=
   { id := "haspelmath2021_ex3b"
     source := ⟨"haspelmath-2021", "(3b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex3b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("split", "scenario"), ("role", "P"), ("scale", "person"), ("scenario", "3 > 3"), ("kind", "balanced"), ("coding", "special")] }
 
-def ex4a : LinguisticExample :=
+def ex4a : Datum :=
   { id := "haspelmath2021_ex4a"
     source := ⟨"haspelmath-2021", "(4a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex4a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("split", "scenario"), ("role", "R"), ("scale", "nominality"), ("scenario", "N > N"), ("kind", "balanced"), ("coding", "zero")] }
 
-def ex4b : LinguisticExample :=
+def ex4b : Datum :=
   { id := "haspelmath2021_ex4b"
     source := ⟨"haspelmath-2021", "(4b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex4b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("split", "scenario"), ("role", "R"), ("scale", "nominality"), ("scenario", "pers > pers"), ("kind", "balanced"), ("coding", "zero")] }
 
-def ex4c : LinguisticExample :=
+def ex4c : Datum :=
   { id := "haspelmath2021_ex4c"
     source := ⟨"haspelmath-2021", "(4c)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex4c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("split", "scenario"), ("role", "R"), ("scale", "nominality"), ("scenario", "N > pers"), ("kind", "upstream"), ("coding", "zero")] }
 
-def ex17a : LinguisticExample :=
+def ex17a : Datum :=
   { id := "haspelmath2021_ex17a"
     source := ⟨"haspelmath-2021", "(17a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex17a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1.1"), ("split", "single-argument"), ("role", "P"), ("scale", "animacy"), ("prominence", "human"), ("coding", "special")] }
 
-def ex17b : LinguisticExample :=
+def ex17b : Datum :=
   { id := "haspelmath2021_ex17b"
     source := ⟨"haspelmath-2021", "(17b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex17b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1.1"), ("split", "single-argument"), ("role", "P"), ("scale", "animacy"), ("prominence", "animate"), ("coding", "zero")] }
 
-def ex18a : LinguisticExample :=
+def ex18a : Datum :=
   { id := "haspelmath2021_ex18a"
     source := ⟨"haspelmath-2021", "(18a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex18a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1.2"), ("split", "single-argument"), ("role", "P"), ("scale", "definiteness"), ("prominence", "indefinite"), ("coding", "zero")] }
 
-def ex18b : LinguisticExample :=
+def ex18b : Datum :=
   { id := "haspelmath2021_ex18b"
     source := ⟨"haspelmath-2021", "(18b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex18b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1.2"), ("split", "single-argument"), ("role", "P"), ("scale", "definiteness"), ("prominence", "definite"), ("coding", "special")] }
 
-def ex19a : LinguisticExample :=
+def ex19a : Datum :=
   { id := "haspelmath2021_ex19a"
     source := ⟨"haspelmath-2021", "(19a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex19a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1.4"), ("split", "single-argument"), ("role", "P"), ("scale", "givenness"), ("prominence", "given"), ("coding", "special")] }
 
-def ex19b : LinguisticExample :=
+def ex19b : Datum :=
   { id := "haspelmath2021_ex19b"
     source := ⟨"haspelmath-2021", "(19b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex19b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1.4"), ("split", "single-argument"), ("role", "P"), ("scale", "givenness"), ("prominence", "new"), ("coding", "zero")] }
 
-def ex19c : LinguisticExample :=
+def ex19c : Datum :=
   { id := "haspelmath2021_ex19c"
     source := ⟨"haspelmath-2021", "(19c)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex19c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1.4"), ("split", "single-argument"), ("role", "P"), ("scale", "givenness"), ("prominence", "given"), ("coding", "special")] }
 
-def ex20a : LinguisticExample :=
+def ex20a : Datum :=
   { id := "haspelmath2021_ex20a"
     source := ⟨"haspelmath-2021", "(20a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex20a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1.5"), ("split", "single-argument"), ("role", "P"), ("scale", "person"), ("prominence", "locuphoric"), ("coding", "special")] }
 
-def ex20b : LinguisticExample :=
+def ex20b : Datum :=
   { id := "haspelmath2021_ex20b"
     source := ⟨"haspelmath-2021", "(20b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex20b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1.5"), ("split", "single-argument"), ("role", "P"), ("scale", "person"), ("prominence", "locuphoric"), ("coding", "special")] }
 
-def ex20c : LinguisticExample :=
+def ex20c : Datum :=
   { id := "haspelmath2021_ex20c"
     source := ⟨"haspelmath-2021", "(20c)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex20c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1.5"), ("split", "single-argument"), ("role", "P"), ("scale", "person"), ("prominence", "aliophoric"), ("coding", "special")] }
 
-def ex23a : LinguisticExample :=
+def ex23a : Datum :=
   { id := "haspelmath2021_ex23a"
     source := ⟨"haspelmath-2021", "(23a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex23a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.2"), ("split", "single-argument"), ("role", "S"), ("scale", "nominality"), ("prominence", "personForm"), ("coding", "zero")] }
 
-def ex23b : LinguisticExample :=
+def ex23b : Datum :=
   { id := "haspelmath2021_ex23b"
     source := ⟨"haspelmath-2021", "(23b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex23b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.2"), ("split", "single-argument"), ("role", "A"), ("scale", "nominality"), ("prominence", "personForm"), ("coding", "zero")] }
 
-def ex23c : LinguisticExample :=
+def ex23c : Datum :=
   { id := "haspelmath2021_ex23c"
     source := ⟨"haspelmath-2021", "(23c)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex23c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.2"), ("split", "single-argument"), ("role", "A"), ("scale", "nominality"), ("prominence", "fullNominal"), ("coding", "special")] }
 
-def ex24a : LinguisticExample :=
+def ex24a : Datum :=
   { id := "haspelmath2021_ex24a"
     source := ⟨"haspelmath-2021", "(24a)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex24a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.3"), ("split", "single-argument"), ("role", "A"), ("scale", "animacy"), ("prominence", "inanimate"), ("coding", "special")] }
 
-def ex24b : LinguisticExample :=
+def ex24b : Datum :=
   { id := "haspelmath2021_ex24b"
     source := ⟨"haspelmath-2021", "(24b)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex24b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.3"), ("split", "single-argument"), ("role", "A"), ("scale", "animacy"), ("prominence", "animate"), ("coding", "zero")] }
 
-def ex25a : LinguisticExample :=
+def ex25a : Datum :=
   { id := "haspelmath2021_ex25a"
     source := ⟨"haspelmath-2021", "(25a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex25a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.4"), ("split", "single-argument"), ("role", "A"), ("scale", "focus"), ("prominence", "background"), ("coding", "zero")] }
 
-def ex25b : LinguisticExample :=
+def ex25b : Datum :=
   { id := "haspelmath2021_ex25b"
     source := ⟨"haspelmath-2021", "(25b)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex25b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.4"), ("split", "single-argument"), ("role", "A"), ("scale", "focus"), ("prominence", "focus"), ("coding", "special")] }
 
-def ex29a : LinguisticExample :=
+def ex29a : Datum :=
   { id := "haspelmath2021_ex29a"
     source := ⟨"haspelmath-2021", "(29a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex29a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1.2"), ("split", "single-argument"), ("role", "R"), ("scale", "nominality"), ("prominence", "fullNominal"), ("coding", "special")] }
 
-def ex29b : LinguisticExample :=
+def ex29b : Datum :=
   { id := "haspelmath2021_ex29b"
     source := ⟨"haspelmath-2021", "(29b)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex29b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1.2"), ("split", "single-argument"), ("role", "R"), ("scale", "nominality"), ("prominence", "fullNominal"), ("coding", "special")] }
 
-def ex29c : LinguisticExample :=
+def ex29c : Datum :=
   { id := "haspelmath2021_ex29c"
     source := ⟨"haspelmath-2021", "(29c)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex29c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1.2"), ("split", "single-argument"), ("role", "R"), ("scale", "nominality"), ("prominence", "personForm"), ("coding", "zero")] }
 
-def ex29d : LinguisticExample :=
+def ex29d : Datum :=
   { id := "haspelmath2021_ex29d"
     source := ⟨"haspelmath-2021", "(29d)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex29d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1.2"), ("split", "single-argument"), ("role", "R"), ("scale", "nominality"), ("prominence", "personForm"), ("coding", "zero")] }
 
-def ex30a : LinguisticExample :=
+def ex30a : Datum :=
   { id := "haspelmath2021_ex30a"
     source := ⟨"haspelmath-2021", "(30a)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex30a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1.3"), ("split", "single-argument"), ("role", "R"), ("scale", "animacy"), ("prominence", "animate"), ("coding", "zero")] }
 
-def ex30b : LinguisticExample :=
+def ex30b : Datum :=
   { id := "haspelmath2021_ex30b"
     source := ⟨"haspelmath-2021", "(30b)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex30b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1.3"), ("split", "single-argument"), ("role", "R"), ("scale", "animacy"), ("prominence", "inanimate"), ("coding", "special")] }
 
-def ex31a : LinguisticExample :=
+def ex31a : Datum :=
   { id := "haspelmath2021_ex31a"
     source := ⟨"haspelmath-2021", "(31a)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex31a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1.4"), ("split", "single-argument"), ("role", "R"), ("scale", "definiteness"), ("prominence", "definite"), ("coding", "zero")] }
 
-def ex31b : LinguisticExample :=
+def ex31b : Datum :=
   { id := "haspelmath2021_ex31b"
     source := ⟨"haspelmath-2021", "(31b)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex31b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1.4"), ("split", "single-argument"), ("role", "R"), ("scale", "definiteness"), ("prominence", "indefinite"), ("coding", "zero")] }
 
-def ex31c : LinguisticExample :=
+def ex31c : Datum :=
   { id := "haspelmath2021_ex31c"
     source := ⟨"haspelmath-2021", "(31c)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex31c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1.4"), ("split", "single-argument"), ("role", "R"), ("scale", "definiteness"), ("prominence", "indefinite"), ("coding", "special")] }
 
-def ex32a : LinguisticExample :=
+def ex32a : Datum :=
   { id := "haspelmath2021_ex32a"
     source := ⟨"haspelmath-2021", "(32a)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex32a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.1"), ("split", "single-argument"), ("role", "T"), ("scale", "nominality"), ("prominence", "fullNominal"), ("coding", "zero")] }
 
-def ex32b : LinguisticExample :=
+def ex32b : Datum :=
   { id := "haspelmath2021_ex32b"
     source := ⟨"haspelmath-2021", "(32b)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex32b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.1"), ("split", "single-argument"), ("role", "T"), ("scale", "nominality"), ("prominence", "personForm"), ("coding", "zero")] }
 
-def ex32c : LinguisticExample :=
+def ex32c : Datum :=
   { id := "haspelmath2021_ex32c"
     source := ⟨"haspelmath-2021", "(32c)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex32c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.1"), ("split", "single-argument"), ("role", "T"), ("scale", "nominality"), ("prominence", "personForm"), ("coding", "special")] }
 
-def ex33a : LinguisticExample :=
+def ex33a : Datum :=
   { id := "haspelmath2021_ex33a"
     source := ⟨"haspelmath-2021", "(33a)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex33a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("split", "single-argument"), ("role", "T"), ("scale", "definiteness"), ("prominence", "indefinite"), ("coding", "zero")] }
 
-def ex33b : LinguisticExample :=
+def ex33b : Datum :=
   { id := "haspelmath2021_ex33b"
     source := ⟨"haspelmath-2021", "(33b)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex33b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("split", "single-argument"), ("role", "T"), ("scale", "definiteness"), ("prominence", "definite"), ("coding", "zero")] }
 
-def ex33c : LinguisticExample :=
+def ex33c : Datum :=
   { id := "haspelmath2021_ex33c"
     source := ⟨"haspelmath-2021", "(33c)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex33c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.2"), ("split", "single-argument"), ("role", "T"), ("scale", "definiteness"), ("prominence", "definite"), ("coding", "special")] }
 
-def ex34a : LinguisticExample :=
+def ex34a : Datum :=
   { id := "haspelmath2021_ex34a"
     source := ⟨"harris-1981", "pp. 48-49"⟩
     reportedIn := some ⟨"haspelmath-2021", "(34a)"⟩
@@ -563,7 +561,7 @@ def ex34a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.3"), ("split", "single-argument"), ("role", "T"), ("scale", "person"), ("prominence", "aliophoric"), ("coding", "zero")] }
 
-def ex34b : LinguisticExample :=
+def ex34b : Datum :=
   { id := "haspelmath2021_ex34b"
     source := ⟨"harris-1981", "pp. 48-49"⟩
     reportedIn := some ⟨"haspelmath-2021", "(34b)"⟩
@@ -576,7 +574,7 @@ def ex34b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.3"), ("split", "single-argument"), ("role", "T"), ("scale", "person"), ("prominence", "locuphoric"), ("coding", "zero")] }
 
-def ex34c : LinguisticExample :=
+def ex34c : Datum :=
   { id := "haspelmath2021_ex34c"
     source := ⟨"harris-1981", "pp. 48-49"⟩
     reportedIn := some ⟨"haspelmath-2021", "(34c)"⟩
@@ -589,7 +587,7 @@ def ex34c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2.3"), ("split", "single-argument"), ("role", "T"), ("scale", "person"), ("prominence", "locuphoric"), ("coding", "special")] }
 
-def ex35a : LinguisticExample :=
+def ex35a : Datum :=
   { id := "haspelmath2021_ex35a"
     source := ⟨"maslova-2003", "pp. 89, 10"⟩
     reportedIn := some ⟨"haspelmath-2021", "(35a)"⟩
@@ -602,7 +600,7 @@ def ex35a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("split", "scenario"), ("role", "P"), ("scale", "person"), ("scenario", "3 > 3"), ("kind", "balanced"), ("coding", "special")] }
 
-def ex35b : LinguisticExample :=
+def ex35b : Datum :=
   { id := "haspelmath2021_ex35b"
     source := ⟨"maslova-2003", "pp. 89, 10"⟩
     reportedIn := some ⟨"haspelmath-2021", "(35b)"⟩
@@ -615,7 +613,7 @@ def ex35b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("split", "scenario"), ("role", "P"), ("scale", "person"), ("scenario", "1 > 3"), ("kind", "downstream"), ("coding", "zero")] }
 
-def ex36a : LinguisticExample :=
+def ex36a : Datum :=
   { id := "haspelmath2021_ex36a"
     source := ⟨"haspelmath-2021", "(36a)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex36a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2"), ("split", "scenario"), ("role", "A"), ("scale", "person"), ("scenario", "3 > 1"), ("kind", "upstream"), ("coding", "special")] }
 
-def ex36b : LinguisticExample :=
+def ex36b : Datum :=
   { id := "haspelmath2021_ex36b"
     source := ⟨"haspelmath-2021", "(36b)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex36b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2"), ("split", "scenario"), ("role", "A"), ("scale", "person"), ("scenario", "3 > 3"), ("kind", "balanced"), ("coding", "zero")] }
 
-def ex37a : LinguisticExample :=
+def ex37a : Datum :=
   { id := "haspelmath2021_ex37a"
     source := ⟨"haspelmath-2021", "(37a)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex37a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.3"), ("split", "scenario"), ("role", "A"), ("scale", "definiteness"), ("scenario", "def > indef"), ("kind", "downstream"), ("coding", "zero")] }
 
-def ex37b : LinguisticExample :=
+def ex37b : Datum :=
   { id := "haspelmath2021_ex37b"
     source := ⟨"haspelmath-2021", "(37b)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex37b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.3"), ("split", "scenario"), ("role", "A"), ("scale", "definiteness"), ("scenario", "def > def"), ("kind", "balanced"), ("coding", "special")] }
 
-def ex38 : LinguisticExample :=
+def ex38 : Datum :=
   { id := "haspelmath2021_ex38"
     source := ⟨"haspelmath-2021", "(38)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex38 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.4"), ("split", "scenario"), ("role", "P"), ("scale", "animacy"), ("scenario", "inanimate > inanimate"), ("kind", "balanced"), ("coding", "special")] }
 
-def ex39a : LinguisticExample :=
+def ex39a : Datum :=
   { id := "haspelmath2021_ex39a"
     source := ⟨"haspelmath-2021", "(39a)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex39a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.1"), ("split", "scenario"), ("role", "R"), ("scale", "person"), ("scenario", "3 > 3"), ("kind", "balanced"), ("coding", "zero")] }
 
-def ex39b : LinguisticExample :=
+def ex39b : Datum :=
   { id := "haspelmath2021_ex39b"
     source := ⟨"haspelmath-2021", "(39b)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex39b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.1"), ("split", "scenario"), ("role", "R"), ("scale", "person"), ("scenario", "3 > 2"), ("kind", "upstream"), ("coding", "zero")] }
 
-def ex39c : LinguisticExample :=
+def ex39c : Datum :=
   { id := "haspelmath2021_ex39c"
     source := ⟨"haspelmath-2021", "(39c)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex39c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.1"), ("split", "scenario"), ("role", "R"), ("scale", "person"), ("scenario", "3 > 2"), ("kind", "upstream"), ("coding", "special")] }
 
-def ex40a : LinguisticExample :=
+def ex40a : Datum :=
   { id := "haspelmath2021_ex40a"
     source := ⟨"haspelmath-2021", "(40a)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex40a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.1"), ("split", "scenario"), ("role", "R"), ("scale", "person"), ("scenario", "1 > 3"), ("kind", "downstream"), ("coding", "zero")] }
 
-def ex40b : LinguisticExample :=
+def ex40b : Datum :=
   { id := "haspelmath2021_ex40b"
     source := ⟨"haspelmath-2021", "(40b)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex40b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.1"), ("split", "scenario"), ("role", "R"), ("scale", "person"), ("scenario", "3 > 1"), ("kind", "upstream"), ("coding", "zero")] }
 
-def ex40c : LinguisticExample :=
+def ex40c : Datum :=
   { id := "haspelmath2021_ex40c"
     source := ⟨"haspelmath-2021", "(40c)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex40c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.1"), ("split", "scenario"), ("role", "R"), ("scale", "person"), ("scenario", "3 > 1"), ("kind", "upstream"), ("coding", "special")] }
 
-def ex43a : LinguisticExample :=
+def ex43a : Datum :=
   { id := "haspelmath2021_ex43a"
     source := ⟨"haspelmath-2021", "(43a)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex43a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("split", "scenario"), ("role", "R"), ("scale", "nominality"), ("scenario", "pers > N"), ("kind", "downstream"), ("variety", "American"), ("coding", "zero")] }
 
-def ex43b : LinguisticExample :=
+def ex43b : Datum :=
   { id := "haspelmath2021_ex43b"
     source := ⟨"haspelmath-2021", "(43b)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ex43b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("split", "scenario"), ("role", "R"), ("scale", "nominality"), ("scenario", "N > N"), ("kind", "balanced"), ("variety", "American"), ("coding", "zero")] }
 
-def ex44a : LinguisticExample :=
+def ex44a : Datum :=
   { id := "haspelmath2021_ex44a"
     source := ⟨"haspelmath-2021", "(44a)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def ex44a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("split", "scenario"), ("role", "R"), ("scale", "nominality"), ("scenario", "pers > pers"), ("kind", "balanced"), ("variety", "American"), ("coding", "zero")] }
 
-def ex44b : LinguisticExample :=
+def ex44b : Datum :=
   { id := "haspelmath2021_ex44b"
     source := ⟨"haspelmath-2021", "(44b)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def ex44b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.2"), ("split", "scenario"), ("role", "R"), ("scale", "nominality"), ("scenario", "N > pers"), ("kind", "upstream"), ("variety", "American"), ("coding", "zero")] }
 
-def ex45a : LinguisticExample :=
+def ex45a : Datum :=
   { id := "haspelmath2021_ex45a"
     source := ⟨"haspelmath-2021", "(45a)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def ex45a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.3"), ("split", "scenario"), ("role", "T"), ("scale", "person"), ("scenario", "3 > 3"), ("kind", "balanced"), ("coding", "zero")] }
 
-def ex45b : LinguisticExample :=
+def ex45b : Datum :=
   { id := "haspelmath2021_ex45b"
     source := ⟨"haspelmath-2021", "(45b)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def ex45b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.3"), ("split", "scenario"), ("role", "T"), ("scale", "person"), ("scenario", "3 > 1"), ("kind", "upstream"), ("coding", "zero")] }
 
-def ex45c : LinguisticExample :=
+def ex45c : Datum :=
   { id := "haspelmath2021_ex45c"
     source := ⟨"haspelmath-2021", "(45c)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def ex45c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.3"), ("split", "scenario"), ("role", "T"), ("scale", "person"), ("scenario", "3 > 1"), ("kind", "upstream"), ("coding", "special")] }
 
-def ex46a : LinguisticExample :=
+def ex46a : Datum :=
   { id := "haspelmath2021_ex46a"
     source := ⟨"haspelmath-2021", "(46a)"⟩
     reportedIn := none
@@ -862,7 +860,7 @@ def ex46a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.4"), ("split", "scenario"), ("role", "R"), ("scale", "animacy"), ("scenario", "animate > inanimate"), ("kind", "downstream"), ("coding", "zero")] }
 
-def ex46b : LinguisticExample :=
+def ex46b : Datum :=
   { id := "haspelmath2021_ex46b"
     source := ⟨"haspelmath-2021", "(46b)"⟩
     reportedIn := none
@@ -875,7 +873,7 @@ def ex46b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7.4"), ("split", "scenario"), ("role", "R"), ("scale", "animacy"), ("scenario", "animate > animate"), ("kind", "balanced"), ("coding", "special")] }
 
-def ex48a : LinguisticExample :=
+def ex48a : Datum :=
   { id := "haspelmath2021_ex48a"
     source := ⟨"haspelmath-2021", "(48a)"⟩
     reportedIn := none
@@ -888,7 +886,7 @@ def ex48a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("split", "scenario"), ("role", "P"), ("scale", "person"), ("scenario", "1 > 2"), ("kind", "downstream"), ("coding", "zero")] }
 
-def ex48b : LinguisticExample :=
+def ex48b : Datum :=
   { id := "haspelmath2021_ex48b"
     source := ⟨"haspelmath-2021", "(48b)"⟩
     reportedIn := none
@@ -901,7 +899,7 @@ def ex48b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("split", "scenario"), ("role", "P"), ("scale", "person"), ("scenario", "2 > 3"), ("kind", "downstream"), ("coding", "zero")] }
 
-def ex48c : LinguisticExample :=
+def ex48c : Datum :=
   { id := "haspelmath2021_ex48c"
     source := ⟨"haspelmath-2021", "(48c)"⟩
     reportedIn := none
@@ -914,7 +912,7 @@ def ex48c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("split", "scenario"), ("role", "P"), ("scale", "person"), ("scenario", "3 > 2"), ("kind", "upstream"), ("coding", "special")] }
 
-def ex48d : LinguisticExample :=
+def ex48d : Datum :=
   { id := "haspelmath2021_ex48d"
     source := ⟨"haspelmath-2021", "(48d)"⟩
     reportedIn := none
@@ -927,7 +925,7 @@ def ex48d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("split", "scenario"), ("role", "P"), ("scale", "person"), ("scenario", "3 > 3"), ("kind", "balanced"), ("coding", "special")] }
 
-def ex50a : LinguisticExample :=
+def ex50a : Datum :=
   { id := "haspelmath2021_ex50a"
     source := ⟨"haspelmath-2021", "(50a)"⟩
     reportedIn := none
@@ -940,7 +938,7 @@ def ex50a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("split", "scenario"), ("role", "T"), ("scale", "nominal type"), ("scenario", "prop > common"), ("kind", "downstream"), ("coding", "zero")] }
 
-def ex50b : LinguisticExample :=
+def ex50b : Datum :=
   { id := "haspelmath2021_ex50b"
     source := ⟨"haspelmath-2021", "(50b)"⟩
     reportedIn := none
@@ -953,7 +951,7 @@ def ex50b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("split", "scenario"), ("role", "T"), ("scale", "nominal type"), ("scenario", "pers > prop"), ("kind", "downstream"), ("coding", "zero")] }
 
-def ex51a : LinguisticExample :=
+def ex51a : Datum :=
   { id := "haspelmath2021_ex51a"
     source := ⟨"haspelmath-2021", "(51a)"⟩
     reportedIn := none
@@ -966,7 +964,7 @@ def ex51a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("split", "scenario"), ("role", "T"), ("scale", "nominal type"), ("scenario", "prop > pers"), ("kind", "upstream"), ("coding", "zero")] }
 
-def ex51b : LinguisticExample :=
+def ex51b : Datum :=
   { id := "haspelmath2021_ex51b"
     source := ⟨"haspelmath-2021", "(51b)"⟩
     reportedIn := none
@@ -979,7 +977,7 @@ def ex51b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("split", "scenario"), ("role", "T"), ("scale", "nominal type"), ("scenario", "prop > pers"), ("kind", "upstream"), ("coding", "special")] }
 
-def ex52a : LinguisticExample :=
+def ex52a : Datum :=
   { id := "haspelmath2021_ex52a"
     source := ⟨"haspelmath-2021", "(52a)"⟩
     reportedIn := none
@@ -992,7 +990,7 @@ def ex52a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("split", "scenario"), ("role", "T"), ("scale", "nominal type"), ("scenario", "pers > pers"), ("kind", "balanced"), ("coding", "zero")] }
 
-def ex52b : LinguisticExample :=
+def ex52b : Datum :=
   { id := "haspelmath2021_ex52b"
     source := ⟨"haspelmath-2021", "(52b)"⟩
     reportedIn := none
@@ -1005,7 +1003,7 @@ def ex52b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("split", "scenario"), ("role", "T"), ("scale", "nominal type"), ("scenario", "pers > pers"), ("kind", "balanced"), ("coding", "special")] }
 
-def ex53a : LinguisticExample :=
+def ex53a : Datum :=
   { id := "haspelmath2021_ex53a"
     source := ⟨"haspelmath-2021", "(53a)"⟩
     reportedIn := none
@@ -1018,7 +1016,7 @@ def ex53a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("split", "scenario"), ("role", "T"), ("scale", "nominal type"), ("scenario", "prop > prop"), ("kind", "balanced"), ("coding", "zero")] }
 
-def ex53b : LinguisticExample :=
+def ex53b : Datum :=
   { id := "haspelmath2021_ex53b"
     source := ⟨"haspelmath-2021", "(53b)"⟩
     reportedIn := none
@@ -1031,7 +1029,7 @@ def ex53b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "8"), ("split", "scenario"), ("role", "T"), ("scale", "nominal type"), ("scenario", "prop > prop"), ("kind", "balanced"), ("coding", "special")] }
 
-def ex55a : LinguisticExample :=
+def ex55a : Datum :=
   { id := "haspelmath2021_ex55a"
     source := ⟨"haspelmath-2021", "(55a)"⟩
     reportedIn := none
@@ -1044,7 +1042,7 @@ def ex55a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9"), ("split", "scenario"), ("role", "verb"), ("scale", "person"), ("scenario", "2 > 3"), ("kind", "downstream"), ("coding", "zero")] }
 
-def ex55b : LinguisticExample :=
+def ex55b : Datum :=
   { id := "haspelmath2021_ex55b"
     source := ⟨"haspelmath-2021", "(55b)"⟩
     reportedIn := none
@@ -1057,7 +1055,7 @@ def ex55b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9"), ("split", "scenario"), ("role", "verb"), ("scale", "person"), ("scenario", "3 > 2"), ("kind", "upstream"), ("coding", "special")] }
 
-def ex56a : LinguisticExample :=
+def ex56a : Datum :=
   { id := "haspelmath2021_ex56a"
     source := ⟨"haspelmath-2021", "(56a)"⟩
     reportedIn := none
@@ -1070,7 +1068,7 @@ def ex56a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9"), ("split", "single-argument"), ("role", "T"), ("scale", "definiteness"), ("prominence", "indefinite"), ("coding", "zero")] }
 
-def ex56b : LinguisticExample :=
+def ex56b : Datum :=
   { id := "haspelmath2021_ex56b"
     source := ⟨"haspelmath-2021", "(56b)"⟩
     reportedIn := none
@@ -1083,7 +1081,7 @@ def ex56b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9"), ("split", "single-argument"), ("role", "T"), ("scale", "definiteness"), ("prominence", "definite"), ("coding", "special")] }
 
-def ex56c : LinguisticExample :=
+def ex56c : Datum :=
   { id := "haspelmath2021_ex56c"
     source := ⟨"haspelmath-2021", "(56c)"⟩
     reportedIn := none
@@ -1096,7 +1094,7 @@ def ex56c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "9"), ("split", "single-argument"), ("role", "T"), ("scale", "nominality"), ("prominence", "personForm"), ("coding", "special")] }
 
-def ex58a : LinguisticExample :=
+def ex58a : Datum :=
   { id := "haspelmath2021_ex58a"
     source := ⟨"haspelmath-2021", "(58a)"⟩
     reportedIn := none
@@ -1109,7 +1107,7 @@ def ex58a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.1"), ("alternation", "passive"), ("alternant", "active")] }
 
-def ex58b : LinguisticExample :=
+def ex58b : Datum :=
   { id := "haspelmath2021_ex58b"
     source := ⟨"haspelmath-2021", "(58b)"⟩
     reportedIn := none
@@ -1122,7 +1120,7 @@ def ex58b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.1"), ("alternation", "passive"), ("alternant", "passive")] }
 
-def ex59a : LinguisticExample :=
+def ex59a : Datum :=
   { id := "haspelmath2021_ex59a"
     source := ⟨"haspelmath-2021", "(59a)"⟩
     reportedIn := none
@@ -1135,7 +1133,7 @@ def ex59a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.1"), ("alternation", "antipassive"), ("alternant", "ergative")] }
 
-def ex59b : LinguisticExample :=
+def ex59b : Datum :=
   { id := "haspelmath2021_ex59b"
     source := ⟨"haspelmath-2021", "(59b)"⟩
     reportedIn := none
@@ -1148,7 +1146,7 @@ def ex59b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.1"), ("alternation", "antipassive"), ("alternant", "antipassive")] }
 
-def ex60a : LinguisticExample :=
+def ex60a : Datum :=
   { id := "haspelmath2021_ex60a"
     source := ⟨"haspelmath-2021", "(60a)"⟩
     reportedIn := none
@@ -1161,7 +1159,7 @@ def ex60a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.1"), ("alternation", "dative"), ("alternant", "double object")] }
 
-def ex60b : LinguisticExample :=
+def ex60b : Datum :=
   { id := "haspelmath2021_ex60b"
     source := ⟨"haspelmath-2021", "(60b)"⟩
     reportedIn := none
@@ -1174,7 +1172,7 @@ def ex60b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.1"), ("alternation", "dative"), ("alternant", "prepositional dative")] }
 
-def ex64a : LinguisticExample :=
+def ex64a : Datum :=
   { id := "haspelmath2021_ex64a"
     source := ⟨"haspelmath-2021", "(64a)"⟩
     reportedIn := none
@@ -1187,7 +1185,7 @@ def ex64a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.2"), ("split", "scenario"), ("role", "A"), ("scale", "nominality"), ("scenario", "pers > N"), ("kind", "downstream"), ("coding", "zero")] }
 
-def ex64b : LinguisticExample :=
+def ex64b : Datum :=
   { id := "haspelmath2021_ex64b"
     source := ⟨"haspelmath-2021", "(64b)"⟩
     reportedIn := none
@@ -1200,7 +1198,7 @@ def ex64b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.2"), ("split", "scenario"), ("role", "A"), ("scale", "nominality"), ("scenario", "pers > pers"), ("kind", "balanced"), ("coding", "zero")] }
 
-def ex64c : LinguisticExample :=
+def ex64c : Datum :=
   { id := "haspelmath2021_ex64c"
     source := ⟨"haspelmath-2021", "(64c)"⟩
     reportedIn := none
@@ -1213,7 +1211,7 @@ def ex64c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.2"), ("split", "scenario"), ("role", "A"), ("scale", "nominality"), ("scenario", "N > pers"), ("kind", "upstream"), ("coding", "special")] }
 
-def ex65a : LinguisticExample :=
+def ex65a : Datum :=
   { id := "haspelmath2021_ex65a"
     source := ⟨"haspelmath-2021", "(65a)"⟩
     reportedIn := none
@@ -1226,7 +1224,7 @@ def ex65a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.2"), ("split", "scenario"), ("role", "A"), ("scale", "nominality"), ("scenario", "N > N"), ("kind", "balanced"), ("coding", "zero")] }
 
-def ex65b : LinguisticExample :=
+def ex65b : Datum :=
   { id := "haspelmath2021_ex65b"
     source := ⟨"haspelmath-2021", "(65b)"⟩
     reportedIn := none
@@ -1239,7 +1237,7 @@ def ex65b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.2"), ("split", "scenario"), ("role", "A"), ("scale", "nominality"), ("scenario", "N > N"), ("kind", "balanced"), ("coding", "special")] }
 
-def ex66a : LinguisticExample :=
+def ex66a : Datum :=
   { id := "haspelmath2021_ex66a"
     source := ⟨"haspelmath-2021", "(66a)"⟩
     reportedIn := none
@@ -1252,7 +1250,7 @@ def ex66a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.2"), ("split", "scenario"), ("role", "R"), ("scale", "nominality"), ("scenario", "N > pers"), ("kind", "upstream"), ("coding", "special")] }
 
-def ex66b : LinguisticExample :=
+def ex66b : Datum :=
   { id := "haspelmath2021_ex66b"
     source := ⟨"haspelmath-2021", "(66b)"⟩
     reportedIn := none
@@ -1265,7 +1263,7 @@ def ex66b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.2"), ("split", "scenario"), ("role", "R"), ("scale", "nominality"), ("scenario", "N > N"), ("kind", "balanced"), ("coding", "special")] }
 
-def ex66c : LinguisticExample :=
+def ex66c : Datum :=
   { id := "haspelmath2021_ex66c"
     source := ⟨"haspelmath-2021", "(66c)"⟩
     reportedIn := none
@@ -1278,7 +1276,7 @@ def ex66c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.2"), ("split", "scenario"), ("role", "R"), ("scale", "nominality"), ("scenario", "pers > pers"), ("kind", "balanced"), ("coding", "special")] }
 
-def ex66d : LinguisticExample :=
+def ex66d : Datum :=
   { id := "haspelmath2021_ex66d"
     source := ⟨"haspelmath-2021", "(66d)"⟩
     reportedIn := none
@@ -1291,7 +1289,7 @@ def ex66d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.2"), ("split", "scenario"), ("role", "R"), ("scale", "nominality"), ("scenario", "pers > N"), ("kind", "downstream"), ("coding", "zero")] }
 
-def ex67a : LinguisticExample :=
+def ex67a : Datum :=
   { id := "haspelmath2021_ex67a"
     source := ⟨"haspelmath-2021", "(67a)"⟩
     reportedIn := none
@@ -1304,7 +1302,7 @@ def ex67a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.2"), ("split", "scenario"), ("role", "R"), ("scale", "nominality"), ("scenario", "pers > N"), ("kind", "downstream"), ("coding", "special")] }
 
-def ex67b : LinguisticExample :=
+def ex67b : Datum :=
   { id := "haspelmath2021_ex67b"
     source := ⟨"haspelmath-2021", "(67b)"⟩
     reportedIn := none
@@ -1317,6 +1315,6 @@ def ex67b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "10.2"), ("split", "scenario"), ("role", "R"), ("scale", "nominality"), ("scenario", "pers > N"), ("kind", "downstream"), ("coding", "zero")] }
 
-def all : List LinguisticExample := [ex1a, ex1b, ex2a, ex2b, ex3a, ex3b, ex4a, ex4b, ex4c, ex17a, ex17b, ex18a, ex18b, ex19a, ex19b, ex19c, ex20a, ex20b, ex20c, ex23a, ex23b, ex23c, ex24a, ex24b, ex25a, ex25b, ex29a, ex29b, ex29c, ex29d, ex30a, ex30b, ex31a, ex31b, ex31c, ex32a, ex32b, ex32c, ex33a, ex33b, ex33c, ex34a, ex34b, ex34c, ex35a, ex35b, ex36a, ex36b, ex37a, ex37b, ex38, ex39a, ex39b, ex39c, ex40a, ex40b, ex40c, ex43a, ex43b, ex44a, ex44b, ex45a, ex45b, ex45c, ex46a, ex46b, ex48a, ex48b, ex48c, ex48d, ex50a, ex50b, ex51a, ex51b, ex52a, ex52b, ex53a, ex53b, ex55a, ex55b, ex56a, ex56b, ex56c, ex58a, ex58b, ex59a, ex59b, ex60a, ex60b, ex64a, ex64b, ex64c, ex65a, ex65b, ex66a, ex66b, ex66c, ex66d, ex67a, ex67b]
+def all : List Datum := [ex1a, ex1b, ex2a, ex2b, ex3a, ex3b, ex4a, ex4b, ex4c, ex17a, ex17b, ex18a, ex18b, ex19a, ex19b, ex19c, ex20a, ex20b, ex20c, ex23a, ex23b, ex23c, ex24a, ex24b, ex25a, ex25b, ex29a, ex29b, ex29c, ex29d, ex30a, ex30b, ex31a, ex31b, ex31c, ex32a, ex32b, ex32c, ex33a, ex33b, ex33c, ex34a, ex34b, ex34c, ex35a, ex35b, ex36a, ex36b, ex37a, ex37b, ex38, ex39a, ex39b, ex39c, ex40a, ex40b, ex40c, ex43a, ex43b, ex44a, ex44b, ex45a, ex45b, ex45c, ex46a, ex46b, ex48a, ex48b, ex48c, ex48d, ex50a, ex50b, ex51a, ex51b, ex52a, ex52b, ex53a, ex53b, ex55a, ex55b, ex56a, ex56b, ex56c, ex58a, ex58b, ex59a, ex59b, ex60a, ex60b, ex64a, ex64b, ex64c, ex65a, ex65b, ex66a, ex66b, ex66c, ex66d, ex67a, ex67b]
 
 end Haspelmath2021.Examples

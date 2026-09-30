@@ -15,9 +15,7 @@ this module; declarations live in `namespace VonFintelGillies2010.Examples`.
 
 namespace VonFintelGillies2010.Examples
 
-open Data.Examples
-
-def keys_drawer : LinguisticExample :=
+def keys_drawer : Datum :=
   { id := "vonfintelgillies2010_keys_drawer"
     source := ⟨"von-fintel-gillies-2010", "(2b)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def keys_drawer : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 
-def john_left : LinguisticExample :=
+def john_left : Datum :=
   { id := "vonfintelgillies2010_john_left"
     source := ⟨"von-fintel-gillies-2010", "(3b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def john_left : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 
-def john_home : LinguisticExample :=
+def john_home : Datum :=
   { id := "vonfintelgillies2010_john_home"
     source := ⟨"von-fintel-gillies-2010", "(4a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def john_home : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 
-def mount_toby : LinguisticExample :=
+def mount_toby : Datum :=
   { id := "vonfintelgillies2010_mount_toby"
     source := ⟨"kratzer-1991", ""⟩
     reportedIn := some ⟨"von-fintel-gillies-2010", "(5b)"⟩
@@ -69,7 +67,7 @@ def mount_toby : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 
-def billy_sees_rain : LinguisticExample :=
+def billy_sees_rain : Datum :=
   { id := "vonfintelgillies2010_billy_sees_rain"
     source := ⟨"von-fintel-gillies-2010", "(6b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def billy_sees_rain : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "direct"), ("must_entails_prejacent", "true")] }
 
-def billy_wet_gear : LinguisticExample :=
+def billy_wet_gear : Datum :=
   { id := "vonfintelgillies2010_billy_wet_gear"
     source := ⟨"von-fintel-gillies-2010", "(7b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def billy_wet_gear : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 
-def chris_ball : LinguisticExample :=
+def chris_ball : Datum :=
   { id := "vonfintelgillies2010_chris_ball"
     source := ⟨"von-fintel-gillies-2010", "(12)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def chris_ball : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "elimination"), ("must_entails_prejacent", "true")] }
 
-def cant_mastermind : LinguisticExample :=
+def cant_mastermind : Datum :=
   { id := "vonfintelgillies2010_cant_mastermind"
     source := ⟨"von-fintel-gillies-2010", "(21b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def cant_mastermind : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "cant"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 
-def cant_sunshine : LinguisticExample :=
+def cant_sunshine : Datum :=
   { id := "vonfintelgillies2010_cant_sunshine"
     source := ⟨"von-fintel-gillies-2010", "(23b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def cant_sunshine : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "cant"), ("evidence", "direct"), ("must_entails_prejacent", "true")] }
 
-def cant_sun_gear : LinguisticExample :=
+def cant_sun_gear : Datum :=
   { id := "vonfintelgillies2010_cant_sun_gear"
     source := ⟨"von-fintel-gillies-2010", "(24b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def cant_sun_gear : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "cant"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 
-def must_be_hungry : LinguisticExample :=
+def must_be_hungry : Datum :=
   { id := "vonfintelgillies2010_must_be_hungry"
     source := ⟨"von-fintel-gillies-2010", "(26)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def must_be_hungry : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 
-def modus_ponens : LinguisticExample :=
+def modus_ponens : Datum :=
   { id := "vonfintelgillies2010_modus_ponens"
     source := ⟨"von-fintel-gillies-2010", "(14)-(15)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def modus_ponens : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "modus_ponens")] }
 
-def must_perhaps : LinguisticExample :=
+def must_perhaps : Datum :=
   { id := "vonfintelgillies2010_must_perhaps"
     source := ⟨"von-fintel-gillies-2010", "(16)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def must_perhaps : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "epistemic_contradiction")] }
 
-def might_retraction : LinguisticExample :=
+def might_retraction : Datum :=
   { id := "vonfintelgillies2010_might_retraction"
     source := ⟨"von-fintel-gillies-2010", "(17)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def might_retraction : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "retraction"), ("modal", "might")] }
 
-def must_no_retraction : LinguisticExample :=
+def must_no_retraction : Datum :=
   { id := "vonfintelgillies2010_must_no_retraction"
     source := ⟨"von-fintel-gillies-2010", "(19)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def must_no_retraction : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "retraction"), ("modal", "must")] }
 
-def hedging : LinguisticExample :=
+def hedging : Datum :=
   { id := "vonfintelgillies2010_hedging"
     source := ⟨"von-fintel-gillies-2010", "(20c)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def hedging : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "hedging")] }
 
-def hey_wait_a_minute : LinguisticExample :=
+def hey_wait_a_minute : Datum :=
   { id := "vonfintelgillies2010_hey_wait_a_minute"
     source := ⟨"von-fintel-gillies-2010", "(22)"⟩
     reportedIn := none
@@ -238,6 +236,6 @@ def hey_wait_a_minute : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "hwam_test")] }
 
-def all : List LinguisticExample := [keys_drawer, john_left, john_home, mount_toby, billy_sees_rain, billy_wet_gear, chris_ball, cant_mastermind, cant_sunshine, cant_sun_gear, must_be_hungry, modus_ponens, must_perhaps, might_retraction, must_no_retraction, hedging, hey_wait_a_minute]
+def all : List Datum := [keys_drawer, john_left, john_home, mount_toby, billy_sees_rain, billy_wet_gear, chris_ball, cant_mastermind, cant_sunshine, cant_sun_gear, must_be_hungry, modus_ponens, must_perhaps, might_retraction, must_no_retraction, hedging, hey_wait_a_minute]
 
 end VonFintelGillies2010.Examples

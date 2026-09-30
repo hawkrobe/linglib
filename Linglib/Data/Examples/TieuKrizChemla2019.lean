@@ -15,9 +15,7 @@ this module; declarations live in `namespace TieuKrizChemla2019.Examples`.
 
 namespace TieuKrizChemla2019.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "tieukrizchemla2019_1"
     source := ⟨"tieu-kriz-chemla-2019", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := [("neither true nor false in the gap context", .acceptable)]
     paperFeatures := [("determiner", "the"), ("polarity", "positive"), ("context", "gap")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "tieukrizchemla2019_2"
     source := ⟨"tieu-kriz-chemla-2019", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := [("neither true nor false in the gap context", .acceptable)]
     paperFeatures := [("determiner", "the"), ("polarity", "negative"), ("context", "gap")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "tieukrizchemla2019_3"
     source := ⟨"tieu-kriz-chemla-2019", "(3)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3 : LinguisticExample :=
     readings := [("false in the gap context", .acceptable)]
     paperFeatures := [("determiner", "all"), ("polarity", "positive"), ("context", "gap")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "tieukrizchemla2019_4"
     source := ⟨"tieu-kriz-chemla-2019", "(4)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4 : LinguisticExample :=
     readings := [("true in the gap context", .acceptable)]
     paperFeatures := [("determiner", "all"), ("polarity", "negative"), ("context", "gap")] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "tieukrizchemla2019_5a"
     source := ⟨"tieu-kriz-chemla-2019", "(5a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5a : LinguisticExample :=
     readings := [("homogeneous", .acceptable), ("existential, as (6a)", .acceptable), ("universal, as (7a)", .acceptable)]
     paperFeatures := [("determiner", "the"), ("polarity", "positive")] }
 
-def ex_5b : LinguisticExample :=
+def ex_5b : Datum :=
   { id := "tieukrizchemla2019_5b"
     source := ⟨"tieu-kriz-chemla-2019", "(5b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_5b : LinguisticExample :=
     readings := [("homogeneous", .acceptable), ("existential, as (6b)", .acceptable), ("universal, as (7b)", .acceptable)]
     paperFeatures := [("determiner", "the"), ("polarity", "negative")] }
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "tieukrizchemla2019_6a"
     source := ⟨"tieu-kriz-chemla-2019", "(6a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_6a : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "some"), ("polarity", "positive")] }
 
-def ex_6b : LinguisticExample :=
+def ex_6b : Datum :=
   { id := "tieukrizchemla2019_6b"
     source := ⟨"tieu-kriz-chemla-2019", "(6b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "some"), ("polarity", "negative")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "tieukrizchemla2019_7a"
     source := ⟨"tieu-kriz-chemla-2019", "(7a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "every"), ("polarity", "positive")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "tieukrizchemla2019_7b"
     source := ⟨"tieu-kriz-chemla-2019", "(7b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "every"), ("polarity", "negative")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "tieukrizchemla2019_8a"
     source := ⟨"tieu-kriz-chemla-2019", "(8a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "some"), ("polarity", "positive")] }
 
-def ex_8b : LinguisticExample :=
+def ex_8b : Datum :=
   { id := "tieukrizchemla2019_8b"
     source := ⟨"tieu-kriz-chemla-2019", "(8b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "all"), ("polarity", "positive")] }
 
-def ex_9a : LinguisticExample :=
+def ex_9a : Datum :=
   { id := "tieukrizchemla2019_9a"
     source := ⟨"tieu-kriz-chemla-2019", "(9a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_9a : LinguisticExample :=
     readings := [("some but not all, the scalar implicature (9b)", .acceptable)]
     paperFeatures := [("determiner", "some"), ("polarity", "positive"), ("inference", "scalar implicature")] }
 
-def ex_9b : LinguisticExample :=
+def ex_9b : Datum :=
   { id := "tieukrizchemla2019_9b"
     source := ⟨"tieu-kriz-chemla-2019", "(9b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_9b : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "all"), ("polarity", "negative"), ("inference", "scalar implicature")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "tieukrizchemla2019_12a"
     source := ⟨"tieu-kriz-chemla-2019", "(12a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "the"), ("polarity", "positive"), ("context", "gap"), ("condition", "homogeneity target")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "tieukrizchemla2019_12b"
     source := ⟨"tieu-kriz-chemla-2019", "(12b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "the"), ("polarity", "negative"), ("context", "gap"), ("condition", "homogeneity target")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "tieukrizchemla2019_13a"
     source := ⟨"tieu-kriz-chemla-2019", "(13a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "the"), ("polarity", "positive"), ("condition", "definite control")] }
 
-def ex_13b : LinguisticExample :=
+def ex_13b : Datum :=
   { id := "tieukrizchemla2019_13b"
     source := ⟨"tieu-kriz-chemla-2019", "(13b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_13b : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "the"), ("polarity", "negative"), ("condition", "definite control")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "tieukrizchemla2019_14a"
     source := ⟨"tieu-kriz-chemla-2019", "(14a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "all"), ("polarity", "positive"), ("context", "gap"), ("condition", "universal control")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "tieukrizchemla2019_14b"
     source := ⟨"tieu-kriz-chemla-2019", "(14b)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("determiner", "all"), ("polarity", "negative"), ("context", "gap"), ("condition", "universal control")] }
 
-def si_target : LinguisticExample :=
+def si_target : Datum :=
   { id := "tieukrizchemla2019_si_target"
     source := ⟨"tieu-kriz-chemla-2019", "Figure 5"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def si_target : LinguisticExample :=
     readings := [("some but not all: rejected with the implicature", .acceptable), ("literal existential: accepted without the implicature", .acceptable)]
     paperFeatures := [("determiner", "some"), ("polarity", "positive"), ("context", "all"), ("condition", "scalar implicature target")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "tieukrizchemla2019_26"
     source := ⟨"tieu-kriz-chemla-2019", "(26)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_26 : LinguisticExample :=
     readings := [("non-maximal", .acceptable)]
     paperFeatures := [("determiner", "the"), ("polarity", "positive"), ("phenomenon", "non-maximality")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "tieukrizchemla2019_27"
     source := ⟨"tieu-kriz-chemla-2019", "(27)"⟩
     reportedIn := none
@@ -316,6 +314,6 @@ def ex_27 : LinguisticExample :=
     readings := [("non-maximal, effectively existential", .acceptable)]
     paperFeatures := [("determiner", "the"), ("polarity", "positive"), ("phenomenon", "non-maximality")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5a, ex_5b, ex_6a, ex_6b, ex_7a, ex_7b, ex_8a, ex_8b, ex_9a, ex_9b, ex_12a, ex_12b, ex_13a, ex_13b, ex_14a, ex_14b, si_target, ex_26, ex_27]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5a, ex_5b, ex_6a, ex_6b, ex_7a, ex_7b, ex_8a, ex_8b, ex_9a, ex_9b, ex_12a, ex_12b, ex_13a, ex_13b, ex_14a, ex_14b, si_target, ex_26, ex_27]
 
 end TieuKrizChemla2019.Examples

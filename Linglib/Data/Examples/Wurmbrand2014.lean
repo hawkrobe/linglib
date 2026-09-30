@@ -15,9 +15,7 @@ this module; declarations live in `namespace Wurmbrand2014.Examples`.
 
 namespace Wurmbrand2014.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "wurmbrand2014_1"
     source := ⟨"wurmbrand-2014", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "future")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "wurmbrand2014_2"
     source := ⟨"wurmbrand-2014", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "propositional")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "wurmbrand2014_3"
     source := ⟨"wurmbrand-2014", "(2a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "future"), ("episodic", "possible")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "wurmbrand2014_4"
     source := ⟨"wurmbrand-2014", "(2b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "propositional"), ("episodic", "impossible")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "wurmbrand2014_5"
     source := ⟨"wurmbrand-2014", "(3a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "propositional"), ("syntax", "control")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "wurmbrand2014_6"
     source := ⟨"wurmbrand-2014", "(3b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "propositional"), ("episodic", "impossible")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "wurmbrand2014_7"
     source := ⟨"wurmbrand-2014", "(6a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "future")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "wurmbrand2014_8"
     source := ⟨"wurmbrand-2014", "(6b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "tenseless simultaneous")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "wurmbrand2014_9"
     source := ⟨"wurmbrand-2014", "(6d)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "propositional")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "wurmbrand2014_10"
     source := ⟨"wurmbrand-2014", "(6e)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_10 : LinguisticExample :=
     readings := [("scheduled future", .acceptable)]
     paperFeatures := [("class", "propositional")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "wurmbrand2014_11"
     source := ⟨"wurmbrand-2014", "(9b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "future"), ("syntax", "ECM")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "wurmbrand2014_12"
     source := ⟨"wurmbrand-2014", "(12a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "future"), ("future", "relative")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "wurmbrand2014_13"
     source := ⟨"wurmbrand-2014", "(12b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("future", "absolute")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "wurmbrand2014_14"
     source := ⟨"wurmbrand-2014", "(14a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "future")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "wurmbrand2014_15"
     source := ⟨"wurmbrand-2014", "(14b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("would", "temporal")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "wurmbrand2014_16"
     source := ⟨"wurmbrand-2014", "(22a)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("would", "relative")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "wurmbrand2014_17"
     source := ⟨"wurmbrand-2014", "(24a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_17 : LinguisticExample :=
     readings := [("simultaneous (SOT)", .unacceptable), ("shifted past", .acceptable)]
     paperFeatures := [("SOT", "blocked")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "wurmbrand2014_18"
     source := ⟨"wurmbrand-2014", "(25a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_18 : LinguisticExample :=
     readings := [("simultaneous (SOT)", .acceptable)]
     paperFeatures := [("SOT", "applies")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "wurmbrand2014_19"
     source := ⟨"wurmbrand-2014", "(27a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_19 : LinguisticExample :=
     readings := [("simultaneous (SOT)", .acceptable)]
     paperFeatures := [("SOT", "applies")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "wurmbrand2014_20"
     source := ⟨"wurmbrand-2014", "(28b)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_20 : LinguisticExample :=
     readings := [("simultaneous (SOT)", .acceptable), ("shifted past", .unacceptable)]
     paperFeatures := [("would", "obligatory SOT")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "wurmbrand2014_21"
     source := ⟨"wurmbrand-2014", "(29a)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("would", "temporal"), ("SOT", "blocked")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "wurmbrand2014_22"
     source := ⟨"wurmbrand-2014", "(30a)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_22 : LinguisticExample :=
     readings := [("simultaneous (SOT)", .unacceptable), ("shifted past", .acceptable)]
     paperFeatures := [("SOT", "blocked")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "wurmbrand2014_23"
     source := ⟨"wurmbrand-2014", "(45a)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "present"), ("episodic", "impossible")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "wurmbrand2014_24"
     source := ⟨"wurmbrand-2014", "(45b)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "past"), ("episodic", "possible")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "wurmbrand2014_25"
     source := ⟨"wurmbrand-2014", "(45c)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("tense", "future"), ("episodic", "possible")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "wurmbrand2014_26"
     source := ⟨"wurmbrand-2014", "(49a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("reference time", "restricted")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "wurmbrand2014_27"
     source := ⟨"wurmbrand-2014", "(50a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_27 : LinguisticExample :=
     readings := [("simultaneous (SOT)", .acceptable), ("shifted past", .acceptable)]
     paperFeatures := [] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "wurmbrand2014_28"
     source := ⟨"wurmbrand-2014", "(50b)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_28 : LinguisticExample :=
     readings := [("simultaneous (SOT)", .unacceptable), ("shifted past", .acceptable)]
     paperFeatures := [] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "wurmbrand2014_29"
     source := ⟨"wurmbrand-2014", "(53a)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "future"), ("aspect", "perfective")] }
 
-def ex_30 : LinguisticExample :=
+def ex_30 : Datum :=
   { id := "wurmbrand2014_30"
     source := ⟨"wurmbrand-2014", "(53b)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "future"), ("reference time", "restricted")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "wurmbrand2014_31"
     source := ⟨"wurmbrand-2014", "(55a)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "propositional"), ("aspect", "perfective")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "wurmbrand2014_32"
     source := ⟨"wurmbrand-2014", "(55b)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "propositional"), ("aspect", "perfective")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "wurmbrand2014_33"
     source := ⟨"wurmbrand-2014", "(55c)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "propositional"), ("predicate", "stative")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "wurmbrand2014_34"
     source := ⟨"wurmbrand-2014", "(55e)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "propositional"), ("aspect", "imperfective")] }
 
-def ex_35 : LinguisticExample :=
+def ex_35 : Datum :=
   { id := "wurmbrand2014_35"
     source := ⟨"wurmbrand-2014", "(56b)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "propositional"), ("syntax", "control")] }
 
-def ex_36 : LinguisticExample :=
+def ex_36 : Datum :=
   { id := "wurmbrand2014_36"
     source := ⟨"wurmbrand-2014", "(56e)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "propositional"), ("aspect", "imperfective")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "wurmbrand2014_37"
     source := ⟨"wurmbrand-2014", "(57a)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "tenseless simultaneous"), ("matrix tense", "present")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "wurmbrand2014_38"
     source := ⟨"wurmbrand-2014", "(57b)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "tenseless simultaneous"), ("aspect", "imperfective")] }
 
-def ex_39 : LinguisticExample :=
+def ex_39 : Datum :=
   { id := "wurmbrand2014_39"
     source := ⟨"wurmbrand-2014", "(57c)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "tenseless simultaneous"), ("matrix tense", "past")] }
 
-def ex_40 : LinguisticExample :=
+def ex_40 : Datum :=
   { id := "wurmbrand2014_40"
     source := ⟨"wurmbrand-2014", "(58a)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_40 : LinguisticExample :=
     readings := []
     paperFeatures := [("reading", "double access")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "wurmbrand2014_41"
     source := ⟨"wurmbrand-2014", "(58c)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "propositional")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "wurmbrand2014_42"
     source := ⟨"wurmbrand-2014", "(59a)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex_42 : LinguisticExample :=
     readings := [("simultaneous (SOT)", .acceptable)]
     paperFeatures := [] }
 
-def ex_43 : LinguisticExample :=
+def ex_43 : Datum :=
   { id := "wurmbrand2014_43"
     source := ⟨"wurmbrand-2014", "(61a)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex_43 : LinguisticExample :=
     readings := [("near future", .acceptable), ("simultaneous", .unacceptable)]
     paperFeatures := [] }
 
-def ex_44 : LinguisticExample :=
+def ex_44 : Datum :=
   { id := "wurmbrand2014_44"
     source := ⟨"wurmbrand-2014", "(61b)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex_44 : LinguisticExample :=
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "wurmbrand2014_45"
     source := ⟨"wurmbrand-2014", "(66a)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "tenseless simultaneous")] }
 
-def ex_46 : LinguisticExample :=
+def ex_46 : Datum :=
   { id := "wurmbrand2014_46"
     source := ⟨"wurmbrand-2014", "(66b)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex_46 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "tenseless simultaneous"), ("syntax", "raising")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "wurmbrand2014_47"
     source := ⟨"wurmbrand-2014", "(67c)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "tenseless simultaneous"), ("matrix tense", "present")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "wurmbrand2014_48"
     source := ⟨"wurmbrand-2014", "(67d)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex_48 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "tenseless simultaneous"), ("matrix tense", "past")] }
 
-def ex_49 : LinguisticExample :=
+def ex_49 : Datum :=
   { id := "wurmbrand2014_49"
     source := ⟨"wurmbrand-2014", "(68a)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex_49 : LinguisticExample :=
     readings := []
     paperFeatures := [("reference time", "restricted")] }
 
-def ex_50 : LinguisticExample :=
+def ex_50 : Datum :=
   { id := "wurmbrand2014_50"
     source := ⟨"wurmbrand-2014", "(69a)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex_50 : LinguisticExample :=
     readings := []
     paperFeatures := [("class", "tenseless simultaneous"), ("matrix tense", "past")] }
 
-def ex_51 : LinguisticExample :=
+def ex_51 : Datum :=
   { id := "wurmbrand2014_51"
     source := ⟨"wurmbrand-2014", "(69b)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex_51 : LinguisticExample :=
     readings := []
     paperFeatures := [("matrix aspect", "perfective")] }
 
-def ex_52 : LinguisticExample :=
+def ex_52 : Datum :=
   { id := "wurmbrand2014_52"
     source := ⟨"wurmbrand-2014", "(70a)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex_52 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude holder", "overt"), ("aspect", "imperfective")] }
 
-def ex_53 : LinguisticExample :=
+def ex_53 : Datum :=
   { id := "wurmbrand2014_53"
     source := ⟨"wurmbrand-2014", "(70b)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex_53 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude holder", "overt"), ("aspect", "perfective")] }
 
-def ex_54 : LinguisticExample :=
+def ex_54 : Datum :=
   { id := "wurmbrand2014_54"
     source := ⟨"wurmbrand-2014", "(70d)"⟩
     reportedIn := none
@@ -719,6 +717,6 @@ def ex_54 : LinguisticExample :=
     readings := []
     paperFeatures := [("attitude holder", "understood"), ("aspect", "perfective")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26, ex_27, ex_28, ex_29, ex_30, ex_31, ex_32, ex_33, ex_34, ex_35, ex_36, ex_37, ex_38, ex_39, ex_40, ex_41, ex_42, ex_43, ex_44, ex_45, ex_46, ex_47, ex_48, ex_49, ex_50, ex_51, ex_52, ex_53, ex_54]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26, ex_27, ex_28, ex_29, ex_30, ex_31, ex_32, ex_33, ex_34, ex_35, ex_36, ex_37, ex_38, ex_39, ex_40, ex_41, ex_42, ex_43, ex_44, ex_45, ex_46, ex_47, ex_48, ex_49, ex_50, ex_51, ex_52, ex_53, ex_54]
 
 end Wurmbrand2014.Examples

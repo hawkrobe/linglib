@@ -55,7 +55,7 @@ discount, and the analogical model itself are not modelled.
 
 namespace AlbrightHayes2003
 
-open Data.Examples Phonology Subregular.LocalRewrite English English.Phonology
+open Phonology Subregular.LocalRewrite English English.Phonology
 
 deriving instance DecidableEq for ContextElem
 
@@ -320,10 +320,10 @@ def digits (s : String) : ℕ :=
   s.toList.foldl (fun n c ↦ if c.isDigit then 10 * n + (c.toNat - '0'.toNat) else n) 0
 
 /-- A row's numeric feature. -/
-def value (key : String) (r : LinguisticExample) : ℕ := digits ((r.feature? key).getD "0")
+def value (key : String) (r : Datum) : ℕ := digits ((r.feature? key).getD "0")
 
 /-- A row's reported rule statistics (Tables 1 and 4). -/
-def statsOf (r : LinguisticExample) : Option Stats :=
+def statsOf (r : Datum) : Option Stats :=
   (r.nat? "ruleScope").bind fun s ↦ (r.nat? "ruleHits").map (⟨s, ·⟩)
 
 /-- In Table 4 the twelve regular islands all outscore the general rule. -/
@@ -339,19 +339,19 @@ theorem gleed_ranking :
 
 /-- The Appendix A rows of one past type in the cells satisfying `p` (the Peripheral stems of
 Table A2 have no cell). -/
-def rows (regular : Bool) (p : IORCategory → Bool) : List LinguisticExample :=
+def rows (regular : Bool) (p : IORCategory → Bool) : List Datum :=
   Examples.all.filter fun r ↦
     r.feature? "pastType" = some (if regular then "regular" else "irregular") ∧
       ((r.feature? "cell").bind IORCategory.ofString).any p
 
 /-- The sum of a numeric feature over rows. -/
-def total (key : String) (rs : List LinguisticExample) : ℕ := (rs.map (value key)).sum
+def total (key : String) (rs : List Datum) : ℕ := (rs.map (value key)).sum
 
 /-- The mean of `key` over `A` exceeds its mean over `B`, cross-multiplied. -/
-def MeanGT (key : String) (A B : List LinguisticExample) : Prop :=
+def MeanGT (key : String) (A B : List Datum) : Prop :=
   total key A * B.length > total key B * A.length
 
-instance (key : String) (A B : List LinguisticExample) : Decidable (MeanGT key A B) :=
+instance (key : String) (A B : List Datum) : Decidable (MeanGT key A B) :=
   inferInstanceAs (Decidable (_ > _))
 
 /-- Regulars show islands of reliability (Fig. 2), in that novel regular pasts are rated higher, and
@@ -400,7 +400,7 @@ theorem analogical_misses_islands :
   decide +kernel
 
 /-- The pseudo-*burnt* irregulars of (15). -/
-def burnt : List LinguisticExample := Examples.all.filter (·.feature? "set" = some "burnt")
+def burnt : List Datum := Examples.all.filter (·.feature? "set" = some "burnt")
 
 /-- The rule-based model's one systematic error: it underrates the *burnt*-class forms, which
 the analogical model overrates. -/

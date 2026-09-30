@@ -15,9 +15,7 @@ this module; declarations live in `namespace Heim1994b.Examples`.
 
 namespace Heim1994b.Examples
 
-open Data.Examples
-
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "heim1994b_ex1"
     source := ⟨"heim-1994", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "0"), ("question", "which students called")] }
 
-def ex6 : LinguisticExample :=
+def ex6 : Datum :=
   { id := "heim1994b_ex6"
     source := ⟨"heim-1994", "(6)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex6 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("question", "who called")] }
 
-def ex17 : LinguisticExample :=
+def ex17 : Datum :=
   { id := "heim1994b_ex17"
     source := ⟨"heim-1994", "(17)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex17 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6")] }
 
-def ex18 : LinguisticExample :=
+def ex18 : Datum :=
   { id := "heim1994b_ex18"
     source := ⟨"heim-1994", "(18)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex18 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6")] }
 
-def ex19 : LinguisticExample :=
+def ex19 : Datum :=
   { id := "heim1994b_ex19"
     source := ⟨"heim-1994", "(19)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex19 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6")] }
 
-def ex20a : LinguisticExample :=
+def ex20a : Datum :=
   { id := "heim1994b_ex20a"
     source := ⟨"heim-1994", "(20a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex20a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6")] }
 
-def ex20b : LinguisticExample :=
+def ex20b : Datum :=
   { id := "heim1994b_ex20b"
     source := ⟨"heim-1994", "(20b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex20b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6")] }
 
-def ex21 : LinguisticExample :=
+def ex21 : Datum :=
   { id := "heim1994b_ex21"
     source := ⟨"heim-1994", "(21)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex21 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("gs", "John knows what students there are"), ("generalizedKarttunen", "John knows whether there are students")] }
 
-def ex24 : LinguisticExample :=
+def ex24 : Datum :=
   { id := "heim1994b_ex24"
     source := ⟨"heim-1994", "(24)"⟩
     reportedIn := none
@@ -134,6 +132,6 @@ def ex24 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "7"), ("gs", "false when John believes Sue not to be a student"), ("generalizedKarttunen", "true")] }
 
-def all : List LinguisticExample := [ex1, ex6, ex17, ex18, ex19, ex20a, ex20b, ex21, ex24]
+def all : List Datum := [ex1, ex6, ex17, ex18, ex19, ex20a, ex20b, ex21, ex24]
 
 end Heim1994b.Examples

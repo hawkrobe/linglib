@@ -15,9 +15,7 @@ this module; declarations live in `namespace Ogihara1996.Examples`.
 
 namespace Ogihara1996.Examples
 
-open Data.Examples
-
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "ogihara1996_ex2a"
     source := ⟨"ogihara-1996", "(2a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex2a : LinguisticExample :=
     readings := [("simultaneous (Hanako sick at saying time)", .acceptable), ("shifted (Hanako sick before saying)", .ungrammatical)]
     paperFeatures := [] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "ogihara1996_ex2b"
     source := ⟨"ogihara-1996", "(2b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex2b : LinguisticExample :=
     readings := [("shifted (Hanako sick before saying)", .acceptable), ("simultaneous (Hanako sick at saying time)", .ungrammatical)]
     paperFeatures := [] }
 
-def ex19d : LinguisticExample :=
+def ex19d : Datum :=
   { id := "ogihara1996_ex19d"
     source := ⟨"ogihara-1996", "(19d)"⟩
     reportedIn := none
@@ -56,6 +54,6 @@ def ex19d : LinguisticExample :=
     readings := [("Mary's reading at yesterday (definite past)", .acceptable)]
     paperFeatures := [] }
 
-def all : List LinguisticExample := [ex2a, ex2b, ex19d]
+def all : List Datum := [ex2a, ex2b, ex19d]
 
 end Ogihara1996.Examples

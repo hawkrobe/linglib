@@ -45,7 +45,7 @@ note a), so only the English, Japanese, and Finnish heads are given as `Cause` v
 
 namespace Pylkkanen2008
 
-open ArgumentStructure Minimalist Data.Examples Examples
+open ArgumentStructure Minimalist Examples
 
 variable {Entity : Type*} {T : Type*} [LinearOrder T]
 
@@ -100,7 +100,7 @@ def Construction.head : Construction → ApplType
 
 /-- Table 2.1: each of the six languages with the construction tested, its unergative test, and
 its static-verb test. -/
-def table21 : List (Construction × LinguisticExample × LinguisticExample) :=
+def table21 : List (Construction × Datum × Datum) :=
   [(.englishDOC, ex20a, ex20b), (.japaneseDOC, ex21a, ex21b), (.koreanDOC, ex22a, ex22b),
    (.lugandaBenefactive, ex23a, ex23b), (.vendaBenefactive, ex24a, ex24b),
    (.albanianBenefactive, ex25a, ex25b)]

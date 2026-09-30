@@ -68,7 +68,7 @@ leaves open which other button fails, while participants answered *No* about a s
 
 namespace EvcenBaleBarner2026
 
-open Data.Examples EvcenBaleBarner2026.Examples
+open EvcenBaleBarner2026.Examples
 
 /-- The three buttons of Experiments 1 and 3. -/
 inductive Button
@@ -187,12 +187,12 @@ structure Row where
   deriving DecidableEq
 
 /-- A row from an example. -/
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   pure ⟨← ex.parse? "qud" qudTable, ← ex.parse? "tested" testedTable,
     ← ex.parse? "response" responseTable⟩
 
 /-- The conditions of Experiments 1 and 3. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Each condition's modal response is the one the alternatives predict: perfection under the
 antecedent-focused question from a speaker who tested every button, and nothing otherwise. -/
@@ -360,11 +360,11 @@ structure Row2 where
   deriving DecidableEq
 
 /-- A row from an example. -/
-def Row2.ofExample (ex : LinguisticExample) : Option Row2 := do
+def Row2.ofDatum (ex : Datum) : Option Row2 := do
   pure ⟨← ex.parse? "answerType" answerTable, ← ex.parse? "response" responseTable⟩
 
 /-- The conditions of Experiment 2. -/
-def rows2 : List Row2 := Examples.all.filterMap Row2.ofExample
+def rows2 : List Row2 := Examples.all.filterMap Row2.ofDatum
 
 /-- Against every button's answer, both answer forms exclude the queried buttons, the modal
 response in both conditions. -/

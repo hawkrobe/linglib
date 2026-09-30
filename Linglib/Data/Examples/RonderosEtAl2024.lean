@@ -15,9 +15,7 @@ this module; declarations live in `namespace RonderosEtAl2024.Examples`.
 
 namespace RonderosEtAl2024.Examples
 
-open Data.Examples
-
-def ronderos2024_1a : LinguisticExample :=
+def ronderos2024_1a : Datum :=
   { id := "ronderos2024_1a"
     source := ⟨"ronderos-etal-2024", "Figure 1 (1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ronderos2024_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("adjType", "scalar"), ("condition", "contrast")] }
 
-def ronderos2024_1b : LinguisticExample :=
+def ronderos2024_1b : Datum :=
   { id := "ronderos2024_1b"
     source := ⟨"ronderos-etal-2024", "Figure 1 (1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ronderos2024_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("adjType", "scalar"), ("condition", "noContrast")] }
 
-def ronderos2024_2a : LinguisticExample :=
+def ronderos2024_2a : Datum :=
   { id := "ronderos2024_2a"
     source := ⟨"ronderos-etal-2024", "Figure 1 (2a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ronderos2024_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("adjType", "color"), ("condition", "contrast")] }
 
-def ronderos2024_2b : LinguisticExample :=
+def ronderos2024_2b : Datum :=
   { id := "ronderos2024_2b"
     source := ⟨"ronderos-etal-2024", "Figure 1 (2b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ronderos2024_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("adjType", "color"), ("condition", "noContrast")] }
 
-def ronderos2024_3a : LinguisticExample :=
+def ronderos2024_3a : Datum :=
   { id := "ronderos2024_3a"
     source := ⟨"ronderos-etal-2024", "Figure 1 (3a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ronderos2024_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("adjType", "material"), ("condition", "contrast")] }
 
-def ronderos2024_3b : LinguisticExample :=
+def ronderos2024_3b : Datum :=
   { id := "ronderos2024_3b"
     source := ⟨"ronderos-etal-2024", "Figure 1 (3b)"⟩
     reportedIn := none
@@ -95,6 +93,6 @@ def ronderos2024_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("adjType", "material"), ("condition", "noContrast")] }
 
-def all : List LinguisticExample := [ronderos2024_1a, ronderos2024_1b, ronderos2024_2a, ronderos2024_2b, ronderos2024_3a, ronderos2024_3b]
+def all : List Datum := [ronderos2024_1a, ronderos2024_1b, ronderos2024_2a, ronderos2024_2b, ronderos2024_3a, ronderos2024_3b]
 
 end RonderosEtAl2024.Examples

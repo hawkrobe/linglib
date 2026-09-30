@@ -231,10 +231,9 @@ theorem eq_authority_of_not_inCrisis_ask (h : ¬ (ask K c (ego V t c)).InCrisis)
 
 section Rows
 
-open Data.Examples
 
 /-- The subject of an example is *I* or *you*, according to the person of its pronoun. -/
-def subject? (r : LinguisticExample) : Option (Term W E P T) :=
+def subject? (r : Datum) : Option (Term W E P T) :=
   match r.feature? "subject" with
   | some "1" => some I
   | some "2" => some you
@@ -242,7 +241,7 @@ def subject? (r : LinguisticExample) : Option (Term W E P T) :=
 
 /-- The context of an example has the speaker as its authority if the example is a statement
 and the addressee if it is a question. -/
-def context? (r : LinguisticExample) (c₀ : Reference.Context W E P T) :
+def context? (r : Datum) (c₀ : Reference.Context W E P T) :
     Option (Context W E P T) :=
   match r.feature? "clause" with
   | some "declarative" => some ⟨c₀, c₀.agent⟩

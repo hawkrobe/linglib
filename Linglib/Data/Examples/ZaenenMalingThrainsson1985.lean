@@ -15,9 +15,7 @@ this module; declarations live in `namespace ZaenenMalingThrainsson1985.Examples
 
 namespace ZaenenMalingThrainsson1985.Examples
 
-open Data.Examples
-
-def zmt1985_8a : LinguisticExample :=
+def zmt1985_8a : Datum :=
   { id := "zmt1985_8a"
     source := ⟨"zaenen-maling-thrainsson-1985", "(8a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def zmt1985_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "active"), ("cases", "nom dat")] }
 
-def zmt1985_8b : LinguisticExample :=
+def zmt1985_8b : Datum :=
   { id := "zmt1985_8b"
     source := ⟨"zaenen-maling-thrainsson-1985", "(8b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def zmt1985_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sakna"), ("voice", "active"), ("cases", "nom gen")] }
 
-def zmt1985_9a : LinguisticExample :=
+def zmt1985_9a : Datum :=
   { id := "zmt1985_9a"
     source := ⟨"zaenen-maling-thrainsson-1985", "(9a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def zmt1985_9a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "dansa"), ("voice", "passive"), ("cases", "")] }
 
-def zmt1985_11a : LinguisticExample :=
+def zmt1985_11a : Datum :=
   { id := "zmt1985_11a"
     source := ⟨"zaenen-maling-thrainsson-1985", "(11a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def zmt1985_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "passive"), ("cases", "dat")] }
 
-def zmt1985_11b : LinguisticExample :=
+def zmt1985_11b : Datum :=
   { id := "zmt1985_11b"
     source := ⟨"zaenen-maling-thrainsson-1985", "(11b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def zmt1985_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sakna"), ("voice", "passive"), ("cases", "gen")] }
 
-def zmt1985_13 : LinguisticExample :=
+def zmt1985_13 : Datum :=
   { id := "zmt1985_13"
     source := ⟨"zaenen-maling-thrainsson-1985", "(13)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def zmt1985_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("cases", "dat nom")] }
 
-def zmt1985_29a : LinguisticExample :=
+def zmt1985_29a : Datum :=
   { id := "zmt1985_29a"
     source := ⟨"zaenen-maling-thrainsson-1985", "(29a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def zmt1985_29a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "vanta"), ("voice", "active"), ("cases", "acc acc")] }
 
-def zmt1985_37a : LinguisticExample :=
+def zmt1985_37a : Datum :=
   { id := "zmt1985_37a"
     source := ⟨"zaenen-maling-thrainsson-1985", "(37a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def zmt1985_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "leyna"), ("voice", "active"), ("cases", "nom acc dat")] }
 
-def zmt1985_37b : LinguisticExample :=
+def zmt1985_37b : Datum :=
   { id := "zmt1985_37b"
     source := ⟨"zaenen-maling-thrainsson-1985", "(37b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def zmt1985_37b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "biðja"), ("voice", "active"), ("cases", "nom acc gen")] }
 
-def zmt1985_37c : LinguisticExample :=
+def zmt1985_37c : Datum :=
   { id := "zmt1985_37c"
     source := ⟨"zaenen-maling-thrainsson-1985", "(37c)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def zmt1985_37c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "segja"), ("voice", "active"), ("cases", "nom dat acc")] }
 
-def zmt1985_37d : LinguisticExample :=
+def zmt1985_37d : Datum :=
   { id := "zmt1985_37d"
     source := ⟨"zaenen-maling-thrainsson-1985", "(37d)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def zmt1985_37d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "lofa"), ("voice", "active"), ("cases", "nom dat dat")] }
 
-def zmt1985_37e : LinguisticExample :=
+def zmt1985_37e : Datum :=
   { id := "zmt1985_37e"
     source := ⟨"zaenen-maling-thrainsson-1985", "(37e)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def zmt1985_37e : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "óska"), ("voice", "active"), ("cases", "nom dat gen")] }
 
-def zmt1985_42a : LinguisticExample :=
+def zmt1985_42a : Datum :=
   { id := "zmt1985_42a"
     source := ⟨"zaenen-maling-thrainsson-1985", "(42a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def zmt1985_42a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "skila"), ("voice", "active"), ("cases", "nom dat dat")] }
 
-def zmt1985_42b : LinguisticExample :=
+def zmt1985_42b : Datum :=
   { id := "zmt1985_42b"
     source := ⟨"zaenen-maling-thrainsson-1985", "(42b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def zmt1985_42b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "skila"), ("voice", "passive"), ("cases", "dat dat"), ("test", "passive"), ("tested", "goal")] }
 
-def zmt1985_42c : LinguisticExample :=
+def zmt1985_42c : Datum :=
   { id := "zmt1985_42c"
     source := ⟨"zaenen-maling-thrainsson-1985", "(42c)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def zmt1985_42c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "skila"), ("voice", "passive"), ("test", "passive"), ("tested", "theme")] }
 
-def zmt1985_44a : LinguisticExample :=
+def zmt1985_44a : Datum :=
   { id := "zmt1985_44a"
     source := ⟨"zaenen-maling-thrainsson-1985", "(44a)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def zmt1985_44a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "gefa"), ("voice", "passive"), ("cases", "dat nom"), ("test", "passive"), ("tested", "goal")] }
 
-def zmt1985_44b : LinguisticExample :=
+def zmt1985_44b : Datum :=
   { id := "zmt1985_44b"
     source := ⟨"zaenen-maling-thrainsson-1985", "(44b)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def zmt1985_44b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "gefa"), ("voice", "passive"), ("cases", "nom dat"), ("test", "passive"), ("tested", "theme")] }
 
-def zmt1985_64a : LinguisticExample :=
+def zmt1985_64a : Datum :=
   { id := "zmt1985_64a"
     source := ⟨"zaenen-maling-thrainsson-1985", "(64a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def zmt1985_64a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "svipta"), ("voice", "active"), ("cases", "nom acc dat")] }
 
-def zmt1985_66b : LinguisticExample :=
+def zmt1985_66b : Datum :=
   { id := "zmt1985_66b"
     source := ⟨"zaenen-maling-thrainsson-1985", "(66b)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def zmt1985_66b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "óska (transitive)"), ("voice", "active"), ("cases", "nom gen")] }
 
-def zmt1985_66c : LinguisticExample :=
+def zmt1985_66c : Datum :=
   { id := "zmt1985_66c"
     source := ⟨"zaenen-maling-thrainsson-1985", "(66c)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def zmt1985_66c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "óska"), ("voice", "active")] }
 
-def zmt1985_14b : LinguisticExample :=
+def zmt1985_14b : Datum :=
   { id := "zmt1985_14b"
     source := ⟨"zaenen-maling-thrainsson-1985", "(14b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def zmt1985_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sakna"), ("voice", "active"), ("test", "raising"), ("tested", "experiencer")] }
 
-def zmt1985_14d : LinguisticExample :=
+def zmt1985_14d : Datum :=
   { id := "zmt1985_14d"
     source := ⟨"zaenen-maling-thrainsson-1985", "(14d)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def zmt1985_14d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sakna"), ("voice", "active"), ("test", "raising"), ("tested", "theme")] }
 
-def zmt1985_16 : LinguisticExample :=
+def zmt1985_16 : Datum :=
   { id := "zmt1985_16"
     source := ⟨"zaenen-maling-thrainsson-1985", "(16)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def zmt1985_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("test", "raising"), ("tested", "experiencer")] }
 
-def zmt1985_18a : LinguisticExample :=
+def zmt1985_18a : Datum :=
   { id := "zmt1985_18a"
     source := ⟨"zaenen-maling-thrainsson-1985", "(18a)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def zmt1985_18a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("test", "reflexivization"), ("tested", "experiencer")] }
 
-def zmt1985_21a : LinguisticExample :=
+def zmt1985_21a : Datum :=
   { id := "zmt1985_21a"
     source := ⟨"zaenen-maling-thrainsson-1985", "(21a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def zmt1985_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("test", "inversion"), ("tested", "experiencer")] }
 
-def zmt1985_21c : LinguisticExample :=
+def zmt1985_21c : Datum :=
   { id := "zmt1985_21c"
     source := ⟨"zaenen-maling-thrainsson-1985", "(21c)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def zmt1985_21c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("test", "inversion"), ("tested", "theme")] }
 
-def zmt1985_23b : LinguisticExample :=
+def zmt1985_23b : Datum :=
   { id := "zmt1985_23b"
     source := ⟨"zaenen-maling-thrainsson-1985", "(23b)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def zmt1985_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("test", "extraction"), ("tested", "experiencer")] }
 
-def zmt1985_23d : LinguisticExample :=
+def zmt1985_23d : Datum :=
   { id := "zmt1985_23d"
     source := ⟨"zaenen-maling-thrainsson-1985", "(23d)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def zmt1985_23d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("test", "extraction"), ("tested", "theme")] }
 
-def zmt1985_25a : LinguisticExample :=
+def zmt1985_25a : Datum :=
   { id := "zmt1985_25a"
     source := ⟨"zaenen-maling-thrainsson-1985", "(25a)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def zmt1985_25a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("test", "postposing"), ("tested", "experiencer")] }
 
-def zmt1985_25c : LinguisticExample :=
+def zmt1985_25c : Datum :=
   { id := "zmt1985_25c"
     source := ⟨"zaenen-maling-thrainsson-1985", "(25c)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def zmt1985_25c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "þykja"), ("voice", "active"), ("test", "postposing"), ("tested", "theme")] }
 
-def zmt1985_27a : LinguisticExample :=
+def zmt1985_27a : Datum :=
   { id := "zmt1985_27a"
     source := ⟨"zaenen-maling-thrainsson-1985", "(27a)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def zmt1985_27a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "finnast"), ("voice", "active"), ("test", "ellipsis"), ("tested", "experiencer")] }
 
-def zmt1985_27b : LinguisticExample :=
+def zmt1985_27b : Datum :=
   { id := "zmt1985_27b"
     source := ⟨"zaenen-maling-thrainsson-1985", "(27b)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def zmt1985_27b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "finnast"), ("voice", "active"), ("test", "ellipsis"), ("tested", "theme")] }
 
-def zmt1985_29b : LinguisticExample :=
+def zmt1985_29b : Datum :=
   { id := "zmt1985_29b"
     source := ⟨"zaenen-maling-thrainsson-1985", "(29b)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def zmt1985_29b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "vanta"), ("voice", "active"), ("test", "control"), ("tested", "experiencer")] }
 
-def zmt1985_30 : LinguisticExample :=
+def zmt1985_30 : Datum :=
   { id := "zmt1985_30"
     source := ⟨"zaenen-maling-thrainsson-1985", "(30)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def zmt1985_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "passive"), ("test", "raising"), ("tested", "theme")] }
 
-def zmt1985_31 : LinguisticExample :=
+def zmt1985_31 : Datum :=
   { id := "zmt1985_31"
     source := ⟨"zaenen-maling-thrainsson-1985", "(31)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def zmt1985_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "passive"), ("test", "reflexivization"), ("tested", "theme")] }
 
-def zmt1985_32a : LinguisticExample :=
+def zmt1985_32a : Datum :=
   { id := "zmt1985_32a"
     source := ⟨"zaenen-maling-thrainsson-1985", "(32a)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def zmt1985_32a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "passive"), ("test", "inversion"), ("tested", "theme")] }
 
-def zmt1985_33b : LinguisticExample :=
+def zmt1985_33b : Datum :=
   { id := "zmt1985_33b"
     source := ⟨"zaenen-maling-thrainsson-1985", "(33b)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def zmt1985_33b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "passive"), ("test", "extraction"), ("tested", "theme")] }
 
-def zmt1985_34 : LinguisticExample :=
+def zmt1985_34 : Datum :=
   { id := "zmt1985_34"
     source := ⟨"zaenen-maling-thrainsson-1985", "(34)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def zmt1985_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "passive"), ("test", "postposing"), ("tested", "theme")] }
 
-def zmt1985_35 : LinguisticExample :=
+def zmt1985_35 : Datum :=
   { id := "zmt1985_35"
     source := ⟨"zaenen-maling-thrainsson-1985", "(35)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def zmt1985_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "passive"), ("test", "ellipsis"), ("tested", "theme")] }
 
-def zmt1985_36a : LinguisticExample :=
+def zmt1985_36a : Datum :=
   { id := "zmt1985_36a"
     source := ⟨"zaenen-maling-thrainsson-1985", "(36a)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def zmt1985_36a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hjálpa"), ("voice", "passive"), ("test", "control"), ("tested", "theme")] }
 
-def zmt1985_45a : LinguisticExample :=
+def zmt1985_45a : Datum :=
   { id := "zmt1985_45a"
     source := ⟨"zaenen-maling-thrainsson-1985", "(45a)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def zmt1985_45a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "gefa"), ("voice", "passive"), ("test", "raising"), ("tested", "goal")] }
 
-def zmt1985_45b : LinguisticExample :=
+def zmt1985_45b : Datum :=
   { id := "zmt1985_45b"
     source := ⟨"zaenen-maling-thrainsson-1985", "(45b)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def zmt1985_45b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "gefa"), ("voice", "passive"), ("test", "raising"), ("tested", "theme")] }
 
-def zmt1985_68a : LinguisticExample :=
+def zmt1985_68a : Datum :=
   { id := "zmt1985_68a"
     source := ⟨"zaenen-maling-thrainsson-1985", "(68a)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def zmt1985_68a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "óska (transitive)"), ("voice", "passive"), ("cases", "gen"), ("test", "passive"), ("tested", "theme")] }
 
-def zmt1985_68a_prime : LinguisticExample :=
+def zmt1985_68a_prime : Datum :=
   { id := "zmt1985_68a_prime"
     source := ⟨"zaenen-maling-thrainsson-1985", "(68a')"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def zmt1985_68a_prime : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "óska"), ("voice", "passive"), ("test", "passive"), ("tested", "theme")] }
 
-def zmt1985_68c : LinguisticExample :=
+def zmt1985_68c : Datum :=
   { id := "zmt1985_68c"
     source := ⟨"zaenen-maling-thrainsson-1985", "(68c)"⟩
     reportedIn := none
@@ -602,6 +600,6 @@ def zmt1985_68c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "óska"), ("voice", "passive"), ("cases", "dat gen"), ("test", "passive"), ("tested", "goal")] }
 
-def all : List LinguisticExample := [zmt1985_8a, zmt1985_8b, zmt1985_9a, zmt1985_11a, zmt1985_11b, zmt1985_13, zmt1985_29a, zmt1985_37a, zmt1985_37b, zmt1985_37c, zmt1985_37d, zmt1985_37e, zmt1985_42a, zmt1985_42b, zmt1985_42c, zmt1985_44a, zmt1985_44b, zmt1985_64a, zmt1985_66b, zmt1985_66c, zmt1985_14b, zmt1985_14d, zmt1985_16, zmt1985_18a, zmt1985_21a, zmt1985_21c, zmt1985_23b, zmt1985_23d, zmt1985_25a, zmt1985_25c, zmt1985_27a, zmt1985_27b, zmt1985_29b, zmt1985_30, zmt1985_31, zmt1985_32a, zmt1985_33b, zmt1985_34, zmt1985_35, zmt1985_36a, zmt1985_45a, zmt1985_45b, zmt1985_68a, zmt1985_68a_prime, zmt1985_68c]
+def all : List Datum := [zmt1985_8a, zmt1985_8b, zmt1985_9a, zmt1985_11a, zmt1985_11b, zmt1985_13, zmt1985_29a, zmt1985_37a, zmt1985_37b, zmt1985_37c, zmt1985_37d, zmt1985_37e, zmt1985_42a, zmt1985_42b, zmt1985_42c, zmt1985_44a, zmt1985_44b, zmt1985_64a, zmt1985_66b, zmt1985_66c, zmt1985_14b, zmt1985_14d, zmt1985_16, zmt1985_18a, zmt1985_21a, zmt1985_21c, zmt1985_23b, zmt1985_23d, zmt1985_25a, zmt1985_25c, zmt1985_27a, zmt1985_27b, zmt1985_29b, zmt1985_30, zmt1985_31, zmt1985_32a, zmt1985_33b, zmt1985_34, zmt1985_35, zmt1985_36a, zmt1985_45a, zmt1985_45b, zmt1985_68a, zmt1985_68a_prime, zmt1985_68c]
 
 end ZaenenMalingThrainsson1985.Examples

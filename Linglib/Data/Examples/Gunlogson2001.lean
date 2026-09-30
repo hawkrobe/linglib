@@ -15,9 +15,7 @@ this module; declarations live in `namespace Gunlogson2001.Examples`.
 
 namespace Gunlogson2001.Examples
 
-open Data.Examples
-
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "gunlogson2001_13"
     source := ⟨"gunlogson-2001", "(13)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "neutrality"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "gunlogson2001_14"
     source := ⟨"gunlogson-2001", "(14)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "neutrality"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "gunlogson2001_16"
     source := ⟨"gunlogson-2001", "(16)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "neutrality"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "gunlogson2001_27"
     source := ⟨"gunlogson-2001", "(27)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "neutrality"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "gunlogson2001_31"
     source := ⟨"gunlogson-2001", "(31)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "informativeRising"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "gunlogson2001_33"
     source := ⟨"gunlogson-2001", "(33)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("phenomenon", "biasMarker"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
-def ex_44 : LinguisticExample :=
+def ex_44 : Datum :=
   { id := "gunlogson2001_44"
     source := ⟨"gunlogson-2001", "(44)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("phenomenon", "speakerCommitment"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "gunlogson2001_45"
     source := ⟨"gunlogson-2001", "(45)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("phenomenon", "speakerCommitment"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
-def ex_46 : LinguisticExample :=
+def ex_46 : Datum :=
   { id := "gunlogson2001_46"
     source := ⟨"gunlogson-2001", "(46)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_46 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("phenomenon", "speakerCommitment"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "gunlogson2001_47"
     source := ⟨"gunlogson-2001", "(47)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("phenomenon", "speakerCommitment"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "gunlogson2001_48"
     source := ⟨"gunlogson-2001", "(48)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_48 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("phenomenon", "speakerCommitment"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
-def ex_100 : LinguisticExample :=
+def ex_100 : Datum :=
   { id := "gunlogson2001_100"
     source := ⟨"gunlogson-2001", "(100)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_100 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.5"), ("phenomenon", "entailedButInformative")] }
 
-def ex_102 : LinguisticExample :=
+def ex_102 : Datum :=
   { id := "gunlogson2001_102"
     source := ⟨"gunlogson-2001", "(102)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_102 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.5"), ("phenomenon", "vacuousness"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
-def ex_103 : LinguisticExample :=
+def ex_103 : Datum :=
   { id := "gunlogson2001_103"
     source := ⟨"gunlogson-2001", "(103)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_103 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.5"), ("phenomenon", "vacuousness"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
-def ex_118 : LinguisticExample :=
+def ex_118 : Datum :=
   { id := "gunlogson2001_118"
     source := ⟨"gunlogson-2001", "(118)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_118 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("phenomenon", "fallingDeclarativeQuestion"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
-def ex_128 : LinguisticExample :=
+def ex_128 : Datum :=
   { id := "gunlogson2001_128"
     source := ⟨"gunlogson-2001", "(128)"⟩
     reportedIn := none
@@ -225,6 +223,6 @@ def ex_128 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("phenomenon", "fallingDeclarativeQuestion"), ("locutions", "interrogative;risingDeclarative;fallingDeclarative")] }
 
-def all : List LinguisticExample := [ex_13, ex_14, ex_16, ex_27, ex_31, ex_33, ex_44, ex_45, ex_46, ex_47, ex_48, ex_100, ex_102, ex_103, ex_118, ex_128]
+def all : List Datum := [ex_13, ex_14, ex_16, ex_27, ex_31, ex_33, ex_44, ex_45, ex_46, ex_47, ex_48, ex_100, ex_102, ex_103, ex_118, ex_128]
 
 end Gunlogson2001.Examples

@@ -83,7 +83,7 @@ formalized.
 
 namespace MunozPerez2026
 
-open Data.Examples Minimalist Person Spanish.Verbs
+open Minimalist Person Spanish.Verbs
 
 /-! ### Clauses -/
 
@@ -257,11 +257,11 @@ theorem syncretic_not_isFissionApplicable :
 /-! ### The examples -/
 
 /-- The verb of an example, from the Fragment. -/
-def verb? (e : LinguisticExample) : Option SpanishVerbEntry :=
+def verb? (e : Datum) : Option SpanishVerbEntry :=
   (e.feature? "verb").bind fun f ↦ allVerbs.find? (·.form = f)
 
 /-- The bundle of the dative of an example, `none` where it has no dative. -/
-def appl? (e : LinguisticExample) : Option (Option Category) :=
+def appl? (e : Datum) : Option (Option Category) :=
   e.parse? "dative" [("none", none), ("1SG", some .speaker), ("2SG", some .addressee),
     ("3SG", some .other), ("1PL", some .speakerOthers), ("3PL", some .others)]
 
@@ -285,7 +285,7 @@ theorem anticausative_rows : ∀ e ∈ Examples.all,
 
 /-- The clause of an example that is not anticausative. *Quejarse* has an external argument and
 impersonal *dar* is an activity under an impersonal Voice head. -/
-def otherClause? (e : LinguisticExample) : Option Clause :=
+def otherClause? (e : Datum) : Option Clause :=
   (appl? e).bind fun a ↦ e.parse? "construction"
     [("inherent", ⟨Minimalist.Voice.agentive, [.vDO], a⟩),
       ("impersonal", ⟨Minimalist.Voice.impersonal, [.vDO], a⟩)]

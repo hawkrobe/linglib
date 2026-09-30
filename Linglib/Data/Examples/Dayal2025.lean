@@ -15,9 +15,7 @@ this module; declarations live in `namespace Dayal2025.Examples`.
 
 namespace Dayal2025.Examples
 
-open Data.Examples
-
-def ex3b : LinguisticExample :=
+def ex3b : Datum :=
   { id := "dayal2025_ex3b"
     source := ⟨"dayal-2025", "(3b)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex3b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("particle", "ya: nahĩ:"), ("embedding", "subordination")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "dayal2025_ex5a"
     source := ⟨"dayal-2025", "(5a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("particle", "ka"), ("embedding", "matrix")] }
 
-def ex5b : LinguisticExample :=
+def ex5b : Datum :=
   { id := "dayal2025_ex5b"
     source := ⟨"dayal-2025", "(5b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex5b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.1"), ("particle", "ka"), ("embedding", "subordination")] }
 
-def ex8a : LinguisticExample :=
+def ex8a : Datum :=
   { id := "dayal2025_ex8a"
     source := ⟨"mccloskey-2006", "(8a)"⟩
     reportedIn := some ⟨"dayal-2025", "(8a)"⟩
@@ -69,7 +67,7 @@ def ex8a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("verb", "wonder"), ("embedding", "quasi")] }
 
-def ex8b : LinguisticExample :=
+def ex8b : Datum :=
   { id := "dayal2025_ex8b"
     source := ⟨"mccloskey-2006", "(8b)"⟩
     reportedIn := some ⟨"dayal-2025", "(8b)"⟩
@@ -82,7 +80,7 @@ def ex8b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("verb", "ask"), ("embedding", "quasi")] }
 
-def ex9a : LinguisticExample :=
+def ex9a : Datum :=
   { id := "dayal2025_ex9a"
     source := ⟨"mccloskey-2006", "(9a)"⟩
     reportedIn := some ⟨"dayal-2025", "(9a)"⟩
@@ -95,7 +93,7 @@ def ex9a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("verb", "know"), ("embedding", "quasi")] }
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "dayal2025_ex11a"
     source := ⟨"dayal-2025", "(11a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("embedding", "subordination")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "dayal2025_ex11b"
     source := ⟨"dayal-2025", "(11b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("embedding", "quasi")] }
 
-def ex11c : LinguisticExample :=
+def ex11c : Datum :=
   { id := "dayal2025_ex11c"
     source := ⟨"dayal-2025", "(11c)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex11c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("verb", "depend on"), ("embedding", "subordination")] }
 
-def ex11d : LinguisticExample :=
+def ex11d : Datum :=
   { id := "dayal2025_ex11d"
     source := ⟨"dayal-2025", "(11d)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex11d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("verb", "depend on"), ("embedding", "quasi")] }
 
-def ex13a : LinguisticExample :=
+def ex13a : Datum :=
   { id := "dayal2025_ex13a"
     source := ⟨"dayal-2025", "(13a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex13a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("embedding", "quasi"), ("syntax", "interrogative")] }
 
-def ex14a : LinguisticExample :=
+def ex14a : Datum :=
   { id := "dayal2025_ex14a"
     source := ⟨"dayal-2025", "(14a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex14a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("verb", "ask"), ("embedding", "quotation")] }
 
-def ex14b : LinguisticExample :=
+def ex14b : Datum :=
   { id := "dayal2025_ex14b"
     source := ⟨"dayal-2025", "(14b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex14b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("verb", "ask"), ("complement", "declarativeAssertion")] }
 
-def ex14c : LinguisticExample :=
+def ex14c : Datum :=
   { id := "dayal2025_ex14c"
     source := ⟨"dayal-2025", "(14c)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex14c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.2"), ("verb", "ask"), ("embedding", "quotation"), ("syntax", "declarative")] }
 
-def ex15b : LinguisticExample :=
+def ex15b : Datum :=
   { id := "dayal2025_ex15b"
     source := ⟨"dayal-2025", "(15b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex15b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "ka"), ("embedding", "subordination")] }
 
-def ex16b : LinguisticExample :=
+def ex16b : Datum :=
   { id := "dayal2025_ex16b"
     source := ⟨"bhatt-dayal-2020", "(16b)"⟩
     reportedIn := some ⟨"dayal-2025", "(16b)"⟩
@@ -225,7 +223,7 @@ def ex16b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "kya:"), ("embedding", "subordination")] }
 
-def ex17a : LinguisticExample :=
+def ex17a : Datum :=
   { id := "dayal2025_ex17a"
     source := ⟨"bhatt-dayal-2020", "(17a)"⟩
     reportedIn := some ⟨"dayal-2025", "(17a)"⟩
@@ -238,7 +236,7 @@ def ex17a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "kya:"), ("embedding", "quasi")] }
 
-def ex17b : LinguisticExample :=
+def ex17b : Datum :=
   { id := "dayal2025_ex17b"
     source := ⟨"bhatt-dayal-2020", "(17b)"⟩
     reportedIn := some ⟨"dayal-2025", "(17b)"⟩
@@ -251,7 +249,7 @@ def ex17b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "kya:"), ("embedding", "quasi")] }
 
-def ex17c : LinguisticExample :=
+def ex17c : Datum :=
   { id := "dayal2025_ex17c"
     source := ⟨"bhatt-dayal-2020", "(17c)"⟩
     reportedIn := some ⟨"dayal-2025", "(17c)"⟩
@@ -264,7 +262,7 @@ def ex17c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "kya:"), ("embedding", "subordination")] }
 
-def ex18a : LinguisticExample :=
+def ex18a : Datum :=
   { id := "dayal2025_ex18a"
     source := ⟨"dayal-2025", "(18a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex18a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "quick"), ("embedding", "matrix")] }
 
-def ex19a : LinguisticExample :=
+def ex19a : Datum :=
   { id := "dayal2025_ex19a"
     source := ⟨"dayal-2025", "(19a)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex19a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "quick"), ("embedding", "subordination")] }
 
-def ex18b : LinguisticExample :=
+def ex18b : Datum :=
   { id := "dayal2025_ex18b"
     source := ⟨"sauerland-yatsushiro-2017", "(18b)"⟩
     reportedIn := some ⟨"dayal-2025", "(18b)"⟩
@@ -303,7 +301,7 @@ def ex18b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "kke"), ("embedding", "matrix")] }
 
-def ex19c : LinguisticExample :=
+def ex19c : Datum :=
   { id := "dayal2025_ex19c"
     source := ⟨"dayal-2025", "(19c)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex19c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1.3"), ("particle", "kke"), ("embedding", "subordination")] }
 
-def ex24a_wonder : LinguisticExample :=
+def ex24a_wonder : Datum :=
   { id := "dayal2025_ex24a_wonder"
     source := ⟨"dayal-2025", "(24a)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex24a_wonder : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1.1"), ("verb", "wonder"), ("embedding", "subordination")] }
 
-def ex24a_know : LinguisticExample :=
+def ex24a_know : Datum :=
   { id := "dayal2025_ex24a_know"
     source := ⟨"dayal-2025", "(24a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex24a_know : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1.1"), ("verb", "know"), ("embedding", "subordination")] }
 
-def ex24a_believe : LinguisticExample :=
+def ex24a_believe : Datum :=
   { id := "dayal2025_ex24a_believe"
     source := ⟨"dayal-2025", "(24a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex24a_believe : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1.1"), ("verb", "believe"), ("embedding", "subordination")] }
 
-def ex38b : LinguisticExample :=
+def ex38b : Datum :=
   { id := "dayal2025_ex38b"
     source := ⟨"dayal-2025", "(38b)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex38b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("verb", "know"), ("embedding", "quasi")] }
 
-def ex39a : LinguisticExample :=
+def ex39a : Datum :=
   { id := "dayal2025_ex39a"
     source := ⟨"dayal-2025", "(39a)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex39a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("embedding", "quasi"), ("verbClass", "rogativePerspP")] }
 
-def ex39b : LinguisticExample :=
+def ex39b : Datum :=
   { id := "dayal2025_ex39b"
     source := ⟨"dayal-2025", "(39b)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex39b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("embedding", "quasi"), ("verbClass", "responsive")] }
 
-def ex40a : LinguisticExample :=
+def ex40a : Datum :=
   { id := "dayal2025_ex40a"
     source := ⟨"mccloskey-2006", "(40a)"⟩
     reportedIn := some ⟨"dayal-2025", "(40a)"⟩
@@ -407,7 +405,7 @@ def ex40a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("verb", "remember"), ("embedding", "quasi")] }
 
-def ex40b : LinguisticExample :=
+def ex40b : Datum :=
   { id := "dayal2025_ex40b"
     source := ⟨"mccloskey-2006", "(40b)"⟩
     reportedIn := some ⟨"dayal-2025", "(40b)"⟩
@@ -420,7 +418,7 @@ def ex40b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("verb", "remember"), ("embedding", "quasi"), ("negated", "true")] }
 
-def ex40c : LinguisticExample :=
+def ex40c : Datum :=
   { id := "dayal2025_ex40c"
     source := ⟨"mccloskey-2006", "(40c)"⟩
     reportedIn := some ⟨"dayal-2025", "(40c)"⟩
@@ -433,7 +431,7 @@ def ex40c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("verb", "remember"), ("embedding", "quasi"), ("questioned", "true")] }
 
-def ex41a : LinguisticExample :=
+def ex41a : Datum :=
   { id := "dayal2025_ex41a"
     source := ⟨"bhatt-dayal-2020", "(41a)"⟩
     reportedIn := some ⟨"dayal-2025", "(41a)"⟩
@@ -446,7 +444,7 @@ def ex41a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("embedding", "quasi"), ("verbClass", "responsive"), ("negated", "true")] }
 
-def ex41b : LinguisticExample :=
+def ex41b : Datum :=
   { id := "dayal2025_ex41b"
     source := ⟨"dayal-2025", "(41b)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex41b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("embedding", "quasi"), ("verbClass", "responsive"), ("questioned", "true")] }
 
-def ex43a : LinguisticExample :=
+def ex43a : Datum :=
   { id := "dayal2025_ex43a"
     source := ⟨"dayal-2025", "(43a)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex43a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("verb", "forget"), ("embedding", "quasi")] }
 
-def ex45a : LinguisticExample :=
+def ex45a : Datum :=
   { id := "dayal2025_ex45a"
     source := ⟨"dayal-2025", "(45a)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex45a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "know"), ("embedding", "quasi")] }
 
-def ex45b_forget : LinguisticExample :=
+def ex45b_forget : Datum :=
   { id := "dayal2025_ex45b_forget"
     source := ⟨"dayal-2025", "(45b)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex45b_forget : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "forget"), ("embedding", "quasi")] }
 
-def ex45b_remember : LinguisticExample :=
+def ex45b_remember : Datum :=
   { id := "dayal2025_ex45b_remember"
     source := ⟨"dayal-2025", "(45b)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex45b_remember : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "remember"), ("embedding", "quasi")] }
 
-def ex46a : LinguisticExample :=
+def ex46a : Datum :=
   { id := "dayal2025_ex46a"
     source := ⟨"dayal-2025", "(46a)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex46a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "remember"), ("embedding", "quasi"), ("questioned", "true")] }
 
-def ex46b : LinguisticExample :=
+def ex46b : Datum :=
   { id := "dayal2025_ex46b"
     source := ⟨"dayal-2025", "(46b)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex46b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "forget"), ("embedding", "quasi"), ("questioned", "true"), ("invested", "speaker")] }
 
-def ex49a_you : LinguisticExample :=
+def ex49a_you : Datum :=
   { id := "dayal2025_ex49a_you"
     source := ⟨"dayal-2025", "(49a)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex49a_you : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("verb", "forget"), ("embedding", "quasi"), ("invested", "speaker")] }
 
-def ex62a : LinguisticExample :=
+def ex62a : Datum :=
   { id := "dayal2025_ex62a"
     source := ⟨"dayal-2025", "(62a)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex62a : LinguisticExample :=
     readings := [("neutral", .acceptable), ("biased", .acceptable)]
     paperFeatures := [("section", "4.3"), ("syntax", "interrogative"), ("embedding", "matrix")] }
 
-def ex62b : LinguisticExample :=
+def ex62b : Datum :=
   { id := "dayal2025_ex62b"
     source := ⟨"dayal-2025", "(62b)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex62b : LinguisticExample :=
     readings := [("neutral", .unacceptable), ("biased", .acceptable)]
     paperFeatures := [("section", "4.3"), ("syntax", "declarative"), ("embedding", "matrix")] }
 
-def ex63a : LinguisticExample :=
+def ex63a : Datum :=
   { id := "dayal2025_ex63a"
     source := ⟨"dayal-2025", "(63a)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex63a : LinguisticExample :=
     readings := [("neutral", .acceptable), ("biased", .acceptable)]
     paperFeatures := [("section", "4.3"), ("syntax", "declarative"), ("embedding", "matrix")] }
 
-def ex63b : LinguisticExample :=
+def ex63b : Datum :=
   { id := "dayal2025_ex63b"
     source := ⟨"dayal-2025", "(63b)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex63b : LinguisticExample :=
     readings := [("neutral", .acceptable), ("biased", .acceptable)]
     paperFeatures := [("section", "4.3"), ("syntax", "declarative"), ("embedding", "matrix")] }
 
-def ex69a_en : LinguisticExample :=
+def ex69a_en : Datum :=
   { id := "dayal2025_ex69a_en"
     source := ⟨"dayal-2025", "(69a)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex69a_en : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "matrix")] }
 
-def ex69b_en : LinguisticExample :=
+def ex69b_en : Datum :=
   { id := "dayal2025_ex69b_en"
     source := ⟨"dayal-2025", "(69b)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex69b_en : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "quasi")] }
 
-def ex69c_en : LinguisticExample :=
+def ex69c_en : Datum :=
   { id := "dayal2025_ex69c_en"
     source := ⟨"dayal-2025", "(69c)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex69c_en : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "subordination")] }
 
-def ex69a_it : LinguisticExample :=
+def ex69a_it : Datum :=
   { id := "dayal2025_ex69a_it"
     source := ⟨"dayal-2025", "(69a)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex69a_it : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "matrix")] }
 
-def ex69b_it : LinguisticExample :=
+def ex69b_it : Datum :=
   { id := "dayal2025_ex69b_it"
     source := ⟨"dayal-2025", "(69b)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex69b_it : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "quasi")] }
 
-def ex69c_it : LinguisticExample :=
+def ex69c_it : Datum :=
   { id := "dayal2025_ex69c_it"
     source := ⟨"dayal-2025", "(69c)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex69c_it : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "subordination")] }
 
-def ex70a : LinguisticExample :=
+def ex70a : Datum :=
   { id := "dayal2025_ex70a"
     source := ⟨"dayal-2025", "(70a)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex70a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "matrix")] }
 
-def ex70b : LinguisticExample :=
+def ex70b : Datum :=
   { id := "dayal2025_ex70b"
     source := ⟨"dayal-2025", "(70b)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex70b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "quasi")] }
 
-def ex71 : LinguisticExample :=
+def ex71 : Datum :=
   { id := "dayal2025_ex71"
     source := ⟨"dayal-2025", "(71)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex71 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.4"), ("simplex", "true"), ("embedding", "subordination")] }
 
-def ex84a : LinguisticExample :=
+def ex84a : Datum :=
   { id := "dayal2025_ex84a"
     source := ⟨"dayal-2025", "(84a)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex84a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("verb", "investigate"), ("embedding", "subordination")] }
 
-def ex84b : LinguisticExample :=
+def ex84b : Datum :=
   { id := "dayal2025_ex84b"
     source := ⟨"dayal-2025", "(84b)"⟩
     reportedIn := none
@@ -745,6 +743,6 @@ def ex84b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.1"), ("verb", "investigate"), ("embedding", "quasi")] }
 
-def all : List LinguisticExample := [ex3b, ex5a, ex5b, ex8a, ex8b, ex9a, ex11a, ex11b, ex11c, ex11d, ex13a, ex14a, ex14b, ex14c, ex15b, ex16b, ex17a, ex17b, ex17c, ex18a, ex19a, ex18b, ex19c, ex24a_wonder, ex24a_know, ex24a_believe, ex38b, ex39a, ex39b, ex40a, ex40b, ex40c, ex41a, ex41b, ex43a, ex45a, ex45b_forget, ex45b_remember, ex46a, ex46b, ex49a_you, ex62a, ex62b, ex63a, ex63b, ex69a_en, ex69b_en, ex69c_en, ex69a_it, ex69b_it, ex69c_it, ex70a, ex70b, ex71, ex84a, ex84b]
+def all : List Datum := [ex3b, ex5a, ex5b, ex8a, ex8b, ex9a, ex11a, ex11b, ex11c, ex11d, ex13a, ex14a, ex14b, ex14c, ex15b, ex16b, ex17a, ex17b, ex17c, ex18a, ex19a, ex18b, ex19c, ex24a_wonder, ex24a_know, ex24a_believe, ex38b, ex39a, ex39b, ex40a, ex40b, ex40c, ex41a, ex41b, ex43a, ex45a, ex45b_forget, ex45b_remember, ex46a, ex46b, ex49a_you, ex62a, ex62b, ex63a, ex63b, ex69a_en, ex69b_en, ex69c_en, ex69a_it, ex69b_it, ex69c_it, ex70a, ex70b, ex71, ex84a, ex84b]
 
 end Dayal2025.Examples

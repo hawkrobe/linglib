@@ -15,9 +15,7 @@ this module; declarations live in `namespace AfkirZellou2025.Examples`.
 
 namespace AfkirZellou2025.Examples
 
-open Data.Examples
-
-def dfes : LinguisticExample :=
+def dfes : Datum :=
   { id := "afkirzellou2025_dfes"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def dfes : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "rarely")] }
 
-def dqer : LinguisticExample :=
+def dqer : Datum :=
   { id := "afkirzellou2025_dqer"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def dqer : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "never")] }
 
-def ghder : LinguisticExample :=
+def ghder : Datum :=
   { id := "afkirzellou2025_ghder"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ghder : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
-def ghfer : LinguisticExample :=
+def ghfer : Datum :=
   { id := "afkirzellou2025_ghfer"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ghfer : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "rarely")] }
 
-def ghreb : LinguisticExample :=
+def ghreb : Datum :=
   { id := "afkirzellou2025_ghreb"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ghreb : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "almost exclusively")] }
 
-def hmed : LinguisticExample :=
+def hmed : Datum :=
   { id := "afkirzellou2025_hmed"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def hmed : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
-def nqer : LinguisticExample :=
+def nqer : Datum :=
   { id := "afkirzellou2025_nqer"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def nqer : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
-def qber : LinguisticExample :=
+def qber : Datum :=
   { id := "afkirzellou2025_qber"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def qber : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
-def qdef : LinguisticExample :=
+def qdef : Datum :=
   { id := "afkirzellou2025_qdef"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def qdef : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
-def qfer : LinguisticExample :=
+def qfer : Datum :=
   { id := "afkirzellou2025_qfer"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def qfer : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "never")] }
 
-def qreb : LinguisticExample :=
+def qreb : Datum :=
   { id := "afkirzellou2025_qreb"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def qreb : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "almost exclusively")] }
 
-def qres : LinguisticExample :=
+def qres : Datum :=
   { id := "afkirzellou2025_qres"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def qres : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "almost exclusively")] }
 
-def qtes : LinguisticExample :=
+def qtes : Datum :=
   { id := "afkirzellou2025_qtes"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def qtes : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
-def rmed : LinguisticExample :=
+def rmed : Datum :=
   { id := "afkirzellou2025_rmed"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def rmed : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
-def srem : LinguisticExample :=
+def srem : Datum :=
   { id := "afkirzellou2025_srem"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def srem : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "almost exclusively")] }
 
-def ster : LinguisticExample :=
+def ster : Datum :=
   { id := "afkirzellou2025_ster"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ster : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "never")] }
 
-def xref : LinguisticExample :=
+def xref : Datum :=
   { id := "afkirzellou2025_xref"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def xref : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "almost exclusively")] }
 
-def zhbed : LinguisticExample :=
+def zhbed : Datum :=
   { id := "afkirzellou2025_zhbed"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def zhbed : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
-def zhmed : LinguisticExample :=
+def zhmed : Datum :=
   { id := "afkirzellou2025_zhmed"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def zhmed : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
-def aybed : LinguisticExample :=
+def aybed : Datum :=
   { id := "afkirzellou2025_aybed"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def aybed : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "variably")] }
 
-def ayrem : LinguisticExample :=
+def ayrem : Datum :=
   { id := "afkirzellou2025_ayrem"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ayrem : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "never"), ("intrusion", "almost exclusively")] }
 
-def hseb : LinguisticExample :=
+def hseb : Datum :=
   { id := "afkirzellou2025_hseb"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def hseb : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "rarely")] }
 
-def hzen : LinguisticExample :=
+def hzen : Datum :=
   { id := "afkirzellou2025_hzen"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def hzen : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "variably")] }
 
-def shmeth : LinguisticExample :=
+def shmeth : Datum :=
   { id := "afkirzellou2025_shmeth"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def shmeth : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "variably")] }
 
-def xzen : LinguisticExample :=
+def xzen : Datum :=
   { id := "afkirzellou2025_xzen"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def xzen : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "variably")] }
 
-def bkem : LinguisticExample :=
+def bkem : Datum :=
   { id := "afkirzellou2025_bkem"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def bkem : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "never")] }
 
-def hlem : LinguisticExample :=
+def hlem : Datum :=
   { id := "afkirzellou2025_hlem"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def hlem : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "variably")] }
 
-def hsen : LinguisticExample :=
+def hsen : Datum :=
   { id := "afkirzellou2025_hsen"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def hsen : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "never")] }
 
-def nqeb : LinguisticExample :=
+def nqeb : Datum :=
   { id := "afkirzellou2025_nqeb"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def nqeb : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "variably")] }
 
-def qmes : LinguisticExample :=
+def qmes : Datum :=
   { id := "afkirzellou2025_qmes"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def qmes : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "variably")] }
 
-def sshen : LinguisticExample :=
+def sshen : Datum :=
   { id := "afkirzellou2025_sshen"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def sshen : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "never")] }
 
-def xnes : LinguisticExample :=
+def xnes : Datum :=
   { id := "afkirzellou2025_xnes"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def xnes : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "variably")] }
 
-def zhmes : LinguisticExample :=
+def zhmes : Datum :=
   { id := "afkirzellou2025_zhmes"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def zhmes : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "rarely"), ("intrusion", "variably")] }
 
-def sxef : LinguisticExample :=
+def sxef : Datum :=
   { id := "afkirzellou2025_sxef"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def sxef : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "often"), ("intrusion", "never")] }
 
-def hkem : LinguisticExample :=
+def hkem : Datum :=
   { id := "afkirzellou2025_hkem"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def hkem : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "often"), ("intrusion", "never")] }
 
-def ntef : LinguisticExample :=
+def ntef : Datum :=
   { id := "afkirzellou2025_ntef"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ntef : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "often"), ("intrusion", "never")] }
 
-def skef : LinguisticExample :=
+def skef : Datum :=
   { id := "afkirzellou2025_skef"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def skef : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "often"), ("intrusion", "never")] }
 
-def rseq : LinguisticExample :=
+def rseq : Datum :=
   { id := "afkirzellou2025_rseq"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩
     reportedIn := none
@@ -511,6 +509,6 @@ def rseq : LinguisticExample :=
     readings := []
     paperFeatures := [("vowelless", "often"), ("intrusion", "rarely")] }
 
-def all : List LinguisticExample := [dfes, dqer, ghder, ghfer, ghreb, hmed, nqer, qber, qdef, qfer, qreb, qres, qtes, rmed, srem, ster, xref, zhbed, zhmed, aybed, ayrem, hseb, hzen, shmeth, xzen, bkem, hlem, hsen, nqeb, qmes, sshen, xnes, zhmes, sxef, hkem, ntef, skef, rseq]
+def all : List Datum := [dfes, dqer, ghder, ghfer, ghreb, hmed, nqer, qber, qdef, qfer, qreb, qres, qtes, rmed, srem, ster, xref, zhbed, zhmed, aybed, ayrem, hseb, hzen, shmeth, xzen, bkem, hlem, hsen, nqeb, qmes, sshen, xnes, zhmes, sxef, hkem, ntef, skef, rseq]
 
 end AfkirZellou2025.Examples

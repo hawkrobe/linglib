@@ -15,9 +15,7 @@ this module; declarations live in `namespace HaslingerEtAl2025.Examples`.
 
 namespace HaslingerEtAl2025.Examples
 
-open Data.Examples
-
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "haslingeretal2025_ex1"
     source := ⟨"haslinger-etal-2025", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("item", "jederDP"), ("trueIn3a", "yes"), ("trueIn3b", "no"), ("trueIn3c", "no")] }
 
-def ex2 : LinguisticExample :=
+def ex2 : Datum :=
   { id := "haslingeretal2025_ex2"
     source := ⟨"haslinger-etal-2025", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("item", "jederDistance"), ("trueIn3a", "yes"), ("trueIn3b", "no"), ("trueIn3c", "no")] }
 
-def ex4a : LinguisticExample :=
+def ex4a : Datum :=
   { id := "haslingeretal2025_ex4a"
     source := ⟨"haslinger-etal-2025", "(4a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex4a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("item", "alle"), ("trueIn3a", "yes"), ("trueIn3b", "yes"), ("trueIn3c", "no")] }
 
-def ex4b : LinguisticExample :=
+def ex4b : Datum :=
   { id := "haslingeretal2025_ex4b"
     source := ⟨"haslinger-etal-2025", "(4b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex4b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("item", "numeralIndefinite"), ("trueIn3a", "yes"), ("trueIn3b", "yes"), ("trueIn3c", "no")] }
 
-def ex4c : LinguisticExample :=
+def ex4c : Datum :=
   { id := "haslingeretal2025_ex4c"
     source := ⟨"haslinger-etal-2025", "(4c)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex4c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("item", "definitePlural"), ("trueIn3a", "yes"), ("trueIn3b", "yes"), ("trueIn3c", "yes")] }
 
-def ex22a : LinguisticExample :=
+def ex22a : Datum :=
   { id := "haslingeretal2025_ex22a"
     source := ⟨"haslinger-etal-2025", "(22a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex22a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jeweils"), ("trueIn3a", "yes"), ("trueIn3b", "no"), ("trueIn3c", "no")] }
 
-def ex22b : LinguisticExample :=
+def ex22b : Datum :=
   { id := "haslingeretal2025_ex22b"
     source := ⟨"haslinger-etal-2025", "(22b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex22b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jederDP"), ("trueIn3a", "yes"), ("trueIn3b", "no"), ("trueIn3c", "no")] }
 
-def ex22c : LinguisticExample :=
+def ex22c : Datum :=
   { id := "haslingeretal2025_ex22c"
     source := ⟨"haslinger-etal-2025", "(22c)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex22c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jederDistance"), ("trueIn3a", "yes"), ("trueIn3b", "no"), ("trueIn3c", "no")] }
 
-def ex23b : LinguisticExample :=
+def ex23b : Datum :=
   { id := "haslingeretal2025_ex23b"
     source := ⟨"haslinger-etal-2025", "(23b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex23b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jeweils"), ("scenario", "nonMaximal"), ("questionnaire", "yes")] }
 
-def ex23c : LinguisticExample :=
+def ex23c : Datum :=
   { id := "haslingeretal2025_ex23c"
     source := ⟨"haslinger-etal-2025", "(23c)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex23c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jederDP"), ("scenario", "nonMaximal"), ("questionnaire", "yes")] }
 
-def ex24b : LinguisticExample :=
+def ex24b : Datum :=
   { id := "haslingeretal2025_ex24b"
     source := ⟨"haslinger-etal-2025", "(24b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex24b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jeweils"), ("scenario", "nonMaximal"), ("questionnaire", "yes")] }
 
-def ex24c : LinguisticExample :=
+def ex24c : Datum :=
   { id := "haslingeretal2025_ex24c"
     source := ⟨"haslinger-etal-2025", "(24c)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex24c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jederDistance"), ("scenario", "nonMaximal"), ("questionnaire", "yes")] }
 
-def ex24d : LinguisticExample :=
+def ex24d : Datum :=
   { id := "haslingeretal2025_ex24d"
     source := ⟨"haslinger-etal-2025", "(24d)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex24d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jederDP"), ("scenario", "nonMaximal"), ("questionnaire", "yes")] }
 
-def ex26 : LinguisticExample :=
+def ex26 : Datum :=
   { id := "haslingeretal2025_ex26"
     source := ⟨"haslinger-etal-2025", "(26)"⟩
     reportedIn := none
@@ -199,6 +197,6 @@ def ex26 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("item", "numeralIndefinite"), ("scenario", "nonMaximal")] }
 
-def all : List LinguisticExample := [ex1, ex2, ex4a, ex4b, ex4c, ex22a, ex22b, ex22c, ex23b, ex23c, ex24b, ex24c, ex24d, ex26]
+def all : List Datum := [ex1, ex2, ex4a, ex4b, ex4c, ex22a, ex22b, ex22c, ex23b, ex23c, ex24b, ex24c, ex24d, ex26]
 
 end HaslingerEtAl2025.Examples

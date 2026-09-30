@@ -15,9 +15,7 @@ this module; declarations live in `namespace Heim1992.Examples`.
 
 namespace Heim1992.Examples
 
-open Data.Examples
-
-def s1 : LinguisticExample :=
+def s1 : Datum :=
   { id := "heim1992_s1"
     source := ⟨"heim-1992", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def s1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("presupposition", "Patrick believes he owns a cello")] }
 
-def s2 : LinguisticExample :=
+def s2 : Datum :=
   { id := "heim1992_s2"
     source := ⟨"heim-1992", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def s2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("presupposition", "none as a whole")] }
 
-def s10 : LinguisticExample :=
+def s10 : Datum :=
   { id := "heim1992_s10"
     source := ⟨"heim-1992", "(10)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def s10 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("rule", "(13): true in w iff it rains in every world of Dox_J(w)")] }
 
-def s19 : LinguisticExample :=
+def s19 : Datum :=
   { id := "heim1992_s19"
     source := ⟨"heim-1992", "(19)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def s19 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("lf", "(20): too_i coindexed with Mary_i, Susan focused"), ("presupposition", "none as a whole")] }
 
-def s25 : LinguisticExample :=
+def s25 : Datum :=
   { id := "heim1992_s25"
     source := ⟨"heim-1992", "(25)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def s25 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("presupposition", "guaranteed undefined after the first conjunct")] }
 
-def s26 : LinguisticExample :=
+def s26 : Datum :=
   { id := "heim1992_s26"
     source := ⟨"heim-1992", "(26)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def s26 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("presupposition", "undefined; the conditional inherits its antecedent's presupposition")] }
 
-def s28 : LinguisticExample :=
+def s28 : Datum :=
   { id := "heim1992_s28"
     source := ⟨"heim-1992", "(28)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def s28 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("presupposition", "none as a whole")] }
 
-def s29 : LinguisticExample :=
+def s29 : Datum :=
   { id := "heim1992_s29"
     source := ⟨"heim-1992", "(29)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def s29 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("presupposition", "none as a whole")] }
 
-def s30 : LinguisticExample :=
+def s30 : Datum :=
   { id := "heim1992_s30"
     source := ⟨"heim-1992", "(30)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def s30 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("presupposition", "none as a whole")] }
 
-def s32a : LinguisticExample :=
+def s32a : Datum :=
   { id := "heim1992_s32a"
     source := ⟨"heim-1992", "(32a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def s32a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("truth", "true"), ("source", "Asher 1987")] }
 
-def s32b : LinguisticExample :=
+def s32b : Datum :=
   { id := "heim1992_s32b"
     source := ⟨"heim-1992", "(32b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def s32b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("truth", "false"), ("source", "Asher 1987")] }
 
-def s33 : LinguisticExample :=
+def s33 : Datum :=
   { id := "heim1992_s33"
     source := ⟨"heim-1992", "(33)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def s33 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1"), ("truth", "true under (31), false under (27)")] }
 
-def s41 : LinguisticExample :=
+def s41 : Datum :=
   { id := "heim1992_s41"
     source := ⟨"heim-1992", "(41)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def s41 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.3"), ("status", "no doubt about where John will be")] }
 
-def s42 : LinguisticExample :=
+def s42 : Datum :=
   { id := "heim1992_s42"
     source := ⟨"heim-1992", "(42)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def s42 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.3"), ("status", "wanting what one is convinced will not happen")] }
 
-def s44 : LinguisticExample :=
+def s44 : Datum :=
   { id := "heim1992_s44"
     source := ⟨"heim-1992", "(44)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def s44 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.3"), ("presupposition", "Patrick believes he has a cello independently of what he does")] }
 
-def s46 : LinguisticExample :=
+def s46 : Datum :=
   { id := "heim1992_s46"
     source := ⟨"heim-1992", "(46)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def s46 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.4"), ("presupposition", "not filtered: want before believe")] }
 
-def s47a : LinguisticExample :=
+def s47a : Datum :=
   { id := "heim1992_s47a"
     source := ⟨"heim-1992", "(47a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def s47a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.4"), ("source", "Asher 1987"), ("anaphora", "it as the car his wife will buy him")] }
 
-def s47b : LinguisticExample :=
+def s47b : Datum :=
   { id := "heim1992_s47b"
     source := ⟨"heim-1992", "(47b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def s47b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.4"), ("source", "Asher 1987")] }
 
-def s47c : LinguisticExample :=
+def s47c : Datum :=
   { id := "heim1992_s47c"
     source := ⟨"heim-1992", "(47c)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def s47c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.4"), ("source", "Asher 1987")] }
 
-def s48 : LinguisticExample :=
+def s48 : Datum :=
   { id := "heim1992_s48"
     source := ⟨"heim-1992", "(48)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def s48 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.4"), ("source", "Asher 1987"), ("reading", "the belief as an implicit conditional")] }
 
-def s49 : LinguisticExample :=
+def s49 : Datum :=
   { id := "heim1992_s49"
     source := ⟨"heim-1992", "(49)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def s49 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.4"), ("source", "Cresswell 1988"), ("reading", "the belief as an implicit conditional")] }
 
-def s50 : LinguisticExample :=
+def s50 : Datum :=
   { id := "heim1992_s50"
     source := ⟨"heim-1992", "(50)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def s50 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.4")] }
 
-def s51 : LinguisticExample :=
+def s51 : Datum :=
   { id := "heim1992_s51"
     source := ⟨"heim-1992", "(51)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def s51 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.2.4")] }
 
-def s52 : LinguisticExample :=
+def s52 : Datum :=
   { id := "heim1992_s52"
     source := ⟨"heim-1992", "(52)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def s52 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("modal base", "not doxastic: John may be certain he will not teach Tuesdays")] }
 
-def s53 : LinguisticExample :=
+def s53 : Datum :=
   { id := "heim1992_s53"
     source := ⟨"heim-1992", "(53)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def s53 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("presupposition", "none as a whole")] }
 
-def s54 : LinguisticExample :=
+def s54 : Datum :=
   { id := "heim1992_s54"
     source := ⟨"heim-1992", "(54)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def s54 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("presupposition", "John believes he will teach on Tuesdays")] }
 
-def s55 : LinguisticExample :=
+def s55 : Datum :=
   { id := "heim1992_s55"
     source := ⟨"heim-1992", "(55)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def s55 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("presupposition", "satisfied in the belief-worlds")] }
 
-def s56a : LinguisticExample :=
+def s56a : Datum :=
   { id := "heim1992_s56a"
     source := ⟨"heim-1992", "(56a)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def s56a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("presupposition", "none as a whole")] }
 
-def s56b : LinguisticExample :=
+def s56b : Datum :=
   { id := "heim1992_s56b"
     source := ⟨"heim-1992", "(56b)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def s56b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("presupposition", "none as a whole")] }
 
-def s57a : LinguisticExample :=
+def s57a : Datum :=
   { id := "heim1992_s57a"
     source := ⟨"heim-1992", "(57a)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def s57a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("presupposition", "accommodated: Patrick believes he sold his cello")] }
 
-def s57b : LinguisticExample :=
+def s57b : Datum :=
   { id := "heim1992_s57b"
     source := ⟨"heim-1992", "(57b)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def s57b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3"), ("presupposition", "accommodated: Patrick believes he did not sell his cello")] }
 
-def s59 : LinguisticExample :=
+def s59 : Datum :=
   { id := "heim1992_s59"
     source := ⟨"heim-1992", "(59)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def s59 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3.1"), ("presupposition", "someone else attended, in the common ground")] }
 
-def s60 : LinguisticExample :=
+def s60 : Datum :=
   { id := "heim1992_s60"
     source := ⟨"heim-1992", "(60)"⟩
     reportedIn := none
@@ -446,6 +444,6 @@ def s60 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.3.1"), ("presupposition", "someone else attended, in the common ground")] }
 
-def all : List LinguisticExample := [s1, s2, s10, s19, s25, s26, s28, s29, s30, s32a, s32b, s33, s41, s42, s44, s46, s47a, s47b, s47c, s48, s49, s50, s51, s52, s53, s54, s55, s56a, s56b, s57a, s57b, s59, s60]
+def all : List Datum := [s1, s2, s10, s19, s25, s26, s28, s29, s30, s32a, s32b, s33, s41, s42, s44, s46, s47a, s47b, s47c, s48, s49, s50, s51, s52, s53, s54, s55, s56a, s56b, s57a, s57b, s59, s60]
 
 end Heim1992.Examples

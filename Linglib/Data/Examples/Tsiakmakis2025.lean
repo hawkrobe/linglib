@@ -15,9 +15,7 @@ this module; declarations live in `namespace Tsiakmakis2025.Examples`.
 
 namespace Tsiakmakis2025.Examples
 
-open Data.Examples
-
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "tsiakmakis2025_6"
     source := ⟨"tsiakmakis-2025", "(6)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "dhen"), ("use", "negative"), ("mood", "indicative")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "tsiakmakis2025_8"
     source := ⟨"tsiakmakis-2025", "(8)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "min"), ("use", "negative"), ("host", "imperative")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "tsiakmakis2025_14"
     source := ⟨"tsiakmakis-2025", "(14)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "dhen"), ("use", "expletive"), ("host", "negative exclamative"), ("class", "apparent")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "tsiakmakis2025_15"
     source := ⟨"tsiakmakis-2025", "(15)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "dhen"), ("use", "expletive"), ("host", "preposed negation question"), ("class", "apparent")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "tsiakmakis2025_16"
     source := ⟨"tsiakmakis-2025", "(16)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "dhen"), ("use", "expletive"), ("host", "rhetorical question"), ("class", "apparent")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "tsiakmakis2025_28"
     source := ⟨"tsiakmakis-2025", "(28)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "dhen"), ("use", "negative"), ("host", "rhetorical question")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "tsiakmakis2025_38"
     source := ⟨"tsiakmakis-2025", "(38)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "min"), ("use", "expletive"), ("host", "fear-predicate complement"), ("class", "proper")] }
 
-def ex_39 : LinguisticExample :=
+def ex_39 : Datum :=
   { id := "tsiakmakis2025_39"
     source := ⟨"tsiakmakis-2025", "(39)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "min dhen"), ("use", "expletive with canonical negation"), ("host", "fear-predicate complement"), ("class", "proper")] }
 
-def ex_40 : LinguisticExample :=
+def ex_40 : Datum :=
   { id := "tsiakmakis2025_40"
     source := ⟨"tsiakmakis-2025", "(40)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_40 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "min"), ("use", "expletive"), ("host", "fear-predicate complement"), ("diagnostic", "NCI licensing")] }
 
-def ex_44a : LinguisticExample :=
+def ex_44a : Datum :=
   { id := "tsiakmakis2025_44a"
     source := ⟨"tsiakmakis-2025", "(44a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_44a : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "min"), ("use", "expletive"), ("host", "fear-predicate complement"), ("diagnostic", "left-periphery merge")] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "tsiakmakis2025_45"
     source := ⟨"tsiakmakis-2025", "(45)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "min"), ("use", "expletive"), ("host", "conditional"), ("class", "proper")] }
 
-def ex_49b : LinguisticExample :=
+def ex_49b : Datum :=
   { id := "tsiakmakis2025_49b"
     source := ⟨"tsiakmakis-2025", "(49b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_49b : LinguisticExample :=
     readings := []
     paperFeatures := [("host", "conditional"), ("conjunction", "an")] }
 
-def ex_51a : LinguisticExample :=
+def ex_51a : Datum :=
   { id := "tsiakmakis2025_51a"
     source := ⟨"tsiakmakis-2025", "(51a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_51a : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "min"), ("use", "expletive"), ("host", "polar question"), ("class", "proper")] }
 
-def ex_53a : LinguisticExample :=
+def ex_53a : Datum :=
   { id := "tsiakmakis2025_53a"
     source := ⟨"tsiakmakis-2025", "(53a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_53a : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "min dhen"), ("use", "expletive with canonical negation"), ("host", "polar question"), ("class", "proper")] }
 
-def ex_59 : LinguisticExample :=
+def ex_59 : Datum :=
   { id := "tsiakmakis2025_59"
     source := ⟨"tsiakmakis-2025", "(59)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_59 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "ne"), ("use", "expletive"), ("host", "fear-predicate complement"), ("class", "proper")] }
 
-def ex_61 : LinguisticExample :=
+def ex_61 : Datum :=
   { id := "tsiakmakis2025_61"
     source := ⟨"tsiakmakis-2025", "(61)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_61 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "lo"), ("use", "expletive with canonical negation"), ("host", "fear-predicate complement"), ("class", "proper")] }
 
-def ex_62 : LinguisticExample :=
+def ex_62 : Datum :=
   { id := "tsiakmakis2025_62"
     source := ⟨"tsiakmakis-2025", "(62)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_62 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "ne"), ("use", "expletive"), ("host", "negative predicate"), ("class", "proper")] }
 
-def ex_65 : LinguisticExample :=
+def ex_65 : Datum :=
   { id := "tsiakmakis2025_65"
     source := ⟨"tsiakmakis-2025", "(65)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_65 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "no"), ("use", "expletive"), ("host", "dubitative predicate"), ("class", "proper")] }
 
-def ex_67 : LinguisticExample :=
+def ex_67 : Datum :=
   { id := "tsiakmakis2025_67"
     source := ⟨"tsiakmakis-2025", "(67)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_67 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "me: ouk"), ("use", "expletive with canonical negation"), ("host", "dubitative predicate"), ("class", "proper")] }
 
-def ex_69a : LinguisticExample :=
+def ex_69a : Datum :=
   { id := "tsiakmakis2025_69a"
     source := ⟨"tsiakmakis-2025", "(69a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_69a : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "non"), ("use", "negative"), ("host", "temporal expression"), ("class", "apparent")] }
 
-def ex_71 : LinguisticExample :=
+def ex_71 : Datum :=
   { id := "tsiakmakis2025_71"
     source := ⟨"tsiakmakis-2025", "(71)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_71 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "ne"), ("use", "expletive"), ("host", "negative adverbial"), ("class", "apparent")] }
 
-def ex_75 : LinguisticExample :=
+def ex_75 : Datum :=
   { id := "tsiakmakis2025_75"
     source := ⟨"tsiakmakis-2025", "(75)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_75 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "non"), ("use", "expletive"), ("host", "unless-conditional"), ("class", "apparent")] }
 
-def ex_77 : LinguisticExample :=
+def ex_77 : Datum :=
   { id := "tsiakmakis2025_77"
     source := ⟨"tsiakmakis-2025", "(77)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_77 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "non"), ("use", "expletive"), ("host", "comparative"), ("class", "apparent")] }
 
-def ex_84 : LinguisticExample :=
+def ex_84 : Datum :=
   { id := "tsiakmakis2025_84"
     source := ⟨"tsiakmakis-2025", "(84)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_84 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "non -ne"), ("use", "expletive with canonical negation"), ("host", "polar question"), ("class", "proper")] }
 
-def ex_87 : LinguisticExample :=
+def ex_87 : Datum :=
   { id := "tsiakmakis2025_87"
     source := ⟨"tsiakmakis-2025", "(87)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_87 : LinguisticExample :=
     readings := []
     paperFeatures := [("host", "rhetorical question"), ("polarity", "positive")] }
 
-def ex_90 : LinguisticExample :=
+def ex_90 : Datum :=
   { id := "tsiakmakis2025_90"
     source := ⟨"tsiakmakis-2025", "(90)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_90 : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "non"), ("use", "expletive"), ("host", "negative exclamative"), ("class", "apparent")] }
 
-def ex_92b : LinguisticExample :=
+def ex_92b : Datum :=
   { id := "tsiakmakis2025_92b"
     source := ⟨"tsiakmakis-2025", "(92b)"⟩
     reportedIn := none
@@ -368,6 +366,6 @@ def ex_92b : LinguisticExample :=
     readings := []
     paperFeatures := [("negator", "lo"), ("use", "expletive"), ("host", "free relative"), ("class", "proper, tentative")] }
 
-def all : List LinguisticExample := [ex_6, ex_8, ex_14, ex_15, ex_16, ex_28, ex_38, ex_39, ex_40, ex_44a, ex_45, ex_49b, ex_51a, ex_53a, ex_59, ex_61, ex_62, ex_65, ex_67, ex_69a, ex_71, ex_75, ex_77, ex_84, ex_87, ex_90, ex_92b]
+def all : List Datum := [ex_6, ex_8, ex_14, ex_15, ex_16, ex_28, ex_38, ex_39, ex_40, ex_44a, ex_45, ex_49b, ex_51a, ex_53a, ex_59, ex_61, ex_62, ex_65, ex_67, ex_69a, ex_71, ex_75, ex_77, ex_84, ex_87, ex_90, ex_92b]
 
 end Tsiakmakis2025.Examples

@@ -47,7 +47,7 @@ formalized.
 
 namespace RitchieSchiller2024
 
-open Quantifier.GQ Data.Examples
+open Quantifier.GQ
 
 /-! ### Cognitive heuristics -/
 
@@ -237,21 +237,21 @@ inductive Setup where
   deriving DecidableEq, Fintype
 
 /-- An example records the intended restriction, its anchor, the setup, and the judgment. -/
-structure Datum where
+structure Row where
   restriction : Restriction
   anchor : Anchor
   setup : Setup
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
 
 /-- A default restriction possibility is a heuristic restriction anchored to the here and
 now. -/
-def Datum.IsDefault (d : Datum) : Prop := d.restriction.IsHeuristic ∧ d.anchor = .hereNow
+def Row.IsDefault (d : Row) : Prop := d.restriction.IsHeuristic ∧ d.anchor = .hereNow
 
-instance : DecidablePred Datum.IsDefault := λ _ => inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidablePred Row.IsDefault := λ _ => inferInstanceAs (Decidable (_ ∧ _))
 
-/-- An example read into its datum; the anchor is the here and now unless the row says
+/-- A datum read into its row; the anchor is the here and now unless the row says
 otherwise. -/
-def datum (e : LinguisticExample) : Option Datum := do
+def Row.ofDatum (e : Datum) : Option Row := do
   let r ← e.parse? "restriction"
     [("location", .location), ("time", .time), ("availability", .availability),
      ("salience", .salience), ("manipulability", .manipulability), ("color", .color),
@@ -264,10 +264,10 @@ def datum (e : LinguisticExample) : Option Datum := do
   pure ⟨r, a, s, e.judgment⟩
 
 /-- Every example is read. -/
-theorem isSome_datum : ∀ e ∈ Examples.all, (datum e).isSome := by decide
+theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide
 
 /-- The paper's examples. -/
-def data : List Datum := Examples.all.filterMap datum
+def data : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Every restriction acceptable without conversational setup is a default one, so a
 non-default restriction is available only through a discourse move, a prior plan or

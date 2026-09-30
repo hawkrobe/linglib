@@ -15,9 +15,7 @@ this module; declarations live in `namespace Gutzmann2015.Examples`.
 
 namespace Gutzmann2015.Examples
 
-open Data.Examples
-
-def ex_5_34 : LinguisticExample :=
+def ex_5_34 : Datum :=
   { id := "gutzmann2015_5_34"
     source := ⟨"gutzmann-2015", "(5.34)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_5_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("phenomenon", "verbPosition"), ("sentenceType", "constituent"), ("embedding", "matrix")] }
 
-def ex_5_35 : LinguisticExample :=
+def ex_5_35 : Datum :=
   { id := "gutzmann2015_5_35"
     source := ⟨"gutzmann-2015", "(5.35)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_5_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("phenomenon", "verbPosition"), ("sentenceType", "constituent"), ("embedding", "insubordinated")] }
 
-def ex_5_36a : LinguisticExample :=
+def ex_5_36a : Datum :=
   { id := "gutzmann2015_5_36a"
     source := ⟨"gutzmann-2015", "(5.36a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_5_36a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("phenomenon", "hearerKnowledge"), ("sentenceType", "polar"), ("embedding", "matrix")] }
 
-def ex_5_36b : LinguisticExample :=
+def ex_5_36b : Datum :=
   { id := "gutzmann2015_5_36b"
     source := ⟨"gutzmann-2015", "(5.36b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_5_36b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("phenomenon", "hearerKnowledge"), ("sentenceType", "polar"), ("embedding", "insubordinated")] }
 
-def ex_5_44 : LinguisticExample :=
+def ex_5_44 : Datum :=
   { id := "gutzmann2015_5_44"
     source := ⟨"gutzmann-2015", "(5.44)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5_44 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("phenomenon", "deonticMood"), ("sentenceType", "declarative"), ("embedding", "insubordinated")] }
 
-def ex_5_46 : LinguisticExample :=
+def ex_5_46 : Datum :=
   { id := "gutzmann2015_5_46"
     source := ⟨"gutzmann-2015", "(5.46)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_5_46 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("phenomenon", "epistemicMood"), ("sentenceType", "declarative"), ("embedding", "matrix")] }
 
-def ex_5_81 : LinguisticExample :=
+def ex_5_81 : Datum :=
   { id := "gutzmann2015_5_81"
     source := ⟨"gutzmann-2015", "(5.81)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_5_81 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.6"), ("phenomenon", "deonticMood"), ("sentenceType", "declarative"), ("embedding", "insubordinated")] }
 
-def ex_6_20 : LinguisticExample :=
+def ex_6_20 : Datum :=
   { id := "gutzmann2015_6_20"
     source := ⟨"gutzmann-2015", "(6.20)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_6_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "declarative"), ("embedding", "matrix"), ("particle", "ja")] }
 
-def ex_6_21a : LinguisticExample :=
+def ex_6_21a : Datum :=
   { id := "gutzmann2015_6_21a"
     source := ⟨"gutzmann-2015", "(6.21a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_6_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "polar"), ("embedding", "matrix"), ("particle", "ja")] }
 
-def ex_6_21b : LinguisticExample :=
+def ex_6_21b : Datum :=
   { id := "gutzmann2015_6_21b"
     source := ⟨"gutzmann-2015", "(6.21b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_6_21b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "constituent"), ("embedding", "matrix"), ("particle", "ja")] }
 
-def ex_6_22a : LinguisticExample :=
+def ex_6_22a : Datum :=
   { id := "gutzmann2015_6_22a"
     source := ⟨"gutzmann-2015", "(6.22a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_6_22a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "imperative"), ("embedding", "matrix"), ("particle", "ja")] }
 
-def ex_6_22b : LinguisticExample :=
+def ex_6_22b : Datum :=
   { id := "gutzmann2015_6_22b"
     source := ⟨"gutzmann-2015", "(6.22b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_6_22b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "declarative"), ("embedding", "insubordinated"), ("particle", "ja")] }
 
-def ex_6_26 : LinguisticExample :=
+def ex_6_26 : Datum :=
   { id := "gutzmann2015_6_26"
     source := ⟨"gutzmann-2015", "(6.26)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_6_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "checkQuestion"), ("sentenceType", "declarative"), ("embedding", "matrix"), ("particle", "ja")] }
 
-def ex_6_27 : LinguisticExample :=
+def ex_6_27 : Datum :=
   { id := "gutzmann2015_6_27"
     source := ⟨"gutzmann-2015", "(6.27)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_6_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "rhetoricalQuestion"), ("sentenceType", "constituent"), ("embedding", "matrix"), ("particle", "ja")] }
 
-def ex_6_28a : LinguisticExample :=
+def ex_6_28a : Datum :=
   { id := "gutzmann2015_6_28a"
     source := ⟨"gutzmann-2015", "(6.28a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_6_28a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "polar"), ("embedding", "matrix"), ("particle", "denn")] }
 
-def ex_6_28b : LinguisticExample :=
+def ex_6_28b : Datum :=
   { id := "gutzmann2015_6_28b"
     source := ⟨"gutzmann-2015", "(6.28b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_6_28b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "constituent"), ("embedding", "matrix"), ("particle", "denn")] }
 
-def ex_6_29 : LinguisticExample :=
+def ex_6_29 : Datum :=
   { id := "gutzmann2015_6_29"
     source := ⟨"gutzmann-2015", "(6.29)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_6_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "declarative"), ("embedding", "matrix"), ("particle", "denn")] }
 
-def ex_6_30 : LinguisticExample :=
+def ex_6_30 : Datum :=
   { id := "gutzmann2015_6_30"
     source := ⟨"gutzmann-2015", "(6.30)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_6_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "imperative"), ("embedding", "matrix"), ("particle", "denn")] }
 
-def ex_6_31 : LinguisticExample :=
+def ex_6_31 : Datum :=
   { id := "gutzmann2015_6_31"
     source := ⟨"gutzmann-2015", "(6.31)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_6_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "declarative"), ("embedding", "insubordinated"), ("particle", "denn")] }
 
-def ex_6_32 : LinguisticExample :=
+def ex_6_32 : Datum :=
   { id := "gutzmann2015_6_32"
     source := ⟨"gutzmann-2015", "(6.32)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_6_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "checkQuestion"), ("sentenceType", "declarative"), ("embedding", "matrix"), ("particle", "denn")] }
 
-def ex_6_33 : LinguisticExample :=
+def ex_6_33 : Datum :=
   { id := "gutzmann2015_6_33"
     source := ⟨"gutzmann-2015", "(6.33)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_6_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "rhetoricalQuestion"), ("sentenceType", "constituent"), ("embedding", "matrix"), ("particle", "denn")] }
 
-def ex_6_35 : LinguisticExample :=
+def ex_6_35 : Datum :=
   { id := "gutzmann2015_6_35"
     source := ⟨"gutzmann-2015", "(6.35)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_6_35 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "declarative"), ("embedding", "matrix"), ("particle", "wohl")] }
 
-def ex_6_36 : LinguisticExample :=
+def ex_6_36 : Datum :=
   { id := "gutzmann2015_6_36"
     source := ⟨"gutzmann-2015", "(6.36)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_6_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "polar"), ("embedding", "matrix"), ("particle", "wohl")] }
 
-def ex_6_37a : LinguisticExample :=
+def ex_6_37a : Datum :=
   { id := "gutzmann2015_6_37a"
     source := ⟨"gutzmann-2015", "(6.37a)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_6_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "imperative"), ("embedding", "matrix"), ("particle", "wohl")] }
 
-def ex_6_37b : LinguisticExample :=
+def ex_6_37b : Datum :=
   { id := "gutzmann2015_6_37b"
     source := ⟨"gutzmann-2015", "(6.37b)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_6_37b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "distribution"), ("sentenceType", "declarative"), ("embedding", "insubordinated"), ("particle", "wohl")] }
 
-def ex_6_38 : LinguisticExample :=
+def ex_6_38 : Datum :=
   { id := "gutzmann2015_6_38"
     source := ⟨"gutzmann-2015", "(6.38)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_6_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "indirectRequest"), ("sentenceType", "polar"), ("embedding", "matrix"), ("particle", "wohl")] }
 
-def ex_6_39 : LinguisticExample :=
+def ex_6_39 : Datum :=
   { id := "gutzmann2015_6_39"
     source := ⟨"gutzmann-2015", "(6.39)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_6_39 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "indirectRequest"), ("sentenceType", "polar"), ("embedding", "matrix"), ("particle", "wohl")] }
 
-def ex_6_41 : LinguisticExample :=
+def ex_6_41 : Datum :=
   { id := "gutzmann2015_6_41"
     source := ⟨"gutzmann-2015", "(6.41)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_6_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.2.3"), ("phenomenon", "rhetoricalRequest"), ("sentenceType", "imperative"), ("embedding", "matrix"), ("particle", "wohl")] }
 
-def ex_6_108 : LinguisticExample :=
+def ex_6_108 : Datum :=
   { id := "gutzmann2015_6_108"
     source := ⟨"gutzmann-2015", "(6.108)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_6_108 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.5.1"), ("phenomenon", "typeMismatch"), ("sentenceType", "imperative"), ("embedding", "matrix"), ("particle", "wohl")] }
 
-def ex_6_117 : LinguisticExample :=
+def ex_6_117 : Datum :=
   { id := "gutzmann2015_6_117"
     source := ⟨"gutzmann-2015", "(6.117)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_6_117 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.5.1"), ("phenomenon", "useConditions"), ("sentenceType", "declarative"), ("embedding", "matrix"), ("particle", "wohl")] }
 
-def ex_6_124 : LinguisticExample :=
+def ex_6_124 : Datum :=
   { id := "gutzmann2015_6_124"
     source := ⟨"gutzmann-2015", "(6.124)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_6_124 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.5.2"), ("phenomenon", "useConditions"), ("sentenceType", "declarative"), ("embedding", "matrix"), ("particle", "ja")] }
 
-def ex_6_128 : LinguisticExample :=
+def ex_6_128 : Datum :=
   { id := "gutzmann2015_6_128"
     source := ⟨"gutzmann-2015", "(6.128)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_6_128 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.5.2"), ("phenomenon", "useConditions"), ("sentenceType", "polar"), ("embedding", "matrix"), ("particle", "ja")] }
 
-def ex_6_134 : LinguisticExample :=
+def ex_6_134 : Datum :=
   { id := "gutzmann2015_6_134"
     source := ⟨"gutzmann-2015", "(6.134)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_6_134 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.5.2"), ("phenomenon", "useConditions"), ("sentenceType", "polar"), ("embedding", "matrix"), ("particle", "denn")] }
 
-def ex_6_138 : LinguisticExample :=
+def ex_6_138 : Datum :=
   { id := "gutzmann2015_6_138"
     source := ⟨"gutzmann-2015", "(6.138)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_6_138 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.5.2"), ("phenomenon", "externalMotivation"), ("sentenceType", "polar"), ("embedding", "matrix"), ("particle", "denn")] }
 
-def ex_6_139 : LinguisticExample :=
+def ex_6_139 : Datum :=
   { id := "gutzmann2015_6_139"
     source := ⟨"gutzmann-2015", "(6.139)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_6_139 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.5.2"), ("phenomenon", "externalMotivation"), ("sentenceType", "constituent"), ("embedding", "matrix"), ("particle", "denn")] }
 
-def ex_6_141 : LinguisticExample :=
+def ex_6_141 : Datum :=
   { id := "gutzmann2015_6_141"
     source := ⟨"gutzmann-2015", "(6.141)"⟩
     reportedIn := none
@@ -485,6 +483,6 @@ def ex_6_141 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6.5.2"), ("phenomenon", "useConditions"), ("sentenceType", "imperative"), ("embedding", "matrix"), ("particle", "denn")] }
 
-def all : List LinguisticExample := [ex_5_34, ex_5_35, ex_5_36a, ex_5_36b, ex_5_44, ex_5_46, ex_5_81, ex_6_20, ex_6_21a, ex_6_21b, ex_6_22a, ex_6_22b, ex_6_26, ex_6_27, ex_6_28a, ex_6_28b, ex_6_29, ex_6_30, ex_6_31, ex_6_32, ex_6_33, ex_6_35, ex_6_36, ex_6_37a, ex_6_37b, ex_6_38, ex_6_39, ex_6_41, ex_6_108, ex_6_117, ex_6_124, ex_6_128, ex_6_134, ex_6_138, ex_6_139, ex_6_141]
+def all : List Datum := [ex_5_34, ex_5_35, ex_5_36a, ex_5_36b, ex_5_44, ex_5_46, ex_5_81, ex_6_20, ex_6_21a, ex_6_21b, ex_6_22a, ex_6_22b, ex_6_26, ex_6_27, ex_6_28a, ex_6_28b, ex_6_29, ex_6_30, ex_6_31, ex_6_32, ex_6_33, ex_6_35, ex_6_36, ex_6_37a, ex_6_37b, ex_6_38, ex_6_39, ex_6_41, ex_6_108, ex_6_117, ex_6_124, ex_6_128, ex_6_134, ex_6_138, ex_6_139, ex_6_141]
 
 end Gutzmann2015.Examples

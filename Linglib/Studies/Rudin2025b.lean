@@ -54,7 +54,7 @@ issue without uttering a sentence, are not represented.
 
 namespace Rudin2025b
 
-open ArgumentStructure Commitment Data.Examples
+open ArgumentStructure Commitment
 
 variable {T : Type*} [LinearOrder T] {P δ W : Type*}
 
@@ -307,7 +307,7 @@ def types : List (String × Clause.SentenceType) :=
   [("declarative", .declarative), ("interrogative", .polar)]
 
 /-- The quoted performance of a row, its sentence read as denoting a fixed proposition. -/
-def performance? (x : LinguisticExample) : Option (Performance Bool) := do
+def performance? (x : Datum) : Option (Performance Bool) := do
   let volume ← x.parse? "volume" volumes
   let material ← match x.feature? "material" with
     | some "none" => some .none
@@ -320,11 +320,11 @@ def performance? (x : LinguisticExample) : Option (Performance Bool) := do
   pure ⟨material, volume⟩
 
 /-- A row: the verb of speech and the quoted performance. -/
-def datum (x : LinguisticExample) : Option (Verb × Performance Bool) := do
+def datum (x : Datum) : Option (Verb × Performance Bool) := do
   pure (← x.parse? "verb" verbs, ← performance? x)
 
 /-- The paper's quotative reports. -/
-def data : List (LinguisticExample × Verb × Performance Bool) :=
+def data : List (Datum × Verb × Performance Bool) :=
   Examples.all.filterMap λ x => (datum x).map (x, ·)
 
 def e₀ : Event ℕ := ⟨⟨⟨0, 0⟩, le_rfl⟩, .action⟩

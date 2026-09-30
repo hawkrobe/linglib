@@ -87,7 +87,7 @@ are pragmatic, in the tradition of [fauconnier-1975] rather than the semantic sc
 
 namespace FillmoreKayOConnor1988
 
-open ConstructionGrammar Data.Examples
+open ConstructionGrammar
 
 /-! ### Scalar models (Appendix) -/
 
@@ -275,7 +275,7 @@ def conjunctionTable : List (String × Conjunction) :=
 def polarityTable : List (String × Polarity) := [("negative", .negative), ("positive", .positive)]
 
 /-- A row from an example, given a reading of its foci as points. -/
-def Row.ofExample (foci? : LinguisticExample → Option (D × D)) (ex : LinguisticExample) :
+def Row.ofDatum (foci? : Datum → Option (D × D)) (ex : Datum) :
     Option (Row D) := do
   let conj ← ex.parse? "conjunction" conjunctionTable
   let pol ← ex.parse? "polarity" polarityTable
@@ -314,12 +314,12 @@ theorem anomaly_107 : ¬ Felicitous MadeRank .negative .secondLieutenant .second
 def rankTable : List (String × Rank) :=
   [("secondLieutenant", .secondLieutenant), ("colonel", .colonel), ("general", .general)]
 
-def rankFoci? (ex : LinguisticExample) : Option (Rank × Rank) := do
+def rankFoci? (ex : Datum) : Option (Rank × Rank) := do
   let a ← ex.parse? "a" rankTable
   let b ← ex.parse? "b" rankTable
   pure (a, b)
 
-def rankRows : List (Row Rank) := Examples.all.filterMap (Row.ofExample rankFoci?)
+def rankRows : List (Row Rank) := Examples.all.filterMap (Row.ofDatum rankFoci?)
 
 /-- (21), (106)–(107), (130)–(132): the acceptable sentences are exactly those meeting the
 conditions of §2.3.2 with the conjunction's ordering of the stronger clause. -/
@@ -442,14 +442,14 @@ def vehicleTable : List (String × (Fin 2 × Fin 2)) := [("car truck", (0, 1)), 
 def feeTable : List (String × (Fin 2 × Fin 2)) := [("$2 $1", (0, 1)), ("$1 $2", (1, 0))]
 
 /-- The foci of a row, one pair per dimension in the order A B. -/
-def focusFoci? (ex : LinguisticExample) : Option (Point × Point) := do
+def focusFoci? (ex : Datum) : Option (Point × Point) := do
   let w ← ex.parse? "wealth" wealthTable
   let t ← ex.parse? "task" taskTable
   let v ← ex.parse? "vehicle" vehicleTable
   let f ← ex.parse? "fee" feeTable
   pure (.mk w.1 t.1 v.1 f.1, .mk w.2 t.2 v.2 f.2)
 
-def focusRows : List (Row Point) := Examples.all.filterMap (Row.ofExample focusFoci?)
+def focusRows : List (Row Point) := Examples.all.filterMap (Row.ofDatum focusFoci?)
 
 /-- (121)–(122): the sentence with the likelier hiring in the full clause is acceptable and each
 exchange of one dimension's foci is not. -/
@@ -459,7 +459,7 @@ theorem focusRows_predicted : ∀ r ∈ focusRows, (r.judgment = .acceptable ↔
 
 /-- Every example that names a conjunction is read into one of the two models. -/
 theorem featured_rows_parse : ∀ ex ∈ Examples.all, (ex.feature? "conjunction").isSome →
-    (Row.ofExample rankFoci? ex).isSome ∨ (Row.ofExample focusFoci? ex).isSome := by
+    (Row.ofDatum rankFoci? ex).isSome ∨ (Row.ofDatum focusFoci? ex).isSome := by
   decide
 
 end FillmoreKayOConnor1988

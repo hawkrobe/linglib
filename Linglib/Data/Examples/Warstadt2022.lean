@@ -15,9 +15,7 @@ this module; declarations live in `namespace Warstadt2022.Examples`.
 
 namespace Warstadt2022.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "warstadt2022_1"
     source := ⟨"warstadt-2022", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("presupposition", "Tom is a non-US citizen"), ("projection", "projects"), ("qud", "need visa")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "warstadt2022_2"
     source := ⟨"warstadt-2022", "(1a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("presupposition", "Tom is a non-US citizen"), ("projection", "absent"), ("qud", "free drink")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "warstadt2022_3"
     source := ⟨"warstadt-2022", "(1b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("presupposition", "the new hires are non-US citizens"), ("projection", "universal")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "warstadt2022_4"
     source := ⟨"warstadt-2022", "(4a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("level", "species"), ("inference", "Tom is an athlete"), ("strength", "stronger")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "warstadt2022_5"
     source := ⟨"warstadt-2022", "(4b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("level", "genus"), ("inference", "Tom is an athlete"), ("strength", "weaker")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "warstadt2022_6"
     source := ⟨"warstadt-2022", "(4c)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("level", "family")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "warstadt2022_7"
     source := ⟨"warstadt-2022", "(5)"⟩
     reportedIn := none
@@ -108,6 +106,6 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("trigger", "stop"), ("projection", "reduced")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7]
 
 end Warstadt2022.Examples

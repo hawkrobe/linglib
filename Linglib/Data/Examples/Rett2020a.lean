@@ -15,9 +15,7 @@ this module; declarations live in `namespace Rett2020a.Examples`.
 
 namespace Rett2020a.Examples
 
-open Data.Examples
-
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "rett2020a_9"
     source := ⟨"rett-2020a", "(9)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_9 : LinguisticExample :=
     readings := [("before-start", .acceptable), ("before-finish", .unacceptable)]
     paperFeatures := [("construction", "before"), ("embedded", "culmination")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "rett2020a_10"
     source := ⟨"rett-2020a", "(10)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_10 : LinguisticExample :=
     readings := [("after-finish", .acceptable), ("after-start", .unacceptable)]
     paperFeatures := [("construction", "after"), ("embedded", "process")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "rett2020a_11a"
     source := ⟨"rett-2020a", "(11a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_11a : LinguisticExample :=
     readings := [("before-start", .acceptable)]
     paperFeatures := [("construction", "before"), ("embedded", "culmination"), ("aspect", "imperfective")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "rett2020a_11b"
     source := ⟨"rett-2020a", "(11b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_11b : LinguisticExample :=
     readings := [("before-finish", .acceptable)]
     paperFeatures := [("construction", "before"), ("embedded", "culmination"), ("aspect", "perfective")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "rett2020a_12a"
     source := ⟨"rett-2020a", "(12a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_12a : LinguisticExample :=
     readings := [("before-start", .acceptable)]
     paperFeatures := [("construction", "before"), ("embedded", "culmination"), ("aspect", "pfv.neut")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "rett2020a_12b"
     source := ⟨"rett-2020a", "(12b)"⟩
     reportedIn := none
@@ -95,6 +93,6 @@ def ex_12b : LinguisticExample :=
     readings := [("before-finish", .acceptable)]
     paperFeatures := [("construction", "before"), ("embedded", "culmination"), ("aspect", "aia")] }
 
-def all : List LinguisticExample := [ex_9, ex_10, ex_11a, ex_11b, ex_12a, ex_12b]
+def all : List Datum := [ex_9, ex_10, ex_11a, ex_11b, ex_12a, ex_12b]
 
 end Rett2020a.Examples

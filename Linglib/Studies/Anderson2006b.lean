@@ -38,7 +38,6 @@ and that the hierarchy selects the recorded subject of each of the book's exampl
 
 namespace Anderson2006b
 
-open Data.Examples
 
 /-- The three first-order case features (11). -/
 inductive Feature
@@ -149,7 +148,7 @@ def ofString : List (String × Relation) :=
 end Relation
 
 /-- The predication a row records, adjuncts excluded. -/
-def Predication.ofRow (e : LinguisticExample) : Predication :=
+def Predication.ofRow (e : Datum) : Predication :=
   (e.features "arg").filterMap (List.lookup · Relation.ofString)
 
 /-- The hierarchy selects the recorded subject of each of the book's examples, and no other

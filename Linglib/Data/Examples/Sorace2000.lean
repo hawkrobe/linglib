@@ -15,9 +15,7 @@ this module; declarations live in `namespace Sorace2000.Examples`.
 
 namespace Sorace2000.Examples
 
-open Data.Examples
-
-def ex1a : LinguisticExample :=
+def ex1a : Datum :=
   { id := "sorace2000_ex1a"
     source := ⟨"sorace-2000", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "venire"), ("position", "changeOfLocation"), ("aux", "be")] }
 
-def ex1b : LinguisticExample :=
+def ex1b : Datum :=
   { id := "sorace2000_ex1b"
     source := ⟨"sorace-2000", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex1b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "arriver"), ("position", "changeOfLocation"), ("aux", "be")] }
 
-def ex1c : LinguisticExample :=
+def ex1c : Datum :=
   { id := "sorace2000_ex1c"
     source := ⟨"sorace-2000", "(1c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex1c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "komen"), ("position", "changeOfLocation"), ("aux", "be")] }
 
-def ex1d : LinguisticExample :=
+def ex1d : Datum :=
   { id := "sorace2000_ex1d"
     source := ⟨"sorace-2000", "(1d)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex1d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ankommen"), ("position", "changeOfLocation"), ("aux", "be")] }
 
-def ex4 : LinguisticExample :=
+def ex4 : Datum :=
   { id := "sorace2000_ex4"
     source := ⟨"sorace-2000", "(4)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex4 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "arrivare"), ("position", "changeOfLocation"), ("aux", "be"), ("predicate", "detelicized")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "sorace2000_ex5a"
     source := ⟨"sorace-2000", "(5a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cadere"), ("position", "changeOfLocation"), ("aux", "be"), ("subject", "agentive")] }
 
-def ex5b : LinguisticExample :=
+def ex5b : Datum :=
   { id := "sorace2000_ex5b"
     source := ⟨"sorace-2000", "(5b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex5b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cadere"), ("position", "changeOfLocation"), ("aux", "be")] }
 
-def ex30a : LinguisticExample :=
+def ex30a : Datum :=
   { id := "sorace2000_ex30a"
     source := ⟨"sorace-2000", "(30a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex30a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "arrivare"), ("position", "changeOfLocation"), ("aux", "have")] }
 
-def ex7a : LinguisticExample :=
+def ex7a : Datum :=
   { id := "sorace2000_ex7a"
     source := ⟨"sorace-2000", "(7a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex7a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "salire"), ("position", "changeOfState"), ("aux", "be")] }
 
-def ex7b : LinguisticExample :=
+def ex7b : Datum :=
   { id := "sorace2000_ex7b"
     source := ⟨"sorace-2000", "(7b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex7b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "marcire"), ("position", "changeOfState"), ("aux", "be")] }
 
-def ex8a : LinguisticExample :=
+def ex8a : Datum :=
   { id := "sorace2000_ex8a"
     source := ⟨"sorace-2000", "(8a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex8a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "fiorire"), ("position", "changeOfState"), ("aux", "be")] }
 
-def ex9a : LinguisticExample :=
+def ex9a : Datum :=
   { id := "sorace2000_ex9a"
     source := ⟨"sorace-2000", "(9a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex9a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "naître"), ("position", "changeOfState"), ("aux", "be")] }
 
-def ex9b : LinguisticExample :=
+def ex9b : Datum :=
   { id := "sorace2000_ex9b"
     source := ⟨"sorace-2000", "(9b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex9b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sterven"), ("position", "changeOfState"), ("aux", "be")] }
 
-def ex9c : LinguisticExample :=
+def ex9c : Datum :=
   { id := "sorace2000_ex9c"
     source := ⟨"sorace-2000", "(9c)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex9c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "gebären"), ("position", "changeOfState"), ("aux", "be")] }
 
-def ex10a : LinguisticExample :=
+def ex10a : Datum :=
   { id := "sorace2000_ex10a"
     source := ⟨"sorace-2000", "(10a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex10a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "groeien"), ("position", "changeOfState"), ("aux", "be")] }
 
-def ex10b : LinguisticExample :=
+def ex10b : Datum :=
   { id := "sorace2000_ex10b"
     source := ⟨"sorace-2000", "(10b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex10b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "steigen"), ("position", "changeOfState"), ("aux", "be")] }
 
-def ex11 : LinguisticExample :=
+def ex11 : Datum :=
   { id := "sorace2000_ex11"
     source := ⟨"sorace-2000", "(11)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "stijgen"), ("position", "changeOfState"), ("aux", "be"), ("predicate", "detelicized")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "sorace2000_ex12"
     source := ⟨"sorace-2000", "(12)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex12 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "devenir"), ("position", "changeOfState"), ("aux", "be")] }
 
-def ex13 : LinguisticExample :=
+def ex13 : Datum :=
   { id := "sorace2000_ex13"
     source := ⟨"sorace-2000", "(13)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex13 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "rougir"), ("position", "changeOfState"), ("aux", "have")] }
 
-def ex14a : LinguisticExample :=
+def ex14a : Datum :=
   { id := "sorace2000_ex14a"
     source := ⟨"sorace-2000", "(14a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex14a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "paraître"), ("position", "changeOfState"), ("aux", "be")] }
 
-def ex14c : LinguisticExample :=
+def ex14c : Datum :=
   { id := "sorace2000_ex14c"
     source := ⟨"sorace-2000", "(14c)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex14c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "échapper"), ("position", "changeOfState"), ("aux", "be")] }
 
-def ex15a : LinguisticExample :=
+def ex15a : Datum :=
   { id := "sorace2000_ex15a"
     source := ⟨"sorace-2000", "(15a)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex15a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "rimanere"), ("position", "continuationOfState"), ("aux", "be")] }
 
-def ex15b : LinguisticExample :=
+def ex15b : Datum :=
   { id := "sorace2000_ex15b"
     source := ⟨"sorace-2000", "(15b)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex15b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "durare"), ("position", "continuationOfState"), ("aux", "be")] }
 
-def ex15c : LinguisticExample :=
+def ex15c : Datum :=
   { id := "sorace2000_ex15c"
     source := ⟨"sorace-2000", "(15c)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex15c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "durare"), ("position", "continuationOfState"), ("aux", "be"), ("subject", "agentive")] }
 
-def ex16 : LinguisticExample :=
+def ex16 : Datum :=
   { id := "sorace2000_ex16"
     source := ⟨"sorace-2000", "(16)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex16 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "survivre"), ("position", "continuationOfState"), ("aux", "have")] }
 
-def ex17a : LinguisticExample :=
+def ex17a : Datum :=
   { id := "sorace2000_ex17a"
     source := ⟨"sorace-2000", "(17a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex17a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "halten"), ("position", "continuationOfState"), ("aux", "have")] }
 
-def ex17b : LinguisticExample :=
+def ex17b : Datum :=
   { id := "sorace2000_ex17b"
     source := ⟨"sorace-2000", "(17b)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex17b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "verweilen"), ("position", "continuationOfState"), ("aux", "have")] }
 
-def ex18a : LinguisticExample :=
+def ex18a : Datum :=
   { id := "sorace2000_ex18a"
     source := ⟨"sorace-2000", "(18a)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex18a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "overblijven"), ("position", "continuationOfState"), ("aux", "be")] }
 
-def ex18b : LinguisticExample :=
+def ex18b : Datum :=
   { id := "sorace2000_ex18b"
     source := ⟨"sorace-2000", "(18b)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex18b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "duren"), ("position", "continuationOfState"), ("aux", "have")] }
 
-def ex19a : LinguisticExample :=
+def ex19a : Datum :=
   { id := "sorace2000_ex19a"
     source := ⟨"sorace-2000", "(19a)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex19a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "rester"), ("position", "continuationOfState"), ("aux", "be")] }
 
-def ex19b : LinguisticExample :=
+def ex19b : Datum :=
   { id := "sorace2000_ex19b"
     source := ⟨"sorace-2000", "(19b)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex19b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "blijven"), ("position", "continuationOfState"), ("aux", "be")] }
 
-def ex19c : LinguisticExample :=
+def ex19c : Datum :=
   { id := "sorace2000_ex19c"
     source := ⟨"sorace-2000", "(19c)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex19c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "bleiben"), ("position", "continuationOfState"), ("aux", "be")] }
 
-def ex20a : LinguisticExample :=
+def ex20a : Datum :=
   { id := "sorace2000_ex20a"
     source := ⟨"sorace-2000", "(20a)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex20a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "esistere"), ("position", "existenceOfState"), ("aux", "be")] }
 
-def ex20b : LinguisticExample :=
+def ex20b : Datum :=
   { id := "sorace2000_ex20b"
     source := ⟨"sorace-2000", "(20b)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex20b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "bastare"), ("position", "existenceOfState"), ("aux", "be")] }
 
-def ex20c : LinguisticExample :=
+def ex20c : Datum :=
   { id := "sorace2000_ex20c"
     source := ⟨"sorace-2000", "(20c)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex20c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sembrare"), ("position", "existenceOfState"), ("aux", "be")] }
 
-def ex21a : LinguisticExample :=
+def ex21a : Datum :=
   { id := "sorace2000_ex21a"
     source := ⟨"sorace-2000", "(21a)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex21a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "bastare"), ("position", "existenceOfState"), ("aux", "have")] }
 
-def ex21b : LinguisticExample :=
+def ex21b : Datum :=
   { id := "sorace2000_ex21b"
     source := ⟨"sorace-2000", "(21b)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex21b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "appartenere"), ("position", "existenceOfState"), ("aux", "have")] }
 
-def ex21c : LinguisticExample :=
+def ex21c : Datum :=
   { id := "sorace2000_ex21c"
     source := ⟨"sorace-2000", "(21c)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex21c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "scarseggiare"), ("position", "existenceOfState"), ("aux", "be")] }
 
-def ex22 : LinguisticExample :=
+def ex22 : Datum :=
   { id := "sorace2000_ex22"
     source := ⟨"sorace-2000", "(22)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex22 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "exister"), ("position", "existenceOfState"), ("aux", "have")] }
 
-def ex23a : LinguisticExample :=
+def ex23a : Datum :=
   { id := "sorace2000_ex23a"
     source := ⟨"sorace-2000", "(23a)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex23a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "gefallen"), ("position", "existenceOfState"), ("aux", "have")] }
 
-def ex23b : LinguisticExample :=
+def ex23b : Datum :=
   { id := "sorace2000_ex23b"
     source := ⟨"sorace-2000", "(23b)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex23b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "genügen"), ("position", "existenceOfState"), ("aux", "have")] }
 
-def ex23c : LinguisticExample :=
+def ex23c : Datum :=
   { id := "sorace2000_ex23c"
     source := ⟨"sorace-2000", "(23c)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex23c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "liegen"), ("position", "existenceOfState"), ("aux", "be")] }
 
-def ex23d : LinguisticExample :=
+def ex23d : Datum :=
   { id := "sorace2000_ex23d"
     source := ⟨"sorace-2000", "(23d)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex23d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "abhängen"), ("position", "existenceOfState"), ("aux", "be")] }
 
-def ex24a : LinguisticExample :=
+def ex24a : Datum :=
   { id := "sorace2000_ex24a"
     source := ⟨"sorace-2000", "(24a)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex24a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "staan"), ("position", "existenceOfState"), ("aux", "have")] }
 
-def ex24b : LinguisticExample :=
+def ex24b : Datum :=
   { id := "sorace2000_ex24b"
     source := ⟨"sorace-2000", "(24b)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex24b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "bestaan"), ("position", "existenceOfState"), ("aux", "have")] }
 
-def ex24c : LinguisticExample :=
+def ex24c : Datum :=
   { id := "sorace2000_ex24c"
     source := ⟨"sorace-2000", "(24c)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex24c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "blijken"), ("position", "existenceOfState"), ("aux", "be")] }
 
-def ex25a : LinguisticExample :=
+def ex25a : Datum :=
   { id := "sorace2000_ex25a"
     source := ⟨"sorace-2000", "(25a)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex25a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "sein"), ("position", "existenceOfState"), ("aux", "be")] }
 
-def ex25b : LinguisticExample :=
+def ex25b : Datum :=
   { id := "sorace2000_ex25b"
     source := ⟨"sorace-2000", "(25b)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex25b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "zijn"), ("position", "existenceOfState"), ("aux", "be")] }
 
-def ex33a : LinguisticExample :=
+def ex33a : Datum :=
   { id := "sorace2000_ex33a"
     source := ⟨"sorace-2000", "(33a)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex33a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "chiacchierare"), ("position", "nonmotionalProcess"), ("aux", "have")] }
 
-def ex33b : LinguisticExample :=
+def ex33b : Datum :=
   { id := "sorace2000_ex33b"
     source := ⟨"sorace-2000", "(33b)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex33b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "travailler"), ("position", "nonmotionalProcess"), ("aux", "have")] }
 
-def ex33c : LinguisticExample :=
+def ex33c : Datum :=
   { id := "sorace2000_ex33c"
     source := ⟨"sorace-2000", "(33c)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex33c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "blazen"), ("position", "nonmotionalProcess"), ("aux", "have")] }
 
-def ex33d : LinguisticExample :=
+def ex33d : Datum :=
   { id := "sorace2000_ex33d"
     source := ⟨"sorace-2000", "(33d)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex33d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "arbeiten"), ("position", "nonmotionalProcess"), ("aux", "have")] }
 
-def ex34 : LinguisticExample :=
+def ex34 : Datum :=
   { id := "sorace2000_ex34"
     source := ⟨"sorace-2000", "(34)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex34 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "funzionare"), ("position", "nonmotionalProcess"), ("aux", "have"), ("subject", "nonagentive")] }
 
-def ex35 : LinguisticExample :=
+def ex35 : Datum :=
   { id := "sorace2000_ex35"
     source := ⟨"sorace-2000", "(35)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex35 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "lavorare"), ("position", "nonmotionalProcess"), ("aux", "have"), ("predicate", "telicized")] }
 
-def ex36a : LinguisticExample :=
+def ex36a : Datum :=
   { id := "sorace2000_ex36a"
     source := ⟨"sorace-2000", "(36a)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex36a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cedere"), ("position", "nonmotionalProcess"), ("aux", "have")] }
 
-def ex36b : LinguisticExample :=
+def ex36b : Datum :=
   { id := "sorace2000_ex36b"
     source := ⟨"sorace-2000", "(36b)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex36b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cedere"), ("position", "nonmotionalProcess"), ("aux", "have"), ("subject", "nonagentive")] }
 
-def ex37a : LinguisticExample :=
+def ex37a : Datum :=
   { id := "sorace2000_ex37a"
     source := ⟨"sorace-2000", "(37a)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex37a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "correre"), ("position", "motionalProcess"), ("aux", "have")] }
 
-def ex37b : LinguisticExample :=
+def ex37b : Datum :=
   { id := "sorace2000_ex37b"
     source := ⟨"sorace-2000", "(37b)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex37b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "lopen"), ("position", "motionalProcess"), ("aux", "have")] }
 
-def ex37c : LinguisticExample :=
+def ex37c : Datum :=
   { id := "sorace2000_ex37c"
     source := ⟨"sorace-2000", "(37c)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ex37c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "nager"), ("position", "motionalProcess"), ("aux", "have")] }
 
-def ex38_rennen : LinguisticExample :=
+def ex38_rennen : Datum :=
   { id := "sorace2000_ex38_rennen"
     source := ⟨"sorace-2000", "(38)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def ex38_rennen : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "rennen"), ("position", "motionalProcess"), ("aux", "be")] }
 
-def ex38_laufen : LinguisticExample :=
+def ex38_laufen : Datum :=
   { id := "sorace2000_ex38_laufen"
     source := ⟨"sorace-2000", "(38)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def ex38_laufen : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "laufen"), ("position", "motionalProcess"), ("aux", "be")] }
 
-def ex38_schwimmen : LinguisticExample :=
+def ex38_schwimmen : Datum :=
   { id := "sorace2000_ex38_schwimmen"
     source := ⟨"sorace-2000", "(38)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def ex38_schwimmen : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "schwimmen"), ("position", "motionalProcess"), ("aux", "be")] }
 
-def ex39a : LinguisticExample :=
+def ex39a : Datum :=
   { id := "sorace2000_ex39a"
     source := ⟨"sorace-2000", "(39a)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def ex39a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "rollen"), ("position", "motionalProcess"), ("aux", "have")] }
 
-def ex39b : LinguisticExample :=
+def ex39b : Datum :=
   { id := "sorace2000_ex39b"
     source := ⟨"sorace-2000", "(39b)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def ex39b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "rollen"), ("position", "motionalProcess"), ("aux", "be"), ("predicate", "telicized")] }
 
-def ex40a : LinguisticExample :=
+def ex40a : Datum :=
   { id := "sorace2000_ex40a"
     source := ⟨"sorace-2000", "(40a)"⟩
     reportedIn := none
@@ -862,7 +860,7 @@ def ex40a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tanzen"), ("position", "motionalProcess"), ("aux", "have")] }
 
-def ex40b : LinguisticExample :=
+def ex40b : Datum :=
   { id := "sorace2000_ex40b"
     source := ⟨"sorace-2000", "(40b)"⟩
     reportedIn := none
@@ -875,7 +873,7 @@ def ex40b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tanzen"), ("position", "motionalProcess"), ("aux", "be"), ("predicate", "telicized")] }
 
-def ex41a : LinguisticExample :=
+def ex41a : Datum :=
   { id := "sorace2000_ex41a"
     source := ⟨"sorace-2000", "(41a)"⟩
     reportedIn := none
@@ -888,7 +886,7 @@ def ex41a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "correre"), ("position", "motionalProcess"), ("aux", "have")] }
 
-def ex41b : LinguisticExample :=
+def ex41b : Datum :=
   { id := "sorace2000_ex41b"
     source := ⟨"sorace-2000", "(41b)"⟩
     reportedIn := none
@@ -901,7 +899,7 @@ def ex41b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "correre"), ("position", "motionalProcess"), ("aux", "be"), ("predicate", "telicized")] }
 
-def ex41c : LinguisticExample :=
+def ex41c : Datum :=
   { id := "sorace2000_ex41c"
     source := ⟨"sorace-2000", "(41c)"⟩
     reportedIn := none
@@ -914,7 +912,7 @@ def ex41c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "nuotare"), ("position", "motionalProcess"), ("aux", "have")] }
 
-def ex41d : LinguisticExample :=
+def ex41d : Datum :=
   { id := "sorace2000_ex41d"
     source := ⟨"sorace-2000", "(41d)"⟩
     reportedIn := none
@@ -927,7 +925,7 @@ def ex41d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "nuotare"), ("position", "motionalProcess"), ("aux", "have"), ("predicate", "telicized")] }
 
-def ex42a : LinguisticExample :=
+def ex42a : Datum :=
   { id := "sorace2000_ex42a"
     source := ⟨"sorace-2000", "(42a)"⟩
     reportedIn := none
@@ -940,7 +938,7 @@ def ex42a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "courir"), ("position", "motionalProcess"), ("aux", "have")] }
 
-def ex42b : LinguisticExample :=
+def ex42b : Datum :=
   { id := "sorace2000_ex42b"
     source := ⟨"sorace-2000", "(42b)"⟩
     reportedIn := none
@@ -953,7 +951,7 @@ def ex42b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "courir"), ("position", "motionalProcess"), ("aux", "have"), ("predicate", "telicized")] }
 
-def ex43a : LinguisticExample :=
+def ex43a : Datum :=
   { id := "sorace2000_ex43a"
     source := ⟨"sorace-2000", "(43a)"⟩
     reportedIn := none
@@ -966,7 +964,7 @@ def ex43a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "correre"), ("position", "motionalProcess"), ("aux", "be"), ("subject", "nonagentive")] }
 
-def ex43b : LinguisticExample :=
+def ex43b : Datum :=
   { id := "sorace2000_ex43b"
     source := ⟨"sorace-2000", "(43b)"⟩
     reportedIn := none
@@ -979,7 +977,7 @@ def ex43b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "saltare"), ("position", "motionalProcess"), ("aux", "be"), ("subject", "nonagentive")] }
 
-def ex44a : LinguisticExample :=
+def ex44a : Datum :=
   { id := "sorace2000_ex44a"
     source := ⟨"sorace-2000", "(44a)"⟩
     reportedIn := none
@@ -992,7 +990,7 @@ def ex44a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "atterrare"), ("position", "motionalProcess"), ("aux", "have")] }
 
-def ex44b : LinguisticExample :=
+def ex44b : Datum :=
   { id := "sorace2000_ex44b"
     source := ⟨"sorace-2000", "(44b)"⟩
     reportedIn := none
@@ -1005,7 +1003,7 @@ def ex44b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "atterrare"), ("position", "motionalProcess"), ("aux", "be"), ("subject", "nonagentive")] }
 
-def ex45a : LinguisticExample :=
+def ex45a : Datum :=
   { id := "sorace2000_ex45a"
     source := ⟨"sorace-2000", "(45a)"⟩
     reportedIn := none
@@ -1018,7 +1016,7 @@ def ex45a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tentennare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
-def ex45b : LinguisticExample :=
+def ex45b : Datum :=
   { id := "sorace2000_ex45b"
     source := ⟨"sorace-2000", "(45b)"⟩
     reportedIn := none
@@ -1031,7 +1029,7 @@ def ex45b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tentennare"), ("position", "uncontrolledProcess"), ("aux", "have"), ("subject", "agentive")] }
 
-def ex46a : LinguisticExample :=
+def ex46a : Datum :=
   { id := "sorace2000_ex46a"
     source := ⟨"sorace-2000", "(46a)"⟩
     reportedIn := none
@@ -1044,7 +1042,7 @@ def ex46a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tossire"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
-def ex46b : LinguisticExample :=
+def ex46b : Datum :=
   { id := "sorace2000_ex46b"
     source := ⟨"sorace-2000", "(46b)"⟩
     reportedIn := none
@@ -1057,7 +1055,7 @@ def ex46b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tossire"), ("position", "uncontrolledProcess"), ("aux", "have"), ("subject", "agentive")] }
 
-def ex47a : LinguisticExample :=
+def ex47a : Datum :=
   { id := "sorace2000_ex47a"
     source := ⟨"sorace-2000", "(47a)"⟩
     reportedIn := none
@@ -1070,7 +1068,7 @@ def ex47a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "squillare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
-def ex47b : LinguisticExample :=
+def ex47b : Datum :=
   { id := "sorace2000_ex47b"
     source := ⟨"sorace-2000", "(47b)"⟩
     reportedIn := none
@@ -1083,7 +1081,7 @@ def ex47b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "risuonare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
-def ex47c : LinguisticExample :=
+def ex47c : Datum :=
   { id := "sorace2000_ex47c"
     source := ⟨"sorace-2000", "(47c)"⟩
     reportedIn := none
@@ -1096,7 +1094,7 @@ def ex47c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "rimbombare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
-def ex47d : LinguisticExample :=
+def ex47d : Datum :=
   { id := "sorace2000_ex47d"
     source := ⟨"sorace-2000", "(47d)"⟩
     reportedIn := none
@@ -1109,7 +1107,7 @@ def ex47d : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "rintoccare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
-def ex48_piovere : LinguisticExample :=
+def ex48_piovere : Datum :=
   { id := "sorace2000_ex48_piovere"
     source := ⟨"sorace-2000", "(48)"⟩
     reportedIn := none
@@ -1122,7 +1120,7 @@ def ex48_piovere : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "piovere"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
-def ex48_nevicare : LinguisticExample :=
+def ex48_nevicare : Datum :=
   { id := "sorace2000_ex48_nevicare"
     source := ⟨"sorace-2000", "(48)"⟩
     reportedIn := none
@@ -1135,7 +1133,7 @@ def ex48_nevicare : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "nevicare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
-def ex48_grandinare : LinguisticExample :=
+def ex48_grandinare : Datum :=
   { id := "sorace2000_ex48_grandinare"
     source := ⟨"sorace-2000", "(48)"⟩
     reportedIn := none
@@ -1148,7 +1146,7 @@ def ex48_grandinare : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "grandinare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
-def ex49 : LinguisticExample :=
+def ex49 : Datum :=
   { id := "sorace2000_ex49"
     source := ⟨"sorace-2000", "(49)"⟩
     reportedIn := none
@@ -1161,7 +1159,7 @@ def ex49 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "piovere"), ("position", "uncontrolledProcess"), ("aux", "be"), ("predicate", "telicized")] }
 
-def ex50a : LinguisticExample :=
+def ex50a : Datum :=
   { id := "sorace2000_ex50a"
     source := ⟨"sorace-2000", "(50a)"⟩
     reportedIn := none
@@ -1174,7 +1172,7 @@ def ex50a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tuonare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
-def ex50b : LinguisticExample :=
+def ex50b : Datum :=
   { id := "sorace2000_ex50b"
     source := ⟨"sorace-2000", "(50b)"⟩
     reportedIn := none
@@ -1187,7 +1185,7 @@ def ex50b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "lampeggiare"), ("position", "uncontrolledProcess"), ("aux", "have")] }
 
-def ex51_tuonare : LinguisticExample :=
+def ex51_tuonare : Datum :=
   { id := "sorace2000_ex51_tuonare"
     source := ⟨"sorace-2000", "(51)"⟩
     reportedIn := none
@@ -1200,7 +1198,7 @@ def ex51_tuonare : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "tuonare"), ("position", "uncontrolledProcess"), ("aux", "be"), ("predicate", "telicized")] }
 
-def ex51_lampeggiare : LinguisticExample :=
+def ex51_lampeggiare : Datum :=
   { id := "sorace2000_ex51_lampeggiare"
     source := ⟨"sorace-2000", "(51)"⟩
     reportedIn := none
@@ -1213,6 +1211,6 @@ def ex51_lampeggiare : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "lampeggiare"), ("position", "uncontrolledProcess"), ("aux", "be"), ("predicate", "telicized")] }
 
-def all : List LinguisticExample := [ex1a, ex1b, ex1c, ex1d, ex4, ex5a, ex5b, ex30a, ex7a, ex7b, ex8a, ex9a, ex9b, ex9c, ex10a, ex10b, ex11, ex12, ex13, ex14a, ex14c, ex15a, ex15b, ex15c, ex16, ex17a, ex17b, ex18a, ex18b, ex19a, ex19b, ex19c, ex20a, ex20b, ex20c, ex21a, ex21b, ex21c, ex22, ex23a, ex23b, ex23c, ex23d, ex24a, ex24b, ex24c, ex25a, ex25b, ex33a, ex33b, ex33c, ex33d, ex34, ex35, ex36a, ex36b, ex37a, ex37b, ex37c, ex38_rennen, ex38_laufen, ex38_schwimmen, ex39a, ex39b, ex40a, ex40b, ex41a, ex41b, ex41c, ex41d, ex42a, ex42b, ex43a, ex43b, ex44a, ex44b, ex45a, ex45b, ex46a, ex46b, ex47a, ex47b, ex47c, ex47d, ex48_piovere, ex48_nevicare, ex48_grandinare, ex49, ex50a, ex50b, ex51_tuonare, ex51_lampeggiare]
+def all : List Datum := [ex1a, ex1b, ex1c, ex1d, ex4, ex5a, ex5b, ex30a, ex7a, ex7b, ex8a, ex9a, ex9b, ex9c, ex10a, ex10b, ex11, ex12, ex13, ex14a, ex14c, ex15a, ex15b, ex15c, ex16, ex17a, ex17b, ex18a, ex18b, ex19a, ex19b, ex19c, ex20a, ex20b, ex20c, ex21a, ex21b, ex21c, ex22, ex23a, ex23b, ex23c, ex23d, ex24a, ex24b, ex24c, ex25a, ex25b, ex33a, ex33b, ex33c, ex33d, ex34, ex35, ex36a, ex36b, ex37a, ex37b, ex37c, ex38_rennen, ex38_laufen, ex38_schwimmen, ex39a, ex39b, ex40a, ex40b, ex41a, ex41b, ex41c, ex41d, ex42a, ex42b, ex43a, ex43b, ex44a, ex44b, ex45a, ex45b, ex46a, ex46b, ex47a, ex47b, ex47c, ex47d, ex48_piovere, ex48_nevicare, ex48_grandinare, ex49, ex50a, ex50b, ex51_tuonare, ex51_lampeggiare]
 
 end Sorace2000.Examples

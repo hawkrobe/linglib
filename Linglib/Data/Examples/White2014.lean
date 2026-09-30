@@ -15,9 +15,7 @@ this module; declarations live in `namespace White2014.Examples`.
 
 namespace White2014.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "white2014_1"
     source := ⟨"white-2014", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("complement", "finite"), ("inference", "presupposes (2)")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "white2014_2"
     source := ⟨"white-2014", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("complement", "infinitive"), ("inference", "entails (2)")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "white2014_3"
     source := ⟨"white-2014", "(2)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("role", "the embedded content")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "white2014_4"
     source := ⟨"white-2014", "(3a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("complement", "finite"), ("test", "negation"), ("inference", "still implies (2)")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "white2014_5"
     source := ⟨"white-2014", "(4a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("complement", "infinitive"), ("test", "negation"), ("inference", "implies the negation of (2)")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "white2014_6"
     source := ⟨"white-2014", "(5)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hope"), ("complement", "infinitive")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "white2014_7"
     source := ⟨"white-2014", "(6)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "turn out"), ("complement", "finite")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "white2014_8"
     source := ⟨"white-2014", "(7a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("complement", "finite with overt modal"), ("inference", "presupposes (7b)")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "white2014_9"
     source := ⟨"white-2014", "(8a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("complement", "infinitive"), ("test", "denial of obligation")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "white2014_10"
     source := ⟨"white-2014", "(8b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("complement", "finite"), ("test", "denial of obligation")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "white2014_11"
     source := ⟨"white-2014", "(9a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "coordination")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "white2014_12"
     source := ⟨"white-2014", "(9b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "gapping")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "white2014_13"
     source := ⟨"white-2014", "(10a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "detachability")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "white2014_14"
     source := ⟨"white-2014", "(12)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("complement", "infinitive"), ("test", "again")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "white2014_15"
     source := ⟨"white-2014", "(13a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("complement", "finite"), ("test", "again"), ("previous", "remembering only")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "white2014_16"
     source := ⟨"white-2014", "(13b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("complement", "finite"), ("test", "again"), ("previous", "filling only")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "white2014_17"
     source := ⟨"white-2014", "(14a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("complement", "infinitive"), ("test", "again"), ("previous", "remembering only")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "white2014_18"
     source := ⟨"white-2014", "(14b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("complement", "infinitive"), ("test", "again"), ("previous", "filling only")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "white2014_19"
     source := ⟨"white-2014", "(15)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hope"), ("test", "again"), ("previous", "hoping only")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "white2014_20"
     source := ⟨"white-2014", "(18)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("complement", "finite with overt modal"), ("inference", "no actuality entailment")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "white2014_21"
     source := ⟨"white-2014", "(33)"⟩
     reportedIn := none
@@ -290,6 +288,6 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hope"), ("test", "coordination")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21]
 
 end White2014.Examples

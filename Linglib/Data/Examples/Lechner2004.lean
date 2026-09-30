@@ -15,9 +15,7 @@ this module; declarations live in `namespace Lechner2004.Examples`.
 
 namespace Lechner2004.Examples
 
-open Data.Examples
-
-def ch2_24 : LinguisticExample :=
+def ch2_24 : Datum :=
   { id := "lechner2004_ch2_24"
     source := ⟨"lechner-2004", "(24) of chapter 2"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ch2_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("coreference", "he = John"), ("deletion_site", "d-proud of John")] }
 
-def ch2_25 : LinguisticExample :=
+def ch2_25 : Datum :=
   { id := "lechner2004_ch2_25"
     source := ⟨"lechner-2004", "(25) of chapter 2"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ch2_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("coreference", "he = John"), ("deletion_site", "d-proud of John")] }
 
-def ch4_83a : LinguisticExample :=
+def ch4_83a : Datum :=
   { id := "lechner2004_ch4_83a"
     source := ⟨"lechner-2004", "(83a) of chapter 4"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ch4_83a : LinguisticExample :=
     readings := []
     paperFeatures := [("coreference", "him = Peter"), ("remnant_case", "NOM")] }
 
-def ch4_85a : LinguisticExample :=
+def ch4_85a : Datum :=
   { id := "lechner2004_ch4_85a"
     source := ⟨"lechner-2004", "(85a) of chapter 4"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ch4_85a : LinguisticExample :=
     readings := []
     paperFeatures := [("coreference", "he = Peter"), ("remnant_case", "ACC")] }
 
-def ch4_87a : LinguisticExample :=
+def ch4_87a : Datum :=
   { id := "lechner2004_ch4_87a"
     source := ⟨"lechner-2004", "(87a) of chapter 4"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ch4_87a : LinguisticExample :=
     readings := []
     paperFeatures := [("coreference", "ihm = Peter"), ("remnant_case", "NOM")] }
 
-def ch4_87b : LinguisticExample :=
+def ch4_87b : Datum :=
   { id := "lechner2004_ch4_87b"
     source := ⟨"lechner-2004", "(87b) of chapter 4"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ch4_87b : LinguisticExample :=
     readings := []
     paperFeatures := [("coreference", "er = Peter"), ("remnant_case", "DAT")] }
 
-def ch4_90a : LinguisticExample :=
+def ch4_90a : Datum :=
   { id := "lechner2004_ch4_90a"
     source := ⟨"lechner-2004", "(90a) of chapter 4"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ch4_90a : LinguisticExample :=
     readings := []
     paperFeatures := [("coreference", "ihn = Präsident"), ("remnant_case", "ACC")] }
 
-def ch4_91a : LinguisticExample :=
+def ch4_91a : Datum :=
   { id := "lechner2004_ch4_91a"
     source := ⟨"lechner-2004", "(91a) of chapter 4"⟩
     reportedIn := none
@@ -121,6 +119,6 @@ def ch4_91a : LinguisticExample :=
     readings := []
     paperFeatures := [("coreference", "er = Präsident"), ("remnant_case", "NOM")] }
 
-def all : List LinguisticExample := [ch2_24, ch2_25, ch4_83a, ch4_85a, ch4_87a, ch4_87b, ch4_90a, ch4_91a]
+def all : List Datum := [ch2_24, ch2_25, ch4_83a, ch4_85a, ch4_87a, ch4_87b, ch4_90a, ch4_91a]
 
 end Lechner2004.Examples

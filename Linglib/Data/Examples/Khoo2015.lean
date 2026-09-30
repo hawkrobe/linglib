@@ -15,9 +15,7 @@ this module; declarations live in `namespace Khoo2015.Examples`.
 
 namespace Khoo2015.Examples
 
-open Data.Examples
-
-def control : LinguisticExample :=
+def control : Datum :=
   { id := "khoo2015_control"
     source := ⟨"khoo-2015", "Section II"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def control : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def modal : LinguisticExample :=
+def modal : Datum :=
   { id := "khoo2015_modal"
     source := ⟨"khoo-2015", "Section II"⟩
     reportedIn := none
@@ -43,6 +41,6 @@ def modal : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def all : List LinguisticExample := [control, modal]
+def all : List Datum := [control, modal]
 
 end Khoo2015.Examples

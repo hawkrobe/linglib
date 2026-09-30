@@ -15,9 +15,7 @@ this module; declarations live in `namespace MunozPerez2026.Examples`.
 
 namespace MunozPerez2026.Examples
 
-open Data.Examples
-
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "munozperez2026_2b"
     source := ⟨"munoz-perez-2026", "(2b)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_2b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "abrir"), ("construction", "anticausative"), ("dative", "none"), ("cluster", "se")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "munozperez2026_5"
     source := ⟨"munoz-perez-2026", "(5)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_5 : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "abrir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "munozperez2026_6a"
     source := ⟨"munoz-perez-2026", "(6a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_6a : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "abrir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
-def ex_6b : LinguisticExample :=
+def ex_6b : Datum :=
   { id := "munozperez2026_6b"
     source := ⟨"munoz-perez-2026", "(6b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_6b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "abrir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "munozperez2026_7a"
     source := ⟨"munoz-perez-2026", "(7a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_7a : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "romper"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "munozperez2026_7b"
     source := ⟨"munoz-perez-2026", "(7b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "romper"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
-def ex_7c : LinguisticExample :=
+def ex_7c : Datum :=
   { id := "munozperez2026_7c"
     source := ⟨"munoz-perez-2026", "(7c)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_7c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "romper"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "munozperez2026_8a"
     source := ⟨"munoz-perez-2026", "(8a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_8a : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "hundir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
-def ex_8b : LinguisticExample :=
+def ex_8b : Datum :=
   { id := "munozperez2026_8b"
     source := ⟨"munoz-perez-2026", "(8b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hundir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
-def ex_8c : LinguisticExample :=
+def ex_8c : Datum :=
   { id := "munozperez2026_8c"
     source := ⟨"munoz-perez-2026", "(8c)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_8c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hundir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
-def ex_9a : LinguisticExample :=
+def ex_9a : Datum :=
   { id := "munozperez2026_9a"
     source := ⟨"munoz-perez-2026", "(9a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_9a : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "caer"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
-def ex_9b : LinguisticExample :=
+def ex_9b : Datum :=
   { id := "munozperez2026_9b"
     source := ⟨"munoz-perez-2026", "(9b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_9b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "caer"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
-def ex_9c : LinguisticExample :=
+def ex_9c : Datum :=
   { id := "munozperez2026_9c"
     source := ⟨"munoz-perez-2026", "(9c)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_9c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "caer"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "munozperez2026_10a"
     source := ⟨"munoz-perez-2026", "(10a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_10a : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "morir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "munozperez2026_10b"
     source := ⟨"munoz-perez-2026", "(10b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "morir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
-def ex_10c : LinguisticExample :=
+def ex_10c : Datum :=
   { id := "munozperez2026_10c"
     source := ⟨"munoz-perez-2026", "(10c)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_10c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "morir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "munozperez2026_11a"
     source := ⟨"munoz-perez-2026", "(11a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "olvidar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "munozperez2026_11b"
     source := ⟨"munoz-perez-2026", "(11b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "olvidar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
-def ex_11c : LinguisticExample :=
+def ex_11c : Datum :=
   { id := "munozperez2026_11c"
     source := ⟨"munoz-perez-2026", "(11c)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_11c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "olvidar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "munozperez2026_12a"
     source := ⟨"munoz-perez-2026", "(12a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ocurrir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "munozperez2026_12b"
     source := ⟨"munoz-perez-2026", "(12b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ocurrir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
-def ex_12c : LinguisticExample :=
+def ex_12c : Datum :=
   { id := "munozperez2026_12c"
     source := ⟨"munoz-perez-2026", "(12c)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_12c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "ocurrir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "munozperez2026_13a"
     source := ⟨"munoz-perez-2026", "(13a)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "quejarse"), ("construction", "inherent"), ("dative", "1SG"), ("cluster", "se me")] }
 
-def ex_13b : LinguisticExample :=
+def ex_13b : Datum :=
   { id := "munozperez2026_13b"
     source := ⟨"munoz-perez-2026", "(13b)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_13b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "quejarse"), ("construction", "inherent"), ("dative", "1SG"), ("cluster", "me le")] }
 
-def ex_13c : LinguisticExample :=
+def ex_13c : Datum :=
   { id := "munozperez2026_13c"
     source := ⟨"munoz-perez-2026", "(13c)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_13c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "quejarse"), ("construction", "inherent"), ("dative", "1SG"), ("cluster", "se me le")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "munozperez2026_14a"
     source := ⟨"munoz-perez-2026", "(14a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "dar"), ("construction", "impersonal"), ("dative", "1SG"), ("cluster", "se me")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "munozperez2026_14b"
     source := ⟨"munoz-perez-2026", "(14b)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "dar"), ("construction", "impersonal"), ("dative", "1SG"), ("cluster", "me le")] }
 
-def ex_14c : LinguisticExample :=
+def ex_14c : Datum :=
   { id := "munozperez2026_14c"
     source := ⟨"munoz-perez-2026", "(14c)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_14c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "dar"), ("construction", "impersonal"), ("dative", "1SG"), ("cluster", "se me le")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "munozperez2026_15a"
     source := ⟨"munoz-perez-2026", "(15a)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_15a : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "munozperez2026_15b"
     source := ⟨"munoz-perez-2026", "(15b)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
-def ex_15c : LinguisticExample :=
+def ex_15c : Datum :=
   { id := "munozperez2026_15c"
     source := ⟨"munoz-perez-2026", "(15c)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_15c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
-def ex_16a : LinguisticExample :=
+def ex_16a : Datum :=
   { id := "munozperez2026_16a"
     source := ⟨"munoz-perez-2026", "(16a)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_16a : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "2SG"), ("cluster", "se te")] }
 
-def ex_16b : LinguisticExample :=
+def ex_16b : Datum :=
   { id := "munozperez2026_16b"
     source := ⟨"munoz-perez-2026", "(16b)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_16b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "2SG"), ("cluster", "te le")] }
 
-def ex_16c : LinguisticExample :=
+def ex_16c : Datum :=
   { id := "munozperez2026_16c"
     source := ⟨"munoz-perez-2026", "(16c)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_16c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "2SG"), ("cluster", "se te le")] }
 
-def ex_17a : LinguisticExample :=
+def ex_17a : Datum :=
   { id := "munozperez2026_17a"
     source := ⟨"munoz-perez-2026", "(17a)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_17a : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "3SG"), ("cluster", "se le")] }
 
-def ex_17b : LinguisticExample :=
+def ex_17b : Datum :=
   { id := "munozperez2026_17b"
     source := ⟨"munoz-perez-2026", "(17b)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_17b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "3SG"), ("cluster", "le le")] }
 
-def ex_17c : LinguisticExample :=
+def ex_17c : Datum :=
   { id := "munozperez2026_17c"
     source := ⟨"munoz-perez-2026", "(17c)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_17c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "3SG"), ("cluster", "se le le")] }
 
-def ex_18a : LinguisticExample :=
+def ex_18a : Datum :=
   { id := "munozperez2026_18a"
     source := ⟨"munoz-perez-2026", "(18a)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_18a : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "1PL"), ("cluster", "se nos")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "munozperez2026_18b"
     source := ⟨"munoz-perez-2026", "(18b)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "1PL"), ("cluster", "nos le")] }
 
-def ex_18c : LinguisticExample :=
+def ex_18c : Datum :=
   { id := "munozperez2026_18c"
     source := ⟨"munoz-perez-2026", "(18c)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_18c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "1PL"), ("cluster", "se nos le")] }
 
-def ex_19a : LinguisticExample :=
+def ex_19a : Datum :=
   { id := "munozperez2026_19a"
     source := ⟨"munoz-perez-2026", "(19a)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex_19a : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "3PL"), ("cluster", "se les")] }
 
-def ex_19b : LinguisticExample :=
+def ex_19b : Datum :=
   { id := "munozperez2026_19b"
     source := ⟨"munoz-perez-2026", "(19b)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "3PL"), ("cluster", "les le")] }
 
-def ex_19c : LinguisticExample :=
+def ex_19c : Datum :=
   { id := "munozperez2026_19c"
     source := ⟨"munoz-perez-2026", "(19c)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex_19c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cerrar"), ("construction", "anticausative"), ("dative", "3PL"), ("cluster", "se les le")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "munozperez2026_23"
     source := ⟨"munoz-perez-2026", "(23)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "recomendar"), ("construction", "ditransitive"), ("dative", "3SG"), ("cluster", "nos le")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "munozperez2026_24"
     source := ⟨"munoz-perez-2026", "(24)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "recomendar"), ("construction", "ditransitive"), ("dative", "3SG"), ("cluster", "me le")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "munozperez2026_29"
     source := ⟨"munoz-perez-2026", "(29)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex_29 : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "abrir"), ("construction", "anticausative"), ("dative", "3PL"), ("cluster", "se les")] }
 
-def ex_30a : LinguisticExample :=
+def ex_30a : Datum :=
   { id := "munozperez2026_30a"
     source := ⟨"munoz-perez-2026", "(30a)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex_30a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "abrir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me les")] }
 
-def ex_30b : LinguisticExample :=
+def ex_30b : Datum :=
   { id := "munozperez2026_30b"
     source := ⟨"munoz-perez-2026", "(30b)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex_30b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "abrir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me les")] }
 
-def ex_36b : LinguisticExample :=
+def ex_36b : Datum :=
   { id := "munozperez2026_36b"
     source := ⟨"munoz-perez-2026", "(36b)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex_36b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "mejorar"), ("construction", "anticausative"), ("dative", "none"), ("cluster", "")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "munozperez2026_37"
     source := ⟨"munoz-perez-2026", "(37)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "mejorar"), ("construction", "anticausative"), ("dative", "none"), ("cluster", "se")] }
 
-def ex_38b : LinguisticExample :=
+def ex_38b : Datum :=
   { id := "munozperez2026_38b"
     source := ⟨"munoz-perez-2026", "(38b)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex_38b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "quebrar"), ("construction", "anticausative"), ("dative", "none"), ("cluster", "")] }
 
-def ex_38c : LinguisticExample :=
+def ex_38c : Datum :=
   { id := "munozperez2026_38c"
     source := ⟨"munoz-perez-2026", "(38c)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex_38c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "quebrar"), ("construction", "anticausative"), ("dative", "none"), ("cluster", "se")] }
 
-def ex_39a : LinguisticExample :=
+def ex_39a : Datum :=
   { id := "munozperez2026_39a"
     source := ⟨"munoz-perez-2026", "(39a)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex_39a : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "quebrar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
-def ex_39b : LinguisticExample :=
+def ex_39b : Datum :=
   { id := "munozperez2026_39b"
     source := ⟨"munoz-perez-2026", "(39b)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex_39b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "quebrar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
-def ex_39c : LinguisticExample :=
+def ex_39c : Datum :=
   { id := "munozperez2026_39c"
     source := ⟨"munoz-perez-2026", "(39c)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex_39c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "quebrar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
-def ex_40a : LinguisticExample :=
+def ex_40a : Datum :=
   { id := "munozperez2026_40a"
     source := ⟨"munoz-perez-2026", "(40a)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex_40a : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .unacceptable)]
     paperFeatures := [("verb", "mejorar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me")] }
 
-def ex_40b : LinguisticExample :=
+def ex_40b : Datum :=
   { id := "munozperez2026_40b"
     source := ⟨"munoz-perez-2026", "(40b)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex_40b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "mejorar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
-def ex_41b : LinguisticExample :=
+def ex_41b : Datum :=
   { id := "munozperez2026_41b"
     source := ⟨"munoz-perez-2026", "(41b)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex_41b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hervir"), ("construction", "anticausative"), ("dative", "none"), ("cluster", "")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "munozperez2026_42"
     source := ⟨"munoz-perez-2026", "(42)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hervir"), ("construction", "anticausative"), ("dative", "none"), ("cluster", "se")] }
 
-def ex_43a : LinguisticExample :=
+def ex_43a : Datum :=
   { id := "munozperez2026_43a"
     source := ⟨"munoz-perez-2026", "(43a)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def ex_43a : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .unacceptable)]
     paperFeatures := [("verb", "hervir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me")] }
 
-def ex_43b : LinguisticExample :=
+def ex_43b : Datum :=
   { id := "munozperez2026_43b"
     source := ⟨"munoz-perez-2026", "(43b)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def ex_43b : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "hervir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
-def ex_44a : LinguisticExample :=
+def ex_44a : Datum :=
   { id := "munozperez2026_44a"
     source := ⟨"munoz-perez-2026", "(44a)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def ex_44a : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "hervir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
-def ex_44b : LinguisticExample :=
+def ex_44b : Datum :=
   { id := "munozperez2026_44b"
     source := ⟨"munoz-perez-2026", "(44b)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def ex_44b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "hervir"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
-def ex_49a : LinguisticExample :=
+def ex_49a : Datum :=
   { id := "munozperez2026_49a"
     source := ⟨"munoz-perez-2026", "(49a)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def ex_49a : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .acceptable)]
     paperFeatures := [("verb", "cortar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
-def ex_49b : LinguisticExample :=
+def ex_49b : Datum :=
   { id := "munozperez2026_49b"
     source := ⟨"munoz-perez-2026", "(49b)"⟩
     reportedIn := none
@@ -862,7 +860,7 @@ def ex_49b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cortar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
-def ex_49c : LinguisticExample :=
+def ex_49c : Datum :=
   { id := "munozperez2026_49c"
     source := ⟨"munoz-perez-2026", "(49c)"⟩
     reportedIn := none
@@ -875,7 +873,7 @@ def ex_49c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cortar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
-def ex_50a : LinguisticExample :=
+def ex_50a : Datum :=
   { id := "munozperez2026_50a"
     source := ⟨"munoz-perez-2026", "(50a)"⟩
     reportedIn := none
@@ -888,7 +886,7 @@ def ex_50a : LinguisticExample :=
     readings := [("affected", .acceptable), ("unintentional causer", .unacceptable)]
     paperFeatures := [("verb", "cortar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me")] }
 
-def ex_50b : LinguisticExample :=
+def ex_50b : Datum :=
   { id := "munozperez2026_50b"
     source := ⟨"munoz-perez-2026", "(50b)"⟩
     reportedIn := none
@@ -901,7 +899,7 @@ def ex_50b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cortar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "me le")] }
 
-def ex_50c : LinguisticExample :=
+def ex_50c : Datum :=
   { id := "munozperez2026_50c"
     source := ⟨"munoz-perez-2026", "(50c)"⟩
     reportedIn := none
@@ -914,6 +912,6 @@ def ex_50c : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cortar"), ("construction", "anticausative"), ("dative", "1SG"), ("cluster", "se me le")] }
 
-def all : List LinguisticExample := [ex_2b, ex_5, ex_6a, ex_6b, ex_7a, ex_7b, ex_7c, ex_8a, ex_8b, ex_8c, ex_9a, ex_9b, ex_9c, ex_10a, ex_10b, ex_10c, ex_11a, ex_11b, ex_11c, ex_12a, ex_12b, ex_12c, ex_13a, ex_13b, ex_13c, ex_14a, ex_14b, ex_14c, ex_15a, ex_15b, ex_15c, ex_16a, ex_16b, ex_16c, ex_17a, ex_17b, ex_17c, ex_18a, ex_18b, ex_18c, ex_19a, ex_19b, ex_19c, ex_23, ex_24, ex_29, ex_30a, ex_30b, ex_36b, ex_37, ex_38b, ex_38c, ex_39a, ex_39b, ex_39c, ex_40a, ex_40b, ex_41b, ex_42, ex_43a, ex_43b, ex_44a, ex_44b, ex_49a, ex_49b, ex_49c, ex_50a, ex_50b, ex_50c]
+def all : List Datum := [ex_2b, ex_5, ex_6a, ex_6b, ex_7a, ex_7b, ex_7c, ex_8a, ex_8b, ex_8c, ex_9a, ex_9b, ex_9c, ex_10a, ex_10b, ex_10c, ex_11a, ex_11b, ex_11c, ex_12a, ex_12b, ex_12c, ex_13a, ex_13b, ex_13c, ex_14a, ex_14b, ex_14c, ex_15a, ex_15b, ex_15c, ex_16a, ex_16b, ex_16c, ex_17a, ex_17b, ex_17c, ex_18a, ex_18b, ex_18c, ex_19a, ex_19b, ex_19c, ex_23, ex_24, ex_29, ex_30a, ex_30b, ex_36b, ex_37, ex_38b, ex_38c, ex_39a, ex_39b, ex_39c, ex_40a, ex_40b, ex_41b, ex_42, ex_43a, ex_43b, ex_44a, ex_44b, ex_49a, ex_49b, ex_49c, ex_50a, ex_50b, ex_50c]
 
 end MunozPerez2026.Examples

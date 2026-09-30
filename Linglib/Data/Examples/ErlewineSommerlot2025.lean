@@ -15,9 +15,7 @@ this module; declarations live in `namespace ErlewineSommerlot2025.Examples`.
 
 namespace ErlewineSommerlot2025.Examples
 
-open Data.Examples
-
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "erlewinesommerlot2025_1a"
     source := ⟨"sneddon-1996", "p. xxiii"⟩
     reportedIn := some ⟨"erlewine-sommerlot-2025", "(1a)"⟩
@@ -30,7 +28,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "erlewinesommerlot2025_1b"
     source := ⟨"sneddon-1996", "p. xxiii"⟩
     reportedIn := some ⟨"erlewine-sommerlot-2025", "(1b)"⟩
@@ -43,7 +41,7 @@ def ex_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "di")] }
 
-def ex_1c : LinguisticExample :=
+def ex_1c : Datum :=
   { id := "erlewinesommerlot2025_1c"
     source := ⟨"sneddon-1996", "p. xxiii"⟩
     reportedIn := some ⟨"erlewine-sommerlot-2025", "(1c)"⟩
@@ -56,7 +54,7 @@ def ex_1c : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "erlewinesommerlot2025_2"
     source := ⟨"erlewine-sommerlot-2025", "(2)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
-def ex_2_meN : LinguisticExample :=
+def ex_2_meN : Datum :=
   { id := "erlewinesommerlot2025_2_meN"
     source := ⟨"erlewine-sommerlot-2025", "(2), with meN-"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_2_meN : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "erlewinesommerlot2025_8"
     source := ⟨"erlewine-sommerlot-2025", "(8)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
-def ex_8_low : LinguisticExample :=
+def ex_8_low : Datum :=
   { id := "erlewinesommerlot2025_8_low"
     source := ⟨"erlewine-sommerlot-2025", "(8), agent after the auxiliaries"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_8_low : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "yes"), ("prefix", "meN")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "erlewinesommerlot2025_17"
     source := ⟨"erlewine-sommerlot-2025", "(17)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "erlewinesommerlot2025_21"
     source := ⟨"erlewine-sommerlot-2025", "(21)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "agent"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "erlewinesommerlot2025_22"
     source := ⟨"erlewine-sommerlot-2025", "(22)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
-def ex_22_meN : LinguisticExample :=
+def ex_22_meN : Datum :=
   { id := "erlewinesommerlot2025_22_meN"
     source := ⟨"erlewine-sommerlot-2025", "(22), with meN-"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_22_meN : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
-def ex_41a : LinguisticExample :=
+def ex_41a : Datum :=
   { id := "erlewinesommerlot2025_41a"
     source := ⟨"erlewine-sommerlot-2025", "(41a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_41a : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "pp"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
-def ex_41b : LinguisticExample :=
+def ex_41b : Datum :=
   { id := "erlewinesommerlot2025_41b"
     source := ⟨"erlewine-sommerlot-2025", "(41b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_41b : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "pp"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "di")] }
 
-def ex_41c : LinguisticExample :=
+def ex_41c : Datum :=
   { id := "erlewinesommerlot2025_41c"
     source := ⟨"erlewine-sommerlot-2025", "(41c)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_41c : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "pp"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
-def ex_54 : LinguisticExample :=
+def ex_54 : Datum :=
   { id := "erlewinesommerlot2025_54"
     source := ⟨"erlewine-sommerlot-2025", "(54)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_54 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
-def ex_54_meN : LinguisticExample :=
+def ex_54_meN : Datum :=
   { id := "erlewinesommerlot2025_54_meN"
     source := ⟨"erlewine-sommerlot-2025", "(54), with meN-"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_54_meN : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
-def ex_60 : LinguisticExample :=
+def ex_60 : Datum :=
   { id := "erlewinesommerlot2025_60"
     source := ⟨"erlewine-sommerlot-2025", "(60)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_60 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "standard"), ("extracted", "agent"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "bare")] }
 
-def ex_5_N : LinguisticExample :=
+def ex_5_N : Datum :=
   { id := "erlewinesommerlot2025_5_N"
     source := ⟨"erlewine-sommerlot-2025", "(5), N-"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_5_N : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
-def ex_5_meN : LinguisticExample :=
+def ex_5_meN : Datum :=
   { id := "erlewinesommerlot2025_5_meN"
     source := ⟨"erlewine-sommerlot-2025", "(5), meN-"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_5_meN : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "erlewinesommerlot2025_9"
     source := ⟨"erlewine-sommerlot-2025", "(9)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "di")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "erlewinesommerlot2025_10"
     source := ⟨"erlewine-sommerlot-2025", "(10)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
-def ex_12_N : LinguisticExample :=
+def ex_12_N : Datum :=
   { id := "erlewinesommerlot2025_12_N"
     source := ⟨"erlewine-sommerlot-2025", "(12), N-"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_12_N : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "N")] }
 
-def ex_12_bare : LinguisticExample :=
+def ex_12_bare : Datum :=
   { id := "erlewinesommerlot2025_12_bare"
     source := ⟨"erlewine-sommerlot-2025", "(12), bare"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_12_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
-def ex_12_meN : LinguisticExample :=
+def ex_12_meN : Datum :=
   { id := "erlewinesommerlot2025_12_meN"
     source := ⟨"erlewine-sommerlot-2025", "(12), meN-"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_12_meN : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "meN")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "erlewinesommerlot2025_13"
     source := ⟨"erlewine-sommerlot-2025", "(13)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "di")] }
 
-def ex_13_bare : LinguisticExample :=
+def ex_13_bare : Datum :=
   { id := "erlewinesommerlot2025_13_bare"
     source := ⟨"erlewine-sommerlot-2025", "(13), bare"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_13_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "erlewinesommerlot2025_14b"
     source := ⟨"erlewine-sommerlot-2025", "(14b)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "bare")] }
 
-def ex_14b_di : LinguisticExample :=
+def ex_14b_di : Datum :=
   { id := "erlewinesommerlot2025_14b_di"
     source := ⟨"erlewine-sommerlot-2025", "(14b), di-"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_14b_di : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "di")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "erlewinesommerlot2025_16"
     source := ⟨"erlewine-sommerlot-2025", "(16)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "bare")] }
 
-def ex_16_low : LinguisticExample :=
+def ex_16_low : Datum :=
   { id := "erlewinesommerlot2025_16_low"
     source := ⟨"erlewine-sommerlot-2025", "(16), agent after the auxiliary"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_16_low : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "erlewinesommerlot2025_23a"
     source := ⟨"erlewine-sommerlot-2025", "(23a)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "agent"), ("subject", "none"), ("lowAgent", "no"), ("prefix", "N")] }
 
-def ex_23b : LinguisticExample :=
+def ex_23b : Datum :=
   { id := "erlewinesommerlot2025_23b"
     source := ⟨"erlewine-sommerlot-2025", "(23b)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_23b : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "agent"), ("subject", "none"), ("lowAgent", "no"), ("prefix", "meN")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "erlewinesommerlot2025_24"
     source := ⟨"erlewine-sommerlot-2025", "(24)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "theme"), ("subject", "none"), ("lowAgent", "no"), ("prefix", "di")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "erlewinesommerlot2025_25"
     source := ⟨"erlewine-sommerlot-2025", "(25)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "theme"), ("subject", "none"), ("lowAgent", "yes"), ("prefix", "N")] }
 
-def ex_25_meN : LinguisticExample :=
+def ex_25_meN : Datum :=
   { id := "erlewinesommerlot2025_25_meN"
     source := ⟨"erlewine-sommerlot-2025", "(25), meN-"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_25_meN : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "theme"), ("subject", "none"), ("lowAgent", "yes"), ("prefix", "meN")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "erlewinesommerlot2025_26"
     source := ⟨"erlewine-sommerlot-2025", "(26)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "theme"), ("subject", "none"), ("lowAgent", "yes"), ("prefix", "N")] }
 
-def ex_26_high : LinguisticExample :=
+def ex_26_high : Datum :=
   { id := "erlewinesommerlot2025_26_high"
     source := ⟨"erlewine-sommerlot-2025", "(26), agent before the auxiliary"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_26_high : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
-def ex_40a_N : LinguisticExample :=
+def ex_40a_N : Datum :=
   { id := "erlewinesommerlot2025_40a_N"
     source := ⟨"erlewine-sommerlot-2025", "(40a), N-"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_40a_N : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "pp"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
-def ex_40a_meN : LinguisticExample :=
+def ex_40a_meN : Datum :=
   { id := "erlewinesommerlot2025_40a_meN"
     source := ⟨"erlewine-sommerlot-2025", "(40a), meN-"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_40a_meN : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "pp"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "meN")] }
 
-def ex_40b : LinguisticExample :=
+def ex_40b : Datum :=
   { id := "erlewinesommerlot2025_40b"
     source := ⟨"erlewine-sommerlot-2025", "(40b)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_40b : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "pp"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "di")] }
 
-def ex_47 : LinguisticExample :=
+def ex_47 : Datum :=
   { id := "erlewinesommerlot2025_47"
     source := ⟨"erlewine-sommerlot-2025", "(47)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex_47 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "agent"), ("subject", "none"), ("lowAgent", "no"), ("prefix", "di")] }
 
-def ex_47_N : LinguisticExample :=
+def ex_47_N : Datum :=
   { id := "erlewinesommerlot2025_47_N"
     source := ⟨"erlewine-sommerlot-2025", "(47), N-"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex_47_N : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "agent"), ("subject", "none"), ("lowAgent", "no"), ("prefix", "N")] }
 
-def ex_47_meN : LinguisticExample :=
+def ex_47_meN : Datum :=
   { id := "erlewinesommerlot2025_47_meN"
     source := ⟨"erlewine-sommerlot-2025", "(47), meN-"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex_47_meN : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "desa"), ("extracted", "agent"), ("subject", "none"), ("lowAgent", "no"), ("prefix", "meN")] }
 
-def ex_71a_N : LinguisticExample :=
+def ex_71a_N : Datum :=
   { id := "erlewinesommerlot2025_71a_N"
     source := ⟨"erlewine-sommerlot-2025", "(71a), N-"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex_71a_N : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "jakarta"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
-def ex_71a_bare : LinguisticExample :=
+def ex_71a_bare : Datum :=
   { id := "erlewinesommerlot2025_71a_bare"
     source := ⟨"erlewine-sommerlot-2025", "(71a), bare"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex_71a_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "jakarta"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
-def ex_71b : LinguisticExample :=
+def ex_71b : Datum :=
   { id := "erlewinesommerlot2025_71b"
     source := ⟨"erlewine-sommerlot-2025", "(71b)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex_71b : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "jakarta"), ("extracted", "agent"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
-def ex_71b_bare : LinguisticExample :=
+def ex_71b_bare : Datum :=
   { id := "erlewinesommerlot2025_71b_bare"
     source := ⟨"erlewine-sommerlot-2025", "(71b), bare"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex_71b_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "jakarta"), ("extracted", "agent"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
-def ex_71c_N : LinguisticExample :=
+def ex_71c_N : Datum :=
   { id := "erlewinesommerlot2025_71c_N"
     source := ⟨"erlewine-sommerlot-2025", "(71c), N-"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex_71c_N : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "jakarta"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
-def ex_71c_bare : LinguisticExample :=
+def ex_71c_bare : Datum :=
   { id := "erlewinesommerlot2025_71c_bare"
     source := ⟨"erlewine-sommerlot-2025", "(71c), bare"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex_71c_bare : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "jakarta"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
-def ex_72 : LinguisticExample :=
+def ex_72 : Datum :=
   { id := "erlewinesommerlot2025_72"
     source := ⟨"erlewine-sommerlot-2025", "(72)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex_72 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "jakarta"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
-def ex_76a : LinguisticExample :=
+def ex_76a : Datum :=
   { id := "erlewinesommerlot2025_76a"
     source := ⟨"jeoung-2017", "pp. 17, 20"⟩
     reportedIn := some ⟨"erlewine-sommerlot-2025", "(76a)"⟩
@@ -680,7 +678,7 @@ def ex_76a : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "politeMadurese"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
-def ex_76b : LinguisticExample :=
+def ex_76b : Datum :=
   { id := "erlewinesommerlot2025_76b"
     source := ⟨"jeoung-2017", "pp. 17, 20"⟩
     reportedIn := some ⟨"erlewine-sommerlot-2025", "(76b)"⟩
@@ -693,7 +691,7 @@ def ex_76b : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "politeMadurese"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "e")] }
 
-def ex_76c : LinguisticExample :=
+def ex_76c : Datum :=
   { id := "erlewinesommerlot2025_76c"
     source := ⟨"jeoung-2017", "pp. 17, 20"⟩
     reportedIn := some ⟨"erlewine-sommerlot-2025", "(76c)"⟩
@@ -706,7 +704,7 @@ def ex_76c : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "politeMadurese"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
-def ex_77a : LinguisticExample :=
+def ex_77a : Datum :=
   { id := "erlewinesommerlot2025_77a"
     source := ⟨"jeoung-2017", "pp. 16, 25"⟩
     reportedIn := some ⟨"erlewine-sommerlot-2025", "(77a)"⟩
@@ -719,7 +717,7 @@ def ex_77a : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "familiarMadurese"), ("extracted", "none"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
-def ex_77b : LinguisticExample :=
+def ex_77b : Datum :=
   { id := "erlewinesommerlot2025_77b"
     source := ⟨"jeoung-2017", "pp. 16, 25"⟩
     reportedIn := some ⟨"erlewine-sommerlot-2025", "(77b)"⟩
@@ -732,7 +730,7 @@ def ex_77b : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "familiarMadurese"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "no"), ("prefix", "e")] }
 
-def ex_77c : LinguisticExample :=
+def ex_77c : Datum :=
   { id := "erlewinesommerlot2025_77c"
     source := ⟨"jeoung-2017", "pp. 16, 25"⟩
     reportedIn := some ⟨"erlewine-sommerlot-2025", "(77c)"⟩
@@ -745,7 +743,7 @@ def ex_77c : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "familiarMadurese"), ("extracted", "none"), ("subject", "theme"), ("lowAgent", "yes"), ("prefix", "bare")] }
 
-def ex_79 : LinguisticExample :=
+def ex_79 : Datum :=
   { id := "erlewinesommerlot2025_79"
     source := ⟨"jeoung-2017", "p. 29"⟩
     reportedIn := some ⟨"erlewine-sommerlot-2025", "(79)"⟩
@@ -758,7 +756,7 @@ def ex_79 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "politeMadurese"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
-def ex_79_N : LinguisticExample :=
+def ex_79_N : Datum :=
   { id := "erlewinesommerlot2025_79_N"
     source := ⟨"jeoung-2017", "p. 29"⟩
     reportedIn := some ⟨"erlewine-sommerlot-2025", "(79), N-"⟩
@@ -771,7 +769,7 @@ def ex_79_N : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "politeMadurese"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
-def ex_80 : LinguisticExample :=
+def ex_80 : Datum :=
   { id := "erlewinesommerlot2025_80"
     source := ⟨"jeoung-2017", "p. 29"⟩
     reportedIn := some ⟨"erlewine-sommerlot-2025", "(80)"⟩
@@ -784,7 +782,7 @@ def ex_80 : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "familiarMadurese"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
-def ex_80_N : LinguisticExample :=
+def ex_80_N : Datum :=
   { id := "erlewinesommerlot2025_80_N"
     source := ⟨"jeoung-2017", "p. 29"⟩
     reportedIn := some ⟨"erlewine-sommerlot-2025", "(80), N-"⟩
@@ -797,6 +795,6 @@ def ex_80_N : LinguisticExample :=
     readings := []
     paperFeatures := [("grammar", "familiarMadurese"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_2, ex_2_meN, ex_8, ex_8_low, ex_17, ex_21, ex_22, ex_22_meN, ex_41a, ex_41b, ex_41c, ex_54, ex_54_meN, ex_60, ex_5_N, ex_5_meN, ex_9, ex_10, ex_12_N, ex_12_bare, ex_12_meN, ex_13, ex_13_bare, ex_14b, ex_14b_di, ex_16, ex_16_low, ex_23a, ex_23b, ex_24, ex_25, ex_25_meN, ex_26, ex_26_high, ex_40a_N, ex_40a_meN, ex_40b, ex_47, ex_47_N, ex_47_meN, ex_71a_N, ex_71a_bare, ex_71b, ex_71b_bare, ex_71c_N, ex_71c_bare, ex_72, ex_76a, ex_76b, ex_76c, ex_77a, ex_77b, ex_77c, ex_79, ex_79_N, ex_80, ex_80_N]
+def all : List Datum := [ex_1a, ex_1b, ex_1c, ex_2, ex_2_meN, ex_8, ex_8_low, ex_17, ex_21, ex_22, ex_22_meN, ex_41a, ex_41b, ex_41c, ex_54, ex_54_meN, ex_60, ex_5_N, ex_5_meN, ex_9, ex_10, ex_12_N, ex_12_bare, ex_12_meN, ex_13, ex_13_bare, ex_14b, ex_14b_di, ex_16, ex_16_low, ex_23a, ex_23b, ex_24, ex_25, ex_25_meN, ex_26, ex_26_high, ex_40a_N, ex_40a_meN, ex_40b, ex_47, ex_47_N, ex_47_meN, ex_71a_N, ex_71a_bare, ex_71b, ex_71b_bare, ex_71c_N, ex_71c_bare, ex_72, ex_76a, ex_76b, ex_76c, ex_77a, ex_77b, ex_77c, ex_79, ex_79_N, ex_80, ex_80_N]
 
 end ErlewineSommerlot2025.Examples

@@ -15,9 +15,7 @@ this module; declarations live in `namespace Ariel2001.Examples`.
 
 namespace Ariel2001.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "ariel2001_1"
     source := ⟨"ariel-2001", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "proxDem"), ("marker", "unstressedPron"), ("marker", "distalDem"), ("marker", "distalDemNP")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "ariel2001_3"
     source := ⟨"ariel-2001", "(3)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("source", "Haaretz"), ("perspective", "victim"), ("victim", "zero"), ("rapists", "lastName")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "ariel2001_4"
     source := ⟨"ariel-2001", "(4)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("source", "Maariv"), ("perspective", "rapists"), ("victim", "proxDem"), ("rapists", "zero")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "ariel2001_5"
     source := ⟨"ariel-2001", "(5)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("speaker", "self")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "ariel2001_6"
     source := ⟨"ariel-2001", "(6)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "girl and tree"), ("marker", "unstressedPron")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "ariel2001_7"
     source := ⟨"ariel-2001", "(7)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "stressedPron")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "ariel2001_8a"
     source := ⟨"ariel-2001", "(8a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "headline"), ("marker", "lastName"), ("marker", "lastName"), ("marker", "fullName"), ("marker", "unstressedPron")] }
 
-def ex_8b : LinguisticExample :=
+def ex_8b : Datum :=
   { id := "ariel2001_8b"
     source := ⟨"ariel-2001", "(8b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "opening sentence"), ("marker", "fullNameMod"), ("marker", "fullNameMod"), ("marker", "fullNameMod"), ("marker", "proxDem")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "ariel2001_9"
     source := ⟨"ariel-2001", "(9)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("marker", "stressedPron")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "ariel2001_10"
     source := ⟨"ariel-2001", "(10)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_10 : LinguisticExample :=
     readings := [("the paper coreferent with the newspaper", .acceptable)]
     paperFeatures := [("marker", "shortDefDescription"), ("marker", "shortDefDescription")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "ariel2001_12"
     source := ⟨"ariel-2001", "(12)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("topicMarker", "unstressedPron"), ("subjectMarker", "shortDefDescription")] }
 
-def maya_rachel : LinguisticExample :=
+def maya_rachel : Datum :=
   { id := "ariel2001_maya_rachel"
     source := ⟨"ariel-2001", "§1.2"⟩
     reportedIn := none
@@ -173,6 +171,6 @@ def maya_rachel : LinguisticExample :=
     readings := [("she = Maya", .acceptable), ("SHE = Rachel", .acceptable)]
     paperFeatures := [("maya", "unstressedPron"), ("rachel", "stressedPron")] }
 
-def all : List LinguisticExample := [ex_1, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8a, ex_8b, ex_9, ex_10, ex_12, maya_rachel]
+def all : List Datum := [ex_1, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8a, ex_8b, ex_9, ex_10, ex_12, maya_rachel]
 
 end Ariel2001.Examples

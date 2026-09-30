@@ -15,9 +15,7 @@ this module; declarations live in `namespace AlstottAravind2026.Examples`.
 
 namespace AlstottAravind2026.Examples
 
-open Data.Examples
-
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "alstottaravind2026_1a"
     source := ⟨"alstott-aravind-2026", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1a : LinguisticExample :=
     readings := [("after-start", .acceptable), ("after-finish", .acceptable)]
     paperFeatures := [("construction", "after"), ("telicity", "atelic")] }
 
-def ex_1b : LinguisticExample :=
+def ex_1b : Datum :=
   { id := "alstottaravind2026_1b"
     source := ⟨"alstott-aravind-2026", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_1b : LinguisticExample :=
     readings := [("before-start", .acceptable), ("before-finish", .unacceptable)]
     paperFeatures := [("construction", "before"), ("telicity", "atelic")] }
 
-def ex_2a : LinguisticExample :=
+def ex_2a : Datum :=
   { id := "alstottaravind2026_2a"
     source := ⟨"alstott-aravind-2026", "(2a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_2a : LinguisticExample :=
     readings := [("before-start", .acceptable), ("before-finish", .acceptable)]
     paperFeatures := [("construction", "before"), ("telicity", "telic")] }
 
-def ex_2b : LinguisticExample :=
+def ex_2b : Datum :=
   { id := "alstottaravind2026_2b"
     source := ⟨"alstott-aravind-2026", "(2b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_2b : LinguisticExample :=
     readings := [("after-start", .unacceptable), ("after-finish", .acceptable)]
     paperFeatures := [("construction", "after"), ("telicity", "telic")] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "alstottaravind2026_3a"
     source := ⟨"alstott-aravind-2026", "(3a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_3a : LinguisticExample :=
     readings := [("change of state", .acceptable)]
     paperFeatures := [("construction", "within"), ("telicity", "atelic")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "alstottaravind2026_3b"
     source := ⟨"alstott-aravind-2026", "(3b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_3b : LinguisticExample :=
     readings := [("completive", .acceptable)]
     paperFeatures := [("construction", "at"), ("telicity", "telic")] }
 
-def exp1a_coercion : LinguisticExample :=
+def exp1a_coercion : Datum :=
   { id := "alstottaravind2026_exp1a_coercion"
     source := ⟨"alstott-aravind-2026", "Table 1 (a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def exp1a_coercion : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1a"), ("trial", "aspectualCoercion"), ("construction", "within"), ("telicity", "atelic"), ("rtCost", "no"), ("naturalness", "null")] }
 
-def exp1a_control : LinguisticExample :=
+def exp1a_control : Datum :=
   { id := "alstottaravind2026_exp1a_control"
     source := ⟨"alstott-aravind-2026", "Table 1 (b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def exp1a_control : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1a"), ("trial", "aspectualControl"), ("construction", "for"), ("telicity", "atelic")] }
 
-def exp1a_complement : LinguisticExample :=
+def exp1a_complement : Datum :=
   { id := "alstottaravind2026_exp1a_complement"
     source := ⟨"alstott-aravind-2026", "Table 1 (c)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def exp1a_complement : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1a"), ("trial", "complementCoercion"), ("construction", "complement"), ("rtCost", "yes"), ("region", "noun+1"), ("naturalness", "lower")] }
 
-def exp1a_complementControl : LinguisticExample :=
+def exp1a_complementControl : Datum :=
   { id := "alstottaravind2026_exp1a_complementControl"
     source := ⟨"alstott-aravind-2026", "Table 1 (d)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def exp1a_complementControl : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1a"), ("trial", "complementControl"), ("construction", "complement")] }
 
-def exp1b_coercion : LinguisticExample :=
+def exp1b_coercion : Datum :=
   { id := "alstottaravind2026_exp1b_coercion"
     source := ⟨"alstott-aravind-2026", "Table 2 (a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def exp1b_coercion : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1b"), ("trial", "aspectualCoercion"), ("construction", "at"), ("telicity", "telic"), ("rtCost", "yes"), ("region", "verb+1"), ("naturalness", "lower")] }
 
-def exp1b_control : LinguisticExample :=
+def exp1b_control : Datum :=
   { id := "alstottaravind2026_exp1b_control"
     source := ⟨"alstott-aravind-2026", "Table 2 (b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def exp1b_control : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1b"), ("trial", "aspectualControl"), ("construction", "in"), ("telicity", "telic")] }
 
-def exp1b_complement : LinguisticExample :=
+def exp1b_complement : Datum :=
   { id := "alstottaravind2026_exp1b_complement"
     source := ⟨"alstott-aravind-2026", "Table 2 (c)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def exp1b_complement : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1b"), ("trial", "complementCoercion"), ("construction", "complement"), ("rtCost", "yes"), ("region", "noun+1"), ("naturalness", "lower")] }
 
-def exp1b_complementControl : LinguisticExample :=
+def exp1b_complementControl : Datum :=
   { id := "alstottaravind2026_exp1b_complementControl"
     source := ⟨"alstott-aravind-2026", "Table 2 (d)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def exp1b_complementControl : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "1b"), ("trial", "complementControl"), ("construction", "complement")] }
 
-def exp2_noCoercion : LinguisticExample :=
+def exp2_noCoercion : Datum :=
   { id := "alstottaravind2026_exp2_noCoercion"
     source := ⟨"alstott-aravind-2026", "Table 3 (a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def exp2_noCoercion : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("trial", "aspectualControl"), ("construction", "before"), ("telicity", "telic"), ("context", "beforeStart")] }
 
-def exp2_completive : LinguisticExample :=
+def exp2_completive : Datum :=
   { id := "alstottaravind2026_exp2_completive"
     source := ⟨"alstott-aravind-2026", "Table 3 (b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def exp2_completive : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("trial", "aspectualCoercion"), ("construction", "before"), ("telicity", "telic"), ("context", "beforeFinish"), ("rtCost", "yes"), ("region", "verb+2"), ("preregistered", "no"), ("naturalness", "lower")] }
 
-def exp2_complement : LinguisticExample :=
+def exp2_complement : Datum :=
   { id := "alstottaravind2026_exp2_complement"
     source := ⟨"alstott-aravind-2026", "Table 3 (c)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def exp2_complement : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "2"), ("trial", "complementCoercion"), ("construction", "complement"), ("rtCost", "yes"), ("region", "noun"), ("naturalness", "lower")] }
 
-def exp3_coercion : LinguisticExample :=
+def exp3_coercion : Datum :=
   { id := "alstottaravind2026_exp3_coercion"
     source := ⟨"alstott-aravind-2026", "Table 4 (a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def exp3_coercion : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "3"), ("trial", "aspectualCoercion"), ("construction", "within"), ("telicity", "atelic"), ("rtCost", "no"), ("naturalness", "null")] }
 
-def exp3_control : LinguisticExample :=
+def exp3_control : Datum :=
   { id := "alstottaravind2026_exp3_control"
     source := ⟨"alstott-aravind-2026", "Table 4 (b)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def exp3_control : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "3"), ("trial", "aspectualControl"), ("construction", "for"), ("telicity", "atelic")] }
 
-def exp3_complement : LinguisticExample :=
+def exp3_complement : Datum :=
   { id := "alstottaravind2026_exp3_complement"
     source := ⟨"alstott-aravind-2026", "Table 4 (c)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def exp3_complement : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "3"), ("trial", "complementCoercion"), ("construction", "complement"), ("rtCost", "yes"), ("region", "noun+1"), ("naturalness", "lower")] }
 
-def exp4_coercion : LinguisticExample :=
+def exp4_coercion : Datum :=
   { id := "alstottaravind2026_exp4_coercion"
     source := ⟨"alstott-aravind-2026", "Table 5 (a)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def exp4_coercion : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "4"), ("trial", "aspectualCoercion"), ("construction", "after"), ("telicity", "atelic"), ("context", "afterStart"), ("rtCost", "yes"), ("region", "verb+2"), ("preregistered", "no"), ("naturalness", "lower")] }
 
-def exp4_control : LinguisticExample :=
+def exp4_control : Datum :=
   { id := "alstottaravind2026_exp4_control"
     source := ⟨"alstott-aravind-2026", "Table 5 (b)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def exp4_control : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "4"), ("trial", "aspectualControl"), ("construction", "after"), ("telicity", "atelic"), ("context", "afterFinish")] }
 
-def exp4_complement : LinguisticExample :=
+def exp4_complement : Datum :=
   { id := "alstottaravind2026_exp4_complement"
     source := ⟨"alstott-aravind-2026", "Table 5 (c)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def exp4_complement : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "4"), ("trial", "complementCoercion"), ("construction", "complement"), ("rtCost", "no"), ("naturalness", "lower")] }
 
-def exp4_complementControl : LinguisticExample :=
+def exp4_complementControl : Datum :=
   { id := "alstottaravind2026_exp4_complementControl"
     source := ⟨"alstott-aravind-2026", "Table 5 (d)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def exp4_complementControl : LinguisticExample :=
     readings := []
     paperFeatures := [("experiment", "4"), ("trial", "complementControl"), ("construction", "complement")] }
 
-def ex_32a : LinguisticExample :=
+def ex_32a : Datum :=
   { id := "alstottaravind2026_32a"
     source := ⟨"alstott-aravind-2026", "(32a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_32a : LinguisticExample :=
     readings := [("became sick during 6–7pm", .acceptable)]
     paperFeatures := [("construction", "within"), ("telicity", "atelic")] }
 
-def ex_35a : LinguisticExample :=
+def ex_35a : Datum :=
   { id := "alstottaravind2026_35a"
     source := ⟨"alstott-aravind-2026", "(35a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_35a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "within"), ("telicity", "atelic"), ("alternativeOf", "(32a)")] }
 
-def ex_36a : LinguisticExample :=
+def ex_36a : Datum :=
   { id := "alstottaravind2026_36a"
     source := ⟨"alstott-aravind-2026", "(36a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_36a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "within"), ("telicity", "telic")] }
 
-def ex_17a : LinguisticExample :=
+def ex_17a : Datum :=
   { id := "alstottaravind2026_17a"
     source := ⟨"rett-2020a", "(12a)"⟩
     reportedIn := some ⟨"alstott-aravind-2026", "(17a)"⟩
@@ -381,7 +379,7 @@ def ex_17a : LinguisticExample :=
     readings := [("before-start", .acceptable), ("before-finish", .unacceptable)]
     paperFeatures := [("construction", "before"), ("aspect", "pfv.neut")] }
 
-def ex_17b : LinguisticExample :=
+def ex_17b : Datum :=
   { id := "alstottaravind2026_17b"
     source := ⟨"rett-2020a", "(12b)"⟩
     reportedIn := some ⟨"alstott-aravind-2026", "(17b)"⟩
@@ -394,6 +392,6 @@ def ex_17b : LinguisticExample :=
     readings := [("before-finish", .acceptable)]
     paperFeatures := [("construction", "before"), ("aspect", "aia")] }
 
-def all : List LinguisticExample := [ex_1a, ex_1b, ex_2a, ex_2b, ex_3a, ex_3b, exp1a_coercion, exp1a_control, exp1a_complement, exp1a_complementControl, exp1b_coercion, exp1b_control, exp1b_complement, exp1b_complementControl, exp2_noCoercion, exp2_completive, exp2_complement, exp3_coercion, exp3_control, exp3_complement, exp4_coercion, exp4_control, exp4_complement, exp4_complementControl, ex_32a, ex_35a, ex_36a, ex_17a, ex_17b]
+def all : List Datum := [ex_1a, ex_1b, ex_2a, ex_2b, ex_3a, ex_3b, exp1a_coercion, exp1a_control, exp1a_complement, exp1a_complementControl, exp1b_coercion, exp1b_control, exp1b_complement, exp1b_complementControl, exp2_noCoercion, exp2_completive, exp2_complement, exp3_coercion, exp3_control, exp3_complement, exp4_coercion, exp4_control, exp4_complement, exp4_complementControl, ex_32a, ex_35a, ex_36a, ex_17a, ex_17b]
 
 end AlstottAravind2026.Examples

@@ -291,7 +291,6 @@ theorem exists_mem_negations_tolerant :
 
 /-! ### The examples -/
 
-open Data.Examples
 
 /-- The features of each language's particles, by Glottocode and spelling. -/
 def featureTable : List (String × List (String × AnswerFeature)) :=
@@ -322,7 +321,7 @@ structure Row where
 
 /-- The row of an example: its question is neutral or its negation located, and its answer is a
 single particle of one of the four languages. -/
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let negation ← if ex.feature? "question" = some "neutral" then some .absent
     else ex.parse? "negation" negationTable
   let table ← List.lookup ex.language featureTable
@@ -331,7 +330,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   pure ⟨negation, feature, target, ex.judgment⟩
 
 /-- The rows of the examples. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The answer is well formed and confirms the alternative the example targets, if any. -/
 def Row.Predicted (r : Row) : Prop :=

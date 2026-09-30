@@ -15,9 +15,7 @@ this module; declarations live in `namespace Sassoon2013.Examples`.
 
 namespace Sassoon2013.Examples
 
-open Data.Examples
-
-def healthy : LinguisticExample :=
+def healthy : Datum :=
   { id := "sassoon2013_healthy"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def healthy : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "54"), ("disj", "11"), ("polarity", "660"), ("positive", "true"), ("totality", "87"), ("standard", "total"), ("antonym", "sick")] }
 
-def normal : LinguisticExample :=
+def normal : Datum :=
   { id := "sassoon2013_normal"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def normal : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "69"), ("disj", "10"), ("polarity", "565"), ("positive", "true"), ("totality", "98"), ("standard", "total"), ("antonym", "abnormal")] }
 
-def typical : LinguisticExample :=
+def typical : Datum :=
   { id := "sassoon2013_typical"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def typical : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "54"), ("disj", "9"), ("polarity", "420"), ("positive", "true"), ("totality", "92"), ("standard", "total"), ("antonym", "atypical")] }
 
-def similar : LinguisticExample :=
+def similar : Datum :=
   { id := "sassoon2013_similar"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def similar : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "80"), ("disj", "67"), ("polarity", "450"), ("positive", "true"), ("totality", "50"), ("standard", "partial"), ("antonym", "dissimilar")] }
 
-def identical : LinguisticExample :=
+def identical : Datum :=
   { id := "sassoon2013_identical"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def identical : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "86"), ("disj", "49"), ("polarity", "415"), ("positive", "true"), ("totality", "89"), ("standard", "total"), ("antonym", "different")] }
 
-def good : LinguisticExample :=
+def good : Datum :=
   { id := "sassoon2013_good"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def good : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "24"), ("disj", "21"), ("polarity", "645"), ("positive", "true"), ("totality", "90"), ("standard", "total"), ("antonym", "bad")] }
 
-def familiar : LinguisticExample :=
+def familiar : Datum :=
   { id := "sassoon2013_familiar"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def familiar : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "45"), ("disj", "9"), ("polarity", "580"), ("positive", "true"), ("totality", "68"), ("standard", "partial"), ("antonym", "unfamiliar")] }
 
-def intelligent : LinguisticExample :=
+def intelligent : Datum :=
   { id := "sassoon2013_intelligent"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def intelligent : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "37"), ("disj", "41"), ("polarity", "670"), ("positive", "true"), ("totality", "71"), ("standard", "relative")] }
 
-def healthier : LinguisticExample :=
+def healthier : Datum :=
   { id := "sassoon2013_healthier"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def healthier : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "35"), ("disj", "9"), ("polarity", "605"), ("positive", "true"), ("totality", "3"), ("standard", "partial"), ("base", "healthy")] }
 
-def better : LinguisticExample :=
+def better : Datum :=
   { id := "sassoon2013_better"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def better : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "25"), ("disj", "25"), ("polarity", "630"), ("positive", "true"), ("totality", "3"), ("standard", "partial"), ("antonym", "worse"), ("base", "good")] }
 
-def sick : LinguisticExample :=
+def sick : Datum :=
   { id := "sassoon2013_sick"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def sick : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "2"), ("disj", "26"), ("polarity", "150"), ("positive", "false"), ("totality", "49"), ("standard", "partial")] }
 
-def abnormal : LinguisticExample :=
+def abnormal : Datum :=
   { id := "sassoon2013_abnormal"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def abnormal : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "6"), ("disj", "20"), ("polarity", "180"), ("positive", "false"), ("totality", "35"), ("standard", "partial")] }
 
-def atypical : LinguisticExample :=
+def atypical : Datum :=
   { id := "sassoon2013_atypical"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def atypical : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "19"), ("disj", "68"), ("polarity", "320"), ("positive", "false"), ("totality", "19"), ("standard", "partial")] }
 
-def dissimilar : LinguisticExample :=
+def dissimilar : Datum :=
   { id := "sassoon2013_dissimilar"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def dissimilar : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "58"), ("disj", "83"), ("polarity", "280"), ("positive", "false"), ("totality", "89"), ("standard", "total")] }
 
-def different : LinguisticExample :=
+def different : Datum :=
   { id := "sassoon2013_different"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def different : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "13"), ("disj", "40"), ("polarity", "340"), ("positive", "false"), ("totality", "38"), ("standard", "partial")] }
 
-def bad : LinguisticExample :=
+def bad : Datum :=
   { id := "sassoon2013_bad"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def bad : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "3"), ("disj", "55"), ("polarity", "110"), ("positive", "false"), ("totality", "73"), ("standard", "partial")] }
 
-def unfamiliar : LinguisticExample :=
+def unfamiliar : Datum :=
   { id := "sassoon2013_unfamiliar"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def unfamiliar : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "15"), ("disj", "27"), ("polarity", "260"), ("positive", "false"), ("totality", "85"), ("standard", "total")] }
 
-def worse : LinguisticExample :=
+def worse : Datum :=
   { id := "sassoon2013_worse"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩
     reportedIn := none
@@ -251,6 +249,6 @@ def worse : LinguisticExample :=
     readings := []
     paperFeatures := [("conj", "20"), ("disj", "32"), ("polarity", "140"), ("positive", "false"), ("totality", "2"), ("standard", "partial"), ("base", "bad")] }
 
-def all : List LinguisticExample := [healthy, normal, typical, similar, identical, good, familiar, intelligent, healthier, better, sick, abnormal, atypical, dissimilar, different, bad, unfamiliar, worse]
+def all : List Datum := [healthy, normal, typical, similar, identical, good, familiar, intelligent, healthier, better, sick, abnormal, atypical, dissimilar, different, bad, unfamiliar, worse]
 
 end Sassoon2013.Examples

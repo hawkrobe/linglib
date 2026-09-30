@@ -15,9 +15,7 @@ this module; declarations live in `namespace CoonKeine2021.Examples`.
 
 namespace CoonKeine2021.Examples
 
-open Data.Examples
-
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "coonkeine2021_3a"
     source := ⟨"coon-keine-2021", "(3a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_3b : LinguisticExample :=
+def ex_3b : Datum :=
   { id := "coonkeine2021_3b"
     source := ⟨"laka-1993", "p. 27"⟩
     reportedIn := some ⟨"coon-keine-2021", "(3b)"⟩
@@ -43,7 +41,7 @@ def ex_3b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "1"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_3c : LinguisticExample :=
+def ex_3c : Datum :=
   { id := "coonkeine2021_3c"
     source := ⟨"laka-1993", "p. 27"⟩
     reportedIn := some ⟨"coon-keine-2021", "(3c)"⟩
@@ -56,7 +54,7 @@ def ex_3c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_3d : LinguisticExample :=
+def ex_3d : Datum :=
   { id := "coonkeine2021_3d"
     source := ⟨"coon-keine-2021", "(3d)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_3d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "1"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "coonkeine2021_10b"
     source := ⟨"coon-keine-2021", "(10b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "nonfinite"), ("probe", "none"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_10c : LinguisticExample :=
+def ex_10c : Datum :=
   { id := "coonkeine2021_10c"
     source := ⟨"coon-keine-2021", "(10c)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_10c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "nonfinite"), ("probe", "none"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_37a : LinguisticExample :=
+def ex_37a : Datum :=
   { id := "coonkeine2021_37a"
     source := ⟨"coon-keine-2021", "(37a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_37a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "datAbs"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_37b : LinguisticExample :=
+def ex_37b : Datum :=
   { id := "coonkeine2021_37b"
     source := ⟨"coon-keine-2021", "(37b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_37b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "absDat"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "1"), ("lowerNumber", "sg"), ("lowerOpaque", "yes"), ("aftermath", "clitic")] }
 
-def ex_41 : LinguisticExample :=
+def ex_41 : Datum :=
   { id := "coonkeine2021_41"
     source := ⟨"coon-keine-2021", "(41)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "3"), ("lowerNumber", "pl"), ("aftermath", "clitic")] }
 
-def ex_50 : LinguisticExample :=
+def ex_50 : Datum :=
   { id := "coonkeine2021_50"
     source := ⟨"rezac-2008", "p. 81"⟩
     reportedIn := some ⟨"coon-keine-2021", "(50)"⟩
@@ -147,7 +145,7 @@ def ex_50 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "repair"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "2"), ("lowerNumber", "sg"), ("lowerShielded", "yes"), ("aftermath", "clitic")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "coonkeine2021_24"
     source := ⟨"bonet-1991", "p. 178"⟩
     reportedIn := some ⟨"coon-keine-2021", "(24)"⟩
@@ -160,7 +158,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "2"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "coonkeine2021_28"
     source := ⟨"bonet-1991", "p. 179"⟩
     reportedIn := some ⟨"coon-keine-2021", "(28)"⟩
@@ -173,7 +171,7 @@ def ex_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_31_2_1 : LinguisticExample :=
+def ex_31_2_1 : Datum :=
   { id := "coonkeine2021_31_2_1"
     source := ⟨"bonet-1991", "p. 179"⟩
     reportedIn := some ⟨"coon-keine-2021", "(31)"⟩
@@ -186,7 +184,7 @@ def ex_31_2_1 : LinguisticExample :=
     readings := [("2 > 1", .acceptable), ("1 > 2", .acceptable)]
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "2"), ("higherNumber", "sg"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_31_1_2 : LinguisticExample :=
+def ex_31_1_2 : Datum :=
   { id := "coonkeine2021_31_1_2"
     source := ⟨"bonet-1991", "p. 179"⟩
     reportedIn := some ⟨"coon-keine-2021", "(31)"⟩
@@ -199,7 +197,7 @@ def ex_31_1_2 : LinguisticExample :=
     readings := [("2 > 1", .acceptable), ("1 > 2", .acceptable)]
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "1"), ("higherNumber", "sg"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_44a : LinguisticExample :=
+def ex_44a : Datum :=
   { id := "coonkeine2021_44a"
     source := ⟨"stegovec-2020", "p. 264"⟩
     reportedIn := some ⟨"coon-keine-2021", "(44a)"⟩
@@ -212,7 +210,7 @@ def ex_44a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "branching"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_44a_me : LinguisticExample :=
+def ex_44a_me : Datum :=
   { id := "coonkeine2021_44a_me"
     source := ⟨"stegovec-2020", "p. 264"⟩
     reportedIn := some ⟨"coon-keine-2021", "(44a)"⟩
@@ -225,7 +223,7 @@ def ex_44a_me : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "branching"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_44a_te : LinguisticExample :=
+def ex_44a_te : Datum :=
   { id := "coonkeine2021_44a_te"
     source := ⟨"stegovec-2020", "p. 264"⟩
     reportedIn := some ⟨"coon-keine-2021", "(44a)"⟩
@@ -238,7 +236,7 @@ def ex_44a_te : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "branching"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_44b : LinguisticExample :=
+def ex_44b : Datum :=
   { id := "coonkeine2021_44b"
     source := ⟨"stegovec-2020", "p. 264"⟩
     reportedIn := some ⟨"coon-keine-2021", "(44b)"⟩
@@ -251,7 +249,7 @@ def ex_44b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "reverse"), ("probe", "branching"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_44b_mi : LinguisticExample :=
+def ex_44b_mi : Datum :=
   { id := "coonkeine2021_44b_mi"
     source := ⟨"stegovec-2020", "p. 264"⟩
     reportedIn := some ⟨"coon-keine-2021", "(44b)"⟩
@@ -264,7 +262,7 @@ def ex_44b_mi : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "reverse"), ("probe", "branching"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_44b_ti : LinguisticExample :=
+def ex_44b_ti : Datum :=
   { id := "coonkeine2021_44b_ti"
     source := ⟨"stegovec-2020", "p. 264"⟩
     reportedIn := some ⟨"coon-keine-2021", "(44b)"⟩
@@ -277,7 +275,7 @@ def ex_44b_ti : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "reverse"), ("probe", "branching"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_46a : LinguisticExample :=
+def ex_46a : Datum :=
   { id := "coonkeine2021_46a"
     source := ⟨"anagnostopoulou-2003", "p. 311"⟩
     reportedIn := some ⟨"coon-keine-2021", "(46a)"⟩
@@ -290,7 +288,7 @@ def ex_46a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_46b : LinguisticExample :=
+def ex_46b : Datum :=
   { id := "coonkeine2021_46b"
     source := ⟨"anagnostopoulou-2003", "p. 311"⟩
     reportedIn := some ⟨"coon-keine-2021", "(46b)"⟩
@@ -303,7 +301,7 @@ def ex_46b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "repair"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("higherShielded", "yes"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_48a : LinguisticExample :=
+def ex_48a : Datum :=
   { id := "coonkeine2021_48a"
     source := ⟨"anagnostopoulou-2017b", "pp. 3004, 3006"⟩
     reportedIn := some ⟨"coon-keine-2021", "(48a)"⟩
@@ -316,7 +314,7 @@ def ex_48a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "ditransitive"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "clitic")] }
 
-def ex_48b : LinguisticExample :=
+def ex_48b : Datum :=
   { id := "coonkeine2021_48b"
     source := ⟨"anagnostopoulou-2017b", "pp. 3004, 3006"⟩
     reportedIn := some ⟨"coon-keine-2021", "(48b)"⟩
@@ -329,7 +327,7 @@ def ex_48b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "repair"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "2"), ("lowerNumber", "sg"), ("lowerShielded", "yes"), ("aftermath", "clitic")] }
 
-def ex_51a : LinguisticExample :=
+def ex_51a : Datum :=
   { id := "coonkeine2021_51a"
     source := ⟨"coon-keine-2021", "(51a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_51a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "2"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "germanPresent")] }
 
-def ex_51b : LinguisticExample :=
+def ex_51b : Datum :=
   { id := "coonkeine2021_51b"
     source := ⟨"coon-keine-2021", "(51b)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_51b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "germanPresent")] }
 
-def ex_52a : LinguisticExample :=
+def ex_52a : Datum :=
   { id := "coonkeine2021_52a"
     source := ⟨"coon-keine-2021", "(52a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_52a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "pl"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "germanPresent")] }
 
-def ex_52b : LinguisticExample :=
+def ex_52b : Datum :=
   { id := "coonkeine2021_52b"
     source := ⟨"coon-keine-2021", "(52b)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_52b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "germanPresent")] }
 
-def ex_54a : LinguisticExample :=
+def ex_54a : Datum :=
   { id := "coonkeine2021_54a"
     source := ⟨"coon-keine-2021", "(54a)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_54a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "nonfinite"), ("probe", "none"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "germanPresent")] }
 
-def ex_54b : LinguisticExample :=
+def ex_54b : Datum :=
   { id := "coonkeine2021_54b"
     source := ⟨"coon-keine-2021", "(54b)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_54b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "nonfinite"), ("probe", "none"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "germanPresent")] }
 
-def fn32_ia : LinguisticExample :=
+def fn32_ia : Datum :=
   { id := "coonkeine2021_fn32_ia"
     source := ⟨"coon-keine-2021", "fn. 32 (ia)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def fn32_ia : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "germanPast")] }
 
-def ex_68a : LinguisticExample :=
+def ex_68a : Datum :=
   { id := "coonkeine2021_68a"
     source := ⟨"bhatia-bhatt-2019", "p. 3"⟩
     reportedIn := some ⟨"coon-keine-2021", "(68a)"⟩
@@ -433,7 +431,7 @@ def ex_68a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "1"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "hindiPresent")] }
 
-def ex_68b : LinguisticExample :=
+def ex_68b : Datum :=
   { id := "coonkeine2021_68b"
     source := ⟨"bhatia-bhatt-2019", "p. 3"⟩
     reportedIn := some ⟨"coon-keine-2021", "(68b)"⟩
@@ -446,7 +444,7 @@ def ex_68b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "hindiPresent")] }
 
-def ex_69a : LinguisticExample :=
+def ex_69a : Datum :=
   { id := "coonkeine2021_69a"
     source := ⟨"coon-keine-2021", "(69a)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_69a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "pl"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "hindiPresent")] }
 
-def ex_69b : LinguisticExample :=
+def ex_69b : Datum :=
   { id := "coonkeine2021_69b"
     source := ⟨"coon-keine-2021", "(69b)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_69b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "hindiPresent")] }
 
-def fn34_i : LinguisticExample :=
+def fn34_i : Datum :=
   { id := "coonkeine2021_fn34_i"
     source := ⟨"bhatia-bhatt-2019", "p. 6"⟩
     reportedIn := some ⟨"coon-keine-2021", "fn. 34 (i)"⟩
@@ -485,7 +483,7 @@ def fn34_i : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "hindiPast")] }
 
-def ex_70a : LinguisticExample :=
+def ex_70a : Datum :=
   { id := "coonkeine2021_70a"
     source := ⟨"coon-keine-2021", "(70a)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_70a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "1"), ("higherNumber", "sg"), ("lower", "3"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "portuguesePresent")] }
 
-def ex_70b : LinguisticExample :=
+def ex_70b : Datum :=
   { id := "coonkeine2021_70b"
     source := ⟨"coon-keine-2021", "(70b)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_70b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copula"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "portuguesePresent")] }
 
-def ex_71 : LinguisticExample :=
+def ex_71 : Datum :=
   { id := "coonkeine2021_71"
     source := ⟨"coon-keine-2021", "(71)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_71 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copula"), ("higher", "3"), ("lower", "2")] }
 
-def ex_72 : LinguisticExample :=
+def ex_72 : Datum :=
   { id := "coonkeine2021_72"
     source := ⟨"coon-keine-2021", "(72)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_72 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "copula"), ("higher", "3"), ("lower", "3"), ("lowerNumber", "pl")] }
 
-def ex_73 : LinguisticExample :=
+def ex_73 : Datum :=
   { id := "coonkeine2021_73"
     source := ⟨"sigurdsson-holmberg-2008", "p. 260"⟩
     reportedIn := some ⟨"coon-keine-2021", "(73)"⟩
@@ -550,7 +548,7 @@ def ex_73 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "datNom"), ("higher", "3"), ("lower", "3"), ("lowerNumber", "pl")] }
 
-def ex_74 : LinguisticExample :=
+def ex_74 : Datum :=
   { id := "coonkeine2021_74"
     source := ⟨"sigurdsson-1996", "p. 1"⟩
     reportedIn := some ⟨"coon-keine-2021", "(74)"⟩
@@ -563,7 +561,7 @@ def ex_74 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "datNom"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "3"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "icelandicMediopassivePast")] }
 
-def ex_76a : LinguisticExample :=
+def ex_76a : Datum :=
   { id := "coonkeine2021_76a"
     source := ⟨"sigurdsson-holmberg-2008", "p. 270"⟩
     reportedIn := some ⟨"coon-keine-2021", "(76a)"⟩
@@ -576,7 +574,7 @@ def ex_76a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "datNom"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "icelandicMediopassivePast")] }
 
-def ex_76b : LinguisticExample :=
+def ex_76b : Datum :=
   { id := "coonkeine2021_76b"
     source := ⟨"sigurdsson-1996", "p. 33"⟩
     reportedIn := some ⟨"coon-keine-2021", "(76b)"⟩
@@ -589,7 +587,7 @@ def ex_76b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "datNom"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "2"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "icelandicLikaPast")] }
 
-def ex_77 : LinguisticExample :=
+def ex_77 : Datum :=
   { id := "coonkeine2021_77"
     source := ⟨"sigurdsson-holmberg-2008", "p. 271"⟩
     reportedIn := some ⟨"coon-keine-2021", "(77)"⟩
@@ -602,7 +600,7 @@ def ex_77 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "nonfinite"), ("probe", "none"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "icelandicMediopassivePast")] }
 
-def ex_78a : LinguisticExample :=
+def ex_78a : Datum :=
   { id := "coonkeine2021_78a"
     source := ⟨"hrafnbjargarson-2002", "p. 2"⟩
     reportedIn := some ⟨"coon-keine-2021", "(78a)"⟩
@@ -615,7 +613,7 @@ def ex_78a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "datNom"), ("probe", "weak"), ("higher", "1"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "3"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "icelandicThykjaPresent")] }
 
-def ex_78b_agree : LinguisticExample :=
+def ex_78b_agree : Datum :=
   { id := "coonkeine2021_78b_agree"
     source := ⟨"hrafnbjargarson-2002", "p. 2"⟩
     reportedIn := some ⟨"coon-keine-2021", "(78b)"⟩
@@ -628,7 +626,7 @@ def ex_78b_agree : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "datNom"), ("probe", "weak"), ("higher", "2"), ("higherNumber", "pl"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "sg"), ("aftermath", "agreement"), ("paradigm", "icelandicThykjaPresent")] }
 
-def ex_78b : LinguisticExample :=
+def ex_78b : Datum :=
   { id := "coonkeine2021_78b"
     source := ⟨"hrafnbjargarson-2002", "p. 2"⟩
     reportedIn := some ⟨"coon-keine-2021", "(78b)"⟩
@@ -641,7 +639,7 @@ def ex_78b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "datNom"), ("probe", "weak"), ("higher", "2"), ("higherNumber", "pl"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "sg"), ("lowerShielded", "yes"), ("aftermath", "agreement"), ("paradigm", "icelandicThykjaPresent")] }
 
-def ex_84a : LinguisticExample :=
+def ex_84a : Datum :=
   { id := "coonkeine2021_84a"
     source := ⟨"sigurdsson-holmberg-2008", "p. 270"⟩
     reportedIn := some ⟨"coon-keine-2021", "(84a)"⟩
@@ -654,7 +652,7 @@ def ex_84a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "datNom"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "2"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "icelandicMediopassivePast")] }
 
-def ex_84b : LinguisticExample :=
+def ex_84b : Datum :=
   { id := "coonkeine2021_84b"
     source := ⟨"sigurdsson-holmberg-2008", "p. 270"⟩
     reportedIn := some ⟨"coon-keine-2021", "(84b)"⟩
@@ -667,7 +665,7 @@ def ex_84b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "datNom"), ("probe", "weak"), ("higher", "3"), ("higherNumber", "sg"), ("higherOpaque", "yes"), ("lower", "1"), ("lowerNumber", "pl"), ("aftermath", "agreement"), ("paradigm", "icelandicMediopassivePast")] }
 
-def ex_86 : LinguisticExample :=
+def ex_86 : Datum :=
   { id := "coonkeine2021_86"
     source := ⟨"sigurdsson-2004a", "p. 86"⟩
     reportedIn := some ⟨"coon-keine-2021", "(86)"⟩
@@ -680,7 +678,7 @@ def ex_86 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "participles"), ("higher", "3"), ("higherNumber", "pl")] }
 
-def fn37_i : LinguisticExample :=
+def fn37_i : Datum :=
   { id := "coonkeine2021_fn37_i"
     source := ⟨"sigurdsson-2006", "p. 223"⟩
     reportedIn := some ⟨"coon-keine-2021", "fn. 37 (i)"⟩
@@ -693,6 +691,6 @@ def fn37_i : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "expletive"), ("lower", "1"), ("lowerNumber", "pl")] }
 
-def all : List LinguisticExample := [ex_3a, ex_3b, ex_3c, ex_3d, ex_10b, ex_10c, ex_37a, ex_37b, ex_41, ex_50, ex_24, ex_28, ex_31_2_1, ex_31_1_2, ex_44a, ex_44a_me, ex_44a_te, ex_44b, ex_44b_mi, ex_44b_ti, ex_46a, ex_46b, ex_48a, ex_48b, ex_51a, ex_51b, ex_52a, ex_52b, ex_54a, ex_54b, fn32_ia, ex_68a, ex_68b, ex_69a, ex_69b, fn34_i, ex_70a, ex_70b, ex_71, ex_72, ex_73, ex_74, ex_76a, ex_76b, ex_77, ex_78a, ex_78b_agree, ex_78b, ex_84a, ex_84b, ex_86, fn37_i]
+def all : List Datum := [ex_3a, ex_3b, ex_3c, ex_3d, ex_10b, ex_10c, ex_37a, ex_37b, ex_41, ex_50, ex_24, ex_28, ex_31_2_1, ex_31_1_2, ex_44a, ex_44a_me, ex_44a_te, ex_44b, ex_44b_mi, ex_44b_ti, ex_46a, ex_46b, ex_48a, ex_48b, ex_51a, ex_51b, ex_52a, ex_52b, ex_54a, ex_54b, fn32_ia, ex_68a, ex_68b, ex_69a, ex_69b, fn34_i, ex_70a, ex_70b, ex_71, ex_72, ex_73, ex_74, ex_76a, ex_76b, ex_77, ex_78a, ex_78b_agree, ex_78b, ex_84a, ex_84b, ex_86, fn37_i]
 
 end CoonKeine2021.Examples

@@ -15,9 +15,7 @@ this module; declarations live in `namespace Wood2015.Examples`.
 
 namespace Wood2015.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "wood2015_1"
     source := ⟨"wood-2015", "Ch. 2 (1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("use", "reciprocal")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "wood2015_2"
     source := ⟨"wood-2015", "Ch. 2 (1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("use", "reflexive")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "wood2015_3"
     source := ⟨"wood-2015", "Ch. 2 (1c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("use", "anticausative")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "wood2015_4"
     source := ⟨"wood-2015", "Ch. 2 (1d)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("use", "generic middle")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "wood2015_5"
     source := ⟨"wood-2015", "Ch. 3 (16a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("exponent", "-ka"), ("voice", "Voice{D}")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "wood2015_6"
     source := ⟨"wood-2015", "Ch. 3 (16b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("exponent", "-ka"), ("voice", "Voice{}")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "wood2015_7"
     source := ⟨"wood-2015", "Ch. 3 (20a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("voice", "Voice{D}")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "wood2015_8"
     source := ⟨"wood-2015", "Ch. 3 (20b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("exponent", "-na"), ("voice", "Voice{}")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "wood2015_9"
     source := ⟨"wood-2015", "Ch. 3 (52)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("use", "anticausative"), ("site", "SpecVoiceP")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "wood2015_10"
     source := ⟨"wood-2015", "Ch. 3 (70)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("use", "anticausative"), ("site", "SpecVoiceP")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "wood2015_11"
     source := ⟨"wood-2015", "Ch. 3 (72a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("voice", "agentive")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "wood2015_12"
     source := ⟨"wood-2015", "Ch. 3 (72b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("voice", "agentive")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "wood2015_13"
     source := ⟨"wood-2015", "Ch. 3 (72c)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("use", "anticausative")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "wood2015_14"
     source := ⟨"wood-2015", "Ch. 5 (47a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "SpecApplP")] }
 
-def ex_15 : LinguisticExample :=
+def ex_15 : Datum :=
   { id := "wood2015_15"
     source := ⟨"wood-2015", "Ch. 5 (47b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_15 : LinguisticExample :=
     readings := []
     paperFeatures := [("position", "SpecApplP")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "wood2015_16"
     source := ⟨"wood-2015", "Ch. 5 (52a)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "Appl")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "wood2015_17"
     source := ⟨"wood-2015", "Ch. 5 (52b)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "Appl")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "wood2015_18"
     source := ⟨"wood-2015", "Ch. 5 (53a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "direct object")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "wood2015_19"
     source := ⟨"wood-2015", "Ch. 5 (53b)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("dative", "direct object")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "wood2015_20"
     source := ⟨"wood-2015", "Ch. 5 (92a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("use", "subject experiencer"), ("site", "SpecVoiceP")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "wood2015_21"
     source := ⟨"wood-2015", "Ch. 6 (55a)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("use", "reciprocal"), ("type", "2")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "wood2015_22"
     source := ⟨"wood-2015", "Ch. 6 (55b)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("use", "reciprocal"), ("type", "2")] }
 
-def ex_23 : LinguisticExample :=
+def ex_23 : Datum :=
   { id := "wood2015_23"
     source := ⟨"wood-2015", "Ch. 6 (76b)"⟩
     reportedIn := none
@@ -316,6 +314,6 @@ def ex_23 : LinguisticExample :=
     readings := []
     paperFeatures := [("use", "reflexive")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23]
 
 end Wood2015.Examples

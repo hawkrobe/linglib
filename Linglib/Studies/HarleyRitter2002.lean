@@ -41,7 +41,7 @@ so the Daga first singular is less marked than the first plural.
 
 namespace HarleyRitter2002
 
-open Phi.Geometry Data.Examples
+open Phi.Geometry
 
 /-! ### Languages and their inventories -/
 
@@ -114,16 +114,16 @@ def numberOfLabel : String → Option Number
   | _ => none
 
 /-- Read a row off a pool example. -/
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let lang ← Lang.ofGlottocode ex.language
   let person ← ex.feature? "person" >>= personOfLabel
   let number ← ex.feature? "number" >>= numberOfLabel
   pure ⟨lang, person, number, ex.primaryText⟩
 
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
 /-- The pronouns of Tables 3–8 and 13–15. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- A language's pronouns. -/
 def Lang.rows (l : Lang) : List Row := HarleyRitter2002.rows.filter (·.lang = l)

@@ -82,7 +82,6 @@ theorem notUntil_iff_when_of_presupposition (a b : T)
 
 /-! ### The durative selectional restriction -/
 
-open Data.Examples
 open Aspect
 
 /-- Durative *until* selects a durative, atelic main clause — the classes with the
@@ -98,7 +97,7 @@ theorem satisfiesDurativeRestriction_iff (c : VendlerClass) :
   cases c <;> decide
 
 /-- The Vendler class a row records. -/
-def vendlerOf (row : LinguisticExample) : Option VendlerClass :=
+def vendlerOf (row : Datum) : Option VendlerClass :=
   match row.feature? "vendler_class" with
   | some "state" => some .state
   | some "activity" => some .activity

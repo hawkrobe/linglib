@@ -15,9 +15,7 @@ this module; declarations live in `namespace Ross1967.Examples`.
 
 namespace Ross1967.Examples
 
-open Data.Examples
-
-def ex4_15a : LinguisticExample :=
+def ex4_15a : Datum :=
   { id := "ross1967_ex4_15a"
     source := ⟨"ross-1967", "(4.15a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex4_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "question"), ("constraint", "CNPC")] }
 
-def ex4_18a : LinguisticExample :=
+def ex4_18a : Datum :=
   { id := "ross1967_ex4_18a"
     source := ⟨"ross-1967", "(4.18a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex4_18a : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "relativization"), ("constraint", "CNPC")] }
 
-def ex4_18b : LinguisticExample :=
+def ex4_18b : Datum :=
   { id := "ross1967_ex4_18b"
     source := ⟨"ross-1967", "(4.18b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex4_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "relativization")] }
 
-def ex2_18 : LinguisticExample :=
+def ex2_18 : Datum :=
   { id := "ross1967_ex2_18"
     source := ⟨"ross-1967", "(2.18)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex2_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "question"), ("constraint", "CSC")] }
 
-def ex4_82a : LinguisticExample :=
+def ex4_82a : Datum :=
   { id := "ross1967_ex4_82a"
     source := ⟨"ross-1967", "(4.82a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex4_82a : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "relativization"), ("constraint", "CSC")] }
 
-def ex4_82d : LinguisticExample :=
+def ex4_82d : Datum :=
   { id := "ross1967_ex4_82d"
     source := ⟨"ross-1967", "(4.82d)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex4_82d : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "question"), ("constraint", "CSC")] }
 
-def ex4_184a : LinguisticExample :=
+def ex4_184a : Datum :=
   { id := "ross1967_ex4_184a"
     source := ⟨"ross-1967", "(4.184a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex4_184a : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "relativization")] }
 
-def ex4_184b : LinguisticExample :=
+def ex4_184b : Datum :=
   { id := "ross1967_ex4_184b"
     source := ⟨"ross-1967", "(4.184b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex4_184b : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "relativization"), ("constraint", "LBC")] }
 
-def ex4_184c : LinguisticExample :=
+def ex4_184c : Datum :=
   { id := "ross1967_ex4_184c"
     source := ⟨"ross-1967", "(4.184c)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex4_184c : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "relativization"), ("constraint", "LBC")] }
 
-def ex4_251a : LinguisticExample :=
+def ex4_251a : Datum :=
   { id := "ross1967_ex4_251a"
     source := ⟨"ross-1967", "(4.251a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex4_251a : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "relativization")] }
 
-def ex4_251b : LinguisticExample :=
+def ex4_251b : Datum :=
   { id := "ross1967_ex4_251b"
     source := ⟨"ross-1967", "(4.251b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex4_251b : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "relativization"), ("constraint", "SSC")] }
 
-def ex4_251c : LinguisticExample :=
+def ex4_251c : Datum :=
   { id := "ross1967_ex4_251c"
     source := ⟨"ross-1967", "(4.251c)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex4_251c : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "relativization")] }
 
-def ex4_252 : LinguisticExample :=
+def ex4_252 : Datum :=
   { id := "ross1967_ex4_252"
     source := ⟨"ross-1967", "(4.252)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex4_252 : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "question")] }
 
-def ex6_128b : LinguisticExample :=
+def ex6_128b : Datum :=
   { id := "ross1967_ex6_128b"
     source := ⟨"ross-1967", "(6.128b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex6_128b : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "leftDislocation"), ("constraint", "CNPC")] }
 
-def ex6_135b : LinguisticExample :=
+def ex6_135b : Datum :=
   { id := "ross1967_ex6_135b"
     source := ⟨"ross-1967", "(6.135b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex6_135b : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "leftDislocation"), ("constraint", "CSC")] }
 
-def ex6_136 : LinguisticExample :=
+def ex6_136 : Datum :=
   { id := "ross1967_ex6_136"
     source := ⟨"ross-1967", "(6.136)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex6_136 : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "leftDislocation"), ("constraint", "SSC")] }
 
-def ex6_137 : LinguisticExample :=
+def ex6_137 : Datum :=
   { id := "ross1967_ex6_137"
     source := ⟨"ross-1967", "(6.137)"⟩
     reportedIn := none
@@ -238,6 +236,6 @@ def ex6_137 : LinguisticExample :=
     readings := []
     paperFeatures := [("rule", "leftDislocation"), ("constraint", "LBC")] }
 
-def all : List LinguisticExample := [ex4_15a, ex4_18a, ex4_18b, ex2_18, ex4_82a, ex4_82d, ex4_184a, ex4_184b, ex4_184c, ex4_251a, ex4_251b, ex4_251c, ex4_252, ex6_128b, ex6_135b, ex6_136, ex6_137]
+def all : List Datum := [ex4_15a, ex4_18a, ex4_18b, ex2_18, ex4_82a, ex4_82d, ex4_184a, ex4_184b, ex4_184c, ex4_251a, ex4_251b, ex4_251c, ex4_252, ex6_128b, ex6_135b, ex6_136, ex6_137]
 
 end Ross1967.Examples

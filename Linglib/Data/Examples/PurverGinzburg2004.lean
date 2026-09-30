@@ -15,9 +15,7 @@ this module; declarations live in `namespace PurverGinzburg2004.Examples`.
 
 namespace PurverGinzburg2004.Examples
 
-open Data.Examples
-
-def ex25 : LinguisticExample :=
+def ex25 : Datum :=
   { id := "purverginzburg2004_ex25"
     source := ⟨"purver-ginzburg-2004", "(25)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex25 : LinguisticExample :=
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "cn")] }
 
-def ex26 : LinguisticExample :=
+def ex26 : Datum :=
   { id := "purverginzburg2004_ex26"
     source := ⟨"purver-ginzburg-2004", "(26)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex26 : LinguisticExample :=
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "cn")] }
 
-def ex27 : LinguisticExample :=
+def ex27 : Datum :=
   { id := "purverginzburg2004_ex27"
     source := ⟨"purver-ginzburg-2004", "(27)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex27 : LinguisticExample :=
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "cn")] }
 
-def ex31 : LinguisticExample :=
+def ex31 : Datum :=
   { id := "purverginzburg2004_ex31"
     source := ⟨"purver-ginzburg-2004", "(31)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex31 : LinguisticExample :=
     readings := [("predicate", .acceptable)]
     paperFeatures := [("np", "bareSingular")] }
 
-def ex32 : LinguisticExample :=
+def ex32 : Datum :=
   { id := "purverginzburg2004_ex32"
     source := ⟨"purver-ginzburg-2004", "(32)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex32 : LinguisticExample :=
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "bareSingular")] }
 
-def ex34 : LinguisticExample :=
+def ex34 : Datum :=
   { id := "purverginzburg2004_ex34"
     source := ⟨"purver-ginzburg-2004", "(34)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex34 : LinguisticExample :=
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "cn")] }
 
-def ex35 : LinguisticExample :=
+def ex35 : Datum :=
   { id := "purverginzburg2004_ex35"
     source := ⟨"purver-ginzburg-2004", "(35)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex35 : LinguisticExample :=
     readings := [("referent", .acceptable), ("predicate", .acceptable)]
     paperFeatures := [("np", "specificIndefinite")] }
 
-def ex36 : LinguisticExample :=
+def ex36 : Datum :=
   { id := "purverginzburg2004_ex36"
     source := ⟨"purver-ginzburg-2004", "(36)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex36 : LinguisticExample :=
     readings := [("determiner", .acceptable)]
     paperFeatures := [("np", "indefinite")] }
 
-def ex37 : LinguisticExample :=
+def ex37 : Datum :=
   { id := "purverginzburg2004_ex37"
     source := ⟨"purver-ginzburg-2004", "(37)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex37 : LinguisticExample :=
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "demonstrative")] }
 
-def ex38 : LinguisticExample :=
+def ex38 : Datum :=
   { id := "purverginzburg2004_ex38"
     source := ⟨"purver-ginzburg-2004", "(38)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex38 : LinguisticExample :=
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "demonstrative")] }
 
-def ex39 : LinguisticExample :=
+def ex39 : Datum :=
   { id := "purverginzburg2004_ex39"
     source := ⟨"purver-ginzburg-2004", "(39)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex39 : LinguisticExample :=
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "demonstrative")] }
 
-def ex40 : LinguisticExample :=
+def ex40 : Datum :=
   { id := "purverginzburg2004_ex40"
     source := ⟨"purver-ginzburg-2004", "(40)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex40 : LinguisticExample :=
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "pronoun")] }
 
-def ex41 : LinguisticExample :=
+def ex41 : Datum :=
   { id := "purverginzburg2004_ex41"
     source := ⟨"purver-ginzburg-2004", "(41)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex41 : LinguisticExample :=
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "definite")] }
 
-def ex42 : LinguisticExample :=
+def ex42 : Datum :=
   { id := "purverginzburg2004_ex42"
     source := ⟨"purver-ginzburg-2004", "(42)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex42 : LinguisticExample :=
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "definite")] }
 
-def ex43 : LinguisticExample :=
+def ex43 : Datum :=
   { id := "purverginzburg2004_ex43"
     source := ⟨"purver-ginzburg-2004", "(43)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex43 : LinguisticExample :=
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "definite")] }
 
-def ex44 : LinguisticExample :=
+def ex44 : Datum :=
   { id := "purverginzburg2004_ex44"
     source := ⟨"purver-ginzburg-2004", "(44)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex44 : LinguisticExample :=
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "definite")] }
 
-def ex46 : LinguisticExample :=
+def ex46 : Datum :=
   { id := "purverginzburg2004_ex46"
     source := ⟨"purver-ginzburg-2004", "(46)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex46 : LinguisticExample :=
     readings := [("functional", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "attributiveDefinite")] }
 
-def ex47 : LinguisticExample :=
+def ex47 : Datum :=
   { id := "purverginzburg2004_ex47"
     source := ⟨"purver-ginzburg-2004", "(47)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex47 : LinguisticExample :=
     readings := [("domain", .acceptable), ("functional", .marginal), ("referent", .unacceptable)]
     paperFeatures := [("np", "attributiveDefinite")] }
 
-def ex49 : LinguisticExample :=
+def ex49 : Datum :=
   { id := "purverginzburg2004_ex49"
     source := ⟨"purver-ginzburg-2004", "(49)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex49 : LinguisticExample :=
     readings := [("referent", .acceptable), ("predicate", .acceptable)]
     paperFeatures := [("np", "definite")] }
 
-def ex50 : LinguisticExample :=
+def ex50 : Datum :=
   { id := "purverginzburg2004_ex50"
     source := ⟨"purver-ginzburg-2004", "(50)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex50 : LinguisticExample :=
     readings := [("predicate", .acceptable)]
     paperFeatures := [("np", "definite")] }
 
-def ex53 : LinguisticExample :=
+def ex53 : Datum :=
   { id := "purverginzburg2004_ex53"
     source := ⟨"purver-ginzburg-2004", "(53)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex53 : LinguisticExample :=
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "indefinite")] }
 
-def ex54 : LinguisticExample :=
+def ex54 : Datum :=
   { id := "purverginzburg2004_ex54"
     source := ⟨"purver-ginzburg-2004", "(54)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex54 : LinguisticExample :=
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "indefinite")] }
 
-def ex55 : LinguisticExample :=
+def ex55 : Datum :=
   { id := "purverginzburg2004_ex55"
     source := ⟨"purver-ginzburg-2004", "(55)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex55 : LinguisticExample :=
     readings := [("determiner", .acceptable), ("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "indefinite")] }
 
-def ex56 : LinguisticExample :=
+def ex56 : Datum :=
   { id := "purverginzburg2004_ex56"
     source := ⟨"purver-ginzburg-2004", "(56)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex56 : LinguisticExample :=
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "indefinite")] }
 
-def ex57 : LinguisticExample :=
+def ex57 : Datum :=
   { id := "purverginzburg2004_ex57"
     source := ⟨"purver-ginzburg-2004", "(57)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex57 : LinguisticExample :=
     readings := [("predicate", .acceptable), ("referent", .marginal)]
     paperFeatures := [("np", "indefinite")] }
 
-def ex58 : LinguisticExample :=
+def ex58 : Datum :=
   { id := "purverginzburg2004_ex58"
     source := ⟨"purver-ginzburg-2004", "(58)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex58 : LinguisticExample :=
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "specificIndefinite")] }
 
-def ex59 : LinguisticExample :=
+def ex59 : Datum :=
   { id := "purverginzburg2004_ex59"
     source := ⟨"purver-ginzburg-2004", "(59)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex59 : LinguisticExample :=
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "specificIndefinite")] }
 
-def ex62 : LinguisticExample :=
+def ex62 : Datum :=
   { id := "purverginzburg2004_ex62"
     source := ⟨"purver-ginzburg-2004", "(62)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex62 : LinguisticExample :=
     readings := [("predicate", .acceptable), ("determiner", .acceptable), ("referent", .acceptable)]
     paperFeatures := [("np", "universal")] }
 
-def ex63 : LinguisticExample :=
+def ex63 : Datum :=
   { id := "purverginzburg2004_ex63"
     source := ⟨"purver-ginzburg-2004", "(63)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex63 : LinguisticExample :=
     readings := [("determiner", .acceptable), ("referent", .marginal)]
     paperFeatures := [("np", "negative")] }
 
-def ex64 : LinguisticExample :=
+def ex64 : Datum :=
   { id := "purverginzburg2004_ex64"
     source := ⟨"purver-ginzburg-2004", "(64)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex64 : LinguisticExample :=
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "universal")] }
 
-def ex65 : LinguisticExample :=
+def ex65 : Datum :=
   { id := "purverginzburg2004_ex65"
     source := ⟨"purver-ginzburg-2004", "(65)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex65 : LinguisticExample :=
     readings := [("referent", .acceptable)]
     paperFeatures := [("np", "universal")] }
 
-def ex77 : LinguisticExample :=
+def ex77 : Datum :=
   { id := "purverginzburg2004_ex77"
     source := ⟨"purver-ginzburg-2004", "(77)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex77 : LinguisticExample :=
     readings := [("determiner", .acceptable)]
     paperFeatures := [("np", "determiner")] }
 
-def ex79 : LinguisticExample :=
+def ex79 : Datum :=
   { id := "purverginzburg2004_ex79"
     source := ⟨"purver-ginzburg-2004", "(79)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex79 : LinguisticExample :=
     readings := [("predicate", .acceptable), ("determiner", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "wh")] }
 
-def ex80 : LinguisticExample :=
+def ex80 : Datum :=
   { id := "purverginzburg2004_ex80"
     source := ⟨"purver-ginzburg-2004", "(80)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex80 : LinguisticExample :=
     readings := [("predicate", .acceptable), ("referent", .unacceptable)]
     paperFeatures := [("np", "wh")] }
 
-def ex87 : LinguisticExample :=
+def ex87 : Datum :=
   { id := "purverginzburg2004_ex87"
     source := ⟨"purver-ginzburg-2004", "(87)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex87 : LinguisticExample :=
     readings := [("predicate", .acceptable), ("determiner", .acceptable)]
     paperFeatures := [("np", "monotoneDecreasing")] }
 
-def ex88 : LinguisticExample :=
+def ex88 : Datum :=
   { id := "purverginzburg2004_ex88"
     source := ⟨"purver-ginzburg-2004", "(88)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex88 : LinguisticExample :=
     readings := [("referent", .acceptable), ("complement", .marginal)]
     paperFeatures := [("np", "monotoneDecreasingReferential")] }
 
-def ex90 : LinguisticExample :=
+def ex90 : Datum :=
   { id := "purverginzburg2004_ex90"
     source := ⟨"purver-ginzburg-2004", "(90)"⟩
     reportedIn := none
@@ -498,6 +496,6 @@ def ex90 : LinguisticExample :=
     readings := [("complement", .acceptable)]
     paperFeatures := [("np", "monotoneDecreasingReferential")] }
 
-def all : List LinguisticExample := [ex25, ex26, ex27, ex31, ex32, ex34, ex35, ex36, ex37, ex38, ex39, ex40, ex41, ex42, ex43, ex44, ex46, ex47, ex49, ex50, ex53, ex54, ex55, ex56, ex57, ex58, ex59, ex62, ex63, ex64, ex65, ex77, ex79, ex80, ex87, ex88, ex90]
+def all : List Datum := [ex25, ex26, ex27, ex31, ex32, ex34, ex35, ex36, ex37, ex38, ex39, ex40, ex41, ex42, ex43, ex44, ex46, ex47, ex49, ex50, ex53, ex54, ex55, ex56, ex57, ex58, ex59, ex62, ex63, ex64, ex65, ex77, ex79, ex80, ex87, ex88, ex90]
 
 end PurverGinzburg2004.Examples

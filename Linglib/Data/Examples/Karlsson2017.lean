@@ -15,9 +15,7 @@ this module; declarations live in `namespace Karlsson2017.Examples`.
 
 namespace Karlsson2017.Examples
 
-open Data.Examples
-
-def neg1 : LinguisticExample :=
+def neg1 : Datum :=
   { id := "karlsson2017_neg1"
     source := ⟨"karlsson-2017", "12.2.2 (1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def neg1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "yes"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "finite"), ("case", "part")] }
 
-def neg2 : LinguisticExample :=
+def neg2 : Datum :=
   { id := "karlsson2017_neg2"
     source := ⟨"karlsson-2017", "12.2.2 (1)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def neg2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "yes"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "finite"), ("case", "part")] }
 
-def neg3 : LinguisticExample :=
+def neg3 : Datum :=
   { id := "karlsson2017_neg3"
     source := ⟨"karlsson-2017", "12.2.2 (1)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def neg3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "yes"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "plural"), ("clause", "finite"), ("case", "part")] }
 
-def neg4 : LinguisticExample :=
+def neg4 : Datum :=
   { id := "karlsson2017_neg4"
     source := ⟨"karlsson-2017", "12.2.2 (1)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def neg4 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "yes"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "personalPronoun"), ("clause", "finite"), ("case", "part")] }
 
-def ex_2a_read_part : LinguisticExample :=
+def ex_2a_read_part : Datum :=
   { id := "karlsson2017_2a_read_part"
     source := ⟨"karlsson-2017", "12.2.2 (2a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_2a_read_part : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "irresultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "finite"), ("case", "part")] }
 
-def ex_2a_read_tot : LinguisticExample :=
+def ex_2a_read_tot : Datum :=
   { id := "karlsson2017_2a_read_tot"
     source := ⟨"karlsson-2017", "12.2.2 (2a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_2a_read_tot : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "finite"), ("case", "gen")] }
 
-def ex_2a_drive_part : LinguisticExample :=
+def ex_2a_drive_part : Datum :=
   { id := "karlsson2017_2a_drive_part"
     source := ⟨"karlsson-2017", "12.2.2 (2a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_2a_drive_part : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "irresultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "finite"), ("case", "part")] }
 
-def ex_2a_drive_tot : LinguisticExample :=
+def ex_2a_drive_tot : Datum :=
   { id := "karlsson2017_2a_drive_tot"
     source := ⟨"karlsson-2017", "12.2.2 (2a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_2a_drive_tot : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "finite"), ("case", "gen")] }
 
-def ex_2a_shoot_part : LinguisticExample :=
+def ex_2a_shoot_part : Datum :=
   { id := "karlsson2017_2a_shoot_part"
     source := ⟨"karlsson-2017", "12.2.2 (2a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_2a_shoot_part : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "irresultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "finite"), ("case", "part")] }
 
-def ex_2a_shoot_tot : LinguisticExample :=
+def ex_2a_shoot_tot : Datum :=
   { id := "karlsson2017_2a_shoot_tot"
     source := ⟨"karlsson-2017", "12.2.2 (2a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_2a_shoot_tot : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "finite"), ("case", "gen")] }
 
-def ex_2b_love : LinguisticExample :=
+def ex_2b_love : Datum :=
   { id := "karlsson2017_2b_love"
     source := ⟨"karlsson-2017", "12.2.2 (2b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_2b_love : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "irresultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "finite"), ("case", "part")] }
 
-def ex_2b_interest : LinguisticExample :=
+def ex_2b_interest : Datum :=
   { id := "karlsson2017_2b_interest"
     source := ⟨"karlsson-2017", "12.2.2 (2b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_2b_interest : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "irresultative"), ("quantity", "definite"), ("nominal", "personalPronoun"), ("clause", "finite"), ("case", "part")] }
 
-def ex_2b_fear : LinguisticExample :=
+def ex_2b_fear : Datum :=
   { id := "karlsson2017_2b_fear"
     source := ⟨"karlsson-2017", "12.2.2 (2b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_2b_fear : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "irresultative"), ("quantity", "indefinite"), ("nominal", "plural"), ("clause", "finite"), ("case", "part")] }
 
-def ex_3_icecream_part : LinguisticExample :=
+def ex_3_icecream_part : Datum :=
   { id := "karlsson2017_3_icecream_part"
     source := ⟨"karlsson-2017", "12.2.2 (3)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_3_icecream_part : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "indefinite"), ("nominal", "singular"), ("clause", "finite"), ("case", "part")] }
 
-def ex_3_icecream_tot : LinguisticExample :=
+def ex_3_icecream_tot : Datum :=
   { id := "karlsson2017_3_icecream_tot"
     source := ⟨"karlsson-2017", "12.2.2 (3)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_3_icecream_tot : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "finite"), ("case", "gen")] }
 
-def ex_3_beer_part : LinguisticExample :=
+def ex_3_beer_part : Datum :=
   { id := "karlsson2017_3_beer_part"
     source := ⟨"karlsson-2017", "12.2.2 (3)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_3_beer_part : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "indefinite"), ("nominal", "singular"), ("clause", "finite"), ("case", "part")] }
 
-def ex_3_beer_tot : LinguisticExample :=
+def ex_3_beer_tot : Datum :=
   { id := "karlsson2017_3_beer_tot"
     source := ⟨"karlsson-2017", "12.2.2 (3)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_3_beer_tot : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "finite"), ("case", "gen")] }
 
-def ex_3_people_part : LinguisticExample :=
+def ex_3_people_part : Datum :=
   { id := "karlsson2017_3_people_part"
     source := ⟨"karlsson-2017", "12.2.2 (3)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_3_people_part : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "indefinite"), ("nominal", "plural"), ("clause", "finite"), ("case", "part")] }
 
-def ex_3_people_tot : LinguisticExample :=
+def ex_3_people_tot : Datum :=
   { id := "karlsson2017_3_people_tot"
     source := ⟨"karlsson-2017", "12.2.2 (3)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_3_people_tot : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "plural"), ("clause", "finite"), ("case", "nom")] }
 
-def ex_3_guests_part : LinguisticExample :=
+def ex_3_guests_part : Datum :=
   { id := "karlsson2017_3_guests_part"
     source := ⟨"karlsson-2017", "12.2.2 (3)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_3_guests_part : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "indefinite"), ("nominal", "plural"), ("clause", "finite"), ("case", "part")] }
 
-def ex_3_guests_tot : LinguisticExample :=
+def ex_3_guests_tot : Datum :=
   { id := "karlsson2017_3_guests_tot"
     source := ⟨"karlsson-2017", "12.2.2 (3)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_3_guests_tot : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "12.2.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "plural"), ("clause", "finite"), ("case", "nom")] }
 
-def tot_message : LinguisticExample :=
+def tot_message : Datum :=
   { id := "karlsson2017_tot_message"
     source := ⟨"karlsson-2017", "13.3.1"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def tot_message : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.1"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "finite"), ("case", "gen")] }
 
-def tot_milk : LinguisticExample :=
+def tot_milk : Datum :=
   { id := "karlsson2017_tot_milk"
     source := ⟨"karlsson-2017", "13.3.1"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def tot_milk : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.1"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "finite"), ("case", "gen")] }
 
-def tot_car_imp : LinguisticExample :=
+def tot_car_imp : Datum :=
   { id := "karlsson2017_tot_car_imp"
     source := ⟨"karlsson-2017", "13.3.1"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def tot_car_imp : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.1"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "imperative"), ("case", "nom")] }
 
-def tot_computers : LinguisticExample :=
+def tot_computers : Datum :=
   { id := "karlsson2017_tot_computers"
     source := ⟨"karlsson-2017", "13.3.1"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def tot_computers : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.1"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "plural"), ("clause", "passive"), ("case", "nom")] }
 
-def tot_cars : LinguisticExample :=
+def tot_cars : Datum :=
   { id := "karlsson2017_tot_cars"
     source := ⟨"karlsson-2017", "13.3.1"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def tot_cars : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.1"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "plural"), ("clause", "finite"), ("case", "nom")] }
 
-def acc_took : LinguisticExample :=
+def acc_took : Datum :=
   { id := "karlsson2017_acc_took"
     source := ⟨"karlsson-2017", "13.3.2 (1)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def acc_took : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "personalPronoun"), ("clause", "finite"), ("case", "acc")] }
 
-def acc_take_imp : LinguisticExample :=
+def acc_take_imp : Datum :=
   { id := "karlsson2017_acc_take_imp"
     source := ⟨"karlsson-2017", "13.3.2 (1)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def acc_take_imp : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "personalPronoun"), ("clause", "imperative"), ("case", "acc")] }
 
-def acc_taken : LinguisticExample :=
+def acc_taken : Datum :=
   { id := "karlsson2017_acc_taken"
     source := ⟨"karlsson-2017", "13.3.2 (1)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def acc_taken : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "personalPronoun"), ("clause", "passive"), ("case", "acc")] }
 
-def acc_whom : LinguisticExample :=
+def acc_whom : Datum :=
   { id := "karlsson2017_acc_whom"
     source := ⟨"karlsson-2017", "13.3.2 (1)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def acc_whom : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "personalPronoun"), ("clause", "finite"), ("case", "acc")] }
 
-def pl_articles : LinguisticExample :=
+def pl_articles : Datum :=
   { id := "karlsson2017_pl_articles"
     source := ⟨"karlsson-2017", "13.3.2 (2)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def pl_articles : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "plural"), ("clause", "finite"), ("case", "nom")] }
 
-def pl_children_imp : LinguisticExample :=
+def pl_children_imp : Datum :=
   { id := "karlsson2017_pl_children_imp"
     source := ⟨"karlsson-2017", "13.3.2 (2)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def pl_children_imp : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "plural"), ("clause", "imperative"), ("case", "nom")] }
 
-def pl_children_pass : LinguisticExample :=
+def pl_children_pass : Datum :=
   { id := "karlsson2017_pl_children_pass"
     source := ⟨"karlsson-2017", "13.3.2 (2)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def pl_children_pass : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "plural"), ("clause", "passive"), ("case", "nom")] }
 
-def num_articles : LinguisticExample :=
+def num_articles : Datum :=
   { id := "karlsson2017_num_articles"
     source := ⟨"karlsson-2017", "13.3.2 (3)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def num_articles : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "numeral"), ("clause", "finite"), ("case", "nom")] }
 
-def num_children_imp : LinguisticExample :=
+def num_children_imp : Datum :=
   { id := "karlsson2017_num_children_imp"
     source := ⟨"karlsson-2017", "13.3.2 (3)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def num_children_imp : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "numeral"), ("clause", "imperative"), ("case", "nom")] }
 
-def num_children_pass : LinguisticExample :=
+def num_children_pass : Datum :=
   { id := "karlsson2017_num_children_pass"
     source := ⟨"karlsson-2017", "13.3.2 (3)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def num_children_pass : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "numeral"), ("clause", "passive"), ("case", "nom")] }
 
-def sg_camera : LinguisticExample :=
+def sg_camera : Datum :=
   { id := "karlsson2017_sg_camera"
     source := ⟨"karlsson-2017", "13.3.2 (4)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def sg_camera : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "finite"), ("case", "gen")] }
 
-def sg_child : LinguisticExample :=
+def sg_child : Datum :=
   { id := "karlsson2017_sg_child"
     source := ⟨"karlsson-2017", "13.3.2 (4)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def sg_child : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "finite"), ("case", "gen")] }
 
-def sg_window : LinguisticExample :=
+def sg_window : Datum :=
   { id := "karlsson2017_sg_window"
     source := ⟨"karlsson-2017", "13.3.2 (4)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def sg_window : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "finite"), ("case", "gen")] }
 
-def sg_paper_imp : LinguisticExample :=
+def sg_paper_imp : Datum :=
   { id := "karlsson2017_sg_paper_imp"
     source := ⟨"karlsson-2017", "13.3.2 (4)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def sg_paper_imp : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "imperative"), ("case", "nom")] }
 
-def sg_book_pass : LinguisticExample :=
+def sg_book_pass : Datum :=
   { id := "karlsson2017_sg_book_pass"
     source := ⟨"karlsson-2017", "13.3.2 (4)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def sg_book_pass : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "passive"), ("case", "nom")] }
 
-def sg_dog_pass : LinguisticExample :=
+def sg_dog_pass : Datum :=
   { id := "karlsson2017_sg_dog_pass"
     source := ⟨"karlsson-2017", "13.3.2 (4)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def sg_dog_pass : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "passive"), ("case", "nom")] }
 
-def sg_book_must : LinguisticExample :=
+def sg_book_must : Datum :=
   { id := "karlsson2017_sg_book_must"
     source := ⟨"karlsson-2017", "13.3.2 (4)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def sg_book_must : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "obligation"), ("case", "nom")] }
 
-def sg_house_inf : LinguisticExample :=
+def sg_house_inf : Datum :=
   { id := "karlsson2017_sg_house_inf"
     source := ⟨"karlsson-2017", "13.3.2 (4)"⟩
     reportedIn := none
@@ -589,6 +587,6 @@ def sg_house_inf : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "13.3.2"), ("negated", "no"), ("aspect", "resultative"), ("quantity", "definite"), ("nominal", "singular"), ("clause", "infinitival"), ("case", "nom")] }
 
-def all : List LinguisticExample := [neg1, neg2, neg3, neg4, ex_2a_read_part, ex_2a_read_tot, ex_2a_drive_part, ex_2a_drive_tot, ex_2a_shoot_part, ex_2a_shoot_tot, ex_2b_love, ex_2b_interest, ex_2b_fear, ex_3_icecream_part, ex_3_icecream_tot, ex_3_beer_part, ex_3_beer_tot, ex_3_people_part, ex_3_people_tot, ex_3_guests_part, ex_3_guests_tot, tot_message, tot_milk, tot_car_imp, tot_computers, tot_cars, acc_took, acc_take_imp, acc_taken, acc_whom, pl_articles, pl_children_imp, pl_children_pass, num_articles, num_children_imp, num_children_pass, sg_camera, sg_child, sg_window, sg_paper_imp, sg_book_pass, sg_dog_pass, sg_book_must, sg_house_inf]
+def all : List Datum := [neg1, neg2, neg3, neg4, ex_2a_read_part, ex_2a_read_tot, ex_2a_drive_part, ex_2a_drive_tot, ex_2a_shoot_part, ex_2a_shoot_tot, ex_2b_love, ex_2b_interest, ex_2b_fear, ex_3_icecream_part, ex_3_icecream_tot, ex_3_beer_part, ex_3_beer_tot, ex_3_people_part, ex_3_people_tot, ex_3_guests_part, ex_3_guests_tot, tot_message, tot_milk, tot_car_imp, tot_computers, tot_cars, acc_took, acc_take_imp, acc_taken, acc_whom, pl_articles, pl_children_imp, pl_children_pass, num_articles, num_children_imp, num_children_pass, sg_camera, sg_child, sg_window, sg_paper_imp, sg_book_pass, sg_dog_pass, sg_book_must, sg_house_inf]
 
 end Karlsson2017.Examples

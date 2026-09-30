@@ -50,7 +50,7 @@ that are not antecedently familiar.
 namespace GoldbergShirtz2025
 
 open ConstructionGrammar
-open Presupposition Data.Examples
+open Presupposition
 
 /-! ### The Figure 5 constructicon -/
 
@@ -384,7 +384,7 @@ structure Row where
   inflection : Option Inflection
   deriving DecidableEq
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let position ← ex.parse? "position"
     [("prenominal modifier", .prenominalModifier), ("head noun", .headNoun),
      ("predicative adjective", .predicativeAdjective), ("verb", .verb)]
@@ -392,7 +392,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
     [("plural", .plural), ("agentive -er + plural", .agentivePlural), ("gerund", .gerund)]⟩
 
 /-- The English tokens of (1a)–(1c), Table 2, and Table 3. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Table 2: PALs are attested in every word-class slot. -/
 theorem rows_position : ∀ p : PALPosition, ∃ r ∈ rows, r.position = p := by decide

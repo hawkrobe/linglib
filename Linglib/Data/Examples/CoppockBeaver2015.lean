@@ -15,9 +15,7 @@ this module; declarations live in `namespace CoppockBeaver2015.Examples`.
 
 namespace CoppockBeaver2015.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "coppockbeaver2015_1"
     source := ⟨"coppock-beaver-2015", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := [("determinate", .acceptable), ("indeterminate", .acceptable)]
     paperFeatures := [("phenomenon", "bare nominal")] }
 
-def ex_4a : LinguisticExample :=
+def ex_4a : Datum :=
   { id := "coppockbeaver2015_4a"
     source := ⟨"coppock-beaver-2015", "(4a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_4a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "predicative definite")] }
 
-def ex_4b : LinguisticExample :=
+def ex_4b : Datum :=
   { id := "coppockbeaver2015_4b"
     source := ⟨"coppock-beaver-2015", "(4b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_4b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "predicative definite")] }
 
-def ex_5 : LinguisticExample :=
+def ex_5 : Datum :=
   { id := "coppockbeaver2015_5"
     source := ⟨"coppock-beaver-2015", "(5)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "predicative definite")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "coppockbeaver2015_7a"
     source := ⟨"winter-2001b", "p. 177ff."⟩
     reportedIn := some ⟨"coppock-beaver-2015", "(7a)"⟩
@@ -82,7 +80,7 @@ def ex_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "appositional conjunction")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "coppockbeaver2015_7b"
     source := ⟨"winter-2001b", "p. 177ff."⟩
     reportedIn := some ⟨"coppock-beaver-2015", "(7b)"⟩
@@ -95,7 +93,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "appositional conjunction")] }
 
-def ex_7c : LinguisticExample :=
+def ex_7c : Datum :=
   { id := "coppockbeaver2015_7c"
     source := ⟨"winter-2001b", "p. 177ff."⟩
     reportedIn := some ⟨"coppock-beaver-2015", "(7c)"⟩
@@ -108,7 +106,7 @@ def ex_7c : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "appositional conjunction")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "coppockbeaver2015_8a"
     source := ⟨"coppock-beaver-2015", "(8a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "appositional conjunction")] }
 
-def ex_8b : LinguisticExample :=
+def ex_8b : Datum :=
   { id := "coppockbeaver2015_8b"
     source := ⟨"coppock-beaver-2015", "(8b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "appositional conjunction")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "coppockbeaver2015_10"
     source := ⟨"coppock-beaver-2015", "(10)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_10 : LinguisticExample :=
     readings := []
     paperFeatures := [("restrictor", "multiple")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "coppockbeaver2015_11"
     source := ⟨"coppock-beaver-2015", "(11)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_11 : LinguisticExample :=
     readings := []
     paperFeatures := [("restrictor", "multiple")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "coppockbeaver2015_12a"
     source := ⟨"coppock-beaver-2015", "(12a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("restrictor", "multiple")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "coppockbeaver2015_12b"
     source := ⟨"coppock-beaver-2015", "(12b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("restrictor", "only")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "coppockbeaver2015_13"
     source := ⟨"coppock-beaver-2015", "(13)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "predicative definite")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "coppockbeaver2015_14"
     source := ⟨"coppock-beaver-2015", "(14)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "argumental definite")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "coppockbeaver2015_15a"
     source := ⟨"coppock-beaver-2015", "(15a)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_15a : LinguisticExample :=
     readings := [("one author", .acceptable)]
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "coppockbeaver2015_15b"
     source := ⟨"coppock-beaver-2015", "(15b)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_15b : LinguisticExample :=
     readings := [("more than one author", .acceptable)]
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
-def ex_15c : LinguisticExample :=
+def ex_15c : Datum :=
   { id := "coppockbeaver2015_15c"
     source := ⟨"coppock-beaver-2015", "(15c)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_15c : LinguisticExample :=
     readings := [("at least one author", .acceptable)]
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
-def ex_15d : LinguisticExample :=
+def ex_15d : Datum :=
   { id := "coppockbeaver2015_15d"
     source := ⟨"coppock-beaver-2015", "(15d)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_15d : LinguisticExample :=
     readings := [("at least one author", .acceptable)]
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "coppockbeaver2015_16"
     source := ⟨"coppock-beaver-2015", "(16)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "no existence implication")] }
 
-def ex_17 : LinguisticExample :=
+def ex_17 : Datum :=
   { id := "coppockbeaver2015_17"
     source := ⟨"coppock-beaver-2015", "(17)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "no existence implication")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "coppockbeaver2015_18"
     source := ⟨"coppock-beaver-2015", "(18)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
-def ex_19 : LinguisticExample :=
+def ex_19 : Datum :=
   { id := "coppockbeaver2015_19"
     source := ⟨"coppock-beaver-2015", "(19)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_19 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
-def ex_20 : LinguisticExample :=
+def ex_20 : Datum :=
   { id := "coppockbeaver2015_20"
     source := ⟨"coppock-beaver-2015", "(20)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_20 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
-def ex_21 : LinguisticExample :=
+def ex_21 : Datum :=
   { id := "coppockbeaver2015_21"
     source := ⟨"coppock-beaver-2015", "(21)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_21 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "coppockbeaver2015_24"
     source := ⟨"coppock-beaver-2015", "(24)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "narrow existence")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "coppockbeaver2015_25"
     source := ⟨"coppock-beaver-2015", "(25)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "narrow existence")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "coppockbeaver2015_26"
     source := ⟨"coppock-beaver-2015", "(26)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "narrow existence")] }
 
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "coppockbeaver2015_27"
     source := ⟨"coppock-beaver-2015", "(27)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "narrow existence")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "coppockbeaver2015_28"
     source := ⟨"coppock-beaver-2015", "(28)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "narrow existence")] }
 
-def ex_29 : LinguisticExample :=
+def ex_29 : Datum :=
   { id := "coppockbeaver2015_29"
     source := ⟨"coppock-beaver-2015", "(29)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex_29 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "broad existence")] }
 
-def ex_30 : LinguisticExample :=
+def ex_30 : Datum :=
   { id := "coppockbeaver2015_30"
     source := ⟨"coppock-beaver-2015", "(30)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex_30 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "broad existence")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "coppockbeaver2015_31"
     source := ⟨"coppock-beaver-2015", "(31)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "broad existence")] }
 
-def ex_32 : LinguisticExample :=
+def ex_32 : Datum :=
   { id := "coppockbeaver2015_32"
     source := ⟨"coppock-beaver-2015", "(32)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex_32 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "broad existence")] }
 
-def ex_33 : LinguisticExample :=
+def ex_33 : Datum :=
   { id := "coppockbeaver2015_33"
     source := ⟨"coppock-beaver-2015", "(33)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex_33 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "broad existence")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "coppockbeaver2015_34"
     source := ⟨"coppock-beaver-2015", "(34)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "broad existence")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "coppockbeaver2015_38"
     source := ⟨"coppock-beaver-2015", "(38)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex_38 : LinguisticExample :=
     readings := [("multiple authors", .acceptable), ("equative", .unacceptable)]
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
-def ex_40a : LinguisticExample :=
+def ex_40a : Datum :=
   { id := "coppockbeaver2015_40a"
     source := ⟨"coppock-beaver-2015", "(40a)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex_40a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
-def ex_40b : LinguisticExample :=
+def ex_40b : Datum :=
   { id := "coppockbeaver2015_40b"
     source := ⟨"coppock-beaver-2015", "(40b)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex_40b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
-def ex_41a : LinguisticExample :=
+def ex_41a : Datum :=
   { id := "coppockbeaver2015_41a"
     source := ⟨"coppock-beaver-2015", "(41a)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex_41a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
-def ex_41c : LinguisticExample :=
+def ex_41c : Datum :=
   { id := "coppockbeaver2015_41c"
     source := ⟨"coppock-beaver-2015", "(41c)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex_41c : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "anti-uniqueness")] }
 
-def ex_42 : LinguisticExample :=
+def ex_42 : Datum :=
   { id := "coppockbeaver2015_42"
     source := ⟨"coppock-beaver-2015", "(42)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "uniqueness at issue")] }
 
-def ex_43 : LinguisticExample :=
+def ex_43 : Datum :=
   { id := "coppockbeaver2015_43"
     source := ⟨"coppock-beaver-2015", "(43)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex_43 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "uniqueness at issue")] }
 
-def ex_44a : LinguisticExample :=
+def ex_44a : Datum :=
   { id := "coppockbeaver2015_44a"
     source := ⟨"coppock-beaver-2015", "(44a)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex_44a : LinguisticExample :=
     readings := []
     paperFeatures := [("restrictor", "uniqueIfAny")] }
 
-def ex_44b : LinguisticExample :=
+def ex_44b : Datum :=
   { id := "coppockbeaver2015_44b"
     source := ⟨"coppock-beaver-2015", "(44b)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex_44b : LinguisticExample :=
     readings := []
     paperFeatures := [("restrictor", "multiple")] }
 
-def ex_45a : LinguisticExample :=
+def ex_45a : Datum :=
   { id := "coppockbeaver2015_45a"
     source := ⟨"coppock-beaver-2015", "(45a)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex_45a : LinguisticExample :=
     readings := []
     paperFeatures := [("restrictor", "uniqueIfAny")] }
 
-def ex_45b : LinguisticExample :=
+def ex_45b : Datum :=
   { id := "coppockbeaver2015_45b"
     source := ⟨"coppock-beaver-2015", "(45b)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex_45b : LinguisticExample :=
     readings := []
     paperFeatures := [("restrictor", "multiple")] }
 
-def ex_46a : LinguisticExample :=
+def ex_46a : Datum :=
   { id := "coppockbeaver2015_46a"
     source := ⟨"coppock-beaver-2015", "(46a)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex_46a : LinguisticExample :=
     readings := []
     paperFeatures := [("restrictor", "uniqueIfAny")] }
 
-def ex_46b : LinguisticExample :=
+def ex_46b : Datum :=
   { id := "coppockbeaver2015_46b"
     source := ⟨"coppock-beaver-2015", "(46b)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex_46b : LinguisticExample :=
     readings := []
     paperFeatures := [("restrictor", "multiple")] }
 
-def ex_47a : LinguisticExample :=
+def ex_47a : Datum :=
   { id := "coppockbeaver2015_47a"
     source := ⟨"coppock-beaver-2015", "(47a)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex_47a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "weak definite")] }
 
-def ex_47b : LinguisticExample :=
+def ex_47b : Datum :=
   { id := "coppockbeaver2015_47b"
     source := ⟨"coppock-beaver-2015", "(47b)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex_47b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "weak definite")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "coppockbeaver2015_48"
     source := ⟨"coppock-beaver-2015", "(48)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex_48 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "weak definite")] }
 
-def ex_54 : LinguisticExample :=
+def ex_54 : Datum :=
   { id := "coppockbeaver2015_54"
     source := ⟨"winter-2001b", "(24)"⟩
     reportedIn := some ⟨"coppock-beaver-2015", "(54)"⟩
@@ -706,7 +704,7 @@ def ex_54 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "be shift")] }
 
-def ex_66 : LinguisticExample :=
+def ex_66 : Datum :=
   { id := "coppockbeaver2015_66"
     source := ⟨"coppock-beaver-2015", "(66)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex_66 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "blocking")] }
 
-def ex_67 : LinguisticExample :=
+def ex_67 : Datum :=
   { id := "coppockbeaver2015_67"
     source := ⟨"coppock-beaver-2015", "(67)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex_67 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "blocking")] }
 
-def ex_68 : LinguisticExample :=
+def ex_68 : Datum :=
   { id := "coppockbeaver2015_68"
     source := ⟨"coppock-beaver-2015", "(68)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex_68 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "blocking")] }
 
-def ex_73a : LinguisticExample :=
+def ex_73a : Datum :=
   { id := "coppockbeaver2015_73a"
     source := ⟨"coppock-beaver-2015", "(73a)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex_73a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "blocking"), ("contextUniqueness", "open")] }
 
-def ex_73b : LinguisticExample :=
+def ex_73b : Datum :=
   { id := "coppockbeaver2015_73b"
     source := ⟨"coppock-beaver-2015", "(73b)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex_73b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "blocking"), ("contextUniqueness", "given")] }
 
-def ex_76a : LinguisticExample :=
+def ex_76a : Datum :=
   { id := "coppockbeaver2015_76a"
     source := ⟨"coppock-beaver-2015", "(76a)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ex_76a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "determinate definite")] }
 
-def ex_76b : LinguisticExample :=
+def ex_76b : Datum :=
   { id := "coppockbeaver2015_76b"
     source := ⟨"coppock-beaver-2015", "(76b)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def ex_76b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "determinate definite")] }
 
-def ex_77a : LinguisticExample :=
+def ex_77a : Datum :=
   { id := "coppockbeaver2015_77a"
     source := ⟨"coppock-beaver-2015", "(77a)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def ex_77a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "argumental definite")] }
 
-def ex_77b : LinguisticExample :=
+def ex_77b : Datum :=
   { id := "coppockbeaver2015_77b"
     source := ⟨"coppock-beaver-2015", "(77b)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def ex_77b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "argumental definite")] }
 
-def ex_78a : LinguisticExample :=
+def ex_78a : Datum :=
   { id := "coppockbeaver2015_78a"
     source := ⟨"coppock-beaver-2015", "(78a)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def ex_78a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "predicative definite")] }
 
-def ex_78b : LinguisticExample :=
+def ex_78b : Datum :=
   { id := "coppockbeaver2015_78b"
     source := ⟨"coppock-beaver-2015", "(78b)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def ex_78b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "predicative definite")] }
 
-def ex_79a : LinguisticExample :=
+def ex_79a : Datum :=
   { id := "coppockbeaver2015_79a"
     source := ⟨"coppock-beaver-2015", "(79a)"⟩
     reportedIn := none
@@ -862,7 +860,7 @@ def ex_79a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "indefinite")] }
 
-def ex_79b : LinguisticExample :=
+def ex_79b : Datum :=
   { id := "coppockbeaver2015_79b"
     source := ⟨"coppock-beaver-2015", "(79b)"⟩
     reportedIn := none
@@ -875,7 +873,7 @@ def ex_79b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "indefinite")] }
 
-def ex_80a : LinguisticExample :=
+def ex_80a : Datum :=
   { id := "coppockbeaver2015_80a"
     source := ⟨"coppock-beaver-2015", "(80a)"⟩
     reportedIn := none
@@ -888,7 +886,7 @@ def ex_80a : LinguisticExample :=
     readings := [("anti-uniqueness", .acceptable), ("determinate", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "entityIntroducing")] }
 
-def ex_80b : LinguisticExample :=
+def ex_80b : Datum :=
   { id := "coppockbeaver2015_80b"
     source := ⟨"coppock-beaver-2015", "(80b)"⟩
     reportedIn := none
@@ -901,7 +899,7 @@ def ex_80b : LinguisticExample :=
     readings := [("determinate", .acceptable), ("anti-uniqueness", .marginal)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "other")] }
 
-def ex_81a : LinguisticExample :=
+def ex_81a : Datum :=
   { id := "coppockbeaver2015_81a"
     source := ⟨"coppock-beaver-2015", "(81a)"⟩
     reportedIn := none
@@ -914,7 +912,7 @@ def ex_81a : LinguisticExample :=
     readings := [("anti-uniqueness", .acceptable), ("determinate", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "entityIntroducing")] }
 
-def ex_81b : LinguisticExample :=
+def ex_81b : Datum :=
   { id := "coppockbeaver2015_81b"
     source := ⟨"coppock-beaver-2015", "(81b)"⟩
     reportedIn := none
@@ -927,7 +925,7 @@ def ex_81b : LinguisticExample :=
     readings := [("determinate", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "other")] }
 
-def ex_82a : LinguisticExample :=
+def ex_82a : Datum :=
   { id := "coppockbeaver2015_82a"
     source := ⟨"coppock-beaver-2015", "(82a)"⟩
     reportedIn := none
@@ -940,7 +938,7 @@ def ex_82a : LinguisticExample :=
     readings := [("anti-uniqueness", .acceptable), ("determinate", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "entityIntroducing")] }
 
-def ex_82b : LinguisticExample :=
+def ex_82b : Datum :=
   { id := "coppockbeaver2015_82b"
     source := ⟨"coppock-beaver-2015", "(82b)"⟩
     reportedIn := none
@@ -953,7 +951,7 @@ def ex_82b : LinguisticExample :=
     readings := [("determinate", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "other")] }
 
-def ex_83a : LinguisticExample :=
+def ex_83a : Datum :=
   { id := "coppockbeaver2015_83a"
     source := ⟨"coppock-beaver-2015", "(83a)"⟩
     reportedIn := none
@@ -966,7 +964,7 @@ def ex_83a : LinguisticExample :=
     readings := [("anti-uniqueness", .acceptable), ("determinate", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "entityIntroducing")] }
 
-def ex_83b : LinguisticExample :=
+def ex_83b : Datum :=
   { id := "coppockbeaver2015_83b"
     source := ⟨"coppock-beaver-2015", "(83b)"⟩
     reportedIn := none
@@ -979,7 +977,7 @@ def ex_83b : LinguisticExample :=
     readings := [("determinate", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "other")] }
 
-def ex_95 : LinguisticExample :=
+def ex_95 : Datum :=
   { id := "coppockbeaver2015_95"
     source := ⟨"coppock-beaver-2015", "(95)"⟩
     reportedIn := none
@@ -992,7 +990,7 @@ def ex_95 : LinguisticExample :=
     readings := [("indeterminate", .acceptable), ("determinate", .unacceptable)]
     paperFeatures := [("phenomenon", "no determinate indefinite")] }
 
-def ex_97a : LinguisticExample :=
+def ex_97a : Datum :=
   { id := "coppockbeaver2015_97a"
     source := ⟨"coppock-beaver-2015", "(97a)"⟩
     reportedIn := none
@@ -1005,7 +1003,7 @@ def ex_97a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "determinate definite")] }
 
-def ex_97b : LinguisticExample :=
+def ex_97b : Datum :=
   { id := "coppockbeaver2015_97b"
     source := ⟨"coppock-beaver-2015", "(97b)"⟩
     reportedIn := none
@@ -1018,7 +1016,7 @@ def ex_97b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "determinate definite")] }
 
-def ex_101a : LinguisticExample :=
+def ex_101a : Datum :=
   { id := "coppockbeaver2015_101a"
     source := ⟨"coppock-beaver-2015", "(101a)"⟩
     reportedIn := none
@@ -1031,7 +1029,7 @@ def ex_101a : LinguisticExample :=
     readings := [("anti-uniqueness", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "entityIntroducing")] }
 
-def ex_101b : LinguisticExample :=
+def ex_101b : Datum :=
   { id := "coppockbeaver2015_101b"
     source := ⟨"coppock-beaver-2015", "(101b)"⟩
     reportedIn := none
@@ -1044,7 +1042,7 @@ def ex_101b : LinguisticExample :=
     readings := [("anti-uniqueness", .unacceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "other")] }
 
-def ex_102a : LinguisticExample :=
+def ex_102a : Datum :=
   { id := "coppockbeaver2015_102a"
     source := ⟨"coppock-beaver-2015", "(102a)"⟩
     reportedIn := none
@@ -1057,7 +1055,7 @@ def ex_102a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
-def ex_102b : LinguisticExample :=
+def ex_102b : Datum :=
   { id := "coppockbeaver2015_102b"
     source := ⟨"coppock-beaver-2015", "(102b)"⟩
     reportedIn := none
@@ -1070,7 +1068,7 @@ def ex_102b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "other")] }
 
-def ex_103a : LinguisticExample :=
+def ex_103a : Datum :=
   { id := "coppockbeaver2015_103a"
     source := ⟨"coppock-beaver-2015", "(103a)"⟩
     reportedIn := none
@@ -1083,7 +1081,7 @@ def ex_103a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
-def ex_103b : LinguisticExample :=
+def ex_103b : Datum :=
   { id := "coppockbeaver2015_103b"
     source := ⟨"coppock-beaver-2015", "(103b)"⟩
     reportedIn := none
@@ -1096,7 +1094,7 @@ def ex_103b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "other")] }
 
-def ex_104a : LinguisticExample :=
+def ex_104a : Datum :=
   { id := "coppockbeaver2015_104a"
     source := ⟨"coppock-beaver-2015", "(104a)"⟩
     reportedIn := none
@@ -1109,7 +1107,7 @@ def ex_104a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
-def ex_104b : LinguisticExample :=
+def ex_104b : Datum :=
   { id := "coppockbeaver2015_104b"
     source := ⟨"coppock-beaver-2015", "(104b)"⟩
     reportedIn := none
@@ -1122,7 +1120,7 @@ def ex_104b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "other")] }
 
-def ex_105a : LinguisticExample :=
+def ex_105a : Datum :=
   { id := "coppockbeaver2015_105a"
     source := ⟨"coppock-beaver-2015", "(105a)"⟩
     reportedIn := none
@@ -1135,7 +1133,7 @@ def ex_105a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
-def ex_105b : LinguisticExample :=
+def ex_105b : Datum :=
   { id := "coppockbeaver2015_105b"
     source := ⟨"coppock-beaver-2015", "(105b)"⟩
     reportedIn := none
@@ -1148,7 +1146,7 @@ def ex_105b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "other")] }
 
-def ex_106a : LinguisticExample :=
+def ex_106a : Datum :=
   { id := "coppockbeaver2015_106a"
     source := ⟨"coppock-beaver-2015", "(106a)"⟩
     reportedIn := none
@@ -1161,7 +1159,7 @@ def ex_106a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
-def ex_106b : LinguisticExample :=
+def ex_106b : Datum :=
   { id := "coppockbeaver2015_106b"
     source := ⟨"coppock-beaver-2015", "(106b)"⟩
     reportedIn := none
@@ -1174,7 +1172,7 @@ def ex_106b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "other")] }
 
-def ex_107a : LinguisticExample :=
+def ex_107a : Datum :=
   { id := "coppockbeaver2015_107a"
     source := ⟨"coppock-beaver-2015", "(107a)"⟩
     reportedIn := none
@@ -1187,7 +1185,7 @@ def ex_107a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
-def ex_107b : LinguisticExample :=
+def ex_107b : Datum :=
   { id := "coppockbeaver2015_107b"
     source := ⟨"coppock-beaver-2015", "(107b)"⟩
     reportedIn := none
@@ -1200,7 +1198,7 @@ def ex_107b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "other")] }
 
-def ex_108a : LinguisticExample :=
+def ex_108a : Datum :=
   { id := "coppockbeaver2015_108a"
     source := ⟨"coppock-beaver-2015", "(108a)"⟩
     reportedIn := none
@@ -1213,7 +1211,7 @@ def ex_108a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
-def ex_108b : LinguisticExample :=
+def ex_108b : Datum :=
   { id := "coppockbeaver2015_108b"
     source := ⟨"coppock-beaver-2015", "(108b)"⟩
     reportedIn := none
@@ -1226,7 +1224,7 @@ def ex_108b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "other")] }
 
-def ex_109a : LinguisticExample :=
+def ex_109a : Datum :=
   { id := "coppockbeaver2015_109a"
     source := ⟨"coppock-beaver-2015", "(109a)"⟩
     reportedIn := none
@@ -1239,7 +1237,7 @@ def ex_109a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
-def ex_109b : LinguisticExample :=
+def ex_109b : Datum :=
   { id := "coppockbeaver2015_109b"
     source := ⟨"coppock-beaver-2015", "(109b)"⟩
     reportedIn := none
@@ -1252,7 +1250,7 @@ def ex_109b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "other")] }
 
-def ex_110 : LinguisticExample :=
+def ex_110 : Datum :=
   { id := "coppockbeaver2015_110"
     source := ⟨"coppock-beaver-2015", "(110)"⟩
     reportedIn := none
@@ -1265,7 +1263,7 @@ def ex_110 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "entity-introducing diagnostic"), ("verb", "entityIntroducing")] }
 
-def ex_111 : LinguisticExample :=
+def ex_111 : Datum :=
   { id := "coppockbeaver2015_111"
     source := ⟨"coppock-beaver-2015", "(111)"⟩
     reportedIn := none
@@ -1278,7 +1276,7 @@ def ex_111 : LinguisticExample :=
     readings := [("anti-uniqueness", .acceptable)]
     paperFeatures := [("phenomenon", "argumental anti-uniqueness"), ("verb", "entityIntroducing")] }
 
-def ex_112a : LinguisticExample :=
+def ex_112a : Datum :=
   { id := "coppockbeaver2015_112a"
     source := ⟨"coppock-beaver-2015", "(112a)"⟩
     reportedIn := none
@@ -1291,7 +1289,7 @@ def ex_112a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "negation"), ("expression", "possessive"), ("verdict", "contradictory")] }
 
-def ex_112b : LinguisticExample :=
+def ex_112b : Datum :=
   { id := "coppockbeaver2015_112b"
     source := ⟨"coppock-beaver-2015", "(112b)"⟩
     reportedIn := none
@@ -1304,7 +1302,7 @@ def ex_112b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "negation"), ("expression", "some"), ("verdict", "notContradictory")] }
 
-def ex_113a : LinguisticExample :=
+def ex_113a : Datum :=
   { id := "coppockbeaver2015_113a"
     source := ⟨"coppock-beaver-2015", "(113a)"⟩
     reportedIn := none
@@ -1317,7 +1315,7 @@ def ex_113a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "conjunction"), ("expression", "possessive"), ("verdict", "equivalent")] }
 
-def ex_113b : LinguisticExample :=
+def ex_113b : Datum :=
   { id := "coppockbeaver2015_113b"
     source := ⟨"coppock-beaver-2015", "(113b)"⟩
     reportedIn := none
@@ -1330,7 +1328,7 @@ def ex_113b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "conjunction"), ("expression", "some"), ("verdict", "notEquivalent")] }
 
-def ex_114a : LinguisticExample :=
+def ex_114a : Datum :=
   { id := "coppockbeaver2015_114a"
     source := ⟨"coppock-beaver-2015", "(114a)"⟩
     reportedIn := none
@@ -1343,7 +1341,7 @@ def ex_114a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "negation"), ("expression", "predicativePossessive"), ("verdict", "notContradictory")] }
 
-def ex_114b : LinguisticExample :=
+def ex_114b : Datum :=
   { id := "coppockbeaver2015_114b"
     source := ⟨"coppock-beaver-2015", "(114b)"⟩
     reportedIn := none
@@ -1356,7 +1354,7 @@ def ex_114b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "negation"), ("expression", "predicativeIndefinite"), ("verdict", "notContradictory")] }
 
-def ex_114c : LinguisticExample :=
+def ex_114c : Datum :=
   { id := "coppockbeaver2015_114c"
     source := ⟨"coppock-beaver-2015", "(114c)"⟩
     reportedIn := none
@@ -1369,7 +1367,7 @@ def ex_114c : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "negation"), ("expression", "predicativeDefinite"), ("verdict", "contradictory")] }
 
-def ex_115a : LinguisticExample :=
+def ex_115a : Datum :=
   { id := "coppockbeaver2015_115a"
     source := ⟨"coppock-beaver-2015", "(115a)"⟩
     reportedIn := none
@@ -1382,7 +1380,7 @@ def ex_115a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "conjunction"), ("expression", "predicativePossessive"), ("verdict", "notEquivalent")] }
 
-def ex_115b : LinguisticExample :=
+def ex_115b : Datum :=
   { id := "coppockbeaver2015_115b"
     source := ⟨"coppock-beaver-2015", "(115b)"⟩
     reportedIn := none
@@ -1395,7 +1393,7 @@ def ex_115b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "conjunction"), ("expression", "predicativeIndefinite"), ("verdict", "notEquivalent")] }
 
-def ex_115c : LinguisticExample :=
+def ex_115c : Datum :=
   { id := "coppockbeaver2015_115c"
     source := ⟨"coppock-beaver-2015", "(115c)"⟩
     reportedIn := none
@@ -1408,7 +1406,7 @@ def ex_115c : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "conjunction"), ("expression", "predicativeDefinite"), ("verdict", "equivalent")] }
 
-def ex_116a : LinguisticExample :=
+def ex_116a : Datum :=
   { id := "coppockbeaver2015_116a"
     source := ⟨"coppock-beaver-2015", "(116a)"⟩
     reportedIn := none
@@ -1421,7 +1419,7 @@ def ex_116a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
-def ex_116b : LinguisticExample :=
+def ex_116b : Datum :=
   { id := "coppockbeaver2015_116b"
     source := ⟨"coppock-beaver-2015", "(116b)"⟩
     reportedIn := none
@@ -1434,7 +1432,7 @@ def ex_116b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
-def ex_117 : LinguisticExample :=
+def ex_117 : Datum :=
   { id := "coppockbeaver2015_117"
     source := ⟨"coppock-beaver-2015", "(117)"⟩
     reportedIn := none
@@ -1447,7 +1445,7 @@ def ex_117 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
-def ex_118a : LinguisticExample :=
+def ex_118a : Datum :=
   { id := "coppockbeaver2015_118a"
     source := ⟨"coppock-beaver-2015", "(118a)"⟩
     reportedIn := none
@@ -1460,7 +1458,7 @@ def ex_118a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
-def ex_118b : LinguisticExample :=
+def ex_118b : Datum :=
   { id := "coppockbeaver2015_118b"
     source := ⟨"coppock-beaver-2015", "(118b)"⟩
     reportedIn := none
@@ -1473,7 +1471,7 @@ def ex_118b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
-def ex_119a : LinguisticExample :=
+def ex_119a : Datum :=
   { id := "coppockbeaver2015_119a"
     source := ⟨"coppock-beaver-2015", "(119a)"⟩
     reportedIn := none
@@ -1486,7 +1484,7 @@ def ex_119a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
-def ex_119b : LinguisticExample :=
+def ex_119b : Datum :=
   { id := "coppockbeaver2015_119b"
     source := ⟨"coppock-beaver-2015", "(119b)"⟩
     reportedIn := none
@@ -1499,7 +1497,7 @@ def ex_119b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
-def ex_120 : LinguisticExample :=
+def ex_120 : Datum :=
   { id := "coppockbeaver2015_120"
     source := ⟨"coppock-beaver-2015", "(120)"⟩
     reportedIn := none
@@ -1512,7 +1510,7 @@ def ex_120 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
-def ex_121 : LinguisticExample :=
+def ex_121 : Datum :=
   { id := "coppockbeaver2015_121"
     source := ⟨"coppock-beaver-2015", "(121)"⟩
     reportedIn := none
@@ -1525,7 +1523,7 @@ def ex_121 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
-def ex_122 : LinguisticExample :=
+def ex_122 : Datum :=
   { id := "coppockbeaver2015_122"
     source := ⟨"coppock-beaver-2015", "(122)"⟩
     reportedIn := none
@@ -1538,7 +1536,7 @@ def ex_122 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
-def ex_123a : LinguisticExample :=
+def ex_123a : Datum :=
   { id := "coppockbeaver2015_123a"
     source := ⟨"coppock-beaver-2015", "(123a)"⟩
     reportedIn := none
@@ -1551,7 +1549,7 @@ def ex_123a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
-def ex_123b : LinguisticExample :=
+def ex_123b : Datum :=
   { id := "coppockbeaver2015_123b"
     source := ⟨"coppock-beaver-2015", "(123b)"⟩
     reportedIn := none
@@ -1564,7 +1562,7 @@ def ex_123b : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
-def ex_124 : LinguisticExample :=
+def ex_124 : Datum :=
   { id := "coppockbeaver2015_124"
     source := ⟨"coppock-beaver-2015", "(124)"⟩
     reportedIn := none
@@ -1577,7 +1575,7 @@ def ex_124 : LinguisticExample :=
     readings := [("multiple contributions", .acceptable)]
     paperFeatures := [("phenomenon", "possessive anti-uniqueness")] }
 
-def ex_125 : LinguisticExample :=
+def ex_125 : Datum :=
   { id := "coppockbeaver2015_125"
     source := ⟨"coppock-beaver-2015", "(125)"⟩
     reportedIn := none
@@ -1590,7 +1588,7 @@ def ex_125 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
-def ex_126 : LinguisticExample :=
+def ex_126 : Datum :=
   { id := "coppockbeaver2015_126"
     source := ⟨"coppock-beaver-2015", "(126)"⟩
     reportedIn := none
@@ -1603,7 +1601,7 @@ def ex_126 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "possessive")] }
 
-def ex_131 : LinguisticExample :=
+def ex_131 : Datum :=
   { id := "coppockbeaver2015_131"
     source := ⟨"coppock-beaver-2015", "(131)"⟩
     reportedIn := none
@@ -1616,7 +1614,7 @@ def ex_131 : LinguisticExample :=
     readings := [("multiple contributions", .acceptable)]
     paperFeatures := [("phenomenon", "possessive anti-uniqueness"), ("verb", "entityIntroducing")] }
 
-def ex_132 : LinguisticExample :=
+def ex_132 : Datum :=
   { id := "coppockbeaver2015_132"
     source := ⟨"coppock-beaver-2015", "(132)"⟩
     reportedIn := none
@@ -1629,7 +1627,7 @@ def ex_132 : LinguisticExample :=
     readings := [("multiple appearances", .acceptable)]
     paperFeatures := [("phenomenon", "possessive anti-uniqueness"), ("verb", "entityIntroducing")] }
 
-def ex_135 : LinguisticExample :=
+def ex_135 : Datum :=
   { id := "coppockbeaver2015_135"
     source := ⟨"coppock-beaver-2015", "(135)"⟩
     reportedIn := none
@@ -1642,6 +1640,6 @@ def ex_135 : LinguisticExample :=
     readings := [("indeterminate", .acceptable)]
     paperFeatures := [("phenomenon", "bare nominal")] }
 
-def all : List LinguisticExample := [ex_1, ex_4a, ex_4b, ex_5, ex_7a, ex_7b, ex_7c, ex_8a, ex_8b, ex_10, ex_11, ex_12a, ex_12b, ex_13, ex_14, ex_15a, ex_15b, ex_15c, ex_15d, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_24, ex_25, ex_26, ex_27, ex_28, ex_29, ex_30, ex_31, ex_32, ex_33, ex_34, ex_38, ex_40a, ex_40b, ex_41a, ex_41c, ex_42, ex_43, ex_44a, ex_44b, ex_45a, ex_45b, ex_46a, ex_46b, ex_47a, ex_47b, ex_48, ex_54, ex_66, ex_67, ex_68, ex_73a, ex_73b, ex_76a, ex_76b, ex_77a, ex_77b, ex_78a, ex_78b, ex_79a, ex_79b, ex_80a, ex_80b, ex_81a, ex_81b, ex_82a, ex_82b, ex_83a, ex_83b, ex_95, ex_97a, ex_97b, ex_101a, ex_101b, ex_102a, ex_102b, ex_103a, ex_103b, ex_104a, ex_104b, ex_105a, ex_105b, ex_106a, ex_106b, ex_107a, ex_107b, ex_108a, ex_108b, ex_109a, ex_109b, ex_110, ex_111, ex_112a, ex_112b, ex_113a, ex_113b, ex_114a, ex_114b, ex_114c, ex_115a, ex_115b, ex_115c, ex_116a, ex_116b, ex_117, ex_118a, ex_118b, ex_119a, ex_119b, ex_120, ex_121, ex_122, ex_123a, ex_123b, ex_124, ex_125, ex_126, ex_131, ex_132, ex_135]
+def all : List Datum := [ex_1, ex_4a, ex_4b, ex_5, ex_7a, ex_7b, ex_7c, ex_8a, ex_8b, ex_10, ex_11, ex_12a, ex_12b, ex_13, ex_14, ex_15a, ex_15b, ex_15c, ex_15d, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_24, ex_25, ex_26, ex_27, ex_28, ex_29, ex_30, ex_31, ex_32, ex_33, ex_34, ex_38, ex_40a, ex_40b, ex_41a, ex_41c, ex_42, ex_43, ex_44a, ex_44b, ex_45a, ex_45b, ex_46a, ex_46b, ex_47a, ex_47b, ex_48, ex_54, ex_66, ex_67, ex_68, ex_73a, ex_73b, ex_76a, ex_76b, ex_77a, ex_77b, ex_78a, ex_78b, ex_79a, ex_79b, ex_80a, ex_80b, ex_81a, ex_81b, ex_82a, ex_82b, ex_83a, ex_83b, ex_95, ex_97a, ex_97b, ex_101a, ex_101b, ex_102a, ex_102b, ex_103a, ex_103b, ex_104a, ex_104b, ex_105a, ex_105b, ex_106a, ex_106b, ex_107a, ex_107b, ex_108a, ex_108b, ex_109a, ex_109b, ex_110, ex_111, ex_112a, ex_112b, ex_113a, ex_113b, ex_114a, ex_114b, ex_114c, ex_115a, ex_115b, ex_115c, ex_116a, ex_116b, ex_117, ex_118a, ex_118b, ex_119a, ex_119b, ex_120, ex_121, ex_122, ex_123a, ex_123b, ex_124, ex_125, ex_126, ex_131, ex_132, ex_135]
 
 end CoppockBeaver2015.Examples

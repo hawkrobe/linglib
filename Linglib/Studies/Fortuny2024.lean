@@ -49,7 +49,6 @@ falls under exactly one factor, as §2.3 claims.
 
 namespace Fortuny2024
 
-open Data.Examples
 
 /-! ### Categories as feature clusters (§2.1) -/
 
@@ -252,7 +251,7 @@ structure Row where
   right : Category
   moved : Moved
   same : Bool
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
   deriving DecidableEq
 
 /-- A coordinand, and not the whole, is attracted: the Integrity Condition (50) forbids it. -/
@@ -288,16 +287,16 @@ def movedTable : List (String × Moved) :=
 
 def sameTable : List (String × Bool) := [("yes", true), ("no", false)]
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let l ← ex.parse? "left" categoryTable
   let r ← ex.parse? "right" categoryTable
   let m ← ex.parse? "moved" movedTable
   let s ← ex.parse? "same" sameTable
   pure ⟨l, r, m, s, ex.judgment⟩
 
-theorem row_ofExample_isSome : ∀ ex ∈ Examples.all, (Row.ofExample ex).isSome := by decide
+theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome := by decide
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The paper's judgments are the three-factor decomposition's: a coordination is ungrammatical
 exactly when one of the factors applies. -/

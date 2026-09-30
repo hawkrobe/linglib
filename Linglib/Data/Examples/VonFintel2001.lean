@@ -15,9 +15,7 @@ this module; declarations live in `namespace VonFintel2001.Examples`.
 
 namespace VonFintel2001.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "vonfintel2001_1"
     source := ⟨"geis-zwicky-1971", ""⟩
     reportedIn := some ⟨"von-fintel-2001", "(1)"⟩
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := [("perfection: no five dollars without mowing", .questionable), ("strengthening: the five dollars are not free for the taking", .acceptable)]
     paperFeatures := [("inference", "conditional perfection"), ("flavor", "bouletic")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "vonfintel2001_2"
     source := ⟨"geis-zwicky-1971", ""⟩
     reportedIn := some ⟨"von-fintel-2001", "(2)"⟩
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "conditional perfection")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "vonfintel2001_3"
     source := ⟨"geis-zwicky-1971", ""⟩
     reportedIn := some ⟨"von-fintel-2001", "(3)"⟩
@@ -56,7 +54,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "conditional perfection")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "vonfintel2001_4"
     source := ⟨"geis-zwicky-1971", ""⟩
     reportedIn := some ⟨"von-fintel-2001", "(4)"⟩
@@ -69,7 +67,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("inference", "conditional perfection")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "vonfintel2001_6"
     source := ⟨"lilje-1972", ""⟩
     reportedIn := some ⟨"von-fintel-2001", "(6)"⟩
@@ -82,7 +80,7 @@ def ex_6 : LinguisticExample :=
     readings := [("perfection", .unacceptable), ("strengthening: the object is not necessarily not Polyglas", .acceptable)]
     paperFeatures := [("inference", "no perfection")] }
 
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "vonfintel2001_7"
     source := ⟨"lilje-1972", ""⟩
     reportedIn := some ⟨"von-fintel-2001", "(7)"⟩
@@ -95,7 +93,7 @@ def ex_7 : LinguisticExample :=
     readings := [("perfection", .unacceptable), ("strengthening: it is not settled that the cactus is not an Astrophytum", .acceptable)]
     paperFeatures := [("inference", "no perfection"), ("question", "information-seeking")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "vonfintel2001_8"
     source := ⟨"lilje-1972", ""⟩
     reportedIn := some ⟨"von-fintel-2001", "(8)"⟩
@@ -108,7 +106,7 @@ def ex_8 : LinguisticExample :=
     readings := [("perfection", .unacceptable)]
     paperFeatures := [("inference", "no perfection")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "vonfintel2001_9"
     source := ⟨"lilje-1972", ""⟩
     reportedIn := some ⟨"von-fintel-2001", "(9)"⟩
@@ -121,7 +119,7 @@ def ex_9 : LinguisticExample :=
     readings := [("perfection", .unacceptable)]
     paperFeatures := [("inference", "no perfection")] }
 
-def ex_10 : LinguisticExample :=
+def ex_10 : Datum :=
   { id := "vonfintel2001_10"
     source := ⟨"boer-lycan-1973", ""⟩
     reportedIn := some ⟨"von-fintel-2001", "(10)"⟩
@@ -134,7 +132,7 @@ def ex_10 : LinguisticExample :=
     readings := [("perfection", .unacceptable), ("strengthening: it is not settled that John will be replaced", .acceptable)]
     paperFeatures := [("inference", "no perfection")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "vonfintel2001_11"
     source := ⟨"von-fintel-2001", "(11)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_11 : LinguisticExample :=
     readings := [("perfection: the student must avoid an A", .unacceptable), ("strengthening: no $5 for another C", .acceptable)]
     paperFeatures := [("inference", "no perfection")] }
 
-def ex_17a : LinguisticExample :=
+def ex_17a : Datum :=
   { id := "vonfintel2001_17a"
     source := ⟨"von-fintel-2001", "(17)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_17a : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "not only α but β"), ("scale", "same monotonicity")] }
 
-def ex_17b : LinguisticExample :=
+def ex_17b : Datum :=
   { id := "vonfintel2001_17b"
     source := ⟨"von-fintel-2001", "(17)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_17b : LinguisticExample :=
     readings := []
     paperFeatures := [("test", "not only α but β"), ("scale", "mixed monotonicity")] }
 
-def seat : LinguisticExample :=
+def seat : Datum :=
   { id := "vonfintel2001_seat"
     source := ⟨"cornulier-1983", ""⟩
     reportedIn := some ⟨"von-fintel-2001", "p. 9"⟩
@@ -186,7 +184,7 @@ def seat : LinguisticExample :=
     readings := [("perfection: only the disabled or the over-70 may sit here", .acceptable)]
     paperFeatures := [("inference", "conditional perfection"), ("presumption", "exhaustivity")] }
 
-def p14_2 : LinguisticExample :=
+def p14_2 : Datum :=
   { id := "vonfintel2001_p14_2"
     source := ⟨"groenendijk-stokhof-1984", ""⟩
     reportedIn := some ⟨"von-fintel-2001", "(2) p. 14"⟩
@@ -199,7 +197,7 @@ def p14_2 : LinguisticExample :=
     readings := [("exhaustive: Robin and Hilary and nobody else", .acceptable)]
     paperFeatures := [("answer", "exhaustive")] }
 
-def p15_3 : LinguisticExample :=
+def p15_3 : Datum :=
   { id := "vonfintel2001_p15_3"
     source := ⟨"groenendijk-stokhof-1984", ""⟩
     reportedIn := some ⟨"von-fintel-2001", "(3) p. 15"⟩
@@ -212,7 +210,7 @@ def p15_3 : LinguisticExample :=
     readings := [("exhaustive: Robin comes only if there is vegetarian food", .acceptable)]
     paperFeatures := [("answer", "exhaustive"), ("inference", "conditional perfection")] }
 
-def p17_4a : LinguisticExample :=
+def p17_4a : Datum :=
   { id := "vonfintel2001_p17_4a"
     source := ⟨"von-fintel-2001", "(4) p. 17"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def p17_4a : LinguisticExample :=
     readings := [("perfection", .unacceptable)]
     paperFeatures := [("question", "yes/no conditional"), ("inference", "no perfection")] }
 
-def p17_5 : LinguisticExample :=
+def p17_5 : Datum :=
   { id := "vonfintel2001_p17_5"
     source := ⟨"von-fintel-2001", "(5) p. 17"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def p17_5 : LinguisticExample :=
     readings := [("perfection: he is home late only if in Amherst", .unacceptable)]
     paperFeatures := [("question", "consequences of an antecedent"), ("inference", "no perfection")] }
 
-def p17_6 : LinguisticExample :=
+def p17_6 : Datum :=
   { id := "vonfintel2001_p17_6"
     source := ⟨"von-fintel-2001", "(6) p. 17"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def p17_6 : LinguisticExample :=
     readings := [("exhaustive", .unacceptable)]
     paperFeatures := [("question", "mention-some")] }
 
-def ex_18 : LinguisticExample :=
+def ex_18 : Datum :=
   { id := "vonfintel2001_18"
     source := ⟨"von-fintel-2001", "(18)"⟩
     reportedIn := none
@@ -264,6 +262,6 @@ def ex_18 : LinguisticExample :=
     readings := [("relativized perfection: a call before midnight will not upset her about its time", .acceptable), ("full perfection: nothing but a call after midnight upsets her", .unacceptable)]
     paperFeatures := [("inference", "relativized perfection"), ("question", "antecedents from a narrow set")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_17a, ex_17b, seat, p14_2, p15_3, p17_4a, p17_5, p17_6, ex_18]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_17a, ex_17b, seat, p14_2, p15_3, p17_4a, p17_5, p17_6, ex_18]
 
 end VonFintel2001.Examples

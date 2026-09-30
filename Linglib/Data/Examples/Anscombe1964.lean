@@ -15,9 +15,7 @@ this module; declarations live in `namespace Anscombe1964.Examples`.
 
 namespace Anscombe1964.Examples
 
-open Data.Examples
-
-def i : LinguisticExample :=
+def i : Datum :=
   { id := "anscombe1964_i"
     source := ⟨"anscombe-1964", "§I (i)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def i : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "before"), ("pattern", "transitivity")] }
 
-def ii : LinguisticExample :=
+def ii : Datum :=
   { id := "anscombe1964_ii"
     source := ⟨"anscombe-1964", "§I (ii)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ii : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "transitivity")] }
 
-def mutual_before : LinguisticExample :=
+def mutual_before : Datum :=
   { id := "anscombe1964_mutual_before"
     source := ⟨"anscombe-1964", "§I"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def mutual_before : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "before"), ("pattern", "mutual")] }
 
-def mutual_after : LinguisticExample :=
+def mutual_after : Datum :=
   { id := "anscombe1964_mutual_after"
     source := ⟨"anscombe-1964", "§I"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def mutual_after : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "mutual")] }
 
-def born : LinguisticExample :=
+def born : Datum :=
   { id := "anscombe1964_born"
     source := ⟨"anscombe-1964", "§II"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def born : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "transitivity_failure")] }
 
-def scout : LinguisticExample :=
+def scout : Datum :=
   { id := "anscombe1964_scout"
     source := ⟨"anscombe-1964", "§II"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def scout : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "alternative_verifications")] }
 
-def james1 : LinguisticExample :=
+def james1 : Datum :=
   { id := "anscombe1964_james1"
     source := ⟨"anscombe-1964", "§III (1)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def james1 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "verification"), ("verification", "begin_after_begin")] }
 
-def james2 : LinguisticExample :=
+def james2 : Datum :=
   { id := "anscombe1964_james2"
     source := ⟨"anscombe-1964", "§III (2)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def james2 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "verification"), ("verification", "begin_after_stop")] }
 
-def james3 : LinguisticExample :=
+def james3 : Datum :=
   { id := "anscombe1964_james3"
     source := ⟨"anscombe-1964", "§III (3)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def james3 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "verification"), ("verification", "overlap_after_begin")] }
 
-def james4 : LinguisticExample :=
+def james4 : Datum :=
   { id := "anscombe1964_james4"
     source := ⟨"anscombe-1964", "§III (4)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def james4 : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "verification"), ("verification", "after_stop")] }
 
-def greece : LinguisticExample :=
+def greece : Datum :=
   { id := "anscombe1964_greece"
     source := ⟨"anscombe-1964", "§IV"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def greece : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "before"), ("pattern", "quantification")] }
 
-def italy : LinguisticExample :=
+def italy : Datum :=
   { id := "anscombe1964_italy"
     source := ⟨"anscombe-1964", "§IV"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def italy : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "quantification")] }
 
-def glass : LinguisticExample :=
+def glass : Datum :=
   { id := "anscombe1964_glass"
     source := ⟨"anscombe-1964", "§V"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def glass : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "before"), ("pattern", "before_ever")] }
 
-def battle : LinguisticExample :=
+def battle : Datum :=
   { id := "anscombe1964_battle"
     source := ⟨"anscombe-1964", "§VII"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def battle : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "mutual")] }
 
-def quarrel : LinguisticExample :=
+def quarrel : Datum :=
   { id := "anscombe1964_quarrel"
     source := ⟨"anscombe-1964", "§VII"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def quarrel : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "mutual")] }
 
-def report : LinguisticExample :=
+def report : Datum :=
   { id := "anscombe1964_report"
     source := ⟨"anscombe-1964", "§VII"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def report : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "mutual")] }
 
-def arrival : LinguisticExample :=
+def arrival : Datum :=
   { id := "anscombe1964_arrival"
     source := ⟨"anscombe-1964", "§VII"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def arrival : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "nominal"), ("instantaneous", "yes")] }
 
-def john_tom : LinguisticExample :=
+def john_tom : Datum :=
   { id := "anscombe1964_john_tom"
     source := ⟨"anscombe-1964", "§IX"⟩
     reportedIn := none
@@ -251,6 +249,6 @@ def john_tom : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "instantaneous"), ("instantaneous", "yes")] }
 
-def all : List LinguisticExample := [i, ii, mutual_before, mutual_after, born, scout, james1, james2, james3, james4, greece, italy, glass, battle, quarrel, report, arrival, john_tom]
+def all : List Datum := [i, ii, mutual_before, mutual_after, born, scout, james1, james2, james3, james4, greece, italy, glass, battle, quarrel, report, arrival, john_tom]
 
 end Anscombe1964.Examples

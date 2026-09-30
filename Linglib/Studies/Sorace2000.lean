@@ -100,7 +100,7 @@ the entries placed by `ofVerb`, each grammar cuts the hierarchy exactly where th
 
 namespace Sorace2000
 
-open ArgumentStructure Data.Examples
+open ArgumentStructure
 open AuxiliarySelectionHierarchy (ofVerb)
 
 /-- The four languages of the paper. -/
@@ -132,7 +132,7 @@ structure Row where
 
 /-- The row of an example, from its language, its `verb`, `position`, `aux`, `predicate` and
 `subject` features, and its alternative with the other auxiliary. -/
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let language ← [("ital1282", Language.italian), ("stan1290", .french), ("dutc1256", .dutch),
     ("stan1295", .german)].lookup ex.language
   let verb ← ex.feature? "verb"
@@ -152,7 +152,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
         if a = aux then some ex.judgment else ex.alternatives.head?.map (·.2) }
 
 /-- The paper's examples. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 example : rows.length = Examples.all.length := by decide
 

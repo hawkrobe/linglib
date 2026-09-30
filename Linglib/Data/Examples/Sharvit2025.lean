@@ -15,9 +15,7 @@ this module; declarations live in `namespace Sharvit2025.Examples`.
 
 namespace Sharvit2025.Examples
 
-open Data.Examples
-
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "sharvit2025_ex5a"
     source := ⟨"sharvit-2025", "(5a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "and"), ("presuppositionalClause", "second"), ("redundant", "no")] }
 
-def ex5b : LinguisticExample :=
+def ex5b : Datum :=
   { id := "sharvit2025_ex5b"
     source := ⟨"sharvit-2025", "(5b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex5b : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "and"), ("presuppositionalClause", "first"), ("redundant", "yes")] }
 
-def ex9a : LinguisticExample :=
+def ex9a : Datum :=
   { id := "sharvit2025_ex9a"
     source := ⟨"sharvit-2025", "(9a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex9a : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "if"), ("presuppositionalClause", "second"), ("redundant", "no")] }
 
-def ex9b : LinguisticExample :=
+def ex9b : Datum :=
   { id := "sharvit2025_ex9b"
     source := ⟨"sharvit-2025", "(9b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex9b : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "if"), ("presuppositionalClause", "first"), ("redundant", "yes")] }
 
-def ex10a : LinguisticExample :=
+def ex10a : Datum :=
   { id := "sharvit2025_ex10a"
     source := ⟨"sharvit-2025", "(10a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex10a : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "and"), ("presuppositionalClause", "second"), ("redundant", "no")] }
 
-def ex10b : LinguisticExample :=
+def ex10b : Datum :=
   { id := "sharvit2025_ex10b"
     source := ⟨"sharvit-2025", "(10b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex10b : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "and"), ("presuppositionalClause", "first"), ("redundant", "yes")] }
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "sharvit2025_ex11a"
     source := ⟨"sharvit-2025", "(11a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "or"), ("presuppositionalClause", "second"), ("redundant", "no")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "sharvit2025_ex11b"
     source := ⟨"sharvit-2025", "(11b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("connective", "or"), ("presuppositionalClause", "first"), ("redundant", "no")] }
 
-def ex30 : LinguisticExample :=
+def ex30 : Datum :=
   { id := "sharvit2025_ex30"
     source := ⟨"sharvit-2025", "(30)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex30 : LinguisticExample :=
     readings := [("if-over-∃: if Mia is bored or penniless, Sue is bored or penniless", .acceptable), ("∀-over-if: if Mia is bored, Sue is bored, and if Mia is penniless, Sue is penniless", .acceptable)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "yes"), ("presuppositionalDisjunct", "no")] }
 
-def ex34 : LinguisticExample :=
+def ex34 : Datum :=
   { id := "sharvit2025_ex34"
     source := ⟨"sharvit-2025", "(34)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex34 : LinguisticExample :=
     readings := [("if-over-∃: if Mia is bored or penniless, Sue is bored or penniless", .acceptable), ("∀-over-if: if Mia is bored, Sue is bored, and if Mia is penniless, Sue is penniless", .ungrammatical)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "no"), ("presuppositionalDisjunct", "no")] }
 
-def ex48 : LinguisticExample :=
+def ex48 : Datum :=
   { id := "sharvit2025_ex48"
     source := ⟨"sharvit-2025", "(48)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex48 : LinguisticExample :=
     readings := [("if-over-∃: if Mia is penniless or proud of her money, Sue is penniless or proud of hers", .acceptable), ("∀-over-if: if Mia is penniless, Sue is penniless, and if Mia is proud of her money, Sue is proud of hers; presupposes that Sue has money if Mia does", .acceptable)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "yes"), ("presuppositionalDisjunct", "yes")] }
 
-def ex50 : LinguisticExample :=
+def ex50 : Datum :=
   { id := "sharvit2025_ex50"
     source := ⟨"sharvit-2025", "(50)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex50 : LinguisticExample :=
     readings := [("if-over-∃: if Mia is penniless or proud of her money, Sue is penniless or proud of hers", .acceptable), ("∀-over-if: if Mia is penniless, Sue is penniless, and if Mia is proud of her money, Sue is proud of hers", .ungrammatical)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "no"), ("presuppositionalDisjunct", "yes")] }
 
-def ex63b : LinguisticExample :=
+def ex63b : Datum :=
   { id := "sharvit2025_ex63b"
     source := ⟨"sharvit-2025", "(63b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex63b : LinguisticExample :=
     readings := [("if-over-∃: if Mia is penniless or proud of her money, Sue is penniless or proud of hers", .acceptable), ("∀-over-if: if Mia is penniless, Sue is penniless, and if Mia is proud of her money, Sue is proud of hers; presupposes that Sue has money if Mia does", .acceptable)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "yes"), ("presuppositionalDisjunct", "yes")] }
 
-def ex148a : LinguisticExample :=
+def ex148a : Datum :=
   { id := "sharvit2025_ex148a"
     source := ⟨"sharvit-2025", "(148a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex148a : LinguisticExample :=
     readings := [("∀-over-if, equivalent to that of (148b)", .acceptable)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "yes"), ("presuppositionalDisjunct", "both")] }
 
-def ex148b : LinguisticExample :=
+def ex148b : Datum :=
   { id := "sharvit2025_ex148b"
     source := ⟨"sharvit-2025", "(148b)"⟩
     reportedIn := none
@@ -212,6 +210,6 @@ def ex148b : LinguisticExample :=
     readings := [("∀-over-if, equivalent to that of (148a)", .acceptable)]
     paperFeatures := [("construction", "roothPartee"), ("ellipsis", "yes"), ("presuppositionalDisjunct", "both")] }
 
-def all : List LinguisticExample := [ex5a, ex5b, ex9a, ex9b, ex10a, ex10b, ex11a, ex11b, ex30, ex34, ex48, ex50, ex63b, ex148a, ex148b]
+def all : List Datum := [ex5a, ex5b, ex9a, ex9b, ex10a, ex10b, ex11a, ex11b, ex30, ex34, ex48, ex50, ex63b, ex148a, ex148b]
 
 end Sharvit2025.Examples

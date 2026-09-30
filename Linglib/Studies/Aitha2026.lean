@@ -58,7 +58,7 @@ order on their comparative values.
 
 namespace Aitha2026
 
-open DistributedMorphology Prosody Data.Examples
+open DistributedMorphology Prosody
 open scoped Case.Caha
 open Core OptimalityTheory
 
@@ -175,7 +175,7 @@ structure Cell where
   deriving DecidableEq, Repr
 
 /-- The cell an example records, from its `paperFeatures`. -/
-def Cell.ofExample (ex : LinguisticExample) : Option Cell := do
+def Cell.ofDatum (ex : Datum) : Option Cell := do
   let fs := ex.paperFeatures
   let noun ← fs.lookup "noun"
   let cls ← fs.lookup "class"
@@ -197,11 +197,11 @@ def Cell.ofExample (ex : LinguisticExample) : Option Cell := do
     (fs.lookup "form").map (· = "long")⟩
 
 /-- Every row recording an n exponent is a cell. -/
-theorem cell_ofExample_isSome :
-    ∀ ex ∈ Examples.all, (ex.feature? "n").isSome → (Cell.ofExample ex).isSome := by decide
+theorem cell_ofDatum_isSome :
+    ∀ ex ∈ Examples.all, (ex.feature? "n").isSome → (Cell.ofDatum ex).isSome := by decide
 
 /-- The cells of the pool. -/
-def cells : List Cell := Examples.all.filterMap Cell.ofExample
+def cells : List Cell := Examples.all.filterMap Cell.ofDatum
 
 /-- The strong cells, with their roots. -/
 def strongCells : List (Root × Case × String) :=

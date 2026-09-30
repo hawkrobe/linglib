@@ -15,9 +15,7 @@ this module; declarations live in `namespace Deo2025.Examples`.
 
 namespace Deo2025.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "deo2025_1"
     source := ⟨"deo-2025-bara", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "warning")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "deo2025_2"
     source := ⟨"deo-2025-bara", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "command")] }
 
-def ex_3 : LinguisticExample :=
+def ex_3 : Datum :=
   { id := "deo2025_3"
     source := ⟨"deo-2025-bara", "(3)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "constituent"), ("act", "question")] }
 
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "deo2025_4"
     source := ⟨"deo-2025-bara", "(4)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "informing")] }
 
-def ex_5a : LinguisticExample :=
+def ex_5a : Datum :=
   { id := "deo2025_5a"
     source := ⟨"deo-2025-bara", "(5a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_5a : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "warning")] }
 
-def ex_5b : LinguisticExample :=
+def ex_5b : Datum :=
   { id := "deo2025_5b"
     source := ⟨"deo-2025-bara", "(5b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_5b : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "warning"), ("infelicity", "precondition")] }
 
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "deo2025_6"
     source := ⟨"deo-2025-bara", "(6)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "advice")] }
 
-def ex_7ctx1 : LinguisticExample :=
+def ex_7ctx1 : Datum :=
   { id := "deo2025_7ctx1"
     source := ⟨"deo-2025-bara", "(7), context 1"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_7ctx1 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "reminder"), ("infelicity", "alignment")] }
 
-def ex_7ctx2 : LinguisticExample :=
+def ex_7ctx2 : Datum :=
   { id := "deo2025_7ctx2"
     source := ⟨"deo-2025-bara", "(7), context 2"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_7ctx2 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "reminder")] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "deo2025_8"
     source := ⟨"deo-2025-bara", "(8)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "warning")] }
 
-def ex_9 : LinguisticExample :=
+def ex_9 : Datum :=
   { id := "deo2025_9"
     source := ⟨"deo-2025-bara", "(9)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_9 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "declarative"), ("act", "commissive"), ("infelicity", "source")] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "deo2025_10a"
     source := ⟨"deo-2025-bara", "(10a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "request"), ("infelicity", "benefit")] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "deo2025_10b"
     source := ⟨"deo-2025-bara", "(10b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "plea"), ("infelicity", "benefit")] }
 
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "deo2025_11a"
     source := ⟨"deo-2025-bara", "(11a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "offer"), ("infelicity", "deference")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "deo2025_11b"
     source := ⟨"deo-2025-bara", "(11b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "permission"), ("infelicity", "source")] }
 
-def ex_11c : LinguisticExample :=
+def ex_11c : Datum :=
   { id := "deo2025_11c"
     source := ⟨"deo-2025-bara", "(11c)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_11c : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "concession"), ("infelicity", "source")] }
 
-def ex_11d : LinguisticExample :=
+def ex_11d : Datum :=
   { id := "deo2025_11d"
     source := ⟨"deo-2025-bara", "(11d)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_11d : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "curse"), ("infelicity", "benefit")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "deo2025_12"
     source := ⟨"deo-2025-bara", "(12)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_12 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "command")] }
 
-def ex_13 : LinguisticExample :=
+def ex_13 : Datum :=
   { id := "deo2025_13"
     source := ⟨"deo-2025-bara", "(13)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_13 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "warning")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "deo2025_14"
     source := ⟨"deo-2025-bara", "(14)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "recommendation")] }
 
-def ex_15ctx1 : LinguisticExample :=
+def ex_15ctx1 : Datum :=
   { id := "deo2025_15ctx1"
     source := ⟨"deo-2025-bara", "(15), context 1"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_15ctx1 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "recommendation")] }
 
-def ex_15ctx2 : LinguisticExample :=
+def ex_15ctx2 : Datum :=
   { id := "deo2025_15ctx2"
     source := ⟨"deo-2025-bara", "(15), context 2"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_15ctx2 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "recommendation"), ("infelicity", "source")] }
 
-def ex_16 : LinguisticExample :=
+def ex_16 : Datum :=
   { id := "deo2025_16"
     source := ⟨"deo-2025-bara", "(16)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("clauseType", "imperative"), ("act", "agreement"), ("infelicity", "source")] }
 
-def ex_19a : LinguisticExample :=
+def ex_19a : Datum :=
   { id := "deo2025_19a"
     source := ⟨"deo-2025-bara", "(19a)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_19a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "responseParticle")] }
 
-def ex_19b : LinguisticExample :=
+def ex_19b : Datum :=
   { id := "deo2025_19b"
     source := ⟨"deo-2025-bara", "(19b)"⟩
     reportedIn := none
@@ -342,6 +340,6 @@ def ex_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "responseParticle")] }
 
-def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5a, ex_5b, ex_6, ex_7ctx1, ex_7ctx2, ex_8, ex_9, ex_10a, ex_10b, ex_11a, ex_11b, ex_11c, ex_11d, ex_12, ex_13, ex_14, ex_15ctx1, ex_15ctx2, ex_16, ex_19a, ex_19b]
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5a, ex_5b, ex_6, ex_7ctx1, ex_7ctx2, ex_8, ex_9, ex_10a, ex_10b, ex_11a, ex_11b, ex_11c, ex_11d, ex_12, ex_13, ex_14, ex_15ctx1, ex_15ctx2, ex_16, ex_19a, ex_19b]
 
 end Deo2025.Examples

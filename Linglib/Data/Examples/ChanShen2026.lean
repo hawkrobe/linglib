@@ -15,9 +15,7 @@ this module; declarations live in `namespace ChanShen2026.Examples`.
 
 namespace ChanShen2026.Examples
 
-open Data.Examples
-
-def ex1a : LinguisticExample :=
+def ex1a : Datum :=
   { id := "chanshen2026_ex1a"
     source := ⟨"chan-shen-2026", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1a : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("interveners", "1")] }
 
-def ex1b : LinguisticExample :=
+def ex1b : Datum :=
   { id := "chanshen2026_ex1b"
     source := ⟨"chan-shen-2026", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex1b : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "full"), ("interveners", "0")] }
 
-def ex4a : LinguisticExample :=
+def ex4a : Datum :=
   { id := "chanshen2026_ex4a"
     source := ⟨"chan-shen-2026", "(4a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex4a : LinguisticExample :=
     readings := []
     paperFeatures := [("condition", "Wh-Long"), ("strategy", "full")] }
 
-def ex4b : LinguisticExample :=
+def ex4b : Datum :=
   { id := "chanshen2026_ex4b"
     source := ⟨"chan-shen-2026", "(4b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex4b : LinguisticExample :=
     readings := []
     paperFeatures := [("condition", "WhHell-Long"), ("modifier", "theHell"), ("strategy", "full"), ("interveners", "0")] }
 
-def ex4c : LinguisticExample :=
+def ex4c : Datum :=
   { id := "chanshen2026_ex4c"
     source := ⟨"chan-shen-2026", "(4c)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex4c : LinguisticExample :=
     readings := []
     paperFeatures := [("condition", "Wh-Situ"), ("strategy", "inSitu")] }
 
-def ex4d : LinguisticExample :=
+def ex4d : Datum :=
   { id := "chanshen2026_ex4d"
     source := ⟨"chan-shen-2026", "(4d)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex4d : LinguisticExample :=
     readings := []
     paperFeatures := [("condition", "WhHell-Situ"), ("modifier", "theHell"), ("strategy", "inSitu"), ("interveners", "0")] }
 
-def ex6c : LinguisticExample :=
+def ex6c : Datum :=
   { id := "chanshen2026_ex6c"
     source := ⟨"chan-shen-2026", "(6c)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex6c : LinguisticExample :=
     readings := []
     paperFeatures := [("condition", "Wh-Partial"), ("strategy", "partial")] }
 
-def ex6d : LinguisticExample :=
+def ex6d : Datum :=
   { id := "chanshen2026_ex6d"
     source := ⟨"chan-shen-2026", "(6d)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex6d : LinguisticExample :=
     readings := []
     paperFeatures := [("condition", "WhHell-Partial"), ("modifier", "theHell"), ("strategy", "partial"), ("interveners", "0")] }
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "chanshen2026_ex11a"
     source := ⟨"sato-ngui-2017", "(11a)"⟩
     reportedIn := some ⟨"chan-shen-2026", "(11a)"⟩
@@ -134,7 +132,7 @@ def ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "full"), ("island", "complexNP")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "chanshen2026_ex11b"
     source := ⟨"sato-ngui-2017", "(11b)"⟩
     reportedIn := some ⟨"chan-shen-2026", "(11b)"⟩
@@ -147,7 +145,7 @@ def ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("island", "complexNP")] }
 
-def ex15 : LinguisticExample :=
+def ex15 : Datum :=
   { id := "chanshen2026_ex15"
     source := ⟨"sato-ngui-2017", "(15)"⟩
     reportedIn := some ⟨"chan-shen-2026", "(15)"⟩
@@ -160,7 +158,7 @@ def ex15 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "partial"), ("island", "complexNP")] }
 
-def ex17a : LinguisticExample :=
+def ex17a : Datum :=
   { id := "chanshen2026_ex17a"
     source := ⟨"cole-hermon-1998", "(17a)"⟩
     reportedIn := some ⟨"chan-shen-2026", "(17a)"⟩
@@ -173,7 +171,7 @@ def ex17a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("island", "complexNP")] }
 
-def ex17b : LinguisticExample :=
+def ex17b : Datum :=
   { id := "chanshen2026_ex17b"
     source := ⟨"cole-hermon-1998", "(17b)"⟩
     reportedIn := some ⟨"chan-shen-2026", "(17b)"⟩
@@ -186,7 +184,7 @@ def ex17b : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "partial"), ("island", "complexNP")] }
 
-def ex19 : LinguisticExample :=
+def ex19 : Datum :=
   { id := "chanshen2026_ex19"
     source := ⟨"chou-2012", "(19)"⟩
     reportedIn := some ⟨"chan-shen-2026", "(19)"⟩
@@ -199,7 +197,7 @@ def ex19 : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "daodi"), ("strategy", "inSitu"), ("interveners", "0")] }
 
-def ex22a : LinguisticExample :=
+def ex22a : Datum :=
   { id := "chanshen2026_ex22a"
     source := ⟨"chan-shen-2026", "(22a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex22a : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("role", "subject")] }
 
-def ex22b : LinguisticExample :=
+def ex22b : Datum :=
   { id := "chanshen2026_ex22b"
     source := ⟨"chan-shen-2026", "(22b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex22b : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("role", "subject"), ("interveners", "0")] }
 
-def ex25a : LinguisticExample :=
+def ex25a : Datum :=
   { id := "chanshen2026_ex25a"
     source := ⟨"chan-shen-2026", "(25a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex25a : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "full"), ("interveners", "0")] }
 
-def ex26a : LinguisticExample :=
+def ex26a : Datum :=
   { id := "chanshen2026_ex26a"
     source := ⟨"den-dikken-giannakidou-2002", "(71a)"⟩
     reportedIn := some ⟨"chan-shen-2026", "(26a)"⟩
@@ -251,6 +249,6 @@ def ex26a : LinguisticExample :=
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("interveners", "1")] }
 
-def all : List LinguisticExample := [ex1a, ex1b, ex4a, ex4b, ex4c, ex4d, ex6c, ex6d, ex11a, ex11b, ex15, ex17a, ex17b, ex19, ex22a, ex22b, ex25a, ex26a]
+def all : List Datum := [ex1a, ex1b, ex4a, ex4b, ex4c, ex4d, ex6c, ex6d, ex11a, ex11b, ex15, ex17a, ex17b, ex19, ex22a, ex22b, ex25a, ex26a]
 
 end ChanShen2026.Examples

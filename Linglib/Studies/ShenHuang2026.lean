@@ -48,7 +48,7 @@ linearization (§4.2, `binding_consistent`).
 
 namespace ShenHuang2026
 
-open Reference Minimalist Minimalist.Linearization ArgumentStructure Data.Examples
+open Reference Minimalist Minimalist.Linearization ArgumentStructure
 
 /-- How a wh-dependency is established: overt movement of the wh-phrase, which binds its
 trace, or unselective binding of an in-situ wh-phrase by an operator, a question operator or
@@ -221,7 +221,7 @@ theorem observed_iff (account : Finset Constraint) : Observed account ↔ accoun
 /-! ### The cited judgments -/
 
 /-- The configuration an example's features record. -/
-def Config.ofExample (ex : LinguisticExample) : Option Config := do
+def Config.ofDatum (ex : Datum) : Option Config := do
   let d ← ex.parse? "dependency" [("movement", Dependency.movement), ("binding", .binding)]
   let o ← ex.parse? "object" [("definite", Definiteness.definite), ("indefinite", .indefinite)]
   let v ← ex.parse? "creation" [("yes", true), ("no", false)]
@@ -232,7 +232,7 @@ Experiment 1 revisits: under the combined account, a non-creation verb with a de
 violates one constraint more than a creation verb, and the row is judged no better. -/
 theorem stacking_daviesDubinsky :
     ∀ ex₁ ∈ DaviesDubinsky2003.Examples.all, ∀ ex₂ ∈ DaviesDubinsky2003.Examples.all,
-      ∀ c₁ ∈ Config.ofExample ex₁, ∀ c₂ ∈ Config.ofExample ex₂,
+      ∀ c₁ ∈ Config.ofDatum ex₁, ∀ c₂ ∈ Config.ofDatum ex₂,
         violations combined c₁ < violations combined c₂ →
           ex₂.judgment.rank ≤ ex₁.judgment.rank := by
   decide
@@ -240,7 +240,7 @@ theorem stacking_daviesDubinsky :
 /-- Constraint stacking on the paper's cited judgments: within a language, an example violating
 strictly more constraints of the combined account is judged no better. -/
 theorem stacking : ∀ ex₁ ∈ Examples.all, ∀ ex₂ ∈ Examples.all, ex₁.language = ex₂.language →
-    ∀ c₁ ∈ Config.ofExample ex₁, ∀ c₂ ∈ Config.ofExample ex₂,
+    ∀ c₁ ∈ Config.ofDatum ex₁, ∀ c₂ ∈ Config.ofDatum ex₂,
       violations combined c₁ < violations combined c₂ →
         ex₂.judgment.rank ≤ ex₁.judgment.rank := by
   decide

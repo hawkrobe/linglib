@@ -15,9 +15,7 @@ this module; declarations live in `namespace GroenendijkStokhof1984.Examples`.
 
 namespace GroenendijkStokhof1984.Examples
 
-open Data.Examples
-
-def gs1984_mentionsome_italian_newspaper : LinguisticExample :=
+def gs1984_mentionsome_italian_newspaper : Datum :=
   { id := "gs1984_mentionsome_italian_newspaper"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §5, p. 331"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def gs1984_mentionsome_italian_newspaper : LinguisticExample :=
     readings := [("mention-some", .acceptable), ("mention-all", .acceptable)]
     paperFeatures := [("phenomenon", "mention_some")] }
 
-def gs1984_mentionsome_know_newspaper : LinguisticExample :=
+def gs1984_mentionsome_know_newspaper : Datum :=
   { id := "gs1984_mentionsome_know_newspaper"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §5.3, (9)-(10)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def gs1984_mentionsome_know_newspaper : LinguisticExample :=
     readings := [("mention-some", .acceptable), ("mention-all", .acceptable)]
     paperFeatures := [("phenomenon", "mention_some"), ("licensor", "know"), ("licenses_mention_some", "true")] }
 
-def gs1984_mentionsome_wonder_newspaper : LinguisticExample :=
+def gs1984_mentionsome_wonder_newspaper : Datum :=
   { id := "gs1984_mentionsome_wonder_newspaper"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §5.3, (11)-(12)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def gs1984_mentionsome_wonder_newspaper : LinguisticExample :=
     readings := [("mention-some", .acceptable), ("mention-all", .acceptable)]
     paperFeatures := [("phenomenon", "mention_some"), ("licensor", "wonder"), ("licenses_mention_some", "true")] }
 
-def gs1984_mentionsome_know_pen : LinguisticExample :=
+def gs1984_mentionsome_know_pen : Datum :=
   { id := "gs1984_mentionsome_know_pen"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §5.3"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def gs1984_mentionsome_know_pen : LinguisticExample :=
     readings := [("mention-some", .acceptable), ("choice", .acceptable), ("mention-all", .acceptable)]
     paperFeatures := [("phenomenon", "mention_some"), ("licensor", "know"), ("licenses_mention_some", "true")] }
 
-def gs1984_mentionsome_negative_pen : LinguisticExample :=
+def gs1984_mentionsome_negative_pen : Datum :=
   { id := "gs1984_mentionsome_negative_pen"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §5.2"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def gs1984_mentionsome_negative_pen : LinguisticExample :=
     readings := [("mention-some", .acceptable)]
     paperFeatures := [("phenomenon", "mention_some")] }
 
-def gs1984_mentionsome_depends : LinguisticExample :=
+def gs1984_mentionsome_depends : Datum :=
   { id := "gs1984_mentionsome_depends"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §5.4"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def gs1984_mentionsome_depends : LinguisticExample :=
     readings := [("mention-some", .unacceptable)]
     paperFeatures := [("phenomenon", "mention_some"), ("licensor", "depends"), ("licenses_mention_some", "false")] }
 
-def gs1984_mentionsome_matter : LinguisticExample :=
+def gs1984_mentionsome_matter : Datum :=
   { id := "gs1984_mentionsome_matter"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §5.4"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def gs1984_mentionsome_matter : LinguisticExample :=
     readings := [("mention-some", .unacceptable)]
     paperFeatures := [("phenomenon", "mention_some"), ("licensor", "matter"), ("licenses_mention_some", "false")] }
 
-def gs1984_mentionsome_determine : LinguisticExample :=
+def gs1984_mentionsome_determine : Datum :=
   { id := "gs1984_mentionsome_determine"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §5.4"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def gs1984_mentionsome_determine : LinguisticExample :=
     readings := [("mention-some", .unacceptable)]
     paperFeatures := [("phenomenon", "mention_some"), ("licensor", "determine"), ("licenses_mention_some", "false")] }
 
-def gs1984_mentionsome_know : LinguisticExample :=
+def gs1984_mentionsome_know : Datum :=
   { id := "gs1984_mentionsome_know"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §5.4"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def gs1984_mentionsome_know : LinguisticExample :=
     readings := [("mention-some", .acceptable)]
     paperFeatures := [("phenomenon", "mention_some"), ("licensor", "know"), ("licenses_mention_some", "true")] }
 
-def gs1984_mentionsome_wonder : LinguisticExample :=
+def gs1984_mentionsome_wonder : Datum :=
   { id := "gs1984_mentionsome_wonder"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §5.4"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def gs1984_mentionsome_wonder : LinguisticExample :=
     readings := [("mention-some", .acceptable)]
     paperFeatures := [("phenomenon", "mention_some"), ("licensor", "wonder"), ("licenses_mention_some", "true")] }
 
-def gs1984_mentionsome_findout : LinguisticExample :=
+def gs1984_mentionsome_findout : Datum :=
   { id := "gs1984_mentionsome_findout"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §5.4"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def gs1984_mentionsome_findout : LinguisticExample :=
     readings := [("mention-some", .acceptable)]
     paperFeatures := [("phenomenon", "mention_some"), ("licensor", "find out"), ("licenses_mention_some", "true")] }
 
-def gs1984_mentiontwo_unicorns : LinguisticExample :=
+def gs1984_mentiontwo_unicorns : Datum :=
   { id := "gs1984_mentiontwo_unicorns"
     source := ⟨"belnap-1982", "two-unicorns example"⟩
     reportedIn := some ⟨"groenendijk-stokhof-1984", "Ch. VI §5.3"⟩
@@ -173,7 +171,7 @@ def gs1984_mentiontwo_unicorns : LinguisticExample :=
     readings := [("mention-some", .acceptable), ("cumulative", .acceptable), ("choice", .acceptable)]
     paperFeatures := [("phenomenon", "mention_some")] }
 
-def gs1984_yourfather : LinguisticExample :=
+def gs1984_yourfather : Datum :=
   { id := "gs1984_yourfather"
     source := ⟨"groenendijk-stokhof-1984", "p. 359"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def gs1984_yourfather : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "pragmatic_answerhood"), ("rigidity", "pragmatic_not_semantic")] }
 
-def gs1984_zoetemelk_rigid : LinguisticExample :=
+def gs1984_zoetemelk_rigid : Datum :=
   { id := "gs1984_zoetemelk_rigid"
     source := ⟨"groenendijk-stokhof-1984", "p. 359"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def gs1984_zoetemelk_rigid : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "pragmatic_answerhood"), ("rigidity", "pragmatic_not_semantic")] }
 
-def gs1984_zoetemelk_false_true : LinguisticExample :=
+def gs1984_zoetemelk_false_true : Datum :=
   { id := "gs1984_zoetemelk_false_true"
     source := ⟨"groenendijk-stokhof-1984", "p. 360"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def gs1984_zoetemelk_false_true : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "pragmatic_answerhood"), ("answer_truth", "false_but_conveys_true")] }
 
-def gs1984_elderly_lady_bootshop : LinguisticExample :=
+def gs1984_elderly_lady_bootshop : Datum :=
   { id := "gs1984_elderly_lady_bootshop"
     source := ⟨"groenendijk-stokhof-1984", "pp. 360-361"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def gs1984_elderly_lady_bootshop : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "pragmatic_answerhood"), ("rigidity", "pragmatically_definite")] }
 
-def gs1984_profa_contribution : LinguisticExample :=
+def gs1984_profa_contribution : Datum :=
   { id := "gs1984_profa_contribution"
     source := ⟨"groenendijk-stokhof-1984", "p. 362"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def gs1984_profa_contribution : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "pragmatic_answerhood"), ("exhaustive_inference", "true")] }
 
-def gs1984_profa_acceptance : LinguisticExample :=
+def gs1984_profa_acceptance : Datum :=
   { id := "gs1984_profa_acceptance"
     source := ⟨"groenendijk-stokhof-1984", "p. 362"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def gs1984_profa_acceptance : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "pragmatic_answerhood"), ("exhaustive_inference", "false")] }
 
-def gs1984_court_testimony : LinguisticExample :=
+def gs1984_court_testimony : Datum :=
   { id := "gs1984_court_testimony"
     source := ⟨"groenendijk-stokhof-1984", "pp. 363, 390"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def gs1984_court_testimony : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "pragmatic_answerhood"), ("rigidity", "semantic_required")] }
 
-def gs1984_pairlist_each_professor : LinguisticExample :=
+def gs1984_pairlist_each_professor : Datum :=
   { id := "gs1984_pairlist_each_professor"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §2.1, p. 403"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def gs1984_pairlist_each_professor : LinguisticExample :=
     readings := [("pair-list", .acceptable), ("single", .acceptable)]
     paperFeatures := [("phenomenon", "pair_list"), ("quantifier", "each"), ("embedding", "matrix"), ("pair_list_ok", "true")] }
 
-def gs1984_pairlist_every_man : LinguisticExample :=
+def gs1984_pairlist_every_man : Datum :=
   { id := "gs1984_pairlist_every_man"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §2.1, p. 404"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def gs1984_pairlist_every_man : LinguisticExample :=
     readings := [("pair-list", .acceptable), ("single", .acceptable)]
     paperFeatures := [("phenomenon", "pair_list"), ("quantifier", "every"), ("embedding", "matrix"), ("pair_list_ok", "true")] }
 
-def gs1984_functional_his_teachers : LinguisticExample :=
+def gs1984_functional_his_teachers : Datum :=
   { id := "gs1984_functional_his_teachers"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §2.1, p. 405"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def gs1984_functional_his_teachers : LinguisticExample :=
     readings := [("functional pair-list", .acceptable), ("single", .unacceptable)]
     paperFeatures := [("phenomenon", "pair_list"), ("quantifier", "every"), ("embedding", "matrix"), ("pair_list_ok", "true")] }
 
-def gs1984_pairlist_know : LinguisticExample :=
+def gs1984_pairlist_know : Datum :=
   { id := "gs1984_pairlist_know"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §2.1, p. 408"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def gs1984_pairlist_know : LinguisticExample :=
     readings := [("pair-list", .acceptable), ("single", .acceptable)]
     paperFeatures := [("phenomenon", "pair_list"), ("quantifier", "each"), ("embedding", "know"), ("pair_list_ok", "true")] }
 
-def gs1984_pairlist_wonder : LinguisticExample :=
+def gs1984_pairlist_wonder : Datum :=
   { id := "gs1984_pairlist_wonder"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §2.1, p. 409"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def gs1984_pairlist_wonder : LinguisticExample :=
     readings := [("pair-list", .marginal), ("single", .acceptable)]
     paperFeatures := [("phenomenon", "pair_list"), ("quantifier", "each"), ("embedding", "wonder"), ("pair_list_ok", "false")] }
 
-def gs1984_choice_john_or_mary : LinguisticExample :=
+def gs1984_choice_john_or_mary : Datum :=
   { id := "gs1984_choice_john_or_mary"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §2.2, p. 411"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def gs1984_choice_john_or_mary : LinguisticExample :=
     readings := [("choice", .acceptable), ("non-choice", .acceptable)]
     paperFeatures := [("phenomenon", "choice"), ("quantifier", "disjunction"), ("embedding", "matrix")] }
 
-def gs1984_choice_know_mary_or_sue : LinguisticExample :=
+def gs1984_choice_know_mary_or_sue : Datum :=
   { id := "gs1984_choice_know_mary_or_sue"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §2.2, p. 412"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def gs1984_choice_know_mary_or_sue : LinguisticExample :=
     readings := [("choice", .acceptable), ("non-choice", .acceptable)]
     paperFeatures := [("phenomenon", "choice"), ("quantifier", "disjunction"), ("embedding", "know")] }
 
-def gs1984_choice_some_professor : LinguisticExample :=
+def gs1984_choice_some_professor : Datum :=
   { id := "gs1984_choice_some_professor"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §2.2, p. 413"⟩
     reportedIn := none
@@ -368,6 +366,6 @@ def gs1984_choice_some_professor : LinguisticExample :=
     readings := [("choice", .acceptable), ("non-choice", .acceptable)]
     paperFeatures := [("phenomenon", "choice"), ("quantifier", "some"), ("embedding", "matrix")] }
 
-def all : List LinguisticExample := [gs1984_mentionsome_italian_newspaper, gs1984_mentionsome_know_newspaper, gs1984_mentionsome_wonder_newspaper, gs1984_mentionsome_know_pen, gs1984_mentionsome_negative_pen, gs1984_mentionsome_depends, gs1984_mentionsome_matter, gs1984_mentionsome_determine, gs1984_mentionsome_know, gs1984_mentionsome_wonder, gs1984_mentionsome_findout, gs1984_mentiontwo_unicorns, gs1984_yourfather, gs1984_zoetemelk_rigid, gs1984_zoetemelk_false_true, gs1984_elderly_lady_bootshop, gs1984_profa_contribution, gs1984_profa_acceptance, gs1984_court_testimony, gs1984_pairlist_each_professor, gs1984_pairlist_every_man, gs1984_functional_his_teachers, gs1984_pairlist_know, gs1984_pairlist_wonder, gs1984_choice_john_or_mary, gs1984_choice_know_mary_or_sue, gs1984_choice_some_professor]
+def all : List Datum := [gs1984_mentionsome_italian_newspaper, gs1984_mentionsome_know_newspaper, gs1984_mentionsome_wonder_newspaper, gs1984_mentionsome_know_pen, gs1984_mentionsome_negative_pen, gs1984_mentionsome_depends, gs1984_mentionsome_matter, gs1984_mentionsome_determine, gs1984_mentionsome_know, gs1984_mentionsome_wonder, gs1984_mentionsome_findout, gs1984_mentiontwo_unicorns, gs1984_yourfather, gs1984_zoetemelk_rigid, gs1984_zoetemelk_false_true, gs1984_elderly_lady_bootshop, gs1984_profa_contribution, gs1984_profa_acceptance, gs1984_court_testimony, gs1984_pairlist_each_professor, gs1984_pairlist_every_man, gs1984_functional_his_teachers, gs1984_pairlist_know, gs1984_pairlist_wonder, gs1984_choice_john_or_mary, gs1984_choice_know_mary_or_sue, gs1984_choice_some_professor]
 
 end GroenendijkStokhof1984.Examples

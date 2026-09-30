@@ -15,9 +15,7 @@ this module; declarations live in `namespace BarAsherSiegal2026.Examples`.
 
 namespace BarAsherSiegal2026.Examples
 
-open Data.Examples
-
-def bas2026_1a : LinguisticExample :=
+def bas2026_1a : Datum :=
   { id := "bas2026_1a"
     source := ⟨"bar-asher-siegal-2026", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def bas2026_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "because"), ("relation", "grounding")] }
 
-def bas2026_1b : LinguisticExample :=
+def bas2026_1b : Datum :=
   { id := "bas2026_1b"
     source := ⟨"bar-asher-siegal-2026", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def bas2026_1b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "cause"), ("relation", "grounding")] }
 
-def bas2026_1c : LinguisticExample :=
+def bas2026_1c : Datum :=
   { id := "bas2026_1c"
     source := ⟨"bar-asher-siegal-2026", "(1c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def bas2026_1c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "because of"), ("relation", "grounding")] }
 
-def bas2026_2a : LinguisticExample :=
+def bas2026_2a : Datum :=
   { id := "bas2026_2a"
     source := ⟨"bar-asher-siegal-2026", "(2a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def bas2026_2a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "lexical causative"), ("entails", "(2b)")] }
 
-def bas2026_2b : LinguisticExample :=
+def bas2026_2b : Datum :=
   { id := "bas2026_2b"
     source := ⟨"bar-asher-siegal-2026", "(2b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def bas2026_2b : LinguisticExample :=
     readings := [("Sam opened a window and a gust blew the door open", .acceptable)]
     paperFeatures := [("construction", "periphrastic causative"), ("entails", "(2a)")] }
 
-def bas2026_i : LinguisticExample :=
+def bas2026_i : Datum :=
   { id := "bas2026_i"
     source := ⟨"bar-asher-siegal-2026", "(i)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def bas2026_i : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "because"), ("pronoun", "they"), ("antecedent", "the demonstrators")] }
 
-def bas2026_ii : LinguisticExample :=
+def bas2026_ii : Datum :=
   { id := "bas2026_ii"
     source := ⟨"bar-asher-siegal-2026", "(ii)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def bas2026_ii : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "because"), ("pronoun", "they"), ("antecedent", "the city council")] }
 
-def bas2026_iii : LinguisticExample :=
+def bas2026_iii : Datum :=
   { id := "bas2026_iii"
     source := ⟨"bar-asher-siegal-2026", "(iii)"⟩
     reportedIn := none
@@ -121,6 +119,6 @@ def bas2026_iii : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "cause"), ("enrichment", "John drank enough wine to impair his driving")] }
 
-def all : List LinguisticExample := [bas2026_1a, bas2026_1b, bas2026_1c, bas2026_2a, bas2026_2b, bas2026_i, bas2026_ii, bas2026_iii]
+def all : List Datum := [bas2026_1a, bas2026_1b, bas2026_1c, bas2026_2a, bas2026_2b, bas2026_i, bas2026_ii, bas2026_iii]
 
 end BarAsherSiegal2026.Examples

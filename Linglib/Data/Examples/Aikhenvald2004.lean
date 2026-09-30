@@ -15,9 +15,7 @@ this module; declarations live in `namespace Aikhenvald2004.Examples`.
 
 namespace Aikhenvald2004.Examples
 
-open Data.Examples
-
-def ex1_1 : LinguisticExample :=
+def ex1_1 : Datum :=
   { id := "aikhenvald2004_ex1_1"
     source := ⟨"aikhenvald-2004", "(1.1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("system", "D1"), ("term", "visual"), ("source", "visual")] }
 
-def ex1_2 : LinguisticExample :=
+def ex1_2 : Datum :=
   { id := "aikhenvald2004_ex1_2"
     source := ⟨"aikhenvald-2004", "(1.2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex1_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("system", "D1"), ("term", "sensory"), ("source", "nonvisual")] }
 
-def ex1_3 : LinguisticExample :=
+def ex1_3 : Datum :=
   { id := "aikhenvald2004_ex1_3"
     source := ⟨"aikhenvald-2004", "(1.3)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex1_3 : LinguisticExample :=
     readings := []
     paperFeatures := [("system", "D1"), ("term", "inferred"), ("source", "inference")] }
 
-def ex1_4 : LinguisticExample :=
+def ex1_4 : Datum :=
   { id := "aikhenvald2004_ex1_4"
     source := ⟨"aikhenvald-2004", "(1.4)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex1_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("system", "D1"), ("term", "assumed"), ("source", "assumption")] }
 
-def ex1_5 : LinguisticExample :=
+def ex1_5 : Datum :=
   { id := "aikhenvald2004_ex1_5"
     source := ⟨"aikhenvald-2004", "(1.5)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex1_5 : LinguisticExample :=
     readings := []
     paperFeatures := [("system", "D1"), ("term", "reported"), ("source", "report")] }
 
-def ex2_16 : LinguisticExample :=
+def ex2_16 : Datum :=
   { id := "aikhenvald2004_ex2_16"
     source := ⟨"aikhenvald-2004", "(2.16)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex2_16 : LinguisticExample :=
     readings := []
     paperFeatures := [("system", "A2"), ("term", "nonfirsthand"), ("source", "report")] }
 
-def ex2_17 : LinguisticExample :=
+def ex2_17 : Datum :=
   { id := "aikhenvald2004_ex2_17"
     source := ⟨"aikhenvald-2004", "(2.17)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex2_17 : LinguisticExample :=
     readings := []
     paperFeatures := [("system", "A2"), ("term", "nonfirsthand"), ("source", "inference")] }
 
-def ex2_18 : LinguisticExample :=
+def ex2_18 : Datum :=
   { id := "aikhenvald2004_ex2_18"
     source := ⟨"aikhenvald-2004", "(2.18)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex2_18 : LinguisticExample :=
     readings := []
     paperFeatures := [("system", "A2"), ("term", "nonfirsthand"), ("source", "nonvisual")] }
 
-def ex2_40 : LinguisticExample :=
+def ex2_40 : Datum :=
   { id := "aikhenvald2004_ex2_40"
     source := ⟨"aikhenvald-2004", "(2.40)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex2_40 : LinguisticExample :=
     readings := []
     paperFeatures := [("system", "B1"), ("term", "visual"), ("source", "visual")] }
 
-def ex2_41 : LinguisticExample :=
+def ex2_41 : Datum :=
   { id := "aikhenvald2004_ex2_41"
     source := ⟨"aikhenvald-2004", "(2.41)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex2_41 : LinguisticExample :=
     readings := []
     paperFeatures := [("system", "B1"), ("term", "inferred"), ("source", "inference")] }
 
-def ex2_42 : LinguisticExample :=
+def ex2_42 : Datum :=
   { id := "aikhenvald2004_ex2_42"
     source := ⟨"aikhenvald-2004", "(2.42)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex2_42 : LinguisticExample :=
     readings := []
     paperFeatures := [("system", "B1"), ("term", "reported"), ("source", "report")] }
 
-def ex4_7 : LinguisticExample :=
+def ex4_7 : Datum :=
   { id := "aikhenvald2004_ex4_7"
     source := ⟨"aikhenvald-2004", "(4.7)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex4_7 : LinguisticExample :=
     readings := []
     paperFeatures := [("strategy", "perfect"), ("source", "nonfirsthand")] }
 
-def ex4_55 : LinguisticExample :=
+def ex4_55 : Datum :=
   { id := "aikhenvald2004_ex4_55"
     source := ⟨"aikhenvald-2004", "(4.55)"⟩
     reportedIn := none
@@ -186,6 +184,6 @@ def ex4_55 : LinguisticExample :=
     readings := []
     paperFeatures := [("system", "A2"), ("term", "nonfirsthand"), ("source", "report"), ("extension", "epistemic")] }
 
-def all : List LinguisticExample := [ex1_1, ex1_2, ex1_3, ex1_4, ex1_5, ex2_16, ex2_17, ex2_18, ex2_40, ex2_41, ex2_42, ex4_7, ex4_55]
+def all : List Datum := [ex1_1, ex1_2, ex1_3, ex1_4, ex1_5, ex2_16, ex2_17, ex2_18, ex2_40, ex2_41, ex2_42, ex4_7, ex4_55]
 
 end Aikhenvald2004.Examples

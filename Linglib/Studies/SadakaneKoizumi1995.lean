@@ -45,7 +45,7 @@ in tables 14, 27, 29, and 32:
 | *ni*-insertion      | *           | */??              | OK               |
 | Copula *ni*         | */N.A.      | */??              | */??             |
 
-Each cell is the list of marks the table prints, as `Data.Examples.Judgment`s: `*/??` is
+Each cell is the list of marks the table prints, as `Judgment`s: `*/??` is
 `[.ungrammatical, .questionable]`, `*/?/OK` is `[.ungrammatical, .marginal, .acceptable]`. The
 `N.A.` of `*/N.A.` is not a mark and is left out (per S&K fn. 10, the test fails for an
 independent non-referentiality reason as well as a structural one).
@@ -74,7 +74,7 @@ acquired only after 3;0.
 
 ## Layered grounding to linglib
 
-- Diagnostic cells are lists of `Data.Examples.Judgment` marks, not a per-paper enum.
+- Diagnostic cells are lists of `Judgment` marks, not a per-paper enum.
 - `Classification.marantz` aligns S&K's 4-way with [baker-2015]'s
   `Case.Mechanism` from `Syntax/Case/Dependent.lean`. The map
   is partial: copula *ni* lies outside Marantz's case-assignment domain.
@@ -115,7 +115,6 @@ stipulation only. Documented here as future work.
 
 namespace SadakaneKoizumi1995
 
-open Data.Examples (Judgment)
 
 /-! ## §1 Classification — S&K's four homophonous *ni* lexemes -/
 

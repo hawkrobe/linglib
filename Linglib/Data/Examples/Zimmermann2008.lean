@@ -15,9 +15,7 @@ this module; declarations live in `namespace Zimmermann2008.Examples`.
 
 namespace Zimmermann2008.Examples
 
-open Data.Examples
-
-def ex_11a : LinguisticExample :=
+def ex_11a : Datum :=
   { id := "zimmermann2008_11a"
     source := ⟨"zimmermann-2008", "(11a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_11a : LinguisticExample :=
     readings := []
     paperFeatures := [("indefinite", "bare"), ("scope", "NEG > ∃")] }
 
-def ex_12a : LinguisticExample :=
+def ex_12a : Datum :=
   { id := "zimmermann2008_12a"
     source := ⟨"zimmermann-2008", "(12a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_12a : LinguisticExample :=
     readings := []
     paperFeatures := [("indefinite", "bare"), ("scope", "NEG > ∃")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "zimmermann2008_13a"
     source := ⟨"zimmermann-2008", "(13a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("indefinite", "bare"), ("scope", "NEG > ∃")] }
 
-def ex_63a : LinguisticExample :=
+def ex_63a : Datum :=
   { id := "zimmermann2008_63a"
     source := ⟨"zimmermann-2008", "(63a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_63a : LinguisticExample :=
     readings := []
     paperFeatures := [("indefinite", "wani"), ("function", "discourse-introducing")] }
 
-def ex_64 : LinguisticExample :=
+def ex_64 : Datum :=
   { id := "zimmermann2008_64"
     source := ⟨"zimmermann-2008", "(64)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_64 : LinguisticExample :=
     readings := []
     paperFeatures := [("indefinite", "wasu"), ("reading", "partitive")] }
 
-def ex_65a : LinguisticExample :=
+def ex_65a : Datum :=
   { id := "zimmermann2008_65a"
     source := ⟨"zimmermann-2008", "(65a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_65a : LinguisticExample :=
     readings := []
     paperFeatures := [("indefinite", "wani"), ("clause", "polar question")] }
 
-def ex_69a : LinguisticExample :=
+def ex_69a : Datum :=
   { id := "zimmermann2008_69a"
     source := ⟨"zimmermann-2008", "(69a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_69a : LinguisticExample :=
     readings := []
     paperFeatures := [("indefinite", "wani"), ("position", "object"), ("scope", "ambiguous")] }
 
-def ex_69b : LinguisticExample :=
+def ex_69b : Datum :=
   { id := "zimmermann2008_69b"
     source := ⟨"zimmermann-2008", "(69b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_69b : LinguisticExample :=
     readings := []
     paperFeatures := [("indefinite", "wani"), ("position", "object"), ("scope", "ambiguous")] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "zimmermann2008_70"
     source := ⟨"zimmermann-2008", "(70)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_70 : LinguisticExample :=
     readings := []
     paperFeatures := [("indefinite", "wasu"), ("position", "subject"), ("scope", "∃ > NEG only")] }
 
-def ex_71 : LinguisticExample :=
+def ex_71 : Datum :=
   { id := "zimmermann2008_71"
     source := ⟨"zimmermann-2008", "(71)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_71 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "negative existential relative")] }
 
-def ex_73 : LinguisticExample :=
+def ex_73 : Datum :=
   { id := "zimmermann2008_73"
     source := ⟨"zimmermann-2008", "(73)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_73 : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifier", "koo+wh"), ("negation", "VP"), ("scope", "negative existential only")] }
 
-def ex_74a : LinguisticExample :=
+def ex_74a : Datum :=
   { id := "zimmermann2008_74a"
     source := ⟨"zimmermann-2008", "(74a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_74a : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifier", "koo+wh"), ("negation", "sentential"), ("scope", "negative universal only")] }
 
-def ex_75 : LinguisticExample :=
+def ex_75 : Datum :=
   { id := "zimmermann2008_75"
     source := ⟨"zimmermann-2008", "(75)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_75 : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifier", "koo+wh"), ("position", "subject")] }
 
-def ex_78 : LinguisticExample :=
+def ex_78 : Datum :=
   { id := "zimmermann2008_78"
     source := ⟨"zimmermann-2008", "(78)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_78 : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifier", "koo+wh"), ("position", "subject"), ("focus", "yes")] }
 
-def ex_85a : LinguisticExample :=
+def ex_85a : Datum :=
   { id := "zimmermann2008_85a"
     source := ⟨"zimmermann-2008", "(85a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_85a : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifier", "duk"), ("order", "prenominal")] }
 
-def ex_86 : LinguisticExample :=
+def ex_86 : Datum :=
   { id := "zimmermann2008_86"
     source := ⟨"zimmermann-2008", "(86)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_86 : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifier", "duk"), ("restrictor", "singular")] }
 
-def ex_89a : LinguisticExample :=
+def ex_89a : Datum :=
   { id := "zimmermann2008_89a"
     source := ⟨"zimmermann-2008", "(89a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_89a : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifier", "koo+wh"), ("predicate", "collective")] }
 
-def ex_90a : LinguisticExample :=
+def ex_90a : Datum :=
   { id := "zimmermann2008_90a"
     source := ⟨"zimmermann-2008", "(90a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_90a : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifier", "duk"), ("predicate", "collective")] }
 
-def ex_91a : LinguisticExample :=
+def ex_91a : Datum :=
   { id := "zimmermann2008_91a"
     source := ⟨"zimmermann-2008", "(91a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_91a : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifier", "duk"), ("negation", "VP"), ("scope", "negative universal")] }
 
-def ex_91b : LinguisticExample :=
+def ex_91b : Datum :=
   { id := "zimmermann2008_91b"
     source := ⟨"zimmermann-2008", "(91b)"⟩
     reportedIn := none
@@ -277,6 +275,6 @@ def ex_91b : LinguisticExample :=
     readings := []
     paperFeatures := [("quantifier", "duk"), ("negation", "sentential"), ("scope", "negative universal")] }
 
-def all : List LinguisticExample := [ex_11a, ex_12a, ex_13a, ex_63a, ex_64, ex_65a, ex_69a, ex_69b, ex_70, ex_71, ex_73, ex_74a, ex_75, ex_78, ex_85a, ex_86, ex_89a, ex_90a, ex_91a, ex_91b]
+def all : List Datum := [ex_11a, ex_12a, ex_13a, ex_63a, ex_64, ex_65a, ex_69a, ex_69b, ex_70, ex_71, ex_73, ex_74a, ex_75, ex_78, ex_85a, ex_86, ex_89a, ex_90a, ex_91a, ex_91b]
 
 end Zimmermann2008.Examples

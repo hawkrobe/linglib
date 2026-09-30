@@ -15,9 +15,7 @@ this module; declarations live in `namespace PullumGazdar1982.Examples`.
 
 namespace PullumGazdar1982.Examples
 
-open Data.Examples
-
-def ex18a : LinguisticExample :=
+def ex18a : Datum :=
   { id := "pullumgazdar1982_ex18a"
     source := ⟨"gazdar-pullum-1982", "(18a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex18a : LinguisticExample :=
     readings := []
     paperFeatures := [("subjects", "sg pl"), ("verbs", "sg sg")] }
 
-def ex18b : LinguisticExample :=
+def ex18b : Datum :=
   { id := "pullumgazdar1982_ex18b"
     source := ⟨"gazdar-pullum-1982", "(18b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex18b : LinguisticExample :=
     readings := []
     paperFeatures := [("subjects", "sg pl"), ("verbs", "sg pl")] }
 
-def ex18c : LinguisticExample :=
+def ex18c : Datum :=
   { id := "pullumgazdar1982_ex18c"
     source := ⟨"gazdar-pullum-1982", "(18c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex18c : LinguisticExample :=
     readings := []
     paperFeatures := [("subjects", "sg pl"), ("verbs", "pl sg")] }
 
-def ex18d : LinguisticExample :=
+def ex18d : Datum :=
   { id := "pullumgazdar1982_ex18d"
     source := ⟨"gazdar-pullum-1982", "(18d)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex18d : LinguisticExample :=
     readings := []
     paperFeatures := [("subjects", "sg pl"), ("verbs", "pl pl")] }
 
-def ex19a : LinguisticExample :=
+def ex19a : Datum :=
   { id := "pullumgazdar1982_ex19a"
     source := ⟨"gazdar-pullum-1982", "(19a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex19a : LinguisticExample :=
     readings := []
     paperFeatures := [("subjects", "sg sg"), ("verbs", "sg sg")] }
 
-def ex19b : LinguisticExample :=
+def ex19b : Datum :=
   { id := "pullumgazdar1982_ex19b"
     source := ⟨"gazdar-pullum-1982", "(19b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex19b : LinguisticExample :=
     readings := []
     paperFeatures := [("subjects", "sg sg"), ("verbs", "pl pl")] }
 
-def ex25 : LinguisticExample :=
+def ex25 : Datum :=
   { id := "pullumgazdar1982_ex25"
     source := ⟨"gazdar-pullum-1982", "(25)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex25 : LinguisticExample :=
     readings := []
     paperFeatures := [("categories", "BBBHFD")] }
 
-def ex26 : LinguisticExample :=
+def ex26 : Datum :=
   { id := "pullumgazdar1982_ex26"
     source := ⟨"gazdar-pullum-1982", "(26)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex26 : LinguisticExample :=
     readings := []
     paperFeatures := [("categories", "BBBHFE")] }
 
-def ex27 : LinguisticExample :=
+def ex27 : Datum :=
   { id := "pullumgazdar1982_ex27"
     source := ⟨"gazdar-pullum-1982", "(27)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex27 : LinguisticExample :=
     readings := []
     paperFeatures := [("categories", "BBBBHFD")] }
 
-def ex28 : LinguisticExample :=
+def ex28 : Datum :=
   { id := "pullumgazdar1982_ex28"
     source := ⟨"gazdar-pullum-1982", "(28)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex28 : LinguisticExample :=
     readings := []
     paperFeatures := [("categories", "BBBIFFD")] }
 
-def ex31 : LinguisticExample :=
+def ex31 : Datum :=
   { id := "pullumgazdar1982_ex31"
     source := ⟨"gazdar-pullum-1982", "(31)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex31 : LinguisticExample :=
     readings := []
     paperFeatures := [("categories", "BBBIFFD")] }
 
-def ex38 : LinguisticExample :=
+def ex38 : Datum :=
   { id := "pullumgazdar1982_ex38"
     source := ⟨"gazdar-pullum-1982", "(38)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex38 : LinguisticExample :=
     readings := []
     paperFeatures := [("incorporated", "nuhs"), ("external", "nuhs")] }
 
-def ex39 : LinguisticExample :=
+def ex39 : Datum :=
   { id := "pullumgazdar1982_ex39"
     source := ⟨"gazdar-pullum-1982", "(39)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex39 : LinguisticExample :=
     readings := []
     paperFeatures := [("incorporated", "hnek"), ("external", "tsiʔts")] }
 
-def ex40 : LinguisticExample :=
+def ex40 : Datum :=
   { id := "pullumgazdar1982_ex40"
     source := ⟨"gazdar-pullum-1982", "(40)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex40 : LinguisticExample :=
     readings := []
     paperFeatures := [("incorporated", "seleht"), ("external", "bike")] }
 
-def ex41a : LinguisticExample :=
+def ex41a : Datum :=
   { id := "pullumgazdar1982_ex41a"
     source := ⟨"gazdar-pullum-1982", "(41a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex41a : LinguisticExample :=
     readings := []
     paperFeatures := [("incorporated", "nuhs"), ("external", "nuhs")] }
 
-def ex41b : LinguisticExample :=
+def ex41b : Datum :=
   { id := "pullumgazdar1982_ex41b"
     source := ⟨"gazdar-pullum-1982", "(41b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex41b : LinguisticExample :=
     readings := []
     paperFeatures := [("incorporated", "nuhs"), ("external", "none")] }
 
-def ex42 : LinguisticExample :=
+def ex42 : Datum :=
   { id := "pullumgazdar1982_ex42"
     source := ⟨"gazdar-pullum-1982", "(42)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex42 : LinguisticExample :=
     readings := []
     paperFeatures := [("incorporated", "liʔw"), ("external", "none")] }
 
-def ex43a : LinguisticExample :=
+def ex43a : Datum :=
   { id := "pullumgazdar1982_ex43a"
     source := ⟨"gazdar-pullum-1982", "(43a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex43a : LinguisticExample :=
     readings := []
     paperFeatures := [("incorporated", "none"), ("external", "nuhs")] }
 
-def ex43b : LinguisticExample :=
+def ex43b : Datum :=
   { id := "pullumgazdar1982_ex43b"
     source := ⟨"gazdar-pullum-1982", "(43b)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex43b : LinguisticExample :=
     readings := []
     paperFeatures := [("incorporated", "none"), ("external", "nuhs")] }
 
-def ex43c : LinguisticExample :=
+def ex43c : Datum :=
   { id := "pullumgazdar1982_ex43c"
     source := ⟨"gazdar-pullum-1982", "(43c)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex43c : LinguisticExample :=
     readings := []
     paperFeatures := [("incorporated", "nuhs"), ("external", "nuhs")] }
 
-def ex43d : LinguisticExample :=
+def ex43d : Datum :=
   { id := "pullumgazdar1982_ex43d"
     source := ⟨"gazdar-pullum-1982", "(43d)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex43d : LinguisticExample :=
     readings := []
     paperFeatures := [("incorporated", "nuhs"), ("external", "sawatis")] }
 
-def ex43e : LinguisticExample :=
+def ex43e : Datum :=
   { id := "pullumgazdar1982_ex43e"
     source := ⟨"gazdar-pullum-1982", "(43e)"⟩
     reportedIn := none
@@ -303,6 +301,6 @@ def ex43e : LinguisticExample :=
     readings := []
     paperFeatures := [("incorporated", "none"), ("external", "nuhs")] }
 
-def all : List LinguisticExample := [ex18a, ex18b, ex18c, ex18d, ex19a, ex19b, ex25, ex26, ex27, ex28, ex31, ex38, ex39, ex40, ex41a, ex41b, ex42, ex43a, ex43b, ex43c, ex43d, ex43e]
+def all : List Datum := [ex18a, ex18b, ex18c, ex18d, ex19a, ex19b, ex25, ex26, ex27, ex28, ex31, ex38, ex39, ex40, ex41a, ex41b, ex42, ex43a, ex43b, ex43c, ex43d, ex43e]
 
 end PullumGazdar1982.Examples

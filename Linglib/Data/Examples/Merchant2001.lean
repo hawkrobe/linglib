@@ -15,9 +15,7 @@ this module; declarations live in `namespace Merchant2001.Examples`.
 
 namespace Merchant2001.Examples
 
-open Data.Examples
-
-def german_case_match : LinguisticExample :=
+def german_case_match : Datum :=
   { id := "merchant2001_german_case_match"
     source := ⟨"merchant-2001", "case-matching under sluicing"⟩
     reportedIn := none
@@ -30,6 +28,6 @@ def german_case_match : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "sluicing"), ("whPhraseCase", "dative"), ("innerAntecedentCase", "dative")] }
 
-def all : List LinguisticExample := [german_case_match]
+def all : List Datum := [german_case_match]
 
 end Merchant2001.Examples

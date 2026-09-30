@@ -15,9 +15,7 @@ this module; declarations live in `namespace SagWasowBender2003.Examples`.
 
 namespace SagWasowBender2003.Examples
 
-open Data.Examples
-
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "sagwasowbender2003_ex2a"
     source := ⟨"sag-wasow-bender-2003", "(2a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "local")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "sagwasowbender2003_ex2b"
     source := ⟨"sag-wasow-bender-2003", "(2b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex2b : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "local")] }
 
-def ex3a : LinguisticExample :=
+def ex3a : Datum :=
   { id := "sagwasowbender2003_ex3a"
     source := ⟨"sag-wasow-bender-2003", "(3a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex3a : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "local")] }
 
-def ex3b : LinguisticExample :=
+def ex3b : Datum :=
   { id := "sagwasowbender2003_ex3b"
     source := ⟨"sag-wasow-bender-2003", "(3b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex3b : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "local")] }
 
-def ex4a : LinguisticExample :=
+def ex4a : Datum :=
   { id := "sagwasowbender2003_ex4a"
     source := ⟨"sag-wasow-bender-2003", "(4a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex4a : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "local")] }
 
-def ex4b : LinguisticExample :=
+def ex4b : Datum :=
   { id := "sagwasowbender2003_ex4b"
     source := ⟨"sag-wasow-bender-2003", "(4b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex4b : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "local")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "sagwasowbender2003_ex5a"
     source := ⟨"sag-wasow-bender-2003", "(5a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "local")] }
 
-def ex5b : LinguisticExample :=
+def ex5b : Datum :=
   { id := "sagwasowbender2003_ex5b"
     source := ⟨"sag-wasow-bender-2003", "(5b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex5b : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "local")] }
 
-def ex6a : LinguisticExample :=
+def ex6a : Datum :=
   { id := "sagwasowbender2003_ex6a"
     source := ⟨"sag-wasow-bender-2003", "(6a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex6a : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "local")] }
 
-def ex6b : LinguisticExample :=
+def ex6b : Datum :=
   { id := "sagwasowbender2003_ex6b"
     source := ⟨"sag-wasow-bender-2003", "(6b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex6b : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "local")] }
 
-def ex7a : LinguisticExample :=
+def ex7a : Datum :=
   { id := "sagwasowbender2003_ex7a"
     source := ⟨"sag-wasow-bender-2003", "(7a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex7a : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "nonlocal")] }
 
-def ex7b : LinguisticExample :=
+def ex7b : Datum :=
   { id := "sagwasowbender2003_ex7b"
     source := ⟨"sag-wasow-bender-2003", "(7b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex7b : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "nonlocal")] }
 
-def ex8a : LinguisticExample :=
+def ex8a : Datum :=
   { id := "sagwasowbender2003_ex8a"
     source := ⟨"sag-wasow-bender-2003", "(8a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex8a : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "nonlocal")] }
 
-def ex8b : LinguisticExample :=
+def ex8b : Datum :=
   { id := "sagwasowbender2003_ex8b"
     source := ⟨"sag-wasow-bender-2003", "(8b)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex8b : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "nonlocal")] }
 
-def ex9a : LinguisticExample :=
+def ex9a : Datum :=
   { id := "sagwasowbender2003_ex9a"
     source := ⟨"sag-wasow-bender-2003", "(9a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex9a : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "anaphor"), ("binder", "nonlocal")] }
 
-def ex9b : LinguisticExample :=
+def ex9b : Datum :=
   { id := "sagwasowbender2003_ex9b"
     source := ⟨"sag-wasow-bender-2003", "(9b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex9b : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "binding"), ("sort", "pronoun"), ("binder", "nonlocal")] }
 
-def ex37a : LinguisticExample :=
+def ex37a : Datum :=
   { id := "sagwasowbender2003_ex37a"
     source := ⟨"sag-wasow-bender-2003", "(37a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex37a : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "coordination"), ("gapInFirst", "true"), ("gapInSecond", "false")] }
 
-def ex37b : LinguisticExample :=
+def ex37b : Datum :=
   { id := "sagwasowbender2003_ex37b"
     source := ⟨"sag-wasow-bender-2003", "(37b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex37b : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "coordination"), ("gapInFirst", "false"), ("gapInSecond", "true")] }
 
-def ex38a : LinguisticExample :=
+def ex38a : Datum :=
   { id := "sagwasowbender2003_ex38a"
     source := ⟨"sag-wasow-bender-2003", "(38a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex38a : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "coordination"), ("gapInFirst", "true"), ("gapInSecond", "false")] }
 
-def ex38b : LinguisticExample :=
+def ex38b : Datum :=
   { id := "sagwasowbender2003_ex38b"
     source := ⟨"sag-wasow-bender-2003", "(38b)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex38b : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "coordination"), ("gapInFirst", "false"), ("gapInSecond", "true")] }
 
-def ex40a : LinguisticExample :=
+def ex40a : Datum :=
   { id := "sagwasowbender2003_ex40a"
     source := ⟨"sag-wasow-bender-2003", "(40a)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex40a : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "coordination"), ("gapInFirst", "true"), ("gapInSecond", "true")] }
 
-def ex40b : LinguisticExample :=
+def ex40b : Datum :=
   { id := "sagwasowbender2003_ex40b"
     source := ⟨"sag-wasow-bender-2003", "(40b)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex40b : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "coordination"), ("gapInFirst", "true"), ("gapInSecond", "true")] }
 
-def ex40c : LinguisticExample :=
+def ex40c : Datum :=
   { id := "sagwasowbender2003_ex40c"
     source := ⟨"sag-wasow-bender-2003", "(40c)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex40c : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "coordination"), ("gapInFirst", "true"), ("gapInSecond", "true")] }
 
-def ex36a : LinguisticExample :=
+def ex36a : Datum :=
   { id := "sagwasowbender2003_ex36a"
     source := ⟨"sag-wasow-bender-2003", "(36a)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex36a : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "conjunctGap")] }
 
-def ex36b : LinguisticExample :=
+def ex36b : Datum :=
   { id := "sagwasowbender2003_ex36b"
     source := ⟨"sag-wasow-bender-2003", "(36b)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex36b : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "conjunctGap")] }
 
-def ex44 : LinguisticExample :=
+def ex44 : Datum :=
   { id := "sagwasowbender2003_ex44"
     source := ⟨"sag-wasow-bender-2003", "(44)"⟩
     reportedIn := none
@@ -355,6 +353,6 @@ def ex44 : LinguisticExample :=
     readings := []
     paperFeatures := [("topic", "conjunctGap")] }
 
-def all : List LinguisticExample := [ex2a, ex2b, ex3a, ex3b, ex4a, ex4b, ex5a, ex5b, ex6a, ex6b, ex7a, ex7b, ex8a, ex8b, ex9a, ex9b, ex37a, ex37b, ex38a, ex38b, ex40a, ex40b, ex40c, ex36a, ex36b, ex44]
+def all : List Datum := [ex2a, ex2b, ex3a, ex3b, ex4a, ex4b, ex5a, ex5b, ex6a, ex6b, ex7a, ex7b, ex8a, ex8b, ex9a, ex9b, ex37a, ex37b, ex38a, ex38b, ex40a, ex40b, ex40c, ex36a, ex36b, ex44]
 
 end SagWasowBender2003.Examples

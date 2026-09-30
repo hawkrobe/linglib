@@ -46,7 +46,7 @@ against the transparent syntax–semantics mapping.
 
 namespace Angelopoulos2026
 
-open Greek.StandardModern.Complementizers Greek.StandardModern.Verbs Data.Examples
+open Greek.StandardModern.Complementizers Greek.StandardModern.Verbs
 open Bondarenko2022 (NominalSort CompositionPath)
 open Aspect
 open Anchor (existsClosure)

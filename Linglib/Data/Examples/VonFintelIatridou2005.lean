@@ -15,9 +15,7 @@ this module; declarations live in `namespace VonFintelIatridou2005.Examples`.
 
 namespace VonFintelIatridou2005.Examples
 
-open Data.Examples
-
-def vFI2005_1_harlem : LinguisticExample :=
+def vFI2005_1_harlem : Datum :=
   { id := "vFI2005_1_harlem"
     source := ⟨"von-fintel-iatridou-2005", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def vFI2005_1_harlem : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "harlemBase")] }
 
-def vFI2005_2_sugarWaiter : LinguisticExample :=
+def vFI2005_2_sugarWaiter : Datum :=
   { id := "vFI2005_2_sugarWaiter"
     source := ⟨"hare-1971", "p. 45"⟩
     reportedIn := some ⟨"von-fintel-iatridou-2005", "(2)"⟩
@@ -43,7 +41,7 @@ def vFI2005_2_sugarWaiter : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "hareMinimalPair"), ("reading", "anankastic")] }
 
-def vFI2005_3_sugarDiabetes : LinguisticExample :=
+def vFI2005_3_sugarDiabetes : Datum :=
   { id := "vFI2005_3_sugarDiabetes"
     source := ⟨"hare-1971", "p. 45"⟩
     reportedIn := some ⟨"von-fintel-iatridou-2005", "(3)"⟩
@@ -56,7 +54,7 @@ def vFI2005_3_sugarDiabetes : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "hareMinimalPair"), ("reading", "non-anankastic")] }
 
-def vFI2005_4_harlemPurpose : LinguisticExample :=
+def vFI2005_4_harlemPurpose : Datum :=
   { id := "vFI2005_4_harlemPurpose"
     source := ⟨"von-fintel-iatridou-2005", "(4)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def vFI2005_4_harlemPurpose : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "harlemBase"), ("clauseType", "purpose")] }
 
-def vFI2005_11_hoboken : LinguisticExample :=
+def vFI2005_11_hoboken : Datum :=
   { id := "vFI2005_11_hoboken"
     source := ⟨"von-fintel-iatridou-2005", "(11)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def vFI2005_11_hoboken : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "hoboken")] }
 
-def vFI2005_13_hobokenSaebo : LinguisticExample :=
+def vFI2005_13_hobokenSaebo : Datum :=
   { id := "vFI2005_13_hobokenSaebo"
     source := ⟨"von-fintel-iatridou-2005", "(13)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def vFI2005_13_hobokenSaebo : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "conflictingGoals")] }
 
-def vFI2005_22_mayorPub : LinguisticExample :=
+def vFI2005_22_mayorPub : Datum :=
   { id := "vFI2005_22_mayorPub"
     source := ⟨"kratzer-1991", "mayor scenario"⟩
     reportedIn := some ⟨"von-fintel-iatridou-2005", "(22)"⟩
@@ -108,7 +106,7 @@ def vFI2005_22_mayorPub : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "conflictingGoals")] }
 
-def vFI2005_p12_vanNistelrooy : LinguisticExample :=
+def vFI2005_p12_vanNistelrooy : Datum :=
   { id := "vFI2005_p12_vanNistelrooy"
     source := ⟨"huitink-2008", "van Nistelrooy scenario"⟩
     reportedIn := some ⟨"von-fintel-iatridou-2005", "§5"⟩
@@ -121,7 +119,7 @@ def vFI2005_p12_vanNistelrooy : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "correlatedIrrelevant")] }
 
-def vFI2005_36_pedroMartinez : LinguisticExample :=
+def vFI2005_36_pedroMartinez : Datum :=
   { id := "vFI2005_36_pedroMartinez"
     source := ⟨"nissenbaum-2005", "Pedro Martinez"⟩
     reportedIn := some ⟨"von-fintel-iatridou-2005", "(36)"⟩
@@ -134,7 +132,7 @@ def vFI2005_36_pedroMartinez : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "nonCausalCoincidence")] }
 
-def vFI2005_34c_harlemBreathe : LinguisticExample :=
+def vFI2005_34c_harlemBreathe : Datum :=
   { id := "vFI2005_34c_harlemBreathe"
     source := ⟨"vonstechow-krasikova-penka-2005", "breathe example"⟩
     reportedIn := some ⟨"von-fintel-iatridou-2005", "(34d)"⟩
@@ -147,7 +145,7 @@ def vFI2005_34c_harlemBreathe : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "triviallyTrue"), ("modal", "have-to")] }
 
-def vFI2005_35_harlemBreatheOught : LinguisticExample :=
+def vFI2005_35_harlemBreatheOught : Datum :=
   { id := "vFI2005_35_harlemBreatheOught"
     source := ⟨"von-fintel-iatridou-2005", "(35)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def vFI2005_35_harlemBreatheOught : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "triviallyTrue"), ("modal", "ought-to")] }
 
-def vFI2005_23_slomanOughtNot : LinguisticExample :=
+def vFI2005_23_slomanOughtNot : Datum :=
   { id := "vFI2005_23_slomanOughtNot"
     source := ⟨"sloman-1970", "ought vs better"⟩
     reportedIn := some ⟨"von-fintel-iatridou-2005", "(23)"⟩
@@ -173,7 +171,7 @@ def vFI2005_23_slomanOughtNot : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "oughtVsHaveTo")] }
 
-def vFI2005_p13_londonByNoon : LinguisticExample :=
+def vFI2005_p13_londonByNoon : Datum :=
   { id := "vFI2005_p13_londonByNoon"
     source := ⟨"sloman-1970", "p. 391"⟩
     reportedIn := some ⟨"von-fintel-iatridou-2005", "§6.1"⟩
@@ -186,7 +184,7 @@ def vFI2005_p13_londonByNoon : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "oughtVsHaveTo")] }
 
-def vFI2005_29_vladivostokHave : LinguisticExample :=
+def vFI2005_29_vladivostokHave : Datum :=
   { id := "vFI2005_29_vladivostokHave"
     source := ⟨"vonstechow-krasikova-penka-2005", "Vladivostok"⟩
     reportedIn := some ⟨"von-fintel-iatridou-2005", "(29)"⟩
@@ -199,7 +197,7 @@ def vFI2005_29_vladivostokHave : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "vladivostokOughtHave"), ("modal", "have-to"), ("speakerVariation", "Klein-vs-Percus")] }
 
-def vFI2005_30_vladivostokOught : LinguisticExample :=
+def vFI2005_30_vladivostokOught : Datum :=
   { id := "vFI2005_30_vladivostokOught"
     source := ⟨"von-fintel-iatridou-2005", "(30)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def vFI2005_30_vladivostokOught : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "vladivostokOughtHave"), ("modal", "ought-to")] }
 
-def vFI2005_28_burdicks : LinguisticExample :=
+def vFI2005_28_burdicks : Datum :=
   { id := "vFI2005_28_burdicks"
     source := ⟨"von-fintel-iatridou-2005", "(28)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def vFI2005_28_burdicks : LinguisticExample :=
     readings := []
     paperFeatures := [("puzzle", "contextualDesignation")] }
 
-def vFI2005_20_weinerJoe : LinguisticExample :=
+def vFI2005_20_weinerJoe : Datum :=
   { id := "vFI2005_20_weinerJoe"
     source := ⟨"von-fintel-iatridou-2005", "(20) (scenario by Weiner)"⟩
     reportedIn := none
@@ -238,6 +236,6 @@ def vFI2005_20_weinerJoe : LinguisticExample :=
     readings := [("epistemic", .marginal), ("anankastic", .acceptable)]
     paperFeatures := [("puzzle", "weinerJoe")] }
 
-def all : List LinguisticExample := [vFI2005_1_harlem, vFI2005_2_sugarWaiter, vFI2005_3_sugarDiabetes, vFI2005_4_harlemPurpose, vFI2005_11_hoboken, vFI2005_13_hobokenSaebo, vFI2005_22_mayorPub, vFI2005_p12_vanNistelrooy, vFI2005_36_pedroMartinez, vFI2005_34c_harlemBreathe, vFI2005_35_harlemBreatheOught, vFI2005_23_slomanOughtNot, vFI2005_p13_londonByNoon, vFI2005_29_vladivostokHave, vFI2005_30_vladivostokOught, vFI2005_28_burdicks, vFI2005_20_weinerJoe]
+def all : List Datum := [vFI2005_1_harlem, vFI2005_2_sugarWaiter, vFI2005_3_sugarDiabetes, vFI2005_4_harlemPurpose, vFI2005_11_hoboken, vFI2005_13_hobokenSaebo, vFI2005_22_mayorPub, vFI2005_p12_vanNistelrooy, vFI2005_36_pedroMartinez, vFI2005_34c_harlemBreathe, vFI2005_35_harlemBreatheOught, vFI2005_23_slomanOughtNot, vFI2005_p13_londonByNoon, vFI2005_29_vladivostokHave, vFI2005_30_vladivostokOught, vFI2005_28_burdicks, vFI2005_20_weinerJoe]
 
 end VonFintelIatridou2005.Examples

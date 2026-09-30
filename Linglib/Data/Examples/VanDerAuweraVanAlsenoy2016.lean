@@ -15,9 +15,7 @@ this module; declarations live in `namespace VanDerAuweraVanAlsenoy2016.Examples
 
 namespace VanDerAuweraVanAlsenoy2016.Examples
 
-open Data.Examples
-
-def ex_1a : LinguisticExample :=
+def ex_1a : Datum :=
   { id := "vanderauweravanalsenoy2016_1a"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_1a : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "strict"), ("exponents", "clausal negator + negative adverb")] }
 
-def ex_2 : LinguisticExample :=
+def ex_2 : Datum :=
   { id := "vanderauweravanalsenoy2016_2"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(2)"⟩
     reportedIn := some ⟨"de-swart-2010", ""⟩
@@ -43,7 +41,7 @@ def ex_2 : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "negative spread")] }
 
-def ex_3a : LinguisticExample :=
+def ex_3a : Datum :=
   { id := "vanderauweravanalsenoy2016_3a"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(3a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_3a : LinguisticExample :=
     readings := []
     paperFeatures := [("indefinite", "negative"), ("negator", "ne")] }
 
-def ex_3e : LinguisticExample :=
+def ex_3e : Datum :=
   { id := "vanderauweravanalsenoy2016_3e"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(3e)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_3e : LinguisticExample :=
     readings := []
     paperFeatures := [("indefinite", "negative")] }
 
-def ex_14a : LinguisticExample :=
+def ex_14a : Datum :=
   { id := "vanderauweravanalsenoy2016_14a"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(14a)"⟩
     reportedIn := some ⟨"haspelmath-1997", ""⟩
@@ -82,7 +80,7 @@ def ex_14a : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "strict"), ("position", "preverbal")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "vanderauweravanalsenoy2016_14b"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(14b)"⟩
     reportedIn := some ⟨"haspelmath-1997", ""⟩
@@ -95,7 +93,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "strict"), ("position", "postverbal")] }
 
-def ex_15a : LinguisticExample :=
+def ex_15a : Datum :=
   { id := "vanderauweravanalsenoy2016_15a"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(15a)"⟩
     reportedIn := some ⟨"haspelmath-1997", ""⟩
@@ -108,7 +106,7 @@ def ex_15a : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("negator", "absent")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "vanderauweravanalsenoy2016_15b"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(15b)"⟩
     reportedIn := some ⟨"haspelmath-1997", ""⟩
@@ -121,7 +119,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "postverbal"), ("negator", "obligatory")] }
 
-def ex_16a : LinguisticExample :=
+def ex_16a : Datum :=
   { id := "vanderauweravanalsenoy2016_16a"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(16a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_16a : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "strict"), ("negator", "postverbal")] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "vanderauweravanalsenoy2016_20a"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(20a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_20a : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("contact", "Spanish")] }
 
-def ex_21a : LinguisticExample :=
+def ex_21a : Datum :=
   { id := "vanderauweravanalsenoy2016_21a"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(21a)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_21a : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("indefinite", "wala")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "vanderauweravanalsenoy2016_21b"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(21b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_21b : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "postverbal"), ("negator", "obligatory")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "vanderauweravanalsenoy2016_24"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(24)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "postverbal"), ("paradigm", "neinn")] }
 
-def ex_25 : LinguisticExample :=
+def ex_25 : Datum :=
   { id := "vanderauweravanalsenoy2016_25"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(25)"⟩
     reportedIn := some ⟨"haspelmath-1997", ""⟩
@@ -199,7 +197,7 @@ def ex_25 : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("paradigm", "neinn")] }
 
-def ex_27c : LinguisticExample :=
+def ex_27c : Datum :=
   { id := "vanderauweravanalsenoy2016_27c"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(27c)"⟩
     reportedIn := some ⟨"haspelmath-1997", ""⟩
@@ -212,7 +210,7 @@ def ex_27c : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("negator", "optional")] }
 
-def ex_29a : LinguisticExample :=
+def ex_29a : Datum :=
   { id := "vanderauweravanalsenoy2016_29a"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(29a)"⟩
     reportedIn := some ⟨"de-swart-2010", ""⟩
@@ -225,7 +223,7 @@ def ex_29a : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("negator", "optional")] }
 
-def ex_31a : LinguisticExample :=
+def ex_31a : Datum :=
   { id := "vanderauweravanalsenoy2016_31a"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(31a)"⟩
     reportedIn := some ⟨"haspelmath-1997", ""⟩
@@ -238,7 +236,7 @@ def ex_31a : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("negator", "optional")] }
 
-def ex_33b : LinguisticExample :=
+def ex_33b : Datum :=
   { id := "vanderauweravanalsenoy2016_33b"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(33b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_33b : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "postverbal"), ("negator", "optional")] }
 
-def ex_34a : LinguisticExample :=
+def ex_34a : Datum :=
   { id := "vanderauweravanalsenoy2016_34a"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(34a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_34a : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("negator", "absent")] }
 
-def ex_34b : LinguisticExample :=
+def ex_34b : Datum :=
   { id := "vanderauweravanalsenoy2016_34b"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(34b)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_34b : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "postverbal"), ("negator", "optional")] }
 
-def ex_35b : LinguisticExample :=
+def ex_35b : Datum :=
   { id := "vanderauweravanalsenoy2016_35b"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(35b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_35b : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "non-strict"), ("parameter", "immediate precedence")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "vanderauweravanalsenoy2016_37"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(37)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "preverbal"), ("negator", "optional")] }
 
-def ex_40b : LinguisticExample :=
+def ex_40b : Datum :=
   { id := "vanderauweravanalsenoy2016_40b"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(40b)"⟩
     reportedIn := some ⟨"de-swart-2010", ""⟩
@@ -316,7 +314,7 @@ def ex_40b : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "non-strict"), ("position", "postverbal"), ("negator", "optional")] }
 
-def ex_45 : LinguisticExample :=
+def ex_45 : Datum :=
   { id := "vanderauweravanalsenoy2016_45"
     source := ⟨"van-der-auwera-van-alsenoy-2016", "(45)"⟩
     reportedIn := none
@@ -329,6 +327,6 @@ def ex_45 : LinguisticExample :=
     readings := []
     paperFeatures := [("concord", "non-strict"), ("parameter", "emphasis")] }
 
-def all : List LinguisticExample := [ex_1a, ex_2, ex_3a, ex_3e, ex_14a, ex_14b, ex_15a, ex_15b, ex_16a, ex_20a, ex_21a, ex_21b, ex_24, ex_25, ex_27c, ex_29a, ex_31a, ex_33b, ex_34a, ex_34b, ex_35b, ex_37, ex_40b, ex_45]
+def all : List Datum := [ex_1a, ex_2, ex_3a, ex_3e, ex_14a, ex_14b, ex_15a, ex_15b, ex_16a, ex_20a, ex_21a, ex_21b, ex_24, ex_25, ex_27c, ex_29a, ex_31a, ex_33b, ex_34a, ex_34b, ex_35b, ex_37, ex_40b, ex_45]
 
 end VanDerAuweraVanAlsenoy2016.Examples

@@ -44,7 +44,7 @@ on the distribution of mention-some enter only through the rows on singular wh-p
 
 namespace Fox2018
 
-open Question Exhaustification Set Data.Examples
+open Question Exhaustification Set
 
 variable {W : Type*}
 
@@ -519,7 +519,7 @@ structure Row where
 
 def yesNoTable : List (String × Bool) := [("yes", true), ("no", false)]
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let n ← ex.parse? "negation" yesNoTable
   let m ← ex.parse? "modal" yesNoTable
   let s ← ex.parse? "number"
@@ -527,7 +527,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let b ← ex.parse? "blocked" yesNoTable
   pure ⟨n, m, s, b⟩
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The islands of the data: a reading is blocked under negation without an intervening modal,
 or for a singular wh-phrase. -/

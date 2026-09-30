@@ -60,7 +60,7 @@ adviser's structures.
 
 namespace CondoravdiLauer2012
 
-open Commitment Desire.Preferential Modality Data.Examples
+open Commitment Desire.Preferential Modality
 
 variable {A W : Type*} {P : A → W → PreferenceStructure W} {a : A} {p q : Set W} {w : W}
 
@@ -293,7 +293,7 @@ structure Sequence where
   continuation : Continuation
 
 /-- The configuration a sequence row records. -/
-def Sequence.ofRow (row : LinguisticExample) : Option Sequence := do
+def Sequence.ofRow (row : Datum) : Option Sequence := do
   guard (row.feature? "construction" = some "sequence")
   return ⟨← row.parse? "second" [("imperative", Second.imperative), ("assertion", .assertion)],
     ← row.parse? "continuation"
@@ -315,7 +315,7 @@ structure FollowUp where
   denial : Denial
 
 /-- The configuration a follow-up row records. -/
-def FollowUp.ofRow (row : LinguisticExample) : Option FollowUp := do
+def FollowUp.ofRow (row : Datum) : Option FollowUp := do
   guard (row.feature? "construction" = some "followUp")
   return ⟨← row.parse? "use" [("assertion", Use.assertion), ("directive", .directive),
       ("advice", .advice), ("concession", .concession)],
@@ -335,7 +335,7 @@ inductive Form
   deriving DecidableEq
 
 /-- The form a challenge row records. -/
-def Form.ofRow (row : LinguisticExample) : Option Form := do
+def Form.ofRow (row : Datum) : Option Form := do
   guard (row.feature? "construction" = some "challenge")
   return ← row.parse? "form"
     [("imperative", Form.imperative), ("performative", .performative), ("assertion", .assertion)]

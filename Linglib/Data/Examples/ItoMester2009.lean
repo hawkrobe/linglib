@@ -15,9 +15,7 @@ this module; declarations live in `namespace ItoMester2009.Examples`.
 
 namespace ItoMester2009.Examples
 
-open Data.Examples
-
-def s20a : LinguisticExample :=
+def s20a : Datum :=
   { id := "itomester2009_s20a"
     source := ⟨"ito-mester-2009", "(20a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def s20a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("site", "full-ω"), ("violates", "FtBin")] }
 
-def s20b : LinguisticExample :=
+def s20b : Datum :=
   { id := "itomester2009_s20b"
     source := ⟨"ito-mester-2009", "(20b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def s20b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("site", "amalgamated"), ("violates", "Lex-to-ω")] }
 
-def s20c : LinguisticExample :=
+def s20c : Datum :=
   { id := "itomester2009_s20c"
     source := ⟨"ito-mester-2009", "(20c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def s20c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("site", "ω-adjoined"), ("violates", "No-Recursion")] }
 
-def s20d : LinguisticExample :=
+def s20d : Datum :=
   { id := "itomester2009_s20d"
     source := ⟨"ito-mester-2009", "(20d)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def s20d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("site", "φ-attached"), ("violates", "Parse-into-ω")] }
 
-def s24a : LinguisticExample :=
+def s24a : Datum :=
   { id := "itomester2009_s24a"
     source := ⟨"ito-mester-2009", "(24)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def s24a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
-def s24b : LinguisticExample :=
+def s24b : Datum :=
   { id := "itomester2009_s24b"
     source := ⟨"ito-mester-2009", "(24)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def s24b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
-def s24c : LinguisticExample :=
+def s24c : Datum :=
   { id := "itomester2009_s24c"
     source := ⟨"ito-mester-2009", "(24)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def s24c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
-def s24d : LinguisticExample :=
+def s24d : Datum :=
   { id := "itomester2009_s24d"
     source := ⟨"ito-mester-2009", "(24)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def s24d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
-def s24e : LinguisticExample :=
+def s24e : Datum :=
   { id := "itomester2009_s24e"
     source := ⟨"ito-mester-2009", "(24)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def s24e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
-def s24f : LinguisticExample :=
+def s24f : Datum :=
   { id := "itomester2009_s24f"
     source := ⟨"ito-mester-2009", "(24)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def s24f : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
-def s24g : LinguisticExample :=
+def s24g : Datum :=
   { id := "itomester2009_s24g"
     source := ⟨"ito-mester-2009", "(24)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def s24g : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
-def s24h : LinguisticExample :=
+def s24h : Datum :=
   { id := "itomester2009_s24h"
     source := ⟨"ito-mester-2009", "(24)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def s24h : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
-def s24i : LinguisticExample :=
+def s24i : Datum :=
   { id := "itomester2009_s24i"
     source := ⟨"ito-mester-2009", "(24)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def s24i : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("claim", "the function word is prosodically subordinated to its lexical host")] }
 
-def s26 : LinguisticExample :=
+def s26 : Datum :=
   { id := "itomester2009_s26"
     source := ⟨"ito-mester-2009", "(26)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def s26 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("tableau", "the four sites, unranked")] }
 
-def s28a1 : LinguisticExample :=
+def s28a1 : Datum :=
   { id := "itomester2009_s28a1"
     source := ⟨"ito-mester-2009", "(28a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def s28a1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "a single pretonic syllable stays unfooted")] }
 
-def s28a2 : LinguisticExample :=
+def s28a2 : Datum :=
   { id := "itomester2009_s28a2"
     source := ⟨"ito-mester-2009", "(28a)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def s28a2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "a single pretonic syllable stays unfooted")] }
 
-def s28b1 : LinguisticExample :=
+def s28b1 : Datum :=
   { id := "itomester2009_s28b1"
     source := ⟨"ito-mester-2009", "(28b)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def s28b1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "a single pretonic syllable stays unfooted")] }
 
-def s28b2 : LinguisticExample :=
+def s28b2 : Datum :=
   { id := "itomester2009_s28b2"
     source := ⟨"ito-mester-2009", "(28b)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def s28b2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "a single pretonic syllable stays unfooted")] }
 
-def s30a1 : LinguisticExample :=
+def s30a1 : Datum :=
   { id := "itomester2009_s30a1"
     source := ⟨"ito-mester-2009", "(30a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def s30a1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "secondary stress on the initial syllable, cf. allege")] }
 
-def s30a2 : LinguisticExample :=
+def s30a2 : Datum :=
   { id := "itomester2009_s30a2"
     source := ⟨"ito-mester-2009", "(30a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def s30a2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "secondary stress on the initial syllable, cf. phonetics")] }
 
-def s30b1 : LinguisticExample :=
+def s30b1 : Datum :=
   { id := "itomester2009_s30b1"
     source := ⟨"ito-mester-2009", "(30b)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def s30b1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "secondary stress on the initial syllable, cf. Adresse")] }
 
-def s30b2 : LinguisticExample :=
+def s30b2 : Datum :=
   { id := "itomester2009_s30b2"
     source := ⟨"ito-mester-2009", "(30b)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def s30b2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "secondary stress on the initial syllable, cf. Protest")] }
 
-def s32a1 : LinguisticExample :=
+def s32a1 : Datum :=
   { id := "itomester2009_s32a1"
     source := ⟨"ito-mester-2009", "(32a)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def s32a1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "an initial lapse: the subminimal function word plus the unfooted initial syllable")] }
 
-def s32a2 : LinguisticExample :=
+def s32a2 : Datum :=
   { id := "itomester2009_s32a2"
     source := ⟨"ito-mester-2009", "(32a)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def s32a2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "an initial lapse: the subminimal function word plus the unfooted initial syllable")] }
 
-def s32a3 : LinguisticExample :=
+def s32a3 : Datum :=
   { id := "itomester2009_s32a3"
     source := ⟨"ito-mester-2009", "(32a)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def s32a3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "an initial lapse: the subminimal function word plus the unfooted initial syllable")] }
 
-def s32a4 : LinguisticExample :=
+def s32a4 : Datum :=
   { id := "itomester2009_s32a4"
     source := ⟨"ito-mester-2009", "(32a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def s32a4 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "an initial lapse: the subminimal function word plus the unfooted initial syllable")] }
 
-def s32b1 : LinguisticExample :=
+def s32b1 : Datum :=
   { id := "itomester2009_s32b1"
     source := ⟨"ito-mester-2009", "(32b)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def s32b1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "an initial lapse: the subminimal function word plus the unfooted initial syllable")] }
 
-def s32b2 : LinguisticExample :=
+def s32b2 : Datum :=
   { id := "itomester2009_s32b2"
     source := ⟨"ito-mester-2009", "(32b)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def s32b2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "an initial lapse: the subminimal function word plus the unfooted initial syllable")] }
 
-def s32b3 : LinguisticExample :=
+def s32b3 : Datum :=
   { id := "itomester2009_s32b3"
     source := ⟨"ito-mester-2009", "(32b)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def s32b3 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "an initial lapse: the subminimal function word plus the unfooted initial syllable")] }
 
-def s32b4 : LinguisticExample :=
+def s32b4 : Datum :=
   { id := "itomester2009_s32b4"
     source := ⟨"ito-mester-2009", "(32b)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def s32b4 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "an initial lapse: the subminimal function word plus the unfooted initial syllable")] }
 
-def s33 : LinguisticExample :=
+def s33 : Datum :=
   { id := "itomester2009_s33"
     source := ⟨"ito-mester-2009", "(33)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def s33 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("tableau", "FtBin, Lex-to-ω(L), Parse-into-f: the ω-adjoined and φ-attached candidates tie")] }
 
-def s34 : LinguisticExample :=
+def s34 : Datum :=
   { id := "itomester2009_s34"
     source := ⟨"ito-mester-2009", "(34)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def s34 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("tableau", "FtBin, Lex-to-ω(L), Parse-into-f: the ω-adjoined and φ-attached candidates tie")] }
 
-def s36a1 : LinguisticExample :=
+def s36a1 : Datum :=
   { id := "itomester2009_s36a1"
     source := ⟨"ito-mester-2009", "(36a)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def s36a1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "ge- appears before main stress")] }
 
-def s36a2 : LinguisticExample :=
+def s36a2 : Datum :=
   { id := "itomester2009_s36a2"
     source := ⟨"ito-mester-2009", "(36a)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def s36a2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "ge- appears before main stress")] }
 
-def s36b1 : LinguisticExample :=
+def s36b1 : Datum :=
   { id := "itomester2009_s36b1"
     source := ⟨"ito-mester-2009", "(36b)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def s36b1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "ge- absent before an unstressed syllable")] }
 
-def s36b2 : LinguisticExample :=
+def s36b2 : Datum :=
   { id := "itomester2009_s36b2"
     source := ⟨"ito-mester-2009", "(36b)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def s36b2 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "ge- absent before an unstressed syllable")] }
 
-def s36c : LinguisticExample :=
+def s36c : Datum :=
   { id := "itomester2009_s36c"
     source := ⟨"ito-mester-2009", "(36c)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def s36c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("claim", "ge- tracks the location of main stress")] }
 
-def s37a : LinguisticExample :=
+def s37a : Datum :=
   { id := "itomester2009_s37a"
     source := ⟨"ito-mester-2009", "(37a)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def s37a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("site", "ω-adjoined"), ("violates", "No-Recursion")] }
 
-def s37b : LinguisticExample :=
+def s37b : Datum :=
   { id := "itomester2009_s37b"
     source := ⟨"ito-mester-2009", "(37b)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def s37b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("site", "φ-attached"), ("violates", "Parse-into-ω")] }
 
-def s39 : LinguisticExample :=
+def s39 : Datum :=
   { id := "itomester2009_s39"
     source := ⟨"ito-mester-2009", "(39)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def s39 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("claim", "function-word initial t flapped: Selkirk's argument for φ-attachment")] }
 
-def s40a : LinguisticExample :=
+def s40a : Datum :=
   { id := "itomester2009_s40a"
     source := ⟨"ito-mester-2009", "(40a)"⟩
     reportedIn := none
@@ -550,6 +548,6 @@ def s40a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("claim", "aspiration at the left edge of an initial function-word complex")] }
 
-def all : List LinguisticExample := [s20a, s20b, s20c, s20d, s24a, s24b, s24c, s24d, s24e, s24f, s24g, s24h, s24i, s26, s28a1, s28a2, s28b1, s28b2, s30a1, s30a2, s30b1, s30b2, s32a1, s32a2, s32a3, s32a4, s32b1, s32b2, s32b3, s32b4, s33, s34, s36a1, s36a2, s36b1, s36b2, s36c, s37a, s37b, s39, s40a]
+def all : List Datum := [s20a, s20b, s20c, s20d, s24a, s24b, s24c, s24d, s24e, s24f, s24g, s24h, s24i, s26, s28a1, s28a2, s28b1, s28b2, s30a1, s30a2, s30b1, s30b2, s32a1, s32a2, s32a3, s32a4, s32b1, s32b2, s32b3, s32b4, s33, s34, s36a1, s36a2, s36b1, s36b2, s36c, s37a, s37b, s39, s40a]
 
 end ItoMester2009.Examples

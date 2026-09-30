@@ -15,9 +15,7 @@ this module; declarations live in `namespace Scott2021.Examples`.
 
 namespace Scott2021.Examples
 
-open Data.Examples
-
-def cleft_24_mi : LinguisticExample :=
+def cleft_24_mi : Datum :=
   { id := "scott2021_cleft_24_mi"
     source := ⟨"scott-2021", "(24)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def cleft_24_mi : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "cleft"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("form", "mi")] }
 
-def cleft_24_ye : LinguisticExample :=
+def cleft_24_ye : Datum :=
   { id := "scott2021_cleft_24_ye"
     source := ⟨"scott-2021", "(24)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def cleft_24_ye : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "cleft"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("form", "ye")] }
 
-def cleft_25_we : LinguisticExample :=
+def cleft_25_we : Datum :=
   { id := "scott2021_cleft_25_we"
     source := ⟨"scott-2021", "(25)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def cleft_25_we : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "cleft"), ("antecedentPerson", "2"), ("antecedentNumber", "sg"), ("form", "we")] }
 
-def cleft_25_ye : LinguisticExample :=
+def cleft_25_ye : Datum :=
   { id := "scott2021_cleft_25_ye"
     source := ⟨"scott-2021", "(25)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def cleft_25_ye : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "cleft"), ("antecedentPerson", "2"), ("antecedentNumber", "sg"), ("form", "ye")] }
 
-def cleft_29a_si : LinguisticExample :=
+def cleft_29a_si : Datum :=
   { id := "scott2021_cleft_29a_si"
     source := ⟨"scott-2021", "(29a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def cleft_29a_si : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "cleft"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("form", "si")] }
 
-def cleft_29a_o : LinguisticExample :=
+def cleft_29a_o : Datum :=
   { id := "scott2021_cleft_29a_o"
     source := ⟨"scott-2021", "(29a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def cleft_29a_o : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "cleft"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("form", "o")] }
 
-def cleft_29b_nyi : LinguisticExample :=
+def cleft_29b_nyi : Datum :=
   { id := "scott2021_cleft_29b_nyi"
     source := ⟨"scott-2021", "(29b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def cleft_29b_nyi : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "cleft"), ("antecedentPerson", "2"), ("antecedentNumber", "sg"), ("form", "nyi")] }
 
-def cleft_29b_o : LinguisticExample :=
+def cleft_29b_o : Datum :=
   { id := "scott2021_cleft_29b_o"
     source := ⟨"scott-2021", "(29b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def cleft_29b_o : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "cleft"), ("antecedentPerson", "2"), ("antecedentNumber", "sg"), ("form", "o")] }
 
-def island_31_we : LinguisticExample :=
+def island_31_we : Datum :=
   { id := "scott2021_island_31_we"
     source := ⟨"scott-2021", "(31)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def island_31_we : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "island"), ("antecedentPerson", "2"), ("antecedentNumber", "sg"), ("form", "we")] }
 
-def island_31_ye : LinguisticExample :=
+def island_31_ye : Datum :=
   { id := "scott2021_island_31_ye"
     source := ⟨"scott-2021", "(31)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def island_31_ye : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "island"), ("antecedentPerson", "2"), ("antecedentNumber", "sg"), ("form", "ye")] }
 
-def island_32_mi : LinguisticExample :=
+def island_32_mi : Datum :=
   { id := "scott2021_island_32_mi"
     source := ⟨"scott-2021", "(32)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def island_32_mi : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "island"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("form", "mi")] }
 
-def island_32_ye : LinguisticExample :=
+def island_32_ye : Datum :=
   { id := "scott2021_island_32_ye"
     source := ⟨"scott-2021", "(32)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def island_32_ye : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "island"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("form", "ye")] }
 
-def island_33_mi : LinguisticExample :=
+def island_33_mi : Datum :=
   { id := "scott2021_island_33_mi"
     source := ⟨"scott-2021", "(33)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def island_33_mi : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "island"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("form", "mi")] }
 
-def island_33_ye : LinguisticExample :=
+def island_33_ye : Datum :=
   { id := "scott2021_island_33_ye"
     source := ⟨"scott-2021", "(33)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def island_33_ye : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "island"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("form", "ye")] }
 
-def pg_36 : LinguisticExample :=
+def pg_36 : Datum :=
   { id := "scott2021_pg_36"
     source := ⟨"scott-2021", "(36)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def pg_36 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "ye"), ("parasitic", "ye")] }
 
-def pg_37 : LinguisticExample :=
+def pg_37 : Datum :=
   { id := "scott2021_pg_37"
     source := ⟨"scott-2021", "(37)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def pg_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "mi"), ("parasitic", "ye")] }
 
-def table4_sp1_ye_ye : LinguisticExample :=
+def table4_sp1_ye_ye : Datum :=
   { id := "scott2021_table4_sp1_ye_ye"
     source := ⟨"scott-2021", "Table 4"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def table4_sp1_ye_ye : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "ye"), ("parasitic", "ye"), ("speaker", "1")] }
 
-def table4_sp1_mi_ye : LinguisticExample :=
+def table4_sp1_mi_ye : Datum :=
   { id := "scott2021_table4_sp1_mi_ye"
     source := ⟨"scott-2021", "Table 4"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def table4_sp1_mi_ye : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "mi"), ("parasitic", "ye"), ("speaker", "1")] }
 
-def table4_sp1_mi_mi : LinguisticExample :=
+def table4_sp1_mi_mi : Datum :=
   { id := "scott2021_table4_sp1_mi_mi"
     source := ⟨"scott-2021", "Table 4"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def table4_sp1_mi_mi : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "mi"), ("parasitic", "mi"), ("speaker", "1")] }
 
-def table4_sp1_ye_mi : LinguisticExample :=
+def table4_sp1_ye_mi : Datum :=
   { id := "scott2021_table4_sp1_ye_mi"
     source := ⟨"scott-2021", "Table 4"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def table4_sp1_ye_mi : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "ye"), ("parasitic", "mi"), ("speaker", "1")] }
 
-def table4_sp2_ye_ye : LinguisticExample :=
+def table4_sp2_ye_ye : Datum :=
   { id := "scott2021_table4_sp2_ye_ye"
     source := ⟨"scott-2021", "Table 4"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def table4_sp2_ye_ye : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "ye"), ("parasitic", "ye"), ("speaker", "2")] }
 
-def table4_sp2_mi_ye : LinguisticExample :=
+def table4_sp2_mi_ye : Datum :=
   { id := "scott2021_table4_sp2_mi_ye"
     source := ⟨"scott-2021", "Table 4"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def table4_sp2_mi_ye : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "mi"), ("parasitic", "ye"), ("speaker", "2")] }
 
-def table4_sp2_mi_mi : LinguisticExample :=
+def table4_sp2_mi_mi : Datum :=
   { id := "scott2021_table4_sp2_mi_mi"
     source := ⟨"scott-2021", "Table 4"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def table4_sp2_mi_mi : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "mi"), ("parasitic", "mi"), ("speaker", "2")] }
 
-def table4_sp2_ye_mi : LinguisticExample :=
+def table4_sp2_ye_mi : Datum :=
   { id := "scott2021_table4_sp2_ye_mi"
     source := ⟨"scott-2021", "Table 4"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def table4_sp2_ye_mi : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "ye"), ("parasitic", "mi"), ("speaker", "2")] }
 
-def table4_sp3_ye_ye : LinguisticExample :=
+def table4_sp3_ye_ye : Datum :=
   { id := "scott2021_table4_sp3_ye_ye"
     source := ⟨"scott-2021", "Table 4"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def table4_sp3_ye_ye : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "ye"), ("parasitic", "ye"), ("speaker", "3")] }
 
-def table4_sp3_mi_ye : LinguisticExample :=
+def table4_sp3_mi_ye : Datum :=
   { id := "scott2021_table4_sp3_mi_ye"
     source := ⟨"scott-2021", "Table 4"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def table4_sp3_mi_ye : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "mi"), ("parasitic", "ye"), ("speaker", "3")] }
 
-def table4_sp3_mi_mi : LinguisticExample :=
+def table4_sp3_mi_mi : Datum :=
   { id := "scott2021_table4_sp3_mi_mi"
     source := ⟨"scott-2021", "Table 4"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def table4_sp3_mi_mi : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "mi"), ("parasitic", "mi"), ("speaker", "3")] }
 
-def table4_sp3_ye_mi : LinguisticExample :=
+def table4_sp3_ye_mi : Datum :=
   { id := "scott2021_table4_sp3_ye_mi"
     source := ⟨"scott-2021", "Table 4"⟩
     reportedIn := none
@@ -381,6 +379,6 @@ def table4_sp3_ye_mi : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "parasiticGap"), ("antecedentPerson", "1"), ("antecedentNumber", "sg"), ("trueGap", "ye"), ("parasitic", "mi"), ("speaker", "3")] }
 
-def all : List LinguisticExample := [cleft_24_mi, cleft_24_ye, cleft_25_we, cleft_25_ye, cleft_29a_si, cleft_29a_o, cleft_29b_nyi, cleft_29b_o, island_31_we, island_31_ye, island_32_mi, island_32_ye, island_33_mi, island_33_ye, pg_36, pg_37, table4_sp1_ye_ye, table4_sp1_mi_ye, table4_sp1_mi_mi, table4_sp1_ye_mi, table4_sp2_ye_ye, table4_sp2_mi_ye, table4_sp2_mi_mi, table4_sp2_ye_mi, table4_sp3_ye_ye, table4_sp3_mi_ye, table4_sp3_mi_mi, table4_sp3_ye_mi]
+def all : List Datum := [cleft_24_mi, cleft_24_ye, cleft_25_we, cleft_25_ye, cleft_29a_si, cleft_29a_o, cleft_29b_nyi, cleft_29b_o, island_31_we, island_31_ye, island_32_mi, island_32_ye, island_33_mi, island_33_ye, pg_36, pg_37, table4_sp1_ye_ye, table4_sp1_mi_ye, table4_sp1_mi_mi, table4_sp1_ye_mi, table4_sp2_ye_ye, table4_sp2_mi_ye, table4_sp2_mi_mi, table4_sp2_ye_mi, table4_sp3_ye_ye, table4_sp3_mi_ye, table4_sp3_mi_mi, table4_sp3_ye_mi]
 
 end Scott2021.Examples

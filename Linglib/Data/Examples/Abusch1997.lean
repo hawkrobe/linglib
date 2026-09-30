@@ -15,9 +15,7 @@ this module; declarations live in `namespace Abusch1997.Examples`.
 
 namespace Abusch1997.Examples
 
-open Data.Examples
-
-def ex1 : LinguisticExample :=
+def ex1 : Datum :=
   { id := "abusch1997_ex1"
     source := ⟨"abusch-1997", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1 : LinguisticExample :=
     readings := [("past-shifted (defendant in lab before jurors' believing)", .acceptable)]
     paperFeatures := [] }
 
-def ex2 : LinguisticExample :=
+def ex2 : Datum :=
   { id := "abusch1997_ex2"
     source := ⟨"abusch-1997", "(2)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex2 : LinguisticExample :=
     readings := [("simultaneous (raining at believing time)", .acceptable), ("past-shifted (raining before believing)", .acceptable)]
     paperFeatures := [] }
 
-def ex3_ULC : LinguisticExample :=
+def ex3_ULC : Datum :=
   { id := "abusch1997_ex3_ULC"
     source := ⟨"abusch-1997", "(3)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex3_ULC : LinguisticExample :=
     readings := [("past-shifted (attack before thinking)", .acceptable), ("forward-shifted (attack co-temporal with later opening, after thinking)", .ungrammatical)]
     paperFeatures := [] }
 
-def ex8_doubleAccess : LinguisticExample :=
+def ex8_doubleAccess : Datum :=
   { id := "abusch1997_ex8_doubleAccess"
     source := ⟨"abusch-1997", "(8)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex8_doubleAccess : LinguisticExample :=
     readings := [("double-access (pregnancy includes utterance + believing)", .acceptable), ("future-shifted (pregnancy only at believing, not utterance)", .ungrammatical)]
     paperFeatures := [] }
 
-def ex6 : LinguisticExample :=
+def ex6 : Datum :=
   { id := "abusch1997_ex6"
     source := ⟨"abusch-1997", "(6)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex6 : LinguisticExample :=
     readings := [("forward-shifted (attack after thinking, co-temporal with the opening)", .acceptable)]
     paperFeatures := [("configuration", "would under past"), ("reading", "forward-shifted")] }
 
-def ex27 : LinguisticExample :=
+def ex27 : Datum :=
   { id := "abusch1997_ex27"
     source := ⟨"abusch-1997", "(27)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex27 : LinguisticExample :=
     readings := [("backward-shifted (a previous Tuesday)", .acceptable), ("forward-shifted (the Tuesday after last Monday)", .unacceptable)]
     paperFeatures := [("phenomenon", "upper limit"), ("anaphora", "internal to the attitude")] }
 
-def ex29 : LinguisticExample :=
+def ex29 : Datum :=
   { id := "abusch1997_ex29"
     source := ⟨"abusch-1997", "(29)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex29 : LinguisticExample :=
     readings := [("backward-shifted, narrow scope (some time before the believing)", .acceptable), ("forward-shifted, narrow scope", .unacceptable)]
     paperFeatures := [("phenomenon", "upper limit"), ("anaphora", "internal to the attitude")] }
 
-def ex30 : LinguisticExample :=
+def ex30 : Datum :=
   { id := "abusch1997_ex30"
     source := ⟨"abusch-1997", "(30)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex30 : LinguisticExample :=
     readings := [("simultaneous (loving at the marrying, after the believing)", .acceptable)]
     paperFeatures := [("phenomenon", "sequence of tense"), ("morphology", "past without precedence")] }
 
-def ex34 : LinguisticExample :=
+def ex34 : Datum :=
   { id := "abusch1997_ex34"
     source := ⟨"abusch-1997", "(34)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex34 : LinguisticExample :=
     readings := [("simultaneous (meal at the saying, three days after the utterance)", .acceptable)]
     paperFeatures := [("phenomenon", "sequence of tense"), ("morphology", "past without precedence")] }
 
-def ex46a : LinguisticExample :=
+def ex46a : Datum :=
   { id := "abusch1997_ex46a"
     source := ⟨"abusch-1997", "(46a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex46a : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "upper limit"), ("reading", "backward-shifted")] }
 
-def ex46b : LinguisticExample :=
+def ex46b : Datum :=
   { id := "abusch1997_ex46b"
     source := ⟨"abusch-1997", "(46b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex46b : LinguisticExample :=
     readings := [("forward-shifted (the thunderstorm after the believing)", .unacceptable)]
     paperFeatures := [("phenomenon", "upper limit"), ("reading", "forward-shifted")] }
 
-def ex47 : LinguisticExample :=
+def ex47 : Datum :=
   { id := "abusch1997_ex47"
     source := ⟨"abusch-1997", "(47)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex47 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "future-directed acquaintance"), ("source", "Bonomi")] }
 
-def ex53 : LinguisticExample :=
+def ex53 : Datum :=
   { id := "abusch1997_ex53"
     source := ⟨"abusch-1997", "(53)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex53 : LinguisticExample :=
     readings := [("narrow scope (interest at the seminar, after the utterance)", .acceptable), ("wide scope (a specific topic; interest before the utterance)", .acceptable)]
     paperFeatures := [("phenomenon", "sequence of tense"), ("sensitivity", "logical scope")] }
 
-def ex60 : LinguisticExample :=
+def ex60 : Datum :=
   { id := "abusch1997_ex60"
     source := ⟨"abusch-1997", "(60)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex60 : LinguisticExample :=
     readings := [("meeting before the marrying (locally licensed)", .acceptable)]
     paperFeatures := [("phenomenon", "local licensing"), ("matrix", "present")] }
 
-def ex63 : LinguisticExample :=
+def ex63 : Datum :=
   { id := "abusch1997_ex63"
     source := ⟨"abusch-1997", "(63)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex63 : LinguisticExample :=
     readings := [("loving before the marrying", .acceptable), ("simultaneous (loving at the marrying)", .unacceptable)]
     paperFeatures := [("phenomenon", "local licensing"), ("matrix", "present")] }
 
-def ex64 : LinguisticExample :=
+def ex64 : Datum :=
   { id := "abusch1997_ex64"
     source := ⟨"abusch-1997", "(64)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex64 : LinguisticExample :=
     readings := [("meeting before the marrying, possibly after the utterance", .acceptable)]
     paperFeatures := [("phenomenon", "local licensing"), ("operator", "will as evaluation-time shifter")] }
 
-def ex69 : LinguisticExample :=
+def ex69 : Datum :=
   { id := "abusch1997_ex69"
     source := ⟨"abusch-1997", "(69)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex69 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "double access"), ("complement", "not true at either time")] }
 
-def ex81 : LinguisticExample :=
+def ex81 : Datum :=
   { id := "abusch1997_ex81"
     source := ⟨"abusch-1997", "(81)"⟩
     reportedIn := none
@@ -251,6 +249,6 @@ def ex81 : LinguisticExample :=
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [("phenomenon", "double access"), ("alternative", "simultaneous past")] }
 
-def all : List LinguisticExample := [ex1, ex2, ex3_ULC, ex8_doubleAccess, ex6, ex27, ex29, ex30, ex34, ex46a, ex46b, ex47, ex53, ex60, ex63, ex64, ex69, ex81]
+def all : List Datum := [ex1, ex2, ex3_ULC, ex8_doubleAccess, ex6, ex27, ex29, ex30, ex34, ex46a, ex46b, ex47, ex53, ex60, ex63, ex64, ex69, ex81]
 
 end Abusch1997.Examples

@@ -15,9 +15,7 @@ this module; declarations live in `namespace ShenHuang2026.Examples`.
 
 namespace ShenHuang2026.Examples
 
-open Data.Examples
-
-def ex3a : LinguisticExample :=
+def ex3a : Datum :=
   { id := "shenhuang2026_ex3a"
     source := ⟨"shen-huang-2026", "(3a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex3a : LinguisticExample :=
     readings := []
     paperFeatures := [("dependency", "movement"), ("object", "indefinite"), ("creation", "yes")] }
 
-def ex3b : LinguisticExample :=
+def ex3b : Datum :=
   { id := "shenhuang2026_ex3b"
     source := ⟨"shen-huang-2026", "(3b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex3b : LinguisticExample :=
     readings := []
     paperFeatures := [("dependency", "movement"), ("object", "definite"), ("creation", "yes")] }
 
-def ex28_indefinite : LinguisticExample :=
+def ex28_indefinite : Datum :=
   { id := "shenhuang2026_ex28_indefinite"
     source := ⟨"li-1992", "(54)"⟩
     reportedIn := some ⟨"shen-huang-2026", "(28)"⟩
@@ -56,7 +54,7 @@ def ex28_indefinite : LinguisticExample :=
     readings := []
     paperFeatures := [("dependency", "binding"), ("object", "indefinite"), ("creation", "no")] }
 
-def ex28_definite : LinguisticExample :=
+def ex28_definite : Datum :=
   { id := "shenhuang2026_ex28_definite"
     source := ⟨"li-1992", "(54)"⟩
     reportedIn := some ⟨"shen-huang-2026", "(28)"⟩
@@ -69,6 +67,6 @@ def ex28_definite : LinguisticExample :=
     readings := []
     paperFeatures := [("dependency", "binding"), ("object", "definite"), ("creation", "no")] }
 
-def all : List LinguisticExample := [ex3a, ex3b, ex28_indefinite, ex28_definite]
+def all : List Datum := [ex3a, ex3b, ex28_indefinite, ex28_definite]
 
 end ShenHuang2026.Examples

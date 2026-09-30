@@ -15,9 +15,7 @@ this module; declarations live in `namespace Hewett2026.Examples`.
 
 namespace Hewett2026.Examples
 
-open Data.Examples
-
-def ex1a : LinguisticExample :=
+def ex1a : Datum :=
   { id := "hewett2026_ex1a"
     source := ⟨"hewett-2026", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("root", "apologi"), ("category", "V"), ("prep", "for")] }
 
-def ex1b : LinguisticExample :=
+def ex1b : Datum :=
   { id := "hewett2026_ex1b"
     source := ⟨"hewett-2026", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex1b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("root", "apologi"), ("category", "N"), ("prep", "for")] }
 
-def ex1c : LinguisticExample :=
+def ex1c : Datum :=
   { id := "hewett2026_ex1c"
     source := ⟨"hewett-2026", "(1c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex1c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("root", "apologi"), ("category", "A"), ("prep", "for")] }
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "hewett2026_ex2a"
     source := ⟨"hewett-2026", "(2a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("root", "fxr"), ("category", "V"), ("prep", "b-")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "hewett2026_ex2b"
     source := ⟨"hewett-2026", "(2b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex2b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("root", "fxr"), ("category", "N"), ("prep", "b-")] }
 
-def ex2c : LinguisticExample :=
+def ex2c : Datum :=
   { id := "hewett2026_ex2c"
     source := ⟨"hewett-2026", "(2c)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex2c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("root", "fxr"), ("category", "A"), ("prep", "b-")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "hewett2026_ex5a"
     source := ⟨"hewett-2026", "(5a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("root", "prd"), ("category", "V"), ("prep", "on")] }
 
-def ex5b : LinguisticExample :=
+def ex5b : Datum :=
   { id := "hewett2026_ex5b"
     source := ⟨"hewett-2026", "(5b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex5b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("root", "prd"), ("category", "N"), ("prep", "in")] }
 
-def ex5c : LinguisticExample :=
+def ex5c : Datum :=
   { id := "hewett2026_ex5c"
     source := ⟨"hewett-2026", "(5c)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex5c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("root", "prd"), ("category", "A"), ("prep", "of")] }
 
-def ex6a : LinguisticExample :=
+def ex6a : Datum :=
   { id := "hewett2026_ex6a"
     source := ⟨"hewett-2026", "(6a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex6a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("root", "brk"), ("category", "V"), ("prep", "b-")] }
 
-def ex6b : LinguisticExample :=
+def ex6b : Datum :=
   { id := "hewett2026_ex6b"
     source := ⟨"hewett-2026", "(6b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex6b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("root", "brk"), ("category", "N"), ("prep", "ʕala")] }
 
-def ex11a : LinguisticExample :=
+def ex11a : Datum :=
   { id := "hewett2026_ex11a"
     source := ⟨"hewett-2026", "(11a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex11a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("root", "xwf"), ("template", "XaYaZ"), ("prep", "min")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "hewett2026_ex11b"
     source := ⟨"hewett-2026", "(11b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2"), ("root", "xwf"), ("template", "XaYYaZ"), ("prep", "min")] }
 
-def ex13ai : LinguisticExample :=
+def ex13ai : Datum :=
   { id := "hewett2026_ex13ai"
     source := ⟨"hewett-2026", "(13a.i)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex13ai : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "krh"), ("template", "XaYaZ"), ("prep", "none")] }
 
-def ex13aii : LinguisticExample :=
+def ex13aii : Datum :=
   { id := "hewett2026_ex13aii"
     source := ⟨"hewett-2026", "(13a.ii)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex13aii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "krh"), ("template", "XaYYaZ"), ("prep", "fi")] }
 
-def ex13bi : LinguisticExample :=
+def ex13bi : Datum :=
   { id := "hewett2026_ex13bi"
     source := ⟨"hewett-2026", "(13b.i)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex13bi : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "dwr"), ("template", "XaYaZ"), ("prep", "bi-")] }
 
-def ex13bii : LinguisticExample :=
+def ex13bii : Datum :=
   { id := "hewett2026_ex13bii"
     source := ⟨"hewett-2026", "(13b.ii)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex13bii : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "dwr"), ("template", "XaYYaZ"), ("prep", "ʕla")] }
 
-def ex14a : LinguisticExample :=
+def ex14a : Datum :=
   { id := "hewett2026_ex14a"
     source := ⟨"hewett-2026", "(14a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex14a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "ħkm"), ("template", "XaYaZ"), ("prep", "ʕala")] }
 
-def ex14b : LinguisticExample :=
+def ex14b : Datum :=
   { id := "hewett2026_ex14b"
     source := ⟨"hewett-2026", "(14b)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex14b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "ħkm"), ("template", "XaYYaZ"), ("prep", "none")] }
 
-def ex15a_active : LinguisticExample :=
+def ex15a_active : Datum :=
   { id := "hewett2026_ex15a_active"
     source := ⟨"hewett-2026", "(15a)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex15a_active : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "wsʔ"), ("template", "XaYaZ"), ("prep", "b-")] }
 
-def ex15a_nonactive : LinguisticExample :=
+def ex15a_nonactive : Datum :=
   { id := "hewett2026_ex15a_nonactive"
     source := ⟨"hewett-2026", "(15a)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex15a_nonactive : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "wsʔ"), ("template", "nXaYaZ"), ("prep", "b-")] }
 
-def ex15b_active : LinguisticExample :=
+def ex15b_active : Datum :=
   { id := "hewett2026_ex15b_active"
     source := ⟨"hewett-2026", "(15b)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex15b_active : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "ʤðb"), ("template", "XaYaZ"), ("prep", "la-/ʕala")] }
 
-def ex15b_nonactive : LinguisticExample :=
+def ex15b_nonactive : Datum :=
   { id := "hewett2026_ex15b_nonactive"
     source := ⟨"hewett-2026", "(15b)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex15b_nonactive : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "ʤðb"), ("template", "nXaYaZ"), ("prep", "la-")] }
 
-def ex15c_active : LinguisticExample :=
+def ex15c_active : Datum :=
   { id := "hewett2026_ex15c_active"
     source := ⟨"hewett-2026", "(15c)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex15c_active : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "ʃkw"), ("template", "XaYaZ"), ("prep", "la-")] }
 
-def ex15c_nonactive : LinguisticExample :=
+def ex15c_nonactive : Datum :=
   { id := "hewett2026_ex15c_nonactive"
     source := ⟨"hewett-2026", "(15c)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex15c_nonactive : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "ʃkw"), ("template", "nXaYaZ"), ("prep", "ʕala")] }
 
-def ex16a_active : LinguisticExample :=
+def ex16a_active : Datum :=
   { id := "hewett2026_ex16a_active"
     source := ⟨"hewett-2026", "(16a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex16a_active : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "dwr"), ("template", "XaYYaZ"), ("prep", "ʕala")] }
 
-def ex16a_nonactive : LinguisticExample :=
+def ex16a_nonactive : Datum :=
   { id := "hewett2026_ex16a_nonactive"
     source := ⟨"hewett-2026", "(16a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex16a_nonactive : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "dwr"), ("template", "tXaYYaZ"), ("prep", "ʕala")] }
 
-def ex16b_active : LinguisticExample :=
+def ex16b_active : Datum :=
   { id := "hewett2026_ex16b_active"
     source := ⟨"hewett-2026", "(16b)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex16b_active : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "ʃwq"), ("template", "XaYYaZ"), ("prep", "ʕala")] }
 
-def ex16b_nonactive : LinguisticExample :=
+def ex16b_nonactive : Datum :=
   { id := "hewett2026_ex16b_nonactive"
     source := ⟨"hewett-2026", "(16b)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex16b_nonactive : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "ʃwq"), ("template", "tXaYYaZ"), ("prep", "ʕala/la-")] }
 
-def ex16c_active : LinguisticExample :=
+def ex16c_active : Datum :=
   { id := "hewett2026_ex16c_active"
     source := ⟨"hewett-2026", "(16c)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex16c_active : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "ħkm"), ("template", "XaYYaZ"), ("prep", "none")] }
 
-def ex16c_nonactive : LinguisticExample :=
+def ex16c_nonactive : Datum :=
   { id := "hewett2026_ex16c_nonactive"
     source := ⟨"hewett-2026", "(16c)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex16c_nonactive : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "ħkm"), ("template", "tXaYYaZ"), ("prep", "b-")] }
 
-def ex17a : LinguisticExample :=
+def ex17a : Datum :=
   { id := "hewett2026_ex17a"
     source := ⟨"hewett-2026", "(17a)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex17a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "tpl"), ("template", "XiYeZ"), ("prep", "be-")] }
 
-def ex17b : LinguisticExample :=
+def ex17b : Datum :=
   { id := "hewett2026_ex17b"
     source := ⟨"hewett-2026", "(17b)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex17b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "tpl"), ("template", "XuYaZ"), ("prep", "none")] }
 
-def ex18a : LinguisticExample :=
+def ex18a : Datum :=
   { id := "hewett2026_ex18a"
     source := ⟨"hewett-2026", "(18a)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex18a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "ʃpʕ"), ("template", "hiXYiZ"), ("prep", "al")] }
 
-def ex18b : LinguisticExample :=
+def ex18b : Datum :=
   { id := "hewett2026_ex18b"
     source := ⟨"hewett-2026", "(18b)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex18b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "ʃpʕ"), ("template", "huXYaZ"), ("prep", "none")] }
 
-def ex19a : LinguisticExample :=
+def ex19a : Datum :=
   { id := "hewett2026_ex19a"
     source := ⟨"hewett-2026", "(19a)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex19a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "srb"), ("template", "XiYeZ"), ("prep", "le-")] }
 
-def ex19b : LinguisticExample :=
+def ex19b : Datum :=
   { id := "hewett2026_ex19b"
     source := ⟨"hewett-2026", "(19b)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex19b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "srb"), ("template", "XuYaZ")] }
 
-def ex20a : LinguisticExample :=
+def ex20a : Datum :=
   { id := "hewett2026_ex20a"
     source := ⟨"hewett-2026", "(20a)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex20a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "rbc"), ("template", "hiXYiZ"), ("prep", "le-")] }
 
-def ex20b : LinguisticExample :=
+def ex20b : Datum :=
   { id := "hewett2026_ex20b"
     source := ⟨"hewett-2026", "(20b)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex20b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "rbc"), ("template", "huXYaZ")] }
 
-def ex21a : LinguisticExample :=
+def ex21a : Datum :=
   { id := "hewett2026_ex21a"
     source := ⟨"hewett-2026", "(21a)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex21a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "oper"), ("construction", "pseudopassive")] }
 
-def ex21b : LinguisticExample :=
+def ex21b : Datum :=
   { id := "hewett2026_ex21b"
     source := ⟨"hewett-2026", "(21b)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex21b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "oper"), ("construction", "-able")] }
 
-def ex21c : LinguisticExample :=
+def ex21c : Datum :=
   { id := "hewett2026_ex21c"
     source := ⟨"hewett-2026", "(21c)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex21c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "oper"), ("construction", "middle")] }
 
-def ex22a : LinguisticExample :=
+def ex22a : Datum :=
   { id := "hewett2026_ex22a"
     source := ⟨"hewett-2026", "(22a)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex22a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "treat"), ("construction", "passive")] }
 
-def ex22b : LinguisticExample :=
+def ex22b : Datum :=
   { id := "hewett2026_ex22b"
     source := ⟨"hewett-2026", "(22b)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex22b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "treat"), ("construction", "-able")] }
 
-def ex22c : LinguisticExample :=
+def ex22c : Datum :=
   { id := "hewett2026_ex22c"
     source := ⟨"hewett-2026", "(22c)"⟩
     reportedIn := none
@@ -602,6 +600,6 @@ def ex22c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("root", "treat"), ("construction", "middle")] }
 
-def all : List LinguisticExample := [ex1a, ex1b, ex1c, ex2a, ex2b, ex2c, ex5a, ex5b, ex5c, ex6a, ex6b, ex11a, ex11b, ex13ai, ex13aii, ex13bi, ex13bii, ex14a, ex14b, ex15a_active, ex15a_nonactive, ex15b_active, ex15b_nonactive, ex15c_active, ex15c_nonactive, ex16a_active, ex16a_nonactive, ex16b_active, ex16b_nonactive, ex16c_active, ex16c_nonactive, ex17a, ex17b, ex18a, ex18b, ex19a, ex19b, ex20a, ex20b, ex21a, ex21b, ex21c, ex22a, ex22b, ex22c]
+def all : List Datum := [ex1a, ex1b, ex1c, ex2a, ex2b, ex2c, ex5a, ex5b, ex5c, ex6a, ex6b, ex11a, ex11b, ex13ai, ex13aii, ex13bi, ex13bii, ex14a, ex14b, ex15a_active, ex15a_nonactive, ex15b_active, ex15b_nonactive, ex15c_active, ex15c_nonactive, ex16a_active, ex16a_nonactive, ex16b_active, ex16b_nonactive, ex16c_active, ex16c_nonactive, ex17a, ex17b, ex18a, ex18b, ex19a, ex19b, ex20a, ex20b, ex21a, ex21b, ex21c, ex22a, ex22b, ex22c]
 
 end Hewett2026.Examples

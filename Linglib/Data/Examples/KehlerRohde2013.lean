@@ -15,9 +15,7 @@ this module; declarations live in `namespace KehlerRohde2013.Examples`.
 
 namespace KehlerRohde2013.Examples
 
-open Data.Examples
-
-def ex_7 : LinguisticExample :=
+def ex_7 : Datum :=
   { id := "kehlerrohde2013_7"
     source := ⟨"kehler-rohde-2013", "(7)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_7 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_8 : LinguisticExample :=
+def ex_8 : Datum :=
   { id := "kehlerrohde2013_8"
     source := ⟨"kehler-rohde-2013", "(8)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_8 : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_10a : LinguisticExample :=
+def ex_10a : Datum :=
   { id := "kehlerrohde2013_10a"
     source := ⟨"kehler-rohde-2013", "(10a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_10a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "kehlerrohde2013_10b"
     source := ⟨"kehler-rohde-2013", "(10b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_20a : LinguisticExample :=
+def ex_20a : Datum :=
   { id := "kehlerrohde2013_20a"
     source := ⟨"kehler-rohde-2013", "(20a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_20a : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_20c : LinguisticExample :=
+def ex_20c : Datum :=
   { id := "kehlerrohde2013_20c"
     source := ⟨"kehler-rohde-2013", "(20c)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_20c : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "kehlerrohde2013_20b"
     source := ⟨"kehler-rohde-2013", "(20b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_20b : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def ex_20d : LinguisticExample :=
+def ex_20d : Datum :=
   { id := "kehlerrohde2013_20d"
     source := ⟨"kehler-rohde-2013", "(20d)"⟩
     reportedIn := none
@@ -121,6 +119,6 @@ def ex_20d : LinguisticExample :=
     readings := []
     paperFeatures := [] }
 
-def all : List LinguisticExample := [ex_7, ex_8, ex_10a, ex_10b, ex_20a, ex_20c, ex_20b, ex_20d]
+def all : List Datum := [ex_7, ex_8, ex_10a, ex_10b, ex_20a, ex_20c, ex_20b, ex_20d]
 
 end KehlerRohde2013.Examples

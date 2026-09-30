@@ -15,9 +15,7 @@ this module; declarations live in `namespace GinzburgCooper2004.Examples`.
 
 namespace GinzburgCooper2004.Examples
 
-open Data.Examples
-
-def ex_4a_bo : LinguisticExample :=
+def ex_4a_bo : Datum :=
   { id := "ginzburgcooper2004_4a_bo"
     source := ⟨"ginzburg-cooper-2004", "(4a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_4a_bo : LinguisticExample :=
     readings := [("clausal", .acceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "Bo"), ("antecedentCat", "NP"), ("fragment", "Bo"), ("fragmentCat", "NP"), ("access", "shared")] }
 
-def ex_4a_finagle : LinguisticExample :=
+def ex_4a_finagle : Datum :=
   { id := "ginzburgcooper2004_4a_finagle"
     source := ⟨"ginzburg-cooper-2004", "(4a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_4a_finagle : LinguisticExample :=
     readings := [("clausal", .acceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "finagle"), ("antecedentCat", "V[bse]"), ("fragment", "Finagle"), ("fragmentCat", "V[bse]"), ("access", "shared")] }
 
-def ex_6a : LinguisticExample :=
+def ex_6a : Datum :=
   { id := "ginzburgcooper2004_6a"
     source := ⟨"ginzburg-cooper-2004", "(6a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_6a : LinguisticExample :=
     readings := [("clausal", .acceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "spunyarn"), ("antecedentCat", "N"), ("fragment", "Spunyarn"), ("fragmentCat", "N"), ("access", "shared")] }
 
-def ex_8a : LinguisticExample :=
+def ex_8a : Datum :=
   { id := "ginzburgcooper2004_8a"
     source := ⟨"ginzburg-cooper-2004", "(8a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_8a : LinguisticExample :=
     readings := [("clausal", .acceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "Bo"), ("antecedentCat", "NP"), ("fragment", "My cousin"), ("fragmentCat", "NP"), ("access", "shared")] }
 
-def ex_8b : LinguisticExample :=
+def ex_8b : Datum :=
   { id := "ginzburgcooper2004_8b"
     source := ⟨"ginzburg-cooper-2004", "(8b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_8b : LinguisticExample :=
     readings := [("clausal", .acceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "she"), ("antecedentCat", "NP"), ("fragment", "Sue"), ("fragmentCat", "NP"), ("access", "shared")] }
 
-def ex_8c : LinguisticExample :=
+def ex_8c : Datum :=
   { id := "ginzburgcooper2004_8c"
     source := ⟨"ginzburg-cooper-2004", "(8c)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_8c : LinguisticExample :=
     readings := [("clausal", .acceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "bike"), ("antecedentCat", "V[bse]"), ("fragment", "Cycle"), ("fragmentCat", "V[bse]"), ("access", "shared")] }
 
-def ex_9a : LinguisticExample :=
+def ex_9a : Datum :=
   { id := "ginzburgcooper2004_9a"
     source := ⟨"ginzburg-cooper-2004", "(9a)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_9a : LinguisticExample :=
     readings := [("clausal", .acceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "Bo"), ("antecedentCat", "NP"), ("fragment", "Who"), ("fragmentCat", "NP"), ("access", "shared")] }
 
-def ex_10a_him : LinguisticExample :=
+def ex_10a_him : Datum :=
   { id := "ginzburgcooper2004_10a_him"
     source := ⟨"ginzburg-cooper-2004", "(10a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_10a_him : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "him"), ("antecedentCat", "NP[acc]"), ("fragment", "Him"), ("fragmentCat", "NP[acc]"), ("access", "shared")] }
 
-def ex_10a_he : LinguisticExample :=
+def ex_10a_he : Datum :=
   { id := "ginzburgcooper2004_10a_he"
     source := ⟨"ginzburg-cooper-2004", "(10a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_10a_he : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "him"), ("antecedentCat", "NP[acc]"), ("fragment", "He"), ("fragmentCat", "NP[nom]"), ("access", "shared")] }
 
-def ex_10b_he : LinguisticExample :=
+def ex_10b_he : Datum :=
   { id := "ginzburgcooper2004_10b_he"
     source := ⟨"ginzburg-cooper-2004", "(10b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_10b_he : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "he"), ("antecedentCat", "NP[nom]"), ("fragment", "He"), ("fragmentCat", "NP[nom]"), ("access", "shared")] }
 
-def ex_10b_him : LinguisticExample :=
+def ex_10b_him : Datum :=
   { id := "ginzburgcooper2004_10b_him"
     source := ⟨"ginzburg-cooper-2004", "(10b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_10b_him : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "he"), ("antecedentCat", "NP[nom]"), ("fragment", "Him"), ("fragmentCat", "NP[acc]"), ("access", "shared")] }
 
-def ex_10c_adore : LinguisticExample :=
+def ex_10c_adore : Datum :=
   { id := "ginzburgcooper2004_10c_adore"
     source := ⟨"ginzburg-cooper-2004", "(10c)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_10c_adore : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "adore"), ("antecedentCat", "V[bse]"), ("fragment", "Adore"), ("fragmentCat", "V[bse]"), ("access", "shared")] }
 
-def ex_10c_adored : LinguisticExample :=
+def ex_10c_adored : Datum :=
   { id := "ginzburgcooper2004_10c_adored"
     source := ⟨"ginzburg-cooper-2004", "(10c)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_10c_adored : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "adore"), ("antecedentCat", "V[bse]"), ("fragment", "Adored"), ("fragmentCat", "V[fin]"), ("access", "shared")] }
 
-def ex_10d_cycling : LinguisticExample :=
+def ex_10d_cycling : Datum :=
   { id := "ginzburgcooper2004_10d_cycling"
     source := ⟨"ginzburg-cooper-2004", "(10d)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_10d_cycling : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "cycling"), ("antecedentCat", "V[prp]"), ("fragment", "Cycling"), ("fragmentCat", "V[prp]"), ("access", "shared")] }
 
-def ex_10d_biking : LinguisticExample :=
+def ex_10d_biking : Datum :=
   { id := "ginzburgcooper2004_10d_biking"
     source := ⟨"ginzburg-cooper-2004", "(10d)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_10d_biking : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "cycling"), ("antecedentCat", "V[prp]"), ("fragment", "Biking"), ("fragmentCat", "V[prp]"), ("access", "shared")] }
 
-def ex_10d_biked : LinguisticExample :=
+def ex_10d_biked : Datum :=
   { id := "ginzburgcooper2004_10d_biked"
     source := ⟨"ginzburg-cooper-2004", "(10d)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_10d_biked : LinguisticExample :=
     readings := []
     paperFeatures := [("antecedent", "cycling"), ("antecedentCat", "V[prp]"), ("fragment", "Biked"), ("fragmentCat", "V[psp]"), ("access", "shared")] }
 
-def ex_11 : LinguisticExample :=
+def ex_11 : Datum :=
   { id := "ginzburgcooper2004_11"
     source := ⟨"ginzburg-cooper-2004", "(11)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_11 : LinguisticExample :=
     readings := [("clausal", .unacceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "here"), ("antecedentCat", "AdvP"), ("fragment", "Here"), ("fragmentCat", "AdvP"), ("access", "distinct")] }
 
-def ex_12 : LinguisticExample :=
+def ex_12 : Datum :=
   { id := "ginzburgcooper2004_12"
     source := ⟨"ginzburg-cooper-2004", "(12)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_12 : LinguisticExample :=
     readings := [("clausal", .acceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "here"), ("antecedentCat", "AdvP"), ("fragment", "Here"), ("fragmentCat", "AdvP"), ("access", "shared")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "ginzburgcooper2004_13a"
     source := ⟨"ginzburg-cooper-2004", "(13a)"⟩
     reportedIn := none
@@ -264,6 +262,6 @@ def ex_13a : LinguisticExample :=
     readings := [("clausal", .unacceptable), ("constituent", .acceptable)]
     paperFeatures := [("antecedent", "I"), ("antecedentCat", "NP[nom]"), ("fragment", "I"), ("fragmentCat", "NP[nom]"), ("access", "distinct")] }
 
-def all : List LinguisticExample := [ex_4a_bo, ex_4a_finagle, ex_6a, ex_8a, ex_8b, ex_8c, ex_9a, ex_10a_him, ex_10a_he, ex_10b_he, ex_10b_him, ex_10c_adore, ex_10c_adored, ex_10d_cycling, ex_10d_biking, ex_10d_biked, ex_11, ex_12, ex_13a]
+def all : List Datum := [ex_4a_bo, ex_4a_finagle, ex_6a, ex_8a, ex_8b, ex_8c, ex_9a, ex_10a_him, ex_10a_he, ex_10b_he, ex_10b_him, ex_10c_adore, ex_10c_adored, ex_10d_cycling, ex_10d_biking, ex_10d_biked, ex_11, ex_12, ex_13a]
 
 end GinzburgCooper2004.Examples

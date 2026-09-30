@@ -15,9 +15,7 @@ this module; declarations live in `namespace CoppockWechsler2018.Examples`.
 
 namespace CoppockWechsler2018.Examples
 
-open Data.Examples
-
-def ex_27 : LinguisticExample :=
+def ex_27 : Datum :=
   { id := "coppockwechsler2018_27"
     source := ⟨"coppock-wechsler-2018", "(27)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_27 : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "1"), ("clause", "declarative"), ("marking", "ego")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "coppockwechsler2018_28"
     source := ⟨"coppock-wechsler-2018", "(28)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_28 : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "2"), ("clause", "declarative"), ("marking", "ego")] }
 
-def ex_34a : LinguisticExample :=
+def ex_34a : Datum :=
   { id := "coppockwechsler2018_34a"
     source := ⟨"coppock-wechsler-2018", "(34a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_34a : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "1"), ("clause", "interrogative"), ("marking", "ego")] }
 
-def ex_34b : LinguisticExample :=
+def ex_34b : Datum :=
   { id := "coppockwechsler2018_34b"
     source := ⟨"coppock-wechsler-2018", "(34b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_34b : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "1"), ("clause", "interrogative"), ("marking", "plain")] }
 
-def ex_35a : LinguisticExample :=
+def ex_35a : Datum :=
   { id := "coppockwechsler2018_35a"
     source := ⟨"coppock-wechsler-2018", "(35a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_35a : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "2"), ("clause", "interrogative"), ("marking", "ego")] }
 
-def ex_35b : LinguisticExample :=
+def ex_35b : Datum :=
   { id := "coppockwechsler2018_35b"
     source := ⟨"coppock-wechsler-2018", "(35b)"⟩
     reportedIn := none
@@ -95,6 +93,6 @@ def ex_35b : LinguisticExample :=
     readings := []
     paperFeatures := [("subject", "2"), ("clause", "interrogative"), ("marking", "plain")] }
 
-def all : List LinguisticExample := [ex_27, ex_28, ex_34a, ex_34b, ex_35a, ex_35b]
+def all : List Datum := [ex_27, ex_28, ex_34a, ex_34b, ex_35a, ex_35b]
 
 end CoppockWechsler2018.Examples

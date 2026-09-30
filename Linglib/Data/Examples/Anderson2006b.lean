@@ -15,9 +15,7 @@ this module; declarations live in `namespace Anderson2006b.Examples`.
 
 namespace Anderson2006b.Examples
 
-open Data.Examples
-
-def ex_39a : LinguisticExample :=
+def ex_39a : Datum :=
   { id := "anderson2006b_39a"
     source := ⟨"anderson-2006b", "ch. 6 (39a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_39a : LinguisticExample :=
     readings := []
     paperFeatures := [("arg", "erg"), ("arg", "abs"), ("subject", "erg")] }
 
-def ex_39b : LinguisticExample :=
+def ex_39b : Datum :=
   { id := "anderson2006b_39b"
     source := ⟨"anderson-2006b", "ch. 6 (39b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_39b : LinguisticExample :=
     readings := []
     paperFeatures := [("arg", "abs"), ("arg", "loc"), ("subject", "abs")] }
 
-def ex_39c : LinguisticExample :=
+def ex_39c : Datum :=
   { id := "anderson2006b_39c"
     source := ⟨"anderson-2006b", "ch. 6 (39c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_39c : LinguisticExample :=
     readings := []
     paperFeatures := [("arg", "abs,erg"), ("arg", "loc"), ("subject", "abs,erg")] }
 
-def ex_39h : LinguisticExample :=
+def ex_39h : Datum :=
   { id := "anderson2006b_39h"
     source := ⟨"anderson-2006b", "ch. 6 (39h)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_39h : LinguisticExample :=
     readings := []
     paperFeatures := [("arg", "erg,loc"), ("arg", "abs"), ("subject", "erg,loc")] }
 
-def ex_39i : LinguisticExample :=
+def ex_39i : Datum :=
   { id := "anderson2006b_39i"
     source := ⟨"anderson-2006b", "ch. 6 (39i)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_39i : LinguisticExample :=
     readings := []
     paperFeatures := [("arg", "erg,loc"), ("arg", "abs"), ("subject", "erg,loc")] }
 
-def ex_39j : LinguisticExample :=
+def ex_39j : Datum :=
   { id := "anderson2006b_39j"
     source := ⟨"anderson-2006b", "ch. 6 (39j)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_39j : LinguisticExample :=
     readings := []
     paperFeatures := [("arg", "abs,erg,loc"), ("arg", "loc"), ("subject", "abs,erg,loc")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "anderson2006b_34"
     source := ⟨"anderson-2006b", "ch. 6 (34)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("arg", "abs,erg,loc"), ("arg", "loc"), ("subject", "abs,erg,loc")] }
 
-def ex_4_8a : LinguisticExample :=
+def ex_4_8a : Datum :=
   { id := "anderson2006b_4_8a"
     source := ⟨"anderson-2006b", "ch. 6 (4.8a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_4_8a : LinguisticExample :=
     readings := []
     paperFeatures := [("arg", "abs"), ("arg", "loc"), ("subject", "abs")] }
 
-def ex_4_8b : LinguisticExample :=
+def ex_4_8b : Datum :=
   { id := "anderson2006b_4_8b"
     source := ⟨"anderson-2006b", "ch. 6 (4.8b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_4_8b : LinguisticExample :=
     readings := []
     paperFeatures := [("arg", "abs,loc"), ("adjunct", "abs"), ("subject", "abs,loc")] }
 
-def ex_23a : LinguisticExample :=
+def ex_23a : Datum :=
   { id := "anderson2006b_23a"
     source := ⟨"anderson-2006b", "ch. 6 (23a)"⟩
     reportedIn := none
@@ -147,6 +145,6 @@ def ex_23a : LinguisticExample :=
     readings := []
     paperFeatures := [("arg", "erg"), ("arg", "abs"), ("subject", "erg")] }
 
-def all : List LinguisticExample := [ex_39a, ex_39b, ex_39c, ex_39h, ex_39i, ex_39j, ex_34, ex_4_8a, ex_4_8b, ex_23a]
+def all : List Datum := [ex_39a, ex_39b, ex_39c, ex_39h, ex_39i, ex_39j, ex_34, ex_4_8a, ex_4_8b, ex_23a]
 
 end Anderson2006b.Examples

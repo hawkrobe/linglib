@@ -15,9 +15,7 @@ this module; declarations live in `namespace Asudeh2022.Examples`.
 
 namespace Asudeh2022.Examples
 
-open Data.Examples
-
-def ex_6 : LinguisticExample :=
+def ex_6 : Datum :=
   { id := "asudeh2022_6"
     source := ⟨"asudeh-2022", "(6)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_6 : LinguisticExample :=
     readings := []
     paperFeatures := [("premises", "likes, alex, blake")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "asudeh2022_14"
     source := ⟨"asudeh-2022", "(14)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_14 : LinguisticExample :=
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("premises", "love, every, some")] }
 
-def fig2_finnish : LinguisticExample :=
+def fig2_finnish : Datum :=
   { id := "asudeh2022_fig2_finnish"
     source := ⟨"asudeh-2022", "Figure 2, Finnish"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def fig2_finnish : LinguisticExample :=
     readings := []
     paperFeatures := [("premises", "speaker, drink, water")] }
 
-def fig2_english : LinguisticExample :=
+def fig2_english : Datum :=
   { id := "asudeh2022_fig2_english"
     source := ⟨"asudeh-2022", "Figure 2, English"⟩
     reportedIn := none
@@ -69,6 +67,6 @@ def fig2_english : LinguisticExample :=
     readings := []
     paperFeatures := [("premises", "speaker, drink, water")] }
 
-def all : List LinguisticExample := [ex_6, ex_14, fig2_finnish, fig2_english]
+def all : List Datum := [ex_6, ex_14, fig2_finnish, fig2_english]
 
 end Asudeh2022.Examples

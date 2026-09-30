@@ -15,9 +15,7 @@ this module; declarations live in `namespace ElkinsTorrenceBrown2026.Examples`.
 
 namespace ElkinsTorrenceBrown2026.Examples
 
-open Data.Examples
-
-def ex_10b : LinguisticExample :=
+def ex_10b : Datum :=
   { id := "elkinstorrencebrown2026_10b"
     source := ⟨"elkins-torrence-brown-2026", "(10b)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_10b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("mover", "absolutive"), ("reflex", "blocked")] }
 
-def ex_11b : LinguisticExample :=
+def ex_11b : Datum :=
   { id := "elkinstorrencebrown2026_11b"
     source := ⟨"elkins-torrence-brown-2026", "(11b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_11b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("mover", "absolutive"), ("reflex", "blocked")] }
 
-def ex_12b : LinguisticExample :=
+def ex_12b : Datum :=
   { id := "elkinstorrencebrown2026_12b"
     source := ⟨"elkins-torrence-brown-2026", "(12b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_12b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("mover", "ergative"), ("reflex", "blocked")] }
 
-def ex_13a : LinguisticExample :=
+def ex_13a : Datum :=
   { id := "elkinstorrencebrown2026_13a"
     source := ⟨"elkins-torrence-brown-2026", "(13a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_13a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.1"), ("mover", "none"), ("reflex", "blocked")] }
 
-def ex_13b : LinguisticExample :=
+def ex_13b : Datum :=
   { id := "elkinstorrencebrown2026_13b"
     source := ⟨"elkins-torrence-brown-2026", "(13b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_13b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.1"), ("mover", "instrument"), ("reflex", "licensed")] }
 
-def ex_14b : LinguisticExample :=
+def ex_14b : Datum :=
   { id := "elkinstorrencebrown2026_14b"
     source := ⟨"elkins-torrence-brown-2026", "(14b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_14b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.2"), ("mover", "benefactive"), ("reflex", "licensed")] }
 
-def ex_15b : LinguisticExample :=
+def ex_15b : Datum :=
   { id := "elkinstorrencebrown2026_15b"
     source := ⟨"elkins-torrence-brown-2026", "(15b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_15b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.2"), ("mover", "dative"), ("reflex", "licensed")] }
 
-def ex_16b : LinguisticExample :=
+def ex_16b : Datum :=
   { id := "elkinstorrencebrown2026_16b"
     source := ⟨"elkins-torrence-brown-2026", "(16b)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_16b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.3"), ("mover", "locative"), ("reflex", "licensed")] }
 
-def ex_17b : LinguisticExample :=
+def ex_17b : Datum :=
   { id := "elkinstorrencebrown2026_17b"
     source := ⟨"elkins-torrence-brown-2026", "(17b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_17b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.4"), ("mover", "reason"), ("reflex", "licensed")] }
 
-def ex_18b : LinguisticExample :=
+def ex_18b : Datum :=
   { id := "elkinstorrencebrown2026_18b"
     source := ⟨"elkins-torrence-brown-2026", "(18b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_18b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.4"), ("mover", "purpose"), ("reflex", "licensed")] }
 
-def ex_19b : LinguisticExample :=
+def ex_19b : Datum :=
   { id := "elkinstorrencebrown2026_19b"
     source := ⟨"elkins-torrence-brown-2026", "(19b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_19b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.5"), ("mover", "manner"), ("reflex", "licensed")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "elkinstorrencebrown2026_20b"
     source := ⟨"elkins-torrence-brown-2026", "(20b)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_20b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.6"), ("mover", "temporal"), ("reflex", "blocked")] }
 
-def ex_21b : LinguisticExample :=
+def ex_21b : Datum :=
   { id := "elkinstorrencebrown2026_21b"
     source := ⟨"elkins-torrence-brown-2026", "(21b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_21b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2.6"), ("mover", "temporal"), ("reflex", "blocked")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "elkinstorrencebrown2026_22"
     source := ⟨"elkins-torrence-brown-2026", "(22)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("mover", "locative"), ("directionals", "1"), ("hosts", "2")] }
 
-def ex_24 : LinguisticExample :=
+def ex_24 : Datum :=
   { id := "elkinstorrencebrown2026_24"
     source := ⟨"elkins-torrence-brown-2026", "(24)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_24 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("mover", "manner"), ("embeddedSize", "cP"), ("landing", "matrix"), ("matrixReflex", "licensed"), ("embeddedReflex", "licensed")] }
 
-def ex_26 : LinguisticExample :=
+def ex_26 : Datum :=
   { id := "elkinstorrencebrown2026_26"
     source := ⟨"elkins-torrence-brown-2026", "(26)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_26 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("mover", "manner"), ("embeddedSize", "cP"), ("landing", "embedded"), ("matrixReflex", "blocked"), ("embeddedReflex", "licensed")] }
 
-def ex_28 : LinguisticExample :=
+def ex_28 : Datum :=
   { id := "elkinstorrencebrown2026_28"
     source := ⟨"elkins-torrence-brown-2026", "(28)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_28 : LinguisticExample :=
     readings := [("matrix locative (where Juan stole it)", .acceptable), ("relative-clause locative (where the women bought it)", .unacceptable)]
     paperFeatures := [("section", "3.2"), ("mover", "locative")] }
 
-def ex_29a : LinguisticExample :=
+def ex_29a : Datum :=
   { id := "elkinstorrencebrown2026_29a"
     source := ⟨"elkins-torrence-brown-2026", "(29a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_29a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2"), ("mover", "locative")] }
 
-def ex_31 : LinguisticExample :=
+def ex_31 : Datum :=
   { id := "elkinstorrencebrown2026_31"
     source := ⟨"elkins-torrence-brown-2026", "(31)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_31 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("mover", "locative"), ("embeddedSize", "voiceP"), ("landing", "matrix"), ("matrixReflex", "licensed"), ("embeddedReflex", "licensed")] }
 
-def ex_34 : LinguisticExample :=
+def ex_34 : Datum :=
   { id := "elkinstorrencebrown2026_34"
     source := ⟨"elkins-torrence-brown-2026", "(34)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_34 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("mover", "benefactive"), ("embeddedSize", "bareVP"), ("landing", "matrix"), ("matrixReflex", "licensed"), ("embeddedReflex", "blocked")] }
 
-def ex_35c : LinguisticExample :=
+def ex_35c : Datum :=
   { id := "elkinstorrencebrown2026_35c"
     source := ⟨"elkins-torrence-brown-2026", "(35c)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_35c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.5"), ("mover", "none"), ("reflex", "blocked")] }
 
-def ex_37 : LinguisticExample :=
+def ex_37 : Datum :=
   { id := "elkinstorrencebrown2026_37"
     source := ⟨"elkins-torrence-brown-2026", "(37)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex_37 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.6"), ("mover", "locative"), ("reflex", "licensed"), ("voice", "passive")] }
 
-def ex_38 : LinguisticExample :=
+def ex_38 : Datum :=
   { id := "elkinstorrencebrown2026_38"
     source := ⟨"elkins-torrence-brown-2026", "(38)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex_38 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.6"), ("mover", "ergative"), ("antipassive", "embedded only")] }
 
-def ex_63 : LinguisticExample :=
+def ex_63 : Datum :=
   { id := "elkinstorrencebrown2026_63"
     source := ⟨"elkins-torrence-brown-2026", "(63)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex_63 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.2"), ("mover", "locative"), ("directionals", "2"), ("hosts", "3")] }
 
-def ex_65 : LinguisticExample :=
+def ex_65 : Datum :=
   { id := "elkinstorrencebrown2026_65"
     source := ⟨"elkins-torrence-brown-2026", "(65)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex_65 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("mover", "temporal"), ("reflex", "blocked")] }
 
-def ex_51 : LinguisticExample :=
+def ex_51 : Datum :=
   { id := "elkinstorrencebrown2026_51"
     source := ⟨"mendes-ranero-2021", "(2)"⟩
     reportedIn := some ⟨"elkins-torrence-brown-2026", "(51)"⟩
@@ -355,7 +353,7 @@ def ex_51 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("mover", "locative"), ("reflex", "licensed")] }
 
-def ex_52 : LinguisticExample :=
+def ex_52 : Datum :=
   { id := "elkinstorrencebrown2026_52"
     source := ⟨"mendes-ranero-2021", "(17)"⟩
     reportedIn := some ⟨"elkins-torrence-brown-2026", "(52)"⟩
@@ -368,7 +366,7 @@ def ex_52 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("mover", "locative"), ("embeddedSize", "cP"), ("landing", "matrix"), ("matrixReflex", "licensed"), ("embeddedReflex", "licensed")] }
 
-def ex_53 : LinguisticExample :=
+def ex_53 : Datum :=
   { id := "elkinstorrencebrown2026_53"
     source := ⟨"mendes-ranero-2021", "(19)"⟩
     reportedIn := some ⟨"elkins-torrence-brown-2026", "(53)"⟩
@@ -381,7 +379,7 @@ def ex_53 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.1"), ("mover", "instrument"), ("embeddedSize", "aspP"), ("landing", "matrix"), ("matrixReflex", "blocked"), ("embeddedReflex", "licensed")] }
 
-def ex_64 : LinguisticExample :=
+def ex_64 : Datum :=
   { id := "elkinstorrencebrown2026_64"
     source := ⟨"mendes-ranero-2021", "(14a)"⟩
     reportedIn := some ⟨"elkins-torrence-brown-2026", "(64)"⟩
@@ -394,6 +392,6 @@ def ex_64 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5.3"), ("mover", "reason"), ("reflex", "blocked")] }
 
-def all : List LinguisticExample := [ex_10b, ex_11b, ex_12b, ex_13a, ex_13b, ex_14b, ex_15b, ex_16b, ex_17b, ex_18b, ex_19b, ex_20b, ex_21b, ex_22, ex_24, ex_26, ex_28, ex_29a, ex_31, ex_34, ex_35c, ex_37, ex_38, ex_63, ex_65, ex_51, ex_52, ex_53, ex_64]
+def all : List Datum := [ex_10b, ex_11b, ex_12b, ex_13a, ex_13b, ex_14b, ex_15b, ex_16b, ex_17b, ex_18b, ex_19b, ex_20b, ex_21b, ex_22, ex_24, ex_26, ex_28, ex_29a, ex_31, ex_34, ex_35c, ex_37, ex_38, ex_63, ex_65, ex_51, ex_52, ex_53, ex_64]
 
 end ElkinsTorrenceBrown2026.Examples

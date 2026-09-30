@@ -15,9 +15,7 @@ this module; declarations live in `namespace Pietraszko2019.Examples`.
 
 namespace Pietraszko2019.Examples
 
-open Data.Examples
-
-def ex_4 : LinguisticExample :=
+def ex_4 : Datum :=
   { id := "pietraszko2019_4"
     source := ⟨"pietraszko-2019", "(4)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_4 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "cabanga"), ("role", "complement"), ("mood", "indicative")] }
 
-def ex_7a : LinguisticExample :=
+def ex_7a : Datum :=
   { id := "pietraszko2019_7a"
     source := ⟨"pietraszko-2019", "(7a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_7a : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "funa"), ("role", "complement"), ("diagnostic", "objectMarking")] }
 
-def ex_7b : LinguisticExample :=
+def ex_7b : Datum :=
   { id := "pietraszko2019_7b"
     source := ⟨"pietraszko-2019", "(7b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_7b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "funa"), ("role", "complement"), ("mood", "subjunctive"), ("diagnostic", "objectMarking")] }
 
-def ex_14 : LinguisticExample :=
+def ex_14 : Datum :=
   { id := "pietraszko2019_14"
     source := ⟨"pietraszko-2019", "(14)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_14 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "danisa"), ("role", "obliquePassiveSubject")] }
 
-def ex_20b : LinguisticExample :=
+def ex_20b : Datum :=
   { id := "pietraszko2019_20b"
     source := ⟨"pietraszko-2019", "(20b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_20b : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "khuluma nga"), ("role", "prepositionObject")] }
 
-def ex_22 : LinguisticExample :=
+def ex_22 : Datum :=
   { id := "pietraszko2019_22"
     source := ⟨"pietraszko-2019", "(22)"⟩
     reportedIn := none
@@ -95,6 +93,6 @@ def ex_22 : LinguisticExample :=
     readings := []
     paperFeatures := [("verb", "bala"), ("role", "subject")] }
 
-def all : List LinguisticExample := [ex_4, ex_7a, ex_7b, ex_14, ex_20b, ex_22]
+def all : List Datum := [ex_4, ex_7a, ex_7b, ex_14, ex_20b, ex_22]
 
 end Pietraszko2019.Examples

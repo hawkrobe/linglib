@@ -15,9 +15,7 @@ this module; declarations live in `namespace IatridouEtAl2001.Examples`.
 
 namespace IatridouEtAl2001.Examples
 
-open Data.Examples
-
-def iai2001_ex1 : LinguisticExample :=
+def iai2001_ex1 : Datum :=
   { id := "iai2001_ex1"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(1)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def iai2001_ex1 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("reading", "anteriority")] }
 
-def iai2001_ex2a : LinguisticExample :=
+def iai2001_ex2a : Datum :=
   { id := "iai2001_ex2a"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(2a)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def iai2001_ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "universal"), ("adverbial", "since"), ("predicate", "stative")] }
 
-def iai2001_ex3a : LinguisticExample :=
+def iai2001_ex3a : Datum :=
   { id := "iai2001_ex3a"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(3a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def iai2001_ex3a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "experiential")] }
 
-def iai2001_ex4 : LinguisticExample :=
+def iai2001_ex4 : Datum :=
   { id := "iai2001_ex4"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(4)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def iai2001_ex4 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "perfect of result")] }
 
-def iai2001_ex5 : LinguisticExample :=
+def iai2001_ex5 : Datum :=
   { id := "iai2001_ex5"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(5)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def iai2001_ex5 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("reading", "perfect of recent past")] }
 
-def iai2001_ex6a : LinguisticExample :=
+def iai2001_ex6a : Datum :=
   { id := "iai2001_ex6a"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(6a)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def iai2001_ex6a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("reading", "universal"), ("point", "RB included by assertion")] }
 
-def iai2001_ex6b : LinguisticExample :=
+def iai2001_ex6b : Datum :=
   { id := "iai2001_ex6b"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(6b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def iai2001_ex6b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("reading", "universal"), ("point", "RB included by assertion")] }
 
-def iai2001_ex7 : LinguisticExample :=
+def iai2001_ex7 : Datum :=
   { id := "iai2001_ex7"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(7)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def iai2001_ex7 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.1"), ("reading", "universal"), ("tense", "past and future perfect"), ("point", "RB set by tense")] }
 
-def iai2001_ex8 : LinguisticExample :=
+def iai2001_ex8 : Datum :=
   { id := "iai2001_ex8"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(8)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def iai2001_ex8 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("predicate", "individual-level stative"), ("adverbial", "required")] }
 
-def iai2001_ex9 : LinguisticExample :=
+def iai2001_ex9 : Datum :=
   { id := "iai2001_ex9"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(9)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def iai2001_ex9 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("predicate", "stage-level stative"), ("reading", "not universal")] }
 
-def iai2001_ex11 : LinguisticExample :=
+def iai2001_ex11 : Datum :=
   { id := "iai2001_ex11"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(11)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def iai2001_ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("reading", "perfect of recent past")] }
 
-def iai2001_ex13B : LinguisticExample :=
+def iai2001_ex13B : Datum :=
   { id := "iai2001_ex13B"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(13B)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def iai2001_ex13B : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("reading", "no perfect of recent past")] }
 
-def iai2001_ex14a : LinguisticExample :=
+def iai2001_ex14a : Datum :=
   { id := "iai2001_ex14a"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(14a)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def iai2001_ex14a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("adverbial", "lately takes the present perfect")] }
 
-def iai2001_ex14d : LinguisticExample :=
+def iai2001_ex14d : Datum :=
   { id := "iai2001_ex14d"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(14d)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def iai2001_ex14d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("adverbial", "lately takes the past in Bulgarian")] }
 
-def iai2001_ex15 : LinguisticExample :=
+def iai2001_ex15 : Datum :=
   { id := "iai2001_ex15"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(15)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def iai2001_ex15 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.1"), ("predicate", "progressive"), ("reading", "not universal")] }
 
-def iai2001_ex17a : LinguisticExample :=
+def iai2001_ex17a : Datum :=
   { id := "iai2001_ex17a"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(17a)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def iai2001_ex17a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "since is perfect-level")] }
 
-def iai2001_ex18a : LinguisticExample :=
+def iai2001_ex18a : Datum :=
   { id := "iai2001_ex18a"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(18a)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def iai2001_ex18a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "since"), ("readings", "universal and existential")] }
 
-def iai2001_ex19a : LinguisticExample :=
+def iai2001_ex19a : Datum :=
   { id := "iai2001_ex19a"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(19a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def iai2001_ex19a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "since"), ("readings", "existential only")] }
 
-def iai2001_ex20a : LinguisticExample :=
+def iai2001_ex20a : Datum :=
   { id := "iai2001_ex20a"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(20a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def iai2001_ex20a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "for, sentence-final"), ("readings", "universal and existential")] }
 
-def iai2001_ex20b : LinguisticExample :=
+def iai2001_ex20b : Datum :=
   { id := "iai2001_ex20b"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(20b)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def iai2001_ex20b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "for, sentence-initial"), ("readings", "universal only")] }
 
-def iai2001_ex21a : LinguisticExample :=
+def iai2001_ex21a : Datum :=
   { id := "iai2001_ex21a"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(21a)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def iai2001_ex21a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "eventuality-level for under perfect-level since"), ("reading", "existential")] }
 
-def iai2001_ex22a : LinguisticExample :=
+def iai2001_ex22a : Datum :=
   { id := "iai2001_ex22a"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(22a)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def iai2001_ex22a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "for"), ("readings", "universal if perfect-level, existential if eventuality-level")] }
 
-def iai2001_ex23a : LinguisticExample :=
+def iai2001_ex23a : Datum :=
   { id := "iai2001_ex23a"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(23a)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def iai2001_ex23a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "for, sentence-final"), ("readings", "ambiguous")] }
 
-def iai2001_ex23b : LinguisticExample :=
+def iai2001_ex23b : Datum :=
   { id := "iai2001_ex23b"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(23b)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def iai2001_ex23b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "for, sentence-initial"), ("readings", "universal only")] }
 
-def iai2001_ex24 : LinguisticExample :=
+def iai2001_ex24 : Datum :=
   { id := "iai2001_ex24"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(24)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def iai2001_ex24 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "since, sentence-initial"), ("reading", "existential")] }
 
-def iai2001_ex25a : LinguisticExample :=
+def iai2001_ex25a : Datum :=
   { id := "iai2001_ex25a"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(25a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def iai2001_ex25a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "perfect-level always"), ("predicate", "individual-level")] }
 
-def iai2001_ex26 : LinguisticExample :=
+def iai2001_ex26 : Datum :=
   { id := "iai2001_ex26"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(26)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def iai2001_ex26 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "always with since"), ("predicate", "individual-level")] }
 
-def iai2001_ex27c : LinguisticExample :=
+def iai2001_ex27c : Datum :=
   { id := "iai2001_ex27c"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(27c)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def iai2001_ex27c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.2"), ("adverbial", "eventuality-level always"), ("predicate", "stage-level")] }
 
-def iai2001_ex28 : LinguisticExample :=
+def iai2001_ex28 : Datum :=
   { id := "iai2001_ex28"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(28)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def iai2001_ex28 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.3"), ("point", "PTS is not the E-R interval"), ("LB", "1991"), ("event", "fall 1993")] }
 
-def iai2001_ex30 : LinguisticExample :=
+def iai2001_ex30 : Datum :=
   { id := "iai2001_ex30"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(30)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def iai2001_ex30 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("reading", "universal unavailable"), ("participle", "perfective")] }
 
-def iai2001_ex31 : LinguisticExample :=
+def iai2001_ex31 : Datum :=
   { id := "iai2001_ex31"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(31)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def iai2001_ex31 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("aspect", "perfective, bounded")] }
 
-def iai2001_ex32 : LinguisticExample :=
+def iai2001_ex32 : Datum :=
   { id := "iai2001_ex32"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(32)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def iai2001_ex32 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4"), ("aspect", "imperfective, unbounded")] }
 
-def iai2001_ex33 : LinguisticExample :=
+def iai2001_ex33 : Datum :=
   { id := "iai2001_ex33"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(33)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def iai2001_ex33 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.1"), ("aspect", "perfective on a stative is inchoative")] }
 
-def iai2001_ex34 : LinguisticExample :=
+def iai2001_ex34 : Datum :=
   { id := "iai2001_ex34"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(34)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def iai2001_ex34 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.1"), ("reading", "existential only"), ("participle", "perfective")] }
 
-def iai2001_ex35 : LinguisticExample :=
+def iai2001_ex35 : Datum :=
   { id := "iai2001_ex35"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(35)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def iai2001_ex35 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.2"), ("reading", "existential only"), ("participle", "perfective")] }
 
-def iai2001_ex36 : LinguisticExample :=
+def iai2001_ex36 : Datum :=
   { id := "iai2001_ex36"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(36)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def iai2001_ex36 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.2"), ("reading", "universal"), ("participle", "imperfective")] }
 
-def iai2001_ex39 : LinguisticExample :=
+def iai2001_ex39 : Datum :=
   { id := "iai2001_ex39"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(39)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def iai2001_ex39 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.2"), ("reading", "universal"), ("participle", "neutral")] }
 
-def iai2001_ex40 : LinguisticExample :=
+def iai2001_ex40 : Datum :=
   { id := "iai2001_ex40"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(40)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def iai2001_ex40 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.3"), ("aspect", "the English perfect of a telic is bounded")] }
 
-def iai2001_ex41a : LinguisticExample :=
+def iai2001_ex41a : Datum :=
   { id := "iai2001_ex41a"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(41a)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def iai2001_ex41a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.3"), ("predicate", "activity, nonprogressive"), ("reading", "universal unavailable")] }
 
-def iai2001_ex41b : LinguisticExample :=
+def iai2001_ex41b : Datum :=
   { id := "iai2001_ex41b"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(41b)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def iai2001_ex41b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.3"), ("predicate", "telic, nonprogressive"), ("reading", "universal unavailable")] }
 
-def iai2001_ex45 : LinguisticExample :=
+def iai2001_ex45 : Datum :=
   { id := "iai2001_ex45"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(45)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def iai2001_ex45 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.4.4"), ("reading", "throughout with a bounded activity ending at RB")] }
 
-def iai2001_ex47 : LinguisticExample :=
+def iai2001_ex47 : Datum :=
   { id := "iai2001_ex47"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(47)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def iai2001_ex47 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("test", "Vlach's stativity test"), ("feature", "unbounded")] }
 
-def iai2001_ex48 : LinguisticExample :=
+def iai2001_ex48 : Datum :=
   { id := "iai2001_ex48"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(48)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def iai2001_ex48 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("test", "Vlach's stativity test passed by a progressive"), ("feature", "unbounded")] }
 
-def iai2001_ex49a : LinguisticExample :=
+def iai2001_ex49a : Datum :=
   { id := "iai2001_ex49a"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(49a)"⟩
     reportedIn := none
@@ -589,6 +587,6 @@ def iai2001_ex49a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4"), ("test", "the neutral fails Vlach's test"), ("feature", "unbounded")] }
 
-def all : List LinguisticExample := [iai2001_ex1, iai2001_ex2a, iai2001_ex3a, iai2001_ex4, iai2001_ex5, iai2001_ex6a, iai2001_ex6b, iai2001_ex7, iai2001_ex8, iai2001_ex9, iai2001_ex11, iai2001_ex13B, iai2001_ex14a, iai2001_ex14d, iai2001_ex15, iai2001_ex17a, iai2001_ex18a, iai2001_ex19a, iai2001_ex20a, iai2001_ex20b, iai2001_ex21a, iai2001_ex22a, iai2001_ex23a, iai2001_ex23b, iai2001_ex24, iai2001_ex25a, iai2001_ex26, iai2001_ex27c, iai2001_ex28, iai2001_ex30, iai2001_ex31, iai2001_ex32, iai2001_ex33, iai2001_ex34, iai2001_ex35, iai2001_ex36, iai2001_ex39, iai2001_ex40, iai2001_ex41a, iai2001_ex41b, iai2001_ex45, iai2001_ex47, iai2001_ex48, iai2001_ex49a]
+def all : List Datum := [iai2001_ex1, iai2001_ex2a, iai2001_ex3a, iai2001_ex4, iai2001_ex5, iai2001_ex6a, iai2001_ex6b, iai2001_ex7, iai2001_ex8, iai2001_ex9, iai2001_ex11, iai2001_ex13B, iai2001_ex14a, iai2001_ex14d, iai2001_ex15, iai2001_ex17a, iai2001_ex18a, iai2001_ex19a, iai2001_ex20a, iai2001_ex20b, iai2001_ex21a, iai2001_ex22a, iai2001_ex23a, iai2001_ex23b, iai2001_ex24, iai2001_ex25a, iai2001_ex26, iai2001_ex27c, iai2001_ex28, iai2001_ex30, iai2001_ex31, iai2001_ex32, iai2001_ex33, iai2001_ex34, iai2001_ex35, iai2001_ex36, iai2001_ex39, iai2001_ex40, iai2001_ex41a, iai2001_ex41b, iai2001_ex45, iai2001_ex47, iai2001_ex48, iai2001_ex49a]
 
 end IatridouEtAl2001.Examples

@@ -15,9 +15,7 @@ this module; declarations live in `namespace PickeringBarry1991.Examples`.
 
 namespace PickeringBarry1991.Examples
 
-open Data.Examples
-
-def ex15 : LinguisticExample :=
+def ex15 : Datum :=
   { id := "pickeringbarry1991_ex15"
     source := ⟨"pickering-barry-1991", "(15)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex15 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "piedPiping"), ("section", "Processing without gaps")] }
 
-def ex16 : LinguisticExample :=
+def ex16 : Datum :=
   { id := "pickeringbarry1991_ex16"
     source := ⟨"pickering-barry-1991", "(16)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex16 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "prepositionStranding"), ("section", "Processing without gaps")] }
 
-def ex42 : LinguisticExample :=
+def ex42 : Datum :=
   { id := "pickeringbarry1991_ex42"
     source := ⟨"pickering-barry-1991", "(42)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex42 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "multiplePiedPiping"), ("section", "Processing recursive constructions")] }
 
-def ex44 : LinguisticExample :=
+def ex44 : Datum :=
   { id := "pickeringbarry1991_ex44"
     source := ⟨"pickering-barry-1991", "(44)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex44 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "multipleSubjectRelative"), ("section", "Processing recursive constructions")] }
 
-def ex45 : LinguisticExample :=
+def ex45 : Datum :=
   { id := "pickeringbarry1991_ex45"
     source := ⟨"pickering-barry-1991", "(45)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex45 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "multipleObjectRelative"), ("section", "Processing recursive constructions")] }
 
-def ex48 : LinguisticExample :=
+def ex48 : Datum :=
   { id := "pickeringbarry1991_ex48"
     source := ⟨"pickering-barry-1991", "(48)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex48 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "multipleSubjectRelative"), ("section", "Processing recursive constructions")] }
 
-def ex51 : LinguisticExample :=
+def ex51 : Datum :=
   { id := "pickeringbarry1991_ex51"
     source := ⟨"pickering-barry-1991", "(51)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex51 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "multipleSubjectRelative"), ("section", "Processing recursive constructions")] }
 
-def ex52 : LinguisticExample :=
+def ex52 : Datum :=
   { id := "pickeringbarry1991_ex52"
     source := ⟨"pickering-barry-1991", "(52)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex52 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "multipleObjectRelative"), ("section", "Processing recursive constructions")] }
 
-def ex53 : LinguisticExample :=
+def ex53 : Datum :=
   { id := "pickeringbarry1991_ex53"
     source := ⟨"pickering-barry-1991", "(53)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex53 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "multipleSubjectRelative"), ("section", "Processing recursive constructions")] }
 
-def ex54 : LinguisticExample :=
+def ex54 : Datum :=
   { id := "pickeringbarry1991_ex54"
     source := ⟨"pickering-barry-1991", "(54)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex54 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "multiplePiedPiping"), ("section", "Processing recursive constructions")] }
 
-def ex55 : LinguisticExample :=
+def ex55 : Datum :=
   { id := "pickeringbarry1991_ex55"
     source := ⟨"pickering-barry-1991", "(55)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex55 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "multiplePiedPiping"), ("section", "Processing recursive constructions")] }
 
-def ex60 : LinguisticExample :=
+def ex60 : Datum :=
   { id := "pickeringbarry1991_ex60"
     source := ⟨"pickering-barry-1991", "(60)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex60 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "multiplePrepositionStranding"), ("section", "Discussion")] }
 
-def ex62 : LinguisticExample :=
+def ex62 : Datum :=
   { id := "pickeringbarry1991_ex62"
     source := ⟨"pickering-barry-1991", "(62)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex62 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "multipleObjectRelativeDitransitive"), ("section", "Discussion")] }
 
-def ex82a : LinguisticExample :=
+def ex82a : Datum :=
   { id := "pickeringbarry1991_ex82a"
     source := ⟨"pickering-barry-1991", "(82a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex82a : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "embeddedQuestion"), ("section", "Unbounded dependencies in categorial grammar")] }
 
-def ex82b : LinguisticExample :=
+def ex82b : Datum :=
   { id := "pickeringbarry1991_ex82b"
     source := ⟨"pickering-barry-1991", "(82b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex82b : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "embeddedQuestion"), ("section", "Unbounded dependencies in categorial grammar")] }
 
-def ex82c : LinguisticExample :=
+def ex82c : Datum :=
   { id := "pickeringbarry1991_ex82c"
     source := ⟨"pickering-barry-1991", "(82c)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex82c : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "embeddedQuestion"), ("section", "Unbounded dependencies in categorial grammar")] }
 
-def ex82d : LinguisticExample :=
+def ex82d : Datum :=
   { id := "pickeringbarry1991_ex82d"
     source := ⟨"pickering-barry-1991", "(82d)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex82d : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "embeddedQuestion"), ("section", "Unbounded dependencies in categorial grammar")] }
 
-def ex93 : LinguisticExample :=
+def ex93 : Datum :=
   { id := "pickeringbarry1991_ex93"
     source := ⟨"pickering-barry-1991", "(93)"⟩
     reportedIn := none
@@ -251,6 +249,6 @@ def ex93 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "recursivePassive"), ("section", "Passives")] }
 
-def all : List LinguisticExample := [ex15, ex16, ex42, ex44, ex45, ex48, ex51, ex52, ex53, ex54, ex55, ex60, ex62, ex82a, ex82b, ex82c, ex82d, ex93]
+def all : List Datum := [ex15, ex16, ex42, ex44, ex45, ex48, ex51, ex52, ex53, ex54, ex55, ex60, ex62, ex82a, ex82b, ex82c, ex82d, ex93]
 
 end PickeringBarry1991.Examples

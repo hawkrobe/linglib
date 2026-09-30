@@ -52,7 +52,7 @@ studies.
 
 namespace GartnerGyuris2017
 
-open Question Data.Examples
+open Question
 
 /-- A bias choice: one of the seven nonempty sets of states of evidence or expectation, for p
 (+), against p (−), or neither (%). -/
@@ -436,7 +436,7 @@ structure Row where
   judgment : Judgment
   deriving DecidableEq
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let construction ← ex.parse? "construction"
     [("English V1", .englishV1), ("Hungarian e", .hungarianE)]
   let reading ← ex.parse? "form"
@@ -446,7 +446,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   pure ⟨construction, reading, dimension, value, ex.judgment⟩
 
 /-- The judged examples (1), (2a), (2b), (8), (9a), (9b). -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 example : rows.length = Examples.all.length := by decide
 

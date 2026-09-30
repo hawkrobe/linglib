@@ -36,7 +36,7 @@ variants, and leave Horn's strong-adjective prediction unsupported.
 
 namespace AlexandropoulouGotzner2024a
 
-open Degree Krifka2007b Data.Examples English.Adjectives
+open Degree Krifka2007b English.Adjectives
 
 /-! ### Design cells -/
 
@@ -215,7 +215,7 @@ def entryOf : String → Option GradableAdjective
   | _ => none
 
 /-- The surface form of a statement row, from its polarity and negation conditions. -/
-def formOf (row : LinguisticExample) : Option AntonymForm :=
+def formOf (row : Datum) : Option AntonymForm :=
   match row.feature? "polarity", row.feature? "negation" with
   | some "positive", some "nonNegated" => some .positive
   | some "positive", some "negated" => some .notPositive

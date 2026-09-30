@@ -41,7 +41,6 @@ cyclicity forces to be inwards.
 namespace Bobaljik2000
 
 open DistributedMorphology
-open Data.Examples (LinguisticExample)
 
 inductive Feature where
   | root (s : String) | classII | tense | classMarker
@@ -98,7 +97,7 @@ def parseArg : String → Option (List Feature)
   | "3pl" => some [third, pl]
   | _ => none
 
-def ofRow (ex : LinguisticExample) : Option (ComplexHead Feature String × List String) := do
+def ofRow (ex : Datum) : Option (ComplexHead Feature String × List String) := do
   let subj ← parseArg (← ex.feature? "subj")
   let obj ← parseArg (← ex.feature? "obj")
   pure (word (← ex.feature? "root") ((← ex.feature? "rootClass") = "II") subj obj,

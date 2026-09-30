@@ -15,9 +15,7 @@ this module; declarations live in `namespace Hyman2006.Examples`.
 
 namespace Hyman2006.Examples
 
-open Data.Examples
-
-def makura : LinguisticExample :=
+def makura : Datum :=
   { id := "hyman2006_makura"
     source := ⟨"hyman-2006", "(4)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def makura : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("output", "mákùrà gà"), ("accent", "initial mora")] }
 
-def kokoro : LinguisticExample :=
+def kokoro : Datum :=
   { id := "hyman2006_kokoro"
     source := ⟨"hyman-2006", "(4)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def kokoro : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("output", "kókórò gà"), ("accent", "second mora")] }
 
-def atama : LinguisticExample :=
+def atama : Datum :=
   { id := "hyman2006_atama"
     source := ⟨"hyman-2006", "(4)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def atama : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("output", "átámá gà"), ("accent", "final mora")] }
 
-def sakana : LinguisticExample :=
+def sakana : Datum :=
   { id := "hyman2006_sakana"
     source := ⟨"hyman-2006", "(4)"⟩
     reportedIn := none
@@ -69,6 +67,6 @@ def sakana : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("output", "sákáná gá"), ("accent", "none"), ("note", "unaccented: no pitch drop")] }
 
-def all : List LinguisticExample := [makura, kokoro, atama, sakana]
+def all : List Datum := [makura, kokoro, atama, sakana]
 
 end Hyman2006.Examples

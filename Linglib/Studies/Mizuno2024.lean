@@ -53,7 +53,6 @@ open Modality.Exclusion (MarkingStrategy XMarkingExponent)
 open Conditional (strictImp mem_strictImp_of_subset not_subset_of_mem_strictImp)
 open HistoricalAlternatives (metaphysicalBase)
 open Reference
-open Data.Examples (LinguisticExample Glottocode)
 
 /-! ### The per-language strategy record (§2–§4.2) -/
 
@@ -114,7 +113,7 @@ Pairs live inside one numbered example: the felicitous `primaryText` (strategy `
 plus the infelicitous `alternatives` entry (realizing `m.other`). -/
 
 /-- Felicitous when fully acceptable. -/
-def IsFelicitous (j : Data.Examples.Judgment) : Prop := j = .acceptable
+def IsFelicitous (j : Judgment) : Prop := j = .acceptable
 
 /-- Parse the `strategy` tag. -/
 def ofStrategyTag? : String → Option MarkingStrategy
@@ -124,7 +123,7 @@ def ofStrategyTag? : String → Option MarkingStrategy
 
 /-- An Anderson row against the record: the primary judgment matches strategy `m` and each
 alternative matches the other strategy, O-marking being the absence of X-marking. -/
-def AndersonRowOK (e : LinguisticExample) : Prop :=
+def AndersonRowOK (e : Datum) : Prop :=
   e.feature? "construction" = some "anderson" →
     ∀ m ∈ (e.feature? "strategy").bind ofStrategyTag?,
       (IsFelicitous e.judgment ↔ andersonStrategy e.language = some m) ∧
@@ -139,7 +138,7 @@ theorem anderson_judgments_match_strategy : ∀ e ∈ Examples.all, AndersonRowO
 /-! ### The Future-Less-Vivid correlation (§4.2) -/
 
 /-- The `flv_xmarking` tag. -/
-def flvAvailableTag (e : LinguisticExample) : Option Bool :=
+def flvAvailableTag (e : Datum) : Option Bool :=
   match e.feature? "flv_xmarking" with
   | some "available"   => some true
   | some "unavailable" => some false

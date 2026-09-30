@@ -428,14 +428,14 @@ abbrev syncretism (r : Row) : Structure := Morphology.syncretism r.forms
 abbrev wePattern (r : Row) : Clusivity.Pattern := r.syncretism.wePattern
 
 /-- A feature that may be absent but, when present, must parse. -/
-def optional? {α : Type*} (e : Data.Examples.LinguisticExample) (key : String)
+def optional? {α : Type*} (e : Datum) (key : String)
     (table : List (String × α)) : Option (Option α) :=
   match e.feature? key with
   | none => some none
   | some s => (table.lookup s).map some
 
 /-- The row of an example. -/
-def ofExample? (e : Data.Examples.LinguisticExample) : Option Row := do
+def ofDatum? (e : Datum) : Option Row := do
   let s1 ← e.feature? "1"
   let s2 ← e.feature? "2"
   let s3 ← e.feature? "3"
@@ -457,12 +457,12 @@ def ofExample? (e : Data.Examples.LinguisticExample) : Option Row := do
            | .speakerAddressee => minIncl | .speakerAddresseeOthers => augIncl
            | .speakerOthers => excl | .addresseeOthers => secondGrp | .others => thirdGrp }
 
-theorem isSome_ofExample : ∀ e ∈ Examples.all, (ofExample? e).isSome := by decide
+theorem isSome_ofDatum : ∀ e ∈ Examples.all, (ofDatum? e).isSome := by decide
 
 end Row
 
 /-- The printed paradigms. -/
-def rows : List Row := Examples.all.filterMap Row.ofExample?
+def rows : List Row := Examples.all.filterMap Row.ofDatum?
 
 /-- Every paradigm the book files under a named type has that type's structure. -/
 theorem rows_kind : ∀ r ∈ rows, ∀ k, r.kind = some k → r.syncretism = k.pattern := by

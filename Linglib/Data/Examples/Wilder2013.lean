@@ -15,9 +15,7 @@ this module; declarations live in `namespace Wilder2013.Examples`.
 
 namespace Wilder2013.Examples
 
-open Data.Examples
-
-def ex10b : LinguisticExample :=
+def ex10b : Datum :=
   { id := "wilder2013_ex10b"
     source := ⟨"wilder-2013", "(10b)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex10b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "root"), ("antecedent", "assertedNegation")] }
 
-def ex11b : LinguisticExample :=
+def ex11b : Datum :=
   { id := "wilder2013_ex11b"
     source := ⟨"wilder-2013", "(11b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex11b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "root"), ("ctConstituent", "vp")] }
 
-def ex12b : LinguisticExample :=
+def ex12b : Datum :=
   { id := "wilder2013_ex12b"
     source := ⟨"wilder-2013", "(12b)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex12b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "root"), ("ctConstituent", "subject")] }
 
-def ex51 : LinguisticExample :=
+def ex51 : Datum :=
   { id := "wilder2013_ex51"
     source := ⟨"wilder-2013", "(51)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex51 : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "root"), ("antecedent", "assertedNegation")] }
 
-def ex52 : LinguisticExample :=
+def ex52 : Datum :=
   { id := "wilder2013_ex52"
     source := ⟨"wilder-2013", "(52)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex52 : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "root"), ("antecedent", "modal")] }
 
-def ex53 : LinguisticExample :=
+def ex53 : Datum :=
   { id := "wilder2013_ex53"
     source := ⟨"wilder-2013", "(53)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex53 : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "root"), ("antecedent", "presupposedNegation")] }
 
-def ex74b : LinguisticExample :=
+def ex74b : Datum :=
   { id := "wilder2013_ex74b"
     source := ⟨"wilder-2013", "(74b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex74b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "root"), ("antecedent", "parallelNegation")] }
 
-def ex27a : LinguisticExample :=
+def ex27a : Datum :=
   { id := "wilder2013_ex27a"
     source := ⟨"wilder-2013", "(27a)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex27a : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "believeComplement")] }
 
-def ex27b : LinguisticExample :=
+def ex27b : Datum :=
   { id := "wilder2013_ex27b"
     source := ⟨"wilder-2013", "(27b)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex27b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "believeComplement"), ("ctConstituent", "vp")] }
 
-def ex27c : LinguisticExample :=
+def ex27c : Datum :=
   { id := "wilder2013_ex27c"
     source := ⟨"wilder-2013", "(27c)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex27c : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "believeComplement"), ("ctConstituent", "subject")] }
 
-def ex27d : LinguisticExample :=
+def ex27d : Datum :=
   { id := "wilder2013_ex27d"
     source := ⟨"wilder-2013", "(27d)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex27d : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "believeComplement")] }
 
-def ex27e : LinguisticExample :=
+def ex27e : Datum :=
   { id := "wilder2013_ex27e"
     source := ⟨"wilder-2013", "(27e)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex27e : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "believeComplement"), ("ctConstituent", "vp")] }
 
-def ex27f : LinguisticExample :=
+def ex27f : Datum :=
   { id := "wilder2013_ex27f"
     source := ⟨"wilder-2013", "(27f)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex27f : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "believeComplement"), ("ctConstituent", "subject")] }
 
-def ex28a : LinguisticExample :=
+def ex28a : Datum :=
   { id := "wilder2013_ex28a"
     source := ⟨"wilder-2013", "(28a)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex28a : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "interrogativeComplement")] }
 
-def ex28b : LinguisticExample :=
+def ex28b : Datum :=
   { id := "wilder2013_ex28b"
     source := ⟨"wilder-2013", "(28b)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex28b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "interrogativeComplement"), ("ctConstituent", "vp")] }
 
-def ex28c : LinguisticExample :=
+def ex28c : Datum :=
   { id := "wilder2013_ex28c"
     source := ⟨"wilder-2013", "(28c)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex28c : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "interrogativeComplement"), ("ctConstituent", "subject")] }
 
-def ex28d : LinguisticExample :=
+def ex28d : Datum :=
   { id := "wilder2013_ex28d"
     source := ⟨"wilder-2013", "(28d)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex28d : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "interrogativeComplement")] }
 
-def ex28e : LinguisticExample :=
+def ex28e : Datum :=
   { id := "wilder2013_ex28e"
     source := ⟨"wilder-2013", "(28e)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex28e : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "interrogativeComplement"), ("ctConstituent", "vp")] }
 
-def ex29a : LinguisticExample :=
+def ex29a : Datum :=
   { id := "wilder2013_ex29a"
     source := ⟨"wilder-2013", "(29a)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex29a : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "factiveComplement")] }
 
-def ex29b : LinguisticExample :=
+def ex29b : Datum :=
   { id := "wilder2013_ex29b"
     source := ⟨"wilder-2013", "(29b)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex29b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "factiveComplement"), ("ctConstituent", "vp")] }
 
-def ex29c : LinguisticExample :=
+def ex29c : Datum :=
   { id := "wilder2013_ex29c"
     source := ⟨"wilder-2013", "(29c)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex29c : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "factiveComplement"), ("ctConstituent", "subject")] }
 
-def ex30a : LinguisticExample :=
+def ex30a : Datum :=
   { id := "wilder2013_ex30a"
     source := ⟨"wilder-2013", "(30a)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex30a : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "itCleft")] }
 
-def ex30b : LinguisticExample :=
+def ex30b : Datum :=
   { id := "wilder2013_ex30b"
     source := ⟨"wilder-2013", "(30b)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex30b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "itCleft"), ("ctConstituent", "vp")] }
 
-def ex30c : LinguisticExample :=
+def ex30c : Datum :=
   { id := "wilder2013_ex30c"
     source := ⟨"wilder-2013", "(30c)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex30c : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "itCleft")] }
 
-def ex30d : LinguisticExample :=
+def ex30d : Datum :=
   { id := "wilder2013_ex30d"
     source := ⟨"wilder-2013", "(30d)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex30d : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "itCleft"), ("ctConstituent", "vp")] }
 
-def ex31a : LinguisticExample :=
+def ex31a : Datum :=
   { id := "wilder2013_ex31a"
     source := ⟨"wilder-2013", "(31a)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex31a : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "restrictiveRelative")] }
 
-def ex31b : LinguisticExample :=
+def ex31b : Datum :=
   { id := "wilder2013_ex31b"
     source := ⟨"wilder-2013", "(31b)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex31b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "restrictiveRelative"), ("ctConstituent", "vp")] }
 
-def ex31c : LinguisticExample :=
+def ex31c : Datum :=
   { id := "wilder2013_ex31c"
     source := ⟨"wilder-2013", "(31c)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex31c : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "restrictiveRelative")] }
 
-def ex31d : LinguisticExample :=
+def ex31d : Datum :=
   { id := "wilder2013_ex31d"
     source := ⟨"wilder-2013", "(31d)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex31d : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "restrictiveRelative"), ("ctConstituent", "vp")] }
 
-def ex32a : LinguisticExample :=
+def ex32a : Datum :=
   { id := "wilder2013_ex32a"
     source := ⟨"wilder-2013", "(32a)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex32a : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "adverbialClause")] }
 
-def ex32b : LinguisticExample :=
+def ex32b : Datum :=
   { id := "wilder2013_ex32b"
     source := ⟨"wilder-2013", "(32b)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex32b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "adverbialClause"), ("ctConstituent", "vp")] }
 
-def ex33a : LinguisticExample :=
+def ex33a : Datum :=
   { id := "wilder2013_ex33a"
     source := ⟨"wilder-2013", "(33a)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex33a : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "adverbialClause")] }
 
-def ex33b : LinguisticExample :=
+def ex33b : Datum :=
   { id := "wilder2013_ex33b"
     source := ⟨"wilder-2013", "(33b)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex33b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "adverbialClause"), ("ctConstituent", "vp")] }
 
-def ex40b : LinguisticExample :=
+def ex40b : Datum :=
   { id := "wilder2013_ex40b"
     source := ⟨"wilder-2013", "(40b)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex40b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "whSubjectQuestion")] }
 
-def ex41b : LinguisticExample :=
+def ex41b : Datum :=
   { id := "wilder2013_ex41b"
     source := ⟨"wilder-2013", "(41b)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex41b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "whSubjectQuestion"), ("ctConstituent", "vp")] }
 
-def ex44b : LinguisticExample :=
+def ex44b : Datum :=
   { id := "wilder2013_ex44b"
     source := ⟨"wilder-2013", "(44b)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex44b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "VF"), ("environment", "objectPreposing")] }
 
-def ex45b : LinguisticExample :=
+def ex45b : Datum :=
   { id := "wilder2013_ex45b"
     source := ⟨"wilder-2013", "(45b)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex45b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CT"), ("environment", "objectPreposing"), ("ctConstituent", "vp")] }
 
-def ex113b : LinguisticExample :=
+def ex113b : Datum :=
   { id := "wilder2013_ex113b"
     source := ⟨"wilder-2013", "(113b)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex113b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CTwh"), ("environment", "root"), ("ctConstituent", "subject")] }
 
-def ex114b : LinguisticExample :=
+def ex114b : Datum :=
   { id := "wilder2013_ex114b"
     source := ⟨"wilder-2013", "(114b)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex114b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "CTwh"), ("environment", "root"), ("ctConstituent", "object")] }
 
-def ex126a : LinguisticExample :=
+def ex126a : Datum :=
   { id := "wilder2013_ex126a"
     source := ⟨"wilder-2013", "(126a)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex126a : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "yesAnswer"), ("environment", "believeComplement")] }
 
-def ex126b : LinguisticExample :=
+def ex126b : Datum :=
   { id := "wilder2013_ex126b"
     source := ⟨"wilder-2013", "(126b)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex126b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "yesAnswer"), ("environment", "believeComplement")] }
 
-def ex127a : LinguisticExample :=
+def ex127a : Datum :=
   { id := "wilder2013_ex127a"
     source := ⟨"wilder-2013", "(127a)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex127a : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "yesAnswer"), ("environment", "interrogativeComplement")] }
 
-def ex127b : LinguisticExample :=
+def ex127b : Datum :=
   { id := "wilder2013_ex127b"
     source := ⟨"wilder-2013", "(127b)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex127b : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "yesAnswer"), ("environment", "interrogativeComplement")] }
 
-def ex127c : LinguisticExample :=
+def ex127c : Datum :=
   { id := "wilder2013_ex127c"
     source := ⟨"wilder-2013", "(127c)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex127c : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "yesAnswer"), ("environment", "factiveComplement")] }
 
-def ex127d : LinguisticExample :=
+def ex127d : Datum :=
   { id := "wilder2013_ex127d"
     source := ⟨"wilder-2013", "(127d)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex127d : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "yesAnswer"), ("environment", "itCleft")] }
 
-def ex127e : LinguisticExample :=
+def ex127e : Datum :=
   { id := "wilder2013_ex127e"
     source := ⟨"wilder-2013", "(127e)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex127e : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "yesAnswer"), ("environment", "restrictiveRelative")] }
 
-def ex127f : LinguisticExample :=
+def ex127f : Datum :=
   { id := "wilder2013_ex127f"
     source := ⟨"wilder-2013", "(127f)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex127f : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "yesAnswer"), ("environment", "adverbialClause")] }
 
-def ex137c : LinguisticExample :=
+def ex137c : Datum :=
   { id := "wilder2013_ex137c"
     source := ⟨"wilder-2013", "(137c)"⟩
     reportedIn := none
@@ -641,6 +639,6 @@ def ex137c : LinguisticExample :=
     readings := []
     paperFeatures := [("pattern", "yesAnswer"), ("environment", "root")] }
 
-def all : List LinguisticExample := [ex10b, ex11b, ex12b, ex51, ex52, ex53, ex74b, ex27a, ex27b, ex27c, ex27d, ex27e, ex27f, ex28a, ex28b, ex28c, ex28d, ex28e, ex29a, ex29b, ex29c, ex30a, ex30b, ex30c, ex30d, ex31a, ex31b, ex31c, ex31d, ex32a, ex32b, ex33a, ex33b, ex40b, ex41b, ex44b, ex45b, ex113b, ex114b, ex126a, ex126b, ex127a, ex127b, ex127c, ex127d, ex127e, ex127f, ex137c]
+def all : List Datum := [ex10b, ex11b, ex12b, ex51, ex52, ex53, ex74b, ex27a, ex27b, ex27c, ex27d, ex27e, ex27f, ex28a, ex28b, ex28c, ex28d, ex28e, ex29a, ex29b, ex29c, ex30a, ex30b, ex30c, ex30d, ex31a, ex31b, ex31c, ex31d, ex32a, ex32b, ex33a, ex33b, ex40b, ex41b, ex44b, ex45b, ex113b, ex114b, ex126a, ex126b, ex127a, ex127b, ex127c, ex127d, ex127e, ex127f, ex137c]
 
 end Wilder2013.Examples

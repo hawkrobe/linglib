@@ -33,7 +33,7 @@ of the display.
 
 namespace EngelhardtEtAl2006
 
-open Data.Examples EngelhardtEtAl2006.Examples
+open EngelhardtEtAl2006.Examples
 
 /-- The kinds of object in a display, the apple to be moved, the frog, and the two kinds of
 destination. -/
@@ -141,15 +141,15 @@ def destinationTable : List (String × Description) :=
   [("towel", .bare .towel), ("otherTowel", .other .towel), ("box", .bare .box)]
 
 /-- An instruction from an example row. -/
-def Instruction.ofExample (ex : LinguisticExample) : Option Instruction := do
+def Instruction.ofDatum (ex : Datum) : Option Instruction := do
   pure ⟨← ex.parse? "target" targetTable, ← ex.parse? "destination" destinationTable⟩
 
-theorem ofExample_isSome :
-    ∀ ex ∈ Examples.all, (ex.feature? "target").isSome → (Instruction.ofExample ex).isSome := by
+theorem ofDatum_isSome :
+    ∀ ex ∈ Examples.all, (ex.feature? "target").isSome → (Instruction.ofDatum ex).isSome := by
   decide
 
 /-- The four instructions of the paper's table. -/
-def instructions : List Instruction := Examples.all.filterMap Instruction.ofExample
+def instructions : List Instruction := Examples.all.filterMap Instruction.ofDatum
 
 /-- The destination matches the target's current location, a towel. -/
 def Instruction.Matching (ins : Instruction) : Prop := ins.destination.kind = .towel

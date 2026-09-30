@@ -47,7 +47,7 @@ later paper that draws it, `Studies/Yagi2025.lean`.
 
 namespace Geurts2005
 
-open Modality Data.Examples Function
+open Modality Function
 
 variable {W : Type*}
 
@@ -271,14 +271,14 @@ structure Row where
 
 def forces : List (String × ModalForce) := [("may", .possibility), ("must", .necessity)]
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let force₁ ← ex.parse? "force1" forces
   let force₂ ← ex.parse? "force2" forces
   let flavor ← ex.parse? "flavor" [("deontic", .deontic), ("epistemic", .epistemic)]
   pure ⟨force₁, force₂, flavor, ex.judgment⟩
 
 /-- The deontic and epistemic disjunctions (1) and (2). -/
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 example : rows.length = Examples.all.length := by decide
 

@@ -69,7 +69,7 @@ comparison with [landau-2004]'s scale is stated for those two.
 
 namespace Allotey2021
 
-open Minimalist.MinimalPronoun Control Ga Ga.Pronouns Data.Examples
+open Minimalist.MinimalPronoun Control Ga Ga.Pronouns
 
 /-! ### Pronouns (Table 3) -/
 
@@ -164,7 +164,7 @@ def gaInventory : Vocabulary Form where
   elsewhere := .pronoun
 
 /-- The Fragment entry for a row's matrix verb. -/
-def verbOf (row : LinguisticExample) : Option Verb :=
+def verbOf (row : Datum) : Option Verb :=
   (row.feature? "verb").bind (Verb.find? verbs ·)
 
 /-- The clause type a complementizer feature names. -/
@@ -176,21 +176,21 @@ def clauseOf : String → Option EmbeddedClauseType
 
 /-- The clause type of a row: its complement's, or the finite type for a
     matrix clause the paper labels finite. -/
-def clauseTypeOf (row : LinguisticExample) : Option EmbeddedClauseType :=
+def clauseTypeOf (row : Datum) : Option EmbeddedClauseType :=
   match row.feature? "complementizer", row.feature? "clauseType" with
   | some c, _ => clauseOf c
   | none, some "finite" => some .ake
   | _, _ => none
 
 /-- A row records reading `r` with judgment `j`. -/
-def reads (row : LinguisticExample) (r : String) (j : Judgment) : Prop :=
+def reads (row : Datum) (r : String) (j : Judgment) : Prop :=
   ∃ x ∈ row.readings, x = (r, j)
 
-instance (row : LinguisticExample) (r : String) (j : Judgment) : Decidable (reads row r j) :=
+instance (row : Datum) (r : String) (j : Judgment) : Decidable (reads row r j) :=
   inferInstanceAs (Decidable (∃ x ∈ row.readings, _))
 
 /-- The realized form of a row's embedded subject. -/
-def formOf (row : LinguisticExample) : Option Form :=
+def formOf (row : Datum) : Option Form :=
   match row.feature? "embeddedSubject" with
   | some "pronoun" => some .pronoun
   | some "null" => some .null
@@ -316,7 +316,7 @@ theorem controlled_form_covaries :
 /-- The control diagnostic a row attests when acceptable: a non-c-commanding or
     long-distance antecedent by the paper's coindexation, a free reading of the
     embedded subject, or a strict reading under ellipsis. -/
-def attests (row : LinguisticExample) : Diagnostic → Prop
+def attests (row : Datum) : Diagnostic → Prop
   | .nonCCommandingControl =>
     row.feature? "antecedent" = some "nonCCommanding" ∧ row.judgment = .acceptable
   | .longDistanceControl =>
@@ -325,7 +325,7 @@ def attests (row : LinguisticExample) : Diagnostic → Prop
   | .strictEllipsis => reads row "strict" .acceptable
   | .strictUnderOnly => False
 
-instance (row : LinguisticExample) : DecidablePred (attests row) := fun d => by
+instance (row : Datum) : DecidablePred (attests row) := fun d => by
   cases d <;> unfold attests <;> infer_instance
 
 /-- The diagnostics the rows attest for a clause type. -/
@@ -417,16 +417,16 @@ inductive Exponent where
   deriving DecidableEq, Repr, Fintype
 
 /-- A row shows an exponent. -/
-def shows (row : LinguisticExample) : Exponent → Prop
+def shows (row : Datum) : Exponent → Prop
   | .subjectTone => row.feature? "subjectTone" = some "high"
   | .verbTone => row.feature? "verbTone" = some "high"
   | .vowel => row.feature? "irrealisVowel" = some "present"
 
-instance (row : LinguisticExample) : DecidablePred (shows row) := fun e => by
+instance (row : Datum) : DecidablePred (shows row) := fun e => by
   cases e <;> unfold shows <;> infer_instance
 
 /-- The rows in an irrealis context with judgment `j`. -/
-def rowsIn (ctx : IrrealisContext) (j : Judgment) : List LinguisticExample :=
+def rowsIn (ctx : IrrealisContext) (j : Judgment) : List Datum :=
   Examples.all.filter fun row =>
     decide ((row.feature? "clauseContext").bind contextOf = some ctx ∧ row.judgment = j)
 

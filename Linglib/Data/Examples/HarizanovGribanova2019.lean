@@ -15,9 +15,7 @@ this module; declarations live in `namespace HarizanovGribanova2019.Examples`.
 
 namespace HarizanovGribanova2019.Examples
 
-open Data.Examples
-
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "harizanovgribanova2019_ex2a"
     source := ⟨"harley-2013-diagnosing", "p. 113, (2)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(2a)"⟩
@@ -30,7 +28,7 @@ def ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "adverb")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "harizanovgribanova2019_ex2b"
     source := ⟨"harley-2013-diagnosing", "p. 113, (2)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(2b)"⟩
@@ -43,7 +41,7 @@ def ex2b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "adverb")] }
 
-def ex3a : LinguisticExample :=
+def ex3a : Datum :=
   { id := "harizanovgribanova2019_ex3a"
     source := ⟨"harley-2013-morphemes", "p. 46, (1)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(3a)"⟩
@@ -56,7 +54,7 @@ def ex3a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "negation")] }
 
-def ex3b : LinguisticExample :=
+def ex3b : Datum :=
   { id := "harizanovgribanova2019_ex3b"
     source := ⟨"harley-2013-morphemes", "p. 46, (1)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(3b)"⟩
@@ -69,7 +67,7 @@ def ex3b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "negation")] }
 
-def ex4a : LinguisticExample :=
+def ex4a : Datum :=
   { id := "harizanovgribanova2019_ex4a"
     source := ⟨"pollock-1989", "p. 367, (5b)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(4a)"⟩
@@ -82,7 +80,7 @@ def ex4a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "quantifier")] }
 
-def ex4b : LinguisticExample :=
+def ex4b : Datum :=
   { id := "harizanovgribanova2019_ex4b"
     source := ⟨"pollock-1989", "p. 367, (5d)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(4b)"⟩
@@ -95,7 +93,7 @@ def ex4b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "quantifier")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "harizanovgribanova2019_ex5a"
     source := ⟨"pollock-1989", "p. 377, (24a), adapted"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(5a)"⟩
@@ -108,7 +106,7 @@ def ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "nonfiniteVerbPlacement"), ("diagnostic", "adverb")] }
 
-def ex5b : LinguisticExample :=
+def ex5b : Datum :=
   { id := "harizanovgribanova2019_ex5b"
     source := ⟨"pollock-1989", "p. 374, (16e), adapted"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(5b)"⟩
@@ -121,7 +119,7 @@ def ex5b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "nonfiniteVerbPlacement"), ("diagnostic", "negation")] }
 
-def ex5c : LinguisticExample :=
+def ex5c : Datum :=
   { id := "harizanovgribanova2019_ex5c"
     source := ⟨"pollock-1989", "p. 377, (25c), adapted"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(5c)"⟩
@@ -134,7 +132,7 @@ def ex5c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "nonfiniteVerbPlacement"), ("diagnostic", "quantifier")] }
 
-def ex6a : LinguisticExample :=
+def ex6a : Datum :=
   { id := "harizanovgribanova2019_ex6a"
     source := ⟨"harizanov-gribanova-2019", "(6a)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex6a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "tToC")] }
 
-def ex6b : LinguisticExample :=
+def ex6b : Datum :=
   { id := "harizanovgribanova2019_ex6b"
     source := ⟨"harizanov-gribanova-2019", "(6b)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex6b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "tToC")] }
 
-def ex7a : LinguisticExample :=
+def ex7a : Datum :=
   { id := "harizanovgribanova2019_ex7a"
     source := ⟨"harizanov-gribanova-2019", "(7a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex7a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "tToC")] }
 
-def ex7b : LinguisticExample :=
+def ex7b : Datum :=
   { id := "harizanovgribanova2019_ex7b"
     source := ⟨"harizanov-gribanova-2019", "(7b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex7b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "tToC")] }
 
-def ex8a : LinguisticExample :=
+def ex8a : Datum :=
   { id := "harizanovgribanova2019_ex8a"
     source := ⟨"vikner-1995", "p. 47, (33c)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(8a)"⟩
@@ -199,7 +197,7 @@ def ex8a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "root"), ("diagnostic", "adverb")] }
 
-def ex8b : LinguisticExample :=
+def ex8b : Datum :=
   { id := "harizanovgribanova2019_ex8b"
     source := ⟨"vikner-1995", "p. 47, (33f)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(8b)"⟩
@@ -212,7 +210,7 @@ def ex8b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "adverb")] }
 
-def ex9a : LinguisticExample :=
+def ex9a : Datum :=
   { id := "harizanovgribanova2019_ex9a"
     source := ⟨"vikner-1995", "p. 145, (32b)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(9a)"⟩
@@ -225,7 +223,7 @@ def ex9a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "adverb")] }
 
-def ex9b : LinguisticExample :=
+def ex9b : Datum :=
   { id := "harizanovgribanova2019_ex9b"
     source := ⟨"vikner-1995", "p. 145, (32a)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(9b)"⟩
@@ -238,7 +236,7 @@ def ex9b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "adverb")] }
 
-def ex10a : LinguisticExample :=
+def ex10a : Datum :=
   { id := "harizanovgribanova2019_ex10a"
     source := ⟨"vikner-1995", "p. 145, (31b)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(10a)"⟩
@@ -251,7 +249,7 @@ def ex10a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "negation")] }
 
-def ex10b : LinguisticExample :=
+def ex10b : Datum :=
   { id := "harizanovgribanova2019_ex10b"
     source := ⟨"vikner-1995", "p. 145, (31a)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(10b)"⟩
@@ -264,7 +262,7 @@ def ex10b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("clause", "embedded"), ("diagnostic", "negation")] }
 
-def ex11 : LinguisticExample :=
+def ex11 : Datum :=
   { id := "harizanovgribanova2019_ex11"
     source := ⟨"harizanov-gribanova-2019", "(11)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "verbalComplex")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "harizanovgribanova2019_ex12"
     source := ⟨"gribanova-2017", "p. 1095, (32)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(12)"⟩
@@ -290,7 +288,7 @@ def ex12 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "adverb")] }
 
-def ex13 : LinguisticExample :=
+def ex13 : Datum :=
   { id := "harizanovgribanova2019_ex13"
     source := ⟨"gribanova-2017", "p. 1095, (33)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(13)"⟩
@@ -303,7 +301,7 @@ def ex13 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "quantifier")] }
 
-def ex14 : LinguisticExample :=
+def ex14 : Datum :=
   { id := "harizanovgribanova2019_ex14"
     source := ⟨"gribanova-2013", "p. 96, (8)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(14)"⟩
@@ -316,7 +314,7 @@ def ex14 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("phenomenon", "finiteVerbPlacement"), ("diagnostic", "coordination")] }
 
-def ex29a : LinguisticExample :=
+def ex29a : Datum :=
   { id := "harizanovgribanova2019_ex29a"
     source := ⟨"harizanov-2016", "p. 1, (3)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(29a)"⟩
@@ -329,7 +327,7 @@ def ex29a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("order", "auxiliaryParticiple")] }
 
-def ex29b : LinguisticExample :=
+def ex29b : Datum :=
   { id := "harizanovgribanova2019_ex29b"
     source := ⟨"harizanov-2016", "p. 1, (3)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(29b)"⟩
@@ -342,7 +340,7 @@ def ex29b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("order", "participleAuxiliary")] }
 
-def ex30a : LinguisticExample :=
+def ex30a : Datum :=
   { id := "harizanovgribanova2019_ex30a"
     source := ⟨"harizanov-2016", "p. 1, (4)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(30a)"⟩
@@ -355,7 +353,7 @@ def ex30a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("order", "auxiliaryParticiple")] }
 
-def ex30b : LinguisticExample :=
+def ex30b : Datum :=
   { id := "harizanovgribanova2019_ex30b"
     source := ⟨"harizanov-2016", "p. 1, (4)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(30b)"⟩
@@ -368,7 +366,7 @@ def ex30b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("order", "participleAuxiliary")] }
 
-def ex31a : LinguisticExample :=
+def ex31a : Datum :=
   { id := "harizanovgribanova2019_ex31a"
     source := ⟨"embick-izvorski-1997", "(30)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(31a)"⟩
@@ -381,7 +379,7 @@ def ex31a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("order", "auxiliaryParticiple")] }
 
-def ex31b : LinguisticExample :=
+def ex31b : Datum :=
   { id := "harizanovgribanova2019_ex31b"
     source := ⟨"embick-izvorski-1997", "(30)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(31b)"⟩
@@ -394,7 +392,7 @@ def ex31b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("order", "participleAuxiliary"), ("locality", "crossesTwoHeads")] }
 
-def ex32a : LinguisticExample :=
+def ex32a : Datum :=
   { id := "harizanovgribanova2019_ex32a"
     source := ⟨"harizanov-2016", "p. 7, (23)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(32a)"⟩
@@ -407,7 +405,7 @@ def ex32a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("locality", "crossesNontensedClause")] }
 
-def ex32b : LinguisticExample :=
+def ex32b : Datum :=
   { id := "harizanovgribanova2019_ex32b"
     source := ⟨"harizanov-2016", "p. 7, (23)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(32b)"⟩
@@ -420,7 +418,7 @@ def ex32b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("locality", "crossesTensedClause")] }
 
-def ex33a : LinguisticExample :=
+def ex33a : Datum :=
   { id := "harizanovgribanova2019_ex33a"
     source := ⟨"harizanov-2016", "p. 7, (24)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(33a)"⟩
@@ -433,7 +431,7 @@ def ex33a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("locality", "island")] }
 
-def ex33b : LinguisticExample :=
+def ex33b : Datum :=
   { id := "harizanovgribanova2019_ex33b"
     source := ⟨"harizanov-2016", "p. 7, (24)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(33b)"⟩
@@ -446,7 +444,7 @@ def ex33b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3.2"), ("phenomenon", "longHeadMovement"), ("locality", "island")] }
 
-def ex42 : LinguisticExample :=
+def ex42 : Datum :=
   { id := "harizanovgribanova2019_ex42"
     source := ⟨"harizanov-gribanova-2019", "(42)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex42 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3"), ("phenomenon", "verbalComplex")] }
 
-def ex58 : LinguisticExample :=
+def ex58 : Datum :=
   { id := "harizanovgribanova2019_ex58"
     source := ⟨"harizanov-gribanova-2019", "(58)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex58 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1.1"), ("phenomenon", "verbSecond")] }
 
-def ex60 : LinguisticExample :=
+def ex60 : Datum :=
   { id := "harizanovgribanova2019_ex60"
     source := ⟨"vikner-1995", "p. 47, (33c)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(60)"⟩
@@ -485,7 +483,7 @@ def ex60 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1.2"), ("phenomenon", "verbSecond")] }
 
-def ex64a : LinguisticExample :=
+def ex64a : Datum :=
   { id := "harizanovgribanova2019_ex64a"
     source := ⟨"gribanova-2017", "p. 1091, (23)"⟩
     reportedIn := some ⟨"harizanov-gribanova-2019", "(64a)"⟩
@@ -498,7 +496,7 @@ def ex64a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1.3"), ("phenomenon", "polarityFocus")] }
 
-def ex64b : LinguisticExample :=
+def ex64b : Datum :=
   { id := "harizanovgribanova2019_ex64b"
     source := ⟨"harizanov-gribanova-2019", "(64b)"⟩
     reportedIn := none
@@ -511,6 +509,6 @@ def ex64b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "4.1.3"), ("phenomenon", "polarityFocus")] }
 
-def all : List LinguisticExample := [ex2a, ex2b, ex3a, ex3b, ex4a, ex4b, ex5a, ex5b, ex5c, ex6a, ex6b, ex7a, ex7b, ex8a, ex8b, ex9a, ex9b, ex10a, ex10b, ex11, ex12, ex13, ex14, ex29a, ex29b, ex30a, ex30b, ex31a, ex31b, ex32a, ex32b, ex33a, ex33b, ex42, ex58, ex60, ex64a, ex64b]
+def all : List Datum := [ex2a, ex2b, ex3a, ex3b, ex4a, ex4b, ex5a, ex5b, ex5c, ex6a, ex6b, ex7a, ex7b, ex8a, ex8b, ex9a, ex9b, ex10a, ex10b, ex11, ex12, ex13, ex14, ex29a, ex29b, ex30a, ex30b, ex31a, ex31b, ex32a, ex32b, ex33a, ex33b, ex42, ex58, ex60, ex64a, ex64b]
 
 end HarizanovGribanova2019.Examples

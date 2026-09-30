@@ -15,9 +15,7 @@ this module; declarations live in `namespace Comrie1989.Examples`.
 
 namespace Comrie1989.Examples
 
-open Data.Examples
-
-def ch5_ex11 : LinguisticExample :=
+def ch5_ex11 : Datum :=
   { id := "comrie1989_ch5_ex11"
     source := ⟨"comrie-1989", "ch. 5, (11)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ch5_ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "grouping"), ("test", "coordination"), ("grouping", "withA")] }
 
-def ch5_ex15 : LinguisticExample :=
+def ch5_ex15 : Datum :=
   { id := "comrie1989_ch5_ex15"
     source := ⟨"comrie-1989", "ch. 5, (15)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ch5_ex15 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "grouping"), ("test", "coordination"), ("grouping", "withP")] }
 
-def ch5_ex19 : LinguisticExample :=
+def ch5_ex19 : Datum :=
   { id := "comrie1989_ch5_ex19"
     source := ⟨"comrie-1989", "ch. 5, (19)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ch5_ex19 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "grouping"), ("test", "coordination"), ("grouping", "withP")] }
 
-def ch5_ex20 : LinguisticExample :=
+def ch5_ex20 : Datum :=
   { id := "comrie1989_ch5_ex20"
     source := ⟨"comrie-1989", "ch. 5, (20)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ch5_ex20 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "grouping"), ("test", "coordination"), ("grouping", "neither")] }
 
-def ch5_ex25 : LinguisticExample :=
+def ch5_ex25 : Datum :=
   { id := "comrie1989_ch5_ex25"
     source := ⟨"comrie-1989", "ch. 5, (25)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ch5_ex25 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "grouping"), ("test", "infinitive"), ("grouping", "withA")] }
 
-def ch5_ex26 : LinguisticExample :=
+def ch5_ex26 : Datum :=
   { id := "comrie1989_ch5_ex26"
     source := ⟨"comrie-1989", "ch. 5, (26)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ch5_ex26 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "grouping"), ("test", "infinitive"), ("grouping", "withA")] }
 
-def ch5_english_imperative : LinguisticExample :=
+def ch5_english_imperative : Datum :=
   { id := "comrie1989_ch5_english_imperative"
     source := ⟨"comrie-1989", "ch. 5, §5.4"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ch5_english_imperative : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "grouping"), ("test", "imperative"), ("grouping", "withA")] }
 
-def ch5_ex30 : LinguisticExample :=
+def ch5_ex30 : Datum :=
   { id := "comrie1989_ch5_ex30"
     source := ⟨"comrie-1989", "ch. 5, (30)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ch5_ex30 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "grouping"), ("test", "imperative"), ("grouping", "withA")] }
 
-def ch5_ex31 : LinguisticExample :=
+def ch5_ex31 : Datum :=
   { id := "comrie1989_ch5_ex31"
     source := ⟨"comrie-1989", "ch. 5, (31)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ch5_ex31 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "grouping"), ("test", "imperative"), ("grouping", "withA")] }
 
-def ch5_ex34 : LinguisticExample :=
+def ch5_ex34 : Datum :=
   { id := "comrie1989_ch5_ex34"
     source := ⟨"comrie-1989", "ch. 5, (34)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ch5_ex34 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "grouping"), ("test", "indirectCommand"), ("grouping", "withP")] }
 
-def ch5_ex35 : LinguisticExample :=
+def ch5_ex35 : Datum :=
   { id := "comrie1989_ch5_ex35"
     source := ⟨"comrie-1989", "ch. 5, (35)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ch5_ex35 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "grouping"), ("test", "indirectCommand"), ("grouping", "withP")] }
 
-def ch5_ex37 : LinguisticExample :=
+def ch5_ex37 : Datum :=
   { id := "comrie1989_ch5_ex37"
     source := ⟨"comrie-1989", "ch. 5, (37)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ch5_ex37 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "grouping"), ("test", "resultative"), ("grouping", "withP")] }
 
-def ch5_ex39 : LinguisticExample :=
+def ch5_ex39 : Datum :=
   { id := "comrie1989_ch5_ex39"
     source := ⟨"comrie-1989", "ch. 5, (39)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ch5_ex39 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "grouping"), ("test", "resultative"), ("grouping", "withP")] }
 
-def ch5_english_resultative : LinguisticExample :=
+def ch5_english_resultative : Datum :=
   { id := "comrie1989_ch5_english_resultative"
     source := ⟨"comrie-1989", "ch. 5, §5.4"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ch5_english_resultative : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "grouping"), ("test", "resultative"), ("grouping", "withA")] }
 
-def ch6_ex7 : LinguisticExample :=
+def ch6_ex7 : Datum :=
   { id := "comrie1989_ch6_ex7"
     source := ⟨"comrie-1989", "ch. 6, (7)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ch6_ex7 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("A.animacy", "human"), ("A.marked", "marked"), ("P.animacy", "human"), ("P.marked", "unmarked")] }
 
-def ch6_ex8 : LinguisticExample :=
+def ch6_ex8 : Datum :=
   { id := "comrie1989_ch6_ex8"
     source := ⟨"comrie-1989", "ch. 6, (8)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ch6_ex8 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("A.animacy", "speaker"), ("A.marked", "unmarked"), ("P.animacy", "addressee"), ("P.marked", "marked")] }
 
-def ch6_ex9 : LinguisticExample :=
+def ch6_ex9 : Datum :=
   { id := "comrie1989_ch6_ex9"
     source := ⟨"comrie-1989", "ch. 6, (9)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ch6_ex9 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("A.animacy", "human"), ("A.marked", "marked"), ("P.animacy", "speaker"), ("P.marked", "marked")] }
 
-def ch6_ex10 : LinguisticExample :=
+def ch6_ex10 : Datum :=
   { id := "comrie1989_ch6_ex10"
     source := ⟨"comrie-1989", "ch. 6, (10)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ch6_ex10 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("A.animacy", "speaker"), ("A.marked", "unmarked"), ("P.animacy", "human"), ("P.marked", "unmarked")] }
 
-def ch6_ex11_boy : LinguisticExample :=
+def ch6_ex11_boy : Datum :=
   { id := "comrie1989_ch6_ex11_boy"
     source := ⟨"comrie-1989", "ch. 6, (11)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ch6_ex11_boy : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.animacy", "human"), ("P.marked", "marked")] }
 
-def ch6_ex11_hippopotamus : LinguisticExample :=
+def ch6_ex11_hippopotamus : Datum :=
   { id := "comrie1989_ch6_ex11_hippopotamus"
     source := ⟨"comrie-1989", "ch. 6, (11)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ch6_ex11_hippopotamus : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.animacy", "higherAnimal"), ("P.marked", "marked")] }
 
-def ch6_ex11_oak : LinguisticExample :=
+def ch6_ex11_oak : Datum :=
   { id := "comrie1989_ch6_ex11_oak"
     source := ⟨"comrie-1989", "ch. 6, (11)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ch6_ex11_oak : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.animacy", "discreteInanimate"), ("P.marked", "unmarked")] }
 
-def ch6_ex11_table : LinguisticExample :=
+def ch6_ex11_table : Datum :=
   { id := "comrie1989_ch6_ex11_table"
     source := ⟨"comrie-1989", "ch. 6, (11)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ch6_ex11_table : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.animacy", "discreteInanimate"), ("P.marked", "unmarked")] }
 
-def ch6_ex12_boys : LinguisticExample :=
+def ch6_ex12_boys : Datum :=
   { id := "comrie1989_ch6_ex12_boys"
     source := ⟨"comrie-1989", "ch. 6, (12)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ch6_ex12_boys : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.animacy", "human"), ("P.marked", "marked")] }
 
-def ch6_ex12_girls : LinguisticExample :=
+def ch6_ex12_girls : Datum :=
   { id := "comrie1989_ch6_ex12_girls"
     source := ⟨"comrie-1989", "ch. 6, (12)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ch6_ex12_girls : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("parameter", "gender"), ("P.animacy", "human"), ("P.marked", "unmarked")] }
 
-def ch6_ex12_dogs : LinguisticExample :=
+def ch6_ex12_dogs : Datum :=
   { id := "comrie1989_ch6_ex12_dogs"
     source := ⟨"comrie-1989", "ch. 6, (12)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ch6_ex12_dogs : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.animacy", "higherAnimal"), ("P.marked", "unmarked")] }
 
-def ch6_ex12_tables : LinguisticExample :=
+def ch6_ex12_tables : Datum :=
   { id := "comrie1989_ch6_ex12_tables"
     source := ⟨"comrie-1989", "ch. 6, (12)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ch6_ex12_tables : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.animacy", "discreteInanimate"), ("P.marked", "unmarked")] }
 
-def ch6_ex13 : LinguisticExample :=
+def ch6_ex13 : Datum :=
   { id := "comrie1989_ch6_ex13"
     source := ⟨"comrie-1989", "ch. 6, (13)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ch6_ex13 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.definiteness", "definite"), ("P.marked", "marked")] }
 
-def ch6_ex14 : LinguisticExample :=
+def ch6_ex14 : Datum :=
   { id := "comrie1989_ch6_ex14"
     source := ⟨"comrie-1989", "ch. 6, (14)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ch6_ex14 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.definiteness", "nonSpecific"), ("P.marked", "unmarked")] }
 
-def ch6_ex15 : LinguisticExample :=
+def ch6_ex15 : Datum :=
   { id := "comrie1989_ch6_ex15"
     source := ⟨"comrie-1989", "ch. 6, (15)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ch6_ex15 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.definiteness", "definite"), ("P.marked", "marked")] }
 
-def ch6_ex16 : LinguisticExample :=
+def ch6_ex16 : Datum :=
   { id := "comrie1989_ch6_ex16"
     source := ⟨"comrie-1989", "ch. 6, (16)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ch6_ex16 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.definiteness", "nonSpecific"), ("P.marked", "unmarked")] }
 
-def ch6_ex17 : LinguisticExample :=
+def ch6_ex17 : Datum :=
   { id := "comrie1989_ch6_ex17"
     source := ⟨"comrie-1989", "ch. 6, (17)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ch6_ex17 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.animacy", "human"), ("P.marked", "marked")] }
 
-def ch6_ex18 : LinguisticExample :=
+def ch6_ex18 : Datum :=
   { id := "comrie1989_ch6_ex18"
     source := ⟨"comrie-1989", "ch. 6, (18)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ch6_ex18 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.animacy", "human"), ("P.definiteness", "indefiniteSpecific"), ("P.marked", "unmarked")] }
 
-def ch6_ex19 : LinguisticExample :=
+def ch6_ex19 : Datum :=
   { id := "comrie1989_ch6_ex19"
     source := ⟨"comrie-1989", "ch. 6, (19)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ch6_ex19 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.animacy", "discreteInanimate"), ("P.definiteness", "definite"), ("P.marked", "optional")] }
 
-def ch6_ex20 : LinguisticExample :=
+def ch6_ex20 : Datum :=
   { id := "comrie1989_ch6_ex20"
     source := ⟨"comrie-1989", "ch. 6, (20)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ch6_ex20 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.animacy", "discreteInanimate"), ("P.definiteness", "definite"), ("P.marked", "optional")] }
 
-def ch6_ex21 : LinguisticExample :=
+def ch6_ex21 : Datum :=
   { id := "comrie1989_ch6_ex21"
     source := ⟨"comrie-1989", "ch. 6, (21)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ch6_ex21 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.animacy", "discreteInanimate"), ("P.definiteness", "nonSpecific"), ("P.marked", "unmarked")] }
 
-def ch6_ex22_car : LinguisticExample :=
+def ch6_ex22_car : Datum :=
   { id := "comrie1989_ch6_ex22_car"
     source := ⟨"comrie-1989", "ch. 6, (22)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ch6_ex22_car : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.animacy", "discreteInanimate"), ("P.definiteness", "definite"), ("P.marked", "unmarked")] }
 
-def ch6_ex22_the_clerk : LinguisticExample :=
+def ch6_ex22_the_clerk : Datum :=
   { id := "comrie1989_ch6_ex22_the_clerk"
     source := ⟨"comrie-1989", "ch. 6, (22)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ch6_ex22_the_clerk : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.animacy", "human"), ("P.definiteness", "definite"), ("P.marked", "marked")] }
 
-def ch6_ex22_a_certain_clerk : LinguisticExample :=
+def ch6_ex22_a_certain_clerk : Datum :=
   { id := "comrie1989_ch6_ex22_a_certain_clerk"
     source := ⟨"comrie-1989", "ch. 6, (22)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ch6_ex22_a_certain_clerk : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.animacy", "human"), ("P.definiteness", "indefiniteSpecific"), ("P.marked", "marked")] }
 
-def ch6_ex22_a_clerk : LinguisticExample :=
+def ch6_ex22_a_clerk : Datum :=
   { id := "comrie1989_ch6_ex22_a_clerk"
     source := ⟨"comrie-1989", "ch. 6, (22)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ch6_ex22_a_clerk : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.animacy", "human"), ("P.definiteness", "nonSpecific"), ("P.marked", "unmarked")] }
 
-def ch6_ex23 : LinguisticExample :=
+def ch6_ex23 : Datum :=
   { id := "comrie1989_ch6_ex23"
     source := ⟨"comrie-1989", "ch. 6, (23)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ch6_ex23 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.definiteness", "indefiniteSpecific"), ("P.marked", "marked")] }
 
-def ch6_ex25 : LinguisticExample :=
+def ch6_ex25 : Datum :=
   { id := "comrie1989_ch6_ex25"
     source := ⟨"comrie-1989", "ch. 6, (25)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ch6_ex25 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.definiteness", "indefiniteSpecific"), ("P.marked", "marked")] }
 
-def ch6_ex27 : LinguisticExample :=
+def ch6_ex27 : Datum :=
   { id := "comrie1989_ch6_ex27"
     source := ⟨"comrie-1989", "ch. 6, (27)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ch6_ex27 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "marking"), ("P.definiteness", "indefiniteSpecific"), ("P.marked", "marked")] }
 
-def ch8_ex6 : LinguisticExample :=
+def ch8_ex6 : Datum :=
   { id := "comrie1989_ch8_ex6"
     source := ⟨"comrie-1989", "ch. 8, (6)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ch8_ex6 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "compactness"), ("complexity", "lexical"), ("mediation", "direct")] }
 
-def ch8_ex7 : LinguisticExample :=
+def ch8_ex7 : Datum :=
   { id := "comrie1989_ch8_ex7"
     source := ⟨"comrie-1989", "ch. 8, (7)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ch8_ex7 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "compactness"), ("complexity", "morphological"), ("mediation", "indirect")] }
 
-def ch8_english_broke : LinguisticExample :=
+def ch8_english_broke : Datum :=
   { id := "comrie1989_ch8_english_broke"
     source := ⟨"comrie-1989", "ch. 8, §8.1.2"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ch8_english_broke : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "compactness"), ("complexity", "lexical"), ("mediation", "direct")] }
 
-def ch8_english_brought_about : LinguisticExample :=
+def ch8_english_brought_about : Datum :=
   { id := "comrie1989_ch8_english_brought_about"
     source := ⟨"comrie-1989", "ch. 8, §8.1.2"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ch8_english_brought_about : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "compactness"), ("complexity", "analytic"), ("mediation", "indirect")] }
 
-def ch8_ex8 : LinguisticExample :=
+def ch8_ex8 : Datum :=
   { id := "comrie1989_ch8_ex8"
     source := ⟨"comrie-1989", "ch. 8, (8)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ch8_ex8 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "control"), ("valency", "1"), ("causee", "directObject"), ("control", "less")] }
 
-def ch8_ex9 : LinguisticExample :=
+def ch8_ex9 : Datum :=
   { id := "comrie1989_ch8_ex9"
     source := ⟨"comrie-1989", "ch. 8, (9)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ch8_ex9 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "control"), ("valency", "1"), ("causee", "oblique"), ("control", "more")] }
 
-def ch8_ex12 : LinguisticExample :=
+def ch8_ex12 : Datum :=
   { id := "comrie1989_ch8_ex12"
     source := ⟨"comrie-1989", "ch. 8, (12)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ch8_ex12 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "causative"), ("valency", "1"), ("causee", "directObject")] }
 
-def ch8_ex14 : LinguisticExample :=
+def ch8_ex14 : Datum :=
   { id := "comrie1989_ch8_ex14"
     source := ⟨"comrie-1989", "ch. 8, (14)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ch8_ex14 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "causative"), ("valency", "2"), ("causee", "indirectObject")] }
 
-def ch8_ex16 : LinguisticExample :=
+def ch8_ex16 : Datum :=
   { id := "comrie1989_ch8_ex16"
     source := ⟨"comrie-1989", "ch. 8, (16)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ch8_ex16 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "causative"), ("valency", "3"), ("causee", "oblique")] }
 
-def ch8_ex17 : LinguisticExample :=
+def ch8_ex17 : Datum :=
   { id := "comrie1989_ch8_ex17"
     source := ⟨"comrie-1989", "ch. 8, (17)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ch8_ex17 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "causative"), ("valency", "2"), ("causee", "directObject")] }
 
-def ch8_ex18 : LinguisticExample :=
+def ch8_ex18 : Datum :=
   { id := "comrie1989_ch8_ex18"
     source := ⟨"comrie-1989", "ch. 8, (18)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ch8_ex18 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "causative"), ("valency", "3"), ("causee", "indirectObject")] }
 
-def ch8_ex19 : LinguisticExample :=
+def ch8_ex19 : Datum :=
   { id := "comrie1989_ch8_ex19"
     source := ⟨"comrie-1989", "ch. 8, (19)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ch8_ex19 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "causative"), ("valency", "3"), ("causee", "oblique")] }
 
-def ch8_ex20 : LinguisticExample :=
+def ch8_ex20 : Datum :=
   { id := "comrie1989_ch8_ex20"
     source := ⟨"comrie-1989", "ch. 8, (20)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ch8_ex20 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "causative"), ("valency", "2"), ("causee", "oblique")] }
 
-def ch8_ex22 : LinguisticExample :=
+def ch8_ex22 : Datum :=
   { id := "comrie1989_ch8_ex22"
     source := ⟨"comrie-1989", "ch. 8, (22)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ch8_ex22 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "causative"), ("valency", "2"), ("causee", "oblique")] }
 
-def ch8_ex25 : LinguisticExample :=
+def ch8_ex25 : Datum :=
   { id := "comrie1989_ch8_ex25"
     source := ⟨"comrie-1989", "ch. 8, (25)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ch8_ex25 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "control"), ("valency", "1"), ("causee", "directObject"), ("control", "less")] }
 
-def ch8_ex26 : LinguisticExample :=
+def ch8_ex26 : Datum :=
   { id := "comrie1989_ch8_ex26"
     source := ⟨"comrie-1989", "ch. 8, (26)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ch8_ex26 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "control"), ("valency", "1"), ("causee", "indirectObject"), ("control", "more")] }
 
-def ch8_ex27 : LinguisticExample :=
+def ch8_ex27 : Datum :=
   { id := "comrie1989_ch8_ex27"
     source := ⟨"comrie-1989", "ch. 8, (27)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ch8_ex27 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "control"), ("valency", "2"), ("causee", "indirectObject"), ("control", "less")] }
 
-def ch8_ex28 : LinguisticExample :=
+def ch8_ex28 : Datum :=
   { id := "comrie1989_ch8_ex28"
     source := ⟨"comrie-1989", "ch. 8, (28)"⟩
     reportedIn := none
@@ -797,6 +795,6 @@ def ch8_ex28 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "control"), ("valency", "2"), ("causee", "oblique"), ("control", "more")] }
 
-def all : List LinguisticExample := [ch5_ex11, ch5_ex15, ch5_ex19, ch5_ex20, ch5_ex25, ch5_ex26, ch5_english_imperative, ch5_ex30, ch5_ex31, ch5_ex34, ch5_ex35, ch5_ex37, ch5_ex39, ch5_english_resultative, ch6_ex7, ch6_ex8, ch6_ex9, ch6_ex10, ch6_ex11_boy, ch6_ex11_hippopotamus, ch6_ex11_oak, ch6_ex11_table, ch6_ex12_boys, ch6_ex12_girls, ch6_ex12_dogs, ch6_ex12_tables, ch6_ex13, ch6_ex14, ch6_ex15, ch6_ex16, ch6_ex17, ch6_ex18, ch6_ex19, ch6_ex20, ch6_ex21, ch6_ex22_car, ch6_ex22_the_clerk, ch6_ex22_a_certain_clerk, ch6_ex22_a_clerk, ch6_ex23, ch6_ex25, ch6_ex27, ch8_ex6, ch8_ex7, ch8_english_broke, ch8_english_brought_about, ch8_ex8, ch8_ex9, ch8_ex12, ch8_ex14, ch8_ex16, ch8_ex17, ch8_ex18, ch8_ex19, ch8_ex20, ch8_ex22, ch8_ex25, ch8_ex26, ch8_ex27, ch8_ex28]
+def all : List Datum := [ch5_ex11, ch5_ex15, ch5_ex19, ch5_ex20, ch5_ex25, ch5_ex26, ch5_english_imperative, ch5_ex30, ch5_ex31, ch5_ex34, ch5_ex35, ch5_ex37, ch5_ex39, ch5_english_resultative, ch6_ex7, ch6_ex8, ch6_ex9, ch6_ex10, ch6_ex11_boy, ch6_ex11_hippopotamus, ch6_ex11_oak, ch6_ex11_table, ch6_ex12_boys, ch6_ex12_girls, ch6_ex12_dogs, ch6_ex12_tables, ch6_ex13, ch6_ex14, ch6_ex15, ch6_ex16, ch6_ex17, ch6_ex18, ch6_ex19, ch6_ex20, ch6_ex21, ch6_ex22_car, ch6_ex22_the_clerk, ch6_ex22_a_certain_clerk, ch6_ex22_a_clerk, ch6_ex23, ch6_ex25, ch6_ex27, ch8_ex6, ch8_ex7, ch8_english_broke, ch8_english_brought_about, ch8_ex8, ch8_ex9, ch8_ex12, ch8_ex14, ch8_ex16, ch8_ex17, ch8_ex18, ch8_ex19, ch8_ex20, ch8_ex22, ch8_ex25, ch8_ex26, ch8_ex27, ch8_ex28]
 
 end Comrie1989.Examples

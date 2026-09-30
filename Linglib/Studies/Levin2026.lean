@@ -54,7 +54,7 @@ kind of the subject is recorded for the rows whose subject the paper discusses.
 
 namespace Levin2026
 
-open Data.Examples ArgumentStructure
+open ArgumentStructure
 
 /-! ### The proper containment condition -/
 
@@ -185,7 +185,7 @@ instance : DecidablePred Result.IsSpatial := fun r ↦
 
 /-- An example of the paper records the kind of its verb, its result phrase and the kind of its
 subject, where it has them, its frame and its judgment. -/
-structure Datum where
+structure Row where
   verb : VerbKind
   result : Option Result
   theme : Option Theme
@@ -195,31 +195,31 @@ structure Datum where
 /-- An intransitive whose subject is the verb's object is licensed when the verb is a verb of
 change of state, or when a verb that applies a force combines with a spatially instantiated
 result predicated of a self-energetic subject. -/
-def Datum.Licensed (d : Datum) : Prop :=
+def Row.Licensed (d : Row) : Prop :=
   d.verb = .changeOfState ∨
     (d.verb.AppliesForce ∧ (∃ r ∈ d.result, r.IsSpatial) ∧ ∃ t ∈ d.theme, t.SelfEnergetic)
 
-instance : DecidablePred Datum.Licensed := fun d ↦
+instance : DecidablePred Row.Licensed := fun d ↦
   inferInstanceAs (Decidable (d.verb = .changeOfState ∨
     (d.verb.AppliesForce ∧ (∃ r ∈ d.result, r.IsSpatial) ∧ ∃ t ∈ d.theme, t.SelfEnergetic)))
 
 /-- An optional feature of an example, read through a table. -/
-def optional? {α : Type*} (e : LinguisticExample) (key : String) (table : List (String × α)) :
+def optional? {α : Type*} (e : Datum) (key : String) (table : List (String × α)) :
     Option (Option α) :=
   match e.feature? key with
   | none => some none
   | some v => (table.lookup v).map some
 
 /-- The result phrase of an example, none when the row names no adjective. -/
-def result? (e : LinguisticExample) : Option (Option Result) :=
+def result? (e : Datum) : Option (Option Result) :=
   match e.feature? "adjective" with
   | none => some none
   | some _ => do
     pure (some { adjective := ← e.parse? "adjective" adjectiveLabels
                  sense := ← e.parse? "sense" Sense.labels })
 
-/-- An example read into its datum. -/
-def datum (e : LinguisticExample) : Option Datum := do
+/-- A datum read into its row. -/
+def Row.ofDatum (e : Datum) : Option Row := do
   pure { verb := ← e.parse? "verb" VerbKind.labels
          result := ← result? e
          theme := ← optional? e "theme" Theme.labels
@@ -227,10 +227,10 @@ def datum (e : LinguisticExample) : Option Datum := do
          judgment := e.judgment }
 
 /-- Every example is read. -/
-theorem isSome_datum : ∀ e ∈ Examples.all, (datum e).isSome := by decide +kernel
+theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide +kernel
 
 /-- The paper's examples. -/
-def data : List Datum := Examples.all.filterMap datum
+def data : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- An intransitive of the paper, with or without a result phrase, is acceptable exactly when
 it is licensed. -/
@@ -273,7 +273,7 @@ theorem directedMotion_selfEnergetic :
 
 /-- An entity that must be manipulated throughout is never the subject of a licensed
 intransitive resultative with a verb that applies a force. -/
-theorem not_licensed_of_manipulated {d : Datum} (hv : d.verb ≠ .changeOfState)
+theorem not_licensed_of_manipulated {d : Row} (hv : d.verb ≠ .changeOfState)
     (ht : d.theme = some .manipulated) : ¬ d.Licensed := by
   rintro (h | ⟨-, -, t, ht', hs⟩)
   · exact hv h

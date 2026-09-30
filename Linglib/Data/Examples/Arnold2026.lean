@@ -15,9 +15,7 @@ this module; declarations live in `namespace Arnold2026.Examples`.
 
 namespace Arnold2026.Examples
 
-open Data.Examples
-
-def homework : LinguisticExample :=
+def homework : Datum :=
   { id := "arnold2026_homework"
     source := ⟨"arnold-2026", "§1"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def homework : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "quantified"), ("representation", "underspecified")] }
 
-def lovato : LinguisticExample :=
+def lovato : Datum :=
   { id := "arnold2026_lovato"
     source := ⟨"arnold-2026", "§1"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def lovato : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "personal"), ("pronouns", "they/them"), ("representation", "elaborated")] }
 
-def bed : LinguisticExample :=
+def bed : Datum :=
   { id := "arnold2026_bed"
     source := ⟨"arnold-2026", "§2"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def bed : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "quantified"), ("representation", "underspecified")] }
 
-def teacher : LinguisticExample :=
+def teacher : Datum :=
   { id := "arnold2026_teacher"
     source := ⟨"arnold-2026", "§2"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def teacher : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "indefinite"), ("referentGender", "unknown"), ("representation", "underspecified")] }
 
-def clerk : LinguisticExample :=
+def clerk : Datum :=
   { id := "arnold2026_clerk"
     source := ⟨"arnold-2026", "§2"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def clerk : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "definite"), ("referentGender", "unknown"), ("representation", "underspecified")] }
 
-def neighbor : LinguisticExample :=
+def neighbor : Datum :=
   { id := "arnold2026_neighbor"
     source := ⟨"arnold-2026", "§2"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def neighbor : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "definite"), ("referentGender", "known"), ("representation", "underspecified")] }
 
-def shakespeare : LinguisticExample :=
+def shakespeare : Datum :=
   { id := "arnold2026_shakespeare"
     source := ⟨"arnold-2026", "Table 1"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def shakespeare : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "quantified"), ("referentGender", "known"), ("representation", "underspecified")] }
 
-def landlord : LinguisticExample :=
+def landlord : Datum :=
   { id := "arnold2026_landlord"
     source := ⟨"arnold-2026", "Table 1"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def landlord : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "indefinite"), ("referentGender", "known"), ("representation", "underspecified")] }
 
-def son : LinguisticExample :=
+def son : Datum :=
   { id := "arnold2026_son"
     source := ⟨"arnold-2026", "Table 1"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def son : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "definite"), ("referentGender", "known"), ("representation", "underspecified")] }
 
-def alex : LinguisticExample :=
+def alex : Datum :=
   { id := "arnold2026_alex"
     source := ⟨"arnold-2026", "§4.3"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def alex : LinguisticExample :=
     readings := [("Alex broke some plates", .acceptable), ("Alex and Will broke some plates", .acceptable)]
     paperFeatures := [("kind", "personal"), ("pronouns", "they/them"), ("representation", "elaborated"), ("ambiguity", "singular or plural")] }
 
-def dillon : LinguisticExample :=
+def dillon : Datum :=
   { id := "arnold2026_dillon"
     source := ⟨"arnold-2026", "§6.1"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def dillon : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "personal"), ("pronouns", "they/them"), ("representation", "elaborated")] }
 
-def mother : LinguisticExample :=
+def mother : Datum :=
   { id := "arnold2026_mother"
     source := ⟨"arnold-2026", "§6.2"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def mother : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "underspecified"), ("antecedent", "definite"), ("referentGender", "known"), ("representation", "elaborated"), ("counterexample", "true")] }
 
-def butler : LinguisticExample :=
+def butler : Datum :=
   { id := "arnold2026_butler"
     source := ⟨"arnold-2026", "fn. 4"⟩
     reportedIn := none
@@ -186,6 +184,6 @@ def butler : LinguisticExample :=
     readings := []
     paperFeatures := [("kind", "personal"), ("pronouns", "they/them"), ("representation", "elaborated"), ("pronounsIntroduced", "true")] }
 
-def all : List LinguisticExample := [homework, lovato, bed, teacher, clerk, neighbor, shakespeare, landlord, son, alex, dillon, mother, butler]
+def all : List Datum := [homework, lovato, bed, teacher, clerk, neighbor, shakespeare, landlord, son, alex, dillon, mother, butler]
 
 end Arnold2026.Examples

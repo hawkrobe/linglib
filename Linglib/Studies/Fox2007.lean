@@ -43,7 +43,7 @@ theorem. Example and note numbers follow the manuscript version of the paper.
 
 namespace Fox2007
 
-open Exhaustification Set ModalLogic Data.Examples
+open Exhaustification Set ModalLogic
 
 variable {W : Type*}
 
@@ -593,7 +593,7 @@ def numberTable : List (String × Number) :=
 def yesNoTable : List (String × Bool) := [("yes", true), ("no", false)]
 
 /-- The rows the paper accounts for; the sentence it leaves open is skipped. -/
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let o ← ex.parse? "quantifier" operatorTable
   let n ← ex.parse? "number" numberTable
   let c ← ex.parse? "connective" [("or", Connective.or), ("and", Connective.and)]
@@ -602,7 +602,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
   let st ← ex.feature? "status"
   if st = "accounted" then pure ⟨o, n, c, s, f⟩ else none
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The two generalizations of §3 fit the data: a sentence has the free-choice reading exactly
 when it falls under existential or conjunctive free choice. -/

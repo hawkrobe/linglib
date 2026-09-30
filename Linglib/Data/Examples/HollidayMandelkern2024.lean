@@ -15,9 +15,7 @@ this module; declarations live in `namespace HollidayMandelkern2024.Examples`.
 
 namespace HollidayMandelkern2024.Examples
 
-open Data.Examples
-
-def ex1a : LinguisticExample :=
+def ex1a : Datum :=
   { id := "hollidaymandelkern2024_ex1a"
     source := ⟨"holliday-mandelkern-2024", "(1a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex1a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("form", "p ∧ ◇¬p"), ("environment", "matrix")] }
 
-def ex1b : LinguisticExample :=
+def ex1b : Datum :=
   { id := "hollidaymandelkern2024_ex1b"
     source := ⟨"holliday-mandelkern-2024", "(1b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex1b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("form", "p ∧ ◇¬p"), ("environment", "suppose")] }
 
-def ex1c : LinguisticExample :=
+def ex1c : Datum :=
   { id := "hollidaymandelkern2024_ex1c"
     source := ⟨"holliday-mandelkern-2024", "(1c)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex1c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "1"), ("form", "p ∧ ◇¬p"), ("environment", "quantifier restrictor")] }
 
-def ex2a : LinguisticExample :=
+def ex2a : Datum :=
   { id := "hollidaymandelkern2024_ex2a"
     source := ⟨"holliday-mandelkern-2024", "(2a)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex2a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("form", "Wittgenstein sentence"), ("environment", "matrix")] }
 
-def ex2b : LinguisticExample :=
+def ex2b : Datum :=
   { id := "hollidaymandelkern2024_ex2b"
     source := ⟨"holliday-mandelkern-2024", "(2b)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex2b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("form", "Wittgenstein sentence"), ("environment", "matrix")] }
 
-def ex2c : LinguisticExample :=
+def ex2c : Datum :=
   { id := "hollidaymandelkern2024_ex2c"
     source := ⟨"holliday-mandelkern-2024", "(2c)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex2c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("form", "Wittgenstein sentence"), ("environment", "matrix")] }
 
-def ex2d : LinguisticExample :=
+def ex2d : Datum :=
   { id := "hollidaymandelkern2024_ex2d"
     source := ⟨"holliday-mandelkern-2024", "(2d)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex2d : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("form", "Wittgenstein sentence"), ("environment", "matrix")] }
 
-def ex2e : LinguisticExample :=
+def ex2e : Datum :=
   { id := "hollidaymandelkern2024_ex2e"
     source := ⟨"holliday-mandelkern-2024", "(2e)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex2e : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("form", "Wittgenstein sentence"), ("environment", "matrix")] }
 
-def ex3a : LinguisticExample :=
+def ex3a : Datum :=
   { id := "hollidaymandelkern2024_ex3a"
     source := ⟨"holliday-mandelkern-2024", "(3a)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex3a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Moore sentence"), ("environment", "suppose")] }
 
-def ex3b : LinguisticExample :=
+def ex3b : Datum :=
   { id := "hollidaymandelkern2024_ex3b"
     source := ⟨"holliday-mandelkern-2024", "(3b)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex3b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "suppose")] }
 
-def ex3c : LinguisticExample :=
+def ex3c : Datum :=
   { id := "hollidaymandelkern2024_ex3c"
     source := ⟨"holliday-mandelkern-2024", "(3c)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex3c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "classical contradiction"), ("environment", "suppose")] }
 
-def ex4a : LinguisticExample :=
+def ex4a : Datum :=
   { id := "hollidaymandelkern2024_ex4a"
     source := ⟨"holliday-mandelkern-2024", "(4a)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex4a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Moore sentence"), ("environment", "conditional antecedent")] }
 
-def ex4b : LinguisticExample :=
+def ex4b : Datum :=
   { id := "hollidaymandelkern2024_ex4b"
     source := ⟨"holliday-mandelkern-2024", "(4b)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex4b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "conditional antecedent")] }
 
-def ex4c : LinguisticExample :=
+def ex4c : Datum :=
   { id := "hollidaymandelkern2024_ex4c"
     source := ⟨"holliday-mandelkern-2024", "(4c)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex4c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "classical contradiction"), ("environment", "conditional antecedent")] }
 
-def ex5a : LinguisticExample :=
+def ex5a : Datum :=
   { id := "hollidaymandelkern2024_ex5a"
     source := ⟨"holliday-mandelkern-2024", "(5a)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex5a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Moore sentence"), ("environment", "could")] }
 
-def ex5b : LinguisticExample :=
+def ex5b : Datum :=
   { id := "hollidaymandelkern2024_ex5b"
     source := ⟨"holliday-mandelkern-2024", "(5b)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex5b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "could")] }
 
-def ex5c : LinguisticExample :=
+def ex5c : Datum :=
   { id := "hollidaymandelkern2024_ex5c"
     source := ⟨"holliday-mandelkern-2024", "(5c)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex5c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "classical contradiction"), ("environment", "could")] }
 
-def ex6a : LinguisticExample :=
+def ex6a : Datum :=
   { id := "hollidaymandelkern2024_ex6a"
     source := ⟨"holliday-mandelkern-2024", "(6a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex6a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Moore sentence"), ("environment", "disjunction")] }
 
-def ex6b : LinguisticExample :=
+def ex6b : Datum :=
   { id := "hollidaymandelkern2024_ex6b"
     source := ⟨"holliday-mandelkern-2024", "(6b)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex6b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "disjunction")] }
 
-def ex6c : LinguisticExample :=
+def ex6c : Datum :=
   { id := "hollidaymandelkern2024_ex6c"
     source := ⟨"holliday-mandelkern-2024", "(6c)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex6c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "classical contradiction"), ("environment", "disjunction")] }
 
-def ex7a : LinguisticExample :=
+def ex7a : Datum :=
   { id := "hollidaymandelkern2024_ex7a"
     source := ⟨"holliday-mandelkern-2024", "(7a)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex7a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Moore sentence"), ("environment", "definite description")] }
 
-def ex7b : LinguisticExample :=
+def ex7b : Datum :=
   { id := "hollidaymandelkern2024_ex7b"
     source := ⟨"holliday-mandelkern-2024", "(7b)"⟩
     reportedIn := none
@@ -303,7 +301,7 @@ def ex7b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "definite description")] }
 
-def ex7c : LinguisticExample :=
+def ex7c : Datum :=
   { id := "hollidaymandelkern2024_ex7c"
     source := ⟨"holliday-mandelkern-2024", "(7c)"⟩
     reportedIn := none
@@ -316,7 +314,7 @@ def ex7c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "classical contradiction"), ("environment", "definite description")] }
 
-def ex8a : LinguisticExample :=
+def ex8a : Datum :=
   { id := "hollidaymandelkern2024_ex8a"
     source := ⟨"holliday-mandelkern-2024", "(8a)"⟩
     reportedIn := none
@@ -329,7 +327,7 @@ def ex8a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Moore sentence"), ("environment", "existential quantifier")] }
 
-def ex8b : LinguisticExample :=
+def ex8b : Datum :=
   { id := "hollidaymandelkern2024_ex8b"
     source := ⟨"holliday-mandelkern-2024", "(8b)"⟩
     reportedIn := none
@@ -342,7 +340,7 @@ def ex8b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "existential quantifier")] }
 
-def ex8c : LinguisticExample :=
+def ex8c : Datum :=
   { id := "hollidaymandelkern2024_ex8c"
     source := ⟨"holliday-mandelkern-2024", "(8c)"⟩
     reportedIn := none
@@ -355,7 +353,7 @@ def ex8c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "classical contradiction"), ("environment", "existential quantifier")] }
 
-def ex9a : LinguisticExample :=
+def ex9a : Datum :=
   { id := "hollidaymandelkern2024_ex9a"
     source := ⟨"holliday-mandelkern-2024", "(9a)"⟩
     reportedIn := none
@@ -368,7 +366,7 @@ def ex9a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "distributed attitude ascriptions")] }
 
-def ex9b : LinguisticExample :=
+def ex9b : Datum :=
   { id := "hollidaymandelkern2024_ex9b"
     source := ⟨"holliday-mandelkern-2024", "(9b)"⟩
     reportedIn := none
@@ -381,7 +379,7 @@ def ex9b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "distributed suppositions")] }
 
-def ex9c : LinguisticExample :=
+def ex9c : Datum :=
   { id := "hollidaymandelkern2024_ex9c"
     source := ⟨"holliday-mandelkern-2024", "(9c)"⟩
     reportedIn := none
@@ -394,7 +392,7 @@ def ex9c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.1"), ("type", "Wittgenstein sentence"), ("environment", "distributed attitude ascriptions")] }
 
-def ex10a : LinguisticExample :=
+def ex10a : Datum :=
   { id := "hollidaymandelkern2024_ex10a"
     source := ⟨"holliday-mandelkern-2024", "(10a)"⟩
     reportedIn := none
@@ -407,7 +405,7 @@ def ex10a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("form", "(◇p ∧ ◇¬p) ∧ (p ∨ ¬p)")] }
 
-def ex10b : LinguisticExample :=
+def ex10b : Datum :=
   { id := "hollidaymandelkern2024_ex10b"
     source := ⟨"holliday-mandelkern-2024", "(10b)"⟩
     reportedIn := none
@@ -420,7 +418,7 @@ def ex10b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("form", "(◇¬p ∧ p) ∨ (◇p ∧ ¬p)")] }
 
-def ex11 : LinguisticExample :=
+def ex11 : Datum :=
   { id := "hollidaymandelkern2024_ex11"
     source := ⟨"holliday-mandelkern-2024", "(11)"⟩
     reportedIn := none
@@ -433,7 +431,7 @@ def ex11 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("form", "∧ᵢ ◇¬W(tᵢ)")] }
 
-def ex12 : LinguisticExample :=
+def ex12 : Datum :=
   { id := "hollidaymandelkern2024_ex12"
     source := ⟨"holliday-mandelkern-2024", "(12)"⟩
     reportedIn := none
@@ -446,7 +444,7 @@ def ex12 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.2"), ("form", "∨ᵢ (W(tᵢ) ∧ ◇¬W(tᵢ))")] }
 
-def ex13a : LinguisticExample :=
+def ex13a : Datum :=
   { id := "hollidaymandelkern2024_ex13a"
     source := ⟨"holliday-mandelkern-2024", "(13a)"⟩
     reportedIn := none
@@ -459,7 +457,7 @@ def ex13a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("form", "p ∨ □¬p"), ("role", "premise")] }
 
-def ex13b : LinguisticExample :=
+def ex13b : Datum :=
   { id := "hollidaymandelkern2024_ex13b"
     source := ⟨"holliday-mandelkern-2024", "(13b)"⟩
     reportedIn := none
@@ -472,7 +470,7 @@ def ex13b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("form", "¬□¬p"), ("role", "premise")] }
 
-def ex13c : LinguisticExample :=
+def ex13c : Datum :=
   { id := "hollidaymandelkern2024_ex13c"
     source := ⟨"holliday-mandelkern-2024", "(13c)"⟩
     reportedIn := none
@@ -485,7 +483,7 @@ def ex13c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("form", "p"), ("role", "conclusion")] }
 
-def ex14 : LinguisticExample :=
+def ex14 : Datum :=
   { id := "hollidaymandelkern2024_ex14"
     source := ⟨"holliday-mandelkern-2024", "(14)"⟩
     reportedIn := none
@@ -498,7 +496,7 @@ def ex14 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("form", "p ∨ ¬p")] }
 
-def ex15a : LinguisticExample :=
+def ex15a : Datum :=
   { id := "hollidaymandelkern2024_ex15a"
     source := ⟨"holliday-mandelkern-2024", "(15a)"⟩
     reportedIn := none
@@ -511,7 +509,7 @@ def ex15a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("form", "p ∨ □¬p")] }
 
-def ex15b : LinguisticExample :=
+def ex15b : Datum :=
   { id := "hollidaymandelkern2024_ex15b"
     source := ⟨"holliday-mandelkern-2024", "(15b)"⟩
     reportedIn := none
@@ -524,7 +522,7 @@ def ex15b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.3"), ("form", "□p ∨ ¬p")] }
 
-def ex16 : LinguisticExample :=
+def ex16 : Datum :=
   { id := "hollidaymandelkern2024_ex16"
     source := ⟨"holliday-mandelkern-2024", "(16)"⟩
     reportedIn := none
@@ -537,7 +535,7 @@ def ex16 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("form", "p ∨ q ⊨ ◇p ∨ ◇q"), ("evidence", "p entails ◇p")] }
 
-def ex17 : LinguisticExample :=
+def ex17 : Datum :=
   { id := "hollidaymandelkern2024_ex17"
     source := ⟨"holliday-mandelkern-2024", "(17)"⟩
     reportedIn := none
@@ -550,7 +548,7 @@ def ex17 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("form", "p ∧ ¬K◇p"), ("evidence", "p entails ◇p")] }
 
-def ex18a : LinguisticExample :=
+def ex18a : Datum :=
   { id := "hollidaymandelkern2024_ex18a"
     source := ⟨"holliday-mandelkern-2024", "(18a)"⟩
     reportedIn := none
@@ -563,7 +561,7 @@ def ex18a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("evidence", "p entails ◇p"), ("type", "retraction")] }
 
-def ex18b : LinguisticExample :=
+def ex18b : Datum :=
   { id := "hollidaymandelkern2024_ex18b"
     source := ⟨"holliday-mandelkern-2024", "(18b)"⟩
     reportedIn := none
@@ -576,7 +574,7 @@ def ex18b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("evidence", "p entails ◇p"), ("type", "retraction")] }
 
-def ex19 : LinguisticExample :=
+def ex19 : Datum :=
   { id := "hollidaymandelkern2024_ex19"
     source := ⟨"holliday-mandelkern-2024", "(19)"⟩
     reportedIn := none
@@ -589,7 +587,7 @@ def ex19 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("evidence", "p entails ◇p"), ("environment", "know")] }
 
-def ex20 : LinguisticExample :=
+def ex20 : Datum :=
   { id := "hollidaymandelkern2024_ex20"
     source := ⟨"holliday-mandelkern-2024", "(20)"⟩
     reportedIn := none
@@ -602,7 +600,7 @@ def ex20 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("evidence", "p entails ◇p"), ("environment", "conditional antecedent")] }
 
-def ex21a : LinguisticExample :=
+def ex21a : Datum :=
   { id := "hollidaymandelkern2024_ex21a"
     source := ⟨"holliday-mandelkern-2024", "(21a)"⟩
     reportedIn := none
@@ -615,7 +613,7 @@ def ex21a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("form", "(¬p ∧ ◇p) ∨ p")] }
 
-def ex21b : LinguisticExample :=
+def ex21b : Datum :=
   { id := "hollidaymandelkern2024_ex21b"
     source := ⟨"holliday-mandelkern-2024", "(21b)"⟩
     reportedIn := none
@@ -628,7 +626,7 @@ def ex21b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "2.4"), ("form", "p")] }
 
-def ex22a : LinguisticExample :=
+def ex22a : Datum :=
   { id := "hollidaymandelkern2024_ex22a"
     source := ⟨"holliday-mandelkern-2024", "(22a)"⟩
     reportedIn := none
@@ -641,7 +639,7 @@ def ex22a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.3"), ("form", "◇◇p"), ("evidence", "against 4")] }
 
-def ex22b : LinguisticExample :=
+def ex22b : Datum :=
   { id := "hollidaymandelkern2024_ex22b"
     source := ⟨"holliday-mandelkern-2024", "(22b)"⟩
     reportedIn := none
@@ -654,7 +652,7 @@ def ex22b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.3"), ("form", "◇p")] }
 
-def ex22c : LinguisticExample :=
+def ex22c : Datum :=
   { id := "hollidaymandelkern2024_ex22c"
     source := ⟨"holliday-mandelkern-2024", "(22c)"⟩
     reportedIn := none
@@ -667,7 +665,7 @@ def ex22c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.3"), ("form", "□◇p")] }
 
-def ex23a : LinguisticExample :=
+def ex23a : Datum :=
   { id := "hollidaymandelkern2024_ex23a"
     source := ⟨"holliday-mandelkern-2024", "(23a)"⟩
     reportedIn := none
@@ -680,7 +678,7 @@ def ex23a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.3"), ("form", "□p ∧ ¬□□p"), ("evidence", "violation of 4 inconsistent")] }
 
-def ex23b : LinguisticExample :=
+def ex23b : Datum :=
   { id := "hollidaymandelkern2024_ex23b"
     source := ⟨"holliday-mandelkern-2024", "(23b)"⟩
     reportedIn := none
@@ -693,7 +691,7 @@ def ex23b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.3"), ("form", "◇p ∧ ¬□◇p"), ("evidence", "violation of 5 inconsistent")] }
 
-def ex23c : LinguisticExample :=
+def ex23c : Datum :=
   { id := "hollidaymandelkern2024_ex23c"
     source := ⟨"holliday-mandelkern-2024", "(23c)"⟩
     reportedIn := none
@@ -706,7 +704,7 @@ def ex23c : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "3.2.3"), ("form", "p ∧ ¬□◇p"), ("evidence", "violation of B inconsistent")] }
 
-def ex24a : LinguisticExample :=
+def ex24a : Datum :=
   { id := "hollidaymandelkern2024_ex24a"
     source := ⟨"holliday-mandelkern-2024", "(24a)"⟩
     reportedIn := none
@@ -719,7 +717,7 @@ def ex24a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("form", "(U₁ ∨ U₂) ∧ ◇V"), ("principle", "restricted diamond distributivity")] }
 
-def ex24b : LinguisticExample :=
+def ex24b : Datum :=
   { id := "hollidaymandelkern2024_ex24b"
     source := ⟨"holliday-mandelkern-2024", "(24b)"⟩
     reportedIn := none
@@ -732,7 +730,7 @@ def ex24b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "5"), ("form", "(U₁ ∧ ◇V) ∨ (U₂ ∧ ◇V)"), ("principle", "restricted diamond distributivity")] }
 
-def ex25 : LinguisticExample :=
+def ex25 : Datum :=
   { id := "hollidaymandelkern2024_ex25"
     source := ⟨"holliday-mandelkern-2024", "(25)"⟩
     reportedIn := none
@@ -745,7 +743,7 @@ def ex25 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("environment", "believe"), ("type", "classical contradiction")] }
 
-def ex26 : LinguisticExample :=
+def ex26 : Datum :=
   { id := "hollidaymandelkern2024_ex26"
     source := ⟨"holliday-mandelkern-2024", "(26)"⟩
     reportedIn := none
@@ -758,7 +756,7 @@ def ex26 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("environment", "believe"), ("type", "disjoined Wittgenstein sentence")] }
 
-def ex27 : LinguisticExample :=
+def ex27 : Datum :=
   { id := "hollidaymandelkern2024_ex27"
     source := ⟨"holliday-mandelkern-2024", "(27)"⟩
     reportedIn := none
@@ -771,7 +769,7 @@ def ex27 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("environment", "believe"), ("type", "modalized Wittgenstein sentence")] }
 
-def ex28a : LinguisticExample :=
+def ex28a : Datum :=
   { id := "hollidaymandelkern2024_ex28a"
     source := ⟨"holliday-mandelkern-2024", "(28a)"⟩
     reportedIn := none
@@ -784,7 +782,7 @@ def ex28a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("form", "(◇p ∧ ¬p) → q"), ("comparison", "dynamic semantics")] }
 
-def ex28b : LinguisticExample :=
+def ex28b : Datum :=
   { id := "hollidaymandelkern2024_ex28b"
     source := ⟨"holliday-mandelkern-2024", "(28b)"⟩
     reportedIn := none
@@ -797,7 +795,7 @@ def ex28b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("form", "◇p ∧ (¬p → q)"), ("comparison", "dynamic semantics")] }
 
-def ex29a : LinguisticExample :=
+def ex29a : Datum :=
   { id := "hollidaymandelkern2024_ex29a"
     source := ⟨"holliday-mandelkern-2024", "(29a)"⟩
     reportedIn := none
@@ -810,7 +808,7 @@ def ex29a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("form", "◇p ∧ ◇¬p"), ("comparison", "state-based semantics")] }
 
-def ex29b : LinguisticExample :=
+def ex29b : Datum :=
   { id := "hollidaymandelkern2024_ex29b"
     source := ⟨"holliday-mandelkern-2024", "(29b)"⟩
     reportedIn := none
@@ -823,7 +821,7 @@ def ex29b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("form", "¬(□¬p ∨ □p)"), ("comparison", "state-based semantics")] }
 
-def ex30 : LinguisticExample :=
+def ex30 : Datum :=
   { id := "hollidaymandelkern2024_ex30"
     source := ⟨"holliday-mandelkern-2024", "(30)"⟩
     reportedIn := none
@@ -836,7 +834,7 @@ def ex30 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("form", "□¬p ∨ □p"), ("comparison", "state-based semantics")] }
 
-def ex31a : LinguisticExample :=
+def ex31a : Datum :=
   { id := "hollidaymandelkern2024_ex31a"
     source := ⟨"holliday-mandelkern-2024", "(31a)"⟩
     reportedIn := none
@@ -849,7 +847,7 @@ def ex31a : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("form", "□p"), ("topic", "probability")] }
 
-def ex31b : LinguisticExample :=
+def ex31b : Datum :=
   { id := "hollidaymandelkern2024_ex31b"
     source := ⟨"holliday-mandelkern-2024", "(31b)"⟩
     reportedIn := none
@@ -862,7 +860,7 @@ def ex31b : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("topic", "probability")] }
 
-def ex32 : LinguisticExample :=
+def ex32 : Datum :=
   { id := "hollidaymandelkern2024_ex32"
     source := ⟨"holliday-mandelkern-2024", "(32)"⟩
     reportedIn := none
@@ -875,7 +873,7 @@ def ex32 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("topic", "probability")] }
 
-def ex33 : LinguisticExample :=
+def ex33 : Datum :=
   { id := "hollidaymandelkern2024_ex33"
     source := ⟨"holliday-mandelkern-2024", "(33)"⟩
     reportedIn := none
@@ -888,6 +886,6 @@ def ex33 : LinguisticExample :=
     readings := []
     paperFeatures := [("section", "6"), ("form", "p ∧ ¬K◇p"), ("comparison", "expressivism")] }
 
-def all : List LinguisticExample := [ex1a, ex1b, ex1c, ex2a, ex2b, ex2c, ex2d, ex2e, ex3a, ex3b, ex3c, ex4a, ex4b, ex4c, ex5a, ex5b, ex5c, ex6a, ex6b, ex6c, ex7a, ex7b, ex7c, ex8a, ex8b, ex8c, ex9a, ex9b, ex9c, ex10a, ex10b, ex11, ex12, ex13a, ex13b, ex13c, ex14, ex15a, ex15b, ex16, ex17, ex18a, ex18b, ex19, ex20, ex21a, ex21b, ex22a, ex22b, ex22c, ex23a, ex23b, ex23c, ex24a, ex24b, ex25, ex26, ex27, ex28a, ex28b, ex29a, ex29b, ex30, ex31a, ex31b, ex32, ex33]
+def all : List Datum := [ex1a, ex1b, ex1c, ex2a, ex2b, ex2c, ex2d, ex2e, ex3a, ex3b, ex3c, ex4a, ex4b, ex4c, ex5a, ex5b, ex5c, ex6a, ex6b, ex6c, ex7a, ex7b, ex7c, ex8a, ex8b, ex8c, ex9a, ex9b, ex9c, ex10a, ex10b, ex11, ex12, ex13a, ex13b, ex13c, ex14, ex15a, ex15b, ex16, ex17, ex18a, ex18b, ex19, ex20, ex21a, ex21b, ex22a, ex22b, ex22c, ex23a, ex23b, ex23c, ex24a, ex24b, ex25, ex26, ex27, ex28a, ex28b, ex29a, ex29b, ex30, ex31a, ex31b, ex32, ex33]
 
 end HollidayMandelkern2024.Examples

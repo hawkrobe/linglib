@@ -37,7 +37,7 @@ and how many there are.
 
 namespace Francescotti1995
 
-open Focus.Particles Data.Examples
+open Focus.Particles
 
 /-- How many true neighbors the prejacent must surpass in surprise: at least one, all, or
 most. -/
@@ -126,13 +126,13 @@ structure Row where
   felicitous : Bool
   deriving DecidableEq
 
-def Row.ofExample (ex : LinguisticExample) : Option Row := do
+def Row.ofDatum (ex : Datum) : Option Row := do
   let k ← ex.nat? "surpassed"
   let n ← ex.nat? "neighbors"
   let f ← ex.parse? "felicitous" [("yes", true), ("no", false)]
   pure ⟨k, n, f⟩
 
-def rows : List Row := Examples.all.filterMap Row.ofExample
+def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- The majority threshold fits every scenario. -/
 theorem rows_most : ∀ r ∈ rows, (r.felicitous = true ↔ Meets .most r.surpassed r.neighbors) := by

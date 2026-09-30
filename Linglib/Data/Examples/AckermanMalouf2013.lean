@@ -15,9 +15,7 @@ this module; declarations live in `namespace AckermanMalouf2013.Examples`.
 
 namespace AckermanMalouf2013.Examples
 
-open Data.Examples
-
-def ex_1 : LinguisticExample :=
+def ex_1 : Datum :=
   { id := "ackermanmalouf2013_1"
     source := ⟨"ackerman-malouf-2013", "(1)"⟩
     reportedIn := none
@@ -30,6 +28,6 @@ def ex_1 : LinguisticExample :=
     readings := []
     paperFeatures := [("phenomenon", "polysynthesis"), ("complexity", "enumerative")] }
 
-def all : List LinguisticExample := [ex_1]
+def all : List Datum := [ex_1]
 
 end AckermanMalouf2013.Examples

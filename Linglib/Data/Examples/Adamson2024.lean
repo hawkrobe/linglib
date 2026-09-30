@@ -15,9 +15,7 @@ this module; declarations live in `namespace Adamson2024.Examples`.
 
 namespace Adamson2024.Examples
 
-open Data.Examples
-
-def ex_39a : LinguisticExample :=
+def ex_39a : Datum :=
   { id := "adamson2024_39a"
     source := ⟨"adamson-2024", "(39a)"⟩
     reportedIn := none
@@ -30,7 +28,7 @@ def ex_39a : LinguisticExample :=
     readings := []
     paperFeatures := [("possession", "inalienable"), ("gender", "I")] }
 
-def ex_39b : LinguisticExample :=
+def ex_39b : Datum :=
   { id := "adamson2024_39b"
     source := ⟨"adamson-2024", "(39b)"⟩
     reportedIn := none
@@ -43,7 +41,7 @@ def ex_39b : LinguisticExample :=
     readings := []
     paperFeatures := [("possession", "none"), ("gender", "II")] }
 
-def ex_40a : LinguisticExample :=
+def ex_40a : Datum :=
   { id := "adamson2024_40a"
     source := ⟨"adamson-2024", "(40a)"⟩
     reportedIn := none
@@ -56,7 +54,7 @@ def ex_40a : LinguisticExample :=
     readings := []
     paperFeatures := [("possession", "inalienable"), ("gender", "I")] }
 
-def ex_40b : LinguisticExample :=
+def ex_40b : Datum :=
   { id := "adamson2024_40b"
     source := ⟨"adamson-2024", "(40b)"⟩
     reportedIn := none
@@ -69,7 +67,7 @@ def ex_40b : LinguisticExample :=
     readings := []
     paperFeatures := [("possession", "none"), ("gender", "II")] }
 
-def ex_44a : LinguisticExample :=
+def ex_44a : Datum :=
   { id := "adamson2024_44a"
     source := ⟨"adamson-2024", "(44a)"⟩
     reportedIn := none
@@ -82,7 +80,7 @@ def ex_44a : LinguisticExample :=
     readings := []
     paperFeatures := [("possession", "inalienable"), ("gender", "I")] }
 
-def ex_44b : LinguisticExample :=
+def ex_44b : Datum :=
   { id := "adamson2024_44b"
     source := ⟨"adamson-2024", "(44b)"⟩
     reportedIn := none
@@ -95,7 +93,7 @@ def ex_44b : LinguisticExample :=
     readings := []
     paperFeatures := [("possession", "alienable"), ("gender", "II")] }
 
-def ex_45b : LinguisticExample :=
+def ex_45b : Datum :=
   { id := "adamson2024_45b"
     source := ⟨"adamson-2024", "(45b)"⟩
     reportedIn := none
@@ -108,7 +106,7 @@ def ex_45b : LinguisticExample :=
     readings := []
     paperFeatures := [("possession", "alienable"), ("gender", "II"), ("alienator", "-na")] }
 
-def ex_46 : LinguisticExample :=
+def ex_46 : Datum :=
   { id := "adamson2024_46"
     source := ⟨"adamson-2024", "(46)"⟩
     reportedIn := none
@@ -121,7 +119,7 @@ def ex_46 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "compound"), ("gender", "II")] }
 
-def ex_48 : LinguisticExample :=
+def ex_48 : Datum :=
   { id := "adamson2024_48"
     source := ⟨"adamson-2024", "(48)"⟩
     reportedIn := none
@@ -134,7 +132,7 @@ def ex_48 : LinguisticExample :=
     readings := []
     paperFeatures := [("possession", "inalienable"), ("gender", "I"), ("possessorGender", "II")] }
 
-def ex_50 : LinguisticExample :=
+def ex_50 : Datum :=
   { id := "adamson2024_50"
     source := ⟨"adamson-2024", "(50)"⟩
     reportedIn := none
@@ -147,7 +145,7 @@ def ex_50 : LinguisticExample :=
     readings := []
     paperFeatures := [("possession", "inalienable"), ("article", "proprial")] }
 
-def ex_51 : LinguisticExample :=
+def ex_51 : Datum :=
   { id := "adamson2024_51"
     source := ⟨"adamson-2024", "(51)"⟩
     reportedIn := none
@@ -160,7 +158,7 @@ def ex_51 : LinguisticExample :=
     readings := []
     paperFeatures := [("possession", "none"), ("gender", "II"), ("alienator", "-na")] }
 
-def ex_52 : LinguisticExample :=
+def ex_52 : Datum :=
   { id := "adamson2024_52"
     source := ⟨"adamson-2024", "(52)"⟩
     reportedIn := none
@@ -173,7 +171,7 @@ def ex_52 : LinguisticExample :=
     readings := []
     paperFeatures := [("possession", "inalienable"), ("agreement", "possessor")] }
 
-def ex_53 : LinguisticExample :=
+def ex_53 : Datum :=
   { id := "adamson2024_53"
     source := ⟨"adamson-2024", "(53)"⟩
     reportedIn := none
@@ -186,7 +184,7 @@ def ex_53 : LinguisticExample :=
     readings := []
     paperFeatures := [("possession", "inalienable"), ("agreement", "possessor")] }
 
-def ex_64 : LinguisticExample :=
+def ex_64 : Datum :=
   { id := "adamson2024_64"
     source := ⟨"adamson-2024", "(64)"⟩
     reportedIn := none
@@ -199,7 +197,7 @@ def ex_64 : LinguisticExample :=
     readings := []
     paperFeatures := [("possession", "inalienable"), ("marker", "juxtaposition")] }
 
-def ex_70 : LinguisticExample :=
+def ex_70 : Datum :=
   { id := "adamson2024_70"
     source := ⟨"adamson-2024", "(70)"⟩
     reportedIn := none
@@ -212,7 +210,7 @@ def ex_70 : LinguisticExample :=
     readings := []
     paperFeatures := [("agreement", "possessor"), ("target", "declarative")] }
 
-def ex_71 : LinguisticExample :=
+def ex_71 : Datum :=
   { id := "adamson2024_71"
     source := ⟨"adamson-2024", "(71)"⟩
     reportedIn := none
@@ -225,7 +223,7 @@ def ex_71 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex possessor"), ("pattern", "match")] }
 
-def ex_73 : LinguisticExample :=
+def ex_73 : Datum :=
   { id := "adamson2024_73"
     source := ⟨"adamson-2024", "(73)"⟩
     reportedIn := none
@@ -238,7 +236,7 @@ def ex_73 : LinguisticExample :=
     readings := []
     paperFeatures := [("construction", "complex possessor"), ("pattern", "mismatch")] }
 
-def ex_75a : LinguisticExample :=
+def ex_75a : Datum :=
   { id := "adamson2024_75a"
     source := ⟨"adamson-2024", "(75a)"⟩
     reportedIn := none
@@ -251,7 +249,7 @@ def ex_75a : LinguisticExample :=
     readings := []
     paperFeatures := [("agreement", "attributive"), ("gender", "feminine")] }
 
-def ex_80 : LinguisticExample :=
+def ex_80 : Datum :=
   { id := "adamson2024_80"
     source := ⟨"adamson-2024", "(80)"⟩
     reportedIn := none
@@ -264,7 +262,7 @@ def ex_80 : LinguisticExample :=
     readings := []
     paperFeatures := [("possession", "inalienable"), ("mechanism", "inherited gender")] }
 
-def ex_88 : LinguisticExample :=
+def ex_88 : Datum :=
   { id := "adamson2024_88"
     source := ⟨"adamson-2024", "(88)"⟩
     reportedIn := none
@@ -277,7 +275,7 @@ def ex_88 : LinguisticExample :=
     readings := []
     paperFeatures := [("possession", "inalienable"), ("mechanism", "inherited gender")] }
 
-def ex_89 : LinguisticExample :=
+def ex_89 : Datum :=
   { id := "adamson2024_89"
     source := ⟨"adamson-2024", "(89)"⟩
     reportedIn := none
@@ -290,7 +288,7 @@ def ex_89 : LinguisticExample :=
     readings := []
     paperFeatures := [("possession", "inalienable"), ("mechanism", "inherited gender")] }
 
-def ex_100 : LinguisticExample :=
+def ex_100 : Datum :=
   { id := "adamson2024_100"
     source := ⟨"adamson-2024", "(100)"⟩
     reportedIn := none
@@ -303,6 +301,6 @@ def ex_100 : LinguisticExample :=
     readings := []
     paperFeatures := [("number", "on n"), ("gender", "feminine")] }
 
-def all : List LinguisticExample := [ex_39a, ex_39b, ex_40a, ex_40b, ex_44a, ex_44b, ex_45b, ex_46, ex_48, ex_50, ex_51, ex_52, ex_53, ex_64, ex_70, ex_71, ex_73, ex_75a, ex_80, ex_88, ex_89, ex_100]
+def all : List Datum := [ex_39a, ex_39b, ex_40a, ex_40b, ex_44a, ex_44b, ex_45b, ex_46, ex_48, ex_50, ex_51, ex_52, ex_53, ex_64, ex_70, ex_71, ex_73, ex_75a, ex_80, ex_88, ex_89, ex_100]
 
 end Adamson2024.Examples

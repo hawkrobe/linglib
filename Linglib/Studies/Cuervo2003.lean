@@ -76,7 +76,7 @@ the paper attests its double object construction with *arrivare* alone.
 
 namespace Cuervo2003
 
-open Minimalist Data.Examples
+open Minimalist
 
 /-! ### Meanings (table (40)) -/
 
@@ -344,7 +344,7 @@ theorem causative_meanings {p : Predicate} (hp : p.heads = [.vDO, .vBE]) :
 /-! ### The rows -/
 
 /-- The predicate of an example. -/
-def predicate? (e : LinguisticExample) : Option Predicate :=
+def predicate? (e : Datum) : Option Predicate :=
   e.parse? "predicate"
     [("mandar", mandar), ("preparar", preparar), ("sacar", sacar), ("lavar", lavar),
       ("admirar", admirar), ("llegar", llegar), ("salir", salir), ("suceder", suceder),
@@ -356,17 +356,17 @@ def predicate? (e : LinguisticExample) : Option Predicate :=
       ("arrive", arrive)]
 
 /-- The inventory of an example's language. -/
-def inventory? (e : LinguisticExample) : Option Inventory :=
+def inventory? (e : Datum) : Option Inventory :=
   List.lookup e.language [("stan1288", spanish), ("stan1293", english)]
 
 /-- The meaning an example reports for its dative. -/
-def meaning? (e : LinguisticExample) : Option Meaning :=
+def meaning? (e : Datum) : Option Meaning :=
   e.parse? "meaning"
     [("recipient", .low .recipient), ("source", .low .source), ("possessor", .low .possessor),
       ("affected", .affected), ("experiencer", .experiencer), ("ethical", .ethical)]
 
 /-- The meanings the model gives an example's dative. -/
-def predicted (e : LinguisticExample) : Option (List Meaning) := do
+def predicted (e : Datum) : Option (List Meaning) := do
   let i ← inventory? e
   let p ← predicate? e
   let a ← e.parse? "animate" [("yes", true), ("no", false)]
