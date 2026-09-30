@@ -106,18 +106,18 @@ theorem inclusive_not_bound :
 denote two or more individuals, under any distribution. This is the plurality a reciprocal
 requires of its antecedent. -/
 theorem reciprocity_implies_multiple_individuals {E : Type*} {uAnaph uAnt : ℕ}
-    {S : PluralAssign ℕ E} {Δ : Set ℕ} (hdef : ∃ s ∈ S, (s uAnaph).isSome ∧ (s uAnt).isSome)
+    {S : PluralAssign ℕ E} {Δ : Set ℕ} (hdef : ∃ s ∈ S, s uAnaph ≠ ⊥ ∧ s uAnt ≠ ⊥)
     (h : reciprocityCond uAnaph uAnt S Δ) : (PCDRT.value uAnt S).Nontrivial := by
   obtain ⟨s, hs, hAnaph, hAnt⟩ := hdef
-  obtain ⟨a, ha⟩ := Option.isSome_iff_exists.mp hAnaph
-  obtain ⟨b, hb⟩ := Option.isSome_iff_exists.mp hAnt
+  obtain ⟨a, ha⟩ := Flat.ne_bot_iff_exists.mp hAnaph
+  obtain ⟨b, hb⟩ := Flat.ne_bot_iff_exists.mp hAnt
   exact nontrivial_value_of_reciprocityCond h hs ha hb
 
 /-- Binding is satisfied by a singleton state mapping both discourse referents to one value:
 reflexive binding imposes no plurality on the denotation. -/
 theorem binding_compatible_with_singleton {E : Type*} (e : E) (uAnaph uAnt : ℕ) :
     bindingCond uAnaph uAnt
-      {PartialAssign.update (PartialAssign.update PartialAssign.empty uAnaph e) uAnt e} ∅ := by
+      {PartialAssign.update (PartialAssign.update ⊥ uAnaph e) uAnt e} ∅ := by
   intro g hg
   obtain rfl : g = _ := hg
   by_cases h : uAnaph = uAnt

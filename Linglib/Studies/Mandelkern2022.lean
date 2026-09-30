@@ -66,8 +66,8 @@ def resolveVars {E : Type v} (g : PartialAssign ℕ E) : List Nat → Option (Li
   | [] => some []
   | x :: xs =>
     match g x with
-    | none => none
-    | some a =>
+    | ⊥ => none
+    | (a : E) =>
       match resolveVars g xs with
       | none => none
       | some bs => some (a :: bs)
@@ -465,26 +465,26 @@ predicate plus the partial-assignment `update_self` plus a truth-invariance
 lemma for non-referenced variable updates. -/
 
 /-- **`resolveVars [x]` extracts `g(x)` defined**: if `resolveVars g [x] = some es`
-for any `es`, then `g x = some a` for some `a`. The base technical lemma
+for any `es`, then `g x = ↑a` for some `a`. The base technical lemma
 that lets atomic-truth-of-`Fx` imply `g(x)` defined.
 
 Proof via `by_contra` + `push Not` to avoid `cases hgx : g x`-style
 substitution which Lean does eagerly, breaking the goal structure. -/
 theorem resolveVars_singleton_def {E : Type v} {g : PartialAssign ℕ E} {x : Nat}
-    {es : List E} (h : resolveVars g [x] = some es) : ∃ a, g x = some a := by
+    {es : List E} (h : resolveVars g [x] = some es) : ∃ a : E, g x = ↑a := by
   by_contra hne
   push Not at hne
-  have hgx_none : g x = none := by
+  have hgx_none : g x = ⊥ := by
     cases hg : g x with
-    | none => rfl
-    | some a => exact absurd hg (hne a)
+    | bot => rfl
+    | coe a => exact absurd hg (hne a)
   unfold resolveVars at h
   rw [hgx_none] at h
   simp at h
 
 /-- **`resolveVars [x]` for defined `g(x)`** computes `some [a]`. -/
 theorem resolveVars_singleton_some {E : Type v} {g : PartialAssign ℕ E} {x : Nat}
-    {a : E} (h : g x = some a) : resolveVars g [x] = some [a] := by
+    {a : E} (h : g x = ↑a) : resolveVars g [x] = some [a] := by
   unfold resolveVars
   rw [h]
   rfl

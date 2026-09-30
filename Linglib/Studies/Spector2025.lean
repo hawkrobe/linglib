@@ -127,12 +127,18 @@ undefined; the existential is true when its scope is, false when every value fal
 scope, undefined otherwise. The universal and the strong-truth operator belong to the full
 system and are left undefined here. -/
 noncomputable def eval : Formula P R → W → PartialAssign ℕ D → Trivalent
-  | .pred p x, w, g => (g x).elim .indet λ d => ofProp (d ∈ M.pred p w)
+  | .pred p x, w, g =>
+    match g x with
+    | ⊥ => .indet
+    | (d : D) => ofProp (d ∈ M.pred p w)
   | .rel r x y, w, g =>
     match g x, g y with
-    | some a, some b => ofProp ((a, b) ∈ M.rel r w)
+    | (a : D), (b : D) => ofProp ((a, b) ∈ M.rel r w)
     | _, _ => .indet
-  | .valued x, _, g => ofBool (g x).isSome
+  | .valued x, _, g =>
+    match g x with
+    | ⊥ => .false
+    | (_ : D) => .true
   | .not φ, w, g => (eval φ w g).neg
   | .and φ ψ, w, g => meetMiddle (eval φ w g) (eval ψ w g)
   | .or φ ψ, w, g => joinMiddle (eval φ w g) (eval ψ w g)
@@ -147,40 +153,38 @@ def TrueAt (φ : Formula P R) (w : W) : Prop := ∃ g : PartialAssign ℕ D, eva
 
 variable {M}
 
-theorem eval_pred_none {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D} (h : g x = none) :
+theorem eval_pred_of_eq_bot {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D} (h : g x = ⊥) :
     eval M (.pred p x) w g = .indet := by
   simp [eval, h]
 
 open Classical in
-theorem eval_pred_some {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D} {d : D}
-    (h : g x = some d) : eval M (.pred p x) w g = ofProp (d ∈ M.pred p w) := by
+theorem eval_pred_of_eq_coe {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D} {d : D}
+    (h : g x = ↑d) : eval M (.pred p x) w g = ofProp (d ∈ M.pred p w) := by
   simp [eval, h]
 
 theorem eval_pred_eq_true_iff {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D} :
-    eval M (.pred p x) w g = .true ↔ ∃ d, g x = some d ∧ d ∈ M.pred p w := by
+    eval M (.pred p x) w g = .true ↔ ∃ d : D, g x = ↑d ∧ d ∈ M.pred p w := by
   cases h : g x with
-  | none => simp [eval_pred_none h]
-  | some d => simp [eval_pred_some h]
+  | bot => simp [eval_pred_of_eq_bot h]
+  | coe d => simp [eval_pred_of_eq_coe h]
 
 theorem eval_pred_eq_false_iff {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D} :
-    eval M (.pred p x) w g = .false ↔ ∃ d, g x = some d ∧ d ∉ M.pred p w := by
+    eval M (.pred p x) w g = .false ↔ ∃ d : D, g x = ↑d ∧ d ∉ M.pred p w := by
   cases h : g x with
-  | none => simp [eval_pred_none h]
-  | some d => simp [eval_pred_some h]
+  | bot => simp [eval_pred_of_eq_bot h]
+  | coe d => simp [eval_pred_of_eq_coe h]
 
-theorem eval_valued {x : ℕ} {w : W} {g : PartialAssign ℕ D} :
-    eval M (.valued x) w g = ofBool (g x).isSome := rfl
-
-theorem eval_valued_of_isSome {x : ℕ} {w : W} {g : PartialAssign ℕ D} (h : (g x).isSome) :
+theorem eval_valued_of_ne_bot {x : ℕ} {w : W} {g : PartialAssign ℕ D} (h : g x ≠ ⊥) :
     eval M (.valued x) w g = .true := by
-  simp [eval_valued, h, ofBool]
+  obtain ⟨d, hd⟩ := Flat.ne_bot_iff_exists.1 h
+  simp [eval, hd]
 
-theorem eval_valued_of_none {x : ℕ} {w : W} {g : PartialAssign ℕ D} (h : g x = none) :
+theorem eval_valued_of_eq_bot {x : ℕ} {w : W} {g : PartialAssign ℕ D} (h : g x = ⊥) :
     eval M (.valued x) w g = .false := by
-  simp [eval_valued, h, ofBool]
+  simp [eval, h]
 
-@[simp] theorem eval_valued_empty (x : ℕ) (w : W) :
-    eval M (.valued x) w (PartialAssign.empty : PartialAssign ℕ D) = .false := rfl
+@[simp] theorem eval_valued_bot (x : ℕ) (w : W) :
+    eval M (.valued x) w (⊥ : PartialAssign ℕ D) = .false := rfl
 
 theorem eval_not {φ : Formula P R} {w : W} {g : PartialAssign ℕ D} :
     eval M (.not φ) w g = (eval M φ w g).neg := rfl
@@ -206,8 +210,8 @@ theorem eval_ex_eq_false_iff {x : ℕ} {φ : Formula P R} {w : W} {g : PartialAs
   split_ifs <;> simp [*]
 
 /-- The witness connection: a true existential over a predicate values its variable. -/
-theorem isSome_of_eval_ex_pred {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D}
-    (h : eval M (.ex x (.pred p x)) w g = .true) : (g x).isSome := by
+theorem ne_bot_of_eval_ex_pred {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D}
+    (h : eval M (.ex x (.pred p x)) w g = .true) : g x ≠ ⊥ := by
   obtain ⟨d, hd, -⟩ := eval_pred_eq_true_iff.1 (eval_ex_eq_true_iff.1 h)
   simp [hd]
 
@@ -227,9 +231,9 @@ theorem trueAt_conj_iff (T Q : P) (x : ℕ) (w : W) :
     obtain ⟨d, hd, hT⟩ := eval_pred_eq_true_iff.1 (eval_ex_eq_true_iff.1 h1)
     obtain ⟨d', hd', hQ⟩ := eval_pred_eq_true_iff.1 hg
     rw [hd] at hd'
-    exact ⟨d, hT, Option.some_inj.1 hd' ▸ hQ⟩
+    exact ⟨d, hT, Flat.coe_inj.1 hd' ▸ hQ⟩
   · rintro ⟨d, hT, hQ⟩
-    refine ⟨PartialAssign.empty.update x d, ?_⟩
+    refine ⟨PartialAssign.update ⊥ x d, ?_⟩
     rw [eval_and, eval_ex_eq_true_iff.2 (eval_pred_eq_true_iff.2 ⟨d, by simp, hT⟩),
       Trivalent.meetMiddle_true_left]
     exact eval_pred_eq_true_iff.2 ⟨d, by simp, hQ⟩
@@ -251,21 +255,21 @@ theorem trueAt_bathroom_iff (B F : P) (x : ℕ) (w : W) :
       obtain ⟨-, hall⟩ := eval_ex_eq_false_iff.1 hE
       obtain ⟨d', hd', hnot⟩ := eval_pred_eq_false_iff.1 (hall d)
       rw [PartialAssign.update_at] at hd'
-      exact hnot (Option.some_inj.1 hd' ▸ hd)
+      exact hnot (Flat.coe_inj.1 hd' ▸ hd)
     | «true» =>
       right
       rw [hE, Trivalent.neg_true, Trivalent.joinMiddle_false_left] at hg
       obtain ⟨d, hd, hB⟩ := eval_pred_eq_true_iff.1 (eval_ex_eq_true_iff.1 hE)
       obtain ⟨d', hd', hF⟩ := eval_pred_eq_true_iff.1 hg
       rw [hd] at hd'
-      exact ⟨d, hB, Option.some_inj.1 hd' ▸ hF⟩
+      exact ⟨d, hB, Flat.coe_inj.1 hd' ▸ hF⟩
   · rintro (hnone | ⟨d, hB, hF⟩)
-    · refine ⟨PartialAssign.empty, ?_⟩
+    · refine ⟨(⊥ : PartialAssign ℕ D), ?_⟩
       rw [eval_or, eval_not, eval_ex_eq_false_iff.2 ⟨?_, λ a => ?_⟩]
       · rfl
-      · rw [eval_pred_none rfl]; decide
+      · rw [eval_pred_of_eq_bot rfl]; decide
       · exact eval_pred_eq_false_iff.2 ⟨a, PartialAssign.update_at _ _ _, hnone a⟩
-    · refine ⟨PartialAssign.empty.update x d, ?_⟩
+    · refine ⟨PartialAssign.update ⊥ x d, ?_⟩
       rw [eval_or, eval_not, eval_ex_eq_true_iff.2 (eval_pred_eq_true_iff.2 ⟨d, by simp, hB⟩),
         Trivalent.neg_true, Trivalent.joinMiddle_false_left]
       exact eval_pred_eq_true_iff.2 ⟨d, by simp, hF⟩
@@ -296,39 +300,39 @@ def Transparent (C : Ctx W D) (F : Frame P R) (x : ℕ) : Prop :=
 *valued(x) ∧ φ* is false while *φ* may be true. -/
 theorem not_transparent_id_null [Nonempty W] (x : ℕ) : ¬ Transparent M nullCtx id x := by
   intro h
-  have := h (.not (.valued x)) (Classical.arbitrary W, PartialAssign.empty) trivial
-  simp only [id, eval_and, eval_not, eval_valued_empty] at this
+  have := h (.not (.valued x)) (Classical.arbitrary W, (⊥ : PartialAssign ℕ D)) trivial
+  simp only [id, eval_and, eval_not, eval_valued_bot] at this
   exact absurd this (by decide)
 
 /-- A bare pronoun is transparent wherever the context values its variable. -/
-theorem transparent_id_of_valued {C : Ctx W D} {x : ℕ} (hC : ∀ p ∈ C, (p.2 x).isSome) :
+theorem transparent_id_of_valued {C : Ctx W D} {x : ℕ} (hC : ∀ p ∈ C, p.2 x ≠ ⊥) :
     Transparent M C id x := λ _ p hp => by
-  simp only [id, eval_and, eval_valued_of_isSome (hC p hp), Trivalent.meetMiddle_true_left]
+  simp only [id, eval_and, eval_valued_of_ne_bot (hC p hp), Trivalent.meetMiddle_true_left]
 
 /-- Accepting *∃xT(x)* leaves `x` valued throughout the updated context. -/
-theorem isSome_of_mem_update_ex {C : Ctx W D} {T : P} {x : ℕ} {p : W × PartialAssign ℕ D}
-    (hp : p ∈ update M C (.ex x (.pred T x))) : (p.2 x).isSome :=
-  isSome_of_eval_ex_pred hp.2
+theorem ne_bot_of_mem_update_ex {C : Ctx W D} {T : P} {x : ℕ} {p : W × PartialAssign ℕ D}
+    (hp : p ∈ update M C (.ex x (.pred T x))) : p.2 x ≠ ⊥ :=
+  ne_bot_of_eval_ex_pred hp.2
 
 /-- *A table is in the room. It is purple.*: the pronoun is transparent after the accepted
 existential. -/
 theorem transparent_id_of_update_ex (C : Ctx W D) (T : P) (x : ℕ) :
     Transparent M (update M C (.ex x (.pred T x))) id x :=
-  transparent_id_of_valued λ _ hp => isSome_of_mem_update_ex hp
+  transparent_id_of_valued λ _ hp => ne_bot_of_mem_update_ex hp
 
 /-- *∃xT(x) ∧ P(x)* is transparent in every context: a true first conjunct values `x`. -/
 theorem transparent_forward_conj (C : Ctx W D) (T : P) (x : ℕ) :
     Transparent M C (λ ψ => .and (.ex x (.pred T x)) ψ) x := λ φ p _ => by
   simp only [eval_and]
-  exact conj_transparency_parametric _ _ _ λ h => eval_valued_of_isSome (isSome_of_eval_ex_pred h)
+  exact conj_transparency_parametric _ _ _ λ h => eval_valued_of_ne_bot (ne_bot_of_eval_ex_pred h)
 
 /-- *P(x) ∧ ∃xT(x)* is not transparent in the null context: with *φ = P(x)* at an unvalued
 variable the plain sentence is undefined and the presuppositional one false. -/
 theorem not_transparent_reverse_conj [Nonempty W] (T : P) (x : ℕ) :
     ¬ Transparent M nullCtx (λ ψ => .and ψ (.ex x (.pred T x))) x := by
   intro h
-  have := h (.pred T x) (Classical.arbitrary W, PartialAssign.empty) trivial
-  simp only [eval_and, eval_valued_empty, eval_pred_none (g := PartialAssign.empty) rfl,
+  have := h (.pred T x) (Classical.arbitrary W, (⊥ : PartialAssign ℕ D)) trivial
+  simp only [eval_and, eval_valued_bot, eval_pred_of_eq_bot (g := (⊥ : PartialAssign ℕ D)) rfl,
     Trivalent.meetMiddle_false_left, Trivalent.meetMiddle_indet_left] at this
   exact absurd this (by decide)
 
@@ -338,7 +342,7 @@ theorem transparent_bathroom (C : Ctx W D) (B : P) (x : ℕ) :
     Transparent M C (λ ψ => .or (.not (.ex x (.pred B x))) ψ) x := λ φ p _ => by
   simp only [eval_or, eval_not]
   exact disj_transparency_parametric _ _ _ λ h =>
-    eval_valued_of_isSome (isSome_of_eval_ex_pred (Trivalent.neg_eq_false_iff.1 h))
+    eval_valued_of_ne_bot (ne_bot_of_eval_ex_pred (Trivalent.neg_eq_false_iff.1 h))
 
 /-- The reversed bathroom sentence *H(x) ∨ ¬∃xB(x)* is not transparent in the null context:
 with a tautological *φ* and an unvalued variable, at a world with a bathroom the plain
@@ -347,20 +351,20 @@ theorem not_transparent_reverse_bathroom (B : P) (x : ℕ) (hw : ∃ w d, d ∈ 
     ¬ Transparent M nullCtx (λ ψ => .or ψ (.not (.ex x (.pred B x)))) x := by
   intro h
   obtain ⟨w, d, hd⟩ := hw
-  have := h (.or (.valued x) (.not (.valued x))) (w, PartialAssign.empty) trivial
-  have hE : eval M (.ex x (.pred B x)) w PartialAssign.empty = .indet := by
-    cases hE : eval M (.ex x (.pred B x)) w PartialAssign.empty with
+  have := h (.or (.valued x) (.not (.valued x))) (w, (⊥ : PartialAssign ℕ D)) trivial
+  have hE : eval M (.ex x (.pred B x)) w (⊥ : PartialAssign ℕ D) = .indet := by
+    cases hE : eval M (.ex x (.pred B x)) w (⊥ : PartialAssign ℕ D) with
     | indet => rfl
     | «true» =>
       have := eval_ex_eq_true_iff.1 hE
-      rw [eval_pred_none rfl] at this
+      rw [eval_pred_of_eq_bot rfl] at this
       cases this
     | «false» =>
       obtain ⟨-, hall⟩ := eval_ex_eq_false_iff.1 hE
       obtain ⟨d', hd', hnot⟩ := eval_pred_eq_false_iff.1 (hall d)
       rw [PartialAssign.update_at] at hd'
-      exact (hnot (Option.some_inj.1 hd' ▸ hd)).elim
-  simp only [eval_or, eval_and, eval_not, hE, eval_valued_empty,
+      exact (hnot (Flat.coe_inj.1 hd' ▸ hd)).elim
+  simp only [eval_or, eval_and, eval_not, hE, eval_valued_bot,
     Trivalent.meetMiddle_false_left] at this
   exact absurd this (by decide)
 
@@ -398,12 +402,12 @@ theorem trueAt_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) (
       ∃ b, ∀ a, (a, b) ∈ M.rel S w := by
   have key : ∀ (g : PartialAssign ℕ D) (a : D),
       eval M (.not (.ex y (.rel S x y))) w (g.update x a) = .false ↔
-        ∃ b, g y = some b ∧ (a, b) ∈ M.rel S w := by
+        ∃ b : D, g y = ↑b ∧ (a, b) ∈ M.rel S w := by
     intro g a
     rw [eval_not, Trivalent.neg_eq_false_iff, eval_ex_eq_true_iff]
     cases hy : g y with
-    | none => simp [eval, hy, PartialAssign.update_ne _ _ hxy.symm]
-    | some b => simp [eval, hy, PartialAssign.update_ne _ _ hxy.symm]
+    | bot => simp [eval, hy, PartialAssign.update_ne _ _ hxy.symm]
+    | coe b => simp [eval, hy, PartialAssign.update_ne _ _ hxy.symm]
   constructor
   · rintro ⟨g, hg⟩
     rw [eval_not, Trivalent.neg_eq_true_iff, eval_ex_eq_false_iff] at hg
@@ -413,15 +417,15 @@ theorem trueAt_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) (
     refine ⟨b, λ a => ?_⟩
     obtain ⟨b', hb', hS⟩ := (key g a).1 (hall a)
     rw [hb] at hb'
-    exact Option.some_inj.1 hb' ▸ hS
+    exact Flat.coe_inj.1 hb' ▸ hS
   · rintro ⟨b, hb⟩
-    refine ⟨PartialAssign.empty.update y b, ?_⟩
+    refine ⟨PartialAssign.update ⊥ y b, ?_⟩
     rw [eval_not, Trivalent.neg_eq_true_iff, eval_ex_eq_false_iff]
     refine ⟨λ hne => ?_, λ a => (key _ a).2 ⟨b, by simp, hb a⟩⟩
     rw [eval_not, Trivalent.neg_eq_true_iff, eval_ex_eq_false_iff] at hne
     obtain ⟨a₀⟩ := ‹Nonempty D›
     have := hne.2 a₀
-    simp [eval, PartialAssign.update_ne _ _ hxy, PartialAssign.empty] at this
+    simp [eval, PartialAssign.update_ne _ _ hxy] at this
 
 /-! ### The full system: plural assignments -/
 
@@ -620,10 +624,10 @@ theorem not_transparentP_forall_conj {a b : D} (hab : a ≠ b) {C : CtxP W D} {P
 
 variable (D) in
 /-- The plural assignment mapping `x` to every individual, one row each. -/
-def covering (x : ℕ) : PluralAssign ℕ D := Set.range (PartialAssign.empty.update x)
+def covering (x : ℕ) : PluralAssign ℕ D := Set.range (PartialAssign.update ⊥ x)
 
 theorem restrict_covering_nonempty (x : ℕ) (a : D) : ((covering D x).restrict x a).Nonempty :=
-  ⟨PartialAssign.empty.update x a, ⟨a, rfl⟩, by simp⟩
+  ⟨PartialAssign.update ⊥ x a, ⟨a, rfl⟩, by simp⟩
 
 /-- The null context contains such a pair whenever some world makes the universal true. -/
 theorem not_transparentP_forall_conj_univ {a b : D} (hab : a ≠ b) {P₀ : P} (x : ℕ)
@@ -678,8 +682,8 @@ theorem trueAtP_bathroom_iff (B F : P) (x : ℕ) (w : W) :
         exact hnone d hd
       · exact ⟨restrict_covering_nonempty x a, evalP_pred_eq_false_iff.2
           ⟨a, PluralAssign.singularAt_restrict (restrict_covering_nonempty x a), hnone a⟩⟩
-    · refine ⟨{PartialAssign.empty.update x d}, ?_⟩
-      have hsing : ({PartialAssign.empty.update x d} : PluralAssign ℕ D).SingularAt x d :=
+    · refine ⟨{PartialAssign.update ⊥ x d}, ?_⟩
+      have hsing : ({PartialAssign.update ⊥ x d} : PluralAssign ℕ D).SingularAt x d :=
         PluralAssign.singularAt_singleton.2 (by simp)
       rw [evalP_or, evalP_not, evalP_ex_eq_true_iff.2 (evalP_pred_eq_true_iff.2 ⟨d, hsing, hB⟩),
         Trivalent.neg_true, Trivalent.joinMiddle_false_left]
@@ -687,13 +691,13 @@ theorem trueAtP_bathroom_iff (B F : P) (x : ℕ) (w : W) :
 
 /-- The plural assignment pairing each individual `a` at `x` with `f a` at `y`. -/
 def pairing (x y : ℕ) (f : D → D) : PluralAssign ℕ D :=
-  Set.range λ a => (PartialAssign.empty.update x a).update y (f a)
+  Set.range λ a => (PartialAssign.update ⊥ x a).update y (f a)
 
 /-- A restriction of the pairing to `x = a` is nonempty and atomic at `y` with value `f a`. -/
 theorem restrict_pairing {x y : ℕ} (hxy : x ≠ y) (f : D → D) (a : D) :
     ((pairing x y f).restrict x a).Nonempty ∧
       ((pairing x y f).restrict x a).SingularAt y (f a) := by
-  have hmem : ∀ a', (PartialAssign.empty.update x a').update y (f a') ∈
+  have hmem : ∀ a', (PartialAssign.update ⊥ x a').update y (f a') ∈
       (pairing x y f).restrict x a ↔ a' = a := by
     intro a'
     constructor
@@ -730,11 +734,11 @@ theorem trueAtP_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) 
       obtain ⟨a₀⟩ := ‹Nonempty D›
       obtain ⟨-, hfalse⟩ := hall (f a₀)
       obtain ⟨a', b', ha', hb', hn⟩ := evalP_rel_eq_false_iff.1 hfalse
-      have hg₀ : (PartialAssign.empty.update x a₀).update y (f a₀) ∈
+      have hg₀ : (PartialAssign.update ⊥ x a₀).update y (f a₀) ∈
           (pairing x y f).restrict y (f a₀) :=
         ⟨⟨a₀, rfl⟩, by simp⟩
       have hx := ha'.2 _ hg₀ (by simp [PartialAssign.update_ne _ _ hxy])
-      rw [PartialAssign.update_ne _ _ hxy, PartialAssign.update_at, Option.some_inj] at hx
+      rw [PartialAssign.update_ne _ _ hxy, PartialAssign.update_at, Flat.coe_inj] at hx
       rw [← hx, (PluralAssign.singularAt_restrict_iff.1 hb').2] at hn
       exact hn (hf a₀)
     · obtain ⟨hne, hsing⟩ := restrict_pairing hxy f a
@@ -785,10 +789,10 @@ theorem trueAtP_not_stronglyTrueAt_conj (B F : P) (x : ℕ) (w : W) {b₁ b₂ :
     (hF₂ : b₂ ∉ M.pred F w) :
     TrueAtP M (.and (.ex x (.pred B x)) (.pred F x)) w ∧
       ¬ StronglyTrueAt M (.and (.ex x (.pred B x)) (.pred F x)) w := by
-  have hs : ∀ d : D, ({PartialAssign.empty.update x d} : PluralAssign ℕ D).SingularAt x d :=
+  have hs : ∀ d : D, ({PartialAssign.update ⊥ x d} : PluralAssign ℕ D).SingularAt x d :=
     λ d => PluralAssign.singularAt_singleton.2 (by simp)
-  refine ⟨⟨{PartialAssign.empty.update x b₁}, ?_⟩,
-    λ h => h.2 {PartialAssign.empty.update x b₂} ?_⟩
+  refine ⟨⟨{PartialAssign.update ⊥ x b₁}, ?_⟩,
+    λ h => h.2 {PartialAssign.update ⊥ x b₂} ?_⟩
   · rw [evalP_and, evalP_ex_eq_true_iff.2 (evalP_pred_eq_true_iff.2 ⟨b₁, hs b₁, h₁⟩),
       Trivalent.meetMiddle_true_left]
     exact evalP_pred_eq_true_iff.2 ⟨b₁, hs b₁, hF₁⟩
@@ -818,7 +822,7 @@ true and the empty one makes it false. -/
 theorem evalP_strong_valued [Nonempty D] (x : ℕ) (w : W) (G : PluralAssign ℕ D) :
     evalP M (.strong (.valued x)) w G = .indet := by
   obtain ⟨d⟩ := ‹Nonempty D›
-  have ht : evalP M (.valued x) w {PartialAssign.empty.update x d} = .true :=
+  have ht : evalP M (.valued x) w {PartialAssign.update ⊥ x d} = .true :=
     evalP_valued_eq_true_iff.2 ⟨d, PluralAssign.singularAt_singleton.2 (by simp)⟩
   have hf : evalP M (.valued x) w ∅ = .false :=
     evalP_valued_eq_false_iff.2 (by simp [PluralAssign.Singular, PluralAssign.SingularAt])
@@ -836,12 +840,12 @@ theorem trueAtP_ex_and_strong_iff (S H : P) (x : ℕ) (w : W) :
     rw [evalP_and, Trivalent.meetMiddle_eq_true_iff, evalP_ex_eq_true_iff,
       evalP_pred_eq_true_iff, evalP_strong_eq_true_iff] at hG
     obtain ⟨⟨d, -, hd⟩, -, hall⟩ := hG
-    refine ⟨⟨d, hd⟩, λ d => by_contra λ hn => hall {PartialAssign.empty.update x d} ?_⟩
+    refine ⟨⟨d, hd⟩, λ d => by_contra λ hn => hall {PartialAssign.update ⊥ x d} ?_⟩
     exact evalP_pred_eq_false_iff.2 ⟨d, PluralAssign.singularAt_singleton.2 (by simp), hn⟩
   · rintro ⟨⟨d, hd⟩, hall⟩
-    have hs : ({PartialAssign.empty.update x d} : PluralAssign ℕ D).SingularAt x d :=
+    have hs : ({PartialAssign.update ⊥ x d} : PluralAssign ℕ D).SingularAt x d :=
       PluralAssign.singularAt_singleton.2 (by simp)
-    refine ⟨{PartialAssign.empty.update x d}, ?_⟩
+    refine ⟨{PartialAssign.update ⊥ x d}, ?_⟩
     rw [evalP_and, Trivalent.meetMiddle_eq_true_iff, evalP_ex_eq_true_iff,
       evalP_strong_eq_true_iff]
     refine ⟨evalP_pred_eq_true_iff.2 ⟨d, hs, hd⟩, evalP_pred_eq_true_iff.2 ⟨d, hs, hall d⟩,

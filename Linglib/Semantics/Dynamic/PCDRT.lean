@@ -11,7 +11,7 @@ Compositional DRT over plural information states ([van-den-berg-1996], [brasovea
 [brasoveanu-2010]). An information state is a set of CDRT states, a matrix whose rows are
 assignments and whose columns are drefs: a dref stores the set of its values in the rows, and the
 rows store the dependencies between the values of different drefs. A dref takes the dummy value ★
-in the rows where it has none; here its register holds an `Option E` and ★ is `none`.
+in the rows where it has none; here its register holds a `Flat E` and ★ is `⊥`.
 
 Every CDRT update lifts to plural states cumulatively: the lift is the relation lifting
 `Set.LiftRel` of the update, which is the cumulation `**` of [beck-sauerland-2000], each input row
@@ -105,32 +105,32 @@ namespace PCDRT
 
 open DynamicSemantics DynamicSemantics.Update SetRel
 
-variable {R S E : Type*} [RegisterStructure R S (Option E)] {u u' v : R} {I J : Set S}
+variable {R S E : Type*} [RegisterStructure R S (Flat E)] {u u' v : R} {I J : Set S}
 
 /-! ### Values, rows and cells -/
 
 /-- The values of `u` in `I`, `uI` ([brasoveanu-2010] (16), (38)); ★ is not a value. -/
-def value (u : R) (I : Set S) : Set E := {x | ∃ i ∈ I, RegisterStructure.val u i = some x}
+def value (u : R) (I : Set S) : Set E := {x | ∃ i ∈ I, RegisterStructure.val u i = ↑x}
 
 /-- The rows of `I` where `u` has the value `x`, `I_{u=x}` ((71)). -/
-def cell (u : R) (x : E) (I : Set S) : Set S := {i ∈ I | RegisterStructure.val u i = some x}
+def cell (u : R) (x : E) (I : Set S) : Set S := {i ∈ I | RegisterStructure.val u i = ↑x}
 
 /-- The dependency between `u` and `v` that `I` stores: the pairs of their values in a row. -/
 def dep (u v : R) (I : Set S) : SetRel E E :=
-  {p | ∃ i ∈ I, RegisterStructure.val u i = some p.1 ∧ RegisterStructure.val v i = some p.2}
+  {p | ∃ i ∈ I, RegisterStructure.val u i = ↑p.1 ∧ RegisterStructure.val v i = ↑p.2}
 
-theorem value_singleton_of_eq {i : S} {x : E} (h : RegisterStructure.val u i = some x) :
+theorem value_singleton_of_eq {i : S} {x : E} (h : RegisterStructure.val u i = ↑x) :
     value u {i} = {x} := by
   ext y
   simp only [value, Set.mem_singleton_iff, exists_eq_left, Set.mem_ofPred_eq, h,
-    Option.some.injEq]
+    Flat.coe_inj]
   exact eq_comm
 
-theorem dep_singleton_of_eq {i : S} {x y : E} (hu : RegisterStructure.val u i = some x)
-    (hv : RegisterStructure.val v i = some y) : dep u v {i} = {(x, y)} := by
+theorem dep_singleton_of_eq {i : S} {x y : E} (hu : RegisterStructure.val u i = ↑x)
+    (hv : RegisterStructure.val v i = ↑y) : dep u v {i} = {(x, y)} := by
   ext ⟨a, b⟩
   simp only [dep, Set.mem_singleton_iff, exists_eq_left, Set.mem_ofPred_eq, hu, hv,
-    Option.some.injEq, Prod.mk.injEq]
+    Flat.coe_inj, Prod.mk.injEq]
   exact ⟨fun ⟨h₁, h₂⟩ ↦ ⟨h₁.symm, h₂.symm⟩, fun ⟨h₁, h₂⟩ ↦ ⟨h₁.symm, h₂.symm⟩⟩
 
 theorem fst_mem_value_of_mem_dep {p : E × E} (h : p ∈ dep u v I) : p.1 ∈ value u I :=
@@ -147,18 +147,18 @@ theorem dep_mono (h : I ⊆ J) : dep u v I ⊆ dep u v J :=
 
 /-- Where every row valuing `u` also values `v`, the values of `u` are the domain of the
 dependency between them. -/
-theorem dom_dep (h : ∀ i ∈ I, (RegisterStructure.val u i).isSome →
-    (RegisterStructure.val v i).isSome) : (dep u v I).dom = value u I := by
+theorem dom_dep (h : ∀ i ∈ I, RegisterStructure.val u i ≠ ⊥ → RegisterStructure.val v i ≠ ⊥) :
+    (dep u v I).dom = value u I := by
   refine Set.ext fun x ↦ ⟨fun ⟨y, hp⟩ ↦ fst_mem_value_of_mem_dep hp, fun ⟨i, hi, hx⟩ ↦ ?_⟩
-  obtain ⟨y, hy⟩ := Option.isSome_iff_exists.1 (h i hi (hx ▸ rfl))
+  obtain ⟨y, hy⟩ := Flat.ne_bot_iff_exists.1 (h i hi (hx ▸ Flat.coe_ne_bot))
   exact ⟨y, i, hi, hx, hy⟩
 
 /-- Where every row valuing `v` also values `u`, the values of `v` are the codomain of the
 dependency between them. -/
-theorem cod_dep (h : ∀ i ∈ I, (RegisterStructure.val v i).isSome →
-    (RegisterStructure.val u i).isSome) : (dep u v I).cod = value v I := by
+theorem cod_dep (h : ∀ i ∈ I, RegisterStructure.val v i ≠ ⊥ → RegisterStructure.val u i ≠ ⊥) :
+    (dep u v I).cod = value v I := by
   refine Set.ext fun y ↦ ⟨fun ⟨x, hp⟩ ↦ snd_mem_value_of_mem_dep hp, fun ⟨i, hi, hy⟩ ↦ ?_⟩
-  obtain ⟨x, hx⟩ := Option.isSome_iff_exists.1 (h i hi (hy ▸ rfl))
+  obtain ⟨x, hx⟩ := Flat.ne_bot_iff_exists.1 (h i hi (hy ▸ Flat.coe_ne_bot))
   exact ⟨x, i, hi, hx, hy⟩
 
 /-- On plural partial assignments, a cell is [spector-2025]'s restriction `G_{x=a}`. -/
@@ -173,7 +173,7 @@ assignment. -/
 def intro (u : R) : Update (Set S) := cumul (randomAssign u)
 
 /-- Introducing `u` at a one-row state can give it any value. -/
-theorem singleton_mem_intro (i : S) (u : R) (e : Option E) :
+theorem singleton_mem_intro (i : S) (u : R) (e : Flat E) :
     {i} ~[intro u] {RegisterStructure.extend i u e} :=
   ⟨fun _ hi ↦ ⟨_, rfl, e, by rw [hi]⟩, fun _ hj ↦ ⟨i, rfl, e, by rw [hj]⟩⟩
 
@@ -210,13 +210,13 @@ def sing (u : R) : Condition (Set S) := {I | ∃ x, value u I = {x}}
 /-- Structured inclusion `u' ⋐ u` ((66)): in every row, `u'` has `u`'s value or ★. -/
 def structSub (u' u : R) : Condition (Set S) :=
   {I | ∀ i ∈ I, RegisterStructure.val u' i = RegisterStructure.val u i ∨
-    RegisterStructure.val u' i = none}
+    RegisterStructure.val u' i = ⊥}
 
 /-- Full structured inclusion `u' ⊑ u` ((68)): structured inclusion that also keeps every row
 in which `u` has one of `u'`'s values. -/
 def structSubAll (u' u : R) : Condition (Set S) :=
   {I | I ∈ structSub u' u ∧ ∀ i ∈ I, ∀ x ∈ value u' I,
-    RegisterStructure.val u i = some x → RegisterStructure.val u' i = some x}
+    RegisterStructure.val u i = ↑x → RegisterStructure.val u' i = ↑x}
 
 /-- A structured subset keeps only the superset's dependencies (p. 465): whatever `u'` is
 paired with in a row, `u` is paired with there too. -/
