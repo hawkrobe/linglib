@@ -6,11 +6,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej mach ix-chanhalw-i t'a k'inh.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["mach", "who"], ["ix-chanhalw-i", "PFV-dance-IV"], ["t'a", "PREP"],
+      ["Yalnhej", "YALNHEJ"], ["mach", "who"], ["ix-chanhalw-i", "PFV-dance-IV"], ["t'a", "PREP"],
       ["k'inh", "party"]
     ],
     "translation": "A person or group of people danced, I don't know who (maybe all did).",
-    "context": "(23a) You were at a party; you know for a fact that not everyone danced, but, because the lights were off, you don't know who exactly danced.",
+    "context": "You were at a party; you know for a fact that not everyone danced, but, because the lights were off, you don't know who exactly danced.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -20,7 +20,8 @@
       ["reading", "epistemic"],
       ["epistemicState", "ignorant"]
     ],
-    "comment": "Repeated as (3), (73), (124)."
+    "comment": "Context (23a). Repeated as (3), (73), (124).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_22_23b",
@@ -29,11 +30,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej mach ix-chanhalw-i t'a k'inh.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["mach", "who"], ["ix-chanhalw-i", "PFV-dance-IV"], ["t'a", "PREP"],
+      ["Yalnhej", "YALNHEJ"], ["mach", "who"], ["ix-chanhalw-i", "PFV-dance-IV"], ["t'a", "PREP"],
       ["k'inh", "party"]
     ],
-    "translation": "A person or group of people danced, I don't know who.",
-    "context": "(23b) You know that only Kixtup and Xun danced at the party.",
+    "translation": "A person or group of people danced, I don't know who (maybe all did).",
+    "context": "You know that only Kixtup and Xun danced at the party.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -43,7 +44,8 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows which, not all"]
     ],
-    "comment": ""
+    "comment": "Context (23b).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_22_24",
@@ -52,11 +54,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej mach ix-chanhalw-i t'a k'inh.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["mach", "who"], ["ix-chanhalw-i", "PFV-dance-IV"], ["t'a", "PREP"],
+      ["Yalnhej", "YALNHEJ"], ["mach", "who"], ["ix-chanhalw-i", "PFV-dance-IV"], ["t'a", "PREP"],
       ["k'inh", "party"]
     ],
-    "translation": "Everybody danced.",
-    "context": "(24) You were at a party and you saw that everyone there danced.",
+    "translation": "A person or group of people danced, I don't know who (maybe all did).",
+    "context": "You were at a party and you saw that everyone there danced.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -68,7 +70,8 @@
       ["item", "yalnhej"],
       ["scenario", "universal"]
     ],
-    "comment": "Consultant comment (25): it could be that just some people danced, or that everybody danced. Repeated as (124)/(125)."
+    "comment": "Context (24). Consultant comment (25): it could be that just some people danced, or that everybody danced. Repeated as (124)/(125).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_26_27a",
@@ -77,11 +80,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej mach ix-chi'-an chi'b'ej t'a k'inh.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["mach", "who"], ["ix-chi'-an", "PFV-eat-AF"], ["chi'b'ej", "meat"],
+      ["Yalnhej", "YALNHEJ"], ["mach", "who"], ["ix-chi'-an", "PFV-eat-AF"], ["chi'b'ej", "meat"],
       ["t'a", "PREP"], ["k'inh", "party"]
     ],
     "translation": "A person/some people (maybe all) ate meat at the party.",
-    "context": "(27a) There was a town party, and meat was served to everyone who wanted it. You know that at least some people ate meat, but since you weren't there, you couldn't tell who.",
+    "context": "There was a town party, and meat was served to everyone who wanted it. You know that at least some people ate meat, but since you weren't there, you couldn't tell who.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -91,7 +94,8 @@
       ["reading", "epistemic"],
       ["epistemicState", "ignorant"]
     ],
-    "comment": ""
+    "comment": "Context (27a).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_26_27b",
@@ -100,11 +104,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej mach ix-chi'-an chi'b'ej t'a k'inh.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["mach", "who"], ["ix-chi'-an", "PFV-eat-AF"], ["chi'b'ej", "meat"],
+      ["Yalnhej", "YALNHEJ"], ["mach", "who"], ["ix-chi'-an", "PFV-eat-AF"], ["chi'b'ej", "meat"],
       ["t'a", "PREP"], ["k'inh", "party"]
     ],
-    "translation": "Everyone ate meat at the party.",
-    "context": "(27b) There was a town party and meat was served; you noticed that everyone was happy about that, and so everyone asked for some.",
+    "translation": "A person/some people (maybe all) ate meat at the party.",
+    "context": "There was a town party and meat was served; you noticed that everyone was happy about that, and so everyone asked for some.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -114,7 +118,8 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows all"]
     ],
-    "comment": ""
+    "comment": "Context (27b).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_26_27c",
@@ -123,11 +128,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej mach ix-chi'-an chi'b'ej t'a k'inh.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["mach", "who"], ["ix-chi'-an", "PFV-eat-AF"], ["chi'b'ej", "meat"],
+      ["Yalnhej", "YALNHEJ"], ["mach", "who"], ["ix-chi'-an", "PFV-eat-AF"], ["chi'b'ej", "meat"],
       ["t'a", "PREP"], ["k'inh", "party"]
     ],
-    "translation": "A person/some people ate meat at the party.",
-    "context": "(27c) There was a town party, with 20 attendees, and meat was served to everyone who wanted it. But you noticed that, in the end, only Kixtup and Xun ate meat.",
+    "translation": "A person/some people (maybe all) ate meat at the party.",
+    "context": "There was a town party, with 20 attendees, and meat was served to everyone who wanted it. But you noticed that, in the end, only Kixtup and Xun ate meat.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -137,7 +142,8 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows which, not all"]
     ],
-    "comment": ""
+    "comment": "Context (27c).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_28_29a",
@@ -146,11 +152,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas tek-al ix-s-nib'-ej waj Xun.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["tek-al", "dish-NML"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["tek-al", "dish-NML"],
       ["ix-s-nib'-ej", "PFV-A3-like-DTV"], ["waj", "CLF"], ["Xun", "Xun"]
     ],
     "translation": "Xun liked some dish or some group of dishes, maybe all dishes.",
-    "context": "(29a) Xun went to a market and tried a few dishes. You know that Xun liked at least one dish (maybe more), but you're not sure which.",
+    "context": "Xun went to a market and tried a few dishes. You know that Xun liked at least one dish (maybe more), but you're not sure which.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -160,7 +166,8 @@
       ["reading", "epistemic"],
       ["epistemicState", "ignorant"]
     ],
-    "comment": "Repeated as (34), (65)."
+    "comment": "Context (29a). Repeated as (34), (65). The paper marks the translation ≈.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_28_29b",
@@ -169,11 +176,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas tek-al ix-s-nib'-ej waj Xun.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["tek-al", "dish-NML"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["tek-al", "dish-NML"],
       ["ix-s-nib'-ej", "PFV-A3-like-DTV"], ["waj", "CLF"], ["Xun", "Xun"]
     ],
-    "translation": "Xun liked some dish or other.",
-    "context": "(29b) Xun went to a market, tried a few dishes, but didn't like them all. You know exactly which dishes Xun liked, namely soup and tamales.",
+    "translation": "Xun liked some dish or some group of dishes, maybe all dishes.",
+    "context": "Xun went to a market, tried a few dishes, but didn't like them all. You know exactly which dishes Xun liked, namely soup and tamales.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -183,7 +190,8 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows which, not all"]
     ],
-    "comment": ""
+    "comment": "Context (29b). The paper marks the translation ≈.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_28_29c",
@@ -192,11 +200,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas tek-al ix-s-nib'-ej waj Xun.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["tek-al", "dish-NML"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["tek-al", "dish-NML"],
       ["ix-s-nib'-ej", "PFV-A3-like-DTV"], ["waj", "CLF"], ["Xun", "Xun"]
     ],
-    "translation": "Xun liked all dishes.",
-    "context": "(29c) Xun went to the market and tried a few dishes. You know for a fact that he liked all dishes.",
+    "translation": "Xun liked some dish or some group of dishes, maybe all dishes.",
+    "context": "Xun went to the market and tried a few dishes. You know for a fact that he liked all dishes.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -206,7 +214,8 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows all"]
     ],
-    "comment": ""
+    "comment": "Context (29c). The paper marks the translation ≈.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_34",
@@ -215,11 +224,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas tek-al ix-s-nib'-ej waj Xun.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["tek-al", "dish-NML"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["tek-al", "dish-NML"],
       ["ix-s-nib'-ej", "PFV-A3-like-DTV"], ["waj", "CLF"], ["Xun", "Xun"]
     ],
     "translation": "Xun liked a dish at random.",
-    "context": "Xun chose a dish to like at random.",
+    "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -228,7 +237,8 @@
       ["volitional", "no"],
       ["reading", "random choice"]
     ],
-    "comment": "With a non-volitional predicate only the epistemic interpretation is possible."
+    "comment": "With a non-volitional predicate only the epistemic interpretation is possible. The paper gives no context: it prints the available readings 'Xun liked some dish(es) or other.' / 'Xun liked all dishes.' and 'Not: 'Xun liked a dish at random.'', the reading this row records as unavailable.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_30b",
@@ -237,10 +247,10 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tasi ix-in-man-a'.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tasi", "what"], ["ix-in-man-a'", "PFV-A1S-buy-TV"]
+      ["Yalnhej", "YALNHEJ"], ["tasi", "what"], ["ix-in-man-a'", "PFV-A1S-buy-TV"]
     ],
     "translation": "I bought something, and anything is a possibility.",
-    "context": "(30a) Your child bought lots of candy, even though you told him not to. You ask him what he bought. He answers:",
+    "context": "Your child bought lots of candy, even though you told him not to. You ask him what he bought. He answers:",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -249,7 +259,8 @@
       ["volitional", "yes"],
       ["reading", "epistemic"]
     ],
-    "comment": "Feigned ignorance, as with English whatever."
+    "comment": "Context (30a). Feigned ignorance, as with English whatever. The paper marks the translation ≈. The paper prints the verb in angle brackets, < ix-in-man-a' >, translated <I bought>.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_31_32a",
@@ -258,11 +269,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas libro'-al ix-s-man waj Xun.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["libro'-al", "book-NML"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["libro'-al", "book-NML"],
       ["ix-s-man", "PFV-A3-buy"], ["waj", "CLF"], ["Xun", "Xun"]
     ],
     "translation": "Xun bought a random book / some random books.",
-    "context": "(32a) Xun wanted to read, but didn't have any specific book in mind. He went to the bookstore and bought one at random.",
+    "context": "Xun wanted to read, but didn't have any specific book in mind. He went to the bookstore and bought one at random.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -272,7 +283,8 @@
       ["reading", "random choice"],
       ["decision", "indiscriminate"]
     ],
-    "comment": "Repeated as (2), (61), (100), (126)."
+    "comment": "Context (32a). Repeated as (2), (61), (100), (126).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_31_32b",
@@ -281,11 +293,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas libro'-al ix-s-man waj Xun.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["libro'-al", "book-NML"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["libro'-al", "book-NML"],
       ["ix-s-man", "PFV-A3-buy"], ["waj", "CLF"], ["Xun", "Xun"]
     ],
-    "translation": "Xun bought a random book.",
-    "context": "(32b) Xun wanted to read a specific book, the Popol Wuj, went to the bookstore and bought it.",
+    "translation": "Xun bought a random book / some random books.",
+    "context": "Xun wanted to read a specific book, the Popol Wuj, went to the bookstore and bought it.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -295,7 +307,8 @@
       ["reading", "random choice"],
       ["decision", "specific"]
     ],
-    "comment": ""
+    "comment": "Context (32b).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_31_33",
@@ -304,11 +317,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas libro'-al ix-s-man waj Xun.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["libro'-al", "book-NML"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["libro'-al", "book-NML"],
       ["ix-s-man", "PFV-A3-buy"], ["waj", "CLF"], ["Xun", "Xun"]
     ],
-    "translation": "Xun bought all the books, indiscriminately.",
-    "context": "(33) Xun is very wealthy, and a bit insane. He goes to a bookstore, and he starts buying books indiscriminately, to the point where he ends up buying all books.",
+    "translation": "Xun bought a random book / some random books.",
+    "context": "Xun is very wealthy, and a bit insane. He goes to a bookstore, and he starts buying books indiscriminately, to the point where he ends up buying all books.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -320,7 +333,8 @@
       ["item", "yalnhej"],
       ["scenario", "universal"]
     ],
-    "comment": "Repeated as (126)/(127)."
+    "comment": "Context (33). Repeated as (126)/(127).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_35_36a",
@@ -329,11 +343,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas anh-il ix-k'ok-chaj yuj ik'.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["anh-il", "plant-NML"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["anh-il", "plant-NML"],
       ["ix-k'ok-chaj", "PFV-break-PASS"], ["yuj", "by"], ["ik'", "wind"]
     ],
-    "translation": "Some plants were broken by the wind, I don't know which.",
-    "context": "(36a) There were strong winds. You know that the wind must have broken many plants, but since you haven't left your house yet, you're not sure which.",
+    "translation": "Yalnhej plants were broken by the wind.",
+    "context": "There were strong winds. You know that the wind must have broken many plants, but since you haven't left your house yet, you're not sure which.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -343,7 +357,8 @@
       ["reading", "epistemic"],
       ["epistemicState", "ignorant"]
     ],
-    "comment": "Passive subject."
+    "comment": "Context (36a). Passive subject.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_35_36b",
@@ -352,11 +367,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas anh-il ix-k'ok-chaj yuj ik'.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["anh-il", "plant-NML"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["anh-il", "plant-NML"],
       ["ix-k'ok-chaj", "PFV-break-PASS"], ["yuj", "by"], ["ik'", "wind"]
     ],
-    "translation": "All plants were broken by the wind.",
-    "context": "(36b) There were very strong winds. You noticed that all plants are broken.",
+    "translation": "Yalnhej plants were broken by the wind.",
+    "context": "There were very strong winds. You noticed that all plants are broken.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -366,7 +381,8 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows all"]
     ],
-    "comment": ""
+    "comment": "Context (36b).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_35_36c",
@@ -375,11 +391,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas anh-il ix-k'ok-chaj yuj ik'.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["anh-il", "plant-NML"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["anh-il", "plant-NML"],
       ["ix-k'ok-chaj", "PFV-break-PASS"], ["yuj", "by"], ["ik'", "wind"]
     ],
-    "translation": "Some plants were broken by the wind.",
-    "context": "(36c) There were mild winds, which broke only a few fragile plants. You went to check out the plants after the windstorm, and saw which plants were broken.",
+    "translation": "Yalnhej plants were broken by the wind.",
+    "context": "There were mild winds, which broke only a few fragile plants. You went to check out the plants after the windstorm, and saw which plants were broken.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -389,7 +405,8 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows which, not all"]
     ],
-    "comment": ""
+    "comment": "Context (36c).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_37_38a",
@@ -398,11 +415,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej mach ix-sik'-chaj yuj heb'.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["mach", "who"], ["ix-sik'-chaj", "PFV-select-PASS"], ["yuj", "by"],
+      ["Yalnhej", "YALNHEJ"], ["mach", "who"], ["ix-sik'-chaj", "PFV-select-PASS"], ["yuj", "by"],
       ["heb'", "them"]
     ],
-    "translation": "Someone was selected by them at random.",
-    "context": "(38a) A jury needs to select someone in a competition. All participants to the competition are equally good, so they decide to choose one at random.",
+    "translation": "Yalnhej who was selected by them.",
+    "context": "A jury needs to select someone in a competition. All participants to the competition are equally good, so they decide to choose one at random.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -412,7 +429,8 @@
       ["reading", "random choice"],
       ["decision", "indiscriminate"]
     ],
-    "comment": "Passive subject of a volitional verb."
+    "comment": "Context (38a). Passive subject of a volitional verb.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_37_38b",
@@ -421,11 +439,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej mach ix-sik'-chaj yuj heb'.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["mach", "who"], ["ix-sik'-chaj", "PFV-select-PASS"], ["yuj", "by"],
+      ["Yalnhej", "YALNHEJ"], ["mach", "who"], ["ix-sik'-chaj", "PFV-select-PASS"], ["yuj", "by"],
       ["heb'", "them"]
     ],
-    "translation": "Someone was selected by them at random.",
-    "context": "(38b) A jury needs to select someone in a competition. One participant stands out as the best, so they select them.",
+    "translation": "Yalnhej who was selected by them.",
+    "context": "A jury needs to select someone in a competition. One participant stands out as the best, so they select them.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -435,7 +453,8 @@
       ["reading", "random choice"],
       ["decision", "specific"]
     ],
-    "comment": ""
+    "comment": "Context (38b).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_39_40a",
@@ -444,11 +463,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej b'ajt'il y-ak' nhab' ewi.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["b'ajt'il", "where"], ["y-ak'", "A3-do"], ["nhab'", "rain"],
+      ["Yalnhej", "YALNHEJ"], ["b'ajt'il", "where"], ["y-ak'", "A3-do"], ["nhab'", "rain"],
       ["ewi", "yesterday"]
     ],
-    "translation": "It rained somewhere yesterday, I'm not sure where.",
-    "context": "(40a) You saw on the news that it rained somewhere in your region yesterday, but you're not sure where.",
+    "translation": "There was rain yalnhej where yesterday.",
+    "context": "You saw on the news that it rained somewhere in your region yesterday, but you're not sure where.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -458,7 +477,8 @@
       ["reading", "epistemic"],
       ["epistemicState", "ignorant"]
     ],
-    "comment": ""
+    "comment": "Context (40a).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_39_40b",
@@ -467,11 +487,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej b'ajt'il y-ak' nhab' ewi.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["b'ajt'il", "where"], ["y-ak'", "A3-do"], ["nhab'", "rain"],
+      ["Yalnhej", "YALNHEJ"], ["b'ajt'il", "where"], ["y-ak'", "A3-do"], ["nhab'", "rain"],
       ["ewi", "yesterday"]
     ],
-    "translation": "It rained everywhere yesterday.",
-    "context": "(40b) You saw on the news that it rained everywhere in your region yesterday.",
+    "translation": "There was rain yalnhej where yesterday.",
+    "context": "You saw on the news that it rained everywhere in your region yesterday.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -481,7 +501,8 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows all"]
     ],
-    "comment": ""
+    "comment": "Context (40b).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_39_40c",
@@ -490,11 +511,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej b'ajt'il y-ak' nhab' ewi.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["b'ajt'il", "where"], ["y-ak'", "A3-do"], ["nhab'", "rain"],
+      ["Yalnhej", "YALNHEJ"], ["b'ajt'il", "where"], ["y-ak'", "A3-do"], ["nhab'", "rain"],
       ["ewi", "yesterday"]
     ],
-    "translation": "It rained somewhere yesterday.",
-    "context": "(40c) While you know from the news that it didn't rain everywhere in your region yesterday, you saw it rained in specific places.",
+    "translation": "There was rain yalnhej where yesterday.",
+    "context": "While you know from the news that it didn't rain everywhere in your region yesterday, you saw it rained in specific places.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -504,7 +525,8 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows which, not all"]
     ],
-    "comment": ""
+    "comment": "Context (40c).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_41_42a",
@@ -513,11 +535,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej b'ajt'il ix-wa' ix Malin.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["b'ajt'il", "where"], ["ix-wa'", "PFV-eat"], ["ix", "CLF"],
+      ["Yalnhej", "YALNHEJ"], ["b'ajt'il", "where"], ["ix-wa'", "PFV-eat"], ["ix", "CLF"],
       ["Malin", "Malin"]
     ],
-    "translation": "Malin ate somewhere chosen at random.",
-    "context": "(42a) Malin didn't know where to eat, so she chose a place to eat at random.",
+    "translation": "Malin ate yalnhej where.",
+    "context": "Malin didn't know where to eat, so she chose a place to eat at random.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -527,7 +549,8 @@
       ["reading", "random choice"],
       ["decision", "indiscriminate"]
     ],
-    "comment": ""
+    "comment": "Context (42a).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_41_42b",
@@ -536,11 +559,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej b'ajt'il ix-wa' ix Malin.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["b'ajt'il", "where"], ["ix-wa'", "PFV-eat"], ["ix", "CLF"],
+      ["Yalnhej", "YALNHEJ"], ["b'ajt'il", "where"], ["ix-wa'", "PFV-eat"], ["ix", "CLF"],
       ["Malin", "Malin"]
     ],
-    "translation": "Malin ate somewhere chosen at random.",
-    "context": "(42b) Malin chose to go try out a new restaurant she heard about.",
+    "translation": "Malin ate yalnhej where.",
+    "context": "Malin chose to go try out a new restaurant she heard about.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -550,7 +573,8 @@
       ["reading", "random choice"],
       ["decision", "specific"]
     ],
-    "comment": ""
+    "comment": "Context (42b).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_43_44",
@@ -559,11 +583,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas yamk'ab'-il ix-s-yam ix.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["yamk'ab'-il", "tool-NML"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["yamk'ab'-il", "tool-NML"],
       ["ix-s-yam", "PFV-A3-grab"], ["ix", "PRON"]
     ],
     "translation": "She grabbed some tool(s) at random.",
-    "context": "(44) There are ten tools in a box in front of Malin. Malin doesn't need one in particular. She grabs only three at random.",
+    "context": "There are ten tools in a box in front of Malin. Malin doesn't need one in particular. She grabs only three at random.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -574,7 +598,8 @@
       ["decision", "indiscriminate"],
       ["property", "non-maximal"]
     ],
-    "comment": ""
+    "comment": "Context (44).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_45_44",
@@ -584,7 +609,7 @@
     "primaryText": "Malin grabbed whatever tools were in the toolbox.",
     "glossedTokens": [],
     "translation": "",
-    "context": "(44) There are ten tools in a box in front of Malin. Malin doesn't need one in particular. She grabs only three at random.",
+    "context": "There are ten tools in a box in front of Malin. Malin doesn't need one in particular. She grabs only three at random.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -592,7 +617,8 @@
       ["item", "whatever"],
       ["property", "maximal"]
     ],
-    "comment": "Wh-ever free relatives convey maximality."
+    "comment": "Context (44). Wh-ever free relatives convey maximality.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_46_47",
@@ -601,12 +627,12 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas ix-s-b'o' ix Telex ewi, ix-y-ab'l-ej ix Xuwan.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["ix-s-b'o'", "PFV-A3-make"], ["ix", "CLF"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["ix-s-b'o'", "PFV-A3-make"], ["ix", "CLF"],
       ["Telex", "Telex"], ["ewi", "yesterday"], ["ix-y-ab'l-ej", "PFV-A3-eat-DTV"], ["ix", "CLF"],
       ["Xuwan", "Xuwan"]
     ],
     "translation": "Xuwan ate things that Telex made yesterday, but I don't know what exactly.",
-    "context": "(47) Telex cooked 10 meals yesterday, five of which Xuwan tasted. Since you weren't there when she cooked, you don't know what meals Telex cooked.",
+    "context": "Telex cooked 10 meals yesterday, five of which Xuwan tasted. Since you weren't there when she cooked, you don't know what meals Telex cooked.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -614,7 +640,8 @@
       ["reading", "epistemic"],
       ["property", "non-maximal"]
     ],
-    "comment": ""
+    "comment": "Context (47). The paper marks the translation ≈.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_48_47",
@@ -624,7 +651,7 @@
     "primaryText": "Xuwan ate whatever Telex cooked yesterday.",
     "glossedTokens": [],
     "translation": "",
-    "context": "(47) Telex cooked 10 meals yesterday, five of which Xuwan tasted.",
+    "context": "Telex cooked 10 meals yesterday, five of which Xuwan tasted. Since you weren't there when she cooked, you don't know what meals Telex cooked.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -632,7 +659,8 @@
       ["item", "whatever"],
       ["property", "maximal"]
     ],
-    "comment": ""
+    "comment": "Context (47).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_50b",
@@ -641,11 +669,11 @@
     "language": "chuj1250",
     "primaryText": "Man yalnhej tas karta-ok laj ix-s-yam winh.",
     "glossedTokens": [
-      ["Man", "NEG"], ["yalnhej", "yalnhej"], ["tas", "what"], ["karta-ok", "card-IRR"],
+      ["Man", "NEG"], ["yalnhej", "YALNHEJ"], ["tas", "what"], ["karta-ok", "card-IRR"],
       ["laj", "NEG"], ["ix-s-yam", "PFV-A3-grab"], ["winh", "CLF"]
     ],
     "translation": "He didn't grab a card at random.",
-    "context": "(49)–(50a) You must first pick one card at random. Xun didn't close his eyes and selected a specific card. How did Xun cheat?",
+    "context": "You're playing a board game, and as part of the rules you must first pick one card at random (with your eyes closed). Some cards give you a clear advantage, others put you at disadvantage. If you don't respect this rule, you're cheating … …Xun didn't close his eyes and selected a specific card, that of course, gave him an advantage. I ask you, how did Xun cheat?",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -655,7 +683,8 @@
       ["embedded", "negation"],
       ["survives", "yes"]
     ],
-    "comment": "The random choice component is at-issue: it is what negation targets."
+    "comment": "Context (49). The random choice component is at-issue: it is what negation targets.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_51b",
@@ -664,12 +693,12 @@
     "language": "chuj1250",
     "primaryText": "Tato yalnhej tas karta'-il ix-s-yam waj Xun, wach' tz-tajn-i winh.",
     "glossedTokens": [
-      ["Tato", "if"], ["yalnhej", "yalnhej"], ["tas", "what"], ["karta'-il", "card-NML"],
+      ["Tato", "if"], ["yalnhej", "YALNHEJ"], ["tas", "what"], ["karta'-il", "card-NML"],
       ["ix-s-yam", "PFV-A3-grab"], ["waj", "CLF"], ["Xun", "Xun"], ["wach'", "good"],
       ["tz-tajn-i", "IPFV-play-IV"], ["winh", "CLF"]
     ],
     "translation": "If Xun grabs a card at random, he's playing well.",
-    "context": "(51a) You're explaining how not to cheat, using Xun as an example player.",
+    "context": "You're playing a board game, and as part of the rules you must first pick one card at random (with your eyes closed). Some cards give you a clear advantage, others put you at disadvantage. If you don't respect this rule, you're cheating … …You're explaining how not to cheat, using Xun as an example player, you say:",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -679,7 +708,8 @@
       ["embedded", "conditional antecedent"],
       ["survives", "yes"]
     ],
-    "comment": ""
+    "comment": "Context (51a).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_52a",
@@ -688,7 +718,7 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas wa'el-al maj s-cha laj s-k'ol waj Xun.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["wa'el-al", "dish-NML"], ["maj", "NEG.PFV"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["wa'el-al", "dish-NML"], ["maj", "NEG.PFV"],
       ["s-cha", "A3-receive"], ["laj", "NEG"], ["s-k'ol", "A3-stomach"], ["waj", "CLF"],
       ["Xun", "Xun"]
     ],
@@ -703,7 +733,8 @@
       ["embedded", "negation"],
       ["survives", "yes"]
     ],
-    "comment": "Continued by (52b): the dish that everybody didn't like, that's the one he ate."
+    "comment": "Continued by (52b) 'Ha tas maj s-cha laj s-k'ol heb' masanil chi', ha-chi' ix-y-ab'l-ej winh.' 'The dish that everybody didn't like, that's the one he ate.'",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_53b",
@@ -713,11 +744,11 @@
     "primaryText": "Tato tz'-och k'ak' t'a yalnhej b'ajt'i'il, tz-in-och il-k'ol-al y-u'uj.",
     "glossedTokens": [
       ["Tato", "if"], ["tz'-och", "PFV-enter"], ["k'ak'", "fire"], ["t'a", "PREP"],
-      ["yalnhej", "yalnhej"], ["b'ajt'i'il", "where"], ["tz-in-och", "IPFV-B1S-enter"],
+      ["yalnhej", "YALNHEJ"], ["b'ajt'i'il", "where"], ["tz-in-och", "IPFV-B1S-enter"],
       ["il-k'ol-al", "see-stomach-NML"], ["y-u'uj", "A3-for"]
     ],
     "translation": "If fire starts in some place and I don't know where, I get worried.",
-    "context": "(53a) You're a firefighter. You only get worried if you do not know where the fire is coming from.",
+    "context": "You're a firefighter, so you know how to stop fire. If you know where the fire is coming from, you don't get worried. You only get worried if you do not know where the fire is coming from.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -727,7 +758,8 @@
       ["embedded", "conditional antecedent"],
       ["survives", "yes"]
     ],
-    "comment": ""
+    "comment": "Context (53a).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_54",
@@ -737,7 +769,7 @@
     "primaryText": "Juan compró un libro cualquiera.",
     "glossedTokens": [
       ["Juan", "Juan"], ["compró", "buy-PFV-3S"], ["un", "a"], ["libro", "book"],
-      ["cualquiera", "cualquiera"]
+      ["cualquiera", "CUALQUIERA"]
     ],
     "translation": "Juan bought a random book.",
     "context": "",
@@ -748,7 +780,8 @@
       ["item", "uno cualquiera"],
       ["reading", "random choice"]
     ],
-    "comment": "Repeated as (119), (123)."
+    "comment": "Repeated as (119), (123).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_55",
@@ -758,7 +791,7 @@
     "primaryText": "Juan es un estudiante cualquiera.",
     "glossedTokens": [
       ["Juan", "Juan"], ["es", "be-3S"], ["un", "a"], ["estudiante", "student"],
-      ["cualquiera", "cualquiera"]
+      ["cualquiera", "CUALQUIERA"]
     ],
     "translation": "Juan is an unremarkable student.",
     "context": "",
@@ -770,7 +803,8 @@
       ["reading", "unremarkable"],
       ["position", "predicative"]
     ],
-    "comment": "Repeated as (94)."
+    "comment": "Repeated as (94).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_57",
@@ -778,7 +812,11 @@
     "reportedIn": null,
     "language": "stan1288",
     "primaryText": "Si Juan compró un libro cualquiera, se arrepentirá pronto.",
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Si", "If"], ["Juan", "Juan"], ["compró", "buy-PFV-3S"], ["un", "a"], ["libro", "book"],
+      ["cualquiera", "CUALQUIERA"], ["se", "SE"], ["arrepentirá", "repent-FUT-3S"],
+      ["pronto", "soon"]
+    ],
     "translation": "If Juan bought a random book, he will regret it soon.",
     "context": "",
     "judgment": "acceptable",
@@ -790,7 +828,8 @@
       ["embedded", "conditional antecedent"],
       ["survives", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_58",
@@ -798,7 +837,10 @@
     "reportedIn": null,
     "language": "stan1288",
     "primaryText": "Nadie compró un libro cualquiera.",
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Nadie", "no.one"], ["compró", "buy-PFV-3S"], ["un", "a"], ["libro", "book"],
+      ["cualquiera", "cualquiera"]
+    ],
     "translation": "Nobody bought a random book.",
     "context": "",
     "judgment": "acceptable",
@@ -810,7 +852,8 @@
       ["embedded", "negation"],
       ["survives", "yes"]
     ],
-    "comment": "Also (111)."
+    "comment": "Also (111). The paper marks the translation ≈.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_60a",
@@ -819,7 +862,7 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas anima'-il waj Xun.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["anima'-il", "person-NML"], ["waj", "CLF"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["anima'-il", "person-NML"], ["waj", "CLF"],
       ["Xun", "Xun"]
     ],
     "translation": "",
@@ -831,7 +874,8 @@
       ["item", "yalnhej"],
       ["position", "predicative"]
     ],
-    "comment": "Repeated as (104a); yalnhej DPs have no predicative uses."
+    "comment": "Repeated as (104a); yalnhej DPs have no predicative uses.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_60b",
@@ -840,7 +884,7 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej b'ajt'il jun chonhab' tik.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["b'ajt'il", "where"], ["jun", "one"], ["chonhab'", "village"],
+      ["Yalnhej", "YALNHEJ"], ["b'ajt'il", "where"], ["jun", "one"], ["chonhab'", "village"],
       ["tik", "DEM"]
     ],
     "translation": "",
@@ -852,7 +896,8 @@
       ["item", "yalnhej"],
       ["position", "predicative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_67",
@@ -870,7 +915,8 @@
       ["item", "algún"],
       ["continuation", "which-question"]
     ],
-    "comment": ""
+    "comment": "The paper marks B's question #, deviant after algún; the row's judgment is B's.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_68",
@@ -888,7 +934,8 @@
       ["item", "uno cualquiera"],
       ["continuation", "which-question"]
     ],
-    "comment": "Not deviant: uno cualquiera conveys no ignorance."
+    "comment": "Not deviant: uno cualquiera conveys no ignorance.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_82_49",
@@ -897,11 +944,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas karta'-il tz-a-yam-a'!",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["karta'-il", "card-NML"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["karta'-il", "card-NML"],
       ["tz-a-yam-a'", "IPFV-A2S-grab-TV"]
     ],
     "translation": "Grab a card at random!",
-    "context": "(49) As part of the rules you must first pick one card at random (with your eyes closed).",
+    "context": "You're playing a board game, and as part of the rules you must first pick one card at random (with your eyes closed). Some cards give you a clear advantage, others put you at disadvantage. If you don't respect this rule, you're cheating …",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -910,7 +957,8 @@
       ["reading", "random choice"],
       ["anchor", "local"]
     ],
-    "comment": "Non-harmonic interpretation (83)–(84)."
+    "comment": "Context (49). Non-harmonic interpretation (83)–(84). The paper glosses the first word YALNEHJ, a misprint for YALNHEJ; it prints 'Possible interpretation: 'Grab a card at random!' (felicitous given (49))'.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_82_85",
@@ -919,11 +967,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas karta'-il tz-a-yam-a'!",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["karta'-il", "card-NML"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["karta'-il", "card-NML"],
       ["tz-a-yam-a'", "IPFV-A2S-grab-TV"]
     ],
-    "translation": "Grab a card — any card is fine!",
-    "context": "(85) At the beginning of a boardgame, players must select any card they want from the game. It's the first time you play, and you ask me what you need to do.",
+    "translation": "",
+    "context": "At the beginning of a boardgame, players must select any card they want from the game. It's the first time you play, and you ask me what you need to do.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -932,7 +980,8 @@
       ["reading", "random choice"],
       ["anchor", "harmonic"]
     ],
-    "comment": "Harmonic interpretation (87)–(88): the DP projects from the imperative's anchor."
+    "comment": "Context (85). Harmonic interpretation (87)–(88): the DP projects from the imperative's anchor. The paper translates (82) only on its non-harmonic reading; this row is the harmonic reading in (85).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_86",
@@ -940,7 +989,9 @@
     "reportedIn": {"bibkey": "alonso-ovalle-royer-2024", "paperLabel": "(86)"},
     "language": "stan1288",
     "primaryText": "¡Coge un libro cualquiera!",
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Coge", "grab"], ["un", "a"], ["libro", "book"], ["cualquiera", "CUALQUIERA"]
+    ],
     "translation": "Grab a book, any book!",
     "context": "",
     "judgment": "acceptable",
@@ -950,7 +1001,8 @@
       ["item", "uno cualquiera"],
       ["anchor", "harmonic"]
     ],
-    "comment": ""
+    "comment": "The paper cites Alonso-Ovalle & Menéndez-Benito (2018) without a page.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_90_89",
@@ -960,11 +1012,11 @@
     "primaryText": "Tz-s-na' waj Xun to yalnhej mach ix-chanhalw-i t'a k'inh.",
     "glossedTokens": [
       ["Tz-s-na'", "PFV-A3-think"], ["waj", "CLF"], ["Xun", "Xun"], ["to", "C"],
-      ["yalnhej", "yalnhej"], ["mach", "who"], ["ix-chanhalw-i", "PFV-dance-IV"], ["t'a", "PREP"],
+      ["yalnhej", "YALNHEJ"], ["mach", "who"], ["ix-chanhalw-i", "PFV-dance-IV"], ["t'a", "PREP"],
       ["k'inh", "party"]
     ],
     "translation": "Xun thinks that a person or people danced, and any person is a possibility.",
-    "context": "(89) Xun thinks that some people danced at the party, but he doesn't know exactly who. As far as he can tell, it could be anyone.",
+    "context": "Xun thinks that some people danced at the party, but he doesn't know exactly who. As far as he can tell, it could be anyone.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -973,7 +1025,8 @@
       ["reading", "epistemic"],
       ["anchor", "harmonic"]
     ],
-    "comment": "Utterable by a speaker who knows who danced: the DP projects from the attitude's anchor (91)–(92)."
+    "comment": "Context (89). Utterable by a speaker who knows who danced: the DP projects from the attitude's anchor (91)–(92).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_93",
@@ -981,7 +1034,11 @@
     "reportedIn": {"bibkey": "alonso-ovalle-royer-2024", "paperLabel": "(93)"},
     "language": "stan1288",
     "primaryText": "Juan tiene que haber ido a ver una película cualquiera.",
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Juan", "Juan"], ["tiene", "have-3S"], ["que", "that"], ["haber", "have"], ["ido", "gone"],
+      ["a", "to"], ["ver", "see"], ["una", "a"], ["película", "film"],
+      ["cualquiera", "CUALQUIERA"]
+    ],
     "translation": "Juan must have gone to see a movie at random.",
     "context": "",
     "judgment": "acceptable",
@@ -993,7 +1050,8 @@
       ["item", "uno cualquiera"],
       ["reading", "random choice"]
     ],
-    "comment": ""
+    "comment": "The paper cites Alonso-Ovalle & Menéndez-Benito (2018) without a page; it prints 'Not: 'Juan must have gone to watch a movie, any movie is a possibility for me.''",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_95",
@@ -1002,7 +1060,7 @@
     "language": "stan1295",
     "primaryText": "Hans ist (nur) irgend-ein Student.",
     "glossedTokens": [
-      ["Hans", "Hans"], ["ist", "be-3S"], ["(nur)", "only"], ["irgend-ein", "irgend-one"],
+      ["Hans", "Hans"], ["ist", "be-3S"], ["(nur)", "only"], ["irgend-ein", "IRGEND-one"],
       ["Student", "student"]
     ],
     "translation": "Hans is an unremarkable student.",
@@ -1015,7 +1073,8 @@
       ["reading", "unremarkable"],
       ["position", "predicative"]
     ],
-    "comment": ""
+    "comment": "The paper marks the translation ≈. German judgments by Michael Wagner (fn. 19).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_96",
@@ -1024,7 +1083,7 @@
     "language": "chuj1250",
     "primaryText": "Ix-s-man jun komon libro waj Xun.",
     "glossedTokens": [
-      ["Ix-s-man", "PFV-A3-buy"], ["jun", "INDF"], ["komon", "komon"], ["libro", "book"],
+      ["Ix-s-man", "PFV-A3-buy"], ["jun", "INDF"], ["komon", "KOMON"], ["libro", "book"],
       ["waj", "CLF"], ["Xun", "Xun"]
     ],
     "translation": "Xun bought a random book.",
@@ -1036,7 +1095,8 @@
       ["item", "komon"],
       ["reading", "random choice"]
     ],
-    "comment": ""
+    "comment": "The paper marks the translation ≈.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_99",
@@ -1045,7 +1105,7 @@
     "language": "chuj1250",
     "primaryText": "Komon k'uyb'um waj Xun.",
     "glossedTokens": [
-      ["Komon", "komon"], ["k'uyb'um", "student"], ["waj", "CLF"], ["Xun", "Xun"]
+      ["Komon", "KOMON"], ["k'uyb'um", "student"], ["waj", "CLF"], ["Xun", "Xun"]
     ],
     "translation": "Xun is an unremarkable student.",
     "context": "",
@@ -1057,7 +1117,8 @@
       ["reading", "unremarkable"],
       ["position", "predicative"]
     ],
-    "comment": ""
+    "comment": "The paper marks the translation ≈.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_100",
@@ -1066,10 +1127,10 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas libro'-al ix-s-man waj Xun.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["libro'-al", "book-NML"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["libro'-al", "book-NML"],
       ["ix-s-man", "PFV-A3-buy"], ["waj", "CLF"], ["Xun", "Xun"]
     ],
-    "translation": "Xun bought an unremarkable book.",
+    "translation": "",
     "context": "Xun bought a book on purpose, and the book is simply unremarkable.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1078,7 +1139,8 @@
       ["item", "yalnhej"],
       ["reading", "unremarkable"]
     ],
-    "comment": ""
+    "comment": "The paper translates ≈ 'Xun bought a random book.' and 'Not: 'Xun bought an unremarkable book.'', the reading the row records as unavailable.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_102a",
@@ -1087,11 +1149,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas k'uyb'um-al ix-s-sikl-ej waj Xun.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["k'uyb'um-al", "student-NML"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["k'uyb'um-al", "student-NML"],
       ["ix-s-sikl-ej", "PFV-A3-choose-DTV"], ["waj", "CLF"], ["Xun", "Xun"]
     ],
     "translation": "Xun chose an unremarkable student.",
-    "context": "(101) Only two students applied for an award. One is prolific, the other an ordinary student with ordinary grades. Xun, the corrupt decider, chooses the ordinary student, who is in his family.",
+    "context": "Only two students applied for an award. While one of the two students is prolific, the other is just an ordinary student with ordinary grades. Xun is the corrupt person who decides which student gets the award. The ordinary student happens to be in his family. He chooses that ordinary student as the recipient of the award.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -1099,7 +1161,8 @@
       ["item", "yalnhej"],
       ["reading", "unremarkable"]
     ],
-    "comment": ""
+    "comment": "Context (101). The paper gives the translation as intended. The context (101) is from Alonso-Ovalle & Royer (2021: 502).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_102b",
@@ -1108,11 +1171,11 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas k'uyb'um-al ix-cha'-an premio chi'.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["k'uyb'um-al", "student-NML"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["k'uyb'um-al", "student-NML"],
       ["ix-cha'-an", "PFV-receive-AF"], ["premio", "prize"], ["chi'", "DEM"]
     ],
     "translation": "An unremarkable student received the prize.",
-    "context": "(101) Only two students applied for an award. One is prolific, the other an ordinary student with ordinary grades. Xun, the corrupt decider, chooses the ordinary student, who is in his family.",
+    "context": "Only two students applied for an award. While one of the two students is prolific, the other is just an ordinary student with ordinary grades. Xun is the corrupt person who decides which student gets the award. The ordinary student happens to be in his family. He chooses that ordinary student as the recipient of the award.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -1120,7 +1183,8 @@
       ["item", "yalnhej"],
       ["reading", "unremarkable"]
     ],
-    "comment": ""
+    "comment": "Context (101). The paper gives the translation as intended. The context (101) is from Alonso-Ovalle & Royer (2021: 502).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_103a",
@@ -1129,11 +1193,11 @@
     "language": "chuj1250",
     "primaryText": "Ix-s-sikl-ej jun komon k'uyb'um waj Xun.",
     "glossedTokens": [
-      ["Ix-s-sikl-ej", "PFV-A3-choose-DTV"], ["jun", "INDF"], ["komon", "komon"],
+      ["Ix-s-sikl-ej", "PFV-A3-choose-DTV"], ["jun", "INDF"], ["komon", "KOMON"],
       ["k'uyb'um", "student"], ["waj", "CLF"], ["Xun", "Xun"]
     ],
     "translation": "Xun chose an unremarkable student.",
-    "context": "(101) Only two students applied for an award. One is prolific, the other an ordinary student with ordinary grades. Xun, the corrupt decider, chooses the ordinary student, who is in his family.",
+    "context": "Only two students applied for an award. While one of the two students is prolific, the other is just an ordinary student with ordinary grades. Xun is the corrupt person who decides which student gets the award. The ordinary student happens to be in his family. He chooses that ordinary student as the recipient of the award.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1141,7 +1205,8 @@
       ["item", "komon"],
       ["reading", "unremarkable"]
     ],
-    "comment": ""
+    "comment": "Context (101). The context (101) is from Alonso-Ovalle & Royer (2021: 502).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_103b",
@@ -1151,10 +1216,10 @@
     "primaryText": "Ix-s-cha' premio chi' jun komon k'uyb'um.",
     "glossedTokens": [
       ["Ix-s-cha'", "PFV-A3-receive"], ["premio", "prize"], ["chi'", "DEM"], ["jun", "INDF"],
-      ["komon", "komon"], ["k'uyb'um", "student"]
+      ["komon", "KOMON"], ["k'uyb'um", "student"]
     ],
     "translation": "An unremarkable student received the prize.",
-    "context": "(101) Only two students applied for an award. One is prolific, the other an ordinary student with ordinary grades. Xun, the corrupt decider, chooses the ordinary student, who is in his family.",
+    "context": "Only two students applied for an award. While one of the two students is prolific, the other is just an ordinary student with ordinary grades. Xun is the corrupt person who decides which student gets the award. The ordinary student happens to be in his family. He chooses that ordinary student as the recipient of the award.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1162,7 +1227,8 @@
       ["item", "komon"],
       ["reading", "unremarkable"]
     ],
-    "comment": ""
+    "comment": "Context (101). The context (101) is from Alonso-Ovalle & Royer (2021: 502).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_105",
@@ -1171,7 +1237,7 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej tas k'uyb'um-al waj Xun.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["tas", "what"], ["k'uyb'um-al", "student-NML"], ["waj", "CLF"],
+      ["Yalnhej", "YALNHEJ"], ["tas", "what"], ["k'uyb'um-al", "student-NML"], ["waj", "CLF"],
       ["Xun", "Xun"]
     ],
     "translation": "Xun is an unremarkable student.",
@@ -1183,7 +1249,8 @@
       ["item", "yalnhej"],
       ["position", "predicative"]
     ],
-    "comment": ""
+    "comment": "The paper gives the translation as intended.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_106a",
@@ -1192,7 +1259,7 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej mach heb' s-nulej ix Katal.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["mach", "who"], ["heb'", "PL"], ["s-nulej", "A3-sibling"],
+      ["Yalnhej", "YALNHEJ"], ["mach", "who"], ["heb'", "PL"], ["s-nulej", "A3-sibling"],
       ["ix", "CLF"], ["Katal", "Katal"]
     ],
     "translation": "Katal has some siblings, but I don't know who they are.",
@@ -1205,7 +1272,8 @@
       ["position", "predicative"],
       ["construction", "possessive have"]
     ],
-    "comment": ""
+    "comment": "The paper gives the translation as intended; fn. 20 notes the string is not ill-formed but incomplete.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_106b",
@@ -1217,7 +1285,7 @@
       ["Tzijtum", "many"], ["heb'", "PL"], ["s-nulej", "A3-sibling"], ["ix", "CLF"],
       ["Katal", "Katal"]
     ],
-    "translation": "Katal has many siblings.",
+    "translation": "Katal has many siblings (Lit: Katal's siblings are many).",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1227,7 +1295,8 @@
       ["position", "predicative"],
       ["construction", "possessive have"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_107a",
@@ -1236,10 +1305,10 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej mach y-ek' heb' paxyalwum t'atik.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["mach", "who"], ["y-ek'", "A3-pass"], ["heb'", "PL"],
+      ["Yalnhej", "YALNHEJ"], ["mach", "who"], ["y-ek'", "A3-pass"], ["heb'", "PL"],
       ["paxyalwum", "visitor"], ["t'atik", "here"]
     ],
-    "translation": "Some visitors come here, and I don't know who they are.",
+    "translation": "Some visitors come here, and I don't who they are.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -1249,7 +1318,8 @@
       ["position", "predicative"],
       ["construction", "secondary predicate"]
     ],
-    "comment": ""
+    "comment": "The paper gives the translation as intended and ≈, and drops 'know' from it.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_107b",
@@ -1261,7 +1331,7 @@
       ["Tzijtum", "many"], ["y-ek'", "A3-pass"], ["heb'", "PL"], ["paxyalwum", "visitor"],
       ["t'atik", "here"]
     ],
-    "translation": "Many visitors come here.",
+    "translation": "Many visitors come here. (Lit: The visitors come many here.)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1271,7 +1341,8 @@
       ["position", "predicative"],
       ["construction", "secondary predicate"]
     ],
-    "comment": "Royer, Buenrostro & Jenks (to appear), p. 15."
+    "comment": "The paper cites Royer, Buenrostro & Jenks (to appear: 15).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_108a",
@@ -1280,7 +1351,7 @@
     "language": "chuj1250",
     "primaryText": "K'ank'an yalnhej tas silab'-il ix-s-yam waj Xun.",
     "glossedTokens": [
-      ["K'ank'an", "yellow"], ["yalnhej", "yalnhej"], ["tas", "what"], ["silab'-il", "gift-NML"],
+      ["K'ank'an", "yellow"], ["yalnhej", "YALNHEJ"], ["tas", "what"], ["silab'-il", "gift-NML"],
       ["ix-s-yam", "PFV-A3-grab"], ["waj", "CLF"], ["Xun", "Xun"]
     ],
     "translation": "",
@@ -1292,7 +1363,8 @@
       ["item", "yalnhej"],
       ["position", "attributive"]
     ],
-    "comment": "Yalnhej DPs cannot stack under adjectival modifiers."
+    "comment": "Yalnhej DPs cannot stack under adjectival modifiers.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_108b",
@@ -1301,7 +1373,7 @@
     "language": "chuj1250",
     "primaryText": "Ix-s-yam jun k'ank'an komon silab' waj Xun.",
     "glossedTokens": [
-      ["Ix-s-yam", "PFV-A3-grab"], ["jun", "INDF"], ["k'ank'an", "yellow"], ["komon", "komon"],
+      ["Ix-s-yam", "PFV-A3-grab"], ["jun", "INDF"], ["k'ank'an", "yellow"], ["komon", "KOMON"],
       ["silab'", "gift"], ["waj", "CLF"], ["Xun", "Xun"]
     ],
     "translation": "Xun grabbed a yellow average gift.",
@@ -1314,7 +1386,8 @@
       ["position", "attributive"],
       ["reading", "unremarkable"]
     ],
-    "comment": ""
+    "comment": "The paper marks the translation ≈.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_109",
@@ -1322,7 +1395,11 @@
     "reportedIn": null,
     "language": "stan1288",
     "primaryText": "Si Juan compró algún libro, hablaré con su padre.",
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Si", "if"], ["Juan", "Juan"], ["compró", "buy-PFV-3S"], ["algún", "ALGÚN"],
+      ["libro", "book"], ["hablaré", "talk-FUT-3S"], ["con", "to"], ["su", "his"],
+      ["padre", "father"]
+    ],
     "translation": "If Juan bought a book / books, I will talk to his father.",
     "context": "",
     "judgment": "acceptable",
@@ -1336,7 +1413,8 @@
       ["embedded", "conditional antecedent"],
       ["survives", "no"]
     ],
-    "comment": ""
+    "comment": "The paper prints 'Not: 'If Juan bought a book / books and I don't know which one(s) …''; it glosses hablaré 'talk-FUT-3S', a slip for 1S.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_110",
@@ -1345,7 +1423,7 @@
     "language": "stan1295",
     "primaryText": "Hans hat nie irgend-ein Buch gekauft.",
     "glossedTokens": [
-      ["Hans", "Hans"], ["hat", "have-3S"], ["nie", "never"], ["irgend-ein", "irgend-a"],
+      ["Hans", "Hans"], ["hat", "have-3S"], ["nie", "never"], ["irgend-ein", "IRGEND-a"],
       ["Buch", "book"], ["gekauft", "bought"]
     ],
     "translation": "Hans never bought any book.",
@@ -1362,7 +1440,8 @@
       ["embedded", "negation"],
       ["survives", "no"]
     ],
-    "comment": "Buccola & Haida 2017; the random choice component survives only with stress on irgendein."
+    "comment": "Buccola & Haida 2017; the random choice component survives only with stress on irgendein.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_111",
@@ -1370,7 +1449,10 @@
     "reportedIn": null,
     "language": "stan1288",
     "primaryText": "Nadie cogió un libro cualquiera.",
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Nadie", "no.one"], ["cogió", "grab-PFC-3S"], ["un", "a"], ["libro", "book"],
+      ["cualquiera", "cualquiera"]
+    ],
     "translation": "Nobody grabbed a random book.",
     "context": "",
     "judgment": "acceptable",
@@ -1382,17 +1464,18 @@
       ["embedded", "negation"],
       ["survives", "yes"]
     ],
-    "comment": ""
+    "comment": "The paper marks the translation ≈. The paper glosses cogió 'grab-PFC-3S', a misprint for PFV.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_112",
     "source": {"bibkey": "alonso-ovalle-royer-2024", "paperLabel": "(112)"},
     "reportedIn": null,
     "language": "stan1290",
-    "primaryText": "Personne n'a apporté n'importe quel livre.",
+    "primaryText": "Personne n'-a apporté n'importe quel livre.",
     "glossedTokens": [
       ["Personne", "no.one"], ["n'-a", "NEG-have-3S"], ["apporté", "brought"],
-      ["n'importe", "n'importe"], ["quel", "what"], ["livre", "book"]
+      ["n'importe", "N'IMPORTE"], ["quel", "what"], ["livre", "book"]
     ],
     "translation": "No one brought along a random book.",
     "context": "",
@@ -1405,7 +1488,8 @@
       ["embedded", "negation"],
       ["survives", "yes"]
     ],
-    "comment": ""
+    "comment": "The paper marks the translation ≈.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_113",
@@ -1415,7 +1499,7 @@
     "primaryText": "Malaj mach ix-ik'-an kot jun komon libro.",
     "glossedTokens": [
       ["Malaj", "NEG.EXT"], ["mach", "who"], ["ix-ik'-an", "PFV-bring-AF"], ["kot", "DIR.along"],
-      ["jun", "INDF"], ["komon", "komon"], ["libro", "book"]
+      ["jun", "INDF"], ["komon", "KOMON"], ["libro", "book"]
     ],
     "translation": "No one brought along a book at random.",
     "context": "",
@@ -1428,7 +1512,8 @@
       ["embedded", "negation"],
       ["survives", "yes"]
     ],
-    "comment": ""
+    "comment": "The paper marks the translation ≈.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_115_116",
@@ -1436,9 +1521,13 @@
     "reportedIn": {"bibkey": "alonso-ovalle-royer-2024", "paperLabel": "(115)"},
     "language": "chuj1250",
     "primaryText": "Tato tz-a-yam jun komon karta, lan ha-k'anab'aj-an s-tz'olal tajnel tik.",
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Tato", "if"], ["tz-a-yam", "IPFV-A2S-grab"], ["jun", "INDF"], ["komon", "KOMON"],
+      ["karta", "card"], ["lan", "PROG"], ["ha-k'anab'aj-an", "A2S-comply.with-DEP"],
+      ["s-tz'olal", "A3-rule"], ["tajnel", "game"], ["tik", "DEM"]
+    ],
     "translation": "If you pick a random card, you're complying with the rules of the game.",
-    "context": "(116) As part of the rules, you must first pick one card at random. You ask me what you need to do to respect the rules.",
+    "context": "We're playing a board game, and as part of the rules, you must first pick one card at random. Some cards give you a clear advantage, others put you at disadvantage, so you can't just pick any card you desire, i.e. it's important you pick one at random. At this stage of the game, you ask me what you need to do to respect the rules of the game.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1448,7 +1537,8 @@
       ["embedded", "conditional antecedent"],
       ["survives", "yes"]
     ],
-    "comment": ""
+    "comment": "Context (116).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_117",
@@ -1457,7 +1547,7 @@
     "language": "stan1295",
     "primaryText": "Hans hat irgend-ein Buch gekauft.",
     "glossedTokens": [
-      ["Hans", "Hans"], ["hat", "have-3S"], ["irgend-ein", "irgend-INDF"], ["Buch", "book"],
+      ["Hans", "Hans"], ["hat", "have-3S"], ["irgend-ein", "IRGEND-INDF"], ["Buch", "book"],
       ["gekauft", "bought"]
     ],
     "translation": "Hans bought some book or other / a random book.",
@@ -1471,7 +1561,8 @@
     "paperFeatures": [
       ["item", "irgendein"]
     ],
-    "comment": "Buccola & Haida 2017."
+    "comment": "Buccola & Haida 2017. The paper marks the translation ≈.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_118",
@@ -1479,7 +1570,9 @@
     "reportedIn": null,
     "language": "stan1288",
     "primaryText": "Juan compró algún libro.",
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Juan", "Juan"], ["compró", "buy-PFV-3S"], ["algún", "ALGÚN"], ["libro", "book"]
+    ],
     "translation": "Juan bought some book or other.",
     "context": "",
     "judgment": "acceptable",
@@ -1491,7 +1584,8 @@
     "paperFeatures": [
       ["item", "algún"]
     ],
-    "comment": ""
+    "comment": "The paper marks the translation ≈. The paper prints 'Not: 'Juan bought a random book.''.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_119",
@@ -1499,7 +1593,10 @@
     "reportedIn": null,
     "language": "stan1288",
     "primaryText": "Juan compró un libro cualquiera.",
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Juan", "Juan"], ["compró", "buy-PFV-3S"], ["un", "a"], ["libro", "book"],
+      ["cualquiera", "CUALQUIERA"]
+    ],
     "translation": "Juan bought a random book.",
     "context": "",
     "judgment": "acceptable",
@@ -1511,7 +1608,8 @@
     "paperFeatures": [
       ["item", "uno cualquiera"]
     ],
-    "comment": ""
+    "comment": "The paper marks the translation ≈. The paper prints 'Not: 'Juan bought some book or other.''.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_120",
@@ -1520,7 +1618,7 @@
     "language": "stan1290",
     "primaryText": "Marie a acheté n'importe quel livre.",
     "glossedTokens": [
-      ["Marie", "Marie"], ["a", "have-3S"], ["acheté", "bought"], ["n'importe", "n'importe"],
+      ["Marie", "Marie"], ["a", "have-3S"], ["acheté", "bought"], ["n'importe", "N'IMPORTE"],
       ["quel", "which"], ["livre", "book"]
     ],
     "translation": "Marie bought a random book.",
@@ -1534,25 +1632,27 @@
     "paperFeatures": [
       ["item", "n'importe quel"]
     ],
-    "comment": ""
+    "comment": "The paper marks the translation ≈. The paper prints 'Not: 'Marie bought some book or other.''.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_121",
     "source": {"bibkey": "chierchia-2013", "paperLabel": "§5.3.2"},
     "reportedIn": {"bibkey": "alonso-ovalle-royer-2024", "paperLabel": "(121)"},
     "language": "ital1282",
-    "primaryText": "A: Chi ha telefonato? B: Un regazzo qualsiasi.",
+    "primaryText": "Chi ha telefonato? Un regazzo qualsiasi",
     "glossedTokens": [],
-    "translation": "A: Who called? B: Some boy or other.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["item", "un qualsiasi"],
       ["reading", "epistemic"]
     ],
-    "comment": "Un qualsiasi does not express speaker ignorance unembedded."
+    "comment": "Un qualsiasi does not express speaker ignorance unembedded. The paper prints (121a) Chi ha telefonato? 'who have:3S telephoned' and (121b) ?? Un regazzo qualsiasi 'a boy QUALSIASI', without translations or speaker labels; regazzo is a misprint for ragazzo. It attributes the description to Chierchia (2013: §5.3.2).",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_122",
@@ -1561,7 +1661,7 @@
     "language": "stan1288",
     "primaryText": "Alguna persona está bailando.",
     "glossedTokens": [
-      ["Alguna", "alguna"], ["persona", "person"], ["está", "be-3S"], ["bailando", "dancing"]
+      ["Alguna", "ALGUNA"], ["persona", "person"], ["está", "be-3S"], ["bailando", "dancing"]
     ],
     "translation": "Some person or other is dancing.",
     "context": "The speaker knows that all contextually relevant people are dancing.",
@@ -1572,7 +1672,8 @@
       ["item", "algún"],
       ["scenario", "universal"]
     ],
-    "comment": ""
+    "comment": "The context paraphrases the paper's prose.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_123",
@@ -1580,7 +1681,10 @@
     "reportedIn": null,
     "language": "stan1288",
     "primaryText": "Juan compró un libro cualquiera.",
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Juan", "Juan"], ["compró", "grab-PFV-3S"], ["un", "a"], ["libro", "book"],
+      ["cualquiera", "CUALQUIERA"]
+    ],
     "translation": "Juan bought a random book.",
     "context": "Juan bought all contextually relevant books.",
     "judgment": "unacceptable",
@@ -1590,7 +1694,8 @@
       ["item", "uno cualquiera"],
       ["scenario", "universal"]
     ],
-    "comment": ""
+    "comment": "The paper glosses compró 'grab-PFV-3S'. The context paraphrases the paper's prose.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_fn10",
@@ -1599,7 +1704,7 @@
     "language": "chuj1250",
     "primaryText": "Mach-xomlaj ix-chanhalw-i.",
     "glossedTokens": [
-      ["Mach-xomlaj", "who-xomlaj"], ["ix-chanhalw-i", "PFV-dance-IV"]
+      ["Mach-xomlaj", "who-XOMLAJ"], ["ix-chanhalw-i", "PFV-dance-IV"]
     ],
     "translation": "Someone danced but I don't know who.",
     "context": "",
@@ -1610,7 +1715,8 @@
       ["item", "xomlaj"],
       ["reading", "epistemic"]
     ],
-    "comment": "Cannot describe (24) (all danced) nor random choice scenarios."
+    "comment": "Cannot describe (24) (all danced) nor random choice scenarios. The paper marks the translation ≈.",
+    "verified": "page-image"
   },
   {
     "id": "alonsoovalleroyer2024_fn20",
@@ -1619,7 +1725,7 @@
     "language": "chuj1250",
     "primaryText": "Yalnhej mach heb' s-nulej ix Katal ix-k'och-i.",
     "glossedTokens": [
-      ["yalnhej", "yalnhej"], ["mach", "who"], ["heb'", "PL"], ["s-nulej", "A3-sibling"],
+      ["Yalnhej", "YALNHEJ"], ["mach", "who"], ["heb'", "PL"], ["s-nulej", "A3-sibling"],
       ["ix", "CLF"], ["Katal", "Katal"], ["ix-k'och-i", "PFV-arrive-IV"]
     ],
     "translation": "Some of Katal's siblings arrived, but I'm not sure which. / All of Katal's siblings arrived.",
@@ -1631,6 +1737,7 @@
       ["item", "yalnhej"],
       ["reading", "epistemic"]
     ],
-    "comment": ""
+    "comment": "The paper marks the translation ≈.",
+    "verified": "page-image"
   }
 ]
