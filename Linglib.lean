@@ -932,7 +932,6 @@ import Linglib.Semantics.Aspect.Instantiation
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Semantics.Attitudes.Acquaintance
 import Linglib.Semantics.Attitudes.Anchor
-import Linglib.Semantics.Attitudes.Confidence
 import Linglib.Semantics.Attitudes.Desire.BestWorlds
 import Linglib.Semantics.Attitudes.Desire.Conditional
 import Linglib.Semantics.Attitudes.Desire.ExpectedValue
