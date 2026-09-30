@@ -79,6 +79,9 @@ CUSTOM_COLUMNS = [
      "dc:description": "The readings the paper distinguishes, with their marks."},
     {"name": "Paper_Features", "datatype": "json",
      "dc:description": "The paper's own classifications of the example, as key-value pairs."},
+    {"name": "Verified",
+     "dc:description": "How the row was last checked against its source: page-image or "
+                       "text-layer; empty when it has not been."},
 ]
 
 
@@ -136,6 +139,7 @@ def example_row(paper, row):
         "Readings": [{"name": r["name"], "mark": MARK[r["judgment"]]}
                      for r in row.get("readings", [])] or None,
         "Paper_Features": features(row) or None,
+        "Verified": row.get("verified"),
     }
 
 
@@ -231,18 +235,25 @@ REPORT_COLUMNS = [
 
 
 def report():
-    """Per paper, the rows to check against their source that CLDF validation does not flag."""
+    """Per paper, the rows to check against their source that CLDF validation does not flag. A row
+    verified against page images is settled, and a sign language's examples are written as
+    glosses, so neither counts as unglossed."""
     with open(LANGUAGES, encoding="utf-8") as f:
-        level = {r["ID"]: r["Level"] for r in csv.DictReader(f)}
-    table = {}
+        languages = list(csv.DictReader(f))
+    level = {r["ID"]: r["Level"] for r in languages}
+    signed = {r["ID"] for r in languages if "Sign Language" in r["Name"]}
+    table, verified = {}, 0
     for paper, rows in load().items():
         counts = dict.fromkeys(k for k, _ in REPORT_COLUMNS)
         for k in counts:
             counts[k] = 0
         for r in rows:
+            if r.get("verified") == "page-image":
+                verified += 1
+                continue
             pairs = r.get("glossedTokens") or []
             foreign = r["language"] not in ("", META_LANGUAGE)
-            counts["unglossed"] += foreign and not pairs
+            counts["unglossed"] += foreign and not pairs and r["language"] not in signed
             counts["untranslated"] += foreign and not r.get("translation")
             counts["rule2"] += (lgr_conformance(pairs) == "WORD_ALIGNED"
                                 and any("-" in w or "=" in w for w, _ in pairs))
@@ -258,6 +269,7 @@ def report():
         sys.stdout.write(paper + "\t" + "\t".join(str(counts[k]) for k in keys) + "\n")
     totals = {k: sum(c[k] for c in table.values()) for k in keys}
     sys.stdout.write("total\t" + "\t".join(str(totals[k]) for k in keys) + "\n")
+    sys.stdout.write(f"# rows verified against page images: {verified}\n")
     for k, what in REPORT_COLUMNS:
         sys.stdout.write(f"# {k}: {what}\n")
 

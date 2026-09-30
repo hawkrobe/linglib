@@ -54,6 +54,7 @@ field reference:
 | `readings` | array of `{name, judgment}` | multiple LFs / scope readings (e.g., donkey strong vs weak) |
 | `paperFeatures` | array of `[key, value]` | what the paper states about the example (its design cell, the class it assigns); a key repeats when the example bears the property twice |
 | `comment` | string | analyst notes |
+| `verified` | `"page-image"` or `"text-layer"`, optional | how the row was last checked against its source; not a Lean field |
 
 Translations are English, so there is no metalanguage field. CLDF's
 `LGR_Conformance` is not recorded either: `glossedTokens` pairs are word
@@ -78,6 +79,15 @@ an `ExampleTable` with the judgment as CLDF's `Grammaticality_Judgement` mark (`
 `LanguageTable` from `languages.csv`; a `ContributionTable` of the data files; and the cited
 entries of `references.bib`. CI runs it with `--validate`, which fails on any issue the CLDF
 validator reports and on any bib entry a BibTeX parser rejects.
+
+## Verification
+
+`verified` records that a row was checked against its source: `"page-image"` when every field
+was compared with the page images (the form, the gloss as printed, the translation, the
+judgment mark, the locator), `"text-layer"` when only the PDF's text was used. A checked row
+whose gloss or translation is empty records that the source prints none. `--report` counts only
+rows not verified against page images, so the queue it prints is the work left. The generated
+Lean module does not carry the key; the CLDF export does, as `Verified`.
 
 ## One sentence per row
 

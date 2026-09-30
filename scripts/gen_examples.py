@@ -41,6 +41,9 @@ object's fields mirror the `LinguisticExample` Lean struct:
 
 Behavior:
 - Errors out (exit 1) if the JSON file doesn't exist.
+- Accepts one key that is not a field, `verified` (`"page-image"` or
+  `"text-layer"`): how the row was last checked against its source. The
+  generated module does not carry it; the CLDF export does.
 - Errors out on schema violations (a key that is not a field, an id outside
   the CLDF identifier characters `[A-Za-z0-9_-]`, a language that is neither
   empty nor a Glottocode of `languages.csv`, unknown judgment value,
@@ -224,6 +227,8 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
     unknown = [k for k in ex if k not in KEY_ORDER]
     if unknown:
         raise ValueError(f"{where}: {', '.join(map(repr, unknown))} not a field of LinguisticExample")
+    if ex.get("verified", "page-image") not in VERIFIED:
+        raise ValueError(f"{where}: verified {ex['verified']!r}; expected one of {sorted(VERIFIED)}")
 
     src         = emit_source_ref(ex.get("source") or {}, where + ".source")
     reported_in = emit_reported_in(ex.get("reportedIn"), where)
@@ -365,7 +370,15 @@ KEY_ORDER = [
     "id", "source", "reportedIn", "language", "primaryText",
     "discourseSegments", "glossedTokens", "translation", "context",
     "judgment", "alternatives", "readings", "paperFeatures", "comment",
+    "verified",
 ]
+
+# `verified` is provenance, not a field: how the row was last checked against its source. It is
+# validated here and exported to CLDF, and the generated Lean module does not carry it.
+VERIFIED = {
+    "page-image": "every field checked against the page images of the source",
+    "text-layer": "checked against the text layer of the source's PDF only",
+}
 
 MAX_WIDTH = 98
 

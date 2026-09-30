@@ -39,7 +39,8 @@ translation and the judgment the paper reports; it is the sentence-level counter
 * Per-paper data lives in `Linglib/Data/Examples/{AuthorYear}.json` and is compiled by
   `scripts/gen_examples.py` into `Linglib/Data/Examples/{AuthorYear}.lean`, declaring
   `namespace {AuthorYear}.Examples`. The JSON keys are the field names, and `id` uses only the
-  characters of a CLDF identifier. `scripts/export_examples_cldf.py` writes the data as a CLDF
+  characters of a CLDF identifier. One further key, `verified`, records how the row was last
+  checked against its source; it is provenance, exported to CLDF but not a field. `scripts/export_examples_cldf.py` writes the data as a CLDF
   dataset, which CI validates.
 * `language` is a Glottocode, which the generator checks against `languages.csv`, the language
   table of the data drawn from Glottolog; it is empty for a constructed string that belongs to no

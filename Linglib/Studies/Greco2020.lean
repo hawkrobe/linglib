@@ -114,7 +114,12 @@ inductive Diagnostic where
   | factiveEmbedding
   deriving DecidableEq, Repr
 
-/-- A judged sentence with the features the analysis reads off it. -/
+/-- The judgment a row tests: of the reading it names under `reading`, as (72b), which is
+acceptable on its affirmative reading and tests the negative one; otherwise of the sentence. -/
+def testedJudgment (ex : LinguisticExample) : Judgment :=
+  ((ex.feature? "reading").bind (ex.readings.lookup ·)).getD ex.judgment
+
+/-- A judged sentence, or reading, with the features the analysis reads off it. -/
 structure Row where
   construction : Construction
   requirement : Option Requirement
@@ -139,7 +144,7 @@ def Row.ofExample (ex : LinguisticExample) : Option Row := do
     ex.parse? "diagnostic"
       [("wh", Diagnostic.wh), ("answerhood", .answerhood), ("dopo tutto", .dopoTutto),
         ("factive embedding", .factiveEmbedding)],
-    ex.parse? "focus" [("DP", Cat.D), ("TP", .T)], ex.judgment⟩
+    ex.parse? "focus" [("DP", Cat.D), ("TP", .T)], testedJudgment ex⟩
 
 /-- The judged sentences of sections 2 to 4. -/
 def rows : List Row := Examples.all.filterMap Row.ofExample
