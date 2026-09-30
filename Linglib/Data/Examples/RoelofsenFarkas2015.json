@@ -21,7 +21,8 @@
       ["relative", "agree"],
       ["particle", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_6a_no",
@@ -35,7 +36,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -45,7 +46,8 @@
       ["relative", "agree"],
       ["particle", "no"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_6b_yes",
@@ -59,7 +61,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -69,7 +71,8 @@
       ["relative", "reverse"],
       ["particle", "yes"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_6b_no",
@@ -93,7 +96,8 @@
       ["relative", "reverse"],
       ["particle", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_7a_yes",
@@ -117,7 +121,8 @@
       ["relative", "agree"],
       ["particle", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_7a_no",
@@ -141,7 +146,8 @@
       ["relative", "agree"],
       ["particle", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_7b_yes",
@@ -165,7 +171,8 @@
       ["relative", "reverse"],
       ["particle", "yes"]
     ],
-    "comment": "Small capitals mark obligatory contrastive stress."
+    "comment": "Small capitals mark obligatory contrastive stress.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_7b_no",
@@ -189,19 +196,20 @@
       ["relative", "reverse"],
       ["particle", "no"]
     ],
-    "comment": "Small capitals mark obligatory contrastive stress."
+    "comment": "Small capitals mark obligatory contrastive stress.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_119_oui",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(119)"},
     "language": "stan1290",
-    "primaryText": "Claude est à la maison. Oui, elle y est.",
+    "primaryText": "A: Claude est à la maison. B: Oui, elle y est.",
     "discourseSegments": [
-      "Claude est à la maison.",
-      "Oui, elle y est."
+      "A: Claude est à la maison.",
+      "B: Oui, elle y est."
     ],
     "glossedTokens": [],
-    "translation": "Yes, she is.",
+    "translation": "Claude is at home. — Yes, she is.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -213,21 +221,22 @@
       ["relative", "agree"],
       ["particle", "oui"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_119_non",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(119)"},
     "language": "stan1290",
-    "primaryText": "Claude est à la maison. Non, elle y est.",
+    "primaryText": "A: Claude est à la maison. B: Non, elle y est.",
     "discourseSegments": [
-      "Claude est à la maison.",
-      "Non, elle y est."
+      "A: Claude est à la maison.",
+      "B: Non, elle y est."
     ],
     "glossedTokens": [],
-    "translation": "Yes, she is.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -237,21 +246,22 @@
       ["relative", "agree"],
       ["particle", "non"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle. The paper's translation, 'Yes, she is.', goes with the grammatical particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_119_si",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(119)"},
     "language": "stan1290",
-    "primaryText": "Claude est à la maison. Si, elle y est.",
+    "primaryText": "A: Claude est à la maison. B: Si, elle y est.",
     "discourseSegments": [
-      "Claude est à la maison.",
-      "Si, elle y est."
+      "A: Claude est à la maison.",
+      "B: Si, elle y est."
     ],
     "glossedTokens": [],
-    "translation": "Yes, she is.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -261,21 +271,22 @@
       ["relative", "agree"],
       ["particle", "si"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle. The paper's translation, 'Yes, she is.', goes with the grammatical particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_120_oui",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(120)"},
     "language": "stan1290",
-    "primaryText": "Claude n'est pas à la maison. Oui, elle n'y est pas.",
+    "primaryText": "A: Claude n'est pas à la maison. B: Oui, elle n'y est pas.",
     "discourseSegments": [
-      "Claude n'est pas à la maison.",
-      "Oui, elle n'y est pas."
+      "A: Claude n'est pas à la maison.",
+      "B: Oui, elle n'y est pas."
     ],
     "glossedTokens": [],
-    "translation": "No, she isn't.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -285,19 +296,20 @@
       ["relative", "agree"],
       ["particle", "oui"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle. The paper's translation, 'No, she isn't.', goes with the grammatical particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_120_non",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(120)"},
     "language": "stan1290",
-    "primaryText": "Claude n'est pas à la maison. Non, elle n'y est pas.",
+    "primaryText": "A: Claude n'est pas à la maison. B: Non, elle n'y est pas.",
     "discourseSegments": [
-      "Claude n'est pas à la maison.",
-      "Non, elle n'y est pas."
+      "A: Claude n'est pas à la maison.",
+      "B: Non, elle n'y est pas."
     ],
     "glossedTokens": [],
-    "translation": "No, she isn't.",
+    "translation": "Claude is not at home. — No, she isn't.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -309,21 +321,22 @@
       ["relative", "agree"],
       ["particle", "non"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_120_si",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(120)"},
     "language": "stan1290",
-    "primaryText": "Claude n'est pas à la maison. Si, elle n'y est pas.",
+    "primaryText": "A: Claude n'est pas à la maison. B: Si, elle n'y est pas.",
     "discourseSegments": [
-      "Claude n'est pas à la maison.",
-      "Si, elle n'y est pas."
+      "A: Claude n'est pas à la maison.",
+      "B: Si, elle n'y est pas."
     ],
     "glossedTokens": [],
-    "translation": "No, she isn't.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -333,21 +346,22 @@
       ["relative", "agree"],
       ["particle", "si"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle. The paper's translation, 'No, she isn't.', goes with the grammatical particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_121_oui",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(121)"},
     "language": "stan1290",
-    "primaryText": "Claude n'est pas à la maison. Oui, elle y est.",
+    "primaryText": "A: Claude n'est pas à la maison. B: Oui, elle y est.",
     "discourseSegments": [
-      "Claude n'est pas à la maison.",
-      "Oui, elle y est."
+      "A: Claude n'est pas à la maison.",
+      "B: Oui, elle y est."
     ],
     "glossedTokens": [],
-    "translation": "Yes, she IS.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -357,21 +371,22 @@
       ["relative", "reverse"],
       ["particle", "oui"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle. The paper's translation, 'Yes, she IS.', goes with the grammatical particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_121_non",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(121)"},
     "language": "stan1290",
-    "primaryText": "Claude n'est pas à la maison. Non, elle y est.",
+    "primaryText": "A: Claude n'est pas à la maison. B: Non, elle y est.",
     "discourseSegments": [
-      "Claude n'est pas à la maison.",
-      "Non, elle y est."
+      "A: Claude n'est pas à la maison.",
+      "B: Non, elle y est."
     ],
     "glossedTokens": [],
-    "translation": "Yes, she IS.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -381,19 +396,20 @@
       ["relative", "reverse"],
       ["particle", "non"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle. The paper's translation, 'Yes, she IS.', goes with the grammatical particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_121_si",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(121)"},
     "language": "stan1290",
-    "primaryText": "Claude n'est pas à la maison. Si, elle y est.",
+    "primaryText": "A: Claude n'est pas à la maison. B: Si, elle y est.",
     "discourseSegments": [
-      "Claude n'est pas à la maison.",
-      "Si, elle y est."
+      "A: Claude n'est pas à la maison.",
+      "B: Si, elle y est."
     ],
     "glossedTokens": [],
-    "translation": "Yes, she IS.",
+    "translation": "Claude is not at home. — Yes, she IS.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -405,21 +421,22 @@
       ["relative", "reverse"],
       ["particle", "si"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_122_oui",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(122)"},
     "language": "stan1290",
-    "primaryText": "Claude est à la maison. Oui, elle n'y est pas.",
+    "primaryText": "A: Claude est à la maison. B: Oui, elle n'y est pas.",
     "discourseSegments": [
-      "Claude est à la maison.",
-      "Oui, elle n'y est pas."
+      "A: Claude est à la maison.",
+      "B: Oui, elle n'y est pas."
     ],
     "glossedTokens": [],
-    "translation": "No, she isn't.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -429,19 +446,20 @@
       ["relative", "reverse"],
       ["particle", "oui"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle. The paper's translation, 'No, she isn't.', goes with the grammatical particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_122_non",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(122)"},
     "language": "stan1290",
-    "primaryText": "Claude est à la maison. Non, elle n'y est pas.",
+    "primaryText": "A: Claude est à la maison. B: Non, elle n'y est pas.",
     "discourseSegments": [
-      "Claude est à la maison.",
-      "Non, elle n'y est pas."
+      "A: Claude est à la maison.",
+      "B: Non, elle n'y est pas."
     ],
     "glossedTokens": [],
-    "translation": "No, she isn't.",
+    "translation": "Claude is at home. — No, she isn't.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -453,21 +471,22 @@
       ["relative", "reverse"],
       ["particle", "non"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_122_si",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(122)"},
     "language": "stan1290",
-    "primaryText": "Claude est à la maison. Si, elle n'y est pas.",
+    "primaryText": "A: Claude est à la maison. B: Si, elle n'y est pas.",
     "discourseSegments": [
-      "Claude est à la maison.",
-      "Si, elle n'y est pas."
+      "A: Claude est à la maison.",
+      "B: Si, elle n'y est pas."
     ],
     "glossedTokens": [],
-    "translation": "No, she isn't.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -477,19 +496,20 @@
       ["relative", "reverse"],
       ["particle", "si"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle. The paper's translation, 'No, she isn't.', goes with the grammatical particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_124_ja",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(124)"},
     "language": "stan1295",
-    "primaryText": "Katharina ist zu Hause. Ja, sie ist zu Hause.",
+    "primaryText": "A: Katharina ist zu Hause. B: Ja, sie ist zu Hause.",
     "discourseSegments": [
-      "Katharina ist zu Hause.",
-      "Ja, sie ist zu Hause."
+      "A: Katharina ist zu Hause.",
+      "B: Ja, sie ist zu Hause."
     ],
     "glossedTokens": [],
-    "translation": "Yes, she is at home.",
+    "translation": "Katharina is at home. — Yes, she is at home.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -501,21 +521,22 @@
       ["relative", "agree"],
       ["particle", "ja"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_124_nein",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(124)"},
     "language": "stan1295",
-    "primaryText": "Katharina ist zu Hause. Nein, sie ist zu Hause.",
+    "primaryText": "A: Katharina ist zu Hause. B: Nein, sie ist zu Hause.",
     "discourseSegments": [
-      "Katharina ist zu Hause.",
-      "Nein, sie ist zu Hause."
+      "A: Katharina ist zu Hause.",
+      "B: Nein, sie ist zu Hause."
     ],
     "glossedTokens": [],
-    "translation": "Yes, she is at home.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -525,21 +546,22 @@
       ["relative", "agree"],
       ["particle", "nein"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle. The paper's translation, 'Yes, she is at home.', goes with the grammatical particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_124_doch",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(124)"},
     "language": "stan1295",
-    "primaryText": "Katharina ist zu Hause. Doch, sie ist zu Hause.",
+    "primaryText": "A: Katharina ist zu Hause. B: Doch, sie ist zu Hause.",
     "discourseSegments": [
-      "Katharina ist zu Hause.",
-      "Doch, sie ist zu Hause."
+      "A: Katharina ist zu Hause.",
+      "B: Doch, sie ist zu Hause."
     ],
     "glossedTokens": [],
-    "translation": "Yes, she is at home.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -549,19 +571,20 @@
       ["relative", "agree"],
       ["particle", "doch"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle. The paper's translation, 'Yes, she is at home.', goes with the grammatical particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_125_ja",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(125)"},
     "language": "stan1295",
-    "primaryText": "Katharina ist nicht zu Hause. Ja, sie ist nicht zu Hause.",
+    "primaryText": "A: Katharina ist nicht zu Hause. B: Ja, sie ist nicht zu Hause.",
     "discourseSegments": [
-      "Katharina ist nicht zu Hause.",
-      "Ja, sie ist nicht zu Hause."
+      "A: Katharina ist nicht zu Hause.",
+      "B: Ja, sie ist nicht zu Hause."
     ],
     "glossedTokens": [],
-    "translation": "Yes, she is not at home.",
+    "translation": "Katharina is not at home. — Yes, she is not at home.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -573,19 +596,20 @@
       ["relative", "agree"],
       ["particle", "ja"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_125_nein",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(125)"},
     "language": "stan1295",
-    "primaryText": "Katharina ist nicht zu Hause. Nein, sie ist nicht zu Hause.",
+    "primaryText": "A: Katharina ist nicht zu Hause. B: Nein, sie ist nicht zu Hause.",
     "discourseSegments": [
-      "Katharina ist nicht zu Hause.",
-      "Nein, sie ist nicht zu Hause."
+      "A: Katharina ist nicht zu Hause.",
+      "B: Nein, sie ist nicht zu Hause."
     ],
     "glossedTokens": [],
-    "translation": "Yes, she is not at home.",
+    "translation": "Katharina is not at home. — Yes, she is not at home.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -597,21 +621,22 @@
       ["relative", "agree"],
       ["particle", "nein"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_125_doch",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(125)"},
     "language": "stan1295",
-    "primaryText": "Katharina ist nicht zu Hause. Doch, sie ist nicht zu Hause.",
+    "primaryText": "A: Katharina ist nicht zu Hause. B: Doch, sie ist nicht zu Hause.",
     "discourseSegments": [
-      "Katharina ist nicht zu Hause.",
-      "Doch, sie ist nicht zu Hause."
+      "A: Katharina ist nicht zu Hause.",
+      "B: Doch, sie ist nicht zu Hause."
     ],
     "glossedTokens": [],
-    "translation": "Yes, she is not at home.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -621,21 +646,22 @@
       ["relative", "agree"],
       ["particle", "doch"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle. The paper's translation, 'Yes, she is not at home.', goes with the grammatical particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_126_ja",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(126)"},
     "language": "stan1295",
-    "primaryText": "Katharina ist nicht zu Hause. Ja, sie ist zu Hause.",
+    "primaryText": "A: Katharina ist nicht zu Hause. B: Ja, sie ist zu Hause.",
     "discourseSegments": [
-      "Katharina ist nicht zu Hause.",
-      "Ja, sie ist zu Hause."
+      "A: Katharina ist nicht zu Hause.",
+      "B: Ja, sie ist zu Hause."
     ],
     "glossedTokens": [],
-    "translation": "Yes, she IS.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -645,21 +671,22 @@
       ["relative", "reverse"],
       ["particle", "ja"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle. The paper's translation, 'Yes, she IS.', goes with the grammatical particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_126_nein",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(126)"},
     "language": "stan1295",
-    "primaryText": "Katharina ist nicht zu Hause. Nein, sie ist zu Hause.",
+    "primaryText": "A: Katharina ist nicht zu Hause. B: Nein, sie ist zu Hause.",
     "discourseSegments": [
-      "Katharina ist nicht zu Hause.",
-      "Nein, sie ist zu Hause."
+      "A: Katharina ist nicht zu Hause.",
+      "B: Nein, sie ist zu Hause."
     ],
     "glossedTokens": [],
-    "translation": "Yes, she IS.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -669,19 +696,20 @@
       ["relative", "reverse"],
       ["particle", "nein"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle. The paper's translation, 'Yes, she IS.', goes with the grammatical particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_126_doch",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(126)"},
     "language": "stan1295",
-    "primaryText": "Katharina ist nicht zu Hause. Doch, sie ist zu Hause.",
+    "primaryText": "A: Katharina ist nicht zu Hause. B: Doch, sie ist zu Hause.",
     "discourseSegments": [
-      "Katharina ist nicht zu Hause.",
-      "Doch, sie ist zu Hause."
+      "A: Katharina ist nicht zu Hause.",
+      "B: Doch, sie ist zu Hause."
     ],
     "glossedTokens": [],
-    "translation": "Yes, she IS.",
+    "translation": "Katharina is not at home. — Yes, she IS.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -693,21 +721,22 @@
       ["relative", "reverse"],
       ["particle", "doch"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_127_ja",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(127)"},
     "language": "stan1295",
-    "primaryText": "Katharina ist zu Hause. Ja, sie ist nicht zu Hause.",
+    "primaryText": "A: Katharina ist zu Hause. B: Ja, sie ist nicht zu Hause.",
     "discourseSegments": [
-      "Katharina ist zu Hause.",
-      "Ja, sie ist nicht zu Hause."
+      "A: Katharina ist zu Hause.",
+      "B: Ja, sie ist nicht zu Hause."
     ],
     "glossedTokens": [],
-    "translation": "No, she is not at home.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -717,19 +746,20 @@
       ["relative", "reverse"],
       ["particle", "ja"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle. The paper's translation, 'No, she is not at home.', goes with the grammatical particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_127_nein",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(127)"},
     "language": "stan1295",
-    "primaryText": "Katharina ist zu Hause. Nein, sie ist nicht zu Hause.",
+    "primaryText": "A: Katharina ist zu Hause. B: Nein, sie ist nicht zu Hause.",
     "discourseSegments": [
-      "Katharina ist zu Hause.",
-      "Nein, sie ist nicht zu Hause."
+      "A: Katharina ist zu Hause.",
+      "B: Nein, sie ist nicht zu Hause."
     ],
     "glossedTokens": [],
-    "translation": "No, she is not at home.",
+    "translation": "Katharina is at home. — No, she is not at home.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -741,21 +771,22 @@
       ["relative", "reverse"],
       ["particle", "nein"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_127_doch",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(127)"},
     "language": "stan1295",
-    "primaryText": "Katharina ist zu Hause. Doch, sie ist nicht zu Hause.",
+    "primaryText": "A: Katharina ist zu Hause. B: Doch, sie ist nicht zu Hause.",
     "discourseSegments": [
-      "Katharina ist zu Hause.",
-      "Doch, sie ist nicht zu Hause."
+      "A: Katharina ist zu Hause.",
+      "B: Doch, sie ist nicht zu Hause."
     ],
     "glossedTokens": [],
-    "translation": "No, she is not at home.",
+    "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -765,16 +796,17 @@
       ["relative", "reverse"],
       ["particle", "doch"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle. The paper's translation, 'No, she is not at home.', goes with the grammatical particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_49_yes",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(49)"},
     "language": "stan1293",
-    "primaryText": "Is the number of planets even? Yes, it is.",
+    "primaryText": "A: Is the number of planets even? B: Yes, it is.",
     "discourseSegments": [
-      "Is the number of planets even?",
-      "Yes, it is."
+      "A: Is the number of planets even?",
+      "B: Yes, it is."
     ],
     "glossedTokens": [],
     "translation": "",
@@ -790,16 +822,17 @@
       ["particle", "yes"],
       ["conveys", "even"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_49_no",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(49)"},
     "language": "stan1293",
-    "primaryText": "Is the number of planets even? No, it isn't.",
+    "primaryText": "A: Is the number of planets even? B: No, it isn't.",
     "discourseSegments": [
-      "Is the number of planets even?",
-      "No, it isn't."
+      "A: Is the number of planets even?",
+      "B: No, it isn't."
     ],
     "glossedTokens": [],
     "translation": "",
@@ -815,16 +848,17 @@
       ["particle", "no"],
       ["conveys", "odd"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_50_yes",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(50)"},
     "language": "stan1293",
-    "primaryText": "Is the number of planets odd? Yes, it is.",
+    "primaryText": "A: Is the number of planets odd? B: Yes, it is.",
     "discourseSegments": [
-      "Is the number of planets odd?",
-      "Yes, it is."
+      "A: Is the number of planets odd?",
+      "B: Yes, it is."
     ],
     "glossedTokens": [],
     "translation": "",
@@ -840,16 +874,17 @@
       ["particle", "yes"],
       ["conveys", "odd"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_50_no",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(50)"},
     "language": "stan1293",
-    "primaryText": "Is the number of planets odd? No, it isn't.",
+    "primaryText": "A: Is the number of planets odd? B: No, it isn't.",
     "discourseSegments": [
-      "Is the number of planets odd?",
-      "No, it isn't."
+      "A: Is the number of planets odd?",
+      "B: No, it isn't."
     ],
     "glossedTokens": [],
     "translation": "",
@@ -865,21 +900,22 @@
       ["particle", "no"],
       ["conveys", "even"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_51_yes",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(51)"},
     "language": "stan1293",
-    "primaryText": "Is the number of planets even↑, or odd↓? Yes, it is.",
+    "primaryText": "A: Is the number of planets even↑, or odd↓? B: Yes, it is.",
     "discourseSegments": [
-      "Is the number of planets even↑, or odd↓?",
-      "Yes, it is."
+      "A: Is the number of planets even↑, or odd↓?",
+      "B: Yes, it is."
     ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -887,21 +923,22 @@
       ["response", "positive"],
       ["particle", "yes"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_51_no",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(51)"},
     "language": "stan1293",
-    "primaryText": "Is the number of planets even↑, or odd↓? No, it isn't.",
+    "primaryText": "A: Is the number of planets even↑, or odd↓? B: No, it isn't.",
     "discourseSegments": [
-      "Is the number of planets even↑, or odd↓?",
-      "No, it isn't."
+      "A: Is the number of planets even↑, or odd↓?",
+      "B: No, it isn't."
     ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -909,16 +946,17 @@
       ["response", "negative"],
       ["particle", "no"]
     ],
-    "comment": ""
+    "comment": "The paper stars the particle.",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_52_no",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(52)"},
     "language": "stan1293",
-    "primaryText": "Is the number of planets odd↑? No, it isn't.",
+    "primaryText": "A: Is the number of planets odd↑? B: No, it isn't.",
     "discourseSegments": [
-      "Is the number of planets odd↑?",
-      "No, it isn't."
+      "A: Is the number of planets odd↑?",
+      "B: No, it isn't."
     ],
     "glossedTokens": [],
     "translation": "",
@@ -934,16 +972,17 @@
       ["particle", "no"],
       ["conveys", "not odd"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roelofsenfarkas2015_53_no",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(53)"},
     "language": "stan1293",
-    "primaryText": "Is the number of planets not even↑? No, it isn't.",
+    "primaryText": "A: Is the number of planets not even↑? B: No, it isn't.",
     "discourseSegments": [
-      "Is the number of planets not even↑?",
-      "No, it isn't."
+      "A: Is the number of planets not even↑?",
+      "B: No, it isn't."
     ],
     "glossedTokens": [],
     "translation": "",
@@ -959,6 +998,7 @@
       ["particle", "no"],
       ["conveys", "not even"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]
