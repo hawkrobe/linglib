@@ -175,7 +175,7 @@ def ex_4d_depPrf : LinguisticExample :=
     alternatives := [("sɨħab-", .acceptable)]
     readings := []
     paperFeatures := [("root", "pull"), ("template", "depPrf")]
-    comment := "The [ɨ] variant is (15d)'s." }
+    comment := "The [ɨ] variant is (15d)'s. (4) prints saħab without the hyphen; (15d) prints saħab- (~ sɨħab-)." }
 
 def ex_4d_prf : LinguisticExample :=
   { id := "faustlampitelli2026_4d_prf"
@@ -607,7 +607,7 @@ def ex_12a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "whip"), ("template", "imprf2")]
-    comment := "" }
+    comment := "The paper prints the prefix in parentheses, (tɨ-)fʌggɨr: optional in regular verbs, obligatory in guttural-medial stems (fn. 9). The column heading of (12) is 2-IMP.M, under the title 'Tigre imperfectives'." }
 
 def ex_12b : LinguisticExample :=
   { id := "faustlampitelli2026_12b"
@@ -815,7 +815,7 @@ def ex_37a : LinguisticExample :=
     alternatives := [("mɨsmɨʕu", .acceptable)]
     readings := []
     paperFeatures := [("root", "hear"), ("template", "gerA"), ("suffix", "u")]
-    comment := "" }
+    comment := "The paper prints [mɨs_muʕu], the underscore marking the dissociated nucleus." }
 
 def ex_17a_pass : LinguisticExample :=
   { id := "faustlampitelli2026_17a_pass"
@@ -927,7 +927,7 @@ def ex_17d_pass : LinguisticExample :=
     alternatives := [("tɨ-sɨʔil", .acceptable)]
     readings := []
     paperFeatures := [("root", "ask"), ("template", "passPrf"), ("predicted", "no")]
-    comment := "" }
+    comment := "The paper prints tɨsiʔil without the hyphen, beside tɨ-sɨʔil." }
 
 def ex_18a_dep : LinguisticExample :=
   { id := "faustlampitelli2026_18a_dep"
@@ -1023,7 +1023,7 @@ def ex_19b_arifu : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "arf"), ("template", "prf"), ("suffix", "u")]
-    comment := "" }
+    comment := "The paper prints the form in table (19) without a gloss; the translation names its template." }
 
 def ex_19b_tismaa : LinguisticExample :=
   { id := "faustlampitelli2026_19b_tismaa"
@@ -1039,7 +1039,7 @@ def ex_19b_tismaa : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "hear"), ("template", "juss2")]
-    comment := "" }
+    comment := "The paper prints the form in table (19) without a gloss; the translation names its template." }
 
 def ex_19c : LinguisticExample :=
   { id := "faustlampitelli2026_19c"
@@ -1055,7 +1055,7 @@ def ex_19c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "hear"), ("template", "caus"), ("suffix", "ka")]
-    comment := "" }
+    comment := "The paper glosses the underlying /ʔʌsmiʕ-ka/ 'make.listen.PRF-2MSG'." }
 
 def ex_31a : LinguisticExample :=
   { id := "faustlampitelli2026_31a"
@@ -1071,7 +1071,7 @@ def ex_31a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "leave"), ("template", "juss2")]
-    comment := "" }
+    comment := "The paper does not name the language of (31)-(33); (31a) repeats Tigre (6a), (32a) Tigrinya (27c)." }
 
 def ex_32b : LinguisticExample :=
   { id := "faustlampitelli2026_32b"
@@ -1087,7 +1087,7 @@ def ex_32b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "pull"), ("template", "juss2")]
-    comment := "" }
+    comment := "The paper does not name the language of (31)-(33); (31a) repeats Tigre (6a), (32a) Tigrinya (27c)." }
 
 def ex_32c : LinguisticExample :=
   { id := "faustlampitelli2026_32c"
@@ -1103,7 +1103,7 @@ def ex_32c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "pull"), ("template", "juss2"), ("suffix", "i")]
-    comment := "" }
+    comment := "The paper does not name the language of (31)-(33); (31a) repeats Tigre (6a), (32a) Tigrinya (27c)." }
 
 def ex_33a : LinguisticExample :=
   { id := "faustlampitelli2026_33a"
@@ -1119,7 +1119,7 @@ def ex_33a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "arf"), ("template", "imp")]
-    comment := "" }
+    comment := "The paper does not name the language of (31)-(33); (31a) repeats Tigre (6a), (32a) Tigrinya (27c)." }
 
 def ex_33b : LinguisticExample :=
   { id := "faustlampitelli2026_33b"
@@ -1135,7 +1135,7 @@ def ex_33b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "arf"), ("template", "depPrf")]
-    comment := "" }
+    comment := "The paper does not name the language of (31)-(33); (31a) repeats Tigre (6a), (32a) Tigrinya (27c)." }
 
 def ex_37b : LinguisticExample :=
   { id := "faustlampitelli2026_37b"
@@ -1183,7 +1183,7 @@ def ex_38 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "hear"), ("template", "passPrf"), ("suffix", "u")]
-    comment := "" }
+    comment := "The paper translates the form 'they were heard'." }
 
 def all : List LinguisticExample := [ex_4a_depPrf, ex_4a_prf, ex_4a_imprf, ex_4b_depPrf, ex_4b_prf, ex_4b_imprf, ex_4c_depPrf, ex_4c_prf, ex_4c_imprf, ex_4d_depPrf, ex_4d_prf, ex_4d_imprf, ex_5a_juss, ex_5a_imp, ex_5b_juss, ex_5b_imp, ex_5c_juss, ex_5c_imp, ex_6a_prf, ex_6b_prf, ex_6b_juss, ex_6c_prf, ex_7a, ex_7b, ex_7c, ex_7d, ex_7e, ex_7f, ex_10a_f, ex_10b_m, ex_10b_f, ex_10c_m, ex_10c_f, ex_10d_m, ex_10d_f, ex_36b, ex_12a, ex_12b, ex_12c, ex_12d, ex_26d, ex_13a_ger, ex_13a_poss, ex_13b_ger, ex_13b_poss, ex_13c_ger, ex_13c_poss, ex_13d_ger, ex_13d_poss, ex_37a, ex_17a_pass, ex_17b_imprf, ex_17b_pass, ex_17c_imprf, ex_17c_pass, ex_17d_imprf, ex_17d_pass, ex_18a_dep, ex_18b_dep, ex_18b_ger, ex_18c_dep, ex_18c_ger, ex_19b_arifu, ex_19b_tismaa, ex_19c, ex_31a, ex_32b, ex_32c, ex_33a, ex_33b, ex_37b, ex_37d, ex_38]
 
