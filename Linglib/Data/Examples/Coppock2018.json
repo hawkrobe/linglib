@@ -24,7 +24,8 @@
         "discretionary"
       ]
     ],
-    "comment": "A taste judgment."
+    "comment": "A taste judgment.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_1b",
@@ -51,7 +52,8 @@
         "discretionary"
       ]
     ],
-    "comment": "A taste judgment."
+    "comment": "A taste judgment.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_1c",
@@ -78,7 +80,8 @@
         "discretionary"
       ]
     ],
-    "comment": "A moral claim; the paper's fn. 2 hedges that morality counts as discretionary by the folk ideology of the speech community."
+    "comment": "A moral claim; the paper's fn. 2 hedges that morality counts as discretionary by the folk ideology of the speech community.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_1d",
@@ -105,7 +108,8 @@
         "discretionary"
       ]
     ],
-    "comment": "A deontic modal."
+    "comment": "A deontic modal.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_1e",
@@ -132,7 +136,8 @@
         "discretionary"
       ]
     ],
-    "comment": "A perceptual judgment."
+    "comment": "A perceptual judgment.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_2a_tro",
@@ -159,7 +164,8 @@
         "objective"
       ]
     ],
-    "comment": "Printed as tror/#tycker in one example. Whether someone is a doctor."
+    "comment": "Printed as tror/#tycker in one example. Whether someone is a doctor.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_2a_tycka",
@@ -186,7 +192,8 @@
         "objective"
       ]
     ],
-    "comment": "Printed as tror/#tycker in one example. Whether someone is a doctor."
+    "comment": "Printed as tror/#tycker in one example. Whether someone is a doctor.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_2b_tro",
@@ -213,7 +220,8 @@
         "objective"
       ]
     ],
-    "comment": "Printed as tror/#tycker in one example. What day it is."
+    "comment": "Printed as tror/#tycker in one example. What day it is.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_2b_tycka",
@@ -240,7 +248,8 @@
         "objective"
       ]
     ],
-    "comment": "Printed as tror/#tycker in one example. What day it is."
+    "comment": "Printed as tror/#tycker in one example. What day it is.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_2c_tro",
@@ -267,7 +276,8 @@
         "objective"
       ]
     ],
-    "comment": "Printed as tror/#tycker in one example. A future contingent, contra MacFarlane's assimilation of future contingents to taste; the objective classification is what the tycka diagnostic implies within the theory, the paper allowing that there may be no fact of the matter."
+    "comment": "Printed as tror/#tycker in one example. A future contingent, contra MacFarlane's assimilation of future contingents to taste; the objective classification is what the tycka diagnostic implies within the theory, the paper allowing that there may be no fact of the matter.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_2c_tycka",
@@ -294,7 +304,8 @@
         "objective"
       ]
     ],
-    "comment": "Printed as tror/#tycker in one example. A future contingent, contra MacFarlane's assimilation of future contingents to taste; the objective classification is what the tycka diagnostic implies within the theory, the paper allowing that there may be no fact of the matter."
+    "comment": "Printed as tror/#tycker in one example. A future contingent, contra MacFarlane's assimilation of future contingents to taste; the objective classification is what the tycka diagnostic implies within the theory, the paper allowing that there may be no fact of the matter.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_2d_tro",
@@ -321,7 +332,8 @@
         "objective"
       ]
     ],
-    "comment": "Printed as tror/#tycker in one example. Epistemic possibility, contra its assimilation to taste; the objective classification is what the tycka diagnostic implies within the theory; borjar sic in the paper."
+    "comment": "Printed as tror/#tycker in one example. Epistemic possibility, contra its assimilation to taste; the objective classification is what the tycka diagnostic implies within the theory; borjar sic in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_2d_tycka",
@@ -348,7 +360,8 @@
         "objective"
       ]
     ],
-    "comment": "Printed as tror/#tycker in one example. Epistemic possibility, contra its assimilation to taste; the objective classification is what the tycka diagnostic implies within the theory; borjar sic in the paper."
+    "comment": "Printed as tror/#tycker in one example. Epistemic possibility, contra its assimilation to taste; the objective classification is what the tycka diagnostic implies within the theory; borjar sic in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_2e_tro",
@@ -375,7 +388,8 @@
         "objective"
       ]
     ],
-    "comment": "Printed as tror/#tycker in one example. A religious statement is not treated as a matter of opinion."
+    "comment": "Printed as tror/#tycker in one example. A religious statement is not treated as a matter of opinion.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_2e_tycka",
@@ -402,7 +416,8 @@
         "objective"
       ]
     ],
-    "comment": "Printed as tror/#tycker in one example. A religious statement is not treated as a matter of opinion."
+    "comment": "Printed as tror/#tycker in one example. A religious statement is not treated as a matter of opinion.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_3",
@@ -411,13 +426,13 @@
       "paperLabel": "(3)"
     },
     "language": "stan1293",
-    "primaryText": "This chili is tasty. No, it's not.",
+    "primaryText": "John: This chili is tasty. Mary: No, it's not.",
     "discourseSegments": [
       "John: This chili is tasty.",
       "Mary: No, it's not."
     ],
     "glossedTokens": [],
-    "translation": "This chili is tasty. No, it's not.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -428,7 +443,8 @@
         "faultless disagreement"
       ]
     ],
-    "comment": "The chili dialogue: the second speaker contradicts the first and neither has said something false; No is felicitous because the propositions are contradictory and the speakers disagree."
+    "comment": "The chili dialogue: the second speaker contradicts the first and neither has said something false; No is felicitous because the propositions are contradictory and the speakers disagree.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_6",
@@ -437,13 +453,13 @@
       "paperLabel": "(6)"
     },
     "language": "stan1293",
-    "primaryText": "I am a doctor. No, I'm not a doctor!",
+    "primaryText": "A: I am a doctor. B: No, I'm not a doctor!",
     "discourseSegments": [
       "A: I am a doctor.",
-      "B: #No, I'm not a doctor!"
+      "B: No, I'm not a doctor!"
     ],
     "glossedTokens": [],
-    "translation": "I am a doctor. No, I'm not a doctor!",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -454,7 +470,8 @@
         "indexical"
       ]
     ],
-    "comment": "The doctor dialogue: the characters conflict but the contents are compatible, so there is neither contradiction nor disagreement and No is odd."
+    "comment": "The doctor dialogue: the characters conflict but the contents are compatible, so there is neither contradiction nor disagreement and No is odd.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_7",
@@ -463,13 +480,13 @@
       "paperLabel": "(7)"
     },
     "language": "stan1293",
-    "primaryText": "Frog legs taste good to me. No, frog legs don't taste good to me.",
+    "primaryText": "A: Frog legs taste good to me. B: No, frog legs don't taste good to me.",
     "discourseSegments": [
       "A: Frog legs taste good to me.",
-      "B: #No, frog legs don't taste good to me."
+      "B: No, frog legs don't taste good to me."
     ],
     "glossedTokens": [],
-    "translation": "Frog legs taste good to me. No, frog legs don't taste good to me.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -480,7 +497,8 @@
         "indexical"
       ]
     ],
-    "comment": "The frog legs dialogue, adapted by the paper from Moltmann (2010, p. 190): the experiencer anchored to the speaker removes the contradiction, so No is odd, though less so than in (6) because the speakers still disagree."
+    "comment": "The frog legs dialogue, adapted by the paper from Moltmann (2010, p. 190): the experiencer anchored to the speaker removes the contradiction, so No is odd, though less so than in (6) because the speakers still disagree.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_8",
@@ -493,13 +511,13 @@
       "paperLabel": "(8)"
     },
     "language": "stan1293",
-    "primaryText": "I like this chili. I disagree, it's too hot for me.",
+    "primaryText": "Sally: I like this chili. Mark: I disagree, it's too hot for me.",
     "discourseSegments": [
       "Sally: I like this chili.",
       "Mark: I disagree, it's too hot for me."
     ],
     "glossedTokens": [],
-    "translation": "I like this chili. I disagree, it's too hot for me.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -510,7 +528,8 @@
         "indexical"
       ]
     ],
-    "comment": "Huvenes's dialogue, unmarked by the paper and said to be not quite as bad as the doctor exchange; the gradient is lost in the coding."
+    "comment": "Huvenes's dialogue, unmarked by the paper and said to be not quite as bad as the doctor exchange; the gradient is lost in the coding.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_9a",
@@ -526,7 +545,7 @@
     "primaryText": "Kim considers Burgundy part of France.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Kim considers Burgundy part of France.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -541,7 +560,8 @@
         "objective"
       ]
     ],
-    "comment": "The same relation as (9b), but whether Burgundy is part of France is not a matter of opinion."
+    "comment": "The same relation as (9b), but whether Burgundy is part of France is not a matter of opinion.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_9b",
@@ -557,7 +577,7 @@
     "primaryText": "Kim considers Crimea part of Russia.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Kim considers Crimea part of Russia.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -572,7 +592,8 @@
         "discretionary"
       ]
     ],
-    "comment": "Whether Crimea is part of Russia is a matter of opinion."
+    "comment": "Whether Crimea is part of Russia is a matter of opinion.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_10",
@@ -584,7 +605,7 @@
     "primaryText": "John is a sexy linguist.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "John is a sexy linguist.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -595,7 +616,8 @@
         "hybrid"
       ]
     ],
-    "comment": "Intersective modification of a non-discretionary noun by a discretionary adjective: discretionary, since it cuts across worlds where John is a linguist, but false at every refinement of a world where he is not, so not strongly discretionary."
+    "comment": "Intersective modification of a non-discretionary noun by a discretionary adjective: discretionary, since it cuts across worlds where John is a linguist, but false at every refinement of a world where he is not, so not strongly discretionary.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_11",
@@ -604,13 +626,13 @@
       "paperLabel": "(11)"
     },
     "language": "stan1293",
-    "primaryText": "John is a sexy linguist. No, he's not sexy.",
+    "primaryText": "A: John is a sexy linguist. B: No, he's not sexy.",
     "discourseSegments": [
       "A: John is a sexy linguist.",
       "B: No, he's not sexy."
     ],
     "glossedTokens": [],
-    "translation": "John is a sexy linguist. No, he's not sexy.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -621,7 +643,8 @@
         "faultless disagreement"
       ]
     ],
-    "comment": "Has the character of a faultless disagreement."
+    "comment": "Has the character of a faultless disagreement.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_12",
@@ -630,13 +653,13 @@
       "paperLabel": "(12)"
     },
     "language": "stan1293",
-    "primaryText": "John is a sexy linguist. No, he's not a linguist.",
+    "primaryText": "A: John is a sexy linguist. B: No, he's not a linguist.",
     "discourseSegments": [
       "A: John is a sexy linguist.",
       "B: No, he's not a linguist."
     ],
     "glossedTokens": [],
-    "translation": "John is a sexy linguist. No, he's not a linguist.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -647,7 +670,8 @@
         "disagreement"
       ]
     ],
-    "comment": "Not faultless: A would be at fault for asserting (10) in a world where John is not a linguist, where it is objectively false."
+    "comment": "Not faultless: A would be at fault for asserting (10) in a world where John is not a linguist, where it is objectively false.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_13a",
@@ -674,7 +698,8 @@
         "objective"
       ]
     ],
-    "comment": "A tycka-report embeds under tro: that someone holds an opinion is a matter of fact."
+    "comment": "A tycka-report embeds under tro: that someone holds an opinion is a matter of fact.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_13b",
@@ -701,7 +726,8 @@
         "objective"
       ]
     ],
-    "comment": "A tycka-report does not embed under tycka; the paper's gloss reads believes for the embedded verb."
+    "comment": "A tycka-report does not embed under tycka; the paper's gloss reads believes for the embedded verb.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_15",
@@ -732,7 +758,8 @@
         "objectiveGiven"
       ]
     ],
-    "comment": "Fully acceptable only in a context where it is taken as given that Jonas is a linguist, relative to which the complement is strongly discretionary (19)."
+    "comment": "Fully acceptable only in a context where it is taken as given that Jonas is a linguist, relative to which the complement is strongly discretionary (19).",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_16",
@@ -763,7 +790,8 @@
         "objectiveGiven"
       ]
     ],
-    "comment": "Implies that Jonas is a linguist: the non-discretionary content is presupposed."
+    "comment": "Implies that Jonas is a linguist: the non-discretionary content is presupposed.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_17",
@@ -794,7 +822,8 @@
         "objectiveGiven"
       ]
     ],
-    "comment": "Implies that Jonas is a linguist: the non-discretionary content is presupposed."
+    "comment": "Implies that Jonas is a linguist: the non-discretionary content is presupposed.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_20",
@@ -817,7 +846,8 @@
         "tycka"
       ]
     ],
-    "comment": "The objective conjunct raises its own issue, which may not be settled in the common ground, so the complement cannot be strongly discretionary relative to it; the paper formalises only the first of the three principles involved."
+    "comment": "The objective conjunct raises its own issue, which may not be settled in the common ground, so the complement cannot be strongly discretionary relative to it; the paper formalises only the first of the three principles involved.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_21",
@@ -833,7 +863,7 @@
     "primaryText": "She finds him handsome and below 45.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "She finds him handsome and below 45.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -844,7 +874,8 @@
         "find"
       ]
     ],
-    "comment": "Sæbø's conjunctive example, of the same structure as (20)."
+    "comment": "Sæbø's conjunctive example, of the same structure as (20).",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_22",
@@ -859,7 +890,7 @@
       "And he is a sexy linguist."
     ],
     "glossedTokens": [],
-    "translation": "He is a linguist. And he is a sexy linguist.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -870,7 +901,8 @@
         "presupposed conjunct"
       ]
     ],
-    "comment": "A conjunct contributing solely presupposed material inside a modifier is fine."
+    "comment": "A conjunct contributing solely presupposed material inside a modifier is fine.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_23",
@@ -882,10 +914,10 @@
     "primaryText": "He is a linguist. And he is sexy, and (he is) a linguist.",
     "discourseSegments": [
       "He is a linguist.",
-      "#And he is sexy, and (he is) a linguist."
+      "And he is sexy, and (he is) a linguist."
     ],
     "glossedTokens": [],
-    "translation": "He is a linguist. And he is sexy, and (he is) a linguist.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -896,7 +928,8 @@
         "presupposed conjunct"
       ]
     ],
-    "comment": "A natural-language conjunct may not contribute solely presupposed material."
+    "comment": "A natural-language conjunct may not contribute solely presupposed material.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_24",
@@ -919,7 +952,8 @@
         "tycka"
       ]
     ],
-    "comment": "The contrast with (25), noted for Norwegian synes by Sæbø, turns on the issues the nuclear scope raises, which the paper does not formalise."
+    "comment": "The contrast with (25), noted for Norwegian synes by Sæbø, turns on the issues the nuclear scope raises, which the paper does not formalise.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_25",
@@ -942,7 +976,8 @@
         "tycka"
       ]
     ],
-    "comment": "Equivalent to (24) in truth conditions but its nuclear scope raises an objective issue."
+    "comment": "Equivalent to (24) in truth conditions but its nuclear scope raises an objective issue.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_26",
@@ -958,7 +993,7 @@
     "primaryText": "Kim finds everyone who is not vegetarian unpleasant.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Kim finds everyone who is not vegetarian unpleasant.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -969,7 +1004,8 @@
         "find"
       ]
     ],
-    "comment": "Kennedy and Willer's variant of the (24)–(25) contrast."
+    "comment": "Kennedy and Willer's variant of the (24)–(25) contrast.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_27",
@@ -985,7 +1021,7 @@
     "primaryText": "Kim finds everyone who is pleasant vegetarian.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Kim finds everyone who is pleasant vegetarian.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -996,7 +1032,8 @@
         "find"
       ]
     ],
-    "comment": "Equivalent to (26) in truth conditions."
+    "comment": "Equivalent to (26) in truth conditions.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_28",
@@ -1023,7 +1060,8 @@
         "objective"
       ]
     ],
-    "comment": "The subjectivity requirement survives negation."
+    "comment": "The subjectivity requirement survives negation.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_29",
@@ -1050,7 +1088,8 @@
         "objective"
       ]
     ],
-    "comment": "The subjectivity requirement survives the antecedent of a conditional."
+    "comment": "The subjectivity requirement survives the antecedent of a conditional.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_33",
@@ -1081,7 +1120,8 @@
         "objectiveGiven"
       ]
     ],
-    "comment": "Defined only at outlooks where he dumped her, an objective proposition; among those it crosscuts the worlds, so it is felicitous. The paper argues over those outlooks only; on an open common ground its own definition fails at the world where he did not, so the common ground here entails the complement's presupposition, as a presupposed proposition holds throughout the context set."
+    "comment": "Defined only at outlooks where he dumped her, an objective proposition; among those it crosscuts the worlds, so it is felicitous. The paper argues over those outlooks only; on an open common ground its own definition fails at the world where he did not, so the common ground here entails the complement's presupposition, as a presupposed proposition holds throughout the context set.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_34_tro",
@@ -1112,7 +1152,8 @@
         "discretionaryGiven"
       ]
     ],
-    "comment": "Printed as tror/#tycker in one example: an objective assertion with a subjective presupposition behaves like an objective statement."
+    "comment": "Printed as tror/#tycker in one example: an objective assertion with a subjective presupposition behaves like an objective statement.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_34_tycka",
@@ -1143,7 +1184,8 @@
         "discretionaryGiven"
       ]
     ],
-    "comment": "Printed as tror/#tycker in one example: the outlooks where the proposition is defined cut across worlds, but no two refinements of one world split it."
+    "comment": "Printed as tror/#tycker in one example: the outlooks where the proposition is defined cut across worlds, but no two refinements of one world split it.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_35_find",
@@ -1159,7 +1201,7 @@
     "primaryText": "Kim finds the sum of two and two equal to four.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Kim finds the sum of two and two equal to four.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1174,7 +1216,8 @@
         "objective"
       ]
     ],
-    "comment": "Printed with finds and considers stacked: neither embeds an objective complement."
+    "comment": "Printed with finds and considers stacked: neither embeds an objective complement.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_36_find",
@@ -1190,7 +1233,7 @@
     "primaryText": "Kim finds Lee fascinating, because he is an expert on oysters.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Kim finds Lee fascinating, because he is an expert on oysters.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1205,7 +1248,8 @@
         "discretionary"
       ]
     ],
-    "comment": "Printed with finds and considers stacked: both embed a discretionary complement."
+    "comment": "Printed with finds and considers stacked: both embed a discretionary complement.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_35_consider",
@@ -1221,7 +1265,7 @@
     "primaryText": "Kim considers the sum of two and two equal to four.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Kim considers the sum of two and two equal to four.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1236,7 +1280,8 @@
         "objective"
       ]
     ],
-    "comment": "Printed with finds and considers stacked: neither embeds an objective complement."
+    "comment": "Printed with finds and considers stacked: neither embeds an objective complement.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_36_consider",
@@ -1252,7 +1297,7 @@
     "primaryText": "Kim considers Lee fascinating, because he is an expert on oysters.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Kim considers Lee fascinating, because he is an expert on oysters.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1267,7 +1312,8 @@
         "discretionary"
       ]
     ],
-    "comment": "Printed with finds and considers stacked: both embed a discretionary complement."
+    "comment": "Printed with finds and considers stacked: both embed a discretionary complement.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_37_find",
@@ -1283,7 +1329,7 @@
     "primaryText": "Kim finds Lee vegetarian, because the only animals he eats are oysters.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Kim finds Lee vegetarian, because the only animals he eats are oysters.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1298,7 +1344,8 @@
         "hybrid"
       ]
     ],
-    "comment": "Printed as #finds/considers: find demands radical counterstance contingency, strong discretionariness in the paper's translation. The paper does not classify the complement; hybrid is the classification its translation requires for Kennedy and Willer's judgments, the difference between the verbs being left open."
+    "comment": "Printed as #finds/considers: find demands radical counterstance contingency, strong discretionariness in the paper's translation. The paper does not classify the complement; hybrid is the classification its translation requires for Kennedy and Willer's judgments, the difference between the verbs being left open.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_37_consider",
@@ -1314,7 +1361,7 @@
     "primaryText": "Kim considers Lee vegetarian, because the only animals he eats are oysters.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Kim considers Lee vegetarian, because the only animals he eats are oysters.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1329,7 +1376,8 @@
         "hybrid"
       ]
     ],
-    "comment": "Printed as #finds/considers: consider demands mere counterstance contingency, discretionariness in the paper's translation; the hybrid classification is the one that translation requires for the judgments."
+    "comment": "Printed as #finds/considers: consider demands mere counterstance contingency, discretionariness in the paper's translation; the hybrid classification is the one that translation requires for the judgments.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_38",
@@ -1356,7 +1404,8 @@
         "discretionary"
       ]
     ],
-    "comment": "Not contradictory: an agent may accept neither a proposition nor its negation, which world-judge relativism with totally opinionated judges rules out. Viktigt is construable as discretionary or objective (fn. 14); tycka forces the former."
+    "comment": "Not contradictory: an agent may accept neither a proposition nor its negation, which world-judge relativism with totally opinionated judges rules out. Viktigt is construable as discretionary or objective (fn. 14); tycka forces the former.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_43a",
@@ -1372,7 +1421,7 @@
     "primaryText": "The cake must be tasty, but I wouldn't like it.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "The cake must be tasty, but I wouldn't like it.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1383,7 +1432,8 @@
         "relevance of tastes"
       ]
     ],
-    "comment": "Pearson's example: the speaker's tastes are relevant unless the context renders them irrelevant."
+    "comment": "Pearson's example: the speaker's tastes are relevant unless the context renders them irrelevant.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_43b",
@@ -1399,7 +1449,7 @@
     "primaryText": "The cake must be tasty, but I wouldn't like it because I don't like chocolate.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "The cake must be tasty, but I wouldn't like it because I don't like chocolate.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1410,7 +1460,8 @@
         "relevance of tastes"
       ]
     ],
-    "comment": "Pearson's example: the speaker's unusual tastes are rendered irrelevant."
+    "comment": "Pearson's example: the speaker's unusual tastes are rendered irrelevant.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_44",
@@ -1422,7 +1473,7 @@
     "primaryText": "Mary thinks that John thinks that the cake is tasty.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Mary thinks that John thinks that the cake is tasty.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1433,7 +1484,8 @@
         "think"
       ]
     ],
-    "comment": "Implies that the cake is tasty to John."
+    "comment": "Implies that the cake is tasty to John.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_45",
@@ -1445,8 +1497,8 @@
     "primaryText": "The cat thinks that John thinks that the cat food is tasty.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "The cat thinks that John thinks that the cat food is tasty.",
-    "context": "John keeps buying a certain kind of cat food for his cat, leading the cat to form the belief that John believes that the cat food is tasty to the cat, but he does not enjoy eating the cat food himself.",
+    "translation": "",
+    "context": "John keeps buying a certain kind of cat food for his cat, leading the cat to form the belief that John believes that the cat food is tasty to the cat, but does not, of course, enjoy eating the cat food himself.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1456,7 +1508,8 @@
         "think"
       ]
     ],
-    "comment": "Usable in the scenario, so the paper takes the embedded sentence to be coerced to an objective proposition, perhaps about the cat's tastes; John's own tastes are not relevant."
+    "comment": "Usable in the scenario, so the paper takes the embedded sentence to be coerced to an objective proposition, perhaps about the cat's tastes; John's own tastes are not relevant.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_46a",
@@ -1468,8 +1521,8 @@
     "primaryText": "Katten tror att John tror att kattmaten är god.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "The cat believes that John believes that the cat food is tasty.",
-    "context": "John keeps buying a certain kind of cat food for his cat, leading the cat to form the belief that John believes that the cat food is tasty to the cat, but he does not enjoy eating the cat food himself.",
+    "translation": "",
+    "context": "John keeps buying a certain kind of cat food for his cat, leading the cat to form the belief that John believes that the cat food is tasty to the cat, but does not, of course, enjoy eating the cat food himself.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1483,7 +1536,8 @@
         "objective"
       ]
     ],
-    "comment": "The Swedish rendering of (45) in the scenario requires tro, the embedded sentence being coerced to an objective proposition."
+    "comment": "The Swedish rendering of (45) in the scenario requires tro, the embedded sentence being coerced to an objective proposition. The source gives (46) untranslated, as renderings of (45).",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_46b",
@@ -1495,8 +1549,8 @@
     "primaryText": "Katten tror att John tycker att kattmaten är god.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "The cat believes that John thinks[opinion] that the cat food is tasty.",
-    "context": "John keeps buying a certain kind of cat food for his cat, leading the cat to form the belief that John believes that the cat food is tasty to the cat, but he does not enjoy eating the cat food himself.",
+    "translation": "",
+    "context": "John keeps buying a certain kind of cat food for his cat, leading the cat to form the belief that John believes that the cat food is tasty to the cat, but does not, of course, enjoy eating the cat food himself.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
@@ -1506,7 +1560,8 @@
         "tycka"
       ]
     ],
-    "comment": "Odd as a rendering of (45) in the scenario: the tycka version implies that John has tasted and enjoys the cat food, its complement being discretionary and the presupposition satisfied."
+    "comment": "Odd as a rendering of (45) in the scenario: the tycka version implies that John has tasted and enjoys the cat food, its complement being discretionary and the presupposition satisfied. The source gives (46) untranslated, as renderings of (45).",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_fn14_1_tro",
@@ -1529,7 +1584,8 @@
         "tro"
       ]
     ],
-    "comment": "Printed as tror/tycker in one example, both acceptable: under tro the complement is coerced to an objective reading, the soup being good according to people in general."
+    "comment": "Printed as tror/tycker in one example, both acceptable: under tro the complement is coerced to an objective reading, the soup being good according to people in general.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_fn14_2_tro",
@@ -1552,7 +1608,8 @@
         "tro"
       ]
     ],
-    "comment": "Printed as tror/tycker in one example, both acceptable: viktigt is construable as discretionary or as an objective claim about predictable impact."
+    "comment": "Printed as tror/tycker in one example, both acceptable: viktigt is construable as discretionary or as an objective claim about predictable impact.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_fn14_1_tycka",
@@ -1575,7 +1632,8 @@
         "tycka"
       ]
     ],
-    "comment": "Printed as tror/tycker in one example, both acceptable: under tro the complement is coerced to an objective reading, the soup being good according to people in general."
+    "comment": "Printed as tror/tycker in one example, both acceptable: under tro the complement is coerced to an objective reading, the soup being good according to people in general.",
+    "verified": "page-image"
   },
   {
     "id": "coppock2018_fn14_2_tycka",
@@ -1598,6 +1656,7 @@
         "tycka"
       ]
     ],
-    "comment": "Printed as tror/tycker in one example, both acceptable: viktigt is construable as discretionary or as an objective claim about predictable impact."
+    "comment": "Printed as tror/tycker in one example, both acceptable: viktigt is construable as discretionary or as an objective claim about predictable impact.",
+    "verified": "page-image"
   }
 ]
