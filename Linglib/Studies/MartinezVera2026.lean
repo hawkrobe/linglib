@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Set.Insert
-public import Linglib.Semantics.Presupposition.ContentLayer
+public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Semantics.Evidential.Defs
 public import Linglib.Discourse.Role
 public import Linglib.Semantics.Questions.Hamblin
@@ -26,7 +26,7 @@ partition is in general distinct from the verum partition of [romero-han-2004]
 
 ## Implementation notes
 
-The bilayered content, evidential illocution, evidential sources, and polar questions are
+Two-dimensional content, evidential illocution, evidential sources, and polar questions are
 substrate; the paper's notion of a highlighted proposition, one made salient by an utterance
 and addressing the question under discussion (its (38)), and the felicity apparatus are
 paper-specific and stay here, while the
@@ -45,7 +45,7 @@ original fieldwork with six speakers following [matthewson-2004].
 
 namespace MartinezVera2026
 
-open Presupposition
+open ConventionalImplicature (TwoDim)
 
 /-! ### Composition of ⟨A, N⟩ pairs -/
 
@@ -53,35 +53,38 @@ variable {W : Type*}
 
 /-- Composition rule I: β has empty NAI; α brings NAI. The new at-issue layer is `α.A β.A`;
 the new NAI is `α.N β.A`. -/
-def composeI (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W) : BiLayered W :=
-  { atIssue := atFn β.atIssue, notAtIssue := naiFn β.atIssue }
+def composeI (atFn naiFn : (W → Prop) → (W → Prop)) (β : TwoDim W (W → Prop)) :
+    TwoDim W (W → Prop) :=
+  ⟨atFn β.atIssue, naiFn β.atIssue⟩
 
-/-- Composition rule II: both α and β bring NAI; the new NAI accumulates `α.N β.A ∧ β.N`. -/
-def composeII (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W) : BiLayered W :=
-  { atIssue := atFn β.atIssue, notAtIssue := λ w => naiFn β.atIssue w ∧ β.notAtIssue w }
+/-- Composition rule II, in which both α and β bring NAI, accumulates `β.N ∧ α.N β.A` as the
+new NAI; it is the bind of two-dimensional meanings. -/
+def composeII (atFn naiFn : (W → Prop) → (W → Prop)) (β : TwoDim W (W → Prop)) :
+    TwoDim W (W → Prop) :=
+  β >>= fun a ↦ ⟨atFn a, naiFn a⟩
 
 /-- Composition rule III: an illocutionary operator takes the full ⟨A, N⟩ pair. -/
-def composeIII (op : BiLayered W → BiLayered W) (β : BiLayered W) : BiLayered W := op β
+def composeIII (op : TwoDim W (W → Prop) → TwoDim W (W → Prop)) (β : TwoDim W (W → Prop)) :
+    TwoDim W (W → Prop) :=
+  op β
 
-@[simp] theorem composeI_atIssue (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W) :
+@[simp] theorem composeI_atIssue (atFn naiFn : (W → Prop) → (W → Prop)) (β : TwoDim W (W → Prop)) :
     (composeI atFn naiFn β).atIssue = atFn β.atIssue := rfl
 
 @[simp] theorem composeI_notAtIssue (atFn naiFn : (W → Prop) → (W → Prop))
-    (β : BiLayered W) : (composeI atFn naiFn β).notAtIssue = naiFn β.atIssue := rfl
+    (β : TwoDim W (W → Prop)) : (composeI atFn naiFn β).notAtIssue = naiFn β.atIssue := rfl
 
-@[simp] theorem composeII_atIssue (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W) :
+@[simp] theorem composeII_atIssue (atFn naiFn : (W → Prop) → (W → Prop)) (β : TwoDim W (W → Prop)) :
     (composeII atFn naiFn β).atIssue = atFn β.atIssue := rfl
 
 @[simp] theorem composeII_notAtIssue (atFn naiFn : (W → Prop) → (W → Prop))
-    (β : BiLayered W) :
-    (composeII atFn naiFn β).notAtIssue = λ w => naiFn β.atIssue w ∧ β.notAtIssue w := rfl
+    (β : TwoDim W (W → Prop)) :
+    (composeII atFn naiFn β).notAtIssue = β.notAtIssue ⊓ naiFn β.atIssue := rfl
 
 /-- Rule II generalizes rule I: they coincide when β's NAI is trivial. -/
-theorem composeI_eq_composeII (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W)
-    (hβ : β.notAtIssue = λ _ => True) : composeI atFn naiFn β = composeII atFn naiFn β := by
-  ext w
-  · rfl
-  · simp [composeI, composeII, hβ]
+theorem composeI_eq_composeII (atFn naiFn : (W → Prop) → (W → Prop)) (β : TwoDim W (W → Prop))
+    (hβ : β.notAtIssue = ⊤) : composeI atFn naiFn β = composeII atFn naiFn β :=
+  TwoDim.ext rfl (by simp [composeI, hβ])
 
 open Evidential
 
@@ -127,7 +130,7 @@ structure EvidentialAct (W : Type*) where
 
 /-- [faller-2002]/[faller-2019a]: `assert(⟨A, N⟩)` commits the
     speaker to both A and N. Used with direct evidentials. -/
-def assert (s a : Discourse.Role) (β : BiLayered W) : EvidentialAct W :=
+def assert (s a : Discourse.Role) (β : TwoDim W (W → Prop)) : EvidentialAct W :=
   { speaker := s
   , addressee := a
   , scope := { w | β.atIssue w }
@@ -137,21 +140,21 @@ def assert (s a : Discourse.Role) (β : BiLayered W) : EvidentialAct W :=
 /-- [murray-2014]/[faller-2019a]: `present(⟨A, N⟩)` brings A
     to attention but does NOT commit to A; commits only to N. Used with
     reportative/inferential evidentials. -/
-def present (s a : Discourse.Role) (β : BiLayered W) : EvidentialAct W :=
+def present (s a : Discourse.Role) (β : TwoDim W (W → Prop)) : EvidentialAct W :=
   { speaker := s
   , addressee := a
   , scope := { w | β.atIssue w }
   , evidentialContent := { w | β.notAtIssue w }
   , commitsToScope := false }
 
-@[simp] theorem assert_commitsToScope (s a : Discourse.Role) (β : BiLayered W) :
+@[simp] theorem assert_commitsToScope (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
     (assert s a β).commitsToScope = true := rfl
 
-@[simp] theorem present_commitsToScope (s a : Discourse.Role) (β : BiLayered W) :
+@[simp] theorem present_commitsToScope (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
     (present s a β).commitsToScope = false := rfl
 
 theorem assert_present_differ_only_in_scope_commitment
-    (s a : Discourse.Role) (β : BiLayered W) :
+    (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
     (assert s a β).scope = (present s a β).scope ∧
     (assert s a β).evidentialContent = (present s a β).evidentialContent ∧
     (assert s a β).commitsToScope ≠ (present s a β).commitsToScope := by
@@ -165,21 +168,21 @@ theorem assert_present_differ_only_in_scope_commitment
 def EvidentialAct.raisedPropositions (a : EvidentialAct W) : Set (Set W) :=
   if a.commitsToScope then {a.scope} else {a.scope, a.scopeᶜ}
 
-@[simp] theorem assert_raisedPropositions (s a : Discourse.Role) (β : BiLayered W) :
+@[simp] theorem assert_raisedPropositions (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
     (assert s a β).raisedPropositions = {{ w | β.atIssue w }} := by
   simp [EvidentialAct.raisedPropositions, assert]
 
-@[simp] theorem present_raisedPropositions (s a : Discourse.Role) (β : BiLayered W) :
+@[simp] theorem present_raisedPropositions (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
     (present s a β).raisedPropositions =
       ({ { w | β.atIssue w }, { w | β.atIssue w }ᶜ } : Set (Set W)) := by
   simp [EvidentialAct.raisedPropositions, present]
 
-theorem present_raises_polar_negation (s a : Discourse.Role) (β : BiLayered W) :
+theorem present_raises_polar_negation (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
     { w | β.atIssue w }ᶜ ∈ (present s a β).raisedPropositions := by
   simp
 
 theorem assert_does_not_raise_polar_negation
-    (s a : Discourse.Role) (β : BiLayered W) (hne : ∃ w, β.atIssue w) :
+    (s a : Discourse.Role) (β : TwoDim W (W → Prop)) (hne : ∃ w, β.atIssue w) :
     { w | β.atIssue w }ᶜ ∉ (assert s a β).raisedPropositions := by
   simp only [assert_raisedPropositions, Set.mem_singleton_iff]
   intro h
@@ -224,20 +227,20 @@ theorem faller_reportative_flavour :
     (fallerEvidenceType? .reportative).map IllocutionaryFlavour.ofEvidenceType
       = some .presentFlavour := rfl
 
-def applyDefault (src : EvidenceType) (s a : Discourse.Role) (β : BiLayered W) :
+def applyDefault (src : EvidenceType) (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
     EvidentialAct W :=
   match IllocutionaryFlavour.ofEvidenceType src with
   | .assertFlavour => assert s a β
   | .presentFlavour => present s a β
 
-@[simp] theorem applyDefault_attested (s a : Discourse.Role) (β : BiLayered W) :
+@[simp] theorem applyDefault_attested (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
     applyDefault .attested s a β = assert s a β := rfl
-@[simp] theorem applyDefault_reported (s a : Discourse.Role) (β : BiLayered W) :
+@[simp] theorem applyDefault_reported (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
     applyDefault .reported s a β = present s a β := rfl
-@[simp] theorem applyDefault_inferring (s a : Discourse.Role) (β : BiLayered W) :
+@[simp] theorem applyDefault_inferring (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
     applyDefault .inferring s a β = present s a β := rfl
 
-theorem attested_commits_indirect_does_not (s a : Discourse.Role) (β : BiLayered W) :
+theorem attested_commits_indirect_does_not (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
     (applyDefault .attested s a β).commitsToScope = true ∧
     (applyDefault .reported s a β).commitsToScope = false ∧
     (applyDefault .inferring s a β).commitsToScope = false :=
@@ -258,7 +261,7 @@ theorem attested_commits_indirect_does_not (s a : Discourse.Role) (β : BiLayere
     multiple elements with overlap. Those would consume the full
     `Semantics/Exhaustification.Excluder` machinery. -/
 def miFelicitous (c : HighlightingContext W) (alts : Set (Set W))
-    (S : BiLayered W) : Prop :=
+    (S : TwoDim W (W → Prop)) : Prop :=
   ∃ q ∈ alts, Highlighted c q ∧ q ⊆ ({ w | S.atIssue w } : Set W)ᶜ
 
 /-! ### § 2. The polar QUD setup -/
@@ -344,24 +347,24 @@ is exercised once in the substrate; here the consequences fall out.
 theorem mi_felicitous_after_present
     (s a : Discourse.Role) (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     miFelicitous
-      (updateAfterAct (polarQUD p) (present s a (BiLayered.ofProp (· ∈ p))))
+      (updateAfterAct (polarQUD p) (present s a (pure (· ∈ p))))
       ({p, pᶜ} : Set (Set W))
-      (BiLayered.ofProp (· ∈ p)) := by
+      (pure (· ∈ p)) := by
   refine ⟨pᶜ, by simp, ⟨?_, ?_⟩, ?_⟩
   · -- pᶜ is in the salient set, via the substrate fact
     -- `present_raises_polar_negation`
     simp only [salient_updateAfterAct, polarQUD,
       MartinezVera2026.present_raisedPropositions,
-      BiLayered.ofProp_atIssue, Set.empty_union, Set.mem_insert_iff,
+      TwoDim.pure_atIssue, Set.empty_union, Set.mem_insert_iff,
       Set.mem_singleton_iff]
     right; rfl
   · -- pᶜ addresses the polar QUD over p
     simp only [qud_updateAfterAct, polarQUD]
     exact addresses_polarQUD_compl p hne hnu
-  · -- pᶜ ⊆ pᶜ (trivially); the at-issue layer of (BiLayered.ofProp (· ∈ p))
+  · -- pᶜ ⊆ pᶜ (trivially); the at-issue layer of (pure (· ∈ p))
     -- unfolds to (· ∈ p), so its complement is pᶜ
     intro w hw
-    simpa [BiLayered.ofProp] using hw
+    simpa using hw
 
 /-- After a direct-evidential `assert(p)` update, a `=mi`-marked follow-up
     confirming `p` is NOT felicitous: only `p` itself is raised by
@@ -373,16 +376,16 @@ theorem mi_felicitous_after_present
 theorem mi_infelicitous_after_assert
     (s a : Discourse.Role) (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     ¬ miFelicitous
-        (updateAfterAct (polarQUD p) (assert s a (BiLayered.ofProp (· ∈ p))))
+        (updateAfterAct (polarQUD p) (assert s a (pure (· ∈ p))))
         ({p, pᶜ} : Set (Set W))
-        (BiLayered.ofProp (· ∈ p)) := by
+        (pure (· ∈ p)) := by
   rintro ⟨q, hq, ⟨hsalient, _⟩, hsub⟩
   -- After assert, raisedPropositions = {p}; salient = ∅ ∪ {p} = {p}
   -- So hsalient says q = p. Combined with hsub : q ⊆ pᶜ, that forces p ⊆ pᶜ,
   -- which means p = ∅, contradicting `hne`.
   simp only [salient_updateAfterAct, polarQUD,
     MartinezVera2026.assert_raisedPropositions,
-    BiLayered.ofProp_atIssue, Set.empty_union,
+    TwoDim.pure_atIssue, Set.empty_union,
     Set.mem_singleton_iff] at hsalient
   -- hsalient : q = {w | w ∈ p}, which is just `q = p`
   have hq_eq : q = p := by
@@ -392,7 +395,7 @@ theorem mi_infelicitous_after_assert
   ext w
   refine ⟨λ hw => ?_, λ hw => absurd hw (Set.notMem_empty _)⟩
   have := hsub hw
-  simp [BiLayered.ofProp] at this
+  simp at this
   exact absurd hw this
 
 /-! ### § 6. MV's partition and [romero-han-2004]'s VERUM partition
@@ -426,7 +429,7 @@ commitment difference, formalised in the substrate's
 -/
 
 theorem direct_commits_reportative_does_not
-    (s a : Discourse.Role) (β : BiLayered W) :
+    (s a : Discourse.Role) (β : TwoDim W (W → Prop)) :
     (assert s a β).commitsToScope = true ∧
     (present s a β).commitsToScope = false :=
   ⟨rfl, rfl⟩

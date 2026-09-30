@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.Expressives.Basic
+public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Semantics.Alternatives.Basic
 public import Linglib.Semantics.Focus.Control
 public import Linglib.Studies.HartmannZimmermann2007
@@ -45,7 +45,7 @@ English (§6–§7) is prose.
 
 @[expose] public section
 
-open Pragmatics.Expressives
+open ConventionalImplicature (TwoDim)
 
 namespace KratzerSelkirk2020
 
@@ -76,12 +76,12 @@ theorem not_given_of_pair {α : Type*} {m : WithAlternatives α} {a b : α}
   exact hab (ha.trans hb.symm)
 
 /-- The Givenness requirement is use-conditional and must be met by the utterance context
-however deeply [G] is embedded: as the conventional-implicature dimension of a
-`TwoDimProp` it projects through negation. -/
-theorem useConditional_projects_through_neg {W : Type*} (atIssue requirement : W → Prop) :
-    (TwoDimProp.neg (TwoDimProp.withCI atIssue requirement)).ci
-      = (TwoDimProp.withCI atIssue requirement).ci :=
-  TwoDimProp.ci_projects_through_neg _
+however deeply [G] is embedded. As the not-at-issue content of a two-dimensional meaning, it
+survives every at-issue operator `F`. -/
+theorem useConditional_projects {W : Type*} (F : (W → Prop) → W → Prop)
+    (atIssue requirement : W → Prop) :
+    (F <$> (⟨atIssue, requirement⟩ : TwoDim W (W → Prop))).notAtIssue = requirement :=
+  rfl
 
 /-! ### The squiggle operator (49), (54) -/
 

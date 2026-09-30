@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Pragmatics.Expressives.Basic
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Semantics.Alternatives.Competition
 public import Linglib.Data.Examples.LoGuercio2025
@@ -51,7 +50,6 @@ theorems.
 
 namespace LoGuercio2025
 
-open Pragmatics.Expressives
 open Alternatives
 open Syntax
 

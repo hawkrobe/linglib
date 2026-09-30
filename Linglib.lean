@@ -885,7 +885,6 @@ import Linglib.Phonology.Tone.Surfacing
 import Linglib.Pragmatics.Bidirectional
 import Linglib.Pragmatics.DecisionTheoretic.Basic
 import Linglib.Pragmatics.Efficiency
-import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Pragmatics.Implicature.Diagnostics
 import Linglib.Pragmatics.Implicature.SomeAll
 import Linglib.Pragmatics.NeoGricean.Basic

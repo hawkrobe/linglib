@@ -7,7 +7,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Focus.Control
-public import Linglib.Pragmatics.Expressives.Basic
+public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Data.Examples.GrubicRenansDuah2019
 public import Mathlib.Data.Set.Lattice.Bounded
 
@@ -23,7 +23,7 @@ negating the construction targets the prejacent, so an additive continuation los
 and Ga *ni* constructions are clefts, (75) and (76): they assert the prejacent and presuppose the
 conditional exhaustivity of Büring (2011), that if the prejacent holds no other alternative does,
 together with existence (`cleft`). The conditional form is what projects through negation, (54):
-the negated cleft is defined when another alternative holds instead (`cleft_neg_of_alt`), while
+the negated cleft is true when another alternative holds instead (`cleft_neg_of_alt`), while
 the unnegated one cannot be cancelled by a further alternative, (43), (44), and (77)
 (`cleft_exhaustive`), and is undefined where no alternative holds, (60) and (61)
 (`cleft_existence`). The Ngamo *=i/ye* construction, (78), only presupposes that its
@@ -33,7 +33,7 @@ background is salient: its exhaustive inference is a cancellable implicature, (4
 
 ## Implementation notes
 
-Constructions are two-dimensional meanings over an arbitrary set of alternatives containing the
+Constructions are partial propositions over an arbitrary set of alternatives containing the
 prejacent, so the theorems are general rather than checked on a two-world model. The background
 of (78) is the existential closure of the alternatives, and its salience an abstract predicate on
 propositions. Section 4's contrast finding, which the paper concludes is pragmatic rather than
@@ -49,36 +49,36 @@ conventional, and section 7's argument that salience is not givenness are not fo
 
 namespace GrubicRenansDuah2019
 
-open Exhaustification Pragmatics.Expressives Focus
+open Exhaustification Presupposition Focus
 
 variable {W : Type*} (alts : Set (Set W)) (p : Set W)
 
 /-- Overt *only*, (36b) and (37b): the prejacent projects and exhaustivity is at issue. -/
-def onlyStyle : TwoDimProp W := .withCI (· ∈ excludes alts p) (· ∈ p)
+def onlyStyle : PartialProp W := ⟨(· ∈ p), (· ∈ excludes alts p)⟩
 
 /-- The Akan *nà* and Ga *ni* constructions, (75) and (76): the prejacent is asserted, and
 conditional exhaustivity together with existence is presupposed. -/
-def cleft : TwoDimProp W :=
-  .withCI (· ∈ p) λ w => (w ∈ p → w ∈ excludes alts p) ∧ w ∈ ⋃₀ alts
+def cleft : PartialProp W :=
+  ⟨fun w ↦ (w ∈ p → w ∈ excludes alts p) ∧ w ∈ ⋃₀ alts, (· ∈ p)⟩
 
 /-- The Ngamo *=i/ye* construction, (78): the prejacent is asserted, and the salience of the
 background, the existential closure of the alternatives, is presupposed. -/
-def marked (salient : Set W → Prop) : TwoDimProp W := .withCI (· ∈ p) λ _ => salient (⋃₀ alts)
+def marked (salient : Set W → Prop) : PartialProp W := ⟨fun _ ↦ salient (⋃₀ alts), (· ∈ p)⟩
 
 /-! ### The exhaustive inference is not asserted, section 5.2.1 -/
 
 /-- Negating overt *only* keeps the prejacent and denies exhaustivity, so some alternative the
 prejacent does not entail holds and *also* has its antecedent, (36b) and (37b). -/
-theorem negated_only_licenses_also {w : W} (h : (onlyStyle alts p).neg.atIssue w)
-    (hp : (onlyStyle alts p).neg.ci w) : w ∈ p ∧ ∃ q ∈ alts, ¬ p ⊆ q ∧ w ∈ q := by
+theorem negated_only_licenses_also {w : W} (h : (onlyStyle alts p).neg.assertion w)
+    (hp : (onlyStyle alts p).neg.presup w) : w ∈ p ∧ ∃ q ∈ alts, ¬ p ⊆ q ∧ w ∈ q := by
   refine ⟨hp, ?_⟩
   by_contra hno
   push Not at hno
-  exact h λ q hq hwq => by_contra λ hne => hno q hq hne hwq
+  exact h fun q hq hwq ↦ by_contra fun hne ↦ hno q hq hne hwq
 
 /-- Negating a marked construction targets the prejacent, so *also* lacks its antecedent, (36a)
 to (38a). -/
-theorem negated_cleft_atIssue {w : W} (h : (cleft alts p).neg.atIssue w) : w ∉ p := h
+theorem negated_cleft_assertion {w : W} (h : (cleft alts p).neg.assertion w) : w ∉ p := h
 
 /-! ### Implicature in Ngamo, presupposition in Akan and Ga, section 5.2.2 -/
 
@@ -87,33 +87,32 @@ an alternative the prejacent does not entail holds too; its exhaustive inference
 cancellable. -/
 theorem marked_exhaustivity_cancellable {salient : Set W → Prop} {q : Set W} {w : W}
     (hs : salient (⋃₀ alts)) (hq : q ∈ alts) (hne : ¬ p ⊆ q) (hw : w ∈ p ∩ q) :
-    (marked alts p salient).atIssue w ∧ (marked alts p salient).ci w ∧ w ∉ excludes alts p :=
-  ⟨hw.1, hs, λ h => hne (h q hq hw.2)⟩
+    (marked alts p salient).holds w ∧ w ∉ excludes alts p :=
+  ⟨⟨hs, hw.1⟩, fun h ↦ hne (h q hq hw.2)⟩
 
 /-- (43), (44), and (77): the cleft, wherever it is defined and true, is exhaustive; a further
 true alternative makes it undefined, so it cannot answer a mention-some question, (49) and
 (50). -/
-theorem cleft_exhaustive {w : W} (ha : (cleft alts p).atIssue w) (hc : (cleft alts p).ci w) :
-    w ∈ excludes alts p :=
-  hc.1 ha
+theorem cleft_exhaustive {w : W} (h : (cleft alts p).holds w) : w ∈ excludes alts p :=
+  h.1.1 h.2
 
-/-- (54): the conditional presupposition projects. A negated cleft is defined at a world where
-the prejacent fails and another alternative holds, so *it wasn't Fred she invited* is compatible
-with her inviting Peter and Paul. -/
+/-- The conditional presupposition projects, (54). A negated cleft is defined and true at a
+world where the prejacent fails and another alternative holds, so *it wasn't Fred she invited* is
+compatible with her inviting Peter and Paul. -/
 theorem cleft_neg_of_alt {q : Set W} {w : W} (hq : q ∈ alts) (hw : w ∈ q) (hp : w ∉ p) :
-    (cleft alts p).neg.atIssue w ∧ (cleft alts p).neg.ci w :=
-  ⟨hp, λ h => absurd h hp, q, hq, hw⟩
+    (cleft alts p).neg.holds w :=
+  ⟨⟨fun h ↦ absurd h hp, q, hq, hw⟩, hp⟩
 
 /-! ### Existence, section 6 -/
 
 /-- (60) and (61): the cleft presupposes that some alternative holds, so a focused negative
 quantifier clashes with it. -/
-theorem cleft_existence {w : W} (hc : (cleft alts p).ci w) : w ∈ ⋃₀ alts := hc.2
+theorem cleft_existence {w : W} (h : (cleft alts p).defined w) : w ∈ ⋃₀ alts := h.2
 
 /-- (59): the Ngamo construction is defined at a world where no alternative holds; it carries
 no existence presupposition. -/
 theorem marked_of_not_exists {salient : Set W → Prop} (hs : salient (⋃₀ alts)) {w : W}
-    (_ : w ∉ ⋃₀ alts) : (marked alts p salient).ci w :=
+    (_ : w ∉ ⋃₀ alts) : (marked alts p salient).defined w :=
   hs
 
 end GrubicRenansDuah2019

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.Expressives.Basic
+public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Discourse.Commitment.Basic
 public import Linglib.Data.Examples.HarrisPotts2009
 
@@ -46,7 +46,7 @@ reports only in aggregate.
 
 namespace HarrisPotts2009
 
-open Pragmatics.Expressives (TwoDimProp)
+open ConventionalImplicature (TwoDim)
 open Commitment Data.Examples
 
 /-- Whose commitment a conventional implicature expresses: the speaker, or another discourse
@@ -67,8 +67,8 @@ structure CIItem (Person W : Type) where
 variable {Person W : Type} (item : CIItem Person W)
 
 /-- The two-dimensional meaning once the orientation variable is resolved to `o`. -/
-def CIItem.resolve (o : Orientation Person) : TwoDimProp W :=
-  { atIssue := item.atIssue, ci := item.ciFor o }
+def CIItem.resolve (o : Orientation Person) : TwoDim W (W → Prop) :=
+  { atIssue := item.atIssue, notAtIssue := item.ciFor o }
 
 /-- Orientation is public commitment (§1): uttering the item with its orientation resolved
 to `o` commits the speaker to the at-issue content and `o` to the conventional implicature. -/

@@ -4,7 +4,7 @@ public import Linglib.Semantics.Reference.Rigidity
 public import Linglib.Syntax.Clause.Basic
 public import Linglib.Semantics.Modality.Basic
 public import Linglib.Semantics.Presupposition.Basic
-public import Linglib.Pragmatics.Expressives.Basic
+public import Linglib.Semantics.ConventionalImplicature
 public import Linglib.Data.Examples.Kubota2026
 
 /-!
@@ -17,10 +17,10 @@ presupposition that the prior discourse has made a counterstance salient, and an
 expressive-like stance that situates the prejacent relative to that counterstance. `Outlook`
 carries the three components, with the stance layer indexed by an outlook in the sense of
 [coppock-2018]. Its presuppositional and expressive projections are its `PartialProp` and
-`TwoDimProp` images, so that denial reaches the prejacent alone ((40)–(41)), and the shifted
+`TwoDim` images, so that denial reaches the prejacent alone ((40)–(41)), and the shifted
 readings under attitude verbs ((42)) are exactly the non-rigidity of the stance layer
 (`isRigid_iff`), which a pure expressive in the sense of [potts-2007b] lacks
-(`ofTwoDimProp_isRigid`).
+(`ofTwoDim_isRigid`).
 
 The chapter's judgment data are the rows of `Data/Examples/Kubota2026.json`, and its
 generalizations are stated over them. An outlook-marked utterance is felicitous iff the prior
@@ -64,7 +64,7 @@ namespace Kubota2026
 
 open Data.Examples (LinguisticExample)
 open Modality (ModalFlavor)
-open Pragmatics.Expressives (TwoDimProp)
+open ConventionalImplicature (TwoDim)
 open Presupposition (PartialProp)
 
 /-! ### The two-layered meaning (§3) -/
@@ -88,7 +88,7 @@ variable {W O : Type*}
 
 /-- The expressive projection at an outlook: the prejacent with the stance as its use-conditional
 dimension. -/
-@[simps] def toTwoDimProp (m : Outlook W O) (o : O) : TwoDimProp W :=
+@[simps] def toTwoDim (m : Outlook W O) (o : O) : TwoDim W (W → Prop) :=
   ⟨m.prejacent, m.evaluation o⟩
 
 /-- Negation, and so denial, leaves the counterstance presupposition in place ((40)–(41)). -/
@@ -96,8 +96,8 @@ theorem presup_neg_toPartialProp (m : Outlook W O) :
     m.toPartialProp.neg.presup = m.counterstance := rfl
 
 /-- Negation leaves the stance layer in place at every outlook ((40)–(41)). -/
-theorem ci_neg_toTwoDimProp (m : Outlook W O) (o : O) :
-    (m.toTwoDimProp o).neg.ci = m.evaluation o := rfl
+theorem toTwoDim_neg_notAtIssue (m : Outlook W O) (o : O) :
+    (m.toTwoDim o).neg.notAtIssue = m.evaluation o := rfl
 
 /-- A meaning is rigid when its stance layer does not depend on the outlook. -/
 def IsRigid (m : Outlook W O) : Prop := Reference.IsRigid m.evaluation
@@ -105,18 +105,18 @@ def IsRigid (m : Outlook W O) : Prop := Reference.IsRigid m.evaluation
 /-- Perspective shift is non-rigidity: the expressive projection varies with the outlook iff
 the stance layer does ((42)). -/
 theorem isRigid_iff (m : Outlook W O) :
-    m.IsRigid ↔ ∀ o o', m.toTwoDimProp o = m.toTwoDimProp o' := by
-  simp only [IsRigid, Reference.IsRigid, toTwoDimProp, TwoDimProp.mk.injEq, true_and]
+    m.IsRigid ↔ ∀ o o', m.toTwoDim o = m.toTwoDim o' := by
+  simp only [IsRigid, Reference.IsRigid, toTwoDim, TwoDim.mk.injEq, true_and]
 
 /-- A pure expressive as an outlook-marked meaning: its conventional implicature is the same at
 every outlook, and it presupposes nothing. -/
-def ofTwoDimProp (t : TwoDimProp W) : Outlook W O :=
-  ⟨t.atIssue, λ _ => True, λ _ => t.ci⟩
+def ofTwoDim (t : TwoDim W (W → Prop)) : Outlook W O :=
+  ⟨t.atIssue, fun _ ↦ True, fun _ ↦ t.notAtIssue⟩
 
 /-- Pure expressives are rigid, so they do not shift under embedding ([potts-2007b]'s
 nondisplaceability). -/
-theorem ofTwoDimProp_isRigid (t : TwoDimProp W) : (ofTwoDimProp (O := O) t).IsRigid :=
-  Reference.isRigid_const t.ci
+theorem ofTwoDim_isRigid (t : TwoDim W (W → Prop)) : (ofTwoDim (O := O) t).IsRigid :=
+  Reference.isRigid_const t.notAtIssue
 
 end Outlook
 
