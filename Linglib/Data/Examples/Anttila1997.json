@@ -19,7 +19,8 @@
       ["syllables", "1"],
       ["variant", "strong"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_1a_potilaiden",
@@ -42,7 +43,8 @@
       ["variant", "strong"],
       ["final_syllable", "heavy"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_1b_kalojen",
@@ -64,7 +66,8 @@
       ["syllables", "2"],
       ["variant", "weak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_1b_margariinien",
@@ -86,7 +89,8 @@
       ["syllables", "4"],
       ["variant", "weak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_1c_naapureiden",
@@ -110,7 +114,8 @@
       ["syllables", "3"],
       ["variant", "strong"]
     ],
-    "comment": "Free variation; the weak variant is the alternative."
+    "comment": "Free variation; the weak variant is the alternative.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_1c_reaganeiden",
@@ -134,7 +139,8 @@
       ["syllables", "3"],
       ["variant", "strong"]
     ],
-    "comment": "Free variation; the weak variant is the alternative."
+    "comment": "Free variation; the weak variant is the alternative.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_1c_moskeijoiden",
@@ -158,7 +164,8 @@
       ["syllables", "3"],
       ["variant", "strong"]
     ],
-    "comment": "Free variation; the weak variant is the alternative."
+    "comment": "Free variation; the weak variant is the alternative.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_1c_ministereiden",
@@ -182,7 +189,8 @@
       ["syllables", "4"],
       ["variant", "strong"]
     ],
-    "comment": "Free variation; the weak variant is the alternative."
+    "comment": "Free variation; the weak variant is the alternative.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_3a_maiden",
@@ -204,7 +212,8 @@
       ["syllables", "1"],
       ["variant", "strong"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_3a_teiden",
@@ -226,7 +235,8 @@
       ["syllables", "1"],
       ["variant", "strong"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_3b_lasien",
@@ -248,7 +258,8 @@
       ["syllables", "2"],
       ["variant", "weak"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_3c_palttoiden",
@@ -271,7 +282,8 @@
       ["variant", "strong"],
       ["final_syllable", "heavy"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_3c_varkaiden",
@@ -294,7 +306,8 @@
       ["variant", "strong"],
       ["final_syllable", "heavy"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_6a_lemmikkien",
@@ -309,7 +322,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "lem.mi.kei.den", "judgment": "marginal"}
+      {"form": "lem.mi.kei.den", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -318,7 +331,8 @@
       ["syllables", "3"],
       ["variant", "weak"]
     ],
-    "comment": "The bracketed (dispreferred) variant is the alternative."
+    "comment": "The paper encloses the dispreferred variant, the alternative, in brackets.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_6a_sihteerien",
@@ -333,7 +347,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "sih.tee.rei.den", "judgment": "marginal"}
+      {"form": "sih.tee.rei.den", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -342,7 +356,8 @@
       ["syllables", "3"],
       ["variant", "weak"]
     ],
-    "comment": "The bracketed (dispreferred) variant is the alternative."
+    "comment": "The paper encloses the dispreferred variant, the alternative, in brackets.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_6a_naapurien",
@@ -357,7 +372,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "naa.pu.rei.den", "judgment": "marginal"}
+      {"form": "naa.pu.rei.den", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -366,7 +381,8 @@
       ["syllables", "3"],
       ["variant", "weak"]
     ],
-    "comment": "The bracketed (dispreferred) variant is the alternative."
+    "comment": "The paper encloses the dispreferred variant, the alternative, in brackets.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_6b_korjaamojen",
@@ -381,7 +397,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "kor.jaa.moi.den", "judgment": "marginal"}
+      {"form": "kor.jaa.moi.den", "judgment": "acceptable"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -390,7 +406,8 @@
       ["syllables", "3"],
       ["variant", "weak"]
     ],
-    "comment": "The bracketed (dispreferred) variant is the alternative."
+    "comment": "The paper encloses the dispreferred variant, the alternative, in brackets.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_6b_fyysikkojen",
@@ -414,7 +431,8 @@
       ["syllables", "3"],
       ["variant", "weak"]
     ],
-    "comment": "Both variants unmarked."
+    "comment": "Both variants unmarked.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_6b_lokeroiden",
@@ -429,7 +447,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "lo.ke.ro.jen", "judgment": "questionable"}
+      {"form": "lo.ke.ro.jen", "judgment": "marginal"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -438,7 +456,8 @@
       ["syllables", "3"],
       ["variant", "strong"]
     ],
-    "comment": "The ?-marked variant is the alternative."
+    "comment": "The paper encloses the dispreferred variant, the alternative, in brackets and marks it ?. The paper prints loke.roi.den, a misprint for lo.ke.roi.den.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_6c_sairaaloiden",
@@ -462,7 +481,8 @@
       ["syllables", "3"],
       ["variant", "strong"]
     ],
-    "comment": "Both variants unmarked."
+    "comment": "Both variants unmarked.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_6c_kameroiden",
@@ -477,7 +497,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "ka.me.ro.jen", "judgment": "questionable"}
+      {"form": "ka.me.ro.jen", "judgment": "marginal"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -486,7 +506,8 @@
       ["syllables", "3"],
       ["variant", "strong"]
     ],
-    "comment": "The ?-marked variant is the alternative."
+    "comment": "The paper encloses the dispreferred variant, the alternative, in brackets and marks it ?.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_6c_mansikoiden",
@@ -501,7 +522,7 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "man.sik.ko.jen", "judgment": "questionable"}
+      {"form": "man.sik.ko.jen", "judgment": "marginal"}
     ],
     "readings": [],
     "paperFeatures": [
@@ -510,7 +531,8 @@
       ["syllables", "3"],
       ["variant", "strong"]
     ],
-    "comment": "The ?-marked variant is the alternative."
+    "comment": "The paper encloses the dispreferred variant, the alternative, in brackets and marks it ?.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_33_maiden",
@@ -534,7 +556,8 @@
       ["syllables", "1"],
       ["variant", "strong"]
     ],
-    "comment": ""
+    "comment": "The paper prints the forms with their stresses: mái.den (b. *má.jen).",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_35_kalojen",
@@ -558,7 +581,8 @@
       ["syllables", "2"],
       ["variant", "weak"]
     ],
-    "comment": ""
+    "comment": "The paper prints the forms with their stresses: ká.lo.jen (b. *ká.loi.den).",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_37_maailmoiden",
@@ -582,7 +606,8 @@
       ["syllables", "3"],
       ["variant", "strong"]
     ],
-    "comment": "Both variants predicted (36)."
+    "comment": "Both variants predicted (36). The paper prints the forms with their stresses: máa.il.mòi.den ~ máa.il.mo.jen.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_39_ministerien",
@@ -606,7 +631,8 @@
       ["syllables", "4"],
       ["variant", "weak"]
     ],
-    "comment": "Both variants predicted (38)."
+    "comment": "Both variants predicted (38). The paper prints the forms with their stresses: mí.nis.te.ri.en ~ mí.nis.te.rèi.den.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_40_margariinien",
@@ -630,7 +656,8 @@
       ["syllables", "4"],
       ["variant", "weak"]
     ],
-    "comment": "The starred form stands for candidates 2b and 2c of (38), which differ only in stress."
+    "comment": "The starred form stands for candidates 2b and 2c of (38), which differ only in stress. The paper prints the forms with their stresses: már.ga.rìi.ni.en (*már.ga.rìi.nei.den, *már.ga.rii.nèi.den).",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_42_aleksantereiden",
@@ -654,7 +681,8 @@
       ["syllables", "5"],
       ["variant", "strong"]
     ],
-    "comment": "Both variants predicted (41)."
+    "comment": "Both variants predicted (41). The paper prints the forms with their stresses: Á.lek.sàn.te.rèi.den ~ Á.lek.sàn.te.ri.en.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_43_koordinaatistoiden",
@@ -678,7 +706,8 @@
       ["syllables", "5"],
       ["variant", "strong"]
     ],
-    "comment": "Both variants predicted (41)."
+    "comment": "Both variants predicted (41). The paper prints the forms with their stresses: kóor.di.nàa.tis.tòi.den ~ kòor.di.nàa.tis.to.jen. (43b) has a grave on the first syllable, (45d) an acute.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_44_italiaanojen",
@@ -702,7 +731,8 @@
       ["syllables", "5"],
       ["variant", "weak"]
     ],
-    "comment": "The starred form stands for candidates 3b and 3c of (41), which differ only in stress."
+    "comment": "The starred form stands for candidates 3b and 3c of (41), which differ only in stress. The paper prints the forms with their stresses: í.ta.li.àa.no.jen (*í.ta.li.àa.noi.den, *í.ta.li.aa.nòi.den).",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_46_intellektuellien",
@@ -726,7 +756,8 @@
       ["syllables", "6"],
       ["variant", "weak"]
     ],
-    "comment": ""
+    "comment": "The paper prints the forms with their stresses: ín.tel.lèk.tu.èl.li.en (*ín.tel.lèk.tu.èl.lei.den).",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_47_eksistentialistien",
@@ -750,7 +781,8 @@
       ["syllables", "7"],
       ["variant", "weak"]
     ],
-    "comment": ""
+    "comment": "The paper prints the forms with their stresses: ék.sis.tèn.ti.a.lìs.ti.en (*ék.sis.tèn.ti.a.lìs.tei.den).",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_48a_kamerojen",
@@ -763,7 +795,7 @@
     ],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -774,7 +806,8 @@
       ["motif", "l.ta"],
       ["obs_pct", "0.6"]
     ],
-    "comment": "Suomen Kuvalehti 1987 corpus frequency."
+    "comment": "Suomen Kuvalehti 1987 corpus frequency. The paper prints the motifs in small capitals with the stressed vowel accented (L.TÁA) and the forms with their stresses. It marks ká.me.ro.jen with ?.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_48a_kameroiden",
@@ -798,7 +831,8 @@
       ["motif", "l.taa"],
       ["obs_pct", "99.4"]
     ],
-    "comment": "Suomen Kuvalehti 1987 corpus frequency."
+    "comment": "Suomen Kuvalehti 1987 corpus frequency. The paper prints the motifs in small capitals with the stressed vowel accented (L.TÁA) and the forms with their stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_48b_sairaalojen",
@@ -822,7 +856,8 @@
       ["motif", "h.ta"],
       ["obs_pct", "49.5"]
     ],
-    "comment": "Suomen Kuvalehti 1987 corpus frequency."
+    "comment": "Suomen Kuvalehti 1987 corpus frequency. The paper prints the motifs in small capitals with the stressed vowel accented (L.TÁA) and the forms with their stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_48b_sairaaloiden",
@@ -846,7 +881,8 @@
       ["motif", "h.taa"],
       ["obs_pct", "50.5"]
     ],
-    "comment": "Suomen Kuvalehti 1987 corpus frequency."
+    "comment": "Suomen Kuvalehti 1987 corpus frequency. The paper prints the motifs in small capitals with the stressed vowel accented (L.TÁA) and the forms with their stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_48c_naapurien",
@@ -870,7 +906,8 @@
       ["motif", "l.ti"],
       ["obs_pct", "63.1"]
     ],
-    "comment": "Suomen Kuvalehti 1987 corpus frequency."
+    "comment": "Suomen Kuvalehti 1987 corpus frequency. The paper prints the motifs in small capitals with the stressed vowel accented (L.TÁA) and the forms with their stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_48c_naapureiden",
@@ -894,7 +931,8 @@
       ["motif", "l.tii"],
       ["obs_pct", "36.9"]
     ],
-    "comment": "Suomen Kuvalehti 1987 corpus frequency."
+    "comment": "Suomen Kuvalehti 1987 corpus frequency. The paper prints the motifs in small capitals with the stressed vowel accented (L.TÁA) and the forms with their stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_48d_korjaamojen",
@@ -918,7 +956,8 @@
       ["motif", "h.to"],
       ["obs_pct", "82.2"]
     ],
-    "comment": "Suomen Kuvalehti 1987 corpus frequency."
+    "comment": "Suomen Kuvalehti 1987 corpus frequency. The paper prints the motifs in small capitals with the stressed vowel accented (L.TÁA) and the forms with their stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_48d_korjaamoiden",
@@ -942,11 +981,12 @@
       ["motif", "h.too"],
       ["obs_pct", "17.8"]
     ],
-    "comment": "Suomen Kuvalehti 1987 corpus frequency."
+    "comment": "Suomen Kuvalehti 1987 corpus frequency. The paper prints the motifs in small capitals with the stressed vowel accented (L.TÁA) and the forms with their stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_531a_kameroiden",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(531a)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(53) 1a"},
     "language": "finn1318",
     "primaryText": "ka.me.roi.den",
     "discourseSegments": [],
@@ -968,11 +1008,12 @@
       ["obs_pct", "99.4"],
       ["count", "720"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_531b_kamerojen",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(531b)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(53) 1b"},
     "language": "finn1318",
     "primaryText": "ka.me.ro.jen",
     "discourseSegments": [],
@@ -994,11 +1035,12 @@
       ["obs_pct", "0.6"],
       ["count", "4"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_532a_heteroiden",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(532a)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(53) 2a"},
     "language": "finn1318",
     "primaryText": "he.te.roi.den",
     "discourseSegments": [],
@@ -1020,11 +1062,12 @@
       ["obs_pct", "99.5"],
       ["count", "389"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_532b_heterojen",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(532b)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(53) 2b"},
     "language": "finn1318",
     "primaryText": "he.te.ro.jen",
     "discourseSegments": [],
@@ -1046,11 +1089,12 @@
       ["obs_pct", "0.5"],
       ["count", "2"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_533a_naapureiden",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(533a)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(53) 3a"},
     "language": "finn1318",
     "primaryText": "naa.pu.rei.den",
     "discourseSegments": [],
@@ -1072,11 +1116,12 @@
       ["obs_pct", "36.9"],
       ["count", "215"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_533b_naapurien",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(533b)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(53) 3b"},
     "language": "finn1318",
     "primaryText": "naa.pu.ri.en",
     "discourseSegments": [],
@@ -1098,11 +1143,12 @@
       ["obs_pct", "63.1"],
       ["count", "368"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_534a_maailmoiden",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(534a)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(53) 4a"},
     "language": "finn1318",
     "primaryText": "maa.il.moi.den",
     "discourseSegments": [],
@@ -1124,11 +1170,12 @@
       ["obs_pct", "50.5"],
       ["count", "46"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_534b_maailmojen",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(534b)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(53) 4b"},
     "language": "finn1318",
     "primaryText": "maa.il.mo.jen",
     "discourseSegments": [],
@@ -1150,11 +1197,12 @@
       ["obs_pct", "49.5"],
       ["count", "45"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_535a_korjaamoiden",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(535a)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(53) 5a"},
     "language": "finn1318",
     "primaryText": "kor.jaa.moi.den",
     "discourseSegments": [],
@@ -1176,11 +1224,12 @@
       ["obs_pct", "17.8"],
       ["count", "76"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_535b_korjaamojen",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(535b)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(53) 5b"},
     "language": "finn1318",
     "primaryText": "kor.jaa.mo.jen",
     "discourseSegments": [],
@@ -1202,11 +1251,12 @@
       ["obs_pct", "82.2"],
       ["count", "350"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_536a_poliiseiden",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(536a)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(53) 6a"},
     "language": "finn1318",
     "primaryText": "po.lii.sei.den",
     "discourseSegments": [],
@@ -1228,11 +1278,12 @@
       ["obs_pct", "1.6"],
       ["count", "13"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_536b_poliisien",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(536b)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(53) 6b"},
     "language": "finn1318",
     "primaryText": "po.lii.si.en",
     "discourseSegments": [],
@@ -1254,11 +1305,12 @@
       ["obs_pct", "98.4"],
       ["count", "806"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_541a_taiteilijoiden",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(541a)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(54) 1a"},
     "language": "finn1318",
     "primaryText": "tai.tei.li.joi.den",
     "discourseSegments": [],
@@ -1280,11 +1332,12 @@
       ["obs_pct", "100"],
       ["count", "276"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_542a_luetteloiden",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(542a)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(54) 2a"},
     "language": "finn1318",
     "primaryText": "lu.et.te.loi.den",
     "discourseSegments": [],
@@ -1306,11 +1359,12 @@
       ["obs_pct", "100"],
       ["count", "25"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_543a_ministereiden",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(543a)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(54) 3a"},
     "language": "finn1318",
     "primaryText": "mi.nis.te.rei.den",
     "discourseSegments": [],
@@ -1332,11 +1386,12 @@
       ["obs_pct", "14.3"],
       ["count", "39"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_543b_ministerien",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(543b)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(54) 3b"},
     "language": "finn1318",
     "primaryText": "mi.nis.te.ri.en",
     "discourseSegments": [],
@@ -1358,11 +1413,12 @@
       ["obs_pct", "85.7"],
       ["count", "234"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_544b_luonnehdintojen",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(544b)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(54) 4b"},
     "language": "finn1318",
     "primaryText": "luon.neh.din.to.jen",
     "discourseSegments": [],
@@ -1384,11 +1440,12 @@
       ["obs_pct", "100"],
       ["count", "1"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_545b_edustustojen",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(545b)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(54) 5b"},
     "language": "finn1318",
     "primaryText": "e.dus.tus.to.jen",
     "discourseSegments": [],
@@ -1410,11 +1467,12 @@
       ["obs_pct", "100"],
       ["count", "84"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_546b_margariinien",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(546b)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(54) 6b"},
     "language": "finn1318",
     "primaryText": "mar.ga.rii.ni.en",
     "discourseSegments": [],
@@ -1436,11 +1494,12 @@
       ["obs_pct", "100"],
       ["count", "736"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_551a_ajattelijoiden",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(551a)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(55) 1a"},
     "language": "finn1318",
     "primaryText": "a.jat.te.li.joi.den",
     "discourseSegments": [],
@@ -1462,11 +1521,12 @@
       ["obs_pct", "100"],
       ["count", "101"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_552a_televisioiden",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(552a)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(55) 2a"},
     "language": "finn1318",
     "primaryText": "te.le.vi.si.oi.den",
     "discourseSegments": [],
@@ -1488,11 +1548,12 @@
       ["obs_pct", "100"],
       ["count", "41"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_553a_aleksantereiden",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(553a)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(55) 3a"},
     "language": "finn1318",
     "primaryText": "A.lek.san.te.rei.den",
     "discourseSegments": [],
@@ -1514,11 +1575,12 @@
       ["obs_pct", "11.8"],
       ["count", "2"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_553b_aleksanterien",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(553b)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(55) 3b"},
     "language": "finn1318",
     "primaryText": "A.lek.san.te.ri.en",
     "discourseSegments": [],
@@ -1540,11 +1602,12 @@
       ["obs_pct", "88.2"],
       ["count", "15"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_554b_evankelistojen",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(554b)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(55) 4b"},
     "language": "finn1318",
     "primaryText": "e.van.ke.lis.to.jen",
     "discourseSegments": [],
@@ -1566,11 +1629,12 @@
       ["obs_pct", "100"],
       ["count", "2"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_555b_italiaanojen",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(555b)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(55) 5b"},
     "language": "finn1318",
     "primaryText": "i.ta.li.aa.no.jen",
     "discourseSegments": [],
@@ -1592,11 +1656,12 @@
       ["obs_pct", "100"],
       ["count", "1"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_555c_koordinaatistoiden",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(555c)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(55) 5c"},
     "language": "finn1318",
     "primaryText": "koor.di.naa.tis.toi.den",
     "discourseSegments": [],
@@ -1618,11 +1683,12 @@
       ["obs_pct", "20"],
       ["count", "2"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_555d_koordinaatistojen",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(555d)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(55) 5d"},
     "language": "finn1318",
     "primaryText": "koor.di.naa.tis.to.jen",
     "discourseSegments": [],
@@ -1644,11 +1710,12 @@
       ["obs_pct", "80"],
       ["count", "8"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_556b_sosialistien",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(556b)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(55) 6b"},
     "language": "finn1318",
     "primaryText": "so.si.a.lis.ti.en",
     "discourseSegments": [],
@@ -1670,11 +1737,12 @@
       ["obs_pct", "100"],
       ["count", "99"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   },
   {
     "id": "anttila1997_556d_avantgardistien",
-    "source": {"bibkey": "anttila-1997", "paperLabel": "(556d)"},
+    "source": {"bibkey": "anttila-1997", "paperLabel": "(55) 6d"},
     "language": "finn1318",
     "primaryText": "a.vant.gar.dis.ti.en",
     "discourseSegments": [],
@@ -1696,6 +1764,7 @@
       ["obs_pct", "100"],
       ["count", "2"]
     ],
-    "comment": "Predicted and observed percentages with corpus token count."
+    "comment": "Predicted and observed percentages with corpus token count. The paper prints the form with its stresses.",
+    "verified": "page-image"
   }
 ]
