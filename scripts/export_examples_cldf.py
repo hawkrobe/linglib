@@ -21,18 +21,28 @@ specification 1.3):
   `Discourse_Segments`, `Alternatives`, `Readings`, `Paper_Features`.
 - `languages.csv` (LanguageTable): the rows of `Linglib/Data/Examples/languages.csv`, plus one
   item with no Glottocode for the constructed strings (formal-language patterns) whose
-  `language` is empty.
+  `language` is empty, and, for each language with a judged example (a non-empty
+  `Grammaticality_Judgement`), one item `<glottocode>-judged` with no Glottocode that such
+  examples link to. The CLDF examples component requires this of ungrammatical examples, so that
+  an aggregator ignoring the judgement does not assign a starred string to the language; a `?`,
+  `??` or `#` example is no safer to assign, so every marked example gets it.
 - `contributions.csv` (ContributionTable): one row per data file; each example links to its file.
 - `sources.bib`: the entries of `references.bib` the examples cite.
 
 `--validate` fails on any error or warning the CLDF validator reports, and on any entry of
-`references.bib` a BibTeX parser rejects.
+`references.bib` a BibTeX parser rejects. Every export fails on a row value whose key names no
+column, which the CLDF writer would otherwise drop without a word.
 
 `--report` prints, per paper, the rows to check against their source that CLDF validation does
 not flag: a non-English example with no gloss or translation (a gap only if the source gives
 one, since a row records what the source prints), a gloss breaking Leipzig Rule 2, a source with
-no locator, a family-level Glottocode, a discourse whose segments do not join to its text. It
-needs no `pycldf`.
+no locator or one with no recognizable head (an example number, page, section, chapter,
+footnote, table or figure), a family-level Glottocode, a discourse whose segments do not join to
+its text, and a word with a digit between letters or a capital after a lowercase letter, the
+shapes a PDF text layer leaves when it renders a letter as another glyph (O'dam ɨ as `1`, ɣ as
+`G`). Some languages write such words on purpose (Jyutping tone digits, Mayan `7` for the glottal
+stop, capitals for retroflexes); the column is a list to look at, not an error. It needs no
+`pycldf`.
 
 `--sync-languages` rewrites `Linglib/Data/Examples/languages.csv` with the Glottolog row of every
 Glottocode the examples use, from a Glottolog CLDF `languages.csv` (by default the pinned release
@@ -60,6 +70,7 @@ GLOTTOLOG = ("https://raw.githubusercontent.com/glottolog/glottolog-cldf/v5.3/cl
 LANGUAGE_COLUMNS = ["ID", "Name", "Glottocode", "ISO639P3code", "Level", "Macroarea",
                     "Latitude", "Longitude"]
 NO_LANGUAGE = {"ID": "no-language", "Name": "No language (a constructed string)"}
+TERMS = "http://cldf.clld.org/v1.0/terms.rdf#"
 
 MARK = {
     "acceptable": "",
@@ -110,8 +121,14 @@ def lgr_conformance(pairs):
 
 
 def source_ref(ref):
-    label = (ref.get("paperLabel") or "").strip()
+    # `;` separates the references of a CLDF `Source` value, so it cannot occur in a locator.
+    label = (ref.get("paperLabel") or "").strip().replace(";", ",")
     return f"{ref['bibkey']}[{label}]" if label else ref["bibkey"]
+
+
+def judged_id(code):
+    """The LanguageTable item, with no Glottocode, that the judged examples of `code` link to."""
+    return f"{code}-judged"
 
 
 def example_row(paper, row):
@@ -119,9 +136,11 @@ def example_row(paper, row):
     refs = [source_ref(row["source"])]
     if row.get("reportedIn"):
         refs.append(source_ref(row["reportedIn"]))
+    code = row.get("language")
     return {
         "ID": row["id"],
-        "Language_ID": row.get("language") or NO_LANGUAGE["ID"],
+        "Language_ID": (NO_LANGUAGE["ID"] if not code
+                        else judged_id(code) if MARK[row["judgment"]] else code),
         "Primary_Text": row.get("primaryText", ""),
         "Analyzed_Word": [w for w, _ in pairs],
         "Gloss": [g for _, g in pairs],
@@ -200,6 +219,11 @@ def export(outdir: Path):
         languages = [{k: (v or None) for k, v in r.items()} for r in csv.DictReader(f)]
     if any(e["Language_ID"] == NO_LANGUAGE["ID"] for e in examples):
         languages.append(dict(NO_LANGUAGE))
+    used = {e["Language_ID"] for e in examples}
+    for lang in list(languages):
+        if lang["ID"] != NO_LANGUAGE["ID"] and judged_id(lang["ID"]) in used:
+            languages.append({"ID": judged_id(lang["ID"]),
+                              "Name": f"{lang['Name']} (judged examples)"})
     cited = {re.sub(r"\[.*$", "", s) for e in examples for s in e["Source"]}
     sources, broken = read_bib()
 
@@ -207,7 +231,11 @@ def export(outdir: Path):
     ds.add_component("ExampleTable")
     ds.add_component("LanguageTable")
     ds.add_component("ContributionTable")
-    ds.add_columns("ExampleTable", "source", "grammaticalityJudgement", "contributionReference",
+    # A column is a CLDF property only when named by its term URI; a bare term name makes a plain
+    # string column (named `source`) that the rows' `Source` values never reach.
+    ds.add_columns("ExampleTable",
+                   *(f"{TERMS}{t}" for t in ("source", "grammaticalityJudgement",
+                                             "contributionReference")),
                    *CUSTOM_COLUMNS)
     ds.add_columns("LanguageTable",
                    {"name": "Level", "dc:description": "The Glottolog level of the languoid."})
@@ -216,6 +244,10 @@ def export(outdir: Path):
         "The per-paper example data of Linglib (Linglib/Data/Examples), exported from its JSON "
         "files by scripts/export_examples_cldf.py. Languages from Glottolog 5.3.")
     ds.add_sources(*[s for s in sources if s.id in cited])
+    for table, rows in (("ExampleTable", examples), ("LanguageTable", languages)):
+        # `ds.write` silently drops a value whose key names no column.
+        if extra := set().union(*rows) - {c.name for c in ds[table].tableSchema.columns}:
+            raise ValueError(f"{table} has no column for {sorted(extra)}")
     ds.write(
         ExampleTable=examples,
         LanguageTable=languages,
@@ -229,9 +261,30 @@ REPORT_COLUMNS = [
     ("untranslated", "a non-English example with no translation"),
     ("rule2", "a segmented gloss whose word and gloss differ in `-` or `=` boundaries"),
     ("nolocator", "a source with no locator"),
+    ("locator", "a locator with no recognizable head: a descriptive name instead of a place"),
     ("coarse", "a Glottocode at family level"),
     ("discourse", "discourse segments whose single-space join is not primaryText"),
+    ("glyphs", "a word with a digit between letters or a capital after a lowercase letter"),
 ]
+
+# The head of a locator: an example number (`(12a)`, `[3b]`, `ex. 4`, `E52`), a page, a section,
+# a chapter, a footnote, a table, figure, appendix or experiment, or the supplementary material.
+# Anything may follow the head (`(53) 1a`, `(22)/(23b)`, `Exp. 1, scalar condition`).
+LOCATOR_HEAD = re.compile(r"""^(?:
+    (?:ex\.?\s*)?(?:\([^()]*\d[^()]*\)|\((?:[ivx]+[a-z]?|[a-z]|[ivx]+\s[a-z]|[IVX]+[a-z]?)\)
+                     |\[\w+\]|[A-Z]{0,3}\d+[a-z]?(?:[._]\w+)*'?)
+  | pp?\.\s*(?:\d+|[ivxlc]+)
+  | n\.p\.
+  | §\s*(?:\d+|[IVX]+)
+  | (?:Section|Sect\.|section)\s*(?:\d+|[IVX]+)
+  | (?:ch\.|Ch\.|Chapter|chapter)\s*(?:\d+|[IVX]+)
+  | (?:fn\.?|footnote)\s*\d+
+  | (?:Tables?|Figures?|Figs?\.|Appendix|Example|example|Experiment|Exp\.?)\s*\(?[A-Z]?\d+
+  | SI\b
+)""", re.X)
+
+# A digit between two letters, or a lowercase letter followed by a capital, inside one word.
+GLYPH = re.compile(r"[^\W\d_]\d+[^\W\d_]|[^\W\d_](?<=[a-zß-ÿā-ž])[A-Z]")
 
 
 def report():
@@ -257,10 +310,15 @@ def report():
             counts["untranslated"] += foreign and not r.get("translation")
             counts["rule2"] += (lgr_conformance(pairs) == "WORD_ALIGNED"
                                 and any("-" in w or "=" in w for w, _ in pairs))
-            counts["nolocator"] += not (r["source"].get("paperLabel") or "").strip()
+            refs = [r["source"]] + ([r["reportedIn"]] if r.get("reportedIn") else [])
+            labels = [(ref.get("paperLabel") or "").strip() for ref in refs]
+            counts["nolocator"] += not labels[0]
+            counts["locator"] += any(l and not LOCATOR_HEAD.match(l) for l in labels)
             counts["coarse"] += level.get(r["language"]) == "family"
             segments = r.get("discourseSegments") or []
             counts["discourse"] += bool(segments) and r["primaryText"] != " ".join(segments)
+            words = r["primaryText"].split() + [w for w, _ in pairs]
+            counts["glyphs"] += any(GLYPH.search(w) for w in words)
         if any(counts.values()):
             table[paper] = counts
     keys = [k for k, _ in REPORT_COLUMNS]
