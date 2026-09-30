@@ -20,8 +20,7 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
   ℕ-register.
 * `PartialAssign Var D`: partial assignments `Var → Option D`.
 * `PluralAssign Var D`: sets of partial assignments, with the
-  [spector-2025] / [haug-dalrymple-2020] operators `restrict`,
-  `SingularAt`, `Singular`, `sumDref`.
+  [spector-2025] operators `restrict`, `SingularAt`, `Singular`.
 
 ## Implementation notes
 
@@ -157,10 +156,5 @@ theorem singularAt_restrict_iff {G : PluralAssign Var D} {x : Var} {a d : D} :
     (G.restrict x a).SingularAt x d ↔ (G.restrict x a).Nonempty ∧ d = a :=
   ⟨λ h => ⟨h.1.imp λ _ hg => hg.1, h.unique (singularAt_restrict ⟨_, h.1.choose_spec.1⟩)⟩,
     λ ⟨hne, hd⟩ => hd.symm ▸ singularAt_restrict hne⟩
-
-/-- The values `x` takes across `G` — [haug-dalrymple-2020]'s `∪u`
-    operator. -/
-def sumDref (G : PluralAssign Var D) (x : Var) : Set D :=
-  {d | ∃ g ∈ G, g x = some d}
 
 end PluralAssign

@@ -995,9 +995,6 @@ import Linglib.Semantics.Dynamic.DRS.Reduction
 import Linglib.Semantics.Dynamic.DRS.Verification
 import Linglib.Semantics.Dynamic.FileChange
 import Linglib.Semantics.Dynamic.Lookup
-import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
-import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
-import Linglib.Semantics.Dynamic.PPCDRT.Defs
 import Linglib.Semantics.Dynamic.Partial
 import Linglib.Semantics.Dynamic.Possibility
 import Linglib.Semantics.Dynamic.State

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
+public import Linglib.Semantics.Dynamic.PPCDRT
 public import Linglib.Fragments.Hungarian.Reciprocals
 public import Linglib.Data.Examples.Rakosi2019
 
@@ -24,10 +24,10 @@ of §5 and the pro-dropped singular variables of §6, licenses the reciprocal
 (`reciprocal_with_singular_verb`). The inclusive reflexive of §2 is set apart: it is never
 read as a bound variable (`inclusive_not_bound`), so it is no counterexample, and the reciprocal
 is excluded in its construction. The semantic side is the plural-assignment semantics of
-`PPCDRT`: reciprocity over jointly defined states forces two distinct individuals
-(`reciprocity_implies_multiple_individuals`), the plurality a reciprocal feeds on, whereas
-binding is satisfied by a singleton state (`binding_compatible_with_singleton`), which is why
-a reflexive's plurality is a matter of φ-agreement instead. The reciprocal itself carries no
+`PPCDRT`: reciprocity at a jointly defined state makes the antecedent denote two or more
+individuals (`reciprocity_implies_multiple_individuals`), the plurality a reciprocal feeds on,
+whereas binding is satisfied by a singleton state (`binding_compatible_with_singleton`), which
+is why a reflexive's plurality is a matter of φ-agreement instead. The reciprocal itself carries no
 number feature (`egymas_no_number_feature`), the reflexive inflects (`reflexive_number_paradigm`).
 
 ## References
@@ -102,16 +102,16 @@ theorem inclusive_not_bound :
 
 /-! ### The semantics of the two anaphoric relations -/
 
-/-- Reciprocity over states where both discourse referents are defined forces two distinct
-individuals: the distinctness clause of `reciprocityCond` yields a distinct pair from any
-jointly defined state. This is the plurality a reciprocal requires of its antecedent. -/
-theorem reciprocity_implies_multiple_individuals {E : Type*} (uAnaph uAnt : ℕ)
-    (S : PluralAssign ℕ E) (Δ : Set ℕ) (hdef : ∃ s ∈ S, (s uAnaph).isSome ∧ (s uAnt).isSome)
-    (h : reciprocityCond uAnaph uAnt S Δ) : ∃ a b : E, a ≠ b := by
-  obtain ⟨g, hgS, hAnaph, hAnt⟩ := hdef
-  obtain ⟨da, hda⟩ := Option.isSome_iff_exists.mp hAnaph
-  obtain ⟨db, hdb⟩ := Option.isSome_iff_exists.mp hAnt
-  exact ⟨da, db, h.2 g hgS da db hda hdb⟩
+/-- Reciprocity at a state where both discourse referents are defined makes the antecedent
+denote two or more individuals, under any distribution. This is the plurality a reciprocal
+requires of its antecedent. -/
+theorem reciprocity_implies_multiple_individuals {E : Type*} {uAnaph uAnt : ℕ}
+    {S : PluralAssign ℕ E} {Δ : Set ℕ} (hdef : ∃ s ∈ S, (s uAnaph).isSome ∧ (s uAnt).isSome)
+    (h : reciprocityCond uAnaph uAnt S Δ) : (PCDRT.value uAnt S).Nontrivial := by
+  obtain ⟨s, hs, hAnaph, hAnt⟩ := hdef
+  obtain ⟨a, ha⟩ := Option.isSome_iff_exists.mp hAnaph
+  obtain ⟨b, hb⟩ := Option.isSome_iff_exists.mp hAnt
+  exact nontrivial_value_of_reciprocityCond h hs ha hb
 
 /-- Binding is satisfied by a singleton state mapping both discourse referents to one value:
 reflexive binding imposes no plurality on the denotation. -/
