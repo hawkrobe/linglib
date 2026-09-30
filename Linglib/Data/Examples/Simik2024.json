@@ -18,7 +18,8 @@
       ["evidence", "neutral"],
       ["epistemic", "neutral"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex11b",
@@ -39,7 +40,8 @@
       ["evidence", "neutral"],
       ["epistemic", "neutral"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex11c",
@@ -60,7 +62,8 @@
       ["evidence", "neutral"],
       ["epistemic", "neutral"]
     ],
-    "comment": "The paper's (11c) 'Marek (ne-) uklidil třetí patro?' covers both polarities; split into two rows."
+    "comment": "The paper's (11c) 'Marek (ne-) uklidil třetí patro?' covers both polarities; split into two rows.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex11c_neg",
@@ -81,7 +84,8 @@
       ["evidence", "neutral"],
       ["epistemic", "neutral"]
     ],
-    "comment": "Negative variant of (11c)."
+    "comment": "Negative variant of (11c).",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex12a",
@@ -103,7 +107,8 @@
       ["evidence", "neutral"],
       ["epistemic", "forP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex12b",
@@ -125,7 +130,8 @@
       ["evidence", "neutral"],
       ["epistemic", "forP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex12c",
@@ -147,7 +153,8 @@
       ["evidence", "neutral"],
       ["epistemic", "forP"]
     ],
-    "comment": "The paper's (12c) covers both polarities; split into two rows."
+    "comment": "The paper's (12c) covers both polarities; split into two rows.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex12c_neg",
@@ -169,7 +176,8 @@
       ["evidence", "neutral"],
       ["epistemic", "forP"]
     ],
-    "comment": "Negative variant of (12c)."
+    "comment": "Negative variant of (12c).",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex16a",
@@ -190,7 +198,8 @@
       ["evidence", "againstP"],
       ["epistemic", "forP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex16b",
@@ -211,7 +220,8 @@
       ["evidence", "againstP"],
       ["epistemic", "forP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex16c",
@@ -232,7 +242,8 @@
       ["evidence", "againstP"],
       ["epistemic", "forP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex16d",
@@ -253,7 +264,8 @@
       ["evidence", "againstP"],
       ["epistemic", "forP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex17a",
@@ -274,7 +286,8 @@
       ["evidence", "forP"],
       ["epistemic", "neutral"]
     ],
-    "comment": ""
+    "comment": "The paper gives the translation as intended.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex17b",
@@ -295,7 +308,8 @@
       ["evidence", "forP"],
       ["epistemic", "neutral"]
     ],
-    "comment": "Explanation-seeking; English uses no negation here (translation due to Daniel Goodhue, p.c.)."
+    "comment": "Explanation-seeking; English uses no negation here (translation due to Daniel Goodhue, p.c.).",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex17c",
@@ -316,7 +330,8 @@
       ["evidence", "forP"],
       ["epistemic", "neutral"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex17d",
@@ -337,7 +352,8 @@
       ["evidence", "forP"],
       ["epistemic", "neutral"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex18a",
@@ -350,7 +366,7 @@
     ],
     "translation": "Has Marek cleaned the third floor?",
     "context": "On a busy day, two hotel cleaning service coordinators (A and B), sitting in their office, are taking note of the progress made thus far. B is informed about the progress. After a brief chat about two new cleaners who have just joined the team, Lucie and Marek, A wants to take note of the final two floors and wonders who (Lucie or Marek) cleaned which floor (second or third). A starts by asking:",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -359,7 +375,8 @@
       ["epistemic", "neutral"],
       ["contrastiveTopic", "true"]
     ],
-    "comment": ""
+    "comment": "The paper marks the example ?.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex18b",
@@ -381,7 +398,8 @@
       ["epistemic", "neutral"],
       ["contrastiveTopic", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex18c",
@@ -403,7 +421,8 @@
       ["epistemic", "neutral"],
       ["contrastiveTopic", "true"]
     ],
-    "comment": "Contrastive topic Marek (vs Lucie) placed utterance-initially outweighs verb movement: an unbiased declarative PQ."
+    "comment": "Contrastive topic Marek (vs Lucie) placed utterance-initially outweighs verb movement: an unbiased declarative PQ.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex18d",
@@ -425,7 +444,8 @@
       ["epistemic", "neutral"],
       ["contrastiveTopic", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex25a",
@@ -447,7 +467,8 @@
       ["polarity", "positive"],
       ["label", "InterPPQ"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex25b",
@@ -456,7 +477,7 @@
     "primaryText": "Nedožil se císař Justinián I. 80 let?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Didn't Emperor Justinian I live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -466,7 +487,8 @@
       ["polarity", "negative"],
       ["label", "InterNPQ"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex25c",
@@ -475,7 +497,7 @@
     "primaryText": "Císař Justinián I. se dožil 80 let?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I lived up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -485,7 +507,8 @@
       ["polarity", "positive"],
       ["label", "DeclPQ"]
     ],
-    "comment": "The paper's (25c) 'Císař Justinián I. se (ne)dožil 80 let?' covers both polarities; split into two rows."
+    "comment": "The paper's (25c) 'Císař Justinián I. se (ne)dožil 80 let?' covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex25c_neg",
@@ -494,7 +517,7 @@
     "primaryText": "Císař Justinián I. se nedožil 80 let?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I didn't live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -504,7 +527,8 @@
       ["polarity", "negative"],
       ["label", "DeclPQ"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex26a",
@@ -526,7 +550,8 @@
       ["polarity", "positive"],
       ["label", "InterPPQ"]
     ],
-    "comment": "Ivana Dragonová, p.c."
+    "comment": "Ivana Dragonová, p.c.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex26b",
@@ -535,7 +560,7 @@
     "primaryText": "Nedožil sa cisár Justinián 80 rokov?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Didn't Emperor Justinian I live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -545,7 +570,8 @@
       ["polarity", "negative"],
       ["label", "InterNPQ"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex26c",
@@ -554,7 +580,7 @@
     "primaryText": "Cisár Justinián sa dožil 80 rokov?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I lived up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -564,7 +590,8 @@
       ["polarity", "positive"],
       ["label", "DeclPQ"]
     ],
-    "comment": "The paper's (26c) covers both polarities; split into two rows."
+    "comment": "The paper's (26c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex26c_neg",
@@ -573,7 +600,7 @@
     "primaryText": "Cisár Justinián sa nedožil 80 rokov?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I didn't live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -583,7 +610,8 @@
       ["polarity", "negative"],
       ["label", "DeclPQ"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex27a",
@@ -605,7 +633,8 @@
       ["polarity", "positive"],
       ["label", "InterPPQ"]
     ],
-    "comment": "Auxiliary rather than lexical verb fronts. Katja Brankačkec, p.c."
+    "comment": "Auxiliary rather than lexical verb fronts. Katja Brankačkec, p.c.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex27b",
@@ -614,7 +643,7 @@
     "primaryText": "Njeje kejžor Justinian Wulki 80 lět wordował?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Didn't Emperor Justinian I live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -624,7 +653,8 @@
       ["polarity", "negative"],
       ["label", "InterNPQ"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex27c",
@@ -633,7 +663,7 @@
     "primaryText": "Kejžor Justinian Wulki je 80 lět wordował?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I lived up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -643,7 +673,8 @@
       ["polarity", "positive"],
       ["label", "DeclPQ"]
     ],
-    "comment": "The paper's (27c) covers both polarities; split into two rows."
+    "comment": "The paper's (27c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex27c_neg",
@@ -652,7 +683,7 @@
     "primaryText": "Kejžor Justinian Wulki njeje 80 lět wordował?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I didn't live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -662,7 +693,8 @@
       ["polarity", "negative"],
       ["label", "DeclPQ"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex28a",
@@ -671,7 +703,7 @@
     "primaryText": "(Ali) Je cesar Justinijan doživel 80 let?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["(Ali)", "ali"], ["Je", "is.AUX"], ["cesar", "emperor"], ["Justinijan", "Justinian"],
+      ["(Ali)", "ALI"], ["Je", "is.AUX"], ["cesar", "emperor"], ["Justinijan", "Justinian"],
       ["doživel", "lived.to"], ["80", "80"], ["let", "years"]
     ],
     "translation": "Did Emperor Justinian I live up to 80 years?",
@@ -685,7 +717,8 @@
       ["label", "InterPPQ"],
       ["particle", "ali"]
     ],
-    "comment": "Clause-initial ali is optional. Adrian Stegovec, p.c."
+    "comment": "Clause-initial ali is optional. Adrian Stegovec, p.c.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex28b",
@@ -694,10 +727,10 @@
     "primaryText": "(Ali) Ni cesar Justinijan doživel 80 let?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["(Ali)", "ali"], ["Ni", "NEG.is.AUX"], ["cesar", "emperor"], ["Justinijan", "Justinian"],
+      ["(Ali)", "ALI"], ["Ni", "NEG.is.AUX"], ["cesar", "emperor"], ["Justinijan", "Justinian"],
       ["doživel", "lived.to"], ["80", "80"], ["let", "years"]
     ],
-    "translation": "Didn't Emperor Justinian I live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -708,7 +741,8 @@
       ["label", "InterNPQ"],
       ["particle", "ali"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex28c",
@@ -717,7 +751,7 @@
     "primaryText": "Cesar Justinijan je doživel 80 let?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I lived up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -727,7 +761,8 @@
       ["polarity", "positive"],
       ["label", "DeclPQ"]
     ],
-    "comment": "Ali is excluded from the declarative (*Ali). The paper's (28c) covers both polarities; split into two rows."
+    "comment": "Ali is excluded from the declarative (*Ali). The paper's (28c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex28c_neg",
@@ -736,7 +771,7 @@
     "primaryText": "Cesar Justinijan ni doživel 80 let?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I didn't live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -746,7 +781,8 @@
       ["polarity", "negative"],
       ["label", "DeclPQ"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex29a",
@@ -755,7 +791,7 @@
     "primaryText": "Čy dožyv imperator Justynian Velykyj do 80 rokiv?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Čy", "cy"], ["dožyv", "lived"], ["imperator", "emperor"], ["Justynian", "Justinian"],
+      ["Čy", "CY"], ["dožyv", "lived"], ["imperator", "emperor"], ["Justynian", "Justinian"],
       ["Velykyj", "Great"], ["do", "to"], ["80", "80"], ["rokiv", "years"]
     ],
     "translation": "Did Emperor Justinian I live up to eighty years?",
@@ -769,7 +805,8 @@
       ["label", "cyPPQ"],
       ["particle", "čy"]
     ],
-    "comment": "Anastasiia Vyshnevska, p.c."
+    "comment": "Anastasiia Vyshnevska, p.c.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex29b",
@@ -778,7 +815,7 @@
     "primaryText": "Čy imperator Justynian Velykyj dožyv do 80 rokiv?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Did Emperor Justinian I live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -789,7 +826,8 @@
       ["label", "cyPPQ"],
       ["particle", "čy"]
     ],
-    "comment": "Verb–subject order is immaterial."
+    "comment": "Verb–subject order is immaterial. The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex29c",
@@ -798,7 +836,7 @@
     "primaryText": "Čy ne dožyv imperator Justynian Velykyj do 80 rokiv?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Didn't Emperor Justinian I live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -809,7 +847,8 @@
       ["label", "cyNPQ"],
       ["particle", "čy"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex29d",
@@ -818,7 +857,7 @@
     "primaryText": "Čy imperator Justynian Velykyj ne dožyv do 80 rokiv?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Didn't Emperor Justinian I live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -829,7 +868,8 @@
       ["label", "cyNPQ"],
       ["particle", "čy"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex29e",
@@ -838,7 +878,7 @@
     "primaryText": "Imperator Justynian Velykyj dožyv do 80 rokiv?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I lived up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -848,7 +888,8 @@
       ["polarity", "positive"],
       ["label", "DeclPQ"]
     ],
-    "comment": "The paper's (29e) covers both polarities; split into two rows."
+    "comment": "The paper's (29e) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex29e_neg",
@@ -857,7 +898,7 @@
     "primaryText": "Imperator Justynian Velykyj ne dožyv do 80 rokiv?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I didn't live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -867,7 +908,8 @@
       ["polarity", "negative"],
       ["label", "DeclPQ"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex30a",
@@ -876,7 +918,7 @@
     "primaryText": "Czy Justynian I Wielki dożył wieku 80 lat?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Czy", "czy"], ["Justynian", "Justinian"], ["I", "I"], ["Wielki", "Great"],
+      ["Czy", "CZY"], ["Justynian", "Justinian"], ["I", "I"], ["Wielki", "Great"],
       ["dożył", "live.to"], ["wieku", "age"], ["80", "80"], ["lat", "years"]
     ],
     "translation": "Did Emperor Justinian I live up to 80 years?",
@@ -890,7 +932,8 @@
       ["label", "czyPPQ"],
       ["particle", "czy"]
     ],
-    "comment": "Dorota Klimek-Jankowska, p.c."
+    "comment": "Dorota Klimek-Jankowska, p.c.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex30b",
@@ -899,7 +942,7 @@
     "primaryText": "Czy Justynian I Wielki nie dożył wieku 80 lat?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Czy", "czy"], ["Justynian", "Justinian"], ["I", "I"], ["Wielki", "Great"], ["nie", "NEG"],
+      ["Czy", "CZY"], ["Justynian", "Justinian"], ["I", "I"], ["Wielki", "Great"], ["nie", "NEG"],
       ["dożył", "live.to"], ["wieku", "age"], ["80", "80"], ["lat", "years"]
     ],
     "translation": "Did Emperor Justinian I not live up to 80 years?",
@@ -913,7 +956,8 @@
       ["label", "czyNPQ"],
       ["particle", "czy"]
     ],
-    "comment": "A negative PQ is quiz-felicitous as long as czy introduces it."
+    "comment": "A negative PQ is quiz-felicitous as long as czy introduces it.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex30c",
@@ -922,7 +966,7 @@
     "primaryText": "Justynian I Wielki dożył wieku 80 lat?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I lived up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -932,7 +976,8 @@
       ["polarity", "positive"],
       ["label", "DeclPQ"]
     ],
-    "comment": "Grammatical but infelicitous in the quiz due to evidential bias. The paper's (30c) covers both polarities; split into two rows."
+    "comment": "Grammatical but infelicitous in the quiz due to evidential bias. The paper's (30c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex30c_neg",
@@ -941,7 +986,7 @@
     "primaryText": "Justynian I Wielki nie dożył wieku 80 lat?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I didn't live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -951,7 +996,8 @@
       ["polarity", "negative"],
       ["label", "DeclPQ"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex30d",
@@ -960,7 +1006,7 @@
     "primaryText": "Dożył Justynian I Wielki wieku 80 lat?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Did Emperor Justinian I live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -970,7 +1016,8 @@
       ["polarity", "positive"],
       ["label", "V1PQ"]
     ],
-    "comment": "The verb cannot move across an overt subject. The paper's (30d) covers both polarities; split into two rows."
+    "comment": "The verb cannot move across an overt subject. The paper's (30d) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex30d_neg",
@@ -979,7 +1026,7 @@
     "primaryText": "Nie dożył Justynian I Wielki wieku 80 lat?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Didn't Emperor Justinian I live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -989,7 +1036,8 @@
       ["polarity", "negative"],
       ["label", "V1PQ"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex31a",
@@ -998,7 +1046,7 @@
     "primaryText": "Da li je Justinijan I/Veliki doživeo 80 godinu?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Da", "da"], ["li", "li"], ["je", "is.AUX"], ["Justinijan", "Justinian"],
+      ["Da", "DA"], ["li", "LI"], ["je", "is.AUX"], ["Justinijan", "Justinian"],
       ["I/Veliki", "I/Great"], ["doživeo", "lived.to"], ["80", "80"], ["godinu", "years"]
     ],
     "translation": "Did Emperor Justinian I live up to 80 years?",
@@ -1012,7 +1060,8 @@
       ["label", "da+liPPQ"],
       ["particle", "da li"]
     ],
-    "comment": "The only strategy fully natural in the quiz. Neda Todorović, p.c."
+    "comment": "The only strategy fully natural in the quiz. Neda Todorović, p.c.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex31b",
@@ -1021,8 +1070,8 @@
     "primaryText": "Je l' (je) Justinijan I/Veliki doživeo 80 godinu?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Je l'", "je li"], ["(je)", "is.AUX"], ["Justinijan", "Justinian"], ["I/Veliki", "I/Great"],
-      ["doživeo", "lived.to"], ["80", "80"], ["godinu", "years"]
+      ["Je", "JE"], ["l'", "LI"], ["(je)", "is.AUX"], ["Justinijan", "Justinian"],
+      ["I/Veliki", "I/Great"], ["doživeo", "lived.to"], ["80", "80"], ["godinu", "years"]
     ],
     "translation": "Did Emperor Justinian I live up to 80 years?",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
@@ -1035,7 +1084,8 @@
       ["label", "je+liPPQ"],
       ["particle", "je li"]
     ],
-    "comment": "Considered neutral by Todorović 2023, but colloquial and probably only information-seeking."
+    "comment": "Considered neutral by Todorović 2023, but colloquial and probably only information-seeking.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex31c",
@@ -1044,7 +1094,7 @@
     "primaryText": "Nije li Justinijan I/Veliki doživeo 80 godinu?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Nije", "NEG.is.AUX"], ["li", "li"], ["Justinijan", "Justinian"], ["I/Veliki", "I/Great"],
+      ["Nije", "NEG.is.AUX"], ["li", "LI"], ["Justinijan", "Justinian"], ["I/Veliki", "I/Great"],
       ["doživeo", "lived.to"], ["80", "80"], ["godinu", "years"]
     ],
     "translation": "Didn't Emperor Justinian I live up to 80 years?",
@@ -1058,7 +1108,8 @@
       ["label", "HighNPQ"],
       ["particle", "li"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex31d",
@@ -1067,7 +1118,7 @@
     "primaryText": "Je l' Justinijan I/Veliki nije doživeo 80 godinu?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I didn't live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1078,7 +1129,8 @@
       ["label", "LowNPQ"],
       ["particle", "je li"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex31e",
@@ -1087,7 +1139,7 @@
     "primaryText": "Justinijan I/Veliki je doživeo 80 godinu?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I lived up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1097,7 +1149,8 @@
       ["polarity", "positive"],
       ["label", "DeclPQ"]
     ],
-    "comment": "The paper's (31e) 'Justinijan I/Veliki (ni)je doživeo 80 godinu?' covers both polarities; split into two rows."
+    "comment": "The paper's (31e) 'Justinijan I/Veliki (ni)je doživeo 80 godinu?' covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex31e_neg",
@@ -1106,7 +1159,7 @@
     "primaryText": "Justinijan I/Veliki nije doživeo 80 godinu?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I didn't live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1116,7 +1169,8 @@
       ["polarity", "negative"],
       ["label", "DeclPQ"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex32a",
@@ -1125,7 +1179,7 @@
     "primaryText": "Dali Justinijan Veliki doživeal 80-godišna vozrast?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Dali", "dali"], ["Justinijan", "Justinian"], ["Veliki", "Great"], ["doživeal", "lived.to"],
+      ["Dali", "DALI"], ["Justinijan", "Justinian"], ["Veliki", "Great"], ["doživeal", "lived.to"],
       ["80-godišna", "80-yearly"], ["vozrast", "age"]
     ],
     "translation": "Did Emperor Justinian I live up to 80 years?",
@@ -1139,7 +1193,8 @@
       ["label", "daliPQ"],
       ["particle", "dali"]
     ],
-    "comment": "The paper's (32a) 'Dali Justinijan Veliki (ne) doživeal ...' covers both polarities; split into two rows. Liljana Mitkovska and Eleni Bužarovska, p.c."
+    "comment": "The paper's (32a) 'Dali Justinijan Veliki (ne) doživeal ...' covers both polarities; split into two rows. Liljana Mitkovska and Eleni Bužarovska, p.c.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex32a_neg",
@@ -1148,7 +1203,7 @@
     "primaryText": "Dali Justinijan Veliki ne doživeal 80-godišna vozrast?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Dali", "dali"], ["Justinijan", "Justinian"], ["Veliki", "Great"], ["ne", "NEG"],
+      ["Dali", "DALI"], ["Justinijan", "Justinian"], ["Veliki", "Great"], ["ne", "NEG"],
       ["doživeal", "lived.to"], ["80-godišna", "80-yearly"], ["vozrast", "age"]
     ],
     "translation": "Did Emperor Justinian I not live up to 80 years?",
@@ -1162,7 +1217,8 @@
       ["label", "daliPQ"],
       ["particle", "dali"]
     ],
-    "comment": "Negation under dali gives rise to no bias."
+    "comment": "Negation under dali gives rise to no bias.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex32b",
@@ -1171,7 +1227,7 @@
     "primaryText": "Doživeal li Justinijan Veliki 80-godišna vozrast?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Doživeal", "lived.to"], ["li", "li"], ["Justinijan", "Justinian"], ["Veliki", "Great"],
+      ["Doživeal", "lived.to"], ["li", "LI"], ["Justinijan", "Justinian"], ["Veliki", "Great"],
       ["80-godišna", "80-yearly"], ["vozrast", "age"]
     ],
     "translation": "Did Emperor Justinian I live up to 80 years?",
@@ -1185,7 +1241,8 @@
       ["label", "liPQ"],
       ["particle", "li"]
     ],
-    "comment": "Less formal than dali but possible in the quiz. The paper's (32b) '(#Ne) Doživeal li ...' covers both polarities; split into two rows."
+    "comment": "Less formal than dali but possible in the quiz. The paper's (32b) '(#Ne) Doživeal li ...' covers both polarities; split into two rows.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex32b_neg",
@@ -1194,7 +1251,7 @@
     "primaryText": "Ne doživeal li Justinijan Veliki 80-godišna vozrast?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Didn't Emperor Justinian I live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1205,7 +1262,8 @@
       ["label", "liPQ"],
       ["particle", "li"]
     ],
-    "comment": "Negating the verb under li yields positive epistemic bias."
+    "comment": "Negating the verb under li yields positive epistemic bias. The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex32c",
@@ -1214,7 +1272,7 @@
     "primaryText": "Doživeal Justinijan Veliki 80-godišna vozrast?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Did Emperor Justinian I live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1224,7 +1282,8 @@
       ["polarity", "positive"],
       ["label", "v1PQ"]
     ],
-    "comment": "Verb-first PQs without li are too colloquial for the quiz. The paper's (32c) covers both polarities; split into two rows."
+    "comment": "Verb-first PQs without li are too colloquial for the quiz. The paper's (32c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex32c_neg",
@@ -1233,7 +1292,7 @@
     "primaryText": "Ne doživeal Justinijan Veliki 80-godišna vozrast?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Didn't Emperor Justinian I live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1243,7 +1302,8 @@
       ["polarity", "negative"],
       ["label", "v1PQ"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex33a",
@@ -1252,7 +1312,7 @@
     "primaryText": "Justinian doživjava li do 80-godišna vŭzrast?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Justinian", "Justinian"], ["doživjava", "lives"], ["li", "li"], ["do", "to"],
+      ["Justinian", "Justinian"], ["doživjava", "lives"], ["li", "LI"], ["do", "to"],
       ["80-godišna", "80-yearly"], ["vŭzrast", "age"]
     ],
     "translation": "Did Emperor Justinian I live up to 80 years?",
@@ -1266,7 +1326,8 @@
       ["label", "liPPQ"],
       ["particle", "li"]
     ],
-    "comment": "Vesela Simeonova, p.c."
+    "comment": "Vesela Simeonova, p.c.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex33b",
@@ -1275,7 +1336,7 @@
     "primaryText": "Justinian ne doživjava li do 80-godišna vŭzrast?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Didn't Emperor Justinian I live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1286,7 +1347,8 @@
       ["label", "liNPQ"],
       ["particle", "li"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex33c",
@@ -1295,7 +1357,7 @@
     "primaryText": "Justinian doživjava do 80-godišna vŭzrast?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I lived up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1305,7 +1367,8 @@
       ["polarity", "positive"],
       ["label", "DeclPQ"]
     ],
-    "comment": "The paper's (33c) covers both polarities; split into two rows."
+    "comment": "The paper's (33c) covers both polarities; split into two rows. The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex33c_neg",
@@ -1314,7 +1377,7 @@
     "primaryText": "Justinian ne doživjava do 80-godišna vŭzrast?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I didn't live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1324,7 +1387,8 @@
       ["polarity", "negative"],
       ["label", "DeclPQ"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex34a",
@@ -1333,7 +1397,7 @@
     "primaryText": "Dožil li Justinian Velikij do 80 let?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Dožil", "lived.to"], ["li", "li"], ["Justinian", "Justinian"], ["Velikij", "Great"],
+      ["Dožil", "lived.to"], ["li", "LI"], ["Justinian", "Justinian"], ["Velikij", "Great"],
       ["do", "to"], ["80", "80"], ["let", "years"]
     ],
     "translation": "Did Emperor Justinian I live up to 80 years?",
@@ -1347,7 +1411,8 @@
       ["label", "liPPQ"],
       ["particle", "li"]
     ],
-    "comment": "Maria Onoeva and Maria Razguliaeva, p.c."
+    "comment": "Maria Onoeva and Maria Razguliaeva, p.c.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex34b",
@@ -1356,7 +1421,7 @@
     "primaryText": "Ne dožil li Justinian Velikij do 80 let?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Didn't Emperor Justinian I live up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1367,7 +1432,8 @@
       ["label", "liNPQ"],
       ["particle", "li"]
     ],
-    "comment": ""
+    "comment": "The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex34c",
@@ -1376,7 +1442,7 @@
     "primaryText": "Justinian Velikij dožil do 80 let?",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Emperor Justinian I lived up to 80 years?",
+    "translation": "",
     "context": "Scenario (24): a TV quiz moderator asks the following polar question, expecting a simple 'yes' or 'no' answer.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1386,7 +1452,8 @@
       ["polarity", "positive"],
       ["label", "IntonPQ"]
     ],
-    "comment": "Question force by pitch accent alone; arguably unbiased but inherently information-seeking."
+    "comment": "Question force by pitch accent alone; arguably unbiased but inherently information-seeking. The paper translates only the glossed variant of the example.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex43c_ppi",
@@ -1407,7 +1474,8 @@
       ["nahodou", "false"],
       ["indefinite", "ppi"]
     ],
-    "comment": "InterNPQ with the PPI: outer negation."
+    "comment": "InterNPQ with the PPI: outer negation.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex43c_nci",
@@ -1416,11 +1484,11 @@
     "primaryText": "Nemá Max žádné námitky?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Nemá", "NEG.has"], ["Max", "Max"], ["žádné", "DET.NCI"], ["námitky", "objections"]
+      ["Nemá", "NEG.has"], ["Max", "Max"], ["žádné", "NEG.NCI"], ["námitky", "objections"]
     ],
     "translation": "Doesn't Max have any objections?",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1428,7 +1496,8 @@
       ["nahodou", "false"],
       ["indefinite", "nci"]
     ],
-    "comment": "InterNPQs only marginally involve inner negation."
+    "comment": "InterNPQs only marginally involve inner negation. The paper prints Nemá Max {nějaké / ?žádné} námitky? 'Doesn't Max have some/any objections?' and glosses žádné 'NEG.NCI' here, 'DET.NCI' in (43a).",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex43d_ppi",
@@ -1450,7 +1519,8 @@
       ["nahodou", "true"],
       ["indefinite", "ppi"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex43d_nci",
@@ -1459,10 +1529,10 @@
     "primaryText": "Nemá Max náhodou žádné námitky?",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Nemá", "NEG.has"], ["Max", "Max"], ["náhodou", "by.chance"], ["žádné", "DET.NCI"],
+      ["Nemá", "NEG.has"], ["Max", "Max"], ["náhodou", "by.chance"], ["žádné", "NEG.NCI"],
       ["námitky", "objections"]
     ],
-    "translation": "Does Max have any objections, by any chance?",
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -1472,7 +1542,8 @@
       ["nahodou", "true"],
       ["indefinite", "nci"]
     ],
-    "comment": "Náhodou requires outer negation, which cannot license the NCI."
+    "comment": "Náhodou requires outer negation, which cannot license the NCI. The paper's translation goes with the unstarred nějaké.",
+    "verified": "page-image"
   },
   {
     "id": "simik2024_ex43e",
@@ -1494,6 +1565,7 @@
       ["nahodou", "true"],
       ["indefinite", "ppi"]
     ],
-    "comment": "The particle náhodou is not licensed in positive PQs."
+    "comment": "The particle náhodou is not licensed in positive PQs. The paper gives the translation as intended.",
+    "verified": "page-image"
   }
 ]
