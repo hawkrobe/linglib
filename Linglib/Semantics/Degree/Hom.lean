@@ -5,6 +5,8 @@ public import Mathlib.Data.Fintype.Card
 public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Tactic.GCongr
 public import Mathlib.Order.Interval.Finset.Fin
+public import Mathlib.Order.UpperLower.Closure
+public import Linglib.Semantics.Degree.Background
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Degree.Delineation
 public import Linglib.Semantics.Degree.Measure.Dimensioned
@@ -12,46 +14,52 @@ public import Linglib.Semantics.Degree.Measure.Dimensioned
 /-!
 # Morphisms between gradability representations
 [kamp-1975] [klein-1980] [kennedy-1999] [kennedy-2007] [scontras-2014] [bale-schwarz-2022]
+[cresswell-1976] [bale-2008] [cariani-santorio-wellwood-2023]
 
-The maps between the three framework objects for gradable predicates,
-with their faithfulness theorems — the degree-semantic analogue of the
-representation maps in `Phonology/Autosegmental` (AR ↔ tone strings):
+The maps between the framework objects for gradable predicates, with their faithfulness
+theorems — the degree-semantic analogue of the representation maps in
+`Phonology/Autosegmental` (AR ↔ tone strings):
 
 ```
-Klein (Delineation)          — most general
-  ↑ measureDelineation
-Kennedy (measure functions)  — specialization: single linear scale
+Klein (Delineation)             — most general
+  ↑ upper sets as extensions: monotone iff the background is total
+States-based (background preorder, threshold upper sets)
+  ↑ pullback of degree thresholds: exact iff the measure reflects the background
+Kennedy (measure functions)     — specialization: single linear scale
   ↑ DimensionedMeasure.apply
 Scontras / Bale & Schwarz (typed measurement)
 ```
 
-Each map is an embedding (`ordering_faithful`,
-`measurement_refines_degree`); the composite is `measure_to_delineation`.
-Strictness: delineation expresses nonlinear adjectives ("clever") that
-no degree function induces (`delineation_strictly_more_general`,
-`nonlinear_delineation_exists`).
+Kennedy embeds in Klein directly by `Delineation.measureDelineation`, whose ordering is degree
+comparison (`Delineation.ordering_iff_degree`). Delineation expresses nonlinear adjectives
+("clever") that no degree function induces (`delineation_strictly_more_general`,
+`nonlinear_delineation_exists`), and a non-total background has thresholds that no degree
+threshold induces (`exists_isUpperSet_forall_ne_preimage`).
 
 ## What each framework adds
 
-| Framework   | Ontology       | Comparative           | Unique capacity        |
-|-------------|----------------|-----------------------|------------------------|
-| Klein       | No degrees     | ∃C. A(x,C) ∧ ¬A(y,C)| Nonlinear adjectives   |
-| Kennedy     | Degrees (D,≤)  | μ(x) > μ(y)          | Measure phrases, DegP  |
-| Measurement | Degrees + dim  | μ_d(x) > μ_d(y)      | Typed dimensions, CARD |
+| Framework    | Ontology          | Comparative          | Unique capacity             |
+|--------------|-------------------|----------------------|-----------------------------|
+| Klein        | No degrees        | ∃C. A(x,C) ∧ ¬A(y,C) | Nonlinear adjectives        |
+| States-based | Preordered states | μ(s) > max, μ admissible | Positive form without *pos* |
+| Kennedy      | Degrees (D,≤)     | μ(x) > μ(y)          | Measure phrases, DegP       |
+| Measurement  | Degrees + dim     | μ_d(x) > μ_d(y)      | Typed dimensions, CARD      |
 
-## Theorems in this file
+## Main results
 
-1. **measure_to_degree**: every `DimensionedMeasure` forgets to a plain degree function
-2. **degree_to_delineation**: every degree function induces a Klein delineation
-3. **ordering_faithful**: the induced delineation's ordering = degree comparison
-4. **degree_delineations_are_linear**: all degree-induced delineations are linear
-5. **nonlinear_delineation_exists**: a concrete nonlinear delineation witness
-6. **monotone_excludes_nonlinear**: monotone delineations are never nonlinear
-7. **delineation_strictly_more_general**: delineation ⊋ degree (strict containment)
-8. **nlDel_not_degree_representable**: no degree function can induce the nonlinear witness
-9. **nondistinct_iff_equal_measure**: Klein's emergent degrees = actual degree equality
-10. **degree_delineation_strict_weak_order**: degree orderings are strict weak orders
-11. **very_degree_chain**: Klein's `very` = two-step degree chain
+* `delineation_strictly_more_general`, `monotone_excludes_nonlinear`: degree functions induce
+  monotone delineations, and monotone delineations are never nonlinear.
+* `isMonotoneDelineation_upperSets_iff`: the thresholds of a background form a monotone
+  delineation iff the background is total.
+* `maxComparative_iff_exists_isUpperSet`: on a total background the comparative is Klein's.
+* `forall_isUpperSet_exists_preimage_iff`, `total_of_reflect_le`: thresholds are pulled-back
+  degree thresholds iff the measure reflects the background, which forces totality.
+* `Comparison.ge_over_eq_Ici`: a threshold above a contrast state is the degree-threshold
+  positive form at its degree.
+* `cresswellSetoid_le_iff`, `factors_through_cresswellDegree`: Cresswell's degrees are the
+  antisymmetrization of the comparison.
+* `universalDegree_lt_iff`: Bale's universal scale.
+* `maxComparative_comp`, `positive_not_natural`: which operators are natural in the scale.
 -/
 
 @[expose] public section
@@ -177,6 +185,109 @@ theorem degree_characterization {E D : Type*} [LinearOrder D]
   ⟨measureDelineation_monotone μ,
    measureDelineation_is_linear μ,
    fun cc a b ha hb => ordering_iff_degree μ cc a b ha hb⟩
+
+/-! ### Background orderings ([cariani-santorio-wellwood-2023])
+
+The states-based framework of `Semantics/Degree/Background.lean` has a background preorder of
+states whose threshold properties are its upper sets. Read as extensions, the thresholds form a
+monotone delineation exactly when the background is total, which makes precise the parallel the
+paper draws between its monotonicity postulate and [klein-1980]'s Consistency Postulate; with a
+monotone admissible measure the comparative is then Klein's, some threshold separating the two.
+The thresholds are degree thresholds pulled back along the measure exactly when the measure
+reflects the background, and such a measure into a linear scale forces the background to be
+total; a threshold above a contrast state is then the degree-threshold positive form at that
+state's degree. -/
+
+section Background
+
+open Set
+
+variable {S X D : Type*} [Preorder S] [Preorder D] {ρ : S → X} {μ : S → D}
+
+/-- The upper sets of a background, as extensions, form a monotone delineation iff the
+background is total. Two incomparable states give the cycle of a nonlinear delineation. -/
+theorem isMonotoneDelineation_upperSets_iff :
+    IsMonotoneDelineation (fun (C : Set S) s ↦ s ∈ C) {C | IsUpperSet C} ↔
+      ∀ s t : S, s ≤ t ∨ t ≤ s := by
+  refine ⟨fun h s t ↦ by_contra fun hst ↦ ?_, fun htot C₁ C₂ h₁ h₂ a b ha hb hb₂ ↦ ?_⟩
+  · obtain ⟨hst, hts⟩ := not_or.1 hst
+    exact hts (h (Ici s) (Ici t) (isUpperSet_Ici s) (isUpperSet_Ici t) s t le_rfl hst le_rfl)
+  · exact (htot a b).elim (fun hab ↦ absurd (h₁ hab ha) hb) fun hba ↦ h₂ hba hb₂
+
+/-- With a monotone measure the comparative yields a separating threshold: if `a` has more than
+`b`, some threshold property holds of `a` and not of `b`. -/
+theorem exists_isUpperSet_of_maxComparative (hm : Monotone μ) {a b : X}
+    (h : maxComparative (ρ · = a) (ρ · = b) μ) :
+    ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T := by
+  obtain ⟨δ, hδ, s, hsa, hlt⟩ := h
+  refine ⟨Ici s, isUpperSet_Ici s, ⟨s, mem_Ici.2 le_rfl, hsa⟩, ?_⟩
+  rintro ⟨t, hst, htb⟩
+  exact ((hδ.2 ⟨t, htb, le_rfl⟩).trans_lt hlt).not_ge (hm hst)
+
+/-- Admissibility alone does not yield a separating threshold: with two tied states every
+measure is admissible and every threshold holding of one holds of the other. The preorder is
+passed explicitly, since `Bool`'s own order would otherwise be found. -/
+example :
+    let tied : Preorder Bool := Preorder.lift fun _ ↦ ()
+    @admissibleMeasure _ _ tied _ Bool.toNat ∧ maxComparative (· = true) (· = false) Bool.toNat ∧
+      ∀ T : Set Bool, @IsUpperSet _ tied.toLE T → true ∈ T → false ∈ T :=
+  ⟨fun _ _ h ↦ absurd h (lt_irrefl ()), (maxComparative_eq_iff _ _ _).2 Nat.zero_lt_one,
+    fun _ hT ht ↦ hT trivial ht⟩
+
+/-- On a total background with an admissible measure a separating threshold yields the
+comparative, when the degrees of `b`'s states have a greatest element. -/
+theorem maxComparative_of_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : admissibleMeasure μ)
+    {a b : X} (hb : ∃ δ, IsGreatest (thanDegrees (ρ · = b) μ) δ)
+    (h : ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T) :
+    maxComparative (ρ · = a) (ρ · = b) μ := by
+  obtain ⟨δ, hδ⟩ := hb
+  obtain ⟨T, hT, ⟨s, hsT, hsa⟩, hbT⟩ := h
+  obtain ⟨t, htb, hδt⟩ := hδ.1
+  have hst : ¬ s ≤ t := fun hst ↦ hbT ⟨t, hT hst hsT, htb⟩
+  exact ⟨δ, hδ, s, hsa, hδt.trans_lt (hμ (lt_of_le_not_ge
+    ((total_of (· ≤ ·) t s).resolve_right hst) hst))⟩
+
+/-- On a total background with a monotone admissible measure the comparative is Klein's: `a`
+has more than `b` iff some threshold property holds of `a` and not of `b`. -/
+theorem maxComparative_iff_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : admissibleMeasure μ)
+    (hm : Monotone μ) {a b : X} (hb : ∃ δ, IsGreatest (thanDegrees (ρ · = b) μ) δ) :
+    maxComparative (ρ · = a) (ρ · = b) μ ↔ ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T :=
+  ⟨exists_isUpperSet_of_maxComparative hm, maxComparative_of_exists_isUpperSet hμ hb⟩
+
+/-- Every threshold property of the background is a degree threshold pulled back along the
+measure iff the measure reflects the background. -/
+theorem forall_isUpperSet_exists_preimage_iff :
+    (∀ T : Set S, IsUpperSet T → ∃ U : Set D, IsUpperSet U ∧ T = μ ⁻¹' U) ↔
+      ∀ a b, μ a ≤ μ b → a ≤ b := by
+  refine ⟨fun h a b hab ↦ ?_, fun h T hT ↦ ⟨upperClosure (μ '' T), (upperClosure _).upper, ?_⟩⟩
+  · obtain ⟨U, hU, hT⟩ := h (Ici a) (isUpperSet_Ici a)
+    exact (Set.ext_iff.1 hT b).2 (hU hab ((Set.ext_iff.1 hT a).1 (mem_Ici.2 le_rfl)))
+  · refine Set.ext fun s ↦ ⟨fun hs ↦ subset_upperClosure ⟨s, hs, rfl⟩, ?_⟩
+    rintro ⟨_, ⟨t, ht, rfl⟩, hts⟩
+    exact hT (h t s hts) ht
+
+/-- A measure into a linear scale that reflects the background makes it total. -/
+theorem total_of_reflect_le {D : Type*} [LinearOrder D] {μ : S → D}
+    (h : ∀ a b, μ a ≤ μ b → a ≤ b) (s t : S) : s ≤ t ∨ t ≤ s :=
+  (le_total (μ s) (μ t)).imp (h s t) (h t s)
+
+/-- On a non-total background some threshold property is no degree threshold pulled back along
+any measure into a linear scale. -/
+theorem exists_isUpperSet_forall_ne_preimage {D : Type*} [LinearOrder D] (μ : S → D) {s t : S}
+    (hst : ¬ s ≤ t) (hts : ¬ t ≤ s) :
+    ∃ T : Set S, IsUpperSet T ∧ ∀ U : Set D, IsUpperSet U → T ≠ μ ⁻¹' U := by
+  by_contra h
+  push Not at h
+  obtain h | h := total_of_reflect_le (forall_isUpperSet_exists_preimage_iff.1 h) s t
+  exacts [hst h, hts h]
+
+/-- When the measure reflects the background and respects ties, the threshold above a contrast
+state `c` is the degree-threshold positive form at the degree of `c`. -/
+theorem Comparison.ge_over_eq_Ici (h : ∀ a b, μ a ≤ μ b → a ≤ b) (hm : Monotone μ) (c : S) :
+    Comparison.ge.over μ (μ c) = Ici c :=
+  Set.ext fun s ↦ ⟨h c s, fun hs ↦ hm hs⟩
+
+end Background
 
 /-! ### Measurement = Degree + Dimension Typing -/
 
