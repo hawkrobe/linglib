@@ -20,6 +20,15 @@ evaluate their second argument in it (`Semantics/Dynamic/Partial.lean`), and [sc
 derives it from transparency. The theories part at disjunction, where the table is asymmetric
 and symmetric filtering is `PartialProp.orKPSymmetric`.
 
+[karttunen-1974-presupposition] extends the table to complement-taking verbs. A verb transparent
+to the presuppositions of its complement, such as a factive, a modal, an aspectual verb or
+negation, gives the complement the context itself; an attitude verb gives it the beliefs
+attributed to its subject in the context, which [heim-1992] construes as the worlds compatible
+with the subject's beliefs at some world of the context (`beliefContext`). The belief context is
+left adjoint to belief (`beliefContext_subset_iff`): it admits a presupposition iff the context
+entails that the subject believes it, so an attitude report presupposes that its subject believes
+what its complement presupposes.
+
 ## Main declarations
 
 * `PartialProp.Admits` — the context entails the presupposition.
@@ -27,11 +36,14 @@ and symmetric filtering is `PartialProp.orKPSymmetric`.
 * `PartialProp.admits_andFilter`, `PartialProp.admits_impFilter`,
   `PartialProp.admits_orFilter` — the filtering connectives are admittance in the local
   contexts.
+* `beliefContext`, `beliefContext_subset_iff` — the local context of an attitude verb's
+  complement, left adjoint to belief.
 
 ## References
 
 * [stalnaker-1974]
 * [heim-1983]
+* [heim-1992]
 * [karttunen-1973]
 * [karttunen-1974-presupposition]
 * [peters-1979]
@@ -62,6 +74,24 @@ def Connective.localContext (C A : Set W) : Connective → Set W
   | conj => C ∩ A
   | cond => C ∩ A
   | disj => C ∩ Aᶜ
+
+/-- The local context of an attitude verb's complement in the context `C`: the beliefs that
+[karttunen-1974-presupposition] attributes to the subject in `C`, as the worlds compatible with
+the subject's beliefs `Dox w` at some world `w` of `C` ([heim-1992]). -/
+def beliefContext (Dox : W → Set W) (C : Set W) : Set W := ⋃ w ∈ C, Dox w
+
+section beliefContext
+
+variable {Dox : W → Set W} {C S : Set W}
+
+@[simp] theorem mem_beliefContext {v : W} : v ∈ beliefContext Dox C ↔ ∃ w ∈ C, v ∈ Dox w := by
+  simp [beliefContext]
+
+/-- The belief context entails `S` iff the context entails that the subject believes `S`. -/
+theorem beliefContext_subset_iff : beliefContext Dox C ⊆ S ↔ C ⊆ {w | Dox w ⊆ S} :=
+  Set.iUnion₂_subset_iff
+
+end beliefContext
 
 namespace PartialProp
 

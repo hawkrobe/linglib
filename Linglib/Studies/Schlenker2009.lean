@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Semantics.Presupposition.SyntacticEnvironment
-public import Linglib.Semantics.Presupposition.BeliefEmbedding
 public import Linglib.Studies.Heim1983
+public import Linglib.Studies.Heim1992
 
 /-!
 # Schlenker (2009): Local Contexts
@@ -29,8 +29,12 @@ Transparency is admittance by the dynamic semantics of [heim-1983], with [beaver
 disjunction (Theorem 1 of C.9, `transpI_iff_admits`; its update clause is `Formula.ccp_get`), so
 that incremental satisfaction is too (C.22, `satI_iff_admits`). The examples (20)–(32) of the
 paper follow. Belief reports use two-dimensional denotations: the local context of the complement
-of *believe* is the set of pairs of an utterance world in the context and a world doxastically
-accessible from it (`isLocalContext_believe`), which is the substrate's `BeliefLocalCtx.atWorld`.
+of *believe* is the set of pairs of an utterance world in the context and a world compatible with
+the agent's beliefs there (`isLocalContext_believe`), and a presupposition about the world of
+evaluation is entailed by it iff it is entailed by the worlds compatible with the agent's beliefs
+at some world of the context (`satisfied_believe_iff`), the local context of
+[karttunen-1974-presupposition]; the complement's presupposition is then satisfied iff the
+context admits the report under the belief rule of [heim-1992] (`satisfied_believe_iff_admits`).
 
 The appendix of the 2008 manuscript [schlenker-2008b], which the published Appendix C shortens,
 compares these theories with a supervaluationist and a Strong Kleene one (items 24–41). A trigger
@@ -79,7 +83,7 @@ reject (Theorem 39a, `transpS_not_kleeneS_not_superS`).
 
 namespace Schlenker2009
 
-open Presupposition Presupposition.BeliefEmbedding Heim1983 DynamicSemantics
+open Presupposition Heim1983 DynamicSemantics
 
 variable {Atom W : Type*} (I : Atom → Set W)
 
@@ -102,12 +106,12 @@ def TranspS (C : Set W) (F : Formula Atom) : Prop :=
 /-- C.17: incremental local satisfaction: at every trigger, the incremental local context entails
 the presupposition. -/
 def SatI (C : Set W) (F : Formula Atom) : Prop :=
-  ∀ o ∈ F.occurrences, Satisfied C (goodFinals I o.1) ⟨(· ∈ I o.2.1), (· ∈ I o.2.2)⟩
+  ∀ o ∈ F.occurrences, Satisfied C (goodFinals I o.1) (I o.2.1)
 
 /-- C.17: symmetric local satisfaction: at every trigger, the symmetric local context entails the
 presupposition. -/
 def SatS (C : Set W) (F : Formula Atom) : Prop :=
-  ∀ o ∈ F.occurrences, Satisfied C {o.1.truth I} ⟨(· ∈ I o.2.1), (· ∈ I o.2.2)⟩
+  ∀ o ∈ F.occurrences, Satisfied C {o.1.truth I} (I o.2.1)
 
 theorem isTruthFunctional_of_mem_goodFinals {K : SyntacticEnvironment Atom}
     {f : Set W → Set W} (hf : f ∈ goodFinals I K) : IsTruthFunctional f := by
@@ -232,23 +236,50 @@ theorem satI_then_iff :
 
 /-! ### Belief reports (§3.1.2) -/
 
-/-- `(believe _)` with two-dimensional denotations, sets of pairs of an utterance world and a
+section Belief
+
+variable (Dox : W → Set W) {C : Set W}
+
+/-- (51): `(believe _)` with two-dimensional denotations, sets of pairs of an utterance world and a
 world of evaluation: the report holds at the utterance world when the complement holds at
-every world the agent's beliefs there allow. -/
-def believe (dox : W → W → Prop) : Set (Set (W × W) → Set W) :=
-  {fun d ↦ {w₀ | ∀ w, dox w₀ w → (w₀, w) ∈ d}}
+every world compatible with the agent's beliefs there. -/
+def believe : Set (Set (W × W) → Set W) :=
+  {fun d ↦ {w₀ | ∀ w ∈ Dox w₀, (w₀, w) ∈ d}}
 
 /-- (52): the local context of the complement of *believe* pairs each utterance world of the
-context with the worlds the agent's beliefs there allow, the substrate's
-`BeliefLocalCtx.atWorld`. -/
-theorem isLocalContext_believe {Agent : Type*} (blc : BeliefLocalCtx W Agent) :
-    IsLocalContext blc.globalCtx (believe (blc.dox blc.agent))
-      {q | q.2 ∈ blc.atWorld q.1} := by
+context with the worlds compatible with the agent's beliefs there. -/
+theorem isLocalContext_believe :
+    IsLocalContext C (believe Dox) {q | q.1 ∈ C ∧ q.2 ∈ Dox q.1} := by
   constructor
   · rintro _ rfl d w₀ hw₀
     exact ⟨fun h w hw ↦ (h w hw).2, fun h w hw ↦ ⟨⟨hw₀, hw⟩, h w hw⟩⟩
   · rintro x hx ⟨w₀, w⟩ ⟨hw₀, hw⟩
     exact ((hx _ rfl Set.univ w₀ hw₀).2 fun _ _ ↦ trivial) w hw |>.1
+
+/-- The worlds of evaluation of the local context of the complement of *believe* are the worlds
+compatible with the agent's beliefs at some world of the context. -/
+theorem image_snd_localContext_believe :
+    Prod.snd '' {q : W × W | q.1 ∈ C ∧ q.2 ∈ Dox q.1} = beliefContext Dox C := by
+  ext; simp [and_comm]
+
+/-- 3:32: a presupposition about the world of evaluation is satisfied in the complement of
+*believe* iff every world compatible with the agent's beliefs at a world of the context satisfies
+it. -/
+theorem satisfied_believe_iff {P : Set W} :
+    Satisfied C (believe Dox) (Prod.snd ⁻¹' P) ↔ beliefContext Dox C ⊆ P := by
+  rw [satisfied_iff (isLocalContext_believe Dox), ← Set.image_subset_iff,
+    image_snd_localContext_believe]
+
+end Belief
+
+/-- 3:32, "the standard result obtained in Heim's framework": the complement's presupposition is
+satisfied in the complement of *believe* iff the context admits the report under rule (18) of
+[heim-1992]. -/
+theorem satisfied_believe_iff_admits {E : Type*} (Dox : E → W → Set W) (a : E)
+    (p : PartialProp W) {C : Set W} :
+    Satisfied C (believe (Dox a)) (Prod.snd ⁻¹' p.presup) ↔
+      (Heim1992.believes Dox a (CCP.Partial.ofPartialProp p)).Admits C := by
+  rw [satisfied_believe_iff, Heim1992.admits_believes_iff]
 
 /-! ### The King conditional ([heim-1983]) -/
 

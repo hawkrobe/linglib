@@ -1069,7 +1069,6 @@ import Linglib.Semantics.Possession.Defs
 import Linglib.Semantics.Possession.Quantifier
 import Linglib.Semantics.Possession.Relationalizer
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Semantics.Presupposition.ContentLayer
 import Linglib.Semantics.Presupposition.Context
 import Linglib.Semantics.Presupposition.Defs

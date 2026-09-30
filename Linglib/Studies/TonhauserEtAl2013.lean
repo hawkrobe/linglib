@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Presupposition.BeliefEmbedding
+public import Linglib.Semantics.Presupposition.Context
 public import Linglib.Data.Examples.TonhauserEtAl2013
 
 /-!
@@ -31,17 +31,18 @@ place it in class A, while classes B, C and D are populated.
 
 ## Implementation notes
 
-A context is a set of worlds and a content a proposition, the paper's own characterization,
-and acceptability is a predicate on contexts that the diagnostics take as given. Local
-satisfaction is the substrate's `PartialProp.Admits` at the matrix and
-`BeliefEmbedding.presupAttributedToHolder`, [schlenker-2009]'s local context under belief.
-Projection, (21), and its family-of-sentences diagnostic, (24), which tests acceptability
-across contexts for triggers with the constraint, after [matthewson-2004], and implication in
-`m`-neutral contexts for the others, are recorded in the rows rather than defined, since they
-quantify over sentence variants. The Guaraní consultants' judgments, and the objection that
-two-dimensional theories after [karttunen-peters-1979] and [potts-2005] make projectivity
-conventional where [simons-tonhauser-beaver-roberts-2010] find it context-dependent, are
-reported in prose. The examples are the rows of `Data.Examples.TonhauserEtAl2013`.
+A context is a set of worlds and a content a proposition, the paper's own characterization, and
+acceptability is a predicate on contexts that the diagnostics take as given. Local satisfaction
+is the substrate's `PartialProp.Admits`, at the matrix in the context and under belief in
+`beliefContext`, [karttunen-1974-presupposition]'s local context of an attitude verb's
+complement. Projection, (21), and its family-of-sentences diagnostic, (24), which tests
+acceptability across contexts for triggers with the constraint, after [matthewson-2004], and
+implication in `m`-neutral contexts for the others, are recorded in the rows rather than
+defined, since they quantify over sentence variants. The Guaraní consultants' judgments, and the
+objection that two-dimensional theories after [karttunen-peters-1979] and [potts-2005] make
+projectivity conventional where [simons-tonhauser-beaver-roberts-2010] find it
+context-dependent, are reported in prose. The examples are the rows of
+`Data.Examples.TonhauserEtAl2013`.
 
 ## References
 
@@ -60,7 +61,7 @@ reported in prose. The examples are the rows of `Data.Examples.TonhauserEtAl2013
 
 namespace TonhauserEtAl2013
 
-open Presupposition Presupposition.BeliefEmbedding
+open Presupposition
 
 /-! ### The taxonomy (Table 1) -/
 
@@ -114,7 +115,7 @@ def StrongContextualFelicity (Acc : Set W → Prop) : Prop := ∀ c, Acc c → M
 /-- (12i): acceptability in an `m`-neutral context refutes the constraint. -/
 theorem not_scf_of_acceptable_neutral {Acc : Set W → Prop} (h : Acc c) (hn : MNeutral m c) :
     ¬ StrongContextualFelicity m Acc :=
-  λ hs => hn.1 (hs c h)
+  fun hs ↦ hn.1 (hs c h)
 
 /-! ### Obligatory local effect (section 5) -/
 
@@ -131,7 +132,7 @@ local effect. -/
 theorem not_ole_of_acceptable_ignorant {Dox : E → W → W → Prop} {a : E} {Acc : Set W → Prop}
     (h : Acc c) {w : W} (hw : w ∈ c) (hig : MNeutral m (Dox a w)) :
     ¬ ObligatoryLocalEffect m Dox a Acc :=
-  λ ho => hig.1 (ho c h w hw)
+  fun ho ↦ hig.1 (ho c h w hw)
 
 /-- (41ii): a consistent belief state cannot give both `m` and its negation local effect, so
 acceptability of the report with `¬m` attributed to the holder refutes obligatory local
@@ -140,7 +141,7 @@ theorem not_ole_of_acceptable_negated {Dox : E → W → W → Prop} {a : E} {Ac
     (h : Acc c) {w : W} (hw : w ∈ c) (hcons : ∃ v, Dox a w v)
     (hneg : LocalEffect mᶜ Dox a w) :
     ¬ ObligatoryLocalEffect m Dox a Acc :=
-  λ ho => hcons.elim λ _ hv => hneg hv (ho c h w hw hv)
+  fun ho ↦ hcons.elim fun _ hv ↦ hneg hv (ho c h w hw hv)
 
 /-! ### Against local satisfaction (section 8) -/
 
@@ -149,12 +150,12 @@ variable (p : PartialProp W) (Dox : E → W → W → Prop) (a : E)
 /-- A trigger acceptable exactly where its local context entails its presupposition imposes
 the strong contextual felicity constraint. -/
 theorem scf_of_satisfaction : StrongContextualFelicity p.presup (p.Admits ·) :=
-  λ _ h => h
+  fun _ h ↦ h
 
 /-- Under belief, local satisfaction is satisfaction in the holder's belief state, so the
 presupposition has obligatory local effect. -/
 theorem ole_of_satisfaction :
-    ObligatoryLocalEffect p.presup Dox a (presupAttributedToHolder ⟨·, Dox, a⟩ p) :=
-  λ _ h w hw _ hx => h w hw ⟨hw, hx⟩
+    ObligatoryLocalEffect p.presup Dox a (p.Admits <| beliefContext (Dox a) ·) :=
+  fun _ h ↦ beliefContext_subset_iff.1 h
 
 end TonhauserEtAl2013
