@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Degree.Background
+public import Linglib.Fragments.English.Adjectives
 public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 
 /-!
@@ -38,7 +39,10 @@ measure, the off-the-shelf alternative of §2 on the scalar semantics of [lassit
 validates conjunction elimination, so no such threshold reproduces the confidence of a holder who
 commits the fallacy (`image_Ici_ne_ge_over`). *Certain* entails *confident* because its contrast
 state is maximal (`image_Ici_subset_image_Ici_of_isMax`), and the entailment is asymmetric
-whenever *confident*'s contrast state is not (`not_image_Ici_subset_image_Ici`).
+whenever *confident*'s contrast state is not (`not_image_Ici_subset_image_Ici`). Conversely
+*confident* entails *certain* once its own contrast state is maximal
+(`image_Ici_subset_image_Ici_iff_isMax`), so (65a) keeps *confident* off the top of an ordering
+that has one, as the English fragment's contextual standard for *confident* records.
 
 ## Main results
 
@@ -47,6 +51,8 @@ whenever *confident*'s contrast state is not (`not_image_Ici_subset_image_Ici`).
   some total ordering, and on no threshold of a probability measure.
 * `image_Ici_subset_image_Ici_of_isMax`, `not_image_Ici_subset_image_Ici`: *certain* entails
   *confident* asymmetrically (65), (66).
+* `image_Ici_subset_image_Ici_iff_isMax`: *confident* entails *certain* exactly when its contrast
+  state is maximal, so (65a) needs a non-maximal one.
 * `Ici_eq_setOf_isMax`: the region above a maximal contrast state (71) is the set of maximal
   states of Figure 3.
 * `not_maxComparative_of_isMax`, `maxComparative_of_isMax`: nothing is more confident than a
@@ -151,6 +157,21 @@ above *certain*'s `m`, the holder is confident but not certain of `c`'s theme. -
 theorem not_image_Ici_subset_image_Ici (hθ : θ.Injective) {c m : S} (hmc : ¬ m ≤ c) :
     ¬ θ '' Ici c ⊆ θ '' Ici m :=
   fun h ↦ hmc (Ici_subset_Ici.1 ((image_subset_image_iff hθ).1 h))
+
+/-- *Confident* entails *certain* exactly when its contrast state is itself maximal, so (65a) is
+consistent only on a contrast state below the top: *confident* measures on an ordering with
+maximal elements (69) without taking them as its standard. -/
+theorem image_Ici_subset_image_Ici_iff_isMax [@Std.Total S (· ≤ ·)] (hθ : θ.Injective) {m : S}
+    (hm : IsMax m) {c : S} : θ '' Ici c ⊆ θ '' Ici m ↔ IsMax c := by
+  rw [image_subset_image_iff hθ, Ici_subset_Ici]
+  exact ⟨hm.mono, fun hc ↦ (total_of (· ≤ ·) m c).elim id fun h ↦ hc h⟩
+
+open English.Adjectives in
+/-- The English fragment agrees with Figure 3: *confident* and *certain* measure on one
+upper-closed scale, *certain* at its maximum and *confident* at a contextual standard. -/
+example : confident.dimension = certain.dimension ∧ confident.scaleType = .upperClosed ∧
+    certain.standard = .maxEndpoint ∧ confident.standard = .contextual := by
+  decide
 
 /-- On a total ordering the region above a maximal contrast state (71) is the set of maximal
 states, what *certain* denotes in Figure 3. -/
