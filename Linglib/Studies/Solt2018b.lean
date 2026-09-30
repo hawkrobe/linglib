@@ -2,7 +2,6 @@ module
 
 public import Linglib.Semantics.Degree.Aggregation
 public import Linglib.Semantics.Degree.Measure.Basic
-public import Linglib.Semantics.Genericity.PredicateLevel
 public import Mathlib.Algebra.Order.Field.Basic
 
 /-!
@@ -60,7 +59,6 @@ Solt's other 2018 paper, the multidimensionality chapter [solt-2018a], is formal
 namespace Solt2018b
 
 open Degree Degree.Aggregation
-open Genericity (PredicateLevel)
 
 variable {α : Type*} (μ : α → ℚ)
 
@@ -169,12 +167,6 @@ def MeasureKind.IsRestricted : MeasureKind → Prop
 instance (k : MeasureKind) : Decidable k.IsRestricted := by
   cases k <;> unfold MeasureKind.IsRestricted <;> infer_instance
 
-/-- The kinds a predicate leaves available: an individual-level predicate forces a
-domain-restricted measure. -/
-def allowedKinds : PredicateLevel → MeasureKind → Prop
-  | .stageLevel, _ => True
-  | .individualLevel, k => k.IsRestricted
-
 /-- Cardinal or proportional reading of a quantity word. -/
 inductive Reading where
   | cardinal
@@ -202,16 +194,16 @@ available kind yields it. -/
 def Licensed (allowed : MeasureKind → Prop) (f : QForm) (r : Reading) : Prop :=
   ∃ k, allowed k ∧ reading f k = r
 
-/-- A stage-level predicate licenses both readings of both forms, as in *few egg-laying
-mammals were found in our survey, perhaps because there are few*. -/
-theorem stageLevel_licensed (f : QForm) (r : Reading) :
-    Licensed (allowedKinds .stageLevel) f r := by
+/-- With every kind available, as under a stage-level predicate, both forms have both readings,
+as in *few egg-laying mammals were found in our survey, perhaps because there are few*. -/
+theorem unrestricted_licensed (f : QForm) (r : Reading) : Licensed (fun _ ↦ True) f r := by
   cases f <;> cases r <;> first
     | exact ⟨.unrestricted, trivial, rfl⟩
     | exact ⟨.proportional, trivial, rfl⟩
 
-/-- With only restricted kinds available, the positive form is proportional: *few
-egg-laying mammals suckle their young* cannot mean that there are few. -/
+/-- With only restricted kinds available, as under an individual-level predicate, which forces
+a domain-restricted measure, the positive form is proportional: *few egg-laying mammals suckle
+their young* cannot mean that there are few. -/
 theorem restricted_positive_iff (r : Reading) :
     Licensed MeasureKind.IsRestricted .positive r ↔ r = .proportional := by
   constructor
@@ -225,9 +217,6 @@ theorem restricted_asymmetry :
     Licensed MeasureKind.IsRestricted .comparative .cardinal ∧
     ¬ Licensed MeasureKind.IsRestricted .positive .cardinal :=
   ⟨⟨.domainRestricted, trivial, rfl⟩, by simp [restricted_positive_iff]⟩
-
-theorem allowedKinds_individualLevel :
-    allowedKinds .individualLevel = MeasureKind.IsRestricted := rfl
 
 /-- The ambiguity account's inventory: a cardinal and a proportional entry, and no
 relative-but-not-proportional measurement. -/
