@@ -37,6 +37,9 @@ comparative `maxComparative` compares a matrix witness with its maximum.
   other conjunct's.
 * `maxComparative_unique`: with unique witnesses the max-quantified comparative is direct
   measure comparison.
+* `maxComparative_trans`, `maxEquative_antisymm`, `maxEquative_total`,
+  `maxComparative_trichotomy`: the max-quantified comparative is transitive, and the equative
+  antisymmetric and, on a linear scale, total.
 * `gtOverSet_isAntiAdditive`: the set-standard comparative is anti-additive in its standard.
 
 ## References
@@ -123,6 +126,11 @@ theorem scopeDegrees_eq_Iic (hQ : Monotone Q) {m : D} (hm : IsGreatest (scopeDeg
     scopeDegrees Q μ = Iic m :=
   (mem_upperBounds_iff_subset_Iic.1 hm.2).antisymm
     ((isLowerSet_scopeDegrees hQ μ).Iic_subset hm.1)
+
+/-- A than-clause degree set with a maximum is the principal lower set of the maximum. -/
+theorem thanDegrees_eq_Iic {P : α → Prop} {m : D} (hm : IsGreatest (thanDegrees P μ) m) :
+    thanDegrees P μ = Iic m :=
+  scopeDegrees_eq_Iic (monotone_some P) hm
 
 end Preorder
 
@@ -286,6 +294,20 @@ theorem maxComparative_entails_maxEquative (Pmatrix Pthan : α → Prop) (μ : �
     maxComparative Pmatrix Pthan μ → maxEquative Pmatrix Pthan μ :=
   λ ⟨δ, hδ, x, hx, hlt⟩ => ⟨δ, hδ, x, hx, hlt.le⟩
 
+/-- Every than-clause witness is exceeded by some matrix witness. -/
+theorem maxComparative.exists_lt (h : maxComparative Pmatrix Pthan μ) {x : α} (hx : Pthan x) :
+    ∃ y, Pmatrix y ∧ μ x < μ y :=
+  let ⟨_, hδ, y, hy, hlt⟩ := h
+  ⟨y, hy, (hδ.2 ⟨x, hx, le_rfl⟩).trans_lt hlt⟩
+
+/-- The max-quantified comparative is transitive: *more P than Q* and *more Q than R* give
+*more P than R*, with no uniqueness assumption on any of the three sides. -/
+theorem maxComparative_trans {Pthan' : α → Prop} (h₁ : maxComparative Pmatrix Pthan μ)
+    (h₂ : maxComparative Pthan Pthan' μ) : maxComparative Pmatrix Pthan' μ :=
+  let ⟨_, hδ, _, hy, hlt⟩ := h₂
+  let ⟨z, hz, hlt'⟩ := h₁.exists_lt hy
+  ⟨_, hδ, z, hz, hlt.trans hlt'⟩
+
 /-- A unique `Pthan`-witness makes its measure the greatest than-clause degree. -/
 theorem isGreatest_thanDegrees_of_unique {xb : α} (hb : Pthan xb)
     (hb_unique : ∀ x, Pthan x → x = xb) : IsGreatest (thanDegrees Pthan μ) (μ xb) :=
@@ -322,6 +344,46 @@ theorem maxComparative_of_isGreatest [Preorder α] {xa xb : α}
     λ hlt => ⟨_, isGreatest_thanDegrees_of_isGreatest hb hμb, xa, ha.1, hlt⟩⟩
 
 end MaxQuantified
+
+section MaxQuantifiedPartialOrder
+variable [PartialOrder D] {P Q : α → Prop} {μ : α → D}
+
+/-- The max-quantified equative is antisymmetric: when each side is at least as great as the
+other, the two degree sets coincide. -/
+theorem maxEquative_antisymm (h₁ : maxEquative P Q μ) (h₂ : maxEquative Q P μ) :
+    thanDegrees P μ = thanDegrees Q μ := by
+  obtain ⟨a, ha, x, hx, hax⟩ := h₂
+  obtain ⟨b, hb, y, hy, hby⟩ := h₁
+  rw [thanDegrees_eq_Iic ha, thanDegrees_eq_Iic hb,
+    (hax.trans (hb.2 ⟨x, hx, le_rfl⟩)).antisymm (hby.trans (ha.2 ⟨y, hy, le_rfl⟩))]
+
+end MaxQuantifiedPartialOrder
+
+section MaxQuantifiedLinearOrder
+variable [LinearOrder D] {P Q : α → Prop} {μ : α → D} {a b : D}
+
+/-- On a linear scale the max-quantified equative is total whenever both degree sets have a
+maximum. -/
+theorem maxEquative_total (ha : IsGreatest (thanDegrees P μ) a)
+    (hb : IsGreatest (thanDegrees Q μ) b) : maxEquative P Q μ ∨ maxEquative Q P μ := by
+  obtain ⟨x, hx, hax⟩ := ha.1
+  obtain ⟨y, hy, hby⟩ := hb.1
+  exact (le_total b a).imp (fun h ↦ ⟨b, hb, x, hx, h.trans hax⟩)
+    (fun h ↦ ⟨a, ha, y, hy, h.trans hby⟩)
+
+/-- On a linear scale, when both degree sets have a maximum, one side exceeds the other or the
+degree sets coincide. -/
+theorem maxComparative_trichotomy (ha : IsGreatest (thanDegrees P μ) a)
+    (hb : IsGreatest (thanDegrees Q μ) b) :
+    maxComparative P Q μ ∨ thanDegrees P μ = thanDegrees Q μ ∨ maxComparative Q P μ := by
+  obtain ⟨x, hx, hax⟩ := ha.1
+  obtain ⟨y, hy, hby⟩ := hb.1
+  rcases lt_trichotomy b a with h | rfl | h
+  · exact .inl ⟨b, hb, x, hx, h.trans_le hax⟩
+  · exact .inr (.inl ((thanDegrees_eq_Iic ha).trans (thanDegrees_eq_Iic hb).symm))
+  · exact .inr (.inr ⟨a, ha, y, hy, h.trans_le hby⟩)
+
+end MaxQuantifiedLinearOrder
 
 /-! ### Set-of-degrees comparative
 
