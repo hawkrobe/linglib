@@ -13,7 +13,7 @@ order-theoretic content of dimension availability.
 
 * `admissibleMeasure` — the multi-tradition monotonicity condition on a
   measure function: mathlib's `StrictMono`, named once. On a total preorder it
-  reflects the ordering (`admissibleMeasure.le_of_lt`).
+  reflects the ordering (`admissibleMeasure.reflect_le`).
 * `DimensionallyRestricted` — any two admissible measures agree on the
   comparative ordering; holds exactly on linear orders
   (`linearOrder_dimensionallyRestricted` /
@@ -49,12 +49,13 @@ abbrev admissibleMeasure {S D : Type*} [Preorder S] [Preorder D]
     (μ : S → D) : Prop :=
   StrictMono μ
 
-/-- On a total preorder an admissible measure reflects the ordering: a state measuring strictly
-below another lies below it. Tied states are unconstrained, so the conclusion is not strict. -/
-theorem admissibleMeasure.le_of_lt {S D : Type*} [Preorder S] [@Std.Total S (· ≤ ·)]
-    [Preorder D] {μ : S → D} (hμ : admissibleMeasure μ) {a b : S} (h : μ a < μ b) : a ≤ b :=
+/-- On a total preorder an admissible measure reflects the ordering: a state measuring at most
+another lies below it. The converse fails for tied states, which admissibility leaves free to
+be measured apart. -/
+theorem admissibleMeasure.reflect_le {S D : Type*} [Preorder S] [@Std.Total S (· ≤ ·)]
+    [Preorder D] {μ : S → D} (hμ : admissibleMeasure μ) {a b : S} (h : μ a ≤ μ b) : a ≤ b :=
   (total_of (· ≤ ·) a b).elim id fun hba ↦
-    by_contra fun hab ↦ (hμ (lt_of_le_not_ge hba hab)).not_gt h
+    by_contra fun hab ↦ (hμ (lt_of_le_not_ge hba hab)).not_ge h
 
 /-! ### Dimensional restriction -/
 
