@@ -77,8 +77,11 @@ code, otherwise the language; a family code only for a claim about the family.
 an `ExampleTable` with the judgment as CLDF's `Grammaticality_Judgement` mark (`?`, `??`, `#`,
 `*`), the Leipzig conformance derived from the gloss pairs, and `bibkey[locator]` sources; a
 `LanguageTable` from `languages.csv`; a `ContributionTable` of the data files; and the cited
-entries of `references.bib`. CI runs it with `--validate`, which fails on any issue the CLDF
-validator reports and on any bib entry a BibTeX parser rejects.
+entries of `references.bib`. An example with a mark links to a languoid `<glottocode>-judged`
+with no Glottocode, as the CLDF examples component requires of ungrammatical examples, so that a
+consumer ignoring the judgment does not attribute a marked string to the language. CI runs it with `--validate`, which fails
+on any issue the CLDF validator reports, on any bib entry a BibTeX parser rejects, and on a row
+value with no column to hold it.
 
 ## Verification
 
