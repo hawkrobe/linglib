@@ -36,7 +36,8 @@
         "no"
       ]
     ],
-    "comment": "Emphatic do in a context of conflicting polarity."
+    "comment": "Emphatic do in a context of conflicting polarity.",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex3",
@@ -48,8 +49,8 @@
     "primaryText": "Karl SCHREIBT ein Drehbuch.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Karl does write a screenplay.",
-    "context": "A reports Hanna's silly claim that Karl is writing a screenplay.",
+    "translation": "Karl DOES write a screenplay",
+    "context": "A: Ich habe Hanna gefragt, was Karl gerade macht, und sie hat die alberne Behauptung aufgestellt, dass er ein Drehbuch schreibt.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -79,7 +80,8 @@
     "reportedIn": {
       "bibkey": "garassino-jacob-2018",
       "paperLabel": "(3)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex4",
@@ -91,7 +93,7 @@
     "primaryText": "(Nein) Karl HAT nicht gelogen.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "(No) Karl didn't lie.",
+    "translation": "(No) Karl DIDN'T lie",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -118,7 +120,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex5a",
@@ -130,7 +133,7 @@
     "primaryText": "Je t'assure qu'il est en train d'écrire un scénario.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I assure you that he is writing a screenplay.",
+    "translation": "I assure you that he is writing a screenplay",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -157,7 +160,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex5b",
@@ -169,7 +173,7 @@
     "primaryText": "Ti assicuro / ti dico che sta scrivendo una sceneggiatura.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I assure you that he is writing a screenplay.",
+    "translation": "I assure you that he is writing a screenplay",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -196,7 +200,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex6",
@@ -208,7 +213,7 @@
     "primaryText": "Ya lo creo que fue a la reunión.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "For sure she did go to the meeting.",
+    "translation": "For sure she DID go to the meeting",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -235,7 +240,8 @@
         "no"
       ]
     ],
-    "comment": "An epistemic matrix verb."
+    "comment": "An epistemic matrix verb. The source attributes the example to Escandell-Vidal & Leonetti (2009, exp. 12) and adds the literal translation 'I believe she went to the meeting'.",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex7a",
@@ -247,7 +253,7 @@
     "primaryText": "Il écrit un scénario, je t'assure.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "He is writing a screenplay, I assure you.",
+    "translation": "Lit. He is writing a screenplay, I assure you",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -274,7 +280,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex7b",
@@ -286,7 +293,7 @@
     "primaryText": "Sta scrivendo una sceneggiatura, ti dico.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "He is writing a screenplay, I assure you.",
+    "translation": "Lit. He is writing a screenplay, I assure you",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -313,7 +320,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex7c",
@@ -325,7 +333,7 @@
     "primaryText": "Escribe un guión, te digo.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "He is writing a screenplay, I assure you.",
+    "translation": "Lit. He is writing a screenplay, I assure you",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -352,7 +360,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex8",
@@ -364,7 +373,7 @@
     "primaryText": "Bien sûr qu'il est en train d'écrire un scénario.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Of course, he is writing a screenplay.",
+    "translation": "Of course, he is writing a screenplay",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -391,7 +400,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex9",
@@ -403,7 +413,7 @@
     "primaryText": "¡Claro que te escucho!",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Of course, I do listen to you.",
+    "translation": "Of course, I do listen to you",
     "context": "A: No me escuchas.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -430,7 +440,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "The source translates (9) and (10) together after (10).",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex10",
@@ -442,7 +453,7 @@
     "primaryText": "Certo che ti ascolto!",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Of course, I do listen to you.",
+    "translation": "Of course, I do listen to you",
     "context": "A: Non mi ascolti.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -469,7 +480,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex11",
@@ -481,7 +493,7 @@
     "primaryText": "Algo debe saber.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Something he must know.",
+    "translation": "Something he must know",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -508,7 +520,8 @@
         "no"
       ]
     ],
-    "comment": "Non-focal fronting, typical of Spanish."
+    "comment": "Non-focal fronting, typical of Spanish.",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex12",
@@ -520,7 +533,7 @@
     "primaryText": "Qualcosa avrà fatto, nelle vacanze.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Something he must have done during his holidays.",
+    "translation": "Something he must have done during his holidays",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -547,7 +560,8 @@
         "no"
       ]
     ],
-    "comment": "From Cinque (1990)."
+    "comment": "From Cinque (1990).",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex13",
@@ -559,7 +573,7 @@
     "primaryText": "Dije que terminaría el libro, y el libro he terminado.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I said that I was going to finish the book and the book I finished.",
+    "translation": "I said that I was going to finish the book and the book I finished",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -586,7 +600,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "The source attributes the example to Escandell-Vidal & Leonetti (2009: 171).",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex14",
@@ -625,20 +640,21 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex15",
     "source": {
-      "bibkey": "garassino-jacob-2018",
-      "paperLabel": "(15)"
+      "bibkey": "frascarelli-2003",
+      "paperLabel": "p. 557"
     },
     "language": "ital1282",
-    "primaryText": "Io te l'ho dato il tempo.",
+    "primaryText": "Non è questione che il tempo non te l'ho dato; io te l'ho dato il tempo.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I gave it to you, the time.",
-    "context": "Non è questione che il tempo non te l'ho dato.",
+    "translation": "[Lit.] It is not that the time I didn't give it to you; I gave it to you, the time",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -664,19 +680,24 @@
         "no"
       ]
     ],
-    "comment": "LIP corpus, cited from Frascarelli (2003)."
+    "comment": "LIP corpus.",
+    "reportedIn": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(15)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex16",
     "source": {
-      "bibkey": "garassino-jacob-2018",
-      "paperLabel": "(16)"
+      "bibkey": "brunetti-2009",
+      "paperLabel": "p. 763"
     },
     "language": "ital1282",
-    "primaryText": "Ah va be', la soluzione gliela troviamo.",
+    "primaryText": "ah va be', la soluzione gliela troviamo.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Ah well, the solution, we're going to find it.",
+    "translation": "Ah well, the solution, we're going to find it",
     "context": "A: no, niente, eh, trovare una soluzione.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -703,7 +724,12 @@
         "no"
       ]
     ],
-    "comment": "LIP corpus, cited from Brunetti (2009)."
+    "comment": "LIP corpus.",
+    "reportedIn": {
+      "bibkey": "garassino-jacob-2018",
+      "paperLabel": "(16)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex17",
@@ -715,7 +741,7 @@
     "primaryText": "Sì che è arrivato.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Of course, he has arrived!",
+    "translation": "Of course, he has arrived! / Absolutely!",
     "context": "A: È poi arrivato Gianni?",
     "judgment": "acceptable",
     "alternatives": [],
@@ -746,7 +772,8 @@
     "reportedIn": {
       "bibkey": "garassino-jacob-2018",
       "paperLabel": "(17)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex18",
@@ -758,7 +785,7 @@
     "primaryText": "Sí que ha cantado la soprano.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "She did sing.",
+    "translation": "She DID sing",
     "context": "A: No ha cantado la soprano.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -789,7 +816,8 @@
     "reportedIn": {
       "bibkey": "garassino-jacob-2018",
       "paperLabel": "(18)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex19",
@@ -798,11 +826,14 @@
       "paperLabel": "pp. 4-5"
     },
     "language": "stan1288",
-    "primaryText": "¡Esto sí que es un aniversario!",
-    "discourseSegments": [],
+    "primaryText": "Carrefour le ofrece este fin de semana precios de vértigo… ¡Esto sí que es un aniversario!",
+    "discourseSegments": [
+      "Carrefour le ofrece este fin de semana precios de vértigo…",
+      "¡Esto sí que es un aniversario!"
+    ],
     "glossedTokens": [],
-    "translation": "Now, that's a real anniversary!",
-    "context": "Carrefour le ofrece este fin de semana precios de vértigo.",
+    "translation": "This weekend Carrefour is offering incredibly low prices! Now, that's a real anniversary!",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -832,7 +863,8 @@
     "reportedIn": {
       "bibkey": "garassino-jacob-2018",
       "paperLabel": "(19)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_fn11",
@@ -871,7 +903,8 @@
         "no"
       ]
     ],
-    "comment": "French si is limited to answering a preceding opposite turn."
+    "comment": "French si is limited to answering a preceding opposite turn.",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex21",
@@ -883,7 +916,7 @@
     "primaryText": "Ma le ho prese, le pastiglie!",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "But I did take them, the pills.",
+    "translation": "But I DID take them, the pills",
     "context": "A: Non hai preso le pastiglie.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -910,7 +943,8 @@
         "no"
       ]
     ],
-    "comment": "The dislocated object is a continuous topic."
+    "comment": "The dislocated object is a continuous topic.",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex22",
@@ -922,7 +956,7 @@
     "primaryText": "Le pastiglie, le ho prese (ma il resto delle medicine no)!",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "The pills, I did take them (but not the whole medical prescription).",
+    "translation": "The pills, I DID take them (but not the whole medical prescription)",
     "context": "A: Non hai preso le pastiglie.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -949,7 +983,8 @@
         "no"
       ]
     ],
-    "comment": "The dislocated object is a contrastive topic."
+    "comment": "The dislocated object is a contrastive topic.",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex23a",
@@ -961,8 +996,8 @@
     "primaryText": "…parce que, lui, il a une vision.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "…because he did have a vision.",
-    "context": "Il faut rendre honneur au président Chirac, qui a combattu et qui a vaincu sur sa vision de l'Europe.",
+    "translation": "…because he did have a vision",
+    "context": "Monsieur le Président, (…) il faut rendre honneur à la présidence française, il faut rendre honneur au président Chirac, qui a été au charbon, qui a combattu et qui a vaincu sur sa vision de l'Europe,",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -988,7 +1023,8 @@
         "no"
       ]
     ],
-    "comment": "The only subject dislocation with a polarity-focus reading found; the allusion is that others lack a vision."
+    "comment": "The only subject dislocation with a polarity-focus reading found; the allusion is that others lack a vision.",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex23b",
@@ -1000,8 +1036,8 @@
     "primaryText": "…porque él sí tiene una visión.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "",
-    "context": "",
+    "translation": "…because he did have a vision",
+    "context": "Señor Presidente, (…) hay que rendir honores a la Presidencia francesa, hay que rendir honores al Presidente Chirac, que se ha dejado la piel, que ha luchido y que ha vencido con su visión de Europa,",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1027,7 +1063,8 @@
         "no"
       ]
     ],
-    "comment": "The official Spanish translation of (23a)."
+    "comment": "The official Spanish translation of (23a). The source prints 'luchido'.",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex23c",
@@ -1039,8 +1076,8 @@
     "primaryText": "…perché lui sì che ha una visione.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "",
-    "context": "",
+    "translation": "…because he did have a vision",
+    "context": "Signor Presidente, (…) occorre rendere omaggio alla Presidenza francese, occorre rendere omaggio al Presidente Chirac che, costretto a un'opera improba, ha combattuto e ha vinto con la sua visione dell'Europa,",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1066,7 +1103,8 @@
         "no"
       ]
     ],
-    "comment": "The official Italian translation of (23a)."
+    "comment": "The official Italian translation of (23a).",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex24",
@@ -1078,8 +1116,8 @@
     "primaryText": "…gli strumenti li abbiamo.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "…the tools are there.",
-    "context": "Non dobbiamo abbatterci per il fatto che non abbiamo strumenti a disposizione.",
+    "translation": "…the tools are there",
+    "context": "Dovremmo, credo, dare maggiore informazione sugli strumenti a disposizione, valutare le cose positive che sono state fatte – anche se noi non siamo contente fino in fondo, perché ancora resta molto da fare – ma non dobbiamo abbatterci per il fatto che non abbiamo strumenti a disposizione:",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1105,7 +1143,8 @@
         "no"
       ]
     ],
-    "comment": "Whether the focus is contrastive or informative is left open."
+    "comment": "Whether the focus is contrastive or informative is left open.",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex25",
@@ -1118,7 +1157,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "…nonetheless, we really have laid the foundations for zero tolerance.",
-    "context": "Lei ha sollevato problemi di importanza fondamentale, il primo dei quali sulla tolleranza zero; è di solito un lavoro che nessuno vuole affrontare.",
+    "context": "Onorevole Maes, lei ha sollevato problemi di importanza fondamentale, il primo dei quali sulla tolleranza zero. (…) E' di solito un lavoro che nessuno vuole affrontare, (…)",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1144,7 +1183,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex26",
@@ -1156,8 +1196,8 @@
     "primaryText": "…ma i problemi della macroeconomia, del lavoro e dei problemi strutturali li mettiamo assieme davvero, adesso.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "…but let us genuinely group macroeconomic issues and labour and structural problems together, right now.",
-    "context": "È chiaro allora che diventa indispensabile mettere assieme i tre processi.",
+    "translation": "…but let us genuinely group macroeconomic issues and labour and structural problems together, right now",
+    "context": "È chiaro allora che diventa indispensabile mettere assieme i tre processi. Purtroppo la nostra terminologia è orrenda,",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1183,7 +1223,8 @@
         "no"
       ]
     ],
-    "comment": "The antecedent is a deontic necessity; the utterance is a referential actualization of it."
+    "comment": "The antecedent is a deontic necessity; the utterance is a referential actualization of it.",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex27",
@@ -1195,8 +1236,8 @@
     "primaryText": "Noi questo sforzo lo abbiamo sempre fatto e continueremo a farlo.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "We always made this effort.",
-    "context": "Nello sviluppo della costruzione europea occorre sempre fare uno sforzo per comprendere le ragioni degli altri.",
+    "translation": "We always made this effort",
+    "context": "Per riuscirci è indispensabile tener fede a un principio che è alla base del nostro stare nell'Unione europea. (…) È quello secondo il quale nello sviluppo della costruzione europea occorre sempre fare uno sforzo per comprendere le ragioni degli altri, farsene in qualche modo carico.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1222,7 +1263,8 @@
         "no"
       ]
     ],
-    "comment": "A dislocated object for topic continuity and a dislocated subject as a frame."
+    "comment": "A dislocated object for topic continuity and a dislocated subject as a frame.",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex28",
@@ -1234,8 +1276,8 @@
     "primaryText": "Sí señor Presidente, sí que puedo responder.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Yes, Mr. President, I can answer.",
-    "context": "Manifestar simplemente que no puede dar una respuesta no forma parte de las reglas del juego.",
+    "translation": "Yes, Mr. President, I can answer",
+    "context": "Pienso que el Sr. Ramón de Miguel puede manifestar que consultará al Consejo y que más tarde dará una respuesta más detallada, que ahora no está en disposición de dar. Pero pienso que manifestar simplemente que no puede dar una respuesta no forma parte de las reglas del juego. Considero que puede someter a la Presidencia, al Consejo, las preguntas que se le han formulado, y que puede declarar que, con respecto a algunas de ellas, ahora no está en disposición de dar una respuesta. Pero considero que, por regla general, corresponde al Consejo responder a todas las preguntas.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1261,7 +1303,8 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex29",
@@ -1273,8 +1316,8 @@
     "primaryText": "En eso, sí que Turquía es un Estado absolutamente europeo.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "On this level, then, yes, Turkey is a totally European State.",
-    "context": "Sigue habiendo detenciones arbitrarias y violaciones de los derechos humanos.",
+    "translation": "On this level, then, yes, Turkey is a totally European State",
+    "context": "(…) sigue habiendo detenciones arbitrarias y violaciones de los derechos humanos. (…) se sigue poniendo en dificultades a los defensores de los derechos humanos (…) permanece todavía en la cárcel una Premio Sajarov, como la Sra. Leyla Zana. (…) Turquía, en el lugar estratégico que ocupa, es el único Estado completamente laico (…)",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1300,7 +1343,8 @@
         "no"
       ]
     ],
-    "comment": "The dislocated adjunct states a condition for the proposition to be true."
+    "comment": "The dislocated adjunct states a condition for the proposition to be true.",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex30",
@@ -1312,8 +1356,8 @@
     "primaryText": "…momentos en el que el Consejo Europeo sí que ha estado con las manos cruzadas.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "…moments when the European Council has been sitting back.",
-    "context": "Creo que aquí alguien se ha podido quedar con las manos cruzadas; quien les habla nunca ha estado con las manos cruzadas.",
+    "translation": "…moments when the European Council has been sitting back",
+    "context": "Sí quisiera decirle a mi buen amigo, el diputado Jacques Poos, que creo que aquí alguien se ha podido quedar con las manos cruzadas. Sus Señorías saben muy bien que quien les habla nunca ha estado con las manos cruzadas, ni cuando era ministro representando a su país –cuando era colega suyo y tuvimos muchos momentos para hablar –; por lo tanto, seamos también respetuosos con las palabras que utilizamos. Si su Señoría piensa que yo he estado con las manos cruzadas en este conflicto, creo que se equivoca y, si me lo permite, podría hasta echar la vista atrás para ver",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1339,7 +1383,8 @@
         "yes"
       ]
     ],
-    "comment": "The polar subquestions of 'who has been sitting back?' are answered one subject at a time."
+    "comment": "The polar subquestions of 'who has been sitting back?' are answered one subject at a time.",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex32",
@@ -1348,11 +1393,11 @@
       "paperLabel": "(32)"
     },
     "language": "stan1288",
-    "primaryText": "…pero sí que se pueden hacer unos diques móviles.",
+    "primaryText": "…pero sí que se pueden hacer unos diques móviles y también se puede hacer un metro subterráneo.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "…but we do have the ability to introduce mobile dikes.",
-    "context": "No podemos evitar el acqua alta – eso es un fenómeno de la naturaleza.",
+    "translation": "…but we do have the ability to introduce mobile dikes and build an underground subway",
+    "context": "No podemos evitar el acqua alta – eso es un fenómeno de la naturaleza –",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1378,7 +1423,8 @@
         "yes"
       ]
     ],
-    "comment": "The antecedent and the utterance instantiate a hyperonymous proposition; the predicate varies."
+    "comment": "The antecedent and the utterance instantiate a hyperonymous proposition; the predicate varies.",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex33",
@@ -1390,8 +1436,8 @@
     "primaryText": "…pero sí que es satisfactorio en alguno de ellos.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "…but that it is satisfactory in some respects.",
-    "context": "Con ello no quiero decirles que el acuerdo alcanzado sea óptimo en todos sus aspectos.",
+    "translation": "…but that it is satisfactory in some respects",
+    "context": "Con ello no quiero decirles que el acuerdo alcanzado sea óptimo en todos sus aspectos,",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1417,7 +1463,8 @@
         "yes"
       ]
     ],
-    "comment": "The denied antecedent is the stronger scalar alternative."
+    "comment": "The denied antecedent is the stronger scalar alternative.",
+    "verified": "page-image"
   },
   {
     "id": "garassinojacob2018_ex35",
@@ -1429,8 +1476,8 @@
     "primaryText": "Eso sí que es de escándalo.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "That really is a scandal.",
-    "context": "Sólo seis Estados miembros nos dicen qué hacen con la recuperación de los fondos que han usado mal.",
+    "translation": "That really is a scandal",
+    "context": "Esto es escandaloso, esto merecería un titular: sólo seis Estados miembros nos dicen qué hacen con la recuperación de los fondos que han usado mal.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -1456,6 +1503,7 @@
         "no"
       ]
     ],
-    "comment": "Emphatic reinforcement without a contrastive antecedent."
+    "comment": "Emphatic reinforcement without a contrastive antecedent.",
+    "verified": "page-image"
   }
 ]
