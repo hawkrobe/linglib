@@ -3,7 +3,7 @@
     "id": "roelofsenfarkas2015_6a_yes",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(6a)"},
     "language": "stan1293",
-    "primaryText": "Yes, he did.",
+    "primaryText": "Peter passed the test. Yes, he did.",
     "discourseSegments": [
       "Peter passed the test.",
       "Yes, he did."
@@ -27,7 +27,7 @@
     "id": "roelofsenfarkas2015_6a_no",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(6a)"},
     "language": "stan1293",
-    "primaryText": "No, he did.",
+    "primaryText": "Peter passed the test. No, he did.",
     "discourseSegments": [
       "Peter passed the test.",
       "No, he did."
@@ -51,7 +51,7 @@
     "id": "roelofsenfarkas2015_6b_yes",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(6b)"},
     "language": "stan1293",
-    "primaryText": "Yes, he didn't.",
+    "primaryText": "Peter passed the test. Yes, he didn't.",
     "discourseSegments": [
       "Peter passed the test.",
       "Yes, he didn't."
@@ -75,7 +75,7 @@
     "id": "roelofsenfarkas2015_6b_no",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(6b)"},
     "language": "stan1293",
-    "primaryText": "No, he didn't.",
+    "primaryText": "Peter passed the test. No, he didn't.",
     "discourseSegments": [
       "Peter passed the test.",
       "No, he didn't."
@@ -99,7 +99,7 @@
     "id": "roelofsenfarkas2015_7a_yes",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(7a)"},
     "language": "stan1293",
-    "primaryText": "Yes, he didn't.",
+    "primaryText": "Peter didn't pass the test. Yes, he didn't.",
     "discourseSegments": [
       "Peter didn't pass the test.",
       "Yes, he didn't."
@@ -123,7 +123,7 @@
     "id": "roelofsenfarkas2015_7a_no",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(7a)"},
     "language": "stan1293",
-    "primaryText": "No, he didn't.",
+    "primaryText": "Peter didn't pass the test. No, he didn't.",
     "discourseSegments": [
       "Peter didn't pass the test.",
       "No, he didn't."
@@ -147,7 +147,7 @@
     "id": "roelofsenfarkas2015_7b_yes",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(7b)"},
     "language": "stan1293",
-    "primaryText": "Yes, he DID.",
+    "primaryText": "Peter didn't pass the test. Yes, he DID.",
     "discourseSegments": [
       "Peter didn't pass the test.",
       "Yes, he DID."
@@ -171,7 +171,7 @@
     "id": "roelofsenfarkas2015_7b_no",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(7b)"},
     "language": "stan1293",
-    "primaryText": "No, he DID.",
+    "primaryText": "Peter didn't pass the test. No, he DID.",
     "discourseSegments": [
       "Peter didn't pass the test.",
       "No, he DID."
@@ -195,7 +195,7 @@
     "id": "roelofsenfarkas2015_119_oui",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(119)"},
     "language": "stan1290",
-    "primaryText": "Oui, elle y est.",
+    "primaryText": "Claude est à la maison. Oui, elle y est.",
     "discourseSegments": [
       "Claude est à la maison.",
       "Oui, elle y est."
@@ -219,7 +219,7 @@
     "id": "roelofsenfarkas2015_119_non",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(119)"},
     "language": "stan1290",
-    "primaryText": "Non, elle y est.",
+    "primaryText": "Claude est à la maison. Non, elle y est.",
     "discourseSegments": [
       "Claude est à la maison.",
       "Non, elle y est."
@@ -243,7 +243,7 @@
     "id": "roelofsenfarkas2015_119_si",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(119)"},
     "language": "stan1290",
-    "primaryText": "Si, elle y est.",
+    "primaryText": "Claude est à la maison. Si, elle y est.",
     "discourseSegments": [
       "Claude est à la maison.",
       "Si, elle y est."
@@ -267,7 +267,7 @@
     "id": "roelofsenfarkas2015_120_oui",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(120)"},
     "language": "stan1290",
-    "primaryText": "Oui, elle n'y est pas.",
+    "primaryText": "Claude n'est pas à la maison. Oui, elle n'y est pas.",
     "discourseSegments": [
       "Claude n'est pas à la maison.",
       "Oui, elle n'y est pas."
@@ -291,7 +291,7 @@
     "id": "roelofsenfarkas2015_120_non",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(120)"},
     "language": "stan1290",
-    "primaryText": "Non, elle n'y est pas.",
+    "primaryText": "Claude n'est pas à la maison. Non, elle n'y est pas.",
     "discourseSegments": [
       "Claude n'est pas à la maison.",
       "Non, elle n'y est pas."
@@ -315,7 +315,7 @@
     "id": "roelofsenfarkas2015_120_si",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(120)"},
     "language": "stan1290",
-    "primaryText": "Si, elle n'y est pas.",
+    "primaryText": "Claude n'est pas à la maison. Si, elle n'y est pas.",
     "discourseSegments": [
       "Claude n'est pas à la maison.",
       "Si, elle n'y est pas."
@@ -339,7 +339,7 @@
     "id": "roelofsenfarkas2015_121_oui",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(121)"},
     "language": "stan1290",
-    "primaryText": "Oui, elle y est.",
+    "primaryText": "Claude n'est pas à la maison. Oui, elle y est.",
     "discourseSegments": [
       "Claude n'est pas à la maison.",
       "Oui, elle y est."
@@ -363,7 +363,7 @@
     "id": "roelofsenfarkas2015_121_non",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(121)"},
     "language": "stan1290",
-    "primaryText": "Non, elle y est.",
+    "primaryText": "Claude n'est pas à la maison. Non, elle y est.",
     "discourseSegments": [
       "Claude n'est pas à la maison.",
       "Non, elle y est."
@@ -387,7 +387,7 @@
     "id": "roelofsenfarkas2015_121_si",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(121)"},
     "language": "stan1290",
-    "primaryText": "Si, elle y est.",
+    "primaryText": "Claude n'est pas à la maison. Si, elle y est.",
     "discourseSegments": [
       "Claude n'est pas à la maison.",
       "Si, elle y est."
@@ -411,7 +411,7 @@
     "id": "roelofsenfarkas2015_122_oui",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(122)"},
     "language": "stan1290",
-    "primaryText": "Oui, elle n'y est pas.",
+    "primaryText": "Claude est à la maison. Oui, elle n'y est pas.",
     "discourseSegments": [
       "Claude est à la maison.",
       "Oui, elle n'y est pas."
@@ -435,7 +435,7 @@
     "id": "roelofsenfarkas2015_122_non",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(122)"},
     "language": "stan1290",
-    "primaryText": "Non, elle n'y est pas.",
+    "primaryText": "Claude est à la maison. Non, elle n'y est pas.",
     "discourseSegments": [
       "Claude est à la maison.",
       "Non, elle n'y est pas."
@@ -459,7 +459,7 @@
     "id": "roelofsenfarkas2015_122_si",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(122)"},
     "language": "stan1290",
-    "primaryText": "Si, elle n'y est pas.",
+    "primaryText": "Claude est à la maison. Si, elle n'y est pas.",
     "discourseSegments": [
       "Claude est à la maison.",
       "Si, elle n'y est pas."
@@ -483,7 +483,7 @@
     "id": "roelofsenfarkas2015_124_ja",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(124)"},
     "language": "stan1295",
-    "primaryText": "Ja, sie ist zu Hause.",
+    "primaryText": "Katharina ist zu Hause. Ja, sie ist zu Hause.",
     "discourseSegments": [
       "Katharina ist zu Hause.",
       "Ja, sie ist zu Hause."
@@ -507,7 +507,7 @@
     "id": "roelofsenfarkas2015_124_nein",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(124)"},
     "language": "stan1295",
-    "primaryText": "Nein, sie ist zu Hause.",
+    "primaryText": "Katharina ist zu Hause. Nein, sie ist zu Hause.",
     "discourseSegments": [
       "Katharina ist zu Hause.",
       "Nein, sie ist zu Hause."
@@ -531,7 +531,7 @@
     "id": "roelofsenfarkas2015_124_doch",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(124)"},
     "language": "stan1295",
-    "primaryText": "Doch, sie ist zu Hause.",
+    "primaryText": "Katharina ist zu Hause. Doch, sie ist zu Hause.",
     "discourseSegments": [
       "Katharina ist zu Hause.",
       "Doch, sie ist zu Hause."
@@ -555,7 +555,7 @@
     "id": "roelofsenfarkas2015_125_ja",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(125)"},
     "language": "stan1295",
-    "primaryText": "Ja, sie ist nicht zu Hause.",
+    "primaryText": "Katharina ist nicht zu Hause. Ja, sie ist nicht zu Hause.",
     "discourseSegments": [
       "Katharina ist nicht zu Hause.",
       "Ja, sie ist nicht zu Hause."
@@ -579,7 +579,7 @@
     "id": "roelofsenfarkas2015_125_nein",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(125)"},
     "language": "stan1295",
-    "primaryText": "Nein, sie ist nicht zu Hause.",
+    "primaryText": "Katharina ist nicht zu Hause. Nein, sie ist nicht zu Hause.",
     "discourseSegments": [
       "Katharina ist nicht zu Hause.",
       "Nein, sie ist nicht zu Hause."
@@ -603,7 +603,7 @@
     "id": "roelofsenfarkas2015_125_doch",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(125)"},
     "language": "stan1295",
-    "primaryText": "Doch, sie ist nicht zu Hause.",
+    "primaryText": "Katharina ist nicht zu Hause. Doch, sie ist nicht zu Hause.",
     "discourseSegments": [
       "Katharina ist nicht zu Hause.",
       "Doch, sie ist nicht zu Hause."
@@ -627,7 +627,7 @@
     "id": "roelofsenfarkas2015_126_ja",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(126)"},
     "language": "stan1295",
-    "primaryText": "Ja, sie ist zu Hause.",
+    "primaryText": "Katharina ist nicht zu Hause. Ja, sie ist zu Hause.",
     "discourseSegments": [
       "Katharina ist nicht zu Hause.",
       "Ja, sie ist zu Hause."
@@ -651,7 +651,7 @@
     "id": "roelofsenfarkas2015_126_nein",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(126)"},
     "language": "stan1295",
-    "primaryText": "Nein, sie ist zu Hause.",
+    "primaryText": "Katharina ist nicht zu Hause. Nein, sie ist zu Hause.",
     "discourseSegments": [
       "Katharina ist nicht zu Hause.",
       "Nein, sie ist zu Hause."
@@ -675,7 +675,7 @@
     "id": "roelofsenfarkas2015_126_doch",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(126)"},
     "language": "stan1295",
-    "primaryText": "Doch, sie ist zu Hause.",
+    "primaryText": "Katharina ist nicht zu Hause. Doch, sie ist zu Hause.",
     "discourseSegments": [
       "Katharina ist nicht zu Hause.",
       "Doch, sie ist zu Hause."
@@ -699,7 +699,7 @@
     "id": "roelofsenfarkas2015_127_ja",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(127)"},
     "language": "stan1295",
-    "primaryText": "Ja, sie ist nicht zu Hause.",
+    "primaryText": "Katharina ist zu Hause. Ja, sie ist nicht zu Hause.",
     "discourseSegments": [
       "Katharina ist zu Hause.",
       "Ja, sie ist nicht zu Hause."
@@ -723,7 +723,7 @@
     "id": "roelofsenfarkas2015_127_nein",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(127)"},
     "language": "stan1295",
-    "primaryText": "Nein, sie ist nicht zu Hause.",
+    "primaryText": "Katharina ist zu Hause. Nein, sie ist nicht zu Hause.",
     "discourseSegments": [
       "Katharina ist zu Hause.",
       "Nein, sie ist nicht zu Hause."
@@ -747,7 +747,7 @@
     "id": "roelofsenfarkas2015_127_doch",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(127)"},
     "language": "stan1295",
-    "primaryText": "Doch, sie ist nicht zu Hause.",
+    "primaryText": "Katharina ist zu Hause. Doch, sie ist nicht zu Hause.",
     "discourseSegments": [
       "Katharina ist zu Hause.",
       "Doch, sie ist nicht zu Hause."
@@ -771,7 +771,7 @@
     "id": "roelofsenfarkas2015_49_yes",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(49)"},
     "language": "stan1293",
-    "primaryText": "Yes, it is.",
+    "primaryText": "Is the number of planets even? Yes, it is.",
     "discourseSegments": [
       "Is the number of planets even?",
       "Yes, it is."
@@ -796,7 +796,7 @@
     "id": "roelofsenfarkas2015_49_no",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(49)"},
     "language": "stan1293",
-    "primaryText": "No, it isn't.",
+    "primaryText": "Is the number of planets even? No, it isn't.",
     "discourseSegments": [
       "Is the number of planets even?",
       "No, it isn't."
@@ -821,7 +821,7 @@
     "id": "roelofsenfarkas2015_50_yes",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(50)"},
     "language": "stan1293",
-    "primaryText": "Yes, it is.",
+    "primaryText": "Is the number of planets odd? Yes, it is.",
     "discourseSegments": [
       "Is the number of planets odd?",
       "Yes, it is."
@@ -846,7 +846,7 @@
     "id": "roelofsenfarkas2015_50_no",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(50)"},
     "language": "stan1293",
-    "primaryText": "No, it isn't.",
+    "primaryText": "Is the number of planets odd? No, it isn't.",
     "discourseSegments": [
       "Is the number of planets odd?",
       "No, it isn't."
@@ -871,7 +871,7 @@
     "id": "roelofsenfarkas2015_51_yes",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(51)"},
     "language": "stan1293",
-    "primaryText": "Yes, it is.",
+    "primaryText": "Is the number of planets even↑, or odd↓? Yes, it is.",
     "discourseSegments": [
       "Is the number of planets even↑, or odd↓?",
       "Yes, it is."
@@ -893,7 +893,7 @@
     "id": "roelofsenfarkas2015_51_no",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(51)"},
     "language": "stan1293",
-    "primaryText": "No, it isn't.",
+    "primaryText": "Is the number of planets even↑, or odd↓? No, it isn't.",
     "discourseSegments": [
       "Is the number of planets even↑, or odd↓?",
       "No, it isn't."
@@ -915,7 +915,7 @@
     "id": "roelofsenfarkas2015_52_no",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(52)"},
     "language": "stan1293",
-    "primaryText": "No, it isn't.",
+    "primaryText": "Is the number of planets odd↑? No, it isn't.",
     "discourseSegments": [
       "Is the number of planets odd↑?",
       "No, it isn't."
@@ -940,7 +940,7 @@
     "id": "roelofsenfarkas2015_53_no",
     "source": {"bibkey": "roelofsen-farkas-2015", "paperLabel": "(53)"},
     "language": "stan1293",
-    "primaryText": "No, it isn't.",
+    "primaryText": "Is the number of planets not even↑? No, it isn't.",
     "discourseSegments": [
       "Is the number of planets not even↑?",
       "No, it isn't."

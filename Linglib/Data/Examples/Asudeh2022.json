@@ -9,7 +9,7 @@
     "glossedTokens": [
       ["Alex", "Alex"], ["likes", "like.PRS.3SG"], ["Blake", "Blake"]
     ],
-    "translation": "Alex likes Blake.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -29,7 +29,7 @@
     "glossedTokens": [
       ["Everybody", "everybody"], ["loves", "love.PRS.3SG"], ["somebody", "somebody"]
     ],
-    "translation": "Everybody loves somebody.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -72,7 +72,7 @@
     "glossedTokens": [
       ["I", "1SG"], ["drank", "drink.PST"], ["water", "water"]
     ],
-    "translation": "I drank water.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],

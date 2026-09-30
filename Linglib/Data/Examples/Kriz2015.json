@@ -9,7 +9,7 @@
     "glossedTokens": [
       ["The", "DEF"], ["switches", "switch.PL"], ["are", "be.PRS.PL"], ["on", "on"]
     ],
-    "translation": "The switches are on.",
+    "translation": "",
     "context": "Ten switches; 5 of the 10 switches are on.",
     "judgment": "questionable",
     "alternatives": [],
@@ -32,7 +32,7 @@
       ["The", "DEF"], ["switches", "switch.PL"], ["are", "be.PRS.PL"], ["not", "NEG"],
       ["on", "on"]
     ],
-    "translation": "The switches are not on.",
+    "translation": "",
     "context": "Ten switches; 5 of the 10 switches are on.",
     "judgment": "questionable",
     "alternatives": [
@@ -57,7 +57,7 @@
       ["Oh", "oh"], ["no", "no"], ["the", "DEF"], ["switches", "switch.PL"], ["are", "be.PRS.PL"],
       ["on", "on"]
     ],
-    "translation": "Oh no, the switches are on!",
+    "translation": "",
     "context": "Fire risk if any switch is on; 2 of the 10 switches are on. Implicit question: Are any of the switches on?",
     "judgment": "acceptable",
     "alternatives": [
@@ -82,7 +82,7 @@
       ["Oh", "oh"], ["no", "no"], ["the", "DEF"], ["switches", "switch.PL"], ["are", "be.PRS.PL"],
       ["on", "on"]
     ],
-    "translation": "Oh no, the switches are on!",
+    "translation": "",
     "context": "Fire risk only if all 10 switches are on; 2 of the 10 switches are on. Implicit question: Are all the switches on?",
     "judgment": "unacceptable",
     "alternatives": [],

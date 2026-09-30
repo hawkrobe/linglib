@@ -10,7 +10,7 @@
       "It is very large!"
     ],
     "glossedTokens": [],
-    "translation": "Everyone is eating a cheeseburger. It is very large!",
+    "translation": "",
     "context": "Everyone is (atypically) sharing a huge cheeseburger.",
     "judgment": "acceptable",
     "alternatives": [
@@ -34,7 +34,7 @@
       "It is very large!"
     ],
     "glossedTokens": [],
-    "translation": "Andrea might be eating a cheeseburger. It is very large!",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [
@@ -60,7 +60,7 @@
       "They are on the kitchen counter."
     ],
     "glossedTokens": [],
-    "translation": "Andrea might be eating a cheeseburger. They are on the kitchen counter.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -84,7 +84,7 @@
       "She is a woman."
     ],
     "glossedTokens": [],
-    "translation": "There might already be a winner in the mayoral election. She is a woman.",
+    "translation": "",
     "context": "Exactly five well-known candidates have run, no write-ins; late on election night the speaker has not checked the news, and may even have one candidate in mind as the possible winner.",
     "judgment": "unacceptable",
     "alternatives": [
@@ -111,7 +111,7 @@
       "She is working late."
     ],
     "glossedTokens": [],
-    "translation": "If there's a light on at 9pm, it is possible that one of the teachers is still inside the school building. She is working late.",
+    "translation": "",
     "context": "The teachers of a particular school; the speaker has no particular teacher in mind.",
     "judgment": "unacceptable",
     "alternatives": [
@@ -137,7 +137,7 @@
       "It's making quite a racket!"
     ],
     "glossedTokens": [],
-    "translation": "There must be some sort of animal in the shed. It's making quite a racket!",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -159,7 +159,7 @@
       "HOUSE: You just did it."
     ],
     "glossedTokens": [],
-    "translation": "If it's cancer, there must be a test. — You just did it.",
+    "translation": "",
     "context": "House, Season 5, Episode 9 (corpus attestation).",
     "judgment": "acceptable",
     "alternatives": [],
@@ -178,7 +178,7 @@
     "primaryText": "Jerry might own a car, but they are still a hassle.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Jerry might own a car, but they are still a hassle.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
@@ -204,7 +204,7 @@
       "It barked."
     ],
     "glossedTokens": [],
-    "translation": "A dog appeared. It barked.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -226,7 +226,7 @@
       "It ate my tulips."
     ],
     "glossedTokens": [],
-    "translation": "Between one and five bunnies live in my yard. It ate my tulips.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -245,7 +245,7 @@
     "primaryText": "Every farmer that owns a donkey beats it.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Every farmer that owns a donkey beats it.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -267,7 +267,7 @@
       "Most treat it well otherwise."
     ],
     "glossedTokens": [],
-    "translation": "Every farmer that owns a donkey beats it. Most treat it well otherwise.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -289,7 +289,7 @@
     "primaryText": "If Sal has a pet, it must be a donkey.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "If Sal has a pet, it must be a donkey.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -312,7 +312,7 @@
       "It would eat Tasty Tim."
     ],
     "glossedTokens": [],
-    "translation": "A wolf might enter. It would eat Tasty Tim.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -335,7 +335,7 @@
       "They waved to some other girls having lunch there, too."
     ],
     "glossedTokens": [],
-    "translation": "Some girls were having lunch in the cafeteria. They waved to some other girls having lunch there, too.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -357,7 +357,7 @@
       "They waved to some other girls having lunch there, too."
     ],
     "glossedTokens": [],
-    "translation": "Most girls were having lunch in the cafeteria. They waved to some other girls having lunch there, too.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -379,7 +379,7 @@
       "Few of them forgot it at home."
     ],
     "glossedTokens": [],
-    "translation": "Almost every girl brought in the paper she wrote. Few of them forgot it at home.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -403,7 +403,7 @@
       "It is large."
     ],
     "glossedTokens": [],
-    "translation": "Andrea is eating a cheeseburger. It is large.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -425,7 +425,7 @@
       "It is large."
     ],
     "glossedTokens": [],
-    "translation": "Andrea might be eating a cheeseburger. It is large.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -447,7 +447,7 @@
       "She is a woman, you know."
     ],
     "glossedTokens": [],
-    "translation": "There may already be a winner in the mayoral race. She is a woman, you know.",
+    "translation": "",
     "context": "A known set of real-life candidates, no write-ins; late on election night the tabulation might be over.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -469,7 +469,7 @@
     "primaryText": "Hob thinks a witch has blighted Bob's mare, and Nob wonders whether she (the same witch) killed Cob's sow.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Hob thinks a witch has blighted Bob's mare, and Nob wonders whether she (the same witch) killed Cob's sow.",
+    "translation": "",
     "context": "A town with an outbreak of witch mania.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -488,7 +488,7 @@
     "primaryText": "Either there's no bathroom in this house or it's in a funny place.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Either there's no bathroom in this house or it's in a funny place.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [

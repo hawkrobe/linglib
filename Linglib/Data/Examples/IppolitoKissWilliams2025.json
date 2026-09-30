@@ -398,7 +398,7 @@
     "primaryText": "Is this house beautiful? #Only it's expensive.",
     "discourseSegments": [
       "Is this house beautiful?",
-      "#Only it's expensive."
+      "Only it's expensive."
     ],
     "glossedTokens": [],
     "translation": "",
@@ -478,7 +478,7 @@
     "primaryText": "When was this house renovated? #Only it's expensive.",
     "discourseSegments": [
       "When was this house renovated?",
-      "#Only it's expensive."
+      "Only it's expensive."
     ],
     "glossedTokens": [],
     "translation": "",
@@ -1097,7 +1097,7 @@
     "primaryText": "Isn't the door open? #Only it's stifling inside.",
     "discourseSegments": [
       "Isn't the door open?",
-      "#Only it's stifling inside."
+      "Only it's stifling inside."
     ],
     "glossedTokens": [],
     "translation": "",

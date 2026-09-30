@@ -5,7 +5,7 @@
     "language": "stan1293",
     "primaryText": "A CAT [...] caused himself [to] look as much as possible like a doctor...",
     "glossedTokens": [],
-    "translation": "A CAT [...] caused himself [to] look as much as possible like a doctor...",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -22,7 +22,7 @@
     "language": "stan1293",
     "primaryText": "A CAT [...] made himself look as much as possible like a doctor...",
     "glossedTokens": [],
-    "translation": "A CAT [...] made himself look as much as possible like a doctor...",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -39,7 +39,7 @@
     "language": "stan1293",
     "primaryText": "A CAT [...] forced himself [to] look as much as possible like a doctor...",
     "glossedTokens": [],
-    "translation": "A CAT [...] forced himself [to] look as much as possible like a doctor...",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -56,7 +56,7 @@
     "language": "stan1293",
     "primaryText": "He caused cancer in one woman.",
     "glossedTokens": [],
-    "translation": "He caused cancer in one woman.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -73,7 +73,7 @@
     "language": "stan1293",
     "primaryText": "He made cancer [happen] in one woman.",
     "glossedTokens": [],
-    "translation": "He made cancer [happen] in one woman.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -89,7 +89,7 @@
     "language": "stan1293",
     "primaryText": "He forced cancer [to happen] in one woman.",
     "glossedTokens": [],
-    "translation": "He forced cancer [to happen] in one woman.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -105,7 +105,7 @@
     "language": "stan1293",
     "primaryText": "I caused Martha to go to the gym by mentioning how the habit has helped me.",
     "glossedTokens": [],
-    "translation": "I caused Martha to go to the gym by mentioning how the habit has helped me.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -121,7 +121,7 @@
     "language": "stan1293",
     "primaryText": "I made Martha go to the gym by mentioning how the habit has helped me.",
     "glossedTokens": [],
-    "translation": "I made Martha go to the gym by mentioning how the habit has helped me.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -137,7 +137,7 @@
     "language": "stan1293",
     "primaryText": "I forced Martha to go to the gym by mentioning how the habit has helped me.",
     "glossedTokens": [],
-    "translation": "I forced Martha to go to the gym by mentioning how the habit has helped me.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -153,7 +153,7 @@
     "language": "stan1293",
     "primaryText": "I caused Martha to go to the gym by criticizing her physical appearance.",
     "glossedTokens": [],
-    "translation": "I caused Martha to go to the gym by criticizing her physical appearance.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -169,7 +169,7 @@
     "language": "stan1293",
     "primaryText": "I made Martha go to the gym by criticizing her physical appearance.",
     "glossedTokens": [],
-    "translation": "I made Martha go to the gym by criticizing her physical appearance.",
+    "translation": "",
     "context": "",
     "judgment": "questionable",
     "paperFeatures": [
@@ -185,7 +185,7 @@
     "language": "stan1293",
     "primaryText": "I forced Martha to go to the gym by criticizing her physical appearance.",
     "glossedTokens": [],
-    "translation": "I forced Martha to go to the gym by criticizing her physical appearance.",
+    "translation": "",
     "context": "",
     "judgment": "unacceptable",
     "paperFeatures": [
@@ -201,7 +201,7 @@
     "language": "stan1293",
     "primaryText": "I caused Martha to go to the gym by holding her child hostage.",
     "glossedTokens": [],
-    "translation": "I caused Martha to go to the gym by holding her child hostage.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -217,7 +217,7 @@
     "language": "stan1293",
     "primaryText": "I made Martha go to the gym by holding her child hostage.",
     "glossedTokens": [],
-    "translation": "I made Martha go to the gym by holding her child hostage.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -233,7 +233,7 @@
     "language": "stan1293",
     "primaryText": "I forced Martha to go to the gym by holding her child hostage.",
     "glossedTokens": [],
-    "translation": "I forced Martha to go to the gym by holding her child hostage.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -249,7 +249,7 @@
     "language": "stan1293",
     "primaryText": "The child was made to get into the car, although she could've chosen to do otherwise.",
     "glossedTokens": [],
-    "translation": "The child was made to get into the car, although she could've chosen to do otherwise.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -265,7 +265,7 @@
     "language": "stan1293",
     "primaryText": "The child was forced to get into the car, although she could've chosen to do otherwise.",
     "glossedTokens": [],
-    "translation": "The child was forced to get into the car, although she could've chosen to do otherwise.",
+    "translation": "",
     "context": "",
     "judgment": "questionable",
     "paperFeatures": [
@@ -281,7 +281,7 @@
     "language": "stan1293",
     "primaryText": "John caused the children to dance, but he didn't intend for the children to dance.",
     "glossedTokens": [],
-    "translation": "John caused the children to dance, but he didn't intend for the children to dance.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -297,7 +297,7 @@
     "language": "stan1293",
     "primaryText": "John made the children dance, but he didn't intend for the children to dance.",
     "glossedTokens": [],
-    "translation": "John made the children dance, but he didn't intend for the children to dance.",
+    "translation": "",
     "context": "",
     "judgment": "marginal",
     "paperFeatures": [
@@ -313,7 +313,7 @@
     "language": "stan1293",
     "primaryText": "John forced the children to dance, but he didn't intend for the children to dance.",
     "glossedTokens": [],
-    "translation": "John forced the children to dance, but he didn't intend for the children to dance.",
+    "translation": "",
     "context": "",
     "judgment": "questionable",
     "paperFeatures": [
@@ -329,7 +329,7 @@
     "language": "stan1293",
     "primaryText": "John accidentally caused the children to dance. He didn't intend for the children to dance.",
     "glossedTokens": [],
-    "translation": "John accidentally caused the children to dance. He didn't intend for the children to dance.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -345,7 +345,7 @@
     "language": "stan1293",
     "primaryText": "John accidentally made the children dance. He didn't intend for the children to dance.",
     "glossedTokens": [],
-    "translation": "John accidentally made the children dance. He didn't intend for the children to dance.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -361,7 +361,7 @@
     "language": "stan1293",
     "primaryText": "John accidentally forced the children to dance. He didn't intend for the children to dance.",
     "glossedTokens": [],
-    "translation": "John accidentally forced the children to dance. He didn't intend for the children to dance.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -377,7 +377,7 @@
     "language": "stan1293",
     "primaryText": "The pirate made the prisoner walk down the plank.",
     "glossedTokens": [],
-    "translation": "The pirate made the prisoner walk down the plank.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -393,7 +393,7 @@
     "language": "stan1293",
     "primaryText": "The pirate let the prisoner walk down the plank.",
     "glossedTokens": [],
-    "translation": "The pirate let the prisoner walk down the plank.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [

@@ -5,7 +5,7 @@
     "language": "stan1293",
     "primaryText": "They must be in the kitchen drawer.",
     "glossedTokens": [],
-    "translation": "They must be in the kitchen drawer.",
+    "translation": "",
     "context": "Answer to: Where are the keys? The speaker infers the location rather than seeing it.",
     "judgment": "acceptable",
     "alternatives": [
@@ -25,7 +25,7 @@
     "language": "stan1293",
     "primaryText": "John must have left.",
     "glossedTokens": [],
-    "translation": "John must have left.",
+    "translation": "",
     "context": "General epistemic context; the speaker infers John's departure.",
     "judgment": "acceptable",
     "alternatives": [
@@ -45,7 +45,7 @@
     "language": "stan1293",
     "primaryText": "John must be at home.",
     "glossedTokens": [],
-    "translation": "John must be at home.",
+    "translation": "",
     "context": "General epistemic context; the speaker infers John's whereabouts.",
     "judgment": "acceptable",
     "alternatives": [
@@ -66,7 +66,7 @@
     "language": "stan1293",
     "primaryText": "She must have climbed Mount Toby.",
     "glossedTokens": [],
-    "translation": "She must have climbed Mount Toby.",
+    "translation": "",
     "context": "General epistemic context; the speaker infers the climb.",
     "judgment": "acceptable",
     "alternatives": [
@@ -86,7 +86,7 @@
     "language": "stan1293",
     "primaryText": "It must be raining.",
     "glossedTokens": [],
-    "translation": "It must be raining.",
+    "translation": "",
     "context": "Billy sees the pouring rain through the window.",
     "judgment": "unacceptable",
     "alternatives": [
@@ -106,7 +106,7 @@
     "language": "stan1293",
     "primaryText": "It must be raining.",
     "glossedTokens": [],
-    "translation": "It must be raining.",
+    "translation": "",
     "context": "Billy sees people coming in with wet umbrellas, slickers, and galoshes, and knows for sure that rain is the only possible cause.",
     "judgment": "acceptable",
     "alternatives": [
@@ -126,7 +126,7 @@
     "language": "stan1293",
     "primaryText": "So, it must be in C.",
     "glossedTokens": [],
-    "translation": "So, it must be in C.",
+    "translation": "",
     "context": "Chris knows the ball is in Box A, B, or C; it is not in A; it is not in B.",
     "judgment": "acceptable",
     "alternatives": [
@@ -146,7 +146,7 @@
     "language": "stan1293",
     "primaryText": "There can't be two reds.",
     "glossedTokens": [],
-    "translation": "There can't be two reds.",
+    "translation": "",
     "context": "Mastermind game: the conclusion is inferred from the clues, not directly observed.",
     "judgment": "acceptable",
     "alternatives": [
@@ -166,7 +166,7 @@
     "language": "stan1293",
     "primaryText": "It can't be raining.",
     "glossedTokens": [],
-    "translation": "It can't be raining.",
+    "translation": "",
     "context": "Billy sees brilliant sunshine.",
     "judgment": "unacceptable",
     "alternatives": [
@@ -186,7 +186,7 @@
     "language": "stan1293",
     "primaryText": "It can't be raining.",
     "glossedTokens": [],
-    "translation": "It can't be raining.",
+    "translation": "",
     "context": "Billy sees people coming in with sun gear and knows sunshine is the only possible explanation.",
     "judgment": "acceptable",
     "alternatives": [
@@ -206,7 +206,7 @@
     "language": "stan1293",
     "primaryText": "I must be hungry.",
     "glossedTokens": [],
-    "translation": "I must be hungry.",
+    "translation": "",
     "context": "Speaker reflecting on their own internal state.",
     "judgment": "acceptable",
     "alternatives": [
@@ -231,7 +231,7 @@
       "So: Lenny is at the party."
     ],
     "glossedTokens": [],
-    "translation": "If Carl is at the party, then Lenny must be at the party. Carl is at the party. So: Lenny is at the party.",
+    "translation": "",
     "context": "Assessing the validity of the argument form: if phi, must psi; phi; therefore psi.",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -246,7 +246,7 @@
     "language": "stan1293",
     "primaryText": "It must be raining but perhaps it isn't raining.",
     "glossedTokens": [],
-    "translation": "It must be raining but perhaps it isn't raining.",
+    "translation": "",
     "context": "Flat-footed conjunction of must phi with perhaps not-phi.",
     "judgment": "unacceptable",
     "alternatives": [
@@ -306,7 +306,7 @@
     "language": "stan1293",
     "primaryText": "It is probably raining.",
     "glossedTokens": [],
-    "translation": "It is probably raining.",
+    "translation": "",
     "context": "Speaker is pretty sure rain explains the wet gear but feels a twinge of doubt and wants to hedge.",
     "judgment": "acceptable",
     "paperFeatures": [

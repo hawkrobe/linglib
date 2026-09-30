@@ -25,7 +25,7 @@ def ag2024a_t2_anna : LinguisticExample :=
     primaryText := "Anna's room was not tiny."
     discourseSegments := []
     glossedTokens := []
-    translation := "Anna's room was not tiny."
+    translation := ""
     context := "A group of friends goes on vacation. One friend named Tim writes a review for each person's room on booking.com. Please decide which rating the room receives in terms of its size based on Tim's statement. 1 = tiny; 5 = gigantic. Tim writes:"
     judgment := .acceptable
     alternatives := []
@@ -41,7 +41,7 @@ def ag2024a_t2_david : LinguisticExample :=
     primaryText := "David's room was small."
     discourseSegments := []
     glossedTokens := []
-    translation := "David's room was small."
+    translation := ""
     context := "A group of friends goes on vacation. One friend named Tim writes a review for each person's room on booking.com. Please decide which rating the room receives in terms of its size based on Tim's statement. 1 = tiny; 5 = gigantic. Tim writes:"
     judgment := .acceptable
     alternatives := []
@@ -57,7 +57,7 @@ def ag2024a_t2_brian : LinguisticExample :=
     primaryText := "Brian's room was gigantic."
     discourseSegments := []
     glossedTokens := []
-    translation := "Brian's room was gigantic."
+    translation := ""
     context := "A group of friends goes on vacation. One friend named Tim writes a review for each person's room on booking.com. Please decide which rating the room receives in terms of its size based on Tim's statement. 1 = tiny; 5 = gigantic. Tim writes:"
     judgment := .acceptable
     alternatives := []
@@ -73,7 +73,7 @@ def ag2024a_t3_anthony : LinguisticExample :=
     primaryText := "The Saint Anthony's Hospital is not filthy."
     discourseSegments := []
     glossedTokens := []
-    translation := "The Saint Anthony's Hospital is not filthy."
+    translation := ""
     context := "The government examines the hospitals of a big city for their hygiene standards. The examiner writes a review. Please decide which rating each hospital gets for its hygiene standards based on the examiner's statements. 1 = filthy; 5 = pristine. The examiner says:"
     judgment := .acceptable
     alternatives := []
@@ -89,7 +89,7 @@ def ag2024a_t3_joseph : LinguisticExample :=
     primaryText := "The Saint Joseph Hospital is not dirty."
     discourseSegments := []
     glossedTokens := []
-    translation := "The Saint Joseph Hospital is not dirty."
+    translation := ""
     context := "The government examines the hospitals of a big city for their hygiene standards. The examiner writes a review. Please decide which rating each hospital gets for its hygiene standards based on the examiner's statements. 1 = filthy; 5 = pristine. The examiner says:"
     judgment := .acceptable
     alternatives := []
@@ -105,7 +105,7 @@ def ag2024a_t3_mary : LinguisticExample :=
     primaryText := "The Saint's Mary's Hospital is pristine."
     discourseSegments := []
     glossedTokens := []
-    translation := "The Saint's Mary's Hospital is pristine."
+    translation := ""
     context := "The government examines the hospitals of a big city for their hygiene standards. The examiner writes a review. Please decide which rating each hospital gets for its hygiene standards based on the examiner's statements. 1 = filthy; 5 = pristine. The examiner says:"
     judgment := .acceptable
     alternatives := []

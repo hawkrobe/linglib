@@ -11,7 +11,7 @@
       "Bill believed Fred had been beating his wife and he hoped Fred would stop."
     ],
     "glossedTokens": [],
-    "translation": "Bill believed Fred had been beating his wife and he hoped Fred would stop.",
+    "translation": "",
     "context": "The presupposition of stop, that Fred had been beating his wife, is filtered: it is not the speaker's.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -44,7 +44,7 @@
       "He hopes that SUE will come too."
     ],
     "glossedTokens": [],
-    "translation": "John believes that Mary will come. He hopes that SUE will come too.",
+    "translation": "",
     "context": "The presupposition of too is filtered by the belief.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -77,7 +77,7 @@
       "He believes that SUE will come too."
     ],
     "glossedTokens": [],
-    "translation": "John hopes that Mary will come. He believes that SUE will come too.",
+    "translation": "",
     "context": "The presupposition of too finds no antecedent in the belief and projects.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -110,7 +110,7 @@
       "Last night he imagined that HER SISTER would come too."
     ],
     "glossedTokens": [],
-    "translation": "John believes that Mary will come to his party. Last night he imagined that HER SISTER would come too.",
+    "translation": "",
     "context": "A representational attitude without a preference component is parasitic on belief in the same way.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -143,7 +143,7 @@
       "He believes that HER SISTER will come too."
     ],
     "glossedTokens": [],
-    "translation": "Last night John imagined that Mary would come to his party. He believes that HER SISTER will come too.",
+    "translation": "",
     "context": "The reverse order does not filter.",
     "judgment": "unacceptable",
     "alternatives": [],

@@ -1154,7 +1154,7 @@
         "cloned"
       ]
     ],
-    "translation": "This sheep has been cloned.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1207,7 +1207,7 @@
         "cloned"
       ]
     ],
-    "translation": "These sheep have been cloned.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1260,7 +1260,7 @@
         "fed"
       ]
     ],
-    "translation": "This peesh has been fed.",
+    "translation": "",
     "context": "A hypothetical noun peesh 'cloned sheep'.",
     "judgment": "acceptable",
     "alternatives": [
@@ -1317,7 +1317,7 @@
         "park"
       ]
     ],
-    "translation": "We observed three elephant in the game park.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1370,7 +1370,7 @@
         "us"
       ]
     ],
-    "translation": "The elephant are downwind of us.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1419,7 +1419,7 @@
         "yourself"
       ]
     ],
-    "translation": "you can do that yourself",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1468,7 +1468,7 @@
         "yourselves"
       ]
     ],
-    "translation": "you can do that yourselves",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -3261,7 +3261,7 @@
         "amazing"
       ]
     ],
-    "translation": "For Bill to make it to a 9 o'clock class is amazing.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -3407,7 +3407,7 @@
         "decided"
       ]
     ],
-    "translation": "the committee have decided",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -3444,7 +3444,7 @@
         "committee"
       ]
     ],
-    "translation": "this committee",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -3481,7 +3481,7 @@
         "committee"
       ]
     ],
-    "translation": "these committee",
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -3526,7 +3526,7 @@
         "decided"
       ]
     ],
-    "translation": "The committee has decided.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -3571,7 +3571,7 @@
         "decided"
       ]
     ],
-    "translation": "The committee have decided.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -3620,7 +3620,7 @@
         "decided"
       ]
     ],
-    "translation": "the committee, which has decided",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -3669,7 +3669,7 @@
         "decided"
       ]
     ],
-    "translation": "the committee, who have decided",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -3710,7 +3710,7 @@
         "it"
       ]
     ],
-    "translation": "The committee ... It ...",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -3751,7 +3751,7 @@
         "they"
       ]
     ],
-    "translation": "The committee ... They ...",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],

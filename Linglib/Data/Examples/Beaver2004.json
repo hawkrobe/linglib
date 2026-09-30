@@ -5,7 +5,7 @@
     "language": "stan1293",
     "primaryText": "Jane likes Mary. She often brings her flowers. She chats with her for ages.",
     "glossedTokens": [],
-    "translation": "Jane likes Mary. She often brings her flowers. She chats with her for ages.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -22,7 +22,7 @@
     "language": "stan1293",
     "primaryText": "Mary likes tennis. She plays Jim quite often. He used to play doubles with Mary.",
     "glossedTokens": [],
-    "translation": "Mary likes tennis. She plays Jim quite often. He used to play doubles with Mary.",
+    "translation": "",
     "context": "",
     "judgment": "marginal",
     "readings": [
@@ -39,7 +39,7 @@
     "language": "stan1293",
     "primaryText": "Jane likes Mary. She often visits her for tea. The woman is a compulsive tea drinker.",
     "glossedTokens": [],
-    "translation": "Jane likes Mary. She often visits her for tea. The woman is a compulsive tea drinker.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -56,7 +56,7 @@
     "language": "stan1293",
     "primaryText": "Jane likes Mary. She often goes around for tea with her. She chats with the young woman for ages.",
     "glossedTokens": [],
-    "translation": "Jane likes Mary. She often goes around for tea with her. She chats with the young woman for ages.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -73,7 +73,7 @@
     "language": "stan1293",
     "primaryText": "Jane is happy. Mary gave her a present. She smiled.",
     "glossedTokens": [],
-    "translation": "Jane is happy. Mary gave her a present. She smiled.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -90,7 +90,7 @@
     "language": "stan1293",
     "primaryText": "Jane is happy. She was congratulated by Freda, and Mary gave her a present.",
     "glossedTokens": [],
-    "translation": "Jane is happy. She was congratulated by Freda, and Mary gave her a present.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -107,7 +107,7 @@
     "language": "stan1293",
     "primaryText": "Jane is happy. Mary gave her a present. She smiled at her.",
     "glossedTokens": [],
-    "translation": "Jane is happy. Mary gave her a present. She smiled at her.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -124,7 +124,7 @@
     "language": "stan1293",
     "primaryText": "Jane is happy. Mary gave her a present. Somebody unwrapped it.",
     "glossedTokens": [],
-    "translation": "Jane is happy. Mary gave her a present. Somebody unwrapped it.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
@@ -141,7 +141,7 @@
     "language": "stan1293",
     "primaryText": "A great refinement among armorial signets was to reproduce not only the coat-of-arms but the correct tinctures; they were repeated in colour on the reverse side and the crystal would then be set in the gold bezel.",
     "glossedTokens": [],
-    "translation": "A great refinement among armorial signets was to reproduce not only the coat-of-arms but the correct tinctures; they were repeated in colour on the reverse side and the crystal would then be set in the gold bezel.",
+    "translation": "",
     "context": "Corpus example from museum-object descriptions.",
     "judgment": "acceptable",
     "readings": [],
@@ -156,7 +156,7 @@
     "language": "stan1293",
     "primaryText": "John went to his favorite music store to buy a piano. He had frequented the store for many years. He was excited to be going to the store to actually buy a piano. It was the biggest music store in the area. It had just the kind of piano that he wanted. It was closing just as John arrived.",
     "glossedTokens": [],
-    "translation": "John went to his favorite music store to buy a piano. He had frequented the store for many years. He was excited to be going to the store to actually buy a piano. It was the biggest music store in the area. It had just the kind of piano that he wanted. It was closing just as John arrived.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [],
@@ -171,7 +171,7 @@
     "language": "stan1293",
     "primaryText": "John went to his favorite music store to buy a piano. It was a store John had frequented for many years. He was excited to be going to the store to actually buy a piano. It was the biggest music store in the area. He knew that it had just the kind of piano that he wanted. It was closing just as John arrived.",
     "glossedTokens": [],
-    "translation": "John went to his favorite music store to buy a piano. It was a store John had frequented for many years. He was excited to be going to the store to actually buy a piano. It was the biggest music store in the area. He knew that it had just the kind of piano that he wanted. It was closing just as John arrived.",
+    "translation": "",
     "context": "",
     "judgment": "marginal",
     "readings": [],
@@ -186,7 +186,7 @@
     "language": "stan1293",
     "primaryText": "Fred was eating. He saw Jim. HE winked.",
     "glossedTokens": [],
-    "translation": "Fred was eating. He saw Jim. HE winked.",
+    "translation": "",
     "context": "The speaker wants to convey that Jim winked.",
     "judgment": "acceptable",
     "readings": [
