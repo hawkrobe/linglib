@@ -26,7 +26,7 @@ def ex52a_write : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("dependency", "movement"), ("verb", "write"), ("creation", "yes"), ("object", "definite")] }
+    paperFeatures := [("wh", "fronted"), ("verb", "write"), ("creation", "yes"), ("object", "definite")] }
 
 def ex52a_read : Datum :=
   { id := "daviesdubinsky2003_ex52a_read"
@@ -39,7 +39,7 @@ def ex52a_read : Datum :=
     judgment := .questionable
     alternatives := []
     readings := []
-    paperFeatures := [("dependency", "movement"), ("verb", "read"), ("creation", "no"), ("object", "definite")] }
+    paperFeatures := [("wh", "fronted"), ("verb", "read"), ("creation", "no"), ("object", "definite")] }
 
 def ex52b_write : Datum :=
   { id := "daviesdubinsky2003_ex52b_write"
@@ -52,7 +52,7 @@ def ex52b_write : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("dependency", "movement"), ("verb", "write"), ("creation", "yes"), ("object", "indefinite")] }
+    paperFeatures := [("wh", "fronted"), ("verb", "write"), ("creation", "yes"), ("object", "indefinite")] }
 
 def ex52b_read : Datum :=
   { id := "daviesdubinsky2003_ex52b_read"
@@ -65,7 +65,7 @@ def ex52b_read : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("dependency", "movement"), ("verb", "read"), ("creation", "no"), ("object", "indefinite")] }
+    paperFeatures := [("wh", "fronted"), ("verb", "read"), ("creation", "no"), ("object", "indefinite")] }
 
 def ex53a_tell : Datum :=
   { id := "daviesdubinsky2003_ex53a_tell"
@@ -78,7 +78,7 @@ def ex53a_tell : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("dependency", "movement"), ("verb", "tell"), ("creation", "yes"), ("object", "definite")] }
+    paperFeatures := [("wh", "fronted"), ("verb", "tell"), ("creation", "yes"), ("object", "definite")] }
 
 def ex53a_hear : Datum :=
   { id := "daviesdubinsky2003_ex53a_hear"
@@ -91,7 +91,7 @@ def ex53a_hear : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("dependency", "movement"), ("verb", "hear"), ("creation", "no"), ("object", "definite")] }
+    paperFeatures := [("wh", "fronted"), ("verb", "hear"), ("creation", "no"), ("object", "definite")] }
 
 def ex53b_tell : Datum :=
   { id := "daviesdubinsky2003_ex53b_tell"
@@ -104,7 +104,7 @@ def ex53b_tell : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("dependency", "movement"), ("verb", "tell"), ("creation", "yes"), ("object", "indefinite")] }
+    paperFeatures := [("wh", "fronted"), ("verb", "tell"), ("creation", "yes"), ("object", "indefinite")] }
 
 def ex53b_hear : Datum :=
   { id := "daviesdubinsky2003_ex53b_hear"
@@ -117,7 +117,7 @@ def ex53b_hear : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("dependency", "movement"), ("verb", "hear"), ("creation", "no"), ("object", "indefinite")] }
+    paperFeatures := [("wh", "fronted"), ("verb", "hear"), ("creation", "no"), ("object", "indefinite")] }
 
 def ex54a_paint : Datum :=
   { id := "daviesdubinsky2003_ex54a_paint"
@@ -130,7 +130,7 @@ def ex54a_paint : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("dependency", "movement"), ("verb", "paint"), ("creation", "yes"), ("object", "definite")] }
+    paperFeatures := [("wh", "fronted"), ("verb", "paint"), ("creation", "yes"), ("object", "definite")] }
 
 def ex54a_see : Datum :=
   { id := "daviesdubinsky2003_ex54a_see"
@@ -143,7 +143,7 @@ def ex54a_see : Datum :=
     judgment := .questionable
     alternatives := []
     readings := []
-    paperFeatures := [("dependency", "movement"), ("verb", "see"), ("creation", "no"), ("object", "definite")] }
+    paperFeatures := [("wh", "fronted"), ("verb", "see"), ("creation", "no"), ("object", "definite")] }
 
 def ex54b_paint : Datum :=
   { id := "daviesdubinsky2003_ex54b_paint"
@@ -156,7 +156,7 @@ def ex54b_paint : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("dependency", "movement"), ("verb", "paint"), ("creation", "yes"), ("object", "indefinite")] }
+    paperFeatures := [("wh", "fronted"), ("verb", "paint"), ("creation", "yes"), ("object", "indefinite")] }
 
 def ex54b_see : Datum :=
   { id := "daviesdubinsky2003_ex54b_see"
@@ -169,7 +169,7 @@ def ex54b_see : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("dependency", "movement"), ("verb", "see"), ("creation", "no"), ("object", "indefinite")] }
+    paperFeatures := [("wh", "fronted"), ("verb", "see"), ("creation", "no"), ("object", "indefinite")] }
 
 def all : List Datum := [ex52a_write, ex52a_read, ex52b_write, ex52b_read, ex53a_tell, ex53a_hear, ex53b_tell, ex53b_hear, ex54a_paint, ex54a_see, ex54b_paint, ex54b_see]
 

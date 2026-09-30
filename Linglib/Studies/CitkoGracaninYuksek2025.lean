@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Linearization.Chain
+public import Linglib.Syntax.Minimalist.Linearization.Spellout
+public import Linglib.Syntax.Minimalist.Economy.Basic
 
 /-!
 # Citko and Gračanin-Yuksek (2025): Economy in PF reduction
@@ -30,18 +31,32 @@ the second deletion silences nothing new, and it forces the nonpaired sluice to 
 complementizers, only one bearing [E]. In right node raising the same economy prefers sharing
 the pivot to building it twice and, when the verbs match, sharing the verb phrase to eliding it.
 
-Each candidate is a planar syntactic object with the chains of `Linearization/Chain.lean`: a token
-at two positions is shared, a moved wh-phrase leaves the traces of its head at the vP edge and its
-base position, and the coordinator is left out, so a string is its conjuncts' words. The predictions
-decide: the pronounced strings, the unbound traces that carry the paired reading, the asterisks, and
-the costs the winners beat. A language's multiple-wh-fronting parameter is the set of phase
-categories whose asterisks PF cannot interpret, so each object's asterisks that reach PF
-(`pfAsterisks`) settle its convergence in every language at once.
+Each candidate is a planar syntactic object with the chains of `Linearization/Chain.lean`, spelled
+out as `Linearization/Spellout.lean` does: a token at two positions is shared, a moved wh-phrase
+leaves the traces of its head at the vP edge and its base position, and the coordinator is left
+out, so a string is its conjuncts' words. The predictions decide: the pronounced strings, the
+deleted copies without antecedents that carry the paired reading, the asterisks, and the costs the
+winners beat. A projection whose edge hosts several wh-specifiers receives an asterisk, which PF
+cannot interpret unless the head is silenced or the language fronts several wh-phrases to an edge
+of that category. A language's multiple-wh-fronting parameter is thus the set of phase categories
+whose asterisks PF cannot interpret, so each object's asterisks that reach PF (`pfAsterisks`)
+settle its convergence in every language at once.
+
+## Implementation notes
+
+The paper states the parameter as (27), an asterisk on every phase edge with several
+wh-specifiers in a language without multiple wh-fronting, refines it after (29) by which phase
+edges count, and mentions in a footnote the alternative statement used here: every such edge
+receives an asterisk, which PF can interpret in a language with multiple wh-fronting. Which
+categories head phases is the analysis's choice (`Minimalist.Phase`), so a parameter is any
+`Finset Cat`; the paper's are `∅`, `{v}` and `{v, C}`.
 
 ## References
 
 * [B. Citko and M. Gračanin-Yuksek, *Economy in PF reduction* (2025)][citko-gracanin-yuksek-2025]
 * [J. Merchant, *The Syntax of Silence* (2001)][merchant-2001]
+* [M. Marcolli, N. Chomsky and R. C. Berwick, *Mathematical Structure of Syntactic Merge: An
+  Algebraic Model for Generative Linguistics* (2025)][marcolli-chomsky-berwick-2025]
 * [Z. Belk, A. Neeleman and J. Philip, *What divides, and what unites, right-node raising*
   (2023)][belk-neeleman-philip-2023]
 -/
@@ -50,7 +65,8 @@ categories whose asterisks PF cannot interpret, so each object's asterisks that 
 
 namespace CitkoGracaninYuksek2025
 
-open Minimalist Minimalist.PlanarSyntacticObject RoseTree
+open Minimalist Minimalist.PlanarSyntacticObject RoseTree Core.Order.Branching
+open Minimalist.SyntacticObject (Vertex)
 
 /-! ### The lexicon -/
 
@@ -154,12 +170,83 @@ abbrev csnrTwoE := nonBulk cE cE'
 /-- The nonpaired coordinated sluice (46b) has two complementizers, one bearing [E]. -/
 abbrev csnr := nonBulk cE c
 
-/-- The paired reading holds when the second conjunct holds an unbound trace of the first
-conjunct's wh-phrase, the copy that vehicle change reads as an E-type pronoun (footnote 20). -/
+/-- The paired reading holds when the second conjunct holds a deleted copy of the first
+conjunct's wh-phrase without an antecedent, the copy that vehicle change reads as an E-type
+pronoun (footnote 20). -/
 def Paired (t : PlanarSyntacticObject) : Prop :=
-  ∃ x ∈ unboundTraces t, x.2 = what ∧ x.1.head? = some 1
+  ∃ x ∈ orphanTraces t, x.2 = what ∧ (⟨[1]⟩ : Core.Order.TreePath) ≤ x.1
 
 instance : DecidablePred Paired := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+/-! ### Economy and Pronunciation Economy (39) -/
+
+/-- The tokens of `t`, each once. -/
+def tokens (t : PlanarSyntacticObject) : Finset LIToken := ((tokenList t.val).map (·.2)).toFinset
+
+/-- The terms of `t` are its subtrees, a shared constituent counted once, as
+[marcolli-chomsky-berwick-2025]'s `subtrees` taken each once. -/
+def terms (t : PlanarSyntacticObject) : Finset (RoseTree Vertex) :=
+  ((vertices t.val).filterMap (subtreeAt t.val)).toFinset
+
+/-- The cost of an object counts its tokens as the lexical items drawn, its internal terms as the
+Merges, so that a shared constituent is built once, and its elided domains as the applications of
+ellipsis. -/
+def planarCost (t : PlanarSyntacticObject) : DerivationCost
+  | .lexicalItems => (tokens t).card
+  | .mergeOps => ((terms t).filter fun s ↦ s.arity ≠ 0).card
+  | .agreeOps => 0
+  | .ellipsisOps => (elidedDomains t).length
+
+/-- The pronounceable tokens the application of ellipsis at the domain `K` silences. -/
+def silencedBy (t : PlanarSyntacticObject) (K : Core.Order.TreePath) : Finset LIToken :=
+  (tokens t).filter fun s ↦ s.phonForm?.isSome ∧ (occurrences t s).any (decide <| K ≤ ·)
+
+/-- The application at `K` is vacuous when the earlier applications already silenced every token
+it silences. -/
+def IsVacuous (t : PlanarSyntacticObject) (K : Core.Order.TreePath) : Prop :=
+  silencedBy t K ⊆ ((elidedDomains t).takeWhile (· ≠ K)).toFinset.biUnion (silencedBy t)
+
+instance (t : PlanarSyntacticObject) (K : Core.Order.TreePath) : Decidable (IsVacuous t K) := by
+  unfold IsVacuous; infer_instance
+
+/-- **Pronunciation Economy** (39): no application of ellipsis is vacuous. -/
+def PronunciationEconomy (t : PlanarSyntacticObject) : Prop :=
+  ∀ K ∈ elidedDomains t, ¬ IsVacuous t K
+
+instance (t : PlanarSyntacticObject) : Decidable (PronunciationEconomy t) :=
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
+
+/-! ### The multiple-wh-fronting asterisk (27) -/
+
+/-- `projection t` finds the specifiers and head of the projection at the root of `t`. Going down
+the right spine, the specifiers are the left daughters above the head, which is the first
+selecting item met; the result is `none` when the spine ends first. -/
+def projection : RoseTree Vertex → Option (List (RoseTree Vertex) × LIToken)
+  | .node (.inr none) [.node (.inl tok) [], r] =>
+      if tok.item.outerSel = [] then
+        (projection r).map fun x ↦ (.node (.inl tok) [] :: x.1, x.2)
+      else some ([], tok)
+  | .node (.inr none) [l, r] => (projection r).map fun x ↦ (l :: x.1, x.2)
+  | _ => none
+
+/-- A constituent is a wh-specifier when its head is a wh-token or its trace. -/
+def IsWhSpecifier (s : RoseTree Vertex) : Prop :=
+  ∃ tok ∈ (headToken? s).toList, tok.item.outerWh = true
+
+instance (s : RoseTree Vertex) : Decidable (IsWhSpecifier s) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+/-- The heads of the projections whose edges host several wh-specifiers, each of which receives
+an asterisk. -/
+def asterisked (t : PlanarSyntacticObject) : List LIToken :=
+  (vertices t.val).filterMap fun p ↦ ((subtreeAt t.val p).bind projection).bind fun x ↦
+    if 1 < x.1.countP (decide <| IsWhSpecifier ·) then some x.2 else none
+
+/-- The categories of the asterisked projections whose heads reach PF unsilenced. The object
+converges at PF under a multiple-wh-fronting parameter, the categories of the phases whose
+asterisks PF cannot interpret, iff the parameter is disjoint from them. -/
+def pfAsterisks (t : PlanarSyntacticObject) : Finset Cat :=
+  (((asterisked t).filter (¬ IsSilenced t ·)).map (·.item.outerCat)).toFinset
 
 /-! ### The multiple-wh-fronting parameter (27) by language -/
 
@@ -190,7 +277,7 @@ theorem cwhTwoAux_pf : pfPhon cwhTwoAux = ["what", "should", "when", "will", "yo
   decide
 
 /-- Each wh-phrase is interpreted in its own conjunct. -/
-theorem cwh_nonpaired : unboundTraces cwh = [] := by decide
+theorem cwh_nonpaired : orphanTraces cwh = [] := by decide
 /-- The shared C′ carries a copy of each wh-phrase into the other conjunct. -/
 theorem cwhBulk_paired : Paired cwhBulk := by decide
 
@@ -267,7 +354,7 @@ theorem csnr_optimal : ∀ t ∈ [csSharedC, csnrTwoE],
 /-- The shared verb occurs in the second conjunct outside the elided TP and is silenced all the
 same, so the object cannot surface as a coordinated wh-question (footnote 30). -/
 theorem csnr_silences_shared :
-    (∃ p ∈ occurrences csnr teach, ∀ K ∈ elidedDomains csnr, ¬ K <+: p) ∧
+    (∃ p ∈ occurrences csnr teach, ∀ K ∈ elidedDomains csnr, ¬ K ≤ p) ∧
       IsSilenced csnr teach := by decide
 
 /-! ### Right node raising (§6.2) -/

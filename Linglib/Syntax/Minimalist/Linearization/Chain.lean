@@ -6,221 +6,238 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Linearization.Replay
-public import Linglib.Syntax.Minimalist.Economy.Basic
+public import Linglib.Syntax.Command
 public import Linglib.Core.Data.RoseTree.Get
 
 /-!
-# Chains, sharing and PF reduction on planar syntactic objects
+# Chains on planar syntactic objects
 
-A planar syntactic object whose traces remember the token that moved carries the two ways one
-token comes to occupy several positions. Internal Merge leaves a trace, the cancellation `T/T_v`
-of [marcolli-chomsky-berwick-2025] with `T_v` remembered, so a token's chain is its occurrence
-with its traces, and a trace no occurrence of its token c-commands is unbound: seen from its own
-conjunct, a copy without its antecedent. A token occurring twice is *shared*, dominated by two
-mothers — [citko-2005]'s Parallel Merge, which MCB §1.1.3.2 places outside Merge as a grafting
-away from the root — and a shared constituent is an identical subtree at two positions. At PF a
-token is pronounced once, at its last occurrence, so shared material follows all unshared material
-([wilder-1999], [de-vries-2009]). An [E] feature on a head silences the head's complement
-([merchant-2001]), and since a shared token is one token, eliding either of its occurrences
-silences it everywhere. An [E] head applies once per distinct complement, and an application that
-silences no pronounceable token an earlier one had not already silenced is vacuous, the
-configuration [citko-gracanin-yuksek-2025]'s Pronunciation Economy bans. A projection whose edge
-hosts several wh-specifiers, wh-tokens or their traces, receives an asterisk, which PF cannot
-interpret unless the head is silenced or the language fronts several wh-phrases to an edge of that
-category. A language's multiple-wh-fronting parameter is thus the set of phase categories whose
-asterisks PF cannot interpret, and the object converges under it iff the set is disjoint from the
-categories of the asterisks that reach PF (`pfAsterisks`), which makes convergence antitone in
-the parameter. The cost of the object is read off its terms, the distinct subtrees as MCB's
-`subtrees` taken each once: the lexical leaves are the items drawn and the internal vertices the
-Merges, so a shared constituent is built once.
+A planar syntactic object is a copy-theoretic representation. A vertex `Sum.inl tok` is a
+pronounced copy of `tok` and a vertex `Sum.inr (some tok)` a deleted one, the trace Internal Merge
+leaves, the cancellation `T/T_v` of [marcolli-chomsky-berwick-2025] with the head of `T_v`
+remembered. The chain of a token is the list of its copies, and a copy stands for the maximal
+projection of its token, so a moved phrase sits where its head projects. A token moves when it
+has a deleted copy. A token bound in situ by an operator ([pesetsky-1987]) has a single copy. A
+deleted copy above the pronounced one is covert movement ([huang-1982]), and a pronounced copy
+between two deleted ones is partial movement ([sato-ngui-2017]), so where a phrase is pronounced
+and where it takes scope come apart without a separate choice of the copy to spell out. A token
+with two pronounced copies is shared, dominated by two mothers, [citko-2005]'s Parallel Merge.
+
+A copy is linked to the nearest copy above it, the one whose projection c-commands it with no
+other copy's projection in between, c-command being `Syntax.CCommands` ([barker-pullum-1990]).
+Locality constrains links. The Phase Impenetrability Condition ([chomsky-2000]) bars a link from
+the interior of a phase, the positions its head c-commands, to a position outside the head's
+maximal projection, so that the edge is the escape hatch (`Crosses`); an island is a domain no
+link may leave (`Escapes`). A token with one copy has no link, so binding in situ is subject to
+neither (`links_eq_nil_of_length_le_one`), and movement, covert movement included, is subject to
+both ([sato-ngui-2017]).
 
 ## Main definitions
 
-* `tokenList`, `occurrences`, `unboundTraces`, `IsShared`: occurrences and chains.
-* `terms`: the distinct subtrees, a shared constituent's once.
-* `elidedDomains`, `IsSilenced`, `pfPhon`: pronunciation under [E].
-* `IsVacuous`, `PronunciationEconomy`: the ban on vacuous ellipsis.
-* `projection`, `asterisked`, `pfAsterisks`: the multiple-wh-fronting asterisk.
-* `planarCost`: the object's `DerivationCost`.
+* `Minimalist.tokenList`, `Minimalist.traceList`: the pronounced and the deleted copies.
+* `occurrences`, `traces`, `chain`, `Moves`, `IsShared`: the copies of a token.
+* `projectionAt`, `HasAntecedent`, `orphanTraces`: the phrase a copy stands for, and the
+  deleted copies no pronounced copy c-commands, seen from their own conjunct copies without
+  antecedents.
+* `IsLink`, `links`, `chainTop`: the links of a chain and its scope position.
+* `interior`, `Crosses`, `Escapes`: phases, islands, and the links that leave them.
 
 ## Implementation notes
 
-[citko-gracanin-yuksek-2025] state the parameter as (27), an asterisk on every phase edge with
-several wh-specifiers in a language without multiple wh-fronting, refine it after (29) by which
-phase edges count, and mention in a footnote the alternative statement used here: every such
-edge receives an asterisk, which PF can interpret in a language with multiple wh-fronting. Which
-categories head phases is the analysis's choice (`Phase`), so a parameter is any `Finset Cat`;
-the paper's are `∅`, `{v}` and `{v, C}`.
+* Positions, not terms, individuate copies: two deleted copies of one token are the same term,
+  so the phase interior of the unordered object (`SyntacticObject.phaseInterior`, the head's
+  c-command domain on terms) cannot tell the links of a successive-cyclic chain apart. `interior`
+  is the same c-command domain on positions.
+* The head of a constituent is found down its right spine (`headPos?`), a left leaf that selects
+  nothing being a specifier. It is not yet `SyntacticObject.selHead`, which gives a trace no
+  category and has no specifier case, so that `selHead`, and with it `Phase.IsWellFormed`,
+  `phase` and `phaseEdge`, fail on objects with a moved phrase or a subject.
+* A chain here is the copies an object contains; the replay of a derivation
+  (`Derivation.externalize?`) builds overt chains with bound traces, while covert movement,
+  sharing and copies without antecedents are available to the representation only.
+
+## TODO
+
+* `CCommands t.val a b ↔ a.parent ≤ b ∧ ¬ a ≤ b` on a well-formed object, for `b` not the mother
+  of `a`: c-command as sisterhood-plus-dominance.
+* `q ∈ interior t h ↔ (t : SyntacticObject).Impenetrable ℓ s` for the token `ℓ` at `h`, occurring
+  once, and the subtree `s` at `q ≠ ⊥`: the bridge to the unordered phase API.
+* A successful `Derivation.externalize?` has no deleted copy without an antecedent.
 
 ## References
 
-* [M. Marcolli, N. Chomsky and R. C. Berwick, *Mathematical Structure of Syntactic Merge*
-  (2025)][marcolli-chomsky-berwick-2025]
-* [B. Citko, *On the nature of Merge* (2005)][citko-2005]
-* [C. Wilder, *Right node raising and the LCA* (1999)][wilder-1999]
-* [M. de Vries, *On multidominance and linearization* (2009)][de-vries-2009]
-* [J. Merchant, *The Syntax of Silence* (2001)][merchant-2001]
-* [B. Citko and M. Gračanin-Yuksek, *Economy in PF reduction* (2025)][citko-gracanin-yuksek-2025]
+* [marcolli-chomsky-berwick-2025]
+* [citko-2005]
+* [pesetsky-1987]
+* [huang-1982]
+* [sato-ngui-2017]
+* [barker-pullum-1990]
+* [chomsky-2000]
 -/
 
 @[expose] public section
 
 namespace Minimalist
 
-open RoseTree SyntacticObject Core.Order.Branching
+open RoseTree SyntacticObject Core.Order Core.Order.Branching Syntax
 
-/-! ### Occurrences and chains -/
+/-! ### Copies -/
 
-mutual
-/-- The positions whose label `f` accepts, with their paths, left to right. -/
-def positions (f : Vertex → Option LIToken) : RoseTree Vertex → List (List ℕ × LIToken)
-  | .node a cs => match f a with
-    | some tok => [([], tok)]
-    | none => positionsAux f 0 cs
-/-- `positionsAux f i cs` lists the positions in the forest `cs`, numbering its trees from `i`. -/
-def positionsAux (f : Vertex → Option LIToken) :
-    ℕ → List (RoseTree Vertex) → List (List ℕ × LIToken)
-  | _, [] => []
-  | i, c :: cs => (positions f c).map (fun x ↦ (i :: x.1, x.2)) ++ positionsAux f (i + 1) cs
-end
+/-- The positions of `t` whose label `f` accepts, with the values, left to right. -/
+def positions {β : Type*} (f : Vertex → Option β) (t : RoseTree Vertex) : List (TreePath × β) :=
+  (vertices t).filterMap fun p ↦ ((subtreeAt t p).bind (f ·.value)).map (⟨p⟩, ·)
 
-/-- The tokens with their paths, left to right. -/
-def tokenList : RoseTree Vertex → List (List ℕ × LIToken) := positions (Sum.elim some fun _ ↦ none)
+theorem mem_positions_iff {β : Type*} {f : Vertex → Option β} {t : RoseTree Vertex}
+    {p : TreePath} {b : β} :
+    (p, b) ∈ positions f t ↔ ∃ s, subtreeAt t p.toList = some s ∧ f s.value = some b := by
+  simp only [positions, List.mem_filterMap]
+  constructor
+  · rintro ⟨q, -, h⟩
+    obtain ⟨b', hb', hpb⟩ := Option.map_eq_some_iff.mp h
+    obtain ⟨s, hs, hf⟩ := Option.bind_eq_some_iff.mp hb'
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj hpb
+    exact ⟨s, hs, hf⟩
+  · rintro ⟨s, hs, hf⟩
+    exact ⟨p.toList, mem_vertices.mpr (by rw [hs]; rfl),
+      Option.map_eq_some_iff.mpr ⟨b, Option.bind_eq_some_iff.mpr ⟨s, hs, hf⟩, by cases p; rfl⟩⟩
 
-/-- The traces with their paths, left to right. -/
-def traceList : RoseTree Vertex → List (List ℕ × LIToken) := positions (Sum.elim (fun _ ↦ none) id)
+/-- The pronounced copies, left to right. -/
+def tokenList : RoseTree Vertex → List (TreePath × LIToken) :=
+  positions (Sum.elim some fun _ ↦ none)
 
-variable (t : PlanarSyntacticObject)
+/-- The deleted copies, left to right. -/
+def traceList : RoseTree Vertex → List (TreePath × LIToken) :=
+  positions (Sum.elim (fun _ ↦ none) id)
 
-/-- The occurrences of `tok`. -/
-def occurrences (tok : LIToken) : List (List ℕ) :=
+variable (t : PlanarSyntacticObject) (tok : LIToken)
+
+/-- The positions of the pronounced copies of `tok`. -/
+def occurrences : List TreePath :=
   (tokenList t.val).filterMap fun x ↦ if x.2 = tok then some x.1 else none
 
-/-- The tokens of `t`, each once. -/
-def tokens : Finset LIToken := ((tokenList t.val).map (·.2)).toFinset
+/-- The positions of the deleted copies of `tok`. -/
+def traces : List TreePath :=
+  (traceList t.val).filterMap fun x ↦ if x.2 = tok then some x.1 else none
 
-/-- The terms of `t` are its subtrees, a shared constituent counted once. -/
-def terms : Finset (RoseTree Vertex) := ((vertices t.val).filterMap (subtreeAt t.val)).toFinset
+/-- The chain of `tok`: the positions of its copies, pronounced or deleted, left to right. -/
+def chain : List TreePath :=
+  (positions (Sum.elim some id) t.val).filterMap fun x ↦ if x.2 = tok then some x.1 else none
 
-/-- `tok` is shared, dominated by two mothers, when it occurs twice. -/
-def IsShared (tok : LIToken) : Prop := 2 ≤ (occurrences t tok).length
+/-- `tok` moves when it has a deleted copy. -/
+def Moves : Prop := traces t tok ≠ []
 
-instance (tok : LIToken) : Decidable (IsShared t tok) := inferInstanceAs (Decidable (_ ≤ _))
+instance : Decidable (Moves t tok) := inferInstanceAs (Decidable (_ ≠ _))
 
-/-- `p` c-commands `q` when the mother of `p` dominates `q` and `p` does not. -/
-def CCommands (p q : List ℕ) : Prop := p.dropLast <+: q ∧ ¬ p <+: q
+/-- `tok` is shared, dominated by two mothers, when it has two pronounced copies. -/
+def IsShared : Prop := 2 ≤ (occurrences t tok).length
 
-instance (p q : List ℕ) : Decidable (CCommands p q) := inferInstanceAs (Decidable (_ ∧ _))
+instance : Decidable (IsShared t tok) := inferInstanceAs (Decidable (_ ≤ _))
 
-/-- The trace `x` is bound when an occurrence of its token c-commands it. -/
-def IsBound (x : List ℕ × LIToken) : Prop := ∃ q ∈ occurrences t x.2, CCommands q x.1
+/-! ### The phrase a copy stands for -/
 
-instance (x : List ℕ × LIToken) : Decidable (IsBound t x) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-/-- The unbound traces are, seen from their positions, copies without their antecedents. -/
-def unboundTraces : List (List ℕ × LIToken) := (traceList t.val).filter (¬ IsBound t ·)
-
-/-- `tok` is pronounced at its last occurrence. -/
-def pronouncedAt (tok : LIToken) : Option (List ℕ) := (occurrences t tok).getLast?
-
-/-! ### Ellipsis -/
-
-/-- The complement of the head at `p` is its sister. -/
-def complementPath (p : List ℕ) : List ℕ := p.dropLast ++ [1 - p.getLastD 0]
-
-/-- The [E] heads. -/
-def eHeads : List (List ℕ) :=
-  (tokenList t.val).filterMap fun x ↦ if x.2.item.outerEllipsis then some x.1 else none
-
-/-- The elided domains are the distinct complements of the [E] heads, in the order of the heads,
-so a shared head over one shared complement applies once and over two complements twice. -/
-def elidedDomains : List (List ℕ) :=
-  ((eHeads t).map complementPath).foldl
-    (fun acc p ↦
-      if acc.any (fun q ↦ subtreeAt t.val q = subtreeAt t.val p) then acc else acc ++ [p]) []
-
-/-- `tok` is silenced when one of its occurrences lies in an elided domain. -/
-def IsSilenced (tok : LIToken) : Prop :=
-  ∃ K ∈ elidedDomains t, ∃ p ∈ occurrences t tok, K <+: p
-
-instance (tok : LIToken) : Decidable (IsSilenced t tok) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-/-- The pronounced tokens, left to right, each at its last occurrence unless silenced. -/
-def pfYield : List LIToken :=
-  (tokenList t.val).filterMap fun x ↦
-    if pronouncedAt t x.2 = some x.1 ∧ ¬ IsSilenced t x.2 then some x.2 else none
-
-/-- The pronounced forms, left to right. -/
-def pfPhon : List String := (pfYield t).filterMap LIToken.phonForm?
-
-/-- The pronounceable tokens the application at the domain `K` silences. -/
-def silencedBy (K : List ℕ) : Finset LIToken :=
-  (tokens t).filter fun s ↦ s.phonForm?.isSome ∧ (occurrences t s).any (decide <| K <+: ·)
-
-/-- The application at `K` is vacuous when the earlier applications already silenced every token
-it silences. -/
-def IsVacuous (K : List ℕ) : Prop :=
-  silencedBy t K ⊆ ((elidedDomains t).takeWhile (· ≠ K)).toFinset.biUnion (silencedBy t)
-
-instance (K : List ℕ) : Decidable (IsVacuous t K) := by unfold IsVacuous; infer_instance
-
-/-- **Pronunciation Economy** ([citko-gracanin-yuksek-2025] (39)) says that no application of
-ellipsis is vacuous. -/
-def PronunciationEconomy : Prop := ∀ K ∈ elidedDomains t, ¬ IsVacuous t K
-
-instance : Decidable (PronunciationEconomy t) := inferInstanceAs (Decidable (∀ _ ∈ _, _))
-
-/-! ### Phase edges and the multiple-wh-fronting asterisk -/
-
-/-- `projection t` finds the specifiers and head of the projection at the root of `t`. Going down
-the right spine, the specifiers are the left daughters above the head, which is the first
-selecting item met; the result is `none` when the spine ends first. -/
-def projection : RoseTree Vertex → Option (List (RoseTree Vertex) × LIToken)
+/-- The position of the head of a constituent, relative to its root: a token or trace leaf is its
+own head; at a binary node a left leaf with nothing to select is a specifier and the head lies in
+the right daughter, a left leaf that selects is the head, and otherwise the head lies in the right
+daughter. -/
+def headPos? : RoseTree Vertex → Option (List ℕ)
+  | .node (.inl _) _ | .node (.inr (some _)) _ => some []
   | .node (.inr none) [.node (.inl tok) [], r] =>
-      if tok.item.outerSel = [] then
-        (projection r).map fun x ↦ (.node (.inl tok) [] :: x.1, x.2)
-      else some ([], tok)
-  | .node (.inr none) [l, r] => (projection r).map fun x ↦ (l :: x.1, x.2)
-  | _ => none
-
-/-- The head of a constituent is the token or trace at a leaf, else the first selecting item down
-the right spine. -/
-def headToken? : RoseTree Vertex → Option LIToken
-  | .node (.inl tok) _ | .node (.inr (some tok)) _ => some tok
-  | .node (.inr none) [.node (.inl tok) [], r] =>
-      if tok.item.outerSel = [] then headToken? r else some tok
-  | .node (.inr none) [_, r] => headToken? r
+      if tok.item.outerSel = [] then (headPos? r).map (1 :: ·) else some [0]
+  | .node (.inr none) [_, r] => (headPos? r).map (1 :: ·)
   | .node (.inr none) _ => none
 
-/-- A constituent is a wh-specifier when its head is a wh-token or its trace. -/
-def IsWhSpecifier (s : RoseTree Vertex) : Prop :=
-  ∃ tok ∈ (headToken? s).toList, tok.item.outerWh = true
+/-- The head of a constituent: the token its head position carries. -/
+def headToken? (s : RoseTree Vertex) : Option LIToken :=
+  (headPos? s).bind fun q ↦ (subtreeAt s q).bind (Sum.elim some id ·.value)
 
-instance (s : RoseTree Vertex) : Decidable (IsWhSpecifier s) :=
+/-- The maximal projection of the copy at `p`: the highest position above it whose head is `p`
+itself, `p` when there is none. -/
+def projectionAt (p : TreePath) : TreePath :=
+  ((p.toList.inits.find? fun r ↦
+      ((subtreeAt t.val r).bind headPos?).map (r ++ ·) = some p.toList).map TreePath.mk).getD p
+
+theorem projectionAt_le (p : TreePath) : projectionAt t p ≤ p := by
+  unfold projectionAt
+  cases h : p.toList.inits.find? _ with
+  | none => exact le_rfl
+  | some r => exact TreePath.le_def.2 (List.mem_inits _ _ |>.1 (List.mem_of_find?_eq_some h))
+
+/-- A deleted copy has an antecedent when the projection of a pronounced copy of its token
+c-commands it. -/
+def HasAntecedent (x : TreePath × LIToken) : Prop :=
+  ∃ p ∈ occurrences t x.2, CCommands t.val (projectionAt t p) x.1
+
+instance (x : TreePath × LIToken) : Decidable (HasAntecedent t x) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- The heads of the projections whose edges host several wh-specifiers, each of which receives an
-asterisk ([citko-gracanin-yuksek-2025] (27)). -/
-def asterisked : List LIToken :=
-  (vertices t.val).filterMap fun p ↦ ((subtreeAt t.val p).bind projection).bind fun x ↦
-    if 1 < x.1.countP (decide <| IsWhSpecifier ·) then some x.2 else none
+/-- The deleted copies without antecedents. -/
+def orphanTraces : List (TreePath × LIToken) := (traceList t.val).filter (¬ HasAntecedent t ·)
 
-/-- The categories of the asterisked projections whose heads reach PF unsilenced. The object
-converges at PF under a multiple-wh-fronting parameter, the categories of the phases whose
-asterisks PF cannot interpret, iff the parameter is disjoint from them. -/
-def pfAsterisks : Finset Cat :=
-  (((asterisked t).filter (¬ IsSilenced t ·)).map (·.item.outerCat)).toFinset
+/-! ### Links -/
 
-/-! ### Cost -/
+/-- The copy at `p` is linked to the copy at `q` below it when its projection c-commands `q` and
+the projection of no other copy of `tok` lies between them. -/
+def IsLink (p q : TreePath) : Prop :=
+  CCommands t.val (projectionAt t p) q ∧
+    ∀ r ∈ chain t tok, CCommands t.val (projectionAt t p) (projectionAt t r) →
+      ¬ CCommands t.val (projectionAt t r) q
 
-/-- The cost of the object counts its tokens as the lexical items drawn, its internal terms as the
-Merges, and its elided domains as the applications of ellipsis. -/
-def planarCost : DerivationCost
-  | .lexicalItems => (tokens t).card
-  | .mergeOps => ((terms t).filter fun s ↦ s.arity ≠ 0).card
-  | .agreeOps => 0
-  | .ellipsisOps => (elidedDomains t).length
+instance (p q : TreePath) : Decidable (IsLink t tok p q) := inferInstanceAs (Decidable (_ ∧ _))
+
+/-- The links of the chain of `tok`: each copy with the projection of the copy linked to it. -/
+def links : List (TreePath × TreePath) :=
+  (chain t tok).flatMap fun q ↦
+    ((chain t tok).filter fun p ↦ IsLink t tok p q).map fun p ↦ (projectionAt t p, q)
+
+/-- The top of the chain of `tok`: the copies no copy's projection c-commands, where it takes
+scope. -/
+def chainTop : List TreePath :=
+  (chain t tok).filter fun q ↦ (chain t tok).all fun p ↦ ¬ CCommands t.val (projectionAt t p) q
+
+theorem not_isLink_self (p : TreePath) : ¬ IsLink t tok p p :=
+  fun h ↦ h.1.2.1 (projectionAt_le t p)
+
+/-- A token with at most one copy has no link. -/
+theorem links_eq_nil_of_length_le_one (h : (chain t tok).length ≤ 1) : links t tok = [] := by
+  simp only [links, List.flatMap_eq_nil_iff, List.map_eq_nil_iff, List.filter_eq_nil_iff,
+    decide_eq_true_eq]
+  intro q hq p hp
+  obtain rfl : p = q := by
+    rcases hc : chain t tok with _ | ⟨a, _ | ⟨b, l⟩⟩
+    · simp [hc] at hp
+    · simp only [hc, List.mem_singleton] at hp hq
+      rw [hp, hq]
+    · simp [hc] at h
+  exact not_isLink_self t tok p
+
+/-! ### Locality -/
+
+/-- The interior of the phase headed at `h`: the positions the head c-commands. -/
+def interior (h : TreePath) : Set TreePath := {q | CCommands t.val h q}
+
+instance (h q : TreePath) : Decidable (q ∈ interior t h) :=
+  inferInstanceAs (Decidable (CCommands _ _ _))
+
+/-- A link of the chain of `tok` leaves the phase headed at `h` when it runs from the interior to
+a position outside the head's maximal projection; the Phase Impenetrability Condition forbids it,
+and a link to the edge does not leave. -/
+def Crosses (h : TreePath) : Prop :=
+  ∃ x ∈ links t tok, x.2 ∈ interior t h ∧ ¬ projectionAt t h ≤ x.1
+
+instance (h : TreePath) : Decidable (Crosses t tok h) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+/-- A link of the chain of `tok` leaves the domain at `D` when it runs from inside `D` to outside,
+as movement out of an island does. -/
+def Escapes (D : TreePath) : Prop := ∃ x ∈ links t tok, D ≤ x.2 ∧ ¬ D ≤ x.1
+
+instance (D : TreePath) : Decidable (Escapes t tok D) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+theorem not_crosses_of_length_le_one (h : (chain t tok).length ≤ 1) (hd : TreePath) :
+    ¬ Crosses t tok hd := by
+  simp [Crosses, links_eq_nil_of_length_le_one t tok h]
+
+theorem not_escapes_of_length_le_one (h : (chain t tok).length ≤ 1) (D : TreePath) :
+    ¬ Escapes t tok D := by
+  simp [Escapes, links_eq_nil_of_length_le_one t tok h]
 
 end Minimalist

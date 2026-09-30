@@ -12,7 +12,7 @@ Langacker, when neither dominates the other and the S node most immediately domi
 dominates the second; the received domain of a node consists of the nodes it precedes and
 commands, `PrecedesAndCommands`, and two noun phrases can corefer just in case, if either is in
 the domain of the other, the one in the domain is a pronoun, `Permits`. The dissertation's
-domain is instead the nodes a node c-commands (36), `Syntax.Tree.CCommands`: neither dominates
+domain is instead the nodes a node c-commands (36), `Syntax.CCommands`: neither dominates
 the other and the first branching node dominating the first dominates the second, so a domain is
 a constituent and linear order plays no part. Both domains are computed for the abstract tree
 (37), and the restriction under each is checked against the examples, `permits_rows`: the Rosa

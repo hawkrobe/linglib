@@ -411,7 +411,7 @@ properly dominating `a` dominates `b` and `b` does not c-command `a`. Binding is
 a domain. -/
 def configuration (t : XTree) : Binding.Configuration TreePath where
   commands a b := (a, b) ∈ Syntax.Tree.maxCommand t {n | n.2 = .max} ∧
-    ¬ Syntax.Tree.CCommands t b a
+    ¬ Syntax.CCommands t b a
   domain _ := Set.univ
 
 instance (t : XTree) : DecidableRel (configuration t).commands := fun a b ↦
@@ -446,7 +446,7 @@ theorem canBind_dobj_iobj :
 /-- With the indirect object in v's complement neither object c-commands the other. -/
 theorem highXP_not_cCommands :
     ∃ a ∈ (leafPaths highXP).lookup .dobj, ∃ b ∈ (leafPaths highXP).lookup .iobj,
-      ¬ Syntax.Tree.CCommands highXP a b ∧ ¬ Syntax.Tree.CCommands highXP b a := by
+      ¬ Syntax.CCommands highXP a b ∧ ¬ Syntax.CCommands highXP b a := by
   decide
 
 /-- **Word order and binding.** When the indirect object precedes the direct object, the direct
