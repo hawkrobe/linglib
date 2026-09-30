@@ -2,13 +2,42 @@
   {
     "id": "grano2024_1a_sbjv",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(1a)"
+      "bibkey": "villalta-2008",
+      "paperLabel": "p. 470"
     },
     "language": "stan1288",
     "primaryText": "Victoria quiere que Marcela venga al picnic.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Victoria",
+        "Victoria"
+      ],
+      [
+        "quiere",
+        "want"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "Marcela",
+        "Marcela"
+      ],
+      [
+        "venga",
+        "come.SBJV"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "picnic",
+        "picnic"
+      ]
+    ],
     "translation": "Victoria wants Marcela to come to the picnic.",
     "context": "",
     "judgment": "acceptable",
@@ -24,18 +53,52 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "The source adapts the example.",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(1a)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_1a_ind",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(1a)"
+      "bibkey": "villalta-2008",
+      "paperLabel": "p. 470"
     },
     "language": "stan1288",
     "primaryText": "Victoria quiere que Marcela viene al picnic.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Victoria",
+        "Victoria"
+      ],
+      [
+        "quiere",
+        "want"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "Marcela",
+        "Marcela"
+      ],
+      [
+        "viene",
+        "come.IND"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "picnic",
+        "picnic"
+      ]
+    ],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -51,18 +114,44 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "The source adapts the example.",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(1a)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_1b",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(1b)"
+      "bibkey": "villalta-2008",
+      "paperLabel": "p. 470"
     },
     "language": "stan1288",
     "primaryText": "Victoria quiere venir al picnic.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Victoria",
+        "Victoria"
+      ],
+      [
+        "quiere",
+        "want"
+      ],
+      [
+        "venir",
+        "come.INF"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "picnic",
+        "picnic"
+      ]
+    ],
     "translation": "Victoria wants to come to the picnic.",
     "context": "",
     "judgment": "acceptable",
@@ -78,7 +167,12 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "The source adapts the example.",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(1b)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_2a_sbjv",
@@ -89,7 +183,32 @@
     "language": "stan1290",
     "primaryText": "Alice veut que Blanche soit végétarienne.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Alice",
+        "Alice"
+      ],
+      [
+        "veut",
+        "want"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "Blanche",
+        "Blanche"
+      ],
+      [
+        "soit",
+        "be.SBJV"
+      ],
+      [
+        "végétarienne",
+        "vegetarian"
+      ]
+    ],
     "translation": "Alice wants Blanche to be vegetarian.",
     "context": "",
     "judgment": "acceptable",
@@ -105,7 +224,8 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (French, adapted from Silk 2018, p. 126).",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_2a_ind",
@@ -116,7 +236,32 @@
     "language": "stan1290",
     "primaryText": "Alice veut que Blanche est végétarienne.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Alice",
+        "Alice"
+      ],
+      [
+        "veut",
+        "want"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "Blanche",
+        "Blanche"
+      ],
+      [
+        "est",
+        "be.IND"
+      ],
+      [
+        "végétarienne",
+        "vegetarian"
+      ]
+    ],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -132,7 +277,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (French, adapted from Silk 2018, p. 126).",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_2b",
@@ -143,7 +289,24 @@
     "language": "stan1290",
     "primaryText": "Alice veut être végétarienne.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Alice",
+        "Alice"
+      ],
+      [
+        "veut",
+        "want"
+      ],
+      [
+        "être",
+        "be.INF"
+      ],
+      [
+        "végétarienne",
+        "vegetarian"
+      ]
+    ],
     "translation": "Alice wants to be vegetarian.",
     "context": "",
     "judgment": "acceptable",
@@ -159,18 +322,48 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (French, adapted from Silk 2018, p. 126).",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_3a_sbjv",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(3a)"
+      "bibkey": "portner-rubinstein-2020",
+      "paperLabel": "p. 380"
     },
     "language": "port1283",
     "primaryText": "João quer que a Maria esteja feliz.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "João",
+        "João"
+      ],
+      [
+        "quer",
+        "want"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "a",
+        "the"
+      ],
+      [
+        "Maria",
+        "Maria"
+      ],
+      [
+        "esteja",
+        "be.SBJV"
+      ],
+      [
+        "feliz",
+        "happy"
+      ]
+    ],
     "translation": "João wants Maria to be happy.",
     "context": "",
     "judgment": "acceptable",
@@ -186,18 +379,52 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "The source adapts the example.",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(3a)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_3a_ind",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(3a)"
+      "bibkey": "portner-rubinstein-2020",
+      "paperLabel": "p. 380"
     },
     "language": "port1283",
     "primaryText": "João quer que a Maria está feliz.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "João",
+        "João"
+      ],
+      [
+        "quer",
+        "want"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "a",
+        "the"
+      ],
+      [
+        "Maria",
+        "Maria"
+      ],
+      [
+        "está",
+        "be.IND"
+      ],
+      [
+        "feliz",
+        "happy"
+      ]
+    ],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -213,18 +440,40 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "The source adapts the example.",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(3a)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_3b",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(3b)"
+      "bibkey": "portner-rubinstein-2020",
+      "paperLabel": "p. 380"
     },
     "language": "port1283",
     "primaryText": "João quer estar feliz.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "João",
+        "João"
+      ],
+      [
+        "quer",
+        "want"
+      ],
+      [
+        "estar",
+        "be.INF"
+      ],
+      [
+        "feliz",
+        "happy"
+      ]
+    ],
     "translation": "João wants to be happy.",
     "context": "",
     "judgment": "acceptable",
@@ -240,18 +489,48 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "The source adapts the example.",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(3b)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_4a_sbjv",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(4a)"
+      "bibkey": "portner-rubinstein-2020",
+      "paperLabel": "p. 382"
     },
     "language": "ital1282",
     "primaryText": "Gianni vuole che Maria sia contenta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Gianni",
+        "Gianni"
+      ],
+      [
+        "vuole",
+        "want"
+      ],
+      [
+        "che",
+        "that"
+      ],
+      [
+        "Maria",
+        "Maria"
+      ],
+      [
+        "sia",
+        "be.SBJV"
+      ],
+      [
+        "contenta",
+        "happy"
+      ]
+    ],
     "translation": "Gianni wants Maria to be happy.",
     "context": "",
     "judgment": "acceptable",
@@ -267,19 +546,49 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "The source adapts the example.",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(4a)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_4a_ind",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(4a)"
+      "bibkey": "portner-rubinstein-2020",
+      "paperLabel": "p. 382"
     },
     "language": "ital1282",
     "primaryText": "Gianni vuole che Maria è contenta.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
+    "glossedTokens": [
+      [
+        "Gianni",
+        "Gianni"
+      ],
+      [
+        "vuole",
+        "want"
+      ],
+      [
+        "che",
+        "that"
+      ],
+      [
+        "Maria",
+        "Maria"
+      ],
+      [
+        "è",
+        "be.IND"
+      ],
+      [
+        "contenta",
+        "happy"
+      ]
+    ],
+    "translation": "Gianni wants Maria to be happy.",
     "context": "",
     "judgment": "marginal",
     "alternatives": [],
@@ -294,18 +603,40 @@
         "indicative"
       ]
     ],
-    "comment": "Accepted by some speakers only."
+    "comment": "Accepted by some speakers only. The source adapts the example. The source marks the indicative %.",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(4a)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_4b",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(4b)"
+      "bibkey": "portner-rubinstein-2020",
+      "paperLabel": "p. 382"
     },
     "language": "ital1282",
     "primaryText": "Gianni vuole essere contento.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Gianni",
+        "Gianni"
+      ],
+      [
+        "vuole",
+        "want"
+      ],
+      [
+        "essere",
+        "be.INF"
+      ],
+      [
+        "contento",
+        "happy"
+      ]
+    ],
     "translation": "Gianni wants to be happy.",
     "context": "",
     "judgment": "acceptable",
@@ -321,18 +652,44 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "The source adapts the example.",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(4b)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_5_sbjv",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(5)"
+      "bibkey": "giannakidou-mari-2021",
+      "paperLabel": "p. 142"
     },
     "language": "mode1248",
     "primaryText": "Thelo na kerdisi o Janis.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Thelo",
+        "want"
+      ],
+      [
+        "na",
+        "that.SBJV"
+      ],
+      [
+        "kerdisi",
+        "win"
+      ],
+      [
+        "o",
+        "the"
+      ],
+      [
+        "Janis",
+        "Janis"
+      ]
+    ],
     "translation": "I want Janis to win.",
     "context": "",
     "judgment": "acceptable",
@@ -348,18 +705,44 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(5)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_5_ind",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(5)"
+      "bibkey": "giannakidou-mari-2021",
+      "paperLabel": "p. 142"
     },
     "language": "mode1248",
     "primaryText": "Thelo oti kerdisi o Janis.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Thelo",
+        "want"
+      ],
+      [
+        "oti",
+        "that.IND"
+      ],
+      [
+        "kerdisi",
+        "win"
+      ],
+      [
+        "o",
+        "the"
+      ],
+      [
+        "Janis",
+        "Janis"
+      ]
+    ],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -375,7 +758,12 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(5)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_6a",
@@ -386,7 +774,32 @@
     "language": "roma1327",
     "primaryText": "Ion vrea să meargă în parc.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ion",
+        "Ion"
+      ],
+      [
+        "vrea",
+        "want"
+      ],
+      [
+        "să",
+        "that.SBJV"
+      ],
+      [
+        "meargă",
+        "go.SBJV"
+      ],
+      [
+        "în",
+        "in"
+      ],
+      [
+        "parc",
+        "park"
+      ]
+    ],
     "translation": "Ion wants to go to the park.",
     "context": "",
     "judgment": "acceptable",
@@ -402,7 +815,8 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_6b",
@@ -413,8 +827,37 @@
     "language": "roma1327",
     "primaryText": "Ion vrea că va merge în parc.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
+    "glossedTokens": [
+      [
+        "Ion",
+        "Ion"
+      ],
+      [
+        "vrea",
+        "want"
+      ],
+      [
+        "că",
+        "that.IND"
+      ],
+      [
+        "va",
+        "will.IND"
+      ],
+      [
+        "merge",
+        "go"
+      ],
+      [
+        "în",
+        "in"
+      ],
+      [
+        "parc",
+        "park"
+      ]
+    ],
+    "translation": "Ion wants to go to the park.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -429,7 +872,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "The source gives the translation as intended.",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_6c",
@@ -440,8 +884,33 @@
     "language": "roma1327",
     "primaryText": "Ion vrea că merge în parc.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
+    "glossedTokens": [
+      [
+        "Ion",
+        "Ion"
+      ],
+      [
+        "vrea",
+        "wants"
+      ],
+      [
+        "că",
+        "that.IND"
+      ],
+      [
+        "merge",
+        "go.IND"
+      ],
+      [
+        "în",
+        "in"
+      ],
+      [
+        "parc",
+        "park"
+      ]
+    ],
+    "translation": "Ion wants to go to the park.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -456,7 +925,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "The source gives the translation as intended.",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_7a",
@@ -483,7 +953,8 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_7b",
@@ -510,7 +981,8 @@
         "forTo"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_8a",
@@ -537,7 +1009,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_8b",
@@ -564,18 +1037,44 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_9_sbjv",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(9)"
+      "bibkey": "villalta-2008",
+      "paperLabel": "p. 511"
     },
     "language": "stan1288",
     "primaryText": "Espero que mi hermano viniera ayer.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Espero",
+        "hope"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "mi",
+        "my"
+      ],
+      [
+        "hermano",
+        "brother"
+      ],
+      [
+        "viniera",
+        "came.SBJV"
+      ],
+      [
+        "ayer",
+        "yesterday"
+      ]
+    ],
     "translation": "I hope that my brother came yesterday.",
     "context": "",
     "judgment": "acceptable",
@@ -591,18 +1090,48 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "The source adapts the example.",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(9)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_9_ind",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(9)"
+      "bibkey": "villalta-2008",
+      "paperLabel": "p. 511"
     },
     "language": "stan1288",
     "primaryText": "Espero que mi hermano vino ayer.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Espero",
+        "hope"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "mi",
+        "my"
+      ],
+      [
+        "hermano",
+        "brother"
+      ],
+      [
+        "vino",
+        "came.IND"
+      ],
+      [
+        "ayer",
+        "yesterday"
+      ]
+    ],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -618,7 +1147,12 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "The source adapts the example.",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(9)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_10_sbjv",
@@ -629,7 +1163,32 @@
     "language": "stan1290",
     "primaryText": "Alice espère que Blanche soit végétarienne.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Alice",
+        "Alice"
+      ],
+      [
+        "espère",
+        "hope"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "Blanche",
+        "Blanche"
+      ],
+      [
+        "soit",
+        "be.SBJV"
+      ],
+      [
+        "végétarienne",
+        "vegetarian"
+      ]
+    ],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -645,7 +1204,8 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (French, from Silk 2018, p. 127). The source prints 'espére'.",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_10_ind",
@@ -656,7 +1216,32 @@
     "language": "stan1290",
     "primaryText": "Alice espère que Blanche est végétarienne.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Alice",
+        "Alice"
+      ],
+      [
+        "espère",
+        "hope"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "Blanche",
+        "Blanche"
+      ],
+      [
+        "est",
+        "be.IND"
+      ],
+      [
+        "végétarienne",
+        "vegetarian"
+      ]
+    ],
     "translation": "Alice hopes that Blanche is vegetarian.",
     "context": "",
     "judgment": "acceptable",
@@ -672,18 +1257,48 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (French, from Silk 2018, p. 127). The source prints 'espére'.",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_11_sbjv",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(11)"
+      "bibkey": "portner-rubinstein-2020",
+      "paperLabel": "p. 381"
     },
     "language": "port1283",
     "primaryText": "João espera que a Maria esteja feliz.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "João",
+        "João"
+      ],
+      [
+        "espera",
+        "hope"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "a",
+        "the"
+      ],
+      [
+        "Maria",
+        "Maria"
+      ],
+      [
+        "esteja",
+        "be.SBJV"
+      ],
+      [
+        "feliz",
+        "happy"
+      ]
+    ],
     "translation": "João hopes that Maria is happy.",
     "context": "",
     "judgment": "acceptable",
@@ -699,18 +1314,52 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(11)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_11_ind",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(11)"
+      "bibkey": "portner-rubinstein-2020",
+      "paperLabel": "p. 381"
     },
     "language": "port1283",
     "primaryText": "João espera que a Maria está feliz.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "João",
+        "João"
+      ],
+      [
+        "espera",
+        "hope"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "a",
+        "the"
+      ],
+      [
+        "Maria",
+        "Maria"
+      ],
+      [
+        "está",
+        "be.IND"
+      ],
+      [
+        "feliz",
+        "happy"
+      ]
+    ],
     "translation": "João hopes that Maria is happy.",
     "context": "",
     "judgment": "acceptable",
@@ -726,18 +1375,48 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(11)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_12_sbjv",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(12)"
+      "bibkey": "portner-rubinstein-2020",
+      "paperLabel": "p. 382"
     },
     "language": "ital1282",
     "primaryText": "Gianni spera che Maria sia contenta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Gianni",
+        "Gianni"
+      ],
+      [
+        "spera",
+        "hope"
+      ],
+      [
+        "che",
+        "that"
+      ],
+      [
+        "Maria",
+        "Maria"
+      ],
+      [
+        "sia",
+        "be.SBJV"
+      ],
+      [
+        "contenta",
+        "happy"
+      ]
+    ],
     "translation": "Gianni hopes that Maria is happy.",
     "context": "",
     "judgment": "acceptable",
@@ -753,19 +1432,49 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(12)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_12_ind",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(12)"
+      "bibkey": "portner-rubinstein-2020",
+      "paperLabel": "p. 382"
     },
     "language": "ital1282",
     "primaryText": "Gianni spera che Maria è contenta.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
+    "glossedTokens": [
+      [
+        "Gianni",
+        "Gianni"
+      ],
+      [
+        "spera",
+        "hope"
+      ],
+      [
+        "che",
+        "that"
+      ],
+      [
+        "Maria",
+        "Maria"
+      ],
+      [
+        "è",
+        "be.IND"
+      ],
+      [
+        "contenta",
+        "happy"
+      ]
+    ],
+    "translation": "Gianni hopes that Maria is happy.",
     "context": "",
     "judgment": "marginal",
     "alternatives": [],
@@ -780,18 +1489,44 @@
         "indicative"
       ]
     ],
-    "comment": "Accepted by some speakers only."
+    "comment": "Accepted by some speakers only. The source marks the indicative %.",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(12)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_13_sbjv",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(13)"
+      "bibkey": "giannakidou-mari-2021",
+      "paperLabel": "p. 32"
     },
     "language": "mode1248",
     "primaryText": "Elpizo na kerdise o Janis.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Elpizo",
+        "hope"
+      ],
+      [
+        "na",
+        "that.SBJV"
+      ],
+      [
+        "kerdise",
+        "won"
+      ],
+      [
+        "o",
+        "the"
+      ],
+      [
+        "Janis",
+        "Janis"
+      ]
+    ],
     "translation": "I hope for Janis to have won.",
     "context": "",
     "judgment": "acceptable",
@@ -807,18 +1542,44 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(13)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_13_ind",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(13)"
+      "bibkey": "giannakidou-mari-2021",
+      "paperLabel": "p. 32"
     },
     "language": "mode1248",
     "primaryText": "Elpizo oti kerdise o Janis.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Elpizo",
+        "hope"
+      ],
+      [
+        "oti",
+        "that.IND"
+      ],
+      [
+        "kerdise",
+        "won"
+      ],
+      [
+        "o",
+        "the"
+      ],
+      [
+        "Janis",
+        "Janis"
+      ]
+    ],
     "translation": "I hope that Janis won.",
     "context": "",
     "judgment": "acceptable",
@@ -834,7 +1595,12 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(13)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_14a",
@@ -845,7 +1611,32 @@
     "language": "roma1327",
     "primaryText": "Ion speră să meargă în parc.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ion",
+        "Ion"
+      ],
+      [
+        "speră",
+        "hope"
+      ],
+      [
+        "să",
+        "that.SBJV"
+      ],
+      [
+        "meargă",
+        "go.SBJV"
+      ],
+      [
+        "în",
+        "in"
+      ],
+      [
+        "parc",
+        "park"
+      ]
+    ],
     "translation": "Ion hopes to go to the park.",
     "context": "",
     "judgment": "acceptable",
@@ -861,7 +1652,8 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_14b",
@@ -872,7 +1664,36 @@
     "language": "roma1327",
     "primaryText": "Ion speră că va merge în parc.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ion",
+        "Ion"
+      ],
+      [
+        "speră",
+        "hope"
+      ],
+      [
+        "că",
+        "that.IND"
+      ],
+      [
+        "va",
+        "will.IND"
+      ],
+      [
+        "merge",
+        "go"
+      ],
+      [
+        "în",
+        "in"
+      ],
+      [
+        "parc",
+        "park"
+      ]
+    ],
     "translation": "Ion hopes that he will go to the park.",
     "context": "",
     "judgment": "acceptable",
@@ -888,7 +1709,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_15a",
@@ -915,7 +1737,8 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_15b",
@@ -942,7 +1765,8 @@
         "forTo"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_16",
@@ -969,7 +1793,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_17",
@@ -980,7 +1805,40 @@
     "language": "stan1288",
     "primaryText": "Tengo la intención de ir al parque hoy.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Tengo",
+        "have"
+      ],
+      [
+        "la",
+        "the"
+      ],
+      [
+        "intención",
+        "intention"
+      ],
+      [
+        "de",
+        "of"
+      ],
+      [
+        "ir",
+        "go.INF"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "parque",
+        "park"
+      ],
+      [
+        "hoy",
+        "today"
+      ]
+    ],
     "translation": "I intend to go to the park today.",
     "context": "",
     "judgment": "acceptable",
@@ -996,7 +1854,8 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_18",
@@ -1007,7 +1866,32 @@
     "language": "stan1290",
     "primaryText": "J'ai l'intention d'aller au parc aujourd'hui.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "J'ai",
+        "I have"
+      ],
+      [
+        "l'intention",
+        "the intention"
+      ],
+      [
+        "d'aller",
+        "of go.INF"
+      ],
+      [
+        "au",
+        "to the"
+      ],
+      [
+        "parc",
+        "park"
+      ],
+      [
+        "aujourd'hui",
+        "today"
+      ]
+    ],
     "translation": "I intend to go to the park today.",
     "context": "",
     "judgment": "acceptable",
@@ -1023,7 +1907,8 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_19",
@@ -1034,7 +1919,28 @@
     "language": "port1283",
     "primaryText": "Pretendo ir ao parque hoje.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Pretendo",
+        "intend"
+      ],
+      [
+        "ir",
+        "go.INF"
+      ],
+      [
+        "ao",
+        "to the"
+      ],
+      [
+        "parque",
+        "park"
+      ],
+      [
+        "hoje",
+        "today"
+      ]
+    ],
     "translation": "I intend to go to the park today.",
     "context": "",
     "judgment": "acceptable",
@@ -1050,7 +1956,8 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_20",
@@ -1061,7 +1968,28 @@
     "language": "ital1282",
     "primaryText": "Intendo andare al parco oggi.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Intendo",
+        "intend"
+      ],
+      [
+        "andare",
+        "go.INF"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "parco",
+        "park"
+      ],
+      [
+        "oggi",
+        "today"
+      ]
+    ],
     "translation": "I intend to go to the park today.",
     "context": "",
     "judgment": "acceptable",
@@ -1077,7 +2005,8 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_21",
@@ -1104,18 +2033,44 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_22_sbjv",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(22)"
+      "bibkey": "giannakidou-mari-2021",
+      "paperLabel": "p. 210"
     },
     "language": "mode1248",
     "primaryText": "I Ariadne protithete na fiji noris.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "I",
+        "the"
+      ],
+      [
+        "Ariadne",
+        "Ariadne"
+      ],
+      [
+        "protithete",
+        "intend"
+      ],
+      [
+        "na",
+        "that.SBJV"
+      ],
+      [
+        "fiji",
+        "leave"
+      ],
+      [
+        "noris",
+        "early"
+      ]
+    ],
     "translation": "Ariadne intends to leave early.",
     "context": "",
     "judgment": "acceptable",
@@ -1131,18 +2086,48 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(22)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_22_ind",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(22)"
+      "bibkey": "giannakidou-mari-2021",
+      "paperLabel": "p. 210"
     },
     "language": "mode1248",
     "primaryText": "I Ariadne protithete oti fiji noris.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "I",
+        "the"
+      ],
+      [
+        "Ariadne",
+        "Ariadne"
+      ],
+      [
+        "protithete",
+        "intend"
+      ],
+      [
+        "oti",
+        "that.IND"
+      ],
+      [
+        "fiji",
+        "leave"
+      ],
+      [
+        "noris",
+        "early"
+      ]
+    ],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -1158,7 +2143,12 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(22)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_23a",
@@ -1169,7 +2159,32 @@
     "language": "roma1327",
     "primaryText": "Ion intenționează să meargă în parc.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ion",
+        "Ion"
+      ],
+      [
+        "intenționează",
+        "intend"
+      ],
+      [
+        "să",
+        "that.SBJV"
+      ],
+      [
+        "meargă",
+        "go.SBJV"
+      ],
+      [
+        "în",
+        "in"
+      ],
+      [
+        "parc",
+        "park"
+      ]
+    ],
     "translation": "Ion intends to go to the park.",
     "context": "",
     "judgment": "acceptable",
@@ -1185,7 +2200,8 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_23b",
@@ -1196,8 +2212,37 @@
     "language": "roma1327",
     "primaryText": "Ion intenționează că va merge în parc.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
+    "glossedTokens": [
+      [
+        "Ion",
+        "Ion"
+      ],
+      [
+        "intenționează",
+        "intend"
+      ],
+      [
+        "că",
+        "that.IND"
+      ],
+      [
+        "va",
+        "will.IND"
+      ],
+      [
+        "merge",
+        "go"
+      ],
+      [
+        "în",
+        "in"
+      ],
+      [
+        "parc",
+        "park"
+      ]
+    ],
+    "translation": "Ion intends to go to the park.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -1212,7 +2257,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "The source gives the translation as intended.",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_24a",
@@ -1239,7 +2285,8 @@
         "forTo"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Jackendoff and Culicover 2003, p. 542).",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_24b",
@@ -1266,7 +2313,8 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Jackendoff and Culicover 2003, p. 542).",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_25_sbjv",
@@ -1277,7 +2325,48 @@
     "language": "stan1288",
     "primaryText": "Tengo la intención de que Juan vaya al parque hoy.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Tengo",
+        "have"
+      ],
+      [
+        "la",
+        "the"
+      ],
+      [
+        "intención",
+        "intention"
+      ],
+      [
+        "de",
+        "of"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "Juan",
+        "Juan"
+      ],
+      [
+        "vaya",
+        "go.SBJV"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "parque",
+        "park"
+      ],
+      [
+        "hoy",
+        "today"
+      ]
+    ],
     "translation": "I intend for Juan to go to the park today.",
     "context": "",
     "judgment": "acceptable",
@@ -1293,7 +2382,8 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "The source translates 'to go the park'.",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_25_ind",
@@ -1304,7 +2394,48 @@
     "language": "stan1288",
     "primaryText": "Tengo la intención de que Juan va al parque hoy.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Tengo",
+        "have"
+      ],
+      [
+        "la",
+        "the"
+      ],
+      [
+        "intención",
+        "intention"
+      ],
+      [
+        "de",
+        "of"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "Juan",
+        "Juan"
+      ],
+      [
+        "va",
+        "go.IND"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "parque",
+        "park"
+      ],
+      [
+        "hoy",
+        "today"
+      ]
+    ],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -1320,7 +2451,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_25_fut",
@@ -1331,7 +2463,48 @@
     "language": "stan1288",
     "primaryText": "Tengo la intención de que Juan irá al parque hoy.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Tengo",
+        "have"
+      ],
+      [
+        "la",
+        "the"
+      ],
+      [
+        "intención",
+        "intention"
+      ],
+      [
+        "de",
+        "of"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "Juan",
+        "Juan"
+      ],
+      [
+        "irá",
+        "go.FUT.IND"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "parque",
+        "park"
+      ],
+      [
+        "hoy",
+        "today"
+      ]
+    ],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -1347,7 +2520,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_26_sbjv",
@@ -1358,7 +2532,40 @@
     "language": "port1283",
     "primaryText": "Pretendo que o João vá ao parque hoje.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Pretendo",
+        "intend"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "o",
+        "the"
+      ],
+      [
+        "João",
+        "João"
+      ],
+      [
+        "vá",
+        "go.SBJV"
+      ],
+      [
+        "ao",
+        "to the"
+      ],
+      [
+        "parque",
+        "park"
+      ],
+      [
+        "hoje",
+        "today"
+      ]
+    ],
     "translation": "I intend for João to go to the park today.",
     "context": "",
     "judgment": "acceptable",
@@ -1374,7 +2581,8 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_26_ind",
@@ -1385,7 +2593,40 @@
     "language": "port1283",
     "primaryText": "Pretendo que o João vai ao parque hoje.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Pretendo",
+        "intend"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "o",
+        "the"
+      ],
+      [
+        "João",
+        "João"
+      ],
+      [
+        "vai",
+        "go.IND"
+      ],
+      [
+        "ao",
+        "to the"
+      ],
+      [
+        "parque",
+        "park"
+      ],
+      [
+        "hoje",
+        "today"
+      ]
+    ],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -1401,7 +2642,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_26_fut",
@@ -1412,7 +2654,40 @@
     "language": "port1283",
     "primaryText": "Pretendo que o João irá ao parque hoje.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Pretendo",
+        "intend"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "o",
+        "the"
+      ],
+      [
+        "João",
+        "João"
+      ],
+      [
+        "irá",
+        "go.FUT.IND"
+      ],
+      [
+        "ao",
+        "to the"
+      ],
+      [
+        "parque",
+        "park"
+      ],
+      [
+        "hoje",
+        "today"
+      ]
+    ],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -1428,7 +2703,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_27_sbjv",
@@ -1439,8 +2715,41 @@
     "language": "stan1290",
     "primaryText": "J'ai l'intention que Jean aille au parc aujourd'hui.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
+    "glossedTokens": [
+      [
+        "J'ai",
+        "I have"
+      ],
+      [
+        "l'intention",
+        "the intention"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "Jean",
+        "Jean"
+      ],
+      [
+        "aille",
+        "go.SBJV"
+      ],
+      [
+        "au",
+        "to the"
+      ],
+      [
+        "parc",
+        "park"
+      ],
+      [
+        "aujourd'hui",
+        "today"
+      ]
+    ],
+    "translation": "I intend for Jean to go to the park today.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -1455,7 +2764,8 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "The source gives the translation as intended.",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_27_ind",
@@ -1466,8 +2776,41 @@
     "language": "stan1290",
     "primaryText": "J'ai l'intention que Jean va au parc aujourd'hui.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
+    "glossedTokens": [
+      [
+        "J'ai",
+        "I have"
+      ],
+      [
+        "l'intention",
+        "the intention"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "Jean",
+        "Jean"
+      ],
+      [
+        "va",
+        "go.IND"
+      ],
+      [
+        "au",
+        "to the"
+      ],
+      [
+        "parc",
+        "park"
+      ],
+      [
+        "aujourd'hui",
+        "today"
+      ]
+    ],
+    "translation": "I intend for Jean to go to the park today.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -1482,7 +2825,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "The source gives the translation as intended.",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_28_sbjv",
@@ -1493,8 +2837,37 @@
     "language": "ital1282",
     "primaryText": "Intendo che Giovanni vada al parco oggi.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
+    "glossedTokens": [
+      [
+        "Intendo",
+        "intend"
+      ],
+      [
+        "che",
+        "that"
+      ],
+      [
+        "Giovanni",
+        "Giovanni"
+      ],
+      [
+        "vada",
+        "go.SBJV"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "parco",
+        "park"
+      ],
+      [
+        "oggi",
+        "today"
+      ]
+    ],
+    "translation": "I intend for Giovanni to go to the park today.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -1509,7 +2882,8 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "The source gives the translation as intended.",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_28_ind",
@@ -1520,8 +2894,37 @@
     "language": "ital1282",
     "primaryText": "Intendo che Giovanni va al parco oggi.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
+    "glossedTokens": [
+      [
+        "Intendo",
+        "intend"
+      ],
+      [
+        "che",
+        "that"
+      ],
+      [
+        "Giovanni",
+        "Giovanni"
+      ],
+      [
+        "va",
+        "go.IND"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "parco",
+        "park"
+      ],
+      [
+        "oggi",
+        "today"
+      ]
+    ],
+    "translation": "I intend for Giovanni to go to the park today.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -1536,7 +2939,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "The source gives the translation as intended.",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_36",
@@ -1547,7 +2951,32 @@
     "language": "stan1288",
     "primaryText": "Hice a Juan ir al parque.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Hice",
+        "made"
+      ],
+      [
+        "a",
+        "to"
+      ],
+      [
+        "Juan",
+        "Juan"
+      ],
+      [
+        "ir",
+        "go.INF"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "parque",
+        "park"
+      ]
+    ],
     "translation": "I made Juan go to the park.",
     "context": "",
     "judgment": "acceptable",
@@ -1563,7 +2992,8 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_37",
@@ -1574,7 +3004,32 @@
     "language": "stan1290",
     "primaryText": "J'ai fait aller Jean au parc.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "J'ai",
+        "I have"
+      ],
+      [
+        "fait",
+        "made"
+      ],
+      [
+        "aller",
+        "go.INF"
+      ],
+      [
+        "Jean",
+        "Jean"
+      ],
+      [
+        "au",
+        "to the"
+      ],
+      [
+        "parc",
+        "park"
+      ]
+    ],
     "translation": "I made Jean go to the park.",
     "context": "",
     "judgment": "acceptable",
@@ -1590,7 +3045,8 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_38",
@@ -1601,7 +3057,32 @@
     "language": "port1283",
     "primaryText": "Eu fiz João ir ao parque.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Eu",
+        "I"
+      ],
+      [
+        "fiz",
+        "made"
+      ],
+      [
+        "João",
+        "João"
+      ],
+      [
+        "ir",
+        "go.INF"
+      ],
+      [
+        "ao",
+        "to the"
+      ],
+      [
+        "parque",
+        "park"
+      ]
+    ],
     "translation": "I made João go to the park.",
     "context": "",
     "judgment": "acceptable",
@@ -1617,7 +3098,8 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_39",
@@ -1628,7 +3110,32 @@
     "language": "ital1282",
     "primaryText": "Ho fatto andare Giovanni al parco.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ho",
+        "have"
+      ],
+      [
+        "fatto",
+        "made"
+      ],
+      [
+        "andare",
+        "go.INF"
+      ],
+      [
+        "Giovanni",
+        "Giovanni"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "parco",
+        "park"
+      ]
+    ],
     "translation": "I made Giovanni go to the park.",
     "context": "",
     "judgment": "acceptable",
@@ -1644,7 +3151,8 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_40_sbjv",
@@ -1655,7 +3163,32 @@
     "language": "stan1288",
     "primaryText": "Hice que Juan fuera al parque.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Hice",
+        "made"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "Juan",
+        "Juan"
+      ],
+      [
+        "fuera",
+        "went.SBJV"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "parque",
+        "park"
+      ]
+    ],
     "translation": "I made Juan go to the park.",
     "context": "",
     "judgment": "acceptable",
@@ -1671,7 +3204,8 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_40_ind",
@@ -1682,7 +3216,32 @@
     "language": "stan1288",
     "primaryText": "Hice que Juan fue al parque.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Hice",
+        "made"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "Juan",
+        "Juan"
+      ],
+      [
+        "fue",
+        "went.IND"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "parque",
+        "park"
+      ]
+    ],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -1698,7 +3257,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_41_sbjv",
@@ -1709,7 +3269,40 @@
     "language": "port1283",
     "primaryText": "Eu fiz com que João fosse ao parque.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Eu",
+        "I"
+      ],
+      [
+        "fiz",
+        "made"
+      ],
+      [
+        "com",
+        "with"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "João",
+        "João"
+      ],
+      [
+        "fosse",
+        "went.SBJV"
+      ],
+      [
+        "ao",
+        "to the"
+      ],
+      [
+        "parque",
+        "park"
+      ]
+    ],
     "translation": "I made João go to the park.",
     "context": "",
     "judgment": "acceptable",
@@ -1725,7 +3318,8 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_41_ind",
@@ -1736,7 +3330,40 @@
     "language": "port1283",
     "primaryText": "Eu fiz com que João foi ao parque.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Eu",
+        "I"
+      ],
+      [
+        "fiz",
+        "made"
+      ],
+      [
+        "com",
+        "with"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "João",
+        "João"
+      ],
+      [
+        "foi",
+        "went.IND"
+      ],
+      [
+        "ao",
+        "to the"
+      ],
+      [
+        "parque",
+        "park"
+      ]
+    ],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -1752,7 +3379,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_42a_sbjv",
@@ -1763,7 +3391,40 @@
     "language": "ital1282",
     "primaryText": "Ho fatto sì che Giovanni andasse al parco.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ho",
+        "have"
+      ],
+      [
+        "fatto",
+        "made"
+      ],
+      [
+        "sì",
+        "so"
+      ],
+      [
+        "che",
+        "that"
+      ],
+      [
+        "Giovanni",
+        "Giovanni"
+      ],
+      [
+        "andasse",
+        "went.SBJV"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "parco",
+        "park"
+      ]
+    ],
     "translation": "I made Giovanni go to the park.",
     "context": "",
     "judgment": "acceptable",
@@ -1779,7 +3440,8 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_42a_ind",
@@ -1790,7 +3452,40 @@
     "language": "ital1282",
     "primaryText": "Ho fatto sì che Giovanni è andato al parco.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ho",
+        "have"
+      ],
+      [
+        "fatto",
+        "made"
+      ],
+      [
+        "sì",
+        "so"
+      ],
+      [
+        "che",
+        "that"
+      ],
+      [
+        "Giovanni",
+        "Giovanni"
+      ],
+      [
+        "è andato",
+        "went.IND"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "parco",
+        "park"
+      ]
+    ],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -1806,7 +3501,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_42b_sbjv",
@@ -1817,7 +3513,36 @@
     "language": "ital1282",
     "primaryText": "Ho lasciato che Giovanni andasse al parco.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ho",
+        "have"
+      ],
+      [
+        "lasciato",
+        "left"
+      ],
+      [
+        "che",
+        "that"
+      ],
+      [
+        "Giovanni",
+        "Giovanni"
+      ],
+      [
+        "andasse",
+        "went.SBJV"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "parco",
+        "park"
+      ]
+    ],
     "translation": "I let Giovanni go to the park.",
     "context": "",
     "judgment": "acceptable",
@@ -1833,7 +3558,8 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_42b_ind",
@@ -1844,7 +3570,36 @@
     "language": "ital1282",
     "primaryText": "Ho lasciato che Giovanni è andato al parco.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Ho",
+        "have"
+      ],
+      [
+        "lasciato",
+        "left"
+      ],
+      [
+        "che",
+        "that"
+      ],
+      [
+        "Giovanni",
+        "Giovanni"
+      ],
+      [
+        "è andato",
+        "went.IND"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "parco",
+        "park"
+      ]
+    ],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -1860,7 +3615,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_45a",
@@ -1871,7 +3627,36 @@
     "language": "mode1248",
     "primaryText": "Evala ton Jani na pai sto parko.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Evala",
+        "put"
+      ],
+      [
+        "ton",
+        "the"
+      ],
+      [
+        "Jani",
+        "Janis"
+      ],
+      [
+        "na",
+        "that.SBJV"
+      ],
+      [
+        "pai",
+        "go"
+      ],
+      [
+        "sto",
+        "at the"
+      ],
+      [
+        "parko",
+        "park"
+      ]
+    ],
     "translation": "I made Janis go to the park.",
     "context": "",
     "judgment": "acceptable",
@@ -1887,7 +3672,8 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_45b",
@@ -1898,8 +3684,37 @@
     "language": "mode1248",
     "primaryText": "Evala oti o Janis pai sto parko.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
+    "glossedTokens": [
+      [
+        "Evala",
+        "put"
+      ],
+      [
+        "oti",
+        "that.IND"
+      ],
+      [
+        "o",
+        "the"
+      ],
+      [
+        "Janis",
+        "Janis"
+      ],
+      [
+        "pai",
+        "go"
+      ],
+      [
+        "sto",
+        "at the"
+      ],
+      [
+        "parko",
+        "park"
+      ]
+    ],
+    "translation": "I made Janis go to the park.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -1914,7 +3729,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "The source gives the translation as intended.",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_46a",
@@ -1925,7 +3741,40 @@
     "language": "roma1327",
     "primaryText": "L-am făcut pe Ion să meargă în parc.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "L-am",
+        "him-have"
+      ],
+      [
+        "făcut",
+        "made"
+      ],
+      [
+        "pe",
+        "on"
+      ],
+      [
+        "Ion",
+        "Ion"
+      ],
+      [
+        "să",
+        "that.SBJV"
+      ],
+      [
+        "meargă",
+        "go.SBJV"
+      ],
+      [
+        "în",
+        "in"
+      ],
+      [
+        "parc",
+        "park"
+      ]
+    ],
     "translation": "I made Ion go to the park.",
     "context": "",
     "judgment": "acceptable",
@@ -1941,7 +3790,8 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_46b",
@@ -1952,8 +3802,37 @@
     "language": "roma1327",
     "primaryText": "Am făcut că Ion merge în parc.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
+    "glossedTokens": [
+      [
+        "Am",
+        "have"
+      ],
+      [
+        "făcut",
+        "made"
+      ],
+      [
+        "că",
+        "that.IND"
+      ],
+      [
+        "Ion",
+        "Ion"
+      ],
+      [
+        "merge",
+        "go.IND"
+      ],
+      [
+        "în",
+        "in"
+      ],
+      [
+        "parc",
+        "park"
+      ]
+    ],
+    "translation": "I made Ion go to the park.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -1968,7 +3847,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "The source gives the translation as intended.",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_47a",
@@ -1995,7 +3875,8 @@
         "bareInfinitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_47b",
@@ -2022,13 +3903,14 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_49a_want",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(49a)"
+      "bibkey": "portner-rubinstein-2020",
+      "paperLabel": "p. 357"
     },
     "language": "stan1293",
     "primaryText": "I want to be immortal.",
@@ -2053,13 +3935,18 @@
         "realism"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(49a)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_49a_hope",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(49a)"
+      "bibkey": "portner-rubinstein-2020",
+      "paperLabel": "p. 357"
     },
     "language": "stan1293",
     "primaryText": "I hope to be immortal.",
@@ -2067,7 +3954,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2084,13 +3971,18 @@
         "realism"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(49a)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_50a",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(50a)"
+      "bibkey": "portner-rubinstein-2020",
+      "paperLabel": "p. 357"
     },
     "language": "stan1293",
     "primaryText": "I want to marry Alice and I want to marry Sue.",
@@ -2115,13 +4007,18 @@
         "consistency"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(50a)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_50b",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(50b)"
+      "bibkey": "portner-rubinstein-2020",
+      "paperLabel": "p. 357"
     },
     "language": "stan1293",
     "primaryText": "I hope to marry Alice and I hope to marry Sue.",
@@ -2129,7 +4026,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2146,7 +4043,12 @@
         "consistency"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(50b)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_51a",
@@ -2160,7 +4062,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2177,7 +4079,8 @@
         "realism"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_52",
@@ -2191,7 +4094,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2208,7 +4111,8 @@
         "consistency"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_53",
@@ -2219,10 +4123,27 @@
     "language": "stan1290",
     "primaryText": "J'ai l'intention d'être immortel.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "J'ai",
+        "I have"
+      ],
+      [
+        "l'intention",
+        "the intention"
+      ],
+      [
+        "d'être",
+        "of be.INF"
+      ],
+      [
+        "immortel",
+        "immortal"
+      ]
+    ],
     "translation": "I intend to be immortal.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2239,7 +4160,8 @@
         "realism"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_54",
@@ -2250,10 +4172,47 @@
     "language": "stan1290",
     "primaryText": "J'ai l'intention d'épouser Alice et j'ai l'intention d'épouser Sue.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "J'ai",
+        "I have"
+      ],
+      [
+        "l'intention",
+        "the intention"
+      ],
+      [
+        "d'épouser",
+        "of marry.INF"
+      ],
+      [
+        "Alice",
+        "Alice"
+      ],
+      [
+        "et",
+        "and"
+      ],
+      [
+        "j'ai",
+        "I have"
+      ],
+      [
+        "l'intention",
+        "the intention"
+      ],
+      [
+        "d'épouser",
+        "of marry.INF"
+      ],
+      [
+        "Sue",
+        "Sue"
+      ]
+    ],
     "translation": "I intend to marry Alice and I intend to marry Sue.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2270,13 +4229,14 @@
         "consistency"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_63",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(63)"
+      "bibkey": "giannakidou-mari-2021",
+      "paperLabel": "p. 203"
     },
     "language": "stan1293",
     "primaryText": "John wants it to rain so the picnic will be canceled, but he also wants it not to rain so he can go hiking.",
@@ -2301,13 +4261,18 @@
         "consistency"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(63)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_64",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(64)"
+      "bibkey": "giannakidou-mari-2021",
+      "paperLabel": "p. 206"
     },
     "language": "stan1293",
     "primaryText": "John hopes that it will rain so the picnic will be cancelled, but he also hopes that it won't rain so he can go hiking.",
@@ -2332,13 +4297,18 @@
         "consistency"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(64)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_65",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(65)"
+      "bibkey": "giannakidou-mari-2021",
+      "paperLabel": "p. 203"
     },
     "language": "stan1293",
     "primaryText": "I don't want to teach, but (since I have to) I want to teach Tuesdays and Thursdays.",
@@ -2363,13 +4333,18 @@
         "monotonicity"
       ]
     ],
-    "comment": ""
+    "comment": "The source notes the example is based on Heim 1992.",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(65)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_66",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(66)"
+      "bibkey": "giannakidou-mari-2021",
+      "paperLabel": "p. 206"
     },
     "language": "stan1293",
     "primaryText": "I don't hope to teach, but (since I have to) I hope to teach Tuesdays and Thursdays.",
@@ -2394,7 +4369,12 @@
         "monotonicity"
       ]
     ],
-    "comment": ""
+    "comment": "The source notes the example is based on Heim 1992.",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(66)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_67",
@@ -2425,7 +4405,8 @@
         "monotonicity"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_90_aim",
@@ -2452,7 +4433,8 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_90_try",
@@ -2479,7 +4461,8 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_91_aim",
@@ -2506,7 +4489,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_91_try",
@@ -2533,7 +4517,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_92",
@@ -2564,7 +4549,8 @@
         "intention"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_93",
@@ -2595,7 +4581,8 @@
         "foresee"
       ]
     ],
-    "comment": "Parasitic on the foresee sense of plan, the paper's hypothesis."
+    "comment": "Parasitic on the foresee sense of plan, the paper's hypothesis. The source cites (Jackendoff and Culicover 2003, p. 526).",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_94",
@@ -2626,7 +4613,8 @@
         "foresee"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Jackendoff and Culicover 2003, p. 526).",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_96a",
@@ -2657,7 +4645,8 @@
         "intention"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_96b",
@@ -2688,7 +4677,8 @@
         "intention"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_97a",
@@ -2719,7 +4709,8 @@
         "belief"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_97b",
@@ -2750,7 +4741,8 @@
         "belief"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_98a",
@@ -2781,7 +4773,8 @@
         "intention"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_99a",
@@ -2812,19 +4805,53 @@
         "assertion"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_100",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(100)"
+      "bibkey": "giannakidou-mari-2021",
+      "paperLabel": "p. 211"
     },
     "language": "mode1248",
     "primaryText": "I Ariadne epise ton Nikolas na fiji noris.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Ariadne persuaded Nikolas to leave early.",
+    "glossedTokens": [
+      [
+        "I",
+        "the"
+      ],
+      [
+        "Ariadne",
+        "Ariadne"
+      ],
+      [
+        "epise",
+        "persuaded"
+      ],
+      [
+        "ton",
+        "the"
+      ],
+      [
+        "Nikolas",
+        "Nikolas"
+      ],
+      [
+        "na",
+        "that.SBJV"
+      ],
+      [
+        "fiji",
+        "leave"
+      ],
+      [
+        "noris",
+        "early"
+      ]
+    ],
+    "translation": "Ariadne persuaded/convinced Nikolas to leave early.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -2843,19 +4870,69 @@
         "intention"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(100)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_101",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(101)"
+      "bibkey": "giannakidou-mari-2021",
+      "paperLabel": "p. 212"
     },
     "language": "mode1248",
     "primaryText": "I Ariadne epise ton Nikolas oti i idea tou ine kali.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Ariadne persuaded Nikolas that his idea is good.",
+    "glossedTokens": [
+      [
+        "I",
+        "the"
+      ],
+      [
+        "Ariadne",
+        "Ariadne"
+      ],
+      [
+        "epise",
+        "persuaded"
+      ],
+      [
+        "ton",
+        "the"
+      ],
+      [
+        "Nikolas",
+        "Nikolas"
+      ],
+      [
+        "oti",
+        "that.IND"
+      ],
+      [
+        "i",
+        "the"
+      ],
+      [
+        "idea",
+        "idea"
+      ],
+      [
+        "tou",
+        "his"
+      ],
+      [
+        "ine",
+        "is"
+      ],
+      [
+        "kali",
+        "good"
+      ]
+    ],
+    "translation": "Ariadne persuaded/convinced Nikolas that his idea is good.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -2874,7 +4951,12 @@
         "belief"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(101)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_102",
@@ -2885,7 +4967,56 @@
     "language": "stan1288",
     "primaryText": "Wendy convenció a Paula de que le pidiera un aumento al jefe.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Wendy",
+        "Wendy"
+      ],
+      [
+        "convenció",
+        "persuaded"
+      ],
+      [
+        "a",
+        "to"
+      ],
+      [
+        "Paula",
+        "Paula"
+      ],
+      [
+        "de",
+        "of"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "le",
+        "him"
+      ],
+      [
+        "pidiera",
+        "asked.SBJV"
+      ],
+      [
+        "un",
+        "a"
+      ],
+      [
+        "aumento",
+        "raise"
+      ],
+      [
+        "al",
+        "to the"
+      ],
+      [
+        "jefe",
+        "boss"
+      ]
+    ],
     "translation": "Wendy persuaded Paula to ask the boss for a pay raise.",
     "context": "",
     "judgment": "acceptable",
@@ -2905,7 +5036,8 @@
         "intention"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (an example sentence taken from wordreference.com).",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_103",
@@ -2916,7 +5048,48 @@
     "language": "stan1288",
     "primaryText": "Alice convenció a Emily de que estaba diciendo la verdad.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Alice",
+        "Alice"
+      ],
+      [
+        "convenció",
+        "persuaded"
+      ],
+      [
+        "a",
+        "to"
+      ],
+      [
+        "Emily",
+        "Emily"
+      ],
+      [
+        "de",
+        "of"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "estaba",
+        "was.IND"
+      ],
+      [
+        "diciendo",
+        "saying"
+      ],
+      [
+        "la",
+        "the"
+      ],
+      [
+        "verdad",
+        "truth"
+      ]
+    ],
     "translation": "Alice persuaded Emily that she was telling the truth.",
     "context": "",
     "judgment": "acceptable",
@@ -2936,7 +5109,8 @@
         "belief"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (an example sentence taken from wordreference.com).",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_104",
@@ -2947,7 +5121,52 @@
     "language": "stan1290",
     "primaryText": "Wendy a persuadé Paula de demander une augmentation à son patron.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Wendy",
+        "Wendy"
+      ],
+      [
+        "a",
+        "has"
+      ],
+      [
+        "persuadé",
+        "persuaded"
+      ],
+      [
+        "Paula",
+        "Paula"
+      ],
+      [
+        "de",
+        "of"
+      ],
+      [
+        "demander",
+        "ask.INF"
+      ],
+      [
+        "une",
+        "a"
+      ],
+      [
+        "augmentation",
+        "raise"
+      ],
+      [
+        "à",
+        "to"
+      ],
+      [
+        "son",
+        "her"
+      ],
+      [
+        "patron",
+        "boss"
+      ]
+    ],
     "translation": "Wendy persuaded Paula to ask her boss for a pay raise.",
     "context": "",
     "judgment": "acceptable",
@@ -2967,7 +5186,8 @@
         "intention"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (an example sentence taken from wordreference.com).",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_105",
@@ -2978,7 +5198,44 @@
     "language": "stan1290",
     "primaryText": "Mark a persuadé Olivia que son argument était véridique.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Mark",
+        "Mark"
+      ],
+      [
+        "a",
+        "has"
+      ],
+      [
+        "persuadé",
+        "persuaded"
+      ],
+      [
+        "Olivia",
+        "Olivia"
+      ],
+      [
+        "que",
+        "that"
+      ],
+      [
+        "son",
+        "his"
+      ],
+      [
+        "argument",
+        "argument"
+      ],
+      [
+        "était",
+        "was.IND"
+      ],
+      [
+        "véridique",
+        "true"
+      ]
+    ],
     "translation": "Mark persuaded Olivia of the truth of his argument.",
     "context": "",
     "judgment": "acceptable",
@@ -2998,7 +5255,8 @@
         "belief"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (an example sentence taken from wordreference.com).",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_106",
@@ -3029,7 +5287,8 @@
         "intention"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_107a",
@@ -3038,7 +5297,7 @@
       "paperLabel": "(107a)"
     },
     "language": "stan1293",
-    "primaryText": "I promise that I will lose the race.",
+    "primaryText": "I promise (you) that I will lose the race.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -3060,7 +5319,8 @@
         "assertion"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_107b",
@@ -3069,7 +5329,7 @@
       "paperLabel": "(107b)"
     },
     "language": "stan1293",
-    "primaryText": "I promise that it will rain tomorrow.",
+    "primaryText": "I promise (you) that it will rain tomorrow.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -3091,7 +5351,8 @@
         "assertion"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_112_plan",
@@ -3126,7 +5387,8 @@
         "anankastic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_112_hope",
@@ -3161,7 +5423,8 @@
         "anankastic"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_113_plan",
@@ -3175,7 +5438,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -3196,7 +5459,8 @@
         "anankastic"
       ]
     ],
-    "comment": ""
+    "comment": "The source prints 'a a job'.",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_113_hope",
@@ -3210,7 +5474,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -3231,7 +5495,8 @@
         "anankastic"
       ]
     ],
-    "comment": ""
+    "comment": "The source prints 'a a job'.",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_115a",
@@ -3258,7 +5523,8 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_115b",
@@ -3285,7 +5551,8 @@
         "gerund"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_116",
@@ -3312,7 +5579,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_117",
@@ -3323,7 +5591,24 @@
     "language": "stan1290",
     "primaryText": "Jean commence à manger.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Jean",
+        "Jean"
+      ],
+      [
+        "commence",
+        "begins"
+      ],
+      [
+        "à",
+        "to"
+      ],
+      [
+        "manger",
+        "eat.INF"
+      ]
+    ],
     "translation": "Jean begins to eat.",
     "context": "",
     "judgment": "acceptable",
@@ -3339,7 +5624,8 @@
         "infinitive"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Rochette 1988, p. 29).",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_118",
@@ -3348,10 +5634,31 @@
       "paperLabel": "(118)"
     },
     "language": "stan1290",
-    "primaryText": "Jean commence qu'il mange.",
+    "primaryText": "Jean commence (à ce) qu'il mange.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
+    "glossedTokens": [
+      [
+        "Jean",
+        "Jean"
+      ],
+      [
+        "commence",
+        "begins"
+      ],
+      [
+        "(à ce)",
+        "to this"
+      ],
+      [
+        "qu'il",
+        "that he"
+      ],
+      [
+        "mange",
+        "eats.IND"
+      ]
+    ],
+    "translation": "Jean begins to eat.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -3366,7 +5673,8 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "The source gives the translation as intended. The source cites (Rochette 1988, p. 30).",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_119",
@@ -3377,7 +5685,20 @@
     "language": "mode1248",
     "primaryText": "Arxisa na grafo.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "Arxisa",
+        "began"
+      ],
+      [
+        "na",
+        "that.SBJV"
+      ],
+      [
+        "grafo",
+        "write"
+      ]
+    ],
     "translation": "I began to write.",
     "context": "",
     "judgment": "acceptable",
@@ -3393,7 +5714,8 @@
         "subjunctive"
       ]
     ],
-    "comment": ""
+    "comment": "The source cites (Roussou 2009, p. 1815).",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_120",
@@ -3424,7 +5746,8 @@
         "event"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_121",
@@ -3455,18 +5778,48 @@
         "proposition"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_122",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(122)"
+      "bibkey": "giannakidou-mari-2021",
+      "paperLabel": "p. 38"
     },
     "language": "mode1248",
     "primaryText": "O Nicholas thimate na kleini tin porta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "O",
+        "the"
+      ],
+      [
+        "Nicholas",
+        "Nicholas"
+      ],
+      [
+        "thimate",
+        "remembered"
+      ],
+      [
+        "na",
+        "that.SBJV"
+      ],
+      [
+        "kleini",
+        "close"
+      ],
+      [
+        "tin",
+        "the"
+      ],
+      [
+        "porta",
+        "door"
+      ]
+    ],
     "translation": "Nicholas remembered closing the door.",
     "context": "",
     "judgment": "acceptable",
@@ -3486,18 +5839,52 @@
         "event"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(122)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_123",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(123)"
+      "bibkey": "giannakidou-mari-2021",
+      "paperLabel": "p. 37"
     },
     "language": "mode1248",
     "primaryText": "O Nicholas thimate oti ekleise tin porta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "O",
+        "the"
+      ],
+      [
+        "Nicholas",
+        "Nicholas"
+      ],
+      [
+        "thimate",
+        "remembered"
+      ],
+      [
+        "oti",
+        "that.IND"
+      ],
+      [
+        "ekleise",
+        "closed"
+      ],
+      [
+        "tin",
+        "the"
+      ],
+      [
+        "porta",
+        "door"
+      ]
+    ],
     "translation": "Nicholas remembered that he closed the door.",
     "context": "",
     "judgment": "acceptable",
@@ -3517,7 +5904,12 @@
         "proposition"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(123)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_124",
@@ -3548,7 +5940,8 @@
         "event"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_125",
@@ -3579,18 +5972,56 @@
         "proposition"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_126",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(126)"
+      "bibkey": "giannakidou-mari-2021",
+      "paperLabel": "p. 178"
     },
     "language": "mode1248",
     "primaryText": "O Nikolas idhe ton Flavio na kleini tin porta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "O",
+        "the"
+      ],
+      [
+        "Nikolas",
+        "Nikolas"
+      ],
+      [
+        "idhe",
+        "saw"
+      ],
+      [
+        "ton",
+        "the"
+      ],
+      [
+        "Flavio",
+        "Flavio"
+      ],
+      [
+        "na",
+        "that.SBJV"
+      ],
+      [
+        "kleini",
+        "close"
+      ],
+      [
+        "tin",
+        "the"
+      ],
+      [
+        "porta",
+        "door"
+      ]
+    ],
     "translation": "Nikolas saw Flavio closing the door.",
     "context": "",
     "judgment": "acceptable",
@@ -3610,18 +6041,60 @@
         "event"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(126)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_127",
     "source": {
-      "bibkey": "grano-2024",
-      "paperLabel": "(127)"
+      "bibkey": "giannakidou-mari-2021",
+      "paperLabel": "p. 178"
     },
     "language": "mode1248",
     "primaryText": "O Nikolas idhe oti o Flavio eklise tin porta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      [
+        "O",
+        "the"
+      ],
+      [
+        "Nikolas",
+        "Nikolas"
+      ],
+      [
+        "idhe",
+        "saw"
+      ],
+      [
+        "oti",
+        "that.IND"
+      ],
+      [
+        "o",
+        "the"
+      ],
+      [
+        "Flavio",
+        "Flavio"
+      ],
+      [
+        "eklise",
+        "closed"
+      ],
+      [
+        "tin",
+        "the"
+      ],
+      [
+        "porta",
+        "door"
+      ]
+    ],
     "translation": "Nikolas saw that Flavio closed the door.",
     "context": "",
     "judgment": "acceptable",
@@ -3641,7 +6114,12 @@
         "proposition"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "reportedIn": {
+      "bibkey": "grano-2024",
+      "paperLabel": "(127)"
+    },
+    "verified": "page-image"
   },
   {
     "id": "grano2024_128a",
@@ -3668,7 +6146,8 @@
         "forTo"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grano2024_128b",
@@ -3695,6 +6174,7 @@
         "indicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]
