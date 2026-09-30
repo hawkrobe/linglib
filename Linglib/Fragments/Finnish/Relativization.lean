@@ -23,27 +23,25 @@ The data are [keenan-comrie-1977]'s.
 
 namespace Finnish
 
-open RelativeClause
-
 /-- The relative pronoun *joka* declines for the case of the relativized position and relativizes
 subjects through genitives. -/
-def relJoka : Marker :=
-  { form := "joka"
-  , npRel := .relPronoun
-  , bearsCaseMarking := true
-  , placement := .postNominal
-  , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
+def relJoka : Relativizer where
+  form := "joka"
+  placement := .postNominal
+  realize
+    | .subject | .directObject | .indirectObject | .oblique | .genitive => {.relPronoun}
+    | _ => ∅
 
 /-- The prenominal participial clause leaves the relativized position empty and relativizes
 subjects and direct objects only. -/
-def relParticipial : Marker :=
-  { form := "participle"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .preNominal
-  , positions := {.subject, .directObject} }
+def relParticipial : Relativizer where
+  form := "participle"
+  placement := .preNominal
+  realize
+    | .subject | .directObject => {.gap}
+    | _ => ∅
 
-/-- The Finnish relative-clause markers. -/
-def relMarkers : List Marker := [relJoka, relParticipial]
+/-- The Finnish relativizers. -/
+def relativizers : List Relativizer := [relJoka, relParticipial]
 
 end Finnish

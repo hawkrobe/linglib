@@ -21,18 +21,16 @@ grande que le jeune homme*. The data are [keenan-comrie-1977]'s.
 
 namespace French
 
-open RelativeClause
-
 /-- The relative pronouns *qui*, *que*, *dont* and *lequel* code the relativized position and
 relativize subjects through genitives. -/
-def relQui : Marker :=
-  { form := "qui/que/dont/lequel"
-  , npRel := .relPronoun
-  , bearsCaseMarking := true
-  , placement := .postNominal
-  , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
+def relQui : Relativizer where
+  form := "qui/que/dont/lequel"
+  placement := .postNominal
+  realize
+    | .subject | .directObject | .indirectObject | .oblique | .genitive => {.relPronoun}
+    | _ => ∅
 
-/-- The French relative-clause markers. -/
-def relMarkers : List Marker := [relQui]
+/-- The French relativizers. -/
+def relativizers : List Relativizer := [relQui]
 
 end French

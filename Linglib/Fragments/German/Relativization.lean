@@ -23,27 +23,25 @@ data are [keenan-comrie-1977]'s.
 
 namespace German
 
-open RelativeClause
-
 /-- The relative pronoun *der*, *die*, *das* declines for the case of the relativized position
 and relativizes subjects through genitives. -/
-def relDer : Marker :=
-  { form := "der/die/das"
-  , npRel := .relPronoun
-  , bearsCaseMarking := true
-  , placement := .postNominal
-  , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
+def relDer : Relativizer where
+  form := "der/die/das"
+  placement := .postNominal
+  realize
+    | .subject | .directObject | .indirectObject | .oblique | .genitive => {.relPronoun}
+    | _ => ∅
 
 /-- The prenominal participial construction leaves the relativized position empty and
 relativizes subjects only. -/
-def relParticiple : Marker :=
-  { form := "participle"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .preNominal
-  , positions := {.subject} }
+def relParticiple : Relativizer where
+  form := "participle"
+  placement := .preNominal
+  realize
+    | .subject => {.gap}
+    | _ => ∅
 
-/-- The German relative-clause markers. -/
-def relMarkers : List Marker := [relDer, relParticiple]
+/-- The German relativizers. -/
+def relativizers : List Relativizer := [relDer, relParticiple]
 
 end German

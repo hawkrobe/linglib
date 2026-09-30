@@ -21,18 +21,16 @@ object, and records no data for the lower positions. The data are [keenan-comrie
 
 namespace Basque
 
-open RelativeClause
-
 /-- The prenominal clause closed by the suffix *-n* leaves the relativized position empty and
 relativizes subjects, direct objects and indirect objects. -/
-def relN : Marker :=
-  { form := "-n"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .preNominal
-  , positions := {.subject, .directObject, .indirectObject} }
+def relN : Relativizer where
+  form := "-n"
+  placement := .preNominal
+  realize
+    | .subject | .directObject | .indirectObject => {.gap}
+    | _ => ∅
 
-/-- The Basque relative-clause markers. -/
-def relMarkers : List Marker := [relN]
+/-- The Basque relativizers. -/
+def relativizers : List Relativizer := [relN]
 
 end Basque

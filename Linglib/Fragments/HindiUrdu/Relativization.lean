@@ -23,26 +23,24 @@ and objects of comparison are treated as obliques governed by postpositions. The
 
 namespace HindiUrdu
 
-open RelativeClause
-
 /-- The postnominal clause with the relative pronoun *jo* relativizes subjects through genitives. -/
-def relJo : Marker :=
-  { form := "jo/jis-"
-  , npRel := .relPronoun
-  , bearsCaseMarking := true
-  , placement := .postNominal
-  , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
+def relJo : Relativizer where
+  form := "jo/jis-"
+  placement := .postNominal
+  realize
+    | .subject | .directObject | .indirectObject | .oblique | .genitive => {.relPronoun}
+    | _ => ∅
 
 /-- The correlative *jo … vo* keeps the head inside the relative clause and relativizes subjects
 through genitives. -/
-def relCorrelative : Marker :=
-  { form := "jo … vo"
-  , npRel := .relPronoun
-  , bearsCaseMarking := true
-  , placement := .correlative
-  , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
+def relCorrelative : Relativizer where
+  form := "jo … vo"
+  placement := .correlative
+  realize
+    | .subject | .directObject | .indirectObject | .oblique | .genitive => {.relPronoun}
+    | _ => ∅
 
-/-- The Hindi-Urdu relative-clause markers. -/
-def relMarkers : List Marker := [relJo, relCorrelative]
+/-- The Hindi-Urdu relativizers. -/
+def relativizers : List Relativizer := [relJo, relCorrelative]
 
 end HindiUrdu

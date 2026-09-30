@@ -23,25 +23,23 @@ The data are [keenan-comrie-1977]'s.
 
 namespace Tagalog
 
-open RelativeClause
-
 /-- The postnominal clause joined by the linker *na ~ -ng* relativizes subjects only. -/
-def relLinkerPost : Marker :=
-  { form := "na/-ng"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .postNominal
-  , positions := {.subject} }
+def relLinkerPost : Relativizer where
+  form := "na/-ng"
+  placement := .postNominal
+  realize
+    | .subject => {.gap}
+    | _ => ∅
 
 /-- The prenominal clause joined by the linker *na ~ -ng* relativizes subjects only. -/
-def relLinkerPre : Marker :=
-  { form := "na/-ng"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .preNominal
-  , positions := {.subject} }
+def relLinkerPre : Relativizer where
+  form := "na/-ng"
+  placement := .preNominal
+  realize
+    | .subject => {.gap}
+    | _ => ∅
 
-/-- The Tagalog relative-clause markers. -/
-def relMarkers : List Marker := [relLinkerPost, relLinkerPre]
+/-- The Tagalog relativizers. -/
+def relativizers : List Relativizer := [relLinkerPost, relLinkerPre]
 
 end Tagalog

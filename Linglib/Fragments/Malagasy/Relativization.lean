@@ -20,18 +20,16 @@ are [keenan-comrie-1977]'s.
 
 namespace Malagasy
 
-open RelativeClause
-
 /-- The postnominal clause, optionally introduced by *izay*, leaves the relativized position
 empty and relativizes subjects only. -/
-def relGap : Marker :=
-  { form := "izay/∅"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .postNominal
-  , positions := {.subject} }
+def relGap : Relativizer where
+  form := "izay/∅"
+  placement := .postNominal
+  realize
+    | .subject => {.gap}
+    | _ => ∅
 
-/-- The Malagasy relative-clause markers. -/
-def relMarkers : List Marker := [relGap]
+/-- The Malagasy relativizers. -/
+def relativizers : List Relativizer := [relGap]
 
 end Malagasy

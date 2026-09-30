@@ -23,27 +23,18 @@ Chinese (spoken Pekingese).
 
 namespace Mandarin
 
-open RelativeClause
+/-- The particle *de* closes a prenominal clause whose relativized position is left empty at the
+subject, left empty or filled by a personal pronoun at the direct object, and filled by a
+personal pronoun from the indirect object down. -/
+def relDe : Relativizer where
+  form := "de"
+  placement := .preNominal
+  realize
+    | .subject => {.gap}
+    | .directObject => {.gap, .resumptive}
+    | _ => {.resumptive}
 
-/-- The prenominal *de*-clause with the relativized position left empty relativizes subjects and
-direct objects. -/
-def relDeGap : Marker :=
-  { form := "de"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .preNominal
-  , positions := {.subject, .directObject} }
-
-/-- The prenominal *de*-clause with a retained pronoun relativizes everything from direct objects
-down. -/
-def relDeResumptive : Marker :=
-  { form := "de"
-  , npRel := .resumptive
-  , bearsCaseMarking := true
-  , placement := .preNominal
-  , positions := {.directObject, .indirectObject, .oblique, .genitive, .objComparison} }
-
-/-- The Mandarin relative-clause markers. -/
-def relMarkers : List Marker := [relDeGap, relDeResumptive]
+/-- The Mandarin relativizers. -/
+def relativizers : List Relativizer := [relDe]
 
 end Mandarin

@@ -95,14 +95,14 @@ instance : DecidableLE Focused := fun a b ↦ inferInstanceAs (Decidable (a = b)
 instance : DecidableLT Focused := fun a b ↦ inferInstanceAs (Decidable (a = b ∧ ¬ b = a))
 
 /-- The relativizable position a focused constituent occupies. -/
-def Focused.relativePosition : Focused → Option RelativeClause.Position
+def Focused.relativePosition : Focused → Option Relativization.Position
   | .subject => some .subject
   | .object => some .directObject
   | .adjunct => none
 
 /-- A fronted subject leaves the high-tone *ó* in its position; a fronted object or adjunct
 leaves it empty. -/
-def Focused.npRel : Focused → RelativeClause.NPRel
+def Focused.npRel : Focused → Relativization.NPRel
   | .subject => .resumptive
   | .object | .adjunct => .gap
 
@@ -206,8 +206,7 @@ theorem standard_exactlyTargets (f : Focused) :
 /-- A fronted focus vacates its position as relativization does, the subject resumed by *ó*
 and the object left empty under both constructions. -/
 theorem npRel_eq_relative :
-    ∀ f : Focused, ∀ m ∈ relMarkers, ∀ p ∈ m.positions,
-      f.relativePosition = some p → f.npRel = m.npRel := by
+    ∀ f : Focused, ∀ p, f.relativePosition = some p → relTi.realize p = {f.npRel} := by
   decide
 
 end Yoruba

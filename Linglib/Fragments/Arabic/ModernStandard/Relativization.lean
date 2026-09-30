@@ -1,127 +1,123 @@
 module
 
 public import Linglib.Syntax.Clause.Relative
+public import Linglib.Syntax.Gender.Basic
+public import Linglib.Syntax.Number.Basic
+public import Linglib.Fragments.Arabic.ModernStandard.Case
 
 /-!
-# Modern Standard Arabic Relativization Fragment
-[keenan-comrie-1977] [ryding-2005]
+# Modern Standard Arabic relative clauses
 
-Two definite-headed RC markers, anchored on [ryding-2005] ch. 14
-(§14.1–14.4) and cross-checked against [keenan-comrie-1977] Table 1:
+Modern Standard Arabic relative clauses are definite or indefinite with their antecedent
+([ryding-2005] ch. 14, pp. 322–325). A definite clause is introduced by the definite relative
+pronoun *alladhii*, which agrees with the antecedent in number and gender and, in the dual, in
+case; an indefinite clause has no relative pronoun. In both, a relativized subject is left
+unfilled, and the object of a verb or a preposition is resumed by a personal pronoun, the
+*ʿaaʾid* 'returner'.
 
-- *alladhī/allatii* + no overt subject (Ryding §14.2; K&C -case strategy):
-  the relative pronoun agrees with a definite head in gender, number, and
-  (in the dual) case. The relativized subject position is unfilled.
-- *alladhī/allatii* + resumptive pronoun (Ryding §14.4.1; K&C +case
-  strategy): same relative pronoun introduces the RC; a resumptive
-  personal pronoun (the *ʿaaʾid* / *raajiʿ*) appears in the relativized
-  non-subject position.
+## Main declarations
 
-`relMarkers` exposes the full Ryding-attested set (4 markers: definite-
-headed pair plus indefinite-headed pair from §14.3, §14.4.2 — Ø relative
-pronoun, with resumption when relativizing a non-subject). The free
-relatives *maa* / *man* (Ryding §14.5) are a separate construction
-(no head NP) and are not included. Paper-specific subsets (e.g., the
-two-marker subset [keenan-comrie-1977] Table 1 records) live in
-the consuming Studies files, not in this Fragment.
+* `Arabic.ModernStandard.relativePronoun`: the nine forms of the definite relative pronoun.
+* `Arabic.ModernStandard.relativePronoun_ne_iff_dual`, `relativePronoun_inj`: only the dual
+  distinguishes case, and every form marks number and gender.
+* `Arabic.ModernStandard.relativePronoun_dual_syncretism`: the dual relative pronoun has the
+  case syncretism of the dual declension.
+* `Arabic.ModernStandard.relativizer`: the relativizer of an antecedent of each definiteness.
 
-## Variety
+## Implementation notes
 
-The data here is Modern Standard Arabic (ISO `arb`); other files in
-`Fragments/Arabic/` (`Reference.lean`, `Pronouns.lean`, `Morph.lean`,
-`TenseAspect.lean`) target Egyptian Arabic (ISO `arz`). The directory is
-already mixed; a future split into `Fragments/StandardArabic/` and
-`Fragments/EgyptianArabic/` would resolve the incoherence.
+The forms are Ryding's transliterations. The relativizer is indexed by the antecedent's
+definiteness, which decides only its form: resumption occurs "in definite and indefinite
+relative clauses" alike (p. 324), so the realization does not depend on it. The relative
+pronoun agrees with the antecedent, not with the relativized position, so a relativized subject
+is a gap whichever form the pronoun takes.
+
+Ryding states the resumptive rule for the object of a verb or a preposition (p. 324), which
+covers the direct object, the indirect object, a second accusative or the object of *li-* or
+*ʾilaa* (p. 70), the oblique, and the object of comparison, the object of the preposition *min*
+'than' (p. 246, p. 378). The genitive is recorded with a resumptive on [keenan-comrie-1977]'s
+Tables 1 and 2 (pp. 76, 93), whose Arabic rows, Classical Arabic in Table 1, agree with Ryding's
+rule at every position the rule covers.
+
+The free relatives with *maa* and *man* (§5, pp. 325–327) have no head noun and are not
+recorded.
+
+## TODO
+
+Ryding does not treat relativization of a possessor; the genitive wants a page in a grammar of
+Modern Standard Arabic.
+
+## References
+
+* [keenan-comrie-1977]
+* [ryding-2005]
 -/
 
 @[expose] public section
 
 namespace Arabic.ModernStandard
 
-open RelativeClause
+open Reference (Definiteness)
 
-/-- Relative pronoun *alladhī* (masc.sg.) / *allatii* (fem.sg.) — head of a
-    nine-form paradigm marked for number/gender (and, in the dual, case);
-    see [ryding-2005] §14.1 Table. Used with definite antecedents
-    (Ryding §14.2). The relativized subject position carries no overt
-    NP — verb agreement on the RC's verb encodes the subject. Per
-    [keenan-comrie-1977] this is the language's -case strategy and
-    is restricted to subject relativization.
+/-! ### The definite relative pronoun -/
 
-    E.g., "hiya llatii ʾarsalat-i l-duktuur-a"
-          'she is the one who sent the doctor' (Ryding §14.2). -/
-def relAlladhi : Marker :=
-  { form := "alladhī/allatii"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .postNominal
-  , positions := {.subject}
-  , headDefiniteness := some .definite }
+/-- The definite relative pronoun, by the number and gender of its antecedent and by case
+([ryding-2005] p. 322), with the feminine plural's variants *allaatii* and *allawaatii*; empty
+outside the singular, dual and plural and the two genders. The plural is used only of human
+referents (p. 323). -/
+def relativePronoun : Number → Gender → Case → List String
+  | .singular, .masculine, _ => ["alladhii"]
+  | .singular, .feminine, _ => ["allatii"]
+  | .dual, .masculine, .nom => ["alladhaani"]
+  | .dual, .masculine, _ => ["alladhayni"]
+  | .dual, .feminine, .nom => ["allataani"]
+  | .dual, .feminine, _ => ["allatayni"]
+  | .plural, .masculine, _ => ["alladhiina"]
+  | .plural, .feminine, _ => ["allaatii", "allawaatii"]
+  | _, _, _ => []
 
-/-- Relative pronoun *alladhī/allatii* with a resumptive personal pronoun
-    (the *ʿaaʾid*) in the relativized position. Used with definite
-    antecedents when the relativized position is the object of a verb or
-    preposition ([ryding-2005] §14.4 and §14.4.1). The resumptive
-    pronoun bears case, instantiating [keenan-comrie-1977]'s +case
-    strategy. K&C Table 1 records coverage through the full DO–OCOMP
-    range.
+/-- "Only the dual form of the definite relative pronoun shows difference in case" (p. 322). -/
+theorem relativePronoun_ne_iff_dual :
+    ∀ n ∈ [Number.singular, .dual, .plural], ∀ g ∈ [Gender.masculine, .feminine],
+      (∃ c c', relativePronoun n g c ≠ relativePronoun n g c') ↔ n = .dual := by
+  decide
 
-    E.g., "al-kitaab-u alladhii qaraʾ-naa-hu"
-          'the book that we read (it)' (Ryding §14.4). -/
-def relResumptive : Marker :=
-  { form := "alladhī/allatii + resumptive"
-  , npRel := .resumptive
-  , bearsCaseMarking := true
-  , placement := .postNominal
-  , positions := {.directObject, .indirectObject, .oblique, .genitive, .objComparison}
-  , headDefiniteness := some .definite }
+/-- The forms "are marked for number and gender" (p. 322): in each case, distinct numbers or
+genders have distinct forms. -/
+theorem relativePronoun_inj :
+    ∀ c, ∀ n ∈ [Number.singular, .dual, .plural], ∀ n' ∈ [Number.singular, .dual, .plural],
+      ∀ g ∈ [Gender.masculine, .feminine], ∀ g' ∈ [Gender.masculine, .feminine],
+        relativePronoun n g c = relativePronoun n' g' c ↔ n = n' ∧ g = g' := by
+  decide
 
-/-- Indefinite-headed RC, subject relativization. Per [ryding-2005]
-    §14.3, "a relative clause may refer to an indefinite noun or noun
-    phrase in the main clause, in which case the relative pronoun is
-    omitted." The relativized subject position is unfilled; the RC's verb
-    encodes the subject via agreement.
+/-- The dual relative pronoun merges the genitive and the accusative against the nominative, as
+the dual declension does (p. 188). -/
+theorem relativePronoun_dual_syncretism :
+    ∀ g ∈ [Gender.masculine, .feminine], ∀ c c',
+      relativePronoun .dual g c = relativePronoun .dual g c' ↔
+        baytaani.form .definite c = baytaani.form .definite c' := by
+  decide
 
-    E.g., "fii ziyaarat-in li-dimashq-a ta-staghriq-u ʾusbuuʿ-an"
-          'on a visit to Damascus [which] lasts a week' (Ryding §14.3). -/
-def relAsyndeticGap : Marker :=
-  { form := "∅"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .postNominal
-  , positions := {.subject}
-  , headDefiniteness := some .indefinite }
+/-! ### The relativizer -/
 
-/-- Indefinite-headed RC, non-subject relativization. Per [ryding-2005]
-    §14.4.2, "indefinite relative clauses do not include relative pronouns,
-    but they must include a resumptive pronoun if the clause refers back to
-    a noun or noun phrase that is the object of a preposition or a verb."
-    The resumptive pronoun bears case.
-
-    Ryding's examples cover direct objects directly. The §14.4.2 "object
-    of a preposition or a verb" formulation extends to oblique positions
-    by the same principle; [keenan-comrie-1977] Table 1 covers the
-    full DO–OCOMP range with the resumptive strategy in both definite and
-    indefinite contexts, and Ryding gives no contrastive restriction. The
-    `positions` list reflects this combined Ryding+K&C reading.
-
-    E.g., "wa-qaal-a fii muʾtamar-in SiHaafiyy-in ʿaqad-a-hu ʾams-i"
-          'he said in a press conference [which] he held (it) yesterday'
-          (Ryding §14.4.2). -/
-def relAsyndeticResumptive : Marker :=
-  { form := "∅ + resumptive"
-  , npRel := .resumptive
-  , bearsCaseMarking := true
-  , placement := .postNominal
-  , positions := {.directObject, .indirectObject, .oblique, .genitive, .objComparison}
-  , headDefiniteness := some .indefinite }
-
-/-- The full MSA RC marker inventory per [ryding-2005] ch. 14:
-    definite-headed pair (`relAlladhi`, `relResumptive`) plus
-    indefinite-headed pair (`relAsyndeticGap`, `relAsyndeticResumptive`).
-    The free relatives *maa* / *man* of §14.5 are a separate construction
-    (no head NP) and are not included. -/
-def relMarkers : List Marker :=
-  [relAlladhi, relResumptive, relAsyndeticGap, relAsyndeticResumptive]
+/-- The relativizer of an antecedent of definiteness `d`: the definite relative pronoun, cited in
+the masculine singular, for a definite antecedent (§2, p. 323), and none for an indefinite one
+(§3, p. 324). A relativized subject is left unfilled, the verb agreeing with it: *hiya llatii
+ʾarsal-at-i l-duktuur-a* 'she is the one who sent the doctor' (p. 323), *fii ziyaarat-in
+li-dimashq-a ta-staghriq-u ʾusbuuʿ-an* 'on a visit to Damascus [which] lasts a week' (p. 324).
+In the dual the pronoun takes the antecedent's case, not the relativized position's: in
+*li-l-zawj-ayni lladh-ayni ya-ntaZir-aani* 'for the couple who are awaiting' the antecedent is
+genitive and the relativized position the subject (p. 323). Every lower position is resumed by
+a personal pronoun, the *ʿaaʾid*, which "must be inserted" (p. 324): *al-kitaab-u lladhii
+qaraʾ-naa-hu* 'the book that we read (it)' (p. 324), *wa-qaal-a fii muʾtamar-in SiHaafiyy-in
+ʿaqad-a-hu ʾams-i* 'he said in a press conference [which] he held (it) yesterday' (p. 325). -/
+def relativizer (d : Definiteness) : Relativizer where
+  form := match d with
+    | .definite => "alladhii"
+    | .indefinite => "∅"
+  placement := .postNominal
+  realize
+    | .subject => {.gap}
+    | _ => {.resumptive}
 
 end Arabic.ModernStandard

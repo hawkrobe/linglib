@@ -22,27 +22,25 @@ book in which I read the story', with the pronoun in *ynddo* 'in it'. The data a
 
 namespace Welsh
 
-open RelativeClause
-
 /-- The particle *a* leaves the relativized position empty and relativizes subjects and direct
 objects. -/
-def relParticleA : Marker :=
-  { form := "a"
-  , npRel := .gap
-  , bearsCaseMarking := false
-  , placement := .postNominal
-  , positions := {.subject, .directObject} }
+def relParticleA : Relativizer where
+  form := "a"
+  placement := .postNominal
+  realize
+    | .subject | .directObject => {.gap}
+    | _ => ∅
 
 /-- The particle *y* puts a personal pronoun in the relativized position and relativizes
 everything from indirect objects down. -/
-def relParticleY : Marker :=
-  { form := "y"
-  , npRel := .resumptive
-  , bearsCaseMarking := true
-  , placement := .postNominal
-  , positions := {.indirectObject, .oblique, .genitive, .objComparison} }
+def relParticleY : Relativizer where
+  form := "y"
+  placement := .postNominal
+  realize
+    | .indirectObject | .oblique | .genitive | .objComparison => {.resumptive}
+    | _ => ∅
 
-/-- The Welsh relative-clause markers. -/
-def relMarkers : List Marker := [relParticleA, relParticleY]
+/-- The Welsh relativizers. -/
+def relativizers : List Relativizer := [relParticleA, relParticleY]
 
 end Welsh

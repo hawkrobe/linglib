@@ -23,18 +23,16 @@ are [keenan-comrie-1977]'s.
 
 namespace Russian
 
-open RelativeClause
-
 /-- The relative pronoun *kotoryj* declines for the case of the relativized position and
 relativizes subjects through genitives. -/
-def relKotoryj : Marker :=
-  { form := "kotoryj"
-  , npRel := .relPronoun
-  , bearsCaseMarking := true
-  , placement := .postNominal
-  , positions := {.subject, .directObject, .indirectObject, .oblique, .genitive} }
+def relKotoryj : Relativizer where
+  form := "kotoryj"
+  placement := .postNominal
+  realize
+    | .subject | .directObject | .indirectObject | .oblique | .genitive => {.relPronoun}
+    | _ => ∅
 
-/-- The Russian relative-clause markers. -/
-def relMarkers : List Marker := [relKotoryj]
+/-- The Russian relativizers. -/
+def relativizers : List Relativizer := [relKotoryj]
 
 end Russian
