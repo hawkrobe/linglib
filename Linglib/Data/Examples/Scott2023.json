@@ -18,8 +18,7 @@
       ["cell", "1plExcl"],
       ["morphemes", "qo=i"]
     ],
-    "comment": "The full first-person plural pronoun is out as an intransitive subject agreed with by Infl.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The full first-person plural pronoun is out as an intransitive subject agreed with by Infl."
   },
   {
     "id": "scott2023_78b",
@@ -41,8 +40,7 @@
       ["cell", "1plExcl"],
       ["morphemes", "qo=i"]
     ],
-    "comment": "The full first-person plural pronoun is out as a transitive subject agreed with by Voice.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The full first-person plural pronoun is out as a transitive subject agreed with by Voice."
   },
   {
     "id": "scott2023_78c",
@@ -63,8 +61,7 @@
       ["cell", "1plExcl"],
       ["morphemes", "qo=i"]
     ],
-    "comment": "The full first-person plural pronoun is out as a possessor agreed with by Poss.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The full first-person plural pronoun is out as a possessor agreed with by Poss."
   },
   {
     "id": "scott2023_79",
@@ -85,8 +82,7 @@
       ["cell", "1plExcl"],
       ["morphemes", "qo=i"]
     ],
-    "comment": "With no agreement on the predicate the full pronoun is in.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "With no agreement on the predicate the full pronoun is in."
   },
   {
     "id": "scott2023_68b",
@@ -107,8 +103,7 @@
       ["cell", "1plExcl"],
       ["morphemes", "=i"]
     ],
-    "comment": "The reduced first-person plural subject pronoun: the disagreement enclitic alone.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The reduced first-person plural subject pronoun: the disagreement enclitic alone."
   },
   {
     "id": "scott2023_85a",
@@ -129,8 +124,7 @@
       ["cell", "1sg"],
       ["morphemes", "qin=i"]
     ],
-    "comment": "The full first-person singular pronoun is out as an intransitive subject.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The full first-person singular pronoun is out as an intransitive subject."
   },
   {
     "id": "scott2023_85b",
@@ -152,8 +146,7 @@
       ["cell", "1sg"],
       ["morphemes", "qin=i"]
     ],
-    "comment": "The full first-person singular pronoun is out as a transitive subject.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The full first-person singular pronoun is out as a transitive subject."
   },
   {
     "id": "scott2023_85c",
@@ -174,8 +167,7 @@
       ["cell", "1sg"],
       ["morphemes", "qin=i"]
     ],
-    "comment": "The full first-person singular pronoun is out as a possessor.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The full first-person singular pronoun is out as a possessor."
   },
   {
     "id": "scott2023_62",
@@ -196,8 +188,7 @@
       ["cell", "1sg"],
       ["morphemes", "=i"]
     ],
-    "comment": "Agreeing Set B on Infl and the reduced first-person singular subject pronoun.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Agreeing Set B on Infl and the reduced first-person singular subject pronoun."
   },
   {
     "id": "scott2023_86a",
@@ -218,8 +209,7 @@
       ["cell", "2pl"],
       ["morphemes", "q=i"]
     ],
-    "comment": "Second-person plural subjects keep their full form.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Second-person plural subjects keep their full form."
   },
   {
     "id": "scott2023_86b",
@@ -241,8 +231,7 @@
       ["cell", "2pl"],
       ["morphemes", "q=i"]
     ],
-    "comment": "Second-person plural transitive subjects keep their full form.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Second-person plural transitive subjects keep their full form."
   },
   {
     "id": "scott2023_86c",
@@ -263,8 +252,7 @@
       ["cell", "2pl"],
       ["morphemes", "q=i"]
     ],
-    "comment": "Second-person plural possessors keep their full form.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Second-person plural possessors keep their full form."
   },
   {
     "id": "scott2023_87a",
@@ -285,8 +273,7 @@
       ["cell", "3pl"],
       ["morphemes", "qa"]
     ],
-    "comment": "Third-person plural subjects keep their full form.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Third-person plural subjects keep their full form."
   },
   {
     "id": "scott2023_87b",
@@ -308,8 +295,7 @@
       ["cell", "3pl"],
       ["morphemes", "qa"]
     ],
-    "comment": "Third-person plural transitive subjects keep their full form.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Third-person plural transitive subjects keep their full form."
   },
   {
     "id": "scott2023_87c",
@@ -330,8 +316,7 @@
       ["cell", "3pl"],
       ["morphemes", "qa"]
     ],
-    "comment": "Third-person plural possessors keep their full form.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Third-person plural possessors keep their full form."
   },
   {
     "id": "scott2023_88b",
@@ -352,8 +337,7 @@
       ["cell", "1sg"],
       ["morphemes", "qin=i"]
     ],
-    "comment": "Without agreement the first-person singular pronoun is full.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Without agreement the first-person singular pronoun is full."
   },
   {
     "id": "scott2023_88c",
@@ -374,8 +358,7 @@
       ["cell", "2pl"],
       ["morphemes", "q=i"]
     ],
-    "comment": "Without agreement the second-person plural pronoun is full.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Without agreement the second-person plural pronoun is full."
   },
   {
     "id": "scott2023_88d",
@@ -396,8 +379,7 @@
       ["cell", "3pl"],
       ["morphemes", "qa"]
     ],
-    "comment": "Without agreement the third-person plural pronoun is full.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Without agreement the third-person plural pronoun is full."
   },
   {
     "id": "scott2023_69a",
@@ -419,8 +401,7 @@
       ["cell", "1sg"],
       ["morphemes", "qin=i"]
     ],
-    "comment": "A transitive object is a full pronoun, next to default Set B on Infl.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A transitive object is a full pronoun, next to default Set B on Infl."
   },
   {
     "id": "scott2023_89a",
@@ -441,8 +422,7 @@
       ["cell", "2pl"],
       ["morphemes", "q=i"]
     ],
-    "comment": "The full second-person plural possessor.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The full second-person plural possessor."
   },
   {
     "id": "scott2023_89b",
@@ -464,8 +444,7 @@
       ["morphemes", "=i"],
       ["optionalReduction", "yes"]
     ],
-    "comment": "The optionally reduced second-person plural possessor, a Set A context.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The optionally reduced second-person plural possessor, a Set A context."
   },
   {
     "id": "scott2023_90b",
@@ -488,8 +467,7 @@
       ["morphemes", "=i"],
       ["optionalReduction", "yes"]
     ],
-    "comment": "The optionally reduced second-person plural transitive subject, a Set A context.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The optionally reduced second-person plural transitive subject, a Set A context."
   },
   {
     "id": "scott2023_91a",
@@ -510,8 +488,7 @@
       ["cell", "2pl"],
       ["morphemes", "q=i"]
     ],
-    "comment": "A second-person plural intransitive subject, a Set B context.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A second-person plural intransitive subject, a Set B context."
   },
   {
     "id": "scott2023_91b",
@@ -532,8 +509,7 @@
       ["cell", "2pl"],
       ["morphemes", "=i"]
     ],
-    "comment": "Reduction of the second-person plural is not available in a Set B context; the sentence is read as 'I danced'.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Reduction of the second-person plural is not available in a Set B context; the sentence is read as 'I danced'."
   },
   {
     "id": "scott2023_57",
@@ -555,8 +531,7 @@
       ["cell", "1sg"],
       ["setB", "chin"]
     ],
-    "comment": "The agreeing-object pattern of standard Mam, available to some speakers as a formal variant: Infl's probe is satisfied by φ alone.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The agreeing-object pattern of standard Mam, available to some speakers as a formal variant: Infl's probe is satisfied by φ alone."
   },
   {
     "id": "scott2023_59",
@@ -578,8 +553,7 @@
       ["cell", "1sg"],
       ["setB", "tz'"]
     ],
-    "comment": "Default Set B: Infl's probe halts at transitive Voice, and the object is a full pronoun.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Default Set B: Infl's probe halts at transitive Voice, and the object is a full pronoun."
   },
   {
     "id": "scott2023_73",
@@ -601,8 +575,7 @@
       ["cell", "1sg"],
       ["setA", "w"]
     ],
-    "comment": "Extended ergativity: the intransitive subject of a when-clause takes Set A.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Extended ergativity: the intransitive subject of a when-clause takes Set A."
   },
   {
     "id": "scott2023_77a",
@@ -625,8 +598,7 @@
       ["cell", "1sg"],
       ["setA", "t"]
     ],
-    "comment": "Super-extended ergativity: the object slot on the directional takes only the default Set A, and the object is a full pronoun.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Super-extended ergativity: the object slot on the directional takes only the default Set A, and the object is a full pronoun."
   },
   {
     "id": "scott2023_77b",
@@ -648,7 +620,6 @@
       ["cell", "1sg"],
       ["setA", "w"]
     ],
-    "comment": "Agreeing Set A for the object is out in a super-extended ergative clause.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Agreeing Set A for the object is out in a super-extended ergative clause."
   }
 ]

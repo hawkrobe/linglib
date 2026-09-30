@@ -31,9 +31,7 @@ def katabt : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L S"), ("stress", "final"), ("register", "colloquial Cairene"), ("source", "Harrell 1957, 15")]
-    comment := "Superheavy final, heavy after Consonant Extrametricality."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Superheavy final, heavy after Consonant Extrametricality." }
 
 def hajjaan : LinguisticExample :=
   { id := "hayes1995_hajjaan"
@@ -49,9 +47,7 @@ def hajjaan : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "H S"), ("stress", "final"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 77")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def gatoo : LinguisticExample :=
   { id := "hayes1995_gatoo"
@@ -67,9 +63,7 @@ def gatoo : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L S"), ("stress", "final"), ("register", "colloquial Cairene"), ("source", "Mitchell 1975, 81")]
-    comment := "Final CV: counts as heavy in colloquial forms."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Final CV: counts as heavy in colloquial forms." }
 
 def beetak : LinguisticExample :=
   { id := "hayes1995_beetak"
@@ -85,9 +79,7 @@ def beetak : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "H L"), ("stress", "penult"), ("register", "colloquial Cairene"), ("source", "Harrell 1957, 15")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def katabta : LinguisticExample :=
   { id := "hayes1995_katabta"
@@ -103,9 +95,7 @@ def katabta : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L H L"), ("stress", "penult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 78")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def mudarris : LinguisticExample :=
   { id := "hayes1995_mudarris"
@@ -121,9 +111,7 @@ def mudarris : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L H L"), ("stress", "penult"), ("register", "colloquial Cairene"), ("source", "McCarthy 1979a, 446")]
-    comment := "Final CVC demoted to light; (15b), (16b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Final CVC demoted to light; (15b), (16b)." }
 
 def haadaani : LinguisticExample :=
   { id := "hayes1995_haadaani"
@@ -139,9 +127,7 @@ def haadaani : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "H H L"), ("stress", "penult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 77")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def qattaala : LinguisticExample :=
   { id := "hayes1995_qattaala"
@@ -157,9 +143,7 @@ def qattaala : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "H L L"), ("stress", "penult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 77"), ("parity", "even from the preceding heavy")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def mudarrisit : LinguisticExample :=
   { id := "hayes1995_mudarrisit"
@@ -175,9 +159,7 @@ def mudarrisit : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L H L L"), ("stress", "penult"), ("register", "colloquial Cairene"), ("source", "McCarthy 1979a, 446"), ("parity", "even from the preceding heavy")]
-    comment := "(15c), (16c)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "(15c), (16c)." }
 
 def Padwiyatuhu : LinguisticExample :=
   { id := "hayes1995_Padwiyatuhu"
@@ -193,9 +175,7 @@ def Padwiyatuhu : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "H L L L L"), ("stress", "penult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 79"), ("parity", "even from the preceding heavy")]
-    comment := "(15c), (16c)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "(15c), (16c)." }
 
 def fihim : LinguisticExample :=
   { id := "hayes1995_fihim"
@@ -211,9 +191,7 @@ def fihim : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L L"), ("stress", "penult"), ("register", "colloquial Cairene"), ("source", "Kenstowicz 1980, 42"), ("parity", "even from the word beginning")]
-    comment := "(15c), (16c)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "(15c), (16c)." }
 
 def sajaratun : LinguisticExample :=
   { id := "hayes1995_sajaratun"
@@ -229,9 +207,7 @@ def sajaratun : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L L L L"), ("stress", "penult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 78"), ("parity", "even from the word beginning")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def katabitu : LinguisticExample :=
   { id := "hayes1995_katabitu"
@@ -247,9 +223,7 @@ def katabitu : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L L L L"), ("stress", "penult"), ("register", "colloquial Cairene"), ("source", "Harrell 1957, 15"), ("parity", "even from the word beginning")]
-    comment := "(15c), (16c)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "(15c), (16c)." }
 
 def sajaratuhuma : LinguisticExample :=
   { id := "hayes1995_sajaratuhuma"
@@ -265,9 +239,7 @@ def sajaratuhuma : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L L L L L L"), ("stress", "penult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 79"), ("parity", "even from the word beginning")]
-    comment := "Final CV: light by Mora Extrametricality; (15c), (16c)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Final CV: light by Mora Extrametricality; (15c), (16c)." }
 
 def Pinkasara : LinguisticExample :=
   { id := "hayes1995_Pinkasara"
@@ -283,9 +255,7 @@ def Pinkasara : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "H L L L"), ("stress", "antepenult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 77"), ("parity", "odd from the preceding heavy")]
-    comment := "(15d), (16d)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "(15d), (16d)." }
 
 def Padwiyatuhuma : LinguisticExample :=
   { id := "hayes1995_Padwiyatuhuma"
@@ -301,9 +271,7 @@ def Padwiyatuhuma : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "H L L L L L"), ("stress", "antepenult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 79"), ("parity", "odd from the preceding heavy")]
-    comment := "(15d), (16d)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "(15d), (16d)." }
 
 def kataba : LinguisticExample :=
   { id := "hayes1995_kataba"
@@ -319,9 +287,7 @@ def kataba : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L L L"), ("stress", "antepenult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 77"), ("parity", "odd from the word beginning")]
-    comment := "(15d), (16d), (17): the stray final light cannot be promoted."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "(15d), (16d), (17): the stray final light cannot be promoted." }
 
 def sajaratuhu : LinguisticExample :=
   { id := "hayes1995_sajaratuhu"
@@ -337,9 +303,7 @@ def sajaratuhu : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.3"), ("weights", "L L L L L"), ("stress", "antepenult"), ("register", "Cairene Classical"), ("source", "Mitchell 1975, 80"), ("parity", "odd from the word beginning")]
-    comment := "(15d), (16d)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "(15d), (16d)." }
 
 def all : List LinguisticExample := [katabt, hajjaan, gatoo, beetak, katabta, mudarris, haadaani, qattaala, mudarrisit, Padwiyatuhu, fihim, sajaratun, katabitu, sajaratuhuma, Pinkasara, Padwiyatuhuma, kataba, sajaratuhu]
 

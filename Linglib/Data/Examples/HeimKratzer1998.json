@@ -24,8 +24,7 @@
         "subject"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heimkratzer1998_ch7_1b",
@@ -52,8 +51,7 @@
         "object"
       ]
     ],
-    "comment": "The type mismatch in object position that Quantifier Raising repairs (§7.3).",
-    "lgrConformance": ""
+    "comment": "The type mismatch in object position that Quantifier Raising repairs (§7.3)."
   },
   {
     "id": "heimkratzer1998_ch7_2",
@@ -80,7 +78,6 @@
         "some > every; every > some"
       ]
     ],
-    "comment": "Scope ambiguity: two Quantifier Raising derivations.",
-    "lgrConformance": ""
+    "comment": "Scope ambiguity: two Quantifier Raising derivations."
   }
 ]

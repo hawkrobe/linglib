@@ -25,8 +25,7 @@
         "contrast"
       ]
     ],
-    "comment": "Contrast condition: a same-kind object of the opposite size is present.",
-    "metaLanguage": "stan1293"
+    "comment": "Contrast condition: a same-kind object of the opposite size is present."
   },
   {
     "id": "ronderos2024_1b",
@@ -54,8 +53,7 @@
         "noContrast"
       ]
     ],
-    "comment": "No-contrast condition: the same-kind object is replaced by a distractor.",
-    "metaLanguage": "stan1293"
+    "comment": "No-contrast condition: the same-kind object is replaced by a distractor."
   },
   {
     "id": "ronderos2024_2a",
@@ -83,8 +81,7 @@
         "contrast"
       ]
     ],
-    "comment": "Contrast condition: a same-kind object of another colour is present.",
-    "metaLanguage": "stan1293"
+    "comment": "Contrast condition: a same-kind object of another colour is present."
   },
   {
     "id": "ronderos2024_2b",
@@ -112,8 +109,7 @@
         "noContrast"
       ]
     ],
-    "comment": "No-contrast condition.",
-    "metaLanguage": "stan1293"
+    "comment": "No-contrast condition."
   },
   {
     "id": "ronderos2024_3a",
@@ -141,8 +137,7 @@
         "contrast"
       ]
     ],
-    "comment": "Contrast condition: a same-kind object of another material is present.",
-    "metaLanguage": "stan1293"
+    "comment": "Contrast condition: a same-kind object of another material is present."
   },
   {
     "id": "ronderos2024_3b",
@@ -170,7 +165,6 @@
         "noContrast"
       ]
     ],
-    "comment": "No-contrast condition.",
-    "metaLanguage": "stan1293"
+    "comment": "No-contrast condition."
   }
 ]

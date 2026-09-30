@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "Asher"), ("role", "premise")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_2 : LinguisticExample :=
   { id := "yan2023_2"
@@ -49,9 +47,7 @@ def ex_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "Asher"), ("role", "monotonic conclusion")]
-    comment := "False in the scenario although a free trip is a trip."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "False in the scenario although a free trip is a trip." }
 
 def ex_3 : LinguisticExample :=
   { id := "yan2023_3"
@@ -67,9 +63,7 @@ def ex_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "Heim"), ("role", "premise")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_4 : LinguisticExample :=
   { id := "yan2023_4"
@@ -85,9 +79,7 @@ def ex_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "Heim"), ("role", "monotonic conclusion")]
-    comment := "Utterable in a situation where the speaker does not want to teach at all."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Utterable in a situation where the speaker does not want to teach at all." }
 
 def ex_5 : LinguisticExample :=
   { id := "yan2023_5"
@@ -103,9 +95,7 @@ def ex_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "Ross"), ("role", "premise")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_6 : LinguisticExample :=
   { id := "yan2023_6"
@@ -121,9 +111,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "Ross"), ("role", "monotonic conclusion")]
-    comment := "Suggests that John is okay with burning the letter."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Suggests that John is okay with burning the letter." }
 
 def ex_7 : LinguisticExample :=
   { id := "yan2023_7"
@@ -139,9 +127,7 @@ def ex_7 : LinguisticExample :=
     alternatives := []
     readings := [("John is ok with a Ferrari and he is ok with a Porsche", .acceptable)]
     paperFeatures := [("inference", "box free choice")]
-    comment := "The distributive inference does not rely on John not wanting a Ferrari and not wanting a Porsche."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The distributive inference does not rely on John not wanting a Ferrari and not wanting a Porsche." }
 
 def ex_8 : LinguisticExample :=
   { id := "yan2023_8"
@@ -157,9 +143,7 @@ def ex_8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "Ross"), ("formula", "◇SEND a")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_9 : LinguisticExample :=
   { id := "yan2023_9"
@@ -175,9 +159,7 @@ def ex_9 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "Ross"), ("formula", "◇BURN a")]
-    comment := "Licensed only by the enriched disjunctive want, which the premise does not support."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Licensed only by the enriched disjunctive want, which the premise does not support." }
 
 def ex_10 : LinguisticExample :=
   { id := "yan2023_10"
@@ -193,9 +175,7 @@ def ex_10 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "Asher"), ("formula", "◇∃x FREE x")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_11 : LinguisticExample :=
   { id := "yan2023_11"
@@ -211,9 +191,7 @@ def ex_11 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "Asher"), ("formula", "◇∃x ¬FREE x")]
-    comment := "Licensed only by the enriched reinterpretation of TRIP, which the premise does not justify."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Licensed only by the enriched reinterpretation of TRIP, which the premise does not justify." }
 
 def ex_12 : LinguisticExample :=
   { id := "yan2023_12"
@@ -229,9 +207,7 @@ def ex_12 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("evidence", "monotonicity"), ("item", "NPI any")]
-    comment := "The NPI is licensed under negated want, which requires want to be upward monotonic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The NPI is licensed under negated want, which requires want to be upward monotonic." }
 
 def ex_13 : LinguisticExample :=
   { id := "yan2023_13"
@@ -247,9 +223,7 @@ def ex_13 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("evidence", "monotonicity"), ("role", "contradiction")]
-    comment := "Infelicitous, as expected if want is upward monotonic; from Zimmermann 2006."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Infelicitous, as expected if want is upward monotonic; from Zimmermann 2006." }
 
 def ex_14 : LinguisticExample :=
   { id := "yan2023_14"
@@ -265,9 +239,7 @@ def ex_14 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "Ross"), ("role", "free-choice inference")]
-    comment := "The □-free-choice inference from the disjunctive want (8a), read with want scoping over the disjunction."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The □-free-choice inference from the disjunctive want (8a), read with want scoping over the disjunction." }
 
 def ex_15 : LinguisticExample :=
   { id := "yan2023_15"
@@ -283,9 +255,7 @@ def ex_15 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "Heim"), ("role", "unwarranted inference")]
-    comment := "Drawn from the reinterpreted conclusion (16b) by free choice; not justified by the premise."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Drawn from the reinterpreted conclusion (16b) by free choice; not justified by the premise." }
 
 def ex_16 : LinguisticExample :=
   { id := "yan2023_16"
@@ -301,9 +271,7 @@ def ex_16 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "Good Samaritan under desire"), ("role", "premise")]
-    comment := "A Good Samaritan case under desire, with a wide- and a narrow-scope reading of the relative clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A Good Samaritan case under desire, with a wide- and a narrow-scope reading of the relative clause." }
 
 def ex_17 : LinguisticExample :=
   { id := "yan2023_17"
@@ -319,9 +287,7 @@ def ex_17 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "Good Samaritan under desire"), ("role", "monotonic conclusion")]
-    comment := "Follows from the wide-scope reading of (19a) by conjunction elimination; the paper leaves this case to a scope solution."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Follows from the wide-scope reading of (19a) by conjunction elimination; the paper leaves this case to a scope solution." }
 
 def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17]
 

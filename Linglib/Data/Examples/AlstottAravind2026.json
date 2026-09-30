@@ -18,8 +18,7 @@
       ["construction", "after"],
       ["telicity", "atelic"]
     ],
-    "comment": "True in Scenarios B and C.",
-    "lgrConformance": "NONE"
+    "comment": "True in Scenarios B and C."
   },
   {
     "id": "alstottaravind2026_1b",
@@ -40,8 +39,7 @@
       ["construction", "before"],
       ["telicity", "atelic"]
     ],
-    "comment": "True only in Scenario A.",
-    "lgrConformance": "NONE"
+    "comment": "True only in Scenario A."
   },
   {
     "id": "alstottaravind2026_2a",
@@ -62,8 +60,7 @@
       ["construction", "before"],
       ["telicity", "telic"]
     ],
-    "comment": "True in Scenarios A and B.",
-    "lgrConformance": "NONE"
+    "comment": "True in Scenarios A and B."
   },
   {
     "id": "alstottaravind2026_2b",
@@ -84,8 +81,7 @@
       ["construction", "after"],
       ["telicity", "telic"]
     ],
-    "comment": "True only in Scenario C.",
-    "lgrConformance": "NONE"
+    "comment": "True only in Scenario C."
   },
   {
     "id": "alstottaravind2026_3a",
@@ -105,8 +101,7 @@
       ["construction", "within"],
       ["telicity", "atelic"]
     ],
-    "comment": "Read as 'within an hour Hector became happy'; Rett attributes the reading to INCHOAT, §8.2 to a scalar implicature over shorter spans.",
-    "lgrConformance": "NONE"
+    "comment": "Read as 'within an hour Hector became happy'; Rett attributes the reading to INCHOAT, §8.2 to a scalar implicature over shorter spans."
   },
   {
     "id": "alstottaravind2026_3b",
@@ -126,8 +121,7 @@
       ["construction", "at"],
       ["telicity", "telic"]
     ],
-    "comment": "Read as 'Jackson finished climbing the mountain at 7pm sharp'; Rett attributes the reading to COMPLET.",
-    "lgrConformance": "NONE"
+    "comment": "Read as 'Jackson finished climbing the mountain at 7pm sharp'; Rett attributes the reading to COMPLET."
   },
   {
     "id": "alstottaravind2026_exp1a_coercion",
@@ -149,8 +143,7 @@
       ["rtCost", "no"],
       ["naturalness", "null"]
     ],
-    "comment": "No slowdown at verb or verb+1 relative to (b); the replication failure of Brennan & Pylkkänen (2010).",
-    "lgrConformance": "NONE"
+    "comment": "No slowdown at verb or verb+1 relative to (b); the replication failure of Brennan & Pylkkänen (2010)."
   },
   {
     "id": "alstottaravind2026_exp1a_control",
@@ -170,8 +163,7 @@
       ["construction", "for"],
       ["telicity", "atelic"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alstottaravind2026_exp1a_complement",
@@ -193,8 +185,7 @@
       ["region", "noun+1"],
       ["naturalness", "lower"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alstottaravind2026_exp1a_complementControl",
@@ -213,8 +204,7 @@
       ["trial", "complementControl"],
       ["construction", "complement"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alstottaravind2026_exp1b_coercion",
@@ -237,8 +227,7 @@
       ["region", "verb+1"],
       ["naturalness", "lower"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alstottaravind2026_exp1b_control",
@@ -258,8 +247,7 @@
       ["construction", "in"],
       ["telicity", "telic"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alstottaravind2026_exp1b_complement",
@@ -281,8 +269,7 @@
       ["region", "noun+1"],
       ["naturalness", "lower"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alstottaravind2026_exp1b_complementControl",
@@ -301,8 +288,7 @@
       ["trial", "complementControl"],
       ["construction", "complement"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alstottaravind2026_exp2_noCoercion",
@@ -323,8 +309,7 @@
       ["telicity", "telic"],
       ["context", "beforeStart"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alstottaravind2026_exp2_completive",
@@ -349,8 +334,7 @@
       ["preregistered", "no"],
       ["naturalness", "lower"]
     ],
-    "comment": "Null at the pre-registered verb and verb+1 regions; the slowdown is at verb+2 (exploratory).",
-    "lgrConformance": "NONE"
+    "comment": "Null at the pre-registered verb and verb+1 regions; the slowdown is at verb+2 (exploratory)."
   },
   {
     "id": "alstottaravind2026_exp2_complement",
@@ -372,8 +356,7 @@
       ["region", "noun"],
       ["naturalness", "lower"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alstottaravind2026_exp3_coercion",
@@ -395,8 +378,7 @@
       ["rtCost", "no"],
       ["naturalness", "null"]
     ],
-    "comment": "Subject-experiencer verbs, as in Brennan & Pylkkänen (2010); still no slowdown.",
-    "lgrConformance": "NONE"
+    "comment": "Subject-experiencer verbs, as in Brennan & Pylkkänen (2010); still no slowdown."
   },
   {
     "id": "alstottaravind2026_exp3_control",
@@ -416,8 +398,7 @@
       ["construction", "for"],
       ["telicity", "atelic"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alstottaravind2026_exp3_complement",
@@ -439,8 +420,7 @@
       ["region", "noun+1"],
       ["naturalness", "lower"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alstottaravind2026_exp4_coercion",
@@ -465,8 +445,7 @@
       ["preregistered", "no"],
       ["naturalness", "lower"]
     ],
-    "comment": "Null at verb and verb+1; slowdown at verb+2 (exploratory).",
-    "lgrConformance": "NONE"
+    "comment": "Null at verb and verb+1; slowdown at verb+2 (exploratory)."
   },
   {
     "id": "alstottaravind2026_exp4_control",
@@ -487,8 +466,7 @@
       ["telicity", "atelic"],
       ["context", "afterFinish"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alstottaravind2026_exp4_complement",
@@ -509,8 +487,7 @@
       ["rtCost", "no"],
       ["naturalness", "lower"]
     ],
-    "comment": "The complement-coercion slowdown was diffuse and not significant at the pre-registered noun and noun+1 regions.",
-    "lgrConformance": "NONE"
+    "comment": "The complement-coercion slowdown was diffuse and not significant at the pre-registered noun and noun+1 regions."
   },
   {
     "id": "alstottaravind2026_exp4_complementControl",
@@ -529,8 +506,7 @@
       ["trial", "complementControl"],
       ["construction", "complement"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alstottaravind2026_32a",
@@ -550,8 +526,7 @@
       ["construction", "within"],
       ["telicity", "atelic"]
     ],
-    "comment": "Asserts that Ben was sick at some point in [6pm, 7pm]; with the negation of (35a) it entails that Ben became sick in that interval.",
-    "lgrConformance": "NONE"
+    "comment": "Asserts that Ben was sick at some point in [6pm, 7pm]; with the negation of (35a) it entails that Ben became sick in that interval."
   },
   {
     "id": "alstottaravind2026_35a",
@@ -570,8 +545,7 @@
       ["telicity", "atelic"],
       ["alternativeOf", "(32a)"]
     ],
-    "comment": "The stronger alternative whose negation (32a) implicates.",
-    "lgrConformance": "NONE"
+    "comment": "The stronger alternative whose negation (32a) implicates."
   },
   {
     "id": "alstottaravind2026_36a",
@@ -589,8 +563,7 @@
       ["construction", "within"],
       ["telicity", "telic"]
     ],
-    "comment": "Asserts a complete eating event in [6pm, 6:30pm] and implicates none in a shorter span.",
-    "lgrConformance": "NONE"
+    "comment": "Asserts a complete eating event in [6pm, 6:30pm] and implicates none in a shorter span."
   },
   {
     "id": "alstottaravind2026_17a",
@@ -614,8 +587,7 @@
       ["construction", "before"],
       ["aspect", "pfv.neut"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alstottaravind2026_17b",
@@ -638,7 +610,6 @@
       ["construction", "before"],
       ["aspect", "aia"]
     ],
-    "comment": "The ability-and-involuntary-action perfective marks the before-finish reading overtly.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The ability-and-involuntary-action perfective marks the before-finish reading overtly."
   }
 ]

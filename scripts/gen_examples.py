@@ -5,6 +5,7 @@ Usage:
     python3 scripts/gen_examples.py <AuthorYear>
     python3 scripts/gen_examples.py --all                # regenerate every paper
     python3 scripts/gen_examples.py --check [<AuthorYear>]  # verify sync, no writes
+    python3 scripts/gen_examples.py --fmt <AuthorYear>   # canonical JSON for one paper
 
 Example:
     python3 scripts/gen_examples.py Charlow2014
@@ -14,11 +15,6 @@ Example:
                  Charlow2014.Examples`. Consumers (the paper's study file,
                  test-suite hubs) `import Linglib.Data.Examples.Charlow2014`.
 
-Legacy migration: earlier versions spliced a generated block between
-`-- BEGIN GENERATED EXAMPLES` / `-- END GENERATED EXAMPLES` markers inside
-the study file (routed by an optional `<AuthorYear>.target` sidecar). When a
-host file still carries such a block, this script removes it, inserts the
-module import into that file, and deletes any retired `.target` sidecar.
 The `Linglib.lean` root import is not touched: the lakefile globs every
 submodule, and `scripts/mk_all.py` regenerates the root before a release.
 
@@ -39,39 +35,32 @@ object's fields mirror the `LinguisticExample` Lean struct:
     "alternatives": [{"form": "...", "judgment": "unacceptable"}],
     "readings":     [{"name": "strong", "judgment": "acceptable"},
                      {"name": "weak",   "judgment": "acceptable"}],
-    "comment": "...",
-    "metaLanguage": "stan1293",              // optional, default "stan1293"
-    "lgrConformance": "WORD_ALIGNED"         // optional, default ""
+    "paperFeatures": [["key", "value"], ...],  // the paper's own columns
+    "comment": "..."
   }
 
 Behavior:
 - Errors out (exit 1) if the JSON file doesn't exist.
-- Errors out on schema violations (unknown judgment value, gloss/word
-  length mismatch, missing required field, missing source.bibkey).
+- Errors out on schema violations (a key that is not a field, unknown
+  judgment value, malformed gloss pair, missing id or source.bibkey).
 - Idempotent: re-running on unchanged JSON produces no diff.
 - `--check` regenerates in-memory and exits 1 on any drift (CI guard);
   writes nothing.
-
-Defer to follow-on:
-- Schema extensions (Tree, indexed anaphora, paper-relativized
-  classifications) when a consuming study demands them.
+- `--fmt` rewrites the named paper's JSON in canonical format. It needs a
+  paper name (or `--all` for a PR whose subject is the reformat): most JSON
+  files predate the formatter, and reformatting them all buries a diff.
 
 Dependencies: pure stdlib (json module).
 """
 
 import json
-import re
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from check_module_frontier import as_module_if_possible, import_stmt  # noqa: E402
+from check_module_frontier import as_module_if_possible  # noqa: E402
 
 ROOT       = Path(__file__).resolve().parent.parent
 JSON_DIR   = ROOT / "Linglib" / "Data" / "Examples"
-STUDIES    = ROOT / "Linglib" / "Studies"
-
-BEGIN_MARKER = "-- BEGIN GENERATED EXAMPLES"
-END_MARKER   = "-- END GENERATED EXAMPLES"
 
 VALID_JUDGMENTS = {
     "acceptable", "marginal", "questionable", "unacceptable", "ungrammatical",
@@ -216,6 +205,9 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
         raise ValueError("example missing required `id`")
     where   = f"example {ex_id!r}"
     local   = lean_identifier(ex_id, author_year_lower)
+    unknown = [k for k in ex if k not in KEY_ORDER]
+    if unknown:
+        raise ValueError(f"{where}: {', '.join(map(repr, unknown))} not a field of LinguisticExample")
 
     src         = emit_source_ref(ex.get("source") or {}, where + ".source")
     reported_in = emit_reported_in(ex.get("reportedIn"), where)
@@ -230,8 +222,6 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
     readings    = emit_form_judgment_list(ex.get("readings", []), where + ".readings", "name")
     features    = emit_string_pair_list(ex.get("paperFeatures", []), where + ".paperFeatures")
     comment     = ex.get("comment") or ""
-    meta_lang   = (ex.get("metaLanguage") or "stan1293").strip() or "stan1293"
-    lgr         = (ex.get("lgrConformance") or "").strip()
 
     return f"""def {local} : LinguisticExample :=
   {{ id := {lean_string(ex_id)}
@@ -247,9 +237,7 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
     alternatives := {alternatives}
     readings := {readings}
     paperFeatures := {features}
-    comment := {lean_string(comment)}
-    metaLanguage := {lean_string(meta_lang)}
-    lgrConformance := {lean_string(lgr)} }}"""
+    comment := {lean_string(comment)} }}"""
 
 
 def emit_module(author_year: str, examples: list) -> str:
@@ -288,79 +276,6 @@ end {author_year}.Examples
 """
 
 
-def find_legacy_hosts(author_year: str) -> list[Path]:
-    """Files that may still carry a legacy marker block for this paper:
-    the `.target` sidecar's host (if any), the flat study file, and any
-    file in a multi-file paper subdir. Only files actually containing
-    both markers are returned (empty list for already-migrated papers)."""
-    candidates: list[Path] = []
-    sidecar = JSON_DIR / f"{author_year}.target"
-    if sidecar.exists():
-        for raw in sidecar.read_text(encoding="utf-8").splitlines():
-            line = raw.strip()
-            if line and not line.startswith("#"):
-                resolved = (ROOT / line).resolve()
-                if resolved.exists():
-                    candidates.append(resolved)
-                break
-    flat = STUDIES / f"{author_year}.lean"
-    if flat.exists():
-        candidates.append(flat)
-    subdir = STUDIES / author_year
-    if subdir.is_dir():
-        candidates.extend(sorted(subdir.glob("*.lean")))
-    hosts = []
-    for path in candidates:
-        body = path.read_text(encoding="utf-8")
-        if BEGIN_MARKER in body and END_MARKER in body and path not in hosts:
-            hosts.append(path)
-    return hosts
-
-
-def remove_marker_block(file_path: Path) -> None:
-    """Delete the legacy generated block, markers included, collapsing
-    the surrounding blank lines to a single separator."""
-    body = file_path.read_text(encoding="utf-8")
-    lines = body.splitlines(keepends=True)
-    begin_idx = end_idx = None
-    for i, line in enumerate(lines):
-        if line.rstrip("\n") == BEGIN_MARKER and begin_idx is None:
-            begin_idx = i
-        elif line.rstrip("\n") == END_MARKER and end_idx is None:
-            end_idx = i
-    if begin_idx is None or end_idx is None or end_idx <= begin_idx:
-        return
-    before = "".join(lines[:begin_idx]).rstrip("\n")
-    after = "".join(lines[end_idx + 1:]).lstrip("\n")
-    if before and after:
-        new_body = before + "\n\n" + after
-    else:
-        new_body = before + after
-    if not new_body.endswith("\n"):
-        new_body += "\n"
-    file_path.write_text(new_body, encoding="utf-8")
-
-
-def ensure_import(file_path: Path, module: str) -> bool:
-    """Insert `import <module>` after the file's last import line if
-    absent. Returns True if the file changed."""
-    body = file_path.read_text(encoding="utf-8")
-    if re.search(rf"^(?:public )?import {re.escape(module)}\s*$", body, flags=re.M):
-        return False
-    stmt = import_stmt(body, module)
-    lines = body.splitlines(keepends=True)
-    last_import = None
-    for i, line in enumerate(lines):
-        if line.startswith(("import ", "public import ")):
-            last_import = i
-    if last_import is None:
-        lines.insert(0, stmt + "\n")
-    else:
-        lines.insert(last_import + 1, stmt + "\n")
-    file_path.write_text("".join(lines), encoding="utf-8")
-    return True
-
-
 def process(author_year: str, check: bool) -> bool:
     """Generate (or, with `check`, verify) one paper's module.
 
@@ -392,7 +307,6 @@ def process(author_year: str, check: bool) -> bool:
         sys.exit(1)
 
     module_path = JSON_DIR / f"{author_year}.lean"
-    module_name = f"Linglib.Data.Examples.{author_year}"
     rel_module = module_path.relative_to(ROOT)
     rel_json = json_path.relative_to(ROOT)
     n = len(examples)
@@ -420,20 +334,6 @@ def process(author_year: str, check: bool) -> bool:
             f"[gen] {rel_module} \u2190 {rel_json} ({n} example{'s' if n != 1 else ''})\n"
         )
 
-    # Legacy migration: strip old marker blocks, wire the module import.
-    for host in find_legacy_hosts(author_year):
-        remove_marker_block(host)
-        ensure_import(host, module_name)
-        sys.stdout.write(
-            f"[gen] migrated legacy block out of {host.relative_to(ROOT)}\n"
-        )
-    sidecar = JSON_DIR / f"{author_year}.target"
-    if sidecar.exists():
-        sidecar.unlink()
-        sys.stdout.write(
-            f"[gen] removed retired sidecar {sidecar.relative_to(ROOT)}\n"
-        )
-
     return True
 
 
@@ -445,7 +345,6 @@ KEY_ORDER = [
     "id", "source", "reportedIn", "language", "primaryText",
     "discourseSegments", "glossedTokens", "translation", "context",
     "judgment", "alternatives", "readings", "paperFeatures", "comment",
-    "metaLanguage", "lgrConformance",
 ]
 
 MAX_WIDTH = 98
@@ -510,7 +409,7 @@ def format_examples(examples: list) -> str:
     for i, ex in enumerate(examples):
         out.append("  {")
         keys = [k for k in KEY_ORDER if k in ex]
-        keys += [k for k in ex if k not in KEY_ORDER]  # never drop unknown keys
+        keys += [k for k in ex if k not in KEY_ORDER]  # never drop unknown keys; the generator rejects them
         for j, k in enumerate(keys):
             comma = "," if j < len(keys) - 1 else ""
             out.append(f"    {_j(k)}: {_fmt_value(k, ex[k], '    ')}{comma}")
@@ -546,7 +445,7 @@ def main():
     do_fmt = "--fmt" in args
     args = [a for a in args if a not in ("--check", "--fmt")]
 
-    if args == ["--all"] or (not args and (check or do_fmt)):
+    if args == ["--all"] or (not args and check):
         papers = sorted(p.stem for p in JSON_DIR.glob("*.json"))
     elif len(args) == 1 and not args[0].startswith("-"):
         papers = [args[0]]
@@ -554,11 +453,12 @@ def main():
         sys.stderr.write(
             "Usage: python3 scripts/gen_examples.py <AuthorYear> | --all\n"
             "       python3 scripts/gen_examples.py --check [<AuthorYear>]\n"
-            "       python3 scripts/gen_examples.py --fmt [<AuthorYear>]\n"
+            "       python3 scripts/gen_examples.py --fmt <AuthorYear> | --all\n"
             "  --all    regenerate every Linglib/Data/Examples/*.json\n"
             "  --check  verify generated modules match JSON (no writes); "
             "exit 1 on drift\n"
-            "  --fmt    rewrite JSON in canonical format (data-preserving)\n"
+            "  --fmt    rewrite JSON in canonical format (data-preserving); needs a\n"
+            "           paper name, or --all for a PR whose subject is the reformat\n"
         )
         sys.exit(1)
 

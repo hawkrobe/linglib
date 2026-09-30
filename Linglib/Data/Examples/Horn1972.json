@@ -28,8 +28,7 @@
         "suspension of the upper bound"
       ]
     ],
-    "comment": "The upper bound of a cardinal is an implicature and can be suspended.",
-    "lgrConformance": ""
+    "comment": "The upper bound of a cardinal is an implicature and can be suspended."
   },
   {
     "id": "horn1972_ex1_58b_fewer",
@@ -60,8 +59,7 @@
         "suspension of the lower bound"
       ]
     ],
-    "comment": "The lower bound is asserted and cannot be suspended.",
-    "lgrConformance": ""
+    "comment": "The lower bound is asserted and cannot be suspended."
   },
   {
     "id": "horn1972_ex1_59a",
@@ -96,8 +94,7 @@
         "at most 3"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex1_59b",
@@ -128,8 +125,7 @@
         "of the lower bound"
       ]
     ],
-    "comment": "Negation contradicts the lower bound, not the putative upper bound: fewer than three.",
-    "lgrConformance": ""
+    "comment": "Negation contradicts the lower bound, not the putative upper bound: fewer than three."
   },
   {
     "id": "horn1972_ex1_60a",
@@ -160,8 +156,7 @@
         "cancelling the upper bound"
       ]
     ],
-    "comment": "Logically consistent, so the upper bound is not an entailment.",
-    "lgrConformance": ""
+    "comment": "Logically consistent, so the upper bound is not an entailment."
   },
   {
     "id": "horn1972_ex1_60b",
@@ -192,8 +187,7 @@
         "contradicting the assertion of only"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex1_63b",
@@ -224,8 +218,7 @@
         "at least"
       ]
     ],
-    "comment": "With the upper bound not implicated, the question is answered yes.",
-    "lgrConformance": ""
+    "comment": "With the upper bound not implicated, the question is answered yes."
   },
   {
     "id": "horn1972_ex1_63c",
@@ -256,8 +249,7 @@
         "exact"
       ]
     ],
-    "comment": "With the upper bound implicated by the question, the answer is no.",
-    "lgrConformance": ""
+    "comment": "With the upper bound implicated by the question, the answer is no."
   },
   {
     "id": "horn1972_ex1_72a_fact",
@@ -288,8 +280,7 @@
         "contradicting the implicature"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex1_72a_susp",
@@ -320,8 +311,7 @@
         "suspension"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex1_72b_cold",
@@ -352,8 +342,7 @@
         "suspension"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex1_72b_warm",
@@ -384,8 +373,7 @@
         "suspension across scales"
       ]
     ],
-    "comment": "Cool and warm are not on one scale: cool asserts the negation of warm.",
-    "lgrConformance": ""
+    "comment": "Cool and warm are not on one scale: cool asserts the negation of warm."
   },
   {
     "id": "horn1972_ex1_73c_hot_warm",
@@ -416,8 +404,7 @@
         "suspension by a weaker member"
       ]
     ],
-    "comment": "No suspension of the asserted lower bound is possible.",
-    "lgrConformance": ""
+    "comment": "No suspension of the asserted lower bound is possible."
   },
   {
     "id": "horn1972_ex1_73a",
@@ -448,8 +435,7 @@
         "asserting the implicature"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex1_73b",
@@ -480,8 +466,7 @@
         "contradicting the implicature"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex1_82a",
@@ -516,8 +501,7 @@
         "rising"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex1_82b",
@@ -548,8 +532,7 @@
         "falling"
       ]
     ],
-    "comment": "A concessive if-not clause, not a suspension: intelligent is not on the scale of pretty.",
-    "lgrConformance": ""
+    "comment": "A concessive if-not clause, not a suspension: intelligent is not on the scale of pretty."
   },
   {
     "id": "horn1972_ex1_85a",
@@ -580,8 +563,7 @@
         "positive"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex1_85b",
@@ -612,8 +594,7 @@
         "negative"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex1_93_ok",
@@ -644,8 +625,7 @@
         "suspension"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex1_93_bad",
@@ -676,8 +656,7 @@
         "suspension by a weaker member"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex2_1a_some_all",
@@ -708,8 +687,7 @@
         "suspension"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex2_1a_all_some",
@@ -740,8 +718,7 @@
         "suspension by a weaker member"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex2_1a_many_most",
@@ -772,8 +749,7 @@
         "suspension"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex2_1b",
@@ -804,8 +780,7 @@
         "suspension"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex2_1e_few",
@@ -836,8 +811,7 @@
         "suspension"
       ]
     ],
-    "comment": "Derived by double negation from few and possibly not any.",
-    "lgrConformance": ""
+    "comment": "Derived by double negation from few and possibly not any."
   },
   {
     "id": "horn1972_ex2_3c",
@@ -864,8 +838,7 @@
         "or both after a suspender disjunction"
       ]
     ],
-    "comment": "Suspender disjunctions are not true disjunctions, so or both cannot be appended.",
-    "lgrConformance": ""
+    "comment": "Suspender disjunctions are not true disjunctions, so or both cannot be appended."
   },
   {
     "id": "horn1972_ex2_3a",
@@ -892,8 +865,7 @@
         "or both after a true disjunction"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex2_24a_somebody",
@@ -924,8 +896,7 @@
         "cancelling the implicature"
       ]
     ],
-    "comment": "Consistent, against treating some as entailing or presupposing not all.",
-    "lgrConformance": ""
+    "comment": "Consistent, against treating some as entailing or presupposing not all."
   },
   {
     "id": "horn1972_ex2_24b_some_not_all",
@@ -956,8 +927,7 @@
         "asserting the implicature"
       ]
     ],
-    "comment": "Non-redundant by the test (2.12), so not all is not entailed by some.",
-    "lgrConformance": ""
+    "comment": "Non-redundant by the test (2.12), so not all is not entailed by some."
   },
   {
     "id": "horn1972_ex2_25a",
@@ -988,8 +958,7 @@
         "asserting the implicature"
       ]
     ],
-    "comment": "Against a presupposition of some by few.",
-    "lgrConformance": ""
+    "comment": "Against a presupposition of some by few."
   },
   {
     "id": "horn1972_ex2_28a",
@@ -1020,8 +989,7 @@
         "of the lower bound"
       ]
     ],
-    "comment": "Fewer than three friends.",
-    "lgrConformance": ""
+    "comment": "Fewer than three friends."
   },
   {
     "id": "horn1972_ex2_28b",
@@ -1052,8 +1020,7 @@
         "external"
       ]
     ],
-    "comment": "With contrastive intonation the exceptional reading: more than three.",
-    "lgrConformance": ""
+    "comment": "With contrastive intonation the exceptional reading: more than three."
   },
   {
     "id": "horn1972_ex2_40a",
@@ -1080,8 +1047,7 @@
         "NEG-V vs NEG-Q"
       ]
     ],
-    "comment": "Comma intonation forces the NEG-Q reading not all, which implicates some.",
-    "lgrConformance": ""
+    "comment": "Comma intonation forces the NEG-Q reading not all, which implicates some."
   },
   {
     "id": "horn1972_ex2_43a",
@@ -1108,8 +1074,7 @@
         "NEG-V only"
       ]
     ],
-    "comment": "Existentials, like disjunctions, lack the NEG-Q reading.",
-    "lgrConformance": ""
+    "comment": "Existentials, like disjunctions, lack the NEG-Q reading."
   },
   {
     "id": "horn1972_ex2_46",
@@ -1144,8 +1109,7 @@
         "or implicates not and"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex2_47",
@@ -1176,8 +1140,7 @@
         "conditional"
       ]
     ],
-    "comment": "The classical entailment holds: seeing both is no excuse.",
-    "lgrConformance": ""
+    "comment": "The classical entailment holds: seeing both is no excuse."
   },
   {
     "id": "horn1972_ex2_49b",
@@ -1208,8 +1171,7 @@
         "suspension of exclusivity"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex2_51a",
@@ -1240,8 +1202,7 @@
         "understatement"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex2_51d",
@@ -1272,8 +1233,7 @@
         "anomaly"
       ]
     ],
-    "comment": "Using some with the knowledge of all is anomalous, not mere understatement.",
-    "lgrConformance": ""
+    "comment": "Using some with the knowledge of all is anomalous, not mere understatement."
   },
   {
     "id": "horn1972_ex2_52a",
@@ -1304,8 +1264,7 @@
         "anomaly"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex2_55c",
@@ -1336,8 +1295,7 @@
         "anomaly"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex2_58a",
@@ -1368,8 +1326,7 @@
         "anomaly"
       ]
     ],
-    "comment": "Worse than some used with the knowledge of almost all: the violation is not merely quantitative.",
-    "lgrConformance": ""
+    "comment": "Worse than some used with the knowledge of almost all: the violation is not merely quantitative."
   },
   {
     "id": "horn1972_ex2_58c",
@@ -1400,8 +1357,7 @@
         "understatement"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex4_49a",
@@ -1432,8 +1388,7 @@
         "nor = and~"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex4_49a_prime",
@@ -1464,8 +1419,7 @@
         "*nand = or~"
       ]
     ],
-    "comment": "No lexical item nand corresponds to or with a lower negation.",
-    "lgrConformance": ""
+    "comment": "No lexical item nand corresponds to or with a lower negation."
   },
   {
     "id": "horn1972_ex4_50a",
@@ -1496,8 +1450,7 @@
         "neither = both~"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex4_50a_prime",
@@ -1528,8 +1481,7 @@
         "*noth = not both"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex4_56a",
@@ -1560,8 +1512,7 @@
         "incompatible with a lower negation"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex4_56b",
@@ -1592,8 +1543,7 @@
         "incompatible with a lower negation"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex4_56c",
@@ -1624,8 +1574,7 @@
         "compatible with a lower negation"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex4_56e",
@@ -1656,8 +1605,7 @@
         "compatible with a lower negation"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex4_57a",
@@ -1688,8 +1636,7 @@
         "compatible with a lower negation"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex4_57a_prime",
@@ -1720,8 +1667,7 @@
         "incompatible with a lower negation"
       ]
     ],
-    "comment": "The contradictory of a quantifier below the midpoint is above the midpoint of the negative scale.",
-    "lgrConformance": ""
+    "comment": "The contradictory of a quantifier below the midpoint is above the midpoint of the negative scale."
   },
   {
     "id": "horn1972_ex4_60a",
@@ -1756,8 +1702,7 @@
         "~some = none; some~ unlexicalized"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex4_60b",
@@ -1792,8 +1737,7 @@
         "~possible = impossible; possible~ unlexicalized"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex4_60f",
@@ -1828,8 +1772,7 @@
         "~(either...or) = neither...nor"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex4_66a",
@@ -1864,8 +1807,7 @@
         "~allow = disallow"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex4_66b",
@@ -1900,8 +1842,7 @@
         "prove~ = disprove"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "horn1972_ex4_75",
@@ -1936,7 +1877,6 @@
         "true~ = false; ~true = untrue"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

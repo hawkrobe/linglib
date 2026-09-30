@@ -31,9 +31,7 @@ def ex6_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "locativeInversion"), ("verb", "appear"), ("class", "48.1.1")]
-    comment := "A corpus locative inversion, from Bromfield, The Farm, with a verb of appearance."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A corpus locative inversion, from Bromfield, The Farm, with a verb of appearance." }
 
 def ex6_4a : LinguisticExample :=
   { id := "levinrappaporthovav1995_ex6_4a"
@@ -49,9 +47,7 @@ def ex6_4a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "thereInsertion"), ("verb", "appear"), ("class", "48.1.1")]
-    comment := "The there-insertion counterpart of (1)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The there-insertion counterpart of (1)." }
 
 def ex4_31a : LinguisticExample :=
   { id := "levinrappaporthovav1995_ex4_31a"
@@ -67,9 +63,7 @@ def ex4_31a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "cognateObject"), ("verb", "arrive"), ("class", "51.1"), ("agentive", "yes")]
-    comment := "A verb of inherently directed motion rejects a cognate object, consistent with an unaccusative classification."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A verb of inherently directed motion rejects a cognate object, consistent with an unaccusative classification." }
 
 def ex4_32c : LinguisticExample :=
   { id := "levinrappaporthovav1995_ex4_32c"
@@ -85,9 +79,7 @@ def ex4_32c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "wayConstruction"), ("verb", "arrive"), ("class", "51.1"), ("agentive", "yes")]
-    comment := "A verb of inherently directed motion rejects the X's way construction."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A verb of inherently directed motion rejects the X's way construction." }
 
 def ex4_50a : LinguisticExample :=
   { id := "levinrappaporthovav1995_ex4_50a"
@@ -103,9 +95,7 @@ def ex4_50a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnergativePattern"), ("verb", "run"), ("class", "51.3.2"), ("agentive", "yes")]
-    comment := "A run verb in the unergative resultative pattern, the result phrase predicated of a nonsubcategorized object."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A run verb in the unergative resultative pattern, the result phrase predicated of a nonsubcategorized object." }
 
 def ex4_51a : LinguisticExample :=
   { id := "levinrappaporthovav1995_ex4_51a"
@@ -121,9 +111,7 @@ def ex4_51a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnaccusativePattern"), ("verb", "run"), ("class", "51.3.2"), ("agentive", "yes")]
-    comment := "A run verb rejects the unaccusative resultative pattern."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A run verb rejects the unaccusative resultative pattern." }
 
 def ex4_52a : LinguisticExample :=
   { id := "levinrappaporthovav1995_ex4_52a"
@@ -139,9 +127,7 @@ def ex4_52a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnaccusativePattern"), ("verb", "roll"), ("class", "51.3.1"), ("agentive", "no")]
-    comment := "A roll verb in the unaccusative resultative pattern, the result phrase predicated of the subject."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A roll verb in the unaccusative resultative pattern, the result phrase predicated of the subject." }
 
 def ex4_53a : LinguisticExample :=
   { id := "levinrappaporthovav1995_ex4_53a"
@@ -157,9 +143,7 @@ def ex4_53a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "resultativeUnergativePattern"), ("verb", "roll"), ("class", "51.3.1"), ("agentive", "no")]
-    comment := "A roll verb rejects the unergative resultative pattern with a fake reflexive."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A roll verb rejects the unergative resultative pattern with a fake reflexive." }
 
 def ex4_54a : LinguisticExample :=
   { id := "levinrappaporthovav1995_ex4_54a"
@@ -175,9 +159,7 @@ def ex4_54a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "wayConstruction"), ("verb", "run"), ("class", "51.3.2"), ("agentive", "yes")]
-    comment := "A run verb in the X's way construction."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A run verb in the X's way construction." }
 
 def ex4_55a : LinguisticExample :=
   { id := "levinrappaporthovav1995_ex4_55a"
@@ -193,9 +175,7 @@ def ex4_55a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "wayConstruction"), ("verb", "roll"), ("class", "51.3.1"), ("agentive", "no")]
-    comment := "A roll verb rejects the X's way construction."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A roll verb rejects the X's way construction." }
 
 def all : List LinguisticExample := [ex6_1, ex6_4a, ex4_31a, ex4_32c, ex4_50a, ex4_51a, ex4_52a, ex4_53a, ex4_54a, ex4_55a]
 

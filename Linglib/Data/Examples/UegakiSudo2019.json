@@ -16,9 +16,7 @@
       ["predicate", "non-veridical preferential"],
       ["complement", "declarative"]
     ],
-    "comment": "Non-veridical preferentials take declarative complements.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Non-veridical preferentials take declarative complements."
   },
   {
     "id": "uegakisudo2019_6c",
@@ -37,9 +35,7 @@
       ["predicate", "veridical preferential"],
       ["complement", "declarative"]
     ],
-    "comment": "Veridical preferentials take declarative complements.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Veridical preferentials take declarative complements."
   },
   {
     "id": "uegakisudo2019_7b",
@@ -58,9 +54,7 @@
       ["predicate", "veridical preferential"],
       ["complement", "wh-interrogative"]
     ],
-    "comment": "Veridical preferentials are responsive; the preposition improves some cases, an issue taken up in section 5.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Veridical preferentials are responsive; the preposition improves some cases, an issue taken up in section 5."
   },
   {
     "id": "uegakisudo2019_7c",
@@ -79,9 +73,7 @@
       ["predicate", "veridical preferential"],
       ["complement", "wh-interrogative"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "uegakisudo2019_8a",
@@ -100,9 +92,7 @@
       ["predicate", "non-veridical preferential"],
       ["complement", "wh-interrogative"]
     ],
-    "comment": "The hope-wh puzzle: non-veridical preferentials are anti-rogative; the which-NP clause has no free-relative reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The hope-wh puzzle: non-veridical preferentials are anti-rogative; the which-NP clause has no free-relative reading."
   },
   {
     "id": "uegakisudo2019_8b",
@@ -121,9 +111,7 @@
       ["predicate", "non-veridical preferential"],
       ["complement", "wh-interrogative"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "uegakisudo2019_10b",
@@ -142,9 +130,7 @@
       ["predicate", "veridical preferential"],
       ["complement", "whether-interrogative"]
     ],
-    "comment": "Veridical preferentials reject whether-complements, a pattern the paper leaves to Romero's account.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Veridical preferentials reject whether-complements, a pattern the paper leaves to Romero's account."
   },
   {
     "id": "uegakisudo2019_40a",
@@ -165,9 +151,7 @@
       ["predicate", "veridical preferential"],
       ["focus", "subject"]
     ],
-    "comment": "Veridicality does not restrict the comparison class.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Veridicality does not restrict the comparison class."
   },
   {
     "id": "uegakisudo2019_40b",
@@ -188,9 +172,7 @@
       ["predicate", "non-veridical preferential"],
       ["focus", "subject"]
     ],
-    "comment": "The doxastic condition of emotive doxastics restricts the comparison class as a whole, (39).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The doxastic condition of emotive doxastics restricts the comparison class as a whole, (39)."
   },
   {
     "id": "uegakisudo2019_41",
@@ -210,9 +192,7 @@
       ["complement", "wh-interrogative"],
       ["evidence", "Threshold Significance"]
     ],
-    "comment": "Without Threshold Significance the sentence would be true in the context; instead it presupposes a student John preferred to sing.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Without Threshold Significance the sentence would be true in the context; instead it presupposes a student John preferred to sing."
   },
   {
     "id": "uegakisudo2019_42",
@@ -231,9 +211,7 @@
       ["predicate", "be indifferent"],
       ["complement", "wh-interrogative"]
     ],
-    "comment": "Be indifferent compares questions rather than propositions, so Threshold Significance holds of a question, compatibly with the context of (41).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Be indifferent compares questions rather than propositions, so Threshold Significance holds of a question, compatibly with the context of (41)."
   },
   {
     "id": "uegakisudo2019_43a",
@@ -252,8 +230,6 @@
       ["predicate", "be indifferent"],
       ["complement", "declarative"]
     ],
-    "comment": "Marginal at best with a declarative: be indifferent concerns questions.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Marginal at best with a declarative: be indifferent concerns questions."
   }
 ]

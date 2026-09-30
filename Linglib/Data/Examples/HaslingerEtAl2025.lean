@@ -31,9 +31,7 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "jederDP"), ("trueIn3a", "yes"), ("trueIn3b", "no"), ("trueIn3c", "no")]
-    comment := "DP-internal jeder: obligatorily distributive, no exceptions."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "DP-internal jeder: obligatorily distributive, no exceptions." }
 
 def ex2 : LinguisticExample :=
   { id := "haslingeretal2025_ex2"
@@ -49,9 +47,7 @@ def ex2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "jederDistance"), ("trueIn3a", "yes"), ("trueIn3b", "no"), ("trueIn3c", "no")]
-    comment := "Distance-distributive jeder: the same semantic effects."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Distance-distributive jeder: the same semantic effects." }
 
 def ex4a : LinguisticExample :=
   { id := "haslingeretal2025_ex4a"
@@ -67,9 +63,7 @@ def ex4a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "alle"), ("trueIn3a", "yes"), ("trueIn3b", "yes"), ("trueIn3c", "no")]
-    comment := "Not obligatorily distributive, but no exceptions."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Not obligatorily distributive, but no exceptions." }
 
 def ex4b : LinguisticExample :=
   { id := "haslingeretal2025_ex4b"
@@ -85,9 +79,7 @@ def ex4b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "numeralIndefinite"), ("trueIn3a", "yes"), ("trueIn3b", "yes"), ("trueIn3c", "no")]
-    comment := "A numeral-modified indefinite: like alle."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "A numeral-modified indefinite: like alle." }
 
 def ex4c : LinguisticExample :=
   { id := "haslingeretal2025_ex4c"
@@ -103,9 +95,7 @@ def ex4c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("item", "definitePlural"), ("trueIn3a", "yes"), ("trueIn3b", "yes"), ("trueIn3c", "yes")]
-    comment := "A definite plural: neither distributive nor exception-intolerant; true in (3c) given an adequate context."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "A definite plural: neither distributive nor exception-intolerant; true in (3c) given an adequate context." }
 
 def ex22a : LinguisticExample :=
   { id := "haslingeretal2025_ex22a"
@@ -121,9 +111,7 @@ def ex22a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jeweils"), ("trueIn3a", "yes"), ("trueIn3b", "no"), ("trueIn3c", "no")]
-    comment := "Distance-distributive jeweils, out of the blue: distributive, and apparently maximal without a context that makes a non-maximal construal salient."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Distance-distributive jeweils, out of the blue: distributive, and apparently maximal without a context that makes a non-maximal construal salient." }
 
 def ex22b : LinguisticExample :=
   { id := "haslingeretal2025_ex22b"
@@ -139,9 +127,7 @@ def ex22b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jederDP"), ("trueIn3a", "yes"), ("trueIn3b", "no"), ("trueIn3c", "no")]
-    comment := "DP-jeder."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "DP-jeder." }
 
 def ex22c : LinguisticExample :=
   { id := "haslingeretal2025_ex22c"
@@ -157,9 +143,7 @@ def ex22c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jederDistance"), ("trueIn3a", "yes"), ("trueIn3b", "no"), ("trueIn3c", "no")]
-    comment := "Distance jeder."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Distance jeder." }
 
 def ex23b : LinguisticExample :=
   { id := "haslingeretal2025_ex23b"
@@ -175,9 +159,7 @@ def ex23b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jeweils"), ("scenario", "nonMaximal"), ("questionnaire", "yes")]
-    comment := "Questionnaire item in the magnets scenario: true only on a non-maximal construal, which the explosion QUD makes salient; judgments were mixed across speakers (Figure 1)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Questionnaire item in the magnets scenario: true only on a non-maximal construal, which the explosion QUD makes salient; judgments were mixed across speakers (Figure 1)." }
 
 def ex23c : LinguisticExample :=
   { id := "haslingeretal2025_ex23c"
@@ -193,9 +175,7 @@ def ex23c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jederDP"), ("scenario", "nonMaximal"), ("questionnaire", "yes")]
-    comment := "Questionnaire item in the magnets scenario: overwhelmingly rejected (Figure 1)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Questionnaire item in the magnets scenario: overwhelmingly rejected (Figure 1)." }
 
 def ex24b : LinguisticExample :=
   { id := "haslingeretal2025_ex24b"
@@ -211,9 +191,7 @@ def ex24b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jeweils"), ("scenario", "nonMaximal"), ("questionnaire", "yes")]
-    comment := "Jeweils with a subject associate: accepted by some speakers in the non-maximal scenario (Figure 2)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Jeweils with a subject associate: accepted by some speakers in the non-maximal scenario (Figure 2)." }
 
 def ex24c : LinguisticExample :=
   { id := "haslingeretal2025_ex24c"
@@ -229,9 +207,7 @@ def ex24c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jederDistance"), ("scenario", "nonMaximal"), ("questionnaire", "yes")]
-    comment := "Distance jeder: mostly rejected, less categorically than DP-jeder (Figure 2); 15 of 18 participants rated the jeweils minimal-pair sentence higher (Figure 3)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Distance jeder: mostly rejected, less categorically than DP-jeder (Figure 2); 15 of 18 participants rated the jeweils minimal-pair sentence higher (Figure 3)." }
 
 def ex24d : LinguisticExample :=
   { id := "haslingeretal2025_ex24d"
@@ -247,9 +223,7 @@ def ex24d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1"), ("item", "jederDP"), ("scenario", "nonMaximal"), ("questionnaire", "yes")]
-    comment := "DP-jeder: rejected in the non-maximal scenario (Figure 2)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "DP-jeder: rejected in the non-maximal scenario (Figure 2)." }
 
 def ex26 : LinguisticExample :=
   { id := "haslingeretal2025_ex26"
@@ -265,9 +239,7 @@ def ex26 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("item", "numeralIndefinite"), ("scenario", "nonMaximal")]
-    comment := "A quantificational subject binds the tolerance parameter on its scope, so jeweils cannot add exception tolerance here."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "A quantificational subject binds the tolerance parameter on its scope, so jeweils cannot add exception tolerance here." }
 
 def all : List LinguisticExample := [ex1, ex2, ex4a, ex4b, ex4c, ex22a, ex22b, ex22c, ex23b, ex23c, ex24b, ex24c, ex24d, ex26]
 

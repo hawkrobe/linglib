@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := [("La tachuela pequeña azul", .unacceptable)]
     readings := []
     paperFeatures := [("idiolect", "Spanish-postnominal"), ("order", "noun color size")]
-    comment := "Fully postnominal modification; the reverse adjective order was offered by none of the four consultants."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Fully postnominal modification; the reverse adjective order was offered by none of the four consultants." }
 
 def ex_2a : LinguisticExample :=
   { id := "waldondegen2021_2a"
@@ -49,9 +47,7 @@ def ex_2a : LinguisticExample :=
     alternatives := [("La tachuela pequeña y azul", .acceptable)]
     readings := []
     paperFeatures := [("idiolect", "Spanish-postnominal-conjunctive"), ("order", "suspended under conjunction")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_3a : LinguisticExample :=
   { id := "waldondegen2021_3a"
@@ -67,9 +63,7 @@ def ex_3a : LinguisticExample :=
     alternatives := [("La azul tachuela pequeña", .ungrammatical)]
     readings := []
     paperFeatures := [("idiolect", "Spanish-split"), ("order", "size noun color")]
-    comment := "Offered by one consultant, for whom the color-first split is out."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Offered by one consultant, for whom the color-first split is out." }
 
 def all : List LinguisticExample := [ex_1, ex_2a, ex_3a]
 

@@ -31,9 +31,7 @@ def ex4 : LinguisticExample :=
     alternatives := []
     readings := [("general epistemic: speaker does not believe all (6a)", .acceptable), ("strong epistemic: speaker believes not all (6b)", .acceptable), ("weak epistemic: speaker uncertain about all (6c)", .acceptable), ("base-level: not all (6d)", .acceptable)]
     paperFeatures := []
-    comment := "The four epistemic varieties of a quantity implicature (§2); games SomeAll and SomeAllEpistemic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The four epistemic varieties of a quantity implicature (§2); games SomeAll and SomeAllEpistemic." }
 
 def ex8 : LinguisticExample :=
   { id := "franke2011_ex8"
@@ -49,9 +47,7 @@ def ex8 : LinguisticExample :=
     alternatives := []
     readings := [("ignorance: speaker uncertain about each disjunct (10)", .acceptable), ("exclusivity: not both (11)", .acceptable)]
     paperFeatures := []
-    comment := "Plain disjunction; games TwoDisjuncts, DisjunctionEpistemic, DisjunctionConj."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Plain disjunction; games TwoDisjuncts, DisjunctionEpistemic, DisjunctionConj." }
 
 def ex12a : LinguisticExample :=
   { id := "franke2011_ex12a"
@@ -67,9 +63,7 @@ def ex12a : LinguisticExample :=
     alternatives := []
     readings := [("free choice: may take an apple and may take a pear (12b)", .acceptable), ("exclusivity: may not take both (15d)", .acceptable)]
     paperFeatures := []
-    comment := "Free choice permission; games TwoDisjuncts and FreeChoiceConj."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Free choice permission; games TwoDisjuncts and FreeChoiceConj." }
 
 def ex13 : LinguisticExample :=
   { id := "franke2011_ex13"
@@ -85,9 +79,7 @@ def ex13 : LinguisticExample :=
     alternatives := []
     readings := [("ignorance: speaker uncertain whether the hearer may take an apple (14a)", .acceptable)]
     paperFeatures := []
-    comment := "Free choice gives way to ignorance implicatures in an epistemic game."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Free choice gives way to ignorance implicatures in an epistemic game." }
 
 def ex18 : LinguisticExample :=
   { id := "franke2011_ex18"
@@ -103,9 +95,7 @@ def ex18 : LinguisticExample :=
     alternatives := []
     readings := [("simplification of disjunctive antecedents (19a) and (19b)", .acceptable)]
     paperFeatures := []
-    comment := "SDA as a quantity implicature parallel to free choice; games TwoDisjuncts and SdaConj."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "SDA as a quantity implicature parallel to free choice; games TwoDisjuncts and SdaConj." }
 
 def ex30 : LinguisticExample :=
   { id := "franke2011_ex30"
@@ -121,9 +111,7 @@ def ex30 : LinguisticExample :=
     alternatives := []
     readings := [("simplification to (30b): if John had taken a pear, he would have taken an apple", .unacceptable)]
     paperFeatures := []
-    comment := "Why SDA is not semantically valid (after McKay and van Inwagen)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Why SDA is not semantically valid (after McKay and van Inwagen)." }
 
 def ex95a : LinguisticExample :=
   { id := "franke2011_ex95a"
@@ -139,9 +127,7 @@ def ex95a : LinguisticExample :=
     alternatives := []
     readings := [("speaker knows John came and considers it possible that Mary came (95b)", .acceptable)]
     paperFeatures := []
-    comment := "Entailing disjuncts: truth-conditionally equivalent to 'John' (94a) but with a different implicature; game EntailingDisjuncts."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Entailing disjuncts: truth-conditionally equivalent to 'John' (94a) but with a different implicature; game EntailingDisjuncts." }
 
 def ex99 : LinguisticExample :=
   { id := "franke2011_ex99"
@@ -157,9 +143,7 @@ def ex99 : LinguisticExample :=
     alternatives := []
     readings := [("universal free choice: everybody may take an apple and everybody may take a pear", .acceptable)]
     paperFeatures := []
-    comment := "Chemla's universal free choice, derived by pruning the mixed-group state; game GroupPermission."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Chemla's universal free choice, derived by pruning the mixed-group state; game GroupPermission." }
 
 def all : List LinguisticExample := [ex4, ex8, ex12a, ex13, ex18, ex30, ex95a, ex99]
 

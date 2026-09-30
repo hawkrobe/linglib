@@ -15,9 +15,7 @@
     "paperFeatures": [
       ["category", "massNoun"]
     ],
-    "comment": "Mass-noun nominal comparative; VOLUME or WEIGHT dimension available.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Mass-noun nominal comparative; VOLUME or WEIGHT dimension available."
   },
   {
     "id": "wellwood2015_felicity_count",
@@ -35,9 +33,7 @@
     "paperFeatures": [
       ["category", "countNoun"]
     ],
-    "comment": "Singular count noun anomalous under much-comparison.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Singular count noun anomalous under much-comparison."
   },
   {
     "id": "wellwood2015_felicity_atelic",
@@ -55,9 +51,7 @@
     "paperFeatures": [
       ["category", "atelicVP"]
     ],
-    "comment": "Atelic VP verbal comparative; DURATION or DISTANCE dimension available.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Atelic VP verbal comparative; DURATION or DISTANCE dimension available."
   },
   {
     "id": "wellwood2015_felicity_telic",
@@ -75,9 +69,7 @@
     "paperFeatures": [
       ["category", "telicVP"]
     ],
-    "comment": "Telic VP anomalous under much-comparison.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Telic VP anomalous under much-comparison."
   },
   {
     "id": "wellwood2015_felicity_ga",
@@ -95,9 +87,7 @@
     "paperFeatures": [
       ["category", "gradableAdj"]
     ],
-    "comment": "Gradable adjective comparative; TEMPERATURE dimension.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Gradable adjective comparative; TEMPERATURE dimension."
   },
   {
     "id": "wellwood2015_felicity_nonga",
@@ -115,9 +105,7 @@
     "paperFeatures": [
       ["category", "nonGradableAdj"]
     ],
-    "comment": "Non-gradable adjective anomalous under comparison.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Non-gradable adjective anomalous under comparison."
   },
   {
     "id": "wellwood2015_dim_82a_hotter",
@@ -138,9 +126,7 @@
       ["dimension", "temperature"],
       ["intensive", "true"]
     ],
-    "comment": "GA measuring states: intensive dimension.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "GA measuring states: intensive dimension."
   },
   {
     "id": "wellwood2015_dim_82b_harder",
@@ -161,9 +147,7 @@
       ["dimension", "hardness"],
       ["intensive", "true"]
     ],
-    "comment": "GA measuring states: intensive dimension.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "GA measuring states: intensive dimension."
   },
   {
     "id": "wellwood2015_dim_83a_more_coffee",
@@ -184,9 +168,7 @@
       ["dimension", "volume"],
       ["intensive", "false"]
     ],
-    "comment": "Mass noun measuring entities: extensive dimension.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Mass noun measuring entities: extensive dimension."
   },
   {
     "id": "wellwood2015_dim_83b_more_plastic",
@@ -207,9 +189,7 @@
       ["dimension", "weight"],
       ["intensive", "false"]
     ],
-    "comment": "Mass noun measuring entities: extensive dimension.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Mass noun measuring entities: extensive dimension."
   },
   {
     "id": "wellwood2015_dim_84a_fuller",
@@ -230,9 +210,7 @@
       ["dimension", "volume"],
       ["intensive", "false"]
     ],
-    "comment": "Reversal: GA but extensive, because the measured domain is entities.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Reversal: GA but extensive, because the measured domain is entities."
   },
   {
     "id": "wellwood2015_dim_84b_heavier",
@@ -253,9 +231,7 @@
       ["dimension", "weight"],
       ["intensive", "false"]
     ],
-    "comment": "Reversal: GA but extensive, because the measured domain is entities.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Reversal: GA but extensive, because the measured domain is entities."
   },
   {
     "id": "wellwood2015_dim_85a_more_heat",
@@ -276,9 +252,7 @@
       ["dimension", "temperature"],
       ["intensive", "true"]
     ],
-    "comment": "Reversal: noun but intensive, because the measured domain is states.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Reversal: noun but intensive, because the measured domain is states."
   },
   {
     "id": "wellwood2015_dim_85b_more_firmness",
@@ -299,9 +273,7 @@
       ["dimension", "hardness"],
       ["intensive", "true"]
     ],
-    "comment": "Reversal: noun but intensive, because the measured domain is states.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Reversal: noun but intensive, because the measured domain is states."
   },
   {
     "id": "wellwood2015_dim_89a_sped_up",
@@ -322,9 +294,7 @@
       ["dimension", "speed"],
       ["intensive", "true"]
     ],
-    "comment": "Reversal: verb but intensive, because the measured domain is states.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Reversal: verb but intensive, because the measured domain is states."
   },
   {
     "id": "wellwood2015_dim_87a_drove",
@@ -345,9 +315,7 @@
       ["dimension", "distance"],
       ["intensive", "false"]
     ],
-    "comment": "Atelic VP measuring events: extensive dimension.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Atelic VP measuring events: extensive dimension."
   },
   {
     "id": "wellwood2015_very_ga",
@@ -368,9 +336,7 @@
       ["category", "gradableAdj"],
       ["requiresOvertMuch", "false"]
     ],
-    "comment": "GAs host covert much, so very combines directly.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "GAs host covert much, so very combines directly."
   },
   {
     "id": "wellwood2015_very_noun",
@@ -391,9 +357,7 @@
       ["category", "massNoun"],
       ["requiresOvertMuch", "true"]
     ],
-    "comment": "Nouns need overt much for very.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Nouns need overt much for very."
   },
   {
     "id": "wellwood2015_very_verb",
@@ -414,9 +378,7 @@
       ["category", "atelicVP"],
       ["requiresOvertMuch", "true"]
     ],
-    "comment": "Verbs need overt much for very; much follows the verb.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Verbs need overt much for very; much follows the verb."
   },
   {
     "id": "wellwood2015_shift_104_rock",
@@ -436,9 +398,7 @@
     "paperFeatures": [
       ["shift", "numberMorphology"]
     ],
-    "comment": "Mass 'more rock': WEIGHT/VOLUME, *NUMBER. Plural 'more rocks': *WEIGHT/*VOLUME, NUMBER. The plural shifts mass to count, restricting measurement to NUMBER.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Mass 'more rock': WEIGHT/VOLUME, *NUMBER. Plural 'more rocks': *WEIGHT/*VOLUME, NUMBER. The plural shifts mass to count, restricting measurement to NUMBER."
   },
   {
     "id": "wellwood2015_shift_105_run",
@@ -458,8 +418,6 @@
     "paperFeatures": [
       ["shift", "telicization"]
     ],
-    "comment": "Atelic 'ran in the park more': DISTANCE/DURATION/NUMBER. Telic 'ran to the park more': *DISTANCE/*DURATION, NUMBER. The directional PP telicizes, restricting measurement to NUMBER.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Atelic 'ran in the park more': DISTANCE/DURATION/NUMBER. Telic 'ran to the park more': *DISTANCE/*DURATION, NUMBER. The directional PP telicizes, restricting measurement to NUMBER."
   }
 ]

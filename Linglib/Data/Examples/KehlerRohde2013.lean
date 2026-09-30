@@ -31,9 +31,7 @@ def ex_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_8 : LinguisticExample :=
   { id := "kehlerrohde2013_8"
@@ -49,9 +47,7 @@ def ex_8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_10a : LinguisticExample :=
   { id := "kehlerrohde2013_10a"
@@ -67,9 +63,7 @@ def ex_10a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_10b : LinguisticExample :=
   { id := "kehlerrohde2013_10b"
@@ -85,9 +79,7 @@ def ex_10b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_20a : LinguisticExample :=
   { id := "kehlerrohde2013_20a"
@@ -103,9 +95,7 @@ def ex_20a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_20c : LinguisticExample :=
   { id := "kehlerrohde2013_20c"
@@ -121,9 +111,7 @@ def ex_20c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_20b : LinguisticExample :=
   { id := "kehlerrohde2013_20b"
@@ -139,9 +127,7 @@ def ex_20b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_20d : LinguisticExample :=
   { id := "kehlerrohde2013_20d"
@@ -157,9 +143,7 @@ def ex_20d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex_7, ex_8, ex_10a, ex_10b, ex_20a, ex_20c, ex_20b, ex_20d]
 

@@ -31,9 +31,7 @@ def ex11a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "dass"), ("position", "postverbal")]
-    comment := "Bare dass-clause with a non-CP-selecting verb."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Bare dass-clause with a non-CP-selecting verb." }
 
 def ex11b : LinguisticExample :=
   { id := "schwarzer2026_ex11b"
@@ -49,9 +47,7 @@ def ex11b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "postverbal"), ("order", "dpFirst")]
-    comment := "DP-CP coordination with a non-CP-selecting verb, rated like the marked-but-grammatical filler group C; the coordination improves over the bare clause by more than the selected contexts predict."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "DP-CP coordination with a non-CP-selecting verb, rated like the marked-but-grammatical filler group C; the coordination improves over the bare clause by more than the selected contexts predict." }
 
 def ex12a : LinguisticExample :=
   { id := "schwarzer2026_ex12a"
@@ -67,9 +63,7 @@ def ex12a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("verb", "veranlassen"), ("selectsCP", "yes"), ("complement", "dass"), ("position", "postverbal")]
-    comment := "Bare dass-clause with a CP-selecting verb."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Bare dass-clause with a CP-selecting verb." }
 
 def ex12b : LinguisticExample :=
   { id := "schwarzer2026_ex12b"
@@ -85,9 +79,7 @@ def ex12b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("verb", "veranlassen"), ("selectsCP", "yes"), ("complement", "coord"), ("position", "postverbal"), ("order", "dpFirst")]
-    comment := "DP-CP coordination with a CP-selecting verb."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "DP-CP coordination with a CP-selecting verb." }
 
 def ex16a : LinguisticExample :=
   { id := "schwarzer2026_ex16a"
@@ -103,9 +95,7 @@ def ex16a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "preverbal"), ("order", "dpFirst")]
-    comment := "Preverbal coordination, DP first: chosen over (16b) more often in the forced choice."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Preverbal coordination, DP first: chosen over (16b) more often in the forced choice." }
 
 def ex16b : LinguisticExample :=
   { id := "schwarzer2026_ex16b"
@@ -121,9 +111,7 @@ def ex16b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "preverbal"), ("order", "cpFirst")]
-    comment := "Preverbal coordination, CP first: the order the linear and temporal closeness accounts predict to be preferred."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Preverbal coordination, CP first: the order the linear and temporal closeness accounts predict to be preferred." }
 
 def ex17a : LinguisticExample :=
   { id := "schwarzer2026_ex17a"
@@ -139,9 +127,7 @@ def ex17a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "postverbal"), ("order", "dpFirst")]
-    comment := "Postverbal coordination, DP first: chosen as often as in preverbal position."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Postverbal coordination, DP first: chosen as often as in preverbal position." }
 
 def ex17b : LinguisticExample :=
   { id := "schwarzer2026_ex17b"
@@ -157,9 +143,7 @@ def ex17b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "2"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "postverbal"), ("order", "cpFirst")]
-    comment := "Postverbal coordination, CP first."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Postverbal coordination, CP first." }
 
 def all : List LinguisticExample := [ex11a, ex11b, ex12a, ex12b, ex16a, ex16b, ex17a, ex17b]
 

@@ -45,11 +45,10 @@ in tables 14, 27, 29, and 32:
 | *ni*-insertion      | *           | */??              | OK               |
 | Copula *ni*         | */N.A.      | */??              | */??             |
 
-The diagnostic acceptability scores are encoded in `Data.Examples.Acceptability`
-(the project canon): `*/??` reduces to `unacceptable`; `*/?/OK` to
-`variable` (genuine speaker variation); `*/N.A.` to `unacceptable` (per
-S&K fn. 10, the test fails for an independent non-referentiality reason
-PLUS a second structural reason — both yield `*`).
+Each cell is the list of marks the table prints, as `Data.Examples.Judgment`s: `*/??` is
+`[.ungrammatical, .questionable]`, `*/?/OK` is `[.ungrammatical, .marginal, .acceptable]`. The
+`N.A.` of `*/N.A.` is not a mark and is left out (per S&K fn. 10, the test fails for an
+independent non-referentiality reason as well as a structural one).
 
 ## Affectedness criterion (§4, p. 18)
 
@@ -75,8 +74,7 @@ acquired only after 3;0.
 
 ## Layered grounding to linglib
 
-- Diagnostic acceptability scores use `Data.Examples.Acceptability` (the
-  project canon), not a per-paper Grammaticality enum.
+- Diagnostic cells are lists of `Data.Examples.Judgment` marks, not a per-paper enum.
 - `Classification.marantz` aligns S&K's 4-way with [baker-2015]'s
   `Case.Mechanism` from `Syntax/Case/Dependent.lean`. The map
   is partial: copula *ni* lies outside Marantz's case-assignment domain.
@@ -117,7 +115,7 @@ stipulation only. Documented here as future work.
 
 namespace SadakaneKoizumi1995
 
-open Data.Examples (Acceptability)
+open Data.Examples (Judgment)
 
 /-! ## §1 Classification — S&K's four homophonous *ni* lexemes -/
 
@@ -205,12 +203,8 @@ end MartinCategory
 /-! ## §3 Operational tests + diagnostic signature
 
 Per S&K §2 (pp. 8–11), three syntactic tests distinguish the four types.
-The signatures in tables 14, 29, 32 are encoded as `Classification.signature`.
-Split judgments in the source (e.g., `*/??`, `*/?/OK`) are reduced to
-`Acceptability` per the convention: `*/??` → `unacceptable` (split with `*`
-floor); `*/?/OK` → `variable` (genuinely speaker-dependent); `*/N.A.` →
-`unacceptable` (per fn 10, S&K's two-reason analysis: non-referentiality
-PLUS structural blocking, both yielding `*`).
+The signatures in tables 14, 29, 32 are encoded as `Classification.signature`, each cell the
+list of marks the table prints.
 -/
 
 /-- The three operational diagnostics S&K apply to each Martin category. -/
@@ -230,25 +224,25 @@ inductive OperationalTest where
 
 namespace Classification
 
-/-- The acceptability signature S&K predict for each `Classification` ×
-    `OperationalTest` pair (tables 14, 29, 32). -/
-def signature : Classification → OperationalTest → Acceptability
+/-- The marks S&K's tables 14, 29 and 32 give each `Classification` on each
+    `OperationalTest`; a split cell such as `*/??` lists each mark. -/
+def signature : Classification → OperationalTest → List Judgment
   -- Dative case marker (table 14, top row): OK | */?? | OK
-  | .dativeCaseMarker, .floatingNQ           => .ok
-  | .dativeCaseMarker, .cleftWithParticle    => .unacceptable
-  | .dativeCaseMarker, .cleftWithoutParticle => .ok
+  | .dativeCaseMarker, .floatingNQ           => [.acceptable]
+  | .dativeCaseMarker, .cleftWithParticle    => [.ungrammatical, .questionable]
+  | .dativeCaseMarker, .cleftWithoutParticle => [.acceptable]
   -- Postposition (table 14, bottom row): * | OK | */?/OK
-  | .postposition,     .floatingNQ           => .unacceptable
-  | .postposition,     .cleftWithParticle    => .ok
-  | .postposition,     .cleftWithoutParticle => .variable
+  | .postposition,     .floatingNQ           => [.ungrammatical]
+  | .postposition,     .cleftWithParticle    => [.acceptable]
+  | .postposition,     .cleftWithoutParticle => [.ungrammatical, .marginal, .acceptable]
   -- ni-of-ni-insertion (table 29): * | */?? | OK
-  | .niInsertion,      .floatingNQ           => .unacceptable
-  | .niInsertion,      .cleftWithParticle    => .unacceptable
-  | .niInsertion,      .cleftWithoutParticle => .ok
+  | .niInsertion,      .floatingNQ           => [.ungrammatical]
+  | .niInsertion,      .cleftWithParticle    => [.ungrammatical, .questionable]
+  | .niInsertion,      .cleftWithoutParticle => [.acceptable]
   -- Copula ni (table 32): */N.A. | */?? | */??
-  | .copula,           .floatingNQ           => .unacceptable
-  | .copula,           .cleftWithParticle    => .unacceptable
-  | .copula,           .cleftWithoutParticle => .unacceptable
+  | .copula,           .floatingNQ           => [.ungrammatical]
+  | .copula,           .cleftWithParticle    => [.ungrammatical, .questionable]
+  | .copula,           .cleftWithoutParticle => [.ungrammatical, .questionable]
 
 end Classification
 

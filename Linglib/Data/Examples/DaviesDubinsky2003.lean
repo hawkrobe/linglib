@@ -31,9 +31,7 @@ def ex52a_write : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "movement"), ("verb", "write"), ("creation", "yes"), ("object", "definite")]
-    comment := "A verb of creation licenses extraction from a definite result nominal."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A verb of creation licenses extraction from a definite result nominal." }
 
 def ex52a_read : LinguisticExample :=
   { id := "daviesdubinsky2003_ex52a_read"
@@ -49,9 +47,7 @@ def ex52a_read : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "movement"), ("verb", "read"), ("creation", "no"), ("object", "definite")]
-    comment := "Marked ?? in the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Marked ?? in the paper." }
 
 def ex52b_write : LinguisticExample :=
   { id := "daviesdubinsky2003_ex52b_write"
@@ -67,9 +63,7 @@ def ex52b_write : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "movement"), ("verb", "write"), ("creation", "yes"), ("object", "indefinite")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex52b_read : LinguisticExample :=
   { id := "daviesdubinsky2003_ex52b_read"
@@ -85,9 +79,7 @@ def ex52b_read : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "movement"), ("verb", "read"), ("creation", "no"), ("object", "indefinite")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex53a_tell : LinguisticExample :=
   { id := "daviesdubinsky2003_ex53a_tell"
@@ -103,9 +95,7 @@ def ex53a_tell : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "movement"), ("verb", "tell"), ("creation", "yes"), ("object", "definite")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex53a_hear : LinguisticExample :=
   { id := "daviesdubinsky2003_ex53a_hear"
@@ -121,9 +111,7 @@ def ex53a_hear : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "movement"), ("verb", "hear"), ("creation", "no"), ("object", "definite")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex53b_tell : LinguisticExample :=
   { id := "daviesdubinsky2003_ex53b_tell"
@@ -139,9 +127,7 @@ def ex53b_tell : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "movement"), ("verb", "tell"), ("creation", "yes"), ("object", "indefinite")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex53b_hear : LinguisticExample :=
   { id := "daviesdubinsky2003_ex53b_hear"
@@ -157,9 +143,7 @@ def ex53b_hear : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "movement"), ("verb", "hear"), ("creation", "no"), ("object", "indefinite")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex54a_paint : LinguisticExample :=
   { id := "daviesdubinsky2003_ex54a_paint"
@@ -175,9 +159,7 @@ def ex54a_paint : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "movement"), ("verb", "paint"), ("creation", "yes"), ("object", "definite")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex54a_see : LinguisticExample :=
   { id := "daviesdubinsky2003_ex54a_see"
@@ -193,9 +175,7 @@ def ex54a_see : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "movement"), ("verb", "see"), ("creation", "no"), ("object", "definite")]
-    comment := "Marked ?? in the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Marked ?? in the paper." }
 
 def ex54b_paint : LinguisticExample :=
   { id := "daviesdubinsky2003_ex54b_paint"
@@ -211,9 +191,7 @@ def ex54b_paint : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "movement"), ("verb", "paint"), ("creation", "yes"), ("object", "indefinite")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex54b_see : LinguisticExample :=
   { id := "daviesdubinsky2003_ex54b_see"
@@ -229,9 +207,7 @@ def ex54b_see : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("dependency", "movement"), ("verb", "see"), ("creation", "no"), ("object", "indefinite")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex52a_write, ex52a_read, ex52b_write, ex52b_read, ex53a_tell, ex53a_hear, ex53b_tell, ex53b_hear, ex54a_paint, ex54a_see, ex54b_paint, ex54b_see]
 

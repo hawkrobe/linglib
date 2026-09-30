@@ -31,9 +31,7 @@ def ex_12 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "sluicing antecedent")]
-    comment := "Both the bare and the wani-marked indefinite serve as sluicing antecedents."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Both the bare and the wani-marked indefinite serve as sluicing antecedents." }
 
 def ex_13a : LinguisticExample :=
   { id := "zimmermann2026_13a"
@@ -49,9 +47,7 @@ def ex_13a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("scope", "wide"), ("context", "Audu bought a lot of fish, but")]
-    comment := "Wide-scope context: the marker wani is required; the bare NP would force the narrow-scope reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Wide-scope context: the marker wani is required; the bare NP would force the narrow-scope reading." }
 
 def ex_13b : LinguisticExample :=
   { id := "zimmermann2026_13b"
@@ -67,9 +63,7 @@ def ex_13b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("scope", "narrow"), ("context", "the market was closed, so")]
-    comment := "Narrow-scope context: wani phrases may also scope below negation, like the bare NP."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Narrow-scope context: wani phrases may also scope below negation, like the bare NP." }
 
 def ex_14 : LinguisticExample :=
   { id := "zimmermann2026_14"
@@ -85,9 +79,7 @@ def ex_14 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("inference", "specificity")]
-    comment := "The marker bí triggers a specificity inference in non-modal environments; cited from Amfo (2010)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The marker bí triggers a specificity inference in non-modal environments; cited from Amfo (2010)." }
 
 def ex_15 : LinguisticExample :=
   { id := "zimmermann2026_15"
@@ -103,9 +95,7 @@ def ex_15 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("scope", "wide only")]
-    comment := "The narrow-scope reading, that I don't eat any fish, is unavailable: bí phrases must outscope negation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The narrow-scope reading, that I don't eat any fish, is unavailable: bí phrases must outscope negation." }
 
 def ex_17 : LinguisticExample :=
   { id := "zimmermann2026_17"
@@ -121,9 +111,7 @@ def ex_17 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "ko"), ("reading", "existentially closed choice function")]
-    comment := "True in the context; cited from Renans (2018). Unavailable for Akan bí."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "True in the context; cited from Renans (2018). Unavailable for Akan bí." }
 
 def ex_18 : LinguisticExample :=
   { id := "zimmermann2026_18"
@@ -139,9 +127,7 @@ def ex_18 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("co-occurrence", "INDEF and DEF")]
-    comment := "Cited from Bombi et al. (2019)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Cited from Bombi et al. (2019)." }
 
 def ex_19 : LinguisticExample :=
   { id := "zimmermann2026_19"
@@ -157,9 +143,7 @@ def ex_19 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("bare NP", "definite or indefinite")]
-    comment := "Cited from Newman (2000); a uniqueness-based definite reading of a bare NP in topical subject position."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Cited from Newman (2000); a uniqueness-based definite reading of a bare NP in topical subject position." }
 
 def all : List LinguisticExample := [ex_12, ex_13a, ex_13b, ex_14, ex_15, ex_17, ex_18, ex_19]
 

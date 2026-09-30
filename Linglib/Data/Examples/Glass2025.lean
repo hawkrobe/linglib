@@ -31,9 +31,7 @@ def ex_1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "know"), ("state", "p")]
-    comment := "The inference that there is a meeting projects through questions and negation, (1b)–(1c)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The inference that there is a meeting projects through questions and negation, (1b)–(1c)." }
 
 def ex_2a_p : LinguisticExample :=
   { id := "glass2025_2a_p"
@@ -49,9 +47,7 @@ def ex_2a_p : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "think"), ("state", "p")]
-    comment := "Whether there is a meeting depends on Alex's trustworthiness and the plausibility of a meeting."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Whether there is a meeting depends on Alex's trustworthiness and the plausibility of a meeting." }
 
 def ex_2a_unsettled : LinguisticExample :=
   { id := "glass2025_2a_unsettled"
@@ -67,9 +63,7 @@ def ex_2a_unsettled : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "think"), ("state", "unsettled")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_2a_notP : LinguisticExample :=
   { id := "glass2025_2a_notP"
@@ -85,9 +79,7 @@ def ex_2a_notP : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "think"), ("state", "notP")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_4_notP : LinguisticExample :=
   { id := "glass2025_4_notP"
@@ -103,9 +95,7 @@ def ex_4_notP : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "yiwei"), ("state", "notP")]
-    comment := "Excerpted from Glass 2023, p. 2."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Excerpted from Glass 2023, p. 2." }
 
 def ex_4_p : LinguisticExample :=
   { id := "glass2025_4_p"
@@ -121,9 +111,7 @@ def ex_4_p : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "yiwei"), ("state", "p")]
-    comment := "Nonsensical if the speaker is definitely sick."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Nonsensical if the speaker is definitely sick." }
 
 def ex_5_notP : LinguisticExample :=
   { id := "glass2025_5_notP"
@@ -139,9 +127,7 @@ def ex_5_notP : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "renwei"), ("state", "notP")]
-    comment := "Adapted from Glass 2023, p. 2."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Adapted from Glass 2023, p. 2." }
 
 def ex_5_unsettled : LinguisticExample :=
   { id := "glass2025_5_unsettled"
@@ -157,9 +143,7 @@ def ex_5_unsettled : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "renwei"), ("state", "unsettled")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_7 : LinguisticExample :=
   { id := "glass2025_7"
@@ -175,9 +159,7 @@ def ex_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "yiwei"), ("state", "unsettled")]
-    comment := "Glass 2023, p. 6. Odd if the speaker has no reason to question the athlete's belief; a presupposition of not-p would contradict the ignorance expressed in the first clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Glass 2023, p. 6. Odd if the speaker has no reason to question the athlete's belief; a presupposition of not-p would contradict the ignorance expressed in the first clause." }
 
 def all : List LinguisticExample := [ex_1a, ex_2a_p, ex_2a_unsettled, ex_2a_notP, ex_4_notP, ex_4_p, ex_5_notP, ex_5_unsettled, ex_7]
 

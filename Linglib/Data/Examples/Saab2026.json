@@ -13,8 +13,7 @@
     "paperFeatures": [
       ["noun", "grupo"]
     ],
-    "comment": "Pseudo-partitive binominal.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Pseudo-partitive binominal."
   },
   {
     "id": "saab2026_ex1b",
@@ -30,8 +29,7 @@
     "paperFeatures": [
       ["noun", "montón"]
     ],
-    "comment": "Quantificational binominal.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Quantificational binominal."
   },
   {
     "id": "saab2026_ex1c",
@@ -47,8 +45,7 @@
     "paperFeatures": [
       ["noun", "mierda"]
     ],
-    "comment": "Qualitative binominal.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Qualitative binominal."
   },
   {
     "id": "saab2026_ex2a",

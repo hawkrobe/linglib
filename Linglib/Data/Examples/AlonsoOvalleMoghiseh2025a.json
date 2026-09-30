@@ -18,8 +18,7 @@
       ["item", "irgendein"],
       ["environment", "downward entailing"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025a_3b",
@@ -41,8 +40,7 @@
       ["modal", "deontic necessity"],
       ["inference", "free choice"]
     ],
-    "comment": "Repeated as (22).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (22)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_4",
@@ -65,8 +63,7 @@
       ["modalInsertion", "no"],
       ["partialExhaustification", "no"]
     ],
-    "comment": "Repeated as (88). Table 2: vreun allows neither rescue.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (88). Table 2: vreun allows neither rescue."
   },
   {
     "id": "alonsoovallemoghiseh2025a_5",
@@ -88,8 +85,7 @@
       ["environment", "unembedded"],
       ["inference", "speaker ignorance"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025a_6",
@@ -130,8 +126,7 @@
       ["environment", "unembedded"],
       ["inference", "agent indifference"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025a_8",
@@ -151,8 +146,7 @@
       ["item", "yek-i"],
       ["environment", "unembedded"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025a_9",
@@ -174,8 +168,7 @@
       ["environment", "unembedded"],
       ["continuation", "namely"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 8; repeated as (38).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 8; repeated as (38)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_10a",
@@ -198,8 +191,7 @@
       ["environment", "unembedded"],
       ["inference", "uniqueness"]
     ],
-    "comment": "Repeated as (46b).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (46b)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_10b",
@@ -237,8 +229,7 @@
       ["item", "yek"],
       ["environment", "unembedded"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025a_12a",
@@ -258,8 +249,7 @@
       ["item", "numeral -i"],
       ["environment", "unembedded"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025a_12b",
@@ -279,8 +269,7 @@
       ["item", "numeral"],
       ["environment", "unembedded"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025a_13",
@@ -300,8 +289,7 @@
       ["item", "yek-i plural"],
       ["environment", "unembedded"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025a_14",
@@ -321,8 +309,7 @@
       ["item", "bare -i"],
       ["environment", "unembedded"]
     ],
-    "comment": "Modarresi & Simonenko 2007: 181; grammatical in the formal register, speaker variation in the informal one.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Modarresi & Simonenko 2007: 181; grammatical in the formal register, speaker variation in the informal one."
   },
   {
     "id": "alonsoovallemoghiseh2025a_15",
@@ -344,8 +331,7 @@
       ["environment", "downward entailing"],
       ["scope", "doubt > ∃"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 5.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 5."
   },
   {
     "id": "alonsoovallemoghiseh2025a_16",
@@ -367,8 +353,7 @@
       ["environment", "downward entailing"],
       ["scope", "if > ∃"]
     ],
-    "comment": "Repeated as (77) and (129a).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (77) and (129a)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_17",
@@ -388,8 +373,7 @@
       ["item", "yek-i"],
       ["environment", "sentential negation"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025a_18",
@@ -447,8 +431,7 @@
       ["modal", "deontic possibility"],
       ["inference", "free choice"]
     ],
-    "comment": "Repeated as (26), (57), (109).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (26), (57), (109)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_20b",
@@ -470,8 +453,7 @@
       ["modal", "deontic necessity"],
       ["inference", "free choice"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 5; repeated as (30), (63), (106).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 5; repeated as (30), (63), (106)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_21a",
@@ -493,8 +475,7 @@
       ["modal", "epistemic possibility"],
       ["inference", "modal variation"]
     ],
-    "comment": "Repeated as (32), (121).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (32), (121)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_21b",
@@ -516,8 +497,7 @@
       ["modal", "epistemic necessity"],
       ["inference", "modal variation"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 6; repeated as (35), (127).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 6; repeated as (35), (127)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_23",
@@ -559,8 +539,7 @@
       ["scenario", "permitted24"],
       ["verdict", "true"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 6. Felicitous in (24); consistent with the continuation (27).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 6. Felicitous in (24); consistent with the continuation (27)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_26",
@@ -583,8 +562,7 @@
       ["scenario", "permitted24"],
       ["verdict", "false"]
     ],
-    "comment": "Cannot describe (24): conveys that Forood may buy any of the five books; inconsistent with (27).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Cannot describe (24): conveys that Forood may buy any of the five books; inconsistent with (27)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_27",
@@ -604,8 +582,7 @@
     "paperFeatures": [
       ["role", "continuation incompatible with free choice"]
     ],
-    "comment": "Consistent with (25) and (29), inconsistent with (26) and (30).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Consistent with (25) and (29), inconsistent with (26) and (30)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_29",
@@ -628,8 +605,7 @@
       ["scenario", "required28"],
       ["verdict", "true"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 7.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 7."
   },
   {
     "id": "alonsoovallemoghiseh2025a_30",
@@ -652,8 +628,7 @@
       ["scenario", "required28"],
       ["verdict", "false"]
     ],
-    "comment": "Not true in (28): conveys that Forood can buy any book.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Not true in (28): conveys that Forood can buy any book."
   },
   {
     "id": "alonsoovallemoghiseh2025a_32",
@@ -676,8 +651,7 @@
       ["scenario", "known31"],
       ["verdict", "true"]
     ],
-    "comment": "Felicitous in (31) although not all books are epistemic possibilities; can be followed by (33).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Felicitous in (31) although not all books are epistemic possibilities; can be followed by (33)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_33",
@@ -697,8 +671,7 @@
     "paperFeatures": [
       ["role", "continuation incompatible with free choice"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025a_35",
@@ -721,8 +694,7 @@
       ["scenario", "known34"],
       ["verdict", "true"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 6.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 6."
   },
   {
     "id": "alonsoovallemoghiseh2025a_36",
@@ -745,8 +717,7 @@
       ["modalInsertion", "no"],
       ["partialExhaustification", "yes"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 7. Felicitous in (37), where the choice was not random: no agent-indifference component. Repeated as (90a), (99a), (136a).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 7. Felicitous in (37), where the choice was not random: no agent-indifference component. Repeated as (90a), (99a), (136a)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_40",
@@ -768,8 +739,7 @@
       ["environment", "unembedded"],
       ["continuation", "which-question"]
     ],
-    "comment": "From Alonso-Ovalle & Moghiseh 2019.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "From Alonso-Ovalle & Moghiseh 2019."
   },
   {
     "id": "alonsoovallemoghiseh2025a_41",
@@ -810,8 +780,7 @@
       ["environment", "unembedded"],
       ["continuation", "guess who"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025a_43",
@@ -833,8 +802,7 @@
       ["environment", "unembedded"],
       ["continuation", "guess what"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025a_44",
@@ -876,8 +844,7 @@
       ["environment", "unembedded"],
       ["continuation", "previously mentioned witness"]
     ],
-    "comment": "Alonso-Ovalle & Moghiseh 2019: 8.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Alonso-Ovalle & Moghiseh 2019: 8."
   },
   {
     "id": "alonsoovallemoghiseh2025a_47",
@@ -900,8 +867,7 @@
       ["continuation", "how-many question"],
       ["inference", "uniqueness"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025a_48",
@@ -944,8 +910,7 @@
       ["environment", "downward entailing"],
       ["inference", "uniqueness absent"]
     ],
-    "comment": "Feels contradictory: the uniqueness component disappears under if. Rescued only with focus on ye.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Feels contradictory: the uniqueness component disappears under if. Rescued only with focus on ye."
   },
   {
     "id": "alonsoovallemoghiseh2025a_50",
@@ -968,8 +933,7 @@
       ["environment", "downward entailing"],
       ["inference", "free choice absent"]
     ],
-    "comment": "(50) cannot be followed by (51): the free choice component disappears under doubt.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "(50) cannot be followed by (51): the free choice component disappears under doubt."
   },
   {
     "id": "alonsoovallemoghiseh2025a_62",
@@ -990,8 +954,7 @@
       ["role", "continuation"],
       ["inference", "no anti-plurality under possibility"]
     ],
-    "comment": "Felicitous after (57) = (20a): the scalar component ¬◇(b1∧b2) of single exhaustification is unattested. Repeated as (107).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Felicitous after (57) = (20a): the scalar component ¬◇(b1∧b2) of single exhaustification is unattested. Repeated as (107)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_73a",
@@ -1013,8 +976,7 @@
       ["modal", "deontic possibility"],
       ["inference", "modal variation"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025a_81a",
@@ -1037,8 +999,7 @@
       ["modalInsertion", "yes"],
       ["partialExhaustification", "no"]
     ],
-    "comment": "Table 2: irgendein-type EFCIs rescue the root contradiction by covert modal insertion.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Table 2: irgendein-type EFCIs rescue the root contradiction by covert modal insertion."
   },
   {
     "id": "alonsoovallemoghiseh2025a_105a",
@@ -1061,8 +1022,7 @@
       ["scenario", "anyNumber104"],
       ["verdict", "true"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025a_105b",
@@ -1085,8 +1045,7 @@
       ["scenario", "anyNumber104"],
       ["verdict", "true"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025a_106",
@@ -1109,8 +1068,7 @@
       ["scenario", "anyNumber104"],
       ["verdict", "false"]
     ],
-    "comment": "False in (104): conveys that in all permitted worlds Forood buys exactly one book. Incompatible with (107).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "False in (104): conveys that in all permitted worlds Forood buys exactly one book. Incompatible with (107)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_109",
@@ -1133,8 +1091,7 @@
       ["scenario", "twoBooks108"],
       ["verdict", "false"]
     ],
-    "comment": "Infelicitous in (108): no permitted world has exactly one book bought. Compatible with (107) and with (110).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Infelicitous in (108): no permitted world has exactly one book bought. Compatible with (107) and with (110)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_110",
@@ -1154,8 +1111,7 @@
     "paperFeatures": [
       ["role", "continuation"]
     ],
-    "comment": "Felicitous after (109).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Felicitous after (109)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_111",
@@ -1178,8 +1134,7 @@
       ["environment", "downward entailing"],
       ["inference", "embedded uniqueness absent"]
     ],
-    "comment": "(111) cannot be continued with (112).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "(111) cannot be continued with (112)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_121",
@@ -1223,8 +1178,7 @@
       ["modal", "epistemic necessity"],
       ["inference", "embedded uniqueness"]
     ],
-    "comment": "(126): after opening the box Forood can utter (126b) but not (126a).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "(126): after opening the box Forood can utter (126b) but not (126a)."
   },
   {
     "id": "alonsoovallemoghiseh2025a_128",
@@ -1248,7 +1202,6 @@
       ["modal", "epistemic necessity"],
       ["inference", "apparent counterexample"]
     ],
-    "comment": "Felicitous: bayad and momkene quantify over different sets of possibilities.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Felicitous: bayad and momkene quantify over different sets of possibilities."
   }
 ]

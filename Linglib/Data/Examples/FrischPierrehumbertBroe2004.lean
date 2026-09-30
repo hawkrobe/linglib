@@ -31,9 +31,7 @@ def fpb2004_dtC : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("c1", "d"), ("c2", "t"), ("observed", "0"), ("expectedTenths", "23"), ("oeHundredths", "0"), ("similarityHundredths", "42")]
-    comment := "Not found, though 2.3 roots are expected: O/E = 0, the strongest under-representation. The similarity of /d, t/ is 0.42 (Table III)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Not found, though 2.3 roots are expected: O/E = 0, the strongest under-representation. The similarity of /d, t/ is 0.42 (Table III)." }
 
 def fpb2004_dsC : LinguisticExample :=
   { id := "fpb2004_dsC"
@@ -49,9 +47,7 @@ def fpb2004_dsC : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("c1", "d"), ("c2", "s"), ("observed", "2"), ("expectedTenths", "29"), ("oeHundredths", "69"), ("similarityHundredths", "17")]
-    comment := "Two roots where 2.9 are expected: O/E = 0.69, under-representation. The similarity of /d, s/ is 0.17 (Table III)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Two roots where 2.9 are expected: O/E = 0.69, under-representation. The similarity of /d, s/ is 0.17 (Table III)." }
 
 def fpb2004_dgC : LinguisticExample :=
   { id := "fpb2004_dgC"
@@ -67,9 +63,7 @@ def fpb2004_dgC : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("c1", "d"), ("c2", "g"), ("observed", "4"), ("expectedTenths", "33"), ("oeHundredths", "121"), ("similarityHundredths", "0")]
-    comment := "Four roots where 3.3 are expected: O/E = 1.21, over-representation. The pair is not homorganic, so its similarity is 0; the paper's g is the fragment's jim."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Four roots where 3.3 are expected: O/E = 1.21, over-representation. The pair is not homorganic, so its similarity is 0; the paper's g is the fragment's jim." }
 
 def all : List LinguisticExample := [fpb2004_dtC, fpb2004_dsC, fpb2004_dgC]
 

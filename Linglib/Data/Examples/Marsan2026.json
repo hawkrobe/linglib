@@ -18,9 +18,7 @@
       ["tam", "DI"],
       ["ET_ST", "ET < ST"]
     ],
-    "comment": "baseline DI",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "baseline DI"
   },
   {
     "id": "tr_001b",
@@ -42,9 +40,7 @@
       ["ET_ST", "ET < ST"],
       ["EAT_ET", "ET < EAT"]
     ],
-    "comment": "baseline MIS",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "baseline MIS"
   },
   {
     "id": "tr_002",
@@ -67,9 +63,7 @@
       ["EAT_ET", "ET < EAT"],
       ["evidence_type", "indirect"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "tr_003",
@@ -92,9 +86,7 @@
       ["EAT_ET", "ET < EAT"],
       ["evidence_type", "indirect"]
     ],
-    "comment": "ST < EAT, Abusch upper limit constraint",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "ST < EAT, Abusch upper limit constraint"
   },
   {
     "id": "tr_004a",
@@ -119,9 +111,7 @@
       ["evidence_type", "indirect"],
       ["evidential_context", "reportative"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "tr_004b",
@@ -146,9 +136,7 @@
       ["evidence_type", "indirect"],
       ["evidential_context", "inferential"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "tr_005",
@@ -172,9 +160,7 @@
       ["evidence_type", "direct"],
       ["evidential_context", "inferential"]
     ],
-    "comment": "Smirnova takes this to be ET = EAT = ST",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Smirnova takes this to be ET = EAT = ST"
   },
   {
     "id": "tr_006a",
@@ -197,9 +183,7 @@
       ["EAT_ET", "ET = EAT"],
       ["evidence_type", "direct"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "tr_006b",
@@ -223,9 +207,7 @@
       ["evidence_type", "direct"],
       ["evidential_context", "inferential"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "tr_007a",
@@ -246,9 +228,7 @@
       ["tam", "DI"],
       ["ET_ST", "ET < ST"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "tr_007b",
@@ -269,9 +249,7 @@
       ["tam", "DI"],
       ["ET_ST", "ET < ST"]
     ],
-    "comment": "Outer negation is not compatible with DI.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Outer negation is not compatible with DI."
   },
   {
     "id": "tr_008a",
@@ -295,9 +273,7 @@
       ["EAT_ET", "ET = EAT"],
       ["evidence_type", "indirect"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "tr_008b",
@@ -321,9 +297,7 @@
       ["EAT_ET", "ET < EAT"],
       ["evidence_type", "indirect"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "tr_008c",
@@ -348,9 +322,7 @@
       ["evidence_type", "indirect"],
       ["evidential_context", "reportative"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "tr_009a",
@@ -370,9 +342,7 @@
     "paperFeatures": [
       ["tam", "DI, MIS"]
     ],
-    "comment": "DI + MIS is not a licensed form",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "DI + MIS is not a licensed form"
   },
   {
     "id": "tr_009b",
@@ -392,8 +362,6 @@
     "paperFeatures": [
       ["tam", "DI, MIS"]
     ],
-    "comment": "MS + DI is licensed",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "MS + DI is licensed"
   }
 ]

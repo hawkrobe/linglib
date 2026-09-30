@@ -31,9 +31,7 @@ def ex_1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("function", "predicative")]
-    comment := "The predicative use of the number word."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The predicative use of the number word." }
 
 def ex_1b : LinguisticExample :=
   { id := "snyder2026_1b"
@@ -49,9 +47,7 @@ def ex_1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("function", "attributive")]
-    comment := "The attributive use."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The attributive use." }
 
 def ex_1c : LinguisticExample :=
   { id := "snyder2026_1c"
@@ -67,9 +63,7 @@ def ex_1c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("function", "quantificational")]
-    comment := "The quantificational use."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The quantificational use." }
 
 def ex_1d : LinguisticExample :=
   { id := "snyder2026_1d"
@@ -85,9 +79,7 @@ def ex_1d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("function", "specificational")]
-    comment := "The specificational use."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The specificational use." }
 
 def ex_1e : LinguisticExample :=
   { id := "snyder2026_1e"
@@ -103,9 +95,7 @@ def ex_1e : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("function", "numeral")]
-    comment := "The numeral use, a name."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The numeral use, a name." }
 
 def ex_1f : LinguisticExample :=
   { id := "snyder2026_1f"
@@ -121,9 +111,7 @@ def ex_1f : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("function", "closeAppositive")]
-    comment := "The close appositive, a singular term coreferential with the numeral."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The close appositive, a singular term coreferential with the numeral." }
 
 def ex_4a : LinguisticExample :=
   { id := "snyder2026_4a"
@@ -139,9 +127,7 @@ def ex_4a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("function", "taxonomic")]
-    comment := "A taxonomic use: the number word predicates a property of subkinds of TWO; repeated as (76j)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A taxonomic use: the number word predicates a property of subkinds of TWO; repeated as (76j)." }
 
 def ex_4b : LinguisticExample :=
   { id := "snyder2026_4b"
@@ -157,9 +143,7 @@ def ex_4b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("function", "kindRef")]
-    comment := "Reference to the superordinate kind TWO; repeated as (76i)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Reference to the superordinate kind TWO; repeated as (76i)." }
 
 def ex_20a : LinguisticExample :=
   { id := "snyder2026_20a"
@@ -175,9 +159,7 @@ def ex_20a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("function", "closeAppositive")]
-    comment := "True: the close appositive refers to the von Neumann ordinal {∅, {∅}}, a subkind of TWO."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "True: the close appositive refers to the von Neumann ordinal {∅, {∅}}, a subkind of TWO." }
 
 def ex_20b : LinguisticExample :=
   { id := "snyder2026_20b"
@@ -193,9 +175,7 @@ def ex_20b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("function", "closeAppositive")]
-    comment := "True: the close appositive refers to the Zermelo ordinal {{∅}}, a distinct subkind of TWO; on extant analyses the two close appositives are wrongly coreferential."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "True: the close appositive refers to the Zermelo ordinal {{∅}}, a distinct subkind of TWO; on extant analyses the two close appositives are wrongly coreferential." }
 
 def ex_76g : LinguisticExample :=
   { id := "snyder2026_76g"
@@ -211,9 +191,7 @@ def ex_76g : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("function", "tokenRef")]
-    comment := "Reference to a numeral token by the numeral."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Reference to a numeral token by the numeral." }
 
 def ex_76h : LinguisticExample :=
   { id := "snyder2026_76h"
@@ -229,9 +207,7 @@ def ex_76h : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("function", "tokenPredicate")]
-    comment := "The lexical predicate applied to a numeral token."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The lexical predicate applied to a numeral token." }
 
 def ex_83 : LinguisticExample :=
   { id := "snyder2026_83"
@@ -247,9 +223,7 @@ def ex_83 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("function", "numeral")]
-    comment := "Both utterances are true: the numeral refers to different subkinds of TWO in the two contexts, Benacerraf's Identification Problem dissolved."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Both utterances are true: the numeral refers to different subkinds of TWO in the two contexts, Benacerraf's Identification Problem dissolved." }
 
 def ex_94a : LinguisticExample :=
   { id := "snyder2026_94a"
@@ -265,9 +239,7 @@ def ex_94a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("function", "taxonomic")]
-    comment := "A colour word as a predicate of subkinds of RED."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A colour word as a predicate of subkinds of RED." }
 
 def ex_94b : LinguisticExample :=
   { id := "snyder2026_94b"
@@ -283,9 +255,7 @@ def ex_94b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("function", "kindRef")]
-    comment := "Reference to the kind RED, of which crimson and maroon are subkinds."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Reference to the kind RED, of which crimson and maroon are subkinds." }
 
 def ex_98 : LinguisticExample :=
   { id := "snyder2026_98"
@@ -301,9 +271,7 @@ def ex_98 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("function", "tokenRef")]
-    comment := "Reference to a concrete colour token by the colour name or its close appositive."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Reference to a concrete colour token by the colour name or its close appositive." }
 
 def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_1d, ex_1e, ex_1f, ex_4a, ex_4b, ex_20a, ex_20b, ex_76g, ex_76h, ex_83, ex_94a, ex_94b, ex_98]
 

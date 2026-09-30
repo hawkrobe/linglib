@@ -28,9 +28,7 @@
         "cross-sentential anaphora"
       ]
     ],
-    "comment": "Syntactic scope anaphora: the indefinite's local variable is closed by the discourse-level summation over the world.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Syntactic scope anaphora: the indefinite's local variable is closed by the discourse-level summation over the world."
   },
   {
     "id": "abneykeshet2025_15",
@@ -61,9 +59,7 @@
         "donkey"
       ]
     ],
-    "comment": "Resumptive scope anaphora: the restriction label repeated in the nuclear scope closes the donkey variable for both indefinite and pronoun.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Resumptive scope anaphora: the restriction label repeated in the nuclear scope closes the donkey variable for both indefinite and pronoun."
   },
   {
     "id": "abneykeshet2025_16",
@@ -87,9 +83,7 @@
         "most"
       ]
     ],
-    "comment": "A generalized quantifier as a relation between the summation of the restriction and of the restriction-plus-scope.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A generalized quantifier as a relation between the summation of the restriction and of the restriction-plus-scope."
   },
   {
     "id": "abneykeshet2025_20",
@@ -117,9 +111,7 @@
         "donkey"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abneykeshet2025_45a",
@@ -143,9 +135,7 @@
         "simple"
       ]
     ],
-    "comment": "The LF tree and the PIP tree of its meaning have the same shape.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The LF tree and the PIP tree of its meaning have the same shape."
   },
   {
     "id": "abneykeshet2025_47",
@@ -169,9 +159,7 @@
         "indefinite"
       ]
     ],
-    "comment": "The tree whose interpretation introduces restricted variables and the operation FX.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The tree whose interpretation introduces restricted variables and the operation FX."
   },
   {
     "id": "abneykeshet2025_66",
@@ -195,9 +183,7 @@
         "every"
       ]
     ],
-    "comment": "Quantifier raising inserts two summation operators labeled with the restriction set and the reference set.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Quantifier raising inserts two summation operators labeled with the restriction set and the reference set."
   },
   {
     "id": "abneykeshet2025_80a",
@@ -237,9 +223,7 @@
         "restriction set"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abneykeshet2025_80b",
@@ -279,9 +263,7 @@
         "reference set"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abneykeshet2025_80c",
@@ -321,9 +303,7 @@
         "scope set"
       ]
     ],
-    "comment": "No DP denotes the simple scope set, so it is not an antecedent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No DP denotes the simple scope set, so it is not an antecedent."
   },
   {
     "id": "abneykeshet2025_98",
@@ -359,9 +339,7 @@
         "summation"
       ]
     ],
-    "comment": "The summation pronoun sums the paper variable of the reference-set label, presupposing plurality.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The summation pronoun sums the paper variable of the reference-set label, presupposing plurality."
   },
   {
     "id": "abneykeshet2025_101",
@@ -397,9 +375,7 @@
         "summation"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abneykeshet2025_105",
@@ -442,9 +418,7 @@
         "summation"
       ]
     ],
-    "comment": "The collective reading, unavailable in Dynamic Plural Logic, is the summation pronoun over the papers written.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The collective reading, unavailable in Dynamic Plural Logic, is the summation pronoun over the papers written."
   },
   {
     "id": "abneykeshet2025_106",
@@ -480,9 +454,7 @@
         "summation"
       ]
     ],
-    "comment": "The collective reading is available but dispreferred without pragmatic support for the boys gathering.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The collective reading is available but dispreferred without pragmatic support for the boys gathering."
   },
   {
     "id": "abneykeshet2025_107a",
@@ -515,9 +487,7 @@
         "summation"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abneykeshet2025_107b",
@@ -550,9 +520,7 @@
         "summation"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abneykeshet2025_108",
@@ -588,9 +556,7 @@
         "simple"
       ]
     ],
-    "comment": "A simple pronoun to a weak indefinite is not exhaustive: other lunching girls may be mentioned.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A simple pronoun to a weak indefinite is not exhaustive: other lunching girls may be mentioned."
   },
   {
     "id": "abneykeshet2025_109",
@@ -626,9 +592,7 @@
         "summation"
       ]
     ],
-    "comment": "A summation pronoun is exhaustive: it denotes all the girls lunching, so 'other girls' lunching is infelicitous.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A summation pronoun is exhaustive: it denotes all the girls lunching, so 'other girls' lunching is infelicitous."
   },
   {
     "id": "abneykeshet2025_110",
@@ -655,9 +619,7 @@
         "paycheck"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abneykeshet2025_111",
@@ -693,9 +655,7 @@
         "paycheck"
       ]
     ],
-    "comment": "The antecedent label contains the free variable of the girl, rebound by 'few'; the pronoun refers to dioramas not mentioned before.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The antecedent label contains the free variable of the girl, rebound by 'few'; the pronoun refers to dioramas not mentioned before."
   },
   {
     "id": "abneykeshet2025_113",
@@ -728,9 +688,7 @@
         "donkey"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abneykeshet2025_114",
@@ -766,9 +724,7 @@
         "summation"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abneykeshet2025_115",
@@ -801,9 +757,7 @@
         "donkey"
       ]
     ],
-    "comment": "The strong reading with the indefinite as a generalized quantifier and 'it' a summation pronoun over the valuables brought.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The strong reading with the indefinite as a generalized quantifier and 'it' a summation pronoun over the valuables brought."
   },
   {
     "id": "abneykeshet2025_117a",
@@ -838,9 +792,7 @@
         "quantificational subordination"
       ]
     ],
-    "comment": "The indefinite under the first quantifier antecedes a pronoun in the nuclear scope of the subordinate quantifier.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The indefinite under the first quantifier antecedes a pronoun in the nuclear scope of the subordinate quantifier."
   },
   {
     "id": "abneykeshet2025_117b",
@@ -875,9 +827,7 @@
         "quantificational subordination"
       ]
     ],
-    "comment": "The novel observation: the pronoun may also appear in the subordinate quantifier's restriction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The novel observation: the pronoun may also appear in the subordinate quantifier's restriction."
   },
   {
     "id": "abneykeshet2025_130a",
@@ -905,9 +855,7 @@
         "donkey"
       ]
     ],
-    "comment": "A conditional donkey sentence: the modal's nuclear scope is subordinate to its if-clause restriction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A conditional donkey sentence: the modal's nuclear scope is subordinate to its if-clause restriction."
   },
   {
     "id": "abneykeshet2025_131a",
@@ -931,9 +879,7 @@
         "might"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abneykeshet2025_132",
@@ -971,9 +917,7 @@
         "modal subordination"
       ]
     ],
-    "comment": "The second modal's restriction is anaphoric to the first's nuclear-scope label.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The second modal's restriction is anaphoric to the first's nuclear-scope label."
   },
   {
     "id": "abneykeshet2025_134",
@@ -997,9 +941,7 @@
         "negation"
       ]
     ],
-    "comment": "Negation existentially closes the indefinite: summation over worlds.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Negation existentially closes the indefinite: summation over worlds."
   },
   {
     "id": "abneykeshet2025_135",
@@ -1033,9 +975,7 @@
         "modal subordination"
       ]
     ],
-    "comment": "Negation antecedes modal subordination.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Negation antecedes modal subordination."
   },
   {
     "id": "abneykeshet2025_138a",
@@ -1071,9 +1011,7 @@
         "summation"
       ]
     ],
-    "comment": "Anaphora out of double negation: the label embedded under two negations is accessible to a summation pronoun.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Anaphora out of double negation: the label embedded under two negations is accessible to a summation pronoun."
   },
   {
     "id": "abneykeshet2025_139",
@@ -1104,9 +1042,7 @@
         "summation"
       ]
     ],
-    "comment": "The set of his cars is empty, so the pronoun's singular presupposition fails.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The set of his cars is empty, so the pronoun's singular presupposition fails."
   },
   {
     "id": "abneykeshet2025_140",
@@ -1137,9 +1073,7 @@
         "summation"
       ]
     ],
-    "comment": "Odd through the difficulty of accommodating the gender and number presuppositions of 'he', not through inaccessibility of the label.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Odd through the difficulty of accommodating the gender and number presuppositions of 'he', not through inaccessibility of the label."
   },
   {
     "id": "abneykeshet2025_141a",
@@ -1170,9 +1104,7 @@
         "summation"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abneykeshet2025_141b",
@@ -1203,9 +1135,7 @@
         "summation"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abneykeshet2025_142",
@@ -1236,9 +1166,7 @@
         "summation"
       ]
     ],
-    "comment": "Attributed to Barbara Partee; felicity reduces to: if there is a bathroom here, it is unique.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Attributed to Barbara Partee; felicity reduces to: if there is a bathroom here, it is unique."
   },
   {
     "id": "abneykeshet2025_146a",
@@ -1266,9 +1194,7 @@
         "presupposition projection"
       ]
     ],
-    "comment": "No presupposition as a whole: the nuclear scope includes the restriction, which satisfies the pronoun's presupposition pointwise.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No presupposition as a whole: the nuclear scope includes the restriction, which satisfies the pronoun's presupposition pointwise."
   },
   {
     "id": "abneykeshet2025_146b",
@@ -1296,9 +1222,7 @@
         "presupposition projection"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abneykeshet2025_146c",
@@ -1326,9 +1250,7 @@
         "presupposition projection"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abneykeshet2025_147",
@@ -1359,9 +1281,7 @@
         "presupposition projection"
       ]
     ],
-    "comment": "The presupposition of 'too' under 'wishes' is satisfied by the label of the belief report, as in modal subordination.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The presupposition of 'too' under 'wishes' is satisfied by the label of the belief report, as in modal subordination."
   },
   {
     "id": "abneykeshet2025_150a",
@@ -1396,9 +1316,7 @@
         "quantificational subordination"
       ]
     ],
-    "comment": "Presupposition satisfaction across quantificational subordination: the first sentence's reference-set label is the second quantifier's restriction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Presupposition satisfaction across quantificational subordination: the first sentence's reference-set label is the second quantifier's restriction."
   },
   {
     "id": "abneykeshet2025_150b",
@@ -1433,9 +1351,7 @@
         "quantificational subordination"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "abneykeshet2025_150c",
@@ -1470,8 +1386,6 @@
         "quantificational subordination"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

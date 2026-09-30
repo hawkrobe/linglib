@@ -12,8 +12,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Polar question.",
-    "lgrConformance": ""
+    "comment": "Polar question."
   },
   {
     "id": "theiler2021_2a",
@@ -28,8 +27,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Wh-question.",
-    "lgrConformance": ""
+    "comment": "Wh-question."
   },
   {
     "id": "theiler2021_3a",
@@ -44,8 +42,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Conditional antecedent.",
-    "lgrConformance": ""
+    "comment": "Conditional antecedent."
   },
   {
     "id": "theiler2021_4a",
@@ -60,8 +57,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The wh-question highlights the property of being the intended referent, with two instantiations; learning one of them is a precondition for interpreting A's assertion.",
-    "lgrConformance": ""
+    "comment": "The wh-question highlights the property of being the intended referent, with two instantiations; learning one of them is a precondition for interpreting A's assertion."
   },
   {
     "id": "theiler2021_4b",
@@ -76,8 +72,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The polar question highlights the proposition that A meant Anna from Munich; learning that Anna from Berlin was meant would serve equally well, so it is not a necessary precondition. Both questions have the same answerhood conditions.",
-    "lgrConformance": ""
+    "comment": "The polar question highlights the proposition that A meant Anna from Munich; learning that Anna from Berlin was meant would serve equally well, so it is not a necessary precondition. Both questions have the same answerhood conditions."
   },
   {
     "id": "theiler2021_6",
@@ -92,8 +87,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Out of the blue there is no salient move or information for *denn* to pick up.",
-    "lgrConformance": ""
+    "comment": "Out of the blue there is no salient move or information for *denn* to pick up."
   },
   {
     "id": "theiler2021_7",
@@ -108,8 +102,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Learning that it is Monday is a precondition for carrying out A's request.",
-    "lgrConformance": ""
+    "comment": "Learning that it is Monday is a precondition for carrying out A's request."
   },
   {
     "id": "theiler2021_8",
@@ -124,8 +117,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The waker has no reason supplied by the context to ask the time; after König.",
-    "lgrConformance": ""
+    "comment": "The waker has no reason supplied by the context to ask the time; after König."
   },
   {
     "id": "theiler2021_9",
@@ -140,8 +132,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The wakee may seek an explanation for being woken.",
-    "lgrConformance": ""
+    "comment": "The wakee may seek an explanation for being woken."
   },
   {
     "id": "theiler2021_12",
@@ -156,8 +147,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Peter's presence cannot be construed as a precondition for integrating that Sophie is there, although A knows why B asks.",
-    "lgrConformance": ""
+    "comment": "Peter's presence cannot be construed as a precondition for integrating that Sophie is there, although A knows why B asks."
   },
   {
     "id": "theiler2021_13",
@@ -172,8 +162,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Sophie's presence would explain Peter's, so learning it is a precondition for integrating A's assertion.",
-    "lgrConformance": ""
+    "comment": "Sophie's presence would explain Peter's, so learning it is a precondition for integrating A's assertion."
   },
   {
     "id": "theiler2021_14a",
@@ -188,8 +177,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Deictic use: learning that the winter was cold is a precondition for integrating the observed fact that the lake is frozen.",
-    "lgrConformance": ""
+    "comment": "Deictic use: learning that the winter was cold is a precondition for integrating the observed fact that the lake is frozen."
   },
   {
     "id": "theiler2021_14b",
@@ -204,8 +192,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "No salient information is such that the plan to skate could be a precondition for integrating it.",
-    "lgrConformance": ""
+    "comment": "No salient information is such that the plan to skate could be a precondition for integrating it."
   },
   {
     "id": "theiler2021_21",
@@ -220,8 +207,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Proceeding from an assertion requires accepting that its felicity conditions are met, here that the speaker knows the content.",
-    "lgrConformance": ""
+    "comment": "Proceeding from an assertion requires accepting that its felicity conditions are met, here that the speaker knows the content."
   },
   {
     "id": "theiler2021_22",
@@ -236,8 +222,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Proceeding from an imperative requires carrying out the instruction, for which the arrival time is missing.",
-    "lgrConformance": ""
+    "comment": "Proceeding from an imperative requires carrying out the instruction, for which the arrival time is missing."
   },
   {
     "id": "theiler2021_23",
@@ -252,8 +237,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Proceeding from a wh-question requires answering it, which depends on A's income.",
-    "lgrConformance": ""
+    "comment": "Proceeding from a wh-question requires answering it, which depends on A's income."
   },
   {
     "id": "theiler2021_24",
@@ -268,8 +252,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Proceeding from a polar question requires answering it positively, for which being under eighteen is a precondition.",
-    "lgrConformance": ""
+    "comment": "Proceeding from a polar question requires answering it positively, for which being under eighteen is a precondition."
   },
   {
     "id": "theiler2021_25",
@@ -284,8 +267,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "A transparently entertained plan, looking up the way to the party, cannot be carried out without the address.",
-    "lgrConformance": ""
+    "comment": "A transparently entertained plan, looking up the way to the party, cannot be carried out without the address."
   },
   {
     "id": "theiler2021_26a",
@@ -300,8 +282,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The hearer refuses to accommodate a presupposition of the previous move.",
-    "lgrConformance": ""
+    "comment": "The hearer refuses to accommodate a presupposition of the previous move."
   },
   {
     "id": "theiler2021_29",
@@ -316,8 +297,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Deictic use picking up extralinguistic evidence.",
-    "lgrConformance": ""
+    "comment": "Deictic use picking up extralinguistic evidence."
   },
   {
     "id": "theiler2021_31a",
@@ -332,8 +312,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The highlighted proposition, that no key is needed, is a precondition for following the instruction.",
-    "lgrConformance": ""
+    "comment": "The highlighted proposition, that no key is needed, is a precondition for following the instruction."
   },
   {
     "id": "theiler2021_31b",
@@ -348,8 +327,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The highlighted proposition, that a key is needed, cannot be a precondition for opening the door, although the two questions have the same answerhood conditions.",
-    "lgrConformance": ""
+    "comment": "The highlighted proposition, that a key is needed, cannot be a precondition for opening the door, although the two questions have the same answerhood conditions."
   },
   {
     "id": "theiler2021_32a",
@@ -364,8 +342,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Disjoining the questions signals that either answer would suffice, so neither can be necessary.",
-    "lgrConformance": ""
+    "comment": "Disjoining the questions signals that either answer would suffice, so neither can be necessary."
   },
   {
     "id": "theiler2021_32b",
@@ -380,8 +357,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "theiler2021_32c",
@@ -396,8 +372,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Conjoined questions name two necessary preconditions.",
-    "lgrConformance": ""
+    "comment": "Conjoined questions name two necessary preconditions."
   },
   {
     "id": "theiler2021_35",
@@ -412,8 +387,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "An alternative question highlights both disjuncts; learning one of them is a precondition for committing to pick A up.",
-    "lgrConformance": ""
+    "comment": "An alternative question highlights both disjuncts; learning one of them is a precondition for committing to pick A up."
   },
   {
     "id": "theiler2021_36",
@@ -428,8 +402,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "A polar disjunctive question highlights the disjunction alone.",
-    "lgrConformance": ""
+    "comment": "A polar disjunctive question highlights the disjunction alone."
   },
   {
     "id": "theiler2021_38",
@@ -444,8 +417,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "No preceding move: the host's plan to serve wine, presupposed by the question, supplies the antecedent.",
-    "lgrConformance": ""
+    "comment": "No preceding move: the host's plan to serve wine, presupposed by the question, supplies the antecedent."
   },
   {
     "id": "theiler2021_45",
@@ -460,8 +432,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "A bare denn-antecedent reacting to the assertion of the consequent.",
-    "lgrConformance": ""
+    "comment": "A bare denn-antecedent reacting to the assertion of the consequent."
   },
   {
     "id": "theiler2021_47b",
@@ -476,8 +447,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Cancelling conditional perfection contradicts the necessity that *denn* marks.",
-    "lgrConformance": ""
+    "comment": "Cancelling conditional perfection contradicts the necessity that *denn* marks."
   },
   {
     "id": "theiler2021_48a",
@@ -492,8 +462,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "theiler2021_48b",
@@ -508,8 +477,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Two sufficient conditions: neither can be necessary.",
-    "lgrConformance": ""
+    "comment": "Two sufficient conditions: neither can be necessary."
   },
   {
     "id": "theiler2021_52",
@@ -524,8 +492,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The father could assert the antecedent, so no unassertability bias is conveyed; against Csipak and Zobel's bias for conditional *denn*.",
-    "lgrConformance": ""
+    "comment": "The father could assert the antecedent, so no unassertability bias is conveyed; against Csipak and Zobel's bias for conditional *denn*."
   },
   {
     "id": "theiler2021_61a",
@@ -543,8 +510,7 @@
       {"name": "with denn", "judgment": "unacceptable"}
     ],
     "paperFeatures": [],
-    "comment": "B drinking alcohol is a precondition for answering the QUD, which *überhaupt* marks, but not for accepting that B does not want a beer, which *denn* would mark.",
-    "lgrConformance": ""
+    "comment": "B drinking alcohol is a precondition for answering the QUD, which *überhaupt* marks, but not for accepting that B does not want a beer, which *denn* would mark."
   },
   {
     "id": "theiler2021_61b",
@@ -562,8 +528,7 @@
       {"name": "with denn", "judgment": "acceptable"}
     ],
     "paperFeatures": [],
-    "comment": "B not drinking alcohol is a precondition for integrating the declined offers but not for answering the QUD.",
-    "lgrConformance": ""
+    "comment": "B not drinking alcohol is a precondition for integrating the declined offers but not for answering the QUD."
   },
   {
     "id": "theiler2021_70",
@@ -578,8 +543,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Causal conjunction *denn* introduces a possible explanation.",
-    "lgrConformance": ""
+    "comment": "Causal conjunction *denn* introduces a possible explanation."
   },
   {
     "id": "theiler2021_71",
@@ -594,8 +558,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Selling drugs is not a necessary precondition for going to jail; the modalized condition distinguishes the question from the conjunction.",
-    "lgrConformance": ""
+    "comment": "Selling drugs is not a necessary precondition for going to jail; the modalized condition distinguishes the question from the conjunction."
   },
   {
     "id": "theiler2021_72",
@@ -610,7 +573,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Committing a crime is a necessary precondition for going to jail.",
-    "lgrConformance": ""
+    "comment": "Committing a crime is a necessary precondition for going to jail."
   }
 ]

@@ -31,9 +31,7 @@ def ex4c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "there"), ("determiner", "every"), ("grammatical", "no")]
-    comment := "A strong quantifier in a there-sentence, the Definiteness Restriction of Milsark and Barwise and Cooper; its logical skeleton receives 1 under every assignment."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A strong quantifier in a there-sentence, the Definiteness Restriction of Milsark and Barwise and Cooper; its logical skeleton receives 1 under every assignment." }
 
 def ex30a : LinguisticExample :=
   { id := "gajewski2002_ex30a"
@@ -49,9 +47,7 @@ def ex30a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "there"), ("determiner", "every"), ("grammatical", "no")]
-    comment := "The logical skeleton [there [are [every n1]]] is an L-tautology: every element of the domain of properties is a subset of the domain of individuals."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The logical skeleton [there [are [every n1]]] is an L-tautology: every element of the domain of properties is a subset of the domain of individuals." }
 
 def ex5a : LinguisticExample :=
   { id := "gajewski2002_ex5a"
@@ -67,9 +63,7 @@ def ex5a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "there"), ("determiner", "some"), ("grammatical", "yes")]
-    comment := "A weak quantifier in a there-sentence."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A weak quantifier in a there-sentence." }
 
 def ex5c : LinguisticExample :=
   { id := "gajewski2002_ex5c"
@@ -85,9 +79,7 @@ def ex5c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "there"), ("determiner", "some"), ("grammatical", "yes")]
-    comment := "The skeleton [there [are [some n1]]] is false when the variable is assigned the empty set and true otherwise, so it is not L-analytic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The skeleton [there [are [some n1]]] is false when the variable is assigned the empty set and true otherwise, so it is not L-analytic." }
 
 def ex11a_every : LinguisticExample :=
   { id := "gajewski2002_ex11a_every"
@@ -103,9 +95,7 @@ def ex11a_every : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "exceptive"), ("determiner", "every"), ("grammatical", "yes")]
-    comment := "A but-exceptive on a positive universal; its skeleton is contingent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A but-exceptive on a positive universal; its skeleton is contingent." }
 
 def ex11a_no : LinguisticExample :=
   { id := "gajewski2002_ex11a_no"
@@ -121,9 +111,7 @@ def ex11a_no : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "exceptive"), ("determiner", "no"), ("grammatical", "yes")]
-    comment := "A but-exceptive on a negative universal; its skeleton is contingent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A but-exceptive on a negative universal; its skeleton is contingent." }
 
 def ex11b : LinguisticExample :=
   { id := "gajewski2002_ex11b"
@@ -139,9 +127,7 @@ def ex11b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "exceptive"), ("determiner", "some"), ("grammatical", "no")]
-    comment := "A but-exceptive on a left-upward-monotone determiner: the least-exception schema is a contradiction under every assignment with a nonempty exception set."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A but-exceptive on a left-upward-monotone determiner: the least-exception schema is a contradiction under every assignment with a nonempty exception set." }
 
 def ex34a : LinguisticExample :=
   { id := "gajewski2002_ex34a"
@@ -157,9 +143,7 @@ def ex34a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "everyIs"), ("determiner", "every"), ("grammatical", "yes")]
-    comment := "A garden-variety tautology whose skeleton replaces the two occurrences of woman by distinct variables, so it is not L-analytic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A garden-variety tautology whose skeleton replaces the two occurrences of woman by distinct variables, so it is not L-analytic." }
 
 def ex34b : LinguisticExample :=
   { id := "gajewski2002_ex34b"
@@ -175,9 +159,7 @@ def ex34b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "andNot"), ("determiner", "none"), ("grammatical", "yes")]
-    comment := "A garden-variety contradiction whose skeleton has two distinct propositional variables, so it is not L-analytic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A garden-variety contradiction whose skeleton has two distinct propositional variables, so it is not L-analytic." }
 
 def all : List LinguisticExample := [ex4c, ex30a, ex5a, ex5c, ex11a_every, ex11a_no, ex11b, ex34a, ex34b]
 

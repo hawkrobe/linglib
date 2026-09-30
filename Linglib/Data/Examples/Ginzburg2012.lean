@@ -31,9 +31,7 @@ def ex_22a : LinguisticExample :=
     alternatives := []
     readings := [("short answer: Does Bo admire Bo?", .acceptable), ("clausal confirmation: Are you asking who Bo (of all people) admires?", .acceptable), ("intended content: Who do you mean 'Bo'?", .acceptable)]
     paperFeatures := [("speaker", "addressee")]
-    comment := "Against Equal Access to Context: only the addressee has the two clarification-request readings."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Against Equal Access to Context: only the addressee has the two clarification-request readings." }
 
 def ex_22b : LinguisticExample :=
   { id := "ginzburg2012_22b"
@@ -49,9 +47,7 @@ def ex_22b : LinguisticExample :=
     alternatives := []
     readings := [("short answer: Does Bo admire Bo?", .acceptable), ("self-correction: Did I say 'Bo'?", .acceptable)]
     paperFeatures := [("speaker", "original speaker")]
-    comment := "Only the original speaker has the self-correction reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Only the original speaker has the self-correction reading." }
 
 def ex_23a : LinguisticExample :=
   { id := "ginzburg2012_23a"
@@ -67,9 +63,7 @@ def ex_23a : LinguisticExample :=
     alternatives := []
     readings := [("Why own a parakeet?", .acceptable), ("Why are you asking which members of this audience own a parakeet?", .unacceptable)]
     paperFeatures := [("turn", "kept")]
-    comment := "The Turn-Taking Puzzle: the resolution of bare 'why' depends on who holds the turn."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Turn-Taking Puzzle: the resolution of bare 'why' depends on who holds the turn." }
 
 def ex_23b : LinguisticExample :=
   { id := "ginzburg2012_23b"
@@ -85,9 +79,7 @@ def ex_23b : LinguisticExample :=
     alternatives := []
     readings := [("Why are you asking which members of this audience own a parakeet?", .acceptable), ("Why own a parakeet?", .unacceptable)]
     paperFeatures := [("turn", "taken")]
-    comment := "The reading available to B is unavailable to A in (23a), and vice versa."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The reading available to B is unavailable to A in (23a), and vice versa." }
 
 def ex_23c : LinguisticExample :=
   { id := "ginzburg2012_23c"
@@ -103,9 +95,7 @@ def ex_23c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("turn", "kept")]
-    comment := "The resolution unavailable to A with bare 'Why?' is a coherent follow-up when expressed non-elliptically, so the (23a)/(23b) asymmetry is not a matter of coherence or plausibility."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The resolution unavailable to A with bare 'Why?' is a coherent follow-up when expressed non-elliptically, so the (23a)/(23b) asymmetry is not a matter of coherence or plausibility." }
 
 def ex_54 : LinguisticExample :=
   { id := "ginzburg2012_54"
@@ -121,9 +111,7 @@ def ex_54 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Traced in (55)–(63) through greeting, counter-greeting, Free Speech, Ask QUD-incrementation, QSPEC, Assert QUD-incrementation, Accept and Fact update/QUD-downdate."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Traced in (55)–(63) through greeting, counter-greeting, Free Speech, Ask QUD-incrementation, QSPEC, Assert QUD-incrementation, Accept and Fact update/QUD-downdate." }
 
 def ex_65 : LinguisticExample :=
   { id := "ginzburg2012_65"
@@ -139,9 +127,7 @@ def ex_65 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Traced in (66): B's question influences A's; A's answer resolves B's question and is accepted, leaving A's question QUD-maximal."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Traced in (66): B's question influences A's; A's answer resolves B's question and is accepted, leaving A's question QUD-maximal." }
 
 def ex_67 : LinguisticExample :=
   { id := "ginzburg2012_67"
@@ -157,9 +143,7 @@ def ex_67 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Traced in (68): the asserter checks their own assertion; the addressee confirms."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Traced in (68): the asserter checks their own assertion; the addressee confirms." }
 
 def ex_78 : LinguisticExample :=
   { id := "ginzburg2012_78"
@@ -175,9 +159,7 @@ def ex_78 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Traced in (79): successive questions by one speaker; the second does not influence the first, which stays QUD-maximal and is answered first."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Traced in (79): successive questions by one speaker; the second does not influence the first, which stays QUD-maximal and is answered first." }
 
 def ex_95 : LinguisticExample :=
   { id := "ginzburg2012_95"
@@ -193,9 +175,7 @@ def ex_95 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("genre", "CasualChat")]
-    comment := "B takes the genre to be CasualChat, whose anticipated issues are how A is and how B is; 'I'm off' is an initiating move about the latter."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "B takes the genre to be CasualChat, whose anticipated issues are how A is and how B is; 'I'm off' is an initiating move about the latter." }
 
 def ch6_90 : LinguisticExample :=
   { id := "ginzburg2012_ch6_90"
@@ -211,9 +191,7 @@ def ch6_90 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("ccur", "Parameter Focussing")]
-    comment := "B initiates clarification by Parameter Focussing; the gameboards after the second utterance are given in Ch. 6 (91) and differ in QUD and PENDING."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "B initiates clarification by Parameter Focussing; the gameboards after the second utterance are given in Ch. 6 (91) and differ in QUD and PENDING." }
 
 def ex_24a : LinguisticExample :=
   { id := "ginzburg2012_24a"
@@ -229,9 +207,7 @@ def ex_24a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("repair", "other-initiated")]
-    comment := "Other-initiated repair: a clarification request across utterances."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Other-initiated repair: a clarification request across utterances." }
 
 def ex_24b : LinguisticExample :=
   { id := "ginzburg2012_24b"
@@ -247,9 +223,7 @@ def ex_24b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("repair", "self-initiated")]
-    comment := "Self-initiated mid-utterance repair, the within-utterance analogue of (24a). Switchboard-style annotation: '+' marks the moment of interruption, '{}' the editing term."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Self-initiated mid-utterance repair, the within-utterance analogue of (24a). Switchboard-style annotation: '+' marks the moment of interruption, '{}' the editing term." }
 
 def all : List LinguisticExample := [ex_22a, ex_22b, ex_23a, ex_23b, ex_23c, ex_54, ex_65, ex_67, ex_78, ex_95, ch6_90, ex_24a, ex_24b]
 

@@ -20,9 +20,7 @@
     "paperFeatures": [
       ["marking", "a before subject"]
     ],
-    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1342.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1342."
   },
   {
     "id": "assmannetal2023_2",
@@ -46,9 +44,7 @@
     "paperFeatures": [
       ["marking", "a between verb and object"]
     ],
-    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1347.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1347."
   },
   {
     "id": "assmannetal2023_3",
@@ -71,9 +67,7 @@
     "paperFeatures": [
       ["marking", "a clause-final"]
     ],
-    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1356.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1356."
   },
   {
     "id": "assmannetal2023_5",
@@ -95,9 +89,7 @@
     "paperFeatures": [
       ["marking", "a clause-final"]
     ],
-    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1359.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1359."
   },
   {
     "id": "assmannetal2023_fn4_i",
@@ -120,9 +112,7 @@
     "paperFeatures": [
       ["marking", "a before phrase within VP"]
     ],
-    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1343.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from Hartmann and Zimmermann 2009: p. 1343."
   },
   {
     "id": "assmannetal2023_6a",
@@ -144,9 +134,7 @@
     "paperFeatures": [
       ["marking", "le after subject"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "assmannetal2023_6b",
@@ -169,9 +157,7 @@
     "paperFeatures": [
       ["marking", "le after subject"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "assmannetal2023_7",
@@ -194,9 +180,7 @@
     "paperFeatures": [
       ["marking", "ka before object"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "assmannetal2023_8",
@@ -219,9 +203,7 @@
     "paperFeatures": [
       ["marking", "kama after VP"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "assmannetal2023_10",
@@ -243,9 +225,7 @@
     "paperFeatures": [
       ["marking", "relative form"]
     ],
-    "comment": "Cited from Hartmann and Zimmermann 2007c: p. 367.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from Hartmann and Zimmermann 2007c: p. 367."
   },
   {
     "id": "assmannetal2023_11",
@@ -270,9 +250,7 @@
     "paperFeatures": [
       ["marking", "absolute form"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "assmannetal2023_12",
@@ -296,9 +274,7 @@
       ["marking", "relative form"],
       ["particle", "cee after subject"]
     ],
-    "comment": "Cited from Hartmann and Zimmermann 2007c: p. 367.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from Hartmann and Zimmermann 2007c: p. 367."
   },
   {
     "id": "assmannetal2023_13",
@@ -325,9 +301,7 @@
       ["marking", "absolute form"],
       ["particle", "nee clause-final"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "assmannetal2023_14",
@@ -354,9 +328,7 @@
       ["particle", "nee clause-final"],
       ["agreement", "masculine despite feminine object"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "assmannetal2023_15",
@@ -381,9 +353,7 @@
       ["marking", "relative form"],
       ["particle", "nee after subject"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "assmannetal2023_17",
@@ -407,9 +377,7 @@
       ["marking", "absolute form"],
       ["particle", "nee after object"]
     ],
-    "comment": "Cited from Hartmann and Zimmermann 2007a: p. 247.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from Hartmann and Zimmermann 2007a: p. 247."
   },
   {
     "id": "assmannetal2023_18a",
@@ -431,9 +399,7 @@
     "paperFeatures": [
       ["marking", "a"]
     ],
-    "comment": "Cited from McLaughlin 2004: p. 247.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from McLaughlin 2004: p. 247."
   },
   {
     "id": "assmannetal2023_18b",
@@ -456,9 +422,7 @@
       ["marking", "la"],
       ["movement", "object fronted"]
     ],
-    "comment": "Cited from McLaughlin 2004: p. 247.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from McLaughlin 2004: p. 247."
   },
   {
     "id": "assmannetal2023_18c",
@@ -481,9 +445,7 @@
     "paperFeatures": [
       ["marking", "dafa"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "assmannetal2023_19",
@@ -506,9 +468,7 @@
       ["marking", "ngi"],
       ["aspect", "imperfective"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "assmannetal2023_20",
@@ -531,9 +491,7 @@
       ["marking", "na"],
       ["aspect", "perfective"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "assmannetal2023_37",
@@ -556,9 +514,7 @@
     "paperFeatures": [
       ["marking", "wa on verb"]
     ],
-    "comment": "Cited from Hardman et al. 1988: p. 281.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from Hardman et al. 1988: p. 281."
   },
   {
     "id": "assmannetal2023_38",
@@ -580,9 +536,7 @@
     "paperFeatures": [
       ["marking", "wa on verb"]
     ],
-    "comment": "Cited from Klose 2015: p. 70.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from Klose 2015: p. 70."
   },
   {
     "id": "assmannetal2023_39",
@@ -606,9 +560,7 @@
     "paperFeatures": [
       ["marking", "wa on verb"]
     ],
-    "comment": "Cited from Klose 2015: p. 70. Analysed by Klose 2015 as VP or clausal focus.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from Klose 2015: p. 70. Analysed by Klose 2015 as VP or clausal focus."
   },
   {
     "id": "assmannetal2023_41",
@@ -634,9 +586,7 @@
     "paperFeatures": [
       ["marking", "none"]
     ],
-    "comment": "Cited from Fominyam and Šimík 2017: p. 1038.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from Fominyam and Šimík 2017: p. 1038."
   },
   {
     "id": "assmannetal2023_53",
@@ -661,8 +611,6 @@
     "paperFeatures": [
       ["marking", "nuclear stress on verb"]
     ],
-    "comment": "The contexts are (53a–f): Kim made the yogurt and then; Kim ate the pickles, and then; Kim went to the fridge and then; The lights went out and; Sam ate the yogurt before; Whenever we made yogurt.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The contexts are (53a–f): Kim made the yogurt and then; Kim ate the pickles, and then; Kim went to the fridge and then; The lights went out and; Sam ate the yogurt before; Whenever we made yogurt."
   }
 ]

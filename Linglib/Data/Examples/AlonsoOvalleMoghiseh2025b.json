@@ -83,8 +83,7 @@
       ["type", "SBI"],
       ["ro", "no"]
     ],
-    "comment": "Repeated as (3) and (38).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (3) and (38)."
   },
   {
     "id": "alonsoovallemoghiseh2025b_21",
@@ -107,8 +106,7 @@
       ["type", "PBI"],
       ["ro", "no"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025b_16",
@@ -131,8 +129,7 @@
       ["type", "SBI"],
       ["language", "Spanish"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025b_17",
@@ -155,8 +152,7 @@
       ["type", "PBI"],
       ["language", "Spanish"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025b_22",
@@ -179,8 +175,7 @@
       ["type", "SCI"],
       ["language", "Spanish"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025b_23",
@@ -204,8 +199,7 @@
       ["type", "SCI"],
       ["ro", "no"]
     ],
-    "comment": "Repeated as (4) and (43). Farsi patterns with Brazilian Portuguese que NP.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (4) and (43). Farsi patterns with Brazilian Portuguese que NP."
   },
   {
     "id": "alonsoovallemoghiseh2025b_24",
@@ -228,8 +222,7 @@
       ["type", "PCI"],
       ["language", "Spanish"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025b_25",
@@ -253,8 +246,7 @@
       ["type", "PCI"],
       ["ro", "no"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025b_26",
@@ -278,8 +270,7 @@
       ["type", "SBI"],
       ["ro", "yes"]
     ],
-    "comment": "Repeated as (49).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (49)."
   },
   {
     "id": "alonsoovallemoghiseh2025b_27",
@@ -303,8 +294,7 @@
       ["type", "SCI"],
       ["ro", "yes"]
     ],
-    "comment": "Repeated as (50).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (50)."
   },
   {
     "id": "alonsoovallemoghiseh2025b_28",
@@ -328,8 +318,7 @@
       ["type", "PCI"],
       ["ro", "yes"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025b_30",
@@ -352,8 +341,7 @@
       ["ro", "no"],
       ["modal", "must"]
     ],
-    "comment": "Answerable with a free choice disjunction.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Answerable with a free choice disjunction."
   },
   {
     "id": "alonsoovallemoghiseh2025b_31",
@@ -377,8 +365,7 @@
       ["ro", "no"],
       ["modal", "must"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025b_47",
@@ -399,8 +386,7 @@
       ["ro", "yes"],
       ["inference", "specificity"]
     ],
-    "comment": "Karimi 2003: 92 — -ro on an existential DP yields a specific reading.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Karimi 2003: 92 — -ro on an existential DP yields a specific reading."
   },
   {
     "id": "alonsoovallemoghiseh2025b_56",
@@ -423,8 +409,7 @@
       ["type", "SBI"],
       ["predicate", "collective"]
     ],
-    "comment": "BIs range over pluralities, with or without -ro.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "BIs range over pluralities, with or without -ro."
   },
   {
     "id": "alonsoovallemoghiseh2025b_57",
@@ -445,8 +430,7 @@
       ["type", "SCI"],
       ["predicate", "collective"]
     ],
-    "comment": "Singular what CIs range over atoms only, so a collective predicate has no true answer.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Singular what CIs range over atoms only, so a collective predicate has no true answer."
   },
   {
     "id": "alonsoovallemoghiseh2025b_60",
@@ -470,8 +454,7 @@
       ["scenario", "freeChoice59"],
       ["verdict", "true"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025b_61",
@@ -495,8 +478,7 @@
       ["scenario", "freeChoice59"],
       ["verdict", "true"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025b_62",
@@ -520,8 +502,7 @@
       ["scenario", "freeChoice59"],
       ["verdict", "false"]
     ],
-    "comment": "-ro neutralizes the disjunctions, so no free choice interpretation.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "-ro neutralizes the disjunctions, so no free choice interpretation."
   },
   {
     "id": "alonsoovallemoghiseh2025b_63",
@@ -545,8 +526,7 @@
       ["scenario", "freeChoice59"],
       ["verdict", "false"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025b_64",
@@ -570,8 +550,7 @@
       ["ro", "yes"],
       ["modal", "must"]
     ],
-    "comment": "Some informants accept the free choice answer unembedded; taken to reject the presupposition that Forood is required to buy a particular thing.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Some informants accept the free choice answer unembedded; taken to reject the presupposition that Forood is required to buy a particular thing."
   },
   {
     "id": "alonsoovallemoghiseh2025b_65",
@@ -595,8 +574,7 @@
       ["ro", "yes"],
       ["modal", "must"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025b_66",
@@ -620,8 +598,7 @@
       ["type", "SBI"],
       ["use", "epistemic indefinite"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025b_67",
@@ -645,8 +622,7 @@
       ["type", "SCI"],
       ["use", "epistemic indefinite"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovallemoghiseh2025b_69",
@@ -668,8 +644,7 @@
       ["ro", "yes"],
       ["property", "D-linked"]
     ],
-    "comment": "Deviant in (68), where the set of books is neither salient nor discourse-given.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Deviant in (68), where the set of books is neither salient nor discourse-given."
   },
   {
     "id": "alonsoovallemoghiseh2025b_70a",
@@ -690,8 +665,7 @@
       ["type", "which CI"],
       ["ro", "no"]
     ],
-    "comment": "Object which CIs are obligatorily -ro marked.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Object which CIs are obligatorily -ro marked."
   },
   {
     "id": "alonsoovallemoghiseh2025b_70b",
@@ -715,8 +689,7 @@
       ["type", "which CI"],
       ["ro", "yes"]
     ],
-    "comment": "Repeated as (71); uniqueness presupposition.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (71); uniqueness presupposition."
   },
   {
     "id": "alonsoovallemoghiseh2025b_73",
@@ -739,8 +712,7 @@
       ["modal", "must"],
       ["inference", "free choice"]
     ],
-    "comment": "Unlike (74) in English and unlike -ro marked what CIs, allows the free choice interpretation.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Unlike (74) in English and unlike -ro marked what CIs, allows the free choice interpretation."
   },
   {
     "id": "alonsoovallemoghiseh2025b_74",
@@ -781,8 +753,7 @@
       ["ro", "yes"],
       ["modal", "must"]
     ],
-    "comment": "With -æ the free choice interpretation is blocked.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "With -æ the free choice interpretation is blocked."
   },
   {
     "id": "alonsoovallemoghiseh2025b_fn2",
@@ -802,7 +773,6 @@
       ["type", "SBI"],
       ["agreement", "singular"]
     ],
-    "comment": "Also with che kateb-i; singular interrogatives trigger singular verb agreement.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Also with che kateb-i; singular interrogatives trigger singular verb agreement."
   }
 ]

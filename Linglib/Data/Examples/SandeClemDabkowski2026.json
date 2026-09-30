@@ -19,8 +19,7 @@
       ["verb", "ni"],
       ["particleATR", "plus"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sandeclemdabkowski2026_ex11b",
@@ -42,8 +41,7 @@
       ["verb", "ni"],
       ["particleATR", "minus"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sandeclemdabkowski2026_ex11c",
@@ -62,8 +60,7 @@
     "paperFeatures": [
       ["pattern", "S Part V O"]
     ],
-    "comment": "The particle cannot surface with the verb in the post-subject position.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The particle cannot surface with the verb in the post-subject position."
   },
   {
     "id": "sandeclemdabkowski2026_ex12b",
@@ -86,8 +83,7 @@
       ["verb", "ngwOsa"],
       ["particleATR", "minus"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sandeclemdabkowski2026_ex13b",
@@ -110,8 +106,7 @@
       ["verb", "ngwOsa"],
       ["particleATR", "minus"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sandeclemdabkowski2026_ex21a",
@@ -133,8 +128,7 @@
       ["verb", "ni"],
       ["particleATR", "minus"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sandeclemdabkowski2026_ex21b",
@@ -153,8 +147,7 @@
     "paperFeatures": [
       ["pattern", "Part V S V O"]
     ],
-    "comment": "Also unacceptable with a clause-final copy of the particle.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Also unacceptable with a clause-final copy of the particle."
   },
   {
     "id": "sandeclemdabkowski2026_ex21c",
@@ -173,8 +166,7 @@
     "paperFeatures": [
       ["pattern", "V S V O Part"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sandeclemdabkowski2026_ex21d",
@@ -193,8 +185,7 @@
     "paperFeatures": [
       ["pattern", "V S O Part"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sandeclemdabkowski2026_ex21e",
@@ -213,8 +204,7 @@
     "paperFeatures": [
       ["pattern", "Part S V O Part"]
     ],
-    "comment": "Unacceptable with either value of the fronted particle's vowels.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Unacceptable with either value of the fronted particle's vowels."
   },
   {
     "id": "sandeclemdabkowski2026_ex22",
@@ -236,8 +226,7 @@
       ["verb", "ni"],
       ["particleATR", "plus"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sandeclemdabkowski2026_ex24b",
@@ -261,8 +250,7 @@
       ["verb", "ni"],
       ["particleATR", "plus"]
     ],
-    "comment": "The fronted particle harmonizes with the clause-final verb across the subject, auxiliary and object.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The fronted particle harmonizes with the clause-final verb across the subject, auxiliary and object."
   },
   {
     "id": "sandeclemdabkowski2026_ex49a",
@@ -283,8 +271,7 @@
       ["headATR", "minus"],
       ["demATR", "minus"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sandeclemdabkowski2026_ex49b",
@@ -305,8 +292,7 @@
       ["headATR", "plus"],
       ["demATR", "plus"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sandeclemdabkowski2026_ex50a",
@@ -328,8 +314,7 @@
       ["stativeATR", "minus"],
       ["demATR", "minus"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sandeclemdabkowski2026_ex50b",
@@ -351,8 +336,7 @@
       ["stativeATR", "plus"],
       ["demATR", "plus"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sandeclemdabkowski2026_ex50c",
@@ -374,8 +358,7 @@
       ["stativeATR", "plus"],
       ["demATR", "minus"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sandeclemdabkowski2026_ex50d",
@@ -397,7 +380,6 @@
       ["stativeATR", "minus"],
       ["demATR", "plus"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   }
 ]

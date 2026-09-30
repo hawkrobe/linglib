@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "proxDem"), ("marker", "unstressedPron"), ("marker", "distalDem"), ("marker", "distalDemNP")]
-    comment := "Household corpus. The word awakened is referred to by that, it, that, and that word."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Household corpus. The word awakened is referred to by that, it, that, and that word." }
 
 def ex_3 : LinguisticExample :=
   { id := "ariel2001_3"
@@ -49,9 +47,7 @@ def ex_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("source", "Haaretz"), ("perspective", "victim"), ("victim", "zero"), ("rapists", "lastName")]
-    comment := "Haaretz, 17 May 1995; the paper prints its English rendering. In the second sentence the victim is coded by zero and the rapist by a proper name."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Haaretz, 17 May 1995; the paper prints its English rendering. In the second sentence the victim is coded by zero and the rapist by a proper name." }
 
 def ex_4 : LinguisticExample :=
   { id := "ariel2001_4"
@@ -67,9 +63,7 @@ def ex_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("source", "Maariv"), ("perspective", "rapists"), ("victim", "proxDem"), ("rapists", "zero")]
-    comment := "Maariv, 17 May 1995; the paper prints its English rendering. In the second sentence the rapists are coded by zero and the victim by a demonstrative pronoun."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Maariv, 17 May 1995; the paper prints its English rendering. In the second sentence the rapists are coded by zero and the victim by a demonstrative pronoun." }
 
 def ex_5 : LinguisticExample :=
   { id := "ariel2001_5"
@@ -85,9 +79,7 @@ def ex_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("speaker", "self")]
-    comment := "Mudai, TV interview, 2 November 1998 (Mulokandov and Rieder 1998). The speaker refers to himself by first-person forms and by third-person generic forms."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mudai, TV interview, 2 November 1998 (Mulokandov and Rieder 1998). The speaker refers to himself by first-person forms and by third-person generic forms." }
 
 def ex_6 : LinguisticExample :=
   { id := "ariel2001_6"
@@ -103,9 +95,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent", "girl and tree"), ("marker", "unstressedPron")]
-    comment := "Sanford and Moxey's example: the second sentence is marked ? although both entities are highly accessible."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Sanford and Moxey's example: the second sentence is marked ? although both entities are highly accessible." }
 
 def ex_7 : LinguisticExample :=
   { id := "ariel2001_7"
@@ -121,9 +111,7 @@ def ex_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "stressedPron")]
-    comment := "TV interview with Yo Yo Ma and Mark Morris, Israeli TV, 9 July 1998."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "TV interview with Yo Yo Ma and Mark Morris, Israeli TV, 9 July 1998." }
 
 def ex_8a : LinguisticExample :=
   { id := "ariel2001_8a"
@@ -139,9 +127,7 @@ def ex_8a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "headline"), ("marker", "lastName"), ("marker", "lastName"), ("marker", "fullName"), ("marker", "unstressedPron")]
-    comment := "Haaretz, 14 July 1998, headline; the paper prints its English rendering. Markers in order: Arafat, Kadafi, Jerusalem, it."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Haaretz, 14 July 1998, headline; the paper prints its English rendering. Markers in order: Arafat, Kadafi, Jerusalem, it." }
 
 def ex_8b : LinguisticExample :=
   { id := "ariel2001_8b"
@@ -157,9 +143,7 @@ def ex_8b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("position", "opening sentence"), ("marker", "fullNameMod"), ("marker", "fullNameMod"), ("marker", "fullNameMod"), ("marker", "proxDem")]
-    comment := "Haaretz, 14 July 1998, opening sentence; the paper prints its English rendering. Markers in order, matching (8a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Haaretz, 14 July 1998, opening sentence; the paper prints its English rendering. Markers in order, matching (8a)." }
 
 def ex_9 : LinguisticExample :=
   { id := "ariel2001_9"
@@ -175,9 +159,7 @@ def ex_9 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "stressedPron")]
-    comment := "Clark Reed, quoted in The International Herald Tribune, 2–3 January 1999: a pronoun lengthened by self."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Clark Reed, quoted in The International Herald Tribune, 2–3 January 1999: a pronoun lengthened by self." }
 
 def ex_10 : LinguisticExample :=
   { id := "ariel2001_10"
@@ -193,9 +175,7 @@ def ex_10 : LinguisticExample :=
     alternatives := []
     readings := [("the paper coreferent with the newspaper", .acceptable)]
     paperFeatures := [("marker", "shortDefDescription"), ("marker", "shortDefDescription")]
-    comment := "Jury corpus. The shorter description the paper resumes the newspaper; no disjoint reading arises."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Jury corpus. The shorter description the paper resumes the newspaper; no disjoint reading arises." }
 
 def ex_12 : LinguisticExample :=
   { id := "ariel2001_12"
@@ -211,9 +191,7 @@ def ex_12 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("topicMarker", "unstressedPron"), ("subjectMarker", "shortDefDescription")]
-    comment := "Haaretz, 21 January 1999; the paper prints its English rendering. The discourse topic (officer Feil) is pronominal although the higher officer is the subject of two consecutive clauses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Haaretz, 21 January 1999; the paper prints its English rendering. The discourse topic (officer Feil) is pronominal although the higher officer is the subject of two consecutive clauses." }
 
 def maya_rachel : LinguisticExample :=
   { id := "ariel2001_maya_rachel"
@@ -229,9 +207,7 @@ def maya_rachel : LinguisticExample :=
     alternatives := []
     readings := [("she = Maya", .acceptable), ("SHE = Rachel", .acceptable)]
     paperFeatures := [("maya", "unstressedPron"), ("rachel", "stressedPron")]
-    comment := "The first-mentioned, topical but more distant Maya is later coded by an unstressed pronoun; the more recent, non-topical Rachel by a stressed pronoun."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The first-mentioned, topical but more distant Maya is later coded by an unstressed pronoun; the more recent, non-topical Rachel by a stressed pronoun." }
 
 def all : List LinguisticExample := [ex_1, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8a, ex_8b, ex_9, ex_10, ex_12, maya_rachel]
 

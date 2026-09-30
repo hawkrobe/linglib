@@ -31,9 +31,7 @@ def ex4_15a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("rule", "question"), ("constraint", "CNPC")]
-    comment := "Questioning out of a relative clause on a lexically headed NP."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Questioning out of a relative clause on a lexically headed NP." }
 
 def ex4_18a : LinguisticExample :=
   { id := "ross1967_ex4_18a"
@@ -49,9 +47,7 @@ def ex4_18a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("rule", "relativization"), ("constraint", "CNPC")]
-    comment := "Relativization out of a noun complement clause under the lexical head noun claim."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Relativization out of a noun complement clause under the lexical head noun claim." }
 
 def ex4_18b : LinguisticExample :=
   { id := "ross1967_ex4_18b"
@@ -67,9 +63,7 @@ def ex4_18b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("rule", "relativization")]
-    comment := "The minimal pair of (4.18a): the complement clause is not dominated by a lexically headed NP."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The minimal pair of (4.18a): the complement clause is not dominated by a lexically headed NP." }
 
 def ex2_18 : LinguisticExample :=
   { id := "ross1967_ex2_18"
@@ -85,9 +79,7 @@ def ex2_18 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("rule", "question"), ("constraint", "CSC")]
-    comment := "Questioning a conjunct."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Questioning a conjunct." }
 
 def ex4_82a : LinguisticExample :=
   { id := "ross1967_ex4_82a"
@@ -103,9 +95,7 @@ def ex4_82a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("rule", "relativization"), ("constraint", "CSC")]
-    comment := "Relativization out of a conjoined VP."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Relativization out of a conjoined VP." }
 
 def ex4_82d : LinguisticExample :=
   { id := "ross1967_ex4_82d"
@@ -121,9 +111,7 @@ def ex4_82d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("rule", "question"), ("constraint", "CSC")]
-    comment := "Questioning out of a conjoined S."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Questioning out of a conjoined S." }
 
 def ex4_184a : LinguisticExample :=
   { id := "ross1967_ex4_184a"
@@ -139,9 +127,7 @@ def ex4_184a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("rule", "relativization")]
-    comment := "Relativization of the largest NP, the pied-piping output the Left Branch Condition leaves."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Relativization of the largest NP, the pied-piping output the Left Branch Condition leaves." }
 
 def ex4_184b : LinguisticExample :=
   { id := "ross1967_ex4_184b"
@@ -157,9 +143,7 @@ def ex4_184b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("rule", "relativization"), ("constraint", "LBC")]
-    comment := "Relativization of the possessor NP on the left branch of the object NP."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Relativization of the possessor NP on the left branch of the object NP." }
 
 def ex4_184c : LinguisticExample :=
   { id := "ross1967_ex4_184c"
@@ -175,9 +159,7 @@ def ex4_184c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("rule", "relativization"), ("constraint", "LBC")]
-    comment := "Relativization of the lowest possessor NP, on the left branch of the possessor NP."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Relativization of the lowest possessor NP, on the left branch of the possessor NP." }
 
 def ex4_251a : LinguisticExample :=
   { id := "ross1967_ex4_251a"
@@ -193,9 +175,7 @@ def ex4_251a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("rule", "relativization")]
-    comment := "Relativization out of an object that-clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Relativization out of an object that-clause." }
 
 def ex4_251b : LinguisticExample :=
   { id := "ross1967_ex4_251b"
@@ -211,9 +191,7 @@ def ex4_251b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("rule", "relativization"), ("constraint", "SSC")]
-    comment := "Relativization out of the that-clause in subject position, the passive of (4.250a); no lexical head noun is involved."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Relativization out of the that-clause in subject position, the passive of (4.250a); no lexical head noun is involved." }
 
 def ex4_251c : LinguisticExample :=
   { id := "ross1967_ex4_251c"
@@ -229,9 +207,7 @@ def ex4_251c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("rule", "relativization")]
-    comment := "Relativization out of the extraposed that-clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Relativization out of the extraposed that-clause." }
 
 def ex4_252 : LinguisticExample :=
   { id := "ross1967_ex4_252"
@@ -247,9 +223,7 @@ def ex4_252 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("rule", "question")]
-    comment := "Questioning a subconstituent of a phrasal, not sentential, subject."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Questioning a subconstituent of a phrasal, not sentential, subject." }
 
 def ex6_128b : LinguisticExample :=
   { id := "ross1967_ex6_128b"
@@ -265,9 +239,7 @@ def ex6_128b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("rule", "leftDislocation"), ("constraint", "CNPC")]
-    comment := "Left Dislocation out of a relative clause on a lexically headed NP, leaving a pronoun."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Left Dislocation out of a relative clause on a lexically headed NP, leaving a pronoun." }
 
 def ex6_135b : LinguisticExample :=
   { id := "ross1967_ex6_135b"
@@ -283,9 +255,7 @@ def ex6_135b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("rule", "leftDislocation"), ("constraint", "CSC")]
-    comment := "Left Dislocation out of a conjunct."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Left Dislocation out of a conjunct." }
 
 def ex6_136 : LinguisticExample :=
   { id := "ross1967_ex6_136"
@@ -301,9 +271,7 @@ def ex6_136 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("rule", "leftDislocation"), ("constraint", "SSC")]
-    comment := "Left Dislocation out of a sentential subject."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Left Dislocation out of a sentential subject." }
 
 def ex6_137 : LinguisticExample :=
   { id := "ross1967_ex6_137"
@@ -319,9 +287,7 @@ def ex6_137 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("rule", "leftDislocation"), ("constraint", "LBC")]
-    comment := "Left Dislocation of a possessor on the left branch of an NP."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Left Dislocation of a possessor on the left branch of an NP." }
 
 def all : List LinguisticExample := [ex4_15a, ex4_18a, ex4_18b, ex2_18, ex4_82a, ex4_82d, ex4_184a, ex4_184b, ex4_184c, ex4_251a, ex4_251b, ex4_251c, ex4_252, ex6_128b, ex6_135b, ex6_136, ex6_137]
 

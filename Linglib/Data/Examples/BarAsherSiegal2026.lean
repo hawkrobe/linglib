@@ -31,9 +31,7 @@ def bas2026_1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "because"), ("relation", "grounding")]
-    comment := "Dowty 1979, example 132b: dependency without temporal precedence and counterfactuality."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Dowty 1979, example 132b: dependency without temporal precedence and counterfactuality." }
 
 def bas2026_1b : LinguisticExample :=
   { id := "bas2026_1b"
@@ -49,9 +47,7 @@ def bas2026_1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "cause"), ("relation", "grounding")]
-    comment := "Dowty 1979, example 132c."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Dowty 1979, example 132c." }
 
 def bas2026_1c : LinguisticExample :=
   { id := "bas2026_1c"
@@ -67,9 +63,7 @@ def bas2026_1c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "because of"), ("relation", "grounding")]
-    comment := "Adapted from Maienborn and Herdtfelder 2017."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Adapted from Maienborn and Herdtfelder 2017." }
 
 def bas2026_2a : LinguisticExample :=
   { id := "bas2026_2a"
@@ -85,9 +79,7 @@ def bas2026_2a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "lexical causative"), ("entails", "(2b)")]
-    comment := "Fodor 1970's one-way entailment."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Fodor 1970's one-way entailment." }
 
 def bas2026_2b : LinguisticExample :=
   { id := "bas2026_2b"
@@ -103,9 +95,7 @@ def bas2026_2b : LinguisticExample :=
     alternatives := []
     readings := [("Sam opened a window and a gust blew the door open", .acceptable)]
     paperFeatures := [("construction", "periphrastic causative"), ("entails", "(2a)")]
-    comment := "Does not entail (2a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Does not entail (2a)." }
 
 def bas2026_i : LinguisticExample :=
   { id := "bas2026_i"
@@ -121,9 +111,7 @@ def bas2026_i : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "because"), ("pronoun", "they"), ("antecedent", "the demonstrators")]
-    comment := "Hobbs 1979, discussed in Wolf et al. 2004."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Hobbs 1979, discussed in Wolf et al. 2004." }
 
 def bas2026_ii : LinguisticExample :=
   { id := "bas2026_ii"
@@ -139,9 +127,7 @@ def bas2026_ii : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "because"), ("pronoun", "they"), ("antecedent", "the city council")]
-    comment := "Hobbs 1979."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Hobbs 1979." }
 
 def bas2026_iii : LinguisticExample :=
   { id := "bas2026_iii"
@@ -157,9 +143,7 @@ def bas2026_iii : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "cause"), ("enrichment", "John drank enough wine to impair his driving")]
-    comment := "Bar-Asher Siegal 2020: the causal context enriches the first clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Bar-Asher Siegal 2020: the causal context enriches the first clause." }
 
 def all : List LinguisticExample := [bas2026_1a, bas2026_1b, bas2026_1c, bas2026_2a, bas2026_2b, bas2026_i, bas2026_ii, bas2026_iii]
 

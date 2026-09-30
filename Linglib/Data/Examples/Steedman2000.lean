@@ -31,9 +31,7 @@ def ex_96 : LinguisticExample :=
     alternatives := []
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("wordOrder", "verbRaising")]
-    comment := "Marked (Ambiguous) in the book. Steedman credits the German contrast to Kayne (1998), following Bayer (1990, 1996). The verb-raising classification follows Steedman's compositional story: 'gespannt ist' can form by composition and 'auf jeden' then combines with the whole thing to take scope over the tensed verb."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Marked (Ambiguous) in the book. Steedman credits the German contrast to Kayne (1998), following Bayer (1990, 1996). The verb-raising classification follows Steedman's compositional story: 'gespannt ist' can form by composition and 'auf jeden' then combines with the whole thing to take scope over the tensed verb." }
 
 def ex_97 : LinguisticExample :=
   { id := "steedman2000_97"
@@ -49,9 +47,7 @@ def ex_97 : LinguisticExample :=
     alternatives := []
     readings := [("surface", .acceptable), ("inverse", .unacceptable)]
     paperFeatures := [("wordOrder", "verbProjectionRaising")]
-    comment := "Marked (Unambiguous) in the book. Although 'versucht hat' can compose, it cannot combine with 'reinzulegen' until 'jeden' has combined with it, so 'jeden' cannot take scope over tense or inverse scope over 'jemand'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Marked (Unambiguous) in the book. Although 'versucht hat' can compose, it cannot combine with 'reinzulegen' until 'jeden' has combined with it, so 'jeden' cannot take scope over tense or inverse scope over 'jemand'." }
 
 def ex_98a : LinguisticExample :=
   { id := "steedman2000_98a"
@@ -67,9 +63,7 @@ def ex_98a : LinguisticExample :=
     alternatives := []
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("wordOrder", "verbRaising")]
-    comment := "Marked (Ambiguous) in the book: 'many books' can take wider scope than 'wanted'. Steedman cites Haegeman and van Riemsdijk (1986, 444-445) and Haegeman (1992, 202) for verb-projection-raising effects on scope in West Flemish and Zurich German."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Marked (Ambiguous) in the book: 'many books' can take wider scope than 'wanted'. Steedman cites Haegeman and van Riemsdijk (1986, 444-445) and Haegeman (1992, 202) for verb-projection-raising effects on scope in West Flemish and Zurich German." }
 
 def ex_98b : LinguisticExample :=
   { id := "steedman2000_98b"
@@ -85,9 +79,7 @@ def ex_98b : LinguisticExample :=
     alternatives := []
     readings := [("surface", .acceptable), ("inverse", .unacceptable)]
     paperFeatures := [("wordOrder", "verbProjectionRaising")]
-    comment := "Marked (Unambiguous) in the book; minimal pair with (98a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Marked (Unambiguous) in the book; minimal pair with (98a)." }
 
 def ex_99a : LinguisticExample :=
   { id := "steedman2000_99a"
@@ -103,9 +95,7 @@ def ex_99a : LinguisticExample :=
     alternatives := []
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("wordOrder", "verbRaising")]
-    comment := "Marked (Ambiguous) in the book; Steedman's own extension of the pattern to Dutch equi verbs."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Marked (Ambiguous) in the book; Steedman's own extension of the pattern to Dutch equi verbs." }
 
 def ex_99b : LinguisticExample :=
   { id := "steedman2000_99b"
@@ -121,9 +111,7 @@ def ex_99b : LinguisticExample :=
     alternatives := []
     readings := [("surface", .acceptable), ("inverse", .unacceptable)]
     paperFeatures := [("wordOrder", "verbProjectionRaising")]
-    comment := "Marked (Unambiguous) in the book; minimal pair with (99a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Marked (Unambiguous) in the book; minimal pair with (99a)." }
 
 def ex_100a : LinguisticExample :=
   { id := "steedman2000_100a"
@@ -139,9 +127,7 @@ def ex_100a : LinguisticExample :=
     alternatives := []
     readings := [("surface", .acceptable), ("inverse", .acceptable)]
     paperFeatures := [("wordOrder", "verbRaising")]
-    comment := "Marked (Ambiguous) in the book."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Marked (Ambiguous) in the book." }
 
 def ex_100b : LinguisticExample :=
   { id := "steedman2000_100b"
@@ -157,9 +143,7 @@ def ex_100b : LinguisticExample :=
     alternatives := []
     readings := [("surface", .acceptable), ("inverse", .unacceptable)]
     paperFeatures := [("wordOrder", "verbProjectionRaising")]
-    comment := "Marked (Unambiguous) in the book: these verbs under this word order 'limit scope inversion similarly to Bayer's (97)'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Marked (Unambiguous) in the book: these verbs under this word order 'limit scope inversion similarly to Bayer's (97)'." }
 
 def ch7_4 : LinguisticExample :=
   { id := "steedman2000_ch7_4"
@@ -175,9 +159,7 @@ def ch7_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "SOV"), ("gappingDirection", "backward")]
-    comment := "Migrated from Phenomena/Ellipsis/Gapping.lean japanese_backward; example number verified against scratch/steedman2000.pdf ch. 7. The book glosses the verb visit-PAST.CONCL (conclusive form)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Migrated from Phenomena/Ellipsis/Gapping.lean japanese_backward; example number verified against scratch/steedman2000.pdf ch. 7. The book glosses the verb visit-PAST.CONCL (conclusive form)." }
 
 def ch7_5 : LinguisticExample :=
   { id := "steedman2000_ch7_5"
@@ -193,9 +175,7 @@ def ch7_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "SOV"), ("gappingDirection", "forward")]
-    comment := "Migrated from Phenomena/Ellipsis/Gapping.lean japanese_forward_bad; example number verified against scratch/steedman2000.pdf ch. 7. The book glosses tazunete as visit-PAST.ADV (adverbial -te form). Minimal pair with ch. 7 (4): SOV languages allow only backward gapping (Ross's generalization)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Migrated from Phenomena/Ellipsis/Gapping.lean japanese_forward_bad; example number verified against scratch/steedman2000.pdf ch. 7. The book glosses tazunete as visit-PAST.ADV (adverbial -te form). Minimal pair with ch. 7 (4): SOV languages allow only backward gapping (Ross's generalization)." }
 
 def ch7_11 : LinguisticExample :=
   { id := "steedman2000_ch7_11"
@@ -211,9 +191,7 @@ def ch7_11 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "SOV"), ("gappingDirection", "backward")]
-    comment := "Migrated from Phenomena/Ellipsis/Gapping.lean dutch_sub_backward; example number verified against scratch/steedman2000.pdf ch. 7, where the full sentence is 'Ik geloof dat Jan Syntactic Structures en Piet Aspects gelezen heeft.' The book credits the example to van Oirsouw (1982, 555, example (8b)), apart from the verbs being in the 'German' order, as is common in standard Dutch with the auxiliary hebben."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Migrated from Phenomena/Ellipsis/Gapping.lean dutch_sub_backward; example number verified against scratch/steedman2000.pdf ch. 7, where the full sentence is 'Ik geloof dat Jan Syntactic Structures en Piet Aspects gelezen heeft.' The book credits the example to van Oirsouw (1982, 555, example (8b)), apart from the verbs being in the 'German' order, as is common in standard Dutch with the auxiliary hebben." }
 
 def ch7_19 : LinguisticExample :=
   { id := "steedman2000_ch7_19"
@@ -229,9 +207,7 @@ def ch7_19 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "VSO"), ("gappingDirection", "forward")]
-    comment := "Migrated from Phenomena/Ellipsis/Gapping.lean irish_forward; example number verified against scratch/steedman2000.pdf ch. 7. Steedman credits the VSO observation to Dowty (1988)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Migrated from Phenomena/Ellipsis/Gapping.lean irish_forward; example number verified against scratch/steedman2000.pdf ch. 7. Steedman credits the VSO observation to Dowty (1988)." }
 
 def ch7_20 : LinguisticExample :=
   { id := "steedman2000_ch7_20"
@@ -247,9 +223,7 @@ def ch7_20 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "VSO"), ("gappingDirection", "backward")]
-    comment := "Migrated from Phenomena/Ellipsis/Gapping.lean irish_backward_bad; example number verified against scratch/steedman2000.pdf ch. 7. Minimal pair with ch. 7 (19): the construction Ross (1970) held to be generally disallowed in strictly verb-initial languages."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Migrated from Phenomena/Ellipsis/Gapping.lean irish_backward_bad; example number verified against scratch/steedman2000.pdf ch. 7. Minimal pair with ch. 7 (19): the construction Ross (1970) held to be generally disallowed in strictly verb-initial languages." }
 
 def ch7_21 : LinguisticExample :=
   { id := "steedman2000_ch7_21"
@@ -265,9 +239,7 @@ def ch7_21 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "VSO"), ("gappingDirection", "forward")]
-    comment := "Migrated from Phenomena/Ellipsis/Gapping.lean dutch_main_forward; example number verified against scratch/steedman2000.pdf ch. 7, where Steedman credits van Oirsouw (1987, 58). The prior Lean file encoded Dutch main clauses as SVO ('Main is V2 ≈ VSO'); the book analyzes Dutch main-clause coordination as conforming to the VSO pattern, so wordOrder is recorded as VSO here."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Migrated from Phenomena/Ellipsis/Gapping.lean dutch_main_forward; example number verified against scratch/steedman2000.pdf ch. 7, where Steedman credits van Oirsouw (1987, 58). The prior Lean file encoded Dutch main clauses as SVO ('Main is V2 ≈ VSO'); the book analyzes Dutch main-clause coordination as conforming to the VSO pattern, so wordOrder is recorded as VSO here." }
 
 def ch7_41 : LinguisticExample :=
   { id := "steedman2000_ch7_41"
@@ -283,9 +255,7 @@ def ch7_41 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "SVO"), ("gappingDirection", "forward")]
-    comment := "Migrated from Phenomena/Ellipsis/Gapping.lean english_forward; example numbers verified against scratch/steedman2000.pdf ch. 7. The Lean primaryText 'Dexter ate bread, and Warren, potatoes' matches the chapter-opening running text; the numbered examples vary the verb form and object: (41) 'Dexter eats beans, and Warren, potatoes', (62) 'Dexter eats bread, and Warren, potatoes'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Migrated from Phenomena/Ellipsis/Gapping.lean english_forward; example numbers verified against scratch/steedman2000.pdf ch. 7. The Lean primaryText 'Dexter ate bread, and Warren, potatoes' matches the chapter-opening running text; the numbered examples vary the verb form and object: (41) 'Dexter eats beans, and Warren, potatoes', (62) 'Dexter eats bread, and Warren, potatoes'." }
 
 def ch7_63 : LinguisticExample :=
   { id := "steedman2000_ch7_63"
@@ -301,9 +271,7 @@ def ch7_63 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "gapping"), ("wordOrder", "SVO"), ("gappingDirection", "backward")]
-    comment := "Migrated from Phenomena/Ellipsis/Gapping.lean english_backward_bad with the verb corrected against scratch/steedman2000.pdf ch. 7 (63): the book's sentence is '*Warren, potatoes and Dexter bought bread' (the Lean file had laundered it to 'ate bread' and added a comma before 'and')."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Migrated from Phenomena/Ellipsis/Gapping.lean english_backward_bad with the verb corrected against scratch/steedman2000.pdf ch. 7 (63): the book's sentence is '*Warren, potatoes and Dexter bought bread' (the Lean file had laundered it to 'ate bread' and added a comma before 'and')." }
 
 def all : List LinguisticExample := [ex_96, ex_97, ex_98a, ex_98b, ex_99a, ex_99b, ex_100a, ex_100b, ch7_4, ch7_5, ch7_11, ch7_19, ch7_20, ch7_21, ch7_41, ch7_63]
 

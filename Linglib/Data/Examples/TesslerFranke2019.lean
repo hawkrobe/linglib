@@ -31,9 +31,7 @@ def happy : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("form", "positive"), ("inner_neg", "none"), ("cost", "0"), ("equivalent_to_positive", "true")]
-    comment := "Migrated from Phenomena/Negation/FlexibleNegation.lean. Cost parameters follow the paper's model: C(un-) = 2, C(not) = 3, additive."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Migrated from Phenomena/Negation/FlexibleNegation.lean. Cost parameters follow the paper's model: C(un-) = 2, C(not) = 3, additive." }
 
 def unhappy : LinguisticExample :=
   { id := "tesslerfranke2019_unhappy"
@@ -49,9 +47,7 @@ def unhappy : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("form", "negative"), ("inner_neg", "morphological"), ("interpretation", "contrary"), ("cost", "2"), ("equivalent_to_positive", "false")]
-    comment := "Migrated from Phenomena/Negation/FlexibleNegation.lean unhappy_contrary."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Migrated from Phenomena/Negation/FlexibleNegation.lean unhappy_contrary." }
 
 def not_happy : LinguisticExample :=
   { id := "tesslerfranke2019_not_happy"
@@ -67,9 +63,7 @@ def not_happy : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("form", "notPositive"), ("inner_neg", "syntactic"), ("interpretation", "contradictory"), ("cost", "3"), ("equivalent_to_positive", "false")]
-    comment := "Migrated from Phenomena/Negation/FlexibleNegation.lean not_happy_ambiguous; 'interpretation' records the preferred (contradictory) reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Migrated from Phenomena/Negation/FlexibleNegation.lean not_happy_ambiguous; 'interpretation' records the preferred (contradictory) reading." }
 
 def not_unhappy : LinguisticExample :=
   { id := "tesslerfranke2019_not_unhappy"
@@ -85,9 +79,7 @@ def not_unhappy : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("form", "notNegative"), ("inner_neg", "morphological"), ("interpretation", "contrary"), ("cost", "5"), ("equivalent_to_positive", "false")]
-    comment := "Migrated from Phenomena/Negation/FlexibleNegation.lean not_unhappy_not_happy and happy_double_neg; 'interpretation' records the contrary reading inherited from the inner 'un-'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Migrated from Phenomena/Negation/FlexibleNegation.lean not_unhappy_not_happy and happy_double_neg; 'interpretation' records the contrary reading inherited from the inner 'un-'." }
 
 def all : List LinguisticExample := [happy, unhappy, not_happy, not_unhappy]
 

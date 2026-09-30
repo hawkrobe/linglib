@@ -31,9 +31,7 @@ def ex11a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("order", "SAuxOPartV"), ("pattern", "S Aux O Part V"), ("verb", "ni"), ("particleATR", "plus")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex11b : LinguisticExample :=
   { id := "sandeclemdabkowski2026_ex11b"
@@ -49,9 +47,7 @@ def ex11b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("order", "SVOPart"), ("pattern", "S V O Part"), ("verb", "ni"), ("particleATR", "minus")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex11c : LinguisticExample :=
   { id := "sandeclemdabkowski2026_ex11c"
@@ -67,9 +63,7 @@ def ex11c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pattern", "S Part V O")]
-    comment := "The particle cannot surface with the verb in the post-subject position."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The particle cannot surface with the verb in the post-subject position." }
 
 def ex12b : LinguisticExample :=
   { id := "sandeclemdabkowski2026_ex12b"
@@ -85,9 +79,7 @@ def ex12b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("order", "SAuxOPartV"), ("pattern", "S Aux O Part V"), ("verb", "ngwOsa"), ("particleATR", "minus")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex13b : LinguisticExample :=
   { id := "sandeclemdabkowski2026_ex13b"
@@ -103,9 +95,7 @@ def ex13b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("order", "SVOPart"), ("pattern", "S V O Part"), ("verb", "ngwOsa"), ("particleATR", "minus")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex21a : LinguisticExample :=
   { id := "sandeclemdabkowski2026_ex21a"
@@ -121,9 +111,7 @@ def ex21a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("order", "PartSVO"), ("pattern", "Part S V O"), ("verb", "ni"), ("particleATR", "minus")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex21b : LinguisticExample :=
   { id := "sandeclemdabkowski2026_ex21b"
@@ -139,9 +127,7 @@ def ex21b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pattern", "Part V S V O")]
-    comment := "Also unacceptable with a clause-final copy of the particle."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Also unacceptable with a clause-final copy of the particle." }
 
 def ex21c : LinguisticExample :=
   { id := "sandeclemdabkowski2026_ex21c"
@@ -157,9 +143,7 @@ def ex21c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pattern", "V S V O Part")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex21d : LinguisticExample :=
   { id := "sandeclemdabkowski2026_ex21d"
@@ -175,9 +159,7 @@ def ex21d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pattern", "V S O Part")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex21e : LinguisticExample :=
   { id := "sandeclemdabkowski2026_ex21e"
@@ -193,9 +175,7 @@ def ex21e : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pattern", "Part S V O Part")]
-    comment := "Unacceptable with either value of the fronted particle's vowels."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Unacceptable with either value of the fronted particle's vowels." }
 
 def ex22 : LinguisticExample :=
   { id := "sandeclemdabkowski2026_ex22"
@@ -211,9 +191,7 @@ def ex22 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("order", "PartSAuxOV"), ("pattern", "Part S Aux O V"), ("verb", "ni"), ("particleATR", "plus")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex24b : LinguisticExample :=
   { id := "sandeclemdabkowski2026_ex24b"
@@ -229,9 +207,7 @@ def ex24b : LinguisticExample :=
     alternatives := [("jɔkʊ ɔ ji ɟaci ni", .ungrammatical)]
     readings := []
     paperFeatures := [("order", "PartSAuxOV"), ("pattern", "Part S Aux O V"), ("verb", "ni"), ("particleATR", "plus")]
-    comment := "The fronted particle harmonizes with the clause-final verb across the subject, auxiliary and object."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The fronted particle harmonizes with the clause-final verb across the subject, auxiliary and object." }
 
 def ex49a : LinguisticExample :=
   { id := "sandeclemdabkowski2026_ex49a"
@@ -247,9 +223,7 @@ def ex49a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("shape", "localDP"), ("headATR", "minus"), ("demATR", "minus")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex49b : LinguisticExample :=
   { id := "sandeclemdabkowski2026_ex49b"
@@ -265,9 +239,7 @@ def ex49b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("shape", "localDP"), ("headATR", "plus"), ("demATR", "plus")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex50a : LinguisticExample :=
   { id := "sandeclemdabkowski2026_ex50a"
@@ -283,9 +255,7 @@ def ex50a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("shape", "relClause"), ("headATR", "minus"), ("stativeATR", "minus"), ("demATR", "minus")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex50b : LinguisticExample :=
   { id := "sandeclemdabkowski2026_ex50b"
@@ -301,9 +271,7 @@ def ex50b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("shape", "relClause"), ("headATR", "plus"), ("stativeATR", "plus"), ("demATR", "plus")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex50c : LinguisticExample :=
   { id := "sandeclemdabkowski2026_ex50c"
@@ -319,9 +287,7 @@ def ex50c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("shape", "relClause"), ("headATR", "minus"), ("stativeATR", "plus"), ("demATR", "minus")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex50d : LinguisticExample :=
   { id := "sandeclemdabkowski2026_ex50d"
@@ -337,9 +303,7 @@ def ex50d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("shape", "relClause"), ("headATR", "plus"), ("stativeATR", "minus"), ("demATR", "plus")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex11a, ex11b, ex11c, ex12b, ex13b, ex21a, ex21b, ex21c, ex21d, ex21e, ex22, ex24b, ex49a, ex49b, ex50a, ex50b, ex50c, ex50d]
 

@@ -17,9 +17,7 @@
       ["projection", "projects"],
       ["qud", "need visa"]
     ],
-    "comment": "Negating the species predicate triggers the defeasible genus inference under this question.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Negating the species predicate triggers the defeasible genus inference under this question."
   },
   {
     "id": "warstadt2022_2",
@@ -39,9 +37,7 @@
       ["projection", "absent"],
       ["qud", "free drink"]
     ],
-    "comment": "Under the free-drink question the genus inference is reported to be absent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Under the free-drink question the genus inference is reported to be absent."
   },
   {
     "id": "warstadt2022_3",
@@ -60,9 +56,7 @@
       ["presupposition", "the new hires are non-US citizens"],
       ["projection", "universal"]
     ],
-    "comment": "The genus inference projects universally out of the quantifier.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The genus inference projects universally out of the quantifier."
   },
   {
     "id": "warstadt2022_4",
@@ -82,9 +76,7 @@
       ["inference", "Tom is an athlete"],
       ["strength", "stronger"]
     ],
-    "comment": "Negating the species predicate projects the family predicate more strongly than negating the genus.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Negating the species predicate projects the family predicate more strongly than negating the genus."
   },
   {
     "id": "warstadt2022_5",
@@ -104,9 +96,7 @@
       ["inference", "Tom is an athlete"],
       ["strength", "weaker"]
     ],
-    "comment": "Negating the genus predicate projects the family predicate only weakly.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Negating the genus predicate projects the family predicate only weakly."
   },
   {
     "id": "warstadt2022_6",
@@ -124,9 +114,7 @@
     "paperFeatures": [
       ["level", "family"]
     ],
-    "comment": "The family-level inference of (4a) and (4b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The family-level inference of (4a) and (4b)."
   },
   {
     "id": "warstadt2022_7",
@@ -145,8 +133,6 @@
       ["trigger", "stop"],
       ["projection", "reduced"]
     ],
-    "comment": "Geurts's example: under this question there is less need to accommodate that Tom smoked.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Geurts's example: under this question there is less need to accommodate that Tom smoked."
   }
 ]

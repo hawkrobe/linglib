@@ -18,8 +18,7 @@
       ["np2", "110"],
       ["pronouns", "none"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "reinhart1976_11b",
@@ -40,8 +39,7 @@
       ["np2", "110"],
       ["pronouns", "np1"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "reinhart1976_11c",
@@ -62,8 +60,7 @@
       ["np2", "110"],
       ["pronouns", "np2"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "reinhart1976_11d",
@@ -84,8 +81,7 @@
       ["np2", "110"],
       ["pronouns", "both"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "reinhart1976_IIa",
@@ -106,8 +102,7 @@
       ["np2", "110"],
       ["pronouns", "np2"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "reinhart1976_IIb",
@@ -128,8 +123,7 @@
       ["np2", "110"],
       ["pronouns", "np1"]
     ],
-    "comment": "repeated as (3)",
-    "metaLanguage": "stan1293"
+    "comment": "repeated as (3)"
   },
   {
     "id": "reinhart1976_12a",
@@ -150,8 +144,7 @@
       ["np2", "11"],
       ["pronouns", "np2"]
     ],
-    "comment": "from Lasnik (1976)",
-    "metaLanguage": "stan1293"
+    "comment": "from Lasnik (1976)"
   },
   {
     "id": "reinhart1976_12b",
@@ -172,8 +165,7 @@
       ["np2", "11"],
       ["pronouns", "np1"]
     ],
-    "comment": "from Lasnik (1976)",
-    "metaLanguage": "stan1293"
+    "comment": "from Lasnik (1976)"
   },
   {
     "id": "reinhart1976_12c",
@@ -194,8 +186,7 @@
       ["np2", "11"],
       ["pronouns", "none"]
     ],
-    "comment": "from Lasnik (1976); marginal for some speakers, but not blocked, unlike (11a)",
-    "metaLanguage": "stan1293"
+    "comment": "from Lasnik (1976); marginal for some speakers, but not blocked, unlike (11a)"
   },
   {
     "id": "reinhart1976_43a",
@@ -216,8 +207,7 @@
       ["np2", "1"],
       ["pronouns", "np2"]
     ],
-    "comment": "repeated from (20a)",
-    "metaLanguage": "stan1293"
+    "comment": "repeated from (20a)"
   },
   {
     "id": "reinhart1976_43b",
@@ -238,8 +228,7 @@
       ["np2", "1"],
       ["pronouns", "none"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "reinhart1976_45",
@@ -260,8 +249,7 @@
       ["np2", "1"],
       ["pronouns", "np1"]
     ],
-    "comment": "repeated from (18a)",
-    "metaLanguage": "stan1293"
+    "comment": "repeated from (18a)"
   },
   {
     "id": "reinhart1976_47",
@@ -282,8 +270,7 @@
       ["np2", "21"],
       ["pronouns", "np2"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "reinhart1976_44a",
@@ -304,8 +291,7 @@
       ["np2", "2100"],
       ["pronouns", "np1"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "reinhart1976_44b",
@@ -326,8 +312,7 @@
       ["np2", "2100"],
       ["pronouns", "none"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "reinhart1976_46",
@@ -348,8 +333,7 @@
       ["np2", "2100"],
       ["pronouns", "np1"]
     ],
-    "comment": "repeated from (19b)",
-    "metaLanguage": "stan1293"
+    "comment": "repeated from (19b)"
   },
   {
     "id": "reinhart1976_48a",
@@ -370,8 +354,7 @@
       ["np2", "11310"],
       ["pronouns", "np1"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "reinhart1976_51a",
@@ -392,8 +375,7 @@
       ["np2", "11"],
       ["pronouns", "np1"]
     ],
-    "comment": "from Ed Keenan, personal communication",
-    "metaLanguage": "stan1293"
+    "comment": "from Ed Keenan, personal communication"
   },
   {
     "id": "reinhart1976_51b",
@@ -414,7 +396,6 @@
       ["np2", "1"],
       ["pronouns", "np2"]
     ],
-    "comment": "from Ed Keenan, personal communication",
-    "metaLanguage": "stan1293"
+    "comment": "from Ed Keenan, personal communication"
   }
 ]

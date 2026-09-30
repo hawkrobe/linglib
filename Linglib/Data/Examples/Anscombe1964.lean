@@ -31,9 +31,7 @@ def i : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "before"), ("pattern", "transitivity")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ii : LinguisticExample :=
   { id := "anscombe1964_ii"
@@ -49,9 +47,7 @@ def ii : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "transitivity")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def mutual_before : LinguisticExample :=
   { id := "anscombe1964_mutual_before"
@@ -67,9 +63,7 @@ def mutual_before : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "before"), ("pattern", "mutual")]
-    comment := "Incompatible with the consequent, and hence the antecedent, of (i)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Incompatible with the consequent, and hence the antecedent, of (i)." }
 
 def mutual_after : LinguisticExample :=
   { id := "anscombe1964_mutual_after"
@@ -85,9 +79,7 @@ def mutual_after : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "mutual")]
-    comment := "Compatible with the consequent and antecedent of (ii): after is not asymmetric."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Compatible with the consequent and antecedent of (ii): after is not asymmetric." }
 
 def born : LinguisticExample :=
   { id := "anscombe1964_born"
@@ -103,9 +95,7 @@ def born : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "transitivity_failure")]
-    comment := "After is not unrestrictedly transitive."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "After is not unrestrictedly transitive." }
 
 def scout : LinguisticExample :=
   { id := "anscombe1964_scout"
@@ -121,9 +111,7 @@ def scout : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "alternative_verifications")]
-    comment := "True if I became one after you did, if I went on after you stopped, or if I was one for a while after you became one."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "True if I became one after you did, if I went on after you stopped, or if I was one for a while after you became one." }
 
 def james1 : LinguisticExample :=
   { id := "anscombe1964_james1"
@@ -139,9 +127,7 @@ def james1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "verification"), ("verification", "begin_after_begin")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def james2 : LinguisticExample :=
   { id := "anscombe1964_james2"
@@ -157,9 +143,7 @@ def james2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "verification"), ("verification", "begin_after_stop")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def james3 : LinguisticExample :=
   { id := "anscombe1964_james3"
@@ -175,9 +159,7 @@ def james3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "verification"), ("verification", "overlap_after_begin")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def james4 : LinguisticExample :=
   { id := "anscombe1964_james4"
@@ -193,9 +175,7 @@ def james4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "verification"), ("verification", "after_stop")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def greece : LinguisticExample :=
   { id := "anscombe1964_greece"
@@ -211,9 +191,7 @@ def greece : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "before"), ("pattern", "quantification")]
-    comment := "Right for 'I was in Greece before you were ever in Italy' (§V), stronger than plain 'before'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Right for 'I was in Greece before you were ever in Italy' (§V), stronger than plain 'before'." }
 
 def italy : LinguisticExample :=
   { id := "anscombe1964_italy"
@@ -229,9 +207,7 @@ def italy : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "quantification")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def glass : LinguisticExample :=
   { id := "anscombe1964_glass"
@@ -247,9 +223,7 @@ def glass : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "before"), ("pattern", "before_ever")]
-    comment := "Does not suggest that he did so before he ever in his life used the telephone."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Does not suggest that he did so before he ever in his life used the telephone." }
 
 def battle : LinguisticExample :=
   { id := "anscombe1964_battle"
@@ -265,9 +239,7 @@ def battle : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "mutual")]
-    comment := "Not inconsistent, unlike 'The battle took place after the rain'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Not inconsistent, unlike 'The battle took place after the rain'." }
 
 def quarrel : LinguisticExample :=
   { id := "anscombe1964_quarrel"
@@ -283,9 +255,7 @@ def quarrel : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "mutual")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def report : LinguisticExample :=
   { id := "anscombe1964_report"
@@ -301,9 +271,7 @@ def report : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "mutual")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def arrival : LinguisticExample :=
   { id := "anscombe1964_arrival"
@@ -319,9 +287,7 @@ def arrival : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "nominal"), ("instantaneous", "yes")]
-    comment := "Events named by nouns: one wholly preceded the other, so before and after are converses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Events named by nouns: one wholly preceded the other, so before and after are converses." }
 
 def john_tom : LinguisticExample :=
   { id := "anscombe1964_john_tom"
@@ -337,9 +303,7 @@ def john_tom : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "after"), ("pattern", "instantaneous"), ("instantaneous", "yes")]
-    comment := "No possibility that Tom also arrived after John."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No possibility that Tom also arrived after John." }
 
 def all : List LinguisticExample := [i, ii, mutual_before, mutual_after, born, scout, james1, james2, james3, james4, greece, italy, glass, battle, quarrel, report, arrival, john_tom]
 

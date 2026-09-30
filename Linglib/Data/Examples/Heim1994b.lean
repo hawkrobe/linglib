@@ -31,9 +31,7 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "0"), ("question", "which students called")]
-    comment := "Exhaustive and de dicto: false when John is agnostic about a non-caller, or does not know that a caller is a student."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Exhaustive and de dicto: false when John is agnostic about a non-caller, or does not know that a caller is a student." }
 
 def ex6 : LinguisticExample :=
   { id := "heim1994b_ex6"
@@ -49,9 +47,7 @@ def ex6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("question", "who called")]
-    comment := "Entails (1) only on the de re reading; Karttunen predicts the entailment except when no student called."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Entails (1) only on the de re reading; Karttunen predicts the entailment except when no student called." }
 
 def ex17 : LinguisticExample :=
   { id := "heim1994b_ex17"
@@ -67,9 +63,7 @@ def ex17 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6")]
-    comment := "Has a weaker reading than (1), on which (18) is valid: 'answer' can mean the answer in the first sense."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Has a weaker reading than (1), on which (18) is valid: 'answer' can mean the answer in the first sense." }
 
 def ex18 : LinguisticExample :=
   { id := "heim1994b_ex18"
@@ -85,9 +79,7 @@ def ex18 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6")]
-    comment := "Valid on the weak reading of (17)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Valid on the weak reading of (17)." }
 
 def ex19 : LinguisticExample :=
   { id := "heim1994b_ex19"
@@ -103,9 +95,7 @@ def ex19 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6")]
-    comment := "Ambiguous in the same way as (17): Partee's example."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Ambiguous in the same way as (17): Partee's example." }
 
 def ex20a : LinguisticExample :=
   { id := "heim1994b_ex20a"
@@ -121,9 +111,7 @@ def ex20a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex20b : LinguisticExample :=
   { id := "heim1994b_ex20b"
@@ -139,9 +127,7 @@ def ex20b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex21 : LinguisticExample :=
   { id := "heim1994b_ex21"
@@ -157,9 +143,7 @@ def ex21 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7"), ("gs", "John knows what students there are"), ("generalizedKarttunen", "John knows whether there are students")]
-    comment := "A universally necessary property: the two analyses diverge, and neither captures the trivial knowledge intuitively ascribed."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A universally necessary property: the two analyses diverge, and neither captures the trivial knowledge intuitively ascribed." }
 
 def ex24 : LinguisticExample :=
   { id := "heim1994b_ex24"
@@ -175,9 +159,7 @@ def ex24 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7"), ("gs", "false when John believes Sue not to be a student"), ("generalizedKarttunen", "true")]
-    comment := "Living with is symmetric, so Bill's and Sue's propositions coincide; Groenendijk and Stokhof predict the right falsity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Living with is symmetric, so Bill's and Sue's propositions coincide; Groenendijk and Stokhof predict the right falsity." }
 
 def all : List LinguisticExample := [ex1, ex6, ex17, ex18, ex19, ex20a, ex20b, ex21, ex24]
 

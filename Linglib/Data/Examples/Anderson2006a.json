@@ -128,9 +128,7 @@
       ["on_lex", "tense"],
       ["aux_marking", "partial (tone)"]
     ],
-    "comment": "The auxiliary is parenthesized in Anderson's gloss; p. 120 notes it \"partially encodes person of the subject through the tone associated with the auxiliary\". Anderson cites Wiering and Wiering 1994: 55.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The auxiliary is parenthesized in Anderson's gloss; p. 120 notes it \"partially encodes person of the subject through the tone associated with the auxiliary\". Anderson cites Wiering and Wiering 1994: 55."
   },
   {
     "id": "anderson2006a_doyayo_splitdoubled",
@@ -153,9 +151,7 @@
       ["on_lex", "subj"],
       ["on_lex", "obj"]
     ],
-    "comment": "Subject hi¹ is marked on both elements, object -mɔ only on the lexical verb. Anderson p. 223: \"this pattern, consisting of an object found on the lexical verb with doubled subject inflection, is common in Doyayo.\" Anderson cites Wiering and Wiering 1994: 221.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Subject hi¹ is marked on both elements, object -mɔ only on the lexical verb. Anderson p. 223: \"this pattern, consisting of an object found on the lexical verb with doubled subject inflection, is common in Doyayo.\" Anderson cites Wiering and Wiering 1994: 221."
   },
   {
     "id": "anderson2006a_gorum_tiger",
@@ -182,9 +178,7 @@
       ["on_lex", "tense"],
       ["on_lex", "affectedness"]
     ],
-    "comment": "Both verbs carry non-past tense and the Gorum category of affectedness (version). Anderson cites Aze 1973.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Both verbs carry non-past tense and the Gorum category of affectedness (version). Anderson cites Aze 1973."
   },
   {
     "id": "anderson2006a_gorum_vigorously",
@@ -208,9 +202,7 @@
       ["on_lex", "subj"],
       ["on_lex", "tense"]
     ],
-    "comment": "Also given as ex. (17) in ch. 1. Anderson cites Aze 1973: 279.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Also given as ex. (17) in ch. 1. Anderson cites Aze 1973: 279."
   },
   {
     "id": "anderson2006a_hemba_progressive",
@@ -234,9 +226,7 @@
       ["on_lex", "subj"],
       ["on_lex", "mood"]
     ],
-    "comment": "Subject agreement on both elements, tense on the auxiliary only, indicative mood on the lexical verb only. Anderson cites Aksenova 1997: 27.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Subject agreement on both elements, tense on the auxiliary only, indicative mood on the lexical verb only. Anderson cites Aksenova 1997: 27."
   },
   {
     "id": "anderson2006a_pipil_capability",
@@ -257,9 +247,7 @@
       ["infl_pattern", "lexHeaded"],
       ["on_lex", "subj"]
     ],
-    "comment": "The capability auxiliary weli is uninflected. Anderson cites Campbell 1985: 139.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The capability auxiliary weli is uninflected. Anderson cites Campbell 1985: 139."
   },
   {
     "id": "anderson2006a_pipil_progressive",
@@ -282,9 +270,7 @@
       ["on_lex", "subj"],
       ["on_lex", "obj"]
     ],
-    "comment": "Subject 1sg is marked on both elements (n- on AUX, ni- on LV); object -mitsin- (2pl) only on the lexical verb. The auxiliary root yu, a grammaticalized motion verb 'go', carries prospective TAM lexically. Anderson p. 224: \"Subjects are doubly marked... while objects occur only on lexical verbs.\" Anderson cites Campbell 1985: 137. Also given as ex. (21) in ch. 1.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Subject 1sg is marked on both elements (n- on AUX, ni- on LV); object -mitsin- (2pl) only on the lexical verb. The auxiliary root yu, a grammaticalized motion verb 'go', carries prospective TAM lexically. Anderson p. 224: \"Subjects are doubly marked... while objects occur only on lexical verbs.\" Anderson cites Campbell 1985: 137. Also given as ex. (21) in ch. 1."
   },
   {
     "id": "anderson2006a_jakaltek_completive",
@@ -307,8 +293,6 @@
       ["on_aux", "obj"],
       ["on_lex", "subj"]
     ],
-    "comment": "Absolutive marking sits on the aspectual auxiliary, ergative on the lexical verb - the reverse of the commoner split where the subject appears on the auxiliary. Also given as ex. (19) in ch. 1. Anderson cites Craig 1977: 60.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Absolutive marking sits on the aspectual auxiliary, ergative on the lexical verb - the reverse of the commoner split where the subject appears on the auxiliary. Also given as ex. (19) in ch. 1. Anderson cites Craig 1977: 60."
   }
 ]

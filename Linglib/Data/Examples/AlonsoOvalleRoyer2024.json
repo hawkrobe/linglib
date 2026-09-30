@@ -20,8 +20,7 @@
       ["reading", "epistemic"],
       ["epistemicState", "ignorant"]
     ],
-    "comment": "Repeated as (3), (73), (124).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (3), (73), (124)."
   },
   {
     "id": "alonsoovalleroyer2024_22_23b",
@@ -44,8 +43,7 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows which, not all"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_22_24",
@@ -70,8 +68,7 @@
       ["item", "yalnhej"],
       ["scenario", "universal"]
     ],
-    "comment": "Consultant comment (25): it could be that just some people danced, or that everybody danced. Repeated as (124)/(125).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Consultant comment (25): it could be that just some people danced, or that everybody danced. Repeated as (124)/(125)."
   },
   {
     "id": "alonsoovalleroyer2024_26_27a",
@@ -94,8 +91,7 @@
       ["reading", "epistemic"],
       ["epistemicState", "ignorant"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_26_27b",
@@ -118,8 +114,7 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows all"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_26_27c",
@@ -142,8 +137,7 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows which, not all"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_28_29a",
@@ -166,8 +160,7 @@
       ["reading", "epistemic"],
       ["epistemicState", "ignorant"]
     ],
-    "comment": "Repeated as (34), (65).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (34), (65)."
   },
   {
     "id": "alonsoovalleroyer2024_28_29b",
@@ -190,8 +183,7 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows which, not all"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_28_29c",
@@ -214,8 +206,7 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows all"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_34",
@@ -237,8 +228,7 @@
       ["volitional", "no"],
       ["reading", "random choice"]
     ],
-    "comment": "With a non-volitional predicate only the epistemic interpretation is possible.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "With a non-volitional predicate only the epistemic interpretation is possible."
   },
   {
     "id": "alonsoovalleroyer2024_30b",
@@ -259,8 +249,7 @@
       ["volitional", "yes"],
       ["reading", "epistemic"]
     ],
-    "comment": "Feigned ignorance, as with English whatever.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Feigned ignorance, as with English whatever."
   },
   {
     "id": "alonsoovalleroyer2024_31_32a",
@@ -283,8 +272,7 @@
       ["reading", "random choice"],
       ["decision", "indiscriminate"]
     ],
-    "comment": "Repeated as (2), (61), (100), (126).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (2), (61), (100), (126)."
   },
   {
     "id": "alonsoovalleroyer2024_31_32b",
@@ -307,8 +295,7 @@
       ["reading", "random choice"],
       ["decision", "specific"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_31_33",
@@ -333,8 +320,7 @@
       ["item", "yalnhej"],
       ["scenario", "universal"]
     ],
-    "comment": "Repeated as (126)/(127).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (126)/(127)."
   },
   {
     "id": "alonsoovalleroyer2024_35_36a",
@@ -357,8 +343,7 @@
       ["reading", "epistemic"],
       ["epistemicState", "ignorant"]
     ],
-    "comment": "Passive subject.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Passive subject."
   },
   {
     "id": "alonsoovalleroyer2024_35_36b",
@@ -381,8 +366,7 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows all"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_35_36c",
@@ -405,8 +389,7 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows which, not all"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_37_38a",
@@ -429,8 +412,7 @@
       ["reading", "random choice"],
       ["decision", "indiscriminate"]
     ],
-    "comment": "Passive subject of a volitional verb.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Passive subject of a volitional verb."
   },
   {
     "id": "alonsoovalleroyer2024_37_38b",
@@ -453,8 +435,7 @@
       ["reading", "random choice"],
       ["decision", "specific"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_39_40a",
@@ -477,8 +458,7 @@
       ["reading", "epistemic"],
       ["epistemicState", "ignorant"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_39_40b",
@@ -501,8 +481,7 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows all"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_39_40c",
@@ -525,8 +504,7 @@
       ["reading", "epistemic"],
       ["epistemicState", "knows which, not all"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_41_42a",
@@ -549,8 +527,7 @@
       ["reading", "random choice"],
       ["decision", "indiscriminate"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_41_42b",
@@ -573,8 +550,7 @@
       ["reading", "random choice"],
       ["decision", "specific"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_43_44",
@@ -598,8 +574,7 @@
       ["decision", "indiscriminate"],
       ["property", "non-maximal"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_45_44",
@@ -639,8 +614,7 @@
       ["reading", "epistemic"],
       ["property", "non-maximal"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_48_47",
@@ -681,8 +655,7 @@
       ["embedded", "negation"],
       ["survives", "yes"]
     ],
-    "comment": "The random choice component is at-issue: it is what negation targets.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The random choice component is at-issue: it is what negation targets."
   },
   {
     "id": "alonsoovalleroyer2024_51b",
@@ -706,8 +679,7 @@
       ["embedded", "conditional antecedent"],
       ["survives", "yes"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_52a",
@@ -731,8 +703,7 @@
       ["embedded", "negation"],
       ["survives", "yes"]
     ],
-    "comment": "Continued by (52b): the dish that everybody didn't like, that's the one he ate.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Continued by (52b): the dish that everybody didn't like, that's the one he ate."
   },
   {
     "id": "alonsoovalleroyer2024_53b",
@@ -756,8 +727,7 @@
       ["embedded", "conditional antecedent"],
       ["survives", "yes"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_54",
@@ -778,8 +748,7 @@
       ["item", "uno cualquiera"],
       ["reading", "random choice"]
     ],
-    "comment": "Repeated as (119), (123).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (119), (123)."
   },
   {
     "id": "alonsoovalleroyer2024_55",
@@ -801,8 +770,7 @@
       ["reading", "unremarkable"],
       ["position", "predicative"]
     ],
-    "comment": "Repeated as (94).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (94)."
   },
   {
     "id": "alonsoovalleroyer2024_57",
@@ -863,8 +831,7 @@
       ["item", "yalnhej"],
       ["position", "predicative"]
     ],
-    "comment": "Repeated as (104a); yalnhej DPs have no predicative uses.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Repeated as (104a); yalnhej DPs have no predicative uses."
   },
   {
     "id": "alonsoovalleroyer2024_60b",
@@ -885,8 +852,7 @@
       ["item", "yalnhej"],
       ["position", "predicative"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_67",
@@ -944,8 +910,7 @@
       ["reading", "random choice"],
       ["anchor", "local"]
     ],
-    "comment": "Non-harmonic interpretation (83)–(84).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Non-harmonic interpretation (83)–(84)."
   },
   {
     "id": "alonsoovalleroyer2024_82_85",
@@ -967,8 +932,7 @@
       ["reading", "random choice"],
       ["anchor", "harmonic"]
     ],
-    "comment": "Harmonic interpretation (87)–(88): the DP projects from the imperative's anchor.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Harmonic interpretation (87)–(88): the DP projects from the imperative's anchor."
   },
   {
     "id": "alonsoovalleroyer2024_86",
@@ -1009,8 +973,7 @@
       ["reading", "epistemic"],
       ["anchor", "harmonic"]
     ],
-    "comment": "Utterable by a speaker who knows who danced: the DP projects from the attitude's anchor (91)–(92).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Utterable by a speaker who knows who danced: the DP projects from the attitude's anchor (91)–(92)."
   },
   {
     "id": "alonsoovalleroyer2024_93",
@@ -1052,8 +1015,7 @@
       ["reading", "unremarkable"],
       ["position", "predicative"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_96",
@@ -1074,8 +1036,7 @@
       ["item", "komon"],
       ["reading", "random choice"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_99",
@@ -1096,8 +1057,7 @@
       ["reading", "unremarkable"],
       ["position", "predicative"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_100",
@@ -1118,8 +1078,7 @@
       ["item", "yalnhej"],
       ["reading", "unremarkable"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_102a",
@@ -1140,8 +1099,7 @@
       ["item", "yalnhej"],
       ["reading", "unremarkable"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_102b",
@@ -1162,8 +1120,7 @@
       ["item", "yalnhej"],
       ["reading", "unremarkable"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_103a",
@@ -1184,8 +1141,7 @@
       ["item", "komon"],
       ["reading", "unremarkable"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_103b",
@@ -1206,8 +1162,7 @@
       ["item", "komon"],
       ["reading", "unremarkable"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_105",
@@ -1228,8 +1183,7 @@
       ["item", "yalnhej"],
       ["position", "predicative"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_106a",
@@ -1251,8 +1205,7 @@
       ["position", "predicative"],
       ["construction", "possessive have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_106b",
@@ -1274,8 +1227,7 @@
       ["position", "predicative"],
       ["construction", "possessive have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_107a",
@@ -1297,8 +1249,7 @@
       ["position", "predicative"],
       ["construction", "secondary predicate"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_107b",
@@ -1320,8 +1271,7 @@
       ["position", "predicative"],
       ["construction", "secondary predicate"]
     ],
-    "comment": "Royer, Buenrostro & Jenks (to appear), p. 15.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Royer, Buenrostro & Jenks (to appear), p. 15."
   },
   {
     "id": "alonsoovalleroyer2024_108a",
@@ -1342,8 +1292,7 @@
       ["item", "yalnhej"],
       ["position", "attributive"]
     ],
-    "comment": "Yalnhej DPs cannot stack under adjectival modifiers.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Yalnhej DPs cannot stack under adjectival modifiers."
   },
   {
     "id": "alonsoovalleroyer2024_108b",
@@ -1365,8 +1314,7 @@
       ["position", "attributive"],
       ["reading", "unremarkable"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_109",
@@ -1414,8 +1362,7 @@
       ["embedded", "negation"],
       ["survives", "no"]
     ],
-    "comment": "Buccola & Haida 2017; the random choice component survives only with stress on irgendein.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Buccola & Haida 2017; the random choice component survives only with stress on irgendein."
   },
   {
     "id": "alonsoovalleroyer2024_111",
@@ -1458,8 +1405,7 @@
       ["embedded", "negation"],
       ["survives", "yes"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_113",
@@ -1482,8 +1428,7 @@
       ["embedded", "negation"],
       ["survives", "yes"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_115_116",
@@ -1526,8 +1471,7 @@
     "paperFeatures": [
       ["item", "irgendein"]
     ],
-    "comment": "Buccola & Haida 2017.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Buccola & Haida 2017."
   },
   {
     "id": "alonsoovalleroyer2024_118",
@@ -1590,8 +1534,7 @@
     "paperFeatures": [
       ["item", "n'importe quel"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_121",
@@ -1629,8 +1572,7 @@
       ["item", "algún"],
       ["scenario", "universal"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alonsoovalleroyer2024_123",
@@ -1668,8 +1610,7 @@
       ["item", "xomlaj"],
       ["reading", "epistemic"]
     ],
-    "comment": "Cannot describe (24) (all danced) nor random choice scenarios.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Cannot describe (24) (all danced) nor random choice scenarios."
   },
   {
     "id": "alonsoovalleroyer2024_fn20",
@@ -1690,7 +1631,6 @@
       ["item", "yalnhej"],
       ["reading", "epistemic"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   }
 ]

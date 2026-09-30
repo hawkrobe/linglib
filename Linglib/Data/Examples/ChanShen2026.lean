@@ -31,9 +31,7 @@ def ex1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("interveners", "1")]
-    comment := "English multiple question with the-hell on the in-situ wh-phrase; the fronted who stands between the question operator and the modifier."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "English multiple question with the-hell on the in-situ wh-phrase; the fronted who stands between the question operator and the modifier." }
 
 def ex1b : LinguisticExample :=
   { id := "chanshen2026_ex1b"
@@ -49,9 +47,7 @@ def ex1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "full"), ("interveners", "0")]
-    comment := "The-hell on the fronted wh-phrase of an English multiple question."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The-hell on the fronted wh-phrase of an English multiple question." }
 
 def ex4a : LinguisticExample :=
   { id := "chanshen2026_ex4a"
@@ -67,9 +63,7 @@ def ex4a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("condition", "Wh-Long"), ("strategy", "full")]
-    comment := "The full-movement baseline of both comparisons; also (2a) and (6a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The full-movement baseline of both comparisons; also (2a) and (6a)." }
 
 def ex4b : LinguisticExample :=
   { id := "chanshen2026_ex4b"
@@ -85,9 +79,7 @@ def ex4b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("condition", "WhHell-Long"), ("modifier", "theHell"), ("strategy", "full"), ("interveners", "0")]
-    comment := "Attested in Singlish before the experiment; also (3a) and (6b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Attested in Singlish before the experiment; also (3a) and (6b)." }
 
 def ex4c : LinguisticExample :=
   { id := "chanshen2026_ex4c"
@@ -103,9 +95,7 @@ def ex4c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("condition", "Wh-Situ"), ("strategy", "inSitu")]
-    comment := "Also (2c)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Also (2c)." }
 
 def ex4d : LinguisticExample :=
   { id := "chanshen2026_ex4d"
@@ -121,9 +111,7 @@ def ex4d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("condition", "WhHell-Situ"), ("modifier", "theHell"), ("strategy", "inSitu"), ("interveners", "0")]
-    comment := "The in-situ comparison shows a superadditive interaction of WhType and Strategy; also (3c)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The in-situ comparison shows a superadditive interaction of WhType and Strategy; also (3c)." }
 
 def ex6c : LinguisticExample :=
   { id := "chanshen2026_ex6c"
@@ -139,9 +127,7 @@ def ex6c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("condition", "Wh-Partial"), ("strategy", "partial")]
-    comment := "Rated around the middle of the scale but above the ungrammatical fillers; also (2b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Rated around the middle of the scale but above the ungrammatical fillers; also (2b)." }
 
 def ex6d : LinguisticExample :=
   { id := "chanshen2026_ex6d"
@@ -157,9 +143,7 @@ def ex6d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("condition", "WhHell-Partial"), ("modifier", "theHell"), ("strategy", "partial"), ("interveners", "0")]
-    comment := "The costs of the-hell and of partial movement are additive: no interaction of WhType and Strategy; also (3b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The costs of the-hell and of partial movement are additive: no interaction of WhType and Strategy; also (3b)." }
 
 def ex11a : LinguisticExample :=
   { id := "chanshen2026_ex11a"
@@ -175,9 +159,7 @@ def ex11a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "full"), ("island", "complexNP")]
-    comment := "Overt movement out of a complex NP; adapted from Sato and Ngui."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Overt movement out of a complex NP; adapted from Sato and Ngui." }
 
 def ex11b : LinguisticExample :=
   { id := "chanshen2026_ex11b"
@@ -193,9 +175,7 @@ def ex11b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("island", "complexNP")]
-    comment := "An in-situ wh-phrase inside a complex NP, bound from outside it."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An in-situ wh-phrase inside a complex NP, bound from outside it." }
 
 def ex15 : LinguisticExample :=
   { id := "chanshen2026_ex15"
@@ -211,9 +191,7 @@ def ex15 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "partial"), ("island", "complexNP")]
-    comment := "Partial movement to the embedded Spec-CP inside a complex NP: the covert second step crosses the island."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Partial movement to the embedded Spec-CP inside a complex NP: the covert second step crosses the island." }
 
 def ex17a : LinguisticExample :=
   { id := "chanshen2026_ex17a"
@@ -229,9 +207,7 @@ def ex17a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("island", "complexNP")]
-    comment := "Malay, a substrate of Singlish: an in-situ wh-phrase inside a complex NP."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Malay, a substrate of Singlish: an in-situ wh-phrase inside a complex NP." }
 
 def ex17b : LinguisticExample :=
   { id := "chanshen2026_ex17b"
@@ -247,9 +223,7 @@ def ex17b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "partial"), ("island", "complexNP")]
-    comment := "Partial movement inside the complex NP, a step that itself crosses no island boundary."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Partial movement inside the complex NP, a step that itself crosses no island boundary." }
 
 def ex19 : LinguisticExample :=
   { id := "chanshen2026_ex19"
@@ -265,9 +239,7 @@ def ex19 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modifier", "daodi"), ("strategy", "inSitu"), ("interveners", "0")]
-    comment := "Daodi and the in-situ wh-phrase it modifies are discontinuous."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Daodi and the in-situ wh-phrase it modifies are discontinuous." }
 
 def ex22a : LinguisticExample :=
   { id := "chanshen2026_ex22a"
@@ -283,9 +255,7 @@ def ex22a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "inSitu"), ("role", "subject")]
-    comment := "A subject wh-phrase in situ, following the overt complementizer; judgments from seven speakers."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A subject wh-phrase in situ, following the overt complementizer; judgments from seven speakers." }
 
 def ex22b : LinguisticExample :=
   { id := "chanshen2026_ex22b"
@@ -301,9 +271,7 @@ def ex22b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("role", "subject"), ("interveners", "0")]
-    comment := "No wh-phrase could intervene between the question operator and a subject; judgments from seven speakers."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No wh-phrase could intervene between the question operator and a subject; judgments from seven speakers." }
 
 def ex25a : LinguisticExample :=
   { id := "chanshen2026_ex25a"
@@ -319,9 +287,7 @@ def ex25a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "full"), ("interveners", "0")]
-    comment := "The-hell on the fronted wh-phrase, in the immediate scope of the question operator."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The-hell on the fronted wh-phrase, in the immediate scope of the question operator." }
 
 def ex26a : LinguisticExample :=
   { id := "chanshen2026_ex26a"
@@ -337,9 +303,7 @@ def ex26a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modifier", "theHell"), ("strategy", "inSitu"), ("interveners", "1")]
-    comment := "The fronted who intervenes between the question operator and the-hell."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The fronted who intervenes between the question operator and the-hell." }
 
 def all : List LinguisticExample := [ex1a, ex1b, ex4a, ex4b, ex4c, ex4d, ex6c, ex6d, ex11a, ex11b, ex15, ex17a, ex17b, ex19, ex22a, ex22b, ex25a, ex26a]
 

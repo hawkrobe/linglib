@@ -31,9 +31,7 @@ def ex_5 : LinguisticExample :=
     alternatives := []
     readings := [("inference: not [John went for a run and didn't smoke], so John smoked", .acceptable)]
     paperFeatures := [("case", "symmetry breaking"), ("prejacent", "run"), ("contextual alternative", "run and not smoke")]
-    comment := "What is true of Bill is inferred not to be true of John."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "What is true of Bill is inferred not to be true of John." }
 
 def ex_6 : LinguisticExample :=
   { id := "trinhhaida2015_6"
@@ -49,9 +47,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := [("inference: not [John passed some and failed some], so John passed all", .unacceptable)]
     paperFeatures := [("case", "symmetry preserving"), ("prejacent", "pass some"), ("contextual alternative", "pass some and fail some")]
-    comment := "The sequence is odd precisely because it cannot mean that what is true of Bill is not true of John (footnote 4)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The sequence is odd precisely because it cannot mean that what is true of Bill is not true of John (footnote 4)." }
 
 def ex_9 : LinguisticExample :=
   { id := "trinhhaida2015_9"
@@ -67,9 +63,7 @@ def ex_9 : LinguisticExample :=
     alternatives := []
     readings := [("inference: John does not have four chairs", .acceptable)]
     paperFeatures := [("case", "symmetry problem"), ("symmetric alternatives", "four; exactly three")]
-    comment := "The symmetry problem: *four* and *exactly three* are of the same type, so relevance keeps both or neither, yet the inference negates only *four*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The symmetry problem: *four* and *exactly three* are of the same type, so relevance keeps both or neither, yet the inference negates only *four*." }
 
 def ex_10 : LinguisticExample :=
   { id := "trinhhaida2015_10"
@@ -85,9 +79,7 @@ def ex_10 : LinguisticExample :=
     alternatives := []
     readings := [("inference: John did not do all of the homework", .acceptable)]
     paperFeatures := [("case", "symmetry problem"), ("symmetric alternatives", "all; some but not all")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_20b : LinguisticExample :=
   { id := "trinhhaida2015_20b"
@@ -103,9 +95,7 @@ def ex_20b : LinguisticExample :=
     alternatives := []
     readings := [("inference: not [John works hard and doesn't watch TV]", .acceptable)]
     paperFeatures := [("case", "symmetry breaking"), ("prejacent", "work hard"), ("contextual alternative", "work hard and not watch TV")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_20c : LinguisticExample :=
   { id := "trinhhaida2015_20c"
@@ -121,9 +111,7 @@ def ex_20c : LinguisticExample :=
     alternatives := []
     readings := [("inference: not [John is tall and not bald]", .acceptable)]
     paperFeatures := [("case", "symmetry breaking"), ("prejacent", "tall"), ("contextual alternative", "tall and not bald")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_21a : LinguisticExample :=
   { id := "trinhhaida2015_21a"
@@ -139,9 +127,7 @@ def ex_21a : LinguisticExample :=
     alternatives := []
     readings := [("inference: not [John ate exactly three cookies]", .unacceptable)]
     paperFeatures := [("case", "symmetry preserving"), ("prejacent", "three"), ("contextual alternative", "exactly three"), ("lexical alternative", "four")]
-    comment := "Atomicity is vacuous: *four* is derived by lexical replacement and, being *three* without *exactly three*, lies in the Boolean closure of {three, exactly three}."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Atomicity is vacuous: *four* is derived by lexical replacement and, being *three* without *exactly three*, lies in the Boolean closure of {three, exactly three}." }
 
 def ex_21b : LinguisticExample :=
   { id := "trinhhaida2015_21b"
@@ -157,9 +143,7 @@ def ex_21b : LinguisticExample :=
     alternatives := []
     readings := [("inference: not [John fathered children and no twins]", .unacceptable)]
     paperFeatures := [("case", "symmetry preserving"), ("prejacent", "children"), ("contextual alternative", "children and no twins"), ("lexical alternative", "twins")]
-    comment := "*Twins* is *children* without *children and no twins*, so it is in the Boolean closure of the restricted domain."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "*Twins* is *children* without *children and no twins*, so it is in the Boolean closure of the restricted domain." }
 
 def ex_21c : LinguisticExample :=
   { id := "trinhhaida2015_21c"
@@ -175,9 +159,7 @@ def ex_21c : LinguisticExample :=
     alternatives := []
     readings := [("inference: not [John passed some of the fitness tests and failed some]", .unacceptable)]
     paperFeatures := [("case", "symmetry preserving"), ("prejacent", "pass some"), ("contextual alternative", "pass some and fail some"), ("lexical alternative", "pass all")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_50 : LinguisticExample :=
   { id := "trinhhaida2015_50"
@@ -193,9 +175,7 @@ def ex_50 : LinguisticExample :=
     alternatives := []
     readings := [("inference: Detective B did not conclude that they stole the book and not the jewelry", .acceptable), ("inference: Detective B did not conclude that they stole the book and the jewelry", .acceptable)]
     paperFeatures := [("case", "apparent problem"), ("prejacent", "concluded book")]
-    comment := "Under Atomicity the alternative *book and the jewelry* is underivable; the second inference comes from the derivable *concluded that they stole the jewelry*, since attitude verbs distribute over conjunction."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Under Atomicity the alternative *book and the jewelry* is underivable; the second inference comes from the derivable *concluded that they stole the jewelry*, since attitude verbs distribute over conjunction." }
 
 def ex_54 : LinguisticExample :=
   { id := "trinhhaida2015_54"
@@ -211,9 +191,7 @@ def ex_54 : LinguisticExample :=
     alternatives := []
     readings := [("inference: the committee passed some of my students", .acceptable)]
     paperFeatures := [("case", "indirect implicature"), ("prejacent", "not all")]
-    comment := "Atomicity rules out the symmetric *passed some*: the VP substituted for NegP is atomic, so *all* inside it cannot then be replaced."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Atomicity rules out the symmetric *passed some*: the VP substituted for NegP is atomic, so *all* inside it cannot then be replaced." }
 
 def ex_56 : LinguisticExample :=
   { id := "trinhhaida2015_56"
@@ -229,9 +207,7 @@ def ex_56 : LinguisticExample :=
     alternatives := []
     readings := [("inference: not [all of my students did some of the readings]", .unacceptable)]
     paperFeatures := [("case", "switching problem"), ("prejacent", "some all")]
-    comment := "The switching problem: *some* and *all* switch places only under negation, (58); the constraints (60b) and (60c) on the order and monotonicity of replacements block the derivation here."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The switching problem: *some* and *all* switch places only under negation, (58); the constraints (60b) and (60c) on the order and monotonicity of replacements block the derivation here." }
 
 def ex_58 : LinguisticExample :=
   { id := "trinhhaida2015_58"
@@ -247,9 +223,7 @@ def ex_58 : LinguisticExample :=
     alternatives := []
     readings := [("inference: all of my students did some of the readings", .acceptable)]
     paperFeatures := [("case", "switching problem"), ("prejacent", "not some all")]
-    comment := "A weak inference; under negation the bottom-up, non-weakening replacements of (60) derive the alternative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A weak inference; under negation the bottom-up, non-weakening replacements of (60) derive the alternative." }
 
 def all : List LinguisticExample := [ex_5, ex_6, ex_9, ex_10, ex_20b, ex_20c, ex_21a, ex_21b, ex_21c, ex_50, ex_54, ex_56, ex_58]
 

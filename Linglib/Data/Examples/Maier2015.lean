@@ -31,9 +31,7 @@ def ex_42 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("order", "doxasticFirst"), ("attitudes", "believe;hope"), ("trigger", "stop")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_7a : LinguisticExample :=
   { id := "maier2015_7a"
@@ -49,9 +47,7 @@ def ex_7a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("order", "doxasticFirst"), ("attitudes", "believe;hope"), ("trigger", "too")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_7b : LinguisticExample :=
   { id := "maier2015_7b"
@@ -67,9 +63,7 @@ def ex_7b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("order", "parasiticFirst"), ("attitudes", "hope;believe"), ("trigger", "too")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_22a : LinguisticExample :=
   { id := "maier2015_22a"
@@ -85,9 +79,7 @@ def ex_22a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("order", "doxasticFirst"), ("attitudes", "believe;imagine"), ("trigger", "too")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_22b : LinguisticExample :=
   { id := "maier2015_22b"
@@ -103,9 +95,7 @@ def ex_22b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("order", "parasiticFirst"), ("attitudes", "imagine;believe"), ("trigger", "too")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex_42, ex_7a, ex_7b, ex_22a, ex_22b]
 

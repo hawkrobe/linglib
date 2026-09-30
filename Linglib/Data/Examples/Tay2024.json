@@ -15,9 +15,7 @@
       {"name": "V1 alone is modified: the baby cried repeatedly until Mother woke once", "judgment": "questionable"}
     ],
     "paperFeatures": [],
-    "comment": "The V1-only reading is hard to access while the whole-event reading is available; (45) blocks the latter and recovers it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The V1-only reading is hard to access while the whole-event reading is available; (45) blocks the latter and recovers it."
   },
   {
     "id": "tay2024_42",
@@ -35,9 +33,7 @@
       {"name": "V1 alone is modified: the baby cried repeatedly until Mother woke once", "judgment": "ungrammatical"}
     ],
     "paperFeatures": [],
-    "comment": "The compound's V1 cannot be independently modified: the components of a V-V resultative are inaccessible to syntactic operations.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The compound's V1 cannot be independently modified: the components of a V-V resultative are inaccessible to syntactic operations."
   },
   {
     "id": "tay2024_45",
@@ -52,9 +48,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "V1 of a V-de resultative independently modified by a locative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "V1 of a V-de resultative independently modified by a locative."
   },
   {
     "id": "tay2024_46",
@@ -69,9 +63,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The minimal pair with (45): V1 of a V-V resultative cannot be independently modified.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The minimal pair with (45): V1 of a V-V resultative cannot be independently modified."
   },
   {
     "id": "tay2024_107",
@@ -86,9 +78,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "agent"]],
-    "comment": "The scenario the trieventive analysis fits and the monoeventive and bieventive analyses do not (108).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The scenario the trieventive analysis fits and the monoeventive and bieventive analyses do not (108)."
   },
   {
     "id": "tay2024_131",
@@ -103,9 +93,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "agent"]],
-    "comment": "The external argument interpreted as the agent of an unergative V1.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The external argument interpreted as the agent of an unergative V1."
   },
   {
     "id": "tay2024_132",
@@ -120,9 +108,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "agent"]],
-    "comment": "The external argument interpreted as the agent of a transitive V1.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The external argument interpreted as the agent of a transitive V1."
   },
   {
     "id": "tay2024_133",
@@ -137,9 +123,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "theme"]],
-    "comment": "The external argument interpreted as the theme of an unaccusative V1; the thesis cites the example from Li 1980 via Williams 2005.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The external argument interpreted as the theme of an unaccusative V1; the thesis cites the example from Li 1980 via Williams 2005."
   },
   {
     "id": "tay2024_134",
@@ -154,9 +138,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "theme"]],
-    "comment": "The external argument interpreted as the theme of a transitive V1; the thesis cites the example from Ren 2001 via Williams 2005.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The external argument interpreted as the theme of a transitive V1; the thesis cites the example from Ren 2001 via Williams 2005."
   },
   {
     "id": "tay2024_137",
@@ -171,9 +153,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "agent"]],
-    "comment": "V1 names the striking, the initial event of the causal chain (136), in which the Russian forces take part (138).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "V1 names the striking, the initial event of the causal chain (136), in which the Russian forces take part (138)."
   },
   {
     "id": "tay2024_139",
@@ -188,9 +168,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "pureCauser"]],
-    "comment": "A pure causer: V1 names the seawater rushing in, the second event of the causal chain (136), in which the Russian forces take no part (140).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A pure causer: V1 names the seawater rushing in, the second event of the causal chain (136), in which the Russian forces take no part (140)."
   },
   {
     "id": "tay2024_146",
@@ -205,9 +183,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "pureCauser"]],
-    "comment": "A pure causer: the coach is not a participant in the walking. The thesis cites the example from Liu 2019.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A pure causer: the coach is not a participant in the walking. The thesis cites the example from Liu 2019."
   },
   {
     "id": "tay2024_148",
@@ -222,9 +198,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "pureCauser"]],
-    "comment": "V1 'crack' is inchoative and has no causative alternant, so the external argument could only be a pure causer.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "V1 'crack' is inchoative and has no causative alternant, so the external argument could only be a pure causer."
   },
   {
     "id": "tay2024_149",
@@ -239,9 +213,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "pureCauser"]],
-    "comment": "An inanimate pure causer that is not an argument of V1.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "An inanimate pure causer that is not an argument of V1."
   },
   {
     "id": "tay2024_150",
@@ -256,9 +228,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "subjectMatter"]],
-    "comment": "The external argument is the subject matter of the crying, a participant in V1's event, not a pure causer: onions or tear gas in its place are out (154).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The external argument is the subject matter of the crying, a participant in V1's event, not a pure causer: onions or tear gas in its place are out (154)."
   },
   {
     "id": "tay2024_151",
@@ -273,9 +243,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "subjectMatter"]],
-    "comment": "The external argument is the subject matter of the laughing; the thesis cites the example from Gu 1992.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The external argument is the subject matter of the laughing; the thesis cites the example from Gu 1992."
   },
   {
     "id": "tay2024_202",
@@ -290,9 +258,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "agent"]],
-    "comment": "The theme of the obligatorily transitive V1 'cut' need not be realised: the internal argument is the knife, V2's argument.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The theme of the obligatorily transitive V1 'cut' need not be realised: the internal argument is the knife, V2's argument."
   },
   {
     "id": "tay2024_205",
@@ -310,9 +276,7 @@
       {"name": "someone else ate the meal I paid for", "judgment": "acceptable"}
     ],
     "paperFeatures": [["externalArgument", "theme"]],
-    "comment": "The internal argument need not be the agent of V1.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The internal argument need not be the agent of V1."
   },
   {
     "id": "tay2024_206",
@@ -330,9 +294,7 @@
       {"name": "the performer sang", "judgment": "acceptable"}
     ],
     "paperFeatures": [["externalArgument", "theme"]],
-    "comment": "The internal argument need not be the agent of V1; the performer reading is the more plausible.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The internal argument need not be the agent of V1; the performer reading is the more plausible."
   },
   {
     "id": "tay2024_216",
@@ -347,9 +309,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "An unaccusative V-V resultative whose sole argument is the theme of V1; acceptable whoever washed the clothes. The thesis cites the example from C. Li 2007.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "An unaccusative V-V resultative whose sole argument is the theme of V1; acceptable whoever washed the clothes. The thesis cites the example from C. Li 2007."
   },
   {
     "id": "tay2024_217",
@@ -364,9 +324,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The sole argument interpreted as the instrument of V1.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The sole argument interpreted as the instrument of V1."
   },
   {
     "id": "tay2024_219",
@@ -381,9 +339,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The sole argument interpreted as the agent of V1: a subject-oriented resultative without a reflexive. The thesis cites the example from C. Li 2007.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The sole argument interpreted as the agent of V1: a subject-oriented resultative without a reflexive. The thesis cites the example from C. Li 2007."
   },
   {
     "id": "tay2024_221",
@@ -398,9 +354,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "The sole argument thematically unrelated to V1. Reported as grammatical by Sybesma 1999; some of the thesis's consultants find it slightly degraded out of the blue.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The sole argument thematically unrelated to V1. Reported as grammatical by Sybesma 1999; some of the thesis's consultants find it slightly degraded out of the blue."
   },
   {
     "id": "tay2024_224",
@@ -418,9 +372,7 @@
       {"name": "Mother wakes from someone else crying", "judgment": "unacceptable"}
     ],
     "paperFeatures": [],
-    "comment": "An unaccusative resultative whose sole argument must be the agent of V1, a restriction the thesis leaves open.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "An unaccusative resultative whose sole argument must be the agent of V1, a restriction the thesis leaves open."
   },
   {
     "id": "tay2024_330",
@@ -438,9 +390,7 @@
       {"name": "Zhangsan became tired", "judgment": "marginal"}
     ],
     "paperFeatures": [["externalArgument", "agent"]],
-    "comment": "The second reading is marked % for speaker variation; on both readings Tay analyzes the postverbal phrase as an argument of V2, a Locatum on the second.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The second reading is marked % for speaker variation; on both readings Tay analyzes the postverbal phrase as an argument of V2, a Locatum on the second."
   },
   {
     "id": "tay2024_668",
@@ -455,8 +405,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["externalArgument", "agent"]],
-    "comment": "The witness for two of chapter 8's three typological parameters: X is a verb, and a transitive resultative takes an intransitive X, unlike Japanese (674)-(675).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The witness for two of chapter 8's three typological parameters: X is a verb, and a transitive resultative takes an intransitive X, unlike Japanese (674)-(675)."
   }
 ]

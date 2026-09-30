@@ -31,9 +31,7 @@ def en1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "anderson"), ("strategy", "x-marking")]
-    comment := "Mizuno's adaptation of Anderson's (1951) original ('If Jones had taken arsenic, he would have shown just exactly those symptoms which he does in fact show.'). English X-marks: past-perfect antecedent, 'would' consequent describing the observed fact."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mizuno's adaptation of Anderson's (1951) original ('If Jones had taken arsenic, he would have shown just exactly those symptoms which he does in fact show.'). English X-marks: past-perfect antecedent, 'would' consequent describing the observed fact." }
 
 def en2 : LinguisticExample :=
   { id := "mizuno2024_en2"
@@ -49,9 +47,7 @@ def en2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "anderson"), ("strategy", "o-marking")]
-    comment := "Infelicitous: the non-expanded domain D makes the consequent (an observed fact) hold everywhere, so the conditional is trivially true (Stalnaker 1975, von Fintel 1999)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Infelicitous: the non-expanded domain D makes the consequent (an observed fact) hold everywhere, so the conditional is trivially true (Stalnaker 1975, von Fintel 1999)." }
 
 def ja3 : LinguisticExample :=
   { id := "mizuno2024_ja3"
@@ -67,9 +63,7 @@ def ja3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "fake-past"), ("x_exponent", "-ta")]
-    comment := "Fake Past: Past -katta in the consequent with non-past reference (ima 'now'), so X-marking rather than real Past (Ogihara 2014, Mizuno & Kaufmann 2019). Establishes that Japanese possesses X-marking, setting up the puzzle of its unavailability in Anderson conditionals."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Fake Past: Past -katta in the consequent with non-past reference (ima 'now'), so X-marking rather than real Past (Ogihara 2014, Mizuno & Kaufmann 2019). Establishes that Japanese possesses X-marking, setting up the puzzle of its unavailability in Anderson conditionals." }
 
 def ja4a : LinguisticExample :=
   { id := "mizuno2024_ja4a"
@@ -85,9 +79,7 @@ def ja4a : LinguisticExample :=
     alternatives := [("Tasikani, Jones-si-ga sakuya hiso-o nom-eba, kare-ga ima mise-tei-ru syoozyoo-to mattaku onazi syoozyoo-o ima mise-ta hazuda.", .unacceptable)]
     readings := []
     paperFeatures := [("construction", "anderson"), ("strategy", "o-marking")]
-    comment := "Japanese O-marks: Non-Past -ru triggers a Historical-Present shift expanding the domain. The X-marked alternative (Past -ta) forces a counterfactual reading, contradicting the Anderson follow-up (4b), so it is infelicitous."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Japanese O-marks: Non-Past -ru triggers a Historical-Present shift expanding the domain. The X-marked alternative (Past -ta) forces a counterfactual reading, contradicting the Anderson follow-up (4b), so it is infelicitous." }
 
 def ja7a : LinguisticExample :=
   { id := "mizuno2024_ja7a"
@@ -103,9 +95,7 @@ def ja7a : LinguisticExample :=
     alternatives := [("Tasikani, Jones-ga ototoi Manila-o syuppatusu-reba, ... kinoo-no tuuka zikoku-to mattaku onazi zikoku-ni tuukas-ita hazuda.", .unacceptable)]
     readings := []
     paperFeatures := [("construction", "anderson"), ("strategy", "o-marking"), ("hp_type", "radical")]
-    comment := "Radical-HP case: consequent event overtly past, yet Non-Past required. Temporal indexicals ototoi and kinoo evaluate against the utterance time (theta = origin), paralleling Schlenker 2004's Historical Present."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Radical-HP case: consequent event overtly past, yet Non-Past required. Temporal indexicals ototoi and kinoo evaluate against the utterance time (theta = origin), paralleling Schlenker 2004's Historical Present." }
 
 def ma13a : LinguisticExample :=
   { id := "mizuno2024_ma13a"
@@ -121,9 +111,7 @@ def ma13a : LinguisticExample :=
     alternatives := [("Ruguo Jones zuotian he le pishuang, jiu hui chuxian ta xianzai shiji chuxian de zheyangde zhengzhuang le.", .unacceptable)]
     readings := []
     paperFeatures := [("construction", "anderson"), ("strategy", "o-marking")]
-    comment := "Mandarin O-marks (no consequent-final le); the conditional marker is ruguo. The X-marked alternative (consequent-final perfective le) induces strong counterfactuality, like Japanese Past -ta, so it is infelicitous for the Anderson reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Mandarin O-marks (no consequent-final le); the conditional marker is ruguo. The X-marked alternative (consequent-final perfective le) induces strong counterfactuality, like Japanese Past -ta, so it is infelicitous for the Anderson reading." }
 
 def en8 : LinguisticExample :=
   { id := "mizuno2024_en8"
@@ -139,9 +127,7 @@ def en8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "flv"), ("strategy", "x-marking"), ("flv_xmarking", "available")]
-    comment := "English X-marking is available for FLV: the X-marked conditional (8a) takes an unlikeliness follow-up (8b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "English X-marking is available for FLV: the X-marked conditional (8a) takes an unlikeliness follow-up (8b)." }
 
 def ja9 : LinguisticExample :=
   { id := "mizuno2024_ja9"
@@ -157,9 +143,7 @@ def ja9 : LinguisticExample :=
     alternatives := [("John-ga asita kur-eba, paatii-wa totemo moriagat-ta daroo, #kedo tabun kare-wa asita ko-na-i to omou.", .unacceptable)]
     readings := []
     paperFeatures := [("construction", "flv"), ("strategy", "o-marking"), ("flv_xmarking", "unavailable")]
-    comment := "Japanese FLV must O-mark (Non-Past -u, ex 9). The X-marked variant (Past -ta, ex 10) induces strong counterfactuality, making the unlikeliness follow-up contradictory."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Japanese FLV must O-mark (Non-Past -u, ex 9). The X-marked variant (Past -ta, ex 10) induces strong counterfactuality, making the unlikeliness follow-up contradictory." }
 
 def ma11 : LinguisticExample :=
   { id := "mizuno2024_ma11"
@@ -175,9 +159,7 @@ def ma11 : LinguisticExample :=
     alternatives := [("Ruguo mingtian John lai, paidui de qifen jiu neng huoyue qilai le, #danshi wo juede ta mingtian bu hui lai.", .unacceptable)]
     readings := []
     paperFeatures := [("construction", "flv"), ("strategy", "o-marking"), ("flv_xmarking", "unavailable")]
-    comment := "Mandarin FLV must O-mark (no le, ex 11). The X-marked variant (perfective le, ex 12) induces strong counterfactuality, making the unlikeliness follow-up contradictory."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Mandarin FLV must O-mark (no le, ex 11). The X-marked variant (perfective le, ex 12) induces strong counterfactuality, making the unlikeliness follow-up contradictory." }
 
 def all : List LinguisticExample := [en1a, en2, ja3, ja4a, ja7a, ma13a, en8, ja9, ma11]
 

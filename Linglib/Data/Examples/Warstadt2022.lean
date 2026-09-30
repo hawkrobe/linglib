@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("presupposition", "Tom is a non-US citizen"), ("projection", "projects"), ("qud", "need visa")]
-    comment := "Negating the species predicate triggers the defeasible genus inference under this question."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Negating the species predicate triggers the defeasible genus inference under this question." }
 
 def ex_2 : LinguisticExample :=
   { id := "warstadt2022_2"
@@ -49,9 +47,7 @@ def ex_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("presupposition", "Tom is a non-US citizen"), ("projection", "absent"), ("qud", "free drink")]
-    comment := "Under the free-drink question the genus inference is reported to be absent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Under the free-drink question the genus inference is reported to be absent." }
 
 def ex_3 : LinguisticExample :=
   { id := "warstadt2022_3"
@@ -67,9 +63,7 @@ def ex_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("presupposition", "the new hires are non-US citizens"), ("projection", "universal")]
-    comment := "The genus inference projects universally out of the quantifier."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The genus inference projects universally out of the quantifier." }
 
 def ex_4 : LinguisticExample :=
   { id := "warstadt2022_4"
@@ -85,9 +79,7 @@ def ex_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("level", "species"), ("inference", "Tom is an athlete"), ("strength", "stronger")]
-    comment := "Negating the species predicate projects the family predicate more strongly than negating the genus."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Negating the species predicate projects the family predicate more strongly than negating the genus." }
 
 def ex_5 : LinguisticExample :=
   { id := "warstadt2022_5"
@@ -103,9 +95,7 @@ def ex_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("level", "genus"), ("inference", "Tom is an athlete"), ("strength", "weaker")]
-    comment := "Negating the genus predicate projects the family predicate only weakly."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Negating the genus predicate projects the family predicate only weakly." }
 
 def ex_6 : LinguisticExample :=
   { id := "warstadt2022_6"
@@ -121,9 +111,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("level", "family")]
-    comment := "The family-level inference of (4a) and (4b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The family-level inference of (4a) and (4b)." }
 
 def ex_7 : LinguisticExample :=
   { id := "warstadt2022_7"
@@ -139,9 +127,7 @@ def ex_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("trigger", "stop"), ("projection", "reduced")]
-    comment := "Geurts's example: under this question there is less need to accommodate that Tom smoked."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Geurts's example: under this question there is less need to accommodate that Tom smoked." }
 
 def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7]
 

@@ -31,9 +31,7 @@ def ex_1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "love"), ("operator", "none"), ("inference", "(2) Mo left."), ("projects", "true")]
-    comment := "The inference that Mo left projects through the entailment-canceling operator."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The inference that Mo left projects through the entailment-canceling operator." }
 
 def ex_1b : LinguisticExample :=
   { id := "grovewhite2025_1b"
@@ -49,9 +47,7 @@ def ex_1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "love"), ("operator", "negation"), ("inference", "(2) Mo left."), ("projects", "true")]
-    comment := "The inference that Mo left projects through the entailment-canceling operator."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The inference that Mo left projects through the entailment-canceling operator." }
 
 def ex_1c : LinguisticExample :=
   { id := "grovewhite2025_1c"
@@ -67,9 +63,7 @@ def ex_1c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "love"), ("operator", "question"), ("inference", "(2) Mo left."), ("projects", "true")]
-    comment := "The inference that Mo left projects through the entailment-canceling operator."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The inference that Mo left projects through the entailment-canceling operator." }
 
 def ex_1d : LinguisticExample :=
   { id := "grovewhite2025_1d"
@@ -85,9 +79,7 @@ def ex_1d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "love"), ("operator", "modal"), ("inference", "(2) Mo left."), ("projects", "true")]
-    comment := "The inference that Mo left projects through the entailment-canceling operator."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The inference that Mo left projects through the entailment-canceling operator." }
 
 def ex_1e : LinguisticExample :=
   { id := "grovewhite2025_1e"
@@ -103,9 +95,7 @@ def ex_1e : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "love"), ("operator", "conditional"), ("inference", "(2) Mo left."), ("projects", "true")]
-    comment := "The inference that Mo left projects through the entailment-canceling operator."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The inference that Mo left projects through the entailment-canceling operator." }
 
 def ex_17_belief : LinguisticExample :=
   { id := "grovewhite2025_17_belief"
@@ -121,9 +111,7 @@ def ex_17_belief : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "be annoyed"), ("operator", "question"), ("inference", "(18a) Jo believed that Mo left."), ("projects", "true")]
-    comment := "Emotive predicates tend to give rise to belief inferences as well as projective ones."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Emotive predicates tend to give rise to belief inferences as well as projective ones." }
 
 def ex_17_truth : LinguisticExample :=
   { id := "grovewhite2025_17_truth"
@@ -139,9 +127,7 @@ def ex_17_truth : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "be annoyed"), ("operator", "question"), ("inference", "(18b) Mo left."), ("projects", "true")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_19 : LinguisticExample :=
   { id := "grovewhite2025_19"
@@ -157,9 +143,7 @@ def ex_19 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "find out"), ("operator", "negation"), ("inference", "Harry is having a graduation party."), ("projects", "false")]
-    comment := "Simons et al. (2017), their (10): with focus on the embedded subject the complement does not project."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Simons et al. (2017), their (10): with focus on the embedded subject the complement does not project." }
 
 def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_1d, ex_1e, ex_17_belief, ex_17_truth, ex_19]
 

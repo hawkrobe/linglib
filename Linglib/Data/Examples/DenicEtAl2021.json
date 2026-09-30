@@ -21,9 +21,7 @@
       ["direction", "subsetToSuperset"],
       ["valid", "yes"]
     ],
-    "comment": "An upward-entailing environment supports the subset-to-superset inference.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "An upward-entailing environment supports the subset-to-superset inference."
   },
   {
     "id": "denicetal2021_2",
@@ -47,9 +45,7 @@
       ["direction", "supersetToSubset"],
       ["valid", "yes"]
     ],
-    "comment": "A downward-entailing environment supports the superset-to-subset inference.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A downward-entailing environment supports the superset-to-subset inference."
   },
   {
     "id": "denicetal2021_3",
@@ -69,9 +65,7 @@
       ["kind", "DE"],
       ["pi", "npi"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denicetal2021_4",
@@ -91,9 +85,7 @@
       ["kind", "UE"],
       ["pi", "npi"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denicetal2021_5",
@@ -113,9 +105,7 @@
       ["kind", "UE"],
       ["pi", "ppi"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denicetal2021_6",
@@ -138,9 +128,7 @@
       ["kind", "DE"],
       ["pi", "ppi"]
     ],
-    "comment": "The positive polarity item has no reading equivalent to I didn't drink any coffee.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The positive polarity item has no reading equivalent to I didn't drink any coffee."
   },
   {
     "id": "denicetal2021_7",
@@ -163,9 +151,7 @@
       ["kind", "NM"],
       ["valid", "no"]
     ],
-    "comment": "Neither sentence entails the other: a non-monotone environment.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Neither sentence entails the other: a non-monotone environment."
   },
   {
     "id": "denicetal2021_8",
@@ -188,9 +174,7 @@
       ["kind", "NM"],
       ["pi", "both"]
     ],
-    "comment": "Both polarity items are acceptable to some extent in non-monotone environments, with individual variation for the negative one.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Both polarity items are acceptable to some extent in non-monotone environments, with individual variation for the negative one."
   },
   {
     "id": "denicetal2021_9",
@@ -212,9 +196,7 @@
       ["kind", "NM"],
       ["pi", "ppi"]
     ],
-    "comment": "The positive polarity item can take exceptional wide scope, under which it sits in an upward-entailing environment.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The positive polarity item can take exceptional wide scope, under which it sits in an upward-entailing environment."
   },
   {
     "id": "denicetal2021_11",
@@ -236,9 +218,7 @@
       ["item", "training"],
       ["expected", "follows"]
     ],
-    "comment": "Training item rated 93% in Experiment 1.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Training item rated 93% in Experiment 1."
   },
   {
     "id": "denicetal2021_12",
@@ -260,9 +240,7 @@
       ["item", "training"],
       ["expected", "doesNotFollow"]
     ],
-    "comment": "Training item rated 9% in Experiment 1.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Training item rated 9% in Experiment 1."
   },
   {
     "id": "denicetal2021_13",
@@ -284,9 +262,7 @@
       ["item", "training"],
       ["expected", "intermediate"]
     ],
-    "comment": "Training item rated 68% in Experiment 1.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Training item rated 68% in Experiment 1."
   },
   {
     "id": "denicetal2021_14",
@@ -311,9 +287,7 @@
       ["pi", "ppi"],
       ["valid", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denicetal2021_15",
@@ -338,9 +312,7 @@
       ["pi", "ppi"],
       ["valid", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denicetal2021_16",
@@ -365,9 +337,7 @@
       ["pi", "ppi"],
       ["valid", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denicetal2021_17",
@@ -392,9 +362,7 @@
       ["pi", "npi"],
       ["valid", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denicetal2021_18",
@@ -419,9 +387,7 @@
       ["pi", "npi"],
       ["valid", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denicetal2021_19",
@@ -446,9 +412,7 @@
       ["pi", "npi"],
       ["valid", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denicetal2021_20",
@@ -473,9 +437,7 @@
       ["pi", "both"],
       ["valid", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denicetal2021_21",
@@ -500,9 +462,7 @@
       ["pi", "both"],
       ["valid", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denicetal2021_22",
@@ -525,9 +485,7 @@
       ["kind", "DN"],
       ["pi", "both"]
     ],
-    "comment": "Both items are licit in a doubly negative environment; the positive one can take narrow scope under both operators, and the negative one sits in a globally upward-entailing environment, licensed by the local one.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Both items are licit in a doubly negative environment; the positive one can take narrow scope under both operators, and the negative one sits in a globally upward-entailing environment, licensed by the local one."
   },
   {
     "id": "denicetal2021_23",
@@ -552,9 +510,7 @@
       ["pi", "both"],
       ["valid", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denicetal2021_24",
@@ -579,9 +535,7 @@
       ["pi", "both"],
       ["valid", "yes"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "denicetal2021_25",
@@ -606,9 +560,7 @@
       ["pi", "ppi"],
       ["valid", "no"]
     ],
-    "comment": "Experiment 2's item with the positive polarity item in both premise and conclusion; the null result suggests the item does not take wide scope in non-monotone environments, §9.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Experiment 2's item with the positive polarity item in both premise and conclusion; the null result suggests the item does not take wide scope in non-monotone environments, §9."
   },
   {
     "id": "denicetal2021_26",
@@ -635,9 +587,7 @@
       ["pi", "ppi"],
       ["valid", "yes"]
     ],
-    "comment": "Under the wide-scope reading (27) the inference still follows, a confound for the positive polarity item's effect in doubly negative environments.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Under the wide-scope reading (27) the inference still follows, a confound for the positive polarity item's effect in doubly negative environments."
   },
   {
     "id": "denicetal2021_28",
@@ -662,9 +612,7 @@
       ["pi", "noPI"],
       ["valid", "yes"]
     ],
-    "comment": "The working example of §10.2, with (29) its version with any and (31) the conclusion.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The working example of §10.2, with (29) its version with any and (31) the conclusion."
   },
   {
     "id": "denicetal2021_29",
@@ -689,8 +637,6 @@
       ["pi", "npi"],
       ["valid", "yes"]
     ],
-    "comment": "Under domain widening, (30), the premise with any is stronger, so downward inferences from it follow a fortiori.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Under domain widening, (30), the premise with any is stronger, so downward inferences from it follow a fortiori."
   }
 ]

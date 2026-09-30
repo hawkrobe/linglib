@@ -31,9 +31,7 @@ def item1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "sunglasses"), ("hiddenDistractor", "glasses case"), ("condition", "scripted")]
-    comment := "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target." }
 
 def item2 : LinguisticExample :=
   { id := "hawkinsgweongoodman2021_item2"
@@ -49,9 +47,7 @@ def item2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "block (3rd row)"), ("hiddenDistractor", "block (4th row)"), ("condition", "scripted")]
-    comment := "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target." }
 
 def item3 : LinguisticExample :=
   { id := "hawkinsgweongoodman2021_item3"
@@ -67,9 +63,7 @@ def item3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "cassette"), ("hiddenDistractor", "Scotch tape"), ("condition", "scripted")]
-    comment := "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target." }
 
 def item4 : LinguisticExample :=
   { id := "hawkinsgweongoodman2021_item4"
@@ -85,9 +79,7 @@ def item4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "medium cup"), ("hiddenDistractor", "large cup"), ("condition", "scripted")]
-    comment := "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target." }
 
 def item5 : LinguisticExample :=
   { id := "hawkinsgweongoodman2021_item5"
@@ -103,9 +95,7 @@ def item5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "round hairbrush"), ("hiddenDistractor", "flat hairbrush"), ("condition", "scripted")]
-    comment := "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target." }
 
 def item6 : LinguisticExample :=
   { id := "hawkinsgweongoodman2021_item6"
@@ -121,9 +111,7 @@ def item6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "board eraser"), ("hiddenDistractor", "pencil eraser"), ("condition", "scripted")]
-    comment := "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target." }
 
 def item7 : LinguisticExample :=
   { id := "hawkinsgweongoodman2021_item7"
@@ -139,9 +127,7 @@ def item7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "medium candle"), ("hiddenDistractor", "small candle"), ("condition", "scripted")]
-    comment := "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target." }
 
 def item8 : LinguisticExample :=
   { id := "hawkinsgweongoodman2021_item8"
@@ -157,9 +143,7 @@ def item8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1"), ("target", "computer mouse"), ("hiddenDistractor", "toy mouse"), ("condition", "scripted")]
-    comment := "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target." }
 
 def shape : LinguisticExample :=
   { id := "hawkinsgweongoodman2021_shape"
@@ -175,9 +159,7 @@ def shape : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.4"), ("features", "shape"), ("speaker", "egocentric")]
-    comment := "Sufficient in the speaker's own view: shape alone identifies the target among the visible objects."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Sufficient in the speaker's own view: shape alone identifies the target among the visible objects." }
 
 def shapeColor : LinguisticExample :=
   { id := "hawkinsgweongoodman2021_shapeColor"
@@ -193,9 +175,7 @@ def shapeColor : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.4"), ("features", "shape, color")]
-    comment := "The utterance the mixture speaker switches to at wS = 0.36 in Fig. 2."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The utterance the mixture speaker switches to at wS = 0.36 in Fig. 2." }
 
 def full : LinguisticExample :=
   { id := "hawkinsgweongoodman2021_full"
@@ -211,9 +191,7 @@ def full : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.4"), ("features", "shape, color, texture")]
-    comment := "The utterance the mixture speaker switches to at wS = 0.72 in Fig. 2."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The utterance the mixture speaker switches to at wS = 0.72 in Fig. 2." }
 
 def all : List LinguisticExample := [item1, item2, item3, item4, item5, item6, item7, item8, shape, shapeColor, full]
 

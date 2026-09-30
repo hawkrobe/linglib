@@ -24,9 +24,7 @@
       ["verb", "leo"],
       ["position", "internal_argument"]
     ],
-    "comment": "Paper prints 'oti/*pu' in one example; the pu variant is expanded into alternatives. OTI/PU are the paper's placeholder glosses for the complementizers (fn. 1). Verbs of saying and belief take oti, not pu.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Paper prints 'oti/*pu' in one example; the pu variant is expanded into alternatives. OTI/PU are the paper's placeholder glosses for the complementizers (fn. 1). Verbs of saying and belief take oti, not pu."
   },
   {
     "id": "angelopoulos2026_1b",
@@ -52,9 +50,7 @@
       ["verb", "metaniono"],
       ["position", "internal_argument"]
     ],
-    "comment": "Paper prints 'pu/*oti' in one example; the oti variant is expanded into alternatives. Emotive factive verbs take pu, not oti.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Paper prints 'pu/*oti' in one example; the oti variant is expanded into alternatives. Emotive factive verbs take pu, not oti."
   },
   {
     "id": "angelopoulos2026_31a",
@@ -75,9 +71,7 @@
       ["diagnostic", "P-ban"],
       ["verb", "δjafono 'disagree'"]
     ],
-    "comment": "δjafono 'disagree' takes a PP complement headed by me 'with'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "δjafono 'disagree' takes a PP complement headed by me 'with'."
   },
   {
     "id": "angelopoulos2026_31b",
@@ -101,9 +95,7 @@
       ["complementizer", "oti"],
       ["position", "internal_argument"]
     ],
-    "comment": "δjafono 'disagree' also takes a bare oti-clause complement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "δjafono 'disagree' also takes a bare oti-clause complement."
   },
   {
     "id": "angelopoulos2026_31c",
@@ -127,9 +119,7 @@
       ["complementizer", "oti"],
       ["position", "p_complement"]
     ],
-    "comment": "Translation marked 'intended:' in the paper. The oti-clause cannot combine with the P me: like T, P cannot host light-noun incorporation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Translation marked 'intended:' in the paper. The oti-clause cannot combine with the P me: like T, P cannot host light-noun incorporation."
   },
   {
     "id": "angelopoulos2026_32a",
@@ -150,9 +140,7 @@
       ["diagnostic", "P-ban"],
       ["verb", "metaniono"]
     ],
-    "comment": "metanjono 'regret' takes a PP complement headed by ja 'for'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "metanjono 'regret' takes a PP complement headed by ja 'for'."
   },
   {
     "id": "angelopoulos2026_32b",
@@ -175,9 +163,7 @@
       ["verb", "metaniono"],
       ["position", "internal_argument"]
     ],
-    "comment": "metanjono 'regret' also takes a bare pu-clause complement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "metanjono 'regret' also takes a bare pu-clause complement."
   },
   {
     "id": "angelopoulos2026_32c",
@@ -201,9 +187,7 @@
       ["position", "p_complement"],
       ["confound", "p_ban"]
     ],
-    "comment": "Translation marked 'intended:' in the paper. The pu-clause cannot combine with the P ja.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Translation marked 'intended:' in the paper. The pu-clause cannot combine with the P ja."
   },
   {
     "id": "angelopoulos2026_33a",
@@ -227,9 +211,7 @@
       ["diagnostic", "truth-predicates"],
       ["nounSort", "content"]
     ],
-    "comment": "Paper prints 'aliθis/lanθasmeni' in one example; expanded here. Content nouns combine with 'true'/'mistaken'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Paper prints 'aliθis/lanθasmeni' in one example; expanded here. Content nouns combine with 'true'/'mistaken'."
   },
   {
     "id": "angelopoulos2026_33b",
@@ -253,9 +235,7 @@
       ["diagnostic", "truth-predicates"],
       ["nounSort", "situation"]
     ],
-    "comment": "Marked # in the paper (scoping over both predicate variants): situation nouns do not combine with 'true'/'mistaken'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Marked # in the paper (scoping over both predicate variants): situation nouns do not combine with 'true'/'mistaken'."
   },
   {
     "id": "angelopoulos2026_34a",
@@ -283,9 +263,7 @@
       ["diagnostic", "occurrence-predicates"],
       ["nounSort", "content"]
     ],
-    "comment": "Marked # in the paper. Paper prints the six content nouns 'fimes/ iδees/ proiδopiisis/ pepiθisis/ ipoθesis/ θeories' (rumors/ideas/warnings/beliefs/hypotheses/theories) as one slash-list; expanded here. Content nouns do not combine with simveni 'happen'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Marked # in the paper. Paper prints the six content nouns 'fimes/ iδees/ proiδopiisis/ pepiθisis/ ipoθesis/ θeories' (rumors/ideas/warnings/beliefs/hypotheses/theories) as one slash-list; expanded here. Content nouns do not combine with simveni 'happen'."
   },
   {
     "id": "angelopoulos2026_34b",
@@ -309,9 +287,7 @@
       ["diagnostic", "occurrence-predicates"],
       ["nounSort", "situation"]
     ],
-    "comment": "Paper prints 'periptosis/ katastasis' glossed 'situations.F.PL.NOM/ cases.F.PL.NOM' — transcribed verbatim, though the gloss order looks swapped relative to (35b), where periptosi = 'case' and katastasi = 'situation'. Situation nouns combine with simveni 'happen'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Paper prints 'periptosis/ katastasis' glossed 'situations.F.PL.NOM/ cases.F.PL.NOM' — transcribed verbatim, though the gloss order looks swapped relative to (35b), where periptosi = 'case' and katastasi = 'situation'. Situation nouns combine with simveni 'happen'."
   },
   {
     "id": "angelopoulos2026_3a",
@@ -338,9 +314,7 @@
       ["position", "internal_argument"],
       ["diagnostic", "clitic-doubling"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "angelopoulos2026_3b",
@@ -366,9 +340,7 @@
       ["position", "internal_argument"],
       ["diagnostic", "clitic-doubling"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "angelopoulos2026_4a",
@@ -391,9 +363,7 @@
       ["position", "internal_argument"],
       ["composition", "predicate_modification"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "angelopoulos2026_4b",
@@ -416,9 +386,7 @@
       ["nominalized", "yes"],
       ["composition", "functional_application"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "angelopoulos2026_4c",
@@ -442,9 +410,7 @@
       ["diagnostic", "clitic-doubling"],
       ["composition", "predicate_modification"]
     ],
-    "comment": "Clitic-doubled bare oti-clause keeps the explanans reading: an internal argument composing as a modifier.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Clitic-doubled bare oti-clause keeps the explanans reading: an internal argument composing as a modifier."
   },
   {
     "id": "angelopoulos2026_6a",
@@ -469,9 +435,7 @@
       ["position", "derived_subject"],
       ["diagnostic", "passivization"]
     ],
-    "comment": "The dative intervenes unless clitic-doubled, as for DP themes.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The dative intervenes unless clitic-doubled, as for DP themes."
   },
   {
     "id": "angelopoulos2026_11a",
@@ -490,9 +454,7 @@
       ["complementizer", "oti"],
       ["position", "external_argument"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "angelopoulos2026_12a",
@@ -511,9 +473,7 @@
       ["complementizer", "pu"],
       ["position", "external_argument"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "angelopoulos2026_14a",
@@ -536,9 +496,7 @@
       ["complementizer", "pu"],
       ["position", "internal_argument"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "angelopoulos2026_14b",
@@ -558,9 +516,7 @@
       ["complementizer", "pu"],
       ["position", "derived_subject"]
     ],
-    "comment": "Preverbal pu-clause of a Class III experiencer verb: a derived subject, rated 4.2/5 against 4.6/5 postverbal (fn. 8).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Preverbal pu-clause of a Class III experiencer verb: a derived subject, rated 4.2/5 against 4.6/5 postverbal (fn. 8)."
   },
   {
     "id": "angelopoulos2026_19c",
@@ -586,9 +542,7 @@
       ["position", "internal_argument"],
       ["diagnostic", "manner-adverb"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "angelopoulos2026_20c",
@@ -614,9 +568,7 @@
       ["position", "internal_argument"],
       ["diagnostic", "manner-adverb"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "angelopoulos2026_21a",
@@ -642,9 +594,7 @@
       ["position", "internal_argument"],
       ["diagnostic", "manner-adverb"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "angelopoulos2026_21b",
@@ -668,9 +618,7 @@
       ["diagnostic", "manner-adverb"],
       ["confound", "manner_adverb"]
     ],
-    "comment": "Eventive oti-selectors accept manner adverbs.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Eventive oti-selectors accept manner adverbs."
   },
   {
     "id": "angelopoulos2026_22a",
@@ -694,9 +642,7 @@
       ["diagnostic", "manner-adverb"],
       ["confound", "manner_adverb"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "angelopoulos2026_22b",
@@ -720,9 +666,7 @@
       ["diagnostic", "manner-adverb"],
       ["confound", "manner_adverb"]
     ],
-    "comment": "Roussou 2019 (7): the pu-sense is stative and rejects the manner PP.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Roussou 2019 (7): the pu-sense is stative and rejects the manner PP."
   },
   {
     "id": "angelopoulos2026_23c",
@@ -748,9 +692,7 @@
       ["position", "internal_argument"],
       ["diagnostic", "in-adverbial"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "angelopoulos2026_35a",
@@ -772,9 +714,7 @@
       ["nounSort", "content"],
       ["diagnostic", "noun-complement"]
     ],
-    "comment": "Also with iδea 'idea', neo 'news', jeGonos 'fact'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Also with iδea 'idea', neo 'news', jeGonos 'fact'."
   },
   {
     "id": "angelopoulos2026_35b",
@@ -796,9 +736,7 @@
       ["nounSort", "situation"],
       ["diagnostic", "noun-complement"]
     ],
-    "comment": "Also with peristasi 'circumstance', katastasi 'situation'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Also with peristasi 'circumstance', katastasi 'situation'."
   },
   {
     "id": "angelopoulos2026_36a",
@@ -818,9 +756,7 @@
       ["nounSort", "content"],
       ["diagnostic", "truth-predicates"]
     ],
-    "comment": "The nominalization of an oti-selecting verb patterns with content nouns; 'mistaken' likewise.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The nominalization of an oti-selecting verb patterns with content nouns; 'mistaken' likewise."
   },
   {
     "id": "angelopoulos2026_37a",
@@ -840,9 +776,7 @@
       ["nounSort", "situation"],
       ["diagnostic", "truth-predicates"]
     ],
-    "comment": "The nominalization of a pu-selecting verb patterns with situation nouns.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The nominalization of a pu-selecting verb patterns with situation nouns."
   },
   {
     "id": "angelopoulos2026_38a",
@@ -863,9 +797,7 @@
       ["diagnostic", "factivity"],
       ["confound", "factivity_continuation"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "angelopoulos2026_38b",
@@ -886,9 +818,7 @@
       ["diagnostic", "factivity"],
       ["confound", "factivity_continuation"]
     ],
-    "comment": "The continuation contradicts the presupposition the pu-clause carries.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The continuation contradicts the presupposition the pu-clause carries."
   },
   {
     "id": "angelopoulos2026_fn14_i",
@@ -909,9 +839,7 @@
       ["verb", "simveni"],
       ["complementizer", "oti"]
     ],
-    "comment": "Occurrence verbs describe situations (no oti) and are eventive (no pu); only na remains.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Occurrence verbs describe situations (no oti) and are eventive (no pu); only na remains."
   },
   {
     "id": "angelopoulos2026_43a",
@@ -931,9 +859,7 @@
       ["position", "external_argument"],
       ["nominalized", "yes"]
     ],
-    "comment": "Nominalization with to rescues the external-argument position for oti-clauses.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Nominalization with to rescues the external-argument position for oti-clauses."
   },
   {
     "id": "angelopoulos2026_44a",
@@ -953,8 +879,6 @@
       ["position", "external_argument"],
       ["nominalized", "yes"]
     ],
-    "comment": "pu-clauses do not nominalize: Greek has no silent situation noun.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "pu-clauses do not nominalize: Greek has no silent situation noun."
   }
 ]

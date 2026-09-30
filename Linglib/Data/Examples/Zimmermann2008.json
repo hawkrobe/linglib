@@ -19,9 +19,7 @@
       ["indefinite", "bare"],
       ["scope", "NEG > ∃"]
     ],
-    "comment": "No reading on which a certain cap escapes the negation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No reading on which a certain cap escapes the negation."
   },
   {
     "id": "zimmermann2008_12a",
@@ -42,9 +40,7 @@
       ["indefinite", "bare"],
       ["scope", "NEG > ∃"]
     ],
-    "comment": "Equivalent to no farmer came, although the subject precedes the negation marker.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Equivalent to no farmer came, although the subject precedes the negation marker."
   },
   {
     "id": "zimmermann2008_13a",
@@ -66,9 +62,7 @@
       ["indefinite", "bare"],
       ["scope", "NEG > ∃"]
     ],
-    "comment": "Cannot describe a situation where some people went and others did not.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cannot describe a situation where some people went and others did not."
   },
   {
     "id": "zimmermann2008_63a",
@@ -89,9 +83,7 @@
       ["indefinite", "wani"],
       ["function", "discourse-introducing"]
     ],
-    "comment": "From the Sauna Jac narrative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "From the Sauna Jac narrative."
   },
   {
     "id": "zimmermann2008_64",
@@ -113,9 +105,7 @@
       ["indefinite", "wasu"],
       ["reading", "partitive"]
     ],
-    "comment": "Cited from Cowan and Schuh (1976).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from Cowan and Schuh (1976)."
   },
   {
     "id": "zimmermann2008_65a",
@@ -136,9 +126,7 @@
       ["indefinite", "wani"],
       ["clause", "polar question"]
     ],
-    "comment": "Ambiguous between an existential and a free-choice reading; cited from Cowan and Schuh (1976).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Ambiguous between an existential and a free-choice reading; cited from Cowan and Schuh (1976)."
   },
   {
     "id": "zimmermann2008_69a",
@@ -160,9 +148,7 @@
       ["position", "object"],
       ["scope", "ambiguous"]
     ],
-    "comment": "The negative existential reading is preferred; cited from Bargery.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The negative existential reading is preferred; cited from Bargery."
   },
   {
     "id": "zimmermann2008_69b",
@@ -185,9 +171,7 @@
       ["position", "object"],
       ["scope", "ambiguous"]
     ],
-    "comment": "Here the some-not reading is preferred.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Here the some-not reading is preferred."
   },
   {
     "id": "zimmermann2008_70",
@@ -209,9 +193,7 @@
       ["position", "subject"],
       ["scope", "∃ > NEG only"]
     ],
-    "comment": "No negative existential reading: the opposite of bare subject indefinites.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No negative existential reading: the opposite of bare subject indefinites."
   },
   {
     "id": "zimmermann2008_71",
@@ -232,9 +214,7 @@
     "paperFeatures": [
       ["construction", "negative existential relative"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zimmermann2008_73",
@@ -256,9 +236,7 @@
       ["negation", "VP"],
       ["scope", "negative existential only"]
     ],
-    "comment": "The not-everyone reading is unavailable.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The not-everyone reading is unavailable."
   },
   {
     "id": "zimmermann2008_74a",
@@ -281,9 +259,7 @@
       ["negation", "sentential"],
       ["scope", "negative universal only"]
     ],
-    "comment": "Cited from Newman (2000).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from Newman (2000)."
   },
   {
     "id": "zimmermann2008_75",
@@ -305,9 +281,7 @@
       ["quantifier", "koo+wh"],
       ["position", "subject"]
     ],
-    "comment": "A subject koo+wh cannot take syntactic scope over VP-negation; cited from Newman (2000).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A subject koo+wh cannot take syntactic scope over VP-negation; cited from Newman (2000)."
   },
   {
     "id": "zimmermann2008_78",
@@ -330,9 +304,7 @@
       ["position", "subject"],
       ["focus", "yes"]
     ],
-    "comment": "Focusing rescues the subject universal over negation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Focusing rescues the subject universal over negation."
   },
   {
     "id": "zimmermann2008_85a",
@@ -353,9 +325,7 @@
       ["quantifier", "duk"],
       ["order", "prenominal"]
     ],
-    "comment": "Alternates with postnominal faasinjojî-n dukà; cited from Newman (2000).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Alternates with postnominal faasinjojî-n dukà; cited from Newman (2000)."
   },
   {
     "id": "zimmermann2008_86",
@@ -376,9 +346,7 @@
       ["quantifier", "duk"],
       ["restrictor", "singular"]
     ],
-    "comment": "Duk requires a plural or mass noun phrase.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Duk requires a plural or mass noun phrase."
   },
   {
     "id": "zimmermann2008_89a",
@@ -400,9 +368,7 @@
       ["quantifier", "koo+wh"],
       ["predicate", "collective"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zimmermann2008_90a",
@@ -424,9 +390,7 @@
       ["quantifier", "duk"],
       ["predicate", "collective"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "zimmermann2008_91a",
@@ -449,9 +413,7 @@
       ["negation", "VP"],
       ["scope", "negative universal"]
     ],
-    "comment": "Cited from Jaggar (2001).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from Jaggar (2001)."
   },
   {
     "id": "zimmermann2008_91b",
@@ -474,8 +436,6 @@
       ["negation", "sentential"],
       ["scope", "negative universal"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

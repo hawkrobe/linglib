@@ -31,9 +31,7 @@ def ex_5a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("item", "be going to"), ("stage", "motion with intent"), ("level", "nonSubjective"), ("century", "16")]
-    comment := "Subjectification of *be going to*: motion with intent to act, before the intentional non-motion (5b) and raising (5c) uses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Subjectification of *be going to*: motion with intent to act, before the intentional non-motion (5b) and raising (5c) uses." }
 
 def ex_5b : LinguisticExample :=
   { id := "traugott2010_5b"
@@ -49,9 +47,7 @@ def ex_5b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("item", "be going to"), ("stage", "intention without motion"), ("level", "nonSubjective"), ("century", "17")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_5c : LinguisticExample :=
   { id := "traugott2010_5c"
@@ -67,9 +63,7 @@ def ex_5c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("item", "be going to"), ("stage", "raising"), ("level", "subjective"), ("century", "18")]
-    comment := "The raising construction expresses the speaker's assessment of the future: the subjectified polysemy."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The raising construction expresses the speaker's assessment of the future: the subjectified polysemy." }
 
 def ex_6 : LinguisticExample :=
   { id := "traugott2010_6"
@@ -85,9 +79,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := [("Old Japanese: wait in a specific location (non-honorific)", .acceptable), ("Late Old Japanese: humble subject be in the vicinity of respected referent (referent honorific, subjectified)", .acceptable), ("Early Middle Japanese -saburau/-soorau: be-polite (addressee honorific, intersubjectified)", .acceptable)]
     paperFeatures := [("item", "saburahu"), ("stage", "non-honorific > referent honorific > addressee honorific"), ("level", "nonSubjective > subjective > intersubjective")]
-    comment := "The coded intersubjective addressee honorific arises from the subjectified referent honorific, from Traugott and Dasher (2002)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The coded intersubjective addressee honorific arises from the subjectified referent honorific, from Traugott and Dasher (2002)." }
 
 def ex_12a : LinguisticExample :=
   { id := "traugott2010_12a"
@@ -103,9 +95,7 @@ def ex_12a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("item", "a piece of"), ("stage", "I Partitive"), ("level", "nonSubjective")]
-    comment := "Stage I: a partitive with a concrete complement."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stage I: a partitive with a concrete complement." }
 
 def ex_13a : LinguisticExample :=
   { id := "traugott2010_13a"
@@ -121,9 +111,7 @@ def ex_13a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("item", "a piece of"), ("stage", "II Extended Partitive"), ("level", "nonSubjective")]
-    comment := "Stage II: the complement generalized to abstract nouns, host-class expansion, with the invited inference of a small amount."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stage II: the complement generalized to abstract nouns, host-class expansion, with the invited inference of a small amount." }
 
 def ex_14a : LinguisticExample :=
   { id := "traugott2010_14a"
@@ -139,9 +127,7 @@ def ex_14a : LinguisticExample :=
     alternatives := []
     readings := [("partitive: a small part or exemplar of a logician", .acceptable), ("degree modifier: somewhat of a logician", .acceptable)]
     paperFeatures := [("item", "a piece of"), ("stage", "III Degree Modifier"), ("level", "subjective")]
-    comment := "Stage III: the bridging context in which a degree modifier reading arose, the only context where it developed robustly for *a piece of*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stage III: the bridging context in which a degree modifier reading arose, the only context where it developed robustly for *a piece of*." }
 
 def ex_16a : LinguisticExample :=
   { id := "traugott2010_16a"
@@ -157,9 +143,7 @@ def ex_16a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "0 Pre-Partitive"), ("level", "nonSubjective")]
-    comment := "Stage 0: the nominalized *biting*, before the metonymic transfer to the piece bitten out."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stage 0: the nominalized *biting*, before the metonymic transfer to the piece bitten out." }
 
 def ex_17 : LinguisticExample :=
   { id := "traugott2010_17"
@@ -175,9 +159,7 @@ def ex_17 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "I Partitive"), ("level", "nonSubjective")]
-    comment := "Stage I: morsel, unit bitten out."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stage I: morsel, unit bitten out." }
 
 def ex_18a : LinguisticExample :=
   { id := "traugott2010_18a"
@@ -193,9 +175,7 @@ def ex_18a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "II Extended Partitive"), ("level", "nonSubjective")]
-    comment := "Stage II: generalized to non-food and abstract complements, host-class expansion, with the implicature that the unit is small or inadequate."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stage II: generalized to non-food and abstract complements, host-class expansion, with the implicature that the unit is small or inadequate." }
 
 def ex_19a : LinguisticExample :=
   { id := "traugott2010_19a"
@@ -211,9 +191,7 @@ def ex_19a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "III Degree Modifier"), ("level", "subjective"), ("pragmatic", "intersubjective hedge")]
-    comment := "Stage III: the downtoner *somewhat*, the subjectification; with a negatively evaluated head it is used intersubjectively as a hedge, a pragmatic intersubjectification that is not coded."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stage III: the downtoner *somewhat*, the subjectification; with a negatively evaluated head it is used intersubjectively as a hedge, a pragmatic intersubjectification that is not coded." }
 
 def ex_20 : LinguisticExample :=
   { id := "traugott2010_20"
@@ -229,9 +207,7 @@ def ex_20 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "IV Adverb Degree Modifier"), ("level", "subjective")]
-    comment := "Stage IV: syntactic expansion to pre-adjectival position."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stage IV: syntactic expansion to pre-adjectival position." }
 
 def ex_21b : LinguisticExample :=
   { id := "traugott2010_21b"
@@ -247,9 +223,7 @@ def ex_21b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "V Adjunct"), ("level", "subjective"), ("polarity", "negative")]
-    comment := "Stage V: a free adjunct in responses, usually in a negative context, where the understating *a bit* is emphatic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stage V: a free adjunct in responses, usually in a negative context, where the understating *a bit* is emphatic." }
 
 def ex_22 : LinguisticExample :=
   { id := "traugott2010_22"
@@ -265,9 +239,7 @@ def ex_22 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("item", "a bit of"), ("stage", "III Degree Modifier"), ("head", "positively evaluated")]
-    comment := "As a downtoner, *a bit of* is unlikely with a positively evaluated head except in special circumstances such as irony."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "As a downtoner, *a bit of* is unlikely with a positively evaluated head except in special circumstances such as irony." }
 
 def ex_23 : LinguisticExample :=
   { id := "traugott2010_23"
@@ -283,9 +255,7 @@ def ex_23 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("item", "a shred of"), ("stage", "I Partitive"), ("level", "nonSubjective")]
-    comment := "Stage I: a fragment cut or broken off, generalized in Middle English to bodies."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stage I: a fragment cut or broken off, generalized in Middle English to bodies." }
 
 def ex_24b : LinguisticExample :=
   { id := "traugott2010_24b"
@@ -301,9 +271,7 @@ def ex_24b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("item", "a shred of"), ("stage", "II Extended Partitive"), ("level", "nonSubjective")]
-    comment := "Stage II: generalized to language, mankind and nature, still partitive, with the focus evaluated as small or inadequate."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stage II: generalized to language, mankind and nature, still partitive, with the focus evaluated as small or inadequate." }
 
 def ex_25a : LinguisticExample :=
   { id := "traugott2010_25a"
@@ -319,9 +287,7 @@ def ex_25a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("item", "a shred of"), ("stage", "III Degree Modifier"), ("level", "subjective"), ("polarity", "negative")]
-    comment := "Stage III: a quantifier over an abstract, positively evaluated mass noun, by the twentieth century largely restricted to negative polarity syntax; no intersubjectification, since it is not used as a hedge."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stage III: a quantifier over an abstract, positively evaluated mass noun, by the twentieth century largely restricted to negative polarity syntax; no intersubjectification, since it is not used as a hedge." }
 
 def all : List LinguisticExample := [ex_5a, ex_5b, ex_5c, ex_6, ex_12a, ex_13a, ex_14a, ex_16a, ex_17, ex_18a, ex_19a, ex_20, ex_21b, ex_22, ex_23, ex_24b, ex_25a]
 

@@ -31,9 +31,7 @@ def ex2 : LinguisticExample :=
     alternatives := [("meʎʎo kivəŋ, kumuqetəŋ", .acceptable)]
     readings := [("says", .acceptable), ("thinks", .acceptable), ("allows", .acceptable), ("hopes", .acceptable), ("fears", .acceptable), ("knows", .unacceptable), ("imagines", .unacceptable), ("wishes", .unacceptable)]
     paperFeatures := [("section", "1")]
-    comment := "The complementizer əno is optional. 'wish' needs the counterfactual prefix ʔ- in the embedded clause, (3)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The complementizer əno is optional. 'wish' needs the counterfactual prefix ʔ- in the embedded clause, (3)." }
 
 def ex4 : LinguisticExample :=
   { id := "mocnikabramovitz2019_ex4"
@@ -49,9 +47,7 @@ def ex4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2")]
-    comment := "The speaker first rejected the discourse and accepted it once asked whether ivək could mean dopuskat' 'allow for the possibility' (§1.1)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The speaker first rejected the discourse and accepted it once asked whether ivək could mean dopuskat' 'allow for the possibility' (§1.1)." }
 
 def ex5 : LinguisticExample :=
   { id := "mocnikabramovitz2019_ex5"
@@ -67,9 +63,7 @@ def ex5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2")]
-    comment := "Intended translation. The verb is ləmalavək 'believe', which has no possibility reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Intended translation. The verb is ləmalavək 'believe', which has no possibility reading." }
 
 def ex6 : LinguisticExample :=
   { id := "mocnikabramovitz2019_ex6"
@@ -85,9 +79,7 @@ def ex6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex7 : LinguisticExample :=
   { id := "mocnikabramovitz2019_ex7"
@@ -103,9 +95,7 @@ def ex7 : LinguisticExample :=
     alternatives := []
     readings := [("said", .acceptable), ("allowed", .acceptable)]
     paperFeatures := [("section", "2")]
-    comment := "The 'said' translation was volunteered and the 'allowed' one accepted in a matching task."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The 'said' translation was volunteered and the 'allowed' one accepted in a matching task." }
 
 def ex8a : LinguisticExample :=
   { id := "mocnikabramovitz2019_ex8a"
@@ -121,9 +111,7 @@ def ex8a : LinguisticExample :=
     alternatives := []
     readings := [("necessity", .unacceptable), ("possibility", .acceptable)]
     paperFeatures := [("section", "2")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex8b : LinguisticExample :=
   { id := "mocnikabramovitz2019_ex8b"
@@ -139,9 +127,7 @@ def ex8b : LinguisticExample :=
     alternatives := []
     readings := [("the thought of (8a)", .acceptable), ("the ball is half white and half black", .unacceptable)]
     paperFeatures := [("section", "2")]
-    comment := "iwke is the non-future negated form of ivək (fn. 9)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "iwke is the non-future negated form of ivək (fn. 9)." }
 
 def ex9a : LinguisticExample :=
   { id := "mocnikabramovitz2019_ex9a"
@@ -157,9 +143,7 @@ def ex9a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2")]
-    comment := "Translated into Koryak. The adverb amu 'might' facilitates the weaker reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Translated into Koryak. The adverb amu 'might' facilitates the weaker reading." }
 
 def ex14a : LinguisticExample :=
   { id := "mocnikabramovitz2019_ex14a"
@@ -175,9 +159,7 @@ def ex14a : LinguisticExample :=
     alternatives := [("inenɣəjulevəčʔən ivi əno əninew jejɣučewŋəlʔu metʔaŋ kojajɣočawŋəlaŋ ʔam ivi əno əčču qekwaŋ kojajɣočawŋəlaŋ.", .unacceptable)]
     readings := []
     paperFeatures := [("section", "3")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex14b : LinguisticExample :=
   { id := "mocnikabramovitz2019_ex14b"
@@ -193,9 +175,7 @@ def ex14b : LinguisticExample :=
     alternatives := [("inenɣəjulevəčʔən ivi əno əninew jejɣučewŋəlʔu qekwaŋ kojajɣočawŋəlaŋ ʔam ivi əno əčču metʔaŋ kojajɣočawŋəlaŋ", .unacceptable)]
     readings := []
     paperFeatures := [("section", "3")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex20 : LinguisticExample :=
   { id := "mocnikabramovitz2019_ex20"
@@ -211,9 +191,7 @@ def ex20 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4")]
-    comment := "Intended translation; a preliminary result. The source prints t͡ɕ here where (14) prints č for the same affricate."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Intended translation; a preliminary result. The source prints t͡ɕ here where (14) prints č for the same affricate." }
 
 def all : List LinguisticExample := [ex2, ex4, ex5, ex6, ex7, ex8a, ex8b, ex9a, ex14a, ex14b, ex20]
 

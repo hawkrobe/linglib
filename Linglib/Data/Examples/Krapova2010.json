@@ -71,9 +71,7 @@
         "detoSelection"
       ]
     ],
-    "comment": "deto alternates freely with če, apart from style and register; colloquial speech.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "deto alternates freely with če, apart from style and register; colloquial speech."
   },
   {
     "id": "krapova2010_56b",
@@ -147,9 +145,7 @@
         "detoSelection"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "krapova2010_57a",
@@ -235,9 +231,7 @@
         "1"
       ]
     ],
-    "comment": "Presupposes that the meeting has failed, although the speaker does not regret that.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Presupposes that the meeting has failed, although the speaker does not regret that."
   },
   {
     "id": "krapova2010_57b",
@@ -315,9 +309,7 @@
         "1"
       ]
     ],
-    "comment": "Presupposes that the visitors arrived late.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Presupposes that the visitors arrived late."
   },
   {
     "id": "krapova2010_57c",
@@ -391,9 +383,7 @@
         "1"
       ]
     ],
-    "comment": "Adding 'but in fact you stayed longer' cancels the presupposition and is a contradiction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Adding 'but in fact you stayed longer' cancels the presupposition and is a contradiction."
   },
   {
     "id": "krapova2010_58a",
@@ -467,9 +457,7 @@
         "detoSelection"
       ]
     ],
-    "comment": "An emotive factive without a za phrase takes če only.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "An emotive factive without a za phrase takes če only."
   },
   {
     "id": "krapova2010_58b",
@@ -535,9 +523,7 @@
         "detoSelection"
       ]
     ],
-    "comment": "A semi-factive takes če only.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A semi-factive takes če only."
   },
   {
     "id": "krapova2010_59a",
@@ -595,9 +581,7 @@
         "zaPhrase"
       ]
     ],
-    "comment": "Other prepositions and preposition-less noun phrases are excluded; the nominal paraphrase of (57a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Other prepositions and preposition-less noun phrases are excluded; the nominal paraphrase of (57a)."
   },
   {
     "id": "krapova2010_59b",
@@ -663,9 +647,7 @@
         "zaPhrase"
       ]
     ],
-    "comment": "The nominal paraphrase of (57b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The nominal paraphrase of (57b)."
   },
   {
     "id": "krapova2010_fn46i",
@@ -743,8 +725,6 @@
         "1"
       ]
     ],
-    "comment": "The če complement is factive too: factivity is the context's, not the complementizer's.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The če complement is factive too: factivity is the context's, not the complementizer's."
   }
 ]

@@ -15,9 +15,7 @@
       {"name": "epistemic", "judgment": "acceptable"}
     ],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_1b",
@@ -35,9 +33,7 @@
       {"name": "epistemic", "judgment": "acceptable"}
     ],
     "paperFeatures": {"attitude_class": "argumentative", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_1c",
@@ -55,9 +51,7 @@
       {"name": "epistemic", "judgment": "acceptable"}
     ],
     "paperFeatures": {"attitude_class": "semifactive", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_2a",
@@ -75,9 +69,7 @@
       {"name": "epistemic", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "Starred on the epistemic interpretation only; the teleological reading is (3a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Starred on the epistemic interpretation only; the teleological reading is (3a)."
   },
   {
     "id": "anandhacquard2013_2b",
@@ -95,9 +87,7 @@
       {"name": "epistemic", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "Starred on the epistemic interpretation only.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Starred on the epistemic interpretation only."
   },
   {
     "id": "anandhacquard2013_2c",
@@ -115,9 +105,7 @@
       {"name": "epistemic", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"attitude_class": "directive", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "Starred on the epistemic interpretation only.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Starred on the epistemic interpretation only."
   },
   {
     "id": "anandhacquard2013_3a",
@@ -135,9 +123,7 @@
       {"name": "teleological", "judgment": "acceptable"}
     ],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "modal_flavor": "teleological", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_13",
@@ -157,9 +143,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "necessity", "mood": "indicative", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_14",
@@ -181,9 +165,7 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "argumentative", "modal_force": "necessity", "mood": "indicative", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_15",
@@ -203,9 +185,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "semifactive", "modal_force": "necessity", "mood": "indicative", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_16",
@@ -225,9 +205,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_17",
@@ -247,9 +225,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "directive", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_18",
@@ -269,9 +245,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "modal_force": "possibility", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_19",
@@ -291,9 +265,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_20",
@@ -313,9 +285,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "dubitative", "modal_force": "possibility", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_21",
@@ -335,9 +305,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "dubitative", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_22",
@@ -357,9 +325,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "third_party"},
-    "comment": "Escape-hatch reading: the modal targets the novel's information state, not John's desires.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Escape-hatch reading: the modal targets the novel's information state, not John's desires."
   },
   {
     "id": "anandhacquard2013_23a",
@@ -375,9 +341,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"second_conjunct": "belief_predicate"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_23b",
@@ -393,9 +357,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"second_conjunct": "epistemic_modal", "modal_force": "possibility"},
-    "comment": "Contradictory once the modal's information state is the imagination state itself.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Contradictory once the modal's information state is the imagination state itself."
   },
   {
     "id": "anandhacquard2013_30a",
@@ -413,9 +375,7 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "argumentative", "test": "parenthetical"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_30b",
@@ -436,9 +396,7 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "test": "verb_second", "complement_order": "verb_final"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_30c",
@@ -459,9 +417,7 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "test": "verb_second", "complement_order": "verb_second"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_39",
@@ -477,9 +433,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "third_party"},
-    "comment": "The *according to* phrase supplies the information state the epistemic is anaphoric to.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The *according to* phrase supplies the information state the epistemic is anaphoric to."
   },
   {
     "id": "anandhacquard2013_40",
@@ -495,9 +449,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "possibility", "modal_flavor": "epistemic", "anchor": "third_party"},
-    "comment": "The epistemic quantifies over the filing cabinet's information, not Harriet's beliefs.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The epistemic quantifies over the filing cabinet's information, not Harriet's beliefs."
   },
   {
     "id": "anandhacquard2013_42",
@@ -518,9 +470,7 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "test": "answer_to_question"},
-    "comment": "Attributed by Scheffler to Hubert Truckenbrodt; also the paper's (12). *Hope* partially answers the question through its doxastic component; *want* cannot.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Attributed by Scheffler to Hubert Truckenbrodt; also the paper's (12). *Hope* partially answers the question through its doxastic component; *want* cannot."
   },
   {
     "id": "anandhacquard2013_43a",
@@ -538,9 +488,7 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "test": "certainty_context"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_43b",
@@ -558,9 +506,7 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "test": "certainty_context"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_44a",
@@ -578,9 +524,7 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "test": "certainty_context"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_44b",
@@ -598,9 +542,7 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "test": "certainty_context"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_45",
@@ -619,9 +561,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "test": "epistemic_indefinite", "indefinite": "vreun"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_46",
@@ -640,9 +580,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "test": "epistemic_indefinite", "indefinite": "vreun"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_60",
@@ -658,9 +596,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "dubitative", "test": "uncertainty_cancellation", "suspender": "in fact"},
-    "comment": "Read as a retraction rather than an implicature suspension.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Read as a retraction rather than an implicature suspension."
   },
   {
     "id": "anandhacquard2013_61a",
@@ -676,9 +612,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "dubitative", "test": "uncertainty_cancellation", "suspender": "because"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_61b",
@@ -694,9 +628,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"test": "uncertainty_cancellation", "suspender": "because"},
-    "comment": "*Because* suspends the exhaustivity inference of *some* but not the uncertainty inference of *doubt*.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "*Because* suspends the exhaustivity inference of *some* but not the uncertainty inference of *doubt*."
   },
   {
     "id": "anandhacquard2013_62",
@@ -714,9 +646,7 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "test": "uncertainty_cancellation", "suspender": "in fact"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_65",
@@ -736,9 +666,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "necessity", "mood": "subjunctive", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "Italian *pensare* selects the subjunctive yet licenses epistemics: subjunctive is not what blocks them.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Italian *pensare* selects the subjunctive yet licenses epistemics: subjunctive is not what blocks them."
   },
   {
     "id": "anandhacquard2013_66_muss",
@@ -758,9 +686,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_66_koennte",
@@ -780,9 +706,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "possibility", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_67_muss",
@@ -802,9 +726,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_67_koennte",
@@ -824,9 +746,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "desiderative", "modal_force": "possibility", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_68",
@@ -846,9 +766,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "modal_force": "possibility", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_69",
@@ -868,9 +786,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_70",
@@ -892,9 +808,7 @@
       {"name": "epistemic", "judgment": "acceptable"}
     ],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "necessity", "complement": "finite"},
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "anandhacquard2013_71",
@@ -916,9 +830,7 @@
       {"name": "epistemic", "judgment": "unacceptable"}
     ],
     "paperFeatures": {"attitude_class": "doxastic", "modal_force": "necessity", "complement": "infinitival"},
-    "comment": "Infinitival complements are too small to host an epistemic; no escape-hatch reading rescues it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Infinitival complements are too small to host an epistemic; no escape-hatch reading rescues it."
   },
   {
     "id": "anandhacquard2013_74",
@@ -937,9 +849,7 @@
     ],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "modal_force": "possibility", "negation": "under_modal", "modal_flavor": "epistemic", "anchor": "attitude"},
-    "comment": "A possibility modal scoping under negation patterns with necessity: *can't* is a universal claim against the uncertainty presupposition.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A possibility modal scoping under negation patterns with necessity: *can't* is a universal claim against the uncertainty presupposition."
   },
   {
     "id": "anandhacquard2013_fn24_i",
@@ -955,9 +865,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "dubitative", "modal_force": "necessity", "modal_flavor": "epistemic", "anchor": "metalinguistic", "focus": "contrastive"},
-    "comment": "Necessity under *doubt* only with contrastive focus on the modal and a prior assertion of the prejacent — metalinguistic.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Necessity under *doubt* only with contrastive focus on the modal and a prior assertion of the prejacent — metalinguistic."
   },
   {
     "id": "anandhacquard2013_fn25_i",
@@ -973,8 +881,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"attitude_class": "emotive_doxastic", "modal_force": "necessity", "modal_flavor": "epistemic", "negation": "over_modal"},
-    "comment": "Marked % by the authors: predicted licensed (negated necessity is possibility), but *have to* under negation disprefers epistemic readings.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Marked % by the authors: predicted licensed (negated necessity is possibility), but *have to* under negation disprefers epistemic readings."
   }
 ]

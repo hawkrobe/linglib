@@ -16,8 +16,7 @@
     "paperFeatures": [
       ["logicalForm", "∀x ∈ De [book(x) → ◇read(you,x)]"]
     ],
-    "comment": "(2) You may read just Book A is the exclusiveness reading; Menéndez-Benito and Dayal take it to be entailed, Alsop to be a robust implicature.",
-    "lgrConformance": "NONE"
+    "comment": "(2) You may read just Book A is the exclusiveness reading; Menéndez-Benito and Dayal take it to be entailed, Alsop to be a robust implicature."
   },
   {
     "id": "alsop2024_3",
@@ -37,8 +36,7 @@
       ["predicate", "symmetric"],
       ["state", "only2"]
     ],
-    "comment": "(4) Bishop A may be the only bishop who meets a bishop can never be true, so the Viability Constraint wrongly predicts infelicity.",
-    "lgrConformance": "NONE"
+    "comment": "(4) Bishop A may be the only bishop who meets a bishop can never be true, so the Viability Constraint wrongly predicts infelicity."
   },
   {
     "id": "alsop2024_5a",
@@ -56,8 +54,7 @@
       ["any", "npi"],
       ["environment", "negation"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alsop2024_5b",
@@ -75,8 +72,7 @@
       ["any", "npi"],
       ["environment", "restrictorOfEvery"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alsop2024_6a",
@@ -94,8 +90,7 @@
       ["any", "fci"],
       ["environment", "episodic"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alsop2024_6b",
@@ -113,8 +108,7 @@
       ["any", "fci"],
       ["environment", "possibilityModal"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alsop2024_6c",
@@ -132,8 +126,7 @@
       ["any", "fci"],
       ["environment", "necessityModal"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alsop2024_17",
@@ -153,8 +146,7 @@
     "paperFeatures": [
       ["state", "only2"]
     ],
-    "comment": "Menéndez-Benito judges it unambiguously false; the dialogue (18) — A: Is it true that in Canasta, you can take any of the cards in the discard pile when you have two cards that match its top card? B: Technically yes…but if you take one card from the discard pile, you must take all of them — shows it literally true.",
-    "lgrConformance": "NONE"
+    "comment": "Menéndez-Benito judges it unambiguously false; the dialogue (18) — A: Is it true that in Canasta, you can take any of the cards in the discard pile when you have two cards that match its top card? B: Technically yes…but if you take one card from the discard pile, you must take all of them — shows it literally true."
   },
   {
     "id": "alsop2024_19",
@@ -174,8 +166,7 @@
     "paperFeatures": [
       ["state", "only2"]
     ],
-    "comment": "Judged less natural but acceptable, true and non-contradictory by the author and three further speakers (fn. 6).",
-    "lgrConformance": "NONE"
+    "comment": "Judged less natural but acceptable, true and non-contradictory by the author and three further speakers (fn. 6)."
   },
   {
     "id": "alsop2024_20a",
@@ -195,8 +186,7 @@
       ["predicate", "symmetric"],
       ["state", "only2"]
     ],
-    "comment": "Does not implicate that Bishop A may be the only bishop who gathers with other bishops.",
-    "lgrConformance": "NONE"
+    "comment": "Does not implicate that Bishop A may be the only bishop who gathers with other bishops."
   },
   {
     "id": "alsop2024_20b",
@@ -216,8 +206,7 @@
       ["predicate", "symmetric"],
       ["state", "only2"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alsop2024_20c",
@@ -237,8 +226,7 @@
       ["predicate", "symmetric"],
       ["state", "only2"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alsop2024_21b",
@@ -255,8 +243,7 @@
       {"name": "exclusiveness", "judgment": "acceptable"}
     ],
     "paperFeatures": [],
-    "comment": "Implicates that we may take Semantics without taking another class.",
-    "lgrConformance": "NONE"
+    "comment": "Implicates that we may take Semantics without taking another class."
   },
   {
     "id": "alsop2024_22b",
@@ -275,8 +262,7 @@
     "paperFeatures": [
       ["state", "only2"]
     ],
-    "comment": "The undergraduate's certainty about the courseload blocks the exclusiveness implicature; only the Only 2 state remains.",
-    "lgrConformance": "NONE"
+    "comment": "The undergraduate's certainty about the courseload blocks the exclusiveness implicature; only the Only 2 state remains."
   },
   {
     "id": "alsop2024_23",
@@ -296,8 +282,7 @@
       ["implicature", "cancelled"],
       ["state", "only2"]
     ],
-    "comment": "The expectation that each cat can be adopted on its own is felicitously denied after the fact.",
-    "lgrConformance": "NONE"
+    "comment": "The expectation that each cat can be adopted on its own is felicitously denied after the fact."
   },
   {
     "id": "alsop2024_24a",
@@ -316,8 +301,7 @@
     "paperFeatures": [
       ["prior", "uniform"]
     ],
-    "comment": "Dayal: Bill is unambiguously permitted to read all the books at once; Alsop: out of the blue this is left open.",
-    "lgrConformance": "NONE"
+    "comment": "Dayal: Bill is unambiguously permitted to read all the books at once; Alsop: out of the blue this is left open."
   },
   {
     "id": "alsop2024_25b",
@@ -338,8 +322,7 @@
     "paperFeatures": [
       ["state", "only1"]
     ],
-    "comment": "The listener's prior knowledge, not the utterance, rules out taking more than one class.",
-    "lgrConformance": "NONE"
+    "comment": "The listener's prior knowledge, not the utterance, rules out taking more than one class."
   },
   {
     "id": "alsop2024_26a",
@@ -356,8 +339,7 @@
     "paperFeatures": [
       ["construction", "anyAndEvery"]
     ],
-    "comment": "The second conjunct adds that there is no limit to the number of individuals who may come.",
-    "lgrConformance": "NONE"
+    "comment": "The second conjunct adds that there is no limit to the number of individuals who may come."
   },
   {
     "id": "alsop2024_26b",
@@ -374,8 +356,7 @@
     "paperFeatures": [
       ["construction", "anyAndEvery"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alsop2024_27a",
@@ -392,8 +373,7 @@
     ],
     "readings": [],
     "paperFeatures": [],
-    "comment": "(27b) is infelicitous: the conjoined universal rules in the scenario of refusing everyone, which world knowledge rules out.",
-    "lgrConformance": "NONE"
+    "comment": "(27b) is infelicitous: the conjoined universal rules in the scenario of refusing everyone, which world knowledge rules out."
   },
   {
     "id": "alsop2024_28",
@@ -412,8 +392,7 @@
     "paperFeatures": [
       ["implicature", "cancelled"]
     ],
-    "comment": "The not two and not every implicatures are robust from the prior but felicitously denied.",
-    "lgrConformance": "NONE"
+    "comment": "The not two and not every implicatures are robust from the prior but felicitously denied."
   },
   {
     "id": "alsop2024_31_mayS",
@@ -431,8 +410,7 @@
       ["utterance", "mayS"],
       ["parses", "3"]
     ],
-    "comment": "Parses (32a–c).",
-    "lgrConformance": "NONE"
+    "comment": "Parses (32a–c)."
   },
   {
     "id": "alsop2024_31_mayP",
@@ -450,8 +428,7 @@
       ["utterance", "mayP"],
       ["parses", "3"]
     ],
-    "comment": "Parses (33a–c).",
-    "lgrConformance": "NONE"
+    "comment": "Parses (33a–c)."
   },
   {
     "id": "alsop2024_31_mayAny",
@@ -473,8 +450,7 @@
       ["parses", "2"],
       ["prior", "uniform"]
     ],
-    "comment": "Parses (34a) (Szabolcsi) and (34b) (Dayal); (42a) the exclusiveness implicature, (43a) the not every implicature, absent at a uniform prior.",
-    "lgrConformance": "NONE"
+    "comment": "Parses (34a) (Szabolcsi) and (34b) (Dayal); (42a) the exclusiveness implicature, (43a) the not every implicature, absent at a uniform prior."
   },
   {
     "id": "alsop2024_31_mayEvery",
@@ -492,8 +468,7 @@
       ["utterance", "mayEvery"],
       ["parses", "4"]
     ],
-    "comment": "Parses (35a–d), with both scopes of the universal.",
-    "lgrConformance": "NONE"
+    "comment": "Parses (35a–d), with both scopes of the universal."
   },
   {
     "id": "alsop2024_44",
@@ -514,7 +489,6 @@
     "paperFeatures": [
       ["revisedViabilityConstraint", "cancelled"]
     ],
-    "comment": "Denies the scalar implicature the Revised Viability Constraint requires; outside the model.",
-    "lgrConformance": "NONE"
+    "comment": "Denies the scalar implicature the Revised Viability Constraint requires; outside the model."
   }
 ]

@@ -5,7 +5,8 @@ A study reads `Data/Examples/<Paper>.json` through string literals: row ids, `pa
 keys and values, reading names, judgments. When a row is renamed or re-encoded those literals
 go stale silently — a hypothesis such as `r.id ≠ "old_id"` excludes nothing, a `feature?` on a
 missing key returns `none` everywhere and the theorem quantifies over no rows. This script
-finds such literals, keys that repeat within a row but are read by a first-match lookup, and
+finds such literals, keys that repeat within a row but are read by a first-match lookup
+(`feature?`, `parse?`, `nat?`, `int?`; `features` reads every value), and
 `source.bibkey`s absent from `references.bib`. Example sets no module imports, and judgment
 comparisons no row can satisfy, are reported as warnings.
 
@@ -22,7 +23,8 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXAMPLES = os.path.join(ROOT, "Linglib", "Data", "Examples")
-KEY_FUNS = r"(?:feature\?|parse\?|nat\?|int\?|rat\?)"
+FIRST_FUNS = r"(?:feature\?|parse\?|nat\?|int\?)"
+KEY_FUNS = r"(?:feature\?|parse\?|nat\?|int\?|features)"
 ID_LIKE = r'"([a-z][a-z0-9]*\d{4}[a-z]?_[A-Za-z0-9_.-]+)"'
 
 
@@ -113,7 +115,7 @@ def check_study(path, papers):
         k = m.group(1)
         if k not in keys:
             out.append((rel, "KEY", k, "no row has this key"))
-        elif k in dup:
+        elif k in dup and re.fullmatch(FIRST_FUNS, m.group(0).split()[0]):
             out.append((rel, "DUP-KEY", k, "repeats within a row; the lookup returns the first"))
     for m in re.finditer(r'\.(?:1|fst)\s*(?:=|==)\s*"([^"]*)"', body):
         k = m.group(1)

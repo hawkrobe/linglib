@@ -15,8 +15,7 @@
       ["construction", "topicalized"],
       ["parameter", "distinguished"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex7b",
@@ -36,8 +35,7 @@
       ["whForm", "what"],
       ["whCategory", "np"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex7c",
@@ -57,8 +55,7 @@
       ["whForm", "who"],
       ["whCategory", "np"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex7d",
@@ -78,8 +75,7 @@
       ["whForm", "whatA"],
       ["whCategory", "detSing"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex7e",
@@ -98,8 +94,7 @@
       ["parameter", "distinguished"],
       ["the", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex8a",
@@ -119,8 +114,7 @@
       ["whForm", "which"],
       ["whCategory", "det"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex8a_ii",
@@ -140,8 +134,7 @@
       ["whForm", "who"],
       ["whCategory", "np"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex8b",
@@ -161,8 +154,7 @@
       ["whForm", "whatA"],
       ["whCategory", "detSing"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex8c",
@@ -182,8 +174,7 @@
       ["whForm", "what"],
       ["whCategory", "np"]
     ],
-    "comment": "Accepted by some speakers.",
-    "lgrConformance": ""
+    "comment": "Accepted by some speakers."
   },
   {
     "id": "sag2010_ex8d",
@@ -203,8 +194,7 @@
       ["whForm", "which"],
       ["whCategory", "det"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex8d_ii",
@@ -224,8 +214,7 @@
       ["whForm", "what"],
       ["whCategory", "np"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex8e",
@@ -245,8 +234,7 @@
       ["whForm", "which"],
       ["whCategory", "det"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex9a",
@@ -266,8 +254,7 @@
       ["whForm", "who"],
       ["whCategory", "np"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex9b",
@@ -287,8 +274,7 @@
       ["whForm", "who"],
       ["whCategory", "np"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex9c",
@@ -308,8 +294,7 @@
       ["whForm", "who"],
       ["whCategory", "np"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex10a",
@@ -329,8 +314,7 @@
       ["whForm", "whose"],
       ["whCategory", "det"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex10b",
@@ -350,8 +334,7 @@
       ["whForm", "whose"],
       ["whCategory", "det"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex10c",
@@ -371,8 +354,7 @@
       ["whForm", "whose"],
       ["whCategory", "det"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex11a",
@@ -392,8 +374,7 @@
       ["whForm", "what"],
       ["whCategory", "np"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex11b",
@@ -413,8 +394,7 @@
       ["whForm", "what"],
       ["whCategory", "np"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex11c",
@@ -434,8 +414,7 @@
       ["whForm", "what"],
       ["whCategory", "np"]
     ],
-    "comment": "Accepted by some speakers.",
-    "lgrConformance": ""
+    "comment": "Accepted by some speakers."
   },
   {
     "id": "sag2010_ex12a",
@@ -455,8 +434,7 @@
       ["whForm", "what"],
       ["whCategory", "detSing"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex12b",
@@ -476,8 +454,7 @@
       ["whForm", "what"],
       ["whCategory", "detSing"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex12c",
@@ -497,8 +474,7 @@
       ["whForm", "what"],
       ["whCategory", "detSing"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex13a",
@@ -518,8 +494,7 @@
       ["whForm", "what"],
       ["whCategory", "detPl"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex13b",
@@ -539,8 +514,7 @@
       ["whForm", "what"],
       ["whCategory", "detPl"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex13c",
@@ -560,8 +534,7 @@
       ["whForm", "what"],
       ["whCategory", "detPl"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex14a",
@@ -581,8 +554,7 @@
       ["whForm", "what"],
       ["whCategory", "degree"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex14b",
@@ -602,8 +574,7 @@
       ["whForm", "what"],
       ["whCategory", "degree"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex14c",
@@ -623,8 +594,7 @@
       ["whForm", "what"],
       ["whCategory", "degree"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex15a",
@@ -644,8 +614,7 @@
       ["whForm", "whatA"],
       ["whCategory", "detSing"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex15b",
@@ -665,8 +634,7 @@
       ["whForm", "whatA"],
       ["whCategory", "detSing"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex15c",
@@ -686,8 +654,7 @@
       ["whForm", "whatA"],
       ["whCategory", "detSing"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex16a",
@@ -707,8 +674,7 @@
       ["whForm", "which"],
       ["whCategory", "det"]
     ],
-    "comment": "An elliptical NP containing the determiner which, so the interrogative is a use of the determiner rather than of the pronoun.",
-    "lgrConformance": ""
+    "comment": "An elliptical NP containing the determiner which, so the interrogative is a use of the determiner rather than of the pronoun."
   },
   {
     "id": "sag2010_ex16b",
@@ -728,8 +694,7 @@
       ["whForm", "which"],
       ["whCategory", "np"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex16c",
@@ -749,8 +714,7 @@
       ["whForm", "which"],
       ["whCategory", "np"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex17a",
@@ -770,8 +734,7 @@
       ["whForm", "which"],
       ["whCategory", "det"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex17b",
@@ -791,8 +754,7 @@
       ["whForm", "which"],
       ["whCategory", "det"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex17c",
@@ -812,8 +774,7 @@
       ["whForm", "which"],
       ["whCategory", "det"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex18a",
@@ -833,8 +794,7 @@
       ["whForm", "how"],
       ["whCategory", "advpManner"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex18b",
@@ -854,8 +814,7 @@
       ["whForm", "how"],
       ["whCategory", "advpManner"]
     ],
-    "comment": "Peter and the Wolf.",
-    "lgrConformance": ""
+    "comment": "Peter and the Wolf."
   },
   {
     "id": "sag2010_ex18c",
@@ -875,8 +834,7 @@
       ["whForm", "how"],
       ["whCategory", "advpManner"]
     ],
-    "comment": "Accepted by some speakers.",
-    "lgrConformance": ""
+    "comment": "Accepted by some speakers."
   },
   {
     "id": "sag2010_ex19a",
@@ -896,8 +854,7 @@
       ["whForm", "how"],
       ["whCategory", "ap"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex19b",
@@ -917,8 +874,7 @@
       ["whForm", "how"],
       ["whCategory", "ap"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex19c",
@@ -938,8 +894,7 @@
       ["whForm", "how"],
       ["whCategory", "ap"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex20a",
@@ -959,8 +914,7 @@
       ["whForm", "how"],
       ["whCategory", "degree"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex20b",
@@ -980,8 +934,7 @@
       ["whForm", "how"],
       ["whCategory", "degree"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex20c",
@@ -1001,8 +954,7 @@
       ["whForm", "how"],
       ["whCategory", "degree"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex21a",
@@ -1022,8 +974,7 @@
       ["whForm", "when"],
       ["whCategory", "ppTime"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex21b",
@@ -1043,8 +994,7 @@
       ["whForm", "when"],
       ["whCategory", "ppTime"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex21c",
@@ -1064,8 +1014,7 @@
       ["whForm", "when"],
       ["whCategory", "ppTime"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex22a",
@@ -1085,8 +1034,7 @@
       ["whForm", "where"],
       ["whCategory", "ppPlace"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex22b",
@@ -1106,8 +1054,7 @@
       ["whForm", "where"],
       ["whCategory", "ppPlace"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex22c",
@@ -1127,8 +1074,7 @@
       ["whForm", "where"],
       ["whCategory", "ppPlace"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex23a",
@@ -1148,8 +1094,7 @@
       ["whForm", "why"],
       ["whCategory", "ppReason"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex23b",
@@ -1169,8 +1114,7 @@
       ["whForm", "why"],
       ["whCategory", "ppReason"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex23c",
@@ -1190,8 +1134,7 @@
       ["whForm", "why"],
       ["whCategory", "ppReason"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex4a",
@@ -1211,8 +1154,7 @@
       ["filler", "NP"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex4b",
@@ -1233,8 +1175,7 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex26a",
@@ -1254,8 +1195,7 @@
       ["filler", "AP"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex26b",
@@ -1274,8 +1214,7 @@
       ["parameter", "fillerCategory"],
       ["filler", "VP"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex26c",
@@ -1294,8 +1233,7 @@
       ["parameter", "fillerCategory"],
       ["filler", "VP"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex26d",
@@ -1316,8 +1254,7 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex63a",
@@ -1336,8 +1273,7 @@
       ["parameter", "fillerCategory"],
       ["filler", "NP"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex63b",
@@ -1356,8 +1292,7 @@
       ["parameter", "fillerCategory"],
       ["filler", "PP"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex63c",
@@ -1376,8 +1311,7 @@
       ["parameter", "fillerCategory"],
       ["filler", "AP"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex63d",
@@ -1396,8 +1330,7 @@
       ["parameter", "fillerCategory"],
       ["filler", "AdvP"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex76a",
@@ -1416,8 +1349,7 @@
       ["parameter", "fillerCategory"],
       ["filler", "NP"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex76b",
@@ -1436,8 +1368,7 @@
       ["parameter", "fillerCategory"],
       ["filler", "AP"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex76c",
@@ -1456,8 +1387,7 @@
       ["parameter", "fillerCategory"],
       ["filler", "AdvP"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex76d",
@@ -1476,8 +1406,7 @@
       ["parameter", "fillerCategory"],
       ["filler", "PP"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex76e",
@@ -1496,8 +1425,7 @@
       ["parameter", "fillerCategory"],
       ["filler", "VP"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex76f",
@@ -1516,8 +1444,7 @@
       ["parameter", "fillerCategory"],
       ["filler", "VP"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex86a",
@@ -1537,8 +1464,7 @@
       ["filler", "NP"],
       ["inverted", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex86b",
@@ -1558,8 +1484,7 @@
       ["filler", "PP"],
       ["inverted", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex86c",
@@ -1579,8 +1504,7 @@
       ["filler", "AP"],
       ["inverted", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex86d",
@@ -1600,8 +1524,7 @@
       ["filler", "AdvP"],
       ["inverted", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex87",
@@ -1621,8 +1544,7 @@
       ["filler", "VP"],
       ["inverted", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex96a",
@@ -1643,8 +1565,7 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex96b",
@@ -1665,8 +1586,7 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex96c",
@@ -1687,8 +1607,7 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex96d",
@@ -1709,8 +1628,7 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex96e",
@@ -1731,8 +1649,7 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex27a",
@@ -1751,8 +1668,7 @@
       ["parameter", "headCategory"],
       ["head", "CP"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex27a_ii",
@@ -1772,8 +1688,7 @@
       ["head", "CP"],
       ["embedded", "true"]
     ],
-    "comment": "Read as an embedded interrogative, so that only the category of the head daughter is at issue.",
-    "lgrConformance": ""
+    "comment": "Read as an embedded interrogative, so that only the category of the head daughter is at issue."
   },
   {
     "id": "sag2010_ex27a_iii",
@@ -1793,8 +1708,7 @@
       ["head", "CP"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex27a_iiii",
@@ -1813,8 +1727,7 @@
       ["parameter", "headCategory"],
       ["head", "CP"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex28a",
@@ -1834,8 +1747,7 @@
       ["filler", "AP"],
       ["inverted", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex28a_ii",
@@ -1856,8 +1768,7 @@
       ["inverted", "true"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex28b",
@@ -1876,8 +1787,7 @@
       ["parameter", "inversion"],
       ["inverted", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex28b_ii",
@@ -1897,8 +1807,7 @@
       ["inverted", "true"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex28b_iii",
@@ -1918,8 +1827,7 @@
       ["filler", "AP"],
       ["inverted", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex28b_iiii",
@@ -1938,8 +1846,7 @@
       ["parameter", "inversion"],
       ["inverted", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex28c",
@@ -1958,8 +1865,7 @@
       ["parameter", "inversion"],
       ["inverted", "true"]
     ],
-    "comment": "A noninitial the-clause; inversion is optional.",
-    "lgrConformance": ""
+    "comment": "A noninitial the-clause; inversion is optional."
   },
   {
     "id": "sag2010_ex28c_ii",
@@ -1977,8 +1883,7 @@
       ["construction", "theClause"],
       ["parameter", "inversion"]
     ],
-    "comment": "A noninitial the-clause; inversion is optional.",
-    "lgrConformance": ""
+    "comment": "A noninitial the-clause; inversion is optional."
   },
   {
     "id": "sag2010_ex71a",
@@ -1997,8 +1902,7 @@
       ["parameter", "inversion"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex71a_ii",
@@ -2018,8 +1922,7 @@
       ["inverted", "true"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex71b",
@@ -2037,8 +1940,7 @@
       ["construction", "whExclamative"],
       ["parameter", "inversion"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex71b_ii",
@@ -2057,8 +1959,7 @@
       ["parameter", "inversion"],
       ["inverted", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex84a",
@@ -2077,8 +1978,7 @@
       ["parameter", "inversion"],
       ["inverted", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex84b",
@@ -2096,8 +1996,7 @@
       ["construction", "whInterrogative"],
       ["parameter", "inversion"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex84c",
@@ -2116,8 +2015,7 @@
       ["parameter", "inversion"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex84d",
@@ -2137,8 +2035,7 @@
       ["inverted", "true"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex29a",
@@ -2157,8 +2054,7 @@
       ["parameter", "finiteness"],
       ["finite", "false"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex29a_ii",
@@ -2178,8 +2074,7 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex29a_iii",
@@ -2199,8 +2094,7 @@
       ["filler", "AP"],
       ["finite", "false"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex29b",
@@ -2220,8 +2114,7 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": "The paper stars the variant with an overt for-subject, for them to take.",
-    "lgrConformance": ""
+    "comment": "The paper stars the variant with an overt for-subject, for them to take."
   },
   {
     "id": "sag2010_ex29b_ii",
@@ -2242,8 +2135,7 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": "The paper stars the variant with an overt for-subject, for them to finish.",
-    "lgrConformance": ""
+    "comment": "The paper stars the variant with an overt for-subject, for them to finish."
   },
   {
     "id": "sag2010_ex71c",
@@ -2263,8 +2155,7 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex85",
@@ -2284,8 +2175,7 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex31a",
@@ -2304,8 +2194,7 @@
       ["parameter", "independence"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex31b",
@@ -2323,8 +2212,7 @@
       ["construction", "whExclamative"],
       ["parameter", "independence"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex67",
@@ -2342,8 +2230,7 @@
       ["construction", "topicalized"],
       ["parameter", "island"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex74",
@@ -2361,8 +2248,7 @@
       ["construction", "whExclamative"],
       ["parameter", "island"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex88a",
@@ -2382,8 +2268,7 @@
       ["finite", "false"],
       ["embedded", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "sag2010_ex88b",
@@ -2402,8 +2287,7 @@
       ["parameter", "island"],
       ["embedded", "true"]
     ],
-    "comment": "Intermediate; the paper attributes the degradation to processing complexity.",
-    "lgrConformance": ""
+    "comment": "Intermediate; the paper attributes the degradation to processing complexity."
   },
   {
     "id": "sag2010_ex88c",
@@ -2422,7 +2306,6 @@
       ["parameter", "island"],
       ["embedded", "true"]
     ],
-    "comment": "The finite verb with specific time reference degrades the example; the paper attributes this to processing complexity, not to a grammatical constraint.",
-    "lgrConformance": ""
+    "comment": "The finite verb with specific time reference degrades the example; the paper attributes this to processing complexity, not to a grammatical constraint."
   }
 ]

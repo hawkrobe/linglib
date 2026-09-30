@@ -31,9 +31,7 @@ def control : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def modal : LinguisticExample :=
   { id := "khoo2015_modal"
@@ -49,9 +47,7 @@ def modal : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [control, modal]
 

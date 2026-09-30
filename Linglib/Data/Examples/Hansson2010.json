@@ -33,7 +33,6 @@
       ]
     ],
     "comment": "No sibilant in the stem: the prefix surfaces in its underlying postalveolar shape.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(3a)"
@@ -73,7 +72,6 @@
       ]
     ],
     "comment": "No sibilant in the stem: the prefix surfaces in its underlying postalveolar shape.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(3a)"
@@ -113,7 +111,6 @@
       ]
     ],
     "comment": "A postalveolar stem sibilant: the prefix keeps its postalveolar.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(3b)"
@@ -153,7 +150,6 @@
       ]
     ],
     "comment": "An alveolar stem sibilant: the prefix sibilant assimilates to it.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(3c)"
@@ -193,7 +189,6 @@
       ]
     ],
     "comment": "An alveolar stem sibilant: the prefix sibilant assimilates to it.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(3c)"
@@ -232,8 +227,7 @@
         "anticipatory"
       ]
     ],
-    "comment": "No sibilant follows: the fourth-person prefix surfaces as postalveolar /dʒi-/.",
-    "lgrConformance": ""
+    "comment": "No sibilant follows: the fourth-person prefix surfaces as postalveolar /dʒi-/."
   },
   {
     "id": "hansson2010_ex4b",
@@ -268,8 +262,7 @@
         "anticipatory"
       ]
     ],
-    "comment": "The perfective /s-/, voiced to [z] here, makes the preceding prefix alveolar.",
-    "lgrConformance": ""
+    "comment": "The perfective /s-/, voiced to [z] here, makes the preceding prefix alveolar."
   },
   {
     "id": "hansson2010_ex4c",
@@ -304,8 +297,7 @@
         "anticipatory"
       ]
     ],
-    "comment": "The stem sibilant determines both prefix sibilants; the intervening [ɣ] is transparent.",
-    "lgrConformance": ""
+    "comment": "The stem sibilant determines both prefix sibilants; the intervening [ɣ] is transparent."
   },
   {
     "id": "hansson2010_ex6a-i",
@@ -341,7 +333,6 @@
       ]
     ],
     "comment": "The root sibilant makes the first-person subject prefix alveolar.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(6a)"
@@ -381,7 +372,6 @@
       ]
     ],
     "comment": "The root sibilant makes the prefix sibilant postalveolar.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(6a)"
@@ -421,7 +411,6 @@
       ]
     ],
     "comment": "A prefix sibilant triggers assimilation in the prefix sibilant before it.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(6b)"
@@ -461,7 +450,6 @@
       ]
     ],
     "comment": "A prefix sibilant triggers assimilation in the prefix sibilant before it.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(6b)"
@@ -501,7 +489,6 @@
       ]
     ],
     "comment": "The root sibilant determines both prefix sibilants.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(6c)"
@@ -541,7 +528,6 @@
       ]
     ],
     "comment": "The perfective prefix triggers harmony in the earlier fourth-person prefix.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(11a)"
@@ -581,7 +567,6 @@
       ]
     ],
     "comment": "The first-person subject prefix triggers harmony in the earlier adverbial prefix.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(11a)"
@@ -621,7 +606,6 @@
       ]
     ],
     "comment": "The stem sibilant affects all preceding prefix sibilants.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(11b)"
@@ -666,7 +650,6 @@
       ]
     ],
     "comment": "The conjugation marker /s(i)-/ makes the following first-person /(i)ʃ-/ alveolar: perseveratory assimilation rather than the expected anticipatory harmony.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(12)"
@@ -706,7 +689,6 @@
       ]
     ],
     "comment": "In the imperfective paradigm the same prefix sequence harmonizes anticipatorily.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(13)"
@@ -746,7 +728,6 @@
       ]
     ],
     "comment": "The s-destruct prefix makes the following first-person prefix alveolar.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(14)"
@@ -786,7 +767,6 @@
       ]
     ],
     "comment": "The s-destruct prefix makes the following first-person prefix alveolar.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(14)"
@@ -826,7 +806,6 @@
       ]
     ],
     "comment": "Anticipatory harmony from the root overrides the perseveratory prefix assimilation of (12) and (14).",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "hansson-2010",
       "paperLabel": "(15)"

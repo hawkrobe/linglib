@@ -31,9 +31,7 @@ def ch1_6a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "lower"), ("precision", "lower")]
-    comment := "The simpler member: a definite plural with potential for imprecision."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The simpler member: a definite plural with potential for imprecision." }
 
 def ch1_6b : LinguisticExample :=
   { id := "haslinger2025_ch1_6b"
@@ -49,9 +47,7 @@ def ch1_6b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "higher"), ("precision", "higher")]
-    comment := "The more complex member: not blocked despite its complexity, because it is more precise."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The more complex member: not blocked despite its complexity, because it is more precise." }
 
 def ch1_7a : LinguisticExample :=
   { id := "haslinger2025_ch1_7a"
@@ -67,9 +63,7 @@ def ch1_7a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "lower"), ("precision", "lower")]
-    comment := "A round bare numeral, imprecise in the right context."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A round bare numeral, imprecise in the right context." }
 
 def ch1_7b : LinguisticExample :=
   { id := "haslinger2025_ch1_7b"
@@ -85,9 +79,7 @@ def ch1_7b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "higher"), ("precision", "higher")]
-    comment := "The modified numeral: more complex and more precise."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The modified numeral: more complex and more precise." }
 
 def ch1_8a : LinguisticExample :=
   { id := "haslinger2025_ch1_8a"
@@ -103,9 +95,7 @@ def ch1_8a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "higher"), ("precision", "lower"), ("hypothetical", "yes")]
-    comment := "The hypothetical inverse pattern, an imprecise expression built by adding structure to the precise one: blocked in almost all contexts by No Needless Manner Violations, hence unattested."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The hypothetical inverse pattern, an imprecise expression built by adding structure to the precise one: blocked in almost all contexts by No Needless Manner Violations, hence unattested." }
 
 def ch1_8b : LinguisticExample :=
   { id := "haslinger2025_ch1_8b"
@@ -121,9 +111,7 @@ def ch1_8b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "lower"), ("precision", "higher"), ("hypothetical", "yes")]
-    comment := "The hypothetical inverse pattern's precise member, simpler than its imprecise counterpart."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The hypothetical inverse pattern's precise member, simpler than its imprecise counterpart." }
 
 def ch1_9a : LinguisticExample :=
   { id := "haslinger2025_ch1_9a"
@@ -139,9 +127,7 @@ def ch1_9a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "lower"), ("precision", "lower")]
-    comment := "A conjunction with a homogeneity gap but no non-maximal reading: potential for imprecision that Inference Preservation blocks."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A conjunction with a homogeneity gap but no non-maximal reading: potential for imprecision that Inference Preservation blocks." }
 
 def ch1_9b : LinguisticExample :=
   { id := "haslinger2025_ch1_9b"
@@ -157,9 +143,7 @@ def ch1_9b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("chapter", "1"), ("phenomenon", "complexityPrecision"), ("complexity", "higher"), ("precision", "higher")]
-    comment := "The gap-less counterpart, with extra material."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The gap-less counterpart, with extra material." }
 
 def ch2_19 : LinguisticExample :=
   { id := "haslinger2025_ch2_19"
@@ -175,9 +159,7 @@ def ch2_19 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("chapter", "2"), ("phenomenon", "numeralImprecision"), ("scenario", "carsExact"), ("actualValue", "98")]
-    comment := "CARS(EXACT): the salient issue is the tax rate, which separates 98 from 100, so the exact construal is the only relevant one and the utterance is rejected."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "CARS(EXACT): the salient issue is the tax rate, which separates 98 from 100, so the exact construal is the only relevant one and the utterance is rejected." }
 
 def ch2_20 : LinguisticExample :=
   { id := "haslinger2025_ch2_20"
@@ -193,9 +175,7 @@ def ch2_20 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("chapter", "2"), ("phenomenon", "numeralImprecision"), ("scenario", "carsInexact"), ("actualValue", "98")]
-    comment := "CARS(INEXACT): for the issue of extreme wealth 98 and 100 fall together, and the inexact construal makes the utterance acceptable."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "CARS(INEXACT): for the issue of extreme wealth 98 and 100 fall together, and the inexact construal makes the utterance acceptable." }
 
 def ch2_164a : LinguisticExample :=
   { id := "haslinger2025_ch2_164a"
@@ -211,9 +191,7 @@ def ch2_164a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("chapter", "2"), ("phenomenon", "numeralImprecision"), ("scenario", "gameShow")]
-    comment := "False on the exact construal, true on the inexact one; most consultants accept exactly one of (164a) and (164b), disagreeing on which, so round numerals show no homogeneity gap."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "False on the exact construal, true on the inexact one; most consultants accept exactly one of (164a) and (164b), disagreeing on which, so round numerals show no homogeneity gap." }
 
 def ch2_164b : LinguisticExample :=
   { id := "haslinger2025_ch2_164b"
@@ -229,9 +207,7 @@ def ch2_164b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("chapter", "2"), ("phenomenon", "numeralImprecision"), ("scenario", "gameShow")]
-    comment := "True on the exact construal, false on the inexact one."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "True on the exact construal, false on the inexact one." }
 
 def ch6_8a : LinguisticExample :=
   { id := "haslinger2025_ch6_8a"
@@ -247,9 +223,7 @@ def ch6_8a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("chapter", "6"), ("phenomenon", "roundness"), ("roundnessScale", "tens")]
-    comment := "A numeral on the conventionalized scale of tens, which permits imprecision."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A numeral on the conventionalized scale of tens, which permits imprecision." }
 
 def ch6_8b : LinguisticExample :=
   { id := "haslinger2025_ch6_8b"
@@ -265,9 +239,7 @@ def ch6_8b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("chapter", "6"), ("phenomenon", "roundness"), ("roundnessScale", "units")]
-    comment := "A numeral off that scale, whose alternatives include 150: no imprecision."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A numeral off that scale, whose alternatives include 150: no imprecision." }
 
 def ch6_9a : LinguisticExample :=
   { id := "haslinger2025_ch6_9a"
@@ -283,9 +255,7 @@ def ch6_9a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("chapter", "6"), ("phenomenon", "roundness"), ("roundnessScale", "quarterHours")]
-    comment := "A clock time on the quarter-hour scale: acceptable exact and inexact."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A clock time on the quarter-hour scale: acceptable exact and inexact." }
 
 def ch6_9b : LinguisticExample :=
   { id := "haslinger2025_ch6_9b"
@@ -301,9 +271,7 @@ def ch6_9b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("chapter", "6"), ("phenomenon", "roundness"), ("roundnessScale", "minutes")]
-    comment := "A clock time off that scale: acceptable exact, unacceptable inexact."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A clock time off that scale: acceptable exact, unacceptable inexact." }
 
 def ch7_19b : LinguisticExample :=
   { id := "haslinger2025_ch7_19b"
@@ -319,9 +287,7 @@ def ch7_19b : LinguisticExample :=
     alternatives := [("Bert was there.", .acceptable)]
     readings := []
     paperFeatures := [("chapter", "7"), ("phenomenon", "conjunctionMaximality")]
-    comment := "The precise truth conditions entail each conjunct alternative, so Inference Preservation admits only the maximal construal."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The precise truth conditions entail each conjunct alternative, so Inference Preservation admits only the maximal construal." }
 
 def all : List LinguisticExample := [ch1_6a, ch1_6b, ch1_7a, ch1_7b, ch1_8a, ch1_8b, ch1_9a, ch1_9b, ch2_19, ch2_20, ch2_164a, ch2_164b, ch6_8a, ch6_8b, ch6_9a, ch6_9b, ch7_19b]
 

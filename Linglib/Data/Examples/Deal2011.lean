@@ -31,9 +31,7 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "unembedded")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex5 : LinguisticExample :=
   { id := "deal2011_ex5"
@@ -49,9 +47,7 @@ def ex5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "unembedded"), ("force", "necessity")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex6 : LinguisticExample :=
   { id := "deal2011_ex6"
@@ -67,9 +63,7 @@ def ex6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "conditional consequent"), ("force", "necessity")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex10 : LinguisticExample :=
   { id := "deal2011_ex10"
@@ -85,9 +79,7 @@ def ex10 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "unembedded"), ("force", "necessity")]
-    comment := "Uttered in casual conversation and translated with should."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Uttered in casual conversation and translated with should." }
 
 def ex46 : LinguisticExample :=
   { id := "deal2011_ex46"
@@ -103,9 +95,7 @@ def ex46 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "negation"), ("force", "possibility")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex47 : LinguisticExample :=
   { id := "deal2011_ex47"
@@ -121,9 +111,7 @@ def ex47 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "negation"), ("force", "possibility")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex48 : LinguisticExample :=
   { id := "deal2011_ex48"
@@ -139,9 +127,7 @@ def ex48 : LinguisticExample :=
     alternatives := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "negation")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex49 : LinguisticExample :=
   { id := "deal2011_ex49"
@@ -157,9 +143,7 @@ def ex49 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "negation"), ("force", "necessity")]
-    comment := "Consultant: the sentence says 'you can't go', a different conversation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Consultant: the sentence says 'you can't go', a different conversation." }
 
 def ex50 : LinguisticExample :=
   { id := "deal2011_ex50"
@@ -175,9 +159,7 @@ def ex50 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "negation"), ("force", "necessity")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex51 : LinguisticExample :=
   { id := "deal2011_ex51"
@@ -193,9 +175,7 @@ def ex51 : LinguisticExample :=
     alternatives := []
     readings := [("possibility", .acceptable), ("necessity", .acceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "existential restriction")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex52 : LinguisticExample :=
   { id := "deal2011_ex52"
@@ -211,9 +191,7 @@ def ex52 : LinguisticExample :=
     alternatives := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "universal restriction")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex53 : LinguisticExample :=
   { id := "deal2011_ex53"
@@ -229,9 +207,7 @@ def ex53 : LinguisticExample :=
     alternatives := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "universal restriction")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex54 : LinguisticExample :=
   { id := "deal2011_ex54"
@@ -247,9 +223,7 @@ def ex54 : LinguisticExample :=
     alternatives := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "universal restriction")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex57 : LinguisticExample :=
   { id := "deal2011_ex57"
@@ -265,9 +239,7 @@ def ex57 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "conditional consequent"), ("force", "necessity")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex58 : LinguisticExample :=
   { id := "deal2011_ex58"
@@ -283,9 +255,7 @@ def ex58 : LinguisticExample :=
     alternatives := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "conditional antecedent")]
-    comment := "The readings concern the modal of the antecedent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The readings concern the modal of the antecedent." }
 
 def ex59 : LinguisticExample :=
   { id := "deal2011_ex59"
@@ -301,9 +271,7 @@ def ex59 : LinguisticExample :=
     alternatives := []
     readings := [("possibility", .acceptable), ("necessity", .unacceptable)]
     paperFeatures := [("modal", "o'qa"), ("environment", "conditional antecedent")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex60 : LinguisticExample :=
   { id := "deal2011_ex60"
@@ -319,9 +287,7 @@ def ex60 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("modal", "o'qa"), ("environment", "conditional antecedent"), ("force", "necessity")]
-    comment := "Consultant: the sentence says that if I could call the doctor, I would."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Consultant: the sentence says that if I could call the doctor, I would." }
 
 def all : List LinguisticExample := [ex1, ex5, ex6, ex10, ex46, ex47, ex48, ex49, ex50, ex51, ex52, ex53, ex54, ex57, ex58, ex59, ex60]
 

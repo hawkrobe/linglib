@@ -31,9 +31,7 @@ def ex_11 : LinguisticExample :=
     alternatives := []
     readings := [("quantified conditional assertion: consider the crows — each one is black", .acceptable)]
     paperFeatures := [("form", "A"), ("assertive iff", "there are crows")]
-    comment := "Asserts nothing about crowhood: the content is the conjunction of 't is black' for the crows t."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Asserts nothing about crowhood: the content is the conjunction of 't is black' for the crows t." }
 
 def ex_12 : LinguisticExample :=
   { id := "belnap1970_12"
@@ -49,9 +47,7 @@ def ex_12 : LinguisticExample :=
     alternatives := []
     readings := [("consider the crows: some of them are black", .acceptable)]
     paperFeatures := [("form", "I"), ("assertive iff", "there are crows")]
-    comment := "The freshman rendering ∃x(if Cx then Bx) comes out right under conditional assertion."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The freshman rendering ∃x(if Cx then Bx) comes out right under conditional assertion." }
 
 def unicorns_a : LinguisticExample :=
   { id := "belnap1970_unicorns_a"
@@ -67,9 +63,7 @@ def unicorns_a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("status", "nonassertive"), ("diagnostic", "I-conversion")]
-    comment := "Nonassertive: no unicorns. Its converse is plain false — conversion preserves truth, not assertiveness."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Nonassertive: no unicorns. Its converse is plain false — conversion preserves truth, not assertiveness." }
 
 def unicorns_b : LinguisticExample :=
   { id := "belnap1970_unicorns_b"
@@ -85,9 +79,7 @@ def unicorns_b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("status", "false"), ("diagnostic", "I-conversion")]
-    comment := "Assertive (there are animals) and false."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Assertive (there are animals) and false." }
 
 def johns_children : LinguisticExample :=
   { id := "belnap1970_johns_children"
@@ -103,9 +95,7 @@ def johns_children : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("status", "nonassertive"), ("diagnostic", "I-conversion")]
-    comment := "Nonassertive in this context, while 'Some sleepers are children of John's' is false."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Nonassertive in this context, while 'Some sleepers are children of John's' is false." }
 
 def barbara : LinguisticExample :=
   { id := "belnap1970_barbara"
@@ -121,9 +111,7 @@ def barbara : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("form", "Barbara conclusion"), ("asymmetry", "the major alone implies the conclusion")]
-    comment := "When the minor is true, major and conclusion are both assertive, and the major's content implies the conclusion's."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "When the minor is true, major and conclusion are both assertive, and the major's content implies the conclusion's." }
 
 def biscuits : LinguisticExample :=
   { id := "belnap1970_biscuits"
@@ -139,9 +127,7 @@ def biscuits : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("status", "plain false, not nonassertive")]
-    comment := "Not a conditional assertion: falsity survives a false antecedent — the biscuit conditional is something else."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Not a conditional assertion: falsity survives a false antecedent — the biscuit conditional is something else." }
 
 def frank_james : LinguisticExample :=
   { id := "belnap1970_frank_james"
@@ -157,9 +143,7 @@ def frank_james : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("use", "conditional denial of a conditional question's presupposition")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def wages : LinguisticExample :=
   { id := "belnap1970_wages"
@@ -175,9 +159,7 @@ def wages : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("use", "summarizing an empirical regularity without explanatory force")]
-    comment := "Quantified conditional assertion limits a law's scope without asserting a connection between antecedent and consequent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Quantified conditional assertion limits a law's scope without asserting a connection between antecedent and consequent." }
 
 def all : List LinguisticExample := [ex_11, ex_12, unicorns_a, unicorns_b, johns_children, barbara, biscuits, frank_james, wages]
 

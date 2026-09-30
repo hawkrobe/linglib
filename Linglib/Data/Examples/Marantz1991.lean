@@ -31,9 +31,7 @@ def m1991_1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause", "unergative"), ("inflection", "I"), ("subject", "NOM")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def m1991_1b : LinguisticExample :=
   { id := "m1991_1b"
@@ -49,9 +47,7 @@ def m1991_1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause", "unergative"), ("inflection", "II"), ("subject", "ERG")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def m1991_1c : LinguisticExample :=
   { id := "m1991_1c"
@@ -67,9 +63,7 @@ def m1991_1c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause", "transitive"), ("inflection", "I"), ("subject", "NOM"), ("object", "DAT")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def m1991_1d : LinguisticExample :=
   { id := "m1991_1d"
@@ -85,9 +79,7 @@ def m1991_1d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause", "transitive"), ("inflection", "II"), ("subject", "ERG"), ("object", "NOM")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def m1991_2a : LinguisticExample :=
   { id := "m1991_2a"
@@ -103,9 +95,7 @@ def m1991_2a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("inflection", "I"), ("subject", "NOM")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def m1991_2b : LinguisticExample :=
   { id := "m1991_2b"
@@ -121,9 +111,7 @@ def m1991_2b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("inflection", "II"), ("subject", "NOM")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def m1991_3a : LinguisticExample :=
   { id := "m1991_3a"
@@ -139,9 +127,7 @@ def m1991_3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause", "psych"), ("inflection", "I"), ("subject", "DAT"), ("object", "NOM")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def m1991_3b : LinguisticExample :=
   { id := "m1991_3b"
@@ -157,9 +143,7 @@ def m1991_3b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause", "psych"), ("inflection", "II"), ("subject", "DAT"), ("object", "NOM")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def m1991_4a : LinguisticExample :=
   { id := "m1991_4a"
@@ -175,9 +159,7 @@ def m1991_4a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("inflection", "perfect"), ("subject", "NOM")]
-    comment := "The paper gives no free translation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper gives no free translation." }
 
 def m1991_4a_erg : LinguisticExample :=
   { id := "m1991_4a_erg"
@@ -193,9 +175,7 @@ def m1991_4a_erg : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("inflection", "perfect"), ("subject", "ERG")]
-    comment := "The paper gives the ergative marker as excluded, *siita (*ne) aayii*. The paper gives no free translation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper gives the ergative marker as excluded, *siita (*ne) aayii*. The paper gives no free translation." }
 
 def m1991_4b : LinguisticExample :=
   { id := "m1991_4b"
@@ -211,9 +191,7 @@ def m1991_4b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause", "unergative"), ("inflection", "perfect"), ("subject", "NOM")]
-    comment := "The paper gives no free translation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper gives no free translation." }
 
 def m1991_4c : LinguisticExample :=
   { id := "m1991_4c"
@@ -229,9 +207,7 @@ def m1991_4c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause", "unergative"), ("inflection", "perfect"), ("subject", "ERG")]
-    comment := "The paper gives no free translation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper gives no free translation." }
 
 def m1991_4d : LinguisticExample :=
   { id := "m1991_4d"
@@ -247,9 +223,7 @@ def m1991_4d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause", "transitive"), ("inflection", "perfect"), ("subject", "ERG"), ("object", "NOM")]
-    comment := "The paper gives no free translation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper gives no free translation." }
 
 def m1991_5a : LinguisticExample :=
   { id := "m1991_5a"
@@ -265,9 +239,7 @@ def m1991_5a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause", "unaccusative"), ("subject", "ABS")]
-    comment := "The paper gives no free translation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper gives no free translation." }
 
 def m1991_5b : LinguisticExample :=
   { id := "m1991_5b"
@@ -283,9 +255,7 @@ def m1991_5b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause", "unergative"), ("subject", "ERG")]
-    comment := "The paper gives no free translation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper gives no free translation." }
 
 def m1991_5c : LinguisticExample :=
   { id := "m1991_5c"
@@ -301,9 +271,7 @@ def m1991_5c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clause", "transitive"), ("subject", "ERG"), ("object", "ABS")]
-    comment := "The paper gives no free translation and glosses *ekarri* as 'bought'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper gives no free translation and glosses *ekarri* as 'bought'." }
 
 def all : List LinguisticExample := [m1991_1a, m1991_1b, m1991_1c, m1991_1d, m1991_2a, m1991_2b, m1991_3a, m1991_3b, m1991_4a, m1991_4a_erg, m1991_4b, m1991_4c, m1991_4d, m1991_5a, m1991_5b, m1991_5c]
 

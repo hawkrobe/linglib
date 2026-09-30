@@ -36,8 +36,7 @@
         "Harrell 1957, 15"
       ]
     ],
-    "comment": "Superheavy final, heavy after Consonant Extrametricality.",
-    "lgrConformance": ""
+    "comment": "Superheavy final, heavy after Consonant Extrametricality."
   },
   {
     "id": "hayes1995_hajjaan",
@@ -76,8 +75,7 @@
         "Mitchell 1975, 77"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hayes1995_gatoo",
@@ -116,8 +114,7 @@
         "Mitchell 1975, 81"
       ]
     ],
-    "comment": "Final CV: counts as heavy in colloquial forms.",
-    "lgrConformance": ""
+    "comment": "Final CV: counts as heavy in colloquial forms."
   },
   {
     "id": "hayes1995_beetak",
@@ -156,8 +153,7 @@
         "Harrell 1957, 15"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hayes1995_katabta",
@@ -196,8 +192,7 @@
         "Mitchell 1975, 78"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hayes1995_mudarris",
@@ -236,8 +231,7 @@
         "McCarthy 1979a, 446"
       ]
     ],
-    "comment": "Final CVC demoted to light; (15b), (16b).",
-    "lgrConformance": ""
+    "comment": "Final CVC demoted to light; (15b), (16b)."
   },
   {
     "id": "hayes1995_haadaani",
@@ -276,8 +270,7 @@
         "Mitchell 1975, 77"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hayes1995_qattaala",
@@ -320,8 +313,7 @@
         "even from the preceding heavy"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hayes1995_mudarrisit",
@@ -364,8 +356,7 @@
         "even from the preceding heavy"
       ]
     ],
-    "comment": "(15c), (16c).",
-    "lgrConformance": ""
+    "comment": "(15c), (16c)."
   },
   {
     "id": "hayes1995_Padwiyatuhu",
@@ -408,8 +399,7 @@
         "even from the preceding heavy"
       ]
     ],
-    "comment": "(15c), (16c).",
-    "lgrConformance": ""
+    "comment": "(15c), (16c)."
   },
   {
     "id": "hayes1995_fihim",
@@ -452,8 +442,7 @@
         "even from the word beginning"
       ]
     ],
-    "comment": "(15c), (16c).",
-    "lgrConformance": ""
+    "comment": "(15c), (16c)."
   },
   {
     "id": "hayes1995_sajaratun",
@@ -496,8 +485,7 @@
         "even from the word beginning"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hayes1995_katabitu",
@@ -540,8 +528,7 @@
         "even from the word beginning"
       ]
     ],
-    "comment": "(15c), (16c).",
-    "lgrConformance": ""
+    "comment": "(15c), (16c)."
   },
   {
     "id": "hayes1995_sajaratuhuma",
@@ -584,8 +571,7 @@
         "even from the word beginning"
       ]
     ],
-    "comment": "Final CV: light by Mora Extrametricality; (15c), (16c).",
-    "lgrConformance": ""
+    "comment": "Final CV: light by Mora Extrametricality; (15c), (16c)."
   },
   {
     "id": "hayes1995_Pinkasara",
@@ -628,8 +614,7 @@
         "odd from the preceding heavy"
       ]
     ],
-    "comment": "(15d), (16d).",
-    "lgrConformance": ""
+    "comment": "(15d), (16d)."
   },
   {
     "id": "hayes1995_Padwiyatuhuma",
@@ -672,8 +657,7 @@
         "odd from the preceding heavy"
       ]
     ],
-    "comment": "(15d), (16d).",
-    "lgrConformance": ""
+    "comment": "(15d), (16d)."
   },
   {
     "id": "hayes1995_kataba",
@@ -716,8 +700,7 @@
         "odd from the word beginning"
       ]
     ],
-    "comment": "(15d), (16d), (17): the stray final light cannot be promoted.",
-    "lgrConformance": ""
+    "comment": "(15d), (16d), (17): the stray final light cannot be promoted."
   },
   {
     "id": "hayes1995_sajaratuhu",
@@ -760,7 +743,6 @@
         "odd from the word beginning"
       ]
     ],
-    "comment": "(15d), (16d).",
-    "lgrConformance": ""
+    "comment": "(15d), (16d)."
   }
 ]

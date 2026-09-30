@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2"), ("phenomenon", "coherence"), ("coherence", "more")]
-    comment := "Intuitively more coherent than (2)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Intuitively more coherent than (2)." }
 
 def ex_2 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_2"
@@ -49,9 +47,7 @@ def ex_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2"), ("phenomenon", "coherence"), ("coherence", "less")]
-    comment := "Less coherent than (1): the discourse flips back and forth among several entities."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Less coherent than (1): the discourse flips back and forth among several entities." }
 
 def ex_3 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_3"
@@ -67,9 +63,7 @@ def ex_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2"), ("phenomenon", "pronounMisdirection")]
-    comment := "The pronoun in (e) misleads: Terry has been the center of attention, and only 'sick' forces Tony."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The pronoun in (e) misleads: Terry has been the center of attention, and only 'sick' forces Tony." }
 
 def ex_4 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_4"
@@ -85,9 +79,7 @@ def ex_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2"), ("phenomenon", "pronounMisdirection")]
-    comment := "(f) and (g) exhibit the same misdirection as (3d) and (3e): the focus has shifted to Tony."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "(f) and (g) exhibit the same misdirection as (3d) and (3e): the focus has shifted to Tony." }
 
 def ex_5 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_5"
@@ -103,9 +95,7 @@ def ex_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2"), ("phenomenon", "pronounMisdirection")]
-    comment := "The confusion of (4g) is avoided by the name."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The confusion of (4g) is avoided by the name." }
 
 def ex_6 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_6"
@@ -121,9 +111,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "uniqueCb")]
-    comment := "A priori either Susan or Betsy might be the Cb of (b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A priori either Susan or Betsy might be the Cb of (b)." }
 
 def ex_7 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_7"
@@ -139,9 +127,7 @@ def ex_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "rule1"), ("rule1", "satisfied")]
-    comment := "Susan continued as Cb."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Susan continued as Cb." }
 
 def ex_8 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_8"
@@ -157,9 +143,7 @@ def ex_8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "rule1"), ("rule1", "satisfied")]
-    comment := "Susan merely retained as Cb; better than (9) although it changes grammatical position."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Susan merely retained as Cb; better than (9) although it changes grammatical position." }
 
 def ex_9 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_9"
@@ -175,9 +159,7 @@ def ex_9 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "rule1"), ("rule1", "violated")]
-    comment := "Marked decrease in acceptability from (7) to (10)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Marked decrease in acceptability from (7) to (10)." }
 
 def ex_10 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_10"
@@ -193,9 +175,7 @@ def ex_10 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "rule1"), ("rule1", "violated")]
-    comment := "For many people completely unacceptable."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "For many people completely unacceptable." }
 
 def ex_11 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_11"
@@ -211,9 +191,7 @@ def ex_11 : LinguisticExample :=
     alternatives := []
     readings := [("she = Susan", .acceptable), ("she = Betsy", .marginal)]
     paperFeatures := [("section", "5"), ("phenomenon", "cfRanking")]
-    comment := "Strong preference for Susan, realized in subject position in (d)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Strong preference for Susan, realized in subject position in (d)." }
 
 def ex_12 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_12"
@@ -229,9 +207,7 @@ def ex_12 : LinguisticExample :=
     alternatives := []
     readings := [("her = Susan", .acceptable), ("her = Betsy", .marginal)]
     paperFeatures := [("section", "5"), ("phenomenon", "cfRanking")]
-    comment := "The preference for Susan holds regardless of syntactic position in (e), so it is not parallelism."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The preference for Susan holds regardless of syntactic position in (e), so it is not parallelism." }
 
 def ex_13 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_13"
@@ -247,9 +223,7 @@ def ex_13 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "cfRanking"), ("coherence", "more")]
-    comment := "'The silly thing' is the boat, the most likely Cb."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "'The silly thing' is the boat, the most likely Cb." }
 
 def ex_14 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_14"
@@ -265,9 +239,7 @@ def ex_14 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5"), ("phenomenon", "cfRanking"), ("coherence", "less")]
-    comment := "Pragmatics prefers the bear as 'the silly thing', in conflict with the boat's being the most likely Cb."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Pragmatics prefers the bear as 'the silly thing', in conflict with the boat's being the most likely Cb." }
 
 def ex_15 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_15"
@@ -283,9 +255,7 @@ def ex_15 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7"), ("phenomenon", "rule1"), ("rule1", "violated")]
-    comment := "Presumed within a segment centered on John; the only interpretation takes 'John' in (c) as a second John, and even then the sequence is very odd."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Presumed within a segment centered on John; the only interpretation takes 'John' in (c) as a second John, and even then the sequence is very odd." }
 
 def ex_16 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_16"
@@ -301,9 +271,7 @@ def ex_16 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7"), ("phenomenon", "rule1"), ("rule1", "satisfied")]
-    comment := "The intervening (c) shifts the center from John to Mike; per Gordon, Grosz, and Gilliom (1993), (16d) without (c) is not as bad as (15c)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The intervening (c) shifts the center from John to Mike; per Gordon, Grosz, and Gilliom (1993), (16d) without (c) is not as bad as (15c)." }
 
 def ex_17 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_17"
@@ -319,9 +287,7 @@ def ex_17 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7"), ("phenomenon", "fullNounPhraseCb")]
-    comment := "Adapted from Sidner (1979); the Cb is realized by a definite description that conveys more than reference."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Adapted from Sidner (1979); the Cb is realized by a definite description that conveys more than reference." }
 
 def ex_18 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_18"
@@ -337,9 +303,7 @@ def ex_18 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7"), ("phenomenon", "fullNounPhraseCb")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_19 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_19"
@@ -355,9 +319,7 @@ def ex_19 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7"), ("phenomenon", "functionalDependence")]
-    comment := "The house is realized but not directly realized in (b); the door ranks above it in Cf(b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The house is realized but not directly realized in (b); the door ranks above it in Cf(b)." }
 
 def ex_20 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_20"
@@ -373,9 +335,7 @@ def ex_20 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7"), ("phenomenon", "transitions"), ("rule1", "satisfied")]
-    comment := "Annotated CONTINUE, RETAIN, SHIFT at (c), (d), (e)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Annotated CONTINUE, RETAIN, SHIFT at (c), (d), (e)." }
 
 def ex_25 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_25"
@@ -391,9 +351,7 @@ def ex_25 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "8"), ("phenomenon", "valueFreeLoaded")]
-    comment := "Value-free interpretation of the description."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Value-free interpretation of the description." }
 
 def ex_26 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_26"
@@ -409,9 +367,7 @@ def ex_26 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "8"), ("phenomenon", "valueFreeLoaded")]
-    comment := "Value-loaded interpretation of the description."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Value-loaded interpretation of the description." }
 
 def ex_27 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_27"
@@ -427,9 +383,7 @@ def ex_27 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "8"), ("phenomenon", "valueFreeLoaded")]
-    comment := "(b) prefers the value-free interpretation but allows the value-loaded one (c) needs."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "(b) prefers the value-free interpretation but allows the value-loaded one (c) needs." }
 
 def ex_28 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_28"
@@ -445,9 +399,7 @@ def ex_28 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "8"), ("phenomenon", "valueFreeLoaded")]
-    comment := "Christine Nakatani's example: (b) prefers value-loaded, (c) requires value-free."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Christine Nakatani's example: (b) prefers value-loaded, (c) requires value-free." }
 
 def ex_32 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_32"
@@ -463,9 +415,7 @@ def ex_32 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "8"), ("phenomenon", "referentialUse")]
-    comment := "Kripke (1977): the Cb of (b) is the husband."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Kripke (1977): the Cb of (b) is the husband." }
 
 def ex_33 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_33"
@@ -481,9 +431,7 @@ def ex_33 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "8"), ("phenomenon", "referentialUse")]
-    comment := "Kripke (1977): the Cb of (b) is the lover."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Kripke (1977): the Cb of (b) is the lover." }
 
 def ex_34 : LinguisticExample :=
   { id := "groszjoshiweinstein1995_34"
@@ -499,9 +447,7 @@ def ex_34 : LinguisticExample :=
     alternatives := []
     readings := [("he in (c) = Jeff", .acceptable)]
     paperFeatures := [("section", "9"), ("phenomenon", "sidnerComparison")]
-    comment := "Section 9 says Sidner's actor focus makes Carl the leading candidate for 'he' in (c); Sidner's own analysis of this discourse (her D9) has every 'he' co-specify Jeff, the discourse focus established before the actor focus. On the centering account Jeff is the Cb at (b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Section 9 says Sidner's actor focus makes Carl the leading candidate for 'he' in (c); Sidner's own analysis of this discourse (her D9) has every 'he' co-specify Jeff, the discourse focus established before the actor focus. On the centering account Jeff is the Cb at (b)." }
 
 def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_25, ex_26, ex_27, ex_28, ex_32, ex_33, ex_34]
 

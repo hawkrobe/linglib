@@ -49,8 +49,7 @@
         "crossSerial"
       ]
     ],
-    "comment": "The cross-serial dependencies: em Hans is the object of hälfed, es huus of aastriiche, and hälfed requires a dative object.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The cross-serial dependencies: em Hans is the object of hälfed, es huus of aastriiche, and hälfed requires a dative object."
   },
   {
     "id": "shieber1985_ex2",
@@ -102,8 +101,7 @@
         "crossSerial"
       ]
     ],
-    "comment": "lönd requires an accusative object.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "lönd requires an accusative object."
   },
   {
     "id": "shieber1985_ex3",
@@ -155,8 +153,7 @@
         "crossSerial"
       ]
     ],
-    "comment": "Informants uniformly reject the clause and identify the case marking on Hans as the culprit.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Informants uniformly reject the clause and identify the case marking on Hans as the culprit."
   },
   {
     "id": "shieber1985_ex4",
@@ -208,8 +205,7 @@
         "crossSerial"
       ]
     ],
-    "comment": "aastriiche requires an accusative object.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "aastriiche requires an accusative object."
   },
   {
     "id": "shieber1985_ex5",
@@ -269,8 +265,7 @@
         "crossSerial"
       ]
     ],
-    "comment": "A triply embedded cross-serial clause, grammatical exactly when the case marking is correct.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A triply embedded cross-serial clause, grammatical exactly when the case marking is correct."
   },
   {
     "id": "shieber1985_ex6",
@@ -330,8 +325,7 @@
         "crossSerial"
       ]
     ],
-    "comment": "The triply embedded clause with Hans in the accusative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The triply embedded clause with Hans in the accusative."
   },
   {
     "id": "shieber1985_ex7",
@@ -391,8 +385,7 @@
         "crossSerial"
       ]
     ],
-    "comment": "Raising verbs may intervene between the noun phrases and the verbs; an instance of Claims 1 and 2.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Raising verbs may intervene between the noun phrases and the verbs; an instance of Claims 1 and 2."
   },
   {
     "id": "shieber1985_ex8",
@@ -460,8 +453,7 @@
         "crossSerial"
       ]
     ],
-    "comment": "The schema of Claim 2 with one accusative pair and one dative pair; laa is the infinitive of lönd.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The schema of Claim 2 with one accusative pair and one dative pair; laa is the infinitive of lönd."
   },
   {
     "id": "shieber1985_ex9",
@@ -513,8 +505,7 @@
         "other"
       ]
     ],
-    "comment": "Another constituent order the language allows (§4.2); the proof removes such orders by the regular filter.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Another constituent order the language allows (§4.2); the proof removes such orders by the regular filter."
   },
   {
     "id": "shieber1985_ex10",
@@ -566,8 +557,7 @@
         "other"
       ]
     ],
-    "comment": "The nested order of the verbs.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The nested order of the verbs."
   },
   {
     "id": "shieber1985_ex11",
@@ -619,8 +609,7 @@
         "other"
       ]
     ],
-    "comment": "Accepted depending on dialect and context; the one clause in the paper on which the four informants did not agree.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Accepted depending on dialect and context; the one clause in the paper on which the four informants did not agree."
   },
   {
     "id": "shieber1985_ex12",
@@ -672,8 +661,7 @@
         "other"
       ]
     ],
-    "comment": "Unmet case requirements are ungrammatical whether the order is cross-serial or not (Claim 3).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Unmet case requirements are ungrammatical whether the order is cross-serial or not (Claim 3)."
   },
   {
     "id": "shieber1985_ex13",
@@ -725,8 +713,7 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Starred in the paper: the case requirements of the verbs are not met."
   },
   {
     "id": "shieber1985_ex14",
@@ -778,8 +765,7 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Starred in the paper: the case requirements of the verbs are not met."
   },
   {
     "id": "shieber1985_ex15",
@@ -831,8 +817,7 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Starred in the paper: the case requirements of the verbs are not met."
   },
   {
     "id": "shieber1985_ex16",
@@ -884,8 +869,7 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Starred in the paper: the case requirements of the verbs are not met."
   },
   {
     "id": "shieber1985_ex17",
@@ -937,8 +921,7 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Starred in the paper: the case requirements of the verbs are not met."
   },
   {
     "id": "shieber1985_ex18",
@@ -990,8 +973,7 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Starred in the paper: the case requirements of the verbs are not met."
   },
   {
     "id": "shieber1985_ex19",
@@ -1043,8 +1025,7 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Starred in the paper: the case requirements of the verbs are not met."
   },
   {
     "id": "shieber1985_ex20",
@@ -1104,8 +1085,7 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Starred in the paper: the case requirements of the verbs are not met."
   },
   {
     "id": "shieber1985_ex21",
@@ -1165,8 +1145,7 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Starred in the paper: the case requirements of the verbs are not met."
   },
   {
     "id": "shieber1985_ex22",
@@ -1226,7 +1205,6 @@
         "crossSerial"
       ]
     ],
-    "comment": "The triply embedded clause (6) again, listed with the other unmet case requirements.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The triply embedded clause (6) again, listed with the other unmet case requirements."
   }
 ]

@@ -19,8 +19,7 @@
       ["scope", "CR"],
       ["suffixes", "CR"]
     ],
-    "comment": "Reciprocalized causative: the reciprocal has scope over the causative, and the suffix order -its-an- is both compositional and templatic. Hyman credits the data to Hyman & Mchombo 1992.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Reciprocalized causative: the reciprocal has scope over the causative, and the suffix order -its-an- is both compositional and templatic. Hyman credits the data to Hyman & Mchombo 1992."
   },
   {
     "id": "hyman2003_2a_rc",
@@ -42,8 +41,7 @@
       ["scope", "RC"],
       ["suffixes", "CR"]
     ],
-    "comment": "The templatic order -its-an- also carries the causativized-reciprocal reading, Hyman's asymmetric compositionality.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The templatic order -its-an- also carries the causativized-reciprocal reading, Hyman's asymmetric compositionality."
   },
   {
     "id": "hyman2003_2b_rc",
@@ -65,8 +63,7 @@
       ["scope", "RC"],
       ["suffixes", "RC"]
     ],
-    "comment": "Causativized reciprocal: the mirror order -an-its- with the compositional reading.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Causativized reciprocal: the mirror order -an-its- with the compositional reading."
   },
   {
     "id": "hyman2003_2b_cr",
@@ -88,8 +85,7 @@
       ["scope", "CR"],
       ["suffixes", "RC"]
     ],
-    "comment": "The mirror order -an-its- has only the compositional reading: it cannot mean 'cause each other to tie'.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The mirror order -an-its- has only the compositional reading: it cannot mean 'cause each other to tie'."
   },
   {
     "id": "hyman2003_3a",
@@ -111,8 +107,7 @@
       ["scope", "CA"],
       ["suffixes", "CA"]
     ],
-    "comment": "Applicativized causative: the instrument goes with the causation, so -its-il- is compositional.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Applicativized causative: the instrument goes with the causation, so -its-il- is compositional."
   },
   {
     "id": "hyman2003_3b",
@@ -134,8 +129,7 @@
       ["scope", "AC"],
       ["suffixes", "CA"]
     ],
-    "comment": "Causativized applicative: the instrument goes with the stirring, yet the order is still -its-il-; the only possible sequence in Chichewa.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Causativized applicative: the instrument goes with the stirring, yet the order is still -its-il-; the only possible sequence in Chichewa."
   },
   {
     "id": "hyman2003_7b",
@@ -157,8 +151,7 @@
       ["scope", "AC"],
       ["suffixes", "AC"]
     ],
-    "comment": "The mirror order -il-its- for a causativized applicative loses to the template in tableau (7b).",
-    "lgrConformance": ""
+    "comment": "The mirror order -il-its- for a causativized applicative loses to the template in tableau (7b)."
   },
   {
     "id": "hyman2003_8",
@@ -180,8 +173,7 @@
       ["scope", "RAC"],
       ["suffixes", "CAR"]
     ],
-    "comment": "The templatic order realizes a reciprocal inside an applicative inside a causative, with the causative two slots out of its compositional place.",
-    "lgrConformance": ""
+    "comment": "The templatic order realizes a reciprocal inside an applicative inside a causative, with the causative two slots out of its compositional place."
   },
   {
     "id": "hyman2003_8_star",
@@ -203,8 +195,7 @@
       ["scope", "RAC"],
       ["suffixes", "RAC"]
     ],
-    "comment": "The compositional order predicted by the Mirror Principle is ungrammatical.",
-    "lgrConformance": ""
+    "comment": "The compositional order predicted by the Mirror Principle is ungrammatical."
   },
   {
     "id": "hyman2003_13a",
@@ -226,8 +217,7 @@
       ["scope", "AR"],
       ["suffixes", "AR"]
     ],
-    "comment": "Reciprocalized applicative: compositional and templatic.",
-    "lgrConformance": ""
+    "comment": "Reciprocalized applicative: compositional and templatic."
   },
   {
     "id": "hyman2003_13b",
@@ -249,8 +239,7 @@
       ["scope", "RA"],
       ["suffixes", "RA"]
     ],
-    "comment": "Applicativized reciprocal: the compositional order -an-il- is ungrammatical even under the compositional reading.",
-    "lgrConformance": ""
+    "comment": "Applicativized reciprocal: the compositional order -an-il- is ungrammatical even under the compositional reading."
   },
   {
     "id": "hyman2003_13c",
@@ -272,8 +261,7 @@
       ["scope", "RA"],
       ["suffixes", "AR"]
     ],
-    "comment": "The templatic order carries the applicativized-reciprocal reading.",
-    "lgrConformance": ""
+    "comment": "The templatic order carries the applicativized-reciprocal reading."
   },
   {
     "id": "hyman2003_13d",
@@ -295,8 +283,7 @@
       ["scope", "RA"],
       ["suffixes", "RAR"]
     ],
-    "comment": "Suffix doubling: -an-il- licensed by the mirror constraint and -il-an- by the template.",
-    "lgrConformance": ""
+    "comment": "Suffix doubling: -an-il- licensed by the mirror constraint and -il-an- by the template."
   },
   {
     "id": "hyman2003_17b",
@@ -318,8 +305,7 @@
       ["scope", "RA"],
       ["suffixes", "ARA"]
     ],
-    "comment": "Doubling of the applicative around the reciprocal is not an appropriate output: a doubled suffix must be a mirror override repaired by a templatic sequence, never the reverse.",
-    "lgrConformance": ""
+    "comment": "Doubling of the applicative around the reciprocal is not an appropriate output: a doubled suffix must be a mirror override repaired by a templatic sequence, never the reverse."
   },
   {
     "id": "hyman2003_18a",
@@ -341,8 +327,7 @@
       ["scope", "AA"],
       ["suffixes", "AA"]
     ],
-    "comment": "The Repeated Morph Constraint: the template licenses no more than one applicative.",
-    "lgrConformance": ""
+    "comment": "The Repeated Morph Constraint: the template licenses no more than one applicative."
   },
   {
     "id": "hyman2003_18b",
@@ -364,8 +349,7 @@
       ["scope", "CC"],
       ["suffixes", "CC"]
     ],
-    "comment": "No double causative.",
-    "lgrConformance": ""
+    "comment": "No double causative."
   },
   {
     "id": "hyman2003_20a",
@@ -387,8 +371,7 @@
       ["scope", "CA"],
       ["suffixes", "CA"]
     ],
-    "comment": "Chimwiini applicativized causative: the instrument acts on the causation, and the templatic order -ish-iriz- is compositional. The paper does not attribute (20) to a source; (19) quotes Abasheikh 1978.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chimwiini applicativized causative: the instrument acts on the causation, and the templatic order -ish-iriz- is compositional. The paper does not attribute (20) to a source; (19) quotes Abasheikh 1978."
   },
   {
     "id": "hyman2003_20b",
@@ -410,8 +393,7 @@
       ["scope", "AC"],
       ["suffixes", "CA"]
     ],
-    "comment": "Chimwiini causativized applicative: the instrument acts on the cooking, within the scope of the causation, yet the order is the templatic -ish-iriz-. Transcription follows the preprint, whose r and the diacritic under n are special symbols.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Chimwiini causativized applicative: the instrument acts on the cooking, within the scope of the causation, yet the order is the templatic -ish-iriz-. Transcription follows the preprint, whose r and the diacritic under n are special symbols."
   },
   {
     "id": "hyman2003_22a",
@@ -433,8 +415,7 @@
       ["scope", "CA"],
       ["suffixes", "CA"]
     ],
-    "comment": "Applicativized causative. The paper glosses only CAUS-APP; the other glosses are supplied.",
-    "lgrConformance": ""
+    "comment": "Applicativized causative. The paper glosses only CAUS-APP; the other glosses are supplied."
   },
   {
     "id": "hyman2003_22b",
@@ -457,8 +438,7 @@
       ["suffixes", "CAP"],
       ["subject", "instrument"]
     ],
-    "comment": "The applicative instrument, with wider scope, becomes the passive subject. Glosses beyond CAUS-APP are supplied.",
-    "lgrConformance": ""
+    "comment": "The applicative instrument, with wider scope, becomes the passive subject. Glosses beyond CAUS-APP are supplied."
   },
   {
     "id": "hyman2003_22c",
@@ -481,8 +461,7 @@
       ["suffixes", "CAP"],
       ["subject", "causee"]
     ],
-    "comment": "Marked ?* by Hyman: the causee is typically rejected as subject of the passive of an applicativized causative.",
-    "lgrConformance": ""
+    "comment": "Marked ?* by Hyman: the causee is typically rejected as subject of the passive of an applicativized causative."
   },
   {
     "id": "hyman2003_23a",
@@ -504,8 +483,7 @@
       ["scope", "AC"],
       ["suffixes", "CA"]
     ],
-    "comment": "Causativized applicative: the causation has scope over the instrument, and the order is still -its-il-. Glosses beyond CAUS-APP are supplied.",
-    "lgrConformance": ""
+    "comment": "Causativized applicative: the causation has scope over the instrument, and the order is still -its-il-. Glosses beyond CAUS-APP are supplied."
   },
   {
     "id": "hyman2003_23b",
@@ -528,8 +506,7 @@
       ["suffixes", "CAP"],
       ["subject", "causee"]
     ],
-    "comment": "The causee becomes the passive subject of a causativized applicative.",
-    "lgrConformance": ""
+    "comment": "The causee becomes the passive subject of a causativized applicative."
   },
   {
     "id": "hyman2003_23c",
@@ -552,8 +529,7 @@
       ["suffixes", "CAP"],
       ["subject", "instrument"]
     ],
-    "comment": "Marked ?* by Hyman: the applicative instrument, within the scope of the causation, cannot become the passive subject.",
-    "lgrConformance": ""
+    "comment": "Marked ?* by Hyman: the applicative instrument, within the scope of the causation, cannot become the passive subject."
   },
   {
     "id": "hyman2003_32c",
@@ -575,8 +551,7 @@
       ["scope", "AC"],
       ["suffixes", "AC"]
     ],
-    "comment": "The lexicalized applicative uk-il- 'rebel against' cannot be causativized by adding -its- outside its base.",
-    "lgrConformance": ""
+    "comment": "The lexicalized applicative uk-il- 'rebel against' cannot be causativized by adding -its- outside its base."
   },
   {
     "id": "hyman2003_32d",
@@ -598,7 +573,6 @@
       ["scope", "AC"],
       ["suffixes", "CA"]
     ],
-    "comment": "The causative is interfixed into its templatic position inside the lexicalized applicative.",
-    "lgrConformance": ""
+    "comment": "The causative is interfixed into its templatic position inside the lexicalized applicative."
   }
 ]

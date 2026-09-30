@@ -16,8 +16,7 @@
       ["use_type", "standard"],
       ["def64_status", "satisfied"]
     ],
-    "comment": "The canonical additive use: two independent answers to a salient question.",
-    "lgrConformance": ""
+    "comment": "The canonical additive use: two independent answers to a salient question."
   },
   {
     "id": "thomas2026_3",
@@ -36,8 +35,7 @@
       ["use_type", "standard"],
       ["def64_status", "antecedent_violation"]
     ],
-    "comment": "Out of the blue there is no salient antecedent answering a relevant question; after Kripke.",
-    "lgrConformance": ""
+    "comment": "Out of the blue there is no salient antecedent answering a relevant question; after Kripke."
   },
   {
     "id": "thomas2026_5a",
@@ -56,8 +54,7 @@
       ["use_type", "standard"],
       ["def64_status", "satisfied"]
     ],
-    "comment": "The antecedent is a focus alternative of the host sentence.",
-    "lgrConformance": ""
+    "comment": "The antecedent is a focus alternative of the host sentence."
   },
   {
     "id": "thomas2026_5b",
@@ -75,8 +72,7 @@
       ["particle", "either"],
       ["use_type", "standard"]
     ],
-    "comment": "The negative additive; its felicity conditions are left to future work in footnote 9.",
-    "lgrConformance": ""
+    "comment": "The negative additive; its felicity conditions are left to future work in footnote 9."
   },
   {
     "id": "thomas2026_11",
@@ -95,8 +91,7 @@
       ["use_type", "standard"],
       ["def64_status", "prejacent_violation_i"]
     ],
-    "comment": "The prejacent entails the resolution that the conjunction evidences; after Beaver and Clark.",
-    "lgrConformance": ""
+    "comment": "The prejacent entails the resolution that the conjunction evidences; after Beaver and Clark."
   },
   {
     "id": "thomas2026_12",
@@ -115,8 +110,7 @@
       ["use_type", "standard"],
       ["def64_status", "satisfied"]
     ],
-    "comment": "A response to a multiple wh-question; after Zeevat and Jasinskaja.",
-    "lgrConformance": ""
+    "comment": "A response to a multiple wh-question; after Zeevat and Jasinskaja."
   },
   {
     "id": "thomas2026_13",
@@ -134,8 +128,7 @@
       ["particle", "too"],
       ["use_type", "standard"]
     ],
-    "comment": "Both sentences address the multiple wh-question, yet *too* is degraded where *and* is fine.",
-    "lgrConformance": ""
+    "comment": "Both sentences address the multiple wh-question, yet *too* is degraded where *and* is fine."
   },
   {
     "id": "thomas2026_18c",
@@ -154,8 +147,7 @@
       ["use_type", "argumentBuilding"],
       ["def64_status", "satisfied"]
     ],
-    "comment": "The argument-building use: the antecedent and prejacent together argue that this hotel is a good place to stay.",
-    "lgrConformance": ""
+    "comment": "The argument-building use: the antecedent and prejacent together argue that this hotel is a good place to stay."
   },
   {
     "id": "thomas2026_19c",
@@ -174,8 +166,7 @@
       ["use_type", "argumentBuilding"],
       ["def64_status", "conjunction_violation"]
     ],
-    "comment": "No question relevant to the interlocutors' goal has a resolution that the conjunction evidences.",
-    "lgrConformance": ""
+    "comment": "No question relevant to the interlocutors' goal has a resolution that the conjunction evidences."
   },
   {
     "id": "thomas2026_20b",
@@ -194,8 +185,7 @@
       ["use_type", "argumentBuilding"],
       ["def64_status", "satisfied"]
     ],
-    "comment": "With a goal that makes a dingy room desirable, a relevant question is available.",
-    "lgrConformance": ""
+    "comment": "With a goal that makes a dingy room desirable, a relevant question is available."
   },
   {
     "id": "thomas2026_24",
@@ -214,8 +204,7 @@
       ["use_type", "standard"],
       ["def64_status", "satisfied"]
     ],
-    "comment": "The antecedent evidences an answer without entailing it.",
-    "lgrConformance": ""
+    "comment": "The antecedent evidences an answer without entailing it."
   },
   {
     "id": "thomas2026_25",
@@ -234,8 +223,7 @@
       ["use_type", "standard"],
       ["def64_status", "conjunction_violation"]
     ],
-    "comment": "No question has a resolution evidenced more strongly by the conjunction than by the antecedent alone; *by the way* allows an unrelated prejacent.",
-    "lgrConformance": ""
+    "comment": "No question has a resolution evidenced more strongly by the conjunction than by the antecedent alone; *by the way* allows an unrelated prejacent."
   },
   {
     "id": "thomas2026_29bA",
@@ -254,8 +242,7 @@
       ["use_type", "standard"],
       ["def64_status", "prejacent_violation_i"]
     ],
-    "comment": "The prejacent entails the evidenced resolution although it does not entail the antecedent.",
-    "lgrConformance": ""
+    "comment": "The prejacent entails the evidenced resolution although it does not entail the antecedent."
   },
   {
     "id": "thomas2026_29bA2",
@@ -274,8 +261,7 @@
       ["use_type", "argumentBuilding"],
       ["def64_status", "satisfied"]
     ],
-    "comment": "Two pieces of evidence for the resolution that Sam stole the cookies.",
-    "lgrConformance": ""
+    "comment": "Two pieces of evidence for the resolution that Sam stole the cookies."
   },
   {
     "id": "thomas2026_30A",
@@ -294,8 +280,7 @@
       ["use_type", "standard"],
       ["def64_status", "prejacent_violation_ii"]
     ],
-    "comment": "A weaker prejacent, that Bailey plays an instrument, would evidence the resolution as strongly.",
-    "lgrConformance": ""
+    "comment": "A weaker prejacent, that Bailey plays an instrument, would evidence the resolution as strongly."
   },
   {
     "id": "thomas2026_30A2",
@@ -314,8 +299,7 @@
       ["use_type", "standard"],
       ["def64_status", "satisfied"]
     ],
-    "comment": "No constraint on the antecedent mirrors the prejacent condition.",
-    "lgrConformance": ""
+    "comment": "No constraint on the antecedent mirrors the prejacent condition."
   },
   {
     "id": "thomas2026_68",
@@ -334,8 +318,7 @@
       ["use_type", "standard"],
       ["def64_status", "satisfied"]
     ],
-    "comment": "Mention-some question: the antecedent entails the resolution that Bailey and Cameron were invited, and the conjunction the stronger resolution including Dana.",
-    "lgrConformance": ""
+    "comment": "Mention-some question: the antecedent entails the resolution that Bailey and Cameron were invited, and the conjunction the stronger resolution including Dana."
   },
   {
     "id": "thomas2026_70",
@@ -354,8 +337,7 @@
       ["use_type", "standard"],
       ["def64_status", "satisfied"]
     ],
-    "comment": "Mention-all question: the antecedent resolves it by quantity implicature, which the prejacent cancels in favour of a weaker exhaustive inference.",
-    "lgrConformance": ""
+    "comment": "Mention-all question: the antecedent resolves it by quantity implicature, which the prejacent cancels in favour of a weaker exhaustive inference."
   },
   {
     "id": "thomas2026_71",
@@ -374,8 +356,7 @@
       ["use_type", "standard"],
       ["def64_status", "satisfied"]
     ],
-    "comment": "The antecedent does not answer the mention-two question, raising every alternative that entails it equally, but answers the relevant mention-one question of someone Avery invited.",
-    "lgrConformance": ""
+    "comment": "The antecedent does not answer the mention-two question, raising every alternative that entails it equally, but answers the relevant mention-one question of someone Avery invited."
   },
   {
     "id": "thomas2026_72",
@@ -394,7 +375,6 @@
       ["use_type", "standard"],
       ["def64_status", "conjunction_violation"]
     ],
-    "comment": "The prejacent contributes no evidence for any resolution of a relevant question beyond the antecedent's.",
-    "lgrConformance": ""
+    "comment": "The prejacent contributes no evidence for any resolution of a relevant question beyond the antecedent's."
   }
 ]

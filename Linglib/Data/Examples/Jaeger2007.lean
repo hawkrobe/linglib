@@ -31,9 +31,7 @@ def t1_cv : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "1"), ("coda", "0"), ("frequency", "44.81"), ("permyriad", "4481")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def t1_cvc : LinguisticExample :=
   { id := "jaeger2007_t1_cvc"
@@ -49,9 +47,7 @@ def t1_cvc : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "1"), ("coda", "1"), ("frequency", "32.05"), ("permyriad", "3205")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def t1_vc : LinguisticExample :=
   { id := "jaeger2007_t1_vc"
@@ -67,9 +63,7 @@ def t1_vc : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "0"), ("coda", "1"), ("frequency", "11.99"), ("permyriad", "1199")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def t1_v : LinguisticExample :=
   { id := "jaeger2007_t1_v"
@@ -85,9 +79,7 @@ def t1_v : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "0"), ("coda", "0"), ("frequency", "3.85"), ("permyriad", "385")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def t1_cvcc : LinguisticExample :=
   { id := "jaeger2007_t1_cvcc"
@@ -103,9 +95,7 @@ def t1_cvcc : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "1"), ("coda", "2"), ("frequency", "3.25"), ("permyriad", "325")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def t1_ccvc : LinguisticExample :=
   { id := "jaeger2007_t1_ccvc"
@@ -121,9 +111,7 @@ def t1_ccvc : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "2"), ("coda", "1"), ("frequency", "1.98"), ("permyriad", "198")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def t1_ccv : LinguisticExample :=
   { id := "jaeger2007_t1_ccv"
@@ -139,9 +127,7 @@ def t1_ccv : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "2"), ("coda", "0"), ("frequency", "1.38"), ("permyriad", "138")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def t1_vcc : LinguisticExample :=
   { id := "jaeger2007_t1_vcc"
@@ -157,9 +143,7 @@ def t1_vcc : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "0"), ("coda", "2"), ("frequency", "0.42"), ("permyriad", "42")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def t1_ccvcc : LinguisticExample :=
   { id := "jaeger2007_t1_ccvcc"
@@ -175,9 +159,7 @@ def t1_ccvcc : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5"), ("onset", "2"), ("coda", "2"), ("frequency", "0.26"), ("permyriad", "26")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [t1_cv, t1_cvc, t1_vc, t1_v, t1_cvcc, t1_ccvc, t1_ccv, t1_vcc, t1_ccvcc]
 

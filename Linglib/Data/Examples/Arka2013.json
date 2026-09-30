@@ -20,8 +20,7 @@
     "paperFeatures": [
       ["tam", "contextual"]
     ],
-    "comment": "Contextual TAM: the bare verb is anchored by context alone.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Contextual TAM: the bare verb is anchored by context alone."
   },
   {
     "id": "arka2013_4a",
@@ -41,8 +40,7 @@
       ["frame", "S<E-R"],
       ["adjunct", "besok"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_4b",
@@ -62,8 +60,7 @@
       ["frame", "E-R<S"],
       ["adjunct", "kemarin"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_4c",
@@ -83,8 +80,7 @@
       ["frame", "E-R-S"],
       ["adjunct", "sekarang"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_5a",
@@ -104,8 +100,7 @@
       ["aux", "sudah"],
       ["frame", "E<S,R"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_5b",
@@ -126,8 +121,7 @@
       ["frame", "E<R<S"],
       ["adjunct", "kemarin"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_6a",
@@ -149,8 +143,7 @@
       ["aspect", "progressive"],
       ["marking", "applicative -i"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_6b",
@@ -172,8 +165,7 @@
       ["aspect", "progressive"],
       ["marking", "reduplication"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_7",
@@ -194,8 +186,7 @@
       ["marking", "reduplication"],
       ["meaning", "unrealised expectation"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_8",
@@ -215,8 +206,7 @@
       ["aspect", "progressive"],
       ["tam", "contextual"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_10",
@@ -238,8 +228,7 @@
       ["withAux", "acceptable"],
       ["clause", "root"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_11a",
@@ -261,8 +250,7 @@
       ["withAux", "ungrammatical"],
       ["matrix", "ingin"]
     ],
-    "comment": "(11b) is the starred alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "(11b) is the starred alternative."
   },
   {
     "id": "arka2013_11c",
@@ -285,8 +273,7 @@
       ["matrix", "tahu"],
       ["subordinator", "bahwa"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_12a",
@@ -306,8 +293,7 @@
       ["withAux", "acceptable"],
       ["clause", "root"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_12b",
@@ -329,8 +315,7 @@
       ["withAux", "ungrammatical"],
       ["matrix", "menyuruh"]
     ],
-    "comment": "(12c) is the starred alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "(12c) is the starred alternative."
   },
   {
     "id": "arka2013_13a",
@@ -353,8 +338,7 @@
       ["withAux", "ungrammatical"],
       ["matrix", "mendorong"]
     ],
-    "comment": "(13b) is the starred alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "(13b) is the starred alternative."
   },
   {
     "id": "arka2013_14a",
@@ -376,8 +360,7 @@
       ["withAux", "questionable"],
       ["adjunct", "sambil"]
     ],
-    "comment": "(14b) is marked ?*.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "(14b) is marked ?*."
   },
   {
     "id": "arka2013_15a",
@@ -399,8 +382,7 @@
       ["withAux", "questionable"],
       ["matrix", "belajar"]
     ],
-    "comment": "(15b) is marked ?*.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "(15b) is marked ?*."
   },
   {
     "id": "arka2013_15c",
@@ -421,8 +403,7 @@
       ["withAux", "acceptable"],
       ["subordinator", "agar"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_18a",
@@ -443,8 +424,7 @@
       ["aux", "sedang"],
       ["voice", "AV"]
     ],
-    "comment": "Google-attested; the actor voice verb with sedang.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Google-attested; the actor voice verb with sedang."
   },
   {
     "id": "arka2013_18b",
@@ -462,8 +442,7 @@
       ["aux", "sudah"],
       ["voice", "passive"]
     ],
-    "comment": "Google-attested; the passive verb with sudah.",
-    "lgrConformance": ""
+    "comment": "Google-attested; the passive verb with sudah."
   },
   {
     "id": "arka2013_34a",
@@ -490,8 +469,7 @@
       ["predicate", "nominal"],
       ["withAux", "ungrammatical"]
     ],
-    "comment": "(34c) is the starred alternative: the nominalised verb takes no auxiliary.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "(34c) is the starred alternative: the nominalised verb takes no auxiliary."
   },
   {
     "id": "arka2013_34b",
@@ -512,8 +490,7 @@
       ["axis", "future"],
       ["adjunct", "nanti"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_34d",
@@ -535,8 +512,7 @@
       ["withAux", "acceptable"],
       ["clause", "root"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_35a",
@@ -563,8 +539,7 @@
       ["predicate", "nominal"],
       ["withAux", "ungrammatical"]
     ],
-    "comment": "(35b) is the starred alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "(35b) is the starred alternative."
   },
   {
     "id": "arka2013_35c",
@@ -585,8 +560,7 @@
       ["withAux", "acceptable"],
       ["clause", "root"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_36a",
@@ -613,8 +587,7 @@
       ["predicate", "nominal"],
       ["withAux", "ungrammatical"]
     ],
-    "comment": "(36b) is the starred alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "(36b) is the starred alternative."
   },
   {
     "id": "arka2013_36c",
@@ -635,8 +608,7 @@
       ["withAux", "acceptable"],
       ["clause", "root"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_37a",
@@ -658,8 +630,7 @@
       ["soa", "future"],
       ["evaluation", "deontic"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_37b",
@@ -681,8 +652,7 @@
       ["soa", "past"],
       ["evaluation", "counterfactual"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_38a",
@@ -704,8 +674,7 @@
       ["soa", "future"],
       ["evaluation", "epistemic"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_38b",
@@ -727,8 +696,7 @@
       ["soa", "past"],
       ["evaluation", "past ability"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_39a",
@@ -749,8 +717,7 @@
       ["nominalised", "false"],
       ["soa", "future"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_39b",
@@ -772,8 +739,7 @@
       ["soa", "present/past"],
       ["evaluation", "counterfactual"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_40a",
@@ -797,8 +763,7 @@
       ["evidential", "visual"],
       ["predicate", "nominal"]
     ],
-    "comment": "(40b) is the starred alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "(40b) is the starred alternative."
   },
   {
     "id": "arka2013_41",
@@ -817,8 +782,7 @@
     "paperFeatures": [
       ["nominalised", "false"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_42a",
@@ -837,8 +801,7 @@
     "paperFeatures": [
       ["evidential", "none"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_42b",
@@ -858,8 +821,7 @@
       ["evidential", "reportative"],
       ["nominalised", "true"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_43a",
@@ -879,8 +841,7 @@
       ["evidential", "reportative"],
       ["nominalised", "true"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_43b",
@@ -900,8 +861,7 @@
       ["evidential", "none"],
       ["nominalised", "true"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_44a",
@@ -923,8 +883,7 @@
       ["predicate", "verbal"],
       ["adalah", "ungrammatical"]
     ],
-    "comment": "(44b) is the starred alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "(44b) is the starred alternative."
   },
   {
     "id": "arka2013_45a",
@@ -944,8 +903,7 @@
       ["predicate", "nominal"],
       ["adalah", "acceptable"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_45b",
@@ -963,8 +921,7 @@
       ["predicate", "nominal"],
       ["adalah", "acceptable"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "arka2013_46a",
@@ -985,8 +942,7 @@
       ["nominalised", "true"],
       ["adalah", "acceptable"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_46b",
@@ -1007,8 +963,7 @@
       ["nominalised", "true"],
       ["adalah", "acceptable"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_47a",
@@ -1029,8 +984,7 @@
       ["bukan", "acceptable"],
       ["tidak", "ungrammatical"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_47b",
@@ -1049,8 +1003,7 @@
       ["bukan", "acceptable"],
       ["tidak", "ungrammatical"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "arka2013_48a",
@@ -1072,8 +1025,7 @@
       ["bukan", "acceptable"],
       ["tidak", "ungrammatical"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arka2013_48b",
@@ -1098,7 +1050,6 @@
       ["bukan", "acceptable"],
       ["tidak", "acceptable"]
     ],
-    "comment": "tidak negates the internal clause headed by tidur.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "tidak negates the internal clause headed by tidur."
   }
 ]

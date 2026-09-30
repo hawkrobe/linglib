@@ -31,9 +31,7 @@ def ex_9 : LinguisticExample :=
     alternatives := []
     readings := [("before-start", .acceptable), ("before-finish", .unacceptable)]
     paperFeatures := [("construction", "before"), ("embedded", "culmination")]
-    comment := "Unambiguously read against the onset; Dutch, Hungarian and Italian consultants report the same."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Unambiguously read against the onset; Dutch, Hungarian and Italian consultants report the same." }
 
 def ex_10 : LinguisticExample :=
   { id := "rett2020a_10"
@@ -49,9 +47,7 @@ def ex_10 : LinguisticExample :=
     alternatives := []
     readings := [("after-finish", .acceptable), ("after-start", .unacceptable)]
     paperFeatures := [("construction", "after"), ("embedded", "process")]
-    comment := "Unambiguously read against the end; Turkish consultants report the same."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Unambiguously read against the end; Turkish consultants report the same." }
 
 def ex_11a : LinguisticExample :=
   { id := "rett2020a_11a"
@@ -67,9 +63,7 @@ def ex_11a : LinguisticExample :=
     alternatives := []
     readings := [("before-start", .acceptable)]
     paperFeatures := [("construction", "before"), ("embedded", "culmination"), ("aspect", "imperfective")]
-    comment := "Acceptable to the extent an imperfective is without an overt inchoative marker."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Acceptable to the extent an imperfective is without an overt inchoative marker." }
 
 def ex_11b : LinguisticExample :=
   { id := "rett2020a_11b"
@@ -85,9 +79,7 @@ def ex_11b : LinguisticExample :=
     alternatives := []
     readings := [("before-finish", .acceptable)]
     paperFeatures := [("construction", "before"), ("embedded", "culmination"), ("aspect", "perfective")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_12a : LinguisticExample :=
   { id := "rett2020a_12a"
@@ -103,9 +95,7 @@ def ex_12a : LinguisticExample :=
     alternatives := []
     readings := [("before-start", .acceptable)]
     paperFeatures := [("construction", "before"), ("embedded", "culmination"), ("aspect", "pfv.neut")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def ex_12b : LinguisticExample :=
   { id := "rett2020a_12b"
@@ -121,9 +111,7 @@ def ex_12b : LinguisticExample :=
     alternatives := []
     readings := [("before-finish", .acceptable)]
     paperFeatures := [("construction", "before"), ("embedded", "culmination"), ("aspect", "aia")]
-    comment := "The ability-and-involuntary-action perfective is the culminating one (Dell 1983)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The ability-and-involuntary-action perfective is the culminating one (Dell 1983)." }
 
 def all : List LinguisticExample := [ex_9, ex_10, ex_11a, ex_11b, ex_12a, ex_12b]
 

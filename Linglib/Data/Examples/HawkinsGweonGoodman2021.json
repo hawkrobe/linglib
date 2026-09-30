@@ -36,8 +36,7 @@
         "scripted"
       ]
     ],
-    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target.",
-    "lgrConformance": ""
+    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
   },
   {
     "id": "hawkinsgweongoodman2021_item2",
@@ -76,8 +75,7 @@
         "scripted"
       ]
     ],
-    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target.",
-    "lgrConformance": ""
+    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
   },
   {
     "id": "hawkinsgweongoodman2021_item3",
@@ -116,8 +114,7 @@
         "scripted"
       ]
     ],
-    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target.",
-    "lgrConformance": ""
+    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
   },
   {
     "id": "hawkinsgweongoodman2021_item4",
@@ -156,8 +153,7 @@
         "scripted"
       ]
     ],
-    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target.",
-    "lgrConformance": ""
+    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
   },
   {
     "id": "hawkinsgweongoodman2021_item5",
@@ -196,8 +192,7 @@
         "scripted"
       ]
     ],
-    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target.",
-    "lgrConformance": ""
+    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
   },
   {
     "id": "hawkinsgweongoodman2021_item6",
@@ -236,8 +231,7 @@
         "scripted"
       ]
     ],
-    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target.",
-    "lgrConformance": ""
+    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
   },
   {
     "id": "hawkinsgweongoodman2021_item7",
@@ -276,8 +270,7 @@
         "scripted"
       ]
     ],
-    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target.",
-    "lgrConformance": ""
+    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
   },
   {
     "id": "hawkinsgweongoodman2021_item8",
@@ -316,8 +309,7 @@
         "scripted"
       ]
     ],
-    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target.",
-    "lgrConformance": ""
+    "comment": "A critical instruction of Keysar et al. (2003): the hidden distractor fits the instruction at least as well as the target."
   },
   {
     "id": "hawkinsgweongoodman2021_shape",
@@ -348,8 +340,7 @@
         "egocentric"
       ]
     ],
-    "comment": "Sufficient in the speaker's own view: shape alone identifies the target among the visible objects.",
-    "lgrConformance": ""
+    "comment": "Sufficient in the speaker's own view: shape alone identifies the target among the visible objects."
   },
   {
     "id": "hawkinsgweongoodman2021_shapeColor",
@@ -376,8 +367,7 @@
         "shape, color"
       ]
     ],
-    "comment": "The utterance the mixture speaker switches to at wS = 0.36 in Fig. 2.",
-    "lgrConformance": ""
+    "comment": "The utterance the mixture speaker switches to at wS = 0.36 in Fig. 2."
   },
   {
     "id": "hawkinsgweongoodman2021_full",
@@ -404,7 +394,6 @@
         "shape, color, texture"
       ]
     ],
-    "comment": "The utterance the mixture speaker switches to at wS = 0.72 in Fig. 2.",
-    "lgrConformance": ""
+    "comment": "The utterance the mixture speaker switches to at wS = 0.72 in Fig. 2."
   }
 ]

@@ -31,9 +31,7 @@ def vFI2005_1_harlem : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "harlemBase")]
-    comment := "The canonical Harlem Sentence; the paper's central example."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The canonical Harlem Sentence; the paper's central example." }
 
 def vFI2005_2_sugarWaiter : LinguisticExample :=
   { id := "vFI2005_2_sugarWaiter"
@@ -49,9 +47,7 @@ def vFI2005_2_sugarWaiter : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "hareMinimalPair"), ("reading", "anankastic")]
-    comment := "Anankastic reading: asking the waiter is a means to having sugar. Same surface form as (3) but different reading — surface form does not determine anankasticity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Anankastic reading: asking the waiter is a means to having sugar. Same surface form as (3) but different reading — surface form does not determine anankasticity." }
 
 def vFI2005_3_sugarDiabetes : LinguisticExample :=
   { id := "vFI2005_3_sugarDiabetes"
@@ -67,9 +63,7 @@ def vFI2005_3_sugarDiabetes : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "hareMinimalPair"), ("reading", "non-anankastic")]
-    comment := "NON-anankastic reading: getting tested is not a means to having sugar. Pair with (2) to show that surface form does not determine anankasticity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "NON-anankastic reading: getting tested is not a means to having sugar. Pair with (2) to show that surface form does not determine anankasticity." }
 
 def vFI2005_4_harlemPurpose : LinguisticExample :=
   { id := "vFI2005_4_harlemPurpose"
@@ -85,9 +79,7 @@ def vFI2005_4_harlemPurpose : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "harlemBase"), ("clauseType", "purpose")]
-    comment := "Purpose-clause near-equivalent of (1); vF&I treat the purpose variant as the primary form for their designated-goal analysis."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Purpose-clause near-equivalent of (1); vF&I treat the purpose variant as the primary form for their designated-goal analysis." }
 
 def vFI2005_11_hoboken : LinguisticExample :=
   { id := "vFI2005_11_hoboken"
@@ -103,9 +95,7 @@ def vFI2005_11_hoboken : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "hoboken")]
-    comment := "The Hoboken Problem. Defeats the obvious analysis: if the if-clause merely added 'you want Harlem' to the modal base, the best goal-achievement at the actual world would be PATH (since the actual goal is Hoboken)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Hoboken Problem. Defeats the obvious analysis: if the if-clause merely added 'you want Harlem' to the modal base, the best goal-achievement at the actual world would be PATH (since the actual goal is Hoboken)." }
 
 def vFI2005_13_hobokenSaebo : LinguisticExample :=
   { id := "vFI2005_13_hobokenSaebo"
@@ -121,9 +111,7 @@ def vFI2005_13_hobokenSaebo : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "conflictingGoals")]
-    comment := "Sæbø 2001's analysis predicts this false (best worlds equally split between PATH and A train); intuition says true. Defeats the if-clause-modifies-ordering-source analysis."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Sæbø 2001's analysis predicts this false (best worlds equally split between PATH and A train); intuition says true. Defeats the if-clause-modifies-ordering-source analysis." }
 
 def vFI2005_22_mayorPub : LinguisticExample :=
   { id := "vFI2005_22_mayorPub"
@@ -139,9 +127,7 @@ def vFI2005_22_mayorPub : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "conflictingGoals")]
-    comment := "Conflicting jointly-satisfiable goals. The if-clause's goal must override the actual conflicting goal, not merely augment the ordering source."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Conflicting jointly-satisfiable goals. The if-clause's goal must override the actual conflicting goal, not merely augment the ordering source." }
 
 def vFI2005_p12_vanNistelrooy : LinguisticExample :=
   { id := "vFI2005_p12_vanNistelrooy"
@@ -157,9 +143,7 @@ def vFI2005_p12_vanNistelrooy : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "correlatedIrrelevant")]
-    comment := "Both routes achieve Harlem; van Nistelrooy preference makes A optimal under naive lifting, but speakers report reluctance to judge the have-to sentence true on this scenario."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Both routes achieve Harlem; van Nistelrooy preference makes A optimal under naive lifting, but speakers report reluctance to judge the have-to sentence true on this scenario." }
 
 def vFI2005_36_pedroMartinez : LinguisticExample :=
   { id := "vFI2005_36_pedroMartinez"
@@ -175,9 +159,7 @@ def vFI2005_36_pedroMartinez : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "nonCausalCoincidence")]
-    comment := "Kissing Pedro is not an essential part of any way of achieving Harlem; sentence is absurd despite the correlation. Motivates vF&I's 'essential part of a way of achieving' refinement (their (42))."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Kissing Pedro is not an essential part of any way of achieving Harlem; sentence is absurd despite the correlation. Motivates vF&I's 'essential part of a way of achieving' refinement (their (42))." }
 
 def vFI2005_34c_harlemBreathe : LinguisticExample :=
   { id := "vFI2005_34c_harlemBreathe"
@@ -193,9 +175,7 @@ def vFI2005_34c_harlemBreathe : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "triviallyTrue"), ("modal", "have-to")]
-    comment := "vF&I accept as true though unhelpful. Chung & Mascarenhas 2024 §5 needs a plausibility-requirement patch to rule out analogous epistemic cases (#He must be dead)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "vF&I accept as true though unhelpful. Chung & Mascarenhas 2024 §5 needs a plausibility-requirement patch to rule out analogous epistemic cases (#He must be dead)." }
 
 def vFI2005_35_harlemBreatheOught : LinguisticExample :=
   { id := "vFI2005_35_harlemBreatheOught"
@@ -211,9 +191,7 @@ def vFI2005_35_harlemBreatheOught : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "triviallyTrue"), ("modal", "ought-to")]
-    comment := "Less acceptable than the have-to variant. vF&I derive this from have-to entailing ought-to, so ought-to signals there are alternatives — false for breathing."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Less acceptable than the have-to variant. vF&I derive this from have-to entailing ought-to, so ought-to signals there are alternatives — false for breathing." }
 
 def vFI2005_23_slomanOughtNot : LinguisticExample :=
   { id := "vFI2005_23_slomanOughtNot"
@@ -229,9 +207,7 @@ def vFI2005_23_slomanOughtNot : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "oughtVsHaveTo")]
-    comment := "Felicitous because ought says what is best while have-to picks out the only candidate."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Felicitous because ought says what is best while have-to picks out the only candidate." }
 
 def vFI2005_p13_londonByNoon : LinguisticExample :=
   { id := "vFI2005_p13_londonByNoon"
@@ -247,9 +223,7 @@ def vFI2005_p13_londonByNoon : LinguisticExample :=
     alternatives := [("If you want to get to London by noon, then you have to go by train.", .unacceptable)]
     readings := []
     paperFeatures := [("puzzle", "oughtVsHaveTo")]
-    comment := "Sloman: 'picks out the best means without excluding the possibility of others.' Contrast with the have-to variant implying no other means exists."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Sloman: 'picks out the best means without excluding the possibility of others.' Contrast with the have-to variant implying no other means exists." }
 
 def vFI2005_29_vladivostokHave : LinguisticExample :=
   { id := "vFI2005_29_vladivostokHave"
@@ -265,9 +239,7 @@ def vFI2005_29_vladivostokHave : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "vladivostokOughtHave"), ("modal", "have-to"), ("speakerVariation", "Klein-vs-Percus")]
-    comment := "Klein-type speakers accept (comfort is implicitly part of the designated goal); Percus-type speakers reject. Documents real speaker variation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Klein-type speakers accept (comfort is implicitly part of the designated goal); Percus-type speakers reject. Documents real speaker variation." }
 
 def vFI2005_30_vladivostokOught : LinguisticExample :=
   { id := "vFI2005_30_vladivostokOught"
@@ -283,9 +255,7 @@ def vFI2005_30_vladivostokOught : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("puzzle", "vladivostokOughtHave"), ("modal", "ought-to")]
-    comment := "Ought-to accepts without controversy because comfort considerations rank the Chinese train above the Russian."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Ought-to accepts without controversy because comfort considerations rank the Chinese train above the Russian." }
 
 def vFI2005_28_burdicks : LinguisticExample :=
   { id := "vFI2005_28_burdicks"
@@ -301,9 +271,7 @@ def vFI2005_28_burdicks : LinguisticExample :=
     alternatives := [("You ought to have some hot chocolate at Burdick's.", .acceptable)]
     readings := []
     paperFeatures := [("puzzle", "contextualDesignation")]
-    comment := "Designated goal supplied by context (something like 'have a good Harvard Square experience'), not by overt syntax. Motivates vF&I §6.4."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Designated goal supplied by context (something like 'have a good Harvard Square experience'), not by overt syntax. Motivates vF&I §6.4." }
 
 def vFI2005_20_weinerJoe : LinguisticExample :=
   { id := "vFI2005_20_weinerJoe"
@@ -319,9 +287,7 @@ def vFI2005_20_weinerJoe : LinguisticExample :=
     alternatives := []
     readings := [("epistemic", .marginal), ("anankastic", .acceptable)]
     paperFeatures := [("puzzle", "weinerJoe")]
-    comment := "On the anankastic reading: true in all cases. On Weiner's intended epistemic reading: true only if Joe hasn't bought the car. vF&I admit the epistemic reading is sometimes available; tests the must-can-be-epistemic-in-anankastic-shell hypothesis."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "On the anankastic reading: true in all cases. On Weiner's intended epistemic reading: true only if Joe hasn't bought the car. vF&I admit the epistemic reading is sometimes available; tests the must-can-be-epistemic-in-anankastic-shell hypothesis." }
 
 def all : List LinguisticExample := [vFI2005_1_harlem, vFI2005_2_sugarWaiter, vFI2005_3_sugarDiabetes, vFI2005_4_harlemPurpose, vFI2005_11_hoboken, vFI2005_13_hobokenSaebo, vFI2005_22_mayorPub, vFI2005_p12_vanNistelrooy, vFI2005_36_pedroMartinez, vFI2005_34c_harlemBreathe, vFI2005_35_harlemBreatheOught, vFI2005_23_slomanOughtNot, vFI2005_p13_londonByNoon, vFI2005_29_vladivostokHave, vFI2005_30_vladivostokOught, vFI2005_28_burdicks, vFI2005_20_weinerJoe]
 

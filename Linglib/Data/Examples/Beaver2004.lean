@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := []
     readings := [("In (1c), she = Jane and her = Mary", .acceptable)]
     paperFeatures := [("transition", "continue")]
-    comment := "BFP's worked example: sixteen candidate resolutions of (1c), filtered and ranked; the continuation wins."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "BFP's worked example: sixteen candidate resolutions of (1c), filtered and ranked; the continuation wins." }
 
 def ex_2 : LinguisticExample :=
   { id := "beaver2004_2"
@@ -49,9 +47,7 @@ def ex_2 : LinguisticExample :=
     alternatives := []
     readings := [("He = Jim and the two Marys corefer", .marginal)]
     paperFeatures := [("phenomenon", "rule 1 violation")]
-    comment := "BFP filters out the coreferential reading (Rule 1); demoting PRO-TOP below FAM-DEF recovers it, and the production tableau explains the awkwardness: the speaker would have pronominalized Mary."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "BFP filters out the coreferential reading (Rule 1); demoting PRO-TOP below FAM-DEF recovers it, and the production tableau explains the awkwardness: the speaker would have pronominalized Mary." }
 
 def ex_5 : LinguisticExample :=
   { id := "beaver2004_5"
@@ -67,9 +63,7 @@ def ex_5 : LinguisticExample :=
     alternatives := []
     readings := [("She = Jane, her = Mary; the woman = Jane", .acceptable)]
     paperFeatures := [("phenomenon", "definite description resolution")]
-    comment := "PRO-TOP fails for every candidate of (5c), so FAM-DEF and COHERE decide: the definite resolves to the topic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "PRO-TOP fails for every candidate of (5c), so FAM-DEF and COHERE decide: the definite resolves to the topic." }
 
 def ex_8 : LinguisticExample :=
   { id := "beaver2004_8"
@@ -85,9 +79,7 @@ def ex_8 : LinguisticExample :=
     alternatives := []
     readings := [("She = Jane, the young woman = Mary", .acceptable)]
     paperFeatures := [("transition", "continue")]
-    comment := "The parallel-subject reading wins; the crossed reading violates PRO-TOP and ALIGN."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The parallel-subject reading wins; the crossed reading violates PRO-TOP and ALIGN." }
 
 def ex_9 : LinguisticExample :=
   { id := "beaver2004_9"
@@ -103,9 +95,7 @@ def ex_9 : LinguisticExample :=
     alternatives := []
     readings := [("She = Jane, the topic, not the previous subject Mary", .acceptable)]
     paperFeatures := [("transition", "continue")]
-    comment := "Neither parallelism nor subjecthood of the antecedent decides: COHERE keeps the topic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Neither parallelism nor subjecthood of the antecedent decides: COHERE keeps the topic." }
 
 def ex_12 : LinguisticExample :=
   { id := "beaver2004_12"
@@ -121,9 +111,7 @@ def ex_12 : LinguisticExample :=
     alternatives := []
     readings := [("her = Jane", .acceptable)]
     paperFeatures := [("transition", "retain")]
-    comment := "Jane stays topic but leaves subject position: only ALIGN is violated."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Jane stays topic but leaves subject position: only ALIGN is violated." }
 
 def ex_14 : LinguisticExample :=
   { id := "beaver2004_14"
@@ -139,9 +127,7 @@ def ex_14 : LinguisticExample :=
     alternatives := []
     readings := [("She = Mary, her = Jane", .acceptable)]
     paperFeatures := [("transition", "smooth shift")]
-    comment := "Both pronouns force an anaphoric reading whose topic was non-topical subject before: ALIGN decides."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Both pronouns force an anaphoric reading whose topic was non-topical subject before: ALIGN decides." }
 
 def ex_16 : LinguisticExample :=
   { id := "beaver2004_16"
@@ -157,9 +143,7 @@ def ex_16 : LinguisticExample :=
     alternatives := []
     readings := [("it = the present", .acceptable)]
     paperFeatures := [("transition", "rough shift")]
-    comment := "The only agreeing resolution shifts the topic to the present, in non-subject position."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The only agreeing resolution shifts the topic to the present, in non-subject position." }
 
 def ex_23 : LinguisticExample :=
   { id := "beaver2004_23"
@@ -175,9 +159,7 @@ def ex_23 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "rule 1 violation")]
-    comment := "The topic continues via a bridging description while a less salient entity is pronominalized; felicitous, supporting defeasible PRO-TOP over an absolute Rule 1."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The topic continues via a bridging description while a less salient entity is pronominalized; felicitous, supporting defeasible PRO-TOP over an absolute Rule 1." }
 
 def ex_24 : LinguisticExample :=
   { id := "beaver2004_24"
@@ -193,9 +175,7 @@ def ex_24 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "text coherence")]
-    comment := "The coherent variant of the Grosz-Sidner text pair: one COHERE violation in the whole-text tableau."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The coherent variant of the Grosz-Sidner text pair: one COHERE violation in the whole-text tableau." }
 
 def ex_25 : LinguisticExample :=
   { id := "beaver2004_25"
@@ -211,9 +191,7 @@ def ex_25 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "text coherence")]
-    comment := "The jerky variant: multiple PRO-TOP, FAM-DEF and ALIGN violations accumulate in the whole-text tableau."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The jerky variant: multiple PRO-TOP, FAM-DEF and ALIGN violations accumulate in the whole-text tableau." }
 
 def ex_28 : LinguisticExample :=
   { id := "beaver2004_28"
@@ -229,9 +207,7 @@ def ex_28 : LinguisticExample :=
     alternatives := []
     readings := [("Stressed HE = Jim (switch reference)", .acceptable)]
     paperFeatures := [("phenomenon", "stressed pronoun")]
-    comment := "Unstressed he is bidirectionally optimal for Fred, so BLOCK gives the stressed form the complementary, topic-shifting reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Unstressed he is bidirectionally optimal for Fred, so BLOCK gives the stressed form the complementary, topic-shifting reading." }
 
 def all : List LinguisticExample := [ex_1, ex_2, ex_5, ex_8, ex_9, ex_12, ex_14, ex_16, ex_23, ex_24, ex_25, ex_28]
 

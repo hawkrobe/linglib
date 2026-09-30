@@ -31,9 +31,7 @@ def ex15 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("acc", "yes"), ("accessible", "yes"), ("licensor", "yes")]
-    comment := "The shifted direct object is accusative; the accusative is obligatory."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The shifted direct object is accusative; the accusative is obligatory." }
 
 def ex15_bare : LinguisticExample :=
   { id := "poole2024_ex15_bare"
@@ -49,9 +47,7 @@ def ex15_bare : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("acc", "no"), ("accessible", "yes"), ("licensor", "yes")]
-    comment := "The shifted direct object cannot stay unmarked."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The shifted direct object cannot stay unmarked." }
 
 def ex18 : LinguisticExample :=
   { id := "poole2024_ex18"
@@ -67,9 +63,7 @@ def ex18 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("acc", "no"), ("accessible", "no"), ("licensor", "yes")]
-    comment := "The direct object inside VP stays unmarked."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The direct object inside VP stays unmarked." }
 
 def ex18_acc : LinguisticExample :=
   { id := "poole2024_ex18_acc"
@@ -85,9 +79,7 @@ def ex18_acc : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("acc", "yes"), ("accessible", "no"), ("licensor", "yes")]
-    comment := "Accusative on the unshifted direct object is infelicitous."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Accusative on the unshifted direct object is infelicitous." }
 
 def ex20a : LinguisticExample :=
   { id := "poole2024_ex20a"
@@ -103,9 +95,7 @@ def ex20a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("acc", "yes"), ("accessible", "yes"), ("licensor", "yes")]
-    comment := "The raised embedded subject is accusative in the presence of a matrix DP."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The raised embedded subject is accusative in the presence of a matrix DP." }
 
 def ex20b : LinguisticExample :=
   { id := "poole2024_ex20b"
@@ -121,9 +111,7 @@ def ex20b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("acc", "yes"), ("accessible", "yes"), ("licensor", "no")]
-    comment := "No matrix DP unlocks the accusative."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "No matrix DP unlocks the accusative." }
 
 def ex20b_bare : LinguisticExample :=
   { id := "poole2024_ex20b_bare"
@@ -139,9 +127,7 @@ def ex20b_bare : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("acc", "no"), ("accessible", "yes"), ("licensor", "no")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex15, ex15_bare, ex18, ex18_acc, ex20a, ex20b, ex20b_bare]
 

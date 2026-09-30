@@ -31,9 +31,7 @@ def ex_6a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "non-veridical preferential"), ("complement", "declarative")]
-    comment := "Non-veridical preferentials take declarative complements."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Non-veridical preferentials take declarative complements." }
 
 def ex_6c : LinguisticExample :=
   { id := "uegakisudo2019_6c"
@@ -49,9 +47,7 @@ def ex_6c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "veridical preferential"), ("complement", "declarative")]
-    comment := "Veridical preferentials take declarative complements."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Veridical preferentials take declarative complements." }
 
 def ex_7b : LinguisticExample :=
   { id := "uegakisudo2019_7b"
@@ -67,9 +63,7 @@ def ex_7b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "veridical preferential"), ("complement", "wh-interrogative")]
-    comment := "Veridical preferentials are responsive; the preposition improves some cases, an issue taken up in section 5."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Veridical preferentials are responsive; the preposition improves some cases, an issue taken up in section 5." }
 
 def ex_7c : LinguisticExample :=
   { id := "uegakisudo2019_7c"
@@ -85,9 +79,7 @@ def ex_7c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "veridical preferential"), ("complement", "wh-interrogative")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_8a : LinguisticExample :=
   { id := "uegakisudo2019_8a"
@@ -103,9 +95,7 @@ def ex_8a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "non-veridical preferential"), ("complement", "wh-interrogative")]
-    comment := "The hope-wh puzzle: non-veridical preferentials are anti-rogative; the which-NP clause has no free-relative reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The hope-wh puzzle: non-veridical preferentials are anti-rogative; the which-NP clause has no free-relative reading." }
 
 def ex_8b : LinguisticExample :=
   { id := "uegakisudo2019_8b"
@@ -121,9 +111,7 @@ def ex_8b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "non-veridical preferential"), ("complement", "wh-interrogative")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_10b : LinguisticExample :=
   { id := "uegakisudo2019_10b"
@@ -139,9 +127,7 @@ def ex_10b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "veridical preferential"), ("complement", "whether-interrogative")]
-    comment := "Veridical preferentials reject whether-complements, a pattern the paper leaves to Romero's account."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Veridical preferentials reject whether-complements, a pattern the paper leaves to Romero's account." }
 
 def ex_40a : LinguisticExample :=
   { id := "uegakisudo2019_40a"
@@ -157,9 +143,7 @@ def ex_40a : LinguisticExample :=
     alternatives := []
     readings := [("John's preference for Alice's jumping is compared to alternatives false at the evaluation world", .acceptable)]
     paperFeatures := [("predicate", "veridical preferential"), ("focus", "subject")]
-    comment := "Veridicality does not restrict the comparison class."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Veridicality does not restrict the comparison class." }
 
 def ex_40b : LinguisticExample :=
   { id := "uegakisudo2019_40b"
@@ -175,9 +159,7 @@ def ex_40b : LinguisticExample :=
     alternatives := []
     readings := [("John's preference for Alice's jumping is compared only to alternatives he considers possible", .acceptable)]
     paperFeatures := [("predicate", "non-veridical preferential"), ("focus", "subject")]
-    comment := "The doxastic condition of emotive doxastics restricts the comparison class as a whole, (39)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The doxastic condition of emotive doxastics restricts the comparison class as a whole, (39)." }
 
 def ex_41 : LinguisticExample :=
   { id := "uegakisudo2019_41"
@@ -193,9 +175,7 @@ def ex_41 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "veridical preferential"), ("complement", "wh-interrogative"), ("evidence", "Threshold Significance")]
-    comment := "Without Threshold Significance the sentence would be true in the context; instead it presupposes a student John preferred to sing."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Without Threshold Significance the sentence would be true in the context; instead it presupposes a student John preferred to sing." }
 
 def ex_42 : LinguisticExample :=
   { id := "uegakisudo2019_42"
@@ -211,9 +191,7 @@ def ex_42 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "be indifferent"), ("complement", "wh-interrogative")]
-    comment := "Be indifferent compares questions rather than propositions, so Threshold Significance holds of a question, compatibly with the context of (41)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Be indifferent compares questions rather than propositions, so Threshold Significance holds of a question, compatibly with the context of (41)." }
 
 def ex_43a : LinguisticExample :=
   { id := "uegakisudo2019_43a"
@@ -229,9 +207,7 @@ def ex_43a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("predicate", "be indifferent"), ("complement", "declarative")]
-    comment := "Marginal at best with a declarative: be indifferent concerns questions."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Marginal at best with a declarative: be indifferent concerns questions." }
 
 def all : List LinguisticExample := [ex_6a, ex_6c, ex_7b, ex_7c, ex_8a, ex_8b, ex_10b, ex_40a, ex_40b, ex_41, ex_42, ex_43a]
 

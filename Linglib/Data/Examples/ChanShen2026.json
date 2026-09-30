@@ -193,8 +193,7 @@
       ["strategy", "inSitu"],
       ["island", "complexNP"]
     ],
-    "comment": "Malay, a substrate of Singlish: an in-situ wh-phrase inside a complex NP.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Malay, a substrate of Singlish: an in-situ wh-phrase inside a complex NP."
   },
   {
     "id": "chanshen2026_ex17b",
@@ -214,8 +213,7 @@
       ["strategy", "partial"],
       ["island", "complexNP"]
     ],
-    "comment": "Partial movement inside the complex NP, a step that itself crosses no island boundary.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Partial movement inside the complex NP, a step that itself crosses no island boundary."
   },
   {
     "id": "chanshen2026_ex19",
@@ -235,8 +233,7 @@
       ["strategy", "inSitu"],
       ["interveners", "0"]
     ],
-    "comment": "Daodi and the in-situ wh-phrase it modifies are discontinuous.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Daodi and the in-situ wh-phrase it modifies are discontinuous."
   },
   {
     "id": "chanshen2026_ex22a",

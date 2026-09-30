@@ -31,9 +31,7 @@ def komi_neg_pres : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "negVerb"), ("tense", "present"), ("on_aux", "negation"), ("on_aux", "tense"), ("on_aux", "subj")]
-    comment := "Komi negative auxiliary o- inflects for tense and person while the lexical verb is uninflected (the Uralic connegative construction, Anderson sect. 1.7.2). Anderson cites Hausenberg 1998: 315."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Komi negative auxiliary o- inflects for tense and person while the lexical verb is uninflected (the Uralic connegative construction, Anderson sect. 1.7.2). Anderson cites Hausenberg 1998: 315." }
 
 def komi_neg_past : LinguisticExample :=
   { id := "anderson2006a_komi_neg_past"
@@ -49,9 +47,7 @@ def komi_neg_past : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "negVerb"), ("tense", "past"), ("on_aux", "negation"), ("on_aux", "tense"), ("on_aux", "subj")]
-    comment := "Past-tense counterpart of (47a): the tense alternation o-/e- is carried entirely by the negative auxiliary. Anderson cites Hausenberg 1998: 315."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Past-tense counterpart of (47a): the tense alternation o-/e- is carried entirely by the negative auxiliary. Anderson cites Hausenberg 1998: 315." }
 
 def udihe_neg : LinguisticExample :=
   { id := "anderson2006a_udihe_neg"
@@ -67,9 +63,7 @@ def udihe_neg : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "negVerb"), ("infl_pattern", "auxHeaded"), ("on_aux", "negation"), ("on_aux", "subj")]
-    comment := "Anderson sect. 1.7.2 classifies the Udihe negative-auxiliary construction as aux-headed. Anderson cites Nikolaeva and Tolskaja 2001: 214."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Anderson sect. 1.7.2 classifies the Udihe negative-auxiliary construction as aux-headed. Anderson cites Nikolaeva and Tolskaja 2001: 214." }
 
 def kwerba_neg_fut : LinguisticExample :=
   { id := "anderson2006a_kwerba_neg_fut"
@@ -85,9 +79,7 @@ def kwerba_neg_fut : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "negVerb"), ("infl_pattern", "lexHeaded")]
-    comment := "Anderson sect. 1.7.2 lists Kwerba as the lex-headed exemplar among negative-auxiliary constructions: the lexical verb hosts the inflection. Anderson cites de Vries and de Vries 1997: 12-13."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Anderson sect. 1.7.2 lists Kwerba as the lex-headed exemplar among negative-auxiliary constructions: the lexical verb hosts the inflection. Anderson cites de Vries and de Vries 1997: 12-13." }
 
 def kwerba_neg_past : LinguisticExample :=
   { id := "anderson2006a_kwerba_neg_past"
@@ -103,9 +95,7 @@ def kwerba_neg_past : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "negVerb"), ("infl_pattern", "lexHeaded")]
-    comment := "Past-tense Kwerba negation: negative suffix -o on the inflected lexical verb plus postverbal baye. Anderson cites de Vries and de Vries 1997: 12-13."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Past-tense Kwerba negation: negative suffix -o on the inflected lexical verb plus postverbal baye. Anderson cites de Vries and de Vries 1997: 12-13." }
 
 def doyayo_lexheaded : LinguisticExample :=
   { id := "anderson2006a_doyayo_lexheaded"
@@ -121,9 +111,7 @@ def doyayo_lexheaded : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("infl_pattern", "lexHeaded"), ("on_aux", "subj"), ("on_lex", "tense"), ("aux_marking", "partial (tone)")]
-    comment := "The auxiliary is parenthesized in Anderson's gloss; p. 120 notes it \"partially encodes person of the subject through the tone associated with the auxiliary\". Anderson cites Wiering and Wiering 1994: 55."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The auxiliary is parenthesized in Anderson's gloss; p. 120 notes it \"partially encodes person of the subject through the tone associated with the auxiliary\". Anderson cites Wiering and Wiering 1994: 55." }
 
 def doyayo_splitdoubled : LinguisticExample :=
   { id := "anderson2006a_doyayo_splitdoubled"
@@ -139,9 +127,7 @@ def doyayo_splitdoubled : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("infl_pattern", "splitDoubled"), ("on_aux", "subj"), ("on_lex", "subj"), ("on_lex", "obj")]
-    comment := "Subject hi¹ is marked on both elements, object -mɔ only on the lexical verb. Anderson p. 223: \"this pattern, consisting of an object found on the lexical verb with doubled subject inflection, is common in Doyayo.\" Anderson cites Wiering and Wiering 1994: 221."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Subject hi¹ is marked on both elements, object -mɔ only on the lexical verb. Anderson p. 223: \"this pattern, consisting of an object found on the lexical verb with doubled subject inflection, is common in Doyayo.\" Anderson cites Wiering and Wiering 1994: 221." }
 
 def gorum_tiger : LinguisticExample :=
   { id := "anderson2006a_gorum_tiger"
@@ -157,9 +143,7 @@ def gorum_tiger : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("infl_pattern", "doubled"), ("on_aux", "subj"), ("on_aux", "tense"), ("on_aux", "affectedness"), ("on_lex", "subj"), ("on_lex", "tense"), ("on_lex", "affectedness")]
-    comment := "Both verbs carry non-past tense and the Gorum category of affectedness (version). Anderson cites Aze 1973."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Both verbs carry non-past tense and the Gorum category of affectedness (version). Anderson cites Aze 1973." }
 
 def gorum_vigorously : LinguisticExample :=
   { id := "anderson2006a_gorum_vigorously"
@@ -175,9 +159,7 @@ def gorum_vigorously : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("infl_pattern", "doubled"), ("on_aux", "subj"), ("on_aux", "tense"), ("on_lex", "subj"), ("on_lex", "tense")]
-    comment := "Also given as ex. (17) in ch. 1. Anderson cites Aze 1973: 279."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Also given as ex. (17) in ch. 1. Anderson cites Aze 1973: 279." }
 
 def hemba_progressive : LinguisticExample :=
   { id := "anderson2006a_hemba_progressive"
@@ -193,9 +175,7 @@ def hemba_progressive : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("infl_pattern", "splitDoubled"), ("on_aux", "subj"), ("on_aux", "tense"), ("on_lex", "subj"), ("on_lex", "mood")]
-    comment := "Subject agreement on both elements, tense on the auxiliary only, indicative mood on the lexical verb only. Anderson cites Aksenova 1997: 27."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Subject agreement on both elements, tense on the auxiliary only, indicative mood on the lexical verb only. Anderson cites Aksenova 1997: 27." }
 
 def pipil_capability : LinguisticExample :=
   { id := "anderson2006a_pipil_capability"
@@ -211,9 +191,7 @@ def pipil_capability : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("infl_pattern", "lexHeaded"), ("on_lex", "subj")]
-    comment := "The capability auxiliary weli is uninflected. Anderson cites Campbell 1985: 139."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The capability auxiliary weli is uninflected. Anderson cites Campbell 1985: 139." }
 
 def pipil_progressive : LinguisticExample :=
   { id := "anderson2006a_pipil_progressive"
@@ -229,9 +207,7 @@ def pipil_progressive : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("infl_pattern", "splitDoubled"), ("on_aux", "subj"), ("on_lex", "subj"), ("on_lex", "obj")]
-    comment := "Subject 1sg is marked on both elements (n- on AUX, ni- on LV); object -mitsin- (2pl) only on the lexical verb. The auxiliary root yu, a grammaticalized motion verb 'go', carries prospective TAM lexically. Anderson p. 224: \"Subjects are doubly marked... while objects occur only on lexical verbs.\" Anderson cites Campbell 1985: 137. Also given as ex. (21) in ch. 1."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Subject 1sg is marked on both elements (n- on AUX, ni- on LV); object -mitsin- (2pl) only on the lexical verb. The auxiliary root yu, a grammaticalized motion verb 'go', carries prospective TAM lexically. Anderson p. 224: \"Subjects are doubly marked... while objects occur only on lexical verbs.\" Anderson cites Campbell 1985: 137. Also given as ex. (21) in ch. 1." }
 
 def jakaltek_completive : LinguisticExample :=
   { id := "anderson2006a_jakaltek_completive"
@@ -247,9 +223,7 @@ def jakaltek_completive : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("infl_pattern", "split"), ("on_aux", "aspect"), ("on_aux", "obj"), ("on_lex", "subj")]
-    comment := "Absolutive marking sits on the aspectual auxiliary, ergative on the lexical verb - the reverse of the commoner split where the subject appears on the auxiliary. Also given as ex. (19) in ch. 1. Anderson cites Craig 1977: 60."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Absolutive marking sits on the aspectual auxiliary, ergative on the lexical verb - the reverse of the commoner split where the subject appears on the auxiliary. Also given as ex. (19) in ch. 1. Anderson cites Craig 1977: 60." }
 
 def all : List LinguisticExample := [komi_neg_pres, komi_neg_past, udihe_neg, kwerba_neg_fut, kwerba_neg_past, doyayo_lexheaded, doyayo_splitdoubled, gorum_tiger, gorum_vigorously, hemba_progressive, pipil_capability, pipil_progressive, jakaltek_completive]
 

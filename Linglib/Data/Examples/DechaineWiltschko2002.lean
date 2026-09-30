@@ -31,9 +31,7 @@ def ex32a_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "we"), ("dialect", "A")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex32a_2 : LinguisticExample :=
   { id := "dechainewiltschko2002_ex32a_2"
@@ -49,9 +47,7 @@ def ex32a_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "us"), ("dialect", "A")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex32b : LinguisticExample :=
   { id := "dechainewiltschko2002_ex32b"
@@ -67,9 +63,7 @@ def ex32b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "you"), ("dialect", "A")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex32c_1 : LinguisticExample :=
   { id := "dechainewiltschko2002_ex32c_1"
@@ -85,9 +79,7 @@ def ex32c_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "they"), ("dialect", "A")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex32c_2 : LinguisticExample :=
   { id := "dechainewiltschko2002_ex32c_2"
@@ -103,9 +95,7 @@ def ex32c_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "them"), ("dialect", "A")]
-    comment := "Standard American English, dialect A."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Standard American English, dialect A." }
 
 def ex34c_1 : LinguisticExample :=
   { id := "dechainewiltschko2002_ex34c_1"
@@ -121,9 +111,7 @@ def ex34c_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "they"), ("dialect", "B")]
-    comment := "Dialect B, which has no reduced *'ey*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Dialect B, which has no reduced *'ey*." }
 
 def ex34c_2 : LinguisticExample :=
   { id := "dechainewiltschko2002_ex34c_2"
@@ -139,9 +127,7 @@ def ex34c_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("test", "precedesNoun"), ("pronoun", "them"), ("dialect", "B")]
-    comment := "Dialect B, where *them* is the D-morpheme *th-* over the clitic *'em*, (37c)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Dialect B, where *them* is the D-morpheme *th-* over the clitic *'em*, (37c)." }
 
 def ex38 : LinguisticExample :=
   { id := "dechainewiltschko2002_ex38"
@@ -157,9 +143,7 @@ def ex38 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("test", "boundVariable"), ("pronoun", "he")]
-    comment := "Bound-variable construal: for every candidate x, x thinks that x will win."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Bound-variable construal: for every candidate x, x thinks that x will win." }
 
 def ex40 : LinguisticExample :=
   { id := "dechainewiltschko2002_ex40"
@@ -175,9 +159,7 @@ def ex40 : LinguisticExample :=
     alternatives := []
     readings := [("strict", .acceptable), ("sloppy", .unacceptable)]
     paperFeatures := [("test", "boundVariable"), ("pronoun", "me")]
-    comment := "The sloppy reading, on which Mary knows that John saw her, is unavailable: *me* is not construed as a bound variable."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The sloppy reading, on which Mary knows that John saw her, is unavailable: *me* is not construed as a bound variable." }
 
 def ex30a : LinguisticExample :=
   { id := "dechainewiltschko2002_ex30a"
@@ -193,9 +175,7 @@ def ex30a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("test", "boundVariable"), ("pronoun", "one")]
-    comment := "Intended: for every x, x thinks that x is a genius."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Intended: for every x, x thinks that x is a genius." }
 
 def ex30b : LinguisticExample :=
   { id := "dechainewiltschko2002_ex30b"
@@ -211,9 +191,7 @@ def ex30b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("test", "boundVariable"), ("pronoun", "one")]
-    comment := "Intended: for every x, x loves x's mother."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Intended: for every x, x loves x's mother." }
 
 def ex22a : LinguisticExample :=
   { id := "dechainewiltschko2002_ex22a"
@@ -229,9 +207,7 @@ def ex22a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("test", "boundVariable"), ("pronoun", "kare")]
-    comment := "Intended: for every x, x loves x's mother; reported from Noguchi (1997)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Intended: for every x, x loves x's mother; reported from Noguchi (1997)." }
 
 def all : List LinguisticExample := [ex32a_1, ex32a_2, ex32b, ex32c_1, ex32c_2, ex34c_1, ex34c_2, ex38, ex40, ex30a, ex30b, ex22a]
 

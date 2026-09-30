@@ -31,9 +31,7 @@ def strong_dominant : LinguisticExample :=
     alternatives := []
     readings := [("strong/universal", .acceptable), ("weak/existential", .acceptable)]
     paperFeatures := [("preferred_reading", "strong"), ("quantifier_monotonicity", "upward")]
-    comment := "Migrated from Phenomena/Anaphora/DonkeyAnaphora.lean strongDominant. Kanazawa 1994's monotonicity generalization: with upward-entailing 'every' out of the blue, both readings are available but the strong reading dominates."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Migrated from Phenomena/Anaphora/DonkeyAnaphora.lean strongDominant. Kanazawa 1994's monotonicity generalization: with upward-entailing 'every' out of the blue, both readings are available but the strong reading dominates." }
 
 def all : List LinguisticExample := [strong_dominant]
 

@@ -31,9 +31,7 @@ def boeken_niet_uitgelezen : LinguisticExample :=
     alternatives := []
     readings := [("wide_scope", .acceptable), ("narrow_scope", .unacceptable)]
     paperFeatures := [("position", "scrambled")]
-    comment := "Naturally occurring scrambled bare plural over negation: obligatory wide scope (there are books I didn't finish), not 'I finished no books'; the follow-up sentence confirms the wide scope reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Naturally occurring scrambled bare plural over negation: obligatory wide scope (there are books I didn't finish), not 'I finished no books'; the follow-up sentence confirms the wide scope reading." }
 
 def boeken_gehaat : LinguisticExample :=
   { id := "lebruyndeswart2022_boeken_gehaat"
@@ -49,9 +47,7 @@ def boeken_gehaat : LinguisticExample :=
     alternatives := []
     readings := [("kind_reference", .acceptable)]
     paperFeatures := [("position", "scrambled")]
-    comment := "A scrambled bare plural under a kind-level predicate ('hate') keeps its kind reading: scrambling affects scope, not kind reference."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "A scrambled bare plural under a kind-level predicate ('hate') keeps its kind reading: scrambling affects scope, not kind reference." }
 
 def all : List LinguisticExample := [boeken_niet_uitgelezen, boeken_gehaat]
 

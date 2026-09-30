@@ -16,9 +16,7 @@
       ["task", "production"],
       ["words", "17 quantity words, 87% of the data"]
     ],
-    "comment": "The production frame of Experiments 1a and 1b, whose production probabilities show gradience and focality.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The production frame of Experiments 1a and 1b, whose production probabilities show gradience and focality."
   },
   {
     "id": "vantieletal2021_all_inference",
@@ -40,9 +38,7 @@
       ["monotonicity", "increasing"],
       ["inference", "sets to supersets"]
     ],
-    "comment": "A monotone-increasing quantity word licenses the inference from a set to its supersets; Experiment 2 classified the 17 words by such arguments.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A monotone-increasing quantity word licenses the inference from a set to its supersets; Experiment 2 classified the 17 words by such arguments."
   },
   {
     "id": "vantieletal2021_no_inference",
@@ -64,9 +60,7 @@
       ["monotonicity", "decreasing"],
       ["inference", "sets to subsets"]
     ],
-    "comment": "A monotone-decreasing quantity word licenses the inference from a set to its subsets; few, hardly any, less than half, none and very few were so classified.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A monotone-decreasing quantity word licenses the inference from a set to its subsets; few, hardly any, less than half, none and very few were so classified."
   },
   {
     "id": "vantieletal2021_some_good",
@@ -85,9 +79,7 @@
       ["word", "some"],
       ["argumentative direction", "positive"]
     ],
-    "comment": "Some and few differ in argumentative direction, a consideration the models abstract away from.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Some and few differ in argumentative direction, a consideration the models abstract away from."
   },
   {
     "id": "vantieletal2021_some_bad",
@@ -106,9 +98,7 @@
       ["word", "some"],
       ["argumentative direction", "positive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vantieletal2021_few_bad",
@@ -127,9 +117,7 @@
       ["word", "few"],
       ["argumentative direction", "negative"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vantieletal2021_few_good",
@@ -148,8 +136,6 @@
       ["word", "few"],
       ["argumentative direction", "negative"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

@@ -31,9 +31,7 @@ def cpa_long_short : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "negative"), ("shared_scale", "true")]
-    comment := "Cross-polar anomaly: positive matrix adjective, negative subdeletion standard, same scale (length)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Cross-polar anomaly: positive matrix adjective, negative subdeletion standard, same scale (length)." }
 
 def cpa_short_long : LinguisticExample :=
   { id := "kennedy1999_cpa_short_long"
@@ -49,9 +47,7 @@ def cpa_short_long : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix_polarity", "negative"), ("standard_polarity", "positive"), ("shared_scale", "true")]
-    comment := "Cross-polar anomaly with the polarities reversed."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Cross-polar anomaly with the polarities reversed." }
 
 def subdel_pos_pos : LinguisticExample :=
   { id := "kennedy1999_subdel_pos_pos"
@@ -67,9 +63,7 @@ def subdel_pos_pos : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "positive"), ("shared_scale", "true")]
-    comment := "Same-polarity subdeletion control: both adjectives positive on the shared scale of linear extent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Same-polarity subdeletion control: both adjectives positive on the shared scale of linear extent." }
 
 def subdel_neg_neg : LinguisticExample :=
   { id := "kennedy1999_subdel_neg_neg"
@@ -85,9 +79,7 @@ def subdel_neg_neg : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix_polarity", "negative"), ("standard_polarity", "negative"), ("shared_scale", "true")]
-    comment := "Same-polarity subdeletion control with two negative adjectives."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Same-polarity subdeletion control with two negative adjectives." }
 
 def ficus_tall_high : LinguisticExample :=
   { id := "kennedy1999_ficus_tall_high"
@@ -103,9 +95,7 @@ def ficus_tall_high : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "positive"), ("shared_scale", "true")]
-    comment := "Minimal quadruple (61)-(64): cross-polar anomaly generalizes beyond antonym pairs to any polarity mismatch."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Minimal quadruple (61)-(64): cross-polar anomaly generalizes beyond antonym pairs to any polarity mismatch." }
 
 def ficus_tall_low : LinguisticExample :=
   { id := "kennedy1999_ficus_tall_low"
@@ -121,9 +111,7 @@ def ficus_tall_low : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "negative"), ("shared_scale", "true")]
-    comment := "tall and low are not antonyms, yet the polarity mismatch is anomalous."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "tall and low are not antonyms, yet the polarity mismatch is anomalous." }
 
 def ficus_short_low : LinguisticExample :=
   { id := "kennedy1999_ficus_short_low"
@@ -139,9 +127,7 @@ def ficus_short_low : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix_polarity", "negative"), ("standard_polarity", "negative"), ("shared_scale", "true")]
-    comment := "Same-polarity (negative-negative) member of the quadruple."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Same-polarity (negative-negative) member of the quadruple." }
 
 def ficus_short_high : LinguisticExample :=
   { id := "kennedy1999_ficus_short_high"
@@ -157,9 +143,7 @@ def ficus_short_high : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix_polarity", "negative"), ("standard_polarity", "positive"), ("shared_scale", "true")]
-    comment := "Polarity-mismatch member of the quadruple with the negative adjective in the matrix."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Polarity-mismatch member of the quadruple with the negative adjective in the matrix." }
 
 def incomm_tall_clever : LinguisticExample :=
   { id := "kennedy1999_incomm_tall_clever"
@@ -175,9 +159,7 @@ def incomm_tall_clever : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "positive"), ("shared_scale", "false")]
-    comment := "Incommensurability: same polarity but distinct scales (height vs cleverness)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Incommensurability: same polarity but distinct scales (height vs cleverness)." }
 
 def incomm_tragic_heavy : LinguisticExample :=
   { id := "kennedy1999_incomm_tragic_heavy"
@@ -193,9 +175,7 @@ def incomm_tragic_heavy : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix_polarity", "positive"), ("standard_polarity", "positive"), ("shared_scale", "false")]
-    comment := "Incommensurability with two positive adjectives on distinct scales."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Incommensurability with two positive adjectives on distinct scales." }
 
 def mp_cadillac : LinguisticExample :=
   { id := "kennedy1999_mp_cadillac"
@@ -211,9 +191,7 @@ def mp_cadillac : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "positive"), ("construction", "absolute")]
-    comment := "Measure phrase with a positive adjective: positive extents are bounded, so the ordering is defined."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Measure phrase with a positive adjective: positive extents are bounded, so the ordering is defined." }
 
 def mp_fiat : LinguisticExample :=
   { id := "kennedy1999_mp_fiat"
@@ -229,9 +207,7 @@ def mp_fiat : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("construction", "absolute")]
-    comment := "Measure phrase with a negative adjective: negative extents are unbounded above, so the ordering is undefined."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Measure phrase with a negative adjective: negative extents are unbounded above, so the ordering is undefined." }
 
 def mp_fiat_comparative : LinguisticExample :=
   { id := "kennedy1999_mp_fiat_comparative"
@@ -247,9 +223,7 @@ def mp_fiat_comparative : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("construction", "comparative")]
-    comment := "Phrasal comparative contrast to (70): the standard is derived by applying short to the measure phrase, not by the measure phrase directly."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Phrasal comparative contrast to (70): the standard is derived by applying short to the measure phrase, not by the measure phrase directly." }
 
 def mp_reich : LinguisticExample :=
   { id := "kennedy1999_mp_reich"
@@ -265,9 +239,7 @@ def mp_reich : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("construction", "absolute")]
-    comment := "Negative adjectives reject overt measure phrases; cited in the argument that sharp-flat pairs are both positive."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Negative adjectives reject overt measure phrases; cited in the argument that sharp-flat pairs are both positive." }
 
 def mp_slow : LinguisticExample :=
   { id := "kennedy1999_mp_slow"
@@ -283,9 +255,7 @@ def mp_slow : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("polarity", "negative"), ("construction", "absolute")]
-    comment := "Adverbial counterpart of the measure-phrase restriction."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Adverbial counterpart of the measure-phrase restriction." }
 
 def all : List LinguisticExample := [cpa_long_short, cpa_short_long, subdel_pos_pos, subdel_neg_neg, ficus_tall_high, ficus_tall_low, ficus_short_low, ficus_short_high, incomm_tall_clever, incomm_tragic_heavy, mp_cadillac, mp_fiat, mp_fiat_comparative, mp_reich, mp_slow]
 

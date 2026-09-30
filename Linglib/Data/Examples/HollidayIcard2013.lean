@@ -31,9 +31,7 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7"), ("axiom", "A"), ("form", "(φ ∨ χ) ⩾ (ψ ∨ χ)")]
-    comment := "Intuitively equivalent to (2): the motivation for qualitative additivity, the axiom A of the logic FA."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Intuitively equivalent to (2): the motivation for qualitative additivity, the axiom A of the logic FA." }
 
 def ex2 : LinguisticExample :=
   { id := "hollidayicard2013_ex2"
@@ -49,9 +47,7 @@ def ex2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7"), ("axiom", "A"), ("form", "φ ⩾ ψ")]
-    comment := "The shared disjunct Qatar cancels; a preliminary Mechanical Turk study found unanimous agreement with the equivalence (footnote 14)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The shared disjunct Qatar cancels; a preliminary Mechanical Turk study found unanimous agreement with the equivalence (footnote 14)." }
 
 def ex3 : LinguisticExample :=
   { id := "hollidayicard2013_ex3"
@@ -67,9 +63,7 @@ def ex3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "10.1"), ("axiom", "Scott4"), ("form", "{a, e} ≻ {c, d}")]
-    comment := "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent." }
 
 def ex4 : LinguisticExample :=
   { id := "hollidayicard2013_ex4"
@@ -85,9 +79,7 @@ def ex4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "10.1"), ("axiom", "Scott4"), ("form", "{b, c} ≻ {a, d}")]
-    comment := "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent." }
 
 def ex5 : LinguisticExample :=
   { id := "hollidayicard2013_ex5"
@@ -103,9 +95,7 @@ def ex5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "10.1"), ("axiom", "Scott4"), ("form", "{d} ≻ {a, c}")]
-    comment := "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent." }
 
 def ex6 : LinguisticExample :=
   { id := "hollidayicard2013_ex6"
@@ -121,9 +111,7 @@ def ex6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "10.1"), ("axiom", "Scott4"), ("form", "{a, c, d} ≻ {b, e}")]
-    comment := "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "One of the four Kraft–Pratt–Seidenberg comparisons: jointly consistent with FA but with no finitely additive measure. The paper doubts that speakers find the combination inconsistent." }
 
 def all : List LinguisticExample := [ex1, ex2, ex3, ex4, ex5, ex6]
 

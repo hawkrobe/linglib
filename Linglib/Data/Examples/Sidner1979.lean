@@ -31,9 +31,7 @@ def ex_22 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "expectedFocus"), ("form", "plain"), ("expectedFocus", "my sister")]
-    comment := "Not an is-a or there-insertion sentence: the default expected focus list runs my sister (theme), the zoo, today, I (agent), the verb phrase, and the expected focus is its first member."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Not an is-a or there-insertion sentence: the default expected focus list runs my sister (theme), the zoo, today, I (agent), the verb phrase, and the expected focus is its first member." }
 
 def ex_23 : LinguisticExample :=
   { id := "sidner1979_23"
@@ -49,9 +47,7 @@ def ex_23 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "expectedFocus"), ("form", "thereInsertion"), ("expectedFocus", "an old man")]
-    comment := "A there-insertion sentence: the expected focus is its subject."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A there-insertion sentence: the expected focus is its subject." }
 
 def ex_24 : LinguisticExample :=
   { id := "sidner1979_24"
@@ -67,9 +63,7 @@ def ex_24 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "expectedFocus"), ("form", "plain"), ("expectedFocus", "her dog")]
-    comment := "No theme is present, what is talked about not being given: the default expected focus list runs her dog, all day long, Linda (agent), the verb phrase."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No theme is present, what is talked about not being given: the default expected focus list runs her dog, all day long, Linda (agent), the verb phrase." }
 
 def d2 : LinguisticExample :=
   { id := "sidner1979_d2"
@@ -85,9 +79,7 @@ def d2 : LinguisticExample :=
     alternatives := []
     readings := [("it = Hilda's house", .acceptable)]
     paperFeatures := [("phenomenon", "recencyRule")]
-    comment := "The pronoun in subject position co-specifies Hilda's house, the last constituent of the previous sentence, by the recency rule rather than the expected focus."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The pronoun in subject position co-specifies Hilda's house, the last constituent of the previous sentence, by the recency rule rather than the expected focus." }
 
 def d7 : LinguisticExample :=
   { id := "sidner1979_d7"
@@ -103,9 +95,7 @@ def d7 : LinguisticExample :=
     alternatives := []
     readings := [("it = the necklace", .acceptable)]
     paperFeatures := [("phenomenon", "nonAgentPronoun")]
-    comment := "The pronoun outside agent position co-specifies the discourse focus, the necklace; the alternate potential focus, the office, is never considered."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The pronoun outside agent position co-specifies the discourse focus, the necklace; the alternate potential focus, the office, is never considered." }
 
 def d8 : LinguisticExample :=
   { id := "sidner1979_d8"
@@ -121,9 +111,7 @@ def d8 : LinguisticExample :=
     alternatives := []
     readings := [("he = Max", .acceptable)]
     paperFeatures := [("phenomenon", "agentPronoun")]
-    comment := "The pronoun in agent position co-specifies the actor focus, Max: the discourse focus, Bloomingdales, was established in the same sentence and takes no precedence, and the two potential actors Ned and Winston raise no actor ambiguity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The pronoun in agent position co-specifies the actor focus, Max: the discourse focus, Bloomingdales, was established in the same sentence and takes no precedence, and the two potential actors Ned and Winston raise no actor ambiguity." }
 
 def d9 : LinguisticExample :=
   { id := "sidner1979_d9"
@@ -139,9 +127,7 @@ def d9 : LinguisticExample :=
     alternatives := []
     readings := [("he = Jeff throughout", .acceptable)]
     paperFeatures := [("phenomenon", "animateDiscourseFocusRule")]
-    comment := "The discourse focus is Jeff while the actor focus moves from the speaker to Carl to Oscar; every he co-specifies Jeff, the discourse focus having been established before any other phrase satisfying person, number and gender. Reported as (34) in Grosz, Joshi and Weinstein (1995)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The discourse focus is Jeff while the actor focus moves from the speaker to Carl to Oscar; every he co-specifies Jeff, the discourse focus having been established before any other phrase satisfying person, number and gender. Reported as (34) in Grosz, Joshi and Weinstein (1995)." }
 
 def d14a : LinguisticExample :=
   { id := "sidner1979_d14a"
@@ -157,9 +143,7 @@ def d14a : LinguisticExample :=
     alternatives := []
     readings := [("he = my dog, him = the vet", .acceptable)]
     paperFeatures := [("phenomenon", "actorAndDiscourseFocus")]
-    comment := "The actor focus, the speaker, fails the syntactic filters for he, so the first potential actor, my dog, is its co-specification; the discourse focus, my dog, is rejected for him by inference, dogs having no hands, so the first potential discourse focus, the vet, is its co-specification. The discourse focus moves to the vet and my dog is stacked; the actor focus moves to my dog and the speaker is stacked."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The actor focus, the speaker, fails the syntactic filters for he, so the first potential actor, my dog, is its co-specification; the discourse focus, my dog, is rejected for him by inference, dogs having no hands, so the first potential discourse focus, the vet, is its co-specification. The discourse focus moves to the vet and my dog is stacked; the actor focus moves to my dog and the speaker is stacked." }
 
 def d14b : LinguisticExample :=
   { id := "sidner1979_d14b"
@@ -175,9 +159,7 @@ def d14b : LinguisticExample :=
     alternatives := []
     readings := [("he = the vet, him = my dog", .acceptable)]
     paperFeatures := [("phenomenon", "actorAndDiscourseFocus")]
-    comment := "The discourse focus, my dog, is retained as the co-specification of him, a dog being injectable; for he the actor focus and the first potential actor are rejected, dogs giving no injections, and the vet is its co-specification and the new actor focus."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The discourse focus, my dog, is retained as the co-specification of him, a dog being injectable; for he the actor focus and the first potential actor are rejected, dogs giving no injections, and the vet is its co-specification and the new actor focus." }
 
 def d25 : LinguisticExample :=
   { id := "sidner1979_d25"
@@ -193,9 +175,7 @@ def d25 : LinguisticExample :=
     alternatives := []
     readings := [("they = the strawberries", .acceptable)]
     paperFeatures := [("phenomenon", "focusConfirmation")]
-    comment := "A there-insertion sentence whose subject, some strawberries, is the expected focus; the pronoun of the second sentence co-specifies it and the focus is retained at step 4 of the focusing algorithm."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A there-insertion sentence whose subject, some strawberries, is the expected focus; the pronoun of the second sentence co-specifies it and the focus is retained at step 4 of the focusing algorithm." }
 
 def d35 : LinguisticExample :=
   { id := "sidner1979_d35"
@@ -211,9 +191,7 @@ def d35 : LinguisticExample :=
     alternatives := []
     readings := [("they in the fourth sentence = the ice cream cones", .acceptable)]
     paperFeatures := [("phenomenon", "focusMovement")]
-    comment := "The expected focus is baseball, the theme of the verb complement, confirmed by it in the second sentence while they in agent position is not consulted; the fourth sentence's they co-specifies the alternate ice cream cones and the focus moves there, baseball being stacked."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The expected focus is baseball, the theme of the verb complement, confirmed by it in the second sentence while they in agent position is not consulted; the fourth sentence's they co-specifies the alternate ice cream cones and the focus moves there, baseball being stacked." }
 
 def all : List LinguisticExample := [ex_22, ex_23, ex_24, d2, d7, d8, d9, d14a, d14b, d25, d35]
 

@@ -21,9 +21,7 @@
       ["alternative", "all"],
       ["symmetric alternative", "some but not all"]
     ],
-    "comment": "The symmetric alternative (2), some but not all, must not enter the computation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The symmetric alternative (2), some but not all, must not enter the computation."
   },
   {
     "id": "brehenyetal2018_11",
@@ -45,9 +43,7 @@
       ["prejacent", "smoked pot"],
       ["alternative", "got drunk"]
     ],
-    "comment": "The alternative is formal because got drunk is salient in the context.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The alternative is formal because got drunk is salient in the context."
   },
   {
     "id": "brehenyetal2018_12",
@@ -70,9 +66,7 @@
       ["alternative", "not any"],
       ["symmetric alternative", "some"]
     ],
-    "comment": "The inference negates (13), John didn't do any of the homework; the structural approach also derives some, (14)–(15).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The inference negates (13), John didn't do any of the homework; the structural approach also derives some, (14)–(15)."
   },
   {
     "id": "brehenyetal2018_17",
@@ -94,9 +88,7 @@
       ["prejacent", "not all"],
       ["focus", "broad"]
     ],
-    "comment": "Focus includes negation, so narrow focus cannot keep some out of the alternatives.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Focus includes negation, so narrow focus cannot keep some out of the alternatives."
   },
   {
     "id": "brehenyetal2018_18",
@@ -119,9 +111,7 @@
       ["alternative", "run and not smoke"],
       ["symmetric alternative", "run and smoke"]
     ],
-    "comment": "Unnatural when it is known that John didn't smoke.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Unnatural when it is known that John didn't smoke."
   },
   {
     "id": "brehenyetal2018_28",
@@ -144,9 +134,7 @@
       ["alternative", "not smoke"],
       ["symmetric alternative", "smoke"]
     ],
-    "comment": "The conjunction is split across sentences, so no salient constituent means run and not smoke, (29)–(31).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The conjunction is split across sentences, so no salient constituent means run and not smoke, (29)–(31)."
   },
   {
     "id": "brehenyetal2018_32",
@@ -170,9 +158,7 @@
       ["alternative", "not empty"],
       ["symmetric alternative", "empty"]
     ],
-    "comment": "Sentential negation keeps the Atomicity Constraint from blocking not empty, footnote 17.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Sentential negation keeps the Atomicity Constraint from blocking not empty, footnote 17."
   },
   {
     "id": "brehenyetal2018_33",
@@ -196,9 +182,7 @@
       ["alternative", "not full"],
       ["symmetric alternative", "full"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "brehenyetal2018_34",
@@ -221,9 +205,7 @@
       ["prejacent", "not required"],
       ["alternative", "not allowed"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "brehenyetal2018_35",
@@ -246,9 +228,7 @@
       ["prejacent", "not certain"],
       ["alternative", "not possible"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "brehenyetal2018_38a",
@@ -270,9 +250,7 @@
       ["prejacent", "not safe"],
       ["scale", "upper closed"]
     ],
-    "comment": "The modifier route (37) predicts the inference; it is absent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The modifier route (37) predicts the inference; it is absent."
   },
   {
     "id": "brehenyetal2018_38b",
@@ -294,9 +272,7 @@
       ["prejacent", "not tall"],
       ["scale", "open"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "brehenyetal2018_38c",
@@ -318,9 +294,7 @@
       ["prejacent", "not transparent"],
       ["scale", "closed"]
     ],
-    "comment": "Transparent takes the same modifiers as full, so scale structure does not explain the contrast with (32).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Transparent takes the same modifiers as full, so scale structure does not explain the contrast with (32)."
   },
   {
     "id": "brehenyetal2018_41",
@@ -344,9 +318,7 @@
       ["prejacent", "allowed"],
       ["alternative", "required"]
     ],
-    "comment": "Deontic possibility with the adjective yoi; unnatural when John is required to come.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Deontic possibility with the adjective yoi; unnatural when John is required to come."
   },
   {
     "id": "brehenyetal2018_42a",
@@ -369,9 +341,7 @@
       ["case", "too few lexical alternatives"],
       ["prejacent", "required"]
     ],
-    "comment": "Deontic necessity with a negated verbal stem, nar-anai or ike-nai, and obligatory topic marking on the gerund: not derivable from (41) by substitution and deletion.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Deontic necessity with a negated verbal stem, nar-anai or ike-nai, and obligatory topic marking on the gerund: not derivable from (41) by substitution and deletion."
   },
   {
     "id": "brehenyetal2018_42b",
@@ -393,9 +363,7 @@
       ["case", "too few lexical alternatives"],
       ["prejacent", "required"]
     ],
-    "comment": "Deontic necessity as an existential construction over the nominal hitsuyoo.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Deontic necessity as an existential construction over the nominal hitsuyoo."
   },
   {
     "id": "brehenyetal2018_44",
@@ -419,9 +387,7 @@
       ["alternative", "required"],
       ["symmetric alternative", "optional"]
     ],
-    "comment": "Optional is a single lexical item of the same complexity as required.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Optional is a single lexical item of the same complexity as required."
   },
   {
     "id": "brehenyetal2018_45",
@@ -445,9 +411,7 @@
       ["alternative", "constantly"],
       ["symmetric alternative", "intermittently"]
     ],
-    "comment": "Footnote 23 weighs whether intermittently and optional are symmetric partners or themselves strengthened.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Footnote 23 weighs whether intermittently and optional are symmetric partners or themselves strengthened."
   },
   {
     "id": "brehenyetal2018_46",
@@ -470,9 +434,7 @@
       ["alternative", "all"],
       ["symmetric alternative", "just some"]
     ],
-    "comment": "The alternatives (47) include both all and just some; cost breaks the symmetry.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The alternatives (47) include both all and just some; cost breaks the symmetry."
   },
   {
     "id": "brehenyetal2018_48",
@@ -496,9 +458,7 @@
       ["alternative", "none"],
       ["symmetric alternative", "some"]
     ],
-    "comment": "The alternatives (49) tie in complexity; relative informativity breaks the symmetry. The second inference holds when whether John saw many of the students is relevant, with the alternatives (54).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The alternatives (49) tie in complexity; relative informativity breaks the symmetry. The second inference holds when whether John saw many of the students is relevant, with the alternatives (54)."
   },
   {
     "id": "brehenyetal2018_50",
@@ -521,9 +481,7 @@
       ["alternative", "not empty"],
       ["symmetric alternative", "empty"]
     ],
-    "comment": "With the alternatives (51), not empty is both less informative and costlier than empty.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "With the alternatives (51), not empty is both less informative and costlier than empty."
   },
   {
     "id": "brehenyetal2018_55",
@@ -546,9 +504,7 @@
       ["alternative", "run and not smoke"],
       ["symmetric alternative", "run and smoke"]
     ],
-    "comment": "The alternatives tie in informativity, and the unattested one is if anything simpler.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The alternatives tie in informativity, and the unattested one is if anything simpler."
   },
   {
     "id": "brehenyetal2018_57",
@@ -569,8 +525,6 @@
       ["alternative", "always"],
       ["symmetric alternative", "intermittently"]
     ],
-    "comment": "With the alternatives (58), only a frequency cost on intermittently breaks the symmetry.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "With the alternatives (58), only a frequency cost on intermittently breaks the symmetry."
   }
 ]

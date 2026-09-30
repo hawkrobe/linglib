@@ -28,8 +28,7 @@
         "safe"
       ]
     ],
-    "comment": "Knowing that Visa is taken settles the disjunctive question.",
-    "lgrConformance": ""
+    "comment": "Knowing that Visa is taken settles the disjunctive question."
   },
   {
     "id": "hawkinsetal2025_ex2",
@@ -60,8 +59,7 @@
         "unsafe"
       ]
     ],
-    "comment": "Knowing about American Express leaves the question open.",
-    "lgrConformance": ""
+    "comment": "Knowing about American Express leaves the question open."
   },
   {
     "id": "hawkinsetal2025_ex3",
@@ -99,8 +97,7 @@
         "exhaustive"
       ]
     ],
-    "comment": "The least likely site of an exhaustive list: (4) ≥ (5) > (3).",
-    "lgrConformance": ""
+    "comment": "The least likely site of an exhaustive list: (4) ≥ (5) > (3)."
   },
   {
     "id": "hawkinsetal2025_ex4",
@@ -138,8 +135,7 @@
         "exhaustive"
       ]
     ],
-    "comment": "Model rate of exhaustive lists 0.75.",
-    "lgrConformance": ""
+    "comment": "Model rate of exhaustive lists 0.75."
   },
   {
     "id": "hawkinsetal2025_ex5",
@@ -173,8 +169,7 @@
         "exhaustive"
       ]
     ],
-    "comment": "Model rate of exhaustive lists 0.66.",
-    "lgrConformance": ""
+    "comment": "Model rate of exhaustive lists 0.66."
   },
   {
     "id": "hawkinsetal2025_ex6",
@@ -212,8 +207,7 @@
         "Chardonnay"
       ]
     ],
-    "comment": "Predicted ordering of responses: competitor > taciturn ≥ same category > exhaustive.",
-    "lgrConformance": ""
+    "comment": "Predicted ordering of responses: competitor > taciturn ≥ same category > exhaustive."
   },
   {
     "id": "hawkinsetal2025_ex7",
@@ -251,8 +245,7 @@
         "carpet"
       ]
     ],
-    "comment": "The contextually relevant competitor is mentioned more than the most similar option.",
-    "lgrConformance": ""
+    "comment": "The contextually relevant competitor is mentioned more than the most similar option."
   },
   {
     "id": "hawkinsetal2025_ex8",
@@ -290,8 +283,7 @@
         "carpet"
       ]
     ],
-    "comment": "The same question and options as (7) with the other competitor relevant.",
-    "lgrConformance": ""
+    "comment": "The same question and options as (7) with the other competitor relevant."
   },
   {
     "id": "hawkinsetal2025_icedtea",
@@ -321,8 +313,7 @@
         "competitor"
       ]
     ],
-    "comment": "The question signals a goal: something cold and caffeinated.",
-    "lgrConformance": ""
+    "comment": "The question signals a goal: something cold and caffeinated."
   },
   {
     "id": "hawkinsetal2025_bbq",
@@ -352,7 +343,6 @@
         "relevant, non-resolving"
       ]
     ],
-    "comment": "Relevance that shifts the likelihood of a world state without resolving the question.",
-    "lgrConformance": ""
+    "comment": "Relevance that shifts the likelihood of a world state without resolving the question."
   }
 ]

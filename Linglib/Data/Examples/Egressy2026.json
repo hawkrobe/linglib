@@ -25,9 +25,7 @@
       ["directPerception", "yes"],
       ["clauseRole", "object"]
     ],
-    "comment": "Direct perception: the past-under-past clause has the simultaneous reading; the backshifted reading is excluded pragmatically, since one cannot directly perceive a past event.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Direct perception: the past-under-past clause has the simultaneous reading; the backshifted reading is excluded pragmatically, since one cannot directly perceive a past event."
   },
   {
     "id": "egressy2026_5",
@@ -55,9 +53,7 @@
       ["directPerception", "yes"],
       ["clauseRole", "object"]
     ],
-    "comment": "Direct perception with a verb of hearing; the same verb embeds a speech-reporting clause in (13).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Direct perception with a verb of hearing; the same verb embeds a speech-reporting clause in (13)."
   },
   {
     "id": "egressy2026_6",
@@ -84,9 +80,7 @@
       ["directPerception", "yes"],
       ["clauseRole", "object"]
     ],
-    "comment": "Dreaming as perception in a dream.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Dreaming as perception in a dream."
   },
   {
     "id": "egressy2026_7",
@@ -115,9 +109,7 @@
       ["directPerception", "no"],
       ["clauseRole", "object"]
     ],
-    "comment": "Thought and belief: no direct perception, so both readings are available.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Thought and belief: no direct perception, so both readings are available."
   },
   {
     "id": "egressy2026_8",
@@ -144,9 +136,7 @@
       ["directPerception", "no"],
       ["clauseRole", "subject"]
     ],
-    "comment": "A subject clause with the nominative expletive az.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A subject clause with the nominative expletive az."
   },
   {
     "id": "egressy2026_9",
@@ -175,9 +165,7 @@
       ["directPerception", "no"],
       ["clauseRole", "adjunct"]
     ],
-    "comment": "A non-argument clause giving the reason for growling; the same verb takes a speech-reporting argument clause in (11).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A non-argument clause giving the reason for growling; the same verb takes a speech-reporting argument clause in (11)."
   },
   {
     "id": "egressy2026_10",
@@ -210,9 +198,7 @@
       ["intermediateDirectPerception", "yes"],
       ["deepestDirectPerception", "yes"]
     ],
-    "comment": "Multiple embedding of non-speech-reporting clauses: simultaneous at both levels; direct perception at both levels excludes backshifting.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Multiple embedding of non-speech-reporting clauses: simultaneous at both levels; direct perception at both levels excludes backshifting."
   },
   {
     "id": "egressy2026_11a",
@@ -239,9 +225,7 @@
       ["directPerception", "no"],
       ["clauseRole", "object"]
     ],
-    "comment": "The content of what was said, with the evaluative adverb sajnos in the embedded left periphery: backshifted only.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The content of what was said, with the evaluative adverb sajnos in the embedded left periphery: backshifted only."
   },
   {
     "id": "egressy2026_11b",
@@ -268,9 +252,7 @@
       ["directPerception", "no"],
       ["clauseRole", "object"]
     ],
-    "comment": "The content of what was shouted: backshifted only.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The content of what was shouted: backshifted only."
   },
   {
     "id": "egressy2026_11c",
@@ -297,9 +279,7 @@
       ["directPerception", "no"],
       ["clauseRole", "object"]
     ],
-    "comment": "The content of what was growled, an argument clause; contrast the reason adjunct of (9).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The content of what was growled, an argument clause; contrast the reason adjunct of (9)."
   },
   {
     "id": "egressy2026_12",
@@ -329,9 +309,7 @@
       ["directPerception", "no"],
       ["clauseRole", "adjunct"]
     ],
-    "comment": "A speech-reporting non-argument clause, with the instrumental expletive: backshifted only.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A speech-reporting non-argument clause, with the instrumental expletive: backshifted only."
   },
   {
     "id": "egressy2026_13",
@@ -362,9 +340,7 @@
       ["directPerception", "no"],
       ["clauseRole", "object"]
     ],
-    "comment": "The same verb as in (5), now embedding Peti's verbal report; with sajnos the complements of gondol and hisz get an inner-speech interpretation and are backshifted only.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The same verb as in (5), now embedding Peti's verbal report; with sajnos the complements of gondol and hisz get an inner-speech interpretation and are backshifted only."
   },
   {
     "id": "egressy2026_14",
@@ -395,9 +371,7 @@
       ["directPerception", "no"],
       ["clauseRole", "object"]
     ],
-    "comment": "Indirect perception through signs that are not verbal: the clause describes the content of a sign and behaves as speech-reporting.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Indirect perception through signs that are not verbal: the clause describes the content of a sign and behaves as speech-reporting."
   },
   {
     "id": "egressy2026_15",
@@ -429,9 +403,7 @@
       ["intermediateDirectPerception", "no"],
       ["deepestDirectPerception", "no"]
     ],
-    "comment": "Multiple embedding of speech-reporting clauses: backshifting at both levels.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Multiple embedding of speech-reporting clauses: backshifting at both levels."
   },
   {
     "id": "egressy2026_16",
@@ -464,9 +436,7 @@
       ["intermediateDirectPerception", "no"],
       ["deepestDirectPerception", "yes"]
     ],
-    "comment": "A non-speech-reporting clause inside a speech-reporting one: the intermediate clause is backshifted, the deepest simultaneous with it; the intermediate perception verb excludes backshifting of the deepest clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A non-speech-reporting clause inside a speech-reporting one: the intermediate clause is backshifted, the deepest simultaneous with it; the intermediate perception verb excludes backshifting of the deepest clause."
   },
   {
     "id": "egressy2026_17",
@@ -499,9 +469,7 @@
       ["intermediateDirectPerception", "yes"],
       ["deepestDirectPerception", "no"]
     ],
-    "comment": "A speech-reporting clause inside a non-speech-reporting one: the intermediate clause is simultaneous with the matrix, the deepest backshifted; only structurally adjacent clauses interact.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A speech-reporting clause inside a non-speech-reporting one: the intermediate clause is simultaneous with the matrix, the deepest backshifted; only structurally adjacent clauses interact."
   },
   {
     "id": "egressy2026_18",
@@ -523,9 +491,7 @@
       ["intermediateTense", "future"],
       ["deepestTense", "past"]
     ],
-    "comment": "Past under will under past: Mary's words cannot be “I am sick”, since the next lowest tense above the deepest past is the future will, not a past.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Past under will under past: Mary's words cannot be “I am sick”, since the next lowest tense above the deepest past is the future will, not a past."
   },
   {
     "id": "egressy2026_19",
@@ -546,9 +512,7 @@
       ["clauseSize", "cP"],
       ["directPerception", "no"]
     ],
-    "comment": "English past under past has the simultaneous reading, Mary's words being “I am sick”; the backshifted reading is set aside.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "English past under past has the simultaneous reading, Mary's words being “I am sick”; the backshifted reading is set aside."
   },
   {
     "id": "egressy2026_23",
@@ -575,9 +539,7 @@
       ["diagnostic", "evaluativeAdverb"],
       ["matrixVerb", "mond"]
     ],
-    "comment": "The evaluative adverb sajnos is hosted in the Say layer above foci: the speech-reporting complements of mond, hall and gondol host it, the TP complement of álmodik cannot.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The evaluative adverb sajnos is hosted in the Say layer above foci: the speech-reporting complements of mond, hall and gondol host it, the TP complement of álmodik cannot."
   },
   {
     "id": "egressy2026_24",
@@ -604,9 +566,7 @@
       ["matrixVerb", "hall"],
       ["embeddedAdverb", "no"]
     ],
-    "comment": "Focus movement to the matrix Spec,FocP escapes the TP complement of hall but not the clause whose left periphery hosts an evaluative adverb, a SayP.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Focus movement to the matrix Spec,FocP escapes the TP complement of hall but not the clause whose left periphery hosts an evaluative adverb, a SayP."
   },
   {
     "id": "egressy2026_25",
@@ -630,9 +590,7 @@
       ["diagnostic", "whMovement"],
       ["matrixVerb", "lát"]
     ],
-    "comment": "Wh-movement to the matrix Spec,FocP escapes the TP complement of lát but not the SayP complement of morog.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Wh-movement to the matrix Spec,FocP escapes the TP complement of lát but not the SayP complement of morog."
   },
   {
     "id": "egressy2026_27",
@@ -651,9 +609,7 @@
       ["diagnostic", "raising"],
       ["crossed", "tP"]
     ],
-    "comment": "Raising to Spec,TP across a TP.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Raising to Spec,TP across a TP."
   },
   {
     "id": "egressy2026_28",
@@ -672,8 +628,6 @@
       ["diagnostic", "raising"],
       ["crossed", "cP"]
     ],
-    "comment": "The ban on hyperraising: raising to Spec,TP cannot cross a CP, since C is above T in the functional sequence.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The ban on hyperraising: raising to Spec,TP cannot cross a CP, since C is above T in the functional sequence."
   }
 ]

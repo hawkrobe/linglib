@@ -31,9 +31,7 @@ def ag2024b_1 : LinguisticExample :=
     alternatives := []
     readings := [("My apartment is small", .acceptable)]
     paperFeatures := [("adjective", "large"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "positive"), ("negation", "negated"), ("relation", "implicates")]
-    comment := "Negative strengthening: the negated positive weak relative adjective implicates its antonym."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Negative strengthening: the negated positive weak relative adjective implicates its antonym." }
 
 def ag2024b_2 : LinguisticExample :=
   { id := "ag2024b_2"
@@ -49,9 +47,7 @@ def ag2024b_2 : LinguisticExample :=
     alternatives := []
     readings := [("My apartment is large", .unacceptable)]
     paperFeatures := [("adjective", "small"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "negative"), ("negation", "negated"), ("relation", "does_not_implicate")]
-    comment := "The double negative does not give rise to negative strengthening; its implicated meaning would be evaluatively positive."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "The double negative does not give rise to negative strengthening; its implicated meaning would be evaluatively positive." }
 
 def ag2024b_5a : LinguisticExample :=
   { id := "ag2024b_5a"
@@ -67,9 +63,7 @@ def ag2024b_5a : LinguisticExample :=
     alternatives := []
     readings := [("The apartment is dirty", .acceptable)]
     paperFeatures := [("adjective", "clean"), ("adjectiveType", "absolute"), ("strength", "weak"), ("polarity", "positive"), ("negation", "negated"), ("relation", "entails")]
-    comment := "Same sentence as (3); a negated maximum-standard absolute adjective entails its antonym."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Same sentence as (3); a negated maximum-standard absolute adjective entails its antonym." }
 
 def ag2024b_5b : LinguisticExample :=
   { id := "ag2024b_5b"
@@ -85,9 +79,7 @@ def ag2024b_5b : LinguisticExample :=
     alternatives := []
     readings := [("The apartment is clean", .acceptable)]
     paperFeatures := [("adjective", "dirty"), ("adjectiveType", "absolute"), ("strength", "weak"), ("polarity", "negative"), ("negation", "negated"), ("relation", "entails")]
-    comment := "Same sentence as (4); a negated minimum-standard absolute adjective entails its antonym."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Same sentence as (4); a negated minimum-standard absolute adjective entails its antonym." }
 
 def ag2024b_6a : LinguisticExample :=
   { id := "ag2024b_6a"
@@ -103,9 +95,7 @@ def ag2024b_6a : LinguisticExample :=
     alternatives := []
     readings := [("The apartment is small", .unacceptable)]
     paperFeatures := [("adjective", "large"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "positive"), ("negation", "negated"), ("relation", "does_not_entail")]
-    comment := "Relative antonyms leave a semantic extension gap, so the negated form does not entail the antonym."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Relative antonyms leave a semantic extension gap, so the negated form does not entail the antonym." }
 
 def ag2024b_6b : LinguisticExample :=
   { id := "ag2024b_6b"
@@ -121,9 +111,7 @@ def ag2024b_6b : LinguisticExample :=
     alternatives := []
     readings := [("The apartment is large", .unacceptable)]
     paperFeatures := [("adjective", "small"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "negative"), ("negation", "negated"), ("relation", "does_not_entail")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "" }
 
 def ag2024b_7a : LinguisticExample :=
   { id := "ag2024b_7a"
@@ -139,9 +127,7 @@ def ag2024b_7a : LinguisticExample :=
     alternatives := []
     readings := [("The apartment is dirty", .unacceptable)]
     paperFeatures := [("adjective", "clean"), ("modifier", "very"), ("adjectiveType", "absolute"), ("strength", "weak"), ("polarity", "positive"), ("negation", "negated"), ("relation", "does_not_entail")]
-    comment := "The entailment to the antonym fails for modified absolute adjectives."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "The entailment to the antonym fails for modified absolute adjectives." }
 
 def ag2024b_7b : LinguisticExample :=
   { id := "ag2024b_7b"
@@ -157,9 +143,7 @@ def ag2024b_7b : LinguisticExample :=
     alternatives := []
     readings := [("The apartment is filthy", .unacceptable), ("The apartment is dirty", .unacceptable)]
     paperFeatures := [("adjective", "pristine"), ("adjectiveType", "absolute"), ("strength", "strong"), ("polarity", "positive"), ("negation", "negated"), ("relation", "does_not_entail")]
-    comment := "The entailment to the antonym fails for stronger scale-mates: the sentence is compatible with the apartment being clean, dirty or filthy."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "The entailment to the antonym fails for stronger scale-mates: the sentence is compatible with the apartment being clean, dirty or filthy." }
 
 def ag2024b_9 : LinguisticExample :=
   { id := "ag2024b_9"
@@ -175,9 +159,7 @@ def ag2024b_9 : LinguisticExample :=
     alternatives := []
     readings := [("The apartment is large but not gigantic", .acceptable)]
     paperFeatures := [("adjective", "large"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "positive"), ("negation", "nonNegated"), ("relation", "implicates")]
-    comment := "Q-based upper-bounding implicature: gigantic asymmetrically entails large."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Q-based upper-bounding implicature: gigantic asymmetrically entails large." }
 
 def ag2024b_10 : LinguisticExample :=
   { id := "ag2024b_10"
@@ -193,9 +175,7 @@ def ag2024b_10 : LinguisticExample :=
     alternatives := []
     readings := [("My apartment is small", .acceptable)]
     paperFeatures := [("adjective", "large"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "positive"), ("negation", "negated"), ("relation", "implicates"), ("inference", "negative_strengthening")]
-    comment := "Horn's R-based implicature: the speaker conceals the stronger negative meaning of the simple antonym."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Horn's R-based implicature: the speaker conceals the stronger negative meaning of the simple antonym." }
 
 def ag2024b_11 : LinguisticExample :=
   { id := "ag2024b_11"
@@ -211,9 +191,7 @@ def ag2024b_11 : LinguisticExample :=
     alternatives := []
     readings := [("My apartment is neither large nor small", .acceptable)]
     paperFeatures := [("adjective", "small"), ("adjectiveType", "relative"), ("strength", "weak"), ("polarity", "negative"), ("negation", "negated"), ("relation", "implicates"), ("inference", "middling")]
-    comment := "Horn's Q/R-based middling interpretation: the prolix double negative conveys the extension gap."
-    metaLanguage := "stan1293"
-    lgrConformance := "NONE" }
+    comment := "Horn's Q/R-based middling interpretation: the prolix double negative conveys the extension gap." }
 
 def all : List LinguisticExample := [ag2024b_1, ag2024b_2, ag2024b_5a, ag2024b_5b, ag2024b_6a, ag2024b_6b, ag2024b_7a, ag2024b_7b, ag2024b_9, ag2024b_10, ag2024b_11]
 

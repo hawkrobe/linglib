@@ -31,9 +31,7 @@ def until_state : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "until"), ("clause", "main"), ("vendler_class", "state")]
-    comment := "Schematic illustration of Karttunen 1974's durative selectional restriction on *until* main clauses; sentence not verified verbatim against the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Schematic illustration of Karttunen 1974's durative selectional restriction on *until* main clauses; sentence not verified verbatim against the paper." }
 
 def until_activity : LinguisticExample :=
   { id := "karttunen1974_until_activity"
@@ -49,9 +47,7 @@ def until_activity : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "until"), ("clause", "main"), ("vendler_class", "activity")]
-    comment := "Schematic illustration of Karttunen 1974's durative selectional restriction on *until* main clauses; sentence not verified verbatim against the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Schematic illustration of Karttunen 1974's durative selectional restriction on *until* main clauses; sentence not verified verbatim against the paper." }
 
 def until_achievement : LinguisticExample :=
   { id := "karttunen1974_until_achievement"
@@ -67,9 +63,7 @@ def until_achievement : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "until"), ("clause", "main"), ("vendler_class", "achievement"), ("coercion", "iterative"), ("result_class", "activity")]
-    comment := "Schematic illustration of Karttunen 1974's durative selectional restriction on *until* main clauses; sentence not verified verbatim against the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Schematic illustration of Karttunen 1974's durative selectional restriction on *until* main clauses; sentence not verified verbatim against the paper." }
 
 def until_accomplishment : LinguisticExample :=
   { id := "karttunen1974_until_accomplishment"
@@ -85,9 +79,7 @@ def until_accomplishment : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "until"), ("clause", "main"), ("vendler_class", "accomplishment"), ("coercion", "atelicize"), ("result_class", "activity")]
-    comment := "Schematic illustration of Karttunen 1974's durative selectional restriction on *until* main clauses; sentence not verified verbatim against the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Schematic illustration of Karttunen 1974's durative selectional restriction on *until* main clauses; sentence not verified verbatim against the paper." }
 
 def all : List LinguisticExample := [until_state, until_activity, until_achievement, until_accomplishment]
 

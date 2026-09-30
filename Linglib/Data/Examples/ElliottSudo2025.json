@@ -17,9 +17,7 @@
     "paperFeatures": [
       ["section", "1"]
     ],
-    "comment": "Kamp's deontic free choice, the original observation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Kamp's deontic free choice, the original observation."
   },
   {
     "id": "elliottsudo2025_2",
@@ -39,9 +37,7 @@
     "paperFeatures": [
       ["section", "1"]
     ],
-    "comment": "Epistemic free choice.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Epistemic free choice."
   },
   {
     "id": "elliottsudo2025_6",
@@ -61,9 +57,7 @@
     "paperFeatures": [
       ["section", "2.1"]
     ],
-    "comment": "The bathroom disjunction: the negation of the first disjunct entails a witness for the pronoun in the second.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The bathroom disjunction: the negation of the first disjunct entails a witness for the pronoun in the second."
   },
   {
     "id": "elliottsudo2025_10a",
@@ -84,9 +78,7 @@
     "paperFeatures": [
       ["section", "2.1"]
     ],
-    "comment": "The indefinite introduces a discourse referent for the pronoun.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The indefinite introduces a discourse referent for the pronoun."
   },
   {
     "id": "elliottsudo2025_10b",
@@ -107,9 +99,7 @@
     "paperFeatures": [
       ["section", "2.1"]
     ],
-    "comment": "Contextually equivalent to (10a) but without a linguistic antecedent: the formal link condition.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Contextually equivalent to (10a) but without a linguistic antecedent: the formal link condition."
   },
   {
     "id": "elliottsudo2025_11a",
@@ -127,9 +117,7 @@
     "paperFeatures": [
       ["section", "2.1"]
     ],
-    "comment": "Anaphora across a disjunction with an indefinite in the negated first disjunct.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Anaphora across a disjunction with an indefinite in the negated first disjunct."
   },
   {
     "id": "elliottsudo2025_11b",
@@ -147,9 +135,7 @@
     "paperFeatures": [
       ["section", "2.1"]
     ],
-    "comment": "The formal link condition holds across disjunctions too.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The formal link condition holds across disjunctions too."
   },
   {
     "id": "elliottsudo2025_14",
@@ -167,9 +153,7 @@
     "paperFeatures": [
       ["section", "2.1"]
     ],
-    "comment": "The pronoun does not project uniqueness in a bathroom disjunction, against an E-type analysis; adapted from Heim's sage plant sentence.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The pronoun does not project uniqueness in a bathroom disjunction, against an E-type analysis; adapted from Heim's sage plant sentence."
   },
   {
     "id": "elliottsudo2025_16a",
@@ -189,9 +173,7 @@
     "paperFeatures": [
       ["section", "2.1"]
     ],
-    "comment": "The conditional-uniqueness oddness is shared by the conjunctive discourse (16b), so it is not special to disjunction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The conditional-uniqueness oddness is shared by the conjunctive discourse (16b), so it is not special to disjunction."
   },
   {
     "id": "elliottsudo2025_18",
@@ -212,9 +194,7 @@
     "paperFeatures": [
       ["section", "2.1"]
     ],
-    "comment": "Universal truth conditions for bathroom disjunctions are too strong.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Universal truth conditions for bathroom disjunctions are too strong."
   },
   {
     "id": "elliottsudo2025_22",
@@ -235,9 +215,7 @@
     "paperFeatures": [
       ["section", "2.2"]
     ],
-    "comment": "Free choice with anaphora under an epistemic modal: the second inference combines material from both disjuncts.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Free choice with anaphora under an epistemic modal: the second inference combines material from both disjuncts."
   },
   {
     "id": "elliottsudo2025_23",
@@ -259,9 +237,7 @@
     "paperFeatures": [
       ["section", "2.2"]
     ],
-    "comment": "Free choice with anaphora under a deontic modal; the classical schema's conclusion (25) has a free pronoun and is not the attested inference.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Free choice with anaphora under a deontic modal; the classical schema's conclusion (25) has a free pronoun and is not the attested inference."
   },
   {
     "id": "elliottsudo2025_42",
@@ -279,9 +255,7 @@
     "paperFeatures": [
       ["section", "3.3"]
     ],
-    "comment": "An indefinite under negation licenses no subsequent pronoun: the negative update of an existential introduces no anaphoric information.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "An indefinite under negation licenses no subsequent pronoun: the negative update of an existential introduces no anaphoric information."
   },
   {
     "id": "elliottsudo2025_51",
@@ -299,9 +273,7 @@
     "paperFeatures": [
       ["section", "3.3"]
     ],
-    "comment": "A doubly negated indefinite licenses anaphora without a uniqueness inference: Double Negation Elimination holds for anaphoric information.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A doubly negated indefinite licenses anaphora without a uniqueness inference: Double Negation Elimination holds for anaphoric information."
   },
   {
     "id": "elliottsudo2025_52b",
@@ -319,9 +291,7 @@
     "paperFeatures": [
       ["section", "3.3"]
     ],
-    "comment": "A doubly negated existential introduces the same anaphoric information as its positive counterpart, which standard dynamic semantics cannot deliver.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A doubly negated existential introduces the same anaphoric information as its positive counterpart, which standard dynamic semantics cannot deliver."
   },
   {
     "id": "elliottsudo2025_63",
@@ -339,9 +309,7 @@
     "paperFeatures": [
       ["section", "3.4.2"]
     ],
-    "comment": "A backwards bathroom disjunction, cataphora that the asymmetric dynamic entries do not capture.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A backwards bathroom disjunction, cataphora that the asymmetric dynamic entries do not capture."
   },
   {
     "id": "elliottsudo2025_71",
@@ -361,9 +329,7 @@
     "paperFeatures": [
       ["section", "3.4.2"]
     ],
-    "comment": "The derived truth conditions (70) are existential: true as soon as some credit card was used.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The derived truth conditions (70) are existential: true as soon as some credit card was used."
   },
   {
     "id": "elliottsudo2025_74",
@@ -381,9 +347,7 @@
     "paperFeatures": [
       ["section", "3.5"]
     ],
-    "comment": "The positive update passes when some possibility has no bathroom; the negative update passes when the state subsists in the positive update of the existential, that is, every possibility has a bathroom.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The positive update passes when some possibility has no bathroom; the negative update passes when the state subsists in the positive update of the existential, that is, every possibility has a bathroom."
   },
   {
     "id": "elliottsudo2025_78",
@@ -401,9 +365,7 @@
     "paperFeatures": [
       ["section", "3.5"]
     ],
-    "comment": "Modal subordination: the externally static test semantics for modals does not license this anaphora.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Modal subordination: the externally static test semantics for modals does not license this anaphora."
   },
   {
     "id": "elliottsudo2025_82",
@@ -423,9 +385,7 @@
     "paperFeatures": [
       ["section", "3.6"]
     ],
-    "comment": "Free choice without anaphora: modal disjunction requires both disjuncts to be possible.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Free choice without anaphora: modal disjunction requires both disjuncts to be possible."
   },
   {
     "id": "elliottsudo2025_85",
@@ -445,9 +405,7 @@
     "paperFeatures": [
       ["section", "3.6"]
     ],
-    "comment": "Dual prohibition is preserved because the negative update of modal disjunction is untouched.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Dual prohibition is preserved because the negative update of modal disjunction is untouched."
   },
   {
     "id": "elliottsudo2025_110",
@@ -467,9 +425,7 @@
     "paperFeatures": [
       ["section", "5.1"]
     ],
-    "comment": "Wide free choice with anaphora, beyond the externally static modals of the analysis.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Wide free choice with anaphora, beyond the externally static modals of the analysis."
   },
   {
     "id": "elliottsudo2025_114",
@@ -490,9 +446,7 @@
     "paperFeatures": [
       ["section", "5.2"]
     ],
-    "comment": "The distributive inference of a disjunction under a universal.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The distributive inference of a disjunction under a universal."
   },
   {
     "id": "elliottsudo2025_116",
@@ -513,9 +467,7 @@
     "paperFeatures": [
       ["section", "5.2"]
     ],
-    "comment": "The distributive inference with anaphora, with the universal as the dual of the existential and disjunction as modal disjunction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The distributive inference with anaphora, with the universal as the dual of the existential and disjunction as modal disjunction."
   },
   {
     "id": "elliottsudo2025_118",
@@ -536,9 +488,7 @@
     "paperFeatures": [
       ["section", "5.2"]
     ],
-    "comment": "The dual treatment of the universal wrongly predicts that a negated universal introduces a singular discourse referent; a plural setting is needed.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The dual treatment of the universal wrongly predicts that a negated universal introduces a singular discourse referent; a plural setting is needed."
   },
   {
     "id": "elliottsudo2025_126",
@@ -559,9 +509,7 @@
     "paperFeatures": [
       ["section", "5.3"]
     ],
-    "comment": "Simplification of disjunctive antecedents with anaphora, left for future work.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Simplification of disjunctive antecedents with anaphora, left for future work."
   },
   {
     "id": "elliottsudo2025_129",
@@ -581,8 +529,6 @@
     "paperFeatures": [
       ["section", "5.4"]
     ],
-    "comment": "Negative free choice with an anaphoric dependency inside the conjunction, derived by a precondition on the negative update of conjunction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Negative free choice with an anaphoric dependency inside the conjunction, derived by a precondition on the negative update of conjunction."
   }
 ]

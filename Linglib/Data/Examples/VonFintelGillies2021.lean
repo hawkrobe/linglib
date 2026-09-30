@@ -31,9 +31,7 @@ def cant_possible : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("kind", "inference"), ("pattern", "cant_possible_contradiction"), ("modal", "cant")]
-    comment := "Observation 5: can't phi excludes 'it's possible that phi'; the conditional-antecedent variant ('If it's possible the keys are in the drawer but they can't be, then ...') is equally incoherent. If can't were weak necessity over not-phi, the conjunction should be coherent — the Mantra's dilemma. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean cantPossibleContradiction."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Observation 5: can't phi excludes 'it's possible that phi'; the conditional-antecedent variant ('If it's possible the keys are in the drawer but they can't be, then ...') is equally incoherent. If can't were weak necessity over not-phi, the conjunction should be coherent — the Mantra's dilemma. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean cantPossibleContradiction." }
 
 def phil_dinner : LinguisticExample :=
   { id := "vonfintelgillies2021_phil_dinner"
@@ -49,9 +47,7 @@ def phil_dinner : LinguisticExample :=
     alternatives := [("Dinner is ready.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "direct"), ("must_entails_prejacent", "true")]
-    comment := "Anti-knowledge: Phil's complete checking counts as direct-enough information and blocks must even though no single perceptual event settles 'dinner is ready' — the indirectness signal is about knowledge, not perception. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean philCooksDinner."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Anti-knowledge: Phil's complete checking counts as direct-enough information and blocks must even though no single perceptual event settles 'dinner is ready' — the indirectness signal is about knowledge, not perception. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean philCooksDinner." }
 
 def meryl_dinner : LinguisticExample :=
   { id := "vonfintelgillies2021_meryl_dinner"
@@ -67,9 +63,7 @@ def meryl_dinner : LinguisticExample :=
     alternatives := [("Dinner is ready.", .acceptable)]
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")]
-    comment := "Meryl's information is indirect: she followed the steps but lacks full direct knowledge of what counts as ready, so must is licensed. Minimal pair with the Phil row. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean merylCooksDinner."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Meryl's information is indirect: she followed the steps but lacks full direct knowledge of what counts as ready, so must is licensed. Minimal pair with the Phil row. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean merylCooksDinner." }
 
 def all : List LinguisticExample := [cant_possible, phil_dinner, meryl_dinner]
 

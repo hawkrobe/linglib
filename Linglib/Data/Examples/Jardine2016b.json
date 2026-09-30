@@ -32,8 +32,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jardine2016b_7_5_aaa",
@@ -68,8 +67,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jardine2016b_7_5_apa",
@@ -104,8 +102,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jardine2016b_7_5_aba",
@@ -140,8 +137,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jardine2016b_7_5_appa",
@@ -176,8 +172,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jardine2016b_7_5_aapaaapa",
@@ -212,8 +207,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "jardine2016b_7_17_pa_ba",
@@ -248,8 +242,7 @@
         "no"
       ]
     ],
-    "comment": "A non-intervocalic p voiced, (7.20a): excluded by φ⋊pb.",
-    "lgrConformance": ""
+    "comment": "A non-intervocalic p voiced, (7.20a): excluded by φ⋊pb."
   },
   {
     "id": "jardine2016b_7_17_apa_apa",
@@ -284,8 +277,7 @@
         "no"
       ]
     ],
-    "comment": "An intervocalic p unvoiced, (7.18b): excluded by φapa.",
-    "lgrConformance": ""
+    "comment": "An intervocalic p unvoiced, (7.18b): excluded by φapa."
   },
   {
     "id": "jardine2016b_7_17_appa_abpa",
@@ -320,7 +312,6 @@
         "no"
       ]
     ],
-    "comment": "A p voiced before a p, (7.20b): excluded by φpbp.",
-    "lgrConformance": ""
+    "comment": "A p voiced before a p, (7.20b): excluded by φpbp."
   }
 ]

@@ -31,9 +31,7 @@ def ctx1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("underlying", "zero"), ("onset", "C"), ("following", "disyllable")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ctx2 : LinguisticExample :=
   { id := "flemming2021_ctx2"
@@ -49,9 +47,7 @@ def ctx2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("underlying", "zero"), ("onset", "C"), ("following", "monosyllable")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ctx3 : LinguisticExample :=
   { id := "flemming2021_ctx3"
@@ -67,9 +63,7 @@ def ctx3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("underlying", "zero"), ("onset", "CC"), ("following", "disyllable")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ctx4 : LinguisticExample :=
   { id := "flemming2021_ctx4"
@@ -85,9 +79,7 @@ def ctx4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("underlying", "zero"), ("onset", "CC"), ("following", "monosyllable")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ctx5 : LinguisticExample :=
   { id := "flemming2021_ctx5"
@@ -103,9 +95,7 @@ def ctx5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("underlying", "schwa"), ("onset", "C"), ("following", "disyllable")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ctx6 : LinguisticExample :=
   { id := "flemming2021_ctx6"
@@ -121,9 +111,7 @@ def ctx6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("underlying", "schwa"), ("onset", "C"), ("following", "monosyllable")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ctx7 : LinguisticExample :=
   { id := "flemming2021_ctx7"
@@ -139,9 +127,7 @@ def ctx7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("underlying", "schwa"), ("onset", "CC"), ("following", "disyllable")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ctx8 : LinguisticExample :=
   { id := "flemming2021_ctx8"
@@ -157,9 +143,7 @@ def ctx8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("underlying", "schwa"), ("onset", "CC"), ("following", "monosyllable")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ctx1, ctx2, ctx3, ctx4, ctx5, ctx6, ctx7, ctx8]
 

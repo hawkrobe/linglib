@@ -31,9 +31,7 @@ def tg2022_tall_basketball : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("adjective", "tall"), ("polarity", "positive"), ("noun", "basketball player"), ("prior_expectation", "high"), ("inferred_class", "superordinate")]
-    comment := "Positive adjective + high prior expectation: inferred comparison class is superordinate (tall even compared to people in general)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Positive adjective + high prior expectation: inferred comparison class is superordinate (tall even compared to people in general)." }
 
 def tg2022_short_basketball : LinguisticExample :=
   { id := "tg2022_short_basketball"
@@ -49,9 +47,7 @@ def tg2022_short_basketball : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("adjective", "short"), ("polarity", "negative"), ("noun", "basketball player"), ("prior_expectation", "high"), ("inferred_class", "subordinate")]
-    comment := "Negative adjective + high prior expectation: inferred comparison class is subordinate (short for a basketball player)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Negative adjective + high prior expectation: inferred comparison class is subordinate (short for a basketball player)." }
 
 def tg2022_tall_jockey : LinguisticExample :=
   { id := "tg2022_tall_jockey"
@@ -67,9 +63,7 @@ def tg2022_tall_jockey : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("adjective", "tall"), ("polarity", "positive"), ("noun", "jockey"), ("prior_expectation", "low"), ("inferred_class", "subordinate")]
-    comment := "Positive adjective + low prior expectation: inferred comparison class is subordinate (tall for a jockey)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Positive adjective + low prior expectation: inferred comparison class is subordinate (tall for a jockey)." }
 
 def tg2022_short_jockey : LinguisticExample :=
   { id := "tg2022_short_jockey"
@@ -85,9 +79,7 @@ def tg2022_short_jockey : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("adjective", "short"), ("polarity", "negative"), ("noun", "jockey"), ("prior_expectation", "low"), ("inferred_class", "superordinate")]
-    comment := "Negative adjective + low prior expectation: inferred comparison class is superordinate (short even compared to people in general)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Negative adjective + low prior expectation: inferred comparison class is superordinate (short even compared to people in general)." }
 
 def all : List LinguisticExample := [tg2022_tall_basketball, tg2022_short_basketball, tg2022_tall_jockey, tg2022_short_jockey]
 

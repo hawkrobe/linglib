@@ -31,9 +31,7 @@ def frame : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("task", "production"), ("words", "17 quantity words, 87% of the data")]
-    comment := "The production frame of Experiments 1a and 1b, whose production probabilities show gradience and focality."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The production frame of Experiments 1a and 1b, whose production probabilities show gradience and focality." }
 
 def all_inference : LinguisticExample :=
   { id := "vantieletal2021_all_inference"
@@ -49,9 +47,7 @@ def all_inference : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("monotonicity", "increasing"), ("inference", "sets to supersets")]
-    comment := "A monotone-increasing quantity word licenses the inference from a set to its supersets; Experiment 2 classified the 17 words by such arguments."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A monotone-increasing quantity word licenses the inference from a set to its supersets; Experiment 2 classified the 17 words by such arguments." }
 
 def no_inference : LinguisticExample :=
   { id := "vantieletal2021_no_inference"
@@ -67,9 +63,7 @@ def no_inference : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("monotonicity", "decreasing"), ("inference", "sets to subsets")]
-    comment := "A monotone-decreasing quantity word licenses the inference from a set to its subsets; few, hardly any, less than half, none and very few were so classified."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A monotone-decreasing quantity word licenses the inference from a set to its subsets; few, hardly any, less than half, none and very few were so classified." }
 
 def some_good : LinguisticExample :=
   { id := "vantieletal2021_some_good"
@@ -85,9 +79,7 @@ def some_good : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("word", "some"), ("argumentative direction", "positive")]
-    comment := "Some and few differ in argumentative direction, a consideration the models abstract away from."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Some and few differ in argumentative direction, a consideration the models abstract away from." }
 
 def some_bad : LinguisticExample :=
   { id := "vantieletal2021_some_bad"
@@ -103,9 +95,7 @@ def some_bad : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("word", "some"), ("argumentative direction", "positive")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def few_bad : LinguisticExample :=
   { id := "vantieletal2021_few_bad"
@@ -121,9 +111,7 @@ def few_bad : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("word", "few"), ("argumentative direction", "negative")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def few_good : LinguisticExample :=
   { id := "vantieletal2021_few_good"
@@ -139,9 +127,7 @@ def few_good : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("word", "few"), ("argumentative direction", "negative")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [frame, all_inference, no_inference, some_good, some_bad, few_bad, few_good]
 

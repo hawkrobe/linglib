@@ -202,8 +202,7 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": "True.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "True."
   },
   {
     "id": "guerrini2026_22b",
@@ -264,8 +263,7 @@
         "singularIndefinite"
       ]
     ],
-    "comment": "True.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "True."
   },
   {
     "id": "guerrini2026_22c",
@@ -318,8 +316,7 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": "True.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "True."
   },
   {
     "id": "guerrini2026_22d",
@@ -372,8 +369,7 @@
         "singularIndefinite"
       ]
     ],
-    "comment": "False.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "False."
   },
   {
     "id": "guerrini2026_4a",
@@ -1381,8 +1377,7 @@
         "singularIndefinite"
       ]
     ],
-    "comment": "The subjunctive is licensed in the restrictor of the generic quantifier; the paper takes the example from Panzeri (2006).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The subjunctive is licensed in the restrictor of the generic quantifier; the paper takes the example from Panzeri (2006)."
   },
   {
     "id": "guerrini2026_45_indicative",
@@ -1471,8 +1466,7 @@
         "indicative"
       ]
     ],
-    "comment": "Law-like situation: nervous people unwanted, a rule disqualifies whoever shows up too early. Accidental situation: people who showed up very early happened not to get hired.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Law-like situation: nervous people unwanted, a rule disqualifies whoever shows up too early. Accidental situation: people who showed up very early happened not to get hired."
   },
   {
     "id": "guerrini2026_45_subjunctive",
@@ -1561,8 +1555,7 @@
         "subjunctive"
       ]
     ],
-    "comment": "With the subjunctive only the law-like reading survives: the subject is inside the restrictor of Gen.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "With the subjunctive only the law-like reading survives: the subject is inside the restrictor of Gen."
   },
   {
     "id": "guerrini2026_51a",
@@ -1825,8 +1818,7 @@
         "kindDenotingPlural"
       ]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "guerrini2026_69a",
@@ -1995,8 +1987,7 @@
         "indicative"
       ]
     ],
-    "comment": "Cumulative: the whole profession produces 1000 papers a year. Distributive: each linguist does.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Cumulative: the whole profession produces 1000 papers a year. Distributive: each linguist does."
   },
   {
     "id": "guerrini2026_72",
@@ -2085,8 +2076,7 @@
         "subjunctive"
       ]
     ],
-    "comment": "The subjunctive forces the subject into the restriction of Gen, and the cumulative reading disappears.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The subjunctive forces the subject into the restriction of Gen, and the cumulative reading disappears."
   },
   {
     "id": "guerrini2026_84a",
@@ -2795,8 +2785,7 @@
         "italianBarePlural"
       ]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "guerrini2026_110",
@@ -2861,8 +2850,7 @@
         "italianDefinitePlural"
       ]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "guerrini2026_113",
@@ -2927,8 +2915,7 @@
         "italianDefinitePlural"
       ]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "guerrini2026_114",
@@ -2989,8 +2976,7 @@
         "italianBarePlural"
       ]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "guerrini2026_115a",

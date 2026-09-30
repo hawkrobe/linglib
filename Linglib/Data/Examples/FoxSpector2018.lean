@@ -31,9 +31,7 @@ def ex14a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "no"), ("order", "canonical"), ("distant", "no"), ("de", "0")]
-    comment := "The second disjunct entails the first and no scalar alternative lets exhaustification break the entailment."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The second disjunct entails the first and no scalar alternative lets exhaustification break the entailment." }
 
 def ex14b : LinguisticExample :=
   { id := "foxspector2018_ex14b"
@@ -49,9 +47,7 @@ def ex14b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "no"), ("order", "canonical"), ("distant", "no"), ("de", "0")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex16a : LinguisticExample :=
   { id := "foxspector2018_ex16a"
@@ -67,9 +63,7 @@ def ex16a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "no"), ("de", "0")]
-    comment := "Exhaustifying the first disjunct excludes 'both', so the second no longer entails it."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Exhaustifying the first disjunct excludes 'both', so the second no longer entails it." }
 
 def ex16b : LinguisticExample :=
   { id := "foxspector2018_ex16b"
@@ -85,9 +79,7 @@ def ex16b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "no"), ("de", "0")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex16c : LinguisticExample :=
   { id := "foxspector2018_ex16c"
@@ -103,9 +95,7 @@ def ex16c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "no"), ("de", "0")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex18a : LinguisticExample :=
   { id := "foxspector2018_ex18a"
@@ -121,9 +111,7 @@ def ex18a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "yes"), ("de", "0")]
-    comment := "Exhaustification of the first disjunct has a detectable effect: four or five children falsify it."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Exhaustification of the first disjunct has a detectable effect: four or five children falsify it." }
 
 def ex18b : LinguisticExample :=
   { id := "foxspector2018_ex18b"
@@ -139,9 +127,7 @@ def ex18b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "yes"), ("de", "0")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex12b : LinguisticExample :=
   { id := "foxspector2018_ex12b"
@@ -157,9 +143,7 @@ def ex12b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "reverse"), ("distant", "no"), ("de", "0")]
-    comment := "Exhaustifying the final disjunct is incrementally vacuous."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Exhaustifying the final disjunct is incrementally vacuous." }
 
 def ex46 : LinguisticExample :=
   { id := "foxspector2018_ex46"
@@ -175,9 +159,7 @@ def ex46 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "reverse"), ("distant", "yes"), ("de", "0")]
-    comment := "A reverse Hurford disjunction of distant entailing disjuncts: exhaustification is not vacuous."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A reverse Hurford disjunction of distant entailing disjuncts: exhaustification is not vacuous." }
 
 def ex10a : LinguisticExample :=
   { id := "foxspector2018_ex10a"
@@ -193,9 +175,7 @@ def ex10a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "no"), ("de", "1")]
-    comment := "Under one downward-entailing operator exhaustification is incrementally weakening."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Under one downward-entailing operator exhaustification is incrementally weakening." }
 
 def ex65a : LinguisticExample :=
   { id := "foxspector2018_ex65a"
@@ -211,9 +191,7 @@ def ex65a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "no"), ("de", "1")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex65b : LinguisticExample :=
   { id := "foxspector2018_ex65b"
@@ -229,9 +207,7 @@ def ex65b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "no"), ("de", "2")]
-    comment := "Two downward-entailing operators make the context upward-entailing again."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Two downward-entailing operators make the context upward-entailing again." }
 
 def ex66a : LinguisticExample :=
   { id := "foxspector2018_ex66a"
@@ -247,9 +223,7 @@ def ex66a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "no"), ("de", "1")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex66b : LinguisticExample :=
   { id := "foxspector2018_ex66b"
@@ -265,9 +239,7 @@ def ex66b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("hurford", "yes"), ("rescuable", "yes"), ("order", "canonical"), ("distant", "no"), ("de", "2")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex14a, ex14b, ex16a, ex16b, ex16c, ex18a, ex18b, ex12b, ex46, ex10a, ex65a, ex65b, ex66a, ex66b]
 

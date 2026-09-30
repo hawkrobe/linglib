@@ -19,9 +19,7 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_2",
@@ -43,9 +41,7 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_4",
@@ -68,9 +64,7 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_5",
@@ -93,9 +87,7 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_7a",
@@ -117,9 +109,7 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_7b",
@@ -141,9 +131,7 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_7c",
@@ -163,9 +151,7 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_13a",
@@ -187,9 +173,7 @@
       ["modal", "universal"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_13b",
@@ -209,9 +193,7 @@
       ["modal", "universal"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_14a",
@@ -233,9 +215,7 @@
       ["modal", "existential"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_14b",
@@ -255,9 +235,7 @@
       ["modal", "existential"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_16",
@@ -277,9 +255,7 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": "Paired in the paper with the statement 'John doesn't weigh 190 pounds.'",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Paired in the paper with the statement 'John doesn't weigh 190 pounds.'"
   },
   {
     "id": "foxhackl2006_19a",
@@ -301,9 +277,7 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_19b",
@@ -323,9 +297,7 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_21",
@@ -345,9 +317,7 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": "Acceptable although no maximal sufficient amount exists: the most informative true answer is the minimal one.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Acceptable although no maximal sufficient amount exists: the most informative true answer is the minimal one."
   },
   {
     "id": "foxhackl2006_23",
@@ -367,9 +337,7 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_27a",
@@ -389,9 +357,7 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_27b",
@@ -411,9 +377,7 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_27c",
@@ -433,9 +397,7 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_28a",
@@ -455,9 +417,7 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_28b",
@@ -477,9 +437,7 @@
       ["modal", "existential"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_29a",
@@ -499,9 +457,7 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_29b",
@@ -521,9 +477,7 @@
       ["modal", "existential"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_30b",
@@ -543,9 +497,7 @@
       ["modal", "existential"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_32",
@@ -565,9 +517,7 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": "Time rather than degree; the paper's [-NI,+MV] case.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Time rather than degree; the paper's [-NI,+MV] case."
   },
   {
     "id": "foxhackl2006_33",
@@ -587,9 +537,7 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_34",
@@ -609,9 +557,7 @@
       ["modal", "existential"],
       ["property", "downward"]
     ],
-    "comment": "Acceptable through the free-choice reading of the answer 'You are allowed to arrive before 10 pm'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Acceptable through the free-choice reading of the answer 'You are allowed to arrive before 10 pm'."
   },
   {
     "id": "foxhackl2006_50a",
@@ -633,9 +579,7 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_50b",
@@ -657,9 +601,7 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_52",
@@ -681,9 +623,7 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_53",
@@ -705,9 +645,7 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_54",
@@ -729,9 +667,7 @@
       ["modal", "existential"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_55",
@@ -753,9 +689,7 @@
       ["modal", "existential"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_57a",
@@ -775,9 +709,7 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_57c",
@@ -797,9 +729,7 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_58a",
@@ -819,9 +749,7 @@
       ["modal", "universal"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_60",
@@ -841,9 +769,7 @@
       ["modal", "existential"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_61",
@@ -863,9 +789,7 @@
       ["modal", "existential"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_62a",
@@ -885,9 +809,7 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_62b",
@@ -907,9 +829,7 @@
       ["modal", "universal"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_62c",
@@ -929,9 +849,7 @@
       ["modal", "existential"],
       ["property", "upward"]
     ],
-    "comment": "Marked ??/* in the paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Marked ??/* in the paper."
   },
   {
     "id": "foxhackl2006_63a",
@@ -951,9 +869,7 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_63b",
@@ -973,9 +889,7 @@
       ["modal", "universal"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_64a",
@@ -995,9 +909,7 @@
       ["modal", "none"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_64b",
@@ -1017,9 +929,7 @@
       ["modal", "universal"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_64c",
@@ -1039,9 +949,7 @@
       ["modal", "existential"],
       ["property", "upward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_100a",
@@ -1061,9 +969,7 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "foxhackl2006_100b",
@@ -1083,8 +989,6 @@
       ["modal", "none"],
       ["property", "downward"]
     ],
-    "comment": "A discrete set of alternatives is specified; the paper's syntactic contextual restriction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A discrete set of alternatives is specified; the paper's syntactic contextual restriction."
   }
 ]

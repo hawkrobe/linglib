@@ -32,8 +32,7 @@
         "no"
       ]
     ],
-    "comment": "The causative suffix denotes an action but never occurs without another contentful morph.",
-    "lgrConformance": ""
+    "comment": "The causative suffix denotes an action but never occurs without another contentful morph."
   },
   {
     "id": "haspelmath2025b_geology",
@@ -68,8 +67,7 @@
         "no"
       ]
     ],
-    "comment": "A neoclassical combining form: contentful, always with another contentful morph.",
-    "lgrConformance": ""
+    "comment": "A neoclassical combining form: contentful, always with another contentful morph."
   },
   {
     "id": "haspelmath2025b_hello",
@@ -104,8 +102,7 @@
         "no"
       ]
     ],
-    "comment": "A free form without a lexemic meaning.",
-    "lgrConformance": ""
+    "comment": "A free form without a lexemic meaning."
   },
   {
     "id": "haspelmath2025b_zona",
@@ -144,8 +141,7 @@
         "yes"
       ]
     ],
-    "comment": "The root always occurs with an inflectional affix.",
-    "lgrConformance": ""
+    "comment": "The root always occurs with an inflectional affix."
   },
   {
     "id": "haspelmath2025b_zony",
@@ -184,8 +180,7 @@
         "yes"
       ]
     ],
-    "comment": "The root always occurs with an inflectional affix.",
-    "lgrConformance": ""
+    "comment": "The root always occurs with an inflectional affix."
   },
   {
     "id": "haspelmath2025b_zonu",
@@ -224,8 +219,7 @@
         "yes"
       ]
     ],
-    "comment": "The root always occurs with an inflectional affix.",
-    "lgrConformance": ""
+    "comment": "The root always occurs with an inflectional affix."
   },
   {
     "id": "haspelmath2025b_ex5a",
@@ -252,8 +246,7 @@
         "lauf"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2025b_ex5b",
@@ -280,8 +273,7 @@
         "lauf"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2025b_ex5c",
@@ -308,8 +300,7 @@
         "lauf"
       ]
     ],
-    "comment": "No zero morph in the imperative.",
-    "lgrConformance": ""
+    "comment": "No zero morph in the imperative."
   },
   {
     "id": "haspelmath2025b_ex5d",
@@ -336,8 +327,7 @@
         "lauf"
       ]
     ],
-    "comment": "A prefix and a suffix, not a circumfix.",
-    "lgrConformance": ""
+    "comment": "A prefix and a suffix, not a circumfix."
   },
   {
     "id": "haspelmath2025b_ex5e",
@@ -364,8 +354,7 @@
         "lief"
       ]
     ],
-    "comment": "A different root related by ablaut, not a replacive morph.",
-    "lgrConformance": ""
+    "comment": "A different root related by ablaut, not a replacive morph."
   },
   {
     "id": "haspelmath2025b_ex6a",
@@ -396,8 +385,7 @@
         "k-t-b"
       ]
     ],
-    "comment": "One of four roots sharing the consonantal skeleton, which is not itself a root.",
-    "lgrConformance": ""
+    "comment": "One of four roots sharing the consonantal skeleton, which is not itself a root."
   },
   {
     "id": "haspelmath2025b_ex6b",
@@ -428,8 +416,7 @@
         "k-t-b"
       ]
     ],
-    "comment": "One of four roots sharing the consonantal skeleton, which is not itself a root.",
-    "lgrConformance": ""
+    "comment": "One of four roots sharing the consonantal skeleton, which is not itself a root."
   },
   {
     "id": "haspelmath2025b_ex6c",
@@ -460,8 +447,7 @@
         "k-t-b"
       ]
     ],
-    "comment": "One of four roots sharing the consonantal skeleton, which is not itself a root.",
-    "lgrConformance": ""
+    "comment": "One of four roots sharing the consonantal skeleton, which is not itself a root."
   },
   {
     "id": "haspelmath2025b_ex6d",
@@ -492,8 +478,7 @@
         "k-t-b"
       ]
     ],
-    "comment": "One of four roots sharing the consonantal skeleton, which is not itself a root.",
-    "lgrConformance": ""
+    "comment": "One of four roots sharing the consonantal skeleton, which is not itself a root."
   },
   {
     "id": "haspelmath2025b_ex8a1",
@@ -520,8 +505,7 @@
         "action"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2025b_ex8a2",
@@ -548,8 +532,7 @@
         "action"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2025b_ex8a3",
@@ -576,8 +559,7 @@
         "action"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2025b_ex8b1",
@@ -604,8 +586,7 @@
         "object"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2025b_ex8b2",
@@ -632,8 +613,7 @@
         "object"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2025b_ex8b3",
@@ -660,8 +640,7 @@
         "object"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2025b_ex8c1",
@@ -688,8 +667,7 @@
         "property"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2025b_ex8c2",
@@ -716,8 +694,7 @@
         "property"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2025b_ex8c3",
@@ -744,8 +721,7 @@
         "property"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2025b_ex12a",
@@ -776,8 +752,7 @@
         "sisterRoot"
       ]
     ],
-    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots.",
-    "lgrConformance": ""
+    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots."
   },
   {
     "id": "haspelmath2025b_ex12b",
@@ -808,8 +783,7 @@
         "sisterRoot"
       ]
     ],
-    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots.",
-    "lgrConformance": ""
+    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots."
   },
   {
     "id": "haspelmath2025b_ex13a",
@@ -840,8 +814,7 @@
         "sisterRoot"
       ]
     ],
-    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots.",
-    "lgrConformance": ""
+    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots."
   },
   {
     "id": "haspelmath2025b_ex13b",
@@ -872,8 +845,7 @@
         "sisterRoot"
       ]
     ],
-    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots.",
-    "lgrConformance": ""
+    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots."
   },
   {
     "id": "haspelmath2025b_ex14a",
@@ -904,8 +876,7 @@
         "sisterRoot"
       ]
     ],
-    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots.",
-    "lgrConformance": ""
+    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots."
   },
   {
     "id": "haspelmath2025b_ex14b",
@@ -936,8 +907,7 @@
         "sisterRoot"
       ]
     ],
-    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots.",
-    "lgrConformance": ""
+    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots."
   },
   {
     "id": "haspelmath2025b_ex15a",
@@ -968,8 +938,7 @@
         "sisterRoot"
       ]
     ],
-    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots.",
-    "lgrConformance": ""
+    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots."
   },
   {
     "id": "haspelmath2025b_ex15b",
@@ -1000,8 +969,7 @@
         "sisterRoot"
       ]
     ],
-    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots.",
-    "lgrConformance": ""
+    "comment": "One of a heterosemous root pair: same shape, related meanings, two roots."
   },
   {
     "id": "haspelmath2025b_ex18a",
@@ -1032,8 +1000,7 @@
         "N-aff"
       ]
     ],
-    "comment": "Sister word of ambitious: shared meaning index and shape index.",
-    "lgrConformance": ""
+    "comment": "Sister word of ambitious: shared meaning index and shape index."
   },
   {
     "id": "haspelmath2025b_ex18b",
@@ -1064,8 +1031,7 @@
         "A-aff"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haspelmath2025b_laudab",
@@ -1092,7 +1058,6 @@
         "yes"
       ]
     ],
-    "comment": "A root and a tense suffix that combine with person suffixes.",
-    "lgrConformance": ""
+    "comment": "A root and a tense suffix that combine with person suffixes."
   }
 ]

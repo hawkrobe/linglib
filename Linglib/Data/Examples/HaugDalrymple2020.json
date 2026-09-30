@@ -20,8 +20,7 @@
         "1"
       ]
     ],
-    "comment": "Distribution vs. polyadic quantification.",
-    "lgrConformance": ""
+    "comment": "Distribution vs. polyadic quantification."
   },
   {
     "id": "haugdalrymple2020_ex2",
@@ -53,8 +52,7 @@
         "1"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex4",
@@ -86,8 +84,7 @@
         "1"
       ]
     ],
-    "comment": "Williams's ambiguity, the same as (2)'s on the relational analysis.",
-    "lgrConformance": ""
+    "comment": "Williams's ambiguity, the same as (2)'s on the relational analysis."
   },
   {
     "id": "haugdalrymple2020_ex8",
@@ -110,8 +107,7 @@
         "2.1"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex10",
@@ -134,8 +130,7 @@
         "2.1"
       ]
     ],
-    "comment": "Plurality by summing across assignments.",
-    "lgrConformance": ""
+    "comment": "Plurality by summing across assignments."
   },
   {
     "id": "haugdalrymple2020_ex11",
@@ -158,8 +153,7 @@
         "2.1"
       ]
     ],
-    "comment": "Collective predicate on the sum.",
-    "lgrConformance": ""
+    "comment": "Collective predicate on the sum."
   },
   {
     "id": "haugdalrymple2020_ex12",
@@ -191,8 +185,7 @@
         "2.1"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex17",
@@ -215,8 +208,7 @@
         "2.2"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex22",
@@ -239,8 +231,7 @@
         "2.3"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex23",
@@ -272,8 +263,7 @@
         "2.3"
       ]
     ],
-    "comment": "The second reading needs the antecedent to escape distribution.",
-    "lgrConformance": ""
+    "comment": "The second reading needs the antecedent to escape distribution."
   },
   {
     "id": "haugdalrymple2020_ex40",
@@ -296,8 +286,7 @@
         "2.4"
       ]
     ],
-    "comment": "Dotlačil's reciprocal (39) and the PPCDRT (41).",
-    "lgrConformance": ""
+    "comment": "Dotlačil's reciprocal (39) and the PPCDRT (41)."
   },
   {
     "id": "haugdalrymple2020_ex45",
@@ -320,8 +309,7 @@
         "3.1"
       ]
     ],
-    "comment": "Quantificational dependencies carry over to each doxastic alternative.",
-    "lgrConformance": ""
+    "comment": "Quantificational dependencies carry over to each doxastic alternative."
   },
   {
     "id": "haugdalrymple2020_ex47",
@@ -349,8 +337,7 @@
         "3.1"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex50",
@@ -378,8 +365,7 @@
         "3.1"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex52",
@@ -407,8 +393,7 @@
         "3.2"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex54",
@@ -436,8 +421,7 @@
         "3.2"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex57",
@@ -465,8 +449,7 @@
         "3.3"
       ]
     ],
-    "comment": "Attested crossed reading.",
-    "lgrConformance": ""
+    "comment": "Attested crossed reading."
   },
   {
     "id": "haugdalrymple2020_ex58",
@@ -494,8 +477,7 @@
         "3.3"
       ]
     ],
-    "comment": "Attested crossed reading, Wikipedia.",
-    "lgrConformance": ""
+    "comment": "Attested crossed reading, Wikipedia."
   },
   {
     "id": "haugdalrymple2020_ex59",
@@ -523,8 +505,7 @@
         "3.3"
       ]
     ],
-    "comment": "Crossed readings are hard without a reciprocal.",
-    "lgrConformance": ""
+    "comment": "Crossed readings are hard without a reciprocal."
   },
   {
     "id": "haugdalrymple2020_ex60",
@@ -552,8 +533,7 @@
         "3.3"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex61",
@@ -581,8 +561,7 @@
         "3.3"
       ]
     ],
-    "comment": "The one attested crossed reading found without a reciprocal.",
-    "lgrConformance": ""
+    "comment": "The one attested crossed reading found without a reciprocal."
   },
   {
     "id": "haugdalrymple2020_ex62",
@@ -614,8 +593,7 @@
         "3.4"
       ]
     ],
-    "comment": "The reciprocal never scopes above the highest binder of its antecedent.",
-    "lgrConformance": ""
+    "comment": "The reciprocal never scopes above the highest binder of its antecedent."
   },
   {
     "id": "haugdalrymple2020_ex63",
@@ -647,8 +625,7 @@
         "3.4"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex64",
@@ -680,8 +657,7 @@
         "3.4"
       ]
     ],
-    "comment": "Each accessible world contains both directions of beat.",
-    "lgrConformance": ""
+    "comment": "Each accessible world contains both directions of beat."
   },
   {
     "id": "haugdalrymple2020_ex65",
@@ -704,8 +680,7 @@
         "3.4"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex71",
@@ -737,8 +712,7 @@
         "3.4"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex72",
@@ -766,8 +740,7 @@
         "3.4"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex73a",
@@ -795,8 +768,7 @@
         "3.4"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex73b",
@@ -824,8 +796,7 @@
         "3.4"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex74a",
@@ -853,8 +824,7 @@
         "3.4"
       ]
     ],
-    "comment": "NOW corpus; a long-distance reading across an adjunct clause.",
-    "lgrConformance": ""
+    "comment": "NOW corpus; a long-distance reading across an adjunct clause."
   },
   {
     "id": "haugdalrymple2020_ex74b",
@@ -882,8 +852,7 @@
         "3.4"
       ]
     ],
-    "comment": "NOW corpus.",
-    "lgrConformance": ""
+    "comment": "NOW corpus."
   },
   {
     "id": "haugdalrymple2020_ex78",
@@ -919,8 +888,7 @@
         "4.2"
       ]
     ],
-    "comment": "Cheyenne, Murray 2008: the underspecified affix.",
-    "lgrConformance": ""
+    "comment": "Cheyenne, Murray 2008: the underspecified affix."
   },
   {
     "id": "haugdalrymple2020_ex80a",
@@ -943,8 +911,7 @@
         "4.3"
       ]
     ],
-    "comment": "#new noses.",
-    "lgrConformance": ""
+    "comment": "#new noses."
   },
   {
     "id": "haugdalrymple2020_ex80b",
@@ -967,8 +934,7 @@
         "4.3"
       ]
     ],
-    "comment": "#a new nose.",
-    "lgrConformance": ""
+    "comment": "#a new nose."
   },
   {
     "id": "haugdalrymple2020_ex80c",
@@ -991,8 +957,7 @@
         "4.3"
       ]
     ],
-    "comment": "#a new nose: reciprocals pattern with plurals.",
-    "lgrConformance": ""
+    "comment": "#a new nose: reciprocals pattern with plurals."
   },
   {
     "id": "haugdalrymple2020_ex81a",
@@ -1020,8 +985,7 @@
         "4.3"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex81b",
@@ -1049,8 +1013,7 @@
         "4.3"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex81c",
@@ -1078,8 +1041,7 @@
         "4.3"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex84",
@@ -1111,8 +1073,7 @@
         "4.4"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex88a",
@@ -1135,8 +1096,7 @@
         "4.5"
       ]
     ],
-    "comment": "Each field against the combined remainder.",
-    "lgrConformance": ""
+    "comment": "Each field against the combined remainder."
   },
   {
     "id": "haugdalrymple2020_ex88b",
@@ -1159,8 +1119,7 @@
         "4.5"
       ]
     ],
-    "comment": "Each fork against a group of others.",
-    "lgrConformance": ""
+    "comment": "Each fork against a group of others."
   },
   {
     "id": "haugdalrymple2020_ex91",
@@ -1183,8 +1142,7 @@
         "4.5"
       ]
     ],
-    "comment": "Each surrounded by some, not necessarily all, of the others.",
-    "lgrConformance": ""
+    "comment": "Each surrounded by some, not necessarily all, of the others."
   },
   {
     "id": "haugdalrymple2020_ex94",
@@ -1207,8 +1165,7 @@
         "4.6"
       ]
     ],
-    "comment": "Collective antecedent; no discernible reciprocity.",
-    "lgrConformance": ""
+    "comment": "Collective antecedent; no discernible reciprocity."
   },
   {
     "id": "haugdalrymple2020_ex95a",
@@ -1231,8 +1188,7 @@
         "4.6"
       ]
     ],
-    "comment": "NOW corpus.",
-    "lgrConformance": ""
+    "comment": "NOW corpus."
   },
   {
     "id": "haugdalrymple2020_ex95b",
@@ -1255,8 +1211,7 @@
         "4.6"
       ]
     ],
-    "comment": "NOW corpus.",
-    "lgrConformance": ""
+    "comment": "NOW corpus."
   },
   {
     "id": "haugdalrymple2020_ex100",
@@ -1284,8 +1239,7 @@
         "5.1"
       ]
     ],
-    "comment": "NOW corpus; the reciprocal ranges over the reference set.",
-    "lgrConformance": ""
+    "comment": "NOW corpus; the reciprocal ranges over the reference set."
   },
   {
     "id": "haugdalrymple2020_ex103",
@@ -1313,8 +1267,7 @@
         "5.1"
       ]
     ],
-    "comment": "Dalrymple et al. 1998; the reciprocal ranges over the maximal set.",
-    "lgrConformance": ""
+    "comment": "Dalrymple et al. 1998; the reciprocal ranges over the maximal set."
   },
   {
     "id": "haugdalrymple2020_ex106",
@@ -1346,8 +1299,7 @@
         "5.2"
       ]
     ],
-    "comment": "Kamp and Reyle's unclear truth conditions.",
-    "lgrConformance": ""
+    "comment": "Kamp and Reyle's unclear truth conditions."
   },
   {
     "id": "haugdalrymple2020_ex107a",
@@ -1370,8 +1322,7 @@
         "5.2"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex107b",
@@ -1394,8 +1345,7 @@
         "5.2"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex107c",
@@ -1418,8 +1368,7 @@
         "5.2"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex112",
@@ -1442,8 +1391,7 @@
         "5.2"
       ]
     ],
-    "comment": "NOW corpus; judged true in an intermediate scenario.",
-    "lgrConformance": ""
+    "comment": "NOW corpus; judged true in an intermediate scenario."
   },
   {
     "id": "haugdalrymple2020_ex113",
@@ -1466,8 +1414,7 @@
         "5.2"
       ]
     ],
-    "comment": "NOW corpus; judged true in an intermediate scenario.",
-    "lgrConformance": ""
+    "comment": "NOW corpus; judged true in an intermediate scenario."
   },
   {
     "id": "haugdalrymple2020_ex114",
@@ -1490,8 +1437,7 @@
         "5.2"
       ]
     ],
-    "comment": "NOW corpus; a weak reading with all.",
-    "lgrConformance": ""
+    "comment": "NOW corpus; a weak reading with all."
   },
   {
     "id": "haugdalrymple2020_ex118",
@@ -1514,8 +1460,7 @@
         "5.3"
       ]
     ],
-    "comment": "Szymanik 2016.",
-    "lgrConformance": ""
+    "comment": "Szymanik 2016."
   },
   {
     "id": "haugdalrymple2020_ex119",
@@ -1543,8 +1488,7 @@
         "6"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex120",
@@ -1572,8 +1516,7 @@
         "6"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex121",
@@ -1601,8 +1544,7 @@
         "6"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex122",
@@ -1625,8 +1567,7 @@
         "6"
       ]
     ],
-    "comment": "Dalrymple et al.'s one-way weak reciprocity; weak reciprocity under a cover for Beck.",
-    "lgrConformance": ""
+    "comment": "Dalrymple et al.'s one-way weak reciprocity; weak reciprocity under a cover for Beck."
   },
   {
     "id": "haugdalrymple2020_ex123",
@@ -1649,8 +1590,7 @@
         "6"
       ]
     ],
-    "comment": "Inclusive alternative ordering.",
-    "lgrConformance": ""
+    "comment": "Inclusive alternative ordering."
   },
   {
     "id": "haugdalrymple2020_ex125",
@@ -1678,8 +1618,7 @@
         "6"
       ]
     ],
-    "comment": "Maximize Anaphora selects (126b) over the minimal (126a).",
-    "lgrConformance": ""
+    "comment": "Maximize Anaphora selects (126b) over the minimal (126a)."
   },
   {
     "id": "haugdalrymple2020_ex129",
@@ -1702,8 +1641,7 @@
         "6"
       ]
     ],
-    "comment": "Anaphora is exhaustive.",
-    "lgrConformance": ""
+    "comment": "Anaphora is exhaustive."
   },
   {
     "id": "haugdalrymple2020_ex130",
@@ -1726,8 +1664,7 @@
         "6.1"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex131",
@@ -1750,8 +1687,7 @@
         "6.1"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex132",
@@ -1774,8 +1710,7 @@
         "6.1"
       ]
     ],
-    "comment": "Sauerland 2012: the Strongest Meaning Hypothesis at the matrix level gives the wrong reading.",
-    "lgrConformance": ""
+    "comment": "Sauerland 2012: the Strongest Meaning Hypothesis at the matrix level gives the wrong reading."
   },
   {
     "id": "haugdalrymple2020_ex133",
@@ -1798,8 +1733,7 @@
         "6.1"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex134",
@@ -1831,8 +1765,7 @@
         "6.2"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex135",
@@ -1864,8 +1797,7 @@
         "6.3"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haugdalrymple2020_ex137",
@@ -1888,7 +1820,6 @@
         "6.3"
       ]
     ],
-    "comment": "Maximization at the local relation gives the weaker reading.",
-    "lgrConformance": ""
+    "comment": "Maximization at the local relation gives the weaker reading."
   }
 ]

@@ -31,9 +31,7 @@ def ex5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("surpassed", "1"), ("neighbors", "3"), ("felicitous", "no")]
-    comment := "Albert's passing surpasses one neighbor, Marie's, in surprise, and no more: Bennett's condition wrongly licenses the sentence. The count of classmates is schematic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Albert's passing surpasses one neighbor, Marie's, in surprise, and no more: Bennett's condition wrongly licenses the sentence. The count of classmates is schematic." }
 
 def ex1 : LinguisticExample :=
   { id := "francescotti1995_ex1"
@@ -49,9 +47,7 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("surpassed", "2"), ("neighbors", "3"), ("felicitous", "yes")]
-    comment := "Albert's failure surpasses every neighbor but Marie's: the universal condition wrongly blocks the sentence. The count of classmates is schematic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Albert's failure surpasses every neighbor but Marie's: the universal condition wrongly blocks the sentence. The count of classmates is schematic." }
 
 def ex7 : LinguisticExample :=
   { id := "francescotti1995_ex7"
@@ -67,9 +63,7 @@ def ex7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("surpassed", "2"), ("neighbors", "3"), ("felicitous", "yes")]
-    comment := "Felicitous although majors, captains or sergeants making policy would be more extreme still. The counts are schematic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Felicitous although majors, captains or sergeants making policy would be more extreme still. The counts are schematic." }
 
 def ex21far : LinguisticExample :=
   { id := "francescotti1995_ex21far"
@@ -85,9 +79,7 @@ def ex21far : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("surpassed", "5"), ("neighbors", "5"), ("felicitous", "yes")]
-    comment := "Surpasses every neighbor by a wide margin: very felicitous. The count of the reference class is schematic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Surpasses every neighbor by a wide margin: very felicitous. The count of the reference class is schematic." }
 
 def ex21near : LinguisticExample :=
   { id := "francescotti1995_ex21near"
@@ -103,9 +95,7 @@ def ex21near : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("surpassed", "5"), ("neighbors", "5"), ("felicitous", "yes")]
-    comment := "Still felicitous, less so: the margin is the paper's first gradient of felicity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Still felicitous, less so: the margin is the paper's first gradient of felicity." }
 
 def ex21half : LinguisticExample :=
   { id := "francescotti1995_ex21half"
@@ -121,9 +111,7 @@ def ex21half : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("surpassed", "2"), ("neighbors", "4"), ("felicitous", "no")]
-    comment := "Andre is not taller than the majority, though far taller than average: not felicitous."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Andre is not taller than the majority, though far taller than average: not felicitous." }
 
 def all : List LinguisticExample := [ex5, ex1, ex7, ex21far, ex21near, ex21half]
 

@@ -19,8 +19,7 @@
       ["addresseeGender", "m"],
       ["clause", "matrix"]
     ],
-    "comment": "Oyharçabal (1993); said to a male friend.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Oyharçabal (1993); said to a male friend."
   },
   {
     "id": "alokbhalla2026_1b",
@@ -42,8 +41,7 @@
       ["addresseeGender", "f"],
       ["clause", "matrix"]
     ],
-    "comment": "Said to a female friend.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Said to a female friend."
   },
   {
     "id": "alokbhalla2026_1c",
@@ -64,8 +62,7 @@
       ["addressee", "h"],
       ["clause", "matrix"]
     ],
-    "comment": "Said to someone of higher social status.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Said to someone of higher social status."
   },
   {
     "id": "alokbhalla2026_1d",
@@ -84,8 +81,7 @@
     "paperFeatures": [
       ["clause", "matrix"]
     ],
-    "comment": "Said to a group: no allocutive marker.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Said to a group: no allocutive marker."
   },
   {
     "id": "alokbhalla2026_2a",
@@ -107,8 +103,7 @@
       ["addressee", "nh"],
       ["clause", "matrix"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_2b",
@@ -130,8 +125,7 @@
       ["addressee", "h"],
       ["clause", "matrix"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_2c",
@@ -153,8 +147,7 @@
       ["addressee", "hh"],
       ["clause", "matrix"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_3",
@@ -176,8 +169,7 @@
       ["addressee", "nh"],
       ["clause", "matrix"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_4",
@@ -199,8 +191,7 @@
       ["addressee", "nh"],
       ["clause", "matrix"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_5",
@@ -222,8 +213,7 @@
       ["addressee", "hh"],
       ["clause", "matrix"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_6",
@@ -245,8 +235,7 @@
       ["addressee", "hh"],
       ["clause", "matrix"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_7",
@@ -267,8 +256,7 @@
       ["addressee", "h"],
       ["clause", "matrix"]
     ],
-    "comment": "McFadden (2020); the marker is homophonous with the plural marker.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "McFadden (2020); the marker is homophonous with the plural marker."
   },
   {
     "id": "alokbhalla2026_8a",
@@ -292,8 +280,7 @@
       ["status", "lt"],
       ["formal", "+"]
     ],
-    "comment": "Portner et al. (2019).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Portner et al. (2019)."
   },
   {
     "id": "alokbhalla2026_8b",
@@ -317,8 +304,7 @@
       ["status", "lt"],
       ["formal", "-"]
     ],
-    "comment": "Portner et al. (2019).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Portner et al. (2019)."
   },
   {
     "id": "alokbhalla2026_8c",
@@ -340,8 +326,7 @@
       ["speechStyle", "fam"],
       ["clause", "matrix"]
     ],
-    "comment": "Portner et al. (2019).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Portner et al. (2019)."
   },
   {
     "id": "alokbhalla2026_8d",
@@ -365,8 +350,7 @@
       ["status", "ge"],
       ["formal", "-"]
     ],
-    "comment": "Portner et al. (2019).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Portner et al. (2019)."
   },
   {
     "id": "alokbhalla2026_9a",
@@ -388,8 +372,7 @@
       ["clause", "embedded"],
       ["embedding", "factive"]
     ],
-    "comment": "Alok and Haddican (2022); repeated as (19).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Alok and Haddican (2022); repeated as (19)."
   },
   {
     "id": "alokbhalla2026_9b",
@@ -411,8 +394,7 @@
       ["clause", "embedded"],
       ["embedding", "relative"]
     ],
-    "comment": "Repeated as (20).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Repeated as (20)."
   },
   {
     "id": "alokbhalla2026_10",
@@ -432,8 +414,7 @@
       ["marker", "che"],
       ["clause", "matrix"]
     ],
-    "comment": "Haddican (2019): the same clitic serves as the thematic dative.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Haddican (2019): the same clitic serves as the thematic dative."
   },
   {
     "id": "alokbhalla2026_11",
@@ -456,8 +437,7 @@
       ["argumentAgreement", "2sg"],
       ["clause", "matrix"]
     ],
-    "comment": "The allocutive markers of (1) reappear as ordinary agreement with a second-person subject.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The allocutive markers of (1) reappear as ordinary agreement with a second-person subject."
   },
   {
     "id": "alokbhalla2026_12",
@@ -478,8 +458,7 @@
       ["clause", "embedded"],
       ["embedding", "complement"]
     ],
-    "comment": "Oyharçabal (1993): allocutive marking inside the complement.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Oyharçabal (1993): allocutive marking inside the complement."
   },
   {
     "id": "alokbhalla2026_13",
@@ -502,8 +481,7 @@
       ["clause", "embedded"],
       ["embedding", "saying"]
     ],
-    "comment": "Portner et al. (2019).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Portner et al. (2019)."
   },
   {
     "id": "alokbhalla2026_14a",
@@ -525,8 +503,7 @@
       ["clause", "embedded"],
       ["embedding", "saying"]
     ],
-    "comment": "Miyagawa (2017).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Miyagawa (2017)."
   },
   {
     "id": "alokbhalla2026_14b",
@@ -550,8 +527,7 @@
       ["clause", "embedded"],
       ["embedding", "believe"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_15",
@@ -573,8 +549,7 @@
       ["clause", "embedded"],
       ["embedding", "reason"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_16",
@@ -597,8 +572,7 @@
       ["clause", "embedded"],
       ["embedding", "perceptual"]
     ],
-    "comment": "Alok (2021).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Alok (2021)."
   },
   {
     "id": "alokbhalla2026_17",
@@ -621,8 +595,7 @@
       ["clause", "embedded"],
       ["embedding", "relative"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_18",
@@ -645,8 +618,7 @@
       ["clause", "embedded"],
       ["embedding", "nounComplement"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_21",
@@ -668,8 +640,7 @@
       ["clause", "embedded"],
       ["embedding", "wh"]
     ],
-    "comment": "cha < che + a.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "cha < che + a."
   },
   {
     "id": "alokbhalla2026_30a",
@@ -693,8 +664,7 @@
       ["clause", "embedded"],
       ["embedding", "nonfinite"]
     ],
-    "comment": "No allocutive marker on the nonfinite complement.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "No allocutive marker on the nonfinite complement."
   },
   {
     "id": "alokbhalla2026_30b",
@@ -719,8 +689,7 @@
       ["clause", "embedded"],
       ["embedding", "nonfinite"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_31a",
@@ -741,8 +710,7 @@
       ["clause", "matrix"],
       ["positions", "2"]
     ],
-    "comment": "McFadden (2020): the marker appears below and above the question particle.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "McFadden (2020): the marker appears below and above the question particle."
   },
   {
     "id": "alokbhalla2026_31b",
@@ -765,8 +733,7 @@
       ["embedding", "saying"],
       ["positions", "1"]
     ],
-    "comment": "Only the position below the complementizer is available when embedded.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Only the position below the complementizer is available when embedded."
   },
   {
     "id": "alokbhalla2026_32",
@@ -788,8 +755,7 @@
       ["clause", "embedded"],
       ["embedding", "infinitive"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_33a",
@@ -812,8 +778,7 @@
       ["clause", "embedded"],
       ["embedding", "koto"]
     ],
-    "comment": "Yamada (2019).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Yamada (2019)."
   },
   {
     "id": "alokbhalla2026_33b",
@@ -835,8 +800,7 @@
       ["clause", "embedded"],
       ["embedding", "yooni"]
     ],
-    "comment": "Miyagawa (2022).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Miyagawa (2022)."
   },
   {
     "id": "alokbhalla2026_33c",
@@ -860,8 +824,7 @@
       ["clause", "embedded"],
       ["embedding", "to"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_35",
@@ -882,8 +845,7 @@
       ["pronoun2", "nh"],
       ["tv", "T"]
     ],
-    "comment": "Addressee a friend or relative.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Addressee a friend or relative."
   },
   {
     "id": "alokbhalla2026_36",
@@ -904,8 +866,7 @@
       ["pronoun2", "h"],
       ["tv", "V"]
     ],
-    "comment": "Addressee a stranger.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Addressee a stranger."
   },
   {
     "id": "alokbhalla2026_39",
@@ -925,8 +886,7 @@
       ["pronoun2", "nh"],
       ["subject", "nh"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_40",
@@ -946,8 +906,7 @@
       ["pronoun2", "hh"],
       ["subject", "nh"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_41",
@@ -969,8 +928,7 @@
       ["pronoun2Other", "nh"],
       ["subject", "nh"]
     ],
-    "comment": "Two second-person pronouns of different honorific level in one clause.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Two second-person pronouns of different honorific level in one clause."
   },
   {
     "id": "alokbhalla2026_42",
@@ -995,8 +953,7 @@
       ["addressee", "hh"],
       ["subject", "nh"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_43",
@@ -1021,8 +978,7 @@
       ["addressee", "nh"],
       ["subject", "nh"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_44a",
@@ -1042,8 +998,7 @@
       ["pronoun3", "nh"],
       ["subject", "nh"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_44b",
@@ -1063,8 +1018,7 @@
       ["pronoun3", "h"],
       ["subject", "nh"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_45",
@@ -1087,8 +1041,7 @@
       ["pronoun3Other", "h"],
       ["subject", "hh"]
     ],
-    "comment": "Each DP sets its referent's relation to the speaker independently.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Each DP sets its referent's relation to the speaker independently."
   },
   {
     "id": "alokbhalla2026_48a",
@@ -1109,8 +1062,7 @@
       ["subjectNumber", "sg"],
       ["agreement", "pl"]
     ],
-    "comment": "Bhatt and Davis (2023).",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Bhatt and Davis (2023)."
   },
   {
     "id": "alokbhalla2026_48b",
@@ -1131,8 +1083,7 @@
       ["subjectNumber", "sg"],
       ["agreement", "sg"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   },
   {
     "id": "alokbhalla2026_48c",
@@ -1153,7 +1104,6 @@
       ["subjectNumber", "pl"],
       ["agreement", "pl"]
     ],
-    "comment": "",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": ""
   }
 ]

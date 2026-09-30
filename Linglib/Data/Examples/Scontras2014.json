@@ -16,9 +16,7 @@
       ["nounClass", "atomizer"],
       ["diagnostic", "selection"]
     ],
-    "comment": "Chierchia's (1998) selectional restriction of the atomizer: water lacks the required small cylindrical bodies; likewise 'four grains of those men'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Chierchia's (1998) selectional restriction of the atomizer: water lacks the required small cylindrical bodies; likewise 'four grains of those men'."
   },
   {
     "id": "scontras2014_ex2a",
@@ -37,9 +35,7 @@
       ["nounClass", "measureTerm"],
       ["diagnostic", "quantifier"]
     ],
-    "comment": "Chierchia (1998): individual-quantifying determiners every, most and no resist measure terms; the judgment is nuanced by the container use of measure terms (fn. 4).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Chierchia (1998): individual-quantifying determiners every, most and no resist measure terms; the judgment is nuanced by the container use of measure terms (fn. 4)."
   },
   {
     "id": "scontras2014_ex2b",
@@ -58,9 +54,7 @@
       ["nounClass", "measureTerm"],
       ["diagnostic", "quantifier"]
     ],
-    "comment": "Chierchia (1998).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Chierchia (1998)."
   },
   {
     "id": "scontras2014_ex3",
@@ -79,9 +73,7 @@
       ["nounClass", "atomizer"],
       ["diagnostic", "quantifier"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "scontras2014_ex4a",
@@ -100,9 +92,7 @@
       ["nounClass", "atomizer"],
       ["diagnostic", "modifier"]
     ],
-    "comment": "Chierchia (1998): the adjective modifies the slices.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Chierchia (1998): the adjective modifies the slices."
   },
   {
     "id": "scontras2014_ex4b",
@@ -121,9 +111,7 @@
       ["nounClass", "measureTerm"],
       ["diagnostic", "modifier"]
     ],
-    "comment": "Chierchia (1998): beauty is attributed to the pizza, not the pounds.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Chierchia (1998): beauty is attributed to the pizza, not the pounds."
   },
   {
     "id": "scontras2014_ex10a",
@@ -143,9 +131,7 @@
       ["diagnostic", "-ful"],
       ["reading", "container"]
     ],
-    "comment": "Rothstein (2009), Diagnostic 1: the measure suffix is impossible under the container reading; without -ful the sentence is fine.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Rothstein (2009), Diagnostic 1: the measure suffix is impossible under the container reading; without -ful the sentence is fine."
   },
   {
     "id": "scontras2014_ex10b",
@@ -165,9 +151,7 @@
       ["diagnostic", "-ful"],
       ["reading", "measure"]
     ],
-    "comment": "Rothstein (2009), Diagnostic 1: the measure suffix is possible under the measure reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Rothstein (2009), Diagnostic 1: the measure suffix is possible under the measure reading."
   },
   {
     "id": "scontras2014_ex11a",
@@ -187,9 +171,7 @@
       ["diagnostic", "-ful"],
       ["reading", "container"]
     ],
-    "comment": "Measure terms reject measure suffixes altogether (Lehrer 1986).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Measure terms reject measure suffixes altogether (Lehrer 1986)."
   },
   {
     "id": "scontras2014_ex11b",
@@ -209,9 +191,7 @@
       ["diagnostic", "-ful"],
       ["reading", "measure"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "scontras2014_ex12a",
@@ -231,9 +211,7 @@
       ["diagnostic", "-ful"],
       ["reading", "atomizing"]
     ],
-    "comment": "Atomizers reject measure suffixes because they cannot take the measure reading that would license them.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Atomizers reject measure suffixes because they cannot take the measure reading that would license them."
   },
   {
     "id": "scontras2014_ex12b",
@@ -253,9 +231,7 @@
       ["diagnostic", "-ful"],
       ["reading", "atomizing"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "scontras2014_ex13a",
@@ -275,9 +251,7 @@
       ["diagnostic", "they"],
       ["reading", "container"]
     ],
-    "comment": "Rothstein (2009), Diagnostic 2: a plural pronoun can be anteceded under the container reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Rothstein (2009), Diagnostic 2: a plural pronoun can be anteceded under the container reading."
   },
   {
     "id": "scontras2014_ex13b",
@@ -297,9 +271,7 @@
       ["diagnostic", "they"],
       ["reading", "measure"]
     ],
-    "comment": "Rothstein (2009), Diagnostic 2: no plural pronoun antecedent under the measure reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Rothstein (2009), Diagnostic 2: no plural pronoun antecedent under the measure reading."
   },
   {
     "id": "scontras2014_ex14a",
@@ -319,9 +291,7 @@
       ["diagnostic", "they"],
       ["reading", "container"]
     ],
-    "comment": "Succeeds to the extent that blueness is attributed to the liters as bottles.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Succeeds to the extent that blueness is attributed to the liters as bottles."
   },
   {
     "id": "scontras2014_ex14b",
@@ -341,9 +311,7 @@
       ["diagnostic", "they"],
       ["reading", "measure"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "scontras2014_ex15a",
@@ -363,9 +331,7 @@
       ["diagnostic", "they"],
       ["reading", "atomizing"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "scontras2014_ex15b",
@@ -385,9 +351,7 @@
       ["diagnostic", "they"],
       ["reading", "atomizing"]
     ],
-    "comment": "The attempt to force a measure reading fails; the atomizing reading antecedes the pronoun.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The attempt to force a measure reading fails; the atomizing reading antecedes the pronoun."
   },
   {
     "id": "scontras2014_ex16a",
@@ -407,9 +371,7 @@
       ["diagnostic", "singularAgreement"],
       ["reading", "container"]
     ],
-    "comment": "Rothstein (2009), Diagnostic 3: plural agreement is forced under the container reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Rothstein (2009), Diagnostic 3: plural agreement is forced under the container reading."
   },
   {
     "id": "scontras2014_ex16b",
@@ -429,9 +391,7 @@
       ["diagnostic", "singularAgreement"],
       ["reading", "measure"]
     ],
-    "comment": "Rothstein (2009), Diagnostic 3: singular agreement is optional under the measure reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Rothstein (2009), Diagnostic 3: singular agreement is optional under the measure reading."
   },
   {
     "id": "scontras2014_ex17a",
@@ -451,9 +411,7 @@
       ["diagnostic", "singularAgreement"],
       ["reading", "container"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "scontras2014_ex17b",
@@ -473,9 +431,7 @@
       ["diagnostic", "singularAgreement"],
       ["reading", "measure"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "scontras2014_ex18a",
@@ -495,9 +451,7 @@
       ["diagnostic", "singularAgreement"],
       ["reading", "atomizing"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "scontras2014_ex18b",
@@ -517,9 +471,7 @@
       ["diagnostic", "singularAgreement"],
       ["reading", "atomizing"]
     ],
-    "comment": "Singular agreement stays unavailable: the atomizer lacks the measure reading the diagnostic tests.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Singular agreement stays unavailable: the atomizer lacks the measure reading the diagnostic tests."
   },
   {
     "id": "scontras2014_ex19a",
@@ -539,9 +491,7 @@
       ["diagnostic", "each"],
       ["reading", "container"]
     ],
-    "comment": "Rothstein (2009), Diagnostic 4: distributive each quantifies over the containers.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Rothstein (2009), Diagnostic 4: distributive each quantifies over the containers."
   },
   {
     "id": "scontras2014_ex19b",
@@ -561,9 +511,7 @@
       ["diagnostic", "each"],
       ["reading", "measure"]
     ],
-    "comment": "Rothstein (2009), Diagnostic 4: no distribution under the measure reading, which references a single quantity.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Rothstein (2009), Diagnostic 4: no distribution under the measure reading, which references a single quantity."
   },
   {
     "id": "scontras2014_ex20a",
@@ -583,9 +531,7 @@
       ["diagnostic", "each"],
       ["reading", "container"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "scontras2014_ex20b",
@@ -605,9 +551,7 @@
       ["diagnostic", "each"],
       ["reading", "measure"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "scontras2014_ex21a",
@@ -627,9 +571,7 @@
       ["diagnostic", "each"],
       ["reading", "atomizing"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "scontras2014_ex21b",
@@ -649,9 +591,7 @@
       ["diagnostic", "each"],
       ["reading", "atomizing"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "scontras2014_ex62",
@@ -670,9 +610,7 @@
       ["nounClass", "atomizer"],
       ["diagnostic", "intransitive"]
     ],
-    "comment": "Chierchia (1998): atomizers resist intransitive use; a substance noun is implicitly assumed.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Chierchia (1998): atomizers resist intransitive use; a substance noun is implicitly assumed."
   },
   {
     "id": "scontras2014_ex80a",
@@ -692,9 +630,7 @@
       ["diagnostic", "selection"],
       ["reading", "atomizing"]
     ],
-    "comment": "The atomizer quantity imposes almost no restriction on the kind it partitions.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The atomizer quantity imposes almost no restriction on the kind it partitions."
   },
   {
     "id": "scontras2014_ex80b",
@@ -714,9 +650,7 @@
       ["diagnostic", "selection"],
       ["reading", "atomizing"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "scontras2014_ex80c",
@@ -736,8 +670,6 @@
       ["diagnostic", "selection"],
       ["reading", "atomizing"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

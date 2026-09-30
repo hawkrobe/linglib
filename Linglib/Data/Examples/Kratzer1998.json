@@ -14,9 +14,7 @@
     "readings": [
       {"name": "uninterpreted-past (SOT)", "judgment": "acceptable"}
     ],
-    "comment": "Kratzer's plot example (1). The point: a past tense morpheme can fail to make any semantic contribution beyond agreeing with a higher past. Section 1, p. 1.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's plot example (1). The point: a past tense morpheme can fail to make any semantic contribution beyond agreeing with a higher past. Section 1, p. 1."
   },
   {
     "id": "kratzer1998_ex02",
@@ -34,9 +32,7 @@
       {"name": "alive-at-buying (later-than-saying)", "judgment": "acceptable"},
       {"name": "alive-at-saying", "judgment": "acceptable"}
     ],
-    "comment": "Kratzer's plot example (2), reported from Ogihara 1989. Ambiguity highlights non-pronominal use of past. Section 1, p. 1.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's plot example (2), reported from Ogihara 1989. Ambiguity highlights non-pronominal use of past. Section 1, p. 1."
   },
   {
     "id": "kratzer1998_ex03",
@@ -52,9 +48,7 @@
     "readings": [
       {"name": "pregnancy-at-knowing (future-of-utterance)", "judgment": "acceptable"}
     ],
-    "comment": "Kratzer's plot example (3). The minute-clause shows even adjunct past morphology can be SOT'd. Section 1, p. 1.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's plot example (3). The minute-clause shows even adjunct past morphology can be SOT'd. Section 1, p. 1."
   },
   {
     "id": "kratzer1998_ex05",
@@ -70,9 +64,7 @@
     "readings": [
       {"name": "going-to-Harvard at past-of-utterance", "judgment": "acceptable"}
     ],
-    "comment": "Kratzer's \"major obstacle\" example (5), Section 1, p. 2: not all past tenses can be analyzed as pronouns. Motivates the perfect-aspect-as-operator move in Section 7.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's \"major obstacle\" example (5), Section 1, p. 2: not all past tenses can be analyzed as pronouns. Motivates the perfect-aspect-as-operator move in Section 7."
   },
   {
     "id": "kratzer1998_ex29",
@@ -89,9 +81,7 @@
       {"name": "de se (John self-locates at 10)", "judgment": "acceptable"},
       {"name": "indexical (John thinks 11 is 10)", "judgment": "marginal"}
     ],
-    "comment": "Kratzer's temporal de se example (29), Section 5, p. 11. Attributed to v. Stechow 1982.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's temporal de se example (29), Section 5, p. 11. Attributed to v. Stechow 1982."
   },
   {
     "id": "kratzer1998_ex30",
@@ -107,9 +97,7 @@
     "readings": [
       {"name": "de se (headache at John's now)", "judgment": "acceptable"}
     ],
-    "comment": "Kratzer's example (30), Section 5, p. 11: even non-dramatic embedded tense gets a de se interpretation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's example (30), Section 5, p. 11: even non-dramatic embedded tense gets a de se interpretation."
   },
   {
     "id": "kratzer1998_ex32a",
@@ -126,9 +114,7 @@
       {"name": "simultaneous (alive-at-buying, zero tense in RC)", "judgment": "acceptable"},
       {"name": "independent past (alive-before-buying, past in RC)", "judgment": "acceptable"}
     ],
-    "comment": "Kratzer's example (32a), Section 5, p. 13. RC tense is structurally optional in a way SOT complement-tense is not.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's example (32a), Section 5, p. 13. RC tense is structurally optional in a way SOT complement-tense is not."
   },
   {
     "id": "kratzer1998_ex33a",
@@ -145,9 +131,7 @@
       {"name": "RC zero-tense (alive-at-buying)", "judgment": "acceptable"},
       {"name": "RC past-tense (alive-at-saying)", "judgment": "acceptable"}
     ],
-    "comment": "Kratzer's example (33a), Section 5, p. 13. Two LFs for the RC tense — zero-tense bound at the buying time, or genuine past bound at the saying time.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's example (33a), Section 5, p. 13. Two LFs for the RC tense — zero-tense bound at the buying time, or genuine past bound at the saying time."
   },
   {
     "id": "kratzer1998_ex34a",
@@ -163,9 +147,7 @@
     "readings": [
       {"name": "sickness-at-yesterday (de re past)", "judgment": "acceptable"}
     ],
-    "comment": "Kratzer's example (34a), Section 5, p. 13. Contrasts minimally with (35a) below.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's example (34a), Section 5, p. 13. Contrasts minimally with (35a) below."
   },
   {
     "id": "kratzer1998_ex35a",
@@ -181,9 +163,7 @@
     "readings": [
       {"name": "sickness-at-thought-time", "judgment": "ungrammatical"}
     ],
-    "comment": "Kratzer's example (35a), Section 5, p. 13. Star is Kratzer's. Illustrates the minimal de re vs SOT contrast.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's example (35a), Section 5, p. 13. Star is Kratzer's. Illustrates the minimal de re vs SOT contrast."
   },
   {
     "id": "kratzer1998_ex36a",
@@ -199,9 +179,7 @@
     "readings": [
       {"name": "de re on present state", "judgment": "marginal"}
     ],
-    "comment": "Kratzer's example (36a), Section 6, p. 14. \"Marginal for many speakers\" per Kratzer; some speakers accept readily.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's example (36a), Section 6, p. 14. \"Marginal for many speakers\" per Kratzer; some speakers accept readily."
   },
   {
     "id": "kratzer1998_ex36b",
@@ -217,9 +195,7 @@
     "readings": [
       {"name": "de re on present state (explicit)", "judgment": "acceptable"}
     ],
-    "comment": "Kratzer's example (36b), Section 6, p. 14.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's example (36b), Section 6, p. 14."
   },
   {
     "id": "kratzer1998_ex40a",
@@ -237,9 +213,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["form", "simple past"], ["context", "out of the blue"]],
-    "comment": "Kratzer's example (40a), Section 7, p. 16. Cornerstone of the deictic-vs-anaphoric contrast: English simple past does not require a contextually salient past time.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's example (40a), Section 7, p. 16. Cornerstone of the deictic-vs-anaphoric contrast: English simple past does not require a contextually salient past time."
   },
   {
     "id": "kratzer1998_ex40b",
@@ -261,9 +235,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["form", "Präteritum"], ["context", "out of the blue"]],
-    "comment": "Kratzer's example (40b), Section 7, p. 16. Star is Kratzer's. Per Kratzer: \"At best, it sounds like the hypercorrect utterance of a South German speaker.\" Cornerstone of the deictic-vs-anaphoric Preterit asymmetry.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's example (40b), Section 7, p. 16. Star is Kratzer's. Per Kratzer: \"At best, it sounds like the hypercorrect utterance of a South German speaker.\" Cornerstone of the deictic-vs-anaphoric Preterit asymmetry."
   },
   {
     "id": "kratzer1998_ex40c",
@@ -285,9 +257,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["form", "Perfekt"], ["context", "out of the blue"]],
-    "comment": "Kratzer's example (40c), Section 7, p. 16. The Perfekt fills the deictic-past slot that the Preterit cannot. Supports Kratzer's decomposition: English simple past = perfect-aspect + present-tense.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's example (40c), Section 7, p. 16. The Perfekt fills the deictic-past slot that the Preterit cannot. Supports Kratzer's decomposition: English simple past = perfect-aspect + present-tense."
   },
   {
     "id": "kratzer1998_ex41a",
@@ -302,9 +272,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["form", "simple past"], ["context", "out of the blue"]],
-    "comment": "Kratzer's example (41a), Section 7, p. 16. English simple past = perfect tolerated in embedded sentences.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's example (41a), Section 7, p. 16. English simple past = perfect tolerated in embedded sentences."
   },
   {
     "id": "kratzer1998_ex41b",
@@ -323,9 +291,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["form", "Präteritum"], ["context", "out of the blue"]],
-    "comment": "Kratzer's example (41b), Section 7, p. 16. Per Kratzer: \"needs a contextually salient past time to be acceptable\" — directly diagnoses the anaphoric requirement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's example (41b), Section 7, p. 16. Per Kratzer: \"needs a contextually salient past time to be acceptable\" — directly diagnoses the anaphoric requirement."
   },
   {
     "id": "kratzer1998_ex41c",
@@ -344,9 +310,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [["form", "Perfekt"], ["context", "out of the blue"]],
-    "comment": "Kratzer's example (41c), Section 7, p. 16. The Perfekt slot again fills in for the missing deictic Preterit.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's example (41c), Section 7, p. 16. The Perfekt slot again fills in for the missing deictic Preterit."
   },
   {
     "id": "kratzer1998_ex42a",
@@ -363,9 +327,7 @@
       {"name": "anaphoric (caught-before-dreaming)", "judgment": "acceptable"},
       {"name": "backward-shifted (caught-before-eating)", "judgment": "acceptable"}
     ],
-    "comment": "Kratzer's example (42a), Section 7, p. 16-17. Per Kratzer: \"Underlined past tense does not have to be anaphoric.\"",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's example (42a), Section 7, p. 16-17. Per Kratzer: \"Underlined past tense does not have to be anaphoric.\""
   },
   {
     "id": "kratzer1998_ex42b",
@@ -386,9 +348,7 @@
       {"name": "anaphoric (caught-at-dreaming-time)", "judgment": "acceptable"},
       {"name": "backward-shifted (caught-before-eating)", "judgment": "unacceptable"}
     ],
-    "comment": "Kratzer's example (42b), Section 7, p. 16-17. Per Kratzer: \"Underlined past tense must be anaphoric.\" The backward-shifted reading is an interpretation gap (unavailable LF), not a string ill-formedness — hence `unacceptable` rather than `ungrammatical`.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's example (42b), Section 7, p. 16-17. Per Kratzer: \"Underlined past tense must be anaphoric.\" The backward-shifted reading is an interpretation gap (unavailable LF), not a string ill-formedness — hence `unacceptable` rather than `ungrammatical`."
   },
   {
     "id": "kratzer1998_ex42c",
@@ -409,8 +369,6 @@
     "readings": [
       {"name": "backward-shifted (caught-before-eating)", "judgment": "acceptable"}
     ],
-    "comment": "Kratzer's example (42c), Section 7, p. 17. Past perfect fills the backward-shifted slot that the bare Preterit cannot. NB: Kratzer's free English translation in the PDF reads \"catching\" (typo for \"eating\"); the German `einen Fisch zu essen` is unambiguously \"to eat a fish\", with the catching in the RC `den er selber gefangen hatte`. Translation here reflects the German.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Kratzer's example (42c), Section 7, p. 17. Past perfect fills the backward-shifted slot that the bare Preterit cannot. NB: Kratzer's free English translation in the PDF reads \"catching\" (typo for \"eating\"); the German `einen Fisch zu essen` is unambiguously \"to eat a fish\", with the catching in the RC `den er selber gefangen hatte`. Translation here reflects the German."
   }
 ]

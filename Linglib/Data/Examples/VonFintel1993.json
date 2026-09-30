@@ -18,9 +18,7 @@
       ["exceptive", "but"],
       ["determiner", "every"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_1b",
@@ -39,9 +37,7 @@
       ["exceptive", "except for"],
       ["determiner", "every"]
     ],
-    "comment": "The free exceptive.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The free exceptive."
   },
   {
     "id": "vonfintel1993_2b",
@@ -62,9 +58,7 @@
       ["exceptive", "but"],
       ["determiner", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_4",
@@ -86,9 +80,7 @@
       ["exceptive", "except for"],
       ["test", "cancellability"]
     ],
-    "comment": "The free exceptive does not entail that the excepted person lacks the property.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The free exceptive does not entail that the excepted person lacks the property."
   },
   {
     "id": "vonfintel1993_5",
@@ -110,9 +102,7 @@
       ["exceptive", "but"],
       ["test", "cancellability"]
     ],
-    "comment": "The but-phrase entails that Dr. Samuels has no alibi; the continuation In fact, he has one too is unacceptable.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The but-phrase entails that Dr. Samuels has no alibi; the continuation In fact, he has one too is unacceptable."
   },
   {
     "id": "vonfintel1993_7",
@@ -133,9 +123,7 @@
       ["exceptive", "but"],
       ["test", "embedding"]
     ],
-    "comment": "Both propositions are entailments; that John is a student may be an implicature.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Both propositions are entailments; that John is a student may be an implicature."
   },
   {
     "id": "vonfintel1993_10_everyone",
@@ -154,9 +142,7 @@
       ["exceptive", "but"],
       ["determiner", "every"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_10_nobody",
@@ -175,9 +161,7 @@
       ["exceptive", "but"],
       ["determiner", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_10_anyone",
@@ -196,9 +180,7 @@
       ["exceptive", "but"],
       ["determiner", "any"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_10_somebody",
@@ -217,9 +199,7 @@
       ["exceptive", "but"],
       ["determiner", "some"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_10_somewhere",
@@ -240,9 +220,7 @@
       ["exceptive", "but"],
       ["determiner", "some"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_10_all_of",
@@ -263,9 +241,7 @@
       ["exceptive", "but"],
       ["determiner", "all"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_10_most_of",
@@ -288,9 +264,7 @@
       ["exceptive", "but"],
       ["determiner", "most"]
     ],
-    "comment": "The alternatives are ungrammatical as well.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The alternatives are ungrammatical as well."
   },
   {
     "id": "vonfintel1993_10_everything",
@@ -309,9 +283,7 @@
       ["exceptive", "but"],
       ["determiner", "every"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_10_none",
@@ -330,9 +302,7 @@
       ["exceptive", "but"],
       ["determiner", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_13",
@@ -356,9 +326,7 @@
       ["inference", "valid"],
       ["property", "left downward monotonicity"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_14",
@@ -382,9 +350,7 @@
       ["inference", "invalid"],
       ["property", "left downward monotonicity"]
     ],
-    "comment": "The conclusion implies that Jill is a student who did not attend, which does not follow; domain subtraction with or without restrictiveness wrongly licenses it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The conclusion implies that Jill is a student who did not attend, which does not follow; domain subtraction with or without restrictiveness wrongly licenses it."
   },
   {
     "id": "vonfintel1993_16",
@@ -403,9 +369,7 @@
       ["exceptive", "but"],
       ["complement", "quantifier"]
     ],
-    "comment": "The complement of but must denote a set that can be subtracted.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The complement of but must denote a set that can be subtracted."
   },
   {
     "id": "vonfintel1993_19",
@@ -427,9 +391,7 @@
       ["inference", "valid"],
       ["property", "left upward monotonicity"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_22",
@@ -450,9 +412,7 @@
       ["exceptive", "but"],
       ["determiner", "every"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_25a",
@@ -471,9 +431,7 @@
       ["determiner", "most"],
       ["truth", "false"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_25b",
@@ -492,9 +450,7 @@
       ["exceptive", "but"],
       ["determiner", "most"]
     ],
-    "comment": "Excluding Tom and Harry or John and Harry would do as well, so there is no least exception set.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Excluding Tom and Harry or John and Harry would do as well, so there is no least exception set."
   },
   {
     "id": "vonfintel1993_27a",
@@ -515,9 +471,7 @@
       ["exceptive", "but"],
       ["construction", "wh-question"]
     ],
-    "comment": "The only possible answers are nobody and everybody, which promotes the rhetorical reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The only possible answers are nobody and everybody, which promotes the rhetorical reading."
   },
   {
     "id": "vonfintel1993_27b",
@@ -536,9 +490,7 @@
       ["exceptive", "but"],
       ["construction", "wh-question"]
     ],
-    "comment": "A rhetorical reading is dispreferred.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A rhetorical reading is dispreferred."
   },
   {
     "id": "vonfintel1993_28a",
@@ -559,9 +511,7 @@
       ["exceptive", "but"],
       ["construction", "conjunction"]
     ],
-    "comment": "Two but-phrases on one quantifier make clashing uniqueness demands.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Two but-phrases on one quantifier make clashing uniqueness demands."
   },
   {
     "id": "vonfintel1993_31b",
@@ -583,9 +533,7 @@
       ["exceptive", "except for"],
       ["position", "peripheral"]
     ],
-    "comment": "Free exceptives appear NP-internally and at either periphery.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Free exceptives appear NP-internally and at either periphery."
   },
   {
     "id": "vonfintel1993_32",
@@ -607,9 +555,7 @@
       ["exceptive", "except for"],
       ["use", "afterthought"]
     ],
-    "comment": "Set aside as not amenable to compositional analysis.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Set aside as not amenable to compositional analysis."
   },
   {
     "id": "vonfintel1993_33a",
@@ -633,9 +579,7 @@
       ["use", "appositive"],
       ["determiner", "most"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_34a",
@@ -655,9 +599,7 @@
       ["use", "restrictive"],
       ["determiner", "no"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_34b",
@@ -677,9 +619,7 @@
       ["use", "restrictive"],
       ["determiner", "definite"]
     ],
-    "comment": "Free exceptives modify definite NPs that are not overtly quantified.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Free exceptives modify definite NPs that are not overtly quantified."
   },
   {
     "id": "vonfintel1993_34c",
@@ -699,9 +639,7 @@
       ["use", "restrictive"],
       ["determiner", "most"]
     ],
-    "comment": "Free exceptives occur with nonuniversal determiners.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Free exceptives occur with nonuniversal determiners."
   },
   {
     "id": "vonfintel1993_35a",
@@ -724,9 +662,7 @@
       ["exceptive", "except for"],
       ["construction", "wh-question"]
     ],
-    "comment": "No rhetorical flavour, unlike the but-phrase.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No rhetorical flavour, unlike the but-phrase."
   },
   {
     "id": "vonfintel1993_36a",
@@ -745,9 +681,7 @@
       ["exceptive", "except for"],
       ["construction", "conjunction"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_36b",
@@ -766,9 +700,7 @@
       ["exceptive", "but"],
       ["construction", "conjunction"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "vonfintel1993_37",
@@ -787,9 +719,7 @@
       ["exceptive", "except for"],
       ["test", "sentence-level subtraction"]
     ],
-    "comment": "Refutes removing the excepted set from the universe of discourse: the exceptive associates with the quantifier only.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Refutes removing the excepted set from the universe of discourse: the exceptive associates with the quantifier only."
   },
   {
     "id": "vonfintel1993_42",
@@ -808,8 +738,6 @@
       ["exceptive", "besides"],
       ["determiner", "numeral"]
     ],
-    "comment": "Besides co-occurs with numerals; the paper suggests it imposes minimality rather than uniqueness.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Besides co-occurs with numerals; the paper suggests it imposes minimality rather than uniqueness."
   }
 ]

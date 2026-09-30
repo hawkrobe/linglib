@@ -31,9 +31,7 @@ def chamorro_15a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "small"), ("valence", "intransitive"), ("agreesWith", "surface subject"), ("m1", "PL"), ("f1", "man"), ("m2", "small"), ("f2", "dikiki'")]
-    comment := "Plural number agreement man- on an intransitive predicate; the singular form is null. Baker credits the Chamorro data to Gibson 1980."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Plural number agreement man- on an intransitive predicate; the singular form is null. Baker credits the Chamorro data to Gibson 1980." }
 
 def chamorro_15b : LinguisticExample :=
   { id := "baker1985_chamorro_15b"
@@ -49,9 +47,7 @@ def chamorro_15b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "spank"), ("valence", "transitive"), ("agreesWith", "surface subject"), ("m1", "IRR"), ("f1", "para"), ("m2", "3PL.SBJ"), ("f2", "u"), ("m3", "PL"), ("f3", "fan"), ("m4", "PASS"), ("f4", "in"), ("m5", "spank"), ("f5", "saolak")]
-    comment := "fan- (outside passive -in-) registers the plurality of the surface subject; -in- is infixed after the stem-initial consonant (s-in-aolak). The passive infix is listed before the root, as a prefix in the generalized sense the paper adopts."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "fan- (outside passive -in-) registers the plurality of the surface subject; -in- is infixed after the stem-initial consonant (s-in-aolak). The passive infix is listed before the root, as a prefix in the generalized sense the paper adopts." }
 
 def chamorro_15c : LinguisticExample :=
   { id := "baker1985_chamorro_15c"
@@ -67,9 +63,7 @@ def chamorro_15c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "eat"), ("valence", "intransitive"), ("agreesWith", "semantic subject"), ("m1", "1SG.SBJ"), ("f1", "hu"), ("m2", "CAUS"), ("f2", "na'"), ("m3", "PL"), ("f3", "fan"), ("m4", "eat"), ("f4", "otchu")]
-    comment := "fan- (inside causative na'-) registers the plurality of the semantic subject of 'eat', not the surface subject. Repeated as Baker's (30)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "fan- (inside causative na'-) registers the plurality of the semantic subject of 'eat', not the surface subject. Repeated as Baker's (30)." }
 
 def chamorro_25 : LinguisticExample :=
   { id := "baker1985_chamorro_25"
@@ -85,9 +79,7 @@ def chamorro_25 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "spank"), ("valence", "transitive"), ("agreesWith", "intermediate subject"), ("m1", "1SG.SBJ"), ("f1", "hu"), ("m2", "CAUS"), ("f2", "na'"), ("m3", "PL"), ("f3", "fan"), ("m4", "PASS"), ("f4", "in"), ("m5", "spank"), ("f5", "saolak")]
-    comment := "Causative of passive: fan- sits between -in- and na'- and registers the intermediate subject (post-passive, pre-causative) -- 'the children' is neither the semantic nor the surface subject. The passive infix is listed before the root, as a prefix in the generalized sense the paper adopts."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Causative of passive: fan- sits between -in- and na'- and registers the intermediate subject (post-passive, pre-causative) -- 'the children' is neither the semantic nor the surface subject. The passive infix is listed before the root, as a prefix in the generalized sense the paper adopts." }
 
 def quechua_39a : LinguisticExample :=
   { id := "baker1985_quechua_39a"
@@ -103,9 +95,7 @@ def quechua_39a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "beat"), ("valence", "transitive"), ("links", "agent-patient"), ("m1", "beat"), ("f1", "maqa"), ("m2", "RECP"), ("f2", "naku"), ("m3", "DUR"), ("f3", "ya"), ("m4", "CAUS"), ("f4", "chi"), ("m5", "3SBJ"), ("f5", "n")]
-    comment := "Baker's translation carries coreference indices ('He_j is causing them_i to beat each other_i'): the reciprocal binds within the caused event. Quechua variety unspecified; Baker credits Muysken 1981. Glottocode is the Quechuan family."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Baker's translation carries coreference indices ('He_j is causing them_i to beat each other_i'): the reciprocal binds within the caused event. Quechua variety unspecified; Baker credits Muysken 1981. Glottocode is the Quechuan family." }
 
 def quechua_39b : LinguisticExample :=
   { id := "baker1985_quechua_39b"
@@ -121,9 +111,7 @@ def quechua_39b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "beat"), ("valence", "transitive"), ("links", "causer-patient"), ("m1", "beat"), ("f1", "maqa"), ("m2", "CAUS"), ("f2", "chi"), ("m3", "RECP"), ("f3", "naku"), ("m4", "PL"), ("f4", "rka"), ("m5", "3SBJ"), ("f5", "n")]
-    comment := "Baker's translation carries coreference indices ('They_j let someone_i beat each other_j'): the reciprocal binds the causers, applying after the causative."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Baker's translation carries coreference indices ('They_j let someone_i beat each other_j'): the reciprocal binds the causers, applying after the causative." }
 
 def bemba_49a : LinguisticExample :=
   { id := "baker1985_bemba_49a"
@@ -139,9 +127,7 @@ def bemba_49a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "see"), ("valence", "transitive"), ("links", "agent-patient"), ("m1", "1SG.SBJ.PST"), ("f1", "naa"), ("m2", "see"), ("f2", "mon"), ("m3", "RECP"), ("f3", "an"), ("m4", "CAUS"), ("f4", "ya")]
-    comment := "Reciprocal -an inside causative -ya: the same order and interpretation as Quechua (39a). Baker credits the Bemba data to Givon 1976."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Reciprocal -an inside causative -ya: the same order and interpretation as Quechua (39a). Baker credits the Bemba data to Givon 1976." }
 
 def bemba_49b : LinguisticExample :=
   { id := "baker1985_bemba_49b"
@@ -157,9 +143,7 @@ def bemba_49b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "see"), ("valence", "transitive"), ("links", "causer-agent"), ("m1", "3PL.SBJ"), ("f1", "baa"), ("m2", "see"), ("f2", "mon"), ("m3", "CAUS"), ("f3", "eshy"), ("m4", "RECP"), ("f4", "ana")]
-    comment := "Causative -eshy inside reciprocal -ana. Bemba's causative is Chamorro-type (Baker's (50)-(51)), so Reciprocal links causer and initial agent -- unlike Quechua (39b), where it links causer and initial patient."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Causative -eshy inside reciprocal -ana. Bemba's causative is Chamorro-type (Baker's (50)-(51)), so Reciprocal links causer and initial agent -- unlike Quechua (39b), where it links causer and initial patient." }
 
 def huichol_55 : LinguisticExample :=
   { id := "baker1985_huichol_55"
@@ -175,9 +159,7 @@ def huichol_55 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "buy"), ("valence", "transitive"), ("surfaceSubject", "applied object"), ("m1", "3PL.SBJ"), ("f1", "me"), ("m2", "buy"), ("f2", "puutinanai"), ("m3", "BEN"), ("f3", "ri"), ("m4", "PASS"), ("f4", "yeri")]
-    comment := "Passive of the applicative (54b): the beneficiary has become subject (quantifier morphology, subject agreement), and benefactive -ri is closer to the verb than passive -yeri. Baker credits the Huichol data to Comrie 1982."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Passive of the applicative (54b): the beneficiary has become subject (quantifier morphology, subject agreement), and benefactive -ri is closer to the verb than passive -yeri. Baker credits the Huichol data to Comrie 1982." }
 
 def chimwiini_56c : LinguisticExample :=
   { id := "baker1985_chimwiini_56c"
@@ -193,9 +175,7 @@ def chimwiini_56c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "bring"), ("valence", "transitive"), ("surfaceSubject", "applied object"), ("m1", "SP"), ("f1", "∅"), ("m2", "bring"), ("f2", "tet"), ("m3", "APPL"), ("f3", "el"), ("m4", "ASP"), ("f4", "el"), ("m5", "PASS"), ("f5", "a")]
-    comment := "Passive of the applicative (56b): the goal 'the teacher' is surface subject; passive -a outside applied -el. SP = subject prefix (here null)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Passive of the applicative (56b): the goal 'the teacher' is surface subject; passive -a outside applied -el. SP = subject prefix (here null)." }
 
 def chimwiini_56d : LinguisticExample :=
   { id := "baker1985_chimwiini_56d"
@@ -211,9 +191,7 @@ def chimwiini_56d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "bring"), ("valence", "transitive"), ("surfaceSubject", "patient"), ("m1", "SP"), ("f1", "chi"), ("m2", "bring"), ("f2", "tet"), ("m3", "APPL"), ("f3", "el"), ("m4", "ASP"), ("f4", "el"), ("m5", "PASS"), ("f5", "a")]
-    comment := "Starred by the Mirror Principle: Applicative precedes Passive morphologically (its affix is closer to the root), but Passive would have to precede Applicative syntactically (the patient, not the goal, maps to subject)."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Starred by the Mirror Principle: Applicative precedes Passive morphologically (its affix is closer to the root), but Passive would have to precede Applicative syntactically (the patient, not the goal, maps to subject)." }
 
 def kinyarwanda_57c : LinguisticExample :=
   { id := "baker1985_kinyarwanda_57c"
@@ -229,9 +207,7 @@ def kinyarwanda_57c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "write"), ("valence", "transitive"), ("surfaceSubject", "applied object"), ("m1", "SP"), ("f1", "i"), ("m2", "PRS"), ("f2", "ra"), ("m3", "write"), ("f3", "andik"), ("m4", "INSTR"), ("f4", "iish"), ("m5", "PASS"), ("f5", "w"), ("m6", "ASP"), ("f6", "a")]
-    comment := "The instrument has become subject; passive -w outside applied -iish, as the Mirror Principle predicts. Baker credits the Kinyarwanda data to Kimenyi 1980."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "The instrument has become subject; passive -w outside applied -iish, as the Mirror Principle predicts. Baker credits the Kinyarwanda data to Kimenyi 1980." }
 
 def kinyarwanda_57d : LinguisticExample :=
   { id := "baker1985_kinyarwanda_57d"
@@ -247,9 +223,7 @@ def kinyarwanda_57d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root", "write"), ("valence", "transitive"), ("surfaceSubject", "patient"), ("m1", "SP"), ("f1", "i"), ("m2", "PRS"), ("f2", "ra"), ("m3", "write"), ("f3", "andik"), ("m4", "INSTR"), ("f4", "iish"), ("m5", "PASS"), ("f5", "w"), ("m6", "ASP"), ("f6", "a")]
-    comment := "Grammatical, unlike Chi-Mwi:ni (56d): Kinyarwanda passive independently promotes either postverbal NP of a double-object verb (Baker's (58)), so this is not a Mirror Principle counterexample."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Grammatical, unlike Chi-Mwi:ni (56d): Kinyarwanda passive independently promotes either postverbal NP of a double-object verb (Baker's (58)), so this is not a Mirror Principle counterexample." }
 
 def all : List LinguisticExample := [chamorro_15a, chamorro_15b, chamorro_15c, chamorro_25, quechua_39a, quechua_39b, bemba_49a, bemba_49b, huichol_55, chimwiini_56c, chimwiini_56d, kinyarwanda_57c, kinyarwanda_57d]
 

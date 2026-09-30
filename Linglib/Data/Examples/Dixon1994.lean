@@ -31,9 +31,7 @@ def ex_1_2_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "simple"), ("function", "S")]
-    comment := "A noun in S function bears absolutive case, with zero realisation; noun markers are omitted throughout, fn. 8."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "A noun in S function bears absolutive case, with zero realisation; noun markers are omitted throughout, fn. 8." }
 
 def ex_1_2_7 : LinguisticExample :=
   { id := "dixon1994_1_2_7"
@@ -49,9 +47,7 @@ def ex_1_2_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "simple"), ("function", "AO")]
-    comment := "A noun in O function is absolutive like S; A takes ergative -ŋgu; the verb cross-references none of S, A and O."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "A noun in O function is absolutive like S; A takes ergative -ŋgu; the verb cross-references none of S, A and O." }
 
 def ex_1_2_12 : LinguisticExample :=
   { id := "dixon1994_1_2_12"
@@ -67,9 +63,7 @@ def ex_1_2_12 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "antipassive"), ("function", "S")]
-    comment := "The antipassive of §1.2 (8): underlying A becomes S, underlying O goes into dative case, and the verb bears -ŋa-y between root and inflection, (11)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The antipassive of §1.2 (8): underlying A becomes S, underlying O goes into dative case, and the verb bears -ŋa-y between root and inflection, (11)." }
 
 def ex_15 : LinguisticExample :=
   { id := "dixon1994_15"
@@ -85,9 +79,7 @@ def ex_15 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "simple"), ("function", "AO")]
-    comment := "First and second person pronouns inflect on a nominative-accusative pattern, Table 6.1: the split of Table 4.1."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "First and second person pronouns inflect on a nominative-accusative pattern, Table 6.1: the split of Table 4.1." }
 
 def ex_17 : LinguisticExample :=
   { id := "dixon1994_17"
@@ -103,9 +95,7 @@ def ex_17 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "S"), ("second", "S"), ("derivation", "none")]
-    comment := "Possibility (a): the common NP is in pivot function S in both clauses and its second occurrence is omitted; there is no overt coordinator."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Possibility (a): the common NP is in pivot function S in both clauses and its second occurrence is omitted; there is no overt coordinator." }
 
 def ex_19 : LinguisticExample :=
   { id := "dixon1994_19"
@@ -121,9 +111,7 @@ def ex_19 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "S"), ("second", "O"), ("derivation", "none")]
-    comment := "Possibility (b), S₁ = O₂: both are pivot functions under the S/O pivot."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Possibility (b), S₁ = O₂: both are pivot functions under the S/O pivot." }
 
 def ex_20 : LinguisticExample :=
   { id := "dixon1994_20"
@@ -139,9 +127,7 @@ def ex_20 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "S"), ("second", "O"), ("derivation", "none")]
-    comment := "The pivot is S/O for pronouns too, although their morphology is accusative: ŋana is retained and ŋana-na omitted."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The pivot is S/O for pronouns too, although their morphology is accusative: ŋana is retained and ŋana-na omitted." }
 
 def ex_21 : LinguisticExample :=
   { id := "dixon1994_21"
@@ -157,9 +143,7 @@ def ex_21 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "O"), ("second", "S"), ("derivation", "none")]
-    comment := "Possibility (d), O₁ = S₂."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Possibility (d), O₁ = S₂." }
 
 def ex_24 : LinguisticExample :=
   { id := "dixon1994_24"
@@ -175,9 +159,7 @@ def ex_24 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "O"), ("second", "O"), ("derivation", "none")]
-    comment := "Possibility (f), O₁ = O₂."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Possibility (f), O₁ = O₂." }
 
 def ex_28 : LinguisticExample :=
   { id := "dixon1994_28"
@@ -193,9 +175,7 @@ def ex_28 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "O"), ("second", "O"), ("derivation", "none")]
-    comment := "Possibility (j), O₁ = O₂ and A₁ = A₂: the pivot NP is the O; the A NP, always omittable, is understood as identical if unstated."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Possibility (j), O₁ = O₂ and A₁ = A₂: the pivot NP is the O; the A NP, always omittable, is understood as identical if unstated." }
 
 def ex_32 : LinguisticExample :=
   { id := "dixon1994_32"
@@ -211,9 +191,7 @@ def ex_32 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "antipassive"), ("function", "S")]
-    comment := "The antipassive version of (11) 'father saw mother', (31): underlying A into derived S, underlying O into dative."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The antipassive version of (11) 'father saw mother', (31): underlying A into derived S, underlying O into dative." }
 
 def ex_33 : LinguisticExample :=
   { id := "dixon1994_33"
@@ -229,9 +207,7 @@ def ex_33 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "antipassive"), ("function", "S")]
-    comment := "The antipassive version of (16); dative is -ŋgu with pronouns."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The antipassive version of (16); dative is -ŋgu with pronouns." }
 
 def ex_34 : LinguisticExample :=
   { id := "dixon1994_34"
@@ -247,9 +223,7 @@ def ex_34 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "S"), ("second", "A"), ("derivation", "antipassive")]
-    comment := "Possibility (c), S₁ = A₂: the second clause is antipassivized to bring the underlying A into derived S and satisfy the S/O pivot."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Possibility (c), S₁ = A₂: the second clause is antipassivized to bring the underlying A into derived S and satisfy the S/O pivot." }
 
 def ex_36 : LinguisticExample :=
   { id := "dixon1994_36"
@@ -265,9 +239,7 @@ def ex_36 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "O"), ("second", "A"), ("derivation", "antipassive")]
-    comment := "Possibility (h), O₁ = A₂, with the second clause antipassivized."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Possibility (h), O₁ = A₂, with the second clause antipassivized." }
 
 def ex_39 : LinguisticExample :=
   { id := "dixon1994_39"
@@ -283,9 +255,7 @@ def ex_39 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "O"), ("second", "A"), ("derivation", "antipassive")]
-    comment := "Possibility (k), O₁ = A₂ and A₁ = O₂: the O₁ = A₂ NP is the pivot; the final dative NP cannot be omitted."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Possibility (k), O₁ = A₂ and A₁ = O₂: the O₁ = A₂ NP is the pivot; the final dative NP cannot be omitted." }
 
 def ex_42 : LinguisticExample :=
   { id := "dixon1994_42"
@@ -301,9 +271,7 @@ def ex_42 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "S"), ("derivation", "antipassive")]
-    comment := "Possibility (e), A₁ = S₂, with the first clause antipassivized, which requires planning ahead; the -ŋurra construction of (46) is the alternative."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Possibility (e), A₁ = S₂, with the first clause antipassivized, which requires planning ahead; the -ŋurra construction of (46) is the alternative." }
 
 def ex_44 : LinguisticExample :=
   { id := "dixon1994_44"
@@ -319,9 +287,7 @@ def ex_44 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "O"), ("derivation", "antipassive")]
-    comment := "Possibility (i), A₁ = O₂, with the first clause antipassivized."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Possibility (i), A₁ = O₂, with the first clause antipassivized." }
 
 def ex_46 : LinguisticExample :=
   { id := "dixon1994_46"
@@ -337,9 +303,7 @@ def ex_46 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "S"), ("derivation", "ngurra")]
-    comment := "The verbal inflection -ŋurra marks that the S or O of its clause is identical to the A of the preceding clause and that the event follows immediately; the common NP may be included or omitted."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The verbal inflection -ŋurra marks that the S or O of its clause is identical to the A of the preceding clause and that the event follows immediately; the common NP may be included or omitted." }
 
 def ex_52 : LinguisticExample :=
   { id := "dixon1994_52"
@@ -355,9 +319,7 @@ def ex_52 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "A"), ("derivation", "antipassive")]
-    comment := "Possibility (g), A₁ = A₂: both clauses are antipassivized; alternatively only the second is, with the -ŋurra construction, (54)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Possibility (g), A₁ = A₂: both clauses are antipassivized; alternatively only the second is, with the -ŋurra construction, (54)." }
 
 def ex_56 : LinguisticExample :=
   { id := "dixon1994_56"
@@ -373,9 +335,7 @@ def ex_56 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "purposive"), ("first", "S"), ("second", "O"), ("derivation", "none")]
-    comment := "Purposive coordination obeys the same S/O pivot: main and purposive clause must share an NP in S or O function in each, contrary to the expectation of §4.4 that purposive clauses group S with A."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Purposive coordination obeys the same S/O pivot: main and purposive clause must share an NP in S or O function in each, contrary to the expectation of §4.4 that purposive clauses group S with A." }
 
 def ex_57 : LinguisticExample :=
   { id := "dixon1994_57"
@@ -391,9 +351,7 @@ def ex_57 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "purposive"), ("first", "S"), ("second", "A"), ("derivation", "antipassive")]
-    comment := "The purposive clause is antipassivized to bring its A into derived S."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The purposive clause is antipassivized to bring its A into derived S." }
 
 def ex_59 : LinguisticExample :=
   { id := "dixon1994_59"
@@ -409,9 +367,7 @@ def ex_59 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "purposive"), ("first", "O"), ("second", "O"), ("derivation", "none")]
-    comment := "O₁ = O₂ with the verb 'tell to do'; the author corrects an earlier statement that the O of giga-l must be coreferential with the A or S of its purposive clause, fn. 19."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "O₁ = O₂ with the verb 'tell to do'; the author corrects an earlier statement that the O of giga-l must be coreferential with the A or S of its purposive clause, fn. 19." }
 
 def ex_60 : LinguisticExample :=
   { id := "dixon1994_60"
@@ -427,9 +383,7 @@ def ex_60 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "purposive"), ("first", "O"), ("second", "A"), ("derivation", "antipassive")]
-    comment := "O₁ = A₂: the purposive clause must be antipassivized."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "O₁ = A₂: the purposive clause must be antipassivized." }
 
 def ex_61 : LinguisticExample :=
   { id := "dixon1994_61"
@@ -445,9 +399,7 @@ def ex_61 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "relative"), ("first", "O"), ("second", "S"), ("derivation", "none")]
-    comment := "The common NP must be in S or O function within the relative clause; the relative verb bears -ŋu and a case inflection agreeing with the common NP in the main clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The common NP must be in S or O function within the relative clause; the relative verb bears -ŋu and a case inflection agreeing with the common NP in the main clause." }
 
 def ex_62 : LinguisticExample :=
   { id := "dixon1994_62"
@@ -463,9 +415,7 @@ def ex_62 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "relative"), ("first", "A"), ("second", "S"), ("derivation", "none")]
-    comment := "The common NP may be in any core function in the main clause, here A, and the relative clause agrees in ergative case."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The common NP may be in any core function in the main clause, here A, and the relative clause agrees in ergative case." }
 
 def ex_63 : LinguisticExample :=
   { id := "dixon1994_63"
@@ -481,9 +431,7 @@ def ex_63 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "relative"), ("first", "S"), ("second", "A"), ("derivation", "antipassive")]
-    comment := "The common NP is in A function in the relative clause, so antipassive applies before relativisation."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The common NP is in A function in the relative clause, so antipassive applies before relativisation." }
 
 def ex_66 : LinguisticExample :=
   { id := "dixon1994_66"
@@ -499,9 +447,7 @@ def ex_66 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "instrumentive"), ("function", "O")]
-    comment := "The instrumentive derivation places an underlying instrumental NP into derived O function, demoting the underlying O to dative, with -ma-l on the verb; it feeds the S/O pivot, (67) and (68)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The instrumentive derivation places an underlying instrumental NP into derived O function, demoting the underlying O to dative, with -ma-l on the verb; it feeds the S/O pivot, (67) and (68)." }
 
 def ex_68 : LinguisticExample :=
   { id := "dixon1994_68"
@@ -517,9 +463,7 @@ def ex_68 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "relative"), ("first", "O"), ("second", "O"), ("derivation", "instrumentive")]
-    comment := "The relative clause is first recast by the instrumentive derivation so that the common NP is in O function within it."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The relative clause is first recast by the instrumentive derivation so that the common NP is in O function within it." }
 
 def en_a : LinguisticExample :=
   { id := "dixon1994_en_a"
@@ -535,9 +479,7 @@ def en_a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "S"), ("second", "S"), ("derivation", "none")]
-    comment := "English's S/A pivot constrains omission of the second occurrence of a common NP, not clause linking itself: a weak pivot."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "English's S/A pivot constrains omission of the second occurrence of a common NP, not clause linking itself: a weak pivot." }
 
 def en_b : LinguisticExample :=
   { id := "dixon1994_en_b"
@@ -553,9 +495,7 @@ def en_b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "S"), ("second", "O"), ("derivation", "passive")]
-    comment := "S₁ = O₂: the second clause is passivized so that the common NP is in derived S."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "S₁ = O₂: the second clause is passivized so that the common NP is in derived S." }
 
 def en_c : LinguisticExample :=
   { id := "dixon1994_en_c"
@@ -571,9 +511,7 @@ def en_c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "S"), ("second", "A"), ("derivation", "none")]
-    comment := "S₁ = A₂."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "S₁ = A₂." }
 
 def en_d : LinguisticExample :=
   { id := "dixon1994_en_d"
@@ -589,9 +527,7 @@ def en_d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "O"), ("second", "S"), ("derivation", "passive")]
-    comment := "O₁ = S₂: the first clause is passivized."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "O₁ = S₂: the first clause is passivized." }
 
 def en_e : LinguisticExample :=
   { id := "dixon1994_en_e"
@@ -607,9 +543,7 @@ def en_e : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "S"), ("derivation", "none")]
-    comment := "A₁ = S₂."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A₁ = S₂." }
 
 def en_f : LinguisticExample :=
   { id := "dixon1994_en_f"
@@ -625,9 +559,7 @@ def en_f : LinguisticExample :=
     alternatives := [("Tom kicked and Bob punched Bill.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "O"), ("second", "O"), ("derivation", "passive")]
-    comment := "O₁ = O₂: both clauses are passivized; the alternative combines A-plus-verb from two clauses with the same O, which not all speakers accept."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "O₁ = O₂: both clauses are passivized; the alternative combines A-plus-verb from two clauses with the same O, which not all speakers accept." }
 
 def en_g : LinguisticExample :=
   { id := "dixon1994_en_g"
@@ -643,9 +575,7 @@ def en_g : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "A"), ("derivation", "none")]
-    comment := "A₁ = A₂."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A₁ = A₂." }
 
 def en_h : LinguisticExample :=
   { id := "dixon1994_en_h"
@@ -661,9 +591,7 @@ def en_h : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "O"), ("second", "A"), ("derivation", "passive")]
-    comment := "O₁ = A₂: the first clause is passivized."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "O₁ = A₂: the first clause is passivized." }
 
 def en_i : LinguisticExample :=
   { id := "dixon1994_en_i"
@@ -679,9 +607,7 @@ def en_i : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "O"), ("derivation", "passive")]
-    comment := "A₁ = O₂: the second clause is passivized."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A₁ = O₂: the second clause is passivized." }
 
 def en_j : LinguisticExample :=
   { id := "dixon1994_en_j"
@@ -697,9 +623,7 @@ def en_j : LinguisticExample :=
     alternatives := [("Fred punched Bill and kicked him.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "A"), ("derivation", "none")]
-    comment := "O₁ = O₂ and A₁ = A₂: the verbs are coordinated so that each NP is stated once."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "O₁ = O₂ and A₁ = A₂: the verbs are coordinated so that each NP is stated once." }
 
 def en_k : LinguisticExample :=
   { id := "dixon1994_en_k"
@@ -715,9 +639,7 @@ def en_k : LinguisticExample :=
     alternatives := [("Fred punched and was kicked by Bill.", .acceptable)]
     readings := []
     paperFeatures := [("construction", "coordination"), ("first", "A"), ("second", "O"), ("derivation", "passive")]
-    comment := "O₁ = A₂ and A₁ = O₂: the A₁ = O₂ NP is the pivot and the second clause is passivized; not all speakers accept the alternative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "O₁ = A₂ and A₁ = O₂: the A₁ = O₂ NP is the pivot and the second clause is passivized; not all speakers accept the alternative." }
 
 def all : List LinguisticExample := [ex_1_2_5, ex_1_2_7, ex_1_2_12, ex_15, ex_17, ex_19, ex_20, ex_21, ex_24, ex_28, ex_32, ex_33, ex_34, ex_36, ex_39, ex_42, ex_44, ex_46, ex_52, ex_56, ex_57, ex_59, ex_60, ex_61, ex_62, ex_63, ex_66, ex_68, en_a, en_b, en_c, en_d, en_e, en_f, en_g, en_h, en_i, en_j, en_k]
 

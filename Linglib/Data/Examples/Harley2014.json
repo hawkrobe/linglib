@@ -36,8 +36,7 @@
         "subject"
       ]
     ],
-    "comment": "A suppletive main verb, conditioned by subject number.",
-    "lgrConformance": ""
+    "comment": "A suppletive main verb, conditioned by subject number."
   },
   {
     "id": "harley2014_ex3b",
@@ -76,8 +75,7 @@
         "subject"
       ]
     ],
-    "comment": "A suppletive main verb, conditioned by subject number.",
-    "lgrConformance": ""
+    "comment": "A suppletive main verb, conditioned by subject number."
   },
   {
     "id": "harley2014_ex3c",
@@ -116,8 +114,7 @@
         "subject"
       ]
     ],
-    "comment": "A suppletive main verb, conditioned by subject number.",
-    "lgrConformance": ""
+    "comment": "A suppletive main verb, conditioned by subject number."
   },
   {
     "id": "harley2014_ex3d",
@@ -156,8 +153,7 @@
         "subject"
       ]
     ],
-    "comment": "A suppletive main verb, conditioned by subject number.",
-    "lgrConformance": ""
+    "comment": "A suppletive main verb, conditioned by subject number."
   },
   {
     "id": "harley2014_ex3e",
@@ -196,8 +192,7 @@
         "subject"
       ]
     ],
-    "comment": "A suppletive main verb, conditioned by subject number.",
-    "lgrConformance": ""
+    "comment": "A suppletive main verb, conditioned by subject number."
   },
   {
     "id": "harley2014_ex3f",
@@ -236,8 +231,7 @@
         "subject"
       ]
     ],
-    "comment": "A suppletive main verb, conditioned by subject number.",
-    "lgrConformance": ""
+    "comment": "A suppletive main verb, conditioned by subject number."
   },
   {
     "id": "harley2014_ex3g",
@@ -276,8 +270,7 @@
         "object"
       ]
     ],
-    "comment": "A suppletive main verb, conditioned by object number.",
-    "lgrConformance": ""
+    "comment": "A suppletive main verb, conditioned by object number."
   },
   {
     "id": "harley2014_ex6a",
@@ -326,8 +319,7 @@
         "singular"
       ]
     ],
-    "comment": "The singular form with a singular subject; the plural subject is excluded.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The singular form with a singular subject; the plural subject is excluded."
   },
   {
     "id": "harley2014_ex6b",
@@ -376,8 +368,7 @@
         "plural"
       ]
     ],
-    "comment": "The plural form with a plural subject; the singular subject is excluded.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The plural form with a plural subject; the singular subject is excluded."
   },
   {
     "id": "harley2014_ex26a",
@@ -417,8 +408,7 @@
         "singular"
       ]
     ],
-    "comment": "An intransitive conditioned by subject number.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "An intransitive conditioned by subject number."
   },
   {
     "id": "harley2014_ex26b",
@@ -458,8 +448,7 @@
         "plural"
       ]
     ],
-    "comment": "An intransitive conditioned by subject number.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "An intransitive conditioned by subject number."
   },
   {
     "id": "harley2014_ex27a",
@@ -507,8 +496,7 @@
         "singular"
       ]
     ],
-    "comment": "A transitive conditioned by object number, whatever the subject's.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A transitive conditioned by object number, whatever the subject's."
   },
   {
     "id": "harley2014_ex27b",
@@ -556,8 +544,7 @@
         "plural"
       ]
     ],
-    "comment": "A transitive conditioned by object number, whatever the subject's.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A transitive conditioned by object number, whatever the subject's."
   },
   {
     "id": "harley2014_ex29a",
@@ -597,8 +584,7 @@
         "case"
       ]
     ],
-    "comment": "Accusative on the object of a transitive.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Accusative on the object of a transitive."
   },
   {
     "id": "harley2014_ex29b",
@@ -638,8 +624,7 @@
         "case"
       ]
     ],
-    "comment": "The accusative is structural: nominative under passivization.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The accusative is structural: nominative under passivization."
   },
   {
     "id": "harley2014_ex30a",
@@ -687,8 +672,7 @@
         "unergative"
       ]
     ],
-    "comment": "The high applicative on an unergative intransitive.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The high applicative on an unergative intransitive."
   },
   {
     "id": "harley2014_ex30b",
@@ -736,8 +720,7 @@
         "transitive"
       ]
     ],
-    "comment": "The applicative on a transitive.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The applicative on a transitive."
   },
   {
     "id": "harley2014_ex31",
@@ -785,8 +768,7 @@
         "unaccusative"
       ]
     ],
-    "comment": "No applicative on an unaccusative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "No applicative on an unaccusative."
   },
   {
     "id": "harley2014_ex32a",
@@ -838,8 +820,7 @@
         "suppletiveIntransitive"
       ]
     ],
-    "comment": "No applicative on a suppletive intransitive: the suppletive intransitives are unaccusative, as the locality of conditioning predicts.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "No applicative on a suppletive intransitive: the suppletive intransitives are unaccusative, as the locality of conditioning predicts."
   },
   {
     "id": "harley2014_ex32b",
@@ -895,8 +876,7 @@
         "suppletiveIntransitive"
       ]
     ],
-    "comment": "The periphrastic benefactive instead.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The periphrastic benefactive instead."
   },
   {
     "id": "harley2014_exfn33-i",
@@ -944,7 +924,6 @@
         "suppletiveTransitive"
       ]
     ],
-    "comment": "The applicative on a suppletive transitive; suppletion still follows the thematic object, not the applied object.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The applicative on a suppletive transitive; suppletion still follows the thematic object, not the applied object."
   }
 ]

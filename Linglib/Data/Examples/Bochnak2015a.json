@@ -19,9 +19,7 @@
       ["force", "necessity"],
       ["flavor", "deontic"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bochnak2015a_ex11",
@@ -44,9 +42,7 @@
       ["force", "necessity"],
       ["flavor", "deontic"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bochnak2015a_ex12",
@@ -69,9 +65,7 @@
       ["force", "necessity"],
       ["flavor", "metaphysical"]
     ],
-    "comment": "The sentence of (8). Headed 'Metaphysical/future necessity'. The embedded -eʔ is the copula with the stage-level agreement le-, the matrix one the modal with the individual-level agreement L-.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The sentence of (8). Headed 'Metaphysical/future necessity'. The embedded -eʔ is the copula with the stage-level agreement le-, the matrix one the modal with the individual-level agreement L-."
   },
   {
     "id": "bochnak2015a_ex13",
@@ -94,9 +88,7 @@
       ["force", "necessity"],
       ["flavor", "metaphysical"]
     ],
-    "comment": "Headed 'Metaphysical/future necessity'. The same sentence is deontic possibility in (19).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Headed 'Metaphysical/future necessity'. The same sentence is deontic possibility in (19)."
   },
   {
     "id": "bochnak2015a_ex14",
@@ -119,9 +111,7 @@
       ["force", "necessity"],
       ["flavor", "epistemic"]
     ],
-    "comment": "Footnote 4: -eʔ is dispreferred in epistemic contexts, where speakers tend to use an evidential or a paraphrase without a modal.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Footnote 4: -eʔ is dispreferred in epistemic contexts, where speakers tend to use an evidential or a paraphrase without a modal."
   },
   {
     "id": "bochnak2015a_ex15",
@@ -143,9 +133,7 @@
       ["force", "necessity"],
       ["flavor", "bouletic"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bochnak2015a_ex16",
@@ -167,9 +155,7 @@
       ["force", "weak necessity"],
       ["flavor", "bouletic"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bochnak2015a_ex17",
@@ -191,9 +177,7 @@
       ["section", "3"],
       ["flavor", "generic"]
     ],
-    "comment": "The sentence of (7), where -eʔ embeds a non-finite clause. Headed 'Generic', with no force. The source glosses -eʔ COP here.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The sentence of (7), where -eʔ embeds a non-finite clause. Headed 'Generic', with no force. The source glosses -eʔ COP here."
   },
   {
     "id": "bochnak2015a_ex18",
@@ -216,9 +200,7 @@
       ["force", "possibility"],
       ["flavor", "deontic"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bochnak2015a_ex19",
@@ -241,9 +223,7 @@
       ["force", "possibility"],
       ["flavor", "deontic"]
     ],
-    "comment": "The sentence of (13), metaphysical necessity there.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The sentence of (13), metaphysical necessity there."
   },
   {
     "id": "bochnak2015a_ex20",
@@ -266,9 +246,7 @@
       ["force", "possibility"],
       ["flavor", "metaphysical"]
     ],
-    "comment": "Headed 'Future possibility'; (12) and (13) are headed 'Metaphysical/future necessity'.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Headed 'Future possibility'; (12) and (13) are headed 'Metaphysical/future necessity'."
   },
   {
     "id": "bochnak2015a_ex21",
@@ -290,9 +268,7 @@
       ["force", "possibility"],
       ["flavor", "epistemic"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bochnak2015a_ex22",
@@ -315,9 +291,7 @@
       ["force", "possibility"],
       ["flavor", "circumstantial"]
     ],
-    "comment": "The sentence of (9). The segmentation line prints k-eʔ-i, without the ejective the surface line has.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The sentence of (9). The segmentation line prints k-eʔ-i, without the ejective the surface line has."
   },
   {
     "id": "bochnak2015a_ex23",
@@ -340,9 +314,7 @@
       ["force", "possibility"],
       ["flavor", "circumstantial"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "bochnak2015a_ex30",
@@ -368,9 +340,7 @@
       ["flavor", "circumstantial"],
       ["prejacent", "negated"]
     ],
-    "comment": "The alternative, (30c), marks the negation on the modal. The source sets the section 5 examples in IPA length marks and g; they are given in the orthography of section 3.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The alternative, (30c), marks the negation on the modal. The source sets the section 5 examples in IPA length marks and g; they are given in the orthography of section 3."
   },
   {
     "id": "bochnak2015a_ex31",
@@ -396,9 +366,7 @@
       ["flavor", "metaphysical"],
       ["prejacent", "negated"]
     ],
-    "comment": "The alternative, (31c), marks the negation on the modal.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The alternative, (31c), marks the negation on the modal."
   },
   {
     "id": "bochnak2015a_ex32",
@@ -423,9 +391,7 @@
       ["flavor", "deontic"],
       ["prejacent", "negated"]
     ],
-    "comment": "The alternative, (32c), marks the negation on the modal. The source glosses le-iʔiw as 1.eat.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The alternative, (32c), marks the negation on the modal. The source glosses le-iʔiw as 1.eat."
   },
   {
     "id": "bochnak2015a_ex33",
@@ -451,9 +417,7 @@
       ["flavor", "metaphysical"],
       ["prejacent", "negated"]
     ],
-    "comment": "The alternative, (33c), marks the negation on the modal.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The alternative, (33c), marks the negation on the modal."
   },
   {
     "id": "bochnak2015a_ex34",
@@ -478,8 +442,6 @@
       ["flavor", "metaphysical"],
       ["prejacent", "negated"]
     ],
-    "comment": "The alternative, (34c), marks the negation on the modal.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The alternative, (34c), marks the negation on the modal."
   }
 ]

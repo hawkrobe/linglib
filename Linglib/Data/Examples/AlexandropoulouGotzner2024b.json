@@ -21,8 +21,7 @@
       ["negation", "negated"],
       ["relation", "implicates"]
     ],
-    "comment": "Negative strengthening: the negated positive weak relative adjective implicates its antonym.",
-    "lgrConformance": "NONE"
+    "comment": "Negative strengthening: the negated positive weak relative adjective implicates its antonym."
   },
   {
     "id": "ag2024b_2",
@@ -46,8 +45,7 @@
       ["negation", "negated"],
       ["relation", "does_not_implicate"]
     ],
-    "comment": "The double negative does not give rise to negative strengthening; its implicated meaning would be evaluatively positive.",
-    "lgrConformance": "NONE"
+    "comment": "The double negative does not give rise to negative strengthening; its implicated meaning would be evaluatively positive."
   },
   {
     "id": "ag2024b_5a",
@@ -71,8 +69,7 @@
       ["negation", "negated"],
       ["relation", "entails"]
     ],
-    "comment": "Same sentence as (3); a negated maximum-standard absolute adjective entails its antonym.",
-    "lgrConformance": "NONE"
+    "comment": "Same sentence as (3); a negated maximum-standard absolute adjective entails its antonym."
   },
   {
     "id": "ag2024b_5b",
@@ -96,8 +93,7 @@
       ["negation", "negated"],
       ["relation", "entails"]
     ],
-    "comment": "Same sentence as (4); a negated minimum-standard absolute adjective entails its antonym.",
-    "lgrConformance": "NONE"
+    "comment": "Same sentence as (4); a negated minimum-standard absolute adjective entails its antonym."
   },
   {
     "id": "ag2024b_6a",
@@ -121,8 +117,7 @@
       ["negation", "negated"],
       ["relation", "does_not_entail"]
     ],
-    "comment": "Relative antonyms leave a semantic extension gap, so the negated form does not entail the antonym.",
-    "lgrConformance": "NONE"
+    "comment": "Relative antonyms leave a semantic extension gap, so the negated form does not entail the antonym."
   },
   {
     "id": "ag2024b_6b",
@@ -146,8 +141,7 @@
       ["negation", "negated"],
       ["relation", "does_not_entail"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "ag2024b_7a",
@@ -172,8 +166,7 @@
       ["negation", "negated"],
       ["relation", "does_not_entail"]
     ],
-    "comment": "The entailment to the antonym fails for modified absolute adjectives.",
-    "lgrConformance": "NONE"
+    "comment": "The entailment to the antonym fails for modified absolute adjectives."
   },
   {
     "id": "ag2024b_7b",
@@ -198,8 +191,7 @@
       ["negation", "negated"],
       ["relation", "does_not_entail"]
     ],
-    "comment": "The entailment to the antonym fails for stronger scale-mates: the sentence is compatible with the apartment being clean, dirty or filthy.",
-    "lgrConformance": "NONE"
+    "comment": "The entailment to the antonym fails for stronger scale-mates: the sentence is compatible with the apartment being clean, dirty or filthy."
   },
   {
     "id": "ag2024b_9",
@@ -223,8 +215,7 @@
       ["negation", "nonNegated"],
       ["relation", "implicates"]
     ],
-    "comment": "Q-based upper-bounding implicature: gigantic asymmetrically entails large.",
-    "lgrConformance": "NONE"
+    "comment": "Q-based upper-bounding implicature: gigantic asymmetrically entails large."
   },
   {
     "id": "ag2024b_10",
@@ -249,8 +240,7 @@
       ["relation", "implicates"],
       ["inference", "negative_strengthening"]
     ],
-    "comment": "Horn's R-based implicature: the speaker conceals the stronger negative meaning of the simple antonym.",
-    "lgrConformance": "NONE"
+    "comment": "Horn's R-based implicature: the speaker conceals the stronger negative meaning of the simple antonym."
   },
   {
     "id": "ag2024b_11",
@@ -275,7 +265,6 @@
       ["relation", "implicates"],
       ["inference", "middling"]
     ],
-    "comment": "Horn's Q/R-based middling interpretation: the prolix double negative conveys the extension gap.",
-    "lgrConformance": "NONE"
+    "comment": "Horn's Q/R-based middling interpretation: the prolix double negative conveys the extension gap."
   }
 ]

@@ -22,9 +22,7 @@
       ["modal", "o'qa"],
       ["environment", "unembedded"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "deal2011_ex5",
@@ -47,9 +45,7 @@
       ["environment", "unembedded"],
       ["force", "necessity"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "deal2011_ex6",
@@ -74,9 +70,7 @@
       ["environment", "conditional consequent"],
       ["force", "necessity"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "deal2011_ex10",
@@ -98,9 +92,7 @@
       ["environment", "unembedded"],
       ["force", "necessity"]
     ],
-    "comment": "Uttered in casual conversation and translated with should.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Uttered in casual conversation and translated with should."
   },
   {
     "id": "deal2011_ex46",
@@ -124,9 +116,7 @@
       ["environment", "negation"],
       ["force", "possibility"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "deal2011_ex47",
@@ -149,9 +139,7 @@
       ["environment", "negation"],
       ["force", "possibility"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "deal2011_ex48",
@@ -176,9 +164,7 @@
       ["modal", "o'qa"],
       ["environment", "negation"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "deal2011_ex49",
@@ -200,9 +186,7 @@
       ["environment", "negation"],
       ["force", "necessity"]
     ],
-    "comment": "Consultant: the sentence says 'you can't go', a different conversation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Consultant: the sentence says 'you can't go', a different conversation."
   },
   {
     "id": "deal2011_ex50",
@@ -224,9 +208,7 @@
       ["environment", "negation"],
       ["force", "necessity"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "deal2011_ex51",
@@ -251,9 +233,7 @@
       ["modal", "o'qa"],
       ["environment", "existential restriction"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "deal2011_ex52",
@@ -278,9 +258,7 @@
       ["modal", "o'qa"],
       ["environment", "universal restriction"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "deal2011_ex53",
@@ -305,9 +283,7 @@
       ["modal", "o'qa"],
       ["environment", "universal restriction"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "deal2011_ex54",
@@ -332,9 +308,7 @@
       ["modal", "o'qa"],
       ["environment", "universal restriction"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "deal2011_ex57",
@@ -358,9 +332,7 @@
       ["environment", "conditional consequent"],
       ["force", "necessity"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "deal2011_ex58",
@@ -386,9 +358,7 @@
       ["modal", "o'qa"],
       ["environment", "conditional antecedent"]
     ],
-    "comment": "The readings concern the modal of the antecedent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The readings concern the modal of the antecedent."
   },
   {
     "id": "deal2011_ex59",
@@ -412,9 +382,7 @@
       ["modal", "o'qa"],
       ["environment", "conditional antecedent"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "deal2011_ex60",
@@ -437,8 +405,6 @@
       ["environment", "conditional antecedent"],
       ["force", "necessity"]
     ],
-    "comment": "Consultant: the sentence says that if I could call the doctor, I would.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Consultant: the sentence says that if I could call the doctor, I would."
   }
 ]

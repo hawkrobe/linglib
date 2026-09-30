@@ -31,9 +31,7 @@ def ex12 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence", "admittedKnown"), ("holds", "yes")]
-    comment := "True on the strongly exhaustive reading: Maggie knows the admitted list is complete."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "True on the strongly exhaustive reading: Maggie knows the admitted list is complete." }
 
 def ex13 : LinguisticExample :=
   { id := "george2011_ex13"
@@ -49,9 +47,7 @@ def ex13 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence", "notAdmittedKnown"), ("holds", "no")]
-    comment := "False on every reading: nothing Maggie knows excludes Robin not having applied, or further applicants."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "False on every reading: nothing Maggie knows excludes Robin not having applied, or further applicants." }
 
 def ex4 : LinguisticExample :=
   { id := "george2011_ex4"
@@ -67,9 +63,7 @@ def ex4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence", "admittedButNot"), ("holds", "yes")]
-    comment := "Adapted from Sharvit (2002); consistent, and true here on strongly exhaustive readings of both questions."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Adapted from Sharvit (2002); consistent, and true here on strongly exhaustive readings of both questions." }
 
 def ex17 : LinguisticExample :=
   { id := "george2011_ex17"
@@ -85,9 +79,7 @@ def ex17 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence", "fourStudents"), ("holds", "yes")]
-    comment := "Adapted from Guerzoni and Sharvit (2007); true when 'weren't admitted' is understood as 'were rejected'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Adapted from Guerzoni and Sharvit (2007); true when 'weren't admitted' is understood as 'were rejected'." }
 
 def ex33 : LinguisticExample :=
   { id := "george2011_ex33"
@@ -103,9 +95,7 @@ def ex33 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence", "jannaNewspaper"), ("holds", "yes")]
-    comment := "True on the mention-some reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "True on the mention-some reading." }
 
 def ex34 : LinguisticExample :=
   { id := "george2011_ex34"
@@ -121,9 +111,7 @@ def ex34 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("sentence", "redNewspaper"), ("holds", "no")]
-    comment := "Untrue: Red's beliefs about where newspapers are available are at odds with the facts."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Untrue: Red's beliefs about where newspapers are available are at odds with the facts." }
 
 def all : List LinguisticExample := [ex12, ex13, ex4, ex17, ex33, ex34]
 

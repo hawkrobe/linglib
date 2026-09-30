@@ -19,9 +19,7 @@
       ["prejacent", "run"],
       ["contextual alternative", "run and not smoke"]
     ],
-    "comment": "What is true of Bill is inferred not to be true of John.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "What is true of Bill is inferred not to be true of John."
   },
   {
     "id": "trinhhaida2015_6",
@@ -43,9 +41,7 @@
       ["prejacent", "pass some"],
       ["contextual alternative", "pass some and fail some"]
     ],
-    "comment": "The sequence is odd precisely because it cannot mean that what is true of Bill is not true of John (footnote 4).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The sequence is odd precisely because it cannot mean that what is true of Bill is not true of John (footnote 4)."
   },
   {
     "id": "trinhhaida2015_9",
@@ -66,9 +62,7 @@
       ["case", "symmetry problem"],
       ["symmetric alternatives", "four; exactly three"]
     ],
-    "comment": "The symmetry problem: *four* and *exactly three* are of the same type, so relevance keeps both or neither, yet the inference negates only *four*.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The symmetry problem: *four* and *exactly three* are of the same type, so relevance keeps both or neither, yet the inference negates only *four*."
   },
   {
     "id": "trinhhaida2015_10",
@@ -89,9 +83,7 @@
       ["case", "symmetry problem"],
       ["symmetric alternatives", "all; some but not all"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "trinhhaida2015_20b",
@@ -113,9 +105,7 @@
       ["prejacent", "work hard"],
       ["contextual alternative", "work hard and not watch TV"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "trinhhaida2015_20c",
@@ -137,9 +127,7 @@
       ["prejacent", "tall"],
       ["contextual alternative", "tall and not bald"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "trinhhaida2015_21a",
@@ -162,9 +150,7 @@
       ["contextual alternative", "exactly three"],
       ["lexical alternative", "four"]
     ],
-    "comment": "Atomicity is vacuous: *four* is derived by lexical replacement and, being *three* without *exactly three*, lies in the Boolean closure of {three, exactly three}.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Atomicity is vacuous: *four* is derived by lexical replacement and, being *three* without *exactly three*, lies in the Boolean closure of {three, exactly three}."
   },
   {
     "id": "trinhhaida2015_21b",
@@ -187,9 +173,7 @@
       ["contextual alternative", "children and no twins"],
       ["lexical alternative", "twins"]
     ],
-    "comment": "*Twins* is *children* without *children and no twins*, so it is in the Boolean closure of the restricted domain.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "*Twins* is *children* without *children and no twins*, so it is in the Boolean closure of the restricted domain."
   },
   {
     "id": "trinhhaida2015_21c",
@@ -212,9 +196,7 @@
       ["contextual alternative", "pass some and fail some"],
       ["lexical alternative", "pass all"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "trinhhaida2015_50",
@@ -236,9 +218,7 @@
       ["case", "apparent problem"],
       ["prejacent", "concluded book"]
     ],
-    "comment": "Under Atomicity the alternative *book and the jewelry* is underivable; the second inference comes from the derivable *concluded that they stole the jewelry*, since attitude verbs distribute over conjunction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Under Atomicity the alternative *book and the jewelry* is underivable; the second inference comes from the derivable *concluded that they stole the jewelry*, since attitude verbs distribute over conjunction."
   },
   {
     "id": "trinhhaida2015_54",
@@ -259,9 +239,7 @@
       ["case", "indirect implicature"],
       ["prejacent", "not all"]
     ],
-    "comment": "Atomicity rules out the symmetric *passed some*: the VP substituted for NegP is atomic, so *all* inside it cannot then be replaced.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Atomicity rules out the symmetric *passed some*: the VP substituted for NegP is atomic, so *all* inside it cannot then be replaced."
   },
   {
     "id": "trinhhaida2015_56",
@@ -282,9 +260,7 @@
       ["case", "switching problem"],
       ["prejacent", "some all"]
     ],
-    "comment": "The switching problem: *some* and *all* switch places only under negation, (58); the constraints (60b) and (60c) on the order and monotonicity of replacements block the derivation here.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The switching problem: *some* and *all* switch places only under negation, (58); the constraints (60b) and (60c) on the order and monotonicity of replacements block the derivation here."
   },
   {
     "id": "trinhhaida2015_58",
@@ -305,8 +281,6 @@
       ["case", "switching problem"],
       ["prejacent", "not some all"]
     ],
-    "comment": "A weak inference; under negation the bottom-up, non-weakening replacements of (60) derive the alternative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A weak inference; under negation the bottom-up, non-weakening replacements of (60) derive the alternative."
   }
 ]

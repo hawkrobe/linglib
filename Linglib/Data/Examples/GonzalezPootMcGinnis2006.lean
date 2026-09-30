@@ -31,9 +31,7 @@ def gpm2006_19 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "2"), ("subjNumber", "pl"), ("objPerson", "1"), ("objNumber", "pl"), ("aux", "a"), ("prefix", "w"), ("suffix1", "oʔon"), ("suffix2", "éːʃ")]
-    comment := "Object-before-subject order, as the template (18) predicts."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Object-before-subject order, as the template (18) predicts." }
 
 def gpm2006_20 : LinguisticExample :=
   { id := "gpm2006_20"
@@ -49,9 +47,7 @@ def gpm2006_20 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "2"), ("objNumber", "pl"), ("aux", "u"), ("prefix", "j"), ("suffix1", "éːʃ"), ("suffix2", "oʔob")]
-    comment := "Also (2) and (28a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Also (2) and (28a)." }
 
 def gpm2006_21 : LinguisticExample :=
   { id := "gpm2006_21"
@@ -67,9 +63,7 @@ def gpm2006_21 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "2"), ("subjNumber", "pl"), ("objPerson", "3"), ("objNumber", "pl"), ("aux", "a"), ("prefix", "w"), ("suffix1", "oʔob"), ("suffix2", "éːʃ")]
-    comment := "The object–subject order the template (18) imposes is ungrammatical here."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The object–subject order the template (18) imposes is ungrammatical here." }
 
 def gpm2006_22 : LinguisticExample :=
   { id := "gpm2006_22"
@@ -85,9 +79,7 @@ def gpm2006_22 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "2"), ("subjNumber", "pl"), ("objPerson", "3"), ("objNumber", "pl"), ("aux", "a"), ("prefix", "w"), ("suffix1", "éːʃ"), ("suffix2", "oʔob")]
-    comment := "Subject agreement precedes object agreement; also (29a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Subject agreement precedes object agreement; also (29a)." }
 
 def gpm2006_23 : LinguisticExample :=
   { id := "gpm2006_23"
@@ -103,9 +95,7 @@ def gpm2006_23 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "3"), ("objNumber", "pl"), ("aux", "u"), ("prefix", "j"), ("suffix1", "oʔob"), ("suffix2", "oʔob")]
-    comment := "Overt agreement for both arguments is impossible."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Overt agreement for both arguments is impossible." }
 
 def gpm2006_24 : LinguisticExample :=
   { id := "gpm2006_24"
@@ -121,9 +111,7 @@ def gpm2006_24 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "3"), ("subjNumber", "pl"), ("objPerson", "3"), ("objNumber", "pl"), ("aux", "u"), ("prefix", "j"), ("suffix1", "oʔob"), ("suffix2", "")]
-    comment := "One overt suffix; also (1) and (30a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "One overt suffix; also (1) and (30a)." }
 
 def gpm2006_16ex : LinguisticExample :=
   { id := "gpm2006_16ex"
@@ -139,9 +127,7 @@ def gpm2006_16ex : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "transitive"), ("subjPerson", "3"), ("subjNumber", "sg"), ("objPerson", "1"), ("objNumber", "sg"), ("aux", "u"), ("prefix", "j"), ("suffix1", "en"), ("suffix2", "")]
-    comment := "The example under the nominative marker table (16)."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The example under the nominative marker table (16)." }
 
 def gpm2006_3 : LinguisticExample :=
   { id := "gpm2006_3"
@@ -157,9 +143,7 @@ def gpm2006_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "1"), ("subjNumber", "sg"), ("aux", "in"), ("prefix", "w"), ("suffix1", ""), ("suffix2", "")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def gpm2006_4 : LinguisticExample :=
   { id := "gpm2006_4"
@@ -175,9 +159,7 @@ def gpm2006_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "1"), ("subjNumber", "pl"), ("aux", "k"), ("prefix", ""), ("suffix1", ""), ("suffix2", "")]
-    comment := "First-person plural: person and number both on the auxiliary, no prefix, no verbal suffix."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "First-person plural: person and number both on the auxiliary, no prefix, no verbal suffix." }
 
 def gpm2006_5 : LinguisticExample :=
   { id := "gpm2006_5"
@@ -193,9 +175,7 @@ def gpm2006_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "2"), ("subjNumber", "sg"), ("aux", "a"), ("prefix", "w"), ("suffix1", ""), ("suffix2", "")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def gpm2006_6 : LinguisticExample :=
   { id := "gpm2006_6"
@@ -211,9 +191,7 @@ def gpm2006_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "2"), ("subjNumber", "pl"), ("aux", "a"), ("prefix", "w"), ("suffix1", "éːʃ"), ("suffix2", "")]
-    comment := "Second person: person on the auxiliary, number on the verb."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Second person: person on the auxiliary, number on the verb." }
 
 def gpm2006_7 : LinguisticExample :=
   { id := "gpm2006_7"
@@ -229,9 +207,7 @@ def gpm2006_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "3"), ("subjNumber", "sg"), ("aux", "u"), ("prefix", "j"), ("suffix1", ""), ("suffix2", "")]
-    comment := "The prefix surfaces as y- before a vowel; the item is j-."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The prefix surfaces as y- before a vowel; the item is j-." }
 
 def gpm2006_8 : LinguisticExample :=
   { id := "gpm2006_8"
@@ -247,9 +223,7 @@ def gpm2006_8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "intransitive"), ("subjPerson", "3"), ("subjNumber", "pl"), ("aux", "u"), ("prefix", "j"), ("suffix1", "oʔob"), ("suffix2", "")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "" }
 
 def all : List LinguisticExample := [gpm2006_19, gpm2006_20, gpm2006_21, gpm2006_22, gpm2006_23, gpm2006_24, gpm2006_16ex, gpm2006_3, gpm2006_4, gpm2006_5, gpm2006_6, gpm2006_7, gpm2006_8]
 

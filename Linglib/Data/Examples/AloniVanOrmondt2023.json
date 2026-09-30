@@ -16,8 +16,7 @@
       ["numeral", "3"],
       ["inference", "ignorance"]
     ],
-    "comment": "Blok (2019); odd because the speaker knows how many children she has.",
-    "lgrConformance": "NONE"
+    "comment": "Blok (2019); odd because the speaker knows how many children she has."
   },
   {
     "id": "alonivanormondt2023_3b",
@@ -36,8 +35,7 @@
       ["numeral", "2"],
       ["inference", "none"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_4a",
@@ -56,8 +54,7 @@
       ["numeral", "10"],
       ["inference", "ignorance"]
     ],
-    "comment": "Nouwen (2010b).",
-    "lgrConformance": "NONE"
+    "comment": "Nouwen (2010b)."
   },
   {
     "id": "alonivanormondt2023_4b",
@@ -76,8 +73,7 @@
       ["numeral", "11"],
       ["inference", "none"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_5",
@@ -96,8 +92,7 @@
       ["numeral", "3"],
       ["inference", "exact"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_6",
@@ -116,8 +111,7 @@
       ["numeral", "3"],
       ["inference", "ignorance"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_7",
@@ -136,8 +130,7 @@
       ["numeral", "2"],
       ["inference", "none"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_10",
@@ -157,8 +150,7 @@
       ["construction", "disjunction"],
       ["inference", "ignorance"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_11",
@@ -178,8 +170,7 @@
       ["construction", "disjunction"],
       ["inference", "ignorance"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_12",
@@ -197,8 +188,7 @@
       ["construction", "disjunction"],
       ["inference", "ignorance"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_13",
@@ -216,8 +206,7 @@
       ["construction", "disjunction"],
       ["inference", "ignorance"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_18",
@@ -237,8 +226,7 @@
       ["construction", "disjunction"],
       ["inference", "ignorance"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_19",
@@ -259,8 +247,7 @@
       ["numeral", "3"],
       ["inference", "ignorance"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_20",
@@ -280,8 +267,7 @@
       ["embedding", "universal"],
       ["inference", "obviation"]
     ],
-    "comment": "Felicitous with full knowledge: no ignorance inference.",
-    "lgrConformance": "NONE"
+    "comment": "Felicitous with full knowledge: no ignorance inference."
   },
   {
     "id": "alonivanormondt2023_21",
@@ -304,8 +290,7 @@
       ["embedding", "necessity"],
       ["inference", "obviation"]
     ],
-    "comment": "Büring (2008): the authoritative reading carries no ignorance inference, the epistemic reading does.",
-    "lgrConformance": "NONE"
+    "comment": "Büring (2008): the authoritative reading carries no ignorance inference, the epistemic reading does."
   },
   {
     "id": "alonivanormondt2023_22",
@@ -326,8 +311,7 @@
       ["inference", "obviation"],
       ["reading", "authoritative"]
     ],
-    "comment": "Büring (2008).",
-    "lgrConformance": "NONE"
+    "comment": "Büring (2008)."
   },
   {
     "id": "alonivanormondt2023_23",
@@ -348,8 +332,7 @@
       ["inference", "ignorance"],
       ["reading", "epistemic"]
     ],
-    "comment": "Büring (2008).",
-    "lgrConformance": "NONE"
+    "comment": "Büring (2008)."
   },
   {
     "id": "alonivanormondt2023_24a",
@@ -367,8 +350,7 @@
       ["construction", "disjunction"],
       ["inference", "ignorance"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_25a",
@@ -387,8 +369,7 @@
       ["embedding", "universal"],
       ["inference", "obviation"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_26",
@@ -410,8 +391,7 @@
       ["embedding", "necessity"],
       ["inference", "obviation"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_27",
@@ -433,8 +413,7 @@
       ["inference", "distribution"],
       ["knowledge", "full"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_28",
@@ -456,8 +435,7 @@
       ["inference", "distributionEpi"],
       ["knowledge", "partial"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_29",
@@ -480,8 +458,7 @@
       ["embedding", "universal"],
       ["inference", "distribution"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_30a",
@@ -502,8 +479,7 @@
       ["embedding", "necessity"],
       ["inference", "boxFreeChoice"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_31a",
@@ -526,8 +502,7 @@
       ["inference", "boxFreeChoice"],
       ["reading", "authoritative"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_34",
@@ -548,8 +523,7 @@
       ["embedding", "universal"],
       ["inference", "distribution"]
     ],
-    "comment": "Crnič et al. (2015): the distributive inference obtains without the negated universal inference.",
-    "lgrConformance": "NONE"
+    "comment": "Crnič et al. (2015): the distributive inference obtains without the negated universal inference."
   },
   {
     "id": "alonivanormondt2023_35a",
@@ -570,8 +544,7 @@
       ["embedding", "possibility"],
       ["inference", "diamondFreeChoice"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_39a",
@@ -593,8 +566,7 @@
       ["embedding", "existential"],
       ["inference", "ignorance"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_40a",
@@ -615,8 +587,7 @@
       ["embedding", "negation"],
       ["inference", "negation"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_41",
@@ -636,8 +607,7 @@
       ["embedding", "negation"],
       ["inference", "negation"]
     ],
-    "comment": "Blocked by the simpler (42).",
-    "lgrConformance": "NONE"
+    "comment": "Blocked by the simpler (42)."
   },
   {
     "id": "alonivanormondt2023_42",
@@ -656,8 +626,7 @@
       ["numeral", "3"],
       ["inference", "none"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_45a",
@@ -676,8 +645,7 @@
       ["numeral", "3"],
       ["translation", "three ∨ more"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_46a",
@@ -696,8 +664,7 @@
       ["numeral", "3"],
       ["translation", "three ∨ less"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_47a",
@@ -716,8 +683,7 @@
       ["numeral", "2"],
       ["translation", "more-than-two"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_48a",
@@ -736,8 +702,7 @@
       ["numeral", "2"],
       ["translation", "less-than-two"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_63a",
@@ -758,8 +723,7 @@
       ["embedding", "universalPossibility"],
       ["inference", "universalFreeChoice"]
     ],
-    "comment": "Chemla (2009).",
-    "lgrConformance": "NONE"
+    "comment": "Chemla (2009)."
   },
   {
     "id": "alonivanormondt2023_64",
@@ -779,8 +743,7 @@
       ["embedding", "negation"],
       ["inference", "negation"]
     ],
-    "comment": "",
-    "lgrConformance": "NONE"
+    "comment": ""
   },
   {
     "id": "alonivanormondt2023_65",
@@ -799,7 +762,6 @@
       ["numeral", "2"],
       ["embedding", "restrictor"]
     ],
-    "comment": "Felicitous in a downward-entailing restrictor; left to future work.",
-    "lgrConformance": "NONE"
+    "comment": "Felicitous in a downward-entailing restrictor; left to future work."
   }
 ]

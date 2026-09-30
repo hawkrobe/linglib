@@ -31,9 +31,7 @@ def gg2017_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "English V1"), ("form", "PPQ"), ("dimension", "evidential"), ("value", "-")]
-    comment := "A positive polar question is infelicitous under compelling evidence against p."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A positive polar question is infelicitous under compelling evidence against p." }
 
 def gg2017_2a : LinguisticExample :=
   { id := "gg2017_2a"
@@ -49,9 +47,7 @@ def gg2017_2a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "English V1"), ("form", "IN-NPQ"), ("dimension", "epistemic"), ("value", "%")]
-    comment := "A negative polar question conveys the speaker's expectation that p, so it is odd without one."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A negative polar question conveys the speaker's expectation that p, so it is odd without one." }
 
 def gg2017_2b : LinguisticExample :=
   { id := "gg2017_2b"
@@ -67,9 +63,7 @@ def gg2017_2b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "English V1"), ("form", "IN-NPQ"), ("dimension", "epistemic"), ("value", "%")]
-    comment := "As (2a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "As (2a)." }
 
 def gg2017_8_neg : LinguisticExample :=
   { id := "gg2017_8_neg"
@@ -85,9 +79,7 @@ def gg2017_8_neg : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "Hungarian e"), ("form", "PPQ"), ("dimension", "evidential"), ("value", "-")]
-    comment := "The e-interrogative's evidential anti-bias: infelicitous under compelling evidence against p."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The e-interrogative's evidential anti-bias: infelicitous under compelling evidence against p." }
 
 def gg2017_8_pos : LinguisticExample :=
   { id := "gg2017_8_pos"
@@ -103,9 +95,7 @@ def gg2017_8_pos : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "Hungarian e"), ("form", "PPQ"), ("dimension", "evidential"), ("value", "+")]
-    comment := "The e-interrogative's evidential anti-bias: infelicitous under compelling evidence for p too."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The e-interrogative's evidential anti-bias: infelicitous under compelling evidence for p too." }
 
 def gg2017_9a : LinguisticExample :=
   { id := "gg2017_9a"
@@ -121,9 +111,7 @@ def gg2017_9a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "Hungarian e"), ("form", "ON-NPQ"), ("dimension", "evidential"), ("value", "-")]
-    comment := "The e-interrogative expressing an outside-negation question keeps the anti-bias."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The e-interrogative expressing an outside-negation question keeps the anti-bias." }
 
 def gg2017_9b : LinguisticExample :=
   { id := "gg2017_9b"
@@ -139,9 +127,7 @@ def gg2017_9b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "Hungarian e"), ("form", "ON-NPQ"), ("dimension", "evidential"), ("value", "+")]
-    comment := "As (9a), under compelling evidence for p."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "As (9a), under compelling evidence for p." }
 
 def all : List LinguisticExample := [gg2017_1, gg2017_2a, gg2017_2b, gg2017_8_neg, gg2017_8_pos, gg2017_9a, gg2017_9b]
 

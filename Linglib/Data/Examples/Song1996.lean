@@ -31,9 +31,7 @@ def ex_1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "fused")]
-    comment := "The lexical causative: kill and the basic verb die of (1.a) share no form; the COMPACT type at maximal fusion (pp. 3, 9)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The lexical causative: kill and the basic verb die of (1.a) share no form; the COMPACT type at maximal fusion (pp. 3, 9)." }
 
 def ex_6 : LinguisticExample :=
   { id := "song1996_6"
@@ -49,9 +47,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "fused"), ("effect", "negated")]
-    comment := "Song's diagnostic of implicativity: kill entails the death of the terrorist, so its denial is contradictory (p. 12, citing Karttunen 1971a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Song's diagnostic of implicativity: kill entails the death of the terrorist, so its denial is contradictory (p. 12, citing Karttunen 1971a)." }
 
 def ex_2b : LinguisticExample :=
   { id := "song1996_2b"
@@ -67,9 +63,7 @@ def ex_2b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "bound")]
-    comment := "The morphological causative: the suffix -dür attached to the basic verb öl- 'die' of (2.a) (p. 3)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The morphological causative: the suffix -dür attached to the basic verb öl- 'die' of (2.a) (p. 3)." }
 
 def ex_3b : LinguisticExample :=
   { id := "song1996_3b"
@@ -85,9 +79,7 @@ def ex_3b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauses", "two"), ("link", "PURP"), ("order", "effect-cause")]
-    comment := "Glossed COMP here after the traditional analysis of -ke as a complementizer; Song identifies it as purposive and glosses it PURP from (7) on (pp. 10, 12)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Glossed COMP here after the traditional analysis of -ke as a complementizer; Song identifies it as purposive and glosses it PURP from (7) on (pp. 10, 12)." }
 
 def ex_4a : LinguisticExample :=
   { id := "song1996_4a"
@@ -103,9 +95,7 @@ def ex_4a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "bound")]
-    comment := "The morphological causative in -ase, the causee in the accusative; the dative version (4.b) is 'Hanako got Ziroo to go' (pp. 5, 9)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The morphological causative in -ase, the causee in the accusative; the dative version (4.b) is 'Hanako got Ziroo to go' (pp. 5, 9)." }
 
 def ex_5 : LinguisticExample :=
   { id := "song1996_5"
@@ -121,9 +111,7 @@ def ex_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauses", "two"), ("link", "AND"), ("order", "cause-effect")]
-    comment := "The AND type: the clause of cause and the clause of effect coordinated by le, in that order; Song's source is Koopman (1984: 24-25) (pp. 10, 36). The glottocode is WALS's for Koopman's Vata."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The AND type: the clause of cause and the clause of effect coordinated by le, in that order; Song's source is Koopman (1984: 24-25) (pp. 10, 36). The glottocode is WALS's for Koopman's Vata." }
 
 def ex_7 : LinguisticExample :=
   { id := "song1996_7"
@@ -139,9 +127,7 @@ def ex_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauses", "two"), ("link", "PURP"), ("order", "effect-cause"), ("effect", "negated")]
-    comment := "The PURP causative of (3.b) with its effect denied: fully grammatical, so the prototypical PURP type is nonimplicative (pp. 12-13)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The PURP causative of (3.b) with its effect denied: fully grammatical, so the prototypical PURP type is nonimplicative (pp. 12-13)." }
 
 def ex_24 : LinguisticExample :=
   { id := "song1996_24"
@@ -157,9 +143,7 @@ def ex_24 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "free")]
-    comment := "The COMPACT type with [Vcause] a free morpheme: faire and the verb of effect adjacent (§2.3.2). Song glosses à Nicole jointly as 'Nicole (DAT)'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The COMPACT type with [Vcause] a free morpheme: faire and the verb of effect adjacent (§2.3.2). Song glosses à Nicole jointly as 'Nicole (DAT)'." }
 
 def ex_104 : LinguisticExample :=
   { id := "song1996_104"
@@ -175,9 +159,7 @@ def ex_104 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("clauses", "one"), ("vcause", "bound"), ("effect", "negated")]
-    comment := "A COMPACT causative in p- that is fully nonimplicative; Song's source is Svantesson (1983: 106), and the translation's 'tried' is added because the literal one is ungrammatical in English (p. 68, note 21; repeated as (35.a), p. 103)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A COMPACT causative in p- that is fully nonimplicative; Song's source is Svantesson (1983: 106), and the translation's 'tried' is added because the literal one is ungrammatical in English (p. 68, note 21; repeated as (35.a), p. 103)." }
 
 def all : List LinguisticExample := [ex_1b, ex_6, ex_2b, ex_3b, ex_4a, ex_5, ex_7, ex_24, ex_104]
 

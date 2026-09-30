@@ -29,8 +29,7 @@
         "true"
       ]
     ],
-    "comment": "Evaluativity of relative adjectives by construction and antonym polarity.",
-    "metaLanguage": "stan1293"
+    "comment": "Evaluativity of relative adjectives by construction and antonym polarity."
   },
   {
     "id": "rett2015_positive_short",
@@ -62,8 +61,7 @@
         "true"
       ]
     ],
-    "comment": "Evaluativity of relative adjectives by construction and antonym polarity.",
-    "metaLanguage": "stan1293"
+    "comment": "Evaluativity of relative adjectives by construction and antonym polarity."
   },
   {
     "id": "rett2015_comparative_tall",
@@ -95,8 +93,7 @@
         "false"
       ]
     ],
-    "comment": "Evaluativity of relative adjectives by construction and antonym polarity.",
-    "metaLanguage": "stan1293"
+    "comment": "Evaluativity of relative adjectives by construction and antonym polarity."
   },
   {
     "id": "rett2015_comparative_short",
@@ -128,8 +125,7 @@
         "false"
       ]
     ],
-    "comment": "Evaluativity of relative adjectives by construction and antonym polarity.",
-    "metaLanguage": "stan1293"
+    "comment": "Evaluativity of relative adjectives by construction and antonym polarity."
   },
   {
     "id": "rett2015_equative_tall",
@@ -161,8 +157,7 @@
         "false"
       ]
     ],
-    "comment": "Evaluativity of relative adjectives by construction and antonym polarity.",
-    "metaLanguage": "stan1293"
+    "comment": "Evaluativity of relative adjectives by construction and antonym polarity."
   },
   {
     "id": "rett2015_equative_short",
@@ -194,8 +189,7 @@
         "true"
       ]
     ],
-    "comment": "Evaluativity of relative adjectives by construction and antonym polarity.",
-    "metaLanguage": "stan1293"
+    "comment": "Evaluativity of relative adjectives by construction and antonym polarity."
   },
   {
     "id": "rett2015_mp_tall",
@@ -227,8 +221,7 @@
         "false"
       ]
     ],
-    "comment": "Evaluativity of relative adjectives by construction and antonym polarity.",
-    "metaLanguage": "stan1293"
+    "comment": "Evaluativity of relative adjectives by construction and antonym polarity."
   },
   {
     "id": "rett2015_mp_short",
@@ -256,8 +249,7 @@
         "negative"
       ]
     ],
-    "comment": "Evaluativity of relative adjectives by construction and antonym polarity.",
-    "metaLanguage": "stan1293"
+    "comment": "Evaluativity of relative adjectives by construction and antonym polarity."
   },
   {
     "id": "rett2015_question_tall",
@@ -289,8 +281,7 @@
         "false"
       ]
     ],
-    "comment": "Evaluativity of relative adjectives by construction and antonym polarity.",
-    "metaLanguage": "stan1293"
+    "comment": "Evaluativity of relative adjectives by construction and antonym polarity."
   },
   {
     "id": "rett2015_question_short",
@@ -322,7 +313,6 @@
         "true"
       ]
     ],
-    "comment": "Evaluativity of relative adjectives by construction and antonym polarity.",
-    "metaLanguage": "stan1293"
+    "comment": "Evaluativity of relative adjectives by construction and antonym polarity."
   }
 ]

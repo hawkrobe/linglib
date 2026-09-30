@@ -31,9 +31,7 @@ def ex10_nanka_noncancelable : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "nanka"), ("phenomenon", "noncancelability"), ("contextStance", "positive")]
-    comment := "The positive evaluation in the preceding clause contradicts the negative stance of nanka, and the stance cannot be cancelled: the evaluative meaning is conventional, not a Gricean inference."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The positive evaluation in the preceding clause contradicts the negative stance of nanka, and the stance cannot be cancelled: the evaluative meaning is conventional, not a Gricean inference." }
 
 def ex11_mushiro_unexpected : LinguisticExample :=
   { id := "kubota2026_ex11_mushiro_unexpected"
@@ -49,9 +47,7 @@ def ex11_mushiro_unexpected : LinguisticExample :=
     alternatives := [("Igai-na koto-ni, sunao-ni misu-o mitome-ta hō-ga yahari yoi kekka-ni tsunagaru.", .unacceptable)]
     readings := []
     paperFeatures := [("marker", "mushiro"), ("phenomenon", "noncancelability"), ("contextExpectation", "unexpected")]
-    comment := "The contrary marker mushiro 'rather' is fine under 'unexpectedly'; yahari 'as expected' is not."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The contrary marker mushiro 'rather' is fine under 'unexpectedly'; yahari 'as expected' is not." }
 
 def ex12_yahari_expected : LinguisticExample :=
   { id := "kubota2026_ex12_yahari_expected"
@@ -67,9 +63,7 @@ def ex12_yahari_expected : LinguisticExample :=
     alternatives := [("Igai-na koto-wa nani-mo na-ku, sunao-ni misu-o mitome-ta hō-ga mushiro yoi kekka-ni tsunagaru.", .unacceptable)]
     readings := []
     paperFeatures := [("marker", "yahari"), ("phenomenon", "noncancelability"), ("contextExpectation", "expected")]
-    comment := "yahari 'as expected' is fine under 'nothing surprising'; the contrary marker mushiro is not."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "yahari 'as expected' is fine under 'nothing surprising'; the contrary marker mushiro is not." }
 
 def ex37_nanka_counterstance : LinguisticExample :=
   { id := "kubota2026_ex37_nanka_counterstance"
@@ -85,9 +79,7 @@ def ex37_nanka_counterstance : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "nanka"), ("phenomenon", "counterstance"), ("priorMove", "evaluativeAssertion")]
-    comment := "A's positive evaluation of sweetened green tea is the salient counterstance that licenses nanka."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A's positive evaluation of sweetened green tea is the salient counterstance that licenses nanka." }
 
 def ex38_nanka_no_counterstance : LinguisticExample :=
   { id := "kubota2026_ex38_nanka_no_counterstance"
@@ -103,9 +95,7 @@ def ex38_nanka_no_counterstance : LinguisticExample :=
     alternatives := [("Satō-iri-no ryokucha-wa oishiku-nai-yo.", .acceptable)]
     readings := []
     paperFeatures := [("marker", "nanka"), ("phenomenon", "counterstance"), ("priorMove", "whQuestion")]
-    comment := "The paper marks nanka with ?? here ({wa/??nanka}); the plain wa variant is fine. No counterstance is salient after a general wh-question."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper marks nanka with ?? here ({wa/??nanka}); the plain wa variant is fine. No counterstance is salient after a general wh-question." }
 
 def ex39_dose_q1 : LinguisticExample :=
   { id := "kubota2026_ex39_dose_q1"
@@ -121,9 +111,7 @@ def ex39_dose_q1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "dōse"), ("phenomenon", "counterstance"), ("priorMove", "polarQuestion")]
-    comment := "The polar question raises the issue whether sweetened green tea is tasty, which licenses dōse."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The polar question raises the issue whether sweetened green tea is tasty, which licenses dōse." }
 
 def ex39_dose_q2 : LinguisticExample :=
   { id := "kubota2026_ex39_dose_q2"
@@ -139,9 +127,7 @@ def ex39_dose_q2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "dōse"), ("phenomenon", "counterstance"), ("priorMove", "whQuestion")]
-    comment := "Same sentence as the response to Q1; infelicitous because no salient issue directly responded to by the prejacent is raised."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Same sentence as the response to Q1; infelicitous because no salient issue directly responded to by the prejacent is raised." }
 
 def ex40_nanka_denial : LinguisticExample :=
   { id := "kubota2026_ex40_nanka_denial"
@@ -157,9 +143,7 @@ def ex40_nanka_denial : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "nanka"), ("phenomenon", "denial"), ("denialTarget", "prejacent")]
-    comment := "B's denial means 'You'll drink it for sure', not 'You are not negative about green tea with sugar': the stance layer cannot be the target of a yes/no response."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "B's denial means 'You'll drink it for sure', not 'You are not negative about green tea with sugar': the stance layer cannot be the target of a yes/no response." }
 
 def ex41_dose_denial : LinguisticExample :=
   { id := "kubota2026_ex41_dose_denial"
@@ -175,9 +159,7 @@ def ex41_dose_denial : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "dōse"), ("phenomenon", "denial"), ("denialTarget", "prejacent")]
-    comment := "B's denial means 'You have plenty of chances', not 'You aren't really so pessimistic'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "B's denial means 'You have plenty of chances', not 'You aren't really so pessimistic'." }
 
 def ex42_perspective_shift : LinguisticExample :=
   { id := "kubota2026_ex42_perspective_shift"
@@ -193,9 +175,7 @@ def ex42_perspective_shift : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "dōse+nanka"), ("phenomenon", "perspectiveShift"), ("perspectiveHolder", "attitudeHolder")]
-    comment := "Under the attitude verb the pessimistic outlook can only be read as the advisor's, not the speaker's: outlook markers shift under embedding, unlike typical expressives."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Under the attitude verb the pessimistic outlook can only be read as the advisor's, not the speaker's: outlook markers shift under embedding, unlike typical expressives." }
 
 def ex45a_nanka_epistemic : LinguisticExample :=
   { id := "kubota2026_ex45a_nanka_epistemic"
@@ -211,9 +191,7 @@ def ex45a_nanka_epistemic : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "nanka"), ("phenomenon", "modalInteraction"), ("modalForm", "hazu"), ("modalFlavor", "epistemic"), ("evaluation", "neutral")]
-    comment := "With the epistemic modal hazu the negative implication is comparatively neutral."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With the epistemic modal hazu the negative implication is comparatively neutral." }
 
 def ex45b_nanka_ability : LinguisticExample :=
   { id := "kubota2026_ex45b_nanka_ability"
@@ -229,9 +207,7 @@ def ex45b_nanka_ability : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "nanka"), ("phenomenon", "modalInteraction"), ("modalForm", "-eru"), ("modalFlavor", "circumstantial"), ("evaluation", "neutral")]
-    comment := "With the ability modal the negative implication is comparatively neutral, as with the epistemic case."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With the ability modal the negative implication is comparatively neutral, as with the epistemic case." }
 
 def ex45c_nanka_deontic : LinguisticExample :=
   { id := "kubota2026_ex45c_nanka_deontic"
@@ -247,9 +223,7 @@ def ex45c_nanka_deontic : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "nanka"), ("phenomenon", "modalInteraction"), ("modalForm", "hō-ga yokat-ta"), ("modalFlavor", "deontic"), ("evaluation", "pejorative")]
-    comment := "With a priority modal the negative implication is clearly pejorative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With a priority modal the negative implication is clearly pejorative." }
 
 def ex45d_nanka_bouletic : LinguisticExample :=
   { id := "kubota2026_ex45d_nanka_bouletic"
@@ -265,9 +239,7 @@ def ex45d_nanka_bouletic : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "nanka"), ("phenomenon", "modalInteraction"), ("modalForm", "iranai"), ("modalFlavor", "bouletic"), ("evaluation", "pejorative")]
-    comment := "With a bouletic modal the negative implication is clearly pejorative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With a bouletic modal the negative implication is clearly pejorative." }
 
 def ex46a_semete_epistemic : LinguisticExample :=
   { id := "kubota2026_ex46a_semete_epistemic"
@@ -283,9 +255,7 @@ def ex46a_semete_epistemic : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "semete"), ("phenomenon", "modalInteraction"), ("modalForm", "hazu"), ("modalFlavor", "epistemic")]
-    comment := "The paper marks the sentence ??: semete is incompatible with the epistemic modal hazu."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper marks the sentence ??: semete is incompatible with the epistemic modal hazu." }
 
 def ex46b_semete_ability : LinguisticExample :=
   { id := "kubota2026_ex46b_semete_ability"
@@ -301,9 +271,7 @@ def ex46b_semete_ability : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "semete"), ("phenomenon", "modalInteraction"), ("modalForm", "-eru"), ("modalFlavor", "circumstantial")]
-    comment := "The paper marks the sentence ??: semete is incompatible with the ability modal -eru."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper marks the sentence ??: semete is incompatible with the ability modal -eru." }
 
 def ex46c_semete_desiderative : LinguisticExample :=
   { id := "kubota2026_ex46c_semete_desiderative"
@@ -319,9 +287,7 @@ def ex46c_semete_desiderative : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "semete"), ("phenomenon", "modalInteraction"), ("modalForm", "-tai"), ("modalFlavor", "bouletic")]
-    comment := "semete with the desiderative -tai."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "semete with the desiderative -tai." }
 
 def ex46d_semete_deontic : LinguisticExample :=
   { id := "kubota2026_ex46d_semete_deontic"
@@ -337,9 +303,7 @@ def ex46d_semete_deontic : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("marker", "semete"), ("phenomenon", "modalInteraction"), ("modalForm", "-beki"), ("modalFlavor", "deontic")]
-    comment := "semete with the deontic -beki."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "semete with the deontic -beki." }
 
 def all : List LinguisticExample := [ex10_nanka_noncancelable, ex11_mushiro_unexpected, ex12_yahari_expected, ex37_nanka_counterstance, ex38_nanka_no_counterstance, ex39_dose_q1, ex39_dose_q2, ex40_nanka_denial, ex41_dose_denial, ex42_perspective_shift, ex45a_nanka_epistemic, ex45b_nanka_ability, ex45c_nanka_deontic, ex45d_nanka_bouletic, ex46a_semete_epistemic, ex46b_semete_ability, ex46c_semete_desiderative, ex46d_semete_deontic]
 

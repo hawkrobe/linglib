@@ -91,8 +91,7 @@
       ["coreference", "ihm = Peter"],
       ["remnant_case", "NOM"]
     ],
-    "comment": "Test context A (82): the nominative remnant has the subject sie as its correlate, which is higher than the pronoun.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Test context A (82): the nominative remnant has the subject sie as its correlate, which is higher than the pronoun."
   },
   {
     "id": "lechner2004_ch4_87b",
@@ -114,8 +113,7 @@
       ["coreference", "er = Peter"],
       ["remnant_case", "DAT"]
     ],
-    "comment": "Test context A (82): the dative remnant has the dative ihr as its correlate, which is lower than the pronoun.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Test context A (82): the dative remnant has the dative ihr as its correlate, which is lower than the pronoun."
   },
   {
     "id": "lechner2004_ch4_90a",
@@ -137,8 +135,7 @@
       ["coreference", "ihn = Präsident"],
       ["remnant_case", "ACC"]
     ],
-    "comment": "Test context B (89): the accusative remnant has the object die Öffentlichkeit as its correlate, which is lower than the name. The underlying parse (90b) prints the name's index as j in the matrix clause and i in the elided copy.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Test context B (89): the accusative remnant has the object die Öffentlichkeit as its correlate, which is lower than the name. The underlying parse (90b) prints the name's index as j in the matrix clause and i in the elided copy."
   },
   {
     "id": "lechner2004_ch4_91a",
@@ -160,7 +157,6 @@
       ["coreference", "er = Präsident"],
       ["remnant_case", "NOM"]
     ],
-    "comment": "Test context B (89): the nominative remnant has the subject die Öffentlichkeit as its correlate, which is higher than the name. The book notes that judgments are subtle here but contrast clearly with (90).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Test context B (89): the nominative remnant has the subject die Öffentlichkeit as its correlate, which is higher than the name. The book notes that judgments are subtle here but contrast clearly with (90)."
   }
 ]

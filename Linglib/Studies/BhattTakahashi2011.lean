@@ -70,10 +70,9 @@ theorem standard_cCommanded_of_associate (e : Lechner2004.PhrasalComparative) {m
 
 /-- A binding row records whether the matrix pronoun c-commands the associate and whether
 coreference between the pronoun and an R-expression inside the standard is attested, with the
-row's label and graded judgment. -/
+row's label. -/
 structure BindingDatum where
   citationId : String
-  acceptability : Acceptability
   pronCCommandsAssociate : Bool
   corefAttested : Bool
   deriving DecidableEq, Repr
@@ -110,22 +109,12 @@ instance (data : List BindingDatum) : Decidable (realizesDirect data) :=
 
 /-! ### The rows -/
 
-/-- `acceptabilityOf j` is the acceptability grade of the judgment `j`. -/
-def acceptabilityOf : Judgment → Acceptability
-  | .acceptable => .ok
-  | .marginal => .marginal
-  | .questionable => .degraded
-  | .unacceptable => .unacceptable
-  | .ungrammatical => .unacceptable
-
 /-- `bindingOf e` reads a binding row into a `BindingDatum`, recording whether the matrix pronoun
 c-commands the associate and whether the coreferential reading the row states is attested. -/
 def bindingOf (e : LinguisticExample) : Option BindingDatum :=
   (e.feature? "pron_c_commands_associate").bind fun s ↦
     let cc : Option Bool := match s with | "yes" => some true | "no" => some false | _ => none
-    cc.map fun b ↦
-      ⟨e.id, acceptabilityOf e.judgment, b,
-        decide (e.judgment = .acceptable ∨ e.judgment = .marginal)⟩
+    cc.map fun b ↦ ⟨e.id, b, decide (.marginal ≤ e.judgment)⟩
 
 /-- `rowsOf g` lists the rows of the language with Glottocode `g`. -/
 def rowsOf (glottocode : String) : List LinguisticExample :=

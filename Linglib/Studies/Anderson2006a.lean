@@ -87,8 +87,7 @@ def Category.ofString? : String → Option Category
 
 /-- The categories a row lists under a feature key. -/
 def categories (r : LinguisticExample) (key : String) : Finset Category :=
-  (r.paperFeatures.filterMap fun kv =>
-    if kv.1 = key then Category.ofString? kv.2 else none).toFinset
+  ((r.features key).filterMap Category.ofString?).toFinset
 
 /-- The inflectional marking a row records, when it records one. -/
 def InflectionalMarking.ofRow? (r : LinguisticExample) : Option InflectionalMarking :=

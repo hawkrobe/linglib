@@ -28,8 +28,7 @@
         "cooking potatoes to any potatoes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "kl1993_2",
@@ -56,8 +55,7 @@
         "mono"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "kl1993_10",
@@ -88,8 +86,7 @@
         "healthy owls to any owl"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "kl1993_27b",
@@ -120,8 +117,7 @@
         "dry matches to any matches"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "kl1993_55",
@@ -148,8 +144,7 @@
         "mult"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "kl1993_56",
@@ -176,8 +171,7 @@
         "mult"
       ]
     ],
-    "comment": "Locality: the sentence-level context under negation is DE, the local scope of every is not.",
-    "lgrConformance": ""
+    "comment": "Locality: the sentence-level context under negation is DE, the local scope of every is not."
   },
   {
     "id": "kl1993_72",
@@ -204,8 +198,7 @@
         "adversative"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "kl1993_73",
@@ -232,8 +225,7 @@
         "mono"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "kl1993_76B",
@@ -264,8 +256,7 @@
         "yes"
       ]
     ],
-    "comment": "Settle for less: the narrow wish, better tickets, is preferred but unsatisfiable.",
-    "lgrConformance": ""
+    "comment": "Settle for less: the narrow wish, better tickets, is preferred but unsatisfiable."
   },
   {
     "id": "kl1993_82",
@@ -296,8 +287,7 @@
         "phonologists who hate me to linguists who hate me"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "kl1993_88",
@@ -328,8 +318,7 @@
         "yes"
       ]
     ],
-    "comment": "Settle for less: the narrow wish, that a phonologist likes me, is preferred but unsatisfiable.",
-    "lgrConformance": ""
+    "comment": "Settle for less: the narrow wish, that a phonologist likes me, is preferred but unsatisfiable."
   },
   {
     "id": "kl1993_95",
@@ -356,8 +345,7 @@
         "mono"
       ]
     ],
-    "comment": "sure has no settle-for-less interpretation, (96) to (98).",
-    "lgrConformance": ""
+    "comment": "sure has no settle-for-less interpretation, (96) to (98)."
   },
   {
     "id": "kl1993_105",
@@ -388,8 +376,7 @@
         "yes"
       ]
     ],
-    "comment": "The negation denies the factive presupposition of because; any strengthens the denial.",
-    "lgrConformance": ""
+    "comment": "The negation denies the factive presupposition of because; any strengthens the denial."
   },
   {
     "id": "kl1993_106",
@@ -416,8 +403,7 @@
         "all"
       ]
     ],
-    "comment": "The continuation cancels the negative implication, so there is no denial.",
-    "lgrConformance": ""
+    "comment": "The continuation cancels the negative implication, so there is no denial."
   },
   {
     "id": "kl1993_109",
@@ -444,8 +430,7 @@
         "all"
       ]
     ],
-    "comment": "The surrounding text cancels the negative implication.",
-    "lgrConformance": ""
+    "comment": "The surrounding text cancels the negative implication."
   },
   {
     "id": "kl1993_122",
@@ -472,8 +457,7 @@
         "anti"
       ]
     ],
-    "comment": "because of NP under negation is downward entailing: any is licensed without a negative implication.",
-    "lgrConformance": ""
+    "comment": "because of NP under negation is downward entailing: any is licensed without a negative implication."
   },
   {
     "id": "kl1993_123",
@@ -500,8 +484,7 @@
         "anti"
       ]
     ],
-    "comment": "The minimal pair with (109): the NP complement restores DE licensing.",
-    "lgrConformance": ""
+    "comment": "The minimal pair with (109): the NP complement restores DE licensing."
   },
   {
     "id": "kl1993_125",
@@ -532,8 +515,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "kl1993_132",
@@ -560,8 +542,7 @@
         "all"
       ]
     ],
-    "comment": "Implies the denial of the presupposition but cannot metalinguistically deny it.",
-    "lgrConformance": ""
+    "comment": "Implies the denial of the presupposition but cannot metalinguistically deny it."
   },
   {
     "id": "kl1993_143",
@@ -592,8 +573,7 @@
         "important newspapers to any newspaper"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "kl1993_almost_every",
@@ -632,8 +612,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "kl1993_almost_no",
@@ -672,8 +651,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "kl1993_almost_some",
@@ -712,8 +690,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "kl1993_almost_an",
@@ -752,8 +729,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "kl1993_almost_any",
@@ -792,7 +768,6 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

@@ -31,9 +31,7 @@ def ex_1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "First member of the (1a)/(1c) minimal pair on za-: transparently spatial (lexical) use."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "First member of the (1a)/(1c) minimal pair on za-: transparently spatial (lexical) use." }
 
 def ex_1b : LinguisticExample :=
   { id := "svenonius2004_1b"
@@ -49,9 +47,7 @@ def ex_1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Lexical za- with idiomatic meaning 'give up' — lexical idiosyncrasy contrasts with the systematic meanings of superlexicals (his (56e))."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Lexical za- with idiomatic meaning 'give up' — lexical idiosyncrasy contrasts with the systematic meanings of superlexicals (his (56e))." }
 
 def ex_1c : LinguisticExample :=
   { id := "svenonius2004_1c"
@@ -67,9 +63,7 @@ def ex_1c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Second member of the (1a)/(1c) minimal pair: same prefix form, superlexical inceptive class."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Second member of the (1a)/(1c) minimal pair: same prefix form, superlexical inceptive class." }
 
 def ex_4a : LinguisticExample :=
   { id := "svenonius2004_4a"
@@ -85,9 +79,7 @@ def ex_4a : LinguisticExample :=
     alternatives := [("vy-po-brasyvatj", .ungrammatical)]
     readings := []
     paperFeatures := []
-    comment := "His (4a) with the reversed order (4b) *vy-po-brasyvatj: the superlexical prefix always appears outside the lexical prefix."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "His (4a) with the reversed order (4b) *vy-po-brasyvatj: the superlexical prefix always appears outside the lexical prefix." }
 
 def ex_4c : LinguisticExample :=
   { id := "svenonius2004_4c"
@@ -103,9 +95,7 @@ def ex_4c : LinguisticExample :=
     alternatives := [("w-po-chodzili", .ungrammatical)]
     readings := []
     paperFeatures := []
-    comment := "Attributed by Svenonius to Jabłońska 2004; not locatable as a numbered example in her paper. Reversed order (4d) *w-po-chodzili is ungrammatical."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Attributed by Svenonius to Jabłońska 2004; not locatable as a numbered example in her paper. Reversed order (4d) *w-po-chodzili is ungrammatical." }
 
 def ex_3a : LinguisticExample :=
   { id := "svenonius2004_3a"
@@ -121,9 +111,7 @@ def ex_3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Svenonius glosses the outer po- DLMT; on Istratkova's own taxonomy the po- that stacks over na- is her attenuative po- (her (23c)), her delimitative po- does not stack."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Svenonius glosses the outer po- DLMT; on Istratkova's own taxonomy the po- that stacks over na- is her attenuative po- (her (23c)), her delimitative po- does not stack." }
 
 def ex_3e : LinguisticExample :=
   { id := "svenonius2004_3e"
@@ -139,9 +127,7 @@ def ex_3e : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "The deepest razkaža stack Svenonius cites from Istratkova's data; the po- after iz- is her distributive po-."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "The deepest razkaža stack Svenonius cites from Istratkova's data; the po- after iz- is her distributive po-." }
 
 def ex_58za : LinguisticExample :=
   { id := "svenonius2004_58za"
@@ -157,9 +143,7 @@ def ex_58za : LinguisticExample :=
     alternatives := [("za-kurivatj", .ungrammatical)]
     readings := []
     paperFeatures := []
-    comment := "Datum for his (58a-i): inceptive za- blocks secondary imperfectivization, consistent with attachment above the SI position."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Datum for his (58a-i): inceptive za- blocks secondary imperfectivization, consistent with attachment above the SI position." }
 
 def ex_58po : LinguisticExample :=
   { id := "svenonius2004_58po"
@@ -175,9 +159,7 @@ def ex_58po : LinguisticExample :=
     alternatives := [("po-čityvatj", .acceptable)]
     readings := []
     paperFeatures := []
-    comment := "Datum for his (58b): attenuative po- sometimes allows the secondary imperfective (po-čityvatj), unlike inceptive za-."
-    metaLanguage := "stan1293"
-    lgrConformance := "MORPHEME_ALIGNED" }
+    comment := "Datum for his (58b): attenuative po- sometimes allows the secondary imperfective (po-čityvatj), unlike inceptive za-." }
 
 def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_4a, ex_4c, ex_3a, ex_3e, ex_58za, ex_58po]
 

@@ -16,8 +16,7 @@
     "paperFeatures": [
       ["polarity", "positive"]
     ],
-    "comment": "Conveys that Emily fed more than one giraffe, the multiplicity inference.",
-    "lgrConformance": ""
+    "comment": "Conveys that Emily fed more than one giraffe, the multiplicity inference."
   },
   {
     "id": "tieuetal2020_2a",
@@ -37,8 +36,7 @@
     "paperFeatures": [
       ["polarity", "negative"]
     ],
-    "comment": "Paraphrased as the negation of the singular, that Emily fed no giraffe, rather than as not more than one.",
-    "lgrConformance": ""
+    "comment": "Paraphrased as the negation of the singular, that Emily fed no giraffe, rather than as not more than one."
   },
   {
     "id": "tieuetal2020_3a",
@@ -55,8 +53,7 @@
     "paperFeatures": [
       ["polarity", "downward"]
     ],
-    "comment": "In the antecedent of a conditional the plural is equivalent to the singular.",
-    "lgrConformance": ""
+    "comment": "In the antecedent of a conditional the plural is equivalent to the singular."
   },
   {
     "id": "tieuetal2020_4a",
@@ -73,8 +70,7 @@
     "paperFeatures": [
       ["polarity", "downward"]
     ],
-    "comment": "In a question the plural is equivalent to the singular.",
-    "lgrConformance": ""
+    "comment": "In a question the plural is equivalent to the singular."
   },
   {
     "id": "tieuetal2020_8",
@@ -91,8 +87,7 @@
     "paperFeatures": [
       ["polarity", "negative"]
     ],
-    "comment": "The marked reading with stress on the plural morpheme: the weak reading of the ambiguity account, a local implicature, or an undefined sentence used as if true.",
-    "lgrConformance": ""
+    "comment": "The marked reading with stress on the plural morpheme: the weak reading of the ambiguity account, a local implicature, or an undefined sentence used as if true."
   },
   {
     "id": "tieuetal2020_14",
@@ -109,8 +104,7 @@
     "paperFeatures": [
       ["polarity", "positive"]
     ],
-    "comment": "The more informative alternative to (13) whose denial is the multiplicity inference.",
-    "lgrConformance": ""
+    "comment": "The more informative alternative to (13) whose denial is the multiplicity inference."
   },
   {
     "id": "tieuetal2020_17",
@@ -127,8 +121,7 @@
     "paperFeatures": [
       ["polarity", "negative"]
     ],
-    "comment": "Weaker than (16), so no implicature arises under negation.",
-    "lgrConformance": ""
+    "comment": "Weaker than (16), so no implicature arises under negation."
   },
   {
     "id": "tieuetal2020_27a",
@@ -146,8 +139,7 @@
       ["polarity", "positive"],
       ["n_acted_on", "one"]
     ],
-    "comment": "In a context where Emily fed only one giraffe: literally true with a false implicature on the implicature approach, false on the ambiguity approach, undefined on the homogeneity approach.",
-    "lgrConformance": ""
+    "comment": "In a context where Emily fed only one giraffe: literally true with a false implicature on the implicature approach, false on the ambiguity approach, undefined on the homogeneity approach."
   },
   {
     "id": "tieuetal2020_27b",
@@ -165,8 +157,7 @@
       ["polarity", "negative"],
       ["n_acted_on", "one"]
     ],
-    "comment": "In the same context: false on the implicature and ambiguity approaches, undefined on the homogeneity approach.",
-    "lgrConformance": ""
+    "comment": "In the same context: false on the implicature and ambiguity approaches, undefined on the homogeneity approach."
   },
   {
     "id": "tieuetal2020_29a",
@@ -185,8 +176,7 @@
     "paperFeatures": [
       ["polarity", "positive"]
     ],
-    "comment": "Children accept it where the stronger (29b) is also true, failing to compute the implicature (29c).",
-    "lgrConformance": ""
+    "comment": "Children accept it where the stronger (29b) is also true, failing to compute the implicature (29c)."
   },
   {
     "id": "tieuetal2020_exp1_positive",
@@ -205,8 +195,7 @@
       ["polarity", "positive"],
       ["n_acted_on", "one"]
     ],
-    "comment": "Truth-value judgment after a story in which Emily fed exactly one pig; rejection indicates the multiplicity inference. Adults rejected at a high rate and children at a low rate.",
-    "lgrConformance": ""
+    "comment": "Truth-value judgment after a story in which Emily fed exactly one pig; rejection indicates the multiplicity inference. Adults rejected at a high rate and children at a low rate."
   },
   {
     "id": "tieuetal2020_exp1_negative",
@@ -225,8 +214,7 @@
       ["polarity", "negative"],
       ["n_acted_on", "one"]
     ],
-    "comment": "Truth-value judgment after a story in which Emily fed exactly one giraffe; acceptance indicates a local multiplicity reading under negation, which adults gave at a moderate rate and children at a low rate.",
-    "lgrConformance": ""
+    "comment": "Truth-value judgment after a story in which Emily fed exactly one giraffe; acceptance indicates a local multiplicity reading under negation, which adults gave at a moderate rate and children at a low rate."
   },
   {
     "id": "tieuetal2020_exp2_si",
@@ -245,8 +233,7 @@
       ["polarity", "positive"],
       ["inference", "scalar"]
     ],
-    "comment": "Scalar-implicature target after a story in which Lion carried all of the apples; rejection indicates the not-all implicature. Children computed fewer scalar implicatures and fewer multiplicity inferences than adults, and the two rates were correlated within children.",
-    "lgrConformance": ""
+    "comment": "Scalar-implicature target after a story in which Lion carried all of the apples; rejection indicates the not-all implicature. Children computed fewer scalar implicatures and fewer multiplicity inferences than adults, and the two rates were correlated within children."
   },
   {
     "id": "tieuetal2020_exp3_positive_plural",
@@ -267,8 +254,7 @@
       ["task", "ternary_reward"],
       ["preferred_reward", "intermediate"]
     ],
-    "comment": "Ternary judgment with adults after Koala bought exactly one pear: the intermediate reward, literally true but misleading.",
-    "lgrConformance": ""
+    "comment": "Ternary judgment with adults after Koala bought exactly one pear: the intermediate reward, literally true but misleading."
   },
   {
     "id": "tieuetal2020_exp3_negative_plural",
@@ -289,7 +275,6 @@
       ["task", "ternary_reward"],
       ["preferred_reward", "minimal"]
     ],
-    "comment": "Ternary judgment with adults after Koala bought exactly one pear: the minimal reward, literally false.",
-    "lgrConformance": ""
+    "comment": "Ternary judgment with adults after Koala bought exactly one pear: the minimal reward, literally false."
   }
 ]

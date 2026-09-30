@@ -31,9 +31,7 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := [("FID (CT/CU split)", .acceptable), ("literal-contradiction", .ungrammatical)]
     paperFeatures := []
-    comment := "Schlenker 2004 ex (1), p. 280: Lawrence, Women in Love (p. 185 of the 1971 Heinemann edition), cited via Banfield 1982 p. 98 and Doron 1991. The past tense is evaluated against the Context of Utterance, `tomorrow` against the Context of Thought; evaluated against one context the sentence is contradictory."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Schlenker 2004 ex (1), p. 280: Lawrence, Women in Love (p. 185 of the 1971 Heinemann edition), cited via Banfield 1982 p. 98 and Doron 1991. The past tense is evaluated against the Context of Utterance, `tomorrow` against the Context of Thought; evaluated against one context the sentence is contradictory." }
 
 def ex2 : LinguisticExample :=
   { id := "schlenker2004a_ex2"
@@ -49,9 +47,7 @@ def ex2 : LinguisticExample :=
     alternatives := []
     readings := [("HP (CT/CU split, CT shifted back 58y)", .acceptable), ("literal-contradiction", .ungrammatical)]
     paperFeatures := []
-    comment := "Schlenker 2004 ex (2), p. 281, repeated as (28a). Mirror image of (1): the present tense is evaluated against a Context of Utterance set fifty-eight years in the past, `fifty eight years ago` against the Context of Thought, which is the actual context."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Schlenker 2004 ex (2), p. 281, repeated as (28a). Mirror image of (1): the present tense is evaluated against a Context of Utterance set fifty-eight years in the past, `fifty eight years ago` against the Context of Thought, which is the actual context." }
 
 def all : List LinguisticExample := [ex1, ex2]
 

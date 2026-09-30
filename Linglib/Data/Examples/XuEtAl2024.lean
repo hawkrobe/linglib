@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := [("deedbox", .acceptable), ("strongbox", .acceptable), ("storeroom", .acceptable)]
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1940+")]
-    comment := "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2." }
 
 def ex_2 : LinguisticExample :=
   { id := "xuetal2024_2"
@@ -49,9 +47,7 @@ def ex_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1940+")]
-    comment := "An attested emerging form-sense pair."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair." }
 
 def ex_3 : LinguisticExample :=
   { id := "xuetal2024_3"
@@ -67,9 +63,7 @@ def ex_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1940+")]
-    comment := "An attested emerging form-sense pair."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair." }
 
 def ex_4 : LinguisticExample :=
   { id := "xuetal2024_4"
@@ -85,9 +79,7 @@ def ex_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1900+")]
-    comment := "An attested emerging form-sense pair."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair." }
 
 def ex_5 : LinguisticExample :=
   { id := "xuetal2024_5"
@@ -103,9 +95,7 @@ def ex_5 : LinguisticExample :=
     alternatives := [("renewal", .acceptable), ("renovation", .acceptable), ("urban-renovation", .acceptable)]
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1940+")]
-    comment := "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2." }
 
 def ex_6 : LinguisticExample :=
   { id := "xuetal2024_6"
@@ -121,9 +111,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1980+")]
-    comment := "An attested emerging form-sense pair."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair." }
 
 def ex_7 : LinguisticExample :=
   { id := "xuetal2024_7"
@@ -139,9 +127,7 @@ def ex_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1900+")]
-    comment := "An attested emerging form-sense pair."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair." }
 
 def ex_8 : LinguisticExample :=
   { id := "xuetal2024_8"
@@ -157,9 +143,7 @@ def ex_8 : LinguisticExample :=
     alternatives := [("réclame", .acceptable), ("annonce", .acceptable), ("pub", .acceptable), ("emballage", .acceptable)]
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1920+")]
-    comment := "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2." }
 
 def ex_9 : LinguisticExample :=
   { id := "xuetal2024_9"
@@ -175,9 +159,7 @@ def ex_9 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1960+")]
-    comment := "An attested emerging form-sense pair."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair." }
 
 def ex_10 : LinguisticExample :=
   { id := "xuetal2024_10"
@@ -193,9 +175,7 @@ def ex_10 : LinguisticExample :=
     alternatives := [("turbine", .acceptable), ("générateur", .acceptable), ("moteur-gaz", .acceptable)]
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1900+")]
-    comment := "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2." }
 
 def ex_11 : LinguisticExample :=
   { id := "xuetal2024_11"
@@ -211,9 +191,7 @@ def ex_11 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1900+")]
-    comment := "An attested emerging form-sense pair."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair." }
 
 def ex_12 : LinguisticExample :=
   { id := "xuetal2024_12"
@@ -229,9 +207,7 @@ def ex_12 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1940+")]
-    comment := "An attested emerging form-sense pair."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair." }
 
 def ex_13 : LinguisticExample :=
   { id := "xuetal2024_13"
@@ -247,9 +223,7 @@ def ex_13 : LinguisticExample :=
     alternatives := [("lasti", .acceptable), ("rahti", .acceptable), ("toimitus", .acceptable), ("kuorma", .acceptable)]
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1900+")]
-    comment := "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2." }
 
 def ex_14 : LinguisticExample :=
   { id := "xuetal2024_14"
@@ -265,9 +239,7 @@ def ex_14 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1920+")]
-    comment := "An attested emerging form-sense pair."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair." }
 
 def ex_15 : LinguisticExample :=
   { id := "xuetal2024_15"
@@ -283,9 +255,7 @@ def ex_15 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "reuse"), ("interval", "1940+")]
-    comment := "An attested emerging form-sense pair."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair." }
 
 def ex_16 : LinguisticExample :=
   { id := "xuetal2024_16"
@@ -301,9 +271,7 @@ def ex_16 : LinguisticExample :=
     alternatives := [("rikos", .acceptable), ("laittomuus", .acceptable), ("sota-laittomuus", .acceptable)]
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1900+")]
-    comment := "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair; the alternatives are the near-synonym baselines of Table 2." }
 
 def ex_17 : LinguisticExample :=
   { id := "xuetal2024_17"
@@ -319,9 +287,7 @@ def ex_17 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1900+")]
-    comment := "An attested emerging form-sense pair."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair." }
 
 def ex_18 : LinguisticExample :=
   { id := "xuetal2024_18"
@@ -337,9 +303,7 @@ def ex_18 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("strategy", "compound"), ("interval", "1920+")]
-    comment := "An attested emerging form-sense pair."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An attested emerging form-sense pair." }
 
 def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18]
 

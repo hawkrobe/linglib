@@ -31,9 +31,7 @@ def ex_7_5_pa : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "pa"), ("output", "pa"), ("in_rvoice", "yes")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_7_5_aaa : LinguisticExample :=
   { id := "jardine2016b_7_5_aaa"
@@ -49,9 +47,7 @@ def ex_7_5_aaa : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "aaa"), ("output", "aaa"), ("in_rvoice", "yes")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_7_5_apa : LinguisticExample :=
   { id := "jardine2016b_7_5_apa"
@@ -67,9 +63,7 @@ def ex_7_5_apa : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "apa"), ("output", "aba"), ("in_rvoice", "yes")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_7_5_aba : LinguisticExample :=
   { id := "jardine2016b_7_5_aba"
@@ -85,9 +79,7 @@ def ex_7_5_aba : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "aba"), ("output", "aba"), ("in_rvoice", "yes")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_7_5_appa : LinguisticExample :=
   { id := "jardine2016b_7_5_appa"
@@ -103,9 +95,7 @@ def ex_7_5_appa : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "appa"), ("output", "appa"), ("in_rvoice", "yes")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_7_5_aapaaapa : LinguisticExample :=
   { id := "jardine2016b_7_5_aapaaapa"
@@ -121,9 +111,7 @@ def ex_7_5_aapaaapa : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "aapaaapa"), ("output", "aabaaaba"), ("in_rvoice", "yes")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_7_17_pa_ba : LinguisticExample :=
   { id := "jardine2016b_7_17_pa_ba"
@@ -139,9 +127,7 @@ def ex_7_17_pa_ba : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "pa"), ("output", "ba"), ("in_rvoice", "no")]
-    comment := "A non-intervocalic p voiced, (7.20a): excluded by φ⋊pb."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A non-intervocalic p voiced, (7.20a): excluded by φ⋊pb." }
 
 def ex_7_17_apa_apa : LinguisticExample :=
   { id := "jardine2016b_7_17_apa_apa"
@@ -157,9 +143,7 @@ def ex_7_17_apa_apa : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "apa"), ("output", "apa"), ("in_rvoice", "no")]
-    comment := "An intervocalic p unvoiced, (7.18b): excluded by φapa."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An intervocalic p unvoiced, (7.18b): excluded by φapa." }
 
 def ex_7_17_appa_abpa : LinguisticExample :=
   { id := "jardine2016b_7_17_appa_abpa"
@@ -175,9 +159,7 @@ def ex_7_17_appa_abpa : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.2"), ("input", "appa"), ("output", "abpa"), ("in_rvoice", "no")]
-    comment := "A p voiced before a p, (7.20b): excluded by φpbp."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A p voiced before a p, (7.20b): excluded by φpbp." }
 
 def all : List LinguisticExample := [ex_7_5_pa, ex_7_5_aaa, ex_7_5_apa, ex_7_5_aba, ex_7_5_appa, ex_7_5_aapaaapa, ex_7_17_pa_ba, ex_7_17_apa_apa, ex_7_17_appa_abpa]
 

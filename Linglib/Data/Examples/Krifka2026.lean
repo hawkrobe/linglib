@@ -31,9 +31,7 @@ def ex3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent", "count"), ("anaphor", "they")]
-    comment := "The paper credits the observation to Krifka et al. (1995)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper credits the observation to Krifka et al. (1995)." }
 
 def ex3b : LinguisticExample :=
   { id := "krifka2026_ex3b"
@@ -49,9 +47,7 @@ def ex3b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent", "mass"), ("anaphor", "it")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex5a : LinguisticExample :=
   { id := "krifka2026_ex5a"
@@ -67,9 +63,7 @@ def ex5a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent", "count"), ("island", "negation"), ("anaphor", "they")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex5b : LinguisticExample :=
   { id := "krifka2026_ex5b"
@@ -85,9 +79,7 @@ def ex5b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent", "mass"), ("island", "negation"), ("anaphor", "it")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex5c : LinguisticExample :=
   { id := "krifka2026_ex5c"
@@ -103,9 +95,7 @@ def ex5c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("antecedent", "count"), ("island", "negation"), ("anaphor", "entityPronoun")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex7a : LinguisticExample :=
   { id := "krifka2026_ex7a"
@@ -121,9 +111,7 @@ def ex7a : LinguisticExample :=
     alternatives := [("He has a phobia against it.", .unacceptable)]
     readings := []
     paperFeatures := [("antecedent", "count"), ("anaphor", "they")]
-    comment := "The antecedent may also be *spiders* or *two spiders*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The antecedent may also be *spiders* or *two spiders*." }
 
 def ex7b : LinguisticExample :=
   { id := "krifka2026_ex7b"
@@ -139,9 +127,7 @@ def ex7b : LinguisticExample :=
     alternatives := [("He is allergic against them.", .unacceptable)]
     readings := []
     paperFeatures := [("antecedent", "mass"), ("anaphor", "it")]
-    comment := "The antecedent may also be *a spot of mold* or *two spots of mold*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The antecedent may also be *a spot of mold* or *two spots of mold*." }
 
 def ex8a : LinguisticExample :=
   { id := "krifka2026_ex8a"
@@ -157,9 +143,7 @@ def ex8a : LinguisticExample :=
     alternatives := [("I am allergic against them.", .unacceptable)]
     readings := []
     paperFeatures := [("antecedent", "mass"), ("anaphor", "it")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex8b : LinguisticExample :=
   { id := "krifka2026_ex8b"
@@ -175,9 +159,7 @@ def ex8b : LinguisticExample :=
     alternatives := [("I am allergic against it.", .questionable)]
     readings := []
     paperFeatures := [("antecedent", "count"), ("anaphor", "they")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex19a : LinguisticExample :=
   { id := "krifka2026_ex19a"
@@ -193,9 +175,7 @@ def ex19a : LinguisticExample :=
     alternatives := []
     readings := [("afraid of dogs", .acceptable)]
     paperFeatures := [("antecedent", "count"), ("island", "negation"), ("anaphor", "they")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex19b : LinguisticExample :=
   { id := "krifka2026_ex19b"
@@ -211,9 +191,7 @@ def ex19b : LinguisticExample :=
     alternatives := []
     readings := [("a dog from the shelter downtown", .acceptable)]
     paperFeatures := [("antecedent", "count"), ("island", "negation"), ("anaphor", "one")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex3a, ex3b, ex5a, ex5b, ex5c, ex7a, ex7b, ex8a, ex8b, ex19a, ex19b]
 

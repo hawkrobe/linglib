@@ -31,9 +31,7 @@ def ex_1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("mode", "indicative"), ("reading", "SDA")]
-    comment := "Intuitively equivalent to the conjunction of its simplifications, (2a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Intuitively equivalent to the conjunction of its simplifications, (2a)." }
 
 def ex_1b : LinguisticExample :=
   { id := "zaniciardellisanfelici2026_1b"
@@ -49,9 +47,7 @@ def ex_1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("reading", "SDA")]
-    comment := "Intuitively equivalent to the conjunction of its simplifications, (2b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Intuitively equivalent to the conjunction of its simplifications, (2b)." }
 
 def ex_3 : LinguisticExample :=
   { id := "zaniciardellisanfelici2026_3"
@@ -67,9 +63,7 @@ def ex_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("reading", "AR"), ("type", "specificational")]
-    comment := "Cited from McKay and van Inwagen (1977): true because fighting with the Axis is the more realistic disjunct, so SDA fails."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Cited from McKay and van Inwagen (1977): true because fighting with the Axis is the more realistic disjunct, so SDA fails." }
 
 def ex_4 : LinguisticExample :=
   { id := "zaniciardellisanfelici2026_4"
@@ -85,9 +79,7 @@ def ex_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("reading", "SDA")]
-    comment := "Nute's bumper-crop example: judged false because the simplification with the less realistic disjunct, (4b), is false, against Lewis's prediction."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Nute's bumper-crop example: judged false because the simplification with the less realistic disjunct, (4b), is false, against Lewis's prediction." }
 
 def ex_6 : LinguisticExample :=
   { id := "zaniciardellisanfelici2026_6"
@@ -103,9 +95,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("mode", "indicative"), ("reading", "DCR")]
-    comment := "The continuation forces the disjunctive conditional reading: the disjunction of the simplifications."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The continuation forces the disjunctive conditional reading: the disjunction of the simplifications." }
 
 def ex_7 : LinguisticExample :=
   { id := "zaniciardellisanfelici2026_7"
@@ -121,9 +111,7 @@ def ex_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("inference", "free choice")]
-    comment := "Free-choice inference to each permission, taken to share its source with SDA."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Free-choice inference to each permission, taken to share its source with SDA." }
 
 def ex_8 : LinguisticExample :=
   { id := "zaniciardellisanfelici2026_8"
@@ -139,9 +127,7 @@ def ex_8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "plural definite homogeneity")]
-    comment := "Adults require all circles red; about a third of 4- and 5-year-olds accept it once some circles are red (Tieu et al. 2019)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Adults require all circles red; about a third of 4- and 5-year-olds accept it once some circles are red (Tieu et al. 2019)." }
 
 def target_ind : LinguisticExample :=
   { id := "zaniciardellisanfelici2026_target_ind"
@@ -157,9 +143,7 @@ def target_ind : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("mode", "indicative"), ("item", "target"), ("schema", "(9a)")]
-    comment := "Target item: the hazelnut is the squirrel's prize, so one simplification is true and the other false."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Target item: the hazelnut is the squirrel's prize, so one simplification is true and the other false." }
 
 def target_ctf : LinguisticExample :=
   { id := "zaniciardellisanfelici2026_target_ctf"
@@ -175,9 +159,7 @@ def target_ctf : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("item", "target"), ("schema", "(9a)")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def control_ind : LinguisticExample :=
   { id := "zaniciardellisanfelici2026_control_ind"
@@ -193,9 +175,7 @@ def control_ind : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("mode", "indicative"), ("item", "control"), ("expected", "true")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def control_ctf : LinguisticExample :=
   { id := "zaniciardellisanfelici2026_control_ctf"
@@ -211,9 +191,7 @@ def control_ctf : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("item", "control"), ("expected", "true")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def closeness_ind : LinguisticExample :=
   { id := "zaniciardellisanfelici2026_closeness_ind"
@@ -229,9 +207,7 @@ def closeness_ind : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("mode", "indicative"), ("item", "closeness evaluation")]
-    comment := "Acceptance reveals that the participant regards the squirrel as a more realistic winner than the tortoise."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Acceptance reveals that the participant regards the squirrel as a more realistic winner than the tortoise." }
 
 def closeness_ctf : LinguisticExample :=
   { id := "zaniciardellisanfelici2026_closeness_ctf"
@@ -247,9 +223,7 @@ def closeness_ctf : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("mode", "counterfactual"), ("item", "closeness evaluation")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def app_1 : LinguisticExample :=
   { id := "zaniciardellisanfelici2026_app_1"
@@ -265,9 +239,7 @@ def app_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("agreement", "singular"), ("reading", "DCR")]
-    comment := "Singular agreement with the disjunctive subject allows the ignorance continuation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Singular agreement with the disjunctive subject allows the ignorance continuation." }
 
 def app_2 : LinguisticExample :=
   { id := "zaniciardellisanfelici2026_app_2"
@@ -283,9 +255,7 @@ def app_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("agreement", "plural"), ("reading", "DCR")]
-    comment := "Plural agreement blocks the ignorance continuation, marked # in the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Plural agreement blocks the ignorance continuation, marked # in the paper." }
 
 def all : List LinguisticExample := [ex_1a, ex_1b, ex_3, ex_4, ex_6, ex_7, ex_8, target_ind, target_ctf, control_ind, control_ctf, closeness_ind, closeness_ctf, app_1, app_2]
 

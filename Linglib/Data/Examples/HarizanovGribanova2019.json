@@ -50,7 +50,6 @@
       ]
     ],
     "comment": "The finite verb precedes the VP adverb.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(2a)"
@@ -107,7 +106,6 @@
       ]
     ],
     "comment": "The finite verb cannot follow the VP adverb.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(2b)"
@@ -164,7 +162,6 @@
       ]
     ],
     "comment": "The finite verb precedes negation.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(3a)"
@@ -221,7 +218,6 @@
       ]
     ],
     "comment": "The finite verb cannot follow negation.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(3b)"
@@ -278,7 +274,6 @@
       ]
     ],
     "comment": "The finite verb precedes the floating quantifier.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(4a)"
@@ -335,7 +330,6 @@
       ]
     ],
     "comment": "The finite verb cannot follow the floating quantifier.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(4b)"
@@ -384,7 +378,6 @@
       ]
     ],
     "comment": "The nonfinite verb follows the adverb: it bears no inflection and stays low.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(5a)"
@@ -441,7 +434,6 @@
       ]
     ],
     "comment": "The nonfinite verb follows negation.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(5b)"
@@ -510,7 +502,6 @@
       ]
     ],
     "comment": "The nonfinite verb follows the floating quantifier.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(5c)"
@@ -541,8 +532,7 @@
         "tToC"
       ]
     ],
-    "comment": "The auxiliary in T.",
-    "lgrConformance": ""
+    "comment": "The auxiliary in T."
   },
   {
     "id": "harizanovgribanova2019_ex6b",
@@ -569,8 +559,7 @@
         "tToC"
       ]
     ],
-    "comment": "The auxiliary in C: displacement of a head with no growth of the morphosyntactic complex.",
-    "lgrConformance": ""
+    "comment": "The auxiliary in C: displacement of a head with no growth of the morphosyntactic complex."
   },
   {
     "id": "harizanovgribanova2019_ex7a",
@@ -638,8 +627,7 @@
         "tToC"
       ]
     ],
-    "comment": "The auxiliary in T.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The auxiliary in T."
   },
   {
     "id": "harizanovgribanova2019_ex7b",
@@ -695,8 +683,7 @@
         "tToC"
       ]
     ],
-    "comment": "The auxiliary in C in a verb-second root clause.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The auxiliary in C in a verb-second root clause."
   },
   {
     "id": "harizanovgribanova2019_ex8a",
@@ -757,7 +744,6 @@
       ]
     ],
     "comment": "Verb second in a root clause: the finite verb precedes the adverb. Transcribed as printed.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(8a)"
@@ -834,7 +820,6 @@
       ]
     ],
     "comment": "No verb movement to C in the embedded clause: the finite verb follows the adverb.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(8b)"
@@ -907,7 +892,6 @@
       ]
     ],
     "comment": "The embedded finite verb follows the adverb: no raising even to T.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(9a)"
@@ -980,7 +964,6 @@
       ]
     ],
     "comment": "The embedded finite verb cannot precede the adverb.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(9b)"
@@ -1053,7 +1036,6 @@
       ]
     ],
     "comment": "The embedded finite verb follows negation. The paper's translation line repeats that of (9a).",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(10a)"
@@ -1126,7 +1108,6 @@
       ]
     ],
     "comment": "The embedded finite verb cannot precede negation.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(10b)"
@@ -1166,8 +1147,7 @@
         "verbalComplex"
       ]
     ],
-    "comment": "Imperfective: negation, an aspectual prefix, the root, a theme vowel, the secondary imperfective and tense-agreement in one word.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Imperfective: negation, an aspectual prefix, the root, a theme vowel, the secondary imperfective and tense-agreement in one word."
   },
   {
     "id": "harizanovgribanova2019_ex12",
@@ -1220,7 +1200,6 @@
       ]
     ],
     "comment": "No low adverb between the finite verb and the object: the verb is below T.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(12)"
@@ -1277,7 +1256,6 @@
       ]
     ],
     "comment": "No floating quantifier between the finite verb and the object.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(13)"
@@ -1362,7 +1340,6 @@
       ]
     ],
     "comment": "Across-the-board movement of the verb out of coordinated vPs below the auxiliary in T: the verb is pronounced between T and vP.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(14)"
@@ -1411,7 +1388,6 @@
       ]
     ],
     "comment": "The participle follows the past perfect auxiliary and precedes the object.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(29a)"
@@ -1460,7 +1436,6 @@
       ]
     ],
     "comment": "The participle fronted over a non-enclitic auxiliary.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(29b)"
@@ -1517,7 +1492,6 @@
       ]
     ],
     "comment": "The participle follows the enclitic auxiliary, which the complementizer supports.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(30a)"
@@ -1574,7 +1548,6 @@
       ]
     ],
     "comment": "The participle fronted over an enclitic auxiliary that is already supported, so not prosodic inversion.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(30b)"
@@ -1627,7 +1600,6 @@
       ]
     ],
     "comment": "Two auxiliaries above the participle.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(31a)"
@@ -1684,7 +1656,6 @@
       ]
     ],
     "comment": "The participle fronted over two auxiliaries that remain separate words: a violation of the Head Movement Constraint.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(31b)"
@@ -1737,7 +1708,6 @@
       ]
     ],
     "comment": "Participle fronting out of a nontensed clause.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(32a)"
@@ -1802,7 +1772,6 @@
       ]
     ],
     "comment": "Participle fronting out of a tensed clause.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(32b)"
@@ -1871,7 +1840,6 @@
       ]
     ],
     "comment": "Participle fronting out of an adjunct island.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(33a)"
@@ -1928,7 +1896,6 @@
       ]
     ],
     "comment": "Participle fronting across negation.",
-    "lgrConformance": "",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(33b)"
@@ -1968,8 +1935,7 @@
         "verbalComplex"
       ]
     ],
-    "comment": "Perfective: the Neg-Asp-V-v-T complex the derivation in (43)-(47) assembles at Neg.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Perfective: the Neg-Asp-V-v-T complex the derivation in (43)-(47) assembles at Neg."
   },
   {
     "id": "harizanovgribanova2019_ex58",
@@ -2025,8 +1991,7 @@
         "verbSecond"
       ]
     ],
-    "comment": "The finite verb in second position: syntactic movement of T to the C domain, with V Raising into the low occurrence of T at PF.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The finite verb in second position: syntactic movement of T to the C domain, with V Raising into the low occurrence of T at PF."
   },
   {
     "id": "harizanovgribanova2019_ex60",
@@ -2079,7 +2044,6 @@
       ]
     ],
     "comment": "Verb second without verb movement to T: syntactic movement of V to the C domain, with T and v Lowering into the low occurrence of V at PF. Transcribed as printed.",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(60)"
@@ -2152,7 +2116,6 @@
       ]
     ],
     "comment": "The SVO context for the polarity-focus reply in (64b).",
-    "lgrConformance": "WORD_ALIGNED",
     "reportedIn": {
       "bibkey": "harizanov-gribanova-2019",
       "paperLabel": "(64a)"
@@ -2204,7 +2167,6 @@
         "polarityFocus"
       ]
     ],
-    "comment": "VSO under polarity focus: syntactic movement of Neg to Pol, with the verbal complex amalgamated into the low occurrence of Neg. From Vasilij Šukšin, Kalina krasnaja (1973).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "VSO under polarity focus: syntactic movement of Neg to Pol, with the verbal complex amalgamated into the low occurrence of Neg. From Vasilij Šukšin, Kalina krasnaja (1973)."
   }
 ]

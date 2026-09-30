@@ -22,9 +22,7 @@
     "paperFeatures": [
       ["speaker", "addressee"]
     ],
-    "comment": "Against Equal Access to Context: only the addressee has the two clarification-request readings.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Against Equal Access to Context: only the addressee has the two clarification-request readings."
   },
   {
     "id": "ginzburg2012_22b",
@@ -48,9 +46,7 @@
     "paperFeatures": [
       ["speaker", "original speaker"]
     ],
-    "comment": "Only the original speaker has the self-correction reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Only the original speaker has the self-correction reading."
   },
   {
     "id": "ginzburg2012_23a",
@@ -74,9 +70,7 @@
     "paperFeatures": [
       ["turn", "kept"]
     ],
-    "comment": "The Turn-Taking Puzzle: the resolution of bare 'why' depends on who holds the turn.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The Turn-Taking Puzzle: the resolution of bare 'why' depends on who holds the turn."
   },
   {
     "id": "ginzburg2012_23b",
@@ -100,9 +94,7 @@
     "paperFeatures": [
       ["turn", "taken"]
     ],
-    "comment": "The reading available to B is unavailable to A in (23a), and vice versa.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The reading available to B is unavailable to A in (23a), and vice versa."
   },
   {
     "id": "ginzburg2012_23c",
@@ -123,9 +115,7 @@
     "paperFeatures": [
       ["turn", "kept"]
     ],
-    "comment": "The resolution unavailable to A with bare 'Why?' is a coherent follow-up when expressed non-elliptically, so the (23a)/(23b) asymmetry is not a matter of coherence or plausibility.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The resolution unavailable to A with bare 'Why?' is a coherent follow-up when expressed non-elliptically, so the (23a)/(23b) asymmetry is not a matter of coherence or plausibility."
   },
   {
     "id": "ginzburg2012_54",
@@ -148,9 +138,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Traced in (55)–(63) through greeting, counter-greeting, Free Speech, Ask QUD-incrementation, QSPEC, Assert QUD-incrementation, Accept and Fact update/QUD-downdate.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Traced in (55)–(63) through greeting, counter-greeting, Free Speech, Ask QUD-incrementation, QSPEC, Assert QUD-incrementation, Accept and Fact update/QUD-downdate."
   },
   {
     "id": "ginzburg2012_65",
@@ -172,9 +160,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Traced in (66): B's question influences A's; A's answer resolves B's question and is accepted, leaving A's question QUD-maximal.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Traced in (66): B's question influences A's; A's answer resolves B's question and is accepted, leaving A's question QUD-maximal."
   },
   {
     "id": "ginzburg2012_67",
@@ -193,9 +179,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Traced in (68): the asserter checks their own assertion; the addressee confirms.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Traced in (68): the asserter checks their own assertion; the addressee confirms."
   },
   {
     "id": "ginzburg2012_78",
@@ -216,9 +200,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Traced in (79): successive questions by one speaker; the second does not influence the first, which stays QUD-maximal and is answered first.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Traced in (79): successive questions by one speaker; the second does not influence the first, which stays QUD-maximal and is answered first."
   },
   {
     "id": "ginzburg2012_95",
@@ -241,9 +223,7 @@
     "paperFeatures": [
       ["genre", "CasualChat"]
     ],
-    "comment": "B takes the genre to be CasualChat, whose anticipated issues are how A is and how B is; 'I'm off' is an initiating move about the latter.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "B takes the genre to be CasualChat, whose anticipated issues are how A is and how B is; 'I'm off' is an initiating move about the latter."
   },
   {
     "id": "ginzburg2012_ch6_90",
@@ -266,9 +246,7 @@
     "paperFeatures": [
       ["ccur", "Parameter Focussing"]
     ],
-    "comment": "B initiates clarification by Parameter Focussing; the gameboards after the second utterance are given in Ch. 6 (91) and differ in QUD and PENDING.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "B initiates clarification by Parameter Focussing; the gameboards after the second utterance are given in Ch. 6 (91) and differ in QUD and PENDING."
   },
   {
     "id": "ginzburg2012_24a",
@@ -290,9 +268,7 @@
     "paperFeatures": [
       ["repair", "other-initiated"]
     ],
-    "comment": "Other-initiated repair: a clarification request across utterances.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Other-initiated repair: a clarification request across utterances."
   },
   {
     "id": "ginzburg2012_24b",
@@ -310,8 +286,6 @@
     "paperFeatures": [
       ["repair", "self-initiated"]
     ],
-    "comment": "Self-initiated mid-utterance repair, the within-utterance analogue of (24a). Switchboard-style annotation: '+' marks the moment of interruption, '{}' the editing term.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Self-initiated mid-utterance repair, the within-utterance analogue of (24a). Switchboard-style annotation: '+' marks the moment of interruption, '{}' the editing term."
   }
 ]

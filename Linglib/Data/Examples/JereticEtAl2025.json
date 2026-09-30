@@ -29,8 +29,7 @@
         "false"
       ]
     ],
-    "comment": "Anti-dual in a domain of two: both is available.",
-    "metaLanguage": "stan1293"
+    "comment": "Anti-dual in a domain of two: both is available."
   },
   {
     "id": "jeretic2025_1c",
@@ -62,8 +61,7 @@
         "true"
       ]
     ],
-    "comment": "The lexical dual universal.",
-    "metaLanguage": "stan1293"
+    "comment": "The lexical dual universal."
   },
   {
     "id": "jeretic2025_2a",
@@ -95,8 +93,7 @@
         "false"
       ]
     ],
-    "comment": "Anti-dual although French has no word for both.",
-    "metaLanguage": "stan1293"
+    "comment": "Anti-dual although French has no word for both."
   },
   {
     "id": "jeretic2025_2b",
@@ -128,8 +125,7 @@
         "true"
       ]
     ],
-    "comment": "The definite numeral, the indirect alternative to tous.",
-    "metaLanguage": "stan1293"
+    "comment": "The definite numeral, the indirect alternative to tous."
   },
   {
     "id": "jeretic2025_6a",
@@ -161,8 +157,7 @@
         "false"
       ]
     ],
-    "comment": "Anti-dual: neither is available.",
-    "metaLanguage": "stan1293"
+    "comment": "Anti-dual: neither is available."
   },
   {
     "id": "jeretic2025_6a_neither",
@@ -194,8 +189,7 @@
         "true"
       ]
     ],
-    "comment": "The lexical dual negative.",
-    "metaLanguage": "stan1293"
+    "comment": "The lexical dual negative."
   },
   {
     "id": "jeretic2025_6b",
@@ -227,8 +221,7 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual: aucun des deux and ni l'un ni l'autre are too complex to block the dual parse.",
-    "metaLanguage": "stan1293"
+    "comment": "Not anti-dual: aucun des deux and ni l'un ni l'autre are too complex to block the dual parse."
   },
   {
     "id": "jeretic2025_6c",
@@ -260,8 +253,7 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual: German has beide but no dual negative.",
-    "metaLanguage": "stan1293"
+    "comment": "Not anti-dual: German has beide but no dual negative."
   },
   {
     "id": "jeretic2025_7a",
@@ -293,8 +285,7 @@
         "true"
       ]
     ],
-    "comment": "The dual interrogative hvor.",
-    "metaLanguage": "stan1293"
+    "comment": "The dual interrogative hvor."
   },
   {
     "id": "jeretic2025_7b",
@@ -326,8 +317,7 @@
         "false"
       ]
     ],
-    "comment": "Marginal in a domain of two.",
-    "metaLanguage": "stan1293"
+    "comment": "Marginal in a domain of two."
   },
   {
     "id": "jeretic2025_8a",
@@ -359,8 +349,7 @@
         "true"
       ]
     ],
-    "comment": "The dual indeterminate dotti.",
-    "metaLanguage": "stan1293"
+    "comment": "The dual indeterminate dotti."
   },
   {
     "id": "jeretic2025_8b",
@@ -392,8 +381,7 @@
         "false"
       ]
     ],
-    "comment": "Anti-dual.",
-    "metaLanguage": "stan1293"
+    "comment": "Anti-dual."
   },
   {
     "id": "jeretic2025_9a",
@@ -425,8 +413,7 @@
         "true"
       ]
     ],
-    "comment": "Dual each on dotti.",
-    "metaLanguage": "stan1293"
+    "comment": "Dual each on dotti."
   },
   {
     "id": "jeretic2025_9b",
@@ -458,8 +445,7 @@
         "false"
       ]
     ],
-    "comment": "Anti-dual.",
-    "metaLanguage": "stan1293"
+    "comment": "Anti-dual."
   },
   {
     "id": "jeretic2025_10a",
@@ -491,8 +477,7 @@
         "true"
       ]
     ],
-    "comment": "Dual one on dotti.",
-    "metaLanguage": "stan1293"
+    "comment": "Dual one on dotti."
   },
   {
     "id": "jeretic2025_10b",
@@ -524,8 +509,7 @@
         "false"
       ]
     ],
-    "comment": "Anti-dual.",
-    "metaLanguage": "stan1293"
+    "comment": "Anti-dual."
   },
   {
     "id": "jeretic2025_11a",
@@ -557,8 +541,7 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual: which of the two is more complex than which.",
-    "metaLanguage": "stan1293"
+    "comment": "Not anti-dual: which of the two is more complex than which."
   },
   {
     "id": "jeretic2025_11b",
@@ -590,8 +573,7 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual.",
-    "metaLanguage": "stan1293"
+    "comment": "Not anti-dual."
   },
   {
     "id": "jeretic2025_11c",
@@ -623,8 +605,7 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual.",
-    "metaLanguage": "stan1293"
+    "comment": "Not anti-dual."
   },
   {
     "id": "jeretic2025_12a",
@@ -656,8 +637,7 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual.",
-    "metaLanguage": "stan1293"
+    "comment": "Not anti-dual."
   },
   {
     "id": "jeretic2025_12b",
@@ -689,8 +669,7 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual.",
-    "metaLanguage": "stan1293"
+    "comment": "Not anti-dual."
   },
   {
     "id": "jeretic2025_12c",
@@ -722,8 +701,7 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual.",
-    "metaLanguage": "stan1293"
+    "comment": "Not anti-dual."
   },
   {
     "id": "jeretic2025_80a",
@@ -755,8 +733,7 @@
         "false"
       ]
     ],
-    "comment": "Anti-dual: both times is as complex as all+ways.",
-    "metaLanguage": "stan1293"
+    "comment": "Anti-dual: both times is as complex as all+ways."
   },
   {
     "id": "jeretic2025_80b",
@@ -788,8 +765,7 @@
         "true"
       ]
     ],
-    "comment": "The dual of always.",
-    "metaLanguage": "stan1293"
+    "comment": "The dual of always."
   },
   {
     "id": "jeretic2025_81a",
@@ -821,8 +797,7 @@
         "false"
       ]
     ],
-    "comment": "Not anti-dual: les deux fois is more complex than toujours.",
-    "metaLanguage": "stan1293"
+    "comment": "Not anti-dual: les deux fois is more complex than toujours."
   },
   {
     "id": "jeretic2025_83a",
@@ -854,8 +829,7 @@
         "false"
       ]
     ],
-    "comment": "Anti-dual: suppletive immer competes with beide Male.",
-    "metaLanguage": "stan1293"
+    "comment": "Anti-dual: suppletive immer competes with beide Male."
   },
   {
     "id": "jeretic2025_83b",
@@ -887,8 +861,7 @@
         "false"
       ]
     ],
-    "comment": "Weakly anti-dual: ni-kai on its definite reading is as complex as itu-mo.",
-    "metaLanguage": "stan1293"
+    "comment": "Weakly anti-dual: ni-kai on its definite reading is as complex as itu-mo."
   },
   {
     "id": "jeretic2025_85",
@@ -920,8 +893,7 @@
         "true"
       ]
     ],
-    "comment": "The bimorphemic dual, ni-kai.",
-    "metaLanguage": "stan1293"
+    "comment": "The bimorphemic dual, ni-kai."
   },
   {
     "id": "jeretic2025_36",
@@ -949,8 +921,7 @@
         "true"
       ]
     ],
-    "comment": "Overt dual number morphology; felicitous only with two computers.",
-    "metaLanguage": "stan1293"
+    "comment": "Overt dual number morphology; felicitous only with two computers."
   },
   {
     "id": "jeretic2025_25a",
@@ -974,8 +945,7 @@
         "25"
       ]
     ],
-    "comment": "The worked example: the plural parse of tous les verres.",
-    "metaLanguage": "stan1293"
+    "comment": "The worked example: the plural parse of tous les verres."
   },
   {
     "id": "jeretic2025_25b",
@@ -999,7 +969,6 @@
         "25"
       ]
     ],
-    "comment": "The indirect alternative, at most as complex by node count (38).",
-    "metaLanguage": "stan1293"
+    "comment": "The indirect alternative, at most as complex by node count (38)."
   }
 ]

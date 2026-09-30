@@ -31,9 +31,7 @@ def tbd2018_1a_nrrc : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "NRRC"), ("experiment", "1a"), ("triggerClass", "B"), ("projectivity", "96"), ("notAtIssueness", "97")]
-    comment := "Mean projectivity .96 and not-at-issueness .97 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'These muffins have blueberries in them.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .96 and not-at-issueness .97 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'These muffins have blueberries in them.'" }
 
 def tbd2018_1a_nominalAppositive : LinguisticExample :=
   { id := "tbd2018_1a_nominalAppositive"
@@ -49,9 +47,7 @@ def tbd2018_1a_nominalAppositive : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "nominalAppositive"), ("experiment", "1a"), ("triggerClass", "B"), ("projectivity", "95"), ("notAtIssueness", "96")]
-    comment := "Mean projectivity .95 and not-at-issueness .96 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Martha's new car is a BMW.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .95 and not-at-issueness .96 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Martha's new car is a BMW.'" }
 
 def tbd2018_1a_possessiveNP : LinguisticExample :=
   { id := "tbd2018_1a_possessiveNP"
@@ -67,9 +63,7 @@ def tbd2018_1a_possessiveNP : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "possessiveNP"), ("experiment", "1a"), ("triggerClass", "B"), ("projectivity", "94"), ("notAtIssueness", "97")]
-    comment := "Mean projectivity .94 and not-at-issueness .97 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Martha has a new BMW.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .94 and not-at-issueness .97 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Martha has a new BMW.'" }
 
 def tbd2018_1a_annoyed : LinguisticExample :=
   { id := "tbd2018_1a_annoyed"
@@ -85,9 +79,7 @@ def tbd2018_1a_annoyed : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "annoyed"), ("experiment", "1a"), ("triggerClass", "C"), ("projectivity", "96"), ("notAtIssueness", "97")]
-    comment := "Mean projectivity .96 and not-at-issueness .97 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Martha has a new BMW.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .96 and not-at-issueness .97 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Martha has a new BMW.'" }
 
 def tbd2018_1a_discover : LinguisticExample :=
   { id := "tbd2018_1a_discover"
@@ -103,9 +95,7 @@ def tbd2018_1a_discover : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "discover"), ("experiment", "1a"), ("triggerClass", "C"), ("projectivity", "86"), ("notAtIssueness", "87")]
-    comment := "Mean projectivity .86 and not-at-issueness .87 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Mary's daughter has been biting her nails.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .86 and not-at-issueness .87 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Mary's daughter has been biting her nails.'" }
 
 def tbd2018_1a_know : LinguisticExample :=
   { id := "tbd2018_1a_know"
@@ -121,9 +111,7 @@ def tbd2018_1a_know : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "know"), ("experiment", "1a"), ("triggerClass", "C"), ("projectivity", "92"), ("notAtIssueness", "91")]
-    comment := "Mean projectivity .92 and not-at-issueness .91 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Martha has a new BMW.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .92 and not-at-issueness .91 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Martha has a new BMW.'" }
 
 def tbd2018_1a_only : LinguisticExample :=
   { id := "tbd2018_1a_only"
@@ -139,9 +127,7 @@ def tbd2018_1a_only : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "only"), ("experiment", "1a"), ("triggerClass", "C"), ("projectivity", "76"), ("notAtIssueness", "72")]
-    comment := "Mean projectivity .76 and not-at-issueness .72 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'These muffins have blueberries in them.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .76 and not-at-issueness .72 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'These muffins have blueberries in them.'" }
 
 def tbd2018_1a_stop : LinguisticExample :=
   { id := "tbd2018_1a_stop"
@@ -157,9 +143,7 @@ def tbd2018_1a_stop : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "stop"), ("experiment", "1a"), ("triggerClass", "C"), ("projectivity", "87"), ("notAtIssueness", "71")]
-    comment := "Mean projectivity .87 and not-at-issueness .71 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Mary's daughter has been biting her nails.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .87 and not-at-issueness .71 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Mary's daughter has been biting her nails.'" }
 
 def tbd2018_1a_stupid : LinguisticExample :=
   { id := "tbd2018_1a_stupid"
@@ -175,9 +159,7 @@ def tbd2018_1a_stupid : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "stupid"), ("experiment", "1a"), ("triggerClass", "C"), ("projectivity", "85"), ("notAtIssueness", "88")]
-    comment := "Mean projectivity .85 and not-at-issueness .88 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Mary's daughter has been biting her nails.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .85 and not-at-issueness .88 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Mary's daughter has been biting her nails.'" }
 
 def tbd2018_1b_amused : LinguisticExample :=
   { id := "tbd2018_1b_amused"
@@ -193,9 +175,7 @@ def tbd2018_1b_amused : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "amused"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "91"), ("notAtIssueness", "94")]
-    comment := "Mean projectivity .91 and not-at-issueness .94 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .91 and not-at-issueness .94 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'" }
 
 def tbd2018_1b_annoyed : LinguisticExample :=
   { id := "tbd2018_1b_annoyed"
@@ -211,9 +191,7 @@ def tbd2018_1b_annoyed : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "annoyed"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "92"), ("notAtIssueness", "94")]
-    comment := "Mean projectivity .92 and not-at-issueness .94 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .92 and not-at-issueness .94 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'" }
 
 def tbd2018_1b_aware : LinguisticExample :=
   { id := "tbd2018_1b_aware"
@@ -229,9 +207,7 @@ def tbd2018_1b_aware : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "aware"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "92"), ("notAtIssueness", "94")]
-    comment := "Mean projectivity .92 and not-at-issueness .94 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .92 and not-at-issueness .94 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'" }
 
 def tbd2018_1b_confess : LinguisticExample :=
   { id := "tbd2018_1b_confess"
@@ -247,9 +223,7 @@ def tbd2018_1b_confess : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "confess"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "69"), ("notAtIssueness", "81")]
-    comment := "Mean projectivity .69 and not-at-issueness .81 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .69 and not-at-issueness .81 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'" }
 
 def tbd2018_1b_discover : LinguisticExample :=
   { id := "tbd2018_1b_discover"
@@ -265,9 +239,7 @@ def tbd2018_1b_discover : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "discover"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "85"), ("notAtIssueness", "89")]
-    comment := "Mean projectivity .85 and not-at-issueness .89 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .85 and not-at-issueness .89 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'" }
 
 def tbd2018_1b_establish : LinguisticExample :=
   { id := "tbd2018_1b_establish"
@@ -283,9 +255,7 @@ def tbd2018_1b_establish : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "establish"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "42"), ("notAtIssueness", "61")]
-    comment := "Mean projectivity .42 and not-at-issueness .61 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .42 and not-at-issueness .61 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'" }
 
 def tbd2018_1b_findOut : LinguisticExample :=
   { id := "tbd2018_1b_findOut"
@@ -301,9 +271,7 @@ def tbd2018_1b_findOut : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "findOut"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "88"), ("notAtIssueness", "91")]
-    comment := "Mean projectivity .88 and not-at-issueness .91 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .88 and not-at-issueness .91 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'" }
 
 def tbd2018_1b_learn : LinguisticExample :=
   { id := "tbd2018_1b_learn"
@@ -319,9 +287,7 @@ def tbd2018_1b_learn : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "learn"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "88"), ("notAtIssueness", "90")]
-    comment := "Mean projectivity .88 and not-at-issueness .90 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .88 and not-at-issueness .90 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'" }
 
 def tbd2018_1b_notice : LinguisticExample :=
   { id := "tbd2018_1b_notice"
@@ -337,9 +303,7 @@ def tbd2018_1b_notice : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "notice"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "92"), ("notAtIssueness", "92")]
-    comment := "Mean projectivity .92 and not-at-issueness .92 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .92 and not-at-issueness .92 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'" }
 
 def tbd2018_1b_realize : LinguisticExample :=
   { id := "tbd2018_1b_realize"
@@ -355,9 +319,7 @@ def tbd2018_1b_realize : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "realize"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "91"), ("notAtIssueness", "92")]
-    comment := "Mean projectivity .91 and not-at-issueness .92 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .91 and not-at-issueness .92 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'" }
 
 def tbd2018_1b_reveal : LinguisticExample :=
   { id := "tbd2018_1b_reveal"
@@ -373,9 +335,7 @@ def tbd2018_1b_reveal : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "reveal"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "78"), ("notAtIssueness", "87")]
-    comment := "Mean projectivity .78 and not-at-issueness .87 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .78 and not-at-issueness .87 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'" }
 
 def tbd2018_1b_see : LinguisticExample :=
   { id := "tbd2018_1b_see"
@@ -391,9 +351,7 @@ def tbd2018_1b_see : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "see"), ("experiment", "1b"), ("triggerClass", "C"), ("projectivity", "89"), ("notAtIssueness", "89")]
-    comment := "Mean projectivity .89 and not-at-issueness .89 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .89 and not-at-issueness .89 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'" }
 
 def tbd2018_1a_mc : LinguisticExample :=
   { id := "tbd2018_1a_mc"
@@ -409,9 +367,7 @@ def tbd2018_1a_mc : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "mainClause"), ("experiment", "1a"), ("triggerClass", "control"), ("projectivity", "5"), ("notAtIssueness", "2"), ("control", "true")]
-    comment := "Mean projectivity .05 and not-at-issueness .02 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Richie is a stuntman.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .05 and not-at-issueness .02 (proportion of projecting / not-at-issue coded responses, n=210), computed from results/exp1a/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Richie is a stuntman.'" }
 
 def tbd2018_1b_mc : LinguisticExample :=
   { id := "tbd2018_1b_mc"
@@ -427,9 +383,7 @@ def tbd2018_1b_mc : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "mainClause"), ("experiment", "1b"), ("triggerClass", "control"), ("projectivity", "6"), ("notAtIssueness", "3"), ("control", "true")]
-    comment := "Mean projectivity .06 and not-at-issueness .03 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .06 and not-at-issueness .03 (proportion of projecting / not-at-issue coded responses, n=235), computed from results/exp1b/data/data_preprocessed.csv at github.com/judith-tonhauser/how-projective (footnote 8). Projective content: 'Raul was drinking chamomile tea.'" }
 
 def all : List LinguisticExample := [tbd2018_1a_nrrc, tbd2018_1a_nominalAppositive, tbd2018_1a_possessiveNP, tbd2018_1a_annoyed, tbd2018_1a_discover, tbd2018_1a_know, tbd2018_1a_only, tbd2018_1a_stop, tbd2018_1a_stupid, tbd2018_1b_amused, tbd2018_1b_annoyed, tbd2018_1b_aware, tbd2018_1b_confess, tbd2018_1b_discover, tbd2018_1b_establish, tbd2018_1b_findOut, tbd2018_1b_learn, tbd2018_1b_notice, tbd2018_1b_realize, tbd2018_1b_reveal, tbd2018_1b_see, tbd2018_1a_mc, tbd2018_1b_mc]
 

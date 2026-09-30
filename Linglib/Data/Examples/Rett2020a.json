@@ -23,8 +23,7 @@
       ["construction", "before"],
       ["embedded", "culmination"]
     ],
-    "comment": "Unambiguously read against the onset; Dutch, Hungarian and Italian consultants report the same.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Unambiguously read against the onset; Dutch, Hungarian and Italian consultants report the same."
   },
   {
     "id": "rett2020a_10",
@@ -49,8 +48,7 @@
       ["construction", "after"],
       ["embedded", "process"]
     ],
-    "comment": "Unambiguously read against the end; Turkish consultants report the same.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Unambiguously read against the end; Turkish consultants report the same."
   },
   {
     "id": "rett2020a_11a",
@@ -76,8 +74,7 @@
       ["embedded", "culmination"],
       ["aspect", "imperfective"]
     ],
-    "comment": "Acceptable to the extent an imperfective is without an overt inchoative marker.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Acceptable to the extent an imperfective is without an overt inchoative marker."
   },
   {
     "id": "rett2020a_11b",
@@ -103,8 +100,7 @@
       ["embedded", "culmination"],
       ["aspect", "perfective"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "rett2020a_12a",
@@ -130,8 +126,7 @@
       ["embedded", "culmination"],
       ["aspect", "pfv.neut"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "rett2020a_12b",
@@ -156,7 +151,6 @@
       ["embedded", "culmination"],
       ["aspect", "aia"]
     ],
-    "comment": "The ability-and-involuntary-action perfective is the culminating one (Dell 1983).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The ability-and-involuntary-action perfective is the culminating one (Dell 1983)."
   }
 ]

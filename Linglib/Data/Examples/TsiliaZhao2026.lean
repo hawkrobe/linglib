@@ -31,9 +31,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix", "present"), ("environment", "root"), ("then", "incompatible")]
-    comment := "In a root clause the perspective is the utterance time, which the present overlaps and *then* must avoid; the past and future of (7) admit *then*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "In a root clause the perspective is the utterance time, which the present overlaps and *then* must avoid; the past and future of (7) admit *then*." }
 
 def ex_8 : LinguisticExample :=
   { id := "tsiliazhao2026_8"
@@ -49,9 +47,7 @@ def ex_8 : LinguisticExample :=
     alternatives := []
     readings := [("shifted present: the pregnancy overlaps the knowledge in 2000", .acceptable)]
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes")]
-    comment := "The 2000, det Yanis know.PAST that the Maria be.PRES pregnant: the embedded present refers to a past time overlapping the matrix attitude, tense shift."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The 2000, det Yanis know.PAST that the Maria be.PRES pregnant: the embedded present refers to a past time overlapping the matrix attitude, tense shift." }
 
 def ex_11 : LinguisticExample :=
   { id := "tsiliazhao2026_11"
@@ -67,9 +63,7 @@ def ex_11 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")]
-    comment := "The ⌈then⌉-present puzzle: the shifted present does not refer to the utterance time, yet *tote* remains incompatible with it; from Tsilia (2021)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The ⌈then⌉-present puzzle: the shifted present does not refer to the utterance time, yet *tote* remains incompatible with it; from Tsilia (2021)." }
 
 def ex_9 : LinguisticExample :=
   { id := "tsiliazhao2026_9"
@@ -85,9 +79,7 @@ def ex_9 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")]
-    comment := "Before 2,000 year, Yosef think.PAST that Miriam love.PRES him then; from Ogihara and Sharvit (2012), who note that not all speakers reject it."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Before 2,000 year, Yosef think.PAST that Miriam love.PRES him then; from Ogihara and Sharvit (2012), who note that not all speakers reject it." }
 
 def ex_10 : LinguisticExample :=
   { id := "tsiliazhao2026_10"
@@ -103,9 +95,7 @@ def ex_10 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")]
-    comment := "in 2016 year Tanja say.PAST that Putin then be.PRES president.NOM Russia.GEN; from Vostrikova (2019)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "in 2016 year Tanja say.PAST that Putin then be.PRES president.NOM Russia.GEN; from Vostrikova (2019)." }
 
 def ex_18 : LinguisticExample :=
   { id := "tsiliazhao2026_18"
@@ -121,9 +111,7 @@ def ex_18 : LinguisticExample :=
     alternatives := []
     readings := [("double access: Mary loves John at the utterance time and at the finding out", .acceptable)]
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "no")]
-    comment := "The English present under past never shifts: it indicates the utterance time, and (19) with *two thousand years ago* is infelicitous; *then* is impossible, (20)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The English present under past never shifts: it indicates the utterance time, and (19) with *two thousand years ago* is infelicitous; *then* is impossible, (20)." }
 
 def ex_21 : LinguisticExample :=
   { id := "tsiliazhao2026_21"
@@ -139,9 +127,7 @@ def ex_21 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "relative clause"), ("embedded", "present"), ("shifted", "no"), ("then", "incompatible")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_25 : LinguisticExample :=
   { id := "tsiliazhao2026_25"
@@ -157,9 +143,7 @@ def ex_25 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "relative clause"), ("embedded", "present"), ("shifted", "no"), ("then", "incompatible")]
-    comment := "Greek, Hebrew, (26), and Russian, (27), do not shift the present in relative clauses under past, an extensional environment with no operator to bind the index."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Greek, Hebrew, (26), and Russian, (27), do not shift the present in relative clauses under past, an extensional environment with no operator to bind the index." }
 
 def ex_28 : LinguisticExample :=
   { id := "tsiliazhao2026_28"
@@ -175,9 +159,7 @@ def ex_28 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")]
-    comment := "2-years before Yusuke-TOP Yukiko-NOM then pregnant be-PRES with know.PAST: Japanese shifts the present under past in attitude reports and, uniquely, in relative clauses, (29), and the puzzle arises in both."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "2-years before Yusuke-TOP Yukiko-NOM then pregnant be-PRES with know.PAST: Japanese shifts the present under past in attitude reports and, uniquely, in relative clauses, (29), and the puzzle arises in both." }
 
 def ex_29 : LinguisticExample :=
   { id := "tsiliazhao2026_29"
@@ -193,9 +175,7 @@ def ex_29 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "relative clause"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_30a : LinguisticExample :=
   { id := "tsiliazhao2026_30a"
@@ -211,9 +191,7 @@ def ex_30a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix", "future"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")]
-    comment := "Under future every surveyed language shifts the present, in attitude reports and relative clauses alike, since WOLL binds an index; Greek, Hebrew, (30b), and Russian, (30c), show the puzzle there too."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Under future every surveyed language shifts the present, in attitude reports and relative clauses alike, since WOLL binds an index; Greek, Hebrew, (30b), and Russian, (30c), show the puzzle there too." }
 
 def ex_30d : LinguisticExample :=
   { id := "tsiliazhao2026_30d"
@@ -229,9 +207,7 @@ def ex_30d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix", "future"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "deleted"), ("then", "variation")]
-    comment := "English tolerates *then* with the present under future, for some speakers here and generally in relative clauses, (31d): the present is deleted by sequence of tense under WOLL's PRES rather than shifted, (92)–(93)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "English tolerates *then* with the present under future, for some speakers here and generally in relative clauses, (31d): the present is deleted by sequence of tense under WOLL's PRES rather than shifted, (92)–(93)." }
 
 def ex_31a : LinguisticExample :=
   { id := "tsiliazhao2026_31a"
@@ -247,9 +223,7 @@ def ex_31a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix", "future"), ("environment", "relative clause"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_32 : LinguisticExample :=
   { id := "tsiliazhao2026_32"
@@ -265,9 +239,7 @@ def ex_32 : LinguisticExample :=
     alternatives := [("Sonotoki ai-mashou.", .acceptable)]
     readings := []
     paperFeatures := [("then", "past-oriented only")]
-    comment := "Japanese *tōji* is used only with past expressions, so the present-under-future cells are not applicable for Japanese."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Japanese *tōji* is used only with past expressions, so the present-under-future cells are not applicable for Japanese." }
 
 def ex_38 : LinguisticExample :=
   { id := "tsiliazhao2026_38"
@@ -283,9 +255,7 @@ def ex_38 : LinguisticExample :=
     alternatives := []
     readings := [("simultaneous: the love overlaps the belief", .acceptable)]
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "past"), ("then", "compatible")]
-    comment := "An embedded past with the same simultaneous reference as the shifted present admits *az*, so the puzzle is not a restriction on the reference; Russian (39) likewise."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "An embedded past with the same simultaneous reference as the shifted present admits *az*, so the puzzle is not a restriction on the reference; Russian (39) likewise." }
 
 def ex_48 : LinguisticExample :=
   { id := "tsiliazhao2026_48"
@@ -301,9 +271,7 @@ def ex_48 : LinguisticExample :=
     alternatives := []
     readings := [("the meeting is at the time of the future saying, three days from now", .acceptable)]
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "deleted past"), ("then", "compatible")]
-    comment := "The most deeply embedded past is past relative to no time in the sentence, so it is deleted; deleted tense carries no perspectival presupposition and *then* is compatible with it, (89a); Greek (49) likewise."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The most deeply embedded past is past relative to no time in the sentence, so it is deleted; deleted tense carries no perspectival presupposition and *then* is compatible with it, (89a); Greek (49) likewise." }
 
 def ex_99 : LinguisticExample :=
   { id := "tsiliazhao2026_99"
@@ -319,9 +287,7 @@ def ex_99 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("indexical", "unshifted")]
-    comment := "The present shifts but *tora* 'now' does not, and Hebrew *axšav* likewise, (100): the perspective is not the context's time."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The present shifts but *tora* 'now' does not, and Hebrew *axšav* likewise, (100): the perspective is not the context's time." }
 
 def all : List LinguisticExample := [ex_6, ex_8, ex_11, ex_9, ex_10, ex_18, ex_21, ex_25, ex_28, ex_29, ex_30a, ex_30d, ex_31a, ex_32, ex_38, ex_48, ex_99]
 

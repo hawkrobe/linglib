@@ -31,9 +31,7 @@ def ex_13 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("leftScale", "distance"), ("rightScale", "distance")]
-    comment := "A comparison of two degrees of height, both on the scale of spatial distances."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A comparison of two degrees of height, both on the scale of spatial distances." }
 
 def ex_15 : LinguisticExample :=
   { id := "cresswell1976_15"
@@ -49,9 +47,7 @@ def ex_15 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("leftScale", "distance"), ("rightScale", "distance")]
-    comment := "Tall and long both measure spatial distance, so the two degrees lie on one scale."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Tall and long both measure spatial distance, so the two degrees lie on one scale." }
 
 def ex_23 : LinguisticExample :=
   { id := "cresswell1976_23"
@@ -67,9 +63,7 @@ def ex_23 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("leftScale", "distance"), ("rightScale", "cleverness")]
-    comment := "Grammatical but semantically anomalous: the degrees of height and of cleverness lie on different scales."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Grammatical but semantically anomalous: the degrees of height and of cleverness lie on different scales." }
 
 def ex_35 : LinguisticExample :=
   { id := "cresswell1976_35"
@@ -85,9 +79,7 @@ def ex_35 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("leftScale", "distance"), ("rightScale", "distance")]
-    comment := "Six feet names a degree on the upward scale of spatial distances."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Six feet names a degree on the upward scale of spatial distances." }
 
 def ex_37 : LinguisticExample :=
   { id := "cresswell1976_37"
@@ -103,9 +95,7 @@ def ex_37 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "The degree name six feet as the degree argument of tall."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The degree name six feet as the degree argument of tall." }
 
 def ex_39 : LinguisticExample :=
   { id := "cresswell1976_39"
@@ -121,9 +111,7 @@ def ex_39 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Not a comparative: six feet names the degree read upward, and the degree argument of short is read downward, so the degree lies outside the domain of short."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Not a comparative: six feet names the degree read upward, and the degree argument of short is read downward, so the degree lies outside the domain of short." }
 
 def ex_41 : LinguisticExample :=
   { id := "cresswell1976_41"
@@ -139,9 +127,7 @@ def ex_41 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("leftScale", "volume"), ("rightScale", "volume")]
-    comment := "The degree of the totality of ebbing water exceeds that of flowing mud, both volumes."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The degree of the totality of ebbing water exceeds that of flowing mud, both volumes." }
 
 def ex_50 : LinguisticExample :=
   { id := "cresswell1976_50"
@@ -157,9 +143,7 @@ def ex_50 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("leftScale", "beauty"), ("rightScale", "cleverness")]
-    comment := "Listed without an asterisk as an instance of the single meaning of more, although beauty and cleverness are distinct scales, as in the starred (65)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Listed without an asterisk as an instance of the single meaning of more, although beauty and cleverness are distinct scales, as in the starred (65)." }
 
 def ex_52 : LinguisticExample :=
   { id := "cresswell1976_52"
@@ -175,9 +159,7 @@ def ex_52 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("leftScale", "number"), ("rightScale", "number")]
-    comment := "Pluralization supplies the numerical scale: the number of walking men exceeds the number of flying birds."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Pluralization supplies the numerical scale: the number of walking men exceeds the number of flying birds." }
 
 def ex_56 : LinguisticExample :=
   { id := "cresswell1976_56"
@@ -193,9 +175,7 @@ def ex_56 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Synonymous with (57) although all combines with the plural and every with the singular."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Synonymous with (57) although all combines with the plural and every with the singular." }
 
 def ex_57 : LinguisticExample :=
   { id := "cresswell1976_57"
@@ -211,9 +191,7 @@ def ex_57 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Synonymous with (56)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Synonymous with (56)." }
 
 def ex_62 : LinguisticExample :=
   { id := "cresswell1976_62"
@@ -229,9 +207,7 @@ def ex_62 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("leftScale", "beauty"), ("rightScale", "beauty")]
-    comment := "The scale of beauty has no unit; its degrees are the classes of the comparison relation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The scale of beauty has no unit; its degrees are the classes of the comparison relation." }
 
 def ex_65 : LinguisticExample :=
   { id := "cresswell1976_65"
@@ -247,9 +223,7 @@ def ex_65 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("leftScale", "distance"), ("rightScale", "beauty")]
-    comment := "Anomalous: Bill's tallness and Arabella's beauty are represented on different scales."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Anomalous: Bill's tallness and Arabella's beauty are represented on different scales." }
 
 def ex_66 : LinguisticExample :=
   { id := "cresswell1976_66"
@@ -265,9 +239,7 @@ def ex_66 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Prima facie anomalous but said; the speaker uses the words as if their meanings produced a scale common to age and wisdom."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Prima facie anomalous but said; the speaker uses the words as if their meanings produced a scale common to age and wisdom." }
 
 def ex_69 : LinguisticExample :=
   { id := "cresswell1976_69"
@@ -283,9 +255,7 @@ def ex_69 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("leftScale", "time"), ("rightScale", "distance")]
-    comment := "Long measures an event on the temporal scale and a physical object on the spatial one."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Long measures an event on the temporal scale and a physical object on the spatial one." }
 
 def ex_70 : LinguisticExample :=
   { id := "cresswell1976_70"
@@ -301,9 +271,7 @@ def ex_70 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("leftScale", "distanceDownward"), ("rightScale", "distanceDownward")]
-    comment := "A trans-world comparison: Bill's height in the nearest world where he smokes against his height in the actual world."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A trans-world comparison: Bill's height in the nearest world where he smokes against his height in the actual world." }
 
 def fn10_iii : LinguisticExample :=
   { id := "cresswell1976_fn10_iii"
@@ -319,9 +287,7 @@ def fn10_iii : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("leftScale", "distance"), ("rightScale", "distance")]
-    comment := "Means, at least usually, that Bill is taller than Arabella and taller than Clarissa, not the disjunction of the two comparisons."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Means, at least usually, that Bill is taller than Arabella and taller than Clarissa, not the disjunction of the two comparisons." }
 
 def all : List LinguisticExample := [ex_13, ex_15, ex_23, ex_35, ex_37, ex_39, ex_41, ex_50, ex_52, ex_56, ex_57, ex_62, ex_65, ex_66, ex_69, ex_70, fn10_iii]
 

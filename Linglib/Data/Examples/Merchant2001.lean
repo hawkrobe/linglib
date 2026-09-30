@@ -31,9 +31,7 @@ def german_case_match : LinguisticExample :=
     alternatives := [("Er will jemandem schmeicheln, aber sie wissen nicht, wen.", .ungrammatical)]
     readings := []
     paperFeatures := [("phenomenon", "sluicing"), ("whPhraseCase", "dative"), ("innerAntecedentCase", "dative")]
-    comment := "Migrated from Phenomena/Ellipsis/Sluicing.lean germanCaseMatch/germanCaseMismatch: dative 'wem' matches dative 'jemandem' (grammatical); the accusative variant 'wen' in alternatives mismatches and is ungrammatical. UNVERIFIED provenance: this German case-matching paradigm is standardly attributed to Ross 1969 (no bib entry; not cited here), reported in Merchant 2001; the prior Lean file sourced it only as 'Merchant (2001)'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Migrated from Phenomena/Ellipsis/Sluicing.lean germanCaseMatch/germanCaseMismatch: dative 'wem' matches dative 'jemandem' (grammatical); the accusative variant 'wen' in alternatives mismatches and is ungrammatical. UNVERIFIED provenance: this German case-matching paradigm is standardly attributed to Ross 1969 (no bib entry; not cited here), reported in Merchant 2001; the prior Lean file sourced it only as 'Merchant (2001)'." }
 
 def all : List LinguisticExample := [german_case_match]
 

@@ -17,9 +17,7 @@
     "paperFeatures": [
       ["verb", "þvo"]
     ],
-    "comment": "The verb underlying þvottur.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The verb underlying þvottur."
   },
   {
     "id": "wood2023_2",
@@ -42,9 +40,7 @@
     "paperFeatures": [
       ["reading", "CEN"]
     ],
-    "comment": "A complex event reading with the internal argument in a PP.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A complex event reading with the internal argument in a PP."
   },
   {
     "id": "wood2023_3",
@@ -66,9 +62,7 @@
     "paperFeatures": [
       ["reading", "SEN"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2023_4",
@@ -91,9 +85,7 @@
     "paperFeatures": [
       ["reading", "RN"]
     ],
-    "comment": "The laundry reading, an entity with no event.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The laundry reading, an entity with no event."
   },
   {
     "id": "wood2023_5",
@@ -113,9 +105,7 @@
     "paperFeatures": [
       ["prefix", "marg-"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2023_6",
@@ -139,9 +129,7 @@
       ["prefix", "marg-"],
       ["reading", "CEN"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2023_7",
@@ -164,9 +152,7 @@
       ["prefix", "marg-"],
       ["reading", "CEN"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2023_8",
@@ -190,9 +176,7 @@
       ["prefix", "marg-"],
       ["reading", "SEN"]
     ],
-    "comment": "Iterative marg- is out on the simple event reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Iterative marg- is out on the simple event reading."
   },
   {
     "id": "wood2023_9",
@@ -216,9 +200,7 @@
       ["prefix", "marg-"],
       ["reading", "RN"]
     ],
-    "comment": "Iterative marg- is out on the entity reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Iterative marg- is out on the entity reading."
   },
   {
     "id": "wood2023_10",
@@ -238,9 +220,7 @@
     "paperFeatures": [
       ["prefix", "endur-"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2023_11",
@@ -264,9 +244,7 @@
       ["prefix", "endur-"],
       ["reading", "CEN"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2023_12",
@@ -290,9 +268,7 @@
       ["prefix", "endur-"],
       ["reading", "SEN"]
     ],
-    "comment": "endur- adjoins to n, where the simple event alloseme supplies the event.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "endur- adjoins to n, where the simple event alloseme supplies the event."
   },
   {
     "id": "wood2023_13",
@@ -316,9 +292,7 @@
       ["prefix", "endur-"],
       ["reading", "RN"]
     ],
-    "comment": "No event variable at v or n on the entity reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No event variable at v or n on the entity reading."
   },
   {
     "id": "wood2023_14",
@@ -342,9 +316,7 @@
       ["prefix", "endur-"],
       ["reading", "result RN"]
     ],
-    "comment": "A result nominal built on eventive v, to which endur- adjoins.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A result nominal built on eventive v, to which endur- adjoins."
   },
   {
     "id": "wood2023_15",
@@ -367,9 +339,7 @@
       ["preposition", "um"],
       ["pattern", "1"]
     ],
-    "comment": "The verb takes an um PP; the prefixed verb um-ræða is out.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The verb takes an um PP; the prefixed verb um-ræða is out."
   },
   {
     "id": "wood2023_16",
@@ -390,9 +360,7 @@
       ["preposition", "um"],
       ["pattern", "1"]
     ],
-    "comment": "Doubling: the preposition is prefixed to the noun and heads a PP.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Doubling: the preposition is prefixed to the noun and heads a PP."
   },
   {
     "id": "wood2023_17",
@@ -413,9 +381,7 @@
       ["preposition", "um"],
       ["pattern", "3"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2023_18",
@@ -436,9 +402,7 @@
       ["preposition", "um"],
       ["pattern", "3"]
     ],
-    "comment": "The preposition conditions no special meaning, so it is not prefixed.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The preposition conditions no special meaning, so it is not prefixed."
   },
   {
     "id": "wood2023_19",
@@ -463,9 +427,7 @@
       ["pattern", "2"],
       ["reading", "CEN"]
     ],
-    "comment": "The preposition conditions the special meaning 'repair' of gera and is prefixed.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The preposition conditions the special meaning 'repair' of gera and is prefixed."
   },
   {
     "id": "wood2023_20",
@@ -486,9 +448,7 @@
     "paperFeatures": [
       ["suffix", "-væða"]
     ],
-    "comment": "The stem carries overt nominalizing and genitive morphology: -væða attaches to a categorized word.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The stem carries overt nominalizing and genitive morphology: -væða attaches to a categorized word."
   },
   {
     "id": "wood2023_21",
@@ -508,9 +468,7 @@
     "paperFeatures": [
       ["suffix", "-væðing"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
     },
   {
     "id": "wood2023_22",
@@ -533,9 +491,7 @@
       ["nominal", "að-dá-un"],
       ["reading", "RN"]
     ],
-    "comment": "The book also gives the verb rétti mér 'handed me'. Aðdáun has no concrete entity reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The book also gives the verb rétti mér 'handed me'. Aðdáun has no concrete entity reading."
   },
   {
     "id": "wood2023_23",
@@ -558,8 +514,6 @@
       ["nominal", "við-vör-un"],
       ["reading", "RN"]
     ],
-    "comment": "Viðvörun, with the same nominalizer as aðdáun, has a concrete entity reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Viðvörun, with the same nominalizer as aðdáun, has a concrete entity reading."
   }
 ]

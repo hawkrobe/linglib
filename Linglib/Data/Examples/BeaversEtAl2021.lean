@@ -31,9 +31,7 @@ def beavers_etal2021_1c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root class", "result"), ("form", "monomorphemic verb")]
-    comment := "Change of state expressed by a basic verb, unlike 'became black' or 'flattened'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Change of state expressed by a basic verb, unlike 'became black' or 'flattened'." }
 
 def beavers_etal2021_7a : LinguisticExample :=
   { id := "beavers_etal2021_7a"
@@ -49,9 +47,7 @@ def beavers_etal2021_7a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("root class", "property concept"), ("form", "basic stative")]
-    comment := "PC roots show both a simple adjective and a deverbal one ('brightened', (7b))."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "PC roots show both a simple adjective and a deverbal one ('brightened', (7b))." }
 
 def beavers_etal2021_10a : LinguisticExample :=
   { id := "beavers_etal2021_10a"
@@ -67,9 +63,7 @@ def beavers_etal2021_10a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "property concept")]
-    comment := "Simple PC adjectives survive change denial; deverbal '#brightened photo' does not."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Simple PC adjectives survive change denial; deverbal '#brightened photo' does not." }
 
 def beavers_etal2021_11c : LinguisticExample :=
   { id := "beavers_etal2021_11c"
@@ -85,9 +79,7 @@ def beavers_etal2021_11c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "result")]
-    comment := "Contradictory even in a prototypical-result context: the adjective entails prior change."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Contradictory even in a prototypical-result context: the adjective entails prior change." }
 
 def beavers_etal2021_13 : LinguisticExample :=
   { id := "beavers_etal2021_13"
@@ -103,9 +95,7 @@ def beavers_etal2021_13 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "result")]
-    comment := "Acceptable for some speakers: lexical drift toward a 'not functioning' sense, expected variation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Acceptable for some speakers: lexical drift toward a 'not functioning' sense, expected variation." }
 
 def beavers_etal2021_15a : LinguisticExample :=
   { id := "beavers_etal2021_15a"
@@ -121,9 +111,7 @@ def beavers_etal2021_15a : LinguisticExample :=
     alternatives := []
     readings := [("restitutive: could be just one sharpening", .acceptable)]
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "property concept")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def beavers_etal2021_16a : LinguisticExample :=
   { id := "beavers_etal2021_16a"
@@ -139,9 +127,7 @@ def beavers_etal2021_16a : LinguisticExample :=
     alternatives := []
     readings := [("repetitive: necessarily two defrostings", .acceptable)]
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "result")]
-    comment := "Result roots lack the restitutive reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Result roots lack the restitutive reading." }
 
 def beavers_etal2021_25a : LinguisticExample :=
   { id := "beavers_etal2021_25a"
@@ -157,9 +143,7 @@ def beavers_etal2021_25a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "property concept")]
-    comment := "Kakataibo PC roots generally allow restitutive -tëkën; this token was rejected in the given context."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Kakataibo PC roots generally allow restitutive -tëkën; this token was rejected in the given context." }
 
 def beavers_etal2021_26 : LinguisticExample :=
   { id := "beavers_etal2021_26"
@@ -175,9 +159,7 @@ def beavers_etal2021_26 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "result")]
-    comment := "Unlike English 'kill': rëtë means 'not alive', applicable to never-alive inanimates — expected lexicalization variation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Unlike English 'kill': rëtë means 'not alive', applicable to never-alive inanimates — expected lexicalization variation." }
 
 def beavers_etal2021_28a : LinguisticExample :=
   { id := "beavers_etal2021_28a"
@@ -193,9 +175,7 @@ def beavers_etal2021_28a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "property concept")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def beavers_etal2021_28b : LinguisticExample :=
   { id := "beavers_etal2021_28b"
@@ -211,9 +191,7 @@ def beavers_etal2021_28b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "result")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def beavers_etal2021_29b : LinguisticExample :=
   { id := "beavers_etal2021_29b"
@@ -229,9 +207,7 @@ def beavers_etal2021_29b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "result")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def beavers_etal2021_31 : LinguisticExample :=
   { id := "beavers_etal2021_31"
@@ -247,9 +223,7 @@ def beavers_etal2021_31 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "property concept")]
-    comment := "With deverbal mu'arax 'lengthened' in place of 'arox the sentence is contradictory."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With deverbal mu'arax 'lengthened' in place of 'arox the sentence is contradictory." }
 
 def beavers_etal2021_32 : LinguisticExample :=
   { id := "beavers_etal2021_32"
@@ -265,9 +239,7 @@ def beavers_etal2021_32 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "result")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def beavers_etal2021_33b : LinguisticExample :=
   { id := "beavers_etal2021_33b"
@@ -283,9 +255,7 @@ def beavers_etal2021_33b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "result")]
-    comment := "mexadaš 'anew' generates only restitutive readings, similar to English re- prefixation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "mexadaš 'anew' generates only restitutive readings, similar to English re- prefixation." }
 
 def beavers_etal2021_35b : LinguisticExample :=
   { id := "beavers_etal2021_35b"
@@ -301,9 +271,7 @@ def beavers_etal2021_35b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "change denial"), ("root class", "result")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def beavers_etal2021_36b : LinguisticExample :=
   { id := "beavers_etal2021_36b"
@@ -319,9 +287,7 @@ def beavers_etal2021_36b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "restitutive again"), ("root class", "result")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def beavers_etal2021_38b : LinguisticExample :=
   { id := "beavers_etal2021_38b"
@@ -337,9 +303,7 @@ def beavers_etal2021_38b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "additive restitutive"), ("root class", "result")]
-    comment := "Spathas's additive test: ftiahno 'fix' rejects the restitutive-like additive reading, patterning with result roots."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Spathas's additive test: ftiahno 'fix' rejects the restitutive-like additive reading, patterning with result roots." }
 
 def all : List LinguisticExample := [beavers_etal2021_1c, beavers_etal2021_7a, beavers_etal2021_10a, beavers_etal2021_11c, beavers_etal2021_13, beavers_etal2021_15a, beavers_etal2021_16a, beavers_etal2021_25a, beavers_etal2021_26, beavers_etal2021_28a, beavers_etal2021_28b, beavers_etal2021_29b, beavers_etal2021_31, beavers_etal2021_32, beavers_etal2021_33b, beavers_etal2021_35b, beavers_etal2021_36b, beavers_etal2021_38b]
 

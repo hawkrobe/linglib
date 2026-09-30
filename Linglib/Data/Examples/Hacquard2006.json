@@ -73,8 +73,7 @@
         "false"
       ]
     ],
-    "comment": "Compatible with Jane not taking the train.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Compatible with Jane not taking the train."
   },
   {
     "id": "hacquard2006_ex1b",
@@ -154,8 +153,7 @@
         "true"
       ]
     ],
-    "comment": "True only if Jane took the train; a continuation denying it is a contradiction.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "True only if Jane took the train; a continuation denying it is a contradiction."
   },
   {
     "id": "hacquard2006_ex2a",
@@ -656,8 +654,7 @@
         "perfective"
       ]
     ],
-    "comment": "The unmodalized sentence: no desirability inference.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The unmodalized sentence: no desirability inference."
   },
   {
     "id": "hacquard2006_ex89b",
@@ -991,8 +988,7 @@
         "eventBinding"
       ]
     ],
-    "comment": "Bound by the speech event the modality is relativized to the speaker at the utterance time; bound by aspect, to Jane at the past time.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Bound by the speech event the modality is relativized to the speaker at the utterance time; bound by aspect, to Jane at the past time."
   },
   {
     "id": "hacquard2006_ex242a",
@@ -1184,8 +1180,7 @@
         "false"
       ]
     ],
-    "comment": "A speech-event-bound epistemic: the stative complement disprefers a circumstantial relation and aspect's event has no content.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A speech-event-bound epistemic: the stative complement disprefers a circumstantial relation and aspect's event has no content."
   },
   {
     "id": "hacquard2006_ex246",

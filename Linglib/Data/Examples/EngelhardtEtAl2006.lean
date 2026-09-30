@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("ambiguity", "ambiguous")]
-    comment := "The temporarily ambiguous instruction of Tanenhaus et al. (1995), on the towel a modifier of the apple or the destination: listeners fixate the empty towel on hearing the prepositional phrase in the one-referent display."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The temporarily ambiguous instruction of Tanenhaus et al. (1995), on the towel a modifier of the apple or the destination: listeners fixate the empty towel on hearing the prepositional phrase in the one-referent display." }
 
 def ex_2 : LinguisticExample :=
   { id := "engelhardtetal2006_2"
@@ -49,9 +47,7 @@ def ex_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("ambiguity", "unambiguous")]
-    comment := "The unambiguous counterpart of (1)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The unambiguous counterpart of (1)." }
 
 def ex_3 : LinguisticExample :=
   { id := "engelhardtetal2006_3"
@@ -67,9 +63,7 @@ def ex_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("target", "bare"), ("destination", "towel")]
-    comment := "Bare target, matching location: the location is under-described, since the apple is already on a towel. Speakers never produced it and listeners rated it lowest of the four."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Bare target, matching location: the location is under-described, since the apple is already on a towel. Speakers never produced it and listeners rated it lowest of the four." }
 
 def ex_4 : LinguisticExample :=
   { id := "engelhardtetal2006_4"
@@ -85,9 +79,7 @@ def ex_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("target", "bare"), ("destination", "box")]
-    comment := "Bare target, different location: concise in the one-referent display, an under-description of the target in the two-referent display."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Bare target, different location: concise in the one-referent display, an under-description of the target in the two-referent display." }
 
 def ex_5 : LinguisticExample :=
   { id := "engelhardtetal2006_5"
@@ -103,9 +95,7 @@ def ex_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("target", "modified"), ("destination", "otherTowel")]
-    comment := "Modified target, matching location: the target is over-described in the one-referent display; the location carries the pre-nominal modifier other."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Modified target, matching location: the target is over-described in the one-referent display; the location carries the pre-nominal modifier other." }
 
 def ex_6 : LinguisticExample :=
   { id := "engelhardtetal2006_6"
@@ -121,9 +111,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("target", "modified"), ("destination", "box")]
-    comment := "Modified target, different location: an over-description in the one-referent display, the modification required in the two-referent display. In Experiment 3 listeners fixated the empty towel on hearing on the towel and were delayed in fixating the box."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Modified target, different location: an over-description in the one-referent display, the modification required in the two-referent display. In Experiment 3 listeners fixated the empty towel on hearing on the towel and were delayed in fixating the box." }
 
 def ex_7 : LinguisticExample :=
   { id := "engelhardtetal2006_7"
@@ -139,9 +127,7 @@ def ex_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Recorded so that the bare target instruction of the matching condition could be cut from it with the prosody of (6)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Recorded so that the bare target instruction of the matching condition could be cut from it with the prosody of (6)." }
 
 def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7]
 

@@ -28,8 +28,7 @@
         "exact"
       ]
     ],
-    "comment": "Based on Horn (1989).",
-    "lgrConformance": ""
+    "comment": "Based on Horn (1989)."
   },
   {
     "id": "huang2013_ex2",
@@ -60,8 +59,7 @@
         "lower-bounded"
       ]
     ],
-    "comment": "Adapted from Kadmon (2001): true and felicitous with five chairs in the office.",
-    "lgrConformance": ""
+    "comment": "Adapted from Kadmon (2001): true and felicitous with five chairs in the office."
   },
   {
     "id": "huang2013_ex3",
@@ -96,8 +94,7 @@
         "calculated"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "huang2013_ex4",
@@ -132,8 +129,7 @@
         "cancelled"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "huang2013_ex5",
@@ -164,8 +160,7 @@
         "stronger alternative to (3)"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "huang2013_ex6",
@@ -200,8 +195,7 @@
         "lower-bounded"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "huang2013_ex7",
@@ -236,8 +230,7 @@
         "exact"
       ]
     ],
-    "comment": "Breheny (2008): the numeral stays exact where the scalar goes lower-bounded.",
-    "lgrConformance": ""
+    "comment": "Breheny (2008): the numeral stays exact where the scalar goes lower-bounded."
   },
   {
     "id": "huang2013_ex8",
@@ -268,8 +261,7 @@
         "implicit domain restriction"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "huang2013_exp1_some",
@@ -304,8 +296,7 @@
         "some(NONE,SOME), some(SOME,ALL), some(NONE,ALL)"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "huang2013_exp1_two",
@@ -340,8 +331,7 @@
         "two(1,2), two(2,3V5), two(1,3V5)"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "huang2013_exp2_giveN_some",
@@ -372,8 +362,7 @@
         "Give-N"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "huang2013_exp2_giveN_all",
@@ -404,8 +393,7 @@
         "Give-N"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "huang2013_exp3_all",
@@ -440,8 +428,7 @@
         "all(NONE,ALL), all(SOME,ALL), all(SOME,NONE)"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "huang2013_exp4_two",
@@ -476,8 +463,7 @@
         "two(1,3)"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "huang2013_exp4_fn2",
@@ -512,8 +498,7 @@
         "of the some(NONE,ALL) trials"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "huang2013_s62_some",
@@ -548,8 +533,7 @@
         "some of the soc-"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "huang2013_s62_three",
@@ -584,8 +568,7 @@
         "lower-bound control"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "huang2013_s62_two",
@@ -620,7 +603,6 @@
         "upper-bound probe"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

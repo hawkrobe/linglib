@@ -31,9 +31,7 @@ def huang2013_ex1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("term", "two"), ("reading", "exact")]
-    comment := "Based on Horn (1989)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Based on Horn (1989)." }
 
 def huang2013_ex2 : LinguisticExample :=
   { id := "huang2013_ex2"
@@ -49,9 +47,7 @@ def huang2013_ex2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("term", "two"), ("reading", "lower-bounded")]
-    comment := "Adapted from Kadmon (2001): true and felicitous with five chairs in the office."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Adapted from Kadmon (2001): true and felicitous with five chairs in the office." }
 
 def huang2013_ex3 : LinguisticExample :=
   { id := "huang2013_ex3"
@@ -67,9 +63,7 @@ def huang2013_ex3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.1"), ("term", "some"), ("reading", "some but not all"), ("implicature", "calculated")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def huang2013_ex4 : LinguisticExample :=
   { id := "huang2013_ex4"
@@ -85,9 +79,7 @@ def huang2013_ex4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.1"), ("term", "some"), ("reading", "lower-bounded"), ("implicature", "cancelled")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def huang2013_ex5 : LinguisticExample :=
   { id := "huang2013_ex5"
@@ -103,9 +95,7 @@ def huang2013_ex5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.1"), ("term", "all"), ("role", "stronger alternative to (3)")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def huang2013_ex6 : LinguisticExample :=
   { id := "huang2013_ex6"
@@ -121,9 +111,7 @@ def huang2013_ex6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.2"), ("term", "some"), ("environment", "restrictor of a universal"), ("reading", "lower-bounded")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def huang2013_ex7 : LinguisticExample :=
   { id := "huang2013_ex7"
@@ -139,9 +127,7 @@ def huang2013_ex7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.2"), ("term", "two"), ("environment", "restrictor of a universal"), ("reading", "exact")]
-    comment := "Breheny (2008): the numeral stays exact where the scalar goes lower-bounded."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Breheny (2008): the numeral stays exact where the scalar goes lower-bounded." }
 
 def huang2013_ex8 : LinguisticExample :=
   { id := "huang2013_ex8"
@@ -157,9 +143,7 @@ def huang2013_ex8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.2"), ("term", "everybody"), ("phenomenon", "implicit domain restriction")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def huang2013_exp1_some : LinguisticExample :=
   { id := "huang2013_exp1_some"
@@ -175,9 +159,7 @@ def huang2013_exp1_some : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1.2"), ("term", "some"), ("task", "covered box"), ("trials", "some(NONE,SOME), some(SOME,ALL), some(NONE,ALL)")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def huang2013_exp1_two : LinguisticExample :=
   { id := "huang2013_exp1_two"
@@ -193,9 +175,7 @@ def huang2013_exp1_two : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1.2"), ("term", "two"), ("task", "covered box"), ("trials", "two(1,2), two(2,3V5), two(1,3V5)")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def huang2013_exp2_giveN_some : LinguisticExample :=
   { id := "huang2013_exp2_giveN_some"
@@ -211,9 +191,7 @@ def huang2013_exp2_giveN_some : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1.2"), ("term", "some"), ("task", "Give-N")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def huang2013_exp2_giveN_all : LinguisticExample :=
   { id := "huang2013_exp2_giveN_all"
@@ -229,9 +207,7 @@ def huang2013_exp2_giveN_all : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3.1.2"), ("term", "all"), ("task", "Give-N")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def huang2013_exp3_all : LinguisticExample :=
   { id := "huang2013_exp3_all"
@@ -247,9 +223,7 @@ def huang2013_exp3_all : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.1.2"), ("term", "all"), ("task", "covered box"), ("trials", "all(NONE,ALL), all(SOME,ALL), all(SOME,NONE)")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def huang2013_exp4_two : LinguisticExample :=
   { id := "huang2013_exp4_two"
@@ -265,9 +239,7 @@ def huang2013_exp4_two : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.1.2"), ("term", "two"), ("task", "covered box"), ("trials", "two(1,3)")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def huang2013_exp4_fn2 : LinguisticExample :=
   { id := "huang2013_exp4_fn2"
@@ -283,9 +255,7 @@ def huang2013_exp4_fn2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.2"), ("term", "two"), ("task", "covered box"), ("displays", "of the some(NONE,ALL) trials")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def huang2013_s62_some : LinguisticExample :=
   { id := "huang2013_s62_some"
@@ -301,9 +271,7 @@ def huang2013_s62_some : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6.2"), ("term", "some"), ("task", "visual world"), ("ambiguity", "some of the soc-")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def huang2013_s62_three : LinguisticExample :=
   { id := "huang2013_s62_three"
@@ -319,9 +287,7 @@ def huang2013_s62_three : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6.2"), ("term", "three"), ("task", "visual world"), ("role", "lower-bound control")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def huang2013_s62_two : LinguisticExample :=
   { id := "huang2013_s62_two"
@@ -337,9 +303,7 @@ def huang2013_s62_two : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "6.2"), ("term", "two"), ("task", "visual world"), ("role", "upper-bound probe")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [huang2013_ex1, huang2013_ex2, huang2013_ex3, huang2013_ex4, huang2013_ex5, huang2013_ex6, huang2013_ex7, huang2013_ex8, huang2013_exp1_some, huang2013_exp1_two, huang2013_exp2_giveN_some, huang2013_exp2_giveN_all, huang2013_exp3_all, huang2013_exp4_two, huang2013_exp4_fn2, huang2013_s62_some, huang2013_s62_three, huang2013_s62_two]
 

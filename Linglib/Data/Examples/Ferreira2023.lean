@@ -31,9 +31,7 @@ def ex_16 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "sn_p"), ("second", "pos_notp")]
-    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*." }
 
 def ex_17 : LinguisticExample :=
   { id := "ferreira2023_17"
@@ -49,9 +47,7 @@ def ex_17 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "pos_notp")]
-    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*." }
 
 def ex_18 : LinguisticExample :=
   { id := "ferreira2023_18"
@@ -67,9 +63,7 @@ def ex_18 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "pos_p"), ("second", "pos_notp")]
-    comment := "Repeated as (23). The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Repeated as (23). The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*." }
 
 def ex_19 : LinguisticExample :=
   { id := "ferreira2023_19"
@@ -85,9 +79,7 @@ def ex_19 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "sn_p"), ("second", "not_wn_p")]
-    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*." }
 
 def ex_20 : LinguisticExample :=
   { id := "ferreira2023_20"
@@ -103,9 +95,7 @@ def ex_20 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "not_sn_p")]
-    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*." }
 
 def ex_21 : LinguisticExample :=
   { id := "ferreira2023_21"
@@ -121,9 +111,7 @@ def ex_21 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "not_pos_p")]
-    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*." }
 
 def ex_22 : LinguisticExample :=
   { id := "ferreira2023_22"
@@ -139,9 +127,7 @@ def ex_22 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "pos_p"), ("second", "not_wn_p")]
-    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper gives an interlinear gloss; the translation follows (15). The paper prints *assasinado*." }
 
 def ex_24 : LinguisticExample :=
   { id := "ferreira2023_24"
@@ -157,9 +143,7 @@ def ex_24 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "wn_notp")]
-    comment := "The paper gives an interlinear gloss; the translation follows (15)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper gives an interlinear gloss; the translation follows (15)." }
 
 def ex_25 : LinguisticExample :=
   { id := "ferreira2023_25"
@@ -175,9 +159,7 @@ def ex_25 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "sn_p"), ("second", "sn_notp")]
-    comment := "The paper gives an interlinear gloss; the translation follows (15)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper gives an interlinear gloss; the translation follows (15)." }
 
 def ex_30a : LinguisticExample :=
   { id := "ferreira2023_30a"
@@ -193,9 +175,7 @@ def ex_30a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "not_sn_p")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_30b : LinguisticExample :=
   { id := "ferreira2023_30b"
@@ -211,9 +191,7 @@ def ex_30b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "sn_p")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_32a : LinguisticExample :=
   { id := "ferreira2023_32a"
@@ -229,9 +207,7 @@ def ex_32a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "sn_p"), ("second", "not_sn_p")]
-    comment := "Not being obliged is read as the negation of the strong necessity."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Not being obliged is read as the negation of the strong necessity." }
 
 def ex_32b : LinguisticExample :=
   { id := "ferreira2023_32b"
@@ -247,9 +223,7 @@ def ex_32b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("first", "wn_p"), ("second", "not_sn_p")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_80 : LinguisticExample :=
   { id := "ferreira2023_80"
@@ -265,9 +239,7 @@ def ex_80 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("base", "holiday")]
-    comment := "Repeats (65). The paper glosses devia as wn.pst.imp and contrasts the English 'That's why I expected him to be there.'"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Repeats (65). The paper glosses devia as wn.pst.imp and contrasts the English 'That's why I expected him to be there.'" }
 
 def ex_81 : LinguisticExample :=
   { id := "ferreira2023_81"
@@ -283,9 +255,7 @@ def ex_81 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("base", "checked")]
-    comment := "Repeats (66). The paper glosses devia as wn.pst.imp."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Repeats (66). The paper glosses devia as wn.pst.imp." }
 
 def all : List LinguisticExample := [ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_24, ex_25, ex_30a, ex_30b, ex_32a, ex_32b, ex_80, ex_81]
 

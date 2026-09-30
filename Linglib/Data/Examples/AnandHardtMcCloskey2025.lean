@@ -31,9 +31,7 @@ def ex_13a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "sluicing"), ("ppType", "nonargument")]
-    comment := "UNVERIFIED paperLabel: ex. (13a) carried from Studies/AnandHardtMcCloskey2025.lean strandedPrepEx13a, not checked against the published paper. SCEP corpus ID [138195] per the Lean source field. The stranded 'in' marks a nonargument PP merged above vP, outside the argument domain, so the Structural Identity Condition does not require it to match. Lean fields: antecedent = 'government regulation is necessary'; innerAntecedent = 'a one-size-fits-all approach'; whPhrase = 'what form'; elided = 'government regulation is necessary in'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "UNVERIFIED paperLabel: ex. (13a) carried from Studies/AnandHardtMcCloskey2025.lean strandedPrepEx13a, not checked against the published paper. SCEP corpus ID [138195] per the Lean source field. The stranded 'in' marks a nonargument PP merged above vP, outside the argument domain, so the Structural Identity Condition does not require it to match. Lean fields: antecedent = 'government regulation is necessary'; innerAntecedent = 'a one-size-fits-all approach'; whPhrase = 'what form'; elided = 'government regulation is necessary in'." }
 
 def ex_13b : LinguisticExample :=
   { id := "anandhardtmccloskey2025_13b"
@@ -49,9 +47,7 @@ def ex_13b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "sluicing"), ("ppType", "nonargument")]
-    comment := "UNVERIFIED paperLabel: ex. (13b) carried from Studies/AnandHardtMcCloskey2025.lean strandedPrepEx13b, not checked against the published paper. SCEP corpus ID [F38] per the Lean source field. Lean fields: antecedent = 'I remembered meeting her'; innerAntecedent = 'her'; whPhrase = 'what date'; elided = 'I met her on'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "UNVERIFIED paperLabel: ex. (13b) carried from Studies/AnandHardtMcCloskey2025.lean strandedPrepEx13b, not checked against the published paper. SCEP corpus ID [F38] per the Lean source field. Lean fields: antecedent = 'I remembered meeting her'; innerAntecedent = 'her'; whPhrase = 'what date'; elided = 'I met her on'." }
 
 def ex_12c : LinguisticExample :=
   { id := "anandhardtmccloskey2025_12c"
@@ -67,9 +63,7 @@ def ex_12c : LinguisticExample :=
     alternatives := [("They're furious but it's unclear who at.", .acceptable)]
     readings := []
     paperFeatures := [("phenomenon", "sluicing"), ("ppType", "argument")]
-    comment := "UNVERIFIED paperLabel: ex. (12c) carried from Studies/AnandHardtMcCloskey2025.lean argumentPPEx12c, not checked against the published paper. The pied-piped (12b) variant in alternatives and the contrast description are carried from the Lean docstring for ex. (12). Lean fields: antecedent = 'they're furious'; whPhrase = 'who'; elided = 'they are furious at'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "UNVERIFIED paperLabel: ex. (12c) carried from Studies/AnandHardtMcCloskey2025.lean argumentPPEx12c, not checked against the published paper. The pied-piped (12b) variant in alternatives and the contrast description are carried from the Lean docstring for ex. (12). Lean fields: antecedent = 'they're furious'; whPhrase = 'who'; elided = 'they are furious at'." }
 
 def ex_15a : LinguisticExample :=
   { id := "anandhardtmccloskey2025_15a"
@@ -85,9 +79,7 @@ def ex_15a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "sluicing"), ("ppType", "argument")]
-    comment := "UNVERIFIED paperLabel: ex. (15a) carried from Studies/AnandHardtMcCloskey2025.lean failedSluiceEx15a (docstring 'paper ex. (15a-b)'), not checked against the published paper. Lean fields: antecedent = 'he is very loyal'; whPhrase = 'who'; elided = 'he is loyal to'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "UNVERIFIED paperLabel: ex. (15a) carried from Studies/AnandHardtMcCloskey2025.lean failedSluiceEx15a (docstring 'paper ex. (15a-b)'), not checked against the published paper. Lean fields: antecedent = 'he is very loyal'; whPhrase = 'who'; elided = 'he is loyal to'." }
 
 def all : List LinguisticExample := [ex_13a, ex_13b, ex_12c, ex_15a]
 

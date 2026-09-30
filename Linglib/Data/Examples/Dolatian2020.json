@@ -19,9 +19,7 @@
       ["dialect", "western"],
       ["process", "stress"]
     ],
-    "comment": "Stress falls on the rightmost full vowel, whether in the root, a derivational suffix or an inflectional suffix, but never on a schwa.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Stress falls on the rightmost full vowel, whether in the root, a derivational suffix or an inflectional suffix, but never on a schwa."
   },
   {
     "id": "dolatian2020_2",
@@ -43,9 +41,7 @@
       ["suffix", "derivational"],
       ["reduction", "both"]
     ],
-    "comment": "A destressed high vowel reduces to schwa, hín ~ hən-utjún, or deletes, teʁín ~ teʁn-orág.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A destressed high vowel reduces to schwa, hín ~ hən-utjún, or deletes, teʁín ~ teʁn-orág."
   },
   {
     "id": "dolatian2020_3b",
@@ -71,9 +67,7 @@
       ["suffix", "derivational"],
       ["reduction", "none"]
     ],
-    "comment": "Low and mid vowels do not reduce when destressed.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Low and mid vowels do not reduce when destressed."
   },
   {
     "id": "dolatian2020_4",
@@ -99,9 +93,7 @@
       ["suffix", "derivational"],
       ["reduction", "deletion"]
     ],
-    "comment": "Only the destressed high vowel reduces, the one stressed in the base and unstressed in the derivative; the other high vowels of the base stay.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Only the destressed high vowel reduces, the one stressed in the base and unstressed in the derivative; the other high vowels of the base stay."
   },
   {
     "id": "dolatian2020_5a",
@@ -123,9 +115,7 @@
       ["suffix", "derivational"],
       ["reduction", "schwa"]
     ],
-    "comment": "Unbounded cyclicity: reduction applies to a sequence of destressed high vowels, each new morpheme triggering a new cycle of stress shift and reduction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Unbounded cyclicity: reduction applies to a sequence of destressed high vowels, each new morpheme triggering a new cycle of stress shift and reduction."
   },
   {
     "id": "dolatian2020_5c",
@@ -148,9 +138,7 @@
       ["suffix", "compound"],
       ["reduction", "both"]
     ],
-    "comment": "Reduction applies to suffixes and in compounds: the suffix vowel of kər-ít͡ʃ is destressed and deleted in the compound.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Reduction applies to suffixes and in compounds: the suffix vowel of kər-ít͡ʃ is destressed and deleted in the compound."
   },
   {
     "id": "dolatian2020_7a",
@@ -172,9 +160,7 @@
       ["suffix", "vInflection"],
       ["reduction", "none"]
     ],
-    "comment": "In Western Armenian derivational suffixes trigger reduction and inflectional suffixes only stress shift: the stem-level against the word-level cophonology.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "In Western Armenian derivational suffixes trigger reduction and inflectional suffixes only stress shift: the stem-level against the word-level cophonology."
   },
   {
     "id": "dolatian2020_7b",
@@ -197,9 +183,7 @@
       ["suffix", "vInflection"],
       ["reduction", "diphthong"]
     ],
-    "comment": "The destressed diphthong uj reduces to u in derivation and not in inflection.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The destressed diphthong uj reduces to u in derivation and not in inflection."
   },
   {
     "id": "dolatian2020_10c",
@@ -221,9 +205,7 @@
       ["suffix", "vInflection"],
       ["reduction", "deletion"]
     ],
-    "comment": "Vowel-initial inflection triggers reduction in Eastern Armenian: the resyllabified stem-final consonant misaligns the Prosodic Stem, which expands and triggers its own cophonology, (78).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Vowel-initial inflection triggers reduction in Eastern Armenian: the resyllabified stem-final consonant misaligns the Prosodic Stem, which expands and triggers its own cophonology, (78)."
   },
   {
     "id": "dolatian2020_10e",
@@ -245,9 +227,7 @@
       ["suffix", "cInflection"],
       ["reduction", "none"]
     ],
-    "comment": "Consonant-initial inflection leaves the Prosodic Stem aligned with the morphological stem and the syllable, so only the word-level cophonology applies, in both dialects.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Consonant-initial inflection leaves the Prosodic Stem aligned with the morphological stem and the syllable, so only the word-level cophonology applies, in both dialects."
   },
   {
     "id": "dolatian2020_12a",
@@ -270,9 +250,7 @@
       ["suffix", "vInflection"],
       ["reduction", "diphthong"]
     ],
-    "comment": "In both dialects the destressed diphthong reduces in derivation and not in inflection; Eastern vowel-initial inflection triggers high vowel reduction but not diphthong reduction, so the Prosodic Stem cophonology lies between the word-level and the stem-level, (76).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "In both dialects the destressed diphthong reduces in derivation and not in inflection; Eastern vowel-initial inflection triggers high vowel reduction but not diphthong reduction, so the Prosodic Stem cophonology lies between the word-level and the stem-level, (76)."
   },
   {
     "id": "dolatian2020_41",
@@ -295,9 +273,7 @@
       ["suffix", "derivational"],
       ["reduction", "none"]
     ],
-    "comment": "A suffix without a full vowel cannot shift stress, so there is no destressed vowel and no reduction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A suffix without a full vowel cannot shift stress, so there is no destressed vowel and no reduction."
   },
   {
     "id": "dolatian2020_42",
@@ -323,9 +299,7 @@
       ["suffix", "derivational"],
       ["reduction", "both"]
     ],
-    "comment": "Reduction deletes the vowel unless deletion would create an unsyllabifiable cluster, in which case the vowel is replaced by schwa, (46).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Reduction deletes the vowel unless deletion would create an unsyllabifiable cluster, in which case the vowel is replaced by schwa, (46)."
   },
   {
     "id": "dolatian2020_47a",
@@ -352,9 +326,7 @@
       ["suffix", "derivational"],
       ["reduction", "both"]
     ],
-    "comment": "The derivation of (47b): the unstressed high vowel of hivánt does not reduce, the destressed vowel of hankíst reduces to schwa because deletion would leave an unsyllabifiable cluster, and that of amusín deletes.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The derivation of (47b): the unstressed high vowel of hivánt does not reduce, the destressed vowel of hankíst reduces to schwa because deletion would leave an unsyllabifiable cluster, and that of amusín deletes."
   },
   {
     "id": "dolatian2020_48a",
@@ -376,9 +348,7 @@
       ["suffix", "derivational"],
       ["reduction", "deletion"]
     ],
-    "comment": "A destressed high vowel in a suffix reduces too.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A destressed high vowel in a suffix reduces too."
   },
   {
     "id": "dolatian2020_65",
@@ -401,9 +371,7 @@
       ["suffix", "vInflection"],
       ["reduction", "both"]
     ],
-    "comment": "All case suffixes are vowel-initial and Eastern Armenian reduces before each of them, Western Armenian before none: tux.t-í, amusi.n-óv.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "All case suffixes are vowel-initial and Eastern Armenian reduces before each of them, Western Armenian before none: tux.t-í, amusi.n-óv."
   },
   {
     "id": "dolatian2020_66",
@@ -426,9 +394,7 @@
       ["suffix", "plural"],
       ["reduction", "both"]
     ],
-    "comment": "The plural is -er after monosyllabic bases and -ner after polysyllabic ones; the vowel-initial allomorph reduces the base and the consonant-initial one does not, whatever case follows.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The plural is -er after monosyllabic bases and -ner after polysyllabic ones; the vowel-initial allomorph reduces the base and the consonant-initial one does not, whatever case follows."
   },
   {
     "id": "dolatian2020_72",
@@ -453,8 +419,6 @@
       ["suffix", "vInflection"],
       ["reduction", "none"]
     ],
-    "comment": "Pre-inflectional reduction does not apply in regularized inflection, inflected adjectives or loanwords: it is a lexical process and not a post-cyclic word-level one, against the recursive prosodic word analysis of §2.5.3.2.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Pre-inflectional reduction does not apply in regularized inflection, inflected adjectives or loanwords: it is a lexical process and not a post-cyclic word-level one, against the recursive prosodic word analysis of §2.5.3.2."
   }
 ]

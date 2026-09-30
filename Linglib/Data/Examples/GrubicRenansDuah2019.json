@@ -18,8 +18,7 @@
       ["construction", "marked"],
       ["diagnostic", "negationAlso"]
     ],
-    "comment": "Negation targets the prejacent, so the additive particle lacks its antecedent.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Negation targets the prejacent, so the additive particle lacks its antecedent."
   },
   {
     "id": "grubicrenansduah2019_36b",
@@ -41,8 +40,7 @@
       ["construction", "only"],
       ["diagnostic", "negationAlso"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_37a",
@@ -63,8 +61,7 @@
       ["construction", "marked"],
       ["diagnostic", "negationAlso"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_37b",
@@ -85,8 +82,7 @@
       ["construction", "only"],
       ["diagnostic", "negationAlso"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_38a",
@@ -108,8 +104,7 @@
       ["construction", "marked"],
       ["diagnostic", "negationAlso"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_38b",
@@ -130,8 +125,7 @@
       ["construction", "only"],
       ["diagnostic", "negationAlso"]
     ],
-    "comment": "Duah (2015: 18).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Duah (2015: 18)."
   },
   {
     "id": "grubicrenansduah2019_39a",
@@ -151,8 +145,7 @@
       ["construction", "only"],
       ["diagnostic", "reasonClause"]
     ],
-    "comment": "Consultant: he doesn't want the other students to fail.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Consultant: he doesn't want the other students to fail."
   },
   {
     "id": "grubicrenansduah2019_39b",
@@ -172,8 +165,7 @@
       ["construction", "marked"],
       ["diagnostic", "reasonClause"]
     ],
-    "comment": "Consultant: he doesn't want Kule to pass. The exhaustive inference is not the reason.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Consultant: he doesn't want Kule to pass. The exhaustive inference is not the reason."
   },
   {
     "id": "grubicrenansduah2019_40a",
@@ -193,8 +185,7 @@
       ["construction", "only"],
       ["diagnostic", "reasonClause"]
     ],
-    "comment": "Consultant: the teacher wants everybody to pass, so he will repeat the exam.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Consultant: the teacher wants everybody to pass, so he will repeat the exam."
   },
   {
     "id": "grubicrenansduah2019_40b",
@@ -214,8 +205,7 @@
       ["construction", "marked"],
       ["diagnostic", "reasonClause"]
     ],
-    "comment": "Consultant: the teacher didn't want Kofi to pass, so he will repeat the exam.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Consultant: the teacher didn't want Kofi to pass, so he will repeat the exam."
   },
   {
     "id": "grubicrenansduah2019_41a",
@@ -236,8 +226,7 @@
       ["construction", "only"],
       ["diagnostic", "reasonClause"]
     ],
-    "comment": "Consultant: the teacher wants everybody to pass, and since Yaw is the only one who passed, the teacher will repeat the exam.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Consultant: the teacher wants everybody to pass, and since Yaw is the only one who passed, the teacher will repeat the exam."
   },
   {
     "id": "grubicrenansduah2019_41b",
@@ -258,8 +247,7 @@
       ["construction", "marked"],
       ["diagnostic", "reasonClause"]
     ],
-    "comment": "Consultant: the teacher doesn't want Yaw to pass the exam, so he will repeat the exam.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Consultant: the teacher doesn't want Yaw to pass the exam, so he will repeat the exam."
   },
   {
     "id": "grubicrenansduah2019_42",
@@ -280,8 +268,7 @@
       ["construction", "marked"],
       ["diagnostic", "cancellation"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_43a1",
@@ -303,8 +290,7 @@
       ["construction", "marked"],
       ["diagnostic", "cancellation"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_43a2",
@@ -326,8 +312,7 @@
       ["construction", "unmarked"],
       ["diagnostic", "cancellation"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_44a1",
@@ -348,8 +333,7 @@
       ["construction", "marked"],
       ["diagnostic", "cancellation"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_44a2",
@@ -370,8 +354,7 @@
       ["construction", "unmarked"],
       ["diagnostic", "cancellation"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_45",
@@ -392,8 +375,7 @@
       ["construction", "marked"],
       ["diagnostic", "cancellation"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_46",
@@ -415,8 +397,7 @@
       ["construction", "marked"],
       ["diagnostic", "cancellation"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_47",
@@ -438,8 +419,7 @@
       ["construction", "marked"],
       ["diagnostic", "cancellation"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_48",
@@ -460,8 +440,7 @@
       ["construction", "marked"],
       ["diagnostic", "mentionSome"]
     ],
-    "comment": "Okay in a context where you just want to know the closest place to buy a newspaper.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Okay in a context where you just want to know the closest place to buy a newspaper."
   },
   {
     "id": "grubicrenansduah2019_49",
@@ -481,8 +460,7 @@
       ["construction", "marked"],
       ["diagnostic", "mentionSome"]
     ],
-    "comment": "Consultant: it sounds like it's only Kofi who sells newspapers at Makola.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Consultant: it sounds like it's only Kofi who sells newspapers at Makola."
   },
   {
     "id": "grubicrenansduah2019_50a",
@@ -502,8 +480,7 @@
       ["construction", "unmarked"],
       ["diagnostic", "mentionSome"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_50a1",
@@ -523,8 +500,7 @@
       ["construction", "marked"],
       ["diagnostic", "mentionSome"]
     ],
-    "comment": "Consultant: the addressee will think that only Ama sells mangoes.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Consultant: the addressee will think that only Ama sells mangoes."
   },
   {
     "id": "grubicrenansduah2019_54a",
@@ -546,8 +522,7 @@
       ["diagnostic", "projection"],
       ["inference", "if she invited Fred, then she didn't invite anybody else"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_54b",
@@ -569,8 +544,7 @@
       ["diagnostic", "projection"],
       ["inference", "if she invited Fred, then she didn't invite anybody else"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_55a",
@@ -591,8 +565,7 @@
       ["diagnostic", "projection"],
       ["inference", "if he invited Amo, then he didn't invite anybody else"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_55b",
@@ -614,8 +587,7 @@
       ["diagnostic", "projection"],
       ["inference", "if he invited Amo, then he didn't invite anybody else"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_59a",
@@ -635,8 +607,7 @@
       ["construction", "marked"],
       ["diagnostic", "negativeQuantifier"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_59b",
@@ -656,8 +627,7 @@
       ["construction", "marked"],
       ["diagnostic", "negativeQuantifier"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_59c",
@@ -678,8 +648,7 @@
       ["construction", "pseudocleft"],
       ["diagnostic", "negativeQuantifier"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_60a",
@@ -699,8 +668,7 @@
       ["construction", "unmarked"],
       ["diagnostic", "negativeQuantifier"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_60b",
@@ -721,8 +689,7 @@
       ["construction", "marked"],
       ["diagnostic", "negativeQuantifier"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_61a",
@@ -742,8 +709,7 @@
       ["construction", "unmarked"],
       ["diagnostic", "negativeQuantifier"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_61b",
@@ -764,8 +730,7 @@
       ["construction", "marked"],
       ["diagnostic", "negativeQuantifier"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_64a",
@@ -786,8 +751,7 @@
       ["construction", "unmarked"],
       ["diagnostic", "uncommittedContext"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_64b",
@@ -808,8 +772,7 @@
       ["construction", "marked"],
       ["diagnostic", "uncommittedContext"]
     ],
-    "comment": "The existence inference here arises from the negation's association with focus under a positive QUD, not from the marker.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The existence inference here arises from the negation's association with focus under a positive QUD, not from the marker."
   },
   {
     "id": "grubicrenansduah2019_75",
@@ -832,8 +795,7 @@
       ["inference", "if Kofi swam, then nobody else swam"],
       ["inference", "somebody swam"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_76",
@@ -856,8 +818,7 @@
       ["inference", "if Ama slept, then nobody else slept"],
       ["inference", "somebody slept"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "grubicrenansduah2019_77",
@@ -877,8 +838,7 @@
       ["construction", "marked"],
       ["diagnostic", "analysis"]
     ],
-    "comment": "Banku was not the maximal thing Kofi ate, so the conditional presupposition fails.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Banku was not the maximal thing Kofi ate, so the conditional presupposition fails."
   },
   {
     "id": "grubicrenansduah2019_78",
@@ -901,7 +861,6 @@
       ["inference", "Mammadi gave a watch to Dimza"],
       ["inference", "that Mammadi gave or might have given something to Dimza is salient"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   }
 ]

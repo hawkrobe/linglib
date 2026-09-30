@@ -31,9 +31,7 @@ def ex_8a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "none"), ("subject_suffix", "S"), ("object_suffix", "none")]
-    comment := "The subject is nonagentive, nonspecific, indefinite, inanimate."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The subject is nonagentive, nonspecific, indefinite, inanimate." }
 
 def ex_9a : LinguisticExample :=
   { id := "kalin2018_9a"
@@ -49,9 +47,7 @@ def ex_9a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "perfective"), ("object", "none"), ("subject_suffix", "L"), ("object_suffix", "none")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_9b : LinguisticExample :=
   { id := "kalin2018_9b"
@@ -67,9 +63,7 @@ def ex_9b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "perfective"), ("object", "none"), ("subject_suffix", "L"), ("object_suffix", "none")]
-    comment := "The subject is agentive, specific, definite, animate."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The subject is agentive, specific, definite, animate." }
 
 def ex_10a : LinguisticExample :=
   { id := "kalin2018_10a"
@@ -85,9 +79,7 @@ def ex_10a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "specific"), ("subject_suffix", "S"), ("object_suffix", "L")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_10b : LinguisticExample :=
   { id := "kalin2018_10b"
@@ -103,9 +95,7 @@ def ex_10b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "specific"), ("subject_suffix", "S"), ("object_suffix", "L")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_10c : LinguisticExample :=
   { id := "kalin2018_10c"
@@ -121,9 +111,7 @@ def ex_10c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "specific"), ("subject_suffix", "S"), ("object_suffix", "L")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_11a : LinguisticExample :=
   { id := "kalin2018_11a"
@@ -139,9 +127,7 @@ def ex_11a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "nonspecific"), ("subject_suffix", "S"), ("object_suffix", "none")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_11b : LinguisticExample :=
   { id := "kalin2018_11b"
@@ -157,9 +143,7 @@ def ex_11b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "nonspecific"), ("subject_suffix", "S"), ("object_suffix", "none")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_12a : LinguisticExample :=
   { id := "kalin2018_12a"
@@ -175,9 +159,7 @@ def ex_12a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "perfective"), ("object", "specific"), ("subject_suffix", "L"), ("object_suffix", "none")]
-    comment := "A specific object is banned with the perfective base; (12b) shows no placement of object agreement rescues it."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A specific object is banned with the perfective base; (12b) shows no placement of object agreement rescues it." }
 
 def ex_12c : LinguisticExample :=
   { id := "kalin2018_12c"
@@ -193,9 +175,7 @@ def ex_12c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "perfective"), ("object", "nonspecific"), ("subject_suffix", "L"), ("object_suffix", "none")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_38 : LinguisticExample :=
   { id := "kalin2018_38"
@@ -211,9 +191,7 @@ def ex_38 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.1"), ("aspect", "imperfective"), ("object", "specific"), ("subject_suffix", "S"), ("object_suffix", "L")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex_8a, ex_9a, ex_9b, ex_10a, ex_10b, ex_10c, ex_11a, ex_11b, ex_12a, ex_12c, ex_38]
 

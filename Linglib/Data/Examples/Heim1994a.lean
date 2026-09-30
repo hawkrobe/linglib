@@ -31,9 +31,7 @@ def s2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("lf", "John PAST1 cry"), ("presupposition", "g(1) < t_c")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s5 : LinguisticExample :=
   { id := "heim1994a_s5"
@@ -49,9 +47,7 @@ def s5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("lf", "(6): (at) some time λ3 [John PAST3 be in Paris]"), ("presupposition", "every time in the restriction precedes t_c")]
-    comment := "The bound tense's presupposition projects universally through the quantifier."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The bound tense's presupposition projects universally through the quantifier." }
 
 def s11 : LinguisticExample :=
   { id := "heim1994a_s11"
@@ -67,9 +63,7 @@ def s11 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1"), ("lf", "(12): John PAST1 believe λ0 [Bill to0 be asleep]"), ("reading", "simultaneous only")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s13a : LinguisticExample :=
   { id := "heim1994a_s13a"
@@ -85,9 +79,7 @@ def s13a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2"), ("ulc", "cannot describe the situation of (13b)")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s13b : LinguisticExample :=
   { id := "heim1994a_s13b"
@@ -103,9 +95,7 @@ def s13b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s14a : LinguisticExample :=
   { id := "heim1994a_s14a"
@@ -121,9 +111,7 @@ def s14a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2"), ("ulc", "cannot describe the situation of (14b)")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s14b : LinguisticExample :=
   { id := "heim1994a_s14b"
@@ -139,9 +127,7 @@ def s14b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s19 : LinguisticExample :=
   { id := "heim1994a_s19"
@@ -157,9 +143,7 @@ def s19 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2"), ("lf", "(20): John PAST1 believe λ0 [his 40th birthday λ2 [Bill PAST2 be happy]]"), ("presupposition", "(i) John believed the birthday to precede t_c; (ii) he located himself at or after it")]
-    comment := "Inappropriate if John is known to have thought Bill was 39; (i) is unwelcome and is removed in Section 3."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Inappropriate if John is known to have thought Bill was 39; (i) is unwelcome and is removed in Section 3." }
 
 def s22 : LinguisticExample :=
   { id := "heim1994a_s22"
@@ -175,9 +159,7 @@ def s22 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2")]
-    comment := "Incoherent: the ULC presupposition (ii) of (19) is violated."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Incoherent: the ULC presupposition (ii) of (19) is violated." }
 
 def s23 : LinguisticExample :=
   { id := "heim1994a_s23"
@@ -193,9 +175,7 @@ def s23 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s24 : LinguisticExample :=
   { id := "heim1994a_s24"
@@ -211,9 +191,7 @@ def s24 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2"), ("lf", "(25): PRES1 woll λ0 [John INF0 cry]"), ("entry", "(26): woll shifts the evaluation time forward")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s27 : LinguisticExample :=
   { id := "heim1994a_s27"
@@ -229,9 +207,7 @@ def s27 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2"), ("lf", "PRES1 woll λ0 [a man who PRES0 love her λ2 [she INF0 marry t2]]")]
-    comment := "Shows why woll must shift the evaluation time: otherwise the ULC would exclude future loving."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Shows why woll must shift the evaluation time: otherwise the ULC would exclude future loving." }
 
 def s28 : LinguisticExample :=
   { id := "heim1994a_s28"
@@ -247,9 +223,7 @@ def s28 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2"), ("lf", "(29) simultaneous, John PAST1 believe λ0 [Bill PAST0 be asleep]; (32) back-shifted through res-movement"), ("readings", "simultaneous; back-shifted")]
-    comment := "LFs (30) and (31) with a free lower past attribute to John beliefs about his own location in time and are set aside."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "LFs (30) and (31) with a free lower past attribute to John beliefs about his own location in time and are set aside." }
 
 def s34 : LinguisticExample :=
   { id := "heim1994a_s34"
@@ -265,9 +239,7 @@ def s34 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2"), ("lf", "(35): a de re report about six o'clock with g_c(1) = 5 o'clock, g_c(2) = 6 o'clock")]
-    comment := "If de re, a belief about a time later than the believing time reported with a past, as the ULC but not the descriptive generalization allows."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "If de re, a belief about a time later than the believing time reported with a past, as the ULC but not the descriptive generalization allows." }
 
 def s36 : LinguisticExample :=
   { id := "heim1994a_s36"
@@ -283,9 +255,7 @@ def s36 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2"), ("lf", "(38): John PAST1 think PRES2 λ3 λ0 [Mary t3 be pregnant]"), ("reading", "double access")]
-    comment := "Presuppositions (i)–(iv); reportable for the belief 'she is pregnant today' on the same day only, never for 'she was pregnant a year ago'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Presuppositions (i)–(iv); reportable for the belief 'she is pregnant today' on the same day only, never for 'she was pregnant a year ago'." }
 
 def s39 : LinguisticExample :=
   { id := "heim1994a_s39"
@@ -301,9 +271,7 @@ def s39 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("counterexample", "PRES overlapping t_c")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s40 : LinguisticExample :=
   { id := "heim1994a_s40"
@@ -319,9 +287,7 @@ def s40 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("counterexample", "PAST preceding t_c")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s41 : LinguisticExample :=
   { id := "heim1994a_s41"
@@ -337,9 +303,7 @@ def s41 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s42 : LinguisticExample :=
   { id := "heim1994a_s42"
@@ -355,9 +319,7 @@ def s42 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s43 : LinguisticExample :=
   { id := "heim1994a_s43"
@@ -373,9 +335,7 @@ def s43 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("source", "Abusch 1988"), ("lf", "(51)"), ("licensing", "the lowest PAST licensed non-locally by <-decide")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s44 : LinguisticExample :=
   { id := "heim1994a_s44"
@@ -391,9 +351,7 @@ def s44 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("source", "Ogihara 1989"), ("lf", "(52)"), ("licensing", "the lowest PAST licensed non-locally by <-say")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s45 : LinguisticExample :=
   { id := "heim1994a_s45"
@@ -409,9 +367,7 @@ def s45 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("source", "A. Santisteban, p.c.")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s54 : LinguisticExample :=
   { id := "heim1994a_s54"
@@ -427,9 +383,7 @@ def s54 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("lf", "(55): the object NP raised out of the argument of <-be looking for"), ("reading", "transparent only")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s59 : LinguisticExample :=
   { id := "heim1994a_s59"
@@ -445,9 +399,7 @@ def s59 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("lf", "(60): John PAST1 <-meet [the man who PAST2 ¬<-live next door]")]
-    comment := "Licensed under definition (53) with the unattested reading where PAST2 is the utterance time; excluded once the object is an extensional argument, (61)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Licensed under definition (53) with the unattested reading where PAST2 is the utterance time; excluded once the object is an extensional argument, (61)." }
 
 def all : List LinguisticExample := [s2, s5, s11, s13a, s13b, s14a, s14b, s19, s22, s23, s24, s27, s28, s34, s36, s39, s40, s41, s42, s43, s44, s45, s54, s59]
 

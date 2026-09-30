@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("quantifier", "some")]
-    comment := "Implies that the stronger (2) is false: a strong scalar implicature."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Implies that the stronger (2) is false: a strong scalar implicature." }
 
 def ex_2 : LinguisticExample :=
   { id := "baleetal2025_2"
@@ -49,9 +47,7 @@ def ex_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("quantifier", "all")]
-    comment := "The stronger alternative to (1)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The stronger alternative to (1)." }
 
 def fk_all : LinguisticExample :=
   { id := "baleetal2025_fk_all"
@@ -67,9 +63,7 @@ def fk_all : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("quantifier", "all"), ("boxesSeen", "3"), ("expectedResponse", "yes")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def fk_some : LinguisticExample :=
   { id := "baleetal2025_fk_some"
@@ -85,9 +79,7 @@ def fk_some : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("quantifier", "some"), ("boxesSeen", "3"), ("expectedResponse", "no")]
-    comment := "No-load participants answered no on 65.6% of these trials; under load 56.7%."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No-load participants answered no on 65.6% of these trials; under load 56.7%." }
 
 def pk_some : LinguisticExample :=
   { id := "baleetal2025_pk_some"
@@ -103,9 +95,7 @@ def pk_some : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("quantifier", "some"), ("boxesSeen", "2"), ("expectedResponse", "dontKnow")]
-    comment := "No-load participants answered no on 10% of these trials; under load 23.3%."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No-load participants answered no on 10% of these trials; under load 23.3%." }
 
 def all : List LinguisticExample := [ex_1, ex_2, fk_all, fk_some, pk_some]
 

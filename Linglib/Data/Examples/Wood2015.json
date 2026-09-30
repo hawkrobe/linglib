@@ -18,9 +18,7 @@
     "paperFeatures": [
       ["use", "reciprocal"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2015_2",
@@ -40,9 +38,7 @@
     "paperFeatures": [
       ["use", "reflexive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2015_3",
@@ -63,9 +59,7 @@
     "paperFeatures": [
       ["use", "anticausative"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2015_4",
@@ -86,9 +80,7 @@
     "paperFeatures": [
       ["use", "generic middle"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2015_5",
@@ -109,9 +101,7 @@
       ["exponent", "-ka"],
       ["voice", "Voice{D}"]
     ],
-    "comment": "-ka spells out v in the context of listed roots and is indifferent to Voice.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "-ka spells out v in the context of listed roots and is indifferent to Voice."
   },
   {
     "id": "wood2015_6",
@@ -132,9 +122,7 @@
       ["exponent", "-ka"],
       ["voice", "Voice{}"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2015_7",
@@ -154,9 +142,7 @@
     "paperFeatures": [
       ["voice", "Voice{D}"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2015_8",
@@ -177,9 +163,7 @@
       ["exponent", "-na"],
       ["voice", "Voice{}"]
     ],
-    "comment": "-na spells out specifierless Voice in the context of listed roots, adjacent to the root because v is zero.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "-na spells out specifierless Voice in the context of listed roots, adjacent to the root because v is zero."
   },
   {
     "id": "wood2015_9",
@@ -200,9 +184,7 @@
       ["use", "anticausative"],
       ["site", "SpecVoiceP"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2015_10",
@@ -223,9 +205,7 @@
       ["use", "anticausative"],
       ["site", "SpecVoiceP"]
     ],
-    "comment": "The root is incompatible with specifierless Voice, so the anticausative needs Voice{D} with -st in its specifier.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The root is incompatible with specifierless Voice, so the anticausative needs Voice{D} with -st in its specifier."
   },
   {
     "id": "wood2015_11",
@@ -245,9 +225,7 @@
     "paperFeatures": [
       ["voice", "agentive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2015_12",
@@ -268,9 +246,7 @@
     "paperFeatures": [
       ["voice", "agentive"]
     ],
-    "comment": "Generable only with a sentient lava stream: murdering events force the agentive alloseme of Voice.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Generable only with a sentient lava stream: murdering events force the agentive alloseme of Voice."
   },
   {
     "id": "wood2015_13",
@@ -290,9 +266,7 @@
     "paperFeatures": [
       ["use", "anticausative"]
     ],
-    "comment": "Not generable: Voice must be agentive, and -st cannot saturate the agent role.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Not generable: Voice must be agentive, and -st cannot saturate the agent role."
   },
   {
     "id": "wood2015_14",
@@ -313,9 +287,7 @@
     "paperFeatures": [
       ["position", "SpecApplP"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2015_15",
@@ -336,9 +308,7 @@
     "paperFeatures": [
       ["position", "SpecApplP"]
     ],
-    "comment": "-st cannot merge in SpecApplP, which demands dative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "-st cannot merge in SpecApplP, which demands dative."
   },
   {
     "id": "wood2015_16",
@@ -359,9 +329,7 @@
     "paperFeatures": [
       ["dative", "Appl"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2015_17",
@@ -381,9 +349,7 @@
     "paperFeatures": [
       ["dative", "Appl"]
     ],
-    "comment": "The Appl dative is retained under -st.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The Appl dative is retained under -st."
   },
   {
     "id": "wood2015_18",
@@ -403,9 +369,7 @@
     "paperFeatures": [
       ["dative", "direct object"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2015_19",
@@ -425,9 +389,7 @@
     "paperFeatures": [
       ["dative", "direct object"]
     ],
-    "comment": "The direct object dative, dependent on Voice, is lost under -st.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The direct object dative, dependent on Voice, is lost under -st."
   },
   {
     "id": "wood2015_20",
@@ -448,9 +410,7 @@
       ["use", "subject experiencer"],
       ["site", "SpecVoiceP"]
     ],
-    "comment": "-st in SpecVoiceP with the dative introduced in SpecApplP.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "-st in SpecVoiceP with the dative introduced in SpecApplP."
   },
   {
     "id": "wood2015_21",
@@ -471,9 +431,7 @@
       ["use", "reciprocal"],
       ["type", "2"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wood2015_22",
@@ -494,9 +452,7 @@
       ["use", "reciprocal"],
       ["type", "2"]
     ],
-    "comment": "A Type 2 reciprocal takes no við phrase and no singular subject.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A Type 2 reciprocal takes no við phrase and no singular subject."
   },
   {
     "id": "wood2015_23",
@@ -517,8 +473,6 @@
     "paperFeatures": [
       ["use", "reflexive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

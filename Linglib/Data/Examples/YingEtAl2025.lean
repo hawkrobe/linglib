@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("factor", "Possibility")]
-    comment := "A human-written epistemic sentence from the dataset."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A human-written epistemic sentence from the dataset." }
 
 def ex_2 : LinguisticExample :=
   { id := "yingetal2025_2"
@@ -49,9 +47,7 @@ def ex_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("factor", "Possibility")]
-    comment := "A human-written epistemic sentence from the dataset."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A human-written epistemic sentence from the dataset." }
 
 def ex_3 : LinguisticExample :=
   { id := "yingetal2025_3"
@@ -67,9 +63,7 @@ def ex_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("factor", "Probability")]
-    comment := "A human-written epistemic sentence from the dataset."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A human-written epistemic sentence from the dataset." }
 
 def ex_4 : LinguisticExample :=
   { id := "yingetal2025_4"
@@ -85,9 +79,7 @@ def ex_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("factor", "Probability")]
-    comment := "A human-written epistemic sentence from the dataset."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A human-written epistemic sentence from the dataset." }
 
 def ex_5 : LinguisticExample :=
   { id := "yingetal2025_5"
@@ -103,9 +95,7 @@ def ex_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("factor", "Compositionality")]
-    comment := "A human-written epistemic sentence from the dataset."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A human-written epistemic sentence from the dataset." }
 
 def ex_6 : LinguisticExample :=
   { id := "yingetal2025_6"
@@ -121,9 +111,7 @@ def ex_6 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("factor", "Compositionality")]
-    comment := "A human-written epistemic sentence from the dataset."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A human-written epistemic sentence from the dataset." }
 
 def ex_7 : LinguisticExample :=
   { id := "yingetal2025_7"
@@ -139,9 +127,7 @@ def ex_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("factor", "Knowledge")]
-    comment := "A human-written epistemic sentence from the dataset."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A human-written epistemic sentence from the dataset." }
 
 def ex_8 : LinguisticExample :=
   { id := "yingetal2025_8"
@@ -157,9 +143,7 @@ def ex_8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("factor", "Knowledge")]
-    comment := "A human-written epistemic sentence from the dataset."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A human-written epistemic sentence from the dataset." }
 
 def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8]
 

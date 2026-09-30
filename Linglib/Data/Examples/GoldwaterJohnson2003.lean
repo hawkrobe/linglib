@@ -31,9 +31,7 @@ def gj2003_kala : LinguisticExample :=
     alternatives := [("*ká.loi.den", .ungrammatical)]
     readings := []
     paperFeatures := [("stem", "kala"), ("loser", "ká.loi.den"), ("winnerViolations", "11000001011"), ("loserViolations", "12000001101")]
-    comment := "Stem class of kala 'fish': only the weak ending; difference vector 0 1 0 0 0 0 0 0 1 -1 0 (Table 3)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stem class of kala 'fish': only the weak ending; difference vector 0 1 0 0 0 0 0 0 1 -1 0 (Table 3)." }
 
 def gj2003_naapuri : LinguisticExample :=
   { id := "gj2003_naapuri"
@@ -49,9 +47,7 @@ def gj2003_naapuri : LinguisticExample :=
     alternatives := [("náa.pu.rèi.den", .acceptable)]
     readings := []
     paperFeatures := [("stem", "naapuri"), ("loser", "náa.pu.rèi.den"), ("winnerViolations", "01000100012"), ("loserViolations", "01100000100")]
-    comment := "Stem class of naapuri 'neighbor': both endings occur; difference vector 0 0 1 0 0 -1 0 0 1 -1 -2."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stem class of naapuri 'neighbor': both endings occur; difference vector 0 0 1 0 0 -1 0 0 1 -1 -2." }
 
 def gj2003_ministeri : LinguisticExample :=
   { id := "gj2003_ministeri"
@@ -67,9 +63,7 @@ def gj2003_ministeri : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("stem", "ministeri"), ("loser", "mí.nis.te.rèi.den"), ("winnerViolations", "12000100013"), ("loserViolations", "12100000101")]
-    comment := "Stem class of ministeri: a different violation pattern from naapuri but the same difference vector, so the two classes are one for a learner that sees only differences (Table 3)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stem class of ministeri: a different violation pattern from naapuri but the same difference vector, so the two classes are one for a learner that sees only differences (Table 3)." }
 
 def gj2003_maailma : LinguisticExample :=
   { id := "gj2003_maailma"
@@ -85,9 +79,7 @@ def gj2003_maailma : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("stem", "maailma"), ("loser", "máa.il.mòi.den"), ("winnerViolations", "02000001102"), ("loserViolations", "02001000300")]
-    comment := "Stem class of maailma: difference vector 0 0 0 0 1 0 0 -1 2 0 -2."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stem class of maailma: difference vector 0 0 0 0 1 0 0 -1 2 0 -2." }
 
 def all : List LinguisticExample := [gj2003_kala, gj2003_naapuri, gj2003_ministeri, gj2003_maailma]
 

@@ -31,9 +31,7 @@ def ost2024_after_veridical : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "veridicality"), ("connective", "after"), ("complement_entailed", "true")]
-    comment := "after(leave, arrive) |= arrive"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "after(leave, arrive) |= arrive" }
 
 def ost2024_before_nonveridical : LinguisticExample :=
   { id := "ost2024_before_nonveridical"
@@ -49,9 +47,7 @@ def ost2024_before_nonveridical : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "veridicality"), ("connective", "before"), ("complement_entailed", "false")]
-    comment := "before(leave, arrive) |/= arrive"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "before(leave, arrive) |/= arrive" }
 
 def ost2024_before_counterfactual : LinguisticExample :=
   { id := "ost2024_before_counterfactual"
@@ -67,9 +63,7 @@ def ost2024_before_counterfactual : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "veridicality"), ("connective", "before"), ("complement_entailed", "false")]
-    comment := "before(explode, defuse) and not defuse"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "before(explode, defuse) and not defuse" }
 
 def ost2024_after_veridical_2 : LinguisticExample :=
   { id := "ost2024_after_veridical_2"
@@ -85,9 +79,7 @@ def ost2024_after_veridical_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "veridicality"), ("connective", "after"), ("complement_entailed", "true")]
-    comment := "after(finish, leave) |= leave"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "after(finish, leave) |= leave" }
 
 def ost2024_before_noncommittal : LinguisticExample :=
   { id := "ost2024_before_noncommittal"
@@ -103,9 +95,7 @@ def ost2024_before_noncommittal : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "veridicality"), ("connective", "before"), ("complement_entailed", "false")]
-    comment := "before(leave, trouble) |/= trouble (non-committal)"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "before(leave, trouble) |/= trouble (non-committal)" }
 
 def ost2024_before_counterfactual_mozart : LinguisticExample :=
   { id := "ost2024_before_counterfactual_mozart"
@@ -121,9 +111,7 @@ def ost2024_before_counterfactual_mozart : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "veridicality"), ("connective", "before"), ("complement_entailed", "false")]
-    comment := "before(die, finish) and not finish (counterfactual)"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "before(die, finish) and not finish (counterfactual)" }
 
 def ost2024_ohtani : LinguisticExample :=
   { id := "ost2024_ohtani"
@@ -139,9 +127,7 @@ def ost2024_ohtani : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "bc_counterexample"), ("reading", "counterfactual")]
-    comment := "O&ST (20a). Complement temporally bounded before the A-time."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "O&ST (20a). Complement temporally bounded before the A-time." }
 
 def ost2024_snow : LinguisticExample :=
   { id := "ost2024_snow"
@@ -157,9 +143,7 @@ def ost2024_snow : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "bc_counterexample"), ("reading", "nonCommittal")]
-    comment := "O&ST (20b). Complement bounded to the end of 2020."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "O&ST (20b). Complement bounded to the end of 2020." }
 
 def ost2024_nostradamus : LinguisticExample :=
   { id := "ost2024_nostradamus"
@@ -175,9 +159,7 @@ def ost2024_nostradamus : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "bc_counterexample"), ("reading", "counterfactual")]
-    comment := "O&ST (20c). Complement bounded to July 1999."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "O&ST (20c). Complement bounded to July 1999." }
 
 def ost2024_noncommittal_available : LinguisticExample :=
   { id := "ost2024_noncommittal_available"
@@ -193,9 +175,7 @@ def ost2024_noncommittal_available : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "noncommittal"), ("noncommittal_available", "true")]
-    comment := "getting drunk is a normal continuation of being at a party"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "getting drunk is a normal continuation of being at a party" }
 
 def ost2024_noncommittal_unavailable : LinguisticExample :=
   { id := "ost2024_noncommittal_unavailable"
@@ -211,9 +191,7 @@ def ost2024_noncommittal_unavailable : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "noncommittal"), ("noncommittal_available", "false")]
-    comment := "Quebec independence is not a contextually normal continuation"
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Quebec independence is not a contextually normal continuation" }
 
 def all : List LinguisticExample := [ost2024_after_veridical, ost2024_before_nonveridical, ost2024_before_counterfactual, ost2024_after_veridical_2, ost2024_before_noncommittal, ost2024_before_counterfactual_mozart, ost2024_ohtani, ost2024_snow, ost2024_nostradamus, ost2024_noncommittal_available, ost2024_noncommittal_unavailable]
 

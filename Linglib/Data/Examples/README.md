@@ -11,32 +11,24 @@ file is a top-level JSON array of example objects mirroring the
 python3 scripts/gen_examples.py <AuthorYear>   # generate one paper's module
 python3 scripts/gen_examples.py --all          # regenerate every paper
 python3 scripts/gen_examples.py --check        # verify modules match JSON (CI)
-python3 scripts/gen_examples.py --fmt          # rewrite JSON in canonical format
+python3 scripts/gen_examples.py --fmt <AuthorYear>  # rewrite one JSON in canonical format
 python3 scripts/check_examples.py              # study literals vs rows, bibkeys (CI)
 ```
 
-JSON files use the canonical format emitted by `--fmt` (2-space indent,
-schema key order, gloss pairs packed onto wrapped lines, one
-feature/alternative/reading per line). Run `--fmt` after hand-editing or
-script-editing a JSON file; it refuses to write if reformatting would
-change the parsed data.
+`--fmt` emits the canonical format (2-space indent, schema key order, gloss
+pairs packed onto wrapped lines, one feature/alternative/reading per line)
+and refuses to write if reformatting would change the parsed data. It needs
+a paper name: most JSON files predate the formatter, and reformatting them
+all buries the diff. The generator rejects a key that is not a field of
+`LinguisticExample`.
 
 Reads `Linglib/Data/Examples/<AuthorYear>.json` and writes a standalone
 auto-generated module at `Linglib/Data/Examples/<AuthorYear>.lean`
 declaring `namespace <AuthorYear>.Examples` (so consumer call sites read
 `Examples.all`, `Examples.ex29a`, ... inside `namespace <AuthorYear>`).
-Consumers — the paper's study file, and any `Phenomena/` test-suite hub
-pooling several papers' stimuli — simply
-`import Linglib.Data.Examples.<AuthorYear>`; the generator keeps the
-`Linglib.lean` root import in sync. The generated module is never edited
-by hand; the JSON is the source of truth.
-
-**Legacy migration**: earlier versions spliced the generated code between
-`-- BEGIN GENERATED EXAMPLES` / `-- END GENERATED EXAMPLES` markers inside
-the study file (with an optional `<AuthorYear>.target` sidecar routing the
-block to a hub). Re-running the generator on such a paper removes the
-block, inserts the module import into the host file, and deletes the
-retired sidecar.
+Consumers (the paper's study file, and any module pooling several papers'
+examples) import `Linglib.Data.Examples.<AuthorYear>`. The generated module is never
+edited by hand; the JSON is the source of truth.
 
 ## Schema
 
@@ -47,19 +39,24 @@ field reference:
 |---|---|---|
 | `id` | string | `<authoryear>_<local>`, e.g. `"charlow2014_donkey1"` |
 | `source` | `{bibkey, paperLabel}` | **originating** paper (e.g. `geach-1962` for the donkey) |
-| `reportedIn` | `{bibkey, paperLabel}` or `null` | citing paper this CSV row sits under, when different from `source` |
+| `reportedIn` | `{bibkey, paperLabel}` or `null` | citing paper whose file holds the row, when different from `source` |
 | `language` | string (Glottocode) | e.g. `"stan1293"` for Standard English |
-| `primaryText` | string | surface form (full discourse if multi-sentence) |
-| `discourseSegments` | array of strings | empty `[]` for single-sentence; non-empty lists the utterances |
+| `primaryText` | string | surface form; for a discourse, its utterances joined by single spaces |
+| `discourseSegments` | array of strings | empty `[]` for a single sentence; the utterances of a discourse, in order |
 | `glossedTokens` | array of 2-string arrays | `[[surface, gloss], ...]`. Empty `[]` if no IGT (e.g., English-glossed-as-English) |
-| `translation` | string | minimal English translation |
+| `translation` | string | English translation; empty for an English example |
 | `context` | string | scenario/discourse context where the judgment holds |
 | `judgment` | one of `acceptable, marginal, questionable, unacceptable, ungrammatical` | sentence-level felicity |
 | `alternatives` | array of `{form, judgment}` | within-example contrast pairs (e.g., Schwarz's `vom` vs `von dem`) |
 | `readings` | array of `{name, judgment}` | multiple LFs / scope readings (e.g., donkey strong vs weak) |
+| `paperFeatures` | array of `[key, value]` | what the paper states about the example (its design cell, the class it assigns); a key repeats when the example bears the property twice |
 | `comment` | string | analyst notes |
-| `metaLanguage` | Glottocode | optional; default `"stan1293"` |
-| `lgrConformance` | string | `""`, `"WORD_ALIGNED"`, or `"MORPHEME_ALIGNED"` |
+
+Translations are English, so there is no metalanguage field. CLDF's
+`LGR_Conformance` is not recorded either: `glossedTokens` pairs are word
+aligned by construction, and morpheme alignment is a property of the pairs.
+Printed results (ratings, rates, statistics) go to `Data/Experiments/`, not
+`paperFeatures`.
 
 ## One sentence per row
 
@@ -70,6 +67,9 @@ sharing the `paperLabel`, when the variants differ in what the paper classifies;
 contrast the paper does not classify in `alternatives`. A feature a sentence bears twice (two
 indefinite series in one clause) is two entries under the same key, not a slash-joined value.
 A judgment that holds only in a scenario records the scenario in `context`.
+A discourse is one row: `discourseSegments` lists its utterances, `primaryText`
+joins them with single spaces, and the judgment is of the last utterance in
+the context of the others.
 Transcribe from page images, not a PDF's text layer: keep the source's morpheme hyphens and
 diacritics, and where the source has an evident misprint give the normal form and record what
 the source prints in `comment`.
@@ -86,7 +86,8 @@ The `gloss` component of `glossedTokens` follows the **Leipzig Glossing Rules**:
 Spec: <https://www.eva.mpg.de/lingua/pdf/Glossing-Rules.pdf>
 
 Quick reference:
-- `-` separates segmentable morphemes (affix boundaries)
+- `-` separates segmentable morphemes (affix boundaries), with exactly as
+  many hyphens in the gloss as in the word (Rule 2)
 - `.` separates two glosses corresponding to one form (fusion / portmanteau)
 - `=` separates clitics from hosts
 - SMALL CAPS for grammatical category labels (e.g., `INDEF`, `3SG`, `PST`,
@@ -132,7 +133,7 @@ introduce their own examples, `reportedIn` is `null`.
 ## Bib entry requirement
 
 Every `bibkey` (in both `source` and `reportedIn`) must resolve to an
-entry in `blog/data/references.bib`. Per CLAUDE.md, fabrication is not
+entry in `references.bib` at the repository root. Per CLAUDE.md, fabrication is not
 allowed — if a paper has no bib entry, add one (with verified DOI / title
 / journal / pages) before referencing the key.
 
@@ -147,8 +148,9 @@ aimed at. Known gaps:
   (Bakay et al. 2026, syntactic minimal pairs).
 - **Paradigm clusters** where N sentences only mean something together
   (Reinhart's (11a)–(11d)).
-- **Paper-relativized classifications** (Schwarz's anaphoric / larger
-  situation / bridging-producer / bridging-part-whole tags as typed
-  fields rather than free-form `comment`).
+- **Typed columns**: `paperFeatures` values are strings that each study
+  reads through its own table of labels (`parse?`), so a value the table
+  omits is skipped silently rather than rejected when the module is
+  generated.
 
 Extensions land when a consuming study demands them.

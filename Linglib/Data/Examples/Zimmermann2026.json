@@ -19,9 +19,7 @@
     "paperFeatures": [
       ["diagnostic", "sluicing antecedent"]
     ],
-    "comment": "Both the bare and the wani-marked indefinite serve as sluicing antecedents.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Both the bare and the wani-marked indefinite serve as sluicing antecedents."
   },
   {
     "id": "zimmermann2026_13a",
@@ -43,9 +41,7 @@
       ["scope", "wide"],
       ["context", "Audu bought a lot of fish, but"]
     ],
-    "comment": "Wide-scope context: the marker wani is required; the bare NP would force the narrow-scope reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Wide-scope context: the marker wani is required; the bare NP would force the narrow-scope reading."
   },
   {
     "id": "zimmermann2026_13b",
@@ -67,9 +63,7 @@
       ["scope", "narrow"],
       ["context", "the market was closed, so"]
     ],
-    "comment": "Narrow-scope context: wani phrases may also scope below negation, like the bare NP.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Narrow-scope context: wani phrases may also scope below negation, like the bare NP."
   },
   {
     "id": "zimmermann2026_14",
@@ -89,9 +83,7 @@
     "paperFeatures": [
       ["inference", "specificity"]
     ],
-    "comment": "The marker bí triggers a specificity inference in non-modal environments; cited from Amfo (2010).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The marker bí triggers a specificity inference in non-modal environments; cited from Amfo (2010)."
   },
   {
     "id": "zimmermann2026_15",
@@ -111,9 +103,7 @@
     "paperFeatures": [
       ["scope", "wide only"]
     ],
-    "comment": "The narrow-scope reading, that I don't eat any fish, is unavailable: bí phrases must outscope negation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The narrow-scope reading, that I don't eat any fish, is unavailable: bí phrases must outscope negation."
   },
   {
     "id": "zimmermann2026_17",
@@ -136,9 +126,7 @@
       ["marker", "ko"],
       ["reading", "existentially closed choice function"]
     ],
-    "comment": "True in the context; cited from Renans (2018). Unavailable for Akan bí.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "True in the context; cited from Renans (2018). Unavailable for Akan bí."
   },
   {
     "id": "zimmermann2026_18",
@@ -159,9 +147,7 @@
     "paperFeatures": [
       ["co-occurrence", "INDEF and DEF"]
     ],
-    "comment": "Cited from Bombi et al. (2019).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from Bombi et al. (2019)."
   },
   {
     "id": "zimmermann2026_19",
@@ -181,8 +167,6 @@
     "paperFeatures": [
       ["bare NP", "definite or indefinite"]
     ],
-    "comment": "Cited from Newman (2000); a uniqueness-based definite reading of a bare NP in topical subject position.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Cited from Newman (2000); a uniqueness-based definite reading of a bare NP in topical subject position."
   }
 ]

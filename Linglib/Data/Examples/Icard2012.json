@@ -28,8 +28,7 @@
         "three substitutions and two compositions"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "icard2012_squid_t2",
@@ -56,8 +55,7 @@
         "⊒ t"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "icard2012_squid_u",
@@ -84,8 +82,7 @@
         "t | u, by safe | dangerous under ⊞"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "icard2012_squid_v",
@@ -112,8 +109,7 @@
         "u ⊒ v, by giant squid ⊑ cephalopod under ◇; v ^ t'"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "icard2012_mono",
@@ -140,8 +136,7 @@
         "a monotonicity inference from giant squid ⊑ cephalopod under ◇"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "icard2012_no_notevery",
@@ -168,8 +163,7 @@
         "derived from no | every and every ^ not every, | ⋈ ^ = ⊑"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "icard2012_confluence",
@@ -196,8 +190,7 @@
         "derivable in one substitution; lost after substituting octopus for squid, which yields #"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "icard2012_s4_1",
@@ -228,8 +221,7 @@
         "not every, antitone"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "icard2012_s4_2",
@@ -260,8 +252,7 @@
         "few, antitone"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "icard2012_s4_3",
@@ -292,8 +283,7 @@
         "few, not anti-additive"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "icard2012_s4_4",
@@ -324,8 +314,7 @@
         "no, anti-additive in its second argument"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "icard2012_s4_5",
@@ -356,8 +345,7 @@
         "no, not anti-multiplicative"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "icard2012_s4_6",
@@ -388,7 +376,6 @@
         "not, anti-additive and anti-multiplicative"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

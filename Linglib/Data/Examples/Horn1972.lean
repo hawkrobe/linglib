@@ -31,9 +31,7 @@ def ex1_58b_more : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "suspension of the upper bound")]
-    comment := "The upper bound of a cardinal is an implicature and can be suspended."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The upper bound of a cardinal is an implicature and can be suspended." }
 
 def ex1_58b_fewer : LinguisticExample :=
   { id := "horn1972_ex1_58b_fewer"
@@ -49,9 +47,7 @@ def ex1_58b_fewer : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "suspension of the lower bound")]
-    comment := "The lower bound is asserted and cannot be suspended."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The lower bound is asserted and cannot be suspended." }
 
 def ex1_59a : LinguisticExample :=
   { id := "horn1972_ex1_59a"
@@ -67,9 +63,7 @@ def ex1_59a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("asserts", "at least 3"), ("implicates", "at most 3")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex1_59b : LinguisticExample :=
   { id := "horn1972_ex1_59b"
@@ -85,9 +79,7 @@ def ex1_59b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("negation", "of the lower bound")]
-    comment := "Negation contradicts the lower bound, not the putative upper bound: fewer than three."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Negation contradicts the lower bound, not the putative upper bound: fewer than three." }
 
 def ex1_60a : LinguisticExample :=
   { id := "horn1972_ex1_60a"
@@ -103,9 +95,7 @@ def ex1_60a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "cancelling the upper bound")]
-    comment := "Logically consistent, so the upper bound is not an entailment."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Logically consistent, so the upper bound is not an entailment." }
 
 def ex1_60b : LinguisticExample :=
   { id := "horn1972_ex1_60b"
@@ -121,9 +111,7 @@ def ex1_60b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("construction", "contradicting the assertion of only")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex1_63b : LinguisticExample :=
   { id := "horn1972_ex1_63b"
@@ -139,9 +127,7 @@ def ex1_63b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("reading", "at least")]
-    comment := "With the upper bound not implicated, the question is answered yes."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With the upper bound not implicated, the question is answered yes." }
 
 def ex1_63c : LinguisticExample :=
   { id := "horn1972_ex1_63c"
@@ -157,9 +143,7 @@ def ex1_63c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.21"), ("scale", "cardinal"), ("reading", "exact")]
-    comment := "With the upper bound implicated by the question, the answer is no."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With the upper bound implicated by the question, the answer is no." }
 
 def ex1_72a_fact : LinguisticExample :=
   { id := "horn1972_ex1_72a_fact"
@@ -175,9 +159,7 @@ def ex1_72a_fact : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "warm–hot"), ("construction", "contradicting the implicature")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex1_72a_susp : LinguisticExample :=
   { id := "horn1972_ex1_72a_susp"
@@ -193,9 +175,7 @@ def ex1_72a_susp : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "warm–hot"), ("construction", "suspension")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex1_72b_cold : LinguisticExample :=
   { id := "horn1972_ex1_72b_cold"
@@ -211,9 +191,7 @@ def ex1_72b_cold : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "cool–cold"), ("construction", "suspension")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex1_72b_warm : LinguisticExample :=
   { id := "horn1972_ex1_72b_warm"
@@ -229,9 +207,7 @@ def ex1_72b_warm : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "cool–cold"), ("construction", "suspension across scales")]
-    comment := "Cool and warm are not on one scale: cool asserts the negation of warm."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Cool and warm are not on one scale: cool asserts the negation of warm." }
 
 def ex1_73c_hot_warm : LinguisticExample :=
   { id := "horn1972_ex1_73c_hot_warm"
@@ -247,9 +223,7 @@ def ex1_73c_hot_warm : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "warm–hot"), ("construction", "suspension by a weaker member")]
-    comment := "No suspension of the asserted lower bound is possible."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No suspension of the asserted lower bound is possible." }
 
 def ex1_73a : LinguisticExample :=
   { id := "horn1972_ex1_73a"
@@ -265,9 +239,7 @@ def ex1_73a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "pretty–beautiful"), ("construction", "asserting the implicature")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex1_73b : LinguisticExample :=
   { id := "horn1972_ex1_73b"
@@ -283,9 +255,7 @@ def ex1_73b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "pretty–beautiful"), ("construction", "contradicting the implicature")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex1_82a : LinguisticExample :=
   { id := "horn1972_ex1_82a"
@@ -301,9 +271,7 @@ def ex1_82a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.22"), ("scale", "pretty–beautiful"), ("construction", "suspension"), ("intonation", "rising")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex1_82b : LinguisticExample :=
   { id := "horn1972_ex1_82b"
@@ -319,9 +287,7 @@ def ex1_82b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.22"), ("construction", "concession"), ("intonation", "falling")]
-    comment := "A concessive if-not clause, not a suspension: intelligent is not on the scale of pretty."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A concessive if-not clause, not a suspension: intelligent is not on the scale of pretty." }
 
 def ex1_85a : LinguisticExample :=
   { id := "horn1972_ex1_85a"
@@ -337,9 +303,7 @@ def ex1_85a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.22"), ("construction", "suspension"), ("polarity item", "positive")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex1_85b : LinguisticExample :=
   { id := "horn1972_ex1_85b"
@@ -355,9 +319,7 @@ def ex1_85b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.22"), ("construction", "concession"), ("polarity item", "negative")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex1_93_ok : LinguisticExample :=
   { id := "horn1972_ex1_93_ok"
@@ -373,9 +335,7 @@ def ex1_93_ok : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.23"), ("scale", "seriously–critically–fatally wounded"), ("construction", "suspension")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex1_93_bad : LinguisticExample :=
   { id := "horn1972_ex1_93_bad"
@@ -391,9 +351,7 @@ def ex1_93_bad : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.23"), ("scale", "seriously–critically–fatally wounded"), ("construction", "suspension by a weaker member")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex2_1a_some_all : LinguisticExample :=
   { id := "horn1972_ex2_1a_some_all"
@@ -409,9 +367,7 @@ def ex2_1a_some_all : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantifier"), ("construction", "suspension")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex2_1a_all_some : LinguisticExample :=
   { id := "horn1972_ex2_1a_all_some"
@@ -427,9 +383,7 @@ def ex2_1a_all_some : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantifier"), ("construction", "suspension by a weaker member")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex2_1a_many_most : LinguisticExample :=
   { id := "horn1972_ex2_1a_many_most"
@@ -445,9 +399,7 @@ def ex2_1a_many_most : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantifier"), ("construction", "suspension")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex2_1b : LinguisticExample :=
   { id := "horn1972_ex2_1b"
@@ -463,9 +415,7 @@ def ex2_1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantificational adverb"), ("construction", "suspension")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex2_1e_few : LinguisticExample :=
   { id := "horn1972_ex2_1e_few"
@@ -481,9 +431,7 @@ def ex2_1e_few : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "negative quantifier"), ("construction", "suspension")]
-    comment := "Derived by double negation from few and possibly not any."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Derived by double negation from few and possibly not any." }
 
 def ex2_3c : LinguisticExample :=
   { id := "horn1972_ex2_3c"
@@ -499,9 +447,7 @@ def ex2_3c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.11"), ("construction", "or both after a suspender disjunction")]
-    comment := "Suspender disjunctions are not true disjunctions, so or both cannot be appended."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Suspender disjunctions are not true disjunctions, so or both cannot be appended." }
 
 def ex2_3a : LinguisticExample :=
   { id := "horn1972_ex2_3a"
@@ -517,9 +463,7 @@ def ex2_3a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.11"), ("construction", "or both after a true disjunction")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex2_24a_somebody : LinguisticExample :=
   { id := "horn1972_ex2_24a_somebody"
@@ -535,9 +479,7 @@ def ex2_24a_somebody : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantifier"), ("construction", "cancelling the implicature")]
-    comment := "Consistent, against treating some as entailing or presupposing not all."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Consistent, against treating some as entailing or presupposing not all." }
 
 def ex2_24b_some_not_all : LinguisticExample :=
   { id := "horn1972_ex2_24b_some_not_all"
@@ -553,9 +495,7 @@ def ex2_24b_some_not_all : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "quantifier"), ("construction", "asserting the implicature")]
-    comment := "Non-redundant by the test (2.12), so not all is not entailed by some."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Non-redundant by the test (2.12), so not all is not entailed by some." }
 
 def ex2_25a : LinguisticExample :=
   { id := "horn1972_ex2_25a"
@@ -571,9 +511,7 @@ def ex2_25a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "negative quantifier"), ("construction", "asserting the implicature")]
-    comment := "Against a presupposition of some by few."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Against a presupposition of some by few." }
 
 def ex2_28a : LinguisticExample :=
   { id := "horn1972_ex2_28a"
@@ -589,9 +527,7 @@ def ex2_28a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "cardinal"), ("negation", "of the lower bound")]
-    comment := "Fewer than three friends."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Fewer than three friends." }
 
 def ex2_28b : LinguisticExample :=
   { id := "horn1972_ex2_28b"
@@ -607,9 +543,7 @@ def ex2_28b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.11"), ("scale", "cardinal"), ("negation", "external")]
-    comment := "With contrastive intonation the exceptional reading: more than three."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With contrastive intonation the exceptional reading: more than three." }
 
 def ex2_40a : LinguisticExample :=
   { id := "horn1972_ex2_40a"
@@ -625,9 +559,7 @@ def ex2_40a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.13"), ("ambiguity", "NEG-V vs NEG-Q")]
-    comment := "Comma intonation forces the NEG-Q reading not all, which implicates some."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Comma intonation forces the NEG-Q reading not all, which implicates some." }
 
 def ex2_43a : LinguisticExample :=
   { id := "horn1972_ex2_43a"
@@ -643,9 +575,7 @@ def ex2_43a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.13"), ("reading", "NEG-V only")]
-    comment := "Existentials, like disjunctions, lack the NEG-Q reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Existentials, like disjunctions, lack the NEG-Q reading." }
 
 def ex2_46 : LinguisticExample :=
   { id := "horn1972_ex2_46"
@@ -661,9 +591,7 @@ def ex2_46 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.13"), ("scale", "connective"), ("entails", "and entails or"), ("implicates", "or implicates not and")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex2_47 : LinguisticExample :=
   { id := "horn1972_ex2_47"
@@ -679,9 +607,7 @@ def ex2_47 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.13"), ("scale", "connective"), ("context", "conditional")]
-    comment := "The classical entailment holds: seeing both is no excuse."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The classical entailment holds: seeing both is no excuse." }
 
 def ex2_49b : LinguisticExample :=
   { id := "horn1972_ex2_49b"
@@ -697,9 +623,7 @@ def ex2_49b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.13"), ("scale", "connective"), ("construction", "suspension of exclusivity")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex2_51a : LinguisticExample :=
   { id := "horn1972_ex2_51a"
@@ -715,9 +639,7 @@ def ex2_51a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "understatement")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex2_51d : LinguisticExample :=
   { id := "horn1972_ex2_51d"
@@ -733,9 +655,7 @@ def ex2_51d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "anomaly")]
-    comment := "Using some with the knowledge of all is anomalous, not mere understatement."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Using some with the knowledge of all is anomalous, not mere understatement." }
 
 def ex2_52a : LinguisticExample :=
   { id := "horn1972_ex2_52a"
@@ -751,9 +671,7 @@ def ex2_52a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "anomaly")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex2_55c : LinguisticExample :=
   { id := "horn1972_ex2_55c"
@@ -769,9 +687,7 @@ def ex2_55c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "anomaly")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex2_58a : LinguisticExample :=
   { id := "horn1972_ex2_58a"
@@ -787,9 +703,7 @@ def ex2_58a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "anomaly")]
-    comment := "Worse than some used with the knowledge of almost all: the violation is not merely quantitative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Worse than some used with the knowledge of almost all: the violation is not merely quantitative." }
 
 def ex2_58c : LinguisticExample :=
   { id := "horn1972_ex2_58c"
@@ -805,9 +719,7 @@ def ex2_58c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.14"), ("scale", "quantifier"), ("status", "understatement")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex4_49a : LinguisticExample :=
   { id := "horn1972_ex4_49a"
@@ -823,9 +735,7 @@ def ex4_49a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.23"), ("connective", "and"), ("lexicalization", "nor = and~")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex4_49a_prime : LinguisticExample :=
   { id := "horn1972_ex4_49a_prime"
@@ -841,9 +751,7 @@ def ex4_49a_prime : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.23"), ("connective", "or"), ("lexicalization", "*nand = or~")]
-    comment := "No lexical item nand corresponds to or with a lower negation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No lexical item nand corresponds to or with a lower negation." }
 
 def ex4_50a : LinguisticExample :=
   { id := "horn1972_ex4_50a"
@@ -859,9 +767,7 @@ def ex4_50a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.23"), ("connective", "both"), ("lexicalization", "neither = both~")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex4_50a_prime : LinguisticExample :=
   { id := "horn1972_ex4_50a_prime"
@@ -877,9 +783,7 @@ def ex4_50a_prime : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.23"), ("connective", "either"), ("lexicalization", "*noth = not both")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex4_56a : LinguisticExample :=
   { id := "horn1972_ex4_56a"
@@ -895,9 +799,7 @@ def ex4_56a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "all"), ("compatibility", "incompatible with a lower negation")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex4_56b : LinguisticExample :=
   { id := "horn1972_ex4_56b"
@@ -913,9 +815,7 @@ def ex4_56b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "most"), ("compatibility", "incompatible with a lower negation")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex4_56c : LinguisticExample :=
   { id := "horn1972_ex4_56c"
@@ -931,9 +831,7 @@ def ex4_56c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "half"), ("compatibility", "compatible with a lower negation")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex4_56e : LinguisticExample :=
   { id := "horn1972_ex4_56e"
@@ -949,9 +847,7 @@ def ex4_56e : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "some"), ("compatibility", "compatible with a lower negation")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex4_57a : LinguisticExample :=
   { id := "horn1972_ex4_57a"
@@ -967,9 +863,7 @@ def ex4_57a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "many"), ("compatibility", "compatible with a lower negation")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex4_57a_prime : LinguisticExample :=
   { id := "horn1972_ex4_57a_prime"
@@ -985,9 +879,7 @@ def ex4_57a_prime : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.24"), ("quantifier", "not many"), ("compatibility", "incompatible with a lower negation")]
-    comment := "The contradictory of a quantifier below the midpoint is above the midpoint of the negative scale."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The contradictory of a quantifier below the midpoint is above the midpoint of the negative scale." }
 
 def ex4_60a : LinguisticExample :=
   { id := "horn1972_ex4_60a"
@@ -1003,9 +895,7 @@ def ex4_60a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.3"), ("quantifier", "some"), ("implicates", "not all"), ("lexicalization", "~some = none; some~ unlexicalized")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex4_60b : LinguisticExample :=
   { id := "horn1972_ex4_60b"
@@ -1021,9 +911,7 @@ def ex4_60b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.3"), ("modal", "possible"), ("implicates", "not necessary"), ("lexicalization", "~possible = impossible; possible~ unlexicalized")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex4_60f : LinguisticExample :=
   { id := "horn1972_ex4_60f"
@@ -1039,9 +927,7 @@ def ex4_60f : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.3"), ("connective", "either...or"), ("implicates", "not both"), ("lexicalization", "~(either...or) = neither...nor")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex4_66a : LinguisticExample :=
   { id := "horn1972_ex4_66a"
@@ -1057,9 +943,7 @@ def ex4_66a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.3"), ("predicate", "allow"), ("compatibility", "compatible"), ("lexicalization", "~allow = disallow")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex4_66b : LinguisticExample :=
   { id := "horn1972_ex4_66b"
@@ -1075,9 +959,7 @@ def ex4_66b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.3"), ("predicate", "prove"), ("compatibility", "incompatible"), ("lexicalization", "prove~ = disprove")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex4_75 : LinguisticExample :=
   { id := "horn1972_ex4_75"
@@ -1093,9 +975,7 @@ def ex4_75 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.3"), ("predicate", "true"), ("compatibility", "incompatible"), ("lexicalization", "true~ = false; ~true = untrue")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [ex1_58b_more, ex1_58b_fewer, ex1_59a, ex1_59b, ex1_60a, ex1_60b, ex1_63b, ex1_63c, ex1_72a_fact, ex1_72a_susp, ex1_72b_cold, ex1_72b_warm, ex1_73c_hot_warm, ex1_73a, ex1_73b, ex1_82a, ex1_82b, ex1_85a, ex1_85b, ex1_93_ok, ex1_93_bad, ex2_1a_some_all, ex2_1a_all_some, ex2_1a_many_most, ex2_1b, ex2_1e_few, ex2_3c, ex2_3a, ex2_24a_somebody, ex2_24b_some_not_all, ex2_25a, ex2_28a, ex2_28b, ex2_40a, ex2_43a, ex2_46, ex2_47, ex2_49b, ex2_51a, ex2_51d, ex2_52a, ex2_55c, ex2_58a, ex2_58c, ex4_49a, ex4_49a_prime, ex4_50a, ex4_50a_prime, ex4_56a, ex4_56b, ex4_56c, ex4_56e, ex4_57a, ex4_57a_prime, ex4_60a, ex4_60b, ex4_60f, ex4_66a, ex4_66b, ex4_75]
 

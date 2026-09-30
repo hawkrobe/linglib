@@ -44,8 +44,7 @@
         "part"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_neg2",
@@ -92,8 +91,7 @@
         "part"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_neg3",
@@ -140,8 +138,7 @@
         "part"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_neg4",
@@ -188,8 +185,7 @@
         "part"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_2a_read_part",
@@ -236,8 +232,7 @@
         "part"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_2a_read_tot",
@@ -284,8 +279,7 @@
         "gen"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_2a_drive_part",
@@ -332,8 +326,7 @@
         "part"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_2a_drive_tot",
@@ -380,8 +373,7 @@
         "gen"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_2a_shoot_part",
@@ -428,8 +420,7 @@
         "part"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_2a_shoot_tot",
@@ -476,8 +467,7 @@
         "gen"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_2b_love",
@@ -524,8 +514,7 @@
         "part"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_2b_interest",
@@ -572,8 +561,7 @@
         "part"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_2b_fear",
@@ -620,8 +608,7 @@
         "part"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_3_icecream_part",
@@ -668,8 +655,7 @@
         "part"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_3_icecream_tot",
@@ -716,8 +702,7 @@
         "gen"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_3_beer_part",
@@ -764,8 +749,7 @@
         "part"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_3_beer_tot",
@@ -812,8 +796,7 @@
         "gen"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_3_people_part",
@@ -860,8 +843,7 @@
         "part"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_3_people_tot",
@@ -908,8 +890,7 @@
         "nom"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_3_guests_part",
@@ -956,8 +937,7 @@
         "part"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_3_guests_tot",
@@ -1004,8 +984,7 @@
         "nom"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_tot_message",
@@ -1052,8 +1031,7 @@
         "gen"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_tot_milk",
@@ -1100,8 +1078,7 @@
         "gen"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_tot_car_imp",
@@ -1148,8 +1125,7 @@
         "nom"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_tot_computers",
@@ -1196,8 +1172,7 @@
         "nom"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_tot_cars",
@@ -1244,8 +1219,7 @@
         "nom"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_acc_took",
@@ -1292,8 +1266,7 @@
         "acc"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_acc_take_imp",
@@ -1340,8 +1313,7 @@
         "acc"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_acc_taken",
@@ -1388,8 +1360,7 @@
         "acc"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_acc_whom",
@@ -1436,8 +1407,7 @@
         "acc"
       ]
     ],
-    "comment": "The interrogative kuka takes the accusative like the personal pronouns.",
-    "lgrConformance": ""
+    "comment": "The interrogative kuka takes the accusative like the personal pronouns."
   },
   {
     "id": "karlsson2017_pl_articles",
@@ -1484,8 +1454,7 @@
         "nom"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_pl_children_imp",
@@ -1532,8 +1501,7 @@
         "nom"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_pl_children_pass",
@@ -1580,8 +1548,7 @@
         "nom"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_num_articles",
@@ -1628,8 +1595,7 @@
         "nom"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_num_children_imp",
@@ -1676,8 +1642,7 @@
         "nom"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_num_children_pass",
@@ -1724,8 +1689,7 @@
         "nom"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_sg_camera",
@@ -1772,8 +1736,7 @@
         "gen"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_sg_child",
@@ -1820,8 +1783,7 @@
         "gen"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_sg_window",
@@ -1868,8 +1830,7 @@
         "gen"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_sg_paper_imp",
@@ -1916,8 +1877,7 @@
         "nom"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_sg_book_pass",
@@ -1964,8 +1924,7 @@
         "nom"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_sg_dog_pass",
@@ -2012,8 +1971,7 @@
         "nom"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_sg_book_must",
@@ -2060,8 +2018,7 @@
         "nom"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "karlsson2017_sg_house_inf",
@@ -2108,7 +2065,6 @@
         "nom"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

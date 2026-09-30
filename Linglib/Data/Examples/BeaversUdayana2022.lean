@@ -31,9 +31,7 @@ def bu2022_2a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("middle type", "inherent reflexive"), ("root class", "naturally reflexive")]
-    comment := "Body-care roots default to the coreferent reading of the suppressed variable."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Body-care roots default to the coreferent reading of the suppressed variable." }
 
 def bu2022_2b : LinguisticExample :=
   { id := "bu2022_2b"
@@ -49,9 +47,7 @@ def bu2022_2b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("middle type", "dispositional"), ("reading", "generic")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bu2022_7 : LinguisticExample :=
   { id := "bu2022_7"
@@ -67,9 +63,7 @@ def bu2022_7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("middle type", "passive middle"), ("reading", "episodic")]
-    comment := "Episodic reading, unlike English dispositionals."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Episodic reading, unlike English dispositionals." }
 
 def bu2022_9a : LinguisticExample :=
   { id := "bu2022_9a"
@@ -85,9 +79,7 @@ def bu2022_9a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("middle type", "dispositional"), ("diagnostic", "agent denial")]
-    comment := "The unexpressed agent is entailed to exist, as with di- passives."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The unexpressed agent is entailed to exist, as with di- passives." }
 
 def bu2022_10c : LinguisticExample :=
   { id := "bu2022_10c"
@@ -103,9 +95,7 @@ def bu2022_10c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("middle type", "dispositional"), ("diagnostic", "dengan sendiri=nya")]
-    comment := "'By itself' contradicts the entailed separate causer."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "'By itself' contradicts the entailed separate causer." }
 
 def bu2022_11 : LinguisticExample :=
   { id := "bu2022_11"
@@ -121,9 +111,7 @@ def bu2022_11 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("voice", "di- passive"), ("diagnostic", "oleh phrase")]
-    comment := "The ber- variant *ber-jual oleh Tono is ungrammatical: middles reject oleh."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The ber- variant *ber-jual oleh Tono is ungrammatical: middles reject oleh." }
 
 def bu2022_13 : LinguisticExample :=
   { id := "bu2022_13"
@@ -139,9 +127,7 @@ def bu2022_13 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("middle type", "dispositional"), ("diagnostic", "rationale clause")]
-    comment := "The suppressed agent cannot control rationale PRO, unlike di- passives (12b)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The suppressed agent cannot control rationale PRO, unlike di- passives (12b)." }
 
 def bu2022_17b : LinguisticExample :=
   { id := "bu2022_17b"
@@ -157,9 +143,7 @@ def bu2022_17b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("middle type", "inherent reflexive"), ("diagnostic", "dengan sendiri=nya")]
-    comment := "The surface subject is the causer, so 'by itself' is licensed."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The surface subject is the causer, so 'by itself' is licensed." }
 
 def bu2022_18a : LinguisticExample :=
   { id := "bu2022_18a"
@@ -175,9 +159,7 @@ def bu2022_18a : LinguisticExample :=
     alternatives := []
     readings := [("compositional: washed his eyes", .acceptable), ("idiomatic: watched the girls go by (24b)", .acceptable)]
     paperFeatures := [("middle type", "incorporation"), ("object", "incorporated NP")]
-    comment := "The agent surfaces as subject; the patient is an incorporated NP."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The agent surfaces as subject; the patient is an incorporated NP." }
 
 def bu2022_19b : LinguisticExample :=
   { id := "bu2022_19b"
@@ -193,9 +175,7 @@ def bu2022_19b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("middle type", "incorporation"), ("diagnostic", "non-separability")]
-    comment := "The incorporated NP cannot be separated from the verb, unlike a meN- object (19a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The incorporated NP cannot be separated from the verb, unlike a meN- object (19a)." }
 
 def bu2022_22 : LinguisticExample :=
   { id := "bu2022_22"
@@ -211,9 +191,7 @@ def bu2022_22 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("middle type", "incorporation"), ("diagnostic", "discourse opacity")]
-    comment := "The incorporated noun cannot antecede 'that car' — no discourse referent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The incorporated noun cannot antecede 'that car' — no discourse referent." }
 
 def bu2022_26b : LinguisticExample :=
   { id := "bu2022_26b"
@@ -229,9 +207,7 @@ def bu2022_26b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("middle type", "incorporated reflexive"), ("object", "diri")]
-    comment := "Incorporated diri triggers the coreferent reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Incorporated diri triggers the coreferent reading." }
 
 def bu2022_28 : LinguisticExample :=
   { id := "bu2022_28"
@@ -247,9 +223,7 @@ def bu2022_28 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("middle type", "incorporation"), ("diagnostic", "complementary distribution")]
-    comment := "Incorporated diri and an incorporated lexical NP compete for one slot."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Incorporated diri and an incorporated lexical NP compete for one slot." }
 
 def bu2022_44a : LinguisticExample :=
   { id := "bu2022_44a"
@@ -265,9 +239,7 @@ def bu2022_44a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "mixed readings"), ("analysis", "open variable vs existential")]
-    comment := "No mixed reflexive/disjoint reading under conjunction — unlike Greek, favoring the open-variable analysis (43)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No mixed reflexive/disjoint reading under conjunction — unlike Greek, favoring the open-variable analysis (43)." }
 
 def bu2022_59 : LinguisticExample :=
   { id := "bu2022_59"
@@ -283,9 +255,7 @@ def bu2022_59 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("middle type", "conflation"), ("root class", "relational noun")]
-    comment := "Relational nouns (body parts, kin, clothing) conflate: the possessor surfaces as subject."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Relational nouns (body parts, kin, clothing) conflate: the possessor surfaces as subject." }
 
 def bu2022_62 : LinguisticExample :=
   { id := "bu2022_62"
@@ -301,9 +271,7 @@ def bu2022_62 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("middle type", "conflation"), ("diagnostic", "change denial")]
-    comment := "Conflation middles are purely possessional statives, not change-of-state."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Conflation middles are purely possessional statives, not change-of-state." }
 
 def bu2022_67a : LinguisticExample :=
   { id := "bu2022_67a"
@@ -319,9 +287,7 @@ def bu2022_67a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("middle type", "anticausative"), ("diagnostic", "causer denial")]
-    comment := "ter- anticausatives lack the entailed external causer of dispositional ber- middles; contrast (74)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "ter- anticausatives lack the entailed external causer of dispositional ber- middles; contrast (74)." }
 
 def bu2022_74 : LinguisticExample :=
   { id := "bu2022_74"
@@ -337,9 +303,7 @@ def bu2022_74 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("middle type", "dispositional"), ("diagnostic", "causer denial")]
-    comment := "ber- on the same root has only the disjoint (dispositional/passive) reading, so causer denial contradicts."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "ber- on the same root has only the disjoint (dispositional/passive) reading, so causer denial contradicts." }
 
 def all : List LinguisticExample := [bu2022_2a, bu2022_2b, bu2022_7, bu2022_9a, bu2022_10c, bu2022_11, bu2022_13, bu2022_17b, bu2022_18a, bu2022_19b, bu2022_22, bu2022_26b, bu2022_28, bu2022_44a, bu2022_59, bu2022_62, bu2022_67a, bu2022_74]
 

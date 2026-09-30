@@ -18,9 +18,7 @@
       ["address", "familiar"],
       ["number", "singular"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wang2023_2",
@@ -44,9 +42,7 @@
       ["number", "plural"],
       ["mismatch", "referentially singular"]
     ],
-    "comment": "Honorific vous triggers plural agreement for a singular addressee.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Honorific vous triggers plural agreement for a singular addressee."
   },
   {
     "id": "wang2023_3a",
@@ -69,9 +65,7 @@
       ["address", "familiar"],
       ["person", "second"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wang2023_3b",
@@ -95,9 +89,7 @@
       ["person", "third"],
       ["mismatch", "second-person addressee"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wang2023_4a",
@@ -119,9 +111,7 @@
       ["address", "familiar"],
       ["definiteness", "definite pronoun"]
     ],
-    "comment": "Refsing 1986: 94, 222, adapted.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Refsing 1986: 94, 222, adapted."
   },
   {
     "id": "wang2023_4b",
@@ -143,9 +133,7 @@
       ["definiteness", "indefinite pronoun"],
       ["mismatch", "definite addressee"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wang2023_29",
@@ -163,9 +151,7 @@
     "paperFeatures": [
       ["unattested", "honorific singular"]
     ],
-    "comment": "A hypothetical French recruiting the singular for honorification is unattested, (28a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A hypothetical French recruiting the singular for honorification is unattested, (28a)."
   },
   {
     "id": "wang2023_30a",
@@ -183,9 +169,7 @@
     "paperFeatures": [
       ["unattested", "honorific first person"]
     ],
-    "comment": "(28b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "(28b)."
   },
   {
     "id": "wang2023_30b",
@@ -203,9 +187,7 @@
     "paperFeatures": [
       ["unattested", "honorific second person"]
     ],
-    "comment": "(28b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "(28b)."
   },
   {
     "id": "wang2023_31",
@@ -223,9 +205,7 @@
     "paperFeatures": [
       ["unattested", "honorific definite"]
     ],
-    "comment": "(28c).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "(28c)."
   },
   {
     "id": "wang2023_48a",
@@ -244,9 +224,7 @@
       ["diagnostic", "semantic markedness"],
       ["number", "plural inclusive"]
     ],
-    "comment": "A singular answer to a plural question: the plural is number-neutral.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A singular answer to a plural question: the plural is number-neutral."
   },
   {
     "id": "wang2023_49",
@@ -268,9 +246,7 @@
       ["diagnostic", "quantification"],
       ["number", "plural inclusive"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wang2023_50",
@@ -292,9 +268,7 @@
       ["diagnostic", "quantification"],
       ["person", "third unmarked"]
     ],
-    "comment": "Sauerland 2008b: 72, adapted; a mixed-person group binds only a third-person pronoun.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Sauerland 2008b: 72, adapted; a mixed-person group binds only a third-person pronoun."
   },
   {
     "id": "wang2023_53a",
@@ -313,9 +287,7 @@
       ["definiteness", "definite"],
       ["presupposition", "familiarity"]
     ],
-    "comment": "Felicitous only with a salient or previously mentioned hamster.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Felicitous only with a salient or previously mentioned hamster."
   },
   {
     "id": "wang2023_53b",
@@ -333,9 +305,7 @@
     "paperFeatures": [
       ["definiteness", "indefinite"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "wang2023_60",
@@ -355,9 +325,7 @@
       ["number", "plural"],
       ["case", "ceiling"]
     ],
-    "comment": "No mismatch with a plural addressee, yet the honorific inference remains.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No mismatch with a plural addressee, yet the honorific inference remains."
   },
   {
     "id": "wang2023_72",
@@ -380,9 +348,7 @@
       ["number", "dual"],
       ["system", "honorific dual only"]
     ],
-    "comment": "François 2005: 121.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "François 2005: 121."
   },
   {
     "id": "wang2023_74b",
@@ -405,9 +371,7 @@
       ["number", "dual for three referents"],
       ["system", "honorific dual only"]
     ],
-    "comment": "Peterson 2011: 169–170, adapted; the weak taboo outranking MP! lets the dual honorify three.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Peterson 2011: 169–170, adapted; the weak taboo outranking MP! lets the dual honorify three."
   },
   {
     "id": "wang2023_75a",
@@ -430,9 +394,7 @@
       ["number", "plural"],
       ["system", "honorific plural only"]
     ],
-    "comment": "Corbett 2000: 226.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Corbett 2000: 226."
   },
   {
     "id": "wang2023_75b",
@@ -454,9 +416,7 @@
       ["address", "plain dual"],
       ["number", "dual"]
     ],
-    "comment": "The dual has no honorific effect.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The dual has no honorific effect."
   },
   {
     "id": "wang2023_78a",
@@ -478,9 +438,7 @@
       ["number", "dual or plural"],
       ["system", "non-escalating"]
     ],
-    "comment": "Own fieldwork; dual and plural indicate equal respect.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Own fieldwork; dual and plural indicate equal respect."
   },
   {
     "id": "wang2023_81",
@@ -502,8 +460,6 @@
       ["diagnostic", "quantification"],
       ["number", "dual intermediate"]
     ],
-    "comment": "Sauerland 2008b: compatible with some students having one book and others exactly two.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Sauerland 2008b: compatible with some students having one book and others exactly two."
   }
 ]

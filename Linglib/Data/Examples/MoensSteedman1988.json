@@ -12,9 +12,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"connective": "when", "clause": "embedded", "vendler_class": "state"},
-    "comment": "Schematic illustration of the M&S 1988 §4.2 when-coercion pattern; sentence not verified verbatim against the paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Schematic illustration of the M&S 1988 §4.2 when-coercion pattern; sentence not verified verbatim against the paper."
   },
   {
     "id": "moenssteedman1988_when_activity",
@@ -29,9 +27,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"connective": "when", "clause": "embedded", "vendler_class": "activity", "coercion": "inception", "result_class": "achievement"},
-    "comment": "Schematic illustration of the M&S 1988 §4.2 when-coercion pattern; sentence not verified verbatim against the paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Schematic illustration of the M&S 1988 §4.2 when-coercion pattern; sentence not verified verbatim against the paper."
   },
   {
     "id": "moenssteedman1988_when_accomplishment",
@@ -46,9 +42,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"connective": "when", "clause": "embedded", "vendler_class": "accomplishment", "coercion": "culmination", "result_class": "achievement"},
-    "comment": "Schematic illustration of the M&S 1988 §4.2 when-coercion pattern; sentence not verified verbatim against the paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Schematic illustration of the M&S 1988 §4.2 when-coercion pattern; sentence not verified verbatim against the paper."
   },
   {
     "id": "moenssteedman1988_when_achievement",
@@ -63,8 +57,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": {"connective": "when", "clause": "embedded", "vendler_class": "achievement"},
-    "comment": "Schematic illustration of the M&S 1988 §4.2 when-coercion pattern; sentence not verified verbatim against the paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Schematic illustration of the M&S 1988 §4.2 when-coercion pattern; sentence not verified verbatim against the paper."
   }
 ]

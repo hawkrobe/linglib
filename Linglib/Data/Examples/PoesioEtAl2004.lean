@@ -31,9 +31,7 @@ def ex5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("parameter", "realization"), ("section", "2.4.2")]
-    comment := "The house is realized in the second utterance only indirectly, by the associative reference the door."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The house is realized in the second utterance only indirectly, by the associative reference the door." }
 
 def ex7 : LinguisticExample :=
   { id := "poesioetal2004_ex7"
@@ -49,9 +47,7 @@ def ex7 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("parameter", "cfFilter"), ("parameter", "previousUtterance"), ("section", "2.4.2")]
-    comment := "Neither the second nor the third utterance has a CB unless the second-person pronoun introduces a CF; treating the if-clause as embedded makes the first utterance the previous utterance of the third."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Neither the second nor the third utterance has a CB unless the second-person pronoun introduces a CF; treating the if-clause as embedded makes the first utterance the previous utterance of the third." }
 
 def ex9 : LinguisticExample :=
   { id := "poesioetal2004_ex9"
@@ -67,9 +63,7 @@ def ex9 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("parameter", "utterance"), ("parameter", "realization"), ("section", "4.1.1")]
-    comment := "With finite clauses as utterances only the last clause refers to the egg vases; identifying utterances with sentences or allowing indirect realization removes the Strong Constraint 1 violations."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "With finite clauses as utterances only the last clause refers to the egg vases; identifying utterances with sentences or allowing indirect realization removes the Strong Constraint 1 violations." }
 
 def ex10 : LinguisticExample :=
   { id := "poesioetal2004_ex10"
@@ -85,9 +79,7 @@ def ex10 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("parameter", "rank"), ("section", "4.1.1")]
-    comment := "The corner cupboard (np-compl) and Branicki (gen) tie under grammatical-function ranking and are both realized in the next utterance, so both are its CB."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The corner cupboard (np-compl) and Branicki (gen) tie under grammatical-function ranking and are both realized in the next utterance, so both are its CB." }
 
 def ex14 : LinguisticExample :=
   { id := "poesioetal2004_ex14"
@@ -103,9 +95,7 @@ def ex14 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("parameter", "previousUtterance"), ("section", "4.2.5")]
-    comment := "Kameyama-style the previous utterance of the third clause is the when-clause; Suri and McCoy-style it is the first clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Kameyama-style the previous utterance of the third clause is the when-clause; Suri and McCoy-style it is the first clause." }
 
 def ex16 : LinguisticExample :=
   { id := "poesioetal2004_ex16"
@@ -121,9 +111,7 @@ def ex16 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("parameter", "previousUtterance"), ("section", "4.2.5")]
-    comment := "The adjunct clause introduces the patch, so treating it as embedded loses the CB of the third clause."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The adjunct clause introduces the patch, so treating it as embedded loses the CB of the third clause." }
 
 def ex23 : LinguisticExample :=
   { id := "poesioetal2004_ex23"
@@ -139,9 +127,7 @@ def ex23 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.2.2")]
-    comment := "Successive utterances mention no common entity; the connection is made by the connectives."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Successive utterances mention no common entity; the connection is made by the connectives." }
 
 def all : List LinguisticExample := [ex5, ex7, ex9, ex10, ex14, ex16, ex23]
 

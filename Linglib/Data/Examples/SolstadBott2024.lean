@@ -31,9 +31,7 @@ def sb2024_exp1_occasion : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "occasion"), ("experiment", "1"), ("verbClass", "agentEvocator"), ("triggerClass", "C"), ("projectivity", "79"), ("atIssueness", "32")]
-    comment := "Mean projectivity .79 and at-issueness .32 (ratings on the certain-that / asking-whether diagnostics of [tonhauser-beaver-degen-2018], rescaled to [0,1], n=71), Exp 1 Block 2 (osf.io/76rxb). Projective content: 'there was an occasion for her to thank him'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .79 and at-issueness .32 (ratings on the certain-that / asking-whether diagnostics of [tonhauser-beaver-degen-2018], rescaled to [0,1], n=71), Exp 1 Block 2 (osf.io/76rxb). Projective content: 'there was an occasion for her to thank him'." }
 
 def sb2024_exp2_occasion : LinguisticExample :=
   { id := "sb2024_exp2_occasion"
@@ -49,9 +47,7 @@ def sb2024_exp2_occasion : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "occasion"), ("experiment", "2"), ("verbClass", "agentEvocator"), ("triggerClass", "C"), ("projectivity", "69"), ("atIssueness", "35")]
-    comment := "Mean projectivity .69 and at-issueness .35 (ratings on the certain-that / asking-whether diagnostics of [tonhauser-beaver-degen-2018], rescaled to [0,1], n=60), Exp 2 Block 2 (osf.io/76rxb). Projective content: 'there was an occasion for her to thank him'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .69 and at-issueness .35 (ratings on the certain-that / asking-whether diagnostics of [tonhauser-beaver-degen-2018], rescaled to [0,1], n=60), Exp 2 Block 2 (osf.io/76rxb). Projective content: 'there was an occasion for her to thank him'." }
 
 def sb2024_exp2_stimulusExperiencer : LinguisticExample :=
   { id := "sb2024_exp2_stimulusExperiencer"
@@ -67,9 +63,7 @@ def sb2024_exp2_stimulusExperiencer : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "stimulusExperiencer"), ("experiment", "2"), ("verbClass", "stimExp"), ("triggerClass", "C"), ("projectivity", "54"), ("atIssueness", "52")]
-    comment := "Mean projectivity .54 and at-issueness .52 (ratings on the certain-that / asking-whether diagnostics of [tonhauser-beaver-degen-2018], rescaled to [0,1], n=60), Exp 2 Block 2 (osf.io/76rxb). Projective content: 'she did something the experiencer might find shocking'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .54 and at-issueness .52 (ratings on the certain-that / asking-whether diagnostics of [tonhauser-beaver-degen-2018], rescaled to [0,1], n=60), Exp 2 Block 2 (osf.io/76rxb). Projective content: 'she did something the experiencer might find shocking'." }
 
 def sb2024_exp2_experiencerStimulus : LinguisticExample :=
   { id := "sb2024_exp2_experiencerStimulus"
@@ -85,9 +79,7 @@ def sb2024_exp2_experiencerStimulus : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("expression", "experiencerStimulus"), ("experiment", "2"), ("verbClass", "expStim"), ("triggerClass", "C"), ("projectivity", "52"), ("atIssueness", "46")]
-    comment := "Mean projectivity .52 and at-issueness .46 (ratings on the certain-that / asking-whether diagnostics of [tonhauser-beaver-degen-2018], rescaled to [0,1], n=60), Exp 2 Block 2 (osf.io/76rxb). Projective content: 'a relevant property of the stimulus argument'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Mean projectivity .52 and at-issueness .46 (ratings on the certain-that / asking-whether diagnostics of [tonhauser-beaver-degen-2018], rescaled to [0,1], n=60), Exp 2 Block 2 (osf.io/76rxb). Projective content: 'a relevant property of the stimulus argument'." }
 
 def all : List LinguisticExample := [sb2024_exp1_occasion, sb2024_exp2_occasion, sb2024_exp2_stimulusExperiencer, sb2024_exp2_experiencerStimulus]
 

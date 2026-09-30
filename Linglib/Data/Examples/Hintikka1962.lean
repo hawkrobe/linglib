@@ -31,9 +31,7 @@ def s8 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.5"), ("form", "p & ~B_a p"), ("status", "defensible; doxastically indefensible for the speaker")]
-    comment := "Moore's sentence: defensible, but its believed form (30)* is indefensible."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Moore's sentence: defensible, but its believed form (30)* is indefensible." }
 
 def s9 : LinguisticExample :=
   { id := "hintikka1962_s9"
@@ -49,9 +47,7 @@ def s9 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.11"), ("form", "p & ~K_a p & ~K_a ~p"), ("status", "defensible; epistemically indefensible for the speaker")]
-    comment := "Less strange than (8): the known form (40)* is indefensible."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Less strange than (8): the known form (40)* is indefensible." }
 
 def s28 : LinguisticExample :=
   { id := "hintikka1962_s28"
@@ -67,9 +63,7 @@ def s28 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.5"), ("form", "p & ~B_a p"), ("status", "defensible; doxastically defensible for a third person")]
-    comment := "A change of person removes the absurdity of (8)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A change of person removes the absurdity of (8)." }
 
 def s29 : LinguisticExample :=
   { id := "hintikka1962_s29"
@@ -85,9 +79,7 @@ def s29 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.5"), ("status", "defensible")]
-    comment := "A change of tense removes the absurdity of (8); (32), its believed form, is defensible."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A change of tense removes the absurdity of (8); (32), its believed form, is defensible." }
 
 def s30 : LinguisticExample :=
   { id := "hintikka1962_s30"
@@ -103,9 +95,7 @@ def s30 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.6"), ("form", "B_a (p & ~B_a p)"), ("status", "indefensible")]
-    comment := "(30)*, indefensible by the reductive argument (33)–(39)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "(30)*, indefensible by the reductive argument (33)–(39)." }
 
 def s30a : LinguisticExample :=
   { id := "hintikka1962_s30a"
@@ -121,9 +111,7 @@ def s30a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.6"), ("form", "B_b (p & ~B_a p)"), ("status", "defensible unless a = b")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s40 : LinguisticExample :=
   { id := "hintikka1962_s40"
@@ -139,9 +127,7 @@ def s40 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.11"), ("form", "K_a (p & ~K_a p & ~K_a ~p)"), ("status", "indefensible")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s42 : LinguisticExample :=
   { id := "hintikka1962_s42"
@@ -157,9 +143,7 @@ def s42 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.13"), ("form", "K_a p & ~K_b p"), ("status", "epistemically indefensible for b")]
-    comment := "Sometimes strange: epistemically indefensible for the speaker, by a simple argument."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Sometimes strange: epistemically indefensible for the speaker, by a simple argument." }
 
 def s43 : LinguisticExample :=
   { id := "hintikka1962_s43"
@@ -175,9 +159,7 @@ def s43 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.13"), ("form", "(K_a p v K_a ~p) & ~(K_b p v K_b ~p)"), ("status", "epistemically defensible")]
-    comment := "Unlike (42), nothing is wrong with it."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Unlike (42), nothing is wrong with it." }
 
 def s46 : LinguisticExample :=
   { id := "hintikka1962_s46"
@@ -193,9 +175,7 @@ def s46 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.14"), ("form", "B_a (p & ~K_a p)"), ("status", "defensible")]
-    comment := "Slightly queer only because more complicated than (47), which it virtually implies."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Slightly queer only because more complicated than (47), which it virtually implies." }
 
 def s47 : LinguisticExample :=
   { id := "hintikka1962_s47"
@@ -211,9 +191,7 @@ def s47 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.14"), ("form", "B_a p & ~K_a p"), ("status", "defensible; its known form (48) defensible")]
-    comment := "A perfectly natural form of words; implies (46) doxastically."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A perfectly natural form of words; implies (46) doxastically." }
 
 def s49 : LinguisticExample :=
   { id := "hintikka1962_s49"
@@ -229,9 +207,7 @@ def s49 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.15"), ("form", "B_a p & ~K_a B_a p"), ("status", "epistemically indefensible for the speaker")]
-    comment := "A special case of (9): 'I believe that p' implies 'I know that I believe that p' epistemically."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A special case of (9): 'I believe that p' implies 'I know that I believe that p' epistemically." }
 
 def s51 : LinguisticExample :=
   { id := "hintikka1962_s51"
@@ -247,9 +223,7 @@ def s51 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.16"), ("form", "B_a p & P_a ~p"), ("status", "epistemically and doxastically defensible")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s52 : LinguisticExample :=
   { id := "hintikka1962_s52"
@@ -265,9 +239,7 @@ def s52 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.17"), ("form", "p & ~K_b p"), ("status", "epistemically indefensible to address to its hearer")]
-    comment := "Antiperformatory: saying it to a well-informed hearer makes it false."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Antiperformatory: saying it to a well-informed hearer makes it false." }
 
 def prize : LinguisticExample :=
   { id := "hintikka1962_prize"
@@ -283,9 +255,7 @@ def prize : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.17"), ("form", "p & ~K_b p"), ("status", "a roundabout way of letting the hearer know that p")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s55 : LinguisticExample :=
   { id := "hintikka1962_s55"
@@ -301,9 +271,7 @@ def s55 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.21"), ("form", "p & ~K_a p"), ("status", "epistemically indefensible")]
-    comment := "More natural than (56): religious discourse is not defeated by the failure to know."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "More natural than (56): religious discourse is not defeated by the failure to know." }
 
 def s56 : LinguisticExample :=
   { id := "hintikka1962_s56"
@@ -319,9 +287,7 @@ def s56 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.21"), ("form", "p & ~K_a p"), ("status", "epistemically indefensible")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s57 : LinguisticExample :=
   { id := "hintikka1962_s57"
@@ -337,9 +303,7 @@ def s57 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.21"), ("status", "less awkward than (9)")]
-    comment := "Stress on the verb assimilates the sentence to (47)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Stress on the verb assimilates the sentence to (47)." }
 
 def s58 : LinguisticExample :=
   { id := "hintikka1962_s58"
@@ -355,9 +319,7 @@ def s58 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.21"), ("status", "implies (8) yet less absurd")]
-    comment := "Shows that the absurdity of (8) is not indefensibility, which (58) would inherit."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Shows that the absurdity of (8) is not indefensibility, which (58) would inherit." }
 
 def s59 : LinguisticExample :=
   { id := "hintikka1962_s59"
@@ -373,9 +335,7 @@ def s59 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4.21"), ("status", "natural")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s60 : LinguisticExample :=
   { id := "hintikka1962_s60"
@@ -391,9 +351,7 @@ def s60 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.1"), ("form", "K_a K_a p"), ("status", "virtually equivalent to (62)")]
-    comment := "Rather strange, being virtually equivalent to the simpler (62)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Rather strange, being virtually equivalent to the simpler (62)." }
 
 def s61 : LinguisticExample :=
   { id := "hintikka1962_s61"
@@ -409,9 +367,7 @@ def s61 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.1"), ("form", "K_b K_a p"), ("status", "virtually implies K_b p")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s62 : LinguisticExample :=
   { id := "hintikka1962_s62"
@@ -427,9 +383,7 @@ def s62 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.2"), ("form", "K_a p")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def s70 : LinguisticExample :=
   { id := "hintikka1962_s70"
@@ -445,9 +399,7 @@ def s70 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.5"), ("form", "K_a p & ~K_a K_a p"), ("status", "indefensible")]
-    comment := "Has a use: a has not followed the implications of what he knows far enough."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Has a use: a has not followed the implications of what he knows far enough." }
 
 def s71 : LinguisticExample :=
   { id := "hintikka1962_s71"
@@ -463,9 +415,7 @@ def s71 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.5"), ("form", "K_a p & ~K_a K_a p"), ("status", "indefensible")]
-    comment := "Absurd in a way (70) is not: the speaker cannot specify such a p himself."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Absurd in a way (70) is not: the speaker cannot specify such a p himself." }
 
 def all : List LinguisticExample := [s8, s9, s28, s29, s30, s30a, s40, s42, s43, s46, s47, s49, s51, s52, prize, s55, s56, s57, s58, s59, s60, s61, s62, s70, s71]
 

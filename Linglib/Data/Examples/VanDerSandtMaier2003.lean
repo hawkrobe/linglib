@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("denial", "presupposition"), ("sequence", "assertion-denial-correction")]
-    comment := "Reverse anaphora moves the contribution of the first utterance under the negation of the denial; the result is that France has no king, (2)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Reverse anaphora moves the contribution of the first utterance under the negation of the denial; the result is that France has no king, (2)." }
 
 def ex_3 : LinguisticExample :=
   { id := "vandersandtmaier2003_3"
@@ -49,9 +47,7 @@ def ex_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("denial", "proposition"), ("problem", "referent must survive")]
-    comment := "The discourse referent of the first utterance must be retained to bind the pronoun, so the whole contribution cannot be removed."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The discourse referent of the first utterance must be retained to bind the pronoun, so the whole contribution cannot be removed." }
 
 def ex_4 : LinguisticExample :=
   { id := "vandersandtmaier2003_4"
@@ -67,9 +63,7 @@ def ex_4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("denial", "presupposition"), ("problem", "one of two presuppositions")]
-    comment := "Only the presupposition that France has a king is objected to; that I quit smoking should pass unharmed."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Only the presupposition that France has a king is objected to; that I quit smoking should pass unharmed." }
 
 def ex_5 : LinguisticExample :=
   { id := "vandersandtmaier2003_5"
@@ -85,9 +79,7 @@ def ex_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("denial", "implicature"), ("problem", "part acknowledged, part denied")]
-    comment := "The second speaker confirms that the person is nice and denies the implicature of 'a lady' that she is a stranger."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The second speaker confirms that the person is nice and denies the implicature of 'a lady' that she is a stranger." }
 
 def ex_9a : LinguisticExample :=
   { id := "vandersandtmaier2003_9a"
@@ -103,9 +95,7 @@ def ex_9a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("layers", "pr: the Pope; fr: possibly right; imp: not necessarily right")]
-    comment := "The preliminary layered representation (9b): the three layers share one reference marker."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The preliminary layered representation (9b): the three layers share one reference marker." }
 
 def ex_20 : LinguisticExample :=
   { id := "vandersandtmaier2003_20"
@@ -121,9 +111,7 @@ def ex_20 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("denial", "implicature"), ("off", "imp1")]
-    comment := "Off(ψ, fr3) = {imp1}: the correction clashes only with the implicature that he is not necessarily right, which moves under the negation of the denial."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Off(ψ, fr3) = {imp1}: the correction clashes only with the implicature that he is not necessarily right, which moves under the negation of the denial." }
 
 def ex_21 : LinguisticExample :=
   { id := "vandersandtmaier2003_21"
@@ -139,9 +127,7 @@ def ex_21 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("denial", "implicature"), ("off", "imp1"), ("sequence", "assertion-affirmation-denial-correction")]
-    comment := "Off(ψ, fr4) = {imp1}: the stranger implicature moves under the negation; the acknowledged content that she is nice and the literal predication that she is a lady survive."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Off(ψ, fr4) = {imp1}: the stranger implicature moves under the negation; the acknowledged content that she is nice and the literal predication that she is a lady survive." }
 
 def fn12 : LinguisticExample :=
   { id := "vandersandtmaier2003_fn12"
@@ -157,9 +143,7 @@ def fn12 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("denial", "register")]
-    comment := "A style or register denial, which a layer for intonational and other surface features would accommodate."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A style or register denial, which a layer for intonational and other surface features would accommodate." }
 
 def all : List LinguisticExample := [ex_1, ex_3, ex_4, ex_5, ex_9a, ex_20, ex_21, fn12]
 

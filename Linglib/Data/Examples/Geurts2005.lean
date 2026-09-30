@@ -31,9 +31,7 @@ def ex_1a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("force1", "may"), ("force2", "may"), ("flavor", "deontic")]
-    comment := "Both domains bound to the background; each alternative is possible."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Both domains bound to the background; each alternative is possible." }
 
 def ex_1b : LinguisticExample :=
   { id := "geurts2005_1b"
@@ -49,9 +47,7 @@ def ex_1b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("force1", "must"), ("force2", "must"), ("flavor", "deontic")]
-    comment := "The domains partition the background; neither disjunct follows on its own."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The domains partition the background; neither disjunct follows on its own." }
 
 def ex_1c : LinguisticExample :=
   { id := "geurts2005_1c"
@@ -67,9 +63,7 @@ def ex_1c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("force1", "may"), ("force2", "must"), ("flavor", "deontic")]
-    comment := "The second, universal domain is the background minus the first disjunct's content."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The second, universal domain is the background minus the first disjunct's content." }
 
 def ex_1d : LinguisticExample :=
   { id := "geurts2005_1d"
@@ -85,9 +79,7 @@ def ex_1d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("force1", "must"), ("force2", "may"), ("flavor", "deontic")]
-    comment := "The first, universal domain is the background minus the second disjunct's content: a forward dependence, awkward like forward reference."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The first, universal domain is the background minus the second disjunct's content: a forward dependence, awkward like forward reference." }
 
 def ex_2a : LinguisticExample :=
   { id := "geurts2005_2a"
@@ -103,9 +95,7 @@ def ex_2a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("force1", "may"), ("force2", "may"), ("flavor", "epistemic")]
-    comment := "Both domains bound to the background; each alternative is possible."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Both domains bound to the background; each alternative is possible." }
 
 def ex_2b : LinguisticExample :=
   { id := "geurts2005_2b"
@@ -121,9 +111,7 @@ def ex_2b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("force1", "must"), ("force2", "must"), ("flavor", "epistemic")]
-    comment := "The domains partition the background; neither disjunct follows on its own."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The domains partition the background; neither disjunct follows on its own." }
 
 def ex_2c : LinguisticExample :=
   { id := "geurts2005_2c"
@@ -139,9 +127,7 @@ def ex_2c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("force1", "may"), ("force2", "must"), ("flavor", "epistemic")]
-    comment := "The second, universal domain is the background minus the first disjunct's content."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The second, universal domain is the background minus the first disjunct's content." }
 
 def ex_2d : LinguisticExample :=
   { id := "geurts2005_2d"
@@ -157,9 +143,7 @@ def ex_2d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("force1", "must"), ("force2", "may"), ("flavor", "epistemic")]
-    comment := "The first, universal domain is the background minus the second disjunct's content: a forward dependence, awkward like forward reference."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The first, universal domain is the background minus the second disjunct's content: a forward dependence, awkward like forward reference." }
 
 def all : List LinguisticExample := [ex_1a, ex_1b, ex_1c, ex_1d, ex_2a, ex_2b, ex_2c, ex_2d]
 

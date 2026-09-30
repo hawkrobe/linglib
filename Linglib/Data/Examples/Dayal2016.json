@@ -18,9 +18,7 @@
       ["section", "2.2.2"],
       ["construction", "sequence"]
     ],
-    "comment": "A sequence of two questions: a good answer specifies a place and an object (I went to the store; I bought apples).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A sequence of two questions: a good answer specifies a place and an object (I went to the store; I bought apples)."
   },
   {
     "id": "dayal2016_ex33b",
@@ -41,9 +39,7 @@
       ["section", "2.2.2"],
       ["construction", "scopeMarking"]
     ],
-    "comment": "Sequential scope marking in spoken English: interpreted as a single question, answered by a value for objects (I think we should buy apples); the intonational contour separates it from (33a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Sequential scope marking in spoken English: interpreted as a single question, answered by a value for objects (I think we should buy apples); the intonational contour separates it from (33a)."
   },
   {
     "id": "dayal2016_ex33c",
@@ -61,9 +57,7 @@
       ["section", "2.2.2"],
       ["construction", "extraction"]
     ],
-    "comment": "Long-distance extraction of the embedded wh to the matrix SpecCP; (33b) seems equivalent to it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Long-distance extraction of the embedded wh to the matrix SpecCP; (33b) seems equivalent to it."
   },
   {
     "id": "dayal2016_ex34a",
@@ -86,9 +80,7 @@
       ["section", "2.2.2"],
       ["construction", "scopeMarking"]
     ],
-    "comment": "(35b) is a legitimate truthful answer although Mary is in Paris, so the second question contributes its Hamblin set (36a), not its Karttunen set (36b); the truth requirement applies only at the matrix level, through Ans-D_PRELIM (37b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "(35b) is a legitimate truthful answer although Mary is in Paris, so the second question contributes its Hamblin set (36a), not its Karttunen set (36b); the truth requirement applies only at the matrix level, through Ans-D_PRELIM (37b)."
   },
   {
     "id": "dayal2016_ex39a",
@@ -106,9 +98,7 @@
       ["section", "2.2.3"],
       ["veridical", "false"]
     ],
-    "comment": "Does not entail that John is certain about the actual attendees: Lahiri's non-veridical embedding predicates, which replace the truth requirement in the answerhood operator by a contextual restriction (40).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Does not entail that John is certain about the actual attendees: Lahiri's non-veridical embedding predicates, which replace the truth requirement in the answerhood operator by a contextual restriction (40)."
   },
   {
     "id": "dayal2016_ex39b",
@@ -126,9 +116,7 @@
       ["section", "2.2.3"],
       ["veridical", "false"]
     ],
-    "comment": "Does not entail that John and Mary agree about the actual attendees.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Does not entail that John and Mary agree about the actual attendees."
   },
   {
     "id": "dayal2016_ex41a_42a",
@@ -150,9 +138,7 @@
       ["whNumber", "singular"],
       ["situation", "one"]
     ],
-    "comment": "The singular wh is answered by an answer naming a single woman.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The singular wh is answered by an answer naming a single woman."
   },
   {
     "id": "dayal2016_ex41a_42b",
@@ -174,9 +160,7 @@
       ["whNumber", "singular"],
       ["situation", "two"]
     ],
-    "comment": "An answer naming a plurality does not fit the singular wh: Ans-D is undefined, since neither true member of (44a) entails the other.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "An answer naming a plurality does not fit the singular wh: Ans-D is undefined, since neither true member of (44a) entails the other."
   },
   {
     "id": "dayal2016_ex41b_42a",
@@ -198,9 +182,7 @@
       ["whNumber", "plural"],
       ["situation", "one"]
     ],
-    "comment": "Ans-D is defined but names an atom, and the plurality implicature of the plural wh's existential presupposition (John likes some women) fails.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Ans-D is defined but names an atom, and the plurality implicature of the plural wh's existential presupposition (John likes some women) fails."
   },
   {
     "id": "dayal2016_ex41b_42b",
@@ -222,9 +204,7 @@
       ["whNumber", "plural"],
       ["situation", "two"]
     ],
-    "comment": "The plural wh is answered by the sum: the member for Mary and Sue entails the members for each.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The plural wh is answered by the sum: the member for Mary and Sue entails the members for each."
   },
   {
     "id": "dayal2016_ex41c_42a",
@@ -246,9 +226,7 @@
       ["whNumber", "neutral"],
       ["situation", "one"]
     ],
-    "comment": "The mono-morphemic wh carries no number specification and takes either answer.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The mono-morphemic wh carries no number specification and takes either answer."
   },
   {
     "id": "dayal2016_ex41c_42b",
@@ -270,9 +248,7 @@
       ["whNumber", "neutral"],
       ["situation", "two"]
     ],
-    "comment": "The mono-morphemic wh carries no number specification and takes either answer.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The mono-morphemic wh carries no number specification and takes either answer."
   },
   {
     "id": "dayal2016_ex47a",
@@ -290,9 +266,7 @@
       ["section", "2.3.2"],
       ["phenomenon", "negativeIsland"]
     ],
-    "comment": "A unique maximal degree exists in the positive extension of Marcus's height; Rullmann's maximality in the wh phrase.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A unique maximal degree exists in the positive extension of Marcus's height; Rullmann's maximality in the wh phrase."
   },
   {
     "id": "dayal2016_ex47b",
@@ -310,9 +284,7 @@
       ["section", "2.3.2"],
       ["phenomenon", "negativeIsland"]
     ],
-    "comment": "No unique maximal degree exists in the negative extension of Marcus's height.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No unique maximal degree exists in the negative extension of Marcus's height."
   },
   {
     "id": "dayal2016_ex51a_singular",
@@ -332,9 +304,7 @@
       ["whNumber", "singular"],
       ["construction", "polarWh"]
     ],
-    "comment": "Karttunen's observation that constituent and polar questions do not combine, derived by Bittner (1998) from Ans-D: for every woman the nucleus or its negation is true, and no true member entails the others (51b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Karttunen's observation that constituent and polar questions do not combine, derived by Bittner (1998) from Ans-D: for every woman the nucleus or its negation is true, and no true member entails the others (51b)."
   },
   {
     "id": "dayal2016_ex51a_plural",
@@ -354,9 +324,7 @@
       ["whNumber", "plural"],
       ["construction", "polarWh"]
     ],
-    "comment": "Ans-D over (51c) is defined only where John likes every woman in the domain, so the question is deemed unanswerable in general.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Ans-D over (51c) is defined only where John likes every woman in the domain, so the question is deemed unanswerable in general."
   },
   {
     "id": "dayal2016_ex53a",
@@ -377,9 +345,7 @@
       ["section", "2.3.3"],
       ["scale", "upward"]
     ],
-    "comment": "Upward scalar predicate: if n eggs are sufficient so are more, so the minimum is the member that entails all true members and the intersection of the true members (52a) is a member.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Upward scalar predicate: if n eggs are sufficient so are more, so the minimum is the member that entails all true members and the intersection of the true members (52a) is a member."
   },
   {
     "id": "dayal2016_ex53c",
@@ -400,9 +366,7 @@
       ["section", "2.3.3"],
       ["scale", "downward"]
     ],
-    "comment": "Downward scalar predicate: if n people left so did fewer, so the maximum is the member that entails all true members.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Downward scalar predicate: if n people left so did fewer, so the maximum is the member that entails all true members."
   },
   {
     "id": "dayal2016_ex54a",
@@ -422,9 +386,7 @@
       ["whNumber", "plural"],
       ["construction", "answerNoun"]
     ],
-    "comment": "Beck and Rullmann's evidence that the noun answer has Ans-H as its meaning and combines with an indefinite determiner.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Beck and Rullmann's evidence that the noun answer has Ans-H as its meaning and combines with an indefinite determiner."
   },
   {
     "id": "dayal2016_ex54b",
@@ -443,9 +405,7 @@
       ["whNumber", "singular"],
       ["construction", "answerNoun"]
     ],
-    "comment": "The shift from a plural to a singular wh in the embedded question affects acceptability, which Beck and Rullmann's number-blind operator misses.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The shift from a plural to a singular wh in the embedded question affects acceptability, which Beck and Rullmann's number-blind operator misses."
   },
   {
     "id": "dayal2016_ex55a",
@@ -469,9 +429,7 @@
       ["phenomenon", "pairList"],
       ["quantifier", "universal"]
     ],
-    "comment": "The pair-list answer (55c) survives replacing who with singular which woman; analysed in chapter 4.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The pair-list answer (55c) survives replacing who with singular which woman; analysed in chapter 4."
   },
   {
     "id": "dayal2016_ex55b",
@@ -495,9 +453,7 @@
       ["phenomenon", "pairList"],
       ["quantifier", "definitePlural"]
     ],
-    "comment": "With singular which woman in place of who the pair-list answer (55c) is lost, unlike (55a): number matters for the parallel between universals and definite plurals.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "With singular which woman in place of who the pair-list answer (55c) is lost, unlike (55a): number matters for the parallel between universals and definite plurals."
   },
   {
     "id": "dayal2016_ex56a",
@@ -520,9 +476,7 @@
       ["phenomenon", "pairList"],
       ["embedded", "whInSitu"]
     ],
-    "comment": "Baker's argument from (56c) that the wh in situ takes matrix scope; the pair-list answer survives replacing the matrix who with singular which student.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Baker's argument from (56c) that the wh in situ takes matrix scope; the pair-list answer survives replacing the matrix who with singular which student."
   },
   {
     "id": "dayal2016_ex56b",
@@ -545,9 +499,7 @@
       ["phenomenon", "pairList"],
       ["embedded", "definitePlural"]
     ],
-    "comment": "Kuno and Robinson's structurally similar example allows (56c) without matrix scope for the plural definite; replacing who with singular which student removes the pair-list answer.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Kuno and Robinson's structurally similar example allows (56c) without matrix scope for the plural definite; replacing who with singular which student removes the pair-list answer."
   },
   {
     "id": "dayal2016_ex57a",
@@ -570,9 +522,7 @@
       ["speaker", "other"],
       ["cleft", "false"]
     ],
-    "comment": "The existential commitment can be denied by another speaker; Ans-D is undefined at such a world and no one is not a direct answer.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The existential commitment can be denied by another speaker; Ans-D is undefined at such a world and no one is not a direct answer."
   },
   {
     "id": "dayal2016_ex57b",
@@ -596,9 +546,7 @@
       ["speaker", "same"],
       ["cleft", "false"]
     ],
-    "comment": "The speaker cannot ask the question while doubting its existential commitment: the commitment is real.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The speaker cannot ask the question while doubting its existential commitment: the commitment is real."
   },
   {
     "id": "dayal2016_ex58a",
@@ -618,9 +566,7 @@
       ["speaker", "same"],
       ["cleft", "false"]
     ],
-    "comment": "Overt suspension of the existential presupposition, noted by Horn (1972).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Overt suspension of the existential presupposition, noted by Horn (1972)."
   },
   {
     "id": "dayal2016_ex58b",
@@ -640,9 +586,7 @@
       ["speaker", "same"],
       ["cleft", "false"]
     ],
-    "comment": "Overt suspension of the existential presupposition.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Overt suspension of the existential presupposition."
   },
   {
     "id": "dayal2016_ex59a",
@@ -665,9 +609,7 @@
       ["speaker", "other"],
       ["cleft", "true"]
     ],
-    "comment": "A clefted question does not brook a negative response: its existence commitment is a hard presupposition (Abusch 2010).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A clefted question does not brook a negative response: its existence commitment is a hard presupposition (Abusch 2010)."
   },
   {
     "id": "dayal2016_ex59b",
@@ -687,9 +629,7 @@
       ["speaker", "same"],
       ["cleft", "true"]
     ],
-    "comment": "A clefted question does not allow the speaker to suspend the existence commitment.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A clefted question does not allow the speaker to suspend the existence commitment."
   },
   {
     "id": "dayal2016_ex61a",
@@ -712,9 +652,7 @@
       ["section", "2.3.4"],
       ["phenomenon", "strongExhaustiveness"]
     ],
-    "comment": "Groenendijk and Stokhof's inference pattern for strong exhaustiveness seems valid; the premises deny existence outside the question's own utterance.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Groenendijk and Stokhof's inference pattern for strong exhaustiveness seems valid; the premises deny existence outside the question's own utterance."
   },
   {
     "id": "dayal2016_ex61b",
@@ -734,9 +672,7 @@
       ["speaker", "same"],
       ["cleft", "false"]
     ],
-    "comment": "The same speaker connects the question with the lack of existential commitment in one sentence, and the result is anomalous.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The same speaker connects the question with the lack of existential commitment in one sentence, and the result is anomalous."
   },
   {
     "id": "dayal2016_ex65a_one",
@@ -758,9 +694,7 @@
       ["whNumber", "singular"],
       ["situation", "one"]
     ],
-    "comment": "Ans-D_W (63b) is Bill saw Alice (65b) and Ans-D/H_S (63b) is Bill saw only Alice (65c).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Ans-D_W (63b) is Bill saw Alice (65b) and Ans-D/H_S (63b) is Bill saw only Alice (65c)."
   },
   {
     "id": "dayal2016_ex65a_two",
@@ -779,9 +713,7 @@
       ["whNumber", "singular"],
       ["situation", "two"]
     ],
-    "comment": "With more than one woman seen the singular question is infelicitous because Ans-D is undefined.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "With more than one woman seen the singular question is infelicitous because Ans-D is undefined."
   },
   {
     "id": "dayal2016_ex65a_none",
@@ -800,9 +732,7 @@
       ["whNumber", "singular"],
       ["situation", "none"]
     ],
-    "comment": "With no woman seen Ans-D is undefined.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "With no woman seen Ans-D is undefined."
   },
   {
     "id": "dayal2016_ex66a_two",
@@ -824,9 +754,7 @@
       ["whNumber", "plural"],
       ["situation", "two"]
     ],
-    "comment": "Ans-D_W (63c) is Bill saw Alice and Betty (66b) and Ans-D/H_S (63c) is Bill saw only Alice and Betty (66c).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Ans-D_W (63c) is Bill saw Alice and Betty (66b) and Ans-D/H_S (63c) is Bill saw only Alice and Betty (66c)."
   },
   {
     "id": "dayal2016_ex66a_one",
@@ -845,9 +773,7 @@
       ["whNumber", "plural"],
       ["situation", "one"]
     ],
-    "comment": "With only one woman seen Ans-D is defined but the implicature of plurality from the presupposition behind the question is not satisfied.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "With only one woman seen Ans-D is defined but the implicature of plurality from the presupposition behind the question is not satisfied."
   },
   {
     "id": "dayal2016_ex66a_none",
@@ -866,8 +792,6 @@
       ["whNumber", "plural"],
       ["situation", "none"]
     ],
-    "comment": "With no woman seen Ans-D is undefined.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "With no woman seen Ans-D is undefined."
   }
 ]

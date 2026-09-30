@@ -25,9 +25,7 @@
         "every"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haslingerhienetal2025_71b",
@@ -80,9 +78,7 @@
         "alle"
       ]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "haslingerhienetal2025_73a",
@@ -110,9 +106,7 @@
         "every"
       ]
     ],
-    "comment": "Annotated [+dist] in the paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Annotated [+dist] in the paper."
   },
   {
     "id": "haslingerhienetal2025_73b",
@@ -140,9 +134,7 @@
         "each"
       ]
     ],
-    "comment": "Starred and annotated [+dist] in the paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Starred and annotated [+dist] in the paper."
   },
   {
     "id": "haslingerhienetal2025_74a",
@@ -183,9 +175,7 @@
         "alle"
       ]
     ],
-    "comment": "Annotated [-dist] in the paper.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Annotated [-dist] in the paper."
   },
   {
     "id": "haslingerhienetal2025_74b",
@@ -226,8 +216,6 @@
         "jeder"
       ]
     ],
-    "comment": "Marked % and annotated [+dist] in the paper, which notes that the oddness is subject to variation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Marked % and annotated [+dist] in the paper, which notes that the oddness is subject to variation."
   }
 ]

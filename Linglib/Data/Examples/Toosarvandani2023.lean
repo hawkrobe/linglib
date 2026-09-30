@@ -31,9 +31,7 @@ def ex_16a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pronoun", "1pl"), ("group", "speaker and lion"), ("property", "context-dependence")]
-    comment := "The speaker and the lion are not associates in the context, so the first-person plural cannot refer to the group, though (16b) *they* can."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The speaker and the lion are not associates in the context, so the first-person plural cannot refer to the group, though (16b) *they* can." }
 
 def ex_16b : LinguisticExample :=
   { id := "toosarvandani2023_16b"
@@ -49,9 +47,7 @@ def ex_16b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pronoun", "3pl"), ("group", "Paul and lion"), ("property", "context-dependence")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_17a : LinguisticExample :=
   { id := "toosarvandani2023_17a"
@@ -67,9 +63,7 @@ def ex_17a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pronoun", "1pl"), ("group", "speaker and pet dog"), ("property", "context-dependence")]
-    comment := "A beloved pet counts as an associate, so the mixed human-animal group takes *we*."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A beloved pet counts as an associate, so the mixed human-animal group takes *we*." }
 
 def ex_18a : LinguisticExample :=
   { id := "toosarvandani2023_18a"
@@ -85,9 +79,7 @@ def ex_18a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("pronoun", "1pl"), ("group", "speaker and parachute"), ("property", "context-dependence")]
-    comment := "A first-person plural cannot refer to the speaker and an inanimate object; (18b) *they* can."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A first-person plural cannot refer to the speaker and an inanimate object; (18b) *they* can." }
 
 def ex_77a : LinguisticExample :=
   { id := "toosarvandani2023_77a"
@@ -103,9 +95,7 @@ def ex_77a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subject", "1sg"), ("object", "3.an"), ("configuration", "1 > 3"), ("cliticization", "both")]
-    comment := "kill.comp=pl=1sg=3.an; Yalálag, from Avelino Becerra (2004). A first-person subject clitic with a third-person animal object clitic."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "kill.comp=pl=1sg=3.an; Yalálag, from Avelino Becerra (2004). A first-person subject clitic with a third-person animal object clitic." }
 
 def ex_77b : LinguisticExample :=
   { id := "toosarvandani2023_77b"
@@ -121,9 +111,7 @@ def ex_77b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subject", "3.an"), ("object", "1sg"), ("configuration", "3 > 1"), ("cliticization", "object blocked")]
-    comment := "follow.comp=3.an=1sg; the person-case constraint: a local-person object cannot cliticize under a third-person subject."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "follow.comp=3.an=1sg; the person-case constraint: a local-person object cannot cliticize under a third-person subject." }
 
 def ex_78a : LinguisticExample :=
   { id := "toosarvandani2023_78a"
@@ -139,9 +127,7 @@ def ex_78a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subject", "2sg"), ("object", "3.an"), ("configuration", "2 > 3"), ("cliticization", "both")]
-    comment := "kill.comp=adv=2sg=3.an."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "kill.comp=adv=2sg=3.an." }
 
 def ex_78b : LinguisticExample :=
   { id := "toosarvandani2023_78b"
@@ -157,9 +143,7 @@ def ex_78b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subject", "3.an"), ("object", "2sg"), ("configuration", "3 > 2"), ("cliticization", "object blocked")]
-    comment := "kill.comp=adv=3.an=2sg."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "kill.comp=adv=3.an=2sg." }
 
 def ex_79a : LinguisticExample :=
   { id := "toosarvandani2023_79a"
@@ -175,9 +159,7 @@ def ex_79a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subject", "3.el"), ("object", "3.hu"), ("configuration", "3.el > 3.hu"), ("cliticization", "both")]
-    comment := "make.cry.comp=3.el=3.hu; the animacy-based constraint of Foley and Toosarvandani: the subject outranks the object in animacy."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "make.cry.comp=3.el=3.hu; the animacy-based constraint of Foley and Toosarvandani: the subject outranks the object in animacy." }
 
 def ex_79b : LinguisticExample :=
   { id := "toosarvandani2023_79b"
@@ -193,9 +175,7 @@ def ex_79b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subject", "3.hu"), ("object", "3.el"), ("configuration", "3.hu > 3.el"), ("cliticization", "object blocked")]
-    comment := "make.cry.comp=3.hu=3.el; in the Laxopa variety, whose probe does not see the elder feature, this combination is permitted."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "make.cry.comp=3.hu=3.el; in the Laxopa variety, whose probe does not see the elder feature, this combination is permitted." }
 
 def ex_80a : LinguisticExample :=
   { id := "toosarvandani2023_80a"
@@ -211,9 +191,7 @@ def ex_80a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subject", "3.hu"), ("object", "3.an"), ("configuration", "3.hu > 3.an"), ("cliticization", "both")]
-    comment := "kick.comp=3.hu=3.an."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "kick.comp=3.hu=3.an." }
 
 def ex_80b : LinguisticExample :=
   { id := "toosarvandani2023_80b"
@@ -229,9 +207,7 @@ def ex_80b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subject", "3.an"), ("object", "3.hu"), ("configuration", "3.an > 3.hu"), ("cliticization", "object blocked")]
-    comment := "bite.comp=3.an=3.hu."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "bite.comp=3.an=3.hu." }
 
 def ex_81a : LinguisticExample :=
   { id := "toosarvandani2023_81a"
@@ -247,9 +223,7 @@ def ex_81a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subject", "3.an"), ("object", "3.in"), ("configuration", "3.an > 3.in"), ("cliticization", "both")]
-    comment := "hit.comp=3.an=3.in."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "hit.comp=3.an=3.in." }
 
 def ex_81b : LinguisticExample :=
   { id := "toosarvandani2023_81b"
@@ -265,9 +239,7 @@ def ex_81b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("subject", "3.in"), ("object", "3.an"), ("configuration", "3.in > 3.an"), ("cliticization", "object blocked")]
-    comment := "hit.comp=3.in=3.an; in the Zoogocho variety, whose probe sees only the animate feature, any combination of animate clitics is allowed."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "hit.comp=3.in=3.an; in the Zoogocho variety, whose probe sees only the animate feature, any combination of animate clitics is allowed." }
 
 def all : List LinguisticExample := [ex_16a, ex_16b, ex_17a, ex_18a, ex_77a, ex_77b, ex_78a, ex_78b, ex_79a, ex_79b, ex_80a, ex_80b, ex_81a, ex_81b]
 

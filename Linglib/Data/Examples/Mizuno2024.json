@@ -15,9 +15,7 @@
       ["construction", "anderson"],
       ["strategy", "x-marking"]
     ],
-    "comment": "Mizuno's adaptation of Anderson's (1951) original ('If Jones had taken arsenic, he would have shown just exactly those symptoms which he does in fact show.'). English X-marks: past-perfect antecedent, 'would' consequent describing the observed fact.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Mizuno's adaptation of Anderson's (1951) original ('If Jones had taken arsenic, he would have shown just exactly those symptoms which he does in fact show.'). English X-marks: past-perfect antecedent, 'would' consequent describing the observed fact."
   },
   {
     "id": "mizuno2024_en2",
@@ -35,9 +33,7 @@
       ["construction", "anderson"],
       ["strategy", "o-marking"]
     ],
-    "comment": "Infelicitous: the non-expanded domain D makes the consequent (an observed fact) hold everywhere, so the conditional is trivially true (Stalnaker 1975, von Fintel 1999).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Infelicitous: the non-expanded domain D makes the consequent (an observed fact) hold everywhere, so the conditional is trivially true (Stalnaker 1975, von Fintel 1999)."
   },
   {
     "id": "mizuno2024_ja3",
@@ -59,9 +55,7 @@
       ["construction", "fake-past"],
       ["x_exponent", "-ta"]
     ],
-    "comment": "Fake Past: Past -katta in the consequent with non-past reference (ima 'now'), so X-marking rather than real Past (Ogihara 2014, Mizuno & Kaufmann 2019). Establishes that Japanese possesses X-marking, setting up the puzzle of its unavailability in Anderson conditionals.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Fake Past: Past -katta in the consequent with non-past reference (ima 'now'), so X-marking rather than real Past (Ogihara 2014, Mizuno & Kaufmann 2019). Establishes that Japanese possesses X-marking, setting up the puzzle of its unavailability in Anderson conditionals."
   },
   {
     "id": "mizuno2024_ja4a",
@@ -87,9 +81,7 @@
       ["construction", "anderson"],
       ["strategy", "o-marking"]
     ],
-    "comment": "Japanese O-marks: Non-Past -ru triggers a Historical-Present shift expanding the domain. The X-marked alternative (Past -ta) forces a counterfactual reading, contradicting the Anderson follow-up (4b), so it is infelicitous.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Japanese O-marks: Non-Past -ru triggers a Historical-Present shift expanding the domain. The X-marked alternative (Past -ta) forces a counterfactual reading, contradicting the Anderson follow-up (4b), so it is infelicitous."
   },
   {
     "id": "mizuno2024_ja7a",
@@ -118,9 +110,7 @@
       ["strategy", "o-marking"],
       ["hp_type", "radical"]
     ],
-    "comment": "Radical-HP case: consequent event overtly past, yet Non-Past required. Temporal indexicals ototoi and kinoo evaluate against the utterance time (theta = origin), paralleling Schlenker 2004's Historical Present.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Radical-HP case: consequent event overtly past, yet Non-Past required. Temporal indexicals ototoi and kinoo evaluate against the utterance time (theta = origin), paralleling Schlenker 2004's Historical Present."
   },
   {
     "id": "mizuno2024_ma13a",
@@ -145,9 +135,7 @@
       ["construction", "anderson"],
       ["strategy", "o-marking"]
     ],
-    "comment": "Mandarin O-marks (no consequent-final le); the conditional marker is ruguo. The X-marked alternative (consequent-final perfective le) induces strong counterfactuality, like Japanese Past -ta, so it is infelicitous for the Anderson reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Mandarin O-marks (no consequent-final le); the conditional marker is ruguo. The X-marked alternative (consequent-final perfective le) induces strong counterfactuality, like Japanese Past -ta, so it is infelicitous for the Anderson reading."
   },
   {
     "id": "mizuno2024_en8",
@@ -169,9 +157,7 @@
       ["strategy", "x-marking"],
       ["flv_xmarking", "available"]
     ],
-    "comment": "English X-marking is available for FLV: the X-marked conditional (8a) takes an unlikeliness follow-up (8b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "English X-marking is available for FLV: the X-marked conditional (8a) takes an unlikeliness follow-up (8b)."
   },
   {
     "id": "mizuno2024_ja9",
@@ -197,9 +183,7 @@
       ["strategy", "o-marking"],
       ["flv_xmarking", "unavailable"]
     ],
-    "comment": "Japanese FLV must O-mark (Non-Past -u, ex 9). The X-marked variant (Past -ta, ex 10) induces strong counterfactuality, making the unlikeliness follow-up contradictory.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Japanese FLV must O-mark (Non-Past -u, ex 9). The X-marked variant (Past -ta, ex 10) induces strong counterfactuality, making the unlikeliness follow-up contradictory."
   },
   {
     "id": "mizuno2024_ma11",
@@ -226,8 +210,6 @@
       ["strategy", "o-marking"],
       ["flv_xmarking", "unavailable"]
     ],
-    "comment": "Mandarin FLV must O-mark (no le, ex 11). The X-marked variant (perfective le, ex 12) induces strong counterfactuality, making the unlikeliness follow-up contradictory.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Mandarin FLV must O-mark (no le, ex 11). The X-marked variant (perfective le, ex 12) induces strong counterfactuality, making the unlikeliness follow-up contradictory."
   }
 ]

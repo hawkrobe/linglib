@@ -15,8 +15,7 @@
     "paperFeatures": [
       ["construction", "before"]
     ],
-    "comment": "from Cépeda (2018)",
-    "metaLanguage": "stan1293"
+    "comment": "from Cépeda (2018)"
   },
   {
     "id": "rett2026_9",
@@ -34,8 +33,7 @@
     "paperFeatures": [
       ["construction", "before"]
     ],
-    "comment": "from Lin (2016)",
-    "metaLanguage": "stan1293"
+    "comment": "from Lin (2016)"
   },
   {
     "id": "rett2026_10",
@@ -53,8 +51,7 @@
     "paperFeatures": [
       ["construction", "before"]
     ],
-    "comment": "from Cépeda (2018)",
-    "metaLanguage": "stan1293"
+    "comment": "from Cépeda (2018)"
   },
   {
     "id": "rett2026_11",
@@ -72,8 +69,7 @@
     "paperFeatures": [
       ["construction", "before"]
     ],
-    "comment": "from Ramat (2022)",
-    "metaLanguage": "stan1293"
+    "comment": "from Ramat (2022)"
   },
   {
     "id": "rett2026_12",
@@ -91,8 +87,7 @@
     "paperFeatures": [
       ["construction", "before"]
     ],
-    "comment": "Januubi, from Jin and Koenig (2021)",
-    "metaLanguage": "stan1293"
+    "comment": "Januubi, from Jin and Koenig (2021)"
   },
   {
     "id": "rett2026_13",
@@ -110,8 +105,7 @@
     "paperFeatures": [
       ["construction", "until"]
     ],
-    "comment": "from Espinal (2000)",
-    "metaLanguage": "stan1293"
+    "comment": "from Espinal (2000)"
   },
   {
     "id": "rett2026_14",
@@ -129,8 +123,7 @@
     "paperFeatures": [
       ["construction", "until"]
     ],
-    "comment": "from Espinal (2000)",
-    "metaLanguage": "stan1293"
+    "comment": "from Espinal (2000)"
   },
   {
     "id": "rett2026_15",
@@ -148,8 +141,7 @@
     "paperFeatures": [
       ["construction", "since"]
     ],
-    "comment": "from Cépeda (2018)",
-    "metaLanguage": "stan1293"
+    "comment": "from Cépeda (2018)"
   },
   {
     "id": "rett2026_16",
@@ -167,8 +159,7 @@
     "paperFeatures": [
       ["construction", "since"]
     ],
-    "comment": "from Espinal (2000)",
-    "metaLanguage": "stan1293"
+    "comment": "from Espinal (2000)"
   },
   {
     "id": "rett2026_17",
@@ -186,8 +177,7 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293"
+    "comment": ""
   },
   {
     "id": "rett2026_18",
@@ -205,8 +195,7 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "from Cépeda (2018)",
-    "metaLanguage": "stan1293"
+    "comment": "from Cépeda (2018)"
   },
   {
     "id": "rett2026_19",
@@ -224,8 +213,7 @@
     "paperFeatures": [
       ["construction", "preference"]
     ],
-    "comment": "from Espinal (2000)",
-    "metaLanguage": "stan1293"
+    "comment": "from Espinal (2000)"
   },
   {
     "id": "rett2026_20",
@@ -243,8 +231,7 @@
     "paperFeatures": [
       ["construction", "negativeVerb"]
     ],
-    "comment": "forget; from Jin and Koenig (2021)",
-    "metaLanguage": "stan1293"
+    "comment": "forget; from Jin and Koenig (2021)"
   },
   {
     "id": "rett2026_21",
@@ -262,8 +249,7 @@
     "paperFeatures": [
       ["construction", "negativeVerb"]
     ],
-    "comment": "doubt; from Espinal (2000)",
-    "metaLanguage": "stan1293"
+    "comment": "doubt; from Espinal (2000)"
   },
   {
     "id": "rett2026_22",
@@ -281,8 +267,7 @@
     "paperFeatures": [
       ["construction", "negativeVerb"]
     ],
-    "comment": "delay; Zarma-Sonrai, from Jin and Koenig (2021)",
-    "metaLanguage": "stan1293"
+    "comment": "delay; Zarma-Sonrai, from Jin and Koenig (2021)"
   },
   {
     "id": "rett2026_23",
@@ -300,8 +285,7 @@
     "paperFeatures": [
       ["construction", "negativeVerb"]
     ],
-    "comment": "fear; from Espinal (2000)",
-    "metaLanguage": "stan1293"
+    "comment": "fear; from Espinal (2000)"
   },
   {
     "id": "rett2026_24",
@@ -319,8 +303,7 @@
     "paperFeatures": [
       ["construction", "negativeVerb"]
     ],
-    "comment": "fear; from Jin and Koenig (2021)",
-    "metaLanguage": "stan1293"
+    "comment": "fear; from Jin and Koenig (2021)"
   },
   {
     "id": "rett2026_25b",
@@ -338,8 +321,7 @@
     "paperFeatures": [
       ["construction", "exclamative"]
     ],
-    "comment": "from Jespersen (1965); high expletive negation",
-    "metaLanguage": "stan1293"
+    "comment": "from Jespersen (1965); high expletive negation"
   },
   {
     "id": "rett2026_26",
@@ -357,8 +339,7 @@
     "paperFeatures": [
       ["construction", "exclamative"]
     ],
-    "comment": "from Villalba (2004); high",
-    "metaLanguage": "stan1293"
+    "comment": "from Villalba (2004); high"
   },
   {
     "id": "rett2026_27",
@@ -376,8 +357,7 @@
     "paperFeatures": [
       ["construction", "exclamative"]
     ],
-    "comment": "wh-exclamative, low expletive negation; from Halm and Huszár (2021)",
-    "metaLanguage": "stan1293"
+    "comment": "wh-exclamative, low expletive negation; from Halm and Huszár (2021)"
   },
   {
     "id": "rett2026_31",
@@ -395,8 +375,7 @@
     "paperFeatures": [
       ["construction", "surpriseNegation"]
     ],
-    "comment": "sentence exclamation, obligatory high negation; from Halm and Huszár (2021)",
-    "metaLanguage": "stan1293"
+    "comment": "sentence exclamation, obligatory high negation; from Halm and Huszár (2021)"
   },
   {
     "id": "rett2026_ii_a",
@@ -414,8 +393,7 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "from Cépeda (2018), citing Larrivée (1994)",
-    "metaLanguage": "stan1293"
+    "comment": "from Cépeda (2018), citing Larrivée (1994)"
   },
   {
     "id": "rett2026_ii_it",
@@ -433,8 +411,7 @@
     "paperFeatures": [
       ["construction", "equative"]
     ],
-    "comment": "from Napoli and Nespor (1976); a language-specific gap",
-    "metaLanguage": "stan1293"
+    "comment": "from Napoli and Nespor (1976); a language-specific gap"
   },
   {
     "id": "rett2026_55",
@@ -452,8 +429,7 @@
     "paperFeatures": [
       ["construction", "differentialComparative"]
     ],
-    "comment": "from Napoli and Nespor (1976); not predicted",
-    "metaLanguage": "stan1293"
+    "comment": "from Napoli and Nespor (1976); not predicted"
   },
   {
     "id": "rett2026_56a",
@@ -471,8 +447,7 @@
     "paperFeatures": [
       ["construction", "comparative"]
     ],
-    "comment": "relative adjective, open scale",
-    "metaLanguage": "stan1293"
+    "comment": "relative adjective, open scale"
   },
   {
     "id": "rett2026_56b",
@@ -490,8 +465,7 @@
     "paperFeatures": [
       ["construction", "closedScaleComparative"]
     ],
-    "comment": "absolute adjective, closed scale",
-    "metaLanguage": "stan1293"
+    "comment": "absolute adjective, closed scale"
   },
   {
     "id": "rett2026_68",
@@ -509,8 +483,7 @@
     "paperFeatures": [
       ["construction", "before"]
     ],
-    "comment": "starting-point reading only",
-    "metaLanguage": "stan1293"
+    "comment": "starting-point reading only"
   },
   {
     "id": "rett2026_69",
@@ -528,8 +501,7 @@
     "paperFeatures": [
       ["construction", "before"]
     ],
-    "comment": "starting-point reading only",
-    "metaLanguage": "stan1293"
+    "comment": "starting-point reading only"
   },
   {
     "id": "rett2026_74b",
@@ -547,8 +519,7 @@
     "paperFeatures": [
       ["construction", "until"]
     ],
-    "comment": "amíg with negation reads only as until, not while; János Egressy, p.c.",
-    "metaLanguage": "stan1293"
+    "comment": "amíg with negation reads only as until, not while; János Egressy, p.c."
   },
   {
     "id": "rett2026_78",
@@ -566,8 +537,7 @@
     "paperFeatures": [
       ["construction", "until"]
     ],
-    "comment": "licenses the weak NPI; from Greco (2018)",
-    "metaLanguage": "stan1293"
+    "comment": "licenses the weak NPI; from Greco (2018)"
   },
   {
     "id": "rett2026_90b",
@@ -585,7 +555,6 @@
     "paperFeatures": [
       ["construction", "notSure"]
     ],
-    "comment": "from Napoli and Nespor (1976)",
-    "metaLanguage": "stan1293"
+    "comment": "from Napoli and Nespor (1976)"
   }
 ]

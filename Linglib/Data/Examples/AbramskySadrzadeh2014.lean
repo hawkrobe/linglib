@@ -31,9 +31,7 @@ def donkey : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "donkey anaphora")]
-    comment := "Cited as the case where the usual Montague-style translation fails and DRT was first to succeed."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Cited as the case where the usual Montague-style translation fails and DRT was first to succeed." }
 
 def drt_resolved : LinguisticExample :=
   { id := "abramskysadrzadeh2014_drt_resolved"
@@ -49,9 +47,7 @@ def drt_resolved : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("resolution", "full"), ("unification", "v = x, w = y")]
-    comment := "The merge of the two DRS is followed by unification of the accessible, agreeing referents."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The merge of the two DRS is followed by unification of the accessible, agreeing referents." }
 
 def drt_partial : LinguisticExample :=
   { id := "abramskysadrzadeh2014_drt_partial"
@@ -67,9 +63,7 @@ def drt_partial : LinguisticExample :=
     alternatives := []
     readings := [("it = the donkey", .unacceptable)]
     paperFeatures := [("resolution", "partial"), ("unification", "v = x")]
-    comment := "The donkey referent sits in a negated sub-DRS and is inaccessible to `it`."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The donkey referent sits in a negated sub-DRS and is inaccessible to `it`." }
 
 def ex1 : LinguisticExample :=
   { id := "abramskysadrzadeh2014_ex1"
@@ -85,9 +79,7 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("cover", "x ↦ z ↤ y"), ("gluing", "{John(z), sleeps(z), snores(z)}")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex2 : LinguisticExample :=
   { id := "abramskysadrzadeh2014_ex2"
@@ -103,9 +95,7 @@ def ex2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("cover", "x ↦ a, y ↦ b, u ↦ a, v ↦ b"), ("gluing", "{John(a), donkey(b), owns(a, b), beats(a, b)}")]
-    comment := "Anaphor and antecedent in one sentence; three local sections for John, the donkey, and owning/beating."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Anaphor and antecedent in one sentence; three local sections for John, the donkey, and owning/beating." }
 
 def ex3 : LinguisticExample :=
   { id := "abramskysadrzadeh2014_ex3"
@@ -121,9 +111,7 @@ def ex3 : LinguisticExample :=
     alternatives := []
     readings := [("it = the donkey", .acceptable), ("it = John", .unacceptable)]
     paperFeatures := [("resolution", "agreement"), ("cover", "x ↦ a, y ↦ b, z ↦ b")]
-    comment := "Agreement is encoded by the negative literal ¬Man(y); merging `it` with John violates consistency."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Agreement is encoded by the negative literal ¬Man(y); merging `it` with John violates consistency." }
 
 def ex4 : LinguisticExample :=
   { id := "abramskysadrzadeh2014_ex4"
@@ -139,9 +127,7 @@ def ex4 : LinguisticExample :=
     alternatives := []
     readings := [("it = the cup", .acceptable), ("it = the plate", .acceptable)]
     paperFeatures := [("resolution", "ambiguous"), ("covers", "v ↦ y; v ↦ z")]
-    comment := "Two plausible covers; the paper defers their ranking to the probabilistic setting."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Two plausible covers; the paper defers their ranking to the probabilistic setting." }
 
 def brother_happy : LinguisticExample :=
   { id := "abramskysadrzadeh2014_brother_happy"
@@ -157,9 +143,7 @@ def brother_happy : LinguisticExample :=
     alternatives := []
     readings := [("he = John", .acceptable), ("he = the brother", .acceptable)]
     paperFeatures := [("resolution", "preferential"), ("preferred", "he = John")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def brother_nice : LinguisticExample :=
   { id := "abramskysadrzadeh2014_brother_nice"
@@ -175,9 +159,7 @@ def brother_nice : LinguisticExample :=
     alternatives := []
     readings := [("he = John", .acceptable), ("he = the brother", .acceptable)]
     paperFeatures := [("resolution", "preferential"), ("preferred", "he = the brother")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def cd : LinguisticExample :=
   { id := "abramskysadrzadeh2014_cd"
@@ -193,9 +175,7 @@ def cd : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("resolution", "preferential")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def jim : LinguisticExample :=
   { id := "abramskysadrzadeh2014_jim"
@@ -211,9 +191,7 @@ def jim : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("resolution", "preferential")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bananas : LinguisticExample :=
   { id := "abramskysadrzadeh2014_bananas"
@@ -229,9 +207,7 @@ def bananas : LinguisticExample :=
     alternatives := []
     readings := [("ripe bananas, cheeky bananas", .acceptable), ("ripe bananas, cheeky monkeys", .acceptable), ("ripe monkeys, cheeky bananas", .acceptable), ("ripe monkeys, cheeky monkeys", .acceptable)]
     paperFeatures := [("resolution", "preferential"), ("corpus", "British News, 200 million words"), ("selected", "ripe bananas, cheeky monkeys")]
-    comment := "Four candidate coverings weighted by adjective–noun pattern frequencies (ripe banana 14, ripe monkey 0, cheeky banana 0, cheeky monkey 10); the covering u ↦ y, v ↦ z has probability 1/2."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Four candidate coverings weighted by adjective–noun pattern frequencies (ripe banana 14, ripe monkey 0, cheeky banana 0, cheeky monkey 10); the covering u ↦ y, v ↦ z has probability 1/2." }
 
 def all : List LinguisticExample := [donkey, drt_resolved, drt_partial, ex1, ex2, ex3, ex4, brother_happy, brother_nice, cd, jim, bananas]
 

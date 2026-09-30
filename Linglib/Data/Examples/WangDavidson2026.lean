@@ -31,9 +31,7 @@ def ex_1 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("presupposition", "John has a violin"), ("projection", "projects")]
-    comment := "The possessive presupposes that John has a violin; the context is explicitly ignorant about it."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The possessive presupposes that John has a violin; the context is explicitly ignorant about it." }
 
 def ex_2 : LinguisticExample :=
   { id := "wangdavidson2026_2"
@@ -49,9 +47,7 @@ def ex_2 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("presupposition", "John has a violin"), ("projection", "projects"), ("direction", "right-to-left")]
-    comment := "No right-to-left filtering: the second conjunct does not license the first conjunct's presupposition."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No right-to-left filtering: the second conjunct does not license the first conjunct's presupposition." }
 
 def ex_3 : LinguisticExample :=
   { id := "wangdavidson2026_3"
@@ -67,9 +63,7 @@ def ex_3 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("presupposition", "John has a violin"), ("projection", "filtered"), ("direction", "left-to-right")]
-    comment := "Left-to-right filtering: the first conjunct licenses the second conjunct's presupposition."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Left-to-right filtering: the first conjunct licenses the second conjunct's presupposition." }
 
 def ex_4 : LinguisticExample :=
   { id := "wangdavidson2026_4"
@@ -85,9 +79,7 @@ def ex_4 : LinguisticExample :=
     alternatives := []
     readings := [("inclusive", .acceptable), ("exclusive", .marginal)]
     paperFeatures := [("task", "norming"), ("monotonicity", "UE")]
-    comment := "Norming trial in an upward-entailing environment; a judgment that the prediction was incorrect counts as an exclusive response, more frequent in UE than in DE environments."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Norming trial in an upward-entailing environment; a judgment that the prediction was incorrect counts as an exclusive response, more frequent in UE than in DE environments." }
 
 def ex_5 : LinguisticExample :=
   { id := "wangdavidson2026_5"
@@ -103,9 +95,7 @@ def ex_5 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("condition", "PSFIRST"), ("monotonicity", "DE"), ("trigger", "jie"), ("context", "explicitly ignorant")]
-    comment := "A bathroom disjunction: the negation of the second disjunct is the presupposition of the first. Rated for naturalness on a seven-point scale; the trigger-first order shows a residual penalty for jie but not for zhidao."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A bathroom disjunction: the negation of the second disjunct is the presupposition of the first. Rated for naturalness on a seven-point scale; the trigger-first order shows a residual penalty for jie but not for zhidao." }
 
 def all : List LinguisticExample := [ex_1, ex_2, ex_3, ex_4, ex_5]
 

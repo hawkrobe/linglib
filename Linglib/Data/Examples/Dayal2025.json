@@ -19,9 +19,7 @@
       ["particle", "ya: nahĩ:"],
       ["embedding", "subordination"]
     ],
-    "comment": "The subordinated polar question requires the overt alternative; without it the clause is ungrammatical (71).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The subordinated polar question requires the overt alternative; without it the clause is ungrammatical (71)."
   },
   {
     "id": "dayal2025_ex5a",
@@ -42,9 +40,7 @@
       ["particle", "ka"],
       ["embedding", "matrix"]
     ],
-    "comment": "The Q-particle can be dropped only in matrix clauses.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The Q-particle can be dropped only in matrix clauses."
   },
   {
     "id": "dayal2025_ex5b",
@@ -66,9 +62,7 @@
       ["particle", "ka"],
       ["embedding", "subordination"]
     ],
-    "comment": "The Q-particle is obligatory in subordinated interrogatives: it clause-types the CP (15).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "The Q-particle is obligatory in subordinated interrogatives: it clause-types the CP (15)."
   },
   {
     "id": "dayal2025_ex8a",
@@ -88,9 +82,7 @@
       ["verb", "wonder"],
       ["embedding", "quasi"]
     ],
-    "comment": "Embedded inversion with matrix intonation under a rogative predicate.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Embedded inversion with matrix intonation under a rogative predicate."
   },
   {
     "id": "dayal2025_ex8b",
@@ -110,9 +102,7 @@
       ["verb", "ask"],
       ["embedding", "quasi"]
     ],
-    "comment": "Embedded inversion under a rogative predicate.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Embedded inversion under a rogative predicate."
   },
   {
     "id": "dayal2025_ex9a",
@@ -132,9 +122,7 @@
       ["verb", "know"],
       ["embedding", "quasi"]
     ],
-    "comment": "A responsive predicate rejects embedded inversion: its assertion of knowledge contradicts the center's possible ignorance (26d).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A responsive predicate rejects embedded inversion: its assertion of knowledge contradicts the center's possible ignorance (26d)."
   },
   {
     "id": "dayal2025_ex11a",
@@ -152,9 +140,7 @@
       ["section", "1.2"],
       ["embedding", "subordination"]
     ],
-    "comment": "*The question is* takes subordinated and quasi-subordinated interrogatives but not declarative questions: a PerspP-selecting rogative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "*The question is* takes subordinated and quasi-subordinated interrogatives but not declarative questions: a PerspP-selecting rogative."
   },
   {
     "id": "dayal2025_ex11b",
@@ -172,9 +158,7 @@
       ["section", "1.2"],
       ["embedding", "quasi"]
     ],
-    "comment": "Quasi-subordination under *the question is*.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Quasi-subordination under *the question is*."
   },
   {
     "id": "dayal2025_ex11c",
@@ -193,9 +177,7 @@
       ["verb", "depend on"],
       ["embedding", "subordination"]
     ],
-    "comment": "*Depend on*, *be up to*, *investigate*, *look into* take interrogatives with subordinate profile only.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "*Depend on*, *be up to*, *investigate*, *look into* take interrogatives with subordinate profile only."
   },
   {
     "id": "dayal2025_ex11d",
@@ -214,9 +196,7 @@
       ["verb", "depend on"],
       ["embedding", "quasi"]
     ],
-    "comment": "A CP-selecting rogative rejects embedded inversion; it also shows no shiftiness (fn. 21).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A CP-selecting rogative rejects embedded inversion; it also shows no shiftiness (fn. 21)."
   },
   {
     "id": "dayal2025_ex13a",
@@ -237,9 +217,7 @@
       ["embedding", "quasi"],
       ["syntax", "interrogative"]
     ],
-    "comment": "Declarative questions do not quasi-subordinate even under predicates that allow embedded inversion (Gunlogson 2004, McCloskey 2006); (67) derives this from the absence of SAP.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Declarative questions do not quasi-subordinate even under predicates that allow embedded inversion (Gunlogson 2004, McCloskey 2006); (67) derives this from the absence of SAP."
   },
   {
     "id": "dayal2025_ex14a",
@@ -258,9 +236,7 @@
       ["verb", "ask"],
       ["embedding", "quotation"]
     ],
-    "comment": "A quoted interrogative question under *ask*, which selects interrogative quotations.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A quoted interrogative question under *ask*, which selects interrogative quotations."
   },
   {
     "id": "dayal2025_ex14b",
@@ -281,9 +257,7 @@
       ["verb", "ask"],
       ["complement", "declarativeAssertion"]
     ],
-    "comment": "A quoted declarative assertion is not an interrogative quotation, so *ask* rejects it while *say* takes it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A quoted declarative assertion is not an interrogative quotation, so *ask* rejects it while *say* takes it."
   },
   {
     "id": "dayal2025_ex14c",
@@ -303,9 +277,7 @@
       ["embedding", "quotation"],
       ["syntax", "declarative"]
     ],
-    "comment": "A quoted declarative question satisfies *ask*'s rogative requirement: declarative questions are genuine questions and embed only as quotations.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A quoted declarative question satisfies *ask*'s rogative requirement: declarative questions are genuine questions and embed only as quotations."
   },
   {
     "id": "dayal2025_ex15b",
@@ -327,9 +299,7 @@
       ["particle", "ka"],
       ["embedding", "subordination"]
     ],
-    "comment": "*ka* is obligatory here; with *koto* in place of *ka* the complement is declarative (15a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "*ka* is obligatory here; with *koto* in place of *ka* the complement is declarative (15a)."
   },
   {
     "id": "dayal2025_ex16b",
@@ -354,9 +324,7 @@
       ["particle", "kya:"],
       ["embedding", "subordination"]
     ],
-    "comment": "*kya:* is not a clause-typing particle: it is excluded from the subordinated complement of a responsive predicate, where a clause-typer would be needed most.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "*kya:* is not a clause-typing particle: it is excluded from the subordinated complement of a responsive predicate, where a clause-typer would be needed most."
   },
   {
     "id": "dayal2025_ex17a",
@@ -379,9 +347,7 @@
       ["particle", "kya:"],
       ["embedding", "quasi"]
     ],
-    "comment": "*kya:* tracks English embedded inversion: acceptable under *ask*.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "*kya:* tracks English embedded inversion: acceptable under *ask*."
   },
   {
     "id": "dayal2025_ex17b",
@@ -405,9 +371,7 @@
       ["particle", "kya:"],
       ["embedding", "quasi"]
     ],
-    "comment": "Acceptable under *the question is*.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Acceptable under *the question is*."
   },
   {
     "id": "dayal2025_ex17c",
@@ -431,9 +395,7 @@
       ["particle", "kya:"],
       ["embedding", "subordination"]
     ],
-    "comment": "Excluded under *depend on*, as English embedded inversion is (11d).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Excluded under *depend on*, as English embedded inversion is (11d)."
   },
   {
     "id": "dayal2025_ex18a",
@@ -452,9 +414,7 @@
       ["particle", "quick"],
       ["embedding", "matrix"]
     ],
-    "comment": "A meta question particle: signals that the addressee should answer without delay, a modifier of the speech act (29).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A meta question particle: signals that the addressee should answer without delay, a modifier of the speech act (29)."
   },
   {
     "id": "dayal2025_ex19a",
@@ -473,9 +433,7 @@
       ["particle", "quick"],
       ["embedding", "subordination"]
     ],
-    "comment": "*Quick* is ungrammatical in embedded position; *quickly* there can only modify the manner of asking.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "*Quick* is ungrammatical in embedded position; *quickly* there can only modify the manner of asking."
   },
   {
     "id": "dayal2025_ex18b",
@@ -497,9 +455,7 @@
       ["particle", "kke"],
       ["embedding", "matrix"]
     ],
-    "comment": "*kke* carries a remind-me presupposition and modifies the act of asking.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "*kke* carries a remind-me presupposition and modifies the act of asking."
   },
   {
     "id": "dayal2025_ex19c",
@@ -521,9 +477,7 @@
       ["particle", "kke"],
       ["embedding", "subordination"]
     ],
-    "comment": "A meta question particle cannot embed, since SAP does not embed except as a quotation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "A meta question particle cannot embed, since SAP does not embed except as a quotation."
   },
   {
     "id": "dayal2025_ex24a_wonder",
@@ -542,9 +496,7 @@
       ["verb", "wonder"],
       ["embedding", "subordination"]
     ],
-    "comment": "Clause-typing at C explains embeddability: predicates select C_+WH or C_-WH or are underspecified.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Clause-typing at C explains embeddability: predicates select C_+WH or C_-WH or are underspecified."
   },
   {
     "id": "dayal2025_ex24a_know",
@@ -563,9 +515,7 @@
       ["verb", "know"],
       ["embedding", "subordination"]
     ],
-    "comment": "A responsive predicate takes the subordinated interrogative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A responsive predicate takes the subordinated interrogative."
   },
   {
     "id": "dayal2025_ex24a_believe",
@@ -584,9 +534,7 @@
       ["verb", "believe"],
       ["embedding", "subordination"]
     ],
-    "comment": "An uninterrogative predicate takes no set-of-propositions complement (30).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "An uninterrogative predicate takes no set-of-propositions complement (30)."
   },
   {
     "id": "dayal2025_ex38b",
@@ -607,9 +555,7 @@
       ["verb", "know"],
       ["embedding", "quasi"]
     ],
-    "comment": "The rogative *want to know* takes the quasi-subordinated question (38a), the responsive *know* does not.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The rogative *want to know* takes the quasi-subordinated question (38a), the responsive *know* does not."
   },
   {
     "id": "dayal2025_ex39a",
@@ -631,9 +577,7 @@
       ["embedding", "quasi"],
       ["verbClass", "rogativePerspP"]
     ],
-    "comment": "The Hindi-Urdu counterpart of (38a): a rogative predicate takes the quasi-subordinated question with *kya:*.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The Hindi-Urdu counterpart of (38a): a rogative predicate takes the quasi-subordinated question with *kya:*."
   },
   {
     "id": "dayal2025_ex39b",
@@ -655,9 +599,7 @@
       ["embedding", "quasi"],
       ["verbClass", "responsive"]
     ],
-    "comment": "The Hindi-Urdu counterpart of (38b): a bare responsive rejects the quasi-subordinated question.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The Hindi-Urdu counterpart of (38b): a bare responsive rejects the quasi-subordinated question."
   },
   {
     "id": "dayal2025_ex40a",
@@ -677,9 +619,7 @@
       ["verb", "remember"],
       ["embedding", "quasi"]
     ],
-    "comment": "*Remember* aligns with *know* on knowledge at the evaluation time and rejects embedded inversion (42a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "*Remember* aligns with *know* on knowledge at the evaluation time and rejects embedded inversion (42a)."
   },
   {
     "id": "dayal2025_ex40b",
@@ -700,9 +640,7 @@
       ["embedding", "quasi"],
       ["negated", "true"]
     ],
-    "comment": "McCloskey's shiftiness: negation of the responsive predicate removes the contradiction with the center's possible ignorance (42b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "McCloskey's shiftiness: negation of the responsive predicate removes the contradiction with the center's possible ignorance (42b)."
   },
   {
     "id": "dayal2025_ex40c",
@@ -723,9 +661,7 @@
       ["embedding", "quasi"],
       ["questioned", "true"]
     ],
-    "comment": "Questioning the responsive predicate leaves both options open, one of them compatible with possible ignorance (42c).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Questioning the responsive predicate leaves both options open, one of them compatible with possible ignorance (42c)."
   },
   {
     "id": "dayal2025_ex41a",
@@ -749,9 +685,7 @@
       ["verbClass", "responsive"],
       ["negated", "true"]
     ],
-    "comment": "Shiftiness in Hindi-Urdu: a negated responsive takes *kya:* (corpus COSH, intonation added by Bhatt and Dayal 2020).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Shiftiness in Hindi-Urdu: a negated responsive takes *kya:* (corpus COSH, intonation added by Bhatt and Dayal 2020)."
   },
   {
     "id": "dayal2025_ex41b",
@@ -775,9 +709,7 @@
       ["verbClass", "responsive"],
       ["questioned", "true"]
     ],
-    "comment": "Shiftiness in Hindi-Urdu: a questioned responsive takes *kya:*.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Shiftiness in Hindi-Urdu: a questioned responsive takes *kya:*."
   },
   {
     "id": "dayal2025_ex43a",
@@ -796,9 +728,7 @@
       ["verb", "forget"],
       ["embedding", "quasi"]
     ],
-    "comment": "A naturally occurring case: *forget* entails ignorance of the answer at the evaluation time, consistent with Persp_CQ, unlike *remember* (43b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A naturally occurring case: *forget* entails ignorance of the answer at the evaluation time, consistent with Persp_CQ, unlike *remember* (43b)."
   },
   {
     "id": "dayal2025_ex45a",
@@ -819,9 +749,7 @@
       ["verb", "know"],
       ["embedding", "quasi"]
     ],
-    "comment": "The minimal pair with *want to know*, explained by the center's ignorance of and interest in the answer.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The minimal pair with *want to know*, explained by the center's ignorance of and interest in the answer."
   },
   {
     "id": "dayal2025_ex45b_forget",
@@ -840,9 +768,7 @@
       ["verb", "forget"],
       ["embedding", "quasi"]
     ],
-    "comment": "The minimal pair *forget* vs. *remember* with a first-person subject.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The minimal pair *forget* vs. *remember* with a first-person subject."
   },
   {
     "id": "dayal2025_ex45b_remember",
@@ -861,9 +787,7 @@
       ["verb", "remember"],
       ["embedding", "quasi"]
     ],
-    "comment": "The minimal pair *forget* vs. *remember* with a first-person subject.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The minimal pair *forget* vs. *remember* with a first-person subject."
   },
   {
     "id": "dayal2025_ex46a",
@@ -883,9 +807,7 @@
       ["embedding", "quasi"],
       ["questioned", "true"]
     ],
-    "comment": "A positive answer to the matrix question can resolve the embedded question the speaker is interested in.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A positive answer to the matrix question can resolve the embedded question the speaker is interested in."
   },
   {
     "id": "dayal2025_ex46b",
@@ -906,9 +828,7 @@
       ["questioned", "true"],
       ["invested", "speaker"]
     ],
-    "comment": "Unacceptable although the possible-ignorance requirement is satisfiable: a positive answer to the matrix question cannot resolve the embedded question, and it is the speaker, not the addressee, who is invested in it (§3.3.2).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Unacceptable although the possible-ignorance requirement is satisfiable: a positive answer to the matrix question cannot resolve the embedded question, and it is the speaker, not the addressee, who is invested in it (§3.3.2)."
   },
   {
     "id": "dayal2025_ex49a_you",
@@ -930,9 +850,7 @@
       ["embedding", "quasi"],
       ["invested", "speaker"]
     ],
-    "comment": "If the addressee has forgotten the answer they cannot help resolve the question the speaker is invested in.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "If the addressee has forgotten the answer they cannot help resolve the question the speaker is invested in."
   },
   {
     "id": "dayal2025_ex62a",
@@ -954,9 +872,7 @@
       ["syntax", "interrogative"],
       ["embedding", "matrix"]
     ],
-    "comment": "Interrogative syntax is felicitous in either context.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Interrogative syntax is felicitous in either context."
   },
   {
     "id": "dayal2025_ex62b",
@@ -978,9 +894,7 @@
       ["syntax", "declarative"],
       ["embedding", "matrix"]
     ],
-    "comment": "A rising declarative is only a biased question in English: C is typed -WH, so Persp must be CP, which only the combined act ASSERT•ASK licenses (64)–(65).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A rising declarative is only a biased question in English: C is typed -WH, so Persp must be CP, which only the combined act ASSERT•ASK licenses (64)–(65)."
   },
   {
     "id": "dayal2025_ex63a",
@@ -1004,9 +918,7 @@
       ["syntax", "declarative"],
       ["embedding", "matrix"]
     ],
-    "comment": "Hindi-Urdu makes no syntactic distinction between declaratives and polar questions: C may stay untyped, so a rising declarative can be a neutral question (66).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Hindi-Urdu makes no syntactic distinction between declaratives and polar questions: C may stay untyped, so a rising declarative can be a neutral question (66)."
   },
   {
     "id": "dayal2025_ex63b",
@@ -1030,9 +942,7 @@
       ["syntax", "declarative"],
       ["embedding", "matrix"]
     ],
-    "comment": "Italian patterns with Hindi-Urdu: clause-typing can be delayed.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Italian patterns with Hindi-Urdu: clause-typing can be delayed."
   },
   {
     "id": "dayal2025_ex69a_en",
@@ -1051,9 +961,7 @@
       ["simplex", "true"],
       ["embedding", "matrix"]
     ],
-    "comment": "A simplex polar question as a matrix clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A simplex polar question as a matrix clause."
   },
   {
     "id": "dayal2025_ex69b_en",
@@ -1072,9 +980,7 @@
       ["simplex", "true"],
       ["embedding", "quasi"]
     ],
-    "comment": "A simplex polar question quasi-subordinated.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A simplex polar question quasi-subordinated."
   },
   {
     "id": "dayal2025_ex69c_en",
@@ -1093,9 +999,7 @@
       ["simplex", "true"],
       ["embedding", "subordination"]
     ],
-    "comment": "*Whether* types the subordinated simplex polar clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "*Whether* types the subordinated simplex polar clause."
   },
   {
     "id": "dayal2025_ex69a_it",
@@ -1116,9 +1020,7 @@
       ["simplex", "true"],
       ["embedding", "matrix"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "dayal2025_ex69b_it",
@@ -1140,9 +1042,7 @@
       ["simplex", "true"],
       ["embedding", "quasi"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "dayal2025_ex69c_it",
@@ -1165,9 +1065,7 @@
       ["simplex", "true"],
       ["embedding", "subordination"]
     ],
-    "comment": "*se* types the subordinated simplex polar clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "*se* types the subordinated simplex polar clause."
   },
   {
     "id": "dayal2025_ex70a",
@@ -1188,9 +1086,7 @@
       ["simplex", "true"],
       ["embedding", "matrix"]
     ],
-    "comment": "A simplex polar question is typed by Persp_CQ with its rising boundary tone (72b).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A simplex polar question is typed by Persp_CQ with its rising boundary tone (72b)."
   },
   {
     "id": "dayal2025_ex70b",
@@ -1213,9 +1109,7 @@
       ["simplex", "true"],
       ["embedding", "quasi"]
     ],
-    "comment": "Quasi-subordination, marked by a slight pause and rising intonation, types the simplex clause.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Quasi-subordination, marked by a slight pause and rising intonation, types the simplex clause."
   },
   {
     "id": "dayal2025_ex71",
@@ -1239,9 +1133,7 @@
       ["simplex", "true"],
       ["embedding", "subordination"]
     ],
-    "comment": "Without a polar complementizer nothing types the subordinated simplex clause; the alternative must be overt, whatever the embedding verb.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Without a polar complementizer nothing types the subordinated simplex clause; the alternative must be overt, whatever the embedding verb."
   },
   {
     "id": "dayal2025_ex84a",
@@ -1260,9 +1152,7 @@
       ["verb", "investigate"],
       ["embedding", "subordination"]
     ],
-    "comment": "*Investigate* and *want to know* both take the subordinated interrogative.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "*Investigate* and *want to know* both take the subordinated interrogative."
   },
   {
     "id": "dayal2025_ex84b",
@@ -1283,8 +1173,6 @@
       ["verb", "investigate"],
       ["embedding", "quasi"]
     ],
-    "comment": "C-selection: *want to know* selects CP and PerspP, *investigate* only CP.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "C-selection: *want to know* selects CP and PerspP, *investigate* only CP."
   }
 ]

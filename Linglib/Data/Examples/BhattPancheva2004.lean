@@ -31,9 +31,7 @@ def bp2004_22 : LinguisticExample :=
     alternatives := []
     readings := [("every > -er", .acceptable), ("-er > every", .unacceptable)]
     paperFeatures := [("section", "4.1"), ("claim", "the reading (22b), -er over every, is unavailable")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_23a : LinguisticExample :=
   { id := "bp2004_23a"
@@ -49,9 +47,7 @@ def bp2004_23a : LinguisticExample :=
     alternatives := []
     readings := [("every > -er", .acceptable), ("-er > every", .unacceptable)]
     paperFeatures := [("section", "4.1")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_23b : LinguisticExample :=
   { id := "bp2004_23b"
@@ -67,9 +63,7 @@ def bp2004_23b : LinguisticExample :=
     alternatives := []
     readings := [("every > -er", .acceptable), ("-er > every", .unacceptable)]
     paperFeatures := [("section", "4.1")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_27a : LinguisticExample :=
   { id := "bp2004_27a"
@@ -85,9 +79,7 @@ def bp2004_27a : LinguisticExample :=
     alternatives := []
     readings := [("-er > require", .acceptable), ("require > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "require")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_27b : LinguisticExample :=
   { id := "bp2004_27b"
@@ -103,9 +95,7 @@ def bp2004_27b : LinguisticExample :=
     alternatives := []
     readings := [("-er > allow", .acceptable), ("allow > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "allow")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_27c : LinguisticExample :=
   { id := "bp2004_27c"
@@ -121,9 +111,7 @@ def bp2004_27c : LinguisticExample :=
     alternatives := []
     readings := [("-er > require", .acceptable), ("require > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "require")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_27d : LinguisticExample :=
   { id := "bp2004_27d"
@@ -139,9 +127,7 @@ def bp2004_27d : LinguisticExample :=
     alternatives := []
     readings := [("-er > allow", .acceptable), ("allow > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "allow")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_30a : LinguisticExample :=
   { id := "bp2004_30a"
@@ -157,9 +143,7 @@ def bp2004_30a : LinguisticExample :=
     alternatives := []
     readings := [("-er > require", .acceptable), ("require > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "require"), ("claim", "the two scopes are truth-conditionally equivalent")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_30b : LinguisticExample :=
   { id := "bp2004_30b"
@@ -175,9 +159,7 @@ def bp2004_30b : LinguisticExample :=
     alternatives := []
     readings := [("-er > allow", .acceptable), ("allow > -er", .acceptable)]
     paperFeatures := [("section", "4.2"), ("verb", "allow"), ("claim", "the two scopes are truth-conditionally equivalent")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_34a : LinguisticExample :=
   { id := "bp2004_34a"
@@ -193,9 +175,7 @@ def bp2004_34a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.1"), ("coreference", "him = John"), ("claim", "string-vacuous high attachment is blocked by minimal attachment")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_34b : LinguisticExample :=
   { id := "bp2004_34b"
@@ -211,9 +191,7 @@ def bp2004_34b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.1"), ("coreference", "him = John"), ("claim", "the degree clause is merged late outside the pronoun's c-command domain")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_35 : LinguisticExample :=
   { id := "bp2004_35"
@@ -229,9 +207,7 @@ def bp2004_35 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.1"), ("coreference", "him = John"), ("claim", "the complement of a nominal cannot be merged late")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_40 : LinguisticExample :=
   { id := "bp2004_40"
@@ -247,9 +223,7 @@ def bp2004_40 : LinguisticExample :=
     alternatives := []
     readings := [("before > every", .acceptable), ("every > before", .acceptable)]
     paperFeatures := [("section", "5.2")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_41 : LinguisticExample :=
   { id := "bp2004_41"
@@ -265,9 +239,7 @@ def bp2004_41 : LinguisticExample :=
     alternatives := []
     readings := [("before > every", .acceptable), ("every > before", .acceptable)]
     paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DP")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_42 : LinguisticExample :=
   { id := "bp2004_42"
@@ -283,9 +255,7 @@ def bp2004_42 : LinguisticExample :=
     alternatives := []
     readings := [("before > every", .unacceptable), ("every > before", .acceptable)]
     paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DP"), ("narrow_scope", "unavailable"), ("wide_scope", "available")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_43 : LinguisticExample :=
   { id := "bp2004_43"
@@ -301,9 +271,7 @@ def bp2004_43 : LinguisticExample :=
     alternatives := []
     readings := [("before > -er", .acceptable), ("-er > before", .unacceptable)]
     paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DegP"), ("narrow_scope", "available"), ("wide_scope", "unavailable")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_44 : LinguisticExample :=
   { id := "bp2004_44"
@@ -319,9 +287,7 @@ def bp2004_44 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DegP"), ("claim", "the position of the degree clause presupposes high scope for -er, which the Heim-Kennedy Constraint excludes")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_45 : LinguisticExample :=
   { id := "bp2004_45"
@@ -337,9 +303,7 @@ def bp2004_45 : LinguisticExample :=
     alternatives := []
     readings := [("before > -er d-many books", .acceptable), ("-er d-many books > before", .acceptable), ("-er > before > d-many books", .unacceptable)]
     paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DP"), ("narrow_scope", "available"), ("wide_scope", "available")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_46 : LinguisticExample :=
   { id := "bp2004_46"
@@ -355,9 +319,7 @@ def bp2004_46 : LinguisticExample :=
     alternatives := []
     readings := [("before > -er d-many books", .unacceptable), ("-er d-many books > before", .acceptable), ("-er > before > d-many books", .unacceptable)]
     paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DP"), ("narrow_scope", "unavailable"), ("wide_scope", "available")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_48a : LinguisticExample :=
   { id := "bp2004_48a"
@@ -373,9 +335,7 @@ def bp2004_48a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.2"), ("claim", "the two degree abstractions need not cross")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_48b : LinguisticExample :=
   { id := "bp2004_48b"
@@ -391,9 +351,7 @@ def bp2004_48b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.2"), ("claim", "result clauses follow comparative clauses")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_50a : LinguisticExample :=
   { id := "bp2004_50a"
@@ -409,9 +367,7 @@ def bp2004_50a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.2"), ("claim", "crossing degree abstractions, excluded by the Heim-Kennedy Constraint")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_50b : LinguisticExample :=
   { id := "bp2004_50b"
@@ -427,9 +383,7 @@ def bp2004_50b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "5.2"), ("claim", "result clauses follow comparative clauses")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_53a : LinguisticExample :=
   { id := "bp2004_53a"
@@ -445,9 +399,7 @@ def bp2004_53a : LinguisticExample :=
     alternatives := []
     readings := [("required > fewer", .acceptable), ("fewer > required", .unacceptable)]
     paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DegP"), ("narrow_scope", "available"), ("wide_scope", "unavailable")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_53b : LinguisticExample :=
   { id := "bp2004_53b"
@@ -463,9 +415,7 @@ def bp2004_53b : LinguisticExample :=
     alternatives := []
     readings := [("required > fewer", .unacceptable), ("fewer > required", .acceptable)]
     paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DegP"), ("narrow_scope", "unavailable"), ("wide_scope", "available")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_54a : LinguisticExample :=
   { id := "bp2004_54a"
@@ -481,9 +431,7 @@ def bp2004_54a : LinguisticExample :=
     alternatives := []
     readings := [("required > exactly 5 more", .acceptable), ("exactly 5 more > required", .unacceptable)]
     paperFeatures := [("section", "5.2"), ("site", "low"), ("mover", "DegP"), ("narrow_scope", "available"), ("wide_scope", "unavailable")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_54b : LinguisticExample :=
   { id := "bp2004_54b"
@@ -499,9 +447,7 @@ def bp2004_54b : LinguisticExample :=
     alternatives := []
     readings := [("required > exactly 5 more", .unacceptable), ("exactly 5 more > required", .acceptable)]
     paperFeatures := [("section", "5.2"), ("site", "high"), ("mover", "DegP"), ("narrow_scope", "unavailable"), ("wide_scope", "available")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_60 : LinguisticExample :=
   { id := "bp2004_60"
@@ -517,9 +463,7 @@ def bp2004_60 : LinguisticExample :=
     alternatives := []
     readings := [("tell > -er, elided VP: work d-hard", .acceptable), ("tell > -er, elided VP: tell her to work d-hard", .unacceptable), ("-er > tell, elided VP: work d-hard", .acceptable), ("-er > tell, elided VP: tell her to work d-hard", .acceptable)]
     paperFeatures := [("section", "6.1")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_61 : LinguisticExample :=
   { id := "bp2004_61"
@@ -535,9 +479,7 @@ def bp2004_61 : LinguisticExample :=
     alternatives := []
     readings := [("tell > -er, elided VP: work d-hard", .acceptable), ("-er > tell, elided VP: work d-hard", .acceptable)]
     paperFeatures := [("section", "6.1")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_63 : LinguisticExample :=
   { id := "bp2004_63"
@@ -553,9 +495,7 @@ def bp2004_63 : LinguisticExample :=
     alternatives := []
     readings := [("tell > -er, elided VP: work d-hard", .unacceptable), ("tell > -er, elided VP: tell her to work d-hard", .unacceptable), ("-er > tell, elided VP: work d-hard", .acceptable), ("-er > tell, elided VP: tell her to work d-hard", .acceptable)]
     paperFeatures := [("section", "6.2"), ("coreference", "her = Mary")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_64a : LinguisticExample :=
   { id := "bp2004_64a"
@@ -571,9 +511,7 @@ def bp2004_64a : LinguisticExample :=
     alternatives := []
     readings := [("tell > -er", .unacceptable), ("-er > tell", .acceptable)]
     paperFeatures := [("section", "6.2"), ("coreference", "her = Mary")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_64b : LinguisticExample :=
   { id := "bp2004_64b"
@@ -589,9 +527,7 @@ def bp2004_64b : LinguisticExample :=
     alternatives := []
     readings := [("tell > -er", .acceptable), ("-er > tell", .acceptable)]
     paperFeatures := [("section", "6.2"), ("coreference", "her = Mary")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_85 : LinguisticExample :=
   { id := "bp2004_85"
@@ -607,9 +543,7 @@ def bp2004_85 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.2"), ("claim", "the set of degrees to which Bill is tall is a proper subset of the set to which John is tall")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_91a : LinguisticExample :=
   { id := "bp2004_91a"
@@ -625,9 +559,7 @@ def bp2004_91a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.4"), ("coreference", "he = John"), ("claim", "the complement of rumor cannot be merged late")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_91b : LinguisticExample :=
   { id := "bp2004_91b"
@@ -643,9 +575,7 @@ def bp2004_91b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "7.4"), ("coreference", "him = John"), ("claim", "the complement of -er can be merged late")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_93a : LinguisticExample :=
   { id := "bp2004_93a"
@@ -661,9 +591,7 @@ def bp2004_93a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "8")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def bp2004_93b : LinguisticExample :=
   { id := "bp2004_93b"
@@ -679,9 +607,7 @@ def bp2004_93b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "8")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def all : List LinguisticExample := [bp2004_22, bp2004_23a, bp2004_23b, bp2004_27a, bp2004_27b, bp2004_27c, bp2004_27d, bp2004_30a, bp2004_30b, bp2004_34a, bp2004_34b, bp2004_35, bp2004_40, bp2004_41, bp2004_42, bp2004_43, bp2004_44, bp2004_45, bp2004_46, bp2004_48a, bp2004_48b, bp2004_50a, bp2004_50b, bp2004_53a, bp2004_53b, bp2004_54a, bp2004_54b, bp2004_60, bp2004_61, bp2004_63, bp2004_64a, bp2004_64b, bp2004_85, bp2004_91a, bp2004_91b, bp2004_93a, bp2004_93b]
 

@@ -31,9 +31,7 @@ def ex_1a : LinguisticExample :=
     alternatives := [("I Elena ipe pu eçi episkefti tin Vrazilia.", .ungrammatical)]
     readings := []
     paperFeatures := [("complementizer", "oti"), ("verbClass", "saying"), ("verb", "leo"), ("position", "internal_argument")]
-    comment := "Paper prints 'oti/*pu' in one example; the pu variant is expanded into alternatives. OTI/PU are the paper's placeholder glosses for the complementizers (fn. 1). Verbs of saying and belief take oti, not pu."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Paper prints 'oti/*pu' in one example; the pu variant is expanded into alternatives. OTI/PU are the paper's placeholder glosses for the complementizers (fn. 1). Verbs of saying and belief take oti, not pu." }
 
 def ex_1b : LinguisticExample :=
   { id := "angelopoulos2026_1b"
@@ -49,9 +47,7 @@ def ex_1b : LinguisticExample :=
     alternatives := [("I Elena metanjose oti paretiθike.", .ungrammatical)]
     readings := []
     paperFeatures := [("complementizer", "pu"), ("verbClass", "emotive-factive"), ("verb", "metaniono"), ("position", "internal_argument")]
-    comment := "Paper prints 'pu/*oti' in one example; the oti variant is expanded into alternatives. Emotive factive verbs take pu, not oti."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Paper prints 'pu/*oti' in one example; the oti variant is expanded into alternatives. Emotive factive verbs take pu, not oti." }
 
 def ex_31a : LinguisticExample :=
   { id := "angelopoulos2026_31a"
@@ -67,9 +63,7 @@ def ex_31a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("verb", "δjafono 'disagree'")]
-    comment := "δjafono 'disagree' takes a PP complement headed by me 'with'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "δjafono 'disagree' takes a PP complement headed by me 'with'." }
 
 def ex_31b : LinguisticExample :=
   { id := "angelopoulos2026_31b"
@@ -85,9 +79,7 @@ def ex_31b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("verb", "δjafono 'disagree'"), ("complementizer", "oti"), ("position", "internal_argument")]
-    comment := "δjafono 'disagree' also takes a bare oti-clause complement."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "δjafono 'disagree' also takes a bare oti-clause complement." }
 
 def ex_31c : LinguisticExample :=
   { id := "angelopoulos2026_31c"
@@ -103,9 +95,7 @@ def ex_31c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("verb", "δjafono 'disagree'"), ("complementizer", "oti"), ("position", "p_complement")]
-    comment := "Translation marked 'intended:' in the paper. The oti-clause cannot combine with the P me: like T, P cannot host light-noun incorporation."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Translation marked 'intended:' in the paper. The oti-clause cannot combine with the P me: like T, P cannot host light-noun incorporation." }
 
 def ex_32a : LinguisticExample :=
   { id := "angelopoulos2026_32a"
@@ -121,9 +111,7 @@ def ex_32a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("verb", "metaniono")]
-    comment := "metanjono 'regret' takes a PP complement headed by ja 'for'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "metanjono 'regret' takes a PP complement headed by ja 'for'." }
 
 def ex_32b : LinguisticExample :=
   { id := "angelopoulos2026_32b"
@@ -139,9 +127,7 @@ def ex_32b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("complementizer", "pu"), ("verb", "metaniono"), ("position", "internal_argument")]
-    comment := "metanjono 'regret' also takes a bare pu-clause complement."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "metanjono 'regret' also takes a bare pu-clause complement." }
 
 def ex_32c : LinguisticExample :=
   { id := "angelopoulos2026_32c"
@@ -157,9 +143,7 @@ def ex_32c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "P-ban"), ("verb", "metaniono"), ("complementizer", "pu"), ("position", "p_complement"), ("confound", "p_ban")]
-    comment := "Translation marked 'intended:' in the paper. The pu-clause cannot combine with the P ja."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Translation marked 'intended:' in the paper. The pu-clause cannot combine with the P ja." }
 
 def ex_33a : LinguisticExample :=
   { id := "angelopoulos2026_33a"
@@ -175,9 +159,7 @@ def ex_33a : LinguisticExample :=
     alternatives := [("Afti i fimi ine lanθasmeni.", .acceptable)]
     readings := []
     paperFeatures := [("diagnostic", "truth-predicates"), ("nounSort", "content")]
-    comment := "Paper prints 'aliθis/lanθasmeni' in one example; expanded here. Content nouns combine with 'true'/'mistaken'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Paper prints 'aliθis/lanθasmeni' in one example; expanded here. Content nouns combine with 'true'/'mistaken'." }
 
 def ex_33b : LinguisticExample :=
   { id := "angelopoulos2026_33b"
@@ -193,9 +175,7 @@ def ex_33b : LinguisticExample :=
     alternatives := [("Afti i katastasi ine lanθasmeni.", .unacceptable)]
     readings := []
     paperFeatures := [("diagnostic", "truth-predicates"), ("nounSort", "situation")]
-    comment := "Marked # in the paper (scoping over both predicate variants): situation nouns do not combine with 'true'/'mistaken'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Marked # in the paper (scoping over both predicate variants): situation nouns do not combine with 'true'/'mistaken'." }
 
 def ex_34a : LinguisticExample :=
   { id := "angelopoulos2026_34a"
@@ -211,9 +191,7 @@ def ex_34a : LinguisticExample :=
     alternatives := [("Tetjes iδees δen simvenun sixna.", .unacceptable), ("Tetjes proiδopiisis δen simvenun sixna.", .unacceptable), ("Tetjes pepiθisis δen simvenun sixna.", .unacceptable), ("Tetjes ipoθesis δen simvenun sixna.", .unacceptable), ("Tetjes θeories δen simvenun sixna.", .unacceptable)]
     readings := []
     paperFeatures := [("diagnostic", "occurrence-predicates"), ("nounSort", "content")]
-    comment := "Marked # in the paper. Paper prints the six content nouns 'fimes/ iδees/ proiδopiisis/ pepiθisis/ ipoθesis/ θeories' (rumors/ideas/warnings/beliefs/hypotheses/theories) as one slash-list; expanded here. Content nouns do not combine with simveni 'happen'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Marked # in the paper. Paper prints the six content nouns 'fimes/ iδees/ proiδopiisis/ pepiθisis/ ipoθesis/ θeories' (rumors/ideas/warnings/beliefs/hypotheses/theories) as one slash-list; expanded here. Content nouns do not combine with simveni 'happen'." }
 
 def ex_34b : LinguisticExample :=
   { id := "angelopoulos2026_34b"
@@ -229,9 +207,7 @@ def ex_34b : LinguisticExample :=
     alternatives := [("Tetjes katastasis δen simvenun sixna.", .acceptable)]
     readings := []
     paperFeatures := [("diagnostic", "occurrence-predicates"), ("nounSort", "situation")]
-    comment := "Paper prints 'periptosis/ katastasis' glossed 'situations.F.PL.NOM/ cases.F.PL.NOM' — transcribed verbatim, though the gloss order looks swapped relative to (35b), where periptosi = 'case' and katastasi = 'situation'. Situation nouns combine with simveni 'happen'."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Paper prints 'periptosis/ katastasis' glossed 'situations.F.PL.NOM/ cases.F.PL.NOM' — transcribed verbatim, though the gloss order looks swapped relative to (35b), where periptosi = 'case' and katastasi = 'situation'. Situation nouns combine with simveni 'happen'." }
 
 def ex_3a : LinguisticExample :=
   { id := "angelopoulos2026_3a"
@@ -247,9 +223,7 @@ def ex_3a : LinguisticExample :=
     alternatives := [("To pistevi pu katalaveni tin katastasi.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "pistevo"), ("complementizer", "oti"), ("position", "internal_argument"), ("diagnostic", "clitic-doubling")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_3b : LinguisticExample :=
   { id := "angelopoulos2026_3b"
@@ -265,9 +239,7 @@ def ex_3b : LinguisticExample :=
     alternatives := [("To metanjose oti δen θa ksanavlepodan pote.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "metaniono"), ("complementizer", "pu"), ("position", "internal_argument"), ("diagnostic", "clitic-doubling")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_4a : LinguisticExample :=
   { id := "angelopoulos2026_4a"
@@ -283,9 +255,7 @@ def ex_4a : LinguisticExample :=
     alternatives := []
     readings := [("explanans", .acceptable)]
     paperFeatures := [("verb", "eksigo"), ("complementizer", "oti"), ("position", "internal_argument"), ("composition", "predicate_modification")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_4b : LinguisticExample :=
   { id := "angelopoulos2026_4b"
@@ -301,9 +271,7 @@ def ex_4b : LinguisticExample :=
     alternatives := []
     readings := [("explanandum", .acceptable)]
     paperFeatures := [("verb", "eksigo"), ("complementizer", "oti"), ("nominalized", "yes"), ("composition", "functional_application")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_4c : LinguisticExample :=
   { id := "angelopoulos2026_4c"
@@ -319,9 +287,7 @@ def ex_4c : LinguisticExample :=
     alternatives := []
     readings := [("explanans", .acceptable)]
     paperFeatures := [("verb", "eksigo"), ("complementizer", "oti"), ("position", "internal_argument"), ("diagnostic", "clitic-doubling"), ("composition", "predicate_modification")]
-    comment := "Clitic-doubled bare oti-clause keeps the explanans reading: an internal argument composing as a modifier."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Clitic-doubled bare oti-clause keeps the explanans reading: an internal argument composing as a modifier." }
 
 def ex_6a : LinguisticExample :=
   { id := "angelopoulos2026_6a"
@@ -337,9 +303,7 @@ def ex_6a : LinguisticExample :=
     alternatives := [("Oti i Ji ine stroéili eksijiθike tis δonatas.", .ungrammatical)]
     readings := [("explanans", .acceptable)]
     paperFeatures := [("verb", "eksigo"), ("complementizer", "oti"), ("position", "derived_subject"), ("diagnostic", "passivization")]
-    comment := "The dative intervenes unless clitic-doubled, as for DP themes."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The dative intervenes unless clitic-doubled, as for DP themes." }
 
 def ex_11a : LinguisticExample :=
   { id := "angelopoulos2026_11a"
@@ -355,9 +319,7 @@ def ex_11a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("complementizer", "oti"), ("position", "external_argument")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_12a : LinguisticExample :=
   { id := "angelopoulos2026_12a"
@@ -373,9 +335,7 @@ def ex_12a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("complementizer", "pu"), ("position", "external_argument")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_14a : LinguisticExample :=
   { id := "angelopoulos2026_14a"
@@ -391,9 +351,7 @@ def ex_14a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "areso"), ("complementizer", "pu"), ("position", "internal_argument")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_14b : LinguisticExample :=
   { id := "angelopoulos2026_14b"
@@ -409,9 +367,7 @@ def ex_14b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "areso"), ("complementizer", "pu"), ("position", "derived_subject")]
-    comment := "Preverbal pu-clause of a Class III experiencer verb: a derived subject, rated 4.2/5 against 4.6/5 postverbal (fn. 8)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Preverbal pu-clause of a Class III experiencer verb: a derived subject, rated 4.2/5 against 4.6/5 postverbal (fn. 8)." }
 
 def ex_19c : LinguisticExample :=
   { id := "angelopoulos2026_19c"
@@ -427,9 +383,7 @@ def ex_19c : LinguisticExample :=
     alternatives := [("θimose apotoma pu apoliun prosopiko.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "thimono_stative"), ("complementizer", "pu"), ("position", "internal_argument"), ("diagnostic", "manner-adverb")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_20c : LinguisticExample :=
   { id := "angelopoulos2026_20c"
@@ -445,9 +399,7 @@ def ex_20c : LinguisticExample :=
     alternatives := [("Metanjose efkola pu aGorase mavro pukamiso.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "metaniono"), ("complementizer", "pu"), ("position", "internal_argument"), ("diagnostic", "manner-adverb")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_21a : LinguisticExample :=
   { id := "angelopoulos2026_21a"
@@ -463,9 +415,7 @@ def ex_21a : LinguisticExample :=
     alternatives := [("Iksere efkola oti prepi na alaksi stratijiki.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "ksero"), ("complementizer", "oti"), ("position", "internal_argument"), ("diagnostic", "manner-adverb")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_21b : LinguisticExample :=
   { id := "angelopoulos2026_21b"
@@ -481,9 +431,7 @@ def ex_21b : LinguisticExample :=
     alternatives := [("Arketos kosmos δen katalaveni efkola oti i periGrafiki kanones ine δjaforetiki apo tus riθmistikus.", .acceptable)]
     readings := []
     paperFeatures := [("verb", "sinidhitopio"), ("complementizer", "oti"), ("position", "internal_argument"), ("diagnostic", "manner-adverb"), ("confound", "manner_adverb")]
-    comment := "Eventive oti-selectors accept manner adverbs."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Eventive oti-selectors accept manner adverbs." }
 
 def ex_22a : LinguisticExample :=
   { id := "angelopoulos2026_22a"
@@ -499,9 +447,7 @@ def ex_22a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "thimame"), ("complementizer", "oti"), ("diagnostic", "manner-adverb"), ("confound", "manner_adverb")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_22b : LinguisticExample :=
   { id := "angelopoulos2026_22b"
@@ -517,9 +463,7 @@ def ex_22b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "thimame_perception"), ("complementizer", "pu"), ("diagnostic", "manner-adverb"), ("confound", "manner_adverb")]
-    comment := "Roussou 2019 (7): the pu-sense is stative and rejects the manner PP."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Roussou 2019 (7): the pu-sense is stative and rejects the manner PP." }
 
 def ex_23c : LinguisticExample :=
   { id := "angelopoulos2026_23c"
@@ -535,9 +479,7 @@ def ex_23c : LinguisticExample :=
     alternatives := [("θimose mesa se pede lepta pu psifistike o nomos.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "thimono_stative"), ("complementizer", "pu"), ("position", "internal_argument"), ("diagnostic", "in-adverbial")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_35a : LinguisticExample :=
   { id := "angelopoulos2026_35a"
@@ -553,9 +495,7 @@ def ex_35a : LinguisticExample :=
     alternatives := [("Akuse ti fimi pu i Ji ine stroéili.", .ungrammatical)]
     readings := []
     paperFeatures := [("complementizer", "oti"), ("nounSort", "content"), ("diagnostic", "noun-complement")]
-    comment := "Also with iδea 'idea', neo 'news', jeGonos 'fact'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Also with iδea 'idea', neo 'news', jeGonos 'fact'." }
 
 def ex_35b : LinguisticExample :=
   { id := "angelopoulos2026_35b"
@@ -571,9 +511,7 @@ def ex_35b : LinguisticExample :=
     alternatives := [("Afora tin periptosi oti o pateras ine apon.", .ungrammatical)]
     readings := []
     paperFeatures := [("complementizer", "pu"), ("nounSort", "situation"), ("diagnostic", "noun-complement")]
-    comment := "Also with peristasi 'circumstance', katastasi 'situation'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Also with peristasi 'circumstance', katastasi 'situation'." }
 
 def ex_36a : LinguisticExample :=
   { id := "angelopoulos2026_36a"
@@ -589,9 +527,7 @@ def ex_36a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("complementizer", "oti"), ("nounSort", "content"), ("diagnostic", "truth-predicates")]
-    comment := "The nominalization of an oti-selecting verb patterns with content nouns; 'mistaken' likewise."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The nominalization of an oti-selecting verb patterns with content nouns; 'mistaken' likewise." }
 
 def ex_37a : LinguisticExample :=
   { id := "angelopoulos2026_37a"
@@ -607,9 +543,7 @@ def ex_37a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("complementizer", "pu"), ("nounSort", "situation"), ("diagnostic", "truth-predicates")]
-    comment := "The nominalization of a pu-selecting verb patterns with situation nouns."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The nominalization of a pu-selecting verb patterns with situation nouns." }
 
 def ex_38a : LinguisticExample :=
   { id := "angelopoulos2026_38a"
@@ -625,9 +559,7 @@ def ex_38a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "thimame"), ("complementizer", "oti"), ("diagnostic", "factivity"), ("confound", "factivity_continuation")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_38b : LinguisticExample :=
   { id := "angelopoulos2026_38b"
@@ -643,9 +575,7 @@ def ex_38b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "thimame_perception"), ("complementizer", "pu"), ("diagnostic", "factivity"), ("confound", "factivity_continuation")]
-    comment := "The continuation contradicts the presupposition the pu-clause carries."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The continuation contradicts the presupposition the pu-clause carries." }
 
 def fn14_i : LinguisticExample :=
   { id := "angelopoulos2026_fn14_i"
@@ -661,9 +591,7 @@ def fn14_i : LinguisticExample :=
     alternatives := [("Içe simvi pu kanume laθos.", .ungrammatical)]
     readings := []
     paperFeatures := [("verb", "simveni"), ("complementizer", "oti")]
-    comment := "Occurrence verbs describe situations (no oti) and are eventive (no pu); only na remains."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Occurrence verbs describe situations (no oti) and are eventive (no pu); only na remains." }
 
 def ex_43a : LinguisticExample :=
   { id := "angelopoulos2026_43a"
@@ -679,9 +607,7 @@ def ex_43a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("complementizer", "oti"), ("position", "external_argument"), ("nominalized", "yes")]
-    comment := "Nominalization with to rescues the external-argument position for oti-clauses."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Nominalization with to rescues the external-argument position for oti-clauses." }
 
 def ex_44a : LinguisticExample :=
   { id := "angelopoulos2026_44a"
@@ -697,9 +623,7 @@ def ex_44a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("complementizer", "pu"), ("position", "external_argument"), ("nominalized", "yes")]
-    comment := "pu-clauses do not nominalize: Greek has no silent situation noun."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "pu-clauses do not nominalize: Greek has no silent situation noun." }
 
 def all : List LinguisticExample := [ex_1a, ex_1b, ex_31a, ex_31b, ex_31c, ex_32a, ex_32b, ex_32c, ex_33a, ex_33b, ex_34a, ex_34b, ex_3a, ex_3b, ex_4a, ex_4b, ex_4c, ex_6a, ex_11a, ex_12a, ex_14a, ex_14b, ex_19c, ex_20c, ex_21a, ex_21b, ex_22a, ex_22b, ex_23c, ex_35a, ex_35b, ex_36a, ex_37a, ex_38a, ex_38b, fn14_i, ex_43a, ex_44a]
 

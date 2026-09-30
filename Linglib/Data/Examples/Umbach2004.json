@@ -16,9 +16,7 @@
       ["condition", "semantic independence"],
       ["construction", "coordination"]
     ],
-    "comment": "Drink subsumes martini; acceptable only if martini is taken not to be a drink.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Drink subsumes martini; acceptable only if martini is taken not to be a drink."
   },
   {
     "id": "umbach2004_9b",
@@ -40,9 +38,7 @@
       ["condition", "common integrator"],
       ["construction", "coordination"]
     ],
-    "comment": "The common integrator makes port a drink.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The common integrator makes port a drink."
   },
   {
     "id": "umbach2004_10a",
@@ -61,9 +57,7 @@
       ["condition", "semantic independence"],
       ["construction", "focus"]
     ],
-    "comment": "The alternatives of a focus obey the same conditions as coordinated elements.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The alternatives of a focus obey the same conditions as coordinated elements."
   },
   {
     "id": "umbach2004_10b",
@@ -82,9 +76,7 @@
       ["condition", "common integrator"],
       ["construction", "focus"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "umbach2004_12",
@@ -103,9 +95,7 @@
       ["focus", "contrastive"],
       ["exclusion", "instead"]
     ],
-    "comment": "A correction: the exhaustive focus implies that Anna did not make the hamburgers.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A correction: the exhaustive focus implies that Anna did not make the hamburgers."
   },
   {
     "id": "umbach2004_14a",
@@ -125,9 +115,7 @@
       ["exclusion", "instead"],
       ["presupposition", "someone went shopping"]
     ],
-    "comment": "Presupposes that someone did the shopping and asserts that it is Ronald; in the old days someone else did it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Presupposes that someone did the shopping and asserts that it is Ronald; in the old days someone else did it."
   },
   {
     "id": "umbach2004_14b",
@@ -147,9 +135,7 @@
       ["exclusion", "in addition"],
       ["presupposition", "Ronald went shopping"]
     ],
-    "comment": "Presupposes that Ronald went shopping and asserts that no one else did; in the old days he went with someone.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Presupposes that Ronald went shopping and asserts that no one else did; in the old days he went with someone."
   },
   {
     "id": "umbach2004_16a",
@@ -168,9 +154,7 @@
       ["focus", "verb phrase"],
       ["contrast", "activity"]
     ],
-    "comment": "But is focus-sensitive: the contrast is with another activity.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "But is focus-sensitive: the contrast is with another activity."
   },
   {
     "id": "umbach2004_16b",
@@ -189,9 +173,7 @@
       ["focus", "subject"],
       ["contrast", "person"]
     ],
-    "comment": "The contrast is with another person.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The contrast is with another person."
   },
   {
     "id": "umbach2004_17b",
@@ -210,9 +192,7 @@
       ["connective", "and"],
       ["answer", "confirm+confirm"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "umbach2004_17c",
@@ -231,9 +211,7 @@
       ["connective", "but"],
       ["answer", "confirm+confirm"]
     ],
-    "comment": "A but-sentence cannot confirm both parts.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A but-sentence cannot confirm both parts."
   },
   {
     "id": "umbach2004_17d",
@@ -252,9 +230,7 @@
       ["connective", "but"],
       ["answer", "deny+deny"]
     ],
-    "comment": "A but-sentence cannot deny both parts.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A but-sentence cannot deny both parts."
   },
   {
     "id": "umbach2004_17e",
@@ -273,9 +249,7 @@
       ["connective", "but"],
       ["answer", "confirm+deny"]
     ],
-    "comment": "The confirm+deny condition; and would be marked here.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The confirm+deny condition; and would be marked here."
   },
   {
     "id": "umbach2004_17f",
@@ -295,9 +269,7 @@
       ["answer", "confirm+deny"],
       ["negation", "implicit"]
     ],
-    "comment": "Denial does not need an explicit negation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Denial does not need an explicit negation."
   },
   {
     "id": "umbach2004_17g",
@@ -316,9 +288,7 @@
       ["connective", "but"],
       ["answer", "deny+confirm"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "umbach2004_19a",
@@ -338,9 +308,7 @@
       ["contrast", "simple"],
       ["exclusion", "in addition"]
     ],
-    "comment": "Nearly equivalent to (19b): the alternative in the but-conjunct is excluded by negation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Nearly equivalent to (19b): the alternative in the but-conjunct is excluded by negation."
   },
   {
     "id": "umbach2004_19b",
@@ -359,9 +327,7 @@
       ["focus", "only-phrase"],
       ["exclusion", "in addition"]
     ],
-    "comment": "Only may exclude several alternatives, and they need not be given explicitly.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Only may exclude several alternatives, and they need not be given explicitly."
   },
   {
     "id": "umbach2004_21b",
@@ -380,9 +346,7 @@
       ["contrast", "simple"],
       ["alternatives", "individuals"]
     ],
-    "comment": "Explicit negation is obligatory: individuals have no complement.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Explicit negation is obligatory: individuals have no complement."
   },
   {
     "id": "umbach2004_22a",
@@ -400,9 +364,7 @@
     "paperFeatures": [
       ["contrast", "double"]
     ],
-    "comment": "Two pairs of alternatives; the denial that John washed the dishes is an entailment.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Two pairs of alternatives; the denial that John washed the dishes is an entailment."
   },
   {
     "id": "umbach2004_23a",
@@ -421,9 +383,7 @@
       ["relation", "correction"],
       ["conjuncts", "non-sentential"]
     ],
-    "comment": "The corrective but takes non-sentential conjuncts and a negated first conjunct.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The corrective but takes non-sentential conjuncts and a negated first conjunct."
   },
   {
     "id": "umbach2004_23b",
@@ -442,9 +402,7 @@
       ["relation", "correction"],
       ["connective", "sondern"]
     ],
-    "comment": "German marks correction with sondern.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "German marks correction with sondern."
   },
   {
     "id": "umbach2004_23c",
@@ -462,9 +420,7 @@
     "paperFeatures": [
       ["relation", "contrast"]
     ],
-    "comment": "Without a negated first conjunct the sentence expresses a contrast, not a correction.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Without a negated first conjunct the sentence expresses a contrast, not a correction."
   },
   {
     "id": "umbach2004_23d",
@@ -483,9 +439,7 @@
       ["relation", "correction"],
       ["connective", "sondern"]
     ],
-    "comment": "Sondern requires a negated first conjunct.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Sondern requires a negated first conjunct."
   },
   {
     "id": "umbach2004_24a",
@@ -504,9 +458,7 @@
       ["relation", "contrast"],
       ["counterfactual", "John might have gone to Berlin in addition to Paris"]
     ],
-    "comment": "Same assertion as (25a), different implicit question and expectation.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Same assertion as (25a), different implicit question and expectation."
   },
   {
     "id": "umbach2004_25a",
@@ -525,9 +477,7 @@
       ["relation", "correction"],
       ["counterfactual", "he might have gone to Berlin instead of Paris"]
     ],
-    "comment": "No acceptable answer to the question of (24a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No acceptable answer to the question of (24a)."
   },
   {
     "id": "umbach2004_26b",
@@ -546,9 +496,7 @@
       ["relation", "correction"],
       ["exclusion", "instead"]
     ],
-    "comment": "The cinema instead of the opera, as the contrastive focus of (26a) expresses.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The cinema instead of the opera, as the contrastive focus of (26a) expresses."
   },
   {
     "id": "umbach2004_27b",
@@ -567,8 +515,6 @@
       ["relation", "contrast"],
       ["exclusion", "in addition"]
     ],
-    "comment": "No other place in addition to the cinema, as the only-phrase of (27a) expresses; the but-variant names the excluded place.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "No other place in addition to the cinema, as the only-phrase of (27a) expresses; the but-variant names the excluded place."
   }
 ]

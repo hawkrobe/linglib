@@ -18,8 +18,7 @@
       ["verbType", "lexical"],
       ["finitePosition", "T"]
     ],
-    "comment": "Pollock 1989:367.",
-    "lgrConformance": ""
+    "comment": "Pollock 1989:367."
   },
   {
     "id": "arregipietraszko2021_7",
@@ -40,8 +39,7 @@
       ["verbType", "lexical"],
       ["finitePosition", "V"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "arregipietraszko2021_10a",
@@ -61,8 +59,7 @@
       ["finitePosition", "T"],
       ["doSupport", "false"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "arregipietraszko2021_10b",
@@ -84,8 +81,7 @@
       ["finitePosition", "T"],
       ["doSupport", "false"]
     ],
-    "comment": "Pollock 1989:370.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Pollock 1989:370."
   },
   {
     "id": "arregipietraszko2021_12",
@@ -104,8 +100,7 @@
     "paperFeatures": [
       ["context", "declarative"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arregipietraszko2021_13",
@@ -124,8 +119,7 @@
     "paperFeatures": [
       ["context", "relative"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arregipietraszko2021_16",
@@ -145,8 +139,7 @@
       ["context", "relative"],
       ["relPrefixPosition", "T"]
     ],
-    "comment": "The whole relative prefix follows the subject in Spec,TP.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The whole relative prefix follows the subject in Spec,TP."
   },
   {
     "id": "arregipietraszko2021_19_1",
@@ -167,8 +160,7 @@
       ["agreement", "u"],
       ["rel", "o"]
     ],
-    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components.",
-    "lgrConformance": ""
+    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components."
   },
   {
     "id": "arregipietraszko2021_19_9",
@@ -189,8 +181,7 @@
       ["agreement", "i"],
       ["rel", "e"]
     ],
-    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components.",
-    "lgrConformance": ""
+    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components."
   },
   {
     "id": "arregipietraszko2021_19_7",
@@ -211,8 +202,7 @@
       ["agreement", "si"],
       ["rel", "esi"]
     ],
-    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components.",
-    "lgrConformance": ""
+    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components."
   },
   {
     "id": "arregipietraszko2021_19_11",
@@ -233,8 +223,7 @@
       ["agreement", "lu"],
       ["rel", "olu"]
     ],
-    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components.",
-    "lgrConformance": ""
+    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components."
   },
   {
     "id": "arregipietraszko2021_26",
@@ -257,8 +246,7 @@
       ["finitePosition", "C"],
       ["doSupport", "false"]
     ],
-    "comment": "Vikner 1995:47.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Vikner 1995:47."
   },
   {
     "id": "arregipietraszko2021_27",
@@ -280,8 +268,7 @@
       ["verbType", "lexical"],
       ["finitePosition", "V"]
     ],
-    "comment": "Vikner 1995:47.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Vikner 1995:47."
   },
   {
     "id": "arregipietraszko2021_30",
@@ -303,8 +290,7 @@
       ["finitePosition", "C"],
       ["imperativeForm", "true"]
     ],
-    "comment": "Enclisis diagnoses the verb in C.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Enclisis diagnoses the verb in C."
   },
   {
     "id": "arregipietraszko2021_31",
@@ -326,8 +312,7 @@
       ["finitePosition", "T"],
       ["imperativeForm", "false"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arregipietraszko2021_33",
@@ -349,8 +334,7 @@
       ["finitePosition", "T"],
       ["imperativeForm", "true"]
     ],
-    "comment": "Scuol variety of Vallader (Manzini and Savoia 2005:424); proclisis with imperative-specific inflection.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Scuol variety of Vallader (Manzini and Savoia 2005:424); proclisis with imperative-specific inflection."
   },
   {
     "id": "arregipietraszko2021_34",
@@ -372,8 +356,7 @@
       ["finitePosition", "T"],
       ["imperativeForm", "false"]
     ],
-    "comment": "Manzini and Savoia 2005:424.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Manzini and Savoia 2005:424."
   },
   {
     "id": "arregipietraszko2021_36a",
@@ -398,8 +381,7 @@
       ["doSupport", "true"],
       ["verbForm", "bare"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "arregipietraszko2021_36b",
@@ -423,8 +405,7 @@
       ["doSupport", "true"],
       ["verbForm", "bare"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "arregipietraszko2021_36c",
@@ -448,8 +429,7 @@
       ["doSupport", "true"],
       ["verbForm", "bare"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "arregipietraszko2021_37a",
@@ -473,8 +453,7 @@
       ["finitePosition", "T"],
       ["doSupport", "false"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "arregipietraszko2021_37b",
@@ -496,8 +475,7 @@
       ["finitePosition", "T"],
       ["doSupport", "false"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "arregipietraszko2021_37c",
@@ -519,8 +497,7 @@
       ["finitePosition", "C"],
       ["doSupport", "false"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "arregipietraszko2021_fn38",
@@ -540,8 +517,7 @@
       ["finitePosition", "V"],
       ["doSupport", "false"]
     ],
-    "comment": "The subject's copy in Spec,TP is a lower copy and does not intervene.",
-    "lgrConformance": ""
+    "comment": "The subject's copy in Spec,TP is a lower copy and does not intervene."
   },
   {
     "id": "arregipietraszko2021_51",
@@ -564,8 +540,7 @@
       ["finitePosition", "V"],
       ["doSupport", "false"]
     ],
-    "comment": "Vikner 1995:144.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Vikner 1995:144."
   },
   {
     "id": "arregipietraszko2021_52",
@@ -585,8 +560,7 @@
       ["finitePosition", "C"],
       ["doSupport", "false"]
     ],
-    "comment": "Vikner 1995:47; subject-verb inversion without do-support.",
-    "lgrConformance": ""
+    "comment": "Vikner 1995:47; subject-verb inversion without do-support."
   },
   {
     "id": "arregipietraszko2021_53a",
@@ -607,8 +581,7 @@
       ["verbType", "lexical"],
       ["finitePosition", "T"]
     ],
-    "comment": "Monnese (Benincà and Poletto 2004:59–60).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Monnese (Benincà and Poletto 2004:59–60)."
   },
   {
     "id": "arregipietraszko2021_53b",
@@ -630,8 +603,7 @@
       ["finitePosition", "T"],
       ["doSupport", "false"]
     ],
-    "comment": "Monnese; negation does not trigger do-support.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Monnese; negation does not trigger do-support."
   },
   {
     "id": "arregipietraszko2021_54",
@@ -652,8 +624,7 @@
       ["verbType", "auxiliary"],
       ["finitePosition", "T"]
     ],
-    "comment": "Benincà and Poletto 2004:59.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Benincà and Poletto 2004:59."
   },
   {
     "id": "arregipietraszko2021_55",
@@ -675,8 +646,7 @@
       ["finitePosition", "C"],
       ["doSupport", "false"]
     ],
-    "comment": "Benincà and Poletto 2004:52.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Benincà and Poletto 2004:52."
   },
   {
     "id": "arregipietraszko2021_56b",
@@ -701,8 +671,7 @@
       ["doSupport", "true"],
       ["verbForm", "infinitive"]
     ],
-    "comment": "Benincà and Poletto 2004:52; (56a) is the starred alternative.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Benincà and Poletto 2004:52; (56a) is the starred alternative."
   },
   {
     "id": "arregipietraszko2021_57",
@@ -726,8 +695,7 @@
       ["doSupport", "true"],
       ["verbForm", "infinitive"]
     ],
-    "comment": "Bjorkman 2011:190–191; the infinitive follows the adverbial.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Bjorkman 2011:190–191; the infinitive follows the adverbial."
   },
   {
     "id": "arregipietraszko2021_61",
@@ -747,8 +715,7 @@
       ["finitePosition", "T"],
       ["doSupport", "true"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "arregipietraszko2021_62",
@@ -773,8 +740,7 @@
       ["finitePosition", "T"],
       ["doSupport", "false"]
     ],
-    "comment": "Verb-stranding VP-ellipsis.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Verb-stranding VP-ellipsis."
   },
   {
     "id": "arregipietraszko2021_67",
@@ -800,8 +766,7 @@
       ["finitePosition", "C"],
       ["doSupport", "true"]
     ],
-    "comment": "Sailor 2018:855–856.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Sailor 2018:855–856."
   },
   {
     "id": "arregipietraszko2021_70",
@@ -823,8 +788,7 @@
       ["doSupport", "false"],
       ["frontedForm", "infinitive"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arregipietraszko2021_71",
@@ -844,8 +808,7 @@
       ["doSupport", "true"],
       ["frontedForm", "bare"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "arregipietraszko2021_74a",
@@ -867,8 +830,7 @@
       ["doSupport", "false"],
       ["frontedForm", "infinitive"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "arregipietraszko2021_74b",
@@ -891,8 +853,7 @@
       ["doSupport", "false"],
       ["frontedForm", "infinitive"]
     ],
-    "comment": "Landau 2006:32.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Landau 2006:32."
   },
   {
     "id": "arregipietraszko2021_77",
@@ -917,8 +878,7 @@
       ["doSupport", "true"],
       ["frontedForm", "finite"]
     ],
-    "comment": "Platzack 2012:281; the fronted verb carries the same past inflection as the support verb.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Platzack 2012:281; the fronted verb carries the same past inflection as the support verb."
   },
   {
     "id": "arregipietraszko2021_80a",
@@ -940,8 +900,7 @@
       ["doSupport", "false"],
       ["frontedForm", "pseudoInfinitive"]
     ],
-    "comment": "Waletzky 1969, cited in Travis 2003:244; the infinitive is vis-n.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Waletzky 1969, cited in Travis 2003:244; the infinitive is vis-n."
   },
   {
     "id": "arregipietraszko2021_80b",
@@ -964,8 +923,7 @@
       ["doSupport", "false"],
       ["frontedForm", "pseudoInfinitive"]
     ],
-    "comment": "Waletzky 1969, cited in Travis 2003:244; the infinitive is zay-n.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Waletzky 1969, cited in Travis 2003:244; the infinitive is zay-n."
   },
   {
     "id": "arregipietraszko2021_80c",
@@ -988,8 +946,7 @@
       ["doSupport", "false"],
       ["frontedForm", "pseudoInfinitive"]
     ],
-    "comment": "Davis and Prince 1986:95.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Davis and Prince 1986:95."
   },
   {
     "id": "arregipietraszko2021_82",
@@ -1013,8 +970,7 @@
       ["doSupport", "false"],
       ["frontedForm", "infinitive"]
     ],
-    "comment": "The paper marks the true infinitive ? and the pseudo-infinitive *.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The paper marks the true infinitive ? and the pseudo-infinitive *."
   },
   {
     "id": "arregipietraszko2021_84",
@@ -1036,7 +992,6 @@
       ["doSupport", "true"],
       ["frontedForm", "bare"]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

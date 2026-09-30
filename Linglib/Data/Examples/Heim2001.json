@@ -24,8 +24,7 @@
         "max{d : tall(j, d)} > 4 feet"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_8",
@@ -65,8 +64,7 @@
         "the two LFs (9) are equivalent, (10)"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_11",
@@ -106,8 +104,7 @@
         "the two LFs are equivalent, (12)"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_13a",
@@ -147,8 +144,7 @@
         "the equivalence extends to equatives"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_13b",
@@ -184,8 +180,7 @@
         "existential"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_14a",
@@ -221,8 +216,7 @@
         "monotone increasing"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_14b",
@@ -258,8 +252,7 @@
         "monotone increasing"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_15a",
@@ -299,8 +292,7 @@
         "the two LFs (16) are equivalent"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_15b",
@@ -336,8 +328,7 @@
         "possibility"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_17a",
@@ -377,8 +368,7 @@
         "the high-DegP LF (17c) refers to an undefined maximum"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_18a",
@@ -414,8 +404,7 @@
         "monotone decreasing"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_19a",
@@ -451,8 +440,7 @@
         "implicitly negative"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_20a",
@@ -492,8 +480,7 @@
         "the high-DegP LF (20c) has a defined maximum and means at least two girls are taller"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_21a",
@@ -533,8 +520,7 @@
         "exactly"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_22a",
@@ -578,8 +564,7 @@
         "(22c) is true and the sentence false when the shortest girl is exactly 4'1'' and others are taller"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_24a",
@@ -623,8 +608,7 @@
         "(24c) says the shortest girl is less than 4' tall, not an available reading"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_25",
@@ -664,8 +648,7 @@
         "exactly"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_26",
@@ -705,8 +688,7 @@
         "less"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_28a",
@@ -750,8 +732,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_29a",
@@ -795,8 +776,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_30a",
@@ -840,8 +820,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_31a",
@@ -885,8 +864,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_32a",
@@ -930,8 +908,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_32b",
@@ -975,8 +952,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_33",
@@ -1020,8 +996,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_34a",
@@ -1065,8 +1040,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_34b",
@@ -1110,8 +1084,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_34c",
@@ -1155,8 +1128,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_36",
@@ -1187,8 +1159,7 @@
         "with the maximum of (35) the high-DegP LF (36b) is equivalent to (36a)"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_37",
@@ -1224,8 +1195,7 @@
         "the Russell ambiguity is de re versus de dicto, not DegP scope, (40)"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_38",
@@ -1252,8 +1222,7 @@
         "a high-DegP LF would misrepresent the truth conditions"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_41",
@@ -1280,8 +1249,7 @@
         "three readings: low DegP de dicto, low DegP de re, high DegP de re"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_42",
@@ -1308,8 +1276,7 @@
         "adds a de dicto reading (41) lacks"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_58",
@@ -1336,8 +1303,7 @@
         "the complement of -est is used twice, (59)"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_60a",
@@ -1373,8 +1339,7 @@
         "two readings by the size of the ellipsis antecedent"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_60b",
@@ -1410,8 +1375,7 @@
         "the same two readings by scoping -est, (61)"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "heim2001_63",
@@ -1447,7 +1411,6 @@
         "two readings by scoping too, (62)"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

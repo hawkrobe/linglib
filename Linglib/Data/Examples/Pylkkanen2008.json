@@ -34,8 +34,7 @@
     "paperFeatures": [
       ["test", "baseline"],
       ["relation", "recipient"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   },
   {
     "id": "pylkkanen2008_ex19c",
@@ -55,8 +54,7 @@
     "paperFeatures": [
       ["test", "baseline"],
       ["relation", "recipient"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   },
   {
     "id": "pylkkanen2008_ex19d",
@@ -76,8 +74,7 @@
     "paperFeatures": [
       ["test", "baseline"],
       ["relation", "benefactive"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   },
   {
     "id": "pylkkanen2008_ex19e",
@@ -115,8 +112,7 @@
     "paperFeatures": [
       ["test", "baseline"],
       ["relation", "benefactive"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   },
   {
     "id": "pylkkanen2008_ex20a",
@@ -166,8 +162,7 @@
     "readings": [],
     "paperFeatures": [
       ["test", "unergative"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   },
   {
     "id": "pylkkanen2008_ex21b",
@@ -186,8 +181,7 @@
     "readings": [],
     "paperFeatures": [
       ["test", "static"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   },
   {
     "id": "pylkkanen2008_ex22a",
@@ -205,8 +199,7 @@
     "readings": [],
     "paperFeatures": [
       ["test", "unergative"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   },
   {
     "id": "pylkkanen2008_ex22b",
@@ -225,8 +218,7 @@
     "readings": [],
     "paperFeatures": [
       ["test", "static"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   },
   {
     "id": "pylkkanen2008_ex23a",
@@ -244,8 +236,7 @@
     "readings": [],
     "paperFeatures": [
       ["test", "unergative"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   },
   {
     "id": "pylkkanen2008_ex23b",
@@ -264,8 +255,7 @@
     "readings": [],
     "paperFeatures": [
       ["test", "static"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   },
   {
     "id": "pylkkanen2008_ex24a",
@@ -283,8 +273,7 @@
     "readings": [],
     "paperFeatures": [
       ["test", "unergative"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   },
   {
     "id": "pylkkanen2008_ex24b",
@@ -302,8 +291,7 @@
     "readings": [],
     "paperFeatures": [
       ["test", "static"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   },
   {
     "id": "pylkkanen2008_ex25a",
@@ -321,8 +309,7 @@
     "readings": [],
     "paperFeatures": [
       ["test", "unergative"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   },
   {
     "id": "pylkkanen2008_ex25b",
@@ -341,8 +328,7 @@
     "readings": [],
     "paperFeatures": [
       ["test", "static"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   },
   {
     "id": "pylkkanen2008_ex26a",
@@ -396,8 +382,7 @@
     "paperFeatures": [
       ["test", "depictiveApplied"]
     ],
-    "comment": "False if Taro isn't naked: the depictive cannot modify the low applied argument in either position.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "False if Taro isn't naked: the depictive cannot modify the low applied argument in either position."
   },
   {
     "id": "pylkkanen2008_ex43a",
@@ -416,8 +401,7 @@
     "readings": [],
     "paperFeatures": [
       ["test", "depictiveApplied"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   },
   {
     "id": "pylkkanen2008_ex12",
@@ -438,8 +422,7 @@
       ["test", "baseline"],
       ["relation", "source"]
     ],
-    "comment": "Hypothesized meaning: the thief stole a ring and it was from Mary's possession.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Hypothesized meaning: the thief stole a ring and it was from Mary's possession."
   },
   {
     "id": "pylkkanen2008_ex82a",
@@ -461,8 +444,7 @@
       ["relation", "source"],
       ["construction", "possessorDative"]
     ],
-    "comment": "From Landau 1999.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "From Landau 1999."
   },
   {
     "id": "pylkkanen2008_ex120a",
@@ -483,8 +465,7 @@
       ["test", "baseline"],
       ["relation", "source"],
       ["construction", "adversityGapped"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   },
   {
     "id": "pylkkanen2008_ex121a",
@@ -505,8 +486,7 @@
       ["test", "baseline"],
       ["relation", "malefactive"],
       ["construction", "adversityGapless"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   },
   {
     "id": "pylkkanen2008_ex95",
@@ -540,7 +520,6 @@
     "readings": [],
     "paperFeatures": [
       ["test", "rootCausativeUnergative"]
-    ],
-    "lgrConformance": "WORD_ALIGNED"
+    ]
   }
 ]

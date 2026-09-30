@@ -33,8 +33,7 @@
         "veng"
       ]
     ],
-    "comment": "The velar stem of the L-morphome.",
-    "lgrConformance": ""
+    "comment": "The velar stem of the L-morphome."
   },
   {
     "id": "herce2023_venir_2sg_ind",
@@ -70,8 +69,7 @@
         "vien"
       ]
     ],
-    "comment": "The diphthongized stem outside the L-morphome.",
-    "lgrConformance": ""
+    "comment": "The diphthongized stem outside the L-morphome."
   },
   {
     "id": "herce2023_venir_1pl_ind",
@@ -107,8 +105,7 @@
         "ven"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "herce2023_venir_1sg_sbjv",
@@ -144,8 +141,7 @@
         "veng"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "herce2023_nacer_1sg_ind",
@@ -181,8 +177,7 @@
         "naθk"
       ]
     ],
-    "comment": "The velar stem of the L-morphome under a different exponent.",
-    "lgrConformance": ""
+    "comment": "The velar stem of the L-morphome under a different exponent."
   },
   {
     "id": "herce2023_nacer_1pl_ind",
@@ -218,8 +213,7 @@
         "naθ"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "herce2023_caber_1sg_ind",
@@ -255,8 +249,7 @@
         "kep"
       ]
     ],
-    "comment": "The weakly suppletive stem of the L-morphome.",
-    "lgrConformance": ""
+    "comment": "The weakly suppletive stem of the L-morphome."
   },
   {
     "id": "herce2023_caber_2sg_ind",
@@ -292,8 +285,7 @@
         "kab"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "herce2023_ra_npst_1sg",
@@ -325,8 +317,7 @@
         "ra"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "herce2023_ra_npst_2sg",
@@ -358,8 +349,7 @@
         "ra"
       ]
     ],
-    "comment": "The suffix shared by the first person plural and the second person; the second person plural adds an optional -i.",
-    "lgrConformance": ""
+    "comment": "The suffix shared by the first person plural and the second person; the second person plural adds an optional -i."
   },
   {
     "id": "herce2023_ra_npst_3sg",
@@ -391,8 +381,7 @@
         "ra"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "herce2023_ra_pst_2sg",
@@ -424,8 +413,7 @@
         "ra"
       ]
     ],
-    "comment": "The same cells share a different suffix in the past: the syncretism recurs across tenses.",
-    "lgrConformance": ""
+    "comment": "The same cells share a different suffix in the past: the syncretism recurs across tenses."
   },
   {
     "id": "herce2023_ra_pst_1sg",
@@ -457,7 +445,6 @@
         "ra"
       ]
     ],
-    "comment": "The past form of the first person singular and the third person.",
-    "lgrConformance": ""
+    "comment": "The past form of the first person singular and the third person."
   }
 ]

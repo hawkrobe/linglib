@@ -31,9 +31,7 @@ def ex4 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.1"), ("form", "φ ⪰ ψ_i for each i")]
-    comment := "True, since Sam holds as many tickets as anyone; the starting point of the iterated disjunction puzzle."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "True, since Sam holds as many tickets as anyone; the starting point of the iterated disjunction puzzle." }
 
 def ex8 : LinguisticExample :=
   { id := "lassiter2015_ex8"
@@ -49,9 +47,7 @@ def ex8 : LinguisticExample :=
     alternatives := []
     readings := [("φ ⪰ (ψ ∨ χ)", .unacceptable), ("φ ⪰ ψ ∧ φ ⪰ χ", .acceptable)]
     paperFeatures := [("section", "1.1"), ("form", "φ ⪰ (ψ ∨ χ)")]
-    comment := "False on the reading equivalent to (9): Mary and Sue hold four tickets together against Sam's two; the conjunctive reading of the disjunction in a comparative complement is set aside."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "False on the reading equivalent to (9): Mary and Sue hold four tickets together against Sam's two; the conjunctive reading of the disjunction in a comparative complement is set aside." }
 
 def ex9 : LinguisticExample :=
   { id := "lassiter2015_ex9"
@@ -67,9 +63,7 @@ def ex9 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.1"), ("form", "φ ⪰ (ψ ∨ χ)")]
-    comment := "Unambiguously false; the reading (8) shares."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Unambiguously false; the reading (8) shares." }
 
 def ex12 : LinguisticExample :=
   { id := "lassiter2015_ex12"
@@ -85,9 +79,7 @@ def ex12 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.1"), ("form", "φ ⪰ (ψ₁ ∨ … ∨ ψ₇)")]
-    comment := "Iterating the puzzle; feeding each conclusion back as a premise reaches (14), that Sam is as likely to win as not."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Iterating the puzzle; feeding each conclusion back as a premise reaches (14), that Sam is as likely to win as not." }
 
 def ex33c : LinguisticExample :=
   { id := "lassiter2015_ex33c"
@@ -103,9 +95,7 @@ def ex33c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.4"), ("form", "(φ ∧ ¬ψ ∧ ¬χ) ⪰ ((¬φ ∧ ψ ∧ ¬χ) ∨ (¬φ ∧ ¬ψ ∧ χ))")]
-    comment := "The modified disjunction puzzle's conclusion: as invalid as (8), yet valid for the revised comparative possibility once the alternatives are stated as disjoint."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The modified disjunction puzzle's conclusion: as invalid as (8), yet valid for the revised comparative possibility once the alternatives are stated as disjoint." }
 
 def ex35 : LinguisticExample :=
   { id := "lassiter2015_ex35"
@@ -121,9 +111,7 @@ def ex35 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "1.5"), ("pattern", "must to more likely than not")]
-    comment := "Intuitively obvious, weaker than (3); invalid when the m-lifting is combined with Kratzer's semantics for must."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Intuitively obvious, weaker than (3); invalid when the m-lifting is combined with Kratzer's semantics for must." }
 
 def ex48 : LinguisticExample :=
   { id := "lassiter2015_ex48"
@@ -139,9 +127,7 @@ def ex48 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("measure", "symmetric fuzzy")]
-    comment := "Compatible with a symmetric fuzzy measure for likely; clearly wrong unless going to school is impossible, which the equal-shares axiom enforces."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Compatible with a symmetric fuzzy measure for likely; clearly wrong unless going to school is impossible, which the equal-shares axiom enforces." }
 
 def ex50 : LinguisticExample :=
   { id := "lassiter2015_ex50"
@@ -157,9 +143,7 @@ def ex50 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("modifier", "ratio")]
-    comment := "Ratio modifiers are acceptable with likely, as with adjectives on additive scales."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Ratio modifiers are acceptable with likely, as with adjectives on additive scales." }
 
 def ex51 : LinguisticExample :=
   { id := "lassiter2015_ex51"
@@ -175,9 +159,7 @@ def ex51 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("modifier", "ratio")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex53 : LinguisticExample :=
   { id := "lassiter2015_ex53"
@@ -193,9 +175,7 @@ def ex53 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("modifier", "ratio"), ("scale", "additive")]
-    comment := "The paper prints the variants tall, old and heavy with a single check mark."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paper prints the variants tall, old and heavy with a single check mark." }
 
 def ex54 : LinguisticExample :=
   { id := "lassiter2015_ex54"
@@ -211,9 +191,7 @@ def ex54 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("modifier", "ratio"), ("scale", "non-additive")]
-    comment := "Printed with two question marks, with the variants hungry and lecherous; ratio modifiers resist adjectives on non-additive scales."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Printed with two question marks, with the variants hungry and lecherous; ratio modifiers resist adjectives on non-additive scales." }
 
 def ex56 : LinguisticExample :=
   { id := "lassiter2015_ex56"
@@ -229,9 +207,7 @@ def ex56 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("pattern", "must to much more likely than not")]
-    comment := "Clearly valid; none of the bridging rules BR1–BR3 validates it, and the quantificational and strong probabilistic auxiliaries do."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Clearly valid; none of the bridging rules BR1–BR3 validates it, and the quantificational and strong probabilistic auxiliaries do." }
 
 def ex62 : LinguisticExample :=
   { id := "lassiter2015_ex62"
@@ -247,9 +223,7 @@ def ex62 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("issue", "weakness of must")]
-    comment := "The conclusion is presented as the best explanation of the evidence, not as the only possibility: a marital split would be an obvious alternative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The conclusion is presented as the best explanation of the evidence, not as the only possibility: a marital split would be an obvious alternative." }
 
 def ex65a : LinguisticExample :=
   { id := "lassiter2015_ex65a"
@@ -265,9 +239,7 @@ def ex65a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("pattern", "more likely than to might")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex65b : LinguisticExample :=
   { id := "lassiter2015_ex65b"
@@ -283,9 +255,7 @@ def ex65b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "4"), ("pattern", "more likely than to might")]
-    comment := "Not obviously inferable from (65a); if the inference fails, the weak probabilistic auxiliaries are favoured."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Not obviously inferable from (65a); if the inference fails, the weak probabilistic auxiliaries are favoured." }
 
 def all : List LinguisticExample := [ex4, ex8, ex9, ex12, ex33c, ex35, ex48, ex50, ex51, ex53, ex54, ex56, ex62, ex65a, ex65b]
 

@@ -18,9 +18,7 @@
       ["conjuncts", "human M + human F"],
       ["resolved", "M"]
     ],
-    "comment": "Mismatched humans resolve masculine plural.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Mismatched humans resolve masculine plural."
   },
   {
     "id": "adamsonanagnostopoulou2025_22b",
@@ -41,9 +39,7 @@
       ["conjuncts", "inanimate M + inanimate F"],
       ["resolved", "N"]
     ],
-    "comment": "Mismatched inanimates resolve neuter plural.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Mismatched inanimates resolve neuter plural."
   },
   {
     "id": "adamsonanagnostopoulou2025_25a",
@@ -62,9 +58,7 @@
       ["conjuncts", "human F + human F"],
       ["resolved", "F"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adamsonanagnostopoulou2025_25b",
@@ -83,9 +77,7 @@
       ["conjuncts", "human M + human M"],
       ["resolved", "M"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adamsonanagnostopoulou2025_35",
@@ -106,9 +98,7 @@
       ["conjuncts", "human F + fixed-gender N (female)"],
       ["resolved", "F"]
     ],
-    "comment": "Anagnostopoulou 2017:26; the neuter koritsi resolves by its referent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Anagnostopoulou 2017:26; the neuter koritsi resolves by its referent."
   },
   {
     "id": "adamsonanagnostopoulou2025_36",
@@ -129,9 +119,7 @@
       ["conjuncts", "fixed-gender F (male) + human F"],
       ["resolved", "M"]
     ],
-    "comment": "Two grammatically feminine conjuncts resolve masculine because the genius is a man.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Two grammatically feminine conjuncts resolve masculine because the genius is a man."
   },
   {
     "id": "adamsonanagnostopoulou2025_37",
@@ -153,9 +141,7 @@
       ["conjuncts", "fixed-gender N (female) + human F"],
       ["resolved", "F"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adamsonanagnostopoulou2025_38a",
@@ -174,9 +160,7 @@
       ["conjuncts", "inanimate F + inanimate F"],
       ["resolved", "F"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adamsonanagnostopoulou2025_38b",
@@ -195,9 +179,7 @@
       ["conjuncts", "inanimate M + inanimate M"],
       ["resolved", "M"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adamsonanagnostopoulou2025_38c",
@@ -216,9 +198,7 @@
       ["conjuncts", "inanimate N + inanimate N"],
       ["resolved", "N"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adamsonanagnostopoulou2025_40b",
@@ -240,9 +220,7 @@
       ["conjuncts", "inanimate N + inanimate F"],
       ["resolved", "N"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adamsonanagnostopoulou2025_40c",
@@ -263,9 +241,7 @@
       ["conjuncts", "inanimate N + inanimate M"],
       ["resolved", "N"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adamsonanagnostopoulou2025_43",
@@ -284,9 +260,7 @@
       ["conjuncts", "inanimate F + inanimate F"],
       ["resolved", "N"]
     ],
-    "comment": "Accepted by some speakers: uniform inanimates percolating interpretable CLASS.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Accepted by some speakers: uniform inanimates percolating interpretable CLASS."
   },
   {
     "id": "adamsonanagnostopoulou2025_45",
@@ -307,9 +281,7 @@
       ["agreement", "closest conjunct"],
       ["value", "uF"]
     ],
-    "comment": "Closest conjunct agreement takes the uninterpretable feminine of megalofiia, not its interpretable masculine.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Closest conjunct agreement takes the uninterpretable feminine of megalofiia, not its interpretable masculine."
   },
   {
     "id": "adamsonanagnostopoulou2025_46",
@@ -330,9 +302,7 @@
       ["agreement", "closest conjunct"],
       ["value", "uF"]
     ],
-    "comment": "Closest conjunct agreement takes the inanimate's uninterpretable masculine, not its interpretable CLASS.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Closest conjunct agreement takes the inanimate's uninterpretable masculine, not its interpretable CLASS."
   },
   {
     "id": "adamsonanagnostopoulou2025_47",
@@ -353,9 +323,7 @@
       ["conjuncts", "human M + inanimate N"],
       ["resolved", "ineffable"]
     ],
-    "comment": "Ineffable: no exponent realizes the thief's MASC and the ring's CLASS together.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Ineffable: no exponent realizes the thief's MASC and the ring's CLASS together."
   },
   {
     "id": "adamsonanagnostopoulou2025_48b",
@@ -374,9 +342,7 @@
       ["conjuncts", "human M + inanimate N"],
       ["agreement", "verb, no gender"]
     ],
-    "comment": "Grammatical when nothing agrees in gender with the coordination.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Grammatical when nothing agrees in gender with the coordination."
   },
   {
     "id": "adamsonanagnostopoulou2025_50",
@@ -399,9 +365,7 @@
       ["conjuncts", "human M + inanimate N"],
       ["predicate", "uninflected"]
     ],
-    "comment": "An uninflected loanword adjective escapes the PF clash.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "An uninflected loanword adjective escapes the PF clash."
   },
   {
     "id": "adamsonanagnostopoulou2025_54a",
@@ -420,9 +384,7 @@
       ["conjuncts", "human M + inanimate M"],
       ["resolved", "M"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adamsonanagnostopoulou2025_54b",
@@ -441,9 +403,7 @@
       ["conjuncts", "human F + inanimate F"],
       ["resolved", "F"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adamsonanagnostopoulou2025_56",
@@ -465,9 +425,7 @@
       ["conjuncts", "fixed-gender F (male) + inanimate M"],
       ["resolved", "M"]
     ],
-    "comment": "The genius's interpretable MASC matches the painting's uninterpretable MASC.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The genius's interpretable MASC matches the painting's uninterpretable MASC."
   },
   {
     "id": "adamsonanagnostopoulou2025_57a",
@@ -489,9 +447,7 @@
       ["conjuncts", "fixed-gender N (male) + inanimate M"],
       ["resolved", "M"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adamsonanagnostopoulou2025_57b",
@@ -513,9 +469,7 @@
       ["conjuncts", "fixed-gender N (female) + inanimate F"],
       ["resolved", "F"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adamsonanagnostopoulou2025_58",
@@ -534,9 +488,7 @@
       ["conjuncts", "clause + clause"],
       ["resolved", "N"]
     ],
-    "comment": "Clausal conjuncts carry no gender; the predicate is neuter.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Clausal conjuncts carry no gender; the predicate is neuter."
   },
   {
     "id": "adamsonanagnostopoulou2025_59",
@@ -555,9 +507,7 @@
       ["conjuncts", "inanimate F + inanimate M"],
       ["resolved", "N"]
     ],
-    "comment": "Thorvaldsdóttir 2019:2.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Thorvaldsdóttir 2019:2."
   },
   {
     "id": "adamsonanagnostopoulou2025_60",
@@ -579,9 +529,7 @@
       ["conjuncts", "human M + human F"],
       ["resolved", "N"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "adamsonanagnostopoulou2025_61",
@@ -602,9 +550,7 @@
       ["conjuncts", "fixed-gender N (male) + human M"],
       ["resolved", "M"]
     ],
-    "comment": "Wechsler 2008:573; the neuter skáld resolves by its referent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Wechsler 2008:573; the neuter skáld resolves by its referent."
   },
   {
     "id": "adamsonanagnostopoulou2025_68",
@@ -623,9 +569,7 @@
       ["conjuncts", "human M + human F"],
       ["resolved", "M"]
     ],
-    "comment": "Motschenbacher and Weikert 2015:75.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Motschenbacher and Weikert 2015:75."
   },
   {
     "id": "adamsonanagnostopoulou2025_69",
@@ -644,9 +588,7 @@
       ["conjuncts", "inanimate N + inanimate F"],
       ["resolved", "M"]
     ],
-    "comment": "Corbett 1983:187.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Corbett 1983:187."
   },
   {
     "id": "adamsonanagnostopoulou2025_70",
@@ -667,8 +609,6 @@
       ["conjuncts", "inanimate N + inanimate N"],
       ["resolved", "M"]
     ],
-    "comment": "Despić 2016:3; two neuters resolve masculine.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Despić 2016:3; two neuters resolve masculine."
   }
 ]

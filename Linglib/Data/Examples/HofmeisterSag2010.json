@@ -28,8 +28,7 @@
         "subject"
       ]
     ],
-    "comment": "Judged more acceptable than the object question (42b): the filler integrates at the next word.",
-    "lgrConformance": ""
+    "comment": "Judged more acceptable than the object question (42b): the filler integrates at the next word."
   },
   {
     "id": "hofmeistersag2010_ex42b",
@@ -60,8 +59,7 @@
         "object"
       ]
     ],
-    "comment": "Three discourse referents are identified while the filler is held in memory.",
-    "lgrConformance": ""
+    "comment": "Three discourse referents are identified while the filler is held in memory."
   },
   {
     "id": "hofmeistersag2010_ex43",
@@ -88,8 +86,7 @@
         "referential load"
       ]
     ],
-    "comment": "Warren and Gibson's contrast: definite NPs and names inside the dependency slow reading at the retrieval site relative to pronouns.",
-    "lgrConformance": ""
+    "comment": "Warren and Gibson's contrast: definite NPs and names inside the dependency slow reading at the retrieval site relative to pronouns."
   },
   {
     "id": "hofmeistersag2010_ex44a",
@@ -120,8 +117,7 @@
         "that"
       ]
     ],
-    "comment": "Kluender and Kutas's contrast: the declarative complement is rated highest.",
-    "lgrConformance": ""
+    "comment": "Kluender and Kutas's contrast: the declarative complement is rated highest."
   },
   {
     "id": "hofmeistersag2010_ex44b",
@@ -152,8 +148,7 @@
         "if"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hofmeistersag2010_ex44c",
@@ -184,8 +179,7 @@
         "who"
       ]
     ],
-    "comment": "The interrogative complement is rated lowest, with no filler crossing the boundary.",
-    "lgrConformance": ""
+    "comment": "The interrogative complement is rated lowest, with no filler crossing the boundary."
   },
   {
     "id": "hofmeistersag2010_ex45a",
@@ -216,8 +210,7 @@
         "simple"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hofmeistersag2010_ex45b",
@@ -248,8 +241,7 @@
         "complex"
       ]
     ],
-    "comment": "Hofmeister's finding: the richer filler is read faster from the subcategorizing verb on.",
-    "lgrConformance": ""
+    "comment": "Hofmeister's finding: the richer filler is read faster from the subcategorizing verb on."
   },
   {
     "id": "hofmeistersag2010_ex46",
@@ -276,8 +268,7 @@
         "complexNP"
       ]
     ],
-    "comment": "A dependency into a complex NP processes three nominal references and crosses a clause boundary.",
-    "lgrConformance": ""
+    "comment": "A dependency into a complex NP processes three nominal references and crosses a clause boundary."
   },
   {
     "id": "hofmeistersag2010_ex48_bareDef",
@@ -316,8 +307,7 @@
         "definite"
       ]
     ],
-    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects.",
-    "lgrConformance": ""
+    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects."
   },
   {
     "id": "hofmeistersag2010_ex48_barePl",
@@ -356,8 +346,7 @@
         "plural"
       ]
     ],
-    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects.",
-    "lgrConformance": ""
+    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects."
   },
   {
     "id": "hofmeistersag2010_ex48_bareIndef",
@@ -396,8 +385,7 @@
         "indefinite"
       ]
     ],
-    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects.",
-    "lgrConformance": ""
+    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects."
   },
   {
     "id": "hofmeistersag2010_ex48_whichDef",
@@ -436,8 +424,7 @@
         "definite"
       ]
     ],
-    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects.",
-    "lgrConformance": ""
+    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects."
   },
   {
     "id": "hofmeistersag2010_ex48_whichPl",
@@ -476,8 +463,7 @@
         "plural"
       ]
     ],
-    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects.",
-    "lgrConformance": ""
+    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects."
   },
   {
     "id": "hofmeistersag2010_ex48_whichIndef",
@@ -516,8 +502,7 @@
         "indefinite"
       ]
     ],
-    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects.",
-    "lgrConformance": ""
+    "comment": "Experiment 1 item; the which-N conditions are read faster from the complementizer on and rated higher, and NP type has only weak, local effects."
   },
   {
     "id": "hofmeistersag2010_ex48_baseline",
@@ -552,8 +537,7 @@
         "whichN"
       ]
     ],
-    "comment": "The non-island baseline of Experiment 1, rated higher than every island condition.",
-    "lgrConformance": ""
+    "comment": "The non-island baseline of Experiment 1, rated higher than every island condition."
   },
   {
     "id": "hofmeistersag2010_ex49_bare",
@@ -588,8 +572,7 @@
         "bare"
       ]
     ],
-    "comment": "Experiment 2 item; the which-N question is read as fast as the baseline after the embedded verb, the bare one slower.",
-    "lgrConformance": ""
+    "comment": "Experiment 2 item; the which-N question is read as fast as the baseline after the embedded verb, the bare one slower."
   },
   {
     "id": "hofmeistersag2010_ex49_which",
@@ -624,8 +607,7 @@
         "whichN"
       ]
     ],
-    "comment": "Experiment 2 item; the which-N question is read as fast as the baseline after the embedded verb, the bare one slower.",
-    "lgrConformance": ""
+    "comment": "Experiment 2 item; the which-N question is read as fast as the baseline after the embedded verb, the bare one slower."
   },
   {
     "id": "hofmeistersag2010_ex49_baseline",
@@ -660,7 +642,6 @@
         "bare"
       ]
     ],
-    "comment": "Experiment 2 item; the which-N question is read as fast as the baseline after the embedded verb, the bare one slower.",
-    "lgrConformance": ""
+    "comment": "Experiment 2 item; the which-N question is read as fast as the baseline after the embedded verb, the bare one slower."
   }
 ]

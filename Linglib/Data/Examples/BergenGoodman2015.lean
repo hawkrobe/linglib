@@ -31,9 +31,7 @@ def stressed_subject : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("stress", "subject"), ("reading", "exhaustive")]
-    comment := "Migrated from Phenomena/Focus/ProsodicExhaustivity.lean stressedSubject. Stress on the subject signals exhaustive knowledge: only Bob went. Modeled by the noisy-channel Prosody model in Studies/BergenGoodman2015.lean (stress halves the rate at which the subject is misheard)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Migrated from Phenomena/Focus/ProsodicExhaustivity.lean stressedSubject. Stress on the subject signals exhaustive knowledge: only Bob went. Modeled by the noisy-channel Prosody model in Studies/BergenGoodman2015.lean (stress halves the rate at which the subject is misheard)." }
 
 def unstressed_subject : LinguisticExample :=
   { id := "bergengoodman2015_unstressed_subject"
@@ -49,9 +47,7 @@ def unstressed_subject : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("stress", "none"), ("reading", "nonExhaustive")]
-    comment := "Migrated from Phenomena/Focus/ProsodicExhaustivity.lean unstressedSubject. Without stress the answer is compatible with others having gone too."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Migrated from Phenomena/Focus/ProsodicExhaustivity.lean unstressedSubject. Without stress the answer is compatible with others having gone too." }
 
 def all : List LinguisticExample := [stressed_subject, unstressed_subject]
 

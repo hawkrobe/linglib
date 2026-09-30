@@ -31,9 +31,7 @@ def ex4_1a : LinguisticExample :=
     alternatives := []
     readings := [("∃ > if", .acceptable)]
     paperFeatures := []
-    comment := "Exceptional scope of an indefinite out of a conditional antecedent, a scope island."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Exceptional scope of an indefinite out of a conditional antecedent, a scope island." }
 
 def ex4_1b : LinguisticExample :=
   { id := "charlow2014_ex4_1b"
@@ -49,9 +47,7 @@ def ex4_1b : LinguisticExample :=
     alternatives := []
     readings := [("∀ > if", .unacceptable)]
     paperFeatures := []
-    comment := "A universal cannot scope out of the antecedent; contrast with (4.1a)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A universal cannot scope out of the antecedent; contrast with (4.1a)." }
 
 def ex4_1c : LinguisticExample :=
   { id := "charlow2014_ex4_1c"
@@ -67,9 +63,7 @@ def ex4_1c : LinguisticExample :=
     alternatives := []
     readings := [("¬∃ > if", .unacceptable)]
     paperFeatures := []
-    comment := "A negative quantifier cannot scope out of the antecedent."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A negative quantifier cannot scope out of the antecedent." }
 
 def ex4_2a : LinguisticExample :=
   { id := "charlow2014_ex4_2a"
@@ -85,9 +79,7 @@ def ex4_2a : LinguisticExample :=
     alternatives := []
     readings := [("no > ∃ > every (intermediate)", .acceptable)]
     paperFeatures := []
-    comment := "Intermediate exceptional scope out of a tensed relative clause, with the indefinite bound into by the subject."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Intermediate exceptional scope out of a tensed relative clause, with the indefinite bound into by the subject." }
 
 def ex4_4 : LinguisticExample :=
   { id := "charlow2014_ex4_4"
@@ -103,9 +95,7 @@ def ex4_4 : LinguisticExample :=
     alternatives := []
     readings := [("∃ > no (pronoun bound)", .unacceptable)]
     paperFeatures := []
-    comment := "The Binder Roof Constraint: an indefinite cannot take existential scope over an operator that binds into its restrictor."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The Binder Roof Constraint: an indefinite cannot take existential scope over an operator that binds into its restrictor." }
 
 def ex4_6 : LinguisticExample :=
   { id := "charlow2014_ex4_6"
@@ -121,9 +111,7 @@ def ex4_6 : LinguisticExample :=
     alternatives := []
     readings := [("a book > not > a famous linguist", .unacceptable)]
     paperFeatures := []
-    comment := "A container indefinite cannot outscope negation while the embedded indefinite scopes below it."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A container indefinite cannot outscope negation while the embedded indefinite scopes below it." }
 
 def ex4_18b : LinguisticExample :=
   { id := "charlow2014_ex4_18b"
@@ -139,9 +127,7 @@ def ex4_18b : LinguisticExample :=
     alternatives := []
     readings := [("a relative > if > a lawyer", .acceptable)]
     paperFeatures := []
-    comment := "Selective exceptional scope: two indefinites on one island scope differently outside it."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Selective exceptional scope: two indefinites on one island scope differently outside it." }
 
 def ex4_23a : LinguisticExample :=
   { id := "charlow2014_ex4_23a"
@@ -157,9 +143,7 @@ def ex4_23a : LinguisticExample :=
     alternatives := []
     readings := [("or > hopes, indefinites de dicto", .acceptable)]
     paperFeatures := []
-    comment := "Disjunction takes exceptional scope while its disjuncts stay below the attitude verb: disjunction does not respect the Binder Roof Constraint."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Disjunction takes exceptional scope while its disjuncts stay below the attitude verb: disjunction does not respect the Binder Roof Constraint." }
 
 def ex4_23b : LinguisticExample :=
   { id := "charlow2014_ex4_23b"
@@ -175,9 +159,7 @@ def ex4_23b : LinguisticExample :=
     alternatives := []
     readings := [("and > hopes", .unacceptable)]
     paperFeatures := []
-    comment := "Unstressed conjunction does not scope out of the island."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Unstressed conjunction does not scope out of the island." }
 
 def ex4_24b : LinguisticExample :=
   { id := "charlow2014_ex4_24b"
@@ -193,9 +175,7 @@ def ex4_24b : LinguisticExample :=
     alternatives := []
     readings := [("either everyone ate a steak, or everyone ate a hamburger (or > every > a)", .acceptable)]
     paperFeatures := []
-    comment := "Disjunction scopes over the universal while each disjoined indefinite stays within it."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Disjunction scopes over the universal while each disjoined indefinite stays within it." }
 
 def ex4_25b : LinguisticExample :=
   { id := "charlow2014_ex4_25b"
@@ -211,9 +191,7 @@ def ex4_25b : LinguisticExample :=
     alternatives := []
     readings := [("every farmer beats every donkey or horse he owns", .acceptable)]
     paperFeatures := []
-    comment := "Disjunctions license donkey anaphora like indefinites."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Disjunctions license donkey anaphora like indefinites." }
 
 def ex5_7a : LinguisticExample :=
   { id := "charlow2014_ex5_7a"
@@ -229,9 +207,7 @@ def ex5_7a : LinguisticExample :=
     alternatives := []
     readings := [("sloppy (him = Bill)", .acceptable)]
     paperFeatures := []
-    comment := "Surprising sloppy reading: Bill's dref must scope out of a tensed clause and over the dynamically closed 'everyone' to bind the sloppy pro-form."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Surprising sloppy reading: Bill's dref must scope out of a tensed clause and over the dynamically closed 'everyone' to bind the sloppy pro-form." }
 
 def ex5_22 : LinguisticExample :=
   { id := "charlow2014_ex5_22"
@@ -247,9 +223,7 @@ def ex5_22 : LinguisticExample :=
     alternatives := []
     readings := [("they = maximal refset", .acceptable)]
     paperFeatures := []
-    comment := "A maximal refset dref created inside a scope island, under dynamically closed operators, is available for cross-sentential anaphora."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A maximal refset dref created inside a scope island, under dynamically closed operators, is available for cross-sentential anaphora." }
 
 def ex5_23 : LinguisticExample :=
   { id := "charlow2014_ex5_23"
@@ -265,9 +239,7 @@ def ex5_23 : LinguisticExample :=
     alternatives := []
     readings := [("they = maximal refset", .acceptable)]
     paperFeatures := []
-    comment := "The refset dref of 'no senators' survives the negation scoping over its island."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The refset dref of 'no senators' survives the negation scoping over its island." }
 
 def ex5_27b : LinguisticExample :=
   { id := "charlow2014_ex5_27b"
@@ -283,9 +255,7 @@ def ex5_27b : LinguisticExample :=
     alternatives := []
     readings := [("also > SUE > only > BILL", .acceptable)]
     paperFeatures := []
-    comment := "Selective association with focus: only associates with BILL, also with SUE."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Selective association with focus: only associates with BILL, also with SUE." }
 
 def all : List LinguisticExample := [ex4_1a, ex4_1b, ex4_1c, ex4_2a, ex4_4, ex4_6, ex4_18b, ex4_23a, ex4_23b, ex4_24b, ex4_25b, ex5_7a, ex5_22, ex5_23, ex5_27b]
 

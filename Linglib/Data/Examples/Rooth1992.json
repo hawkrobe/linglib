@@ -29,8 +29,7 @@
         "false"
       ]
     ],
-    "comment": "False in the introduction scenario: the domain of only is constrained to properties of the form 'introducing y to Sue', and Mary also introduced Tom to Sue.",
-    "metaLanguage": "stan1293"
+    "comment": "False in the introduction scenario: the domain of only is constrained to properties of the form 'introducing y to Sue', and Mary also introduced Tom to Sue."
   },
   {
     "id": "rooth1992_3b",
@@ -62,8 +61,7 @@
         "true"
       ]
     ],
-    "comment": "True in the introduction scenario: among properties of the form 'introducing Bill to z', Mary has only 'introducing Bill to Sue'.",
-    "metaLanguage": "stan1293"
+    "comment": "True in the introduction scenario: among properties of the form 'introducing Bill to z', Mary has only 'introducing Bill to Sue'."
   },
   {
     "id": "rooth1992_7",
@@ -91,8 +89,7 @@
         "read"
       ]
     ],
-    "comment": "With a focused transitive verb the focus semantic value of the VP contains every property of the form 'R-ing The Recognitions', trivial relations included; fixing the domain of only to it gives unsatisfiable truth conditions, though the sentence can be true.",
-    "metaLanguage": "stan1293"
+    "comment": "With a focused transitive verb the focus semantic value of the VP contains every property of the form 'R-ing The Recognitions', trivial relations included; fixing the domain of only to it gives unsatisfiable truth conditions, though the sentence can be true."
   },
   {
     "id": "rooth1992_11",
@@ -116,8 +113,7 @@
         "contrast"
       ]
     ],
-    "comment": "Symmetric contrast: each N' is construed as contrasting with the other, the ordinary value of each being a member of the focus semantic value of the other.",
-    "metaLanguage": "stan1293"
+    "comment": "Symmetric contrast: each N' is construed as contrasting with the other, the ordinary value of each being a member of the focus semantic value of the other."
   },
   {
     "id": "rooth1992_16",
@@ -150,8 +146,7 @@
         "passed"
       ]
     ],
-    "comment": "Suggests that the speaker did no better than passing, and nothing about whether the roommates passed.",
-    "metaLanguage": "stan1293"
+    "comment": "Suggests that the speaker did no better than passing, and nothing about whether the roommates passed."
   },
   {
     "id": "rooth1992_17",
@@ -184,8 +179,7 @@
         "I"
       ]
     ],
-    "comment": "Suggests that the roommates did not pass, via a scale of group propositions of the form 'x passed'.",
-    "metaLanguage": "stan1293"
+    "comment": "Suggests that the roommates did not pass, via a scale of group propositions of the form 'x passed'."
   },
   {
     "id": "rooth1992_23Aa_Qa",
@@ -217,8 +211,7 @@
         "Mary"
       ]
     ],
-    "comment": "An appropriate answer: the question denotation is a subset of the answer's focus semantic value.",
-    "metaLanguage": "stan1293"
+    "comment": "An appropriate answer: the question denotation is a subset of the answer's focus semantic value."
   },
   {
     "id": "rooth1992_23Ab_Qa",
@@ -250,8 +243,7 @@
         "Bill"
       ]
     ],
-    "comment": "Inappropriate: the propositions of the form 'x cut Bill down to size' are not all of the form 'Mary cut y down to size'.",
-    "metaLanguage": "stan1293"
+    "comment": "Inappropriate: the propositions of the form 'x cut Bill down to size' are not all of the form 'Mary cut y down to size'."
   },
   {
     "id": "rooth1992_23Ab_Qb",
@@ -283,8 +275,7 @@
         "Bill"
       ]
     ],
-    "comment": "An appropriate answer to the object question.",
-    "metaLanguage": "stan1293"
+    "comment": "An appropriate answer to the object question."
   },
   {
     "id": "rooth1992_23Aa_Qb",
@@ -316,8 +307,7 @@
         "Mary"
       ]
     ],
-    "comment": "Inappropriate as an answer to the object question.",
-    "metaLanguage": "stan1293"
+    "comment": "Inappropriate as an answer to the object question."
   },
   {
     "id": "rooth1992_59a",
@@ -354,8 +344,7 @@
         "me"
       ]
     ],
-    "comment": "Bare remnant ellipsis: focus on the object correlate selects the reading in which the remnant corresponds to the object.",
-    "metaLanguage": "stan1293"
+    "comment": "Bare remnant ellipsis: focus on the object correlate selects the reading in which the remnant corresponds to the object."
   },
   {
     "id": "rooth1992_59b",
@@ -392,8 +381,7 @@
         "she"
       ]
     ],
-    "comment": "Focus on the subject correlate selects the reading in which the remnant corresponds to the subject.",
-    "metaLanguage": "stan1293"
+    "comment": "Focus on the subject correlate selects the reading in which the remnant corresponds to the subject."
   },
   {
     "id": "rooth1992_70",
@@ -421,8 +409,7 @@
         "eat"
       ]
     ],
-    "comment": "The focus on the verb is anaphoric to the other verb phrase rather than associated with only, whose domain is then fixed pragmatically: what is excluded is eating staples other than rice.",
-    "metaLanguage": "stan1293"
+    "comment": "The focus on the verb is anaphoric to the other verb phrase rather than associated with only, whose domain is then fixed pragmatically: what is excluded is eating staples other than rice."
   },
   {
     "id": "rooth1992_72a",
@@ -446,7 +433,6 @@
         "contrast"
       ]
     ],
-    "comment": "The anticipatory first focus of (11) is optional: no focus interpretation operator at the level of the first N'.",
-    "metaLanguage": "stan1293"
+    "comment": "The anticipatory first focus of (11) is optional: no focus interpretation operator at the level of the first N'."
   }
 ]

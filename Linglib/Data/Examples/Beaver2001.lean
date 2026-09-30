@@ -31,9 +31,7 @@ def e52 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("trigger", "definite (my sister)"), ("embedding", "consequent of conditional")]
-    comment := "The paradigm conditional presupposition: satisfaction models predict only 'if I go to London I have a sister'; hearers tend to infer the stronger 'I have a sister', which Ch. 9 derives by global accommodation over information orderings."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The paradigm conditional presupposition: satisfaction models predict only 'if I go to London I have a sister'; hearers tend to infer the stronger 'I have a sister', which Ch. 9 derives by global accommodation over information orderings." }
 
 def e154 : LinguisticExample :=
   { id := "beaver2001_e154"
@@ -49,9 +47,7 @@ def e154 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("trigger", "the fact that + factive bothered by"), ("embedding", "consequent of conditional")]
-    comment := "Presupposes only the conditional: if he lands there, his weight is greater. Natural when Spiff hangs weightless in space, so the unconditional presupposition is wrong; structural accommodation accounts cannot produce the conditional reading."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Presupposes only the conditional: if he lands there, his weight is greater. Natural when Spiff hangs weightless in space, so the unconditional presupposition is wrong; structural accommodation accounts cannot produce the conditional reading." }
 
 def e155 : LinguisticExample :=
   { id := "beaver2001_e155"
@@ -67,9 +63,7 @@ def e155 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("trigger", "the fact that + factive bothered by"), ("embedding", "conditional under unlikely")]
-    comment := "Preferred reading keeps the conditional implication; accommodation into the consequent is unavailable here."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Preferred reading keeps the conditional implication; accommodation into the consequent is unavailable here." }
 
 def e156 : LinguisticExample :=
   { id := "beaver2001_e156"
@@ -85,9 +79,7 @@ def e156 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("trigger", "the fact that + factive bothered by"), ("embedding", "second conjunct of conditional antecedent")]
-    comment := "Same conditional presupposition, predicted by the treatment of conjunction; accommodation into the consequent is not even available."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Same conditional presupposition, predicted by the treatment of conjunction; accommodation into the consequent is not even available." }
 
 def e198 : LinguisticExample :=
   { id := "beaver2001_e198"
@@ -103,9 +95,7 @@ def e198 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("role", "presupposed content for E168'-E173")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def e168prime : LinguisticExample :=
   { id := "beaver2001_e168prime"
@@ -121,9 +111,7 @@ def e168prime : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("trigger", "factive realise"), ("embedding", "none")]
-    comment := "Presupposes (and entails) that Bertha is hiding."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Presupposes (and entails) that Bertha is hiding." }
 
 def e169prime : LinguisticExample :=
   { id := "beaver2001_e169prime"
@@ -139,9 +127,7 @@ def e169prime : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("trigger", "factive realise"), ("embedding", "negation")]
-    comment := "Projection through negation (Fact 8.1)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Projection through negation (Fact 8.1)." }
 
 def e172prime : LinguisticExample :=
   { id := "beaver2001_e172prime"
@@ -157,9 +143,7 @@ def e172prime : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("trigger", "factive realise"), ("embedding", "antecedent of conditional")]
-    comment := "Projection from the antecedent (Fact 8.1)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Projection from the antecedent (Fact 8.1)." }
 
 def e173 : LinguisticExample :=
   { id := "beaver2001_e173"
@@ -175,9 +159,7 @@ def e173 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("trigger", "factive realise"), ("embedding", "might")]
-    comment := "Projection through the epistemic modals (Fact 8.8)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Projection through the epistemic modals (Fact 8.8)." }
 
 def e175 : LinguisticExample :=
   { id := "beaver2001_e175"
@@ -193,9 +175,7 @@ def e175 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("trigger", "factive realise"), ("embedding", "consequent of conditional")]
-    comment := "Presupposes the conditionalised E175c: if Bertha is not in the kitchen, she is in the attic (Fact 8.3) — the paradigmatically CCP behaviour."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Presupposes the conditionalised E175c: if Bertha is not in the kitchen, she is in the attic (Fact 8.3) — the paradigmatically CCP behaviour." }
 
 def e206 : LinguisticExample :=
   { id := "beaver2001_e206"
@@ -211,9 +191,7 @@ def e206 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "might phi and might not phi")]
-    comment := "Consistent as a might-sequence; following it with E207a is consistent, while E207a followed by E206a is not — might is a consistency test on the current state."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Consistent as a might-sequence; following it with E207a is consistent, while E207a followed by E206a is not — might is a consistency test on the current state." }
 
 def e207 : LinguisticExample :=
   { id := "beaver2001_e207"
@@ -229,9 +207,7 @@ def e207 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "plain assertion")]
-    comment := "Order contrast with E206a: assertion then might-sentence is inconsistent, might-sentence then assertion is fine."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Order contrast with E206a: assertion then might-sentence is inconsistent, might-sentence then assertion is fine." }
 
 def all : List LinguisticExample := [e52, e154, e155, e156, e198, e168prime, e169prime, e172prime, e173, e175, e206, e207]
 

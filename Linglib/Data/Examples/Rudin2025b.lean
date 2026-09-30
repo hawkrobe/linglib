@@ -31,9 +31,7 @@ def ex6b_wonder : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "wonder"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "neutral")]
-    comment := "The quoted clause is pronounced as its own intonational phrase with the rising tune of a rising declarative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The quoted clause is pronounced as its own intonational phrase with the rising tune of a rising declarative." }
 
 def ex7b_claim : LinguisticExample :=
   { id := "rudin2025b_ex7b_claim"
@@ -49,9 +47,7 @@ def ex7b_claim : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "claim"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "neutral")]
-    comment := "The quoted clause is pronounced as a rising declarative. Marked # in the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The quoted clause is pronounced as a rising declarative. Marked # in the paper." }
 
 def ex8_whisper : LinguisticExample :=
   { id := "rudin2025b_ex8_whisper"
@@ -67,9 +63,7 @@ def ex8_whisper : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "whisper"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "whispered")]
-    comment := "The quoted clause is pronounced as a rising declarative, whispered. One of the manner-of-speech verbs listed in (8)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The quoted clause is pronounced as a rising declarative, whispered. One of the manner-of-speech verbs listed in (8)." }
 
 def ex10_shout : LinguisticExample :=
   { id := "rudin2025b_ex10_shout"
@@ -85,9 +79,7 @@ def ex10_shout : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "shout"), ("material", "sentence"), ("mood", "interrogative"), ("tune", "rising"), ("volume", "loud")]
-    comment := "The quoted clause is a polar interrogative, shouted. One of the manner-of-speech verbs listed in (10)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The quoted clause is a polar interrogative, shouted. One of the manner-of-speech verbs listed in (10)." }
 
 def ex12a : LinguisticExample :=
   { id := "rudin2025b_ex12a"
@@ -103,9 +95,7 @@ def ex12a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ask"), ("material", "sentence"), ("mood", "interrogative"), ("tune", "rising"), ("volume", "neutral")]
-    comment := "The indexical is interpreted relative to Polina's utterance."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The indexical is interpreted relative to Polina's utterance." }
 
 def ex18a : LinguisticExample :=
   { id := "rudin2025b_ex18a"
@@ -121,9 +111,7 @@ def ex18a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "say"), ("material", "sentence"), ("mood", "declarative"), ("tune", "falling"), ("volume", "neutral")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex37a : LinguisticExample :=
   { id := "rudin2025b_ex37a"
@@ -139,9 +127,7 @@ def ex37a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "say"), ("material", "inarticulate"), ("volume", "neutral")]
-    comment := "Nonphonemic noise quoted under say."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Nonphonemic noise quoted under say." }
 
 def ex42a : LinguisticExample :=
   { id := "rudin2025b_ex42a"
@@ -157,9 +143,7 @@ def ex42a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "say"), ("material", "none"), ("volume", "neutral")]
-    comment := "Marked # in the paper: a performance with no linguistic material."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Marked # in the paper: a performance with no linguistic material." }
 
 def ex48 : LinguisticExample :=
   { id := "rudin2025b_ex48"
@@ -175,9 +159,7 @@ def ex48 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "say"), ("material", "sentence"), ("mood", "interrogative"), ("tune", "rising"), ("volume", "neutral")]
-    comment := "Interpreted as reporting an asking, not the assertion of an answer."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Interpreted as reporting an asking, not the assertion of an answer." }
 
 def ex49 : LinguisticExample :=
   { id := "rudin2025b_ex49"
@@ -193,9 +175,7 @@ def ex49 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "say"), ("material", "inarticulate"), ("volume", "neutral")]
-    comment := "A string with no propositional content quoted under say."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A string with no propositional content quoted under say." }
 
 def ex69a : LinguisticExample :=
   { id := "rudin2025b_ex69a"
@@ -211,9 +191,7 @@ def ex69a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "yell"), ("material", "sentence"), ("mood", "declarative"), ("tune", "falling"), ("volume", "loud")]
-    comment := "The quoted clause is shouted."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The quoted clause is shouted." }
 
 def ex69b : LinguisticExample :=
   { id := "rudin2025b_ex69b"
@@ -229,9 +207,7 @@ def ex69b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "yell"), ("material", "sentence"), ("mood", "declarative"), ("tune", "falling"), ("volume", "whispered")]
-    comment := "The quoted clause is whispered. Marked # in the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The quoted clause is whispered. Marked # in the paper." }
 
 def ex70a : LinguisticExample :=
   { id := "rudin2025b_ex70a"
@@ -247,9 +223,7 @@ def ex70a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "whisper"), ("material", "sentence"), ("mood", "declarative"), ("tune", "falling"), ("volume", "loud")]
-    comment := "The quoted clause is shouted. Marked # in the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The quoted clause is shouted. Marked # in the paper." }
 
 def ex70b : LinguisticExample :=
   { id := "rudin2025b_ex70b"
@@ -265,9 +239,7 @@ def ex70b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "whisper"), ("material", "sentence"), ("mood", "declarative"), ("tune", "falling"), ("volume", "whispered")]
-    comment := "The quoted clause is whispered."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The quoted clause is whispered." }
 
 def ex74a : LinguisticExample :=
   { id := "rudin2025b_ex74a"
@@ -283,9 +255,7 @@ def ex74a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "say"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "neutral")]
-    comment := "The quoted clause is pronounced as a rising declarative. Interpreted as reporting an asking."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The quoted clause is pronounced as a rising declarative. Interpreted as reporting an asking." }
 
 def ex75 : LinguisticExample :=
   { id := "rudin2025b_ex75"
@@ -301,9 +271,7 @@ def ex75 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "yell"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "loud")]
-    comment := "The quoted clause is a shouted rising declarative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The quoted clause is a shouted rising declarative." }
 
 def ex78a : LinguisticExample :=
   { id := "rudin2025b_ex78a"
@@ -319,9 +287,7 @@ def ex78a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "assert"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "neutral")]
-    comment := "The quoted clause is pronounced as a rising declarative. Marked # in the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The quoted clause is pronounced as a rising declarative. Marked # in the paper." }
 
 def ex82a : LinguisticExample :=
   { id := "rudin2025b_ex82a"
@@ -337,9 +303,7 @@ def ex82a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("verb", "ask"), ("material", "sentence"), ("mood", "declarative"), ("tune", "rising"), ("volume", "neutral")]
-    comment := "The quoted clause is pronounced as a rising declarative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The quoted clause is pronounced as a rising declarative." }
 
 def all : List LinguisticExample := [ex6b_wonder, ex7b_claim, ex8_whisper, ex10_shout, ex12a, ex18a, ex37a, ex42a, ex48, ex49, ex69a, ex69b, ex70a, ex70b, ex74a, ex75, ex78a, ex82a]
 

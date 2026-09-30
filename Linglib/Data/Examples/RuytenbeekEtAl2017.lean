@@ -31,9 +31,7 @@ def ruytenbeek2017_ex17 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("study", "1"), ("construction", "imperative")]
-    comment := "Control imperative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Control imperative." }
 
 def ruytenbeek2017_ex18 : LinguisticExample :=
   { id := "ruytenbeek2017_ex18"
@@ -49,9 +47,7 @@ def ruytenbeek2017_ex18 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("study", "1"), ("construction", "controlInterrogative")]
-    comment := "Control interrogative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Control interrogative." }
 
 def ruytenbeek2017_ex19 : LinguisticExample :=
   { id := "ruytenbeek2017_ex19"
@@ -67,9 +63,7 @@ def ruytenbeek2017_ex19 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("study", "1"), ("construction", "canYou")]
-    comment := "Conventionalised indirect request."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Conventionalised indirect request." }
 
 def ruytenbeek2017_ex20 : LinguisticExample :=
   { id := "ruytenbeek2017_ex20"
@@ -85,9 +79,7 @@ def ruytenbeek2017_ex20 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("study", "1"), ("construction", "isItPossible")]
-    comment := "Non-conventionalised indirect request."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Non-conventionalised indirect request." }
 
 def ruytenbeek2017_ex23 : LinguisticExample :=
   { id := "ruytenbeek2017_ex23"
@@ -103,9 +95,7 @@ def ruytenbeek2017_ex23 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("study", "2"), ("construction", "youMust")]
-    comment := "Deontic necessity declarative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Deontic necessity declarative." }
 
 def ruytenbeek2017_ex24 : LinguisticExample :=
   { id := "ruytenbeek2017_ex24"
@@ -121,9 +111,7 @@ def ruytenbeek2017_ex24 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("study", "2"), ("construction", "imperative")]
-    comment := "Control imperative of Study 2."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Control imperative of Study 2." }
 
 def ruytenbeek2017_ex25 : LinguisticExample :=
   { id := "ruytenbeek2017_ex25"
@@ -139,9 +127,7 @@ def ruytenbeek2017_ex25 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("study", "2"), ("construction", "youCan")]
-    comment := "Possibility declarative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Possibility declarative." }
 
 def ruytenbeek2017_ex26 : LinguisticExample :=
   { id := "ruytenbeek2017_ex26"
@@ -157,9 +143,7 @@ def ruytenbeek2017_ex26 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("study", "2"), ("construction", "itIsPossible")]
-    comment := "Impersonal possibility declarative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Impersonal possibility declarative." }
 
 def ruytenbeek2017_ex27 : LinguisticExample :=
   { id := "ruytenbeek2017_ex27"
@@ -175,9 +159,7 @@ def ruytenbeek2017_ex27 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("study", "2"), ("construction", "controlDeclarative")]
-    comment := "Control declarative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Control declarative." }
 
 def ruytenbeek2017_corpus_pouvezvous : LinguisticExample :=
   { id := "ruytenbeek2017_corpus_pouvezvous"
@@ -193,9 +175,7 @@ def ruytenbeek2017_corpus_pouvezvous : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "canYou")]
-    comment := "Frantext tokens after 1900 with a singular addressee, coded as indirect request, genuine question or rhetorical question."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Frantext tokens after 1900 with a singular addressee, coded as indirect request, genuine question or rhetorical question." }
 
 def ruytenbeek2017_corpus_estilpossible : LinguisticExample :=
   { id := "ruytenbeek2017_corpus_estilpossible"
@@ -211,9 +191,7 @@ def ruytenbeek2017_corpus_estilpossible : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "isItPossible")]
-    comment := "Frantext tokens after 1900, coded as indirect request, genuine question or rhetorical question."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Frantext tokens after 1900, coded as indirect request, genuine question or rhetorical question." }
 
 def all : List LinguisticExample := [ruytenbeek2017_ex17, ruytenbeek2017_ex18, ruytenbeek2017_ex19, ruytenbeek2017_ex20, ruytenbeek2017_ex23, ruytenbeek2017_ex24, ruytenbeek2017_ex25, ruytenbeek2017_ex26, ruytenbeek2017_ex27, ruytenbeek2017_corpus_pouvezvous, ruytenbeek2017_corpus_estilpossible]
 

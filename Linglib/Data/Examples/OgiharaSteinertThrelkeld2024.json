@@ -16,9 +16,7 @@
       ["connective", "after"],
       ["complement_entailed", "true"]
     ],
-    "comment": "after(leave, arrive) |= arrive",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "after(leave, arrive) |= arrive"
   },
   {
     "id": "ost2024_before_nonveridical",
@@ -37,9 +35,7 @@
       ["connective", "before"],
       ["complement_entailed", "false"]
     ],
-    "comment": "before(leave, arrive) |/= arrive",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "before(leave, arrive) |/= arrive"
   },
   {
     "id": "ost2024_before_counterfactual",
@@ -58,9 +54,7 @@
       ["connective", "before"],
       ["complement_entailed", "false"]
     ],
-    "comment": "before(explode, defuse) and not defuse",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "before(explode, defuse) and not defuse"
   },
   {
     "id": "ost2024_after_veridical_2",
@@ -79,9 +73,7 @@
       ["connective", "after"],
       ["complement_entailed", "true"]
     ],
-    "comment": "after(finish, leave) |= leave",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "after(finish, leave) |= leave"
   },
   {
     "id": "ost2024_before_noncommittal",
@@ -101,9 +93,7 @@
       ["connective", "before"],
       ["complement_entailed", "false"]
     ],
-    "comment": "before(leave, trouble) |/= trouble (non-committal)",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "before(leave, trouble) |/= trouble (non-committal)"
   },
   {
     "id": "ost2024_before_counterfactual_mozart",
@@ -123,9 +113,7 @@
       ["connective", "before"],
       ["complement_entailed", "false"]
     ],
-    "comment": "before(die, finish) and not finish (counterfactual)",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "before(die, finish) and not finish (counterfactual)"
   },
   {
     "id": "ost2024_ohtani",
@@ -143,9 +131,7 @@
       ["construction", "bc_counterexample"],
       ["reading", "counterfactual"]
     ],
-    "comment": "O&ST (20a). Complement temporally bounded before the A-time.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "O&ST (20a). Complement temporally bounded before the A-time."
   },
   {
     "id": "ost2024_snow",
@@ -163,9 +149,7 @@
       ["construction", "bc_counterexample"],
       ["reading", "nonCommittal"]
     ],
-    "comment": "O&ST (20b). Complement bounded to the end of 2020.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "O&ST (20b). Complement bounded to the end of 2020."
   },
   {
     "id": "ost2024_nostradamus",
@@ -183,9 +167,7 @@
       ["construction", "bc_counterexample"],
       ["reading", "counterfactual"]
     ],
-    "comment": "O&ST (20c). Complement bounded to July 1999.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "O&ST (20c). Complement bounded to July 1999."
   },
   {
     "id": "ost2024_noncommittal_available",
@@ -203,9 +185,7 @@
       ["construction", "noncommittal"],
       ["noncommittal_available", "true"]
     ],
-    "comment": "getting drunk is a normal continuation of being at a party",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "getting drunk is a normal continuation of being at a party"
   },
   {
     "id": "ost2024_noncommittal_unavailable",
@@ -223,8 +203,6 @@
       ["construction", "noncommittal"],
       ["noncommittal_available", "false"]
     ],
-    "comment": "Quebec independence is not a contextually normal continuation",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Quebec independence is not a contextually normal continuation"
   }
 ]

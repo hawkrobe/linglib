@@ -31,9 +31,7 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := [("past-shifted (defendant in lab before jurors' believing)", .acceptable)]
     paperFeatures := []
-    comment := "Abusch 1997 ex (1), Linguistics and Philosophy 20 p. 2. Two-sentence discourse establishing the time-of-the-crime antecedent; the second sentence's embedded past picks up that antecedent rather than the matrix `believed` event. Cornerstone of the anaphoric (vs. SOT-deletion) account of past-under-past."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Abusch 1997 ex (1), Linguistics and Philosophy 20 p. 2. Two-sentence discourse establishing the time-of-the-crime antecedent; the second sentence's embedded past picks up that antecedent rather than the matrix `believed` event. Cornerstone of the anaphoric (vs. SOT-deletion) account of past-under-past." }
 
 def ex2 : LinguisticExample :=
   { id := "abusch1997_ex2"
@@ -49,9 +47,7 @@ def ex2 : LinguisticExample :=
     alternatives := []
     readings := [("simultaneous (raining at believing time)", .acceptable), ("past-shifted (raining before believing)", .acceptable)]
     paperFeatures := []
-    comment := "Abusch 1997 ex (2), p. 3. Footnote 2 attributes the simultaneous-reading shape to Enç 1987 (cited as 'Eng 1987'). Standard past-under-past minimal example."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Abusch 1997 ex (2), p. 3. Footnote 2 attributes the simultaneous-reading shape to Enç 1987 (cited as 'Eng 1987'). Standard past-under-past minimal example." }
 
 def ex3_ULC : LinguisticExample :=
   { id := "abusch1997_ex3_ULC"
@@ -67,9 +63,7 @@ def ex3_ULC : LinguisticExample :=
     alternatives := []
     readings := [("past-shifted (attack before thinking)", .acceptable), ("forward-shifted (attack co-temporal with later opening, after thinking)", .ungrammatical)]
     paperFeatures := []
-    comment := "Abusch 1997 ex (3), p. 4. The decisive counterexample to the pure Independent Theory: the predicted forward-shifted reading (paraphrased by ex (4) 'When I open the door, a burglar will attack me') is unavailable. Motivates the Upper Limit Constraint: embedded R cannot exceed matrix E."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Abusch 1997 ex (3), p. 4. The decisive counterexample to the pure Independent Theory: the predicted forward-shifted reading (paraphrased by ex (4) 'When I open the door, a burglar will attack me') is unavailable. Motivates the Upper Limit Constraint: embedded R cannot exceed matrix E." }
 
 def ex8_doubleAccess : LinguisticExample :=
   { id := "abusch1997_ex8_doubleAccess"
@@ -85,9 +79,7 @@ def ex8_doubleAccess : LinguisticExample :=
     alternatives := []
     readings := [("double-access (pregnancy includes utterance + believing)", .acceptable), ("future-shifted (pregnancy only at believing, not utterance)", .ungrammatical)]
     paperFeatures := []
-    comment := "Abusch 1997 ex (8), p. 5. Cornerstone present-under-past example. Sharvit 2003 ex (3) descends from this. The double-access constraint is one of two phenomena (alongside the ULC of ex 3) that the pure Independent Theory cannot derive; Abusch addresses both via de re belief + acquaintance relations."
-    metaLanguage := "stan1293"
-    lgrConformance := "WORD_ALIGNED" }
+    comment := "Abusch 1997 ex (8), p. 5. Cornerstone present-under-past example. Sharvit 2003 ex (3) descends from this. The double-access constraint is one of two phenomena (alongside the ULC of ex 3) that the pure Independent Theory cannot derive; Abusch addresses both via de re belief + acquaintance relations." }
 
 def ex6 : LinguisticExample :=
   { id := "abusch1997_ex6"
@@ -103,9 +95,7 @@ def ex6 : LinguisticExample :=
     alternatives := []
     readings := [("forward-shifted (attack after thinking, co-temporal with the opening)", .acceptable)]
     paperFeatures := [("configuration", "would under past"), ("reading", "forward-shifted")]
-    comment := "The forward-shifted reading (3) lacks is available with would: the past on would is anaphoric to the past on thought and woll orders the attack after it."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The forward-shifted reading (3) lacks is available with would: the past on would is anaphoric to the past on thought and woll orders the attack after it." }
 
 def ex27 : LinguisticExample :=
   { id := "abusch1997_ex27"
@@ -121,9 +111,7 @@ def ex27 : LinguisticExample :=
     alternatives := []
     readings := [("backward-shifted (a previous Tuesday)", .acceptable), ("forward-shifted (the Tuesday after last Monday)", .unacceptable)]
     paperFeatures := [("phenomenon", "upper limit"), ("anaphora", "internal to the attitude")]
-    comment := "Temporal anaphora internal to the belief context, beyond the reach of acquaintance relations; an upper limit phenomenon."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Temporal anaphora internal to the belief context, beyond the reach of acquaintance relations; an upper limit phenomenon." }
 
 def ex29 : LinguisticExample :=
   { id := "abusch1997_ex29"
@@ -139,9 +127,7 @@ def ex29 : LinguisticExample :=
     alternatives := []
     readings := [("backward-shifted, narrow scope (some time before the believing)", .acceptable), ("forward-shifted, narrow scope", .unacceptable)]
     paperFeatures := [("phenomenon", "upper limit"), ("anaphora", "internal to the attitude")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex30 : LinguisticExample :=
   { id := "abusch1997_ex30"
@@ -157,9 +143,7 @@ def ex30 : LinguisticExample :=
     alternatives := []
     readings := [("simultaneous (loving at the marrying, after the believing)", .acceptable)]
     paperFeatures := [("phenomenon", "sequence of tense"), ("morphology", "past without precedence")]
-    comment := "Past morphology on loved with no precedence relative to the utterance time: anaphora internal to the attitude, so not de re."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Past morphology on loved with no precedence relative to the utterance time: anaphora internal to the attitude, so not de re." }
 
 def ex34 : LinguisticExample :=
   { id := "abusch1997_ex34"
@@ -175,9 +159,7 @@ def ex34 : LinguisticExample :=
     alternatives := []
     readings := [("simultaneous (meal at the saying, three days after the utterance)", .acceptable)]
     paperFeatures := [("phenomenon", "sequence of tense"), ("morphology", "past without precedence")]
-    comment := "The meal time precedes no time mentioned in the sentence; a sequence-of-tense past licensed non-locally."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The meal time precedes no time mentioned in the sentence; a sequence-of-tense past licensed non-locally." }
 
 def ex46a : LinguisticExample :=
   { id := "abusch1997_ex46a"
@@ -193,9 +175,7 @@ def ex46a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "upper limit"), ("reading", "backward-shifted")]
-    comment := "The past is determinate from an epistemic alternative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The past is determinate from an epistemic alternative." }
 
 def ex46b : LinguisticExample :=
   { id := "abusch1997_ex46b"
@@ -211,9 +191,7 @@ def ex46b : LinguisticExample :=
     alternatives := []
     readings := [("forward-shifted (the thunderstorm after the believing)", .unacceptable)]
     paperFeatures := [("phenomenon", "upper limit"), ("reading", "forward-shifted")]
-    comment := "The future branches across epistemic alternatives; the now of an alternative is an upper limit for tense denotation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The future branches across epistemic alternatives; the now of an alternative is an upper limit for tense denotation." }
 
 def ex47 : LinguisticExample :=
   { id := "abusch1997_ex47"
@@ -229,9 +207,7 @@ def ex47 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "future-directed acquaintance"), ("source", "Bonomi")]
-    comment := "Anaphoric then under believes refers to a future time de re, refuting a constraint on acquaintance relations as the source of upper limit effects."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Anaphoric then under believes refers to a future time de re, refuting a constraint on acquaintance relations as the source of upper limit effects." }
 
 def ex53 : LinguisticExample :=
   { id := "abusch1997_ex53"
@@ -247,9 +223,7 @@ def ex53 : LinguisticExample :=
     alternatives := []
     readings := [("narrow scope (interest at the seminar, after the utterance)", .acceptable), ("wide scope (a specific topic; interest before the utterance)", .acceptable)]
     paperFeatures := [("phenomenon", "sequence of tense"), ("sensitivity", "logical scope")]
-    comment := "Non-local licensing of the relative-clause past is available only when the noun phrase scopes under the attitude."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Non-local licensing of the relative-clause past is available only when the noun phrase scopes under the attitude." }
 
 def ex60 : LinguisticExample :=
   { id := "abusch1997_ex60"
@@ -265,9 +239,7 @@ def ex60 : LinguisticExample :=
     alternatives := []
     readings := [("meeting before the marrying (locally licensed)", .acceptable)]
     paperFeatures := [("phenomenon", "local licensing"), ("matrix", "present")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex63 : LinguisticExample :=
   { id := "abusch1997_ex63"
@@ -283,9 +255,7 @@ def ex63 : LinguisticExample :=
     alternatives := []
     readings := [("loving before the marrying", .acceptable), ("simultaneous (loving at the marrying)", .unacceptable)]
     paperFeatures := [("phenomenon", "local licensing"), ("matrix", "present")]
-    comment := "Under a present matrix neither relation can license a past coindexed with the marrying time."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Under a present matrix neither relation can license a past coindexed with the marrying time." }
 
 def ex64 : LinguisticExample :=
   { id := "abusch1997_ex64"
@@ -301,9 +271,7 @@ def ex64 : LinguisticExample :=
     alternatives := []
     readings := [("meeting before the marrying, possibly after the utterance", .acceptable)]
     paperFeatures := [("phenomenon", "local licensing"), ("operator", "will as evaluation-time shifter")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex69 : LinguisticExample :=
   { id := "abusch1997_ex69"
@@ -319,9 +287,7 @@ def ex69 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("phenomenon", "double access"), ("complement", "not true at either time")]
-    comment := "The double access reading does not require the complement to hold at the believing time or the utterance time."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The double access reading does not require the complement to hold at the believing time or the utterance time." }
 
 def ex81 : LinguisticExample :=
   { id := "abusch1997_ex81"
@@ -337,9 +303,7 @@ def ex81 : LinguisticExample :=
     alternatives := []
     readings := [("simultaneous", .acceptable)]
     paperFeatures := [("phenomenon", "double access"), ("alternative", "simultaneous past")]
-    comment := "The pragmatically neutral report when Mary's symptom no longer persists at the utterance time."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The pragmatically neutral report when Mary's symptom no longer persists at the utterance time." }
 
 def all : List LinguisticExample := [ex1, ex2, ex3_ULC, ex8_doubleAccess, ex6, ex27, ex29, ex30, ex34, ex46a, ex46b, ex47, ex53, ex60, ex63, ex64, ex69, ex81]
 

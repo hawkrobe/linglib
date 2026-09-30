@@ -31,9 +31,7 @@ def ex_39a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("arg", "erg"), ("arg", "abs"), ("subject", "erg")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_39b : LinguisticExample :=
   { id := "anderson2006b_39b"
@@ -49,9 +47,7 @@ def ex_39b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("arg", "abs"), ("arg", "loc"), ("subject", "abs")]
-    comment := "The locative carries the second-order feature {goal}; the subject is not inherently ergative."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The locative carries the second-order feature {goal}; the subject is not inherently ergative." }
 
 def ex_39c : LinguisticExample :=
   { id := "anderson2006b_39c"
@@ -67,9 +63,7 @@ def ex_39c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("arg", "abs,erg"), ("arg", "loc"), ("subject", "abs,erg")]
-    comment := "The locative carries {goal}."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The locative carries {goal}." }
 
 def ex_39h : LinguisticExample :=
   { id := "anderson2006b_39h"
@@ -85,9 +79,7 @@ def ex_39h : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("arg", "erg,loc"), ("arg", "abs"), ("subject", "erg,loc")]
-    comment := "E (Experiencer) = erg,loc."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "E (Experiencer) = erg,loc." }
 
 def ex_39i : LinguisticExample :=
   { id := "anderson2006b_39i"
@@ -103,9 +95,7 @@ def ex_39i : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("arg", "erg,loc"), ("arg", "abs"), ("subject", "erg,loc")]
-    comment := "Experiencer with {goal} on its locative component: erg,loc{goal} + abs. Also 'a new outlook'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Experiencer with {goal} on its locative component: erg,loc{goal} + abs. Also 'a new outlook'." }
 
 def ex_39j : LinguisticExample :=
   { id := "anderson2006b_39j"
@@ -121,9 +111,7 @@ def ex_39j : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("arg", "abs,erg,loc"), ("arg", "loc"), ("subject", "abs,erg,loc")]
-    comment := "E + abl = abs,erg,loc{goal} + loc{src}. Also 'from delusions'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "E + abl = abs,erg,loc{goal} + loc{src}. Also 'from delusions'." }
 
 def ex_34 : LinguisticExample :=
   { id := "anderson2006b_34"
@@ -139,9 +127,7 @@ def ex_34 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("arg", "abs,erg,loc"), ("arg", "loc"), ("subject", "abs,erg,loc")]
-    comment := "A patient that is at once Experiencer and contactive: all three first-order features combine on one argument; the ablative is loc{src}."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A patient that is at once Experiencer and contactive: all three first-order features combine on one argument; the ablative is loc{src}." }
 
 def ex_4_8a : LinguisticExample :=
   { id := "anderson2006b_4_8a"
@@ -157,9 +143,7 @@ def ex_4_8a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("arg", "abs"), ("arg", "loc"), ("subject", "abs")]
-    comment := "The simple absolutive is subject; the goal locative is a spatial argument, ineligible for subject."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The simple absolutive is subject; the goal locative is a spatial argument, ineligible for subject." }
 
 def ex_4_8b : LinguisticExample :=
   { id := "anderson2006b_4_8b"
@@ -175,9 +159,7 @@ def ex_4_8b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("arg", "abs,loc"), ("adjunct", "abs"), ("subject", "abs,loc")]
-    comment := "The holistic subject is a contactive; the with-phrase is a circumstantial outside subject selection, which is what lets (38)' drop the optional comma of (38)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The holistic subject is a contactive; the with-phrase is a circumstantial outside subject selection, which is what lets (38)' drop the optional comma of (38)." }
 
 def ex_23a : LinguisticExample :=
   { id := "anderson2006b_23a"
@@ -193,9 +175,7 @@ def ex_23a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("arg", "erg"), ("arg", "abs"), ("subject", "erg")]
-    comment := "The object is absolutive but not contactive: no 'intimate contact'."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The object is absolutive but not contactive: no 'intimate contact'." }
 
 def all : List LinguisticExample := [ex_39a, ex_39b, ex_39c, ex_39h, ex_39i, ex_39j, ex_34, ex_4_8a, ex_4_8b, ex_23a]
 

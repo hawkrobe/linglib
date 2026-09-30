@@ -31,9 +31,7 @@ def ex_18 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("structure", "(17)")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_18_pink : LinguisticExample :=
   { id := "asherlascarides2003_18_pink"
@@ -49,9 +47,7 @@ def ex_18_pink : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("structure", "(17)"), ("antecedent", "salmon"), ("antecedentLabel", "3")]
-    comment := "The salmon is introduced in the constituent labelled π3, which is not on the right frontier."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The salmon is introduced in the constituent labelled π3, which is not on the right frontier." }
 
 def ex_19 : LinguisticExample :=
   { id := "asherlascarides2003_19"
@@ -67,9 +63,7 @@ def ex_19 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("relations", "Contrast, Narration")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_22 : LinguisticExample :=
   { id := "asherlascarides2003_22"
@@ -85,9 +79,7 @@ def ex_22 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("relations", "Background"), ("antecedent", "car")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_23 : LinguisticExample :=
   { id := "asherlascarides2003_23"
@@ -103,9 +95,7 @@ def ex_23 : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("relations", "Consequence"), ("antecedent", "car")]
-    comment := "The car is under negation in the antecedent and so not available to the pronoun."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The car is under negation in the antecedent and so not available to the pronoun." }
 
 def all : List LinguisticExample := [ex_18, ex_18_pink, ex_19, ex_22, ex_23]
 

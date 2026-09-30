@@ -32,8 +32,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex2b",
@@ -68,8 +67,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex4a",
@@ -104,8 +102,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex4b",
@@ -140,8 +137,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex6a",
@@ -180,8 +176,7 @@
         "context"
       ]
     ],
-    "comment": "Ambiguous: real-world knowledge about pants supplies a bound.",
-    "lgrConformance": ""
+    "comment": "Ambiguous: real-world knowledge about pants supplies a bound."
   },
   {
     "id": "haykennedylevin1999_ex6b",
@@ -220,8 +215,7 @@
         "none"
       ]
     ],
-    "comment": "Unambiguous: no bound on the length of an exam.",
-    "lgrConformance": ""
+    "comment": "Unambiguous: no bound on the length of an exam."
   },
   {
     "id": "haykennedylevin1999_ex8a",
@@ -256,8 +250,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex8b",
@@ -296,8 +289,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex10",
@@ -336,8 +328,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex18a",
@@ -372,8 +363,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex18b",
@@ -408,8 +398,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex19a",
@@ -448,8 +437,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex19b",
@@ -488,8 +476,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex20a",
@@ -528,8 +515,7 @@
         "yes"
       ]
     ],
-    "comment": "Ambiguous.",
-    "lgrConformance": ""
+    "comment": "Ambiguous."
   },
   {
     "id": "haykennedylevin1999_ex20b",
@@ -568,8 +554,7 @@
         "yes"
       ]
     ],
-    "comment": "Ambiguous.",
-    "lgrConformance": ""
+    "comment": "Ambiguous."
   },
   {
     "id": "haykennedylevin1999_ex21a",
@@ -608,8 +593,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex21b",
@@ -648,8 +632,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex22a",
@@ -688,8 +671,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex22b",
@@ -728,8 +710,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex23a",
@@ -768,8 +749,7 @@
         "yes"
       ]
     ],
-    "comment": "A monotone increasing modifier: the change must reach a contextual standard.",
-    "lgrConformance": ""
+    "comment": "A monotone increasing modifier: the change must reach a contextual standard."
   },
   {
     "id": "haykennedylevin1999_ex23b",
@@ -808,8 +788,7 @@
         "yes"
       ]
     ],
-    "comment": "Ambiguous.",
-    "lgrConformance": ""
+    "comment": "Ambiguous."
   },
   {
     "id": "haykennedylevin1999_ex23c",
@@ -848,8 +827,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex24a",
@@ -888,8 +866,7 @@
         "no"
       ]
     ],
-    "comment": "A monotone decreasing modifier: part of a slight increase is a slight increase.",
-    "lgrConformance": ""
+    "comment": "A monotone decreasing modifier: part of a slight increase is a slight increase."
   },
   {
     "id": "haykennedylevin1999_ex24b",
@@ -928,8 +905,7 @@
         "no"
       ]
     ],
-    "comment": "Unambiguous.",
-    "lgrConformance": ""
+    "comment": "Unambiguous."
   },
   {
     "id": "haykennedylevin1999_ex24c",
@@ -968,8 +944,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex25a_straight",
@@ -1000,8 +975,7 @@
         "closed"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex25a_empty",
@@ -1032,8 +1006,7 @@
         "closed"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex25a_dry",
@@ -1064,8 +1037,7 @@
         "closed"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex25b_long",
@@ -1096,8 +1068,7 @@
         "open"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex25b_wide",
@@ -1128,8 +1099,7 @@
         "open"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex25b_short",
@@ -1160,8 +1130,7 @@
         "open"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex26a",
@@ -1204,8 +1173,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex26b",
@@ -1248,8 +1216,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex27a",
@@ -1292,8 +1259,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex27b",
@@ -1336,8 +1302,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex28a",
@@ -1372,8 +1337,7 @@
         "yes"
       ]
     ],
-    "comment": "A conventional maximal length for pants supplies the bound.",
-    "lgrConformance": ""
+    "comment": "A conventional maximal length for pants supplies the bound."
   },
   {
     "id": "haykennedylevin1999_ex28b",
@@ -1408,8 +1372,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex29a",
@@ -1448,8 +1411,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex29b",
@@ -1488,8 +1450,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex30a",
@@ -1524,8 +1485,7 @@
         "no"
       ]
     ],
-    "comment": "No bounded length for a commute.",
-    "lgrConformance": ""
+    "comment": "No bounded length for a commute."
   },
   {
     "id": "haykennedylevin1999_ex30b",
@@ -1560,8 +1520,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex31a",
@@ -1600,8 +1559,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex31b",
@@ -1640,8 +1598,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex32a",
@@ -1680,8 +1637,7 @@
         "yes"
       ]
     ],
-    "comment": "The bound arises by conversational implicature and can be cancelled.",
-    "lgrConformance": ""
+    "comment": "The bound arises by conversational implicature and can be cancelled."
   },
   {
     "id": "haykennedylevin1999_ex32b",
@@ -1720,8 +1676,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex33a",
@@ -1760,8 +1715,7 @@
         "no"
       ]
     ],
-    "comment": "A bound supplied by overt material is not cancellable.",
-    "lgrConformance": ""
+    "comment": "A bound supplied by overt material is not cancellable."
   },
   {
     "id": "haykennedylevin1999_ex33b",
@@ -1800,8 +1754,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex34a",
@@ -1840,8 +1793,7 @@
         "yes"
       ]
     ],
-    "comment": "Room temperature is a salient bound; compare ?The lake cooled in an hour.",
-    "lgrConformance": ""
+    "comment": "Room temperature is a salient bound; compare ?The lake cooled in an hour."
   },
   {
     "id": "haykennedylevin1999_ex34b",
@@ -1880,8 +1832,7 @@
         "no"
       ]
     ],
-    "comment": "The durative adverbial cancels the telicity implicature.",
-    "lgrConformance": ""
+    "comment": "The durative adverbial cancels the telicity implicature."
   },
   {
     "id": "haykennedylevin1999_ex35a",
@@ -1920,8 +1871,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex35b",
@@ -1960,8 +1910,7 @@
         "yes"
       ]
     ],
-    "comment": "Telicity from overt material cannot be cancelled by the durative adverbial.",
-    "lgrConformance": ""
+    "comment": "Telicity from overt material cannot be cancelled by the durative adverbial."
   },
   {
     "id": "haykennedylevin1999_ex36",
@@ -2000,8 +1949,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex37a",
@@ -2040,8 +1988,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex37b",
@@ -2080,8 +2027,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex38a",
@@ -2124,8 +2070,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex38b",
@@ -2168,8 +2113,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex39a",
@@ -2212,8 +2156,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex39b",
@@ -2256,8 +2199,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex40a",
@@ -2296,8 +2238,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex40b",
@@ -2336,8 +2277,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex41a",
@@ -2380,8 +2320,7 @@
         "yes"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex41b",
@@ -2424,8 +2363,7 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "haykennedylevin1999_ex42a",
@@ -2468,8 +2406,7 @@
         "yes"
       ]
     ],
-    "comment": "Sea level is a maximal value for the ascent.",
-    "lgrConformance": ""
+    "comment": "Sea level is a maximal value for the ascent."
   },
   {
     "id": "haykennedylevin1999_ex42b",
@@ -2512,7 +2449,6 @@
         "no"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   }
 ]

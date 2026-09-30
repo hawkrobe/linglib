@@ -28,8 +28,7 @@
         "matrix"
       ]
     ],
-    "comment": "An epistemic contradiction, infelicitous unembedded.",
-    "lgrConformance": ""
+    "comment": "An epistemic contradiction, infelicitous unembedded."
   },
   {
     "id": "hollidaymandelkern2024_ex1b",
@@ -60,8 +59,7 @@
         "suppose"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex1c",
@@ -92,8 +90,7 @@
         "quantifier restrictor"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex2a",
@@ -124,8 +121,7 @@
         "matrix"
       ]
     ],
-    "comment": "Wittgenstein sentences of both orders are unassertable.",
-    "lgrConformance": ""
+    "comment": "Wittgenstein sentences of both orders are unassertable."
   },
   {
     "id": "hollidaymandelkern2024_ex2b",
@@ -156,8 +152,7 @@
         "matrix"
       ]
     ],
-    "comment": "Wittgenstein sentences of both orders are unassertable.",
-    "lgrConformance": ""
+    "comment": "Wittgenstein sentences of both orders are unassertable."
   },
   {
     "id": "hollidaymandelkern2024_ex2c",
@@ -188,8 +183,7 @@
         "matrix"
       ]
     ],
-    "comment": "Wittgenstein sentences of both orders are unassertable.",
-    "lgrConformance": ""
+    "comment": "Wittgenstein sentences of both orders are unassertable."
   },
   {
     "id": "hollidaymandelkern2024_ex2d",
@@ -220,8 +214,7 @@
         "matrix"
       ]
     ],
-    "comment": "Wittgenstein sentences of both orders are unassertable.",
-    "lgrConformance": ""
+    "comment": "Wittgenstein sentences of both orders are unassertable."
   },
   {
     "id": "hollidaymandelkern2024_ex2e",
@@ -252,8 +245,7 @@
         "matrix"
       ]
     ],
-    "comment": "Wittgenstein sentences of both orders are unassertable.",
-    "lgrConformance": ""
+    "comment": "Wittgenstein sentences of both orders are unassertable."
   },
   {
     "id": "hollidaymandelkern2024_ex3a",
@@ -284,8 +276,7 @@
         "suppose"
       ]
     ],
-    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic.",
-    "lgrConformance": ""
+    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic."
   },
   {
     "id": "hollidaymandelkern2024_ex3b",
@@ -316,8 +307,7 @@
         "suppose"
       ]
     ],
-    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence.",
-    "lgrConformance": ""
+    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence."
   },
   {
     "id": "hollidaymandelkern2024_ex3c",
@@ -348,8 +338,7 @@
         "suppose"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex4a",
@@ -380,8 +369,7 @@
         "conditional antecedent"
       ]
     ],
-    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic.",
-    "lgrConformance": ""
+    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic."
   },
   {
     "id": "hollidaymandelkern2024_ex4b",
@@ -412,8 +400,7 @@
         "conditional antecedent"
       ]
     ],
-    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence.",
-    "lgrConformance": ""
+    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence."
   },
   {
     "id": "hollidaymandelkern2024_ex4c",
@@ -444,8 +431,7 @@
         "conditional antecedent"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex5a",
@@ -476,8 +462,7 @@
         "could"
       ]
     ],
-    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic.",
-    "lgrConformance": ""
+    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic."
   },
   {
     "id": "hollidaymandelkern2024_ex5b",
@@ -508,8 +493,7 @@
         "could"
       ]
     ],
-    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence.",
-    "lgrConformance": ""
+    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence."
   },
   {
     "id": "hollidaymandelkern2024_ex5c",
@@ -540,8 +524,7 @@
         "could"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex6a",
@@ -572,8 +555,7 @@
         "disjunction"
       ]
     ],
-    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic.",
-    "lgrConformance": ""
+    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic."
   },
   {
     "id": "hollidaymandelkern2024_ex6b",
@@ -604,8 +586,7 @@
         "disjunction"
       ]
     ],
-    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence.",
-    "lgrConformance": ""
+    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence."
   },
   {
     "id": "hollidaymandelkern2024_ex6c",
@@ -636,8 +617,7 @@
         "disjunction"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex7a",
@@ -668,8 +648,7 @@
         "definite description"
       ]
     ],
-    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic.",
-    "lgrConformance": ""
+    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic."
   },
   {
     "id": "hollidaymandelkern2024_ex7b",
@@ -700,8 +679,7 @@
         "definite description"
       ]
     ],
-    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence.",
-    "lgrConformance": ""
+    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence."
   },
   {
     "id": "hollidaymandelkern2024_ex7c",
@@ -732,8 +710,7 @@
         "definite description"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex8a",
@@ -764,8 +741,7 @@
         "existential quantifier"
       ]
     ],
-    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic.",
-    "lgrConformance": ""
+    "comment": "The embedded Moore sentence is felicitous: its unassertability is pragmatic."
   },
   {
     "id": "hollidaymandelkern2024_ex8b",
@@ -796,8 +772,7 @@
         "existential quantifier"
       ]
     ],
-    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence.",
-    "lgrConformance": ""
+    "comment": "The embedded Wittgenstein sentence patterns with the contradiction, not the Moore sentence."
   },
   {
     "id": "hollidaymandelkern2024_ex8c",
@@ -828,8 +803,7 @@
         "existential quantifier"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex9a",
@@ -860,8 +834,7 @@
         "distributed attitude ascriptions"
       ]
     ],
-    "comment": "The conjuncts are jointly inconsistent even when distributed across attitude ascriptions.",
-    "lgrConformance": ""
+    "comment": "The conjuncts are jointly inconsistent even when distributed across attitude ascriptions."
   },
   {
     "id": "hollidaymandelkern2024_ex9b",
@@ -892,8 +865,7 @@
         "distributed suppositions"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex9c",
@@ -924,8 +896,7 @@
         "distributed attitude ascriptions"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex10a",
@@ -952,8 +923,7 @@
         "(◇p ∧ ◇¬p) ∧ (p ∨ ¬p)"
       ]
     ],
-    "comment": "A long-winded avowal of ignorance; true at the point of full uncertainty.",
-    "lgrConformance": ""
+    "comment": "A long-winded avowal of ignorance; true at the point of full uncertainty."
   },
   {
     "id": "hollidaymandelkern2024_ex10b",
@@ -980,8 +950,7 @@
         "(◇¬p ∧ p) ∨ (◇p ∧ ¬p)"
       ]
     ],
-    "comment": "The distribution of (10a): a disjunction of Wittgenstein sentences, so distributivity is invalid.",
-    "lgrConformance": ""
+    "comment": "The distribution of (10a): a disjunction of Wittgenstein sentences, so distributivity is invalid."
   },
   {
     "id": "hollidaymandelkern2024_ex11",
@@ -1008,8 +977,7 @@
         "∧ᵢ ◇¬W(tᵢ)"
       ]
     ],
-    "comment": "True of a fair lottery whose result is unknown.",
-    "lgrConformance": ""
+    "comment": "True of a fair lottery whose result is unknown."
   },
   {
     "id": "hollidaymandelkern2024_ex12",
@@ -1036,8 +1004,7 @@
         "∨ᵢ (W(tᵢ) ∧ ◇¬W(tᵢ))"
       ]
     ],
-    "comment": "Would follow from (11) and the disjunction of the winners by distributivity.",
-    "lgrConformance": ""
+    "comment": "Would follow from (11) and the disjunction of the winners by distributivity."
   },
   {
     "id": "hollidaymandelkern2024_ex13a",
@@ -1068,8 +1035,7 @@
         "premise"
       ]
     ],
-    "comment": "A logical truth in any E-logic with De Morgan's laws.",
-    "lgrConformance": ""
+    "comment": "A logical truth in any E-logic with De Morgan's laws."
   },
   {
     "id": "hollidaymandelkern2024_ex13b",
@@ -1100,8 +1066,7 @@
         "premise"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex13c",
@@ -1132,8 +1097,7 @@
         "conclusion"
       ]
     ],
-    "comment": "The disjunctive-syllogism inference from (13a) and (13b) is intuitively invalid.",
-    "lgrConformance": ""
+    "comment": "The disjunctive-syllogism inference from (13a) and (13b) is intuitively invalid."
   },
   {
     "id": "hollidaymandelkern2024_ex14",
@@ -1160,8 +1124,7 @@
         "p ∨ ¬p"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex15a",
@@ -1188,8 +1151,7 @@
         "p ∨ □¬p"
       ]
     ],
-    "comment": "Feels like the corresponding tautology.",
-    "lgrConformance": ""
+    "comment": "Feels like the corresponding tautology."
   },
   {
     "id": "hollidaymandelkern2024_ex15b",
@@ -1216,8 +1178,7 @@
         "□p ∨ ¬p"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex16",
@@ -1248,8 +1209,7 @@
         "p entails ◇p"
       ]
     ],
-    "comment": "Proof by cases, footnote 5.",
-    "lgrConformance": ""
+    "comment": "Proof by cases, footnote 5."
   },
   {
     "id": "hollidaymandelkern2024_ex17",
@@ -1280,8 +1240,7 @@
         "p entails ◇p"
       ]
     ],
-    "comment": "Footnote 5: Moorean, explained if p entails ◇p.",
-    "lgrConformance": ""
+    "comment": "Footnote 5: Moorean, explained if p entails ◇p."
   },
   {
     "id": "hollidaymandelkern2024_ex18a",
@@ -1312,8 +1271,7 @@
         "retraction"
       ]
     ],
-    "comment": "Footnote 5.",
-    "lgrConformance": ""
+    "comment": "Footnote 5."
   },
   {
     "id": "hollidaymandelkern2024_ex18b",
@@ -1344,8 +1302,7 @@
         "retraction"
       ]
     ],
-    "comment": "Footnote 5.",
-    "lgrConformance": ""
+    "comment": "Footnote 5."
   },
   {
     "id": "hollidaymandelkern2024_ex19",
@@ -1376,8 +1333,7 @@
         "know"
       ]
     ],
-    "comment": "Footnote 5.",
-    "lgrConformance": ""
+    "comment": "Footnote 5."
   },
   {
     "id": "hollidaymandelkern2024_ex20",
@@ -1408,8 +1364,7 @@
         "conditional antecedent"
       ]
     ],
-    "comment": "Footnote 5: someone who is sick is obligated by modus ponens to tell.",
-    "lgrConformance": ""
+    "comment": "Footnote 5: someone who is sick is obligated by modus ponens to tell."
   },
   {
     "id": "hollidaymandelkern2024_ex21a",
@@ -1436,8 +1391,7 @@
         "(¬p ∧ ◇p) ∨ p"
       ]
     ],
-    "comment": "Sounds infelicitous, as a disjunction with a contradictory disjunct, yet feels equivalent to (21b); orthomodularity would make ◇p entail it.",
-    "lgrConformance": ""
+    "comment": "Sounds infelicitous, as a disjunction with a contradictory disjunct, yet feels equivalent to (21b); orthomodularity would make ◇p entail it."
   },
   {
     "id": "hollidaymandelkern2024_ex21b",
@@ -1464,8 +1418,7 @@
         "p"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex22a",
@@ -1496,8 +1449,7 @@
         "against 4"
       ]
     ],
-    "comment": "Moss's nested modals seem increasingly strong, against the collapse principles.",
-    "lgrConformance": ""
+    "comment": "Moss's nested modals seem increasingly strong, against the collapse principles."
   },
   {
     "id": "hollidaymandelkern2024_ex22b",
@@ -1524,8 +1476,7 @@
         "◇p"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex22c",
@@ -1552,8 +1503,7 @@
         "□◇p"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex23a",
@@ -1584,8 +1534,7 @@
         "violation of 4 inconsistent"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex23b",
@@ -1616,8 +1565,7 @@
         "violation of 5 inconsistent"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex23c",
@@ -1648,8 +1596,7 @@
         "violation of B inconsistent"
       ]
     ],
-    "comment": "Inconsistent although 4, 5 and B are invalid: negation is not pseudocomplementation.",
-    "lgrConformance": ""
+    "comment": "Inconsistent although 4, 5 and B are invalid: negation is not pseudocomplementation."
   },
   {
     "id": "hollidaymandelkern2024_ex24a",
@@ -1680,8 +1627,7 @@
         "restricted diamond distributivity"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex24b",
@@ -1712,8 +1658,7 @@
         "restricted diamond distributivity"
       ]
     ],
-    "comment": "Intuitively reasonable given that both conjunctions might hold; Proposition 5.12.1.",
-    "lgrConformance": ""
+    "comment": "Intuitively reasonable given that both conjunctions might hold; Proposition 5.12.1."
   },
   {
     "id": "hollidaymandelkern2024_ex25",
@@ -1744,8 +1689,7 @@
         "classical contradiction"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex26",
@@ -1776,8 +1720,7 @@
         "disjoined Wittgenstein sentence"
       ]
     ],
-    "comment": "Ascribes incoherent beliefs, like (25); a pragmatic supposability rule cannot explain this.",
-    "lgrConformance": ""
+    "comment": "Ascribes incoherent beliefs, like (25); a pragmatic supposability rule cannot explain this."
   },
   {
     "id": "hollidaymandelkern2024_ex27",
@@ -1808,8 +1751,7 @@
         "modalized Wittgenstein sentence"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex28a",
@@ -1840,8 +1782,7 @@
         "dynamic semantics"
       ]
     ],
-    "comment": "As bad as the reverse order, against the dynamic prediction that the left-modal variant is coherent.",
-    "lgrConformance": ""
+    "comment": "As bad as the reverse order, against the dynamic prediction that the left-modal variant is coherent."
   },
   {
     "id": "hollidaymandelkern2024_ex28b",
@@ -1872,8 +1813,7 @@
         "dynamic semantics"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex29a",
@@ -1904,8 +1844,7 @@
         "state-based semantics"
       ]
     ],
-    "comment": "Equivalent to (29b) by De Morgan's laws, contrary to Hawke and Steinert-Threlkeld.",
-    "lgrConformance": ""
+    "comment": "Equivalent to (29b) by De Morgan's laws, contrary to Hawke and Steinert-Threlkeld."
   },
   {
     "id": "hollidaymandelkern2024_ex29b",
@@ -1936,8 +1875,7 @@
         "state-based semantics"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex30",
@@ -1968,8 +1906,7 @@
         "state-based semantics"
       ]
     ],
-    "comment": "Not a logical truth: more committal than the disjunction of p and ¬p.",
-    "lgrConformance": ""
+    "comment": "Not a logical truth: more committal than the disjunction of p and ¬p."
   },
   {
     "id": "hollidaymandelkern2024_ex31a",
@@ -2000,8 +1937,7 @@
         "probability"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex31b",
@@ -2028,8 +1964,7 @@
         "probability"
       ]
     ],
-    "comment": "Makes sense where there is a .5 chance the coin was double-headed.",
-    "lgrConformance": ""
+    "comment": "Makes sense where there is a .5 chance the coin was double-headed."
   },
   {
     "id": "hollidaymandelkern2024_ex32",
@@ -2056,8 +1991,7 @@
         "probability"
       ]
     ],
-    "comment": "",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "hollidaymandelkern2024_ex33",
@@ -2088,7 +2022,6 @@
         "expressivism"
       ]
     ],
-    "comment": "p does not entail that one knows ◇p.",
-    "lgrConformance": ""
+    "comment": "p does not entail that one knows ◇p."
   }
 ]

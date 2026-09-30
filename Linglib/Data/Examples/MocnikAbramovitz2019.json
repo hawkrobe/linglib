@@ -29,9 +29,7 @@
     "paperFeatures": [
       ["section", "1"]
     ],
-    "comment": "The complementizer əno is optional. 'wish' needs the counterfactual prefix ʔ- in the embedded clause, (3).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The complementizer əno is optional. 'wish' needs the counterfactual prefix ʔ- in the embedded clause, (3)."
   },
   {
     "id": "mocnikabramovitz2019_ex4",
@@ -57,9 +55,7 @@
     "paperFeatures": [
       ["section", "2"]
     ],
-    "comment": "The speaker first rejected the discourse and accepted it once asked whether ivək could mean dopuskat' 'allow for the possibility' (§1.1).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The speaker first rejected the discourse and accepted it once asked whether ivək could mean dopuskat' 'allow for the possibility' (§1.1)."
   },
   {
     "id": "mocnikabramovitz2019_ex5",
@@ -81,9 +77,7 @@
     "paperFeatures": [
       ["section", "2"]
     ],
-    "comment": "Intended translation. The verb is ləmalavək 'believe', which has no possibility reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Intended translation. The verb is ləmalavək 'believe', which has no possibility reading."
   },
   {
     "id": "mocnikabramovitz2019_ex6",
@@ -105,9 +99,7 @@
     "paperFeatures": [
       ["section", "2"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "mocnikabramovitz2019_ex7",
@@ -132,9 +124,7 @@
     "paperFeatures": [
       ["section", "2"]
     ],
-    "comment": "The 'said' translation was volunteered and the 'allowed' one accepted in a matching task.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The 'said' translation was volunteered and the 'allowed' one accepted in a matching task."
   },
   {
     "id": "mocnikabramovitz2019_ex8a",
@@ -159,9 +149,7 @@
     "paperFeatures": [
       ["section", "2"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "mocnikabramovitz2019_ex8b",
@@ -187,9 +175,7 @@
     "paperFeatures": [
       ["section", "2"]
     ],
-    "comment": "iwke is the non-future negated form of ivək (fn. 9).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "iwke is the non-future negated form of ivək (fn. 9)."
   },
   {
     "id": "mocnikabramovitz2019_ex9a",
@@ -210,9 +196,7 @@
     "paperFeatures": [
       ["section", "2"]
     ],
-    "comment": "Translated into Koryak. The adverb amu 'might' facilitates the weaker reading.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Translated into Koryak. The adverb amu 'might' facilitates the weaker reading."
   },
   {
     "id": "mocnikabramovitz2019_ex14a",
@@ -237,9 +221,7 @@
     "paperFeatures": [
       ["section", "3"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "mocnikabramovitz2019_ex14b",
@@ -264,9 +246,7 @@
     "paperFeatures": [
       ["section", "3"]
     ],
-    "comment": "",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": ""
   },
   {
     "id": "mocnikabramovitz2019_ex20",
@@ -289,8 +269,6 @@
     "paperFeatures": [
       ["section", "4"]
     ],
-    "comment": "Intended translation; a preliminary result. The source prints t͡ɕ here where (14) prints č for the same affricate.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Intended translation; a preliminary result. The source prints t͡ɕ here where (14) prints č for the same affricate."
   }
 ]

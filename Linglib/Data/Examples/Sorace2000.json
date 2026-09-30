@@ -18,8 +18,7 @@
       ["position", "changeOfLocation"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex1b",
@@ -40,8 +39,7 @@
       ["position", "changeOfLocation"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex1c",
@@ -63,8 +61,7 @@
       ["position", "changeOfLocation"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex1d",
@@ -85,8 +82,7 @@
       ["position", "changeOfLocation"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex4",
@@ -109,8 +105,7 @@
       ["aux", "be"],
       ["predicate", "detelicized"]
     ],
-    "comment": "The auxiliary stays essere although the predicate is atelic.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The auxiliary stays essere although the predicate is atelic."
   },
   {
     "id": "sorace2000_ex5a",
@@ -133,8 +128,7 @@
       ["aux", "be"],
       ["subject", "agentive"]
     ],
-    "comment": "The paper labels the example agentive; agentivity does not affect auxiliary choice with these verbs (§3.1).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The paper labels the example agentive; agentivity does not affect auxiliary choice with these verbs (§3.1)."
   },
   {
     "id": "sorace2000_ex5b",
@@ -156,8 +150,7 @@
       ["position", "changeOfLocation"],
       ["aux", "be"]
     ],
-    "comment": "The paper labels the example nonagentive.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The paper labels the example nonagentive."
   },
   {
     "id": "sorace2000_ex30a",
@@ -178,8 +171,7 @@
       ["position", "changeOfLocation"],
       ["aux", "have"]
     ],
-    "comment": "From §3.5, where it is contrasted with the anticausative (30b); the paper prints no translation.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "From §3.5, where it is contrasted with the anticausative (30b); the paper prints no translation."
   },
   {
     "id": "sorace2000_ex7a",
@@ -203,8 +195,7 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": "Printed ?*ha.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Printed ?*ha."
   },
   {
     "id": "sorace2000_ex7b",
@@ -228,8 +219,7 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex8a",
@@ -253,8 +243,7 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": "Printed with one participle for both auxiliaries, La pianta è / ha fiorito; the participle with essere agrees with the subject.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Printed with one participle for both auxiliaries, La pianta è / ha fiorito; the participle with essere agrees with the subject."
   },
   {
     "id": "sorace2000_ex9a",
@@ -276,8 +265,7 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": "The paper prints the preposition as a without the grave accent.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The paper prints the preposition as a without the grave accent."
   },
   {
     "id": "sorace2000_ex9b",
@@ -299,8 +287,7 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex9c",
@@ -322,8 +309,7 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex10a",
@@ -347,8 +333,7 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex10b",
@@ -370,8 +355,7 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex11",
@@ -397,8 +381,7 @@
       ["aux", "be"],
       ["predicate", "detelicized"]
     ],
-    "comment": "A durative adverbial makes the predicate atelic (§3.2). Sorace takes the example from van Hout (1993: 7).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A durative adverbial makes the predicate atelic (§3.2). Sorace takes the example from van Hout (1993: 7)."
   },
   {
     "id": "sorace2000_ex12",
@@ -421,8 +404,7 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex13",
@@ -443,8 +425,7 @@
       ["position", "changeOfState"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex14a",
@@ -468,8 +449,7 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex14c",
@@ -491,8 +471,7 @@
       ["position", "changeOfState"],
       ["aux", "be"]
     ],
-    "comment": "Échapper takes être in its change-of-state sense, something said or done inadvertently. The paper's text refers to this example as (14b) and to the avoir example as (14c), the reverse of the printed examples.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Échapper takes être in its change-of-state sense, something said or done inadvertently. The paper's text refers to this example as (14b) and to the avoir example as (14c), the reverse of the printed examples."
   },
   {
     "id": "sorace2000_ex15a",
@@ -516,8 +495,7 @@
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex15b",
@@ -541,8 +519,7 @@
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
-    "comment": "Printed with one participle for both auxiliaries, La guerra è / ?ha durato; the participle with essere agrees with the subject.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Printed with one participle for both auxiliaries, La guerra è / ?ha durato; the participle with essere agrees with the subject."
   },
   {
     "id": "sorace2000_ex15c",
@@ -567,8 +544,7 @@
       ["aux", "be"],
       ["subject", "agentive"]
     ],
-    "comment": "An agentive subject makes avere more acceptable.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "An agentive subject makes avere more acceptable."
   },
   {
     "id": "sorace2000_ex16",
@@ -592,8 +568,7 @@
       ["position", "continuationOfState"],
       ["aux", "have"]
     ],
-    "comment": "The paper prints the participle with être without its accent, survecus.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The paper prints the participle with être without its accent, survecus."
   },
   {
     "id": "sorace2000_ex17a",
@@ -617,8 +592,7 @@
       ["position", "continuationOfState"],
       ["aux", "have"]
     ],
-    "comment": "Printed haben / *?sein, with the citation form of the auxiliary.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Printed haben / *?sein, with the citation form of the auxiliary."
   },
   {
     "id": "sorace2000_ex17b",
@@ -642,8 +616,7 @@
       ["position", "continuationOfState"],
       ["aux", "have"]
     ],
-    "comment": "The paper prints no translation.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The paper prints no translation."
   },
   {
     "id": "sorace2000_ex18a",
@@ -665,8 +638,7 @@
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex18b",
@@ -690,8 +662,7 @@
       ["position", "continuationOfState"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex19a",
@@ -715,8 +686,7 @@
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex19b",
@@ -740,8 +710,7 @@
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex19c",
@@ -765,8 +734,7 @@
       ["position", "continuationOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex20a",
@@ -790,8 +758,7 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex20b",
@@ -815,8 +782,7 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex20c",
@@ -840,8 +806,7 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex21a",
@@ -864,8 +829,7 @@
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
-    "comment": "An attested alternation: avere with a verb that otherwise prefers essere, cf. (20b).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "An attested alternation: avere with a verb that otherwise prefers essere, cf. (20b)."
   },
   {
     "id": "sorace2000_ex21b",
@@ -887,8 +851,7 @@
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex21c",
@@ -912,8 +875,7 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex22",
@@ -938,8 +900,7 @@
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
-    "comment": "The paper prints the determiner as Le, and the variant as /*?sont existé.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The paper prints the determiner as Le, and the variant as /*?sont existé."
   },
   {
     "id": "sorace2000_ex23a",
@@ -960,8 +921,7 @@
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex23b",
@@ -982,8 +942,7 @@
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex23c",
@@ -1007,8 +966,7 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex23d",
@@ -1031,8 +989,7 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex24a",
@@ -1054,8 +1011,7 @@
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex24b",
@@ -1077,8 +1033,7 @@
       ["position", "existenceOfState"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex24c",
@@ -1100,8 +1055,7 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex25a",
@@ -1123,8 +1077,7 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": "The paper prints in Ausland, glossed in abroad. BE itself is the exception the paper notes for Dutch and German.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The paper prints in Ausland, glossed in abroad. BE itself is the exception the paper notes for Dutch and German."
   },
   {
     "id": "sorace2000_ex25b",
@@ -1146,8 +1099,7 @@
       ["position", "existenceOfState"],
       ["aux", "be"]
     ],
-    "comment": "BE itself is the exception the paper notes for Dutch and German.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "BE itself is the exception the paper notes for Dutch and German."
   },
   {
     "id": "sorace2000_ex33a",
@@ -1169,8 +1121,7 @@
       ["position", "nonmotionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "The paper prints chiaccherato.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The paper prints chiaccherato."
   },
   {
     "id": "sorace2000_ex33b",
@@ -1192,8 +1143,7 @@
       ["position", "nonmotionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex33c",
@@ -1215,8 +1165,7 @@
       ["position", "nonmotionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex33d",
@@ -1238,8 +1187,7 @@
       ["position", "nonmotionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex34",
@@ -1265,8 +1213,7 @@
       ["aux", "have"],
       ["subject", "nonagentive"]
     ],
-    "comment": "Some speakers find essere not completely unacceptable with a nonagentive subject.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Some speakers find essere not completely unacceptable with a nonagentive subject."
   },
   {
     "id": "sorace2000_ex35",
@@ -1289,8 +1236,7 @@
       ["aux", "have"],
       ["predicate", "telicized"]
     ],
-    "comment": "A temporally bounding adverbial leaves the auxiliary avere.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A temporally bounding adverbial leaves the auxiliary avere."
   },
   {
     "id": "sorace2000_ex36a",
@@ -1314,8 +1260,7 @@
       ["position", "nonmotionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "From §4.2, the controlled affecting processes, a subclass of the controlled processes that selects HAVE less categorically than the unaffecting ones. Printed ha / *è ceduta; the participle with avere takes the default form.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "From §4.2, the controlled affecting processes, a subclass of the controlled processes that selects HAVE less categorically than the unaffecting ones. Printed ha / *è ceduta; the participle with avere takes the default form."
   },
   {
     "id": "sorace2000_ex36b",
@@ -1340,8 +1285,7 @@
       ["aux", "have"],
       ["subject", "nonagentive"]
     ],
-    "comment": "From §4.2; with a nonhuman subject these verbs tend to accept BE as well.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "From §4.2; with a nonhuman subject these verbs tend to accept BE as well."
   },
   {
     "id": "sorace2000_ex37a",
@@ -1365,8 +1309,7 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex37b",
@@ -1390,8 +1333,7 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex37c",
@@ -1415,8 +1357,7 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex38_rennen",
@@ -1440,8 +1381,7 @@
       ["position", "motionalProcess"],
       ["aux", "be"]
     ],
-    "comment": "Printed with three participles, gerannt / gelaufen / geschwommen; the paper's translation says the whole afternoon.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Printed with three participles, gerannt / gelaufen / geschwommen; the paper's translation says the whole afternoon."
   },
   {
     "id": "sorace2000_ex38_laufen",
@@ -1465,8 +1405,7 @@
       ["position", "motionalProcess"],
       ["aux", "be"]
     ],
-    "comment": "Printed with three participles, gerannt / gelaufen / geschwommen; the paper's translation says the whole afternoon.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Printed with three participles, gerannt / gelaufen / geschwommen; the paper's translation says the whole afternoon."
   },
   {
     "id": "sorace2000_ex38_schwimmen",
@@ -1490,8 +1429,7 @@
       ["position", "motionalProcess"],
       ["aux", "be"]
     ],
-    "comment": "Printed with three participles, gerannt / gelaufen / geschwommen; the paper's translation says the whole afternoon.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Printed with three participles, gerannt / gelaufen / geschwommen; the paper's translation says the whole afternoon."
   },
   {
     "id": "sorace2000_ex39a",
@@ -1514,8 +1452,7 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex39b",
@@ -1540,8 +1477,7 @@
       ["aux", "be"],
       ["predicate", "telicized"]
     ],
-    "comment": "A directional phrase (§4.3).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A directional phrase (§4.3)."
   },
   {
     "id": "sorace2000_ex40a",
@@ -1565,8 +1501,7 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex40b",
@@ -1591,8 +1526,7 @@
       ["aux", "be"],
       ["predicate", "telicized"]
     ],
-    "comment": "A directional phrase (§4.3).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A directional phrase (§4.3)."
   },
   {
     "id": "sorace2000_ex41a",
@@ -1615,8 +1549,7 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex41b",
@@ -1641,8 +1574,7 @@
       ["aux", "be"],
       ["predicate", "telicized"]
     ],
-    "comment": "A directional phrase (§4.3).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A directional phrase (§4.3)."
   },
   {
     "id": "sorace2000_ex41c",
@@ -1666,8 +1598,7 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex41d",
@@ -1691,8 +1622,7 @@
       ["aux", "have"],
       ["predicate", "telicized"]
     ],
-    "comment": "A directional phrase; nuotare, unlike correre (41b), keeps avere (§4.3).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A directional phrase; nuotare, unlike correre (41b), keeps avere (§4.3)."
   },
   {
     "id": "sorace2000_ex42a",
@@ -1715,8 +1645,7 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "The paper prints tres without its accent.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The paper prints tres without its accent."
   },
   {
     "id": "sorace2000_ex42b",
@@ -1741,8 +1670,7 @@
       ["aux", "have"],
       ["predicate", "telicized"]
     ],
-    "comment": "A directional phrase; in French the event-type shift leaves avoir (§4.3).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A directional phrase; in French the event-type shift leaves avoir (§4.3)."
   },
   {
     "id": "sorace2000_ex43a",
@@ -1767,8 +1695,7 @@
       ["aux", "be"],
       ["subject", "nonagentive"]
     ],
-    "comment": "An idiomatic, nonagentive use.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "An idiomatic, nonagentive use."
   },
   {
     "id": "sorace2000_ex43b",
@@ -1793,8 +1720,7 @@
       ["aux", "be"],
       ["subject", "nonagentive"]
     ],
-    "comment": "A sentential subject.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A sentential subject."
   },
   {
     "id": "sorace2000_ex44a",
@@ -1818,8 +1744,7 @@
       ["position", "motionalProcess"],
       ["aux", "have"]
     ],
-    "comment": "A volitional subject.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A volitional subject."
   },
   {
     "id": "sorace2000_ex44b",
@@ -1844,8 +1769,7 @@
       ["aux", "be"],
       ["subject", "nonagentive"]
     ],
-    "comment": "A nonvolitional subject, against the pilot of (44a).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A nonvolitional subject, against the pilot of (44a)."
   },
   {
     "id": "sorace2000_ex45a",
@@ -1870,8 +1794,7 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex45b",
@@ -1896,8 +1819,7 @@
       ["aux", "have"],
       ["subject", "agentive"]
     ],
-    "comment": "An agentive subject; these verbs prefer HAVE with agentive subjects (§4.4).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "An agentive subject; these verbs prefer HAVE with agentive subjects (§4.4)."
   },
   {
     "id": "sorace2000_ex46a",
@@ -1920,8 +1842,7 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex46b",
@@ -1944,8 +1865,7 @@
       ["aux", "have"],
       ["subject", "agentive"]
     ],
-    "comment": "The phrase on purpose construes the bodily function as volitional (§4.4).",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "The phrase on purpose construes the bodily function as volitional (§4.4)."
   },
   {
     "id": "sorace2000_ex47a",
@@ -1968,8 +1888,7 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex47b",
@@ -1993,8 +1912,7 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex47c",
@@ -2017,8 +1935,7 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex47d",
@@ -2041,8 +1958,7 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": "Printed with one participle for both auxiliaries, ha/?è rintoccata; the participle with avere takes the default form.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Printed with one participle for both auxiliaries, ha/?è rintoccata; the participle with avere takes the default form."
   },
   {
     "id": "sorace2000_ex48_piovere",
@@ -2066,8 +1982,7 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": "Printed with three participles, piovuto / nevicato / gradinato.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Printed with three participles, piovuto / nevicato / gradinato."
   },
   {
     "id": "sorace2000_ex48_nevicare",
@@ -2091,8 +2006,7 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": "Printed with three participles, piovuto / nevicato / gradinato.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Printed with three participles, piovuto / nevicato / gradinato."
   },
   {
     "id": "sorace2000_ex48_grandinare",
@@ -2116,8 +2030,7 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": "Printed with three participles, piovuto / nevicato / gradinato; the last is a misprint for grandinato.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Printed with three participles, piovuto / nevicato / gradinato; the last is a misprint for grandinato."
   },
   {
     "id": "sorace2000_ex49",
@@ -2141,8 +2054,7 @@
       ["aux", "be"],
       ["predicate", "telicized"]
     ],
-    "comment": "A directional phrase expresses the endpoint.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "A directional phrase expresses the endpoint."
   },
   {
     "id": "sorace2000_ex50a",
@@ -2166,8 +2078,7 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex50b",
@@ -2190,8 +2101,7 @@
       ["position", "uncontrolledProcess"],
       ["aux", "have"]
     ],
-    "comment": "",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": ""
   },
   {
     "id": "sorace2000_ex51_tuonare",
@@ -2213,8 +2123,7 @@
       ["aux", "be"],
       ["predicate", "telicized"]
     ],
-    "comment": "Printed with two participles, tuonato / lampeggiato, under a directional reading.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Printed with two participles, tuonato / lampeggiato, under a directional reading."
   },
   {
     "id": "sorace2000_ex51_lampeggiare",
@@ -2236,7 +2145,6 @@
       ["aux", "be"],
       ["predicate", "telicized"]
     ],
-    "comment": "Printed with two participles, tuonato / lampeggiato, under a directional reading.",
-    "lgrConformance": "WORD_ALIGNED"
+    "comment": "Printed with two participles, tuonato / lampeggiato, under a directional reading."
   }
 ]

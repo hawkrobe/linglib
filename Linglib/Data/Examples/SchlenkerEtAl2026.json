@@ -18,9 +18,7 @@
       ["roleShift", "broad"],
       ["verb", "DRIVE"]
     ],
-    "comment": "The pole classifier moves past the signer's head on the right; no body rotation. score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The pole classifier moves past the signer's head on the right; no body rotation. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex7b",
@@ -41,9 +39,7 @@
       ["roleShift", "broad"],
       ["verb", "DRIVE"]
     ],
-    "comment": "The pole classifier moves past the signer's head on the left; no body rotation. score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The pole classifier moves past the signer's head on the left; no body rotation. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex10a",
@@ -64,9 +60,7 @@
       ["roleShift", "broad"],
       ["verb", "DRIVE"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex10b",
@@ -87,9 +81,7 @@
       ["roleShift", "broad"],
       ["verb", "DRIVE"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex10c",
@@ -110,9 +102,7 @@
       ["roleShift", "broad"],
       ["verb", "DRIVE"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex10d",
@@ -133,9 +123,7 @@
       ["roleShift", "broad"],
       ["verb", "DRIVE"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex10e",
@@ -156,9 +144,7 @@
       ["roleShift", "broad"],
       ["verb", "DRIVE"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex10f",
@@ -179,9 +165,7 @@
       ["roleShift", "broad"],
       ["verb", "DRIVE"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex13a",
@@ -203,9 +187,7 @@
       ["verb", "JOG"],
       ["pathDisplayed", "none"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex13b",
@@ -227,9 +209,7 @@
       ["verb", "RUN-agreeing"],
       ["pathDisplayed", "forward"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex13c",
@@ -251,9 +231,7 @@
       ["verb", "PERSON-cl-agreeing"],
       ["pathDisplayed", "forward"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex13d",
@@ -275,9 +253,7 @@
       ["verb", "JOG"],
       ["pathDisplayed", "none"]
     ],
-    "comment": "The second consultant found it less acceptable than (13e,f). score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The second consultant found it less acceptable than (13e,f). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex13e",
@@ -299,9 +275,7 @@
       ["verb", "RUN-agreeing"],
       ["pathDisplayed", "forward"]
     ],
-    "comment": "Individual judgments 5, 7, 4. score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Individual judgments 5, 7, 4. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex13f",
@@ -323,9 +297,7 @@
       ["verb", "PERSON-cl-agreeing"],
       ["pathDisplayed", "forward"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex16a",
@@ -346,9 +318,7 @@
       ["roleShift", "broad"],
       ["verb", "JOG"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex16b",
@@ -369,9 +339,7 @@
       ["roleShift", "broad"],
       ["verb", "RUN-agreeing"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex16c",
@@ -393,9 +361,7 @@
       ["verb", "RUN-neutral"],
       ["signerMoves", "yes"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex16d",
@@ -417,9 +383,7 @@
       ["verb", "RUN-neutral"],
       ["signerMoves", "no"]
     ],
-    "comment": "Individual judgments 7, 4, 5. score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Individual judgments 7, 4, 5. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex16e",
@@ -440,9 +404,7 @@
       ["roleShift", "broad"],
       ["verb", "PERSON-cl-agreeing"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex16f",
@@ -464,9 +426,7 @@
       ["verb", "PERSON-cl-neutral"],
       ["signerMoves", "yes"]
     ],
-    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex16g",
@@ -488,9 +448,7 @@
       ["verb", "PERSON-cl-neutral"],
       ["signerMoves", "no"]
     ],
-    "comment": "Individual judgments 7, 4, 5. score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Individual judgments 7, 4, 5. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex19a",
@@ -511,9 +469,7 @@
       ["roleShift", "strict"],
       ["verb", "DRIVE"]
     ],
-    "comment": "Role Shift in the strict sense, with body rotation; the role-shifted counterpart of (7). score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Role Shift in the strict sense, with body rotation; the role-shifted counterpart of (7). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex19b",
@@ -534,9 +490,7 @@
       ["roleShift", "strict"],
       ["verb", "DRIVE"]
     ],
-    "comment": "Role Shift in the strict sense, with body rotation; the role-shifted counterpart of (7). score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Role Shift in the strict sense, with body rotation; the role-shifted counterpart of (7). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex21a",
@@ -557,9 +511,7 @@
       ["roleShift", "strict"],
       ["verb", "JOG"]
     ],
-    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex21b",
@@ -580,9 +532,7 @@
       ["roleShift", "strict"],
       ["verb", "RUN-agreeing"]
     ],
-    "comment": "The second consultant found it suboptimal because of misalignment with the Role Shift. Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The second consultant found it suboptimal because of misalignment with the Role Shift. Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex21c",
@@ -604,9 +554,7 @@
       ["verb", "RUN-neutral"],
       ["signerMoves", "yes"]
     ],
-    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex21d",
@@ -628,9 +576,7 @@
       ["verb", "RUN-neutral"],
       ["signerMoves", "no"]
     ],
-    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex21e",
@@ -651,9 +597,7 @@
       ["roleShift", "strict"],
       ["verb", "PERSON-cl-agreeing"]
     ],
-    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex21f",
@@ -675,9 +619,7 @@
       ["verb", "PERSON-cl-neutral"],
       ["signerMoves", "yes"]
     ],
-    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex21g",
@@ -699,9 +641,7 @@
       ["verb", "PERSON-cl-neutral"],
       ["signerMoves", "no"]
     ],
-    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Role Shift in the strict sense; the role-shifted counterpart of (16). score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex23a",
@@ -722,9 +662,7 @@
       ["roleShift", "strict"],
       ["figure", "PERSON-cl"]
     ],
-    "comment": "Two classifiers: a person classifier runs in place while the tree classifier passes repeatedly. score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Two classifiers: a person classifier runs in place while the tree classifier passes repeatedly. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex23b",
@@ -745,9 +683,7 @@
       ["roleShift", "broad"],
       ["figure", "PERSON-cl"]
     ],
-    "comment": "As (23a) without body rotation. score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "As (23a) without body rotation. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex24a",
@@ -768,9 +704,7 @@
       ["roleShift", "strict"],
       ["figure", "VEHICLE-cl"]
     ],
-    "comment": "Two classifiers: the ground classifier moves relative to the vehicle classifier. score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Two classifiers: the ground classifier moves relative to the vehicle classifier. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   },
   {
     "id": "schlenkeretal2026_ex24b",
@@ -791,8 +725,6 @@
       ["roleShift", "broad"],
       ["figure", "VEHICLE-cl"]
     ],
-    "comment": "As (24a) without body rotation. score is the mean acceptability over three sessions on a 7-point scale, in tenths.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "As (24a) without body rotation. score is the mean acceptability over three sessions on a 7-point scale, in tenths."
   }
 ]

@@ -13,9 +13,7 @@
     "readings": [
       {"name": "∃ > if", "judgment": "acceptable"}
     ],
-    "comment": "Exceptional scope of an indefinite out of a conditional antecedent, a scope island.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Exceptional scope of an indefinite out of a conditional antecedent, a scope island."
   },
   {
     "id": "charlow2014_ex4_1b",
@@ -31,9 +29,7 @@
     "readings": [
       {"name": "∀ > if", "judgment": "unacceptable"}
     ],
-    "comment": "A universal cannot scope out of the antecedent; contrast with (4.1a).",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A universal cannot scope out of the antecedent; contrast with (4.1a)."
   },
   {
     "id": "charlow2014_ex4_1c",
@@ -49,9 +45,7 @@
     "readings": [
       {"name": "¬∃ > if", "judgment": "unacceptable"}
     ],
-    "comment": "A negative quantifier cannot scope out of the antecedent.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A negative quantifier cannot scope out of the antecedent."
   },
   {
     "id": "charlow2014_ex4_2a",
@@ -67,9 +61,7 @@
     "readings": [
       {"name": "no > ∃ > every (intermediate)", "judgment": "acceptable"}
     ],
-    "comment": "Intermediate exceptional scope out of a tensed relative clause, with the indefinite bound into by the subject.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Intermediate exceptional scope out of a tensed relative clause, with the indefinite bound into by the subject."
   },
   {
     "id": "charlow2014_ex4_4",
@@ -86,9 +78,7 @@
     "readings": [
       {"name": "∃ > no (pronoun bound)", "judgment": "unacceptable"}
     ],
-    "comment": "The Binder Roof Constraint: an indefinite cannot take existential scope over an operator that binds into its restrictor.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The Binder Roof Constraint: an indefinite cannot take existential scope over an operator that binds into its restrictor."
   },
   {
     "id": "charlow2014_ex4_6",
@@ -104,9 +94,7 @@
     "readings": [
       {"name": "a book > not > a famous linguist", "judgment": "unacceptable"}
     ],
-    "comment": "A container indefinite cannot outscope negation while the embedded indefinite scopes below it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A container indefinite cannot outscope negation while the embedded indefinite scopes below it."
   },
   {
     "id": "charlow2014_ex4_18b",
@@ -122,9 +110,7 @@
     "readings": [
       {"name": "a relative > if > a lawyer", "judgment": "acceptable"}
     ],
-    "comment": "Selective exceptional scope: two indefinites on one island scope differently outside it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Selective exceptional scope: two indefinites on one island scope differently outside it."
   },
   {
     "id": "charlow2014_ex4_23a",
@@ -141,9 +127,7 @@
     "readings": [
       {"name": "or > hopes, indefinites de dicto", "judgment": "acceptable"}
     ],
-    "comment": "Disjunction takes exceptional scope while its disjuncts stay below the attitude verb: disjunction does not respect the Binder Roof Constraint.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Disjunction takes exceptional scope while its disjuncts stay below the attitude verb: disjunction does not respect the Binder Roof Constraint."
   },
   {
     "id": "charlow2014_ex4_23b",
@@ -160,9 +144,7 @@
     "readings": [
       {"name": "and > hopes", "judgment": "unacceptable"}
     ],
-    "comment": "Unstressed conjunction does not scope out of the island.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Unstressed conjunction does not scope out of the island."
   },
   {
     "id": "charlow2014_ex4_24b",
@@ -178,9 +160,7 @@
     "readings": [
       {"name": "either everyone ate a steak, or everyone ate a hamburger (or > every > a)", "judgment": "acceptable"}
     ],
-    "comment": "Disjunction scopes over the universal while each disjoined indefinite stays within it.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Disjunction scopes over the universal while each disjoined indefinite stays within it."
   },
   {
     "id": "charlow2014_ex4_25b",
@@ -196,9 +176,7 @@
     "readings": [
       {"name": "every farmer beats every donkey or horse he owns", "judgment": "acceptable"}
     ],
-    "comment": "Disjunctions license donkey anaphora like indefinites.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Disjunctions license donkey anaphora like indefinites."
   },
   {
     "id": "charlow2014_ex5_7a",
@@ -217,9 +195,7 @@
     "readings": [
       {"name": "sloppy (him = Bill)", "judgment": "acceptable"}
     ],
-    "comment": "Surprising sloppy reading: Bill's dref must scope out of a tensed clause and over the dynamically closed 'everyone' to bind the sloppy pro-form.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Surprising sloppy reading: Bill's dref must scope out of a tensed clause and over the dynamically closed 'everyone' to bind the sloppy pro-form."
   },
   {
     "id": "charlow2014_ex5_22",
@@ -238,9 +214,7 @@
     "readings": [
       {"name": "they = maximal refset", "judgment": "acceptable"}
     ],
-    "comment": "A maximal refset dref created inside a scope island, under dynamically closed operators, is available for cross-sentential anaphora.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "A maximal refset dref created inside a scope island, under dynamically closed operators, is available for cross-sentential anaphora."
   },
   {
     "id": "charlow2014_ex5_23",
@@ -259,9 +233,7 @@
     "readings": [
       {"name": "they = maximal refset", "judgment": "acceptable"}
     ],
-    "comment": "The refset dref of 'no senators' survives the negation scoping over its island.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "The refset dref of 'no senators' survives the negation scoping over its island."
   },
   {
     "id": "charlow2014_ex5_27b",
@@ -277,8 +249,6 @@
     "readings": [
       {"name": "also > SUE > only > BILL", "judgment": "acceptable"}
     ],
-    "comment": "Selective association with focus: only associates with BILL, also with SUE.",
-    "metaLanguage": "stan1293",
-    "lgrConformance": ""
+    "comment": "Selective association with focus: only associates with BILL, also with SUE."
   }
 ]

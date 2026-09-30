@@ -31,9 +31,7 @@ def when_state : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "when"), ("clause", "embedded"), ("vendler_class", "state")]
-    comment := "Schematic illustration of the M&S 1988 §4.2 when-coercion pattern; sentence not verified verbatim against the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Schematic illustration of the M&S 1988 §4.2 when-coercion pattern; sentence not verified verbatim against the paper." }
 
 def when_activity : LinguisticExample :=
   { id := "moenssteedman1988_when_activity"
@@ -49,9 +47,7 @@ def when_activity : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "when"), ("clause", "embedded"), ("vendler_class", "activity"), ("coercion", "inception"), ("result_class", "achievement")]
-    comment := "Schematic illustration of the M&S 1988 §4.2 when-coercion pattern; sentence not verified verbatim against the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Schematic illustration of the M&S 1988 §4.2 when-coercion pattern; sentence not verified verbatim against the paper." }
 
 def when_accomplishment : LinguisticExample :=
   { id := "moenssteedman1988_when_accomplishment"
@@ -67,9 +63,7 @@ def when_accomplishment : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "when"), ("clause", "embedded"), ("vendler_class", "accomplishment"), ("coercion", "culmination"), ("result_class", "achievement")]
-    comment := "Schematic illustration of the M&S 1988 §4.2 when-coercion pattern; sentence not verified verbatim against the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Schematic illustration of the M&S 1988 §4.2 when-coercion pattern; sentence not verified verbatim against the paper." }
 
 def when_achievement : LinguisticExample :=
   { id := "moenssteedman1988_when_achievement"
@@ -85,9 +79,7 @@ def when_achievement : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("connective", "when"), ("clause", "embedded"), ("vendler_class", "achievement")]
-    comment := "Schematic illustration of the M&S 1988 §4.2 when-coercion pattern; sentence not verified verbatim against the paper."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Schematic illustration of the M&S 1988 §4.2 when-coercion pattern; sentence not verified verbatim against the paper." }
 
 def all : List LinguisticExample := [when_state, when_activity, when_accomplishment, when_achievement]
 

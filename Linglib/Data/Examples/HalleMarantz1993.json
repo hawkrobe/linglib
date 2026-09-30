@@ -18,8 +18,7 @@
       ["part", "past_participle"],
       ["suffix", "-n"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Past participle': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Past participle': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_beat_past_finite",
@@ -40,8 +39,7 @@
       ["part", "past_finite"],
       ["suffix", "∅"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Past finite': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Past finite': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_beat_nonpast_3sg",
@@ -62,8 +60,7 @@
       ["part", "nonpast_3sg"],
       ["suffix", "-z"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Nonpast finite 3rd sg': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Nonpast finite 3rd sg': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_beat_nonpast_participle",
@@ -84,8 +81,7 @@
       ["part", "nonpast_participle"],
       ["suffix", "-ing"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Nonpast participle': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Nonpast participle': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_beat_nonpast_finite",
@@ -106,8 +102,7 @@
       ["part", "nonpast_finite"],
       ["suffix", "∅"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Nonpast finite': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Nonpast finite': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_put_past_participle",
@@ -128,8 +123,7 @@
       ["part", "past_participle"],
       ["suffix", "∅"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Past participle': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Past participle': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_put_past_finite",
@@ -150,8 +144,7 @@
       ["part", "past_finite"],
       ["suffix", "∅"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Past finite': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Past finite': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_put_nonpast_3sg",
@@ -172,8 +165,7 @@
       ["part", "nonpast_3sg"],
       ["suffix", "-z"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Nonpast finite 3rd sg': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Nonpast finite 3rd sg': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_put_nonpast_participle",
@@ -194,8 +186,7 @@
       ["part", "nonpast_participle"],
       ["suffix", "-ing"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Nonpast participle': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Nonpast participle': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_put_nonpast_finite",
@@ -216,8 +207,7 @@
       ["part", "nonpast_finite"],
       ["suffix", "∅"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Nonpast finite': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Nonpast finite': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_dwell_past_participle",
@@ -238,8 +228,7 @@
       ["part", "past_participle"],
       ["suffix", "-t"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Past participle': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Past participle': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_dwell_past_finite",
@@ -260,8 +249,7 @@
       ["part", "past_finite"],
       ["suffix", "-t"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Past finite': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Past finite': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_dwell_nonpast_3sg",
@@ -282,8 +270,7 @@
       ["part", "nonpast_3sg"],
       ["suffix", "-z"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Nonpast finite 3rd sg': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Nonpast finite 3rd sg': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_dwell_nonpast_participle",
@@ -304,8 +291,7 @@
       ["part", "nonpast_participle"],
       ["suffix", "-ing"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Nonpast participle': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Nonpast participle': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_dwell_nonpast_finite",
@@ -326,8 +312,7 @@
       ["part", "nonpast_finite"],
       ["suffix", "∅"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Nonpast finite': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Nonpast finite': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_play_past_participle",
@@ -348,8 +333,7 @@
       ["part", "past_participle"],
       ["suffix", "-d"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Past participle': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Past participle': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_play_past_finite",
@@ -370,8 +354,7 @@
       ["part", "past_finite"],
       ["suffix", "-d"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Past finite': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Past finite': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_play_nonpast_3sg",
@@ -392,8 +375,7 @@
       ["part", "nonpast_3sg"],
       ["suffix", "-z"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Nonpast finite 3rd sg': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Nonpast finite 3rd sg': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_play_nonpast_participle",
@@ -414,8 +396,7 @@
       ["part", "nonpast_participle"],
       ["suffix", "-ing"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Nonpast participle': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Nonpast participle': the suffix is the paper's own segmentation."
   },
   {
     "id": "hallemarantz1993_play_nonpast_finite",
@@ -436,7 +417,6 @@
       ["part", "nonpast_finite"],
       ["suffix", "∅"]
     ],
-    "comment": "Halle & Marantz 1993 (7), row 'Nonpast finite': the suffix is the paper's own segmentation.",
-    "lgrConformance": "MORPHEME_ALIGNED"
+    "comment": "Halle & Marantz 1993 (7), row 'Nonpast finite': the suffix is the paper's own segmentation."
   }
 ]

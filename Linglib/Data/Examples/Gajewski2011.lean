@@ -31,9 +31,7 @@ def ex14a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "no"), ("strength", "weak"), ("npi", "anyone")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex15a : LinguisticExample :=
   { id := "gajewski2011_ex15a"
@@ -49,9 +47,7 @@ def ex15a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "no"), ("strength", "strong"), ("npi", "in weeks")]
-    comment := "No sits at the end of its scale, so its enriched meaning is its plain, downward-entailing meaning."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No sits at the end of its scale, so its enriched meaning is its plain, downward-entailing meaning." }
 
 def ex14b : LinguisticExample :=
   { id := "gajewski2011_ex14b"
@@ -67,9 +63,7 @@ def ex14b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "atMostFive"), ("strength", "weak"), ("npi", "anyone")]
-    comment := "Downward entailing but not anti-additive."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Downward entailing but not anti-additive." }
 
 def ex15b : LinguisticExample :=
   { id := "gajewski2011_ex15b"
@@ -85,9 +79,7 @@ def ex15b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "atMostFive"), ("strength", "strong"), ("npi", "in weeks")]
-    comment := "Excluding the stronger alternative at most four leaves exactly five, which is not downward entailing."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Excluding the stronger alternative at most four leaves exactly five, which is not downward entailing." }
 
 def ex1f : LinguisticExample :=
   { id := "gajewski2011_ex1f"
@@ -103,9 +95,7 @@ def ex1f : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "some"), ("strength", "weak"), ("npi", "ever")]
-    comment := "Upward entailing in its scope."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Upward entailing in its scope." }
 
 def ex7f : LinguisticExample :=
   { id := "gajewski2011_ex7f"
@@ -121,9 +111,7 @@ def ex7f : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "some"), ("strength", "strong"), ("npi", "until")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex39a : LinguisticExample :=
   { id := "gajewski2011_ex39a"
@@ -139,9 +127,7 @@ def ex39a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "only"), ("strength", "weak"), ("npi", "ever, anyone")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex39b : LinguisticExample :=
   { id := "gajewski2011_ex39b"
@@ -157,9 +143,7 @@ def ex39b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "only"), ("strength", "strong"), ("npi", "in weeks")]
-    comment := "Only's presupposition that the focus satisfies the scope is upward entailing."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Only's presupposition that the focus satisfies the scope is upward entailing." }
 
 def ex39c : LinguisticExample :=
   { id := "gajewski2011_ex39c"
@@ -175,9 +159,7 @@ def ex39c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "only"), ("strength", "strong"), ("npi", "either")]
-    comment := "Only's presupposition that the focus satisfies the scope is upward entailing. The paper credits the example to Nathan (1999)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Only's presupposition that the focus satisfies the scope is upward entailing. The paper credits the example to Nathan (1999)." }
 
 def ex39d : LinguisticExample :=
   { id := "gajewski2011_ex39d"
@@ -193,9 +175,7 @@ def ex39d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "only"), ("strength", "strong"), ("npi", "until")]
-    comment := "Only's presupposition that the focus satisfies the scope is upward entailing."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Only's presupposition that the focus satisfies the scope is upward entailing." }
 
 def ex40a : LinguisticExample :=
   { id := "gajewski2011_ex40a"
@@ -211,9 +191,7 @@ def ex40a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "conditional"), ("strength", "weak"), ("npi", "ever, anyone")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex40b : LinguisticExample :=
   { id := "gajewski2011_ex40b"
@@ -229,9 +207,7 @@ def ex40b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "conditional"), ("strength", "strong"), ("npi", "in weeks")]
-    comment := "The conditional's presupposition that its antecedent is possible is upward entailing."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The conditional's presupposition that its antecedent is possible is upward entailing." }
 
 def ex40c : LinguisticExample :=
   { id := "gajewski2011_ex40c"
@@ -247,9 +223,7 @@ def ex40c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "conditional"), ("strength", "strong"), ("npi", "either")]
-    comment := "The conditional's presupposition that its antecedent is possible is upward entailing."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The conditional's presupposition that its antecedent is possible is upward entailing." }
 
 def ex40d : LinguisticExample :=
   { id := "gajewski2011_ex40d"
@@ -265,9 +239,7 @@ def ex40d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "conditional"), ("strength", "strong"), ("npi", "until")]
-    comment := "The conditional's presupposition that its antecedent is possible is upward entailing."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The conditional's presupposition that its antecedent is possible is upward entailing." }
 
 def ex41a : LinguisticExample :=
   { id := "gajewski2011_ex41a"
@@ -283,9 +255,7 @@ def ex41a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "sorry"), ("strength", "weak"), ("npi", "ever, anyone")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex41b : LinguisticExample :=
   { id := "gajewski2011_ex41b"
@@ -301,9 +271,7 @@ def ex41b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "sorry"), ("strength", "strong"), ("npi", "in weeks")]
-    comment := "The factive presupposition of sorry is upward entailing in the complement."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The factive presupposition of sorry is upward entailing in the complement." }
 
 def ex41c : LinguisticExample :=
   { id := "gajewski2011_ex41c"
@@ -319,9 +287,7 @@ def ex41c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "sorry"), ("strength", "strong"), ("npi", "either")]
-    comment := "The factive presupposition of sorry is upward entailing in the complement."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The factive presupposition of sorry is upward entailing in the complement." }
 
 def ex41d : LinguisticExample :=
   { id := "gajewski2011_ex41d"
@@ -337,9 +303,7 @@ def ex41d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("licenser", "sorry"), ("strength", "strong"), ("npi", "until")]
-    comment := "The factive presupposition of sorry is upward entailing in the complement."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The factive presupposition of sorry is upward entailing in the complement." }
 
 def all : List LinguisticExample := [ex14a, ex15a, ex14b, ex15b, ex1f, ex7f, ex39a, ex39b, ex39c, ex39d, ex40a, ex40b, ex40c, ex40d, ex41a, ex41b, ex41c, ex41d]
 

@@ -31,9 +31,7 @@ def ex_8_kikopo : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/ki-kópo/"), ("underlying", "OHO"), ("surface", "OHO")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_8_kisiki : LinguisticExample :=
   { id := "jardine2016a_8_kisiki"
@@ -49,9 +47,7 @@ def ex_8_kisiki : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/ki-sikí/"), ("underlying", "OOH"), ("surface", "OOH")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_8_kitabo : LinguisticExample :=
   { id := "jardine2016a_8_kitabo"
@@ -67,9 +63,7 @@ def ex_8_kitabo : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/ki-tabo/"), ("underlying", "OOO"), ("surface", "OOO")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_8_mutunda : LinguisticExample :=
   { id := "jardine2016a_8_mutunda"
@@ -85,9 +79,7 @@ def ex_8_mutunda : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/mu-tund-a/"), ("underlying", "OOO"), ("surface", "OOO")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_8_mutema : LinguisticExample :=
   { id := "jardine2016a_8_mutema"
@@ -103,9 +95,7 @@ def ex_8_mutema : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/mu-tém-a/"), ("underlying", "OHO"), ("surface", "OHO")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_9a : LinguisticExample :=
   { id := "jardine2016a_9a"
@@ -121,9 +111,7 @@ def ex_9a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/mu-tund-a+bi-kópo/"), ("underlying", "OOOOHO"), ("surface", "OOOOHO")]
-    comment := "A toneless noun and a H-toned noun are pronounced as in isolation."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A toneless noun and a H-toned noun are pronounced as in isolation." }
 
 def ex_9b : LinguisticExample :=
   { id := "jardine2016a_9b"
@@ -139,9 +127,7 @@ def ex_9b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/mu-tém-a+bi-sikí/"), ("underlying", "OHOOOH"), ("surface", "OHHHHH")]
-    comment := "A plateau over three unspecified TBUs."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A plateau over three unspecified TBUs." }
 
 def ex_10b : LinguisticExample :=
   { id := "jardine2016a_10b"
@@ -157,9 +143,7 @@ def ex_10b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/tw-áa-láb-w-a walúsimbi/"), ("underlying", "HHHOOHOO"), ("surface", "HHHHHHOO")]
-    comment := "The noun and the verb form a phonological phrase, criterion (6c)."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The noun and the verb form a phonological phrase, criterion (6c)." }
 
 def ex_12a : LinguisticExample :=
   { id := "jardine2016a_12a"
@@ -175,9 +159,7 @@ def ex_12a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/tw-áa-láb-a byaa=walúsimbi/"), ("underlying", "HHHOOOOHOO"), ("surface", "HHHHHHHHOO")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_12b : LinguisticExample :=
   { id := "jardine2016a_12b"
@@ -193,9 +175,7 @@ def ex_12b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/tw-áa-génd-a na=byaa=ba=walúsimbi/"), ("underlying", "HHHOOOOOOHOO"), ("surface", "HHHHHHHHHHOO")]
-    comment := "A six-TBU span of toneless TBUs, triggers five TBUs from their targets on each side."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "A six-TBU span of toneless TBUs, triggers five TBUs from their targets on each side." }
 
 def ex_18b : LinguisticExample :=
   { id := "jardine2016a_18b"
@@ -211,9 +191,7 @@ def ex_18b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/ámàkhòsánà/"), ("underlying", "HOOHO"), ("surface", "HHHHO")]
-    comment := "The two Hs do not fuse; the second is downstepped."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The two Hs do not fuse; the second is downstepped." }
 
 def ex_21a : LinguisticExample :=
   { id := "jardine2016a_21a"
@@ -229,9 +207,7 @@ def ex_21a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/dí hánso sëmbë/"), ("underlying", "HHOOO"), ("surface", "HHOOO")]
-    comment := "No second H: the final /o/ of /hánso/ stays low."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "No second H: the final /o/ of /hánso/ stays low." }
 
 def ex_21b : LinguisticExample :=
   { id := "jardine2016a_21b"
@@ -247,9 +223,7 @@ def ex_21b : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/dí hánso wómi/"), ("underlying", "HHOHO"), ("surface", "HHHHO")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_21c : LinguisticExample :=
   { id := "jardine2016a_21c"
@@ -265,9 +239,7 @@ def ex_21c : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/dí hánso mujêE/"), ("underlying", "HHOOHO"), ("surface", "HHHHHO")]
-    comment := "Plateauing over two TBUs."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "Plateauing over two TBUs." }
 
 def ex_21d : LinguisticExample :=
   { id := "jardine2016a_21d"
@@ -283,9 +255,7 @@ def ex_21d : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/dí wajamáka=dé á óbo/"), ("underlying", "HOOHOHHHO"), ("surface", "HHHHHHHHO")]
-    comment := ""
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "" }
 
 def ex_21e : LinguisticExample :=
   { id := "jardine2016a_21e"
@@ -301,9 +271,7 @@ def ex_21e : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "2.2"), ("underlying_form", "/taánga amEEká wómi/"), ("underlying", "OHOOOOHHO"), ("surface", "OHHHHHHHO")]
-    comment := "The domain from /taánga/: a plateau over four TBUs, the final /a/ of /taánga/ and the first three vowels of /amEEká/; the determiner /dí/ precedes it outside the domain."
-    metaLanguage := "stan1293"
-    lgrConformance := "" }
+    comment := "The domain from /taánga/: a plateau over four TBUs, the final /a/ of /taánga/ and the first three vowels of /amEEká/; the determiner /dí/ precedes it outside the domain." }
 
 def all : List LinguisticExample := [ex_8_kikopo, ex_8_kisiki, ex_8_kitabo, ex_8_mutunda, ex_8_mutema, ex_9a, ex_9b, ex_10b, ex_12a, ex_12b, ex_18b, ex_21a, ex_21b, ex_21c, ex_21d, ex_21e]
 
