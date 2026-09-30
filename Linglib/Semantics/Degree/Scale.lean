@@ -42,6 +42,8 @@ degree achievement is read off that shape.
   (2007)][kennedy-2007]
 * [C. Kennedy and B. Levin, *Measure of Change: The Adjectival Core of Degree Achievements*
   (2008)][kennedy-levin-2008]
+* [D. Lassiter, *Graded Modality: Qualitative and Quantitative Perspectives*
+  (2017)][lassiter-2017]
 * [A. Bale and B. Schwarz, *Natural language and external conventions: re-examining per*
   (2026)][bale-schwarz-2026]
 -/
@@ -90,19 +92,22 @@ def ScalarDimension.domain : ScalarDimension → PropertyDomain
 /-- The shape of a dimension's scale in its increasing direction ([kennedy-mcnally-2005]
     (24)–(27), [kennedy-2007] (33), (49)–(50), (60)). Wetness is lower closed, *wet* taking a
     minimum standard and *dry* a maximum one, straightness upper closed, by *fully straight*
-    against *??fully bent*, and fullness closed, by *100% full* and *100% empty*. The negative
-    member of an antonym pair measures on the dual scale. The definition is reducible, so that
-    order instances on the degrees of a dimension see through it. -/
+    against *??fully bent*, and fullness closed, by *100% full* and *100% empty*. Possibility is
+    lower closed: nothing is less possible than the impossible ([lassiter-2017] §5.2.3), so
+    *possible* takes a minimum standard and *impossible* a maximum one, as *wet* and *dry* do;
+    whether it also has a maximum turns on the disputed identity of its scale with that of
+    *likely*. The negative member of an antonym pair measures on the dual scale. The definition is
+    reducible, so that order instances on the degrees of a dimension see through it. -/
 abbrev ScalarDimension.boundedness : ScalarDimension → Boundedness
   | .openness | .curvature | .cracking | .denting | .scratching | .boiling
   | .alive | .freedom | .fullness | .shattering | .tightness | .pregnancy => .closed
   | .straightness | .flatness | .cleanliness | .purity | .smoothness | .safety
   | .confidence => .upperClosed
-  | .wetness => .lowerClosed
+  | .wetness | .possibility => .lowerClosed
   | .height | .width | .length | .weight | .thickness | .depth | .speed
   | .strength | .age | .generalSize | .temperature | .brightness | .volume | .taste
   | .happiness | .cost | .price | .quality | .value | .danger | .beauty
-  | .importance | .intelligence | .expectation | .possibility
+  | .importance | .intelligence | .expectation
   | .hardness | .color | .corrosion | .quantity
   | .unspecified => .open_
 

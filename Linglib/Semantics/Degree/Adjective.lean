@@ -23,6 +23,9 @@ strength, evaluative valence, and the ways a multidimensional adjective binds it
 * `GradableAdjective.scaleType`: the scale an adjective measures on.
 * `GradableAdjective.standard`: the positive standard of an adjective.
 * `AntonymPair`: the two polar adjectives of one scale.
+* `AntonymPair.ComplementaryStandards`: the poles take the minimum and the maximum, and so
+  split the scale; without lexical standards this holds exactly on a half-closed scale
+  (`AntonymPair.complementaryStandards_iff_of_lexicalStandard_none`).
 * `DimensionBindingType`: how a multidimensional adjective binds its dimensions.
 
 ## References
@@ -231,6 +234,27 @@ def neg (p : AntonymPair) : GradableAdjective where
 @[simp] theorem pos_antonymForm (p : AntonymPair) : p.pos.antonymForm = some p.neg.form := rfl
 
 @[simp] theorem neg_antonymForm (p : AntonymPair) : p.neg.antonymForm = some p.pos.form := rfl
+
+/-- The poles take complementary standards, one the minimum and the other the maximum, so that
+denying one asserts the other, as for *wet* and *dry* ([kennedy-2007] (47)). -/
+def ComplementaryStandards (p : AntonymPair) : Prop :=
+  (p.pos.standard = .minEndpoint ∧ p.neg.standard = .maxEndpoint) ∨
+    (p.pos.standard = .maxEndpoint ∧ p.neg.standard = .minEndpoint)
+
+instance (p : AntonymPair) : Decidable p.ComplementaryStandards := by
+  unfold ComplementaryStandards; infer_instance
+
+/-- Without lexically fixed standards, the poles take complementary standards exactly when the
+scale has one endpoint: an open scale gives both a contextual standard, which leaves a gap, and a
+totally closed one gives both the maximum, as for *full* and *empty*. -/
+theorem complementaryStandards_iff_of_lexicalStandard_none (p : AntonymPair)
+    (hp : p.posLexicalStandard = none) (hn : p.negLexicalStandard = none) :
+    p.ComplementaryStandards ↔
+      p.dimension.boundedness = .lowerClosed ∨ p.dimension.boundedness = .upperClosed := by
+  simp only [ComplementaryStandards, GradableAdjective.standard, GradableAdjective.scaleType, pos,
+    neg, hp, hn, Option.getD_none, Option.map_some, Boundedness.negative_smul]
+  generalize p.dimension.boundedness = b
+  cases b <;> decide
 
 end AntonymPair
 

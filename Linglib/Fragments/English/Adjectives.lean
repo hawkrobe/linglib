@@ -505,6 +505,10 @@ def stunning : GradableAdjective :=
 def expected : GradableAdjective :=
   { form := "expected", dimension := some .expectation, evaluativeValence := some .neutral }
 
+/-- *possible* and *impossible*, contradictories: *possible* takes the minimum standard of the
+lower-closed possibility scale and *impossible* the maximum of its dual, as *wet* and *dry* do.
+Whether *possible* is gradable at all is disputed ([lassiter-2017] §5.2.2); the entry records its
+gradable use, which *impossibly long* needs ([nouwen-2024] (27b)). -/
 def possibility : AntonymPair :=
   { dimension := .possibility, relation := .contradictory, posForm := "possible"
   , negForm := "impossible", evaluativeValence := some .neutral }
