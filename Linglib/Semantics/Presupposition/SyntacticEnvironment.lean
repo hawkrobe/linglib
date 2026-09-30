@@ -19,6 +19,12 @@ replaces what follows it. For the first argument of a conjunction or a disjuncti
 itself follows the gap in the string, so it may be replaced too, while *if* precedes its
 antecedent.
 
+[kalomoiros-2023] checks the constraint at every parse point after a trigger:
+`AgreeUpTo n K K'` holds when `K'` keeps the material before the gap and the first `n` items after
+it, counting the connective after a first argument and the second argument as one item each. At the
+first point it admits every good final (`SyntacticEnvironment.agreeUpTo_zero_iff`), and from the
+last point on only the environment itself (`SyntacticEnvironment.agreeUpTo_iff_eq`).
+
 [karttunen-1974-presupposition]'s local context of a gap (`SyntacticEnvironment.localContext`) is
 recovered from the good finals: some good final makes the formula's truth value at a world depend on
 the gap iff the world is in the local context (`SyntacticEnvironment.exists_dependsAt_iff`), and the
@@ -33,12 +39,15 @@ presupposition holds there whenever the world is in the trigger's local context
   the gap, and the meaning as a function of the gap's.
 * `Presupposition.Formula.occurrences`: the triggers of a formula with their environments.
 * `Presupposition.SyntacticEnvironment.SameInitialString`: the environments of the good finals.
+* `Presupposition.SyntacticEnvironment.AgreeUpTo`: the environments of the good finals at a parse
+  point.
 * `Presupposition.SyntacticEnvironment.localContext`: [karttunen-1974-presupposition]'s local
   context of the gap.
 
 ## References
 
 * [schlenker-2009]
+* [kalomoiros-2023]
 * [karttunen-1974-presupposition]
 * [peters-1979]
 -/
@@ -122,6 +131,12 @@ theorem fill_append (K K' : SyntacticEnvironment Atom) (X : Formula Atom) :
   | nil => rfl
   | cons s K ih => exact ih _
 
+theorem truth_append (I : Atom → Set W) (K K' : SyntacticEnvironment Atom) (d : Set W) :
+    truth I (K ++ K') d = truth I K' (truth I K d) := by
+  induction K generalizing d with
+  | nil => rfl
+  | cons s K ih => exact ih _
+
 theorem truth_fill (I : Atom → Set W) (K : SyntacticEnvironment Atom) (X : Formula Atom) :
     (K.fill X).truth I = K.truth I (X.truth I) := by
   induction K generalizing X with
@@ -188,6 +203,159 @@ theorem sameInitialString_append_singleton {K L : SyntacticEnvironment Atom} {s 
       exact ⟨t' :: K', s', rfl, ⟨t', K', ht, hK, rfl⟩, hs⟩
     · rintro ⟨K', s', rfl, ⟨t', K'', ht, hK, rfl⟩, hs⟩
       exact ⟨t', K'' ++ [s'], ht, ih.2 ⟨K'', s', rfl, hK, hs⟩, rfl⟩
+
+/-! ### Parse points -/
+
+/-- The number of items of the string that follow the first argument of a connective: the
+connective and the second argument for a conjunction or a disjunction, only the consequent for
+*if*, which precedes its antecedent and whose separator is forced. -/
+def _root_.Presupposition.Connective.rightItems : Connective → ℕ
+  | .cond => 1
+  | _ => 2
+
+/-- The number of items of the string after the gap of a step; only closing brackets, which are
+forced, follow the argument of a negation and the second argument of a connective. -/
+def Step.rightItems : Step Atom → ℕ
+  | .left c _ => c.rightItems
+  | _ => 0
+
+/-- The number of items of the string after the gap. -/
+def rightItems (K : SyntacticEnvironment Atom) : ℕ := (K.map Step.rightItems).sum
+
+@[simp] theorem rightItems_nil : rightItems ([] : SyntacticEnvironment Atom) = 0 := rfl
+
+@[simp] theorem rightItems_cons (s : Step Atom) (K : SyntacticEnvironment Atom) :
+    rightItems (s :: K) = s.rightItems + rightItems K := by
+  simp [rightItems]
+
+theorem rightItems_append (K K' : SyntacticEnvironment Atom) :
+    rightItems (K ++ K') = rightItems K + rightItems K' := by
+  simp [rightItems]
+
+/-- `s'` keeps the material of `s` before the gap and its first `n` items after it. -/
+def Step.AgreeUpTo (n : ℕ) : Step Atom → Step Atom → Prop
+  | .not, s' => s' = .not
+  | .right c F, s' => s' = .right c F
+  | .left c G, s' =>
+    if n = 0 then ∃ c' G', s' = .left c' G' ∧ (c = .cond ↔ c' = .cond)
+    else if n < c.rightItems then ∃ G', s' = .left c G' else s' = .left c G
+
+/-- `AgreeUpTo n K K'`: `K'` keeps the material of `K` before the gap and the first `n` items after
+it, so that it is `K` with a good final of the string up to the `n`-th item: the parse points of
+[kalomoiros-2023]. -/
+def AgreeUpTo : ℕ → SyntacticEnvironment Atom → SyntacticEnvironment Atom → Prop
+  | _, [], K' => K' = []
+  | n, s :: K, K' =>
+    ∃ s' K'', K' = s' :: K'' ∧ s.AgreeUpTo n s' ∧ AgreeUpTo (n - s.rightItems) K K''
+
+theorem Step.agreeUpTo_zero_iff {s s' : Step Atom} : s.AgreeUpTo 0 s' ↔ s.SameInitialString s' := by
+  cases s with
+  | not => exact ⟨fun h ↦ h ▸ .not, fun h ↦ by cases h; rfl⟩
+  | right c F => exact ⟨fun h ↦ h ▸ .right c F, fun h ↦ by cases h; rfl⟩
+  | left c G =>
+    simp only [AgreeUpTo, ite_true]
+    exact ⟨fun ⟨c', G', he, hc⟩ ↦ he ▸ .left hc G G', fun h ↦ by cases h with
+      | left hc _ G' => exact ⟨_, G', rfl, hc⟩⟩
+
+/-- The first parse point, right after the trigger, admits every good final. -/
+theorem agreeUpTo_zero_iff {K K' : SyntacticEnvironment Atom} :
+    AgreeUpTo 0 K K' ↔ SameInitialString K K' := by
+  induction K generalizing K' with
+  | nil => exact ⟨fun h ↦ h ▸ .nil, fun h ↦ by cases h; rfl⟩
+  | cons s K ih =>
+    simp only [AgreeUpTo, Nat.zero_sub, SameInitialString, List.forall₂_cons_left_iff, ih,
+      Step.agreeUpTo_zero_iff]
+    exact ⟨fun ⟨s', K'', he, hs, hK⟩ ↦ ⟨s', K'', hs, hK, he⟩,
+      fun ⟨s', K'', hs, hK, he⟩ ↦ ⟨s', K'', he, hs, hK⟩⟩
+
+theorem Step.AgreeUpTo.refl (n : ℕ) (s : Step Atom) : s.AgreeUpTo n s := by
+  cases s with
+  | not => rfl
+  | right c F => rfl
+  | left c G =>
+    simp only [AgreeUpTo]
+    split_ifs
+    · exact ⟨c, G, rfl, Iff.rfl⟩
+    · exact ⟨G, rfl⟩
+
+theorem AgreeUpTo.refl (n : ℕ) (K : SyntacticEnvironment Atom) : AgreeUpTo n K K := by
+  induction K generalizing n with
+  | nil => rfl
+  | cons s K ih => exact ⟨s, K, rfl, .refl n s, ih _⟩
+
+theorem Step.AgreeUpTo.mono {m n : ℕ} {s s' : Step Atom} (h : s.AgreeUpTo m s') (hnm : n ≤ m) :
+    s.AgreeUpTo n s' := by
+  cases s with
+  | not => exact h
+  | right c F => exact h
+  | left c G =>
+    simp only [AgreeUpTo] at h ⊢
+    by_cases hn0 : n = 0
+    · simp only [hn0, ite_true]
+      by_cases hm0 : m = 0
+      · simpa [hm0] using h
+      · by_cases hm : m < c.rightItems
+        · simp only [hm0, hm, ite_false, ite_true] at h
+          obtain ⟨G', rfl⟩ := h
+          exact ⟨c, G', rfl, Iff.rfl⟩
+        · simp only [hm0, hm, ite_false] at h
+          exact ⟨c, G, h, Iff.rfl⟩
+    · have hm0 : ¬ m = 0 := by omega
+      by_cases hn : n < c.rightItems
+      · by_cases hm : m < c.rightItems
+        · simpa [hn0, hn, hm0, hm] using h
+        · simp only [hm0, hm, ite_false] at h
+          simp only [hn0, hn, ite_false, ite_true]
+          exact ⟨G, h⟩
+      · have hm : ¬ m < c.rightItems := by omega
+        simpa [hn0, hn, hm0, hm] using h
+
+theorem AgreeUpTo.mono {m n : ℕ} {K K' : SyntacticEnvironment Atom} (h : AgreeUpTo m K K')
+    (hnm : n ≤ m) : AgreeUpTo n K K' := by
+  induction K generalizing m n K' with
+  | nil => exact h
+  | cons s K ih =>
+    obtain ⟨s', K'', rfl, hs, hK⟩ := h
+    exact ⟨s', K'', rfl, hs.mono hnm, ih hK (Nat.sub_le_sub_right hnm _)⟩
+
+theorem Step.agreeUpTo_iff_eq {n : ℕ} {s s' : Step Atom} (hn : s.rightItems ≤ n) :
+    s.AgreeUpTo n s' ↔ s' = s := by
+  cases s with
+  | not => exact Iff.rfl
+  | right c F => exact Iff.rfl
+  | left c G =>
+    have h1 : 1 ≤ c.rightItems := by cases c <;> decide
+    have hn0 : ¬ n = 0 := by simp only [rightItems] at hn; omega
+    have hn' : ¬ n < c.rightItems := by simp only [rightItems] at hn; omega
+    simp only [AgreeUpTo, hn0, hn', ite_false]
+
+/-- From the last parse point on, only the environment itself agrees. -/
+theorem agreeUpTo_iff_eq {n : ℕ} {K K' : SyntacticEnvironment Atom} (hn : rightItems K ≤ n) :
+    AgreeUpTo n K K' ↔ K' = K := by
+  induction K generalizing n K' with
+  | nil => exact Iff.rfl
+  | cons s K ih =>
+    rw [rightItems_cons] at hn
+    simp only [AgreeUpTo, Step.agreeUpTo_iff_eq (show s.rightItems ≤ n by omega),
+      ih (show rightItems K ≤ n - s.rightItems by omega)]
+    exact ⟨fun ⟨_, _, he, rfl, rfl⟩ ↦ he, fun h ↦ ⟨s, K, h, rfl, rfl⟩⟩
+
+/-- A good final of `K ++ [s]` up to a parse point is a good final of `K` inside one of `s`. -/
+theorem agreeUpTo_append_singleton {n : ℕ} {K L : SyntacticEnvironment Atom} {s : Step Atom} :
+    AgreeUpTo n (K ++ [s]) L ↔
+      ∃ K' s', L = K' ++ [s'] ∧ AgreeUpTo n K K' ∧ s.AgreeUpTo (n - rightItems K) s' := by
+  induction K generalizing n L with
+  | nil =>
+    simp only [List.nil_append, AgreeUpTo, rightItems_nil, Nat.sub_zero]
+    exact ⟨fun ⟨s', K'', he, hs, hK⟩ ↦ ⟨[], s', by rw [he, hK]; rfl, rfl, hs⟩,
+      fun ⟨K', s', he, hK, hs⟩ ↦ ⟨s', [], by rw [he, hK]; rfl, hs, rfl⟩⟩
+  | cons t K ih =>
+    simp only [List.cons_append, AgreeUpTo, rightItems_cons, ih]
+    constructor
+    · rintro ⟨t', _, rfl, ht, K', s', rfl, hK, hs⟩
+      exact ⟨t' :: K', s', rfl, ⟨t', K', rfl, ht, hK⟩, by rwa [Nat.sub_add_eq]⟩
+    · rintro ⟨_, s', rfl, ⟨t', K', rfl, ht, hK⟩, hs⟩
+      exact ⟨t', K' ++ [s'], rfl, ht, K', s', rfl, hK, by rwa [← Nat.sub_add_eq]⟩
 
 end SyntacticEnvironment
 
