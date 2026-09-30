@@ -15,8 +15,6 @@ this module; declarations live in `namespace Hacquard2006.Examples`.
 
 namespace Hacquard2006.Examples
 
-open Data.Examples
-
 def ex1a : Datum :=
   { id := "hacquard2006_ex1a"
     source := ⟨"hacquard-2006", "(1a)"⟩

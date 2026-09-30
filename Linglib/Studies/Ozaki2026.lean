@@ -45,7 +45,7 @@ for both verbs and from which it derives their unaccusativity.
 
 namespace Ozaki2026
 
-open Data.Examples Ozaki2026.Examples Case DependentCase Minimalist.Voice
+open Ozaki2026.Examples Case DependentCase Minimalist.Voice
 
 /-! ### The diagnostics -/
 

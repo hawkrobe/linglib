@@ -15,8 +15,6 @@ this module; declarations live in `namespace Kubota2026.Examples`.
 
 namespace Kubota2026.Examples
 
-open Data.Examples
-
 def ex10_nanka_noncancelable : Datum :=
   { id := "kubota2026_ex10_nanka_noncancelable"
     source := ⟨"kubota-2026", "(10)"⟩

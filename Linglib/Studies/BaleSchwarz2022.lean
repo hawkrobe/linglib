@@ -262,7 +262,6 @@ theorem density_eq_divisionMP_iff (hu : u.dimension = .mass) (hr : r.dimension =
 
 /-! ### The paper's examples -/
 
-open Data.Examples (Datum)
 
 /-- The natural number a digit string denotes. -/
 def nat? (cs : List Char) : Option ℕ :=

@@ -15,8 +15,6 @@ this module; declarations live in `namespace BaleSchwarz2022.Examples`.
 
 namespace BaleSchwarz2022.Examples
 
-open Data.Examples
-
 def bs2022_3 : Datum :=
   { id := "bs2022_3"
     source := ⟨"bale-schwarz-2022", "(3)"⟩

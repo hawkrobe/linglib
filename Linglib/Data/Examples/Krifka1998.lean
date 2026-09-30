@@ -15,8 +15,6 @@ this module; declarations live in `namespace Krifka1998.Examples`.
 
 namespace Krifka1998.Examples
 
-open Data.Examples
-
 def ex11a : Datum :=
   { id := "krifka1998_ex11a"
     source := ⟨"krifka-1998", "(11a)"⟩

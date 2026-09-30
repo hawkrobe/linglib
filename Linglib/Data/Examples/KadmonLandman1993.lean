@@ -15,8 +15,6 @@ this module; declarations live in `namespace KadmonLandman1993.Examples`.
 
 namespace KadmonLandman1993.Examples
 
-open Data.Examples
-
 def kl1993_1 : Datum :=
   { id := "kl1993_1"
     source := ⟨"kadmon-landman-1993", "(1)"⟩

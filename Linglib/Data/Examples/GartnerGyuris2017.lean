@@ -15,8 +15,6 @@ this module; declarations live in `namespace GartnerGyuris2017.Examples`.
 
 namespace GartnerGyuris2017.Examples
 
-open Data.Examples
-
 def gg2017_1 : Datum :=
   { id := "gg2017_1"
     source := ⟨"gartner-gyuris-2017", "(1)"⟩

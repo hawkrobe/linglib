@@ -15,8 +15,6 @@ this module; declarations live in `namespace HarizanovGribanova2019.Examples`.
 
 namespace HarizanovGribanova2019.Examples
 
-open Data.Examples
-
 def ex2a : Datum :=
   { id := "harizanovgribanova2019_ex2a"
     source := ⟨"harley-2013-diagnosing", "p. 113, (2)"⟩

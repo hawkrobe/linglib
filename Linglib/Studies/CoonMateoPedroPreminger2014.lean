@@ -92,7 +92,7 @@ are recorded as data without a configuration.
 
 namespace CoonMateoPedroPreminger2014
 
-open Minimalist Minimalist.Voice Mayan Data.Examples
+open Minimalist Minimalist.Voice Mayan
 
 /-! ### Clauses -/
 

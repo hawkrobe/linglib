@@ -15,8 +15,6 @@ this module; declarations live in `namespace Stankova2026.Examples`.
 
 namespace Stankova2026.Examples
 
-open Data.Examples
-
 def ex6a : Datum :=
   { id := "stankova2026_ex6a"
     source := ⟨"stankova-2026", "ex. 6a"⟩

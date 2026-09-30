@@ -15,8 +15,6 @@ this module; declarations live in `namespace Karttunen1974.Examples`.
 
 namespace Karttunen1974.Examples
 
-open Data.Examples
-
 def until_state : Datum :=
   { id := "karttunen1974_until_state"
     source := ⟨"karttunen-1974", "UNVERIFIED"⟩

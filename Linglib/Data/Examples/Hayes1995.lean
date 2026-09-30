@@ -15,8 +15,6 @@ this module; declarations live in `namespace Hayes1995.Examples`.
 
 namespace Hayes1995.Examples
 
-open Data.Examples
-
 def katabt : Datum :=
   { id := "hayes1995_katabt"
     source := ⟨"hayes-1995", "(12a)"⟩

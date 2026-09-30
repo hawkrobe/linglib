@@ -15,8 +15,6 @@ this module; declarations live in `namespace Embick2021.Examples`.
 
 namespace Embick2021.Examples
 
-open Data.Examples
-
 def ex_6c : Datum :=
   { id := "embick2021_6c"
     source := ⟨"embick-2021", "(6c)"⟩

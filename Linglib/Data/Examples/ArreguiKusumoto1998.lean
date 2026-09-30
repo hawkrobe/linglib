@@ -15,8 +15,6 @@ this module; declarations live in `namespace ArreguiKusumoto1998.Examples`.
 
 namespace ArreguiKusumoto1998.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "arreguikusumoto1998_1"
     source := ⟨"arregui-kusumoto-1998", "(1)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace AkinboFwangwar2026.Examples`.
 
 namespace AkinboFwangwar2026.Examples
 
-open Data.Examples
-
 def ex_6a : Datum :=
   { id := "akinbofwangwar2026_6a"
     source := ⟨"akinbo-fwangwar-2026", "(6a)"⟩

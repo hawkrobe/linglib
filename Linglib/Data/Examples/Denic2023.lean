@@ -15,8 +15,6 @@ this module; declarations live in `namespace Denic2023.Examples`.
 
 namespace Denic2023.Examples
 
-open Data.Examples
-
 def ex_6 : Datum :=
   { id := "denic2023_6"
     source := ⟨"denic-2023", "(6)"⟩

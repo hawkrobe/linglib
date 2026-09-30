@@ -15,8 +15,6 @@ this module; declarations live in `namespace AghaJeretic2026.Examples`.
 
 namespace AghaJeretic2026.Examples
 
-open Data.Examples
-
 def ex_6a : Datum :=
   { id := "aghajeretic2026_6a"
     source := ⟨"agha-jeretic-2026", "(6a)"⟩

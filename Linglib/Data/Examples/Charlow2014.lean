@@ -15,8 +15,6 @@ this module; declarations live in `namespace Charlow2014.Examples`.
 
 namespace Charlow2014.Examples
 
-open Data.Examples
-
 def ex4_1a : Datum :=
   { id := "charlow2014_ex4_1a"
     source := ⟨"charlow-2014", "(4.1a)"⟩

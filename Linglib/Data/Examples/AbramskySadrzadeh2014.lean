@@ -15,8 +15,6 @@ this module; declarations live in `namespace AbramskySadrzadeh2014.Examples`.
 
 namespace AbramskySadrzadeh2014.Examples
 
-open Data.Examples
-
 def donkey : Datum :=
   { id := "abramskysadrzadeh2014_donkey"
     source := ⟨"geach-1962", "donkey sentence"⟩

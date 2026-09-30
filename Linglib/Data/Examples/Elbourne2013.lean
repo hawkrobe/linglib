@@ -15,8 +15,6 @@ this module; declarations live in `namespace Elbourne2013.Examples`.
 
 namespace Elbourne2013.Examples
 
-open Data.Examples
-
 def ch3_5 : Datum :=
   { id := "elbourne2013_ch3_5"
     source := ⟨"elbourne-2013", "ch. 3, (5)"⟩

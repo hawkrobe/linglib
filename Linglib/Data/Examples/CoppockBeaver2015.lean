@@ -15,8 +15,6 @@ this module; declarations live in `namespace CoppockBeaver2015.Examples`.
 
 namespace CoppockBeaver2015.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "coppockbeaver2015_1"
     source := ⟨"coppock-beaver-2015", "(1)"⟩

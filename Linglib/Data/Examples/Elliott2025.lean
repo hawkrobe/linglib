@@ -15,8 +15,6 @@ this module; declarations live in `namespace Elliott2025.Examples`.
 
 namespace Elliott2025.Examples
 
-open Data.Examples
-
 def ex_6 : Datum :=
   { id := "elliott2025_6"
     source := ⟨"elliott-2025", "(6)"⟩

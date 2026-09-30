@@ -49,7 +49,7 @@ and *kisiike* are *koii*'s.
 
 namespace Lahiri1998
 
-open Focus.Particles PolarityItem Data.Examples Hindi.PolarityItems
+open Focus.Particles PolarityItem Hindi.PolarityItems
 
 /-! ### The implicature clash (§7, §8) -/
 

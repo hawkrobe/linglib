@@ -15,8 +15,6 @@ this module; declarations live in `namespace Sassoon2013.Examples`.
 
 namespace Sassoon2013.Examples
 
-open Data.Examples
-
 def healthy : Datum :=
   { id := "sassoon2013_healthy"
     source := ⟨"sassoon-2013", "Tables 2–4"⟩

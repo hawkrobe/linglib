@@ -15,8 +15,6 @@ this module; declarations live in `namespace GarassinoJacob2018.Examples`.
 
 namespace GarassinoJacob2018.Examples
 
-open Data.Examples
-
 def ex1 : Datum :=
   { id := "garassinojacob2018_ex1"
     source := ⟨"garassino-jacob-2018", "(1)"⟩

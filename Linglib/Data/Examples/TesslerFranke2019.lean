@@ -15,8 +15,6 @@ this module; declarations live in `namespace TesslerFranke2019.Examples`.
 
 namespace TesslerFranke2019.Examples
 
-open Data.Examples
-
 def happy : Datum :=
   { id := "tesslerfranke2019_happy"
     source := ⟨"tessler-franke-2019", "UNVERIFIED quadruplet, bare positive"⟩

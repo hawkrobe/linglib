@@ -42,7 +42,7 @@ results are not re-derived here.
 
 namespace Alsop2024
 
-open MeasureTheory ProbabilityTheory RSA Data.Examples
+open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal
 
 /-! ### States, utterances, parses (Tables 1–2) -/

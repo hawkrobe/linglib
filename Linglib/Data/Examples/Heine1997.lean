@@ -15,8 +15,6 @@ this module; declarations live in `namespace Heine1997.Examples`.
 
 namespace Heine1997.Examples
 
-open Data.Examples
-
 def ex_2_pt : Datum :=
   { id := "heine1997_2_pt"
     source := ⟨"heine-1997", "(2)"⟩

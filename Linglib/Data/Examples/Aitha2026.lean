@@ -15,8 +15,6 @@ this module; declarations live in `namespace Aitha2026.Examples`.
 
 namespace Aitha2026.Examples
 
-open Data.Examples
-
 def house_nom : Datum :=
   { id := "aitha2026_house_nom"
     source := ⟨"aitha-2026", "(1)"⟩

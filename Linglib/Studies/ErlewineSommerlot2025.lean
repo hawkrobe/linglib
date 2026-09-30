@@ -58,7 +58,7 @@ Kuching Malay's *N-* on v does not (§5.2); and the polite and familiar register
 
 namespace ErlewineSommerlot2025
 
-open Minimalist.Linearization Data.Examples ErlewineSommerlot2025.Examples
+open Minimalist.Linearization ErlewineSommerlot2025.Examples
 
 /-- The two flavours of v (§3.1). -/
 inductive VFlavor
@@ -347,7 +347,7 @@ def prefixTable : List (String × Prefix) :=
 structure Row where
   grammar : Grammar
   surface : Surface
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
 
 /-- A row from an example. -/
 def Row.ofDatum (ex : Datum) : Option Row := do

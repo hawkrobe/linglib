@@ -15,8 +15,6 @@ this module; declarations live in `namespace VonFintelGillies2021.Examples`.
 
 namespace VonFintelGillies2021.Examples
 
-open Data.Examples
-
 def cant_possible : Datum :=
   { id := "vonfintelgillies2021_cant_possible"
     source := ⟨"von-fintel-gillies-2021", "(22a)"⟩

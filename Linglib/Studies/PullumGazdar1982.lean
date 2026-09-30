@@ -44,7 +44,7 @@ Langendoen's finite state language are not formalized.
 
 namespace PullumGazdar1982
 
-open Data.Examples Examples
+open Examples
 
 /-- A rule of a grammar rewrites its nonterminal to its output. -/
 private theorem produces_of_mem {T : Type*} {g : ContextFreeGrammar T} {r : ContextFreeRule T g.NT}

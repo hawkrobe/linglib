@@ -58,7 +58,7 @@ realise the pronoun, and check the paper's examples.
 
 namespace DavidsonGagne2022
 
-open Quantifier Quantifier.GQ Presupposition Data.Examples ASL.Determiners
+open Quantifier Quantifier.GQ Presupposition ASL.Determiners
 
 variable {E : Type*} [PartialOrder E]
 

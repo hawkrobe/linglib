@@ -59,7 +59,7 @@ paper's examples as rows.
 
 namespace Condoravdi2002
 
-open Aspect HistoricalAlternatives Data.Examples
+open Aspect HistoricalAlternatives
 open Modality (TemporalPerspective TemporalOrientation)
 
 variable {W T : Type*} [LinearOrder T] {P : W → Event T → Prop} {Q Q' : SortedProperty W T}

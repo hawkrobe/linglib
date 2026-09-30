@@ -15,8 +15,6 @@ this module; declarations live in `namespace JansenPollmann2001.Examples`.
 
 namespace JansenPollmann2001.Examples
 
-open Data.Examples
-
 def pair_3_4 : Datum :=
   { id := "jansenpollmann2001_pair_3_4"
     source := ⟨"jansen-pollmann-2001", "pp. 196-197"⟩

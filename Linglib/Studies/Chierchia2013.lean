@@ -37,7 +37,7 @@ from the licensing relation applied to the Fragment entries.
 
 namespace Chierchia2013
 
-open NaturalLogic PolarityItem Exhaustification Data.Examples
+open NaturalLogic PolarityItem Exhaustification
 
 /-! ### Maximize Strength -/
 

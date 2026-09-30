@@ -15,8 +15,6 @@ this module; declarations live in `namespace RotterLiu2025.Examples`.
 
 namespace RotterLiu2025.Examples
 
-open Data.Examples
-
 def close_nece_sm : Datum :=
   { id := "rotterliu2025_close_nece_sm"
     source := ⟨"rotter-liu-2025", "Exp 2 (6) close necessity SM"⟩

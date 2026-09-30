@@ -15,8 +15,6 @@ this module; declarations live in `namespace PoesioEtAl2004.Examples`.
 
 namespace PoesioEtAl2004.Examples
 
-open Data.Examples
-
 def ex5 : Datum :=
   { id := "poesioetal2004_ex5"
     source := ⟨"poesio-stevenson-eugenio-hitzeman-2004", "(5)"⟩

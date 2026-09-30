@@ -15,8 +15,6 @@ this module; declarations live in `namespace AlexandropoulouGotzner2024a.Example
 
 namespace AlexandropoulouGotzner2024a.Examples
 
-open Data.Examples
-
 def ag2024a_t2_anna : Datum :=
   { id := "ag2024a_t2_anna"
     source := ⟨"alexandropoulou-gotzner-2024a", "Table 2"⟩

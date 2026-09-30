@@ -255,7 +255,6 @@ end FreeChoice
 
 /-! ### Selectivity and intervention (§9) -/
 
-open Data.Examples
 
 /-- Japanese indeterminates do not change shape: *dare-ka* and *dare-mo* share their base
 and differ in force. -/

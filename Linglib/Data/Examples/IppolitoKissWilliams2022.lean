@@ -15,8 +15,6 @@ this module; declarations live in `namespace IppolitoKissWilliams2022.Examples`.
 
 namespace IppolitoKissWilliams2022.Examples
 
-open Data.Examples
-
 def s1a : Datum :=
   { id := "ippolitokisswilliams2022_s1a"
     source := ⟨"ippolito-kiss-williams-2022", "(1a)"⟩

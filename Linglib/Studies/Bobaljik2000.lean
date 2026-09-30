@@ -41,7 +41,6 @@ cyclicity forces to be inwards.
 namespace Bobaljik2000
 
 open DistributedMorphology
-open Data.Examples (Datum)
 
 inductive Feature where
   | root (s : String) | classII | tense | classMarker

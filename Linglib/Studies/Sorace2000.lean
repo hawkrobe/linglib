@@ -100,7 +100,7 @@ the entries placed by `ofVerb`, each grammar cuts the hierarchy exactly where th
 
 namespace Sorace2000
 
-open ArgumentStructure Data.Examples
+open ArgumentStructure
 open AuxiliarySelectionHierarchy (ofVerb)
 
 /-- The four languages of the paper. -/

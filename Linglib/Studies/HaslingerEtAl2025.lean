@@ -47,7 +47,7 @@ answers the explosion question.
 
 namespace HaslingerEtAl2025
 
-open Plurality Plurality.Distributivity German.Distributives Data.Examples
+open Plurality Plurality.Distributivity German.Distributives
 
 /-- The expressions of (5) and (22): the distance distributor *jeweils* beside the
 determiner and distance uses of *jed-*, *alle*, numeral indefinites and definite plurals. -/

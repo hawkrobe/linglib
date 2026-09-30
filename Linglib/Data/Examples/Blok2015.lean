@@ -15,8 +15,6 @@ this module; declarations live in `namespace Blok2015.Examples`.
 
 namespace Blok2015.Examples
 
-open Data.Examples
-
 def ex_3a : Datum :=
   { id := "blok2015_3a"
     source := ⟨"blok-2015", "(3a)"⟩

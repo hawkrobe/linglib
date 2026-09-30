@@ -44,7 +44,6 @@ namespace LiuRotter2025
 
 open Modality (ModalForce ModalItem)
 open English.Auxiliaries English.Adverbs
-open Data.Examples (Datum)
 
 /-! ### The concord effect as a force-indexed sign -/
 

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Haspelmath1997.Examples`.
 
 namespace Haspelmath1997.Examples
 
-open Data.Examples
-
 def en_102a : Datum :=
   { id := "haspelmath1997_en_102a"
     source := ⟨"warfel-1972", "pp. 43–4"⟩

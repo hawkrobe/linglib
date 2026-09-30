@@ -15,8 +15,6 @@ this module; declarations live in `namespace Jablonska2004.Examples`.
 
 namespace Jablonska2004.Examples
 
-open Data.Examples
-
 def ex_3a : Datum :=
   { id := "jablonska2004_3a"
     source := ⟨"jablonska-2004", "(3a)"⟩

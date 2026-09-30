@@ -15,8 +15,6 @@ this module; declarations live in `namespace HarrisPotts2009.Examples`.
 
 namespace HarrisPotts2009.Examples
 
-open Data.Examples
-
 def ex2a : Datum :=
   { id := "harrispotts2009_ex2a"
     source := ⟨"harris-potts-2009", "(2a)"⟩

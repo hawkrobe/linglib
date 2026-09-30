@@ -15,8 +15,6 @@ this module; declarations live in `namespace BeaversUdayana2022.Examples`.
 
 namespace BeaversUdayana2022.Examples
 
-open Data.Examples
-
 def bu2022_2a : Datum :=
   { id := "bu2022_2a"
     source := ⟨"beavers-udayana-2022", "(2a)"⟩

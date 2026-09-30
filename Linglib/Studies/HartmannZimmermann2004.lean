@@ -300,7 +300,7 @@ def aspectLabel : Tangale.TAM → String
 
 /-- The paradigm cells paired with their data rows. -/
 def configRows :
-    List (Config × Data.Examples.Datum) :=
+    List (Config × Datum) :=
   [(⟨.subject, .perfective, false⟩, Examples.ex17b),
    (⟨.vp, .perfective, false⟩, Examples.ex24b),
    (⟨.object, .perfective, true⟩, Examples.ex25a),

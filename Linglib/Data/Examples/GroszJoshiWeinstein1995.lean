@@ -15,8 +15,6 @@ this module; declarations live in `namespace GroszJoshiWeinstein1995.Examples`.
 
 namespace GroszJoshiWeinstein1995.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "groszjoshiweinstein1995_1"
     source := ⟨"grosz-joshi-weinstein-1995", "(1)"⟩

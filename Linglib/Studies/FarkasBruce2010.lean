@@ -88,7 +88,7 @@ to be absent from a [reverse, −] answer (`ba_not_reverse_answer_neg`).
 namespace FarkasBruce2010
 
 open Commitment
-open Filter Data.Examples
+open Filter
 
 variable {W : Type*} (K : Table Discourse.Role W) (p : Set W)
 
@@ -307,7 +307,7 @@ judgment. -/
 structure Row where
   response : Response
   particles : List Particle
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
   deriving DecidableEq, Repr
 
 def moveTable : List (String × InitiatingMove) :=

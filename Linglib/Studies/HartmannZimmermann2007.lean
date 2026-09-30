@@ -379,7 +379,7 @@ def stabLabel (c : FocusConfig) : String :=
   | none => "none"
 
 def cellRows :
-    List (FocusUtterance × Data.Examples.Datum) :=
+    List (FocusUtterance × Datum) :=
   [(exSitu_newInfo, Examples.ex22), (exSitu_corrective, Examples.ex24),
    (exSitu_selective, Examples.ex29), (exSitu_contrastive, Examples.ex27),
    (inSitu_newInfo, Examples.ex23), (inSitu_corrective, Examples.ex25),

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Herce2023.Examples`.
 
 namespace Herce2023.Examples
 
-open Data.Examples
-
 def venir_1sg_ind : Datum :=
   { id := "herce2023_venir_1sg_ind"
     source := ⟨"herce-2023", "Table 1.2"⟩

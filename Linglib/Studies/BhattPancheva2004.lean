@@ -55,7 +55,7 @@ the clause merges only at the DegP's ultimate scope position, (90).
 
 namespace BhattPancheva2004
 
-open Core.Order Core.Order.Branching Data.Examples Degree Minimalist Set Syntax Syntax.Tree
+open Core.Order Core.Order.Branching Degree Minimalist Set Syntax Syntax.Tree
 
 /-! ### The Heim–Kennedy constraint (Section 4.1) -/
 

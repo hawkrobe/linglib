@@ -142,10 +142,10 @@ structure Row where
   verbClass : Option VerbClass
   /-- Whether *do* and *happen* are neutralized, as in *why does the door do that*. -/
   neutralized : Bool
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
 
 /-- An example read into its frame, profile and judgment. -/
-def Row.ofDatum (e : Data.Examples.Datum) : Option Row := do
+def Row.ofDatum (e : Datum) : Option Row := do
   pure { frame := ← e.parse? "frame" Frame.labels
          profile := e.parse? "features" Profile.labels
          inferred := decide (e.feature? "inferred" = some "true")

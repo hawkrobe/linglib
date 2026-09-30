@@ -15,8 +15,6 @@ this module; declarations live in `namespace Imanishi2020.Examples`.
 
 namespace Imanishi2020.Examples
 
-open Data.Examples
-
 def s1a : Datum :=
   { id := "imanishi2020_s1a"
     source := ⟨"imanishi-2020", "(1a)"⟩

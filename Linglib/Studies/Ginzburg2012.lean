@@ -48,7 +48,7 @@ clarification request, a self-repair and a bare follow-up question, as the rules
 
 namespace Ginzburg2012
 
-open Discourse.Gameboard Data.Examples
+open Discourse.Gameboard
 
 /-- What a gameboard's content types supply: the polar question `p?`, the
 aboutness and influence relations of q-specificity, and resolution, with `p`

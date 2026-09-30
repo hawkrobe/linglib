@@ -15,8 +15,6 @@ this module; declarations live in `namespace TonhauserEtAl2013.Examples`.
 
 namespace TonhauserEtAl2013.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "tonhauseretal2013_1a"
     source := ⟨"tonhauser-beaver-roberts-simons-2013", "(1a)"⟩

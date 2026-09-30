@@ -15,8 +15,6 @@ this module; declarations live in `namespace HerbstrittFranke2019.Examples`.
 
 namespace HerbstrittFranke2019.Examples
 
-open Data.Examples
-
 def ex1a : Datum :=
   { id := "herbstrittfranke2019_ex1a"
     source := ⟨"herbstritt-franke-2019", "(1a)"⟩

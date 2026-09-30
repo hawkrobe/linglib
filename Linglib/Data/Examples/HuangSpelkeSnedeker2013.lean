@@ -15,8 +15,6 @@ this module; declarations live in `namespace HuangSpelkeSnedeker2013.Examples`.
 
 namespace HuangSpelkeSnedeker2013.Examples
 
-open Data.Examples
-
 def huang2013_ex1 : Datum :=
   { id := "huang2013_ex1"
     source := ⟨"huang-spelke-snedeker-2013", "(1)"⟩

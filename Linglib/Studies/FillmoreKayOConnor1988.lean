@@ -87,7 +87,7 @@ are pragmatic, in the tradition of [fauconnier-1975] rather than the semantic sc
 
 namespace FillmoreKayOConnor1988
 
-open ConstructionGrammar Data.Examples
+open ConstructionGrammar
 
 /-! ### Scalar models (Appendix) -/
 

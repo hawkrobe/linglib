@@ -47,7 +47,7 @@ reports only in aggregate.
 namespace HarrisPotts2009
 
 open ConventionalImplicature (TwoDim)
-open Commitment Data.Examples
+open Commitment
 
 /-- Whose commitment a conventional implicature expresses: the speaker, or another discourse
 participant. -/

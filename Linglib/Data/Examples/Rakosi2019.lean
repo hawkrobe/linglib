@@ -15,8 +15,6 @@ this module; declarations live in `namespace Rakosi2019.Examples`.
 
 namespace Rakosi2019.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "rakosi2019_1a"
     source := ⟨"rakosi-2019", "(1a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace HahnDegenFutrell2021.Examples`.
 
 namespace HahnDegenFutrell2021.Examples
 
-open Data.Examples
-
 def ex2a : Datum :=
   { id := "hahndegenfutrell2021_ex2a"
     source := ⟨"hahn-degen-futrell-2021", "(2a)"⟩

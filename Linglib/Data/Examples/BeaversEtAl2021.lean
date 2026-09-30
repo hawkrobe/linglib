@@ -15,8 +15,6 @@ this module; declarations live in `namespace BeaversEtAl2021.Examples`.
 
 namespace BeaversEtAl2021.Examples
 
-open Data.Examples
-
 def beavers_etal2021_1c : Datum :=
   { id := "beavers_etal2021_1c"
     source := ⟨"beavers-etal-2021", "(1c)"⟩

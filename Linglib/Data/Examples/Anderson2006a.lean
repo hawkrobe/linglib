@@ -15,8 +15,6 @@ this module; declarations live in `namespace Anderson2006a.Examples`.
 
 namespace Anderson2006a.Examples
 
-open Data.Examples
-
 def komi_neg_pres : Datum :=
   { id := "anderson2006a_komi_neg_pres"
     source := ⟨"anderson-2006a", "(47a)"⟩

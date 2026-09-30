@@ -45,7 +45,7 @@ the comparison with [boersma-1997]'s Gradual Learning Algorithm.
 
 namespace GoldwaterJohnson2003
 
-open OptimalityTheory HarmonicGrammar Finset Real Data.Examples
+open OptimalityTheory HarmonicGrammar Finset Real
 
 variable {I O : Type*} [Fintype O] {n : ℕ}
 

@@ -15,8 +15,6 @@ this module; declarations live in `namespace DechaineWiltschko2002.Examples`.
 
 namespace DechaineWiltschko2002.Examples
 
-open Data.Examples
-
 def ex32a_1 : Datum :=
   { id := "dechainewiltschko2002_ex32a_1"
     source := ⟨"dechaine-wiltschko-2002", "(32a)"⟩

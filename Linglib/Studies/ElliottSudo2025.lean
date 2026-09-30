@@ -69,7 +69,7 @@ universal gives distributive inferences, both with anaphora.
 
 namespace ElliottSudo2025
 
-open DynamicSemantics BilateralDen Data.Examples ElliottSudo2025.Examples
+open DynamicSemantics BilateralDen ElliottSudo2025.Examples
 
 /-- A BUS denotation: a bilateral denotation over possibilities with natural-number variables. -/
 abbrev BUSDen (W E : Type*) := BilateralDen W ℕ E

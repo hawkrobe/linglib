@@ -55,7 +55,7 @@ the paper beyond monotonicity.
 
 namespace Rett2020a
 
-open Tense Degree Anscombe1964 Data.Examples
+open Tense Degree Anscombe1964
 
 variable {T : Type*} [LinearOrder T]
 

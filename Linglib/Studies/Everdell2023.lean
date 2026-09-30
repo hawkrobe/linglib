@@ -80,7 +80,6 @@ applicatives reach unergatives but not simple transitives.
 
 namespace Everdell2023
 
-open Data.Examples
 
 /-- The verb classes the chapter names; `plain` is any other verb. -/
 inductive Class

@@ -59,7 +59,6 @@ namespace RomeroHan2004
 open scoped ModalLogic
 open Question (polar polar_compl)
 open Set (Iic)
-open Data.Examples
 
 variable {W : Type*} (epi conv : W → W → Prop) (cg : W → Filter W) (p : Set W)
 
@@ -165,7 +164,7 @@ structure Row where
   bias : Option SignType
   form : Option Form
   item : Option PolarityItem
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
 
 /-- A datum read into its row. -/
 def Row.ofDatum (e : Datum) : Row where

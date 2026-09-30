@@ -49,7 +49,7 @@ imperfect correlate.
 
 namespace AnandHacquard2013
 
-open Data.Examples Presupposition
+open Presupposition
 
 variable {W : Type*}
 

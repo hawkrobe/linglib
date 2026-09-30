@@ -58,7 +58,7 @@ order on their comparative values.
 
 namespace Aitha2026
 
-open DistributedMorphology Prosody Data.Examples
+open DistributedMorphology Prosody
 open scoped Case.Caha
 open Core OptimalityTheory
 

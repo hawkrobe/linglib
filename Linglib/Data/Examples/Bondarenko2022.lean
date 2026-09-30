@@ -15,8 +15,6 @@ this module; declarations live in `namespace Bondarenko2022.Examples`.
 
 namespace Bondarenko2022.Examples
 
-open Data.Examples
-
 def ch2_105 : Datum :=
   { id := "bondarenko2022_ch2_105"
     source := ⟨"bondarenko-2022", "§2.2.3 ex. (105)"⟩

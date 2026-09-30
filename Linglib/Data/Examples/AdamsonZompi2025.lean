@@ -15,8 +15,6 @@ this module; declarations live in `namespace AdamsonZompi2025.Examples`.
 
 namespace AdamsonZompi2025.Examples
 
-open Data.Examples
-
 def ex_2a : Datum :=
   { id := "adamsonzompi2025_2a"
     source := ⟨"adamson-zompi-2025", "(2a)"⟩

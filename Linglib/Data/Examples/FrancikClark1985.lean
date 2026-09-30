@@ -15,8 +15,6 @@ this module; declarations live in `namespace FrancikClark1985.Examples`.
 
 namespace FrancikClark1985.Examples
 
-open Data.Examples
-
 def read_newspaper : Datum :=
   { id := "francikclark1985_read_newspaper"
     source := ⟨"francik-clark-1985", "introduction"⟩

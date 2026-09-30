@@ -62,7 +62,6 @@ chapter's ability modals.
 
 namespace Kubota2026
 
-open Data.Examples (Datum)
 open Modality (ModalFlavor)
 open ConventionalImplicature (TwoDim)
 open Presupposition (PartialProp)

@@ -38,7 +38,6 @@ in a family of inverse voice constructions (§4.3, `InverseVoiceKind`).
 
 namespace Storment2026
 
-open Data.Examples
 
 /-! ### The derivation (§4) -/
 

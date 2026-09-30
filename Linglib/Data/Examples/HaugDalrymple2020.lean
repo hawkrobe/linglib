@@ -15,8 +15,6 @@ this module; declarations live in `namespace HaugDalrymple2020.Examples`.
 
 namespace HaugDalrymple2020.Examples
 
-open Data.Examples
-
 def ex1 : Datum :=
   { id := "haugdalrymple2020_ex1"
     source := ⟨"haug-dalrymple-2020", "(1)"⟩

@@ -291,8 +291,6 @@ this module; declarations live in `namespace {author_year}.Examples`.
 
 namespace {author_year}.Examples
 
-open Data.Examples
-
 {body}
 
 {all_def}

@@ -68,7 +68,7 @@ leaves open which other button fails, while participants answered *No* about a s
 
 namespace EvcenBaleBarner2026
 
-open Data.Examples EvcenBaleBarner2026.Examples
+open EvcenBaleBarner2026.Examples
 
 /-- The three buttons of Experiments 1 and 3. -/
 inductive Button

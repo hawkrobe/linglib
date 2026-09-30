@@ -50,7 +50,7 @@ projection ([schutzenberger-1965], [mcnaughton-papert-1971], `isStarFree_free_re
 
 namespace Jardine2019
 
-open Autosegmental Data.Examples Tone Tone.TRN
+open Autosegmental Tone Tone.TRN
 
 /-- The string alphabet Σ_T = {H, L, F} (§5.2.2): a high, low or falling-toned mora. -/
 inductive Sym | H | L | F

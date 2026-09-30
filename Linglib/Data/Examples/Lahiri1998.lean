@@ -15,8 +15,6 @@ this module; declarations live in `namespace Lahiri1998.Examples`.
 
 namespace Lahiri1998.Examples
 
-open Data.Examples
-
 def ex6a : Datum :=
   { id := "lahiri1998_ex6a"
     source := ⟨"lahiri-1998", "(6a)"⟩

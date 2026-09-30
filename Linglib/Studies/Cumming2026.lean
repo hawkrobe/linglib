@@ -60,7 +60,7 @@ namespace Cumming2026
 
 open Semantics
 
-open Tense Tense.Evidential Presupposition Data.Examples
+open Tense Tense.Evidential Presupposition
 
 variable {T : Type*} [LinearOrder T]
 

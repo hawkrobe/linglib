@@ -67,7 +67,7 @@ chance of ineffability by a best guess from the distribution of witnesses.
 
 namespace Enguehard2024
 
-open Presupposition Data.Examples Enguehard2024.Examples
+open Presupposition Enguehard2024.Examples
 
 /-- The number of an indefinite. -/
 inductive Number
@@ -275,7 +275,7 @@ judgment. -/
 structure ContinuationRow where
   antecedent : Number
   pronoun : Pronoun
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
   deriving DecidableEq, Repr
 
 /-- A row from an example. -/

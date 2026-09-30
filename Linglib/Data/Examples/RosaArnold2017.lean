@@ -15,8 +15,6 @@ this module; declarations live in `namespace RosaArnold2017.Examples`.
 
 namespace RosaArnold2017.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "rosaarnold2017_1a"
     source := ⟨"rosa-arnold-2017", "(1a)"⟩

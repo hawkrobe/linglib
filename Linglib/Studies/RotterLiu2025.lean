@@ -46,7 +46,6 @@ effect is modelled as one additive shift on both cells of a pair.
 namespace RotterLiu2025
 
 open Modality (ModalForce)
-open Data.Examples (Datum)
 open LiuRotter2025 (ShiftObservation vacuityEffect spreadEffect forceKey)
 
 /-! ### The two analyses -/

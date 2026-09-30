@@ -61,7 +61,7 @@ homogeneity criterion with negation playing no role (`diagnostics_predicted`).
 
 namespace Giannakidou2002
 
-open Aspect Tense Karttunen1974 Heinamaki1974 Data.Examples
+open Aspect Tense Karttunen1974 Heinamaki1974
 
 variable {W T : Type*} [LinearOrder T]
 

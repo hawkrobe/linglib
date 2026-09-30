@@ -61,7 +61,7 @@ its six cells; the mechanism's verdicts on reflexive combinations are not stated
 
 namespace Deal2024
 
-open Minimalist Data.Examples
+open Minimalist
 
 /-! ### The feature geometry (7) -/
 

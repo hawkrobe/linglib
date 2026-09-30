@@ -50,7 +50,7 @@ that are not antecedently familiar.
 namespace GoldbergShirtz2025
 
 open ConstructionGrammar
-open Presupposition Data.Examples
+open Presupposition
 
 /-! ### The Figure 5 constructicon -/
 

@@ -15,8 +15,6 @@ this module; declarations live in `namespace IatridouEtAl2001.Examples`.
 
 namespace IatridouEtAl2001.Examples
 
-open Data.Examples
-
 def iai2001_ex1 : Datum :=
   { id := "iai2001_ex1"
     source := ⟨"iatridou-anagnostopoulou-izvorski-2001", "(1)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace GroenendijkStokhof1984.Examples`.
 
 namespace GroenendijkStokhof1984.Examples
 
-open Data.Examples
-
 def gs1984_mentionsome_italian_newspaper : Datum :=
   { id := "gs1984_mentionsome_italian_newspaper"
     source := ⟨"groenendijk-stokhof-1984", "Ch. VI §5, p. 331"⟩

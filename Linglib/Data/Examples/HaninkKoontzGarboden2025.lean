@@ -15,8 +15,6 @@ this module; declarations live in `namespace HaninkKoontzGarboden2025.Examples`.
 
 namespace HaninkKoontzGarboden2025.Examples
 
-open Data.Examples
-
 def ex20a : Datum :=
   { id := "haninkkoontzgarboden2025_ex20a"
     source := ⟨"hanink-koontz-garboden-2025", "(20a)"⟩

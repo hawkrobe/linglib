@@ -15,8 +15,6 @@ this module; declarations live in `namespace Istratkova2004.Examples`.
 
 namespace Istratkova2004.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "istratkova2004_1a"
     source := ⟨"istratkova-2004", "(1a)"⟩

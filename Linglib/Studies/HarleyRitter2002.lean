@@ -41,7 +41,7 @@ so the Daga first singular is less marked than the first plural.
 
 namespace HarleyRitter2002
 
-open Phi.Geometry Data.Examples
+open Phi.Geometry
 
 /-! ### Languages and their inventories -/
 

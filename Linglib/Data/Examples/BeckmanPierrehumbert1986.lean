@@ -15,8 +15,6 @@ this module; declarations live in `namespace BeckmanPierrehumbert1986.Examples`.
 
 namespace BeckmanPierrehumbert1986.Examples
 
-open Data.Examples
-
 def bp1986_fig3 : Datum :=
   { id := "bp1986_fig3"
     source := ⟨"beckman-pierrehumbert-1986", "Fig. 3"⟩

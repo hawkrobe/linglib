@@ -15,8 +15,6 @@ this module; declarations live in `namespace RitchieSchiller2024.Examples`.
 
 namespace RitchieSchiller2024.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "ritchieschiller2024_1"
     source := ⟨"ritchie-schiller-2024", "(1)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace WaldonDegen2021.Examples`.
 
 namespace WaldonDegen2021.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "waldondegen2021_1"
     source := ⟨"waldon-degen-2021", "(1)"⟩

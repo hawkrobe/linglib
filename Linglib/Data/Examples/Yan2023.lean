@@ -15,8 +15,6 @@ this module; declarations live in `namespace Yan2023.Examples`.
 
 namespace Yan2023.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "yan2023_1"
     source := ⟨"yan-2023", "Ch. 4 (1b)"⟩

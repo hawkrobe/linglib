@@ -137,7 +137,7 @@ def frame (e : ℤ) (Salient : Prop) [Decidable Salient] : Perspective ℤ :=
 structure Judgment where
   form : TenseForm
   frame : Perspective ℤ
-  verdict : Data.Examples.Judgment
+  verdict : _root_.Judgment
 
 /-- The paper licenses a form in a frame when its use is true, or when it is a synthetic form
 in one of the false uses the paper describes: a false past, or will-deletion. -/

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Snyder2026.Examples`.
 
 namespace Snyder2026.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "snyder2026_1a"
     source := ⟨"snyder-2026", "(1a)"⟩

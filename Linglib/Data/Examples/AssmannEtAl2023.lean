@@ -15,8 +15,6 @@ this module; declarations live in `namespace AssmannEtAl2023.Examples`.
 
 namespace AssmannEtAl2023.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "assmannetal2023_1"
     source := ⟨"assmann-etal-2023", "(1)"⟩

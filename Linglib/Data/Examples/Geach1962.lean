@@ -15,8 +15,6 @@ this module; declarations live in `namespace Geach1962.Examples`.
 
 namespace Geach1962.Examples
 
-open Data.Examples
-
 def donkey_classic : Datum :=
   { id := "geach1962_donkey_classic"
     source := ⟨"geach-1962", "UNVERIFIED the donkey sentence"⟩

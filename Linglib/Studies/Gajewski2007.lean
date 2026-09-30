@@ -83,7 +83,7 @@ complement projects into the subject's beliefs whatever the attitude ([karttunen
 
 namespace Gajewski2007
 
-open Presupposition PartialProp ModalLogic NaturalLogic Data.Examples
+open Presupposition PartialProp ModalLogic NaturalLogic
 
 variable {W : Type*}
 

@@ -57,7 +57,7 @@ frequency on magnitude and the four properties stays in prose.
 
 namespace JansenPollmann2001
 
-open Data.Examples Numerals.Roundness
+open Numerals.Roundness
 
 /-! ### The principle of favourite quantities (pp. 200–201) -/
 

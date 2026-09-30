@@ -15,8 +15,6 @@ this module; declarations live in `namespace Fox2018.Examples`.
 
 namespace Fox2018.Examples
 
-open Data.Examples
-
 def ex16a : Datum :=
   { id := "fox2018_ex16a"
     source := ⟨"fox-2018", "(16a)"⟩

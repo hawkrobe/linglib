@@ -15,8 +15,6 @@ this module; declarations live in `namespace GrubicRenansDuah2019.Examples`.
 
 namespace GrubicRenansDuah2019.Examples
 
-open Data.Examples
-
 def ex_36a : Datum :=
   { id := "grubicrenansduah2019_36a"
     source := ⟨"grubic-renans-duah-2019", "(36a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace GoldbergShirtz2025.Examples`.
 
 namespace GoldbergShirtz2025.Examples
 
-open Data.Examples
-
 def gs2025_1a : Datum :=
   { id := "gs2025_1a"
     source := ⟨"goldberg-shirtz-2025", "(1a)"⟩

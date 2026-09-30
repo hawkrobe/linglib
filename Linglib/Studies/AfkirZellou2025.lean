@@ -48,7 +48,7 @@ here.
 
 namespace AfkirZellou2025
 
-open Tarifit Morphology Phonology Data.Examples
+open Tarifit Morphology Phonology
 
 /-! ### The simple imperative -/
 

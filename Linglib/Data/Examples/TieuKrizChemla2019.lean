@@ -15,8 +15,6 @@ this module; declarations live in `namespace TieuKrizChemla2019.Examples`.
 
 namespace TieuKrizChemla2019.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "tieukrizchemla2019_1"
     source := ⟨"tieu-kriz-chemla-2019", "(1)"⟩

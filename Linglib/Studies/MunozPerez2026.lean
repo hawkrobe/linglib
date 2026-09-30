@@ -83,7 +83,7 @@ formalized.
 
 namespace MunozPerez2026
 
-open Data.Examples Minimalist Person Spanish.Verbs
+open Minimalist Person Spanish.Verbs
 
 /-! ### Clauses -/
 

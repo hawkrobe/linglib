@@ -49,7 +49,6 @@ its footnote 14 offers no account.
 
 namespace KampanarouAlexiadou2026
 
-open Data.Examples
 
 /-- Acceptable from `marginal`, the paper's `?`, up. -/
 def Acceptable (j : Judgment) : Prop := .marginal ≤ j

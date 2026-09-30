@@ -15,8 +15,6 @@ this module; declarations live in `namespace Ostrove2026.Examples`.
 
 namespace Ostrove2026.Examples
 
-open Data.Examples
-
 def ex_9a_completive : Datum :=
   { id := "ostrove2026_9a_completive"
     source := ⟨"ostrove-2026", "(9a)"⟩

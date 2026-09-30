@@ -15,8 +15,6 @@ this module; declarations live in `namespace BeckOdaSugisaki2004.Examples`.
 
 namespace BeckOdaSugisaki2004.Examples
 
-open Data.Examples
-
 def amount_yori : Datum :=
   { id := "beckodasugisaki2004_amount_yori"
     source := ⟨"beck-oda-sugisaki-2004", "(3-a), p. 290"⟩

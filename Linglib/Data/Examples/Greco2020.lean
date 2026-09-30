@@ -15,8 +15,6 @@ this module; declarations live in `namespace Greco2020.Examples`.
 
 namespace Greco2020.Examples
 
-open Data.Examples
-
 def ex_2 : Datum :=
   { id := "greco2020_2"
     source := ⟨"greco-2020", "(2)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace AissenPolian2025.Examples`.
 
 namespace AissenPolian2025.Examples
 
-open Data.Examples
-
 def ex1 : Datum :=
   { id := "aissenpolian2025_ex1"
     source := ⟨"aissen-polian-2025", "(1)"⟩

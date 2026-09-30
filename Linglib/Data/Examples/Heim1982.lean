@@ -15,8 +15,6 @@ this module; declarations live in `namespace Heim1982.Examples`.
 
 namespace Heim1982.Examples
 
-open Data.Examples
-
 def indefinite_persists : Datum :=
   { id := "heim1982_indefinite_persists"
     source := ⟨"heim-1982", "Ch. I §1 (9)"⟩

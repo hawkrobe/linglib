@@ -58,7 +58,7 @@ change of state with its cause.
 
 namespace Levin1993
 
-open Data.Examples ArgumentStructure
+open ArgumentStructure
 
 /-- The alternation named by a row's tag. -/
 def alternationOfString : String → Option DiathesisAlternation

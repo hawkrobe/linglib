@@ -36,7 +36,7 @@ system (10) and is outside this file.
 
 namespace HalleMarantz1993
 
-open DistributedMorphology Data.Examples
+open DistributedMorphology
 
 /-! ### The fused Tns–Agr node -/
 

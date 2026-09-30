@@ -15,8 +15,6 @@ this module; declarations live in `namespace Yalcin2010.Examples`.
 
 namespace Yalcin2010.Examples
 
-open Data.Examples
-
 def die_p1 : Datum :=
   { id := "yalcin2010_die_p1"
     source := ⟨"yalcin-2010", "(P1)"⟩

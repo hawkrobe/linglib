@@ -15,8 +15,6 @@ this module; declarations live in `namespace GilesEtAl2026.Examples`.
 
 namespace GilesEtAl2026.Examples
 
-open Data.Examples
-
 def exp1_sLowRHigh : Datum :=
   { id := "gilesetal2026_exp1_sLowRHigh"
     source := ⟨"giles-etal-2026", "Table 1 reference"⟩

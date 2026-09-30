@@ -48,7 +48,7 @@ derivations and the discussion of incremental interpretation are not formalized.
 
 namespace PickeringBarry1991
 
-open Data.Examples Examples
+open Examples
 open scoped CCG
 
 /-! ### Associations and their patterns -/

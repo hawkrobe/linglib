@@ -74,7 +74,7 @@ double-modal readings of (81) to (83) is not modelled.
 
 namespace CondoravdiLauer2016
 
-open Desire.Preferential Modality Conditional.Restrictor Data.Examples
+open Desire.Preferential Modality Conditional.Restrictor
 
 section General
 

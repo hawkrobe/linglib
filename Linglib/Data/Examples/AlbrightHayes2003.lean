@@ -15,8 +15,6 @@ this module; declarations live in `namespace AlbrightHayes2003.Examples`.
 
 namespace AlbrightHayes2003.Examples
 
-open Data.Examples
-
 def a1_1_bized : Datum :=
   { id := "albrighthayes2003_a1_1_bized"
     source := ⟨"albright-hayes-2003", "Table A1, 1. bize"⟩

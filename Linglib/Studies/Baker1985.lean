@@ -77,7 +77,7 @@ run of `Voice` correspondences) are both read. The word determines the sequence 
 
 namespace Baker1985
 
-open Morphology Morphology.Word Data.Examples
+open Morphology Morphology.Word
 open ArgumentFrame (Slot Position)
 
 /-! ### Grammatical-function rules

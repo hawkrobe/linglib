@@ -15,8 +15,6 @@ this module; declarations live in `namespace Cooper2023.Examples`.
 
 namespace Cooper2023.Examples
 
-open Data.Examples
-
 def ex_3_89 : Datum :=
   { id := "cooper2023_3_89"
     source := ⟨"cooper-2023", "Ch. 3, (89)"⟩

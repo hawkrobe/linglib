@@ -387,7 +387,6 @@ theorem mo_comparative_with_negation :
 
 /-! ### The book's examples -/
 
-open Data.Examples (Datum)
 
 /-- The paradigm of a language of the sample, by Glottocode; Latin, Yakut and Kannada have no
 example rows. -/

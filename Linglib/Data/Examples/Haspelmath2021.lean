@@ -15,8 +15,6 @@ this module; declarations live in `namespace Haspelmath2021.Examples`.
 
 namespace Haspelmath2021.Examples
 
-open Data.Examples
-
 def ex1a : Datum :=
   { id := "haspelmath2021_ex1a"
     source := ⟨"haspelmath-2021", "(1a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Kratzer1998.Examples`.
 
 namespace Kratzer1998.Examples
 
-open Data.Examples
-
 def ex01 : Datum :=
   { id := "kratzer1998_ex01"
     source := ⟨"abusch-1988", "WCCFL 7 SOT example"⟩

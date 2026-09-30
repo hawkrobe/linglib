@@ -15,8 +15,6 @@ this module; declarations live in `namespace Corbett1991.Examples`.
 
 namespace Corbett1991.Examples
 
-open Data.Examples
-
 def ex_3_1 : Datum :=
   { id := "corbett1991_3_1"
     source := ⟨"corbett-1991", "ch. 3 (1)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace HayKennedyLevin1999.Examples`.
 
 namespace HayKennedyLevin1999.Examples
 
-open Data.Examples
-
 def ex2a : Datum :=
   { id := "haykennedylevin1999_ex2a"
     source := ⟨"hay-kennedy-levin-1999", "(2a)"⟩

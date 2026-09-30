@@ -86,7 +86,7 @@ paper's morpheme templates against Bybee's relevance hierarchy.
 
 namespace HahnDegenFutrell2021
 
-open Data.Examples DependencyGrammar Morphology
+open DependencyGrammar Morphology
 open Morphology (Word)
 
 /-! ### Dependency locality -/

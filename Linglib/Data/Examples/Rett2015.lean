@@ -15,8 +15,6 @@ this module; declarations live in `namespace Rett2015.Examples`.
 
 namespace Rett2015.Examples
 
-open Data.Examples
-
 def positive_tall : Datum :=
   { id := "rett2015_positive_tall"
     source := ⟨"rett-2015", "Table 3.1"⟩

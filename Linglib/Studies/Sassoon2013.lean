@@ -46,7 +46,7 @@ normalized conjunctivity and between totality and conjunctivity are not formaliz
 
 namespace Sassoon2013
 
-open Degree Data.Examples
+open Degree
 
 /-- The paper's criterion: an adjective is conjunctive when its dimensional uses in positive
 contexts are at least three times those in negated contexts, disjunctive in the converse case,

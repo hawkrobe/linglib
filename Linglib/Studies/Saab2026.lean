@@ -53,7 +53,7 @@ not formalized.
 
 namespace Saab2026
 
-open Spanish.Binominals Data.Examples
+open Spanish.Binominals
 
 /-! ### Structures -/
 

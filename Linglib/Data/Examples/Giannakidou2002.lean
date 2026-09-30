@@ -15,8 +15,6 @@ this module; declarations live in `namespace Giannakidou2002.Examples`.
 
 namespace Giannakidou2002.Examples
 
-open Data.Examples
-
 def ex1 : Datum :=
   { id := "giannakidou2002_ex1"
     source := ⟨"giannakidou-2002", "(1)"⟩

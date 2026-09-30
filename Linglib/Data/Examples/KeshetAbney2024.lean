@@ -15,8 +15,6 @@ this module; declarations live in `namespace KeshetAbney2024.Examples`.
 
 namespace KeshetAbney2024.Examples
 
-open Data.Examples
-
 def ex_2a : Datum :=
   { id := "keshetabney2024_2a"
     source := ⟨"keshet-abney-2024", "(2a)"⟩

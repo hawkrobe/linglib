@@ -63,7 +63,7 @@ dissertation's judgments (`Data/Examples/Scott2023`) instantiate the derivation
 
 @[expose] public section
 
-open Mam DistributedMorphology Minimalist Morphology Data.Examples
+open Mam DistributedMorphology Minimalist Morphology
 
 namespace Scott2023
 

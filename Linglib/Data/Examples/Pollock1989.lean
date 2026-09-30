@@ -15,8 +15,6 @@ this module; declarations live in `namespace Pollock1989.Examples`.
 
 namespace Pollock1989.Examples
 
-open Data.Examples
-
 def ex2a : Datum :=
   { id := "pollock1989_ex2a"
     source := ⟨"pollock-1989", "(2a)"⟩

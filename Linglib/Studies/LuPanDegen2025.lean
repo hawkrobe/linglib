@@ -65,7 +65,6 @@ overt complementizer of manner-of-speaking complements (22).
 namespace LuPanDegen2025
 
 open ArgumentStructure English English.Verbs
-open Data.Examples
 
 /-! ### Foregrounding (3) -/
 

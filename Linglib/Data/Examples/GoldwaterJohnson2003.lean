@@ -15,8 +15,6 @@ this module; declarations live in `namespace GoldwaterJohnson2003.Examples`.
 
 namespace GoldwaterJohnson2003.Examples
 
-open Data.Examples
-
 def gj2003_kala : Datum :=
   { id := "gj2003_kala"
     source := ⟨"goldwater-johnson-2003", "Table 2"⟩

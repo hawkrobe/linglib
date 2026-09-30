@@ -15,8 +15,6 @@ this module; declarations live in `namespace AhnKocabDavidson2026.Examples`.
 
 namespace AhnKocabDavidson2026.Examples
 
-open Data.Examples
-
 def ex9 : Datum :=
   { id := "ahnkocabdavidson2026_ex9"
     source := ⟨"ahn-kocab-davidson-2026", "(9)"⟩

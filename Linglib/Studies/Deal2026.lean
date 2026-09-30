@@ -77,7 +77,7 @@ against factivity, needs Turkish *düşün-* 'think', which has no Fragment.
 
 namespace Deal2026
 
-open NezPerce Minimalist Data.Examples
+open NezPerce Minimalist
 
 /-! ### The embedding strategy -/
 

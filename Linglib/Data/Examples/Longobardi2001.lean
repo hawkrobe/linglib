@@ -15,8 +15,6 @@ this module; declarations live in `namespace Longobardi2001.Examples`.
 
 namespace Longobardi2001.Examples
 
-open Data.Examples
-
 def ex_6a : Datum :=
   { id := "longobardi2001_6a"
     source := ⟨"longobardi-2001", "(6a)"⟩

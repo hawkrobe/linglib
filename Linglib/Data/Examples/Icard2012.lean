@@ -15,8 +15,6 @@ this module; declarations live in `namespace Icard2012.Examples`.
 
 namespace Icard2012.Examples
 
-open Data.Examples
-
 def squid_t : Datum :=
   { id := "icard2012_squid_t"
     source := ⟨"icard-2012", "Section 3.2, t"⟩

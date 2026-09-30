@@ -15,8 +15,6 @@ this module; declarations live in `namespace HalleMarantz1993.Examples`.
 
 namespace HalleMarantz1993.Examples
 
-open Data.Examples
-
 def beat_past_participle : Datum :=
   { id := "hallemarantz1993_beat_past_participle"
     source := ⟨"halle-marantz-1993", "(7)"⟩

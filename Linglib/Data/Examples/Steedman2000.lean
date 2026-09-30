@@ -15,8 +15,6 @@ this module; declarations live in `namespace Steedman2000.Examples`.
 
 namespace Steedman2000.Examples
 
-open Data.Examples
-
 def ex_96 : Datum :=
   { id := "steedman2000_96"
     source := ⟨"steedman-2000", "(96)"⟩

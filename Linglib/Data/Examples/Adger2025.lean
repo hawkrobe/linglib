@@ -15,8 +15,6 @@ this module; declarations live in `namespace Adger2025.Examples`.
 
 namespace Adger2025.Examples
 
-open Data.Examples
-
 def ch433 : Datum :=
   { id := "adger2025_ch433"
     source := ⟨"adger-2025", "ch. 4 (33)"⟩

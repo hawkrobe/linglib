@@ -15,8 +15,6 @@ this module; declarations live in `namespace Funakoshi2016.Examples`.
 
 namespace Funakoshi2016.Examples
 
-open Data.Examples
-
 def ex15b : Datum :=
   { id := "funakoshi2016_ex15b"
     source := ⟨"funakoshi-2016", "(15b)"⟩

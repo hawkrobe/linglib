@@ -15,8 +15,6 @@ this module; declarations live in `namespace BarLevFox2020.Examples`.
 
 namespace BarLevFox2020.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "barlevfox2020_1"
     source := ⟨"bar-lev-fox-2020", "(1)"⟩

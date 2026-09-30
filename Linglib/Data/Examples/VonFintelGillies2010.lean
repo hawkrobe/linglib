@@ -15,8 +15,6 @@ this module; declarations live in `namespace VonFintelGillies2010.Examples`.
 
 namespace VonFintelGillies2010.Examples
 
-open Data.Examples
-
 def keys_drawer : Datum :=
   { id := "vonfintelgillies2010_keys_drawer"
     source := ⟨"von-fintel-gillies-2010", "(2b)"⟩

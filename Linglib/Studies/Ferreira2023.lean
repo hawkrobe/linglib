@@ -89,7 +89,7 @@ which Portuguese fills with *tem que*, *tinha que*, *deve*, *devia* (135).
 
 namespace Ferreira2023
 
-open Modality Modality.Directive Data.Examples
+open Modality Modality.Directive
 
 variable {W : Type*}
 

@@ -48,7 +48,7 @@ removes (`modal_gq`, (58)–(63)); collective predicates need pluralities in the
 
 namespace AlonsoOvalleMoghiseh2025b
 
-open Quantifier Quantifier.GQ Quantifier.NP Question Data.Examples Finset
+open Quantifier Quantifier.GQ Quantifier.NP Question Finset
 
 /-! ### Entities, worlds, and answers -/
 

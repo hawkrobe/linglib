@@ -95,7 +95,7 @@ P-coding, which split-S languages violate. The book's examples are the rows of
 
 namespace Creissels2024
 
-open Voice Data.Examples
+open Voice
 
 /-! ### Constructions and transitivity-related roles (§1.3) -/
 

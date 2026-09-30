@@ -43,7 +43,7 @@ theorem. Example and note numbers follow the manuscript version of the paper.
 
 namespace Fox2007
 
-open Exhaustification Set ModalLogic Data.Examples
+open Exhaustification Set ModalLogic
 
 variable {W : Type*}
 

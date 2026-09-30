@@ -53,7 +53,7 @@ natural-classes model explains more of the variance than the categorical one (Ta
 
 namespace FrischPierrehumbertBroe2004
 
-open Arabic.ModernStandard Data.Examples
+open Arabic.ModernStandard
 
 /-- The natural-classes similarity of two segments (equation (7)): the classes containing both
 over the classes containing either. -/

@@ -15,8 +15,6 @@ this module; declarations live in `namespace AlexandropoulouGotzner2024b.Example
 
 namespace AlexandropoulouGotzner2024b.Examples
 
-open Data.Examples
-
 def ag2024b_1 : Datum :=
   { id := "ag2024b_1"
     source := ⟨"alexandropoulou-gotzner-2024b", "(1)"⟩

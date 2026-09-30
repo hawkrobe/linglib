@@ -15,8 +15,6 @@ this module; declarations live in `namespace Yolyan2025.Examples`.
 
 namespace Yolyan2025.Examples
 
-open Data.Examples
-
 def ex_2_11a_1 : Datum :=
   { id := "yolyan2025_2_11a_1"
     source := ⟨"yolyan-2025", "Example 2.11 (a)"⟩

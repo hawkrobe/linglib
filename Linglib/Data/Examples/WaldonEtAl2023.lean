@@ -15,8 +15,6 @@ this module; declarations live in `namespace WaldonEtAl2023.Examples`.
 
 namespace WaldonEtAl2023.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "waldonetal2023_1"
     source := ⟨"hart-1958", ""⟩

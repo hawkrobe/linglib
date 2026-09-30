@@ -34,7 +34,7 @@ related by Background, the first of those units is the one label not available.
 
 namespace AsherLascarides2003
 
-open Data.Examples Relation
+open Relation
 
 /-! ### Rhetorical relations -/
 

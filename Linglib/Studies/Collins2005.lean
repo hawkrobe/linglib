@@ -86,7 +86,6 @@ is the θ-uniformity the analysis was built for.
 namespace Collins2005
 
 open Minimalist SyntacticObject
-open Data.Examples (Datum)
 
 /-! ### The passive and its rival derivations (§2–§5) -/
 
@@ -388,7 +387,7 @@ the DP is Merged, (83)–(84) (§9.3); a name meets Condition C at the surface, 
 reconstruction (§9.2); a negative polarity item and *the other* need a c-commanding licensor at
 the surface. -/
 def Dependency.predict (dep : Dependency) (p : Clause) (d : Derivation) (x y : Position) :
-    Data.Examples.Judgment :=
+    Judgment :=
   match dep with
   | .reflexive =>
       if (Level.surface.configuration p d).Condition (pair x y) ∅ y .reflexive then .acceptable
@@ -433,7 +432,7 @@ def Licensing.ofRow (row : Datum) : Option Licensing := do
 def Licensing.derivation (c : Licensing) : Derivation := c.clause.passive .partP c.evacuated
 
 /-- The judgment the configuration predicts on its derivation. -/
-def Licensing.predict (c : Licensing) : Data.Examples.Judgment :=
+def Licensing.predict (c : Licensing) : Judgment :=
   c.dependency.predict c.clause c.derivation c.antecedent c.dependent
 
 /-- The [barss-lasnik-1986] tests (10), Principle A (72), (74), the bound variable (75),

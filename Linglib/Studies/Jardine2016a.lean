@@ -51,7 +51,7 @@ output is one H linked to the plateau, Section 4.4.
 
 namespace Jardine2016a
 
-open Data.Examples Tone
+open Tone
 
 /-! ### The plateauing data
 

@@ -36,7 +36,7 @@ The words are the rows of `Data/Examples/Marantz2013`, the examples of (1) to (3
 
 namespace Marantz2013
 
-open DistributedMorphology Data.Examples
+open DistributedMorphology
 
 /-! ### Heads and interfaces -/
 

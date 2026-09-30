@@ -15,8 +15,6 @@ this module; declarations live in `namespace SeeligerRepp2018.Examples`.
 
 namespace SeeligerRepp2018.Examples
 
-open Data.Examples
-
 def en_pdq : Datum :=
   { id := "seeligerrepp2018_en_pdq"
     source := ⟨"seeliger-repp-2018", "(5a)"⟩

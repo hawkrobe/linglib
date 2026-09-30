@@ -15,8 +15,6 @@ this module; declarations live in `namespace Westergaard2009.Examples`.
 
 namespace Westergaard2009.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "westergaard2009_1"
     source := ⟨"westergaard-2009", "ch. 1 (1)"⟩

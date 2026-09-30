@@ -15,8 +15,6 @@ this module; declarations live in `namespace MocnikAbramovitz2019.Examples`.
 
 namespace MocnikAbramovitz2019.Examples
 
-open Data.Examples
-
 def ex2 : Datum :=
   { id := "mocnikabramovitz2019_ex2"
     source := ⟨"mocnik-abramovitz-2019", "(2)"⟩

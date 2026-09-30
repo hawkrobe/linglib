@@ -15,8 +15,6 @@ this module; declarations live in `namespace Alsop2024.Examples`.
 
 namespace Alsop2024.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "alsop2024_1a"
     source := ⟨"alsop-2024", "(1a)"⟩

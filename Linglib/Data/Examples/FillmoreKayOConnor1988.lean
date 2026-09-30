@@ -15,8 +15,6 @@ this module; declarations live in `namespace FillmoreKayOConnor1988.Examples`.
 
 namespace FillmoreKayOConnor1988.Examples
 
-open Data.Examples
-
 def ex15b : Datum :=
   { id := "fillmorekayoconnor1988_ex15b"
     source := ⟨"fillmore-kay-oconnor-1988", "(15b)"⟩

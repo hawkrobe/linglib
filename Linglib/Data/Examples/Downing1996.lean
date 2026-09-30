@@ -15,8 +15,6 @@ this module; declarations live in `namespace Downing1996.Examples`.
 
 namespace Downing1996.Examples
 
-open Data.Examples
-
 def ex_1_14 : Datum :=
   { id := "downing1996_1_14"
     source := ⟨"downing-1996", "(14), Chapter 1"⟩

@@ -70,7 +70,7 @@ of specificity descends the order on queries (`gradient_antitone`).
 
 namespace FrancikClark1985
 
-open Data.Examples Discourse.SpeechAct
+open Discourse.SpeechAct
 
 /-- What a request asks about: nothing, one preparatory condition, or anything that could stand
 in the way (*Can you tell me?*, *Could you tell me?*). -/

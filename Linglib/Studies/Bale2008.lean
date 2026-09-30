@@ -55,7 +55,7 @@ than he is wide yet not taller for a man than he is wide for a man.
 
 namespace Bale2008
 
-open Data.Examples Degree
+open Degree
 
 /-! ### The comparative -/
 

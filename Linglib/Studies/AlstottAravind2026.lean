@@ -49,7 +49,7 @@ to pragmatic as against semantic coercion.
 
 namespace AlstottAravind2026
 
-open Tense Rett2020a Data.Examples
+open Tense Rett2020a
 
 /-! ### The two theories (§2.1) -/
 

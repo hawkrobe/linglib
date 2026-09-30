@@ -15,8 +15,6 @@ this module; declarations live in `namespace Schlenker2004a.Examples`.
 
 namespace Schlenker2004a.Examples
 
-open Data.Examples
-
 def ex1 : Datum :=
   { id := "schlenker2004a_ex1"
     source := ⟨"schlenker-2004a", "(1)"⟩

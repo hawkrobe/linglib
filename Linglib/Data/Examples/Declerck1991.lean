@@ -15,8 +15,6 @@ this module; declarations live in `namespace Declerck1991.Examples`.
 
 namespace Declerck1991.Examples
 
-open Data.Examples
-
 def domainShift1a : Datum :=
   { id := "declerck1991_domainShift1a"
     source := ⟨"declerck-1991-grammar", "ch. 3 ex (1a)"⟩

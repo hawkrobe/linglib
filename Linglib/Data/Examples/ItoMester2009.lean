@@ -15,8 +15,6 @@ this module; declarations live in `namespace ItoMester2009.Examples`.
 
 namespace ItoMester2009.Examples
 
-open Data.Examples
-
 def s20a : Datum :=
   { id := "itomester2009_s20a"
     source := ⟨"ito-mester-2009", "(20a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace PurverGinzburg2004.Examples`.
 
 namespace PurverGinzburg2004.Examples
 
-open Data.Examples
-
 def ex25 : Datum :=
   { id := "purverginzburg2004_ex25"
     source := ⟨"purver-ginzburg-2004", "(25)"⟩

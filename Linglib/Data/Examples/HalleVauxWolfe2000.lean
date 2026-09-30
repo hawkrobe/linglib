@@ -15,8 +15,6 @@ this module; declarations live in `namespace HalleVauxWolfe2000.Examples`.
 
 namespace HalleVauxWolfe2000.Examples
 
-open Data.Examples
-
 def ex44a : Datum :=
   { id := "hallevauxwolfe2000_ex44a"
     source := ⟨"halle-vaux-wolfe-2000", "(44a)"⟩

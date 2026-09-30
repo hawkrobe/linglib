@@ -15,8 +15,6 @@ this module; declarations live in `namespace AlstottAravind2026.Examples`.
 
 namespace AlstottAravind2026.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "alstottaravind2026_1a"
     source := ⟨"alstott-aravind-2026", "(1a)"⟩

@@ -55,7 +55,7 @@ the participants share the sub-utterance's content, the constituent reading does
 
 namespace GinzburgCooper2004
 
-open Discourse.Gameboard Data.Examples
+open Discourse.Gameboard
 
 variable {V Cont : Type}
 
@@ -329,9 +329,9 @@ structure Row where
   antecedent : SubUtterance
   fragment : SubUtterance
   access : Access
-  clausal : Option Data.Examples.Judgment
-  constituent : Option Data.Examples.Judgment
-  judgment : Data.Examples.Judgment
+  clausal : Option Judgment
+  constituent : Option Judgment
+  judgment : Judgment
   deriving DecidableEq
 
 def Row.ofDatum (ex : Datum) : Option Row := do

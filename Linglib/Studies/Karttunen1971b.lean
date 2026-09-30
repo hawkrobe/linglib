@@ -40,7 +40,7 @@ not the presupposition holds (`negExt_no_inference`).
 
 namespace Karttunen1971b
 
-open Presupposition Data.Examples
+open Presupposition
 open English
 open English.Verbs hiding Verb
 

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Erlewine2016.Examples`.
 
 namespace Erlewine2016.Examples
 
-open Data.Examples
-
 def ex_8 : Datum :=
   { id := "erlewine2016_8"
     source := ⟨"erlewine-2016", "(8), preprint numbering"⟩

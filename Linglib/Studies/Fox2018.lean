@@ -44,7 +44,7 @@ on the distribution of mention-some enter only through the rows on singular wh-p
 
 namespace Fox2018
 
-open Question Exhaustification Set Data.Examples
+open Question Exhaustification Set
 
 variable {W : Type*}
 

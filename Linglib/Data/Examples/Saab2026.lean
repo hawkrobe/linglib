@@ -15,8 +15,6 @@ this module; declarations live in `namespace Saab2026.Examples`.
 
 namespace Saab2026.Examples
 
-open Data.Examples
-
 def ex1a : Datum :=
   { id := "saab2026_ex1a"
     source := ⟨"saab-2026", "(1a)"⟩

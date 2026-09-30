@@ -15,8 +15,6 @@ this module; declarations live in `namespace VonStechow1984.Examples`.
 
 namespace VonStechow1984.Examples
 
-open Data.Examples
-
 def yacht : Datum :=
   { id := "vonstechow1984_yacht"
     source := ⟨"russell-1905", "the yacht anecdote"⟩

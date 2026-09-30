@@ -15,8 +15,6 @@ this module; declarations live in `namespace Svenonius2004.Examples`.
 
 namespace Svenonius2004.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "svenonius2004_1a"
     source := ⟨"svenonius-2004", "(1a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace RomeroHan2004.Examples`.
 
 namespace RomeroHan2004.Examples
 
-open Data.Examples
-
 def doesnt_john_drink : Datum :=
   { id := "romerohan2004_doesnt_john_drink"
     source := ⟨"romero-han-2004", "(1)"⟩

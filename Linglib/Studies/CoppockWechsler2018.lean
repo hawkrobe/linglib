@@ -231,7 +231,6 @@ theorem eq_authority_of_not_inCrisis_ask (h : ¬ (ask K c (ego V t c)).InCrisis)
 
 section Rows
 
-open Data.Examples
 
 /-- The subject of an example is *I* or *you*, according to the person of its pronoun. -/
 def subject? (r : Datum) : Option (Term W E P T) :=

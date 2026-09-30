@@ -47,7 +47,7 @@ Item numbers follow the 2012 preprint.
 
 namespace AsherPelletier2013
 
-open Data.Examples MeasureTheory ProbabilityTheory
+open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
 variable {W E : Type*}

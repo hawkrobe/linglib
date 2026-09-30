@@ -65,7 +65,7 @@ out of the perfective configuration of [hacquard-2006].
 
 namespace Matthewson2013
 
-open Modality Data.Examples Gitksan
+open Modality Gitksan
 
 /-! ### The modal system (Fig. 1) -/
 

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Harley2014.Examples`.
 
 namespace Harley2014.Examples
 
-open Data.Examples
-
 def ex3a : Datum :=
   { id := "harley2014_ex3a"
     source := ⟨"harley-2014", "(3a)"⟩

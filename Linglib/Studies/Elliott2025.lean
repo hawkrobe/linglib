@@ -68,7 +68,7 @@ they show no exceptional scope ([reinhart-1997], [charlow-2014]), whereas *exact
 
 namespace Elliott2025
 
-open Quantifier Quantifier.GQ Quantifier.NP Data.Examples Elliott2025.Examples
+open Quantifier Quantifier.GQ Quantifier.NP Elliott2025.Examples
 
 /-! ### The classical predicative theory of numerals (§2) -/
 

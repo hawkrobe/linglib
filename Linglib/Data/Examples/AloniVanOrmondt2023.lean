@@ -15,8 +15,6 @@ this module; declarations live in `namespace AloniVanOrmondt2023.Examples`.
 
 namespace AloniVanOrmondt2023.Examples
 
-open Data.Examples
-
 def ex_3a : Datum :=
   { id := "alonivanormondt2023_3a"
     source := ⟨"aloni-vanormondt-2023", "(3a)"⟩

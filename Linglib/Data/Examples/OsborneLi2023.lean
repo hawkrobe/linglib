@@ -15,8 +15,6 @@ this module; declarations live in `namespace OsborneLi2023.Examples`.
 
 namespace OsborneLi2023.Examples
 
-open Data.Examples
-
 def ex2a : Datum :=
   { id := "osborneli2023_ex2a"
     source := ⟨"osborne-li-2023", "(2a)"⟩

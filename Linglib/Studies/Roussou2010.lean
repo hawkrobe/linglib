@@ -50,7 +50,7 @@ argument against uninterpretable features are not formalized.
 
 namespace Roussou2010
 
-open Greek.StandardModern.Complementizers Greek.StandardModern.Verbs Presupposition Data.Examples
+open Greek.StandardModern.Complementizers Greek.StandardModern.Verbs Presupposition
 open Semantics.Composition.Tree
 
 /-! ### The lexical specification -/

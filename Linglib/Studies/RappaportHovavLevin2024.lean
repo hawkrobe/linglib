@@ -60,7 +60,7 @@ are omitted.
 
 namespace RappaportHovavLevin2024
 
-open ArgumentStructure Data.Examples
+open ArgumentStructure
 
 /-! ### Participants and senses -/
 
@@ -488,7 +488,7 @@ structure Row where
   verb : Verb
   event : Event
   slots : Slots
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
 
 /-- A datum read into its row. -/
 def Row.ofDatum (e : Datum) : Option Row := do

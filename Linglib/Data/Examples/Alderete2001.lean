@@ -15,8 +15,6 @@ this module; declarations live in `namespace Alderete2001.Examples`.
 
 namespace Alderete2001.Examples
 
-open Data.Examples
-
 def ex_6a_bat : Datum :=
   { id := "alderete2001_6a_bat"
     source := ⟨"alderete-2001", "(6a)"⟩

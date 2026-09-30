@@ -15,8 +15,6 @@ this module; declarations live in `namespace AsherPelletier2013.Examples`.
 
 namespace AsherPelletier2013.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "asherpelletier2013_1"
     source := ⟨"asher-pelletier-2013", "(1)"⟩

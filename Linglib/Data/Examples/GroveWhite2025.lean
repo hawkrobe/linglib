@@ -15,8 +15,6 @@ this module; declarations live in `namespace GroveWhite2025.Examples`.
 
 namespace GroveWhite2025.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "grovewhite2025_1a"
     source := ⟨"grove-white-2025", "(1a)"⟩

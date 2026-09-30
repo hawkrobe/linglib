@@ -15,8 +15,6 @@ this module; declarations live in `namespace ZwickyPullum1983.Examples`.
 
 namespace ZwickyPullum1983.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "zwickypullum1983_1a"
     source := ⟨"zwicky-pullum-1983", "(1a)"⟩

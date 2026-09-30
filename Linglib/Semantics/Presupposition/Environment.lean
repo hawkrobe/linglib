@@ -50,7 +50,7 @@ end Environment
 
 end Presupposition
 
-namespace Data.Examples.Datum
+namespace Datum
 
 open Presupposition
 
@@ -66,4 +66,4 @@ def projective? (e : Datum) : Option Bool :=
 def person? (e : Datum) : Option UD.Person :=
   e.parse? "person" [("1", .first), ("2", .second), ("3", .third)]
 
-end Data.Examples.Datum
+end Datum

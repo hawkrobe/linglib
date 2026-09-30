@@ -15,8 +15,6 @@ this module; declarations live in `namespace AlonsoOvalleMoghiseh2025a.Examples`
 
 namespace AlonsoOvalleMoghiseh2025a.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "alonsoovallemoghiseh2025a_1"
     source := ⟨"aloni-port-2015", "p. 121"⟩

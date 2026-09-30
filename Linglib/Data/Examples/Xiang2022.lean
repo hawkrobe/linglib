@@ -15,8 +15,6 @@ this module; declarations live in `namespace Xiang2022.Examples`.
 
 namespace Xiang2022.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "xiang2022_1"
     source := ⟨"xiang-2022", "(1)"⟩

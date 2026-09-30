@@ -15,8 +15,6 @@ this module; declarations live in `namespace Umbach2004.Examples`.
 
 namespace Umbach2004.Examples
 
-open Data.Examples
-
 def ex_9a : Datum :=
   { id := "umbach2004_9a"
     source := ⟨"umbach-2004", "(9a)"⟩

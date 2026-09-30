@@ -41,7 +41,6 @@ without quantifier raising or type shifting.
 
 namespace Asudeh2022
 
-open Data.Examples
 
 /-! ### The Glue logic -/
 

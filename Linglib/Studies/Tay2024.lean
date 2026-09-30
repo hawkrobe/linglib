@@ -74,7 +74,7 @@ postverbal phrase is an argument of V2, and that chapter, the V-*de* constructio
 
 namespace Tay2024
 
-open Mandarin Morphology Data.Examples
+open Mandarin Morphology
 
 /-! ### The null affix (chapter 2, section 3.3) -/
 

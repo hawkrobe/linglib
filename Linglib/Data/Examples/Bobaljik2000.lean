@@ -15,8 +15,6 @@ this module; declarations live in `namespace Bobaljik2000.Examples`.
 
 namespace Bobaljik2000.Examples
 
-open Data.Examples
-
 def ex_9a : Datum :=
   { id := "bobaljik2000_9a"
     source := ⟨"bobaljik-2000", "(9a)"⟩

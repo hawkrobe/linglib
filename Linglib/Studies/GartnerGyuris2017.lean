@@ -52,7 +52,7 @@ studies.
 
 namespace GartnerGyuris2017
 
-open Question Data.Examples
+open Question
 
 /-- A bias choice: one of the seven nonempty sets of states of evidence or expectation, for p
 (+), against p (−), or neither (%). -/

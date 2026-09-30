@@ -15,8 +15,6 @@ this module; declarations live in `namespace HawkinsEtAl2025.Examples`.
 
 namespace HawkinsEtAl2025.Examples
 
-open Data.Examples
-
 def ex1 : Datum :=
   { id := "hawkinsetal2025_ex1"
     source := ⟨"hawkins-etal-2025", "(1)"⟩

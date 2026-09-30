@@ -15,8 +15,6 @@ this module; declarations live in `namespace Merchant2001.Examples`.
 
 namespace Merchant2001.Examples
 
-open Data.Examples
-
 def german_case_match : Datum :=
   { id := "merchant2001_german_case_match"
     source := ⟨"merchant-2001", "case-matching under sluicing"⟩

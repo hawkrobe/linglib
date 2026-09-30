@@ -15,8 +15,6 @@ this module; declarations live in `namespace Partee2010.Examples`.
 
 namespace Partee2010.Examples
 
-open Data.Examples
-
 def ex_10a : Datum :=
   { id := "partee2010_10a"
     source := ⟨"partee-2010", "(10a)"⟩

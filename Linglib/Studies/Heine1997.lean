@@ -52,7 +52,7 @@ possession.
 
 namespace Heine1997
 
-open Data.Examples Possession
+open Possession
 
 /-! ### The event schemas -/
 

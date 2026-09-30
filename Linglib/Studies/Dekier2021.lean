@@ -50,7 +50,6 @@ prefixes and suffixes in §4.2 are not modelled.
 namespace Dekier2021
 
 open Morphology Morphology.Containment Indefinite
-open Data.Examples (Datum)
 open Haspelmath1997 (Series english yakut latin kannada)
 
 /-! ### The hierarchy -/

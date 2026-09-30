@@ -56,7 +56,7 @@ namespace Sharvit2003
 
 open Semantics
 
-open Tense Data.Examples
+open Tense
 
 variable {T : Type*}
 

@@ -15,8 +15,6 @@ this module; declarations live in `namespace ArnoldEtAl2000.Examples`.
 
 namespace ArnoldEtAl2000.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "arnoldetal2000_1"
     source := ⟨"arnold-wasow-losongco-ginstrom-2000", "(1)"⟩

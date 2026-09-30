@@ -15,8 +15,6 @@ this module; declarations live in `namespace RappaportHovavLevin2024.Examples`.
 
 namespace RappaportHovavLevin2024.Examples
 
-open Data.Examples
-
 def rhl2024_11d : Datum :=
   { id := "rhl2024_11d"
     source := ⟨"rappaport-hovav-levin-2024", "(11d)"⟩

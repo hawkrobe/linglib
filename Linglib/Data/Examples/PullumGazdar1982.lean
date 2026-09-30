@@ -15,8 +15,6 @@ this module; declarations live in `namespace PullumGazdar1982.Examples`.
 
 namespace PullumGazdar1982.Examples
 
-open Data.Examples
-
 def ex18a : Datum :=
   { id := "pullumgazdar1982_ex18a"
     source := ⟨"gazdar-pullum-1982", "(18a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace StankovaSimik2025.Examples`.
 
 namespace StankovaSimik2025.Examples
 
-open Data.Examples
-
 def ex13_v1_nci : Datum :=
   { id := "stankovasimik2025_ex13_v1_nci"
     source := ⟨"stankova-2025", "(13) B"⟩

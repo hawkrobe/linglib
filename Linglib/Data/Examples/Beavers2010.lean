@@ -15,8 +15,6 @@ this module; declarations live in `namespace Beavers2010.Examples`.
 
 namespace Beavers2010.Examples
 
-open Data.Examples
-
 def ex_9a : Datum :=
   { id := "beavers2010_9a"
     source := ⟨"beavers-2010", "(9a)"⟩

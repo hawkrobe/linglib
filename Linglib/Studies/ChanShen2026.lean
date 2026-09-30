@@ -50,7 +50,7 @@ partial-movement order. The paper's Table 5 is the three accounts against the da
 
 namespace ChanShen2026
 
-open Data.Examples WhModifier Singlish.Questions
+open WhModifier Singlish.Questions
 
 /-- The wh-phrase hosting the modifier: how it is interpreted, and how many wh-phrases stand
 between the question operator and it. -/

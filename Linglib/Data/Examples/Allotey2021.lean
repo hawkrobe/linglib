@@ -15,8 +15,6 @@ this module; declarations live in `namespace Allotey2021.Examples`.
 
 namespace Allotey2021.Examples
 
-open Data.Examples
-
 def ex_2a : Datum :=
   { id := "allotey2021_2a"
     source := ⟨"allotey-2021", "(2a)"⟩

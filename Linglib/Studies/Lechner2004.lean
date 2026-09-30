@@ -62,7 +62,7 @@ surface Principle B account of (24) are not formalized.
 
 namespace Lechner2004
 
-open Core.Order Core.Order.Branching Data.Examples Syntax Syntax.Tree Binding
+open Core.Order Core.Order.Branching Syntax Syntax.Tree Binding
 
 /-! ### Trees and coreference -/
 

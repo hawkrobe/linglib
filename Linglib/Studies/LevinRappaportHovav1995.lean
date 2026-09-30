@@ -38,7 +38,7 @@ in `Data/Examples/LevinRappaportHovav1995.json` sort the verbs the same way
 
 namespace LevinRappaportHovav1995
 
-open ArgumentStructure Data.Examples
+open ArgumentStructure
 
 /-- What a verb's meaning says of an argument, as the linking rules read it: whether it is the
 immediate cause of the eventuality, so that the verb is internally caused (§3.2.1), whether it

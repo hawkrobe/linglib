@@ -15,8 +15,6 @@ this module; declarations live in `namespace Huijsmans2025.Examples`.
 
 namespace Huijsmans2025.Examples
 
-open Data.Examples
-
 def ex37 : Datum :=
   { id := "huijsmans2025_ex37"
     source := ⟨"huijsmans-2025", "(37)"⟩

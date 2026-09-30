@@ -15,7 +15,7 @@ which rival accounts of that relationship are run.
 
 The empirical generalisation (projectivity is gradient and tracks
 not-at-issueness across triggers) predates any one formal account and spans
-≥ 2 papers contributing generated `Data.Examples` rows
+≥ 2 papers contributing generated example rows
 ([tonhauser-beaver-degen-2018]: 9 + 12 English expressions;
 [solstad-bott-2024]: occasion + psychological verbs in German), with ≥ 2 rival
 accounts run against the pool in their study files (`gppProjection` and
@@ -44,7 +44,6 @@ only): accounts and divergence theorems live in the consuming study files.
 
 namespace Generalizations.Projectivity
 
-open Data.Examples (Datum SourceRef)
 
 /-- An observed datum: mean projectivity and at-issueness for one expression,
     with its originating `SourceRef`. -/

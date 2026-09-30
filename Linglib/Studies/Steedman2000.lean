@@ -405,7 +405,6 @@ verb-projection-raising order it combines with the embedded verb alone. -/
 
 section Quantification
 
-open Data.Examples
 
 /-- Word order in a West Germanic verb cluster. -/
 inductive VerbOrder

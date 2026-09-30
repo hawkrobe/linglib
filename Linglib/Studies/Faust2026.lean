@@ -61,7 +61,7 @@ left unexplained. The pipeline reproduces the paradigms (3), (5), (12) and the t
 
 namespace Faust2026
 
-open Morphology Data.Examples Autosegmental
+open Morphology Autosegmental
 
 variable {α : Type*}
 

@@ -48,7 +48,7 @@ typological survey (chapter 2), and its speech-error account (chapter 6) are not
 
 namespace Hansson2010
 
-open Subregular Phonology Phonology.Harmony Data.Examples
+open Subregular Phonology Phonology.Harmony
 
 /-! ### Transcriptions and the tier alphabet -/
 

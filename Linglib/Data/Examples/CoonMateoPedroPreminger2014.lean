@@ -15,8 +15,6 @@ this module; declarations live in `namespace CoonMateoPedroPreminger2014.Example
 
 namespace CoonMateoPedroPreminger2014.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "coonmateopedropreminger2014_1"
     source := ⟨"coon-mateo-pedro-preminger-2014", "(1)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace ChatzikyriakidisEtAl2025.Examples`.
 
 namespace ChatzikyriakidisEtAl2025.Examples
 
-open Data.Examples
-
 def hobNob : Datum :=
   { id := "chatzikyriakidisetal2025_hobNob"
     source := ⟨"geach-1967", "the Hob-Nob sentence"⟩

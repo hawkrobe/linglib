@@ -73,7 +73,7 @@ comparisons, and check the chapter's judgments.
 
 namespace Dayal2016
 
-open Question Data.Examples Set
+open Question Set
 
 /-! ### Scope marking (34)–(37): the truth requirement leaves the denotation -/
 

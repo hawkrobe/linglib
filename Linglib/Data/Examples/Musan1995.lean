@@ -15,8 +15,6 @@ this module; declarations live in `namespace Musan1995.Examples`.
 
 namespace Musan1995.Examples
 
-open Data.Examples
-
 def ex2a : Datum :=
   { id := "musan1995_ex2a"
     source := ⟨"musan-1995", "(2a)"⟩

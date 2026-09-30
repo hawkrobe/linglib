@@ -15,8 +15,6 @@ this module; declarations live in `namespace Shieber1985.Examples`.
 
 namespace Shieber1985.Examples
 
-open Data.Examples
-
 def ex1 : Datum :=
   { id := "shieber1985_ex1"
     source := ⟨"shieber-1985", "(1)"⟩

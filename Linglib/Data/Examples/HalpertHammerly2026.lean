@@ -15,8 +15,6 @@ this module; declarations live in `namespace HalpertHammerly2026.Examples`.
 
 namespace HalpertHammerly2026.Examples
 
-open Data.Examples
-
 def ex8a : Datum :=
   { id := "halperthammerly2026_ex8a"
     source := ⟨"wasike-2006", "p. 235"⟩

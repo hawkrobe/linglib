@@ -47,7 +47,7 @@ treats morphological gaps natively (`no_theory_handles_gaps`).
 
 namespace KalinBjorkmanEtAl2026
 
-open Data.Examples Morphology.Diagnostics
+open Morphology.Diagnostics
 
 /-! ### The dimensions of the interface (Section 2.1) -/
 

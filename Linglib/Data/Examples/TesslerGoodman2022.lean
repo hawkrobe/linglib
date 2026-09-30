@@ -15,8 +15,6 @@ this module; declarations live in `namespace TesslerGoodman2022.Examples`.
 
 namespace TesslerGoodman2022.Examples
 
-open Data.Examples
-
 def tg2022_tall_basketball : Datum :=
   { id := "tg2022_tall_basketball"
     source := ⟨"tessler-goodman-2022", "UNVERIFIED §3.2.1, Fig. 3"⟩

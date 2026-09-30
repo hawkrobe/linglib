@@ -53,7 +53,7 @@ monotonicity of the five quantifiers (`rows_predicted_mainstream`).
 
 namespace GeurtsPouscoulous2009
 
-open Quantifier Quantifier.GQ Quantifier.NP ModalLogic Data.Examples
+open Quantifier Quantifier.GQ Quantifier.NP ModalLogic
 
 variable {W : Type*}
 

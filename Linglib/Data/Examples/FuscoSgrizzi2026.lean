@@ -15,8 +15,6 @@ this module; declarations live in `namespace FuscoSgrizzi2026.Examples`.
 
 namespace FuscoSgrizzi2026.Examples
 
-open Data.Examples
-
 def ex4a : Datum :=
   { id := "fuscosgrizzi2026_ex4a"
     source := ⟨"fusco-sgrizzi-2026", "(4a)"⟩

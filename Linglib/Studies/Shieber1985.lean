@@ -235,7 +235,7 @@ theorem not_claims_top : ¬ Claims id (⊤ : Language Letter) := fun h ↦ by
 
 /-! ### The paper's clauses (1)–(22) -/
 
-open Data.Examples German.Zurich.Verbs
+open German.Zurich.Verbs
 
 /-- `glossCase? g` is the case the gloss `g` marks on its noun phrase, if any. -/
 def glossCase? (g : String) : Option German.Zurich.Case :=

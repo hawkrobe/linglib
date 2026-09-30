@@ -15,8 +15,6 @@ this module; declarations live in `namespace Khoo2015.Examples`.
 
 namespace Khoo2015.Examples
 
-open Data.Examples
-
 def control : Datum :=
   { id := "khoo2015_control"
     source := ⟨"khoo-2015", "Section II"⟩

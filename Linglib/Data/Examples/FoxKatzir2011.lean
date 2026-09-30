@@ -15,8 +15,6 @@ this module; declarations live in `namespace FoxKatzir2011.Examples`.
 
 namespace FoxKatzir2011.Examples
 
-open Data.Examples
-
 def ex1 : Datum :=
   { id := "foxkatzir2011_ex1"
     source := ⟨"fox-katzir-2011", "(1)"⟩

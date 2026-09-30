@@ -62,7 +62,7 @@ namespace Egressy2026
 
 open Semantics
 
-open Minimalist Tense Data.Examples Hungarian.Verbs Egressy2026.Examples
+open Minimalist Tense Hungarian.Verbs Egressy2026.Examples
 
 /-! ### The two clause types and their size (§2, §3.1) -/
 

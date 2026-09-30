@@ -15,8 +15,6 @@ this module; declarations live in `namespace Rubinstein2014.Examples`.
 
 namespace Rubinstein2014.Examples
 
-open Data.Examples
-
 def nr_should : Datum :=
   { id := "rubinstein2014_nr_should"
     source := ⟨"horn-1978", "p. 198"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace ViknerJensen2002.Examples`.
 
 namespace ViknerJensen2002.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "viknerjensen2002_1a"
     source := ⟨"vikner-jensen-2002", "(1a)"⟩

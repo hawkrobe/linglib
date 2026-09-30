@@ -41,7 +41,7 @@ does not predict the repeated-name penalty.
 
 namespace Ariel2001
 
-open Discourse Data.Examples
+open Discourse
 
 /-! ### Form-function criteria (§1.1) -/
 

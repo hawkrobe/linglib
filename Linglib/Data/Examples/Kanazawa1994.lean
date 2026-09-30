@@ -15,8 +15,6 @@ this module; declarations live in `namespace Kanazawa1994.Examples`.
 
 namespace Kanazawa1994.Examples
 
-open Data.Examples
-
 def strong_dominant : Datum :=
   { id := "kanazawa1994_strong_dominant"
     source := ⟨"geach-1962", "UNVERIFIED the donkey sentence"⟩

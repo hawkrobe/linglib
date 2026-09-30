@@ -15,8 +15,6 @@ this module; declarations live in `namespace Schwarzer2026.Examples`.
 
 namespace Schwarzer2026.Examples
 
-open Data.Examples
-
 def ex11a : Datum :=
   { id := "schwarzer2026_ex11a"
     source := ⟨"schwarzer-2026", "(11a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace HartshorneEtAl2016.Examples`.
 
 namespace HartshorneEtAl2016.Examples
 
-open Data.Examples
-
 def fear : Datum :=
   { id := "hartshorneetal2016_fear"
     source := ⟨"hartshorne-etal-2016", "§1.2"⟩

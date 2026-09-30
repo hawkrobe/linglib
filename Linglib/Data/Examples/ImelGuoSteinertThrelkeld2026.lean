@@ -15,8 +15,6 @@ this module; declarations live in `namespace ImelGuoSteinertThrelkeld2026.Exampl
 
 namespace ImelGuoSteinertThrelkeld2026.Examples
 
-open Data.Examples
-
 def s1a : Datum :=
   { id := "imelguosteinertthrelkeld2026_s1a"
     source := ⟨"imel-guo-steinert-threlkeld-2026", "(1a)"⟩

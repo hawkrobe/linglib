@@ -15,8 +15,6 @@ this module; declarations live in `namespace Nadathur2023.Examples`.
 
 namespace Nadathur2023.Examples
 
-open Data.Examples
-
 def ex_2a : Datum :=
   { id := "nadathur2023_2a"
     source := ⟨"nadathur-2023-implicatives", "(2a)"⟩

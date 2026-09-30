@@ -15,8 +15,6 @@ this module; declarations live in `namespace PickeringBarry1991.Examples`.
 
 namespace PickeringBarry1991.Examples
 
-open Data.Examples
-
 def ex15 : Datum :=
   { id := "pickeringbarry1991_ex15"
     source := ⟨"pickering-barry-1991", "(15)"⟩

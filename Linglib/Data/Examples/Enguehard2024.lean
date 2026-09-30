@@ -15,8 +15,6 @@ this module; declarations live in `namespace Enguehard2024.Examples`.
 
 namespace Enguehard2024.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "enguehard2024_1a"
     source := ⟨"enguehard-2024", "(1a)"⟩

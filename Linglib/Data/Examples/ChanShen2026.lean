@@ -15,8 +15,6 @@ this module; declarations live in `namespace ChanShen2026.Examples`.
 
 namespace ChanShen2026.Examples
 
-open Data.Examples
-
 def ex1a : Datum :=
   { id := "chanshen2026_ex1a"
     source := ⟨"chan-shen-2026", "(1a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Ozaki2026.Examples`.
 
 namespace Ozaki2026.Examples
 
-open Data.Examples
-
 def ex1_acc : Datum :=
   { id := "ozaki2026_ex1_acc"
     source := ⟨"ozaki-2026", "(1)"⟩

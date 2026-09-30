@@ -27,7 +27,6 @@ Fragment's person features, and the determiner and bound-variable data are rows.
 
 namespace DechaineWiltschko2002
 
-open Data.Examples
 
 /-! ### The categories -/
 

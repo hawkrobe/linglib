@@ -15,8 +15,6 @@ this module; declarations live in `namespace AnandHardtMcCloskey2025.Examples`.
 
 namespace AnandHardtMcCloskey2025.Examples
 
-open Data.Examples
-
 def ex_13a : Datum :=
   { id := "anandhardtmccloskey2025_13a"
     source := ⟨"anand-hardt-mccloskey-2025", "(13a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace HaslingerEtAl2025.Examples`.
 
 namespace HaslingerEtAl2025.Examples
 
-open Data.Examples
-
 def ex1 : Datum :=
   { id := "haslingeretal2025_ex1"
     source := ⟨"haslinger-etal-2025", "(1)"⟩

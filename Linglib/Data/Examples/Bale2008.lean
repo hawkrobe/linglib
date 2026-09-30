@@ -15,8 +15,6 @@ this module; declarations live in `namespace Bale2008.Examples`.
 
 namespace Bale2008.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "bale2008_1a"
     source := ⟨"bale-2008", "(1a)"⟩

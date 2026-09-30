@@ -15,8 +15,6 @@ this module; declarations live in `namespace Cysouw2003.Examples`.
 
 namespace Cysouw2003.Examples
 
-open Data.Examples
-
 def fig3_6 : Datum :=
   { id := "cysouw2003_fig3_6"
     source := ⟨"cysouw-2003", "Fig. 3.6"⟩

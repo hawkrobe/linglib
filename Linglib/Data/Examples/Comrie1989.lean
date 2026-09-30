@@ -15,8 +15,6 @@ this module; declarations live in `namespace Comrie1989.Examples`.
 
 namespace Comrie1989.Examples
 
-open Data.Examples
-
 def ch5_ex11 : Datum :=
   { id := "comrie1989_ch5_ex11"
     source := ⟨"comrie-1989", "ch. 5, (11)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace HayesWilson2008.Examples`.
 
 namespace HayesWilson2008.Examples
 
-open Data.Examples
-
 def k : Datum :=
   { id := "hayeswilson2008_k"
     source := ⟨"hayes-wilson-2008", "(11)"⟩

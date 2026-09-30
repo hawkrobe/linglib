@@ -54,7 +54,7 @@ open-range adjectives are checked against the scales of the English fragment.
 
 namespace HayKennedyLevin1999
 
-open Data.Examples Degree
+open Degree
 open English
 open English.Verbs hiding Verb
 

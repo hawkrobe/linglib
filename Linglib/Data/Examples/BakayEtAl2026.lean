@@ -15,8 +15,6 @@ this module; declarations live in `namespace BakayEtAl2026.Examples`.
 
 namespace BakayEtAl2026.Examples
 
-open Data.Examples
-
 def ex_5a_match : Datum :=
   { id := "bakayetal2026_5a_match"
     source := ⟨"bakay-etal-2026", "(5a), Distractor Match"⟩

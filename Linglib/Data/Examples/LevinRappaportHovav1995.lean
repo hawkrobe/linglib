@@ -15,8 +15,6 @@ this module; declarations live in `namespace LevinRappaportHovav1995.Examples`.
 
 namespace LevinRappaportHovav1995.Examples
 
-open Data.Examples
-
 def ex6_1 : Datum :=
   { id := "levinrappaporthovav1995_ex6_1"
     source := ⟨"levin-hovav-1995", "(1) of chapter 6"⟩

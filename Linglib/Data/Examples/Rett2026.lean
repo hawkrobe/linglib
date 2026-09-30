@@ -15,8 +15,6 @@ this module; declarations live in `namespace Rett2026.Examples`.
 
 namespace Rett2026.Examples
 
-open Data.Examples
-
 def ex_8 : Datum :=
   { id := "rett2026_8"
     source := ⟨"rett-2026", "(8)"⟩

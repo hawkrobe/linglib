@@ -15,8 +15,6 @@ this module; declarations live in `namespace BachBrownMarslenWilson1986.Examples
 
 namespace BachBrownMarslenWilson1986.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "bachbrownmarslenwilson1986_1"
     source := ⟨"bach-brown-marslen-wilson-1986", "(1)"⟩

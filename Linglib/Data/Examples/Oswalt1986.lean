@@ -15,8 +15,6 @@ this module; declarations live in `namespace Oswalt1986.Examples`.
 
 namespace Oswalt1986.Examples
 
-open Data.Examples
-
 def s1 : Datum :=
   { id := "oswalt1986_s1"
     source := ⟨"oswalt-1986", "(S1)"⟩

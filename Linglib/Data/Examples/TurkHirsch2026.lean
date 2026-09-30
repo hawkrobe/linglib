@@ -15,8 +15,6 @@ this module; declarations live in `namespace TurkHirsch2026.Examples`.
 
 namespace TurkHirsch2026.Examples
 
-open Data.Examples
-
 def ex_4 : Datum :=
   { id := "turkhirsch2026_4"
     source := ⟨"turk-hirsch-2026", "(4)"⟩

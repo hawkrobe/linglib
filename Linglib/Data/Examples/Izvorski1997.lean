@@ -15,8 +15,6 @@ this module; declarations live in `namespace Izvorski1997.Examples`.
 
 namespace Izvorski1997.Examples
 
-open Data.Examples
-
 def s1a : Datum :=
   { id := "izvorski1997_s1a"
     source := ⟨"izvorski-1997", "(1a)"⟩

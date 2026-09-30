@@ -15,8 +15,6 @@ this module; declarations live in `namespace Song1996.Examples`.
 
 namespace Song1996.Examples
 
-open Data.Examples
-
 def ex_1b : Datum :=
   { id := "song1996_1b"
     source := ⟨"song-1996", "(1.b), p. 3"⟩

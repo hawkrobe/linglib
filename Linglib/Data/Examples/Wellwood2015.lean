@@ -15,8 +15,6 @@ this module; declarations live in `namespace Wellwood2015.Examples`.
 
 namespace Wellwood2015.Examples
 
-open Data.Examples
-
 def felicity_mass : Datum :=
   { id := "wellwood2015_felicity_mass"
     source := ⟨"wellwood-2015", "(9a)"⟩

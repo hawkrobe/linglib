@@ -15,8 +15,6 @@ this module; declarations live in `namespace FaustLampitelli2026.Examples`.
 
 namespace FaustLampitelli2026.Examples
 
-open Data.Examples
-
 def ex_4a_depPrf : Datum :=
   { id := "faustlampitelli2026_4a_depPrf"
     source := ⟨"faust-lampitelli-2026", "(4a)"⟩

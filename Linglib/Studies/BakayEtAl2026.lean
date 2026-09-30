@@ -67,7 +67,7 @@ available antecedents (`privileged_iff_available`), so no distractor is accessed
 
 namespace BakayEtAl2026
 
-open Core.Order Syntax Syntax.Tree Binding Data.Examples
+open Core.Order Syntax Syntax.Tree Binding
 
 /-! ### The stimuli -/
 

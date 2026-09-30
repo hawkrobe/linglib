@@ -15,8 +15,6 @@ this module; declarations live in `namespace Simik2024.Examples`.
 
 namespace Simik2024.Examples
 
-open Data.Examples
-
 def ex11a : Datum :=
   { id := "simik2024_ex11a"
     source := ⟨"simik-2024", "ex. 11a"⟩

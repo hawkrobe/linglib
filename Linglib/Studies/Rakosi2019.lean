@@ -40,7 +40,7 @@ number feature (`egymas_no_number_feature`), the reflexive inflects (`reflexive_
 
 namespace Rakosi2019
 
-open PPCDRT Data.Examples Hungarian.Reciprocals
+open PPCDRT Hungarian.Reciprocals
 open Examples (all)
 
 /-! ### The rows -/

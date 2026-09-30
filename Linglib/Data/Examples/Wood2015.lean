@@ -15,8 +15,6 @@ this module; declarations live in `namespace Wood2015.Examples`.
 
 namespace Wood2015.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "wood2015_1"
     source := ⟨"wood-2015", "Ch. 2 (1a)"⟩

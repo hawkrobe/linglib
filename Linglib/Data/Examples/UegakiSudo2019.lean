@@ -15,8 +15,6 @@ this module; declarations live in `namespace UegakiSudo2019.Examples`.
 
 namespace UegakiSudo2019.Examples
 
-open Data.Examples
-
 def ex_6a : Datum :=
   { id := "uegakisudo2019_6a"
     source := ⟨"uegaki-sudo-2019", "(6a)"⟩

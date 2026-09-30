@@ -15,8 +15,6 @@ this module; declarations live in `namespace Jaeger2007.Examples`.
 
 namespace Jaeger2007.Examples
 
-open Data.Examples
-
 def t1_cv : Datum :=
   { id := "jaeger2007_t1_cv"
     source := ⟨"jaeger-2007", "Table 1"⟩

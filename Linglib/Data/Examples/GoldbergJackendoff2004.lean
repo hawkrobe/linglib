@@ -15,8 +15,6 @@ this module; declarations live in `namespace GoldbergJackendoff2004.Examples`.
 
 namespace GoldbergJackendoff2004.Examples
 
-open Data.Examples
-
 def gj2004_5a : Datum :=
   { id := "gj2004_5a"
     source := ⟨"goldberg-jackendoff-2004", "(5a)"⟩

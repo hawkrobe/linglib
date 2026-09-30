@@ -15,8 +15,6 @@ this module; declarations live in `namespace VonFintel2001.Examples`.
 
 namespace VonFintel2001.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "vonfintel2001_1"
     source := ⟨"geis-zwicky-1971", ""⟩

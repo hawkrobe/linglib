@@ -36,7 +36,7 @@ grammatical exactly when the prefix and suffixes are what the analysis inserts
 
 namespace McGinnis2013
 
-open DistributedMorphology Phi.Geometry Data.Examples
+open DistributedMorphology Phi.Geometry
 
 /-! ### Features and arguments -/
 

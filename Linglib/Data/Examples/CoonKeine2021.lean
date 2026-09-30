@@ -15,8 +15,6 @@ this module; declarations live in `namespace CoonKeine2021.Examples`.
 
 namespace CoonKeine2021.Examples
 
-open Data.Examples
-
 def ex_3a : Datum :=
   { id := "coonkeine2021_3a"
     source := ⟨"coon-keine-2021", "(3a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace ShenHuang2026.Examples`.
 
 namespace ShenHuang2026.Examples
 
-open Data.Examples
-
 def ex3a : Datum :=
   { id := "shenhuang2026_ex3a"
     source := ⟨"shen-huang-2026", "(3a)"⟩

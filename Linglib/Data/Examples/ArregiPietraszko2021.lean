@@ -15,8 +15,6 @@ this module; declarations live in `namespace ArregiPietraszko2021.Examples`.
 
 namespace ArregiPietraszko2021.Examples
 
-open Data.Examples
-
 def ex_6 : Datum :=
   { id := "arregipietraszko2021_6"
     source := ⟨"arregi-pietraszko-2021", "(6)"⟩

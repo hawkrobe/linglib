@@ -15,8 +15,6 @@ this module; declarations live in `namespace Sorace2000.Examples`.
 
 namespace Sorace2000.Examples
 
-open Data.Examples
-
 def ex1a : Datum :=
   { id := "sorace2000_ex1a"
     source := ⟨"sorace-2000", "(1a)"⟩

@@ -61,7 +61,6 @@ open Minimalist.MinimalPronoun
 open scoped DistributedMorphology
 open Control
 open Mixtec.SMPM
-open Data.Examples
 
 /-! ### The clause typology (26) -/
 

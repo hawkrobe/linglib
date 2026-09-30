@@ -15,8 +15,6 @@ this module; declarations live in `namespace Aikhenvald2004.Examples`.
 
 namespace Aikhenvald2004.Examples
 
-open Data.Examples
-
 def ex1_1 : Datum :=
   { id := "aikhenvald2004_ex1_1"
     source := ⟨"aikhenvald-2004", "(1.1)"⟩

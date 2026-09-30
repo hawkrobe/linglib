@@ -15,8 +15,6 @@ this module; declarations live in `namespace MoensSteedman1988.Examples`.
 
 namespace MoensSteedman1988.Examples
 
-open Data.Examples
-
 def when_state : Datum :=
   { id := "moenssteedman1988_when_state"
     source := ⟨"moens-steedman-1988", "UNVERIFIED §4.2"⟩

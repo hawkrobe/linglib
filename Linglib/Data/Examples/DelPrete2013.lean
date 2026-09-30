@@ -15,8 +15,6 @@ this module; declarations live in `namespace DelPrete2013.Examples`.
 
 namespace DelPrete2013.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "delprete2013_1"
     source := ⟨"del-prete-2013", "(1)"⟩

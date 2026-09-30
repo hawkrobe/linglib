@@ -15,8 +15,6 @@ this module; declarations live in `namespace Hansson2010.Examples`.
 
 namespace Hansson2010.Examples
 
-open Data.Examples
-
 def ex3a_i : Datum :=
   { id := "hansson2010_ex3a-i"
     source := ⟨"sapir-hoijer-1967", ""⟩

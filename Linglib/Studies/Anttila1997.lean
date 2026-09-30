@@ -44,7 +44,7 @@ Item and page numbers follow the ROA-63 manuscript.
 
 namespace Anttila1997
 
-open OptimalityTheory Data.Examples
+open OptimalityTheory
 
 /-! ### Syllable prominence (25) -/
 

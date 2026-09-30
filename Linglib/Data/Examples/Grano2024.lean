@@ -15,8 +15,6 @@ this module; declarations live in `namespace Grano2024.Examples`.
 
 namespace Grano2024.Examples
 
-open Data.Examples
-
 def ex_1a_sbjv : Datum :=
   { id := "grano2024_1a_sbjv"
     source := ⟨"villalta-2008", "p. 470"⟩

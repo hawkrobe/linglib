@@ -52,7 +52,7 @@ reports the Januubi prohibitive *laa*, without an example.
 
 namespace JinKoenig2021
 
-open Negation Data.Examples
+open Negation
 
 /-! ### The dual inference (Section 5.5) -/
 

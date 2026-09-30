@@ -15,8 +15,6 @@ this module; declarations live in `namespace Haslinger2025.Examples`.
 
 namespace Haslinger2025.Examples
 
-open Data.Examples
-
 def ch1_6a : Datum :=
   { id := "haslinger2025_ch1_6a"
     source := ⟨"haslinger-2025-diss", "Ch. 1, (6a)"⟩

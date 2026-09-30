@@ -15,8 +15,6 @@ this module; declarations live in `namespace Horn1972.Examples`.
 
 namespace Horn1972.Examples
 
-open Data.Examples
-
 def ex1_58b_more : Datum :=
   { id := "horn1972_ex1_58b_more"
     source := ⟨"horn-1972", "(1.58b)"⟩

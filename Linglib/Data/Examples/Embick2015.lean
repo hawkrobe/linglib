@@ -15,8 +15,6 @@ this module; declarations live in `namespace Embick2015.Examples`.
 
 namespace Embick2015.Examples
 
-open Data.Examples
-
 def latin_present_1sg : Datum :=
   { id := "embick2015_latin_present_1sg"
     source := ⟨"embick-2015", "ch. 4, (40)"⟩

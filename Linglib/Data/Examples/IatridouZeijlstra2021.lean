@@ -15,8 +15,6 @@ this module; declarations live in `namespace IatridouZeijlstra2021.Examples`.
 
 namespace IatridouZeijlstra2021.Examples
 
-open Data.Examples
-
 def iz2021_s10a : Datum :=
   { id := "iz2021_s10a"
     source := ⟨"iatridou-zeijlstra-2021", "(10a)"⟩

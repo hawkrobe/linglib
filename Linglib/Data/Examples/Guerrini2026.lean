@@ -15,8 +15,6 @@ this module; declarations live in `namespace Guerrini2026.Examples`.
 
 namespace Guerrini2026.Examples
 
-open Data.Examples
-
 def ex_21a : Datum :=
   { id := "guerrini2026_21a"
     source := ⟨"guerrini-2026", "(21a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace TieuEtAl2020.Examples`.
 
 namespace TieuEtAl2020.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "tieuetal2020_1a"
     source := ⟨"tieu-etal-2020", "(1a), (13), (21)"⟩

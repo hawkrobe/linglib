@@ -19,7 +19,7 @@ successive-cyclic movement ([mccloskey-2002], [georgi-2017]). A `Reflex` is a pe
 perturbation at a host constituent: a displaced exponent, a morpheme with its marker, a phrase
 edge, or metrical prominence. A marking system assigns each designated target its finite set of
 reflexes. Reflexes classify by `Reflex.Modality` and further by `Reflex.Channel`, the
-phonological vs morphological vs syntactic cut. Like `Data.Examples.Judgment` for
+phonological vs morphological vs syntactic cut. Like `Judgment` for
 acceptability, this is a prediction-target vocabulary: studies translate theory-native
 predictions into it, and no theory consumes it as machinery.
 

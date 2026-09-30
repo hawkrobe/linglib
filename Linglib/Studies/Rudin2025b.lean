@@ -54,7 +54,7 @@ issue without uttering a sentence, are not represented.
 
 namespace Rudin2025b
 
-open ArgumentStructure Commitment Data.Examples
+open ArgumentStructure Commitment
 
 variable {T : Type*} [LinearOrder T] {P δ W : Type*}
 

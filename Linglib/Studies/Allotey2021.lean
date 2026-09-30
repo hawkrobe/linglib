@@ -69,7 +69,7 @@ comparison with [landau-2004]'s scale is stated for those two.
 
 namespace Allotey2021
 
-open Minimalist.MinimalPronoun Control Ga Ga.Pronouns Data.Examples
+open Minimalist.MinimalPronoun Control Ga Ga.Pronouns
 
 /-! ### Pronouns (Table 3) -/
 

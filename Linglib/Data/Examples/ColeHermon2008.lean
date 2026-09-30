@@ -15,8 +15,6 @@ this module; declarations live in `namespace ColeHermon2008.Examples`.
 
 namespace ColeHermon2008.Examples
 
-open Data.Examples
-
 def ex7a : Datum :=
   { id := "colehermon2008_ex7a"
     source := ⟨"cole-hermon-2008", "(7a)"⟩

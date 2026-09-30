@@ -15,8 +15,6 @@ this module; declarations live in `namespace Haspelmath2007.Examples`.
 
 namespace Haspelmath2007.Examples
 
-open Data.Examples
-
 def ex5 : Datum :=
   { id := "haspelmath2007_ex5"
     source := ⟨"haspelmath-2007", "(5)"⟩

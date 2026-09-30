@@ -15,8 +15,6 @@ this module; declarations live in `namespace Hofmann2025.Examples`.
 
 namespace Hofmann2025.Examples
 
-open Data.Examples
-
 def ex1a : Datum :=
   { id := "hofmann2025_ex1a"
     source := ⟨"hofmann-2025", "(1a)"⟩

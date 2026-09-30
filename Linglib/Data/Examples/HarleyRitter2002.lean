@@ -15,8 +15,6 @@ this module; declarations live in `namespace HarleyRitter2002.Examples`.
 
 namespace HarleyRitter2002.Examples
 
-open Data.Examples
-
 def hr2002_daga_1sg : Datum :=
   { id := "hr2002_daga_1sg"
     source := ⟨"harley-ritter-2002", "Table 3"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace ElliottSudo2025.Examples`.
 
 namespace ElliottSudo2025.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "elliottsudo2025_1"
     source := ⟨"kamp-1973", "permission sentences"⟩

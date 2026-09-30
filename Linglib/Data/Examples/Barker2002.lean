@@ -15,8 +15,6 @@ this module; declarations live in `namespace Barker2002.Examples`.
 
 namespace Barker2002.Examples
 
-open Data.Examples
-
 def ex_4a : Datum :=
   { id := "barker2002_4a"
     source := ⟨"barker-2002", "(4a)"⟩

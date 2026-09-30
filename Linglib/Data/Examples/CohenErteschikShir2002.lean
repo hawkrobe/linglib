@@ -15,8 +15,6 @@ this module; declarations live in `namespace CohenErteschikShir2002.Examples`.
 
 namespace CohenErteschikShir2002.Examples
 
-open Data.Examples
-
 def boys_brave : Datum :=
   { id := "cohenerteschikshir2002_boys_brave"
     source := ⟨"cohen-erteschik-shir-2002", "UNVERIFIED §2.1"⟩

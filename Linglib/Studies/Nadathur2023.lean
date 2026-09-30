@@ -246,7 +246,6 @@ theorem msg_iff_nerve :
 /-! ### The Finnish implicatives -/
 
 open Implicative (Directionality)
-open Data.Examples
 
 /-- A positive implicative whose prerequisite is `p`. -/
 def positiveClass (d : Directionality) (p : Prerequisite) : ImplicativeClass :=

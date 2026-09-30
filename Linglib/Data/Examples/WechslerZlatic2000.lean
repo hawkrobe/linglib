@@ -15,8 +15,6 @@ this module; declarations live in `namespace WechslerZlatic2000.Examples`.
 
 namespace WechslerZlatic2000.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "wechslerzlatic2000_1"
     source := ⟨"wechsler-zlatic-2000", "(6)"⟩

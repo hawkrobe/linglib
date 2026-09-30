@@ -15,8 +15,6 @@ this module; declarations live in `namespace BeaversKoontzGarboden2020.Examples`
 
 namespace BeaversKoontzGarboden2020.Examples
 
-open Data.Examples
-
 def bkg2020_25a : Datum :=
   { id := "bkg2020_25a"
     source := ⟨"beavers-koontz-garboden-2020", "(25a)"⟩

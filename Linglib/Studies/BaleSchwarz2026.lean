@@ -97,7 +97,6 @@ theorem not_much_mathSpeak (hu : u.dimension = D) : ¬ much (w.quantity D) (math
 
 /-! ### The paper's examples -/
 
-open Data.Examples (Datum)
 
 /-- The dimension a predicate measures in. -/
 def predicateDimension? : String → Option QuantityDimension

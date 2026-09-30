@@ -15,8 +15,6 @@ this module; declarations live in `namespace Coppock2018.Examples`.
 
 namespace Coppock2018.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "coppock2018_1a"
     source := ⟨"coppock-2018", "(1a)"⟩

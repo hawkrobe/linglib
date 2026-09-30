@@ -15,8 +15,6 @@ this module; declarations live in `namespace Bresnan1973.Examples`.
 
 namespace Bresnan1973.Examples
 
-open Data.Examples
-
 def ex1a : Datum :=
   { id := "bresnan1973_ex1a"
     source := ⟨"bresnan-1973", "(1a)"⟩

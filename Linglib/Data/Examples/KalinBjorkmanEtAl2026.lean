@@ -15,8 +15,6 @@ this module; declarations live in `namespace KalinBjorkmanEtAl2026.Examples`.
 
 namespace KalinBjorkmanEtAl2026.Examples
 
-open Data.Examples
-
 def kb2026_cat : Datum :=
   { id := "kb2026_cat"
     source := ⟨"kalin-bjorkman-etal-2026", "Table 3"⟩

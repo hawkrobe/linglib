@@ -15,8 +15,6 @@ this module; declarations live in `namespace Cuervo2003.Examples`.
 
 namespace Cuervo2003.Examples
 
-open Data.Examples
-
 def ex_29a : Datum :=
   { id := "cuervo2003_29a"
     source := ⟨"cuervo-2003", "(29a)"⟩

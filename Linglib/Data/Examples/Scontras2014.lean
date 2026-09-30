@@ -15,8 +15,6 @@ this module; declarations live in `namespace Scontras2014.Examples`.
 
 namespace Scontras2014.Examples
 
-open Data.Examples
-
 def ex1 : Datum :=
   { id := "scontras2014_ex1"
     source := ⟨"scontras-2014", "(1)"⟩

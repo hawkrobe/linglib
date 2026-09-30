@@ -15,8 +15,6 @@ this module; declarations live in `namespace JereticEtAl2025.Examples`.
 
 namespace JereticEtAl2025.Examples
 
-open Data.Examples
-
 def jeretic2025_1a : Datum :=
   { id := "jeretic2025_1a"
     source := ⟨"jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025", "(1a)"⟩

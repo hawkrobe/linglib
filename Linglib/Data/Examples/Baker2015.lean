@@ -15,8 +15,6 @@ this module; declarations live in `namespace Baker2015.Examples`.
 
 namespace Baker2015.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "baker2015_1a"
     source := ⟨"baker-2015", "ch. 1 (1a)"⟩

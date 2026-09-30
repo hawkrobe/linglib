@@ -15,8 +15,6 @@ this module; declarations live in `namespace Gajewski2011.Examples`.
 
 namespace Gajewski2011.Examples
 
-open Data.Examples
-
 def ex14a : Datum :=
   { id := "gajewski2011_ex14a"
     source := ⟨"gajewski-2011", "(14a)"⟩

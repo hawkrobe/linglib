@@ -15,8 +15,6 @@ this module; declarations live in `namespace IoninMatushansky2006.Examples`.
 
 namespace IoninMatushansky2006.Examples
 
-open Data.Examples
-
 def s1a : Datum :=
   { id := "ioninmatushansky2006_s1a"
     source := ⟨"ionin-matushansky-2006", "(1a)"⟩

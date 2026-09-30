@@ -15,8 +15,6 @@ this module; declarations live in `namespace Faust2026.Examples`.
 
 namespace Faust2026.Examples
 
-open Data.Examples
-
 def ex_3a_pst3msg : Datum :=
   { id := "faust2026_3a_pst3msg"
     source := ⟨"faust-2026", "(3a)"⟩

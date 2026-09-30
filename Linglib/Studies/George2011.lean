@@ -57,7 +57,7 @@ defeats it (`knowsQ_not_reducible`), whereas the existential rule makes any pred
 
 namespace George2011
 
-open Question Data.Examples
+open Question
 
 variable {W τ E : Type*}
 

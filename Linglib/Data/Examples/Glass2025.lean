@@ -15,8 +15,6 @@ this module; declarations live in `namespace Glass2025.Examples`.
 
 namespace Glass2025.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "glass2025_1a"
     source := ⟨"glass-2025", "(1a)"⟩

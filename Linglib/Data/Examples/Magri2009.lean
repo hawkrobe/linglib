@@ -15,8 +15,6 @@ this module; declarations live in `namespace Magri2009.Examples`.
 
 namespace Magri2009.Examples
 
-open Data.Examples
-
 def ex_8a : Datum :=
   { id := "magri2009_8a"
     source := ⟨"diesing-1992", "UNVERIFIED"⟩

@@ -43,7 +43,7 @@ two cycles down (§3.2.2).
 
 namespace Embick2010
 
-open DistributedMorphology Data.Examples Embick2010.Examples
+open DistributedMorphology Embick2010.Examples
 
 /-- The heads of the case studies: the categorizers, active and passive Voice, the theme position,
 and the inflectional heads. -/

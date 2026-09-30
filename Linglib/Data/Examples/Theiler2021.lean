@@ -15,8 +15,6 @@ this module; declarations live in `namespace Theiler2021.Examples`.
 
 namespace Theiler2021.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "theiler2021_1a"
     source := ⟨"theiler-2021", "(1a)"⟩

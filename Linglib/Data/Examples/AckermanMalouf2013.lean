@@ -15,8 +15,6 @@ this module; declarations live in `namespace AckermanMalouf2013.Examples`.
 
 namespace AckermanMalouf2013.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "ackermanmalouf2013_1"
     source := ⟨"ackerman-malouf-2013", "(1)"⟩

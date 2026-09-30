@@ -86,7 +86,7 @@ no configuration and enter no theorem.
 
 namespace CoonKeine2021
 
-open Minimalist Minimalist.CyclicAgree Morphology.Exponence Data.Examples
+open Minimalist Minimalist.CyclicAgree Morphology.Exponence
 
 /-! ### Goals and their visible geometries -/
 

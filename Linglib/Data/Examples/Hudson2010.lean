@@ -15,8 +15,6 @@ this module; declarations live in `namespace Hudson2010.Examples`.
 
 namespace Hudson2010.Examples
 
-open Data.Examples
-
 def ch7_11 : Datum :=
   { id := "hudson2010_ch7_11"
     source := ⟨"hudson-2010", "(11)"⟩

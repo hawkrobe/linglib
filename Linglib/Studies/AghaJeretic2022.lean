@@ -58,7 +58,7 @@ namespace AghaJeretic2022
 
 open Trivalent (Prop3 supervaluation supervaluation_eq_true_iff supervaluation_eq_false_iff
   supervaluation_eq_indet_iff supervaluation_not metaAssert_supervaluation)
-open Homogeneity Data.Examples
+open Homogeneity
 open Generalizations.HomogeneityGap (GapDatum GapScenario fromDatum)
 
 variable {W : Type*} (D : W → Finset W) (p : W → Prop) [DecidablePred p]

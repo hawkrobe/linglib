@@ -52,7 +52,7 @@ example numbers of the rows are those of the manuscript [rose-walker-2001].
 
 namespace RoseWalker2004
 
-open OptimalityTheory Data.Examples
+open OptimalityTheory
 
 /-! ### Segments and similarity -/
 

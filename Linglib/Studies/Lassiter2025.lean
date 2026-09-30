@@ -67,7 +67,7 @@ which the paper offers as a direction rather than a result, are not modelled.
 
 namespace Lassiter2025
 
-open Conditional Data.Examples NaturalLogic PolarityItem
+open Conditional NaturalLogic PolarityItem
 
 /-- The content of an embedded conditional. -/
 inductive Content

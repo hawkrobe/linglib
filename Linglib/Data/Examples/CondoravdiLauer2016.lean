@@ -15,8 +15,6 @@ this module; declarations live in `namespace CondoravdiLauer2016.Examples`.
 
 namespace CondoravdiLauer2016.Examples
 
-open Data.Examples
-
 def cl2016_ex1 : Datum :=
   { id := "cl2016_ex1"
     source := ⟨"condoravdi-lauer-2016", "(1)"⟩

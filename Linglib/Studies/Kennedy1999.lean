@@ -34,7 +34,6 @@ against the rows.
 
 namespace Kennedy1999
 
-open Data.Examples
 
 /-! ### Cross-polar anomaly (Sections 3.1.3–3.1.7) -/
 

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Sag2010.Examples`.
 
 namespace Sag2010.Examples
 
-open Data.Examples
-
 def ex7a : Datum :=
   { id := "sag2010_ex7a"
     source := ⟨"sag-2010", "(7a)"⟩

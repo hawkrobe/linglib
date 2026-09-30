@@ -91,7 +91,7 @@ correlation through the substrate's monotonicity, and `bias_rows`, `coordination
 
 namespace Comrie1989
 
-open Reference.Prominence Causation.Morphological Data.Examples
+open Reference.Prominence Causation.Morphological
 
 /-! ### The discriminatory function of case (§6.1) -/
 

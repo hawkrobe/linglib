@@ -53,7 +53,6 @@ open Modality.Exclusion (MarkingStrategy XMarkingExponent)
 open Conditional (strictImp mem_strictImp_of_subset not_subset_of_mem_strictImp)
 open HistoricalAlternatives (metaphysicalBase)
 open Reference
-open Data.Examples (Datum Glottocode)
 
 /-! ### The per-language strategy record (§2–§4.2) -/
 
@@ -114,7 +113,7 @@ Pairs live inside one numbered example: the felicitous `primaryText` (strategy `
 plus the infelicitous `alternatives` entry (realizing `m.other`). -/
 
 /-- Felicitous when fully acceptable. -/
-def IsFelicitous (j : Data.Examples.Judgment) : Prop := j = .acceptable
+def IsFelicitous (j : Judgment) : Prop := j = .acceptable
 
 /-- Parse the `strategy` tag. -/
 def ofStrategyTag? : String → Option MarkingStrategy

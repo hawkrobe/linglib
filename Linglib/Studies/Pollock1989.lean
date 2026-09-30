@@ -44,7 +44,7 @@ gerunds, and the ECP account of why *not* alone blocks affix lowering are not fo
 
 namespace Pollock1989
 
-open Data.Examples Examples
+open Examples
 
 /-! ### Heads, verbs, and reachability -/
 

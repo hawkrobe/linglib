@@ -47,7 +47,7 @@ speaker of Table 4 a personless parasitic pronoun needs a personless true gap (`
 
 namespace Scott2021
 
-open Swahili Syntax DistributedMorphology Data.Examples
+open Swahili Syntax DistributedMorphology
 open Minimalist (FeatureVal PhiFeature GramFeature)
 
 /-! ### The structure of pronouns (§5.1) -/

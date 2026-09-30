@@ -15,8 +15,6 @@ this module; declarations live in `namespace ChungMascarenhas2023.Examples`.
 
 namespace ChungMascarenhas2023.Examples
 
-open Data.Examples
-
 def cm2024_1_korean_conditional_eval : Datum :=
   { id := "cm2024_1_korean_conditional_eval"
     source := ⟨"chung-mascarenhas-2023", "(1) / (42)"⟩

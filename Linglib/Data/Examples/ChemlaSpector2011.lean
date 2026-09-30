@@ -15,8 +15,6 @@ this module; declarations live in `namespace ChemlaSpector2011.Examples`.
 
 namespace ChemlaSpector2011.Examples
 
-open Data.Examples
-
 def exp1_universal_some_false : Datum :=
   { id := "chemlaspector2011_exp1_universal_some_false"
     source := ⟨"chemla-spector-2011", "(8), Figure 5"⟩

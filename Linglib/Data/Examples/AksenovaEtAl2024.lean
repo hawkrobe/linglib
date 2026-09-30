@@ -15,8 +15,6 @@ this module; declarations live in `namespace AksenovaEtAl2024.Examples`.
 
 namespace AksenovaEtAl2024.Examples
 
-open Data.Examples
-
 def ex_3a : Datum :=
   { id := "aksenovaetal2024_3a"
     source := ⟨"aksenova-rawski-graf-heinz-2024", "(3a)"⟩

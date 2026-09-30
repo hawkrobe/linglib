@@ -15,8 +15,6 @@ this module; declarations live in `namespace EngelhardtEtAl2006.Examples`.
 
 namespace EngelhardtEtAl2006.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "engelhardtetal2006_1"
     source := ⟨"engelhardt-etal-2006", "(1)"⟩

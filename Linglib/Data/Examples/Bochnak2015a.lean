@@ -15,8 +15,6 @@ this module; declarations live in `namespace Bochnak2015a.Examples`.
 
 namespace Bochnak2015a.Examples
 
-open Data.Examples
-
 def ex10 : Datum :=
   { id := "bochnak2015a_ex10"
     source := ⟨"bochnak-2015a", "(10b)"⟩

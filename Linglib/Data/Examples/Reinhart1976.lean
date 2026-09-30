@@ -15,8 +15,6 @@ this module; declarations live in `namespace Reinhart1976.Examples`.
 
 namespace Reinhart1976.Examples
 
-open Data.Examples
-
 def ex_11a : Datum :=
   { id := "reinhart1976_11a"
     source := ⟨"reinhart-1976", "(11a)"⟩

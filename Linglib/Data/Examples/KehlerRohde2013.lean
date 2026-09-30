@@ -15,8 +15,6 @@ this module; declarations live in `namespace KehlerRohde2013.Examples`.
 
 namespace KehlerRohde2013.Examples
 
-open Data.Examples
-
 def ex_7 : Datum :=
   { id := "kehlerrohde2013_7"
     source := ⟨"kehler-rohde-2013", "(7)"⟩

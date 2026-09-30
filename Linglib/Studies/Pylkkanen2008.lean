@@ -45,7 +45,7 @@ note a), so only the English, Japanese, and Finnish heads are given as `Cause` v
 
 namespace Pylkkanen2008
 
-open ArgumentStructure Minimalist Data.Examples Examples
+open ArgumentStructure Minimalist Examples
 
 variable {Entity : Type*} {T : Type*} [LinearOrder T]
 

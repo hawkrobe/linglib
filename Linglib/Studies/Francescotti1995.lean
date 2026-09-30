@@ -37,7 +37,7 @@ and how many there are.
 
 namespace Francescotti1995
 
-open Focus.Particles Data.Examples
+open Focus.Particles
 
 /-- How many true neighbors the prejacent must surpass in surprise: at least one, all, or
 most. -/

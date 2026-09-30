@@ -42,7 +42,7 @@ are both words, the word cannot be the domain; the domains are the cycles.
 
 namespace Embick2021
 
-open DistributedMorphology Data.Examples Embick2021.Examples
+open DistributedMorphology Embick2021.Examples
 
 /-- The heads of the examples: the categorizers, Voice, tense and aspect. -/
 inductive Head
@@ -88,7 +88,7 @@ structure Row where
   spine : Spine Head
   rootClass : Option RootClass
   construction : Construction
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
   deriving Repr
 
 /-- The heads as named in the rows. -/

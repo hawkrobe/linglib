@@ -15,8 +15,6 @@ this module; declarations live in `namespace Hewett2026.Examples`.
 
 namespace Hewett2026.Examples
 
-open Data.Examples
-
 def ex1a : Datum :=
   { id := "hewett2026_ex1a"
     source := ⟨"hewett-2026", "(1a)"⟩

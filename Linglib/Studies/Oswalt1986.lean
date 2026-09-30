@@ -37,7 +37,7 @@ the mode; each lies in the paradigm of its mode for the aspect of its stem
 
 namespace Oswalt1986
 
-open Evidential Aspect Data.Examples Kashaya.Evidentiality
+open Evidential Aspect Kashaya.Evidentiality
 
 /-! ### The columns of Table 1 -/
 

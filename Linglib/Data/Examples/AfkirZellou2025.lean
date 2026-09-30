@@ -15,8 +15,6 @@ this module; declarations live in `namespace AfkirZellou2025.Examples`.
 
 namespace AfkirZellou2025.Examples
 
-open Data.Examples
-
 def dfes : Datum :=
   { id := "afkirzellou2025_dfes"
     source := ⟨"afkir-zellou-2025", "Tables 7 and 9"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace DelPinal2015.Examples`.
 
 namespace DelPinal2015.Examples
 
-open Data.Examples
-
 def fake_gun : Datum :=
   { id := "delpinal2015_fake_gun"
     source := ⟨"delpinal-2015", "(17)"⟩

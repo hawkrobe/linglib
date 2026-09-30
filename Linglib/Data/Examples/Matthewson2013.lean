@@ -15,8 +15,6 @@ this module; declarations live in `namespace Matthewson2013.Examples`.
 
 namespace Matthewson2013.Examples
 
-open Data.Examples
-
 def ex22 : Datum :=
   { id := "matthewson2013_ex22"
     source := ⟨"matthewson-2013", "(22)"⟩

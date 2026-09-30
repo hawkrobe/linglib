@@ -15,8 +15,6 @@ this module; declarations live in `namespace Scott2021.Examples`.
 
 namespace Scott2021.Examples
 
-open Data.Examples
-
 def cleft_24_mi : Datum :=
   { id := "scott2021_cleft_24_mi"
     source := ⟨"scott-2021", "(24)"⟩

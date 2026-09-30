@@ -15,8 +15,6 @@ this module; declarations live in `namespace Benz2025.Examples`.
 
 namespace Benz2025.Examples
 
-open Data.Examples
-
 def ex32a : Datum :=
   { id := "benz2025_ex32a"
     source := ⟨"benz-2025", "(32a)"⟩

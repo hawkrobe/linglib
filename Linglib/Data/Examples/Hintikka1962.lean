@@ -15,8 +15,6 @@ this module; declarations live in `namespace Hintikka1962.Examples`.
 
 namespace Hintikka1962.Examples
 
-open Data.Examples
-
 def s8 : Datum :=
   { id := "hintikka1962_s8"
     source := ⟨"hintikka-1962", "(8)"⟩

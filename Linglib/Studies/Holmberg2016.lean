@@ -291,7 +291,6 @@ theorem exists_mem_negations_tolerant :
 
 /-! ### The examples -/
 
-open Data.Examples
 
 /-- The features of each language's particles, by Glottocode and spelling. -/
 def featureTable : List (String × List (String × AnswerFeature)) :=

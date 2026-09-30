@@ -15,8 +15,6 @@ this module; declarations live in `namespace QingEtAl2025.Examples`.
 
 namespace QingEtAl2025.Examples
 
-open Data.Examples
-
 def en_13a : Datum :=
   { id := "qingetal2025_en_13a"
     source := ⟨"white-2021", ""⟩

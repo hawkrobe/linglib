@@ -15,8 +15,6 @@ this module; declarations live in `namespace Krapova2010.Examples`.
 
 namespace Krapova2010.Examples
 
-open Data.Examples
-
 def ex_56a : Datum :=
   { id := "krapova2010_56a"
     source := ⟨"krapova-2010", "(56a)"⟩

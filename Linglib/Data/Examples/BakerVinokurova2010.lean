@@ -15,8 +15,6 @@ this module; declarations live in `namespace BakerVinokurova2010.Examples`.
 
 namespace BakerVinokurova2010.Examples
 
-open Data.Examples
-
 def ex_3a : Datum :=
   { id := "bakervinokurova2010_3a"
     source := ⟨"baker-vinokurova-2010", "(3a)"⟩

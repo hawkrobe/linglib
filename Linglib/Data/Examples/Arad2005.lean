@@ -15,8 +15,6 @@ this module; declarations live in `namespace Arad2005.Examples`.
 
 namespace Arad2005.Examples
 
-open Data.Examples
-
 def ex_3_lamad : Datum :=
   { id := "arad2005_3_lamad"
     source := ⟨"arad-2005", "Ch. 2 (3)"⟩

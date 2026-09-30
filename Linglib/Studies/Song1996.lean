@@ -68,7 +68,6 @@ bases (`paradigmCoreNPs_two`).
 
 namespace Song1996
 
-open Data.Examples (Datum)
 open Causation.Morphological (CausativeComplexity causeeDemotion)
 
 /-! ### Forms and types (chapter 2) -/

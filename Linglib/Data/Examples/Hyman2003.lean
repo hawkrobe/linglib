@@ -15,8 +15,6 @@ this module; declarations live in `namespace Hyman2003.Examples`.
 
 namespace Hyman2003.Examples
 
-open Data.Examples
-
 def ex_2a_cr : Datum :=
   { id := "hyman2003_2a_cr"
     source := ⟨"hyman-mchombo-1992", "(2a)"⟩

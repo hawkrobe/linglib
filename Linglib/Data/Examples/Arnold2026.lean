@@ -15,8 +15,6 @@ this module; declarations live in `namespace Arnold2026.Examples`.
 
 namespace Arnold2026.Examples
 
-open Data.Examples
-
 def homework : Datum :=
   { id := "arnold2026_homework"
     source := ⟨"arnold-2026", "§1"⟩

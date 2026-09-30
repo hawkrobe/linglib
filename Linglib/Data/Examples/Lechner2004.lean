@@ -15,8 +15,6 @@ this module; declarations live in `namespace Lechner2004.Examples`.
 
 namespace Lechner2004.Examples
 
-open Data.Examples
-
 def ch2_24 : Datum :=
   { id := "lechner2004_ch2_24"
     source := ⟨"lechner-2004", "(24) of chapter 2"⟩

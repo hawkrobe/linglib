@@ -54,7 +54,7 @@ the paper does not print, so the learned rules (40) and (44) are not run here.
 
 namespace Belth2026
 
-open Phonology Data.Examples
+open Phonology
 
 /-! ### D2L -/
 

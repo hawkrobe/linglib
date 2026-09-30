@@ -48,7 +48,7 @@ linearization (§4.2, `binding_consistent`).
 
 namespace ShenHuang2026
 
-open Reference Minimalist Minimalist.Linearization ArgumentStructure Data.Examples
+open Reference Minimalist Minimalist.Linearization ArgumentStructure
 
 /-- How a wh-dependency is established: overt movement of the wh-phrase, which binds its
 trace, or unselective binding of an in-situ wh-phrase by an operator, a question operator or

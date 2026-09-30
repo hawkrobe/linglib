@@ -71,7 +71,7 @@ they are in `ecm`. The third series of Georgian is outside the paper.
 
 namespace Marantz1991
 
-open Case DependentCase Data.Examples
+open Case DependentCase
 
 /-! ### Clauses and their chains -/
 

@@ -49,7 +49,7 @@ in §8 is stated in prose only.
 
 namespace Carstens2026
 
-open Bantu Data.Examples Reference.Prominence Minimalist.Coordination
+open Bantu Reference.Prominence Minimalist.Coordination
 
 /-- Whether the n of a gender carries a feature that percolates to &P, (13) and (77b). -/
 def interpretability : GenderStatus → Minimalist.Interpretability

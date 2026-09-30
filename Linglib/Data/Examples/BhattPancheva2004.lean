@@ -15,8 +15,6 @@ this module; declarations live in `namespace BhattPancheva2004.Examples`.
 
 namespace BhattPancheva2004.Examples
 
-open Data.Examples
-
 def bp2004_22 : Datum :=
   { id := "bp2004_22"
     source := ⟨"bhatt-pancheva-2004", "(22)"⟩

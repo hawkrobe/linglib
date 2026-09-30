@@ -15,8 +15,6 @@ this module; declarations live in `namespace FrischPierrehumbertBroe2004.Example
 
 namespace FrischPierrehumbertBroe2004.Examples
 
-open Data.Examples
-
 def fpb2004_dtC : Datum :=
   { id := "fpb2004_dtC"
     source := ⟨"frisch-pierrehumbert-broe-2004", "O/E examples"⟩

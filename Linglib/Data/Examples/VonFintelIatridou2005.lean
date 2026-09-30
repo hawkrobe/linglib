@@ -15,8 +15,6 @@ this module; declarations live in `namespace VonFintelIatridou2005.Examples`.
 
 namespace VonFintelIatridou2005.Examples
 
-open Data.Examples
-
 def vFI2005_1_harlem : Datum :=
   { id := "vFI2005_1_harlem"
     source := ⟨"von-fintel-iatridou-2005", "(1)"⟩

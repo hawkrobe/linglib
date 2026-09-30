@@ -47,7 +47,6 @@ domain of a null site is the category of its head, `Minimalist.Cat`.
 namespace Landau2026
 
 open Anaphor (Depth)
-open Data.Examples (Datum)
 
 /-! ### Sites and dependencies -/
 

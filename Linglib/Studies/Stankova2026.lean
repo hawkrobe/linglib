@@ -294,7 +294,6 @@ theorem context_tracks_bias_strength :
 Typed stimuli live in `Data.Examples.Stankova2026`; each is paired here
 with the negation reading and Table 1 diagnostic the paper assigns. -/
 
-open Data.Examples (Datum)
 
 /-- The paper's polarity/particle examples with their negation reading
 and tested diagnostic. -/

@@ -68,7 +68,7 @@ section on a `Situation`, and `rows_felicitous` checks it against all sixty judg
 
 namespace FarkasRoelofsen2017
 
-open Commitment Data.Examples Question
+open Commitment Question
 
 /-! ### Sentence forms and their semantics -/
 
@@ -313,7 +313,7 @@ instance (f : Form) (s : Situation) : Decidable (Felicitous f s) := by
 structure Row where
   form : Form
   situation : Situation
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
   deriving DecidableEq, Repr
 
 def formTable : List (String × Form) :=

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Holmberg2016.Examples`.
 
 namespace Holmberg2016.Examples
 
-open Data.Examples
-
 def en_neutral_yes : Datum :=
   { id := "holmberg2016_en_neutral_yes"
     source := ⟨"holmberg-2016", "§1.1"⟩

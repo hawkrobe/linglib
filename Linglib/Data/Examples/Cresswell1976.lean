@@ -15,8 +15,6 @@ this module; declarations live in `namespace Cresswell1976.Examples`.
 
 namespace Cresswell1976.Examples
 
-open Data.Examples
-
 def ex_13 : Datum :=
   { id := "cresswell1976_13"
     source := ⟨"cresswell-1976", "(13)"⟩

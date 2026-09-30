@@ -168,7 +168,7 @@ end PolarVarianceGrounding
 
 /-- A Table 3.1 judgment: construction, antonym polarity, and whether the sentence is
 evaluative. The ungrammatical negative-antonym measure phrase carries no judgment. -/
-def datum (e : Data.Examples.Datum) : Option (Construction × Polarity × Bool) :=
+def datum (e : Datum) : Option (Construction × Polarity × Bool) :=
   do
     let c ← e.parse? "construction" [("positive", Construction.positive),
       ("comparative", .comparative), ("equative", .equative), ("measurePhrase", .measurePhrase),

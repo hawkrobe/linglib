@@ -15,8 +15,6 @@ this module; declarations live in `namespace SolstadBott2024.Examples`.
 
 namespace SolstadBott2024.Examples
 
-open Data.Examples
-
 def sb2024_exp1_occasion : Datum :=
   { id := "sb2024_exp1_occasion"
     source := ⟨"solstad-bott-2024", "Exp 1, occasion verbs (16 German occasion verbs)"⟩

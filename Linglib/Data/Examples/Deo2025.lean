@@ -15,8 +15,6 @@ this module; declarations live in `namespace Deo2025.Examples`.
 
 namespace Deo2025.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "deo2025_1"
     source := ⟨"deo-2025-bara", "(1)"⟩

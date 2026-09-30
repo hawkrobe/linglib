@@ -15,8 +15,6 @@ this module; declarations live in `namespace Lionnet2025.Examples`.
 
 namespace Lionnet2025.Examples
 
-open Data.Examples
-
 def ex11 : Datum :=
   { id := "lionnet2025_ex11"
     source := ⟨"shintani-paita-1990b", "p. 19"⟩

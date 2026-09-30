@@ -54,7 +54,7 @@ an added probe (Mohawk, Nishnaabemwin, Basque) or R-Case on the IA
 namespace BejarRezac2009
 
 open Minimalist.CyclicAgree
-open Agreement Data.Examples
+open Agreement
 
 /-- The three core person values the paper's paradigms range over. -/
 def corePersons : List Person := [.first, .second, .third]

@@ -15,8 +15,6 @@ this module; declarations live in `namespace HeKaiserIskarous2025.Examples`.
 
 namespace HeKaiserIskarous2025.Examples
 
-open Data.Examples
-
 def house_no_bathroom : Datum :=
   { id := "hekaiseriskarous2025_house_no_bathroom"
     source := ⟨"he-kaiser-iskarous-2025", "§1"⟩

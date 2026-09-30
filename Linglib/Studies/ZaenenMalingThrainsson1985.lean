@@ -50,7 +50,7 @@ case; the paper's ditransitives never present one.
 
 namespace ZaenenMalingThrainsson1985
 
-open Icelandic.Verbs Data.Examples ZaenenMalingThrainsson1985.Examples
+open Icelandic.Verbs ZaenenMalingThrainsson1985.Examples
 
 /-! ### Thematic structure and grammatical functions -/
 

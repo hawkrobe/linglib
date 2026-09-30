@@ -15,8 +15,6 @@ this module; declarations live in `namespace Beaver2001.Examples`.
 
 namespace Beaver2001.Examples
 
-open Data.Examples
-
 def e52 : Datum :=
   { id := "beaver2001_e52"
     source := ⟨"beaver-2001", "E52"⟩

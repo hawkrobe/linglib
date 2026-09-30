@@ -15,8 +15,6 @@ this module; declarations live in `namespace Landau2026.Examples`.
 
 namespace Landau2026.Examples
 
-open Data.Examples
-
 def hebrewEN : Datum :=
   { id := "landau2026_hebrewEN"
     source := ⟨"landau-2026", "(18a)"⟩

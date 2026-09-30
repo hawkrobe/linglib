@@ -15,8 +15,6 @@ this module; declarations live in `namespace Dixon1994.Examples`.
 
 namespace Dixon1994.Examples
 
-open Data.Examples
-
 def ex_1_2_5 : Datum :=
   { id := "dixon1994_1_2_5"
     source := ⟨"dixon-1994", "§1.2 (5)"⟩

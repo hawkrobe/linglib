@@ -44,7 +44,7 @@ disjunctions by the paper's own classification of each sentence.
 
 namespace FoxSpector2018
 
-open Exhaustification Set Data.Examples
+open Exhaustification Set
 
 variable {W : Type*}
 
@@ -273,7 +273,7 @@ structure Row where
   canonical : Bool
   distant : Bool
   de : ℕ
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
   deriving DecidableEq
 
 def yesNoTable : List (String × Bool) := [("yes", true), ("no", false)]

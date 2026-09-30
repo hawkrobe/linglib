@@ -44,7 +44,7 @@ Ch. 5, with the base verbs read from the German fragment.
 
 namespace Benz2025
 
-open DistributedMorphology DistributedMorphology.Allosemy Data.Examples German.Verbs
+open DistributedMorphology DistributedMorphology.Allosemy German.Verbs
   ArgumentStructure
 open Aspect
 

@@ -112,7 +112,6 @@ theorem felicity_rejectQ_ssubset_rejectQWith_falsum :
 
 /-! ### Table 1 -/
 
-open Data.Examples
 
 /-- The two kinds of question with declarative syntax. -/
 inductive Kind where

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Cacchioli2026.Examples`.
 
 namespace Cacchioli2026.Examples
 
-open Data.Examples
-
 def ex_5b : Datum :=
   { id := "cacchioli2026_5b"
     source := ⟨"cacchioli-2026", "ex. (5b)"⟩

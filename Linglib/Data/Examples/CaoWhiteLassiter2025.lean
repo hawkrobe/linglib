@@ -15,8 +15,6 @@ this module; declarations live in `namespace CaoWhiteLassiter2025.Examples`.
 
 namespace CaoWhiteLassiter2025.Examples
 
-open Data.Examples
-
 def cwl2025_ex3a : Datum :=
   { id := "cwl2025_ex3a"
     source := ⟨"cao-white-lassiter-2025", "(3a)"⟩

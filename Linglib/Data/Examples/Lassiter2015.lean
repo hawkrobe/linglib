@@ -15,8 +15,6 @@ this module; declarations live in `namespace Lassiter2015.Examples`.
 
 namespace Lassiter2015.Examples
 
-open Data.Examples
-
 def ex4 : Datum :=
   { id := "lassiter2015_ex4"
     source := ⟨"lassiter-2015", "(4)"⟩

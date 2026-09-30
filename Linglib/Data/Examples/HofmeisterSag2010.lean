@@ -15,8 +15,6 @@ this module; declarations live in `namespace HofmeisterSag2010.Examples`.
 
 namespace HofmeisterSag2010.Examples
 
-open Data.Examples
-
 def ex42a : Datum :=
   { id := "hofmeistersag2010_ex42a"
     source := ⟨"hofmeister-sag-2010", "(42a)"⟩

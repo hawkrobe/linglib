@@ -15,8 +15,6 @@ this module; declarations live in `namespace Klecha2016.Examples`.
 
 namespace Klecha2016.Examples
 
-open Data.Examples
-
 def ex1 : Datum :=
   { id := "klecha2016_ex1"
     source := ⟨"klecha-2016", "(1)"⟩

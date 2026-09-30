@@ -84,7 +84,7 @@ constituent question rejects *do* altogether.
 
 namespace Wilder2013
 
-open Data.Examples Focus
+open Focus
 
 /-! ### The auxiliary system -/
 

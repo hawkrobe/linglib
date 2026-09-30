@@ -44,7 +44,7 @@ reflexive environments that (10) sets aside do not arise in the rows.
 
 namespace Reinhart1976
 
-open Core.Order Core.Order.Branching Syntax Syntax.Tree Data.Examples
+open Core.Order Core.Order.Branching Syntax Syntax.Tree
 
 variable {C W : Type*}
 
@@ -246,7 +246,7 @@ structure Row where
   np₁ : TreePath
   np₂ : TreePath
   pron : List TreePath
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
 
 /-- A datum read into its row. -/
 def Row.ofDatum (e : Datum) : Option Row := do

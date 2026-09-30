@@ -76,7 +76,7 @@ the paper attests its double object construction with *arrivare* alone.
 
 namespace Cuervo2003
 
-open Minimalist Data.Examples
+open Minimalist
 
 /-! ### Meanings (table (40)) -/
 

@@ -50,7 +50,7 @@ diagnostic data (1), (25), (26), (31), (37) are rows of `Data/Examples/Filip2012
 
 namespace Filip2012
 
-open Mereology ArgumentStructure Aspect Data.Examples
+open Mereology ArgumentStructure Aspect
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
@@ -142,7 +142,7 @@ structure Row where
   cls : VerbClass
   obj : Object
   adverbial : Adverbial
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
   deriving DecidableEq, Repr
 
 /-- The telicity the classification assigns: telic verbs form telic predicates

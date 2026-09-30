@@ -15,8 +15,6 @@ this module; declarations live in `namespace Belth2026.Examples`.
 
 namespace Belth2026.Examples
 
-open Data.Examples
-
 def ex_53a : Datum :=
   { id := "belth2026_53a"
     source := ⟨"belth-2026", "(53a)"⟩

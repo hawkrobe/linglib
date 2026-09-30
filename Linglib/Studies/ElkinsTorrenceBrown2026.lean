@@ -72,7 +72,7 @@ in K'ichean, and temporals trigger neither.
 
 namespace ElkinsTorrenceBrown2026
 
-open Minimalist DistributedMorphology Data.Examples ElkinsTorrenceBrown2026.Examples
+open Minimalist DistributedMorphology ElkinsTorrenceBrown2026.Examples
 
 /-! ### The extended verbal domain (§1.3) -/
 

@@ -45,7 +45,6 @@ live in the comparing paper's study file, not here.
 
 namespace Generalizations.HomogeneityGap
 
-open Data.Examples (Datum SourceRef)
 
 /-! ### Substrate -/
 

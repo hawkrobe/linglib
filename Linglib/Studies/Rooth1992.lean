@@ -48,7 +48,7 @@ antecedent for ~ under exactly one focus placement (`ellipsis_filter`).
 
 namespace Rooth1992
 
-open Data.Examples Exhaustification Focus WithAlternatives
+open Exhaustification Focus WithAlternatives
 
 /-! ### Focus semantic values (2) -/
 

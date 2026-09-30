@@ -15,8 +15,6 @@ this module; declarations live in `namespace SagWasowBender2003.Examples`.
 
 namespace SagWasowBender2003.Examples
 
-open Data.Examples
-
 def ex2a : Datum :=
   { id := "sagwasowbender2003_ex2a"
     source := ⟨"sag-wasow-bender-2003", "(2a)"⟩

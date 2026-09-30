@@ -15,8 +15,6 @@ this module; declarations live in `namespace Grubic2015.Examples`.
 
 namespace Grubic2015.Examples
 
-open Data.Examples
-
 def ex_6_24 : Datum :=
   { id := "grubic2015_6_24"
     source := ⟨"grubic-2015", "(24)"⟩

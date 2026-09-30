@@ -59,7 +59,6 @@ are not formalized.
 
 namespace JereticEtAl2025
 
-open Data.Examples
 
 /-! ### The typology -/
 

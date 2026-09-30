@@ -15,8 +15,6 @@ this module; declarations live in `namespace CoppockWechsler2018.Examples`.
 
 namespace CoppockWechsler2018.Examples
 
-open Data.Examples
-
 def ex_27 : Datum :=
   { id := "coppockwechsler2018_27"
     source := ⟨"coppock-wechsler-2018", "(27)"⟩

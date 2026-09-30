@@ -15,8 +15,6 @@ this module; declarations live in `namespace Everdell2023.Examples`.
 
 namespace Everdell2023.Examples
 
-open Data.Examples
-
 def baig1kia : Datum :=
   { id := "everdell2023_baig1kia"
     source := ⟨"everdell-2023", "Table 5.1"⟩

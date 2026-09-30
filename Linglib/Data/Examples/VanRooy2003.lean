@@ -15,8 +15,6 @@ this module; declarations live in `namespace VanRooy2003.Examples`.
 
 namespace VanRooy2003.Examples
 
-open Data.Examples
-
 def ex_3 : Datum :=
   { id := "vanrooy2003_3"
     source := ⟨"van-rooy-2003", "(3)"⟩

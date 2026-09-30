@@ -15,8 +15,6 @@ this module; declarations live in `namespace KratzerShimoyama2002.Examples`.
 
 namespace KratzerShimoyama2002.Examples
 
-open Data.Examples
-
 def ex23a : Datum :=
   { id := "kratzershimoyama2002_ex23a"
     source := ⟨"kratzer-shimoyama-2002", "(23a)"⟩

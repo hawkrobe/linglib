@@ -15,8 +15,6 @@ this module; declarations live in `namespace Kriz2015.Examples`.
 
 namespace Kriz2015.Examples
 
-open Data.Examples
-
 def switches_pos_gap : Datum :=
   { id := "kriz2015_switches_pos_gap"
     source := ⟨"kriz-2015", "canonical switches homogeneity item"⟩

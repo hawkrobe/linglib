@@ -91,7 +91,6 @@ the rows and not formalized.
 namespace Dendikken1995
 
 open Minimalist
-open Data.Examples (Datum)
 
 /-- The particle's complement is the object of a simplex construction or the inner small clause
 of a complex one, whose predicate is headed by the given lexical category; the infinitival marker

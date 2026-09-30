@@ -15,8 +15,6 @@ this module; declarations live in `namespace Creissels2024.Examples`.
 
 namespace Creissels2024.Examples
 
-open Data.Examples
-
 def ex_1_13a : Datum :=
   { id := "creissels2024_1_13a"
     source := ⟨"creissels-2024", "ch. 1 (13a)"⟩

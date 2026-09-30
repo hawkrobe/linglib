@@ -45,7 +45,6 @@ has the Mirror-obeying bracketing its vowel coalescence requires.
 
 namespace ArregiPietraszko2021
 
-open Data.Examples
 
 /-! ### Head chains and M-values (§2) -/
 

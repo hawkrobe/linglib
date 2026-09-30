@@ -41,7 +41,7 @@ to the reader fails: no subgraph of (7.22) mentions a `b` beside the target, so 
 
 namespace Jardine2016b
 
-open Autosegmental Correspondence Data.Examples
+open Autosegmental Correspondence
 
 /-- Σ = ∆ = {a, b, p} of (7.1), with the word boundaries ⋊ (`lb`) and ⋉ (`rb`) that the
 subgraphs of (7.21) read. -/

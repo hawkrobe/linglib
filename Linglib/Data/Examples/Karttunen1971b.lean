@@ -15,8 +15,6 @@ this module; declarations live in `namespace Karttunen1971b.Examples`.
 
 namespace Karttunen1971b.Examples
 
-open Data.Examples
-
 def ex_2a : Datum :=
   { id := "karttunen1971b_2a"
     source := ⟨"karttunen-1971b", "(2a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Jaeger2014.Examples`.
 
 namespace Jaeger2014.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "jaeger2014_1a"
     source := ⟨"jaeger-2014", "(1a)"⟩

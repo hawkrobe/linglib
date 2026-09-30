@@ -15,8 +15,6 @@ this module; declarations live in `namespace Tay2024.Examples`.
 
 namespace Tay2024.Examples
 
-open Data.Examples
-
 def ex_41 : Datum :=
   { id := "tay2024_41"
     source := ⟨"tay-2024", "(41), (43)"⟩

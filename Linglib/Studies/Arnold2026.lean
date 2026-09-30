@@ -34,7 +34,7 @@ it is unconstrained, whichever kind is intended.
 
 namespace Arnold2026
 
-open Data.Examples KonnellyCowper2020
+open KonnellyCowper2020
 
 /-- The two kinds of singular *they*. -/
 inductive Kind

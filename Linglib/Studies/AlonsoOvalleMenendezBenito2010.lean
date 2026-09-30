@@ -48,7 +48,7 @@ scenario verdicts (24)–(30) are checked in `rows_agree`.
 
 namespace AlonsoOvalleMenendezBenito2010
 
-open Presupposition Exhaustification ModalLogic Data.Examples
+open Presupposition Exhaustification ModalLogic
 
 variable {E W : Type*}
 

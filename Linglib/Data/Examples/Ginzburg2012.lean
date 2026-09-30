@@ -15,8 +15,6 @@ this module; declarations live in `namespace Ginzburg2012.Examples`.
 
 namespace Ginzburg2012.Examples
 
-open Data.Examples
-
 def ex_22a : Datum :=
   { id := "ginzburg2012_22a"
     source := ⟨"ginzburg-2012", "(22a)"⟩

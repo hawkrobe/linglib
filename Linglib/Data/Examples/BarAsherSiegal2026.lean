@@ -15,8 +15,6 @@ this module; declarations live in `namespace BarAsherSiegal2026.Examples`.
 
 namespace BarAsherSiegal2026.Examples
 
-open Data.Examples
-
 def bas2026_1a : Datum :=
   { id := "bas2026_1a"
     source := ⟨"bar-asher-siegal-2026", "(1a)"⟩

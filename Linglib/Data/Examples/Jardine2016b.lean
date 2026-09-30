@@ -15,8 +15,6 @@ this module; declarations live in `namespace Jardine2016b.Examples`.
 
 namespace Jardine2016b.Examples
 
-open Data.Examples
-
 def ex_7_5_pa : Datum :=
   { id := "jardine2016b_7_5_pa"
     source := ⟨"jardine-2016b", "(7.5)"⟩

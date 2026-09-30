@@ -15,8 +15,6 @@ this module; declarations live in `namespace Beltrama2025.Examples`.
 
 namespace Beltrama2025.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "beltrama2025_1a"
     source := ⟨"beltrama-2025", "(1a)"⟩

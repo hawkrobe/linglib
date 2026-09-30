@@ -15,8 +15,6 @@ this module; declarations live in `namespace Poole2024.Examples`.
 
 namespace Poole2024.Examples
 
-open Data.Examples
-
 def ex15 : Datum :=
   { id := "poole2024_ex15"
     source := ⟨"poole-2024", "(15)"⟩

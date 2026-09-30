@@ -15,8 +15,6 @@ this module; declarations live in `namespace Major2024.Examples`.
 
 namespace Major2024.Examples
 
-open Data.Examples
-
 def ex_2 : Datum :=
   { id := "major2024_2"
     source := ⟨"major-2024", "ex. (2)"⟩

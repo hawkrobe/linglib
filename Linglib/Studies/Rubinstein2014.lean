@@ -69,7 +69,7 @@ Hebrew reaches weak necessity through the comparatives alone.
 
 namespace Rubinstein2014
 
-open Modality Data.Examples
+open Modality
 
 variable {W : Type*}
 

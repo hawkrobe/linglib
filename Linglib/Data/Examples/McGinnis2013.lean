@@ -15,8 +15,6 @@ this module; declarations live in `namespace McGinnis2013.Examples`.
 
 namespace McGinnis2013.Examples
 
-open Data.Examples
-
 def ex_17a : Datum :=
   { id := "mcginnis2013_17a"
     source := ⟨"mcginnis-2013", "(2), (17a)"⟩

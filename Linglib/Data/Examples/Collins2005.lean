@@ -15,8 +15,6 @@ this module; declarations live in `namespace Collins2005.Examples`.
 
 namespace Collins2005.Examples
 
-open Data.Examples
-
 def ex9a : Datum :=
   { id := "collins2005_ex9a"
     source := ⟨"collins-2005", "(9a)"⟩

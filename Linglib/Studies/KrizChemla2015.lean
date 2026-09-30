@@ -107,7 +107,7 @@ definite contains a variable bound by the quantifier ([steedman-2012]).
 
 namespace KrizChemla2015
 
-open Data.Examples Generalizations Quantifier
+open Generalizations Quantifier
 open Trivalent (Designation designated)
 
 /-! ### Displays and their resolutions -/

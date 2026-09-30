@@ -733,7 +733,6 @@ alternation, when the construction shown is available in the row's scenario. -/
 
 section Examples
 
-open Data.Examples (Datum)
 
 variable {α : Type*}
 

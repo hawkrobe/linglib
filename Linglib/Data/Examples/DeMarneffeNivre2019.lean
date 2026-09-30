@@ -15,8 +15,6 @@ this module; declarations live in `namespace DeMarneffeNivre2019.Examples`.
 
 namespace DeMarneffeNivre2019.Examples
 
-open Data.Examples
-
 def fig1 : Datum :=
   { id := "demarneffenivre2019_fig1"
     source := ⟨"de-marneffe-nivre-2019", "Figure 1"⟩

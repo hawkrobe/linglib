@@ -54,7 +54,7 @@ kind of the subject is recorded for the rows whose subject the paper discusses.
 
 namespace Levin2026
 
-open Data.Examples ArgumentStructure
+open ArgumentStructure
 
 /-! ### The proper containment condition -/
 

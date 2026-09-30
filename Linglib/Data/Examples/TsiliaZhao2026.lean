@@ -15,8 +15,6 @@ this module; declarations live in `namespace TsiliaZhao2026.Examples`.
 
 namespace TsiliaZhao2026.Examples
 
-open Data.Examples
-
 def ex_6 : Datum :=
   { id := "tsiliazhao2026_6"
     source := ⟨"tsilia-zhao-2026", "(6)"⟩

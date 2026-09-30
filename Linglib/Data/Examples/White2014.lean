@@ -15,8 +15,6 @@ this module; declarations live in `namespace White2014.Examples`.
 
 namespace White2014.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "white2014_1"
     source := ⟨"white-2014", "(1a)"⟩

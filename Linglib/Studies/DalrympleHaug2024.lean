@@ -66,7 +66,7 @@ construction, and check them against the paper's judgments.
 
 namespace DalrympleHaug2024
 
-open Reciprocal Data.Examples
+open Reciprocal
 
 /-! ### Analyses and local antecedents -/
 

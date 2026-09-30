@@ -54,7 +54,6 @@ argument the scenario's kind under that ranking favours, as the paper argues aft
 namespace Just2024
 
 open Clause (Scenario)
-open Data.Examples
 open Reference.Prominence (atLeast)
 
 /-! ### Indexing and referential prominence -/

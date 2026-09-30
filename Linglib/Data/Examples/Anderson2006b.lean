@@ -15,8 +15,6 @@ this module; declarations live in `namespace Anderson2006b.Examples`.
 
 namespace Anderson2006b.Examples
 
-open Data.Examples
-
 def ex_39a : Datum :=
   { id := "anderson2006b_39a"
     source := ⟨"anderson-2006b", "ch. 6 (39a)"⟩

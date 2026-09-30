@@ -15,8 +15,6 @@ this module; declarations live in `namespace ElkinsTorrenceBrown2026.Examples`.
 
 namespace ElkinsTorrenceBrown2026.Examples
 
-open Data.Examples
-
 def ex_10b : Datum :=
   { id := "elkinstorrencebrown2026_10b"
     source := ⟨"elkins-torrence-brown-2026", "(10b)"⟩

@@ -21,14 +21,13 @@ sentence-level counterpart of `Data/Forms/`.
 
 ## Main definitions
 
-* `Data.Examples.Datum`: a piece of data about an example, with the judgment layer (`judgment`,
+* `Datum`: a piece of data about an example, with the judgment layer (`judgment`,
   `alternatives`, `readings`) and the paper's own columns (`paperFeatures`).
-* `Data.Examples.SourceRef`: a reference to a paper, a bibkey with a locator.
-* `Data.Examples.Datum.feature?`, `Data.Examples.Datum.features`: the first
-  value and every value of a key of `paperFeatures`.
-* `Data.Examples.Datum.parse?`: the first value of a key read through a table.
-* `Data.Examples.digits?`, `Data.Examples.Datum.nat?`,
-  `Data.Examples.Datum.int?`: numerals.
+* `SourceRef`: a reference to a paper, a bibkey with a locator.
+* `Datum.feature?`, `Datum.features`: the first value and every value of a key of
+  `paperFeatures`.
+* `Datum.parse?`: the first value of a key read through a table.
+* `Datum.digits?`, `Datum.nat?`, `Datum.int?`: numerals.
 
 ## Main statements
 
@@ -84,8 +83,6 @@ sentence-level counterpart of `Data/Forms/`.
 
 @[expose] public section
 
-namespace Data.Examples
-
 /-- A Glottolog language identifier, such as `"stan1293"` for Standard English. -/
 abbrev Glottocode := String
 
@@ -129,13 +126,13 @@ structure Datum where
   paperFeatures : List (String × String) := []
   deriving DecidableEq, Repr
 
+namespace Datum
+
 /-- `digits? cs` is the number that the nonempty string of decimal digits `cs` denotes. -/
 def digits? (cs : List Char) : Option ℕ :=
   if cs ≠ [] ∧ cs.all Char.isDigit then
     some (cs.foldl (fun n c ↦ 10 * n + (c.toNat - '0'.toNat)) 0)
   else none
-
-namespace Datum
 
 variable (e : Datum) (key : String)
 
@@ -186,5 +183,3 @@ theorem feature?_eq_none : e.feature? key = none ↔ ∀ v, (key, v) ∉ e.paper
   rw [← head?_features, List.head?_eq_none_iff, features_eq_nil]
 
 end Datum
-
-end Data.Examples

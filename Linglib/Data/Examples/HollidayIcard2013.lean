@@ -15,8 +15,6 @@ this module; declarations live in `namespace HollidayIcard2013.Examples`.
 
 namespace HollidayIcard2013.Examples
 
-open Data.Examples
-
 def ex1 : Datum :=
   { id := "hollidayicard2013_ex1"
     source := ⟨"holliday-icard-2013", "(1)"⟩

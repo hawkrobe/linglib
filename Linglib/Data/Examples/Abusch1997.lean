@@ -15,8 +15,6 @@ this module; declarations live in `namespace Abusch1997.Examples`.
 
 namespace Abusch1997.Examples
 
-open Data.Examples
-
 def ex1 : Datum :=
   { id := "abusch1997_ex1"
     source := ⟨"abusch-1997", "(1)"⟩

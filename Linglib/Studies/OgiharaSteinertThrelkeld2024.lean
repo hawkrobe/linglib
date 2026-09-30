@@ -52,7 +52,6 @@ are recorded in the example rows only.
 
 namespace OgiharaSteinertThrelkeld2024
 
-open Data.Examples
 open OgiharaSteinertThrelkeld2024.Examples
 open Tense Anscombe1964 BeaverCondoravdi2003
 

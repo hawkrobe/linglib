@@ -15,8 +15,6 @@ this module; declarations live in `namespace HollidayMandelkern2024.Examples`.
 
 namespace HollidayMandelkern2024.Examples
 
-open Data.Examples
-
 def ex1a : Datum :=
   { id := "hollidaymandelkern2024_ex1a"
     source := ⟨"holliday-mandelkern-2024", "(1a)"⟩

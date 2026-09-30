@@ -15,8 +15,6 @@ this module; declarations live in `namespace TrinhHaida2015.Examples`.
 
 namespace TrinhHaida2015.Examples
 
-open Data.Examples
-
 def ex_5 : Datum :=
   { id := "trinhhaida2015_5"
     source := ⟨"trinh-haida-2015", "(5)"⟩

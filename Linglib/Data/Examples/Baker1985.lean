@@ -15,8 +15,6 @@ this module; declarations live in `namespace Baker1985.Examples`.
 
 namespace Baker1985.Examples
 
-open Data.Examples
-
 def chamorro_15a : Datum :=
   { id := "baker1985_chamorro_15a"
     source := ⟨"gibson-1980", "(15a)"⟩

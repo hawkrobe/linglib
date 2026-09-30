@@ -46,7 +46,6 @@ marked.
 
 namespace AssmannEtAl2023
 
-open Data.Examples
 open Focus (Usable)
 
 /-! ### The clause skeleton -/

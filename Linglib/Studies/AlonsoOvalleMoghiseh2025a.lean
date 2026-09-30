@@ -52,7 +52,7 @@ while the single-operator LFs (143)–(146) are too weak or too strong (`single_
 
 namespace AlonsoOvalleMoghiseh2025a
 
-open Exhaustification ModalLogic Data.Examples Finset
+open Exhaustification ModalLogic Finset
 
 /-! ### The two-book model (§3) -/
 

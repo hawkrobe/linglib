@@ -15,8 +15,6 @@ this module; declarations live in `namespace JinKoenig2021.Examples`.
 
 namespace JinKoenig2021.Examples
 
-open Data.Examples
-
 def jk2021_1 : Datum :=
   { id := "jk2021_1"
     source := ⟨"jin-koenig-2021", "(1)"⟩

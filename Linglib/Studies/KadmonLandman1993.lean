@@ -55,7 +55,7 @@ precisification space the two truth notions are [fine-1975]'s super-truth and bo
 
 namespace KadmonLandman1993
 
-open NaturalLogic PolarityItem Ladusaw1979 Semantics.Supervaluation Data.Examples
+open NaturalLogic PolarityItem Ladusaw1979 Semantics.Supervaluation
 
 /-! ### The strengthening condition
 

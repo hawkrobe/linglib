@@ -15,8 +15,6 @@ this module; declarations live in `namespace HawkinsGweonGoodman2021.Examples`.
 
 namespace HawkinsGweonGoodman2021.Examples
 
-open Data.Examples
-
 def item1 : Datum :=
   { id := "hawkinsgweongoodman2021_item1"
     source := ⟨"keysar-etal-2003", "Table 1, item 1"⟩

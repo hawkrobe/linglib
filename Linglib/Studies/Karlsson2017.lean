@@ -48,7 +48,7 @@ nominative form has no case ending.
 
 @[expose] public section
 
-open Data.Examples Aspect
+open Aspect
 
 namespace Karlsson2017
 

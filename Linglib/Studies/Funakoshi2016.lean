@@ -44,7 +44,7 @@ rows are the paper's ellipsis clauses under the null adjunct reading (`rows_pred
 
 namespace Funakoshi2016
 
-open Minimalist Data.Examples
+open Minimalist
 
 /-- Where the adjunct attaches: inside the verb phrase, as manner, instrumental and temporal
 adjuncts do, or above negation, as reason adverbial clauses do. -/

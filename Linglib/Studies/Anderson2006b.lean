@@ -38,7 +38,6 @@ and that the hierarchy selects the recorded subject of each of the book's exampl
 
 namespace Anderson2006b
 
-open Data.Examples
 
 /-- The three first-order case features (11). -/
 inductive Feature

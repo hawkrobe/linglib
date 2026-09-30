@@ -15,8 +15,6 @@ this module; declarations live in `namespace WangDavidson2026.Examples`.
 
 namespace WangDavidson2026.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "wangdavidson2026_1"
     source := ⟨"wang-davidson-2026", "(1a)"⟩

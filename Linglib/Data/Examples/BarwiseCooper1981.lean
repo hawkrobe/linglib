@@ -15,8 +15,6 @@ this module; declarations live in `namespace BarwiseCooper1981.Examples`.
 
 namespace BarwiseCooper1981.Examples
 
-open Data.Examples
-
 def ex_6a : Datum :=
   { id := "barwisecooper1981_6a"
     source := ⟨"barwise-cooper-1981", "(6a)"⟩

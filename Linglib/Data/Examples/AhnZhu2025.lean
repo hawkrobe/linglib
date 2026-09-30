@@ -15,8 +15,6 @@ this module; declarations live in `namespace AhnZhu2025.Examples`.
 
 namespace AhnZhu2025.Examples
 
-open Data.Examples
-
 def ex14a_bare : Datum :=
   { id := "ahnzhu2025_ex14a_bare"
     source := ⟨"ahn-zhu-2025", "(14a)"⟩

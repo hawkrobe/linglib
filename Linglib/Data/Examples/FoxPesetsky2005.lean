@@ -15,8 +15,6 @@ this module; declarations live in `namespace FoxPesetsky2005.Examples`.
 
 namespace FoxPesetsky2005.Examples
 
-open Data.Examples
-
 def ex19a : Datum :=
   { id := "foxpesetsky2005_ex19a"
     source := ⟨"fox-pesetsky-2005", "(19a)"⟩

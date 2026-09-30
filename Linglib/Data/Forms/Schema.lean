@@ -60,7 +60,6 @@ makes on a paper's forms. It is the morphological counterpart of the Examples co
 
 namespace Data.Forms
 
-open Data.Examples
 
 /-- A `Form` is a row of a CLDF `FormTable`, a word form of a language expressing a concept,
 with its segmentation. -/

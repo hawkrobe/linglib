@@ -15,8 +15,6 @@ this module; declarations live in `namespace Pancheva2003.Examples`.
 
 namespace Pancheva2003.Examples
 
-open Data.Examples
-
 def ex1a_U : Datum :=
   { id := "pancheva2003_ex1a_U"
     source := ⟨"pancheva-2003", "(1a)"⟩

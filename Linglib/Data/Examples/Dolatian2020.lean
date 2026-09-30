@@ -15,8 +15,6 @@ this module; declarations live in `namespace Dolatian2020.Examples`.
 
 namespace Dolatian2020.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "dolatian2020_1"
     source := ⟨"dolatian-2020", "(1)"⟩

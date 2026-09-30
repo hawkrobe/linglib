@@ -15,8 +15,6 @@ this module; declarations live in `namespace VanTielEtAl2016.Examples`.
 
 namespace VanTielEtAl2016.Examples
 
-open Data.Examples
-
 def cheap_free : Datum :=
   { id := "vantieletal2016_cheap_free"
     source := ⟨"van-tiel-geurts-2016", "Table 3, Appendix A"⟩

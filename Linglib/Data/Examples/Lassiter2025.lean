@@ -15,8 +15,6 @@ this module; declarations live in `namespace Lassiter2025.Examples`.
 
 namespace Lassiter2025.Examples
 
-open Data.Examples
-
 def lass2025_gibbard : Datum :=
   { id := "lass2025_gibbard"
     source := ⟨"gibbard-1981", "p. 235"⟩

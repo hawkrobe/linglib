@@ -15,8 +15,6 @@ this module; declarations live in `namespace Hohle1992.Examples`.
 
 namespace Hohle1992.Examples
 
-open Data.Examples
-
 def ex1b : Datum :=
   { id := "hohle1992_ex1b"
     source := ⟨"hohle-1992", "(1b)"⟩

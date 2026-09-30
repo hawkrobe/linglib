@@ -15,8 +15,6 @@ this module; declarations live in `namespace LoGuercio2025.Examples`.
 
 namespace LoGuercio2025.Examples
 
-open Data.Examples
-
 def outOfBlue_epithet : Datum :=
   { id := "loguercio2025_outOfBlue_epithet"
     source := ⟨"lo-guercio-2025", "(epithet OOTB)"⟩

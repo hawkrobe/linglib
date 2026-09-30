@@ -65,7 +65,7 @@ the licensing derivation does (`assign_eq_map_license`).
 
 namespace Kalin2018
 
-open Data.Examples Minimalist
+open Minimalist
 open Case (Valuation)
 
 section Licensing

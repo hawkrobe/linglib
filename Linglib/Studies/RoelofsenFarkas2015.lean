@@ -49,7 +49,7 @@ English particles mark (`usable_english_iff_mem`).
 
 namespace RoelofsenFarkas2015
 
-open Discourse Data.Examples
+open Discourse
 
 variable {W : Type*}
 

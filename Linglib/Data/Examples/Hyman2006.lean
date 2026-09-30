@@ -15,8 +15,6 @@ this module; declarations live in `namespace Hyman2006.Examples`.
 
 namespace Hyman2006.Examples
 
-open Data.Examples
-
 def makura : Datum :=
   { id := "hyman2006_makura"
     source := ⟨"hyman-2006", "(4)"⟩

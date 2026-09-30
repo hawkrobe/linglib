@@ -41,7 +41,7 @@ inventories.
 namespace Bondarenko2022
 
 open Anchor (comp)
-open Data.Examples Buryat
+open Buryat
 
 /-! ### Nominal sorts -/
 
@@ -97,7 +97,7 @@ structure CooccurrenceDatum where
 def cooccurrenceDatum (e : Datum) : Option CooccurrenceDatum := do
   let s ← parseSort (← e.paperFeatures.lookup "nounSort")
   let d ← parseDiagnostic (← e.paperFeatures.lookup "diagnostic")
-  some ⟨s, d, e.judgment == Data.Examples.Judgment.acceptable⟩
+  some ⟨s, d, e.judgment == Judgment.acceptable⟩
 
 /-- The ch. 2 co-occurrence examples. -/
 def cooccurrenceData : List CooccurrenceDatum := Examples.all.filterMap cooccurrenceDatum

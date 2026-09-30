@@ -15,8 +15,6 @@ this module; declarations live in `namespace LuPanDegen2025.Examples`.
 
 namespace LuPanDegen2025.Examples
 
-open Data.Examples
-
 def exp1_verbfocus : Datum :=
   { id := "lupandegen2025_exp1_verbfocus"
     source := ⟨"lu-pan-degen-2025", "(9a)"⟩

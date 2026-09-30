@@ -58,7 +58,7 @@ paper leaves open are not formalized.
 
 namespace SandeClemDabkowski2026
 
-open List Data.Examples
+open List
 open Minimalist.Linearization (Consistent)
 open OptimalityTheory (Constraint)
 open OptimalityTheory

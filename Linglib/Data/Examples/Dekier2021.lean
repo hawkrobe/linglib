@@ -15,8 +15,6 @@ this module; declarations live in `namespace Dekier2021.Examples`.
 
 namespace Dekier2021.Examples
 
-open Data.Examples
-
 def english : Datum :=
   { id := "dekier2021_english"
     source := ⟨"dekier-2021", "Table 7"⟩

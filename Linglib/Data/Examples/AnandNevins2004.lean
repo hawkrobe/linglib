@@ -15,8 +15,6 @@ this module; declarations live in `namespace AnandNevins2004.Examples`.
 
 namespace AnandNevins2004.Examples
 
-open Data.Examples
-
 def ex_4 : Datum :=
   { id := "anandnevins2004_4"
     source := ⟨"anand-nevins-2004", "(4)"⟩

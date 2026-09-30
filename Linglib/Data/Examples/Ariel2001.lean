@@ -15,8 +15,6 @@ this module; declarations live in `namespace Ariel2001.Examples`.
 
 namespace Ariel2001.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "ariel2001_1"
     source := ⟨"ariel-2001", "(1)"⟩

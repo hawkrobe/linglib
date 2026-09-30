@@ -15,8 +15,6 @@ this module; declarations live in `namespace Gunlogson2001.Examples`.
 
 namespace Gunlogson2001.Examples
 
-open Data.Examples
-
 def ex_13 : Datum :=
   { id := "gunlogson2001_13"
     source := ⟨"gunlogson-2001", "(13)"⟩

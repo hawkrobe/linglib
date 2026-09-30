@@ -15,8 +15,6 @@ this module; declarations live in `namespace Rooth1992.Examples`.
 
 namespace Rooth1992.Examples
 
-open Data.Examples
-
 def ex_3a : Datum :=
   { id := "rooth1992_3a"
     source := ⟨"rooth-1992", "(3a)"⟩

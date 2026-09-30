@@ -15,8 +15,6 @@ this module; declarations live in `namespace Kennedy1999.Examples`.
 
 namespace Kennedy1999.Examples
 
-open Data.Examples
-
 def cpa_long_short : Datum :=
   { id := "kennedy1999_cpa_long_short"
     source := ⟨"kennedy-1999", "(15), §3.1.3"⟩

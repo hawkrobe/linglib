@@ -15,8 +15,6 @@ this module; declarations live in `namespace GinzburgCooper2004.Examples`.
 
 namespace GinzburgCooper2004.Examples
 
-open Data.Examples
-
 def ex_4a_bo : Datum :=
   { id := "ginzburgcooper2004_4a_bo"
     source := ⟨"ginzburg-cooper-2004", "(4a)"⟩

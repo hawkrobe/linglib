@@ -15,8 +15,6 @@ this module; declarations live in `namespace Levin2026.Examples`.
 
 namespace Levin2026.Examples
 
-open Data.Examples
-
 def ex_9 : Datum :=
   { id := "levin2026_9"
     source := ⟨"levin-2026", "(9)"⟩

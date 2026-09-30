@@ -76,7 +76,7 @@ syllable-dependent (`drubea_tonal`, `drubea_not_stressAccent`) — close the fil
 
 namespace Lionnet2025
 
-open Tone Tone.Registered Data.Examples Subregular
+open Tone Tone.Registered Subregular
 open Prosody (Syllable)
 
 /-- The weight a syllable contributes: its mora count. -/
@@ -631,8 +631,8 @@ def tokens : List Char → List (List Char)
 def halfSteps? (cs : List Char) : Option ℕ := go cs [] where
   /-- The digits read so far, reversed. -/
   go : List Char → List Char → Option ℕ
-    | [], acc => (digits? acc.reverse).map (2 * ·)
-    | ['.', '5'], acc => (digits? acc.reverse).map (2 * · + 1)
+    | [], acc => (Datum.digits? acc.reverse).map (2 * ·)
+    | ['.', '5'], acc => (Datum.digits? acc.reverse).map (2 * · + 1)
     | '.' :: _, _ => none
     | c :: cs, acc => go cs (c :: acc)
 

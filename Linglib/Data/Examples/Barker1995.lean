@@ -15,8 +15,6 @@ this module; declarations live in `namespace Barker1995.Examples`.
 
 namespace Barker1995.Examples
 
-open Data.Examples
-
 def ch2_39c : Datum :=
   { id := "barker1995_ch2_39c"
     source := ⟨"barker-1995", "Ch. 2 (39c)"⟩

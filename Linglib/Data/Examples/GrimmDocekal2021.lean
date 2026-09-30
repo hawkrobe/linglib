@@ -15,8 +15,6 @@ this module; declarations live in `namespace GrimmDocekal2021.Examples`.
 
 namespace GrimmDocekal2021.Examples
 
-open Data.Examples
-
 def ex_9b : Datum :=
   { id := "grimmdocekal2021_9b"
     source := ⟨"grimm-docekal-2021", "(9b)"⟩

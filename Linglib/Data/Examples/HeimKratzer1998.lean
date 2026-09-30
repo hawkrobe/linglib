@@ -15,8 +15,6 @@ this module; declarations live in `namespace HeimKratzer1998.Examples`.
 
 namespace HeimKratzer1998.Examples
 
-open Data.Examples
-
 def ch7_1a : Datum :=
   { id := "heimkratzer1998_ch7_1a"
     source := ⟨"heim-kratzer-1998", "Ch. 7 (1a)"⟩

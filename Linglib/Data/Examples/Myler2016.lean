@@ -15,8 +15,6 @@ this module; declarations live in `namespace Myler2016.Examples`.
 
 namespace Myler2016.Examples
 
-open Data.Examples
-
 def concrete_hafa : Datum :=
   { id := "myler2016_concrete_hafa"
     source := ⟨"myler-2016", "(91)"⟩

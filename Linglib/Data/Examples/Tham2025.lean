@@ -15,8 +15,6 @@ this module; declarations live in `namespace Tham2025.Examples`.
 
 namespace Tham2025.Examples
 
-open Data.Examples
-
 def ex_4a : Datum :=
   { id := "tham2025_4a"
     source := ⟨"tham-2025", "(4a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Imanishi2014.Examples`.
 
 namespace Imanishi2014.Examples
 
-open Data.Examples
-
 def s89 : Datum :=
   { id := "imanishi2014_s89"
     source := ⟨"imanishi-2014", "(89)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Flemming2021.Examples`.
 
 namespace Flemming2021.Examples
 
-open Data.Examples
-
 def ctx1 : Datum :=
   { id := "flemming2021_ctx1"
     source := ⟨"smith-pater-2020", "experiment"⟩

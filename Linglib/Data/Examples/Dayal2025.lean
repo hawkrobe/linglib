@@ -15,8 +15,6 @@ this module; declarations live in `namespace Dayal2025.Examples`.
 
 namespace Dayal2025.Examples
 
-open Data.Examples
-
 def ex3b : Datum :=
   { id := "dayal2025_ex3b"
     source := ⟨"dayal-2025", "(3b)"⟩

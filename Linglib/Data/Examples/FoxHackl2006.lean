@@ -15,8 +15,6 @@ this module; declarations live in `namespace FoxHackl2006.Examples`.
 
 namespace FoxHackl2006.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "foxhackl2006_1"
     source := ⟨"fox-hackl-2006", "(1)"⟩

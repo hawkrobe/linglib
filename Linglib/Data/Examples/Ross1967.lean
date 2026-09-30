@@ -15,8 +15,6 @@ this module; declarations live in `namespace Ross1967.Examples`.
 
 namespace Ross1967.Examples
 
-open Data.Examples
-
 def ex4_15a : Datum :=
   { id := "ross1967_ex4_15a"
     source := ⟨"ross-1967", "(4.15a)"⟩

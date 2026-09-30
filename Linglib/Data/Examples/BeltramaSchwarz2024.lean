@@ -15,8 +15,6 @@ this module; declarations live in `namespace BeltramaSchwarz2024.Examples`.
 
 namespace BeltramaSchwarz2024.Examples
 
-open Data.Examples
-
 def beltrama_schwarz_2024_cst_nopersona : Datum :=
   { id := "beltrama_schwarz_2024_cst_nopersona"
     source := ⟨"beltrama-schwarz-2024", "Exp 1 Imprecise No.Persona"⟩

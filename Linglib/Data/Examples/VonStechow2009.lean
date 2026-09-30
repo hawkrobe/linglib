@@ -15,8 +15,6 @@ this module; declarations live in `namespace VonStechow2009.Examples`.
 
 namespace VonStechow2009.Examples
 
-open Data.Examples
-
 def ex_21a : Datum :=
   { id := "vonstechow2009_21a"
     source := ⟨"von-stechow-2009", "(21a)"⟩

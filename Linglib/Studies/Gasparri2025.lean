@@ -41,7 +41,7 @@ a referentialist needs must introduce the naming predicate itself.
 
 namespace Gasparri2025
 
-open Quantifier Quantifier.GQ Quantifier.NP Data.Examples
+open Quantifier Quantifier.GQ Quantifier.NP
 
 /-- A referential name shifted to its identity property and fed to the generic operator returns
 the token reading, so a generic use of a bare name needs the naming predicate. -/

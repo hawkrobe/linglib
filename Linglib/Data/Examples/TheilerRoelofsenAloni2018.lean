@@ -15,8 +15,6 @@ this module; declarations live in `namespace TheilerRoelofsenAloni2018.Examples`
 
 namespace TheilerRoelofsenAloni2018.Examples
 
-open Data.Examples
-
 def theileretal2018_1a : Datum :=
   { id := "theileretal2018_1a"
     source := ⟨"theiler-etal-2018", "(1a)"⟩

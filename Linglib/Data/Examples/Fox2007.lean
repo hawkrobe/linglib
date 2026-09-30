@@ -15,8 +15,6 @@ this module; declarations live in `namespace Fox2007.Examples`.
 
 namespace Fox2007.Examples
 
-open Data.Examples
-
 def ex16 : Datum :=
   { id := "fox2007_ex16"
     source := ⟨"kamp-1973", "free choice permission"⟩

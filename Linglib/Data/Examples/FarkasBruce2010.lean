@@ -15,8 +15,6 @@ this module; declarations live in `namespace FarkasBruce2010.Examples`.
 
 namespace FarkasBruce2010.Examples
 
-open Data.Examples
-
 def ex_36_yes : Datum :=
   { id := "farkasbruce2010_36_yes"
     source := ⟨"farkas-bruce-2010", "(36)"⟩

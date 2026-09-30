@@ -15,8 +15,6 @@ this module; declarations live in `namespace XuEtAl2024.Examples`.
 
 namespace XuEtAl2024.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "xuetal2024_1"
     source := ⟨"xu-etal-2024", "Table 1"⟩

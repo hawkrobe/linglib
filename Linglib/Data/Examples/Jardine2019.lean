@@ -15,8 +15,6 @@ this module; declarations live in `namespace Jardine2019.Examples`.
 
 namespace Jardine2019.Examples
 
-open Data.Examples
-
 def ex_27_empty : Datum :=
   { id := "jardine2019_27_empty"
     source := ⟨"jardine-2019", "(27)"⟩

@@ -100,7 +100,6 @@ open ArgumentStructure
 namespace ColeHermon2008
 
 open Minimalist SyntacticObject
-open Data.Examples (Datum)
 
 /-! ### The clause and its derivations (§4.1–§4.2) -/
 
@@ -323,10 +322,10 @@ def args : List (String × Arg) :=
   [("agent", .core .external), ("patient", .core .internal), ("goal", .goal)]
 
 /-- Toba Batak's Glottocode. -/
-def tobaBatak : Data.Examples.Glottocode := "bata1289"
+def tobaBatak : Glottocode := "bata1289"
 
 /-- English's Glottocode. -/
-def english : Data.Examples.Glottocode := "stan1293"
+def english : Glottocode := "stan1293"
 
 /-! ### Extraction (§3.2, §4, §5) -/
 

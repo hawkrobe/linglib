@@ -63,7 +63,7 @@ which makes syneresis opaque in (14), (16), (37). `rows_derived` derives every a
 
 namespace FaustLampitelli2026
 
-open Morphology ElementTheory Tigrinya.Phonology Data.Examples
+open Morphology ElementTheory Tigrinya.Phonology
 
 /-! ### Element-theoretic representations (20)–(22) -/
 

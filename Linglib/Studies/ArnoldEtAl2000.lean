@@ -49,7 +49,7 @@ size in the data and is not represented.
 
 namespace ArnoldEtAl2000
 
-open OptimalityTheory HarmonicGrammar Discourse Data.Examples
+open OptimalityTheory HarmonicGrammar Discourse
 
 /-! ### Phrases, orderings, and candidates -/
 

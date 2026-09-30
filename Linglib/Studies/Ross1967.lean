@@ -44,7 +44,7 @@ and the definition of islands as the domains of chopping rules are not formalize
 
 namespace Ross1967
 
-open Syntax Data.Examples Core.Order
+open Syntax Core.Order
 
 /-! ### Trees and movements -/
 

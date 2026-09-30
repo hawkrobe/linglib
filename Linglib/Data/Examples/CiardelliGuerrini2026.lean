@@ -15,8 +15,6 @@ this module; declarations live in `namespace CiardelliGuerrini2026.Examples`.
 
 namespace CiardelliGuerrini2026.Examples
 
-open Data.Examples
-
 def ex2 : Datum :=
   { id := "ciardelliguerrini2026_ex2"
     source := ⟨"ciardelli-guerrini-2026", "(2)"⟩

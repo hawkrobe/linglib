@@ -15,8 +15,6 @@ this module; declarations live in `namespace Anttila1997.Examples`.
 
 namespace Anttila1997.Examples
 
-open Data.Examples
-
 def ex_1a_puiden : Datum :=
   { id := "anttila1997_1a_puiden"
     source := ⟨"anttila-1997", "(1a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace BeaverCondoravdi2003.Examples`.
 
 namespace BeaverCondoravdi2003.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "beavercondoravdi2003_1"
     source := ⟨"beaver-condoravdi-2003", "(1)"⟩

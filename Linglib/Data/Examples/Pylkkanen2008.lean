@@ -15,8 +15,6 @@ this module; declarations live in `namespace Pylkkanen2008.Examples`.
 
 namespace Pylkkanen2008.Examples
 
-open Data.Examples
-
 def ex19a : Datum :=
   { id := "pylkkanen2008_ex19a"
     source := ⟨"pylkkanen-2008", "(19a)"⟩

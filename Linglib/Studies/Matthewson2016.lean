@@ -91,7 +91,7 @@ Gitksan.
 
 namespace Matthewson2016
 
-open Modality Data.Examples Evidential
+open Modality Evidential
 
 /-! ### Modes of projection (Table 18.2) -/
 

@@ -50,7 +50,7 @@ in the paper without a proposal formalized here.
 
 namespace Rett2026
 
-open Degree Tense Rett2020a Data.Examples
+open Degree Tense Rett2020a
 
 /-! ### Ambivalence -/
 
@@ -293,7 +293,7 @@ instance : DecidablePred Construction.Scalar := λ c => by
 /-- An example: its construction and judgment. -/
 structure Row where
   construction : Construction
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
 
 /-- A datum read into its row. -/
 def Row.ofDatum (e : Datum) : Option Row := do

@@ -15,8 +15,6 @@ this module; declarations live in `namespace SchlenkerEtAl2026.Examples`.
 
 namespace SchlenkerEtAl2026.Examples
 
-open Data.Examples
-
 def ex7a : Datum :=
   { id := "schlenkeretal2026_ex7a"
     source := ⟨"schlenker-lamberton-lamberton-2026", "(7a)"⟩

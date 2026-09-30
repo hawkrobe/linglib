@@ -15,8 +15,6 @@ this module; declarations live in `namespace BergenGoodman2015.Examples`.
 
 namespace BergenGoodman2015.Examples
 
-open Data.Examples
-
 def stressed_subject : Datum :=
   { id := "bergengoodman2015_stressed_subject"
     source := ⟨"bergen-goodman-2015", "UNVERIFIED (2)"⟩

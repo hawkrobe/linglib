@@ -15,8 +15,6 @@ this module; declarations live in `namespace Heim1994b.Examples`.
 
 namespace Heim1994b.Examples
 
-open Data.Examples
-
 def ex1 : Datum :=
   { id := "heim1994b_ex1"
     source := ⟨"heim-1994", "(1)"⟩

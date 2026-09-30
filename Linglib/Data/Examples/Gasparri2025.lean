@@ -15,8 +15,6 @@ this module; declarations live in `namespace Gasparri2025.Examples`.
 
 namespace Gasparri2025.Examples
 
-open Data.Examples
-
 def ex4a : Datum :=
   { id := "gasparri2025_ex4a"
     source := ⟨"gasparri-2025", "(4a)"⟩

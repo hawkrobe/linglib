@@ -64,7 +64,6 @@ logic, so their use conditions are derived and the restriction is left to the ro
 
 namespace Gutzmann2015
 
-open Data.Examples
 open Clause (SentenceType EmbeddingContext)
 
 /-- The German clause types of chapter 5, Truckenbrodt's, told apart by the position of the

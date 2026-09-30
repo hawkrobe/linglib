@@ -69,7 +69,6 @@ formalized; the Tromsø rows have no fragment and enter only the *wh*-word model
 namespace Westergaard2009
 
 open Clause
-open Data.Examples (Datum)
 
 /-- A verb-second grammar is the set of cells, a sentence type in an embedding context, in
 which the finite verb moves to the left periphery: Westergaard's clause-type heads. -/

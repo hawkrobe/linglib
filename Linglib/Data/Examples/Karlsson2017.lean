@@ -15,8 +15,6 @@ this module; declarations live in `namespace Karlsson2017.Examples`.
 
 namespace Karlsson2017.Examples
 
-open Data.Examples
-
 def neg1 : Datum :=
   { id := "karlsson2017_neg1"
     source := ⟨"karlsson-2017", "12.2.2 (1)"⟩

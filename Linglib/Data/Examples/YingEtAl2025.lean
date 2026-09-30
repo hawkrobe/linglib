@@ -15,8 +15,6 @@ this module; declarations live in `namespace YingEtAl2025.Examples`.
 
 namespace YingEtAl2025.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "yingetal2025_1"
     source := ⟨"ying-zhi-xuan-wong-mansinghka-tenenbaum-2025", "Table 2"⟩

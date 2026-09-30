@@ -15,8 +15,6 @@ this module; declarations live in `namespace Roussou2010.Examples`.
 
 namespace Roussou2010.Examples
 
-open Data.Examples
-
 def ex1a : Datum :=
   { id := "roussou2010_ex1a"
     source := ⟨"roussou-2010", "(1a)"⟩

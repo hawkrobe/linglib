@@ -49,7 +49,6 @@ falls under exactly one factor, as §2.3 claims.
 
 namespace Fortuny2024
 
-open Data.Examples
 
 /-! ### Categories as feature clusters (§2.1) -/
 
@@ -252,7 +251,7 @@ structure Row where
   right : Category
   moved : Moved
   same : Bool
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
   deriving DecidableEq
 
 /-- A coordinand, and not the whole, is attracted: the Integrity Condition (50) forbids it. -/

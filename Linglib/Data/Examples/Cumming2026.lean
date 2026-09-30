@@ -15,8 +15,6 @@ this module; declarations live in `namespace Cumming2026.Examples`.
 
 namespace Cumming2026.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "cumming2026_1"
     source := ⟨"cumming-2026", "(1)"⟩

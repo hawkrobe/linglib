@@ -15,8 +15,6 @@ this module; declarations live in `namespace VanTielEtAl2021.Examples`.
 
 namespace VanTielEtAl2021.Examples
 
-open Data.Examples
-
 def frame : Datum :=
   { id := "vantieletal2021_frame"
     source := ⟨"van-tiel-franke-sauerland-2021", "Exp. 1"⟩

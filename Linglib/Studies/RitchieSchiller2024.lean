@@ -47,7 +47,7 @@ formalized.
 
 namespace RitchieSchiller2024
 
-open Quantifier.GQ Data.Examples
+open Quantifier.GQ
 
 /-! ### Cognitive heuristics -/
 
@@ -241,7 +241,7 @@ structure Row where
   restriction : Restriction
   anchor : Anchor
   setup : Setup
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
 
 /-- A default restriction possibility is a heuristic restriction anchored to the here and
 now. -/

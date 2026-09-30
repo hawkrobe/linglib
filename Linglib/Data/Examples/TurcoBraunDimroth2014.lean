@@ -15,8 +15,6 @@ this module; declarations live in `namespace TurcoBraunDimroth2014.Examples`.
 
 namespace TurcoBraunDimroth2014.Examples
 
-open Data.Examples
-
 def ex_1A : Datum :=
   { id := "turcobraundimroth2014_1A"
     source := ⟨"turco-braun-dimroth-2014", "(1) A"⟩

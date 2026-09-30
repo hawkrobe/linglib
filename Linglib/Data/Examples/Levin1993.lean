@@ -15,8 +15,6 @@ this module; declarations live in `namespace Levin1993.Examples`.
 
 namespace Levin1993.Examples
 
-open Data.Examples
-
 def ci_break : Datum :=
   { id := "levin1993_ci_break"
     source := ⟨"levin-1993", "(22), p. 9"⟩

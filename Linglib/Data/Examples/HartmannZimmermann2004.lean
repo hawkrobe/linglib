@@ -15,8 +15,6 @@ this module; declarations live in `namespace HartmannZimmermann2004.Examples`.
 
 namespace HartmannZimmermann2004.Examples
 
-open Data.Examples
-
 def ex17b : Datum :=
   { id := "hartmannzimmermann2004_ex17b"
     source := ⟨"hartmann-zimmermann-2004", "(17b)"⟩

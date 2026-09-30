@@ -15,8 +15,6 @@ this module; declarations live in `namespace JackendoffAudring2020.Examples`.
 
 namespace JackendoffAudring2020.Examples
 
-open Data.Examples
-
 def ex_6a : Datum :=
   { id := "jackendoffaudring2020_6a"
     source := ⟨"jackendoff-audring-2020", "(6a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace FoxSpector2018.Examples`.
 
 namespace FoxSpector2018.Examples
 
-open Data.Examples
-
 def ex14a : Datum :=
   { id := "foxspector2018_ex14a"
     source := ⟨"hurford-1974", "Hurford's Constraint"⟩

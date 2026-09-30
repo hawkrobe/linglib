@@ -15,8 +15,6 @@ this module; declarations live in `namespace CondoravdiLauer2012.Examples`.
 
 namespace CondoravdiLauer2012.Examples
 
-open Data.Examples
-
 def ex6a : Datum :=
   { id := "condoravdilauer2012_ex6a"
     source := ⟨"condoravdi-lauer-2012", "(6a)"⟩

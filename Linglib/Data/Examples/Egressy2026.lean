@@ -15,8 +15,6 @@ this module; declarations live in `namespace Egressy2026.Examples`.
 
 namespace Egressy2026.Examples
 
-open Data.Examples
-
 def ex_4 : Datum :=
   { id := "egressy2026_4"
     source := ⟨"egressy-2026", "(4)"⟩

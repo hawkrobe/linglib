@@ -56,7 +56,6 @@ in the second, where attentional guidance, production effort and term frequency 
 
 namespace GilesEtAl2026
 
-open Data.Examples
 
 variable {D : Type*}
 

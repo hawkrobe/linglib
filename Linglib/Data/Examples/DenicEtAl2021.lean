@@ -15,8 +15,6 @@ this module; declarations live in `namespace DenicEtAl2021.Examples`.
 
 namespace DenicEtAl2021.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "denicetal2021_1"
     source := ⟨"denic-homer-rothschild-chemla-2021", "(1)"⟩

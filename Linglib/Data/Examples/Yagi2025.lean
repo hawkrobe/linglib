@@ -15,8 +15,6 @@ this module; declarations live in `namespace Yagi2025.Examples`.
 
 namespace Yagi2025.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "yagi2025_1"
     source := ⟨"yagi-2025", "(1a)"⟩

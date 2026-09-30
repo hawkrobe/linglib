@@ -36,7 +36,7 @@ variants, and leave Horn's strong-adjective prediction unsupported.
 
 namespace AlexandropoulouGotzner2024a
 
-open Degree Krifka2007b Data.Examples English.Adjectives
+open Degree Krifka2007b English.Adjectives
 
 /-! ### Design cells -/
 

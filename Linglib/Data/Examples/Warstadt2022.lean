@@ -15,8 +15,6 @@ this module; declarations live in `namespace Warstadt2022.Examples`.
 
 namespace Warstadt2022.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "warstadt2022_1"
     source := ⟨"warstadt-2022", "(1a)"⟩

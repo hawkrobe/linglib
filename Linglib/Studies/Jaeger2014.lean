@@ -587,7 +587,6 @@ one or two strategies of the previous stage. -/
 
 namespace Horn
 
-open Data.Examples
 
 /-- Example 6's semantic game, Table 10. -/
 def game : SemanticGame Unit (Fin 2) (Fin 2) (Fin 2) where

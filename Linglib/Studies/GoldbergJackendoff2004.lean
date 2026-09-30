@@ -63,7 +63,7 @@ patient.
 
 namespace GoldbergJackendoff2004
 
-open ArgumentStructure Data.Examples
+open ArgumentStructure
 open English
 open English.Verbs hiding Verb
 

@@ -15,8 +15,6 @@ this module; declarations live in `namespace RuytenbeekEtAl2017.Examples`.
 
 namespace RuytenbeekEtAl2017.Examples
 
-open Data.Examples
-
 def ruytenbeek2017_ex17 : Datum :=
   { id := "ruytenbeek2017_ex17"
     source := ⟨"ruytenbeek-etal-2017", "(17)"⟩

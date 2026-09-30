@@ -15,8 +15,6 @@ this module; declarations live in `namespace Fortuny2024.Examples`.
 
 namespace Fortuny2024.Examples
 
-open Data.Examples
-
 def ex3a : Datum :=
   { id := "fortuny2024_ex3a"
     source := ⟨"fortuny-2024", "(3a)"⟩

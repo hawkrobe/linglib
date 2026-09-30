@@ -15,8 +15,6 @@ this module; declarations live in `namespace Maier2015.Examples`.
 
 namespace Maier2015.Examples
 
-open Data.Examples
-
 def ex_42 : Datum :=
   { id := "maier2015_42"
     source := ⟨"maier-2015", "(42), after Karttunen (1973)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Arka2013.Examples`.
 
 namespace Arka2013.Examples
 
-open Data.Examples
-
 def ex_3 : Datum :=
   { id := "arka2013_3"
     source := ⟨"arka-2013", "(3)"⟩

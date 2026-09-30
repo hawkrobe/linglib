@@ -52,7 +52,7 @@ object unit operators of section 4 are not formalized.
 
 namespace GrimmDocekal2021
 
-open Mereology Data.Examples
+open Mereology
 
 /-! ### The judged noun phrases, section 2 -/
 

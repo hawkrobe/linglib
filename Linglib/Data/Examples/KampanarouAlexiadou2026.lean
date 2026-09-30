@@ -15,8 +15,6 @@ this module; declarations live in `namespace KampanarouAlexiadou2026.Examples`.
 
 namespace KampanarouAlexiadou2026.Examples
 
-open Data.Examples
-
 def ka2026_5a : Datum :=
   { id := "ka2026_5a"
     source := ⟨"kampanarou-alexiadou-2026", "(5a)"⟩

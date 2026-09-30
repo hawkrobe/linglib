@@ -49,7 +49,7 @@ accessibility relation, covering the modal and the quantificational cases alike.
 
 namespace FoxKatzir2011
 
-open Alternatives Exhaustification ModalLogic Set Data.Examples
+open Alternatives Exhaustification ModalLogic Set
 
 variable {W : Type*}
 

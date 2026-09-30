@@ -15,8 +15,6 @@ this module; declarations live in `namespace Haspelmath2025b.Examples`.
 
 namespace Haspelmath2025b.Examples
 
-open Data.Examples
-
 def yomaseru : Datum :=
   { id := "haspelmath2025b_yomaseru"
     source := ⟨"haspelmath-2025b", "§2"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Belnap1982.Examples`.
 
 namespace Belnap1982.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "belnap1982_1"
     source := ⟨"belnap-1982", "(1)"⟩

@@ -50,7 +50,7 @@ quantificational, bound by a covert adverb of quantification, and a past-tense o
 
 namespace ArreguiKusumoto1998
 
-open Data.Examples English.TemporalConnectives Japanese.TemporalConnectives
+open English.TemporalConnectives Japanese.TemporalConnectives
 open Tense (SOTParameter EmbeddedTenseReading availableReadings)
 
 variable {T : Type*}

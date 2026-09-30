@@ -35,7 +35,7 @@ by the inflectional-head criterion.
 
 namespace Anderson2006a
 
-open AuxiliaryVerbs Data.Examples Negation
+open AuxiliaryVerbs Negation
 
 /-! ### Where the inflection is marked -/
 

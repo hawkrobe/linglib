@@ -15,8 +15,6 @@ this module; declarations live in `namespace Rudin2025b.Examples`.
 
 namespace Rudin2025b.Examples
 
-open Data.Examples
-
 def ex6b_wonder : Datum :=
   { id := "rudin2025b_ex6b_wonder"
     source := ⟨"rudin-2025b", "(6b)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace ZaenenMalingThrainsson1985.Examples
 
 namespace ZaenenMalingThrainsson1985.Examples
 
-open Data.Examples
-
 def zmt1985_8a : Datum :=
   { id := "zmt1985_8a"
     source := ⟨"zaenen-maling-thrainsson-1985", "(8a)"⟩

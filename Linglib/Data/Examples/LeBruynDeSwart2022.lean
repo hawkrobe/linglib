@@ -15,8 +15,6 @@ this module; declarations live in `namespace LeBruynDeSwart2022.Examples`.
 
 namespace LeBruynDeSwart2022.Examples
 
-open Data.Examples
-
 def boeken_niet_uitgelezen : Datum :=
   { id := "lebruyndeswart2022_boeken_niet_uitgelezen"
     source := ⟨"le-bruyn-de-swart-2022", "(35)"⟩

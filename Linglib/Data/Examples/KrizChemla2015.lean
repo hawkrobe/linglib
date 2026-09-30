@@ -15,8 +15,6 @@ this module; declarations live in `namespace KrizChemla2015.Examples`.
 
 namespace KrizChemla2015.Examples
 
-open Data.Examples
-
 def every_C2_gap : Datum :=
   { id := "krizchemla2015_every_C2_gap"
     source := ⟨"kriz-chemla-2015", "Exp. C2, (19) E-every+GAP"⟩

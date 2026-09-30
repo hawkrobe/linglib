@@ -62,7 +62,7 @@ responses outside it (`rows_siChe_siQue_not_mem_reversePositive`).
 
 namespace GarassinoJacob2018
 
-open Question Discourse Data.Examples
+open Question Discourse
 
 variable {W F : Type*}
 

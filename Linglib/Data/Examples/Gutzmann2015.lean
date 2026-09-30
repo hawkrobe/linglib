@@ -15,8 +15,6 @@ this module; declarations live in `namespace Gutzmann2015.Examples`.
 
 namespace Gutzmann2015.Examples
 
-open Data.Examples
-
 def ex_5_34 : Datum :=
   { id := "gutzmann2015_5_34"
     source := ⟨"gutzmann-2015", "(5.34)"⟩

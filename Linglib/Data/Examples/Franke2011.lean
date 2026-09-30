@@ -15,8 +15,6 @@ this module; declarations live in `namespace Franke2011.Examples`.
 
 namespace Franke2011.Examples
 
-open Data.Examples
-
 def ex4 : Datum :=
   { id := "franke2011_ex4"
     source := ⟨"franke-2011", "(4)"⟩

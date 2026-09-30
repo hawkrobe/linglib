@@ -15,8 +15,6 @@ this module; declarations live in `namespace EvcenBaleBarner2026.Examples`.
 
 namespace EvcenBaleBarner2026.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "evcenbalebarner2026_1a"
     source := ⟨"evcen-bale-barner-2026", "(1a)"⟩

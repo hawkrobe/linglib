@@ -98,7 +98,7 @@ conjunction's marker. Each construction is then checked against the paper's judg
 
 namespace DalrympleKaplan2000
 
-open Data.Examples Morphology
+open Morphology
 
 /-- The paper's judgment on `e` is the prediction `P`. -/
 abbrev AcceptableIff (e : Datum) (P : Prop) : Prop := e.judgment = .acceptable ↔ P

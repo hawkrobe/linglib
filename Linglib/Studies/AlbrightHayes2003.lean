@@ -55,7 +55,7 @@ discount, and the analogical model itself are not modelled.
 
 namespace AlbrightHayes2003
 
-open Data.Examples Phonology Subregular.LocalRewrite English English.Phonology
+open Phonology Subregular.LocalRewrite English English.Phonology
 
 deriving instance DecidableEq for ContextElem
 

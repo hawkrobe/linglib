@@ -15,8 +15,6 @@ this module; declarations live in `namespace Just2024.Examples`.
 
 namespace Just2024.Examples
 
-open Data.Examples
-
 def ex_2a : Datum :=
   { id := "just2024_2a"
     source := ⟨"just-2024", "(2a)"⟩

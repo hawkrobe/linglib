@@ -15,8 +15,6 @@ this module; declarations live in `namespace Dayal2016.Examples`.
 
 namespace Dayal2016.Examples
 
-open Data.Examples
-
 def ex33a : Datum :=
   { id := "dayal2016_ex33a"
     source := ⟨"dayal-2016", "(33a)"⟩

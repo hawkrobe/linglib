@@ -59,7 +59,7 @@ inanimate causer of (70a) and the isolated -j form (71) are recorded as data onl
 
 namespace Coon2019
 
-open Chuj Minimalist.Voice Data.Examples ArgumentStructure
+open Chuj Minimalist.Voice ArgumentStructure
 
 /-! ### Root classes -/
 

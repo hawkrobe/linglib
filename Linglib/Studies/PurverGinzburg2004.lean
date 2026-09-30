@@ -49,7 +49,7 @@ formalized.
 
 namespace PurverGinzburg2004
 
-open Data.Examples Examples Quantifier Quantifier.GQ Quantifier.NP
+open Examples Quantifier Quantifier.GQ Quantifier.NP
 
 /-! ### Signs and the Definiteness Principle (§2.1, §4.5) -/
 

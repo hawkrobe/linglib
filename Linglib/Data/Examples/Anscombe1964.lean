@@ -15,8 +15,6 @@ this module; declarations live in `namespace Anscombe1964.Examples`.
 
 namespace Anscombe1964.Examples
 
-open Data.Examples
-
 def i : Datum :=
   { id := "anscombe1964_i"
     source := ⟨"anscombe-1964", "§I (i)"⟩

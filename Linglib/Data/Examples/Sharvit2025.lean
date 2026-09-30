@@ -15,8 +15,6 @@ this module; declarations live in `namespace Sharvit2025.Examples`.
 
 namespace Sharvit2025.Examples
 
-open Data.Examples
-
 def ex5a : Datum :=
   { id := "sharvit2025_ex5a"
     source := ⟨"sharvit-2025", "(5a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Filip2012.Examples`.
 
 namespace Filip2012.Examples
 
-open Data.Examples
-
 def ex_1a_in : Datum :=
   { id := "filip2012_1a_in"
     source := ⟨"filip-2012", "(1a)"⟩

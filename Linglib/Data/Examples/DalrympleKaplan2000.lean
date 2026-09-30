@@ -15,8 +15,6 @@ this module; declarations live in `namespace DalrympleKaplan2000.Examples`.
 
 namespace DalrympleKaplan2000.Examples
 
-open Data.Examples
-
 def ex_17 : Datum :=
   { id := "dalrymplekaplan2000_17"
     source := ⟨"dalrymple-kaplan-2000", "(17)"⟩

@@ -52,7 +52,6 @@ mismatches among the diagnostics.
 
 namespace Svenonius2004
 
-open Data.Examples (Datum)
 open Morphology (Morph)
 open Morphology.Word (Tree)
 open Aspect (Perfectivity)

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Mizuno2024.Examples`.
 
 namespace Mizuno2024.Examples
 
-open Data.Examples
-
 def en1a : Datum :=
   { id := "mizuno2024_en1a"
     source := ⟨"mizuno-2024", "(1a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace GeurtsPouscoulous2009.Examples`.
 
 namespace GeurtsPouscoulous2009.Examples
 
-open Data.Examples
-
 def t1_simple : Datum :=
   { id := "geurtspouscoulous2009_t1_simple"
     source := ⟨"geurts-pouscoulous-2009", "Table 1 ∅"⟩

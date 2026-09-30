@@ -66,7 +66,7 @@ normalized `strategy` and `polarity` features. The kin of *razve* across Slavic 
 
 namespace Simik2024
 
-open Question Data.Examples
+open Question
 open scoped ModalLogic
 
 /-! ### Bias and the polarity of the prejacent (§3.1) -/

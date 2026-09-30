@@ -15,8 +15,6 @@ this module; declarations live in `namespace RoseWalker2004.Examples`.
 
 namespace RoseWalker2004.Examples
 
-open Data.Examples
-
 def ex26a_i : Datum :=
   { id := "rosewalker2004_ex26a-i"
     source := ⟨"rose-walker-2001", "(26a-i)"⟩

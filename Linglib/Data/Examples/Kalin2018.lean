@@ -15,8 +15,6 @@ this module; declarations live in `namespace Kalin2018.Examples`.
 
 namespace Kalin2018.Examples
 
-open Data.Examples
-
 def ex_8a : Datum :=
   { id := "kalin2018_8a"
     source := ⟨"kalin-2018", "(8a)"⟩

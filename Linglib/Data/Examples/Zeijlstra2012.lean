@@ -15,8 +15,6 @@ this module; declarations live in `namespace Zeijlstra2012.Examples`.
 
 namespace Zeijlstra2012.Examples
 
-open Data.Examples
-
 def ex_20a : Datum :=
   { id := "zeijlstra2012_20a"
     source := ⟨"zeijlstra-2012", "(20a)"⟩

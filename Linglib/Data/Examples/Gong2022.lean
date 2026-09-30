@@ -15,8 +15,6 @@ this module; declarations live in `namespace Gong2022.Examples`.
 
 namespace Gong2022.Examples
 
-open Data.Examples
-
 def ex_18b : Datum :=
   { id := "gong2022_18b"
     source := ⟨"gong-2022", "(18b)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Rett2020a.Examples`.
 
 namespace Rett2020a.Examples
 
-open Data.Examples
-
 def ex_9 : Datum :=
   { id := "rett2020a_9"
     source := ⟨"rett-2020a", "(9)"⟩

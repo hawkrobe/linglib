@@ -49,7 +49,7 @@ competitor.
 
 namespace Gong2022
 
-open Minimalist Data.Examples
+open Minimalist
 
 /-! ### The hybrid case rules (26) at a landing site -/
 

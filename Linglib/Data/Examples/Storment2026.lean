@@ -15,8 +15,6 @@ this module; declarations live in `namespace Storment2026.Examples`.
 
 namespace Storment2026.Examples
 
-open Data.Examples
-
 def ex1a : Datum :=
   { id := "storment2026_ex1a"
     source := ⟨"storment-2026", "(1a)"⟩

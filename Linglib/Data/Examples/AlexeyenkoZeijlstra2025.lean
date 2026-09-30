@@ -15,8 +15,6 @@ this module; declarations live in `namespace AlexeyenkoZeijlstra2025.Examples`.
 
 namespace AlexeyenkoZeijlstra2025.Examples
 
-open Data.Examples
-
 def az2025_1a : Datum :=
   { id := "az2025_1a"
     source := ⟨"alexeyenko-zeijlstra-2025", "(1a)"⟩

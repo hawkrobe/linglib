@@ -52,7 +52,7 @@ admitted states (`rows_admits`).
 
 namespace Glass2025
 
-open Doxastic Presupposition Data.Examples
+open Doxastic Presupposition
 open English
 open English.Verbs hiding Verb
 

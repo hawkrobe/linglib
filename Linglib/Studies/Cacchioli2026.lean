@@ -44,7 +44,7 @@ thesis's own examples, and both are attested on each side, so neither check is v
 @[expose] public section
 namespace Cacchioli2026
 
-open Data.Examples Tigrinya.Complementizers
+open Tigrinya.Complementizers
 
 /-! ### Selection -/
 

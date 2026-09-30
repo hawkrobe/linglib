@@ -15,8 +15,6 @@ this module; declarations live in `namespace Traugott2010.Examples`.
 
 namespace Traugott2010.Examples
 
-open Data.Examples
-
 def ex_5a : Datum :=
   { id := "traugott2010_5a"
     source := ⟨"traugott-2010", "(5a)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace TonhauserBeaverDegen2018.Examples`.
 
 namespace TonhauserBeaverDegen2018.Examples
 
-open Data.Examples
-
 def tbd2018_1a_nrrc : Datum :=
   { id := "tbd2018_1a_nrrc"
     source := ⟨"tonhauser-beaver-degen-2018", "Exp 1a (12.1), NRRC"⟩

@@ -53,7 +53,7 @@ ignorant speaker, and participants under cognitive load answered no to the ignor
 
 namespace BaleEtAl2025
 
-open Data.Examples GoodmanStuhlmuller2013 NeoGricean Set
+open GoodmanStuhlmuller2013 NeoGricean Set
 
 /-! ### Worlds, evidence and knowledge states -/
 

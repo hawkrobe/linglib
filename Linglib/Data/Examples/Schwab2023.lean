@@ -15,8 +15,6 @@ this module; declarations live in `namespace Schwab2023.Examples`.
 
 namespace Schwab2023.Examples
 
-open Data.Examples
-
 def ex7a_jemals : Datum :=
   { id := "schwab2023_ex7a_jemals"
     source := ⟨"schwab-2023", "(7a)"⟩

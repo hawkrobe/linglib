@@ -42,7 +42,6 @@ leaves uncertain have no rows.
 
 namespace Rett2020b
 
-open Data.Examples
 
 /-! ### Strategies and classes -/
 
@@ -209,7 +208,7 @@ def Diagnostic.labels : List (String × Diagnostic) :=
 structure Row where
   strategy : Strategy
   diagnostic : Option Diagnostic
-  judgment : Data.Examples.Judgment
+  judgment : Judgment
 
 /-- A datum read into its row. -/
 def Row.ofDatum (e : Datum) : Option Row := do

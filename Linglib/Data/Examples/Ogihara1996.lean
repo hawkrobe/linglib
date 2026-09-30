@@ -15,8 +15,6 @@ this module; declarations live in `namespace Ogihara1996.Examples`.
 
 namespace Ogihara1996.Examples
 
-open Data.Examples
-
 def ex2a : Datum :=
   { id := "ogihara1996_ex2a"
     source := ⟨"ogihara-1996", "(2a)"⟩

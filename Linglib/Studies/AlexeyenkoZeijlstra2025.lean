@@ -43,7 +43,6 @@ the languages and the judgments.
 
 namespace AlexeyenkoZeijlstra2025
 
-open Data.Examples
 
 /-! ### Agreement marking -/
 

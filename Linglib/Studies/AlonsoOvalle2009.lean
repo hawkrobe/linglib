@@ -50,7 +50,6 @@ The paper's verdicts are checked in `rows_agree`.
 namespace AlonsoOvalle2009
 
 open Conditional McKayVanInwagen1977
-  Data.Examples
 
 variable {W : Type*} [DecidableEq W] [Fintype W] (ord : W → Preorder W)
   [∀ w, DecidableRel (ord w).le] (S : Finset (Finset W)) (C : Set W) [DecidablePred (· ∈ C)]

@@ -15,8 +15,6 @@ this module; declarations live in `namespace AckemaNeeleman2018.Examples`.
 
 namespace AckemaNeeleman2018.Examples
 
-open Data.Examples
-
 def ex_2a : Datum :=
   { id := "ackemaneeleman2018_2a"
     source := ⟨"ackema-neeleman-2018", "ch. 2 (2a)"⟩

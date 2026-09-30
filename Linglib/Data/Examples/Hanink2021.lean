@@ -15,8 +15,6 @@ this module; declarations live in `namespace Hanink2021.Examples`.
 
 namespace Hanink2021.Examples
 
-open Data.Examples
-
 def ex1 : Datum :=
   { id := "hanink2021_ex1"
     source := ⟨"hanink-2021", "(1)"⟩

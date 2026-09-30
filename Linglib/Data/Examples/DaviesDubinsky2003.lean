@@ -15,8 +15,6 @@ this module; declarations live in `namespace DaviesDubinsky2003.Examples`.
 
 namespace DaviesDubinsky2003.Examples
 
-open Data.Examples
-
 def ex52a_write : Datum :=
   { id := "daviesdubinsky2003_ex52a_write"
     source := ⟨"davies-dubinsky-2003", "(52a)"⟩

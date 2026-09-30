@@ -15,8 +15,6 @@ this module; declarations live in `namespace Marantz2013.Examples`.
 
 namespace Marantz2013.Examples
 
-open Data.Examples
-
 def taught : Datum :=
   { id := "marantz2013_taught"
     source := ⟨"marantz-2013", "(1a)"⟩

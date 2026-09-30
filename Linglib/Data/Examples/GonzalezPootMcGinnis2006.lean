@@ -15,8 +15,6 @@ this module; declarations live in `namespace GonzalezPootMcGinnis2006.Examples`.
 
 namespace GonzalezPootMcGinnis2006.Examples
 
-open Data.Examples
-
 def gpm2006_19 : Datum :=
   { id := "gpm2006_19"
     source := ⟨"gonzalez-poot-mcginnis-2006", "(19)"⟩

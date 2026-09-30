@@ -15,8 +15,6 @@ this module; declarations live in `namespace Embick2010.Examples`.
 
 namespace Embick2010.Examples
 
-open Data.Examples
-
 def amavi : Datum :=
   { id := "embick2010_amavi"
     source := ⟨"embick-2010", "ch. 3, (3), (10a)"⟩

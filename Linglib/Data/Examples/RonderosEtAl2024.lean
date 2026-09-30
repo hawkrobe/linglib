@@ -15,8 +15,6 @@ this module; declarations live in `namespace RonderosEtAl2024.Examples`.
 
 namespace RonderosEtAl2024.Examples
 
-open Data.Examples
-
 def ronderos2024_1a : Datum :=
   { id := "ronderos2024_1a"
     source := ⟨"ronderos-etal-2024", "Figure 1 (1a)"⟩

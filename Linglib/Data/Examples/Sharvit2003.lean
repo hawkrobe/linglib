@@ -15,8 +15,6 @@ this module; declarations live in `namespace Sharvit2003.Examples`.
 
 namespace Sharvit2003.Examples
 
-open Data.Examples
-
 def ex1 : Datum :=
   { id := "sharvit2003_ex1"
     source := ⟨"sharvit-2003", "(1)"⟩

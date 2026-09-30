@@ -15,8 +15,6 @@ this module; declarations live in `namespace FarkasRoelofsen2017.Examples`.
 
 namespace FarkasRoelofsen2017.Examples
 
-open Data.Examples
-
 def ex_61a : Datum :=
   { id := "farkasroelofsen2017_61a"
     source := ⟨"farkas-roelofsen-2017", "(61a)"⟩

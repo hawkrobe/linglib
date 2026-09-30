@@ -188,7 +188,7 @@ theorem falling_stays :
 
 /-! ### The data -/
 
-open Data.Examples Examples
+open Examples
 
 /-- A form's characters with the accent mark removed. -/
 def stripAccent (s : String) : List Char :=

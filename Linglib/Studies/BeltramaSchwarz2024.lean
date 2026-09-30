@@ -63,7 +63,6 @@ namespace BeltramaSchwarz2024
 
 open SocialMeaning
 open Numerals.Precision
-open Data.Examples (Datum)
 
 /-! ### Conditions -/
 

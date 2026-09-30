@@ -15,8 +15,6 @@ this module; declarations live in `namespace Wilder2013.Examples`.
 
 namespace Wilder2013.Examples
 
-open Data.Examples
-
 def ex10b : Datum :=
   { id := "wilder2013_ex10b"
     source := ⟨"wilder-2013", "(10b)"⟩

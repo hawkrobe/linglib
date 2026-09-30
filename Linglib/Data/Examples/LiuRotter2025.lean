@@ -15,8 +15,6 @@ this module; declarations live in `namespace LiuRotter2025.Examples`.
 
 namespace LiuRotter2025.Examples
 
-open Data.Examples
-
 def poss_sm : Datum :=
   { id := "liurotter2025_poss_sm"
     source := ⟨"liu-rotter-2025", "(3) possibility SM"⟩

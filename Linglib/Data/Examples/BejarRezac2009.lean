@@ -15,8 +15,6 @@ this module; declarations live in `namespace BejarRezac2009.Examples`.
 
 namespace BejarRezac2009.Examples
 
-open Data.Examples
-
 def br2009_2a : Datum :=
   { id := "br2009_2a"
     source := ⟨"bejar-rezac-2009", "(2a)"⟩

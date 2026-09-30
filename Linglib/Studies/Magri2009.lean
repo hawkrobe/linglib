@@ -479,7 +479,6 @@ end Universal
 
 section GermanWordOrder
 
-open Data.Examples
 
 /-- Common knowledge about the predicate of a row, by (70) from the level ([carlson-1977]) its
 `predicate_level` feature records: an individual-level predicate is permanent, a stage-level one

@@ -33,7 +33,7 @@ of the display.
 
 namespace EngelhardtEtAl2006
 
-open Data.Examples EngelhardtEtAl2006.Examples
+open EngelhardtEtAl2006.Examples
 
 /-- The kinds of object in a display, the apple to be moved, the frog, and the two kinds of
 destination. -/

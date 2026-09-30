@@ -36,7 +36,7 @@ an expletive Voice at logical form while still surfacing as *have*.
 
 namespace Myler2016
 
-open DistributedMorphology DistributedMorphology.Allosemy Data.Examples
+open DistributedMorphology DistributedMorphology.Allosemy
 
 /-! ### The copula's context and form -/
 

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Woolford1997.Examples`.
 
 namespace Woolford1997.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "woolford1997_1"
     source := ⟨"woolford-1997", "(3)"⟩

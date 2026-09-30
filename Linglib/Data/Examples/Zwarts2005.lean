@@ -15,8 +15,6 @@ this module; declarations live in `namespace Zwarts2005.Examples`.
 
 namespace Zwarts2005.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "zwarts2005_1a"
     source := ⟨"zwarts-2005", "(1a)"⟩

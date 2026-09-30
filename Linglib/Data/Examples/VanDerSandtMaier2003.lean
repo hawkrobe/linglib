@@ -15,8 +15,6 @@ this module; declarations live in `namespace VanDerSandtMaier2003.Examples`.
 
 namespace VanDerSandtMaier2003.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "vandersandtmaier2003_1"
     source := ⟨"van-der-sandt-maier-2003", "(1)"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace DalrympleHaug2024.Examples`.
 
 namespace DalrympleHaug2024.Examples
 
-open Data.Examples
-
 def ex_1 : Datum :=
   { id := "dalrymplehaug2024_1"
     source := ⟨"dalrymple-haug-2024", "(1)"⟩

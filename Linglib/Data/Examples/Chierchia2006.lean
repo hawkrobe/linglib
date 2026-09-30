@@ -15,8 +15,6 @@ this module; declarations live in `namespace Chierchia2006.Examples`.
 
 namespace Chierchia2006.Examples
 
-open Data.Examples
-
 def ex2a : Datum :=
   { id := "chierchia2006_ex2a"
     source := ⟨"chierchia-2006", "(2a)"⟩

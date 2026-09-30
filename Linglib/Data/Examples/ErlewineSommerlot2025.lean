@@ -15,8 +15,6 @@ this module; declarations live in `namespace ErlewineSommerlot2025.Examples`.
 
 namespace ErlewineSommerlot2025.Examples
 
-open Data.Examples
-
 def ex_1a : Datum :=
   { id := "erlewinesommerlot2025_1a"
     source := ⟨"sneddon-1996", "p. xxiii"⟩

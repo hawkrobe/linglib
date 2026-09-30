@@ -15,8 +15,6 @@ this module; declarations live in `namespace OgiharaSteinertThrelkeld2024.Exampl
 
 namespace OgiharaSteinertThrelkeld2024.Examples
 
-open Data.Examples
-
 def ost2024_after_veridical : Datum :=
   { id := "ost2024_after_veridical"
     source := ⟨"ogihara-steinert-threlkeld-2024", "veridicality"⟩

@@ -15,8 +15,6 @@ this module; declarations live in `namespace Marantz1991.Examples`.
 
 namespace Marantz1991.Examples
 
-open Data.Examples
-
 def m1991_1a : Datum :=
   { id := "m1991_1a"
     source := ⟨"marantz-1991", "(1a)"⟩

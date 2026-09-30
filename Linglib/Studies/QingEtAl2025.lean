@@ -74,7 +74,7 @@ constituent question, which the paper sets aside, are recorded but not predicted
 
 namespace QingEtAl2025
 
-open Data.Examples Examples Preferential Modality
+open Examples Preferential Modality
 
 variable {W E : Type*}
 
