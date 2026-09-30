@@ -1,14 +1,12 @@
 [
   {
     "id": "arad2005_3_lamad",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(3)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (3)"},
     "language": "hebr1245",
     "primaryText": "lamad",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["lamad", "learn"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "learn",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -19,18 +17,17 @@
       ["category", "v"],
       ["gloss", "learn"]
     ],
-    "comment": "Chapter 2 (3): the seven verbal patterns."
+    "comment": "Chapter 2 (3): the seven verbal patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_3_nilmad",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(3)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (3)"},
     "language": "hebr1245",
     "primaryText": "nilmad",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["nilmad", "learn.PASS"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "learn—pass.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -41,18 +38,17 @@
       ["category", "v"],
       ["gloss", "learn (passive)"]
     ],
-    "comment": "Chapter 2 (3): the seven verbal patterns."
+    "comment": "Chapter 2 (3): the seven verbal patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_3_siper",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(3)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (3)"},
     "language": "hebr1245",
     "primaryText": "siper",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["siper", "tell"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "tell",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -63,18 +59,17 @@
       ["category", "v"],
       ["gloss", "tell"]
     ],
-    "comment": "Chapter 2 (3): the seven verbal patterns."
+    "comment": "Chapter 2 (3): the seven verbal patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_3_supar",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(3)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (3)"},
     "language": "hebr1245",
     "primaryText": "supar",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["supar", "tell.PASS"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "tell—pass.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -85,18 +80,17 @@
       ["category", "v"],
       ["gloss", "tell (passive)"]
     ],
-    "comment": "Chapter 2 (3): the seven verbal patterns."
+    "comment": "Chapter 2 (3): the seven verbal patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_3_hiqlit",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(3)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (3)"},
     "language": "hebr1245",
     "primaryText": "hiqlit",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["hiqlit", "record"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "record",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -107,18 +101,17 @@
       ["category", "v"],
       ["gloss", "record"]
     ],
-    "comment": "Chapter 2 (3): the seven verbal patterns."
+    "comment": "Chapter 2 (3): the seven verbal patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_3_huqlat",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(3)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (3)"},
     "language": "hebr1245",
     "primaryText": "huqlat",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["huqlat", "record.PASS"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "record—pass.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -129,18 +122,17 @@
       ["category", "v"],
       ["gloss", "record (passive)"]
     ],
-    "comment": "Chapter 2 (3): the seven verbal patterns."
+    "comment": "Chapter 2 (3): the seven verbal patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_3_hitpalel",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(3)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (3)"},
     "language": "hebr1245",
     "primaryText": "hitpalel",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["hitpalel", "pray"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "pray",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -151,17 +143,16 @@
       ["category", "v"],
       ["gloss", "pray"]
     ],
-    "comment": "Chapter 2 (3): the seven verbal patterns."
+    "comment": "Chapter 2 (3): the seven verbal patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_6a_nipec",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(6a)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (6a)"},
     "language": "hebr1245",
     "primaryText": "nipec",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["nipec", "shatter"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -173,17 +164,16 @@
       ["category", "v"],
       ["gloss", "shatter"]
     ],
-    "comment": "Chapter 2 (6): active member of the pair."
+    "comment": "Chapter 2 (6): active member of the pair. The book glosses the pair once, 'shatter act–pass, patterns 3–4', and prints no gloss line.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_6a_nupac",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(6a)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (6a)"},
     "language": "hebr1245",
     "primaryText": "nupac",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["nupac", "shatter.PASS"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -195,17 +185,16 @@
       ["category", "v"],
       ["gloss", "shatter (passive)"]
     ],
-    "comment": "Chapter 2 (6): passive member of the pair."
+    "comment": "Chapter 2 (6): passive member of the pair. The book glosses the pair once, 'shatter act–pass, patterns 3–4', and prints no gloss line.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_6b_xileq",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(6b)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (6b)"},
     "language": "hebr1245",
     "primaryText": "xileq",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["xileq", "divide"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -217,17 +206,16 @@
       ["category", "v"],
       ["gloss", "divide"]
     ],
-    "comment": "Chapter 2 (6): active member of the pair."
+    "comment": "Chapter 2 (6): active member of the pair. The book glosses the pair once, 'divide act–pass, patterns 3–4', and prints no gloss line.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_6b_xulaq",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(6b)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (6b)"},
     "language": "hebr1245",
     "primaryText": "xulaq",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["xulaq", "divide.PASS"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -239,17 +227,16 @@
       ["category", "v"],
       ["gloss", "divide (passive)"]
     ],
-    "comment": "Chapter 2 (6): passive member of the pair."
+    "comment": "Chapter 2 (6): passive member of the pair. The book glosses the pair once, 'divide act–pass, patterns 3–4', and prints no gloss line.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_6c_histir",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(6c)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (6c)"},
     "language": "hebr1245",
     "primaryText": "histir",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["histir", "hide"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -261,17 +248,16 @@
       ["category", "v"],
       ["gloss", "hide"]
     ],
-    "comment": "Chapter 2 (6): active member of the pair."
+    "comment": "Chapter 2 (6): active member of the pair. The book glosses the pair once, 'hide act–pass, patterns 5–6', and prints no gloss line.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_6c_hustar",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(6c)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (6c)"},
     "language": "hebr1245",
     "primaryText": "hustar",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["hustar", "hide.PASS"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -283,17 +269,16 @@
       ["category", "v"],
       ["gloss", "hide (passive)"]
     ],
-    "comment": "Chapter 2 (6): passive member of the pair."
+    "comment": "Chapter 2 (6): passive member of the pair. The book glosses the pair once, 'hide act–pass, patterns 5–6', and prints no gloss line.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_6d_hifqid",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(6d)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (6d)"},
     "language": "hebr1245",
     "primaryText": "hifqid",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["hifqid", "deposit"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -305,17 +290,16 @@
       ["category", "v"],
       ["gloss", "deposit"]
     ],
-    "comment": "Chapter 2 (6): active member of the pair."
+    "comment": "Chapter 2 (6): active member of the pair. The book glosses the pair once, 'deposit act–pass, patterns 5–6', and prints no gloss line.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_6d_hufqad",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(6d)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (6d)"},
     "language": "hebr1245",
     "primaryText": "hufqad",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["hufqad", "deposit.PASS"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -327,18 +311,17 @@
       ["category", "v"],
       ["gloss", "deposit (passive)"]
     ],
-    "comment": "Chapter 2 (6): passive member of the pair."
+    "comment": "Chapter 2 (6): passive member of the pair. The book glosses the pair once, 'deposit act–pass, patterns 5–6', and prints no gloss line.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_29a_tilfen",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(29a)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (29a)"},
     "language": "hebr1245",
     "primaryText": "tilfen",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["tilfen", "to telephone"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to telephone",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -349,18 +332,17 @@
       ["category", "v"],
       ["gloss", "to telephone"]
     ],
-    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification."
+    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification. The book prints 'patterns 3', a slip for 'pattern 3'. (29) repeats (14).",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_29b_hitmastel",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(29b)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (29b)"},
     "language": "hebr1245",
     "primaryText": "hitmastel",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["hitmastel", "to get drunk"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to get drunk",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -371,18 +353,17 @@
       ["category", "v"],
       ["gloss", "to get drunk"]
     ],
-    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification."
+    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification. (29) repeats (14).",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_29c_xarap",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(29c)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (29c)"},
     "language": "hebr1245",
     "primaryText": "xarap",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["xarap", "to snooze"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to snooze",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -393,18 +374,17 @@
       ["category", "v"],
       ["gloss", "to snooze"]
     ],
-    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification."
+    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification. (29) repeats (14).",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_29d_mixshev",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(29d)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (29d)"},
     "language": "hebr1245",
     "primaryText": "mixšev",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["mixšev", "to computerize"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to computerize",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -415,18 +395,17 @@
       ["category", "v"],
       ["gloss", "to computerize"]
     ],
-    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification."
+    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification. (29) repeats (14).",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_32a_tixzeq",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(32a)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (32a)"},
     "language": "hebr1245",
     "primaryText": "tixzeq",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["tixzeq", "to maintain"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to maintain",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -437,18 +416,17 @@
       ["category", "v"],
       ["gloss", "to maintain"]
     ],
-    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification."
+    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_32b_misger",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(32b)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (32b)"},
     "language": "hebr1245",
     "primaryText": "misger",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["misger", "to frame"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to frame",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -459,18 +437,17 @@
       ["category", "v"],
       ["gloss", "to frame"]
     ],
-    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification."
+    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_32c_cinzer",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(32c)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 2 (32c)"},
     "language": "hebr1245",
     "primaryText": "cinzer",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["cinzer", "to censor"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to censor",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -481,18 +458,17 @@
       ["category", "v"],
       ["gloss", "to censor"]
     ],
-    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification."
+    "comment": "Chapter 2: verb formed from a noun or adjective by stem modification.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_39a_trinsfer",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(39a)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 7 (39a)"},
     "language": "hebr1245",
     "primaryText": "trinsfer",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["trinsfer", "to transfer"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to transfer",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -502,18 +478,17 @@
       ["category", "v"],
       ["gloss", "to transfer"]
     ],
-    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together."
+    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_39b_striptez",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(39b)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 7 (39b)"},
     "language": "hebr1245",
     "primaryText": "striptez",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["striptez", "to perform a striptease"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to perform a striptease",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -523,18 +498,17 @@
       ["category", "v"],
       ["gloss", "to perform a striptease"]
     ],
-    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together."
+    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_39c_sinxren",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(39c)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 7 (39c)"},
     "language": "hebr1245",
     "primaryText": "sinxren",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["sinxren", "synchronize"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "synchronize",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -544,18 +518,17 @@
       ["category", "v"],
       ["gloss", "synchronize"]
     ],
-    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together."
+    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together. The book prints 'syncronize'.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_40a_hiqliq",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(40a)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 7 (40a)"},
     "language": "hebr1245",
     "primaryText": "hiqliq",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["hiqliq", "to click"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to click",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -566,18 +539,17 @@
       ["category", "v"],
       ["gloss", "to click"]
     ],
-    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together."
+    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_40b_hifliq",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(40b)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 7 (40b)"},
     "language": "hebr1245",
     "primaryText": "hifliq",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["hifliq", "to slap"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to slap",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -588,18 +560,17 @@
       ["category", "v"],
       ["gloss", "to slap"]
     ],
-    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together."
+    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_40c_hishpritz",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(40c)"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 7 (40c)"},
     "language": "hebr1245",
     "primaryText": "hišpritz",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["hišpritz", "to splash"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to splash",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -610,18 +581,17 @@
       ["category", "v"],
       ["gloss", "to splash"]
     ],
-    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together."
+    "comment": "Chapter 7 §7.5, reported from Bat-El 1994: the base's consonant clusters are kept together.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_6b_fn2_musgar",
-    "source": {"bibkey": "arad-2005", "paperLabel": "(6b) fn. 2"},
+    "source": {"bibkey": "arad-2005", "paperLabel": "Ch. 7 fn. 2"},
     "language": "hebr1245",
     "primaryText": "musgar",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["musgar", "was framed"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "was framed",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -632,7 +602,8 @@
       ["category", "v"],
       ["gloss", "was framed"]
     ],
-    "comment": "Chapter 7, footnote 2: the passive of the denominal verb."
+    "comment": "Chapter 7, footnote 2: the passive of the denominal verb.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_2a_shemen",
@@ -640,10 +611,8 @@
     "language": "hebr1245",
     "primaryText": "šemen",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["šemen", "oil, grease"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "oil, grease",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -654,7 +623,8 @@
       ["category", "n"],
       ["gloss", "oil, grease"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_2b_shamenet",
@@ -662,10 +632,8 @@
     "language": "hebr1245",
     "primaryText": "šamenet",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["šamenet", "cream"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "cream",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -676,7 +644,8 @@
       ["category", "n"],
       ["gloss", "cream"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_2c_shuman",
@@ -684,10 +653,8 @@
     "language": "hebr1245",
     "primaryText": "šuman",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["šuman", "fat"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "fat",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -698,7 +665,8 @@
       ["category", "n"],
       ["gloss", "fat"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_2d_shamen",
@@ -706,10 +674,8 @@
     "language": "hebr1245",
     "primaryText": "šamen",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["šamen", "fat"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "fat",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -720,7 +686,8 @@
       ["category", "adj"],
       ["gloss", "fat"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_2e_hishmin",
@@ -728,10 +695,8 @@
     "language": "hebr1245",
     "primaryText": "hišmin",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["hišmin", "grow fat, fatten"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "grow fat/fatten",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -740,9 +705,10 @@
       ["root", "šmn"],
       ["pattern", "hiCCiC"],
       ["category", "v"],
-      ["gloss", "grow fat, fatten"]
+      ["gloss", "grow fat/fatten"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_2f_shimen",
@@ -750,10 +716,8 @@
     "language": "hebr1245",
     "primaryText": "šimen",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["šimen", "grease"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "grease",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -764,7 +728,8 @@
       ["category", "v"],
       ["gloss", "grease"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns. The book labels šimen '(n)', a slip for (v): CiCCeC is verbal pattern 3.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_3a_xashav",
@@ -772,10 +737,8 @@
     "language": "hebr1245",
     "primaryText": "xašav",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["xašav", "to think"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to think",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -786,7 +749,8 @@
       ["category", "v"],
       ["gloss", "to think"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_3b_xishev",
@@ -794,10 +758,8 @@
     "language": "hebr1245",
     "primaryText": "xišev",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["xišev", "to calculate"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to calculate",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -808,7 +770,8 @@
       ["category", "v"],
       ["gloss", "to calculate"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_3c_hexshiv",
@@ -816,10 +779,8 @@
     "language": "hebr1245",
     "primaryText": "hexšiv",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["hexšiv", "to consider"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to consider",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -830,7 +791,8 @@
       ["category", "v"],
       ["gloss", "to consider"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_3d_hitxashev",
@@ -838,10 +800,8 @@
     "language": "hebr1245",
     "primaryText": "hitxašev",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["hitxašev", "to be considerate"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to be considerate",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -852,7 +812,8 @@
       ["category", "v"],
       ["gloss", "to be considerate"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_3e_maxshev",
@@ -860,10 +821,8 @@
     "language": "hebr1245",
     "primaryText": "maxšev",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["maxšev", "a computer, calculator"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "a computer/calculator",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -872,9 +831,10 @@
       ["root", "xšb"],
       ["pattern", "maCCeC"],
       ["category", "n"],
-      ["gloss", "a computer, calculator"]
+      ["gloss", "a computer/calculator"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_3f_maxshava",
@@ -882,10 +842,8 @@
     "language": "hebr1245",
     "primaryText": "maxšava",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["maxšava", "a thought"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "a thought",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -896,7 +854,8 @@
       ["category", "n"],
       ["gloss", "a thought"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_3g_xashivut",
@@ -904,10 +863,8 @@
     "language": "hebr1245",
     "primaryText": "xašivut",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["xašivut", "importance"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "importance",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -918,7 +875,8 @@
       ["category", "n"],
       ["gloss", "importance"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_3h_xeshbon",
@@ -926,10 +884,8 @@
     "language": "hebr1245",
     "primaryText": "xešbon",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["xešbon", "arithmetic, bill"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "arithmetic/bill",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -938,9 +894,10 @@
       ["root", "xšb"],
       ["pattern", "CiCCon"],
       ["category", "n"],
-      ["gloss", "arithmetic, bill"]
+      ["gloss", "arithmetic/bill"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_3i_taxshiv",
@@ -948,10 +905,8 @@
     "language": "hebr1245",
     "primaryText": "taxšiv",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["taxšiv", "calculus"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "calculus",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -962,7 +917,8 @@
       ["category", "n"],
       ["gloss", "calculus"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_4a_qalat",
@@ -970,10 +926,8 @@
     "language": "hebr1245",
     "primaryText": "qalat",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["qalat", "to absorb, receive"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to absorb, receive",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -984,7 +938,8 @@
       ["category", "v"],
       ["gloss", "to absorb, receive"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_4b_hiqlit",
@@ -992,10 +947,8 @@
     "language": "hebr1245",
     "primaryText": "hiqlit",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["hiqlit", "to record"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to record",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1006,7 +959,8 @@
       ["category", "v"],
       ["gloss", "to record"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_4c_miqlat",
@@ -1014,10 +968,8 @@
     "language": "hebr1245",
     "primaryText": "miqlat",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["miqlat", "a shelter"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "a shelter",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1028,7 +980,8 @@
       ["category", "n"],
       ["gloss", "a shelter"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_4d_maqlet",
@@ -1036,10 +989,8 @@
     "language": "hebr1245",
     "primaryText": "maqlet",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["maqlet", "a receiver"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "a receiver",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1050,7 +1001,8 @@
       ["category", "n"],
       ["gloss", "a receiver"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_4e_taqlit",
@@ -1058,10 +1010,8 @@
     "language": "hebr1245",
     "primaryText": "taqlit",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["taqlit", "a record"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "a record",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1072,7 +1022,8 @@
       ["category", "n"],
       ["gloss", "a record"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_4f_qaletet",
@@ -1080,10 +1031,8 @@
     "language": "hebr1245",
     "primaryText": "qaletet",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["qaletet", "a cassette"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "a cassette",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1094,7 +1043,8 @@
       ["category", "n"],
       ["gloss", "a cassette"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_4g_qelet",
@@ -1102,10 +1052,8 @@
     "language": "hebr1245",
     "primaryText": "qelet",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["qelet", "input"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "input",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1116,7 +1064,8 @@
       ["category", "n"],
       ["gloss", "input"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_5a_sagar",
@@ -1124,10 +1073,8 @@
     "language": "hebr1245",
     "primaryText": "sagar",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["sagar", "close"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "close",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1138,7 +1085,8 @@
       ["category", "v"],
       ["gloss", "close"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_5b_hisgir",
@@ -1146,10 +1094,8 @@
     "language": "hebr1245",
     "primaryText": "hisgir",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["hisgir", "extradite"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "extradite",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1160,7 +1106,8 @@
       ["category", "v"],
       ["gloss", "extradite"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_5c_histager",
@@ -1168,10 +1115,8 @@
     "language": "hebr1245",
     "primaryText": "histager",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["histager", "cocoon oneself"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "cocoon oneself",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1182,7 +1127,8 @@
       ["category", "v"],
       ["gloss", "cocoon oneself"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_5d_seger",
@@ -1190,10 +1136,8 @@
     "language": "hebr1245",
     "primaryText": "seger",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["seger", "closure"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "closure",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1204,7 +1148,8 @@
       ["category", "n"],
       ["gloss", "closure"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_5e_sograyim",
@@ -1212,10 +1157,8 @@
     "language": "hebr1245",
     "primaryText": "sograyim",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["sograyim", "parentheses"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "parentheses",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1226,7 +1169,8 @@
       ["category", "n"],
       ["gloss", "parentheses"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_5f_misgeret",
@@ -1234,10 +1178,8 @@
     "language": "hebr1245",
     "primaryText": "misgeret",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["misgeret", "frame"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "frame",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1248,7 +1190,8 @@
       ["category", "n"],
       ["gloss", "frame"]
     ],
-    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns."
+    "comment": "Chapter 7: Multiple Contextualized Meaning of the root across patterns.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_6a_misgeret",
@@ -1256,10 +1199,8 @@
     "language": "hebr1245",
     "primaryText": "misgeret",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["misgeret", "a frame"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "a frame",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1270,7 +1211,8 @@
       ["category", "n"],
       ["gloss", "a frame"]
     ],
-    "comment": "Chapter 7 (6): the root-derived noun."
+    "comment": "Chapter 7 (6): the root-derived noun.",
+    "verified": "page-image"
   },
   {
     "id": "arad2005_Ch7_6b_misger",
@@ -1278,10 +1220,8 @@
     "language": "hebr1245",
     "primaryText": "misger",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["misger", "to frame"]
-    ],
-    "translation": "",
+    "glossedTokens": [],
+    "translation": "to frame",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1292,6 +1232,7 @@
       ["category", "v"],
       ["gloss", "to frame"]
     ],
-    "comment": "Chapter 7 (6): the noun-derived verb, with the nominal prefix m- carried over."
+    "comment": "Chapter 7 (6): the noun-derived verb, with the nominal prefix m- carried over.",
+    "verified": "page-image"
   }
 ]
