@@ -325,7 +325,7 @@ theorem qlt_mcm : roots.IsAllosemous "qlt" :=
 /-- √xšb: *xašav* 'to think' against *maxšev* 'a computer' (Ch. 7 (3)). -/
 theorem xsb_mcm : roots.IsAllosemous "xšb" :=
   roots_allosemous (c := "CaCaC") (c' := "maCCeC") (m := "to think")
-    (m' := "a computer, calculator") (by decide +kernel) (by decide +kernel) (by decide)
+    (m' := "a computer/calculator") (by decide +kernel) (by decide +kernel) (by decide)
 
 /-- √šmn: *šemen* 'oil' against *šamenet* 'cream' (Ch. 7 (2)). -/
 theorem smn_mcm : roots.IsAllosemous "šmn" :=
