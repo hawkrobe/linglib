@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Category.Verb.Basic
 public import Linglib.Semantics.ArgumentStructure.ThetaRole
+public import Linglib.Semantics.ArgumentStructure.Linking
 
 /-!
 # Verb arguments
@@ -13,7 +14,8 @@ slots: `Verb.thetaLabel` gives the Dowty cluster label of a slot's
 profile, and `Verb.codingRole` the comparative S/A/P/R/T classification
 of the citation frame (`ArgumentFrame.codingRole`), a function of the frame's
 shape (A is *defined* as the more agent-like core argument of a two-place
-frame), never a stored feature.
+frame), never a stored feature. `Verb.linkedFrame?` assembles the citation frame
+and the derived labels into the verb's argument structure.
 
 ## References
 
@@ -41,7 +43,7 @@ def entailments : ArgumentFrame.Slot → Option EntailmentProfile
   | s@(.complement _) =>
     if v.citationFrame?.bind ArgumentFrame.objectSlot? = some s then v.objectProfile? else none
 
-/-- The derived semantic-role label of a slot: the cluster label of its
+/-- `thetaLabel s` is the derived semantic-role label of the slot `s`, the cluster label of its
     entailment profile (`EntailmentProfile.toRole`). -/
 def thetaLabel (s : ArgumentFrame.Slot) : Option ThetaRole :=
   (v.entailments s).bind EntailmentProfile.toRole
@@ -51,5 +53,14 @@ def thetaLabel (s : ArgumentFrame.Slot) : Option ThetaRole :=
     token (a passive clause of the same verb has an S). -/
 def codingRole (s : ArgumentFrame.Slot) : Option ArgumentRole :=
   v.citationFrame?.bind (·.codingRole s)
+
+/-- The lexical argument structure of a verb entry is its citation frame, each slot linked to the
+label read off its entailment profile and required when the frame expresses it. -/
+def linkedFrame? : Option LinkedFrame :=
+  v.citationFrame?.map fun fr ↦
+    { frame := fr
+      roles := fr.slots.map fun s ↦
+        (s, { admits := (v.thetaLabel s).toList.toFinset
+              obligatory := (fr.get? s).any fun p ↦ decide p.IsExpressed }) }
 
 end Verb

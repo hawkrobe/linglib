@@ -32,7 +32,7 @@ open English.Inflection
 
 /-- Every entry of the lexicon, in file order. -/
 def verbs : List Verb :=
-  [sleep, run, arrive, come, eat, kick, give, put,
+  [sleep, sneeze, run, arrive, come, eat, kick, aim, give, put,
    weigh, cover, measure, buy, meet, set_, clarify, sell,
    leave, see, know, regret, realize, discover, notice, stop,
    quit, start, begin_, continue_, keep, manage, fail, try_,
@@ -68,7 +68,7 @@ def verbs : List Verb :=
    linger, rush, rain, charge, cost, fine, tip, pay,
    strike_, forgive, spare, deny, permit, assign, begrudge, bet,
    serve, teach, feed, show_, award, forward_, grant, offer,
-   reserve, pass, hand, lend]
+   reserve, pass, hand, mail, lend]
 
 /-! ### Voice -/
 

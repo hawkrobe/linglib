@@ -119,6 +119,12 @@ def sleep : Verb where
   vendlerClass := some .state
   levinClasses := {LevinClass.fit, .snooze}
 
+/-- "sneeze" — intransitive -/
+def sneeze : Verb := .mkRegular {
+  form := "sneeze"
+  frames := [ArgumentFrame.intransitive]
+  passivizable := false }
+
 /-- "run" — intransitive, no presupposition -/
 def run : Verb where
   form := "run"
@@ -180,7 +186,7 @@ def go : Verb where
   vendlerClass := some .achievement
   levinClasses := {LevinClass.inherentlyDirectedMotion}
 
-/-- *Run into the room*: a bounded goal phrase makes a verb of manner of motion directed and
+/-- In *run into the room* a bounded goal phrase makes a verb of manner of motion directed and
 telic, while *run behind the house* leaves it as it is, and so does any path phrase *sleep*, which
 selects none. -/
 example : (run.withPath Adposition.into).direction = some .goal ∧
@@ -226,6 +232,12 @@ def kick : Verb := .mkRegular {
     agentControl := {.neutral, .compatible}
   } }
   levinClasses := {LevinClass.bodyInternalMotion, .carry, .crane, .hit, .split, .throw} }
+
+/-- "aim" — with an *at*-phrase, and transitive with one -/
+def aim : Verb := .mkRegular {
+  form := "aim"
+  frames :=
+    [ArgumentFrame.pp (some Adpositions.at_), ArgumentFrame.np_pp (some Adpositions.at_)] }
 
 /-- "give" — ditransitive, alternates DOC/PP.
     Implicit goal is definite ([fillmore-1986]: pragmatically recoverable).

@@ -7,10 +7,10 @@ public import Linglib.Studies.FillmoreKayOConnor1988
 /-!
 # Kay and Michaelis (2019): Constructional Meaning and Compositionality
 
-This file formalizes the two formal claims of the survey chapter [kay-michaelis-2019]. First,
+This file formalizes the two formal claims of Kay and Michaelis's survey chapter. First,
 rules of semantic combination are construction-relative: a construction specifies how the
 semantics of the daughters combine into the semantics of the mother and what the construction
-itself adds (Sections 1 and 4). The substrate's `CompositionRule` and `interps`
+itself adds (Sections 1 and 4). `CompositionRule` and `interps`
 give that architecture content over the licensing layer's local trees, a token's readings being
 whatever the syntactically matching constructions' rules produce from its daughters' readings;
 the chapter's opening contrast, *purple plum* composed by intersection and *alleged thief* by
@@ -39,7 +39,7 @@ open ConstructionGrammar
 The chapter's classification, offered as "neither definitive nor
 exhaustive"; `informationFlow` is §9's strand. -/
 
-/-- A kind of meaning contributed by a construction ([kay-michaelis-2019]
+/-- A `MeaningKind` is a kind of meaning a construction contributes ([kay-michaelis-2019]
 §3, §9). -/
 inductive MeaningKind where
   | literal                  -- §3(i), §4: truth-conditional content
@@ -66,47 +66,46 @@ intersection of the set of thieves and the set of alleged things." Two
 modification constructions share one syntactic form; their rules accept
 disjoint daughter shapes, so each token composes exactly one way. -/
 
-/-- Demo denotations: first-order predicates and predicate operators. -/
+/-- A `Den E` is a denotation, either a first-order predicate or a predicate operator. -/
 inductive Den (E : Type*) where
   | pred : (E → Prop) → Den E
   | op : ((E → Prop) → (E → Prop)) → Den E
 
-/-- Intersective modification: both daughters denote predicates; the
-mother denotes their intersection (*purple plum*). -/
+/-- The intersective rule maps two predicate daughters to their intersection (*purple
+plum*). -/
 def intersectiveRule (E : Type*) : CompositionRule (Den E)
-  | [.pred a, .pred n] => some (.pred (λ x => a x ∧ n x))
+  | [.pred a, .pred n] => some (.pred fun x ↦ a x ∧ n x)
   | _ => none
 
-/-- Operator modification: the adjective denotes a predicate operator
-applied to the head's predicate (*alleged thief*). -/
+/-- The operator rule applies the adjective's predicate operator to the head's predicate
+(*alleged thief*). -/
 def operatorRule (E : Type*) : CompositionRule (Den E)
   | [.op f, .pred n] => some (.pred (f n))
   | _ => none
 
-/-- The shared prenominal-modification form. -/
+/-- `modificationForm` is the prenominal-modification form the two constructions share. -/
 def modificationForm : TypedForm String :=
   [ { filler := .open_ .ADJ }
   , { filler := .open_ .NOUN, isHead := true } ]
 
-/-- Intersective Adj+N modification: its meaning pole is the
-intersective rule. -/
+/-- Intersective Adj+N modification has the intersective rule as its meaning. -/
 def intersectiveModification (E : Type*) :
     Construction (CompositionRule (Den E)) :=
   { form := modificationForm
   , meaning := intersectiveRule E }
 
-/-- Operator Adj+N modification: its meaning pole is the operator rule. -/
+/-- Operator Adj+N modification has the operator rule as its meaning. -/
 def operatorModification (E : Type*) :
     Construction (CompositionRule (Den E)) :=
   { form := modificationForm
   , meaning := operatorRule E }
 
-/-- §1's premise: one rule of syntactic formation, two semantic
-specifications — the constructions share their typed form. -/
+/-- The two constructions share their form, one rule of syntactic formation with two semantic
+specifications (§1). -/
 theorem same_form (E : Type*) :
     (intersectiveModification E).form = (operatorModification E).form := rfl
 
-/-- The demo inventory: both modification constructions. -/
+/-- `demoCx` is the inventory of the two modification constructions. -/
 def demoCx (E : Type*) : List (Construction (CompositionRule (Den E))) :=
   [intersectiveModification E, operatorModification E]
 
@@ -115,7 +114,7 @@ section Demo
 variable {E : Type*} (purple plum thief : E → Prop)
   (alleged : (E → Prop) → (E → Prop))
 
-/-- Toy denotations, by form: *purple* is a predicate, *alleged* an operator. -/
+/-- `demoLex` gives *purple*, *plum* and *thief* predicates and *alleged* an operator. -/
 def demoLex (w : Morphology.Word) : Option (Den E) :=
   match w.form with
   | "purple" => some (.pred purple)
@@ -124,23 +123,22 @@ def demoLex (w : Morphology.Word) : Option (Den E) :=
   | "thief" => some (.pred thief)
   | _ => none
 
-/-- *purple plum*, two words tagged for part of speech. -/
+/-- `purplePlum` is *purple plum*, two words tagged for part of speech. -/
 def purplePlum : Syntax.Tree Unit Morphology.Word :=
   .node () [.leaf (.mk' "purple" .ADJ), .leaf (.mk' "plum" .NOUN)]
 
-/-- *alleged thief*, two words tagged for part of speech. -/
+/-- `allegedThief` is *alleged thief*, two words tagged for part of speech. -/
 def allegedThief : Syntax.Tree Unit Morphology.Word :=
   .node () [.leaf (.mk' "alleged" .ADJ), .leaf (.mk' "thief" .NOUN)]
 
-/-- *Purple plum* has exactly one reading: the intersection. The operator
-construction matches the form but its rule rejects two predicate
-daughters. -/
+/-- *Purple plum* has exactly one reading, the intersection, since the operator construction
+matches the form but its rule rejects two predicate daughters. -/
 theorem purple_plum_intersective :
     interps (demoCx E) (demoLex purple plum thief alleged) purplePlum
       = [.pred fun x ↦ purple x ∧ plum x] := rfl
 
-/-- *Alleged thief* has exactly one reading: the operator applied to the
-head predicate — not an intersection. -/
+/-- *Alleged thief* has exactly one reading, the operator applied to the head predicate, and no
+intersective one. -/
 theorem alleged_thief_operator :
     interps (demoCx E) (demoLex purple plum thief alleged) allegedThief
       = [.pred (alleged thief)] := rfl
@@ -159,12 +157,11 @@ end Demo
 The chapter's cases that the library already formalizes, with the kind of
 meaning each contributes. -/
 
-/-- The chapter's example constructions by meaning kind: caused motion
-(§5, exx. 19–22, *Frank sneezed the tissue off the table*), *let alone*
-(§6, ex. 32), and the incredulity type (§7, ex. 14, *Him get first
-prize?!*). -/
+/-- `chapterCases` pairs the chapter's example constructions with their kinds of meaning: caused
+motion (§5, exx. 19–22, *Frank sneezed the tissue off the table*), *let alone* (§6, ex. 32), and
+the incredulity type (§7, ex. 14, *Him get first prize?!*). -/
 def chapterCases : List (Construction Unit × MeaningKind) :=
-  [ (Goldberg1995.causedMotion, .argumentStructure)
+  [ (Goldberg1995.causedMotion.map fun _ ↦ (), .argumentStructure)
   , (_root_.FillmoreKayOConnor1988.letAloneConstruction, .conventionalImplicature)
   , (_root_.FillmoreKayOConnor1988.incredulityResponse, .illocutionaryForce) ]
 

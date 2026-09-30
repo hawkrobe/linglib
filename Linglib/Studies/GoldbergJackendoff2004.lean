@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.ArgumentStructure.ThetaRole
+public import Linglib.Semantics.ArgumentStructure.Linking
 public import Linglib.Semantics.Events.SpatialTrace
 public import Linglib.Syntax.Category.Verb.Argument
 public import Linglib.Fragments.English.Verbs.Inventory
@@ -15,7 +16,9 @@ constructional subevent supplied by the construction: a host comes to have the p
 result phrase names or traverses the path it names, caused by the subject in the transitive
 cases. The four subconstructions of the summary (97) are the combinations of these two choices
 (`Subconstruction`), and in most of them the verbal subevent is the means of the constructional
-one (`SubeventRelation`).
+one (`ArgumentStructure.SubeventRelation`), with verbs of sound emission and disappearance its
+result (*The trolley rumbled through the tunnel*, (17a); *The witch vanished into the forest*,
+(21a)).
 
 The constructional subevent's aspect controls the sentence's, the generalization (27). The event
 measures out the result phrase's path, so an end-bounded result phrase makes a resultative telic
@@ -23,13 +26,14 @@ whatever the verb (`qua_resultative`), and one that is not end-bounded leaves an
 (`cum_resultative`). On a nonrepetitive reading the for-adverbial is accordingly acceptable
 exactly when the result phrase is not end-bounded (`rows_for_adverbial`).
 
-The constructional subevent's roles constrain the verb's under the principle of semantic
-coherence (44): a verb role unifies with a constructional role only if it can be construed as
-an instance of it (`Compatible`). The causer of a causative is an agent and a host a patient,
-except that the host of an uncaused GO may be either (`Subconstruction.subjectRoles`). So the
-intransitive path resultative admits more verbs than the intransitive property resultative
-(`compatible_noncausative_path`), and *The worm wriggled onto the carpet* is acceptable while
-**She yelled hoarse* and **The ball wiggled itself loose* are not (`rows_coherence`).
+The constructional subevent's roles constrain the verb's under the principle of semantic coherence
+(44): a verb role unifies with a constructional role only if it can be construed as an instance of
+it, that is, only if the roles each admits meet (`Row.Coheres`). The causer of a causative is an
+agent and a host a patient, except that the host of an uncaused GO may be either
+(`Subconstruction.subjectRoles`). So the intransitive path resultative admits more verbs than the
+intransitive property resultative (`coheres_noncausative_path`), and *The worm wriggled onto the
+carpet* is acceptable while **She yelled hoarse* and **The ball wiggled itself loose* are not
+(`rows_coherence`).
 
 ## Implementation notes
 
@@ -75,31 +79,14 @@ inductive RPType where
   | path
   deriving DecidableEq, Repr
 
-/-- A subconstruction of the summary (97): whether the subject causes the host's change, and
-what the result phrase names. The causative ones are `X CAUSE [Y BECOME Z]` and
+/-- A `Subconstruction` of the summary (97) records whether the subject causes the host's change,
+and what the result phrase names. The causative ones are `X CAUSE [Y BECOME Z]` and
 `X CAUSE [Y GO Path]`, the noncausative ones `X BECOME Y` and `X GO Path`. -/
 structure Subconstruction where
   /-- Whether the subject causes the change of the host, which is then the object. -/
   causative : Bool
   /-- What the result phrase names. -/
   rp : RPType
-  deriving DecidableEq, Repr
-
-/-- How the verbal subevent relates to the constructional one (§3, §7.1). -/
-inductive SubeventRelation where
-  /-- The verbal subevent is the means of the constructional one, as in all four
-  subconstructions: in *Willy watered the plants flat* the watering makes the plants flat. -/
-  | means
-  /-- The verbal subevent results from the constructional one, as with verbs of sound emission
-  (*The trolley rumbled through the tunnel*, (17a)) and disappearance (*The witch vanished into
-  the forest*, (21a)). -/
-  | result
-  /-- The verbal subevent is an instance of the constructional one, as with *follow* (*Bill
-  followed the thief into the library*, (50a)) in the analysis (55). -/
-  | instance_
-  /-- The subevents merely co-occur, for the speakers who accept **The car honked down the
-  road*, (18a). -/
-  | coOccurrence
   deriving DecidableEq, Repr
 
 /-- How the object of a transitive resultative is selected (§2). By §5 the fake reflexive is not
@@ -110,24 +97,17 @@ inductive ObjectSelection where
   | selected
   /-- Only the construction licenses the object: *They drank the pub dry*, (8a). -/
   | unselected
-  /-- An unselected reflexive that alternates with no other object: *We yelled ourselves
+  /-- An unselected reflexive that alternates with no other object, as in *We yelled ourselves
   hoarse*, (9a). -/
   | fakeReflexive
   deriving DecidableEq, Repr
 
-/-! ### Semantic coherence -/
+/-! ### Semantic coherence
 
-/-- The principle of semantic coherence (44): a verb role, given by the roles it can be
-construed as, unifies with a constructional role, given by the roles that are instances of it,
-only if some construal of the verb role is an instance of the constructional role. -/
-def Compatible (rV rC : Finset ThetaRole) : Prop := ∃ ρ ∈ rV, ρ ∈ rC
-
-instance (rV rC : Finset ThetaRole) : Decidable (Compatible rV rC) :=
-  inferInstanceAs (Decidable (∃ ρ ∈ rV, ρ ∈ rC))
-
-theorem Compatible.mono {rV rV' rC rC' : Finset ThetaRole} (hV : rV ⊆ rV') (hC : rC ⊆ rC')
-    (h : Compatible rV rC) : Compatible rV' rC' :=
-  let ⟨ρ, hρV, hρC⟩ := h; ⟨ρ, hV hρV, hC hρC⟩
+The principle of semantic coherence (44): a verb role, given by the roles it can be construed as,
+unifies with a constructional role, given by the roles that are instances of it, only if some
+construal of the verb role is an instance of the constructional role, that is, only if the two
+sets of roles are not disjoint. -/
 
 /-- The roles the host of the constructional subevent admits (§6.2). The host of BECOME and a
 caused host are patients, while the host of an uncaused GO is agent or patient, as the subject
@@ -136,21 +116,21 @@ def Subconstruction.hostRoles : Subconstruction → Finset ThetaRole
   | ⟨false, .path⟩ => {.agent, .patient}
   | _ => {.patient}
 
-/-- The roles the construction admits for its subject: an agent, the causer, in a causative, and
-otherwise the host. -/
+/-- `s.subjectRoles` is the set of roles the construction admits for its subject, an agent, the
+causer, in a causative, and otherwise the host. -/
 def Subconstruction.subjectRoles (s : Subconstruction) : Finset ThetaRole :=
   if s.causative then {.agent} else s.hostRoles
 
 /-- The intransitive path resultative is more liberal than the intransitive property resultative
 in the verbs it admits (§6.2): a subject role compatible with BECOME is compatible with GO. -/
-theorem compatible_noncausative_path {rV : Finset ThetaRole}
-    (h : Compatible rV (Subconstruction.subjectRoles ⟨false, .property⟩)) :
-    Compatible rV (Subconstruction.subjectRoles ⟨false, .path⟩) :=
-  h.mono subset_rfl (by decide)
+theorem coheres_noncausative_path {rV : Finset ThetaRole}
+    (h : ¬ Disjoint rV (Subconstruction.subjectRoles ⟨false, .property⟩)) :
+    ¬ Disjoint rV (Subconstruction.subjectRoles ⟨false, .path⟩) :=
+  fun hd ↦ h (hd.mono_right (by decide))
 
 /-- An agent subject, as of *yell*, is compatible with GO but not with BECOME. -/
-example : Compatible {.agent} (Subconstruction.subjectRoles ⟨false, .path⟩) ∧
-    ¬ Compatible {.agent} (Subconstruction.subjectRoles ⟨false, .property⟩) := by
+example : ¬ Disjoint {.agent} (Subconstruction.subjectRoles ⟨false, .path⟩) ∧
+    Disjoint {.agent} (Subconstruction.subjectRoles ⟨false, .property⟩) := by
   decide
 
 /-! ### Aspect -/
@@ -162,12 +142,13 @@ open Mereology Spatial
 variable {Loc T : Type*} [LinearOrder T] [Event.Mereology T] [ClassicalMereology (Event T)]
   [SemilatticeSup (Path Loc)] [Trace Loc T] {V : Event T → Prop} {R : Path Loc → Prop}
 
-/-- A resultative with cotemporal subevents: an event of the verb whose path, the path of the
-constructional subevent, is one the result phrase describes. -/
+/-- `resultative V R e` holds when `e` is an event of the verb whose path, the path of the
+constructional subevent, is one the result phrase describes, the two subevents being
+cotemporal. -/
 def resultative (V : Event T → Prop) (R : Path Loc → Prop) (e : Event T) : Prop :=
   V e ∧ R (Trace.σ e)
 
-/-- The generalization (27) for an end-bounded result phrase: the resultative is telic whatever
+/-- By the generalization (27), an end-bounded result phrase makes the resultative telic whatever
 the verb. -/
 theorem qua_resultative
     (hσ : ∀ e e' : Event T, (Trace.σ (e ⊔ e') : Path Loc) = Trace.σ e ⊔ Trace.σ e')
@@ -175,8 +156,8 @@ theorem qua_resultative
     QUA (resultative V R) :=
   IsAntichain.subset (Trace.bounded_path_telic hσ hinj hR) fun _ h ↦ h.2
 
-/-- The generalization (27) for a result phrase that is not end-bounded: the resultative of an
-activity is atelic. -/
+/-- By the generalization (27), a result phrase that is not end-bounded leaves the resultative of
+an activity atelic. -/
 theorem cum_resultative
     (hσ : ∀ e e' : Event T, (Trace.σ (e ⊔ e') : Path Loc) = Trace.σ e ⊔ Trace.σ e')
     (hV : CUM V) (hR : CUM R) : CUM (resultative V R) :=
@@ -186,7 +167,7 @@ end Aspect
 
 /-! ### The examples -/
 
-/-- An example row: the verb, the subconstruction, how the subevents relate, the object
+/-- A `Row` records an example's verb, subconstruction, the relation of its subevents, the object
 selection of a transitive, whether the result phrase is end-bounded where the paper tests
 telicity, the paper's construals of the verb's subject and object where it discusses them, and
 the judgment. -/
@@ -236,21 +217,21 @@ example : rows.length = Examples.all.length := by decide
 -- Object selection is a dimension of the transitive, that is causative, subconstructions.
 example : ∀ r ∈ rows, r.selection.isSome → r.subconstruction.causative := by decide
 
-/-- Section 4.1: on a nonrepetitive reading the for-adverbial is acceptable exactly when the
-result phrase is not end-bounded, that is, when the resultative is atelic. -/
+/-- By §4.1, on a nonrepetitive reading the for-adverbial is acceptable exactly when the result
+phrase is not end-bounded, that is, when the resultative is atelic. -/
 theorem rows_for_adverbial :
     ∀ r ∈ rows, ∀ b ∈ r.endBounded, r.judgment = .acceptable ↔ b = false := by
   decide
 
-/-- The roles of a row cohere: the paper's construal of the verb's subject is compatible with
-the construction's subject, and that of a selected object with the host. -/
+/-- A row coheres when the paper's construal of the verb's subject is compatible with the
+construction's subject, and that of a selected object with the host. -/
 def Row.Coheres (r : Row) : Prop :=
-  (∀ ρ ∈ r.subjectRole, Compatible ρ r.subconstruction.subjectRoles) ∧
-    ∀ ρ ∈ r.objectRole, Compatible ρ r.subconstruction.hostRoles
+  (∀ ρ ∈ r.subjectRole, ¬ Disjoint ρ r.subconstruction.subjectRoles) ∧
+    ∀ ρ ∈ r.objectRole, ¬ Disjoint ρ r.subconstruction.hostRoles
 
 instance (r : Row) : Decidable r.Coheres := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Section 6.2: outside the telicity tests, an example is acceptable exactly when its roles
+/-- By §6.2, outside the telicity tests an example is acceptable exactly when its roles
 cohere. -/
 theorem rows_coherence :
     ∀ r ∈ rows, r.endBounded = none → (r.judgment = .acceptable ↔ r.Coheres) := by
