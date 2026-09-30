@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.ChanShen2026
 public import Linglib.Fragments.Mandarin.Questions
 public import Linglib.Fragments.Singlish.Questions
-public import Linglib.Syntax.Minimalist.WhDependency
+public import Linglib.Syntax.Minimalist.Linearization.Spellout
 
 /-!
 # Chan and Shen (2026): Conditions on *wh-the-hell* licensing
@@ -17,17 +17,31 @@ partial-movement one only additive costs. This follows from two independent piec
 C, which ascribes its negative attitude (surprise, ignorance, doubt of every answer:
 [pesetsky-1987], [martin-2020], [rawlins-2008], [ippolito-2024]) to the speaker
 ([chou-2012]); and as a modifier adjoined to the wh-head it moves only with the wh-phrase
-([merchant-2002]). Full and partial movement put the wh-phrase in matrix Spec-CP, the latter
-by a covert second step, while an in-situ wh-phrase is bound unselectively and never leaves
-(`dependency`, after [sato-ngui-2017]); the island facts, with [cole-hermon-1998]'s Malay, admit
-no other assignment of dependencies to positions (`island_rows_iff`). Mandarin *daodi* moves on
-its own and so tolerates an in-situ host.
+([merchant-2002]). The three strategies are three structures (7), (14), (8), each a chain of
+copies of the wh-phrase: full movement pronounces the top of the chain in matrix Spec-CP;
+partial movement pronounces a copy in the intermediate Spec-CP below a deleted one there, the
+covert second step; and an in-situ wh-phrase is bound unselectively, a single copy that never
+leaves ([sato-ngui-2017]). *The-hell* is licensed exactly when the top of its host's chain is
+matrix Spec-CP. Islands constrain the links of a chain, so extraction from a complex NP fails
+under full and partial movement and not in situ ((11), (15), with [cole-hermon-1998]'s Malay);
+covert movement of the in-situ wh-phrase ([huang-1982]), a deleted copy in matrix Spec-CP over
+the pronounced one, would cross the island and license *the-hell* in situ, against (11b) and
+(4d). Mandarin *daodi* moves on its own and so tolerates an in-situ host.
 
 The intervention account of [den-dikken-giannakidou-2002] licenses *the-hell* in the
 immediate scope of the question operator ([linebarger-1987]) and so admits Singlish in-situ
 questions, where nothing intervenes; the attitude-phrase account of [vu-lohiniva-2020], after
 [huang-ochi-2004], base-generates *the-hell* in the matrix clause and so cannot generate the
 partial-movement order. The paper's Table 5 is the three accounts against the data.
+
+## Implementation notes
+
+The rows are mapped to structures by their strategy and whether they sit in a complex NP; the
+structures are schematic Singlish questions (2), (11), and the English, Malay and Mandarin rows
+share them, since what the accounts read, the chain of the wh-phrase and where it is pronounced,
+is the same. *The-hell* adjoined to the wh-head is not built: it is carried by the wh-phrase, so
+its position is its host's. The intervention account reads the number of interveners the rows
+record.
 
 ## References
 
@@ -53,45 +67,107 @@ partial-movement order. The paper's Table 5 is the three accounts against the da
 
 namespace ChanShen2026
 
-open WhModifier Singlish.Questions
-open Minimalist (WhDependency)
+open WhModifier Singlish.Questions Minimalist Core.Order
 
-/-- Where a question pronounces its wh-phrase, the strategy a row records: in matrix Spec-CP
-(full wh-movement), in an intermediate Spec-CP (partial movement), or in situ. -/
-inductive Position where
-  | matrix
-  | intermediate
-  | inSitu
-  deriving DecidableEq, Repr, Fintype
+/-! ### The three strategies (7), (8), (14) -/
 
-/-- The wh-phrase hosting the modifier: where it is pronounced, and how many wh-phrases stand
-between the question operator and it. -/
-structure Host where
-  position : Position
-  interveners : ℕ := 0
-  deriving DecidableEq
+/-- A token of the schematic questions. -/
+def tok (id : ℕ) (cat : Cat) (sel : SelStack := []) (phon : String := "") (wh : Bool := false) :
+    LIToken :=
+  ⟨LexicalItem.simple cat sel phon wh false, id⟩
 
-/-- The analysis of [sato-ngui-2017] the paper adopts (§3.1): a wh-phrase pronounced in situ is
-bound unselectively, and one pronounced in a Spec-CP moves to matrix Spec-CP, covertly from an
-intermediate one, which binding cannot target ((14)). -/
-def dependency : Position → WhDependency
-  | .inSitu => .binding
-  | .matrix | .intermediate => .movement
+/-- The wh-phrase; *the-hell*, adjoined to it, goes where it goes. -/
+def what := tok 0 .D (phon := "what") (wh := true)
+/-- The matrix interrogative C and the embedded C. -/
+def c₁ := tok 1 .C [.T]
+def c₂ := tok 2 .C [.T]
+def you := tok 3 .D (phon := "you")
+def think := tok 4 .V [.C] "think"
+def natalie := tok 5 .D (phon := "Natalie")
+def baking := tok 6 .V [.D] "baking"
+/-- The complex NP of (11): *John like the man that think Mary eat …*. -/
+def john := tok 7 .D (phon := "John")
+def like := tok 8 .V [.D] "like"
+def the := tok 9 .D [.N] "the"
+def man := tok 10 .N [.C] "man"
+def that := tok 11 .C [.V] "that"
+def mary := tok 12 .D (phon := "Mary")
+def eat := tok 13 .V [.D] "eat"
+
+/-- The embedded CP, *Natalie baking x* or, in the island, *Mary eat x*, with `spec` in its
+specifier. -/
+def embedded (island : Bool) (spec : Option PlanarSyntacticObject) (x : PlanarSyntacticObject) :
+    PlanarSyntacticObject :=
+  let tp := if island then mary * (eat * x) else natalie * (baking * x)
+  (spec.map (· * (c₂ * tp))).getD (c₂ * tp)
+
+/-- The matrix CP over the embedded one, *you think …* or, in the island, *John like the man that
+think …*, with `spec` in matrix Spec-CP. -/
+def matrix (island : Bool) (spec : Option PlanarSyntacticObject) (emb : PlanarSyntacticObject) :
+    PlanarSyntacticObject :=
+  let vp := if island then john * (like * (the * (man * (that * (think * emb)))))
+    else you * (think * emb)
+  (spec.map (· * (c₁ * vp))).getD (c₁ * vp)
+
+/-- (7): full movement, successive cyclic, the top copy pronounced. -/
+def full (island : Bool) : PlanarSyntacticObject :=
+  matrix island (some what) (embedded island (some (.traceOf what)) (.traceOf what))
+
+/-- (14): partial movement, overt to the intermediate Spec-CP and covert from there. -/
+def partialMovement (island : Bool) : PlanarSyntacticObject :=
+  matrix island (some (.traceOf what)) (embedded island (some what) (.traceOf what))
+
+/-- (8): the wh-phrase in situ, bound by the question operator: one copy. -/
+def bound (island : Bool) : PlanarSyntacticObject :=
+  matrix island none (embedded island none what)
+
+/-- The LF-movement analysis of wh-in-situ ([huang-1982]): a deleted copy in matrix Spec-CP over
+the pronounced one. -/
+def covert (island : Bool) : PlanarSyntacticObject :=
+  matrix island (some (.traceOf what)) (embedded island none what)
+
+/-- The wh-phrase takes scope in matrix Spec-CP: the top of its chain is there. -/
+def ReachesScope (t : PlanarSyntacticObject) : Prop := ⟨[0]⟩ ∈ chainTop t what
+
+instance (t : PlanarSyntacticObject) : Decidable (ReachesScope t) :=
+  inferInstanceAs (Decidable (_ ∈ _))
+
+/-- The wh-phrase is pronounced in matrix Spec-CP. -/
+def PronouncedAtScope (t : PlanarSyntacticObject) : Prop := ⟨[0]⟩ ∈ occurrences t what
+
+instance (t : PlanarSyntacticObject) : Decidable (PronouncedAtScope t) :=
+  inferInstanceAs (Decidable (_ ∈ _))
+
+/-- Full and partial movement reach matrix Spec-CP, the latter pronounced lower; the bound
+wh-phrase stays in situ ((7), (14), (8)). -/
+example : (ReachesScope (full false) ∧ PronouncedAtScope (full false)) ∧
+    (ReachesScope (partialMovement false) ∧ ¬ PronouncedAtScope (partialMovement false)) ∧
+    ¬ ReachesScope (bound false) := by
+  decide
+
+/-- Covert movement pronounces the in-situ string. -/
+example (island : Bool) : pfYield (covert island) = pfYield (bound island) := by
+  cases island <;> decide
 
 /-! ### Negative attitude ascription (§3.2–3.3) -/
 
+/-- The wh-phrase hosting the modifier: its structure, and how many wh-phrases stand between the
+question operator and it. -/
+structure Host where
+  tree : PlanarSyntacticObject
+  interveners : ℕ := 0
+
 /-- The modifier's point-of-view feature is checked in matrix Spec-CP, so it is licensed iff it
-gets there: with its host, when the host moves there, or on its own. -/
-def Licensed (m : WhModifier) (h : Host) : Prop :=
-  WhModifier.Licensed m (dependency h.position = .movement)
+gets there: with its host, when the host's chain reaches it, or on its own. -/
+def Licensed (m : WhModifier) (h : Host) : Prop := WhModifier.Licensed m (ReachesScope h.tree)
 
 instance (m : WhModifier) (h : Host) : Decidable (Licensed m h) :=
   inferInstanceAs (Decidable (WhModifier.Licensed _ _))
 
 variable (h : Host)
 
-/-- *The-hell* is licensed iff its host moves to matrix Spec-CP ((20), (21), (24)). -/
-theorem licensed_theHell_iff : Licensed theHell h ↔ dependency h.position = .movement :=
+/-- *The-hell* is licensed iff its host's chain reaches matrix Spec-CP ((20), (21), (24)). -/
+theorem licensed_theHell_iff : Licensed theHell h ↔ ReachesScope h.tree :=
   licensed_iff_of_parasitic _ rfl
 
 /-- *Daodi* is licensed whatever its host does ((19)). -/
@@ -99,8 +175,10 @@ theorem licensed_daodi : Licensed Mandarin.Questions.daodi h :=
   licensed_of_independent _ rfl
 
 /-- Across the three strategies, *the-hell* is out exactly in situ ((3a–c)). -/
-theorem licensed_theHell_strategies (p : Position) : Licensed theHell ⟨p, 0⟩ ↔ p ≠ .inSitu := by
-  cases p <;> decide
+theorem licensed_theHell_strategies :
+    Licensed theHell ⟨full false, 0⟩ ∧ Licensed theHell ⟨partialMovement false, 0⟩ ∧
+      ¬ Licensed theHell ⟨bound false, 0⟩ := by
+  decide
 
 /-! ### Rival accounts (§3.4) -/
 
@@ -114,28 +192,31 @@ instance : Decidable (Intervention.Licensed h) := inferInstanceAs (Decidable (_ 
 phrase, whose [+wh] feature the nearest wh-phrase checks by moving there before the pair moves
 to Spec-CP; a *wh-the-hell* string therefore surfaces only with the wh-phrase pronounced in matrix
 Spec-CP. -/
-def AttP.Licensed : Prop := h.position = .matrix
+def AttP.Licensed : Prop := PronouncedAtScope h.tree
 
-instance : Decidable (AttP.Licensed h) := inferInstanceAs (Decidable (_ = _))
+instance : Decidable (AttP.Licensed h) := inferInstanceAs (Decidable (PronouncedAtScope _))
 
 /-- In English a wh-phrase stays in situ only in a multiple question, under the fronted one, so
 in situ and intervened coincide and ascription agrees with intervention ((1), (25)–(26)); the
 two part only where a single question leaves its wh-phrase in situ. -/
-theorem licensed_theHell_iff_intervention
-    (hE : dependency h.position = .movement ↔ h.interveners = 0) :
+theorem licensed_theHell_iff_intervention (hE : ReachesScope h.tree ↔ h.interveners = 0) :
     Licensed theHell h ↔ Intervention.Licensed h :=
   (licensed_theHell_iff h).trans hE
 
 /-! ### The data -/
 
-/-- A row's strategy: the position of its wh-phrase. -/
-def positionOf (e : Datum) : Option Position :=
-  e.parse? "strategy" [("full", .matrix), ("partial", .intermediate), ("inSitu", .inSitu)]
+/-- The structure of a row: its strategy, in a complex NP or not, with an in-situ wh-phrase
+construed by `inSitu`. -/
+def structureOf (inSitu : Bool → PlanarSyntacticObject) (e : Datum) :
+    Option PlanarSyntacticObject :=
+  let island := e.feature? "island" = some "complexNP"
+  e.parse? "strategy"
+    [("full", full island), ("partial", partialMovement island), ("inSitu", inSitu island)]
 
-/-- A row's host: the position of its wh-phrase and the number of wh-phrases between the
-question operator and the modifier, both of which the row records. -/
-def hostOf (e : Datum) : Option Host := do
-  pure ⟨← positionOf e, ← e.nat? "interveners"⟩
+/-- A row's host on the analysis `inSitu`: its structure and the number of wh-phrases between the
+question operator and the modifier, which the row records. -/
+def hostOf (inSitu : Bool → PlanarSyntacticObject) (e : Datum) : Option Host := do
+  pure ⟨← structureOf inSitu e, ← e.nat? "interveners"⟩
 
 /-- A row's modifier. -/
 def modifierOf (e : Datum) : Option WhModifier :=
@@ -143,37 +224,54 @@ def modifierOf (e : Datum) : Option WhModifier :=
 
 /-- Every row with a modifier records its host, so the statements over `hostOf` below range over
 all of them. -/
-theorem hostOf_isSome : ∀ e ∈ Examples.all, (modifierOf e).isSome → (hostOf e).isSome := by
+theorem hostOf_isSome : ∀ e ∈ Examples.all, (modifierOf e).isSome → (hostOf bound e).isSome := by
   decide
 
-/-- Extraction from a complex NP fails exactly where the wh-phrase moves, since islands constrain
-movement, the covert step of partial movement included, and not binding ((11), (15), Malay
-(17)). Of all assignments of dependencies to positions only `dependency` fits: covert movement
-of an in-situ wh-phrase ([huang-1982]) would cross the island too. -/
-theorem island_rows_iff (f : Position → WhDependency) :
-    (∀ e ∈ Examples.all, e.feature? "island" = some "complexNP" →
-      ∀ p ∈ positionOf e, (f p = .movement ↔ e.judgment ≠ .acceptable)) ↔ f = dependency := by
-  revert f; decide
+/-- Extraction fails when a link of the wh-phrase's chain leaves the complex NP. -/
+def CrossesIsland (t : PlanarSyntacticObject) : Prop :=
+  ∃ h ∈ occurrences t the, Escapes t what (projectionAt t h)
+
+instance (t : PlanarSyntacticObject) : Decidable (CrossesIsland t) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+
+/-- Extraction from a complex NP fails exactly where a link of the chain leaves it: under full
+movement, and under partial movement by its covert step, but not in situ ((11), (15), Malay
+(17)). -/
+theorem island_rows : ∀ e ∈ Examples.all, e.feature? "island" = some "complexNP" →
+    ∀ t ∈ structureOf bound e, (CrossesIsland t ↔ e.judgment ≠ .acceptable) := by
+  decide
 
 /-- Ascription predicts every modifier row: English (1), (25)–(26), the experiment's (4) and
 (6), the subject question (22), and Mandarin (19). -/
 theorem ascription_rows :
-    ∀ e ∈ Examples.all, ∀ m ∈ modifierOf e, ∀ h ∈ hostOf e,
+    ∀ e ∈ Examples.all, ∀ m ∈ modifierOf e, ∀ h ∈ hostOf bound e,
       (Licensed m h ↔ e.judgment = .acceptable) := by
+  decide
+
+/-- Covert movement of the in-situ wh-phrase crosses the complex NP of (11b) and licenses
+*the-hell* in the in-situ question (4d), both acceptable and unacceptable the other way round:
+the island facts and the modifier facts each choose binding ([sato-ngui-2017]). -/
+theorem covert_mispredicts :
+    (∃ t ∈ structureOf covert Examples.ex11b, CrossesIsland t) ∧
+      Examples.ex11b.judgment = .acceptable ∧
+      (∃ m ∈ modifierOf Examples.ex4d, ∃ h ∈ hostOf covert Examples.ex4d, Licensed m h) ∧
+      Examples.ex4d.judgment = .unacceptable := by
   decide
 
 /-- Intervention is right except on the in-situ single questions ((4d), (22b)): nothing
 intervenes, yet *the-hell* is out. -/
 theorem intervention_rows :
-    ∀ e ∈ Examples.all, e.feature? "modifier" = some "theHell" → ∀ h ∈ hostOf e,
+    ∀ e ∈ Examples.all, e.feature? "modifier" = some "theHell" → ∀ h ∈ hostOf bound e,
       ((Intervention.Licensed h ↔ e.judgment = .acceptable) ↔
-        (dependency h.position = .movement ∨ h.interveners ≠ 0)) := by
+        (ReachesScope h.tree ∨ h.interveners ≠ 0)) := by
   decide
 
-/-- The attitude phrase is right except under partial movement ((6d)). -/
+/-- The attitude phrase is right except where the wh-phrase takes scope from a position it is not
+pronounced in, under partial movement ((6d)). -/
 theorem attP_rows :
-    ∀ e ∈ Examples.all, e.feature? "modifier" = some "theHell" → ∀ h ∈ hostOf e,
-      ((AttP.Licensed h ↔ e.judgment = .acceptable) ↔ h.position ≠ .intermediate) := by
+    ∀ e ∈ Examples.all, e.feature? "modifier" = some "theHell" → ∀ h ∈ hostOf bound e,
+      ((AttP.Licensed h ↔ e.judgment = .acceptable) ↔
+        ¬ (ReachesScope h.tree ∧ ¬ PronouncedAtScope h.tree)) := by
   decide
 
 end ChanShen2026

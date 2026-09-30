@@ -26,7 +26,7 @@ def ex3a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("dependency", "movement"), ("object", "indefinite"), ("creation", "yes")] }
+    paperFeatures := [("wh", "fronted"), ("object", "indefinite"), ("creation", "yes")] }
 
 def ex3b : Datum :=
   { id := "shenhuang2026_ex3b"
@@ -39,7 +39,7 @@ def ex3b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("dependency", "movement"), ("object", "definite"), ("creation", "yes")] }
+    paperFeatures := [("wh", "fronted"), ("object", "definite"), ("creation", "yes")] }
 
 def ex28_indefinite : Datum :=
   { id := "shenhuang2026_ex28_indefinite"
@@ -52,7 +52,7 @@ def ex28_indefinite : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("dependency", "binding"), ("object", "indefinite"), ("creation", "no")] }
+    paperFeatures := [("wh", "inSitu"), ("object", "indefinite"), ("creation", "no")] }
 
 def ex28_definite : Datum :=
   { id := "shenhuang2026_ex28_definite"
@@ -65,7 +65,7 @@ def ex28_definite : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("dependency", "binding"), ("object", "definite"), ("creation", "no")] }
+    paperFeatures := [("wh", "inSitu"), ("object", "definite"), ("creation", "no")] }
 
 def all : List Datum := [ex3a, ex3b, ex28_indefinite, ex28_definite]
 

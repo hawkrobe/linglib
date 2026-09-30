@@ -15,7 +15,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["dependency", "movement"],
+      ["wh", "fronted"],
       ["object", "indefinite"],
       ["creation", "yes"]
     ],
@@ -37,7 +37,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["dependency", "movement"],
+      ["wh", "fronted"],
       ["object", "definite"],
       ["creation", "yes"]
     ],
@@ -72,7 +72,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["dependency", "binding"],
+      ["wh", "inSitu"],
       ["object", "indefinite"],
       ["creation", "no"]
     ],
@@ -108,7 +108,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["dependency", "binding"],
+      ["wh", "inSitu"],
       ["object", "definite"],
       ["creation", "no"]
     ],
