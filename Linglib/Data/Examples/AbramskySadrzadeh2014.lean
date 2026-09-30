@@ -23,15 +23,12 @@ def donkey : LinguisticExample :=
     reportedIn := some ⟨"abramsky-sadrzadeh-2014", "§1"⟩
     language := "stan1293"
     primaryText := "If a farmer owns a donkey, he beats it."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("phenomenon", "donkey anaphora")]
-    comment := "Cited as the case where the usual Montague-style translation fails and DRT was first to succeed." }
+    paperFeatures := [("phenomenon", "donkey anaphora")] }
 
 def drt_resolved : LinguisticExample :=
   { id := "abramskysadrzadeh2014_drt_resolved"
@@ -39,15 +36,12 @@ def drt_resolved : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John owns a donkey. He beats it."
-    discourseSegments := ["John owns a donkey.", "He beats it."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("resolution", "full"), ("unification", "v = x, w = y")]
-    comment := "The merge of the two DRS is followed by unification of the accessible, agreeing referents." }
+    paperFeatures := [("resolution", "full"), ("unification", "v = x, w = y")] }
 
 def drt_partial : LinguisticExample :=
   { id := "abramskysadrzadeh2014_drt_partial"
@@ -55,15 +49,12 @@ def drt_partial : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John does not own a donkey. He beats it."
-    discourseSegments := ["John does not own a donkey.", "He beats it."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("it = the donkey", .unacceptable)]
-    paperFeatures := [("resolution", "partial"), ("unification", "v = x")]
-    comment := "The donkey referent sits in a negated sub-DRS and is inaccessible to `it`." }
+    paperFeatures := [("resolution", "partial"), ("unification", "v = x")] }
 
 def ex1 : LinguisticExample :=
   { id := "abramskysadrzadeh2014_ex1"
@@ -71,15 +62,12 @@ def ex1 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John sleeps. He snores."
-    discourseSegments := ["John sleeps.", "He snores."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("cover", "x ↦ z ↤ y"), ("gluing", "{John(z), sleeps(z), snores(z)}")]
-    comment := "" }
+    paperFeatures := [("cover", "x ↦ z ↤ y"), ("gluing", "{John(z), sleeps(z), snores(z)}")] }
 
 def ex2 : LinguisticExample :=
   { id := "abramskysadrzadeh2014_ex2"
@@ -87,15 +75,12 @@ def ex2 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John beats his donkey."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("cover", "x ↦ a, y ↦ b, u ↦ a, v ↦ b"), ("gluing", "{John(a), donkey(b), owns(a, b), beats(a, b)}")]
-    comment := "Anaphor and antecedent in one sentence; three local sections for John, the donkey, and owning/beating." }
+    paperFeatures := [("cover", "x ↦ a, y ↦ b, u ↦ a, v ↦ b"), ("gluing", "{John(a), donkey(b), owns(a, b), beats(a, b)}")] }
 
 def ex3 : LinguisticExample :=
   { id := "abramskysadrzadeh2014_ex3"
@@ -103,15 +88,12 @@ def ex3 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John owns a donkey. It is grey."
-    discourseSegments := ["John owns a donkey.", "It is grey."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("it = the donkey", .acceptable), ("it = John", .unacceptable)]
-    paperFeatures := [("resolution", "agreement"), ("cover", "x ↦ a, y ↦ b, z ↦ b")]
-    comment := "Agreement is encoded by the negative literal ¬Man(y); merging `it` with John violates consistency." }
+    paperFeatures := [("resolution", "agreement"), ("cover", "x ↦ a, y ↦ b, z ↦ b")] }
 
 def ex4 : LinguisticExample :=
   { id := "abramskysadrzadeh2014_ex4"
@@ -119,15 +101,12 @@ def ex4 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John put the cup on the plate. He broke it."
-    discourseSegments := ["John put the cup on the plate.", "He broke it."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("it = the cup", .acceptable), ("it = the plate", .acceptable)]
-    paperFeatures := [("resolution", "ambiguous"), ("covers", "v ↦ y; v ↦ z")]
-    comment := "Two plausible covers; the paper defers their ranking to the probabilistic setting." }
+    paperFeatures := [("resolution", "ambiguous"), ("covers", "v ↦ y; v ↦ z")] }
 
 def brother_happy : LinguisticExample :=
   { id := "abramskysadrzadeh2014_brother_happy"
@@ -135,15 +114,12 @@ def brother_happy : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John has a brother. He is happy."
-    discourseSegments := ["John has a brother.", "He is happy."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("he = John", .acceptable), ("he = the brother", .acceptable)]
-    paperFeatures := [("resolution", "preferential"), ("preferred", "he = John")]
-    comment := "" }
+    paperFeatures := [("resolution", "preferential"), ("preferred", "he = John")] }
 
 def brother_nice : LinguisticExample :=
   { id := "abramskysadrzadeh2014_brother_nice"
@@ -151,15 +127,12 @@ def brother_nice : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John has a brother. He is nice."
-    discourseSegments := ["John has a brother.", "He is nice."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("he = John", .acceptable), ("he = the brother", .acceptable)]
-    paperFeatures := [("resolution", "preferential"), ("preferred", "he = the brother")]
-    comment := "" }
+    paperFeatures := [("resolution", "preferential"), ("preferred", "he = the brother")] }
 
 def cd : LinguisticExample :=
   { id := "abramskysadrzadeh2014_cd"
@@ -167,15 +140,12 @@ def cd : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John put a cd in the computer and copied it."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("resolution", "preferential")]
-    comment := "" }
+    paperFeatures := [("resolution", "preferential")] }
 
 def jim : LinguisticExample :=
   { id := "abramskysadrzadeh2014_jim"
@@ -183,15 +153,12 @@ def jim : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John gave a donkey to Jim. James also gave him a dog."
-    discourseSegments := ["John gave a donkey to Jim.", "James also gave him a dog."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("resolution", "preferential")]
-    comment := "" }
+    paperFeatures := [("resolution", "preferential")] }
 
 def bananas : LinguisticExample :=
   { id := "abramskysadrzadeh2014_bananas"
@@ -199,15 +166,12 @@ def bananas : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John gave the bananas to the monkeys. They were ripe. They were cheeky."
-    discourseSegments := ["John gave the bananas to the monkeys.", "They were ripe.", "They were cheeky."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("ripe bananas, cheeky bananas", .acceptable), ("ripe bananas, cheeky monkeys", .acceptable), ("ripe monkeys, cheeky bananas", .acceptable), ("ripe monkeys, cheeky monkeys", .acceptable)]
-    paperFeatures := [("resolution", "preferential"), ("corpus", "British News, 200 million words"), ("selected", "ripe bananas, cheeky monkeys")]
-    comment := "Four candidate coverings weighted by adjective–noun pattern frequencies (ripe banana 14, ripe monkey 0, cheeky banana 0, cheeky monkey 10); the covering u ↦ y, v ↦ z has probability 1/2." }
+    paperFeatures := [("resolution", "preferential"), ("corpus", "British News, 200 million words"), ("selected", "ripe bananas, cheeky monkeys")] }
 
 def all : List LinguisticExample := [donkey, drt_resolved, drt_partial, ex1, ex2, ex3, ex4, brother_happy, brother_nice, cd, jim, bananas]
 

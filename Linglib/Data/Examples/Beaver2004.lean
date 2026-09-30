@@ -23,15 +23,12 @@ def ex_1 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Jane likes Mary. She often brings her flowers. She chats with her for ages."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("In (1c), she = Jane and her = Mary", .acceptable)]
-    paperFeatures := [("transition", "continue")]
-    comment := "BFP's worked example: sixteen candidate resolutions of (1c), filtered and ranked; the continuation wins." }
+    paperFeatures := [("transition", "continue")] }
 
 def ex_2 : LinguisticExample :=
   { id := "beaver2004_2"
@@ -39,15 +36,12 @@ def ex_2 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Mary likes tennis. She plays Jim quite often. He used to play doubles with Mary."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .marginal
     alternatives := []
     readings := [("He = Jim and the two Marys corefer", .marginal)]
-    paperFeatures := [("phenomenon", "rule 1 violation")]
-    comment := "BFP filters out the coreferential reading (Rule 1); demoting PRO-TOP below FAM-DEF recovers it, and the production tableau explains the awkwardness: the speaker would have pronominalized Mary." }
+    paperFeatures := [("phenomenon", "rule 1 violation")] }
 
 def ex_5 : LinguisticExample :=
   { id := "beaver2004_5"
@@ -55,15 +49,12 @@ def ex_5 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Jane likes Mary. She often visits her for tea. The woman is a compulsive tea drinker."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("She = Jane, her = Mary; the woman = Jane", .acceptable)]
-    paperFeatures := [("phenomenon", "definite description resolution")]
-    comment := "PRO-TOP fails for every candidate of (5c), so FAM-DEF and COHERE decide: the definite resolves to the topic." }
+    paperFeatures := [("phenomenon", "definite description resolution")] }
 
 def ex_8 : LinguisticExample :=
   { id := "beaver2004_8"
@@ -71,15 +62,12 @@ def ex_8 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Jane likes Mary. She often goes around for tea with her. She chats with the young woman for ages."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("She = Jane, the young woman = Mary", .acceptable)]
-    paperFeatures := [("transition", "continue")]
-    comment := "The parallel-subject reading wins; the crossed reading violates PRO-TOP and ALIGN." }
+    paperFeatures := [("transition", "continue")] }
 
 def ex_9 : LinguisticExample :=
   { id := "beaver2004_9"
@@ -87,15 +75,12 @@ def ex_9 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Jane is happy. Mary gave her a present. She smiled."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("She = Jane, the topic, not the previous subject Mary", .acceptable)]
-    paperFeatures := [("transition", "continue")]
-    comment := "Neither parallelism nor subjecthood of the antecedent decides: COHERE keeps the topic." }
+    paperFeatures := [("transition", "continue")] }
 
 def ex_12 : LinguisticExample :=
   { id := "beaver2004_12"
@@ -103,15 +88,12 @@ def ex_12 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Jane is happy. She was congratulated by Freda, and Mary gave her a present."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("her = Jane", .acceptable)]
-    paperFeatures := [("transition", "retain")]
-    comment := "Jane stays topic but leaves subject position: only ALIGN is violated." }
+    paperFeatures := [("transition", "retain")] }
 
 def ex_14 : LinguisticExample :=
   { id := "beaver2004_14"
@@ -119,15 +101,12 @@ def ex_14 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Jane is happy. Mary gave her a present. She smiled at her."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("She = Mary, her = Jane", .acceptable)]
-    paperFeatures := [("transition", "smooth shift")]
-    comment := "Both pronouns force an anaphoric reading whose topic was non-topical subject before: ALIGN decides." }
+    paperFeatures := [("transition", "smooth shift")] }
 
 def ex_16 : LinguisticExample :=
   { id := "beaver2004_16"
@@ -135,15 +114,12 @@ def ex_16 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Jane is happy. Mary gave her a present. Somebody unwrapped it."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("it = the present", .acceptable)]
-    paperFeatures := [("transition", "rough shift")]
-    comment := "The only agreeing resolution shifts the topic to the present, in non-subject position." }
+    paperFeatures := [("transition", "rough shift")] }
 
 def ex_23 : LinguisticExample :=
   { id := "beaver2004_23"
@@ -151,15 +127,12 @@ def ex_23 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "A great refinement among armorial signets was to reproduce not only the coat-of-arms but the correct tinctures; they were repeated in colour on the reverse side and the crystal would then be set in the gold bezel."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Corpus example from museum-object descriptions."
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("phenomenon", "rule 1 violation")]
-    comment := "The topic continues via a bridging description while a less salient entity is pronominalized; felicitous, supporting defeasible PRO-TOP over an absolute Rule 1." }
+    paperFeatures := [("phenomenon", "rule 1 violation")] }
 
 def ex_24 : LinguisticExample :=
   { id := "beaver2004_24"
@@ -167,15 +140,12 @@ def ex_24 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John went to his favorite music store to buy a piano. He had frequented the store for many years. He was excited to be going to the store to actually buy a piano. It was the biggest music store in the area. It had just the kind of piano that he wanted. It was closing just as John arrived."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("phenomenon", "text coherence")]
-    comment := "The coherent variant of the Grosz-Sidner text pair: one COHERE violation in the whole-text tableau." }
+    paperFeatures := [("phenomenon", "text coherence")] }
 
 def ex_25 : LinguisticExample :=
   { id := "beaver2004_25"
@@ -183,15 +153,12 @@ def ex_25 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John went to his favorite music store to buy a piano. It was a store John had frequented for many years. He was excited to be going to the store to actually buy a piano. It was the biggest music store in the area. He knew that it had just the kind of piano that he wanted. It was closing just as John arrived."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .marginal
     alternatives := []
     readings := []
-    paperFeatures := [("phenomenon", "text coherence")]
-    comment := "The jerky variant: multiple PRO-TOP, FAM-DEF and ALIGN violations accumulate in the whole-text tableau." }
+    paperFeatures := [("phenomenon", "text coherence")] }
 
 def ex_28 : LinguisticExample :=
   { id := "beaver2004_28"
@@ -199,15 +166,12 @@ def ex_28 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Fred was eating. He saw Jim. HE winked."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "The speaker wants to convey that Jim winked."
     judgment := .acceptable
     alternatives := []
     readings := [("Stressed HE = Jim (switch reference)", .acceptable)]
-    paperFeatures := [("phenomenon", "stressed pronoun")]
-    comment := "Unstressed he is bidirectionally optimal for Fred, so BLOCK gives the stressed form the complementary, topic-shifting reading." }
+    paperFeatures := [("phenomenon", "stressed pronoun")] }
 
 def all : List LinguisticExample := [ex_1, ex_2, ex_5, ex_8, ex_9, ex_12, ex_14, ex_16, ex_23, ex_24, ex_25, ex_28]
 

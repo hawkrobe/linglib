@@ -23,15 +23,12 @@ def ex2a : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Max and Lucie talked about him."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Coordinate subject; pronoun in PP complement. CRDC predicts marginality of co-valuing `him` with `Max` (conjunct valent of the subject coordinate structure)."
     judgment := .questionable
     alternatives := []
     readings := [("him = Max (co-valued)", .questionable), ("him = external referent", .acceptable)]
-    paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "him;Max"), ("paperSection", "1"), ("paperMeanScore", "2.38"), ("paperNRespondents", "60")]
-    comment := "Osborne & Li 2023 ex (2a), p. ~632. Crowdsourced mean 2.38 → `??` per paper p. 630 fn. 3 threshold table (1.65–2.29 = ?, 2.30–2.94 = ??, 2.95–4.00 = *)." }
+    paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "him;Max"), ("paperSection", "1"), ("paperMeanScore", "2.38"), ("paperNRespondents", "60")] }
 
 def ex3a : LinguisticExample :=
   { id := "osborneli2023_ex3a"
@@ -39,15 +36,12 @@ def ex3a : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John and Mary talked about himself."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Coordinate subject; reflexive in PP complement. Co-valuing `himself` with `John` (a conjunct valent of the subject) is marginal — the reflexive cannot find a fully matching antecedent in the local domain but is licensed by the conjunct valent."
     judgment := .questionable
     alternatives := []
     readings := [("himself = John", .marginal)]
-    paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "himself;John"), ("anaphorType", "reflexive"), ("paperSection", "3"), ("paperMeanScore", "2.15"), ("paperNRespondents", "60")]
-    comment := "Osborne & Li 2023 ex (3a). Mean 2.15 → `?` per threshold table. CRDC predicts marginality (full reflexive of conjunct antecedent); some speakers tolerate semantic-plural agreement, others not." }
+    paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "himself;John"), ("anaphorType", "reflexive"), ("paperSection", "3"), ("paperMeanScore", "2.15"), ("paperNRespondents", "60")] }
 
 def ex3b : LinguisticExample :=
   { id := "osborneli2023_ex3b"
@@ -55,15 +49,12 @@ def ex3b : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John and Mary talked about him."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Co-valuing `him` with `John` (conjunct valent of subject coordinate structure). Same CRDC structure as (2a) with masculine antecedent."
     judgment := .questionable
     alternatives := []
     readings := [("him = John (co-valued)", .questionable)]
-    paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "him;John"), ("paperSection", "3"), ("paperMeanScore", "2.43"), ("paperNRespondents", "60")]
-    comment := "Osborne & Li 2023 ex (3b). Mean 2.43 → `??`." }
+    paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "him;John"), ("paperSection", "3"), ("paperMeanScore", "2.43"), ("paperNRespondents", "60")] }
 
 def ex5a : LinguisticExample :=
   { id := "osborneli2023_ex5a"
@@ -71,15 +62,12 @@ def ex5a : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Both John and Mary love him."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "`both ... and ...` coordinator; pronoun as object of a symmetric predicate (`love`). Co-valuing `him` with `John` instantiates the CRDC configuration: `him` is a full valent, `John` is a conjunct of the coordinate subject."
     judgment := .ungrammatical
     alternatives := []
     readings := [("him = John", .questionable)]
-    paperFeatures := [("coordinateSubject", "true"), ("coordinator", "both...and"), ("coVValuedPair", "him;John"), ("paperSection", "3"), ("paperMeanScore", "3.20"), ("paperNRespondents", "60")]
-    comment := "Osborne & Li 2023 ex (5a). CRDC predicts marginality (`.questionable`). Mean score and respondent count not verified against the paper PDF; the paired-coordinator variant pairs with a bare-`and` baseline that the paper itself uses to argue the symmetric-predicate `love` is the locus of the contrast, not the `both`-coordinator. Re-check both the score and the analytic attribution on next audit pass." }
+    paperFeatures := [("coordinateSubject", "true"), ("coordinator", "both...and"), ("coVValuedPair", "him;John"), ("paperSection", "3"), ("paperMeanScore", "3.20"), ("paperNRespondents", "60")] }
 
 def ex6a : LinguisticExample :=
   { id := "osborneli2023_ex6a"
@@ -87,15 +75,12 @@ def ex6a : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Bill and Mary consider him to be ready for a raise."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Coordinate subject; pronoun in raising-to-object position. CRDC applies: `him` is a full valent of `consider` (raising-to-object); `Bill` is a conjunct valent of the coordinate subject. Co-valuation is marginal."
     judgment := .questionable
     alternatives := []
     readings := [("him = Bill", .questionable)]
-    paperFeatures := [("coordinateSubject", "true"), ("construction", "raising-to-object"), ("coVValuedPair", "him;Bill"), ("paperSection", "3"), ("paperMeanScore", "2.42"), ("paperNRespondents", "60")]
-    comment := "Osborne & Li 2023 ex (6a). Mean 2.42 → `??`. Raising-to-object case strengthens the empirical base for CRDC over coordinate-subject configurations." }
+    paperFeatures := [("coordinateSubject", "true"), ("construction", "raising-to-object"), ("coVValuedPair", "him;Bill"), ("paperSection", "3"), ("paperMeanScore", "2.42"), ("paperNRespondents", "60")] }
 
 def ex9a : LinguisticExample :=
   { id := "osborneli2023_ex9a"
@@ -103,15 +88,12 @@ def ex9a : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Max talked about himself."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Non-coordinate baseline; reflexive licensed by Condition A. CRDC is silent (no coordination); the example is fully acceptable."
     judgment := .acceptable
     alternatives := []
     readings := [("himself = Max", .acceptable)]
-    paperFeatures := [("coordinateSubject", "false"), ("coVValuedPair", "himself;Max"), ("paperSection", "3"), ("paperMeanScore", "1.28"), ("paperNRespondents", "60")]
-    comment := "Osborne & Li 2023 ex (9a). Mean 1.28 → no indicator (acceptable). Non-coordinate baseline; CRDC says nothing because there is no coordination." }
+    paperFeatures := [("coordinateSubject", "false"), ("coVValuedPair", "himself;Max"), ("paperSection", "3"), ("paperMeanScore", "1.28"), ("paperNRespondents", "60")] }
 
 def ex9b : LinguisticExample :=
   { id := "osborneli2023_ex9b"
@@ -119,15 +101,12 @@ def ex9b : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Max talked about him."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Non-coordinate baseline; co-valuing `him` with local subject `Max` violates Condition B (not CRDC, which is silent here)."
     judgment := .questionable
     alternatives := []
     readings := [("him = Max", .questionable), ("him = external referent", .acceptable)]
-    paperFeatures := [("coordinateSubject", "false"), ("coVValuedPair", "him;Max"), ("paperSection", "3"), ("paperMeanScore", "2.92"), ("paperNRespondents", "60")]
-    comment := "Osborne & Li 2023 ex (9b). Mean 2.92 → `??`. The marginality here comes from Condition B (local pronoun bound by subject), not CRDC." }
+    paperFeatures := [("coordinateSubject", "false"), ("coVValuedPair", "him;Max"), ("paperSection", "3"), ("paperMeanScore", "2.92"), ("paperNRespondents", "60")] }
 
 def ex11a : LinguisticExample :=
   { id := "osborneli2023_ex11a"
@@ -135,15 +114,12 @@ def ex11a : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Max and Lucie talked about his work."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Coordinate subject; possessive pronoun inside object PP. Possessives embed the conjunct-valent referent inside a further DP, weakening CRDC's marginality prediction."
     judgment := .acceptable
     alternatives := []
     readings := [("his = Max", .acceptable)]
-    paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "his;Max"), ("anaphorType", "possessive"), ("paperSection", "3"), ("paperMeanScore", "1.20"), ("paperNRespondents", "60")]
-    comment := "Osborne & Li 2023 ex (11a). Mean 1.20 → no indicator. Embedding the pronoun inside a possessive DP defuses CRDC." }
+    paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "his;Max"), ("anaphorType", "possessive"), ("paperSection", "3"), ("paperMeanScore", "1.20"), ("paperNRespondents", "60")] }
 
 def ex11e : LinguisticExample :=
   { id := "osborneli2023_ex11e"
@@ -151,15 +127,12 @@ def ex11e : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Max and Lucie talked about Max."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Coordinate subject; R-expression repeated as object. Condition C is in play, not CRDC. The repeated R-expression is acceptable on the disjoint reading (two different Maxes)."
     judgment := .acceptable
     alternatives := []
     readings := [("object Max ≠ subject Max", .acceptable), ("object Max = subject Max (same individual)", .marginal)]
-    paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "Max;Max"), ("anaphorType", "R-expression"), ("paperSection", "3"), ("paperMeanScore", "1.47"), ("paperNRespondents", "100")]
-    comment := "Osborne & Li 2023 ex (11e). Mean 1.47 → no indicator. R-expressions skirt CRDC because they need no antecedent." }
+    paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "Max;Max"), ("anaphorType", "R-expression"), ("paperSection", "3"), ("paperMeanScore", "1.47"), ("paperNRespondents", "100")] }
 
 def ex20b : LinguisticExample :=
   { id := "osborneli2023_ex20b"
@@ -167,15 +140,12 @@ def ex20b : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Hank and Hillary appear to her to be good friends."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Subject-to-subject raising over an experiencer PP. `her` is a full valent of `appear`; `Hillary` is a conjunct valent of the raised subject coordinate structure. CRDC predicts marginality of co-valuation."
     judgment := .questionable
     alternatives := []
     readings := [("her = Hillary", .questionable)]
-    paperFeatures := [("coordinateSubject", "true"), ("construction", "raising-with-experiencer"), ("coVValuedPair", "her;Hillary"), ("paperSection", "3"), ("paperMeanScore", "2.68"), ("paperNRespondents", "60")]
-    comment := "Osborne & Li 2023 ex (20b). Mean 2.68 → `??`. Raising-with-experiencer pattern: CRDC continues to apply across the raising chain." }
+    paperFeatures := [("coordinateSubject", "true"), ("construction", "raising-with-experiencer"), ("coVValuedPair", "her;Hillary"), ("paperSection", "3"), ("paperMeanScore", "2.68"), ("paperNRespondents", "60")] }
 
 def ex24a : LinguisticExample :=
   { id := "osborneli2023_ex24a"
@@ -183,15 +153,12 @@ def ex24a : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John talked about himself and his mother."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Coordinate *object*, not coordinate subject. `himself` is a conjunct valent of a full valent of `talked`; co-valuation with the full-valent subject `John` is the reverse direction of CRDC (conjunct anaphor of full antecedent), which CRDC explicitly permits."
     judgment := .acceptable
     alternatives := []
     readings := [("himself = John", .acceptable)]
-    paperFeatures := [("coordinateObject", "true"), ("coVValuedPair", "himself;John"), ("paperSection", "3"), ("paperMeanScore", "1.14"), ("paperNRespondents", "60")]
-    comment := "Osborne & Li 2023 ex (24a). Mean 1.14 → no indicator. Key directionality test: conjunct anaphor of full-valent antecedent is fine; only the full-anaphor-of-conjunct direction triggers CRDC marginality." }
+    paperFeatures := [("coordinateObject", "true"), ("coVValuedPair", "himself;John"), ("paperSection", "3"), ("paperMeanScore", "1.14"), ("paperNRespondents", "60")] }
 
 def ex25c : LinguisticExample :=
   { id := "osborneli2023_ex25c"
@@ -199,15 +166,12 @@ def ex25c : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Jane defended her."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Non-coordinate Condition B violation. Co-valuing `her` with local subject `Jane` is straightforwardly ungrammatical. CRDC is silent (no coordination)."
     judgment := .ungrammatical
     alternatives := []
     readings := [("her = Jane", .ungrammatical)]
-    paperFeatures := [("coordinateSubject", "false"), ("coVValuedPair", "her;Jane"), ("paperSection", "3"), ("paperMeanScore", "3.20"), ("paperNRespondents", "40")]
-    comment := "Osborne & Li 2023 ex (25c). Mean 3.20 → `*`. Standard Condition B violation; cited to contrast with the coordinate-object licensing in (24a)." }
+    paperFeatures := [("coordinateSubject", "false"), ("coVValuedPair", "her;Jane"), ("paperSection", "3"), ("paperMeanScore", "3.20"), ("paperNRespondents", "40")] }
 
 def ex28d : LinguisticExample :=
   { id := "osborneli2023_ex28d"
@@ -215,15 +179,12 @@ def ex28d : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "John expected Mary and him to be able to leave soon."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Raising-to-object with coordinate object; `him` is a conjunct valent of the embedded subject. Co-valuing `him` with matrix-subject `John` (a full valent of `expected`) is acceptable — the reverse CRDC direction (conjunct anaphor of full antecedent)."
     judgment := .acceptable
     alternatives := []
     readings := [("him = John", .acceptable)]
-    paperFeatures := [("coordinateObject", "true"), ("construction", "raising-to-object"), ("coVValuedPair", "him;John"), ("paperSection", "3"), ("paperMeanScore", "1.40"), ("paperNRespondents", "60")]
-    comment := "Osborne & Li 2023 ex (28d). Mean 1.40 → no indicator. Confirms the directionality asymmetry: conjunct anaphor of full antecedent is fine even with raising-to-object." }
+    paperFeatures := [("coordinateObject", "true"), ("construction", "raising-to-object"), ("coVValuedPair", "him;John"), ("paperSection", "3"), ("paperMeanScore", "1.40"), ("paperNRespondents", "60")] }
 
 def ex55a : LinguisticExample :=
   { id := "osborneli2023_ex55a"
@@ -231,15 +192,12 @@ def ex55a : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Sophy and Edgar voted for her."
-    discourseSegments := []
     glossedTokens := []
-    translation := ""
     context := "Coordinate-subject CRDC configuration, but a structural counterexample: speakers accept co-valuation of `her` with `Sophy` despite CRDC's marginality prediction. Paper discusses this as a candidate exception (Section 6)."
     judgment := .acceptable
     alternatives := []
     readings := [("her = Sophy", .acceptable)]
-    paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "her;Sophy"), ("paperSection", "6"), ("isCounterexample", "true"), ("paperMeanScore", "1.43"), ("paperNRespondents", "40")]
-    comment := "Osborne & Li 2023 ex (55a). Mean 1.43 → no indicator. Section 6 counterexample: predicates like `vote for` allow `her` to pick out an individual outside the coordination (a third party), making CRDC's prediction empirically wrong here. Flagged in `paperFeatures.isCounterexample`." }
+    paperFeatures := [("coordinateSubject", "true"), ("coVValuedPair", "her;Sophy"), ("paperSection", "6"), ("isCounterexample", "true"), ("paperMeanScore", "1.43"), ("paperNRespondents", "40")] }
 
 def all : List LinguisticExample := [ex2a, ex3a, ex3b, ex5a, ex6a, ex9a, ex9b, ex11a, ex11e, ex20b, ex24a, ex25c, ex28d, ex55a]
 

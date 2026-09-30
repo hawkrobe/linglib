@@ -19,7 +19,8 @@ The `Linglib.lean` root import is not touched: the lakefile globs every
 submodule, and `scripts/mk_all.py` regenerates the root before a release.
 
 JSON file format: a single top-level JSON array of example objects. Each
-object's fields mirror the `LinguisticExample` Lean struct:
+object's keys are the fields of the `LinguisticExample` Lean struct, plus the
+record-only keys `discourseSegments`, `translation`, `comment` and `verified`:
 
   {
     "id": "charlow2014_donkey1",
@@ -41,9 +42,10 @@ object's fields mirror the `LinguisticExample` Lean struct:
 
 Behavior:
 - Errors out (exit 1) if the JSON file doesn't exist.
-- Accepts one key that is not a field, `verified` (`"page-image"` or
-  `"text-layer"`): how the row was last checked against its source. The
-  generated module does not carry it; the CLDF export does.
+- Validates but does not emit the record-only keys: the CLDF export carries
+  them, and no theorem reads them, so the Lean rows that `decide` reduces stay
+  small. `verified` (`"page-image"` or `"text-layer"`) is how the row was last
+  checked against its source.
 - Errors out on schema violations (a key that is not a field, an id outside
   the CLDF identifier characters `[A-Za-z0-9_-]`, a language that is neither
   empty nor a Glottocode of `languages.csv`, unknown judgment value,
@@ -226,7 +228,7 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
     local   = lean_identifier(ex_id, author_year_lower)
     unknown = [k for k in ex if k not in KEY_ORDER]
     if unknown:
-        raise ValueError(f"{where}: {', '.join(map(repr, unknown))} not a field of LinguisticExample")
+        raise ValueError(f"{where}: {', '.join(map(repr, unknown))} not a key of the example schema")
     if ex.get("verified", "page-image") not in VERIFIED:
         raise ValueError(f"{where}: verified {ex['verified']!r}; expected one of {sorted(VERIFIED)}")
 
@@ -237,16 +239,17 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
         raise ValueError(
             f"{where}: language {language!r} is not in {LANGUAGES.relative_to(ROOT)}; if it is a "
             f"Glottocode, add it with scripts/export_examples_cldf.py --sync-languages")
+    for key in ("translation", "comment"):
+        if not isinstance(ex.get(key, ""), str):
+            raise ValueError(f"{where}.{key}: expected a string")
+    emit_string_list(ex.get("discourseSegments", []), where + ".discourseSegments")
     primary     = ex.get("primaryText") or ""
-    discourse   = emit_string_list(ex.get("discourseSegments", []), where + ".discourseSegments")
     glossed     = emit_glossed_tokens(ex.get("glossedTokens", []), where)
-    translation = ex.get("translation") or ""
     context     = ex.get("context") or ""
     judgment    = parse_judgment(ex.get("judgment", ""), where + ".judgment")
     alternatives = emit_form_judgment_list(ex.get("alternatives", []), where + ".alternatives", "form")
     readings    = emit_form_judgment_list(ex.get("readings", []), where + ".readings", "name")
     features    = emit_string_pair_list(ex.get("paperFeatures", []), where + ".paperFeatures")
-    comment     = ex.get("comment") or ""
 
     return f"""def {local} : LinguisticExample :=
   {{ id := {lean_string(ex_id)}
@@ -254,15 +257,12 @@ def emit_example(ex: dict, author_year_lower: str) -> str:
     reportedIn := {reported_in}
     language := {lean_string(language)}
     primaryText := {lean_string(primary)}
-    discourseSegments := {discourse}
     glossedTokens := {glossed}
-    translation := {lean_string(translation)}
     context := {lean_string(context)}
     judgment := {judgment}
     alternatives := {alternatives}
     readings := {readings}
-    paperFeatures := {features}
-    comment := {lean_string(comment)} }}"""
+    paperFeatures := {features} }}"""
 
 
 def emit_module(author_year: str, examples: list) -> str:
@@ -373,8 +373,10 @@ KEY_ORDER = [
     "verified",
 ]
 
-# `verified` is provenance, not a field: how the row was last checked against its source. It is
-# validated here and exported to CLDF, and the generated Lean module does not carry it.
+# `discourseSegments`, `translation`, `comment` and `verified` are the source's record rather than
+# fields: the utterances of a discourse, the translation, notes, and how the row was last checked
+# against its source. They are validated here and exported to CLDF; the generated Lean module does
+# not carry them.
 VERIFIED = {
     "page-image": "every field checked against the page images of the source",
     "text-layer": "checked against the text layer of the source's PDF only",

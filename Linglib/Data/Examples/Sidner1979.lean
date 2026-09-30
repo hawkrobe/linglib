@@ -23,15 +23,12 @@ def ex_22 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "I took my sister to the zoo today."
-    discourseSegments := ["I took my sister to the zoo today."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("phenomenon", "expectedFocus"), ("form", "plain"), ("expectedFocus", "my sister")]
-    comment := "Not an is-a or there-insertion sentence: the default expected focus list runs my sister (theme), the zoo, today, I (agent), the verb phrase, and the expected focus is its first member." }
+    paperFeatures := [("phenomenon", "expectedFocus"), ("form", "plain"), ("expectedFocus", "my sister")] }
 
 def ex_23 : LinguisticExample :=
   { id := "sidner1979_23"
@@ -39,15 +36,12 @@ def ex_23 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "There once was an old man who lived in the woods."
-    discourseSegments := ["There once was an old man who lived in the woods."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("phenomenon", "expectedFocus"), ("form", "thereInsertion"), ("expectedFocus", "an old man")]
-    comment := "A there-insertion sentence: the expected focus is its subject." }
+    paperFeatures := [("phenomenon", "expectedFocus"), ("form", "thereInsertion"), ("expectedFocus", "an old man")] }
 
 def ex_24 : LinguisticExample :=
   { id := "sidner1979_24"
@@ -55,15 +49,12 @@ def ex_24 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Linda talked with her dog all day long."
-    discourseSegments := ["Linda talked with her dog all day long."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("phenomenon", "expectedFocus"), ("form", "plain"), ("expectedFocus", "her dog")]
-    comment := "No theme is present, what is talked about not being given: the default expected focus list runs her dog, all day long, Linda (agent), the verb phrase." }
+    paperFeatures := [("phenomenon", "expectedFocus"), ("form", "plain"), ("expectedFocus", "her dog")] }
 
 def d2 : LinguisticExample :=
   { id := "sidner1979_d2"
@@ -71,15 +62,12 @@ def d2 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Mary is giving a surprise party at Hilda's house. It's at 340 Cherry St."
-    discourseSegments := ["Mary is giving a surprise party at Hilda's house.", "It's at 340 Cherry St."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("it = Hilda's house", .acceptable)]
-    paperFeatures := [("phenomenon", "recencyRule")]
-    comment := "The pronoun in subject position co-specifies Hilda's house, the last constituent of the previous sentence, by the recency rule rather than the expected focus." }
+    paperFeatures := [("phenomenon", "recencyRule")] }
 
 def d7 : LinguisticExample :=
   { id := "sidner1979_d7"
@@ -87,15 +75,12 @@ def d7 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "I lost a necklace at the office yesterday. I inherited it from my grandmother, and it meant a lot to me."
-    discourseSegments := ["I lost a necklace at the office yesterday.", "I inherited it from my grandmother,", "and it meant a lot to me."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("it = the necklace", .acceptable)]
-    paperFeatures := [("phenomenon", "nonAgentPronoun")]
-    comment := "The pronoun outside agent position co-specifies the discourse focus, the necklace; the alternate potential focus, the office, is never considered." }
+    paperFeatures := [("phenomenon", "nonAgentPronoun")] }
 
 def d8 : LinguisticExample :=
   { id := "sidner1979_d8"
@@ -103,15 +88,12 @@ def d8 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Yesterday Max went to Bloomingdales with Ned and Winston on a shopping trip. While he was there, he bought some sneakers for his mother."
-    discourseSegments := ["Yesterday Max went to Bloomingdales with Ned and Winston on a shopping trip.", "While he was there, he bought some sneakers for his mother."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("he = Max", .acceptable)]
-    paperFeatures := [("phenomenon", "agentPronoun")]
-    comment := "The pronoun in agent position co-specifies the actor focus, Max: the discourse focus, Bloomingdales, was established in the same sentence and takes no precedence, and the two potential actors Ned and Winston raise no actor ambiguity." }
+    paperFeatures := [("phenomenon", "agentPronoun")] }
 
 def d9 : LinguisticExample :=
   { id := "sidner1979_d9"
@@ -119,15 +101,12 @@ def d9 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "I haven't seen Jeff for several days. Carl thinks he's studying for his exams. Oscar says he is sick, but I think he went to the Cape with Linda."
-    discourseSegments := ["I haven't seen Jeff for several days.", "Carl thinks he's studying for his exams.", "Oscar says he is sick,", "but I think he went to the Cape with Linda."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("he = Jeff throughout", .acceptable)]
-    paperFeatures := [("phenomenon", "animateDiscourseFocusRule")]
-    comment := "The discourse focus is Jeff while the actor focus moves from the speaker to Carl to Oscar; every he co-specifies Jeff, the discourse focus having been established before any other phrase satisfying person, number and gender. Reported as (34) in Grosz, Joshi and Weinstein (1995)." }
+    paperFeatures := [("phenomenon", "animateDiscourseFocusRule")] }
 
 def d14a : LinguisticExample :=
   { id := "sidner1979_d14a"
@@ -135,15 +114,12 @@ def d14a : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "I took my dog to the vet yesterday. He bit him in the hand."
-    discourseSegments := ["I took my dog to the vet yesterday.", "He bit him in the hand."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("he = my dog, him = the vet", .acceptable)]
-    paperFeatures := [("phenomenon", "actorAndDiscourseFocus")]
-    comment := "The actor focus, the speaker, fails the syntactic filters for he, so the first potential actor, my dog, is its co-specification; the discourse focus, my dog, is rejected for him by inference, dogs having no hands, so the first potential discourse focus, the vet, is its co-specification. The discourse focus moves to the vet and my dog is stacked; the actor focus moves to my dog and the speaker is stacked." }
+    paperFeatures := [("phenomenon", "actorAndDiscourseFocus")] }
 
 def d14b : LinguisticExample :=
   { id := "sidner1979_d14b"
@@ -151,15 +127,12 @@ def d14b : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "I took my dog to the vet yesterday. He injected him with a new medicine."
-    discourseSegments := ["I took my dog to the vet yesterday.", "He injected him with a new medicine."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("he = the vet, him = my dog", .acceptable)]
-    paperFeatures := [("phenomenon", "actorAndDiscourseFocus")]
-    comment := "The discourse focus, my dog, is retained as the co-specification of him, a dog being injectable; for he the actor focus and the first potential actor are rejected, dogs giving no injections, and the vet is its co-specification and the new actor focus." }
+    paperFeatures := [("phenomenon", "actorAndDiscourseFocus")] }
 
 def d25 : LinguisticExample :=
   { id := "sidner1979_d25"
@@ -167,15 +140,12 @@ def d25 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Last week there were some nice strawberries in the refrigerator. They came from our food co-op and were unusually fresh."
-    discourseSegments := ["Last week there were some nice strawberries in the refrigerator.", "They came from our food co-op and were unusually fresh."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("they = the strawberries", .acceptable)]
-    paperFeatures := [("phenomenon", "focusConfirmation")]
-    comment := "A there-insertion sentence whose subject, some strawberries, is the expected focus; the pronoun of the second sentence co-specifies it and the focus is retained at step 4 of the focusing algorithm." }
+    paperFeatures := [("phenomenon", "focusConfirmation")] }
 
 def d35 : LinguisticExample :=
   { id := "sidner1979_d35"
@@ -183,15 +153,12 @@ def d35 : LinguisticExample :=
     reportedIn := none
     language := "stan1293"
     primaryText := "Alfred and Zohar liked to play baseball. They played it everyday after school before dinner. After their game, Alfred and Zohar had ice cream cones. They tasted really good. Alfred always had the vanilla super scooper, while Zohar tried the flavor of the day cone. After the cones had been eaten, the boys went home to study."
-    discourseSegments := ["Alfred and Zohar liked to play baseball.", "They played it everyday after school before dinner.", "After their game, Alfred and Zohar had ice cream cones.", "They tasted really good.", "Alfred always had the vanilla super scooper,", "while Zohar tried the flavor of the day cone.", "After the cones had been eaten,", "the boys went home to study."]
     glossedTokens := []
-    translation := ""
     context := ""
     judgment := .acceptable
     alternatives := []
     readings := [("they in the fourth sentence = the ice cream cones", .acceptable)]
-    paperFeatures := [("phenomenon", "focusMovement")]
-    comment := "The expected focus is baseball, the theme of the verb complement, confirmed by it in the second sentence while they in agent position is not consulted; the fourth sentence's they co-specifies the alternate ice cream cones and the focus moves there, baseball being stacked." }
+    paperFeatures := [("phenomenon", "focusMovement")] }
 
 def all : List LinguisticExample := [ex_22, ex_23, ex_24, d2, d7, d8, d9, d14a, d14b, d25, d35]
 
