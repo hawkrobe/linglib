@@ -250,6 +250,12 @@ variable (D x P) in
 def IsReading (Q : Setoid W) (q : Set W) : Prop :=
   q ∈ readings D x P ∧ Q.Decides q ∧ ∀ r ∈ readings D x P, Q.Decides r → q ⊆ r
 
+omit [∀ a w, Decidable (P a w)] in
+/-- A partition selects at most one reading. -/
+theorem IsReading.unique {Q : Setoid W} {q r : Set W} (hq : IsReading D x P Q q)
+    (hr : IsReading D x P Q r) : q = r :=
+  subset_antisymm (hq.2.2 r hr.1 hr.2.1) (hr.2.2 q hq.1 hq.2.1)
+
 /-- Given the polar question whether at least `k` of the kids laughed, *the kids laughed* means
 that at least `k` did, provided every number of laughers is realized at some world. -/
 theorem isReading_polar_atLeast (h : Separating D x P)
