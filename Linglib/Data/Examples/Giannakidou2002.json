@@ -1,10 +1,7 @@
 [
   {
     "id": "giannakidou2002_ex1",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(1)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(1)"},
     "language": "stan1293",
     "primaryText": "The princess slept until midnight.",
     "discourseSegments": [],
@@ -15,35 +12,18 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "until"
-      ],
-      [
-        "aspect",
-        "simplePast"
-      ],
-      [
-        "eventuality",
-        "stative"
-      ],
-      [
-        "licenser",
-        "none"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "until"],
+      ["aspect", "simplePast"],
+      ["eventuality", "stative"],
+      ["licenser", "none"],
+      ["test", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex2",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(2)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(2)"},
     "language": "stan1293",
     "primaryText": "The princess was writing a letter until midnight.",
     "discourseSegments": [],
@@ -54,35 +34,18 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "until"
-      ],
-      [
-        "aspect",
-        "progressive"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "none"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "until"],
+      ["aspect", "progressive"],
+      ["eventuality", "eventive"],
+      ["licenser", "none"],
+      ["test", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex3",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(3)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(3)"},
     "language": "stan1293",
     "primaryText": "The princess arrived until midnight.",
     "discourseSegments": [],
@@ -93,35 +56,18 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "until"
-      ],
-      [
-        "aspect",
-        "simplePast"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "none"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "until"],
+      ["aspect", "simplePast"],
+      ["eventuality", "eventive"],
+      ["licenser", "none"],
+      ["test", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex4",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(4)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(4)"},
     "language": "stan1293",
     "primaryText": "The princess ate a sandwich until noon.",
     "discourseSegments": [],
@@ -132,35 +78,18 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "until"
-      ],
-      [
-        "aspect",
-        "simplePast"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "none"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "until"],
+      ["aspect", "simplePast"],
+      ["eventuality", "eventive"],
+      ["licenser", "none"],
+      ["test", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex8a",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(8a)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(8a)"},
     "language": "stan1293",
     "primaryText": "The princess didn't arrive until midnight.",
     "discourseSegments": [],
@@ -171,35 +100,18 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "until"
-      ],
-      [
-        "aspect",
-        "simplePast"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "negation"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "until"],
+      ["aspect", "simplePast"],
+      ["eventuality", "eventive"],
+      ["licenser", "negation"],
+      ["test", "plain"]
     ],
-    "comment": "The eventive, polarity-sensitive until: an arrival at midnight is entailed."
+    "comment": "The eventive, polarity-sensitive until: an arrival at midnight is entailed.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex8b",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(8b)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(8b)"},
     "language": "stan1293",
     "primaryText": "The princess didn't sleep until midnight.",
     "discourseSegments": [],
@@ -210,35 +122,18 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "until"
-      ],
-      [
-        "aspect",
-        "simplePast"
-      ],
-      [
-        "eventuality",
-        "stative"
-      ],
-      [
-        "licenser",
-        "negation"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "until"],
+      ["aspect", "simplePast"],
+      ["eventuality", "stative"],
+      ["licenser", "negation"],
+      ["test", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex22",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(22)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(22)"},
     "language": "stan1293",
     "primaryText": "Nancy remained a spinster until she died.",
     "discourseSegments": [],
@@ -249,74 +144,43 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "until"
-      ],
-      [
-        "aspect",
-        "simplePast"
-      ],
-      [
-        "eventuality",
-        "stative"
-      ],
-      [
-        "licenser",
-        "none"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "until"],
+      ["aspect", "simplePast"],
+      ["eventuality", "stative"],
+      ["licenser", "none"],
+      ["test", "plain"]
     ],
-    "comment": "Karttunen's contrast case: a true stative, hence no marriage at her death."
+    "comment": "Karttunen's contrast case: a true stative, hence no marriage at her death.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex61a",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(61a)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(61a)"},
     "language": "stan1293",
     "primaryText": "The princess didn't sleep until midnight. At midnight she got up, got dressed and went out for a walk.",
-    "discourseSegments": [],
+    "discourseSegments": [
+      "The princess didn't sleep until midnight.",
+      "At midnight she got up, got dressed and went out for a walk."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "ungrammatical",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "until"
-      ],
-      [
-        "aspect",
-        "simplePast"
-      ],
-      [
-        "eventuality",
-        "stative"
-      ],
-      [
-        "licenser",
-        "negation"
-      ],
-      [
-        "test",
-        "noEventContinuation"
-      ]
+      ["connective", "until"],
+      ["aspect", "simplePast"],
+      ["eventuality", "stative"],
+      ["licenser", "negation"],
+      ["test", "noEventContinuation"]
     ],
-    "comment": "The continuation denying a falling-asleep event is contradictory: the English simple past lacks the wide-scope reading."
+    "comment": "The continuation denying a falling-asleep event is contradictory: the English simple past lacks the wide-scope reading.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex61b",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(61b)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(61b)"},
     "language": "stan1293",
     "primaryText": "Until midnight, the princess didn't sleep.",
     "discourseSegments": [],
@@ -327,347 +191,224 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "until"
-      ],
-      [
-        "aspect",
-        "simplePast"
-      ],
-      [
-        "eventuality",
-        "stative"
-      ],
-      [
-        "licenser",
-        "negation"
-      ],
-      [
-        "test",
-        "preposed"
-      ]
+      ["connective", "until"],
+      ["aspect", "simplePast"],
+      ["eventuality", "stative"],
+      ["licenser", "negation"],
+      ["test", "preposed"]
     ],
-    "comment": "Preposing needs the wide-scope reading, which the simple past lacks."
+    "comment": "Preposing needs the wide-scope reading, which the simple past lacks.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex32",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(32)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(32)"},
     "language": "mode1248",
     "primaryText": "I prigipisa egrafe ena grama mexri ta mesanixta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["I", "the"], ["prigipisa", "princess"], ["egrafe", "wrote.imperf.3sg"], ["ena", "a"],
+      ["grama", "letter"], ["mexri", "until"], ["ta", "the"], ["mesanixta", "midnight"]
+    ],
     "translation": "The princess was writing a letter until midnight.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "mexri"
-      ],
-      [
-        "aspect",
-        "imperfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "none"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "mexri"],
+      ["aspect", "imperfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "none"],
+      ["test", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex33",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(33)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(33)"},
     "language": "mode1248",
     "primaryText": "I prigipisa kimotane mexri ta mesanixta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["I", "the"], ["prigipisa", "princess"], ["kimotane", "slept.imperf.3sg"],
+      ["mexri", "until"], ["ta", "the"], ["mesanixta", "midnight"]
+    ],
     "translation": "The princess was sleeping until midnight.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "mexri"
-      ],
-      [
-        "aspect",
-        "imperfective"
-      ],
-      [
-        "eventuality",
-        "stative"
-      ],
-      [
-        "licenser",
-        "none"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "mexri"],
+      ["aspect", "imperfective"],
+      ["eventuality", "stative"],
+      ["licenser", "none"],
+      ["test", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex34",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(34)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(34)"},
     "language": "mode1248",
     "primaryText": "I prigipisa eftase mexri ta mesanixta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["I", "the"], ["prigipisa", "princess"], ["eftase", "arrived.perf.3sg"], ["mexri", "until"],
+      ["ta", "the"], ["mesanixta", "midnight"]
+    ],
     "translation": "The princess arrived until midnight.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "mexri"
-      ],
-      [
-        "aspect",
-        "perfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "none"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "mexri"],
+      ["aspect", "perfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "none"],
+      ["test", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex35",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(35)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(35)"},
     "language": "mode1248",
     "primaryText": "I prigipisa dhen eftase mexri ta mesanixta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["I", "the"], ["prigipisa", "princess"], ["dhen", "not"], ["eftase", "arrived.perf.3sg"],
+      ["mexri", "until"], ["ta", "the"], ["mesanixta", "midnight"]
+    ],
     "translation": "The princess did not arrive until midnight.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "mexri"
-      ],
-      [
-        "aspect",
-        "perfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "negation"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "mexri"],
+      ["aspect", "perfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "negation"],
+      ["test", "plain"]
     ],
-    "comment": "Negation cannot stativize an unambiguously eventive form."
+    "comment": "Negation cannot stativize an unambiguously eventive form.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex36",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(36)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(36)"},
     "language": "mode1248",
     "primaryText": "I prigipisa dhen eftase para monon ta mesanixta.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "It was only at midnight that the princess arrived.",
+    "glossedTokens": [
+      ["I", "the"], ["prigipisa", "princess"], ["dhen", "not"], ["eftase", "arrived.perf.3sg"],
+      ["para", "but"], ["monon", "only"], ["ta", "the"], ["mesanixta", "midnight"]
+    ],
+    "translation": "The princess did not arrive until midnight.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "paraMonon"
-      ],
-      [
-        "aspect",
-        "perfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "negation"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "paraMonon"],
+      ["aspect", "perfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "negation"],
+      ["test", "plain"]
     ],
-    "comment": ""
+    "comment": "The source adds '= It was only at midnight that the princess arrived.'",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex36pos",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(36)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(36)"},
     "language": "mode1248",
     "primaryText": "I prigipisa eftase para monon ta mesanixta.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The princess arrived but only at midnight.",
+    "glossedTokens": [
+      ["I", "the"], ["prigipisa", "princess"], ["eftase", "arrived.perf.3sg"], ["para", "but"],
+      ["monon", "only"], ["ta", "the"], ["mesanixta", "midnight"]
+    ],
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "paraMonon"
-      ],
-      [
-        "aspect",
-        "perfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "none"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "paraMonon"],
+      ["aspect", "perfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "none"],
+      ["test", "plain"]
     ],
-    "comment": "Para monon needs its antiveridical licenser."
+    "comment": "Para monon needs its antiveridical licenser.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex37",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(37)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(37)"},
     "language": "mode1248",
     "primaryText": "I prigipisa dhen (apo)kimithike para monon ta mesanixta.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["I", "the"], ["prigipisa", "princess"], ["dhen", "not"],
+      ["(apo)kimithike", "fell.asleep.perf.3sg"], ["para", "but"], ["monon", "only"],
+      ["ta", "the"], ["mesanixta", "midnight"]
+    ],
     "translation": "The princess didn't fall asleep until midnight.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "paraMonon"
-      ],
-      [
-        "aspect",
-        "perfective"
-      ],
-      [
-        "eventuality",
-        "stative"
-      ],
-      [
-        "licenser",
-        "negation"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "paraMonon"],
+      ["aspect", "perfective"],
+      ["eventuality", "stative"],
+      ["licenser", "negation"],
+      ["test", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex38",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(38)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(38)"},
     "language": "mode1248",
     "primaryText": "I prigipisa dhen eftase para monon ta mesanixta. Dhen eftase kan ekino to vradi.",
-    "discourseSegments": [],
-    "glossedTokens": [],
+    "discourseSegments": [
+      "I prigipisa dhen eftase para monon ta mesanixta.",
+      "Dhen eftase kan ekino to vradi."
+    ],
+    "glossedTokens": [
+      ["I", "the"], ["prigipisa", "princess"], ["dhen", "not"], ["eftase", "arrived.perf.3sg"],
+      ["para", "but"], ["monon", "only"], ["ta", "the"], ["mesanixta", "midnight"],
+      ["Dhen", "not"], ["eftase", "arrived"], ["kan", "even"], ["ekino", "that"],
+      ["to vradi", "night"]
+    ],
     "translation": "The princess did not arrive until midnight. In fact she didn't even arrive that night.",
     "context": "",
-    "judgment": "ungrammatical",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "paraMonon"
-      ],
-      [
-        "aspect",
-        "perfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "negation"
-      ],
-      [
-        "test",
-        "noEventContinuation"
-      ]
+      ["connective", "paraMonon"],
+      ["aspect", "perfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "negation"],
+      ["test", "noEventContinuation"]
     ],
-    "comment": "Para monon entails actualization, so denying the arrival contradicts it."
+    "comment": "Para monon entails actualization, so denying the arrival contradicts it. The source glosses 'to vradi' as 'night'.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex40",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(40)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(40)"},
     "language": "mode1248",
     "primaryText": "Kitouse to tavani xoris na milisi para monon otan efije o jatros.",
     "discourseSegments": [],
@@ -678,35 +419,18 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "paraMonon"
-      ],
-      [
-        "aspect",
-        "perfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "without"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "paraMonon"],
+      ["aspect", "perfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "without"],
+      ["test", "plain"]
     ],
-    "comment": "Without is antiveridical and licenses para monon."
+    "comment": "Without is antiveridical and licenses para monon. The source prints 'staired'.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex41pm",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(41)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(41)"},
     "language": "mode1248",
     "primaryText": "Amfivalo an ixe erthi para monon ta mesanixta.",
     "discourseSegments": [],
@@ -717,74 +441,40 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "paraMonon"
-      ],
-      [
-        "aspect",
-        "perfect"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "nonveridical"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "paraMonon"],
+      ["aspect", "perfect"],
+      ["eventuality", "eventive"],
+      ["licenser", "nonveridical"],
+      ["test", "plain"]
     ],
-    "comment": "A merely nonveridical environment does not license para monon."
+    "comment": "A merely nonveridical environment does not license para monon.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex41mx",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(41)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(41)"},
     "language": "mode1248",
     "primaryText": "Amfivalo an ixe erthi mexri ta mesanixta.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "I doubt whether he had arrived by midnight.",
+    "translation": "I doubt whether he had arrived until midnight.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "mexri"
-      ],
-      [
-        "aspect",
-        "perfect"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "nonveridical"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "mexri"],
+      ["aspect", "perfect"],
+      ["eventuality", "eventive"],
+      ["licenser", "nonveridical"],
+      ["test", "plain"]
     ],
-    "comment": "Mexri is no polarity item; the pluperfect is a stative form."
+    "comment": "Mexri is no polarity item; the pluperfect is a stative form. The source prints one translation for the pair {*para monon/mexri}, starred.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex42pm",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(42)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(42)"},
     "language": "mode1248",
     "primaryText": "Jati na pantreftis para monon otan prepi anagastika na to kanis?",
     "discourseSegments": [],
@@ -795,269 +485,177 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "paraMonon"
-      ],
-      [
-        "aspect",
-        "perfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "nonveridical"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "paraMonon"],
+      ["aspect", "perfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "nonveridical"],
+      ["test", "plain"]
     ],
-    "comment": "A rhetorical question carries a negative implicature but is not antiveridical."
+    "comment": "A rhetorical question carries a negative implicature but is not antiveridical.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex48",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(48)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(48)"},
     "language": "mode1248",
     "primaryText": "I prigipisa dhen kimotane mexri ta mesanixta.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The princess was in a state of not-sleeping until midnight, or did not sleep the whole time until midnight.",
+    "glossedTokens": [
+      ["I", "the"], ["prigipisa", "princess"], ["dhen", "not"], ["kimotane", "slept.imperf.3sg"],
+      ["mexri", "until"], ["ta", "the"], ["mesanixta", "midnight"]
+    ],
+    "translation": "The princess was in a state of not-sleeping until midnight.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "connective",
-        "mexri"
-      ],
-      [
-        "aspect",
-        "imperfective"
-      ],
-      [
-        "eventuality",
-        "stative"
-      ],
-      [
-        "licenser",
-        "negation"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+    "readings": [
+      {"name": "The princess was in a state of not-sleeping until midnight.", "judgment": "acceptable"},
+      {"name": "It is not true that the princess slept until midnight. (She woke up earlier than that.)", "judgment": "acceptable"}
     ],
-    "comment": ""
+    "paperFeatures": [
+      ["connective", "mexri"],
+      ["aspect", "imperfective"],
+      ["eventuality", "stative"],
+      ["licenser", "negation"],
+      ["test", "plain"]
+    ],
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex49",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(49)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(49)"},
     "language": "mode1248",
     "primaryText": "I prigipisa dhen kimithike mexri ta mesanixta.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "It is not true that the princess slept until midnight.",
+    "glossedTokens": [
+      ["I", "the"], ["prigipisa", "princess"], ["dhen", "not"], ["kimithike", "slept.perf.3sg"],
+      ["mexri", "until"], ["ta", "the"], ["mesanixta", "midnight"]
+    ],
+    "translation": "It is not true that the princess slept until midnight. (She woke up earlier than that.)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "mexri"
-      ],
-      [
-        "aspect",
-        "perfective"
-      ],
-      [
-        "eventuality",
-        "stative"
-      ],
-      [
-        "licenser",
-        "negation"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "mexri"],
+      ["aspect", "perfective"],
+      ["eventuality", "stative"],
+      ["licenser", "negation"],
+      ["test", "plain"]
     ],
-    "comment": "Only the narrow-scope reading: the perfective stative allows no state of not-sleeping."
+    "comment": "Only the narrow-scope reading: the perfective stative allows no state of not-sleeping.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex51",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(51)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(51)"},
     "language": "mode1248",
     "primaryText": "I prigipisa dhen kimotane mexri ta mesanixta. Ke tote, apofasise na sikothi, na ndithi ke na vgi ekso.",
-    "discourseSegments": [],
-    "glossedTokens": [],
+    "discourseSegments": [
+      "I prigipisa dhen kimotane mexri ta mesanixta.",
+      "Ke tote, apofasise na sikothi, na ndithi ke na vgi ekso."
+    ],
+    "glossedTokens": [
+      ["I", "the"], ["prigipisa", "princess"], ["dhen", "not"], ["kimotane", "slept.imperf.3sg"],
+      ["mexri", "until"], ["ta", "the"], ["mesanixta", "midnight"]
+    ],
     "translation": "The princess was in a state of not-sleeping until midnight. And then she decided to get out of bed, get dressed, and go out for a walk.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "mexri"
-      ],
-      [
-        "aspect",
-        "imperfective"
-      ],
-      [
-        "eventuality",
-        "stative"
-      ],
-      [
-        "licenser",
-        "negation"
-      ],
-      [
-        "test",
-        "noEventContinuation"
-      ]
+      ["connective", "mexri"],
+      ["aspect", "imperfective"],
+      ["eventuality", "stative"],
+      ["licenser", "negation"],
+      ["test", "noEventContinuation"]
     ],
-    "comment": "The wide-scope reading carries no falling-asleep event, so the continuation is consistent."
+    "comment": "The wide-scope reading carries no falling-asleep event, so the continuation is consistent. The source glosses the first sentence only, as (51), and gives the second as (51b).",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex53",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(53)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(53)"},
     "language": "mode1248",
     "primaryText": "Mexri ta mesanixta i prigipisa dhen kimotane.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Mexri", "Until"], ["ta", "the"], ["mesanixta", "midnight"], ["i", "the"],
+      ["prigipisa", "princess"], ["dhen", "not"], ["kimotane", "slept.imperf.3sg"]
+    ],
     "translation": "Until midnight, the princess was in a state of not-sleeping.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "mexri"
-      ],
-      [
-        "aspect",
-        "imperfective"
-      ],
-      [
-        "eventuality",
-        "stative"
-      ],
-      [
-        "licenser",
-        "negation"
-      ],
-      [
-        "test",
-        "preposed"
-      ]
+      ["connective", "mexri"],
+      ["aspect", "imperfective"],
+      ["eventuality", "stative"],
+      ["licenser", "negation"],
+      ["test", "preposed"]
     ],
-    "comment": ""
+    "comment": "The source prints the preposed phrase in parentheses.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex57",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(57)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(57)"},
     "language": "mode1248",
     "primaryText": "I prigipisa dhen kimithike para monon ta mesanixta. Ke tote, apofasise na sikothi, na ndithi ke na vgi ekso.",
-    "discourseSegments": [],
-    "glossedTokens": [],
+    "discourseSegments": [
+      "I prigipisa dhen kimithike para monon ta mesanixta.",
+      "Ke tote, apofasise na sikothi, na ndithi ke na vgi ekso."
+    ],
+    "glossedTokens": [
+      ["I", "the"], ["prigipisa", "princess"], ["dhen", "not"], ["kimithike", "slept.perf.3sg"],
+      ["para", "but"], ["monon", "only"], ["ta", "the"], ["mesanixta", "midnight"]
+    ],
     "translation": "The princess didn't sleep until midnight. And then she decided to get out of bed, get dressed and go out for a walk.",
     "context": "",
-    "judgment": "ungrammatical",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "paraMonon"
-      ],
-      [
-        "aspect",
-        "perfective"
-      ],
-      [
-        "eventuality",
-        "stative"
-      ],
-      [
-        "licenser",
-        "negation"
-      ],
-      [
-        "test",
-        "noEventContinuation"
-      ]
+      ["connective", "paraMonon"],
+      ["aspect", "perfective"],
+      ["eventuality", "stative"],
+      ["licenser", "negation"],
+      ["test", "noEventContinuation"]
     ],
-    "comment": "Para monon shifts the stative to an achievement and entails the falling asleep."
+    "comment": "Para monon shifts the stative to an achievement and entails the falling asleep. The source glosses the first sentence only; the continuation is marked #.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex72",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(72)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(72)"},
     "language": "mode1248",
     "primaryText": "I prigipisa dhen eftase prin apo ta mesanixta. Eftase argotera i den eftase kan.",
-    "discourseSegments": [],
+    "discourseSegments": [
+      "I prigipisa dhen eftase prin apo ta mesanixta.",
+      "Eftase argotera i den eftase kan."
+    ],
     "glossedTokens": [],
-    "translation": "The princess did not arrive before midnight. In fact, she arrived much later than that, or she didn't arrive at all.",
+    "translation": "The princess did not arrive before midnight. (In fact, she arrived (much) later than that. Or she didn't arrive at all).",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "prin"
-      ],
-      [
-        "aspect",
-        "perfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "negation"
-      ],
-      [
-        "test",
-        "noEventContinuation"
-      ]
+      ["connective", "prin"],
+      ["aspect", "perfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "negation"],
+      ["test", "noEventContinuation"]
     ],
-    "comment": "Before contributes only a temporal scale and no event."
+    "comment": "Before contributes only a temporal scale and no event.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex77",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(77)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(77a)"},
     "language": "mode1248",
     "primaryText": "I prigipisa dhen pandreftike prin pethani.",
     "discourseSegments": [],
@@ -1068,308 +666,193 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "prin"
-      ],
-      [
-        "aspect",
-        "perfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "negation"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "prin"],
+      ["aspect", "perfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "negation"],
+      ["test", "plain"]
     ],
-    "comment": ""
+    "comment": "The source prints 'dhe died' in the translation.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex43",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(43)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(43)"},
     "language": "icel1247",
-    "primaryText": "Prinsessan svaf (þangað) til klukkan fimm.",
+    "primaryText": "Prinsessan svaf (þangað) til klukkan fimm",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Prinsessan", "princess-the"], ["svaf", "slept"], ["(þangað) til", "mexri"],
+      ["klukkan fimm", "five o'clock"]
+    ],
     "translation": "The princess slept until five o'clock.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "til"
-      ],
-      [
-        "aspect",
-        "simplePast"
-      ],
-      [
-        "eventuality",
-        "stative"
-      ],
-      [
-        "licenser",
-        "none"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "til"],
+      ["aspect", "simplePast"],
+      ["eventuality", "stative"],
+      ["licenser", "none"],
+      ["test", "plain"]
     ],
-    "comment": ""
+    "comment": "The source prints '(flanga) til', a font substitution for '(þangað) til', in braces with the alternatives.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex44",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(44)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(44)"},
     "language": "icel1247",
     "primaryText": "Prinsessan var að skrifa bréf (þangað) til klukkan fimm.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Prinsessan", "princess-the"], ["var", "was"], ["að", "to"], ["skrifa", "write"],
+      ["bréf", "letters"], ["(þangað) til", "mexri"], ["klukkan fimm", "five o'clock"]
+    ],
     "translation": "The princess was writing letters until five o'clock.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "til"
-      ],
-      [
-        "aspect",
-        "progressive"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "none"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "til"],
+      ["aspect", "progressive"],
+      ["eventuality", "eventive"],
+      ["licenser", "none"],
+      ["test", "plain"]
     ],
-    "comment": ""
+    "comment": "The source prints 'a skrifa' and '(flanga) til', font substitutions for 'að skrifa' and '(þangað) til', and glosses skrifa 'writ'.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex45",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(45)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(45)"},
     "language": "icel1247",
-    "primaryText": "Prinsessan kom (þangað) til klukkan fimm.",
+    "primaryText": "Prinsessan kom (þangað) til klukkan fimm",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Prinsessan", "princess-the"], ["kom", "arrived"], ["(þangað) til", "until"],
+      ["klukkan fimm", "five o'clock"]
+    ],
     "translation": "The princess arrived until five o'clock.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "til"
-      ],
-      [
-        "aspect",
-        "simplePast"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "none"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "til"],
+      ["aspect", "simplePast"],
+      ["eventuality", "eventive"],
+      ["licenser", "none"],
+      ["test", "plain"]
     ],
-    "comment": ""
+    "comment": "The source prints '(flanga) til', a font substitution for '(þangað) til'.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex46",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(46)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(46)"},
     "language": "icel1247",
     "primaryText": "Prinsessan kom ekki fyrr en klukkan fimm.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Prinsessan", "princess-the"], ["kom", "arrived"], ["ekki", "not"],
+      ["fyrr en", "para monon"], ["klukkan fimm", "five o'clock"]
+    ],
     "translation": "The princess didn't arrive until five o'clock.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "fyrrEn"
-      ],
-      [
-        "aspect",
-        "simplePast"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "negation"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "fyrrEn"],
+      ["aspect", "simplePast"],
+      ["eventuality", "eventive"],
+      ["licenser", "negation"],
+      ["test", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex46pos",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(46)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(46)"},
     "language": "icel1247",
     "primaryText": "Prinsessan kom fyrr en klukkan fimm.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "The princess arrived until five o'clock.",
+    "glossedTokens": [
+      ["Prinsessan", "princess-the"], ["kom", "arrived"], ["fyrr en", "para monon"],
+      ["klukkan fimm", "five o'clock"]
+    ],
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "fyrrEn"
-      ],
-      [
-        "aspect",
-        "simplePast"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "none"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "fyrrEn"],
+      ["aspect", "simplePast"],
+      ["eventuality", "eventive"],
+      ["licenser", "none"],
+      ["test", "plain"]
     ],
-    "comment": "Fyrr en needs its negation."
+    "comment": "Fyrr en needs its negation.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex47a",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(47a)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(47a)"},
     "language": "dutc1256",
     "primaryText": "Marie kwam tot 9 uur niet aan.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Marie", "Marie"], ["kwam", "came"], ["tot", "until"], ["9", "9"], ["uur", "hour"],
+      ["niet", "not"], ["aan", "on"]
+    ],
     "translation": "Marie didn't arrive until 9.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "tot"
-      ],
-      [
-        "aspect",
-        "simplePast"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "negation"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "tot"],
+      ["aspect", "simplePast"],
+      ["eventuality", "eventive"],
+      ["licenser", "negation"],
+      ["test", "plain"]
     ],
-    "comment": "Dutch excludes durative UNTIL from negation altogether."
+    "comment": "Dutch excludes durative UNTIL from negation altogether.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex47a2",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(47a)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(47a)"},
     "language": "dutc1256",
     "primaryText": "Marie kwam tot 9 uur aan.",
     "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "Marie arrived until 9.",
+    "glossedTokens": [
+      ["Marie", "Marie"], ["kwam", "came"], ["tot", "until"], ["9", "9"], ["uur", "hour"],
+      ["aan", "on"]
+    ],
+    "translation": "",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "tot"
-      ],
-      [
-        "aspect",
-        "simplePast"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "none"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "tot"],
+      ["aspect", "simplePast"],
+      ["eventuality", "eventive"],
+      ["licenser", "none"],
+      ["test", "plain"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex47b",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(47b)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(47b)"},
     "language": "dutc1256",
     "primaryText": "Marie kwam pas om 9 uur aan.",
     "discourseSegments": [],
@@ -1380,350 +863,228 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "connective",
-        "pas"
-      ],
-      [
-        "aspect",
-        "simplePast"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "none"
-      ],
-      [
-        "test",
-        "plain"
-      ]
+      ["connective", "pas"],
+      ["aspect", "simplePast"],
+      ["eventuality", "eventive"],
+      ["licenser", "none"],
+      ["test", "plain"]
     ],
-    "comment": "Pas lexicalizes not until as a positive polarity item."
+    "comment": "Pas lexicalizes not until as a positive polarity item.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex67a",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(67a)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(67a)"},
     "language": "mode1248",
-    "primaryText": "(Ja) posi ora kimotane i Ariadne?",
+    "primaryText": "(Ja) Posi ora kimotane i Ariadne?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Ja", "For"], ["Posi", "how"], ["ora", "time"], ["kimotane", "slept.imperf.3sg"],
+      ["i", "the"], ["Ariadne", "Ariadne"]
+    ],
     "translation": "How long was Ariadne sleeping for?",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "howLong"
-      ],
-      [
-        "aspect",
-        "imperfective"
-      ],
-      [
-        "eventuality",
-        "stative"
-      ],
-      [
-        "licenser",
-        "none"
-      ]
+      ["diagnostic", "howLong"],
+      ["aspect", "imperfective"],
+      ["eventuality", "stative"],
+      ["licenser", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex67b",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(67b)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(67b)"},
     "language": "mode1248",
-    "primaryText": "(Ja) posi ora dhen petakse ti bala i Ariadne?",
+    "primaryText": "(Ja) Posi ora dhen petakse ti bala i Ariadne?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Ja", "For"], ["Posi", "how"], ["ora", "time"], ["dhen", "not"],
+      ["petakse", "threw.perf.3sg"], ["ti", "the"], ["bala", "ball"], ["i Ariadne", "Ariadne"]
+    ],
     "translation": "How long did Ariadne not throw the ball for?",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "howLong"
-      ],
-      [
-        "aspect",
-        "perfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "negation"
-      ]
+      ["diagnostic", "howLong"],
+      ["aspect", "perfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "negation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex67c",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(67c)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(67c)"},
     "language": "mode1248",
-    "primaryText": "(Ja) posi ora dhen petuse ti bala i Ariadne?",
+    "primaryText": "(Ja) Posi ora dhen petuse ti bala i Ariadne?",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Ja", "For"], ["Posi", "how"], ["ora", "time"], ["dhen", "not"],
+      ["petuse", "threw.imperf.3sg"], ["ti", "the"], ["bala", "ball"], ["i Ariadne", "Ariadne"]
+    ],
     "translation": "How long was Ariadne in the state of not throwing the ball?",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "howLong"
-      ],
-      [
-        "aspect",
-        "imperfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "negation"
-      ]
+      ["diagnostic", "howLong"],
+      ["aspect", "imperfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "negation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex68a",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(68a)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(68a)"},
     "language": "mode1248",
     "primaryText": "Eplina ta pjata oso kimotane i Ariadne.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Eplina", "washed.perf.1sg"], ["ta", "the"], ["pjata", "dishes"], ["oso", "while"],
+      ["kimotane", "slept.imperf.3sg"], ["i", "the"], ["Ariadne", "A."]
+    ],
     "translation": "I washed the dishes while Ariadne was asleep.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "while"
-      ],
-      [
-        "aspect",
-        "imperfective"
-      ],
-      [
-        "eventuality",
-        "stative"
-      ],
-      [
-        "licenser",
-        "none"
-      ]
+      ["diagnostic", "while"],
+      ["aspect", "imperfective"],
+      ["eventuality", "stative"],
+      ["licenser", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex68b",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(68b)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(68b)"},
     "language": "mode1248",
     "primaryText": "Eplina ta pjata oso dhen petakse ti bala i Ariadne.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Eplina", "Washed"], ["ta", "the"], ["pjata", "dishes"], ["oso", "while"], ["dhen", "not"],
+      ["petakse", "threw.perf.3sg"], ["ti", "the"], ["bala", "ball"], ["i Ariadne", "A."]
+    ],
     "translation": "I washed the dishes while Ariadne didn't throw the ball.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "while"
-      ],
-      [
-        "aspect",
-        "perfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "negation"
-      ]
+      ["diagnostic", "while"],
+      ["aspect", "perfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "negation"]
     ],
-    "comment": ""
+    "comment": "The source prints 'trow' in the translation.",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex68c",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(68c)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(68c)"},
     "language": "mode1248",
     "primaryText": "Eplina ta pjata oso dhen petuse ti bala i Ariadne.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["Eplina", "Washed"], ["ta", "the"], ["pjata", "dishes"], ["oso", "while"], ["dhen", "not"],
+      ["petuse", "threw.imperf.3sg"], ["ti", "the"], ["bala", "ball"], ["i Ariadne", "A."]
+    ],
     "translation": "I washed the dishes while Ariadne was in the state of not throwing the ball.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "while"
-      ],
-      [
-        "aspect",
-        "imperfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "negation"
-      ]
+      ["diagnostic", "while"],
+      ["aspect", "imperfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "negation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex69",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(69)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(69)"},
     "language": "mode1248",
     "primaryText": "I Ariadni itan distixismeni ja pola xronia.",
     "discourseSegments": [],
-    "glossedTokens": [],
+    "glossedTokens": [
+      ["I", "the"], ["Ariadni", "A."], ["itan", "was"], ["distixismeni", "unhappy"], ["ja", "for"],
+      ["pola", "many"], ["xronia", "years"]
+    ],
     "translation": "Ariadne was unhappy for many years.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "forAdverbial"
-      ],
-      [
-        "aspect",
-        "imperfective"
-      ],
-      [
-        "eventuality",
-        "stative"
-      ],
-      [
-        "licenser",
-        "none"
-      ]
+      ["diagnostic", "forAdverbial"],
+      ["aspect", "imperfective"],
+      ["eventuality", "stative"],
+      ["licenser", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex70b",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(70b)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(70b)"},
     "language": "mode1248",
     "primaryText": "I Ariadni dhen ksipnise ja 10 lepta.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Ariadne didn't wake up for 10 minutes.",
+    "translation": "Ariadne didn't wake up (perf.) for 10 minutes.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "forAdverbial"
-      ],
-      [
-        "aspect",
-        "perfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "negation"
-      ]
+      ["diagnostic", "forAdverbial"],
+      ["aspect", "perfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "negation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex70c",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(70c)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(70c)"},
     "language": "mode1248",
     "primaryText": "I Ariadni dhen ksipnuse ja 10 lepta.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Ariadne didn't wake up (imperfective) for 10 minutes.",
+    "translation": "Ariadne didn't wake up (imperf.) for 10 minutes.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "forAdverbial"
-      ],
-      [
-        "aspect",
-        "imperfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "negation"
-      ]
+      ["diagnostic", "forAdverbial"],
+      ["aspect", "imperfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "negation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex71a",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(71a)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(71a)"},
     "language": "mode1248",
     "primaryText": "Gnorize tin apandisi!",
     "discourseSegments": [],
@@ -1734,93 +1095,54 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "imperative"
-      ],
-      [
-        "aspect",
-        "imperfective"
-      ],
-      [
-        "eventuality",
-        "stative"
-      ],
-      [
-        "licenser",
-        "none"
-      ]
+      ["diagnostic", "imperative"],
+      ["aspect", "imperfective"],
+      ["eventuality", "stative"],
+      ["licenser", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex71b",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(71b)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(71b)"},
     "language": "mode1248",
     "primaryText": "Diavase to grama!",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Read the letter!",
+    "translation": "Read(perf.) the letter!",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "imperative"
-      ],
-      [
-        "aspect",
-        "perfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "none"
-      ]
+      ["diagnostic", "imperative"],
+      ["aspect", "perfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "none"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "giannakidou2002_ex71c",
-    "source": {
-      "bibkey": "giannakidou-2002",
-      "paperLabel": "(71c)"
-    },
+    "source": {"bibkey": "giannakidou-2002", "paperLabel": "(71c)"},
     "language": "mode1248",
     "primaryText": "Mi diavasis to grama!",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "Don't read the letter!",
+    "translation": "Don't read(perf.) the letter!",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      [
-        "diagnostic",
-        "imperative"
-      ],
-      [
-        "aspect",
-        "perfective"
-      ],
-      [
-        "eventuality",
-        "eventive"
-      ],
-      [
-        "licenser",
-        "negation"
-      ]
+      ["diagnostic", "imperative"],
+      ["aspect", "perfective"],
+      ["eventuality", "eventive"],
+      ["licenser", "negation"]
     ],
-    "comment": "The negated perfective is interpreted eventively and is a fine imperative."
+    "comment": "The negated perfective is interpreted eventively and is a fine imperative.",
+    "verified": "page-image"
   }
 ]
