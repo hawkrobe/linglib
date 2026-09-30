@@ -24,6 +24,13 @@ require mathlib from git
 lean_lib Linglib where
   globs := #[.submodules `Linglib]
 
+/-- Evaluation of the library's accounts against data: which judgments each registered theory
+    gets right, wrong, or says nothing about, and how the theories compare. A default target, so
+    that a change of verdict shows up in the pull request that causes it. -/
+@[default_target]
+lean_lib Eval where
+  globs := #[.submodules `Eval]
+
 /-- Blog essays: novel synthesis and explorations accompanying blog posts.
     These import from Linglib but are not part of the library proper. -/
 lean_lib PsychVerbs where

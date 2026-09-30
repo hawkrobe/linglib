@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate `[key]` citations in Lean sources against references.bib.
 
-Scans Linglib/**/*.lean for reference-style `[bibkey]` brackets, checks
+Scans Linglib/**/*.lean and Eval/**/*.lean for reference-style `[bibkey]` brackets, checks
 them against the BibTeX entries, and warns about author-year-shaped
 brackets with no matching entry (likely citation typos).
 
@@ -16,7 +16,7 @@ from pathlib import Path
 from collections import defaultdict
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-LEAN_DIR = PROJECT_ROOT / "Linglib"
+LEAN_DIRS = [PROJECT_ROOT / "Linglib", PROJECT_ROOT / "Eval"]
 BIB_PATH = PROJECT_ROOT / "references.bib"
 
 BRACKET_RE = re.compile(r"\[([^\[\]\n]+)\]")
@@ -36,7 +36,7 @@ def main() -> None:
     keys = parse_bib_keys(BIB_PATH)
     cited_by: dict[str, list[str]] = defaultdict(list)
     unknown: list[tuple[str, str]] = []
-    for lean_file in LEAN_DIR.rglob("*.lean"):
+    for lean_file in (f for d in LEAN_DIRS for f in d.rglob("*.lean")):
         try:
             text = lean_file.read_text(encoding="utf-8")
         except (UnicodeDecodeError, PermissionError):
